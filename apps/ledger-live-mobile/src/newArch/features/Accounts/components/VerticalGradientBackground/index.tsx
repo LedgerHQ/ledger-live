@@ -19,7 +19,12 @@ export default function VerticalGradientBackground({ stopColor }: { stopColor: s
           <Stop offset="100%" stopOpacity={0} stopColor={stopColor} />
         </LinearGradient>
       </Defs>
-      <Rect x="0" y="0" width="100%" height="100%" fill="url(#verticalGradient)" />
+      <Rect
+        transform={[{ translateX: 0 }, { translateY: 0 }]}
+        width="100%"
+        height="100%"
+        fill="url(#verticalGradient)"
+      />
     </Svg>
   );
 }

@@ -25,7 +25,7 @@ import { ModalData } from "../types";
 import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
 import { walletSelector } from "~/renderer/reducers/wallet";
 
-type OwnProps = {};
+type OwnProps = object;
 type Props = OwnProps & {
   closeModal: (a: keyof ModalData) => void;
   accounts: Account[];
@@ -49,7 +49,7 @@ const exportOperations = async (
     if (res && callback) {
       callback();
     }
-  } catch (error) {
+  } catch {
     // ignore
   }
 };
@@ -214,7 +214,7 @@ const Title = styled(Box).attrs(() => ({
   fontSize: 5,
   mt: 2,
   mb: 15,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))`
   text-align: center;
 `;

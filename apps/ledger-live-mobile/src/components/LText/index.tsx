@@ -62,4 +62,6 @@ function LText({ color, children, semiBold, bold, ...props }: Opts) {
   );
 }
 
+// FIXME: Remove this once we have migrated to the new button
+// eslint-disable-next-line @typescript-eslint/no-deprecated
 export default memo<Opts>(LText);

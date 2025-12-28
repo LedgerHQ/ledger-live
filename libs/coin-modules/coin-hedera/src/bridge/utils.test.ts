@@ -254,7 +254,7 @@ describe("bridge utils", () => {
   });
 
   describe("classifyERC20Operations", () => {
-    const evmAddress = "0x1234567890abcdef";
+    const evmAddress = "0x0000000000000000000000000000000000003039";
     const tokenCurrency = getTokenCurrencyFromCALByType("erc20");
 
     it("classifies to 'add' when no matching operation exists", () => {

@@ -152,6 +152,8 @@ export type CurrencyFeatures = {
   currencyMonadTestnet: DefaultFeature;
   currencySomnia: DefaultFeature;
   currencyZeroGravity: DefaultFeature;
+  currencyConcordium: DefaultFeature;
+  currencyConcordiumTestnet: DefaultFeature;
 };
 
 /**
@@ -185,6 +187,7 @@ export type Features = CurrencyFeatures & {
   firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
   protectServicesMobile: Feature_ProtectServicesMobile;
   protectServicesDesktop: Feature_ProtectServicesDesktop;
+  recoverUpsellPostOnboarding: Feature_RecoverUpsellPostOnboarding;
   ptxServiceCtaExchangeDrawer: Feature_PtxServiceCtaExchangeDrawer;
   ptxServiceCtaScreens: Feature_PtxServiceCtaScreens;
   swapWalletApiPartnerList: Feature_SwapWalletApiPartnerList;
@@ -231,6 +234,10 @@ export type Features = CurrencyFeatures & {
   llmAccountListUI: DefaultFeature;
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
+  lwmLedgerSyncOptimisation: DefaultFeature;
+  lwdLedgerSyncOptimisation: DefaultFeature;
+  lwmNewWordingOptInNotificationsDrawer: DefaultFeature;
+  lwmOptimizeOptInNotificationsToOptOutUsers: DefaultFeature;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;
@@ -240,8 +247,8 @@ export type Features = CurrencyFeatures & {
   lldModularDrawer: Feature_ModularDrawer;
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
-  ldmkConnectApp: DefaultFeature;
   ldmkSolanaSigner: DefaultFeature;
+  ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
   llmDatadog: {
     enabled: boolean;
@@ -278,6 +285,12 @@ export type Features = CurrencyFeatures & {
   newSendFlow: DefaultFeature;
   lldSessionReplay: Feature_LldSessionReplay;
   zcashShielded: DefaultFeature;
+  llmNanoOnboardingFundWallet: DefaultFeature;
+  lldRebornABtest: DefaultFeature;
+  llmRebornABtest: DefaultFeature;
+  lifiSolana: DefaultFeature;
+  llmAnimatedSplashScreen: Feature_LlmAnimatedSplashScreen;
+  llmOnboardingEnableSync: Feature_OnboardingEnableSync;
 };
 
 /**
@@ -484,6 +497,10 @@ export type Feature_ProtectServicesDesktop = Feature<{
   protectId: string;
 }>;
 
+export type Feature_RecoverUpsellPostOnboarding = Feature<{
+  deviceIds: DeviceModelId[];
+}>;
+
 export type Feature_DeviceInitialApps = Feature<{
   apps: string[];
 }>;
@@ -635,6 +652,7 @@ export type Feature_LlmLedgerSyncEntryPoints = Feature<{
   manager: boolean;
   accounts: boolean;
   settings: boolean;
+  onboarding: boolean;
   postOnboarding: boolean;
 }>;
 export type Feature_LldLedgerSyncEntryPoints = Feature<{
@@ -674,6 +692,7 @@ export type Feature_ModularDrawer = Feature<{
   enableModularization: boolean;
   searchDebounceTime: number;
   backendEnvironment: string;
+  enableDialogDesktop?: boolean;
 }>;
 
 export type Feature_Noah = Feature<{
@@ -731,6 +750,13 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
 
 export type Feature_LlmHomescreen = DefaultFeature;
 export type Feature_SupportDeviceApex = DefaultFeature;
+
+export type Feature_LlmAnimatedSplashScreen = Feature<Record<string, boolean>>;
+
+export type Feature_OnboardingEnableSync = Feature<{
+  nanos: boolean;
+  touchscreens: boolean;
+}>;
 
 /**
  * Array of firmware versions that are ignored for the given device model

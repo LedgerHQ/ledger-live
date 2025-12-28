@@ -13,6 +13,12 @@ import ModularDrawerAddAccountFlowManager, {
 
 const store = createStore(() => ({
   accounts: [],
+  modularDrawer: {
+    source: "",
+  },
+  devices: { currentDevice: null },
+  settings: { vaultSigner: { enabled: false } },
+  currency: bitcoinCurrency,
 }));
 
 const ScanControls = () => {
@@ -73,7 +79,7 @@ const ScanControls = () => {
 };
 
 const meta: Meta<ModularDrawerAddAccountFlowManagerProps> = {
-  title: "ModularDrawer/ModularDrawerAddAccountFlowManager",
+  title: "ModularDialog/ModularDrawerAddAccountFlowManager",
   component: ModularDrawerAddAccountFlowManager,
   args: { currency: bitcoinCurrency },
   decorators: [

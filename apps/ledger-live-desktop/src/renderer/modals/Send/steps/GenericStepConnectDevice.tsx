@@ -51,8 +51,8 @@ export default function StepConnectDevice({
   onTransactionError: (a: Error) => void;
   onOperationBroadcasted: (a: Operation) => void;
   setSigned: (a: boolean) => void;
-  onConfirmationHandler?: Function;
-  onFailHandler?: Function;
+  onConfirmationHandler?: (operation: Operation) => void;
+  onFailHandler?: (error: Error) => void;
 }) {
   const mevProtected = useSelector(mevProtectionSelector);
   const dispatch = useDispatch();

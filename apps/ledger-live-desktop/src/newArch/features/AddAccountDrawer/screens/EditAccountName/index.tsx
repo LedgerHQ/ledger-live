@@ -65,7 +65,7 @@ const EditAccountName = ({ account, navigateBack }: Props) => {
           textAlign="left"
           width="100%"
           lineHeight="32.4px"
-          color="palette.text.shade100"
+          color="neutral.c100"
           data-testid="scan-accounts-title"
         >
           {t("modularAssetDrawer.editAccountName.title")}

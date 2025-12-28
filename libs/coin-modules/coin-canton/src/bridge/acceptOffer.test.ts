@@ -1,17 +1,24 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { buildTransferInstruction } from "./acceptOffer";
-import * as gateway from "../network/gateway";
+import type { Account } from "@ledgerhq/types-live";
 import * as signTransactionModule from "../common-logic/transaction/sign";
-import type { CantonSigner, CantonSignature } from "../types/signer";
 import type { PrepareTransferResponse } from "../network/gateway";
+import * as gateway from "../network/gateway";
+import type { CantonAccount } from "../types";
+import { TopologyChangeError } from "../types/errors";
+import type { CantonSignature, CantonSigner } from "../types/signer";
+import { buildTransferInstruction } from "./acceptOffer";
+import * as getTransactionStatusModule from "./getTransactionStatus";
 
 jest.mock("../network/gateway");
 jest.mock("../common-logic/transaction/sign");
+jest.mock("./getTransactionStatus");
 
 const mockedGateway = gateway as jest.Mocked<typeof gateway>;
 const mockedSignTransaction = signTransactionModule as jest.Mocked<typeof signTransactionModule>;
+const mockedGetTransactionStatus = getTransactionStatusModule as jest.Mocked<
+  typeof getTransactionStatusModule
+>;
 
 describe("acceptOffer", () => {
   const mockCurrency = {
@@ -95,6 +102,7 @@ describe("acceptOffer", () => {
     mockedGateway.prepareTransferInstruction.mockResolvedValue(mockPreparedTransaction);
     mockedSignTransaction.signTransaction.mockResolvedValue(mockSignature);
     mockedGateway.submitTransferInstruction.mockResolvedValue({ update_id: "test-update-id" });
+    mockedGetTransactionStatus.validateTopology.mockResolvedValue(null);
   });
 
   describe("buildTransferInstruction", () => {
@@ -295,6 +303,37 @@ describe("acceptOffer", () => {
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalled();
       expect(mockedSignTransaction.signTransaction).toHaveBeenCalled();
       expect(mockedGateway.submitTransferInstruction).toHaveBeenCalled();
+    });
+
+    it("should throw TopologyChangeError when validateTopology returns topology error", async () => {
+      // GIVEN
+      const topologyError = new TopologyChangeError("Topology change detected");
+      const cantonAccount = {
+        ...mockAccount,
+        cantonResources: {
+          publicKey: "test-public-key",
+          instrumentUtxoCounts: {},
+        },
+      } as unknown as CantonAccount;
+      mockedGetTransactionStatus.validateTopology.mockResolvedValue(topologyError);
+      const transferInstruction = buildTransferInstruction(mockSignerContext);
+
+      // WHEN & THEN
+      await expect(
+        transferInstruction(
+          mockCurrency,
+          mockDeviceId,
+          cantonAccount,
+          mockPartyId,
+          mockContractId,
+          "accept-transfer-instruction",
+        ),
+      ).rejects.toThrow(TopologyChangeError);
+
+      expect(mockedGetTransactionStatus.validateTopology).toHaveBeenCalledWith(cantonAccount);
+      expect(mockedGateway.prepareTransferInstruction).not.toHaveBeenCalled();
+      expect(mockedSignTransaction.signTransaction).not.toHaveBeenCalled();
+      expect(mockedGateway.submitTransferInstruction).not.toHaveBeenCalled();
     });
   });
 });

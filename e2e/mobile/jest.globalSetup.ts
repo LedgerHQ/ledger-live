@@ -8,6 +8,7 @@ import { exec } from "child_process";
 import { releaseSpeculosDeviceCI } from "@ledgerhq/live-common/lib/e2e/speculosCI";
 import { isSpeculosRemote } from "./helpers/commonHelpers";
 import { SPECULOS_TRACKING_FILE } from "./utils/speculosUtils";
+import { NANO_APP_CATALOG_PATH } from "./utils/constants";
 
 export default async function setup(): Promise<void> {
   // Validate .env.mock file
@@ -21,6 +22,7 @@ export default async function setup(): Promise<void> {
   }
 
   setupSpeculosCleanupHandlers();
+  await cleanupPreviousNanoAppJsonFile();
   await globalSetup();
 }
 
@@ -63,4 +65,9 @@ function setupSpeculosCleanupHandlers() {
 
   const signals: NodeJS.Signals[] = ["SIGINT", "SIGTERM", "SIGHUP", "SIGQUIT"];
   signals.forEach(sig => process.once(sig, () => handleCleanup(sig)));
+}
+
+async function cleanupPreviousNanoAppJsonFile() {
+  const nanoAppJsonPath = path.resolve(process.cwd(), NANO_APP_CATALOG_PATH);
+  await fs.unlink(nanoAppJsonPath).catch(() => {});
 }

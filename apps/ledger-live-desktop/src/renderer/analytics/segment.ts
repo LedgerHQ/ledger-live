@@ -40,6 +40,7 @@ import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { onboardingReceiveFlowSelector } from "../reducers/onboarding";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import mixpanel from "mixpanel-browser";
+import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
 
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.AnyAction>, State>;
 
@@ -84,10 +85,12 @@ const getMarketWidgetAnalytics = (state: State) => {
 const getLedgerSyncAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
   const walletSync = analyticsFeatureFlagMethod("lldWalletSync");
+  const ledgerSyncOptimisation = analyticsFeatureFlagMethod("lwdLedgerSyncOptimisation");
 
   return {
     hasLedgerSync: !!walletSync?.enabled,
     ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
+    ledger_sync_revamp: !!ledgerSyncOptimisation?.enabled,
   };
 };
 
@@ -119,6 +122,7 @@ const getMADAttributes = () => {
     receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
     send_flow: madFeatureFlag?.params?.send_flow ?? false,
     isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
+    enableDialogDesktop: madFeatureFlag?.params?.enableDialogDesktop ?? false,
   };
 };
 
@@ -250,6 +254,19 @@ const extraProperties = (store: ReduxStore) => {
     : {};
   const sidebarCollapsed = sidebarCollapsedSelector(state);
 
+  const { combinedIds, stakeableAssets } = getTotalStakeableAssets(
+    accounts,
+    Array.isArray(ptxAttributes.stakingCurrenciesEnabled)
+      ? ptxAttributes.stakingCurrenciesEnabled
+      : [],
+    Array.isArray(ptxAttributes.partnerStakingCurrenciesEnabled)
+      ? ptxAttributes.partnerStakingCurrenciesEnabled
+      : [],
+  );
+  const stakeableAssetsList = stakeableAssets.map(
+    asset => `${asset.ticker} on ${asset.networkName}`,
+  );
+
   const accountsWithFunds = accounts
     ? [
         ...new Set(
@@ -259,6 +276,7 @@ const extraProperties = (store: ReduxStore) => {
         ),
       ]
     : [];
+
   const tokenWithFunds = getTokensWithFunds(accounts);
 
   return {
@@ -294,6 +312,8 @@ const extraProperties = (store: ReduxStore) => {
     ...(postOnboardingInProgress ? { flow: "post-onboarding" } : {}),
     ...sessionReplayProperties,
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
+    totalStakeableAssets: combinedIds.size,
+    stakeableAssets: stakeableAssetsList,
   };
 };
 
@@ -304,12 +324,19 @@ function getAnalytics() {
   }
   return analytics;
 }
-export const start = async (store: ReduxStore) => {
+export const startAnalytics = async (store: ReduxStore) => {
   if (!user || (!process.env.SEGMENT_TEST && (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN")))) return;
+  // calling user() first is essential because otherwise the store data will not reflect the user's preferences
+  // and hence canBeTracked will always be set to true...
   const { id } = await user();
   storeInstance = store;
+
+  const canBeTracked = trackingEnabledSelector(store.getState());
+  if (!canBeTracked) return;
+
   const analytics = getAnalytics();
   if (!analytics) return;
+
   const allProperties = {
     ...extraProperties(store),
     userId: id,

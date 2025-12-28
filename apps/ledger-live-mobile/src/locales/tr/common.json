@@ -665,6 +665,11 @@
       "title" : "{{appName}} uygulaması, özel yapılandırmanız için bulunamadı.",
       "description" : "Uygulamayı My Ledger'dan yeniden yüklemeyi deneyin"
     },
+    "NanoSNotSupported" : {
+      "title" : "Ledger Nano S™ bu özelliği desteklemez",
+      "description" : "En yeni Ledger Wallet özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin.",
+      "upsellCtaLabel" : "Model Yükseltme Programınızı keşfedin"
+    },
     "NotEnoughGas" : {
       "title" : "{{cryptoName}} ağındaki işlem ücretlerini ödemek için hesabınızda {{fees}} {{ticker}} olması gerekiyor.  <link0>{{ticker}} satın alın</link0> veya hesabınıza daha fazlasını yatırın.",
       "description" : "Token işlem ücretlerini ödemek için lütfen hesabınıza biraz coin gönderin."
@@ -1089,6 +1094,10 @@
       "title" : "Token ilişkilendirmesi doğrulanamıyor",
       "description" : "Hedef hesabın bu token’ı alıp alamayacağını doğrulayamadık. Adres geçersiz olabilir veya bir ağ ya da hizmet sorunu yaşanıyor olabilir."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "EVM adresi doğrulaması gerekiyor",
+      "description" : "Onaylamadan önce, Ledger cihazınızda görüntülenen EVM adresini lütfen doğrulayın."
+    },
     "NearNewAccountWarning" : {
       "title" : "Alıcı hesabı henüz oluşturulmadı. Bu protokol, alıcı hesabı oluşturmak için {{formattedNewAccountStorageCost}} tutarında bir aktarım yapılmasını gerektiriyor."
     },
@@ -1133,6 +1142,11 @@
       "description" : "Cihazınızın kilidini açın ve tekrar deneyin.",
       "descriptionWithProductName" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
     },
+    "UnsupportedFeatureError" : {
+      "title" : "Desteklenmeyen özellik",
+      "description" : "Bu işlem için gerekli uygulama an itibarıyla Ledger cihazınızda kullanılamıyor. Ayrıntılar için lütfen Ledger Destek ile iletişime geçin.",
+      "ctaLabel" : "Ledger Destek"
+    },
     "EtherscanAPIError" : {
       "title" : "İşlemler alınamadı",
       "description" : "Tarayıcılarla ilgili beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin"
@@ -1153,6 +1167,11 @@
     "FirmwareNotRecognized" : {
       "title" : "Geçersiz Sağlayıcı",
       "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Wallet'ta \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
+    },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "Geçersiz Sağlayıcı",
+      "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Wallet'ta \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin.",
+      "openSettings" : "Ayarlara git"
     },
     "GasLessThanEstimate" : {
       "title" : "Bu çok düşük olabilir. Lütfen arttırın"
@@ -1224,6 +1243,12 @@
     "AddressesSanctionedError" : {
       "title" : "Sizi güvende tutuyoruz",
       "description" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "Miktar, UTXO kısıtlamalarına uyacak şekilde azaltıldı."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "Miktar, UTXO kısıtlamaları için fazla büyük."
     }
   },
   "crash" : {
@@ -2730,6 +2755,9 @@
       "REWARD" : "Ödül alındı",
       "FEES" : "Ücretler",
       "PRE_APPROVAL" : "Ön onay",
+      "TRANSFER_PROPOSAL" : "Transfer teklifi",
+      "TRANSFER_REJECTED" : "Transfer reddedildi",
+      "TRANSFER_WITHDRAWN" : "Transfer geri çekildi",
       "OPT_IN" : "Onaylama",
       "OPT_OUT" : "Reddetme",
       "CLOSE_ACCOUNT" : "Hesabı kapama",
@@ -2751,7 +2779,8 @@
       "STAKE" : "Stake edildi",
       "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
-      "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin"
+      "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin",
+      "CONTRACT_CALL" : "Sözleşme çağrısı"
     }
   },
   "operationDetails" : {
@@ -3780,7 +3809,9 @@
       },
       "wrongDevice" : {
         "title" : "Ledger Nano S™, {{provider}} ile uyumlu değildir",
-        "description" : "Ledger Nano S™, {{provider}} ile uyumlu değildir. Ledger Live üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ veya Ledger Flex™ cihazlarını kullanabilirsiniz"
+        "description" : "Ledger Nano S™, {{provider}} ile uyumlu değildir. Ledger Wallet üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ veya Ledger Flex™ cihazlarını kullanabilirsiniz",
+        "explore_compatible_devices" : "Uyumlu cihazları keşfedin",
+        "swapWithAnotherProvider" : "Başka bir sağlayıcıyla takas edin"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Uyumlu cihazları keşfedin",
@@ -7223,6 +7254,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "Daha fazla bilgi"
+        },
+        "evmVerificationRequired" : {
+          "text" : "Bir ERC-20 token’ı gönderiyorsunuz. Ledger cihazınız bu işlem türünde gönderenin Hesap Kimliğini değil, EVM adresini gösterir.\nOnaylamadan önce adresin doğru olduğunu doğrulamak için lütfen bu <0>bu rehberdeki</0> yönergeleri izleyin."
         }
       }
     },
@@ -7311,11 +7345,11 @@
         "description" : "{{productName}} cihazınızda kilit ekranı olarak ayarlamak istediğiniz bir dijital sanat eserini veya resmi seçin.",
         "popupLabel" : "Kilitli ekran başarıyla özelleştirildi"
       },
-      "recover" : {
-        "title" : "Ledger Recover'a abone olun",
-        "titleCompleted" : "Ledger Recover'a abone oldunuz",
-        "description" : "Gizli Kurtarma İfadeniz gerekmeden cüzdanınıza erişimi geri kazanın.",
-        "popupLabel" : "Ledger Recover'a başarıyla abone oldunuz"
+      "syncAccounts" : {
+        "title" : "Kripto hesaplarınızı senkronize edin",
+        "titleCompleted" : "Hesaplarınız senkronize edildi",
+        "description" : "Kripto hesaplarınızı senkronize etmek için Ledger Sync’i etkinleştirin",
+        "popupLabel" : "Hesaplar senkronize edildi"
       }
     }
   },
@@ -7978,7 +8012,15 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Sağlayıcı kullanılamıyor",
-      "description" : "Changelly bu işlemi gerçekleştiremiyor. Hata kodu 8HBB{{errorCode}}"
+      "description" : "Changelly bu işlemi gerçekleştiremiyor. Hata kodu 8HBB-{{randomCode}}"
+    },
+    "swapQuoteLowLiquidity" : {
+      "title" : "Sağlayıcı kullanılamıyor",
+      "description" : "Takas işleminizi bu sağlayıcı ile tamamlayamıyoruz. Lütfen başka bir sağlayıcıyla deneyin."
+    },
+    "swapRateExpiredError" : {
+      "title" : "Kurun Süresi Doldu",
+      "description" : "Kur zaman aşımına uğradı. Lütfen yenileyip tekrar deneyin."
     },
     "default" : {
       "title" : "Bir hata oluştu",

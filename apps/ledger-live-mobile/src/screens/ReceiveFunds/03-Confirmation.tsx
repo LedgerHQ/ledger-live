@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Dimensions, Linking, Platform, Share, View } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import QRCode from "react-native-qrcode-svg";
 import { useTranslation } from "react-i18next";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
@@ -11,14 +11,12 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, IconsLegacy, Button, Box, BannerCard, Icons } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import { hasMemoTag } from "LLM/features/MemoTag/utils/hasMemoTag";
 import getWindowDimensions from "~/logic/getWindowDimensions";
-import { accountScreenSelector } from "~/reducers/accounts";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import ReceiveSecurityModal from "./ReceiveSecurityModal";
@@ -36,6 +34,7 @@ import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
 import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasClosedWithdrawBannerSelector } from "~/reducers/settings";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { setCloseWithdrawBanner } from "~/actions/settings";
 import { urls } from "~/utils/urls";
 import { useMaybeAccountName } from "~/reducers/wallet";
@@ -69,7 +68,7 @@ const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>``;
 
 export default function ReceiveConfirmation({ navigation }: Props) {
   const route = useRoute<ScreenProps["route"]>();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   return account ? (
     <ReceiveConfirmationInner
@@ -337,7 +336,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
         <Flex p={0} alignItems="center" justifyContent="center">
           <StyledTouchableHightlight
             activeOpacity={1}
-            underlayColor={colors.palette.opacityDefault.c10}
+            underlayColor={colors.opacityDefault.c10}
             alignItems="center"
             justifyContent="center"
             width={QRContainerSize}
@@ -379,13 +378,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                   bg="constant.white"
                   position="absolute"
                 >
-                  <CurrencyIcon
-                    currency={currency}
-                    color={colors.constant.white}
-                    bg={getCurrencyColor(currency) || colors.constant.black}
-                    size={48}
-                    circle
-                  />
+                  <CurrencyIcon currency={currency} size={48} />
                 </Flex>
               </Flex>
               <Text

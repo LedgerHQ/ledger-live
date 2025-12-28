@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-api-acre-module",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Wallet-API ACRE Module for Ledger Live",
   "license": "MIT",
   "keywords": [
@@ -34,8 +34,8 @@
     "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {
-    "@ledgerhq/wallet-api-client": "^1.12.5",
-    "@ledgerhq/wallet-api-core": "^1.26.1"
+    "@ledgerhq/wallet-api-client": "^1.12.6",
+    "@ledgerhq/wallet-api-core": "^1.27.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.10"

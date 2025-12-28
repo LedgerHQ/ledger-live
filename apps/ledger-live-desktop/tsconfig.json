@@ -22,7 +22,6 @@
   "include": [
     "src",
     "static/**/*.json",
-    "src/renderer/styles/palettes/*.json",
     "src/renderer/animations/**/*.json",
     "src/renderer/screens/settings/sections/General/regions.json",
     "package.json",

@@ -199,6 +199,8 @@ export class Currency {
 
   static readonly SUI = new Currency("Sui", "SUI", "sui", AppInfos.SUI, [Network.SUI]);
 
+  static readonly BASE = new Currency("Base", "ETH", "base", AppInfos.BASE, [Network.BASE]);
+
   static readonly SUI_USDC = new Currency(
     "USD Coin",
     "USDC",

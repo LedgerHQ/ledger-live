@@ -104,7 +104,7 @@ export function isValidKaspaAddress(address: string): boolean {
       // checksum not valid
       return false;
     }
-  } catch (e) {
+  } catch {
     // Unable to translate address to ScriptPublicKey
     return false;
   }

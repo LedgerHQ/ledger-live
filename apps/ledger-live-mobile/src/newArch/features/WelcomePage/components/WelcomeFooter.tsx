@@ -10,7 +10,7 @@ import { useWelcomeNavigation } from "../hooks/useWelcomeNavigation";
  * - Get Started (Navigate to accept terms screen)
  * - Terms and Conditions (Open link in external browser)
  * - Privacy Policy (Open link in external browser)
- * @returns JSX.Element
+ * @returns React.JSX.Element
  */
 export function WelcomeFooter() {
   const { t } = useTranslation();

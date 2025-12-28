@@ -8,7 +8,7 @@ import SummaryRow from "./SummaryRow";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
 import LText from "~/components/LText";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 const styles = StyleSheet.create({
   amountContainer: {

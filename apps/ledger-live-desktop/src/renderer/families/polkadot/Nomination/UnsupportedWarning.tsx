@@ -26,8 +26,8 @@ export const ExternalControllerUnsupportedWarning = ({
   onSetController,
 }: {
   controllerAddress: string | undefined | null;
-  onExternalLink: Function;
-  onSetController: Function;
+  onExternalLink: (address?: string | null) => void;
+  onSetController: () => void;
 }) => (
   <Box horizontal flow={1} alignItems="center" justifyContent="space-between">
     <Alert
@@ -66,7 +66,7 @@ export const ExternalStashUnsupportedWarning = ({
   onExternalLink,
 }: {
   stashAddress: string | undefined | null;
-  onExternalLink: Function;
+  onExternalLink: (address?: string | null) => void;
 }) => (
   <Alert
     type="help"

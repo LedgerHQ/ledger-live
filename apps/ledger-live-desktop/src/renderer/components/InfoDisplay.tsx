@@ -22,7 +22,7 @@ const InfoDisplay = ({ title, description }: { title: string; description: strin
         ff="Inter|Regular"
         fontSize={18}
         textAlign="center"
-        color="palette.text.shade100"
+        color="neutral.c100"
         lineHeight="22px"
         mb="16px"
       >
@@ -32,7 +32,7 @@ const InfoDisplay = ({ title, description }: { title: string; description: strin
         ff="Inter|Regular"
         fontSize={13}
         textAlign="center"
-        color="palette.text.shade50"
+        color="neutral.c70"
         lineHeight="19px"
       >
         {description}

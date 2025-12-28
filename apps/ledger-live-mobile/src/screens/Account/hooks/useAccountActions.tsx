@@ -5,7 +5,7 @@ import {
   getMainAccount,
   getAccountSpendableBalance,
 } from "@ledgerhq/live-common/account/index";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useTranslation } from "react-i18next";
 import { useRoute } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";

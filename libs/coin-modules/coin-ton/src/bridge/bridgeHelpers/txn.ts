@@ -298,7 +298,7 @@ export function dataToSlice(data: string): Slice | undefined {
 
     try {
       return Cell.fromBoc(buffer)[0].beginParse();
-    } catch (err) {
+    } catch {
       return new Slice(new BitReader(new BitString(buffer, 0, buffer.length * 8)), []);
     }
   }
@@ -339,7 +339,7 @@ export function decodeForwardPayload(payload: string | null): string {
     const comment = buffer.toString("utf-8");
 
     return comment;
-  } catch (error) {
+  } catch {
     // Silent failure, returning empty string
     return "";
   }

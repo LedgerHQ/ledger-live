@@ -16,7 +16,7 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { endpoints as calEndpoints } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 import { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
-import { InfiniteData } from "@reduxjs/toolkit/query";
+import { InfiniteData } from "@reduxjs/toolkit/query/react";
 import type {
   TokensDataWithPagination,
   PageParam,
@@ -806,8 +806,13 @@ export function useWalletAPIServer({
 
     server.setHandler(
       "transaction.signAndBroadcast",
-      async ({ accountId, tokenCurrency, transaction, options }) => {
+      async ({ accountId, tokenCurrency, transaction, options, meta }) => {
         const sponsored = transaction.family === "ethereum" && transaction.sponsored;
+        // isEmbedded and partner are passed via meta (not transaction) as they're tracking params, not tx properties
+        const isEmbeddedSwap =
+          transaction.family === "ethereum" &&
+          (meta as { isEmbedded?: boolean } | undefined)?.isEmbedded;
+        const partner = (meta as { partner?: string } | undefined)?.partner;
 
         const signedTransaction = await signTransactionLogic(
           { manifest, accounts, tracking },
@@ -824,18 +829,20 @@ export function useWalletAPIServer({
                 onSuccess: signedOperation => {
                   if (done) return;
                   done = true;
-                  tracking.signTransactionSuccess(manifest);
+                  tracking.signTransactionSuccess(manifest, isEmbeddedSwap, partner);
                   resolve(signedOperation);
                 },
                 onError: error => {
                   if (done) return;
                   done = true;
-                  tracking.signTransactionFail(manifest);
+                  tracking.signTransactionFail(manifest, isEmbeddedSwap, partner);
                   reject(error);
                 },
               });
             }),
           tokenCurrency,
+          isEmbeddedSwap,
+          partner,
         );
 
         return broadcastTransactionLogic(
@@ -858,9 +865,9 @@ export function useWalletAPIServer({
                     sponsored,
                   },
                 });
-                tracking.broadcastSuccess(manifest);
+                tracking.broadcastSuccess(manifest, isEmbeddedSwap, partner);
               } catch (error) {
-                tracking.broadcastFail(manifest);
+                tracking.broadcastFail(manifest, isEmbeddedSwap, partner);
                 throw error;
               }
             }

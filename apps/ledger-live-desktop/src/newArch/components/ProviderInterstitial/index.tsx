@@ -37,7 +37,7 @@ const IconContainer = styled.div<{ bgColor?: string }>`
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid;
-  border-color: ${p => p.theme.colors.palette.opacityDefault.c10};
+  border-color: ${p => p.theme.colors.opacityDefault.c10};
   background-color: ${p => p.bgColor};
 `;
 
@@ -53,7 +53,7 @@ const circleAnimation = keyframes`
   }
   30% {
     opacity: 0.9;
-  }  
+  }
 `;
 
 const Ellipsis = styled.div`
@@ -65,7 +65,7 @@ const Circle = styled.div<{ delay: number }>`
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: ${p => p.theme.colors.palette.neutral.c100};
+  background-color: ${p => p.theme.colors.neutral.c100};
   animation: ${circleAnimation} 1.5s infinite;
   animation-delay: ${({ delay }) => delay}s;
 `;
@@ -91,14 +91,14 @@ export const ProviderInterstitial: WebviewLoader = ({ manifest, isLoading, descr
     <Loader data-testid="custom-buy-sell-loader">
       <VisualWrapper>
         <IconContainer bgColor="black">
-          <Icon name="LedgerLogo" size={36} color="palette.constant.white" />
+          <Icon name="LedgerLogo" size={36} color="constant.white" />
         </IconContainer>
         <EllipsisLoader />
         <IconContainer>
           <ProviderIcon size="XXL" boxed name={manifest.id} />
         </IconContainer>
       </VisualWrapper>
-      <Text variant="body" color="palette.opacityDefault.c60" textAlign="center">
+      <Text variant="body" color="opacityDefault.c60" textAlign="center">
         {description ?? t("exchange.connectingTo", { provider: manifest.name })}
       </Text>
     </Loader>

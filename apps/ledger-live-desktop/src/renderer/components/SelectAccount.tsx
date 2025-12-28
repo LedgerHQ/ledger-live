@@ -34,7 +34,7 @@ const Tick = styled.div`
   top: -10px;
   height: 40px;
   width: 1px;
-  background: ${p => p.theme.colors.palette.divider};
+  background: ${p => p.theme.colors.neutral.c40};
 `;
 const tokenTick = (
   <div
@@ -138,14 +138,14 @@ export const AccountOption = React.memo<AccountOptionProps>(function AccountOpti
         {!hideDerivationTag && <AccountTagDerivationMode account={account} />}
       </Box>
       <Box>
-        <FormattedVal color="palette.text.shade60" val={balance} unit={unit} showCode />
+        <FormattedVal color="neutral.c70" val={balance} unit={unit} showCode />
       </Box>
     </>
   ) : (
     <OptionMultilineContainer flex="1">
       <Box flex="1" horizontal alignItems="center">
         <Box flex="0 1 auto">
-          <Ellipsis ff="Inter|SemiBold" fontSize={4} color="palette.text.shade100">
+          <Ellipsis ff="Inter|SemiBold" fontSize={4} color="neutral.c100">
             {name}
           </Ellipsis>
         </Box>
@@ -153,7 +153,7 @@ export const AccountOption = React.memo<AccountOptionProps>(function AccountOpti
       </Box>
       <Box>
         <FormattedVal
-          color="palette.text.shade40"
+          color="neutral.c60"
           ff="Inter|Medium"
           fontSize={3}
           val={balance}
@@ -174,7 +174,7 @@ export const AccountOption = React.memo<AccountOptionProps>(function AccountOpti
       }}
     >
       {!isValue && nested ? tokenTick : null}
-      <CryptoCurrencyIcon currency={currency} size={16} />
+      <CryptoCurrencyIcon currency={currency} size={22} />
       {textContents}
     </Box>
   );
@@ -185,7 +185,7 @@ const AddAccountContainer = styled(Box)<{ small?: boolean }>`
   cursor: pointer;
   flex-direction: row;
   align-items: center;
-  border-top: 1px solid ${p => p.theme.colors.palette.divider};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c40};
   padding: ${p => (p.small ? "8px 15px 8px 15px" : "10px 15px 11px 15px")};
 `;
 const RoundButton = styled(Button)`
@@ -214,7 +214,7 @@ const AddAccountFooter = (small?: boolean) =>
           <Box mr={3}>
             <AddAccountButton />
           </Box>
-          <Text ff="Inter|SemiBold" color="palette.primary.main" fontSize={3}>
+          <Text ff="Inter|SemiBold" color="primary.c80" fontSize={3}>
             <Trans i18nKey="swap2.form.details.noAccountCTA" />
           </Text>
         </AddAccountContainer>
@@ -311,8 +311,7 @@ export const RawSelectAccount = ({
         );
         if (display) {
           result.push({
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            matched: match && !isDisabledOption(option as { disabled?: boolean }),
+            matched: match,
             account: option,
             accountName,
           });
@@ -333,7 +332,7 @@ export const RawSelectAccount = ({
   }, [showAddAccount, props.small]);
   const structuredResults = manualFilter();
   return (
-    <Select
+    <Select<Option>
       {...props}
       value={selectedOption}
       options={structuredResults}
@@ -359,11 +358,3 @@ export const RawSelectAccount = ({
 export const SelectAccount = withTranslation()(RawSelectAccount);
 const m: React.ComponentType<OwnProps> = connect(mapStateToProps)(SelectAccount);
 export default m;
-
-/**
- * @deprecated we must completely remove this concept: account.disabled is not a thing!
- */
-function isDisabledOption(option: { disabled?: boolean }): boolean {
-  if (!("disabled" in option)) return false;
-  return Boolean(option.disabled);
-}

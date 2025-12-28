@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-algorand",
-  "version": "0.13.0",
+  "version": "0.14.1",
   "description": "Ledger Algorand Coin integration",
   "keywords": [
     "Ledger",
@@ -60,7 +60,7 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "prando": "^6.0.1",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.2",

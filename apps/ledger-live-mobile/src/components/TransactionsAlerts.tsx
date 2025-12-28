@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { accountsSelector } from "~/reducers/accounts";
 import getOrCreateUser from "../user";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";

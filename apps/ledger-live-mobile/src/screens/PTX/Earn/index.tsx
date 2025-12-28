@@ -1,4 +1,7 @@
-import { stakeProgramsToEarnParam } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import {
+  stakeProgramsToEarnParam,
+  getEthDepositScreenSetting,
+} from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
 import {
@@ -10,7 +13,7 @@ import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalL
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import React, { Fragment, memo, useMemo } from "react";
 import { Platform } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useTheme } from "styled-components/native";
 import TrackScreen from "~/analytics/TrackScreen";
 import GenericErrorView from "~/components/GenericErrorView";
@@ -63,9 +66,12 @@ function Earn({ route }: Props) {
     [stakePrograms],
   );
   const stakeCurrenciesParam = useMemo(() => stakePrograms?.params?.list, [stakePrograms]);
+  const ethDepositCohort = useMemo(
+    () => getEthDepositScreenSetting(stakePrograms),
+    [stakePrograms],
+  );
 
   if (!remoteLiveAppState.isLoading && !manifest) {
-    // We want to track occurrences of this error in Sentry
     console.error(appManifestNotFoundError);
   }
 
@@ -88,6 +94,7 @@ function Earn({ route }: Props) {
             ? JSON.stringify(stakeCurrenciesParam)
             : undefined,
           OS: Platform.OS,
+          ethDepositCohort,
           ...params,
           ...Object.fromEntries(searchParams.entries()),
         }}

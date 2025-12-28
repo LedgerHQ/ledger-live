@@ -38,7 +38,7 @@ import UndelegateIcon from "~/icons/Undelegate";
 import ValidatorImage from "../shared/ValidatorImage";
 import DelegationLabelRight from "./LabelRight";
 import DelegationRow from "./Row";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: SolanaAccount;

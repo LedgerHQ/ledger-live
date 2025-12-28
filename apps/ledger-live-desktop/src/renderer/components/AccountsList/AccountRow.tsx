@@ -82,7 +82,6 @@ function AccountRow(props: Props) {
   const tag = <AccountTagDerivationMode account={account} />;
   return (
     <AccountRowContainer
-      className="account-row"
       isDisabled={isDisabled}
       onClick={isDisabled ? undefined : onClickToggleAccount}
     >
@@ -91,7 +90,7 @@ function AccountRow(props: Props) {
         shrink
         grow
         ff="Inter|SemiBold"
-        color="palette.text.shade100"
+        color="neutral.c100"
         horizontal
         alignItems="center"
         fontSize={4}
@@ -139,7 +138,7 @@ function AccountRow(props: Props) {
           }}
           showCode
           fontSize={4}
-          color="palette.text.shade60"
+          color="neutral.c70"
         />
       ) : null}
       {!isDisabled && !isReadonly && (

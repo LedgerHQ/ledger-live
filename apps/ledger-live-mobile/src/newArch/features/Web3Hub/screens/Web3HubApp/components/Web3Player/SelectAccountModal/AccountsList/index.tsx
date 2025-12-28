@@ -1,11 +1,10 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { isAccount } from "@ledgerhq/live-common/account/index";
 import { FlashList } from "@shopify/flash-list";
-import { accountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
+import { useAccountsByCryptoCurrency } from "LLM/hooks/useAccountsByCryptoCurrency";
 import AccountCard from "~/components/AccountCard";
 import AddAccountItem from "./AddAccountItem";
 
@@ -52,7 +51,7 @@ export default function AccountsList({
   onPressItem: (account: AccountLike) => void;
   onAddAccount: () => void;
 }) {
-  const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency));
+  const accounts = useAccountsByCryptoCurrency(currency);
 
   return (
     <FlashList
@@ -61,7 +60,6 @@ export default function AccountsList({
       ListHeaderComponent={<AddAccountItem onPress={onAddAccount} />}
       keyExtractor={accountKeyExtractor}
       renderItem={renderAccountItem}
-      estimatedItemSize={60}
       data={accounts}
       extraData={onPressItem}
     />

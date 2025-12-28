@@ -26,7 +26,7 @@ export type Props = {
   variant?: Variant;
   screen: string;
   eventProperties?: Record<string, unknown>;
-  topLeft?: JSX.Element | null;
+  topLeft?: React.JSX.Element | null;
   buttonLabel?: string;
   buttonSize?: WrappedButtonProps["size"];
   event?: string;

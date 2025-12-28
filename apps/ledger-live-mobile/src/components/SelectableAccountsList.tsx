@@ -1,7 +1,6 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import {
-  Animated as RNAnimated,
   View,
   TouchableOpacity,
   PanResponder,
@@ -11,23 +10,23 @@ import {
   LayoutChangeEvent,
   TextStyle,
 } from "react-native";
+import { RectButton } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { Account } from "@ledgerhq/types-live";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
-import { Flex, Text } from "@ledgerhq/native-ui";
-import Swipeable from "react-native-gesture-handler/Swipeable";
+import { Flex, Text, Button } from "@ledgerhq/native-ui";
+import Swipeable, { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import CheckBox from "./CheckBox";
 import swipedAccountSubject from "~/types/subject";
-import Button from "./Button";
 import TouchHintCircle from "./TouchHintCircle";
 import Touchable from "./Touchable";
 import { AccountSettingsNavigatorParamList } from "./RootNavigator/types/AccountSettingsNavigator";
 import AccountItem from "LLM/features/Accounts/components/AccountsListView/components/AccountItem";
 import { BaseComposite, StackNavigatorProps } from "./RootNavigator/types/helpers";
-import Animated from "react-native-reanimated";
+import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 import useItemAnimation from "LLM/features/Accounts/components/AccountsListView/components/AnimatedAccountItem/useItemAnimation";
 import { TextVariants } from "@ledgerhq/native-ui/styles/theme";
@@ -103,12 +102,13 @@ const SelectableAccountsList = ({
 
   const onSelectAll = useCallback(() => {
     track("SelectAllAccounts");
-    onSelectAllProp && onSelectAllProp(accounts);
+
+    if (onSelectAllProp) onSelectAllProp(accounts);
   }, [accounts, onSelectAllProp]);
 
   const onUnselectAll = useCallback(() => {
     track("UnselectAllAccounts");
-    onUnselectAllProp && onUnselectAllProp(accounts);
+    if (onUnselectAllProp) onUnselectAllProp(accounts);
   }, [accounts, onUnselectAllProp]);
 
   const areAllSelected = accounts.every(a => selectedIds.indexOf(a.id) > -1);
@@ -193,7 +193,7 @@ const SelectableAccount = ({
   const [stopAnimation, setStopAnimation] = useState<boolean>(false);
   const { space } = useTheme();
 
-  const swipeableRow = useRef<Swipeable>(null);
+  const swipeableRow = useRef<SwipeableMethods>(null);
 
   useEffect(() => {
     const sub = swipedAccountSubject.subscribe(msg => {
@@ -250,6 +250,8 @@ const SelectableAccount = ({
   const editAccountName = useCallback(() => {
     if (!onAccountNameChange) return;
 
+    track("EditAccountNameFromSlideAction");
+
     swipedAccountSubject.next({ row: -1, list: -1 });
 
     navigation.navigate(NavigatorName.AccountSettings, {
@@ -261,32 +263,34 @@ const SelectableAccount = ({
     });
   }, [account, navigation, onAccountNameChange]);
 
-  const renderLeftActions = useCallback(
-    (
-      progress: RNAnimated.AnimatedInterpolation<number>,
-      dragX: RNAnimated.AnimatedInterpolation<number>,
-    ) => {
-      const translateX = dragX.interpolate({
-        inputRange: [0, 1000],
-        outputRange: [-1 * editNameButtonWidth, 1000 - editNameButtonWidth],
-      });
+  const LeftActions = ({ translation }: { translation: SharedValue<number> }) => {
+    const animatedStyle = useAnimatedStyle(() => {
+      "worklet";
+      return {
+        transform: [{ translateX: translation.value - editNameButtonWidth }],
+      };
+    });
 
-      return (
-        <Flex width="auto" flexDirection="row" alignItems="center" justifyContent="center" ml={2}>
-          <RNAnimated.View style={[{ transform: [{ translateX }] }]} onLayout={setLayout}>
-            <Button
-              event="EditAccountNameFromSlideAction"
-              type="primary"
-              title={<Trans i18nKey="common.editName" />}
-              onPress={editAccountName}
-              paddingLeft={0}
-              paddingRight={0}
-            />
-          </RNAnimated.View>
-        </Flex>
-      );
-    },
-    [editNameButtonWidth, setLayout, editAccountName],
+    return (
+      <Flex width="auto" flexDirection="row" alignItems="center" justifyContent="center" ml={2}>
+        <Animated.View style={[animatedStyle]} onLayout={setLayout}>
+          <RectButton
+            enabled={!isDisabled}
+            onPress={editAccountName}
+            hitSlop={selectAllHitSlop}
+            style={{ borderRadius: space[10] }}
+          >
+            <Button type="main" disabled={isDisabled} paddingLeft={0} paddingRight={0}>
+              <Trans i18nKey="common.editName" />
+            </Button>
+          </RectButton>
+        </Animated.View>
+      </Flex>
+    );
+  };
+
+  const renderLeftActions = (_progress: SharedValue<number>, translation: SharedValue<number>) => (
+    <LeftActions translation={translation} />
   );
 
   const { animatedStyle, startAnimation } = useItemAnimation();

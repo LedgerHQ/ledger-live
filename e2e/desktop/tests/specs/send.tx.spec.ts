@@ -5,6 +5,9 @@ import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { liveDataWithRecipientAddressCommand } from "tests/utils/cliCommandsUtils";
+import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
@@ -39,26 +42,31 @@ const transactionsAmountInvalid = [
 const transactionsAddressInvalid = [
   {
     transaction: new Transaction(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.00001", Fee.MEDIUM),
+    address: Addresses.BTC_NATIVE_SEGWIT_1,
     expectedErrorMessage: "This is not a valid Ethereum address",
     xrayTicket: "B2CQA-2709",
   },
   {
     transaction: new Transaction(Account.ETH_1, Account.EMPTY, "0.00001", Fee.MEDIUM),
+    address: " ",
     expectedErrorMessage: null,
     xrayTicket: "B2CQA-2710",
   },
   {
     transaction: new Transaction(Account.DOT_1, Account.DOT_1, "0.5"),
+    address: undefined,
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-2711",
   },
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_1, "1", undefined, "123456"),
+    address: undefined,
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-2712",
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_1, "0.00001"),
+    address: undefined,
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-2713",
   },
@@ -173,7 +181,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2813",
-    bugTicket: "LIVE-20362",
+    bugTicket: "LIVE-24214",
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "noTag"),
@@ -212,6 +220,10 @@ const transactionE2E = [
     transaction: new Transaction(Account.SUI_1, Account.SUI_2, "0.0001", undefined),
     xrayTicket: "B2CQA-3802",
   },
+  {
+    transaction: new Transaction(Account.BASE_1, Account.BASE_2, "0.000001"),
+    xrayTicket: "B2CQA-4225",
+  },
 ];
 
 test.describe("Send flows", () => {
@@ -222,17 +234,10 @@ test.describe("Send flows", () => {
       test.use({
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
-        cliCommands: [
-          (appjsonPath: string) => {
-            return CLI.liveData({
-              currency: transaction.transaction.accountToDebit.currency.id,
-              index: transaction.transaction.accountToDebit.index,
-              add: true,
-              appjson: appjsonPath,
-            });
-          },
-        ],
+        cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
       });
+
+      const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
 
       test(
         `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}`,
@@ -244,6 +249,8 @@ test.describe("Send flows", () => {
             "@Stax",
             "@Flex",
             "@NanoGen5",
+            `@${transaction.transaction.accountToDebit.currency.id}`,
+            ...(family ? [`@family-${family}`] : []),
             ...(transaction.transaction.accountToDebit === Account.BTC_NATIVE_SEGWIT_1
               ? ["@smoke"]
               : []),
@@ -255,6 +262,7 @@ test.describe("Send flows", () => {
           if (transaction.bugTicket) {
             await addBugLink([transaction.bugTicket]);
           }
+
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
@@ -282,22 +290,24 @@ test.describe("Send flows", () => {
       test.use({
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
-        cliCommands: [
-          (appjsonPath: string) => {
-            return CLI.liveData({
-              currency: transaction.transaction.accountToDebit.currency.id,
-              index: transaction.transaction.accountToDebit.index,
-              add: true,
-              appjson: appjsonPath,
-            });
-          },
-        ],
+        cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
       });
+
+      const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
 
       test(
         `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount ${transaction.transaction.amount} input error`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+          tag: [
+            "@NanoSP",
+            "@LNS",
+            "@NanoX",
+            "@Stax",
+            "@Flex",
+            "@NanoGen5",
+            `@${transaction.transaction.accountToDebit.currency.id}`,
+            ...(family ? [`@family-${family}`] : []),
+          ],
           annotation: { type: "TMS", description: transaction.xrayTicket },
         },
         async ({ app }) => {
@@ -328,22 +338,24 @@ test.describe("Send flows", () => {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: transactionInputValid.accountToDebit.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: transactionInputValid.accountToDebit.currency.id,
-            index: transactionInputValid.accountToDebit.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataWithRecipientAddressCommand(transactionInputValid)],
     });
+
+    const family = getFamilyByCurrencyId(transactionInputValid.accountToDebit.currency.id);
 
     test(
       `Check Valid amount input (${transactionInputValid.amount})`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${transactionInputValid.accountToDebit.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
+        ],
         annotation: {
           type: "TMS",
           description: "B2CQA-473",
@@ -373,22 +385,25 @@ test.describe("Send flows", () => {
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
-          (appjsonPath: string) => {
-            return CLI.liveData({
-              currency: transaction.transaction.accountToDebit.currency.id,
-              index: transaction.transaction.accountToDebit.index,
-              scheme: transaction.transaction.accountToDebit.derivationMode,
-              add: true,
-              appjson: appjsonPath,
-            });
-          },
+          liveDataWithRecipientAddressCommand(transaction.transaction, { useScheme: true }),
         ],
       });
 
+      const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
+
       test(
-        `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input (${transaction.transaction.accountToDebit.address})`,
+        `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input (${transaction.xrayTicket})`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+          tag: [
+            "@NanoSP",
+            "@LNS",
+            "@NanoX",
+            "@Stax",
+            "@Flex",
+            "@NanoGen5",
+            `@${transaction.transaction.accountToDebit.currency.id}`,
+            ...(family ? [`@family-${family}`] : []),
+          ],
           annotation: {
             type: "TMS",
             description: transaction.xrayTicket,
@@ -403,6 +418,11 @@ test.describe("Send flows", () => {
           );
 
           await app.account.clickSend();
+          transaction.transaction.accountToCredit.address =
+            transaction.transaction.accountToCredit === Account.ETH_2_LOWER_CASE
+              ? (transaction.transaction.accountToCredit.address ?? "").toLowerCase()
+              : transaction.transaction.accountToCredit.address ?? "";
+
           await app.send.fillRecipientInfo(transaction.transaction);
           await app.send.checkInputWarningMessage(transaction.expectedWarningMessage);
           await app.send.checkContinueButtonEnable();
@@ -417,21 +437,46 @@ test.describe("Send flows", () => {
         userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
-          (appjsonPath: string) => {
-            return CLI.liveData({
+          async (appjsonPath: string) => {
+            await CLI.liveData({
               currency: transaction.transaction.accountToDebit.currency.id,
               index: transaction.transaction.accountToDebit.index,
               add: true,
               appjson: appjsonPath,
             });
+            if (
+              transaction.transaction.accountToCredit !== Account.EMPTY &&
+              transaction.transaction.accountToCredit !== Account.BTC_NATIVE_SEGWIT_1
+            ) {
+              const receiveAddress = await CLI.getAddress({
+                currency: transaction.transaction.accountToCredit.currency.id,
+                path: transaction.transaction.accountToCredit.accountPath,
+                derivationMode: transaction.transaction.accountToCredit.derivationMode,
+              });
+              transaction.address = receiveAddress.address;
+
+              return receiveAddress.address;
+            }
+            return transaction.address;
           },
         ],
       });
 
+      const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
+
       test(
         `Check "${transaction.expectedErrorMessage}" (from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - invalid address input error`,
         {
-          tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+          tag: [
+            "@NanoSP",
+            "@LNS",
+            "@NanoX",
+            "@Stax",
+            "@Flex",
+            "@NanoGen5",
+            `@${transaction.transaction.accountToDebit.currency.id}`,
+            ...(family ? [`@family-${family}`] : []),
+          ],
           annotation: {
             type: "TMS",
             description: transaction.xrayTicket,
@@ -446,7 +491,7 @@ test.describe("Send flows", () => {
           );
 
           await app.account.clickSend();
-          await app.send.fillRecipientInfo(transaction.transaction);
+          await app.send.fillRecipient(transaction.address);
           await app.send.checkErrorMessage(transaction.expectedErrorMessage);
           await app.send.checkContinueButtonDisabled();
         },
@@ -471,21 +516,24 @@ test.describe("Send flows", () => {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: transactionEnsAddress.accountToDebit.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: transactionEnsAddress.accountToDebit.currency.id,
-            index: transactionEnsAddress.accountToDebit.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataWithRecipientAddressCommand(transactionEnsAddress)],
     });
+
+    const family = getFamilyByCurrencyId(transactionEnsAddress.accountToDebit.currency.id);
+
     test(
       `User sends funds to ENS address - ${transactionEnsAddress.accountToCredit.ensName}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${transactionEnsAddress.accountToDebit.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
+        ],
         annotation: {
           type: "TMS",
           description: "B2CQA-2202",

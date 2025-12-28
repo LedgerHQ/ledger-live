@@ -6,7 +6,7 @@ type TappableMaskProps = { onPrevious: () => void; onNext: () => void };
 /**
  * TappableMask component to handle touch events for navigating stories.
  * @param param0 {TappableMaskProps} - Props for the TappableMask component.
- * @returns JSX.Element
+ * @returns React.JSX.Element
  */
 export function TappableMask({ onPrevious, onNext }: Readonly<TappableMaskProps>) {
   const [isTouching, setIsTouching] = useState<boolean>(false);

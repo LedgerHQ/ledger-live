@@ -26,6 +26,7 @@ import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/stor
 import { marketStoreSelector } from "./reducers/market";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 import type { PersistedCAL } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import type { PersistedIdentities } from "@ledgerhq/client-ids/store";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -63,6 +64,7 @@ type DatabaseValues = {
   wallet: ExportedWalletState;
   market: Market;
   cryptoAssets: PersistedCAL;
+  identities: PersistedIdentities;
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
   };
@@ -219,7 +221,7 @@ export const loadLSS = async (): Promise<SatStackConfig | undefined | null> => {
     const config = parseSatStackConfig(satStackConfigRaw);
     setEnvOnAllThreads("SATSTACK", true);
     return config;
-  } catch (e) {
+  } catch {
     // For instance file no longer exists
     setEnvOnAllThreads("SATSTACK", false);
   }

@@ -2,10 +2,11 @@ import { useNavigation, useRoute } from "@react-navigation/core";
 import { useEffect, useCallback, useState, useRef, useMemo } from "react";
 import { concat, from, Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import uniq from "lodash/uniq";
 import type { Account } from "@ledgerhq/types-live";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import logger from "~/logger";
@@ -20,6 +21,17 @@ import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import type { ScanDeviceAccountsNavigationProps, ScanDeviceAccountsViewModelProps } from "./types";
 import { track } from "~/analytics";
+
+const isNoAssociatedAccountsFamily = (
+  family: string,
+): family is keyof typeof noAssociatedAccountsByFamily =>
+  Object.prototype.hasOwnProperty.call(noAssociatedAccountsByFamily, family);
+
+const getCustomNoAssociatedAccounts = (currency: CryptoOrTokenCurrency) => {
+  if (currency.type !== "CryptoCurrency") return null;
+  if (!isNoAssociatedAccountsFamily(currency.family)) return null;
+  return noAssociatedAccountsByFamily[currency.family];
+};
 
 export default function useScanDeviceAccountsViewModel({
   existingAccounts,
@@ -236,21 +248,21 @@ export default function useScanDeviceAccountsViewModel({
     },
     [dispatch],
   );
+  const preferredNewAccountSchemes = useMemo(
+    () =>
+      showAllCreatedAccounts || !preferredNewAccountScheme
+        ? undefined
+        : [preferredNewAccountScheme],
+    [preferredNewAccountScheme, showAllCreatedAccounts],
+  );
+
   const { sections, alreadyEmptyAccount } = useMemo(
     () =>
       groupAddAccounts(existingAccounts, scannedAccounts, {
         scanning,
-        preferredNewAccountSchemes: showAllCreatedAccounts
-          ? undefined
-          : [preferredNewAccountScheme!],
+        preferredNewAccountSchemes,
       }),
-    [
-      existingAccounts,
-      scannedAccounts,
-      scanning,
-      showAllCreatedAccounts,
-      preferredNewAccountScheme,
-    ],
+    [existingAccounts, scannedAccounts, scanning, preferredNewAccountSchemes],
   );
   const alreadyEmptyAccountName = useMaybeAccountName(alreadyEmptyAccount);
   const cantCreateAccount = !sections.some(s => s.id === "creatable" && s.data.length > 0);
@@ -261,10 +273,7 @@ export default function useScanDeviceAccountsViewModel({
   const sanitizedSections = sections.filter(s => s.id !== "imported");
   const hasImportableAccounts = sections.find(s => s.id === "importable" && s.data.length > 0);
 
-  const CustomNoAssociatedAccounts =
-    currency.type === "CryptoCurrency"
-      ? noAssociatedAccountsByFamily[currency.family as keyof typeof noAssociatedAccountsByFamily]
-      : null;
+  const CustomNoAssociatedAccounts = getCustomNoAssociatedAccounts(currency);
   useEffect(() => {
     startSubscription();
     return () => stopSubscription(false);
@@ -296,6 +305,8 @@ export default function useScanDeviceAccountsViewModel({
   }, [existingAccounts, latestScannedAccount, onlyNewAccounts, scannedAccounts, selectedIds]);
 
   useEffect(() => {
+    const hasScannedAccounts = scannedAccounts.length > 0 || !!latestScannedAccount;
+
     if (!isAddingAccounts && !scanning) {
       if (alreadyEmptyAccount && !hasImportableAccounts) {
         navigation.replace(ScreenName.AddAccountsWarning, {
@@ -305,7 +316,7 @@ export default function useScanDeviceAccountsViewModel({
           context,
           onCloseNavigation,
         });
-      } else if (noImportableAccounts && CustomNoAssociatedAccounts) {
+      } else if (!hasScannedAccounts && CustomNoAssociatedAccounts) {
         navigation.replace(ScreenName.NoAssociatedAccounts, {
           CustomNoAssociatedAccounts,
         });
@@ -313,7 +324,6 @@ export default function useScanDeviceAccountsViewModel({
     }
   }, [
     hasImportableAccounts,
-    cantCreateAccount,
     isAddingAccounts,
     alreadyEmptyAccount,
     alreadyEmptyAccountName,
@@ -321,9 +331,10 @@ export default function useScanDeviceAccountsViewModel({
     navigation,
     currency,
     CustomNoAssociatedAccounts,
-    noImportableAccounts,
     context,
     onCloseNavigation,
+    scannedAccounts.length,
+    latestScannedAccount,
   ]);
   return {
     alreadyEmptyAccount,

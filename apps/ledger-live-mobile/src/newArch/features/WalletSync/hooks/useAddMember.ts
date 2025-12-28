@@ -3,7 +3,7 @@ import {
   setTrustchain,
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import {
   NoTrustchainInitialized,
@@ -20,8 +20,9 @@ import { track } from "~/analytics";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { hasCompletedOnboardingSelector, onboardingTypeSelector } from "~/reducers/settings";
 import { DrawerProps, SceneKind, useFollowInstructionDrawer } from "./useFollowInstructionDrawer";
+import { OnboardingType } from "~/reducers/types";
 
 export function useAddMember({ device }: { device: Device | null }): DrawerProps {
   const trustchain = useSelector(trustchainSelector);
@@ -32,6 +33,7 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
   const trustchainRef = useRef(trustchain);
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const onboardingType = useSelector(onboardingTypeSelector);
 
   const transitionToNextScreen = useCallback(
     (trustchainResult: TrustchainResult) => {
@@ -56,7 +58,12 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
           memberCredentialsRef.current,
           {
             onInitialResponse: trustchains => {
-              if (hasCompletedOnboarding || Object.keys(trustchains).length > 0) return;
+              if (
+                onboardingType === OnboardingType.setupNew ||
+                hasCompletedOnboarding ||
+                Object.keys(trustchains).length > 0
+              )
+                return;
               else throw new NoTrustchainInitialized();
             },
             onStartRequestUserInteraction: () =>

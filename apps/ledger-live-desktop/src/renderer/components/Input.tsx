@@ -41,9 +41,7 @@ export const Container = styled(Box).attrs(() => ({
   horizontal: true,
 }))<InnerProps>`
   background: ${p =>
-    p.disabled
-      ? p.theme.colors.palette.background.default
-      : p.theme.colors.palette.background.paper};
+    p.disabled ? p.theme.colors.background.default : p.theme.colors.background.card};
 
   ${p =>
     p.noBorderLeftRadius
@@ -59,10 +57,10 @@ export const Container = styled(Box).attrs(() => ({
     p.error
       ? p.theme.colors.pearl
       : p.warning
-        ? p.theme.colors.warning
+        ? p.theme.colors.legacyWarning
         : p.isFocus
-          ? p.theme.colors.palette.primary.main
-          : p.theme.colors.palette.divider};
+          ? p.theme.colors.primary.c80
+          : p.theme.colors.neutral.c40};
   box-shadow: ${p => (p.isFocus && !p.noBoxShadow ? `rgba(0, 0, 0, 0.05) 0 2px 2px` : "none")};
   height: ${p => (p.small ? "34" : "48")}px;
   position: relative;
@@ -76,9 +74,9 @@ export const Container = styled(Box).attrs(() => ({
     p.error
       ? `--status-color: ${p.theme.colors.pearl};`
       : p.warning
-        ? `--status-color: ${p.theme.colors.warning};`
+        ? `--status-color: ${p.theme.colors.legacyWarning};`
         : p.isFocus
-          ? `--status-color: ${p.theme.colors.palette.primary.main};`
+          ? `--status-color: ${p.theme.colors.primary.c80};`
           : ""}
 
   ${p =>
@@ -109,7 +107,7 @@ const ErrorDisplay = styled(Box)`
   color: ${p => p.theme.colors.pearl};
 `;
 const WarningDisplay = styled(Box)`
-  color: ${p => p.theme.colors.warning};
+  color: ${p => p.theme.colors.legacyWarning};
 `;
 const LoadingDisplay = styled(Box)`
   position: absolute;
@@ -131,7 +129,7 @@ const Base = styled.input.attrs(() => ({
 }))`
   font-family: "Inter";
   font-weight: 600;
-  color: ${p => p.theme.colors.palette.text.shade100};
+  color: ${p => p.theme.colors.neutral.c100};
   border: 0;
   ${fontFamily};
   ${fontSize};
@@ -146,7 +144,7 @@ const Base = styled.input.attrs(() => ({
   cursor: ${p => (p.disabled ? "not-allowed" : "text")};
 
   &::placeholder {
-    color: ${p => p.theme.colors.palette.text.shade40};
+    color: ${p => p.theme.colors.neutral.c60};
   }
 
   &[type="date"] {
@@ -215,9 +213,9 @@ const Input = function Input(
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       // handle enter key
-      if (e.which === 13 && onEnter) {
+      if (e.key === "Enter" && onEnter) {
         onEnter(e);
-      } else if (e.which === 27 && onEsc) {
+      } else if (e.key === "Escape" && onEsc) {
         onEsc(e);
       }
     },
@@ -225,7 +223,7 @@ const Input = function Input(
   );
 
   const handleClick = useCallback(() => {
-    inputRef && "current" in inputRef && inputRef.current?.focus();
+    if (inputRef && "current" in inputRef) inputRef.current?.focus();
   }, [inputRef]);
 
   const handleFocus = useCallback(

@@ -1,6 +1,6 @@
 import { FeeEstimationFailed } from "@ledgerhq/errors";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
@@ -13,7 +13,7 @@ const getEstimatedFees: (currency: CryptoCurrency) => Promise<Fees> = makeLRUCac
   async currency => {
     const baseURL = blockchainBaseURL(currency);
     invariant(baseURL, `Fees for ${currency.id} are not supported`);
-    const { data, status } = await network({
+    const { data, status } = await network<Fees>({
       method: "GET",
       url: `${baseURL}/fees`,
     });

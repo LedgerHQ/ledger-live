@@ -11,6 +11,7 @@ import AddFundsButton from "../../components/AddFundsButton";
 import useAddAccountWarningViewModel, { type Props } from "./useAddAccountWarningViewModel";
 import AnimatedAccountItem from "../../components/AccountsListView/components/AnimatedAccountItem";
 import { AnalyticPages } from "LLM/hooks/useAnalytics/enums";
+import { TrackScreen } from "~/analytics";
 
 type ViewProps = ReturnType<typeof useAddAccountWarningViewModel>;
 
@@ -27,6 +28,7 @@ const View = ({
 
   return (
     <SafeAreaView edges={["left", "right", "bottom", "top"]} isFlex>
+      <TrackScreen category="Cant add a new account" />
       <VerticalGradientBackground stopColor={statusColor} />
       <Flex alignItems="center" pt={space[10]}>
         <Circle size={24} bg={rgba(statusColor, 0.05)} style={styles.iconWrapper}>

@@ -29,7 +29,7 @@ const moduleNameMapper = {
   "@polkadot/x-ws": "<rootDir>/__mocks__/x-ws.js",
 };
 
-const transformIncludePatterns = ["ky"];
+const transformIncludePatterns = ["ky", "@ledgerhq\\+lumen-ui-react"];
 
 const commonConfig = {
   testEnvironment: "jsdom",

@@ -6,7 +6,7 @@
     "dependencies": "error",
     "devDependencies": "off",
     "optionalPeerDependencies": "off",
-    "duplicates": "warn",
+    "duplicates": "error",
     "enumMembers": "warn",
     "exports": "warn",
     "files": "error",
@@ -17,9 +17,7 @@
     "unresolved": "off"
   },
   "ignoreExportsUsedInFile": true,
-  "project": [
-    "src/**"
-  ],
+  "project": ["src/**"],
   "ignore": [
     "**/__integrations__/*",
     "**/*.test.*",
@@ -49,13 +47,6 @@
         "src/renderer/mockServiceWorker.js",
         "src/newArch/utils/cn.ts"
       ],
-      "ignoreBinaries": [
-        "eslint",
-        "knip",
-        "prettier",
-        "zx",
-        "lint"
-      ],
       "ignoreDependencies": [
         "prop-types",
         "allure-commandline",
@@ -68,16 +59,8 @@
       ]
     },
     "./apps/ledger-live-mobile": {
-      "entry": [
-        "index.js",
-        "src/families/**"
-      ],
-      "ignore": [
-        "src/**/*.android.*",
-        "src/**/*.ios.*",
-        "src/logic/keyboardVisible.ts",
-        "babel-plugin-inject-collapsable.js"
-      ],
+      "entry": ["index.js", "src/families/**"],
+      "ignore": ["src/**/*.android.*", "src/**/*.ios.*", "babel-plugin-inject-collapsable.js"],
       "ignoreDependencies": [
         "@react-native-masked-view/masked-view",
         "@react-native/gradle-plugin",
@@ -91,43 +74,30 @@
         "expo-modules-autolinking",
         "expo-modules-core",
         "prop-types",
+        "react-is",
         "react-native-fast-pbkdf2",
         "react-native-level-fs",
         "react-native-navigation-bar-color",
         "react-native-randombytes",
         "react-native-tcp-socket",
-        "react-native-udp"
+        "react-native-udp",
+        "stylis"
       ]
     },
     "./libs/env": {
-      "entry": [
-        "src/index.ts"
-      ]
+      "entry": ["src/index.ts"]
     },
     "./libs/live-hooks": {
-      "entry": [
-        "src/useDebounce.ts",
-        "src/useThrottledFunction.ts"
-      ]
+      "entry": ["src/useDebounce.ts", "src/useThrottledFunction.ts"]
     },
     "./libs/live-countervalues": {
-      "entry": [
-        "src/logic.ts",
-        "src/api/index.ts",
-        "src/types.ts",
-        "src/portfolio.ts"
-      ]
+      "entry": ["src/logic.ts", "src/api/index.ts", "src/types.ts", "src/portfolio.ts"]
     },
     "./libs/live-countervalues-react": {
-      "entry": [
-        "src/index.tsx",
-        "src/portfolio.tsx"
-      ]
+      "entry": ["src/index.tsx", "src/portfolio.tsx"]
     },
     "./libs/live-dmk-mobile": {
-      "entry": [
-        "src/index.ts"
-      ]
+      "entry": ["src/index.ts"]
     },
     "./libs/live-wallet": {
       "entry": [
@@ -142,25 +112,14 @@
       ]
     },
     "./libs/ledger-key-ring-protocol": {
-      "entry": [
-        "src/index.ts",
-        "src/store.ts",
-        "src/qrcode/index.ts"
-      ]
+      "entry": ["src/index.ts", "src/store.ts", "src/qrcode/index.ts"]
     },
     "./libs/hw-ledger-key-ring-protocol": {
-      "entry": [
-        "src/index.ts"
-      ],
-      "ignoreDependencies": [
-        "@ledgerhq/logs",
-        "@ledgerhq/live-env"
-      ]
+      "entry": ["src/index.ts"],
+      "ignoreDependencies": ["@ledgerhq/logs", "@ledgerhq/live-env"]
     },
     "./libs/promise": {
-      "entry": [
-        "src/index.ts"
-      ]
+      "entry": ["src/index.ts"]
     },
     "./libs/ui/packages/native": {
       "entry": [
@@ -177,10 +136,21 @@
         "src/pre-ldls/components/index.ts",
         "index.js"
       ],
-      "ignore": [
-        ".storybook*/*",
-        "storybook/constants/*"
-      ]
+      "ignoreDependencies": ["stylis"],
+      "ignore": [".storybook*/*", "storybook/constants/*"]
+    },
+    "./libs/ui/packages/icons": {
+      "entry": [
+        "src/react/index.ts",
+        "src/native/index.ts",
+        "src/reactLegacy/index.ts",
+        "src/nativeLegacy/index.ts"
+      ],
+      "ignoreDependencies": ["stylis"],
+      "ignore": ["scripts/**", "index.js"]
+    },
+    "./libs/ledgerjs/packages/react-native-hid": {
+      "entry": ["src/index.ts"]
     }
   }
 }

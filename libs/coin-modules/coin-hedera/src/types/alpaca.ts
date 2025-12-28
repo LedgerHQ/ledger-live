@@ -13,6 +13,10 @@ export type HederaTxData =
   | {
       type: "erc20";
       gasLimit: bigint;
+    }
+  | {
+      type: "staking";
+      stakingNodeId: number | null | undefined;
     };
 
 export type HederaBlock = Block<HederaMemo>;

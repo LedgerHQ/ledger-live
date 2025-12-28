@@ -17,6 +17,7 @@ export interface Props {
   currentPage: AnalyticsPage;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface BackProps {}
 
 export const WalletSyncRouter = forwardRef<BackRef, Props>(({ currentPage }, ref) => {

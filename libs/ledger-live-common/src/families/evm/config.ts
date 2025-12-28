@@ -4,7 +4,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_akroma: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       showNfts: false,
     },
   },
@@ -13,6 +16,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -22,6 +26,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "ledger",
@@ -43,6 +48,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "ledger",
@@ -64,6 +70,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -73,6 +80,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -82,6 +90,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -91,6 +100,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       gasTracker: {
         type: "ledger",
@@ -142,6 +152,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "ledger",
@@ -163,6 +174,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -172,6 +184,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -181,6 +194,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -190,6 +204,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -199,6 +214,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -208,6 +224,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -217,6 +234,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -226,6 +244,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -235,6 +254,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
     },
   },
@@ -243,6 +263,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -252,6 +273,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "ledger",
@@ -274,6 +296,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -283,6 +306,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -292,6 +316,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -301,6 +326,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -310,6 +336,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       showNfts: false,
     },
@@ -319,6 +346,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -336,6 +364,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -353,6 +382,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -369,6 +399,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -386,6 +417,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -403,6 +435,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -420,6 +453,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -437,6 +471,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -454,6 +489,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -471,6 +507,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -486,7 +523,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_optimism_sepolia: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       node: { type: "external", uri: "https://sepolia.optimism.io" },
       explorer: { type: "blockscout", uri: "https://optimism-sepolia.blockscout.com/api" },
       showNfts: false,
@@ -497,6 +537,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -514,6 +555,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -531,6 +573,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -548,6 +591,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -565,6 +609,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -582,6 +627,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -599,6 +645,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -616,6 +663,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -628,11 +676,12 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
-  config_currency_sei_network_evm: {
+  config_currency_sei_evm: {
     type: "object",
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -650,6 +699,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -667,6 +717,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -684,6 +735,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -701,6 +753,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -718,6 +771,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -735,6 +789,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -752,6 +807,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -769,6 +825,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -785,7 +842,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_ethereum_sepolia: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       node: { type: "ledger", explorerId: "eth_sepolia" },
       explorer: { type: "ledger", explorerId: "eth_sepolia" },
       gasTracker: { type: "ledger", explorerId: "eth_sepolia" },
@@ -795,7 +855,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_ethereum_holesky: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       node: { type: "ledger", explorerId: "eth_holesky" },
       explorer: { type: "ledger", explorerId: "eth_holesky" },
       gasTracker: { type: "ledger", explorerId: "eth_holesky" },
@@ -805,7 +868,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_ethereum_hoodi: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       node: { type: "ledger", explorerId: "eth_hoodi" },
       explorer: { type: "ledger", explorerId: "eth_hoodi" },
       gasTracker: { type: "ledger", explorerId: "eth_hoodi" },
@@ -826,7 +892,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_polygon_zk_evm_testnet: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       node: { type: "external", uri: "https://rpc.public.zkevm-test.net" },
       explorer: {
         type: "etherscan",
@@ -838,7 +907,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_base_sepolia: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       node: { type: "external", uri: "https://sepolia.base.org" },
       explorer: { type: "blockscout", uri: "https://base-sepolia.blockscout.com/api" },
       showNfts: false,
@@ -847,7 +919,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_linea_sepolia: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       node: { type: "external", uri: "https://rpc.sepolia.linea.build" },
       explorer: {
         type: "etherscan",
@@ -859,7 +934,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_blast: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       node: { type: "external", uri: "https://rpc.blast.io" },
       explorer: {
         type: "etherscan",
@@ -871,7 +949,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_blast_sepolia: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       node: { type: "external", uri: "https://sepolia.blast.io" },
       explorer: {
         type: "etherscan",
@@ -883,7 +964,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_scroll: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       node: { type: "external", uri: "https://rpc.scroll.io" },
       explorer: { type: "blockscout", uri: "https://scroll.blockscout.com/api" },
       showNfts: false,
@@ -892,7 +976,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_scroll_sepolia: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       node: { type: "external", uri: "https://sepolia-rpc.scroll.io" },
       explorer: { type: "blockscout", uri: "https://scroll-sepolia.blockscout.com/api" },
       showNfts: false,
@@ -901,7 +988,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_etherlink: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       node: { type: "external", uri: "https://node.mainnet.etherlink.com" },
       explorer: { type: "blockscout", uri: "https://explorer.etherlink.com/api" },
       showNfts: false,
@@ -910,7 +1000,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_zksync: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       node: { type: "external", uri: "https://mainnet.era.zksync.io" },
       explorer: { type: "blockscout", uri: "https://zksync.blockscout.com/api" },
       showNfts: false,
@@ -919,7 +1012,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_zksync_sepolia: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
       node: { type: "external", uri: "https://sepolia.era.zksync.dev" },
       explorer: { type: "blockscout", uri: "https://zksync-sepolia.blockscout.com/api" },
       showNfts: false,
@@ -930,6 +1026,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -947,6 +1044,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -964,6 +1062,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",
@@ -980,6 +1079,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         type: "external",

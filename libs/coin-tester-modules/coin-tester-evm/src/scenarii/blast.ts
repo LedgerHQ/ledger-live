@@ -1,22 +1,17 @@
-import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer";
-import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { makeAccount } from "../fixtures";
-import { blast, callMyDealer, VITALIK } from "../helpers";
-import { defaultNanoApp } from "../constants";
+import { blast, callMyDealer, getBridges, VITALIK } from "../helpers";
 import { killAnvil, spawnAnvil } from "../anvil";
-import resolver from "@ledgerhq/coin-evm/hw-getAddress";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { EvmSigner } from "@ledgerhq/coin-evm/types/signer";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { MIM_ON_BLAST } from "../tokenFixtures";
+import { buildSigner } from "../signer";
 
 type BlastScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -62,13 +57,10 @@ const makeScenarioTransactions = ({ address }: { address: string }): BlastScenar
 export const scenarioBlast: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic Blast Transactions",
   setup: async () => {
-    const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
-      spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
-      spawnAnvil("https://rpc.blast.io"),
-    ]);
+    const signer = await buildSigner();
+    await spawnAnvil("https://rpc.blast.io", signer.exportMnemonic());
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
-    const signerContext: SignerContext<EvmSigner> = (_, fn) => fn(new LegacySignerEth(transport));
 
     const lastBlockNumber = await provider.getBlockNumber();
     // start indexing at next block
@@ -85,18 +77,33 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
         },
         explorer: {
           type: "etherscan",
-          uri: "https://api.blastscan.io/api",
+          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/81457",
         },
         showNfts: true,
       },
     }));
+    LiveConfig.setConfig({
+      config_currency_blast: {
+        type: "object",
+        default: {
+          status: {
+            type: "active",
+          },
+          node: {
+            type: "external",
+            uri: "http://127.0.0.1:8545",
+          },
+          explorer: {
+            type: "etherscan",
+            uri: "https://proxyetherscan.api.live.ledger.com/v2/api/81457",
+          },
+          showNfts: true,
+        },
+      },
+    });
     initMswHandlers(getCoinConfig(blast).info);
 
-    const onSignerConfirmation = getOnSpeculosConfirmation();
-    const currencyBridge = buildCurrencyBridge(signerContext);
-    await currencyBridge.preload(blast);
-    const accountBridge = buildAccountBridge(signerContext);
-    const getAddress = resolver(signerContext);
+    const { currencyBridge, accountBridge, getAddress } = await getBridges("blast", signer);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: blast,
@@ -116,7 +123,6 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
       currencyBridge,
       accountBridge,
       account: scenarioAccount,
-      onSignerConfirmation,
       retryLimit: 0,
     };
   },
@@ -139,7 +145,7 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
     expect(account.operations.length).toBe(3);
   },
   teardown: async () => {
-    await Promise.all([killSpeculos(), killAnvil()]);
+    await killAnvil();
     resetIndexer();
   },
 };

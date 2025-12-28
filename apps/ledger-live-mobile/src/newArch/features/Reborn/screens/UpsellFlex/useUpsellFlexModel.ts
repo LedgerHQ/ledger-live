@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { useTheme } from "styled-components/native";
 import { setOnboardingHasDevice } from "~/actions/settings";
 import { track } from "~/analytics";

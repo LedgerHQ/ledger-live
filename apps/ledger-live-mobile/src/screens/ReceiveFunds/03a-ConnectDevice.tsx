@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, StyleSheet, LayoutChangeEvent } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -9,17 +9,15 @@ import {
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
-
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import { TrackScreen, track } from "~/analytics";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import ReadOnlyWarning from "./ReadOnlyWarning";
 import NotSyncedWarning from "./NotSyncedWarning";
 import GenericErrorView from "~/components/GenericErrorView";
 import DeviceActionModal from "~/components/DeviceActionModal";
-import SkipSelectDevice from "../SkipSelectDevice";
 import byFamily from "../../generated/ConnectDevice";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import {
@@ -43,7 +41,7 @@ export default function ConnectDevice({
   navigation,
   route,
 }: StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConnectDevice>) {
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
   const action = useAppDeviceAction();
@@ -163,16 +161,19 @@ export default function ConnectDevice({
     return <NotSyncedWarning accountId={mainAccount.id} />;
   }
 
+  /** Parameter used to prevent auto selection and force the user to manually select a device */
+  const forceSelectDevice = "forceSelectDevice" in route.params && route.params.forceSelectDevice;
+
   return (
     <>
       <TrackScreen category="Deposit" name="Device Selection" />
-      <SkipSelectDevice route={route} onResult={setDevice} />
       <Animated.View style={[{ flex: 1 }, animatedStyle]}>
         <Flex onLayout={onLayout} px={16} py={5} flex={1}>
           <SelectDevice2
             onSelect={setDevice}
             stopBleScanning={!!device}
             requestToSetHeaderOptions={requestToSetHeaderOptions}
+            autoSelectLastConnectedDevice={!forceSelectDevice}
           />
         </Flex>
       </Animated.View>

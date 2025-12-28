@@ -4,7 +4,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { isEqual } from "lodash/fp";
 import React from "react";
 import Config from "react-native-config";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { createSelector } from "reselect";
 import { cryptoCurrenciesSelector } from "~/reducers/accounts";
 import debugNetworkApi from "../Settings/Debug/__mocks__/serviceStatus";

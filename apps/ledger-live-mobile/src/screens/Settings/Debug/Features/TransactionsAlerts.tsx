@@ -5,7 +5,7 @@ import { ChainwatchAccount, ChainwatchNetwork } from "@ledgerhq/types-live";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import styled from "styled-components/native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { notificationsSelector } from "~/reducers/settings";
 import { getSupportedChainsAccounts } from "@ledgerhq/live-common/transactionsAlerts/index";
 import getOrCreateUser from "../../../../user";

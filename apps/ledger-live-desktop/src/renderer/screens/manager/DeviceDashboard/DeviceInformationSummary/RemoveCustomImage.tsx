@@ -34,7 +34,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose, onRemoved }) => {
     setCompleted(true);
     setRunning(false);
     dispatch(clearLastSeenCustomImage());
-    onRemoved && onRemoved();
+    onRemoved?.();
   }, [dispatch, onRemoved]);
 
   const onError = useCallback(

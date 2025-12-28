@@ -9,8 +9,7 @@ export function Acre({ size = 32, outline = "white", ...props }: Props) {
     <Svg width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
       <Rect width="32" height="32" rx="5.33333" stroke={outline} fill="#F34900" />
       <Rect
-        x="0.266667"
-        y="0.266667"
+        transform={[{ translateX: 0.266667 }, { translateY: 0.266667 }]}
         width="31.4667"
         height="31.4667"
         rx="5.06667"

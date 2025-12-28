@@ -665,6 +665,11 @@
       "title" : "无法为您的特定配置找到 {{appName}} 应用程序。",
       "description" : "尝试在 My Ledger（我的 Ledger）中重新安装应用程序"
     },
+    "NanoSNotSupported" : {
+      "title" : "Ledger Nano S™ 不支持此功能",
+      "description" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Wallet 功能。",
+      "upsellCtaLabel" : "探索您的升级计划"
+    },
     "NotEnoughGas" : {
       "title" : "您的账户中需要有 {{fees}} {{ticker}} 以支付 {{cryptoName}} 网络上的交易费用。<link0>购买 {{ticker}}</link0> 或向账户存入更多资产。",
       "description" : "请向您的账户发送一些币以支付代币交易费用。"
@@ -1089,6 +1094,10 @@
       "title" : "无法验证代币关联",
       "description" : "我们无法确认目标账户是否可以接收此代币。地址可能无效，或者存在网络或服务问题。"
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "需要核实以太坊虚拟机 (EVM) 地址",
+      "description" : "确认前请核实 Ledger 设备上显示的 EVM 地址。"
+    },
     "NearNewAccountWarning" : {
       "title" : "尚未创建接收人账户。该协议需要 {{formattedNewAccountStorageCost}} 转账才能创建账户。"
     },
@@ -1133,6 +1142,11 @@
       "description" : "解锁您的设备并重试。",
       "descriptionWithProductName" : "解锁您的 {{ productName }} 并重试。"
     },
+    "UnsupportedFeatureError" : {
+      "title" : "功能不受支持",
+      "description" : "您的 Ledger 设备上目前没有执行此操作所需的应用程序。要了解详情，请联系 Ledger 客服。",
+      "ctaLabel" : "联系 Ledger 客服"
+    },
     "EtherscanAPIError" : {
       "title" : "未能提取交易",
       "description" : "浏览器出现意外错误。请重试"
@@ -1153,6 +1167,11 @@
     "FirmwareNotRecognized" : {
       "title" : "提供商无效",
       "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Wallet “设置”，选择“实验性功能”，然后选择其他提供商。"
+    },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "提供商无效",
+      "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Wallet “设置”，选择“实验性功能”，然后选择其他提供商。",
+      "openSettings" : "前往设置选项"
     },
     "GasLessThanEstimate" : {
       "title" : "这可能太低。请增加"
@@ -1224,6 +1243,12 @@
     "AddressesSanctionedError" : {
       "title" : "保障您的安全",
       "description" : "此交易涉及受制裁的钱包地址，无法处理。\n——{{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "数额已减少至符合 UTXO 限制。"
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "数额过大，超出 UTXO 限制。"
     }
   },
   "crash" : {
@@ -2730,6 +2755,9 @@
       "REWARD" : "已申领的奖励",
       "FEES" : "费用",
       "PRE_APPROVAL" : "预先批准",
+      "TRANSFER_PROPOSAL" : "转账请求",
+      "TRANSFER_REJECTED" : "转账已拒绝",
+      "TRANSFER_WITHDRAWN" : "转账已撤回",
       "OPT_IN" : "选择加入",
       "OPT_OUT" : "选择退出",
       "CLOSE_ACCOUNT" : "关闭账户",
@@ -2751,7 +2779,8 @@
       "STAKE" : "已权益质押",
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
-      "ASSOCIATE_TOKEN" : "关联代币"
+      "ASSOCIATE_TOKEN" : "关联代币",
+      "CONTRACT_CALL" : "合约调用"
     }
   },
   "operationDetails" : {
@@ -3780,7 +3809,9 @@
       },
       "wrongDevice" : {
         "title" : "Ledger Nano S™ 与 {{provider}} 不兼容",
-        "description" : "Ledger Nano S™ 与 {{provider}} 不兼容。您可以使用 Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™ 或 Ledger Flex™ 通过 Ledger Live 体验 {{provider}} 的跨链互换"
+        "description" : "Ledger Nano S™ 与 {{provider}} 不兼容。您可以使用 Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™ 或 Ledger Flex™ 通过 Ledger Wallet 体验 {{provider}} 的跨链互换",
+        "explore_compatible_devices" : "浏览兼容设备",
+        "swapWithAnotherProvider" : "使用其他提供商进行互换"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "浏览兼容设备",
@@ -7223,6 +7254,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "了解更多"
+        },
+        "evmVerificationRequired" : {
+          "text" : "您正在发送 ERC-20 代币。对于此类交易，您的 Ledger 设备将显示发送者的 EVM 地址，而非其账户 ID。\n请按照<0>此指南</0>，在确认前核实地址是否正确。"
         }
       }
     },
@@ -7311,11 +7345,11 @@
         "description" : "选择要设置为 {{productName}} 锁屏界面的任意数字艺术或图片。",
         "popupLabel" : "已成功自定义锁屏界面"
       },
-      "recover" : {
-        "title" : "订阅 Ledger Recover",
-        "titleCompleted" : "已订阅 Ledger Recover",
-        "description" : "无需秘密恢复短语即可恢复钱包访问权限。",
-        "popupLabel" : "已成功订阅 Ledger Recover"
+      "syncAccounts" : {
+        "title" : "同步您的加密货币账户",
+        "titleCompleted" : "您的账户已同步",
+        "description" : "启用 Ledger Sync 以同步您的加密货币账户",
+        "popupLabel" : "账户已同步"
       }
     }
   },
@@ -7978,7 +8012,15 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "服务提供商不可用",
-      "description" : "Changelly 无法处理此交易。错误代码 8HBB{{errorCode}}"
+      "description" : "Changelly 无法处理此交易。错误代码 8HBB-{{randomCode}}"
+    },
+    "swapQuoteLowLiquidity" : {
+      "title" : "服务提供商不可用",
+      "description" : "我们无法完成您通过该服务提供商进行的互换。请尝试其他服务提供商。"
+    },
+    "swapRateExpiredError" : {
+      "title" : "费率已过期",
+      "description" : "汇率已过期。请刷新并重试。"
     },
     "default" : {
       "title" : "出错了",

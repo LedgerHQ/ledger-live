@@ -3,6 +3,8 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import invariant from "invariant";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
 
 const currencies = [
   {
@@ -23,6 +25,7 @@ const currencies = [
   { currency: Currency.SOL, xrayTicket: "B2CQA-2642, B2CQA-2656, B2CQA-2684" },
   { currency: Currency.TON, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" },
   { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
+  { currency: Currency.BASE, xrayTicket: "B2CQA-4226, B2CQA-4227, B2CQA-4228" },
 ];
 
 for (const currency of currencies) {
@@ -31,6 +34,8 @@ for (const currency of currencies) {
       userdata: "skip-onboarding",
       speculosApp: currency.currency.speculosApp,
     });
+
+    const family = getFamilyByCurrencyId(currency.currency.id);
 
     test(
       `[${currency.currency.name}] Add account`,
@@ -42,6 +47,8 @@ for (const currency of currencies) {
           "@Stax",
           "@Flex",
           "@NanoGen5",
+          `@${currency.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
           ...(currency.currency === Currency.ETH ? ["@smoke"] : []),
         ],
         annotation: {
@@ -54,11 +61,12 @@ for (const currency of currencies) {
         const firstAccountName = `${currency.currency.name} 1`;
 
         await app.portfolio.openAddAccountModal();
-        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-        if (isModularDrawer) {
-          await app.modularDrawer.validateAssetsDrawerItems();
-          await app.modularDrawer.selectAssetByTickerAndName(currency.currency);
-          await app.modularDrawer.selectNetwork(currency.currency);
+
+        const selector = await getModularSelector(app, "ASSET");
+        if (selector) {
+          await selector.validateItems();
+          await selector.selectAsset(currency.currency);
+          await selector.selectNetwork(currency.currency);
           await app.scanAccountsDrawer.selectFirstAccount();
           await app.scanAccountsDrawer.clickCloseButton();
         } else {

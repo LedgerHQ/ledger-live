@@ -3,7 +3,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 
 import { NavigatorName, ScreenName } from "~/const";
 import HelpDrawer from "../HelpDrawer";

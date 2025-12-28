@@ -1,6 +1,6 @@
 import type { Action } from "redux-actions";
 import type { AccountComparator } from "@ledgerhq/live-wallet/ordering";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
   Account,
   DeviceInfo,
@@ -9,9 +9,9 @@ import type {
   FeatureId,
 } from "@ledgerhq/types-live";
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
   AppState,
   FwUpdateBackgroundEvent,
@@ -34,11 +34,11 @@ import type {
   SwapStateType,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
-import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
-import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
-import { Steps } from "LLM/features/WalletSync/types/Activation";
+import type { HandlersPayloads } from "@ledgerhq/live-wallet/store";
+import type { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
+import type { Steps } from "LLM/features/WalletSync/types/Activation";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { AnyAction } from "redux";
+import type { UnknownAction } from "redux";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -618,4 +618,4 @@ export type ActionsPayload =
   | Action<ProtectPayload>
   | Action<EarnPayload>
   | Action<MarketPayload>
-  | AnyAction;
+  | UnknownAction;

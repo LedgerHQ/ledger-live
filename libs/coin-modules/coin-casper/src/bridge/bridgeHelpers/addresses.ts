@@ -13,7 +13,7 @@ export function isAddressValid(pubKey: string): boolean {
   try {
     PublicKey.fromHex(pubKey, checksummed).accountHash().toHex();
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 }

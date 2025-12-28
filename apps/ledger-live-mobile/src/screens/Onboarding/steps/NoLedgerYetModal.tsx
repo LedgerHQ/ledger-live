@@ -2,7 +2,7 @@ import React, { ReactNode, useCallback, useState } from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/core";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import styled from "styled-components/native";
 import { setHasOrderedNano, setOnboardingHasDevice } from "~/actions/settings";
 import { ScreenName } from "~/const";

@@ -1,3 +1,5 @@
+import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+
 export const mockedAccountList = [
   {
     address: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
@@ -135,14 +137,14 @@ export const mockedAccountList = [
   {
     id: "a758d3a7-e057-5fcc-8b6e-23169bc4d577",
     name: "Sanctioned Ethereum",
-    address: "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+    address: Addresses.SANCTIONED_ETHEREUM,
     currency: "ethereum",
   },
   {
     id: "917d77a2-5ded-57e6-a3e3-3cb7472a5974",
     parentAccountId: "a758d3a7-e057-5fcc-8b6e-23169bc4d577",
     name: "Sanctioned Ethereum (KICK)",
-    address: "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+    address: Addresses.SANCTIONED_ETHEREUM,
     currency: "ethereum/erc20/kicktoken",
     balance: "88888800000000",
     spendableBalance: "88888800000000",
@@ -926,8 +928,8 @@ export const expectedCurrencyList = [
     color: "#89395b",
     decimals: 18,
     family: "ethereum",
-    id: "sei_network_evm",
-    name: "SEI Network EVM",
+    id: "sei_evm",
+    name: "SEI Network (EVM)",
     ticker: "SEI",
     type: "CryptoCurrency",
   },

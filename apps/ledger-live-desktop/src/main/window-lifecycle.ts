@@ -262,7 +262,7 @@ export async function applyWindowParams(
     const openDevTools = () => {
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.once("devtools-opened", () => {
-          mainWindow && mainWindow.focus();
+          if (mainWindow) mainWindow.focus();
         });
         mainWindow.webContents.openDevTools();
       }

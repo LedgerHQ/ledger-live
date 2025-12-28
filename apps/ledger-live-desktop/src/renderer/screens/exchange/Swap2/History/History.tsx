@@ -29,10 +29,10 @@ import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
 import { getEnv } from "@ledgerhq/live-env";
 
 const Head = styled(Box)`
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 const ExportOperationsWrapper = styled(Box)`
-  color: ${p => p.theme.colors.palette.primary.main};
+  color: ${p => p.theme.colors.primary.c80};
   align-items: center;
   z-index: 10;
 `;
@@ -46,7 +46,7 @@ const exportOperations = async (
     if (res && callback) {
       callback();
     }
-  } catch (error) {
+  } catch {
     // ignore
   }
 };
@@ -129,9 +129,11 @@ const History = () => {
     async function fetchUpdatedSwapStatus() {
       const updatedAccounts = await Promise.all(accounts.map(updateAccountSwapStatus));
       if (!cancelled) {
-        updatedAccounts.filter(Boolean).forEach(account => {
-          account && dispatch(updateAccountWithUpdater(account.id, () => account));
-        });
+        updatedAccounts
+          .filter(Boolean)
+          .forEach(
+            account => account && dispatch(updateAccountWithUpdater(account.id, () => account)),
+          );
       }
     }
     fetchUpdatedSwapStatus();

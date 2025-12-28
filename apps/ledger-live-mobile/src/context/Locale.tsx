@@ -9,7 +9,7 @@ import RNRestart from "react-native-restart";
 
 import { DEFAULT_LANGUAGE_LOCALE, getDefaultLanguageLocale, locales } from "../languages";
 import { setLanguage } from "~/actions/settings";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import { useSettings } from "~/hooks";
 import { useSupportedLocales } from "~/hooks/languages/useSupportedLocales";
 import { loadLocaleData } from "~/utils/localeLoader";
@@ -44,7 +44,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const SUPPORTED_LANGUAGES = [
+export const SUPPORTED_LANGUAGES = [
   "en",
   "fr",
   "es",

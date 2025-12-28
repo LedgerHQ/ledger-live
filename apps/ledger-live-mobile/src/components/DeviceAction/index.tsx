@@ -3,8 +3,13 @@ import {
   UserRefusedDeviceNameChange,
   UserRefusedOnDevice,
   LatestFirmwareVersionRequired,
+  UnsupportedFeatureError,
 } from "@ledgerhq/errors";
-import { DeviceNotOnboarded, ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
+import {
+  DeviceNotOnboarded,
+  ImageDoesNotExistOnDevice,
+  NoSuchAppOnProvider,
+} from "@ledgerhq/live-common/errors";
 import {
   ExchangeRate,
   ExchangeSwap,
@@ -21,7 +26,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
 import { setLastSeenDeviceInfo } from "~/actions/settings";
 import { useTrackAddAccountFlow } from "~/analytics/hooks/useTrackAddAccountFlow";
@@ -52,7 +57,7 @@ import {
   renderAllowOpeningApp,
   renderAllowRemoveCustomLockscreen,
   renderBootloaderStep,
-  renderConnectYourDevice,
+  ConnectYourDevice,
   renderDeviceNotOnboarded,
   renderError,
   renderExchange,
@@ -62,18 +67,18 @@ import {
   renderRequiresAppInstallation,
   renderWarningOutdated,
   RequiredFirmwareUpdate,
+  NanoSNotSupportedComponent,
+  UnsupportedFeatureComponent,
 } from "./rendering";
 import { ThorSwapIncompatibility } from "./ThorSwapIncompatibility";
 import { WalletState } from "@ledgerhq/live-wallet/lib/store";
+import { DeviceId } from "@ledgerhq/client-ids/ids";
+import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";
 import { useTrackTransactionChecksFlow } from "~/analytics/hooks/useTrackTransactionChecksFlow";
 import { useTrackDmkErrorsEvents } from "~/analytics/hooks/useTrackDmkErrorsEvents";
-import { UnsupportedFirmwareDAError } from "@ledgerhq/device-management-kit";
 import { DeviceModelId } from "@ledgerhq/devices";
-
-const isFirmwareUnsupportedError = (error: unknown): boolean =>
-  error instanceof LatestFirmwareVersionRequired || error instanceof UnsupportedFirmwareDAError;
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -86,6 +91,7 @@ type Status = PartialNullable<{
   allowRenamingRequested: boolean;
   requestQuitApp: boolean;
   deviceInfo: DeviceInfo;
+  deviceId: DeviceId | null | undefined;
   requestOpenApp: string;
   allowOpeningRequestedWording: string;
   requiresAppInstallation: {
@@ -132,7 +138,7 @@ type Status = PartialNullable<{
 type Props<H extends Status, P> = {
   onResult?: (_: NonNullable<P>) => Promise<void> | void;
   onError?: (_: Error) => Promise<void> | void;
-  renderOnResult?: (_: P) => JSX.Element | null;
+  renderOnResult?: (_: P) => React.JSX.Element | null;
   status: H;
   device: Device;
   payload?: P | null;
@@ -156,7 +162,7 @@ export default function DeviceAction<R, H extends Status, P>({
 }: Omit<Props<H, P>, "status"> & {
   action: Action<R, H, P>;
   request: R;
-}): JSX.Element {
+}): React.JSX.Element {
   const status = action?.useHook(selectedDevice, request);
   const payload = action?.mapResult(status);
 
@@ -186,11 +192,9 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   onClose,
 }: Props<H, P> & {
   request?: R;
-}): JSX.Element | null {
+}): React.JSX.Element | null {
   const { colors, dark } = useTheme();
-  const {
-    colors: { palette },
-  } = useThemeFromStyledComponents();
+  const { colors: colorsFromStyled } = useThemeFromStyledComponents();
   const dispatch = useDispatch();
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const { t } = useTranslation();
@@ -206,6 +210,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     allowRenamingRequested,
     requestQuitApp,
     deviceInfo,
+    deviceId,
     requestOpenApp,
     allowOpeningRequestedWording,
     requiresAppInstallation,
@@ -296,6 +301,13 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   });
 
   useTrackDmkErrorsEvents({ error });
+
+  // Add deviceId to identities store when detected
+  useEffect(() => {
+    if (deviceId) {
+      dispatch(identitiesSlice.actions.addDeviceId(deviceId));
+    }
+  }, [dispatch, deviceId]);
 
   useEffect(() => {
     if (deviceInfo && device) {
@@ -437,7 +449,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
           theme,
           hasExportLogButton: false,
           Icon: Icons.InformationFill,
-          iconColor: palette.primary.c80,
+          iconColor: colorsFromStyled.primary.c80,
           device: device ?? undefined,
         });
       }
@@ -548,8 +560,19 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       return renderDeviceNotOnboarded({ t, device, navigation });
     }
 
-    if (isFirmwareUnsupportedError(error)) {
-      return <RequiredFirmwareUpdate t={t} navigation={navigation} device={selectedDevice} />;
+    if (error instanceof LatestFirmwareVersionRequired) {
+      return <RequiredFirmwareUpdate navigation={navigation} device={selectedDevice} />;
+    }
+
+    if (error instanceof UnsupportedFeatureError) {
+      return <UnsupportedFeatureComponent error={error} />;
+    }
+
+    if (error instanceof NoSuchAppOnProvider && device?.modelId === DeviceModelId.nanoS) {
+      // This should be only happening for Nano S devices, but in order to make sure we don't miss any
+      // use case for other devices we keep the check and will consider to remove it later after complete
+      // checks.
+      return <NanoSNotSupportedComponent />;
     }
 
     if ((error as Status["error"]) instanceof UserRefusedDeviceNameChange) {
@@ -557,7 +580,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
         t,
         navigation,
         error,
-        onRetry,
         colors,
         theme,
         iconColor: "warning.c60",
@@ -582,15 +604,14 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   }
 
   if ((!isLoading && !device) || unresponsive || isLocked) {
-    return renderConnectYourDevice({
-      t,
-      device: selectedDevice,
-      unresponsive,
-      isLocked: isLocked === null ? undefined : isLocked,
-      colors,
-      theme,
-      onSelectDeviceLink,
-    });
+    return (
+      <ConnectYourDevice
+        device={selectedDevice}
+        unresponsive={unresponsive}
+        isLocked={isLocked === null ? undefined : isLocked}
+        onSelectDeviceLink={onSelectDeviceLink}
+      />
+    );
   }
 
   if (isLoading || (allowOpeningGranted && !appAndVersion)) {

@@ -2,8 +2,8 @@ import { test } from "tests/fixtures/common";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { CLI } from "tests/utils/cliUtils";
 import { FileUtils } from "tests/utils/fileUtils";
+import { liveDataCommand } from "tests/utils/cliCommandsUtils";
 
 test.describe("Settings", () => {
   test.use({
@@ -13,7 +13,7 @@ test.describe("Settings", () => {
   test(
     `ERC20 token with 0 balance is hidden if 'hide empty token accounts' is ON`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: [{ type: "TMS", description: "B2CQA-817" }],
     },
     async ({ app }) => {
@@ -45,23 +45,14 @@ test.describe("Password", () => {
   const account = Account.ETH_1;
   test.use({
     userdata: "skip-onboarding",
-    cliCommands: [
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: account.currency.id,
-          index: account.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
-    ],
+    cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
   });
 
   test(
     "The user enter his password to access to the app",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@ethereum`, "@family-evm"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2343, B2CQA-1763, B2CQA-826",
@@ -92,23 +83,23 @@ test.describe("counter value selection", () => {
   const account = Account.BTC_NATIVE_SEGWIT_1;
   test.use({
     userdata: "skip-onboarding",
-    cliCommands: [
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: account.currency.id,
-          index: account.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
-    ],
+    cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
   });
 
   test(
     "User can select a counter value to display amount",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: {
         type: "TMS",
         description: "B2CQA-804",
@@ -164,7 +155,7 @@ test.describe("Reset app", () => {
   test(
     "Verify that user can Reset app",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: {
         type: "TMS",
         description: "B2CQA-821",
@@ -194,7 +185,7 @@ test.describe("Settings - Help tab", () => {
   test(
     "Verify that user can view user data folder and export logs",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: {
         type: "TMS",
         description: "B2CQA-825, B2CQA-2074",

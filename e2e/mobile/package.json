@@ -1,6 +1,6 @@
 {
   "name": "ledger-live-mobile-e2e-tests",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx --cache",
@@ -13,12 +13,14 @@
     "test:ios:debug": "pnpm test:detox --configuration ios.sim.debug",
     "test:android:debug": "pnpm test:detox --configuration android.emu.debug",
     "build:ios:debug": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.debug",
-    "build:android:debug": "pnpm --filter live-mobile run e2e:build --configuration android.emu.debug"
+    "build:android:debug": "pnpm --filter live-mobile run e2e:build --configuration android.emu.debug",
+    "allure:generate": "allure generate ./artifacts --clean -o ./artifacts/allure-report",
+    "allure:open": "allure open ./artifacts/allure-report"
   },
   "dependencies": {
     "@ledgerhq/logs": "workspace:^",
     "invariant": "2.2.4",
-    "rxjs": "7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@jest/reporters": "30.2.0",
@@ -41,8 +43,8 @@
     "@types/jest": "^30.0.0",
     "@types/lodash": "4.17.0",
     "@types/ws": "8.5.10",
-    "@typescript-eslint/eslint-plugin": "6.21.0",
-    "@typescript-eslint/parser": "6.21.0",
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
     "allure-commandline": "2.28.0",
     "babel-jest": "30.2.0",
     "babel-plugin-module-resolver": "^5.0.2",
@@ -56,7 +58,7 @@
     "eslint-plugin-json": "3.1.0",
     "eslint-plugin-prettier": "5.1.3",
     "expect": "27.5.1",
-    "express": "4.19.2",
+    "express": "4.22.0",
     "glob": "^11.0.1",
     "jest": "30.2.0",
     "jest-allure2-reporter": "2.2.8",
@@ -68,6 +70,6 @@
     "ts-jest": "29.4.5",
     "ts-node": "10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "ws": "7.5.10"
+    "ws": "catalog:"
   }
 }

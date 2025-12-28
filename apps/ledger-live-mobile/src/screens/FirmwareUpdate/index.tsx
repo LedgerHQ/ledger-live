@@ -29,7 +29,7 @@ import {
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { Observable } from "rxjs";
 import { updateMainNavigatorVisibility } from "~/actions/appstate";
 import {
@@ -44,7 +44,7 @@ import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { ScreenName } from "~/const";
 import {
   renderAllowLanguageInstallation,
-  renderConnectYourDevice,
+  ConnectYourDevice,
 } from "~/components/DeviceAction/rendering";
 import {
   RenderImageCommitRequested,
@@ -596,12 +596,7 @@ export const FirmwareUpdate = ({
     ) {
       return (
         <Flex>
-          {renderConnectYourDevice({
-            t,
-            device,
-            theme,
-            fullScreen: false,
-          })}
+          <ConnectYourDevice device={device} fullScreen={false} />
           <Button type="main" outline={false} onPress={retryCurrentStep} mt={6} alignSelf="stretch">
             {t("common.retry")}
           </Button>

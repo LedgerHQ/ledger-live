@@ -10,7 +10,6 @@ import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { CLI } from "tests/utils/cliUtils";
 import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
@@ -20,15 +19,12 @@ import {
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getEnv } from "@ledgerhq/live-env";
 import { overrideNetworkPayload } from "tests/utils/networkUtils";
-const app: AppInfos = AppInfos.EXCHANGE;
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
+import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
+import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 
-const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
-  CLI.liveData({
-    currency: currencyApp.name,
-    index,
-    add: true,
-    appjson: userdataPath,
-  });
+const app: AppInfos = AppInfos.EXCHANGE;
 
 test.describe("Swap - Provider redirection", () => {
   const fromAccount = Account.ETH_1;
@@ -56,11 +52,11 @@ test.describe("Swap - Provider redirection", () => {
       [
         {
           app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          cmd: liveDataWithAddressCommand(fromAccount),
         },
         {
           app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          cmd: liveDataWithAddressCommand(toAccount),
         },
       ],
       { scope: "test" },
@@ -70,7 +66,7 @@ test.describe("Swap - Provider redirection", () => {
   test(
     `Swap test provider redirection (${provider.uiName})`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: {
         type: "TMS",
         description: "B2CQA-3119",
@@ -118,11 +114,11 @@ test.describe("Swap - 1inch flow", () => {
       [
         {
           app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          cmd: liveDataWithAddressCommand(fromAccount),
         },
         {
           app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          cmd: liveDataWithAddressCommand(toAccount),
         },
       ],
       { scope: "test" },
@@ -132,7 +128,7 @@ test.describe("Swap - 1inch flow", () => {
   test(
     `Swap test 1inch flow (${provider.uiName})`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: {
         type: "TMS",
         description: "B2CQA-3120",
@@ -147,11 +143,11 @@ test.describe("Swap - 1inch flow", () => {
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
 
       await app.swap.selectSpecificProvider(provider, electronApp);
-      await app.swap.clickExchangeButton(electronApp, provider.uiName);
+      await app.swap.clickExchangeButton(electronApp);
       await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
-      await app.swap.clickExchangeButton(electronApp, provider.uiName);
+      await app.swap.clickExecuteSwapButton(electronApp);
       await app.swap.clickContinueButton();
-      //ToDo: when B2CA-2384 is fixed the flow could be finished
+      //TODO: when B2CA-2384 is fixed the flow could be finished
     },
   );
 });
@@ -176,11 +172,11 @@ test.describe("Swap - Check Best Offer", () => {
       [
         {
           app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          cmd: liveDataWithAddressCommand(fromAccount),
         },
         {
           app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          cmd: liveDataWithAddressCommand(toAccount),
         },
       ],
       { scope: "test" },
@@ -190,7 +186,18 @@ test.describe("Swap - Check Best Offer", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Check "Best Offer"`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: { type: "TMS", description: "B2CQA-2327" },
     },
     async ({ app, electronApp }) => {
@@ -226,11 +233,11 @@ test.describe("Swap - Default currency when landing on swap", () => {
       [
         {
           app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          cmd: liveDataWithAddressCommand(fromAccount),
         },
         {
           app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          cmd: liveDataWithAddressCommand(toAccount),
         },
       ],
       { scope: "test" },
@@ -240,7 +247,18 @@ test.describe("Swap - Default currency when landing on swap", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Default currency`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: { type: "TMS", description: "B2CQA-3079" },
     },
     async ({ app, electronApp }) => {
@@ -255,7 +273,18 @@ test.describe("Swap - Default currency when landing on swap", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Previous set up`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: { type: "TMS", description: "B2CQA-3080" },
     },
     async ({ app, electronApp }) => {
@@ -294,11 +323,11 @@ test.describe("Swap - Rejected on device", () => {
       [
         {
           app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          cmd: liveDataWithAddressCommand(fromAccount),
         },
         {
           app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          cmd: liveDataWithAddressCommand(toAccount),
         },
       ],
       { scope: "test" },
@@ -308,7 +337,18 @@ test.describe("Swap - Rejected on device", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: { type: "TMS", description: "B2CQA-2212" },
     },
     async ({ app, electronApp }) => {
@@ -318,9 +358,9 @@ test.describe("Swap - Rejected on device", () => {
       const rejectedSwap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap, minAmount);
-      const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
+      await app.swap.selectExchangeWithoutKyc(electronApp);
 
-      await app.swap.clickExchangeButton(electronApp, selectedProvider);
+      await app.swap.clickExchangeButton(electronApp);
       await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
       await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
     },
@@ -348,11 +388,11 @@ test.describe("Swap - Landing page", () => {
       [
         {
           app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          cmd: liveDataWithAddressCommand(fromAccount),
         },
         {
           app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          cmd: liveDataWithAddressCommand(toAccount),
         },
       ],
       { scope: "test" },
@@ -362,7 +402,7 @@ test.describe("Swap - Landing page", () => {
   test(
     `Swap landing page`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: { type: "TMS", description: "B2CQA-2918" },
     },
     async ({ app, electronApp }) => {
@@ -395,6 +435,8 @@ interface SwapTestCase {
   expectedErrorPerDevice?: {
     [deviceId: string]: string;
   };
+  addressFrom: string;
+  addressTo: string;
 }
 
 const swapWithDifferentSeed: SwapTestCase[] = [
@@ -403,6 +445,8 @@ const swapWithDifferentSeed: SwapTestCase[] = [
     xrayTicket: "B2CQA-3089",
     errorMessage:
       "This sending account does not belong to the device you have connected. Please change and retry",
+    addressFrom: Addresses.ETH_OTHER_SEED,
+    addressTo: Addresses.SOL_OTHER_SEED,
     expectedErrorPerDevice: {
       [DeviceModelId.nanoS]:
         "This receiving account does not belong to the device you have connected. Please change and retry",
@@ -412,12 +456,16 @@ const swapWithDifferentSeed: SwapTestCase[] = [
     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.002"),
     xrayTicket: "B2CQA-3090",
     errorMessage: null,
+    addressFrom: Addresses.BTC_NATIVE_SEGWIT_1,
+    addressTo: Addresses.ETH_OTHER_SEED,
   },
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03"),
     xrayTicket: "B2CQA-3091",
     errorMessage:
       "This sending account does not belong to the device you have connected. Please change and retry",
+    addressFrom: Addresses.ETH_OTHER_SEED,
+    addressTo: Addresses.BTC_NATIVE_SEGWIT_1,
     expectedErrorPerDevice: {
       [DeviceModelId.nanoS]:
         "This sending account does not belong to the device you have connected. Please change and retry",
@@ -425,7 +473,14 @@ const swapWithDifferentSeed: SwapTestCase[] = [
   },
 ];
 
-for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWithDifferentSeed) {
+for (const {
+  swap,
+  xrayTicket,
+  errorMessage,
+  expectedErrorPerDevice,
+  addressFrom,
+  addressTo,
+} of swapWithDifferentSeed) {
   test.describe("Swap - Using different seed", () => {
     setupEnv(true);
 
@@ -433,6 +488,9 @@ for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWit
       userdata: "speculos-x-other-account",
       speculosApp: app,
     });
+
+    const familyDebit = getFamilyByCurrencyId(swap.accountToDebit.currency.id);
+    const familyCredit = getFamilyByCurrencyId(swap.accountToCredit.currency.id);
 
     test.beforeEach(async () => {
       const accountPair = [swap.accountToDebit, swap.accountToCredit].map(acc =>
@@ -451,13 +509,18 @@ for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWit
           "@Stax",
           "@Flex",
           "@NanoGen5",
-          ...(swap.accountToDebit === Account.BTC_NATIVE_SEGWIT_1 ? ["@smoke"] : []),
+          `@${swap.accountToDebit.currency.id}`,
+          ...(familyDebit ? [`@family-${familyDebit}`] : []),
+          `@${swap.accountToCredit.currency.id}`,
+          ...(familyCredit ? [`@family-${familyCredit}`] : []),
         ],
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, electronApp }) => {
         const tmsDescription = getDescription(test.info().annotations, "TMS");
         await addTmsLink(tmsDescription.split(", "));
+        swap.accountToDebit.address = addressFrom;
+        swap.accountToCredit.address = addressTo;
 
         const minAmount = await app.swap.getMinimumAmount(
           swap.accountToDebit,
@@ -492,7 +555,7 @@ test.describe("Swap a coin for which you have no account yet", () => {
       [
         {
           app: account1.currency.speculosApp,
-          cmd: liveDataCommand(account1.currency.speculosApp, account1.index),
+          cmd: liveDataWithAddressCommand(account1),
         },
       ],
       { scope: "test" },
@@ -502,7 +565,18 @@ test.describe("Swap a coin for which you have no account yet", () => {
   test(
     "from Account present to Account not present",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: { type: "TMS", description: xrayTicket },
     },
     async ({ app, electronApp }) => {
@@ -511,14 +585,14 @@ test.describe("Swap a coin for which you have no account yet", () => {
 
       await app.swap.selectFromAccountCoinSelector(electronApp);
 
-      const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-      if (isModularDrawer) {
-        await selectAccountMAD(app, account1);
+      const selector = await getModularSelector(app, "ASSET");
+      if (selector) {
+        await selectAccountMAD(selector, account1);
 
         await app.swap.selectToAccountCoinSelector(electronApp);
-        await app.modularDrawer.selectAssetByTickerAndName(account2.currency);
-        await app.modularDrawer.selectNetwork(account2.currency);
-        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+        await selector.selectAsset(account2.currency);
+        await selector.selectNetwork(account2.currency);
+        await selector.clickOnAddAndExistingAccount();
 
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
@@ -552,7 +626,7 @@ test.describe("Swap a coin for which you have no account yet", () => {
       [
         {
           app: account2.currency.speculosApp,
-          cmd: liveDataCommand(account2.currency.speculosApp, account2.index),
+          cmd: liveDataWithAddressCommand(account2),
         },
       ],
       { scope: "test" },
@@ -562,7 +636,18 @@ test.describe("Swap a coin for which you have no account yet", () => {
   test(
     "from Account not present to Account present",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: { type: "TMS", description: xrayTicket },
     },
     async ({ app, electronApp }) => {
@@ -570,17 +655,17 @@ test.describe("Swap a coin for which you have no account yet", () => {
       await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
 
       await app.swap.selectFromAccountCoinSelector(electronApp);
-      const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-      if (isModularDrawer) {
-        await app.modularDrawer.selectAssetByTickerAndName(account1.currency);
-        await app.modularDrawer.selectNetwork(account1.currency);
-        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+      const selector = await getModularSelector(app, "ASSET");
+      if (selector) {
+        await selector.selectAsset(account1.currency);
+        await selector.selectNetwork(account1.currency);
+        await selector.clickOnAddAndExistingAccount();
 
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
 
         await app.swap.selectToAccountCoinSelector(electronApp);
-        await selectAccountMAD(app, account2);
+        await selectAccountMAD(selector, account2);
       } else {
         await app.swap.selectAssetFrom(electronApp, account1.currency.name);
         await app.swapDrawer.clickOnAddAccountButton();
@@ -613,7 +698,17 @@ test.describe("Swap a coin for which you have no account yet", () => {
   test(
     "from Account not present to Account not present",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bsc",
+      ],
       annotation: { type: "TMS", description: xrayTicket },
     },
     async ({ app, electronApp }) => {
@@ -622,37 +717,25 @@ test.describe("Swap a coin for which you have no account yet", () => {
 
       await app.swap.selectFromAccountCoinSelector(electronApp);
 
-      const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-      if (isModularDrawer) {
-        await app.modularDrawer.selectAssetByTickerAndName(account1.currency);
-        await app.modularDrawer.selectNetwork(account1.currency);
-        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+      const selector = await getModularSelector(app, "ASSET");
+      if (selector) {
+        await selector.selectAsset(account1.currency);
+        await selector.selectNetwork(account1.currency);
+        await selector.clickOnAddAndExistingAccount();
 
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
 
         await app.swap.selectToAccountCoinSelector(electronApp);
-        await app.modularDrawer.selectAssetByTickerAndName(account2.currency);
-        await app.modularDrawer.selectNetwork(account2.currency);
-        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+        await selector.selectAsset(account2.currency);
+        await selector.selectNetwork(account2.currency);
+        await selector.clickOnAddAndExistingAccount();
 
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
-      } else {
-        await app.swap.selectAsset(account1.currency.name);
-        await app.swapDrawer.clickOnAddAccountButton();
-        await app.addAccount.addAccounts();
-        await app.addAccount.done();
-        await app.swapDrawer.selectAccountByName(account1);
-
-        await app.swap.selectAssetTo(electronApp, account2.currency.name);
-        await app.swapDrawer.clickOnAddAccountButton();
-        await app.addAccount.addAccounts();
-        await app.addAccount.done();
-        await app.swapDrawer.selectAccountByName(account2);
+        await app.swap.checkAssetFrom(electronApp, account1.currency.name);
+        await app.swap.checkAssetTo(electronApp, account2.currency.name);
       }
-      await app.swap.checkAssetFrom(electronApp, account1.currency.name);
-      await app.swap.checkAssetTo(electronApp, account2.currency.name);
     },
   );
 });
@@ -721,11 +804,11 @@ for (const swap of tooLowAmountForQuoteSwaps) {
         [
           {
             app: accountToDebit.currency.speculosApp,
-            cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+            cmd: liveDataWithAddressCommand(accountToDebit),
           },
           {
             app: accountToCredit.currency.speculosApp,
-            cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+            cmd: liveDataWithAddressCommand(accountToCredit),
           },
         ],
         { scope: "test" },
@@ -735,7 +818,18 @@ for (const swap of tooLowAmountForQuoteSwaps) {
     test(
       `Swap too low quote amounts from ${swap.swap.accountToDebit.currency.name} to ${swap.swap.accountToCredit.currency.name} - ${swap.errorMessage}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          "@ethereum",
+          "@family-evm",
+          "@bitcoin",
+          "@family-bitcoin",
+        ],
         annotation: {
           type: "TMS",
           description: swap.xrayTicket,
@@ -769,7 +863,18 @@ const swapNetworkFeesAboveAccountBalanceTestConfig = {
     `You need \\d+\\.\\d+ ETH in your account to pay for transaction fees on the Ethereum network. {2}Buy ETH or deposit more into your account. Learn more`,
   ),
   xrayTicket: "B2CQA-2363",
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    "@ethereum",
+    "@family-evm",
+    "@bitcoin",
+    "@family-bitcoin",
+  ],
 };
 
 test.describe(`Swap - Error message when network fees are above account balance (${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToDebit.currency.name} to ${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToCredit.currency.name})`, () => {
@@ -798,11 +903,11 @@ test.describe(`Swap - Error message when network fees are above account balance 
       [
         {
           app: accountToDebit.currency.speculosApp,
-          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+          cmd: liveDataWithAddressCommand(accountToDebit),
         },
         {
           app: accountToCredit.currency.speculosApp,
-          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+          cmd: liveDataWithAddressCommand(accountToCredit),
         },
       ],
       { scope: "test" },
@@ -812,7 +917,18 @@ test.describe(`Swap - Error message when network fees are above account balance 
   test(
     `Swap - Network fees above account balance`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: {
         type: "TMS",
         description: swapNetworkFeesAboveAccountBalanceTestConfig.xrayTicket,
@@ -862,7 +978,18 @@ test.describe("Swap - Switch You send and You receive currency", () => {
   test(
     "Switch You send and You receive currency",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: {
         type: "TMS",
         description: "B2CQA-2136",
@@ -896,11 +1023,11 @@ test.describe("Swap flow from different entry point", () => {
       [
         {
           app: accountToDebit.currency.speculosApp,
-          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+          cmd: liveDataWithAddressCommand(accountToDebit),
         },
         {
           app: accountToCredit.currency.speculosApp,
-          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+          cmd: liveDataWithAddressCommand(accountToCredit),
         },
       ],
       { scope: "test" },
@@ -910,7 +1037,18 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Portfolio page",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: {
         type: "TMS",
         description: "B2CQA-2985",
@@ -927,7 +1065,18 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Asset Allocation",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: {
         type: "TMS",
         description: "B2CQA-2986",
@@ -946,7 +1095,18 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Market page - Click on swap for any coin",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: {
         type: "TMS",
         description: "B2CQA-2987",
@@ -967,7 +1127,18 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Market page - More than one account for an asset",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: {
         type: "TMS",
         description: "B2CQA-2988",
@@ -985,7 +1156,18 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Account page",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@smoke"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: {
         type: "TMS",
         description: "B2CQA-2989",
@@ -1006,7 +1188,18 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - left menu",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: {
         type: "TMS",
         description: "B2CQA-2990, B2CQA-523",
@@ -1058,11 +1251,11 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
         [
           {
             app: fromAccount.currency.speculosApp,
-            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+            cmd: liveDataWithAddressCommand(fromAccount),
           },
           {
             app: toAccount.currency.speculosApp,
-            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+            cmd: liveDataWithAddressCommand(toAccount),
           },
         ],
         { scope: "test" },
@@ -1072,7 +1265,18 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
     test(
       `Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          "@ethereum",
+          "@family-evm",
+          "@bitcoin",
+          "@family-bitcoin",
+        ],
         annotation: {
           type: "TMS",
           description: xrayTicket,
@@ -1084,16 +1288,16 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
 
         await app.swap.selectFromAccountCoinSelector(electronApp);
 
-        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-        if (isModularDrawer) {
-          await app.modularDrawer.selectAssetByTickerAndName(fromAccount.currency);
-          await app.modularDrawer.selectNetwork(fromAccount.currency);
-          await app.modularDrawer.selectAccountByName(fromAccount);
+        const selector = await getModularSelector(app, "ASSET");
+        if (selector) {
+          await selector.selectAsset(fromAccount.currency);
+          await selector.selectNetwork(fromAccount.currency);
+          await selector.selectAccountByName(fromAccount);
 
           await app.swap.selectToAccountCoinSelector(electronApp);
-          await app.modularDrawer.selectAssetByTickerAndName(toAccount.currency);
-          await app.modularDrawer.selectNetwork(toAccount.currency);
-          await app.modularDrawer.selectAccountByName(toAccount);
+          await selector.selectAsset(toAccount.currency);
+          await selector.selectNetwork(toAccount.currency);
+          await selector.selectAccountByName(toAccount);
         } else {
           const networkName = fromAccount.parentAccount?.currency.name;
           await app.swap.selectAsset(fromAccount.currency.name, networkName);
@@ -1105,10 +1309,10 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
         await app.swap.clickSwapMax(electronApp);
 
         const amountToSend = await app.swap.getAmountToSend(electronApp);
-        const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
+        await app.swap.selectExchangeWithoutKyc(electronApp);
         const swap = new Swap(fromAccount, toAccount, amountToSend);
 
-        await app.swap.clickExchangeButton(electronApp, selectedProvider);
+        await app.swap.clickExchangeButton(electronApp);
         await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },
@@ -1122,6 +1326,8 @@ test.describe("Swap history", () => {
     xrayTicket: "B2CQA-604",
     provider: Provider.EXODUS,
     swapId: "wQ90NrWdvJz5dA4",
+    addressFrom: Addresses.SWAP_HISTORY_SOL_FROM,
+    addressTo: Addresses.SWAP_HISTORY_ETH_TO,
   };
 
   setupEnv(true);
@@ -1142,11 +1348,25 @@ test.describe("Swap history", () => {
   test(
     `User can export all history operations`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@solana",
+        "@family-solana",
+        "@ethereum",
+        "@family-evm",
+      ],
       annotation: { type: "TMS", description: "B2CQA-604" },
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      swapHistory.swap.accountToDebit.address = swapHistory.addressFrom;
+      swapHistory.swap.accountToCredit.address = swapHistory.addressTo;
 
       await app.layout.goToSwap();
       await app.swap.goToSwapHistory();
@@ -1163,7 +1383,18 @@ test.describe("Swap history", () => {
   test(
     `User should be able to see their swap history from the swap history page`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@solana",
+        "@family-solana",
+        "@ethereum",
+        "@family-evm",
+      ],
       annotation: { type: "TMS", description: "B2CQA-602" },
     },
     async ({ app }) => {
@@ -1202,11 +1433,11 @@ test.describe("Swap - Block blacklisted addresses", () => {
       [
         {
           app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          cmd: liveDataWithAddressCommand(fromAccount),
         },
         {
           app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          cmd: liveDataWithAddressCommand(toAccount),
         },
       ],
       { scope: "test" },
@@ -1216,10 +1447,21 @@ test.describe("Swap - Block blacklisted addresses", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        "@ethereum",
+        "@family-evm",
+        "@bitcoin",
+        "@family-bitcoin",
+      ],
       annotation: {
         type: "TMS",
-        description: "B2CQA-3539",
+        description: "B2CQA-3655",
       },
     },
     async ({ app, electronApp }) => {
@@ -1235,8 +1477,8 @@ test.describe("Swap - Block blacklisted addresses", () => {
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-      const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
-      await app.swap.clickExchangeButton(electronApp, selectedProvider);
+      await app.swap.selectExchangeWithoutKyc(electronApp);
+      await app.swap.clickExchangeButton(electronApp);
 
       await app.swapDrawer.checkErrorMessage(
         `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${fromAccount.address}`,

@@ -10,6 +10,12 @@ import { AlpacaSigner } from "./types";
 import { DerivationType, LedgerSigner as TaquitoLedgerSigner } from "@taquito/ledger-signer";
 import tezosGetAddress from "@ledgerhq/coin-tezos/signer/getAddress";
 import Tezos from "@ledgerhq/hw-app-tezos";
+import { context as evmContext, getAddress as evmGetAddress } from "./Eth";
+import { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
+import { validateAddress as tezosValidateAddress } from "@ledgerhq/coin-tezos/logic/validateAddress";
+import { validateAddress as xrpValidateAddress } from "@ledgerhq/coin-xrp/logic/validateAddress";
+import { validateAddress as stellarValidateAddress } from "@ledgerhq/coin-stellar/logic/validateAddress";
+import { validateAddress as evmValidateAddress } from "@ledgerhq/coin-evm/logic/validateAddress";
 
 const createSignerXrp: CreateSigner<Xrp> = (transport: Transport) => {
   return new Xrp(transport);
@@ -97,6 +103,38 @@ export function getSigner(network: string): AlpacaSigner {
         context: signerContextTezos,
       };
     }
+    case "evm": {
+      return {
+        getAddress: evmGetAddress,
+        context: evmContext,
+      };
+    }
   }
   throw new Error(`signer for ${network} not implemented`);
+}
+
+type ValidateAddressFunction = (
+  address: string,
+  parameters: Partial<AddressValidationCurrencyParameters>,
+) => Promise<boolean>;
+
+const validateAddressByNetwork = new Map<string, ValidateAddressFunction>();
+validateAddressByNetwork.set("stellar", stellarValidateAddress);
+validateAddressByNetwork.set("xrp", xrpValidateAddress);
+validateAddressByNetwork.set("tezos", tezosValidateAddress);
+validateAddressByNetwork.set("evm", evmValidateAddress);
+validateAddressByNetwork.set("ethereum", evmValidateAddress); // for the coin tester
+validateAddressByNetwork.set("sonic", evmValidateAddress); // for the coin tester
+validateAddressByNetwork.set("polygon", evmValidateAddress); // for the coin tester
+validateAddressByNetwork.set("core", evmValidateAddress); // for the coin tester
+validateAddressByNetwork.set("scroll", evmValidateAddress); // for the coin tester
+validateAddressByNetwork.set("blast", evmValidateAddress); // for the coin tester
+
+export function getValidateAddress(network: string): ValidateAddressFunction {
+  const validateAddress = validateAddressByNetwork.get(network);
+  if (!validateAddress) {
+    throw new Error(`No validate address function for network ${network}`);
+  }
+
+  return validateAddress;
 }

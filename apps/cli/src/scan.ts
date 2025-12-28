@@ -125,7 +125,7 @@ export const inferManagerApp = (keyword: string): string => {
     const currency = findCryptoCurrencyByKeyword(keyword);
     if (!currency || !currency.managerAppName) return keyword;
     return currency.managerAppName;
-  } catch (e) {
+  } catch {
     return keyword;
   }
 };
@@ -260,7 +260,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
             // preserve if decodeAccountId don't fail
             decodeAccountId(id);
             return id;
-          } catch (e) {
+          } catch {
             const splitted = id.split(":");
 
             const findAndEat = (predicate: any) => {
@@ -286,7 +286,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
               findAndEat((s: string) => {
                 try {
                   return asDerivationMode(s);
-                } catch (e) {
+                } catch {
                   // this is therefore not a derivation mode
                 }
               }) ??

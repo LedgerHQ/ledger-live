@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import type { OperationType } from "@ledgerhq/types-live";
 
 /**
  * Internal types to distinguish custom Hedera transaction behaviors.
@@ -7,12 +8,25 @@ import BigNumber from "bignumber.js";
 export enum HEDERA_TRANSACTION_MODES {
   Send = "send",
   TokenAssociate = "token-associate",
+  Delegate = "delegate",
+  Undelegate = "undelegate",
+  Redelegate = "redelegate",
+  ClaimRewards = "claim-rewards",
+}
+
+/**
+ * Enum representing Hedera transaction names used in the Hedera Mirror Node API.
+ */
+export enum HEDERA_TRANSACTION_NAMES {
+  ContractCall = "CONTRACTCALL",
+  UpdateAccount = "CRYPTOUPDATEACCOUNT",
 }
 
 /**
  * Enum representing the supported Hedera operation types for fee estimation
  */
 export enum HEDERA_OPERATION_TYPES {
+  CryptoUpdate = "CryptoUpdate",
   CryptoTransfer = "CryptoTransfer",
   TokenTransfer = "TokenTransfer",
   TokenAssociate = "TokenAssociate",
@@ -39,6 +53,17 @@ export const DEFAULT_GAS_PRICE_TINYBARS = new BigNumber(100);
 
 export const HEDERA_MAINNET_CHAIN_ID = 295;
 
+export const MEMO_CHARACTER_LIMIT = 100;
+
+/**
+ * Enum representing the delegation status of a Hedera account
+ */
+export enum HEDERA_DELEGATION_STATUS {
+  Inactive = "inactive",
+  Overstaked = "overstaked",
+  Active = "active",
+}
+
 /**
  * https://docs.hedera.com/hedera/networks/mainnet/fees
  *
@@ -49,6 +74,7 @@ export const HEDERA_MAINNET_CHAIN_ID = 295;
  * has sufficient balance to cover the cost of a transaction (e.g. token association).
  */
 export const BASE_USD_FEE_BY_OPERATION_TYPE = {
+  [HEDERA_OPERATION_TYPES.CryptoUpdate]: 0.00022 * 10 ** TINYBAR_SCALE,
   [HEDERA_OPERATION_TYPES.CryptoTransfer]: 0.0001 * 10 ** TINYBAR_SCALE,
   [HEDERA_OPERATION_TYPES.TokenTransfer]: 0.001 * 10 ** TINYBAR_SCALE,
   [HEDERA_OPERATION_TYPES.TokenAssociate]: 0.05 * 10 ** TINYBAR_SCALE,
@@ -83,4 +109,36 @@ export const SUPPORTED_ERC20_TOKENS = [
     contractAddress: "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
     tokenId: "0.0.10047837",
   },
+];
+
+export const MAP_STAKING_MODE_TO_MEMO: Record<string, string> = {
+  [HEDERA_TRANSACTION_MODES.ClaimRewards]: "Collect Staking Rewards",
+  [HEDERA_TRANSACTION_MODES.Delegate]: "Stake",
+  [HEDERA_TRANSACTION_MODES.Undelegate]: "Unstake",
+  [HEDERA_TRANSACTION_MODES.Redelegate]: "Restake",
+} as const;
+
+export const MAP_STAKING_MODE_TO_OPERATION_TYPE: Record<string, OperationType> = {
+  [HEDERA_TRANSACTION_MODES.Delegate]: "DELEGATE",
+  [HEDERA_TRANSACTION_MODES.Undelegate]: "UNDELEGATE",
+  [HEDERA_TRANSACTION_MODES.Redelegate]: "REDELEGATE",
+};
+
+export const MAP_STAKING_MODE_TO_METHOD: Record<string, string> = {
+  [HEDERA_TRANSACTION_MODES.Delegate]: "Delegate",
+  [HEDERA_TRANSACTION_MODES.Undelegate]: "Undelegate",
+  [HEDERA_TRANSACTION_MODES.Redelegate]: "Redelegate",
+  [HEDERA_TRANSACTION_MODES.ClaimRewards]: "Claim Rewards",
+};
+
+/**
+ * Operation types where fees should be excluded from value of native HBAR operations.
+ */
+export const OP_TYPES_EXCLUDING_FEES: OperationType[] = [
+  "OUT",
+  "DELEGATE",
+  "UNDELEGATE",
+  "REDELEGATE",
+  "UPDATE_ACCOUNT",
+  "CONTRACT_CALL",
 ];

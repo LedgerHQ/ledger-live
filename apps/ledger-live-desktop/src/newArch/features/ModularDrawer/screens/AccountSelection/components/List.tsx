@@ -8,7 +8,12 @@ import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCur
 import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { useSelector } from "react-redux";
-import { localeSelector, discreetModeSelector } from "~/renderer/reducers/settings";
+import {
+  localeSelector,
+  discreetModeSelector,
+  counterValueCurrencySelector,
+} from "~/renderer/reducers/settings";
+import BigNumber from "bignumber.js";
 
 type SelectAccountProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
@@ -29,6 +34,7 @@ export const SelectAccountList = ({
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const formattedAccounts = useMemo(() => {
     return detailedAccounts.map(account => ({
@@ -41,9 +47,17 @@ export const SelectAccountList = ({
               locale,
             })
           : "",
-      fiatValue: "",
+      fiatValue: formatCurrencyUnit(
+        counterValueCurrency.units[0],
+        new BigNumber(account.fiatValue),
+        {
+          showCode: true,
+          discreet,
+          locale,
+        },
+      ),
     }));
-  }, [detailedAccounts, locale, discreet]);
+  }, [detailedAccounts, locale, discreet, counterValueCurrency]);
 
   const trackAccountClick = (name: string) => {
     trackModularDrawerEvent("account_clicked", {
@@ -53,19 +67,21 @@ export const SelectAccountList = ({
   };
 
   const onAccountClick = (accountId: string) => {
-    const currencyAccount = accounts.find(({ account }) => account.id === accountId);
-    if (currencyAccount) {
-      onAccountSelected(currencyAccount.account);
-      trackAccountClick(currencyAccount.account.currency.name);
-      return;
-    }
-
+    // First, check if the accountId matches a subAccount (token account)
     const tupleWithSub = accounts.find(
       ({ subAccount }) => subAccount && subAccount.id === accountId,
     );
     if (tupleWithSub?.subAccount) {
       onAccountSelected(tupleWithSub.subAccount, tupleWithSub.account);
       trackAccountClick(tupleWithSub.subAccount.token.ticker);
+      return;
+    }
+
+    // If not found as a subAccount, check if it's a parent account
+    const currencyAccount = accounts.find(({ account }) => account.id === accountId);
+    if (currencyAccount) {
+      onAccountSelected(currencyAccount.account);
+      trackAccountClick(currencyAccount.account.currency.name);
     }
   };
 

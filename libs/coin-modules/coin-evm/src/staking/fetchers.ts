@@ -24,13 +24,13 @@ const createStakingFetcher = (
     currency: CryptoCurrency,
   ): Promise<Stake[]> => {
     const validators = await getValidatorsFn(config, currency);
-    const logPrefix = currency.id === "sei_network_evm" ? "SEI" : "CELO";
+    const logPrefix = currency.id === "sei_evm" ? "SEI" : "CELO";
     return getStakesForValidators(address, config, currency, validators, logPrefix);
   };
 };
 
 export const STAKING_CONFIG: Record<string, StakingStrategy> = {
-  sei_network_evm: {
+  sei_evm: {
     fetcher: createStakingFetcher(
       async (config, currency) => await getValidators(currency.id, config.apiConfig),
     ),
@@ -41,7 +41,7 @@ export const STAKING_CONFIG: Record<string, StakingStrategy> = {
 };
 
 const AMOUNT_EXTRACTORS: Record<string, StakingExtractor> = {
-  sei_network_evm: (decoded: unknown): bigint => {
+  sei_evm: (decoded: unknown): bigint => {
     const delegation = extractSeiDelegation(decoded);
     return getSeiDelegationAmount(delegation);
   },

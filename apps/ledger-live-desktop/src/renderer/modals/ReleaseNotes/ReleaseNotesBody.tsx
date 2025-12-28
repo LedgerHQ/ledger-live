@@ -23,7 +23,7 @@ type RenderContentProps = {
 const Title = styled(Text).attrs(() => ({
   ff: "Inter",
   fontSize: 5,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))``;
 const RenderContent = ({ notes }: RenderContentProps) => {
   const { t } = useTranslation();

@@ -105,21 +105,21 @@ export default function BlacklistedTokens() {
           {sections.map(({ parentCurrency, tokens }) => (
             <Box key={parentCurrency.id}>
               <BlacklistedTokensSectionHeader>
-                <Text ff="Inter|Bold" fontSize={2} color="palette.text.shade40">
+                <Text ff="Inter|Bold" fontSize={2} color="neutral.c60">
                   {parentCurrency.name}
                 </Text>
               </BlacklistedTokensSectionHeader>
               <Body>
                 {tokens.map((token: TokenCurrency) => (
                   <BlacklistedTokenRow key={token.id}>
-                    <CryptoCurrencyIcon currency={token} size={20} />
+                    <CryptoCurrencyIcon currency={token} size={28} />
                     <Text
                       style={{
                         marginLeft: 10,
                         flex: 1,
                       }}
                       ff="Inter|Medium"
-                      color="palette.text.shade100"
+                      color="neutral.c100"
                       fontSize={3}
                     >
                       {token.name}
@@ -138,11 +138,11 @@ export default function BlacklistedTokens() {
   );
 }
 const IconContainer = styled.div`
-  color: ${p => p.theme.colors.palette.text.shade60};
+  color: ${p => p.theme.colors.neutral.c70};
   text-align: center;
   &:hover {
     cursor: pointer;
-    color: ${p => p.theme.colors.palette.text.shade40};
+    color: ${p => p.theme.colors.neutral.c60};
   }
 `;
 const BlacklistedTokenRow = styled(Box).attrs({
@@ -153,7 +153,7 @@ const BlacklistedTokenRow = styled(Box).attrs({
 })`
   margin: 0px;
   &:not(:last-child) {
-    border-bottom: 1px solid ${p => p.theme.colors.palette.text.shade10};
+    border-bottom: 1px solid ${p => p.theme.colors.neutral.c30};
   }
   padding: 14px 6px;
 `;
@@ -163,7 +163,7 @@ const Body = styled(Box)`
   }
 `;
 const BlacklistedTokensSectionHeader = styled.div`
-  background: ${p => p.theme.colors.palette.background.default};
+  background: ${p => p.theme.colors.background.default};
   margin: 0 20px;
   padding: 2px 12px;
   border-radius: 4px;

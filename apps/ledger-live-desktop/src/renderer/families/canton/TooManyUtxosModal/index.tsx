@@ -62,27 +62,21 @@ export default function TooManyUtxosModal({ account }: Props) {
                 <Text
                   ff="Inter|SemiBold"
                   fontSize={6}
-                  color="palette.text.shade100"
+                  color="neutral.c100"
                   textAlign="center"
                   mb={3}
                 >
                   <Trans i18nKey="families.canton.tooManyUtxos.title" />
                 </Text>
 
-                <Text
-                  ff="Inter|Regular"
-                  fontSize={4}
-                  color="palette.text.shade80"
-                  textAlign="center"
-                  mb={4}
-                >
+                <Text ff="Inter|Regular" fontSize={4} color="neutral.c80" textAlign="center" mb={4}>
                   <Trans i18nKey="families.canton.tooManyUtxos.description" />
                 </Text>
 
                 <Text
                   ff="Inter|SemiBold"
                   fontSize={4}
-                  color="palette.text.shade100"
+                  color="neutral.c100"
                   textAlign="center"
                   mb={4}
                 >

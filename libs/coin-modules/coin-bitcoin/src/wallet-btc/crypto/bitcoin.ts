@@ -54,9 +54,7 @@ function toBech32(data: Buffer, version: number, prefix: string): string {
   const words = bech32.toWords(data);
   words.unshift(version);
 
-  return version === 0
-    ? bech32.encode(prefix, words)
-    : bech32m.encode(prefix, words);
+  return version === 0 ? bech32.encode(prefix, words) : bech32m.encode(prefix, words);
 }
 /* eslint-enable */
 
@@ -69,7 +67,7 @@ function toOutputScriptTemporary(validAddress: string, network: bjs.Network): Bu
       return bjs.payments.p2pkh({ hash: decodeBase58.hash }).output as Buffer;
     if (decodeBase58.version === network.scriptHash)
       return bjs.payments.p2sh({ hash: decodeBase58.hash }).output as Buffer;
-  } catch (e) {
+  } catch {
     // It's not a base58 address, so it's a segwit address
   }
   const decodeBech32 = fromBech32(validAddress);

@@ -4,7 +4,7 @@ import { Flex, IconsLegacy, Divider, Alert, Text } from "@ledgerhq/native-ui";
 import Switch from "~/components/Switch";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut, LinearTransition } from "react-native-reanimated";
 import Slider from "@react-native-community/slider";
 import FloatingDebugButton from "../FloatingDebugButton";
 import EventList from "./EventList";
@@ -118,7 +118,7 @@ const AnalyticsConsole = () => {
               </AnimatedFlex>
             ) : null}
           </AnimatedFlex>
-          <AnimatedFlex flexShrink={1} layout={Layout}>
+          <AnimatedFlex flexShrink={1} layout={LinearTransition}>
             <EventList
               hidden={visibility === Visibility.hidden}
               showExtraProps={showExtraProps}

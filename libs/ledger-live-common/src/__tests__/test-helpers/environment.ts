@@ -45,6 +45,7 @@ setSupportedCurrencies([
   "cosmos",
   "algorand",
   "polkadot",
+  "assethub_polkadot",
   "bitcoin_testnet",
   "bitcoin_regtest",
   "ethereum_sepolia",
@@ -90,7 +91,7 @@ setSupportedCurrencies([
   "base_sepolia",
   "stacks",
   "telos_evm",
-  "sei_network_evm",
+  "sei_evm",
   "berachain",
   "hyperevm",
   "coreum",
@@ -127,6 +128,8 @@ setSupportedCurrencies([
   "monad_testnet",
   "somnia",
   "zero_gravity",
+  "concordium",
+  "concordium_testnet",
 ]);
 LiveConfig.setConfig(liveConfig);
 

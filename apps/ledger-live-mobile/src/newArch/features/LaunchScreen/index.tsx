@@ -1,11 +1,12 @@
 import React from "react";
 import { View, StyleSheet, Animated } from "react-native";
+import { logStartupEvent } from "LLM/utils/logStartupTime";
 import { LoadingState, LoadingConfig, DEFAULT_LOADING_CONFIG } from "./LoadingStates";
 import LottieLauncher from "./components/LottieLauncher";
 import { useAppLoadingManager } from "./hooks/useAppLoadingManager";
 import Config from "react-native-config";
 
-interface AppLoadingManagerProps {
+export interface AppLoadingManagerProps {
   children: React.ReactNode;
   isNavigationReady: boolean;
   config?: LoadingConfig;
@@ -18,6 +19,8 @@ export const AppLoadingManager: React.FC<AppLoadingManagerProps> = ({
   config = DEFAULT_LOADING_CONFIG,
   onAppReady,
 }) => {
+  logStartupEvent("Splash screen render");
+
   const { loadingState, appIsReady, handleLottieFinish, appOpacity, lottieOpacity } =
     useAppLoadingManager({ isNavigationReady, config, onAppReady });
 

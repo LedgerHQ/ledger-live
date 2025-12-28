@@ -22,12 +22,7 @@ export const Tag = ({
 }) => {
   return (
     <Wrapper testID="tag" $spacing={spacing}>
-      <Text
-        color="palette.neutral.c70"
-        fontSize="10px"
-        lineHeight="16px"
-        textTransform={textTransform}
-      >
+      <Text color="neutral.c70" fontSize="10px" lineHeight="16px" textTransform={textTransform}>
         {children}
       </Text>
     </Wrapper>

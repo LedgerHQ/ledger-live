@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { ModularDrawerStep } from "../types";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import {
   modularDrawerEnableAccountSelectionSelector,
   modularDrawerStepSelector,

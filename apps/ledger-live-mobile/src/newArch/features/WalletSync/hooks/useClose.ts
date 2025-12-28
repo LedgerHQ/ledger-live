@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { setFromLedgerSyncOnboarding, setIsPostOnboardingFlow } from "~/actions/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import {
@@ -11,12 +11,15 @@ import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/u
 import {
   isFromLedgerSyncOnboardingSelector,
   isPostOnboardingFlowSelector,
+  onboardingTypeSelector,
 } from "~/reducers/settings";
+import { OnboardingType } from "~/reducers/types";
 
 export function useClose() {
   const navigationOnbarding =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
   const isFromLedgerSyncOnboarding = useSelector(isFromLedgerSyncOnboardingSelector);
+  const onboardingType = useSelector(onboardingTypeSelector);
   const isPostOnboardingFlow = useSelector(isPostOnboardingFlowSelector);
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
   const dispatch = useDispatch();
@@ -24,6 +27,12 @@ export function useClose() {
   const close = () => {
     if (isFromLedgerSyncOnboarding) {
       dispatch(setFromLedgerSyncOnboarding(false));
+
+      if (onboardingType === OnboardingType.setupNew) {
+        navigationOnbarding.popToTop();
+        navigationOnbarding.goBack();
+        return;
+      }
     }
 
     if (isPostOnboardingFlow) {

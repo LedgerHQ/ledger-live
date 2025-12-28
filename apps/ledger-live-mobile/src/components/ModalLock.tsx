@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import { setModalLock } from "~/actions/appstate";
 
 /**

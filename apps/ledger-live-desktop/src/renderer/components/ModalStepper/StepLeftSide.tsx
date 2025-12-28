@@ -50,7 +50,7 @@ const StepLeftSide = ({
           </Text>
         )}
         {description && (
-          <Text variant="body" fontWeight="medium" color="palette.neutral.c80">
+          <Text variant="body" fontWeight="medium" color="neutral.c80">
             {description}
           </Text>
         )}

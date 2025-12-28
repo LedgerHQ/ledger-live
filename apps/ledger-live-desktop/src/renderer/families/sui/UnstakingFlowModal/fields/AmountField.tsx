@@ -79,7 +79,7 @@ export default function AmountField({
 }
 const InputLeft = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   fontSize: 4,
   justifyContent: "center",
   horizontal: true,
@@ -87,7 +87,7 @@ const InputLeft = styled(Box).attrs(() => ({
 }))``;
 const InputRight = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   fontSize: 4,
   justifyContent: "center",
   horizontal: true,
@@ -103,9 +103,9 @@ const getBackgroundColor = (p: {
     return p.theme.colors.lightRed;
   }
   if (p.active) {
-    return p.theme.colors.palette.primary.main;
+    return p.theme.colors.primary.c80;
   }
-  return p.theme.colors.palette.action.hover;
+  return p.theme.colors.opacityDefault.c10;
 };
 
 const getTextColor = (p: {
@@ -117,9 +117,9 @@ const getTextColor = (p: {
     return p.theme.colors.alertRed;
   }
   if (p.active) {
-    return p.theme.colors.palette.primary.contrastText;
+    return p.theme.colors.neutral.c00;
   }
-  return p.theme.colors.palette.primary.main;
+  return p.theme.colors.primary.c80;
 };
 
 const AmountButton = styled.button.attrs(() => ({

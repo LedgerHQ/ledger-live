@@ -1,5 +1,17 @@
 # @actions/live-common-affected
 
+## 1.3.0
+
+### Minor Changes
+
+- [#12927](https://github.com/LedgerHQ/ledger-live/pull/12927) [`ff53856`](https://github.com/LedgerHQ/ledger-live/commit/ff53856fbe70845728dc0c52ac687dbf4dc730b3) Thanks [@qperrot](https://github.com/qperrot)! - Fix run integration tests if families or coin-modules is affected
+
+## 1.3.0-next.0
+
+### Minor Changes
+
+- [#12927](https://github.com/LedgerHQ/ledger-live/pull/12927) [`ff53856`](https://github.com/LedgerHQ/ledger-live/commit/ff53856fbe70845728dc0c52ac687dbf4dc730b3) Thanks [@qperrot](https://github.com/qperrot)! - Fix run integration tests if families or coin-modules is affected
+
 ## 1.2.0
 
 ### Minor Changes

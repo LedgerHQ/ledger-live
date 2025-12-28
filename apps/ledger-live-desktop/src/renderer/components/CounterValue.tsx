@@ -48,7 +48,7 @@ export const NoCountervaluePlaceholder = ({
       <ToolTip
         content={<Trans i18nKey="errors.countervaluesUnavailable.title" />}
         containerStyle={{
-          color: colors.palette.text.shade40,
+          color: colors.neutral.c60,
         }}
       >
         {placeholder || "-"}

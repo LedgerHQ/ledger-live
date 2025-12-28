@@ -26,6 +26,7 @@ const getLeftElement =
             params,
             NetworkConfigurationDeps.useAccountData,
             NetworkConfigurationDeps.accountsCountAndApy,
+            NetworkConfigurationDeps.accountsApy,
           );
       case "numberOfAccounts":
       default:
@@ -53,7 +54,12 @@ const getRightElement =
   };
 
 type NetworksWithComponents = CryptoOrTokenCurrency &
-  Network & { balanceData?: BalanceUI; count?: number };
+  Network & {
+    balanceData?: BalanceUI;
+    count?: number;
+    apy?: React.ReactElement;
+    description?: string;
+  };
 
 const sortNetworks = (
   result: NetworksWithComponents[],
@@ -87,7 +93,15 @@ export const createNetworkConfigurationHook =
 
     return (
       networks: CryptoOrTokenCurrency[],
-    ): Array<CryptoOrTokenCurrency & Network & { balanceData?: BalanceUI; count?: number }> => {
+    ): Array<
+      CryptoOrTokenCurrency &
+        Network & {
+          balanceData?: BalanceUI;
+          count?: number;
+          apy?: React.ReactElement;
+          description?: string;
+        }
+    > => {
       const hookResults = hooks.map(hook =>
         hook({
           networks,

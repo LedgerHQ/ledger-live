@@ -1,4 +1,5 @@
 import type {
+  HederaMirrorAccount,
   HederaMirrorCoinTransfer,
   HederaMirrorToken,
   HederaMirrorTokenTransfer,
@@ -13,6 +14,24 @@ export const getMockedMirrorToken = (overrides?: Partial<HederaMirrorToken>): He
     decimals: 0,
     freeze_status: "NOT_APPLICABLE",
     kyc_status: "NOT_APPLICABLE",
+    ...overrides,
+  };
+};
+
+export const getMockedMirrorAccount = (
+  overrides?: Partial<HederaMirrorAccount>,
+): HederaMirrorAccount => {
+  return {
+    account: "0.0.12345",
+    evm_address: "0x0000000000000000000000000000000000012345",
+    balance: {
+      balance: 1000,
+      timestamp: "1764932745.835883000",
+      tokens: [],
+    },
+    max_automatic_token_associations: -1,
+    pending_reward: 0,
+    staked_node_id: null,
     ...overrides,
   };
 };

@@ -7,6 +7,7 @@ import { ScreenName } from "~/const";
 import { AnalyticsButton, AnalyticsFlow, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import { track } from "~/analytics";
 import { useClose } from "../../hooks/useClose";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type Props = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncSuccess>
@@ -14,9 +15,18 @@ type Props = BaseComposite<
 
 export function ActivationSuccess({ route }: Props) {
   const { t } = useTranslation();
+  const ledgerSyncOptimisationFlag = useFeature("lwmLedgerSyncOptimisation");
   const { created } = route.params;
-  const title = created ? "walletSync.success.activation" : "walletSync.success.sync";
-  const desc = created ? "" : "walletSync.success.syncDesc";
+  const title = ledgerSyncOptimisationFlag?.enabled
+    ? "walletSync.success.complete.title"
+    : created
+      ? "walletSync.success.activation"
+      : "walletSync.success.sync";
+  const desc = ledgerSyncOptimisationFlag?.enabled
+    ? "walletSync.success.complete.description"
+    : created
+      ? ""
+      : "walletSync.success.syncDesc";
   const page = created ? AnalyticsPage.BackupCreationSuccess : AnalyticsPage.SyncSuccess;
 
   const close = useClose();

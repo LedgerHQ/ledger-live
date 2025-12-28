@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { createSelector } from "reselect";
 import compareDate from "~/logic/compareDate";
 import { dateFormatSelector, languageSelector } from "~/reducers/settings";
@@ -14,7 +14,7 @@ const defaultOptionsSelector = createSelector(languageSelector, language =>
   genericFormatter(language),
 );
 
-const hoursAndMinutesOptionsSelector = createSelector(
+export const hoursAndMinutesOptionsSelector = createSelector(
   languageSelector,
   language =>
     new Intl.DateTimeFormat(language, {
@@ -23,7 +23,7 @@ const hoursAndMinutesOptionsSelector = createSelector(
     }),
 );
 
-function FormatDate({ date, withHoursMinutes = false }: Props): JSX.Element | null {
+function FormatDate({ date, withHoursMinutes = false }: Props): React.JSX.Element | null {
   const defaultOptions = useSelector(defaultOptionsSelector);
 
   const hoursAndMinutesOptions = useSelector(hoursAndMinutesOptionsSelector);

@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCallback, useMemo } from "react";
 import { useBrazeContentCard } from "./brazeContentCard";

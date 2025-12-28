@@ -14,6 +14,6 @@ export type EntryPointsData = Record<
     enabled: boolean;
     page: AnalyticsPage;
     onClick: () => void;
-    component: ({ onPress }: { onPress: () => void }) => JSX.Element;
+    component: ({ onPress }: { onPress: () => void }) => React.JSX.Element;
   }
 >;

@@ -5,7 +5,7 @@ import { Button, Flex } from "@ledgerhq/native-ui";
 import { ExchangeRate, OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { useSwapTransaction, usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { useTranslation } from "react-i18next";
 import {
   flattenAccounts,

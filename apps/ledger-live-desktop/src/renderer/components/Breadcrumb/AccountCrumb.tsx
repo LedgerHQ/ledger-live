@@ -68,7 +68,7 @@ const AccountCrumb = () => {
       const name = accountNameWithDefaultSelector(walletState, item.account);
       return (
         <Item key={item.key} isActive={isActive}>
-          <CryptoCurrencyIcon size={16} currency={currency} />
+          <CryptoCurrencyIcon size={22} currency={currency} />
           <Ellipsis ff={`Inter|${isActive ? "SemiBold" : "Regular"}`} fontSize={4}>
             {name}
           </Ellipsis>
@@ -170,7 +170,7 @@ const AccountCrumb = () => {
           value ? (
             <Box flex={1} shrink={!!parentId} horizontal>
               <TextLink shrink>
-                {currency && <CryptoCurrencyIcon size={14} currency={currency} />}
+                {currency && <CryptoCurrencyIcon size={20} currency={currency} />}
                 <Button onClick={openActiveAccount}>
                   <Ellipsis>{value.label}</Ellipsis>
                 </Button>

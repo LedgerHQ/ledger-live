@@ -91,6 +91,8 @@ import { useTrackSyncFlow } from "~/renderer/analytics/hooks/useTrackSyncFlow";
 import { useTrackGenericDAppTransactionSend } from "~/renderer/analytics/hooks/useTrackGenericDAppTransactionSend";
 import { useTrackTransactionChecksFlow } from "~/renderer/analytics/hooks/useTrackTransactionChecksFlow";
 import { useTrackDmkErrorsEvents } from "~/renderer/analytics/hooks/useTrackDmkErrorsEvents";
+import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { DeviceId } from "@ledgerhq/client-ids/ids";
 
 export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -112,6 +114,7 @@ type States = PartialNullable<{
   allowRenamingRequested: boolean;
   requestQuitApp: boolean;
   deviceInfo: DeviceInfo;
+  deviceId: DeviceId | null | undefined;
   latestFirmware: unknown;
   onRepairModal: (open: boolean) => void;
   requestOpenApp: string;
@@ -164,7 +167,7 @@ type InnerProps<P> = {
   Result?: React.ComponentType<P>;
   onResult?: (_: NonNullable<P>) => void;
   onError?: (_: Error) => Promise<void> | void;
-  renderOnResult?: (_: P) => JSX.Element | null;
+  renderOnResult?: (_: P) => React.JSX.Element | null;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
   overridesPreferredDeviceModel?: DeviceModelId;
@@ -180,7 +183,7 @@ type Props<H extends States, P> = InnerProps<P> & {
 class OnResult<P> extends Component<{ payload: P; onResult: (_: P) => void }> {
   componentDidMount() {
     const { onResult, payload } = this.props;
-    onResult && onResult(payload);
+    onResult?.(payload);
   }
 
   render() {
@@ -214,6 +217,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     imageRemoveRequested,
     requestQuitApp,
     deviceInfo,
+    deviceId,
     latestFirmware,
     repairModalOpened,
     requestOpenApp,
@@ -338,7 +342,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
   useTrackDmkErrorsEvents({ error });
 
-  const type = useTheme().colors.palette.type;
+  const type = useTheme().theme;
 
   const modelId = device ? device.modelId : overridesPreferredDeviceModel || preferredDeviceModel;
 
@@ -367,6 +371,13 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       dispatch(addNewDeviceModel({ deviceModelId: lastSeenDevice.modelId }));
     }
   }, [dispatch, device, deviceInfo, latestFirmware]);
+
+  // Add deviceId to identities store when detected
+  useEffect(() => {
+    if (deviceId) {
+      dispatch(identitiesSlice.actions.addDeviceId(deviceId));
+    }
+  }, [dispatch, deviceId]);
 
   if (displayUpgradeWarning && appAndVersion && passWarning) {
     return renderWarningOutdated({ appName: appAndVersion.name, passWarning });
@@ -640,7 +651,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderLoading();
   }
 
-  if (deviceInfo && deviceInfo.isBootloader && onAutoRepair) {
+  if (deviceInfo?.isBootloader && onAutoRepair) {
     return renderBootloaderStep({ onAutoRepair });
   }
 
@@ -739,7 +750,7 @@ export default function DeviceAction<R, H extends States, P>({
 }: InnerProps<P> & {
   action: Action<R, H, P>;
   request: R;
-}): JSX.Element {
+}): React.JSX.Element {
   const device = useSelector(getCurrentDevice);
   const hookState = action.useHook(device, request);
   const payload = action.mapResult(hookState);

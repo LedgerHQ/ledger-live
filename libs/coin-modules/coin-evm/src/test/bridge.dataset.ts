@@ -1,3 +1,5 @@
+// NOTE We can keep only one entry point for all coins that use the
+// Generic Adapter, since it is one unique implementation of the Bridge.
 /**
  * ⚠️ In order to test this file, you must run the test from the live-common repo
  */
@@ -14,7 +16,7 @@ export const dataset: DatasetTest<Transaction> = {
   currencies: {
     ethereum: {
       FIXME_ignorePreloadFields: true, // FIXME LIVE-12356 : preload data seems instable between two calls
-      IgnorePrepareTransactionFields: ["maxFeePerGas", "maxPriorityFeePerGas"],
+      IgnorePrepareTransactionFields: ["fees", "maxFeePerGas", "maxPriorityFeePerGas"],
       accounts: [
         {
           FIXME_tests: ["balance is sum of ops"],

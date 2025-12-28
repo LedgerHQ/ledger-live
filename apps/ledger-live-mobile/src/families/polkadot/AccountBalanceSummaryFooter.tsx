@@ -1,4 +1,3 @@
-import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -6,7 +5,7 @@ import BigNumber from "bignumber.js";
 import { useTheme } from "@react-navigation/native";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
+import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import { hasMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/logic";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import type { ModalInfo } from "~/modals/Info";
@@ -17,7 +16,7 @@ import BondedIcon from "~/icons/LinkIcon";
 import UnbondingIcon from "~/icons/Clock";
 import Unbonded from "~/icons/Undelegate";
 import WarningIcon from "~/icons/Warning";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: PolkadotAccount;
@@ -117,13 +116,11 @@ function useInfo(account: PolkadotAccount): Record<InfoName, ModalInfo[]> {
   });
 
   const { currency } = account;
-  const PolkadotIcon = getCryptoCurrencyIcon(currency);
-  invariant(PolkadotIcon, "Icon is expected");
 
   return {
     available: [
       {
-        Icon: () => <PolkadotIcon color={currency.color} size={18} />,
+        Icon: () => <CryptoIcon ledgerId={currency.id} ticker={currency.ticker} size={20} />,
         title: t("polkadot.info.available.title"),
         description: t("polkadot.info.available.description"),
       },

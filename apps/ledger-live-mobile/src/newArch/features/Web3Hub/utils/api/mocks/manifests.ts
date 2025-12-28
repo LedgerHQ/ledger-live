@@ -135,7 +135,7 @@ export const mocks: AppManifest[] = [
       "base_sepolia",
       "telos_evm",
       "hyperevm",
-      "sei_network_evm",
+      "sei_evm",
       "berachain",
       "coreum",
       "injective",

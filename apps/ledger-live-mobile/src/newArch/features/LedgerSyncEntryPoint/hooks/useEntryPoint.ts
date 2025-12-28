@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
@@ -7,12 +7,14 @@ import { track } from "~/analytics";
 import { EntryPoint, EntryPointsData } from "../types";
 import CtaEntryPoint from "../components/CtaEntryPoint";
 import CardEntryPoint from "../components/CardEntryPoint";
+import OptimisedCardEntryPoint from "../components/CardEntryPoint/optimisedCardEntryPoint";
 
 export function useEntryPoint(entryPoint: EntryPoint) {
   const featureLedgerSyncEntryPoints = useFeature("llmLedgerSyncEntryPoints");
   const featureWalletSync = useFeature("llmWalletSync");
   const trustchain = useSelector(trustchainSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+  const lwmLedgerSyncOptimisation = useFeature("lwmLedgerSyncOptimisation");
 
   const isLedgerSyncEnabled = featureWalletSync?.enabled ?? false;
   const areEntryPointsEnabled = featureLedgerSyncEntryPoints?.enabled ?? false;
@@ -34,18 +36,28 @@ export function useEntryPoint(entryPoint: EntryPoint) {
     },
     component: CardEntryPoint,
   };
+  const optimisedCardEntryPoint = {
+    onClick: ({ page }: { page: string }) => {
+      track("banner_clicked", { banner: "Ledger Sync Activation", page });
+    },
+    component: OptimisedCardEntryPoint,
+  };
 
   const entryPointsData: EntryPointsData = {
     [EntryPoint.manager]: {
       enabled: featureLedgerSyncEntryPoints?.params?.manager ?? false,
-      ...cardEntryPoint,
+      ...(lwmLedgerSyncOptimisation?.enabled ? optimisedCardEntryPoint : cardEntryPoint),
     },
     [EntryPoint.accounts]: {
       enabled: featureLedgerSyncEntryPoints?.params?.accounts ?? false,
-      ...ctaEntryPoint,
+      ...(lwmLedgerSyncOptimisation?.enabled ? optimisedCardEntryPoint : ctaEntryPoint),
     },
     [EntryPoint.settings]: {
       enabled: featureLedgerSyncEntryPoints?.params?.settings ?? false,
+      ...(lwmLedgerSyncOptimisation?.enabled ? optimisedCardEntryPoint : cardEntryPoint),
+    },
+    [EntryPoint.onboarding]: {
+      enabled: featureLedgerSyncEntryPoints?.params?.onboarding ?? false,
       ...cardEntryPoint,
     },
     [EntryPoint.postOnboarding]: {

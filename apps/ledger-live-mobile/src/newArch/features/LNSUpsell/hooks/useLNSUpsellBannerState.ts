@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { LlmNanoSUpsellBannersConfig } from "@ledgerhq/types-live/lib/lnsUpsell";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";

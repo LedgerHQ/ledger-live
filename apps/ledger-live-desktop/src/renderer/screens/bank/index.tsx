@@ -29,7 +29,7 @@ const Bank = () => {
     shareAnalytics,
   });
   const history = useHistory();
-  const themeType = useTheme().colors.palette.type;
+  const themeType = useTheme().theme;
   const params = location.state || {};
   const providerInterstitialEnabled = useProviderInterstitalEnabled({
     manifest,

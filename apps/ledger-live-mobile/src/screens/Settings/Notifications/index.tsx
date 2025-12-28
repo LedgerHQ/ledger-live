@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect, useMemo } from "react";
 import { Platform } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { useTranslation } from "react-i18next";
 import { capitalize } from "lodash/fp";
 import { Box, Switch, Text, Button, IconsLegacy, InfiniteLoader } from "@ledgerhq/native-ui";

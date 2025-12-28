@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-http",
-  "version": "6.31.0",
+  "version": "6.31.1",
   "description": "Ledger Hardware Wallet communication layer over http",
   "keywords": [
     "Ledger",
@@ -31,7 +31,7 @@
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/logs": "workspace:^",
     "axios": "catalog:",
-    "ws": "^7.5.2"
+    "ws": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

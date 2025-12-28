@@ -6,7 +6,7 @@ const StyledSVG = styled(Svg)`
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 164;
+  height: 164px;
 `;
 
 export type Props = {

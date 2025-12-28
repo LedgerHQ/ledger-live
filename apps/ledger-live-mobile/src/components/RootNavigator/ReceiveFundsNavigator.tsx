@@ -18,7 +18,7 @@ import { ReceiveFundsStackParamList } from "./types/ReceiveFundsNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { Flex } from "@ledgerhq/native-ui";
 import HelpButton from "~/screens/ReceiveFunds/HelpButton";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { hasClosedWithdrawBannerSelector, isOnboardingFlowSelector } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
 import ReceiveProvider from "~/screens/ReceiveFunds/01b-ReceiveProvider.";

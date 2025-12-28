@@ -349,6 +349,14 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Base: {
+    currency: getCryptoCurrencyById("base"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Ethereum",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(
@@ -395,7 +403,6 @@ export async function startSpeculos(
   if (!appCandidate) {
     console.warn("no app found for " + testName);
     console.warn(appQuery);
-    console.warn(JSON.stringify(appCandidates, undefined, 2));
   }
   invariant(
     appCandidate,
@@ -815,15 +822,14 @@ export async function signSendTransaction(tx: Transaction) {
   const currencyName = tx.accountToDebit.currency;
   switch (currencyName) {
     case Currency.sepETH:
+    case Currency.BASE:
     case Currency.POL:
     case Currency.ETH:
+    case Currency.ETH_USDT:
       await sendEVM(tx);
       break;
     case Currency.BTC:
       await sendBTC(tx);
-      break;
-    case Currency.ETH_USDT:
-      await sendEVM(tx);
       break;
     case Currency.DOGE:
     case Currency.BCH:

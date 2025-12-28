@@ -21,7 +21,7 @@ import { useLargeMoverChartData } from "@ledgerhq/live-common/market/hooks/useLa
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { OverlayTutorial } from "./components/OverlayTutorial";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { tutorialSelector } from "~/reducers/largeMover";
 
 type LargeMoverLandingPageProps = StackNavigatorProps<

@@ -46,6 +46,8 @@ jest.mock("react-native-gesture-handler", () => {
   };
 });
 
+jest.mock("react-native-gesture-handler/ReanimatedSwipeable");
+
 jest.mock("react-native-haptic-feedback", () => ({
   default: {
     trigger: jest.fn(),
@@ -64,26 +66,31 @@ jest.mock("react-native-share", () => ({
   default: jest.fn(),
 }));
 
-const mockPermissions = {
-  status: "granted",
-  expires: "never",
-  canAskAgain: true,
-  granted: true,
-};
-
 export const mockSimulateBarcodeScanned = jest.fn();
+export const mockGetCameraPermissionStatus = jest.fn(() => "granted");
 
-jest.mock("expo-camera", () => {
+jest.mock("react-native-vision-camera", () => {
+  const CameraMock = jest.fn(({ codeScanner }) => {
+    if (codeScanner?.onCodeScanned) {
+      mockSimulateBarcodeScanned.mockImplementation(code => {
+        codeScanner.onCodeScanned([code]);
+      });
+    }
+    return null;
+  });
+  CameraMock.getCameraPermissionStatus = mockGetCameraPermissionStatus;
+
   return {
-    CameraView: jest.fn(({ onBarcodeScanned }) => {
-      mockSimulateBarcodeScanned.mockImplementation(onBarcodeScanned);
-      return null;
-    }),
-    useCameraPermissions: jest.fn(() => [
-      mockPermissions,
-      jest.fn(() => Promise.resolve(mockPermissions)),
-      jest.fn(() => Promise.resolve(mockPermissions)),
-    ]),
+    Camera: CameraMock,
+    useCameraPermission: jest.fn(() => ({
+      hasPermission: true,
+      requestPermission: jest.fn(() => Promise.resolve(true)),
+    })),
+    useCameraDevice: jest.fn(() => ({
+      id: "mock-camera-device",
+      position: "back",
+    })),
+    useCodeScanner: jest.fn(config => config),
   };
 });
 
@@ -103,6 +110,20 @@ jest.mock("~/analytics/segment", () => ({
 
 // Mock of Native Modules
 jest.mock("react-native-localize", () => mockLocalize);
+
+jest.mock("react-redux", () => {
+  const actual = jest.requireActual("react-redux");
+  const withTypesSupport = hook => {
+    hook.withTypes = () => hook;
+    return hook;
+  };
+  return {
+    ...actual,
+    useDispatch: withTypesSupport(actual.useDispatch),
+    useSelector: withTypesSupport(actual.useSelector),
+    useStore: withTypesSupport(actual.useStore),
+  };
+});
 
 jest.mock("@react-native-async-storage/async-storage", () => mockAsyncStorage);
 

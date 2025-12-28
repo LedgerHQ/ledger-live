@@ -8,10 +8,10 @@ import Text from "~/renderer/components/Text";
 import Interactions from "~/renderer/icons/device/interactions";
 const Bullet = styled.span`
   font-weight: 600;
-  color: ${p => p.theme.colors.palette.text.shade100};
+  color: ${p => p.theme.colors.neutral.c100};
 `;
 const Separator = styled(Box).attrs(() => ({
-  color: "palette.divider",
+  color: "divider",
 }))`
   height: 1px;
   width: 100%;
@@ -23,7 +23,7 @@ type Props = {
 const FlashMCUNanosLocal = ({ deviceModelId }: Props) => (
   <>
     <Box mx={7}>
-      <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade80">
+      <Text ff="Inter|Regular" textAlign="center" color="neutral.c80">
         <Bullet>{"1. "}</Bullet>
         <Trans i18nKey="manager.modal.mcuFirst" />
       </Text>
@@ -38,12 +38,12 @@ const FlashMCUNanosLocal = ({ deviceModelId }: Props) => (
     </Box>
     <Separator my={6} />
     <Box mx={7}>
-      <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade80">
+      <Text ff="Inter|Regular" textAlign="center" color="neutral.c80">
         <Bullet>{"2. "}</Bullet>
         {deviceModelId === "nanoX" ? (
           <Trans i18nKey="manager.modal.mcuSecondNanoX">
             {"text"}
-            <Text ff="Inter|SemiBold" color="palette.text.shade100">
+            <Text ff="Inter|SemiBold" color="neutral.c100">
               {bootloaderMode}
             </Text>
             {"text"}
@@ -51,7 +51,7 @@ const FlashMCUNanosLocal = ({ deviceModelId }: Props) => (
         ) : (
           <Trans i18nKey="manager.modal.mcuSecond">
             {"text"}
-            <Text ff="Inter|SemiBold" color="palette.text.shade100">
+            <Text ff="Inter|SemiBold" color="neutral.c100">
               {bootloader}
             </Text>
             {"text"}
@@ -82,7 +82,7 @@ const FlashMCUBlueLocal = ({ deviceModelId }: Props) => (
   <>
     <Box mx={7} horizontal>
       <Container px={1}>
-        <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade80">
+        <Text ff="Inter|Regular" textAlign="center" color="neutral.c80">
           <Bullet>{"1. "}</Bullet>
           <Trans i18nKey="manager.modal.mcuBlueFirst" />
         </Text>
@@ -91,7 +91,7 @@ const FlashMCUBlueLocal = ({ deviceModelId }: Props) => (
         </Box>
       </Container>
       <Container>
-        <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade80">
+        <Text ff="Inter|Regular" textAlign="center" color="neutral.c80">
           <Bullet>{"2. "}</Bullet>
           <Trans i18nKey="manager.modal.mcuBlueSecond" />
         </Text>

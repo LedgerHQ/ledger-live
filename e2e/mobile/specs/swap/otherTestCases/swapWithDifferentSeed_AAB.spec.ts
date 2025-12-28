@@ -1,3 +1,4 @@
+import { Addresses } from "@ledgerhq/live-common/lib/e2e/enum/Addresses";
 import { runSwapWithDifferentSeedTest } from "./swap.other";
 
 const swapTestConfig = {
@@ -6,13 +7,17 @@ const swapTestConfig = {
   userData: "speculos-x-other-account",
   errorMessage:
     "This sending account does not belong to the connected device. Please change and retry.",
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  addressFrom: Addresses.ETH_OTHER_SEED,
+  addressTo: Addresses.SOL_OTHER_SEED,
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runSwapWithDifferentSeedTest(
   swapTestConfig.swap,
   swapTestConfig.userData,
   swapTestConfig.errorMessage,
+  swapTestConfig.addressFrom,
+  swapTestConfig.addressTo,
   swapTestConfig.tmsLinks,
   swapTestConfig.tags,
 );

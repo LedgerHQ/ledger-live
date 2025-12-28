@@ -10,10 +10,9 @@ import {
   KeyboardEventListener,
   ListRenderItem,
 } from "react-native";
-import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation, Trans } from "react-i18next";
-import Icon from "react-native-vector-icons/Feather";
+import { Icons } from "@ledgerhq/native-ui";
 import { RecipientRequired } from "@ledgerhq/errors";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -22,7 +21,6 @@ import type { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { useBakers } from "@ledgerhq/live-common/families/tezos/react";
 import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import { useTheme } from "@react-navigation/native";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import InfoModal from "~/components/InfoModal";
@@ -36,6 +34,7 @@ import Info from "~/icons/Info";
 import BakerImage from "../BakerImage";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { TezosDelegationFlowParamList } from "./types";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const keyExtractor = (baker: Baker) => baker.address;
 
@@ -117,7 +116,7 @@ const BakerRow = ({ onPress, baker }: { onPress: (arg0: Baker) => void; baker: B
 
 const ModalIcon = () => {
   const { colors } = useTheme();
-  return <Icon name="user-plus" size={24} color={colors.live} />;
+  return <Icons.UserAdd size="M" color={colors.live} />;
 };
 
 type Props = StackNavigatorProps<
@@ -128,7 +127,7 @@ type Props = StackNavigatorProps<
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const bakers = useBakers(whitelist);
   const [editingCustom, setEditingCustom] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -290,7 +289,7 @@ export default function SelectValidator({ navigation, route }: Props) {
           ]}
           onChangeText={onChangeText}
           value={transaction.recipient}
-          blurOnSubmit
+          submitBehavior="blurAndSubmit"
           autoCapitalize="none"
           clearButtonMode="always"
         />

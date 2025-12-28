@@ -48,7 +48,7 @@ const Container = styled(Tabbable).attrs<{
 
 type Props = {
   manifest: LiveAppManifest;
-  onClick: Function;
+  onClick: () => void;
   id?: string;
 };
 

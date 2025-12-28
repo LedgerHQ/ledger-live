@@ -18,6 +18,7 @@
     "src/test/cli.ts",
     "src/test/fixtures.ts",
     "src/test/index.ts",
-    "src/test/speculos-deviceActions.ts"
+    "src/test/speculos-deviceActions.ts",
+    "src/supportedFeatures.ts"
   ]
 }

@@ -5,7 +5,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { BalanceUI } from "@ledgerhq/live-common/modularDrawer/utils/type";
 

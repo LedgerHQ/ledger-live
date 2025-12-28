@@ -144,7 +144,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
       <HeaderContainer>
         <Text
           ff="Inter|Medium"
-          color="palette.text.shade100"
+          color="neutral.c100"
           fontSize="24px"
           textTransform="uppercase"
           data-testid="select-asset-drawer-title"

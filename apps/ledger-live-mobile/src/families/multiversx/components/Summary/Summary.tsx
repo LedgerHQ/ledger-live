@@ -12,7 +12,7 @@ import InfoItem from "~/components/BalanceSummaryInfoItem";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 
 import styles from "./styles";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 /*
  * Create a higher order component that will return null if balance is zero (thus unable to delegate).

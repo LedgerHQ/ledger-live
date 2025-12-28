@@ -15,7 +15,7 @@ type OperationFn = (
 ) => unknown[];
 
 const STAKING_PROTOCOLS: Record<string, Record<string, OperationFn>> = {
-  sei_network_evm: {
+  sei_evm: {
     delegate: valAddress => [valAddress],
     undelegate: (valAddress, amount) => [valAddress, amount],
     redelegate: (valAddress, amount, dstValAddress) => {

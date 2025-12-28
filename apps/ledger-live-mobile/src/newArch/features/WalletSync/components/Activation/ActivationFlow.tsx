@@ -1,7 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import Activation from ".";
+import ActivationModal from "./ActivationModal";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { TrackScreen } from "~/analytics";
 import {
   RootNavigationComposite,
@@ -51,6 +53,7 @@ const ActivationFlow = ({
 }: Props) => {
   const { currentStep, setCurrentStep } = useCurrentStep();
   const { memberCredentials } = useInitMemberCredentials();
+  const lwmLedgerSyncOptimisation = useFeature("lwmLedgerSyncOptimisation");
 
   const { handleStart, handleSendDigits, nbDigits } = useSyncWithQrCode();
 
@@ -78,10 +81,14 @@ const ActivationFlow = ({
         return (
           <>
             <TrackScreen category={AnalyticsPage.ActivateLedgerSync} />
-            <Activation
-              onSyncMethodPress={onCreateKey}
-              navigateToChooseSyncMethod={navigateToChooseSyncMethod}
-            />
+            {lwmLedgerSyncOptimisation?.enabled ? (
+              <ActivationModal onSyncMethodPress={navigateToChooseSyncMethod} />
+            ) : (
+              <Activation
+                onSyncMethodPress={onCreateKey}
+                navigateToChooseSyncMethod={navigateToChooseSyncMethod}
+              />
+            )}
           </>
         );
       case Steps.ChooseSyncMethod:

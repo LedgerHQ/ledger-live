@@ -7,7 +7,7 @@ import {
   useModularDrawerAnalytics,
 } from "../analytics/useModularDrawerAnalytics";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import {
   modularDrawerFlowSelector,
   modularDrawerStepSelector,

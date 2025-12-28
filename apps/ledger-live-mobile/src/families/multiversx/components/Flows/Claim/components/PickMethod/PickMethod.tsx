@@ -27,7 +27,7 @@ import { ScreenName } from "~/const";
 import { TransactionMethodEnum } from "./enums";
 
 import styles from "./styles";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.

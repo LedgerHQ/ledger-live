@@ -1,9 +1,9 @@
 import { runAddSubAccountTest } from "../subAccount";
 
 const testConfig = {
-  account: Account.TRX_USDT,
+  account: TokenAccount.TRX_USDT,
   tmslinks: ["B2CQA-2496"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
   withParentAccount: true,
 };
 

@@ -33,6 +33,7 @@ on:
           - nanoX
           - stax
           - flex
+          - nanoGen5
         default: nanoX
       production_firebase:
         description: "Target Firebase Production env"
@@ -57,11 +58,6 @@ on:
         description: "Xray execution key for iOS (optional)"
         required: false
         type: string
-      firmware_version:
-        description: "Firmware version to use for selected device"
-        required: false
-        type: string
-        default: "2.6.0"
 
   workflow_call:
     inputs:
@@ -92,10 +88,6 @@ on:
         required: false
         type: boolean
         default: false
-      firmware_version:
-        description: "Firmware version to use for selected device"
-        required: true
-        type: string
 
 permissions:
   id-token: write
@@ -103,15 +95,14 @@ permissions:
 
 env:
   cache-bucket: ll-gha-s3-cache
-  ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
+  ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-x86_64-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}.apk
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
-  ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk
+  ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}-androidTest.apk
   IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'master' }}
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
-  SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '2.6.0' }}
 
 jobs:
   determine-builds:
@@ -157,6 +148,7 @@ jobs:
           test_directory: e2e/mobile
           test_filter: ${{ inputs.test_filter || '' }}
           event_name: ${{ github.event_name }}
+          ref: ${{ inputs.ref || github.ref_name }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -168,8 +160,8 @@ jobs:
       - name: Determine cache keys
         id: cache-keys
         run: |
-          echo "ios_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-2" >> $GITHUB_OUTPUT
-          echo "android_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android" >> $GITHUB_OUTPUT
+          echo "ios_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
+          echo "android_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           echo "ios_js_key=${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}" >> $GITHUB_OUTPUT
@@ -240,10 +232,11 @@ jobs:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: "general-pool"
       disable-turbo-cache: false
-      build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' && !inputs.production_firebase }}
-      build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' && !inputs.production_firebase }}
+      build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
+      build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
       ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
       ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
+      production_firebase: ${{ inputs.production_firebase || false }}
     secrets: inherit
 
   build-android:
@@ -254,10 +247,11 @@ jobs:
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-turbo-cache: false
-      build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' && !inputs.production_firebase }}
-      build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' && !inputs.production_firebase }}
+      build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' }}
+      build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
       android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
       android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
+      production_firebase: ${{ inputs.production_firebase || false }}
     secrets: inherit
 
   detox-tests-ios:
@@ -275,7 +269,6 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-      SEED: ${{ secrets.SEED_QAA_B2C }}
     outputs:
       status: ${{ steps.run-ios.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -369,7 +362,6 @@ jobs:
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - uses: nick-fields/retry@v3
-        if: inputs.production_firebase != true
         name: install dependencies
         id: install-dependencies
         with:
@@ -378,23 +370,11 @@ jobs:
           command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
 
-      - uses: nick-fields/retry@v3
-        if: inputs.production_firebase == true
-        name: install dependencies
-        id: install-dependencies-prod
-        with:
-          max_attempts: 2
-          timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile
-
       - name: Detox Post Install
-        if: inputs.production_firebase != true
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
       - name: Download Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
-        if: inputs.production_firebase != true
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_native_key }}
@@ -406,7 +386,6 @@ jobs:
 
       - name: Download JS Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
-        if: inputs.production_firebase != true
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_js_key }}
@@ -417,7 +396,6 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Copy JS build
-        if: inputs.production_firebase != true
         run: |
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }} 
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
@@ -430,11 +408,6 @@ jobs:
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: false
 
-      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
-        run: |
-          pnpm build:dummy-apps
-        shell: bash
-
       - name: Build CLI
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
         with:
@@ -442,12 +415,6 @@ jobs:
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: false
-
-      - name: Build iOS app for Detox test run
-        if: inputs.production_firebase == true
-        run: pnpm mobile e2e:ci -p ios -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
-        env:
-          PRODUCTION: ${{ inputs.production_firebase }}
 
       - name: Setup Speculos image and Coin Apps
         id: setup-speculos
@@ -474,8 +441,6 @@ jobs:
             --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          AWS_ROLE: ${{ secrets.B2CQA_AWS_ROLE }}
-          CLUSTER: ${{ secrets.B2CQA_CLUSTER }}
           GITHUB_TOKEN: ${{ secrets.LL_SPECULOS_CI }}
           INPUT_E2E: "true"
           REMOTE_SPECULOS: "true"
@@ -605,7 +570,6 @@ jobs:
           packages: "tools platform-tools"
 
       - name: Download Native Build
-        if: inputs.production_firebase != true
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
           key: ${{ needs.determine-builds.outputs.android_native_key }}
@@ -616,7 +580,6 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Bundle
-        if: inputs.production_firebase != true
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
           key: ${{ needs.determine-builds.outputs.android_js_key }}
@@ -627,7 +590,6 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Prepare APK
-        if: inputs.production_firebase != true
         run: |
           mkdir -p /tmp/apk/assets
           mkdir /home/runner/.android/
@@ -659,17 +621,10 @@ jobs:
         run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
 
       - name: Install dependencies
-        if: inputs.production_firebase != true
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
 
-      - name: Install dependencies
-        if: inputs.production_firebase == true
-        run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
-
       - name: Detox Post Install
-        if: inputs.production_firebase != true
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
       - name: Build dependencies
@@ -679,20 +634,6 @@ jobs:
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: false
-
-      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm build:dummy-apps
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: false
-
-      - name: Build Android app for Detox test run
-        if: inputs.production_firebase == true
-        run: pnpm mobile e2e:ci -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
-        env:
-          PRODUCTION: ${{ inputs.production_firebase }}
 
       - name: Download android emulator
         timeout-minutes: 10
@@ -705,6 +646,7 @@ jobs:
           bucket: ledger-live-cache
           endpoint: ${{ secrets.R2_ENDPOINT }}
           region: auto
+          destination: /
 
       - name: create AVD and generate snapshot for caching
         if: steps.detox-avd.outputs.cache-hit != 'true'
@@ -821,11 +763,12 @@ jobs:
     name: Allure Report iOS
     runs-on: [ledger-live-medium]
     if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'Android Only' }}
-    needs: [detox-tests-ios]
+    needs: [determine-builds, detox-tests-ios]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
       finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
+      missingShards: ${{ steps.aggregate.outputs.missingShards }}
     steps:
       - name: Download Allure Report
         uses: actions/download-artifact@v4
@@ -841,6 +784,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
+          report_path_suffix: ${{ github.event_name == 'schedule' && '' || 'manual' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
@@ -850,29 +794,21 @@ jobs:
           platform: iOS
       - name: Aggregate test results
         id: aggregate
-        run: |
-          statuses=(
-            "${{ needs.detox-tests-ios.outputs.status_1 }}"
-            "${{ needs.detox-tests-ios.outputs.status_2 }}"
-            "${{ needs.detox-tests-ios.outputs.status_3 }}"
-            "${{ needs.detox-tests-ios.outputs.status_4 }}"
-            "${{ needs.detox-tests-ios.outputs.status_5 }}"
-            "${{ needs.detox-tests-ios.outputs.status_6 }}"
-            "${{ needs.detox-tests-ios.outputs.status_7 }}"
-            "${{ needs.detox-tests-ios.outputs.status_8 }}"
-            "${{ needs.detox-tests-ios.outputs.status_9 }}"
-            "${{ needs.detox-tests-ios.outputs.status_10 }}"
-            "${{ needs.detox-tests-ios.outputs.status_11 }}"
-            "${{ needs.detox-tests-ios.outputs.status_12 }}"
-          )
-          finalStatus="success"
-          for status in "${statuses[@]}"; do
-            if [ "$status" != "success" ] && [ -n "$status" ]; then
-              finalStatus="failure"
-              break
-            fi
-          done
-          echo "finalStatus=$finalStatus" >> $GITHUB_OUTPUT
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        with:
+          total_shards: ${{ fromJSON(needs.determine-builds.outputs.matrix_ios)[0].total }}
+          status_1: ${{ needs.detox-tests-ios.outputs.status_1 }}
+          status_2: ${{ needs.detox-tests-ios.outputs.status_2 }}
+          status_3: ${{ needs.detox-tests-ios.outputs.status_3 }}
+          status_4: ${{ needs.detox-tests-ios.outputs.status_4 }}
+          status_5: ${{ needs.detox-tests-ios.outputs.status_5 }}
+          status_6: ${{ needs.detox-tests-ios.outputs.status_6 }}
+          status_7: ${{ needs.detox-tests-ios.outputs.status_7 }}
+          status_8: ${{ needs.detox-tests-ios.outputs.status_8 }}
+          status_9: ${{ needs.detox-tests-ios.outputs.status_9 }}
+          status_10: ${{ needs.detox-tests-ios.outputs.status_10 }}
+          status_11: ${{ needs.detox-tests-ios.outputs.status_11 }}
+          status_12: ${{ needs.detox-tests-ios.outputs.status_12 }}
 
   allure-report-android:
     name: Allure Report Android
@@ -882,7 +818,8 @@ jobs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
       finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
-    needs: [detox-tests-android]
+      missingShards: ${{ steps.aggregate.outputs.missingShards }}
+    needs: [determine-builds, detox-tests-android]
     steps:
       - name: Download Allure Report
         uses: actions/download-artifact@v4
@@ -898,6 +835,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts
+          report_path_suffix: ${{ github.event_name == 'schedule' && '' || 'manual' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
@@ -907,29 +845,21 @@ jobs:
           platform: android
       - name: Aggregate test results
         id: aggregate
-        run: |
-          statuses=(
-            "${{ needs.detox-tests-android.outputs.status_1 }}"
-            "${{ needs.detox-tests-android.outputs.status_2 }}"
-            "${{ needs.detox-tests-android.outputs.status_3 }}"
-            "${{ needs.detox-tests-android.outputs.status_4 }}"
-            "${{ needs.detox-tests-android.outputs.status_5 }}"
-            "${{ needs.detox-tests-android.outputs.status_6 }}"
-            "${{ needs.detox-tests-android.outputs.status_7 }}"
-            "${{ needs.detox-tests-android.outputs.status_8 }}"
-            "${{ needs.detox-tests-android.outputs.status_9 }}"
-            "${{ needs.detox-tests-android.outputs.status_10 }}"
-            "${{ needs.detox-tests-android.outputs.status_11 }}"
-            "${{ needs.detox-tests-android.outputs.status_12 }}"
-          )
-          finalStatus="success"
-          for status in "${statuses[@]}"; do
-            if [ "$status" != "success" ] && [ -n "$status" ]; then
-              finalStatus="failure"
-              break
-            fi
-          done
-          echo "finalStatus=$finalStatus" >> $GITHUB_OUTPUT
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        with:
+          total_shards: ${{ fromJSON(needs.determine-builds.outputs.matrix_android)[0].total }}
+          status_1: ${{ needs.detox-tests-android.outputs.status_1 }}
+          status_2: ${{ needs.detox-tests-android.outputs.status_2 }}
+          status_3: ${{ needs.detox-tests-android.outputs.status_3 }}
+          status_4: ${{ needs.detox-tests-android.outputs.status_4 }}
+          status_5: ${{ needs.detox-tests-android.outputs.status_5 }}
+          status_6: ${{ needs.detox-tests-android.outputs.status_6 }}
+          status_7: ${{ needs.detox-tests-android.outputs.status_7 }}
+          status_8: ${{ needs.detox-tests-android.outputs.status_8 }}
+          status_9: ${{ needs.detox-tests-android.outputs.status_9 }}
+          status_10: ${{ needs.detox-tests-android.outputs.status_10 }}
+          status_11: ${{ needs.detox-tests-android.outputs.status_11 }}
+          status_12: ${{ needs.detox-tests-android.outputs.status_12 }}
 
   upload-to-xray:
     name: "Test Mobile E2E > XRAY Report"
@@ -1005,9 +935,11 @@ jobs:
     env:
       IOS_STATUS: ${{ needs.allure-report-ios.outputs.finalStatus }}
       IOS_REPORT_URL: ${{ needs.allure-report-ios.outputs.report-url }}
+      IOS_MISSING_SHARDS: ${{ needs.allure-report-ios.outputs.missingShards }}
       ANDROID_STATUS: ${{ needs.allure-report-android.outputs.finalStatus }}
       ANDROID_REPORT_URL: ${{ needs.allure-report-android.outputs.report-url }}
-      ANDROID_ONLY: ${{ inputs.tests_type == 'Android Only' }}
+      ANDROID_MISSING_SHARDS: ${{ needs.allure-report-android.outputs.missingShards }}
+      TESTS_TYPE: ${{ inputs.tests_type }}
     steps:
       - name: format message
         uses: actions/github-script@v7
@@ -1021,7 +953,7 @@ jobs:
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device || 'nanoX' }}",
+                  "text": ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ inputs.ref || github.ref_name }} - ${{ inputs.speculos_device || 'nanoX' }}",
                   "emoji": true
                 }
               },
@@ -1065,8 +997,8 @@ jobs:
             ];
 
             const infoFields = []
-              .concat(${{ env.ANDROID_ONLY == 'true' }} ? [] : iOSInfo)
-              .concat(androidInfo)
+              .concat(${{ env.TESTS_TYPE == 'Android Only' }} ? [] : iOSInfo)
+              .concat(${{ env.TESTS_TYPE == 'iOS Only' }} ? [] : androidInfo)
               .concat([
               {
                 "type": "mrkdwn",
@@ -1084,10 +1016,32 @@ jobs:
               }
             ];
 
+            // Warning block for failed shards
+            const warningBlocks = [];
+            if (process.env.IOS_MISSING_SHARDS) {
+              warningBlocks.push({
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": `⚠️ *Warning*: iOS - Missing results for shard(s): ${process.env.IOS_MISSING_SHARDS}.`
+                }
+              });
+            }
+            if (process.env.ANDROID_MISSING_SHARDS) {
+              warningBlocks.push({
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": `⚠️ *Warning*: Android - Missing results for shard(s): ${process.env.ANDROID_MISSING_SHARDS}.`
+                }
+              });
+            }
+
             const blocks = []
               .concat(header)
-              .concat(${{ env.ANDROID_ONLY == 'true' }} ? [] : iOSResult)
-              .concat(androidResult)
+              .concat(${{ env.TESTS_TYPE == 'Android Only' }} ? [] : iOSResult)
+              .concat(${{ env.TESTS_TYPE == 'iOS Only' }} ? [] : androidResult)
+              .concat(warningBlocks.length > 0 ? warningBlocks : [])
               .concat(infoBlock);
 
             const result = {
@@ -1111,7 +1065,7 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
       - name: post to a Slack channel
-        if: ${{ (failure() && contains(fromJson('["develop", "main"]'), github.ref_name)) || contains(fromJson('["release"]'), github.ref_name) || github.event_name == 'schedule' }}
+        if: ${{ contains(fromJson('["release"]'), github.ref_name) || contains(fromJson('["release, develop"]'), inputs.ref) || github.event_name == 'schedule' }}
         uses: slackapi/slack-github-action@v1.23.0
         with:
           channel-id: "C05FKJ7DFAP"

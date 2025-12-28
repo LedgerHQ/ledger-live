@@ -197,4 +197,94 @@ describe("LedgerSyncEntryPoint", () => {
 
     expect(button).toBe(null);
   });
+
+  describe("when lwdLedgerSyncOptimisation feature flag is enabled", () => {
+    const OPTIMISATION_ENABLED_STATE = {
+      ...INITIAL_STATE,
+      settings: {
+        ...INITIAL_STATE.settings,
+        overriddenFeatureFlags: {
+          ...INITIAL_STATE.settings.overriddenFeatureFlags,
+          lwdLedgerSyncOptimisation: {
+            enabled: true,
+          },
+        },
+      },
+    };
+
+    it("should display Manager entry point with LedgerSyncBanner when optimisation is enabled", async () => {
+      const { user } = render(<LedgerSyncEntryPointShared entryPoint={EntryPoint.manager} />, {
+        initialState: OPTIMISATION_ENABLED_STATE,
+      });
+
+      const bannerTitle = screen.getByText(/Your wallet isn't synced/);
+      expect(bannerTitle).toBeVisible();
+
+      const bannerDescription = screen.getByText(
+        /Keep your portfolio up to date when switching computers or use a phone/,
+      );
+      expect(bannerDescription).toBeVisible();
+
+      const syncButton = screen.getByRole("button", { name: "Sync my wallet" });
+      expect(syncButton).toBeVisible();
+
+      await user.click(syncButton);
+
+      expect(track).toHaveBeenCalled();
+      expect(track).toHaveBeenCalledWith("banner_clicked", {
+        banner: "Ledger Sync Activation",
+        page: "Manager",
+      });
+    });
+
+    it("should display Accounts entry point with LedgerSyncBanner when optimisation is enabled", async () => {
+      const { user } = render(<LedgerSyncEntryPointShared entryPoint={EntryPoint.accounts} />, {
+        initialState: OPTIMISATION_ENABLED_STATE,
+      });
+
+      const bannerTitle = screen.getByText(/Your wallet isn't synced/);
+      expect(bannerTitle).toBeVisible();
+
+      const bannerDescription = screen.getByText(
+        /Keep your portfolio up to date when switching computers or use a phone/,
+      );
+      expect(bannerDescription).toBeVisible();
+
+      const syncButton = screen.getByRole("button", { name: "Sync my wallet" });
+      expect(syncButton).toBeVisible();
+
+      await user.click(syncButton);
+
+      expect(track).toHaveBeenCalled();
+      expect(track).toHaveBeenCalledWith("banner_clicked", {
+        banner: "Ledger Sync Activation",
+        page: "Accounts",
+      });
+    });
+
+    it("should display Settings entry point with LedgerSyncBanner when optimisation is enabled", async () => {
+      const { user } = render(<LedgerSyncEntryPointShared entryPoint={EntryPoint.settings} />, {
+        initialState: OPTIMISATION_ENABLED_STATE,
+      });
+
+      const bannerTitle = screen.getByText(/Your wallet isn't synced/);
+      expect(bannerTitle).toBeVisible();
+
+      const bannerDescription = screen.getByText(
+        /Keep your portfolio up to date when switching computers or use a phone/,
+      );
+      expect(bannerDescription).toBeVisible();
+
+      const syncButton = screen.getByRole("button", { name: "Sync my wallet" });
+      expect(syncButton).toBeVisible();
+
+      await user.click(syncButton);
+
+      expect(track).toHaveBeenCalled();
+      expect(track).toHaveBeenCalledWith("banner_clicked", {
+        banner: "Ledger Sync Activation",
+        page: "Settings",
+      });
+    });
+  });
 });

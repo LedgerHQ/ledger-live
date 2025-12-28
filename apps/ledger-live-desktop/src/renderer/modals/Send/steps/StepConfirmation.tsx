@@ -23,7 +23,7 @@ import AbortButton from "~/renderer/components/AbortButton";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))<{
   shouldSpace?: boolean;
 }>`
@@ -136,7 +136,13 @@ export function StepConfirmationFooter({
           {t("send.steps.confirmation.success.cta")}
         </Button>
       ) : error ? (
-        ["LedgerAPI5xx", "NetworkDown"].includes(error.name) ? (
+        [
+          "LedgerAPI5xx",
+          "NetworkDown",
+          "DeviceLockedError",
+          "LockedDeviceError",
+          "UserRefusedOnDevice",
+        ].includes(error.name) ? (
           <RetryButton
             ml={2}
             primary

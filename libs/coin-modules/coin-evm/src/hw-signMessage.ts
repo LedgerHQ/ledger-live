@@ -8,7 +8,7 @@ export const prepareMessageToSign = ({ message }: { message: string }): TypedEvm
   const parsedMessage = ((): string | Record<string, unknown> => {
     try {
       return JSON.parse(message) as Record<string, unknown>;
-    } catch (error) {
+    } catch {
       return message;
     }
   })();

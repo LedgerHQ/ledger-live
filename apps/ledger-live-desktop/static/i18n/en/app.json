@@ -207,7 +207,8 @@
       "SENDING": "Sending",
       "BURN": "Burned",
       "ASSOCIATE_TOKEN": "Associate token",
-      "CONTRACT_CALL": "Contract call"
+      "CONTRACT_CALL": "Contract call",
+      "UPDATE_ACCOUNT": "Updated account"
     },
     "edit": {
       "title": "Speed up or Cancel",
@@ -479,7 +480,9 @@
       "kaspa_title": "Ledger Nano S™ does not support swapping Kaspa",
       "kaspa_description": "To swap Kaspa, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "celo_title": "Ledger Nano S™ does not support swapping Celo",
-      "celo_description": "To swap Celo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "celo_description": "To swap Celo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "monad_title": "Ledger Nano S™ does not support swapping Monad",
+      "monad_description": "To swap Monad, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
@@ -844,7 +847,7 @@
     "stake": "Stake",
     "delegatedAssets": "Delegated assets",
     "undelegating": "Undelegating",
-    "availableBalanceTooltip": "This amount is disposable.",
+    "availableBalanceTooltip": "Funds you can use right now.",
     "frozenAssetsTooltip": "Frozen assets are used in the Tron voting process. This represents your total number of votes.",
     "bandwidthTooltip": "Freeze assets to gain bandwidth",
     "energyTooltip": "Freeze assets to gain energy",
@@ -1423,7 +1426,7 @@
   },
   "postOnboarding": {
     "postOnboardingScreen": {
-      "title": "Next up, use your\n{{productName}} to... ",
+      "title": "What’s next?",
       "titleCompleted": "You're all set !\nKeep going and explore your portfolio.",
       "exploreCTA": "Explore my portfolio"
     },
@@ -1432,19 +1435,22 @@
     },
     "postOnboardingBanner": {
       "title": "What's next for your {{productName}}?",
-      "description": "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
+      "description": "Secure your assets and go further.",
       "link": "See what's next",
       "dismiss": "Maybe later"
     },
     "actions": {
+      "deviceOnboarded": {
+        "titleCompleted": "Setup your Ledger device"
+      },
       "buyCrypto": {
-        "title": "Buy Crypto",
-        "description": "Choose from 500+ coins and the best quotes, tailored to your preferences.",
+        "title": "Buy crypto via Ledger Wallet",
+        "description": "Choose from 500+ coins and tokens.",
         "actionCompletedPopupLabel": "Crypto bought"
       },
       "assetsTransfer": {
-        "title": "Transfer your assets to Ledger",
-        "description": "From any exchange or wallet, directly to your Ledger.",
+        "title": "Transfer your assets",
+        "description": "Transfer from any exchange or wallet.",
         "actionCompletedPopupLabel": "Assets transferred"
       },
       "syncAccounts": {
@@ -1864,7 +1870,13 @@
       "transferAmount": "Transfer Amount",
       "validatorsCount": "Validators ({{number}})",
       "version": "Version",
-      "accountCreationFee": "Account Creation Fee"
+      "accountCreationFee": "Account Creation Fee",
+      "associatedTokenId": "Associated token ID",
+      "targetStakingNodeId": "Target node ID",
+      "previousStakingNodeId": "Previous node ID",
+      "gasConsumed": "Gas consumed",
+      "gasUsed": "Gas used",
+      "gasLimit": "Gas limit"
     }
   },
   "operationList": {
@@ -4518,6 +4530,7 @@
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Wallet crypto accounts across different phones and computers.",
+      "walletSyncDescription": "Keep your portfolio up to date when switching computers or use a phone",
       "mevProtection": "MEV Protection",
       "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
       "mevProtectionLearnMore": "Privacy notice",
@@ -4553,6 +4566,10 @@
       "analyticsConsole": {
         "title": "Allow Analytics Console",
         "desc": "Display and allow opening analytics console."
+      },
+      "themeConsole": {
+        "title": "Theme Toggle",
+        "desc": "Display a floating overlay to quickly switch themes."
       },
       "brazeTools": {
         "title": "Braze Tools",
@@ -5500,7 +5517,7 @@
           },
           "welcomeToWalletWithFunds": {
             "title": "Everything's in place",
-            "description": "Your Ledger device is ready. If you have sent crypto, you’ll receive it in a few minutes.",
+            "description": "Your Ledger device is ready. If you have sent crypto to your Ledger Wallet, you'll receive it in a few minutes.",
             "buttons": {
               "next": "Continue"
             }
@@ -5845,10 +5862,32 @@
     "canton": {
       "commentPlaceholder": "Optional",
       "comment": "Comment",
+      "expiryDuration": {
+        "label": "Expiry duration",
+        "summaryLabel": "Expiry Offer",
+        "threeHours": "3 hours",
+        "sixHours": "6 hours",
+        "oneDay": "1 day",
+        "oneWeek": "1 week",
+        "oneMonth": "30 days"
+      },
+      "account": {
+        "lockedBalance": "Locked",
+        "lockedBalanceTooltip": "Your funds are locked in offers you've sent to others. You can cancel these offers any time, or wait for the recipient to accept or reject.",
+        "withdrawableBalance": "Withdrawable",
+        "withdrawableBalanceTooltip": "Funds you can reclaim from offers you sent that have expired. Withdraw to move these back to your available balance."
+      },
       "addAccount": {
         "title": "Add Canton Account",
+        "reonboard": {
+          "title": "Account Update Required",
+          "init": "A topology change has been detected in the Canton network. Please re-onboard your account to continue using it.",
+          "success": "Account updated successfully",
+          "successDescription": "You can now continue using your account"
+        },
         "onboard": {
           "title": "Onboarding",
+          "account": "Account",
           "newAccount": "New Account",
           "init": "Set up your new Canton account by clicking Continue",
           "onboarded": "Onboarded accounts",
@@ -5865,6 +5904,9 @@
           "title": "Authorization",
           "validator": "Authorize",
           "hint": "Automaticaly accept incoming funds to this account.",
+          "reonboard": {
+            "hint": "A topology change has been detected. Please re-authorize the Ledger validator to continue receiving funds automatically."
+          },
           "error": "Authorization failed. Please try again.",
           "validatorLabel": "Ledger Validator",
           "validatorDescription": "Automated fund acceptance"
@@ -5872,6 +5914,9 @@
         "finish": {
           "title": "Confirmation"
         }
+      },
+      "topologyChangeError": {
+        "message": "Topology change detected. Re-onboarding required."
       },
       "tooManyUtxos": {
         "title": "Action Needed: Too Many UTXOs",
@@ -5883,10 +5928,12 @@
       "pendingTransactions": {
         "title": "Pending Transactions ({{count}})",
         "incoming": {
-          "title": "Incoming Offers ({{count}})"
+          "title": "Incoming transfer to review ({{count}})",
+          "detailsTitle": "Incoming transfer details"
         },
         "outgoing": {
-          "title": "Outgoing Offers ({{count}})"
+          "title": "Outgoing Offers ({{count}})",
+          "detailsTitle": "Outgoing transfer details"
         },
         "pending": "Pending",
         "expired": "Expired",
@@ -6156,6 +6203,11 @@
       "title": "Update Device Firmware",
       "description": "Please update your device firmware to the latest version to access this feature"
     },
+    "UnsupportedFeatureError": {
+      "title": "Unsupported feature",
+      "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details.",
+      "ctaLabel": "Contact Ledger Support"
+    },
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Wallet \"Settings\", select \"Experimental features\", and then select a different provider.",
@@ -6386,7 +6438,11 @@
     },
     "TransactionCannotBeCreated": {
       "title": "Processing Error",
-      "description": "Changelly cannot process this transaction. Error code 8HBB{{errorCode}}"
+      "description": "Changelly cannot process this transaction. Error code 8HBB-{{randomCode}}"
+    },
+    "SwapQuoteLowLiquidity": {
+      "title": "Partner unavailable",
+      "description": "We cannot complete your swap with this partner. Please try with another one."
     },
     "TimeoutError": {
       "title": "Sorry, server took too long to respond",
@@ -6898,6 +6954,18 @@
       "title": "EVM address verification required",
       "description": "Please verify the EVM address visible on your Ledger device before confirming."
     },
+    "HederaRedundantStakingNodeIdError": {
+      "title": "You are already delegating to this node"
+    },
+    "HederaInvalidStakingNodeIdError": {
+      "title": "Selected node is not a valid validator"
+    },
+    "HederaNoStakingRewardsError": {
+      "title": "No rewards to claim"
+    },
+    "HederaMemoIsTooLong": {
+      "title": "Memo is too long. Max length is {{maxLength}} characters"
+    },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",
       "description": "Please try again with an image."
@@ -7226,6 +7294,152 @@
         }
       }
     },
+    "account": {
+      "header": {
+        "actions": {
+          "stake": {
+            "alreadyDelegatedTooltip": "Your entire balance is already delegated"
+          }
+        }
+      },
+      "balanceFooter": {
+        "delegated": {
+          "tooltip": "When staking on Hedera, your full balance is delegated and remains liquid"
+        },
+        "claimable": {
+          "tooltip": "Rewards will be claimed automatically after each transaction. You can also claim them manually."
+        }
+      },
+      "bodyHeader": {
+        "delegatedPositions": {
+          "header": "Delegation",
+          "button": "Claim rewards",
+          "columns": {
+            "inactiveTooltip": "Validator not found",
+            "overstakedTooltip": "This node is overstaked, APY is lower than optimal",
+            "activeTooltip": "Delegated amount generates rewards",
+            "delegated": "Delegated",
+            "rewards": "Rewards"
+          },
+          "actions": {
+            "redelegation": "Redelegate",
+            "undelegation": "Undelegate",
+            "claimRewards": "Claim rewards"
+          }
+        }
+      }
+    },
+    "delegation": {
+      "totalStake": "Total stake",
+      "flow": {
+        "title": "Delegate",
+        "steps": {
+          "validator": {
+            "title": "Validators",
+            "rowTitle": "Node {{index}}: {{name}}",
+            "rowSubtitlePercentage": "Staked {{percentage}}% of max",
+            "rowSubtitleOverstaked": "Node is overstaked"
+          },
+          "amount": {
+            "title": "Amount",
+            "alert": "When staking on Hedera, your entire balance is staked. It remains fully liquid and is not exposed to lockup period or slashing risks. You may need to wait up to 48 hours for staking rewards to start.",
+            "learnMore": "Learn more"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully delegated your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "undelegation": {
+      "flow": {
+        "title": "Undelegate assets",
+        "steps": {
+          "summary": {
+            "title": "Amount",
+            "validatorLabel": "Validator",
+            "amountLabel": "Amount to undelegate",
+            "alert": "Once undelegated your balance & pending rewards will be immediately cashed in. It is not possible to partially undelegate your stake.",
+            "learnMore": "Learn more"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully undelegated your assets",
+              "text": "Your account balance will be updated when the network confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "redelegation": {
+      "flow": {
+        "title": "Redelegate assets",
+        "steps": {
+          "validators": {
+            "title": "Validators",
+            "currentValidatorLabel": "Current delegation",
+            "newValidatorLabel": "New delegation",
+            "newValidatorSelectPlaceholder": "Select validator",
+            "removedValidatorSelectPlaceholder": "Previously selected validator is no longer available",
+            "newValidatorSelectNoOption": "No validator matching \"{{validatorName}}\"",
+            "amountLabel": "Amount to redelegate",
+            "alert": "When staking on Hedera, your entire balance is staked. It remains fully liquid and is not exposed to lockup period or slashing risks. You may need to wait up to 48 hours for staking rewards to start.",
+            "learnMore": "Learn more"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully redelegated your assets",
+              "text": "The redelegation will update once the blockchain has confirmed the transaction",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "claimRewards": {
+      "flow": {
+        "title": "Claim rewards",
+        "steps": {
+          "rewards": {
+            "title": "Rewards",
+            "description": "You earned <0>{{formattedClaimableRewards}}</0> from the validator below. By clicking Continue, they will be claimed now and automatically added to the available balance.",
+            "currentValidatorLabel": "Delegation"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully claimed your rewards",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
     "send": {
       "memo": {
         "label": "Memo (optional)",
@@ -7249,6 +7463,11 @@
         "text": "Once this transaction has been confirmed you will be able to receive your token. <0>Click here</0> to start the receive flow.",
         "learnMore": "Learn more"
       }
+    }
+  },
+  "dialogs": {
+    "selectAccount": {
+      "addAccount": "Add new"
     }
   },
   "drawers": {
@@ -7297,7 +7516,7 @@
     },
     "postOnboarding": {
       "title": "Customize the lock screen",
-      "description": "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
+      "description": "Display your favorite digital art or photo as your device’s lock screen.",
       "actionCompletedPopupLabel": "Device personalized"
     },
     "customImageSet": "Lock screen customized",
@@ -7420,12 +7639,20 @@
   "walletSync": {
     "title": "Ledger Sync",
     "close": "Close",
+    "banner": {
+      "title": "Your wallet isn't synced",
+      "description": "Keep your portfolio up to date when switching computers or use a phone",
+      "cta": "Sync my wallet"
+    },
     "activate": {
       "title": "Turn on Ledger Sync for this computer?",
       "description": "Automatically sync your crypto accounts across all your phones and computers, even when transitioning to a new device.",
       "cta": "Turn on Ledger Sync",
       "alreadySync": "I already turned it on",
-      "learnMore": "How does Ledger Sync work?"
+      "learnMore": "How does Ledger Sync work?",
+      "titleModal": "Sync your wallet",
+      "descriptionModal": "Keep your portfolio up to date when switching computers or use a phone — all secured by your Ledger device.",
+      "ctaModal": "Continue"
     },
     "entryPoints": {
       "accounts": {
@@ -7502,6 +7729,11 @@
         "title": "Sync successful!",
         "desc": "Changes in your crypto accounts will now automatically appear across Ledger Wallet apps on synched phones and computers. "
       },
+      "complete": {
+        "title": "Sync complete",
+        "description": "From now on, your portfolio will automatically stay sync across all your devices.",
+        "syncAnother": "Using Ledger on Mobile? Scan QR code "
+      },
       "synchAnother": "Sync with another Ledger Wallet app",
       "close": "Close"
     },
@@ -7513,7 +7745,7 @@
         "cancel": "Keep sync"
       },
       "deleteBackupSuccess": {
-        "title": "Your Ledger Wallet apps are no longer synched",
+        "title": "Your Ledger Wallet apps are no longer synced",
         "description": "You can turn on sync anytime"
       },
       "deleteBackupError": {
@@ -7531,7 +7763,8 @@
         "connectDevice": {
           "title": "Use your Ledger",
           "description": "Synchronize by signing with your Ledger"
-        }
+        },
+        "descriptionModal": "Choose if you have Ledger Wallet synced on another phone"
       },
       "qrCode": {
         "title": "Sync your Ledger Wallet apps",
@@ -7667,6 +7900,17 @@
       "title": "A network error occurred",
       "description": "Something went wrong, please try again or contact Ledger Support if in doubt.",
       "cta": "Retry"
+    },
+    "errors": {
+      "network": {
+        "title": "Connection failed",
+        "description": "No internet connection. Please try again"
+      },
+      "backend": {
+        "title": "Connection failed",
+        "description": "Something went wrong on our end. Please try again later"
+      },
+      "cta": "Try again"
     }
   },
   "nftEntryPoint": {

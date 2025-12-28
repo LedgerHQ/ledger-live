@@ -1,5 +1,5 @@
 import React, { useRef, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { IconsLegacy, Flex } from "@ledgerhq/native-ui";

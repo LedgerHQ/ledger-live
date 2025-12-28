@@ -12,7 +12,7 @@ const testConfig = {
   tmsLinks: ["B2CQA-3414"],
   provider: Provider.TRANSAK,
   paymentMethod: "card",
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runNavigateToBuyFromMarketPageTest(

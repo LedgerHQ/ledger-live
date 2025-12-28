@@ -19,7 +19,7 @@ export function extractURLFromManifest(manifest: LiveAppManifest): URL | undefin
     }
     const url = new URL(manifest.url);
     return url;
-  } catch (error) {
+  } catch {
     // Invalid URL
     return undefined;
   }

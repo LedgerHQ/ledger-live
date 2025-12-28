@@ -64,7 +64,7 @@ export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Pro
           />
         )}
         {valueChange.value === 0 ? (
-          <Text color={"palette.text.shade100"}>{"-"}</Text>
+          <Text color={"neutral.c100"}>{"-"}</Text>
         ) : (
           <FormattedVal
             unit={unit}
@@ -103,7 +103,7 @@ export function BalanceTotal({
             <FormattedVal
               inline
               animateTicker
-              color="palette.text.shade100"
+              color="neutral.c100"
               unit={unit}
               fontSize={8}
               showCode

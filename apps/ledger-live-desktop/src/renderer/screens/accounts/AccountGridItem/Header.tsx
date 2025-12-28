@@ -3,7 +3,6 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import Bar from "~/renderer/components/Bar";
 import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import ParentCryptoCurrencyIcon from "~/renderer/components/ParentCryptoCurrencyIcon";
@@ -13,6 +12,7 @@ import AccountSyncStatusIndicator from "../AccountSyncStatusIndicator";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useAccountName } from "~/renderer/reducers/wallet";
+import { Divider } from "@ledgerhq/react-ui/index";
 
 function HeadText(props: { account: AccountLike; title: string; name: string }) {
   const { title, name, account } = props;
@@ -30,14 +30,14 @@ function HeadText(props: { account: AccountLike; title: string; name: string }) 
         horizontal
         alignItems="center"
         fontSize={10}
-        color="palette.text.shade80"
+        color="neutral.c80"
       >
         {title}
         <AccountTagDerivationMode account={account} />
       </Box>
       <Tooltip content={name} delay={1200}>
         <Ellipsis>
-          <Text fontSize={13} color="palette.text.shade100">
+          <Text fontSize={13} color="neutral.c100">
             {name}
           </Text>
         </Ellipsis>
@@ -70,7 +70,7 @@ const Header = ({
   return (
     <Box flow={4}>
       <Box horizontal ff="Inter|SemiBold" flow={3} alignItems="center">
-        <ParentCryptoCurrencyIcon currency={currency} />
+        <ParentCryptoCurrencyIcon currency={currency} bigger />
         <HeadText account={account} name={name} title={title} />
         <AccountSyncStatusIndicator
           accountId={(parentAccount && parentAccount.id) || account.id}
@@ -78,13 +78,13 @@ const Header = ({
         />
         <Star accountId={account.id} />
       </Box>
-      <Bar size={1} color="palette.divider" />
+      <Divider />
       <Box justifyContent="center">
         <FormattedVal
           alwaysShowSign={false}
           animateTicker={false}
           ellipsis
-          color="palette.text.shade100"
+          color="neutral.c100"
           unit={unit}
           showCode
           val={account.balance}

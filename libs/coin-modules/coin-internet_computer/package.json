@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-internet_computer",
-  "version": "1.11.0",
+  "version": "1.11.2",
   "description": "Ledger Internet Computer integration",
   "keywords": [
     "Ledger",
@@ -95,7 +95,7 @@
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.2",

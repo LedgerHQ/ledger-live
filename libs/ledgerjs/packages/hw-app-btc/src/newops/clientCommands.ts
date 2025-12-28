@@ -123,7 +123,7 @@ export class GetMerkleLeafProofCommand extends ClientCommand {
     try {
       tree_size = reqBuf.readVarInt();
       leaf_index = reqBuf.readVarInt();
-    } catch (e: any) {
+    } catch {
       throw new Error("Invalid request, couldn't parse tree_size or leaf_index");
     }
 

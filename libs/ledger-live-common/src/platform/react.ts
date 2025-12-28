@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
-import { InfiniteData } from "@reduxjs/toolkit/query";
+import { InfiniteData } from "@reduxjs/toolkit/query/react";
 import { AccountLike } from "@ledgerhq/types-live";
 import { makeRe } from "minimatch";
 import type {

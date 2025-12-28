@@ -9,20 +9,19 @@ const transformIncludePatterns = [
   "rn-range-slider",
   "react-native-reanimated",
   "react-native-modal",
-  "@sentry/react-native",
   "@hashgraph/sdk",
   "react-native-startup-time",
   "@segment/analytics-react-native",
   "uuid",
   "react-native-ble-plx",
   "react-native-android-location-services-dialog-box",
-  "react-native-vector-icons",
   "react-native-qrcode-svg",
   "react-native-video",
   "ky",
   "@gorhom/bottom-sheet",
   "react-native-safe-area-context",
   "react-native-gesture-handler",
+  "@shopify/flash-list",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */

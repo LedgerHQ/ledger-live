@@ -23,6 +23,7 @@ import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import type { Transaction } from "../types/index";
 import { IconSigner } from "../signer";
 import { IconCoinConfig, setCoinConfig } from "../config";
+import { validateAddress } from "../validateAddress";
 
 export function buildCurrencyBridge(signerContext: SignerContext<IconSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -65,6 +66,7 @@ export function buildAccountBridge(
     broadcast,
     estimateMaxSpendable,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

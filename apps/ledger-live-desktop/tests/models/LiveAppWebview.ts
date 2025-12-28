@@ -117,7 +117,7 @@ export class LiveAppWebview {
         url.searchParams.get("params") ?? "",
       );
       return dappUrl;
-    } catch (e) {
+    } catch {
       return null;
     }
   }

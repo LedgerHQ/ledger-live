@@ -6,7 +6,8 @@
     "src/datasets/dataset-1.ts",
     "src/signer/index.ts",
     "src/test/index.ts",
-    "src/index.ts"
+    "src/index.ts",
+    "src/logic/validateAddress.ts"
   ],
   "ignorePatterns": [
     "**/node_modules/**",
@@ -19,7 +20,9 @@
     "jest-matcher-utils",
     "jest-message-util"
   ],
-  "ignoreUnimported": [],
+  "ignoreUnimported": [
+    "src/supportedFeatures.ts"
+  ],
   "ignoreUnused": [
     "rxjs"
   ]

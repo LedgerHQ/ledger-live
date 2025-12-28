@@ -4,8 +4,8 @@ import { exec } from "child_process";
 import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
-import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 import { readFile } from "fs/promises";
+import { NANO_APP_CATALOG_PATH } from "../utils/constants";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -48,14 +48,6 @@ export function isSpeculosRemote(): boolean {
 
 export function isRemoteIos(): boolean {
   return isSpeculosRemote() && isIos();
-}
-
-export async function addDelayBeforeInteractingWithDevice(
-  // TODO: QAA-683
-  ciDelay: number = 10_000,
-  localDelay: number = 0,
-) {
-  await delay(process.env.CI ? ciDelay : localDelay);
 }
 
 /**
@@ -102,8 +94,7 @@ export function setupEnvironment() {
   setEnv("MOCK", "");
   process.env.MOCK = "";
   setEnv("DETOX", "1");
-  setEnv("E2E_NANO_APP_VERSION_PATH", "artifacts/appVersion/nano-app-catalog.json");
-  process.env.SPECULOS_DEVICE = getSpeculosModel();
+  setEnv("E2E_NANO_APP_VERSION_PATH", NANO_APP_CATALOG_PATH);
 
   const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;
   const shouldBroadcast = disableBroadcastEnv === "0";

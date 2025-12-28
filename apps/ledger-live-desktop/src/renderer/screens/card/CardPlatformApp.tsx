@@ -10,7 +10,7 @@ export const BAANX_APP_ID = "cl-card";
 export default function CardPlatformApp() {
   const { state: urlParams } = useLocation();
   const manifest = useRemoteLiveAppManifest(BAANX_APP_ID);
-  const themeType = useTheme().colors.palette.type;
+  const themeType = useTheme().theme;
 
   return (
     <Card

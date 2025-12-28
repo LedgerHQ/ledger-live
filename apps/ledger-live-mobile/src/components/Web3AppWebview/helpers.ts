@@ -16,7 +16,7 @@ import type { AccountLike, Operation, Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { WebViewProps, WebView, WebViewMessageEvent } from "react-native-webview";
 import VersionNumber from "react-native-version-number";
@@ -106,7 +106,7 @@ export function useWebView(
           const webview = safeGetRefValue(webviewRef);
 
           webview.postMessage(message);
-        } catch (error) {
+        } catch {
           console.warn(
             "wallet-api-server tried to send a message while the webview was not yet initialized.",
             message,

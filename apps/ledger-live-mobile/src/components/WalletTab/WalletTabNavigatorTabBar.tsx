@@ -4,7 +4,7 @@ import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import React, { memo, useCallback, useContext, useMemo } from "react";
 import { Animated } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useTheme } from "styled-components/native";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";

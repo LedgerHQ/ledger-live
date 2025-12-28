@@ -38,7 +38,7 @@ import { formatAmount } from "./utils";
 import CheckCircle from "~/icons/CheckCircle";
 import Loader from "~/icons/Loader";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: Account;

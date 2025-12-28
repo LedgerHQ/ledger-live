@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { I18nManager, Pressable } from "react-native";
 import { Flex, SelectableList, Text } from "@ledgerhq/native-ui";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import { DropdownMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 
@@ -115,7 +115,7 @@ const LanguageSelect = () => {
           pl="12px"
           pr={3}
           bg="opacityDefault.c10"
-          borderRadius="50"
+          borderRadius={50}
           testID="language-select-button"
         >
           <Text mr="2px" testID="current-selected-language">

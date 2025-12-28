@@ -170,7 +170,8 @@ export function useStake() {
         accountId: accountIdForManifestVersion,
       })?.toString();
 
-      if (manifest.id === "earn" || manifest.id === "earn-stg") {
+      const isEarnManifest = ["earn", "earn-stg", "earn-prd-eks"].includes(manifest.id);
+      if (isEarnManifest) {
         // Earn live app uses a different navigator
         return {
           screen: NavigatorName.Earn,

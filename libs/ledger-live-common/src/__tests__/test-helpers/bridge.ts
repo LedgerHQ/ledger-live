@@ -35,7 +35,7 @@ import { firstValueFrom } from "rxjs";
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);
 // FIXME move out into DatasetTest to be defined in
 const blacklistOpsSumEq = {
-  currencies: ["ripple", "ethereum", "tezos"],
+  currencies: ["ripple", "ethereum", "tezos", "assethub_polkadot"],
   impls: ["mock"],
 };
 

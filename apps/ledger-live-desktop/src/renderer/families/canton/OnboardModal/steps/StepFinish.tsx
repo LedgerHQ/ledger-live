@@ -5,7 +5,13 @@ import Button from "~/renderer/components/Button";
 import { CurrencyCircleIcon } from "~/renderer/components/CurrencyBadge";
 import { StepProps } from "../types";
 
-const StepFinish = ({ t, currency, creatableAccount, importableAccounts }: StepProps) => {
+const StepFinish = ({
+  t,
+  currency,
+  creatableAccount,
+  importableAccounts,
+  isReonboarding,
+}: StepProps) => {
   const accounts = [...importableAccounts, creatableAccount];
 
   return (
@@ -17,31 +23,38 @@ const StepFinish = ({ t, currency, creatableAccount, importableAccounts }: StepP
         aria-label={`${currency.name} account created successfully`}
       />
       <Title>
-        {t("addAccounts.success", {
-          count: accounts.length,
-        })}
+        {isReonboarding
+          ? t("families.canton.addAccount.reonboard.success")
+          : t("addAccounts.success", { count: accounts.length })}
       </Title>
       <Text>
-        {t("addAccounts.successDescription", {
-          count: accounts.length,
-        })}
+        {isReonboarding
+          ? t("families.canton.addAccount.reonboard.successDescription")
+          : t("addAccounts.successDescription", { count: accounts.length })}
       </Text>
     </Box>
   );
 };
 
-export const StepFinishFooter = ({ t, onAddAccounts, onAddMore }: StepProps) => {
+export const StepFinishFooter = ({ t, onAddAccounts, onAddMore, isReonboarding }: StepProps) => {
   return (
-    <Box horizontal alignItems="center" justifyContent="space-between" grow>
-      <Button
-        event="Page AddAccounts Step 4 AddMore"
-        data-testid="add-accounts-finish-add-more-button"
-        outlineGrey
-        onClick={onAddMore}
-        aria-label="Add more Canton accounts"
-      >
-        {t("addAccounts.cta.addMore")}
-      </Button>
+    <Box
+      horizontal
+      alignItems="center"
+      justifyContent={isReonboarding ? "flex-end" : "space-between"}
+      grow
+    >
+      {!isReonboarding && (
+        <Button
+          event="Page AddAccounts Step 4 AddMore"
+          data-testid="add-accounts-finish-add-more-button"
+          outlineGrey
+          onClick={onAddMore}
+          aria-label="Add more Canton accounts"
+        >
+          {t("addAccounts.cta.addMore")}
+        </Button>
+      )}
       <Button
         event="Page AddAccounts Step 4 Close"
         data-testid="add-accounts-finish-close-button"
@@ -49,7 +62,7 @@ export const StepFinishFooter = ({ t, onAddAccounts, onAddMore }: StepProps) => 
         onClick={onAddAccounts}
         aria-label="Complete Canton account setup"
       >
-        {t("common.done")}
+        {isReonboarding ? t("common.continue") : t("common.done")}
       </Button>
     </Box>
   );
@@ -59,7 +72,7 @@ const Title = styled(Box).attrs(() => ({
   ff: "Inter",
   fontSize: 5,
   mt: 2,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))`
   text-align: center;
 `;

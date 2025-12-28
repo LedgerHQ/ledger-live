@@ -4,7 +4,7 @@ import type { AccountLike, DerivationMode } from "@ledgerhq/types-live";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import Text from "~/renderer/components/Text";
 const CurrencyLabel = styled(Text).attrs(() => ({
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   ff: "Inter|SemiBold",
   fontSize: "8px",
 }))`

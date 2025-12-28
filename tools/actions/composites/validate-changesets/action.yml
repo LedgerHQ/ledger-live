@@ -1,0 +1,14 @@
+name: "Validate Changesets"
+description: "Validates all changeset files in .changeset/ directory"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Validate changesets
+      shell: bash
+      run: |
+        SCRIPT_PATH="${{ github.action_path }}/validate-all-changesets.sh"
+        
+        # Run the script
+        "$SCRIPT_PATH"
+

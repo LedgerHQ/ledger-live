@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import storage from "LLM/storage";
 import semver from "semver";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";

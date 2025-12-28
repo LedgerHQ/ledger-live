@@ -12,7 +12,7 @@ type BaseProps = {
 };
 
 const Base = styled(Tabbable).attrs<BaseProps>(p => ({
-  bg: p.forceBgColor ? p.forceBgColor : p.isChecked ? "wallet" : "palette.text.shade10",
+  bg: p.forceBgColor ? p.forceBgColor : p.isChecked ? "wallet" : "neutral.c30",
   horizontal: true,
   alignItems: "center",
 }))<BaseProps>`
@@ -40,7 +40,7 @@ const Ball = styled.div<BallProps>`
   width: ${p => (p.small ? 9 : p.medium ? 14 : 20)}px;
   height: ${p => (p.small ? 9 : p.medium ? 14.5 : 20)}px;
   border-radius: 50%;
-  background: ${p => p.theme.colors?.palette.primary.contrastText};
+  background: ${p => p.theme.colors?.neutral.c00};
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
   transition: 250ms ease-in-out transform;
   transform: translate3d(
@@ -92,7 +92,6 @@ export default function Switch({
           onChange(!isChecked);
         }
       }}
-      className="switch"
       forceBgColor={forceBgColor}
     >
       <input type="checkbox" disabled={disabled || false} checked={isChecked} readOnly />

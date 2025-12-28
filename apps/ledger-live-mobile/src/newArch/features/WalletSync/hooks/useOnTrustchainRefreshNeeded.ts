@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import {
   MemberCredentials,
   Trustchain,

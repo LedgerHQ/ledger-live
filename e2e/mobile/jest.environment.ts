@@ -98,6 +98,7 @@ Object.assign(globalThis, {
   typeTextByWebTestId: WebElementHelpers.typeTextByWebTestId,
   waitForCurrentWebviewUrlToContain: WebElementHelpers.waitForCurrentWebviewUrlToContain,
   waitForWebElementToBeEnabled: WebElementHelpers.waitForWebElementToBeEnabled,
+  waitForWebElementToMatchRegex: WebElementHelpers.waitForWebElementToMatchRegex,
   waitWebElementByTestId: WebElementHelpers.waitWebElementByTestId,
 });
 

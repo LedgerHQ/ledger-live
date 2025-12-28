@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import SettingsRow from "~/components/SettingsRow";
 import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
 import { reboot } from "~/actions/appstate";

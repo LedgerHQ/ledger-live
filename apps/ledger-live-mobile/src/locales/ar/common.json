@@ -665,6 +665,11 @@
       "title" : "لا يمكن العثور على التطبيق {{appName}} للتهيئة الخاصة بك.",
       "description" : "حاول إعادة تثبيت التطبيق من My Ledger (جهازي Ledger)"
     },
+    "NanoSNotSupported" : {
+      "title" : "™Ledger Nano S لا يدعم هذه الميزة",
+      "description" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل ميزات Ledger Wallet الحديثة.",
+      "upsellCtaLabel" : "اكتشف برنامج الترقية المناسب لك"
+    },
     "NotEnoughGas" : {
       "title" : "تحتاج إلى {{fees}} {{ticker}} في حسابك لدفع رسوم المعاملة على شبكة {{cryptoName}}.  <link0>اشتر {{ticker}}</link0> أو قم بإيداع المزيد في حسابك.",
       "description" : "يرجى إرسال بعض العملات إلى حسابك لسداد قيمة معاملات رموز التوكن."
@@ -1089,6 +1094,10 @@
       "title" : "تعذّر التحقق من ربط رمز التوكن",
       "description" : "لم نتمكن من تأكيد ما إذا كان بإمكان حساب الوجهة تلقي رمز التوكن هذا. ربما يكون العنوان غير صالح، أو قد يكون هناك مشكلةً في الشبكة أو الخدمة."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "التحقق من عنوان EVM مطلوب",
+      "description" : "يُرجى التحقق من عنوان EVM الظاهر على جهازك Ledger قبل التأكيد."
+    },
     "NearNewAccountWarning" : {
       "title" : "حساب المُستلِم لم يتم إنشاؤه بعد. البروتوكول يتطلب تحويل {{formattedNewAccountStorageCost}} لإنشائه."
     },
@@ -1133,6 +1142,11 @@
       "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
     },
+    "UnsupportedFeatureError" : {
+      "title" : "ميزة غير مدعومة",
+      "description" : "التطبيق المطلوب لهذه العملية غير متاح حالياً لجهازك Ledger. يُرجى التواصل مع دعم Ledger للتفاصيل.",
+      "ctaLabel" : "تواصل مع دعم Ledger"
+    },
     "EtherscanAPIError" : {
       "title" : "فشل إحضار المعاملات",
       "description" : "حدث خطأ غير متوقع مع المستكشفات. يُرجى إعادة المحاولة لاحقاً"
@@ -1153,6 +1167,11 @@
     "FirmwareNotRecognized" : {
       "title" : "مزوّد غير صالح",
       "description" : "يجب عليك تغيير إعداد \"My Ledger Provider (مزوّد جهازي Ledger)\". لتغييره، افتح ”Settings (الإعدادات)“ في Ledger Wallet، واختر ”Experimental features (الميزات التجريبية)“، ثم اختر مزوّداً آخر."
+    },
+    "InvalidGetFirmwareMetadataResponseError" : {
+      "title" : "مزوّد غير صالح",
+      "description" : "يجب عليك تغيير إعداد ”My Ledger Provider (مزوّد جهازي Ledger)“. لتغييره، افتح ”Settings (إعدادات)“ في Ledger Wallet، واختر ”Experimental features (الميزات التجريبية)“، ثم اختر مزوّداً آخر.",
+      "openSettings" : "انتقل إلى الإعدادات"
     },
     "GasLessThanEstimate" : {
       "title" : "قد يكون هذا منخفضاً جداً. يرجى زيادته"
@@ -1224,6 +1243,12 @@
     "AddressesSanctionedError" : {
       "title" : "إبقاؤك آمناً",
       "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n-- {{addresses}}"
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "تم تخفيض المبلغ ليناسب قيود UTXO ( إخراج المعاملات غير المنفقة)."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "المبلغ كبير جداً بالنسبة لقيود UTXO ( إخراج المعاملات غير المنفقة)."
     }
   },
   "crash" : {
@@ -2730,6 +2755,9 @@
       "REWARD" : "المكافأة المُطالب بها",
       "FEES" : "رسوم",
       "PRE_APPROVAL" : "موافقة مسبقة",
+      "TRANSFER_PROPOSAL" : "عرض التحويل",
+      "TRANSFER_REJECTED" : "تم رفض التحويل",
+      "TRANSFER_WITHDRAWN" : "تم سحب التحويل",
       "OPT_IN" : "الانضمام",
       "OPT_OUT" : "إلغاء الانضمام",
       "CLOSE_ACCOUNT" : "إغلاق الحساب",
@@ -2751,7 +2779,8 @@
       "STAKE" : "مُكدَّس",
       "UNSTAKE" : "غير مُكدَّس",
       "WITHDRAW_UNSTAKED" : "مسحوب",
-      "ASSOCIATE_TOKEN" : "ربط رمز التوكن"
+      "ASSOCIATE_TOKEN" : "ربط رمز التوكن",
+      "CONTRACT_CALL" : "استدعاء عقد"
     }
   },
   "operationDetails" : {
@@ -3780,7 +3809,9 @@
       },
       "wrongDevice" : {
         "title" : "™Ledger Nano S ليست متوافقة مع {{provider}}",
-        "description" : "™Ledger Nano S ليست متوافقة مع {{provider}}. يمكنك استخدام ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Stax أو ™Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على {{provider}} عبر Ledger Live"
+        "description" : "™Ledger Nano S ليست متوافقة مع {{provider}}. يمكنك استخدام ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Stax أو ™Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على {{provider}} عبر Ledger Wallet",
+        "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
+        "swapWithAnotherProvider" : "المبادلة عن طريق مزود آخر"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
@@ -7223,6 +7254,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "تعرّف على المزيد"
+        },
+        "evmVerificationRequired" : {
+          "text" : "أنت ترسل رمز ERC-20. لهذا النوع من المعاملات، جهازك Ledger سيعرض عنوان EVM الخاص بالمُرسِل، وليس معرّف حسابه.\nيُرجى اتباع <0>هذا الدليل</0> للتحقق من أن العنوان صحيح قبل التأكيد."
         }
       }
     },
@@ -7311,11 +7345,11 @@
         "description" : "اختر أي فن رقمي أو صورة للتعيين كشاشة قَفل {{productName}} الخاص بك.",
         "popupLabel" : "تم تخصيص شاشة القَفل بنجاح"
       },
-      "recover" : {
-        "title" : "الاشتراك في Ledger Recover",
-        "titleCompleted" : "مشترك في Ledger Recover",
-        "description" : "استعدْ الوصول إلى محفظتك بدون الحاجة إلى عبارة الاسترداد السرية الخاصة بك.",
-        "popupLabel" : "تم الاشتراك بنجاح في Ledger Recover"
+      "syncAccounts" : {
+        "title" : "مزامنة حسابات الأصول المشفرة خاصتك",
+        "titleCompleted" : "تمت مزامنة حساباتك",
+        "description" : "تنشيط مزامنة Ledger Sync لمزامنة حسابات الأصول المشفرة الخاصة بك",
+        "popupLabel" : "تمت مزامنة الحسابات"
       }
     }
   },
@@ -7978,7 +8012,15 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "المزود غير متاح",
-      "description" : "Changelly لا يمكنها معالجة هذه المعاملة. كود الخطأ {{errorCode}}8HBB"
+      "description" : "Changelly لا يمكنها معالجة هذه المعاملة. كود الخطأ {{randomCode}}-8HBB"
+    },
+    "swapQuoteLowLiquidity" : {
+      "title" : "المزود غير متاح",
+      "description" : "لا يمكننا إتمام مبادلتك عن طريق هذا المزود. يُرجى المحاولة من خلال مزود آخر."
+    },
+    "swapRateExpiredError" : {
+      "title" : "انتهت صلاحية المعدَّل",
+      "description" : "انتهت صلاحية مُعدل الصرف. يُرجى التحديث وإعادة المحاولة."
     },
     "default" : {
       "title" : "حدث خطأ ما",
