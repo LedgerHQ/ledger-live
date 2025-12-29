@@ -139,7 +139,6 @@ const useNotifications = () => {
     }
 
     // TODO: handle when the user has opted out of notifications from the system settings
-
     getPushNotificationsDataOfUserFromStorage().then(dataOfUser => {
       updatePushNotificationsDataOfUserInStateAndStore({
         ...(dataOfUser ?? {}),
@@ -527,6 +526,7 @@ const useNotifications = () => {
       button: "Maybe Later",
       page: pushNotificationsOldRoute,
       drawer: "Notif",
+      // TODO: add the dismissed count and/or the last dismissed date
     });
     setPushNotificationsModalOpenCallback(false);
 
@@ -554,6 +554,7 @@ const useNotifications = () => {
       button: "Allow",
       page: pushNotificationsOldRoute,
       drawer: "Notif",
+      // TODO: add the dismissed count and/or the last dismissed date
     });
     setPushNotificationsModalOpenCallback(false);
     requestPushNotificationsPermission();

@@ -68,7 +68,7 @@ function NotificationsSettings() {
   const notifications = useSelector(notificationsSelector);
   const {
     getIsNotifEnabled,
-    handlePushNotificationsPermission,
+    requestPushNotificationsPermission,
     pushNotificationsOldRoute,
     hiddenNotificationCategories,
   } = useNotifications();
@@ -86,8 +86,8 @@ function NotificationsSettings() {
       button: "Go to system settings",
       page: pushNotificationsOldRoute,
     });
-    handlePushNotificationsPermission();
-  }, [pushNotificationsOldRoute, handlePushNotificationsPermission]);
+    requestPushNotificationsPermission();
+  }, [pushNotificationsOldRoute, requestPushNotificationsPermission]);
 
   useEffect(() => {
     const interval = setInterval(refreshNotifPermission, 500);

@@ -393,6 +393,49 @@ export type Feature_BrazePushNotifications = Feature<{
     timer: number;
     type: string;
   }[];
+  reprompt_schedule: [
+    {
+      months: 1;
+    },
+    {
+      months: 3;
+    },
+    {
+      months: 6;
+    },
+  ];
+  action_events: {
+    just_finished_onboarding: {
+      enabled: boolean;
+      timer: number;
+    };
+    send: {
+      enabled: boolean;
+      timer: number;
+    };
+    receive: {
+      enabled: boolean;
+      timer: number;
+    };
+    buy: {
+      enabled: boolean;
+      timer: number;
+    };
+    swap: {
+      enabled: boolean;
+      timer: number;
+    };
+    stake: {
+      enabled: boolean;
+      timer: number;
+    };
+    market_starred: {
+      enabled: boolean;
+      timer: number;
+    };
+  };
+
+  // TODO: to remove them once we have the new logic in place.
   marketCoinStarred: {
     enabled: boolean;
     timer: number;
