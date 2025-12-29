@@ -124,5 +124,41 @@ describe("getPlatformTransactionSignFlowInfos", () => {
 }
 `);
     });
+
+    test("with changeAddress provided", () => {
+      const btcPlatformTx: WalletAPITransaction = {
+        family: "bitcoin",
+        amount: new BigNumber(100000),
+        recipient: "0xABCDEF",
+        changeAddress: "1ChangeAddressExample",
+      };
+
+      const { canEditFees, hasFeesProvided, liveTx } = btc.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: btcPlatformTx,
+        account: {} as Account,
+      });
+
+      expect(canEditFees).toBe(true);
+
+      expect(hasFeesProvided).toBe(false);
+
+      expect(liveTx).toMatchInlineSnapshot(`
+{
+  "amount": "100000",
+  "changeAddress": "1ChangeAddressExample",
+  "family": "bitcoin",
+  "feePerByte": null,
+  "feesStrategy": "medium",
+  "networkInfo": null,
+  "rbf": false,
+  "recipient": "0xABCDEF",
+  "useAllAmount": false,
+  "utxoStrategy": {
+    "excludeUTXOs": [],
+    "strategy": 0,
+  },
+}
+`);
+    });
   });
 });

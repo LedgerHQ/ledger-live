@@ -15,8 +15,7 @@ type Props = {
 };
 
 export default function FollowStepsOnDevice({ modelId, isDeviceBlocker }: Props) {
-  const { colors } = useTheme();
-  const theme = colors.palette.type;
+  const { theme } = useTheme();
   const { t } = useTranslation();
   const wording = getProductName(modelId);
 

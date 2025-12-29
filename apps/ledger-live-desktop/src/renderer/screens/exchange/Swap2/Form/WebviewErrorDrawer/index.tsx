@@ -27,7 +27,7 @@ const Logo = styled(Box)`
 const ErrorTitle = styled(Text).attrs({
   variant: "paragraph",
   fontWeight: "semiBold",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   textAlign: "center",
   fontSize: 6,
 })`
@@ -38,7 +38,7 @@ const ErrorTitle = styled(Text).attrs({
 
 const ErrorDescription = styled(Text).attrs({
   variant: "paragraph",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   textAlign: "center",
   fontSize: 4,
   whiteSpace: "pre-wrap",

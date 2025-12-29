@@ -2,8 +2,14 @@ import type { Config } from "jest";
 import { pathsToModuleNameMapper } from "ts-jest";
 import type { ReporterOptions } from "jest-allure2-reporter";
 import { compilerOptions } from "./tsconfig.json";
+import { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
+import {
+  getDeviceFirmwareVersion,
+  getSpeculosModel,
+} from "@ledgerhq/live-common/e2e/speculosAppVersion";
 
 const jestAllure2ReporterOptions: ReporterOptions = {
+  extends: "detox-allure2-adapter/preset-detox",
   resultsDir: "artifacts",
   testCase: {
     links: {
@@ -17,12 +23,21 @@ const jestAllure2ReporterOptions: ReporterOptions = {
   },
   overwrite: false,
   environment: async ({ $ }) => ({
+    SPECULOS_DEVICE: process.env.SPECULOS_DEVICE,
+    SPECULOS_FIRMWARE_VERSION: await getDeviceFirmwareVersion(getSpeculosModel()),
     path: process.cwd(),
     "version.node": process.version,
     "version.jest": await $.manifest("jest", ["version"]),
     "package.name": await $.manifest(m => m.name),
     "package.version": await $.manifest(["version"]),
   }),
+};
+
+const detoxAllure2AdapterOptions: DetoxAllure2AdapterOptions = {
+  deviceLogs: false,
+  deviceScreenshots: false,
+  deviceVideos: false,
+  deviceViewHierarchy: false,
 };
 
 // Include problematic ESM packages and their submodules
@@ -62,7 +77,7 @@ const config: Config = {
     eventListeners: [
       "jest-metadata/environment-listener",
       "jest-allure2-reporter/environment-listener",
-      "detox-allure2-adapter",
+      ["detox-allure2-adapter", detoxAllure2AdapterOptions],
     ],
   },
   verbose: true,

@@ -19,16 +19,16 @@ const InteractFlex = styled(Flex)`
   height: 40px;
   &:hover {
     cursor: pointer;
-    background-color: ${({ theme }) => theme.colors.palette.opacityDefault.c10};
+    background-color: ${({ theme }) => theme.colors.opacityDefault.c10};
   }
   padding: 8px;
-  background-color: ${({ theme }) => theme.colors.palette.opacityDefault.c05};
+  background-color: ${({ theme }) => theme.colors.opacityDefault.c05};
   border-radius: 8px;
   column-gap: 8px;
   align-items: center;
 
   &:active {
-    background-color: ${({ theme }) => theme.colors.palette.opacityDefault.c20};
+    background-color: ${({ theme }) => theme.colors.opacityDefault.c20};
   }
 `;
 

@@ -20,14 +20,7 @@ const Illustration = styled.div`
 const Disconnect = () => (
   <Box>
     <Illustration />
-    <Text
-      mx={30}
-      ff="Inter|Regular"
-      textAlign={"center"}
-      mt={32}
-      fontSize={4}
-      color="palette.text.shade50"
-    >
+    <Text mx={30} ff="Inter|Regular" textAlign={"center"} mt={32} fontSize={4} color="neutral.c70">
       <Trans i18nKey={"fullNode.modal.steps.disconnect.description"} />
     </Text>
   </Box>

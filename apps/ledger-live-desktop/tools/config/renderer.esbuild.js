@@ -9,6 +9,7 @@ const {
 } = require("@ledgerhq/esbuild-utils");
 const { DOTENV_FILE } = require("../utils");
 const common = require("./common.esbuild");
+const postcssTailwindPlugin = require("../plugins/postcss-tailwind-plugin");
 
 module.exports = {
   ...common,
@@ -25,6 +26,7 @@ module.exports = {
     ? [".v3.tsx", ".v3.ts", ".tsx", ".ts", ".js", ".jsx", ".json"]
     : [".tsx", ".ts", ".v3.tsx", ".v3.ts", ".js", ".jsx", ".json"],
   plugins: [
+    postcssTailwindPlugin(),
     ...common.plugins,
     AliasPlugin({
       // Alias react to prevent esbuild trying to resolve them wrongly.
@@ -33,17 +35,6 @@ module.exports = {
       // It prevents the global styles from working.
       // See: https://github.com/styled-components/styled-components/issues/3714#issuecomment-1112672142
       "styled-components": [require.resolve("styled-components/dist/styled-components")],
-      // Force resolution of crypto-icons-ui to workspace to avoid duplication
-      "@ledgerhq/crypto-icons-ui": path.resolve(
-        path.dirname(__dirname),
-        "..",
-        "..",
-        "..",
-        "libs",
-        "ui",
-        "packages",
-        "crypto-icons",
-      ),
       "buffer/": "buffer",
     }),
     HtmlPlugin({

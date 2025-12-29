@@ -1,9 +1,10 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import React, { memo } from "react";
-import { RectButton, LongPressGestureHandler, State } from "react-native-gesture-handler";
+import { RectButton, Gesture, GestureDetector } from "react-native-gesture-handler";
 import { TokenAccount, Account } from "@ledgerhq/types-live";
 import { createStructuredSelector } from "reselect";
-import { connect, useSelector } from "react-redux";
+import { connect } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
@@ -14,7 +15,7 @@ import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import Delta from "./Delta";
 import { State as RootState } from "~/reducers/types";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: TokenAccount;
@@ -47,19 +48,21 @@ function SubAccountRow({
     range,
   });
 
+  const longPressGesture = Gesture.LongPress()
+    .minDuration(600)
+    .onStart(() => {
+      if (account.type === "TokenAccount") {
+        onSubAccountLongPress(account, parentAccount);
+      }
+    });
+
   return (
-    <LongPressGestureHandler
-      onHandlerStateChange={({ nativeEvent }) => {
-        if (nativeEvent.state === State.ACTIVE) {
-          if (account.type === "TokenAccount") {
-            onSubAccountLongPress(account, parentAccount);
-          }
-        }
-      }}
-      minDurationMs={600}
-      testID={testID}
-    >
-      <RectButton onPress={() => onSubAccountPress(account)} style={{ alignItems: "center" }}>
+    <GestureDetector gesture={longPressGesture}>
+      <RectButton
+        onPress={() => onSubAccountPress(account)}
+        style={{ alignItems: "center" }}
+        testID={testID}
+      >
         <Flex flexDirection={"row"} alignItems={"center"} py={6}>
           <Box justifyContent={"center"}>
             <CurrencyIcon size={32} currency={currency} />
@@ -87,7 +90,7 @@ function SubAccountRow({
           </Box>
         </Flex>
       </RectButton>
-    </LongPressGestureHandler>
+    </GestureDetector>
   );
 }
 

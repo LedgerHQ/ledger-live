@@ -14,4 +14,3 @@ export * from "./Search/Search";
 export * from "./Tag/Tag";
 export * from "./TextInput/TextInput";
 export * from "./VirtualList/VirtualList";
-export * from "./CryptoIcon/CryptoIcon";

@@ -834,6 +834,59 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerId: "club",
   },
+  concordium: {
+    type: "CryptoCurrency",
+    id: "concordium",
+    managerAppName: "Concordium",
+    coinType: CoinType.CONCORDIUM,
+    name: "Concordium",
+    ticker: "CCD",
+    scheme: "concordium",
+    color: "#000000",
+    family: "concordium",
+    blockAvgTime: 2,
+    units: [
+      {
+        name: "ccd",
+        code: "CCD",
+        magnitude: 6,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://ccdscan.io/transactions?dentity=transaction&dhash=$hash",
+        address: "https://ccdscan.io/accounts?dentity=account&daddress=$address",
+      },
+    ],
+    keywords: ["concordium"],
+  },
+  concordium_testnet: {
+    type: "CryptoCurrency",
+    id: "concordium_testnet",
+    managerAppName: "Concordium",
+    coinType: CoinType.CONCORDIUM,
+    name: "Concordium (Testnet)",
+    ticker: "CCD",
+    scheme: "concordium_testnet",
+    color: "#000000",
+    family: "concordium",
+    blockAvgTime: 2,
+    isTestnetFor: "concordium",
+    units: [
+      {
+        name: "ccd",
+        code: "CCD",
+        magnitude: 6,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://testnet.ccdscan.io/transactions?dentity=transaction&dhash=$hash",
+        address: "https://testnet.ccdscan.io/accounts?dentity=account&daddress=$address",
+      },
+    ],
+    keywords: ["concordium_testnet"],
+  },
   coreum: {
     type: "CryptoCurrency",
     id: "coreum",
@@ -1698,7 +1751,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         name: "KAS",
         code: "KAS",
         magnitude: 8,
-        showAllDigits: true,
       },
       {
         name: "Sompis",
@@ -2526,8 +2578,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://www.mintscan.io/quicksilver/txs/$hash",
-        address: "https://www.mintscan.io/quicksilver/validators/$address",
+        tx: "https://explorer.quicksilver.zone/transactions/$hash",
+        address: "https://explorer.quicksilver.zone/validators/$address",
       },
     ],
   },
@@ -3624,6 +3676,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://explorer.stacks.co/address/$address",
       },
     ],
+    tokenTypes: ["sip010"],
   },
   // Cronos POS Chain Croeseid (formerly Crypto.org Croeseid)
   crypto_org_croeseid: {
@@ -4309,11 +4362,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  sei_network_evm: {
+  sei_evm: {
     type: "CryptoCurrency",
-    id: "sei_network_evm",
+    id: "sei_evm",
     coinType: CoinType.ETH,
-    name: "SEI Network EVM",
+    name: "SEI Network (EVM)",
     managerAppName: "Ethereum",
     ticker: "SEI",
     scheme: "sei",
@@ -4540,7 +4593,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 81457,
     },
-    explorerViews: [blockscoutExplorerView("https://blast.blockscout.com")],
+    explorerViews: [
+      {
+        tx: "https://blastscan.io/tx/$hash",
+        address: "https://blastscan.io/address/$address",
+        token: "https://blastscan.io/token/$contractAddress?a=$address",
+      },
+    ],
   },
   blast_sepolia: {
     type: "CryptoCurrency",
@@ -4558,7 +4617,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 168587773,
     },
-    explorerViews: [blockscoutExplorerView("https://blast-testnet.blockscout.com")],
+    explorerViews: [
+      {
+        tx: "https://sepolia.blastscan.io/tx/$hash",
+        address: "https://sepolia.blastscan.io/address/$address",
+        token: "https://sepolia.blastscan.io/token/$contractAddress?a=$address",
+      },
+    ],
   },
   scroll: {
     type: "CryptoCurrency",

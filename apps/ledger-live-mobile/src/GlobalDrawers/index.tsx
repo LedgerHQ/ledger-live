@@ -2,7 +2,7 @@ import React from "react";
 import { DRAWER_ENTRIES } from "./registry";
 
 type GlobalDrawersProps = Readonly<{
-  children: JSX.Element;
+  children: React.JSX.Element;
 }>;
 
 /**

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-evm",
-  "version": "2.36.1",
+  "version": "2.37.0",
   "description": "Ledger EVM Coin integration",
   "keywords": [
     "Ledger",
@@ -80,7 +80,7 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "react-native-get-random-values": "^1.8.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

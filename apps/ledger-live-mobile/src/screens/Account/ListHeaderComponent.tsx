@@ -17,6 +17,7 @@ import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
+import { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
 import { isEditableOperation, isStuckOperation } from "@ledgerhq/live-common/operation";
 import AccountGraphCard from "~/components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
@@ -37,6 +38,7 @@ import WarningBannerStatus from "~/components/WarningBannerStatus";
 import WarningCustomBanner from "~/components/WarningCustomBanner";
 import ErrorWarning from "./ErrorWarning";
 import NftEntryPoint from "LLM/features/NftEntryPoint";
+import perFamilyPendingTransferProposals from "../../generated/PendingTransferProposals";
 
 type Props = {
   account?: AccountLike;
@@ -106,6 +108,9 @@ export function useListHeaderComponents({
     AccountBodyHeader && AccountBodyHeader({ account, parentAccount });
 
   const AccountSubHeader = (perFamilyAccountSubHeader as Record<string, MaybeComponent>)[family];
+  const PendingTransferProposals = (
+    perFamilyPendingTransferProposals as Record<string, MaybeComponent>
+  )[family];
 
   const AccountBalanceSummaryFooter =
     perFamilyAccountBalanceSummaryFooter[
@@ -120,6 +125,7 @@ export function useListHeaderComponents({
         CosmosAccount &
         PolkadotAccount &
         MultiversXAccount &
+        HederaAccount &
         NearAccount,
     });
 
@@ -220,6 +226,13 @@ export function useListHeaderComponents({
                 parentAccount={account}
                 useCounterValue={shouldUseCounterValue}
               />
+            </SectionContainer>,
+          ]
+        : []),
+      ...(PendingTransferProposals
+        ? [
+            <SectionContainer px={2} key="PendingTransferProposals">
+              <PendingTransferProposals account={account} parentAccount={mainAccount} />
             </SectionContainer>,
           ]
         : []),

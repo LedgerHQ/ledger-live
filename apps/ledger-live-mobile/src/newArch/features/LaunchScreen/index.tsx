@@ -6,7 +6,7 @@ import LottieLauncher from "./components/LottieLauncher";
 import { useAppLoadingManager } from "./hooks/useAppLoadingManager";
 import Config from "react-native-config";
 
-interface AppLoadingManagerProps {
+export interface AppLoadingManagerProps {
   children: React.ReactNode;
   isNavigationReady: boolean;
   config?: LoadingConfig;

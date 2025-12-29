@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, FlatList, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { v4 as uuid } from "uuid";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import Snackbar from "./Snackbar";
 import * as RootNavigation from "../../../rootnavigation";

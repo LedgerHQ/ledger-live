@@ -111,6 +111,7 @@ const walletState: WalletState = {
     version: 0,
   },
   nonImportedAccountInfos: [],
+  recentAddresses: {},
 };
 
 const userData = accountRawToAccountUserData(raw);

@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import TabBar from "~/renderer/components/TabBar";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { SettingsSection as Section } from "./SettingsSection";
 import SectionDisplay from "./sections/General";
 import SectionExperimental from "./sections/Experimental";
@@ -14,6 +15,8 @@ import SectionAbout from "./sections/About";
 import SectionHelp from "./sections/Help";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { developerModeSelector } from "~/renderer/reducers/settings";
+import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
+import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 
 const getItems = (t: (a: string) => string, devMode?: boolean) => {
   const items = [
@@ -68,6 +71,7 @@ const Settings = () => {
     [items, accountsCount],
   );
   const defaultItem = items[0];
+  const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");
   const handleChangeTab = useCallback(
     (index: number) => {
       const item = items[index];
@@ -100,15 +104,12 @@ const Settings = () => {
   }, [match, history, location, items, activeTabIndex]);
   return (
     <Box pb={4} selectable>
-      <Box
-        ff="Inter|SemiBold"
-        color="palette.text.shade100"
-        fontSize={7}
-        mb={5}
-        data-e2e="settings_title"
-      >
+      <Box ff="Inter|SemiBold" color="neutral.c100" fontSize={7} mb={5} data-e2e="settings_title">
         {t("settings.title")}
       </Box>
+      {ledgerSyncOptimisationFlag?.enabled && (
+        <LedgerSyncEntryPoint entryPoint={EntryPoint.settings} />
+      )}
       <Section>
         <TabBar
           onIndexChange={handleChangeTab}

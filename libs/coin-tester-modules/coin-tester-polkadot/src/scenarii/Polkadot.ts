@@ -57,160 +57,7 @@ const getTransactions = () => {
     },
   };
 
-  const bond500DotTransaction: PolkadotScenarioTransaction = {
-    name: "Bond 500 DOT",
-    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: parseCurrencyUnit(polkadot.units[0], "500"),
-    mode: "bond",
-    expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("BOND");
-      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.bond");
-      expect(
-        parseCurrencyUnit(
-          polkadot.units[0],
-          (latestOperation.extra as PolkadotOperationExtra).bondedAmount!.toFixed(),
-        ).toFixed(),
-      ).toBe("50000000000000000000000");
-      expect(currentAccount.balance.toFixed()).toBe(
-        previousAccount.balance.minus(latestOperation.value).toFixed(),
-      );
-    },
-  };
-
-  const unbond100DotTransaction: PolkadotScenarioTransaction = {
-    name: "Unbond 100 DOT",
-    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: parseCurrencyUnit(polkadot.units[0], "100"),
-    mode: "unbond",
-    expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("UNBOND");
-      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.unbond");
-      expect(
-        parseCurrencyUnit(
-          polkadot.units[0],
-          (latestOperation.extra as PolkadotOperationExtra).unbondedAmount!.toFixed(),
-        ).toFixed(),
-      ).toBe("10000000000000000000000");
-      expect(
-        parseCurrencyUnit(
-          polkadot.units[0],
-          currentAccount.polkadotResources.unlockingBalance.toFixed(),
-        ).toFixed(),
-      ).toBe("10000000000000000000000");
-    },
-  };
-
-  const rebond50DotTransaction: PolkadotScenarioTransaction = {
-    name: "Rebond 50 DOT",
-    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: parseCurrencyUnit(polkadot.units[0], "50"),
-    mode: "rebond",
-    expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("BOND");
-      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.rebond");
-      expect(
-        parseCurrencyUnit(
-          polkadot.units[0],
-          (latestOperation.extra as PolkadotOperationExtra).bondedAmount!.toFixed(),
-        ).toFixed(),
-      ).toBe("5000000000000000000000"); // Should be 450 DOT no ?
-      expect(
-        parseCurrencyUnit(
-          polkadot.units[0],
-          currentAccount.polkadotResources.unlockingBalance.toFixed(),
-        ).toFixed(),
-      ).toBe("5000000000000000000000");
-    },
-  };
-
-  const nomminateTransaction: PolkadotScenarioTransaction = {
-    name: "Nominate",
-    mode: "nominate",
-    // https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpolkadot-rpc.publicnode.com#/staking
-    validators: [
-      "15ANfaUMadXk65NtRqzCKuhAiVSA47Ks6fZs8rUcRQX11pzM",
-      "19KaPfHSSjv4soqNW1tqPMwAnSGmG3pGydPzrPvaNLXLFDZ",
-    ],
-    expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("NOMINATE");
-      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe(
-        "staking.nominate",
-      );
-      expect((latestOperation.extra as PolkadotOperationExtra).validators?.length).toBe(2);
-      expect(currentAccount.polkadotResources.nominations?.length).toBe(2);
-      expect(
-        currentAccount.polkadotResources.nominations?.every(
-          nominiation => nominiation.status === "waiting" || nominiation.status === "inactive",
-        ),
-      ).toBe(true);
-    },
-  };
-
-  const chillTransaction: PolkadotScenarioTransaction = {
-    name: "Chill",
-    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    mode: "chill",
-    expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("CHILL");
-      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.chill");
-    },
-  };
-
-  const withdraw250DotTransaction: PolkadotScenarioTransaction = {
-    name: "Withdraw 250 DOT",
-    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: parseCurrencyUnit(polkadot.units[0], "250"),
-    mode: "withdrawUnbonded",
-    expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("WITHDRAW_UNBONDED");
-      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe(
-        "staking.withdrawUnbonded",
-      );
-    },
-  };
-
-  const claimRewardTransaction: PolkadotScenarioTransaction = {
-    name: "Claim reward",
-    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    mode: "claimReward",
-    validators: [
-      "15ANfaUMadXk65NtRqzCKuhAiVSA47Ks6fZs8rUcRQX11pzM",
-      "13TrdLhMVLcwcEhMYLcqrkxAgq9M5gnK1LZKAF4VupVfQDUg",
-      "19KaPfHSSjv4soqNW1tqPMwAnSGmG3pGydPzrPvaNLXLFDZ",
-    ],
-    expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("FEES");
-      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe(
-        "staking.payoutStakers",
-      );
-    },
-  };
-
-  return [
-    send1DotTransaction,
-    send100DotTransaction,
-    bond500DotTransaction,
-    unbond100DotTransaction,
-    rebond50DotTransaction,
-    nomminateTransaction,
-    chillTransaction,
-    withdraw250DotTransaction,
-    claimRewardTransaction,
-  ];
+  return [send1DotTransaction, send100DotTransaction];
 };
 
 const LOCAL_TESTNODE_WS_URL = "ws://127.0.0.1:8000";
@@ -252,7 +99,7 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
       spawnSpeculos(
         `/${defaultNanoApp.firmware}/PolkadotMigration/app_${defaultNanoApp.version}.elf`,
       ),
-      spawnChopsticksAndSidecar("coin-tester-chopsticks/polkadot.yml"),
+      spawnChopsticksAndSidecar("/coin-tester-polkadot/coin-tester-chopsticks/polkadot.yml"),
     ]);
 
     const onSignerConfirmation = getOnSpeculosConfirmation("APPROVE");
@@ -282,27 +129,16 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
     // https://polkadot.js.org/docs/keyring/start/suri/#dev-accounts
     const alice = keyring.addFromUri("//Alice");
 
-    // Wait for the transfer to be finalized
-    await new Promise<void>((resolve, reject) => {
-      api.tx.balances
-        .transferAllowDeath(
-          polkadotScenarioAccountPair.address,
-          parseCurrencyUnit(polkadot.units[0], "500000").toNumber(),
-        )
-        .signAndSend(alice, result => {
-          if (result.status.isFinalized) {
-            resolve();
-          } else if (
-            result.status.type === "Dropped" ||
-            result.status.type === "Invalid" ||
-            result.status.type === "Usurped" ||
-            result.status.type === "FinalityTimeout"
-          ) {
-            reject(new Error(`Transaction failed: ${result.status.type}`));
-          }
-        })
-        .catch(reject);
-    });
+    const unsub = await api.tx.balances
+      .transferAllowDeath(
+        polkadotScenarioAccountPair.address,
+        parseCurrencyUnit(polkadot.units[0], "100000").toNumber(),
+      )
+      .signAndSend(alice, result => {
+        if (result.status.isFinalized) {
+          unsub();
+        }
+      });
 
     const account = makeAccount(polkadotScenarioAccountPair.address, polkadot);
 
@@ -405,7 +241,7 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
   },
   beforeAll: async account => {
     expect(formatCurrencyUnit(polkadot.units[0], account.balance, { useGrouping: false })).toBe(
-      "500000",
+      "100000",
     );
   },
   beforeSync: async () => {

@@ -5,6 +5,6 @@ runSendInvalidAddressTest(
   transaction,
   "Recipient account has not opted in the selected ASA.",
   ["B2CQA-2702"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
   transaction.accountToDebit.currency.name,
 );

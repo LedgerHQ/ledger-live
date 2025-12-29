@@ -183,6 +183,173 @@ describe("getAccountShape", () => {
     expect(shape.operationsCount).toEqual(0);
     expect(shape.operations).toEqual([]);
   });
+
+  it("does not migrate when assethub has not been migrated", async () => {
+    mockGetCoinConfig.mockImplementation((currency?: CryptoCurrency): any => {
+      if (currency?.id === "assethub_polkadot") {
+        return {
+          hasBeenMigrated: false,
+        };
+      }
+    });
+
+    const initialAccount = undefined;
+    const accountInfo = createAccountInfo();
+    mockGetAccount.mockResolvedValue(accountInfo);
+    mockGetOperations.mockResolvedValue([]);
+
+    await getAccountShape(
+      {
+        index: -1,
+        derivationPath: "not used",
+        currency: CURRENCY,
+        address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
+        initialAccount,
+        derivationMode: "polkadotbip44",
+      },
+      { paginationConfig: {} },
+    );
+
+    expect(mockGetAccount).toHaveBeenCalledTimes(1);
+    expect(mockGetAccount.mock.lastCall[1]).toEqual(CURRENCY);
+    expect(mockGetOperations).toHaveBeenCalledTimes(1);
+    expect(mockGetOperations.mock.lastCall[2]).toEqual(CURRENCY);
+  });
+
+  it("does not migrate when currency is not polkadot", async () => {
+    const nonPolkadotCurrency = getCryptoCurrencyById("westend");
+    mockGetCoinConfig.mockImplementation((currency?: CryptoCurrency): any => {
+      if (currency?.id === "assethub_polkadot") {
+        return {
+          hasBeenMigrated: true,
+        };
+      }
+    });
+
+    const initialAccount = undefined;
+    const accountInfo = createAccountInfo();
+    mockGetAccount.mockResolvedValue(accountInfo);
+    mockGetOperations.mockResolvedValue([]);
+
+    await getAccountShape(
+      {
+        index: -1,
+        derivationPath: "not used",
+        currency: nonPolkadotCurrency,
+        address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
+        initialAccount,
+        derivationMode: "polkadotbip44",
+      },
+      { paginationConfig: {} },
+    );
+
+    expect(mockGetAccount).toHaveBeenCalledTimes(1);
+    expect(mockGetAccount.mock.lastCall[1]).toEqual(nonPolkadotCurrency);
+    expect(mockGetOperations).toHaveBeenCalledTimes(1);
+    expect(mockGetOperations.mock.lastCall[2]).toEqual(nonPolkadotCurrency);
+  });
+
+  it("generates correct account ID with migration", async () => {
+    const initialAccount = undefined;
+    const accountInfo = createAccountInfo();
+    mockGetAccount.mockResolvedValue(accountInfo);
+    mockGetOperations.mockResolvedValue([]);
+
+    const shape = await getAccountShape(
+      {
+        index: -1,
+        derivationPath: "not used",
+        currency: CURRENCY,
+        address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
+        initialAccount,
+        derivationMode: "polkadotbip44",
+      },
+      { paginationConfig: {} },
+    );
+
+    expect(shape.id).toEqual(
+      "js:2:assethub_polkadot:5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J:polkadotbip44",
+    );
+  });
+
+  it("generates correct account ID without migration", async () => {
+    mockGetCoinConfig.mockImplementation((currency?: CryptoCurrency): any => {
+      if (currency?.id === "assethub_polkadot") {
+        return {
+          hasBeenMigrated: false,
+        };
+      }
+    });
+
+    const initialAccount = undefined;
+    const accountInfo = createAccountInfo();
+    mockGetAccount.mockResolvedValue(accountInfo);
+    mockGetOperations.mockResolvedValue([]);
+
+    const shape = await getAccountShape(
+      {
+        index: -1,
+        derivationPath: "not used",
+        currency: CURRENCY,
+        address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
+        initialAccount,
+        derivationMode: "polkadotbip44",
+      },
+      { paginationConfig: {} },
+    );
+
+    expect(shape.id).toEqual(
+      "js:2:polkadot:5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J:polkadotbip44",
+    );
+  });
+
+  it("returns correct currency in account shape", async () => {
+    const accountInfo = createAccountInfo();
+    mockGetAccount.mockResolvedValue(accountInfo);
+    mockGetOperations.mockResolvedValue([]);
+
+    const shape = await getAccountShape(
+      {
+        index: -1,
+        derivationPath: "not used",
+        currency: CURRENCY,
+        address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
+        initialAccount: undefined,
+        derivationMode: "polkadotbip44",
+      },
+      { paginationConfig: {} },
+    );
+
+    expect(shape.currency).toEqual(EXPECTED_CURRENCY);
+  });
+
+  it("returns correct currency in account shape without migration", async () => {
+    mockGetCoinConfig.mockImplementation((currency?: CryptoCurrency): any => {
+      if (currency?.id === "assethub_polkadot") {
+        return {
+          hasBeenMigrated: false,
+        };
+      }
+    });
+
+    const accountInfo = createAccountInfo();
+    mockGetAccount.mockResolvedValue(accountInfo);
+    mockGetOperations.mockResolvedValue([]);
+
+    const shape = await getAccountShape(
+      {
+        index: -1,
+        derivationPath: "not used",
+        currency: CURRENCY,
+        address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
+        initialAccount: undefined,
+        derivationMode: "polkadotbip44",
+      },
+      { paginationConfig: {} },
+    );
+
+    expect(shape.currency).toEqual(CURRENCY);
+  });
 });
 
 function createAccountInfo() {

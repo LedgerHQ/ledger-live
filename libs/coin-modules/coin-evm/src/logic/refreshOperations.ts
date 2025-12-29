@@ -36,7 +36,7 @@ async function getOperationStatus(
         date,
       })),
     } as Operation;
-  } catch (e) {
+  } catch {
     return null;
   }
 }

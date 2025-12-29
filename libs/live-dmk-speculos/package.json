@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-speculos",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -56,14 +56,14 @@
     "jsdom": "25.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "rxjs": "^7.8.1",
+    "rxjs": "catalog:",
     "vite": "6.0.7",
     "vitest": "2.1.9",
-    "ws": "8.18.0"
+    "ws": "catalog:"
   },
   "peerDependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   }
 }

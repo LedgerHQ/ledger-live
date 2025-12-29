@@ -228,7 +228,7 @@ async function getCompressedValue<T = unknown>(
     }
 
     return value && JSON.parse(value);
-  } catch (e) {
+  } catch {
     return undefined;
   }
 }
@@ -253,7 +253,7 @@ async function getCompressedString(key: string): Promise<string | null> {
     }
 
     return value;
-  } catch (e) {
+  } catch {
     return null;
   }
 }

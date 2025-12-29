@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { allowDebugAppsSelector } from "~/renderer/reducers/settings";
 import { setAllowDebugApps } from "~/renderer/actions/settings";
 import Track from "~/renderer/analytics/Track";
-import Switch from "~/renderer/components/Switch";
+import { Switch } from "@ledgerhq/lumen-ui-react";
 
 const AllowDebugAppsToggle = () => {
   const dispatch = useDispatch();
@@ -16,7 +16,7 @@ const AllowDebugAppsToggle = () => {
     <>
       <Track onUpdate event="AllowDebugApps" />
       <Switch
-        isChecked={allowDebugApps}
+        selected={allowDebugApps}
         onChange={onSetAllowDebugApps}
         data-testid="settings-allow-debug-apps"
       />

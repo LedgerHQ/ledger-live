@@ -19,7 +19,7 @@ import {
 } from "@ledgerhq/live-common/wallet-api/constants";
 import { DiscoverDB, AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { useSearch } from "@ledgerhq/live-common/hooks/useSearch";
 import { useDB } from "../../../db";
 import { NavigatorName, ScreenName } from "~/const";

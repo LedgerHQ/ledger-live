@@ -70,7 +70,7 @@ describe("EVM Staking - getStakes", () => {
   });
 
   it("should handle multiple validators and filter zero amounts", async () => {
-    const currency = getCryptoCurrencyById("sei_network_evm");
+    const currency = getCryptoCurrencyById("sei_evm");
 
     jest.spyOn(VALIDATORS, "getValidators").mockResolvedValue(["seivaloper1abc", "seivaloper1def"]);
 
@@ -142,7 +142,7 @@ describe("EVM Staking - getStakes", () => {
   });
 
   it("should handle SEI when no validators are available", async () => {
-    const currency = getCryptoCurrencyById("sei_network_evm");
+    const currency = getCryptoCurrencyById("sei_evm");
 
     jest.spyOn(VALIDATORS, "getValidators").mockResolvedValue([]);
 
@@ -154,7 +154,7 @@ describe("EVM Staking - getStakes", () => {
   });
 
   it("should survive network failures during validator fetching", async () => {
-    const currency = getCryptoCurrencyById("sei_network_evm");
+    const currency = getCryptoCurrencyById("sei_evm");
 
     jest.spyOn(VALIDATORS, "getValidators").mockRejectedValue(new Error("Network unreachable"));
 

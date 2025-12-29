@@ -2,14 +2,10 @@ import React from "react";
 import { State } from "~/reducers/types";
 import { renderWithReactQuery } from "@tests/test-renderer";
 import { MockedAccounts } from "../../Accounts/__integrations__/mockedAccounts";
-import AccountsList from "../../Accounts/screens/AccountsList";
-import { AccountsListNavigator } from "../../Accounts/screens/AccountsList/types";
-import { ScreenName } from "~/const";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { EntryPoint } from "../types";
-import LedgerSyncEntryPoint from "..";
+import { TestAccountsListScreen } from "./TestAccountsListScreen";
 
 const getInitialState = (state: State) => ({
   ...state,
@@ -37,6 +33,7 @@ const getInitialState = (state: State) => ({
           postOnboarding: true,
         },
       },
+      // lwmLedgerSyncOptimisation not defined = old behavior with "Activate Ledger Sync" text
     },
     seenDevices: [
       {
@@ -48,22 +45,8 @@ const getInitialState = (state: State) => ({
 
 describe("Ledger Sync Entry Point on Accounts screen", () => {
   it("entry point should be displayed and open ledger sync activation flow", async () => {
-    const Stack = createNativeStackNavigator<AccountsListNavigator>();
-
     const { getByText, findByText, findByRole, user } = renderWithReactQuery(
-      <Stack.Navigator>
-        <Stack.Screen
-          name={ScreenName.AccountsList}
-          component={AccountsList}
-          initialParams={{ sourceScreenName: ScreenName.AccountsList, canAddAccount: true }}
-          options={{
-            headerTitle: "",
-            headerRight: () => (
-              <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} page="Accounts" />
-            ),
-          }}
-        />
-      </Stack.Navigator>,
+      <TestAccountsListScreen entryPoint={EntryPoint.accounts} page="Accounts" />,
       {
         overrideInitialState: getInitialState,
       },
@@ -77,22 +60,8 @@ describe("Ledger Sync Entry Point on Accounts screen", () => {
   });
 
   it("entry point should not be displayed when the entry point is disabled in the ff", async () => {
-    const Stack = createNativeStackNavigator<AccountsListNavigator>();
-
     const { queryByText } = renderWithReactQuery(
-      <Stack.Navigator>
-        <Stack.Screen
-          name={ScreenName.AccountsList}
-          component={AccountsList}
-          initialParams={{ sourceScreenName: ScreenName.AccountsList, canAddAccount: true }}
-          options={{
-            headerTitle: "",
-            headerRight: () => (
-              <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} page="Accounts" />
-            ),
-          }}
-        />
-      </Stack.Navigator>,
+      <TestAccountsListScreen entryPoint={EntryPoint.accounts} page="Accounts" />,
       {
         overrideInitialState: (state: State) => ({
           ...getInitialState(state),
@@ -117,5 +86,84 @@ describe("Ledger Sync Entry Point on Accounts screen", () => {
 
     // Check that the entry point is not visible
     expect(queryByText(/activate ledger sync/i)).not.toBeVisible();
+  });
+});
+
+const getInitialStateWithOptimisation = (state: State) => ({
+  ...state,
+  accounts: MockedAccounts,
+  settings: {
+    ...state.settings,
+    readOnlyModeEnabled: false,
+    overriddenFeatureFlags: {
+      llmAccountListUI: {
+        enabled: true,
+      },
+      llmWalletSync: {
+        enabled: true,
+        params: {
+          environment: "STAGING",
+          watchConfig: {},
+        },
+      },
+      llmLedgerSyncEntryPoints: {
+        enabled: true,
+        params: {
+          manager: false,
+          accounts: true,
+          settings: true,
+          postOnboarding: true,
+        },
+      },
+      lwmLedgerSyncOptimisation: {
+        enabled: true,
+      },
+    },
+    seenDevices: [
+      {
+        modelId: DeviceModelId.stax,
+      } as DeviceModelInfo,
+    ],
+  },
+});
+
+describe("Ledger Sync Entry Point with lwmLedgerSyncOptimisation enabled", () => {
+  it("accounts entry point should display optimised banner and open activation flow", async () => {
+    const { getAllByText, findByRole, user } = renderWithReactQuery(
+      <TestAccountsListScreen entryPoint={EntryPoint.accounts} page="Accounts" />,
+      {
+        overrideInitialState: getInitialStateWithOptimisation,
+      },
+    );
+
+    await user.press(getAllByText(/your wallet isn't synced/i)[0]);
+
+    expect(await findByRole("button", { name: "Continue" })).toBeVisible();
+  });
+
+  it("settings entry point should display optimised banner and open activation flow", async () => {
+    const { getAllByText, findByRole, user } = renderWithReactQuery(
+      <TestAccountsListScreen entryPoint={EntryPoint.settings} page="Settings" />,
+      {
+        overrideInitialState: getInitialStateWithOptimisation,
+      },
+    );
+
+    await user.press(getAllByText(/your wallet isn't synced/i)[0]);
+
+    expect(await findByRole("button", { name: "Continue" })).toBeVisible();
+  });
+
+  it("manager entry point should display optimised banner and open activation flow", async () => {
+    const { getAllByText, findByRole, user } = renderWithReactQuery(
+      <TestAccountsListScreen entryPoint={EntryPoint.manager} page="Manager" />,
+      {
+        overrideInitialState: getInitialStateWithOptimisation,
+      },
+    );
+
+    await user.press(getAllByText(/your wallet isn't synced/i)[0]);
+
+    expect(await findByRole("button", { name: "Continue" })).toBeVisible();
   });
 });

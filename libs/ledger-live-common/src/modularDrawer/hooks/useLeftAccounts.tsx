@@ -13,6 +13,7 @@ export const createUseLeftAccountsModule = ({
 
     return accountData.map(({ label, count }) => ({
       leftElement: count > 0 ? accountsCount({ label }) : undefined,
+      description: count > 0 ? label : undefined,
       count,
     }));
   };

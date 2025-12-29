@@ -43,6 +43,9 @@ export const contextWithSyncFailures = (shouldFailOnAccount: (_: Account) => boo
     getSerializedAddressParameters: () => {
       throw new Error("not implemented");
     },
+    validateAddress: () => {
+      throw new Error("not implemented");
+    },
   }),
   bridgeCache: {
     hydrateCurrency: () => Promise.resolve(null),

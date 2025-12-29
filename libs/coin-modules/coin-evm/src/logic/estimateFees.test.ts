@@ -11,6 +11,7 @@ import { getNodeApi } from "../network/node";
 import ledgerGasTracker from "../network/gasTracker/ledger";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import * as gasTrackerModule from "../network/gasTracker";
+import { GasEstimationError } from "../errors";
 import { estimateFees } from "./estimateFees";
 
 jest.mock("../network/node", () => ({ getNodeApi: jest.fn() }));
@@ -64,20 +65,12 @@ describe("estimateFees", () => {
         >,
       ),
     ).toEqual({ value: 0n });
-    expect(
-      await estimateFees(
-        {} as CryptoCurrency,
-        {
-          type: "send-legacy",
-          recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
-        } as TransactionIntent<MemoNotSupported, BufferTxData>,
-      ),
-    ).toEqual({ value: 0n });
     expect(mockNodeApi.getGasEstimation).not.toHaveBeenCalled();
   });
 
   it("estimates fees for native asset and custom fee options", async () => {
     mockNodeApi.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    mockNodeApi.getTransactionCount.mockResolvedValue(42);
     jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
 
     const result = await estimateFees(
@@ -323,6 +316,41 @@ describe("estimateFees", () => {
     });
   });
 
+  it("returns 0 when gas estimation fails", async () => {
+    mockNodeApi.getGasEstimation.mockRejectedValue(new GasEstimationError());
+    jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
+    mockNodeApi.getFeeData.mockResolvedValue({
+      gasPrice: null,
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      nextBaseFee: null,
+    });
+    jest.spyOn(gasTrackerModule, "getGasTracker").mockReturnValue(null);
+
+    const result = await estimateFees(mockCurrency, {
+      intentType: "transaction",
+      type: "send-legacy",
+      amount: BigInt("1000000000000000000"),
+      asset: { type: "native" },
+      recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+      sender: "0xsender",
+      feesStrategy: "slow",
+      data: { type: "buffer", value: Buffer.from([]) },
+    } as SendTransactionIntent<MemoNotSupported, BufferTxData>);
+
+    expect(result).toEqual({
+      value: 0n,
+      parameters: {
+        gasPrice: null,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null,
+        nextBaseFee: null,
+        gasLimit: 0n,
+        type: 0,
+      },
+    });
+  });
+
   it("embeds additional fees when dealing with layers 2", async () => {
     mockNodeApi.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
     jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
@@ -381,7 +409,7 @@ describe("estimateFees", () => {
       amount: 1000000n,
     };
     const result = await estimateFees(
-      { ...mockCurrency, id: "sei_network_evm", ethereumLikeInfo: { chainId: 1329 } },
+      { ...mockCurrency, id: "sei_evm", ethereumLikeInfo: { chainId: 1329 } },
       tokenIntent,
     );
     expect(result).toEqual({
@@ -418,7 +446,7 @@ describe("estimateFees", () => {
       amount: 1000000n,
     };
     const result = await estimateFees(
-      { ...mockCurrency, id: "sei_network_evm", ethereumLikeInfo: { chainId: 1329 } },
+      { ...mockCurrency, id: "sei_evm", ethereumLikeInfo: { chainId: 1329 } },
       tokenIntent,
     );
     expect(result).toEqual({

@@ -48,7 +48,7 @@ const TeamLink = ({ team, teamLink }: TeamLinkProps) => {
         verticalAlign={"bottom"}
         onClick={onOpenTeam}
         justifyContent="center"
-        color={"palette.primary.main"}
+        color={"primary.c80"}
       >
         {team}
         <ExternalLinkIconContainer>

@@ -12,12 +12,12 @@ export type Props = {
   title?: React.ReactNode;
   subTitle?: React.ReactNode;
   desc?: React.ReactNode;
-  renderIcon?: Function;
+  renderIcon?: () => React.ReactNode;
   confirmText?: React.ReactNode;
   cancelText?: React.ReactNode;
-  onReject?: Function;
+  onReject?: () => void;
   onClose?: () => void;
-  onConfirm: Function;
+  onConfirm: () => void;
   isLoading?: boolean;
   analyticsName: string;
   cancellable?: boolean;
@@ -85,13 +85,7 @@ const ConfirmModal = ({
         render={() => (
           <Box>
             {subTitle && (
-              <Box
-                ff="Inter|Regular"
-                color="palette.text.shade100"
-                textAlign="center"
-                mb={2}
-                mt={3}
-              >
+              <Box ff="Inter|Regular" color="neutral.c100" textAlign="center" mb={2} mt={3}>
                 {subTitle}
               </Box>
             )}
@@ -101,7 +95,7 @@ const ConfirmModal = ({
               </Box>
             )}
             {desc && (
-              <Box ff="Inter" color="palette.text.shade80" fontSize={4} textAlign="center">
+              <Box ff="Inter" color="neutral.c80" fontSize={4} textAlign="center">
                 {desc}
               </Box>
             )}

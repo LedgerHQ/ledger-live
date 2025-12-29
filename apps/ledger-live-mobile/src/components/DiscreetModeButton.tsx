@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/store";
 import { EyeMedium, EyeNoneMedium } from "@ledgerhq/native-ui/assets/icons";
 import { discreetModeSelector } from "~/reducers/settings";
 import { setDiscreetMode } from "~/actions/settings";

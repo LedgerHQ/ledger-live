@@ -6,6 +6,7 @@ import {
   RenderHookResult,
   render as rtlRender,
   renderHook as rtlRenderHook,
+  act,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
@@ -46,6 +47,7 @@ interface RenderReturn {
   container: HTMLElement;
   i18n: typeof i18n;
 }
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 type DeepPartial<T> = T extends Function
   ? T
   : T extends Array<infer U>
@@ -85,7 +87,7 @@ function CountervaluesProviders({
  * @param {ReduxStore} props.store - The Redux store to be used with the Provider.
  * @param {boolean} [props.minimal=false] - If true, renders only the children without additional context providers.
  *
- * @returns {JSX.Element} The wrapped children with the specified context providers.
+ * @returns {React.JSX.Element} The wrapped children with the specified context providers.
  */
 
 function Providers({
@@ -100,7 +102,7 @@ function Providers({
   minimal?: boolean;
   withLiveApp?: boolean;
   initialCountervalues?: CounterValuesStateRaw;
-}): JSX.Element {
+}): React.JSX.Element {
   const queryClient = new QueryClient();
 
   const content = minimal ? <>{children}</> : <EnhancedProviders>{children}</EnhancedProviders>;
@@ -120,7 +122,7 @@ function Providers({
   );
 }
 
-function EnhancedProviders({ children }: { children: React.ReactNode }): JSX.Element {
+function EnhancedProviders({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
     <I18nextProvider i18n={i18n}>
       <DrawerProvider>
@@ -137,13 +139,13 @@ function EnhancedProviders({ children }: { children: React.ReactNode }): JSX.Ele
  * This should be merged with the main render function to avoid duplication.
  * But for now, it is kept separate to maintain the mocking of counter values and avoid breaking changes.
  *
- * @param {JSX.Element} ui - The React component to be rendered.
+ * @param {React.JSX.Element} ui - The React component to be rendered.
  * @param {ExtraOptions} [options={}] - Additional options for rendering, such as initial state, store, etc.
  *
  * @returns {RenderReturn} The rendered component with the provided context providers and user events.
  */
 function renderWithMockedCounterValuesProvider(
-  ui: JSX.Element,
+  ui: React.JSX.Element,
   options: ExtraOptions = {},
 ): RenderReturn {
   const {
@@ -172,12 +174,12 @@ function renderWithMockedCounterValuesProvider(
 /**
  * Renders a UI component with the necessary context providers and sets up user events for testing.
  *
- * @param {JSX.Element} ui - The React component to be rendered.
+ * @param {React.JSX.Element} ui - The React component to be rendered.
  * @param {ExtraOptions} [options={}] - Additional options for rendering, such as initial state, store, etc.
  *
  * @returns {RenderReturn} The rendered component with the provided context providers and user events.
  */
-function render(ui: JSX.Element, options: ExtraOptions = {}): RenderReturn {
+function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn {
   const {
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -266,7 +268,15 @@ function renderHookWithLiveAppProvider<Result, Props>(
   };
 }
 
+// Override act to suppress deprecation warnings for synchronous usage
+// eslint-disable-next-line @typescript-eslint/no-deprecated
+const actWrapper = (callback: () => void | Promise<void>): void | Promise<void> => {
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
+  return act(callback);
+};
+
 export * from "@testing-library/react";
+export { actWrapper as act };
 export {
   render,
   renderHook,

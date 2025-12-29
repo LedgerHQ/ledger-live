@@ -19,6 +19,7 @@ import getTransactionStatus from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import buildSignOperation from "./signOperation";
 import makeCliTools from "./cli-transaction";
+import { validateAddress } from "./validateAddress";
 
 export { makeCliTools };
 
@@ -59,6 +60,7 @@ export function buildAccountBridge(
     },
     broadcast,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

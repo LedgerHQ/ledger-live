@@ -6,30 +6,20 @@ import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { makeAccount } from "../fixtures";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
-import {
-  EvmNftTransaction,
-  Transaction as EvmTransaction,
-} from "@ledgerhq/coin-evm/types/transaction";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { callMyDealer, ethereum, VITALIK, getBridges } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
 import { defaultNanoApp } from "../constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 import { USDC_ON_ETHEREUM } from "../tokenFixtures";
 
 type EthereumScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
-const boredApeContract = "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D";
-const boredApeTokenId = "3368";
-const cloneXContract = "0x348FC118bcC65a92dC033A951aF153d14D945312";
-const cloneXTokenId = "951";
 
 const makeScenarioTransactions = ({
   address,
-  strategy,
 }: {
   address: string;
-  strategy: BridgeStrategy;
 }): EthereumScenarioTransaction[] => {
   const scenarioSendEthTransaction: EthereumScenarioTransaction = {
     name: "Send 1 ETH",
@@ -66,72 +56,12 @@ const makeScenarioTransactions = ({
     },
   };
 
-  const scenarioSendERC721Transaction: ScenarioTransaction<
-    EvmTransaction & EvmNftTransaction,
-    Account
-  > = {
-    name: "Send ERC721",
-    recipient: VITALIK,
-    mode: "erc721",
-    nft: {
-      tokenId: boredApeTokenId,
-      contract: boredApeContract,
-      quantity: new BigNumber(1),
-      collectionName: "Bored Ape",
-    },
-    expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(currentAccount.nfts?.every(nft => nft.contract !== boredApeContract)).toBe(true);
-      expect(latestOperation.type).toBe("FEES");
-      const lastNftOperation = latestOperation.nftOperations?.[0];
-      expect(lastNftOperation).toMatchObject({
-        contract: boredApeContract,
-        tokenId: boredApeTokenId,
-        value: new BigNumber(1),
-      });
-    },
-  };
-
-  const scenarioSendERC1155Transaction: ScenarioTransaction<
-    EvmTransaction & EvmNftTransaction,
-    Account
-  > = {
-    name: "Send ERC1155",
-    recipient: VITALIK,
-    mode: "erc1155",
-    nft: {
-      tokenId: "951",
-      contract: cloneXContract,
-      collectionName: "Clone X",
-      quantity: new BigNumber(2),
-    },
-    expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(currentAccount.nfts?.every(nft => nft.contract !== cloneXContract)).toBe(true);
-      expect(latestOperation.type).toBe("FEES");
-      const lastNftOperation = latestOperation.nftOperations?.[0];
-      expect(lastNftOperation).toMatchObject({
-        contract: cloneXContract,
-        tokenId: cloneXTokenId,
-        value: new BigNumber(2),
-      });
-    },
-  };
-
-  return [
-    scenarioSendEthTransaction,
-    scenarioSendUSDCTransaction,
-    ...(strategy === "legacy"
-      ? [scenarioSendERC721Transaction, scenarioSendERC1155Transaction]
-      : []),
-  ];
+  return [scenarioSendEthTransaction, scenarioSendUSDCTransaction];
 };
 
 export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic ETH Transactions",
-  setup: async strategy => {
+  setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
       spawnAnvil("https://ethereum-rpc.publicnode.com"),
@@ -184,11 +114,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
     initMswHandlers(getCoinConfig(ethereum).info);
 
     const onSignerConfirmation = getOnSpeculosConfirmation();
-    const { currencyBridge, accountBridge, getAddress } = getBridges(
-      strategy,
-      transport,
-      "ethereum",
-    );
+    const { currencyBridge, accountBridge, getAddress } = getBridges(transport, "ethereum");
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: ethereum,
@@ -211,32 +137,6 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
       dose: ethers.parseUnits("100", USDC_ON_ETHEREUM.units[0].magnitude),
     });
 
-    // Get a Bored Ape
-    await callMyDealer({
-      provider,
-      drug: {
-        type: "Nft",
-        tokenId: boredApeTokenId,
-        contractAddress: boredApeContract,
-        standard: "ERC721",
-      },
-      junkie: address,
-      dose: 1n,
-    });
-
-    // Get 2 CloneX
-    await callMyDealer({
-      provider,
-      drug: {
-        type: "Nft",
-        tokenId: cloneXTokenId,
-        contractAddress: cloneXContract,
-        standard: "ERC1155",
-      },
-      junkie: address,
-      dose: 2n,
-    });
-
     return {
       currencyBridge,
       accountBridge,
@@ -244,25 +144,25 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
       onSignerConfirmation,
     };
   },
-  beforeAll: (account, strategy) => {
+  beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
     expect(account.subAccounts?.[0].type).toBe("TokenAccount");
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("100", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
     );
-    expect(account.nfts?.length).toBe(strategy === "legacy" ? 2 : 0);
+    expect(account.nfts?.length).toBe(0);
   },
-  getTransactions: (address, strategy) => makeScenarioTransactions({ address, strategy }),
+  getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
     await indexBlocks();
   },
-  afterAll: (account, strategy) => {
+  afterAll: account => {
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("20", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
     );
     expect(account.nfts?.length).toBe(0);
-    expect(account.operations.length).toBe(strategy === "legacy" ? 7 : 3);
+    expect(account.operations.length).toBe(3);
   },
   teardown: async () => {
     resetIndexer();

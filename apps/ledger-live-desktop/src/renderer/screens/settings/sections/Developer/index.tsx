@@ -16,16 +16,18 @@ import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
 import ExchangeTestPartnerMode from "./ExchangeTestPartnerMode";
-import LottieTester from "../Experimental/LottieTester";
-import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
+import LottieTester from "./LottieTester";
+import PostOnboardingHubTester from "./PostOnboardingHubTester";
 import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import WalletSyncTester from "./WalletSync/WalletSyncTester";
 import MockAppUpdate from "./MockAppUpdate";
 import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
+import EnableThemeConsole from "./EnableThemeConsole";
 import BrazeTools from "./BrazeTools";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
 import CustomCALRefInput from "./CustomCALRefInput";
+import EnvVariableOverride from "./EnvVariableOverride";
 import ModularDrawerDevTool from "./ModularDrawer";
 import CryptoAssetsListDevTool from "./CryptoAssetsList";
 import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
@@ -86,10 +88,17 @@ const Default = () => {
       >
         <EnableAnalyticsConsole />
       </Row>
+      <Row
+        title={t("settings.developer.themeConsole.title")}
+        desc={t("settings.developer.themeConsole.desc")}
+      >
+        <EnableThemeConsole />
+      </Row>
       <RunLocalAppButton />
       <CustomLockScreenTester />
       <CustomLockScreenToggle />
       <FeatureFlagsSettings />
+      {__DEV__ && <EnvVariableOverride />}
       <Row
         title={t("settings.developer.enableLearnStagingUrl")}
         desc={t("settings.developer.enableLearnStagingUrlDesc")}

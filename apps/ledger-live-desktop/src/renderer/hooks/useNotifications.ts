@@ -71,7 +71,7 @@ export function useNotifications() {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         currentCard.url = currentCard.id;
-        isTrackedUser && braze.logContentCardClick(currentCard);
+        if (isTrackedUser) braze.logContentCardClick(currentCard);
       }
 
       track("contentcard_clicked", {

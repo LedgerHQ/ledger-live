@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-bitcoin",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Ledger BTC Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [

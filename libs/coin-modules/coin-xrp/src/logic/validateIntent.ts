@@ -10,15 +10,15 @@ import {
 } from "@ledgerhq/errors";
 import { isValidClassicAddress } from "ripple-address-codec";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { getServerInfos } from "../network";
-import { cachedRecipientIsNew } from "./utils";
-import { parseAPIValue } from "./common";
 import {
   TransactionValidation,
   TransactionIntent,
   FeeEstimation,
 } from "@ledgerhq/coin-framework/api/types";
+import { getServerInfos } from "../network";
 import { XrpMapMemo } from "../types";
+import { cachedRecipientIsNew } from "./utils";
+import { parseAPIValue } from "./common";
 import { getBalance } from "./getBalance";
 
 export const validateIntent = async (

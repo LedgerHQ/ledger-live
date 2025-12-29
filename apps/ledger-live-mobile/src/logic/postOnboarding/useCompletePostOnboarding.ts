@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 
 import { useNavigation } from "@react-navigation/native";
 import { postOnboardingSetFinished } from "@ledgerhq/live-common/postOnboarding/actions";

@@ -21,10 +21,13 @@ describe("createApi", () => {
     expect(api.combine).toBeInstanceOf(Function);
     expect(api.craftTransaction).toBeInstanceOf(Function);
     expect(api.estimateFees).toBeInstanceOf(Function);
+    expect(api.getAssetFromToken).toBeInstanceOf(Function);
     expect(api.getBalance).toBeInstanceOf(Function);
+    expect(api.getBlock).toBeInstanceOf(Function);
+    expect(api.getBlockInfo).toBeInstanceOf(Function);
+    expect(api.getTokenFromAsset).toBeInstanceOf(Function);
+    expect(api.getValidators).toBeInstanceOf(Function);
     expect(api.lastBlock).toBeInstanceOf(Function);
     expect(api.listOperations).toBeInstanceOf(Function);
-    expect(api.getAssetFromToken).toBeInstanceOf(Function);
-    expect(api.getTokenFromAsset).toBeInstanceOf(Function);
   });
 });

@@ -25,12 +25,12 @@ export const ItemContainer = styled(Tabbable).attrs<ItemProps>(p => ({
   pointer-events: ${p => (p.disabled ? "none" : "unset")};
   cursor: ${p => (p.isInteractive ? "pointer" : "initial")};
   &:hover {
-    color: ${p => (p.disabled ? "" : p.theme.colors.palette.text.shade100)};
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.action.active, 0.05))};
+    color: ${p => (p.disabled ? "" : p.theme.colors.neutral.c100)};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.opacityDefault.c10, 0.05))};
   }
 
   &:active {
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.action.active, 0.1))};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.opacityDefault.c10, 0.1))};
   }
 `;
 export const Bar = styled.div`
@@ -38,5 +38,5 @@ export const Bar = styled.div`
   margin-right: 5px;
   height: 15px;
   width: 1px;
-  background: ${p => p.theme.colors.palette.divider};
+  background: ${p => p.theme.colors.neutral.c40};
 `;

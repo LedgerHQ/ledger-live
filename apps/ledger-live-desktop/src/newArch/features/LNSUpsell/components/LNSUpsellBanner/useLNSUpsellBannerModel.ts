@@ -16,7 +16,7 @@ export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerM
       link: ctaLink,
       page: analitycsPage,
     });
-    ctaLink && openURL(ctaLink);
+    if (ctaLink) openURL(ctaLink);
   };
 
   const tracking = state.tracking;

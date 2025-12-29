@@ -10,13 +10,12 @@ const Tab = styled(Base)<{
   flex: ${({ fullWidth }) => (fullWidth ? "1" : "initial")};
   display: flex;
   justify-content: center;
-  color: ${p =>
-    p.active ? p.theme.colors.palette.text.shade100 : p.theme.colors.palette.text.shade50};
+  color: ${p => (p.active ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c70)};
   &:hover,
   &:active,
   &:focus {
     background: none;
-    color: ${p => p.theme.colors.palette.text.shade100};
+    color: ${p => (p.active ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c100)};
   }
 
   > * {
@@ -42,7 +41,7 @@ const TabIndicator = styled.span.attrs<TabIndicatorProps>(({ currentRef, index, 
   position: absolute;
   bottom: 0;
   left: ${p => (p.short && p.index === 0 ? 0 : "16px")};
-  background-color: ${p => p.theme.colors.palette.primary.main};
+  background-color: ${p => p.theme.colors.primary.c80};
   transition: all 0.3s ease-in-out;
 `;
 
@@ -65,7 +64,7 @@ export const TabBarRootStyled = styled.div<{
     p.separator
       ? `
     &:after {
-    background: ${p.theme.colors.palette.divider};
+    background: ${p.theme.colors.neutral.c40};
     content: "";
     display: block;
     height: 1px;

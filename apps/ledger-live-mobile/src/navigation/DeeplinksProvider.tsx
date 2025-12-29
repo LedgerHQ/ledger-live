@@ -1,6 +1,6 @@
-import React, { useMemo, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Linking } from "react-native";
+import React, { useMemo, useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "~/context/store";
+import { Platform, Linking } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import {
   getStateFromPath,
@@ -28,7 +28,6 @@ import {
   makeSetEarnProtocolInfoModalAction,
 } from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
-import { navigationIntegration } from "../sentry";
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
@@ -44,7 +43,7 @@ import {
   validateEarnDepositScreen,
 } from "./deeplinks/validation";
 import { viewNamePredicate } from "~/datadog";
-import { AppLoadingManager } from "LLM/features/LaunchScreen";
+import { AppLoadingManager, AppLoadingManagerProps } from "LLM/features/LaunchScreen";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
 
 const themes: {
@@ -101,10 +100,8 @@ const linkingOptions = () => ({
     if (url) {
       return url ? getProxyURL(url) : null;
     }
-    const brazeUrl: string = await new Promise(resolve => {
-      Braze.getInitialURL(initialUrl => {
-        resolve(initialUrl);
-      });
+    const brazeUrl: string | null = await new Promise(resolve => {
+      Braze.getInitialPushPayload(payload => resolve(payload?.url ?? null));
     });
     return brazeUrl ? getProxyURL(brazeUrl) : null;
   },
@@ -332,6 +329,8 @@ export const DeeplinksProvider = ({
   children: React.ReactNode;
   resolvedTheme: "light" | "dark";
 }) => {
+  logStartupEvent("DeeplinksProvider render");
+
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
@@ -503,6 +502,9 @@ export const DeeplinksProvider = ({
           : getOnboardingLinkingOptions(!!userAcceptedTerms)),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
+            // Track deeplink session when app comes from background
+            track("Start", { isDeeplinkSession: true });
+
             // Close all drawers if app was in background before deeplink
             onDeeplinkReceived();
 
@@ -720,39 +722,47 @@ export const DeeplinksProvider = ({
     [],
   );
 
-  if (!isReady) {
-    return null;
-  }
+  const animSplash = useFeature("llmAnimatedSplashScreen");
+  const showAnimatedSplashScreen = useRef(
+    (animSplash?.enabled && animSplash.params?.[Platform.OS]) ?? true,
+  );
+  const SplashScreenComponent = useRef(
+    showAnimatedSplashScreen.current
+      ? AppLoadingManager
+      : ({ children }: AppLoadingManagerProps) => <>{children}</>,
+  );
 
   return (
-    <AppLoadingManager
-      isNavigationReady={isReady}
-      onAppReady={async () => {
-        navigationIntegration.registerNavigationContainer(navigationRef);
-
-        try {
-          DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
-
-          logStartupEvent(STARTUP_EVENTS.STARTED);
-          const events = await resolveStartupEvents();
-          const appStartupTime = events.find(({ event }) => event === STARTUP_EVENTS.STARTED)?.time;
-          await track("app_startup_events", { appStartupTime, events });
-        } catch (error) {
-          console.error("Error during app startup tracking:", error);
-        }
-      }}
-    >
-      <NavigationContainer
-        theme={theme}
-        linking={linking}
-        ref={navigationRef}
-        onReady={() => {
-          isReadyRef.current = true;
-          setTimeout(() => SplashScreen.hide(), 300);
-        }}
-      >
-        {children}
-      </NavigationContainer>
-    </AppLoadingManager>
+    <SplashScreenComponent.current isNavigationReady={isReady} onAppReady={handleAppFullyStarted}>
+      {isReady ? (
+        <NavigationContainer
+          theme={theme}
+          linking={linking}
+          ref={navigationRef}
+          onReady={() => {
+            isReadyRef.current = true;
+            setTimeout(() => {
+              SplashScreen.hide();
+              if (!showAnimatedSplashScreen.current) handleAppFullyStarted();
+            }, 300);
+          }}
+        >
+          {children}
+        </NavigationContainer>
+      ) : null}
+    </SplashScreenComponent.current>
   );
 };
+
+async function handleAppFullyStarted() {
+  try {
+    DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
+
+    logStartupEvent(STARTUP_EVENTS.STARTED);
+    const events = await resolveStartupEvents();
+    const appStartupTime = events.find(({ event }) => event === STARTUP_EVENTS.STARTED)?.time;
+    await track("app_startup_events", { appStartupTime, events });
+  } catch (error) {
+    console.error("Error during app startup tracking:", error);
+  }
+}

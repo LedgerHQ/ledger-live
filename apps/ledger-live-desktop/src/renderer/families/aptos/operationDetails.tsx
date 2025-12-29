@@ -18,9 +18,9 @@ const AmountCellExtra = ({ operation, currency, unit }: AmountCellExtraProps<Ope
 
   return !amount.isZero() ? (
     <>
-      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"neutral.c80"} />
       <CounterValue
-        color="palette.text.shade60"
+        color="neutral.c70"
         fontSize={3}
         date={operation.date}
         currency={currency}
@@ -69,11 +69,11 @@ const OperationDetailsExtra = ({
       <OpDetailsData>
         <Box alignItems="flex-end">
           <Box horizontal alignItems="center">
-            <FormattedVal unit={unit} showCode val={amount} color="palette.text.shade80" />
+            <FormattedVal unit={unit} showCode val={amount} color="neutral.c80" />
           </Box>
           <Box horizontal justifyContent="flex-end">
             <CounterValue
-              color="palette.text.shade60"
+              color="neutral.c70"
               date={operation.date}
               fontSize={3}
               currency={account.currency}
@@ -85,7 +85,7 @@ const OperationDetailsExtra = ({
               prefix={
                 <Box
                   mr={1}
-                  color="palette.text.shade60"
+                  color="neutral.c70"
                   style={{
                     width: "auto",
                   }}
@@ -106,9 +106,9 @@ const WithdrawAmountCell = ({ operation, currency, unit }: AmountCellExtraProps<
 
   return !amount.isZero() ? (
     <>
-      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"neutral.c80"} />
       <CounterValue
-        color="palette.text.shade60"
+        color="neutral.c70"
         fontSize={3}
         date={operation.date}
         currency={currency}

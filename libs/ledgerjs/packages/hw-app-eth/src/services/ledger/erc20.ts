@@ -45,7 +45,7 @@ export const byContractAddressAndChainId = (
   if (erc20SignaturesBlob) {
     try {
       return parse(erc20SignaturesBlob).byContractAndChainId(asContractAddress(contract), chainId);
-    } catch (e) {
+    } catch {
       // Fall through to static fallback if dynamic CAL parsing fails
     }
   }

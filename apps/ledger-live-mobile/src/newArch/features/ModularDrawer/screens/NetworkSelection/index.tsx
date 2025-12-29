@@ -17,10 +17,11 @@ import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { accountsCount } from "../../components/AccountCount";
 import { accountsCountAndApy } from "../../components/AccountCountAndApy";
+import { accountsApy } from "../../components/AccountApy";
 import { balanceItem } from "../../components/Balance";
 import { useAccountData } from "../../hooks/useAccountData";
 import { useBalanceDeps } from "../../hooks/useBalanceDeps";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
@@ -78,6 +79,7 @@ const NetworkSelection = ({
     useAccountData,
     accountsCount,
     accountsCountAndApy,
+    accountsApy,
     useBalanceDeps,
     balanceItem,
   };

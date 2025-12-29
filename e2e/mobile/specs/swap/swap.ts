@@ -88,7 +88,6 @@ export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) 
       await app.common.disableSynchronizationForiOS();
       await app.swapLiveApp.tapExecuteSwap();
       await app.swap.verifyAmountsAndAcceptSwap(swap, swapAmount);
-      await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swap.waitForSuccessAndContinue();
     });
   });

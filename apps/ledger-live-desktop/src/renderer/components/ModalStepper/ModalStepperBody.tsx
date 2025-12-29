@@ -40,7 +40,7 @@ export default function ModalStepperBody({
   dataTestId,
 }: Props) {
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { theme } = useTheme();
 
   const stepsProps = { stepIndex, stepCount };
 
@@ -65,7 +65,7 @@ export default function ModalStepperBody({
           stepIndex !== stepCount - 1 ? "v3-modal-stepper-continue" : "v3-modal-stepper-end"
         }
       />
-      {colors.palette.type === "dark" ? (
+      {theme === "dark" ? (
         <InvertThemeV3>
           <StepRightSide AsideRight={AsideRight} rightSideBgColor={rightSideBgColor} />
         </InvertThemeV3>

@@ -4,6 +4,7 @@ import StepReceiveFunds from "./StepReceiveFunds";
 import TooManyUtxosModal from "./TooManyUtxosModal";
 import { CantonFamily } from "./types";
 import PendingTransferProposals from "./PendingTransferProposals";
+import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 
 const family: CantonFamily = {
   operationDetails,
@@ -11,6 +12,7 @@ const family: CantonFamily = {
   StepReceiveFunds,
   TooManyUtxosModal,
   PendingTransferProposals,
+  AccountBalanceSummaryFooter,
 };
 
 export default family;

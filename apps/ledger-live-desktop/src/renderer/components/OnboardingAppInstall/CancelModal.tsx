@@ -29,7 +29,7 @@ const CancelModal = ({ isOpen, productName, onRetry, onSkip }: Props) => {
         <Text mb={8} variant="body" fontSize={24} textAlign="center">
           {t("onboardingAppInstall.cancelled.title", { productName })}
         </Text>
-        <Text mb={14} fontSize={16} variant="body" color="palette.neutral.c80" textAlign="center">
+        <Text mb={14} fontSize={16} variant="body" color="neutral.c80" textAlign="center">
           {t("onboardingAppInstall.cancelled.subtitle", { productName })}
         </Text>
         <Flex flexDirection="column" width="100%">

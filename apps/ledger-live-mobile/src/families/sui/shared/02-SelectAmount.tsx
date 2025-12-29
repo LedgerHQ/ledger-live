@@ -10,13 +10,11 @@ import {
   KeyboardAvoidingViewProps,
 } from "react-native";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
-import { accountScreenSelector } from "~/reducers/accounts";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import Check from "~/icons/Check";
@@ -28,11 +26,12 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import { SuiStakingFlowParamList } from "../StakingFlow/types";
 import { SuiUnstakingFlowParamList } from "../UnstakingFlow/types";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import AmountInput from "~/screens/SendFunds/AmountInput";
 import Alert from "~/components/Alert";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props =
   | StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingAmount>
@@ -40,7 +39,7 @@ type Props =
 
 function StakingAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const account = useSelector(accountScreenSelector(route)).account as SuiAccount;
+  const account = useAccountScreen(route).account as SuiAccount;
   const { locale } = useSettings();
 
   invariant(

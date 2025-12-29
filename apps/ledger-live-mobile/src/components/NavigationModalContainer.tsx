@@ -48,7 +48,7 @@ export default function NavigationModalContainer({
   children,
   contentContainerProps,
   deadZoneProps,
-  backgroundColor = "palette.neutral.c00",
+  backgroundColor = "neutral.c00",
 }: Props) {
   return (
     <SafeContainer>

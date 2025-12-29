@@ -2,7 +2,7 @@ import { groupAccountsOperationsByDay } from "@ledgerhq/coin-framework/lib/accou
 import { isAddressPoisoningOperation } from "@ledgerhq/coin-framework/lib/operation";
 import { Operation, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
 
 export function useOperationsV1(accounts: AccountLike[], opCount: number) {

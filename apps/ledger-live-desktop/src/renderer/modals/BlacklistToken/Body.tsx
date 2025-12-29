@@ -13,14 +13,7 @@ const Body = ({ onClose, token }: { onClose?: () => void; token: TokenCurrency }
       title={t("blacklistToken.title")}
       render={() => (
         <Box>
-          <Box
-            ff="Inter|Regular"
-            fontSize={4}
-            color="palette.text.shade60"
-            textAlign="center"
-            mb={2}
-            mt={3}
-          >
+          <Box ff="Inter|Regular" fontSize={4} color="neutral.c70" textAlign="center" mb={2} mt={3}>
             <Trans
               i18nKey="blacklistToken.desc"
               parent="div"
@@ -29,11 +22,11 @@ const Body = ({ onClose, token }: { onClose?: () => void; token: TokenCurrency }
               }}
             >
               {"This action will hide all "}
-              <Text ff="Inter|SemiBold" color="palette.text.shade100">
+              <Text ff="Inter|SemiBold" color="neutral.c100">
                 {token.name}
               </Text>
               {"accounts, you can restore their visibility at any time from "}
-              <Text ff="Inter|SemiBold" color="palette.text.shade100">
+              <Text ff="Inter|SemiBold" color="neutral.c100">
                 {"Settings"}
               </Text>
             </Trans>

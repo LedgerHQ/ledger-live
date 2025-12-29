@@ -9,7 +9,7 @@ import { TouchableOpacityProps, TouchableOpacity } from "react-native";
 
 export type CardProps = TouchableOpacityProps & {
   tag?: string;
-  description?: string;
+  description?: string | React.ReactNode;
   cta?: string;
   link?: string;
   time?: string;
@@ -74,16 +74,22 @@ const NotificationCard = (props: CardProps): React.ReactElement => {
           {title}
         </Text>
 
-        <Text
-          variant="bodyLineHeight"
-          fontWeight="medium"
-          color="neutral.c70"
-          numberOfLines={3}
-          mt={2}
-          mb={showLinkCta ? 4 : 0}
-        >
-          {description}
-        </Text>
+        {typeof description === "string" ? (
+          <Text
+            variant="bodyLineHeight"
+            fontWeight="medium"
+            color="neutral.c70"
+            numberOfLines={3}
+            mt={2}
+            mb={showLinkCta ? 4 : 0}
+          >
+            {description}
+          </Text>
+        ) : (
+          <Box mt={2} mb={showLinkCta ? 4 : 0}>
+            {description}
+          </Box>
+        )}
 
         {!!showLinkCta && (
           <Flex alignItems="flex-start">

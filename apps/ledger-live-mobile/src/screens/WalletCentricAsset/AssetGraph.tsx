@@ -1,6 +1,6 @@
 import React from "react";
-import Animated from "react-native-reanimated";
-import { useSelector } from "react-redux";
+import { SharedValue } from "react-native-reanimated";
+import { useSelector } from "~/context/store";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import AssetCentricGraphCard from "~/components/AssetCentricGraphCard";
@@ -10,7 +10,7 @@ import { counterValueCurrencySelector } from "~/reducers/settings";
 type Props = {
   accounts: AccountLike[];
   currency: CryptoOrTokenCurrency;
-  currentPositionY: Animated.SharedValue<number>;
+  currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
   currencyBalance: number;
   accountsAreEmpty?: boolean;

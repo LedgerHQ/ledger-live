@@ -62,6 +62,7 @@ export type Transaction = TransactionCommon & {
   memo?: string;
   tokenId: string;
   expireInSeconds?: number;
+  instrumentAdmin?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -70,18 +71,25 @@ export type TransactionRaw = TransactionCommonRaw & {
   memo?: string;
   tokenId: string;
   expireInSeconds?: number;
+  instrumentAdmin?: string;
 };
 
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export type CantonResources = {
+  isOnboarded: boolean;
   instrumentUtxoCounts: Record<string, number>;
   pendingTransferProposals: TransferProposal[];
+  publicKey?: string;
+  xpub?: string;
 };
 export type CantonResourcesRaw = {
+  isOnboarded: boolean;
   instrumentUtxoCounts: Record<string, number>;
   pendingTransferProposals: TransferProposal[];
+  publicKey?: string;
+  xpub?: string;
 };
 
 export type CantonAccount = Account & {

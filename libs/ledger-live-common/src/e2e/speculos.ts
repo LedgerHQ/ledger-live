@@ -49,6 +49,7 @@ import {
   swipeRight,
 } from "./deviceInteraction/TouchDeviceSimulator";
 import { withDeviceController } from "./deviceInteraction/DeviceController";
+import { sanitizeError } from ".";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -394,7 +395,6 @@ export async function startSpeculos(
   if (!appCandidate) {
     console.warn("no app found for " + testName);
     console.warn(appQuery);
-    console.warn(JSON.stringify(appCandidates, undefined, 2));
   }
   invariant(
     appCandidate,
@@ -428,7 +428,7 @@ export async function startSpeculos(
           };
         });
   } catch (e: unknown) {
-    console.error(e);
+    console.error(sanitizeError(e));
     log("engine", `test ${testName} failed with ${String(e)}`);
   }
 }
@@ -610,7 +610,7 @@ export async function takeScreenshot(port?: number): Promise<Buffer | undefined>
     );
     return response.data;
   } catch (error) {
-    console.error("Error downloading speculos screenshot:", error);
+    console.error("Error downloading speculos screenshot:", sanitizeError(error));
   }
 }
 
@@ -668,12 +668,42 @@ export const activateLedgerSync = withDeviceController(({ getButtonsController }
   }
 });
 
+const getSettingsToggle1Coordinates = () => {
+  const deviceModel = getSpeculosModel();
+
+  switch (deviceModel) {
+    case DeviceModelId.stax:
+      return { x: 345, y: 136 };
+    case DeviceModelId.europa:
+      return { x: 420, y: 140 };
+    case DeviceModelId.apex:
+      return { x: 263, y: 100 };
+    default:
+      return { x: 420, y: 140 };
+  }
+};
+
+const getSettingsCogwheelCoordinates = () => {
+  const deviceModel = getSpeculosModel();
+
+  switch (deviceModel) {
+    case DeviceModelId.stax:
+      return { x: 362, y: 43 };
+    case DeviceModelId.europa:
+      return { x: 400, y: 80 };
+    case DeviceModelId.apex:
+      return { x: 253, y: 58 };
+    default:
+      return { x: 400, y: 80 };
+  }
+};
+
 export const activateExpertMode = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
 
   if (isTouchDevice()) {
     await goToSettings();
-    const SettingsToggle1Coordinates = { x: 344, y: 136 };
+    const SettingsToggle1Coordinates = getSettingsToggle1Coordinates();
     await pressAndRelease(
       DeviceLabels.SETTINGS_TOGGLE_1,
       SettingsToggle1Coordinates.x,
@@ -698,7 +728,7 @@ export const goToSettings = withDeviceController(({ getButtonsController }) => a
   const buttons = getButtonsController();
 
   if (isTouchDevice()) {
-    const SettingsCogwheelCoordinates = { x: 400, y: 75 };
+    const SettingsCogwheelCoordinates = getSettingsCogwheelCoordinates();
     await pressAndRelease(
       DeviceLabels.SETTINGS,
       SettingsCogwheelCoordinates.x,

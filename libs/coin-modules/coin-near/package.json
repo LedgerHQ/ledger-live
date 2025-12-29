@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-near",
-  "version": "0.16.2",
+  "version": "0.17.0",
   "description": "Near Coin integration",
   "keywords": [
     "Ledger",
@@ -57,7 +57,7 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "near-api-js": "^3.0.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

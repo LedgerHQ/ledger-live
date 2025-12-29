@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";

@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { differenceInCalendarDays } from "date-fns";
 import { createSelector } from "reselect";
 import { useTranslation } from "react-i18next";

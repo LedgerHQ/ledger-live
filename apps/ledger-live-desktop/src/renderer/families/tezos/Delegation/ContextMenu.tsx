@@ -89,7 +89,7 @@ const ContextMenu = ({ account }: Props) => {
       onClick: () => void;
     };
   }) => {
-    const color = item.key === "stopDelegation" ? "alertRed" : "palette.text.shade100";
+    const color = item.key === "stopDelegation" ? "alertRed" : "neutral.c100";
     return (
       <Item horizontal flow={2} onClick={item.onClick}>
         {item.icon ? (
@@ -113,7 +113,7 @@ const ContextMenu = ({ account }: Props) => {
           }}
         >
           <Box horizontal flow={1} alignItems="center" justifyContent="center">
-            <IconsLegacy.OthersMedium size={14} color={theme.colors.palette.text.shade50} />
+            <IconsLegacy.OthersMedium size={14} color={theme.colors.neutral.c70} />
           </Box>
         </Container>
       )}

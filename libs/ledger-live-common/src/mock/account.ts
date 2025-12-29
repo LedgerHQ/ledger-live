@@ -199,7 +199,7 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
             if (initAccount) {
               initAccount(account);
             }
-          } catch (e: any) {
+          } catch {
             // to fix /src/__tests__/cross.ts, skip bridge error if there is no bridge in such currency
           }
         }

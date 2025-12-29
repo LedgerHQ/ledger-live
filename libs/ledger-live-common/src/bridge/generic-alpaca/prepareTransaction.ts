@@ -31,6 +31,11 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
       dest[field] = Number(value.toString());
       return;
     case "storageLimit":
+    case "gasLimit":
+    case "gasPrice":
+    case "maxFeePerGas":
+    case "maxPriorityFeePerGas":
+    case "additionalFees":
       dest[field] = new BigNumber(value.toString());
       return;
     default:
@@ -51,17 +56,42 @@ export function genericPrepareTransaction(
       ? await getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
       : assetInfosFallback(transaction);
     const customParametersFees = transaction.customFees?.parameters?.fees;
+
+    /**
+     * Ticking `useAllAmount` constantly resets the amount to 0. This is problematic
+     * because some Blockchain need the actual transaction amount to compute the fees
+     * (Example with EVM and ERC20 transactions)
+     * In case of `useAllAmount` and token transaction, we read the token account spendable
+     * balance instead.
+     */
+    let amount = transaction.amount;
+    if (transaction.useAllAmount && transaction.subAccountId) {
+      const subAccount = account.subAccounts?.find(acc => acc.id === transaction.subAccountId);
+      amount = subAccount?.spendableBalance ?? amount;
+    }
+
+    // Pass any parameters that help estimating fees
+    // This includes `assetOwner` and `assetReference` that are not used by some apps that only rely on `subAccountId`
+    // TODO Remove `assetOwner` and `assetReference` in order to maintain one unique way of identifying the type of asset
+    // https://ledgerhq.atlassian.net/browse/LIVE-24044
+    const intent = transactionToIntent(
+      account,
+      {
+        ...transaction,
+        assetOwner,
+        assetReference,
+        amount,
+      },
+      computeIntentType,
+    );
     const estimation: FeeEstimation = customParametersFees
       ? { value: BigInt(customParametersFees.toFixed()) }
-      : await estimateFees(
-          transactionToIntent(
-            account,
-            {
-              ...transaction,
-            },
-            computeIntentType,
-          ),
-        );
+      : await estimateFees(intent, {
+          gasPrice: transaction.gasPrice,
+          maxFeePerGas: transaction.maxFeePerGas,
+          maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+          gasOptions: transaction.gasOptions,
+        });
     const fees = new BigNumber(estimation.value.toString());
 
     if (!bnEq(transaction.fees, fees)) {
@@ -78,7 +108,15 @@ export function genericPrepareTransaction(
       };
 
       // Propagate needed fields
-      const fieldsToPropagate = ["type", "storageLimit"];
+      const fieldsToPropagate = [
+        "type",
+        "storageLimit",
+        "gasLimit",
+        "gasPrice",
+        "maxFeePerGas",
+        "maxPriorityFeePerGas",
+        "additionalFees",
+      ];
 
       for (const field of fieldsToPropagate) {
         propagateField(estimation, field, next);
@@ -86,11 +124,14 @@ export function genericPrepareTransaction(
 
       // align with stellar/xrp: when send max (or staking intents), reflect validated amount in UI
       if (transaction.useAllAmount || ["stake", "unstake"].includes(transaction.mode ?? "")) {
+        // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22228
         const { amount } = await validateIntent(
           transactionToIntent(
             account,
             {
               ...transaction,
+              assetOwner,
+              assetReference,
             },
             computeIntentType,
           ),

@@ -1,3 +1,4 @@
+import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import { Account } from "@ledgerhq/types-live";
 import { useMemo } from "react";
 
@@ -26,7 +27,10 @@ export function useCantonCreatableAccounts({
 }: UseCantonCreatableAccountsProps): UseCantonCreatableAccountsReturn {
   const cantonCreatableAccounts = useMemo(() => {
     return scannedAccounts.filter(
-      account => !account.used && account.currency?.family === "canton",
+      account =>
+        account.currency?.family === "canton" &&
+        isCantonAccount(account) &&
+        !account.cantonResources.isOnboarded,
     );
   }, [scannedAccounts]);
 

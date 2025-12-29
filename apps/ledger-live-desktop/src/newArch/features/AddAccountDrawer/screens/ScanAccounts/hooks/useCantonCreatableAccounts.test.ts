@@ -1,20 +1,26 @@
-import { renderHook } from "@testing-library/react";
-import { Account } from "@ledgerhq/types-live";
+import { CantonAccount } from "@ledgerhq/coin-canton/types";
 import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account/balanceHistoryCache";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import {
   getDerivationModesForCurrency,
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/coin-framework/derivation";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { renderHook } from "tests/testSetup";
 import { useCantonCreatableAccounts } from "./useCantonCreatableAccounts";
 
-const createMockAccount = (id: string, currencyId: string, used: boolean = false): Account => {
+const createMockAccount = (
+  id: string,
+  currencyId: string,
+  used: boolean = false,
+  isOnboarded: boolean = false,
+): Account => {
   const currency = getCryptoCurrencyById(currencyId);
   const derivationMode = getDerivationModesForCurrency(currency)[0];
   const scheme = getDerivationScheme({ derivationMode, currency });
-  return {
+  const baseAccount: Account = {
     id,
     type: "Account",
     used,
@@ -40,6 +46,19 @@ const createMockAccount = (id: string, currencyId: string, used: boolean = false
     swapHistory: [],
     subAccounts: [],
   };
+
+  if (currency.family === "canton") {
+    return {
+      ...baseAccount,
+      cantonResources: {
+        isOnboarded,
+        instrumentUtxoCounts: {},
+        pendingTransferProposals: [],
+      },
+    } as CantonAccount;
+  }
+
+  return baseAccount;
 };
 
 describe("useCantonCreatableAccounts", () => {
@@ -56,8 +75,8 @@ describe("useCantonCreatableAccounts", () => {
     expect(result.current.selectedCantonCreatableAccounts).toEqual([]);
   });
 
-  it("should return false when Canton accounts are used", () => {
-    const scannedAccounts: Account[] = [createMockAccount("1", "canton_network", true)];
+  it("should return false when Canton accounts are onboarded", () => {
+    const scannedAccounts: Account[] = [createMockAccount("1", "canton_network", false, true)];
     const selectedIds = ["1"];
 
     const { result } = renderHook(() =>
@@ -83,7 +102,7 @@ describe("useCantonCreatableAccounts", () => {
   });
 
   it("should return true when Canton creatable accounts are selected", () => {
-    const scannedAccounts: Account[] = [createMockAccount("1", "canton_network", false)];
+    const scannedAccounts: Account[] = [createMockAccount("1", "canton_network", false, false)];
     const selectedIds = ["1"];
 
     const { result } = renderHook(() =>
@@ -110,7 +129,9 @@ describe("useCantonCreatableAccounts", () => {
   });
 
   it("should update results when props change", () => {
-    const initialScannedAccounts: Account[] = [createMockAccount("1", "canton_network", false)];
+    const initialScannedAccounts: Account[] = [
+      createMockAccount("1", "canton_network", false, false),
+    ];
     const initialSelectedIds = ["1"];
 
     const { result, rerender } = renderHook(

@@ -293,7 +293,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
                 id={"account-nominate-button"}
                 mr={2}
                 disabled={!nominateEnabled}
-                color="palette.primary.main"
+                color="primary.c80"
                 small
                 onClick={onNominate}
               >
@@ -334,7 +334,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
                 maxWidth: "65%",
               }}
             >
-              <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+              <Text ff="Inter|Medium|SemiBold" color="neutral.c70" fontSize={4}>
                 <Trans
                   i18nKey="polkadot.nomination.emptyState.description"
                   values={{
@@ -409,7 +409,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
                 id={"account-rebond-button"}
                 disabled={electionOpen}
                 mr={2}
-                color="palette.primary.main"
+                color="primary.c80"
                 small
                 onClick={onRebond}
               >
@@ -439,7 +439,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
               <Button
                 id={"account-withdraw-button"}
                 disabled={!withdrawEnabled}
-                color="palette.primary.main"
+                color="primary.c80"
                 small
                 onClick={onWithdrawUnbonded}
               >

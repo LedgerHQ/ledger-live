@@ -18,7 +18,7 @@ function fromBech32(value: string): string {
 
   try {
     decoded = decode(value);
-  } catch (err) {
+  } catch {
     throw new Error("Erd address can't be created");
   }
 
@@ -44,7 +44,7 @@ export const isValidAddress = (address: string): boolean => {
   try {
     fromBech32(address);
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 };

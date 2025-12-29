@@ -1,17 +1,15 @@
 import { getStakingABI, isPayable } from "../../../staking/abis";
 
 describe("getStakingABI", () => {
-  it("should return SEI ABI for sei_network_evm", () => {
-    const abi = getStakingABI("sei_network_evm");
-    expect(abi).toBeDefined();
-    expect(Array.isArray(abi)).toBe(true);
+  it("should return SEI ABI for sei_evm", () => {
+    const abi = getStakingABI("sei_evm");
+    expect(abi).toBeInstanceOf(Array);
     expect(abi?.length).toBeGreaterThan(0);
   });
 
   it("should return CELO ABI for celo", () => {
     const abi = getStakingABI("celo");
-    expect(abi).toBeDefined();
-    expect(Array.isArray(abi)).toBe(true);
+    expect(abi).toBeInstanceOf(Array);
     expect(abi?.length).toBeGreaterThan(0);
   });
 
@@ -24,27 +22,27 @@ describe("getStakingABI", () => {
 describe("isPayable", () => {
   describe("SEI Network", () => {
     it("should return true for delegate function (payable)", () => {
-      const result = isPayable("sei_network_evm", "delegate");
+      const result = isPayable("sei_evm", "delegate");
       expect(result).toBe(true);
     });
 
     it("should return false for undelegate function (nonpayable)", () => {
-      const result = isPayable("sei_network_evm", "undelegate");
+      const result = isPayable("sei_evm", "undelegate");
       expect(result).toBe(false);
     });
 
     it("should return false for redelegate function (nonpayable)", () => {
-      const result = isPayable("sei_network_evm", "redelegate");
+      const result = isPayable("sei_evm", "redelegate");
       expect(result).toBe(false);
     });
 
     it("should return false for delegation function (view)", () => {
-      const result = isPayable("sei_network_evm", "delegation");
+      const result = isPayable("sei_evm", "delegation");
       expect(result).toBe(false);
     });
 
     it("should return false for non-existent function", () => {
-      const result = isPayable("sei_network_evm", "nonExistentFunction");
+      const result = isPayable("sei_evm", "nonExistentFunction");
       expect(result).toBe(false);
     });
   });
@@ -78,7 +76,7 @@ describe("isPayable", () => {
     });
 
     it("should return false for empty function name", () => {
-      const result = isPayable("sei_network_evm", "");
+      const result = isPayable("sei_evm", "");
       expect(result).toBe(false);
     });
 

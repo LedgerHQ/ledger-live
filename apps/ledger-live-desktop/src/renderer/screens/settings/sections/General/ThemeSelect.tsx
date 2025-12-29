@@ -5,6 +5,7 @@ import { setTheme } from "~/renderer/actions/settings";
 import { userThemeSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
 import Track from "~/renderer/analytics/Track";
+import { useTheme, ThemeMode } from "@ledgerhq/lumen-ui-react";
 
 type ThemeSelectOption = {
   value: string | null;
@@ -19,13 +20,16 @@ const ThemeSelect = () => {
   const theme = useSelector(userThemeSelector);
   const { t } = useTranslation();
 
+  const { setMode } = useTheme();
+
   const avoidEmptyValue = (theme?: ThemeSelectOption | null) => theme && handleChangeTheme(theme);
 
   const handleChangeTheme = useCallback(
     (theme: ThemeSelectOption) => {
+      setMode(theme.value as ThemeMode);
       dispatch(setTheme(theme.value));
     },
-    [dispatch],
+    [dispatch, setMode],
   );
   const options = useMemo(() => {
     const xs: ThemeSelectOption[] = [

@@ -12,7 +12,7 @@ import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLo
 
 type Props = {
   onClick: () => void;
-  iconComponent: JSX.Element;
+  iconComponent: React.JSX.Element;
   labelComponent: React.ReactNode;
   event?: string;
   eventProperties?: Record<string, unknown>;

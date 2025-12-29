@@ -59,7 +59,6 @@ const test_ios = async () => {
       --forceExit \
       --headless \
       --retries 2 \
-      --runInBand \
       --cleanup \
       ${filteredArgs}`;
 };
@@ -77,7 +76,6 @@ const test_android = async () => {
       --forceExit \\
       --headless \\
       --retries 2 \\
-      --runInBand \\
       --cleanup \\
       ${filteredArgs}`;
 };
@@ -161,6 +159,7 @@ const filteredArgs = extraArgs.filter(arg => {
 if (testType === "mock") {
   filteredArgs.push("--shard");
   filteredArgs.push(shard);
+  filteredArgs.push("--runInBand");
 }
 
 if (outputFile) {

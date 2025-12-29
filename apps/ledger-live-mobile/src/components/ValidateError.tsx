@@ -10,7 +10,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { UpdateYourApp, LatestFirmwareVersionRequired } from "@ledgerhq/errors";
 import { RequiredFirmwareUpdate } from "./DeviceAction/rendering";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { LedgerError } from "~/types/error";
 

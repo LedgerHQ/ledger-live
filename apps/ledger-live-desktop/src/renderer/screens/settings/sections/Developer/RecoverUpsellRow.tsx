@@ -1,7 +1,7 @@
 import React from "react";
 import { useFeature, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
-import Switch from "~/renderer/components/Switch";
+import { Switch } from "@ledgerhq/lumen-ui-react";
 
 export function RecoverUpsellRow() {
   const { overrideFeature, resetFeature } = useFeatureFlags();
@@ -28,7 +28,7 @@ export function RecoverUpsellRow() {
       title="Ledger Recover deeplinks environment"
       desc={`Enable the production mode of the Legacy Recover Feature Flag to have access to prod deeplinks, in dev or staging builds (current env is "${currentTarget}")`}
     >
-      <Switch isChecked={currentTarget === "protect-prod"} onChange={onChange} />
+      <Switch selected={currentTarget === "protect-prod"} onChange={onChange} />
     </Row>
   );
 }

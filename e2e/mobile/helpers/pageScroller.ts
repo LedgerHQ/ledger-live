@@ -87,7 +87,7 @@ export class PageScroller {
         default:
           throw new Error(`Unsupported scroll direction: ${direction}`);
       }
-    } catch (error) {
+    } catch {
       // If scroll fails, try alternative approaches for ModularDrawer
       return await scrollContainer.swipe(direction === "down" ? "up" : "down", "slow");
     }

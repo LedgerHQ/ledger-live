@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-icon",
-  "version": "0.15.2",
+  "version": "0.16.0",
   "description": "Ledger Icon Coin integration",
   "keywords": [
     "Ledger",
@@ -61,7 +61,7 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "prando": "^6.0.1",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

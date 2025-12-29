@@ -9,7 +9,10 @@ import { overriddenFeatureFlagsSelector } from "../reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
 import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
 
-export const FirebaseFeatureFlagsProvider = ({ children, getFeature }: Props): JSX.Element => {
+export const FirebaseFeatureFlagsProvider = ({
+  children,
+  getFeature,
+}: Props): React.JSX.Element => {
   const { config: remoteConfig } = useFirebaseRemoteConfig();
 
   const localOverrides = useSelector(overriddenFeatureFlagsSelector);

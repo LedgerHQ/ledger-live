@@ -1,6 +1,6 @@
-import { listOperations } from "./listOperations";
-import coinConfig from "../config";
 import { Horizon } from "@stellar/stellar-sdk";
+import coinConfig from "../config";
+import { listOperations } from "./listOperations";
 
 jest.mock("@stellar/stellar-sdk");
 

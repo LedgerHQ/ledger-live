@@ -35,7 +35,7 @@ export type NetworkBasedAddAccountNavigator = {
       style?: {
         paddingHorizontal?: TouchableProps["style"];
       };
-    }) => JSX.Element;
+    }) => React.JSX.Element;
   };
   [ScreenName.CantonOnboardAccount]: CantonOnboardAccountParamList[ScreenName.CantonOnboardAccount];
 };

@@ -33,6 +33,7 @@ import {
 } from "../serialization";
 import nftResolvers from "../nftResolvers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { validateAddress } from "../validateAddress";
 
 function makePrepare(getChainAPI: (config: Config) => ChainAPI) {
   const prepareTransaction: AccountBridge<Transaction, SolanaAccount>["prepareTransaction"] = (
@@ -178,6 +179,7 @@ export function makeBridges({
     getSerializedAddressParameters,
     assignFromTokenAccountRaw,
     assignToTokenAccountRaw,
+    validateAddress,
   };
 
   const currencyBridge: CurrencyBridge = {

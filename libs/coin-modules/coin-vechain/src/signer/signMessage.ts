@@ -10,7 +10,7 @@ export const signMessage =
       if (message) messageObj = JSON.parse(message);
       else messageObj = JSON.parse(rawMessage);
       unsigned = VechainSDKTransaction.of(messageObj);
-    } catch (e) {
+    } catch {
       throw new Error("Message is not a valid JSON object");
     }
     const result = await signerContext(deviceId, signer =>

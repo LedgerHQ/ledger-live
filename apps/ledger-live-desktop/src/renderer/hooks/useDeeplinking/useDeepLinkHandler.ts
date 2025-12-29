@@ -16,7 +16,7 @@ import { CARD_APP_ID, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { getAccountsOrSubAccountsByCurrency, trackDeeplinkingEvent } from "./utils";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useRedirectToPostOnboardingCallback } from "../useAutoRedirectToPostOnboarding";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -43,7 +43,7 @@ export function useDeepLinkHandler() {
     (
       pathname: string,
       state?: {
-        [k: string]: string | Object;
+        [k: string]: string | object;
       },
       search?: string,
     ) => {
@@ -326,7 +326,7 @@ export function useDeepLinkHandler() {
                 findCryptoCurrencyByKeyword(currencyId) ||
                 (await getCryptoAssetsStore().findTokenById(currencyId)) ||
                 null;
-            } catch (error) {
+            } catch {
               foundCurrency = null;
             }
 

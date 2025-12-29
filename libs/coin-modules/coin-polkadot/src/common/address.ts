@@ -21,7 +21,7 @@ export const isValidAddress = (
       ss58Format,
     );
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 };

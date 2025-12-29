@@ -108,6 +108,12 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
     secrets: inherit
 
+  test-additional:
+    name: "Test Additional"
+    if: ${{!github.event.pull_request.head.repo.fork}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    secrets: inherit
+
   notify-e2e-required:
     name: "Notify E2E Required"
     needs: determine-affected
@@ -143,6 +149,7 @@ jobs:
       - test-design-system
       - build-web-tools
       - test-cli
+      - test-additional
       - determine-affected
     runs-on: ubuntu-22.04
     if: always() && !cancelled() && needs.determine-affected.result == 'success'

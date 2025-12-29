@@ -11,7 +11,7 @@ async function fetchSanctionedAddresses(): Promise<Record<string, string[]>> {
     const url = getEnv("SANCTIONED_ADDRESSES_URL");
     const { data } = await axios.get(url);
     return data;
-  } catch (_) {
+  } catch {
     // We dont want if call fails for some reason to stop the workflow, user must be able to make transaction
     return {};
   }

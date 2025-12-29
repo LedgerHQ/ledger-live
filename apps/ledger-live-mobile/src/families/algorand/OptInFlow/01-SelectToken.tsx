@@ -2,7 +2,6 @@ import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -14,7 +13,6 @@ import { useTheme } from "@react-navigation/native";
 import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
 import { ScreenName } from "~/const";
 import LText from "~/components/LText";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import FilteredSearchBar from "~/components/FilteredSearchBar";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
@@ -25,6 +23,7 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { AlgorandOptInFlowParamList } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const Row = ({
   item,
@@ -85,7 +84,7 @@ type Props = StackNavigatorProps<AlgorandOptInFlowParamList, ScreenName.Algorand
 
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account) as AlgorandAccount;
   const bridge = getAccountBridge(mainAccount);

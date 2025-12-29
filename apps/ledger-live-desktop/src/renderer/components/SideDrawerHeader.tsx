@@ -16,7 +16,7 @@ const TouchButton = styled.button`
   -webkit-app-region: no-drag;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
-  color: ${p => p.theme.colors.palette.text.shade80};
+  color: ${p => p.theme.colors.neutral.c80};
   transition: filter 150ms ease-out;
   cursor: pointer;
   :hover {
@@ -45,7 +45,7 @@ const SideDrawerHeader = ({
 
   const hasOnlyCloseButton = !onRequestBack && !title && onRequestClose;
 
-  const CloseButton = () => {
+  const renderCloseButton = () => {
     if (closeButtonComponent && onRequestClose && !blocked) {
       return React.createElement(closeButtonComponent, {
         onRequestClose,
@@ -83,7 +83,7 @@ const SideDrawerHeader = ({
               data-testid="drawer-close-button"
             >
               <IconAngleLeft size={12} />
-              <Text ff="Inter|Medium" fontSize={4} color="palette.text.shade40">
+              <Text ff="Inter|Medium" fontSize={4} color="neutral.c60">
                 <Trans i18nKey="common.back" />
               </Text>
             </Button>
@@ -95,7 +95,7 @@ const SideDrawerHeader = ({
               {title}
             </Text>
           )}
-          <CloseButton />
+          {renderCloseButton()}
         </Box>
       ) : null}
     </>

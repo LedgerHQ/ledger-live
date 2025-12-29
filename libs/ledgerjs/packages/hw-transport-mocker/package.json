@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-mocker",
-  "version": "6.29.14",
+  "version": "6.30.0",
   "description": "Ledger Hardware Wallet mocker utilities used for tests",
   "keywords": [
     "Ledger",
@@ -27,7 +27,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/logs": "workspace:^",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

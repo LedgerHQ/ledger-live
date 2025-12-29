@@ -37,7 +37,7 @@ const Wrapper = styled.div`
   cursor: pointer;
 
   &:hover {
-    background: ${p => p.theme.colors.palette.background.default};
+    background: ${p => p.theme.colors.background.default};
   }
 `;
 const Asset = styled.div`
@@ -59,7 +59,7 @@ const PriceSection = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
-    display: block;
+    display: inline-block;
   }
 `;
 const Distribution = styled.div`
@@ -88,13 +88,13 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
   const theme = useTheme();
   const history = useHistory();
   const locale = useSelector(localeSelector);
-  const color = useCurrencyColor(currency, theme.colors.palette.background.paper);
+  const color = useCurrencyColor(currency, theme.colors.background.card);
   const percentage = Math.floor(distribution * 10000) / 100;
   const percentageWording = percentage.toLocaleString(locale, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   });
-  const icon = <CryptoCurrencyIcon currency={currency} size={16} />;
+  const icon = <CryptoCurrencyIcon currency={currency} size={22} />;
   const onClick = useCallback(() => {
     setTrackingSource("asset allocation");
     history.push({
@@ -106,7 +106,7 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
       <Asset>
         {icon}
         <Tooltip delay={1200} content={currency.name}>
-          <Ellipsis ff="Inter|SemiBold" color="palette.text.shade100" fontSize={3}>
+          <Ellipsis ff="Inter|SemiBold" color="neutral.c100" fontSize={3}>
             {currency.name}
           </Ellipsis>
         </Tooltip>
@@ -114,7 +114,7 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
       <PriceSection>
         {distribution ? (
           // @ts-expect-error Need to change "color" type in Component
-          <Price from={currency} color="palette.text.shade80" fontSize={3} />
+          <Price from={currency} color="neutral.c80" fontSize={3} />
         ) : (
           <NoCountervaluePlaceholder />
         )}
@@ -122,7 +122,7 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
       <Distribution>
         {!!distribution && (
           <>
-            <Text ff="Inter" color="palette.text.shade100" fontSize={3}>
+            <Text ff="Inter" color="neutral.c100" fontSize={3}>
               {`${percentageWording}%`}
             </Text>
             <Bar
@@ -135,7 +135,7 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
       <Amount>
         <Ellipsis>
           <FormattedVal
-            color={"palette.text.shade80"}
+            color={"neutral.c80"}
             unit={currency.units[0]}
             val={amount}
             fontSize={3}
@@ -149,7 +149,7 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
             <CounterValue
               currency={currency}
               value={amount}
-              color="palette.text.shade100"
+              color="neutral.c100"
               fontSize={3}
               showCode
             />

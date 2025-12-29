@@ -18,7 +18,7 @@ export default function ClearCacheBanner() {
       setIsLoading(true);
       softReset();
       dispatch(setShowClearCacheBanner(false));
-    } catch (err) {
+    } catch {
       setIsLoading(false);
     }
   }, [dispatch, softReset]);
@@ -40,7 +40,7 @@ export default function ClearCacheBanner() {
   );
 }
 const Link = styled.span`
-  color: ${p => p.theme.colors.palette.primary.contrastText};
+  color: ${p => p.theme.colors.neutral.c00};
   text-decoration: underline;
   cursor: pointer;
 `;

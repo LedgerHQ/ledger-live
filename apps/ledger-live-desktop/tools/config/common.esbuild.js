@@ -34,6 +34,7 @@ module.exports = {
     ".jpeg": "file",
     ".gif": "file",
     ".svg": "file",
+    ".css": "css",
   },
   logOverride: {
     "this-is-undefined-in-esm": "silent",

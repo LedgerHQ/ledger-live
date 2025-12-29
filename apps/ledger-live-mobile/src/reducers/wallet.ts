@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import {
   HandlersPayloads,
   WalletHandlers,
@@ -9,12 +10,16 @@ import {
 } from "@ledgerhq/live-wallet/store";
 import { handleActions } from "redux-actions";
 import { State } from "./types";
-import { useSelector } from "react-redux";
-import { AccountLike } from "@ledgerhq/types-live";
+import { shallowEqual } from "react-redux";
+import { useSelector } from "~/context/store";
+import { AccountLike, RecentAddressesState } from "@ledgerhq/types-live";
 import { DistantState } from "@ledgerhq/live-wallet/walletsync/index";
 
 export const walletSelector = (state: State): WalletState => state.wallet;
 
+export function recentAddressesSelector(state: State): RecentAddressesState {
+  return walletSelector(state).recentAddresses;
+}
 export function latestDistantStateSelector(state: State): DistantState | null {
   return walletSyncStateSelector(walletSelector(state)).data;
 }
@@ -30,21 +35,56 @@ const getAccountName = (
   return !account ? undefined : accountNameWithDefaultSelector(state.wallet, account);
 };
 
+/**
+ * Hook to get the name of an account (or undefined if account is null/undefined).
+ *
+ * @param account
+ * The account to get the name for.
+ *
+ * @returns
+ * The name of the account.
+ */
 export const useMaybeAccountName = (
   account: AccountLike | null | undefined,
 ): string | undefined => {
-  return useSelector((state: State) =>
-    !account ? undefined : accountNameWithDefaultSelector(state.wallet, account),
+  const selector = useCallback(
+    (state: State) =>
+      !account ? undefined : accountNameWithDefaultSelector(state.wallet, account),
+    [account],
   );
+  return useSelector(selector);
 };
+
+/**
+ * Hook to get names for a batch of accounts.
+ *
+ * @param accounts
+ * The accounts to get names for.
+ *
+ * @returns
+ * The names of the accounts.
+ */
 export const useBatchMaybeAccountName = (
   accounts: (AccountLike | null | undefined)[],
 ): (string | undefined)[] => {
-  return useSelector((state: State) => accounts.map(account => getAccountName(state, account)));
+  const selector = useCallback(
+    (state: State) => accounts.map(account => getAccountName(state, account)),
+    [accounts],
+  );
+  return useSelector(selector, shallowEqual);
 };
 
+/**
+ * Hook to get the name of an account.
+ *
+ * Uses a memoized selector to prevent unnecessary re-renders in react-redux v9.
+ */
 export const useAccountName = (account: AccountLike) => {
-  return useSelector((state: State) => accountNameWithDefaultSelector(state.wallet, account));
+  const selector = useCallback(
+    (state: State) => accountNameWithDefaultSelector(state.wallet, account),
+    [account],
+  );
+  return useSelector(selector);
 };
 
 export default handleActions<WalletState, HandlersPayloads[keyof HandlersPayloads]>(

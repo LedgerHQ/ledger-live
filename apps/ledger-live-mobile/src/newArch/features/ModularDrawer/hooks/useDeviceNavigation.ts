@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
 import type { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { Account } from "@ledgerhq/types-live";
 import type { ModularDrawerProps } from "../ModularDrawer";
 import { modularDrawerStateSelector } from "~/reducers/modularDrawer";

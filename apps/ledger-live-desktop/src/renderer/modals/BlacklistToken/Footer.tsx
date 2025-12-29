@@ -23,7 +23,7 @@ const Footer = ({ onClose, token }: { onClose?: () => void; token: TokenCurrency
         data-testid="modal-confirm-button"
         onClick={() => {
           confirmBlacklistToken(token.id);
-          onClose && onClose();
+          onClose?.();
         }}
         primary
       >

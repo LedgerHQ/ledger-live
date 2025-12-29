@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-shared",
-  "version": "0.15.1",
+  "version": "0.16.0",
   "description": "Ledger Device Management Kit shared module",
   "private": true,
   "license": "Apache-2.0",
@@ -52,14 +52,14 @@
     "jsdom": "25.0.1",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "rxjs": "^7.8.1",
+    "rxjs": "catalog:",
     "vite": "6.0.7",
     "vitest": "2.1.9",
-    "ws": "8.18.0"
+    "ws": "catalog:"
   },
   "peerDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
     "react": "catalog:",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   }
 }

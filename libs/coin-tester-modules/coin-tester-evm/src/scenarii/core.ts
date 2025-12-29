@@ -58,7 +58,7 @@ const makeScenarioTransactions = ({ address }: { address: string }): CoreScenari
 
 export const scenarioCore: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic CORE Transactions",
-  setup: async strategy => {
+  setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
       spawnAnvil("https://rpc.ankr.com/core"),
@@ -102,7 +102,7 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
     initMswHandlers(getCoinConfig(core).info);
 
     const onSignerConfirmation = getOnSpeculosConfirmation();
-    const { currencyBridge, accountBridge, getAddress } = getBridges(strategy, transport, "core");
+    const { currencyBridge, accountBridge, getAddress } = getBridges(transport, "core");
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: core,

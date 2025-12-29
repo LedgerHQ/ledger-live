@@ -39,7 +39,42 @@ type Props = {
 const Stars = ({ pathname, collapsed }: Props) => {
   const walletState = useSelector(walletSelector);
   const starredAccounts = useSelector(starredAccountsSelector);
-  return starredAccounts && starredAccounts.length ? (
+
+  if (starredAccounts.length === 0) {
+    return (
+      <Hide visible={!collapsed}>
+        <Placeholder>
+          <Image
+            alt="stars placeholder"
+            resource={{
+              light: emptyBookmarksLight,
+              dark: emptyBookmarksDark,
+            }}
+            width="95"
+            height="53"
+          />
+          <Text
+            ff="Inter|SemiBold"
+            color="neutral.c70"
+            fontSize={3}
+            style={{
+              minWidth: 180,
+            }}
+          >
+            <Trans i18nKey={"stars.placeholder"}>
+              {"Accounts that you star on the"}
+              <Text ff="Inter|SemiBold" color="neutral.c100">
+                {"Accounts"}
+              </Text>
+              {" page will now appear here!."}
+            </Trans>
+          </Text>
+        </Placeholder>
+      </Hide>
+    );
+  }
+
+  return (
     <Container key={pathname} data-testid="drawer-bookmarked-accounts">
       {starredAccounts.map((account, i) => (
         <Tooltip
@@ -63,36 +98,6 @@ const Stars = ({ pathname, collapsed }: Props) => {
         </Tooltip>
       ))}
     </Container>
-  ) : (
-    <Hide visible={!collapsed}>
-      <Placeholder>
-        <Image
-          alt="stars placeholder"
-          resource={{
-            light: emptyBookmarksLight,
-            dark: emptyBookmarksDark,
-          }}
-          width="95"
-          height="53"
-        />
-        <Text
-          ff="Inter|SemiBold"
-          color="palette.text.shade60"
-          fontSize={3}
-          style={{
-            minWidth: 180,
-          }}
-        >
-          <Trans i18nKey={"stars.placeholder"}>
-            {"Accounts that you star on the"}
-            <Text ff="Inter|SemiBold" color="palette.text.shade100">
-              {"Accounts"}
-            </Text>
-            {" page will now appear here!."}
-          </Trans>
-        </Text>
-      </Placeholder>
-    </Hide>
   );
 };
 export default Stars;

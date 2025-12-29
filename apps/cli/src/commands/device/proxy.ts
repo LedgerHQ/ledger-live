@@ -340,7 +340,7 @@ const job = ({
             }
           }
         });
-      } catch (e) {
+      } catch {
         ws.close();
       }
     });

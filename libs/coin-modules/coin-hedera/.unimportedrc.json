@@ -23,7 +23,8 @@
     "src/test/bridgeDatasetTest.ts",
     "src/test/cli.ts",
     "src/test/index.ts",
-    "src/test/speculos-deviceActions.ts"
+    "src/test/speculos-deviceActions.ts",
+    "src/supportedFeatures.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/store";
 import { useTranslation } from "react-i18next";
 import { Checkbox, Text } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";

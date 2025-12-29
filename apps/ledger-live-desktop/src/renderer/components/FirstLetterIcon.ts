@@ -9,7 +9,7 @@ const FirstLetterIcon = styled.div.attrs<{
   label?: string;
 }>(p => ({
   content: p.label ? p.label.substring(0, isEmoji(p.label) ? 2 : 1) : "",
-  bg: p.theme.colors.palette.divider,
+  bg: p.theme.colors.neutral.c40,
 }))<{
   label?: string;
   content?: string;
@@ -25,7 +25,7 @@ const FirstLetterIcon = styled.div.attrs<{
   font-size: 13px;
   line-height: 24px;
   text-align: center;
-  color: ${p => p.theme.colors.palette.text.shade80};
+  color: ${p => p.theme.colors.neutral.c80};
   ${color};
   ${margin};
   overflow: hidden;

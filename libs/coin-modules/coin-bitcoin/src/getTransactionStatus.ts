@@ -30,10 +30,8 @@ export const getTransactionStatus: AccountBridge<
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!transaction.useAllAmount;
-  const { recipientError, recipientWarning } = await validateRecipient(
-    account.currency,
-    transaction.recipient,
-  );
+  const { recipientError, recipientWarning, changeAddressError, changeAddressWarning } =
+    await validateRecipient(account.currency, transaction.recipient, transaction?.changeAddress);
 
   if (recipientError) {
     errors.recipient = recipientError;
@@ -43,23 +41,38 @@ export const getTransactionStatus: AccountBridge<
     warnings.recipient = recipientWarning;
   }
 
+  if (changeAddressError) {
+    errors.changeAddress = changeAddressError;
+  }
+
+  if (changeAddressWarning) {
+    warnings.changeAddress = changeAddressWarning;
+  }
+
   // Safeguard before Taproot activation
   if (
     transaction.recipient &&
     !errors.recipient &&
+    !errors.changeAddress &&
     account.currency.id === "bitcoin" &&
     account.blockHeight <= MAX_BLOCK_HEIGHT_FOR_TAPROOT
   ) {
     const isTaproot = await isTaprootRecipient(account.currency, transaction.recipient);
+    const changeAddressIsTaproot = transaction.changeAddress
+      ? await isTaprootRecipient(account.currency, transaction.changeAddress)
+      : false;
     if (isTaproot) {
       errors.recipient = new TaprootNotActivated();
+    }
+    if (changeAddressIsTaproot) {
+      errors.changeAddress = new TaprootNotActivated();
     }
   }
 
   let txInputs: BitcoinInput[] = [];
   let txOutputs: BitcoinOutput[] = [];
   let estimatedFees = new BigNumber(0);
-  const { opReturnData } = transaction;
+  const { opReturnData, changeAddress } = transaction;
 
   if (!transaction.feePerByte) {
     errors.feePerByte = new FeeNotLoaded();
@@ -152,6 +165,7 @@ export const getTransactionStatus: AccountBridge<
     totalSpent,
     txInputs,
     txOutputs,
+    changeAddress,
   };
 };
 

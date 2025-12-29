@@ -11,7 +11,7 @@ export const MAX_MEMO_LENGTH = 500;
 export const isValidBase58Address = (address: string): boolean => {
   try {
     return Boolean(new PublicKey(address));
-  } catch (_) {
+  } catch {
     return false;
   }
 };

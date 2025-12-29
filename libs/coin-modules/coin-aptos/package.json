@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-aptos",
-  "version": "3.7.1",
+  "version": "3.8.0",
   "description": "Ledger Aptos Coin integration",
   "keywords": [
     "Ledger",
@@ -103,7 +103,7 @@
     "graphql": "^16.10.0",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.4.0",

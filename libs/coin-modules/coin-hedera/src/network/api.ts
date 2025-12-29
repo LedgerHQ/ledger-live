@@ -4,6 +4,7 @@ import network from "@ledgerhq/live-network";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-env";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { HEDERA_TRANSACTION_NAMES } from "../constants";
 import { HederaAddAccountError } from "../errors";
 import type {
   HederaMirrorAccountTokensResponse,
@@ -16,6 +17,8 @@ import type {
   HederaMirrorContractCallResult,
   HederaMirrorContractCallBalance,
   HederaMirrorContractCallEstimate,
+  HederaMirrorNode,
+  HederaMirrorNodesResponse,
 } from "../types";
 
 const API_URL = getEnv("API_HEDERA_MIRROR");
@@ -37,11 +40,28 @@ async function getAccountsForPublicKey(publicKey: string): Promise<HederaMirrorA
   return accounts;
 }
 
-async function getAccount(address: string): Promise<HederaMirrorAccount> {
+/**
+ * Fetches account information from the Hedera Mirror Node API, excluding transactions.
+ *
+ * @param address - The Hedera account ID (e.g., "0.0.12345")
+ * @param timestamp - Optional timestamp filter to get historical account state.
+ *                    Supports comparison operators:
+ *                    - "lt:1234567890.123456789" - state before the timestamp
+ *                    - "eq:1234567890.123456789" - state at the timestamp
+ *                    Used primarily for analyzing state changes in staking operations.
+ * @returns Promise resolving to account data
+ * @throws HederaAddAccountError if account not found (404)
+ */
+async function getAccount(address: string, timestamp?: string): Promise<HederaMirrorAccount> {
   try {
+    const params = new URLSearchParams({
+      transactions: "false",
+      ...(timestamp && { timestamp }),
+    });
+
     const res = await network<HederaMirrorAccount>({
       method: "GET",
-      url: `${API_URL}/api/v1/accounts/${address}`,
+      url: `${API_URL}/api/v1/accounts/${address}?${params.toString()}`,
     });
     const account = res.data;
 
@@ -54,6 +74,12 @@ async function getAccount(address: string): Promise<HederaMirrorAccount> {
     throw error;
   }
 }
+
+// keeps old behavior when all pages are fetched
+const getPaginationDirection = (fetchAllPages: boolean, order: string) => {
+  if (fetchAllPages) return "gt";
+  return order === "asc" ? "gt" : "lt";
+};
 
 async function getAccountTransactions({
   address,
@@ -75,14 +101,8 @@ async function getAccountTransactions({
     order,
   });
 
-  // keeps old behavior when all pages are fetched
-  const getTimestampDirection = () => {
-    if (fetchAllPages) return "gt";
-    return order === "asc" ? "gt" : "lt";
-  };
-
   if (pagingToken) {
-    params.append("timestamp", `${getTimestampDirection()}:${pagingToken}`);
+    params.append("timestamp", `${getPaginationDirection(fetchAllPages, order)}:${pagingToken}`);
   }
 
   let nextCursor: string | null = null;
@@ -189,8 +209,11 @@ async function findTransactionByContractCall(
     url: `${API_URL}/api/v1/transactions?timestamp=${timestamp}`,
   });
   const transactions = res.data.transactions;
+  const relatedTx = transactions.find(
+    el => el.name === HEDERA_TRANSACTION_NAMES.ContractCall && el.entity_id === contractId,
+  );
 
-  return transactions.find(el => el.name === "CONTRACTCALL" && el.entity_id === contractId) ?? null;
+  return relatedTx ?? null;
 }
 
 async function getERC20Balance(
@@ -267,6 +290,59 @@ async function getTransactionsByTimestampRange(
   return transactions;
 }
 
+async function getNodes({
+  cursor,
+  limit = 100,
+  order = "desc",
+  fetchAllPages,
+}: {
+  cursor?: string;
+  limit?: number;
+  order?: "asc" | "desc";
+  fetchAllPages: boolean;
+}): Promise<{ nodes: HederaMirrorNode[]; nextCursor: string | null }> {
+  const nodes: HederaMirrorNode[] = [];
+  const params = new URLSearchParams({
+    order,
+    limit: limit.toString(),
+  });
+
+  if (cursor) {
+    params.append("node.id", `${getPaginationDirection(fetchAllPages, order)}:${cursor}`);
+  }
+
+  let nextCursor: string | null = null;
+  let nextPath: string | null = `/api/v1/network/nodes?${params.toString()}`;
+
+  while (nextPath) {
+    const res: LiveNetworkResponse<HederaMirrorNodesResponse> = await network({
+      method: "GET",
+      url: `${API_URL}${nextPath}`,
+    });
+    const newNodes = res.data.nodes;
+    nodes.push(...newNodes);
+    nextPath = res.data.links.next;
+
+    // stop fetching if pagination mode is used and we reached the limit
+    if (!fetchAllPages && nodes.length >= limit) {
+      break;
+    }
+  }
+
+  // ensure we don't exceed the limit in pagination mode
+  if (!fetchAllPages && nodes.length > limit) {
+    nodes.splice(limit);
+  }
+
+  // set the next cursor only if we have more nodes to fetch
+  if (!fetchAllPages && nextPath) {
+    const lastNode = nodes.at(-1);
+    nextCursor = lastNode?.node_id?.toString() ?? null;
+  }
+
+  return { nodes, nextCursor };
+}
+
 export const apiClient = {
   getAccountsForPublicKey,
   getAccount,
@@ -279,4 +355,5 @@ export const apiClient = {
   getERC20Balance,
   estimateContractCallGas,
   getTransactionsByTimestampRange,
+  getNodes,
 };

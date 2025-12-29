@@ -72,7 +72,7 @@ function AccountsList({
             <Box
               horizontal
               ff="Inter|Bold"
-              color="palette.text.shade100"
+              color="neutral.c100"
               fontSize={2}
               textTransform="uppercase"
               cursor={collapsible ? "pointer" : undefined}

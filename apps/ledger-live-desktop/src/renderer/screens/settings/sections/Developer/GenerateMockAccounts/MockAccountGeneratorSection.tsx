@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui/index";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
-import ButtonV2 from "~/renderer/components/Button";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import MockAccountGenerator from "./MockAccountGenerator";
 import CustomMockAccountGenerator from "./CustomMockAccountGenerator";
 type MockAccountGeneratorSectionContentProps = {
@@ -50,9 +50,9 @@ const MockAccountGeneratorSection = () => {
       childrenContainerStyle={{ alignSelf: "flex-start" }}
       desc={<MockAccountGeneratorSectionContent expanded={contentExpanded} />}
     >
-      <ButtonV2 small primary onClick={toggleContentVisibility}>
+      <Button size="sm" appearance="accent" onClick={toggleContentVisibility}>
         {contentExpanded ? t("settings.developer.hide") : t("settings.developer.show")}
-      </ButtonV2>
+      </Button>
     </Row>
   );
 };

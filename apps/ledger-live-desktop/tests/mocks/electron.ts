@@ -1,4 +1,4 @@
-export const remote: jest.Mocked<{ dialog: {} }> = {
+export const remote: jest.Mocked<{ dialog: object }> = {
   dialog: {
     showOpenDialog: jest.fn().mockReturnValue("path/to/output"),
   },

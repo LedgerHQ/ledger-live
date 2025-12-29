@@ -1,4 +1,5 @@
 import "LLM/utils/logStartup/beforeJSImports";
+require("./promise-polyfill");
 import "./polyfill";
 import "./live-common-setup";
 import "./iosWebsocketFix";
@@ -15,7 +16,6 @@ import "./config/configInit";
 import "./config/bridge-setup";
 import Config from "react-native-config";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { useDispatch, useSelector } from "react-redux";
 import { init } from "../e2e/bridge/client";
 import logger from "./logger";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
@@ -33,14 +33,13 @@ import { rebootIdSelector } from "~/reducers/appstate";
 import LocaleProvider, { i18n } from "~/context/Locale";
 import AuthPass from "~/context/AuthPass";
 import LedgerStoreProvider from "~/context/LedgerStore";
-import { store } from "~/context/store";
+import { store, useSelector, useDispatch } from "~/context/store";
 import LoadingApp from "~/components/LoadingApp";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
 import DebugTheme from "~/components/DebugTheme";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
 import SegmentSetup from "~/analytics/SegmentSetup";
-import HookSentry from "~/components/HookSentry";
 import HookNotifications from "~/notifications/HookNotifications";
 import RootNavigator from "~/components/RootNavigator";
 import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
@@ -97,7 +96,6 @@ import {
   customLogEventMapper,
   initializeDatadogProvider,
 } from "./datadog";
-import { initSentry } from "./sentry";
 import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
@@ -130,7 +128,6 @@ function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
   const datadogFF = useFeature("llmDatadog");
-  const sentryFF = useFeature("llmSentry");
   const isLDMKEnabled = useDeviceManagementKitEnabled();
   const providerNumber = useEnv("FORCE_PROVIDER");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
@@ -229,12 +226,6 @@ function App() {
         console.error("Datadog initialization failed", e);
       });
   }, [datadogFF?.params, datadogFF?.enabled, isTrackingEnabled]);
-
-  useEffect(() => {
-    if (sentryFF?.enabled) {
-      initSentry(automaticBugReportingEnabled);
-    }
-  }, [sentryFF?.enabled, automaticBugReportingEnabled]);
 
   const checkAccountsWithFunds = useCheckAccountWithFunds();
 
@@ -352,8 +343,6 @@ export default class Root extends Component {
           ready ? (
             <RebootProvider>
               <SetEnvsFromSettings />
-              {/* TODO: delete the following HookSentry when Sentry will be completelyy switched off */}
-              <HookSentry />
               <SegmentSetup />
               <HookNotifications />
               <HookDynamicContentCards />
@@ -361,17 +350,17 @@ export default class Root extends Component {
               <TermsAndConditionMigrateLegacyData />
               <QueuedDrawersContextProvider>
                 <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-                  <WaitForAppReady currencyInitialized={currencyInitialized}>
-                    <I18nextProvider i18n={i18n}>
-                      <LocaleProvider>
-                        <PlatformAppProviderWrapper>
-                          <SafeAreaProvider>
-                            <ModalSystemPrimer />
-                            <StylesProvider>
-                              <StyledStatusBar />
-                              <NavBarColorHandler />
-                              <AuthPass>
-                                <GestureHandlerRootView style={styles.root}>
+                  <I18nextProvider i18n={i18n}>
+                    <LocaleProvider>
+                      <PlatformAppProviderWrapper>
+                        <SafeAreaProvider>
+                          <ModalSystemPrimer />
+                          <StylesProvider>
+                            <StyledStatusBar />
+                            <NavBarColorHandler />
+                            <AuthPass>
+                              <GestureHandlerRootView style={styles.root}>
+                                <WaitForAppReady currencyInitialized={currencyInitialized}>
                                   <AppProviders initialCountervalues={initialCountervalues}>
                                     <AppGeoBlocker>
                                       <AppVersionBlocker>
@@ -381,14 +370,14 @@ export default class Root extends Component {
                                       </AppVersionBlocker>
                                     </AppGeoBlocker>
                                   </AppProviders>
-                                </GestureHandlerRootView>
-                              </AuthPass>
-                            </StylesProvider>
-                          </SafeAreaProvider>
-                        </PlatformAppProviderWrapper>
-                      </LocaleProvider>
-                    </I18nextProvider>
-                  </WaitForAppReady>
+                                </WaitForAppReady>
+                              </GestureHandlerRootView>
+                            </AuthPass>
+                          </StylesProvider>
+                        </SafeAreaProvider>
+                      </PlatformAppProviderWrapper>
+                    </LocaleProvider>
+                  </I18nextProvider>
                 </FirebaseFeatureFlagsProvider>
               </QueuedDrawersContextProvider>
             </RebootProvider>

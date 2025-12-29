@@ -1,7 +1,7 @@
 import { localForger } from "@taquito/local-forging";
-import { createApi } from ".";
-import type { TezosApi } from "./types";
 import { SendTransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { TezosApi } from "./types";
+import { createApi } from ".";
 
 /**
  * Ghostnet-specific integration tests
@@ -51,7 +51,6 @@ describe("Tezos Api", () => {
 
       // Then
       expect(result.value).toBeGreaterThanOrEqual(BigInt(0));
-      expect(result.parameters).toBeDefined();
       expect(result.parameters?.gasLimit).toBeGreaterThanOrEqual(BigInt(0));
       expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
     });
@@ -87,7 +86,6 @@ describe("Tezos Api", () => {
 
     // Then
     expect(result.value).toBeGreaterThanOrEqual(BigInt(0));
-    expect(result.parameters).toBeDefined();
     expect(result.parameters?.gasLimit).toBeGreaterThanOrEqual(BigInt(0));
     expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
   });
@@ -115,8 +113,13 @@ describe("Tezos Api", () => {
       tx.forEach(operation => {
         const isSenderOrReceipt =
           operation.senders.includes(address) || operation.recipients.includes(address);
-        expect(isSenderOrReceipt).toBeTruthy();
-        expect(operation.tx.block).toBeDefined();
+        expect(isSenderOrReceipt).toBe(true);
+        expect(operation.value).toBeGreaterThanOrEqual(0);
+        expect(operation.tx.hash).toMatch(/^o[1-9A-HJ-NP-Za-km-z]+/); // "o" + base58
+        expect(operation.tx.block.hash).toMatch(/^B[1-9A-HJ-NP-Za-km-z]+/); // "B" + base58
+        expect(operation.tx.block.height).toBeGreaterThanOrEqual(0);
+        expect(operation.tx.fees).toBeGreaterThan(0);
+        expect(operation.tx.date).toBeInstanceOf(Date);
       });
     });
 
@@ -148,8 +151,8 @@ describe("Tezos Api", () => {
       const result = await module.lastBlock();
 
       // Then
-      expect(result.hash).toBeDefined();
-      expect(result.height).toBeDefined();
+      expect(result.hash).toMatch(/^B[1-9A-HJ-NP-Za-km-z]+/); // "B" + base58
+      expect(result.height).toBeGreaterThan(0);
       expect(result.time).toBeInstanceOf(Date);
     });
   });

@@ -22,10 +22,10 @@ import MainSideBar from "~/renderer/components/MainSideBar";
 import TriggerAppReady from "~/renderer/components/TriggerAppReady";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import DebugUpdater from "~/renderer/components/debug/DebugUpdater";
-import DebugTheme from "~/renderer/components/debug/DebugTheme";
 import DebugFirmwareUpdater from "~/renderer/components/debug/DebugFirmwareUpdater";
 import Page from "~/renderer/components/Page";
 import AnalyticsConsole from "~/renderer/components/AnalyticsConsole";
+import ThemeConsole from "~/renderer/components/ThemeConsole";
 import DebugMock from "~/renderer/components/debug/DebugMock";
 import DebugSkeletons from "~/renderer/components/debug/DebugSkeletons";
 import { DisableTransactionBroadcastWarning } from "~/renderer/components/debug/DisableTransactionBroadcastWarning";
@@ -65,6 +65,7 @@ import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersio
 import { initMixpanel } from "./analytics/mixpanel";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
+import { ModularDialogRoot } from "LLD/features/ModularDialog/ModularDialogRoot";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -199,6 +200,7 @@ export default function Default() {
   const areSettingsLoadedSelector = useSelector(areSettingsLoaded);
   const accounts = useSelector(accountsSelector);
   const analyticsConsoleActive = useEnv("ANALYTICS_CONSOLE");
+  const themeConsoleActive = useEnv("DEBUG_THEME");
   const providerNumber = useEnv("FORCE_PROVIDER");
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
 
@@ -299,7 +301,6 @@ export default function Default() {
                 <ContextMenuWrapper>
                   <ModalsLayer />
                   <DebugWrapper>
-                    {process.env.DEBUG_THEME ? <DebugTheme /> : null}
                     {process.env.MOCK ? <DebugMock /> : null}
                     {process.env.DEBUG_UPDATE ? <DebugUpdater /> : null}
                     {process.env.DEBUG_SKELETONS ? <DebugSkeletons /> : null}
@@ -310,6 +311,7 @@ export default function Default() {
                       value={process.env.DISABLE_TRANSACTION_BROADCAST}
                     />
                   ) : null}
+                  <ModularDialogRoot />
                   <Switch>
                     <Route
                       path="/onboarding"
@@ -361,8 +363,8 @@ export default function Default() {
                             <Box
                               grow
                               horizontal
-                              bg="palette.background.default"
-                              color="palette.text.shade60"
+                              bg="background.default"
+                              color="neutral.c70"
                               style={{
                                 width: "100%",
                                 height: "100%",
@@ -452,6 +454,7 @@ export default function Default() {
       </AppGeoBlocker>
 
       {analyticsConsoleActive ? <AnalyticsConsole /> : null}
+      {themeConsoleActive || process.env.DEBUG_THEME ? <ThemeConsole /> : null}
     </>
   );
 }

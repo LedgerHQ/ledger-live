@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/store";
 import { firstValueFrom, from } from "rxjs";
 
 import { useNavigation } from "@react-navigation/native";
