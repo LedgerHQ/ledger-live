@@ -111,7 +111,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "axios": "1.10.0",
+    "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "bs58check": "catalog:",
     "expect": "catalog:",
