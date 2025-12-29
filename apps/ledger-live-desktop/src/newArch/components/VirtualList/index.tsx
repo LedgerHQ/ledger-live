@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { InfiniteLoader } from "@ledgerhq/react-ui";
+import { cn } from "LLD/utils/cn";
 
 interface VirtualItem {
   key: string | number | bigint;
@@ -73,6 +74,10 @@ type VirtualListProps<T> = {
    * Optional test ID for the container element.
    */
   testId?: string;
+  /**
+   * Optional additional className for the container element.
+   */
+  className?: string;
 };
 
 const DefaultLoadingComponent = () => (
@@ -99,6 +104,7 @@ export const VirtualList = <T,>({
   bottomComponent,
   threshold = 5,
   testId,
+  className,
 }: VirtualListProps<T>) => {
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -181,7 +187,7 @@ export const VirtualList = <T,>({
   return (
     <div
       ref={parentRef}
-      className="size-full overflow-auto"
+      className={cn("size-full overflow-auto", className)}
       style={{ scrollbarWidth: "none" }}
       data-testid={testId}
     >
