@@ -1,5 +1,18 @@
 # @ledgerhq/coin-tester
 
+## 0.14.0
+
+### Minor Changes
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+- [#13126](https://github.com/LedgerHQ/ledger-live/pull/13126) [`ac82441`](https://github.com/LedgerHQ/ledger-live/commit/ac824414e167adc3b7fedaa397832e5b41d5f5c7) Thanks [@aussedatlo](https://github.com/aussedatlo)! - update speculos controller version
+
+### Patch Changes
+
+- Updated dependencies [[`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe)]:
+  - @ledgerhq/live-dmk-speculos@0.3.0
+
 ## 0.14.0-next.0
 
 ### Minor Changes

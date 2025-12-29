@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.18.2
+
+### Patch Changes
+
+- Updated dependencies [[`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143)]:
+  - @ledgerhq/errors@6.28.0
+  - @ledgerhq/hw-transport@6.31.15
+
 ## 0.18.2-next.0
 
 ### Patch Changes

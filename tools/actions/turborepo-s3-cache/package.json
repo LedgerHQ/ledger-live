@@ -1,6 +1,6 @@
 {
   "name": "@actions/turborepo-s3-cache",
-  "version": "1.1.0-next.0",
+  "version": "1.1.0",
   "description": "Uses S3 API to cache turborepo outputs",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",
