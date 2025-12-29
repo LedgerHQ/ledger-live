@@ -6,6 +6,7 @@ import type {
   NotificationsSetModalLockedPayload,
   NotificationsSetModalOpenPayload,
   NotificationsSetModalTypePayload,
+  NotificationSetSystemAuthorizationStatusPayload,
 } from "./types";
 import { NotificationsActionTypes } from "./types";
 
@@ -28,3 +29,7 @@ export const setNotificationsEventTriggered = createAction<NotificationsSetEvent
 export const setNotificationsDataOfUser = createAction<NotificationsSetDataOfUserPayload>(
   NotificationsActionTypes.NOTIFICATIONS_SET_DATA_OF_USER,
 );
+export const setNotificationSystemAuthorizationStatus =
+  createAction<NotificationSetSystemAuthorizationStatusPayload>(
+    NotificationsActionTypes.NOTIFICATIONS_SET_SYSTEM_AUTHORIZATION_STATUS,
+  );

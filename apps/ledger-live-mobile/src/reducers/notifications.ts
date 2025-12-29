@@ -10,6 +10,7 @@ import type {
   NotificationsSetModalOpenPayload,
   NotificationsSetModalTypePayload,
   DangerouslyOverrideStatePayload,
+  NotificationSetSystemAuthorizationStatusPayload,
 } from "../actions/types";
 import { NotificationsActionTypes } from "../actions/types";
 
@@ -20,6 +21,7 @@ export const INITIAL_STATE: NotificationsState = {
   currentRouteName: undefined,
   eventTriggered: undefined,
   dataOfUser: undefined,
+  systemAuthorizationStatus: undefined,
 };
 
 const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
@@ -47,7 +49,12 @@ const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
     ...state,
     dataOfUser: (action as Action<NotificationsSetDataOfUserPayload>).payload,
   }),
-
+  [NotificationsActionTypes.NOTIFICATIONS_SET_SYSTEM_AUTHORIZATION_STATUS]: (state, action) => ({
+    ...state,
+    notificationSystemAuthorizationStatus: (
+      action as Action<NotificationSetSystemAuthorizationStatusPayload>
+    ).payload,
+  }),
   [NotificationsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
     state: NotificationsState,
     action,
@@ -71,5 +78,8 @@ export const notificationsCurrentRouteNameSelector = (s: State) => s.notificatio
 export const notificationsEventTriggeredSelector = (s: State) => s.notifications.eventTriggered;
 
 export const notificationsDataOfUserSelector = (s: State) => s.notifications.dataOfUser;
+
+export const notificationSystemAuthorizationStatus = (s: State) =>
+  s.notifications.systemAuthorizationStatus;
 
 export default handleActions<NotificationsState, NotificationsPayload>(handlers, INITIAL_STATE);

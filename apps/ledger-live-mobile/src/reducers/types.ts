@@ -36,6 +36,7 @@ import { ModularDrawerState } from "./modularDrawer";
 import { LLMRTKApiState } from "~/context/rtkQueryApi";
 import { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
+import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 
 // === ACCOUNT STATE ===
 
@@ -112,6 +113,8 @@ export type BleState = {
 // === NOTIFICATIONS STATE ===
 
 export type NotificationsState = {
+  /** The authorization status of the system notifications */
+  systemAuthorizationStatus: FirebaseMessagingTypes.AuthorizationStatus | undefined;
   /** Boolean indicating whether the push notifications modal is opened or closed */
   isPushNotificationsModalOpen: boolean;
   /** Type of the push notifications modal to display (either the generic one or the market one) */

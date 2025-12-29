@@ -12,6 +12,7 @@ import {
   notificationsEventTriggeredSelector,
   notificationsDataOfUserSelector,
   notificationsModalLockedSelector,
+  notificationSystemAuthorizationStatus,
 } from "~/reducers/notifications";
 import {
   setNotificationsModalOpen,
@@ -19,6 +20,7 @@ import {
   setNotificationsCurrentRouteName,
   setNotificationsEventTriggered,
   setNotificationsDataOfUser,
+  setNotificationSystemAuthorizationStatus,
 } from "~/actions/notifications";
 import { setRatingsModalLocked } from "~/actions/ratings";
 import { track } from "~/analytics";
@@ -31,7 +33,7 @@ import { ScreenName } from "~/const/navigation";
 import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "~/actions/settings";
 import { NotificationsSettings, type NotificationsState } from "~/reducers/types";
 import Braze from "@braze/react-native-sdk";
-import { getIsNotifEnabled } from "./getNotifPermissions";
+import { getIsNotifEnabled, getSystemNotificationAuthorizationStatus } from "./getNotifPermissions";
 
 export type EventTrigger = {
   timeout: NodeJS.Timeout;
@@ -46,13 +48,6 @@ export type EventTrigger = {
 };
 
 export type DataOfUser = {
-  /** Date of the first time the user oppened the app */
-  appFirstStartDate?: Date;
-  /** Number of times the user oppened the application */
-  numberOfAppStarts?: number;
-
-  optedOutAt?: number; // timestamp in milliseconds
-
   // dates the user dismissed the opt in prompt
   // we will check the last entry in the array
   // but we will also need to check the previous entries to compute the duration between the dismissals
@@ -64,6 +59,10 @@ export type DataOfUser = {
   dateOfNextAllowedRequest?: Date;
   /** Whether or not the user clicked on the "Maybe later" cta */
   alreadyDelayedToLater?: boolean;
+  /** Date of the first time the user oppened the app */
+  appFirstStartDate?: Date;
+  /** Number of times the user oppened the application */
+  numberOfAppStarts?: number;
 };
 
 export type NotificationCategory = {
@@ -90,6 +89,7 @@ async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
 const useNotifications = () => {
   const pushNotificationsFeature = useFeature("brazePushNotifications");
   const notifications = useSelector(notificationsSelector);
+  const systemAuthorizationStatus = useSelector(notificationSystemAuthorizationStatus);
   const actionEvents = pushNotificationsFeature?.params?.action_events;
   const repromptSchedule = pushNotificationsFeature?.params?.reprompt_schedule;
 
@@ -126,7 +126,7 @@ const useNotifications = () => {
     [dispatch],
   );
 
-  const initPushNotificationsData = useCallback(() => {
+  const initPushNotificationsData = useCallback(async () => {
     if (notifications.areNotificationsAllowed === undefined) {
       dispatch(setNotifications(settingsInitialState.notifications));
     } else {
@@ -139,12 +139,21 @@ const useNotifications = () => {
       dispatch(setNotifications(newNotificationsState));
     }
 
-    // TODO: handle when the user has opted out of notifications from the system settings
-    getPushNotificationsDataOfUserFromStorage().then(dataOfUser => {
+    const [systemNotificationAuthorizationStatus, dataOfUserFromStorage] = await Promise.allSettled(
+      [getSystemNotificationAuthorizationStatus(), getPushNotificationsDataOfUserFromStorage()],
+    );
+
+    if (systemNotificationAuthorizationStatus.status === "fulfilled") {
+      dispatch(
+        setNotificationSystemAuthorizationStatus(systemNotificationAuthorizationStatus.value),
+      );
+    }
+
+    if (dataOfUserFromStorage.status === "fulfilled") {
       updatePushNotificationsDataOfUserInStateAndStore({
-        ...(dataOfUser ?? {}),
+        ...(dataOfUserFromStorage.value ?? {}),
       });
-    });
+    }
   }, [dispatch, notifications, updatePushNotificationsDataOfUserInStateAndStore]);
 
   const requestPushNotificationsPermission = useCallback(async () => {
@@ -198,9 +207,18 @@ const useNotifications = () => {
   );
 
   const checkShouldPromptOptInDrawer = useCallback(() => {
-    const today = new Date().getTime();
+    const isSystemNotificationsAuthorized =
+      systemAuthorizationStatus === AuthorizationStatus.AUTHORIZED;
+    const areNotificationsAllowed = notifications.areNotificationsAllowed;
+    if (!isSystemNotificationsAuthorized && !areNotificationsAllowed) {
+      return false;
+    }
 
-    if (!pushNotificationsDataOfUser?.optedOutAt) {
+    const dismissedOptInDrawerAtList =
+      pushNotificationsDataOfUser?.dismissedOptInDrawerAtList ?? [];
+
+    const hasNeverSeenOptInPromptDrawer = dismissedOptInDrawerAtList.length === 0;
+    if (hasNeverSeenOptInPromptDrawer) {
       return true;
     }
 
@@ -208,21 +226,21 @@ const useNotifications = () => {
       return false;
     }
 
-    const dismissedAtList = pushNotificationsDataOfUser.dismissedOptInDrawerAtList ?? [];
-    const dismissalCount = Math.max(dismissedAtList.length, 1);
-    const lastDismissedOptInDrawerAtMs =
-      dismissedAtList[dismissalCount - 1] ?? pushNotificationsDataOfUser.optedOutAt;
+    const dismissalCount = dismissedOptInDrawerAtList.length;
+    const lastDismissedAt = dismissedOptInDrawerAtList[dismissalCount - 1];
 
     // If user has dismissed more than the schedule length, keep using the last delay.
     const scheduleIndex = Math.min(dismissalCount - 1, repromptSchedule.length - 1);
     const repromptDelay = repromptSchedule[scheduleIndex];
-    const nextRepromptAt = add(lastDismissedOptInDrawerAtMs, repromptDelay);
+    const nextMinimumRepromptAt = add(lastDismissedAt, repromptDelay).getTime();
 
-    return isBefore(nextRepromptAt, today) || isEqual(nextRepromptAt, today);
+    const today = new Date().getTime();
+    return isBefore(nextMinimumRepromptAt, today) || isEqual(nextMinimumRepromptAt, today);
   }, [
-    pushNotificationsDataOfUser?.optedOutAt,
-    pushNotificationsDataOfUser?.dismissedOptInDrawerAtList,
+    systemAuthorizationStatus,
+    notifications.areNotificationsAllowed,
     repromptSchedule,
+    pushNotificationsDataOfUser?.dismissedOptInDrawerAtList,
   ]);
 
   const onPushNotificationsRouteChange = useCallback(
@@ -274,17 +292,17 @@ const useNotifications = () => {
   const openDrawer = useCallback(
     (
       modalType: NotificationsState["notificationsModalType"],
-      timer: number,
+      timer: number = 0,
       routeName: ScreenName,
     ) => {
       dispatch(setRatingsModalLocked(true));
       const timeout = setTimeout(() => {
         setPushNotificationsModalOpenCallback(true, modalType);
-      }, timer ?? 0);
+      }, timer);
       dispatch(
         setNotificationsEventTriggered({
           route_name: routeName,
-          timer: timer ?? 0,
+          timer,
           timeout,
         }),
       );
@@ -295,10 +313,12 @@ const useNotifications = () => {
   const triggerPushNotificationModalAfterMarketStarredAction = useCallback(() => {
     if (isPushNotificationsModalLocked) return;
 
-    const marketCoinStarredParamsOld = pushNotificationsFeature?.params?.marketCoinStarred;
+    const marketCoinStarredParamsBackwardCompatibility =
+      pushNotificationsFeature?.params?.marketCoinStarred;
     // TODO: to remove once we have the new logic in place (action_events.market_starred).
-    if (marketCoinStarredParamsOld) {
-      if (!marketCoinStarredParamsOld?.enabled) {
+
+    if (marketCoinStarredParamsBackwardCompatibility) {
+      if (marketCoinStarredParamsBackwardCompatibility?.enabled) {
         return;
       }
       const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
@@ -306,7 +326,11 @@ const useNotifications = () => {
         return;
       }
 
-      openDrawer("market_starred", marketCoinStarredParamsOld?.timer ?? 0, ScreenName.MarketDetail);
+      openDrawer(
+        "market_starred",
+        marketCoinStarredParamsBackwardCompatibility?.timer ?? 0,
+        ScreenName.MarketDetail,
+      );
     } else {
       const marketCoinStarredParams = actionEvents?.market_starred;
       if (!marketCoinStarredParams?.enabled) {
@@ -331,12 +355,12 @@ const useNotifications = () => {
   const triggerPushNotificationModalAfterFinishingOnboardingNewDevice = useCallback(() => {
     if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
 
-    const justFinishedOnboardingParamsOld =
+    const justFinishedOnboardingParamsBackwardCompatibility =
       pushNotificationsFeature?.params?.justFinishedOnboarding;
 
     // TODO: to remove once we have the new logic in place (action_events.just_finished_onboarding).
-    if (justFinishedOnboardingParamsOld) {
-      if (!justFinishedOnboardingParamsOld?.enabled) {
+    if (justFinishedOnboardingParamsBackwardCompatibility) {
+      if (!justFinishedOnboardingParamsBackwardCompatibility?.enabled) {
         return;
       }
       const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
@@ -345,7 +369,11 @@ const useNotifications = () => {
         return;
       }
 
-      openDrawer("generic", justFinishedOnboardingParamsOld?.timer ?? 0, ScreenName.Portfolio);
+      openDrawer(
+        "generic",
+        justFinishedOnboardingParamsBackwardCompatibility?.timer ?? 0,
+        ScreenName.Portfolio,
+      );
     } else {
       const justFinishedOnboardingParams = actionEvents?.just_finished_onboarding;
       if (!justFinishedOnboardingParams?.enabled) {
@@ -482,26 +510,20 @@ const useNotifications = () => {
   const optOutOfNotifications = useCallback(() => {
     const today = new Date().getTime();
 
+    const dismissedOptInDrawerAtList =
+      pushNotificationsDataOfUser?.dismissedOptInDrawerAtList ?? [];
+
     // first time opting out
-    if (!pushNotificationsDataOfUser?.optedOutAt) {
+    const hasNeverSeenOptInPromptDrawer = dismissedOptInDrawerAtList.length === 0;
+    if (hasNeverSeenOptInPromptDrawer) {
       updatePushNotificationsDataOfUserInStateAndStore({
         ...pushNotificationsDataOfUser,
-        optedOutAt: today,
         dismissedOptInDrawerAtList: [today],
       });
     } else {
-      if (!pushNotificationsDataOfUser?.dismissedOptInDrawerAtList) {
-        console.error(
-          "Notifications: dismissedOptInDrawerAtList is not set and that should not happen...",
-        );
-      }
-      const dismissedOptInDrawerAtList = [
-        ...(pushNotificationsDataOfUser?.dismissedOptInDrawerAtList ?? []),
-        today,
-      ];
       updatePushNotificationsDataOfUserInStateAndStore({
         ...pushNotificationsDataOfUser,
-        dismissedOptInDrawerAtList,
+        dismissedOptInDrawerAtList: [...dismissedOptInDrawerAtList, today],
       });
     }
   }, [updatePushNotificationsDataOfUserInStateAndStore, pushNotificationsDataOfUser]);
@@ -529,8 +551,7 @@ const useNotifications = () => {
   const resetOptOutState = useCallback(() => {
     updatePushNotificationsDataOfUserInStateAndStore({
       ...pushNotificationsDataOfUser,
-      optedOutAt: undefined,
-      dismissedOptInDrawerAtList: [],
+      dismissedOptInDrawerAtList: undefined,
     });
   }, [updatePushNotificationsDataOfUserInStateAndStore, pushNotificationsDataOfUser]);
 
