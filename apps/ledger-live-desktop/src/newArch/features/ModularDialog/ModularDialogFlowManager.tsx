@@ -126,7 +126,9 @@ const ModularDialogFlowManager = ({
           handleBack={handleBack}
           renderStepContent={renderStepContent}
           description={
-            selectedNetwork?.name && !hasAccounts
+            currentStep === MODULAR_DRAWER_STEP.ACCOUNT_SELECTION &&
+            selectedNetwork?.name &&
+            !hasAccounts
               ? t("dialogs.selectAccount.description", { network: selectedNetwork.name })
               : undefined
           }
