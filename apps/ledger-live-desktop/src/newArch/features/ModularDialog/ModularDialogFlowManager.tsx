@@ -17,6 +17,8 @@ import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { ModularDialogContent } from "./ModularDialogContent";
+import { useTranslation } from "react-i18next";
+import { useHasAccountsForAsset } from "./hooks/useHasAccountsForAsset";
 
 const ModularDialogFlowManager = ({
   currencies,
@@ -27,6 +29,7 @@ const ModularDialogFlowManager = ({
   onAccountSelected,
   onClose,
 }: ModularDrawerFlowManagerProps) => {
+  const { t } = useTranslation();
   const currencyIds = useMemo(() => currencies, [currencies]);
   const dispatch = useDispatch();
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
@@ -77,6 +80,8 @@ const ModularDialogFlowManager = ({
     drawerConfiguration,
   );
 
+  const hasAccounts = useHasAccountsForAsset(selectedAsset);
+
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {
       case MODULAR_DRAWER_STEP.ASSET_SELECTION:
@@ -120,6 +125,13 @@ const ModularDialogFlowManager = ({
           handleClose={handleClose}
           handleBack={handleBack}
           renderStepContent={renderStepContent}
+          description={
+            currentStep === MODULAR_DRAWER_STEP.ACCOUNT_SELECTION &&
+            selectedNetwork?.name &&
+            !hasAccounts
+              ? t("dialogs.selectAccount.description", { network: selectedNetwork.name })
+              : undefined
+          }
         />
       </DialogContent>
     </Dialog>
