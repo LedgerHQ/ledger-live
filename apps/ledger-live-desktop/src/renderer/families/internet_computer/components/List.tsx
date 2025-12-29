@@ -26,7 +26,7 @@ const StyledTable = styled.table`
 
 const Th = styled.th`
   padding: 8px 16px;
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
   text-align: left;
   font-family: "Inter";
   font-weight: normal;
@@ -37,7 +37,7 @@ const Th = styled.th`
 const Tr = styled.tr<{ pointer?: boolean }>`
   cursor: ${p => (p.pointer ? "pointer" : "default")};
   &:hover {
-    background: ${p => p.theme.colors.palette.background.default};
+    background: ${p => p.theme.colors.background.default};
   }
 `;
 
