@@ -8089,7 +8089,7 @@
     "manageNeuronFlow": {
       "title": "Manage Neurons",
       "manageAction": {
-        "title": "Manage Neuron Acton"
+        "title": "Manage Neuron Action"
       },
       "stakeMaturity": {
         "title": "Stake Maturity",

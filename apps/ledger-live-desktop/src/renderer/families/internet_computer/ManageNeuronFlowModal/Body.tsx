@@ -1,29 +1,29 @@
-import invariant from "invariant";
-import React, { useCallback, useState } from "react";
-import { useTranslation, withTranslation } from "react-i18next";
-import { TFunction } from "i18next";
-import { compose } from "redux";
-import { connect, useDispatch } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { StepId, St } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import logger from "~/renderer/logger";
+import { TFunction } from "i18next";
+import invariant from "invariant";
+import React, { useCallback, useState } from "react";
+import { useTranslation, withTranslation } from "react-i18next";
+import { connect, useDispatch } from "react-redux";
+import { compose } from "redux";
+import { createStructuredSelector } from "reselect";
 import { OpenModal, openModal } from "~/renderer/actions/modals";
+import logger from "~/renderer/logger";
+import { St, StepId } from "./types";
 
-import Track from "~/renderer/analytics/Track";
-import Stepper from "~/renderer/components/Stepper";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { useSteps } from "./steps";
 import {
   ICPAccount,
   ICPTransactionType,
   InternetComputerOperation,
 } from "@ledgerhq/live-common/families/internet_computer/types";
+import Track from "~/renderer/analytics/Track";
+import Stepper from "~/renderer/components/Stepper";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { refreshNeuronsData } from "../common";
+import { useSteps } from "./steps";
 
 export type Data = {
   account: ICPAccount;
@@ -51,6 +51,7 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = {
   openModal,
 };
+
 function Body({
   account: accountProp,
   refresh,
@@ -83,7 +84,7 @@ function Body({
     status,
   } = useBridgeTransaction(() => {
     invariant(accountProp, "icp: account");
-    const bridge = getAccountBridge(accountProp, undefined);
+    const bridge = getAccountBridge(accountProp);
     const initTx = bridge.createTransaction(accountProp);
     if (refresh) {
       initTx.type = "list_neurons";

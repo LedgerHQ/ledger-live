@@ -1,16 +1,16 @@
+import { ListNeuronsResponse, ManageNeuronResponse } from "@zondax/ledger-live-icp";
+import BigNumber from "bignumber.js";
 import {
-  SAMPLE_ACCOUNT_ID,
-  SAMPLE_PUBLIC_KEY,
-  SAMPLE_ICP_ADDRESS,
-  SAMPLE_BALANCE,
-  SAMPLE_BLOCK_HEIGHT,
   createMockAgentResponse,
-  SAMPLE_GET_ACCOUNT_TRANSACTIONS_RESPONSE,
+  SAMPLE_ACCOUNT_ID,
+  SAMPLE_BALANCE,
   SAMPLE_BALANCE_RESPONSE,
+  SAMPLE_BLOCK_HEIGHT,
+  SAMPLE_GET_ACCOUNT_TRANSACTIONS_RESPONSE,
+  SAMPLE_ICP_ADDRESS,
+  SAMPLE_PUBLIC_KEY,
   SAMPLE_QUERY_BLOCKS_RESPONSE,
 } from "./__fixtures__";
-import BigNumber from "bignumber.js";
-import { ListNeuronsResponse, ManageNeuronResponse } from "@zondax/ledger-live-icp";
 
 // Define types for mock implementations
 interface MockAPI {

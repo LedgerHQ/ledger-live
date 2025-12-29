@@ -1,14 +1,14 @@
+import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   ICPAccount,
   InternetComputerOperation,
 } from "@ledgerhq/live-common/families/internet_computer/types";
-import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 
@@ -34,9 +34,8 @@ const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
     [account, dispatch],
   );
   const onClickStakeIcp = useCallback(() => {
-    if (parentAccount) return;
-    if (account.type !== "Account") return;
-    const bridge = getAccountBridge(account, undefined);
+    if (parentAccount || account.type !== "Account") return;
+    const bridge = getAccountBridge(account);
     const initTx = bridge.createTransaction(account);
     dispatch(
       openModal("MODAL_SEND", {

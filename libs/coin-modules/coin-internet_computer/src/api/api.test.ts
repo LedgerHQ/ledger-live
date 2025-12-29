@@ -201,7 +201,7 @@ describe("api", () => {
 
       expect(result).toBe(mockArrayBuffer);
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining(`/api/v2/canister/${canisterId}/call`),
+        expect.stringContaining(`/api/v3/canister/${canisterId}/call`),
         expect.objectContaining({
           method: "POST",
           body: transaction,
@@ -222,7 +222,7 @@ describe("api", () => {
 
       expect(result).toBe(mockArrayBuffer);
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining(`/api/v2/canister/${canisterId}/read_state`),
+        expect.stringContaining(`/api/v3/canister/${canisterId}/read_state`),
         expect.objectContaining({
           method: "POST",
           body: transaction,

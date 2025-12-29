@@ -3,7 +3,6 @@ setup();
 import { assignFromAccountRaw } from "./assignFromAccountRaw";
 import { ICPAccount, ICPAccountRaw } from "../types";
 import { getEmptyAccount, getEmptyAccountRaw, ICP_CURRENCY_MOCK } from "../test/__fixtures__";
-import { NeuronsData } from "../common-logic";
 
 describe("assignFromAccountRaw", () => {
   beforeEach(() => {
@@ -13,21 +12,21 @@ describe("assignFromAccountRaw", () => {
   it("should not assign neurons if neuronsData is missing in accountRaw", () => {
     if (!assignFromAccountRaw) return;
 
-    // GIVEN
+    // GIVEN - Testing edge case where neurons/neuronsData is undefined
     const account = {
       ...getEmptyAccount(ICP_CURRENCY_MOCK),
-      neurons: undefined as unknown as NeuronsData,
-    };
+      neurons: undefined,
+    } as unknown as ICPAccount;
     const accountRaw = {
       ...getEmptyAccountRaw(ICP_CURRENCY_MOCK),
       neuronsData: undefined,
-    };
+    } as unknown as ICPAccountRaw;
 
     // WHEN
-    assignFromAccountRaw(accountRaw as unknown as ICPAccountRaw, account as ICPAccount);
+    assignFromAccountRaw(accountRaw, account);
 
     // THEN
-    expect((account as ICPAccount).neurons).toBeUndefined();
+    expect(account.neurons).toBeUndefined();
     expect(getMockedNeurons().NeuronsData.deserialize).not.toHaveBeenCalled();
   });
 

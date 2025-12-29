@@ -1,14 +1,14 @@
-import { BigNumber } from "bignumber.js";
-import { MAX_MEMO_VALUE } from "../consts";
-import { secondsToDuration } from "@zondax/ledger-live-icp/utils";
-import { InternetComputerOperation, Transaction } from "../types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { OperationType } from "@ledgerhq/types-live";
+import { secondsToDuration } from "@zondax/ledger-live-icp/utils";
+import { BigNumber } from "bignumber.js";
+import { MAX_MEMO_VALUE } from "../consts";
+import { InternetComputerOperation, Transaction } from "../types";
 
 const validHexRegExp = /^[0-9a-fA-F]+$/;
 const validBase64RegExp = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
 
-export const isNoErrorReturnCode = (code: number): boolean => code === 0x9000;
+export const isNoErrorReturnCode = (code: number) => code === 0x9000;
 
 export const getPath = (path: string): string =>
   path && path.substring(0, 2) !== "m/" ? `m/${path}` : path;

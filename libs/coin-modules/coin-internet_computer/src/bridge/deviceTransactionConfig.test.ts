@@ -16,7 +16,7 @@ describe("getDeviceTransactionConfig", () => {
     totalSpent: new BigNumber(0),
   };
 
-  it("should return the base fields for a simple send transaction", () => {
+  it("should return the base fields for a simple send transaction", async () => {
     const transaction: Transaction = {
       family: "internet_computer",
       type: "send",
@@ -25,7 +25,7 @@ describe("getDeviceTransactionConfig", () => {
       recipient: "recipient_address",
     };
 
-    const fields = getDeviceTransactionConfig({
+    const fields = await getDeviceTransactionConfig({
       account,
       parentAccount,
       transaction,
@@ -50,7 +50,7 @@ describe("getDeviceTransactionConfig", () => {
     expect(fields.find(f => f.label === "Memo")).toBeUndefined();
   });
 
-  it("should include memo if it exists and is not '0'", () => {
+  it("should include memo if it exists and is not '0'", async () => {
     const transaction: Transaction = {
       family: "internet_computer",
       type: "send",
@@ -60,7 +60,7 @@ describe("getDeviceTransactionConfig", () => {
       memo: "12345",
     };
 
-    const fields = getDeviceTransactionConfig({
+    const fields = await getDeviceTransactionConfig({
       account,
       parentAccount,
       transaction,
@@ -74,7 +74,7 @@ describe("getDeviceTransactionConfig", () => {
     });
   });
 
-  it("should not include memo if it is '0'", () => {
+  it("should not include memo if it is '0'", async () => {
     const transaction: Transaction = {
       family: "internet_computer",
       type: "send",
@@ -84,7 +84,7 @@ describe("getDeviceTransactionConfig", () => {
       memo: "0",
     };
 
-    const fields = getDeviceTransactionConfig({
+    const fields = await getDeviceTransactionConfig({
       account,
       parentAccount,
       transaction,
@@ -94,7 +94,7 @@ describe("getDeviceTransactionConfig", () => {
     expect(fields.find(f => f.label === "Memo")).toBeUndefined();
   });
 
-  it("should not include amount fields if amount is zero", () => {
+  it("should not include amount fields if amount is zero", async () => {
     const transaction: Transaction = {
       family: "internet_computer",
       type: "send",
@@ -103,7 +103,7 @@ describe("getDeviceTransactionConfig", () => {
       recipient: "recipient_address",
     };
 
-    const fields = getDeviceTransactionConfig({
+    const fields = await getDeviceTransactionConfig({
       account,
       parentAccount,
       transaction,
@@ -123,14 +123,14 @@ describe("getDeviceTransactionConfig", () => {
       neuronId: "123456789",
     };
 
-    it('should handle "stake_maturity" transaction with a given percentage', () => {
+    it('should handle "stake_maturity" transaction with a given percentage', async () => {
       const transaction: Transaction = {
         ...baseNeuronTx,
         type: "stake_maturity",
         percentageToStake: "50",
       };
 
-      const fields = getDeviceTransactionConfig({
+      const fields = await getDeviceTransactionConfig({
         account,
         parentAccount,
         transaction,
@@ -154,13 +154,13 @@ describe("getDeviceTransactionConfig", () => {
       });
     });
 
-    it('should handle "stake_maturity" transaction with default percentage', () => {
+    it('should handle "stake_maturity" transaction with default percentage', async () => {
       const transaction: Transaction = {
         ...baseNeuronTx,
         type: "stake_maturity",
       };
 
-      const fields = getDeviceTransactionConfig({
+      const fields = await getDeviceTransactionConfig({
         account,
         parentAccount,
         transaction,
@@ -174,14 +174,14 @@ describe("getDeviceTransactionConfig", () => {
       });
     });
 
-    it('should handle "remove_hot_key" transaction', () => {
+    it('should handle "remove_hot_key" transaction', async () => {
       const transaction: Transaction = {
         ...baseNeuronTx,
         type: "remove_hot_key",
         hotKeyToRemove: "principal_to_remove",
       };
 
-      const fields = getDeviceTransactionConfig({
+      const fields = await getDeviceTransactionConfig({
         account,
         parentAccount,
         transaction,
@@ -195,14 +195,14 @@ describe("getDeviceTransactionConfig", () => {
       });
     });
 
-    it('should handle "add_hot_key" transaction', () => {
+    it('should handle "add_hot_key" transaction', async () => {
       const transaction: Transaction = {
         ...baseNeuronTx,
         type: "add_hot_key",
         hotKeyToAdd: "principal_to_add",
       };
 
-      const fields = getDeviceTransactionConfig({
+      const fields = await getDeviceTransactionConfig({
         account,
         parentAccount,
         transaction,
@@ -216,13 +216,13 @@ describe("getDeviceTransactionConfig", () => {
       });
     });
 
-    it('should handle "auto_stake_maturity" transaction', () => {
+    it('should handle "auto_stake_maturity" transaction', async () => {
       const transactionTrue: Transaction = {
         ...baseNeuronTx,
         type: "auto_stake_maturity",
         autoStakeMaturity: true,
       };
-      const fieldsTrue = getDeviceTransactionConfig({
+      const fieldsTrue = await getDeviceTransactionConfig({
         account,
         parentAccount,
         transaction: transactionTrue,
@@ -238,7 +238,7 @@ describe("getDeviceTransactionConfig", () => {
         ...transactionTrue,
         autoStakeMaturity: false,
       };
-      const fieldsFalse = getDeviceTransactionConfig({
+      const fieldsFalse = await getDeviceTransactionConfig({
         account,
         parentAccount,
         transaction: transactionFalse,
@@ -251,12 +251,12 @@ describe("getDeviceTransactionConfig", () => {
       });
     });
 
-    it('should handle "spawn_neuron" transaction', () => {
+    it('should handle "spawn_neuron" transaction', async () => {
       const transaction: Transaction = {
         ...baseNeuronTx,
         type: "spawn_neuron",
       };
-      const fields = getDeviceTransactionConfig({
+      const fields = await getDeviceTransactionConfig({
         account,
         parentAccount,
         transaction,
@@ -269,12 +269,12 @@ describe("getDeviceTransactionConfig", () => {
       });
     });
 
-    it('should handle "disburse" transaction', () => {
+    it('should handle "disburse" transaction', async () => {
       const transaction: Transaction = {
         ...baseNeuronTx,
         type: "disburse",
       };
-      const fields = getDeviceTransactionConfig({
+      const fields = await getDeviceTransactionConfig({
         account,
         parentAccount,
         transaction,
@@ -287,7 +287,7 @@ describe("getDeviceTransactionConfig", () => {
       });
     });
 
-    it('should handle "set_dissolve_delay" transaction', () => {
+    it('should handle "set_dissolve_delay" transaction', async () => {
       const dissolveDelay = new BigNumber(3600 * 24 * 365); // 1 year in seconds
       const transaction: Transaction = {
         ...baseNeuronTx,
@@ -295,7 +295,7 @@ describe("getDeviceTransactionConfig", () => {
         dissolveDelay: dissolveDelay.toString(),
       };
 
-      const fields = getDeviceTransactionConfig({
+      const fields = await getDeviceTransactionConfig({
         account,
         parentAccount,
         transaction,
@@ -313,13 +313,13 @@ describe("getDeviceTransactionConfig", () => {
       });
     });
 
-    it('should handle "follow" transaction with topic', () => {
+    it('should handle "follow" transaction with topic', async () => {
       const transaction: Transaction = {
         ...baseNeuronTx,
         type: "follow",
         followTopic: 1, // Corresponds to GOVERNANCE
       };
-      const fields = getDeviceTransactionConfig({
+      const fields = await getDeviceTransactionConfig({
         account,
         parentAccount,
         transaction,
@@ -332,13 +332,13 @@ describe("getDeviceTransactionConfig", () => {
       });
     });
 
-    it('should handle "follow" transaction with followees', () => {
+    it('should handle "follow" transaction with followees', async () => {
       const transaction: Transaction = {
         ...baseNeuronTx,
         type: "follow",
         followeesIds: ["100", "200", "300"],
       };
-      const fields = getDeviceTransactionConfig({
+      const fields = await getDeviceTransactionConfig({
         account,
         parentAccount,
         transaction,

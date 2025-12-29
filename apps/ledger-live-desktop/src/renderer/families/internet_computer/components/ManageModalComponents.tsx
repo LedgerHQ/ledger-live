@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import Text from "~/renderer/components/Text";
-import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
-import { StyledIconInfo } from "./StyledIconInfo";
+import Button from "~/renderer/components/Button";
+import Text from "~/renderer/components/Text";
 import Tooltip from "~/renderer/components/Tooltip";
 import { CopiableField } from "./CopialbleField";
+import { StyledIconInfo } from "./StyledIconInfo";
 
 const Section = styled(Box)`
   width: 100%;
@@ -170,7 +170,7 @@ export function ManageModalActionElement({
 }: ManageModalActionElementProps) {
   return (
     <Box style={{ flexDirection: "row", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-      {hidden ? null : (
+      {!hidden && (
         <Button key={label} primary onClick={onClick} disabled={disabled}>
           {label}
         </Button>

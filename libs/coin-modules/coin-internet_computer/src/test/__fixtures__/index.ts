@@ -1,5 +1,5 @@
 import { NeuronsData } from "@zondax/ledger-live-icp/neurons";
-import { ICPAccount, ICPAccountRaw } from "../../types";
+import { ICPAccount, ICPAccountRaw, Transaction } from "../../types";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -298,6 +298,15 @@ export const getEmptyAccount = (currency: CryptoCurrency): ICPAccount => ({
   swapHistory: [],
   type: "Account",
   used: false,
+});
+
+export const createTestTransaction = (overrides: Partial<Transaction> = {}): Transaction => ({
+  amount: new BigNumber(0),
+  recipient: "",
+  family: "internet_computer",
+  fees: new BigNumber(10000),
+  type: "send",
+  ...overrides,
 });
 
 export const getEmptyAccountRaw = (currency: CryptoCurrency): ICPAccountRaw => ({

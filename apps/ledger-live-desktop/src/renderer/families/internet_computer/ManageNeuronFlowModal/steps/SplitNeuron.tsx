@@ -1,15 +1,15 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
+import { BigNumber } from "bignumber.js";
+import { Trans, useTranslation } from "react-i18next";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { ICP_FEES } from "@ledgerhq/live-common/families/internet_computer/consts";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Input from "~/renderer/components/Input";
-import { StepProps } from "../types";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { BigNumber } from "bignumber.js";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { maxAllowedSplitAmount } from "@ledgerhq/live-common/families/internet_computer/utils";
-import { Trans, useTranslation } from "react-i18next";
+import { StepProps } from "../types";
+import { useSplitNeuron } from "./hooks/useSplitNeuron";
 
 export function SplitNeuron({
   manageNeuronIndex,
@@ -22,66 +22,42 @@ export function SplitNeuron({
 }: StepProps) {
   const { t } = useTranslation();
   const [amount, setAmount] = useState("");
+
   const neuron = neurons.fullNeurons[manageNeuronIndex];
   const { errors } = status;
   const unit = account.currency.units[0];
   const currencyId = account.currency.id;
   const neuronBalance = BigNumber(neuron.cached_neuron_stake_e8s.toString());
 
-  const onChangeAmount = useCallback(
-    (value: string) => {
-      setAmount(value);
-      const bridge = getAccountBridge(account, undefined);
-      const initTx = bridge.createTransaction(account);
-      onChangeTransaction(
-        bridge.updateTransaction(initTx, {
-          neuronId: neuron.id[0]?.id.toString(),
-          type: "split_neuron",
-          amount: BigNumber(value || "0").multipliedBy(10 ** unit.magnitude),
-        }),
-      );
-    },
-    [account, neuron.id, onChangeTransaction, unit.magnitude],
-  );
-
-  const handleMax = useCallback(() => {
-    onChangeAmount(
-      maxAllowedSplitAmount(neuron)
-        .div(10 ** unit.magnitude)
-        .toString(),
-    );
-  }, [neuron, onChangeAmount, unit.magnitude]);
-
-  const onClickConfirmSplit = useCallback(() => {
-    const bridge = getAccountBridge(account, undefined);
-    const initTx = bridge.createTransaction(account);
-    const action = "split_neuron";
-    onChangeTransaction(
-      bridge.updateTransaction(initTx, {
-        neuronId: neuron.id[0]?.id.toString(),
-        type: action,
-        amount: BigNumber(amount).multipliedBy(10 ** unit.magnitude),
-      }),
-    );
-    setLastManageAction(action);
-    transitionTo("manageAction");
-  }, [
+  const { neuronId, maxAmount, onAmountChange, onConfirmSplit, onCancel } = useSplitNeuron({
     account,
-    onChangeTransaction,
-    transitionTo,
     neuron,
+    unit,
+    onChangeTransaction,
     setLastManageAction,
-    amount,
-    unit.magnitude,
-  ]);
+    transitionTo,
+  });
+
+  const handleAmountChange = (value: string) => {
+    setAmount(value);
+    onAmountChange(value);
+  };
+
+  const handleMax = () => {
+    setAmount(maxAmount);
+    onAmountChange(maxAmount);
+  };
+
+  const handleConfirm = () => {
+    onConfirmSplit(amount);
+  };
 
   const formattedBalance = formatCurrencyUnit(unit, neuronBalance, {
     showCode: true,
     disableRounding: true,
   });
 
-  const txFee = BigNumber(0.0001);
-  const formattedFee = formatCurrencyUnit(unit, txFee.multipliedBy(10 ** unit.magnitude), {
+  const formattedFee = formatCurrencyUnit(unit, BigNumber(ICP_FEES), {
     showCode: true,
     disableRounding: true,
   });
@@ -106,7 +82,7 @@ export function SplitNeuron({
             <Trans i18nKey="internetComputer.common.neuronId" />
           </Text>
           <Text ml={1} ff="Inter|SemiBold" fontSize={16}>
-            {neuron.id[0]?.id.toString()}
+            {neuronId}
           </Text>
         </Box>
         <Box horizontal alignItems="center" mb={12}>
@@ -129,7 +105,7 @@ export function SplitNeuron({
 
         <Input
           value={amount}
-          onChange={onChangeAmount}
+          onChange={handleAmountChange}
           error={!!amount && errors.splitNeuron}
           placeholder="0"
           type="number"
@@ -148,10 +124,10 @@ export function SplitNeuron({
       </Box>
 
       <Box horizontal justifyContent="flex-end">
-        <Button mr={2} onClick={() => transitionTo("manage")}>
+        <Button mr={2} onClick={onCancel}>
           {t("common.cancel")}
         </Button>
-        <Button primary onClick={onClickConfirmSplit} disabled={!!errors.splitNeuron}>
+        <Button primary onClick={handleConfirm} disabled={!!errors.splitNeuron}>
           <Trans i18nKey="internetComputer.manageNeuronFlow.splitNeuron.confirmSplit" />
         </Button>
       </Box>

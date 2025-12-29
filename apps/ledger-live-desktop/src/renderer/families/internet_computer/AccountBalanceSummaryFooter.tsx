@@ -1,23 +1,23 @@
-import React from "react";
-import styled from "styled-components";
-import { useSelector } from "react-redux";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { ICPAccount } from "@ledgerhq/live-common/families/internet_computer/types";
+import { BigNumber } from "bignumber.js";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import styled from "styled-components";
+import { useBalanceHistoryWithCountervalue } from "~/renderer/actions/portfolio";
+import Box from "~/renderer/components/Box/Box";
+import Discreet from "~/renderer/components/Discreet";
+import Text from "~/renderer/components/Text";
+import ToolTip from "~/renderer/components/Tooltip";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import InfoCircle from "~/renderer/icons/InfoCircle";
 import {
-  localeSelector,
   counterValueCurrencySelector,
   countervalueFirstSelector,
+  localeSelector,
 } from "~/renderer/reducers/settings";
-import { useBalanceHistoryWithCountervalue } from "~/renderer/actions/portfolio";
-import Discreet from "~/renderer/components/Discreet";
-import Box from "~/renderer/components/Box/Box";
-import Text from "~/renderer/components/Text";
-import InfoCircle from "~/renderer/icons/InfoCircle";
-import ToolTip from "~/renderer/components/Tooltip";
 import { InternetComputerFamily } from "./types";
-import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { BigNumber } from "bignumber.js";
-import { ICPAccount } from "@ledgerhq/live-common/families/internet_computer/types";
-import { useTranslation } from "react-i18next";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -96,14 +96,15 @@ const AccountBalanceSummaryFooter: InternetComputerFamily["AccountBalanceSummary
   discreetMode,
 }) => {
   const { t } = useTranslation();
-  const icpAccount = account as unknown as ICPAccount; // TokenAccount is not possible here
+
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   const counterValue = useSelector(counterValueCurrencySelector);
-  const stakedCountervalue = useStakedBalanceCountervalue(icpAccount);
   const { countervalueFirst } = useCountervaluePreferences();
 
   if (account.type !== "Account") return null;
+  const icpAccount = account; // TokenAccount is not possible here
+  const stakedCountervalue = useStakedBalanceCountervalue(icpAccount);
   const { neurons } = icpAccount;
 
   const formatConfig = {

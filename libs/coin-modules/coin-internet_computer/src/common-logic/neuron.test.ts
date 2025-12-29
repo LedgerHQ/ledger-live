@@ -89,7 +89,7 @@ describe("getBannerState", () => {
     expect(result.state).toBe("stakeICP");
   });
 
-  it("should return default 'syncNeurons' when no other condition is met", () => {
+  it("should return default 'stakeICP' when no other condition is met", () => {
     (votingPowerNeedsRefresh as jest.Mock).mockReturnValue({
       needsRefresh: false,
       minDays: 0,
@@ -97,6 +97,6 @@ describe("getBannerState", () => {
       minMinutes: 0,
     });
     const result = getBannerState(account);
-    expect(result.state).toBe("syncNeurons");
+    expect(result.state).toBe("stakeICP");
   });
 });
