@@ -1,16 +1,16 @@
-import React, { useCallback, useState } from "react";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { KNOWN_NEURON_IDS } from "@ledgerhq/live-common/families/internet_computer/consts";
+import { Divider } from "@ledgerhq/react-ui";
+import React, { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
+import Box from "~/renderer/components/Box";
+import Button from "~/renderer/components/Button";
 import Input, { InputError } from "~/renderer/components/Input";
 import Label from "~/renderer/components/Label";
 import Text from "~/renderer/components/Text";
-import { Divider } from "@ledgerhq/react-ui";
-import Box from "~/renderer/components/Box";
-import Cross from "~/renderer/icons/Cross";
 import { CopiableField } from "../../components/CopialbleField";
-import Button from "~/renderer/components/Button";
 import { StepProps } from "../types";
-import { useTranslation } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { FolloweesList } from "./components";
 
 const neuronIdsList = Object.entries(KNOWN_NEURON_IDS);
 
@@ -154,44 +154,13 @@ export function StepSelectFollowees({
           ))}
         </Box>
       </Box>
-      {(!!followees.length || hasInitialFollowees) && (
-        <>
-          <Divider my={4} />
-          <Box style={{ gap: 10 }}>
-            <Text ff="Inter|SemiBold" fontSize={14}>
-              {t("internetComputer.common.followees")} ({followees.length})
-            </Text>
-            <Box style={{ gap: 10 }}>
-              {followees.map(followee => (
-                <Box style={{ gap: 10, flexDirection: "row" }} key={followee}>
-                  <Text ff="Inter|Regular" fontSize={14}>
-                    {KNOWN_NEURON_IDS[followee] ?? followee}
-                  </Text>
-                  <Box
-                    style={{ cursor: "pointer", margin: "auto 0" }}
-                    onClick={() => onClickRemoveFollowee(followee)}
-                  >
-                    <Cross size={12} />
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-            <Box horizontal justifyContent="flex-end">
-              <Button mr={2} onClick={() => transitionTo("manage")}>
-                {t("common.cancel")}
-              </Button>
-              {followees.length ? (
-                <Button onClick={onClickFollowNeuron} primary>
-                  {t("common.follow")}
-                </Button>
-              ) : (
-                <Button onClick={onClickFollowNeuron} primary>
-                  {t("common.set")}
-                </Button>
-              )}
-            </Box>
-          </Box>
-        </>
+      {(Boolean(followees.length) || hasInitialFollowees) && (
+        <FolloweesList
+          followees={followees}
+          onRemoveFollowee={onClickRemoveFollowee}
+          onCancel={() => transitionTo("manage")}
+          onSubmit={onClickFollowNeuron}
+        />
       )}
     </Box>
   );

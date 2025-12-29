@@ -1,8 +1,20 @@
-import { Observable } from "rxjs";
+import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { log } from "@ledgerhq/logs";
 import { Account, AccountBridge, DeviceId } from "@ledgerhq/types-live";
-import { getAddress } from "./bridgeHelpers/addresses";
-import { buildOptimisticSendOperation as buildOptimisticOperation } from "./buildOptimisticOperation";
-import { hashTransaction, pubkeyToDer } from "@zondax/ledger-live-icp/utils";
+import { Cbor } from "@zondax/ledger-live-icp/agent";
+import {
+  TransferRawRequest,
+  UnsignedTransaction,
+  createReadStateRequest,
+  createUnsignedListNeuronsTransaction,
+  createUnsignedNeuronCommandTransaction,
+  createUnsignedSendTransaction,
+  hashTransaction,
+  pubkeyToDer,
+} from "@zondax/ledger-live-icp/utils";
+import invariant from "invariant";
+import { Observable } from "rxjs";
+import { getPath } from "../common-logic/utils";
 import {
   ICPAccount,
   ICPAccountRaw,
@@ -11,32 +23,21 @@ import {
   Transaction,
   TransactionStatus,
 } from "../types";
-import { getPath } from "../common-logic/utils";
-import { log } from "@ledgerhq/logs";
-import invariant from "invariant";
-import { Cbor } from "@zondax/ledger-live-icp/agent";
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
-import {
-  UnsignedTransaction,
-  TransferRawRequest,
-  createReadStateRequest,
-  createUnsignedSendTransaction,
-  createUnsignedListNeuronsTransaction,
-  createUnsignedNeuronCommandTransaction,
-} from "@zondax/ledger-live-icp/utils";
+import { getAddress } from "./bridgeHelpers/addresses";
+import { buildOptimisticSendOperation as buildOptimisticOperation } from "./buildOptimisticOperation";
 
 const signICPTransaction = async (
   unsignedTxn: UnsignedTransaction,
   derivationPath: string,
   signerContext: SignerContext<ICPSigner>,
   account: Account,
-  isCreateNeuron: boolean,
+  isNeuronCreation: boolean,
   deviceId: DeviceId,
 ) => {
   const blob = Cbor.encode({ content: unsignedTxn });
   log("debug", "[signICPTransaction] blob", Buffer.from(blob).toString("hex"));
   const signatures = await signerContext(deviceId, signer =>
-    signer.sign(derivationPath, Buffer.from(blob), isCreateNeuron ? 1 : 0),
+    signer.sign(derivationPath, Buffer.from(blob), isNeuronCreation ? 1 : 0),
   );
 
   invariant(signatures.signatureRS, "[ICP](signICPTransaction) Signature not found");

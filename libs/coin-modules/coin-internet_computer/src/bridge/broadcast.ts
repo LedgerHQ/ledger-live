@@ -110,13 +110,14 @@ export const broadcast: AccountBridge<
       Date.now(),
       MAINNET_GOVERNANCE_CANISTER_ID,
     );
+
     return {
       ...operation,
       extra: {
         ...operation.extra,
         neurons,
       },
-    } as InternetComputerOperation;
+    };
   }
 
   if (
@@ -184,13 +185,14 @@ export const broadcast: AccountBridge<
     }
 
     invariant(neuronId, `[ICP](broadcast) Failed to claim or refresh neuron with memo: ${memo}`);
+
     return {
       ...operation,
       extra: {
         ...operation.extra,
         createdNeuronId: neuronId?.toString(),
       },
-    } as InternetComputerOperation;
+    };
   }
 
   // Additional step for neuron stake increase

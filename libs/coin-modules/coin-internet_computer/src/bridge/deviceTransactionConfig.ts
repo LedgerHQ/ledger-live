@@ -50,69 +50,66 @@ async function getDeviceTransactionConfig({
       });
     }
 
-    if (transaction.type === "stake_maturity") {
-      fields.push({
-        type: "text",
-        label: "Percentage to Stake",
-        value: transaction.percentageToStake ?? "100",
-      });
-    }
+    switch (transaction.type) {
+      case "stake_maturity":
+        fields.push({
+          type: "text",
+          label: "Percentage to Stake",
+          value: transaction.percentageToStake ?? "100",
+        });
+        break;
+      case "remove_hot_key":
+        fields.push({
+          type: "text",
+          label: "Principal",
+          value: transaction.hotKeyToRemove ?? "",
+        });
+        break;
+      case "add_hot_key":
+        fields.push({
+          type: "text",
+          label: "Principal",
+          value: transaction.hotKeyToAdd ?? "",
+        });
+        break;
+      case "auto_stake_maturity":
+        fields.push({
+          type: "text",
+          label: "Auto Stake",
+          value: transaction.autoStakeMaturity ? "true" : "false",
+        });
+        break;
+      case "spawn_neuron":
+        fields.push({
+          type: "text",
+          label: "Controller",
+          value: "self",
+        });
+        break;
+      case "disburse":
+        fields.push({
+          type: "text",
+          label: "Disburse To",
+          value: "Self",
+        });
+        break;
+      case "set_dissolve_delay": {
+        const dissolveDelayStr = new Date(
+          BigNumber(transaction.dissolveDelay ?? "0")
+            .plus(nowInSeconds())
+            .times(1000)
+            .toNumber(),
+        )
+          .toISOString()
+          .split("T")[0];
 
-    if (transaction.type === "remove_hot_key") {
-      fields.push({
-        type: "text",
-        label: "Principal",
-        value: transaction.hotKeyToRemove ?? "",
-      });
-    }
-
-    if (transaction.type === "add_hot_key") {
-      fields.push({
-        type: "text",
-        label: "Principal",
-        value: transaction.hotKeyToAdd ?? "",
-      });
-    }
-
-    if (transaction.type === "auto_stake_maturity") {
-      fields.push({
-        type: "text",
-        label: "Auto Stake",
-        value: transaction.autoStakeMaturity ? "true" : "false",
-      });
-    }
-
-    if (transaction.type === "spawn_neuron") {
-      fields.push({
-        type: "text",
-        label: "Controller",
-        value: "self",
-      });
-    }
-
-    if (transaction.type === "disburse") {
-      fields.push({
-        type: "text",
-        label: "Disburse To",
-        value: "Self",
-      });
-    }
-
-    if (transaction.type === "set_dissolve_delay") {
-      const dissolveDelayStr = new Date(
-        BigNumber(transaction.dissolveDelay ?? "0")
-          .plus(nowInSeconds())
-          .times(1000)
-          .toNumber(),
-      )
-        .toISOString()
-        .split("T")[0];
-
-      fields.push({
-        type: "text",
-        label: "Dissolve Date",
-        value: dissolveDelayStr,
-      });
+        fields.push({
+          type: "text",
+          label: "Dissolve Date",
+          value: dissolveDelayStr,
+        });
+        break;
+      }
     }
   }
 
