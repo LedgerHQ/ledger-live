@@ -2,21 +2,21 @@ import React from "react";
 import { DialogBody, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
-import { MODULAR_DRAWER_STEP, ModularDrawerStep, NavigationDirection } from "./types";
+import { MODULAR_DIALOG_STEP, ModularDialogStep, NavigationDirection } from "./types";
 
-const TranslationKeyMap: Record<ModularDrawerStep, string> = {
-  [MODULAR_DRAWER_STEP.ASSET_SELECTION]: "modularAssetDrawer.selectAsset",
-  [MODULAR_DRAWER_STEP.NETWORK_SELECTION]: "modularAssetDrawer.selectNetwork",
-  [MODULAR_DRAWER_STEP.ACCOUNT_SELECTION]: "modularAssetDrawer.selectAccount",
+const TranslationKeyMap: Record<ModularDialogStep, string> = {
+  [MODULAR_DIALOG_STEP.ASSET_SELECTION]: "modularAssetDrawer.selectAsset",
+  [MODULAR_DIALOG_STEP.NETWORK_SELECTION]: "modularAssetDrawer.selectNetwork",
+  [MODULAR_DIALOG_STEP.ACCOUNT_SELECTION]: "modularAssetDrawer.selectAccount",
 };
 
 interface ModularDialogContentProps {
-  currentStep: ModularDrawerStep;
+  currentStep: ModularDialogStep;
   navigationDirection: NavigationDirection;
   handleClose: () => void;
   handleBack?: () => void;
-  renderStepContent: (step: ModularDrawerStep) => React.ReactNode;
   description?: string;
+  renderStepContent: (step: ModularDialogStep) => React.ReactNode;
 }
 
 export const ModularDialogContent = ({

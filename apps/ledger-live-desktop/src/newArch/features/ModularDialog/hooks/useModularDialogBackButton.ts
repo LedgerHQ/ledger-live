@@ -1,24 +1,24 @@
 import { useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { ModularDrawerStep } from "../types";
+import { ModularDialogStep } from "../types";
 import { useSelector } from "react-redux";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
 
-interface UseModularDrawerBackButtonProps {
-  currentStep: ModularDrawerStep;
+interface UseModularDialogBackButtonProps {
+  currentStep: ModularDialogStep;
   goBackToAssetSelection?: () => void;
   goBackToNetworkSelection?: () => void;
   hasOneCurrency: boolean;
   networksToDisplay?: CryptoOrTokenCurrency[];
 }
 
-export function useModularDrawerBackButton({
+export function useModularDialogBackButton({
   currentStep,
   goBackToAssetSelection,
   goBackToNetworkSelection,
   hasOneCurrency,
   networksToDisplay,
-}: UseModularDrawerBackButtonProps) {
+}: UseModularDialogBackButtonProps) {
   const searchedValue = useSelector(modularDrawerSearchedSelector);
   const handleBack = useMemo(() => {
     const canGoBackToAsset = !hasOneCurrency || !!searchedValue;

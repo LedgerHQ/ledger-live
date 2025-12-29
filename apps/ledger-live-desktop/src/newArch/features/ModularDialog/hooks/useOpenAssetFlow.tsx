@@ -3,14 +3,17 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { ModularDrawerVisibleParams, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
+import {
+  useModularDrawerVisibility,
+  ModularDrawerVisibleParams,
+} from "@ledgerhq/live-common/modularDrawer/useModularDrawerVisibility";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { GlobalModalData } from "~/renderer/modals/types";
 import ModularDrawerAddAccountFlowManager from "../../AddAccountDrawer/ModularDrawerAddAccountFlowManager";
-import { useModularDrawerAnalytics } from "../analytics/useModularDialogAnalytics";
+import { useModularDialogAnalytics } from "../analytics/useModularDialogAnalytics";
 import { CloseButton } from "../components/CloseButton";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {
@@ -83,16 +86,16 @@ export function useOpenAssetFlowDialog(
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
   });
-  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const { trackModularDialogEvent } = useModularDialogAnalytics();
   const featureNetworkBasedAddAccount = useFeature("lldNetworkBasedAddAccount");
 
   const handleClose = useCallback(() => {
     setDrawer();
-    trackModularDrawerEvent("button_clicked", {
+    trackModularDialogEvent("button_clicked", {
       button: "Close",
       page: currentRouteNameRef.current ?? "Unknown",
     });
-  }, [trackModularDrawerEvent]);
+  }, [trackModularDialogEvent]);
 
   const openAddAccountFlow = useCallback(
     (
@@ -106,7 +109,7 @@ export function useOpenAssetFlowDialog(
 
       const onClose = () => {
         setDrawer();
-        trackModularDrawerEvent("button_clicked", {
+        trackModularDialogEvent("button_clicked", {
           button: "Close",
           page: currentRouteNameRef.current ?? "Unknown",
         });
@@ -148,7 +151,7 @@ export function useOpenAssetFlowDialog(
       featureNetworkBasedAddAccount?.enabled,
       modalNameToReopen,
       source,
-      trackModularDrawerEvent,
+      trackModularDialogEvent,
     ],
   );
 

@@ -19,7 +19,7 @@ export const ModularDialogRoot: React.FC = () => {
   return (
     <ModularDialogFlowManager
       currencies={dialogParams.currencies ?? []}
-      drawerConfiguration={dialogParams.drawerConfiguration}
+      dialogConfiguration={dialogParams.drawerConfiguration}
       useCase={dialogParams.useCase}
       areCurrenciesFiltered={dialogParams.areCurrenciesFiltered}
       onAssetSelected={dialogParams.onAssetSelected}

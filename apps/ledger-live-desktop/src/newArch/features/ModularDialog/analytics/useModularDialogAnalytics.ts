@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { track } from "~/renderer/analytics/segment";
-import { ModularDrawerEventName, ModularDrawerEventParams } from "./modularDialog.types";
+import { ModularDialogEventName, ModularDialogEventParams } from "./modularDialog.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
 import { useSelector } from "react-redux";
@@ -9,27 +9,27 @@ import {
   modularDrawerSourceSelector,
 } from "~/renderer/reducers/modularDrawer";
 
-type DrawerConfig = {
+type DialogConfig = {
   formatNetworkConfig?: boolean;
   formatAssetConfig?: boolean;
   assetsConfig?: EnhancedModularDrawerConfiguration["assets"];
   networksConfig?: EnhancedModularDrawerConfiguration["networks"];
 };
 
-type TrackModularDrawerEvent = <T extends ModularDrawerEventName>(
+type TrackModularDialogEvent = <T extends ModularDialogEventName>(
   eventName: T,
-  params: ModularDrawerEventParams[T],
-  drawerConfig?: DrawerConfig,
+  params: ModularDialogEventParams[T],
+  dialogConfig?: DialogConfig,
 ) => void;
 
-export const useModularDrawerAnalytics = () => {
+export const useModularDialogAnalytics = () => {
   const flow = useSelector(modularDrawerFlowSelector);
   const source = useSelector(modularDrawerSourceSelector);
 
-  const trackModularDrawerEvent = useCallback<TrackModularDrawerEvent>(
-    (eventName, params, drawerConfig) => {
+  const trackModularDialogEvent = useCallback<TrackModularDialogEvent>(
+    (eventName, params, dialogConfig) => {
       const { formatNetworkConfig, formatAssetConfig, assetsConfig, networksConfig } =
-        drawerConfig || {};
+        dialogConfig || {};
       const analyticsParams = {
         ...params,
         ...(formatAssetConfig && { asset_component_features: formatAssetsConfig(assetsConfig) }),
@@ -44,5 +44,5 @@ export const useModularDrawerAnalytics = () => {
     [flow, source],
   );
 
-  return { trackModularDrawerEvent };
+  return { trackModularDialogEvent };
 };

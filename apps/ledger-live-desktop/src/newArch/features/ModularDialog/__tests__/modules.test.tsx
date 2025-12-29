@@ -91,7 +91,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{
+        dialogConfiguration={{
           assets: {
             rightElement: "balance",
           },
@@ -115,7 +115,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{
+        dialogConfiguration={{
           assets: {
             leftElement: "apy",
           },
@@ -134,7 +134,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{
+        dialogConfiguration={{
           assets: {
             leftElement: "marketTrend",
           },
@@ -155,7 +155,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{
+        dialogConfiguration={{
           assets: {
             rightElement: "marketTrend",
           },
@@ -177,7 +177,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{
+        dialogConfiguration={{
           assets: {
             rightElement: "balance",
           },
@@ -214,7 +214,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{ networks: { leftElement: "numberOfAccounts" } }}
+        dialogConfiguration={{ networks: { leftElement: "numberOfAccounts" } }}
       />,
       mockedInitialState,
     );
@@ -240,7 +240,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{ networks: { leftElement: "numberOfAccountsAndApy" } }}
+        dialogConfiguration={{ networks: { leftElement: "numberOfAccountsAndApy" } }}
       />,
       mockedInitialState,
     );
@@ -261,7 +261,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{ networks: { rightElement: "balance" } }}
+        dialogConfiguration={{ networks: { rightElement: "balance" } }}
       />,
       mockedInitialState,
     );
@@ -286,7 +286,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{ assets: { rightElement: "balance" } }}
+        dialogConfiguration={{ assets: { rightElement: "balance" } }}
       />,
       mockedInitialState,
     );
@@ -315,7 +315,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mixedCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{ assets: { rightElement: "balance" } }}
+        dialogConfiguration={{ assets: { rightElement: "balance" } }}
       />,
       mockedInitialState,
     );
