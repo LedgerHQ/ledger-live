@@ -75,7 +75,6 @@ const test_android = async () => {
       --take-screenshots failing \\
       --forceExit \\
       --headless \\
-      --retries 2 \\
       --cleanup \\
       ${filteredArgs}`;
 };
