@@ -204,7 +204,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
     await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
     expect(screen.getByText(/add account/i)).toBeVisible();
-    expect(screen.getAllByText(/please add bitcoin account to continue/i)[0]).toBeVisible();
+    expect(screen.getAllByText(/you don't have bitcoin accounts yet/i)[0]).toBeVisible();
   });
 
   it("should trigger add account with corresponding currency", async () => {
@@ -532,7 +532,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
     await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
 
-    const descriptions = screen.getAllByText(/please add ethereum account to continue/i);
+    const descriptions = screen.getAllByText(/you don't have ethereum accounts yet/i);
     expect(descriptions[0]).toBeVisible();
   });
 
@@ -560,7 +560,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
     await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
 
-    const description = screen.queryByText(/please add ethereum account to continue/i);
+    const description = screen.queryByText(/you don't have ethereum accounts yet/i);
     expect(description).not.toBeInTheDocument();
   });
 });

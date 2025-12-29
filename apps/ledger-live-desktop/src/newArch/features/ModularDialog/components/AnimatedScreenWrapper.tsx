@@ -15,7 +15,7 @@ const AnimatedScreenWrapper = ({
   return (
     <div
       className={cn(
-        "h-[480px] w-full overflow-hidden [scrollbar-width:none]",
+        "flex h-[450px] w-full flex-col overflow-hidden [scrollbar-width:none]",
         direction === "FORWARD" ? "animate-slide-in-from-right" : "animate-slide-in-from-left",
       )}
       data-testid={`modular-dialog-screen-${screenKey}`}
