@@ -12,7 +12,7 @@ import { BoxWithBackground } from "../../../components/BoxWithBackground";
 import { StyledIconInfo } from "../../../components/StyledIconInfo";
 
 const Section = styled(Box)`
-  background: ${p => p.theme.colors.palette.background.paper};
+  background: ${p => p.theme.colors.background.paper};
   border-radius: 12px;
   padding: 16px;
   width: 100%;

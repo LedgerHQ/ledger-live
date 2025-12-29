@@ -26,7 +26,7 @@ const Wrapper = styled(Box).attrs(() => ({
   pb: 0,
   scroll: true,
 }))`
-  border-top: 1px solid ${p => p.theme.colors.palette.text.shade10};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c30};
 `;
 
 const BalanceDetail = styled(Box).attrs(() => ({
@@ -59,7 +59,7 @@ const AmountValue = styled(Text).attrs(() => ({
 const Separator = styled.div`
   width: 1px;
   height: 40px;
-  background-color: ${p => p.theme.colors.palette.text.shade10};
+  background-color: ${p => p.theme.colors.neutral.c30};
   margin: 0 10px;
   align-self: center;
 `;
