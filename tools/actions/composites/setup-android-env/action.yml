@@ -27,6 +27,7 @@ runs:
       uses: android-actions/setup-android@v3.2.2
       with:
         packages: ${{ inputs.android_packages }}
+        cmdline-tools-version: 13114758
 
     - name: Enable Hardware Acceleration
       shell: bash
