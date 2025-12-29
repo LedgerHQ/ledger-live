@@ -7467,7 +7467,8 @@
   },
   "dialogs": {
     "selectAccount": {
-      "addAccount": "Add new"
+      "description": "Please add {{network}} account to continue",
+      "addAccount": "Add account"
     }
   },
   "drawers": {

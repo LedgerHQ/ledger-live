@@ -16,6 +16,7 @@ interface ModularDialogContentProps {
   handleClose: () => void;
   handleBack?: () => void;
   renderStepContent: (step: ModularDrawerStep) => React.ReactNode;
+  description?: string;
 }
 
 export const ModularDialogContent = ({
@@ -24,6 +25,7 @@ export const ModularDialogContent = ({
   handleClose,
   handleBack,
   renderStepContent,
+  description,
 }: ModularDialogContentProps) => {
   const { t } = useTranslation();
 
@@ -32,6 +34,7 @@ export const ModularDialogContent = ({
       <DialogHeader
         appearance="extended"
         title={t(TranslationKeyMap[currentStep])}
+        description={description}
         onClose={handleClose}
         onBack={handleBack}
       />
