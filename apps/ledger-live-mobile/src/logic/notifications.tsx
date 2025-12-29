@@ -243,52 +243,6 @@ const useNotifications = () => {
     pushNotificationsDataOfUser?.dismissedOptInDrawerAtList,
   ]);
 
-  const onPushNotificationsRouteChange = useCallback(
-    (newRoute: string, isOtherModalOpened = false) => {
-      if (pushNotificationsEventTriggered?.timeout) {
-        clearTimeout(pushNotificationsEventTriggered?.timeout);
-        dispatch(setRatingsModalLocked(false));
-      }
-
-      if (isOtherModalOpened) return false;
-
-      // @ts-expect-error TYPINGS
-      for (const eventTrigger of pushNotificationsFeature?.params?.trigger_events) {
-        // @ts-expect-error TYPINGS
-        if (isEventTriggered(eventTrigger, newRoute)) {
-          const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
-          if (!shouldPromptOptInDrawer) {
-            return false;
-          }
-
-          dispatch(setRatingsModalLocked(true));
-          const timeout = setTimeout(() => {
-            setPushNotificationsModalOpenCallback(true, "generic");
-          }, eventTrigger.timer);
-          dispatch(
-            // @ts-expect-error TYPINGS
-            setNotificationsEventTriggered({
-              ...eventTrigger,
-              timeout,
-            }),
-          );
-          dispatch(setNotificationsCurrentRouteName(newRoute));
-          return true;
-        }
-      }
-      dispatch(setNotificationsCurrentRouteName(newRoute));
-      return false;
-    },
-    [
-      checkShouldPromptOptInDrawer,
-      pushNotificationsEventTriggered?.timeout,
-      dispatch,
-      pushNotificationsFeature?.params?.trigger_events,
-      isEventTriggered,
-      setPushNotificationsModalOpenCallback,
-    ],
-  );
-
   const openDrawer = useCallback(
     (
       modalType: NotificationsState["notificationsModalType"],
@@ -308,6 +262,41 @@ const useNotifications = () => {
       );
     },
     [dispatch, setPushNotificationsModalOpenCallback],
+  );
+
+  const onPushNotificationsRouteChange = useCallback(
+    (newRoute: string, isOtherModalOpened = false) => {
+      if (pushNotificationsEventTriggered?.timeout) {
+        clearTimeout(pushNotificationsEventTriggered?.timeout);
+        dispatch(setRatingsModalLocked(false));
+      }
+
+      if (isOtherModalOpened) return false;
+
+      // @ts-expect-error TYPINGS
+      for (const eventTrigger of pushNotificationsFeature?.params?.trigger_events) {
+        // @ts-expect-error TYPINGS
+        if (isEventTriggered(eventTrigger, newRoute)) {
+          const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
+          if (!shouldPromptOptInDrawer) {
+            return false;
+          }
+
+          openDrawer("generic", eventTrigger.timer, newRoute as ScreenName);
+          return true;
+        }
+      }
+      dispatch(setNotificationsCurrentRouteName(newRoute));
+      return false;
+    },
+    [
+      pushNotificationsEventTriggered?.timeout,
+      dispatch,
+      pushNotificationsFeature?.params?.trigger_events,
+      isEventTriggered,
+      checkShouldPromptOptInDrawer,
+      openDrawer,
+    ],
   );
 
   const triggerPushNotificationModalAfterMarketStarredAction = useCallback(() => {

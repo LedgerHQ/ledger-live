@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { View } from "react-native";
-import { NavigationState, useNavigation } from "@react-navigation/native";
+import { EventArg, NavigationState, useNavigation } from "@react-navigation/native";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import PushNotificationsModal from "../PushNotificationsModal";
 import RatingsModal from "../RatingsModal";
@@ -41,10 +41,10 @@ const Modals = () => {
       : "none";
 
   const onRouteChange = useCallback(
-    // @ts-expect-error cannot find the correct event there
-    e => {
-      const navState = e?.data?.state;
-      if (navState && navState.routeNames) {
+    (e: EventArg<"state", false, { state: NavigationState }>) => {
+      const navState = e.data.state;
+
+      if (navState.routeNames) {
         const currentRouteName = getCurrentRouteName(navState) as string;
         let isModalOpened = false;
         if (pushNotificationsFeature?.enabled) {
