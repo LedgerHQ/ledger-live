@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-hedera": minor
+"@ledgerhq/coin-hedera": patch
 ---
 
 fix: avoid hardcoding node account id
