@@ -13,13 +13,9 @@ import {
 } from "@hashgraph/sdk";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import { DEFAULT_GAS_LIMIT, HEDERA_TRANSACTION_MODES } from "../constants";
+import { rpcClient } from "../network/rpc";
 import type { HederaMemo, HederaTxData } from "../types";
 import { hasSpecificIntentData, serializeTransaction } from "./utils";
-
-// avoid "sign" prompt loop by having only one node (one transaction)
-// https://github.com/LedgerHQ/ledger-live/pull/72/commits/1e942687d4301660e43e0c4b5419fcfa2733b290
-// changing this will break `getHederaTransactionBodyBytes` from logic/utils.ts
-const nodeAccountIds: AccountId[] = [new AccountId(3)];
 
 interface BuilderOperator {
   accountId: string;
@@ -75,7 +71,6 @@ async function buildUnsignedCoinTransaction({
   const hbarAmount = Hbar.fromTinybars(transaction.amount);
 
   const tx = new TransferTransaction()
-    .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo)
     .addHbarTransfer(accountId, hbarAmount.negated())
@@ -85,7 +80,7 @@ async function buildUnsignedCoinTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freeze();
+  return tx.freezeWith(rpcClient.getInstance());
 }
 
 async function buildUnsignedHTSTokenTransaction({
@@ -99,7 +94,6 @@ async function buildUnsignedHTSTokenTransaction({
   const tokenId = transaction.tokenAddress;
 
   const tx = new TransferTransaction()
-    .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo)
     .addTokenTransfer(tokenId, accountId, transaction.amount.negated().toNumber())
@@ -109,7 +103,7 @@ async function buildUnsignedHTSTokenTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freeze();
+  return tx.freezeWith(rpcClient.getInstance());
 }
 
 async function buildUnsignedERC20TokenTransaction({
@@ -131,7 +125,6 @@ async function buildUnsignedERC20TokenTransaction({
     .addUint256(transaction.amount.toNumber());
 
   const tx = new ContractExecuteTransaction()
-    .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .setContractId(contractId)
@@ -142,7 +135,7 @@ async function buildUnsignedERC20TokenTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freeze();
+  return tx.freezeWith(rpcClient.getInstance());
 }
 
 async function buildTokenAssociateTransaction({
@@ -155,7 +148,6 @@ async function buildTokenAssociateTransaction({
   const accountId = account.accountId;
 
   const tx = new TokenAssociateTransaction()
-    .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo)
     .setAccountId(accountId)
@@ -165,7 +157,7 @@ async function buildTokenAssociateTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freeze();
+  return tx.freezeWith(rpcClient.getInstance());
 }
 
 async function buildUnsignedUpdateAccountTransaction({
@@ -178,7 +170,6 @@ async function buildUnsignedUpdateAccountTransaction({
   const accountId = account.accountId;
 
   const tx = new AccountUpdateTransaction()
-    .setNodeAccountIds([new AccountId(3)])
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .setAccountId(accountId);
@@ -195,7 +186,7 @@ async function buildUnsignedUpdateAccountTransaction({
     tx.clearStakedNodeId();
   }
 
-  return tx.freeze();
+  return tx.freezeWith(rpcClient.getInstance());
 }
 
 export async function craftTransaction(

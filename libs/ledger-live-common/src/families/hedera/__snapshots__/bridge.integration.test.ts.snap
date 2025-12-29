@@ -160,7 +160,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
       "delegation": {
         "delegated": "334045080",
         "nodeId": 18,
-        "pendingReward": "102735",
+        "pendingReward": "205470",
       },
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,
@@ -188,12 +188,12 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "balance": "40011",
+    "balance": "40018",
     "id": "js:2:hedera:0.0.8313485:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
     "operationsCount": 4,
     "parentId": "js:2:hedera:0.0.8313485:hederaBip44",
     "pendingOperations": [],
-    "spendableBalance": "40011",
+    "spendableBalance": "40018",
     "swapHistory": [],
     "tokenId": "hedera/erc20/bonzo_atoken_usdc_0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
     "type": "TokenAccountRaw",
