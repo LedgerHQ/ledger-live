@@ -393,17 +393,13 @@ export type Feature_BrazePushNotifications = Feature<{
     timer: number;
     type: string;
   }[];
-  reprompt_schedule: [
-    {
-      months: 1;
-    },
-    {
-      months: 3;
-    },
-    {
-      months: 6;
-    },
-  ];
+  reprompt_schedule: Array<{
+    months: number;
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  }>;
   action_events: {
     just_finished_onboarding: {
       enabled: boolean;
