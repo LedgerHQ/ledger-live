@@ -27,6 +27,7 @@ import {
   INITIAL_STATE as settingsInitialState,
   neverClickedOnAllowNotificationsButtonSelector,
 } from "~/reducers/settings";
+import { ScreenName } from "~/const/navigation";
 import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "~/actions/settings";
 import { NotificationsSettings, type NotificationsState } from "~/reducers/types";
 import Braze from "@braze/react-native-sdk";
@@ -271,7 +272,11 @@ const useNotifications = () => {
   );
 
   const openDrawer = useCallback(
-    (modalType: NotificationsState["notificationsModalType"], timer: number, routeName: string) => {
+    (
+      modalType: NotificationsState["notificationsModalType"],
+      timer: number,
+      routeName: ScreenName,
+    ) => {
       dispatch(setRatingsModalLocked(true));
       const timeout = setTimeout(() => {
         setPushNotificationsModalOpenCallback(true, modalType);
@@ -301,7 +306,7 @@ const useNotifications = () => {
         return;
       }
 
-      openDrawer("market_starred", marketCoinStarredParamsOld?.timer ?? 0, "MarketDetail");
+      openDrawer("market_starred", marketCoinStarredParamsOld?.timer ?? 0, ScreenName.MarketDetail);
     } else {
       const marketCoinStarredParams = actionEvents?.market_starred;
       if (!marketCoinStarredParams?.enabled) {
@@ -313,7 +318,7 @@ const useNotifications = () => {
         return;
       }
 
-      openDrawer("market_starred", marketCoinStarredParams?.timer ?? 0, "MarketDetail");
+      openDrawer("market_starred", marketCoinStarredParams?.timer ?? 0, ScreenName.MarketDetail);
     }
   }, [
     checkShouldPromptOptInDrawer,
@@ -340,7 +345,7 @@ const useNotifications = () => {
         return;
       }
 
-      openDrawer("generic", justFinishedOnboardingParamsOld?.timer ?? 0, "Portfolio");
+      openDrawer("generic", justFinishedOnboardingParamsOld?.timer ?? 0, ScreenName.Portfolio);
     } else {
       const justFinishedOnboardingParams = actionEvents?.just_finished_onboarding;
       if (!justFinishedOnboardingParams?.enabled) {
@@ -352,7 +357,7 @@ const useNotifications = () => {
         return;
       }
 
-      openDrawer("generic", justFinishedOnboardingParams?.timer ?? 0, "Portfolio");
+      openDrawer("generic", justFinishedOnboardingParams?.timer ?? 0, ScreenName.Portfolio);
     }
   }, [
     pushNotificationsFeature?.enabled,
@@ -377,11 +382,7 @@ const useNotifications = () => {
       return;
     }
 
-    openDrawer(
-      "send",
-      sendParams?.timer ?? 0,
-      "Send", // TODO: find the correct route name
-    );
+    openDrawer("send", sendParams?.timer ?? 0, ScreenName.SendCoin);
   }, [
     checkShouldPromptOptInDrawer,
     isPushNotificationsModalLocked,
@@ -403,11 +404,7 @@ const useNotifications = () => {
       return;
     }
 
-    openDrawer(
-      "receive",
-      receiveParams?.timer ?? 0,
-      "Receive", // TODO: find the correct route name
-    );
+    openDrawer("receive", receiveParams?.timer ?? 0, ScreenName.ReceiveConfirmation);
   }, [
     checkShouldPromptOptInDrawer,
     isPushNotificationsModalLocked,
@@ -429,11 +426,7 @@ const useNotifications = () => {
       return;
     }
 
-    openDrawer(
-      "buy",
-      buyParams?.timer ?? 0,
-      "Buy", // TODO: find the correct route name
-    );
+    openDrawer("buy", buyParams?.timer ?? 0, ScreenName.ExchangeBuy);
   }, [
     checkShouldPromptOptInDrawer,
     isPushNotificationsModalLocked,
@@ -455,11 +448,7 @@ const useNotifications = () => {
       return;
     }
 
-    openDrawer(
-      "swap",
-      swapParams?.timer ?? 0,
-      "Swap", // TODO: find the correct route name
-    );
+    openDrawer("swap", swapParams?.timer ?? 0, ScreenName.Swap);
   }, [
     checkShouldPromptOptInDrawer,
     isPushNotificationsModalLocked,
@@ -481,11 +470,7 @@ const useNotifications = () => {
       return;
     }
 
-    openDrawer(
-      "stake",
-      stakeParams?.timer ?? 0,
-      "Stake", // TODO: find the correct route name
-    );
+    openDrawer("stake", stakeParams?.timer ?? 0, ScreenName.Stake);
   }, [
     checkShouldPromptOptInDrawer,
     isPushNotificationsModalLocked,
