@@ -10,7 +10,7 @@ import type {
   NotificationsSetModalOpenPayload,
   NotificationsSetModalTypePayload,
   DangerouslyOverrideStatePayload,
-  NotificationSetSystemAuthorizationStatusPayload,
+  NotificationSetPermissionStatusPayload,
 } from "../actions/types";
 import { NotificationsActionTypes } from "../actions/types";
 
@@ -49,10 +49,10 @@ const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
     ...state,
     dataOfUser: (action as Action<NotificationsSetDataOfUserPayload>).payload,
   }),
-  [NotificationsActionTypes.NOTIFICATIONS_SET_SYSTEM_AUTHORIZATION_STATUS]: (state, action) => ({
+  [NotificationsActionTypes.NOTIFICATIONS_SET_PERMISSION_STATUS]: (state, action) => ({
     ...state,
     notificationSystemAuthorizationStatus: (
-      action as Action<NotificationSetSystemAuthorizationStatusPayload>
+      action as Action<NotificationSetPermissionStatusPayload>
     ).payload,
   }),
   [NotificationsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (

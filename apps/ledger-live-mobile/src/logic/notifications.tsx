@@ -3,7 +3,7 @@ import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/store";
 import { add, isBefore, isEqual } from "date-fns";
 import storage from "LLM/storage";
-import { getMessaging, AuthorizationStatus } from "@react-native-firebase/messaging";
+import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   notificationsModalOpenSelector,
@@ -20,7 +20,7 @@ import {
   setNotificationsCurrentRouteName,
   setNotificationsEventTriggered,
   setNotificationsDataOfUser,
-  setNotificationSystemAuthorizationStatus,
+  setNotificationPermissionStatus,
 } from "~/actions/notifications";
 import { setRatingsModalLocked } from "~/actions/ratings";
 import { track } from "~/analytics";
@@ -33,7 +33,7 @@ import { ScreenName } from "~/const/navigation";
 import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "~/actions/settings";
 import { NotificationsSettings, type NotificationsState } from "~/reducers/types";
 import Braze from "@braze/react-native-sdk";
-import { getIsNotifEnabled, getSystemNotificationAuthorizationStatus } from "./getNotifPermissions";
+import { getIsNotifEnabled, getNotificationPermissionStatus } from "./getNotifPermissions";
 
 export type EventTrigger = {
   timeout: NodeJS.Timeout;
@@ -57,10 +57,6 @@ export type DataOfUser = {
   dateOfNextAllowedRequest?: Date;
   /** Whether or not the user clicked on the "Maybe later" cta */
   alreadyDelayedToLater?: boolean;
-  /** Date of the first time the user oppened the app */
-  appFirstStartDate?: Date;
-  /** Number of times the user oppened the application */
-  numberOfAppStarts?: number;
 };
 
 export type NotificationCategory = {
@@ -137,14 +133,13 @@ const useNotifications = () => {
       dispatch(setNotifications(newNotificationsState));
     }
 
-    const [systemNotificationAuthorizationStatus, dataOfUserFromStorage] = await Promise.allSettled(
-      [getSystemNotificationAuthorizationStatus(), getPushNotificationsDataOfUserFromStorage()],
-    );
+    const [permission, dataOfUserFromStorage] = await Promise.allSettled([
+      getNotificationPermissionStatus(),
+      getPushNotificationsDataOfUserFromStorage(),
+    ]);
 
-    if (systemNotificationAuthorizationStatus.status === "fulfilled") {
-      dispatch(
-        setNotificationSystemAuthorizationStatus(systemNotificationAuthorizationStatus.value),
-      );
+    if (permission.status === "fulfilled") {
+      dispatch(setNotificationPermissionStatus(permission.value));
     }
 
     if (dataOfUserFromStorage.status === "fulfilled") {
@@ -163,13 +158,11 @@ const useNotifications = () => {
         Linking.openSettings();
       }
     } else {
-      const permission = await getMessaging().hasPermission();
-
-      if (permission === AuthorizationStatus.DENIED) {
+      if (systemAuthorizationStatus === AuthorizationStatus.DENIED) {
         Linking.openSettings();
       } else if (
-        permission === AuthorizationStatus.NOT_DETERMINED ||
-        permission === AuthorizationStatus.PROVISIONAL
+        systemAuthorizationStatus === AuthorizationStatus.NOT_DETERMINED ||
+        systemAuthorizationStatus === AuthorizationStatus.PROVISIONAL
       ) {
         Braze.requestPushPermission();
       }
@@ -177,7 +170,7 @@ const useNotifications = () => {
     if (neverClickedOnAllowNotificationsButton) {
       dispatch(setNeverClickedOnAllowNotificationsButton(false));
     }
-  }, [neverClickedOnAllowNotificationsButton, dispatch]);
+  }, [neverClickedOnAllowNotificationsButton, systemAuthorizationStatus, dispatch]);
 
   const setPushNotificationsModalOpenCallback = useCallback(
     (isModalOpen: boolean, modalType: NotificationsState["notificationsModalType"] = "generic") => {
@@ -499,12 +492,10 @@ const useNotifications = () => {
     const hasNeverSeenOptInPromptDrawer = dismissedOptInDrawerAtList.length === 0;
     if (hasNeverSeenOptInPromptDrawer) {
       updatePushNotificationsDataOfUserInStateAndStore({
-        ...pushNotificationsDataOfUser,
         dismissedOptInDrawerAtList: [today],
       });
     } else {
       updatePushNotificationsDataOfUserInStateAndStore({
-        ...pushNotificationsDataOfUser,
         dismissedOptInDrawerAtList: [...dismissedOptInDrawerAtList, today],
       });
     }
@@ -532,10 +523,9 @@ const useNotifications = () => {
 
   const resetOptOutState = useCallback(() => {
     updatePushNotificationsDataOfUserInStateAndStore({
-      ...pushNotificationsDataOfUser,
       dismissedOptInDrawerAtList: undefined,
     });
-  }, [updatePushNotificationsDataOfUserInStateAndStore, pushNotificationsDataOfUser]);
+  }, [updatePushNotificationsDataOfUserInStateAndStore]);
 
   const handleAllowNotificationsPress = useCallback(() => {
     track("button_clicked", {

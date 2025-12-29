@@ -171,7 +171,7 @@ export enum NotificationsActionTypes {
   NOTIFICATIONS_SET_EVENT_TRIGGERED = "NOTIFICATIONS_SET_EVENT_TRIGGERED",
   NOTIFICATIONS_SET_DATA_OF_USER = "NOTIFICATIONS_SET_DATA_OF_USER",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
-  NOTIFICATIONS_SET_SYSTEM_AUTHORIZATION_STATUS = "NOTIFICATIONS_SET_SYSTEM_AUTHORIZATION_STATUS",
+  NOTIFICATIONS_SET_PERMISSION_STATUS = "NOTIFICATIONS_SET_PERMISSION_STATUS",
 }
 
 export type NotificationsSetModalOpenPayload = NotificationsState["isPushNotificationsModalOpen"];
@@ -185,7 +185,7 @@ export type NotificationsSetCurrentRouteNamePayload = NotificationsState["curren
 
 export type NotificationsSetEventTriggeredPayload = NotificationsState["eventTriggered"];
 
-export type NotificationSetSystemAuthorizationStatusPayload =
+export type NotificationSetPermissionStatusPayload =
   NotificationsState["systemAuthorizationStatus"];
 
 export type NotificationsSetDataOfUserPayload = NotificationsState["dataOfUser"];
@@ -197,7 +197,7 @@ export type NotificationsPayload =
   | NotificationsSetCurrentRouteNamePayload
   | NotificationsSetEventTriggeredPayload
   | NotificationsSetDataOfUserPayload
-  | NotificationSetSystemAuthorizationStatusPayload;
+  | NotificationSetPermissionStatusPayload;
 
 // === DYNAMIC CONTENT ACTIONS ===
 
