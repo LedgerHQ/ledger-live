@@ -4129,8 +4129,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       axios:
-        specifier: 1.10.0
-        version: 1.10.0
+        specifier: 'catalog:'
+        version: 1.13.2
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -4160,7 +4160,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.8)
       '@types/bs58check':
-        specifier: ^2.1.2
+        specifier: 'catalog:'
         version: 2.1.2
       '@types/invariant':
         specifier: ^2.2.2
@@ -21017,9 +21017,6 @@ packages:
   axe-core@4.7.0:
     resolution: {integrity: sha512-M0JtH+hlOL5pLQwHOLNYZaXuhqmvS8oExsqB1SBYgA4Dk7u/xx+YdGHXaK5pyUfed5mYXdlYiphWq3G8cRi5JQ==}
     engines: {node: '>=4'}
-
-  axios@1.10.0:
-    resolution: {integrity: sha512-/1xYAC4MP/HEG+3duIhFr4ZQXR4sQXOIe+o6sdqzeykGLx6Upp/1p8MHqhINOvGeP7xyNHe7tsiJByc4SSVUxw==}
 
   axios@1.11.0:
     resolution: {integrity: sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==}
@@ -38188,7 +38185,7 @@ snapshots:
       ajv: 8.17.1
       ajv-formats: 2.1.1
       async-retry: 1.3.1
-      axios: 1.10.0
+      axios: 1.13.2
       chalk: 3.0.0
       clipanion: 3.2.1
       datadog-metrics: 0.9.3
@@ -41970,7 +41967,7 @@ snapshots:
       uuid: 8.3.2
     optionalDependencies:
       '@multiversx/sdk-bls-wasm': 0.3.5
-      axios: 1.10.0
+      axios: 1.13.2
       bip39: 3.1.0
 
   '@multiversx/sdk-transaction-decoder@1.0.2':
@@ -47264,7 +47261,7 @@ snapshots:
   '@stellar/stellar-sdk@14.0.0':
     dependencies:
       '@stellar/stellar-base': 14.0.0
-      axios: 1.10.0
+      axios: 1.13.2
       bignumber.js: 9.1.2
       eventsource: 2.0.2
       feaxios: 0.0.23
@@ -48135,7 +48132,7 @@ snapshots:
     dependencies:
       '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      axios: 1.10.0
+      axios: 1.13.2
       dataloader: 2.2.2
       symbol.inspect: 1.0.1
       teslabot: 1.5.0
@@ -50145,7 +50142,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@zondax/ledger-js': 0.8.2
-      axios: 1.10.0
+      axios: 1.13.2
 
   JSONStream@1.3.5:
     dependencies:
@@ -50718,12 +50715,6 @@ snapshots:
   aws4@1.12.0: {}
 
   axe-core@4.7.0: {}
-
-  axios@1.10.0:
-    dependencies:
-      follow-redirects: 1.15.11
-      form-data: 4.0.5
-      proxy-from-env: 1.1.0
 
   axios@1.11.0:
     dependencies:
@@ -51830,7 +51821,7 @@ snapshots:
       '@scure/bip39': 1.3.0
       '@types/ws': 8.5.10
       asn1.js: 5.4.1
-      axios: 1.10.0
+      axios: 1.13.2
       bn.js: 5.2.1
       elliptic: 6.6.1
       eventsource: 2.0.2
@@ -66943,7 +66934,7 @@ snapshots:
       '@noble/secp256k1': 1.7.1
       '@tronweb3/google-protobuf': 3.21.2
       aes-js: 3.1.2
-      axios: 1.10.0
+      axios: 1.13.2
       bignumber.js: 9.1.2
       ethereum-cryptography: 2.1.3
       ethers: 6.15.0
