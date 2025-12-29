@@ -48,10 +48,8 @@ export type EventTrigger = {
 };
 
 export type DataOfUser = {
-  // dates the user dismissed the opt in prompt
-  // we will check the last entry in the array
-  // but we will also need to check the previous entries to compute the duration between the dismissals
-  dismissedOptInDrawerAtList?: number[]; // timestamps in milliseconds
+  // timestamps in ms of every time the user dismisses the opt in prompt (until he opts in)
+  dismissedOptInDrawerAtList?: number[];
 
   // TODO: to remove them once we have the new logic in place.
   // This old logic is helpful to know if the user has already opted out of notifications
@@ -187,23 +185,13 @@ const useNotifications = () => {
         dispatch(setNotificationsModalType(modalType));
         dispatch(setNotificationsModalOpen(isModalOpen));
         dispatch(setRatingsModalLocked(false));
-      } else if (!isPushNotificationsModalLocked) {
-        getIsNotifEnabled().then(isNotifEnabled => {
-          if (!isNotifEnabled) {
-            dispatch(setNotificationsModalOpen(isModalOpen));
-            dispatch(setRatingsModalLocked(true));
-          }
-        });
+      }
+      if (!isPushNotificationsModalLocked) {
+        dispatch(setNotificationsModalOpen(isModalOpen));
+        dispatch(setRatingsModalLocked(true));
       }
     },
     [dispatch, isPushNotificationsModalLocked],
-  );
-
-  const isEventTriggered = useCallback(
-    (eventTrigger: EventTrigger, newRoute?: string) =>
-      (eventTrigger.type === "on_enter" && eventTrigger.route_name === newRoute) ||
-      (eventTrigger.type === "on_leave" && eventTrigger.route_name === pushNotificationsOldRoute),
-    [pushNotificationsOldRoute],
   );
 
   const checkShouldPromptOptInDrawer = useCallback(() => {
@@ -264,8 +252,8 @@ const useNotifications = () => {
     [dispatch, setPushNotificationsModalOpenCallback],
   );
 
-  const onPushNotificationsRouteChange = useCallback(
-    (newRoute: string, isOtherModalOpened = false) => {
+  const handleRouteChangePushNotification = useCallback(
+    (newRoute: ScreenName, isOtherModalOpened = false): boolean => {
       if (pushNotificationsEventTriggered?.timeout) {
         clearTimeout(pushNotificationsEventTriggered?.timeout);
         dispatch(setRatingsModalLocked(false));
@@ -273,27 +261,32 @@ const useNotifications = () => {
 
       if (isOtherModalOpened) return false;
 
-      // @ts-expect-error TYPINGS
-      for (const eventTrigger of pushNotificationsFeature?.params?.trigger_events) {
-        // @ts-expect-error TYPINGS
-        if (isEventTriggered(eventTrigger, newRoute)) {
+      const triggerEvents = pushNotificationsFeature?.params?.trigger_events ?? [];
+
+      for (const eventTrigger of triggerEvents) {
+        const isEntering = eventTrigger.type === "on_enter" && eventTrigger.route_name === newRoute;
+        const isLeaving =
+          eventTrigger.type === "on_leave" && eventTrigger.route_name === pushNotificationsOldRoute;
+
+        if (isEntering || isLeaving) {
           const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
           if (!shouldPromptOptInDrawer) {
             return false;
           }
 
-          openDrawer("generic", eventTrigger.timer, newRoute as ScreenName);
+          openDrawer("generic", eventTrigger.timer, newRoute);
           return true;
         }
       }
+
       dispatch(setNotificationsCurrentRouteName(newRoute));
       return false;
     },
     [
       pushNotificationsEventTriggered?.timeout,
-      dispatch,
       pushNotificationsFeature?.params?.trigger_events,
-      isEventTriggered,
+      dispatch,
+      pushNotificationsOldRoute,
       checkShouldPromptOptInDrawer,
       openDrawer,
     ],
@@ -565,7 +558,7 @@ const useNotifications = () => {
   return {
     initPushNotificationsData,
 
-    onPushNotificationsRouteChange,
+    handleRouteChangePushNotification,
     pushNotificationsOldRoute,
     pushNotificationsModalType,
     isPushNotificationsModalOpen,

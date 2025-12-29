@@ -9,6 +9,7 @@ import useRatings from "~/logic/ratings";
 import useNotifications from "~/logic/notifications";
 import DebugAppLevelDrawer from "LLM/components/QueuedDrawer/DebugAppLevelDrawer";
 import useNpsRatings from "~/logic/npsRatings";
+import { ScreenName } from "~/const";
 
 const getCurrentRouteName = (
   state: NavigationState | Required<NavigationState["routes"][0]>["state"],
@@ -27,7 +28,7 @@ const Modals = () => {
   const navigation = useNavigation();
 
   const pushNotificationsFeature = useFeature("brazePushNotifications");
-  const { onPushNotificationsRouteChange } = useNotifications();
+  const { handleRouteChangePushNotification } = useNotifications();
 
   const ratingsFeature = useFeature("ratingsPrompt");
   const npsRatingsFeature = useFeature("npsRatingsPrompt");
@@ -48,7 +49,10 @@ const Modals = () => {
         const currentRouteName = getCurrentRouteName(navState) as string;
         let isModalOpened = false;
         if (pushNotificationsFeature?.enabled) {
-          isModalOpened = onPushNotificationsRouteChange(currentRouteName, isModalOpened);
+          isModalOpened = handleRouteChangePushNotification(
+            currentRouteName as ScreenName,
+            isModalOpened,
+          );
         }
         if (activeRatings === "nps") {
           npsOnRatingsRouteChange(currentRouteName, isModalOpened);
@@ -61,7 +65,7 @@ const Modals = () => {
     [
       activeRatings,
       npsOnRatingsRouteChange,
-      onPushNotificationsRouteChange,
+      handleRouteChangePushNotification,
       onRatingsRouteChange,
       pushNotificationsFeature?.enabled,
     ],
