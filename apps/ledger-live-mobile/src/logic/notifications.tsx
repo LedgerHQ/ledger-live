@@ -35,18 +35,6 @@ import { NotificationsSettings, type NotificationsState } from "~/reducers/types
 import Braze from "@braze/react-native-sdk";
 import { getIsNotifEnabled, getNotificationPermissionStatus } from "./getNotifPermissions";
 
-export type EventTrigger = {
-  timeout: NodeJS.Timeout;
-  /** Name of the route that will trigger the push notification modal */
-  // camelcase perhaps it should
-  // eslint-disable-next-line camelcase
-  route_name: string;
-  /** In milliseconds, delay before triggering the push notification modal */
-  timer: number;
-  /** Whether the push notification modal is triggered when entering or when leaving the screen */
-  type?: "on_enter" | "on_leave";
-};
-
 export type DataOfUser = {
   // timestamps in ms of every time the user dismisses the opt in prompt (until he opts in)
   dismissedOptInDrawerAtList?: number[];
@@ -59,11 +47,14 @@ export type DataOfUser = {
   alreadyDelayedToLater?: boolean;
 };
 
-export type NotificationCategory = {
-  /** Whether or not the category is displayed in the Ledger Wallet notifications settings */
-  displayed?: boolean;
-  /** The key of the category */
-  category?: string;
+export type EventTrigger = {
+  timeout: NodeJS.Timeout;
+  /** Name of the current screen route that will maybe trigger the push notification modal */
+  routeName: ScreenName;
+  /** In milliseconds, delay before triggering the push notification modal */
+  timer: number;
+  /** Whether the push notification modal is triggered when entering or when leaving the screen */
+  type?: "on_enter" | "on_leave";
 };
 
 const pushNotificationsDataOfUserStorageKey = "pushNotificationsDataOfUser";
@@ -143,11 +134,30 @@ const useNotifications = () => {
     }
 
     if (dataOfUserFromStorage.status === "fulfilled") {
-      updatePushNotificationsDataOfUserInStateAndStore({
-        ...(dataOfUserFromStorage.value ?? {}),
-      });
+      // TODO: for users that have already opted out before this feature launches
+      const hasAlreadyOptedOutBackwardCompatibility = Boolean(
+        pushNotificationsDataOfUser?.alreadyDelayedToLater ||
+          pushNotificationsDataOfUser?.dateOfNextAllowedRequest,
+      );
+      if (hasAlreadyOptedOutBackwardCompatibility) {
+        const today = new Date().getTime();
+        updatePushNotificationsDataOfUserInStateAndStore({
+          dismissedOptInDrawerAtList: [today],
+        });
+        return;
+      } else {
+        updatePushNotificationsDataOfUserInStateAndStore({
+          ...(dataOfUserFromStorage.value ?? {}),
+        });
+      }
     }
-  }, [dispatch, notifications, updatePushNotificationsDataOfUserInStateAndStore]);
+  }, [
+    dispatch,
+    notifications,
+    pushNotificationsDataOfUser?.alreadyDelayedToLater,
+    pushNotificationsDataOfUser?.dateOfNextAllowedRequest,
+    updatePushNotificationsDataOfUserInStateAndStore,
+  ]);
 
   const requestPushNotificationsPermission = useCallback(async () => {
     if (Platform.OS === "android") {
@@ -212,9 +222,9 @@ const useNotifications = () => {
     // If user has dismissed more than the schedule length, keep using the last delay.
     const scheduleIndex = Math.min(dismissalCount - 1, repromptSchedule.length - 1);
     const repromptDelay = repromptSchedule[scheduleIndex];
-    const nextMinimumRepromptAt = add(lastDismissedAt, repromptDelay).getTime();
+    const nextMinimumRepromptAt = add(lastDismissedAt, repromptDelay);
 
-    const today = new Date().getTime();
+    const today = new Date();
     return isBefore(nextMinimumRepromptAt, today) || isEqual(nextMinimumRepromptAt, today);
   }, [
     permissionStatus,
@@ -235,7 +245,7 @@ const useNotifications = () => {
       }, timer);
       dispatch(
         setNotificationsEventTriggered({
-          route_name: routeName,
+          routeName,
           timer,
           timeout,
         }),
