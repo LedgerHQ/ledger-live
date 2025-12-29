@@ -12,7 +12,7 @@ import {
   notificationsEventTriggeredSelector,
   notificationsDataOfUserSelector,
   notificationsModalLockedSelector,
-  notificationSystemAuthorizationStatus,
+  notificationPermissionStatus,
 } from "~/reducers/notifications";
 import {
   setNotificationsModalOpen,
@@ -83,7 +83,7 @@ async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
 const useNotifications = () => {
   const pushNotificationsFeature = useFeature("brazePushNotifications");
   const notifications = useSelector(notificationsSelector);
-  const systemAuthorizationStatus = useSelector(notificationSystemAuthorizationStatus);
+  const permissionStatus = useSelector(notificationPermissionStatus);
   const actionEvents = pushNotificationsFeature?.params?.action_events;
   const repromptSchedule = pushNotificationsFeature?.params?.reprompt_schedule;
 
@@ -158,11 +158,11 @@ const useNotifications = () => {
         Linking.openSettings();
       }
     } else {
-      if (systemAuthorizationStatus === AuthorizationStatus.DENIED) {
+      if (permissionStatus === AuthorizationStatus.DENIED) {
         Linking.openSettings();
       } else if (
-        systemAuthorizationStatus === AuthorizationStatus.NOT_DETERMINED ||
-        systemAuthorizationStatus === AuthorizationStatus.PROVISIONAL
+        permissionStatus === AuthorizationStatus.NOT_DETERMINED ||
+        permissionStatus === AuthorizationStatus.PROVISIONAL
       ) {
         Braze.requestPushPermission();
       }
@@ -170,7 +170,7 @@ const useNotifications = () => {
     if (neverClickedOnAllowNotificationsButton) {
       dispatch(setNeverClickedOnAllowNotificationsButton(false));
     }
-  }, [neverClickedOnAllowNotificationsButton, systemAuthorizationStatus, dispatch]);
+  }, [neverClickedOnAllowNotificationsButton, permissionStatus, dispatch]);
 
   const setPushNotificationsModalOpenCallback = useCallback(
     (isModalOpen: boolean, modalType: NotificationsState["notificationsModalType"] = "generic") => {
@@ -188,8 +188,7 @@ const useNotifications = () => {
   );
 
   const checkShouldPromptOptInDrawer = useCallback(() => {
-    const isSystemNotificationsAuthorized =
-      systemAuthorizationStatus === AuthorizationStatus.AUTHORIZED;
+    const isSystemNotificationsAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
     const areNotificationsAllowed = notifications.areNotificationsAllowed;
     if (!isSystemNotificationsAuthorized && !areNotificationsAllowed) {
       return false;
@@ -218,7 +217,7 @@ const useNotifications = () => {
     const today = new Date().getTime();
     return isBefore(nextMinimumRepromptAt, today) || isEqual(nextMinimumRepromptAt, today);
   }, [
-    systemAuthorizationStatus,
+    permissionStatus,
     notifications.areNotificationsAllowed,
     repromptSchedule,
     pushNotificationsDataOfUser?.dismissedOptInDrawerAtList,

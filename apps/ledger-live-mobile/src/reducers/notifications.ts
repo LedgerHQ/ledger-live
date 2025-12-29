@@ -21,7 +21,7 @@ export const INITIAL_STATE: NotificationsState = {
   currentRouteName: undefined,
   eventTriggered: undefined,
   dataOfUser: undefined,
-  systemAuthorizationStatus: undefined,
+  permissionStatus: undefined,
 };
 
 const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
@@ -51,9 +51,8 @@ const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
   }),
   [NotificationsActionTypes.NOTIFICATIONS_SET_PERMISSION_STATUS]: (state, action) => ({
     ...state,
-    notificationSystemAuthorizationStatus: (
-      action as Action<NotificationSetPermissionStatusPayload>
-    ).payload,
+    notificationPermissionStatus: (action as Action<NotificationSetPermissionStatusPayload>)
+      .payload,
   }),
   [NotificationsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
     state: NotificationsState,
@@ -79,7 +78,6 @@ export const notificationsEventTriggeredSelector = (s: State) => s.notifications
 
 export const notificationsDataOfUserSelector = (s: State) => s.notifications.dataOfUser;
 
-export const notificationSystemAuthorizationStatus = (s: State) =>
-  s.notifications.systemAuthorizationStatus;
+export const notificationPermissionStatus = (s: State) => s.notifications.permissionStatus;
 
 export default handleActions<NotificationsState, NotificationsPayload>(handlers, INITIAL_STATE);

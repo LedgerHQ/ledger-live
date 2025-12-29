@@ -114,7 +114,7 @@ export type BleState = {
 
 export type NotificationsState = {
   /** The authorization status of the system notifications */
-  systemAuthorizationStatus: FirebaseMessagingTypes.AuthorizationStatus | undefined;
+  permissionStatus?: FirebaseMessagingTypes.AuthorizationStatus;
   /** Boolean indicating whether the push notifications modal is opened or closed */
   isPushNotificationsModalOpen: boolean;
   /** Type of the push notifications modal to display (either the generic one or the market one) */

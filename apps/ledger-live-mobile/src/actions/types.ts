@@ -185,8 +185,7 @@ export type NotificationsSetCurrentRouteNamePayload = NotificationsState["curren
 
 export type NotificationsSetEventTriggeredPayload = NotificationsState["eventTriggered"];
 
-export type NotificationSetPermissionStatusPayload =
-  NotificationsState["systemAuthorizationStatus"];
+export type NotificationSetPermissionStatusPayload = NotificationsState["permissionStatus"];
 
 export type NotificationsSetDataOfUserPayload = NotificationsState["dataOfUser"];
 
