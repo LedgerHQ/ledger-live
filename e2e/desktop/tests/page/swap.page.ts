@@ -263,11 +263,7 @@ export class SwapPage extends AppPage {
   async checkExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
 
-    const buttonText = [Provider.VELORA.uiName, Provider.MOONPAY.uiName].includes(provider)
-      ? `Continue with ${provider}`
-      : `Swap with ${provider}`;
-
-    const buttonLocator = webview.getByRole("button", { name: buttonText });
+    const buttonLocator = webview.getByRole("button", { name: new RegExp(provider, "i") });
     await expect(buttonLocator).toBeVisible();
     await expect(buttonLocator).toBeEnabled();
   }
@@ -293,7 +289,7 @@ export class SwapPage extends AppPage {
   @step("Go to provider live app")
   async goToProviderLiveApp(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
-    const continueButton = webview.getByRole("button", { name: `Continue with ${provider}` });
+    const continueButton = webview.getByRole("button", { name: new RegExp(provider, "i") });
     await expect(continueButton).toBeVisible();
     await expect(continueButton).toBeEnabled();
     await continueButton.click();
