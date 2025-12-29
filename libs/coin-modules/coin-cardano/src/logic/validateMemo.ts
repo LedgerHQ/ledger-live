@@ -4,5 +4,5 @@
 export const CARDANO_MAX_MEMO_TAG_SIZE = 64;
 
 export function validateMemo(memo?: string): boolean {
-  return !memo || memo.length <= CARDANO_MAX_MEMO_TAG_SIZE;
+  return !memo || Buffer.from(memo).byteLength <= CARDANO_MAX_MEMO_TAG_SIZE;
 }

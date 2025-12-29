@@ -250,10 +250,6 @@ async function handleCoinTransaction(
     errors.recipient = recipientError;
   }
 
-  if (!validateMemo(transaction.memo)) {
-    errors.transaction = new HederaMemoExceededSizeError();
-  }
-
   if (transaction.amount.eq(0) && !transaction.useAllAmount) {
     errors.amount = new AmountRequired();
   }

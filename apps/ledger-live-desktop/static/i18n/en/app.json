@@ -6891,7 +6891,7 @@
       "description": "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
     },
     "CardanoMemoExceededSizeError": {
-      "title": "Invalid memo size, maximum allowed is 100 characters",
+      "title": "Invalid memo size, maximum allowed is 64 characters",
       "description": "Cardano memo have a maximum limited size. Please reduce the size of the memo"
     },
     "StacksMemoTooLong": {
