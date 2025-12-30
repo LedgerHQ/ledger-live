@@ -471,6 +471,13 @@ export const DEFAULT_FEATURES: Features = {
     params: {},
   },
 
+  ptxEarnUi: {
+    enabled: false,
+    params: {
+      value: "v1",
+    },
+  },
+
   ptxSwapLiveAppMobile: {
     enabled: false,
     params: {
