@@ -38,6 +38,18 @@ const getTypeFromString = (value: string) => {
   return operationsTypes.find(item => item === value) ?? "NONE";
 };
 
+let evmAPI: ReturnType<typeof createApi> | null = null;
+const getApi = (configEvm: any, currencyId: string) => {
+  if (!evmAPI) {
+    evmAPI = createApi(configEvm, currencyId);
+  }
+  return evmAPI;
+};
+
+export const clearEvmApiInstance = () => {
+  evmAPI = null;
+};
+
 const resolveTypesFromContracts = (item: {
   type: OperationType;
   senders: string[];
@@ -84,7 +96,7 @@ const getOperationsList = async ({
   const shouldSyncFromScratch =
     syncHash !== initialAccount?.syncHash || initialAccount === undefined;
   const latestSyncedHeight = shouldSyncFromScratch ? 0 : initialAccount.blockHeight;
-  const api = createApi(configEvm, currency.id);
+  const api = getApi(configEvm, currency.id);
   const rawOperationsList = (
     await api.listOperations(address, {
       minHeight: Math.max(latestSyncedHeight - SAFE_REORG_THRESHOLD, 0),
@@ -230,7 +242,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
   const syncHash = await getSyncHash(currency, blacklistedTokenIds);
 
   const nodeApi = getNodeApi(currency);
-  const api = createApi(configEvm, currency.id);
+  const api = getApi(configEvm, currency.id);
   const blockInfo = await api.lastBlock();
   const balance = await nodeApi.getCoinBalance(currency, address);
 
@@ -280,7 +292,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
     subAccounts: getEnv("ENABLE_CELO_TOKENS") ? subAccounts : [],
     syncHash: syncHash,
     celoResources: {
-      registrationStatus: false,
+      registrationStatus: accountRegistrationStatus,
       lockedBalance,
       nonvotingLockedBalance,
       pendingWithdrawals,
