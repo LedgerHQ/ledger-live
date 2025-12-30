@@ -71,7 +71,80 @@ async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
 }
 
 const useNotifications = () => {
-  const pushNotificationsFeature = useFeature("brazePushNotifications");
+  // const pushNotificationsFeature = useFeature("brazePushNotifications");
+  const pushNotificationsFeature = {
+    enabled: true,
+    params: {
+      notificationsCategories: [
+        {
+          displayed: true,
+          category: "announcementsCategory",
+        },
+        {
+          displayed: true,
+          category: "recommendationsCategory",
+        },
+        {
+          displayed: true,
+          category: "largeMoverCategory",
+        },
+        {
+          displayed: true,
+          category: "transactionsAlertsCategory",
+        },
+      ],
+      trigger_events: [
+        {
+          route_name: "PortfolioNavigator",
+          timer: 3000,
+          type: "on_enter",
+        },
+        {
+          route_name: "Wallet",
+          timer: 3000,
+          type: "on_enter",
+        },
+      ],
+
+      action_events: {
+        complete_onboarding: {
+          enabled: true,
+          timer: 1000,
+        },
+
+        add_favorite_coin: {
+          enabled: true,
+          timer: 3000,
+        },
+
+        send: {
+          enabled: true,
+          timer: 2000,
+        },
+        receive: {
+          enabled: true,
+          timer: 2000,
+        },
+        buy: {
+          enabled: true,
+          timer: 2000,
+        },
+        swap: {
+          enabled: true,
+          timer: 2000,
+        },
+        stake: {
+          enabled: true,
+          timer: 2000,
+        },
+      },
+      reprompt_schedule: [
+        {
+          seconds: 10,
+        },
+      ],
+    },
+  };
   const notifications = useSelector(notificationsSelector);
   const permissionStatus = useSelector(notificationPermissionStatus);
   const actionEvents = pushNotificationsFeature?.params?.action_events;

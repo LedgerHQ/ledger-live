@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo, useContext } from "react";
+import React, { useCallback, useState, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Carousel, Text, Button, StoriesIndicator, Box } from "@ledgerhq/native-ui";
 import { useNavigation, useFocusEffect, CompositeNavigationProp } from "@react-navigation/native";
@@ -64,16 +64,14 @@ const Item = ({
 
   const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
-  const screenName = `Reborn Story Step ${currentIndex}`;
-
   const onClick = useCallback(
     (value: string) => {
       track("button_clicked", {
         button: value,
-        page: screenName,
+        page: `Reborn Story Step ${currentIndex}`,
       });
     },
-    [screenName],
+    [currentIndex],
   );
 
   const pressExplore = useCallback(() => {
@@ -91,7 +89,7 @@ const Item = ({
     dispatch(setOnboardingHasDevice(false));
 
     // showing the drawer needs to wait for the next tick to ensure the navigation is complete
-    setImmediate(() => {
+    requestIdleCallback(() => {
       tryTriggerPushNotificationDrawerAfterAction("onboarding");
     });
   }, [dispatch, onClick, navigation, tryTriggerPushNotificationDrawerAfterAction]);

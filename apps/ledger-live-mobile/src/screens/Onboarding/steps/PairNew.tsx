@@ -141,7 +141,7 @@ export default memo(function () {
     }
 
     // showing the drawer needs to wait for the next tick to ensure the navigation is complete
-    setImmediate(() => {
+    requestIdleCallback(() => {
       tryTriggerPushNotificationDrawerAfterAction("onboarding");
     });
   }, [
