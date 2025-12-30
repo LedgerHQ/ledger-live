@@ -68,4 +68,6 @@ export class AppInfos {
   static readonly SUI = new AppInfos("Sui");
 
   static readonly BASE = new AppInfos("Base");
+
+  static readonly VECHAIN = new AppInfos("Vechain");
 }
