@@ -10,7 +10,8 @@ export class MarketPage extends AppPage {
   private coinRow = (ticker: string) => this.page.getByTestId(`market-${ticker}-row`);
   private coinPageContainer = this.page.getByTestId("market-coin-page-container");
   private starButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-star-button`);
-  private buyButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-buy-button`);
+  private buyButton = (ticker: string) =>
+    this.page.getByTestId(`market-${ticker}-buy-button`).first();
   readonly swapButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-swap-button`);
   private stakeButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-stake-button`);
 
