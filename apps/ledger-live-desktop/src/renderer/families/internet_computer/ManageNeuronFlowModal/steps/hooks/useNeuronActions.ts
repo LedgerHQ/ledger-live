@@ -1,10 +1,5 @@
-import { useCallback } from "react";
-import { useDispatch } from "react-redux";
-import BigNumber from "bignumber.js";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { closeModal } from "~/renderer/actions/modals";
-import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   ICPAccount,
   ICPNeuron,
@@ -12,7 +7,11 @@ import {
   InternetComputerOperation,
   Transaction,
 } from "@ledgerhq/live-common/families/internet_computer/types";
-import { OpenModal } from "~/renderer/actions/modals";
+import BigNumber from "bignumber.js";
+import { useCallback } from "react";
+import { useDispatch } from "react-redux";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { closeModal, OpenModal } from "~/renderer/actions/modals";
 
 type UseNeuronActionsParams = {
   account: ICPAccount;
@@ -36,7 +35,7 @@ export function useNeuronActions({
   const dispatch = useDispatch();
 
   const onClickIncreaseStake = useCallback(() => {
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = getAccountBridge(account);
     const initTx = bridge.createTransaction(account);
     dispatch(closeModal("MODAL_ICP_LIST_NEURONS"));
     dispatch(
@@ -72,7 +71,7 @@ export function useNeuronActions({
   }, [account, dispatch, openModal, neuron, manageNeuronIndex]);
 
   const onClickDisburseStake = useCallback(() => {
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = getAccountBridge(account);
     const initTx = bridge.createTransaction(account);
     onChangeTransaction(
       bridge.updateTransaction(initTx, {
@@ -88,7 +87,7 @@ export function useNeuronActions({
   const onClickConfirmFollowing = useCallback(
     (neuronToConfirm: ICPNeuron) => {
       if (account.type !== "Account") return;
-      const bridge = getAccountBridge(account, undefined);
+      const bridge = getAccountBridge(account);
       const initTx = bridge.createTransaction(account);
       onChangeTransaction(
         bridge.updateTransaction(initTx, {
@@ -103,7 +102,7 @@ export function useNeuronActions({
   );
 
   const onClickStartStopDissolving = useCallback(() => {
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = getAccountBridge(account);
     const initTx = bridge.createTransaction(account);
     const action = neuron.dissolveState === "Dissolving" ? "stop_dissolving" : "start_dissolving";
     onChangeTransaction(
@@ -118,7 +117,7 @@ export function useNeuronActions({
 
   const onClickAutoStakeMaturity = useCallback(
     (enabled: boolean) => {
-      const bridge = getAccountBridge(account, undefined);
+      const bridge = getAccountBridge(account);
       const initTx = bridge.createTransaction(account);
       onChangeTransaction(
         bridge.updateTransaction(initTx, {
@@ -149,7 +148,7 @@ export function useNeuronActions({
 
   const onClickRemoveHotKey = useCallback(
     (hotKey: string) => {
-      const bridge = getAccountBridge(account, undefined);
+      const bridge = getAccountBridge(account);
       const initTx = bridge.createTransaction(account);
       onChangeTransaction(
         bridge.updateTransaction(initTx, {
@@ -165,7 +164,7 @@ export function useNeuronActions({
   );
 
   const onClickSpawnNeuron = useCallback(() => {
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = getAccountBridge(account);
     const initTx = bridge.createTransaction(account);
     onChangeTransaction(
       bridge.updateTransaction(initTx, {

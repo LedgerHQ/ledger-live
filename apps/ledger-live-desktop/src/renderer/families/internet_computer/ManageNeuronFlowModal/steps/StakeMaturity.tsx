@@ -1,11 +1,11 @@
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import React, { useCallback, useState } from "react";
-import Text from "~/renderer/components/Text";
+import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Slider from "~/renderer/components/Slider";
+import Text from "~/renderer/components/Text";
 import { StepProps } from "../types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Trans } from "react-i18next";
 
 export function StakeMaturity({
   manageNeuronIndex,
@@ -21,7 +21,7 @@ export function StakeMaturity({
   const { errors } = status;
 
   const onClickStakeMaturity = useCallback(() => {
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = getAccountBridge(account);
     const initTx = bridge.createTransaction(account);
     const action = "stake_maturity";
     onChangeTransaction(

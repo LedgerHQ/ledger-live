@@ -1,16 +1,16 @@
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
+import { ICPNeuron } from "@ledgerhq/live-common/families/internet_computer/types";
+import { getSecondsTillVotingPowerExpires } from "@ledgerhq/live-common/families/internet_computer/utils";
 import React, { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import List from "../../components/List";
 import { StepProps } from "../types";
-import { ICPNeuron } from "@ledgerhq/live-common/families/internet_computer/types";
-import { getSecondsTillVotingPowerExpires } from "@ledgerhq/live-common/families/internet_computer/utils";
 
 interface ContainerProps {
   shouldSpace?: boolean;
@@ -41,7 +41,7 @@ export default function StepListNeuron({
 
   useEffect(() => {
     if (needsRefresh) {
-      const bridge = getAccountBridge(account, undefined);
+      const bridge = getAccountBridge(account);
       const initTx = bridge.createTransaction(account);
       onChangeTransaction(
         bridge.updateTransaction(initTx, {
@@ -57,7 +57,7 @@ export default function StepListNeuron({
   const onClickConfirmFollowing = useCallback(
     (neuron: ICPNeuron) => {
       if (account.type !== "Account") return;
-      const bridge = getAccountBridge(account, undefined);
+      const bridge = getAccountBridge(account);
       const initTx = bridge.createTransaction(account);
       onChangeTransaction(
         bridge.updateTransaction(initTx, {
