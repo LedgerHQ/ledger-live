@@ -56,7 +56,7 @@ function Earn({ route }: Props) {
   const earnFlag = useFeature("ptxEarnLiveApp");
   const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
   const earnUiFlag = useFeature("ptxEarnUi");
-  const earnUiVersion = earnUiFlag?.params?.value;
+  const earnUiVersion = earnUiFlag?.params?.value ?? "v1";
   const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(earnManifestId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
