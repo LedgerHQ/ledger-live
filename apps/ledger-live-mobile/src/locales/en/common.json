@@ -6375,6 +6375,7 @@
       "netApy": "Net APY",
       "stakeActivationState": "State",
       "stakeActivePercent": "Active",
+      "inactiveStake": "Withdrawable Rewards",
       "stakeAvailableBalance": "Available balance",
       "actions": {
         "activate": "Activate",
