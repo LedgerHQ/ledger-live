@@ -36,6 +36,8 @@ const Earn = () => {
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const earnFlag = useFeature("ptxEarnLiveApp");
   const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
+  const earnUiFlag = useFeature("ptxEarnUi");
+  const earnUiVersion = earnUiFlag?.params?.value;
   const localManifest = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest = useRemoteLiveAppManifest(earnManifestId);
   const manifest = localManifest || remoteManifest;
@@ -86,6 +88,7 @@ const Earn = () => {
             ? JSON.stringify(stakeCurrenciesParam)
             : undefined,
           ethDepositCohort,
+          uiVersion: earnUiVersion,
         }}
       />
     </Card>

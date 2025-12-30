@@ -53,6 +53,8 @@ function Earn({ route }: Props) {
 
   const earnFlag = useFeature("ptxEarnLiveApp");
   const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
+  const earnUiFlag = useFeature("ptxEarnUi");
+  const earnUiVersion = earnUiFlag?.params?.value;
   const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(earnManifestId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
@@ -95,6 +97,7 @@ function Earn({ route }: Props) {
             : undefined,
           OS: Platform.OS,
           ethDepositCohort,
+          uiVersion: earnUiVersion,
           ...params,
           ...Object.fromEntries(searchParams.entries()),
         }}
