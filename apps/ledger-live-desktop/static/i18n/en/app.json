@@ -4663,7 +4663,10 @@
       },
       "modularDrawerDevTool": {
         "title": "Modular Drawer Dev Tool",
-        "description": "Allows you to test the Modular Drawer easily"
+        "description": "Allows you to test the Modular Drawer easily",
+        "openDrawer": "Open Drawer",
+        "debugDialog": "Debug Dialog",
+        "debugDuplicates": "Debug Duplicates"
       },
       "cryptoAssetsList": {
         "title": "Crypto Assets List",
