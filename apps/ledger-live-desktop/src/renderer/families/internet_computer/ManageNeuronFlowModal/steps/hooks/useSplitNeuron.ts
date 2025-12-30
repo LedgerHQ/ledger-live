@@ -1,13 +1,13 @@
-import { useCallback, useMemo } from "react";
-import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { maxAllowedSplitAmount } from "@ledgerhq/live-common/families/internet_computer/utils";
 import {
   ICPAccount,
   ICPNeuron,
   Transaction,
 } from "@ledgerhq/live-common/families/internet_computer/types";
+import { maxAllowedSplitAmount } from "@ledgerhq/live-common/families/internet_computer/utils";
 import { Unit } from "@ledgerhq/types-cryptoassets";
+import { BigNumber } from "bignumber.js";
+import { useCallback, useMemo } from "react";
 
 type UseSplitNeuronParams = {
   account: ICPAccount;
@@ -30,7 +30,7 @@ export function useSplitNeuron({
 
   const updateTransaction = useCallback(
     (amount: BigNumber) => {
-      const bridge = getAccountBridge(account, undefined);
+      const bridge = getAccountBridge(account);
       const initTx = bridge.createTransaction(account);
       onChangeTransaction(
         bridge.updateTransaction(initTx, {

@@ -1,22 +1,22 @@
-import React, { useCallback, useState } from "react";
-import Text from "~/renderer/components/Text";
-import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
-import Input from "~/renderer/components/Input";
-import { StepProps } from "../types";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { BigNumber } from "bignumber.js";
-import { Trans, useTranslation } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
-  SECONDS_IN_DAY,
   MAX_DISSOLVE_DELAY,
+  SECONDS_IN_DAY,
 } from "@ledgerhq/live-common/families/internet_computer/consts";
 import {
   getMinDissolveDelay,
-  secondsToDurationString,
   neuronPotentialVotingPower,
+  secondsToDurationString,
 } from "@ledgerhq/live-common/families/internet_computer/utils";
+import { BigNumber } from "bignumber.js";
+import React, { useCallback, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import Box from "~/renderer/components/Box";
+import Button from "~/renderer/components/Button";
+import Input from "~/renderer/components/Input";
+import Text from "~/renderer/components/Text";
+import { StepProps } from "../types";
 
 export function SetDissolveDelay({
   manageNeuronIndex,
@@ -37,7 +37,7 @@ export function SetDissolveDelay({
   const onChangeDissolveDelay = useCallback(
     (value: string) => {
       setDissolveDelay(value);
-      const bridge = getAccountBridge(account, undefined);
+      const bridge = getAccountBridge(account);
       const initTx = bridge.createTransaction(account);
       const valueInSeconds = BigNumber(value).times(SECONDS_IN_DAY).toString();
       onChangeTransaction(
@@ -52,7 +52,7 @@ export function SetDissolveDelay({
   );
 
   const onClickIncreaseDissolveDelay = useCallback(() => {
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = getAccountBridge(account);
     const initTx = bridge.createTransaction(account);
     const action = "set_dissolve_delay";
     onChangeTransaction(
