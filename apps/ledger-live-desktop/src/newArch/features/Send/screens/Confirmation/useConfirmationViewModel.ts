@@ -3,17 +3,26 @@ import { useSendFlowContext } from "../../context/SendFlowContext";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import type { SendFlowOperationResult } from "../../types";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 
 type ConfirmationStatus = "success" | "refused" | "error" | "idle";
 
-function getConfirmationStatus(operation: SendFlowOperationResult): ConfirmationStatus {
+function getConfirmationStatus(
+  operation: SendFlowOperationResult,
+  currency: TokenCurrency | CryptoCurrency | null,
+): ConfirmationStatus {
   const { signed, optimisticOperation, transactionError } = operation;
 
   if (signed && optimisticOperation) {
     return "success";
   }
 
-  if (!signed && transactionError?.name === "UserRefusedOnDevice") {
+  if (
+    !signed &&
+    currency &&
+    sendFeatures.isUserRefusedTransactionError(currency, transactionError)
+  ) {
     return "refused";
   }
 
@@ -28,7 +37,10 @@ export function useConfirmationViewModel() {
   const { close, state, navigation, operation, status: statusActions } = useSendFlowContext();
   const { account, parentAccount } = state.account;
 
-  const status = useMemo(() => getConfirmationStatus(state.operation), [state.operation]);
+  const status = useMemo(
+    () => getConfirmationStatus(state.operation, state.account.currency),
+    [state.operation, state.account.currency],
+  );
 
   const optimisticOperation = state.operation.optimisticOperation;
   const concernedOperation = useMemo(

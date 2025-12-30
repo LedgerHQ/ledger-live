@@ -1,8 +1,10 @@
 import { useCallback, useMemo, useRef } from "react";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import { useSendFlowContext } from "../../context/SendFlowContext";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export function useSignatureViewModel() {
   const { navigation, operation, status, state } = useSendFlowContext();
@@ -12,6 +14,7 @@ export function useSignatureViewModel() {
   const parentAccount = state.account.parentAccount;
   const transaction = state.transaction.transaction;
   const txStatus = state.transaction.status;
+  const currency = state.account.currency;
 
   const action = useTransactionAction();
   const broadcast = useBroadcast({ account, parentAccount });
@@ -33,14 +36,19 @@ export function useSignatureViewModel() {
       if (hasFinishedRef.current) return;
       hasFinishedRef.current = true;
       operation.onTransactionError(error);
-      if (error.name !== "UserRefusedOnDevice") {
+      if (
+        !sendFeatures.isUserRefusedTransactionError(
+          currency as CryptoCurrency | TokenCurrency,
+          error,
+        )
+      ) {
         status.setError();
       } else {
         status.resetStatus();
       }
       navigation.goToNextStep();
     },
-    [navigation, operation, status],
+    [navigation, operation, status, currency],
   );
 
   const finishWithSuccess = useCallback(
