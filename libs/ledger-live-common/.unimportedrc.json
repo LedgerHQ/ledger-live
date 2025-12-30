@@ -537,6 +537,7 @@
     "@react-native/normalize-colors",
     "@react-native/virtualized-lists",
     "@solana/buffer-layout",
+    "@solana/codecs-numbers",
     "abort-controller/dist/abort-controller",
     "anser",
     "base64-js",
