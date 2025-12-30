@@ -26,7 +26,6 @@ export const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
     color: inherit;
     user-select: inherit;
     cursor: inherit;
-    outline: none;
   }
 
   ::selection {
