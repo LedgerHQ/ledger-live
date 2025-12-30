@@ -58,7 +58,7 @@ const test_ios = async () => {
       --take-screenshots failing \
       --forceExit \
       --headless \
-      --retries 2 \
+      --retries 0 \
       --cleanup \
       ${filteredArgs}`;
 };
@@ -75,7 +75,7 @@ const test_android = async () => {
       --take-screenshots failing \\
       --forceExit \\
       --headless \\
-      --retries 2 \\
+      --retries 0 \\
       --cleanup \\
       ${filteredArgs}`;
 };
