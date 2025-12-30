@@ -228,22 +228,26 @@ const useNotifications = () => {
   );
 
   const checkShouldPromptOptInDrawer = useCallback(() => {
-    const isSystemNotificationsAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
+    const PROMPT = true;
+    const DO_NOT_PROMPT = false;
+
+    const isOsPermissionAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
     const areNotificationsAllowed = notifications.areNotificationsAllowed;
-    if (!isSystemNotificationsAuthorized && !areNotificationsAllowed) {
-      return false;
+    if (isOsPermissionAuthorized && areNotificationsAllowed) {
+      // user has accepted notifications. No need to prompt the opt in drawer
+      return DO_NOT_PROMPT;
     }
 
-    const dismissedOptInDrawerAtList =
-      pushNotificationsDataOfUser?.dismissedOptInDrawerAtList ?? [];
+    const dismissedOptInDrawerAtList = pushNotificationsDataOfUser?.dismissedOptInDrawerAtList;
 
-    const hasNeverSeenOptInPromptDrawer = dismissedOptInDrawerAtList.length === 0;
+    const hasNeverSeenOptInPromptDrawer = typeof dismissedOptInDrawerAtList === "undefined";
     if (hasNeverSeenOptInPromptDrawer) {
-      return true;
+      return PROMPT;
     }
 
     if (!repromptSchedule) {
-      return false;
+      // if the feature flag params does not specify a reprompt schedule, avoid prompting the opt in drawer
+      return DO_NOT_PROMPT;
     }
 
     const dismissalCount = dismissedOptInDrawerAtList.length;
@@ -254,8 +258,12 @@ const useNotifications = () => {
     const repromptDelay = repromptSchedule[scheduleIndex];
     const nextMinimumRepromptAt = add(lastDismissedAt, repromptDelay);
 
-    const now = new Date();
-    return isBefore(nextMinimumRepromptAt, now) || isEqual(nextMinimumRepromptAt, now);
+    const now = Date.now();
+    if (isBefore(nextMinimumRepromptAt, now) || isEqual(nextMinimumRepromptAt, now)) {
+      return PROMPT;
+    }
+
+    return DO_NOT_PROMPT;
   }, [
     permissionStatus,
     notifications.areNotificationsAllowed,
