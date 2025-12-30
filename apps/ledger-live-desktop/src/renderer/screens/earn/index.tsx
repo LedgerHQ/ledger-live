@@ -18,6 +18,7 @@ import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
 import {
   counterValueCurrencySelector,
+  developerModeSelector,
   languageSelector,
   localeSelector,
 } from "~/renderer/reducers/settings";
@@ -34,6 +35,7 @@ const Earn = () => {
   const language = useSelector(languageSelector);
   const locale = useSelector(localeSelector);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
+  const devMode = useSelector(developerModeSelector);
   const earnFlag = useFeature("ptxEarnLiveApp");
   const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
   const earnUiFlag = useFeature("ptxEarnUi");
@@ -80,6 +82,7 @@ const Earn = () => {
           locale: locale,
           countryLocale,
           currencyTicker: fiatCurrency.ticker,
+          devMode,
           discreetMode: discreetMode ? "true" : "false",
           OS: "web",
           routerState: JSON.stringify(router.location.state ?? {}),
