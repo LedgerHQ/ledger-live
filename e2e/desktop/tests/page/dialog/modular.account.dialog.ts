@@ -8,7 +8,7 @@ export class ModularAccountDialog extends Dialog {
   private accountRowByName = (accountName: string) =>
     this.page.locator("[data-testid^='account-row-']").filter({ hasText: accountName });
   private addNewExistingAccountButton = this.page.getByRole("button", {
-    name: "Add new",
+    name: "Add account",
   });
 
   @step("Wait for dialog to be visible")
