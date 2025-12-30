@@ -736,7 +736,12 @@ export const DEFAULT_FEATURES: Features = {
       activeCurrencyIds: [],
     },
   },
-  newSendFlow: DEFAULT_FEATURE,
+  newSendFlow: {
+    ...DEFAULT_FEATURE,
+    params: {
+      families: [],
+    },
+  },
   cantonSkipPreapprovalStep: DEFAULT_FEATURE,
   lldSessionReplay: {
     ...DEFAULT_FEATURE,
