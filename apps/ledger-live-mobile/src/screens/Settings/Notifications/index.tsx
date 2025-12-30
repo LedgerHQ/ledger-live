@@ -14,6 +14,8 @@ import useNotifications from "~/logic/notifications";
 import { updateUserPreferences } from "~/notifications/braze";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
+import { getNotificationPermissionStatus } from "~/logic/getNotifPermissions";
+import { setNotificationPermissionStatus } from "~/actions/notifications";
 
 const notificationsMapping = {
   areNotificationsAllowed: "allowed",
@@ -31,7 +33,7 @@ type NotificationRowProps = {
 function NotificationSettingsRow({ disabled, notificationKey, label }: NotificationRowProps) {
   const dispatch = useDispatch();
   const notifications = useSelector(notificationsSelector);
-  const { resetOptOutState, permissionStatus } = useNotifications();
+  const { resetOptOutState, permissionStatus, optOutOfNotifications } = useNotifications();
 
   const { t } = useTranslation();
 
@@ -50,11 +52,24 @@ function NotificationSettingsRow({ disabled, notificationKey, label }: Notificat
         }),
       );
 
-      if (permissionStatus === AuthorizationStatus.AUTHORIZED) {
-        resetOptOutState();
+      if (value === false) {
+        optOutOfNotifications();
+      }
+
+      if (value === true) {
+        if (permissionStatus === AuthorizationStatus.AUTHORIZED) {
+          resetOptOutState();
+        }
       }
     },
-    [capitalizedKey, dispatch, notificationKey, resetOptOutState, permissionStatus],
+    [
+      capitalizedKey,
+      dispatch,
+      notificationKey,
+      permissionStatus,
+      resetOptOutState,
+      optOutOfNotifications,
+    ],
   );
 
   return (
@@ -73,19 +88,15 @@ function NotificationsSettings() {
   const { t } = useTranslation();
   const notifications = useSelector(notificationsSelector);
   const {
-    getIsNotifEnabled,
+    permissionStatus,
     requestPushNotificationsPermission,
     pushNotificationsOldRoute,
     hiddenNotificationCategories,
+    resetOptOutState,
+    optOutOfNotifications,
   } = useNotifications();
-  const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] = useState<boolean | undefined>();
   const featureTransactionsAlerts = useFeature("transactionsAlerts");
-
-  const refreshNotifPermission = useCallback(() => {
-    getIsNotifEnabled().then(isNotifPermissionEnabled => {
-      setIsNotifPermissionEnabled(isNotifPermissionEnabled);
-    });
-  }, [getIsNotifEnabled, setIsNotifPermissionEnabled]);
+  const dispatch = useDispatch();
 
   const allowPushNotifications = useCallback(() => {
     track("button_clicked", {
@@ -95,13 +106,26 @@ function NotificationsSettings() {
     requestPushNotificationsPermission();
   }, [pushNotificationsOldRoute, requestPushNotificationsPermission]);
 
+  const isOsPermissionAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
   useEffect(() => {
-    const interval = setInterval(refreshNotifPermission, 500);
+    const interval = setInterval(() => {
+      getNotificationPermissionStatus().then(permission => {
+        if (permission !== permissionStatus) {
+          dispatch(setNotificationPermissionStatus(permission));
+          if (permission === AuthorizationStatus.AUTHORIZED) {
+            resetOptOutState();
+          }
+          if (permission === AuthorizationStatus.DENIED) {
+            optOutOfNotifications();
+          }
+        }
+      });
+    }, 500);
 
     return () => {
       clearInterval(interval);
     };
-  }, [refreshNotifPermission]);
+  }, [permissionStatus, dispatch, resetOptOutState, optOutOfNotifications]);
 
   // Refresh user properties and send them to Segment when notifications preferences are updated
   // Also send user notifications preferences to Braze when updated
@@ -131,70 +155,62 @@ function NotificationsSettings() {
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="Notifications" />
-      {isNotifPermissionEnabled === null || isNotifPermissionEnabled === undefined ? (
-        <InfiniteLoader />
-      ) : (
-        <Box>
-          {!isNotifPermissionEnabled ? (
-            <Box p={6} bg={"neutral.c30"} mx={6} borderRadius={2}>
-              <Text color={"neutral.c100"} variant={"large"} fontWeight={"semiBold"} mb={2}>
-                {t(`settings.notifications.disabledNotifications.title`)}
-              </Text>
-              <Text color={"neutral.c70"} variant={"bodyLineHeight"}>
-                {t(`settings.notifications.disabledNotifications.desc`, {
-                  platform: platformData.osName,
-                })}
-              </Text>
-              <Button
-                type={"main"}
-                mt={6}
-                onPress={allowPushNotifications}
-                Icon={platformData.ctaIcon}
-                iconPosition={"left"}
-              >
-                {t(`settings.notifications.disabledNotifications.${platformData.ctaTransKey}`)}
-              </Button>
-            </Box>
-          ) : null}
-          <Box opacity={isNotifPermissionEnabled ? 1 : 0.2}>
-            <NotificationSettingsRow
-              notificationKey={"areNotificationsAllowed"}
-              disabled={!isNotifPermissionEnabled}
-            />
-          </Box>
-          <Box
-            opacity={isNotifPermissionEnabled && notifications.areNotificationsAllowed ? 1 : 0.2}
-          >
-            {!hiddenNotificationCategories ||
-            !hiddenNotificationCategories.includes("announcementsCategory") ? (
-              <NotificationSettingsRow
-                notificationKey={"announcementsCategory"}
-                disabled={disableSubSettings}
-              />
-            ) : null}
-            {!hiddenNotificationCategories ||
-            !hiddenNotificationCategories.includes("largeMoverCategory") ? (
-              <NotificationSettingsRow
-                notificationKey={"largeMoverCategory"}
-                disabled={disableSubSettings}
-              />
-            ) : null}
-            {featureTransactionsAlerts?.enabled &&
-            (!hiddenNotificationCategories ||
-              !hiddenNotificationCategories.includes("transactionsAlertsCategory")) ? (
-              <NotificationSettingsRow
-                notificationKey={"transactionsAlertsCategory"}
-                disabled={disableSubSettings}
-              />
-            ) : null}
-          </Box>
-          <Box m={6}>
-            <Text color="neutral.c70" variant="small" textAlign="center">
-              {t("settings.notifications.disclaimer")}
+
+      <Box>
+        {!isOsPermissionAuthorized ? (
+          <Box p={6} bg={"neutral.c30"} mx={6} borderRadius={2}>
+            <Text color={"neutral.c100"} variant={"large"} fontWeight={"semiBold"} mb={2}>
+              {t(`settings.notifications.disabledNotifications.title`)}
             </Text>
+            <Text color={"neutral.c70"} variant={"bodyLineHeight"}>
+              {t(`settings.notifications.disabledNotifications.desc`, {
+                platform: platformData.osName,
+              })}
+            </Text>
+            <Button
+              type={"main"}
+              mt={6}
+              onPress={allowPushNotifications}
+              Icon={platformData.ctaIcon}
+              iconPosition={"left"}
+            >
+              {t(`settings.notifications.disabledNotifications.${platformData.ctaTransKey}`)}
+            </Button>
           </Box>
+        ) : null}
+        <Box opacity={isOsPermissionAuthorized ? 1 : 0.2}>
+          <NotificationSettingsRow
+            notificationKey={"areNotificationsAllowed"}
+            disabled={!isOsPermissionAuthorized}
+          />
         </Box>
-      )}
+        <Box opacity={isOsPermissionAuthorized && notifications.areNotificationsAllowed ? 1 : 0.2}>
+          {!hiddenNotificationCategories.includes("announcementsCategory") ? (
+            <NotificationSettingsRow
+              notificationKey={"announcementsCategory"}
+              disabled={disableSubSettings}
+            />
+          ) : null}
+          {!hiddenNotificationCategories.includes("largeMoverCategory") ? (
+            <NotificationSettingsRow
+              notificationKey={"largeMoverCategory"}
+              disabled={disableSubSettings}
+            />
+          ) : null}
+          {featureTransactionsAlerts?.enabled &&
+          !hiddenNotificationCategories.includes("transactionsAlertsCategory") ? (
+            <NotificationSettingsRow
+              notificationKey={"transactionsAlertsCategory"}
+              disabled={disableSubSettings}
+            />
+          ) : null}
+        </Box>
+        <Box m={6}>
+          <Text color="neutral.c70" variant="small" textAlign="center">
+            {t("settings.notifications.disclaimer")}
+          </Text>
+        </Box>
+      </Box>
     </SettingsNavigationScrollView>
   );
 }

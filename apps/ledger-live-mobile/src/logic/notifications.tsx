@@ -32,7 +32,7 @@ import {
 import { NavigatorName, ScreenName } from "~/const/navigation";
 import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "~/actions/settings";
 import { NotificationsSettings, type NotificationsState } from "~/reducers/types";
-import { getIsNotifEnabled, getNotificationPermissionStatus } from "./getNotifPermissions";
+import { getNotificationPermissionStatus } from "./getNotifPermissions";
 import { useNavigation } from "@react-navigation/core";
 
 export type DataOfUser = {
@@ -313,8 +313,9 @@ const useNotifications = () => {
     const SKIP = false;
 
     const isOsPermissionAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
-    const areNotificationsAllowed = notifications.areNotificationsAllowed;
-    if (isOsPermissionAuthorized && areNotificationsAllowed) {
+    console.log("OS Notifications", isOsPermissionAuthorized);
+    console.log("App Notifications", notifications.areNotificationsAllowed);
+    if (isOsPermissionAuthorized && notifications.areNotificationsAllowed) {
       // user has accepted notifications. No need to prompt the opt in drawer
       return SKIP;
     }
@@ -391,6 +392,7 @@ const useNotifications = () => {
 
         if (isEntering || isLeaving) {
           const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
+          console.log("shouldPromptOptInDrawer", shouldPromptOptInDrawer);
           if (!shouldPromptOptInDrawer) {
             return false;
           }
@@ -581,13 +583,12 @@ const useNotifications = () => {
 
     hiddenNotificationCategories,
 
-    getIsNotifEnabled,
-
     requestPushNotificationsPermission,
 
     tryTriggerPushNotificationDrawerAfterAction,
 
     resetOptOutState,
+    optOutOfNotifications,
 
     // Actions to handle the push notifications modal
     handleAllowNotificationsPress,
