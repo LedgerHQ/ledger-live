@@ -29,10 +29,11 @@ import {
   INITIAL_STATE as settingsInitialState,
   neverClickedOnAllowNotificationsButtonSelector,
 } from "~/reducers/settings";
-import { ScreenName } from "~/const/navigation";
+import { NavigatorName, ScreenName } from "~/const/navigation";
 import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "~/actions/settings";
 import { NotificationsSettings, type NotificationsState } from "~/reducers/types";
 import { getIsNotifEnabled, getNotificationPermissionStatus } from "./getNotifPermissions";
+import { useNavigation } from "@react-navigation/core";
 
 export type DataOfUser = {
   // timestamps in ms of every time the user dismisses the opt in prompt (until he opts in)
@@ -150,6 +151,19 @@ const useNotifications = () => {
   const actionEvents = pushNotificationsFeature?.params?.action_events;
   const repromptSchedule = pushNotificationsFeature?.params?.reprompt_schedule;
 
+  const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
+  const isPushNotificationsModalLocked = useSelector(notificationsModalLockedSelector);
+  // const neverClickedOnAllowNotificationsButton = useSelector(
+  //   neverClickedOnAllowNotificationsButtonSelector,
+  // );
+  const drawerSource = useSelector(drawerSourceSelector);
+  const pushNotificationsOldRoute = useSelector(notificationsCurrentRouteNameSelector);
+  const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
+  const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
+
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+
   const hiddenNotificationCategories = useMemo(() => {
     const hiddenCategories = [];
     const categoriesToHide = pushNotificationsFeature?.params?.notificationsCategories ?? [];
@@ -162,18 +176,6 @@ const useNotifications = () => {
 
     return hiddenCategories;
   }, [pushNotificationsFeature?.params?.notificationsCategories]);
-
-  const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
-  const isPushNotificationsModalLocked = useSelector(notificationsModalLockedSelector);
-  // const neverClickedOnAllowNotificationsButton = useSelector(
-  //   neverClickedOnAllowNotificationsButtonSelector,
-  // );
-  const drawerSource = useSelector(drawerSourceSelector);
-  const pushNotificationsOldRoute = useSelector(notificationsCurrentRouteNameSelector);
-  const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
-  const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
-
-  const dispatch = useDispatch();
 
   const updatePushNotificationsDataOfUserInStateAndStore = useCallback(
     (dataOfUserUpdated: DataOfUser) => {
@@ -536,25 +538,37 @@ const useNotifications = () => {
     });
     setPushNotificationsModalOpenCallback(false);
 
-    const permission = await requestPushNotificationsPermission();
-    if (permission === AuthorizationStatus.DENIED) {
-      track("os_notification_permission_denied");
-      optOutOfNotifications();
-    } else if (permission === AuthorizationStatus.AUTHORIZED) {
-      track("os_notification_permission_granted");
-      resetOptOutState();
+    if (permissionStatus !== AuthorizationStatus.AUTHORIZED) {
+      const permission = await requestPushNotificationsPermission();
+      if (permission === AuthorizationStatus.DENIED) {
+        track("os_notification_permission_denied");
+        optOutOfNotifications();
+      } else if (permission === AuthorizationStatus.AUTHORIZED) {
+        track("os_notification_permission_granted");
+        resetOptOutState();
+      }
+    }
+
+    if (!notifications.areNotificationsAllowed) {
+      navigation.navigate(NavigatorName.Settings, {
+        screen: ScreenName.NotificationsSettings,
+      });
     }
   }, [
     pushNotificationsOldRoute,
-    requestPushNotificationsPermission,
-    resetOptOutState,
     setPushNotificationsModalOpenCallback,
+    permissionStatus,
+    notifications.areNotificationsAllowed,
+    requestPushNotificationsPermission,
     optOutOfNotifications,
+    resetOptOutState,
+    navigation,
   ]);
 
   return {
     initPushNotificationsData,
 
+    permissionStatus,
     handleRouteChangePushNotification,
     pushNotificationsOldRoute,
 
@@ -572,6 +586,8 @@ const useNotifications = () => {
     requestPushNotificationsPermission,
 
     tryTriggerPushNotificationDrawerAfterAction,
+
+    resetOptOutState,
 
     // Actions to handle the push notifications modal
     handleAllowNotificationsPress,

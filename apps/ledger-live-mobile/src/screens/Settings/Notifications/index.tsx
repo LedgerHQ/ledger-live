@@ -13,6 +13,7 @@ import type { State } from "~/reducers/types";
 import useNotifications from "~/logic/notifications";
 import { updateUserPreferences } from "~/notifications/braze";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { AuthorizationStatus } from "@react-native-firebase/messaging";
 
 const notificationsMapping = {
   areNotificationsAllowed: "allowed",
@@ -30,6 +31,7 @@ type NotificationRowProps = {
 function NotificationSettingsRow({ disabled, notificationKey, label }: NotificationRowProps) {
   const dispatch = useDispatch();
   const notifications = useSelector(notificationsSelector);
+  const { resetOptOutState, permissionStatus } = useNotifications();
 
   const { t } = useTranslation();
 
@@ -38,17 +40,21 @@ function NotificationSettingsRow({ disabled, notificationKey, label }: Notificat
 
   const onChange = useCallback(
     (value: boolean) => {
+      track("toggle_clicked", {
+        toggle: `Toggle_${capitalizedKey === "Allowed" ? "Allow" : capitalizedKey}`,
+        enabled: value,
+      });
       dispatch(
         setNotifications({
           [notificationKey]: value,
         }),
       );
-      track("toggle_clicked", {
-        toggle: `Toggle_${capitalizedKey === "Allowed" ? "Allow" : capitalizedKey}`,
-        enabled: value,
-      });
+
+      if (permissionStatus === AuthorizationStatus.AUTHORIZED) {
+        resetOptOutState();
+      }
     },
-    [capitalizedKey, dispatch, notificationKey],
+    [capitalizedKey, dispatch, notificationKey, resetOptOutState, permissionStatus],
   );
 
   return (
