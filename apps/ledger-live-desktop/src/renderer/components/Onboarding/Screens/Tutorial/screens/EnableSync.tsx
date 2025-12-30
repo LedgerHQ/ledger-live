@@ -6,7 +6,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { LogoWrapper } from "LLD/features/WalletSync/components/LogoWrapper";
 import { Title, Column, SubTitle, TrackTutorialProps } from "../shared";
 
-export function EnableSync(trackProps: TrackTutorialProps) {
+export function EnableSync(trackProps: Readonly<TrackTutorialProps>) {
   const { t } = useTranslation();
   const { colors } = useTheme();
 

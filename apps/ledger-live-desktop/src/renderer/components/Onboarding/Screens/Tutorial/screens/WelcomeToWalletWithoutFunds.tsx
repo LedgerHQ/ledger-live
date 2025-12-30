@@ -4,7 +4,7 @@ import { Title, Column, SubTitle, TrackTutorialProps } from "../shared";
 import { Flex, Icons } from "@ledgerhq/react-ui/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
-export function WelcomeToWalletWithoutFunds(trackProps: TrackTutorialProps) {
+export function WelcomeToWalletWithoutFunds(trackProps: Readonly<TrackTutorialProps>) {
   const { t } = useTranslation();
 
   return (

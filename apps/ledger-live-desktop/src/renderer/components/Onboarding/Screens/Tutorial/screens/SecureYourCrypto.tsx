@@ -5,7 +5,7 @@ import { Flex } from "@ledgerhq/react-ui/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import NewSeedIllustration from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/NewSeedPanel/NewSeedIllustration";
 
-export function SecureYourCrypto(trackProps: TrackTutorialProps) {
+export function SecureYourCrypto(trackProps: Readonly<TrackTutorialProps>) {
   const { t } = useTranslation();
 
   return (

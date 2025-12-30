@@ -106,7 +106,7 @@ const handlers: WalletSyncHandlers = {
   ) => ({
     ...state,
     isDrawerOpen: payload,
-    onboardingNewDevice: !payload ? false : state.onboardingNewDevice,
+    onboardingNewDevice: payload ? state.onboardingNewDevice : false,
   }),
   WALLET_SYNC_CHANGE_FLOW: (
     state: WalletSyncState,
@@ -125,8 +125,7 @@ const handlers: WalletSyncHandlers = {
     step,
     nextStep,
     hasTrustchainBeenCreated,
-    onboardingNewDevice:
-      onboardingNewDevice === undefined ? state.onboardingNewDevice : onboardingNewDevice,
+    onboardingNewDevice: onboardingNewDevice ?? state.onboardingNewDevice,
   }),
   WALLET_SYNC_CHANGE_ADD_INSTANCE: (
     state: WalletSyncState,
