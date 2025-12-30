@@ -1,16 +1,16 @@
 import React from "react";
 import { render } from "tests/testSetup";
-import TrackDrawerScreen from "../TrackDialogScreen";
+import TrackDialogScreen from "../TrackDialogScreen";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { MODULAR_DRAWER_PAGE_NAME } from "../modularDialog.types";
+import { MODULAR_DIALOG_PAGE_NAME } from "../modularDialog.types";
 import { trackPage } from "~/renderer/analytics/segment";
 
-describe("TrackDrawerScreen", () => {
+describe("TrackDialogScreen", () => {
   it("calls track page with flow and source", () => {
-    const page = MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION;
+    const page = MODULAR_DIALOG_PAGE_NAME.MODULAR_ASSET_SELECTION;
     const params = { flow: "flowtest", source: "sourcetest" };
 
-    render(<TrackDrawerScreen page={page} />, { initialState: { modularDrawer: params } });
+    render(<TrackDialogScreen page={page} />, { initialState: { modularDrawer: params } });
 
     expect(trackPage).toHaveBeenCalledWith(
       "Asset Selection",
@@ -22,13 +22,13 @@ describe("TrackDrawerScreen", () => {
   });
 
   it("formats asset configuration and track it", () => {
-    const page = MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION;
+    const page = MODULAR_DIALOG_PAGE_NAME.MODULAR_ASSET_SELECTION;
     const params = { flow: "flowtest", source: "sourcetest" };
     const assetsConfig: EnhancedModularDrawerConfiguration["assets"] = {
       filter: "topNetworks",
     };
 
-    render(<TrackDrawerScreen page={page} formatAssetConfig assetsConfig={assetsConfig} />, {
+    render(<TrackDialogScreen page={page} formatAssetConfig assetsConfig={assetsConfig} />, {
       initialState: { modularDrawer: params },
     });
 
@@ -46,13 +46,13 @@ describe("TrackDrawerScreen", () => {
   });
 
   it("formats network configuration and track it", () => {
-    const page = MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION;
+    const page = MODULAR_DIALOG_PAGE_NAME.MODULAR_NETWORK_SELECTION;
     const params = { flow: "flowtest", source: "sourcetest" };
     const networksConfig: EnhancedModularDrawerConfiguration["networks"] = {
       leftElement: "numberOfAccounts",
     };
 
-    render(<TrackDrawerScreen page={page} formatNetworkConfig networksConfig={networksConfig} />, {
+    render(<TrackDialogScreen page={page} formatNetworkConfig networksConfig={networksConfig} />, {
       initialState: { modularDrawer: params },
     });
 

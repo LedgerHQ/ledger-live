@@ -1,7 +1,7 @@
 import { act } from "react-dom/test-utils";
 import { renderHook } from "tests/testSetup";
 import { bitcoinCurrency, ethereumCurrency } from "../../../__mocks__/useSelectAssetFlow.mock";
-import { useModularDrawerFlowState } from "../useModularDialogFlowState";
+import { useModularDialogFlowState } from "../useModularDialogFlowState";
 
 const mockGoToStep = jest.fn();
 const mockSetNetworksToDisplay = jest.fn();
@@ -23,20 +23,20 @@ const defaultProps = {
   flow: "selectAsset",
 };
 
-describe("useModularDrawerFlowState", () => {
+describe("useModularDialogFlowState", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("should initialize with default state", () => {
-    const { result } = renderHook(() => useModularDrawerFlowState(defaultProps));
+    const { result } = renderHook(() => useModularDialogFlowState(defaultProps));
     expect(result.current.selectedAsset).toBeUndefined();
     expect(result.current.selectedNetwork).toBeUndefined();
     expect(result.current.providers).toBeUndefined();
   });
 
   it("should handle asset selection", () => {
-    const { result } = renderHook(() => useModularDrawerFlowState(defaultProps));
+    const { result } = renderHook(() => useModularDialogFlowState(defaultProps));
     act(() => {
       result.current.handleAssetSelected(defaultProps.assetsToDisplay[0]);
     });
@@ -44,7 +44,7 @@ describe("useModularDrawerFlowState", () => {
   });
 
   it("should go back to asset selection", () => {
-    const { result } = renderHook(() => useModularDrawerFlowState(defaultProps));
+    const { result } = renderHook(() => useModularDialogFlowState(defaultProps));
     act(() => {
       result.current.goBackToAssetSelection();
     });
@@ -54,7 +54,7 @@ describe("useModularDrawerFlowState", () => {
   });
 
   it("should go to network selection", () => {
-    const { result } = renderHook(() => useModularDrawerFlowState(defaultProps));
+    const { result } = renderHook(() => useModularDialogFlowState(defaultProps));
     const filtered = [bitcoinCurrency];
     act(() => {
       result.current.goToNetworkSelection(bitcoinCurrency, filtered);

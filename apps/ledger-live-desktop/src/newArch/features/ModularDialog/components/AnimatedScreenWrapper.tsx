@@ -1,6 +1,6 @@
 import React from "react";
 import type { ModularDrawerAddAccountStep } from "../../AddAccountDrawer/domain";
-import type { ModularDrawerStep, NavigationDirection } from "../types";
+import type { ModularDialogStep, NavigationDirection } from "../types";
 import { cn } from "LLD/utils/cn";
 
 const AnimatedScreenWrapper = ({
@@ -9,7 +9,7 @@ const AnimatedScreenWrapper = ({
   direction,
 }: {
   children: React.ReactNode;
-  screenKey: ModularDrawerStep | ModularDrawerAddAccountStep;
+  screenKey: ModularDialogStep | ModularDrawerAddAccountStep;
   direction: NavigationDirection;
 }) => {
   return (
