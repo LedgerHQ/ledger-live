@@ -92,9 +92,9 @@ const useNotifications = () => {
 
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
   const isPushNotificationsModalLocked = useSelector(notificationsModalLockedSelector);
-  const neverClickedOnAllowNotificationsButton = useSelector(
-    neverClickedOnAllowNotificationsButtonSelector,
-  );
+  // const neverClickedOnAllowNotificationsButton = useSelector(
+  //   neverClickedOnAllowNotificationsButtonSelector,
+  // );
   const drawerSource = useSelector(drawerSourceSelector);
   const pushNotificationsOldRoute = useSelector(notificationsCurrentRouteNameSelector);
   const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
@@ -122,9 +122,13 @@ const useNotifications = () => {
 
     const FIRST_TIME_OPTING_OUT_DISMISSED_OPT_IN_DRAWER_AT_LIST = [now];
 
-    const dismissedOptInDrawerAtList =
-      pushNotificationsDataOfUser?.dismissedOptInDrawerAtList ??
-      FIRST_TIME_OPTING_OUT_DISMISSED_OPT_IN_DRAWER_AT_LIST;
+    let dismissedOptInDrawerAtList = pushNotificationsDataOfUser?.dismissedOptInDrawerAtList;
+
+    if (typeof dismissedOptInDrawerAtList === "undefined") {
+      dismissedOptInDrawerAtList = FIRST_TIME_OPTING_OUT_DISMISSED_OPT_IN_DRAWER_AT_LIST;
+    } else {
+      dismissedOptInDrawerAtList = [...dismissedOptInDrawerAtList, now];
+    }
 
     updatePushNotificationsDataOfUserInStateAndStore({
       dismissedOptInDrawerAtList,
@@ -201,7 +205,14 @@ const useNotifications = () => {
       permissionStatus === AuthorizationStatus.NOT_DETERMINED ||
       permissionStatus === AuthorizationStatus.PROVISIONAL
     ) {
-      return requestPermission();
+      return requestPermission().then(permission => {
+        console.log("permission", permission);
+        // if (permission === AuthorizationStatus.AUTHORIZED) {
+        //   dispatch(setNotificationPermissionStatus(AuthorizationStatus));
+        // }
+
+        return permission;
+      });
     }
 
     if (permissionStatus === AuthorizationStatus.DENIED) {
@@ -211,7 +222,7 @@ const useNotifications = () => {
     if (permissionStatus === AuthorizationStatus.AUTHORIZED) {
       return Promise.resolve(AuthorizationStatus.AUTHORIZED);
     }
-  }, [permissionStatus]);
+  }, [dispatch, permissionStatus]);
 
   const setPushNotificationsModalOpenCallback = useCallback(
     (isOpen: boolean, drawerSource: NotificationsState["drawerSource"] = "generic") => {
@@ -229,26 +240,26 @@ const useNotifications = () => {
   );
 
   const checkShouldPromptOptInDrawer = useCallback(() => {
-    const PROMPT = true;
-    const DO_NOT_PROMPT = false;
+    const OK = true;
+    const SKIP = false;
 
     const isOsPermissionAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
     const areNotificationsAllowed = notifications.areNotificationsAllowed;
     if (isOsPermissionAuthorized && areNotificationsAllowed) {
       // user has accepted notifications. No need to prompt the opt in drawer
-      return DO_NOT_PROMPT;
+      return SKIP;
     }
 
     const dismissedOptInDrawerAtList = pushNotificationsDataOfUser?.dismissedOptInDrawerAtList;
 
     const hasNeverSeenOptInPromptDrawer = typeof dismissedOptInDrawerAtList === "undefined";
     if (hasNeverSeenOptInPromptDrawer) {
-      return PROMPT;
+      return OK;
     }
 
     if (!repromptSchedule) {
       // if the feature flag params does not specify a reprompt schedule, avoid prompting the opt in drawer
-      return DO_NOT_PROMPT;
+      return SKIP;
     }
 
     const dismissalCount = dismissedOptInDrawerAtList.length;
@@ -261,14 +272,14 @@ const useNotifications = () => {
 
     const now = Date.now();
     if (isBefore(nextMinimumRepromptAt, now) || isEqual(nextMinimumRepromptAt, now)) {
-      return PROMPT;
+      return OK;
     }
 
-    return DO_NOT_PROMPT;
+    return SKIP;
   }, [
     permissionStatus,
-    notifications.areNotificationsAllowed,
     repromptSchedule,
+    notifications.areNotificationsAllowed,
     pushNotificationsDataOfUser?.dismissedOptInDrawerAtList,
   ]);
 
@@ -333,202 +344,101 @@ const useNotifications = () => {
     ],
   );
 
-  const triggerPushNotificationModalAfterMarketStarredAction = useCallback(() => {
-    if (isPushNotificationsModalLocked) return;
-
-    const marketCoinStarredParamsBackwardCompatibility =
-      pushNotificationsFeature?.params?.marketCoinStarred;
-    // TODO: to remove once we have the new logic in place (action_events.add_favorite_coin).
-
-    if (marketCoinStarredParamsBackwardCompatibility) {
-      if (!marketCoinStarredParamsBackwardCompatibility?.enabled) {
-        return;
-      }
-      const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
-      if (!shouldPromptOptInDrawer) {
-        return;
-      }
-
-      openDrawer(
-        "add_favorite_coin",
-        marketCoinStarredParamsBackwardCompatibility?.timer ?? 0,
-        ScreenName.MarketDetail,
-      );
-    } else {
-      const marketCoinStarredParams = actionEvents?.add_favorite_coin;
-      if (!marketCoinStarredParams?.enabled) {
-        return;
-      }
+  const tryTriggerPushNotificationDrawerAfterAction = useCallback(
+    (actionSource: Exclude<NotificationsState["drawerSource"], "generic">) => {
+      if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
 
       const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
       if (!shouldPromptOptInDrawer) {
         return;
       }
 
-      openDrawer("add_favorite_coin", marketCoinStarredParams?.timer ?? 0, ScreenName.MarketDetail);
-    }
-  }, [
-    checkShouldPromptOptInDrawer,
-    isPushNotificationsModalLocked,
-    openDrawer,
-    actionEvents?.add_favorite_coin,
-    pushNotificationsFeature?.params?.marketCoinStarred,
-  ]);
+      switch (actionSource) {
+        case "onboarding": {
+          const onboardingParams = actionEvents?.complete_onboarding;
+          if (!onboardingParams?.enabled) {
+            return;
+          }
+          openDrawer("onboarding", onboardingParams?.timer ?? 0, ScreenName.Portfolio);
+          break;
+        }
+        case "add_favorite_coin": {
+          const addFavoriteCoinParams = actionEvents?.add_favorite_coin;
+          if (!addFavoriteCoinParams?.enabled) {
+            return;
+          }
 
-  const triggerPushNotificationModalAfterFinishingOnboardingNewDevice = useCallback(() => {
-    if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
+          openDrawer(
+            "add_favorite_coin",
+            addFavoriteCoinParams?.timer ?? 0,
+            ScreenName.MarketDetail,
+          );
+          break;
+        }
+        case "buy": {
+          const buyParams = actionEvents?.buy;
+          if (!buyParams?.enabled) {
+            return;
+          }
 
-    const justFinishedOnboardingParamsBackwardCompatibility =
-      pushNotificationsFeature?.params?.justFinishedOnboarding;
+          openDrawer("buy", buyParams?.timer ?? 0, ScreenName.ExchangeBuy);
+          break;
+        }
+        case "send": {
+          const sendParams = actionEvents?.send;
+          if (!sendParams?.enabled) {
+            return;
+          }
 
-    // TODO: to remove once we have the new logic in place (action_events.just_finished_onboarding).
-    if (justFinishedOnboardingParamsBackwardCompatibility) {
-      if (!justFinishedOnboardingParamsBackwardCompatibility?.enabled) {
-        return;
+          openDrawer("send", sendParams?.timer ?? 0, ScreenName.SendCoin);
+          break;
+        }
+        case "receive": {
+          const receiveParams = actionEvents?.receive;
+          if (!receiveParams?.enabled) {
+            return;
+          }
+
+          openDrawer("receive", receiveParams?.timer ?? 0, ScreenName.ReceiveConfirmation);
+          break;
+        }
+
+        case "swap": {
+          const swapParams = actionEvents?.swap;
+          if (!swapParams?.enabled) {
+            return;
+          }
+
+          openDrawer("swap", swapParams?.timer ?? 0, ScreenName.Swap);
+          break;
+        }
+        case "stake": {
+          const stakeParams = actionEvents?.stake;
+          if (!stakeParams?.enabled) {
+            return;
+          }
+          openDrawer("stake", stakeParams?.timer ?? 0, ScreenName.Stake);
+          break;
+        }
+        default: {
+          break;
+        }
       }
-      const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
-
-      if (!shouldPromptOptInDrawer) {
-        return;
-      }
-
-      openDrawer(
-        "onboarding",
-        justFinishedOnboardingParamsBackwardCompatibility?.timer ?? 0,
-        ScreenName.Portfolio,
-      );
-    } else {
-      const justFinishedOnboardingParams = actionEvents?.just_finished_onboarding;
-      if (!justFinishedOnboardingParams?.enabled) {
-        return;
-      }
-
-      const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
-      if (!shouldPromptOptInDrawer) {
-        return;
-      }
-
-      openDrawer("generic", justFinishedOnboardingParams?.timer ?? 0, ScreenName.Portfolio);
-    }
-  }, [
-    pushNotificationsFeature?.enabled,
-    pushNotificationsFeature?.params?.justFinishedOnboarding,
-    actionEvents?.just_finished_onboarding,
-    isPushNotificationsModalLocked,
-    checkShouldPromptOptInDrawer,
-    openDrawer,
-  ]);
-
-  const triggerPushNotificationModalAfterSendAction = useCallback(() => {
-    if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
-
-    const sendParams = actionEvents?.send;
-    if (!sendParams?.enabled) {
-      return;
-    }
-
-    const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
-
-    if (!shouldPromptOptInDrawer) {
-      return;
-    }
-
-    openDrawer("send", sendParams?.timer ?? 0, ScreenName.SendCoin);
-  }, [
-    checkShouldPromptOptInDrawer,
-    isPushNotificationsModalLocked,
-    openDrawer,
-    pushNotificationsFeature?.enabled,
-    actionEvents?.send,
-  ]);
-
-  const triggerPushNotificationModalAfterReceiveAction = useCallback(() => {
-    if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
-
-    const receiveParams = actionEvents?.receive;
-    if (!receiveParams?.enabled) {
-      return;
-    }
-
-    const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
-    if (!shouldPromptOptInDrawer) {
-      return;
-    }
-
-    openDrawer("receive", receiveParams?.timer ?? 0, ScreenName.ReceiveConfirmation);
-  }, [
-    checkShouldPromptOptInDrawer,
-    isPushNotificationsModalLocked,
-    openDrawer,
-    pushNotificationsFeature?.enabled,
-    actionEvents?.receive,
-  ]);
-
-  const triggerPushNotificationModalAfterBuyAction = useCallback(() => {
-    if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
-
-    const buyParams = actionEvents?.buy;
-    if (!buyParams?.enabled) {
-      return;
-    }
-
-    const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
-    if (!shouldPromptOptInDrawer) {
-      return;
-    }
-
-    openDrawer("buy", buyParams?.timer ?? 0, ScreenName.ExchangeBuy);
-  }, [
-    checkShouldPromptOptInDrawer,
-    isPushNotificationsModalLocked,
-    openDrawer,
-    pushNotificationsFeature?.enabled,
-    actionEvents?.buy,
-  ]);
-
-  const triggerPushNotificationModalAfterSwapAction = useCallback(() => {
-    if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
-
-    const swapParams = actionEvents?.swap;
-    if (!swapParams?.enabled) {
-      return;
-    }
-
-    const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
-    if (!shouldPromptOptInDrawer) {
-      return;
-    }
-
-    openDrawer("swap", swapParams?.timer ?? 0, ScreenName.Swap);
-  }, [
-    checkShouldPromptOptInDrawer,
-    isPushNotificationsModalLocked,
-    openDrawer,
-    pushNotificationsFeature?.enabled,
-    actionEvents?.swap,
-  ]);
-
-  const triggerPushNotificationModalAfterStakeAction = useCallback(() => {
-    if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
-
-    const stakeParams = actionEvents?.stake;
-    if (!stakeParams?.enabled) {
-      return;
-    }
-
-    const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
-    if (!shouldPromptOptInDrawer) {
-      return;
-    }
-
-    openDrawer("stake", stakeParams?.timer ?? 0, ScreenName.Stake);
-  }, [
-    checkShouldPromptOptInDrawer,
-    isPushNotificationsModalLocked,
-    openDrawer,
-    pushNotificationsFeature?.enabled,
-    actionEvents?.stake,
-  ]);
+    },
+    [
+      checkShouldPromptOptInDrawer,
+      isPushNotificationsModalLocked,
+      openDrawer,
+      pushNotificationsFeature?.enabled,
+      actionEvents?.add_favorite_coin,
+      actionEvents?.buy,
+      actionEvents?.receive,
+      actionEvents?.send,
+      actionEvents?.stake,
+      actionEvents?.swap,
+      actionEvents?.complete_onboarding,
+    ],
+  );
 
   const handleDelayLaterPress = useCallback(() => {
     track("button_clicked", {
@@ -593,14 +503,7 @@ const useNotifications = () => {
 
     requestPushNotificationsPermission,
 
-    // Actions to trigger (display) the push notifications modal
-    triggerPushNotificationModalAfterFinishingOnboardingNewDevice,
-    triggerPushNotificationModalAfterMarketStarredAction,
-    triggerPushNotificationModalAfterSendAction,
-    triggerPushNotificationModalAfterReceiveAction,
-    triggerPushNotificationModalAfterBuyAction,
-    triggerPushNotificationModalAfterSwapAction,
-    triggerPushNotificationModalAfterStakeAction,
+    tryTriggerPushNotificationDrawerAfterAction,
 
     // Actions to handle the push notifications modal
     handleAllowNotificationsPress,

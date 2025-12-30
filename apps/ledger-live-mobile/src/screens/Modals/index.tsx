@@ -42,10 +42,10 @@ const Modals = () => {
       : "none";
 
   const onRouteChange = useCallback(
-    (e: EventArg<"state", false, { state: NavigationState }>) => {
+    (e: EventArg<"state", false, { state: NavigationState | undefined }>) => {
       const navState = e.data.state;
 
-      if (navState.routeNames) {
+      if (navState?.routeNames) {
         const currentRouteName = getCurrentRouteName(navState) as string;
         let isModalOpened = false;
         if (pushNotificationsFeature?.enabled) {

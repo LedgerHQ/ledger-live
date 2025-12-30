@@ -80,7 +80,7 @@ export default memo(function () {
   const route = useRoute<NavigationProps["route"]>();
 
   const dispatch = useDispatch();
-  const { triggerPushNotificationModalAfterFinishingOnboardingNewDevice } = useNotifications();
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const { deviceModelId, showSeedWarning, isProtectFlow, fromAccessExistingWallet, isRestoreSeed } =
     route.params;
@@ -140,7 +140,10 @@ export default memo(function () {
       dispatch(setHasBeenRedirectedToPostOnboarding(false));
     }
 
-    triggerPushNotificationModalAfterFinishingOnboardingNewDevice();
+    // showing the drawer needs to wait for the next tick to ensure the navigation is complete
+    setImmediate(() => {
+      tryTriggerPushNotificationDrawerAfterAction("onboarding");
+    });
   }, [
     isProtectFlow,
     deviceModelId,
@@ -148,7 +151,7 @@ export default memo(function () {
     hasCompletedOnboarding,
     navigation,
     fromAccessExistingWallet,
-    triggerPushNotificationModalAfterFinishingOnboardingNewDevice,
+    tryTriggerPushNotificationDrawerAfterAction,
     isFundWalletNewSetup,
     seedConfiguration,
   ]);

@@ -24,6 +24,7 @@ import {
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import { DETOX_ENABLED } from "~/utils/constants";
+import useNotifications from "~/logic/notifications";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.webp"),
@@ -61,7 +62,9 @@ const Item = ({
   const { t } = useTranslation();
   const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow(true);
 
-  const screenName = useMemo(() => `Reborn Story Step ${currentIndex}`, [currentIndex]);
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
+
+  const screenName = `Reborn Story Step ${currentIndex}`;
 
   const onClick = useCallback(
     (value: string) => {
@@ -73,32 +76,30 @@ const Item = ({
     [screenName],
   );
 
-  const buyLedger = useCallback(() => {
-    onClick("Buy a Ledger");
-    navigateToRebornFlow();
-  }, [navigateToRebornFlow, onClick]);
+  const pressExplore = useCallback(() => {
+    onClick("Explore without a device");
 
-  const exploreLedger = useCallback(() => {
     dispatch(completeOnboarding());
     dispatch(setReadOnlyMode(true));
-    onClick("Explore without a device");
 
     navigation.reset({
       index: 0,
       routes: [{ name: NavigatorName.Base } as never],
     });
-  }, [dispatch, navigation, onClick]);
 
-  const pressExplore = useCallback(() => {
-    exploreLedger();
     dispatch(setIsReborn(true));
     dispatch(setOnboardingHasDevice(false));
-    onClick("Explore without a device");
-  }, [dispatch, exploreLedger, onClick]);
+
+    // showing the drawer needs to wait for the next tick to ensure the navigation is complete
+    setImmediate(() => {
+      tryTriggerPushNotificationDrawerAfterAction("onboarding");
+    });
+  }, [dispatch, onClick, navigation, tryTriggerPushNotificationDrawerAfterAction]);
 
   const pressBuy = useCallback(() => {
-    buyLedger();
-  }, [buyLedger]);
+    onClick("Buy a Ledger");
+    navigateToRebornFlow();
+  }, [navigateToRebornFlow, onClick]);
 
   return (
     <Flex flex={1} backgroundColor={`background.main`} accessible={true}>

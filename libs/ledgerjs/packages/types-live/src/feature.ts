@@ -401,7 +401,7 @@ export type Feature_BrazePushNotifications = Feature<{
     seconds: number;
   }>;
   action_events: {
-    just_finished_onboarding: {
+    complete_onboarding: {
       enabled: boolean;
       timer: number;
     };
