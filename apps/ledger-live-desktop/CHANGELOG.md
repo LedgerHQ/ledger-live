@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.135.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.55.1-hotfix.0
+  - @ledgerhq/live-dmk-desktop@0.14.1-hotfix.0
+
 ## 2.135.0
 
 ### Minor Changes

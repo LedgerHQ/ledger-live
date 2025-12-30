@@ -1,5 +1,11 @@
 # @ledgerhq/coin-hedera
 
+## 1.16.1-hotfix.0
+
+### Patch Changes
+
+- [#13480](https://github.com/LedgerHQ/ledger-live/pull/13480) [`c6fc74b`](https://github.com/LedgerHQ/ledger-live/commit/c6fc74bc5f9a229da876ef2bd1a41b012134026d) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: avoid hardcoding node account id
+
 ## 1.16.0
 
 ### Minor Changes

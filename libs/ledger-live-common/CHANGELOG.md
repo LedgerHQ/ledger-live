@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 34.55.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`c6fc74b`](https://github.com/LedgerHQ/ledger-live/commit/c6fc74bc5f9a229da876ef2bd1a41b012134026d)]:
+  - @ledgerhq/coin-hedera@1.16.1-hotfix.0
+
 ## 34.55.0
 
 ### Minor Changes

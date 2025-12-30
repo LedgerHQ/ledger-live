@@ -156,5 +156,7 @@
     "@ledgerhq/live-github-bot": "1.2.0",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "smart-donkeys-dress"
+  ]
 }

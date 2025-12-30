@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.12.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.55.1-hotfix.0
+
 ## 1.12.0
 
 ### Minor Changes
