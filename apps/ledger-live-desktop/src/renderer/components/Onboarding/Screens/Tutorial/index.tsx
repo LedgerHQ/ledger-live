@@ -23,7 +23,7 @@ import {
   setHasBeenUpsoldRecover,
   setLastOnboardedDevice,
 } from "~/renderer/actions/settings";
-import { track } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { HideRecoverySeed } from "~/renderer/components/Onboarding/Help/HideRecoverySeed";
 import { PinHelp } from "~/renderer/components/Onboarding/Help/PinHelp";
 import { RecoverySeed } from "~/renderer/components/Onboarding/Help/RecoverySeed";
@@ -58,9 +58,11 @@ import { SecureYourCrypto } from "~/renderer/components/Onboarding/Screens/Tutor
 import { WelcomeToWalletWithFunds } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/WelcomeToWalletWithFunds";
 import { WelcomeToWalletWithoutFunds } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/WelcomeToWalletWithoutFunds";
 import {
+  onboardingIsSyncFlowSelector,
   onboardingReceiveFlowSelector,
   onboardingReceiveSuccessSelector,
   setIsOnboardingReceiveFlow,
+  setOnboardingSyncFlow,
 } from "~/renderer/reducers/onboarding";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
@@ -314,17 +316,19 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     return {
       seedConfiguration: USE_CASE_SEED_CONFIG[useCase],
       deviceModelId,
+      flow: "Onboarding",
     };
   }, [deviceModelId, useCase]);
   const history = useHistory<{ fromRecover: boolean } | undefined>();
   const [quizzOpen, setQuizOpen] = useState(false);
-  const syncDrawerOpen = useSelector(walletSyncDrawerVisibilitySelector)
+  const syncDrawerOpen = useSelector(walletSyncDrawerVisibilitySelector);
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
+  const isOnboardingSyncFlow = useSelector(onboardingIsSyncFlowSelector);
   const isOnboardingReceiveSuccess = useSelector(onboardingReceiveSuccessSelector);
-  const trustchain = useSelector(trustchainSelector)
+  const trustchain = useSelector(trustchainSelector);
   const isLedgerSyncActive = Boolean(trustchain?.rootId);
   const nanoOnboardingFundWalletFeature = useFeature("nanoOnboardingFundWallet")?.enabled;
-  const nanoOnboardingEnableSyncFeature = useFeature("onboardingEnableSync")?.params?.nanos;
+  const nanoOnboardingEnableSyncFeature = useFeature("lldOnboardingEnableSync")?.params?.nanos;
   const initialIsLedgerSyncActive = useRef(isLedgerSyncActive);
   const hasSyncStep = nanoOnboardingEnableSyncFeature && !initialIsLedgerSyncActive.current;
   const { t } = useTranslation();
@@ -688,10 +692,18 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         component: EnableSync,
         useCases: [OnboardingUseCase.setupDevice],
         next: () => {
-          track("Onboarding - Enable sync", trackProperties);
+          track("button_clicked", {
+            button: "Continue",
+            ...trackProperties,
+          });
+          dispatch(setOnboardingSyncFlow({ seedConfiguration: trackProperties.seedConfiguration }));
           openDrawer();
         },
-        nextSecondary: () => history.push(`${path}/${ScreenId.secureYourCrypto}`),
+        nextSecondary: () => {
+          track("button_clicked", { button: "Maybe later", ...trackProperties });
+          trackPage("Set up device: Ledger Sync Reject", null, { ...trackProperties });
+          history.push(`${path}/${ScreenId.secureYourCrypto}`);
+        },
         previous: () => history.push(`${path}/${ScreenId.genuineCheck}`),
       },
       {
@@ -940,9 +952,16 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
 
   useEffect(() => {
     if (isLedgerSyncActive && currentStep === ScreenId.enableSync && !syncDrawerOpen) {
+      trackPage("Set up device: Step 4 Ledger Sync Success", null, trackProperties);
       history.push(`${path}/${ScreenId.secureYourCrypto}`);
     }
-  }, [isLedgerSyncActive, history, path, currentStep, syncDrawerOpen]);
+  }, [isLedgerSyncActive, history, path, currentStep, syncDrawerOpen, trackProperties]);
+
+  useEffect(() => {
+    if (isOnboardingSyncFlow && currentStep !== ScreenId.enableSync) {
+      dispatch(setOnboardingSyncFlow(null));
+    }
+  }, [dispatch, isOnboardingSyncFlow, currentStep]);
 
   return (
     <>
@@ -1031,7 +1050,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
                 path={`${path}/${id}`}
                 render={props => {
                   const Screen: React.ElementType = component;
-                  return <Screen {...props} {...screenProps} />;
+                  return <Screen {...props} {...screenProps} {...trackProperties} />;
                 }}
               />
             );
