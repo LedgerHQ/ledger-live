@@ -36,7 +36,7 @@ export const AssetVirtualList = ({
       scrollToTop={scrollToTop}
       hasNextPage={hasNextPage}
       testId="asset-selector-list-container"
-      className="pb-40"
+      className="pb-80"
     />
   );
 };

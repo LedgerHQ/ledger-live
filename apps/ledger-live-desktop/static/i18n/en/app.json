@@ -7467,7 +7467,7 @@
   },
   "dialogs": {
     "selectAccount": {
-      "description": "Please add {{network}} account to continue",
+      "description": "You don't have {{network}} accounts yet. Please add one to continue",
       "addAccount": "Add account"
     }
   },
