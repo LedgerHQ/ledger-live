@@ -161,6 +161,11 @@ const useNotifications = () => {
   const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
   const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
 
+  console.log(
+    "pushNotificationsDataOfUser",
+    pushNotificationsDataOfUser?.dismissedOptInDrawerAtList,
+  );
+
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -235,7 +240,7 @@ const useNotifications = () => {
       const hasAuthorizedFromOsSettings =
         permission.value === AuthorizationStatus.AUTHORIZED &&
         typeof dismissedOptInDrawerAtList !== "undefined";
-      if (hasAuthorizedFromOsSettings) {
+      if (hasAuthorizedFromOsSettings && notifications.areNotificationsAllowed) {
         resetOptOutState();
         return;
       }
