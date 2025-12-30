@@ -116,6 +116,20 @@ const useNotifications = () => {
     });
   }, [updatePushNotificationsDataOfUserInStateAndStore]);
 
+  const optOutOfNotifications = useCallback(() => {
+    const now = Date.now();
+
+    const FIRST_TIME_OPTING_OUT_DISMISSED_OPT_IN_DRAWER_AT_LIST = [now];
+
+    const dismissedOptInDrawerAtList =
+      pushNotificationsDataOfUser?.dismissedOptInDrawerAtList ??
+      FIRST_TIME_OPTING_OUT_DISMISSED_OPT_IN_DRAWER_AT_LIST;
+
+    updatePushNotificationsDataOfUserInStateAndStore({
+      dismissedOptInDrawerAtList,
+    });
+  }, [updatePushNotificationsDataOfUserInStateAndStore, pushNotificationsDataOfUser]);
+
   const initPushNotificationsData = useCallback(async () => {
     if (notifications.areNotificationsAllowed === undefined) {
       dispatch(setNotifications(settingsInitialState.notifications));
@@ -134,41 +148,45 @@ const useNotifications = () => {
       getPushNotificationsDataOfUserFromStorage(),
     ]);
 
-    if (permission.status === "fulfilled") {
+    if (permission.status === "fulfilled" && dataOfUserFromStorage.status === "fulfilled") {
       dispatch(setNotificationPermissionStatus(permission.value));
-    }
 
-    if (dataOfUserFromStorage.status === "fulfilled") {
-      // TODO: for users that have already opted out before this feature launches
+      const dismissedOptInDrawerAtList = dataOfUserFromStorage.value?.dismissedOptInDrawerAtList;
+
+      const hasAuthorizedFromOsSettings =
+        permission.value === AuthorizationStatus.AUTHORIZED &&
+        typeof dismissedOptInDrawerAtList !== "undefined";
+      if (hasAuthorizedFromOsSettings) {
+        resetOptOutState();
+        return;
+      }
+
+      const hasDeniedFromOsSettings =
+        permission.value === AuthorizationStatus.DENIED &&
+        typeof dismissedOptInDrawerAtList === "undefined";
+      if (hasDeniedFromOsSettings) {
+        optOutOfNotifications();
+        return;
+      }
+
+      // TODO: for users that have already opted out before the new optimise opt-in notifications feature launches
       const hasAlreadyOptedOutBackwardCompatibility = Boolean(
         pushNotificationsDataOfUser?.alreadyDelayedToLater ||
           pushNotificationsDataOfUser?.dateOfNextAllowedRequest,
       );
       if (hasAlreadyOptedOutBackwardCompatibility) {
-        const today = new Date().getTime();
-        updatePushNotificationsDataOfUserInStateAndStore({
-          dismissedOptInDrawerAtList: [today],
-        });
-
+        optOutOfNotifications();
         return;
-      } else {
-        updatePushNotificationsDataOfUserInStateAndStore({
-          ...(dataOfUserFromStorage.value ?? {}),
-        });
       }
-    }
 
-    if (permission.status === "fulfilled" && dataOfUserFromStorage.status === "fulfilled") {
-      if (
-        permission.value === AuthorizationStatus.AUTHORIZED &&
-        typeof dataOfUserFromStorage.value?.dismissedOptInDrawerAtList === "undefined"
-      ) {
-        resetOptOutState();
-      }
+      updatePushNotificationsDataOfUserInStateAndStore({
+        ...(dataOfUserFromStorage.value ?? {}),
+      });
     }
   }, [
     dispatch,
     notifications,
+    optOutOfNotifications,
     pushNotificationsDataOfUser?.alreadyDelayedToLater,
     pushNotificationsDataOfUser?.dateOfNextAllowedRequest,
     resetOptOutState,
@@ -236,8 +254,8 @@ const useNotifications = () => {
     const repromptDelay = repromptSchedule[scheduleIndex];
     const nextMinimumRepromptAt = add(lastDismissedAt, repromptDelay);
 
-    const today = new Date();
-    return isBefore(nextMinimumRepromptAt, today) || isEqual(nextMinimumRepromptAt, today);
+    const now = new Date();
+    return isBefore(nextMinimumRepromptAt, now) || isEqual(nextMinimumRepromptAt, now);
   }, [
     permissionStatus,
     notifications.areNotificationsAllowed,
@@ -502,25 +520,6 @@ const useNotifications = () => {
     pushNotificationsFeature?.enabled,
     actionEvents?.stake,
   ]);
-
-  const optOutOfNotifications = useCallback(() => {
-    const today = new Date().getTime();
-
-    const dismissedOptInDrawerAtList =
-      pushNotificationsDataOfUser?.dismissedOptInDrawerAtList ?? [];
-
-    // first time opting out
-    const hasNeverSeenOptInPromptDrawer = dismissedOptInDrawerAtList.length === 0;
-    if (hasNeverSeenOptInPromptDrawer) {
-      updatePushNotificationsDataOfUserInStateAndStore({
-        dismissedOptInDrawerAtList: [today],
-      });
-    } else {
-      updatePushNotificationsDataOfUserInStateAndStore({
-        dismissedOptInDrawerAtList: [...dismissedOptInDrawerAtList, today],
-      });
-    }
-  }, [updatePushNotificationsDataOfUserInStateAndStore, pushNotificationsDataOfUser]);
 
   const handleDelayLaterPress = useCallback(() => {
     track("button_clicked", {
