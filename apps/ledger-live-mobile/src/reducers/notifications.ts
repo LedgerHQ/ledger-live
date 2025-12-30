@@ -51,8 +51,7 @@ const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
   }),
   [NotificationsActionTypes.NOTIFICATIONS_SET_PERMISSION_STATUS]: (state, action) => ({
     ...state,
-    notificationPermissionStatus: (action as Action<NotificationSetPermissionStatusPayload>)
-      .payload,
+    permissionStatus: (action as Action<NotificationSetPermissionStatusPayload>).payload,
   }),
   [NotificationsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
     state: NotificationsState,

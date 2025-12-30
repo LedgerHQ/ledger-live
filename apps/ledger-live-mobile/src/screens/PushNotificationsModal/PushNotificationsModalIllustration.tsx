@@ -12,7 +12,7 @@ export function PushNotificationsModalIllustration({
   type: NotificationsState["notificationsModalType"];
 }) {
   switch (type) {
-    case "market_starred": {
+    case "add_favorite_coin": {
       return (
         <Illustration
           lightSource={PromptNotifMarketLight}

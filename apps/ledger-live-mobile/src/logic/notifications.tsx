@@ -3,7 +3,7 @@ import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/store";
 import { add, isBefore, isEqual } from "date-fns";
 import storage from "LLM/storage";
-import { AuthorizationStatus } from "@react-native-firebase/messaging";
+import { AuthorizationStatus, getMessaging } from "@react-native-firebase/messaging";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   notificationsModalOpenSelector,
@@ -32,7 +32,6 @@ import {
 import { ScreenName } from "~/const/navigation";
 import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "~/actions/settings";
 import { NotificationsSettings, type NotificationsState } from "~/reducers/types";
-import Braze from "@braze/react-native-sdk";
 import { getIsNotifEnabled, getNotificationPermissionStatus } from "./getNotifPermissions";
 
 export type DataOfUser = {
@@ -111,6 +110,12 @@ const useNotifications = () => {
     [dispatch],
   );
 
+  const resetOptOutState = useCallback(() => {
+    updatePushNotificationsDataOfUserInStateAndStore({
+      dismissedOptInDrawerAtList: undefined,
+    });
+  }, [updatePushNotificationsDataOfUserInStateAndStore]);
+
   const initPushNotificationsData = useCallback(async () => {
     if (notifications.areNotificationsAllowed === undefined) {
       dispatch(setNotifications(settingsInitialState.notifications));
@@ -144,6 +149,7 @@ const useNotifications = () => {
         updatePushNotificationsDataOfUserInStateAndStore({
           dismissedOptInDrawerAtList: [today],
         });
+
         return;
       } else {
         updatePushNotificationsDataOfUserInStateAndStore({
@@ -151,36 +157,42 @@ const useNotifications = () => {
         });
       }
     }
+
+    if (permission.status === "fulfilled" && dataOfUserFromStorage.status === "fulfilled") {
+      if (
+        permission.value === AuthorizationStatus.AUTHORIZED &&
+        typeof dataOfUserFromStorage.value?.dismissedOptInDrawerAtList === "undefined"
+      ) {
+        resetOptOutState();
+      }
+    }
   }, [
     dispatch,
     notifications,
     pushNotificationsDataOfUser?.alreadyDelayedToLater,
     pushNotificationsDataOfUser?.dateOfNextAllowedRequest,
+    resetOptOutState,
     updatePushNotificationsDataOfUserInStateAndStore,
   ]);
 
   const requestPushNotificationsPermission = useCallback(async () => {
-    if (Platform.OS === "android") {
-      // Braze.requestPushPermission() is a no-op on Android 12 and below so we only call it on Android 13 and above
-      if (neverClickedOnAllowNotificationsButton && Platform.Version >= 33) {
-        Braze.requestPushPermission();
-      } else {
-        Linking.openSettings();
-      }
-    } else {
-      if (permissionStatus === AuthorizationStatus.DENIED) {
-        Linking.openSettings();
-      } else if (
-        permissionStatus === AuthorizationStatus.NOT_DETERMINED ||
-        permissionStatus === AuthorizationStatus.PROVISIONAL
-      ) {
-        Braze.requestPushPermission();
-      }
+    const { requestPermission } = getMessaging();
+
+    if (
+      permissionStatus === AuthorizationStatus.NOT_DETERMINED ||
+      permissionStatus === AuthorizationStatus.PROVISIONAL
+    ) {
+      return requestPermission();
     }
-    if (neverClickedOnAllowNotificationsButton) {
-      dispatch(setNeverClickedOnAllowNotificationsButton(false));
+
+    if (permissionStatus === AuthorizationStatus.DENIED) {
+      return Linking.openSettings();
     }
-  }, [neverClickedOnAllowNotificationsButton, permissionStatus, dispatch]);
+
+    if (permissionStatus === AuthorizationStatus.AUTHORIZED) {
+      return Promise.resolve(AuthorizationStatus.AUTHORIZED);
+    }
+  }, [permissionStatus]);
 
   const setPushNotificationsModalOpenCallback = useCallback(
     (isModalOpen: boolean, modalType: NotificationsState["notificationsModalType"] = "generic") => {
@@ -299,7 +311,7 @@ const useNotifications = () => {
 
     const marketCoinStarredParamsBackwardCompatibility =
       pushNotificationsFeature?.params?.marketCoinStarred;
-    // TODO: to remove once we have the new logic in place (action_events.market_starred).
+    // TODO: to remove once we have the new logic in place (action_events.add_favorite_coin).
 
     if (marketCoinStarredParamsBackwardCompatibility) {
       if (marketCoinStarredParamsBackwardCompatibility?.enabled) {
@@ -311,12 +323,12 @@ const useNotifications = () => {
       }
 
       openDrawer(
-        "market_starred",
+        "add_favorite_coin",
         marketCoinStarredParamsBackwardCompatibility?.timer ?? 0,
         ScreenName.MarketDetail,
       );
     } else {
-      const marketCoinStarredParams = actionEvents?.market_starred;
+      const marketCoinStarredParams = actionEvents?.add_favorite_coin;
       if (!marketCoinStarredParams?.enabled) {
         return;
       }
@@ -326,13 +338,13 @@ const useNotifications = () => {
         return;
       }
 
-      openDrawer("market_starred", marketCoinStarredParams?.timer ?? 0, ScreenName.MarketDetail);
+      openDrawer("add_favorite_coin", marketCoinStarredParams?.timer ?? 0, ScreenName.MarketDetail);
     }
   }, [
     checkShouldPromptOptInDrawer,
     isPushNotificationsModalLocked,
     openDrawer,
-    actionEvents?.market_starred,
+    actionEvents?.add_favorite_coin,
     pushNotificationsFeature?.params?.marketCoinStarred,
   ]);
 
@@ -530,12 +542,6 @@ const useNotifications = () => {
     optOutOfNotifications();
   }, [setPushNotificationsModalOpenCallback, optOutOfNotifications]);
 
-  const resetOptOutState = useCallback(() => {
-    updatePushNotificationsDataOfUserInStateAndStore({
-      dismissedOptInDrawerAtList: undefined,
-    });
-  }, [updatePushNotificationsDataOfUserInStateAndStore]);
-
   const handleAllowNotificationsPress = useCallback(() => {
     track("button_clicked", {
       button: "Allow",
@@ -544,14 +550,20 @@ const useNotifications = () => {
       // TODO: add the dismissed count and/or the last dismissed date
     });
     setPushNotificationsModalOpenCallback(false);
-    requestPushNotificationsPermission();
-
-    resetOptOutState();
+    requestPushNotificationsPermission().then(permission => {
+      if (permission === AuthorizationStatus.DENIED) {
+        track("os_notification_permission_denied");
+        optOutOfNotifications();
+      } else if (permission === AuthorizationStatus.AUTHORIZED) {
+        resetOptOutState();
+      }
+    });
   }, [
     pushNotificationsOldRoute,
-    setPushNotificationsModalOpenCallback,
     requestPushNotificationsPermission,
     resetOptOutState,
+    setPushNotificationsModalOpenCallback,
+    optOutOfNotifications,
   ]);
 
   return {

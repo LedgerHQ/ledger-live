@@ -425,7 +425,7 @@ export type Feature_BrazePushNotifications = Feature<{
       enabled: boolean;
       timer: number;
     };
-    market_starred: {
+    add_favorite_coin: {
       enabled: boolean;
       timer: number;
     };

@@ -125,7 +125,7 @@ export type NotificationsState = {
     | "buy"
     | "swap"
     | "stake"
-    | "market_starred";
+    | "add_favorite_coin";
   /** The route name of the current screen displayed in the app, it is updated every time the displayed screen change */
   currentRouteName?: string;
   /** The event that triggered the oppening of the push notifications modal */

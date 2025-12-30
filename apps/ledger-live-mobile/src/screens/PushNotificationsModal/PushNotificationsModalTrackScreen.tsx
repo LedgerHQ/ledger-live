@@ -13,7 +13,7 @@ export function PushNotificationsModalTrackScreen({
   let screenName = "";
 
   switch (type) {
-    case "market_starred": {
+    case "add_favorite_coin": {
       screenName = "Notification Prompt 2 - Graph";
       break;
     }
