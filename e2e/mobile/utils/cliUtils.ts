@@ -15,6 +15,7 @@ import {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
 import { isRemoteIos } from "../helpers/commonHelpers";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export type LiveDataOpts = {
   currency: string;
@@ -262,5 +263,14 @@ export const CLI = {
       const lastLine = lines[lines.length - 1] ?? "";
       return JSON.parse(lastLine);
     });
+  },
+  getAddressForAccount: async (account: Account) => {
+    const addressInfo = await CLI.getAddress({
+      currency: account.currency.speculosApp.name,
+      path: account.accountPath,
+      derivationMode: account.derivationMode,
+    });
+    account.address = addressInfo.address;
+    return addressInfo.address;
   },
 };

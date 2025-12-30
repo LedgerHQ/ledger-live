@@ -1,9 +1,8 @@
+import { Addresses } from "./Addresses";
 import { Currency } from "./Currency";
 import { TokenType } from "./TokenType";
 
 export class Account {
-  public address?: string;
-
   constructor(
     public readonly currency: Currency,
     public readonly accountName: string,
@@ -13,6 +12,7 @@ export class Account {
     public readonly ensName?: string,
     public readonly derivationMode?: string,
     public readonly parentAccount?: Account,
+    public address?: string,
   ) {}
 
   static readonly ADA_1 = new Account(Currency.ADA, "Cardano 1", 0, "1852'/1815'/0'/0/3");
@@ -234,8 +234,19 @@ export class TokenAccount extends Account {
     parentAccount: Account,
     ensName?: string,
     derivationMode?: string,
+    address?: string,
   ) {
-    super(currency, accountName, index, path, tokenType, ensName, derivationMode, parentAccount);
+    super(
+      currency,
+      accountName,
+      index,
+      path,
+      tokenType,
+      ensName,
+      derivationMode,
+      parentAccount,
+      address,
+    );
   }
 
   static readonly ETH_LIDO = new TokenAccount(
@@ -281,6 +292,9 @@ export class TokenAccount extends Account {
     Account.SOL_1.accountPath,
     TokenType.SPL,
     Account.SOL_1,
+    undefined,
+    undefined,
+    Addresses.SOL_GIGA_1_ATA_ADDRESS,
   );
   static readonly SOL_GIGA_2 = new TokenAccount(
     Currency.SOL_GIGA,

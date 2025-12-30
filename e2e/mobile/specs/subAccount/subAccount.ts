@@ -47,18 +47,16 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
                 add: true,
               });
 
-              const parentAccount = transaction.accountToCredit.parentAccount;
-              invariant(parentAccount, "Parent account is required");
+              const parentAccountToCredit = transaction.accountToCredit.parentAccount;
+              invariant(parentAccountToCredit, "Parent account to credit is required");
+              const parentAccountToDebit = transaction.accountToDebit.parentAccount;
+              invariant(parentAccountToDebit, "Parent account to debit is required");
 
-              const { address } = await CLI.getAddress({
-                currency: parentAccount.currency.id,
-                path: parentAccount.accountPath,
-                derivationMode: parentAccount.derivationMode,
-              });
+              transaction.accountToCredit.address = await CLI.getAddressForAccount(
+                transaction.accountToCredit,
+              );
 
-              transaction.accountToCredit.address = address;
-
-              return address;
+              parentAccountToDebit.address = await CLI.getAddressForAccount(parentAccountToDebit);
             },
           ]
         : []),
