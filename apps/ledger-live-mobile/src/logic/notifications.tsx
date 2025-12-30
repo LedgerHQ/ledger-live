@@ -99,7 +99,6 @@ const useNotifications = () => {
   const pushNotificationsOldRoute = useSelector(notificationsCurrentRouteNameSelector);
   const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
   const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
-  console.log("pushNotificationsDataOfUser", pushNotificationsDataOfUser);
 
   const dispatch = useDispatch();
 
@@ -205,14 +204,9 @@ const useNotifications = () => {
       permissionStatus === AuthorizationStatus.NOT_DETERMINED ||
       permissionStatus === AuthorizationStatus.PROVISIONAL
     ) {
-      return requestPermission().then(permission => {
-        console.log("permission", permission);
-        // if (permission === AuthorizationStatus.AUTHORIZED) {
-        //   dispatch(setNotificationPermissionStatus(AuthorizationStatus));
-        // }
-
-        return permission;
-      });
+      const permission = await requestPermission();
+      dispatch(setNotificationPermissionStatus(permission));
+      return permission;
     }
 
     if (permissionStatus === AuthorizationStatus.DENIED) {
@@ -460,7 +454,7 @@ const useNotifications = () => {
     optOutOfNotifications();
   }, [setPushNotificationsModalOpenCallback, optOutOfNotifications]);
 
-  const handleAllowNotificationsPress = useCallback(() => {
+  const handleAllowNotificationsPress = useCallback(async () => {
     track("button_clicked", {
       button: "Allow",
       page: pushNotificationsOldRoute,
@@ -468,14 +462,15 @@ const useNotifications = () => {
       // TODO: add the dismissed count and/or the last dismissed date
     });
     setPushNotificationsModalOpenCallback(false);
-    requestPushNotificationsPermission().then(permission => {
-      if (permission === AuthorizationStatus.DENIED) {
-        track("os_notification_permission_denied");
-        optOutOfNotifications();
-      } else if (permission === AuthorizationStatus.AUTHORIZED) {
-        resetOptOutState();
-      }
-    });
+
+    const permission = await requestPushNotificationsPermission();
+    if (permission === AuthorizationStatus.DENIED) {
+      track("os_notification_permission_denied");
+      optOutOfNotifications();
+    } else if (permission === AuthorizationStatus.AUTHORIZED) {
+      track("os_notification_permission_granted");
+      resetOptOutState();
+    }
   }, [
     pushNotificationsOldRoute,
     requestPushNotificationsPermission,
