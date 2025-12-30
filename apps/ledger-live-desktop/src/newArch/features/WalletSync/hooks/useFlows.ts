@@ -101,7 +101,7 @@ export const useFlows = () => {
         setFlow({
           flow: Flow.Activation,
           step: onboardingNewDevice ? Step.DeviceAction : Step.CreateOrSynchronize,
-          onboardingNewDevice
+          onboardingNewDevice,
         }),
       );
     }

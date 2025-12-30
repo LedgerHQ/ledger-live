@@ -80,7 +80,7 @@ export type ChangeFlowPayload = {
   step: Step;
   nextStep?: Step | null;
   hasTrustchainBeenCreated?: boolean | null;
-  onboardingNewDevice?: boolean
+  onboardingNewDevice?: boolean;
 };
 
 type HandlersPayloads = {
@@ -111,15 +111,22 @@ const handlers: WalletSyncHandlers = {
   WALLET_SYNC_CHANGE_FLOW: (
     state: WalletSyncState,
     {
-      payload: { flow, step, nextStep = null, hasTrustchainBeenCreated = null, onboardingNewDevice },
+      payload: {
+        flow,
+        step,
+        nextStep = null,
+        hasTrustchainBeenCreated = null,
+        onboardingNewDevice,
+      },
     }: { payload: ChangeFlowPayload },
-  ) =>  ({
+  ) => ({
     ...state,
     flow,
     step,
     nextStep,
     hasTrustchainBeenCreated,
-    onboardingNewDevice: onboardingNewDevice === undefined ? state.onboardingNewDevice : onboardingNewDevice
+    onboardingNewDevice:
+      onboardingNewDevice === undefined ? state.onboardingNewDevice : onboardingNewDevice,
   }),
   WALLET_SYNC_CHANGE_ADD_INSTANCE: (
     state: WalletSyncState,

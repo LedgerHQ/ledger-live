@@ -30,7 +30,7 @@ export function useAddMember({
   const sdk = useTrustchainSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const trustchain = useSelector(trustchainSelector);
-  const isOnboardingNewDevice = useSelector(walletSyncOnboardingNewDeviceSelector)
+  const isOnboardingNewDevice = useSelector(walletSyncOnboardingNewDeviceSelector);
   const [error, setError] = useState<Error | null>(null);
 
   const [userDeviceInteraction, setUserDeviceInteraction] = useState(false);
@@ -45,7 +45,7 @@ export function useAddMember({
       dispatch(setTrustchain(trustchainResult.trustchain));
       track("ledgersync_activated");
       if (sourcePage === AnalyticsPage.Onboarding) {
-        if(!isOnboardingNewDevice) {
+        if (!isOnboardingNewDevice) {
           dispatch(saveSettings({ hasCompletedOnboarding: true }));
           dispatch(setLastOnboardedDevice(device));
           history.push("/");
@@ -65,7 +65,7 @@ export function useAddMember({
         );
       }
     },
-    [device, dispatch, history, sourcePage],
+    [device, dispatch, history, sourcePage, isOnboardingNewDevice],
   );
 
   const handleMissingDevice = useCallback(() => {
