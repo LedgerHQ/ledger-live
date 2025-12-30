@@ -19,10 +19,22 @@ import modularDrawerReducer, { openDialog } from "~/renderer/reducers/modularDra
 import { useDispatch } from "react-redux";
 import { setEnv } from "@ledgerhq/live-env";
 import { setSupportedCurrencies } from "@ledgerhq/coin-framework/lib-es/currencies/support";
+import {
+  makeMockedFeatureFlagsProviderWrapper,
+  makeMockedContextValue,
+} from "@ledgerhq/live-common/featureFlags/mock";
 
 setEnv("MOCK", "true");
 
 setSupportedCurrencies(["ethereum", "arbitrum", "bitcoin"]);
+
+const mockedFeatureFlags = {
+  lldModularDrawer: { enabled: true, params: { enableModularization: true } },
+};
+
+const FeatureFlagsProvider = makeMockedFeatureFlagsProviderWrapper(
+  makeMockedContextValue(mockedFeatureFlags),
+);
 
 const createMockState = () => ({
   accounts: [ARB_ACCOUNT, ETH_ACCOUNT, BTC_ACCOUNT],
@@ -55,6 +67,7 @@ const createMockState = () => ({
     isDebuggingDuplicates: false,
     source: "sourceTest",
     dialogParams: null,
+    enableModularization: true,
   },
   countervalues: { countervalues: { state: { cache: true } } },
 });
@@ -134,10 +147,12 @@ const meta: Meta<StoryArgs> = {
   decorators: [
     Story => (
       <div style={{ minHeight: "400px", position: "relative", margin: "50px" }}>
-        <Provider store={store}>
-          <OpenDialogButton />
-          <Story />
-        </Provider>
+        <FeatureFlagsProvider>
+          <Provider store={store}>
+            <OpenDialogButton />
+            <Story />
+          </Provider>
+        </FeatureFlagsProvider>
       </div>
     ),
   ],

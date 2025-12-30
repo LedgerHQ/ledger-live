@@ -47,7 +47,7 @@ function openAssetAndAccountDialog(params: DrawerParams, dispatch: Dispatch) {
       onAccountSelected: (account, parentAccount) => {
         handleSuccess({ account, parentAccount });
       },
-      drawerConfiguration: modularDrawerConfiguration,
+      dialogConfiguration: modularDrawerConfiguration,
       useCase,
       areCurrenciesFiltered,
       onClose: handleClose,

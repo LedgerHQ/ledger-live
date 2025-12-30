@@ -29,7 +29,7 @@ function selectCurrencyDialog(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
   currencies?: CryptoOrTokenCurrency[],
   onClose?: () => void,
-  drawerConfiguration?: EnhancedModularDrawerConfiguration,
+  dialogConfiguration?: EnhancedModularDrawerConfiguration,
 ): void {
   const filteredCurrencies = currencies?.map(currency => currency.id) ?? [];
 
@@ -37,7 +37,7 @@ function selectCurrencyDialog(
     openDialog({
       currencies: filteredCurrencies,
       onAssetSelected,
-      drawerConfiguration: drawerConfiguration ?? {
+      dialogConfiguration: dialogConfiguration ?? {
         assets: { leftElement: "undefined", rightElement: "balance" },
         networks: { leftElement: "numberOfAccounts", rightElement: "balance" },
       },
@@ -156,7 +156,7 @@ export function useOpenAssetFlowDialog(
   );
 
   const openAssetFlowDialog = useCallback(
-    (drawerConfiguration?: EnhancedModularDrawerConfiguration) => {
+    (dialogConfiguration?: EnhancedModularDrawerConfiguration) => {
       if (isModularDrawerVisible(modularDrawerVisibleParams)) {
         dispatch(setFlowValue(modularDrawerVisibleParams.location));
         dispatch(setSourceValue(source));
@@ -165,7 +165,7 @@ export function useOpenAssetFlowDialog(
           openAddAccountFlow,
           undefined,
           handleClose,
-          drawerConfiguration,
+          dialogConfiguration,
         );
       } else {
         dispatch(closeDialog());
