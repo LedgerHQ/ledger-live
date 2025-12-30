@@ -1,9 +1,9 @@
-import React, { useCallback, useState, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/store";
 import { useTranslation } from "react-i18next";
 import { capitalize } from "lodash/fp";
-import { Box, Switch, Text, Button, IconsLegacy, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Box, Switch, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import SettingsRow from "~/components/SettingsRow";
 import { track, TrackScreen, updateIdentify } from "~/analytics";
@@ -14,8 +14,6 @@ import useNotifications from "~/logic/notifications";
 import { updateUserPreferences } from "~/notifications/braze";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { getNotificationPermissionStatus } from "~/logic/getNotifPermissions";
-import { setNotificationPermissionStatus } from "~/actions/notifications";
 
 const notificationsMapping = {
   areNotificationsAllowed: "allowed",
@@ -92,11 +90,8 @@ function NotificationsSettings() {
     requestPushNotificationsPermission,
     pushNotificationsOldRoute,
     hiddenNotificationCategories,
-    resetOptOutState,
-    optOutOfNotifications,
   } = useNotifications();
   const featureTransactionsAlerts = useFeature("transactionsAlerts");
-  const dispatch = useDispatch();
 
   const allowPushNotifications = useCallback(() => {
     track("button_clicked", {
@@ -107,25 +102,6 @@ function NotificationsSettings() {
   }, [pushNotificationsOldRoute, requestPushNotificationsPermission]);
 
   const isOsPermissionAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
-  useEffect(() => {
-    const interval = setInterval(() => {
-      getNotificationPermissionStatus().then(permission => {
-        if (permission !== permissionStatus) {
-          dispatch(setNotificationPermissionStatus(permission));
-          if (permission === AuthorizationStatus.AUTHORIZED) {
-            resetOptOutState();
-          }
-          if (permission === AuthorizationStatus.DENIED) {
-            optOutOfNotifications();
-          }
-        }
-      });
-    }, 500);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [permissionStatus, dispatch, resetOptOutState, optOutOfNotifications]);
 
   // Refresh user properties and send them to Segment when notifications preferences are updated
   // Also send user notifications preferences to Braze when updated

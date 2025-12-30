@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from "react";
-import { Linking, Platform } from "react-native";
+import { useCallback, useEffect, useMemo } from "react";
+import { AppState, Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/store";
 import { add, isBefore, isEqual } from "date-fns";
 import storage from "LLM/storage";
@@ -33,7 +33,7 @@ import { NavigatorName, ScreenName } from "~/const/navigation";
 import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "~/actions/settings";
 import { NotificationsSettings, type NotificationsState } from "~/reducers/types";
 import { getNotificationPermissionStatus } from "./getNotifPermissions";
-import { useNavigation } from "@react-navigation/core";
+import { useFocusEffect, useNavigation } from "@react-navigation/core";
 
 export type DataOfUser = {
   // timestamps in ms of every time the user dismisses the opt in prompt (until he opts in)
@@ -271,6 +271,18 @@ const useNotifications = () => {
     resetOptOutState,
     updatePushNotificationsDataOfUserInStateAndStore,
   ]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", nextAppState => {
+      if (nextAppState === "active") {
+        initPushNotificationsData();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [initPushNotificationsData]);
 
   const requestPushNotificationsPermission = useCallback(async () => {
     const { requestPermission } = getMessaging();
