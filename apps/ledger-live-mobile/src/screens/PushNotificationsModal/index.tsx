@@ -4,17 +4,18 @@ import { Flex, Text, Link as TextLink, Button } from "@ledgerhq/native-ui";
 import useNotifications from "~/logic/notifications";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { PushNotificationsModalIllustration } from "./PushNotificationsModalIllustration";
-import { PushNotificationsModalTrackScreen } from "./PushNotificationsModalTrackScreen";
+import { TrackScreen } from "~/analytics";
 
 const PushNotificationsModal = () => {
   const { t } = useTranslation();
   const {
     initPushNotificationsData,
-    pushNotificationsModalType,
+    drawerSource,
     isPushNotificationsModalOpen,
     handleAllowNotificationsPress,
     handleDelayLaterPress,
     handleCloseFromBackdropPress,
+    pushNotificationsOldRoute,
   } = useNotifications();
 
   useEffect(() => {
@@ -28,11 +29,16 @@ const PushNotificationsModal = () => {
       noCloseButton
       onBackdropPress={handleCloseFromBackdropPress}
     >
-      <PushNotificationsModalTrackScreen type={pushNotificationsModalType} />
+      <TrackScreen
+        category="Notification Prompt"
+        name={drawerSource}
+        source={pushNotificationsOldRoute}
+        type="drawer"
+      />
 
       <Flex mb={4}>
         <Flex alignItems={"center"}>
-          <PushNotificationsModalIllustration type={pushNotificationsModalType} />
+          <PushNotificationsModalIllustration type={drawerSource} />
 
           <Text variant="h4" fontWeight="semiBold" color="neutral.c100" mt={5}>
             {t("notifications.prompt.title")}

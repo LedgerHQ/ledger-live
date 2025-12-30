@@ -118,8 +118,9 @@ export type NotificationsState = {
   /** Boolean indicating whether the push notifications modal is opened or closed */
   isPushNotificationsModalOpen: boolean;
   /** Type of the push notifications modal to display (either the generic one or the market one) */
-  notificationsModalType:
+  drawerSource:
     | "generic"
+    | "onboarding"
     | "send"
     | "receive"
     | "buy"

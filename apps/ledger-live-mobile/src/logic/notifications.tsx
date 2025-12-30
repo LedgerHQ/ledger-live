@@ -7,7 +7,7 @@ import { AuthorizationStatus, getMessaging } from "@react-native-firebase/messag
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   notificationsModalOpenSelector,
-  notificationsModalTypeSelector,
+  drawerSourceSelector,
   notificationsCurrentRouteNameSelector,
   notificationsEventTriggeredSelector,
   notificationsDataOfUserSelector,
@@ -16,7 +16,7 @@ import {
 } from "~/reducers/notifications";
 import {
   setNotificationsModalOpen,
-  setNotificationsModalType,
+  setNotificationsDrawerSource,
   setNotificationsCurrentRouteName,
   setNotificationsEventTriggered,
   setNotificationsDataOfUser,
@@ -95,10 +95,11 @@ const useNotifications = () => {
   const neverClickedOnAllowNotificationsButton = useSelector(
     neverClickedOnAllowNotificationsButtonSelector,
   );
-  const pushNotificationsModalType = useSelector(notificationsModalTypeSelector);
+  const drawerSource = useSelector(drawerSourceSelector);
   const pushNotificationsOldRoute = useSelector(notificationsCurrentRouteNameSelector);
   const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
   const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
+  console.log("pushNotificationsDataOfUser", pushNotificationsDataOfUser);
 
   const dispatch = useDispatch();
 
@@ -213,14 +214,14 @@ const useNotifications = () => {
   }, [permissionStatus]);
 
   const setPushNotificationsModalOpenCallback = useCallback(
-    (isModalOpen: boolean, modalType: NotificationsState["notificationsModalType"] = "generic") => {
-      if (!isModalOpen) {
-        dispatch(setNotificationsModalType(modalType));
-        dispatch(setNotificationsModalOpen(isModalOpen));
+    (isOpen: boolean, drawerSource: NotificationsState["drawerSource"] = "generic") => {
+      if (!isOpen) {
+        dispatch(setNotificationsDrawerSource(drawerSource));
+        dispatch(setNotificationsModalOpen(isOpen));
         dispatch(setRatingsModalLocked(false));
       }
       if (!isPushNotificationsModalLocked) {
-        dispatch(setNotificationsModalOpen(isModalOpen));
+        dispatch(setNotificationsModalOpen(isOpen));
         dispatch(setRatingsModalLocked(true));
       }
     },
@@ -273,13 +274,13 @@ const useNotifications = () => {
 
   const openDrawer = useCallback(
     (
-      modalType: NotificationsState["notificationsModalType"],
+      drawerSource: NotificationsState["drawerSource"],
       timer: number = 0,
       routeName: ScreenName,
     ) => {
       dispatch(setRatingsModalLocked(true));
       const timeout = setTimeout(() => {
-        setPushNotificationsModalOpenCallback(true, modalType);
+        setPushNotificationsModalOpenCallback(true, drawerSource);
       }, timer);
       dispatch(
         setNotificationsEventTriggered({
@@ -340,7 +341,7 @@ const useNotifications = () => {
     // TODO: to remove once we have the new logic in place (action_events.add_favorite_coin).
 
     if (marketCoinStarredParamsBackwardCompatibility) {
-      if (marketCoinStarredParamsBackwardCompatibility?.enabled) {
+      if (!marketCoinStarredParamsBackwardCompatibility?.enabled) {
         return;
       }
       const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
@@ -392,7 +393,7 @@ const useNotifications = () => {
       }
 
       openDrawer(
-        "generic",
+        "onboarding",
         justFinishedOnboardingParamsBackwardCompatibility?.timer ?? 0,
         ScreenName.Portfolio,
       );
@@ -578,7 +579,12 @@ const useNotifications = () => {
 
     handleRouteChangePushNotification,
     pushNotificationsOldRoute,
-    pushNotificationsModalType,
+
+    /**
+     * The action that triggered the opening of the push notifications drawer
+     */
+    drawerSource,
+
     isPushNotificationsModalOpen,
 
     hiddenNotificationCategories,

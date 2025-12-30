@@ -179,7 +179,7 @@ export type NotificationsSetModalOpenPayload = NotificationsState["isPushNotific
 export type NotificationsSetModalLockedPayload =
   NotificationsState["isPushNotificationsModalLocked"];
 
-export type NotificationsSetModalTypePayload = NotificationsState["notificationsModalType"];
+export type NotificationsSetDrawerSourcePayload = NotificationsState["drawerSource"];
 
 export type NotificationsSetCurrentRouteNamePayload = NotificationsState["currentRouteName"];
 
@@ -192,7 +192,7 @@ export type NotificationsSetDataOfUserPayload = NotificationsState["dataOfUser"]
 export type NotificationsPayload =
   | NotificationsSetModalOpenPayload
   | NotificationsSetModalLockedPayload
-  | NotificationsSetModalTypePayload
+  | NotificationsSetDrawerSourcePayload
   | NotificationsSetCurrentRouteNamePayload
   | NotificationsSetEventTriggeredPayload
   | NotificationsSetDataOfUserPayload

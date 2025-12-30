@@ -9,7 +9,7 @@ import PromptNotifMarketLight from "~/images/illustration/Light/_PromptNotifMark
 export function PushNotificationsModalIllustration({
   type,
 }: {
-  type: NotificationsState["notificationsModalType"];
+  type: NotificationsState["drawerSource"];
 }) {
   switch (type) {
     case "add_favorite_coin": {
@@ -23,6 +23,7 @@ export function PushNotificationsModalIllustration({
       );
     }
     case "generic":
+    case "onboarding":
     default: {
       return (
         <Illustration

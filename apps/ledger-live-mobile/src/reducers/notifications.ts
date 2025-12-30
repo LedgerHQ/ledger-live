@@ -8,7 +8,7 @@ import type {
   NotificationsSetEventTriggeredPayload,
   NotificationsSetModalLockedPayload,
   NotificationsSetModalOpenPayload,
-  NotificationsSetModalTypePayload,
+  NotificationsSetDrawerSourcePayload,
   DangerouslyOverrideStatePayload,
   NotificationSetPermissionStatusPayload,
 } from "../actions/types";
@@ -17,7 +17,7 @@ import { NotificationsActionTypes } from "../actions/types";
 export const INITIAL_STATE: NotificationsState = {
   isPushNotificationsModalOpen: false,
   isPushNotificationsModalLocked: false,
-  notificationsModalType: "generic",
+  drawerSource: "generic",
   currentRouteName: undefined,
   eventTriggered: undefined,
   dataOfUser: undefined,
@@ -35,7 +35,7 @@ const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
   }),
   [NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_TYPE]: (state, action) => ({
     ...state,
-    notificationsModalType: (action as Action<NotificationsSetModalTypePayload>).payload,
+    drawerSource: (action as Action<NotificationsSetDrawerSourcePayload>).payload,
   }),
   [NotificationsActionTypes.NOTIFICATIONS_SET_CURRENT_ROUTE_NAME]: (state, action) => ({
     ...state,
@@ -69,7 +69,7 @@ export const notificationsModalOpenSelector = (s: State) =>
 export const notificationsModalLockedSelector = (s: State) =>
   s.notifications.isPushNotificationsModalLocked;
 
-export const notificationsModalTypeSelector = (s: State) => s.notifications.notificationsModalType;
+export const drawerSourceSelector = (s: State) => s.notifications.drawerSource;
 
 export const notificationsCurrentRouteNameSelector = (s: State) => s.notifications.currentRouteName;
 

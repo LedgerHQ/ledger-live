@@ -5,7 +5,7 @@ import type {
   NotificationsSetEventTriggeredPayload,
   NotificationsSetModalLockedPayload,
   NotificationsSetModalOpenPayload,
-  NotificationsSetModalTypePayload,
+  NotificationsSetDrawerSourcePayload,
   NotificationSetPermissionStatusPayload,
 } from "./types";
 import { NotificationsActionTypes } from "./types";
@@ -16,7 +16,7 @@ export const setNotificationsModalOpen = createAction<NotificationsSetModalOpenP
 export const setNotificationsModalLocked = createAction<NotificationsSetModalLockedPayload>(
   NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_LOCKED,
 );
-export const setNotificationsModalType = createAction<NotificationsSetModalTypePayload>(
+export const setNotificationsDrawerSource = createAction<NotificationsSetDrawerSourcePayload>(
   NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_TYPE,
 );
 export const setNotificationsCurrentRouteName =
