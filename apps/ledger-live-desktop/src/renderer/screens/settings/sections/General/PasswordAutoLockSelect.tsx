@@ -60,7 +60,7 @@ const PasswordAutoLockSelect = () => {
       minWidth={260}
       isSearchable={false}
       onChange={avoidEmptyValue}
-      renderSelected={(item: { name: string }) => item && item.name}
+      renderValue={({ data }) => data?.label}
       value={currentTimeout}
       options={timeouts}
     />

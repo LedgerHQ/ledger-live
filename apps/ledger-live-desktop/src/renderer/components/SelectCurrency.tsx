@@ -11,7 +11,7 @@ import { CreateStylesReturnType } from "~/renderer/components/Select/createStyle
 import Box from "~/renderer/components/Box";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Text from "./Text";
-import { ThemeConfig } from "react-select/src/theme";
+import { StylesConfig } from "react-select";
 
 type CurrencyOption = CryptoOrTokenCurrency & {
   value: CryptoOrTokenCurrency;
@@ -33,7 +33,7 @@ type Props = {
   isDisabled?: boolean;
   id?: string;
   renderValueOverride?: ({ data }: { data: CurrencyOption }) => React.ReactNode;
-  stylesMap?: (a: ThemeConfig) => CreateStylesReturnType<CurrencyOption>;
+  stylesMap?: (a: StylesConfig<CurrencyOption>) => CreateStylesReturnType<CurrencyOption>;
   onMenuOpen?: () => void;
   small?: boolean;
   onMenuScrollToBottom?: () => void;

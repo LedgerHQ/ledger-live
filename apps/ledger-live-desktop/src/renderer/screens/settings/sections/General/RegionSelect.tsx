@@ -72,7 +72,7 @@ const RegionSelectComponent: React.FC = () => {
         small
         minWidth={260}
         onChange={avoidEmptyValue}
-        renderSelected={(item: { label: string }) => item && item.label}
+        renderValue={({ data }) => data?.label}
         value={currentRegionOption}
         options={regionsOptions}
       />

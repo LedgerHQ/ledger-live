@@ -87,7 +87,7 @@
     "framer-motion": "^11.3.28",
     "lodash": "4",
     "react-is": "^17.0.2",
-    "react-select": "^5.2.1",
+    "react-select": "^5.10.2",
     "react-spring": "8.0.27",
     "react-transition-group": "^4.4.2",
     "react-window": "^1.8.6",
@@ -99,10 +99,10 @@
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
-    "@babel/core": "7.27.1",
-    "@babel/preset-env": "7.27.1",
-    "@babel/preset-react": "7.27.1",
-    "@babel/preset-typescript": "7.27.1",
+    "@babel/core": "7.28.5",
+    "@babel/preset-env": "7.28.5",
+    "@babel/preset-react": "7.28.5",
+    "@babel/preset-typescript": "7.28.5",
     "@storybook/addon-actions": "^8.6.12",
     "@storybook/addon-essentials": "^8.6.12",
     "@storybook/addon-interactions": "8.6.12",
