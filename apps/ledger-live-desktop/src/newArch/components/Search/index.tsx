@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, ChangeEvent } from "react";
-import { Search as LumenSearch } from "@ledgerhq/lumen-ui-react";
+import { SearchInput as LumenSearch } from "@ledgerhq/lumen-ui-react";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 
 type SearchProps = {
