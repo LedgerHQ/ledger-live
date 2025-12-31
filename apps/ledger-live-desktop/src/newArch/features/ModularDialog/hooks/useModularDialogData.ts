@@ -2,23 +2,18 @@ import { useMemo } from "react";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
+import {
+  modularDialogAreCurrenciesFiltered,
+  modularDialogCurrencies,
+  modularDialogUseCase,
+  modularDrawerSearchedSelector,
+} from "~/renderer/reducers/modularDrawer";
 import { useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
-interface UseModularDialogDataProps {
-  currencyIds?: string[];
-  useCase?: string;
-  areCurrenciesFiltered?: boolean;
-}
-
-export function useModularDialogData({
-  currencyIds,
-  useCase,
-  areCurrenciesFiltered,
-}: UseModularDialogDataProps) {
+export function useModularDialogData() {
   const modularDrawerFeature = useFeature("lldModularDrawer");
   const devMode = useEnv("MANAGER_DEV_MODE");
 
@@ -27,6 +22,10 @@ export function useModularDialogData({
     [modularDrawerFeature?.params?.backendEnvironment],
   );
   const searchedValue = useSelector(modularDrawerSearchedSelector);
+
+  const currencyIds = useSelector(modularDialogCurrencies);
+  const useCase = useSelector(modularDialogUseCase);
+  const areCurrenciesFiltered = useSelector(modularDialogAreCurrenciesFiltered);
 
   const { data, isLoading, isSuccess, error, errorInfo, loadNext, refetch } = useAssetsData({
     search: searchedValue,

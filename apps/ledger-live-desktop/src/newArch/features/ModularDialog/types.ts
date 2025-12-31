@@ -1,6 +1,3 @@
-import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, AccountLike } from "@ledgerhq/types-live";
 import { ReactNode } from "react";
 
 export type AssetType = {
@@ -30,11 +27,5 @@ export const MODULAR_DIALOG_STEP = {
 export type ModularDialogStep = (typeof MODULAR_DIALOG_STEP)[keyof typeof MODULAR_DIALOG_STEP];
 
 export type ModularDialogFlowManagerProps = {
-  currencies: string[];
-  dialogConfiguration?: EnhancedModularDrawerConfiguration;
-  useCase?: string;
-  areCurrenciesFiltered?: boolean;
-  onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;
-  onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
   onClose?: () => void;
 };

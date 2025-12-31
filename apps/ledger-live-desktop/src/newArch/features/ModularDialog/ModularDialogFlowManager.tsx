@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { MODULAR_DIALOG_STEP, ModularDialogFlowManagerProps, ModularDialogStep } from "./types";
 import AssetSelector from "./screens/AssetSelector";
@@ -11,6 +11,8 @@ import {
   modularDrawerFlowSelector,
   modularDialogIsOpenSelector,
   closeDialog,
+  modularDialogConfiguration,
+  modularDialogOnAccountSelected,
 } from "~/renderer/reducers/modularDrawer";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
@@ -20,21 +22,15 @@ import { ModularDialogContent } from "./ModularDialogContent";
 import { useTranslation } from "react-i18next";
 import { useHasAccountsForAsset } from "./hooks/useHasAccountsForAsset";
 
-const ModularDialogFlowManager = ({
-  currencies,
-  dialogConfiguration,
-  useCase,
-  areCurrenciesFiltered,
-  onAssetSelected,
-  onAccountSelected,
-  onClose,
-}: ModularDialogFlowManagerProps) => {
+const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) => {
   const { t } = useTranslation();
-  const currencyIds = useMemo(() => currencies, [currencies]);
   const dispatch = useDispatch();
-  const { currentStep, navigationDirection, goToStep } = useModularDialogNavigation();
+  const { currentStep, navigationDirection, goToStep, setCurrentStep } =
+    useModularDialogNavigation();
   const flow = useSelector(modularDrawerFlowSelector);
   const isOpen = useSelector(modularDialogIsOpenSelector);
+  const onAccountSelected = useSelector(modularDialogOnAccountSelected);
+  const dialogConfiguration = useSelector(modularDialogConfiguration);
 
   const handleClose = () => {
     track("button_clicked", {
@@ -47,10 +43,12 @@ const ModularDialogFlowManager = ({
   };
 
   useEffect(() => {
-    return () => {
+    if (isOpen) {
+      setCurrentStep(MODULAR_DIALOG_STEP.ASSET_SELECTION);
+    } else {
       dispatch(resetModularDrawerState());
-    };
-  }, [dispatch]);
+    }
+  }, [dispatch, isOpen, setCurrentStep]);
 
   const {
     errorInfo,
@@ -67,12 +65,7 @@ const ModularDialogFlowManager = ({
     assetsSorted,
   } = useModularDialogRemoteData({
     currentStep,
-    currencyIds,
     goToStep,
-    onAssetSelected,
-    isSelectAccountFlow: Boolean(onAccountSelected),
-    useCase,
-    areCurrenciesFiltered,
   });
 
   const { assetsConfiguration, networkConfiguration } = useModularDrawerConfiguration(

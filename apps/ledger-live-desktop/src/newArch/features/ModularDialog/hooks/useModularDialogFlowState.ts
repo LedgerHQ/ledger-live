@@ -8,7 +8,12 @@ import uniqWith from "lodash/uniqWith";
 
 import { belongsToSameNetwork } from "@ledgerhq/live-common/modularDrawer/utils/index";
 import { useSelector } from "LLD/hooks/redux";
-import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
+import {
+  modularDialogCurrencies,
+  modularDialogOnAccountSelected,
+  modularDialogOnAssetSelected,
+  modularDrawerSearchedSelector,
+} from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 
@@ -16,24 +21,21 @@ type Props = {
   assets: AssetData[] | undefined;
   sortedCryptoCurrencies: CryptoOrTokenCurrency[];
   setNetworksToDisplay: (networks?: CryptoOrTokenCurrency[]) => void;
-  currencyIds: string[];
   goToStep: (nextStep: ModularDialogStep) => void;
-  isSelectAccountFlow?: boolean;
-  onAssetSelected?: (asset: CryptoOrTokenCurrency) => void;
 };
 
 export function useModularDialogFlowState({
   assets,
   sortedCryptoCurrencies,
   setNetworksToDisplay,
-  currencyIds,
   goToStep,
-  isSelectAccountFlow,
-  onAssetSelected,
 }: Props) {
   const isAcceptedCurrency = useAcceptedCurrency();
   const { trackModularDialogEvent } = useModularDialogAnalytics();
   const searchedValue = useSelector(modularDrawerSearchedSelector);
+  const currencyIds = useSelector(modularDialogCurrencies);
+  const onAssetSelected = useSelector(modularDialogOnAssetSelected);
+  const onAccountSelected = useSelector(modularDialogOnAccountSelected);
 
   const [selectedAsset, setSelectedAsset] = useState<CryptoOrTokenCurrency>();
   const [selectedNetwork, setSelectedNetwork] = useState<CryptoOrTokenCurrency>();
@@ -79,19 +81,19 @@ export function useModularDialogFlowState({
       const correspondingCurrency =
         providers.networks.find(elem => belongsToSameNetwork(elem, network)) ?? network;
 
-      if (isSelectAccountFlow) {
+      if (onAccountSelected) {
         goToAccountSelection(correspondingCurrency, network);
       } else {
         onAssetSelected?.(correspondingCurrency);
       }
     },
-    [goToAccountSelection, isSelectAccountFlow, onAssetSelected, providers],
+    [goToAccountSelection, onAccountSelected, onAssetSelected, providers],
   );
 
   const getNetworksFromProvider = useCallback(
     (provider: AssetData) => {
       return provider.networks.filter(elem => {
-        const isAllowedByFilter = currencyIds.length === 0 || currencyIds.includes(elem.id);
+        const isAllowedByFilter = currencyIds?.length === 0 || currencyIds?.includes(elem.id);
 
         return isAcceptedCurrency(elem) && isAllowedByFilter;
       });
@@ -101,13 +103,13 @@ export function useModularDialogFlowState({
 
   const handleNoProvider = useCallback(
     (currency: CryptoOrTokenCurrency) => {
-      if (isSelectAccountFlow) {
+      if (onAccountSelected) {
         goToAccountSelection(currency, currency);
       } else {
         onAssetSelected?.(currency);
       }
     },
-    [isSelectAccountFlow, goToAccountSelection, onAssetSelected],
+    [onAccountSelected, goToAccountSelection, onAssetSelected],
   );
 
   const handleMultipleNetworks = useCallback(
@@ -119,13 +121,13 @@ export function useModularDialogFlowState({
 
   const handleSingleNetwork = useCallback(
     (currency: CryptoOrTokenCurrency) => {
-      if (isSelectAccountFlow) {
+      if (onAccountSelected) {
         goToAccountSelection(currency, currency);
       } else {
         onAssetSelected?.(currency);
       }
     },
-    [isSelectAccountFlow, goToAccountSelection, onAssetSelected],
+    [onAccountSelected, goToAccountSelection, onAssetSelected],
   );
 
   const handleAssetSelected = useCallback(
@@ -165,16 +167,7 @@ export function useModularDialogFlowState({
         handleAssetSelected(currency);
       }
     }
-  }, [
-    sortedCryptoCurrencies,
-    currencyIds.length,
-    goToStep,
-    handleAssetSelected,
-    selectedAsset,
-    currencyIds,
-    searchedValue,
-    assets,
-  ]);
+  }, [sortedCryptoCurrencies, goToStep, handleAssetSelected, selectedAsset, searchedValue, assets]);
 
   return {
     selectedAsset,

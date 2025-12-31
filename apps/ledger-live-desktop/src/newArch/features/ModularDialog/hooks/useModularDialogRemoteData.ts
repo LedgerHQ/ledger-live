@@ -1,4 +1,4 @@
-import { ModularDialogFlowManagerProps, ModularDialogStep } from "../types";
+import { ModularDialogStep } from "../types";
 import { useModularDialogData } from "./useModularDialogData";
 import { useModularDialogFlowState } from "./useModularDialogFlowState";
 import { useModularDialogBackButton } from "./useModularDialogBackButton";
@@ -8,22 +8,12 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 interface UseModularDialogRemoteDataProps {
   currentStep: ModularDialogStep;
-  currencyIds: string[];
-  useCase?: string;
-  areCurrenciesFiltered?: boolean;
   goToStep: (step: ModularDialogStep) => void;
-  onAssetSelected: ModularDialogFlowManagerProps["onAssetSelected"];
-  isSelectAccountFlow: boolean;
 }
 
 export function useModularDialogRemoteData({
   currentStep,
-  currencyIds,
-  useCase,
-  areCurrenciesFiltered,
   goToStep,
-  onAssetSelected,
-  isSelectAccountFlow,
 }: UseModularDialogRemoteDataProps) {
   const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>();
 
@@ -35,9 +25,9 @@ export function useModularDialogRemoteData({
     loadingStatus,
     loadNext,
     assetsSorted,
-  } = useModularDialogData({ currencyIds, useCase, areCurrenciesFiltered });
+  } = useModularDialogData();
 
-  const { assetsToDisplay } = useAssetSelection(currencyIds, sortedCryptoCurrencies);
+  const { assetsToDisplay } = useAssetSelection(sortedCryptoCurrencies);
 
   const {
     selectedAsset,
@@ -49,11 +39,8 @@ export function useModularDialogRemoteData({
   } = useModularDialogFlowState({
     assets: assetsSorted,
     sortedCryptoCurrencies,
-    currencyIds,
-    isSelectAccountFlow,
     setNetworksToDisplay,
     goToStep,
-    onAssetSelected,
   });
 
   const hasOneCurrency = useMemo(() => assetsSorted?.length === 1, [assetsSorted]);
@@ -72,7 +59,6 @@ export function useModularDialogRemoteData({
     refetch,
     loadingStatus,
     assetsToDisplay,
-
     networksToDisplay,
     selectedAsset,
     selectedNetwork,

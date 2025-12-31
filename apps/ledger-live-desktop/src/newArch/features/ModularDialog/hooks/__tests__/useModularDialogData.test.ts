@@ -5,7 +5,7 @@ import { expectedAssetsSorted } from "@ledgerhq/live-common/modularDrawer/__mock
 
 describe("useModularDialogData", () => {
   it("should return the correct data structure", async () => {
-    const { result } = renderHook(() => useModularDialogData({}));
+    const { result } = renderHook(() => useModularDialogData());
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBeUndefined();
@@ -25,7 +25,7 @@ describe("useModularDialogData", () => {
   });
 
   it("should process assets data correctly", async () => {
-    const { result } = renderHook(() => useModularDialogData({}));
+    const { result } = renderHook(() => useModularDialogData());
 
     expect(result.current.isLoading).toBe(true);
 

@@ -36,6 +36,8 @@ const FeatureFlagsProvider = makeMockedFeatureFlagsProviderWrapper(
   makeMockedContextValue(mockedFeatureFlags),
 );
 
+const onAccountSelected = fn();
+
 const createMockState = () => ({
   accounts: [ARB_ACCOUNT, ETH_ACCOUNT, BTC_ACCOUNT],
   wallet: {
@@ -66,7 +68,7 @@ const createMockState = () => ({
     isOpen: false,
     isDebuggingDuplicates: false,
     source: "sourceTest",
-    dialogParams: null,
+    dialogParams: { onAccountSelected },
     enableModularization: true,
   },
   countervalues: { countervalues: { state: { cache: true } } },
@@ -117,11 +119,7 @@ type StoryArgs = ModularDialogFlowManagerProps & ExtraStoryArgs;
 const meta: Meta<StoryArgs> = {
   title: "ModularDialog/ModularDialogFlowManager",
   component: ModularDialogFlowManager,
-  args: {
-    currencies: [],
-    onAssetSelected: () => null,
-    onAccountSelected: () => null,
-  },
+  args: {},
   argTypes: {
     assetsFilter: {
       options: [...filterOptions, "default"],
@@ -251,11 +249,6 @@ export const CustomDialogConfig: StoryObj<StoryArgs> = {
           }}
         >
           <ModularDialogFlowManager
-            currencies={[]}
-            areCurrenciesFiltered={false}
-            onAssetSelected={() => null}
-            onAccountSelected={() => null}
-            dialogConfiguration={dialogConfiguration}
             // Changing dialogConfiguration may alter which hooks are called.
             // The dynamic key ensures the component is remounted to avoid hook order violations
             key={JSON.stringify(args)}
@@ -266,11 +259,8 @@ export const CustomDialogConfig: StoryObj<StoryArgs> = {
   },
 };
 
-const onAssetSelected = fn();
-const onAccountSelected = fn();
-
 export const TestSelectAccountFlow: StoryObj<StoryArgs> = {
-  args: { onAccountSelected, onAssetSelected },
+  args: {},
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
