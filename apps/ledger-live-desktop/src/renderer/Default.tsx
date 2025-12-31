@@ -51,7 +51,6 @@ import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreO
 import {
   hasCompletedOnboardingSelector,
   hasSeenAnalyticsOptInPromptSelector,
-  shareAnalyticsSelector,
   areSettingsLoaded,
 } from "~/renderer/reducers/settings";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
@@ -62,7 +61,6 @@ import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
-import { initMixpanel } from "./analytics/mixpanel";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import { ModularDialogRoot } from "LLD/features/ModularDialog/ModularDialogRoot";
@@ -222,14 +220,6 @@ export default function Default() {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const isLocked = useSelector(isLockedSelector);
   const dispatch = useDispatch();
-  const mixpanelFF = useFeature("lldSessionReplay");
-  const shareAnalytics = useSelector(shareAnalyticsSelector);
-
-  useEffect(() => {
-    if (mixpanelFF?.enabled && shareAnalytics) {
-      initMixpanel(mixpanelFF?.params?.sampling);
-    }
-  }, [mixpanelFF, shareAnalytics]);
 
   useEffect(() => {
     if (typeof ldmkSolanaSignerFeatureFlag?.enabled === "boolean") {

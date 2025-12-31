@@ -735,9 +735,6 @@ importers:
       lodash:
         specifier: 4.17.21
         version: 4.17.21
-      mixpanel-browser:
-        specifier: 2.71.1
-        version: 2.71.1
       prando:
         specifier: 5.1.2
         version: 5.1.2
@@ -15241,21 +15238,6 @@ packages:
       '@types/react': '>=16'
       react: '>=16'
 
-  '@mixpanel/rrdom@2.0.0-alpha.18.2':
-    resolution: {integrity: sha512-vX/tbnS14ZzzatC7vOyvAm9tOLU8tof0BuppBlphzEx1YHTSw8DQiAmyAc0AmXidchLV0W+cUHV/WsehPLh2hQ==}
-
-  '@mixpanel/rrweb-snapshot@2.0.0-alpha.18.2':
-    resolution: {integrity: sha512-2kSnjZZ3QZ9zOz/isOt8s54mXUUDgXk/u0eEi/rE0xBWDeuA0NHrBcqiMc+w4F/yWWUpo5F5zcuPeYpc6ufAsw==}
-
-  '@mixpanel/rrweb-types@2.0.0-alpha.18.2':
-    resolution: {integrity: sha512-ucIYe1mfJ2UksvXW+d3bOySTB2/0yUSqQJlUydvbBz6OO2Bhq3nJHyLXV9ExkgUMZm1ZyDcvvmNUd1+5tAXlpA==}
-
-  '@mixpanel/rrweb-utils@2.0.0-alpha.18.2':
-    resolution: {integrity: sha512-OomKIB6GTx5xvCLJ7iic2khT/t/tnCJUex13aEqsbSqIT/UzUUsqf+LTrgUK5ex+f6odmkCNjre2y5jvpNqn+g==}
-
-  '@mixpanel/rrweb@2.0.0-alpha.18.2':
-    resolution: {integrity: sha512-J3dVTEu6Z4p8di7y9KKvUooNuBjX97DdG6XGWoPEPi07A9512h9M8MEtvlY3mK0PGfuC0Mz5Pv/Ws6gjGYfKQg==}
-
   '@mswjs/interceptors@0.37.6':
     resolution: {integrity: sha512-wK+5pLK5XFmgtH3aQ2YVvA3HohS3xqV/OxuVOdNx9Wpnz7VE/fnC+e1A7ln6LFYeck7gOJ/dsZV6OLplOtAJ2w==}
     engines: {node: '>=18'}
@@ -20275,9 +20257,6 @@ packages:
   '@types/crypto-js@4.2.2':
     resolution: {integrity: sha512-sDOLlVbHhXpAUAL0YHDUUwDZf3iN4Bwi4W6a0W0b+QcAezUbRtH4FVb+9J4h+XFPW7l/gQ9F8qC7P+Ec4k8QVQ==}
 
-  '@types/css-font-loading-module@0.0.7':
-    resolution: {integrity: sha512-nl09VhutdjINdWyXxHWN/w9zlNCfr60JUqJbd24YXUuCwgeL0TpFSdElCwb6cxfB6ybE19Gjj4g0jsgkXxKv1Q==}
-
   '@types/d3-array@2.3.0':
     resolution: {integrity: sha512-eBQLBDq0bcXW9K14ktZDL/oeTzhS7BIoyEb0ZQb7gq4kTI/nZD+OISrpmxFll9LIXp7gOmYk+yPPoxt3GeXtQg==}
 
@@ -21602,9 +21581,6 @@ packages:
     resolution: {integrity: sha512-IyMsxyjkJK8YWq566KyuFuh/PUiLzQ02RbUO5qa+vEQb6zIAR9MzFwN7wBmBy7wmKkjligcdNDMG5EaBRH8FxQ==}
     engines: {node: '>=16.0.0'}
 
-  '@xstate/fsm@1.6.5':
-    resolution: {integrity: sha512-b5o1I6aLNeYlU/3CPlj/Z91ybk1gUsKT+5NAJI+2W4UjvS5KLG28K9v5UvNoFVjHV8PajVZ00RH3vnjyQO7ZAw==}
-
   '@xstate/react@5.0.3':
     resolution: {integrity: sha512-Zdnn0VTPcVdoaAiW0OX6Nkvdoe7SNGjfaZqM61NKhjt2aNULqiicmDu2tOd1ChzlRWYDxGTdbzVqqVyMLpoHJw==}
     peerDependencies:
@@ -22575,10 +22551,6 @@ packages:
 
   base64-arraybuffer@0.2.0:
     resolution: {integrity: sha512-7emyCsu1/xiBXgQZrscw/8KPRT44I4Yq9Pe6EGs3aPRTsWuggML1/1DTuZUuIaJPIm1FTDUVXl4x/yW8s0kQDQ==}
-    engines: {node: '>= 0.6.0'}
-
-  base64-arraybuffer@1.0.2:
-    resolution: {integrity: sha512-I3yl4r9QB5ZRY3XuJVEPfc2XhZO6YweFPI+UovAzn+8/hb3oJ6lnysaFcjVpkCPfVWFUDvoZ8kmVDP7WyRtYtQ==}
     engines: {node: '>= 0.6.0'}
 
   base64-js@1.5.1:
@@ -30622,12 +30594,6 @@ packages:
   minizlib@3.0.2:
     resolution: {integrity: sha512-oG62iEk+CYt5Xj2YqI5Xi9xWUeZhDI8jjQmC5oThVH5JGCTgIjr7ciJDzC7MBzYd//WvR1OTmP5Q38Q8ShQtVA==}
     engines: {node: '>= 18'}
-
-  mitt@3.0.1:
-    resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
-
-  mixpanel-browser@2.71.1:
-    resolution: {integrity: sha512-TKE+3PhhyPHgkgosAtESs6g++waMmm99G0f/jGLPVGTyY4Wi3BwmqsFaxrvm6rsKt4JY6L1vkdHhoMnfG8+juA==}
 
   mkdirp-classic@0.5.3:
     resolution: {integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==}
@@ -46748,29 +46714,6 @@ snapshots:
       '@types/react': 18.2.73
       react: 18.3.1
 
-  '@mixpanel/rrdom@2.0.0-alpha.18.2':
-    dependencies:
-      '@mixpanel/rrweb-snapshot': 2.0.0-alpha.18.2
-
-  '@mixpanel/rrweb-snapshot@2.0.0-alpha.18.2':
-    dependencies:
-      postcss: 8.5.6
-
-  '@mixpanel/rrweb-types@2.0.0-alpha.18.2': {}
-
-  '@mixpanel/rrweb-utils@2.0.0-alpha.18.2': {}
-
-  '@mixpanel/rrweb@2.0.0-alpha.18.2':
-    dependencies:
-      '@mixpanel/rrdom': 2.0.0-alpha.18.2
-      '@mixpanel/rrweb-snapshot': 2.0.0-alpha.18.2
-      '@mixpanel/rrweb-types': 2.0.0-alpha.18.2
-      '@mixpanel/rrweb-utils': 2.0.0-alpha.18.2
-      '@types/css-font-loading-module': 0.0.7
-      '@xstate/fsm': 1.6.5
-      base64-arraybuffer: 1.0.2
-      mitt: 3.0.1
-
   '@mswjs/interceptors@0.37.6':
     dependencies:
       '@open-draft/deferred-promise': 2.2.0
@@ -54461,8 +54404,6 @@ snapshots:
 
   '@types/crypto-js@4.2.2': {}
 
-  '@types/css-font-loading-module@0.0.7': {}
-
   '@types/d3-array@2.3.0': {}
 
   '@types/d3-axis@3.0.6':
@@ -56325,8 +56266,6 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@xstate/fsm@1.6.5': {}
-
   '@xstate/react@5.0.3(@types/react@18.2.73)(react@18.3.1)(xstate@5.19.2)':
     dependencies:
       react: 18.3.1
@@ -57852,8 +57791,6 @@ snapshots:
   base32.js@0.1.0: {}
 
   base64-arraybuffer@0.2.0: {}
-
-  base64-arraybuffer@1.0.2: {}
 
   base64-js@1.5.1: {}
 
@@ -70641,12 +70578,6 @@ snapshots:
   minizlib@3.0.2:
     dependencies:
       minipass: 7.1.2
-
-  mitt@3.0.1: {}
-
-  mixpanel-browser@2.71.1:
-    dependencies:
-      '@mixpanel/rrweb': 2.0.0-alpha.18.2
 
   mkdirp-classic@0.5.3: {}
 

@@ -282,7 +282,6 @@ export type Features = CurrencyFeatures & {
   cantonSkipPreapprovalStep: DefaultFeature;
   noah: Feature_Noah;
   newSendFlow: Feature_NewSendFlow;
-  lldSessionReplay: Feature_LldSessionReplay;
   zcashShielded: DefaultFeature;
   llmNanoOnboardingFundWallet: DefaultFeature;
   lldRebornABtest: DefaultFeature;
@@ -784,7 +783,3 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 export type FeatureMap<T = Feature> = { [key in FeatureId]: T };
 export type OptionalFeatureMap<T = Feature> = { [key in FeatureId]?: T };
 export type FeatureParam<T extends FeatureId> = Features[T]["params"];
-
-export type Feature_LldSessionReplay = Feature<{
-  sampling: number;
-}>;
