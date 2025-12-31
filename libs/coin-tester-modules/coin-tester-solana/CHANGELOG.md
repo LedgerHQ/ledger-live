@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tester-solana
 
+## 1.8.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.91.1
+  - @ledgerhq/coin-framework@6.11.1
+  - @ledgerhq/coin-solana@0.39.1
+  - @ledgerhq/coin-tester@0.14.0
+  - @ledgerhq/cryptoassets@13.35.1
+  - @ledgerhq/live-signer-solana@0.8.1
+
 ## 1.8.1-hotfix.0
 
 ### Patch Changes

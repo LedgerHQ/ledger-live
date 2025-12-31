@@ -1,5 +1,12 @@
 # @ledgerhq/types-live
 
+## 6.91.1
+
+### Patch Changes
+
+- Updated dependencies [[`3e488d1`](https://github.com/LedgerHQ/ledger-live/commit/3e488d1f7e2972cebe8ebc519b5c56cfc8fb48ad)]:
+  - @ledgerhq/client-ids@0.2.1
+
 ## 6.91.1-hotfix.0
 
 ### Patch Changes

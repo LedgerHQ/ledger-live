@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-canton",
-  "version": "0.5.5-hotfix.0",
+  "version": "0.5.5",
   "private": true,
   "description": "Ledger Hardware Wallet Canton Application API",
   "keywords": [

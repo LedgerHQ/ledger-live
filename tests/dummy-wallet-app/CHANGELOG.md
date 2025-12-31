@@ -1,5 +1,13 @@
 # dummy-wallet-app
 
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.55.1
+  - @ledgerhq/hw-app-eth@7.1.1
+
 ## 0.11.1-hotfix.1
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/domain-service
 
+## 1.5.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.91.1
+
 ## 1.5.1-hotfix.0
 
 ### Patch Changes

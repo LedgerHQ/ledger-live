@@ -1,5 +1,14 @@
 # @ledgerhq/coin-elrond
 
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.91.1
+  - @ledgerhq/coin-framework@6.11.1
+  - @ledgerhq/cryptoassets@13.35.1
+
 ## 0.9.1-hotfix.0
 
 ### Patch Changes

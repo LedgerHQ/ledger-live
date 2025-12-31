@@ -1,5 +1,12 @@
 # @ledgerhq/device-core
 
+## 0.6.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.91.1
+
 ## 0.6.12-hotfix.0
 
 ### Patch Changes

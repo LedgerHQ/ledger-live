@@ -1,5 +1,13 @@
 # @ledgerhq/coin-modules-monitoring
 
+## 2.7.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.55.1
+  - @ledgerhq/cryptoassets@13.35.1
+
 ## 2.7.1-hotfix.1
 
 ### Patch Changes

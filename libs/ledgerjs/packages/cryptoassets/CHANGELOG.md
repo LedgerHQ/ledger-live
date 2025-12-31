@@ -1,5 +1,12 @@
 # @ledgerhq/cryptoassets
 
+## 13.35.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.91.1
+
 ## 13.35.1-hotfix.0
 
 ### Patch Changes
