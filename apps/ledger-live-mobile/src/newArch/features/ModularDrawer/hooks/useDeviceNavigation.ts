@@ -38,6 +38,11 @@ export function useDeviceNavigation({
     (selectedAsset: CryptoCurrency, createTokenAccount?: boolean) => {
       onClose?.();
       resetSelection();
+
+      // Number of screens in the navigation stack to pop when closing:
+      // SelectDevice (1) + AddAccounts flow (1) = 2 screens to pop
+      const navigationDepth = isInline ? 2 : undefined;
+
       navigation.navigate(NavigatorName.DeviceSelection, {
         screen: ScreenName.SelectDevice,
         params: {
@@ -46,6 +51,7 @@ export function useDeviceNavigation({
           context: AddAccountContexts.AddAccounts,
           inline: isInline,
           onCloseNavigation: onClose,
+          navigationDepth,
           onSuccess,
         },
       });

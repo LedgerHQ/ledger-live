@@ -12,6 +12,7 @@ type CommonParams = {
   context?: AddAccountContextType;
   onSuccess?: (res?: { scannedAccounts: Account[]; selected: Account[] }) => void;
   onCloseNavigation?: () => void;
+  navigationDepth?: number;
   sourceScreenName?: string;
 };
 

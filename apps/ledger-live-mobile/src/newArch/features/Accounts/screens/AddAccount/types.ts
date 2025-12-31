@@ -11,6 +11,8 @@ export type AddAccountContextType = `${AddAccountContexts}`;
 type CommonParams = {
   context?: AddAccountContextType;
   onCloseNavigation?: () => void;
+  // Number of navigators to pop when closing the flow (calculated at entry point)
+  navigationDepth?: number;
   currency: CryptoOrTokenCurrency;
   sourceScreenName?: string;
 };

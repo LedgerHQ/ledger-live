@@ -60,7 +60,7 @@ function ScanDeviceAccounts() {
     onModalHide,
     onPressAccount,
     quitFlow,
-    restartSubscription,
+    handleRetry,
     scannedAccounts,
     scanning,
     sections,
@@ -187,7 +187,7 @@ function ScanDeviceAccounts() {
             (!scanning && scannedAccounts.length === 0)
           }
           canDone={!scanning && cantCreateAccount && noImportableAccounts}
-          onRetry={restartSubscription}
+          onRetry={handleRetry}
           onStop={stopSubscription}
           onDone={quitFlow}
           onContinue={importAccounts}
@@ -201,10 +201,10 @@ function ScanDeviceAccounts() {
         onModalHide={onModalHide}
         footerButtons={
           <>
-            <CancelButton containerStyle={styles.button} onPress={onCancel} />
+            <CancelButton containerStyle={styles.button} onPress={onCancel} outline />
             <RetryButton
               containerStyle={[styles.button, styles.buttonRight]}
-              onPress={restartSubscription}
+              onPress={handleRetry}
             />
           </>
         }
