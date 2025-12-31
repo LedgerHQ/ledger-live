@@ -4510,6 +4510,7 @@
       "mevProtection" : "Protección contra MEV",
       "mevProtectionDesc" : "Activa la Protección contra MEV para lograr transacciones más fiables en Ethereum.",
       "mevProtectionLearnMore" : "Aviso de privacidad",
+      "mevProtectionLearnMoreUrl": "https://support.ledger.com/es/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
       "marketPerformanceWidget" : "Widget de rendimiento del mercado",
       "marketPerformanceWidgetDesc" : "Activa esta opción para ver los principales ganadores y perdedores en los periodos que selecciones en la página del portfolio."
     },

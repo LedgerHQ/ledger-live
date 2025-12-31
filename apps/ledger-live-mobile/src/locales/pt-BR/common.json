@@ -3205,6 +3205,7 @@
       "mevProtection" : "Proteção MEV",
       "mevProtectionDesc" : "Habilite a proteção MEV para realizar transações na Ethereum com mais confiança.",
       "mevProtectionLearnMore" : "Declaração de privacidade",
+      "mevProtectionLearnMoreUrl": "https://support.ledger.com/pt-BR/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
       "personalizedRecommendations" : "Experiência personalizada",
       "personalizedRecommendationsDesc" : "Permitir que a Ledger colete dados de uso do aplicativo para fornecer recomendações e conteúdo personalizados que correspondam às suas preferências e para ajudar a medir o desempenho de nossas campanhas de marketing.",
       "analyticsModal" : {

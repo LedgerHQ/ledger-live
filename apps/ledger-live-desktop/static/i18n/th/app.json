@@ -4510,6 +4510,7 @@
       "mevProtection" : "MEV Protection",
       "mevProtectionDesc" : "เปิดใช้ Mev Protection เพื่อธุรกรรมที่เชื่อถือได้มากยิ่งขึ้นบน Ethereum",
       "mevProtectionLearnMore" : "ประกาศความเป็นส่วนตัว",
+      "mevProtectionLearnMoreUrl": "https://support.ledger.com/th/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
       "marketPerformanceWidget" : "วิดเจ็ตประสิทธิภาพของตลาด",
       "marketPerformanceWidgetDesc" : "เปิดใช้งานคุณสมบัตินี้เพื่อดู Top Gainers และ Losers ในกรอบเวลาที่เลือกในหน้าพอร์ตโฟลิโอ"
     },

@@ -4510,6 +4510,7 @@
       "mevProtection" : "MEV Koruması",
       "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin.",
       "mevProtectionLearnMore" : "Gizlilik bildirimi",
+      "mevProtectionLearnMoreUrl": "https://support.ledger.com/tr/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
       "marketPerformanceWidget" : "Piyasa Performansı Widget'ı",
       "marketPerformanceWidgetDesc" : "Portföy sayfasında seçili zaman aralıklarında en çok yükselenler ve en çok düşenleri görüntülemek için bu özelliği etkinleştirin."
     },

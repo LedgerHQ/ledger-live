@@ -4510,6 +4510,7 @@
       "mevProtection" : "MEV 保护",
       "mevProtectionDesc" : "启用 MEV Protection，确保以太坊上的交易更加可靠。",
       "mevProtectionLearnMore" : "隐私声明",
+      "mevProtectionLearnMoreUrl": "https://support.ledger.com/zh-CN/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
       "marketPerformanceWidget" : "市场表现小组件",
       "marketPerformanceWidgetDesc" : "启用此功能可在资产组合页面上查看指定时间范围内获利最多和亏损最多的资产。"
     },

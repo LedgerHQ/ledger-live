@@ -102,12 +102,11 @@ const getLedgerSyncAttributes = (state: State) => {
 
 const getMEVAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
-  const mevProtection = analyticsFeatureFlagMethod("llMevProtection");
 
   const hasMEVActivated = mevProtectionSelector(state);
 
   return {
-    MEVProtectionActivated: !mevProtection?.enabled ? "Null" : hasMEVActivated ? "Yes" : "No",
+    MEVProtectionActivated: hasMEVActivated ? "Yes" : "No",
   };
 };
 

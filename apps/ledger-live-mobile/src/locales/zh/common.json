@@ -3205,6 +3205,7 @@
       "mevProtection" : "MEV 保护",
       "mevProtectionDesc" : "启用 MEV Protection，确保以太坊上的交易更加可靠。",
       "mevProtectionLearnMore" : "隐私声明",
+      "mevProtectionLearnMoreUrl": "https://support.ledger.com/zh-CN/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
       "personalizedRecommendations" : "个性化体验",
       "personalizedRecommendationsDesc" : "允许 Ledger 收集应用程序使用数据，以便我们提供符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果。",
       "analyticsModal" : {

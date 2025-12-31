@@ -7,7 +7,6 @@ import { setMevProtection } from "~/actions/settings";
 import { mevProtectionSelector } from "~/reducers/settings";
 import Track from "~/analytics/Track";
 import { track } from "~/analytics";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Linking } from "react-native";
 import styled from "styled-components/native";
 
@@ -22,9 +21,6 @@ const MevProtectionRow = () => {
   const mevProctection = useSelector(mevProtectionSelector);
 
   const dispatch = useDispatch();
-
-  const llMevProtectionFeatureFlag = useFeature("llMevProtection");
-  const mevLearnMoreLink = llMevProtectionFeatureFlag?.params?.link?.trim() || undefined;
 
   const onPressLink = (url: string) => Linking.openURL(url);
 
@@ -50,15 +46,13 @@ const MevProtectionRow = () => {
       <Text variant="body" fontWeight="medium" color="neutral.c70">
         {t("settings.display.mevProtectionDesc")}
       </Text>
-      {mevLearnMoreLink && (
-        <StyledText
-          onPress={() => onPressLink(mevLearnMoreLink)}
-          variant="body"
-          fontWeight="medium"
-        >
-          {t("settings.display.mevProtectionLearnMore")}
-        </StyledText>
-      )}
+      <StyledText
+        onPress={() => onPressLink(t("settings.display.mevProtectionLearnMoreUrl"))}
+        variant="body"
+        fontWeight="medium"
+      >
+        {t("settings.display.mevProtectionLearnMore")}
+      </StyledText>
     </Flex>
   );
 

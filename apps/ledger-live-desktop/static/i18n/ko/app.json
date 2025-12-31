@@ -4510,6 +4510,7 @@
       "mevProtection" : "MEV 보호",
       "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
       "mevProtectionLearnMore" : "개인정보 관련 고지",
+      "mevProtectionLearnMoreUrl": "https://support.ledger.com/ko/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
       "marketPerformanceWidget" : "마켓 퍼포먼스 위젯",
       "marketPerformanceWidgetDesc" : "이 기능을 활성화하면 포트폴리오 페이지에서 선택한 기간 동안 가장 큰 상승 및 하락을 기록한 코인을 확인할 수 있습니다."
     },

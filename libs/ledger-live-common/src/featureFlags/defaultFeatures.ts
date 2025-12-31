@@ -580,10 +580,6 @@ export const DEFAULT_FEATURES: Features = {
       warningVisible: true,
     },
   },
-  llMevProtection: {
-    ...DEFAULT_FEATURE,
-    params: { link: null },
-  },
   llCounterValueGranularitiesRates: {
     ...DEFAULT_FEATURE,
     params: {

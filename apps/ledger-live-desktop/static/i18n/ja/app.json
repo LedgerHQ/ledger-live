@@ -4510,6 +4510,7 @@
       "mevProtection" : "MEV保護",
       "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります。",
       "mevProtectionLearnMore" : "プライバシーに関する通知",
+      "mevProtectionLearnMoreUrl": "https://support.ledger.com/ja/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
       "marketPerformanceWidget" : "マーケットパフォーマンスウィジェット",
       "marketPerformanceWidgetDesc" : "この機能を有効化すると、ポートフォリオページで選択した時間枠の、上昇率上位と下落率上位が表示されます。"
     },

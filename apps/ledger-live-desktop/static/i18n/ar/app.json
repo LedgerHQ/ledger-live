@@ -4510,6 +4510,7 @@
       "mevProtection" : "حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV)",
       "mevProtectionDesc" : "قم بتمكين حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV) لمعاملات أكثر موثوقية على إيثريوم.",
       "mevProtectionLearnMore" : "إشعار الخصوصية",
+      "mevProtectionLearnMoreUrl": "https://support.ledger.com/ar/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
       "marketPerformanceWidget" : "أداة أداء السوق",
       "marketPerformanceWidgetDesc" : "قم بتمكين هذه الميزة لعرض أعلى الرابحين وأعلى الخاسرين خلال الفترات الزمنية المختارة في صفحة المحفظة الاستثمارية."
     },

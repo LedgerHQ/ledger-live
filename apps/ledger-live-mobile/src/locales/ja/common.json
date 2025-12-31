@@ -3205,6 +3205,7 @@
       "mevProtection" : "MEV保護",
       "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります。",
       "mevProtectionLearnMore" : "プライバシーに関する通知",
+      "mevProtectionLearnMoreUrl": "https://support.ledger.com/ja/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
       "personalizedRecommendations" : "好みに合わせてコンテンツをカスタマイズ",
       "personalizedRecommendationsDesc" : "Ledgerがアプリの使用状況データを収集して、好みに合ったパーソナライズされた推奨事項やコンテンツを提供し、Ledgerのマーケティングキャンペーンのパフォーマンスを測定できるようにします。",
       "analyticsModal" : {

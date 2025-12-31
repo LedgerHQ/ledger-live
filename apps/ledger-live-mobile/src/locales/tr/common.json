@@ -3205,6 +3205,7 @@
       "mevProtection" : "MEV Koruması",
       "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin.",
       "mevProtectionLearnMore" : "Gizlilik bildirimi",
+      "mevProtectionLearnMoreUrl": "https://support.ledger.com/tr/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
       "personalizedRecommendations" : "Kişiselleştirilmiş deneyim",
       "personalizedRecommendationsDesc" : "Size kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sunabilmemiz ve pazarlama kampanyalarımızın performansını ölçebilmemiz için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
       "analyticsModal" : {

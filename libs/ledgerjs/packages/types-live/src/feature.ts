@@ -229,7 +229,6 @@ export type Features = CurrencyFeatures & {
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
-  llMevProtection: Feature_LlMevProtection;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmRebornLP: Feature_LlmRebornLP;
   llmAccountListUI: DefaultFeature;
@@ -673,10 +672,6 @@ export type Feature_LlNftEntryPoint = Feature<{
 export type Feature_LlCounterValueGranularitiesRates = Feature<{
   daily: number;
   hourly: number;
-}>;
-
-export type Feature_LlMevProtection = Feature<{
-  link: string | null;
 }>;
 
 export type Feature_LlmMmkvMigration = Feature<{
