@@ -240,15 +240,21 @@ const useNotifications = () => {
       const hasAuthorizedFromOsSettings =
         permission.value === AuthorizationStatus.AUTHORIZED &&
         typeof dismissedOptInDrawerAtList !== "undefined";
-      if (hasAuthorizedFromOsSettings && notifications.areNotificationsAllowed) {
-        resetOptOutState();
-        return;
+      if (hasAuthorizedFromOsSettings) {
+        if (notifications.areNotificationsAllowed) {
+          track("os_notifications_allowed_from_settings_and_app_notifications_allowed");
+          resetOptOutState();
+          return;
+        } else {
+          track("os_notifications_allowed_from_settings_but_app_notifications_disabled");
+        }
       }
 
       const hasDeniedFromOsSettings =
         permission.value === AuthorizationStatus.DENIED &&
         typeof dismissedOptInDrawerAtList === "undefined";
       if (hasDeniedFromOsSettings) {
+        track("os_notifications_denied_from_settings");
         optOutOfNotifications();
         return;
       }
