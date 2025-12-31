@@ -318,7 +318,7 @@ const extraProperties = (store: ReduxStore) => {
     lldSyncOnboardingIncr1: Boolean(lldSyncOnboardingIncr1?.enabled),
     nanoOnboardingFundWallet: Boolean(nanoOnboardingFundWallet?.enabled),
     // For tracking receive flow events during onboarding
-    ...(postOnboardingInProgress ? { flow: "post-onboarding" } : {}),
+    ...(postOnboardingInProgress && !isOnboardingFlow ? { flow: "post-onboarding" } : {}),
     ...(isOnboardingFlow ? { flow: "Onboarding", ...onboardingSyncFlow } : {}),
     ...sessionReplayProperties,
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,

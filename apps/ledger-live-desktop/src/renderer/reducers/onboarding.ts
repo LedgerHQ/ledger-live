@@ -11,7 +11,7 @@ export interface OnboardingState {
 }
 
 /*
- * We have seperate states for checking if is onboarding flow
+ * We have separate states for checking if is onboarding flow
  * as we want to keep the state pure for specific flows and their dependencies
  */
 const initialState: OnboardingState = {
