@@ -25,7 +25,7 @@ export function ConfirmationScreen() {
         </div>
       </DialogBody>
 
-      <DialogFooter>
+      <DialogFooter className="px-6">
         {status === "success" && (
           <>
             <Button className="mb-16" appearance="gray" size="lg" isFull onClick={onViewDetails}>

@@ -4,7 +4,6 @@ import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import { useSendFlowContext } from "../../context/SendFlowContext";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export function useSignatureViewModel() {
   const { navigation, operation, status, state } = useSendFlowContext();
@@ -20,7 +19,8 @@ export function useSignatureViewModel() {
   const broadcast = useBroadcast({ account, parentAccount });
 
   const request = useMemo(() => {
-    const tokenCurrency = account && account.type === "TokenAccount" ? account.token : undefined;
+    const tokenCurrency =
+      (account && account.type === "TokenAccount" && account.token) || undefined;
 
     return {
       tokenCurrency,
@@ -36,15 +36,17 @@ export function useSignatureViewModel() {
       if (hasFinishedRef.current) return;
       hasFinishedRef.current = true;
       operation.onTransactionError(error);
-      if (
-        !sendFeatures.isUserRefusedTransactionError(
-          currency as CryptoCurrency | TokenCurrency,
-          error,
-        )
-      ) {
-        status.setError();
-      } else {
+      if (currency == null) {
         status.resetStatus();
+        return;
+      }
+
+      const isUserRefused = sendFeatures.isUserRefusedTransactionError(currency, error);
+
+      if (isUserRefused) {
+        status.resetStatus();
+      } else {
+        status.setError();
       }
       navigation.goToNextStep();
     },
