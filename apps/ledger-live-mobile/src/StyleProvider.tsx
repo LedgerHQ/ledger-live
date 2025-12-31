@@ -3,6 +3,8 @@ import { ThemeProvider } from "styled-components/native";
 import { palettes, defaultTheme } from "@ledgerhq/native-ui/styles/index";
 import { Theme as UITheme } from "@ledgerhq/native-ui/styles/theme";
 import { lightTheme as light, darkTheme as dark } from "./colors";
+import { ThemeProvider as LumenThemeProvider } from "@ledgerhq/lumen-ui-rnative";
+import { ledgerLiveThemes as lumenThemes } from "@ledgerhq/lumen-design-core";
 
 const themes = { light, dark };
 
@@ -29,5 +31,11 @@ export default function StyleProvider({ children, selectedPalette }: Props): Rea
     [selectedTheme.colors, selectedPalette],
   );
 
-  return <ThemeProvider theme={t}>{children}</ThemeProvider>;
+  return (
+    <ThemeProvider theme={t}>
+      <LumenThemeProvider themes={lumenThemes} colorScheme={selectedPalette} locale="en">
+        {children}
+      </LumenThemeProvider>
+    </ThemeProvider>
+  );
 }
