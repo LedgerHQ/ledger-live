@@ -34,8 +34,12 @@
   },
   "dependencies": {
     "@ledgerhq/live-env": "workspace:^",
-    "@reduxjs/toolkit": "catalog:",
     "uuid": "^9.0.0"
+  },
+  "peerDependencies": {
+    "@reduxjs/toolkit": "catalog:",
+    "react-redux": "catalog:",
+    "redux": "catalog:"
   },
   "devDependencies": {
     "@types/jest": "^29.5.10",
@@ -44,7 +48,9 @@
     "@types/uuid": "^9.0.0",
     "jest": "^29.7.0",
     "jest-util": "^29.7.0",
+    "@reduxjs/toolkit": "catalog:",
     "react-redux": "catalog:",
+    "redux": "catalog:",
     "react-dom": "catalog:",
     "react": "catalog:",
     "rimraf": "^4.4.1",

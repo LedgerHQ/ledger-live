@@ -2210,13 +2210,13 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
-      '@reduxjs/toolkit':
-        specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
     devDependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
       '@types/jest':
         specifier: ^29.5.10
         version: 29.5.14
@@ -2243,7 +2243,10 @@ importers:
         version: 18.3.1(react@18.3.1)
       react-redux:
         specifier: 'catalog:'
-        version: 9.2.0(@types/react@18.2.73)(react@18.3.1)
+        version: 9.2.0(@types/react@18.2.73)(react@18.3.1)(redux@5.0.1)
+      redux:
+        specifier: 'catalog:'
+        version: 5.0.1
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5788,9 +5791,6 @@ importers:
       '@noble/hashes':
         specifier: 1.8.0
         version: 1.8.0
-      '@reduxjs/toolkit':
-        specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@stellar/stellar-sdk':
         specifier: ^14.0.0
         version: 14.0.0
@@ -5905,6 +5905,9 @@ importers:
       qs:
         specifier: ^6.10.1
         version: 6.13.0
+      redux-actions:
+        specifier: 'catalog:'
+        version: 3.0.3
       reselect:
         specifier: 'catalog:'
         version: 5.1.1
@@ -5954,6 +5957,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
       '@solana/web3.js':
         specifier: 1.95.4
         version: 1.95.4
@@ -6058,13 +6064,13 @@ importers:
         version: 0.77.3(patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069259d3db2)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
       react-redux:
         specifier: 'catalog:'
-        version: 9.2.0(@types/react@18.2.73)(react@18.3.1)
+        version: 9.2.0(@types/react@18.2.73)(react@18.3.1)(redux@5.0.1)
       react-test-renderer:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
-      redux-actions:
+      redux:
         specifier: 'catalog:'
-        version: 3.0.3
+        version: 5.0.1
       timemachine:
         specifier: ^0.3.2
         version: 0.3.2
@@ -6197,9 +6203,6 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
-      '@reduxjs/toolkit':
-        specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       invariant:
         specifier: '2'
         version: 2.2.4
@@ -6210,6 +6213,9 @@ importers:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../types-cryptoassets
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
       '@testing-library/react':
         specifier: 14.2.2
         version: 14.2.2(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -6236,7 +6242,10 @@ importers:
         version: 18.3.1(react@18.3.1)
       react-redux:
         specifier: 'catalog:'
-        version: 9.2.0(@types/react@18.2.73)(react@18.3.1)
+        version: 9.2.0(@types/react@18.2.73)(react@18.3.1)(redux@5.0.1)
+      redux:
+        specifier: 'catalog:'
+        version: 5.0.1
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -50205,18 +50214,6 @@ snapshots:
       react: 19.2.0
       react-redux: 9.2.0(@types/react@18.2.73)(react@18.3.1)(redux@5.0.1)
 
-  '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@standard-schema/spec': 1.0.0
-      '@standard-schema/utils': 0.3.0
-      immer: 11.1.0
-      redux: 5.0.1
-      redux-thunk: 3.1.0(redux@5.0.1)
-      reselect: 5.1.1
-    optionalDependencies:
-      react: 18.3.1
-      react-redux: 9.2.0(@types/react@18.2.73)(react@18.3.1)
-
   '@rjsf/core@5.24.13(@rjsf/utils@5.24.13(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@rjsf/utils': 5.24.13(react@19.2.0)
@@ -74584,14 +74581,6 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1):
-    dependencies:
-      '@types/use-sync-external-store': 0.0.6
-      react: 18.3.1
-      use-sync-external-store: 1.6.0(react@18.3.1)
-    optionalDependencies:
-      '@types/react': 18.2.73
-
   react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1)(redux@5.0.1):
     dependencies:
       '@types/use-sync-external-store': 0.0.6
@@ -77546,7 +77535,7 @@ snapshots:
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.36.0
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
     transitivePeerDependencies:
       - metro
 

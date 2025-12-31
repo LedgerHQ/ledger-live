@@ -114,8 +114,9 @@
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
+    "@reduxjs/toolkit": "catalog:",
     "react-redux": "catalog:",
-    "redux-actions": "catalog:"
+    "redux": "catalog:"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -130,7 +131,10 @@
     "react-redux": {
       "optional": true
     },
-    "redux-actions": {
+    "@reduxjs/toolkit": {
+      "optional": true
+    },
+    "redux": {
       "optional": true
     }
   },
@@ -221,7 +225,6 @@
     "@ledgerhq/wallet-api-server": "^2.0.1",
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "1.8.0",
-    "@reduxjs/toolkit": "catalog:",
     "@stellar/stellar-sdk": "^14.0.0",
     "@stricahq/typhonjs": "^3.0.0",
     "@taquito/ledger-signer": "^23.0.0-RC.0",
@@ -261,6 +264,7 @@
     "prando": "^6.0.1",
     "qs": "^6.10.1",
     "reselect": "catalog:",
+    "redux-actions": "catalog:",
     "rlp": "^3.0.0",
     "rxjs": "catalog:",
     "semver": "^7.3.5",
@@ -314,7 +318,8 @@
     "react-native": "catalog:",
     "react-test-renderer": "catalog:",
     "react-redux": "catalog:",
-    "redux-actions": "catalog:",
+    "redux": "catalog:",
+    "@reduxjs/toolkit": "catalog:",
     "timemachine": "^0.3.2",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.4.0",

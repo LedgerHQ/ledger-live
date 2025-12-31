@@ -38,9 +38,13 @@
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@reduxjs/toolkit": "catalog:",
     "invariant": "2",
     "zod": "^3.22.4"
+  },
+  "peerDependencies": {
+    "@reduxjs/toolkit": "catalog:",
+    "react-redux": "catalog:",
+    "redux": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
@@ -48,11 +52,13 @@
     "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",
     "@types/react": "^18.0.0",
+    "@reduxjs/toolkit": "catalog:",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-redux": "catalog:",
+    "redux": "catalog:",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
     "ts-jest": "^29.1.1",
