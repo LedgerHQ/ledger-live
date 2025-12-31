@@ -1,6 +1,10 @@
 import "@jest/globals";
 import "@testing-library/jest-dom";
 import { server } from "./server";
+import { EventEmitter } from "events";
+
+// Disable max listeners warning for MSW (known issue with multiple tests)
+EventEmitter.defaultMaxListeners = 0;
 
 jest.mock("framer-motion", () => {
   const originalModule = jest.requireActual("framer-motion");
