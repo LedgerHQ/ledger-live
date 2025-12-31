@@ -99,8 +99,8 @@
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
-    "@babel/core": "7.27.1",
-    "@babel/preset-env": "7.27.1",
+    "@babel/core": "7.27.7",
+    "@babel/preset-env": "7.27.2",
     "@babel/preset-react": "7.27.1",
     "@babel/preset-typescript": "7.27.1",
     "@storybook/addon-actions": "^8.6.12",
