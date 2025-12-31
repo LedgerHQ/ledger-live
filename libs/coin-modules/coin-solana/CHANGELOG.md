@@ -1,5 +1,23 @@
 # @ledgerhq/coin-solana
 
+## 0.39.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.91.1
+  - @ledgerhq/coin-framework@6.11.1
+  - @ledgerhq/cryptoassets@13.35.1
+
+## 0.39.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.91.1-hotfix.0
+  - @ledgerhq/coin-framework@6.11.1-hotfix.0
+  - @ledgerhq/cryptoassets@13.35.1-hotfix.0
+
 ## 0.39.0
 
 ### Minor Changes

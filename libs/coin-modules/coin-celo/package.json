@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-celo",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "celo coin integration",
   "keywords": [
     "Ledger",

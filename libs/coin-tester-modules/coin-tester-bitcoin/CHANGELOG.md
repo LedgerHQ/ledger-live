@@ -1,5 +1,27 @@
 # @ledgerhq/coin-tester-bitcoin
 
+## 1.2.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.91.1
+  - @ledgerhq/coin-framework@6.11.1
+  - @ledgerhq/coin-bitcoin@0.27.1
+  - @ledgerhq/coin-tester@0.14.0
+  - @ledgerhq/cryptoassets@13.35.1
+
+## 1.2.4-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.91.1-hotfix.0
+  - @ledgerhq/coin-framework@6.11.1-hotfix.0
+  - @ledgerhq/coin-bitcoin@0.27.1-hotfix.0
+  - @ledgerhq/coin-tester@0.14.0
+  - @ledgerhq/cryptoassets@13.35.1-hotfix.0
+
 ## 1.2.3
 
 ### Patch Changes
