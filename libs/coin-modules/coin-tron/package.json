@@ -104,10 +104,9 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "rxjs": "catalog:",
-    "tronweb": "5.3.2"
+    "tronweb": "6.1.1"
   },
   "devDependencies": {
-    "@agrozyme/types-tronweb": "^5.3.2",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/bs58check": "catalog:",
