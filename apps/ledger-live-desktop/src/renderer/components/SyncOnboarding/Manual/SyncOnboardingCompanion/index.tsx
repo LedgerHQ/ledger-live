@@ -27,7 +27,11 @@ import { LockedDeviceError } from "@ledgerhq/errors";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { useTrackOnboardingFlow } from "~/renderer/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import useCompanionSteps, { READY_REDIRECT_DELAY_MS, Step, StepKey } from "./useCompanionSteps";
+import useCompanionSteps, {
+  READY_REDIRECT_DELAY_MS,
+  Step,
+  StepKey,
+} from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/hooks/useCompanionSteps";
 import TwoStepCompanion from "./TwoStepCompanion";
 
 const POLLING_PERIOD_MS = 1000;

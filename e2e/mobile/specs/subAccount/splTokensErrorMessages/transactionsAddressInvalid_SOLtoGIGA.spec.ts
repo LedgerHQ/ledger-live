@@ -1,8 +1,9 @@
 import { runSendSPLAddressInvalid } from "../subAccount";
+import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 
 const transactionE2E = {
   tx: new Transaction(Account.SOL_1, TokenAccount.SOL_GIGA_2, "0.1", undefined),
-  recipient: TokenAccount.SOL_GIGA_2.address,
+  recipient: Addresses.SOL_GIGA_2_ATA_ADDRESS,
   expectedErrorMessage: "This is a token account. Input a regular wallet address",
   xrayTicket: ["B2CQA-3084"],
   tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],

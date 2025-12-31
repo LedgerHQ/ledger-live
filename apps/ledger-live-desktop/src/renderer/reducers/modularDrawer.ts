@@ -6,7 +6,7 @@ import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/w
 
 export interface ModularDialogParams {
   currencies?: string[];
-  drawerConfiguration?: EnhancedModularDrawerConfiguration;
+  dialogConfiguration?: EnhancedModularDrawerConfiguration;
   useCase?: string;
   areCurrenciesFiltered?: boolean;
   onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;

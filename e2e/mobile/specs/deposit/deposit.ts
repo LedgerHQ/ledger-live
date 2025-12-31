@@ -2,8 +2,6 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { setEnv } from "@ledgerhq/live-env";
 import { ApplicationOptions } from "page";
 
-setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-
 const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
   CLI.liveData({
     currency: currencyApp.name,
@@ -11,6 +9,27 @@ const liveDataCommand = (currencyApp: { name: string }, index: number) => (userd
     add: true,
     appjson: userdataPath,
   });
+
+const liveDataWithAddressCommand = (account: Account) => async (userdataPath?: string) => {
+  await CLI.liveData({
+    currency: account.currency.speculosApp.name,
+    index: account.index,
+    add: true,
+    appjson: userdataPath,
+  });
+
+  const { address } = await CLI.getAddress({
+    currency: account.currency.speculosApp.name,
+    path: account.accountPath,
+    derivationMode: account.derivationMode,
+  });
+
+  account.address = address;
+
+  return address;
+};
+
+setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
@@ -33,7 +52,7 @@ export async function runCreateNewAccountAndDepositTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: currentAccount.currency.speculosApp,
-        cliCommands: [liveDataCommand(currentAccount.currency.speculosApp, currentAccount.index)],
+        cliCommands: [liveDataWithAddressCommand(currentAccount)],
       });
     });
 
@@ -63,7 +82,9 @@ export async function runSelectCryptoNetworkTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe(`Select crypto network with ${withAccount ? "account" : "no account"} for ${account.currency.ticker}`, () => {
+  describe(`Select crypto network with ${withAccount ? "account" : "no account"} for ${
+    account.currency.ticker
+  }`, () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -76,10 +97,14 @@ export async function runSelectCryptoNetworkTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`should select crypto network with ${withAccount ? "account" : "no account"} for ${account.currency.ticker}`, async () => {
-      withAccount
-        ? await app.portfolio.tapQuickActionReceiveButton()
-        : await app.portfolioEmptyState.navigateToReceive();
+    it(`should select crypto network with ${withAccount ? "account" : "no account"} for ${
+      account.currency.ticker
+    }`, async () => {
+      if (withAccount) {
+        await app.portfolio.tapQuickActionReceiveButton();
+      } else {
+        await app.portfolioEmptyState.navigateToReceive();
+      }
       await app.modularDrawer.performSearchByTicker(account.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
       await app.modularDrawer.validateNetworksScreen(networks);
@@ -117,7 +142,6 @@ export async function runSelectCryptoWithoutNetworkAndAccountTest(
 
 export async function runDepositInExistingAccountTest(
   account: Account,
-  networkName: string,
   tmsLinks: string[],
   tags: string[],
 ) {
@@ -126,7 +150,7 @@ export async function runDepositInExistingAccountTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        cliCommands: [liveDataCommand(account.currency.speculosApp, account.index)],
+        cliCommands: [liveDataWithAddressCommand(account)],
       });
     });
 

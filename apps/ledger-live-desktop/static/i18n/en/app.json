@@ -3715,6 +3715,8 @@
       "activeTooltip": "Active amount generate rewards",
       "inactiveTooltip": "Inactive amount does not generate rewards",
       "delegatedInfoTooltip": "Total amount that is delegated to validators.",
+      "inactiveStakeTooltip": "Inactive stake that can be withdrawn without deactivating your delegation.",
+      "inactiveStakeTitle": "Withdrawable Rewards",
       "withdrawableInfoTooltip": "Total amount that is withdrawable from delegations.",
       "withdrawableTitle": "Withdrawable",
       "statusUpdateNotice": "The status of the delegation will be updated when the transaction is confirmed.",
@@ -4661,7 +4663,10 @@
       },
       "modularDrawerDevTool": {
         "title": "Modular Drawer Dev Tool",
-        "description": "Allows you to test the Modular Drawer easily"
+        "description": "Allows you to test the Modular Drawer easily",
+        "openDrawer": "Open Drawer",
+        "debugDialog": "Debug Dialog",
+        "debugDuplicates": "Debug Duplicates"
       },
       "cryptoAssetsList": {
         "title": "Crypto Assets List",
@@ -7463,6 +7468,12 @@
         "text": "Once this transaction has been confirmed you will be able to receive your token. <0>Click here</0> to start the receive flow.",
         "learnMore": "Learn more"
       }
+    }
+  },
+  "dialogs": {
+    "selectAccount": {
+      "description": "You don't have {{network}} accounts yet. Please add one to continue",
+      "addAccount": "Add account"
     }
   },
   "drawers": {

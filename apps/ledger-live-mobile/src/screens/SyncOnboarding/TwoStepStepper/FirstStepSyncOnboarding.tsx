@@ -175,6 +175,7 @@ const FirstStepSyncOnboarding = ({
     productName,
     seedPathStatus,
     deviceOnboardingState,
+    analyticsSeedConfiguration,
   });
 
   // Destructure for useEffect dependency
@@ -441,10 +442,26 @@ const FirstStepSyncOnboarding = ({
       companionSteps.activeStep === FirstStepCompanionStepKey.Sync &&
       companionSteps.isLedgerSyncActive
     ) {
+      screen(
+        "Set up device: Step 4 Ledger Sync Success",
+        undefined,
+        {
+          seedConfiguration: analyticsSeedConfiguration.current,
+          flow: "onboarding",
+        },
+        true,
+        true,
+      );
       const timer = setTimeout(() => setStep(FirstStepCompanionStepKey.Ready), 1000);
       return () => clearTimeout(timer);
     }
-  }, [isFocused, companionSteps.activeStep, companionSteps.isLedgerSyncActive, setStep]);
+  }, [
+    isFocused,
+    companionSteps.activeStep,
+    companionSteps.isLedgerSyncActive,
+    setStep,
+    analyticsSeedConfiguration,
+  ]);
 
   return (
     <CollapsibleStep

@@ -1,7 +1,7 @@
 import React from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useModularDrawerAnalytics } from "../../../../analytics/useModularDialogAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../../../../analytics/modularDialog.types";
+import { useModularDialogAnalytics } from "../../../../analytics/useModularDialogAnalytics";
+import { MODULAR_DIALOG_PAGE_NAME } from "../../../../analytics/modularDialog.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { balanceItem } from "../../../../components/Balance";
@@ -25,7 +25,7 @@ export const NetworkSelectorContent = ({
   networksConfig,
   selectedAssetId,
 }: NetworkSelectorContentProps) => {
-  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const { trackModularDialogEvent } = useModularDialogAnalytics();
 
   if (!networks || networks.length === 0 || !selectedAssetId) {
     return null;
@@ -57,11 +57,11 @@ export const NetworkSelectorContent = ({
 
     if (!network) return;
 
-    trackModularDrawerEvent(
+    trackModularDialogEvent(
       "network_clicked",
       {
         network: network.name,
-        page: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
+        page: MODULAR_DIALOG_PAGE_NAME.MODULAR_NETWORK_SELECTION,
       },
       {
         formatNetworkConfig: true,

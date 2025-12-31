@@ -23,7 +23,7 @@ catalog:
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.2
   "@ledgerhq/device-transport-kit-speculos": 1.1.2
   "@ledgerhq/device-transport-kit-web-hid": 1.2.2
-  "@ledgerhq/lumen-design-core": 0.0.35
+  "@ledgerhq/lumen-design-core": 0.0.36
   "@ledgerhq/speculos-device-controller": 0.2.1
   "@react-native/assets-registry": 0.77.3
   "@react-native/babel-plugin-codegen": 0.77.3
@@ -44,6 +44,7 @@ catalog:
   ethers: 6.15.0
   i18next: 25.7.3
   isomorphic-ws: 5.0.0
+  msw: ^2.7.3
   react: 18.3.1
   react-dom: 18.3.1
   react-i18next: 16.5.0

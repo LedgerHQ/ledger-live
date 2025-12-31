@@ -4,11 +4,7 @@ module.exports = {
   testPathIgnorePatterns: ["lib/", "lib-es/"],
   roots: ["<rootDir>/src"],
   testMatch: ["**/*.test.ts"],
-  collectCoverageFrom: [
-    "src/**/*.ts",
-    "!src/**/*.d.ts",
-    "!src/**/*.test.ts",
-  ],
+  collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts", "!src/**/*.test.ts"],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
   reporters: [
     "default",

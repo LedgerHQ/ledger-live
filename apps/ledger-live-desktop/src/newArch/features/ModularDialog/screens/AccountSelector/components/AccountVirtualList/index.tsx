@@ -22,6 +22,7 @@ export const AccountVirtualList = ({
       itemHeight={64}
       bottomComponent={bottomComponent}
       renderItem={renderAccountListItem}
+      className="pb-40"
     />
   );
 };

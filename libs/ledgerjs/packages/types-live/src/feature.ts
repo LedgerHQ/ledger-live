@@ -208,6 +208,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapDetailedView: Feature_PtxSwapDetailedView;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxEarnDrawerConfiguration: Feature_PtxEarnDrawerConfiguration;
+  ptxEarnUi: Feature_PtxEarnUi;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
@@ -237,7 +238,6 @@ export type Features = CurrencyFeatures & {
   lwmLedgerSyncOptimisation: DefaultFeature;
   lwdLedgerSyncOptimisation: DefaultFeature;
   lwmNewWordingOptInNotificationsDrawer: DefaultFeature;
-  lwmOptimizeOptInNotificationsToOptOutUsers: DefaultFeature;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;
@@ -282,7 +282,7 @@ export type Features = CurrencyFeatures & {
   lldSyncOnboardingIncr1: DefaultFeature;
   cantonSkipPreapprovalStep: DefaultFeature;
   noah: Feature_Noah;
-  newSendFlow: DefaultFeature;
+  newSendFlow: Feature_NewSendFlow;
   lldSessionReplay: Feature_LldSessionReplay;
   zcashShielded: DefaultFeature;
   llmNanoOnboardingFundWallet: DefaultFeature;
@@ -738,6 +738,10 @@ export type Feature_Noah = Feature<{
   activeCurrencyIds: string[];
 }>;
 
+export type Feature_NewSendFlow = Feature<{
+  families?: string[];
+}>;
+
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
@@ -765,6 +769,9 @@ export type Feature_PtxEarnDrawerConfiguration = Feature<{
     leftElement?: "numberOfAccounts" | "numberOfAccountsAndApy" | "undefined";
     rightElement?: "balance" | "undefined";
   };
+}>;
+export type Feature_PtxEarnUi = Feature<{
+  value: string;
 }>;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;

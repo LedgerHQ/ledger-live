@@ -23,6 +23,7 @@ import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { ScreenName } from "~/const";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { EarnWebview } from "./EarnWebview";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
@@ -41,6 +42,7 @@ function Earn({ route }: Props) {
   const { language } = useSettings();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
+  const devMode = useEnv("MANAGER_DEV_MODE").toString();
   const { platform: appId, ...params } = route.params || {};
   const searchParams = useMemo(
     () => (route.path ? new URL("ledgerlive://" + route.path).searchParams : new URLSearchParams()),
@@ -53,6 +55,8 @@ function Earn({ route }: Props) {
 
   const earnFlag = useFeature("ptxEarnLiveApp");
   const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
+  const earnUiFlag = useFeature("ptxEarnUi");
+  const earnUiVersion = earnUiFlag?.params?.value ?? "v1";
   const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(earnManifestId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
@@ -88,6 +92,7 @@ function Earn({ route }: Props) {
           locale: language, // LLM doesn't support different locales. By doing this we don't have to have specific LLM/LLD logic in earn, and in future if LLM supports locales we will change this from `language` to `locale`
           countryLocale,
           currencyTicker,
+          devMode,
           discreetMode: discreet ? "true" : "false",
           stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
           stakeCurrenciesParam: stakeCurrenciesParam?.length
@@ -95,6 +100,7 @@ function Earn({ route }: Props) {
             : undefined,
           OS: Platform.OS,
           ethDepositCohort,
+          uiVersion: earnUiVersion,
           ...params,
           ...Object.fromEntries(searchParams.entries()),
         }}

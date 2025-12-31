@@ -33,10 +33,10 @@ describe("AppGeoBlocker", () => {
 
   afterEach(() => {
     cleanup();
+    server.resetHandlers();
   });
 
   it("calls window.api.appLoaded on finish if window.api exists", async () => {
-    server.use(http.get(OFAC_ENDPOINT, () => HttpResponse.json({}, { status: 200 })));
     const store = createStore({});
     render(
       <AppGeoBlocker>
@@ -48,7 +48,6 @@ describe("AppGeoBlocker", () => {
   });
 
   it("renders children when not blocked", async () => {
-    server.use(http.get(OFAC_ENDPOINT, () => HttpResponse.json({}, { status: 200 })));
     const store = createStore({});
     render(
       <AppGeoBlocker>
@@ -63,7 +62,7 @@ describe("AppGeoBlocker", () => {
 
   it("renders geoblocking UI when blocked", async () => {
     server.use(
-      http.get("*/v3/markets", () => {
+      http.get(OFAC_ENDPOINT, () => {
         return HttpResponse.json({}, { status: 451 });
       }),
     );
@@ -97,7 +96,6 @@ describe("AppGeoBlocker", () => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     window.api = undefined as never;
 
-    server.use(http.get(OFAC_ENDPOINT, () => HttpResponse.json({}, { status: 200 })));
     const store = createStore({});
     expect(() =>
       render(
@@ -110,7 +108,6 @@ describe("AppGeoBlocker", () => {
   });
 
   it("renders nothing if children is null and not blocked", async () => {
-    server.use(http.get(OFAC_ENDPOINT, () => HttpResponse.json({}, { status: 200 })));
     const store = createStore({});
     const { container } = render(<AppGeoBlocker>{null}</AppGeoBlocker>, { store });
     await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled());
@@ -119,7 +116,6 @@ describe("AppGeoBlocker", () => {
   });
 
   it("renders custom children when not blocked", async () => {
-    server.use(http.get(OFAC_ENDPOINT, () => HttpResponse.json({}, { status: 200 })));
     const store = createStore({});
     render(
       <AppGeoBlocker>

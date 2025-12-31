@@ -471,6 +471,13 @@ export const DEFAULT_FEATURES: Features = {
     params: {},
   },
 
+  ptxEarnUi: {
+    enabled: false,
+    params: {
+      value: "v1",
+    },
+  },
+
   ptxSwapLiveAppMobile: {
     enabled: false,
     params: {
@@ -602,7 +609,6 @@ export const DEFAULT_FEATURES: Features = {
   lwmLedgerSyncOptimisation: DEFAULT_FEATURE,
   lwdLedgerSyncOptimisation: DEFAULT_FEATURE,
   lwmNewWordingOptInNotificationsDrawer: DEFAULT_FEATURE,
-  lwmOptimizeOptInNotificationsToOptOutUsers: DEFAULT_FEATURE,
   lldNanoSUpsellBanners: {
     ...DEFAULT_FEATURE,
     params: {
@@ -730,7 +736,12 @@ export const DEFAULT_FEATURES: Features = {
       activeCurrencyIds: [],
     },
   },
-  newSendFlow: DEFAULT_FEATURE,
+  newSendFlow: {
+    ...DEFAULT_FEATURE,
+    params: {
+      families: [],
+    },
+  },
   cantonSkipPreapprovalStep: DEFAULT_FEATURE,
   lldSessionReplay: {
     ...DEFAULT_FEATURE,

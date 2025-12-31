@@ -50,6 +50,7 @@ import {
 } from "./deviceInteraction/TouchDeviceSimulator";
 import { withDeviceController } from "./deviceInteraction/DeviceController";
 import { sanitizeError } from ".";
+import { sendVechain } from "./families/vechain";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -354,6 +355,14 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "Ethereum",
+    },
+    dependency: "",
+  },
+  Vechain: {
+    currency: getCryptoCurrencyById("vechain"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Vechain",
     },
     dependency: "",
   },
@@ -825,13 +834,11 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.BASE:
     case Currency.POL:
     case Currency.ETH:
+    case Currency.ETH_USDT:
       await sendEVM(tx);
       break;
     case Currency.BTC:
       await sendBTC(tx);
-      break;
-    case Currency.ETH_USDT:
-      await sendEVM(tx);
       break;
     case Currency.DOGE:
     case Currency.BCH:
@@ -874,6 +881,9 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.SUI:
     case Currency.SUI_USDC:
       await sendSui(tx);
+      break;
+    case Currency.VET:
+      await sendVechain(tx);
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName.ticker}`);

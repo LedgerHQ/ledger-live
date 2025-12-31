@@ -1,27 +1,27 @@
 import { renderHook } from "tests/testSetup";
-import { useModularDrawerAnalytics } from "../useModularDialogAnalytics";
+import { useModularDialogAnalytics } from "../useModularDialogAnalytics";
 import { track } from "~/renderer/analytics/segment";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { EVENTS_NAME } from "../modularDialog.types";
 
-describe("useModularDrawerAnalytics", () => {
+describe("useModularDialogAnalytics", () => {
   it("tracks event with default params", () => {
     const madState = { flow: "testFlow", source: "testSource" };
 
-    const { result } = renderHook(() => useModularDrawerAnalytics(), {
+    const { result } = renderHook(() => useModularDialogAnalytics(), {
       initialState: { modularDrawer: madState },
     });
 
     const eventName = EVENTS_NAME.ASSET_CLICKED;
     const params = { asset: "assettest", page: "pagetest" };
 
-    result.current.trackModularDrawerEvent(eventName, params);
+    result.current.trackModularDialogEvent(eventName, params);
 
     expect(track).toHaveBeenCalledWith(eventName, { ...params, ...madState });
   });
 
   it("formats and tracks asset configuration when formatAssetConfig is true", () => {
-    const { result } = renderHook(() => useModularDrawerAnalytics());
+    const { result } = renderHook(() => useModularDialogAnalytics());
 
     const eventName = EVENTS_NAME.ASSET_CLICKED;
     const params = { asset: "assettest", page: "pagetest" };
@@ -30,7 +30,7 @@ describe("useModularDrawerAnalytics", () => {
       filter: "topNetworks",
     };
 
-    result.current.trackModularDrawerEvent(eventName, params, {
+    result.current.trackModularDialogEvent(eventName, params, {
       formatAssetConfig: true,
       assetsConfig,
     });
@@ -49,7 +49,7 @@ describe("useModularDrawerAnalytics", () => {
   });
 
   it("formats and tracks network configuration when formatNetworkConfig is true", () => {
-    const { result } = renderHook(() => useModularDrawerAnalytics());
+    const { result } = renderHook(() => useModularDialogAnalytics());
 
     const eventName = EVENTS_NAME.NETWORK_CLICKED;
     const params = { network: "networktest", page: "pagetest" };
@@ -57,7 +57,7 @@ describe("useModularDrawerAnalytics", () => {
       leftElement: "numberOfAccounts",
     };
 
-    result.current.trackModularDrawerEvent(eventName, params, {
+    result.current.trackModularDialogEvent(eventName, params, {
       formatNetworkConfig: true,
       networksConfig,
     });
