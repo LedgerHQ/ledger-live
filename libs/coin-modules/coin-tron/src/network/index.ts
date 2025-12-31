@@ -9,7 +9,7 @@ import drop from "lodash/drop";
 import sumBy from "lodash/sumBy";
 import take from "lodash/take";
 import { stringify } from "querystring";
-import TronWeb from "tronweb";
+import { TronWeb, providers } from "tronweb";
 import coinConfig from "../config";
 import type {
   FreezeTransactionData,
@@ -288,7 +288,7 @@ async function extendExpiration(
   preparedTransaction: any,
   expiration?: number,
 ): Promise<SendTransactionDataSuccess> {
-  const HttpProvider = TronWeb.providers.HttpProvider;
+  const HttpProvider = providers.HttpProvider;
   const fullNode = new HttpProvider(getBaseApiUrl());
   const solidityNode = new HttpProvider(getBaseApiUrl());
   const eventServer = new HttpProvider(getBaseApiUrl());

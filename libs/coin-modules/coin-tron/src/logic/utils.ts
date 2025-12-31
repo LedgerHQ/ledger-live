@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { createHash } from "crypto";
 import get from "lodash/get";
-import TronWeb from "tronweb";
+import { TronWeb, providers, utils } from "tronweb";
 import coinConfig from "../config";
 import { TronResources, UnFrozenInfo } from "../types";
 
@@ -10,7 +10,7 @@ export function createTronWeb(trongridUrl?: string): TronWeb {
     trongridUrl = coinConfig.getCoinConfig().explorer.url;
   }
 
-  const HttpProvider = TronWeb.providers.HttpProvider;
+  const HttpProvider = providers.HttpProvider;
   const fullNode = new HttpProvider(trongridUrl);
   const solidityNode = new HttpProvider(trongridUrl);
   const eventServer = new HttpProvider(trongridUrl);
@@ -224,11 +224,11 @@ function convertHexToBase58(address: string): string {
 }
 
 function convertBufferToHex(address: Buffer): string {
-  return (TronWeb.utils.bytes.byteArray2hexStr(address) as string).toLowerCase();
+  return (utils.bytes.byteArray2hexStr(address) as string).toLowerCase();
 }
 
 function convertBufferToString(address: Buffer): string {
-  return TronWeb.utils.bytes.bytesToString(address);
+  return utils.bytes.bytesToString(address);
 }
 
 export type AccountInfo = {
