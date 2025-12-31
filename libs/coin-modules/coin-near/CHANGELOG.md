@@ -1,5 +1,14 @@
 # @ledgerhq/coin-near
 
+## 0.17.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.91.1-hotfix.0
+  - @ledgerhq/coin-framework@6.11.1-hotfix.0
+  - @ledgerhq/cryptoassets@13.35.1-hotfix.0
+
 ## 0.17.0
 
 ### Minor Changes

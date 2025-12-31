@@ -1,5 +1,15 @@
 # @ledgerhq/coin-hedera
 
+## 1.16.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.91.1-hotfix.0
+  - @ledgerhq/coin-framework@6.11.1-hotfix.0
+  - @ledgerhq/cryptoassets@13.35.1-hotfix.0
+  - @ledgerhq/live-countervalues@0.10.4-hotfix.0
+
 ## 1.16.1-hotfix.0
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # @ledgerhq/live-cli
 
+## 24.30.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.55.1-hotfix.1
+  - @ledgerhq/coin-framework@6.11.1-hotfix.0
+  - @ledgerhq/coin-bitcoin@0.27.1-hotfix.0
+  - @ledgerhq/device-core@0.6.12-hotfix.0
+  - @ledgerhq/cryptoassets@13.35.1-hotfix.0
+  - @ledgerhq/live-countervalues@0.10.4-hotfix.0
+  - @ledgerhq/live-wallet@0.17.1-hotfix.0
+
 ## 24.30.1-hotfix.0
 
 ### Patch Changes

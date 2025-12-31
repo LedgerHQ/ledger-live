@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-vet
 
+## 0.8.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/cryptoassets@13.35.1-hotfix.0
+
 ## 0.8.2
 
 ### Patch Changes

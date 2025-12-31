@@ -157,6 +157,7 @@
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "dirty-worms-notice",
     "smart-donkeys-dress"
   ]
 }

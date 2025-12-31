@@ -1,5 +1,14 @@
 # @ledgerhq/hw-app-eth
 
+## 7.1.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.91.1-hotfix.0
+  - @ledgerhq/domain-service@1.5.1-hotfix.0
+  - @ledgerhq/evm-tools@1.9.0
+
 ## 7.1.0
 
 ### Minor Changes

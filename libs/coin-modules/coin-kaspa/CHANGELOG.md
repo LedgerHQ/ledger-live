@@ -1,5 +1,14 @@
 # @ledgerhq/coin-framework
 
+## 1.6.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.91.1-hotfix.0
+  - @ledgerhq/coin-framework@6.11.1-hotfix.0
+  - @ledgerhq/cryptoassets@13.35.1-hotfix.0
+
 ## 1.6.0
 
 ### Minor Changes

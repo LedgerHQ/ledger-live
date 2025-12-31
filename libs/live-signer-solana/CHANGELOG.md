@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-solana
 
+## 0.8.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-solana@0.39.1-hotfix.0
+
 ## 0.8.0
 
 ### Minor Changes

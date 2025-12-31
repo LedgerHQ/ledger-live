@@ -1,5 +1,18 @@
 # web-tools
 
+## 0.27.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.55.1-hotfix.1
+  - @ledgerhq/types-live@6.91.1-hotfix.0
+  - @ledgerhq/coin-framework@6.11.1-hotfix.0
+  - @ledgerhq/domain-service@1.5.1-hotfix.0
+  - @ledgerhq/cryptoassets@13.35.1-hotfix.0
+  - @ledgerhq/hw-app-eth@7.1.1-hotfix.0
+  - @ledgerhq/live-wallet@0.17.1-hotfix.0
+
 ## 0.27.1-hotfix.0
 
 ### Patch Changes

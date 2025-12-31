@@ -1,5 +1,16 @@
 # @ledgerhq/coin-celo
 
+## 1.8.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.91.1-hotfix.0
+  - @ledgerhq/coin-framework@6.11.1-hotfix.0
+  - @ledgerhq/coin-evm@2.37.1-hotfix.0
+  - @ledgerhq/cryptoassets@13.35.1-hotfix.0
+  - @ledgerhq/hw-app-eth@7.1.1-hotfix.0
+
 ## 1.8.0
 
 ### Minor Changes

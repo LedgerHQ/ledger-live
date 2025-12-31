@@ -1,5 +1,11 @@
 # @ledgerhq/client-ids
 
+## 0.2.1-hotfix.0
+
+### Patch Changes
+
+- [#13494](https://github.com/LedgerHQ/ledger-live/pull/13494) [`3e488d1`](https://github.com/LedgerHQ/ledger-live/commit/3e488d1f7e2972cebe8ebc519b5c56cfc8fb48ad) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Make client-ids package public to be published on npm
+
 ## 0.2.0
 
 ### Minor Changes

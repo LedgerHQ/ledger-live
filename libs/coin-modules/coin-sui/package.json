@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "0.19.0",
+  "version": "0.19.1-hotfix.0",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",

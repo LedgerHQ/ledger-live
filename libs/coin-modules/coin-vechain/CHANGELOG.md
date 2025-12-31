@@ -1,5 +1,13 @@
 # @ledgerhq/coin-evm
 
+## 2.14.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@6.11.1-hotfix.0
+  - @ledgerhq/cryptoassets@13.35.1-hotfix.0
+
 ## 2.14.0
 
 ### Minor Changes
