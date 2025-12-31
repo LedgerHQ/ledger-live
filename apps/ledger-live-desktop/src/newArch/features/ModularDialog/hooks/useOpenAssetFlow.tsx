@@ -115,10 +115,10 @@ export function useOpenAssetFlowDialog(
         });
       };
 
-      const onFlowFinishedWithModalReopen = () => {
+      const onFlowFinishedWithModalReopen = (account: AccountLike, parentAccount?: Account) => {
         setDrawer();
         if (modalNameToReopen) {
-          dispatch(openModal(modalNameToReopen, undefined));
+          dispatch(openModal(modalNameToReopen, { account, parentAccount }));
         }
       };
       if (featureNetworkBasedAddAccount?.enabled) {
