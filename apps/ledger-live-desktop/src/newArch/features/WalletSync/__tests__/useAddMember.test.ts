@@ -11,6 +11,11 @@ import {
   TrustchainAlreadyInitializedWithOtherSeed,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
+jest.mock("~/renderer/reducers/walletSync", () => ({
+  ...jest.requireActual("~/renderer/reducers/walletSync"),
+  walletSyncOnboardingNewDeviceSelector: jest.fn().mockReturnValue(false),
+}));
+
 const device = { deviceId: "", modelId: DeviceModelId.stax, wired: true };
 const trustchain = {
   rootId: "trustchainId",
@@ -32,6 +37,7 @@ describe("useAddMember", () => {
       trustchain,
       type: TrustchainResultType.created,
     });
+
     const { result } = renderHook(() => useAddMember({ device }));
 
     await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
