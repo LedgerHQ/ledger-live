@@ -3,10 +3,17 @@ import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
-import { useSendFlowContext } from "../../context/SendFlowContext";
+import {
+  useSendFlowActions,
+  useSendFlowData,
+  useSendFlowNavigation,
+} from "../../context/SendFlowContext";
 
 export function useSignatureViewModel() {
-  const { navigation, operation, status, state } = useSendFlowContext();
+  const { navigation } = useSendFlowNavigation();
+  const { operation, status } = useSendFlowActions();
+  const { state } = useSendFlowData();
+
   const hasFinishedRef = useRef(false);
 
   const account = state.account.account;

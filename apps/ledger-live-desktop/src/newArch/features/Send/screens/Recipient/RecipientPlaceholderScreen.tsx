@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, AddressInput } from "@ledgerhq/lumen-ui-react";
-import { useSendFlowContext } from "../../context/SendFlowContext";
-
+import { useSendFlowActions, useSendFlowNavigation } from "../../context/SendFlowContext";
 export function RecipientPlaceholderScreen() {
   const { t } = useTranslation();
-  const { navigation, transaction } = useSendFlowContext();
+  const { navigation } = useSendFlowNavigation();
+  const { transaction } = useSendFlowActions();
   const [address, setAddress] = useState("");
 
   const handleAddressChange = useCallback(

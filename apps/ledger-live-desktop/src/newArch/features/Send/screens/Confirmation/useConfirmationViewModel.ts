@@ -1,10 +1,14 @@
 import { useCallback, useMemo } from "react";
-import { useSendFlowContext } from "../../context/SendFlowContext";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import type { SendFlowOperationResult } from "../../types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import {
+  useSendFlowActions,
+  useSendFlowData,
+  useSendFlowNavigation,
+} from "../../context/SendFlowContext";
 
 type ConfirmationStatus = "success" | "refused" | "error" | "idle";
 
@@ -34,7 +38,9 @@ function getConfirmationStatus(
 }
 
 export function useConfirmationViewModel() {
-  const { close, state, navigation, operation, status: statusActions } = useSendFlowContext();
+  const { navigation } = useSendFlowNavigation();
+  const { close, status: statusActions, operation } = useSendFlowActions();
+  const { state } = useSendFlowData();
   const { account, parentAccount } = state.account;
 
   const status = useMemo(
