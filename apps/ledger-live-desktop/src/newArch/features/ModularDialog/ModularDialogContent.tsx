@@ -38,8 +38,7 @@ export const ModularDialogContent = ({
         onClose={handleClose}
         onBack={handleBack}
       />
-      {/* The shrink-0 must stay until we got a fix from lumen team for the DialogBody (because of the flex-1) */}
-      <DialogBody className="shrink-0 !px-16">
+      <DialogBody className="!px-16">
         <AnimatedScreenWrapper
           key={`${currentStep}-${navigationDirection}`}
           screenKey={currentStep}
