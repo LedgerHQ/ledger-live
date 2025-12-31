@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { AppState, Linking, Platform } from "react-native";
+import { AppState, Linking } from "react-native";
 import { useSelector, useDispatch } from "~/context/store";
 import { add, isBefore, isEqual } from "date-fns";
 import storage from "LLM/storage";
@@ -24,16 +24,12 @@ import {
 } from "~/actions/notifications";
 import { setRatingsModalLocked } from "~/actions/ratings";
 import { track } from "~/analytics";
-import {
-  notificationsSelector,
-  INITIAL_STATE as settingsInitialState,
-  neverClickedOnAllowNotificationsButtonSelector,
-} from "~/reducers/settings";
+import { notificationsSelector, INITIAL_STATE as settingsInitialState } from "~/reducers/settings";
 import { NavigatorName, ScreenName } from "~/const/navigation";
-import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "~/actions/settings";
+import { setNotifications } from "~/actions/settings";
 import { NotificationsSettings, type NotificationsState } from "~/reducers/types";
 import { getNotificationPermissionStatus } from "./getNotifPermissions";
-import { useFocusEffect, useNavigation } from "@react-navigation/core";
+import { useNavigation } from "@react-navigation/core";
 
 export type DataOfUser = {
   // timestamps in ms of every time the user dismisses the opt in prompt (until he opts in)
@@ -153,9 +149,6 @@ const useNotifications = () => {
 
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
   const isPushNotificationsModalLocked = useSelector(notificationsModalLockedSelector);
-  // const neverClickedOnAllowNotificationsButton = useSelector(
-  //   neverClickedOnAllowNotificationsButtonSelector,
-  // );
   const drawerSource = useSelector(drawerSourceSelector);
   const pushNotificationsOldRoute = useSelector(notificationsCurrentRouteNameSelector);
   const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);

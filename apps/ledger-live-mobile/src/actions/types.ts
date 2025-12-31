@@ -301,7 +301,6 @@ export enum SettingsActionTypes {
   SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
   SET_IS_REBORN = "SET_IS_REBORN",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
-  SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON = "SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
   SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
   SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
@@ -380,8 +379,6 @@ export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
 export type SettingsSetClosedWithdrawBannerPayload = boolean;
 
 export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
-export type SettingsSetNeverClickedOnAllowNotificationsButton =
-  SettingsState["neverClickedOnAllowNotificationsButton"];
 export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
   SettingsState["walletTabNavigatorLastVisitedTab"];
 export type SettingsSetDateFormatPayload = SettingsState["dateFormat"];

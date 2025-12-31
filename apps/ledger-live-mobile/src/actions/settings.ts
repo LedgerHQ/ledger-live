@@ -24,7 +24,6 @@ import {
   SettingsSetLastConnectedDevicePayload,
   SettingsSetLocalePayload,
   SettingsSetNotificationsPayload,
-  SettingsSetNeverClickedOnAllowNotificationsButton,
   SettingsSetOrderAccountsPayload,
   SettingsSetOsThemePayload,
   SettingsSetPrivacyBiometricsPayload,
@@ -213,10 +212,7 @@ export const setOnboardingType = createAction<SettingsSetOnboardingTypePayload>(
 export const setNotifications = createAction<SettingsSetNotificationsPayload>(
   SettingsActionTypes.SET_NOTIFICATIONS,
 );
-export const setNeverClickedOnAllowNotificationsButton =
-  createAction<SettingsSetNeverClickedOnAllowNotificationsButton>(
-    SettingsActionTypes.SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON,
-  );
+
 export const setCloseWithdrawBanner = createAction<SettingsSetClosedWithdrawBannerPayload>(
   SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER,
 );
