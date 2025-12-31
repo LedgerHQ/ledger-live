@@ -15,7 +15,7 @@ import { StepProps } from "../types";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import EditOperationPanel from "~/renderer/components/OperationsList/EditOperationPanel";
 import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setMemoTagInfoBoxDisplay } from "~/renderer/actions/UI";
 import {
   forceAutoFocusOnMemoFieldSelector,

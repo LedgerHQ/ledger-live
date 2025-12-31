@@ -7,7 +7,7 @@ import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/modularDrawer.types
 import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import {
   localeSelector,
   discreetModeSelector,

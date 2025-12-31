@@ -147,8 +147,8 @@ describe("useAddMember", () => {
   });
 });
 
-jest.mock("react-redux", () => {
-  const actual = jest.requireActual("react-redux");
+jest.mock("LLD/hooks/redux", () => {
+  const actual = jest.requireActual("LLD/hooks/redux");
   const dispatch = jest.fn();
   return {
     ...actual,

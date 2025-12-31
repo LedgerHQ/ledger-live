@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { modularDialogParamsSelector, closeDialog } from "~/renderer/reducers/modularDrawer";
 import ModularDialogFlowManager from "./ModularDialogFlowManager";
 

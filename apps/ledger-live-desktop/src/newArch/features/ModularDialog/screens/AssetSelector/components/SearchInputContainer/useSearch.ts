@@ -1,7 +1,7 @@
 import { ChangeEvent, useCallback } from "react";
 import { useModularDialogAnalytics } from "LLD/features/ModularDialog/analytics/useModularDialogAnalytics";
 import { MODULAR_DIALOG_PAGE_NAME } from "LLD/features/ModularDialog/analytics/modularDialog.types";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSearch";
 import { modularDrawerSearchedSelector, setSearchedValue } from "~/renderer/reducers/modularDrawer";
 

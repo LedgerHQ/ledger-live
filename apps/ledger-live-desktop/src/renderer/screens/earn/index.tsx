@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import React, { useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
 import Card from "~/renderer/components/Box/Card";
 import { useDiscreetMode } from "~/renderer/components/Discreet";

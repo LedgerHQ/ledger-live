@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { Flex } from "@ledgerhq/react-ui";
 import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
 import { urls } from "~/config/urls";

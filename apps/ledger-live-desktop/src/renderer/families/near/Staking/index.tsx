@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import invariant from "invariant";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { useNearMappedStakingPositions } from "@ledgerhq/live-common/families/near/react";

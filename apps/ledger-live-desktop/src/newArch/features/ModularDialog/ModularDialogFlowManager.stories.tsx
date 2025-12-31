@@ -16,7 +16,7 @@ import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/a
 import ModularDialogFlowManager from "./ModularDialogFlowManager";
 import { ModularDialogFlowManagerProps } from "./types";
 import modularDrawerReducer, { openDialog } from "~/renderer/reducers/modularDrawer";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setEnv } from "@ledgerhq/live-env";
 import { setSupportedCurrencies } from "@ledgerhq/coin-framework/lib-es/currencies/support";
 import {

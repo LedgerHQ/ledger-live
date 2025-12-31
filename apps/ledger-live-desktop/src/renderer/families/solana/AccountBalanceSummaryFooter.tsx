@@ -1,7 +1,7 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import React from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box/Box";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";

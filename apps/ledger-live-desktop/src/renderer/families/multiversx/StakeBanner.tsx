@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import { AccountBannerState } from "@ledgerhq/live-common/families/multiversx/banner";
 

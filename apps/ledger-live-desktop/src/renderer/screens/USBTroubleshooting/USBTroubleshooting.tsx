@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import ConnectionTester from "./ConnectionTester";
 import Button from "~/renderer/components/Button";

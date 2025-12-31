@@ -10,7 +10,7 @@ import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import EmptyList from "../../../../components/EmptyList";
 import { balanceItem } from "../../../../components/Balance";
 import { useBalanceDeps } from "../../../../hooks/useBalanceDeps";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";

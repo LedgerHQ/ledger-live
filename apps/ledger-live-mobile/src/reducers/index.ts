@@ -1,7 +1,6 @@
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
-import type { ActionsPayload } from "../actions/types";
 import accounts from "./accounts";
 import appstate from "./appstate";
 import auth from "./auth";
@@ -26,6 +25,7 @@ import wallet from "./wallet";
 import walletconnect from "./walletconnect";
 import walletSync from "./walletSync";
 import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import type { UnknownAction } from "@reduxjs/toolkit";
 
 export type AppStore = Store<State>;
 
@@ -58,7 +58,7 @@ const appReducer = combineReducers({
 });
 
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>
-const rootReducer = (state: State | undefined, action: ActionsPayload) => {
+const rootReducer = (state: State | undefined, action: UnknownAction) => {
   return appReducer(state, action);
 };
 

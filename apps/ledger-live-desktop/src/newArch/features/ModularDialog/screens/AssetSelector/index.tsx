@@ -6,7 +6,7 @@ import { MODULAR_DIALOG_PAGE_NAME } from "../../analytics/modularDialog.types";
 import TrackDialogScreen from "../../analytics/TrackDialogScreen";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { GenericError } from "../../components/GenericError";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { AssetSelectorContent } from "./components/AssetSelectorContent";

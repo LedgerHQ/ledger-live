@@ -3,7 +3,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import ModularDrawerFlowManager from "LLD/features/ModularDrawer/ModularDrawerFlowManager";
 import { CloseButton } from "LLD/features/ModularDrawer/components/CloseButton";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 
 type SendWorkflowProps = Readonly<{

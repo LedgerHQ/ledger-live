@@ -4,7 +4,7 @@ import {
   useNetworkAccountCounts,
 } from "@ledgerhq/live-common/modularDrawer/hooks/useNetworkAccountCounts";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 
 export const useAccountData = ({ networks }: AccountModuleParams): NetworkCountItem[] => {

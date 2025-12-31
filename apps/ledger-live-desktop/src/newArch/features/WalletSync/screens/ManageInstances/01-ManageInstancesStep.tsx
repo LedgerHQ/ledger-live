@@ -6,7 +6,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { TinyCard } from "../../components/TinyCard";
 import { useInstances } from "./useInstances";
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { memberCredentialsSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import styled from "styled-components";
 import { setFlow } from "~/renderer/actions/walletSync";

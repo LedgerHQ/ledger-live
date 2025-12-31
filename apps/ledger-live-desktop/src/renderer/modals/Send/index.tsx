@@ -3,7 +3,7 @@ import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setMemoTagInfoBoxDisplay } from "~/renderer/actions/UI";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import SendWorkflow from "LLD/features/Send";

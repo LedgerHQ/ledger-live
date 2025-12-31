@@ -120,6 +120,21 @@ if (!globalThis.Buffer) {
 
 jest.mock("@ledgerhq/device-transport-kit-web-hid");
 
+jest.mock("react-redux", () => {
+  const actual = jest.requireActual("react-redux");
+  const withTypesSupport = hook => {
+    const mockedHook = (...args) => hook(...args);
+    mockedHook.withTypes = () => mockedHook;
+    return mockedHook;
+  };
+  return {
+    ...actual,
+    useDispatch: withTypesSupport(actual.useDispatch),
+    useSelector: withTypesSupport(actual.useSelector),
+    useStore: withTypesSupport(actual.useStore),
+  };
+});
+
 const originalError = console.error;
 const originalWarn = console.warn;
 // eslint-disable-next-line no-console

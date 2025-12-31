@@ -1,6 +1,6 @@
 import React, { memo, useState } from "react";
 import styled from "styled-components";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import { validateNameEdition } from "@ledgerhq/live-wallet/accountName";

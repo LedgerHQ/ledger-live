@@ -3,7 +3,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { ModularDrawerEventName } from "./modularDrawer.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import {
   modularDrawerFlowSelector,
   modularDrawerSourceSelector,

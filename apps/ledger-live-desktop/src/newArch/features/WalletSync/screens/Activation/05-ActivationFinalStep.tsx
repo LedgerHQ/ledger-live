@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Success } from "../../components/Success";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setDrawerVisibility, setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import {
