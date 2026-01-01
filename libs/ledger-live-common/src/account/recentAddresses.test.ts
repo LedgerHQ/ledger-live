@@ -14,7 +14,7 @@ describe("RecentAddressesStore", () => {
   it("should add one address and return this only address", async () => {
     const newAddress = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
     await store.addAddress("ethereum", newAddress);
-    const addresses = store.getAddresses("ethereum");
+    const addresses = store.getAddresses("ethereum").map(entry => entry.address);
     expect(addresses).toEqual([newAddress]);
     expect(onAddAddressCompleteMock).toHaveBeenCalledTimes(1);
     expect(onAddAddressCompleteMock).toHaveBeenCalledWith({
@@ -29,7 +29,7 @@ describe("RecentAddressesStore", () => {
   it("should add a second address and return addresses sorted by insertion", async () => {
     const newAddress = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
     await store.addAddress("ethereum", newAddress);
-    let addresses = store.getAddresses("ethereum");
+    let addresses = store.getAddresses("ethereum").map(entry => entry.address);
     expect(addresses).toEqual([newAddress]);
     expect(onAddAddressCompleteMock).toHaveBeenCalledTimes(1);
     expect(onAddAddressCompleteMock).toHaveBeenCalledWith({
@@ -38,7 +38,7 @@ describe("RecentAddressesStore", () => {
 
     const newAddress2 = "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1";
     await store.addAddress("ethereum", newAddress2);
-    addresses = store.getAddresses("ethereum");
+    addresses = store.getAddresses("ethereum").map(entry => entry.address);
     expect(addresses).toEqual([newAddress2, newAddress]);
     expect(onAddAddressCompleteMock).toHaveBeenCalledTimes(2);
     expect(onAddAddressCompleteMock).toHaveBeenCalledWith({
@@ -52,7 +52,7 @@ describe("RecentAddressesStore", () => {
   it("should replace at first place when an address is already saved", async () => {
     const newAddress = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
     await store.addAddress("ethereum", newAddress);
-    let addresses = store.getAddresses("ethereum");
+    let addresses = store.getAddresses("ethereum").map(entry => entry.address);
     expect(addresses).toEqual([newAddress]);
     expect(onAddAddressCompleteMock).toHaveBeenCalledTimes(1);
     expect(onAddAddressCompleteMock).toHaveBeenCalledWith({
@@ -61,7 +61,7 @@ describe("RecentAddressesStore", () => {
 
     const newAddress2 = "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1";
     await store.addAddress("ethereum", newAddress2);
-    addresses = store.getAddresses("ethereum");
+    addresses = store.getAddresses("ethereum").map(entry => entry.address);
     expect(addresses).toEqual([newAddress2, newAddress]);
     expect(onAddAddressCompleteMock).toHaveBeenCalledTimes(2);
     expect(onAddAddressCompleteMock).toHaveBeenCalledWith({
@@ -72,7 +72,7 @@ describe("RecentAddressesStore", () => {
     });
 
     await store.addAddress("ethereum", newAddress);
-    addresses = store.getAddresses("ethereum");
+    addresses = store.getAddresses("ethereum").map(entry => entry.address);
     expect(addresses).toEqual([newAddress, newAddress2]);
     expect(onAddAddressCompleteMock).toHaveBeenCalledTimes(3);
     expect(onAddAddressCompleteMock).toHaveBeenCalledWith({
@@ -93,7 +93,7 @@ describe("RecentAddressesStore", () => {
       expectedObjects.unshift(expect.objectContaining({ address: addr }));
     }
 
-    let addresses = store.getAddresses("ethereum");
+    let addresses = store.getAddresses("ethereum").map(entry => entry.address);
     expect(addresses).toEqual(expectedAddresses);
     expect(onAddAddressCompleteMock).toHaveBeenCalledTimes(RECENT_ADDRESSES_COUNT_LIMIT);
     expect(onAddAddressCompleteMock).toHaveBeenCalledWith({ ethereum: expectedObjects });
@@ -106,7 +106,7 @@ describe("RecentAddressesStore", () => {
     expectedObjects.unshift(expect.objectContaining({ address: newAddress2 }));
 
     await store.addAddress("ethereum", newAddress2);
-    addresses = store.getAddresses("ethereum");
+    addresses = store.getAddresses("ethereum").map(entry => entry.address);
     expect(addresses).toEqual(expectedAddresses);
     expect(onAddAddressCompleteMock).toHaveBeenCalledTimes(RECENT_ADDRESSES_COUNT_LIMIT + 1);
     expect(onAddAddressCompleteMock).toHaveBeenCalledWith({ ethereum: expectedObjects });
@@ -116,7 +116,7 @@ describe("RecentAddressesStore", () => {
     const newAddress = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
     await store.addAddress("ethereum", newAddress);
 
-    let addresses = store.getAddresses("ethereum");
+    let addresses = store.getAddresses("ethereum").map(entry => entry.address);
     expect(addresses).toEqual([newAddress]);
     expect(onAddAddressCompleteMock).toHaveBeenCalledTimes(1);
     expect(onAddAddressCompleteMock).toHaveBeenCalledWith({
@@ -126,7 +126,7 @@ describe("RecentAddressesStore", () => {
     const newAddress2 = "bc1pxlmrudqyq8qd8pfsc4mpmlaw56x6vtcr9m8nvp8kj3gckefc4kmqhkg4l7";
     await store.addAddress("bitcoin", newAddress2);
 
-    addresses = store.getAddresses("bitcoin");
+    addresses = store.getAddresses("bitcoin").map(entry => entry.address);
     expect(addresses).toEqual([newAddress2]);
     expect(onAddAddressCompleteMock).toHaveBeenCalledTimes(2);
     expect(onAddAddressCompleteMock).toHaveBeenCalledWith({
@@ -159,7 +159,7 @@ describe("RecentAddressesStore", () => {
     dateNowSpy.mockReturnValue(now);
     await store.addAddress("ethereum", address3);
 
-    let addresses = store.getAddresses("ethereum");
+    let addresses = store.getAddresses("ethereum").map(entry => entry.address);
     expect(addresses).toEqual([address3, address2, address1]);
 
     // Re-add address1 (the oldest one) now
@@ -167,7 +167,7 @@ describe("RecentAddressesStore", () => {
     dateNowSpy.mockReturnValue(reAddTime);
     await store.addAddress("ethereum", address1);
 
-    addresses = store.getAddresses("ethereum");
+    addresses = store.getAddresses("ethereum").map(entry => entry.address);
     expect(addresses).toEqual([address1, address3, address2]);
 
     expect(onAddAddressCompleteMock).toHaveBeenLastCalledWith({
@@ -196,9 +196,39 @@ describe("RecentAddressesStore", () => {
     setupRecentAddressesStore(legacyCache, onAddAddressCompleteMock);
     store = getRecentAddressesStore();
 
-    const addresses = store.getAddresses("ethereum");
+    const addresses = store.getAddresses("ethereum").map(entry => entry.address);
 
     // Order should be preserved: legacy1, modern, legacy2
     expect(addresses).toEqual([legacyAddress1, modernAddress, legacyAddress2]);
+  });
+
+  it("should save and retrieve ensName when provided", async () => {
+    const address = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
+    const ensName = "vitalik.eth";
+    await store.addAddress("ethereum", address, ensName);
+    const addresses = store.getAddresses("ethereum");
+    expect(addresses).toHaveLength(1);
+    expect(addresses[0]).toEqual(
+      expect.objectContaining({
+        address,
+        ensName,
+      }),
+    );
+    expect(onAddAddressCompleteMock).toHaveBeenCalledWith({
+      ethereum: [expect.objectContaining({ address, ensName })],
+    });
+  });
+
+  it("should save address without ensName when not provided", async () => {
+    const address = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
+    await store.addAddress("ethereum", address);
+    const addresses = store.getAddresses("ethereum");
+    expect(addresses).toHaveLength(1);
+    expect(addresses[0]).toEqual(
+      expect.objectContaining({
+        address,
+        ensName: undefined,
+      }),
+    );
   });
 });
