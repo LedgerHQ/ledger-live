@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { accountUnitSelector } from "../reducers/settings";
 import { AccountLike } from "@ledgerhq/types-live";
 import { State } from "../reducers";

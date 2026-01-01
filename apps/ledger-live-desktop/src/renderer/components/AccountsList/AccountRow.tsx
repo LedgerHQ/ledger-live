@@ -82,7 +82,6 @@ function AccountRow(props: Props) {
   const tag = <AccountTagDerivationMode account={account} />;
   return (
     <AccountRowContainer
-      className="account-row"
       isDisabled={isDisabled}
       onClick={isDisabled ? undefined : onClickToggleAccount}
     >

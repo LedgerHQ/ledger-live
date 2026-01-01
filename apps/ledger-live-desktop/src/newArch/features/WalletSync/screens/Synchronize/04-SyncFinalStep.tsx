@@ -6,7 +6,7 @@ import {
   useLedgerSyncAnalytics,
   AnalyticsFlow,
 } from "../../hooks/useLedgerSyncAnalytics";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setDrawerVisibility, setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 

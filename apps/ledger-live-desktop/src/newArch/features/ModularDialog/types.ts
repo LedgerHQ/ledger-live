@@ -1,6 +1,18 @@
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
+import { ReactNode } from "react";
+
+export type AssetType = {
+  name: string;
+  ticker: string;
+  id: string;
+  leftElement?: ReactNode;
+  rightElement?: ReactNode;
+  numberOfNetworks?: number;
+  assetId?: string;
+  shouldDisplayId?: boolean;
+};
 
 export const NAVIGATION_DIRECTION = {
   FORWARD: "FORWARD",
@@ -9,17 +21,17 @@ export const NAVIGATION_DIRECTION = {
 
 export type NavigationDirection = (typeof NAVIGATION_DIRECTION)[keyof typeof NAVIGATION_DIRECTION];
 
-export const MODULAR_DRAWER_STEP = {
+export const MODULAR_DIALOG_STEP = {
   ASSET_SELECTION: "ASSET_SELECTION",
   NETWORK_SELECTION: "NETWORK_SELECTION",
   ACCOUNT_SELECTION: "ACCOUNT_SELECTION",
 } as const;
 
-export type ModularDrawerStep = (typeof MODULAR_DRAWER_STEP)[keyof typeof MODULAR_DRAWER_STEP];
+export type ModularDialogStep = (typeof MODULAR_DIALOG_STEP)[keyof typeof MODULAR_DIALOG_STEP];
 
-export type ModularDrawerFlowManagerProps = {
+export type ModularDialogFlowManagerProps = {
   currencies: string[];
-  drawerConfiguration?: EnhancedModularDrawerConfiguration;
+  dialogConfiguration?: EnhancedModularDrawerConfiguration;
   useCase?: string;
   areCurrenciesFiltered?: boolean;
   onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;

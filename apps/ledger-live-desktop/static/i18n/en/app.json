@@ -2461,6 +2461,54 @@
       }
     }
   },
+  "newSendFlow": {
+    "title": "Send {{currency}}",
+    "available": "Available {{amount}}",
+    "placeholder": "Enter address or ENS",
+    "placeholderNoENS": "Enter address",
+    "recent": "Recent",
+    "myAccounts": "My accounts",
+    "sendTo": "Send to {{address}}",
+    "addressMatched": "Address matched",
+    "addressNotFound": "Address not found",
+    "alreadyUsed": "Already used · {{date}}",
+    "recentSendWillAppear": "Your recent send will appear here",
+    "remove": "Remove",
+    "enterTag": "Enter {{tag}}",
+    "firstInteraction": {
+      "title": "You’re sending to a new address",
+      "description": "Verify that the address is correct. In case of doubt send a small amount first."
+    },
+    "sanctioned": {
+      "title": "Flagged address",
+      "description": "This address has been flagged and Ledger doesn’t allow sending to it",
+      "helpCenter": "Help center"
+    },
+    "errors": {
+      "incorrectFormat": "Incorrect address format",
+      "incompatibleAsset": "Address isn’t compatible with the asset selected",
+      "walletNotExist": "Wallet doesn’t exist"
+    },
+    "skipMemo": {
+      "title": "Skip adding {{tag}}?",
+      "warning": "Your asset may be lost if a {{tag}} is required by your recipient"
+    },
+    "tagHelp": {
+      "title": "What’s a {{tag}}?",
+      "description": "A {{tag}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{tag}} memo may result in a loss of funds."
+    },
+    "networkFeesInFiat": "Network fees in {{currency}}",
+    "feesAmount": "Fees amount ({{unit}})",
+    "gasLimit": "Gas limit ({{unit}})",
+    "feesPaid": "Fees paid to the network to proceed your transaction",
+    "insufficientBalanceFees": "Insufficient balance to cover the network fees",
+    "amountToSend": "Amount to send in ({{currency}})",
+    "coinToSend": "Coin to send",
+    "coinControlCustom": "Custom coin selection",
+    "aboveMaximum": "Above maximum balance",
+    "transactionSigned": "Transaction signed",
+    "processingTransaction": "Your transaction is being processed"
+  },
   "releaseNotes": {
     "title": "Release notes",
     "version": "Ledger Wallet {{versionNb}}"
@@ -3715,6 +3763,8 @@
       "activeTooltip": "Active amount generate rewards",
       "inactiveTooltip": "Inactive amount does not generate rewards",
       "delegatedInfoTooltip": "Total amount that is delegated to validators.",
+      "inactiveStakeTooltip": "Inactive stake that can be withdrawn without deactivating your delegation.",
+      "inactiveStakeTitle": "Withdrawable Rewards",
       "withdrawableInfoTooltip": "Total amount that is withdrawable from delegations.",
       "withdrawableTitle": "Withdrawable",
       "statusUpdateNotice": "The status of the delegation will be updated when the transaction is confirmed.",
@@ -4661,7 +4711,10 @@
       },
       "modularDrawerDevTool": {
         "title": "Modular Drawer Dev Tool",
-        "description": "Allows you to test the Modular Drawer easily"
+        "description": "Allows you to test the Modular Drawer easily",
+        "openDrawer": "Open Drawer",
+        "debugDialog": "Debug Dialog",
+        "debugDuplicates": "Debug Duplicates"
       },
       "cryptoAssetsList": {
         "title": "Crypto Assets List",
@@ -5862,6 +5915,15 @@
     "canton": {
       "commentPlaceholder": "Optional",
       "comment": "Comment",
+      "expiryDuration": {
+        "label": "Expiry duration",
+        "summaryLabel": "Expiry Offer",
+        "threeHours": "3 hours",
+        "sixHours": "6 hours",
+        "oneDay": "1 day",
+        "oneWeek": "1 week",
+        "oneMonth": "30 days"
+      },
       "account": {
         "lockedBalance": "Locked",
         "lockedBalanceTooltip": "Your funds are locked in offers you've sent to others. You can cancel these offers any time, or wait for the recipient to accept or reject.",
@@ -5919,10 +5981,12 @@
       "pendingTransactions": {
         "title": "Pending Transactions ({{count}})",
         "incoming": {
-          "title": "Incoming Offers ({{count}})"
+          "title": "Incoming transfer to review ({{count}})",
+          "detailsTitle": "Incoming transfer details"
         },
         "outgoing": {
-          "title": "Outgoing Offers ({{count}})"
+          "title": "Outgoing Offers ({{count}})",
+          "detailsTitle": "Outgoing transfer details"
         },
         "pending": "Pending",
         "expired": "Expired",
@@ -6952,6 +7016,9 @@
     "HederaNoStakingRewardsError": {
       "title": "No rewards to claim"
     },
+    "HederaMemoIsTooLong": {
+      "title": "Memo is too long. Max length is {{maxLength}} characters"
+    },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",
       "description": "Please try again with an image."
@@ -7449,6 +7516,12 @@
         "text": "Once this transaction has been confirmed you will be able to receive your token. <0>Click here</0> to start the receive flow.",
         "learnMore": "Learn more"
       }
+    }
+  },
+  "dialogs": {
+    "selectAccount": {
+      "description": "You don't have {{network}} accounts yet. Please add one to continue",
+      "addAccount": "Add account"
     }
   },
   "drawers": {

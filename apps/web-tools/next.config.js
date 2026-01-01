@@ -7,7 +7,9 @@ const nextConfig = {
   },
   webpack: (config, { webpack }) => {
     config.experiments = {
+      ...config.experiments,
       asyncWebAssembly: true,
+      layers: true,
     };
     config.resolve.fallback = {
       fs: false,

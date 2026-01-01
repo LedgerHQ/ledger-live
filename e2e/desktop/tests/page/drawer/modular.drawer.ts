@@ -21,6 +21,35 @@ export class ModularDrawer extends Drawer {
     this.scanAccountsDrawer = new ModularScanAccountsDrawer(page);
   }
 
+  // ===== Unified interface methods (same names as ModularDialog) =====
+
+  // Asset selector
+  async isVisible(): Promise<boolean> {
+    return await this.isModularAssetsDrawerVisible();
+  }
+
+  async validateItems() {
+    return await this.validateAssetsDrawerItems();
+  }
+
+  async selectAsset(currency: Currency) {
+    return await this.selectAssetByTickerAndName(currency);
+  }
+
+  // Account selector
+  async isAccountVisible(): Promise<boolean> {
+    return await this.isModularAccountDrawerVisible();
+  }
+
+  async selectAccount(account: AccountType) {
+    return await this.selectAccountByName(account);
+  }
+
+  async clickOnAddAndExistingAccount() {
+    return await this.clickOnAddAndExistingAccountButton();
+  }
+
+  // ===== Original methods (kept for backward compatibility) =====
   async isModularAssetsDrawerVisible(): Promise<boolean> {
     return await this.assetDrawer.isModularDrawerVisible();
   }

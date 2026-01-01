@@ -4,7 +4,6 @@ import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useCantonAcceptOrRejectOffer } from "@ledgerhq/live-common/families/canton/react";
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import React from "react";
-import * as reactRedux from "react-redux";
 import { fireEvent, render, screen, waitFor } from "tests/testSetup";
 import { State } from "~/renderer/reducers";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -14,6 +13,14 @@ import { handleTopologyChangeError } from "../hooks/topologyChangeError";
 import { createMockDevice } from "../OnboardModal/__tests__/testUtils";
 import PendingTransferProposals from "./index";
 
+const mockDispatch = jest.fn();
+jest.mock("LLD/hooks/redux", () => {
+  const actual = jest.requireActual("LLD/hooks/redux");
+  return {
+    ...actual,
+    useDispatch: () => mockDispatch,
+  };
+});
 jest.mock("react-i18next", () => ({
   ...jest.requireActual("react-i18next"),
   useTranslation: () => ({
@@ -54,6 +61,16 @@ jest.mock("./DeviceAppModal", () => ({
 jest.mock("~/renderer/hooks/useAccountUnit", () => ({
   useAccountUnit: jest.fn(() => ({ code: "AMU", magnitude: 18, name: "Amulet" })),
 }));
+jest.mock("~/renderer/components/OperationsList/AddressCell", () => ({
+  __esModule: true,
+  default: () => <div data-testid="address-cell" />,
+  splitAddress: (value: string) => ({ left: value.slice(0, 5), right: value.slice(5) }),
+  SplitAddress: ({ value }: { value: string }) => (
+    <span data-testid={`address-${value}`}>{value}</span>
+  ),
+  Address: ({ value }: { value: string }) => <span data-testid={`address-${value}`}>{value}</span>,
+  Cell: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
 jest.mock("./PendingTransferProposalsDetails", () => ({
   __esModule: true,
   default: ({ account, contractId, onOpenModal }: any) => (
@@ -76,12 +93,8 @@ const mockHandleTopologyChangeError = handleTopologyChangeError as jest.MockedFu
   typeof handleTopologyChangeError
 >;
 
-const mockDispatch = jest.fn();
-const mockUseDispatch = jest.fn(() => mockDispatch);
 const mockSync = jest.fn();
 const mockPerformTransferInstruction = jest.fn();
-
-jest.spyOn(reactRedux, "useDispatch").mockImplementation(mockUseDispatch);
 
 const createAccountWithProposal = (
   contractId: string,
@@ -166,7 +179,9 @@ describe("PendingTransferProposals", () => {
       render(<PendingTransferProposals account={account} parentAccount={mockAccount} />, {
         initialState: buildInitialState(),
       });
-      fireEvent.click(screen.getByText(`families.canton.pendingTransactions.${action}`));
+      const buttonText =
+        action === "withdraw" ? "common.cancel" : `families.canton.pendingTransactions.${action}`;
+      fireEvent.click(screen.getByText(buttonText));
       fireEvent.click(await screen.findByTestId("modal-confirm"));
 
       await waitFor(() => {

@@ -9,7 +9,7 @@ import getCloudSyncApi, {
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
 
 export function useLedgerSyncInfo() {

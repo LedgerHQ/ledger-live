@@ -127,6 +127,8 @@ validateAddressByNetwork.set("ethereum", evmValidateAddress); // for the coin te
 validateAddressByNetwork.set("sonic", evmValidateAddress); // for the coin tester
 validateAddressByNetwork.set("polygon", evmValidateAddress); // for the coin tester
 validateAddressByNetwork.set("core", evmValidateAddress); // for the coin tester
+validateAddressByNetwork.set("scroll", evmValidateAddress); // for the coin tester
+validateAddressByNetwork.set("blast", evmValidateAddress); // for the coin tester
 
 export function getValidateAddress(network: string): ValidateAddressFunction {
   const validateAddress = validateAddressByNetwork.get(network);

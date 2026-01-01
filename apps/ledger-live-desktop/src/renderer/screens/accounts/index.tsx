@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { Account, AccountLike } from "@ledgerhq/types-live";

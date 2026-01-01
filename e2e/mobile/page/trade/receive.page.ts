@@ -108,7 +108,10 @@ export default class ReceivePage {
   }
 
   @Step("Verify address")
-  async verifyAddress(address: string): Promise<void> {
+  async verifyAddress(address: string | undefined): Promise<void> {
+    if (!address) {
+      throw new Error("Address is not set");
+    }
     await detoxExpect(getElementById(this.accountAddress)).toHaveText(address);
   }
 

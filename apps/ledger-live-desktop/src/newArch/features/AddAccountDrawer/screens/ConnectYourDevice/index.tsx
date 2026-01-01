@@ -1,7 +1,7 @@
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useOnDemandCurrencyCountervalues } from "~/renderer/actions/deprecated/ondemand-countervalues";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { prepareCurrency } from "~/renderer/bridge/cache";

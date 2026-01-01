@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Flex, Switch, Text } from "@ledgerhq/native-ui";
-import { CameraView, CameraType } from "expo-camera";
+import { Camera, useCameraDevice } from "react-native-vision-camera";
 import { useIsFocused } from "@react-navigation/native";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
 import CameraPermissionContext from "~/components/RequiresCameraPermissions/CameraPermissionContext";
@@ -9,6 +9,28 @@ const CameraPermissions: React.FC<Record<string, never>> = () => {
   const [optimistic, setOptimistic] = useState(false);
   const [mounted, setMounted] = useState(false);
   const isFocused = useIsFocused();
+  const device = useCameraDevice("back");
+
+  const renderCameraContent = (permissionGranted: boolean | null) => {
+    if (!permissionGranted) {
+      return <Text>waiting for permission (optimistic strategy)</Text>;
+    }
+    if (!isFocused || !device) {
+      return <Text>screen not in focus, camera not mounted</Text>;
+    }
+    return (
+      <Camera
+        device={device}
+        isActive={isFocused}
+        style={{
+          height: 200,
+          width: 200,
+          alignSelf: "center",
+        }}
+      />
+    );
+  };
+
   return (
     <Flex flex={1} p={6}>
       <Switch
@@ -22,24 +44,7 @@ const CameraPermissions: React.FC<Record<string, never>> = () => {
       {mounted ? (
         <RequiresCameraPermissions optimisticallyMountChildren={optimistic}>
           <CameraPermissionContext.Consumer>
-            {({ permissionGranted }) =>
-              permissionGranted ? (
-                isFocused ? (
-                  <CameraView
-                    facing={"back" as CameraType}
-                    style={{
-                      height: 200,
-                      width: 200,
-                      alignSelf: "center",
-                    }}
-                  />
-                ) : (
-                  <Text>screen not in focus, camera not mounted</Text>
-                )
-              ) : (
-                <Text>waiting for permission (optimistic strategy)</Text>
-              )
-            }
+            {({ permissionGranted }) => renderCameraContent(permissionGranted)}
           </CameraPermissionContext.Consumer>
         </RequiresCameraPermissions>
       ) : (

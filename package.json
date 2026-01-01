@@ -70,6 +70,7 @@
     "lint": "pnpm turbo lint",
     "lint:fix": "pnpm turbo lint:fix",
     "typecheck": "pnpm turbo typecheck",
+    "validate:renovate": "npx --yes --package renovate -- renovate-config-validator",
     "knip-check": "pnpm turbo knip-check",
     "unimported": "pnpm turbo unimported",
     "desktop": "pnpm --filter ledger-live-desktop",
@@ -252,7 +253,6 @@
       "@ethersproject/providers>ws": "7.5.10",
       "elliptic": "6.6.1",
       "use-latest-callback": "0.1.9",
-      "@sentry/react-native>metro": "0.81.5",
       "ethers": "6.15.0",
       "bignumber.js": "9.1.2",
       "@radix-ui/react-slot": "^1.2.3"

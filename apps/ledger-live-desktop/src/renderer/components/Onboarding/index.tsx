@@ -58,7 +58,6 @@ export const OnboardingContext = createContext<OnboardingContextTypes>({
 export function Onboarding() {
   const { path } = useRouteMatch();
   const matchRecover = useRouteMatch(`${path}/${OnboardingUseCase.recover}`);
-  const [imgsLoaded, setImgsLoaded] = useState(false);
   const [useCase, setUseCase] = useState<OnboardingUseCase | null>(
     matchRecover ? OnboardingUseCase.recover : null,
   );
@@ -67,7 +66,7 @@ export function Onboarding() {
   const [openedRecoveryPhraseWarningHelp, setOpenedRecoveryPhraseWarningHelp] = useState(false);
 
   useEffect(() => {
-    preloadAssets().then(() => setImgsLoaded(true));
+    preloadAssets();
   }, []);
 
   return (
@@ -92,7 +91,7 @@ export function Onboarding() {
           <RecoveryWarning />
         </Box>
       </SideDrawer>
-      <OnboardingContainer className={imgsLoaded ? "onboarding-imgs-loaded" : ""}>
+      <OnboardingContainer>
         <CSSTransition in appear key={path} timeout={DURATION} classNames="page-switch">
           <ScreenContainer>
             <Switch>

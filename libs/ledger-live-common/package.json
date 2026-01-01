@@ -114,7 +114,7 @@
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
-    "react-redux": "^7.2.9 || ^9.0.0",
+    "react-redux": "catalog:",
     "redux-actions": "2.6.5"
   },
   "peerDependenciesMeta": {
@@ -235,7 +235,7 @@
     "@xstate/react": "^5.0.2",
     "@zondax/ledger-casper": "^2.6.1",
     "@zondax/ledger-cosmos-js": "3.0.3",
-    "@zondax/ledger-filecoin": "^2.0.2",
+    "@zondax/ledger-filecoin": "^3.0.6",
     "@zondax/ledger-icp": "^0.7.0",
     "@zondax/ledger-mina-js": "0.0.2",
     "@zondax/ledger-stacks": "^1.0.2",
@@ -250,7 +250,6 @@
     "ethers": "catalog:",
     "expect": "^27.4.6",
     "fuse.js": "^6.6.2",
-    "i18next": "20.6.1",
     "invariant": "^2.2.2",
     "isomorphic-ws": "catalog:",
     "jotai": "2.12.4",

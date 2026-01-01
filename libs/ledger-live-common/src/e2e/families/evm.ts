@@ -16,6 +16,9 @@ function validateTransactionData(tx: Transaction, events: string[]) {
     const isENSNameCorrect = containsSubstringInEvent(tx.accountToCredit.ensName, events);
     expect(isENSNameCorrect).toBeTruthy();
   } else {
+    if (!tx.accountToCredit.address) {
+      throw new Error("Recipient address is not set");
+    }
     const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
     expect(isAddressCorrect).toBeTruthy();
   }

@@ -28,6 +28,7 @@ jest.mock("~/renderer/components/CopyWithFeedback", () => ({
 }));
 
 jest.mock("~/renderer/components/OperationsList/AddressCell", () => ({
+  __esModule: true,
   SplitAddress: ({ value }: { value: string }) => (
     <span data-testid={`address-${value}`}>{value}</span>
   ),
@@ -133,15 +134,16 @@ describe("PendingTransactionDetails", () => {
         <PendingTransactionDetails
           account={account}
           parentAccount={parentAccount}
-          contractId="contract-456"
+          contractId="contract-789"
           onOpenModal={mockOnOpenModal}
           onClose={mockOnClose}
         />,
       );
 
       expect(screen.getByText("families.canton.pendingTransactions.amount")).toBeInTheDocument();
-      expect(screen.getByTestId("address-other-sender")).toBeInTheDocument();
+      // For outgoing: sender is xpub (receiver-address), receiver is other-receiver
       expect(screen.getByTestId("address-receiver-address")).toBeInTheDocument();
+      expect(screen.getByTestId("address-other-receiver")).toBeInTheDocument();
     });
 
     it("should display memo when present", () => {
@@ -408,7 +410,8 @@ describe("PendingTransactionDetails", () => {
         />,
       );
 
-      expect(screen.getByText("families.canton.pendingTransactions.withdraw")).toBeInTheDocument();
+      // Outgoing action uses the common cancel label
+      expect(screen.getByText("common.cancel")).toBeInTheDocument();
       expect(
         screen.queryByText("families.canton.pendingTransactions.accept"),
       ).not.toBeInTheDocument();
@@ -431,9 +434,7 @@ describe("PendingTransactionDetails", () => {
         />,
       );
 
-      const withdrawButton = screen
-        .getByText("families.canton.pendingTransactions.withdraw")
-        .closest("button");
+      const withdrawButton = screen.getByText("common.cancel").closest("button");
       fireEvent.click(withdrawButton!);
 
       await waitFor(() => {

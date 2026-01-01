@@ -7,6 +7,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { useDeepLinkHandler } from "./useDeepLinkHandler";
+import BigNumber from "bignumber.js";
 
 jest.mock("~/renderer/actions/modals", () => ({
   openModal: jest.fn(() => ({ type: "OPEN_MODAL" })),
@@ -45,6 +46,24 @@ jest.mock("LLD/features/ModularDrawer/hooks/useOpenAssetFlow", () => ({
     openAddAccountFlow: mockOpenAddAccountFlow,
     openAssetFlow: mockOpenAssetFlow,
   }),
+}));
+
+const mockOpenSendFlow = jest.fn(params => {
+  // Maintain backward compatibility: call openModal when no account is provided
+  if (!params?.account) {
+    mockOpenModal("MODAL_SEND", params || {});
+  } else {
+    // When account is provided, convert amount from string to BigNumber for compatibility
+    const modalParams = {
+      ...params,
+      amount: typeof params.amount === "string" ? new BigNumber(params.amount) : params.amount,
+    };
+    mockOpenModal("MODAL_SEND", modalParams);
+  }
+});
+
+jest.mock("LLD/features/Send/hooks/useOpenSendFlow", () => ({
+  useOpenSendFlow: () => mockOpenSendFlow,
 }));
 
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
@@ -238,7 +257,7 @@ describe("useDeepLinkHandler", () => {
             recipient,
             account: mockAccount,
             parentAccount: undefined,
-            amount,
+            amount: new BigNumber(amount),
           });
         });
       });

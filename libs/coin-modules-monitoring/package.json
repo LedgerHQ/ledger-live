@@ -19,7 +19,7 @@
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "command-line-args": "6.0.1",
-    "msw": "2.3.4",
+    "msw": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {

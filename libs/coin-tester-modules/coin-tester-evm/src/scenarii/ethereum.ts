@@ -1,6 +1,5 @@
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
@@ -10,9 +9,9 @@ import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transact
 import { killAnvil, spawnAnvil } from "../anvil";
 import { callMyDealer, ethereum, VITALIK, getBridges } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
-import { defaultNanoApp } from "../constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDC_ON_ETHEREUM } from "../tokenFixtures";
+import { buildSigner } from "../signer";
 
 type EthereumScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -62,10 +61,8 @@ const makeScenarioTransactions = ({
 export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic ETH Transactions",
   setup: async () => {
-    const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
-      spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
-      spawnAnvil("https://ethereum-rpc.publicnode.com"),
-    ]);
+    const signer = await buildSigner();
+    await spawnAnvil("https://ethereum-rpc.publicnode.com", signer.exportMnemonic());
 
     setCoinConfig(() => ({
       info: {
@@ -113,8 +110,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
 
     initMswHandlers(getCoinConfig(ethereum).info);
 
-    const onSignerConfirmation = getOnSpeculosConfirmation();
-    const { currencyBridge, accountBridge, getAddress } = getBridges(transport, "ethereum");
+    const { currencyBridge, accountBridge, getAddress } = await getBridges("ethereum", signer);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: ethereum,
@@ -141,7 +137,6 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
       currencyBridge,
       accountBridge,
       account: scenarioAccount,
-      onSignerConfirmation,
     };
   },
   beforeAll: account => {
@@ -166,6 +161,6 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
   },
   teardown: async () => {
     resetIndexer();
-    await Promise.all([killSpeculos(), killAnvil()]);
+    await killAnvil();
   },
 };

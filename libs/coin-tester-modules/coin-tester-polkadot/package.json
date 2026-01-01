@@ -58,7 +58,6 @@
     "@ledgerhq/coin-polkadot": "workspace:^",
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/hw-app-polkadot": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@polkadot/api": "11.2.1",
@@ -68,7 +67,7 @@
     "chalk": "^4.1.2",
     "dotenv": "^16.4.5",
     "expect": "^27.4.6",
-    "msw": "^2.2.1"
+    "msw": "catalog:"
   },
   "devDependencies": {
     "@polkadot/util": "12.6.2",

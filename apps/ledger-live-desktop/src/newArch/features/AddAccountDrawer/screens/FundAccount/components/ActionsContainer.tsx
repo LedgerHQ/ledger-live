@@ -3,7 +3,7 @@ import { Flex, Icons, Text } from "@ledgerhq/react-ui";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { openModal } from "~/renderer/actions/modals";

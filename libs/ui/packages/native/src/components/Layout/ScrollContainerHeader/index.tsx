@@ -1,13 +1,17 @@
 import React from "react";
 import { FlatList, FlatListProps, ScrollViewProps, View } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
-
 import Flex from "../Flex";
 import Header from "./Header";
 import type { HeaderProps } from "./Header";
 import baseStyled, { BaseStyledProps } from "../../styled";
 
-const StyledFlatList = baseStyled(FlatList)<BaseStyledProps>``;
+type StyledFlatListProps<ItemType> = {
+  onScroll: ReturnType<typeof useAnimatedScrollHandler>;
+  scrollEventThrottle: number;
+} & Omit<ScrollContainerHeaderProps<ItemType>, "onScroll" | "data" | "renderItem">;
+
+const StyledFlatList = baseStyled(FlatList)<StyledFlatListProps<any>>``;
 
 const AnimatedFlatList = Animated.createAnimatedComponent(StyledFlatList);
 
@@ -29,7 +33,7 @@ const ScrollContainerHeader = <ItemType,>({
   onScroll,
   containerProps,
   ...props
-}: ScrollContainerHeaderProps<ItemType>): JSX.Element => {
+}: ScrollContainerHeaderProps<ItemType>): React.ReactElement => {
   const currentPositionY = useSharedValue(0);
   const handleScroll = useAnimatedScrollHandler((event) => {
     currentPositionY.value = event.contentOffset.y;

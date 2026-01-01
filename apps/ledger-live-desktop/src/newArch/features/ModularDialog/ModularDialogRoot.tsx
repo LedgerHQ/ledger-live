@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { modularDialogParamsSelector, closeDialog } from "~/renderer/reducers/modularDrawer";
 import ModularDialogFlowManager from "./ModularDialogFlowManager";
 
@@ -19,7 +19,7 @@ export const ModularDialogRoot: React.FC = () => {
   return (
     <ModularDialogFlowManager
       currencies={dialogParams.currencies ?? []}
-      drawerConfiguration={dialogParams.drawerConfiguration}
+      dialogConfiguration={dialogParams.dialogConfiguration}
       useCase={dialogParams.useCase}
       areCurrenciesFiltered={dialogParams.areCurrenciesFiltered}
       onAssetSelected={dialogParams.onAssetSelected}

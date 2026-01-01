@@ -1,6 +1,6 @@
 import React, { RefObject, useCallback, useEffect, useRef, useMemo } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";

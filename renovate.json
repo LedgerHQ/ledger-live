@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", ":dependencyDashboard"],
+  "extends": ["config:best-practices", ":dependencyDashboard"],
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "automerge": false,
@@ -10,6 +10,16 @@
   },
   "packageRules": [
     {
+      "description": "GitHub Actions (CI)",
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["LedgerHQ/*", "ledgerhq/*"],
+      "pinDigests": false,
+      "minimumReleaseAge": "15 days",
+      "labels": ["dependencies", "github_actions"],
+      "reviewers": ["team:wallet-ci"],
+      "assignees": ["team:wallet-ci"]
+    },
+    {
       "description": "Lumen UI React - version updates",
       "matchPackageNames": ["@ledgerhq/lumen-ui-react"],
       "matchFileNames": ["apps/ledger-live-desktop/package.json"],
@@ -17,8 +27,8 @@
       "commitMessageTopic": "update {{depName}}",
       "commitMessageExtra": "to {{newVersion}}",
       "labels": ["dependencies", "ui", "lumen"],
-      "reviewers": ["ledgerhq/live-hub"],
-      "assignees": ["ledgerhq/live-hub"],
+      "reviewers": ["team:live-hub"],
+      "assignees": ["team:live-hub"],
       "prPriority": 10
     },
     {
@@ -29,14 +39,14 @@
       "commitMessageTopic": "update {{depName}} catalog",
       "commitMessageExtra": "to {{newVersion}}",
       "labels": ["dependencies", "ui", "lumen", "catalog"],
-      "reviewers": ["ledgerhq/live-hub"],
-      "assignees": ["ledgerhq/live-hub"],
+      "reviewers": ["team:live-hub"],
+      "assignees": ["team:live-hub"],
       "prPriority": 10
     },
     {
       "description": "Core Ownership Rules",
-      "reviewers": ["ledgerhq/live-hub"],
-      "assignees": ["ledgerhq/live-hub"],
+      "reviewers": ["team:live-hub"],
+      "assignees": ["team:live-hub"],
       "matchPackageNames": [
         "/changesets/",
         "/commitlint/",
@@ -52,8 +62,8 @@
     {
       "description": "Electron linked updates",
       "groupName": "electron",
-      "reviewers": ["ledgerhq/live-hub"],
-      "assignees": ["ledgerhq/live-hub"],
+      "reviewers": ["team:live-hub"],
+      "assignees": ["team:live-hub"],
       "matchPackageNames": [
         "/electron/",
         "/^@electron/",
@@ -75,8 +85,8 @@
         "metro-transform-worker"
       ],
       "groupName": "metro",
-      "reviewers": ["ledgerhq/live-hub"],
-      "assignees": ["ledgerhq/live-hub"]
+      "reviewers": ["team:live-hub"],
+      "assignees": ["team:live-hub"]
     },
     {
       "extends": ["monorepo:expo"],

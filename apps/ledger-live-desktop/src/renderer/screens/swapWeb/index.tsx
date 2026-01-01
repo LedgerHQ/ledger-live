@@ -2,7 +2,7 @@ import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useHistory, useLocation } from "react-router-dom";
 import Card from "~/renderer/components/Box/Card";
 import { WebviewProps } from "~/renderer/components/Web3AppWebview/types";

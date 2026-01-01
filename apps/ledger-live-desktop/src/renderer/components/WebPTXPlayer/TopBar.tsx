@@ -9,7 +9,7 @@ import ArrowRight from "~/renderer/icons/ArrowRight";
 import LightBulb from "~/renderer/icons/LightBulb";
 import IconReload from "~/renderer/icons/UpdateCircle";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import { WebviewState, WebviewAPI } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";

@@ -372,6 +372,7 @@
     "src/deviceSDK/commands/getAppAndVersion.ts",
     "src/deviceSDK/tasks/genuineCheck.ts",
     "src/e2e/enum/Account.ts",
+    "src/e2e/enum/Addresses.ts",
     "src/e2e/enum/AppInfos.ts",
     "src/e2e/enum/Currency.ts",
     "src/e2e/enum/Device.ts",
@@ -498,7 +499,6 @@
     "bip32",
     "bip39",
     "ethers",
-    "i18next",
     "rlp",
     "tsx",
     "yargs"

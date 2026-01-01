@@ -79,6 +79,39 @@ describe("SendBroadcastError", () => {
     expect(screen.queryByText(/Abort/i)).toBeNull();
   });
 
+  test("should show Retry button for 'DeviceLockedError' error", () => {
+    const networkError = {
+      name: "DeviceLockedError",
+      message: "Device is locked",
+    };
+    setup(networkError);
+
+    expect(screen.queryByText(/Retry/i)).toBeTruthy();
+    expect(screen.queryByText(/Abort/i)).toBeNull();
+  });
+
+  test("should show Retry button for 'LockedDeviceError' error", () => {
+    const networkError = {
+      name: "LockedDeviceError",
+      message: "Device is locked (bis)",
+    };
+    setup(networkError);
+
+    expect(screen.queryByText(/Retry/i)).toBeTruthy();
+    expect(screen.queryByText(/Abort/i)).toBeNull();
+  });
+
+  test("should show Retry button for 'UserRefusedOnDevice' error", () => {
+    const networkError = {
+      name: "UserRefusedOnDevice",
+      message: "User refused the action on device",
+    };
+    setup(networkError);
+
+    expect(screen.queryByText(/Retry/i)).toBeTruthy();
+    expect(screen.queryByText(/Abort/i)).toBeNull();
+  });
+
   test("should show Abort button for other errors", () => {
     const networkError = {
       name: "LedgerAPI4xx",

@@ -10,7 +10,7 @@ import { DrawerConfiguration } from "./DrawerConfiguration";
 import { DevToolControls } from "./DevToolControls";
 import { useDrawerConfiguration, useDevToolState } from "./hooks";
 import { ModularDrawerDevToolContentProps } from "./types";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import {
   setIsDebuggingDuplicates,
   setFlowValue,
@@ -55,7 +55,7 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
 
   const debugDuplicates = () => {
     dispatch(setIsDebuggingDuplicates(true));
-    openAssetFlow({
+    openAssetFlowDialog({
       assets: { leftElement: "undefined", rightElement: "undefined" },
       networks: { leftElement: "undefined", rightElement: "undefined" },
     });
@@ -117,13 +117,13 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
               size="sm"
               onClick={() => openDrawerFunctions[location.value]()}
             >
-              Open Drawer
+              {t("settings.developer.modularDrawerDevTool.openDrawer")}
             </Button>
             <Button size="sm" onClick={() => openDrawerFunctionsDialog[location.value]()}>
-              Debug Dialog
+              {t("settings.developer.modularDrawerDevTool.debugDialog")}
             </Button>
             <Button appearance="accent" size="sm" onClick={debugDuplicates}>
-              Debug Duplicates
+              {t("settings.developer.modularDrawerDevTool.debugDuplicates")}
             </Button>
           </Flex>
         </Flex>
