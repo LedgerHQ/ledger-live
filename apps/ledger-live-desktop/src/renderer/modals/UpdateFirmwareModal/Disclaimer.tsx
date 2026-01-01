@@ -2,7 +2,7 @@ import { Flex, Alert, Divider, Button, Text } from "@ledgerhq/react-ui";
 import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Markdown, { Notes } from "~/renderer/components/Markdown";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";

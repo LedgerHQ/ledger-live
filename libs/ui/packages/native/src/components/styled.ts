@@ -1,4 +1,4 @@
-import styled, { ReactNativeStyledInterface, DefaultTheme } from "styled-components/native";
+import styled from "styled-components/native";
 
 import {
   compose,
@@ -19,7 +19,6 @@ import {
   background,
   BackgroundProps,
 } from "styled-system";
-import { InterpolationFunction } from "styled-components";
 
 export type BaseStyledProps = SpaceProps &
   FlexboxProps &
@@ -37,7 +36,7 @@ export type BaseStyledProps = SpaceProps &
     maxHeight?: string | number;
   };
 
-export const baseStyles: InterpolationFunction<unknown> = compose(
+export const baseStyles = compose(
   flexbox,
   space,
   position,
@@ -60,4 +59,5 @@ const proxyStyled = new Proxy(styled, {
   },
 });
 
-export default <ReactNativeStyledInterface<DefaultTheme>>proxyStyled;
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+export default proxyStyled as typeof styled;

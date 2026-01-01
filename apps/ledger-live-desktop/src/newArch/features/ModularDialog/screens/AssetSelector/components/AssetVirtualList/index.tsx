@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
-import { AssetType } from "@ledgerhq/react-ui/pre-ldls";
 import { VirtualList } from "LLD/components/VirtualList";
 import { AssetListItem } from "../AssetListItem";
+import { AssetType } from "../../../../types";
 
 type AssetVirtualListProps = {
   assets: AssetType[];
@@ -35,6 +35,8 @@ export const AssetVirtualList = ({
       renderItem={renderAssetItem}
       scrollToTop={scrollToTop}
       hasNextPage={hasNextPage}
+      testId="asset-selector-list-container"
+      className="pb-80"
     />
   );
 };

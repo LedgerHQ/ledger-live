@@ -3,7 +3,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { Alert, Link, Text } from "@ledgerhq/react-ui";
 import { Trans, useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { Account } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";

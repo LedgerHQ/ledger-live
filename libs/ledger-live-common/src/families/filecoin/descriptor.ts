@@ -7,5 +7,6 @@ export const descriptor: CoinDescriptor = {
       hasPresets: false,
       hasCustom: true,
     },
+    selfTransfer: "free",
   },
 };

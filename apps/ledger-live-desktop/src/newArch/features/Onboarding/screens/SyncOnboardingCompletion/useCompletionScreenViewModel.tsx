@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLocation } from "react-router";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {

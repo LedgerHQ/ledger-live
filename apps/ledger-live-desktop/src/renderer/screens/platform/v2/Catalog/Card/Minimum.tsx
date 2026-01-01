@@ -4,7 +4,7 @@ import { Logo } from "./Logo";
 import { PropsCard } from "./types";
 import { useCard } from "./hooks";
 import { Container, Subtitle } from "./Layout";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { RecentlyUsedManifest } from "@ledgerhq/live-common/wallet-api/react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";

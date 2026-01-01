@@ -1,6 +1,6 @@
 import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { SolanaFamily } from "./types";

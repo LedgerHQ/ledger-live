@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import React from "react";
-import * as reactRedux from "react-redux";
+import * as reduxHooks from "LLD/hooks/redux";
 import { render, screen, waitFor } from "tests/testSetup";
 import ModalsLayer from "~/renderer/ModalsLayer";
 import { track, trackPage } from "~/renderer/analytics/segment";
@@ -27,6 +27,15 @@ import {
   mockOnAccountSelected,
 } from "../../__tests__/shared";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
+
+const actualUseDispatch = jest.requireActual<typeof reduxHooks>("LLD/hooks/redux").useDispatch;
+jest.mock("LLD/hooks/redux", () => {
+  const actual = jest.requireActual<typeof reduxHooks>("LLD/hooks/redux");
+  return {
+    ...actual,
+    useDispatch: jest.fn(() => actual.useDispatch()),
+  };
+});
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
@@ -178,7 +187,8 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   });
 
   it("should trigger add account with corresponding currency", async () => {
-    const useDispatchSpy = jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
+    const useDispatchMock = jest.mocked(reduxHooks.useDispatch);
+    useDispatchMock.mockReturnValue(mockDispatch);
     const bitcoinCurrencyResult = getCryptoCurrencyById("bitcoin");
     const { user } = render(
       <ModularDrawerFlowManager
@@ -201,7 +211,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       type: "MODAL_OPEN",
     });
 
-    useDispatchSpy.mockRestore();
+    useDispatchMock.mockImplementation(actualUseDispatch);
   });
 
   it("should go back to AssetSelection step when clicking on back button", async () => {
@@ -455,6 +465,6 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     );
 
     await waitFor(() => expect(screen.getByRole("textbox")).toBeVisible());
-    expect(screen.getByRole("textbox")).toHaveFocus();
+    await waitFor(() => expect(screen.getByRole("textbox")).toHaveFocus());
   });
 });

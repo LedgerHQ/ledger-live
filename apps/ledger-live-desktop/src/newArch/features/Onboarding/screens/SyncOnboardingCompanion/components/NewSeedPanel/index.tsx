@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { Button, Flex, Text } from "@ledgerhq/react-ui/index";
 import { SeedOriginType } from "@ledgerhq/types-live";

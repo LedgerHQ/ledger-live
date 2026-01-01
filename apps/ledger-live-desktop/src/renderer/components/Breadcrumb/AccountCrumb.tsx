@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import Box from "~/renderer/components/Box";
 import { useHistory, useParams } from "react-router-dom";
 import {

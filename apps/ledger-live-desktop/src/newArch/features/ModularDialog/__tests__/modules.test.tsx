@@ -91,7 +91,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{
+        dialogConfiguration={{
           assets: {
             rightElement: "balance",
           },
@@ -115,7 +115,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{
+        dialogConfiguration={{
           assets: {
             leftElement: "apy",
           },
@@ -134,7 +134,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{
+        dialogConfiguration={{
           assets: {
             leftElement: "marketTrend",
           },
@@ -155,7 +155,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{
+        dialogConfiguration={{
           assets: {
             rightElement: "marketTrend",
           },
@@ -177,7 +177,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{
+        dialogConfiguration={{
           assets: {
             rightElement: "balance",
           },
@@ -214,7 +214,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{ networks: { leftElement: "numberOfAccounts" } }}
+        dialogConfiguration={{ networks: { leftElement: "numberOfAccounts" } }}
       />,
       mockedInitialState,
     );
@@ -240,7 +240,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{ networks: { leftElement: "numberOfAccountsAndApy" } }}
+        dialogConfiguration={{ networks: { leftElement: "numberOfAccountsAndApy" } }}
       />,
       mockedInitialState,
     );
@@ -261,7 +261,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{ networks: { rightElement: "balance" } }}
+        dialogConfiguration={{ networks: { rightElement: "balance" } }}
       />,
       mockedInitialState,
     );
@@ -274,10 +274,9 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
     expect(ethereumBalance).toBeVisible();
     const usdBalance = screen.getByText(/\$65,081.79/i);
     expect(usdBalance).toBeVisible();
-    const arbitrumBalance = screen.getByText(/0 eth/i);
-    expect(arbitrumBalance).toBeVisible();
-    const usdAbrBalance = screen.getByText(/\$0.00/i);
-    expect(usdAbrBalance).toBeVisible();
+    // Arbitrum has 0 balance with $0 fiat value, so it should not display balance (hidden by Balance component)
+    expect(screen.queryByText(/0 eth/i)).toBeNull();
+    expect(screen.queryByText(/\$0.00/i)).toBeNull();
   });
 
   // this is logically failing because we are not able to retrieve the wanted data consistantly because it depends on the providerId that can be wrongly set in mapping services
@@ -287,7 +286,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{ assets: { rightElement: "balance" } }}
+        dialogConfiguration={{ assets: { rightElement: "balance" } }}
       />,
       mockedInitialState,
     );
@@ -316,7 +315,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       <ModularDialogFlowManager
         currencies={mixedCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        drawerConfiguration={{ assets: { rightElement: "balance" } }}
+        dialogConfiguration={{ assets: { rightElement: "balance" } }}
       />,
       mockedInitialState,
     );

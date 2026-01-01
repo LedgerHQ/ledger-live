@@ -1,9 +1,10 @@
 import { useSelector } from "react-redux";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { selectMarketByCurrency } from "../entities/marketSelectors";
+import { ApiState } from "../entities/selectorUtils";
 
 export const useMarketByCurrencies = (currencies: CryptoOrTokenCurrency[]) => {
-  return useSelector(state => {
+  return useSelector((state: ApiState) => {
     const marketByCurrencies: Record<
       string,
       { price?: number; priceChangePercentage24h?: number }

@@ -1,7 +1,11 @@
 import styled from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 
-export const StyledBadge = styled(Flex).attrs((p: { bg?: string }) => ({
+type StyledBadgeProps = {
+  bg?: string;
+};
+
+export const StyledBadge = styled(Flex).attrs<StyledBadgeProps>(p => ({
   bg: p.bg ?? "neutral.c30",
   flexDirection: "row",
   mx: "6px",

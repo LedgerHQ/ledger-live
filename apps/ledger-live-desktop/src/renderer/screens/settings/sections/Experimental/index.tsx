@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { EnvName, isEnvDefault } from "@ledgerhq/live-env";
 import { experimentalFeatures, isReadOnlyEnv, Feature } from "~/renderer/experimental";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import { openModal } from "~/renderer/actions/modals";
 import TrackPage from "~/renderer/analytics/TrackPage";

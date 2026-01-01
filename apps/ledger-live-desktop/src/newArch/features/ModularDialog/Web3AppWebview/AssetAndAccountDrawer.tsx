@@ -5,7 +5,7 @@ import type {
 } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
 import type { Dispatch } from "redux";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { openAssetAndAccountDrawer, openAssetAndAccountDrawerPromise } from "../../ModularDrawer";
@@ -47,7 +47,7 @@ function openAssetAndAccountDialog(params: DrawerParams, dispatch: Dispatch) {
       onAccountSelected: (account, parentAccount) => {
         handleSuccess({ account, parentAccount });
       },
-      drawerConfiguration: modularDrawerConfiguration,
+      dialogConfiguration: modularDrawerConfiguration,
       useCase,
       areCurrenciesFiltered,
       onClose: handleClose,

@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, Route, useHistory, useLocation, useRouteMatch } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import TabBar from "~/renderer/components/TabBar";

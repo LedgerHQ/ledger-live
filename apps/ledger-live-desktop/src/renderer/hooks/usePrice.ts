@@ -1,7 +1,7 @@
 import { useCalculate } from "@ledgerhq/live-countervalues-react/index";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector } from "../reducers/settings";
 
 export const usePrice = (from: Currency, to?: Currency, unit?: Unit, rate?: BigNumber) => {

@@ -67,7 +67,7 @@
     "bip32-path": "^0.4.2",
     "bitcoinjs-lib": "^5.2.0",
     "bs58": "catalog:",
-    "bs58check": "^2.1.2",
+    "bs58check": "catalog:",
     "invariant": "^2.2.4",
     "semver": "^7.3.5",
     "varuint-bitcoin": "1.1.2"

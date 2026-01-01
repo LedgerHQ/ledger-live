@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import BigNumber from "bignumber.js";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";

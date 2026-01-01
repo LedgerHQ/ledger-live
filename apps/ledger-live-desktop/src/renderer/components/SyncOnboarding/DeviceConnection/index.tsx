@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { stringToDeviceModelId } from "@ledgerhq/devices/helpers";

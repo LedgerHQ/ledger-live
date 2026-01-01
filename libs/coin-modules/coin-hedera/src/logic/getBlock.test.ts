@@ -47,10 +47,10 @@ describe("getBlock", () => {
     expect(getTimestampRangeFromBlockHeight).toHaveBeenCalledWith(42);
     expect(getBlockInfo).toHaveBeenCalledWith(42);
     expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledTimes(1);
-    expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledWith(
-      mockTimestampRange.start,
-      mockTimestampRange.end,
-    );
+    expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledWith({
+      startTimestamp: `gte:${mockTimestampRange.start}`,
+      endTimestamp: `lt:${mockTimestampRange.end}`,
+    });
   });
 
   it("should extract fee payer from transaction_id", async () => {

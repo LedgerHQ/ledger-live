@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
@@ -8,6 +8,7 @@ import {
   ReceiveActionDefault,
 } from "~/renderer/screens/account/AccountActionsDefault";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
+import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 type Props = {
   account: TezosAccount | TokenAccount;
   parentAccount: TezosAccount | undefined | null;
@@ -15,21 +16,19 @@ type Props = {
 };
 const SendAction = ({ account, parentAccount, onClick }: Props) => {
   const delegation = useDelegation(account);
-  const dispatch = useDispatch();
   const sendShouldWarnDelegation = delegation && delegation.sendShouldWarnDelegation;
+  const openSendFlow = useOpenSendFlow();
   const onClickDecorated = useCallback(() => {
     if (sendShouldWarnDelegation) {
-      dispatch(
-        openModal("MODAL_SEND", {
-          parentAccount,
-          account,
-          startWithWarning: sendShouldWarnDelegation,
-        }),
-      );
+      openSendFlow({
+        parentAccount: parentAccount ?? undefined,
+        account,
+        startWithWarning: sendShouldWarnDelegation,
+      });
     } else {
       onClick();
     }
-  }, [sendShouldWarnDelegation, dispatch, parentAccount, account, onClick]);
+  }, [sendShouldWarnDelegation, openSendFlow, parentAccount, account, onClick]);
   return <SendActionDefault onClick={onClickDecorated} />;
 };
 const ReceiveAction = ({ account, parentAccount, onClick }: Props) => {

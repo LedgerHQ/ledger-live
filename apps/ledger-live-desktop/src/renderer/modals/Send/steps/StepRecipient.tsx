@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Trans } from "react-i18next";
 import { getMainAccount, getRecentAddressesStore } from "@ledgerhq/live-common/account/index";
@@ -15,7 +15,7 @@ import { StepProps } from "../types";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import EditOperationPanel from "~/renderer/components/OperationsList/EditOperationPanel";
 import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setMemoTagInfoBoxDisplay } from "~/renderer/actions/UI";
 import {
   forceAutoFocusOnMemoFieldSelector,
@@ -36,6 +36,8 @@ import Alert from "~/renderer/components/Alert";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
+import { Account } from "@ledgerhq/types-live";
 
 const openSplTokenExtensionsArticle = () => openURL(urls.solana.splTokenExtensions);
 
@@ -56,6 +58,15 @@ const StepRecipient = ({
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);
   const forceAutoFocusOnMemoField = useSelector(forceAutoFocusOnMemoFieldSelector);
   const lldMemoTag = useFeature("lldMemoTag");
+  const { isEnabledForFamily } = useNewSendFlowFeature();
+
+  const accountFilter = useMemo(
+    () => (acc: Account) => {
+      const family = acc.currency.family;
+      return !isEnabledForFamily(family);
+    },
+    [isEnabledForFamily],
+  );
 
   if (!status || !account) return null;
 
@@ -89,6 +100,7 @@ const StepRecipient = ({
               autoFocus={!openedFromAccount && !forceAutoFocusOnMemoField}
               onChange={onChangeAccount}
               value={account}
+              filter={accountFilter}
             />
           </Box>
 
@@ -169,19 +181,22 @@ export const StepRecipientFooter = ({
       const store = getRecentAddressesStore();
       store.addAddress(mainAccount.currency.id, transaction.recipient);
     }
-    const memoTagValue = getMemoTagValueByTransactionFamily(transaction as Transaction);
     if (
+      transaction &&
       lldMemoTag?.enabled &&
-      !memoTagValue &&
-      MEMO_TAG_COINS.includes(transaction?.family as string) &&
+      typeof transaction.family === "string" &&
+      MEMO_TAG_COINS.includes(transaction.family) &&
       alwaysShowMemoTagInfo
     ) {
-      dispatch(
-        setMemoTagInfoBoxDisplay({
-          isMemoTagBoxVisible: true,
-        }),
-      );
-      return;
+      const memoTagValue = getMemoTagValueByTransactionFamily(transaction);
+      if (!memoTagValue) {
+        dispatch(
+          setMemoTagInfoBoxDisplay({
+            isMemoTagBoxVisible: true,
+          }),
+        );
+        return;
+      }
     }
     transitionTo("amount");
   };

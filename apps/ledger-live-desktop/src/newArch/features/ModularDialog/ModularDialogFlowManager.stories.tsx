@@ -1,8 +1,4 @@
 import {
-  FeatureFlagsContextValue,
-  FeatureFlagsProvider,
-} from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
-import {
   assetsLeftElementOptions,
   assetsRightElementOptions,
   filterOptions,
@@ -10,21 +6,35 @@ import {
   networksRightElementOptions,
 } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import type { Meta, StoryObj } from "@storybook/react";
-import { expect, fn, userEvent, waitFor, within } from "@storybook/test";
+import { expect, fn, userEvent, waitFor, within, screen } from "@storybook/test";
 import React from "react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { track } from "~/renderer/analytics/__mocks__/segment";
 import { ARB_ACCOUNT, BTC_ACCOUNT, ETH_ACCOUNT } from "../__mocks__/accounts.mock";
-import {
-  arbitrumCurrency,
-  arbitrumToken,
-  bitcoinCurrency,
-  ethereumCurrency,
-} from "../__mocks__/useSelectAssetFlow.mock";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import ModularDialogFlowManager from "./ModularDialogFlowManager";
-import { ModularDrawerFlowManagerProps } from "./types";
+import { ModularDialogFlowManagerProps } from "./types";
+import modularDrawerReducer, { openDialog } from "~/renderer/reducers/modularDrawer";
+import { useDispatch } from "LLD/hooks/redux";
+import { setEnv } from "@ledgerhq/live-env";
+import { setSupportedCurrencies } from "@ledgerhq/coin-framework/lib-es/currencies/support";
+import {
+  makeMockedFeatureFlagsProviderWrapper,
+  makeMockedContextValue,
+} from "@ledgerhq/live-common/featureFlags/mock";
+
+setEnv("MOCK", "true");
+
+setSupportedCurrencies(["ethereum", "arbitrum", "bitcoin"]);
+
+const mockedFeatureFlags = {
+  lldModularDrawer: { enabled: true, params: { enableModularization: true } },
+};
+
+const FeatureFlagsProvider = makeMockedFeatureFlagsProviderWrapper(
+  makeMockedContextValue(mockedFeatureFlags),
+);
 
 const createMockState = () => ({
   accounts: [ARB_ACCOUNT, ETH_ACCOUNT, BTC_ACCOUNT],
@@ -51,6 +61,15 @@ const createMockState = () => ({
     ],
   },
   application: { debug: {} },
+  modularDrawer: {
+    flow: "Modular Asset Flow",
+    isOpen: false,
+    isDebuggingDuplicates: false,
+    source: "sourceTest",
+    dialogParams: null,
+    enableModularization: true,
+  },
+  countervalues: { countervalues: { state: { cache: true } } },
 });
 
 const initialMockState = createMockState();
@@ -61,7 +80,12 @@ const store = configureStore({
     wallet: (state = initialMockState.wallet) => state,
     currency: (state = initialMockState.currency) => state,
     application: (state = initialMockState.application) => state,
+    modularDrawer: modularDrawerReducer,
+    countervalues: (state = initialMockState.countervalues) => state,
     assetsDataApi: assetsDataApi.reducer,
+  },
+  preloadedState: {
+    modularDrawer: initialMockState.modularDrawer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
@@ -70,17 +94,14 @@ const store = configureStore({
     }).concat(assetsDataApi.middleware),
 });
 
-function makeMockedContextValue(
-  mockedFeatures: Partial<Record<FeatureId, Feature>>,
-): FeatureFlagsContextValue {
-  return {
-    isFeature: () => true,
-    getFeature: (featureId: FeatureId) => mockedFeatures[featureId] || null,
-    overrideFeature: () => {},
-    resetFeature: () => {},
-    resetFeatures: () => {},
-  };
-}
+const OpenDialogButton = () => {
+  const dispatch = useDispatch();
+  return (
+    <button onClick={() => dispatch(openDialog({}))} style={{ backgroundColor: "red" }}>
+      open dialog
+    </button>
+  );
+};
 
 type ExtraStoryArgs = {
   // "default" is used as the primitive undefined option in the dropdown
@@ -91,17 +112,13 @@ type ExtraStoryArgs = {
   assetsFilter?: (typeof filterOptions)[number] | "default";
 };
 
-type StoryArgs = ModularDrawerFlowManagerProps & ExtraStoryArgs;
-
-const mockCurrencies = [ethereumCurrency, arbitrumCurrency, arbitrumToken, bitcoinCurrency].map(
-  currency => currency.id,
-);
+type StoryArgs = ModularDialogFlowManagerProps & ExtraStoryArgs;
 
 const meta: Meta<StoryArgs> = {
-  title: "ModularDrawer/ModularDrawerFlowManager",
+  title: "ModularDialog/ModularDialogFlowManager",
   component: ModularDialogFlowManager,
   args: {
-    currencies: mockCurrencies,
+    currencies: [],
     onAssetSelected: () => null,
     onAccountSelected: () => null,
   },
@@ -130,12 +147,9 @@ const meta: Meta<StoryArgs> = {
   decorators: [
     Story => (
       <div style={{ minHeight: "400px", position: "relative", margin: "50px" }}>
-        <FeatureFlagsProvider
-          value={makeMockedContextValue({
-            lldModularDrawer: { enabled: true, params: { enableModularization: true } },
-          })}
-        >
+        <FeatureFlagsProvider>
           <Provider store={store}>
+            <OpenDialogButton />
             <Story />
           </Provider>
         </FeatureFlagsProvider>
@@ -146,14 +160,14 @@ const meta: Meta<StoryArgs> = {
 
 export default meta;
 
-export const CustomDrawerConfig: StoryObj<StoryArgs> = {
+export const CustomDialogConfig: StoryObj<StoryArgs> = {
   parameters: {
     controls: {
       exclude: [
         "currencies",
         "source",
         "flow",
-        "drawerConfiguration",
+        "dialogConfiguration",
         "onAssetSelected",
         "onAccountSelected",
       ],
@@ -168,7 +182,7 @@ export const CustomDrawerConfig: StoryObj<StoryArgs> = {
       networksRightElement,
     } = args;
 
-    const drawerConfiguration = {
+    const dialogConfiguration = {
       assets: {
         leftElement: assetsLeftElement === "default" ? undefined : assetsLeftElement,
         rightElement: assetsRightElement === "default" ? undefined : assetsRightElement,
@@ -185,33 +199,33 @@ export const CustomDrawerConfig: StoryObj<StoryArgs> = {
         <div style={{ color: "#333", backgroundColor: "#f9f9f9", padding: "5px" }}>
           <p style={{ fontSize: "16px", marginBottom: "8px" }}>
             Use the storybook controls below to alter the{" "}
-            <span style={{ fontWeight: 600 }}>drawerConfiguration</span> parameters and feature
+            <span style={{ fontWeight: 600 }}>dialogConfiguration</span> parameters and feature
             flags:
           </p>
           <p style={{ fontSize: "14px", marginBottom: "16px", color: "#555" }}>
             &quot;undefined&quot; represents no element shown, &quot;default&quot; represents the
-            default element if the parameter is not provided in the drawerConfiguration object.
+            default element if the parameter is not provided in the dialogConfiguration object.
           </p>
           <ul style={{ paddingLeft: "20px", fontSize: "14px", marginBottom: "16px" }}>
             <li>
               <span style={{ fontWeight: 600 }}>assetsFilter:</span> Element to display at the top
-              of the drawer to filter assets.
+              of the dialog to filter assets.
             </li>
             <li>
               <span style={{ fontWeight: 600 }}>assetsLeftElement:</span> Element to display on the
-              left side of the assets drawer. Defaults to undefined.
+              left side of the assets dialog. Defaults to undefined.
             </li>
             <li>
               <span style={{ fontWeight: 600 }}>assetsRightElement:</span> Element to display on the
-              right side of the assets drawer. Defaults to balance.
+              right side of the assets dialog. Defaults to balance.
             </li>
             <li>
               <span style={{ fontWeight: 600 }}>networksLeftElement:</span> Element to display on
-              the left side of the networks drawer. Defaults to undefined.
+              the left side of the networks dialog. Defaults to undefined.
             </li>
             <li>
               <span style={{ fontWeight: 600 }}>networksRightElement:</span> Element to display on
-              the right side of the networks drawer. Defaults to undefined.
+              the right side of the networks dialog. Defaults to undefined.
             </li>
           </ul>
           <pre
@@ -223,7 +237,7 @@ export const CustomDrawerConfig: StoryObj<StoryArgs> = {
               fontSize: "13px",
             }}
           >
-            {JSON.stringify({ drawerConfiguration }, null, 2)}
+            {JSON.stringify({ dialogConfiguration }, null, 2)}
           </pre>
         </div>
         <div
@@ -237,11 +251,12 @@ export const CustomDrawerConfig: StoryObj<StoryArgs> = {
           }}
         >
           <ModularDialogFlowManager
-            currencies={mockCurrencies}
+            currencies={[]}
+            areCurrenciesFiltered={false}
             onAssetSelected={() => null}
             onAccountSelected={() => null}
-            drawerConfiguration={drawerConfiguration}
-            // Changing drawerConfiguration may alter which hooks are called.
+            dialogConfiguration={dialogConfiguration}
+            // Changing dialogConfiguration may alter which hooks are called.
             // The dynamic key ensures the component is remounted to avoid hook order violations
             key={JSON.stringify(args)}
           />
@@ -258,13 +273,18 @@ export const TestSelectAccountFlow: StoryObj<StoryArgs> = {
   args: { onAccountSelected, onAssetSelected },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
+    const openButton = await canvas.findByText("open dialog");
+    await userEvent.click(openButton);
+
     const waitForAnimationExit = (text: RegExp) =>
       waitFor(() => {
-        const [el] = canvas.queryAllByText(text);
-        if (canvas.queryAllByText(text).length !== 1) throw new Error();
+        const [el] = screen.queryAllByText(text);
+        if (screen.queryAllByText(text).length !== 1) throw new Error();
         return el;
       });
-    const ethereumAsset = canvas.getByText(/ethereum/i);
+
+    const ethereumAsset = await screen.findByText(/ethereum/i);
 
     await userEvent.click(ethereumAsset);
 
@@ -285,11 +305,11 @@ export const TestSelectAccountFlow: StoryObj<StoryArgs> = {
 
     await userEvent.click(arbitrumNetwork);
 
-    const arbitrumAccount = await waitForAnimationExit(/arbitrum-account-1/i);
+    const arbitrumAccount = await waitForAnimationExit(/Arbitrum 2/i);
     expect(arbitrumAccount).toBeInTheDocument();
 
     await userEvent.click(arbitrumAccount);
 
-    expect(onAccountSelected).toHaveBeenCalledWith(ARB_ACCOUNT, undefined);
+    expect(onAccountSelected).toHaveBeenCalledWith(ARB_ACCOUNT);
   },
 };

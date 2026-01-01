@@ -6,7 +6,7 @@ import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/us
 import { DeviceInfo, DeviceModelInfo, idsToLanguage } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
 import { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { firstValueFrom, from } from "rxjs";
 import { Languages } from "~/config/languages";
 import { CONNECTION_TYPES } from "~/renderer/analytics/hooks/variables";

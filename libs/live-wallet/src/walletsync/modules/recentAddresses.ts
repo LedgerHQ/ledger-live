@@ -33,6 +33,7 @@ export type DistantRecentAddressesState = Record<
   {
     address: string;
     index: number;
+    lastUsed?: number;
   }[]
 >;
 
@@ -41,7 +42,11 @@ export function toDistantState(
 ): DistantRecentAddressesState {
   const state: DistantRecentAddressesState = {};
   Object.keys(addressesByCurrency).forEach(key => {
-    state[key] = addressesByCurrency[key].map((address, index) => ({ address, index }));
+    state[key] = addressesByCurrency[key].map((entry, index) => ({
+      address: entry.address,
+      index,
+      lastUsed: entry.lastUsed,
+    }));
   });
 
   return state;
@@ -52,7 +57,10 @@ export function toState(addressesByCurrency: DistantRecentAddressesState): Recen
   Object.keys(addressesByCurrency).forEach(key => {
     state[key] = addressesByCurrency[key]
       .sort((current, other) => current.index - other.index)
-      .map(data => data.address);
+      .map(data => ({
+        address: data.address,
+        lastUsed: data.lastUsed ?? Date.now(),
+      }));
   });
 
   return state;
@@ -70,12 +78,10 @@ function sameDistantState(
       return (
         localData[key] &&
         localData[key].length === distantState[key].length &&
-        !distantState[key].some(
-          data =>
-            data.index < 0 ||
-            data.index >= localData[key].length ||
-            localData[key][data.index] !== data.address,
-        )
+        !distantState[key].some(data => {
+          if (data.index < 0 || data.index >= localData[key].length) return true;
+          return localData[key][data.index].address !== data.address;
+        })
       );
     })
   );
@@ -84,6 +90,7 @@ function sameDistantState(
 const recentAddressesSchema = z.object({
   address: z.string(),
   index: z.number(),
+  lastUsed: z.number().optional(),
 });
 
 const schema = z.record(z.string(), z.array(recentAddressesSchema));

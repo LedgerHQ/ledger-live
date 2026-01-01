@@ -28,5 +28,6 @@ export enum FirstStepCompanionStepKey {
   Pin,
   Seed,
   Ready,
+  Sync,
   Exit,
 }

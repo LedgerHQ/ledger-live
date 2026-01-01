@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { vaultSignerSelector } from "~/renderer/reducers/settings";
 import { setVaultSigner } from "~/renderer/actions/settings";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";

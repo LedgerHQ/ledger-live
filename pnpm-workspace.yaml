@@ -23,8 +23,8 @@ catalog:
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.2
   "@ledgerhq/device-transport-kit-speculos": 1.1.2
   "@ledgerhq/device-transport-kit-web-hid": 1.2.2
-  "@ledgerhq/lumen-design-core": 0.0.35
-  "@ledgerhq/speculos-device-controller": 0.2.0
+  "@ledgerhq/lumen-design-core": 0.0.36
+  "@ledgerhq/speculos-device-controller": 0.2.1
   "@react-native/assets-registry": 0.77.3
   "@react-native/babel-plugin-codegen": 0.77.3
   "@react-native/babel-preset": 0.77.3
@@ -34,27 +34,34 @@ catalog:
   "@react-native/metro-config": 0.77.3
   "@reduxjs/toolkit": 2.8.2
   "@types/bs58": ^4.0.1
+  "@types/bs58check": ^2.1.2
   "@typescript-eslint/eslint-plugin": 8.48.1
   "@typescript-eslint/parser": 8.48.1
-  axios: 1.12.2
+  axios: 1.13.2
   bs58: ^4.0.1
+  bs58check: ^2.1.2
   electron: 38.2.0
   ethers: 6.15.0
-  i18next: 23.10.1
+  i18next: 25.7.3
   isomorphic-ws: 5.0.0
+  msw: ^2.7.3
   react: 18.3.1
   react-dom: 18.3.1
-  react-i18next: 13.5.0
+  react-i18next: 16.5.0
   react-native: 0.77.3
   react-native-config: 1.5.3
   react-native-reanimated: 3.16.7
   react-native-safe-area-context: 5.6.1
   react-native-svg: 15.12.1
-  react-redux: 7.2.9
+  react-redux: ^9.2.0
+  redux: ^5.0.1
   react-test-renderer: 18.3.1
   rxjs: 7.8.2
   tailwindcss: ^3.4.0
   ws: 8.18.3
+  "styled-components": 6.1.19
+  "styled-system": 5.1.5
+  "stylis": 4.0.0
 
 overrides:
   node-abi: ^4.9.0

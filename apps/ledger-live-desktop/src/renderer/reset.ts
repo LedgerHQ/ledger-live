@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { log } from "@ledgerhq/logs";
 import { delay } from "@ledgerhq/live-common/promise";
 import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";

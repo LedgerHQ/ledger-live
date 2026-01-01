@@ -1,7 +1,7 @@
 import mixpanel from "mixpanel-browser";
 import { getEnv } from "@ledgerhq/live-env";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { shareAnalyticsSelector } from "../reducers/settings";
 /**
  * ⚠️ FEATURE IN TESTING PHASE ⚠️

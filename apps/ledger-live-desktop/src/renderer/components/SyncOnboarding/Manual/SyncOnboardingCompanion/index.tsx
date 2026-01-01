@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { useHistory } from "react-router-dom";
 import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
@@ -13,8 +13,8 @@ import {
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
-import { DesyncOverlay } from "./DesyncOverlay";
-import { SeedPathStatus } from "./SeedStep";
+import { DesyncOverlay } from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/DesyncOverlay";
+import { SeedPathStatus } from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/types";
 import { analyticsFlowName } from "../shared";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-desktop";
@@ -27,7 +27,11 @@ import { LockedDeviceError } from "@ledgerhq/errors";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { useTrackOnboardingFlow } from "~/renderer/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import useCompanionSteps, { READY_REDIRECT_DELAY_MS, Step, StepKey } from "./useCompanionSteps";
+import useCompanionSteps, {
+  READY_REDIRECT_DELAY_MS,
+  Step,
+  StepKey,
+} from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/hooks/useCompanionSteps";
 import TwoStepCompanion from "./TwoStepCompanion";
 
 const POLLING_PERIOD_MS = 1000;

@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { useTranslation } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";

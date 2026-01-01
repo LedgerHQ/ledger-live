@@ -7,7 +7,7 @@ import {
   TrustchainAlreadyInitialized,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setDrawerVisibility, setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import {

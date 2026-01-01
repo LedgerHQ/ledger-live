@@ -12,7 +12,7 @@ import {
   blacklistedTokenIdsSelector,
   hideEmptyTokenAccountsSelector,
 } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 
 export default function AssetDistribution() {
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);

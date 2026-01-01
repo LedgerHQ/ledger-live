@@ -929,7 +929,7 @@ const envDefinitions = {
     desc: "Cryptoassets list service url (staging)",
   },
   PUSH_DEVICES_SERVICE_URL: {
-    def: "", // FIXME LIVE-23878: need to set the final endpoint
+    def: "https://device-gateway.api.ledger.com",
     parser: stringParser,
     desc: "Push Devices Service url for device tracking",
   },

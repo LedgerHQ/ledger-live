@@ -10,7 +10,7 @@ import Box from "~/renderer/components/Box";
 import Header from "./Header";
 import Row from "./Row";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router";
 type Props = {
   accounts: AccountLike[];

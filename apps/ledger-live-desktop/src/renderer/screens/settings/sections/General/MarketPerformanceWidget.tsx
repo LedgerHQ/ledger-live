@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import Switch from "~/renderer/components/Switch";
 import Track from "~/renderer/analytics/Track";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { setMarketWidget } from "~/renderer/actions/settings";
 import { track } from "~/renderer/analytics/segment";
 import { marketPerformanceWidgetSelector } from "~/renderer/reducers/settings";

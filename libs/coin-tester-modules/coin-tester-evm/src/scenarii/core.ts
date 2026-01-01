@@ -3,7 +3,6 @@ import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -11,8 +10,8 @@ import { ethers } from "ethers";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { VITALIK, core, getBridges } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
-import { defaultNanoApp } from "../constants";
 import { STCORE_ON_CORE } from "../tokenFixtures";
+import { buildSigner } from "../signer";
 
 type CoreScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -59,10 +58,9 @@ const makeScenarioTransactions = ({ address }: { address: string }): CoreScenari
 export const scenarioCore: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic CORE Transactions",
   setup: async () => {
-    const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
-      spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
-      spawnAnvil("https://rpc.ankr.com/core"),
-    ]);
+    const signer = await buildSigner();
+    await spawnAnvil("https://rpc.ankr.com/core", signer.exportMnemonic());
+
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
     setCoinConfig(() => ({
@@ -101,8 +99,7 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
 
     initMswHandlers(getCoinConfig(core).info);
 
-    const onSignerConfirmation = getOnSpeculosConfirmation();
-    const { currencyBridge, accountBridge, getAddress } = getBridges(transport, "core");
+    const { currencyBridge, accountBridge, getAddress } = await getBridges("core", signer);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: core,
@@ -128,7 +125,6 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
       currencyBridge,
       accountBridge,
       account: scenarioAccount,
-      onSignerConfirmation,
     };
   },
   beforeAll: account => {
@@ -152,6 +148,6 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
   },
   teardown: async () => {
     resetIndexer();
-    await Promise.all([killSpeculos(), killAnvil()]);
+    await killAnvil();
   },
 };

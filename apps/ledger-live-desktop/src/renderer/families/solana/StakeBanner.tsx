@@ -8,7 +8,7 @@ import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
 import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
 import { getAccountBannerState as getSolanaBannerState } from "@ledgerhq/live-common/families/solana/banner";
 import { openModal } from "~/renderer/actions/modals";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 
 const StakeBanner: React.FC<{ account: SolanaAccount }> = ({ account }) => {

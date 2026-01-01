@@ -37,6 +37,11 @@ export const headerOptions: ReactNavigationHeaderOptions = {
 type ChooseDeviceProps = Props & {
   isFocused?: boolean;
   goToFollowInstructions: (device: Device) => void;
+  /*
+   * Sometimes we navigate to selection with a device that we already know
+   * we want to connect to
+   */
+  defaultDevice?: Device;
 };
 
 const request = {
@@ -45,10 +50,11 @@ const request = {
 
 const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
   goToFollowInstructions,
+  defaultDevice,
 }) => {
   const isFocused = useIsFocused();
   const action = useAppDeviceAction();
-  const { device, selectDevice, registerDeviceSelection } = useSelectDevice();
+  const { device, selectDevice, registerDeviceSelection } = useSelectDevice(defaultDevice);
   const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
 
   const navigation = useNavigation<NavigationProps["navigation"]>();

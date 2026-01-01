@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { AnyAction, Store } from "redux";
+import { UnknownAction, Store } from "redux";
 import { State as StoreState } from "~/renderer/reducers";
 import App from "./App";
 import "./global.css";
@@ -10,7 +10,7 @@ type State = {
   error: unknown;
 };
 type Props = {
-  store: Store<StoreState, AnyAction>;
+  store: Store<StoreState, UnknownAction>;
   language: string;
   initialCountervalues: Countervalues;
 };

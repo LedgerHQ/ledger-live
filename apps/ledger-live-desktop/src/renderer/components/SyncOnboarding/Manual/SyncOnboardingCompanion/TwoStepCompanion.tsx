@@ -1,5 +1,8 @@
 import React from "react";
-import { Step, StepKey } from "./useCompanionSteps";
+import {
+  Step,
+  StepKey,
+} from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/hooks/useCompanionSteps";
 import { useTranslation } from "react-i18next";
 import { Flex, VerticalTimeline } from "@ledgerhq/react-ui";
 import CollapsibleStep from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/CollapsibleStep";

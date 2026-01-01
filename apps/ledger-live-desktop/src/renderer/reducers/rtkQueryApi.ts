@@ -1,4 +1,4 @@
-import type { Middleware, Reducer } from "@reduxjs/toolkit";
+import type { Middleware, Reducer, Tuple } from "@reduxjs/toolkit";
 import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
@@ -33,4 +33,9 @@ export const lldRTKApiReducers = Object.fromEntries(
   lldRTKApis.map(api => [api.reducerPath, api.reducer]),
 ) as ExtractAPIReducers<typeof APIs>;
 
-export const lldRTKApiMiddlewares = lldRTKApis.map(api => api.middleware);
+export function applyLldRTKApiMiddlewares<M extends Tuple<Middleware[]>>(middleware: M) {
+  return lldRTKApis.reduce<Tuple<Middleware[]>>(
+    (middleware, api) => middleware.concat(api.middleware),
+    middleware,
+  );
+}

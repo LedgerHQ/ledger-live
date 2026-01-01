@@ -33,6 +33,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { LayoutChangeEvent, ScrollView } from "react-native";
 import { SEED_STATE, SeedPathStatus, FirstStepCompanionStepKey } from "./types";
+import { useIsFocused } from "@react-navigation/core";
 
 /*
  * Constants
@@ -92,6 +93,7 @@ const FirstStepSyncOnboarding = ({
 }: FirstStepSyncOnboardingProps) => {
   const { t } = useTranslation();
   const safeAreaInsets = useSafeAreaInsets();
+  const isFocused = useIsFocused();
 
   /*
    * Local State
@@ -173,6 +175,7 @@ const FirstStepSyncOnboarding = ({
     productName,
     seedPathStatus,
     deviceOnboardingState,
+    analyticsSeedConfiguration,
   });
 
   // Destructure for useEffect dependency
@@ -186,6 +189,7 @@ const FirstStepSyncOnboarding = ({
     setSeedPathStatus,
     analyticsSeedConfiguration,
     activeStep: companionSteps.activeStep,
+    hasSyncStep: companionSteps.hasSyncStep,
   });
 
   useTrackOnboardingFlow({
@@ -431,6 +435,33 @@ const FirstStepSyncOnboarding = ({
       sharedOpacity.value = withTiming(100, { duration: OPACITY_DURATION });
     }
   }, [showSuccess, sharedOpacity]);
+
+  useEffect(() => {
+    if (
+      isFocused &&
+      companionSteps.activeStep === FirstStepCompanionStepKey.Sync &&
+      companionSteps.isLedgerSyncActive
+    ) {
+      screen(
+        "Set up device: Step 4 Ledger Sync Success",
+        undefined,
+        {
+          seedConfiguration: analyticsSeedConfiguration.current,
+          flow: "onboarding",
+        },
+        true,
+        true,
+      );
+      const timer = setTimeout(() => setStep(FirstStepCompanionStepKey.Ready), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [
+    isFocused,
+    companionSteps.activeStep,
+    companionSteps.isLedgerSyncActive,
+    setStep,
+    analyticsSeedConfiguration,
+  ]);
 
   return (
     <CollapsibleStep

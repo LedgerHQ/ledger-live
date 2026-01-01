@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { themeSelector } from "~/renderer/actions/general";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Loading from "../../components/LoadingStep";

@@ -30,7 +30,10 @@ export class SendModal extends Modal {
   }
 
   @step("Enter recipient as $0")
-  async fillRecipient(recipient: string) {
+  async fillRecipient(recipient: string | undefined) {
+    if (!recipient) {
+      throw new Error("Recipient address is not set");
+    }
     await this.recipientInput.clear();
     await this.recipientInput.fill(recipient);
   }

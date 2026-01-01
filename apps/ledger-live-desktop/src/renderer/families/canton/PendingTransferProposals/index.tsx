@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import styled from "styled-components";
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { Account } from "@ledgerhq/types-live";
@@ -18,6 +19,7 @@ import PendingTransferProposalsDetails from "./PendingTransferProposalsDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import SectionTitle from "~/renderer/components/OperationsList/SectionTitle";
 import OperationDate from "~/renderer/components/OperationsList/OperationDate";
+import { Address } from "~/renderer/components/OperationsList/AddressCell";
 import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
 import IconCross from "~/renderer/icons/Cross";
@@ -313,6 +315,12 @@ type ExpiresInDisplayProps = {
   t: (key: string) => string;
 };
 
+const MonospaceText = styled(Text)`
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  letter-spacing: 0;
+`;
+
 const ExpiresInDisplay: React.FC<ExpiresInDisplayProps> = ({ expiresAtMicros, isExpired, t }) => {
   const timeRemaining = useTimeRemaining(expiresAtMicros, isExpired);
 
@@ -325,9 +333,9 @@ const ExpiresInDisplay: React.FC<ExpiresInDisplayProps> = ({ expiresAtMicros, is
   }
 
   return (
-    <Text fontSize={3} color="neutral.c80" ff="Inter">
+    <MonospaceText fontSize={3} color="neutral.c80" ff="Inter">
       {timeRemaining || "-"}
-    </Text>
+    </MonospaceText>
   );
 };
 
@@ -413,10 +421,15 @@ const ProposalRow: React.FC<ProposalRowProps> = ({
           </Box>
         </Box>
 
-        <Box px={4} horizontal={true} alignItems="center" style={{ flex: 1 }}>
-          <Text fontSize={3} color="neutral.c80" ff="Inter">
-            {addressToShow}
-          </Text>
+        <Box
+          px={4}
+          horizontal={true}
+          alignItems="center"
+          style={{ flex: 1, minWidth: 0, overflow: "hidden" }}
+        >
+          <Box style={{ width: "100%", minWidth: 0, overflow: "hidden" }}>
+            <Address value={addressToShow} />
+          </Box>
         </Box>
 
         <Box
@@ -460,38 +473,34 @@ const ProposalRow: React.FC<ProposalRowProps> = ({
           alignItems="center"
           style={{
             flex: "0 0 auto",
-            gap: "4px",
+            gap: "8px",
             minWidth: "150px",
           }}
         >
           {isIncoming ? (
             <>
+              {!isExpired && (
+                <Button size="sm" onClick={handleAcceptClick}>
+                  {t("families.canton.pendingTransactions.accept")}
+                </Button>
+              )}
               <Button
-                small
-                primary
-                disabled={isExpired}
-                onClick={handleAcceptClick}
-                style={{ minWidth: "auto", padding: "4px 8px" }}
-              >
-                {t("families.canton.pendingTransactions.accept")}
-              </Button>
-              <Button
-                small
-                outline
+                size="sm"
+                appearance="no-background"
+                style={{ borderColor: "neutral.c100", borderWidth: 1 }}
                 onClick={handleRejectClick}
-                style={{ minWidth: "auto", padding: "4px 8px" }}
               >
                 {t("families.canton.pendingTransactions.reject")}
               </Button>
             </>
           ) : (
             <Button
-              small
-              outline
+              size="sm"
+              appearance="no-background"
+              style={{ borderColor: "neutral.c100", borderWidth: 1 }}
               onClick={handleWithdrawClick}
-              style={{ minWidth: "auto", padding: "4px 8px" }}
             >
-              {t("families.canton.pendingTransactions.withdraw")}
+              {t("common.cancel")}
             </Button>
           )}
         </Box>
