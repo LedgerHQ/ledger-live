@@ -6,6 +6,7 @@ export default function SuccessBackground() {
       height={280}
       width={"100%"}
       style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+      data-testid="success-background"
     >
       <defs>
         {/* 1. tiny 2×2px grey dot pattern */}

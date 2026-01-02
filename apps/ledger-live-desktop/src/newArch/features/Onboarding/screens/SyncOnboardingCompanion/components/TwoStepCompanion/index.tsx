@@ -1,15 +1,12 @@
 import React from "react";
-import {
-  Step,
-  StepKey,
-} from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/hooks/useCompanionSteps";
 import { useTranslation } from "react-i18next";
 import { Flex, VerticalTimeline } from "@ledgerhq/react-ui";
-import CollapsibleStep from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/CollapsibleStep";
-import SuccessStep from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/SuccessStep";
-import SuccessBackground from "../assets/SuccessBackground";
-import NewSeedPanel from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/NewSeedPanel";
 import { SeedOriginType } from "@ledgerhq/types-live";
+import CollapsibleStep from "../CollapsibleStep";
+import SuccessStep from "../SuccessStep";
+import NewSeedPanel from "../NewSeedPanel";
+import { Step, StepKey } from "../../hooks/useCompanionSteps";
+import SuccessBackground from "../../assets/SuccessBackground";
 
 interface TwoStepCompanionProps {
   steps: Step[];
