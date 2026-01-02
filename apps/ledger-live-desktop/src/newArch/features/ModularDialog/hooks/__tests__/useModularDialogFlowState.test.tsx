@@ -6,21 +6,12 @@ import { useModularDialogFlowState } from "../useModularDialogFlowState";
 const mockGoToStep = jest.fn();
 const mockSetNetworksToDisplay = jest.fn();
 const mockOnAssetSelected = jest.fn();
-const mockOnAccountSelected = jest.fn();
 
 const defaultProps = {
   assets: [],
-  assetsToDisplay: [ethereumCurrency, bitcoinCurrency],
   sortedCryptoCurrencies: [bitcoinCurrency, ethereumCurrency],
   setNetworksToDisplay: mockSetNetworksToDisplay,
-  currencyIds: ["bitcoin", "ethereum"],
   goToStep: mockGoToStep,
-  isSelectAccountFlow: false,
-  onAssetSelected: mockOnAssetSelected,
-  onAccountSelected: mockOnAccountSelected,
-  hasOneNetwork: false,
-  hasOneCurrency: false,
-  flow: "selectAsset",
 };
 
 describe("useModularDialogFlowState", () => {
@@ -36,11 +27,15 @@ describe("useModularDialogFlowState", () => {
   });
 
   it("should handle asset selection", () => {
-    const { result } = renderHook(() => useModularDialogFlowState(defaultProps));
-    act(() => {
-      result.current.handleAssetSelected(defaultProps.assetsToDisplay[0]);
+    const { result } = renderHook(() => useModularDialogFlowState(defaultProps), {
+      initialState: {
+        modularDrawer: { isOpen: true, dialogParams: { onAssetSelected: mockOnAssetSelected } },
+      },
     });
-    expect(mockOnAssetSelected).toHaveBeenCalledWith(defaultProps.assetsToDisplay[0]);
+    act(() => {
+      result.current.handleAssetSelected(ethereumCurrency);
+    });
+    expect(mockOnAssetSelected).toHaveBeenCalledWith(ethereumCurrency);
   });
 
   it("should go back to asset selection", () => {

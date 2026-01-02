@@ -33,7 +33,7 @@ beforeEach(async () => {
   LiveConfig.setConfig(liveConfig);
 });
 
-const mockedInitialState = {
+const createMockedInitialState = (dialogParams = {}) => ({
   initialState: {
     accounts: [
       ETH_ACCOUNT,
@@ -54,9 +54,16 @@ const mockedInitialState = {
         },
       },
     },
-    modularDrawer: { isOpen: true },
+    modularDrawer: {
+      isOpen: true,
+      dialogParams: {
+        currencies: mockCurrencies,
+        onAssetSelected: mockOnAssetSelected,
+        ...dialogParams,
+      },
+    },
   },
-};
+});
 
 const mockCurrencies = [ethereumCurrency, bitcoinCurrency, arbitrumCurrency].map(c => c.id);
 
@@ -71,11 +78,10 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       bitcoinCurrency,
     ];
     renderWithMockedCounterValuesProvider(
-      <ModularDialogFlowManager
-        currencies={mixedCurrencies.map(c => c.id)}
-        onAssetSelected={mockOnAssetSelected}
-      />,
-      mockedInitialState,
+      <ModularDialogFlowManager />,
+      createMockedInitialState({
+        currencies: mixedCurrencies.map(c => c.id),
+      }),
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -88,16 +94,14 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
 
   it("should display balance on the right at assetSelection step", async () => {
     renderWithMockedCounterValuesProvider(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-        dialogConfiguration={{
+      <ModularDialogFlowManager />,
+      createMockedInitialState({
+        dialogConfiguration: {
           assets: {
             rightElement: "balance",
           },
-        }}
-      />,
-      mockedInitialState,
+        },
+      }),
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -112,16 +116,14 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
 
   it("should display APY tag at assetSelection step", async () => {
     renderWithMockedCounterValuesProvider(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-        dialogConfiguration={{
+      <ModularDialogFlowManager />,
+      createMockedInitialState({
+        dialogConfiguration: {
           assets: {
             leftElement: "apy",
           },
-        }}
-      />,
-      mockedInitialState,
+        },
+      }),
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -131,16 +133,14 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
 
   it("should display market trend on the left at assetSelection step", async () => {
     renderWithMockedCounterValuesProvider(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-        dialogConfiguration={{
+      <ModularDialogFlowManager />,
+      createMockedInitialState({
+        dialogConfiguration: {
           assets: {
             leftElement: "marketTrend",
           },
-        }}
-      />,
-      mockedInitialState,
+        },
+      }),
     );
 
     await waitFor(() => expect(screen.getByText(/bitcoin/i)).toBeVisible());
@@ -152,16 +152,14 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
 
   it("should display market trend on the right at assetSelection step", async () => {
     renderWithMockedCounterValuesProvider(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-        dialogConfiguration={{
+      <ModularDialogFlowManager />,
+      createMockedInitialState({
+        dialogConfiguration: {
           assets: {
             rightElement: "marketTrend",
           },
-        }}
-      />,
-      mockedInitialState,
+        },
+      }),
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -173,34 +171,34 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
   });
 
   it("should not display balance on the right at assetSelection step when enableModularization is false ", async () => {
-    renderWithMockedCounterValuesProvider(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-        dialogConfiguration={{
-          assets: {
-            rightElement: "balance",
+    renderWithMockedCounterValuesProvider(<ModularDialogFlowManager />, {
+      accounts: ETH_ACCOUNT,
+      settings: {
+        ...INITIAL_STATE,
+        overriddenFeatureFlags: {
+          lldModularDrawer: {
+            enabled: true,
+            params: {
+              enableModularization: false,
+            },
           },
-        }}
-      />,
-      {
-        accounts: ETH_ACCOUNT,
-        settings: {
-          ...INITIAL_STATE,
-          overriddenFeatureFlags: {
-            lldModularDrawer: {
-              enabled: true,
-              params: {
-                enableModularization: false,
+        },
+      },
+      initialState: {
+        modularDrawer: {
+          isOpen: true,
+          dialogParams: {
+            currencies: mockCurrencies,
+            onAssetSelected: mockOnAssetSelected,
+            dialogConfiguration: {
+              assets: {
+                rightElement: "balance",
               },
             },
           },
         },
-        initialState: {
-          modularDrawer: { isOpen: true },
-        },
       },
-    );
+    });
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     const ethereumBalance = screen.queryByText(/23.4663 eth/i);
@@ -211,12 +209,10 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
 
   it("should display number of accounts for network with numberOfAccounts flag", async () => {
     const { user } = renderWithMockedCounterValuesProvider(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-        dialogConfiguration={{ networks: { leftElement: "numberOfAccounts" } }}
-      />,
-      mockedInitialState,
+      <ModularDialogFlowManager />,
+      createMockedInitialState({
+        dialogConfiguration: { networks: { leftElement: "numberOfAccounts" } },
+      }),
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -237,12 +233,10 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
 
   it("should display number of accounts and APY for network with numberOfAccountsAndApy flag", async () => {
     const { user } = renderWithMockedCounterValuesProvider(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-        dialogConfiguration={{ networks: { leftElement: "numberOfAccountsAndApy" } }}
-      />,
-      mockedInitialState,
+      <ModularDialogFlowManager />,
+      createMockedInitialState({
+        dialogConfiguration: { networks: { leftElement: "numberOfAccountsAndApy" } },
+      }),
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -258,12 +252,10 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
 
   it("should display the total balance of an asset a specific network", async () => {
     const { user } = renderWithMockedCounterValuesProvider(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-        dialogConfiguration={{ networks: { rightElement: "balance" } }}
-      />,
-      mockedInitialState,
+      <ModularDialogFlowManager />,
+      createMockedInitialState({
+        dialogConfiguration: { networks: { rightElement: "balance" } },
+      }),
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -283,12 +275,10 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
   // Skipping because flaky, test to be rewritten in refactor from LIVE-21033
   it.skip("render the eth balance of scroll base and arbitrum as ethereum", async () => {
     renderWithMockedCounterValuesProvider(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-        dialogConfiguration={{ assets: { rightElement: "balance" } }}
-      />,
-      mockedInitialState,
+      <ModularDialogFlowManager />,
+      createMockedInitialState({
+        dialogConfiguration: { assets: { rightElement: "balance" } },
+      }),
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
@@ -312,12 +302,11 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
       bitcoinCurrency,
     ].map(c => c.id);
     renderWithMockedCounterValuesProvider(
-      <ModularDialogFlowManager
-        currencies={mixedCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-        dialogConfiguration={{ assets: { rightElement: "balance" } }}
-      />,
-      mockedInitialState,
+      <ModularDialogFlowManager />,
+      createMockedInitialState({
+        currencies: mixedCurrencies,
+        dialogConfiguration: { assets: { rightElement: "balance" } },
+      }),
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());

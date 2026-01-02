@@ -64,7 +64,20 @@ export const modularDrawerSearchedSelector = (state: State) => state.modularDraw
 export const modularDrawerFlowSelector = (state: State) => state.modularDrawer.flow;
 export const modularDrawerSourceSelector = (state: State) => state.modularDrawer.source;
 export const modularDialogIsOpenSelector = (state: State) => state.modularDrawer.isOpen;
-export const modularDialogParamsSelector = (state: State) => state.modularDrawer.dialogParams;
+export const modularDialogOnCloseSelector = (state: State) =>
+  state.modularDrawer.dialogParams?.onClose;
+export const modularDialogOnAccountSelectedSelector = (state: State) =>
+  state.modularDrawer.dialogParams?.onAccountSelected;
+export const modularDialogOnAssetSelectedSelector = (state: State) =>
+  state.modularDrawer.dialogParams?.onAssetSelected;
+export const modularDialogConfigurationSelector = (state: State) =>
+  state.modularDrawer.dialogParams?.dialogConfiguration;
+export const modularDialogCurrenciesSelector = (state: State) =>
+  state.modularDrawer.dialogParams?.currencies;
+export const modularDialogUseCaseSelector = (state: State) =>
+  state.modularDrawer.dialogParams?.useCase;
+export const modularDialogAreCurrenciesFilteredSelector = (state: State) =>
+  state.modularDrawer.dialogParams?.areCurrenciesFiltered;
 
 export const modularDrawerIsDebuggingDuplicatesSelector = (state: State) =>
   state.modularDrawer.isDebuggingDuplicates;

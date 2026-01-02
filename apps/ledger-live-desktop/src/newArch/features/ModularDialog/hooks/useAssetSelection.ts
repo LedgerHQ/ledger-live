@@ -2,10 +2,7 @@ import { useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 
-export function useAssetSelection(
-  currencyIds: string[],
-  sortedCryptoCurrencies: CryptoOrTokenCurrency[],
-) {
+export function useAssetSelection(sortedCryptoCurrencies: CryptoOrTokenCurrency[]) {
   const isAcceptedCurrency = useAcceptedCurrency();
 
   const assetsToDisplay = useMemo(
@@ -13,10 +10,7 @@ export function useAssetSelection(
     [sortedCryptoCurrencies, isAcceptedCurrency],
   );
 
-  const currencyIdsSet = useMemo(() => new Set(currencyIds), [currencyIds]);
-
   return {
     assetsToDisplay,
-    currencyIdsSet,
   };
 }
