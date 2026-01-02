@@ -10,7 +10,6 @@ import {
   resetModularDrawerState,
   modularDrawerFlowSelector,
   modularDialogIsOpenSelector,
-  closeDialog,
   modularDialogConfiguration,
   modularDialogOnAccountSelected,
 } from "~/renderer/reducers/modularDrawer";
@@ -38,7 +37,6 @@ const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) =>
       flow,
       page: currentRouteNameRef.current,
     });
-    dispatch(closeDialog());
     onClose?.();
   };
 

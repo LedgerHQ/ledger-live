@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-Replaces dialogParmas with redux state
+Replaces dialogParams with redux state
