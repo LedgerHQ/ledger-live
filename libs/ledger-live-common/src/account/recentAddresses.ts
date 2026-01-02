@@ -5,9 +5,10 @@ export const RECENT_ADDRESSES_COUNT_LIMIT = 12;
 export type RecentAddressesCache = RecentAddressesState;
 
 export interface RecentAddressesStore {
-  addAddress(currency: string, address: string): void;
+  addAddress(currency: string, address: string, ensName?: string): void;
+  removeAddress(currency: string, address: string): void;
   syncAddresses(cache: RecentAddressesCache): void;
-  getAddresses(currency: string): string[];
+  getAddresses(currency: string): RecentAddress[];
 }
 
 let recentAddressesStore: RecentAddressesStore | null = null;
@@ -46,7 +47,7 @@ class RecentAddressesStoreImpl implements RecentAddressesStore {
       const entries = cache[currency] as (RecentAddress | string)[];
       sanitized[currency] = entries.map(entry => {
         if (typeof entry === "string") {
-          return { address: entry, lastUsed: Date.now() };
+          return { address: entry, lastUsed: Date.now(), ensName: undefined };
         }
         return entry;
       });
@@ -54,8 +55,19 @@ class RecentAddressesStoreImpl implements RecentAddressesStore {
     return sanitized;
   }
 
-  addAddress(currency: string, address: string): void {
-    this.addAddressToCache(currency, address, Date.now(), true);
+  addAddress(currency: string, address: string, ensName?: string): void {
+    this.addAddressToCache(currency, address, Date.now(), true, ensName);
+  }
+
+  removeAddress(currency: string, address: string): void {
+    if (!this.addressesByCurrency[currency]) return;
+    const addresses = this.addressesByCurrency[currency];
+    const index = addresses.findIndex(entry => entry.address === address);
+    if (index !== -1) {
+      addresses.splice(index, 1);
+      this.addressesByCurrency[currency] = [...addresses];
+      this.onAddAddressComplete(this.addressesByCurrency);
+    }
   }
 
   syncAddresses(cache: RecentAddressesCache): void {
@@ -66,17 +78,21 @@ class RecentAddressesStoreImpl implements RecentAddressesStore {
       for (const entry of entries) {
         const address = typeof entry === "string" ? entry : entry.address;
         const timestamp = typeof entry === "string" ? undefined : entry.lastUsed;
-        this.addAddressToCache(currency, address, timestamp ?? Date.now(), false);
+        const ensName = typeof entry === "string" ? undefined : entry.ensName;
+        this.addAddressToCache(currency, address, timestamp ?? Date.now(), false, ensName);
       }
     }
 
     this.onAddAddressComplete(this.addressesByCurrency);
   }
 
-  getAddresses(currency: string): string[] {
+  getAddresses(currency: string): RecentAddress[] {
     const addresses = this.addressesByCurrency[currency];
     if (!addresses) return [];
-    return addresses.map(entry => entry.address);
+    return addresses.filter(
+      (entry): entry is RecentAddress =>
+        !!entry && typeof entry.address === "string" && entry.address.length > 0,
+    );
   }
 
   private addAddressToCache(
@@ -84,6 +100,7 @@ class RecentAddressesStoreImpl implements RecentAddressesStore {
     address: string,
     timestamp: number,
     shouldTriggerCallback: boolean,
+    ensName?: string,
   ): void {
     if (!this.addressesByCurrency[currency]) {
       this.addressesByCurrency[currency] = [];
@@ -98,7 +115,7 @@ class RecentAddressesStoreImpl implements RecentAddressesStore {
       addresses.pop();
     }
 
-    addresses.unshift({ address, lastUsed: timestamp });
+    addresses.unshift({ address, lastUsed: timestamp, ensName });
     this.addressesByCurrency[currency] = [...addresses];
 
     if (shouldTriggerCallback) {

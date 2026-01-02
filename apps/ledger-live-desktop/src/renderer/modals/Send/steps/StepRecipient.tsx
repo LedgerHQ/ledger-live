@@ -179,7 +179,8 @@ export const StepRecipientFooter = ({
   const handleOnNext = async () => {
     if (mainAccount && transaction) {
       const store = getRecentAddressesStore();
-      store.addAddress(mainAccount.currency.id, transaction.recipient);
+      const ensName = transaction.recipientDomain?.domain;
+      store.addAddress(mainAccount.currency.id, transaction.recipient, ensName);
     }
     if (
       transaction &&
