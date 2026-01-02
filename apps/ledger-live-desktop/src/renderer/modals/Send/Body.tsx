@@ -7,7 +7,11 @@ import { TFunction } from "i18next";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
+import {
+  addPendingOperation,
+  getMainAccount,
+  getRecentAddressesStore,
+} from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -249,8 +253,14 @@ const Body = ({
       );
       setOptimisticOperation(optimisticOperation);
       setTransactionError(null);
+      // Add address to recent addresses store after successful broadcast
+      if (transaction && mainAccount) {
+        const store = getRecentAddressesStore();
+        const ensName = transaction.recipientDomain?.domain;
+        store.addAddress(mainAccount.currency.id, transaction.recipient, ensName);
+      }
     },
-    [account, parentAccount, updateAccountWithUpdater],
+    [account, parentAccount, updateAccountWithUpdater, transaction],
   );
   const handleStepChange = useCallback(
     (e: { id: StepId }) => onChangeStepId(e.id),
