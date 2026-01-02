@@ -3,9 +3,9 @@ import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import {
-  modularDialogAreCurrenciesFiltered,
-  modularDialogCurrencies,
-  modularDialogUseCase,
+  modularDialogAreCurrenciesFilteredSelector,
+  modularDialogCurrenciesSelector,
+  modularDialogUseCaseSelector,
   modularDrawerSearchedSelector,
 } from "~/renderer/reducers/modularDrawer";
 import { useSelector } from "LLD/hooks/redux";
@@ -23,9 +23,9 @@ export function useModularDialogData() {
   );
   const searchedValue = useSelector(modularDrawerSearchedSelector);
 
-  const currencyIds = useSelector(modularDialogCurrencies);
-  const useCase = useSelector(modularDialogUseCase);
-  const areCurrenciesFiltered = useSelector(modularDialogAreCurrenciesFiltered);
+  const currencyIds = useSelector(modularDialogCurrenciesSelector);
+  const useCase = useSelector(modularDialogUseCaseSelector);
+  const areCurrenciesFiltered = useSelector(modularDialogAreCurrenciesFilteredSelector);
 
   const { data, isLoading, isSuccess, error, errorInfo, loadNext, refetch } = useAssetsData({
     search: searchedValue,

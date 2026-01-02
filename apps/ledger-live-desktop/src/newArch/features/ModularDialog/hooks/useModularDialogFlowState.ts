@@ -9,9 +9,9 @@ import uniqWith from "lodash/uniqWith";
 import { belongsToSameNetwork } from "@ledgerhq/live-common/modularDrawer/utils/index";
 import { useSelector } from "LLD/hooks/redux";
 import {
-  modularDialogCurrencies,
-  modularDialogOnAccountSelected,
-  modularDialogOnAssetSelected,
+  modularDialogCurrenciesSelector,
+  modularDialogOnAccountSelectedSelector,
+  modularDialogOnAssetSelectedSelector,
   modularDrawerSearchedSelector,
 } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
@@ -33,9 +33,9 @@ export function useModularDialogFlowState({
   const isAcceptedCurrency = useAcceptedCurrency();
   const { trackModularDialogEvent } = useModularDialogAnalytics();
   const searchedValue = useSelector(modularDrawerSearchedSelector);
-  const currencyIds = useSelector(modularDialogCurrencies);
-  const onAssetSelected = useSelector(modularDialogOnAssetSelected);
-  const onAccountSelected = useSelector(modularDialogOnAccountSelected);
+  const currencyIds = useSelector(modularDialogCurrenciesSelector);
+  const onAssetSelected = useSelector(modularDialogOnAssetSelectedSelector);
+  const onAccountSelected = useSelector(modularDialogOnAccountSelectedSelector);
 
   const [selectedAsset, setSelectedAsset] = useState<CryptoOrTokenCurrency>();
   const [selectedNetwork, setSelectedNetwork] = useState<CryptoOrTokenCurrency>();
@@ -93,7 +93,8 @@ export function useModularDialogFlowState({
   const getNetworksFromProvider = useCallback(
     (provider: AssetData) => {
       return provider.networks.filter(elem => {
-        const isAllowedByFilter = currencyIds?.length === 0 || currencyIds?.includes(elem.id);
+        const isAllowedByFilter =
+          !currencyIds || currencyIds.length === 0 || currencyIds.includes(elem.id);
 
         return isAcceptedCurrency(elem) && isAllowedByFilter;
       });
@@ -167,7 +168,15 @@ export function useModularDialogFlowState({
         handleAssetSelected(currency);
       }
     }
-  }, [sortedCryptoCurrencies, goToStep, handleAssetSelected, selectedAsset, searchedValue, assets]);
+  }, [
+    sortedCryptoCurrencies,
+    goToStep,
+    handleAssetSelected,
+    selectedAsset,
+    searchedValue,
+    assets,
+    currencyIds,
+  ]);
 
   return {
     selectedAsset,

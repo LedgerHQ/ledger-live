@@ -10,8 +10,8 @@ import {
   resetModularDrawerState,
   modularDrawerFlowSelector,
   modularDialogIsOpenSelector,
-  modularDialogConfiguration,
-  modularDialogOnAccountSelected,
+  modularDialogConfigurationSelector,
+  modularDialogOnAccountSelectedSelector,
 } from "~/renderer/reducers/modularDrawer";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
@@ -28,8 +28,8 @@ const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) =>
     useModularDialogNavigation();
   const flow = useSelector(modularDrawerFlowSelector);
   const isOpen = useSelector(modularDialogIsOpenSelector);
-  const onAccountSelected = useSelector(modularDialogOnAccountSelected);
-  const dialogConfiguration = useSelector(modularDialogConfiguration);
+  const onAccountSelected = useSelector(modularDialogOnAccountSelectedSelector);
+  const dialogConfiguration = useSelector(modularDialogConfigurationSelector);
 
   const handleClose = () => {
     track("button_clicked", {
@@ -43,8 +43,10 @@ const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) =>
   useEffect(() => {
     if (isOpen) {
       setCurrentStep(MODULAR_DIALOG_STEP.ASSET_SELECTION);
-    } else {
-      dispatch(resetModularDrawerState());
+
+      return () => {
+        dispatch(resetModularDrawerState());
+      };
     }
   }, [dispatch, isOpen, setCurrentStep]);
 

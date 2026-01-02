@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-Replaces dialogParams with redux state
+Refactor dialog handling to read dialog parameters from Redux state instead of the dialogParams prop, reducing prop drilling and centralizing dialog configuration.

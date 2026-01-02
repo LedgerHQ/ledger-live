@@ -167,7 +167,7 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
 
   it("should display the empty state when there are no assets", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
-      initialState: { modularDrawer: dialogParamsMixedCurrencies },
+      initialState: { modularDrawer: dialogParamsMockCurrencies },
     });
 
     await waitForSkeletonToBeRemoved();
