@@ -69,8 +69,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
   const { isAWalletCardDisplayed } = useDynamicContent();
-  const accountListFF = useFeature("llmAccountListUI");
-  const isAccountListUIEnabled = accountListFF?.enabled;
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   useListenToHidDevices();
@@ -164,17 +162,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         ) : null}
       </WalletTabSafeAreaView>,
       showAssets ? (
-        isAccountListUIEnabled ? (
-          <AnimatedContainer onHeightChange={handleHeightChange}>
-            <Box background={colors.background.main} px={6} key="PortfolioAssets">
-              <RecoverBanner />
-              <PortfolioAssets
-                hideEmptyTokenAccount={hideEmptyTokenAccount}
-                openAddModal={openAddModal}
-              />
-            </Box>
-          </AnimatedContainer>
-        ) : (
+        <AnimatedContainer onHeightChange={handleHeightChange}>
           <Box background={colors.background.main} px={6} key="PortfolioAssets">
             <RecoverBanner />
             <PortfolioAssets
@@ -182,7 +170,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
               openAddModal={openAddModal}
             />
           </Box>
-        )
+        </AnimatedContainer>
       ) : null,
       ...(showAssets && isAWalletCardDisplayed
         ? [
@@ -227,7 +215,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     [
       onBackFromUpdate,
       showAssets,
-      isAccountListUIEnabled,
       handleHeightChange,
       colors.background.main,
       hideEmptyTokenAccount,

@@ -31,8 +31,6 @@ const maxItemsToDisplay = 5;
 const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const accountListFF = useFeature("llmAccountListUI");
-  const isAccountListUIEnabled = accountListFF?.enabled;
   const navigation = useNavigation();
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   const initialSelectedTab = useSelector(selectedTabPortfolioAssetsSelector, shallowEqual);
@@ -99,7 +97,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         button: showAssets ? "See all assets" : "See all accounts",
         page: "Wallet",
       });
-      if (!showAssets && isAccountListUIEnabled) {
+      if (!showAssets) {
         navigation.navigate(NavigatorName.Accounts, {
           screen: ScreenName.AccountsList,
           params: {
@@ -111,22 +109,16 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         });
         return;
       }
-      if (isAccountListUIEnabled) {
-        navigation.navigate(NavigatorName.Assets, {
-          screen: ScreenName.AssetsList,
-          params: {
-            sourceScreenName: ScreenName.Portfolio,
-            showHeader: true,
-            isSyncEnabled: true,
-          },
-        });
-      } else {
-        navigation.navigate(NavigatorName.Accounts, {
-          screen: ScreenName.Assets,
-        });
-      }
+      navigation.navigate(NavigatorName.Assets, {
+        screen: ScreenName.AssetsList,
+        params: {
+          sourceScreenName: ScreenName.Portfolio,
+          showHeader: true,
+          isSyncEnabled: true,
+        },
+      });
     },
-    [showAssets, isAccountListUIEnabled, navigation],
+    [showAssets, navigation],
   );
 
   return (
@@ -139,25 +131,21 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
       <Box my={24}>
         <PortfolioQuickActionsBar />
       </Box>
-      {isAccountListUIEnabled ? (
-        <TabSection
-          handleToggle={handleToggle}
-          handleButtonLayout={handleButtonLayout}
-          handleAssetsContentSizeChange={handleAssetsContentSizeChange}
-          handleAccountsContentSizeChange={handleAccountsContentSizeChange}
-          onPressButton={onPressButton}
-          initialTab={initialSelectedTab}
-          showAssets={showAssets}
-          assetsLength={assetsToDisplay.length}
-          accountsLength={allAccounts.length}
-          assetsFullHeight={assetsFullHeight}
-          accountsFullHeight={accountsFullHeight}
-          maxItemsToDisplay={maxItemsToDisplay}
-        />
-      ) : (
-        <Assets assets={assetsToDisplay} />
-      )}
-      {!isAccountListUIEnabled && distribution.list.length < maxItemsToDisplay && (
+      <TabSection
+        handleToggle={handleToggle}
+        handleButtonLayout={handleButtonLayout}
+        handleAssetsContentSizeChange={handleAssetsContentSizeChange}
+        handleAccountsContentSizeChange={handleAccountsContentSizeChange}
+        onPressButton={onPressButton}
+        initialTab={initialSelectedTab}
+        showAssets={showAssets}
+        assetsLength={assetsToDisplay.length}
+        accountsLength={allAccounts.length}
+        assetsFullHeight={assetsFullHeight}
+        accountsFullHeight={accountsFullHeight}
+        maxItemsToDisplay={maxItemsToDisplay}
+      />
+      {distribution.list.length < maxItemsToDisplay && (
         <Button
           type="shade"
           size="large"
@@ -169,11 +157,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
           testID="add-account-cta"
         >
           {t("account.emptyState.addAccountCta")}
-        </Button>
-      )}
-      {!isAccountListUIEnabled && distribution.list.length >= maxItemsToDisplay && (
-        <Button type="shade" size="large" outline onPress={onPressButton}>
-          {t("portfolio.seeAllAssets")}
         </Button>
       )}
     </>

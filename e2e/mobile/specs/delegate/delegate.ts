@@ -7,9 +7,6 @@ import { getCurrencyManagerApp } from "../../models/currencies";
 const beforeAllFunction = async (delegation: DelegateType) => {
   await app.init({
     speculosApp: delegation.account.currency.speculosApp,
-    featureFlags: {
-      llmAccountListUI: { enabled: true },
-    },
     cliCommands: [
       async (userdataPath?: string) => {
         await CLI.liveData({

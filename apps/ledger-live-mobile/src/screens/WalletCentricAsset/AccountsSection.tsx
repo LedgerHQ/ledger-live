@@ -27,7 +27,6 @@ type ListProps = {
 const AccountsSection = ({ accounts, currencyId, currencyTicker }: ListProps) => {
   const navigation = useNavigation<Navigation["navigation"]>();
   const { t } = useTranslation();
-  const llmAccountListUI = useFeature("llmAccountListUI");
 
   const accountsToDisplay = useMemo(
     () => accounts.slice(0, NB_MAX_ACCOUNTS_TO_DISPLAY),
@@ -50,47 +49,25 @@ const AccountsSection = ({ accounts, currencyId, currencyTicker }: ListProps) =>
     track("button_clicked", {
       button: "See All",
     });
-    if (llmAccountListUI?.enabled) {
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.AccountsList,
-        params: {
-          sourceScreenName: ScreenName.Asset,
-          showHeader: true,
-          canAddAccount: true,
-          isSyncEnabled: true,
-          specificAccounts: accounts as Account[],
-        },
-      });
-    } else {
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.Accounts,
-        params: {
-          currencyId,
-          currencyTicker,
-        },
-      });
-    }
-  }, [llmAccountListUI, navigation, accounts, currencyId, currencyTicker]);
+    navigation.navigate(NavigatorName.Accounts, {
+      screen: ScreenName.AccountsList,
+      params: {
+        sourceScreenName: ScreenName.Asset,
+        showHeader: true,
+        canAddAccount: true,
+        isSyncEnabled: true,
+        specificAccounts: accounts as Account[],
+      },
+    });
+  }, [navigation, accounts]);
 
   return (
     <>
-      <FeatureToggle
-        featureId="llmAccountListUI"
-        fallback={
-          <FlatList<Account | TokenAccount>
-            data={accountsToDisplay}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-            contentContainerStyle={{ flex: 1 }}
-          />
-        }
-      >
-        <AccountsList
-          limitNumberOfAccounts={NB_MAX_ACCOUNTS_TO_DISPLAY}
-          specificAccounts={accountsToDisplay}
-        />
-        <AddAccountButton sourceScreenName={ScreenName.Asset} currency={currencyId} />
-      </FeatureToggle>
+      <AccountsList
+        limitNumberOfAccounts={NB_MAX_ACCOUNTS_TO_DISPLAY}
+        specificAccounts={accountsToDisplay}
+      />
+      <AddAccountButton sourceScreenName={ScreenName.Asset} currency={currencyId} />
       {accounts.length > NB_MAX_ACCOUNTS_TO_DISPLAY ? (
         <Button type="shade" size="large" outline mt={4} onPress={goToAccountsScreen}>
           {t("addAccounts.seeAllAccounts")}
