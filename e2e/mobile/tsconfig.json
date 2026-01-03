@@ -2,43 +2,27 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "experimentalDecorators": true,
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "module": "preserve",
+    "isolatedModules": true,
+    "allowJs": false,
     "checkJs": false,
     "jsx": "react-native",
-    "lib": [
-      "es2017",
-      "DOM"
-    ],
+    "lib": ["es2017", "DOM"],
     "skipLibCheck": true,
     "noEmit": true,
     "baseUrl": ".",
-    "typeRoots": [
-      "./types",
-      "./node_modules/@types"
-    ],
+    "typeRoots": ["./types", "./node_modules/@types"],
     "paths": {
-      "LLM/*": [
-        "../../apps/ledger-live-mobile/src/newArch/*"
-      ],
-      "~/*": [
-        "../../apps/ledger-live-mobile/src/*"
-      ],
-      "@ledgerhq/live-common/hw/index": [
-        "../../libs/ledger-live-common/src/hw/index"
-      ],
-      "@ledgerhq/live-common/hw/deviceAccess": [
-        "../../libs/ledger-live-common/src/hw/deviceAccess"
-      ]
+      "LLM/*": ["../../apps/ledger-live-mobile/src/newArch/*"],
+      "~/*": ["../../apps/ledger-live-mobile/src/*"]
     }
   },
   "include": [
-    "types",
-    "**/*.ts",
-    "**/*.tsx"
+    "./**/*.ts",
+    "../../apps/ledger-live-mobile/**/*.d.ts",
+    "../../apps/ledger-live-mobile/src/**/*.{ts,tsx}"
   ],
-  "exclude": [
-    "node_modules",
-    "babel.config.js",
-    "jest.config.js",
-    "**/*.js"
-  ]
+  "exclude": ["node_modules", "babel.config.js", "jest.config.js"]
 }

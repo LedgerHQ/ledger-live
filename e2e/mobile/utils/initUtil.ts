@@ -11,7 +11,7 @@ import {
   removeSpeculosAndDeregisterKnownSpeculos,
 } from "./speculosUtils";
 import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
-import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import { SettingsSetOverriddenFeatureFlagsPlayload } from "../../../apps/ledger-live-mobile/src/actions/types";
 
 type CliCommand = (
   userdataPath?: string,

@@ -5,6 +5,7 @@
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit --project ./tsconfig.json",
     "test:detox": "pnpm detox test",
     "test:ios": "pnpm test:detox --configuration ios.sim.release",
     "test:android": "pnpm test:detox --configuration android.emu.release",
@@ -14,8 +15,10 @@
     "test:android:debug": "pnpm test:detox --configuration android.emu.debug",
     "build:ios:debug": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.debug",
     "build:android:debug": "pnpm --filter live-mobile run e2e:build --configuration android.emu.debug",
+    "clean:detox": "pnpm detox clean-framework-cache && pnpm detox clean",
     "allure:generate": "allure generate ./artifacts --clean -o ./artifacts/allure-report",
-    "allure:open": "allure open ./artifacts/allure-report"
+    "allure:open": "allure open ./artifacts/allure-report",
+    "prepare": "cd ../.. && husky e2e/mobile/.husky"
   },
   "dependencies": {
     "@ledgerhq/logs": "workspace:^",
@@ -60,12 +63,13 @@
     "expect": "27.5.1",
     "express": "4.22.0",
     "glob": "^11.0.1",
+    "husky": "9.1.7",
     "jest": "30.2.0",
     "jest-allure2-reporter": "2.2.8",
     "jest-docblock": "30.2.0",
     "jest-environment-node": "30.2.0",
-    "jest-util": "30.2.0",
     "jest-metadata": "1.6.0",
+    "jest-util": "30.2.0",
     "lodash": "4.17.21",
     "ts-jest": "29.4.5",
     "ts-node": "10.9.2",

@@ -1,0 +1,8 @@
+# .husky/pre-push
+
+if git diff --name-only origin/main...HEAD | grep -q "^e2e/mobile"; then
+  echo "Running Husky pre-push for e2e mobile"
+  echo "You can skip this by setting HUSKY=0 env var or adding -n/--no-verify on git command"
+  
+  pnpm e2e:mobile typecheck
+fi
