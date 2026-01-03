@@ -14,6 +14,7 @@ import {
   SignTransactionDAError,
   SignerSolana,
   TransactionResolutionContext,
+  UserInputType,
 } from "@ledgerhq/device-signer-kit-solana";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import bs58 from "bs58";
@@ -81,6 +82,7 @@ export class DmkSignerSol implements SolanaSigner {
    */
   async getAppConfiguration(): Promise<AppConfig> {
     const { observable } = this.dmkSigner.getAppConfiguration();
+
     return new Promise<AppConfig>((resolve, reject) => {
       observable.subscribe({
         next: state => {
@@ -143,7 +145,8 @@ export class DmkSignerSol implements SolanaSigner {
       createATA: resolution.createATA,
       templateId: resolution.templateId,
       // Cast is safe: UserInputType enum values ("sol" | "ata") are identical in both types
-      userInputType: resolution.userInputType as TransactionResolutionContext["userInputType"],
+      userInputType: resolution.userInputType as UserInputType,
+      ...(resolution.templateId && { templateId: resolution.templateId }),
     };
   }
 
