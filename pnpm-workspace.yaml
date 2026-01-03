@@ -166,6 +166,7 @@ catalog:
 
 overrides:
   node-abi: ^4.9.0
+  "@ledgerhq/device-management-kit": 1.0.1
 
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
