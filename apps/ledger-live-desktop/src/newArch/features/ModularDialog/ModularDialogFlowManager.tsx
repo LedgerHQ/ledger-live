@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { MODULAR_DRAWER_STEP, ModularDrawerFlowManagerProps, ModularDrawerStep } from "./types";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { MODULAR_DIALOG_STEP, ModularDialogFlowManagerProps, ModularDialogStep } from "./types";
 import AssetSelector from "./screens/AssetSelector";
 import { NetworkSelector } from "./screens/NetworkSelector";
 import { AccountSelector } from "./screens/AccountSelector";
-import { useModularDrawerNavigation } from "./hooks/useModularDialogNavigation";
-import { useModularDrawerRemoteData } from "./hooks/useModularDialogRemoteData";
+import { useModularDialogNavigation } from "./hooks/useModularDialogNavigation";
+import { useModularDialogRemoteData } from "./hooks/useModularDialogRemoteData";
 import {
   resetModularDrawerState,
   modularDrawerFlowSelector,
@@ -17,19 +17,22 @@ import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { ModularDialogContent } from "./ModularDialogContent";
+import { useTranslation } from "react-i18next";
+import { useHasAccountsForAsset } from "./hooks/useHasAccountsForAsset";
 
 const ModularDialogFlowManager = ({
   currencies,
-  drawerConfiguration,
+  dialogConfiguration,
   useCase,
   areCurrenciesFiltered,
   onAssetSelected,
   onAccountSelected,
   onClose,
-}: ModularDrawerFlowManagerProps) => {
+}: ModularDialogFlowManagerProps) => {
+  const { t } = useTranslation();
   const currencyIds = useMemo(() => currencies, [currencies]);
   const dispatch = useDispatch();
-  const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
+  const { currentStep, navigationDirection, goToStep } = useModularDialogNavigation();
   const flow = useSelector(modularDrawerFlowSelector);
   const isOpen = useSelector(modularDialogIsOpenSelector);
 
@@ -62,7 +65,7 @@ const ModularDialogFlowManager = ({
     handleBack,
     loadNext,
     assetsSorted,
-  } = useModularDrawerRemoteData({
+  } = useModularDialogRemoteData({
     currentStep,
     currencyIds,
     goToStep,
@@ -74,12 +77,14 @@ const ModularDialogFlowManager = ({
 
   const { assetsConfiguration, networkConfiguration } = useModularDrawerConfiguration(
     "lldModularDrawer",
-    drawerConfiguration,
+    dialogConfiguration,
   );
 
-  const renderStepContent = (step: ModularDrawerStep) => {
+  const hasAccounts = useHasAccountsForAsset(selectedAsset);
+
+  const renderStepContent = (step: ModularDialogStep) => {
     switch (step) {
-      case MODULAR_DRAWER_STEP.ASSET_SELECTION:
+      case MODULAR_DIALOG_STEP.ASSET_SELECTION:
         return (
           <AssetSelector
             assetsToDisplay={assetsToDisplay}
@@ -92,7 +97,7 @@ const ModularDialogFlowManager = ({
             assetsSorted={assetsSorted}
           />
         );
-      case MODULAR_DRAWER_STEP.NETWORK_SELECTION:
+      case MODULAR_DIALOG_STEP.NETWORK_SELECTION:
         return (
           <NetworkSelector
             networks={networksToDisplay}
@@ -101,7 +106,7 @@ const ModularDialogFlowManager = ({
             selectedAssetId={selectedAsset?.id}
           />
         );
-      case MODULAR_DRAWER_STEP.ACCOUNT_SELECTION:
+      case MODULAR_DIALOG_STEP.ACCOUNT_SELECTION:
         if (selectedAsset && selectedNetwork && onAccountSelected) {
           return <AccountSelector asset={selectedAsset} onAccountSelected={onAccountSelected} />;
         }
@@ -120,6 +125,13 @@ const ModularDialogFlowManager = ({
           handleClose={handleClose}
           handleBack={handleBack}
           renderStepContent={renderStepContent}
+          description={
+            currentStep === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION &&
+            selectedNetwork?.name &&
+            !hasAccounts
+              ? t("dialogs.selectAccount.description", { network: selectedNetwork.name })
+              : undefined
+          }
         />
       </DialogContent>
     </Dialog>

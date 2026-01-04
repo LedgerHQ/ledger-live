@@ -1,6 +1,6 @@
 import { track } from "~/renderer/analytics/segment";
 import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { ErrorType } from "./type.hooks";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";

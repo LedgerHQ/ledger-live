@@ -1,12 +1,12 @@
 import { useCallback, useState } from "react";
 import {
-  MODULAR_DRAWER_STEP,
-  ModularDrawerStep,
+  MODULAR_DIALOG_STEP,
+  ModularDialogStep,
   NAVIGATION_DIRECTION,
   NavigationDirection,
 } from "../types";
 
-const ACCOUNT_SELECTION_STEP_ORDER: ModularDrawerStep[] = [
+const ACCOUNT_SELECTION_STEP_ORDER: ModularDialogStep[] = [
   "ASSET_SELECTION",
   "NETWORK_SELECTION",
   "ACCOUNT_SELECTION",
@@ -51,8 +51,8 @@ export function useGenericNavigation<T>({
   };
 }
 
-export function useModularDrawerNavigation(
-  initialStep: ModularDrawerStep = MODULAR_DRAWER_STEP.ASSET_SELECTION,
+export function useModularDialogNavigation(
+  initialStep: ModularDialogStep = MODULAR_DIALOG_STEP.ASSET_SELECTION,
 ) {
   return useGenericNavigation({
     stepOrder: ACCOUNT_SELECTION_STEP_ORDER,

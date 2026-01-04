@@ -48,6 +48,24 @@ jest.mock("LLD/features/ModularDrawer/hooks/useOpenAssetFlow", () => ({
   }),
 }));
 
+const mockOpenSendFlow = jest.fn(params => {
+  // Maintain backward compatibility: call openModal when no account is provided
+  if (!params?.account) {
+    mockOpenModal("MODAL_SEND", params || {});
+  } else {
+    // When account is provided, convert amount from string to BigNumber for compatibility
+    const modalParams = {
+      ...params,
+      amount: typeof params.amount === "string" ? new BigNumber(params.amount) : params.amount,
+    };
+    mockOpenModal("MODAL_SEND", modalParams);
+  }
+});
+
+jest.mock("LLD/features/Send/hooks/useOpenSendFlow", () => ({
+  useOpenSendFlow: () => mockOpenSendFlow,
+}));
+
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
   findCryptoCurrencyByKeyword: jest.fn(),

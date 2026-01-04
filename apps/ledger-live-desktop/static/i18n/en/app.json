@@ -2468,6 +2468,7 @@
     "placeholderNoENS": "Enter address",
     "recent": "Recent",
     "myAccounts": "My accounts",
+    "sendTo": "Send to {{address}}",
     "addressMatched": "Address matched",
     "addressNotFound": "Address not found",
     "alreadyUsed": "Already used · {{date}}",
@@ -2476,7 +2477,7 @@
     "enterTag": "Enter {{tag}}",
     "firstInteraction": {
       "title": "You’re sending to a new address",
-      "description": "Verify that the address is correct. In case of doubt send a small amount first"
+      "description": "Verify that the address is correct. In case of doubt send a small amount first."
     },
     "sanctioned": {
       "title": "Flagged address",
@@ -2499,7 +2500,7 @@
     "networkFeesInFiat": "Network fees in {{currency}}",
     "feesAmount": "Fees amount ({{unit}})",
     "gasLimit": "Gas limit ({{unit}})",
-    "feesPaid": "Fees paid to the network to proceed the transaction",
+    "feesPaid": "Fees paid to the network to proceed your transaction",
     "insufficientBalanceFees": "Insufficient balance to cover the network fees",
     "amountToSend": "Amount to send in ({{currency}})",
     "coinToSend": "Coin to send",
@@ -3762,6 +3763,8 @@
       "activeTooltip": "Active amount generate rewards",
       "inactiveTooltip": "Inactive amount does not generate rewards",
       "delegatedInfoTooltip": "Total amount that is delegated to validators.",
+      "inactiveStakeTooltip": "Inactive stake that can be withdrawn without deactivating your delegation.",
+      "inactiveStakeTitle": "Withdrawable Rewards",
       "withdrawableInfoTooltip": "Total amount that is withdrawable from delegations.",
       "withdrawableTitle": "Withdrawable",
       "statusUpdateNotice": "The status of the delegation will be updated when the transaction is confirmed.",
@@ -4708,7 +4711,10 @@
       },
       "modularDrawerDevTool": {
         "title": "Modular Drawer Dev Tool",
-        "description": "Allows you to test the Modular Drawer easily"
+        "description": "Allows you to test the Modular Drawer easily",
+        "openDrawer": "Open Drawer",
+        "debugDialog": "Debug Dialog",
+        "debugDuplicates": "Debug Duplicates"
       },
       "cryptoAssetsList": {
         "title": "Crypto Assets List",
@@ -7514,7 +7520,8 @@
   },
   "dialogs": {
     "selectAccount": {
-      "addAccount": "Add new"
+      "description": "You don't have {{network}} accounts yet. Please add one to continue",
+      "addAccount": "Add account"
     }
   },
   "drawers": {

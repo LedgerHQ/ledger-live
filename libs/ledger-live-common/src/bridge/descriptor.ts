@@ -51,6 +51,7 @@ export type InputDescriptor = Readonly<{
   maxLength?: number;
   maxValue?: number;
   options?: readonly string[];
+  defaultOption?: string;
   supportsDomain?: boolean; // Whether the field supports domain names (ENS for EVM)
 }>;
 
@@ -64,6 +65,18 @@ export type FeeDescriptor = {
 };
 
 /**
+ * Self-transfer policy for a coin
+ */
+export type SelfTransferPolicy = "free" | "warning" | "impossible";
+
+/**
+ * Error registry for coin-specific error classes
+ */
+export type ErrorRegistry = {
+  userRefusedTransaction?: string; // Error class name for when user refuses transaction on device
+};
+
+/**
  * Send flow descriptor defining inputs for the send transaction
  */
 export type SendDescriptor = {
@@ -72,6 +85,8 @@ export type SendDescriptor = {
     memo?: InputDescriptor;
   };
   fees: FeeDescriptor;
+  selfTransfer?: SelfTransferPolicy; // Policy for sending to self (same address), defaults to "impossible"
+  errors?: ErrorRegistry; // Registry of error class names for this coin
 };
 
 /**
@@ -254,8 +269,35 @@ export const sendFeatures = {
     const descriptor = getSendDescriptor(currency);
     return descriptor?.inputs.memo?.options;
   },
+  getMemoDefaultOption: (currency: CryptoOrTokenCurrency | undefined): string | undefined => {
+    const descriptor = getSendDescriptor(currency);
+    return descriptor?.inputs.memo?.defaultOption;
+  },
   supportsDomain: (currency: CryptoOrTokenCurrency | undefined): boolean => {
     const descriptor = getSendDescriptor(currency);
     return descriptor?.inputs.recipientSupportsDomain ?? false;
+  },
+  getSelfTransferPolicy: (currency: CryptoOrTokenCurrency | undefined): SelfTransferPolicy => {
+    const descriptor = getSendDescriptor(currency);
+    // Default to "impossible" if not specified
+    return descriptor?.selfTransfer ?? "impossible";
+  },
+  getUserRefusedTransactionErrorName: (currency: CryptoOrTokenCurrency | undefined): string => {
+    const descriptor = getSendDescriptor(currency);
+    // Default to TransactionRefusedOnDevice if not specified
+    return descriptor?.errors?.userRefusedTransaction ?? "TransactionRefusedOnDevice";
+  },
+  isUserRefusedTransactionError: (
+    currency: CryptoOrTokenCurrency | undefined,
+    error: unknown,
+  ): boolean => {
+    if (!currency) {
+      return false;
+    }
+    const errorName = sendFeatures.getUserRefusedTransactionErrorName(currency);
+    // Check if error is an instance of the registered error class by name
+    return (
+      error !== null && typeof error === "object" && "name" in error && error.name === errorName
+    );
   },
 };

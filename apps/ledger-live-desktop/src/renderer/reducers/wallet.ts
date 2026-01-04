@@ -12,7 +12,7 @@ import { DistantState } from "@ledgerhq/live-wallet/walletsync/index";
 import { handleActions } from "redux-actions";
 import { State } from ".";
 import { createSelector } from "reselect";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { AccountLike, RecentAddressesState } from "@ledgerhq/types-live";
 
 export const walletSelector = (state: State): WalletState => state.wallet;

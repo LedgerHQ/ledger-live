@@ -5,7 +5,7 @@ import RecoverBanner from "~/renderer/components/RecoverBanner/RecoverBanner";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import { Box } from "@ledgerhq/react-ui/components/layout/index";
 import { currenciesSelector } from "~/renderer/reducers/accounts";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import useActionCards from "~/renderer/hooks/useActionCards";
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";

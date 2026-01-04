@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import styled, { keyframes } from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { toggleStarAction } from "~/renderer/actions/wallet";
 import { rgba } from "~/renderer/styles/helpers";
 import starAnim from "~/renderer/images/starAnim.png";

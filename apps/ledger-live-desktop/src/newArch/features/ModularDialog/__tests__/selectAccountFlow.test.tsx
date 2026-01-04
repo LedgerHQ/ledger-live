@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import React from "react";
-import * as reactRedux from "react-redux";
+import * as reduxHooks from "LLD/hooks/redux";
 import { render, screen, waitFor } from "tests/testSetup";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
@@ -26,6 +26,15 @@ import {
   mockOnAccountSelected,
 } from "../../__tests__/shared";
 import ModularDialogFlowManager from "../ModularDialogFlowManager";
+
+const actualUseDispatch = jest.requireActual<typeof reduxHooks>("LLD/hooks/redux").useDispatch;
+jest.mock("LLD/hooks/redux", () => {
+  const actual = jest.requireActual<typeof reduxHooks>("LLD/hooks/redux");
+  return {
+    ...actual,
+    useDispatch: jest.fn(() => actual.useDispatch()),
+  };
+});
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
@@ -114,7 +123,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     await user.click(arbitrumNetwork);
 
     expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
-    expect(screen.getByText(/add new/i)).toBeVisible();
+    expect(screen.getByText(/add account/i)).toBeVisible();
     expect(screen.getByText(/ethereum 2/i)).toBeVisible();
     expect(screen.getByText(/1 eth/i)).toBeVisible();
   });
@@ -203,12 +212,13 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     );
 
     await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
-    expect(screen.getByText(/add new/i)).toBeVisible();
-    expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/add account/i)).toBeVisible();
+    expect(screen.getAllByText(/you don't have bitcoin accounts yet/i)[0]).toBeVisible();
   });
 
   it("should trigger add account with corresponding currency", async () => {
-    const useDispatchSpy = jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
+    const useDispatchMock = jest.mocked(reduxHooks.useDispatch);
+    useDispatchMock.mockReturnValue(mockDispatch);
     const bitcoinCurrencyResult = getCryptoCurrencyById("bitcoin");
     const { user } = render(
       <ModularDialogFlowManager
@@ -225,8 +235,8 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     );
 
     await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
-    expect(screen.getByText(/add new/i)).toBeVisible();
-    await user.click(screen.getByText(/add new/i));
+    expect(screen.getByText(/add account/i)).toBeVisible();
+    await user.click(screen.getByText(/add account/i));
     expect(mockDispatch).toHaveBeenCalledWith({
       payload: {
         data: {
@@ -237,7 +247,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       type: "MODAL_OPEN",
     });
 
-    useDispatchSpy.mockRestore();
+    useDispatchMock.mockImplementation(actualUseDispatch);
   });
 
   it("should go back to AssetSelection step when clicking on back button", async () => {
@@ -506,5 +516,61 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
     await waitFor(() => expect(screen.getByRole("textbox")).toBeVisible());
     await waitFor(() => expect(screen.getByRole("textbox")).toHaveFocus());
+  });
+
+  it("should display description when there are no accounts for the selected network", async () => {
+    const { user } = render(
+      <ModularDialogFlowManager
+        currencies={mockCurrencies}
+        onAccountSelected={mockOnAccountSelected}
+      />,
+      {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [],
+          modularDrawer: { isOpen: true },
+        },
+      },
+    );
+
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    const ethereumAsset = screen.getByText(/ethereum/i);
+    await user.click(ethereumAsset);
+
+    const ethereumNetwork = screen.getByText(/ethereum/i);
+    await user.click(ethereumNetwork);
+
+    await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
+
+    const descriptions = screen.getAllByText(/you don't have ethereum accounts yet/i);
+    expect(descriptions[0]).toBeVisible();
+  });
+
+  it("should NOT display description when there are accounts for the selected network", async () => {
+    const { user } = render(
+      <ModularDialogFlowManager
+        currencies={mockCurrencies}
+        onAccountSelected={mockOnAccountSelected}
+      />,
+      {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [ETH_ACCOUNT],
+          modularDrawer: { isOpen: true },
+        },
+      },
+    );
+
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    const ethereumAsset = screen.getByText(/ethereum/i);
+    await user.click(ethereumAsset);
+
+    const ethereumNetwork = screen.getByText(/ethereum/i);
+    await user.click(ethereumNetwork);
+
+    await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
+
+    const description = screen.queryByText(/you don't have ethereum accounts yet/i);
+    expect(description).not.toBeInTheDocument();
   });
 });

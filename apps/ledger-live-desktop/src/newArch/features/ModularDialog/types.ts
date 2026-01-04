@@ -21,17 +21,17 @@ export const NAVIGATION_DIRECTION = {
 
 export type NavigationDirection = (typeof NAVIGATION_DIRECTION)[keyof typeof NAVIGATION_DIRECTION];
 
-export const MODULAR_DRAWER_STEP = {
+export const MODULAR_DIALOG_STEP = {
   ASSET_SELECTION: "ASSET_SELECTION",
   NETWORK_SELECTION: "NETWORK_SELECTION",
   ACCOUNT_SELECTION: "ACCOUNT_SELECTION",
 } as const;
 
-export type ModularDrawerStep = (typeof MODULAR_DRAWER_STEP)[keyof typeof MODULAR_DRAWER_STEP];
+export type ModularDialogStep = (typeof MODULAR_DIALOG_STEP)[keyof typeof MODULAR_DIALOG_STEP];
 
-export type ModularDrawerFlowManagerProps = {
+export type ModularDialogFlowManagerProps = {
   currencies: string[];
-  drawerConfiguration?: EnhancedModularDrawerConfiguration;
+  dialogConfiguration?: EnhancedModularDrawerConfiguration;
   useCase?: string;
   areCurrenciesFiltered?: boolean;
   onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;

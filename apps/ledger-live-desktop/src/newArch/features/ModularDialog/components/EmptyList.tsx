@@ -8,11 +8,11 @@ const EmptyList = () => {
   const Icon = <Search size={40} className="text-base" />;
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-16">
+    <div className="flex flex-1 flex-col items-center justify-center gap-16">
       <div className="flex items-center justify-center rounded-full bg-muted-transparent p-16">
         {Icon}
       </div>
-      <span className="text-base body-3-semi-bold">{text}</span>
+      <span className="text-base heading-4-semi-bold">{text}</span>
     </div>
   );
 };

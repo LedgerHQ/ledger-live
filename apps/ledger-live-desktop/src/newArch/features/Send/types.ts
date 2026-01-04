@@ -23,7 +23,7 @@ export type SendStepConfig = FlowStepConfig<SendFlowStep> &
   Readonly<{
     addressInput?: boolean;
     showTitle?: boolean;
-    height?: number;
+    height?: "fixed" | "hug";
   }>;
 
 export type SendFlowConfig = FlowConfig<SendFlowStep, SendStepConfig>;

@@ -8,7 +8,6 @@ import debounce from "lodash/debounce";
 import { setEnvOnAllThreads } from "~/helpers/env";
 
 // TODO move to bitcoin family
-// eslint-disable-next-line no-restricted-imports
 import {
   editSatStackConfig,
   stringifySatStackConfig,

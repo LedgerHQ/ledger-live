@@ -72,7 +72,7 @@
     "docker-compose": "^1.1.0",
     "dotenv": "^16.4.5",
     "ethers": "catalog:",
-    "msw": "^2.2.1"
+    "msw": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport": "workspace:*",

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { getEnv } from "@ledgerhq/live-env";
 import { StepProps } from "../types";
 import { signMessageExec, createAction } from "@ledgerhq/live-common/hw/signMessage/index";

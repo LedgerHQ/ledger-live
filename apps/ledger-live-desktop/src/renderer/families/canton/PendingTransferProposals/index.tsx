@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import styled from "styled-components";
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { Account } from "@ledgerhq/types-live";

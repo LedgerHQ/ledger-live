@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { Link, useHistory, useLocation, PromptProps } from "react-router-dom";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";

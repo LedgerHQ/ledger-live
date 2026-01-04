@@ -1,15 +1,15 @@
 import React, { useMemo } from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { ModularDrawerEventName } from "./modularDialog.types";
+import { ModularDialogEventName } from "./modularDialog.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import {
   modularDrawerFlowSelector,
   modularDrawerSourceSelector,
 } from "~/renderer/reducers/modularDrawer";
 
-interface TrackDrawerScreenProps<T extends ModularDrawerEventName> {
+interface TrackDialogScreenProps<T extends ModularDialogEventName> {
   page: T;
   formatNetworkConfig?: boolean;
   formatAssetConfig?: boolean;
@@ -17,13 +17,13 @@ interface TrackDrawerScreenProps<T extends ModularDrawerEventName> {
   networksConfig?: EnhancedModularDrawerConfiguration["networks"];
 }
 
-const TrackDrawerScreen = <T extends ModularDrawerEventName>({
+const TrackDialogScreen = <T extends ModularDialogEventName>({
   page,
   formatNetworkConfig,
   formatAssetConfig,
   assetsConfig,
   networksConfig,
-}: TrackDrawerScreenProps<T>) => {
+}: TrackDialogScreenProps<T>) => {
   const source = useSelector(modularDrawerSourceSelector);
   const flow = useSelector(modularDrawerFlowSelector);
 
@@ -41,4 +41,4 @@ const TrackDrawerScreen = <T extends ModularDrawerEventName>({
   return <TrackPage category={page} {...analyticsParams} />;
 };
 
-export default React.memo(TrackDrawerScreen);
+export default React.memo(TrackDialogScreen);

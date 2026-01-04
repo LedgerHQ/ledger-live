@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetType } from "../../../../types";
-import { useModularDrawerAnalytics } from "../../../../analytics/useModularDialogAnalytics";
+import { useModularDialogAnalytics } from "../../../../analytics/useModularDialogAnalytics";
 import SkeletonList from "../../../../components/SkeletonList";
 import { MarketPriceIndicator, MarketPercentIndicator } from "../../../../components/Market";
 import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
@@ -10,7 +10,7 @@ import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import EmptyList from "../../../../components/EmptyList";
 import { balanceItem } from "../../../../components/Balance";
 import { useBalanceDeps } from "../../../../hooks/useBalanceDeps";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
@@ -74,14 +74,14 @@ export const AssetSelectorContent = ({
   const isLoading = [LoadingStatus.Pending, LoadingStatus.Idle].includes(providersLoadingStatus);
   const shouldDisplayEmptyState =
     (!assetsTransformed || assetsTransformed.length === 0) && !isLoading;
-  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const { trackModularDialogEvent } = useModularDialogAnalytics();
 
   const onClick = useCallback(
     (asset: AssetType) => {
       const selectedAsset = assetsToDisplay.find(({ id }) => id === asset.id);
       if (!selectedAsset) return;
 
-      trackModularDrawerEvent(
+      trackModularDialogEvent(
         "asset_clicked",
         {
           asset: selectedAsset.name,
@@ -95,7 +95,7 @@ export const AssetSelectorContent = ({
 
       onAssetSelected(selectedAsset);
     },
-    [assetsToDisplay, trackModularDrawerEvent, assetsConfiguration, onAssetSelected],
+    [assetsToDisplay, trackModularDialogEvent, assetsConfiguration, onAssetSelected],
   );
 
   useEffect(() => {

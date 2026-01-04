@@ -1,6 +1,31 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
 const path = require("path");
 
+const commonImportRestrictions = [
+  {
+    group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+    message: "Please remove the /lib import from live-common import.",
+  },
+  {
+    group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
+    message:
+      "Use 'LLD' alias instead of '~/newArch'. Replace '~/newArch' with 'LLD' in your imports.",
+  },
+];
+
+const lodashImportRestriction = [
+  "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
+];
+
+const reactReduxImportRestrictions = [
+  {
+    name: "react-redux",
+    importNames: ["useSelector", "useDispatch", "useStore"],
+    message:
+      "Import typed hooks from 'LLD/hooks/redux' instead of 'react-redux' to ensure proper TypeScript typing.",
+  },
+];
+
 const currencyFamiliesRules = {
   files: ["src/**"],
   excludedFiles: ["**/families/generated.ts", "**/families/*/**"],
@@ -26,21 +51,8 @@ const livecommonRules = {
     "no-restricted-imports": [
       "error",
       {
-        patterns: [
-          {
-            group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
-            message: "Please remove the /lib import from live-common import.",
-          },
-          {
-            group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
-            message:
-              "Use 'LLD' alias instead of '~/newArch'. Replace '~/newArch' with 'LLD' in your imports.",
-          },
-        ],
-
-        paths: [
-          "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
-        ],
+        patterns: commonImportRestrictions,
+        paths: [...lodashImportRestriction, ...reactReduxImportRestrictions],
       },
     ],
   },
@@ -102,6 +114,24 @@ module.exports = {
   overrides: [
     currencyFamiliesRules,
     livecommonRules,
+    {
+      files: [
+        "src/newArch/hooks/redux.ts",
+        "src/**/*.test.tsx",
+        "src/**/*.test.ts",
+        "src/**/*.integration.tsx",
+        "src/**/*.integration.ts",
+      ],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: commonImportRestrictions,
+            paths: lodashImportRestriction,
+          },
+        ],
+      },
+    },
     {
       files: ["tests/**/*.test.ts", "tests/**/*.test.tsx", "tests/**/*.ts", "tests/**/*.tsx"],
       env: {

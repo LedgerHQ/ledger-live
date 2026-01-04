@@ -28,16 +28,11 @@ export function ErrorContent({ error }: ErrorContentProps) {
         </p>
         <button
           type="button"
+          style={{ color: "#D4A0FF" }}
           onClick={handleExportLogs}
-          className="mt-4"
-          style={{
-            fontFamily: "Inter, sans-serif",
-            fontWeight: 600,
-            fontSize: "14px",
-            color: "#8b5eb9ff",
-          }}
+          className="mt-4 text-muted body-2"
         >
-          {t("settings.exportLogs.btn")}
+          {t("settings.exportLogs.title")}
         </button>
       </div>
     </>

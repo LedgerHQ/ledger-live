@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { AccountVirtualList } from "../AccountVirtualList";
-import { useModularDrawerAnalytics } from "../../../../analytics/useModularDialogAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../../../../analytics/modularDialog.types";
+import { useModularDialogAnalytics } from "../../../../analytics/useModularDialogAnalytics";
+import { MODULAR_DIALOG_PAGE_NAME } from "../../../../analytics/modularDialog.types";
 import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import {
   localeSelector,
   discreetModeSelector,
@@ -27,7 +27,7 @@ export const AccountSelectorContent = ({
   onAccountSelected,
   bottomComponent,
 }: AccountSelectorContentProps) => {
-  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const { trackModularDialogEvent } = useModularDialogAnalytics();
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -56,9 +56,9 @@ export const AccountSelectorContent = ({
   }, [detailedAccounts, locale, discreet, counterValueCurrency]);
 
   const trackAccountClick = (name: string) => {
-    trackModularDrawerEvent("account_clicked", {
+    trackModularDialogEvent("account_clicked", {
       currency: name,
-      page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
+      page: MODULAR_DIALOG_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
     });
   };
 

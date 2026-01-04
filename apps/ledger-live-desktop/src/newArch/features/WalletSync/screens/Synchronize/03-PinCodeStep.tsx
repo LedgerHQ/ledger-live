@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { walletSyncQrCodePinCodeSelector } from "~/renderer/reducers/walletSync";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";

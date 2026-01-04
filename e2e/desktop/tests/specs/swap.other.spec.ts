@@ -82,8 +82,14 @@ test.describe("Swap - Provider redirection", () => {
 
       await app.swap.selectSpecificProvider(provider, electronApp);
       await app.swap.goToProviderLiveApp(electronApp, provider.uiName);
-      await app.swap.verifyProviderURL(electronApp, provider.uiName, swap);
-      await app.liveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
+      if (getEnv("SWAP_API_BASE") === "https://swap-stg.ledger-test.com/v5") {
+        await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
+        await app.swap.clickExecuteSwapButton(electronApp);
+        await app.swap.clickContinueButton();
+      } else {
+        await app.swap.verifyProviderURL(electronApp, provider.uiName, swap);
+        await app.liveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
+      }
     },
   );
 });

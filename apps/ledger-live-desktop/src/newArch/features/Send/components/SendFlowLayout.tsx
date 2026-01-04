@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { Dialog, DialogContent, DialogBody } from "@ledgerhq/lumen-ui-react";
-import { useSendFlowContext } from "../context/SendFlowContext";
+import { useSendFlowNavigation, useSendFlowData } from "../context/SendFlowContext";
 import type { StepRegistry, StepRenderer } from "../../FlowWizard/types";
 import { FLOW_STATUS } from "../../FlowWizard/types";
 import type { SendFlowStep } from "../types";
@@ -13,7 +13,8 @@ type SendFlowLayoutProps = Readonly<{
 }>;
 
 export function SendFlowLayout({ stepRegistry, isOpen, onClose }: SendFlowLayoutProps) {
-  const { currentStep, direction, currentStepConfig, state } = useSendFlowContext();
+  const { currentStep, direction, currentStepConfig } = useSendFlowNavigation();
+  const { state } = useSendFlowData();
 
   const StepComponent = useMemo<StepRenderer | null>(() => {
     const renderer = stepRegistry[currentStep];
@@ -30,7 +31,7 @@ export function SendFlowLayout({ stepRegistry, isOpen, onClose }: SendFlowLayout
   );
 
   const animationClass = direction === "FORWARD" ? "animate-fade-in" : "animate-fade-out";
-  const dialogHeight = currentStepConfig?.height ? "hug" : "fixed";
+  const dialogHeight = currentStepConfig?.height ?? "fixed";
 
   const statusGradientClass = useMemo(() => {
     if (state.flowStatus === FLOW_STATUS.ERROR) {
@@ -43,20 +44,15 @@ export function SendFlowLayout({ stepRegistry, isOpen, onClose }: SendFlowLayout
   }, [state.flowStatus]);
 
   return (
-    <Dialog
-      height={dialogHeight}
-      open={isOpen}
-      onOpenChange={handleDialogOpenChange}
-      {...(currentStepConfig?.height ? { maxHeight: currentStepConfig.height } : {})}
-    >
+    <Dialog height={dialogHeight} open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogContent>
+        {statusGradientClass && (
+          <div
+            className={`pointer-events-none absolute inset-x-0 top-0 h-full ${statusGradientClass}`}
+          />
+        )}
         <SendHeader />
-        <DialogBody className="relative mb-0 gap-32 px-24 text-base [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {statusGradientClass && (
-            <div
-              className={`pointer-events-none absolute inset-x-0 top-0 h-full ${statusGradientClass}`}
-            />
-          )}
+        <DialogBody className="py-16 -mb-24 gap-32 px-24 text-base [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {StepComponent && (
             <div key={currentStep} className={`min-h-0 flex-1 ${animationClass}`}>
               <StepComponent />

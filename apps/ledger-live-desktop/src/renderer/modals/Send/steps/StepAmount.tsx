@@ -14,9 +14,11 @@ import SendAmountFields from "../SendAmountFields";
 import AmountField from "../fields/AmountField";
 import { StepProps } from "../types";
 import { closeAllModal } from "~/renderer/actions/modals";
+import { useDispatch } from "LLD/hooks/redux";
 import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
 
 const StepAmount = (props: StepProps) => {
+  const dispatch = useDispatch();
   const {
     t,
     account,
@@ -83,7 +85,7 @@ const StepAmount = (props: StepProps) => {
         />
         <LowGasAlertBuyMore
           account={mainAccount}
-          handleRequestClose={closeAllModal}
+          handleRequestClose={() => dispatch(closeAllModal())}
           gasPriceError={gasPrice}
           trackingSource={"send flow"}
         />

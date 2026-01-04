@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";

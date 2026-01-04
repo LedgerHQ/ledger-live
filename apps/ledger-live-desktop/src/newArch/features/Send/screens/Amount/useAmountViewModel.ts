@@ -2,10 +2,15 @@ import { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useSendFlowContext } from "../../context/SendFlowContext";
-
+import {
+  useSendFlowActions,
+  useSendFlowData,
+  useSendFlowNavigation,
+} from "../../context/SendFlowContext";
 export function useAmountViewModel() {
-  const { navigation, state, transaction: transactionActions } = useSendFlowContext();
+  const { navigation } = useSendFlowNavigation();
+  const { transaction: transactionActions } = useSendFlowActions();
+  const { state } = useSendFlowData();
   const { account, parentAccount } = state.account;
   const { transaction, status, bridgePending } = state.transaction;
 

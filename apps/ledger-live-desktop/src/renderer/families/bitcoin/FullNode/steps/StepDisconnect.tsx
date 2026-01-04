@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { cleanFullNodeDisconnect } from "~/renderer/actions/accounts";
 import styled from "styled-components";
 import { Trans } from "react-i18next";

@@ -1,7 +1,7 @@
 import React, { useCallback, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Flex, Text } from "@ledgerhq/react-ui";

@@ -49,7 +49,6 @@ export function VideoBackground({
           onLoad={onVideoLoad}
           onEnd={() => {
             onVideoEnd?.();
-            videoRef.current?.seek(0);
           }}
           paused={!isOnStage}
         />

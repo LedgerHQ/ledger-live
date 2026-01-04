@@ -26,13 +26,13 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     id: SEND_FLOW_STEP.SIGNATURE,
     canGoBack: false,
     showTitle: false,
-    height: 418,
+    height: "hug",
   },
   [SEND_FLOW_STEP.CONFIRMATION]: {
     id: SEND_FLOW_STEP.CONFIRMATION,
     canGoBack: false,
     showTitle: false,
-    height: 354,
+    height: "hug",
   },
 };
 

@@ -7,6 +7,7 @@ import {
   type FlowStepConfig,
   type UseFlowWizardNavigationParams,
   type UseFlowWizardNavigationResult,
+  type FlowNavigationDirection,
 } from "../types";
 
 type NavigationAction<TStep extends FlowStep, TStepConfig extends FlowStepConfig<TStep>> =
@@ -31,7 +32,7 @@ function determineDirection<TStep extends FlowStep>(
   currentStep: TStep,
   targetStep: TStep,
   stepOrder: readonly TStep[],
-): string {
+): FlowNavigationDirection {
   const currentIndex = getStepIndex(currentStep, stepOrder);
   const targetIndex = getStepIndex(targetStep, stepOrder);
   return targetIndex > currentIndex

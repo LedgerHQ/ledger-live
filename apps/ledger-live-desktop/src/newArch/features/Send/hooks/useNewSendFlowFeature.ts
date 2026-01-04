@@ -15,7 +15,7 @@ export function useNewSendFlowFeature() {
 
   const isEnabledForFamily = (family?: string): boolean => {
     if (!isValidConfig) return false;
-    if (!family) return true; // Opening flow without account
+    if (!family) return true; // Opening flow without account - use new flow if feature flag is enabled
     return allowedFamilies.includes(family);
   };
 

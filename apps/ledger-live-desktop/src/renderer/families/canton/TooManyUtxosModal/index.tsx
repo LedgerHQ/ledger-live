@@ -2,7 +2,7 @@ import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { urls } from "~/config/urls";
 import { closeModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";

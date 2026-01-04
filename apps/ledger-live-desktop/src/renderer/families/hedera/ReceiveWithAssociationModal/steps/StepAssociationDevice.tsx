@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { SignedOperation } from "@ledgerhq/types-live";

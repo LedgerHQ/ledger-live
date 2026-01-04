@@ -6,16 +6,16 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const SearchInputContainer = () => {
   const { t } = useTranslation();
-  const modularDrawer = useFeature("lldModularDrawer");
+  const modularDialog = useFeature("lldModularDrawer");
 
   const { handleDebouncedChange, handleSearch, displayedValue } = useSearch();
 
   return (
-    <div className="mb-12 flex-1 px-8 pt-4">
+    <div className="mb-12 px-8 pt-4">
       <Search
         value={displayedValue ?? ""}
         placeholder={t("modularAssetDrawer.searchPlaceholder")}
-        debounceTime={modularDrawer?.params?.searchDebounceTime}
+        debounceTime={modularDialog?.params?.searchDebounceTime}
         onChange={handleSearch}
         onDebouncedChange={handleDebouncedChange}
         data-testid="modular-asset-dialog-search-input"

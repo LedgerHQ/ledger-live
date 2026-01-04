@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { useLocation, useHistory } from "react-router-dom";
 import { USBTroubleshootingIndexSelector } from "~/renderer/reducers/settings";
 import { setUSBTroubleshootingIndex } from "~/renderer/actions/settings";

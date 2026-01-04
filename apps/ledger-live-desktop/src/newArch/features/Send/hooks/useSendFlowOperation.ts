@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useReducer } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";

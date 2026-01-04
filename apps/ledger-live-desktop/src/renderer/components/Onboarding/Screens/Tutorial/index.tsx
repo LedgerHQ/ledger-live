@@ -13,7 +13,7 @@ import {
 import { Direction } from "@ledgerhq/react-ui/components/layout/Drawer/index";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Route, Switch, useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import {

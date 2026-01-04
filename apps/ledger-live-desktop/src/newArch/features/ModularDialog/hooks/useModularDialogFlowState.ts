@@ -1,13 +1,13 @@
 import { useState, useCallback, useEffect } from "react";
 import { getAssetByCurrency } from "../utils/getAssetByCurrency";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { ModularDrawerStep } from "../types";
-import { useModularDrawerAnalytics } from "../analytics/useModularDialogAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDialog.types";
+import { ModularDialogStep } from "../types";
+import { useModularDialogAnalytics } from "../analytics/useModularDialogAnalytics";
+import { MODULAR_DIALOG_PAGE_NAME } from "../analytics/modularDialog.types";
 import uniqWith from "lodash/uniqWith";
 
 import { belongsToSameNetwork } from "@ledgerhq/live-common/modularDrawer/utils/index";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
@@ -17,12 +17,12 @@ type Props = {
   sortedCryptoCurrencies: CryptoOrTokenCurrency[];
   setNetworksToDisplay: (networks?: CryptoOrTokenCurrency[]) => void;
   currencyIds: string[];
-  goToStep: (nextStep: ModularDrawerStep) => void;
+  goToStep: (nextStep: ModularDialogStep) => void;
   isSelectAccountFlow?: boolean;
   onAssetSelected?: (asset: CryptoOrTokenCurrency) => void;
 };
 
-export function useModularDrawerFlowState({
+export function useModularDialogFlowState({
   assets,
   sortedCryptoCurrencies,
   setNetworksToDisplay,
@@ -32,7 +32,7 @@ export function useModularDrawerFlowState({
   onAssetSelected,
 }: Props) {
   const isAcceptedCurrency = useAcceptedCurrency();
-  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const { trackModularDialogEvent } = useModularDialogAnalytics();
   const searchedValue = useSelector(modularDrawerSearchedSelector);
 
   const [selectedAsset, setSelectedAsset] = useState<CryptoOrTokenCurrency>();
@@ -43,12 +43,12 @@ export function useModularDrawerFlowState({
     setSelectedAsset(undefined);
     setSelectedNetwork(undefined);
     setNetworksToDisplay(undefined);
-    trackModularDrawerEvent("button_clicked", {
+    trackModularDialogEvent("button_clicked", {
       button: "Back",
-      page: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
+      page: MODULAR_DIALOG_PAGE_NAME.MODULAR_NETWORK_SELECTION,
     });
     goToStep("ASSET_SELECTION");
-  }, [goToStep, setNetworksToDisplay, trackModularDrawerEvent]);
+  }, [goToStep, setNetworksToDisplay, trackModularDialogEvent]);
 
   const goBackToNetworkSelection = useCallback(() => {
     setSelectedNetwork(undefined);

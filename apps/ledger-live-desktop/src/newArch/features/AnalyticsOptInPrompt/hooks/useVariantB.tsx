@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { themeSelector } from "~/renderer/actions/general";
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
 import { track } from "~/renderer/analytics/segment";

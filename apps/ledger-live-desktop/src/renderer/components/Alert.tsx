@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { css, DefaultTheme, ThemedStyledProps } from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { colors } from "~/renderer/styles/theme";
 import { openURL } from "~/renderer/linking";
 import { dismissedBannersSelector } from "~/renderer/reducers/settings";

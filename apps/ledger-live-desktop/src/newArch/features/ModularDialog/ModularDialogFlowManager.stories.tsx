@@ -14,15 +14,27 @@ import { track } from "~/renderer/analytics/__mocks__/segment";
 import { ARB_ACCOUNT, BTC_ACCOUNT, ETH_ACCOUNT } from "../__mocks__/accounts.mock";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import ModularDialogFlowManager from "./ModularDialogFlowManager";
-import { ModularDrawerFlowManagerProps } from "./types";
+import { ModularDialogFlowManagerProps } from "./types";
 import modularDrawerReducer, { openDialog } from "~/renderer/reducers/modularDrawer";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setEnv } from "@ledgerhq/live-env";
 import { setSupportedCurrencies } from "@ledgerhq/coin-framework/lib-es/currencies/support";
+import {
+  makeMockedFeatureFlagsProviderWrapper,
+  makeMockedContextValue,
+} from "@ledgerhq/live-common/featureFlags/mock";
 
 setEnv("MOCK", "true");
 
 setSupportedCurrencies(["ethereum", "arbitrum", "bitcoin"]);
+
+const mockedFeatureFlags = {
+  lldModularDrawer: { enabled: true, params: { enableModularization: true } },
+};
+
+const FeatureFlagsProvider = makeMockedFeatureFlagsProviderWrapper(
+  makeMockedContextValue(mockedFeatureFlags),
+);
 
 const createMockState = () => ({
   accounts: [ARB_ACCOUNT, ETH_ACCOUNT, BTC_ACCOUNT],
@@ -55,6 +67,7 @@ const createMockState = () => ({
     isDebuggingDuplicates: false,
     source: "sourceTest",
     dialogParams: null,
+    enableModularization: true,
   },
   countervalues: { countervalues: { state: { cache: true } } },
 });
@@ -99,7 +112,7 @@ type ExtraStoryArgs = {
   assetsFilter?: (typeof filterOptions)[number] | "default";
 };
 
-type StoryArgs = ModularDrawerFlowManagerProps & ExtraStoryArgs;
+type StoryArgs = ModularDialogFlowManagerProps & ExtraStoryArgs;
 
 const meta: Meta<StoryArgs> = {
   title: "ModularDialog/ModularDialogFlowManager",
@@ -134,10 +147,12 @@ const meta: Meta<StoryArgs> = {
   decorators: [
     Story => (
       <div style={{ minHeight: "400px", position: "relative", margin: "50px" }}>
-        <Provider store={store}>
-          <OpenDialogButton />
-          <Story />
-        </Provider>
+        <FeatureFlagsProvider>
+          <Provider store={store}>
+            <OpenDialogButton />
+            <Story />
+          </Provider>
+        </FeatureFlagsProvider>
       </div>
     ),
   ],
@@ -152,7 +167,7 @@ export const CustomDialogConfig: StoryObj<StoryArgs> = {
         "currencies",
         "source",
         "flow",
-        "drawerConfiguration",
+        "dialogConfiguration",
         "onAssetSelected",
         "onAccountSelected",
       ],
@@ -240,7 +255,7 @@ export const CustomDialogConfig: StoryObj<StoryArgs> = {
             areCurrenciesFiltered={false}
             onAssetSelected={() => null}
             onAccountSelected={() => null}
-            drawerConfiguration={dialogConfiguration}
+            dialogConfiguration={dialogConfiguration}
             // Changing dialogConfiguration may alter which hooks are called.
             // The dynamic key ensures the component is remounted to avoid hook order violations
             key={JSON.stringify(args)}

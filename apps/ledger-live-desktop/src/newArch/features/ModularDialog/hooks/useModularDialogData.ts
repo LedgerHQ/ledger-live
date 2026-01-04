@@ -3,22 +3,22 @@ import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
-interface UseModularDrawerDataProps {
+interface UseModularDialogDataProps {
   currencyIds?: string[];
   useCase?: string;
   areCurrenciesFiltered?: boolean;
 }
 
-export function useModularDrawerData({
+export function useModularDialogData({
   currencyIds,
   useCase,
   areCurrenciesFiltered,
-}: UseModularDrawerDataProps) {
+}: UseModularDialogDataProps) {
   const modularDrawerFeature = useFeature("lldModularDrawer");
   const devMode = useEnv("MANAGER_DEV_MODE");
 

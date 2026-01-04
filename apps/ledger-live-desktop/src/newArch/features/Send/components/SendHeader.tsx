@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { BigNumber } from "bignumber.js";
 import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -9,7 +9,11 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
-import { useSendFlowContext } from "../context/SendFlowContext";
+import {
+  useSendFlowNavigation,
+  useSendFlowData,
+  useSendFlowActions,
+} from "../context/SendFlowContext";
 
 function useAvailableBalance(account?: AccountLike | null) {
   const locale = useSelector(localeSelector);
@@ -51,8 +55,9 @@ function useAvailableBalance(account?: AccountLike | null) {
 }
 
 export function SendHeader() {
-  const { navigation, state, close, currentStepConfig, uiConfig, recipientSearch } =
-    useSendFlowContext();
+  const { navigation, currentStepConfig } = useSendFlowNavigation();
+  const { state, uiConfig, recipientSearch } = useSendFlowData();
+  const { close } = useSendFlowActions();
   const { t } = useTranslation();
 
   const currencyName = state.account.currency?.ticker ?? "";
@@ -76,7 +81,7 @@ export function SendHeader() {
   const showRecipientInput = currentStepConfig?.addressInput ?? false;
 
   return (
-    <div className="flex flex-col gap-24">
+    <div className="-mb-12 flex flex-col">
       <DialogHeader
         appearance="compact"
         title={title}

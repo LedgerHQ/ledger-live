@@ -53,7 +53,7 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
     onClose?.();
   }, [dispatch, onClose]);
 
-  useEffect(() => {
+  useMemo(() => {
     if (!shouldRedirectToNewFlow || !isOpened) return;
 
     const sendData = modalData || {};

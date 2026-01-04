@@ -4,7 +4,6 @@ import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useCantonAcceptOrRejectOffer } from "@ledgerhq/live-common/families/canton/react";
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import React from "react";
-import * as reactRedux from "react-redux";
 import { fireEvent, render, screen, waitFor } from "tests/testSetup";
 import { State } from "~/renderer/reducers";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -14,6 +13,14 @@ import { handleTopologyChangeError } from "../hooks/topologyChangeError";
 import { createMockDevice } from "../OnboardModal/__tests__/testUtils";
 import PendingTransferProposals from "./index";
 
+const mockDispatch = jest.fn();
+jest.mock("LLD/hooks/redux", () => {
+  const actual = jest.requireActual("LLD/hooks/redux");
+  return {
+    ...actual,
+    useDispatch: () => mockDispatch,
+  };
+});
 jest.mock("react-i18next", () => ({
   ...jest.requireActual("react-i18next"),
   useTranslation: () => ({
@@ -86,12 +93,8 @@ const mockHandleTopologyChangeError = handleTopologyChangeError as jest.MockedFu
   typeof handleTopologyChangeError
 >;
 
-const mockDispatch = jest.fn();
-const mockUseDispatch = jest.fn(() => mockDispatch);
 const mockSync = jest.fn();
 const mockPerformTransferInstruction = jest.fn();
-
-jest.spyOn(reactRedux, "useDispatch").mockImplementation(mockUseDispatch);
 
 const createAccountWithProposal = (
   contractId: string,

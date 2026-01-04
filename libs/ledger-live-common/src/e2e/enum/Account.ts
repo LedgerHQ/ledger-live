@@ -218,6 +218,9 @@ export class Account {
   static readonly BASE_1 = new Account(Currency.BASE, "Base 1", 0, "44'/60'/0'/0/0");
   static readonly BASE_2 = new Account(Currency.BASE, "Base 2", 1, "44'/60'/1'/0/0");
 
+  static readonly VET_1 = new Account(Currency.VET, "Vechain 1", 0, "44'/818'/0'/0/0");
+  static readonly VET_2 = new Account(Currency.VET, "Vechain 2", 1, "44'/818'/0'/0/1");
+
   static readonly EMPTY = new Account(Currency.BTC, "Empty", 0, "");
 }
 

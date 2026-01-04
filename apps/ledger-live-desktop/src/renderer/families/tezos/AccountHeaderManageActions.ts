@@ -1,7 +1,7 @@
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { TezosFamily } from "./types";

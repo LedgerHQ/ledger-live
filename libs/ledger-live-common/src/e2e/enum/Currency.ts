@@ -201,6 +201,10 @@ export class Currency {
 
   static readonly BASE = new Currency("Base", "ETH", "base", AppInfos.BASE, [Network.BASE]);
 
+  static readonly VET = new Currency("Vechain", "VET", "vechain", AppInfos.VECHAIN, [
+    Network.VECHAIN,
+  ]);
+
   static readonly SUI_USDC = new Currency(
     "USD Coin",
     "USDC",

@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import TopBanner from "~/renderer/components/TopBanner";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import { Trans } from "react-i18next";

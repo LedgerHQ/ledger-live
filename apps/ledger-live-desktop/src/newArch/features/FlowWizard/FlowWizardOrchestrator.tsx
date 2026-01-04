@@ -104,7 +104,7 @@ export function FlowWizardOrchestrator<
   );
 }
 
-// Need to use it to create the step registry typesafe
+// Used to create a type-safe step registry
 export function createStepRegistry<TStep extends FlowStep>(
   registry: StepRegistry<TStep>,
 ): StepRegistry<TStep> {

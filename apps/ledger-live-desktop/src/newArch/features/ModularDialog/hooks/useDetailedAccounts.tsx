@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import {
@@ -11,8 +11,8 @@ import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
 import { useDetailedAccountsCore } from "@ledgerhq/live-common/modularDrawer/hooks/useDetailedAccountsCore";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
-import { useModularDrawerAnalytics } from "../analytics/useModularDialogAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDialog.types";
+import { useModularDialogAnalytics } from "../analytics/useModularDialogAnalytics";
+import { MODULAR_DIALOG_PAGE_NAME } from "../analytics/modularDialog.types";
 import { useOpenAssetFlowDialog } from "./useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -25,7 +25,7 @@ export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void,
 ) => {
-  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const { trackModularDialogEvent } = useModularDialogAnalytics();
   const counterValuesState = useCountervaluesState();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const source = useSelector(modularDrawerSourceSelector);
@@ -80,12 +80,12 @@ export const useDetailedAccounts = (
   }, [accounts, isATokenCurrency, overridedAccountName, createBaseDetailedAccounts, asset]);
 
   const onAddAccountClick = useCallback(() => {
-    trackModularDrawerEvent("button_clicked", {
+    trackModularDialogEvent("button_clicked", {
       button: "Add a new account",
-      page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
+      page: MODULAR_DIALOG_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
     });
     openAddAccountFlow(asset, false, wrappedOnAccountSelected);
-  }, [asset, openAddAccountFlow, trackModularDrawerEvent, wrappedOnAccountSelected]);
+  }, [asset, openAddAccountFlow, trackModularDialogEvent, wrappedOnAccountSelected]);
 
   return { detailedAccounts, accounts, onAddAccountClick };
 };
