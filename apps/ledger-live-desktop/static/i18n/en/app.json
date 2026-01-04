@@ -2390,7 +2390,11 @@
     "coinControlCustom": "Custom coin selection",
     "aboveMaximum": "Above maximum balance",
     "transactionSigned": "Transaction signed",
-    "processingTransaction": "Your transaction is being processed"
+    "processingTransaction": "Your transaction is being processed",
+    "sign": {
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instructions displayed on your Secure Touchscreen."
+    }
   },
   "releaseNotes": {
     "title": "Release notes",
