@@ -5,6 +5,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { useSignatureViewModel } from "./useSignatureViewModel";
+import Spinner from "~/renderer/components/Spinner";
 
 const Result = (
   props:
@@ -16,7 +17,15 @@ const Result = (
         transactionSignError: Error;
       },
 ) => {
-  if (!("signedOperation" in props)) return null;
+  if (!("signedOperation" in props)) {
+    return (
+      <>
+        <div className="flex h-full w-full items-center justify-center">
+          <Spinner size={56} />
+        </div>
+      </>
+    );
+  }
   return (
     <>
       <DeviceBlocker />
