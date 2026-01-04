@@ -4,7 +4,7 @@ import type { SignedOperation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
-import { useSignatureViewModel } from "./useSignatureViewModel";
+import { useSignatureViewModel } from "./hooks/useSignatureViewModel";
 import Spinner from "~/renderer/components/Spinner";
 
 const Result = (

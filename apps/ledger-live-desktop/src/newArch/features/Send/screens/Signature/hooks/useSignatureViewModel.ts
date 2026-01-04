@@ -7,7 +7,7 @@ import {
   useSendFlowActions,
   useSendFlowData,
   useSendFlowNavigation,
-} from "../../context/SendFlowContext";
+} from "../../../context/SendFlowContext";
 
 export function useSignatureViewModel() {
   const { navigation } = useSendFlowNavigation();
@@ -104,7 +104,7 @@ export function useSignatureViewModel() {
 
       operation.onSigned();
       broadcast(signedOperation)
-        .then(finishWithSuccess, finishWithError)
+        .then(finishWithSuccess)
         .catch(error => {
           try {
             const normalizedError = error instanceof Error ? error : new Error(String(error));
