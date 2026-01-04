@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
+import type { Theme } from "@ledgerhq/react-ui";
 import {
   EConnResetError,
   ImageDoesNotExistOnDevice,
@@ -168,6 +169,14 @@ type InnerProps<P> = {
   onResult?: (_: NonNullable<P>) => void;
   onError?: (_: Error) => Promise<void> | void;
   renderOnResult?: (_: P) => React.JSX.Element | null;
+  renderDeviceSignatureRequested?: (args: { device: Device; request: unknown }) => React.ReactNode;
+  renderLockedDevice?: (args: {
+    device?: Device | null;
+    modelId: DeviceModelId;
+    theme: Theme["theme"];
+    onRetry?: (() => void) | null | undefined;
+    inlineRetry?: boolean;
+  }) => React.ReactNode;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
   overridesPreferredDeviceModel?: DeviceModelId;
@@ -198,6 +207,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   Result,
   onResult,
   onError,
+  renderDeviceSignatureRequested,
+  renderLockedDevice,
   overridesPreferredDeviceModel,
   inlineRetry = true,
   analyticsPropertyFlow,
@@ -634,6 +645,9 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
   // Renders an error as long as LLD is using the "event" implementation of device actions
   if (isLocked) {
+    if (renderLockedDevice) {
+      return renderLockedDevice({ device, modelId, theme: type, onRetry, inlineRetry });
+    }
     return renderLockedDeviceError({ t, device, onRetry, inlineRetry });
   }
 
@@ -656,6 +670,9 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (request && device && deviceSignatureRequested) {
+    if (renderDeviceSignatureRequested) {
+      return renderDeviceSignatureRequested({ device, request });
+    }
     const { account, parentAccount, status, transaction } = request as unknown as {
       account: AccountLike;
       parentAccount: Account | null;
