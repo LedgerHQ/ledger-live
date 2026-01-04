@@ -22,6 +22,22 @@ export function useSignatureViewModel() {
   const txStatus = state.transaction.status;
   const currency = state.account.currency;
 
+  const depsRef = useRef({
+    account,
+    parentAccount,
+    transaction,
+    txStatus,
+  });
+  if (
+    depsRef.current.account !== account ||
+    depsRef.current.parentAccount !== parentAccount ||
+    depsRef.current.transaction !== transaction ||
+    depsRef.current.txStatus !== txStatus
+  ) {
+    hasFinishedRef.current = false;
+    depsRef.current = { account, parentAccount, transaction, txStatus };
+  }
+
   const action = useTransactionAction();
   const broadcast = useBroadcast({ account, parentAccount });
 
@@ -87,7 +103,16 @@ export function useSignatureViewModel() {
       }
 
       operation.onSigned();
-      broadcast(signedOperation).then(finishWithSuccess, finishWithError);
+      broadcast(signedOperation)
+        .then(finishWithSuccess, finishWithError)
+        .catch(error => {
+          try {
+            const normalizedError = error instanceof Error ? error : new Error(String(error));
+            finishWithError(normalizedError);
+          } catch (e) {
+            console.error("Unhandled error during broadcast error handling", e);
+          }
+        });
     },
     [broadcast, finishWithError, finishWithSuccess, operation],
   );

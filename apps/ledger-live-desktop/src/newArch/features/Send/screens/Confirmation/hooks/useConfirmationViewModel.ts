@@ -19,6 +19,11 @@ function getConfirmationStatus(
 
   if (signed && optimisticOperation) {
     return "success";
+  }
+
+  if (signed && transactionError && !optimisticOperation) {
+    console.log("signed with error and no optimistic operation");
+    return "error";
   } else if (!signed && transactionError) {
     if (currency && sendFeatures.isUserRefusedTransactionError(currency, transactionError)) {
       return "idle";
