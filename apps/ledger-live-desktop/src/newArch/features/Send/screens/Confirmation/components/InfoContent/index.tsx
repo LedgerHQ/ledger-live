@@ -7,7 +7,11 @@ type InfoContentProps = Readonly<{
   descriptionKey: string;
 }>;
 
+<<<<<<< HEAD
 export function InfoContent({ titleKey, descriptionKey }: InfoContentProps) {
+=======
+export const InfoContent = ({ titleKey, descriptionKey }: InfoContentProps) => {
+>>>>>>> 6570c37c6c (feat(LWD): Signature screen (redesign send flow) (with placeholders screens))
   const { t } = useTranslation();
 
   return (
@@ -19,4 +23,8 @@ export function InfoContent({ titleKey, descriptionKey }: InfoContentProps) {
       </div>
     </>
   );
+<<<<<<< HEAD
 }
+=======
+};
+>>>>>>> 6570c37c6c (feat(LWD): Signature screen (redesign send flow) (with placeholders screens))

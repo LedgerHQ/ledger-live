@@ -2,7 +2,11 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Spot } from "@ledgerhq/lumen-ui-react";
 
+<<<<<<< HEAD
 export function SuccessContent() {
+=======
+export const SuccessContent = () => {
+>>>>>>> 6570c37c6c (feat(LWD): Signature screen (redesign send flow) (with placeholders screens))
   const { t } = useTranslation();
 
   return (
@@ -16,4 +20,8 @@ export function SuccessContent() {
       </div>
     </>
   );
+<<<<<<< HEAD
 }
+=======
+};
+>>>>>>> 6570c37c6c (feat(LWD): Signature screen (redesign send flow) (with placeholders screens))

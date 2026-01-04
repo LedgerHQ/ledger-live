@@ -25,7 +25,11 @@ const Result = (
   );
 };
 
+<<<<<<< HEAD
 export function SignatureScreen() {
+=======
+export const SignatureScreen = () => {
+>>>>>>> 6570c37c6c (feat(LWD): Signature screen (redesign send flow) (with placeholders screens))
   const { account, transaction, action, request, onDeviceActionResult, finishWithError } =
     useSignatureViewModel();
 
@@ -42,4 +46,8 @@ export function SignatureScreen() {
       analyticsPropertyFlow="send"
     />
   );
+<<<<<<< HEAD
 }
+=======
+};
+>>>>>>> 6570c37c6c (feat(LWD): Signature screen (redesign send flow) (with placeholders screens))
