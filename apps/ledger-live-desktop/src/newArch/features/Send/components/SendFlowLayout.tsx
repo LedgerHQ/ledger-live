@@ -54,7 +54,7 @@ export function SendFlowLayout({ stepRegistry, isOpen, onClose }: SendFlowLayout
         <SendHeader />
         <DialogBody className="-mb-24 basis-0 gap-32 px-24 py-16 text-base [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {StepComponent && (
-            <div key={currentStep} className={animationClass}>
+            <div key={currentStep} className="animate-fade-in">
               <StepComponent />
             </div>
           )}
