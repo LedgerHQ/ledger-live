@@ -1,5 +1,12 @@
 # @ledgerhq/hw-transport-vault
 
+## 1.3.16-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-http@6.32.1-next.0
+
 ## 1.3.15
 
 ### Patch Changes

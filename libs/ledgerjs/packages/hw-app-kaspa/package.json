@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-kaspa",
-  "version": "1.3.4",
+  "version": "1.3.5-next.0",
   "description": "",
   "main": "lib/index.js",
   "module": "lib-es/index.js",

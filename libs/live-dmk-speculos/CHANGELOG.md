@@ -1,5 +1,17 @@
 # @ledgerhq/live-dmk-speculos
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#13381](https://github.com/LedgerHQ/ledger-live/pull/13381) [`b394f1d`](https://github.com/LedgerHQ/ledger-live/commit/b394f1ddca998a384d5e8032899d7f9a356cc4cc) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Bump speculos version to remove duplications
+
+### Patch Changes
+
+- Updated dependencies [[`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4), [`fba1e31`](https://github.com/LedgerHQ/ledger-live/commit/fba1e31386e589a93adb19bc4f6eae55129e19ea)]:
+  - @ledgerhq/live-env@2.24.0-next.0
+  - @ledgerhq/hw-transport@6.31.16-next.0
+
 ## 0.3.0
 
 ### Minor Changes

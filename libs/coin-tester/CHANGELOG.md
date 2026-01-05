@@ -1,5 +1,16 @@
 # @ledgerhq/coin-tester
 
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#13381](https://github.com/LedgerHQ/ledger-live/pull/13381) [`b394f1d`](https://github.com/LedgerHQ/ledger-live/commit/b394f1ddca998a384d5e8032899d7f9a356cc4cc) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Bump speculos version to remove duplications
+
+### Patch Changes
+
+- Updated dependencies [[`b394f1d`](https://github.com/LedgerHQ/ledger-live/commit/b394f1ddca998a384d5e8032899d7f9a356cc4cc)]:
+  - @ledgerhq/live-dmk-speculos@0.4.0-next.0
+
 ## 0.14.0
 
 ### Minor Changes

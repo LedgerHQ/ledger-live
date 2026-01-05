@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-polkadot
 
+## 6.36.0-next.0
+
+### Minor Changes
+
+- [#13426](https://github.com/LedgerHQ/ledger-live/pull/13426) [`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae) Thanks [@gre-ledger](https://github.com/gre-ledger)! - update semver library (minor)
+
+### Patch Changes
+
+- Updated dependencies [[`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae)]:
+  - @ledgerhq/hw-app-eth@7.2.0-next.0
+  - @ledgerhq/hw-transport@6.31.16-next.0
+
 ## 6.35.7
 
 ### Patch Changes

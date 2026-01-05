@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-kaspa",
-  "version": "1.6.1",
+  "version": "1.6.2-next.0",
   "description": "Ledger framework for Kaspa integration",
   "keywords": [
     "Ledger",

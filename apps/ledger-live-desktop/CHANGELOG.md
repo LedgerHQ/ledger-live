@@ -1,5 +1,135 @@
 # ledger-live-desktop
 
+## 2.136.0-next.0
+
+### Minor Changes
+
+- [#13424](https://github.com/LedgerHQ/ledger-live/pull/13424) [`6bf5759`](https://github.com/LedgerHQ/ledger-live/commit/6bf5759d09a9cc116e6eea86c6384e87005dbf32) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LWD - Bump react-i18next and i18next versions; LWM - Use catalog for i18next and react-i18next (it was already migrated)
+
+- [#13414](https://github.com/LedgerHQ/ledger-live/pull/13414) [`266252e`](https://github.com/LedgerHQ/ledger-live/commit/266252e24b465934577aff2beba176e4c37ea972) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Retry button when device is locked or user refused
+
+- [#13407](https://github.com/LedgerHQ/ledger-live/pull/13407) [`2011f8b`](https://github.com/LedgerHQ/ledger-live/commit/2011f8bcb12106c4f038816887ecc058aa0e7904) Thanks [@deepyjr](https://github.com/deepyjr)! - Update the account network icon on the account page on the modular dialog
+
+- [#13506](https://github.com/LedgerHQ/ledger-live/pull/13506) [`4d1c842`](https://github.com/LedgerHQ/ledger-live/commit/4d1c842545337e6085ac026ea57700b4a9843e4d) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Refactor dialog handling to read dialog parameters from Redux state instead of the dialogParams prop, reducing prop drilling and centralizing dialog configuration.
+
+- [#13446](https://github.com/LedgerHQ/ledger-live/pull/13446) [`084163d`](https://github.com/LedgerHQ/ledger-live/commit/084163d9d2ddfa2d4e9af61795a3ed1f42ed9ec0) Thanks [@deepyjr](https://github.com/deepyjr)! - Update the margin on the MADialog
+
+- [#13409](https://github.com/LedgerHQ/ledger-live/pull/13409) [`ac19e27`](https://github.com/LedgerHQ/ledger-live/commit/ac19e27eeede259ad667086ac77d9424b1cd69f4) Thanks [@deepyjr](https://github.com/deepyjr)! - Update content of the add account button
+
+- [#13351](https://github.com/LedgerHQ/ledger-live/pull/13351) [`a5af3d0`](https://github.com/LedgerHQ/ledger-live/commit/a5af3d07c168a98096700f048232dac9c3901f6f) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - fixes storybook for modular asset dialog
+
+- [#13252](https://github.com/LedgerHQ/ledger-live/pull/13252) [`7600cb2`](https://github.com/LedgerHQ/ledger-live/commit/7600cb265e84784b455ff0ed7fce975bd67a7c64) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Migrate onboarding desync overlay to new arch
+
+- [#13318](https://github.com/LedgerHQ/ledger-live/pull/13318) [`3bf2344`](https://github.com/LedgerHQ/ledger-live/commit/3bf2344c28c6cdb2de081810c6e57546fa90ae6e) Thanks [@ben-ledger](https://github.com/ben-ledger)! - Fix account selection in the Buy app when going through the getFunds Wallet API
+
+- [#13451](https://github.com/LedgerHQ/ledger-live/pull/13451) [`753027f`](https://github.com/LedgerHQ/ledger-live/commit/753027fb4579a990080907aad4084572dabc7a3c) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: display and enable withdrawable rewards of inactive stake for SOL
+
+- [#13471](https://github.com/LedgerHQ/ledger-live/pull/13471) [`74c8a8e`](https://github.com/LedgerHQ/ledger-live/commit/74c8a8e5794b21c6e749c16ac7046d352bdc13ba) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Rename instances of drawer to dialog within modular asset dialog
+
+- [#13426](https://github.com/LedgerHQ/ledger-live/pull/13426) [`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae) Thanks [@gre-ledger](https://github.com/gre-ledger)! - update semver library (minor)
+
+- [#13487](https://github.com/LedgerHQ/ledger-live/pull/13487) [`979930b`](https://github.com/LedgerHQ/ledger-live/commit/979930b0674ca67229b9058b314cff40b6d7a364) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Migrate debug duplicates into Dialog
+
+- [#13352](https://github.com/LedgerHQ/ledger-live/pull/13352) [`93bf5f4`](https://github.com/LedgerHQ/ledger-live/commit/93bf5f4946aa0a629978a682b172d0e93d27cbb2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - After select an account should close Drawer when coming form MADialog
+
+- [#13365](https://github.com/LedgerHQ/ledger-live/pull/13365) [`bedc2b3`](https://github.com/LedgerHQ/ledger-live/commit/bedc2b350ba96859c62a380d4951e8ec435f31ac) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - adds enableDialogDesktop parameter to analytics for MADialog
+
+- [#13259](https://github.com/LedgerHQ/ledger-live/pull/13259) [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Bump styled-components to v6 on mobile and icons to prepare react 19 migration
+
+- [#13524](https://github.com/LedgerHQ/ledger-live/pull/13524) [`54cd18e`](https://github.com/LedgerHQ/ledger-live/commit/54cd18e2d195dbc4779cf9046bc38c039a78122c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump reselect to latest version and use the catalog
+
+- [#13230](https://github.com/LedgerHQ/ledger-live/pull/13230) [`c5b6f4b`](https://github.com/LedgerHQ/ledger-live/commit/c5b6f4bee534213498f819f45c6fb7434f248943) Thanks [@ishaba](https://github.com/ishaba)! - chore: canton update pending offers ui styles
+
+- [#13415](https://github.com/LedgerHQ/ledger-live/pull/13415) [`dd5c4f8`](https://github.com/LedgerHQ/ledger-live/commit/dd5c4f8c91b8a8afc14bf89258a68da646efad59) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: migrate segment
+
+- [#13468](https://github.com/LedgerHQ/ledger-live/pull/13468) [`9874905`](https://github.com/LedgerHQ/ledger-live/commit/98749050026e6b19a207065b312dc99770af639d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Dedup MSW lib inside monorepo
+
+- [#13389](https://github.com/LedgerHQ/ledger-live/pull/13389) [`d2d0c63`](https://github.com/LedgerHQ/ledger-live/commit/d2d0c63f73e58867adc8b029c99a44075621cbc1) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add fiat value to MADrawer account list
+
+- [#13423](https://github.com/LedgerHQ/ledger-live/pull/13423) [`e2aab1d`](https://github.com/LedgerHQ/ledger-live/commit/e2aab1d466f574cd767e498291c606a3ddaf6998) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Migrate sync onboarding companion seed step to new arch
+
+- [#13420](https://github.com/LedgerHQ/ledger-live/pull/13420) [`2e3ba70`](https://github.com/LedgerHQ/ledger-live/commit/2e3ba70cc7a91d57df962c28336c0757b0c1c20f) Thanks [@deepyjr](https://github.com/deepyjr)! - Update lumen version
+
+- [#13489](https://github.com/LedgerHQ/ledger-live/pull/13489) [`d8ae4e0`](https://github.com/LedgerHQ/ledger-live/commit/d8ae4e0d74807bed3e05d9334ba3166bf80c2b2c) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add default of newly added account in receive flow from add account flow
+
+- [#13303](https://github.com/LedgerHQ/ledger-live/pull/13303) [`9ec1f54`](https://github.com/LedgerHQ/ledger-live/commit/9ec1f54948cca264be8068d34b98bcde2ae5f02e) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(LWD): create wizard for send flow revamp
+
+- [#13482](https://github.com/LedgerHQ/ledger-live/pull/13482) [`e844b3b`](https://github.com/LedgerHQ/ledger-live/commit/e844b3bd5f8a4b21cf94e0a598c22a2a42791490) Thanks [@sergiubreban](https://github.com/sergiubreban)! - Adds earn ui feature flag
+
+- [#13364](https://github.com/LedgerHQ/ledger-live/pull/13364) [`81a193d`](https://github.com/LedgerHQ/ledger-live/commit/81a193da5abf0d5f3a129bd78895dd450ce29ca1) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update axios to 1.13.2
+
+- [#13481](https://github.com/LedgerHQ/ledger-live/pull/13481) [`1e5a7b0`](https://github.com/LedgerHQ/ledger-live/commit/1e5a7b0f1d9cb5769f0f481a90e6108834c6304e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove currenciesIds from CurrenciesOrder in DaDa response
+
+- [#13483](https://github.com/LedgerHQ/ledger-live/pull/13483) [`2dda558`](https://github.com/LedgerHQ/ledger-live/commit/2dda55855da0f0e32a7330d8796d320384cbe7ac) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - amend madialog asset empty list component
+
+- [#13470](https://github.com/LedgerHQ/ledger-live/pull/13470) [`972db02`](https://github.com/LedgerHQ/ledger-live/commit/972db02212577dbd4805767b0905ef49fce58c6e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix scroll to last row in Dialog
+
+- [#13394](https://github.com/LedgerHQ/ledger-live/pull/13394) [`dde638b`](https://github.com/LedgerHQ/ledger-live/commit/dde638b99a98127036faac5355a6e4be4fda91a1) Thanks [@deepyjr](https://github.com/deepyjr)! - Update the paddings on the MADialog
+
+- [#13473](https://github.com/LedgerHQ/ledger-live/pull/13473) [`9ae1b84`](https://github.com/LedgerHQ/ledger-live/commit/9ae1b8467c712cf827fa48947faa73f4270ba6f5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework Select Account step
+
+- [#13390](https://github.com/LedgerHQ/ledger-live/pull/13390) [`5b1ee45`](https://github.com/LedgerHQ/ledger-live/commit/5b1ee457a4014c05bb53d69d381f12856a93f418) Thanks [@deepyjr](https://github.com/deepyjr)! - Update the autofocus on the input for the modal and hide 0 values for the itemList
+
+- [#13287](https://github.com/LedgerHQ/ledger-live/pull/13287) [`cbe6ff4`](https://github.com/LedgerHQ/ledger-live/commit/cbe6ff4754551d5651222c57724ceed4c8e5d41c) Thanks [@jonezque](https://github.com/jonezque)! - feat: canton add offer expiration select to send flow
+
+- [#13397](https://github.com/LedgerHQ/ledger-live/pull/13397) [`682845a`](https://github.com/LedgerHQ/ledger-live/commit/682845aa6093863d0fc7037519d159fbfd48658f) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Rename drawer files to dialog in ModularDialog
+
+- [#13500](https://github.com/LedgerHQ/ledger-live/pull/13500) [`510d1be`](https://github.com/LedgerHQ/ledger-live/commit/510d1beba5c8ec0372eec5fabd1c02ab64693667) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update @babel/\* libraries and react-select
+
+- [#13176](https://github.com/LedgerHQ/ledger-live/pull/13176) [`f53cbdd`](https://github.com/LedgerHQ/ledger-live/commit/f53cbdddd8ad1b58409b3a1217990379adabb2b1) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: hedera memo validation
+
+- [#13444](https://github.com/LedgerHQ/ledger-live/pull/13444) [`e47e52a`](https://github.com/LedgerHQ/ledger-live/commit/e47e52a0c04a0a3ae7fa499da0962ec1c4fd4bb7) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump redux version on LWD. Use catalog for LWM and LLC
+
+- [#13448](https://github.com/LedgerHQ/ledger-live/pull/13448) [`376062f`](https://github.com/LedgerHQ/ledger-live/commit/376062f13df6924d496c20bc1757938475cc6ef2) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Migrate useCompanionSteps to new arch
+
+- [#13498](https://github.com/LedgerHQ/ledger-live/pull/13498) [`4d61fe4`](https://github.com/LedgerHQ/ledger-live/commit/4d61fe4c693bc9982665baa41a54da753c5116a3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade Lumen deps + fix breaking changes
+
+- [#13393](https://github.com/LedgerHQ/ledger-live/pull/13393) [`400dafc`](https://github.com/LedgerHQ/ledger-live/commit/400dafc2e7e440192d1933d9f7b0383271fb5780) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Wrap ModularAsset content to be usable by other flow like Send
+
+- [#13514](https://github.com/LedgerHQ/ledger-live/pull/13514) [`ec9de17`](https://github.com/LedgerHQ/ledger-live/commit/ec9de17cb612d3af36ac3f0abe97715ab10ef36b) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Migrate TwpStepCompanion to new arch
+
+- [#13512](https://github.com/LedgerHQ/ledger-live/pull/13512) [`4caf2ef`](https://github.com/LedgerHQ/ledger-live/commit/4caf2eff2aff2a6f1048ccf8e94295c954554ae1) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: add removeAddress method + store ens address
+
+- [#13356](https://github.com/LedgerHQ/ledger-live/pull/13356) [`e55921b`](https://github.com/LedgerHQ/ledger-live/commit/e55921b1dd0540a4d0b3f529d4414cdc7e51a544) Thanks [@deepyjr](https://github.com/deepyjr)! - Update input from modular dialog and move type
+
+- [#13392](https://github.com/LedgerHQ/ledger-live/pull/13392) [`9351cb2`](https://github.com/LedgerHQ/ledger-live/commit/9351cb2e0336d156598a080d066a21ea18a24abd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Migrate Emptylist using LDLS
+
+- [#13258](https://github.com/LedgerHQ/ledger-live/pull/13258) [`c4045c7`](https://github.com/LedgerHQ/ledger-live/commit/c4045c714ee0fb1f02f6e75cae04e99cdea01ae4) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - Add ledger sync step to non touchscreen device onboarding flow
+
+- [#13219](https://github.com/LedgerHQ/ledger-live/pull/13219) [`d967123`](https://github.com/LedgerHQ/ledger-live/commit/d967123e6850dcfc90d399cfdeb4cb9085e1cdd6) Thanks [@deepyjr](https://github.com/deepyjr)! - Update the tailwind config in the eslint file
+
+- [#13327](https://github.com/LedgerHQ/ledger-live/pull/13327) [`53c2cd4`](https://github.com/LedgerHQ/ledger-live/commit/53c2cd462013993b8ffdbf426770be46738164de) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Adapt e2e Desktop for MADialog
+
+### Patch Changes
+
+- Updated dependencies [[`6e6a12c`](https://github.com/LedgerHQ/ledger-live/commit/6e6a12cdfd79b752839bf664bab5156cea9c9e23), [`0f41528`](https://github.com/LedgerHQ/ledger-live/commit/0f415284044c2bfa622dad33fea01cb5f2cee034), [`d1a83d9`](https://github.com/LedgerHQ/ledger-live/commit/d1a83d942d98e52eeac3d459f5f8ac763d4b6c13), [`7e12cd3`](https://github.com/LedgerHQ/ledger-live/commit/7e12cd30f47d42cd8dac35cfa475abdd9ad44e19), [`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae), [`4455451`](https://github.com/LedgerHQ/ledger-live/commit/445545117cf0196d7c5a303df21041c23b91844c), [`4259445`](https://github.com/LedgerHQ/ledger-live/commit/4259445dfcdbd102269c004820cf3d7774e930c0), [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4), [`54cd18e`](https://github.com/LedgerHQ/ledger-live/commit/54cd18e2d195dbc4779cf9046bc38c039a78122c), [`c5b6f4b`](https://github.com/LedgerHQ/ledger-live/commit/c5b6f4bee534213498f819f45c6fb7434f248943), [`fba1e31`](https://github.com/LedgerHQ/ledger-live/commit/fba1e31386e589a93adb19bc4f6eae55129e19ea), [`e57fa40`](https://github.com/LedgerHQ/ledger-live/commit/e57fa40a1bb480ebcc03120a1aab3b02e249bf8d), [`9874905`](https://github.com/LedgerHQ/ledger-live/commit/98749050026e6b19a207065b312dc99770af639d), [`e844b3b`](https://github.com/LedgerHQ/ledger-live/commit/e844b3bd5f8a4b21cf94e0a598c22a2a42791490), [`81a193d`](https://github.com/LedgerHQ/ledger-live/commit/81a193da5abf0d5f3a129bd78895dd450ce29ca1), [`1e5a7b0`](https://github.com/LedgerHQ/ledger-live/commit/1e5a7b0f1d9cb5769f0f481a90e6108834c6304e), [`cbe6ff4`](https://github.com/LedgerHQ/ledger-live/commit/cbe6ff4754551d5651222c57724ceed4c8e5d41c), [`67f89a7`](https://github.com/LedgerHQ/ledger-live/commit/67f89a710a0bdd9ae0df78708e1b297dd0100535), [`c2d4259`](https://github.com/LedgerHQ/ledger-live/commit/c2d425989b600732f4fb0a88993e2673e93698a7), [`510d1be`](https://github.com/LedgerHQ/ledger-live/commit/510d1beba5c8ec0372eec5fabd1c02ab64693667), [`9e80ecc`](https://github.com/LedgerHQ/ledger-live/commit/9e80ecc5ef6da4f39a184d3c555c8d7c439754a8), [`e47e52a`](https://github.com/LedgerHQ/ledger-live/commit/e47e52a0c04a0a3ae7fa499da0962ec1c4fd4bb7), [`ffa9e7e`](https://github.com/LedgerHQ/ledger-live/commit/ffa9e7e58dd60d0f568362a95e14ba5d130c2d07), [`96a0821`](https://github.com/LedgerHQ/ledger-live/commit/96a08210ae9a40c9b4c39cdbb85acf742d43c3a4), [`4caf2ef`](https://github.com/LedgerHQ/ledger-live/commit/4caf2eff2aff2a6f1048ccf8e94295c954554ae1), [`b394f1d`](https://github.com/LedgerHQ/ledger-live/commit/b394f1ddca998a384d5e8032899d7f9a356cc4cc), [`c4045c7`](https://github.com/LedgerHQ/ledger-live/commit/c4045c714ee0fb1f02f6e75cae04e99cdea01ae4)]:
+  - @ledgerhq/cryptoassets@13.36.0-next.0
+  - @ledgerhq/client-ids@0.3.0-next.0
+  - @ledgerhq/coin-bitcoin@0.28.0-next.0
+  - @ledgerhq/types-live@6.92.0-next.0
+  - @ledgerhq/live-common@34.56.0-next.0
+  - @ledgerhq/coin-filecoin@1.17.0-next.0
+  - @ledgerhq/devices@8.9.0-next.0
+  - @ledgerhq/coin-cosmos@0.22.0-next.0
+  - @ledgerhq/live-config@3.4.0-next.0
+  - @ledgerhq/live-env@2.24.0-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.10.0-next.0
+  - @ledgerhq/coin-evm@2.38.0-next.0
+  - @ledgerhq/live-wallet@0.18.0-next.0
+  - @ledgerhq/coin-canton@0.13.0-next.0
+  - @ledgerhq/react-ui@0.43.0-next.0
+  - @ledgerhq/live-dmk-speculos@0.4.0-next.0
+  - @ledgerhq/coin-framework@6.11.2-next.0
+  - @ledgerhq/live-countervalues@0.10.5-next.0
+  - @ledgerhq/live-countervalues-react@0.7.7-next.0
+  - @ledgerhq/domain-service@1.5.2-next.0
+  - @ledgerhq/live-dmk-desktop@0.14.2-next.0
+  - @ledgerhq/hw-transport@6.31.16-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.6.1-next.0
+  - @ledgerhq/live-network@2.1.5-next.0
+  - @ledgerhq/hw-transport-http@6.32.1-next.0
+  - @ledgerhq/hw-transport-vault@1.3.16-next.0
+
 ## 2.135.1
 
 ### Patch Changes

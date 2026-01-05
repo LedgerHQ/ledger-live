@@ -1,5 +1,13 @@
 # @ledgerhq/live-env
 
+## 2.24.0-next.0
+
+### Minor Changes
+
+- [#13259](https://github.com/LedgerHQ/ledger-live/pull/13259) [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Bump styled-components to v6 on mobile and icons to prepare react 19 migration
+
+- [#13368](https://github.com/LedgerHQ/ledger-live/pull/13368) [`fba1e31`](https://github.com/LedgerHQ/ledger-live/commit/fba1e31386e589a93adb19bc4f6eae55129e19ea) Thanks [@gre-ledger](https://github.com/gre-ledger)! - set PUSH_DEVICES_SERVICE_URL value and make sure the error case is rate limited.
+
 ## 2.23.0
 
 ### Minor Changes

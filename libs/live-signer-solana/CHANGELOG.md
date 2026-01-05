@@ -1,5 +1,22 @@
 # @ledgerhq/live-signer-solana
 
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#13426](https://github.com/LedgerHQ/ledger-live/pull/13426) [`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae) Thanks [@gre-ledger](https://github.com/gre-ledger)! - update semver library (minor)
+
+### Patch Changes
+
+- Updated dependencies [[`753027f`](https://github.com/LedgerHQ/ledger-live/commit/753027fb4579a990080907aad4084572dabc7a3c), [`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae), [`9874905`](https://github.com/LedgerHQ/ledger-live/commit/98749050026e6b19a207065b312dc99770af639d), [`f9a893e`](https://github.com/LedgerHQ/ledger-live/commit/f9a893e972a52ac2a4953efa3a5dccb614da79e6)]:
+  - @ledgerhq/coin-solana@0.40.0-next.0
+  - @ledgerhq/devices@8.9.0-next.0
+  - @ledgerhq/ledger-trust-service@0.5.0-next.0
+  - @ledgerhq/ledger-cal-service@1.10.0-next.0
+  - @ledgerhq/hw-transport@6.31.16-next.0
+  - @ledgerhq/hw-app-solana@7.6.3-next.0
+  - @ledgerhq/hw-bolos@6.32.12-next.0
+
 ## 0.8.1
 
 ### Patch Changes

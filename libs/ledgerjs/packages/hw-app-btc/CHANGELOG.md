@@ -1,5 +1,18 @@
 # @ledgerhq/hw-app-btc
 
+## 10.15.0-next.0
+
+### Minor Changes
+
+- [#13431](https://github.com/LedgerHQ/ledger-live/pull/13431) [`d1a83d9`](https://github.com/LedgerHQ/ledger-live/commit/d1a83d942d98e52eeac3d459f5f8ac763d4b6c13) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update to latest bs58 libs.
+
+- [#13426](https://github.com/LedgerHQ/ledger-live/pull/13426) [`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae) Thanks [@gre-ledger](https://github.com/gre-ledger)! - update semver library (minor)
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.16-next.0
+
 ## 10.14.0
 
 ### Minor Changes
