@@ -27,8 +27,24 @@ export class Account {
   static readonly ATOM_1 = new Account(Currency.ATOM, "Cosmos 1", 0, "44'/118'/0'/0/0");
   static readonly ATOM_2 = new Account(Currency.ATOM, "Cosmos 2", 1, "44'/118'/1'/0/0");
 
-  static readonly BCH_1 = new Account(Currency.BCH, "Bitcoin Cash 1", 0, "44'/145'/0'/0/2");
-  static readonly BCH_2 = new Account(Currency.BCH, "Bitcoin Cash 2", 1, "44'/145'/1'/0/2");
+  static readonly BCH_1 = new Account(
+    Currency.BCH,
+    "Bitcoin Cash 1",
+    0,
+    "44'/145'/0'/0/2",
+    undefined,
+    undefined,
+    "cashaddr",
+  );
+  static readonly BCH_2 = new Account(
+    Currency.BCH,
+    "Bitcoin Cash 2",
+    1,
+    "44'/145'/1'/0/2",
+    undefined,
+    undefined,
+    "cashaddr",
+  );
 
   static readonly BSC_1 = new Account(Currency.BSC, "BNB Chain 1", 0, "44'/60'/0'/0/0");
   static readonly BSC_2 = new Account(Currency.BSC, "BNB Chain 2", 1, "44'/60'/1'/0/0");
