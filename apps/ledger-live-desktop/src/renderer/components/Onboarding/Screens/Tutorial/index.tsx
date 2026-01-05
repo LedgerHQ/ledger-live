@@ -68,7 +68,7 @@ import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetF
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { EnableSync } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/EnableSync";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/lib-es/store";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";

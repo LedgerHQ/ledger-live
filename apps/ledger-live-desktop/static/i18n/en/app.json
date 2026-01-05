@@ -1311,6 +1311,17 @@
         "depositButton": "Secure my crypto",
         "skipButton": "Maybe later"
       },
+      "sync": {
+        "timelineTitle": "Wallet sync",
+        "timelineTitleCompleted": "Sync enabled",
+        "title": "Enable sync for your wallet",
+        "description": "Keep your portfolio up to date when switching computers or using a phone",
+        "skipButton": "I’ll do it later",
+        "skipTitle": "Skip enabling sync?",
+        "skipDescription": "If you skip, you'll have to manually re-add all your crypto accounts if you ever switch to a new phone or computer. You can always disable it from your Ledger Wallet settings.",
+        "skipConfirm": "Yes, skip",
+        "skipNo": "No, enable sync"
+      },
       "backup": {
         "title": "Backup for your Secret Recovery Phrase",
         "description": "With a digital encrypted backup, restore access to your wallet without your Secret Recovery Phrase.\n\nChoose if you’d like a digital backup:",

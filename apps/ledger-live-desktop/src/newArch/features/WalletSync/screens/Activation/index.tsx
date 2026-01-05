@@ -96,7 +96,7 @@ const WalletSyncActivation = forwardRef<BackRef, Props>(({ sourcePage }, ref) =>
       case Step.ActivationLoading:
         return <LoadingStep />;
       case Step.ActivationFinal:
-        return <ActivationFinalStep isNewBackup={true} />;
+        return <ActivationFinalStep isNewBackup={true} sourcePage={sourcePage} />;
       case Step.SynchronizationFinal:
         return <ActivationFinalStep isNewBackup={false} />;
 

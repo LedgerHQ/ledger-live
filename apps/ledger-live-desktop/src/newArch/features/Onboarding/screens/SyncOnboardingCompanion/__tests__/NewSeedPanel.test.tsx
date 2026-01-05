@@ -22,6 +22,7 @@ const getInitialState = (isOnboardingReceiveSuccess: boolean = false): Partial<S
     isOnboardingReceiveFlow: false,
     isOnboardingReceiveSuccess,
     onboardingSyncFlow: null,
+    isSkipDrawerOpen: false,
   },
 });
 
