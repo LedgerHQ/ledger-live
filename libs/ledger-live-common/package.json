@@ -261,7 +261,7 @@
     "performance-now": "^2.1.0",
     "prando": "^6.0.1",
     "qs": "^6.10.1",
-    "reselect": "^4.1.5",
+    "reselect": "catalog:",
     "rlp": "^3.0.0",
     "rxjs": "catalog:",
     "semver": "^7.3.5",

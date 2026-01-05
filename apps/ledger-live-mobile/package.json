@@ -212,7 +212,7 @@
     "react-redux": "catalog:",
     "redux": "catalog:",
     "redux-actions": "2.6.5",
-    "reselect": "4.0.0",
+    "reselect": "catalog:",
     "rn-fetch-blob": "0.12.0",
     "rxjs": "catalog:",
     "semver": "7.5.4",

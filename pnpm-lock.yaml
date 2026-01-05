@@ -126,6 +126,9 @@ catalogs:
     redux:
       specifier: ^5.0.1
       version: 5.0.1
+    reselect:
+      specifier: 5.1.1
+      version: 5.1.1
     rxjs:
       specifier: 7.8.2
       version: 7.8.2
@@ -799,8 +802,8 @@ importers:
         specifier: 2.6.5
         version: 2.6.5
       reselect:
-        specifier: 4.1.8
-        version: 4.1.8
+        specifier: 'catalog:'
+        version: 5.1.1
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -1520,8 +1523,8 @@ importers:
         specifier: 2.6.5
         version: 2.6.5
       reselect:
-        specifier: 4.0.0
-        version: 4.0.0
+        specifier: 'catalog:'
+        version: 5.1.1
       rn-fetch-blob:
         specifier: 0.12.0
         version: 0.12.0(patch_hash=5d357d2cf58066f49b2c2d96c7b92b4b1c6d3d63508aca870f571e092deaaefd)
@@ -5909,8 +5912,8 @@ importers:
         specifier: ^6.10.1
         version: 6.13.0
       reselect:
-        specifier: ^4.1.5
-        version: 4.1.8
+        specifier: 'catalog:'
+        version: 5.1.1
       rlp:
         specifier: ^3.0.0
         version: 3.0.0
@@ -33856,9 +33859,6 @@ packages:
   resedit@1.7.2:
     resolution: {integrity: sha512-vHjcY2MlAITJhC0eRD/Vv8Vlgmu9Sd3LX9zZvtGzU5ZImdTN3+d6e/4mnTyV8vEbyf1sgNIrWxhWlrys52OkEA==}
     engines: {node: '>=12', npm: '>=6'}
-
-  reselect@4.0.0:
-    resolution: {integrity: sha512-qUgANli03jjAyGlnbYVAV5vvnOmJnODyABz51RdBN7M4WaVu8mecZWgyQNkG8Yqe3KRGRt0l4K4B3XVEULC4CA==}
 
   reselect@4.1.8:
     resolution: {integrity: sha512-ab9EmR80F/zQTMNeneUr4cv+jSwPJgIlvEmVwLerwrWVbpLlBuls9XHzIeTFy4cegU2NHBp3va0LKOzU5qFEYQ==}
@@ -75384,8 +75384,6 @@ snapshots:
     dependencies:
       pe-library: 0.4.1
 
-  reselect@4.0.0: {}
-
   reselect@4.1.8: {}
 
   reselect@5.1.1: {}
@@ -77588,7 +77586,7 @@ snapshots:
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.36.0
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
     transitivePeerDependencies:
       - metro
 
