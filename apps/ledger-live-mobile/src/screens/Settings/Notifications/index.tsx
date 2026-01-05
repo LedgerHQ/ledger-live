@@ -10,7 +10,7 @@ import { track, TrackScreen, updateIdentify } from "~/analytics";
 import { notificationsSelector } from "~/reducers/settings";
 import { setNotifications } from "~/actions/settings";
 import type { State } from "~/reducers/types";
-import useNotifications from "~/logic/notifications";
+import { useNotifications } from "~/logic/notifications";
 import { updateUserPreferences } from "~/notifications/braze";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";

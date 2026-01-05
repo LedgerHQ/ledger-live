@@ -6,7 +6,7 @@ import PushNotificationsModal from "../PushNotificationsModal";
 import RatingsModal from "../RatingsModal";
 import NpsRatingsModal from "../NpsRatingsModal";
 import useRatings from "~/logic/ratings";
-import useNotifications from "~/logic/notifications";
+import { useNotifications } from "~/logic/notifications";
 import DebugAppLevelDrawer from "LLM/components/QueuedDrawer/DebugAppLevelDrawer";
 import useNpsRatings from "~/logic/npsRatings";
 import { ScreenName } from "~/const";

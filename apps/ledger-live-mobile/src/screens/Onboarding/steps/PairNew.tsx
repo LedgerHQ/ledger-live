@@ -13,7 +13,7 @@ import {
   setIsReborn,
   setOnboardingHasDevice,
 } from "~/actions/settings";
-import useNotifications from "~/logic/notifications";
+import { useNotifications } from "~/logic/notifications";
 import {
   RootComposite,
   StackNavigatorNavigation,

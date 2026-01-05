@@ -4,7 +4,7 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
 import { screen, track } from "~/analytics";
 import { ScreenName } from "~/const";
-import useNotifications from "~/logic/notifications";
+import { useNotifications } from "~/logic/notifications";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 

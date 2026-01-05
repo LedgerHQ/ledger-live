@@ -24,7 +24,7 @@ import {
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import { DETOX_ENABLED } from "~/utils/constants";
-import useNotifications from "~/logic/notifications";
+import { useNotifications } from "~/logic/notifications";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.webp"),
