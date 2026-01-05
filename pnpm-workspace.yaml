@@ -63,6 +63,7 @@ catalog:
   "styled-components": 6.1.19
   "styled-system": 5.1.5
   "stylis": 4.0.0
+  "@tanstack/react-virtual": 3.13.16
 
 overrides:
   node-abi: ^4.9.0

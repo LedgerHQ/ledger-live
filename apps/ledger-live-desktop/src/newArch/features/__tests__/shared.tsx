@@ -1,3 +1,4 @@
+import { RefObject } from "react";
 import {
   ethereumCurrency,
   bitcoinCurrency,
@@ -31,4 +32,12 @@ export function mockDomMeasurements() {
       toJSON: () => {},
     };
   };
+}
+
+export function setRefCurrent<T>(ref: RefObject<T>, value: T | null): void {
+  Object.defineProperty(ref, "current", {
+    writable: true,
+    configurable: true,
+    value,
+  });
 }
