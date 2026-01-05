@@ -30,7 +30,6 @@ dynamicKeys = {
     '^(families.stellar.memoType.)\w+': rep,
     '^(fees.)\w+': rep,
     '^(freeze.steps.confirmation.success.)\w+': rep,
-    '^(fullNode.modal.steps.satstack.connectionSteps.)[\w-]+': rep,
     '^(lend.account.)\w+': rep,
     '^(lend.enable.steps.)\w+': rep,
     '^(manager.modal.steps.)[\w-]+': rep,

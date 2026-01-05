@@ -469,19 +469,6 @@ Usage: ledger-live repl       # Low level exchange with the device. Send APDUs f
  -d, --device <String>        : provide a specific HID path of a device
  -f, --file <filename>        : A file can also be provided. By default stdin is used.
 
-Usage: ledger-live satstack   # SatStack: Generate and manage lss.json file
- -d, --device <String>        : provide a specific HID path of a device
-     --no-device              : disable the scanning of device descriptors
-     --no-save                : disable the save of the lss file
-     --lss <filename>         : A file to save the sats stack state
-     --rpcHOST <String>       : host to rpc full node (e.g. 127.0.0.1:8332)
-     --rpcUSER <String>       : username of full node
-     --rpcPASSWORD <String>   : password of full node
-     --rpcTLS                 : use tls in full node
-
-Usage: ledger-live satstackStatus # Check StackSats status
-     --continuous             : enable status polling
-
 Usage: ledger-live scanDescriptors # Synchronize accounts with blockchain
  -d, --device <String>        : provide a specific HID path of a device
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.

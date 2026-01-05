@@ -4,7 +4,6 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/bitcoin/types";
 import { LLDCoinFamily } from "../types";
-import { AccountDescriptor } from "@ledgerhq/live-common/families/bitcoin/logic";
 import { Operation } from "@ledgerhq/types-live";
 
 export type BitcoinFamily = LLDCoinFamily<
@@ -13,7 +12,3 @@ export type BitcoinFamily = LLDCoinFamily<
   TransactionStatus,
   Operation
 >;
-
-export type ScannedDescriptor = {
-  descriptor: AccountDescriptor;
-};

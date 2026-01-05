@@ -28,10 +28,6 @@ export const DeviceAlreadySetup = createCustomErrorClass("DeviceAlreadySetup");
 
 export const SourceHasMultiSign = createCustomErrorClass("SourceHasMultiSign");
 
-export const RPCHostRequired = createCustomErrorClass("RPCHostRequired");
-export const RPCHostInvalid = createCustomErrorClass("RPCHostInvalid");
-export const RPCUserRequired = createCustomErrorClass("RPCUserRequired");
-export const RPCPassRequired = createCustomErrorClass("RPCPassRequired");
 // Note : info of this code can be found here :
 // https://github.com/cosmos/cosmos-sdk/blob/v0.40.0-rc3/types/errors/errors.go#L16
 export const CosmosBroadcastError = {
@@ -72,12 +68,6 @@ export const CosmosBroadcastError = {
   "35": createCustomErrorClass("CosmosBroadcastLogic"),
   "36": createCustomErrorClass("CosmosBroadcastConflict"),
 };
-export const SatStackVersionTooOld = createCustomErrorClass("SatStackVersionTooOld");
-export const SatStackAccessDown = createCustomErrorClass("SatStackAccessDown");
-export const SatStackStillSyncing = createCustomErrorClass("SatStackStillSyncing");
-export const SatStackDescriptorNotImported = createCustomErrorClass(
-  "SatStackDescriptorNotImported",
-);
 export const SwapNoAvailableProviders = createCustomErrorClass("SwapNoAvailableProviders");
 export const NoSuchAppOnProvider = createCustomErrorClass("NoSuchAppOnProvider");
 export const SwapExchangeRateAmountTooLow = createCustomErrorClass("SwapExchangeRateAmountTooLow");
