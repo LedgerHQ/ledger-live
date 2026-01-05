@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-multiversx",
-  "version": "6.26.1",
+  "version": "6.26.2",
   "description": "Ledger Hardware Wallet MultiversX Application API",
   "keywords": [
     "Ledger",
