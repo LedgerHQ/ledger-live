@@ -290,6 +290,7 @@ export type Features = CurrencyFeatures & {
   lifiSolana: DefaultFeature;
   llmAnimatedSplashScreen: Feature_LlmAnimatedSplashScreen;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
+  lldOnboardingEnableSync: Feature_OnboardingEnableSync;
 };
 
 /**

@@ -40,7 +40,7 @@ export function SelectDevice() {
   const handleDeviceSelect = useCallback(
     (deviceModelId: DeviceModelId) => {
       // TODO: use a feature flag to do this properly
-      track("Onboarding Device - Selection", { deviceModelId });
+      track("Onboarding Device - Selection", { deviceModelId, flow: "Onboarding" });
       if (isSyncOnboardingSupported(deviceModelId)) {
         history.push(`/onboarding/sync/${deviceModelId}`);
       } else {
@@ -53,7 +53,7 @@ export function SelectDevice() {
 
   return (
     <SelectDeviceContainer>
-      <TrackPage category="Onboarding Device - Selection" />
+      <TrackPage category="Onboarding Device - Selection" flow="Onboarding" />
       <OnboardingNavHeader
         onClickPrevious={() =>
           history.push(hasCompletedOnboarding ? "/settings/help" : "/onboarding/welcome")

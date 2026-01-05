@@ -5265,6 +5265,7 @@
           "recoveryPhrase": "Recovery phrase",
           "hideRecoveryPhrase": "Hide recovery phrase",
           "pairNano": "Connect nano",
+          "enableSync": "Synchronization",
           "secureYourCrypto": "Secure your crypto"
         },
         "screens": {
@@ -5557,6 +5558,14 @@
             "help": {
               "help": "Need help",
               "descr": "Don't know what you have to do? Get some help to close this step."
+            }
+          },
+          "enableSync": {
+            "title": "Enable sync for your wallet",
+            "description": "Keep your portfolio up to date when switching phones or using a computer.",
+            "buttons": {
+              "next": "Continue",
+              "nextSecondary": "I'll do it later"
             }
           },
           "secureYourCrypto": {

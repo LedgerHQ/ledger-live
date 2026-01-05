@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setDrawerVisibility, setFlow } from "~/renderer/actions/walletSync";
-import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { Flow, Step, walletSyncOnboardingNewDeviceSelector } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -30,6 +30,8 @@ export function useAddMember({
   const sdk = useTrustchainSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const trustchain = useSelector(trustchainSelector);
+  const isOnboardingNewDevice = useSelector(walletSyncOnboardingNewDeviceSelector);
+  const isOnboardingNewDeviceInitial = useRef(isOnboardingNewDevice);
   const [error, setError] = useState<Error | null>(null);
 
   const [userDeviceInteraction, setUserDeviceInteraction] = useState(false);
@@ -44,9 +46,11 @@ export function useAddMember({
       dispatch(setTrustchain(trustchainResult.trustchain));
       track("ledgersync_activated");
       if (sourcePage === AnalyticsPage.Onboarding) {
-        dispatch(saveSettings({ hasCompletedOnboarding: true }));
-        dispatch(setLastOnboardedDevice(device));
-        history.push("/");
+        if (!isOnboardingNewDeviceInitial.current) {
+          dispatch(saveSettings({ hasCompletedOnboarding: true }));
+          dispatch(setLastOnboardedDevice(device));
+          history.push("/");
+        }
         dispatch(setDrawerVisibility(false));
       } else {
         dispatch(
