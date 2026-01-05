@@ -114,13 +114,10 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       label: t("account.swap", { currency: currency.name }),
       Icon: iconSwap,
       disabled: false,
-      modalOnDisabledClick: {
-        component: isPtxServiceCtaScreensDisabled ? PtxToast : ZeroBalanceDisabledModalContent,
-      },
       event: "Swap Crypto Account Button",
       eventProperties: { currencyName: currency.name },
     }),
-    [isPtxServiceCtaScreensDisabled, currency, account, parentAccount, t],
+    [currency, account, parentAccount, t],
   );
 
   const actionButtonBuy: ActionButtonEvent = useMemo(
