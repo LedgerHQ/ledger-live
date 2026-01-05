@@ -158,11 +158,11 @@ const useNotifications = () => {
         typeof dismissedOptInDrawerAtList !== "undefined";
       if (hasAuthorizedFromOsSettings) {
         if (notifications.areNotificationsAllowed) {
-          track("os_notifications_allowed_from_settings_and_app_notifications_allowed");
+          // track("os_notifications_allowed_from_settings_and_app_notifications_allowed");
           resetOptOutState();
           return;
         } else {
-          track("os_notifications_allowed_from_settings_but_app_notifications_disabled");
+          // track("os_notifications_allowed_from_settings_but_app_notifications_disabled");
         }
       }
 
@@ -170,7 +170,7 @@ const useNotifications = () => {
         permission.value === AuthorizationStatus.DENIED &&
         typeof dismissedOptInDrawerAtList === "undefined";
       if (hasDeniedFromOsSettings) {
-        track("os_notifications_denied_from_settings");
+        // track("os_notifications_denied_from_settings");
         optOutOfNotifications();
         return;
       }
@@ -200,6 +200,7 @@ const useNotifications = () => {
   ]);
 
   useEffect(() => {
+    // When user is redirected to the os settings to allow notifications, we need to re-initialize the push notifications data
     const subscription = AppState.addEventListener("change", nextAppState => {
       if (nextAppState === "active") {
         initPushNotificationsData();
@@ -247,55 +248,61 @@ const useNotifications = () => {
     [dispatch, isPushNotificationsModalLocked],
   );
 
-  const verifyShouldPromptOptInDrawer = useCallback(() => {
-    const OK = true;
-    const SKIP = false;
+  const getRepromptDelay = useCallback(
+    (dismissedOptInDrawerAtList?: number[]) => {
+      if (!repromptSchedule || !dismissedOptInDrawerAtList) {
+        return null;
+      }
 
+      const dismissalCount = dismissedOptInDrawerAtList.length;
+      let scheduleIndex = dismissalCount - 1;
+
+      const lastScheduleIndex = repromptSchedule.length - 1;
+      if (scheduleIndex > lastScheduleIndex) {
+        // If user has dismissed more than the schedule length, keep using the last delay.
+        scheduleIndex = lastScheduleIndex;
+      }
+
+      const repromptDelay = repromptSchedule[scheduleIndex];
+
+      return repromptDelay;
+    },
+    [repromptSchedule],
+  );
+
+  const verifyShouldPromptOptInDrawer = useCallback(() => {
     const isOsPermissionAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
     if (isOsPermissionAuthorized && notifications.areNotificationsAllowed) {
-      return SKIP;
+      return false;
     }
 
     const dismissedOptInDrawerAtList = pushNotificationsDataOfUser?.dismissedOptInDrawerAtList;
 
     const hasNeverSeenOptInPromptDrawer = typeof dismissedOptInDrawerAtList === "undefined";
     if (hasNeverSeenOptInPromptDrawer) {
-      return OK;
-    }
-
-    if (!repromptSchedule) {
-      // if the feature flag params does not specify a reprompt schedule, avoid prompting the opt in drawer
-      return SKIP;
+      return true;
     }
 
     const dismissalCount = dismissedOptInDrawerAtList.length;
-    if (dismissalCount === 0) {
-      // Treat as if the user has never seen the opt in prompt drawer
-      return OK;
+    const repromptDelay = getRepromptDelay(dismissedOptInDrawerAtList);
+
+    if (!repromptDelay) {
+      return false;
     }
 
     const lastDismissedAt = dismissedOptInDrawerAtList[dismissalCount - 1];
-    const lastScheduleIndex = repromptSchedule.length - 1;
-
-    let scheduleIndex = dismissalCount - 1;
-    if (scheduleIndex > lastScheduleIndex) {
-      // If user has dismissed more than the schedule length, keep using the last delay.
-      scheduleIndex = lastScheduleIndex;
-    }
-
-    const repromptDelay = repromptSchedule[scheduleIndex];
     const nextMinimumRepromptAt = add(lastDismissedAt, repromptDelay);
     const now = Date.now();
     if (isBefore(nextMinimumRepromptAt, now) || isEqual(nextMinimumRepromptAt, now)) {
-      return OK;
+      return true;
     }
 
-    return SKIP;
+    return false;
   }, [
     permissionStatus,
-    repromptSchedule,
     notifications.areNotificationsAllowed,
     pushNotificationsDataOfUser?.dismissedOptInDrawerAtList,
+    getRepromptDelay,
   ]);
 
   const openDrawer = useCallback(
@@ -467,42 +474,52 @@ const useNotifications = () => {
     ],
   );
 
+  const trackButtonClicked = useCallback(
+    (eventName: string) => {
+      track("button_clicked", {
+        button: eventName,
+        drawer: "Drawer push notification opt-in",
+        page: pushNotificationsOldRoute,
+        source: drawerSource,
+        repromptDelay: getRepromptDelay(pushNotificationsDataOfUser?.dismissedOptInDrawerAtList),
+        dismissedCount: pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0,
+        // variant: "A" || "B",
+      });
+    },
+    [
+      drawerSource,
+      getRepromptDelay,
+      pushNotificationsDataOfUser?.dismissedOptInDrawerAtList,
+      pushNotificationsOldRoute,
+    ],
+  );
+
   const handleDelayLaterPress = useCallback(() => {
-    track("button_clicked", {
-      button: "Maybe Later",
-      page: pushNotificationsOldRoute,
-      drawer: "Notif",
-      // TODO: add the dismissed count and/or the last dismissed date
-    });
+    trackButtonClicked("maybe later");
     setPushNotificationsModalOpenCallback(false);
 
     optOutOfNotifications();
-  }, [pushNotificationsOldRoute, setPushNotificationsModalOpenCallback, optOutOfNotifications]);
+  }, [trackButtonClicked, setPushNotificationsModalOpenCallback, optOutOfNotifications]);
 
   const handleCloseFromBackdropPress = useCallback(() => {
-    track("TODO: update when rebasing master");
+    trackButtonClicked("backdrop");
 
     setPushNotificationsModalOpenCallback(false);
 
     optOutOfNotifications();
-  }, [setPushNotificationsModalOpenCallback, optOutOfNotifications]);
+  }, [trackButtonClicked, setPushNotificationsModalOpenCallback, optOutOfNotifications]);
 
   const handleAllowNotificationsPress = useCallback(async () => {
-    track("button_clicked", {
-      button: "Allow",
-      page: pushNotificationsOldRoute,
-      drawer: "Notif",
-      // TODO: add the dismissed count and/or the last dismissed date
-    });
+    trackButtonClicked("allow notifications");
     setPushNotificationsModalOpenCallback(false);
 
     if (permissionStatus !== AuthorizationStatus.AUTHORIZED) {
       const permission = await requestPushNotificationsPermission();
       if (permission === AuthorizationStatus.DENIED) {
-        track("os_notification_permission_denied");
+        trackButtonClicked("os_notifications_deny");
         optOutOfNotifications();
       } else if (permission === AuthorizationStatus.AUTHORIZED) {
-        track("os_notification_permission_granted");
+        trackButtonClicked("os_notifications_allow");
         resetOptOutState();
       }
     }
@@ -513,7 +530,7 @@ const useNotifications = () => {
       });
     }
   }, [
-    pushNotificationsOldRoute,
+    trackButtonClicked,
     setPushNotificationsModalOpenCallback,
     permissionStatus,
     notifications.areNotificationsAllowed,

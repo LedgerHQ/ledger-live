@@ -88,10 +88,7 @@ const Item = ({
     dispatch(setIsReborn(true));
     dispatch(setOnboardingHasDevice(false));
 
-    // showing the drawer needs to wait for the next tick to ensure the navigation is complete
-    requestIdleCallback(() => {
-      tryTriggerPushNotificationDrawerAfterAction("onboarding");
-    });
+    tryTriggerPushNotificationDrawerAfterAction("onboarding");
   }, [dispatch, onClick, navigation, tryTriggerPushNotificationDrawerAfterAction]);
 
   const pressBuy = useCallback(() => {

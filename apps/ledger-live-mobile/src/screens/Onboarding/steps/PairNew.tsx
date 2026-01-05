@@ -140,10 +140,7 @@ export default memo(function () {
       dispatch(setHasBeenRedirectedToPostOnboarding(false));
     }
 
-    // showing the drawer needs to wait for the next tick to ensure the navigation is complete
-    requestIdleCallback(() => {
-      tryTriggerPushNotificationDrawerAfterAction("onboarding");
-    });
+    tryTriggerPushNotificationDrawerAfterAction("onboarding");
   }, [
     isProtectFlow,
     deviceModelId,
