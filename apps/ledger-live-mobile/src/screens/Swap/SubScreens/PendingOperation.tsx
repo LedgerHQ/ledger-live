@@ -13,10 +13,12 @@ import IconClock from "~/icons/Clock";
 import { rgba } from "../../../colors";
 import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import { PendingOperationParamList } from "../types";
+import { useNotifications } from "~/logic/notifications";
 
 export function PendingOperation({ route, navigation }: PendingOperationParamList) {
   const { colors } = useTheme();
   const { swapId, provider, toCurrency, fromCurrency } = route.params.swapOperation;
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const syncAccounts = useSyncAllAccounts();
 
@@ -24,6 +26,10 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
     syncAccounts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    tryTriggerPushNotificationDrawerAfterAction("swap");
+  }, [tryTriggerPushNotificationDrawerAfterAction]);
 
   const onComplete = useCallback(() => {
     navigation.dispatch(
