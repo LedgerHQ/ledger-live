@@ -121,7 +121,7 @@ const LottieDebugger = () => {
                 <DeviceSelectButton modelId={DeviceModelId.nanoS} />
               </Box>
               <Box>
-                <Select
+                <Select<{ label: string; value: string }>
                   isSearchable={false}
                   onChange={option => {
                     if (option) {
@@ -129,15 +129,13 @@ const LottieDebugger = () => {
                       setAnimationKey(option.value as AnimationKey);
                     }
                   }}
-                  // @ts-expect-error react-select bindings expect an object as a value
-                  value={animationKey}
+                  value={{ label: animationKey, value: animationKey }}
                   options={allKeys.map(k => ({
                     label: k,
                     value: k,
                   }))}
-                  // @ts-expect-error TODO: Shouldn't this be {data: { label }} instead?
-                  renderOption={({ label }) => label}
-                  renderValue={({ data: { label } }) => label}
+                  renderOption={({ data }) => data.label}
+                  renderValue={({ data }) => data.label}
                 />
               </Box>
             </ScrollArea>

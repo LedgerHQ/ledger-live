@@ -1,12 +1,11 @@
 import React, { PureComponent } from "react";
 import ReactSelect, {
   components,
-  GroupTypeBase,
-  MenuListComponentProps,
-  OptionTypeBase,
+  GroupBase,
+  MenuListProps,
   Props as ReactSelectProps,
   StylesConfig,
-  ValueType,
+  OnChangeValue,
 } from "react-select";
 import AsyncReactSelect from "react-select/async";
 import { withTranslation } from "react-i18next";
@@ -15,17 +14,22 @@ import styled, { DefaultTheme, withTheme } from "styled-components";
 import debounce from "lodash/debounce";
 import createStyles from "./createStyles";
 import createRenderers from "./createRenderers";
-import { ThemeConfig } from "react-select/src/theme";
 
 export type Props<
-  OptionType extends OptionTypeBase = { label: string; value: string },
+  OptionType = { label: string; value: string },
   IsMulti extends boolean = false,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
+  GroupType extends GroupBase<OptionType> = GroupBase<OptionType>,
 > = {
-  onChange: (a?: ValueType<OptionType, IsMulti> | null) => void;
+  onChange: (a?: OnChangeValue<OptionType, IsMulti> | null) => void;
   // custom renders
   renderOption?: (a: { data: OptionType; isDisabled: boolean }) => React.ReactNode;
   renderValue?: (a: { data: OptionType; isDisabled: boolean }) => React.ReactNode;
+  /** @deprecated Use renderValue instead - accepts various legacy formats */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  renderSelected?: (a: any) => React.ReactNode;
+  /** @deprecated Not used in react-select v5 */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  itemToString?: (item: any) => string;
   // optional
   async?: boolean;
   isRight?: boolean;
@@ -37,26 +41,29 @@ export type Props<
   rowHeight?: number;
   disableOptionPadding?: boolean;
   error?: Error | undefined | null;
+  fakeFocusRight?: boolean;
   // NB at least a different rendering for now
-  stylesMap?: (a: ThemeConfig) => StylesConfig<OptionType, IsMulti, GroupType>;
+  stylesMap?: (
+    a: StylesConfig<OptionType, IsMulti, GroupType>,
+  ) => StylesConfig<OptionType, IsMulti, GroupType>;
   extraRenderers?: {
     [x: string]: (props: unknown) => React.ReactNode;
   };
   // Allows overriding react-select components. See: https://react-select.com/components
   disabledTooltipText?: string;
   theme?: DefaultTheme;
-} & ReactSelectProps<OptionType, IsMulti, GroupType>;
+} & Omit<ReactSelectProps<OptionType, IsMulti, GroupType>, "onChange">;
 
 const Row = styled.div`
   max-width: 100%;
 `;
 
 class MenuList<
-  OptionType extends OptionTypeBase,
+  OptionType,
   IsMulti extends boolean,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
+  GroupType extends GroupBase<OptionType> = GroupBase<OptionType>,
 > extends PureComponent<
-  MenuListComponentProps<OptionType, IsMulti, GroupType> &
+  MenuListProps<OptionType, IsMulti, GroupType> &
     Props<OptionType, IsMulti, GroupType> & {
       lastItemIndex?: number;
       keepLastScrollPosition?: boolean;
@@ -121,27 +128,25 @@ class MenuList<
 
   list = React.createRef<List>();
   render() {
-    const {
-      options,
-      maxHeight,
-      getValue,
-      onScrollEnd,
-      selectProps: { noOptionsMessage, rowHeight },
-    } = this.props;
+    const { options, maxHeight, getValue, onScrollEnd, selectProps } = this.props;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { noOptionsMessage, rowHeight = 48, inputValue = "" } = selectProps as any;
     const { children } = this.state;
     if (!children) return null;
     const [value] = getValue();
     const initialOffset = options.indexOf(value) * rowHeight;
     const minHeight = Math.min(...[maxHeight, rowHeight * children.length]);
 
-    if (!children.length && noOptionsMessage) {
+    if (!children.length && noOptionsMessage?.({ inputValue })) {
       return <components.NoOptionsMessage {...this.props} innerProps={{}} />;
     }
 
-    children.map(key => {
-      delete key.props.innerProps.onMouseMove; // NB: Removes lag on hover, see https://github.com/JedWatson/react-select/issues/3128#issuecomment-433834170
-      delete key.props.innerProps.onMouseOver;
-      return null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (children as any[]).forEach(key => {
+      if (key?.props?.innerProps) {
+        delete key.props.innerProps.onMouseMove; // NB: Removes lag on hover, see https://github.com/JedWatson/react-select/issues/3128#issuecomment-433834170
+        delete key.props.innerProps.onMouseOver;
+      }
     });
 
     const handleScroll = ({
@@ -188,9 +193,9 @@ class MenuList<
   }
 }
 class Select<
-  OptionType extends OptionTypeBase = { label: string; value: string },
+  OptionType = { label: string; value: string },
   IsMulti extends boolean = false,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
+  GroupType extends GroupBase<OptionType> = GroupBase<OptionType>,
 > extends PureComponent<
   Props<OptionType, IsMulti, GroupType> & {
     lastItemIndex?: number | undefined;
@@ -236,7 +241,7 @@ class Select<
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ref: ReactSelect<any, IsMulti> | undefined | null;
+  ref: any;
   timeout: number | undefined;
   render() {
     const {
@@ -287,49 +292,51 @@ class Select<
       }),
     };
 
-    // @ts-expect-error This is complicated to get it right
-    const styles = stylesMap ? stylesMap(baseStylesWithPlaceholder) : baseStylesWithPlaceholder;
+    const styles = stylesMap
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        stylesMap(baseStylesWithPlaceholder as any)
+      : baseStylesWithPlaceholder;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const customComponents: any = virtual
+      ? {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          MenuList: (props: any) => (
+            <MenuList
+              {...props}
+              lastItemIndex={lastItemIndex}
+              keepLastScrollPosition={keepLastScrollPosition}
+              onScrollEnd={onScrollEnd}
+            />
+          ),
+          ...createRenderers({
+            renderOption,
+            renderValue,
+            selectProps: this.props,
+          }),
+          ...(extraRenderers || {}),
+        }
+      : {
+          ...createRenderers({
+            renderOption,
+            renderValue,
+            selectProps: this.props,
+          }),
+          ...(extraRenderers || {}),
+        };
 
     return (
-      // @ts-expect-error This is complicated to get it right
       <Comp
         {...props}
-        // @ts-expect-error This is complicated to get it right
         ref={c => (this.ref = c)}
         autoFocus={autoFocus}
         value={value}
         maxMenuHeight={rowHeight * 4.5}
         classNamePrefix="select"
         options={options}
-        components={
-          virtual
-            ? {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                MenuList: (props: any) => (
-                  <MenuList
-                    {...props}
-                    lastItemIndex={lastItemIndex}
-                    keepLastScrollPosition={keepLastScrollPosition}
-                    onScrollEnd={onScrollEnd}
-                  />
-                ),
-                ...createRenderers({
-                  renderOption,
-                  renderValue,
-                  selectProps: this.props,
-                }),
-                ...(extraRenderers || {}),
-              }
-            : {
-                ...createRenderers({
-                  renderOption,
-                  renderValue,
-                  selectProps: this.props,
-                }),
-                ...(extraRenderers || {}),
-              }
-        }
-        styles={styles}
+        components={customComponents}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        styles={styles as any}
         placeholder={placeholder}
         isDisabled={isDisabled}
         isLoading={isLoading}
@@ -341,6 +348,7 @@ class Select<
         captureMenuScroll={false}
         menuShouldBlockScroll
         menuPortalTarget={document.body}
+        // @ts-expect-error rowHeight is a custom prop passed through selectProps
         rowHeight={rowHeight}
         onChange={this.handleChange}
       />
