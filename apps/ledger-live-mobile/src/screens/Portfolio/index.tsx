@@ -54,6 +54,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
 import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 import { renderItem } from "LLM/utils/renderItem";
+import { CryptoBanner } from "@ledgerhq/crypto-banner";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -242,14 +243,15 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     <>
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
-      <Animated.View style={{ flex: 1 }}>
-        <RefreshableCollapsibleHeaderFlatList
+      <Animated.View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        {/* <RefreshableCollapsibleHeaderFlatList
           data={data}
           renderItem={renderItem<React.JSX.Element>}
           keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
-        />
+        /> */}
+        <CryptoBanner product="llm" version="1.0.0" />
         <AddAccountDrawer
           isOpened={isAddModalOpened}
           onClose={closeAddModal}

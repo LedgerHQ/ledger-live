@@ -207,7 +207,8 @@
     "ui:example:next": "pnpm  --filter=\"next.js-example\"",
     "ui:example:webpack": "pnpm  --filter=\"webpack.js-example\"",
     "actions": "pnpm --filter @actions/*",
-    "import:cal-tokens": "pnpm --filter=\"@ledgerhq/cryptoassets\" import:cal-tokens"
+    "import:cal-tokens": "pnpm --filter=\"@ledgerhq/cryptoassets\" import:cal-tokens",
+    "feature:crypto-banner": "pnpm --filter @ledgerhq/crypto-banner"
   },
   "devDependencies": {
     "@changesets/changelog-github": "0.5.0",

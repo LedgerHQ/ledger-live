@@ -1,6 +1,7 @@
 packages:
   - "apps/*"
   - "e2e/*"
+  - "features/*"
   - "libs/*"
   - "tests/*"
   - "libs/coin-modules/*"

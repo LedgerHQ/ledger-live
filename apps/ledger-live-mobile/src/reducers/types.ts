@@ -379,12 +379,19 @@ export type LargeMoverState = {
 
 // === ROOT STATE ===
 
+interface CryptoBannerState {
+  isEnabled: boolean;
+  autoScroll: boolean;
+  scrollSpeed: number;
+}
+
 export type State = LLMRTKApiState & {
   accounts: AccountsState;
   appstate: AppState;
   auth: AuthState;
   ble: BleState;
   countervalues: CountervaluesState;
+  cryptoBanner: CryptoBannerState;
   dynamicContent: DynamicContentState;
   earn: EarnState;
   identities: IdentitiesState;

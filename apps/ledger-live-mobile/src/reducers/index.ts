@@ -25,6 +25,7 @@ import wallet from "./wallet";
 import walletconnect from "./walletconnect";
 import walletSync from "./walletSync";
 import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { cryptoBannerReducer } from "@ledgerhq/crypto-banner";
 import type { UnknownAction } from "@reduxjs/toolkit";
 
 export type AppStore = Store<State>;
@@ -35,6 +36,7 @@ const appReducer = combineReducers({
   auth,
   ble,
   countervalues,
+  cryptoBanner: cryptoBannerReducer,
   dynamicContent,
   earn,
   identities: identitiesSlice.reducer,

@@ -21,12 +21,20 @@ import sendFlow, { SendFlowState } from "./sendFlow";
 import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { identitiesSlice, IdentitiesState } from "@ledgerhq/client-ids/store";
+import { cryptoBannerReducer } from "@ledgerhq/crypto-banner";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
+
+interface CryptoBannerState {
+  isEnabled: boolean;
+  autoScroll: boolean;
+  scrollSpeed: number;
+}
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;
   application: ApplicationState;
   countervalues: CountervaluesState;
+  cryptoBanner: CryptoBannerState;
   devices: DevicesState;
   dynamicContent: DynamicContentState;
   identities: IdentitiesState;
@@ -47,6 +55,7 @@ const appReducer = combineReducers({
   accounts,
   application,
   countervalues,
+  cryptoBanner: cryptoBannerReducer,
   devices,
   dynamicContent,
   identities: identitiesSlice.reducer,

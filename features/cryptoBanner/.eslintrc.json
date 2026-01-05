@@ -1,0 +1,16 @@
+{
+  "extends": "../../.eslintrc.json",
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@apps/*"],
+            "message": "Features should not import from apps"
+          }
+        ]
+      }
+    ]
+  }
+}

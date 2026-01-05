@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "declaration": true,
+    "declarationMap": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": [
+    "node_modules",
+    "lib",
+    "lib-es",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/__integrations__/**"
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "name": "@ledgerhq/crypto-banner",
+  "version": "1.0.0",
+  "description": "Bloomberg-style cryptocurrency ticker banner feature",
+  "keywords": [
+    "ledger",
+    "crypto",
+    "banner",
+    "ticker",
+    "feature"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/features/cryptoBanner",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/web/index.js",
+  "module": "./dist/web/index.mjs",
+  "types": "./dist/web/index.d.ts",
+  "react-native": "./dist/native/index.native.js",
+  "exports": {
+    ".": {
+      "react-native": "./dist/native/index.native.js",
+      "import": "./dist/web/index.mjs",
+      "require": "./dist/web/index.js",
+      "types": "./dist/web/index.d.ts"
+    }
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "clean": "rimraf lib lib-es dist",
+    "build": "tsup",
+    "build:web": "tsup --filter web",
+    "build:native": "tsup --filter native",
+    "prewatch": "pnpm build",
+    "watch": "tsup --watch",
+    "watch:web": "tsup --watch --filter web",
+    "watch:native": "tsup --watch --filter native",
+    "lint": "eslint . --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "test:jest": "jest",
+    "typecheck": "tsc --noEmit",
+    "unimported": "pnpm knip --directory ../.. -W features/cryptoBanner"
+  },
+  "files": [
+    "lib",
+    "lib-es",
+    "src"
+  ],
+  "dependencies": {
+    "@reduxjs/toolkit": "catalog:",
+    "@ledgerhq/live-env": "workspace:*"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^14.0.0",
+    "@types/jest": "^29.5.10",
+    "@types/react": "^18.3.0",
+    "jest": "^29.7.0",
+    "msw": "catalog:",
+    "react": "catalog:",
+    "react-redux": "catalog:",
+    "rimraf": "^4.4.1",
+    "ts-jest": "^29.1.1",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.3"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-redux": ">=9",
+    "react-native": ">=0.65.1"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-redux": {
+      "optional": true
+    }
+  }
+}

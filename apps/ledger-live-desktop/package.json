@@ -74,6 +74,7 @@
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/hw-transport-vault": "workspace:^",
     "@ledgerhq/client-ids": "workspace:*",
+    "@ledgerhq/crypto-banner": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "0.0.58",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
