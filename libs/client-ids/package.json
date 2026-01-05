@@ -34,10 +34,13 @@
   },
   "dependencies": {
     "@ledgerhq/live-env": "workspace:^",
-    "@reduxjs/toolkit": "catalog:",
     "uuid": "^9.0.0"
   },
+  "peerDependencies": {
+    "@reduxjs/toolkit": "catalog:"
+  },
   "devDependencies": {
+    "@reduxjs/toolkit": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
     "@types/react": "^18.0.0",

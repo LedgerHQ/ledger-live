@@ -41,6 +41,7 @@ const transformIncludePatterns = [
   "react-native-gesture-handler",
   "@shopify/flash-list",
   "@ledgerhq/lumen-.*",
+  "immer",
 ];
 
 /** @type {import('@swc/jest').JestConfigWithTsJest} */

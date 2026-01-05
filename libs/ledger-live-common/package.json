@@ -115,7 +115,8 @@
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
     "react-redux": "catalog:",
-    "redux-actions": "2.6.5"
+    "redux-actions": "2.6.5",
+    "@reduxjs/toolkit": "catalog:"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -131,6 +132,9 @@
       "optional": true
     },
     "redux-actions": {
+      "optional": true
+    },
+    "@reduxjs/toolkit": {
       "optional": true
     }
   },
@@ -221,7 +225,6 @@
     "@ledgerhq/wallet-api-server": "^2.0.1",
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "1.8.0",
-    "@reduxjs/toolkit": "catalog:",
     "@stellar/stellar-sdk": "^14.0.0",
     "@stricahq/typhonjs": "^3.0.0",
     "@taquito/ledger-signer": "^23.0.0-RC.0",
@@ -279,6 +282,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@reduxjs/toolkit": "catalog:",
     "@solana/web3.js": "1.95.4",
     "@svgr/core": "^5.5.0",
     "@tanstack/react-query": "^5.28.9",

@@ -38,13 +38,16 @@
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@reduxjs/toolkit": "catalog:",
     "invariant": "2",
     "zod": "^3.22.4"
+  },
+  "peerDependencies": {
+    "@reduxjs/toolkit": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@testing-library/dom": "catalog:",
+    "@reduxjs/toolkit": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "^22.10.10",

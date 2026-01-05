@@ -34,7 +34,7 @@ catalog:
   "@react-native/gradle-plugin": 0.77.3
   "@react-native/metro-config": 0.77.3
   "@jest/reporters": 30.2.0
-  "@reduxjs/toolkit": 2.8.2
+  "@reduxjs/toolkit": ^2.11.2
   "@rspack/cli": 1.7.1
   "@rspack/core": 1.7.1
   "@rspack/dev-server": 1.1.5
