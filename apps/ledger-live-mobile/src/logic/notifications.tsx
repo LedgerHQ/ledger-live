@@ -63,7 +63,7 @@ async function getPushNotificationsDataOfUserFromStorage() {
   return dataOfUser;
 }
 
-async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
+export async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
   return storage.save(pushNotificationsDataOfUserStorageKey, dataOfUser);
 }
 
@@ -177,12 +177,21 @@ const useNotifications = () => {
 
       // TODO: for users that have already opted out before the new optimise opt-in notifications feature launches
       const hasAlreadyOptedOutBackwardCompatibility = Boolean(
-        pushNotificationsDataOfUser?.alreadyDelayedToLater ||
-          pushNotificationsDataOfUser?.dateOfNextAllowedRequest,
+        dataOfUserFromStorage.value?.alreadyDelayedToLater ||
+          dataOfUserFromStorage.value?.dateOfNextAllowedRequest,
       );
       if (hasAlreadyOptedOutBackwardCompatibility) {
-        optOutOfNotifications();
-        return;
+        if (
+          permission.value === AuthorizationStatus.AUTHORIZED &&
+          notifications.areNotificationsAllowed
+        ) {
+          return resetOptOutState();
+        } else {
+          // no one will fall in this case
+          // they will fall in hasDeniedFromOsSettings instead
+          // but just in case, let's make sure to mark user as opted out
+          return optOutOfNotifications();
+        }
       }
 
       updatePushNotificationsDataOfUserInStateAndStore({
@@ -193,8 +202,6 @@ const useNotifications = () => {
     dispatch,
     notifications,
     optOutOfNotifications,
-    pushNotificationsDataOfUser?.alreadyDelayedToLater,
-    pushNotificationsDataOfUser?.dateOfNextAllowedRequest,
     resetOptOutState,
     updatePushNotificationsDataOfUserInStateAndStore,
   ]);
@@ -285,7 +292,6 @@ const useNotifications = () => {
 
     const dismissalCount = dismissedOptInDrawerAtList.length;
     const repromptDelay = getRepromptDelay(dismissedOptInDrawerAtList);
-
     if (!repromptDelay) {
       return false;
     }
@@ -559,6 +565,7 @@ const useNotifications = () => {
     requestPushNotificationsPermission,
 
     tryTriggerPushNotificationDrawerAfterAction,
+    verifyShouldPromptOptInDrawer,
 
     resetOptOutState,
     optOutOfNotifications,
