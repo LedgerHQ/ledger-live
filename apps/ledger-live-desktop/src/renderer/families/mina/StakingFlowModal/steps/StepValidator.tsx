@@ -15,7 +15,6 @@ const Container = styled(Box).attrs(() => ({
 }))``;
 
 const StepValidator = ({ account, transaction, onUpdateTransaction, error }: StepProps) => {
-  const { t } = useTranslation();
   if (!transaction) return null;
   if (!account) return null;
 
