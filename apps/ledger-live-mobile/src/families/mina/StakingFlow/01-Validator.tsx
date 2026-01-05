@@ -8,11 +8,11 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { FlatList, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
+import { useSelector } from "~/context/store";
 import { accountScreenSelector } from "~/reducers/accounts";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import { MinaStakingFlowParamList } from "./types";
@@ -33,7 +33,10 @@ function StakingValidator({ navigation, route }: Props) {
 
   const unit = useAccountUnit(account);
   const mainAccount = getMainAccount<MinaAccount>(account as MinaAccount, undefined);
-  const blockProducers = mainAccount?.resources?.blockProducers || [];
+  const blockProducers = useMemo(() => {
+    return mainAccount?.resources?.blockProducers || [];
+    // usa blockProducers
+  }, [mainAccount?.resources?.blockProducers]);
 
   // Sort validators by stake (highest first) and filter by search
   const validators = useMemo(() => {
