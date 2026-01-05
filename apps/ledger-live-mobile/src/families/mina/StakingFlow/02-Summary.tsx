@@ -13,7 +13,6 @@ import { Trans } from "react-i18next";
 import { Animated, StyleProp, StyleSheet, TextStyle, View } from "react-native";
 import Config from "react-native-config";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import Circle from "~/components/Circle";
@@ -24,6 +23,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import Touchable from "~/components/Touchable";
 import TranslatedError from "~/components/TranslatedError";
 import { ScreenName } from "~/const";
+import { useSelector } from "~/context/store";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { rgba } from "../../../colors";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
@@ -59,6 +59,7 @@ function StakingSummary({ navigation, route }: Props) {
     },
   );
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (!transaction) return;
     const bridge = getAccountBridge(account);
