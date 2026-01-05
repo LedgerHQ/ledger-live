@@ -13,7 +13,7 @@ import { webFrame, ipcRenderer } from "electron";
 // eslint-disable-next-line react/no-deprecated
 import { render } from "react-dom";
 import each from "lodash/each";
-import { reload, getKey, loadLSS } from "~/renderer/storage";
+import { reload, getKey } from "~/renderer/storage";
 import { hardReset } from "~/renderer/reset";
 import "~/renderer/styles/global";
 import "~/renderer/live-common-setup";
@@ -189,7 +189,6 @@ async function init() {
   const language = languageSelector(state);
 
   i18n.changeLanguage(language);
-  await loadLSS(); // Set env handled inside
 
   const hideEmptyTokenAccounts = hideEmptyTokenAccountsSelector(state);
   setEnvOnAllThreads("HIDE_EMPTY_TOKEN_ACCOUNTS", hideEmptyTokenAccounts);

@@ -89,7 +89,6 @@
     "src/families/bitcoin/descriptor.ts",
     "src/families/bitcoin/logic.ts",
     "src/families/bitcoin/react.ts",
-    "src/families/bitcoin/satstack.ts",
     "src/families/bitcoin/types.ts",
     "src/families/bitcoin/wallet-btc/crypto/secp256k1.ts",
     "src/families/canton/config.ts",
