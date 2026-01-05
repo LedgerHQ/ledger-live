@@ -154,7 +154,7 @@
     "react-window-infinite-loader": "1.0.9",
     "redux": "catalog:",
     "redux-actions": "2.6.5",
-    "reselect": "4.1.8",
+    "reselect": "catalog:",
     "rimraf": "4.4.1",
     "rxjs": "catalog:",
     "semver": "7.5.4",

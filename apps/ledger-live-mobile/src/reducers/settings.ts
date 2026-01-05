@@ -6,7 +6,7 @@ import {
   findCryptoCurrencyByTicker,
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@ledgerhq/live-env";
-import { createSelector } from "reselect";
+import { createSelector } from "~/context/selectors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
