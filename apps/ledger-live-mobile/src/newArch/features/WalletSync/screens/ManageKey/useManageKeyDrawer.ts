@@ -6,7 +6,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import { useDestroyTrustchain } from "../../hooks/useDestroyTrustchain";
 import { UseMutationResult } from "@tanstack/react-query";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { setWallectSyncManageKeyDrawer } from "~/actions/walletSync";
 import { manageKeyDrawerSelector } from "~/reducers/walletSync";
 import { track } from "~/analytics";

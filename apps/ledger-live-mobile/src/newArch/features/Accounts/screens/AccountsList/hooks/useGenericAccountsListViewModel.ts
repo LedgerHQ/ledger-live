@@ -1,4 +1,4 @@
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/useGlobalSyncState";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";

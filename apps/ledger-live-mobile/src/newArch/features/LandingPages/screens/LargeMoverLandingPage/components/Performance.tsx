@@ -2,7 +2,7 @@ import { Flex, Text, ProgressPoint } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { counterValueCurrencySelector } from "~/reducers/settings";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import { useLocale } from "~/context/Locale";
 

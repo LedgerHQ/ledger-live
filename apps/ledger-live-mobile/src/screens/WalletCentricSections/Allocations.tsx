@@ -5,7 +5,7 @@ import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { DefaultTheme, useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import chunk from "lodash/chunk";
 import { ensureContrast } from "../../colors";
 import { ScreenName } from "~/const";

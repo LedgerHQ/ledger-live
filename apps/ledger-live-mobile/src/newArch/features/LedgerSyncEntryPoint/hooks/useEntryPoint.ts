@@ -1,4 +1,4 @@
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { lastSeenDeviceSelector } from "~/reducers/settings";

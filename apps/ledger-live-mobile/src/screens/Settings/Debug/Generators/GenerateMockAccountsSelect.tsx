@@ -9,7 +9,7 @@ import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import SettingsRow from "~/components/SettingsRow";
 import { reboot } from "~/actions/appstate";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { replaceAccounts } from "~/actions/accounts";
 import { ScreenName } from "~/const";
 import CurrencyIcon from "~/components/CurrencyIcon";

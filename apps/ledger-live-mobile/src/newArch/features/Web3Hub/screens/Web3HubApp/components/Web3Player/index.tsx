@@ -1,7 +1,7 @@
 import React, { ComponentProps, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View, BackHandler, Platform } from "react-native";
 import { SharedValue } from "react-native-reanimated";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { ScopeProvider } from "jotai-scope";
 import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";

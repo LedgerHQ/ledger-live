@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 import Share from "react-native-share";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { track, TrackScreen } from "~/analytics";
 import Alert from "~/components/Alert";

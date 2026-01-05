@@ -1,7 +1,7 @@
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { useMarketDataProvider } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useCallback } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { setMarketRequestParams } from "~/actions/market";
 import {
   marketParamsSelector,

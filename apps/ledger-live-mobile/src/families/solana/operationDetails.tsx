@@ -1,6 +1,6 @@
 import React from "react";
 import { Linking, View } from "react-native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { OperationType } from "@ledgerhq/types-live";

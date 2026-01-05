@@ -4,7 +4,7 @@ import {
   EVENTS_NAME,
   MODULAR_DRAWER_PAGE_NAME,
 } from "LLM/features/ModularDrawer/analytics";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { modularDrawerSearchValueSelector, setSearchValue } from "~/reducers/modularDrawer";
 import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSearch";
 import { useCallback } from "react";

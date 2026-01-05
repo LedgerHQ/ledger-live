@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { setFromLedgerSyncOnboarding, setIsPostOnboardingFlow } from "~/actions/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import {

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { useTheme } from "styled-components/native";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "~/const";
 import BaseStepperView, { RestoreWithProtect, PinCodeInstructions } from "./setupDevice/scenes";

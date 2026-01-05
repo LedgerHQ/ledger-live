@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { Platform, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-navigation/native";
 import { Text, Flex, IconsLegacy, Box, ScrollContainer } from "@ledgerhq/native-ui";

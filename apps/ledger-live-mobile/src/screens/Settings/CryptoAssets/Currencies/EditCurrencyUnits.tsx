@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import SettingsRow from "~/components/SettingsRow";
 import NavigationScrollView from "~/components/NavigationScrollView";

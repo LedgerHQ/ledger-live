@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { AccountLike } from "@ledgerhq/types-live";
 import {
   openModularDrawer,

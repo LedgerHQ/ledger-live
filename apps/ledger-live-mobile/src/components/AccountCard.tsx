@@ -10,7 +10,7 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
 
 export type Props = CardProps & {

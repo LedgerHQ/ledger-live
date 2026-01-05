@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Icon, Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
 import { ScrollView, StyleSheet, View, Linking, TouchableOpacity } from "react-native";

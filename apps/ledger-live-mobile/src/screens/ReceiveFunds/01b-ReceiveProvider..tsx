@@ -13,7 +13,7 @@ import {
 import WebRecievePlayer from "~/components/WebReceivePlayer";
 import GenericErrorView from "~/components/GenericErrorView";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { analyticsEnabledSelector } from "~/reducers/settings";
 
 export default function ReceiveProvider(

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
 import { screen, track } from "~/analytics";

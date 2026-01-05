@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 import { ScreenName } from "~/const";

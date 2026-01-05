@@ -1,6 +1,6 @@
 import { setEnvUnsafe } from "@ledgerhq/live-env";
 import { useEffect } from "react";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import {
   filterTokenOperationsZeroAmountEnabledSelector,
   hideEmptyTokenAccountsEnabledSelector,

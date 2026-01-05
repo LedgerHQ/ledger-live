@@ -24,7 +24,7 @@ import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackBut
 import { NavigatorName, ScreenName } from "~/const";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;

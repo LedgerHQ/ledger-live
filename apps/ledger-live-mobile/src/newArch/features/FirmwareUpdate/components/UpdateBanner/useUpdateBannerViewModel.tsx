@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
 import {
   lastSeenDeviceSelector,

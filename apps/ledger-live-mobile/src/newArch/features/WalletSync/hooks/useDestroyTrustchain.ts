@@ -1,5 +1,5 @@
 import { useTrustchainSdk } from "./useTrustchainSdk";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import {
   trustchainSelector,
   resetTrustchainStore,
