@@ -377,7 +377,7 @@ export const alpacaGetOperationAmount = (
     return BigNumber(0);
   } else {
     return (
-      transaction.balanceChanges
+      change
         ?.filter(
           balanceChange =>
             typeof balanceChange.owner !== "string" &&
@@ -408,7 +408,8 @@ export function alpacaTransactionToOp(
   const type = getOperationType(address, transaction);
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
-  return {
+
+  const op: Op = {
     id: hash,
     tx: {
       date: getOperationDate(transaction),
@@ -426,6 +427,16 @@ export function alpacaTransactionToOp(
     type,
     value: BigInt(alpacaGetOperationAmount(address, transaction, coinType).toString()),
   };
+
+  if (type === "DELEGATE" || type === "UNDELEGATE") {
+    // for staking, the amount is stored in the details
+    op.details = {
+      stakedAmount: op.value,
+    };
+    op.value = 0n;
+  }
+
+  return op;
 }
 
 /**
@@ -528,7 +539,7 @@ export function toBlockOperation(
           operationType: operationType,
           address: change.owner.AddressOwner,
           asset: toSuiAsset(change.coinType),
-          amount: BigInt(removeFeesFromAmountForNative(change, fees).toString()),
+          stakedAmount: BigInt(removeFeesFromAmountForNative(change, fees).toString()),
         },
       ];
     default:
