@@ -14,6 +14,7 @@ import {
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
 import Config from "react-native-config";
+import { useNotifications } from "~/logic/notifications";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendValidationSuccess>,
@@ -23,6 +24,7 @@ type Props = CompositeScreenProps<
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const currency = account ? getAccountCurrency(account) : null;
   useEffect(() => {
@@ -35,6 +37,10 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     // IT NEEDS TO BE RERUN WHEN DEPS CHANGE
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    tryTriggerPushNotificationDrawerAfterAction("send");
+  }, [tryTriggerPushNotificationDrawerAfterAction]);
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
