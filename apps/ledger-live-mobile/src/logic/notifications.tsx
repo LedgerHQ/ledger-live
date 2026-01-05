@@ -68,80 +68,8 @@ async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
 }
 
 const useNotifications = () => {
-  // const pushNotificationsFeature = useFeature("brazePushNotifications");
-  const pushNotificationsFeature = {
-    enabled: true,
-    params: {
-      notificationsCategories: [
-        {
-          displayed: true,
-          category: "announcementsCategory",
-        },
-        {
-          displayed: true,
-          category: "recommendationsCategory",
-        },
-        {
-          displayed: true,
-          category: "largeMoverCategory",
-        },
-        {
-          displayed: true,
-          category: "transactionsAlertsCategory",
-        },
-      ],
-      trigger_events: [
-        {
-          route_name: "PortfolioNavigator",
-          timer: 3000,
-          type: "on_enter",
-        },
-        {
-          route_name: "Wallet",
-          timer: 3000,
-          type: "on_enter",
-        },
-      ],
+  const pushNotificationsFeature = useFeature("brazePushNotifications");
 
-      action_events: {
-        complete_onboarding: {
-          enabled: true,
-          timer: 1000,
-        },
-
-        add_favorite_coin: {
-          enabled: true,
-          timer: 3000,
-        },
-
-        send: {
-          enabled: true,
-          timer: 2000,
-        },
-        receive: {
-          enabled: true,
-          timer: 2000,
-        },
-        buy: {
-          enabled: true,
-          timer: 2000,
-        },
-        swap: {
-          enabled: true,
-          timer: 2000,
-        },
-        stake: {
-          enabled: true,
-          timer: 2000,
-        },
-      },
-      reprompt_schedule: [
-        {
-          seconds: 10,
-        },
-      ],
-    },
-  };
   const notifications = useSelector(notificationsSelector);
   const permissionStatus = useSelector(notificationPermissionStatus);
   const actionEvents = pushNotificationsFeature?.params?.action_events;
@@ -153,11 +81,6 @@ const useNotifications = () => {
   const pushNotificationsOldRoute = useSelector(notificationsCurrentRouteNameSelector);
   const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
   const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
-
-  console.log(
-    "pushNotificationsDataOfUser",
-    pushNotificationsDataOfUser?.dismissedOptInDrawerAtList,
-  );
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -324,15 +247,12 @@ const useNotifications = () => {
     [dispatch, isPushNotificationsModalLocked],
   );
 
-  const checkShouldPromptOptInDrawer = useCallback(() => {
+  const verifyShouldPromptOptInDrawer = useCallback(() => {
     const OK = true;
     const SKIP = false;
 
     const isOsPermissionAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
-    console.log("OS Notifications", isOsPermissionAuthorized);
-    console.log("App Notifications", notifications.areNotificationsAllowed);
     if (isOsPermissionAuthorized && notifications.areNotificationsAllowed) {
-      // user has accepted notifications. No need to prompt the opt in drawer
       return SKIP;
     }
 
@@ -349,13 +269,22 @@ const useNotifications = () => {
     }
 
     const dismissalCount = dismissedOptInDrawerAtList.length;
-    const lastDismissedAt = dismissedOptInDrawerAtList[dismissalCount - 1];
+    if (dismissalCount === 0) {
+      // Treat as if the user has never seen the opt in prompt drawer
+      return OK;
+    }
 
-    // If user has dismissed more than the schedule length, keep using the last delay.
-    const scheduleIndex = Math.min(dismissalCount - 1, repromptSchedule.length - 1);
+    const lastDismissedAt = dismissedOptInDrawerAtList[dismissalCount - 1];
+    const lastScheduleIndex = repromptSchedule.length - 1;
+
+    let scheduleIndex = dismissalCount - 1;
+    if (scheduleIndex > lastScheduleIndex) {
+      // If user has dismissed more than the schedule length, keep using the last delay.
+      scheduleIndex = lastScheduleIndex;
+    }
+
     const repromptDelay = repromptSchedule[scheduleIndex];
     const nextMinimumRepromptAt = add(lastDismissedAt, repromptDelay);
-
     const now = Date.now();
     if (isBefore(nextMinimumRepromptAt, now) || isEqual(nextMinimumRepromptAt, now)) {
       return OK;
@@ -407,8 +336,7 @@ const useNotifications = () => {
           eventTrigger.type === "on_leave" && eventTrigger.route_name === pushNotificationsOldRoute;
 
         if (isEntering || isLeaving) {
-          const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
-          console.log("shouldPromptOptInDrawer", shouldPromptOptInDrawer);
+          const shouldPromptOptInDrawer = verifyShouldPromptOptInDrawer();
           if (!shouldPromptOptInDrawer) {
             return false;
           }
@@ -426,7 +354,7 @@ const useNotifications = () => {
       pushNotificationsFeature?.params?.trigger_events,
       dispatch,
       pushNotificationsOldRoute,
-      checkShouldPromptOptInDrawer,
+      verifyShouldPromptOptInDrawer,
       openDrawer,
     ],
   );
@@ -435,10 +363,21 @@ const useNotifications = () => {
     (actionSource: Exclude<NotificationsState["drawerSource"], "generic">) => {
       if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
 
-      const shouldPromptOptInDrawer = checkShouldPromptOptInDrawer();
+      const shouldPromptOptInDrawer = verifyShouldPromptOptInDrawer();
       if (!shouldPromptOptInDrawer) {
         return;
       }
+
+      const openDrawerCallback = (
+        drawerSource: NotificationsState["drawerSource"],
+        timer: number,
+        routeName: ScreenName,
+      ) => {
+        // TODO: it was needed for drawerSource === 'onboarding'. But check for other actions.
+        requestIdleCallback(() => {
+          openDrawer(drawerSource, timer, routeName);
+        });
+      };
 
       switch (actionSource) {
         case "onboarding": {
@@ -446,7 +385,7 @@ const useNotifications = () => {
           if (!onboardingParams?.enabled) {
             return;
           }
-          openDrawer("onboarding", onboardingParams?.timer ?? 0, ScreenName.Portfolio);
+          openDrawerCallback("onboarding", onboardingParams?.timer ?? 0, ScreenName.Portfolio);
           break;
         }
         case "add_favorite_coin": {
@@ -455,7 +394,7 @@ const useNotifications = () => {
             return;
           }
 
-          openDrawer(
+          openDrawerCallback(
             "add_favorite_coin",
             addFavoriteCoinParams?.timer ?? 0,
             ScreenName.MarketDetail,
@@ -468,7 +407,7 @@ const useNotifications = () => {
             return;
           }
 
-          openDrawer("buy", buyParams?.timer ?? 0, ScreenName.ExchangeBuy);
+          openDrawerCallback("buy", buyParams?.timer ?? 0, ScreenName.ExchangeBuy);
           break;
         }
         case "send": {
@@ -477,7 +416,7 @@ const useNotifications = () => {
             return;
           }
 
-          openDrawer("send", sendParams?.timer ?? 0, ScreenName.SendCoin);
+          openDrawerCallback("send", sendParams?.timer ?? 0, ScreenName.SendCoin);
           break;
         }
         case "receive": {
@@ -486,7 +425,7 @@ const useNotifications = () => {
             return;
           }
 
-          openDrawer("receive", receiveParams?.timer ?? 0, ScreenName.ReceiveConfirmation);
+          openDrawerCallback("receive", receiveParams?.timer ?? 0, ScreenName.ReceiveConfirmation);
           break;
         }
 
@@ -496,7 +435,7 @@ const useNotifications = () => {
             return;
           }
 
-          openDrawer("swap", swapParams?.timer ?? 0, ScreenName.Swap);
+          openDrawerCallback("swap", swapParams?.timer ?? 0, ScreenName.Swap);
           break;
         }
         case "stake": {
@@ -504,16 +443,17 @@ const useNotifications = () => {
           if (!stakeParams?.enabled) {
             return;
           }
-          openDrawer("stake", stakeParams?.timer ?? 0, ScreenName.Stake);
+          openDrawerCallback("stake", stakeParams?.timer ?? 0, ScreenName.Stake);
           break;
         }
         default: {
+          console.warn(`Unknown action source: ${actionSource}`);
           break;
         }
       }
     },
     [
-      checkShouldPromptOptInDrawer,
+      verifyShouldPromptOptInDrawer,
       isPushNotificationsModalLocked,
       openDrawer,
       pushNotificationsFeature?.enabled,
@@ -606,7 +546,6 @@ const useNotifications = () => {
     resetOptOutState,
     optOutOfNotifications,
 
-    // Actions to handle the push notifications modal
     handleAllowNotificationsPress,
     handleDelayLaterPress,
     handleCloseFromBackdropPress,
