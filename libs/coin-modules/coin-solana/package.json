@@ -62,7 +62,7 @@
     "ky": "1.7.5",
     "lodash": "^4.17.21",
     "rxjs": "catalog:",
-    "semver": "7.7.1",
+    "semver": "catalog:",
     "superstruct": "0.16.7"
   },
   "devDependencies": {
@@ -74,7 +74,7 @@
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
-    "@types/semver": "7.7.0",
+    "@types/semver": "catalog:",
     "axios": "catalog:",
     "eslint-plugin-jest": "^27.4.2",
     "jest": "^29.7.0",

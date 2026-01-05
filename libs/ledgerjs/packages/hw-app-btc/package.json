@@ -69,7 +69,7 @@
     "bs58": "catalog:",
     "bs58check": "catalog:",
     "invariant": "^2.2.4",
-    "semver": "^7.3.5",
+    "semver": "catalog:",
     "varuint-bitcoin": "1.1.2"
   },
   "devDependencies": {

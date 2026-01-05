@@ -33,7 +33,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-canton": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
-    "semver": "^7"
+    "semver": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -50,7 +50,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@types/jest": "^29.5.10",
     "@types/node": "22.10.1",
-    "@types/semver": "^7",
+    "@types/semver": "catalog:",
     "jest": "^29.7.0",
     "rimraf": "^4.4.1",
     "ts-jest": "^29.1.1",
