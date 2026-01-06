@@ -8,7 +8,12 @@
     "downlevelIteration": true,
     "jsx": "react",
     "lib": ["es2020", "dom"],
-    "outDir": "lib"
+    "outDir": "lib",
+    "baseUrl": ".",
+    "paths": {
+      "react": ["../../node_modules/@types/react"],
+      "@types/react": ["../../node_modules/@types/react"]
+    }
   },
   "include": ["src/**/*"]
 }

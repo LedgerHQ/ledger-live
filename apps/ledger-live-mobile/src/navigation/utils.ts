@@ -9,7 +9,7 @@ export type Animated<T> = T & {
 
 const scrollSubject = new Subject();
 export function useScrollToTop(
-  ref: React.MutableRefObject<
+  ref: React.RefObject<
     ScrollView | FlatList | SectionList | Animated<SectionList> | Animated<FlatList> | null
   >,
 ) {
@@ -17,41 +17,33 @@ export function useScrollToTop(
   useNativeScrollToTop(ref);
   useEffect(() => {
     const subscription = scrollSubject.subscribe(() => {
-      if (!ref.current || !isFocused) {
+      const current = ref.current;
+      if (!current || !isFocused) {
         return;
       }
 
-      if (typeof (ref as React.MutableRefObject<ScrollView>).current.scrollTo === "function") {
+      if (typeof (current as ScrollView).scrollTo === "function") {
         // this handles ScrollView
-        (ref.current as ScrollView).scrollTo();
-      } else if (
-        typeof (ref as React.MutableRefObject<FlatList>).current.scrollToOffset === "function"
-      ) {
+        (current as ScrollView).scrollTo();
+      } else if (typeof (current as FlatList).scrollToOffset === "function") {
         // this handles FlatList
-        (ref.current as FlatList).scrollToOffset({
+        (current as FlatList).scrollToOffset({
           offset: 0,
         });
-      } else if (
-        typeof (ref as React.MutableRefObject<SectionList>).current.scrollToLocation === "function"
-      ) {
+      } else if (typeof (current as SectionList).scrollToLocation === "function") {
         // this handles SectionList
-        scrollSectionListToTop((ref as React.MutableRefObject<SectionList>).current);
+        scrollSectionListToTop(current as SectionList);
       } else if (
-        typeof (ref as React.MutableRefObject<Animated<SectionList>>).current.getNode ===
-          "function" &&
-        typeof (ref as React.MutableRefObject<Animated<SectionList>>).current.getNode()
-          .scrollToLocation === "function"
+        typeof (current as Animated<SectionList>).getNode === "function" &&
+        typeof (current as Animated<SectionList>).getNode().scrollToLocation === "function"
       ) {
         // this handles SectionList with Animated wrapper
-        scrollSectionListToTop(
-          (ref as React.MutableRefObject<Animated<SectionList>>).current.getNode(),
-        );
+        scrollSectionListToTop((current as Animated<SectionList>).getNode());
       } else if (
-        typeof (ref as React.MutableRefObject<Animated<FlatList>>).current.getNode === "function" &&
-        typeof (ref as React.MutableRefObject<Animated<FlatList>>).current.getNode()
-          .scrollToOffset === "function"
+        typeof (current as Animated<FlatList>).getNode === "function" &&
+        typeof (current as Animated<FlatList>).getNode().scrollToOffset === "function"
       ) {
-        (ref as React.MutableRefObject<Animated<FlatList>>).current.getNode().scrollToOffset({
+        (current as Animated<FlatList>).getNode().scrollToOffset({
           animated: true,
           offset: 0,
         });

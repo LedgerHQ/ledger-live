@@ -224,7 +224,7 @@ export function TransferTabIcon() {
         </AnimatedDrawerContainer>
       ) : null}
       <MainButton
-        style={({ pressed }) => (pressed ? { opacity: 1 } : {})}
+        style={({ pressed }: { pressed: boolean }) => (pressed ? { opacity: 1 } : {})}
         disabled={lockSubject.getValue()}
         hitSlop={hitSlop}
         onPress={onPressButton}

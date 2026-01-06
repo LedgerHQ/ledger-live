@@ -200,7 +200,7 @@ export function useConfig({
 }
 
 function useDeviceTransport({ manifest, tracking }) {
-  const ref = useRef<Subject<BidirectionalEvent> | undefined>();
+  const ref = useRef<Subject<BidirectionalEvent> | undefined>(undefined);
 
   const subscribe = useCallback((deviceId: string) => {
     ref.current = openTransportAsSubject({ deviceId });

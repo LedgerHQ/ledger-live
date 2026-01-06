@@ -21,7 +21,7 @@ export default function useSelectDeviceViewModel(
   const action = useAppDeviceAction();
   const isFocused = useIsFocused();
 
-  const onDeviceUpdated = useRef<() => void>();
+  const onDeviceUpdated = useRef<(() => void) | undefined>(undefined);
 
   const registerDeviceSelection = useCallback((handler: () => void) => {
     onDeviceUpdated.current = handler;

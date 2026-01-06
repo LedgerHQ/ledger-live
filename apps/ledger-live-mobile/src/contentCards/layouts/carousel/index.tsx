@@ -55,7 +55,7 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
     if (newIndex !== carouselIndex) setCarouselIndex(newIndex);
   };
 
-  const viewRef = useRef<View>(null);
+  const viewRef = useRef<View | null>(null);
   const isInViewRef = useRef(false);
   const visibleCardsRef = useRef<string[]>([]);
   const { logImpressionCard } = useDynamicContent();
@@ -65,6 +65,7 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
       if (isInView) visibleCardsRef.current.forEach(logImpressionCard);
     },
     [logImpressionCard],
+    // @ts-expect-error REACT19FIXME: RefObject<View | null> not assignable to RefObject<View>
     viewRef,
   );
   const handleViewableItemsChanged = useCallback(

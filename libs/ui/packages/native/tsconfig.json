@@ -1,7 +1,11 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "jsx": "react-native",
+    "jsx": "react-jsx",
+    "types": [
+      "react",
+      "react-native"
+    ],
     "composite": true,
     "declarationMap": true,
     "allowSyntheticDefaultImports": true,

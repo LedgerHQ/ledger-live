@@ -8,6 +8,7 @@
     "jsx": "react-native",
     "lib": ["es2017", "DOM"],
     "types": [
+      "react",
       "jest",
       "jest-allure2-reporter/globals"
     ],

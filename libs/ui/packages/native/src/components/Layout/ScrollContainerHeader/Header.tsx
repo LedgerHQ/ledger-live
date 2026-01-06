@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState, type JSX } from "react";
 import styled from "styled-components/native";
 import Animated, { useAnimatedStyle, interpolate, Extrapolate } from "react-native-reanimated";
 

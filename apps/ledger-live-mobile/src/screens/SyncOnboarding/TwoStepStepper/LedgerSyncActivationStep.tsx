@@ -29,7 +29,7 @@ const LedgerSyncActivationStep = ({
   handleContinue: () => void;
   isLedgerSyncActive: boolean;
   device: Device;
-  analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
+  analyticsSeedConfiguration: React.RefObject<SeedOriginType | undefined>;
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();

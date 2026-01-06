@@ -149,6 +149,16 @@ jest.mock("react-native-safe-area-context", () => mockSafeAreaContext);
 
 require("react-native-reanimated").setUpTests();
 
+// Mock useAnimatedScrollHandler to avoid worklet validation errors in tests
+// The @swc/jest transformer doesn't process worklet directives
+jest.mock("react-native-reanimated", () => {
+  const Reanimated = jest.requireActual("react-native-reanimated/mock");
+  return {
+    ...Reanimated,
+    useAnimatedScrollHandler: jest.fn(() => jest.fn()),
+  };
+});
+
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),
   track: jest.fn(),

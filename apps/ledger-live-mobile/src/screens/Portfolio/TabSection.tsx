@@ -89,7 +89,6 @@ export default function TabSection({
     <>
       <Box height={40} mb={16}>
         <TabSelector
-          key={initialTab} // Force remount when initialTab changes to sync internal state
           labels={[
             { id: TAB_OPTIONS.Assets, value: t("assets.title") },
             { id: TAB_OPTIONS.Accounts, value: t("accounts.title") },
@@ -101,6 +100,7 @@ export default function TabSection({
       <Box testID="portfolio-assets-layout" minHeight={displayHeight}>
         {showAssets ? (
           <Animated.View
+            key="assets-tab"
             entering={hasAnimated ? SlideInLeft.duration(ANIMATION_DURATION_MS) : undefined}
             exiting={hasAnimated ? SlideOutLeft.duration(ANIMATION_DURATION_MS) : undefined}
             style={{ height: assetsFullHeight }}
@@ -124,6 +124,7 @@ export default function TabSection({
           </Animated.View>
         ) : (
           <Animated.View
+            key="accounts-tab"
             entering={hasAnimated ? SlideInRight.duration(ANIMATION_DURATION_MS) : undefined}
             exiting={hasAnimated ? SlideOutRight.duration(ANIMATION_DURATION_MS) : undefined}
             style={{ height: accountsFullHeight }}
@@ -202,7 +203,7 @@ function handleTabChangeHeight(
  * The full height of the container
  */
 function handleFirstRenderFrameAnimation(
-  hasInitialized: React.MutableRefObject<boolean>,
+  hasInitialized: React.RefObject<boolean>,
   setDisplayHeight: React.Dispatch<React.SetStateAction<number>>,
   fullHeight: number,
 ) {
@@ -225,7 +226,7 @@ function handleFirstRenderFrameAnimation(
  * The full height of the container
  */
 function completeFirstRenderAnimation(
-  hasInitialized: React.MutableRefObject<boolean>,
+  hasInitialized: React.RefObject<boolean>,
   setDisplayHeight: React.Dispatch<React.SetStateAction<number>>,
   fullHeight: number,
 ) {
@@ -257,10 +258,10 @@ function completeFirstRenderAnimation(
 function resetInitializationOnDataChange(
   assetsLength: number,
   accountsLength: number,
-  prevAssetsLength: React.MutableRefObject<number>,
-  prevAccountsLength: React.MutableRefObject<number>,
-  hasInitializedAssets: React.MutableRefObject<boolean>,
-  hasInitializedAccounts: React.MutableRefObject<boolean>,
+  prevAssetsLength: React.RefObject<number>,
+  prevAccountsLength: React.RefObject<number>,
+  hasInitializedAssets: React.RefObject<boolean>,
+  hasInitializedAccounts: React.RefObject<boolean>,
 ) {
   if (assetsLength !== prevAssetsLength.current) {
     prevAssetsLength.current = assetsLength;

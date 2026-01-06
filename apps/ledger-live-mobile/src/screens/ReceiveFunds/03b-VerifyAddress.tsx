@@ -87,7 +87,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
     setError(null);
   }, []);
 
-  const sub = useRef<Subscription>();
+  const sub = useRef<Subscription | undefined>(undefined);
 
   const { onSuccess, onError, device } = route.params;
 

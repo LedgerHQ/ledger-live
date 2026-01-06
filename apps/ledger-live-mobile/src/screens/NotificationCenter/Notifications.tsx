@@ -43,7 +43,7 @@ const RemoveContainer = styled(TouchableHighlight)`
 `;
 
 export default function NotificationCenter() {
-  const rowRefs = useRef(new Map<string, React.RefObject<SwipeableMethods>>()).current;
+  const rowRefs = useRef(new Map<string, React.RefObject<SwipeableMethods | null>>()).current;
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { colors } = useTheme();

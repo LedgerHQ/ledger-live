@@ -14,7 +14,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import snakeCase from "lodash/snakeCase";
-import React, { MutableRefObject, useCallback } from "react";
+import React, { type RefObject, useCallback } from "react";
 import { ABTestingVariants, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
@@ -546,7 +546,7 @@ export const useAnalytics = () => {
   };
 };
 
-const lastScreenEventName: MutableRefObject<string | null | undefined> = React.createRef();
+const lastScreenEventName: RefObject<string | null | undefined> = React.createRef();
 
 /**
  * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.

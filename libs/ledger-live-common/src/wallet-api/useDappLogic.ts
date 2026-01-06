@@ -240,7 +240,7 @@ export function useDappLogic({
 }) {
   const nanoApp = manifest.dapp?.nanoApp;
   const dependencies = manifest.dapp?.dependencies;
-  const ws = useRef<SmartWebsocket>();
+  const ws = useRef<SmartWebsocket | undefined>(undefined);
   const { currentAccount, currentParentAccount, setCurrentAccount, setCurrentAccountHist } =
     useDappAccountLogic({
       manifest,
@@ -685,7 +685,7 @@ export function useDappLogic({
           if (ws.current) {
             ws.current.send(data);
           } else if (currentNetwork.nodeURL?.startsWith("https:")) {
-            void network({
+            network({
               method: "POST",
               url: currentNetwork.nodeURL,
               data,
