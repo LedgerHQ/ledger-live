@@ -13,8 +13,14 @@ function getAddress(keyPair: Keypair): Promise<PolkadotAddress> {
 
 function signTransaction(keyPair: Keypair, transaction: Buffer): Promise<PolkadotSignature> {
   const keyring = new Keyring().addFromPair(keyPair);
+  // keyring.sign() requires Uint8Array, not Buffer (TypeScript 5.6.3 compatibility)
+  const transactionUint8Array = new Uint8Array(transaction);
+  const signatureBuffer = keyring.sign(transactionUint8Array, { withType: true });
+  // Ensure signature is Uint8Array before Buffer.from() (defensive check for TS 5.6.3 compatibility)
+  const signatureUint8Array =
+    signatureBuffer instanceof Uint8Array ? signatureBuffer : new Uint8Array(signatureBuffer);
   return Promise.resolve({
-    signature: Buffer.from(keyring.sign(transaction, { withType: true })).toString("hex"),
+    signature: Buffer.from(signatureUint8Array).toString("hex"),
     return_code: 0,
   });
 }

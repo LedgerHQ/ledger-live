@@ -504,6 +504,9 @@
     "yargs"
   ],
   "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util",
     "../../Image/Image",
     "../../StyleSheet/PlatformColorValueTypes",
     "../../Utilities/Platform",

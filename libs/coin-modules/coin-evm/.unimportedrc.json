@@ -29,6 +29,9 @@
     "src/supportedFeatures.ts"
   ],
   "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util",
     "@ethersproject/bytes",
     "@ethersproject/logger",
     "@ethersproject/bignumber",

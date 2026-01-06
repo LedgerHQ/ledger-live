@@ -8,13 +8,27 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import { getNodeApi } from "../network/node";
-import ledgerGasTracker from "../network/gasTracker/ledger";
+import { getGasTracker } from "../network/gasTracker";
 import { EvmCoinConfig, setCoinConfig } from "../config";
-import * as gasTrackerModule from "../network/gasTracker";
 import { GasEstimationError } from "../errors";
+import ledgerGasTracker from "../network/gasTracker/ledger";
 import { estimateFees } from "./estimateFees";
 
 jest.mock("../network/node", () => ({ getNodeApi: jest.fn() }));
+
+jest.mock("../network/gasTracker", () => ({
+  getGasTracker: jest.fn(),
+}));
+
+jest.mock("../network/gasTracker/ledger", () => ({
+  __esModule: true,
+  default: {
+    getGasOptions: jest.fn(),
+  },
+}));
+
+const mockGetGasTracker = getGasTracker as jest.Mock;
+const _mockLedgerGasTrackerGetGasOptions = ledgerGasTracker.getGasOptions as jest.Mock;
 
 describe("estimateFees", () => {
   const mockCurrency = {
@@ -146,25 +160,27 @@ describe("estimateFees", () => {
   it("estimates fees for token asset and remote gas options", async () => {
     mockNodeApi.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
     jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
-    jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
-      fast: {
-        maxFeePerGas: null,
-        maxPriorityFeePerGas: null,
-        gasPrice: new BigNumber("30000000000"),
-        nextBaseFee: null,
-      },
-      medium: {
-        maxFeePerGas: null,
-        maxPriorityFeePerGas: null,
-        gasPrice: new BigNumber("20000000000"),
-        nextBaseFee: null,
-      },
-      slow: {
-        maxFeePerGas: null,
-        maxPriorityFeePerGas: null,
-        gasPrice: new BigNumber("10000000000"),
-        nextBaseFee: null,
-      },
+    mockGetGasTracker.mockReturnValue({
+      getGasOptions: jest.fn().mockResolvedValue({
+        fast: {
+          maxFeePerGas: null,
+          maxPriorityFeePerGas: null,
+          gasPrice: new BigNumber("30000000000"),
+          nextBaseFee: null,
+        },
+        medium: {
+          maxFeePerGas: null,
+          maxPriorityFeePerGas: null,
+          gasPrice: new BigNumber("20000000000"),
+          nextBaseFee: null,
+        },
+        slow: {
+          maxFeePerGas: null,
+          maxPriorityFeePerGas: null,
+          gasPrice: new BigNumber("10000000000"),
+          nextBaseFee: null,
+        },
+      }),
     });
 
     const result = await estimateFees(mockCurrency, {
@@ -221,7 +237,7 @@ describe("estimateFees", () => {
       maxPriorityFeePerGas: null,
       nextBaseFee: null,
     });
-    jest.spyOn(gasTrackerModule, "getGasTracker").mockReturnValue(null);
+    mockGetGasTracker.mockReturnValue(null);
 
     const result = await estimateFees(mockCurrency, {
       intentType: "transaction",
@@ -290,7 +306,7 @@ describe("estimateFees", () => {
       maxPriorityFeePerGas: null,
       nextBaseFee: null,
     });
-    jest.spyOn(gasTrackerModule, "getGasTracker").mockReturnValue(null);
+    mockGetGasTracker.mockReturnValue(null);
 
     const result = await estimateFees(mockCurrency, {
       intentType: "transaction",
@@ -325,7 +341,7 @@ describe("estimateFees", () => {
       maxPriorityFeePerGas: null,
       nextBaseFee: null,
     });
-    jest.spyOn(gasTrackerModule, "getGasTracker").mockReturnValue(null);
+    mockGetGasTracker.mockReturnValue(null);
 
     const result = await estimateFees(mockCurrency, {
       intentType: "transaction",
@@ -360,7 +376,7 @@ describe("estimateFees", () => {
       maxPriorityFeePerGas: null,
       nextBaseFee: null,
     });
-    jest.spyOn(gasTrackerModule, "getGasTracker").mockReturnValue(null);
+    mockGetGasTracker.mockReturnValue(null);
     mockNodeApi.getOptimismAdditionalFees.mockResolvedValue(new BigNumber(8000));
 
     const result = await estimateFees(
@@ -398,7 +414,7 @@ describe("estimateFees", () => {
       maxPriorityFeePerGas: null,
       nextBaseFee: null,
     });
-    jest.spyOn(gasTrackerModule, "getGasTracker").mockReturnValue(null);
+    mockGetGasTracker.mockReturnValue(null);
 
     const tokenIntent = {
       ...mockIntent,
@@ -434,7 +450,7 @@ describe("estimateFees", () => {
       maxPriorityFeePerGas: null,
       nextBaseFee: null,
     });
-    jest.spyOn(gasTrackerModule, "getGasTracker").mockReturnValue(null);
+    mockGetGasTracker.mockReturnValue(null);
 
     const tokenIntent = {
       ...mockIntent,

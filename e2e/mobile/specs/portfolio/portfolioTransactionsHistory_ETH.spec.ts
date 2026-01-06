@@ -1,3 +1,4 @@
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { runPortfolioTransactionsHistoryTest } from "./portfolio";
 
 runPortfolioTransactionsHistoryTest(

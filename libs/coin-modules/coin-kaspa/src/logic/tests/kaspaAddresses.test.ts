@@ -58,7 +58,7 @@ describe("addressToPublicKey", () => {
 
   it("should throw error for unknown type", () => {
     const address = "kaspa:dppdtlw845g6vhgtheug9lpahjgmtpsarqkueeul0sd7t07npfnhe4s7fd82n0v";
-    expect(() => addressToPublicKey(address)).toThrowError(
+    expect(() => addressToPublicKey(address)).toThrow(
       /Unable to translate address to ScriptPublicKey/,
     );
   });
@@ -172,7 +172,7 @@ describe("parseExtendedPublicKey", () => {
   it("throw error when inputs is broken", () => {
     const extendedPublicKey = Buffer.from("41", "hex");
 
-    expect(() => parseExtendedPublicKey(extendedPublicKey)).toThrowError(
+    expect(() => parseExtendedPublicKey(extendedPublicKey)).toThrow(
       /Invalid extended public key length. Expected length is 99 bytes./,
     );
   });

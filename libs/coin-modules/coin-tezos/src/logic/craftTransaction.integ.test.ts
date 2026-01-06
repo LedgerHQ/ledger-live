@@ -27,8 +27,8 @@ describe("Tezos Api", () => {
     // Then
     expect(result.type).toBe("OUT");
     expect(result.contents).toEqual(
-      expect.objectContaining([
-        {
+      expect.arrayContaining([
+        expect.objectContaining({
           kind: OpKind.TRANSACTION,
           amount: "10",
           destination: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
@@ -37,7 +37,7 @@ describe("Tezos Api", () => {
           fee: "1",
           gas_limit: "0",
           storage_limit: "0",
-        },
+        }),
       ]),
     );
   });
@@ -57,8 +57,8 @@ describe("Tezos Api", () => {
     // Then
     expect(result.type).toBe("DELEGATE");
     expect(result.contents).toEqual(
-      expect.objectContaining([
-        {
+      expect.arrayContaining([
+        expect.objectContaining({
           kind: OpKind.DELEGATION,
           source: address,
           counter: expect.any(String),
@@ -66,7 +66,7 @@ describe("Tezos Api", () => {
           fee: "1",
           gas_limit: "200",
           storage_limit: "300",
-        },
+        }),
       ]),
     );
   });
@@ -87,15 +87,15 @@ describe("Tezos Api", () => {
 
     expect(result.type).toBe("UNDELEGATE");
     expect(result.contents).toEqual(
-      expect.objectContaining([
-        {
+      expect.arrayContaining([
+        expect.objectContaining({
           kind: OpKind.DELEGATION,
           source: address,
           counter: expect.any(String),
           fee: "1",
           gas_limit: "200",
           storage_limit: "300",
-        },
+        }),
       ]),
     );
   });

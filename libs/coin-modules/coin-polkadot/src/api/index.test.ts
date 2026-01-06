@@ -8,6 +8,22 @@ import { TypeRegistry, type GenericExtrinsic } from "@polkadot/types";
 import type { CoreTransaction } from "../types";
 import type { AnyTuple } from "@polkadot/types/types";
 
+// Module-level mocks for logic functions that need to be spied on
+const mockBroadcast = jest.fn();
+const mockCraftTransaction = jest.fn();
+const mockEstimateFees = jest.fn();
+const mockCraftEstimationTransaction = jest.fn();
+const mockListOperations = jest.fn();
+
+jest.mock("../logic", () => ({
+  ...jest.requireActual("../logic"),
+  broadcast: (...args: unknown[]) => mockBroadcast(...args),
+  craftTransaction: (...args: unknown[]) => mockCraftTransaction(...args),
+  estimateFees: (...args: unknown[]) => mockEstimateFees(...args),
+  craftEstimationTransaction: (...args: unknown[]) => mockCraftEstimationTransaction(...args),
+  listOperations: (...args: unknown[]) => mockListOperations(...args),
+}));
+
 function generateApi() {
   const config = {} as PolkadotConfig;
   return createApi(config);
@@ -94,17 +110,13 @@ describe("index", () => {
     it("should broadcast a transaction using broadcast from logic", async () => {
       const api = generateApi();
 
-      const spiedBroadcast = jest
-        .spyOn(logic, "broadcast")
-        .mockImplementationOnce((_signature: string, _currencyId?: string | undefined) => {
-          return Promise.resolve("");
-        });
+      mockBroadcast.mockResolvedValueOnce("");
 
       const transaction = "some random string";
       await api.broadcast(transaction);
 
-      expect(spiedBroadcast).toHaveBeenCalledTimes(1);
-      expect(spiedBroadcast).toHaveBeenCalledWith(transaction, "polkadot");
+      expect(mockBroadcast).toHaveBeenCalledTimes(1);
+      expect(mockBroadcast).toHaveBeenCalledWith(transaction, "polkadot");
     });
   });
 
@@ -123,7 +135,7 @@ describe("index", () => {
 
       const registry = new TypeRegistry();
       jest.spyOn(registry, "createType").mockReturnValue(extrinsic);
-      jest.spyOn(logic, "craftTransaction").mockResolvedValue({
+      mockCraftTransaction.mockResolvedValue({
         unsigned: {
           version: 0,
         },
@@ -145,9 +157,9 @@ describe("index", () => {
       } as TransactionIntent;
 
       const fees = 1n;
-      jest.spyOn(logic, "estimateFees").mockResolvedValue(fees);
+      mockEstimateFees.mockResolvedValue(fees);
 
-      jest.spyOn(logic, "craftEstimationTransaction").mockResolvedValue({} as CoreTransaction);
+      mockCraftEstimationTransaction.mockResolvedValue({} as CoreTransaction);
 
       const feeEstimation = await api.estimateFees(intent);
       expect(feeEstimation.value).toEqual(fees);
@@ -158,7 +170,7 @@ describe("index", () => {
     it("should return operations", async () => {
       const api = generateApi();
 
-      jest.spyOn(logic, "listOperations").mockResolvedValue([[], 2]);
+      mockListOperations.mockResolvedValue([[], 2]);
       const result = await api.listOperations("some random address", { minHeight: 0 });
       expect(result).toEqual([[], "2"]);
     });

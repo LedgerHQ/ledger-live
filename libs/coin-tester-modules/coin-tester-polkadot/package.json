@@ -66,14 +66,15 @@
     "docker-compose": "^1.1.0",
     "chalk": "^4.1.2",
     "dotenv": "^16.4.5",
-    "expect": "^27.4.6",
+    "expect": "catalog:",
     "msw": "catalog:"
   },
   "devDependencies": {
     "@polkadot/util": "12.6.2",
-    "@types/jest": "^29.5.10",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
+    "@types/jest": "catalog:",
+    "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }

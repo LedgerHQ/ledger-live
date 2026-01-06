@@ -1,3 +1,4 @@
+import { Step } from "jest-allure2-reporter/api";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { BuySell, Fiat } from "@ledgerhq/live-common/lib/e2e/models/BuySell";
 import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";

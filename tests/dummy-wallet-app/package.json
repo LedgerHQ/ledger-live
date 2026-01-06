@@ -35,7 +35,7 @@
     ]
   },
   "devDependencies": {
-    "@types/jest": "^27.0.1",
+    "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.13",

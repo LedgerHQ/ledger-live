@@ -8,19 +8,29 @@ import {
 } from "../entities/LanguagePackageEntity";
 import { HttpManagerApiRepository } from "./HttpManagerApiRepository";
 
-const getUserHashesModule = jest.requireActual("../use-cases/getUserHashes");
-const networkModule = jest.requireActual("@ledgerhq/live-network/network");
+jest.mock("../use-cases/getUserHashes", () => ({
+  ...jest.requireActual("../use-cases/getUserHashes"),
+  getUserHashes: jest.fn(),
+}));
+
+jest.mock("@ledgerhq/live-network/network", () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
+import { getUserHashes } from "../use-cases/getUserHashes";
+import network from "@ledgerhq/live-network/network";
+
+const mockedGetUserHashes = jest.mocked(getUserHashes);
+const mockedNetwork = jest.mocked(network);
 
 describe("HttpManagerApiRepository", () => {
   let httpManagerApiRepository: HttpManagerApiRepository;
-  let getUserHashesSpy: jest.SpyInstance;
-  let networkSpy: jest.SpyInstance;
 
   beforeEach(() => {
     httpManagerApiRepository = new HttpManagerApiRepository("http://managerApiBase.com", "1.2.3");
-    getUserHashesSpy = jest.spyOn(getUserHashesModule, "getUserHashes");
-    networkSpy = jest.spyOn(networkModule, "default");
-    networkSpy.mockImplementation(jest.fn());
+    mockedNetwork.mockImplementation(jest.fn());
+    jest.clearAllMocks();
   });
 
   afterEach(() => {
@@ -28,7 +38,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("fetchLatestFirmware should call network() with the correct parameters", async () => {
-    getUserHashesSpy.mockReturnValue({
+    mockedGetUserHashes.mockReturnValue({
       firmwareSalt: "mockedFirmwareSalt",
     });
     const params: Parameters<typeof httpManagerApiRepository.fetchLatestFirmware>[0] = {
@@ -42,7 +52,7 @@ describe("HttpManagerApiRepository", () => {
       // ignore the error in this test case
     });
 
-    expect(networkSpy).toHaveBeenCalledWith({
+    expect(mockedNetwork).toHaveBeenCalledWith({
       method: "GET",
       url:
         "http://managerApiBase.com/get_latest_firmware" +
@@ -55,7 +65,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("fetchLatestFirmware should return null if data.result is null", async () => {
-    getUserHashesSpy.mockReturnValue({
+    mockedGetUserHashes.mockReturnValue({
       firmwareSalt: "mockedFirmwareSalt",
     });
     const params: Parameters<typeof httpManagerApiRepository.fetchLatestFirmware>[0] = {
@@ -64,7 +74,7 @@ describe("HttpManagerApiRepository", () => {
       providerId: 12,
       userId: "userId",
     };
-    networkSpy.mockResolvedValue({
+    mockedNetwork.mockResolvedValue({
       data: {
         result: "null",
       },
@@ -76,7 +86,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("fetchLatestFirmware should return data.se_firmware_osu_version", async () => {
-    getUserHashesSpy.mockReturnValue({
+    mockedGetUserHashes.mockReturnValue({
       firmwareSalt: "mockedFirmwareSalt",
     });
     const params: Parameters<typeof httpManagerApiRepository.fetchLatestFirmware>[0] = {
@@ -85,7 +95,7 @@ describe("HttpManagerApiRepository", () => {
       providerId: 12,
       userId: "userId",
     };
-    networkSpy.mockResolvedValue({
+    mockedNetwork.mockResolvedValue({
       data: {
         result: "mockedResult",
         se_firmware_osu_version: "mockedOsuFirmware",
@@ -102,14 +112,14 @@ describe("HttpManagerApiRepository", () => {
       // ignore the error in this test case
     });
 
-    expect(networkSpy).toHaveBeenCalledWith({
+    expect(mockedNetwork).toHaveBeenCalledWith({
       method: "GET",
       url: "http://managerApiBase.com/mcu_versions?livecommonversion=1.2.3",
     });
   });
 
   test("fetchMcus should return data", async () => {
-    networkSpy.mockResolvedValue({
+    mockedNetwork.mockResolvedValue({
       data: "mockedData",
     });
 
@@ -128,7 +138,7 @@ describe("HttpManagerApiRepository", () => {
       // ignore the error in this test case
     });
 
-    expect(networkSpy).toHaveBeenCalledWith({
+    expect(mockedNetwork).toHaveBeenCalledWith({
       method: "GET",
       url:
         "http://managerApiBase.com/get_device_version" +
@@ -139,7 +149,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getDeviceVersion should throw a FirmwareNotRecognized error if status is 404", async () => {
-    networkSpy.mockRejectedValue({
+    mockedNetwork.mockRejectedValue({
       status: 404,
     });
 
@@ -152,7 +162,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getDeviceVersion should throw a FirmwareNotRecognized error if response.status is 404", async () => {
-    networkSpy.mockRejectedValue({
+    mockedNetwork.mockRejectedValue({
       response: {
         status: 404,
       },
@@ -167,7 +177,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getDeviceVersion should return data", async () => {
-    networkSpy.mockResolvedValue({
+    mockedNetwork.mockResolvedValue({
       data: "mockedData",
     });
 
@@ -190,7 +200,7 @@ describe("HttpManagerApiRepository", () => {
       // ignore the error in this test case
     });
 
-    expect(networkSpy).toHaveBeenCalledWith({
+    expect(mockedNetwork).toHaveBeenCalledWith({
       method: "GET",
       url:
         "http://managerApiBase.com/get_osu_version" +
@@ -202,7 +212,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getCurrentOSU should return data", async () => {
-    networkSpy.mockResolvedValue({
+    mockedNetwork.mockResolvedValue({
       data: "mockedData",
     });
 
@@ -226,7 +236,7 @@ describe("HttpManagerApiRepository", () => {
       // ignore the error in this test case
     });
 
-    expect(networkSpy).toHaveBeenCalledWith({
+    expect(mockedNetwork).toHaveBeenCalledWith({
       method: "GET",
       url:
         "http://managerApiBase.com/get_firmware_version" +
@@ -238,7 +248,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getCurrentFirmware should throw a FirmwareNotRecognized error if status is 404", async () => {
-    networkSpy.mockRejectedValue({
+    mockedNetwork.mockRejectedValue({
       status: 404,
     });
 
@@ -252,7 +262,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getCurrentFirmware should throw a FirmwareNotRecognized error if response.status is 404", async () => {
-    networkSpy.mockRejectedValue({
+    mockedNetwork.mockRejectedValue({
       response: {
         status: 404,
       },
@@ -268,7 +278,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getCurrentFirmware should return data", async () => {
-    networkSpy.mockResolvedValue({
+    mockedNetwork.mockResolvedValue({
       data: "mockedData",
     });
 
@@ -286,14 +296,14 @@ describe("HttpManagerApiRepository", () => {
       // ignore the error in this test case
     });
 
-    expect(networkSpy).toHaveBeenCalledWith({
+    expect(mockedNetwork).toHaveBeenCalledWith({
       method: "GET",
       url: "http://managerApiBase.com/firmware_final_versions/123?livecommonversion=1.2.3",
     });
   });
 
   test("getFinalFirmwareById should return data", async () => {
-    networkSpy.mockResolvedValue({
+    mockedNetwork.mockResolvedValue({
       data: "mockedData",
     });
 
@@ -308,7 +318,7 @@ describe("HttpManagerApiRepository", () => {
       // ignore the error in this test case
     });
 
-    expect(networkSpy).toHaveBeenCalledWith({
+    expect(mockedNetwork).toHaveBeenCalledWith({
       method: "POST",
       url: "http://managerApiBase.com/v2/apps/hash?livecommonversion=1.2.3",
       data: mockHashes,
@@ -316,7 +326,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getAppsByHash should throw a NetworkDown error if data is null", async () => {
-    networkSpy.mockResolvedValue({
+    mockedNetwork.mockResolvedValue({
       data: null,
     });
 
@@ -326,7 +336,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getAppsByHash should throw a NetworkDown error if data is not an array", async () => {
-    networkSpy.mockResolvedValue({
+    mockedNetwork.mockResolvedValue({
       data: "mockedData",
     });
 
@@ -336,7 +346,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getAppsByHash should return data if it's an array", async () => {
-    networkSpy.mockResolvedValue({
+    mockedNetwork.mockResolvedValue({
       data: ["mockedData"],
     });
 
@@ -356,14 +366,14 @@ describe("HttpManagerApiRepository", () => {
         // ignore the error in this test case
       });
 
-    expect(networkSpy).toHaveBeenCalledWith({
+    expect(mockedNetwork).toHaveBeenCalledWith({
       method: "GET",
       url: "http://managerApiBase.com/v2/apps/by-target?livecommonversion=1.2.3&provider=12&target_id=123&firmware_version_name=mockedFirmwareVersion",
     });
   });
 
   test("catalogForDevice should throw a NetworkDown error if data is null", async () => {
-    networkSpy.mockResolvedValue({
+    mockedNetwork.mockResolvedValue({
       data: null,
     });
 
@@ -377,7 +387,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("catalogForDevice should throw a NetworkDown error if data is not an array", async () => {
-    networkSpy.mockResolvedValue({
+    mockedNetwork.mockResolvedValue({
       data: "mockedData",
     });
 
@@ -391,7 +401,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("catalogForDevice should return data if it's an array", async () => {
-    networkSpy.mockResolvedValue({
+    mockedNetwork.mockResolvedValue({
       data: ["mockedData"],
     });
 
@@ -428,7 +438,7 @@ describe("HttpManagerApiRepository", () => {
     expect(getDeviceVersionSpy).toHaveBeenCalledWith({ targetId: 2, providerId: 12 });
     expect(getCurrentFirmwareSpy).toHaveBeenCalledWith({ deviceId: 4, providerId: 12, version: 1 });
 
-    expect(networkSpy).toHaveBeenCalledWith({
+    expect(mockedNetwork).toHaveBeenCalledWith({
       method: "GET",
       url: "http://managerApiBase.com/language-package?livecommonversion=1.2.3",
     });
@@ -445,7 +455,7 @@ describe("HttpManagerApiRepository", () => {
       .spyOn(httpManagerApiRepository, "getCurrentFirmware")
       .mockReturnValue(Promise.resolve({ id: mockedCurrentFirmwareId } as FinalFirmware));
 
-    networkSpy.mockResolvedValue({
+    mockedNetwork.mockResolvedValue({
       data: [
         {
           language: "french",

@@ -1,3 +1,4 @@
+import { Step } from "jest-allure2-reporter/api";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";

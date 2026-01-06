@@ -1,20 +1,29 @@
 import BigNumber from "bignumber.js";
-import * as lib from "../../network";
 import { parseExtendedPublicKey } from "../kaspaAddresses";
 import { scanUtxos } from "../scanUtxos";
 
-describe("scan UTXOs function", () => {
-  it("Gets information about addresses being active or not", async () => {
-    jest.mock("../scanAddresses", () => ({
-      SCAN_BATCH_SIZE: 1,
-    }));
+// Module-level mocks for network functions
+const mockGetBalancesForAddresses = jest.fn();
+const mockGetAddressesActive = jest.fn();
+const mockGetUtxosForAddresses = jest.fn();
+jest.mock("../../network", () => ({
+  ...jest.requireActual("../../network"),
+  getBalancesForAddresses: (...args: unknown[]) => mockGetBalancesForAddresses(...args),
+  getAddressesActive: (...args: unknown[]) => mockGetAddressesActive(...args),
+  getUtxosForAddresses: (...args: unknown[]) => mockGetUtxosForAddresses(...args),
+}));
 
+describe("scan UTXOs function", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("Gets information about addresses being active or not", async () => {
     const xpub =
       "410404cd27f15b8a73039972cdd131a93754ef3fa90bee794222737f5ca26a12f887f2fd493acf13230fa42c418d2c1be53a6fc66fbbec3ea9c37a675acc53a65e08203a35a71b1d8c10f7b03cf84c50570ee21af9b830b25bbe16ec661e7de8a51563";
     const { compressedPublicKey, chainCode } = parseExtendedPublicKey(Buffer.from(xpub, "hex"));
 
-    jest
-      .spyOn(lib, "getBalancesForAddresses")
+    mockGetBalancesForAddresses
       .mockResolvedValueOnce([
         {
           address: "kaspa:qq82f9sdsqqkr74memhxt9yrefc8vq9khf5vt6xjp4tscc3pdenmks29mlp9y",
@@ -27,8 +36,7 @@ describe("scan UTXOs function", () => {
       ])
       .mockResolvedValue([]);
 
-    jest
-      .spyOn(lib, "getAddressesActive")
+    mockGetAddressesActive
       .mockResolvedValueOnce([
         {
           address: "kaspa:qq82f9sdsqqkr74memhxt9yrefc8vq9khf5vt6xjp4tscc3pdenmks29mlp9y",
@@ -44,7 +52,7 @@ describe("scan UTXOs function", () => {
       .mockResolvedValueOnce([])
       .mockResolvedValue([]);
 
-    jest.spyOn(lib, "getUtxosForAddresses").mockResolvedValue([
+    mockGetUtxosForAddresses.mockResolvedValue([
       {
         address: "kaspa:qq82f9sdsqqkr74memhxt9yrefc8vq9khf5vt6xjp4tscc3pdenmks29mlp9y",
         outpoint: {
@@ -96,20 +104,21 @@ describe("scan UTXOs function", () => {
 
     expect(utxos.length).toBe(3);
   });
+});
 
+describe("Error while scanning UTXOs", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-});
-describe("Error while scanning UTXOs", () => {
+
   it("Gets information about addresses being active or not", async () => {
     const xpub =
       "410404cd27f15b8a73039972cdd131a93754ef3fa90bee794222737f5ca26a12f887f2fd493acf13230fa42c418d2c1be53a6fc66fbbec3ea9c37a675acc53a65e08203a35a71b1d8c10f7b03cf84c50570ee21af9b830b25bbe16ec661e7de8a51563";
     const { compressedPublicKey, chainCode } = parseExtendedPublicKey(Buffer.from(xpub, "hex"));
 
-    jest.spyOn(lib, "getBalancesForAddresses").mockResolvedValue([]);
-    jest.spyOn(lib, "getAddressesActive").mockResolvedValue([]);
-    jest.spyOn(lib, "getUtxosForAddresses").mockResolvedValue([
+    mockGetBalancesForAddresses.mockResolvedValue([]);
+    mockGetAddressesActive.mockResolvedValue([]);
+    mockGetUtxosForAddresses.mockResolvedValue([
       {
         address: "kaspa:qq82f9sdsqqkr74memhxt9yrefc8vq9khf5vt6xjp4tscc3pdenmks29mlp9y",
         outpoint: {
@@ -145,9 +154,5 @@ describe("Error while scanning UTXOs", () => {
     await expect(scanUtxos(compressedPublicKey, chainCode)).rejects.toThrow(
       "not found in addresses set",
     );
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
   });
 });

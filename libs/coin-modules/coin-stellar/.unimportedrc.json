@@ -18,7 +18,10 @@
     "@ledgerhq/live-env",
     "rxjs"
   ],
-  "ignoreUnresolved": [],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"],
   "ignoreUnimported": [
     "src/globals.d.ts",
     "src/supportedFeatures.ts"
