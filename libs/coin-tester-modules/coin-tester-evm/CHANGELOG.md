@@ -1,5 +1,13 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.13.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`3d30262`](https://github.com/LedgerHQ/ledger-live/commit/3d3026233072f4fab0dbcf6fee8153a75e295def)]:
+  - @ledgerhq/coin-evm@2.38.0-next.1
+  - @ledgerhq/live-common@34.56.0-next.1
+
 ## 1.13.0-next.0
 
 ### Minor Changes

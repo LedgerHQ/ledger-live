@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.38.0-next.1
+
+### Minor Changes
+
+- [#13543](https://github.com/LedgerHQ/ledger-live/pull/13543) [`3d30262`](https://github.com/LedgerHQ/ledger-live/commit/3d3026233072f4fab0dbcf6fee8153a75e295def) Thanks [@qperrot](https://github.com/qperrot)! - Fix: remove asset type check and only check reference
+
 ## 2.38.0-next.0
 
 ### Minor Changes

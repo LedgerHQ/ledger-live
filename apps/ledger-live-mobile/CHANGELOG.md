@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.101.0-next.1
+
+### Minor Changes
+
+- [#13546](https://github.com/LedgerHQ/ledger-live/pull/13546) [`62f15cd`](https://github.com/LedgerHQ/ledger-live/commit/62f15cd73b3d72015f4fff0d681eb8601bd44cb9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - React-native-vision-camera disable location service to be compliant with Apple
+
+### Patch Changes
+
+- Updated dependencies [[`3d30262`](https://github.com/LedgerHQ/ledger-live/commit/3d3026233072f4fab0dbcf6fee8153a75e295def)]:
+  - @ledgerhq/coin-evm@2.38.0-next.1
+
 ## 3.101.0-next.0
 
 ### Minor Changes
