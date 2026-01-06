@@ -1,13 +1,13 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, type Slice } from "@reduxjs/toolkit";
 import { DeviceId } from "../ids";
-import { initialIdentitiesState } from "./types";
+import { IdentitiesState, initialIdentitiesState } from "./types";
 import { PersistedIdentities } from "./persistence";
 
 /**
  * Redux slice for identities management
  * Only manages DeviceIds - UserId and DatadogId are managed by apps
  */
-export const identitiesSlice = createSlice({
+export const identitiesSlice: Slice<IdentitiesState> = createSlice({
   name: "identities",
   initialState: initialIdentitiesState,
   reducers: {

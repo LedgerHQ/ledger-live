@@ -80,6 +80,7 @@ export class DmkSignerSol implements SolanaSigner {
    */
   async getAppConfiguration(): Promise<AppConfig> {
     const { observable } = this.dmkSigner.getAppConfiguration();
+
     return new Promise<AppConfig>((resolve, reject) => {
       observable.subscribe({
         next: state => {
@@ -141,8 +142,14 @@ export class DmkSignerSol implements SolanaSigner {
     txBuffer: Uint8Array,
     resolution?: Resolution | undefined,
   ): Promise<SolanaSignature> {
+    const transactionResolutionContext = resolution
+      ? {
+          ...resolution,
+          userInputType: resolution.userInputType as any,
+        }
+      : undefined;
     const { observable } = this.dmkSigner.signTransaction(path, txBuffer, {
-      transactionResolutionContext: resolution,
+      transactionResolutionContext,
       skipOpenApp: true,
     });
     return new Promise<SolanaSignature>((resolve, reject) => {
