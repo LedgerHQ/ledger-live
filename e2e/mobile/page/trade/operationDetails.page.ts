@@ -83,9 +83,10 @@ export default class OperationDetailsPage {
   }
 
   @Step("Check that transaction details are displayed")
-  async checkTransactionDetailsVisibility() {
+  async checkTransactionDetailsVisibility(currencyName: string) {
     await this.waitForOperationDetails();
     await detoxExpect(this.account()).toBeVisible();
+    await detoxExpect(this.account()).toHaveText(currencyName + " 1");
     await detoxExpect(this.amount()).toBeVisible();
     await detoxExpect(this.operation()).toBeVisible();
     await detoxExpect(this.date()).toBeVisible();
