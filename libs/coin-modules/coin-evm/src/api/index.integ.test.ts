@@ -282,6 +282,30 @@ describe.each([
         expect(balance.value).toBeGreaterThanOrEqual(0);
       });
     });
+
+    /**
+     * Ensure non regression and avoid
+     * "To send batches over 10 items, consider using a dedicated API provider"
+     */
+    it("returns at least 10 token balances on Optimisim", async () => {
+      const module = createApi(
+        {
+          node: {
+            type: "external",
+            uri: "https://mainnet.optimism.io",
+          },
+          explorer: {
+            type: "blockscout",
+            uri: "https://optimism.blockscout.com/api",
+          },
+        } as EvmConfig,
+        "optimism",
+      );
+
+      const result = await module.getBalance("0x1CDDb825910426644e00e769072Ce1Ea7d4e34BB");
+
+      expect(result.length).toBeGreaterThan(10);
+    });
   });
 
   describe("listOperations", () => {
