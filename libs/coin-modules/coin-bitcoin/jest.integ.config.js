@@ -4,6 +4,8 @@ module.exports = {
   testRegex: ".integ.test.ts$",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
   testTimeout: 60_000,
+  forceExit: true,
+  passWithNoTests: true,
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",
