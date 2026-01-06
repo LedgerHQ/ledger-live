@@ -455,6 +455,8 @@
     "src/market/utils/queryKeys.ts",
     "src/market/utils/timers.ts",
     "src/market/utils/types.ts",
+    "src/market/state-manager/api.ts",
+    "src/market/state-manager/types.ts",
     "src/modularDrawer/enums.ts",
     "src/modularDrawer/hooks/index.ts",
     "src/modularDrawer/hooks/modules/useLeftApyModule.tsx",
