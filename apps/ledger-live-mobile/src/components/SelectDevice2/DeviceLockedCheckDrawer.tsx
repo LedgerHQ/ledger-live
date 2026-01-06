@@ -17,7 +17,7 @@ type Props = {
 };
 
 export const DeviceLockedCheckDrawer = ({ isOpen, device, onDeviceUnlocked, onClose }: Props) => {
-  const isLockedResult = useIsDeviceLockedPolling({ device, enabled: isOpen });
+  const { result: isLockedResult, retry } = useIsDeviceLockedPolling({ device, enabled: isOpen });
 
   const isUndetermined = isLockedResult.type === IsDeviceLockedResultType.undetermined;
   const isLocked = isLockedResult.type === IsDeviceLockedResultType.locked;
