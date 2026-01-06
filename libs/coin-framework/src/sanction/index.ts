@@ -1,10 +1,7 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import axios from "axios";
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
-
-const cache = makeLRUCache(fetchSanctionedAddresses, () => "all_sanctioned_addresses", minutes(15));
 
 async function fetchSanctionedAddresses(): Promise<Record<string, string[]>> {
   try {
@@ -30,9 +27,7 @@ export async function isAddressSanctioned(
     "tmp_sanctioned_addresses",
   );
 
-  const data: Record<string, string[]> = getEnv("MOCK")
-    ? await fetchSanctionedAddresses()
-    : await cache();
+  const data: Record<string, string[]> = await fetchSanctionedAddresses();
   const addresses = data["bannedAddresses"] || [];
 
   if (temporarySanctionedAddress) {
