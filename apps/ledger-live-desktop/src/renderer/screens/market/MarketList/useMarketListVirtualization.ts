@@ -30,16 +30,16 @@ export const useMarketListVirtualization = ({
   });
 
   const virtualItems = rowVirtualizer.getVirtualItems();
+  const lastVirtualItemIndex =
+    virtualItems.length > 0 ? virtualItems[virtualItems.length - 1].index : -1;
 
   useEffect(() => {
-    const [lastItem] = [...virtualItems].reverse();
+    if (lastVirtualItemIndex === -1 || loading) return;
 
-    if (!lastItem || loading) return;
-
-    if (lastItem.index >= marketData.length - 1 && currenciesLength > 0) {
+    if (lastVirtualItemIndex >= marketData.length - 1 && currenciesLength > 0) {
       onLoadNextPage();
     }
-  }, [marketData.length, currenciesLength, onLoadNextPage, loading, virtualItems]);
+  }, [marketData.length, currenciesLength, onLoadNextPage, loading, lastVirtualItemIndex]);
 
   useEffect(() => {
     const scrollElement = parentRef.current;
