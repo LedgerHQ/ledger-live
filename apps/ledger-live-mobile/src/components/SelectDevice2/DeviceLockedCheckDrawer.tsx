@@ -8,6 +8,9 @@ import { ConnectYourDevice } from "../DeviceAction/rendering";
 import QueuedDrawer from "../QueuedDrawer";
 import { useIsDeviceLockedPolling } from "~/hooks/useIsDeviceLockedPolling/useIsDeviceLockedPolling";
 import { IsDeviceLockedResultType } from "~/hooks/useIsDeviceLockedPolling/types";
+import { PeerRemovedPairing } from "@ledgerhq/errors";
+import { BleForgetDeviceIllustration } from "../BleDevicePairingFlow/BleDevicePairingContent/BleForgetDeviceIllustration";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 type Props = {
   isOpen: boolean;
@@ -25,6 +28,7 @@ export const DeviceLockedCheckDrawer = ({ isOpen, device, onDeviceUnlocked, onCl
   const isError = isLockedResult.type === IsDeviceLockedResultType.error;
   const isLockedStateCannotBeDetermined =
     isLockedResult.type === IsDeviceLockedResultType.lockedStateCannotBeDetermined;
+  const isPeerRemovedPairingError = isError && isLockedResult.error instanceof PeerRemovedPairing;
 
   useEffect(() => {
     if (isUnlocked || isLockedStateCannotBeDetermined) {
@@ -49,7 +53,15 @@ export const DeviceLockedCheckDrawer = ({ isOpen, device, onDeviceUnlocked, onCl
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
       {isUndetermined && <InfiniteLoader />}
-      {isError && <GenericErrorView error={isLockedResult.error} hasExportLogButton />}
+      {isError &&
+        (isPeerRemovedPairingError ? (
+          <BleForgetDeviceIllustration
+            productName={getDeviceModel(device.modelId).productName}
+            onRetry={retry}
+          />
+        ) : (
+          <GenericErrorView error={isLockedResult.error} hasExportLogButton />
+        ))}
       {isLocked && (
         <>
           <TrackScreen name="Drawer: Unlock your Device" {...trackingProps} />
