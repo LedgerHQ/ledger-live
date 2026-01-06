@@ -90,7 +90,7 @@ export default function DashboardPage() {
         ) : totalAccounts > 0 ? (
           <>
             {ptxSwapLiveAppOnPortfolio?.enabled ? (
-              <SwapPortfolioGrid>
+              <PortfolioGrid marginTop={4}>
                 <Box>
                   <FeaturedButtons hideSwapButton />
                   <BalanceSummary
@@ -103,7 +103,7 @@ export default function DashboardPage() {
                 <Box ml={2} minWidth={375} maxWidth={700}>
                   <SwapWebViewEmbedded height="550px" />
                 </Box>
-              </SwapPortfolioGrid>
+              </PortfolioGrid>
             ) : marketPerformanceEnabled ? (
               <PortfolioGrid>
                 <BalanceSummary
@@ -148,13 +148,6 @@ export default function DashboardPage() {
 }
 
 const PortfolioGrid = styled(Grid).attrs(() => ({
-  columnGap: 2,
-  columns: 2,
-}))`
-  grid-template-columns: 2fr 1fr;
-`;
-
-const SwapPortfolioGrid = styled(Grid).attrs(() => ({
   columnGap: 2,
   columns: 2,
 }))`
