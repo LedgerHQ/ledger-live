@@ -10,7 +10,12 @@
     "noEmit": true,
     "moduleResolution": "bundler",
     "module": "esnext",
-    "target": "esnext"
+    "target": "esnext",
+    "skipLibCheck": true,
+    "paths": {
+      "react": ["../../../../node_modules/@types/react"],
+      "@types/react": ["../../../../node_modules/@types/react"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "react", "native"]

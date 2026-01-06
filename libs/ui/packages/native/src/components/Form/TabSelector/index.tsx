@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import type { JSX } from "react";
 import { Pressable, LayoutChangeEvent } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import styled from "styled-components/native";
@@ -45,12 +46,30 @@ export default function TabSelector<T extends string>({
   const initialIndex = initialTab ? labels.findIndex((l) => l.id === initialTab) : 0;
   const translateX = useSharedValue(0);
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
+  const isInitialMount = React.useRef(true);
+
+  // Sync selectedIndex when initialIndex changes externally
+  useEffect(() => {
+    if (selectedIndex !== initialIndex) {
+      setSelectedIndex(initialIndex);
+    }
+  }, [initialIndex]);
 
   useEffect(() => {
     if (containerWidth > 0) {
-      translateX.value = (containerWidth / labels.length) * initialIndex;
+      const targetPosition = (containerWidth / labels.length) * initialIndex;
+
+      // On initial mount or when container width changes,
+      // set position immediately to avoid animation bouncing effect
+      if (isInitialMount.current) {
+        translateX.value = targetPosition;
+        isInitialMount.current = false;
+      } else {
+        // When initialIndex changes after mount, animate the transition
+        translateX.value = targetPosition;
+      }
     }
-  }, [containerWidth, labels.length, initialIndex]);
+  }, [containerWidth, labels.length, initialIndex, translateX]);
 
   const handlePress = (id: T, index: number) => {
     setSelectedIndex(index);

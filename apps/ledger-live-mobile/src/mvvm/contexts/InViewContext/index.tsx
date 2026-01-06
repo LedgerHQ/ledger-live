@@ -41,7 +41,7 @@ function Effect({
 }: {
   intervalDuration: number;
   inViewThreshold: number;
-  itemsRef: React.MutableRefObject<WatchedItem[]>;
+  itemsRef: React.RefObject<WatchedItem[]>;
   outOfViewThreshold: number;
 }) {
   const watchedItem = useRef(new WeakMap<WatchedItem, boolean>());
@@ -52,12 +52,15 @@ function Effect({
     if (!hasItems) return;
 
     const window = Dimensions.get("window");
+    const items = itemsRef.current;
+    if (!items) return;
+
     const subscription = interval(intervalDuration)
       .pipe(
         concatMap(() =>
           from(
             Promise.all(
-              itemsRef.current.map(async item => {
+              items.map(async item => {
                 const threshold = watchedItem.current.get(item)
                   ? outOfViewThreshold
                   : inViewThreshold;

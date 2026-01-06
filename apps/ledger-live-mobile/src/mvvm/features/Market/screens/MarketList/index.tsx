@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useCallback, useContext, useEffect } from "react";
+import React, { RefObject, useCallback, useContext, useEffect } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { RefreshControl, ViewToken } from "react-native";
 import {
@@ -41,7 +41,7 @@ interface ViewProps {
   refreshRate: number;
   marketParams: MarketListRequestParams;
   marketCurrentPage: number;
-  viewabilityConfigCallbackPairs: MutableRefObject<
+  viewabilityConfigCallbackPairs: RefObject<
     {
       onViewableItemsChanged: ({ viewableItems }: { viewableItems: ViewToken[] }) => void;
       viewabilityConfig: {
@@ -134,7 +134,7 @@ function View({
     scrollEventThrottle: 50,
     initialNumToRender: 50,
     keyExtractor,
-    viewabilityConfigCallbackPairs: viewabilityConfigCallbackPairs.current,
+    viewabilityConfigCallbackPairs: viewabilityConfigCallbackPairs.current ?? undefined,
     ListFooterComponent: <ListFooter isLoading={loading} />,
     ListEmptyComponent: (
       <ListEmpty

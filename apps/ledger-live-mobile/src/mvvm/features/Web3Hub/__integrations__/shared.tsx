@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Navigator from "../Navigator";
 import TabNavigator from "../TabNavigator";
@@ -8,8 +8,11 @@ import { NavigatorName } from "~/const";
 const Stack = createNativeStackNavigator();
 
 export function Web3HubTest() {
+  // Create QueryClient inside useMemo to ensure stable reference
+  const queryClient = useMemo(() => new QueryClient(), []);
+
   return (
-    <QueryClientProvider client={new QueryClient()}>
+    <QueryClientProvider client={queryClient}>
       <Stack.Navigator initialRouteName={NavigatorName.Web3HubTab}>
         <Stack.Screen
           name={NavigatorName.Web3HubTab}

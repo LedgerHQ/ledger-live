@@ -15,7 +15,7 @@ interface UseFirstStepCompanionStateProps {
    */
   notifyEarlySecurityCheckShouldReset: () => void;
   setSeedPathStatus: (status: SeedPathStatus) => void;
-  analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
+  analyticsSeedConfiguration: React.RefObject<SeedOriginType | undefined>;
   hasSyncStep: boolean;
 }
 
