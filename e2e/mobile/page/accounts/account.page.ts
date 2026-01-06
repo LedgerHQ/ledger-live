@@ -42,7 +42,7 @@ export default class AccountPage {
 
   @Step("Go to the account with the name")
   async goToAccountByName(name: string) {
-    await waitForElementById(this.baseAccountName + name);
+    await scrollToId(this.baseAccountName + name);
     await tapById(this.baseAccountName + name);
   }
 
