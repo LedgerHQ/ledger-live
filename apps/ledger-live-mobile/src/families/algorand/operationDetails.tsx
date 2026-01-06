@@ -28,7 +28,7 @@ function OperationDetailsExtra({ operation, account }: Props) {
   const { locale } = useSettings();
   const formattedRewards = operation.extra.rewards?.gt(0)
     ? formatCurrencyUnit(unit, operation.extra.rewards, {
-        locale: locale,
+        locale,
         disableRounding: true,
         alwaysShowSign: false,
         showCode: true,

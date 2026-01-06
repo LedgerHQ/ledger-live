@@ -120,7 +120,7 @@ export const INITIAL_STATE: SettingsState = {
   discreetMode: false,
   language: getDefaultLanguageLocale(),
   languageIsSetByUser: false,
-  locale: null,
+  locale: getDefaultLocale(),
   swap: {
     hasAcceptedIPSharing: false,
     acceptedProviders: [],
@@ -175,10 +175,14 @@ const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
   `${from.ticker}_${to.ticker}`;
 
 const handlers: ReducerMap<SettingsState, SettingsPayload> = {
-  [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => ({
-    ...state,
-    ...(action as Action<SettingsImportPayload>).payload,
-  }),
+  [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => {
+    const payload = (action as Action<SettingsImportPayload>).payload;
+    return {
+      ...state,
+      ...payload,
+      locale: payload.locale ?? state.locale ?? getDefaultLocale(),
+    };
+  },
 
   [SettingsActionTypes.UPDATE_CURRENCY_SETTINGS]: (
     { currenciesSettings, ...state }: SettingsState,

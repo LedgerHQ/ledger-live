@@ -12,7 +12,7 @@ type ResolvedTheme = "light" | "dark";
 
 interface UseSettingsResult {
   language: string;
-  locale: string | null | undefined;
+  locale: string;
   theme: Theme;
   osTheme: SettingsState["osTheme"];
   resolvedTheme: ResolvedTheme;
@@ -23,7 +23,7 @@ const useSettings = (): UseSettingsResult => {
   const language = useSelector(languageSelector);
   const locale = useSelector(localeSelector);
 
-  // Theme - uses memoized selector from Redux
+  // Theme
   const theme = useSelector(themeSelector);
   const osTheme = useSelector(osThemeSelector);
   const resolvedTheme = useSelector(resolvedThemeSelector);
