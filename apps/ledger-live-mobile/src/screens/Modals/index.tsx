@@ -49,10 +49,7 @@ const Modals = () => {
         const currentRouteName = getCurrentRouteName(navState) as string;
         let isModalOpened = false;
         if (pushNotificationsFeature?.enabled) {
-          isModalOpened = handleRouteChangePushNotification(
-            currentRouteName as ScreenName,
-            isModalOpened,
-          );
+          isModalOpened = handleRouteChangePushNotification(currentRouteName as ScreenName);
         }
         if (activeRatings === "nps") {
           npsOnRatingsRouteChange(currentRouteName, isModalOpened);

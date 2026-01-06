@@ -77,6 +77,6 @@ export const notificationsEventTriggeredSelector = (s: State) => s.notifications
 
 export const notificationsDataOfUserSelector = (s: State) => s.notifications.dataOfUser;
 
-export const notificationPermissionStatus = (s: State) => s.notifications.permissionStatus;
+export const notificationsPermissionStatusSelector = (s: State) => s.notifications.permissionStatus;
 
 export default handleActions<NotificationsState, NotificationsPayload>(handlers, INITIAL_STATE);

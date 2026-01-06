@@ -6,8 +6,6 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import { PushNotificationsModalIllustration } from "./PushNotificationsModalIllustration";
 import { TrackScreen } from "~/analytics";
 
-export const DRAWER_PAGE_NAME_TRACK_EVENT = "Drawer push notification opt-in";
-
 const PushNotificationsModal = () => {
   const { t } = useTranslation();
   const {
@@ -33,7 +31,7 @@ const PushNotificationsModal = () => {
       onBackdropPress={handleCloseFromBackdropPress}
     >
       <TrackScreen
-        category={DRAWER_PAGE_NAME_TRACK_EVENT}
+        category="Drawer push notification opt-in"
         source={drawerSource}
         repromptDelay={
           getRepromptDelay(pushNotificationsDataOfUser?.dismissedOptInDrawerAtList) ?? undefined

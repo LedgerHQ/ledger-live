@@ -12,7 +12,7 @@ import {
   notificationsEventTriggeredSelector,
   notificationsDataOfUserSelector,
   notificationsModalLockedSelector,
-  notificationPermissionStatus,
+  notificationsPermissionStatusSelector,
 } from "~/reducers/notifications";
 import {
   setNotificationsModalOpen,
@@ -30,7 +30,6 @@ import { setNotifications } from "~/actions/settings";
 import { NotificationsSettings, type NotificationsState } from "~/reducers/types";
 import { getNotificationPermissionStatus } from "./getNotifPermissions";
 import { useNavigation } from "@react-navigation/core";
-import { DRAWER_PAGE_NAME_TRACK_EVENT } from "~/screens/PushNotificationsModal";
 
 export type DataOfUser = {
   // timestamps in ms of every time the user dismisses the opt in prompt (until he opts in)
@@ -46,7 +45,7 @@ export type DataOfUser = {
 export type EventTrigger = {
   timeout: NodeJS.Timeout;
   /** Name of the current screen route that will maybe trigger the push notification modal */
-  routeName: ScreenName;
+  route_name: ScreenName;
   /** In milliseconds, delay before triggering the push notification modal */
   timer: number;
   /** Whether the push notification modal is triggered when entering or when leaving the screen */
@@ -71,7 +70,7 @@ const useNotifications = () => {
   const pushNotificationsFeature = useFeature("brazePushNotifications");
 
   const notifications = useSelector(notificationsSelector);
-  const permissionStatus = useSelector(notificationPermissionStatus);
+  const permissionStatus = useSelector(notificationsPermissionStatusSelector);
   const actionEvents = pushNotificationsFeature?.params?.action_events;
   const repromptSchedule = pushNotificationsFeature?.params?.reprompt_schedule;
 
@@ -240,6 +239,14 @@ const useNotifications = () => {
         return updatePushNotificationsDataOfUserInStateAndStore(storedUserData ?? {});
       }
     }
+
+    if (dataOfUserFromStorage.status === "rejected" && permission.status === "fulfilled") {
+      const osPermissionStatus = permission.value;
+      dispatch(setNotificationPermissionStatus(osPermissionStatus));
+
+      // ignore this case, we will check user status in the next initPushNotificationsData call
+      return;
+    }
   }, [
     initializeNotificationSettingsState,
     syncOptOutState,
@@ -259,6 +266,15 @@ const useNotifications = () => {
       subscription.remove();
     };
   }, [initPushNotificationsData]);
+
+  useEffect(() => {
+    return () => {
+      if (pushNotificationsEventTriggered?.timeout) {
+        clearTimeout(pushNotificationsEventTriggered.timeout);
+        dispatch(setRatingsModalLocked(false));
+      }
+    };
+  }, [dispatch, pushNotificationsEventTriggered?.timeout]);
 
   const requestPushNotificationsPermission = useCallback(async () => {
     const { requestPermission } = getMessaging();
@@ -318,7 +334,7 @@ const useNotifications = () => {
     [repromptSchedule],
   );
 
-  const verifyShouldPromptOptInDrawer = useCallback(() => {
+  const shouldPromptOptInDrawerCallback = useCallback(() => {
     const isOsPermissionAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
     if (isOsPermissionAuthorized && notifications.areNotificationsAllowed) {
       return false;
@@ -360,7 +376,7 @@ const useNotifications = () => {
       }, timer);
       dispatch(
         setNotificationsEventTriggered({
-          routeName,
+          route_name: routeName,
           timer,
           timeout,
         }),
@@ -370,13 +386,11 @@ const useNotifications = () => {
   );
 
   const handleRouteChangePushNotification = useCallback(
-    (newRoute: ScreenName, isOtherModalOpened = false): boolean => {
+    (newRoute: ScreenName): boolean => {
       if (pushNotificationsEventTriggered?.timeout) {
         clearTimeout(pushNotificationsEventTriggered?.timeout);
         dispatch(setRatingsModalLocked(false));
       }
-
-      if (isOtherModalOpened) return false;
 
       const triggerEvents = pushNotificationsFeature?.params?.trigger_events ?? [];
 
@@ -386,8 +400,8 @@ const useNotifications = () => {
           eventTrigger.type === "on_leave" && eventTrigger.route_name === pushNotificationsOldRoute;
 
         if (isEntering || isLeaving) {
-          const shouldPromptOptInDrawer = verifyShouldPromptOptInDrawer();
-          if (!shouldPromptOptInDrawer) {
+          const shouldPrompt = shouldPromptOptInDrawerCallback();
+          if (!shouldPrompt) {
             return false;
           }
 
@@ -404,17 +418,19 @@ const useNotifications = () => {
       pushNotificationsFeature?.params?.trigger_events,
       dispatch,
       pushNotificationsOldRoute,
-      verifyShouldPromptOptInDrawer,
+      shouldPromptOptInDrawerCallback,
       openDrawer,
     ],
   );
 
   const tryTriggerPushNotificationDrawerAfterAction = useCallback(
     (actionSource: Exclude<NotificationsState["drawerSource"], "generic">) => {
-      if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
+      if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked || !actionEvents) {
+        return;
+      }
 
-      const shouldPromptOptInDrawer = verifyShouldPromptOptInDrawer();
-      if (!shouldPromptOptInDrawer) {
+      const shouldPrompt = shouldPromptOptInDrawerCallback();
+      if (!shouldPrompt) {
         return;
       }
 
@@ -491,17 +507,11 @@ const useNotifications = () => {
       }
     },
     [
-      verifyShouldPromptOptInDrawer,
-      isPushNotificationsModalLocked,
-      openDrawer,
       pushNotificationsFeature?.enabled,
-      actionEvents?.add_favorite_coin,
-      actionEvents?.buy,
-      actionEvents?.receive,
-      actionEvents?.send,
-      actionEvents?.stake,
-      actionEvents?.swap,
-      actionEvents?.complete_onboarding,
+      isPushNotificationsModalLocked,
+      actionEvents,
+      shouldPromptOptInDrawerCallback,
+      openDrawer,
     ],
   );
 
@@ -509,7 +519,7 @@ const useNotifications = () => {
     (eventName: string) => {
       track("button_clicked", {
         button: eventName,
-        page: DRAWER_PAGE_NAME_TRACK_EVENT,
+        page: "Drawer push notification opt-in",
         source: drawerSource,
         repromptDelay: getRepromptDelay(pushNotificationsDataOfUser?.dismissedOptInDrawerAtList),
         dismissedCount: pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0,
@@ -591,6 +601,8 @@ const useNotifications = () => {
     handleAllowNotificationsPress,
     handleDelayLaterPress,
     handleCloseFromBackdropPress,
+
+    shouldPromptOptInDrawerCallback,
   };
 };
 

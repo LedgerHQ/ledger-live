@@ -164,25 +164,25 @@ function NotificationsSettings() {
           />
         </Box>
         <Box opacity={isOsPermissionAuthorized && notifications.areNotificationsAllowed ? 1 : 0.2}>
-          {!hiddenNotificationCategories.includes("announcementsCategory") ? (
+          {hiddenNotificationCategories.includes("announcementsCategory") ? null : (
             <NotificationSettingsRow
               notificationKey={"announcementsCategory"}
               disabled={disableSubSettings}
             />
-          ) : null}
-          {!hiddenNotificationCategories.includes("largeMoverCategory") ? (
+          )}
+          {hiddenNotificationCategories.includes("largeMoverCategory") ? null : (
             <NotificationSettingsRow
               notificationKey={"largeMoverCategory"}
               disabled={disableSubSettings}
             />
-          ) : null}
+          )}
           {featureTransactionsAlerts?.enabled &&
-          !hiddenNotificationCategories.includes("transactionsAlertsCategory") ? (
+          hiddenNotificationCategories.includes("transactionsAlertsCategory") ? null : (
             <NotificationSettingsRow
               notificationKey={"transactionsAlertsCategory"}
               disabled={disableSubSettings}
             />
-          ) : null}
+          )}
         </Box>
         <Box m={6}>
           <Text color="neutral.c70" variant="small" textAlign="center">
