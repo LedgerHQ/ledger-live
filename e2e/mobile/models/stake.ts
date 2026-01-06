@@ -80,7 +80,12 @@ export async function verifyStakeOperationDetailsInfo(
     await app.operationDetails.checkRecipientAsProvider(provider);
   }
   if (currenciesForSender.includes(currency)) {
-    await app.operationDetails.checkSender(delegation.account.address);
+    const address = delegation.account.address;
+    if (address) {
+      await app.operationDetails.checkSender(address);
+    } else {
+      throw new Error("Account address is undefined");
+    }
   }
   if (fees) {
     await app.operationDetails.checkFees(fees);

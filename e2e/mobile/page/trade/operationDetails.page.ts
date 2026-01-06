@@ -1,4 +1,4 @@
-import { getAccountAddress, Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
 
 export default class OperationDetailsPage {
   titleId = "operationDetails-title";
@@ -37,13 +37,12 @@ export default class OperationDetailsPage {
     await scrollToId(this.recipientId, this.operationDetailsScrollViewId);
     const recipientElement = getElementById(this.recipientId);
 
-    let expected: string;
-    if (await IsIdVisible(this.operationDetailsConfirmed)) {
-      expected = getAccountAddress(recipient);
+    const expected = recipient.address;
+    if (expected) {
+      await detoxExpect(recipientElement).toHaveText(expected);
     } else {
-      expected = recipient.address;
+      throw new Error("Recipient address is undefined");
     }
-    await detoxExpect(recipientElement).toHaveText(expected);
   }
 
   @Step("Check recipient as provider")
