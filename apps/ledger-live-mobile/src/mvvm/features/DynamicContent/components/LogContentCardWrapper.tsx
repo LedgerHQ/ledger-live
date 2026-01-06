@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function LogContentCardWrapper({ id, children, displayedPosition }: Props) {
-  const ref = useRef<View>(null);
+  const ref = useRef<View | null>(null);
   const { logImpressionCard } = useDynamicContent();
 
   useInViewContext(
@@ -19,6 +19,7 @@ export default function LogContentCardWrapper({ id, children, displayedPosition 
       if (isInView) logImpressionCard(id, displayedPosition);
     },
     [id, logImpressionCard, displayedPosition],
+    // @ts-expect-error REACT19FIXME: RefObject<View | null> not assignable to RefObject<View>
     ref,
   );
 

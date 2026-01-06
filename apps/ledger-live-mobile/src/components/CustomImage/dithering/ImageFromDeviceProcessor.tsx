@@ -102,7 +102,9 @@ export default class ImageHexProcessor extends React.Component<Props> {
         />
         <Flex flex={0}>
           <WebView
-            ref={c => (this.webViewRef = c)}
+            ref={c => {
+              this.webViewRef = c;
+            }}
             androidLayerType="software"
             onError={this.handleWebViewError}
             onLoadEnd={this.handleWebViewLoaded}

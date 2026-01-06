@@ -104,7 +104,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
   const readyRedirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const preventNavigation = useRef(false);
   const scrollViewRef = useRef<ScrollView>(null);
-  const analyticsSeedConfiguration = useRef<SeedOriginType>();
+  const analyticsSeedConfiguration = useRef<SeedOriginType | undefined>(undefined);
 
   /*
    * Redux State

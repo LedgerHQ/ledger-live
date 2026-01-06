@@ -42,7 +42,7 @@ const ActionRow: React.FC<ActionRowProps> = ({
     <TouchableCard
       onPressIn={onPress}
       testID={testID}
-      style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+      style={({ pressed }: { pressed: boolean }) => ({ opacity: pressed ? 0.5 : 1 })}
       hitSlop={16}
     >
       {icon}

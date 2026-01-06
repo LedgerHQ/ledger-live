@@ -97,5 +97,7 @@ module.exports = {
     "styled-components":
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
     "^react-redux": "<rootDir>/node_modules/react-redux",
+    "^@tanstack/react-query$":
+      "<rootDir>/../../node_modules/.pnpm/@tanstack+react-query@5.28.9_react@19.0.0/node_modules/@tanstack/react-query",
   },
 };

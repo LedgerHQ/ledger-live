@@ -185,7 +185,7 @@ const History = () => {
           </Alert>
         </View>
       ) : null}
-      <AnimatedSectionList
+      <AnimatedSectionList<MappedSwapOperation, SwapHistorySection>
         ref={ref}
         sections={sections}
         style={styles.sectionList}
@@ -204,9 +204,7 @@ const History = () => {
             />
           ) : null
         }
-        keyExtractor={({ swapId, operation }: { swapId: string; operation?: { id: string } }) =>
-          swapId + operation?.id
-        }
+        keyExtractor={({ swapId, operation }: MappedSwapOperation) => swapId + operation?.id}
         renderItem={renderItem}
         renderSectionHeader={({ section }: { section: SwapHistorySection }) => (
           <LText semiBold style={styles.section} color="grey">

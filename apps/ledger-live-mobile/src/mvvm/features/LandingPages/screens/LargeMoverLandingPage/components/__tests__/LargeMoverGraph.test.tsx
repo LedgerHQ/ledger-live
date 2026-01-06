@@ -93,7 +93,7 @@ describe("LargeMoverGraph", () => {
           value: d[1],
         })),
       }),
-      expect.anything(),
+      undefined,
     );
 
     rerender(
@@ -113,7 +113,7 @@ describe("LargeMoverGraph", () => {
           value: d[1],
         })),
       }),
-      expect.anything(),
+      undefined,
     );
   });
 });

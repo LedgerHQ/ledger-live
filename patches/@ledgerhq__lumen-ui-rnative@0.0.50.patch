@@ -1,0 +1,45 @@
+diff --git a/src/lib/Components/Select/Select.tsx b/src/lib/Components/Select/Select.tsx
+index 5dc82892f1c13b38966cdee2870bd8a951b9ca14..41ed8da8a6166ac9f8868ad950105c430f372b10 100644
+--- a/src/lib/Components/Select/Select.tsx
++++ b/src/lib/Components/Select/Select.tsx
+@@ -339,10 +339,10 @@ export const SelectContent: React.FC<SelectContentProps> = ({ children }) => {
+             disabled: props.disabled,
+           });
+         } else if (element.type === SelectGroup) {
+-          extractItems(element.props.children);
++          extractItems((element.props as any).children);
+         } else if (element.type === SelectLabel) {
+           const labelText = extractTextFromChildren(
+-            element.props.children,
++            (element.props as any).children,
+             SelectItemText,
+           );
+           items.push({
+@@ -353,8 +353,8 @@ export const SelectContent: React.FC<SelectContentProps> = ({ children }) => {
+           items.push({
+             type: 'separator',
+           });
+-        } else if (element.props?.children) {
+-          extractItems(element.props.children);
++        } else if ((element.props as any)?.children) {
++          extractItems((element.props as any).children);
+         }
+       });
+     };
+diff --git a/src/lib/utils/react/extractTextFromChildren.ts b/src/lib/utils/react/extractTextFromChildren.ts
+index f5511413f3625df9442e1d305190bf6be94af3ae..527f253451cf9b31420fd91358b3be7f849729f2 100644
+--- a/src/lib/utils/react/extractTextFromChildren.ts
++++ b/src/lib/utils/react/extractTextFromChildren.ts
+@@ -17,10 +17,10 @@ export function extractTextFromChildren(
+     } else if (React.isValidElement(child)) {
+       if (
+         (textComponentType && child.type === textComponentType) ||
+-        child.props?.children
++        (child.props as any)?.children
+       ) {
+         text += extractTextFromChildren(
+-          child.props.children,
++          (child.props as any).children,
+           textComponentType,
+         );
+       }

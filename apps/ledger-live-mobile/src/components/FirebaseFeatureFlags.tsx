@@ -89,6 +89,10 @@ export const FirebaseFeatureFlagsProvider = ({
     }),
     [overrideFeature, resetFeature, resetFeatures, wrappedGetFeature],
   );
-
-  return <FeatureFlagsProvider value={contextValue}>{children}</FeatureFlagsProvider>;
+  return (
+    <FeatureFlagsProvider value={contextValue}>
+      {/* @ts-expect-error REACT19FIXME: ReactNode type from React 18 is not compatible with ReactNode from React 19 */}
+      {children}
+    </FeatureFlagsProvider>
+  );
 };

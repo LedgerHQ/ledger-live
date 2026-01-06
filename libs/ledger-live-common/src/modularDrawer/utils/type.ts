@@ -1,7 +1,7 @@
 import { CounterValuesState } from "@ledgerhq/live-countervalues/lib/types";
 import { CryptoOrTokenCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
-import { ReactNode } from "react";
+import type { ReactNode, ReactElement } from "react";
 import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";
 import { InterestRate } from "../../dada-client/entities";
 import { MarketItemResponse } from "../../market/utils/types";
@@ -12,8 +12,8 @@ export type AssetType = {
   name: string;
   ticker: string;
   id: string;
-  leftElement?: React.ReactNode;
-  rightElement?: React.ReactNode;
+  leftElement?: ReactNode;
+  rightElement?: ReactNode;
 };
 
 export type ProviderBalanceAsset = {
@@ -48,18 +48,18 @@ export type BalanceUI = {
   locale?: string;
   discreet?: boolean;
 };
-export type CreateBalanceItem = (x: BalanceUI) => React.ReactNode;
+export type CreateBalanceItem = (x: BalanceUI) => ReactNode;
 
 export type CreateAccountsCountAndApy = (args: {
   label?: string;
   value?: number;
   type?: ApyType;
-}) => React.ReactElement | undefined;
+}) => ReactElement | undefined;
 
 export type NetworkWithCount = {
   leftElement?: ReactNode;
   description?: string;
-  apy?: React.ReactElement;
+  apy?: ReactElement;
   count: number;
 };
 
@@ -84,10 +84,10 @@ export type NetworkHookParams = {
 export type NetworkHook = (params: NetworkHookParams) => Array<{
   balanceData?: BalanceUI;
   count?: number;
-  leftElement?: React.ReactNode;
-  rightElement?: React.ReactNode;
+  leftElement?: ReactNode;
+  rightElement?: ReactNode;
   description?: string;
-  apy?: React.ReactElement;
+  apy?: ReactElement;
 }>;
 
 export type NetworkConfigurationDeps = {
@@ -106,10 +106,10 @@ export type Network = {
   name: string;
   id: string;
   ticker: string;
-  leftElement?: React.ReactNode;
-  rightElement?: React.ReactNode;
+  leftElement?: ReactNode;
+  rightElement?: ReactNode;
   description?: string;
-  apy?: React.ReactElement;
+  apy?: ReactElement;
 };
 
 export type CreateNetworkConfigurationHookProps = {
