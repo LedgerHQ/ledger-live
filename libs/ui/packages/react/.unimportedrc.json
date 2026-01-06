@@ -6,8 +6,7 @@
     "src/assets/fonts.ts",
     "src/assets/icons.ts",
     "src/assets/cryptoIcons.ts",
-    "src/components/animations/GlitchText/index.tsx",
-    "src/components/form/SelectInput/VirtualMenuList.tsx"
+    "src/components/animations/GlitchText/index.tsx"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": ["**/node_modules/**", "**/*.stories.*", "**/*.test.*"],

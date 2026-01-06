@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { TokenCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -66,9 +66,6 @@ const TokenSelection = ({
   onChangeToken: (token?: TokenCurrency | null) => void;
   networkFamily: string;
 }) => {
-  const [lastItemIndex, setLastItemIndex] = useState<number | undefined>(undefined);
-  const [keepLastScrollPosition, setKeepLastScrollPosition] = useState(false);
-
   const {
     data: tokensData,
     isLoading,
@@ -79,12 +76,8 @@ const TokenSelection = ({
   });
 
   const handleMenuScrollToBottom = useCallback(() => {
-    if (loadNext) {
-      setLastItemIndex(tokensData ? tokensData.tokens.length - 1 : 0);
-      setKeepLastScrollPosition(true);
-      loadNext();
-    }
-  }, [loadNext, tokensData]);
+    loadNext?.();
+  }, [loadNext]);
 
   if (error) {
     return (
@@ -122,8 +115,6 @@ const TokenSelection = ({
         currencies={tokensData?.tokens || []}
         value={token}
         onMenuScrollToBottom={handleMenuScrollToBottom}
-        lastItemIndex={lastItemIndex}
-        keepLastScrollPosition={keepLastScrollPosition}
         isLoading={isLoading}
       />
     </>
