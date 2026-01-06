@@ -91,8 +91,8 @@ export function useIsDeviceLockedPolling({ device, enabled }: Params): {
   }, [enabled, device, nonce]);
 
   const retry = useCallback(() => {
-    setNonce(nonce + 1);
-  }, [nonce]);
+    setNonce(nonce => nonce + 1);
+  }, []);
 
   return { result, retry };
 }
