@@ -41,6 +41,8 @@ export default class PortfolioPage {
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
   walletTabSelector = (id: "Wallet" | "Market") =>
     getElementById(`${this.walletTabSelectorBase}${id}`);
+  operationByType = (operationType?: string) =>
+    getElementByIdAndText(this.operationRowDate, new RegExp(`.*${operationType ?? ""}.*`, "i"));
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
@@ -201,8 +203,8 @@ export default class PortfolioPage {
   }
 
   @Step("Click on selected last operation")
-  async selectAndClickOnLastOperation() {
-    await tapById(this.operationRowDate);
+  async selectAndClickOnLastOperation(operationType?: string) {
+    await tapByElement(this.operationByType(operationType));
   }
 
   @Step("Tap on tab selector")
