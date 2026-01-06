@@ -26,9 +26,10 @@ export const DeviceLockedCheckDrawer = ({ isOpen, device, onDeviceUnlocked, onCl
   const isLocked = isLockedResult.type === IsDeviceLockedResultType.locked;
   const isUnlocked = isLockedResult.type === IsDeviceLockedResultType.unlocked;
   const isError = isLockedResult.type === IsDeviceLockedResultType.error;
+  const isPeerRemovedPairingError = isError && isLockedResult.error instanceof PeerRemovedPairing;
+  const isOtherError = isError && !isPeerRemovedPairingError;
   const isLockedStateCannotBeDetermined =
     isLockedResult.type === IsDeviceLockedResultType.lockedStateCannotBeDetermined;
-  const isPeerRemovedPairingError = isError && isLockedResult.error instanceof PeerRemovedPairing;
 
   useEffect(() => {
     if (isUnlocked || isLockedStateCannotBeDetermined) {
@@ -53,15 +54,13 @@ export const DeviceLockedCheckDrawer = ({ isOpen, device, onDeviceUnlocked, onCl
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
       {isUndetermined && <InfiniteLoader />}
-      {isError &&
-        (isPeerRemovedPairingError ? (
-          <BleForgetDeviceIllustration
-            productName={getDeviceModel(device.modelId).productName}
-            onRetry={retry}
-          />
-        ) : (
-          <GenericErrorView error={isLockedResult.error} hasExportLogButton />
-        ))}
+      {isPeerRemovedPairingError && (
+        <BleForgetDeviceIllustration
+          productName={getDeviceModel(device.modelId).productName}
+          onRetry={retry}
+        />
+      )}
+      {isOtherError && <GenericErrorView error={isLockedResult.error} hasExportLogButton />}
       {isLocked && (
         <>
           <TrackScreen name="Drawer: Unlock your Device" {...trackingProps} />
