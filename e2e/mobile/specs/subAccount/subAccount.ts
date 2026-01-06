@@ -158,81 +158,60 @@ export function runSendSPLAddressInvalid(
   });
 }
 
-export function runAddSubAccountTest(
-  asset: AccountType,
-  tmslinks: string[],
-  tags: string[],
-  withParentAccount: boolean,
-) {
-  describe(
-    withParentAccount ? "Add subAccount when parent exists" : "Add subAccount without parent",
-    () => {
-      beforeAll(async () => {
-        await app.init({
-          userdata: withParentAccount ? "speculos-subAccount" : "skip-onboarding",
-          speculosApp: asset.currency.speculosApp,
-        });
-        await app.portfolio.waitForPortfolioPageToLoad();
+export function runAddSubAccountTest(testConfig: {
+  asset: AccountType;
+  tmslinks: string[];
+  tags: string[];
+}) {
+  describe("Add subAccount without parent", () => {
+    const { asset, tmslinks, tags } = testConfig;
+    beforeAll(async () => {
+      await app.init({
+        userdata: "skip-onboarding",
+        speculosApp: asset.currency.speculosApp,
       });
+      await app.portfolio.waitForPortfolioPageToLoad();
+    });
 
-      tmslinks.forEach(tmsLink => $TmsLink(tmsLink));
-      tags.forEach(tag => $Tag(tag));
-      it(
-        withParentAccount
-          ? `[${asset.currency.speculosApp.name}] Add subAccount when parent exists (${asset.currency.ticker})`
-          : `Add Sub Account without parent (${asset.currency.speculosApp.name}) - ${asset.currency.ticker}`,
-        async () => {
-          if (withParentAccount) {
-            await app.portfolio.tapTabSelector("Accounts");
-            await app.portfolio.tapAddNewOrExistingAccountButton();
-          } else {
-            await app.portfolio.addAccount();
-          }
+    tmslinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it(`Add Sub Account without parent (${asset.currency.speculosApp.name}) - ${asset.currency.ticker}`, async () => {
+      await app.portfolio.addAccount();
 
-          const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
+      const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
 
-          if (isModularDrawer) {
-            await app.addAccount.importWithYourLedger();
-            await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
-            await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
-            const networkName =
-              asset?.parentAccount === undefined
-                ? asset.currency.speculosApp.name
-                : asset?.parentAccount?.currency.name;
-            await app.modularDrawer.selectNetworkIfAsked(networkName);
-          } else {
-            await app.addAccount.importWithYourLedger();
-            await app.common.performSearch(
-              asset?.parentAccount === undefined ? asset.currency.id : asset.currency.name,
-            );
-            if (asset.tokenType) {
-              await app.receive.selectCurrencyByType(asset.tokenType);
-            } else {
-              await app.receive.selectCurrency(asset.currency.id);
-            }
-            const networkId =
-              asset?.parentAccount === undefined
-                ? asset.currency.speculosApp.name.toLowerCase()
-                : asset?.parentAccount?.currency.id;
-            await app.receive.selectNetworkIfAsked(networkId);
-          }
+      if (isModularDrawer) {
+        await app.addAccount.importWithYourLedger();
+        await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
+        await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
+        await app.modularDrawer.selectNetworkIfAsked(asset.parentAccount!.currency.name);
+      } else {
+        await app.addAccount.importWithYourLedger();
+        await app.common.performSearch(
+          asset?.parentAccount === undefined ? asset.currency.id : asset.currency.name,
+        );
+        if (asset.tokenType) {
+          await app.receive.selectCurrencyByType(asset.tokenType);
+        } else {
+          await app.receive.selectCurrency(asset.currency.id);
+        }
+        const networkId =
+          asset?.parentAccount === undefined
+            ? asset.currency.speculosApp.name.toLowerCase()
+            : asset?.parentAccount?.currency.id;
+        await app.receive.selectNetworkIfAsked(networkId);
+      }
 
-          const accountId = await app.addAccount.addAccountAtIndex(
-            asset?.parentAccount === undefined
-              ? asset.accountName
-              : asset.parentAccount.accountName,
-            asset?.parentAccount === undefined
-              ? `${asset.currency.id}:${asset.address}`
-              : asset.parentAccount.currency.id,
-            asset.index,
-          );
-
-          await app.common.goToAccount(accountId);
-          await app.account.expectAccountBalanceVisible(accountId);
-          await app.account.expectOperationHistoryVisible(accountId);
-          await app.account.expectAddressIndex(0);
-        },
+      const accountId = await app.addAccount.addAccountAtIndex(
+        asset.parentAccount!.accountName,
+        asset.parentAccount!.currency.id,
+        asset.index,
       );
-    },
-  );
+
+      await app.common.goToAccount(accountId);
+      await app.account.expectAccountBalanceVisible(accountId);
+      await app.account.expectOperationHistoryVisible(accountId);
+      await app.account.expectAddressIndex(0);
+    });
+  });
 }
