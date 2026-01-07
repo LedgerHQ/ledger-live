@@ -168,11 +168,7 @@ export function getDescriptor(currency: CryptoOrTokenCurrency | undefined): Coin
   // Fallback: use the descriptor registry and check feature flags
   const fullDescriptor = descriptorRegistry[cryptoCurrency.family];
 
-  if (!fullDescriptor) {
-    return null;
-  }
-
-  if (fullDescriptor.send && isFeatureActive(cryptoCurrency, "blockchain_txs")) {
+  if (fullDescriptor) {
     return fullDescriptor;
   }
 

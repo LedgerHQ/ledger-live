@@ -6,10 +6,6 @@ const nearConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
-        features: [
-          { id: "blockchain_txs", status: "active" },
-          { id: "staking_txs", status: "active" },
-        ],
       },
       infra: {
         API_NEAR_PRIVATE_NODE: "https://near.coin.ledger.com/node",

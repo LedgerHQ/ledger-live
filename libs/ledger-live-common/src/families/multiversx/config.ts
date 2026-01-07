@@ -6,10 +6,6 @@ export const multiversxConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
-        features: [
-          { id: "blockchain_txs", status: "active" },
-          { id: "staking_txs", status: "active" },
-        ],
       },
     },
   },

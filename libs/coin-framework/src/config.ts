@@ -1,11 +1,11 @@
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { MissingCoinConfig } from "./errors";
-import type { FeatureConfig } from "./features/types";
+import { FeaturesMap } from "./features/types";
 
 type ConfigStatus =
   | {
       type: "active";
-      features?: FeatureConfig[];
+      features?: FeaturesMap[];
     }
   | {
       type: "under_maintenance";

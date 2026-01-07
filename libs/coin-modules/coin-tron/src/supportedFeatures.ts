@@ -1,6 +1,7 @@
-import type { SupportedFeatures } from "@ledgerhq/coin-framework/features/types";
+import type { FeaturesMap } from "@ledgerhq/coin-framework/features/types";
 
-export const supportedFeatures: SupportedFeatures = {
-  blockchain_txs: ["send"],
-  staking_txs: ["delegate", "undelegate", "claimReward"],
+export const supportedFeatures: FeaturesMap = {
+  blockchain: ["blockchain_blocks", "blockchain_txs"],
+  staking: ["staking_history", "staking_txs", "staking_stakes", "staking_rewards"],
+  tokens: ["tokens_balance", "tokens_history", "tokens_craft"],
 };

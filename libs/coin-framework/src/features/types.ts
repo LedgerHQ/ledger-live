@@ -1,71 +1,59 @@
 /**
- * Feature IDs as defined in https://ledgerhq.atlassian.net/wiki/spaces/CF/pages/6125551933/Coin+modules+-+ADR-003+-+Features+support
- * These represent the capabilities/features a coin module can support
- */
-export type FeatureId =
-  // Blockchain transaction features
-  | "blockchain_txs"
-  // Staking features
-  | "staking_txs";
-
-/**
  * Intent types for blockchain_txs feature
  */
-export type BlockchainTxsIntent = "send";
+export type BlockchainTxsFeatures = "blockchain_blocks" | "blockchain_txs";
 
 /**
  * Intent types for staking_txs feature
  */
-export type StakingTxsIntent =
-  | "delegate"
-  | "undelegate"
-  | "redelegate"
-  | "claimReward"
-  | "withdraw";
+export type StakingTxsFeatures =
+  | "staking_txs"
+  | "staking_history"
+  | "staking_stakes"
+  | "staking_rewards";
+
+export type NativeAssetsFeatures = "native_craft" | "native_balance" | "native_history";
+export type DAppsFeatures = "wallet_api";
+export type TokensFeature = "tokens_balance" | "tokens_history" | "tokens_craft";
+export type GasOptionsFeature = "token_craft_gas";
+export type MemosFeature = "memo_craft" | "memo_history";
+
+export type Feature =
+  | BlockchainTxsFeatures
+  | StakingTxsFeatures
+  | NativeAssetsFeatures
+  | DAppsFeatures
+  | TokensFeature
+  | GasOptionsFeature
+  | MemosFeature;
 
 /**
  * Mapping from feature ID to its supported intents
  */
-export type FeatureIntentMap = {
-  blockchain_txs: BlockchainTxsIntent;
-  staking_txs: StakingTxsIntent;
+export type FeaturesMap = {
+  blockchain?: BlockchainTxsFeatures[];
+  staking?: StakingTxsFeatures[];
+  native_assets?: NativeAssetsFeatures[];
+  dApps?: DAppsFeatures;
+  memos?: MemosFeature[];
+  tokens?: TokensFeature[];
+  gasOptions?: GasOptionsFeature;
 };
 
 /**
- * A supported feature declaration in a coin module
- * Maps feature IDs to their supported intents
- * Example: { "blockchain_txs": ["send"], "staking_txs": ["delegate", "claimReward"] }
+ * Alias for FeaturesMap for backward compatibility
  */
-export type SupportedFeatures = Partial<Record<FeatureId, string[]>>;
+export type SupportedFeatures = FeaturesMap;
 
 /**
- * Feature status in liveconfig
+ * Feature ID type - represents a feature identifier
  */
-export type FeatureStatus = "active" | "inactive";
+export type FeatureId = keyof FeaturesMap;
 
 /**
- * Feature configuration in liveconfig
+ * Feature configuration type
  */
 export type FeatureConfig = {
   id: FeatureId;
-  status: FeatureStatus;
+  status: "active" | "inactive";
 };
-
-/**
- * Helper function to check if a feature is supported
- */
-export function hasFeature(supportedFeatures: SupportedFeatures, featureId: FeatureId): boolean {
-  return featureId in supportedFeatures;
-}
-
-/**
- * Helper function to check if an intent is supported for a feature
- */
-export function hasIntent(
-  supportedFeatures: SupportedFeatures,
-  featureId: FeatureId,
-  intent: string,
-): boolean {
-  const intents = supportedFeatures[featureId];
-  return intents?.includes(intent) ?? false;
-}
