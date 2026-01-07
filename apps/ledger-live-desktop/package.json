@@ -149,7 +149,7 @@
     "react-spring": "8.0.27",
     "react-transition-group": "4.4.5",
     "redux": "catalog:",
-    "redux-actions": "2.6.5",
+    "redux-actions": "catalog:",
     "reselect": "catalog:",
     "rimraf": "4.4.1",
     "rxjs": "catalog:",

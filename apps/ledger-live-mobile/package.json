@@ -213,7 +213,7 @@
     "react-native-webview": "13.16.0",
     "react-redux": "catalog:",
     "redux": "catalog:",
-    "redux-actions": "2.6.5",
+    "redux-actions": "catalog:",
     "reselect": "catalog:",
     "rn-fetch-blob": "0.12.0",
     "rxjs": "catalog:",
