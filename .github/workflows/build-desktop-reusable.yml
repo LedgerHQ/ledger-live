@@ -144,7 +144,7 @@ jobs:
             }
             return JSON.stringify(obj);
 
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@chore/rspack-compatible-build-checks
+      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@chore/rspack-compatible-build-checks-test
         if: ${{ !cancelled() && github.event.number != '' }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
