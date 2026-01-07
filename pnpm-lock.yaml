@@ -213,7 +213,6 @@ overrides:
   '@ledgerhq/devices': workspace:*
   '@ledgerhq/hw-transport': workspace:*
   '@ledgerhq/context-module': 1.11.1
-  '@hashgraph/sdk>bignumber.js': 9.1.2
   tslib: 2.6.2
   '@ethersproject/providers>ws': 7.5.10
   elliptic: 6.6.1
@@ -3455,8 +3454,8 @@ importers:
   libs/coin-modules/coin-hedera:
     dependencies:
       '@hashgraph/sdk':
-        specifier: 2.74.0
-        version: 2.74.0
+        specifier: 2.78.0
+        version: 2.78.0
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework
@@ -13896,9 +13895,6 @@ packages:
   '@ethersproject/abi@5.8.0':
     resolution: {integrity: sha512-b9YS/43ObplgyV6SlyQsG53/vkSal0MNA1fskSC4mbnCMi8R+NkcH8K9FPYNESf6jUefBUniE4SOKms0E/KK1Q==}
 
-  '@ethersproject/abstract-provider@5.7.0':
-    resolution: {integrity: sha512-R41c9UkchKCpAqStMYUpdunjo3pkEvZC3FAwZn5S5MGbXoMQOHIdHItezTETxAO5bevtMApSyEhn9+CHcDsWBw==}
-
   '@ethersproject/abstract-provider@5.8.0':
     resolution: {integrity: sha512-wC9SFcmh4UK0oKuLJQItoQdzS/qZ51EJegK6EmAWlh+OptpQ/npECOR3QqECd8iGHC0RJb4WKbVdSfif4ammrg==}
 
@@ -13956,9 +13952,6 @@ packages:
   '@ethersproject/logger@5.8.0':
     resolution: {integrity: sha512-Qe6knGmY+zPPWTC+wQrpitodgBfH7XoceCGL5bJVejmH+yCS3R8jJm8iiWuvWbG76RUmyEG53oqv6GMVWqunjA==}
 
-  '@ethersproject/networks@5.7.1':
-    resolution: {integrity: sha512-n/MufjFYv3yFcUyfhnXotyDlNdFb7onmkSy8aQERi2PjNcnWQ66xXxa3XlS8nCcA8aJKJjIIMNJTC7tu80GwpQ==}
-
   '@ethersproject/networks@5.8.0':
     resolution: {integrity: sha512-egPJh3aPVAzbHwq8DD7Po53J4OUSsA1MjQp8Vf/OZPav5rlmWUaFLiq8cvQiGK0Z5K6LYzm29+VA/p4RL1FzNg==}
 
@@ -13997,9 +13990,6 @@ packages:
 
   '@ethersproject/units@5.7.0':
     resolution: {integrity: sha512-pD3xLMy3SJu9kG5xDGI7+xhTEmGXlEqXU4OfNapmfnxLVY4EMSSRp7j1k7eezutBPH7RBN/7QPnwR7hzNlEFeg==}
-
-  '@ethersproject/web@5.7.1':
-    resolution: {integrity: sha512-Gueu8lSvyjBWL4cYsWsjh6MtMwM0+H4HvqFPZfB6dV8ctbP9zFAO73VG1cMWae0FLPCtz0peKPpZY8/ugJJX2w==}
 
   '@ethersproject/web@5.8.0':
     resolution: {integrity: sha512-j7+Ksi/9KfGviws6Qtf9Q7KCqRhpwrYKQPs+JBA/rKVFF/yaWLHJEH3zfVP2plVu+eys0d2DlFmhoQJayFewcw==}
@@ -14705,27 +14695,8 @@ packages:
   '@hapi/topo@5.1.0':
     resolution: {integrity: sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==}
 
-  '@hashgraph/cryptography@1.12.0':
-    resolution: {integrity: sha512-KdiH8bufBZrFsXLjYEKedULZIHkXXBVMbTNjG+URbxJAjbgw+vRqv4J/xxUjJg1WAg2TydX8MZuDqsfoUBovxQ==}
-    engines: {node: '>=12.0.0'}
-    peerDependencies:
-      expo-crypto: '*'
-    peerDependenciesMeta:
-      expo-crypto:
-        optional: true
-
-  '@hashgraph/proto@2.23.0':
-    resolution: {integrity: sha512-2IWei6P/cddhUmhDsvBEGx62/74siF4ZUIvuqBRq4JuVTEqcJaTH2T0RN5XL/IH6brwQUuEGlAs8gRMXa0bxaQ==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      ansi-regex: 6.2.2
-      ansi-styles: 6.2.3
-      debug: 4.4.1
-      protobufjs: 7.5.4
-      strip-ansi: 7.1.2
-
-  '@hashgraph/sdk@2.74.0':
-    resolution: {integrity: sha512-W4wCtScO4FR4bzm1s336yKQj+rKlawQigP/TRO/PcIzxbHJSgwvZRyP6rfoFYOaRZZeWkg3zyl+5Mz09pVB94w==}
+  '@hashgraph/sdk@2.78.0':
+    resolution: {integrity: sha512-mhefCpseHduXwsSJvAItNjpgio0LwTxoEQ3qzGdtY1WybUurTe5XA+2PFVnbiutaXQ+mDsLo+LJzS3D1juaK1g==}
     engines: {node: '>=18.0.0'}
 
   '@helium/address@4.11.1':
@@ -14736,6 +14707,25 @@ packages:
 
   '@helium/transactions@4.11.1':
     resolution: {integrity: sha512-uL6OKo5o8AKn7oOuuW6/T7MSwPikbYU2HsSDu2O7ZhnGiyzKcKXQMkIHSBuFKz9KT+DKVpVSwjeLXr4a6/D/eQ==}
+
+  '@hiero-ledger/cryptography@1.15.0':
+    resolution: {integrity: sha512-KLbueVfPuTotZfGT+HxcA3zz455eIZW/dBGxkpj9MEp+J2pruR9TyWzenozkuFAzvQ+ouJexE8OmtJMwV5XBBg==}
+    engines: {node: '>=12.0.0'}
+    peerDependencies:
+      expo-crypto: '*'
+    peerDependenciesMeta:
+      expo-crypto:
+        optional: true
+
+  '@hiero-ledger/proto@2.25.0':
+    resolution: {integrity: sha512-yZ9gb/2FMUSvH+txR1g1Z/03vbl4T11H8qw1NQyIuKhXe4PE8Ct8iHAL62aS0BN+OcR6CaF2wkfkQa16kgIkSA==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      ansi-regex: 6.2.2
+      ansi-styles: 6.2.3
+      debug: 4.4.1
+      protobufjs: 7.5.4
+      strip-ansi: 7.1.2
 
   '@humanwhocodes/config-array@0.11.14':
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
@@ -16075,6 +16065,9 @@ packages:
     engines: {node: '>=14'}
     peerDependencies:
       '@opentelemetry/api': ^1.1.0
+
+  '@pinojs/redact@0.4.0':
+    resolution: {integrity: sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg==}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -31573,6 +31566,10 @@ packages:
   pino-std-serializers@7.0.0:
     resolution: {integrity: sha512-e906FRY0+tV27iq4juKzSYPbUj2do2X2JX4EzSca1631EB2QJQUqGbDuERal7LCtOpxl6x3+nvo9NPZcmjkiFA==}
 
+  pino@10.1.0:
+    resolution: {integrity: sha512-0zZC2ygfdqvqK8zJIr1e+wT1T/L+LF6qvqvbzEQ6tiMAoTqEVK9a1K3YRu8HEUvGEvNqZyPJTtb2sNIoTkB83w==}
+    hasBin: true
+
   pino@9.1.0:
     resolution: {integrity: sha512-qUcgfrlyOtjwhNLdbhoL7NR4NkHjzykAPw0V2QLFbvu/zss29h4NkRnibyFzBrNCbzCOY3WZ9hhKSwfOkNggYA==}
     hasBin: true
@@ -32270,6 +32267,9 @@ packages:
 
   process-warning@4.0.1:
     resolution: {integrity: sha512-3c2LzQ3rY9d0hc1emcsHhfT9Jwz0cChib/QN89oME2R451w5fy3f0afAhERFZAwrbDU43wk12d0ORBpDVME50Q==}
+
+  process-warning@5.0.0:
+    resolution: {integrity: sha512-a39t9ApHNx2L4+HBnQKqxxHNs1r7KF+Intd8Q/g1bUh6q0WIp9voPXJ/x0j+ZL45KF1pJd9+q2jLIRMfvEshkA==}
 
   process@0.11.10:
     resolution: {integrity: sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==}
@@ -41112,8 +41112,8 @@ snapshots:
 
   '@celo/hw-app-eth@1.0.1':
     dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/rlp': 5.7.0
+      '@ethersproject/abi': 5.8.0
+      '@ethersproject/rlp': 5.8.0
       '@ledgerhq/cryptoassets-evm-signatures': 13.5.2
       '@ledgerhq/domain-service': 1.2.12
       '@ledgerhq/errors': 6.27.0
@@ -42882,16 +42882,6 @@ snapshots:
       '@ethersproject/properties': 5.8.0
       '@ethersproject/strings': 5.8.0
 
-  '@ethersproject/abstract-provider@5.7.0':
-    dependencies:
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/networks': 5.7.1
-      '@ethersproject/properties': 5.7.0
-      '@ethersproject/transactions': 5.7.0
-      '@ethersproject/web': 5.7.1
-
   '@ethersproject/abstract-provider@5.8.0':
     dependencies:
       '@ethersproject/bignumber': 5.8.0
@@ -42904,11 +42894,11 @@ snapshots:
 
   '@ethersproject/abstract-signer@5.7.0':
     dependencies:
-      '@ethersproject/abstract-provider': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/properties': 5.7.0
+      '@ethersproject/abstract-provider': 5.8.0
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/properties': 5.8.0
 
   '@ethersproject/abstract-signer@5.8.0':
     dependencies:
@@ -42920,11 +42910,11 @@ snapshots:
 
   '@ethersproject/address@5.7.0':
     dependencies:
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/keccak256': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/rlp': 5.7.0
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/keccak256': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/rlp': 5.8.0
 
   '@ethersproject/address@5.8.0':
     dependencies:
@@ -42936,7 +42926,7 @@ snapshots:
 
   '@ethersproject/base64@5.7.0':
     dependencies:
-      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/bytes': 5.8.0
 
   '@ethersproject/base64@5.8.0':
     dependencies:
@@ -42956,7 +42946,7 @@ snapshots:
 
   '@ethersproject/bytes@5.7.0':
     dependencies:
-      '@ethersproject/logger': 5.7.0
+      '@ethersproject/logger': 5.8.0
 
   '@ethersproject/bytes@5.8.0':
     dependencies:
@@ -42996,7 +42986,7 @@ snapshots:
 
   '@ethersproject/keccak256@5.7.0':
     dependencies:
-      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/bytes': 5.8.0
       js-sha3: 0.8.0
 
   '@ethersproject/keccak256@5.8.0':
@@ -43008,17 +42998,13 @@ snapshots:
 
   '@ethersproject/logger@5.8.0': {}
 
-  '@ethersproject/networks@5.7.1':
-    dependencies:
-      '@ethersproject/logger': 5.7.0
-
   '@ethersproject/networks@5.8.0':
     dependencies:
       '@ethersproject/logger': 5.8.0
 
   '@ethersproject/properties@5.7.0':
     dependencies:
-      '@ethersproject/logger': 5.7.0
+      '@ethersproject/logger': 5.8.0
 
   '@ethersproject/properties@5.8.0':
     dependencies:
@@ -43038,9 +43024,9 @@ snapshots:
 
   '@ethersproject/signing-key@5.7.0':
     dependencies:
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/properties': 5.7.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/properties': 5.8.0
       bn.js: 5.2.2
       elliptic: 6.6.1
       hash.js: 1.1.7
@@ -43056,9 +43042,9 @@ snapshots:
 
   '@ethersproject/strings@5.7.0':
     dependencies:
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/logger': 5.7.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/constants': 5.8.0
+      '@ethersproject/logger': 5.8.0
 
   '@ethersproject/strings@5.8.0':
     dependencies:
@@ -43095,14 +43081,6 @@ snapshots:
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/constants': 5.7.0
       '@ethersproject/logger': 5.7.0
-
-  '@ethersproject/web@5.7.1':
-    dependencies:
-      '@ethersproject/base64': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/properties': 5.7.0
-      '@ethersproject/strings': 5.7.0
 
   '@ethersproject/web@5.8.0':
     dependencies:
@@ -44507,46 +44485,15 @@ snapshots:
     dependencies:
       '@hapi/hoek': 9.3.0
 
-  '@hashgraph/cryptography@1.12.0':
-    dependencies:
-      '@noble/curves': 1.8.1
-      ansi-regex: 6.2.2
-      ansi-styles: 6.2.3
-      asn1js: 3.0.6
-      bignumber.js: 9.1.2
-      bn.js: 5.2.1
-      buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
-      crypto-js: 4.2.0
-      debug: 4.4.1
-      forge-light: 1.1.4
-      js-base64: 3.7.7
-      react-native-get-random-values: 1.11.0
-      spark-md5: 3.0.2
-      strip-ansi: 7.1.2
-      tweetnacl: 1.0.3
-      utf8: 3.0.0
-    transitivePeerDependencies:
-      - react-native
-      - supports-color
-
-  '@hashgraph/proto@2.23.0(ansi-regex@6.2.2)(ansi-styles@6.2.3)(debug@4.4.1)(protobufjs@7.5.4)(strip-ansi@7.1.2)':
-    dependencies:
-      ansi-regex: 6.2.2
-      ansi-styles: 6.2.3
-      debug: 4.4.1
-      long: 5.3.1
-      protobufjs: 7.5.4
-      strip-ansi: 7.1.2
-
-  '@hashgraph/sdk@2.74.0':
+  '@hashgraph/sdk@2.78.0':
     dependencies:
       '@ethersproject/abi': 5.8.0
       '@ethersproject/bignumber': 5.8.0
       '@ethersproject/bytes': 5.8.0
       '@ethersproject/rlp': 5.8.0
       '@grpc/grpc-js': 1.12.6
-      '@hashgraph/cryptography': 1.12.0
-      '@hashgraph/proto': 2.23.0(ansi-regex@6.2.2)(ansi-styles@6.2.3)(debug@4.4.1)(protobufjs@7.5.4)(strip-ansi@7.1.2)
+      '@hiero-ledger/cryptography': 1.15.0
+      '@hiero-ledger/proto': 2.25.0(ansi-regex@6.2.2)(ansi-styles@6.2.3)(debug@4.4.1)(protobufjs@7.5.4)(strip-ansi@7.1.2)
       ansi-regex: 6.2.2
       ansi-styles: 6.2.3
       bignumber.js: 9.1.2
@@ -44555,7 +44502,7 @@ snapshots:
       debug: 4.4.1
       js-base64: 3.7.4
       long: 5.3.1
-      pino: 9.6.0
+      pino: 10.1.0
       pino-pretty: 13.0.0
       protobufjs: 7.5.4
       rfc4648: 1.5.3
@@ -44583,6 +44530,37 @@ snapshots:
       '@types/libsodium-wrappers': 0.7.13
       long: 4.0.0
       path: 0.12.7
+
+  '@hiero-ledger/cryptography@1.15.0':
+    dependencies:
+      '@noble/curves': 1.8.1
+      ansi-regex: 6.2.2
+      ansi-styles: 6.2.3
+      asn1js: 3.0.6
+      bignumber.js: 9.1.2
+      bn.js: 5.2.1
+      buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
+      crypto-js: 4.2.0
+      debug: 4.4.1
+      forge-light: 1.1.4
+      js-base64: 3.7.7
+      react-native-get-random-values: 1.11.0
+      spark-md5: 3.0.2
+      strip-ansi: 7.1.2
+      tweetnacl: 1.0.3
+      utf8: 3.0.0
+    transitivePeerDependencies:
+      - react-native
+      - supports-color
+
+  '@hiero-ledger/proto@2.25.0(ansi-regex@6.2.2)(ansi-styles@6.2.3)(debug@4.4.1)(protobufjs@7.5.4)(strip-ansi@7.1.2)':
+    dependencies:
+      ansi-regex: 6.2.2
+      ansi-styles: 6.2.3
+      debug: 4.4.1
+      long: 5.3.1
+      protobufjs: 7.5.4
+      strip-ansi: 7.1.2
 
   '@humanwhocodes/config-array@0.11.14':
     dependencies:
@@ -45809,8 +45787,8 @@ snapshots:
 
   '@ledgerhq/evm-tools@1.3.0':
     dependencies:
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/hash': 5.7.0
+      '@ethersproject/constants': 5.8.0
+      '@ethersproject/hash': 5.8.0
       '@ledgerhq/cryptoassets-evm-signatures': 13.5.2
       '@ledgerhq/live-env': 2.4.1
       axios: 1.7.7
@@ -46831,6 +46809,8 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.25.1(@opentelemetry/api@1.9.0)
+
+  '@pinojs/redact@0.4.0': {}
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -69930,7 +69910,7 @@ snapshots:
   pino-http@10.1.0:
     dependencies:
       get-caller-file: 2.0.5
-      pino: 9.1.0
+      pino: 9.6.0
       pino-std-serializers: 7.0.0
       process-warning: 3.0.0
 
@@ -69966,6 +69946,20 @@ snapshots:
       strip-json-comments: 3.1.1
 
   pino-std-serializers@7.0.0: {}
+
+  pino@10.1.0:
+    dependencies:
+      '@pinojs/redact': 0.4.0
+      atomic-sleep: 1.0.0
+      on-exit-leak-free: 2.1.2
+      pino-abstract-transport: 2.0.0
+      pino-std-serializers: 7.0.0
+      process-warning: 5.0.0
+      quick-format-unescaped: 4.0.4
+      real-require: 0.2.0
+      safe-stable-stringify: 2.4.3
+      sonic-boom: 4.0.1
+      thread-stream: 3.0.0
 
   pino@9.1.0:
     dependencies:
@@ -70943,6 +70937,8 @@ snapshots:
   process-warning@3.0.0: {}
 
   process-warning@4.0.1: {}
+
+  process-warning@5.0.0: {}
 
   process@0.11.10: {}
 
@@ -76823,7 +76819,7 @@ snapshots:
 
   web3-core-method@1.10.4:
     dependencies:
-      '@ethersproject/transactions': 5.7.0
+      '@ethersproject/transactions': 5.8.0
       web3-core-helpers: 1.10.4
       web3-core-promievent: 1.10.4
       web3-core-subscriptions: 1.10.4
@@ -76864,7 +76860,7 @@ snapshots:
 
   web3-eth-abi@1.10.4:
     dependencies:
-      '@ethersproject/abi': 5.7.0
+      '@ethersproject/abi': 5.8.0
       web3-utils: 1.10.4
 
   web3-eth-accounts@1.10.4:
