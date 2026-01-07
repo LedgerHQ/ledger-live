@@ -1,4 +1,5 @@
 {
+  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
   "entry": [
     "src/index.ts",
     "src/api/index.ts",
@@ -14,12 +15,14 @@
     "src/test/bot-specs.ts",
     "src/test/bridgeDatasetTest.ts",
     "src/test/cli.ts",
-    "src/test/index.ts"
+    "src/test/index.ts",
+    "src/supportedFeatures.ts"
   ],
   "ignorePatterns": ["**/node_modules/**", "**/*.fixture.ts", "**/*.mock.ts", "**/*.test.ts"],
   "ignoreUnused": [
     "@ledgerhq/devices",
     "expect",
-    "invariant"
+    "invariant",
+    "@ledgerhq/cryptoassets"
   ]
 }

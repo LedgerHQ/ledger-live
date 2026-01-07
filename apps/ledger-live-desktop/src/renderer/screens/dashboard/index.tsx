@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import Box from "~/renderer/components/Box";
-import { accountsSelector, currenciesSelector } from "~/renderer/reducers/accounts";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import BalanceSummary from "./GlobalSummary";
 import { colors } from "~/renderer/styles/theme";
 import {
@@ -15,28 +15,20 @@ import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import OperationsList from "~/renderer/components/OperationsList";
 import AssetDistribution from "./AssetDistribution";
-import ClearCacheBanner from "~/renderer/components/ClearCacheBanner";
-import RecoverBanner from "~/renderer/components/RecoverBanner/RecoverBanner";
-import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import uniq from "lodash/uniq";
 import EmptyStateInstalledApps from "~/renderer/screens/dashboard/EmptyStateInstalledApps";
 import EmptyStateAccounts from "~/renderer/screens/dashboard/EmptyStateAccounts";
-import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
-import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
-import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
-import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live";
-import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
+import FeaturedButtons from "~/renderer/screens/dashboard/components/FeaturedButtons";
+import { AccountLike, Operation } from "@ledgerhq/types-live";
 import MarketPerformanceWidget from "LLD/features/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 import { Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
-import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
-import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLD/features/LNSUpsell";
-import useActionCards from "~/renderer/hooks/useActionCards";
-import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
+import SwapWebViewEmbedded from "./components/SwapWebViewEmbedded";
+import BannerSection from "./components/BannerSection";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -49,68 +41,42 @@ export const TopBannerContainer = styled.div`
 export default function DashboardPage() {
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
-  const currencies = useSelector(currenciesSelector);
 
   const counterValue = useSelector(counterValueCurrencySelector);
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const hasInstalledApps = useSelector(hasInstalledAppsSelector);
   const totalAccounts = accounts.length;
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
-  const lldActionCarousel = useFeature("lldActionCarousel");
   const totalCurrencies = useMemo(() => uniq(accounts.map(a => a.currency.id)).length, [accounts]);
   const totalOperations = useMemo(
     () => accounts.reduce((sum, a) => sum + a.operations.length, 0),
     [accounts],
   );
-  const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const { hiddenNftCollections } = useNftCollectionsStatus(true);
+
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
       const removeZeroAmountTokenOp =
         shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
-      // Remove operations coming from an NFT collection considered spam
-      const opFromBlacklistedNftCollection = operation?.nftOperations?.find(op =>
-        hiddenNftCollections.includes(`${account.id}|${op?.contract}`),
-      );
-      return !opFromBlacklistedNftCollection && !removeZeroAmountTokenOp;
+
+      return !removeZeroAmountTokenOp;
     },
-    [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
+    [shouldFilterTokenOpsZeroAmount],
   );
 
   const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
     useMarketPerformanceFeatureFlag();
-  const { actionCards } = useActionCards();
-  const isActionCardsCampainRunning = actionCards.length > 0;
 
   const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
     useDisplayOnPortfolioAnalytics();
 
-  const isLNSUpsellBannerShown = useLNSUpsellBannerState("portfolio").isShown;
+  const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio");
 
   return (
     <>
-      <TopBannerContainer>
-        <ClearCacheBanner />
-        <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
-      </TopBannerContainer>
-      <Box>
-        {isPostOnboardingBannerVisible ? (
-          <PostOnboardingHubBanner />
-        ) : (
-          <RecoverBanner>
-            {isActionCardsCampainRunning && lldActionCarousel?.enabled ? (
-              <ActionContentCards variant={ABTestingVariants.variantA} />
-            ) : isLNSUpsellBannerShown ? (
-              <LNSUpsellBanner location="portfolio" />
-            ) : (
-              <PortfolioContentCards />
-            )}
-          </RecoverBanner>
-        )}
-      </Box>
-      <FeaturedButtons />
+      <BannerSection />
+      {!ptxSwapLiveAppOnPortfolio?.enabled && <FeaturedButtons />}
       <TrackPage
         category="Portfolio"
         totalAccounts={totalAccounts}
@@ -123,7 +89,22 @@ export default function DashboardPage() {
           <EmptyStateInstalledApps />
         ) : totalAccounts > 0 ? (
           <>
-            {marketPerformanceEnabled ? (
+            {ptxSwapLiveAppOnPortfolio?.enabled ? (
+              <PortfolioGrid marginTop={4}>
+                <Box>
+                  <FeaturedButtons hideSwapButton />
+                  <BalanceSummary
+                    counterValue={counterValue}
+                    chartColor={colors.wallet}
+                    range={selectedTimeRange}
+                  />
+                </Box>
+
+                <Box ml={2} minWidth={375} maxWidth={700}>
+                  <SwapWebViewEmbedded height="550px" />
+                </Box>
+              </PortfolioGrid>
+            ) : marketPerformanceEnabled ? (
               <PortfolioGrid>
                 <BalanceSummary
                   counterValue={counterValue}
@@ -151,6 +132,7 @@ export default function DashboardPage() {
                 withAccount
                 withSubAccounts
                 filterOperation={filterOperations}
+                t={t}
               />
             )}
           </>

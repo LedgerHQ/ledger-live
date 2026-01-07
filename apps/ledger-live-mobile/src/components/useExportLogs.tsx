@@ -59,7 +59,7 @@ export default function useExportLogs() {
       const version = getFullAppVersion(undefined, undefined, "-");
       const date = new Date().toISOString().split("T")[0];
 
-      const humanReadableName = `ledger-live-mob-${version}-${date}-logs.txt`;
+      const humanReadableName = `ledgerwallet-mob-${version}-${date}-logs.txt`;
       const filePath = `${RNFetchBlob.fs.dirs.DocumentDir}/${humanReadableName}`;
 
       await RNFetchBlob.fs.writeFile(filePath, base64, "base64");
@@ -72,7 +72,7 @@ export default function useExportLogs() {
 
       if (getEnv("DETOX")) {
         const fileContent = await RNFetchBlob.fs.readFile(filePath, "base64");
-        sendFile({ fileName: "ledgerlive-logs.txt", fileContent });
+        sendFile({ fileName: "ledgerwallet-logs.txt", fileContent });
       } else {
         await Share.open(options);
       }

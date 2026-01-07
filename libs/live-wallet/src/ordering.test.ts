@@ -5,8 +5,7 @@ import { sortAccountsComparatorFromOrder } from "./ordering";
 import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { WalletState, accountRawToAccountUserData } from "./store";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 setSupportedCurrencies(["ethereum"]);
 
@@ -87,10 +86,12 @@ const raws: AccountRaw[] = [
     balance: "4000000000000000000",
   },
 ];
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStore({} as CryptoAssetsStore);
-const accounts = raws.map(a => fromAccountRaw(a));
 
+setupMockCryptoAssetsStore({
+  getTokensSyncHash: async () => "0",
+});
+
+let accounts: Awaited<ReturnType<typeof fromAccountRaw>>[];
 const walletState: WalletState = {
   accountNames: new Map(),
   starredAccountIds: new Set(),
@@ -99,15 +100,20 @@ const walletState: WalletState = {
     version: 0,
   },
   nonImportedAccountInfos: [],
+  recentAddresses: {},
 };
 
-for (const raw of raws) {
-  const r = accountRawToAccountUserData(raw);
-  walletState.accountNames.set(r.id, r.name);
-  for (const id of r.starredIds) {
-    walletState.starredAccountIds.add(id);
+beforeAll(async () => {
+  accounts = await Promise.all(raws.map(a => fromAccountRaw(a)));
+
+  for (const raw of raws) {
+    const r = accountRawToAccountUserData(raw);
+    walletState.accountNames.set(r.id, r.name);
+    for (const id of r.starredIds) {
+      walletState.starredAccountIds.add(id);
+    }
   }
-}
+});
 
 const mockedCalculateCountervalue = <T>(_: unknown, balance: T): T => balance;
 

@@ -3,8 +3,13 @@ import {
   UserRefusedDeviceNameChange,
   UserRefusedOnDevice,
   LatestFirmwareVersionRequired,
+  UnsupportedFeatureError,
 } from "@ledgerhq/errors";
-import { DeviceNotOnboarded, ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
+import {
+  DeviceNotOnboarded,
+  ImageDoesNotExistOnDevice,
+  NoSuchAppOnProvider,
+} from "@ledgerhq/live-common/errors";
 import {
   ExchangeRate,
   ExchangeSwap,
@@ -18,10 +23,10 @@ import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
 import { setLastSeenDeviceInfo } from "~/actions/settings";
 import { useTrackAddAccountFlow } from "~/analytics/hooks/useTrackAddAccountFlow";
@@ -43,6 +48,7 @@ import PreventNativeBack from "../PreventNativeBack";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
 import ValidateOnDevice from "../ValidateOnDevice";
+import ValidateRawOnDevice from "../ValidateRawOnDevice";
 import {
   AutoRepair,
   LoadingAppInstall,
@@ -51,7 +57,7 @@ import {
   renderAllowOpeningApp,
   renderAllowRemoveCustomLockscreen,
   renderBootloaderStep,
-  renderConnectYourDevice,
+  ConnectYourDevice,
   renderDeviceNotOnboarded,
   renderError,
   renderExchange,
@@ -61,12 +67,18 @@ import {
   renderRequiresAppInstallation,
   renderWarningOutdated,
   RequiredFirmwareUpdate,
+  NanoSNotSupportedComponent,
+  UnsupportedFeatureComponent,
 } from "./rendering";
+import { ThorSwapIncompatibility } from "./ThorSwapIncompatibility";
 import { WalletState } from "@ledgerhq/live-wallet/lib/store";
+import { DeviceId } from "@ledgerhq/client-ids/ids";
+import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";
 import { useTrackTransactionChecksFlow } from "~/analytics/hooks/useTrackTransactionChecksFlow";
 import { useTrackDmkErrorsEvents } from "~/analytics/hooks/useTrackDmkErrorsEvents";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -79,6 +91,7 @@ type Status = PartialNullable<{
   allowRenamingRequested: boolean;
   requestQuitApp: boolean;
   deviceInfo: DeviceInfo;
+  deviceId: DeviceId | null | undefined;
   requestOpenApp: string;
   allowOpeningRequestedWording: string;
   requiresAppInstallation: {
@@ -125,13 +138,14 @@ type Status = PartialNullable<{
 type Props<H extends Status, P> = {
   onResult?: (_: NonNullable<P>) => Promise<void> | void;
   onError?: (_: Error) => Promise<void> | void;
-  renderOnResult?: (_: P) => JSX.Element | null;
+  renderOnResult?: (_: P) => React.JSX.Element | null;
   status: H;
   device: Device;
   payload?: P | null;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
   location?: HOOKS_TRACKING_LOCATIONS;
+  onClose?: () => void;
   /*
    * Defines in what type of component this action will be rendered in.
    *
@@ -148,7 +162,7 @@ export default function DeviceAction<R, H extends Status, P>({
 }: Omit<Props<H, P>, "status"> & {
   action: Action<R, H, P>;
   request: R;
-}): JSX.Element {
+}): React.JSX.Element {
   const status = action?.useHook(selectedDevice, request);
   const payload = action?.mapResult(status);
 
@@ -175,18 +189,16 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   request,
   payload,
   location,
+  onClose,
 }: Props<H, P> & {
   request?: R;
-}): JSX.Element | null {
+}): React.JSX.Element | null {
   const { colors, dark } = useTheme();
-  const {
-    colors: { palette },
-  } = useThemeFromStyledComponents();
-
+  const { colors: colorsFromStyled } = useThemeFromStyledComponents();
   const dispatch = useDispatch();
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const { t } = useTranslation();
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {
     appAndVersion,
     device,
@@ -198,6 +210,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     allowRenamingRequested,
     requestQuitApp,
     deviceInfo,
+    deviceId,
     requestOpenApp,
     allowOpeningRequestedWording,
     requiresAppInstallation,
@@ -288,6 +301,13 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   });
 
   useTrackDmkErrorsEvents({ error });
+
+  // Add deviceId to identities store when detected
+  useEffect(() => {
+    if (deviceId) {
+      dispatch(identitiesSlice.actions.addDeviceId(deviceId));
+    }
+  }, [dispatch, deviceId]);
 
   useEffect(() => {
     if (deviceInfo && device) {
@@ -385,6 +405,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       theme,
     });
   }
+
   if (allowManagerRequested) {
     return renderAllowManager({
       t,
@@ -428,7 +449,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
           theme,
           hasExportLogButton: false,
           Icon: Icons.InformationFill,
-          iconColor: palette.primary.c80,
+          iconColor: colorsFromStyled.primary.c80,
           device: device ?? undefined,
         });
       }
@@ -448,6 +469,23 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       colors,
       theme,
     });
+  }
+
+  // Check for NanoS + ThorSwap incompatibility
+  const provider = (request as { provider?: string })?.provider;
+  const isThorSwap = provider?.toLowerCase() === "thorswap";
+  const isNanoS = device?.modelId === DeviceModelId.nanoS;
+
+  if (completeExchangeStarted && completeExchangeError && isNanoS && isThorSwap) {
+    return (
+      <ThorSwapIncompatibility
+        t={t}
+        device={selectedDevice}
+        provider={provider}
+        theme={theme}
+        onClose={onClose}
+      />
+    );
   }
 
   if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError) {
@@ -523,7 +561,18 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     }
 
     if (error instanceof LatestFirmwareVersionRequired) {
-      return <RequiredFirmwareUpdate t={t} navigation={navigation} device={selectedDevice} />;
+      return <RequiredFirmwareUpdate navigation={navigation} device={selectedDevice} />;
+    }
+
+    if (error instanceof UnsupportedFeatureError) {
+      return <UnsupportedFeatureComponent error={error} />;
+    }
+
+    if (error instanceof NoSuchAppOnProvider && device?.modelId === DeviceModelId.nanoS) {
+      // This should be only happening for Nano S devices, but in order to make sure we don't miss any
+      // use case for other devices we keep the check and will consider to remove it later after complete
+      // checks.
+      return <NanoSNotSupportedComponent />;
     }
 
     if ((error as Status["error"]) instanceof UserRefusedDeviceNameChange) {
@@ -531,7 +580,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
         t,
         navigation,
         error,
-        onRetry,
         colors,
         theme,
         iconColor: "warning.c60",
@@ -556,15 +604,14 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   }
 
   if ((!isLoading && !device) || unresponsive || isLocked) {
-    return renderConnectYourDevice({
-      t,
-      device: selectedDevice,
-      unresponsive,
-      isLocked: isLocked === null ? undefined : isLocked,
-      colors,
-      theme,
-      onSelectDeviceLink,
-    });
+    return (
+      <ConnectYourDevice
+        device={selectedDevice}
+        unresponsive={unresponsive}
+        isLocked={isLocked === null ? undefined : isLocked}
+        onSelectDeviceLink={onSelectDeviceLink}
+      />
+    );
   }
 
   if (isLoading || (allowOpeningGranted && !appAndVersion)) {
@@ -602,6 +649,20 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
             parentAccount={parentAccount}
             transaction={transaction}
             status={status}
+          />
+        </>
+      );
+    } else if (account && typeof transaction === "string") {
+      // sign raw transaction case
+      return (
+        <>
+          <PreventNativeBack />
+          <SkipLock />
+          <ValidateRawOnDevice
+            device={device}
+            account={account}
+            parentAccount={parentAccount}
+            transaction={transaction}
           />
         </>
       );

@@ -3,6 +3,7 @@ import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { AppPlatform, AppBranch, Visibility } from "../types";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 // Mock dependencies
 jest.mock("@ledgerhq/wallet-api-server", () => ({
@@ -11,9 +12,11 @@ jest.mock("@ledgerhq/wallet-api-server", () => ({
 }));
 
 jest.mock("@ledgerhq/cryptoassets", () => ({
-  findTokenById: jest.fn(),
-  findTokenByAddressInCurrency: jest.fn(),
   getCryptoCurrencyById: jest.fn(),
+}));
+
+jest.mock("@ledgerhq/cryptoassets/state", () => ({
+  getCryptoAssetsStore: jest.fn(),
 }));
 
 jest.mock("../converters", () => ({
@@ -150,6 +153,11 @@ describe("ACRE Server Handlers", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    (getCryptoAssetsStore as jest.Mock).mockReturnValue({
+      findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenCurrency),
+      findTokenById: jest.fn().mockResolvedValue(mockTokenCurrency),
+    });
     mockUiHooks = {
       "custom.acre.messageSign": jest.fn().mockImplementation(({ onSuccess }) => {
         onSuccess("0x1234567890abcdef");
@@ -165,12 +173,6 @@ describe("ACRE Server Handlers", () => {
         onSuccess();
       }),
     };
-
-    // Mock the cryptoassets functions globally
-    const { findTokenByAddressInCurrency, getCryptoCurrencyById } =
-      jest.requireMock("@ledgerhq/cryptoassets");
-    findTokenByAddressInCurrency.mockReturnValue(mockTokenCurrency);
-    getCryptoCurrencyById.mockReturnValue(mockEthereumCurrency);
 
     // Mock the account functions
     const { makeEmptyTokenAccount, getMainAccount, getParentAccount } = jest.requireMock(

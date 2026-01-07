@@ -1,10 +1,15 @@
-import { AssetInfo, MemoNotSupported, Operation } from "@ledgerhq/coin-framework/api/types";
+import {
+  AssetInfo,
+  MemoNotSupported,
+  Operation,
+  Pagination,
+} from "@ledgerhq/coin-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
 import { getExplorerApi } from "../network/explorer";
 
 type AssetConfig =
-  | { type: "native" }
+  | { type: "native"; internal?: boolean }
   | { type: "token"; owner: string; parents: Record<string, LiveOperation> };
 
 function extractStandard(op: LiveOperation): string {
@@ -21,12 +26,24 @@ function extractType(asset: AssetConfig, op: LiveOperation): OperationType {
   return "NONE";
 }
 
-function computeValue(asset: AssetConfig, op: LiveOperation, type: OperationType): bigint {
-  if (type === "FEES") return BigInt(op.fee.toFixed(0));
-  if (asset.type === "native" && op.type === "OUT")
+function computeValue(asset: AssetConfig, op: LiveOperation): bigint {
+  if (asset.type === "native" && ["OUT", "FEES"].includes(op.type)) {
     return BigInt(op.value.toFixed(0)) - BigInt(op.fee.toFixed(0));
+  }
+
+  if (asset.type === "token" && op.hash in asset.parents) {
+    return BigInt(asset.parents[op.hash].value.toFixed(0));
+  }
 
   return BigInt(op.value.toFixed(0));
+}
+
+function computeFailed(asset: AssetConfig, op: LiveOperation): boolean {
+  if (asset.type === "token" && op.hash in asset.parents) {
+    return asset.parents[op.hash].hasFailed ?? false;
+  }
+
+  return op.hasFailed ?? false;
 }
 
 function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSupported> {
@@ -39,7 +56,22 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
   }
 
   const type = extractType(asset, op);
-  const value = computeValue(asset, op, type);
+  const value = computeValue(asset, op);
+  const failed = computeFailed(asset, op);
+
+  const internalOpDetail =
+    asset.type === "native" && asset.internal ? { internal: asset.internal } : {};
+  const tokenOpDetail =
+    asset.type === "token"
+      ? {
+          ledgerOpType: op.type,
+          assetAmount: op.value.toFixed(0),
+          assetSenders: op.senders,
+          assetRecipients: op.recipients,
+          parentSenders: asset.parents[op.hash]?.senders ?? [],
+          parentRecipients: asset.parents[op.hash]?.recipients ?? [],
+        }
+      : {};
 
   return {
     id: op.id,
@@ -56,10 +88,12 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
       },
       fees: BigInt(op.fee.toFixed(0)),
       date: op.date,
+      failed,
     },
     details: {
-      ledgerOpType: op.type,
-      ...(asset.type === "token" ? { assetAmount: op.value.toFixed(0) } : {}),
+      sequence: op.transactionSequenceNumber,
+      ...internalOpDetail,
+      ...tokenOpDetail,
     },
   };
 }
@@ -67,39 +101,68 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
 export async function listOperations(
   currency: CryptoCurrency,
   address: string,
-  minHeight: number,
+  pagination: Pagination,
 ): Promise<[Operation<MemoNotSupported>[], string]> {
   const explorerApi = getExplorerApi(currency);
-  const { lastCoinOperations, lastTokenOperations, lastNftOperations } =
+  const { lastCoinOperations, lastTokenOperations, lastNftOperations, lastInternalOperations } =
     await explorerApi.getLastOperations(
       currency,
       address,
       `js:2:${currency.id}:${address}:`,
-      minHeight,
+      pagination.minHeight,
     );
 
   const isNativeOperation = (coinOperation: LiveOperation): boolean =>
-    ![...lastTokenOperations, ...lastNftOperations].map(op => op.hash).includes(coinOperation.hash);
-  const isTokenOperation = (coinOperation: LiveOperation): boolean =>
-    lastTokenOperations.map(op => op.hash).includes(coinOperation.hash);
+    ![...lastTokenOperations, ...lastNftOperations, ...lastInternalOperations]
+      .map(op => op.hash)
+      .includes(coinOperation.hash);
+  const isTokenOrInternalOperation = (coinOperation: LiveOperation): boolean =>
+    [...lastTokenOperations, ...lastNftOperations, ...lastInternalOperations]
+      .map(op => op.hash)
+      .includes(coinOperation.hash);
   const parents = Object.fromEntries(
-    lastCoinOperations.filter(isTokenOperation).map(op => [op.hash, op]),
+    lastCoinOperations.filter(isTokenOrInternalOperation).map(op => [op.hash, op]),
   );
 
   const nativeOperations = lastCoinOperations
     .filter(isNativeOperation)
     .map<Operation<MemoNotSupported>>(op => toOperation({ type: "native" }, op));
-  const tokenOperations = lastTokenOperations.map<Operation<MemoNotSupported>>(op =>
-    toOperation({ type: "token", owner: address, parents }, op),
-  );
+  const tokenOperations = [...lastTokenOperations, ...lastNftOperations].map<
+    Operation<MemoNotSupported>
+  >(op => toOperation({ type: "token", owner: address, parents }, op));
+  const internalOperations = lastInternalOperations
+    .filter(op => op.hash in parents)
+    .map<Operation<MemoNotSupported>>(op =>
+      toOperation(
+        { type: "native", internal: true },
+        // Explorers don't provide block hash and fees for internal operations.
+        // We take this values from their parent.
+        { ...op, fee: parents[op.hash].fee, blockHash: parents[op.hash].blockHash },
+      ),
+    );
 
   const hasValidType = (operation: Operation): boolean =>
-    ["NONE", "FEES", "IN", "OUT"].includes(operation.type);
-  const isAlone = (operation: Operation): boolean =>
-    ["NONE", "FEES"].includes(operation.type) && !("assetAmount" in (operation.details ?? {}));
+    [
+      "NONE",
+      "FEES",
+      "IN",
+      "OUT",
+      "DELEGATE",
+      "UNDELEGATE",
+      "REDELEGATE",
+      "NFT_IN",
+      "NFT_OUT",
+    ].includes(operation.type);
 
-  return [
-    nativeOperations.concat(tokenOperations).filter(op => hasValidType(op) && !isAlone(op)),
-    "",
-  ];
+  const operations = nativeOperations
+    .concat(tokenOperations)
+    .concat(internalOperations)
+    .filter(hasValidType)
+    .sort((a, b) =>
+      pagination.order === "asc"
+        ? a.tx.date.getTime() - b.tx.date.getTime()
+        : b.tx.date.getTime() - a.tx.date.getTime(),
+    );
+
+  return [operations, ""];
 }

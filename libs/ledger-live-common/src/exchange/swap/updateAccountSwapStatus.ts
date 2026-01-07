@@ -4,6 +4,8 @@ import type { TokenAccount, Account, SwapOperation, Operation } from "@ledgerhq/
 import type { SwapStatus, SwapStatusRequest, UpdateAccountSwapStatus } from "./types";
 import { log } from "@ledgerhq/logs";
 
+const PROVIDERS_REQUIRING_OPERATION_ID = ["thorswap", "lifi", "nearintents"];
+
 const maybeGetUpdatedSwapHistory = async (
   swapHistory: SwapOperation[] | null | undefined,
   operations: Operation[] | null | undefined,
@@ -38,15 +40,15 @@ const maybeGetUpdatedSwapHistory = async (
           }
         } else {
           // Collect all others swaps that need status update via getMultipleStatus
-          const transactionId =
-            provider === "thorswap" || provider === "lifi"
-              ? operations?.find(o => o.id.includes(operationId))?.hash
-              : undefined;
+          const requiresOperationId = PROVIDERS_REQUIRING_OPERATION_ID.includes(provider);
+          const relatedTransactionId = requiresOperationId
+            ? operations?.find(op => op.id.includes(operationId))?.hash
+            : undefined;
           pendingSwapIds.push({
             provider,
             swapId,
-            transactionId,
-            ...((provider === "thorswap" || provider === "lifi") && { operationId }),
+            transactionId: relatedTransactionId,
+            ...(requiresOperationId && { operationId }),
           });
         }
       }

@@ -2,6 +2,9 @@ import { BigNumber } from "bignumber.js";
 
 import { Transaction } from "../../generated/types";
 import { TransactionCommon } from "@ledgerhq/types-live";
+import { createStepError, StepError, CustomErrorType } from "../../wallet-api/Exchange";
+import { getFeature } from "../../featureFlags";
+
 export type { SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
 
 export function defaultTransaction({
@@ -85,11 +88,11 @@ export function stellarTransaction({
   customErrorType,
 }: TransactionWithCustomFee): Extract<Transaction, { family: "stellar" }> {
   if (!payinExtraId)
-    throw {
+    throw createStepError({
       error: new Error("Missing payinExtraId"),
-      step: "PayinExtraIdStepError",
+      step: StepError.PAYIN_EXTRA_ID,
       customErrorType,
-    };
+    });
 
   return {
     family: "stellar",
@@ -110,11 +113,11 @@ export function rippleTransaction({
   customErrorType,
 }: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "xrp" }>> {
   if (!payinExtraId)
-    throw {
+    throw createStepError({
       error: new Error("Missing payinExtraId"),
-      step: "PayinExtraIdStepError",
+      step: StepError.PAYIN_EXTRA_ID,
       customErrorType,
-    };
+    });
 
   return {
     family: "xrp",
@@ -130,6 +133,7 @@ export function evmTransaction({
   recipient,
   customFeeConfig,
   extraTransactionParameters,
+  sponsored,
 }: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "evm" }>> {
   if (customFeeConfig?.gasLimit) {
     delete customFeeConfig.gasLimit;
@@ -142,6 +146,7 @@ export function evmTransaction({
       recipient,
       ...customFeeConfig,
       data: Buffer.from(extraTransactionParameters, "hex"),
+      sponsored,
     };
   }
   return {
@@ -149,6 +154,7 @@ export function evmTransaction({
     amount,
     recipient,
     ...customFeeConfig,
+    sponsored,
   };
 }
 
@@ -179,12 +185,32 @@ export function solanaTransaction({
   amount,
   recipient,
   customFeeConfig: _customFeeConfig,
+  extraTransactionParameters,
 }: TransactionWithCustomFee): Extract<Transaction, { family: "solana" }> {
+  let templateId: string | undefined = undefined;
+  const lifiSolanaFeature = getFeature({ key: "lifiSolana" });
+
+  if (lifiSolanaFeature?.enabled && extraTransactionParameters) {
+    try {
+      const parsed = JSON.parse(extraTransactionParameters);
+      if (typeof parsed?.solanaTransaction?.templateId === "string") {
+        templateId = parsed.solanaTransaction.templateId;
+      } else {
+        console.warn(
+          `Template id "${templateId}" found in extraTransactionParameters for solana transaction is not a string, ignored`,
+        );
+      }
+    } catch (e) {
+      console.warn("Failed to parse extraTransactionParameters", e);
+    }
+  }
+
   return {
     family: "solana",
     amount,
     recipient,
     model: { kind: "transfer", uiState: {} },
+    ...(templateId && { templateId }),
   };
 }
 
@@ -234,14 +260,30 @@ export function cosmosTransaction({
   };
 }
 
+export function hederaTransaction({
+  amount,
+  recipient,
+  customFeeConfig,
+  payinExtraId,
+}: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "hedera" }>> {
+  return {
+    family: "hedera",
+    amount,
+    recipient,
+    ...customFeeConfig,
+    memo: payinExtraId ?? undefined,
+  };
+}
+
 export type TransactionWithCustomFee = TransactionCommon & {
   customFeeConfig: {
     [key: string]: BigNumber;
   };
   payinExtraId?: string;
-  customErrorType?: "swap";
+  customErrorType?: CustomErrorType;
   extraTransactionParameters?: string;
   family: string;
+  sponsored?: boolean;
 };
 
 // Define a specific type for the strategy functions, assuming they might need parameters
@@ -262,7 +304,7 @@ export const transactionStrategy: {
   cosmos: cosmosTransaction,
   evm: evmTransaction,
   filecoin: defaultTransaction,
-  hedera: defaultTransaction,
+  hedera: hederaTransaction,
   icon: defaultTransaction,
   internet_computer: defaultTransaction,
   mina: defaultTransaction,

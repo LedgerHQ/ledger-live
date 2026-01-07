@@ -1,4 +1,4 @@
-import { TFunction } from "react-i18next";
+import type { TFunction } from "i18next";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import i18next from "i18next";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
@@ -18,11 +18,11 @@ function getTimeAgoCode(date: Date): string {
   const generatePath = (key: string, value: number) =>
     i18next.t(`largeMover.timeAgo.${key}`, { count: value });
 
-  if (years > 0) return generatePath(years > 1 ? "years_plural" : "years", years);
-  if (months > 0) return generatePath(months > 1 ? "months_plural" : "months", months);
-  if (days > 0) return generatePath(days > 1 ? "days_plural" : "days", days);
-  if (hours > 0) return generatePath(hours > 1 ? "hours_plural" : "hours", hours);
-  if (minutes > 0) return generatePath(minutes > 1 ? "minutes_plural" : "minutes", minutes);
+  if (years > 0) return generatePath("years", years);
+  if (months > 0) return generatePath("months", months);
+  if (days > 0) return generatePath("days", days);
+  if (hours > 0) return generatePath("hours", hours);
+  if (minutes > 0) return generatePath("minutes", minutes);
 
   return generatePath("seconds", seconds);
 }
@@ -67,4 +67,5 @@ function getCurrencyIdsFromTickers(tickers: string[]): string[] {
     return currency?.id ? [currency.id] : [];
   });
 }
+
 export { formatCounterValue, getTimeAgoCode, getColors, rangeMap, getCurrencyIdsFromTickers };

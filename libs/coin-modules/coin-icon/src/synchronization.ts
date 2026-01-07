@@ -52,7 +52,7 @@ export const getAccountShape: GetAccountShape = async (info: AccountShapeInfo) =
       iconResources,
       operations,
     };
-  } catch (error) {
+  } catch {
     return {
       id: accountId,
       balance: new BigNumber(0),

@@ -42,7 +42,7 @@ describe("Testing signOperation", () => {
 
       const observable = buildSignOperation(
         signContext(),
-        api,
+        api(),
       )({
         account: account(),
         deviceId: "any random value",
@@ -118,7 +118,7 @@ function blockhashWithExpiryBlockHeight() {
 }
 
 function api() {
-  return Promise.resolve({} as ChainAPI);
+  return {} as ChainAPI;
 }
 
 function account(): Account {

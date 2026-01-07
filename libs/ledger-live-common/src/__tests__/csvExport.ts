@@ -5,7 +5,10 @@ import { getCryptoCurrencyById } from "../currencies";
 import { accountsOpToCSV } from "../csvExport";
 import { initialState, loadCountervalues } from "@ledgerhq/live-countervalues/logic";
 import { getFiatCurrencyByTicker, setSupportedCurrencies } from "../currencies";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
+// Setup mock store for unit tests
+setupMockCryptoAssetsStore();
 setSupportedCurrencies(["ethereum", "ripple"]);
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");

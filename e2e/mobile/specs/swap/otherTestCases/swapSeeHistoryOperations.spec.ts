@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { runSwapHistoryOperationsTest } from "./swap.other";
 
@@ -6,7 +7,7 @@ const swapHistoryTestConfig = {
   provider: Provider.EXODUS,
   swapId: "wQ90NrWdvJz5dA4",
   tmsLinks: ["B2CQA-602"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runSwapHistoryOperationsTest(

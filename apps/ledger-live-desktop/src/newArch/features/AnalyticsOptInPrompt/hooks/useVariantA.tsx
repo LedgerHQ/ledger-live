@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import {
   setShareAnalytics,
   setSharePersonalizedRecommendations,

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-hedera",
-  "version": "1.11.0",
+  "version": "1.16.1",
   "description": "Ledger Hedera Coin integration",
   "keywords": [
     "Ledger",
@@ -75,7 +75,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@hashgraph/sdk": "2.14.2",
+    "@hashgraph/sdk": "2.74.0",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
@@ -83,24 +83,25 @@
     "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
-    "expect": "^27.4.6",
-    "imurmurhash": "^0.1.4",
+    "expect": "catalog:",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:",
+    "viem": "^2.27.0"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
-    "@types/imurmurhash": "^0.1.4",
     "@types/invariant": "^2.2.2",
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
     "eslint-plugin-jest": "^27.4.2",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.1"
+    "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -113,6 +114,8 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
+    "test-integ": "jest --config=jest.integ.config.js",
+    "typecheck": "tsc --noEmit",
     "unimported": "unimported"
   }
 }

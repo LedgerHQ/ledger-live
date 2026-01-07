@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import "./starts-console";
 import "./setup"; // Needs to be imported first
 import {
@@ -20,10 +22,9 @@ import {
   getMainWindowAsync,
   loadWindow,
 } from "./window-lifecycle";
-import { getSentryEnabled, setUserId } from "./internal-lifecycle";
 import db from "./db";
 import debounce from "lodash/debounce";
-import sentry from "~/sentry/main";
+import sentry, { setTags } from "~/sentry/main";
 import type { SettingsState } from "~/renderer/reducers/settings";
 import type { User } from "~/renderer/storage";
 import {
@@ -31,11 +32,16 @@ import {
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
+import { setupTransportHandlers, cleanupTransports } from "./transportHandler";
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
 
+setUserDataPath();
+
 Store.initRenderer();
+
+const SUPPORTED_SCHEMES = ["ledgerlive", "ledgerwallet"];
 
 const gotLock = app.requestSingleInstanceLock();
 const { LEDGER_CONFIG_DIRECTORY } = process.env;
@@ -54,7 +60,9 @@ if (!gotLock) {
 
       // Deep linking for when the app is already running (Windows, Linux)
       if (process.platform === "win32" || process.platform === "linux") {
-        const uri = commandLine.filter(arg => arg.startsWith("ledgerlive://"));
+        const uri = commandLine.filter(arg =>
+          SUPPORTED_SCHEMES.some(scheme => arg.startsWith(`${scheme}://`)),
+        );
         if (uri.length) {
           if ("send" in w.webContents) {
             w.webContents.send("deep-linking", uri[0]);
@@ -113,13 +121,11 @@ app.on("ready", async () => {
   console.timeEnd("T-db");
   const userId = user?.id;
   if (userId) {
-    setUserId(userId);
-    sentry(() => {
-      const value = getSentryEnabled();
-      if (value === undefined) return settings?.sentryLogs;
-      return value;
-    }, userId);
+    sentry(() => settings?.sentryLogs, userId);
   }
+
+  // Set up transport handlers for Speculos and HTTP proxy in main process
+  setupTransportHandlers();
 
   /**
    * Clears the session’s HTTP cache
@@ -163,6 +169,9 @@ app.on("ready", async () => {
     console.log("reloading renderer ...");
     loadWindow();
   });
+  ipcMain.handle("set-sentry-tags", (event, tags) => {
+    setTags(tags);
+  });
 
   // To handle opening new windows from webview
   // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
@@ -180,6 +189,7 @@ app.on("ready", async () => {
   });
   Menu.setApplicationMenu(menu);
 
+  // Apply window parameters now that we have DB data
   const windowParams = (await db.getKey("windowParams", "MainWindow", {})) as Parameters<
     typeof applyWindowParams
   >[0];
@@ -212,24 +222,37 @@ app.on("ready", async () => {
   if (__DEV__ || process.env.PLAYWRIGHT_RUN) {
     // Catch ledgerlive:// deep-link requests in dev mode from the app or live-apps
     // We cannot get deep-links from outside the app, from the browser for example
-    protocol.handle("ledgerlive", request => {
-      const url = request.url;
-      getMainWindowAsync()
-        .then(w => {
-          if (w) {
-            show(w);
-            if ("send" in w.webContents) {
-              w.webContents.send("deep-linking", url);
+    SUPPORTED_SCHEMES.forEach(scheme => {
+      protocol.handle(scheme, request => {
+        const url = request.url;
+        getMainWindowAsync()
+          .then(w => {
+            if (w) {
+              show(w);
+              if ("send" in w.webContents) {
+                w.webContents.send("deep-linking", url);
+              }
             }
-          }
-        })
-        .catch((err: unknown) => console.log(err));
+          })
+          .catch((err: unknown) => console.log(err));
 
-      return new Response();
+        return new Response();
+      });
     });
   }
 
   await clearSessionCache(window.webContents.session);
+});
+
+// Cleanup transports on app shutdown
+app.on("before-quit", () => {
+  console.log("App shutting down, cleaning up transports...");
+  cleanupTransports();
+});
+
+app.on("window-all-closed", () => {
+  cleanupTransports();
+  app.quit();
 });
 
 ipcMain.on("set-background-color", (_, color) => {
@@ -275,7 +298,9 @@ ipcMain.on("ready-to-show", () => {
     // Deep linking for when the app is not running already (Windows, Linux)
     if (process.platform === "win32" || process.platform === "linux") {
       const { argv } = process;
-      const uri = argv.filter(arg => arg.startsWith("ledgerlive://"));
+      const uri = argv.filter(arg =>
+        SUPPORTED_SCHEMES.some(scheme => arg.startsWith(`${scheme}://`)),
+      );
       if (uri.length) {
         show(w);
         if ("send" in w.webContents) {
@@ -285,6 +310,26 @@ ipcMain.on("ready-to-show", () => {
     }
   }
 });
+
+// Keep using "Ledger Live" in the userData path for backward compatibility.
+// This way users could even rollback to older versions and keep their data.
+// While a migration would only work for future versions.
+function setUserDataPath() {
+  const currentName = app.getName();
+  const defaultPath = app.getPath("userData");
+
+  if (
+    process.env.LEDGER_CONFIG_DIRECTORY ||
+    !app.getPath("userData").endsWith(currentName) ||
+    fs.existsSync(path.resolve(defaultPath, "app.json")) // Don't change if the default path already exists this could allow a migration later
+  ) {
+    return;
+  }
+
+  const legacyName = currentName.replace("Ledger Wallet", "Ledger Live");
+  app.setPath("userData", `${defaultPath.slice(0, -currentName.length)}${legacyName}`);
+}
+
 async function installExtensions() {
   // https://github.com/MarshallOfSound/electron-devtools-installer#usage
   app.whenReady().then(() => {

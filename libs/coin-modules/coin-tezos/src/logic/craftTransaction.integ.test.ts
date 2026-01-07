@@ -1,7 +1,7 @@
 import { OpKind } from "@taquito/rpc";
-import { craftTransaction } from ".";
 import coinConfig, { TezosCoinConfig } from "../config";
 import { mockConfig } from "../test/config";
+import { craftTransaction } from ".";
 
 /**
  * https://teztnets.com/ghostnet-about
@@ -27,8 +27,8 @@ describe("Tezos Api", () => {
     // Then
     expect(result.type).toBe("OUT");
     expect(result.contents).toEqual(
-      expect.objectContaining([
-        {
+      expect.arrayContaining([
+        expect.objectContaining({
           kind: OpKind.TRANSACTION,
           amount: "10",
           destination: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
@@ -37,7 +37,7 @@ describe("Tezos Api", () => {
           fee: "1",
           gas_limit: "0",
           storage_limit: "0",
-        },
+        }),
       ]),
     );
   });
@@ -57,8 +57,8 @@ describe("Tezos Api", () => {
     // Then
     expect(result.type).toBe("DELEGATE");
     expect(result.contents).toEqual(
-      expect.objectContaining([
-        {
+      expect.arrayContaining([
+        expect.objectContaining({
           kind: OpKind.DELEGATION,
           source: address,
           counter: expect.any(String),
@@ -66,7 +66,7 @@ describe("Tezos Api", () => {
           fee: "1",
           gas_limit: "200",
           storage_limit: "300",
-        },
+        }),
       ]),
     );
   });
@@ -87,16 +87,50 @@ describe("Tezos Api", () => {
 
     expect(result.type).toBe("UNDELEGATE");
     expect(result.contents).toEqual(
-      expect.objectContaining([
-        {
+      expect.arrayContaining([
+        expect.objectContaining({
           kind: OpKind.DELEGATION,
           source: address,
           counter: expect.any(String),
           fee: "1",
           gas_limit: "200",
           storage_limit: "300",
-        },
+        }),
       ]),
     );
+  });
+
+  it("should craft a send transaction from tz2 address with correct compressedreveal public key", async () => {
+    // Given: LAMA account from production environment
+    const tz2Address = "tz2F4XnSd1wjwWsthemvZQjoPER7NVSt35k3";
+    const expectedPublicKey = "sppk7but7h93Ws1XhAPvdBcttVmoBDGHxdpaU8dPy5549f3eLJFAjag";
+
+    // When: craft a send transaction with the public key
+    const result = await craftTransaction(
+      { address: tz2Address },
+      {
+        type: "send",
+        recipient: "tz2VYbGhf44HDDYP2fepNA7n7MDHWuBe6RxD",
+        amount: BigInt(1000000),
+        fee: { fees: "500", gasLimit: "10000", storageLimit: "0" },
+      },
+      {
+        publicKey: expectedPublicKey,
+        publicKeyHash: tz2Address,
+      },
+    );
+
+    // Then: verify the reveal operation contains the correct public key
+    expect(result).toEqual({
+      type: "OUT",
+      contents: [
+        expect.objectContaining({
+          kind: OpKind.REVEAL,
+          public_key: expectedPublicKey,
+          source: tz2Address,
+        }),
+        expect.objectContaining({ kind: OpKind.TRANSACTION }),
+      ],
+    });
   });
 });

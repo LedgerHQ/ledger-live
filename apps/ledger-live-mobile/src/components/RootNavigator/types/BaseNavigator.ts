@@ -14,7 +14,6 @@ import type { MappedSwapOperation, SwapLiveError } from "@ledgerhq/live-common/e
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/types";
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import type { Web3HubStackParamList } from "LLM/features/Web3Hub/types";
@@ -44,6 +43,11 @@ import type { StellarAddAssetFlowParamList } from "../../../families/stellar/Add
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
+import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
+import type { HederaDelegationFlowParamList } from "../../../families/hedera/DelegationFlow/types";
+import type { HederaUndelegationFlowParamList } from "../../../families/hedera/UndelegationFlow/types";
+import type { HederaRedelegationFlowParamList } from "../../../families/hedera/RedelegationFlow/types";
+import type { HederaClaimRewardsFlowParamList } from "../../../families/hedera/ClaimRewardsFlow/types";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
 import type { AccountsNavigatorParamList } from "./AccountsNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
@@ -75,11 +79,11 @@ import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
-import type { ModularDrawerNavigatorStackParamList } from "./ModularDrawerNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import type { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
+import { SignRawTransactionNavigatorParamList } from "./SignRawTransactionNavigator";
 
-type CommonAddAccountNavigatorParamsList = {
+export type CommonAddAccountNavigatorParamsList = {
   currency?: CryptoCurrency | TokenCurrency | null;
   token?: TokenCurrency;
   returnToSwap?: boolean;
@@ -211,6 +215,9 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.SignTransaction]: NavigatorScreenParams<SignTransactionNavigatorParamList> & {
     onError: (err: Error) => void;
   };
+  [NavigatorName.SignRawTransaction]: NavigatorScreenParams<SignRawTransactionNavigatorParamList> & {
+    onError: (err: Error) => void;
+  };
   [NavigatorName.Swap]?: NavigatorScreenParams<SwapNavigatorParamList>;
   [NavigatorName.Earn]?: NavigatorScreenParams<EarnLiveAppNavigatorParamList>;
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;
@@ -288,6 +295,13 @@ export type BaseNavigatorStackParamList = {
 
   // Hedera
   [NavigatorName.HederaAssociateTokenFlow]: NavigatorScreenParams<HederaAssociateTokenFlowParamList>;
+  [NavigatorName.HederaDelegationFlow]: NavigatorScreenParams<HederaDelegationFlowParamList>;
+  [NavigatorName.HederaUndelegationFlow]: NavigatorScreenParams<HederaUndelegationFlowParamList>;
+  [NavigatorName.HederaRedelegationFlow]: NavigatorScreenParams<HederaRedelegationFlowParamList>;
+  [NavigatorName.HederaClaimRewardsFlow]: NavigatorScreenParams<HederaClaimRewardsFlowParamList>;
+
+  // Canton
+  [NavigatorName.CantonOnboard]: NavigatorScreenParams<CantonOnboardAccountParamList>;
 
   [ScreenName.DeviceConnect]: {
     appName?: string;
@@ -307,8 +321,6 @@ export type BaseNavigatorStackParamList = {
   // WALLET SYNC
   [NavigatorName.WalletSync]: NavigatorScreenParams<WalletSyncNavigatorStackParamList>;
 
-  // MODULAR DRAWER
-  [NavigatorName.ModularDrawer]: NavigatorScreenParams<ModularDrawerNavigatorStackParamList>;
   [ScreenName.MockedModularDrawer]: undefined;
 
   [ScreenName.FirmwareUpdate]: {
@@ -323,14 +335,6 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.DeviceSelection]?: Partial<
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>
   >;
-  [NavigatorName.AssetSelection]?: Partial<
-    NavigatorScreenParams<AssetSelectionNavigatorParamsList> & {
-      context?: "addAccounts" | "receiveFunds";
-      token?: string;
-      currency?: string;
-      sourceScreenName?: string;
-    } // in some cases we need to pass directly the context to the navigator and let it handle the logic
-  >;
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
   [ScreenName.SwapHistory]: undefined;
   [ScreenName.SwapLoading]: undefined;
@@ -341,6 +345,7 @@ export type BaseNavigatorStackParamList = {
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace ReactNavigation {
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     interface RootParamList extends BaseNavigatorStackParamList {}
   }
 }

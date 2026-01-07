@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { switchCountervalueFirst } from "~/actions/settings";
 import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import {
@@ -19,7 +19,7 @@ import {
   counterValueCurrencySelector,
   countervalueFirstSelector,
 } from "~/reducers/settings";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { track, TrackScreen } from "~/analytics";
 import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
 import { NavigatorName, ScreenName } from "~/const";
@@ -53,7 +53,7 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
 
 /** If deep linking params are present, this Account Screen is redirected to from Accounts Screen. */
 function AccountScreen({ route }: Props) {
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
@@ -84,7 +84,7 @@ const AccountScreenInner = ({
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const navigation = useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<AccountsNavigatorParamList>>();
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
   const { countervalueAvailable, countervalueChange, cryptoChange, history } =
@@ -193,7 +193,7 @@ const AccountScreenInner = ({
           paddingTop: 48, //CurrencyHeader height
         }}
         data={data}
-        renderItem={renderItem<JSX.Element>}
+        renderItem={renderItem<React.JSX.Element>}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}

@@ -26,9 +26,16 @@
     "src/prepareTransaction.ts",
     "src/signOperation.ts",
     "src/synchronization.ts",
-    "src/types/bridge.fixture.ts"
+    "src/test/bridge.dataset.ts",
+    "src/types/bridge.fixture.ts",
+    "src/validateAddress.ts",
+    "src/uiConfig.ts",
+    "src/supportedFeatures.ts"
   ],
-  "ignoreUnresolved": [],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"],
   "ignoreUnused": [
     "@faker-js/faker",
     "@ledgerhq/live-env",

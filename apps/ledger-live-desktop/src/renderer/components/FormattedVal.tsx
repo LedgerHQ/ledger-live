@@ -75,7 +75,7 @@ function FormattedVal(props: Props) {
     locale,
     color,
     ellipsis,
-    subMagnitude,
+    subMagnitude = 0,
     prefix,
     suffix,
     showAllDigits,
@@ -128,7 +128,7 @@ function FormattedVal(props: Props) {
     <T {...p} color={color || marketColor}>
       {withIcon ? (
         <Box horizontal alignItems="center">
-          <Box data-testId={`arrow-${isNegative ? "down" : "up"}`} mr={1}>
+          <Box data-testid={`arrow-${isNegative ? "down" : "up"}`} mr={1}>
             <I color={marketColor}>
               {isNegative ? (
                 <Icons.ArrowDownRight size={"M"} />
@@ -147,8 +147,5 @@ function FormattedVal(props: Props) {
     </T>
   );
 }
-FormattedVal.defaultProps = {
-  subMagnitude: 0,
-};
 const m: React.ComponentType<OwnProps> = connect(mapStateToProps)(FormattedVal);
 export default m;

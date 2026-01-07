@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { formatCurrencyUnitOptions } from "@ledgerhq/live-common/currencies/index";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { BigNumber } from "bignumber.js";
 import { useLocale } from "~/context/Locale";
 import DiscreetModeContext from "~/context/DiscreetModeContext";
@@ -24,7 +24,7 @@ const CurrencyUnitValue = ({
   before = "",
   after = "",
   ...otherFormatCurrencyUnitOptions
-}: CurrencyUnitValueProps): JSX.Element => {
+}: CurrencyUnitValueProps): React.JSX.Element => {
   const { locale } = useLocale();
   const discreet = useSelector(discreetModeSelector);
   const shouldApplyDiscreetMode = useContext(DiscreetModeContext);

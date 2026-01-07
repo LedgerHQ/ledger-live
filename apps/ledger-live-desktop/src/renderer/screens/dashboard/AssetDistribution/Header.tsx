@@ -8,8 +8,8 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   padding: 10px 20px;
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
-  background-color: ${p => rgba(p.theme.colors.palette.secondary.main, 0.02)};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
+  background-color: ${p => rgba(p.theme.colors.neutral.c100, 0.02)};
   > * {
     width: 20%;
     display: flex;
@@ -27,18 +27,18 @@ const Wrapper = styled.div`
 `;
 const Header = () => (
   <Wrapper>
-    <Text ff="Inter|SemiBold" color="palette.text.shade50" fontSize={3}>
+    <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
       <Trans i18nKey={"distribution.asset"} />
     </Text>
-    <Text ff="Inter|SemiBold" color="palette.text.shade50" fontSize={3}>
+    <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
       <Trans i18nKey={"distribution.price"} />
     </Text>
-    <Text ff="Inter|SemiBold" color="palette.text.shade50" fontSize={3}>
+    <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
       <Trans i18nKey={"distribution.distribution"} />
     </Text>
     <Text
       ff="Inter|SemiBold"
-      color="palette.text.shade50"
+      color="neutral.c70"
       style={{
         justifyContent: "flex-end",
       }}
@@ -48,7 +48,7 @@ const Header = () => (
     </Text>
     <Text
       ff="Inter|SemiBold"
-      color="palette.text.shade50"
+      color="neutral.c70"
       style={{
         justifyContent: "flex-end",
       }}

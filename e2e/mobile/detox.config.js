@@ -21,7 +21,7 @@ const getAndroidTestBinary = type =>
 /** @type {Detox.DetoxConfig} */
 module.exports = {
   testRunner: {
-    $0: "ts-jest",
+    $0: "jest",
     args: {
       config: "jest.config.ts",
     },
@@ -30,6 +30,7 @@ module.exports = {
     },
     noRetryArgs: ["json", "outputFile"],
     retries: 0,
+    forwardEnv: true, // Used to forward DETOX_CONFIGURATION to Jest workers
   },
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
@@ -44,6 +45,7 @@ module.exports = {
     cleanup: {
       shutdownDevice: !!process.env.CI,
     },
+    extends: "detox-allure2-adapter/preset-detox",
   },
   apps: {
     "ios.debug": {
@@ -92,10 +94,24 @@ module.exports = {
         name: "iOS Simulator",
       },
     },
+    simulator2: {
+      type: "ios.simulator",
+      device: {
+        name: "iOS Simulator 2",
+      },
+    },
     emulator: {
       type: "android.emulator",
       device: {
         avdName: "Android_Emulator",
+      },
+      gpuMode: "swiftshader_indirect",
+      headless: !!process.env.CI,
+    },
+    emulator2: {
+      type: "android.emulator",
+      device: {
+        avdName: "Android_Emulator_2",
       },
       gpuMode: "swiftshader_indirect",
       headless: !!process.env.CI,

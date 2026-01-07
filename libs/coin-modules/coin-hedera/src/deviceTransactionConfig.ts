@@ -1,9 +1,10 @@
-import type { AccountLike, Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "./types";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
-import { isTokenAssociateTransaction } from "./logic";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
+import { HEDERA_TRANSACTION_MODES, MAP_STAKING_MODE_TO_METHOD } from "./constants";
+import { isTokenAssociateTransaction, isStakingTransaction } from "./logic/utils";
+import type { Transaction, TransactionStatus } from "./types";
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   transaction,
   status: { estimatedFees },
 }: {
@@ -11,8 +12,41 @@ function getDeviceTransactionConfig({
   parentAccount?: Account;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const fields: Array<DeviceTransactionField> = [];
+
+  if (isStakingTransaction(transaction)) {
+    fields.push({
+      type: "text",
+      label: "Method",
+      value: MAP_STAKING_MODE_TO_METHOD[transaction.mode],
+    });
+
+    if (!estimatedFees.isZero()) {
+      fields.push({
+        type: "fees",
+        label: "Fees",
+      });
+    }
+
+    if (typeof transaction.properties?.stakingNodeId === "number") {
+      fields.push({
+        type: "text",
+        label: "Staked Node ID",
+        value: transaction.properties.stakingNodeId.toString(),
+      });
+    }
+
+    if (transaction.memo) {
+      fields.push({
+        type: "text",
+        label: "Memo",
+        value: transaction.memo,
+      });
+    }
+
+    return fields;
+  }
 
   const method = (() => {
     if (isTokenAssociateTransaction(transaction)) return "Associate Token";
@@ -37,6 +71,14 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "fees",
       label: "Fees",
+    });
+  }
+
+  if (transaction.mode === HEDERA_TRANSACTION_MODES.Send && transaction.gasLimit) {
+    fields.push({
+      type: "text",
+      label: "Gas Limit",
+      value: transaction.gasLimit.toString(),
     });
   }
 

@@ -26,8 +26,8 @@ const LiveLogoContainer = styled(Box).attrs(() => ({
   width?: number;
   height?: number;
 }>`
-  color: ${p => p.theme.colors.palette.secondary.main};
-  background-color: ${p => p.theme.colors.palette.primary.contrastText};
+  color: ${p => p.theme.colors.neutral.c100};
+  background-color: ${p => p.theme.colors.neutral.c00};
   box-shadow: 0 2px 24px 0 #00000014;
   width: ${p => (p.width ? p.width : "80px")};
   height: ${p => (p.height ? p.height : "80px")};

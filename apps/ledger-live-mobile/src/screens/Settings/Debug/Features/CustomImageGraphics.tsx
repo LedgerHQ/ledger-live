@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
-import { Button, Divider, Flex, Switch, Text } from "@ledgerhq/native-ui";
+import { Button, Divider, Flex, Icons, Switch, Text } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Slider from "@react-native-community/slider";
@@ -17,8 +17,6 @@ import {
 } from "~/components/CustomLockScreenDeviceAction/stepsRendering";
 import imageSource from "~/components/CustomImage/assets/examplePicture2.webp";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getFramedPictureConfig } from "~/components/CustomImage/framedPictureConfigs";
-import { useTheme } from "styled-components/native";
 
 const aStaxDevice: Device = {
   deviceId: "",
@@ -48,8 +46,6 @@ export default function DebugCustomImageGraphics() {
   const [showAllAssets, setShowAllAssets] = useState(false);
   const [deviceActionStep, setDeviceActionStep] = useState<DeviceActionStep>("confirmLoad");
   const [progress, setProgress] = useState(0);
-  const { colors } = useTheme();
-  const theme = colors.type as "light" | "dark";
 
   const [deviceModelId, setDeviceModelId] = useState<CLSSupportedDeviceModelId>(DeviceModelId.stax);
   const device = {
@@ -70,8 +66,18 @@ export default function DebugCustomImageGraphics() {
     />
   );
 
-  const framedPreviewConfig = getFramedPictureConfig("preview", deviceModelId, theme);
-  const framedTransferConfig = getFramedPictureConfig("transfer", deviceModelId, theme);
+  const getDeviceIcon = (deviceModelId: DeviceModelId) => {
+    switch (deviceModelId) {
+      case DeviceModelId.stax:
+        return <Icons.Stax size="S" color="inherit" />;
+      case DeviceModelId.europa:
+        return <Icons.Flex size="S" color="inherit" />;
+      case DeviceModelId.apex:
+        return <Icons.Apex size="S" color="inherit" />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <ImageSourceContext.Provider value={{ source: imageSource }}>
@@ -82,7 +88,7 @@ export default function DebugCustomImageGraphics() {
             <Text>FramedImage component, transferConfig</Text>
             <Text mb={3}>progress={Math.round(progress * 100) / 100}</Text>
             <FramedImageWithContext
-              framedPictureConfig={framedTransferConfig}
+              deviceModelId={deviceModelId}
               style={{ backgroundColor: "red" }}
               loadingProgress={progress}
             />
@@ -90,21 +96,19 @@ export default function DebugCustomImageGraphics() {
             {slider}
             <Divider />
             <Text mb={3}>FramedImage component, previewConfig</Text>
-            <FramedImageWithContext framedPictureConfig={framedPreviewConfig} />
+            <FramedImageWithContext deviceModelId={deviceModelId} />
           </Flex>
         </NavigationScrollView>
       ) : (
         <Flex flex={1} alignItems="center" justifyContent="center">
           {deviceActionStep === "confirmLoad" ? (
-            <RenderImageLoadRequested device={device} deviceModelId={deviceModelId} />
+            <RenderImageLoadRequested device={device} deviceModelId={deviceModelId} fullscreen />
           ) : deviceActionStep === "loading" ? (
             <RenderLoadingImage device={device} progress={progress} deviceModelId={deviceModelId} />
           ) : deviceActionStep === "confirmCommit" ? (
-            <RenderImageCommitRequested device={device} deviceModelId={deviceModelId} />
+            <RenderImageCommitRequested device={device} deviceModelId={deviceModelId} fullscreen />
           ) : deviceActionStep === "preview" ? (
-            <FramedImageWithContext
-              framedPictureConfig={getFramedPictureConfig("preview", deviceModelId, theme)}
-            />
+            <FramedImageWithContext deviceModelId={deviceModelId} />
           ) : null}
         </Flex>
       )}
@@ -130,7 +134,7 @@ export default function DebugCustomImageGraphics() {
                 </Button>
               ))}
             </Flex>
-            <Flex flexDirection={"row"} flexGrow={1} flexWrap={"wrap"} style={{ rowGap: 3 }}>
+            <Flex flexDirection={"row"} mt={2}>
               {supportedDeviceModelIds.map(val => (
                 <Button
                   key={val}
@@ -138,6 +142,7 @@ export default function DebugCustomImageGraphics() {
                   size="small"
                   onPress={() => setDeviceModelId(val)}
                   mr={3}
+                  Icon={() => getDeviceIcon(val)}
                 >
                   {val}
                 </Button>

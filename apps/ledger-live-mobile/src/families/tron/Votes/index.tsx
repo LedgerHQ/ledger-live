@@ -26,11 +26,11 @@ import IlluRewards from "~/icons/images/Rewards";
 import ProgressCircle from "~/components/ProgressCircle";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ScreenName } from "../../../const";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: TronAccount;
@@ -67,7 +67,7 @@ const Delegation = ({ account }: Props) => {
   const remoteManifest = useRemoteLiveAppManifest("stakekit");
   const manifest = remoteManifest || localManifest;
 
-  const navigation = useNavigation<StackNavigationProp<ParamListBase, string, ScreenName>>();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase, string, ScreenName>>();
 
   const managePosition = useCallback(
     (type: "CLAIM_REWARDS" | "REVOTE") => {

@@ -1,30 +1,41 @@
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { Box } from "@ledgerhq/native-ui";
 import {
   createMaterialTopTabNavigator,
   MaterialTopTabBarProps,
 } from "@react-navigation/material-top-tabs";
-import { useDispatch, useSelector } from "react-redux";
 import { NavigationContainerEventMap } from "@react-navigation/native";
-import { Box } from "@ledgerhq/native-ui";
-import Portfolio from "~/screens/Portfolio";
+import MarketWalletTabNavigator from "LLM/features/Market/WalletTabNavigator";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import type { StyleProp, ViewStyle } from "react-native";
+import { useSelector, useDispatch } from "~/context/hooks";
+import { setWalletTabNavigatorLastVisitedTab } from "~/actions/settings";
+import { NavigatorName, ScreenName } from "~/const/navigation";
+import { hasNoAccountsSelector } from "~/reducers/accounts";
 import {
   readOnlyModeEnabledSelector,
   walletTabNavigatorLastVisitedTabSelector,
 } from "~/reducers/settings";
-import { hasNoAccountsSelector } from "~/reducers/accounts";
+import Portfolio from "~/screens/Portfolio";
 import ReadOnlyPortfolio from "~/screens/Portfolio/ReadOnly";
-import { setWalletTabNavigatorLastVisitedTab } from "~/actions/settings";
-import WalletTabNavigatorTabBar from "../WalletTab/WalletTabNavigatorTabBar";
-import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
 import WalletTabHeader from "../WalletTab/WalletTabHeader";
+import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
+import WalletTabNavigatorTabBar from "../WalletTab/WalletTabNavigatorTabBar";
 import { WalletTabNavigatorStackParamList } from "./types/WalletTabNavigator";
-import { ScreenName, NavigatorName } from "~/const/navigation";
-import MarketWalletTabNavigator from "LLM/features/Market/WalletTabNavigator";
 
 const WalletTab = createMaterialTopTabNavigator<WalletTabNavigatorStackParamList>();
 
-const tabBarOptions = (props: MaterialTopTabBarProps) => <WalletTabNavigatorTabBar {...props} />;
+const tabBar = (props: MaterialTopTabBarProps) => <WalletTabNavigatorTabBar {...props} />;
+
+const styles = {
+  navigator: { backgroundColor: "transparent" } satisfies StyleProp<ViewStyle>,
+} as const;
+
+const screenOptions = {
+  lazy: true,
+  swipeEnabled: false, // For Contents Cards issue
+  sceneStyle: { backgroundColor: "transparent" },
+} as const;
 
 export default function WalletTabNavigator() {
   const dispatch = useDispatch();
@@ -39,13 +50,9 @@ export default function WalletTabNavigator() {
       <Box flexGrow={1} bg={"background.main"}>
         <WalletTab.Navigator
           initialRouteName={lastVisitedTab}
-          tabBar={tabBarOptions}
-          style={{ backgroundColor: "transparent" }}
-          screenOptions={{
-            lazy: true,
-            swipeEnabled: false, // For Contents Cards issue
-            sceneStyle: { backgroundColor: "transparent" },
-          }}
+          tabBar={tabBar}
+          style={styles.navigator}
+          screenOptions={screenOptions}
           screenListeners={{
             state: (e: { data: NavigationContainerEventMap["state"]["data"] }) => {
               const data = e.data;
@@ -53,7 +60,6 @@ export default function WalletTabNavigator() {
                 setCurrentRouteName(data.state.routeNames[data.state.index]);
                 dispatch(
                   setWalletTabNavigatorLastVisitedTab(
-                    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                     data.state.routeNames[
                       data.state.index
                     ] as keyof WalletTabNavigatorStackParamList,

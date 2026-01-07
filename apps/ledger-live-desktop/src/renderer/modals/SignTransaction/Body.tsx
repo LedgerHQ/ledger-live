@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { useTranslation } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
@@ -21,10 +22,8 @@ import logger from "~/renderer/logger";
 import Text from "~/renderer/components/Text";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { ModalData } from "../types";
-import {
-  DeviceTransactionField,
-  getDeviceTransactionConfig,
-} from "@ledgerhq/live-common/transaction/index";
+import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
+import { useDeviceTransactionConfig } from "@ledgerhq/live-common/hooks/useDeviceTransactionConfig";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 export type Params = {
@@ -37,7 +36,6 @@ export type Params = {
   onResult: (signedOperation: SignedOperation) => void;
   onCancel: (error: Error) => void;
   parentAccount: Account | undefined | null;
-  startWithWarning?: boolean;
   recipient?: string;
   amount?: BigNumber;
   manifestId?: string;
@@ -64,7 +62,7 @@ function useSteps(canEditFees = false): St[] {
         footer: StepSummaryFooter,
         onBack: canEditFees ? ({ transitionTo }) => transitionTo("amount") : null,
         backButtonComponent: canEditFees ? (
-          <Text ff="Inter|Bold" fontSize={4} color="palette.primary.main">
+          <Text ff="Inter|Bold" fontSize={4} color="primary.c80">
             {t("common.adjustFees")}
           </Text>
         ) : undefined,
@@ -123,7 +121,6 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { canEditFees, transactionData } = params;
-  const openedFromAccount = !!params.account;
   const {
     transaction,
     setTransaction,
@@ -192,7 +189,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   );
   const errorSteps = [];
 
-  const fields = getDeviceTransactionConfig({
+  const { fields } = useDeviceTransactionConfig({
     account: params.account,
     parentAccount,
     transaction,
@@ -232,7 +229,6 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     steps,
     errorSteps,
     device,
-    openedFromAccount,
     account,
     parentAccount,
     transaction,

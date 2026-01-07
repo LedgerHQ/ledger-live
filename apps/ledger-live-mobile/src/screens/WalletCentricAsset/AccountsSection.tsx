@@ -22,17 +22,9 @@ type ListProps = {
   accounts: Account[] | TokenAccount[];
   currencyId: string;
   currencyTicker: string;
-  isAddAccountCtaDisabled?: boolean;
-  onAddAccount: () => void;
 };
 
-const AccountsSection = ({
-  accounts,
-  currencyId,
-  currencyTicker,
-  isAddAccountCtaDisabled,
-  onAddAccount,
-}: ListProps) => {
+const AccountsSection = ({ accounts, currencyId, currencyTicker }: ListProps) => {
   const navigation = useNavigation<Navigation["navigation"]>();
   const { t } = useTranslation();
   const llmAccountListUI = useFeature("llmAccountListUI");
@@ -97,12 +89,7 @@ const AccountsSection = ({
           limitNumberOfAccounts={NB_MAX_ACCOUNTS_TO_DISPLAY}
           specificAccounts={accountsToDisplay}
         />
-        <AddAccountButton
-          sourceScreenName={ScreenName.Asset}
-          disabled={isAddAccountCtaDisabled}
-          onClick={onAddAccount}
-          currency={currencyId}
-        />
+        <AddAccountButton sourceScreenName={ScreenName.Asset} currency={currencyId} />
       </FeatureToggle>
       {accounts.length > NB_MAX_ACCOUNTS_TO_DISPLAY ? (
         <Button type="shade" size="large" outline mt={4} onPress={goToAccountsScreen}>

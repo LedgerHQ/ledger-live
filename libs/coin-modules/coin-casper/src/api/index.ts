@@ -115,7 +115,7 @@ export const fetchTxs = async (addr: string): Promise<ITxnHistoryData[]> => {
   );
   res = res.concat(response.data);
 
-  while (response.pageCount > page) {
+  while (response.page_count > page) {
     page++;
     response = await casperIndexerWrapper<ITxnHistoryData>(
       `accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,

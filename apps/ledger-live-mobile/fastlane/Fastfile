@@ -484,6 +484,7 @@ platform :android do
           "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASS"],
           "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
           "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASS"],
+          "APP_IDENTIFIER" => ENV["APP_IDENTIFIER"]
         },
         project_dir: 'android/',
         flags: ' -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dorg.gradle.jvmargs="-XX:MaxRAMPercentage=15.0"'
@@ -496,14 +497,14 @@ platform :android do
     if(options[:ci])
       upload_to_play_store(
         track: options[:nightly] ? 'Nightly' : options[:recover] ? 'Recover Beta' : "internal",
-        package_name: 'com.ledger.live',
+        package_name: ENV["APP_IDENTIFIER"],
         json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"],
         skip_upload_apk: true
       )
     else
       upload_to_play_store(
         track: options[:nightly] ? 'Nightly' : options[:recover] ? 'Recover Beta' : "internal",
-        package_name: "com.ledger.live",
+        package_name: ENV["APP_IDENTIFIER"],
         json_key: ENV["ANDROID_SERVICE_KEY_PATH"],
         skip_upload_apk: true
       )
@@ -561,13 +562,6 @@ platform :android do
       ci: true,
       apk_and_aab: true
     )
-    
-    unless handle_dry_run(options, "nightly upload")
-      upload(
-        nightly: true,
-        ci: true
-      )
-    end
   end
 
   desc "build recover version"

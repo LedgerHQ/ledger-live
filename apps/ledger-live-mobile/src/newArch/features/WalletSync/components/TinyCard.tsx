@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native";
 import styled from "styled-components/native";
 
 export type CardProps = {
@@ -31,7 +31,7 @@ export const TinyCard = ({ text, cta, onClick, testID, currentInstance = false }
           {text}
         </Text>
       </Flex>
-      <ButtonContainer onPress={onClick}>
+      <Pressable onPressIn={onClick} hitSlop={16}>
         <Text
           fontSize={14}
           variant="body"
@@ -40,7 +40,7 @@ export const TinyCard = ({ text, cta, onClick, testID, currentInstance = false }
         >
           {cta}
         </Text>
-      </ButtonContainer>
+      </Pressable>
     </CardContainer>
   );
 };
@@ -50,15 +50,9 @@ const CardContainer = styled(Flex)`
   background-color: ${p => p.theme.colors.opacityDefault.c05};
 `;
 
-const ButtonContainer = styled(TouchableOpacity)`
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
 const CurrentInstance = styled(Box)`
   height: 6px;
   width: 6px;
-  border-radius: 50;
+  border-radius: 3px;
   background-color: ${p => p.theme.colors.success.c70};
 `;

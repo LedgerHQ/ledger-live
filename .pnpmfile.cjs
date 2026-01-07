@@ -113,11 +113,6 @@ function readPackage(pkg, context) {
       }),
       addDependencies("allure-playwright", { "@playwright/test": "*" }),
       addPeerDependencies("@svgr/core", { "@svgr/plugin-svgo": "*" }),
-      addDependencies("@sentry/react-native", {
-        tslib: "*",
-        promise: "*",
-        metro: "*",
-      }),
       addDependencies("react-native-text-input-mask", {
         tslib: "*",
       }),
@@ -156,10 +151,6 @@ function readPackage(pkg, context) {
         react: "*",
         "react-native": "*",
         "prop-types": "*",
-      }),
-      addPeerDependencies("react-native-animatable", {
-        react: "*",
-        "react-native": "*",
       }),
 
       addDependencies("expo-pwa", {
@@ -200,12 +191,6 @@ function readPackage(pkg, context) {
       removeDependencies("follow-redirects", ["debug"], {
         kind: "peerDependencies",
       }),
-      addDependencies("@shopify/react-native-performance", {
-        tslib: "*",
-      }),
-      addDependencies("@shopify/react-native-performance-navigation", {
-        tslib: "*",
-      }),
       addPeerDependencies("react-native-easy-markdown", {
         "prop-types": "*",
       }),
@@ -217,12 +202,6 @@ function readPackage(pkg, context) {
       }),
       addDependencies("documentation", {
         micromark: "*",
-      }),
-      addDependencies("@dfinity/candid", {
-        "@dfinity/principal": "*",
-      }),
-      addDependencies("@dfinity/agent", {
-        buffer: "*",
       }),
       addDependencies("@react-native-community/cli-tools", {
         execa: "5.0.0",

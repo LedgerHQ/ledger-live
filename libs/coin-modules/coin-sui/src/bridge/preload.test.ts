@@ -16,12 +16,12 @@ jest.mock("@ledgerhq/logs", () => ({
 describe("Sui Preload Functions", () => {
   beforeEach(() => {
     // Reset the preload data before each test
-    setSuiPreloadData({ validators: [] });
+    setSuiPreloadData({ validators: [], tokens: [] });
   });
 
   describe("getCurrentSuiPreloadData", () => {
     it("should return the current preloaded data", () => {
-      const testData: SuiPreloadData = { validators: [] };
+      const testData: SuiPreloadData = { validators: [], tokens: [] };
       setSuiPreloadData(testData);
 
       const data = getCurrentSuiPreloadData();
@@ -36,7 +36,7 @@ describe("Sui Preload Functions", () => {
     });
 
     it("should emit updates when data is set", done => {
-      const testData: SuiPreloadData = { validators: [] };
+      const testData: SuiPreloadData = { validators: [], tokens: [] };
       const updates = getSuiPreloadDataUpdates();
 
       updates.pipe(take(1)).subscribe(data => {

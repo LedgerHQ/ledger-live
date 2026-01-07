@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
 import BigNumber from "bignumber.js";
 
-import type { StackNavigationProp } from "@react-navigation/stack";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { NavigationType } from "../../../../types";
 import type { RewardsPropsType } from "./types";
 
@@ -17,7 +17,7 @@ import LText from "~/components/LText";
 import { ScreenName, NavigatorName } from "~/const";
 
 import styles from "./styles";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.
@@ -28,7 +28,7 @@ const Rewards = (props: RewardsPropsType) => {
   const { t } = useTranslation();
 
   const unit = useAccountUnit(account);
-  const navigation: StackNavigationProp<NavigationType> = useNavigation();
+  const navigation: NativeStackNavigationProp<NavigationType> = useNavigation();
   const currency = getAccountCurrency(getMainAccount(account, undefined));
 
   /*

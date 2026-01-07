@@ -31,26 +31,25 @@ export default function InfiniteLoader({
   ...extraProps
 }: Props): JSX.Element {
   const rotation = useSharedValue(0);
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      transform: [{ rotate: `${rotation.value}deg` }],
+    }),
+    [rotation],
+  );
 
-  // Start the rotation animation if not in mock mode
   useEffect(() => {
-    if (!mock) {
-      rotation.value = withRepeat(
-        withTiming(360, {
-          duration: 1000,
-          easing: Easing.linear,
-        }),
-        mock ? 1 : -1,
-        false,
-      );
-    }
+    if (mock) return;
+    rotation.value = withRepeat(
+      withTiming(360, {
+        duration: 1000,
+        easing: Easing.linear,
+      }),
+      mock ? 1 : -1,
+      false,
+    );
     return () => cancelAnimation(rotation);
-  }, [mock, rotation.value]);
-
-  // Animated style for rotation
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotation.value}deg` }],
-  }));
+  }, [mock, rotation]);
 
   return (
     <Animated.View
@@ -122,7 +121,11 @@ const Loader = styled(Svg).attrs<SizeProps>((props) => ({
   ...strokeSystem(props),
   width: props.size,
   height: props.size,
-}))<SizeProps>`
+}))<
+  SizeProps & {
+    xmlns?: string;
+  }
+>`
   ${size}
   width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;

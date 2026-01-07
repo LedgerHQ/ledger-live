@@ -18,6 +18,7 @@ import { getMainAccount } from "../../../account";
 import {
   scanAccounts,
   signOperation,
+  signRawOperation,
   broadcast,
   sync,
   isInvalidRecipient,
@@ -28,6 +29,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { isAccountDelegating } from "../staking";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const isAccountBalanceSignificant = (a: AccountLike): boolean => a.balance.gt(100);
 
@@ -205,8 +207,10 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
+  signRawOperation,
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),

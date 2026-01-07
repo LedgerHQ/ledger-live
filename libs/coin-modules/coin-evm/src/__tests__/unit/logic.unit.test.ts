@@ -8,9 +8,21 @@ import {
   TokenCurrency,
   Unit,
 } from "@ledgerhq/types-cryptoassets";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import * as RPC_API from "../../network/node/rpc.common";
+import type { Operation } from "@ledgerhq/types-live";
+import { getSyncHash as baseGetSyncHash } from "@ledgerhq/coin-framework/account/sync";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getOptimismAdditionalFees, getScrollAdditionalFees } from "../../network/node/rpc.common";
 import { getCoinConfig } from "../../config";
+
+jest.mock("../../network/node/rpc.common", () => ({
+  ...jest.requireActual("../../network/node/rpc.common"),
+  getOptimismAdditionalFees: jest.fn(),
+  getScrollAdditionalFees: jest.fn(),
+}));
+
+const mockGetOptimismAdditionalFees = getOptimismAdditionalFees as jest.Mock;
+const mockGetScrollAdditionalFees = getScrollAdditionalFees as jest.Mock;
 import {
   attachOperations,
   createSwapHistoryMap,
@@ -21,7 +33,6 @@ import {
   getSyncHash,
   legacyTransactionHasFees,
   mergeSubAccounts,
-  setCALHash,
 } from "../../logic";
 import {
   deepFreeze,
@@ -38,7 +49,6 @@ import {
 import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "../../utils";
 import usdCoinTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
 import wethTokenData from "../../__fixtures__/ethereum-erc20-weth.json";
-import { setCryptoAssetsStoreGetter } from "../../cryptoAssetsStore";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const USD_COIN_TOKEN = usdCoinTokenData as unknown as TokenCurrency;
@@ -47,6 +57,9 @@ const WETH_TOKEN = wethTokenData as unknown as TokenCurrency;
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
+
+jest.mock("@ledgerhq/coin-framework/account/sync");
+const mockedBaseGetSyncHash = jest.mocked(baseGetSyncHash);
 
 mockGetConfig.mockImplementation((currency: { id: string }): any => {
   switch (currency.id) {
@@ -331,30 +344,22 @@ describe("EVM Family", () => {
       });
 
       it("should try to get additionalFees for a valid layer 2", async () => {
-        const spyOptimism = jest
-          .spyOn(RPC_API, "getOptimismAdditionalFees")
-          .mockImplementation(jest.fn());
-        const spyScroll = jest
-          .spyOn(RPC_API, "getScrollAdditionalFees")
-          .mockImplementation(jest.fn());
+        mockGetOptimismAdditionalFees.mockClear();
+        mockGetScrollAdditionalFees.mockClear();
 
         await getAdditionalLayer2Fees(optimism, {} as any);
-        expect(spyOptimism).toHaveBeenCalled();
+        expect(mockGetOptimismAdditionalFees).toHaveBeenCalled();
         await getAdditionalLayer2Fees(scroll, {} as any);
-        expect(spyScroll).toHaveBeenCalled();
+        expect(mockGetScrollAdditionalFees).toHaveBeenCalled();
       });
 
       it("should not try to get additionalFees for an invalid layer 2", async () => {
-        const spyOptimism = jest
-          .spyOn(RPC_API, "getOptimismAdditionalFees")
-          .mockImplementation(jest.fn());
-        const spyScroll = jest
-          .spyOn(RPC_API, "getOptimismAdditionalFees")
-          .mockImplementation(jest.fn());
+        mockGetOptimismAdditionalFees.mockClear();
+        mockGetScrollAdditionalFees.mockClear();
 
         await getAdditionalLayer2Fees(ethereum, {} as any);
-        expect(spyOptimism).not.toHaveBeenCalled();
-        expect(spyScroll).not.toHaveBeenCalled();
+        expect(mockGetOptimismAdditionalFees).not.toHaveBeenCalled();
+        expect(mockGetScrollAdditionalFees).not.toHaveBeenCalled();
       });
     });
 
@@ -529,8 +534,8 @@ describe("EVM Family", () => {
         const swapHistory = createSwapHistoryMap(account);
 
         expect(swapHistory.size).toBe(2);
-        expect(swapHistory.get(tokenAccount1.token)).toEqual(tokenAccount1.swapHistory);
-        expect(swapHistory.get(tokenAccount2.token)).toEqual(tokenAccount2.swapHistory);
+        expect(swapHistory.get(tokenAccount1.token.id)).toEqual(tokenAccount1.swapHistory);
+        expect(swapHistory.get(tokenAccount2.token.id)).toEqual(tokenAccount2.swapHistory);
       });
       it("should include correct swapHistory for a token account", () => {
         const tokenAccount = {
@@ -551,7 +556,7 @@ describe("EVM Family", () => {
         const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), [tokenAccount]);
 
         const swapHistoryMap = createSwapHistoryMap(account);
-        expect(swapHistoryMap.get(tokenAccount.token)).toEqual(tokenAccount.swapHistory);
+        expect(swapHistoryMap.get(tokenAccount.token.id)).toEqual(tokenAccount.swapHistory);
       });
     });
     describe("getSyncHash", () => {
@@ -562,49 +567,55 @@ describe("EVM Family", () => {
         oldEnv = getEnv("NFT_CURRENCIES");
       });
 
+      beforeEach(() => {
+        mockedBaseGetSyncHash.mockClear();
+        mockedBaseGetSyncHash.mockResolvedValue("some_random_hash");
+      });
+
       afterEach(() => {
         jest.restoreAllMocks();
         setEnv("NFT_CURRENCIES", oldEnv);
-        setCALHash(currency, "");
       });
 
-      it("should provide a valid hex hash", () => {
-        // mumurhash is always returning a 32bits uint, so a 4 bytes hexa string
-        expect(getSyncHash(currency)).toStrictEqual(expect.stringMatching(/^0x[A-Fa-f0-9]{8}$/));
+      it("should provide a valid hex hash", async () => {
+        const syncHash = await getSyncHash(currency);
+        expect(syncHash).toStrictEqual(expect.stringMatching(/^0x[A-Fa-f0-9]{8}$/));
       });
 
-      it("should provide a new hash if the CAL hash changed", () => {
-        const initialSyncHash = getSyncHash(currency);
-        setCALHash(currency, "anything");
-        expect(initialSyncHash).not.toEqual(getSyncHash(currency));
+      it("should provide a new hash when the hash from the common getSyncHash change", async () => {
+        const initialSyncHash = await getSyncHash(currency);
+        mockedBaseGetSyncHash.mockClear();
+        mockedBaseGetSyncHash.mockResolvedValueOnce("some_random_hash_2");
+        const secondSyncHash = await getSyncHash(currency);
+        expect(initialSyncHash).not.toEqual(secondSyncHash);
       });
 
-      it("should provide a new hash if nft support is activated or not", () => {
+      it("should provide a new hash if nft support is activated or not", async () => {
         setEnv("NFT_CURRENCIES", []);
-        const hash1 = getSyncHash(currency);
+        const hash1 = await getSyncHash(currency);
         setEnv("NFT_CURRENCIES", [currency.id]);
-        const hash2 = getSyncHash(currency);
+        const hash2 = await getSyncHash(currency);
 
         expect(hash1).not.toEqual(hash2);
       });
 
-      it("should provide a new hash if currency is using a new node config", () => {
-        const hash1 = getSyncHash({
+      it("should provide a new hash if currency is using a new node config", async () => {
+        const hash1 = await getSyncHash({
           ...currency,
           id: "ethereum",
           ethereumLikeInfo: { chainId: 1 },
         });
-        const hash2 = getSyncHash({
+        const hash2 = await getSyncHash({
           ...currency,
           id: "matic" as CryptoCurrencyId,
           ethereumLikeInfo: { chainId: 1 },
         });
-        const hash3 = getSyncHash({
+        const hash3 = await getSyncHash({
           ...currency,
           id: "anything" as CryptoCurrencyId,
           ethereumLikeInfo: { chainId: 1 },
         });
-        const hash4 = getSyncHash({
+        const hash4 = await getSyncHash({
           ...currency,
           id: "somethingelse" as CryptoCurrencyId,
           ethereumLikeInfo: { chainId: 1 },
@@ -616,20 +627,20 @@ describe("EVM Family", () => {
         expect(hashes).toEqual(Array.from(uniqueSet));
       });
 
-      it("should provide a new hash if currency is using a new explorer config", () => {
-        const hash1 = getSyncHash({
+      it("should provide a new hash if currency is using a new explorer config", async () => {
+        const hash1 = await getSyncHash({
           ...currency,
           id: "ethereum",
         });
-        const hash2 = getSyncHash({
+        const hash2 = await getSyncHash({
           ...currency,
           id: "matic" as CryptoCurrencyId,
         });
-        const hash3 = getSyncHash({
+        const hash3 = await getSyncHash({
           ...currency,
           id: "anything" as CryptoCurrencyId,
         });
-        const hash4 = getSyncHash({
+        const hash4 = await getSyncHash({
           ...currency,
           id: "somethingelse" as CryptoCurrencyId,
         });
@@ -638,29 +649,44 @@ describe("EVM Family", () => {
         const uniqueSet = new Set(hashes);
 
         expect(hashes).toEqual(Array.from(uniqueSet));
-      });
-
-      it("should provide a new hash if a token is added to the blacklistedTokenIds", () => {
-        expect(getSyncHash(currency)).not.toEqual(getSyncHash(currency, [USD_COIN_TOKEN.id]));
       });
     });
 
     describe("attachOperations", () => {
-      it("should attach token & nft operations to coin operations and create 'NONE' coin operations in case of orphans child operations", () => {
-        setCryptoAssetsStoreGetter(
-          () =>
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            ({
-              findTokenById: (id: string) => {
-                if (id === "ethereum/erc20/usd__coin") {
-                  return USD_COIN_TOKEN;
-                }
-
-                return undefined;
-              },
-              findTokenByAddressInCurrency: (_: string, __: string) => undefined,
-            }) as CryptoAssetsStore,
-        );
+      it("should attach token & nft operations to coin operations and create 'NONE' coin operations in case of orphans child operations", async () => {
+        setupMockCryptoAssetsStore({
+          findTokenByAddressInCurrency: async (
+            address: string,
+            currencyId: string,
+          ): Promise<TokenCurrency | undefined> => {
+            if (address === "0xTokenContract" && currencyId === "ethereum") {
+              return {
+                type: "TokenCurrency" as const,
+                id: "ethereum/erc20/usd__coin",
+                contractAddress: "0xTokenContract",
+                parentCurrency: getCryptoCurrencyById("ethereum"),
+                tokenType: "erc20",
+                name: "USD Coin",
+                ticker: "USDC",
+                units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+              };
+            }
+            if (address === "0xOtherTokenContract" && currencyId === "ethereum") {
+              return {
+                type: "TokenCurrency" as const,
+                id: "ethereum/erc20/usd__coin",
+                contractAddress: "0xOtherTokenContract",
+                parentCurrency: getCryptoCurrencyById("ethereum"),
+                tokenType: "erc20",
+                name: "USD Coin",
+                ticker: "USDC",
+                units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+              };
+            }
+            return undefined;
+          },
+          getTokensSyncHash: async () => "0",
+        });
         const coinOperation = makeOperation({
           hash: "0xCoinOp3Hash",
         });
@@ -719,7 +745,17 @@ describe("EVM Family", () => {
         ];
 
         expect(
-          attachOperations([coinOperation], tokenOperations, nftOperations, internalOperations),
+          await attachOperations(
+            [coinOperation],
+            tokenOperations,
+            nftOperations,
+            internalOperations,
+            {
+              blacklistedTokenIds: [],
+              findToken: async (contractAddress: string) =>
+                getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
+            },
+          ),
         ).toEqual([
           {
             ...coinOperation,
@@ -786,12 +822,21 @@ describe("EVM Family", () => {
           }),
         ]);
         expect(() =>
-          // @ts-expect-error purposely ignore readonly ts issue for this
-          attachOperations(coinOperations, tokenOperations, nftOperations, internalOperations),
+          attachOperations(
+            coinOperations as Operation[],
+            tokenOperations as Operation[],
+            nftOperations as Operation[],
+            internalOperations as Operation[],
+            {
+              blacklistedTokenIds: [],
+              findToken: async (contractAddress: string) =>
+                getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
+            },
+          ),
         ).not.toThrow(); // mutation prevented by deepFreeze method
       });
 
-      it("should filter blacklisted tokens", () => {
+      it("should filter blacklisted tokens", async () => {
         const coinOperation = makeOperation({
           hash: "0xCoinOp3Hash",
         });
@@ -850,9 +895,17 @@ describe("EVM Family", () => {
         ];
 
         expect(
-          attachOperations([coinOperation], tokenOperations, nftOperations, internalOperations, {
-            blacklistedTokenIds: [USD_COIN_TOKEN.id],
-          }),
+          await attachOperations(
+            [coinOperation],
+            tokenOperations,
+            nftOperations,
+            internalOperations,
+            {
+              blacklistedTokenIds: [USD_COIN_TOKEN.id],
+              findToken: async (contractAddress: string) =>
+                getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
+            },
+          ),
         ).toEqual([
           {
             ...coinOperation,

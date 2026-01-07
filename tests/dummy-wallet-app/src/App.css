@@ -52,7 +52,9 @@ pre {
 .recipient-input,
 .currency-ids-input,
 .amount-input,
-.data-input {
+.data-input,
+.message-input,
+.deeplink-url-input {
   margin-bottom: 12px;
   width: 320px;
 }

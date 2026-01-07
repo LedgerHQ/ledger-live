@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { I18nManager, ScrollView } from "react-native";
+import { I18nManager, Pressable } from "react-native";
 import { Flex, SelectableList, Text } from "@ledgerhq/native-ui";
-import { useDispatch } from "react-redux";
-import { CloseMedium, DropdownMedium } from "@ledgerhq/native-ui/assets/icons";
+import { useDispatch } from "~/context/hooks";
+import { DropdownMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 
 import RNRestart from "react-native-restart";
 import { Trans, useTranslation } from "react-i18next";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { setLanguage } from "~/actions/settings";
 import { useLocale } from "~/context/Locale";
 import { languages, Locale } from "../../languages";
@@ -16,6 +15,9 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import i18next from "i18next";
 import Button from "~/components/Button";
 import { useSupportedLocales } from "~/hooks/languages/useSupportedLocales";
+import QueuedDrawerGorhom, {
+  BottomSheetScrollView,
+} from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 
 type UiDrawerStatus = "none" | "language-selection" | "firmware-language-update";
 
@@ -25,9 +27,9 @@ type LanguageSelectStatus =
   | "firmware-language-update-requested"
   | "completed";
 
-const ScrollViewContainer = styled(ScrollView)`
-  height: 100%;
-`;
+const ScrollViewContainer = styled(BottomSheetScrollView)``;
+
+const SNAP_POINTS = ["92%"];
 
 const LanguageSelect = () => {
   const { t } = useTranslation();
@@ -91,10 +93,6 @@ const LanguageSelect = () => {
     setLanguageSelectStatus("language-selection-requested");
   }, []);
 
-  const handleLanguageSelectCancel = useCallback(() => {
-    setLanguageSelectStatus("completed");
-  }, []);
-
   // Needed because the drawer can close if it loses the screen focus, or another drawer forces it to close
   const handleLanguageSelectOnClose = useCallback(() => {
     setLanguageSelectStatus("unrequested");
@@ -109,7 +107,7 @@ const LanguageSelect = () => {
 
   return (
     <Flex>
-      <TouchableOpacity onPress={handleLanguageSelectOnPress}>
+      <Pressable onPress={handleLanguageSelectOnPress}>
         <Flex
           flexDirection="row"
           alignItems="center"
@@ -117,7 +115,7 @@ const LanguageSelect = () => {
           pl="12px"
           pr={3}
           bg="opacityDefault.c10"
-          borderRadius="50"
+          borderRadius={50}
           testID="language-select-button"
         >
           <Text mr="2px" testID="current-selected-language">
@@ -125,16 +123,18 @@ const LanguageSelect = () => {
           </Text>
           <DropdownMedium />
         </Flex>
-      </TouchableOpacity>
+      </Pressable>
 
-      <QueuedDrawer
-        noCloseButton
-        preventBackdropClick
+      <QueuedDrawerGorhom
         isRequestingToBeOpened={nextDrawerToDisplay === "language-selection"}
         onClose={handleLanguageSelectOnClose}
+        enableBlurKeyboardOnGesture={true}
+        snapPoints={SNAP_POINTS}
+        preventBackdropClick
+        enablePanDownToClose
+        keyboardBehavior="extend"
       >
-        <Flex mb={4} flexDirection="row" alignItems="center" justifyContent="space-between">
-          <Flex flex={1} />
+        <Flex mb={4} flexDirection="row" alignItems="center" justifyContent="center">
           <Text
             variant="h5"
             fontWeight="semiBold"
@@ -143,26 +143,21 @@ const LanguageSelect = () => {
           >
             {t("syncOnboarding.languageSelect.title")}
           </Text>
-          <Flex flex={1} alignItems="flex-end">
-            <Button Icon={CloseMedium} onPress={handleLanguageSelectCancel} />
-          </Flex>
         </Flex>
-        <ScrollViewContainer>
-          <Flex>
-            <SelectableList currentValue={currentLocale} onChange={handleLanguageSelectOnChange}>
-              {supportedLocales.map((locale, index: number) => (
-                <SelectableList.Element
-                  key={index + locale}
-                  value={locale}
-                  testID={`language-select-${locale}`}
-                >
-                  {languages[locale]}
-                </SelectableList.Element>
-              ))}
-            </SelectableList>
-          </Flex>
+        <ScrollViewContainer contentContainerStyle={{ paddingBottom: 24 }}>
+          <SelectableList currentValue={currentLocale} onChange={handleLanguageSelectOnChange}>
+            {supportedLocales.map((locale, index: number) => (
+              <SelectableList.Element
+                key={index + locale}
+                value={locale}
+                testID={`language-select-${locale}`}
+              >
+                {languages[locale]}
+              </SelectableList.Element>
+            ))}
+          </SelectableList>
         </ScrollViewContainer>
-      </QueuedDrawer>
+      </QueuedDrawerGorhom>
 
       <QueuedDrawer
         isRequestingToBeOpened={isRestartPromptOpened}

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, BackHandler, Platform, View, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -27,6 +27,8 @@ import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseBut
 import { NavigatorName, ScreenName } from "~/const";
 import { Loading } from "../Loading";
 import { usePTXCustomHandlers } from "./CustomHandlers";
+import { useDeeplinkCustomHandlers } from "../WebPlatformPlayer/CustomHandlers";
+import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 
 type BackToInternalDomainProps = {
   config: {
@@ -114,6 +116,7 @@ function HeaderRight({ softExit }: { softExit: boolean }) {
 export type InterstitialType = React.ComponentType<{
   manifest: LiveAppManifest;
   isLoading: boolean;
+  description?: string;
 }>;
 
 type Props = {
@@ -254,13 +257,21 @@ export const WebPTXPlayer = ({
         headerRight: () => (isInternalApp ? null : <HeaderRight softExit={softExit} />),
         headerLeft: () => (isInternalApp ? null : <BackToInternalDomain config={config} />),
         headerTitle: () => null,
+        title: "",
         headerShown: !isInternalApp,
       });
     }
   }, [config, disableHeader, isInternalApp, manifest, navigation, webviewState?.url, softExit]);
 
   const accounts = useSelector(flattenAccountsSelector);
-  const customHandlers = usePTXCustomHandlers(manifest, accounts);
+  const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
+  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+  const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
+    return {
+      ...customPTXHandlers,
+      ...customDeeplinkHandlers,
+    };
+  }, [customPTXHandlers, customDeeplinkHandlers]);
   return (
     <SafeAreaView edges={isInternalApp ? ["left", "right", "top"] : ["left", "right"]} isFlex>
       <Web3AppWebview

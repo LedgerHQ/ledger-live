@@ -5,7 +5,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { useNavigation } from "@react-navigation/native";
 import { WebViewMessageEvent } from "react-native-webview";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 
 import Button from "~/components/wrappedUi/Button";
 import logger from "../../logger";
@@ -15,15 +15,15 @@ import DebugMessageDrawer from "./DebugMessageDrawer";
 import WebViewScreen from "~/components/WebViewScreen";
 import { completeOnboarding, setReadOnlyMode } from "~/actions/settings";
 import { urls } from "~/utils/urls";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 const PurchaseDevice = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
-  const upsellFlexFF = useFeature("llmRebornFlex");
 
-  const defaultURL = upsellFlexFF?.enabled ? urls.buyFlex : urls.buyNanoX;
+  const defaultURL = useLocalizedUrl(urls.buyFlex);
 
   const [isURLDrawerOpen, setURLDrawerOpen] = useState(false);
   const [isMessageDrawerOpen, setMessageDrawerOpen] = useState(false);

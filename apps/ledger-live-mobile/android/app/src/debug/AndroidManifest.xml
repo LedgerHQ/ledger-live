@@ -5,13 +5,26 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <uses-sdk
-        android:minSdkVersion="21"
-        android:targetSdkVersion="33"
+        android:minSdkVersion="25"
+        android:targetSdkVersion="35"
         tools:overrideLibrary="com.ledger.reactnative, ca.jaysoo.extradimensions" />
 
     <application
         android:usesCleartextTraffic="true"
         tools:targetApi="28"
         tools:ignore="GoogleAppIndexingWarning"
-        android:networkSecurityConfig="@xml/network_security_config"/>
+        android:networkSecurityConfig="@xml/network_security_config">
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"
+            android:theme="@android:style/Theme"
+            tools:replace="android:theme" />
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity"
+            android:theme="@android:style/Theme"
+            tools:replace="android:theme" />
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyFloatingActivity"
+            android:theme="@android:style/Theme.Dialog"
+            tools:replace="android:theme" />
+    </application>
 </manifest>

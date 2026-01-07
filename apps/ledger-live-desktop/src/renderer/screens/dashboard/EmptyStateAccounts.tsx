@@ -11,7 +11,7 @@ import { DefaultTheme, withTheme } from "styled-components";
 import FakeLink from "~/renderer/components/FakeLink";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
   const { push } = useHistory();
@@ -38,7 +38,7 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
       <Box mt={5} alignItems="center">
         <Text
           ff="Inter|SemiBold"
-          color="palette.text.shade100"
+          color="neutral.c100"
           fontSize={5}
           data-testid="portfolio-empty-state-title"
         >
@@ -47,7 +47,7 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
         <Box mt={3}>
           <Text
             ff="Inter|Regular"
-            color="palette.text.shade60"
+            color="neutral.c70"
             textAlign="center"
             fontSize={4}
             style={{
@@ -78,7 +78,7 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
         <FakeLink
           underline
           fontSize={3}
-          color="palette.text.shade80"
+          color="neutral.c80"
           onClick={handleInstallApp}
           data-e2e="accounts_empty_InstallApps"
         >
@@ -87,7 +87,7 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
         <Box mt={5} justifyContent="center">
           <LinkHelp
             style={{
-              color: theme.colors.palette.text.shade60,
+              color: theme.colors.neutral.c70,
             }}
             iconSize={14}
             label={<Trans i18nKey="emptyState.accounts.buttons.help" />}
@@ -98,4 +98,4 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
     </Box>
   );
 };
-export default React.memo<{}>(withTheme(EmptyStateAccounts));
+export default React.memo(withTheme(EmptyStateAccounts));

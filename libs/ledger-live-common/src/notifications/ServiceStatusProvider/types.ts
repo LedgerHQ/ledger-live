@@ -1,3 +1,5 @@
+import { EntryPoint } from "./entry-points";
+
 type Component = {
   id: string;
   name: string;
@@ -42,5 +44,6 @@ export type ServiceStatusApi = {
 };
 
 export type ServiceStatusUserSettings = {
-  tickers: string[];
+  tickers?: string[];
+  entryPoint?: EntryPoint;
 };

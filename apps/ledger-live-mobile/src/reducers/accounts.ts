@@ -1,6 +1,7 @@
 import { handleActions, ReducerMap } from "redux-actions";
 import type { Action } from "redux-actions";
-import { createSelector, createSelectorCreator, defaultMemoize, OutputSelector } from "reselect";
+import { createSelector } from "~/context/selectors";
+import { createSelectorCreator, lruMemoize } from "reselect";
 import uniq from "lodash/uniq";
 import {
   Account,
@@ -158,7 +159,7 @@ const accountHash = (a: AccountLike) =>
   `${a.id}-${a.balance.toString()}-swapHistory(${a.swapHistory.length})`;
 
 // TODO can we share with desktop in common?
-const shallowAccountsSelectorCreator = createSelectorCreator(defaultMemoize, (a, b): boolean =>
+const shallowAccountsSelectorCreator = createSelectorCreator(lruMemoize, (a, b): boolean =>
   isEqual(
     flattenAccounts(a as AccountLikeArray).map(accountHash),
     flattenAccounts(b as AccountLikeArray).map(accountHash),
@@ -188,13 +189,10 @@ export const accountsTuplesByCurrencySelector = createSelector(
   walletSelector,
   accountsSelector,
   (_: State, currency: CryptoCurrency | TokenCurrency) => currency,
-  (_: State, currency: CryptoCurrency | TokenCurrency, accountIds?: Map<string, boolean>) =>
-    accountIds,
   (
     wallet,
     accounts,
     currency,
-    accountIds,
   ): { account: AccountLike; subAccount: TokenAccount | null; name: string }[] => {
     if (currency.type === "TokenCurrency") {
       return accounts
@@ -219,10 +217,7 @@ export const accountsTuplesByCurrencySelector = createSelector(
     }
 
     return accounts
-      .filter(
-        account =>
-          account.currency.id === currency.id && (accountIds ? accountIds.has(account.id) : true),
-      )
+      .filter(account => account.currency.id === currency.id)
       .map(account => ({
         name: accountNameWithDefaultSelector(wallet, account),
         account,
@@ -242,10 +237,10 @@ export const flattenAccountsByCryptoCurrencySelector = createSelector(
 
 const emptyTuples: ReturnType<typeof accountsTuplesByCurrencySelector> = [];
 export const accountsByCryptoCurrencyScreenSelector =
-  (currency: CryptoOrTokenCurrency, accountIds?: Map<string, boolean>) => (state: State) => {
+  (currency: CryptoOrTokenCurrency) => (state: State) => {
     // TODO look if we can remove this check as the types should already protect here
     if (!currency) return emptyTuples;
-    return accountsTuplesByCurrencySelector(state, currency, accountIds);
+    return accountsTuplesByCurrencySelector(state, currency);
   };
 
 const emptyArray: AccountLike[] = [];
@@ -326,20 +321,20 @@ export const accountsWithPositiveBalanceCountSelector = createSelector(
  * Selector creators
  */
 
-type AccountsLikeSelector = OutputSelector<
-  State,
-  AccountLike[],
-  (res: Account[], res2: string[]) => AccountLike[]
->;
+type AccountsLikeSelector = (state: State) => AccountLike[];
 
-function makeHasAccountsSelectors(accountsSelector: AccountsLikeSelector) {
-  return createSelector(accountsSelector, accounts => accounts.length > 0);
+function makeHasAccountsSelectors(
+  accountsSelector: AccountsLikeSelector,
+): (state: State) => boolean {
+  return createSelector(accountsSelector, (accounts: AccountLike[]) => accounts.length > 0);
 }
 
-function makeHasAccountsWithPositiveBalanceSelector(accountsSelector: AccountsLikeSelector) {
+function makeHasAccountsWithPositiveBalanceSelector(
+  accountsSelector: AccountsLikeSelector,
+): (state: State) => boolean {
   return createSelector(
     accountsSelector,
-    accounts => accounts.filter(accountHasPositiveBalance).length > 0,
+    (accounts: AccountLike[]) => accounts.filter(accountHasPositiveBalance).length > 0,
   );
 }
 

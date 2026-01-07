@@ -52,14 +52,11 @@ export const useDrawerConfiguration = () => {
 };
 
 export const useDevToolState = () => {
-  const [includeTokens, setIncludeTokens] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [location, setLocation] = useState<LocationOption>(LOCATIONS[0]);
   const [liveApp, setLiveApp] = useState<LiveAppOption>(LIVE_APPS[0]);
 
   return {
-    includeTokens,
-    setIncludeTokens,
     openModal,
     setOpenModal,
     location,

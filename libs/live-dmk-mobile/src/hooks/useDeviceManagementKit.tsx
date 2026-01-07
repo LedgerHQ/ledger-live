@@ -5,18 +5,29 @@ import {
   LogLevel,
 } from "@ledgerhq/device-management-kit";
 import { RNBleTransportFactory } from "@ledgerhq/device-transport-kit-react-native-ble";
-import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
+import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
+import { RNHidTransportFactory } from "@ledgerhq/device-transport-kit-react-native-hid";
+import { getEnv } from "@ledgerhq/live-env";
+import { LocalTracer } from "@ledgerhq/logs";
+
+const tracer = new LocalTracer("live-dmk-tracer", { function: "useDeviceManagementKit" });
 
 let instance: DeviceManagementKit | null = null;
 
 export const getDeviceManagementKit = (): DeviceManagementKit => {
   if (!instance) {
+    const userId = getEnv("USER_ID");
+    const firmwareDistributionSalt = UserHashService.compute(userId).firmwareSalt;
+    tracer.trace("Initialize DeviceManagementKit", {
+      firmwareDistributionSalt,
+    });
     instance = new DeviceManagementKitBuilder()
       .addTransport(RNBleTransportFactory)
+      .addTransport(RNHidTransportFactory)
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
+      .addConfig({ firmwareDistributionSalt })
       .build();
   }
-
   return instance;
 };
 
@@ -28,12 +39,17 @@ type Props = {
 };
 
 export const DeviceManagementKitProvider: React.FC<Props> = ({ children, dmkEnabled }) => {
+  tracer.trace("DeviceManagementKitProvider render", { dmkEnabled });
+
   const deviceManagementKit = useMemo(() => {
-    if (!dmkEnabled) return null;
+    if (!dmkEnabled) {
+      tracer.trace("DMK is disabled inside useMemo, returning null", { dmkEnabled });
+      return null;
+    }
     return getDeviceManagementKit();
   }, [dmkEnabled]);
 
-  if (!dmkEnabled || deviceManagementKit === null) {
+  if (deviceManagementKit === null) {
     return <>{children}</>;
   }
 

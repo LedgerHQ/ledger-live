@@ -2,7 +2,6 @@ import querystring from "querystring";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { OperationType } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { isValidAddress } from "../common";
@@ -13,6 +12,9 @@ import type {
   PolkadotOperation,
   PolkadotOperationExtra,
 } from "../types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import coinConfig from "../config";
+import { encodeAddress } from "@polkadot/util-crypto";
 
 const LIMIT = 200;
 
@@ -21,7 +23,8 @@ const LIMIT = 200;
  *
  * @returns {string}
  */
-const getBaseApiUrl = (): string => getEnv("API_POLKADOT_INDEXER");
+const getBaseApiUrl = (currency?: CryptoCurrency): string =>
+  coinConfig.getCoinConfig(currency).indexer.url;
 
 /**
  * Fetch operation lists from indexer
@@ -38,8 +41,9 @@ const getAccountOperationUrl = (
   offset: number,
   startAt: number,
   limit: number = LIMIT,
+  currency?: CryptoCurrency,
 ): string =>
-  `${getBaseApiUrl()}/accounts/${addr}/operations?${querystring.stringify({
+  `${getBaseApiUrl(currency)}/accounts/${addr}/operations?${querystring.stringify({
     limit,
     offset,
     startAt,
@@ -222,7 +226,8 @@ const extrinsicToOperation = (
     recipients: [extrinsic.affectedAddress1, extrinsic.affectedAddress2]
       .filter(addr => addr !== undefined)
       .filter(isValidAddress),
-    transactionSequenceNumber: extrinsic.signer === addr ? extrinsic.nonce : undefined,
+    transactionSequenceNumber:
+      extrinsic.signer === addr ? new BigNumber(extrinsic.nonce) : undefined,
     hasFailed: !extrinsic.isSuccess,
   };
 };
@@ -296,13 +301,14 @@ const fetchOperationList = async (
   accountId: string,
   addr: string,
   startAt: number,
+  currency?: CryptoCurrency,
   limit = LIMIT,
   offset = 0,
   prevOperations: PolkadotOperation[] = [],
 ): Promise<PolkadotOperation[]> => {
   const { data } = await network({
     method: "GET",
-    url: getAccountOperationUrl(addr, offset, startAt, limit),
+    url: getAccountOperationUrl(addr, offset, startAt, limit, currency),
   });
   const operations = data.extrinsics.map((extrinsic: any) =>
     extrinsicToOperation(addr, accountId, extrinsic),
@@ -315,7 +321,15 @@ const fetchOperationList = async (
     return mergedOp.filter(Boolean).sort((a, b) => b.date - a.date);
   }
 
-  return await fetchOperationList(accountId, addr, startAt, limit, offset + LIMIT, mergedOp);
+  return await fetchOperationList(
+    accountId,
+    addr,
+    startAt,
+    currency,
+    limit,
+    offset + LIMIT,
+    mergedOp,
+  );
 };
 
 /**
@@ -330,8 +344,14 @@ const fetchOperationList = async (
 export const getOperations = async (
   accountId: string,
   addr: string,
+  currency?: CryptoCurrency,
   startAt = 0,
   limit = LIMIT,
 ) => {
-  return await fetchOperationList(accountId, addr, startAt, limit);
+  if (currency && ["westend", "assethub_westend"].includes(currency.id)) {
+    const encodeAddr = encodeAddress(addr, 42);
+    return await fetchOperationList(accountId, encodeAddr, startAt, currency, limit);
+  } else {
+    return await fetchOperationList(accountId, addr, startAt, currency, limit);
+  }
 };

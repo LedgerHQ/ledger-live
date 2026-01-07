@@ -26,11 +26,13 @@ export type ToggleOnboardingEarlyCheckTaskEvent =
 
 export type ToggleOnboardingEarlyCheckTaskArgs = {
   deviceId: DeviceId;
+  deviceName: string | null;
   toggleType: "enter" | "exit";
 };
 
 function internalToggleOnboardingEarlyCheckTask({
   deviceId,
+  deviceName,
   toggleType,
 }: ToggleOnboardingEarlyCheckTaskArgs): Observable<ToggleOnboardingEarlyCheckTaskEvent> {
   const tracer = new LocalTracer(LOG_TYPE, {
@@ -42,7 +44,10 @@ function internalToggleOnboardingEarlyCheckTask({
   const p2 = toggleType === "enter" ? ToggleTypeP2.EnterChecking : ToggleTypeP2.ExitChecking;
 
   return new Observable(subscriber => {
-    withTransport(deviceId)(({ transportRef }) =>
+    withTransport(
+      deviceId,
+      deviceName ? { matchDeviceByName: deviceName } : undefined,
+    )(({ transportRef }) =>
       toggleOnboardingEarlyCheckCmd({
         transport: transportRef.current,
         p2,

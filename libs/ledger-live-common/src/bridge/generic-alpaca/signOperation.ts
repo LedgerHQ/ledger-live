@@ -1,12 +1,6 @@
 import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type {
-  Account,
-  DeviceId,
-  SignOperationEvent,
-  AccountBridge,
-  TransactionCommon,
-} from "@ledgerhq/types-live";
+import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
 import { buildOptimisticOperation, transactionToIntent } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
@@ -15,6 +9,7 @@ import { MapMemo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { StellarMemo } from "@ledgerhq/coin-stellar/types/bridge";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
+import { GenericTransaction } from "./types";
 
 /**
  * Applies memo information to transaction intent
@@ -22,12 +17,12 @@ import BigNumber from "bignumber.js";
  */
 function applyMemoToIntent(
   transactionIntent: TransactionIntent<any>,
-  transaction: TransactionCommon,
+  transaction: GenericTransaction,
 ): TransactionIntent<any> {
   // Handle destination tag memo (for XRP-like chains)
-  if (transaction["tag"]) {
+  if (transaction.tag) {
     const txWithMemoTag = transactionIntent as TransactionIntent<MapMemo<string, string>>;
-    const txMemo = String(transaction["tag"]);
+    const txMemo = String(transaction.tag);
 
     txWithMemoTag.memo = {
       type: "map",
@@ -39,10 +34,10 @@ function applyMemoToIntent(
   }
 
   // Handle Stellar-style memo
-  if (transaction["memoType"] && transaction["memoValue"]) {
+  if (transaction.memoType && transaction.memoValue) {
     const txWithMemo = transactionIntent as TransactionIntent<StellarMemo>;
-    const txMemoType = String(transaction["memoType"]);
-    const txMemoValue = String(transaction["memoValue"]);
+    const txMemoType = String(transaction.memoType);
+    const txMemoValue = String(transaction.memoValue);
 
     txWithMemo.memo = {
       type: txMemoType as "NO_MEMO" | "MEMO_TEXT" | "MEMO_ID" | "MEMO_HASH" | "MEMO_RETURN",
@@ -60,7 +55,7 @@ function applyMemoToIntent(
  */
 function enrichTransactionIntent(
   transactionIntent: TransactionIntent<any>,
-  transaction: TransactionCommon,
+  transaction: GenericTransaction,
   publicKey: string,
 ): TransactionIntent<any> {
   // Set sender public key
@@ -76,33 +71,52 @@ function enrichTransactionIntent(
  */
 export const genericSignOperation =
   (network, kind) =>
-  (signerContext: SignerContext<any>): AccountBridge<TransactionCommon>["signOperation"] =>
+  (signerContext: SignerContext<any>): AccountBridge<GenericTransaction>["signOperation"] =>
   ({
     account,
     transaction,
     deviceId,
   }: {
     account: Account;
-    transaction: TransactionCommon;
+    transaction: GenericTransaction;
     deviceId: DeviceId;
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main() {
-        // NOTE: checking field that's not inside TransactionCommon, improve
-        if (!transaction["fees"]) throw new FeeNotLoaded();
-        const fees = BigInt(transaction["fees"]?.toString() || "0");
-        if (transaction["useAllAmount"]) {
+        const alpacaApi = getAlpacaApi(account.currency.id, kind);
+        if (!transaction.fees) throw new FeeNotLoaded();
+        const fees = BigInt(transaction.fees?.toString() || "0");
+        const feesParameters = {
+          ...(transaction.gasLimit ? { gasLimit: BigInt(transaction.gasLimit.toFixed()) } : {}),
+          ...(transaction.gasPrice ? { gasPrice: BigInt(transaction.gasPrice.toFixed()) } : {}),
+          ...(transaction.maxFeePerGas
+            ? { maxFeePerGas: BigInt(transaction.maxFeePerGas.toFixed()) }
+            : {}),
+          ...(transaction.maxPriorityFeePerGas
+            ? { maxPriorityFeePerGas: BigInt(transaction.maxPriorityFeePerGas.toFixed()) }
+            : {}),
+          ...(transaction.additionalFees
+            ? { additionalFees: BigInt(transaction.additionalFees.toFixed()) }
+            : {}),
+        };
+        if (transaction.useAllAmount) {
           const draftTransaction = {
+            mode: transaction.mode,
             recipient: transaction.recipient,
             amount: transaction.amount ?? 0,
             useAllAmount: !!transaction.useAllAmount,
-            assetReference: transaction?.["assetReference"] || "",
-            assetOwner: transaction?.["assetOwner"] || "",
+            assetReference: transaction?.assetReference || "",
+            assetOwner: transaction?.assetOwner || "",
             subAccountId: transaction.subAccountId || "",
+            family: transaction.family,
+            feesStrategy: transaction.feesStrategy,
+            data: transaction.data,
+            type: transaction.type,
           };
-          const { amount } = await getAlpacaApi(network, kind).validateIntent(
-            transactionToIntent(account, draftTransaction),
-            { value: fees },
+          // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22227
+          const { amount } = await alpacaApi.validateIntent(
+            transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
+            { value: fees, parameters: feesParameters },
           );
           transaction.amount = new BigNumber(amount.toString());
         }
@@ -110,28 +124,36 @@ export const genericSignOperation =
           const derivationPath = account.freshAddressPath;
           const { publicKey } = (await signer.getAddress(derivationPath)) as Result;
 
-          let transactionIntent = transactionToIntent(account, { ...transaction });
+          let transactionIntent = transactionToIntent(
+            account,
+            { ...transaction },
+            alpacaApi.computeIntentType,
+          );
           transactionIntent.senderPublicKey = publicKey;
 
           // Enrich with memo and asset information
           transactionIntent = enrichTransactionIntent(transactionIntent, transaction, publicKey);
 
-          // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
-          const sequenceNumber = await getAlpacaApi(network, kind).getSequence(
-            transactionIntent.sender,
-          );
-          transactionIntent.sequence = sequenceNumber;
+          if (typeof transactionIntent.sequence !== "bigint" || transactionIntent.sequence < 0n) {
+            // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
+            const sequenceNumber = await alpacaApi.getSequence(transactionIntent.sender);
+            transactionIntent.sequence = sequenceNumber;
+          }
 
           /* Craft unsigned blob via Alpaca */
-          const { transaction: unsigned } = await getAlpacaApi(network, kind).craftTransaction(
-            transactionIntent,
-            { value: fees },
-          );
+          const { transaction: unsigned } = await alpacaApi.craftTransaction(transactionIntent, {
+            value: fees,
+            parameters: feesParameters,
+          });
 
           /* Notify UI that the device is now showing the tx */
           o.next({ type: "device-signature-requested" });
           /* Sign on Ledger device */
-          const txnSig = await signer.signTransaction(derivationPath, unsigned);
+          const txnSig = await signer.signTransaction(
+            derivationPath,
+            unsigned,
+            transaction.recipientDomain,
+          );
           return { unsigned, txnSig, publicKey, sequence: transactionIntent.sequence };
         });
 
@@ -140,7 +162,7 @@ export const genericSignOperation =
         o.next({ type: "device-signature-granted" });
 
         /* Combine payload + signature for broadcast */
-        const combined = await getAlpacaApi(network, kind).combine(
+        const combined = await alpacaApi.combine(
           signedInfo.unsigned,
           signedInfo.txnSig,
           signedInfo.publicKey,

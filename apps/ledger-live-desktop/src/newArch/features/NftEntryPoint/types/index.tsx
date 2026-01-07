@@ -12,6 +12,6 @@ export type EntryPointNft = Record<
   {
     enabled: boolean;
     page: AnalyticsPage;
-    component: () => JSX.Element;
+    component: () => React.JSX.Element;
   }
 >;

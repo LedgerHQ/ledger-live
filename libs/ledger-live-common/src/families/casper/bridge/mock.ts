@@ -11,6 +11,7 @@ import type { Transaction, TransactionStatus } from "../types";
 import {
   scanAccounts,
   signOperation,
+  signRawOperation,
   broadcast,
   sync,
   makeAccountBridgeReceive,
@@ -34,6 +35,7 @@ import {
   CASPER_MINIMUM_VALID_AMOUNT_MOTES,
 } from "../consts";
 import { getMainAccount } from "../../../account";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
@@ -167,9 +169,11 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
+  signRawOperation,
   broadcast,
   estimateMaxSpendable,
   getSerializedAddressParameters,
+  validateAddress,
 };
 export default {
   currencyBridge,

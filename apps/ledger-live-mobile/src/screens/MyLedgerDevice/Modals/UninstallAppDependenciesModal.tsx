@@ -2,16 +2,13 @@ import React, { memo, useCallback } from "react";
 import { View } from "react-native";
 import { Trans } from "react-i18next";
 import { App } from "@ledgerhq/types-live";
-
 import styled, { DefaultTheme, useTheme } from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import AppTree from "~/icons/AppTree";
 import AppIcon from "../AppsList/AppIcon";
-
 import QueuedDrawer from "~/components/QueuedDrawer";
 import CollapsibleList from "~/components/CollapsibleList";
 import ListTreeLine from "~/icons/ListTreeLine";
-
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Theme } from "../../../colors";
 import { AppWithDependents } from "../AppsInstallUninstallWithDependenciesContext";
@@ -27,7 +24,9 @@ type Props = {
 const LIST_HEIGHT = height - 420;
 const LINE_HEIGHT = 46;
 
-const ImageContainer = styled(Flex).attrs({
+const ImageContainer = styled(Flex).attrs<{
+  marginVertical?: number;
+}>({
   width: "100%",
   flexDirection: "row",
   alignItems: "center",
@@ -95,7 +94,11 @@ const UninstallAppDependenciesModal = ({
             </ImageContainer>
             <TextContainer>
               <ModalText color="neutral.c100" fontWeight="medium" variant="h2">
-                <Trans i18nKey="AppAction.uninstall.dependency.title" values={{ app: name }} />
+                <Trans
+                  i18nKey="AppAction.uninstall.dependency.title"
+                  values={{ app: name }}
+                  count={dependents.length}
+                />
               </ModalText>
               <ModalText color="neutral.c70" fontWeight="medium" variant="bodyLineHeight">
                 <Trans

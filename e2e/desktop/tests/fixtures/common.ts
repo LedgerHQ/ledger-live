@@ -1,18 +1,18 @@
 import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from "@playwright/test";
-import fsPromises from "fs/promises";
+import { mkdir, readFile, writeFile } from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 
 import { Application } from "tests/page";
-import { safeAppendFile } from "tests/utils/fileUtils";
+import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
-import { CLI } from "../utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 import { launchSpeculos, killSpeculos } from "tests/utils/speculosUtils";
 import { SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
 
@@ -56,7 +56,7 @@ export const test = base.extend<TestFixtures>({
   lang: "en-US",
   theme: "dark",
   userdata: undefined,
-  settings: { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true },
+  settings: { shareAnalytics: false, hasSeenAnalyticsOptInPrompt: true },
   featureFlags: undefined,
   simulateCamera: undefined,
   speculosApp: undefined,
@@ -97,19 +97,20 @@ export const test = base.extend<TestFixtures>({
     testInfo,
   ) => {
     // create userdata path
-    await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
+    await mkdir(userdataDestinationPath, { recursive: true });
 
     const fileUserData = userdataOriginalFile
-      ? await fsPromises.readFile(userdataOriginalFile, { encoding: "utf-8" }).then(JSON.parse)
+      ? await readFile(userdataOriginalFile, { encoding: "utf-8" }).then(JSON.parse)
       : {};
 
     const userData = merge({ data: { settings } }, fileUserData);
-    await fsPromises.writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
+    await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
 
     let speculos: SpeculosDevice | undefined;
 
     try {
       setEnv("PLAYWRIGHT_RUN", true);
+      setEnv("E2E_NANO_APP_VERSION_PATH", NANO_APP_CATALOG_PATH);
       if (IS_NOT_MOCK && speculosApp) {
         setEnv("MOCK", "");
         process.env.MOCK = "";

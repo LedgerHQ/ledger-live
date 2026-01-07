@@ -1,7 +1,7 @@
 import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { useSendAmount } from "@ledgerhq/live-countervalues-react";
 import Box from "~/renderer/components/Box";
@@ -28,12 +28,12 @@ const ErrorDisplay = styled(Box)`
 `;
 
 const WarningDisplay = styled(Box)`
-  color: ${p => p.theme.colors.warning};
+  color: ${p => p.theme.colors.legacyWarning};
 `;
 
 const InputRight = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   fontSize: 4,
   justifyContent: "center",
 }))`
@@ -43,7 +43,7 @@ const InputRight = styled(Box).attrs(() => ({
 const InputCenter = styled(Box).attrs(() => ({
   alignItems: "center",
   justifyContent: "center",
-  color: "palette.text.shade40",
+  color: "neutral.c60",
 }))`
   margin-left: 19px;
   margin-right: 19px;

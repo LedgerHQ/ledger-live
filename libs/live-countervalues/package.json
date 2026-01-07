@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-countervalues",
-  "version": "0.7.0",
+  "version": "0.10.4",
   "description": "Ledger Live countervalues module",
   "keywords": [
     "Ledger"
@@ -31,9 +31,10 @@
     "@ledgerhq/live-env": "workspace:*"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.10",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
+    "@types/jest": "catalog:",
+    "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "prando": "6"
   },
   "scripts": {

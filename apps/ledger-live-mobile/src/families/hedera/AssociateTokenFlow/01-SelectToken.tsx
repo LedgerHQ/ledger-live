@@ -1,11 +1,10 @@
 import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
-import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
-import { listTokens } from "@ledgerhq/live-common/currencies/index";
+import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import invariant from "invariant";
 
@@ -16,7 +15,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import type { HederaAssociateTokenFlowParamList } from "~/families/hedera/AssociateTokenFlow/types";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<HederaAssociateTokenFlowParamList, ScreenName.HederaAssociateTokenSelectToken>
@@ -36,8 +35,15 @@ const renderEmptyList = () => (
 
 export default function SelectToken({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const list = useMemo(() => listTokens().filter(t => t.parentCurrency.id === "hedera"), []);
+  const { account, parentAccount } = useAccountScreen(route);
+
+  const { data, loadNext } = useTokensData({
+    networkFamily: "hedera",
+  });
+
+  const list = useMemo(() => {
+    return data?.tokens || [];
+  }, [data?.tokens]);
 
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
 
@@ -85,9 +91,11 @@ export default function SelectToken({ navigation, route }: Props) {
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
         keyboardDismissMode="on-drag"
+        onEndReached={loadNext}
+        onEndReachedThreshold={0.5}
       />
     ),
-    [onPressItem],
+    [onPressItem, loadNext],
   );
 
   return (

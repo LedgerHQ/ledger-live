@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { TFunction } from "i18next";
 import { Trans } from "react-i18next";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
+import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
 import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
@@ -25,22 +25,19 @@ const renderItem = ({
       key={id}
       horizontal
       alignItems="center"
-      color={isDisabled ? "palette.text.shade40" : "palette.text.shade100"}
+      color={isDisabled ? "neutral.c60" : "neutral.c100"}
       justifyContent="space-between"
     >
       <Box horizontal alignItems="center" justifyContent="flex-start">
-        <FirstLetterIcon
-          color={isDisabled ? "palette.text.shade40" : "palette.text.shade100"}
-          label={name}
-        />
+        <FirstLetterIcon color={isDisabled ? "neutral.c60" : "neutral.c100"} label={name} />
         <Text ff="Inter|Medium">{name}</Text>
-        <Text fontSize={3} color="palette.text.shade40">
+        <Text fontSize={3} color="neutral.c60">
           - ID {tokenId}
         </Text>
       </Box>
       {isDisabled && (
         <ToolTip content={<Trans i18nKey="algorand.optIn.flow.steps.assets.disabledTooltip" />}>
-          <Box color="warning">
+          <Box color="legacyWarning">
             <ExclamationCircleThin size={16} />
           </Box>
         </ToolTip>
@@ -61,10 +58,15 @@ export default function DelegationSelectorField({
 }) {
   const [query, setQuery] = useState("");
   const subAccounts = account.subAccounts;
-  const options = listTokensForCryptoCurrency(account.currency);
+
+  const { data } = useTokensData({
+    networkFamily: "algorand",
+  });
+
+  const options = data?.tokens || [];
   const value = useMemo(
-    () => options.find(({ id }) => id === transaction.assetId),
-    [options, transaction],
+    () => (data?.tokens || []).find(({ id }) => id === transaction.assetId),
+    [data?.tokens, transaction.assetId],
   );
   return (
     <Box flow={1} mb={4}>

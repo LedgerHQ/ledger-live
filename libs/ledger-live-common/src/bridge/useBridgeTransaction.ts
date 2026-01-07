@@ -6,6 +6,8 @@ import { getMainAccount } from "../account";
 import { delay } from "../promise";
 import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../generated/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 export type State<T extends Transaction = Transaction> = {
   account: AccountLike | null | undefined;
@@ -15,6 +17,8 @@ export type State<T extends Transaction = Transaction> = {
   statusOnTransaction: T | null | undefined;
   errorAccount: Error | null | undefined;
   errorStatus: Error | null | undefined;
+  syncing: boolean;
+  synced: boolean;
 };
 
 export type Result<T extends Transaction = Transaction> = {
@@ -55,6 +59,12 @@ type Actions<T extends Transaction = Transaction> =
   | {
       type: "setTransaction";
       transaction: T;
+    }
+  | {
+      type: "onStartSync";
+    }
+  | {
+      type: "onSync";
     };
 
 type Reducer<T extends Transaction = Transaction> = (
@@ -76,6 +86,18 @@ const initial: State<Transaction> = {
   statusOnTransaction: null,
   errorAccount: null,
   errorStatus: null,
+  syncing: false,
+  synced: false,
+};
+
+export const shouldSyncBeforeTx = (currency: CryptoCurrency): boolean => {
+  const currencyConfig = LiveConfig.getValueByKey(`config_currency_${currency.id}`);
+  const sharedConfig = LiveConfig.getValueByKey("config_currency");
+  if (currencyConfig && "syncBeforeTx" in currencyConfig) {
+    return currencyConfig.syncBeforeTx === true;
+  } else {
+    return sharedConfig && "syncBeforeTx" in sharedConfig && sharedConfig.syncBeforeTx === true;
+  }
 };
 
 const makeInit =
@@ -142,6 +164,8 @@ const reducer = <T extends Transaction = Transaction>(
           account,
           parentAccount,
           transaction: t,
+          syncing: false,
+          synced: false,
         } as State<T>;
       } catch (e: any) {
         return {
@@ -149,6 +173,8 @@ const reducer = <T extends Transaction = Transaction>(
           account,
           parentAccount,
           errorAccount: e,
+          syncing: false,
+          synced: false,
         } as State<T>;
       }
     }
@@ -177,6 +203,12 @@ const reducer = <T extends Transaction = Transaction>(
       if (action.error === state.errorStatus) return state;
       return { ...state, errorStatus: action.error };
 
+    case "onStartSync":
+      return { ...state, syncing: true, synced: false };
+
+    case "onSync":
+      return { ...state, syncing: false, synced: true };
+
     default:
       return state;
   }
@@ -190,7 +222,17 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   optionalInit?: (() => Partial<State<T>>) | null | undefined,
 ): Result<T> => {
   const [
-    { account, parentAccount, transaction, status, statusOnTransaction, errorAccount, errorStatus },
+    {
+      account,
+      parentAccount,
+      transaction,
+      status,
+      statusOnTransaction,
+      syncing,
+      synced,
+      errorAccount,
+      errorStatus,
+    },
     dispatch,
   ] = useReducer(reducer as Reducer<T>, undefined, makeInit<T>(optionalInit));
   const setAccount = useCallback(
@@ -223,15 +265,39 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const errorDelay = useRef(INITIAL_ERROR_RETRY_DELAY);
   const statusIsPending = useRef(false); // Stores if status already being processed
+  const shouldSync = mainAccount && shouldSyncBeforeTx(mainAccount.currency);
+
+  useEffect(() => {
+    if (mainAccount === null || synced || syncing) return;
+
+    if (!shouldSync) return; // skip sync if not required by currency config
+
+    dispatch({ type: "onStartSync" });
+    const bridge = getAccountBridge(mainAccount, null);
+    const sub = bridge.sync(mainAccount, { paginationConfig: {} }).subscribe({
+      error: (_: Error) => {
+        // we do not block the user in case of error for now but it should be the case
+        dispatch({ type: "onSync" });
+      },
+      complete: () => {
+        dispatch({ type: "onSync" });
+      },
+    });
+
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [mainAccount, synced, syncing, shouldSync]);
 
   const bridgePending = transaction !== statusOnTransaction;
+
   // when transaction changes, prepare the transaction
   useEffect(() => {
     let ignore = false;
     let errorTimeout: NodeJS.Timeout | null;
     // If bridge is not pending, transaction change is due to
     // the last onStatus dispatch (prepareTransaction changed original transaction) and must be ignored
-    if (!bridgePending) return;
+    if (!bridgePending && !synced) return;
 
     if (mainAccount && transaction) {
       // We don't debounce first status refresh, but any subsequent to avoid multiple calls
@@ -301,7 +367,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
         errorTimeout = null;
       }
     };
-  }, [transaction, mainAccount, bridgePending, dispatch]);
+  }, [transaction, mainAccount, bridgePending, dispatch, synced]);
 
   const bridgeError = errorAccount || errorStatus;
 
@@ -320,7 +386,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
     parentAccount,
     setAccount,
     bridgeError,
-    bridgePending,
+    bridgePending: bridgePending && (shouldSync ? !synced : true),
   };
 };
 

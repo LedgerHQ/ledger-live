@@ -1,36 +1,20 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import manager from "@ledgerhq/live-common/manager/index";
-import { findCryptoCurrencyById, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getValidCryptoIconSize } from "@ledgerhq/live-common/helpers/cryptoIconSize";
 import { App } from "@ledgerhq/types-live";
 import Image from "~/renderer/components/Image";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/react";
 import ManagerAppIconPlaceholder from "~/renderer/icons/ManagerAppIcon";
+import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 
 const size = 40;
-// trick to format size for certain type of icons
-const Container = styled.div`
-  width: ${size}px;
-  height: ${size}px;
-  background-color: ${p => p.color};
-  border-radius: 14px;
-  position: relative;
-  overflow: hidden;
-
-  > svg {
-    position: absolute;
-    top: 2.5px;
-    left: 2.5px;
-    width: ${size - 5}px;
-    height: ${size - 5}px;
-  }
-`;
 const ManagerAppIconContainer = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   transition: opacity 0.2s ease-out;
-  color: ${p => p.theme.colors.palette.text.shade20};
+  color: ${p => p.theme.colors.neutral.c40};
 `;
 const IconContainer = styled.div<{ size?: number | string; loading?: boolean }>`
   width: ${p => p.size}px;
@@ -48,19 +32,34 @@ const IconContainer = styled.div<{ size?: number | string; loading?: boolean }>`
 type Props = {
   app: App;
 };
-function AppIcon({ app }: Props) {
+function AppIcon({ app }: Readonly<Props>) {
   const { currencyId, icon } = app;
   const [loading, setLoading] = useState(true);
   const onLoad = useCallback(() => setLoading(false), []);
   const iconUrl = manager.getIconUrl(icon);
   const currency = currencyId && findCryptoCurrencyById(currencyId);
-  const currencyColor = currency && getCurrencyColor(currency);
-  const IconCurrency = currency && getCryptoCurrencyIcon(currency);
-  return IconCurrency ? (
-    <Container color={currencyColor ?? undefined}>
-      <IconCurrency size={size} color="#FFF" />
-    </Container>
-  ) : (
+
+  // Use new CryptoIcon if currency exists
+  if (currency) {
+    const ledgerId = currency.id;
+    const ticker = currency.ticker;
+    const validSize = getValidCryptoIconSize(size);
+
+    return <SquaredCryptoIcon ledgerId={ledgerId} ticker={ticker} size={validSize} />;
+  }
+
+  // Fallback to manager icon for non-crypto apps
+  if (!iconUrl) {
+    return (
+      <IconContainer loading={false} size={size}>
+        <ManagerAppIconContainer>
+          <ManagerAppIconPlaceholder size={size} />
+        </ManagerAppIconContainer>
+      </IconContainer>
+    );
+  }
+
+  return (
     <IconContainer loading={loading} size={size}>
       <ManagerAppIconContainer>
         <ManagerAppIconPlaceholder size={size} />

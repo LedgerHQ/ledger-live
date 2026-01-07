@@ -1,9 +1,9 @@
 import React, { memo, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { Trans } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { hasInstalledAnyAppSelector } from "~/reducers/settings";
 import { NavigatorName } from "~/const";
 import Button from "~/components/Button";
@@ -23,7 +23,7 @@ type Props = {
   showHelp?: boolean;
 };
 
-type NavigationProp = BaseNavigationComposite<StackNavigationProp<MainNavigatorParamList>>;
+type NavigationProp = BaseNavigationComposite<NativeStackNavigationProp<MainNavigatorParamList>>;
 
 function EmptyStatePortfolio({ showHelp = true }: Props) {
   const navigation = useNavigation<NavigationProp>();

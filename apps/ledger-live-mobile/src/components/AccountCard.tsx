@@ -3,17 +3,14 @@ import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/acco
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { AccountLike, Account, DerivationMode } from "@ledgerhq/types-live";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components/native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-
-import { ViewStyle, StyleProp } from "react-native";
+import { ViewStyle, StyleProp, Pressable } from "react-native";
 import Card, { Props as CardProps } from "./Card";
 import CurrencyIcon from "./CurrencyIcon";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import { useMaybeAccountName } from "~/reducers/wallet";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
-import { useSelector } from "react-redux";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
+import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
 
 export type Props = CardProps & {
@@ -39,7 +36,6 @@ const AccountCard = ({
   iconSize = 48,
   ...props
 }: Props) => {
-  const { colors } = useTheme();
   const accounts = useSelector(accountsSelector);
 
   const accountNameFromStore = useMaybeAccountName(account);
@@ -63,7 +59,14 @@ const AccountCard = ({
         : currency.ticker
       : accountName;
   return (
-    <TouchableOpacity disabled={disabled} onPress={onPress} testID={"account-card-" + account.id}>
+    <Pressable
+      disabled={disabled}
+      onPress={onPress}
+      hitSlop={16}
+      pointerEvents="box-only"
+      accessible={true}
+      testID={"account-card-" + account.id}
+    >
       <Card
         flexDirection="row"
         paddingY={4}
@@ -72,13 +75,7 @@ const AccountCard = ({
         style={style}
         {...props}
       >
-        <CurrencyIcon
-          currency={currency}
-          disabled={disabled}
-          color={colors.constant.white}
-          size={iconSize}
-          circle
-        />
+        <CurrencyIcon currency={currency} disabled={disabled} size={iconSize} />
         <Flex flexGrow={1} flexShrink={1} marginLeft={4} flexDirection="row" alignItems="center">
           <Flex minWidth={20} flexShrink={1}>
             <Text
@@ -119,7 +116,7 @@ const AccountCard = ({
           </Text>
         </Flex>
       </Card>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

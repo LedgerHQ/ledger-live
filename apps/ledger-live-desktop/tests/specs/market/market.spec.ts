@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 import { getEnv } from "@ledgerhq/live-env";
 import test from "../../fixtures/common";
 import { MarketPage } from "../../page/market.page";
@@ -52,17 +52,12 @@ test("Market", async ({ page, electronApp }) => {
     ];
   }
 
-  function createMaskExcluding(page: Page, excludedPatterns: string[]): Locator[] {
-    const baseMask = createBaseMask(page);
-    const exclusionRegex = new RegExp(`^(?!.*(?:${excludedPatterns.join("|")})).*$`);
-    return [...baseMask, page.getByRole("row").filter({ hasText: exclusionRegex })];
-  }
-
-  // Masks
   const maskEverythingExceptBitcoinAndEthereum = {
-    mask: createMaskExcluding(page, ["Bitcoin", "Ethereum"]),
-  }; // Exclude all except Bitcoin and Ethereum
-  const maskEverythingExceptBitcoin = { mask: createMaskExcluding(page, ["Bitcoin"]) }; // Exclude all except Bitcoin
+    mask: [...createBaseMask(page), page.getByRole("row").nth(2)],
+  };
+  const maskEverythingExceptBitcoin = {
+    mask: [...createBaseMask(page), page.getByRole("row").nth(1), page.getByRole("row").nth(2)],
+  };
 
   await test.step("go to market", async () => {
     await layout.goToMarket();

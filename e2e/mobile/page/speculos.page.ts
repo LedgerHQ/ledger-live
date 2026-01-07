@@ -1,3 +1,4 @@
+import { Step } from "jest-allure2-reporter/api";
 import {
   activateContractData,
   goToSettings,
@@ -53,8 +54,12 @@ export default class SpeculosPage {
   }
 
   @Step("Verify amounts and accept swap for different seed")
-  async verifyAmountsAndAcceptSwapForDifferentSeed(swap: SwapType, amount: string) {
-    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount);
+  async verifyAmountsAndAcceptSwapForDifferentSeed(
+    swap: SwapType,
+    amount: string,
+    errorMessage: string | null,
+  ) {
+    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage);
   }
 
   @Step("Verify amounts and reject swap")

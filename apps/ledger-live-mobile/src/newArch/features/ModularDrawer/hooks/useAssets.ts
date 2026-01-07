@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAssetsData";
-import { MarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
-import { InterestRate } from "@ledgerhq/live-common/modularDrawer/data/entities/index";
+import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import VersionNumber from "react-native-version-number";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
 interface AssetsProps {
   currencyIds?: string[];
@@ -15,27 +15,15 @@ interface AssetsProps {
   areCurrenciesFiltered?: boolean;
 }
 
-export type AssetsData =
-  | {
-      asset: {
-        id: string;
-        ticker: string;
-        name: string;
-        assetsIds: Record<string, string>;
-      };
-      networks: CryptoOrTokenCurrency[];
-      interestRates?: InterestRate;
-      market?: Partial<MarketItemResponse>;
-    }[]
-  | undefined;
-
 export function useAssets({
   currencyIds,
   searchedValue,
   useCase,
   areCurrenciesFiltered,
 }: AssetsProps) {
+  const isAcceptedCurrency = useAcceptedCurrency();
   const modularDrawerFeature = useFeature("llmModularDrawer");
+  const devMode = useEnv("MANAGER_DEV_MODE");
 
   const isStaging = useMemo(
     () => modularDrawerFeature?.params?.backendEnvironment === "STAGING",
@@ -50,9 +38,10 @@ export function useAssets({
     useCase,
     areCurrenciesFiltered,
     isStaging,
+    includeTestNetworks: devMode,
   });
 
-  const assetsSorted: AssetsData = useMemo(() => {
+  const assetsSorted: AssetData[] | undefined = useMemo(() => {
     if (!data?.currenciesOrder.metaCurrencyIds) return undefined;
 
     return data.currenciesOrder.metaCurrencyIds
@@ -75,13 +64,13 @@ export function useAssets({
 
   const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });
 
-  const sortedCryptoCurrencies = useMemo(() => {
+  const assetsToDisplay = useMemo(() => {
     if (!assetsSorted || !data) return [];
 
     return assetsSorted
-      .map(assetData => data.cryptoOrTokenCurrencies[assetData.asset.id])
-      .filter(currency => currency !== undefined);
-  }, [assetsSorted, data]);
+      .map(({ asset }) => data.cryptoOrTokenCurrencies[asset.id])
+      .filter(currency => currency && isAcceptedCurrency(currency));
+  }, [assetsSorted, data, isAcceptedCurrency]);
 
   return {
     data,
@@ -91,7 +80,7 @@ export function useAssets({
     error,
     loadingStatus,
     assetsSorted,
-    sortedCryptoCurrencies,
+    sortedCryptoCurrencies: assetsToDisplay,
     refetch,
     loadNext,
   };

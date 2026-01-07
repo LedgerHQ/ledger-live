@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
@@ -22,7 +22,7 @@ import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 const Row = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
-  bg: "palette.background.default",
+  bg: "background.default",
   px: 2,
   mb: 2,
   flow: 3,
@@ -69,7 +69,7 @@ const Accounts = ({
     <Box>
       <Text
         ff="Inter|ExtraBold"
-        color="palette.text.shade100"
+        color="neutral.c100"
         fontSize={2}
         style={{
           textTransform: "uppercase",
@@ -80,11 +80,11 @@ const Accounts = ({
       </Text>
       <Box horizontal alignItems={"center"}>
         <Box horizontal alignItems={"center"} flex={1}>
-          <Text ff="Inter|Medium" color="palette.text.shade100" mr={2} fontSize={4}>
+          <Text ff="Inter|Medium" color="neutral.c100" mr={2} fontSize={4}>
             <Trans i18nKey="fullNode.modal.steps.accounts.toScanDescription" />
           </Text>
           <ToolTip content={<Trans i18nKey="fullNode.modal.steps.accounts.toScanTooltip" />}>
-            <Box color={"palette.text.shade50"}>
+            <Box color={"neutral.c70"}>
               <InfoCircle size={13} />
             </Box>
           </ToolTip>
@@ -105,7 +105,7 @@ const Accounts = ({
         <>
           <Text
             ff="Inter|ExtraBold"
-            color="palette.text.shade100"
+            color="neutral.c100"
             fontSize={2}
             style={{
               textTransform: "uppercase",
@@ -118,15 +118,8 @@ const Accounts = ({
           <>
             {bitcoinAccounts.map(account => (
               <Row key={account.id}>
-                <CryptoCurrencyIcon size={16} currency={account.currency} />
-                <Box
-                  ml={2}
-                  shrink
-                  grow
-                  ff="Inter|SemiBold"
-                  color="palette.text.shade40"
-                  fontSize={3}
-                >
+                <CryptoCurrencyIcon size={22} currency={account.currency} />
+                <Box ml={2} shrink grow ff="Inter|SemiBold" color="neutral.c60" fontSize={3}>
                   <Text>{accountNameWithDefaultSelector(walletState, account)}</Text>
                 </Box>
                 <FormattedVal
@@ -139,7 +132,7 @@ const Accounts = ({
                   }}
                   showCode
                   fontSize={3}
-                  color="palette.text.shade40"
+                  color="neutral.c60"
                 />
               </Row>
             ))}

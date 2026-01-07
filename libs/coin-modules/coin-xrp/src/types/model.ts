@@ -31,3 +31,11 @@ export type ListOperationsOptions = {
   // filters:
   minHeight?: number;
 };
+
+export type SignerEntry = {
+  Signer: {
+    Account: string;
+    SigningPubKey: string;
+    TxnSignature: string;
+  };
+};

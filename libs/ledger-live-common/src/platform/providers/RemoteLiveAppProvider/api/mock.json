@@ -263,9 +263,9 @@
   {
     "id": "1inch",
     "name": "1inch",
-    "url": "https://dapp-browser.apps.ledger.com/?params=%7B%22dappUrl%22%3A%22https%3A%2F%2Fapp.1inch.io%2F%3FledgerLive%3Dtrue%22%2C%22nanoApp%22%3A%221inch%22%2C%22dappName%22%3A%221inch%22%2C%22networks%22%3A%5B%7B%22currency%22%3A%22ethereum%22%2C%22chainID%22%3A1%2C%22nodeURL%22%3A%22wss%3A%2F%2Feth-mainnet.ws.alchemyapi.io%2Fv2%2F0fyudoTG94QWC0tEtfJViM9v2ZXJuij2%22%7D%2C%7B%22currency%22%3A%22bsc%22%2C%22chainID%22%3A56%2C%22nodeURL%22%3A%22https%3A%2F%2Fbsc-dataseed.binance.org%2F%22%7D%2C%7B%22currency%22%3A%20%22polygon%22%2C%22chainID%22%3A%20137%2C%22nodeURL%22%3A%20%22https%3A%2F%2Fpolygon-mainnet.g.alchemy.com%2Fv2%2FoPIxZM7kXsPVVY1Sk0kOQwkoIOpSu8PE%22%7D%5D%7D",
+    "url": "https://dapp-browser.apps.ledger.com/?params=%7B%22dappUrl%22%3A%22https%3A%2F%2F1inch.com%2Fswap%2F%22%2C%22nanoApp%22%3A%221inch%22%2C%22dappName%22%3A%221inch%22%2C%22networks%22%3A%5B%7B%22currency%22%3A%22ethereum%22%2C%22chainID%22%3A1%2C%22nodeURL%22%3A%22wss%3A%2F%2Feth-mainnet.ws.alchemyapi.io%2Fv2%2F0fyudoTG94QWC0tEtfJViM9v2ZXJuij2%22%7D%2C%7B%22currency%22%3A%22bsc%22%2C%22chainID%22%3A56%2C%22nodeURL%22%3A%22https%3A%2F%2Fbsc-dataseed.binance.org%2F%22%7D%2C%7B%22currency%22%3A%22polygon%22%2C%22chainID%22%3A137%2C%22nodeURL%22%3A%22https%3A%2F%2Fpolygon-mainnet.g.alchemy.com%2Fv2%2FoPIxZM7kXsPVVY1Sk0kOQwkoIOpSu8PE%22%7D%5D%7D",
     "params": {
-      "dappUrl": "https://app.1inch.io/?ledgerLive=true",
+      "dappUrl": "https://1inch.com/swap/",
       "nanoApp": "1inch",
       "dappName": "1inch",
       "networks": [
@@ -286,7 +286,7 @@
         }
       ]
     },
-    "homepageUrl": "https://1inch.io/",
+    "homepageUrl": "https://1inch.com/",
     "icon": "https://cdn.live.ledger.com/icons/platform/1inch.png",
     "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",

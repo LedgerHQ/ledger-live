@@ -20,6 +20,7 @@ import { buildSignOperation } from "../signOperation";
 import { broadcast } from "../broadcast";
 import resolver from "../hw-getAddress";
 import { NearSigner } from "../signer";
+import { validateAddress } from "../validateAddress";
 
 export function buildCurrencyBridge(signerContext: SignerContext<NearSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -54,10 +55,14 @@ export function buildAccountBridge(
     sync,
     receive,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     assignToAccountRaw,
     assignFromAccountRaw,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

@@ -1,7 +1,8 @@
 import { Box, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import { useTheme } from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { TrackScreen } from "~/analytics";
+import SafeAreaView from "~/components/SafeAreaView";
 import StyledStatusBar from "~/components/StyledStatusBar";
 
 type OnboardingViewProps = {
@@ -12,6 +13,7 @@ type OnboardingViewProps = {
     tracking: {
       category: string;
       name: string;
+      deviceModelId?: string;
     };
   };
 
@@ -24,7 +26,7 @@ function OnboardingView({ title, subTitle, children, analytics, footer }: Onboar
   const { colors } = useTheme();
 
   return (
-    <Box flex={1} mx={6} mt={3}>
+    <StyleSafeAreaView edges={["bottom", "left", "right"]}>
       <TrackScreen {...analytics.tracking} />
       <StyledStatusBar barStyle="dark-content" />
 
@@ -40,11 +42,19 @@ function OnboardingView({ title, subTitle, children, analytics, footer }: Onboar
         )}
       </Box>
 
-      <ScrollListContainer>{children}</ScrollListContainer>
+      <ScrollListContainer testID="onboarding-view-scroll-list-container">
+        {children}
+      </ScrollListContainer>
 
       {footer}
-    </Box>
+    </StyleSafeAreaView>
   );
 }
+
+const StyleSafeAreaView = styled(SafeAreaView)`
+  flex: 1;
+  background-color: ${p => p.theme.colors.background.main};
+  margin: 3px 16px 0 16px;
+`;
 
 export default OnboardingView;

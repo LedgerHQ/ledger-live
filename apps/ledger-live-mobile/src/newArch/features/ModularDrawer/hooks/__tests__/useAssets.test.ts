@@ -3,6 +3,10 @@ import { useAssets } from "../useAssets";
 import { expectedAssetsSorted as expectedAssetsSortedFromMock } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
+jest.mock("@ledgerhq/coin-framework/currencies/support", () => ({
+  isCurrencySupported: jest.fn(() => true),
+}));
+
 describe("useAssets", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -16,10 +20,13 @@ describe("useAssets", () => {
     expect(result.current.error).toBeUndefined();
     expect(result.current.loadingStatus).toBe(LoadingStatus.Success);
 
-    // assetsSorted shape and order should match expected mock
     const assets = result.current.assetsSorted?.map(a => a.asset);
+    const expectedAssetsWithoutMetaCurrencyId = expectedAssetsSortedFromMock.map(asset => {
+      const { metaCurrencyId, ...assetWithoutMetaCurrencyId } = asset;
+      return assetWithoutMetaCurrencyId;
+    });
 
-    expect(assets).toEqual(expectedAssetsSortedFromMock);
+    expect(assets).toEqual(expectedAssetsWithoutMetaCurrencyId);
 
     expect(result.current.sortedCryptoCurrencies.length).toBeGreaterThan(0);
     expect(result.current.sortedCryptoCurrencies[0].id).toBe("bitcoin");

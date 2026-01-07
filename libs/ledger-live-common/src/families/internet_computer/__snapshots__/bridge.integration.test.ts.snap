@@ -1,19 +1,19 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`internet_computer currency bridge scanAccounts internet_computer seed 1 1`] = `
 [
   {
-    "balance": "1000000",
+    "balance": "90980000",
     "currencyId": "internet_computer",
     "derivationMode": "internet_computer",
     "freshAddress": "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
     "freshAddressPath": "44'/223'/0'/0/0",
     "id": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer",
     "index": 0,
-    "operationsCount": 1,
+    "operationsCount": 4,
     "pendingOperations": [],
     "seedIdentifier": "046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf",
-    "spendableBalance": "1000000",
+    "spendableBalance": "90980000",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -44,7 +44,64 @@ exports[`internet_computer currency bridge scanAccounts internet_computer seed 1
   [
     {
       "accountId": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer",
-      "blockHash": null,
+      "blockHash": "",
+      "blockHeight": 25132406,
+      "extra": {
+        "memo": "0",
+      },
+      "fee": "10000",
+      "hash": "64f3c12bae8243dc5fb50497c2d79dbeb600d92d995d26297b5882560d1d1cb1",
+      "id": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer-64f3c12bae8243dc5fb50497c2d79dbeb600d92d995d26297b5882560d1d1cb1-OUT",
+      "recipients": [
+        "5442dcadb1de34824e0a3000db6228ab21f3ad298caa1d910da0bd56d7f892a5",
+      ],
+      "senders": [
+        "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
+      ],
+      "type": "OUT",
+      "value": "10010000",
+    },
+    {
+      "accountId": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer",
+      "blockHash": "",
+      "blockHeight": 25132352,
+      "extra": {
+        "memo": "3544580464453892767",
+      },
+      "fee": "10000",
+      "hash": "8ee53474525de27a357f728d1486c7cc6cead11bb4025b62f2154b4d7652789b",
+      "id": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer-8ee53474525de27a357f728d1486c7cc6cead11bb4025b62f2154b4d7652789b-OUT",
+      "recipients": [
+        "5442dcadb1de34824e0a3000db6228ab21f3ad298caa1d910da0bd56d7f892a5",
+      ],
+      "senders": [
+        "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
+      ],
+      "type": "OUT",
+      "value": "100010000",
+    },
+    {
+      "accountId": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer",
+      "blockHash": "",
+      "blockHeight": 25132338,
+      "extra": {
+        "memo": "0",
+      },
+      "fee": "10000",
+      "hash": "c2550a82c2885719fb2de48ac0cfa5d1f22b9d754df7adaf939dfa6da7a85a30",
+      "id": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer-c2550a82c2885719fb2de48ac0cfa5d1f22b9d754df7adaf939dfa6da7a85a30-IN",
+      "recipients": [
+        "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
+      ],
+      "senders": [
+        "e018d81c6da0016f94b6119a3195d87b9e2fbd1ee72ac00f518ddfacfa9e44bd",
+      ],
+      "type": "IN",
+      "value": "200000000",
+    },
+    {
+      "accountId": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer",
+      "blockHash": "",
       "blockHeight": 5432782,
       "extra": {
         "memo": "0",

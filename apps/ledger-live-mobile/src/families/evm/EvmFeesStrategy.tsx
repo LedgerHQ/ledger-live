@@ -20,7 +20,7 @@ import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import Info from "~/icons/Info";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 const getCustomStrategyFees = (transaction: Transaction): BigNumber | null => {
   if (transaction.feesStrategy === "custom") {
@@ -210,6 +210,10 @@ export default function EvmFeesStrategy({
 
   if (loading) {
     return <InfiniteLoader size={32} />;
+  }
+
+  if (transaction.sponsored) {
+    return null;
   }
 
   /**

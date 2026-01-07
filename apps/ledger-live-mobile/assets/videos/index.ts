@@ -6,11 +6,7 @@ export default {
   // Stax
   onboardingSuccessStaxDark: require("./stax/onboardingSuccessDark.mp4"),
   onboardingSuccessStaxLight: require("./stax/onboardingSuccessLight.mp4"),
-  customLockScreenBannerStaxDark: require("./stax/customLockScreenBannerDark.mp4"),
-  customLockScreenBannerStaxLight: require("./stax/customLockScreenBannerLight.mp4"),
   // Apex
-  onboardingSuccessApexDark: require("./apex/onboardingSuccessDark.mp4"),
-  onboardingSuccessApexLight: require("./apex/onboardingSuccessLight.mp4"),
-  customLockScreenBannerApexDark: require("./apex/customLockScreenBannerDark.mp4"),
-  customLockScreenBannerApexLight: require("./apex/customLockScreenBannerLight.mp4"),
+  onboardingSuccessApexDark: require("./apex/onboardingSuccess.mp4"),
+  onboardingSuccessApexLight: require("./apex/onboardingSuccess.mp4"),
 };

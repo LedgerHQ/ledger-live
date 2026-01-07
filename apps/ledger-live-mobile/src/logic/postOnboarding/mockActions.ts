@@ -1,4 +1,8 @@
-import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
+import {
+  PostOnboardingAction,
+  PostOnboardingActionId,
+  StartActionArgs,
+} from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "~/const";
 
@@ -41,6 +45,9 @@ export const buyCryptoMock: PostOnboardingAction = {
       },
     },
   ],
+  getIsAlreadyCompletedByState: ({ accounts }) => {
+    return !!accounts && accounts.some(account => account?.balance.isGreaterThan(0));
+  },
 };
 
 export const customImageMock: PostOnboardingAction = {
@@ -62,21 +69,17 @@ export const customImageMock: PostOnboardingAction = {
   ],
 };
 
-export const recoverMock: PostOnboardingAction = {
-  id: PostOnboardingActionId.recoverMock,
-  Icon: Icons.ShieldCheck,
-  title: "postOnboarding.actions.recover.title",
-  titleCompleted: "postOnboarding.actions.recover.titleCompleted",
-  description: "postOnboarding.actions.recover.description",
-  actionCompletedPopupLabel: "postOnboarding.actions.recover.popupLabel",
-  getNavigationParams: () => [
-    NavigatorName.PostOnboarding,
-    {
-      screen: ScreenName.PostOnboardingMockActionScreen,
-      params: {
-        id: PostOnboardingActionId.recoverMock,
-        title: PostOnboardingActionId.recoverMock,
-      },
-    },
-  ],
+export const syncAccountsMock: PostOnboardingAction = {
+  id: PostOnboardingActionId.syncAccounts,
+  Icon: Icons.Refresh,
+  title: "postOnboarding.actions.syncAccounts.title",
+  titleCompleted: "postOnboarding.actions.syncAccounts.titleCompleted",
+  description: "postOnboarding.actions.syncAccounts.description",
+  actionCompletedPopupLabel: "postOnboarding.actions.syncAccounts.popupLabel",
+  getIsAlreadyCompletedByState: ({ isLedgerSyncActive }) => {
+    return !!isLedgerSyncActive;
+  },
+  startAction: ({ openActivationDrawer }: StartActionArgs) => {
+    openActivationDrawer?.();
+  },
 };

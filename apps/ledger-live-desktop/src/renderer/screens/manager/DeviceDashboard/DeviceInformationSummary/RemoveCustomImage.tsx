@@ -1,23 +1,16 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { BoxedIcon, Button, Divider, Flex, IconsLegacy, Text } from "@ledgerhq/react-ui";
-import { useDispatch } from "react-redux";
+import { Button, Divider, Flex, Icons, Text } from "@ledgerhq/react-ui";
+import { useDispatch } from "LLD/hooks/redux";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { createAction } from "@ledgerhq/live-common/hw/actions/customLockScreenRemove";
 import removeImage from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { clearLastSeenCustomImage } from "~/renderer/actions/settings";
 import { ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 const action = createAction(removeImage);
-
-const TextEllipsis = styled.div`
-  flex-shrink: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
 
 type Props = { onClose: () => void; onRemoved?: () => void };
 
@@ -41,7 +34,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose, onRemoved }) => {
     setCompleted(true);
     setRunning(false);
     dispatch(clearLastSeenCustomImage());
-    onRemoved && onRemoved();
+    onRemoved?.();
   }, [dispatch, onRemoved]);
 
   const onError = useCallback(
@@ -55,6 +48,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose, onRemoved }) => {
   );
 
   const showRetry = error && !(error instanceof ImageDoesNotExistOnDevice);
+
   return (
     <Flex
       flexDirection="column"
@@ -77,21 +71,19 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose, onRemoved }) => {
         overflowY="hidden"
       >
         {completed ? (
-          <Flex
-            flex={1}
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            data-testid="custom-image-removed"
-          >
-            <BoxedIcon
-              Icon={IconsLegacy.CheckAloneMedium}
-              iconColor="success.c100"
-              size={64}
-              iconSize={24}
-            />
-            <Text variant="large" alignSelf="stretch" mt={9} textAlign="center">
-              <TextEllipsis>{t("removeCustomLockscreen.success")}</TextEllipsis>
+          <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
+            <Flex
+              width={72}
+              height={72}
+              borderRadius={100}
+              bg="opacityDefault.c05"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Icons.CheckmarkCircleFill color="success.c70" size="L" />
+            </Flex>
+            <Text variant="h5Inter" alignSelf="stretch" mt={9} textAlign="center">
+              {t("removeCustomLockscreen.success")}
             </Text>
           </Flex>
         ) : running ? (
@@ -115,7 +107,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose, onRemoved }) => {
             alignSelf="stretch"
             flexDirection="row"
             justifyContent="space-between"
-            pt={4}
+            pt={6}
             pb={1}
           >
             {showRetry ? (

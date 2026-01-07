@@ -3,7 +3,7 @@ import {
   setMemberCredentials,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 
 export function useInitMemberCredentials() {

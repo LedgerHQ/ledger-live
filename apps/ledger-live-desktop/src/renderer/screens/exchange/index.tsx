@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import semver from "semver";
 import { RouteComponentProps, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import Card from "~/renderer/components/Box/Card";
 import {
   counterValueCurrencySelector,
@@ -30,8 +30,8 @@ import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalL
 import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
-import { ProviderInterstitial } from "./BuySell/ProviderInterstitial";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
+import { ProviderInterstitial } from "LLD/components/ProviderInterstitial";
 
 type ExchangeState = { account?: string } | undefined;
 
@@ -51,7 +51,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const manifest = localManifest || mockManifest || remoteManifest;
-  const themeType = useTheme().colors.palette.type;
+  const themeType = useTheme().theme;
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
   const walletState = useSelector(walletSelector);
 

@@ -1,8 +1,6 @@
 import BigNumber from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
-import { encodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
   ledgerERC1155EventToOperations,
   ledgerERC20EventToOperations,
@@ -17,8 +15,6 @@ import {
   LedgerExplorerInternalTransaction,
   LedgerExplorerOperation,
 } from "../../../types";
-import usdCoinTokenData from "../../../__fixtures__/ethereum-erc20-usd__coin.json";
-import { setCryptoAssetsStoreGetter } from "../../../cryptoAssetsStore";
 
 const accountId = encodeAccountId({
   type: "js",
@@ -39,7 +35,7 @@ const coinOperation: Operation = {
   value: new BigNumber("4254163264389158"),
   fee: new BigNumber("4254163264389158"),
   date: new Date("2023-01-24T17:11:45Z"),
-  transactionSequenceNumber: 75,
+  transactionSequenceNumber: new BigNumber(75),
   hasFailed: false,
   nftOperations: [],
   subOperations: [],
@@ -109,7 +105,7 @@ describe("EVM Family", () => {
             value: new BigNumber("0"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
@@ -172,7 +168,7 @@ describe("EVM Family", () => {
             value: new BigNumber("4254163264389158"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
@@ -235,7 +231,7 @@ describe("EVM Family", () => {
             value: new BigNumber("4254163264389159"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
@@ -298,7 +294,7 @@ describe("EVM Family", () => {
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
@@ -361,7 +357,7 @@ describe("EVM Family", () => {
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
@@ -429,7 +425,7 @@ describe("EVM Family", () => {
             value: new BigNumber("0"),
             fee: new BigNumber("905335872155003804"),
             date: new Date("2022-12-13T21:41:37Z"),
-            transactionSequenceNumber: 3,
+            transactionSequenceNumber: new BigNumber(3),
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
@@ -492,7 +488,7 @@ describe("EVM Family", () => {
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
@@ -511,7 +507,7 @@ describe("EVM Family", () => {
             value: new BigNumber("4254163264389159"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
@@ -731,34 +727,6 @@ describe("EVM Family", () => {
       });
 
       describe("ledgerERC20EventToOperations", () => {
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        const tokenCurrency = usdCoinTokenData as TokenCurrency;
-
-        beforeAll(() => {
-          setCryptoAssetsStoreGetter(
-            () =>
-              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-              ({
-                findTokenByAddressInCurrency: (_address: string, _currencyId: string) => {
-                  return _address === "0x000000000000000000000000000000000000dead"
-                    ? undefined
-                    : tokenCurrency;
-                },
-              }) as CryptoAssetsStore,
-          );
-        });
-
-        it("should return an empty array for an unknown token", () => {
-          const ledgerERC20Event: LedgerExplorerERC20TransferEvent = {
-            contract: "0x000000000000000000000000000000000000dead",
-            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-            to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
-            count: "100000000000000",
-          };
-
-          expect(ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([]);
-        });
-
         it("should convert a ledger explorer usdc out event to a Ledger Live Operation", () => {
           const ledgerERC20Event: LedgerExplorerERC20TransferEvent = {
             contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
@@ -768,9 +736,9 @@ describe("EVM Family", () => {
           };
 
           const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT-i0",
+            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT-i0",
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId: encodeTokenAccountId(accountId, tokenCurrency),
+            accountId,
             blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
             blockHeight: 38476740,
             recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
@@ -779,7 +747,7 @@ describe("EVM Family", () => {
             value: new BigNumber("100000000000000"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "OUT",
             extra: {},
           };
@@ -798,9 +766,9 @@ describe("EVM Family", () => {
           };
 
           const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN-i0",
+            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN-i0",
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId: encodeTokenAccountId(accountId, tokenCurrency),
+            accountId,
             blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
             blockHeight: 38476740,
             recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
@@ -809,7 +777,7 @@ describe("EVM Family", () => {
             value: new BigNumber("100000000000000"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "IN",
             extra: {},
           };
@@ -839,9 +807,9 @@ describe("EVM Family", () => {
           };
 
           const expectedOperation1: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN-i0",
+            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN-i0",
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId: encodeTokenAccountId(accountId, tokenCurrency),
+            accountId,
             blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
             blockHeight: 38476740,
             recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
@@ -850,14 +818,14 @@ describe("EVM Family", () => {
             value: new BigNumber("100000000000000"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "IN",
             extra: {},
           };
           const expectedOperation2: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT-i0",
+            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT-i0",
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId: encodeTokenAccountId(accountId, tokenCurrency),
+            accountId,
             blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
             blockHeight: 38476740,
             recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
@@ -866,7 +834,7 @@ describe("EVM Family", () => {
             value: new BigNumber("100000000000000"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "OUT",
             extra: {},
           };
@@ -903,7 +871,7 @@ describe("EVM Family", () => {
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "NFT_OUT",
             extra: {},
           };
@@ -937,7 +905,7 @@ describe("EVM Family", () => {
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "NFT_IN",
             extra: {},
           };
@@ -983,7 +951,7 @@ describe("EVM Family", () => {
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "NFT_IN",
             extra: {},
           };
@@ -1002,7 +970,7 @@ describe("EVM Family", () => {
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "NFT_OUT",
             extra: {},
           };
@@ -1048,7 +1016,7 @@ describe("EVM Family", () => {
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "NFT_OUT",
             extra: {},
           };
@@ -1067,7 +1035,7 @@ describe("EVM Family", () => {
             value: new BigNumber("2"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "NFT_OUT",
             extra: {},
           };
@@ -1111,7 +1079,7 @@ describe("EVM Family", () => {
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "NFT_IN",
             extra: {},
           };
@@ -1130,7 +1098,7 @@ describe("EVM Family", () => {
             value: new BigNumber("2"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "NFT_IN",
             extra: {},
           };
@@ -1195,7 +1163,7 @@ describe("EVM Family", () => {
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "NFT_IN",
             extra: {},
           };
@@ -1214,7 +1182,7 @@ describe("EVM Family", () => {
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "NFT_OUT",
             extra: {},
           };
@@ -1233,7 +1201,7 @@ describe("EVM Family", () => {
             value: new BigNumber("2"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "NFT_IN",
             extra: {},
           };
@@ -1252,7 +1220,7 @@ describe("EVM Family", () => {
             value: new BigNumber("2"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: 75,
+            transactionSequenceNumber: new BigNumber(75),
             type: "NFT_OUT",
             extra: {},
           };

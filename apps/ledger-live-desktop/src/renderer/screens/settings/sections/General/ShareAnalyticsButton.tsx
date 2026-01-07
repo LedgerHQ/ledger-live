@@ -1,28 +1,30 @@
-import React, { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
+import React from "react";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
+import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import {
   setShareAnalytics,
   setSharePersonalizedRecommendations,
 } from "~/renderer/actions/settings";
+import { updateIdentify } from "~/renderer/analytics/segment";
 import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";
+
 const ShareAnalyticsButton = () => {
-  const shareAnalytics = useSelector(shareAnalyticsSelector);
+  const shareAnalytics = useSelector(trackingEnabledSelector);
   const dispatch = useDispatch();
-  const onChangeShareAnalytics = useCallback(
-    (value: boolean) => {
-      dispatch(setShareAnalytics(value));
-      dispatch(setSharePersonalizedRecommendations(value));
-    },
-    [dispatch],
-  );
+
+  const toggleShareAnalytics = async (value: boolean) => {
+    dispatch(setShareAnalytics(value));
+    dispatch(setSharePersonalizedRecommendations(value));
+    await updateIdentify();
+  };
+
   return (
     <>
       <Track mandatory onUpdate event={shareAnalytics ? "AnalyticsEnabled" : "AnalyticsDisabled"} />
       <Switch
         isChecked={shareAnalytics}
-        onChange={onChangeShareAnalytics}
+        onChange={toggleShareAnalytics}
         data-e2e="shareAnalytics_button"
       />
     </>

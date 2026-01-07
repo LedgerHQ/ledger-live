@@ -4,23 +4,14 @@ import {
   getOperationAmountNumber,
   getOperationAmountNumberWithInternals,
 } from "@ledgerhq/coin-framework/operation";
-import { nftsByCollections } from "@ledgerhq/live-nft";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import type { Account, Operation, ProtoNFT } from "@ledgerhq/types-live";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { formatCurrencyUnit } from "../currencies";
 import { toAccountRaw } from "./serialization";
 import { getAccountBridge } from "../bridge";
-
-const styling = {
-  bold: (str: string) => `\x1b[1m${str}\x1b[22m`,
-  underline: (str: string) => `\x1b[4m${str}\x1b[24m`,
-  cyan: (str: string) => `\x1b[36m${str}\x1b[37m`,
-  magenta: (str: string) => `\x1b[35m${str}\x1b[37m`,
-  reverse: (str: string) => `\x1b[7m${str}\x1b[27m`,
-};
 
 const isSignificantAccount = acc =>
   acc.balance.gt(10 ** (getAccountCurrency(acc).units[0].magnitude - 6));
@@ -77,8 +68,7 @@ function maybeDisplaySumOfOpsIssue(ops, balance, unit) {
 }
 
 const cliFormat = (account, level?: string) => {
-  const { id, name, freshAddress, freshAddressPath, derivationMode, index, operations, nfts } =
-    account;
+  const { id, name, freshAddress, freshAddressPath, derivationMode, index, operations } = account;
   const tag = getTagDerivationMode(account.currency, derivationMode);
   const balance = formatCurrencyUnit(getAccountCurrency(account).units[0], account.balance, {
     showCode: true,
@@ -121,34 +111,6 @@ const cliFormat = (account, level?: string) => {
         maybeDisplaySumOfOpsIssue(ta.operations, ta.balance, getAccountCurrency(ta).units[0]),
     )
     .join("\n");
-
-  if (nfts?.length) {
-    const NFTCollections = nftsByCollections(nfts);
-
-    str += "\n";
-    str += `NFT Collections (${Object.keys(NFTCollections).length}) `;
-    str += "\n";
-
-    str += Object.entries(NFTCollections)
-      .map(([contract, nfts]: [string, ProtoNFT[]]) => {
-        const tokenName = nfts?.[0]?.metadata?.tokenName;
-        const { bold, magenta, cyan, reverse } = styling;
-
-        return (
-          `${bold(tokenName ?? "Unknown Collection Name")} (${magenta(contract)}): ` +
-          nfts
-            .map(t =>
-              t?.metadata?.nftName
-                ? `\n  ${t.amount}x ${reverse(` ${t?.metadata?.nftName} `)} ${cyan(
-                    "#" + t.tokenId,
-                  )}`
-                : `\n  ${t.amount}x ${cyan("#" + t.tokenId)}`,
-            )
-            .join()
-        );
-      })
-      .join("\n");
-  }
 
   if (level === "basic") return str;
   str += "\nOPERATIONS (" + operations.length + ")";

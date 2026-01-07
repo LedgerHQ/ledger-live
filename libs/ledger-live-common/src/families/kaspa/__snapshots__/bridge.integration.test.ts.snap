@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`kaspa currency bridge scanAccounts kaspa seed 1 1`] = `
 [
@@ -44,7 +44,7 @@ exports[`kaspa currency bridge scanAccounts kaspa seed 1 2`] = `
   [
     {
       "accountId": "js:2:kaspa:41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a5576:",
-      "blockHash": "12166d40313b71447d4dd837f2e91e749407b0a1c8844e9e9d010390a67d6b52",
+      "blockHash": "c11f5877fc777b59a180de2da6bd02046e19219a9bda714c304ada1d3af7144b",
       "blockHeight": 194187672,
       "extra": {},
       "fee": "2069",

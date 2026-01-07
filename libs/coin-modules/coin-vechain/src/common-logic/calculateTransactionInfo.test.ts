@@ -106,6 +106,7 @@ describe("calculateTransactionInfo", () => {
           amount: new BigNumber("1000000000000000000"),
         }),
         false,
+        mockAccount.freshAddress,
       );
     });
   });
@@ -172,6 +173,7 @@ describe("calculateTransactionInfo", () => {
           amount: new BigNumber("1000000000000000000"),
         }),
         true,
+        mockAccount.freshAddress,
       );
     });
 

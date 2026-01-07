@@ -12,9 +12,9 @@ export const setBroadcastTransaction = ({
   hardwareWalletType,
   swapType,
   swapAppVersion,
-  fromAccountId,
-  toAccountId,
-  amount,
+  fromAccountAddress,
+  toAccountAddress,
+  fromAmount,
 }: {
   result: { operation: Operation | string; swapId: string };
   provider: string;
@@ -23,9 +23,9 @@ export const setBroadcastTransaction = ({
   hardwareWalletType?: DeviceModelId;
   swapType?: TradeMethod;
   swapAppVersion?: string;
-  fromAccountId?: string;
-  toAccountId?: string;
-  amount?: string;
+  fromAccountAddress?: string;
+  toAccountAddress?: string;
+  fromAmount?: string;
 }) => {
   const { operation, swapId } = result;
 
@@ -45,9 +45,9 @@ export const setBroadcastTransaction = ({
       hardwareWalletType,
       swapType: swapType,
       swapAppVersion,
-      fromAccountId,
-      toAccountId,
-      amount,
+      fromAccountAddress,
+      toAccountAddress,
+      fromAmount,
     });
   } else {
     postSwapAccepted({
@@ -59,9 +59,9 @@ export const setBroadcastTransaction = ({
       hardwareWalletType,
       swapType,
       swapAppVersion,
-      fromAccountId,
-      toAccountId,
-      amount,
+      fromAccountAddress,
+      toAccountAddress,
+      fromAmount,
     });
   }
 };

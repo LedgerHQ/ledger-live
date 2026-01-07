@@ -1,5 +1,5 @@
 import { AppPage } from "./abstractClasses";
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 
 export class LockscreenPage extends AppPage {
   readonly container = this.page.getByTestId("lockscreen-container");
@@ -18,10 +18,5 @@ export class LockscreenPage extends AppPage {
   @step("Check input error state visibility: $0")
   async checkInputErrorVisibility(expectedState: "visible" | "hidden") {
     await this.inputError.waitFor({ state: expectedState });
-  }
-
-  @step("Expect Ledger Logo to be visible")
-  async expectLogoToBeVisible() {
-    await this.logo.waitFor({ state: "visible" });
   }
 }

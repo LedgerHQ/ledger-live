@@ -1,5 +1,5 @@
 import React from "react";
-import { render, waitFor, act } from "@tests/test-renderer";
+import { render, waitFor, act, screen } from "@tests/test-renderer";
 import {
   ModularDrawerSharedNavigator,
   WITHOUT_ACCOUNT_SELECTION,
@@ -13,7 +13,19 @@ import { INITIAL_STATE } from "~/reducers/settings";
 
 import { http, HttpResponse } from "msw";
 import { server } from "@tests/server";
-import { NetInfoStateType, useNetInfo } from "@react-native-community/netinfo";
+import {
+  NetInfoStateType,
+  useNetInfo,
+  type NetInfoState,
+  type NetInfoNoConnectionState,
+  type NetInfoUnknownState,
+} from "@react-native-community/netinfo";
+
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
+  useAcceptedCurrency: () => mockUseAcceptedCurrency(),
+}));
+
+const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
 jest.mock("@react-native-community/netinfo", () => {
   const mockUseNetInfo = jest.fn(() => ({
@@ -26,14 +38,56 @@ jest.mock("@react-native-community/netinfo", () => {
   return {
     NetInfoStateType: {
       unknown: "unknown",
+      none: "none",
     },
     useNetInfo: mockUseNetInfo,
   };
 });
 
+type NetInfoOverride =
+  | ({
+      type: NetInfoStateType.none;
+    } & Partial<Omit<NetInfoNoConnectionState, "type">>)
+  | ({
+      type?: NetInfoStateType.unknown;
+    } & Partial<Omit<NetInfoUnknownState, "type">>);
+
+const buildNetInfoState = (override?: NetInfoOverride): NetInfoState => {
+  if (override?.type === NetInfoStateType.none) {
+    const noConnectionBase: NetInfoNoConnectionState = {
+      type: NetInfoStateType.none,
+      isConnected: false,
+      isInternetReachable: false,
+      details: null,
+    };
+
+    return {
+      ...noConnectionBase,
+      ...override,
+    };
+  }
+
+  const unknownBase: NetInfoUnknownState = {
+    type: NetInfoStateType.unknown,
+    isConnected: null,
+    isInternetReachable: null,
+    details: null,
+  };
+
+  return {
+    ...unknownBase,
+    ...override,
+  };
+};
+
+const setNetInfoState = (override?: NetInfoOverride) => {
+  jest.mocked(useNetInfo).mockReturnValue(buildNetInfoState(override));
+};
+
 describe("ModularDrawer integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    setNetInfoState();
   });
 
   afterEach(() => {
@@ -191,26 +245,30 @@ describe("ModularDrawer integration", () => {
   it("should display generic error when a Backend error occurs", async () => {
     server.use(http.get("https://dada.api.ledger.com/v1/assets", () => HttpResponse.error()));
     const { getByText, user } = render(<ModularDrawerSharedNavigator />);
+    advanceTimers();
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
 
-    expect(getByText(/Something went wrong on our end. Please try again later/i)).toBeVisible();
+    expect(
+      await screen.findByText(/Something went wrong on our end\. Please try again later/i),
+    ).toBeVisible();
   });
 
   it("should display generic error when an internet error occurs", async () => {
+    setNetInfoState({
+      isConnected: false,
+      isInternetReachable: false,
+      type: NetInfoStateType.none,
+    });
+
     const { getByText, user } = render(<ModularDrawerSharedNavigator />);
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
 
-    jest.mocked(useNetInfo).mockReturnValue({
-      isConnected: false,
-      isInternetReachable: false,
-      type: NetInfoStateType.none,
-      details: null,
-    });
-
     advanceTimers();
 
-    expect(getByText(/No internet connection. Please try again/i)).toBeVisible();
+    await waitFor(() =>
+      expect(getByText(/No internet connection. Please try again/i)).toBeVisible(),
+    );
   });
 });

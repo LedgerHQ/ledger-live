@@ -1,19 +1,18 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 import { WebViewAppPage } from "./webViewApp.page";
 import { expect } from "@playwright/test";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { ModularDrawer } from "./drawer/modular.drawer";
+import { ModularDialog } from "./dialog/modular.dialog";
 
 export class EarnPage extends WebViewAppPage {
   private earnMoreRewardTabButton = "tab-earn-more";
-  private earnAppContainer = this.page.getByTestId("earn-app-container");
   private stakeCryptoAssetsButton = "stake-crypto-assets-button";
   private potentialRewardsBalanceCard = "Rewards you could earn-balance-card";
   private amountAvailableBalanceCard = "Amount available to earn-balance-card";
   private amountAvailableAssetsText = "  Amount available to earn";
   private rewardsPotentialText = "Rewards you could earn";
-  private availableAssetsText = "Available assets";
   private totalRewardsText = "Total rewards";
   private totalDepositedBalanceCard = "Total deposited-balance-card";
   private totalRewardsBalanceCard = "Total rewards-balance-card";
@@ -23,6 +22,7 @@ export class EarnPage extends WebViewAppPage {
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
   private modularDrawer = new ModularDrawer(this.page);
+  private modularDialog = new ModularDialog(this.page);
 
   @step("Go and wait for Earn app to be ready")
   async goAndWaitForEarnToBeReady(earnFunction: () => Promise<void>) {
@@ -59,13 +59,6 @@ export class EarnPage extends WebViewAppPage {
     const webview = await this.getWebView();
     const row = webview.locator("tr", { hasText: `${account}` });
     await row.getByRole("button", { name: "Earn" }).first().click();
-  }
-
-  @step("Expect live App to be visible")
-  async expectLiveAppToBeVisible() {
-    const webview = await this.getWebView();
-    await expect(this.earnAppContainer).toBeVisible();
-    await expect(webview.locator(`[data-test-id="${this.stakeCryptoAssetsButton}"]`)).toBeVisible();
   }
 
   @step("Verify rewards potential is visible")
@@ -107,11 +100,22 @@ export class EarnPage extends WebViewAppPage {
     await expect(earnButton).toBeVisible();
     await expect(earnButton).toBeEnabled();
     await earnButton.click();
-    if (await this.modularDrawer.isModularAssetsDrawerVisible()) {
-      await this.modularDrawer.validateAssetsDrawerItems();
-      return;
+
+    const selector = await this.getModularSelector();
+    if (selector) {
+      await selector.validateItems();
+    } else {
+      await this.chooseAssetDrawer.verifyChooseAssetDrawer();
     }
-    await this.chooseAssetDrawer.verifyChooseAssetDrawer();
+  }
+
+  /**
+   * Returns the visible modular selector (Dialog or Drawer), or null if legacy UI.
+   */
+  private async getModularSelector() {
+    if (await this.modularDialog.isVisible()) return this.modularDialog;
+    if (await this.modularDrawer.isVisible()) return this.modularDrawer;
+    return null;
   }
 
   @step("Verify provider URL")

@@ -1,6 +1,9 @@
 import { PortfolioRange } from "@ledgerhq/types-live";
 import { Order } from "./types";
 
+// Export all types from types.ts
+export * from "./types";
+
 export function getRange(range: PortfolioRange | string) {
   switch (range) {
     case "day":

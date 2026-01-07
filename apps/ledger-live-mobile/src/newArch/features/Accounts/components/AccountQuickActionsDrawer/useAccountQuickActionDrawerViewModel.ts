@@ -7,6 +7,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StyleProp, ViewStyle } from "react-native";
 import { track } from "~/analytics";
 import { AnalyticButtons, AnalyticEvents } from "LLM/hooks/useAnalytics/enums";
@@ -38,6 +39,7 @@ export default function useAccountQuickActionDrawerViewModel({
   } = useQuickActions({ currency, accounts: [account] });
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const { t } = useTranslation();
+  const noah = useFeature("noah");
 
   const actions: ActionItem[] = [
     RECEIVE && {
@@ -46,7 +48,9 @@ export default function useAccountQuickActionDrawerViewModel({
         page: AnalyticEvents.FundingQuickAction,
       },
       title: t("transfer.receive.title"),
-      description: t("transfer.receive.description"),
+      description: noah?.enabled
+        ? t("transfer.receive.description_v2")
+        : t("transfer.receive.description"),
       onPress: () =>
         navigation.navigate<keyof BaseNavigatorStackParamList>(NavigatorName.ReceiveFunds, {
           screen: ScreenName.ReceiveConfirmation,

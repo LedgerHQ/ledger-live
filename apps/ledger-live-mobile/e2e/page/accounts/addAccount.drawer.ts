@@ -1,5 +1,6 @@
 import { expect } from "detox";
-import { openDeeplink } from "../../helpers/commonHelpers";
+import { Step } from "jest-allure2-reporter/api";
+import { delay, openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
 
 export default class AddAccountDrawer extends CommonPage {
@@ -26,6 +27,8 @@ export default class AddAccountDrawer extends CommonPage {
   @Step("Wait for accounts discovery")
   async waitAccountsDiscovery() {
     await waitForElementById(this.continueButtonId, 240000);
+    // element is animated with delay
+    await delay(1000);
   }
 
   @Step("Finish account discovery")

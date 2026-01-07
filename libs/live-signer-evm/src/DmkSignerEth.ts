@@ -17,7 +17,11 @@ import {
   hexaStringToBuffer,
 } from "@ledgerhq/device-management-kit";
 import { EIP712Message } from "@ledgerhq/types-live";
-import { EthAppPleaseEnableContractData, UserRefusedOnDevice } from "@ledgerhq/errors";
+import {
+  EthAppPleaseEnableContractData,
+  LockedDeviceError,
+  UserRefusedOnDevice,
+} from "@ledgerhq/errors";
 import { EvmAddress, EvmSigner, EvmSignerEvent } from "@ledgerhq/coin-evm/types/signer";
 import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 
@@ -46,6 +50,8 @@ export class DmkSignerEth implements EvmSigner {
     }
 
     switch (error.errorCode) {
+      case "5515":
+        return new LockedDeviceError();
       case "6985":
         return new UserRefusedOnDevice();
       case "6a80":
@@ -156,7 +162,7 @@ export class DmkSignerEth implements EvmSigner {
               if (result.intermediateValue.step === SignTransactionDAStep.SIGN_TRANSACTION) {
                 observer.next({ type: "signer.evm.signing" });
               }
-              if (result.intermediateValue.step === SignTransactionDAStep.BUILD_CONTEXT) {
+              if (result.intermediateValue.step === SignTransactionDAStep.BUILD_CONTEXTS) {
                 observer.next({ type: "signer.evm.loading-context" });
               }
               if (result.intermediateValue.step === SignTransactionDAStep.WEB3_CHECKS_OPT_IN) {

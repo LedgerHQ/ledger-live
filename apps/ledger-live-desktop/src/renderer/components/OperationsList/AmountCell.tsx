@@ -65,15 +65,15 @@ class AmountCell extends PureComponent<Props> {
                   alwaysShowSign
                   color={
                     !isConfirmed && operation.type === "IN"
-                      ? colors.warning
+                      ? colors.legacyWarning
                       : amount.isNegative()
-                        ? "palette.text.shade80"
+                        ? "neutral.c80"
                         : undefined
                   }
                 />
 
                 <CounterValue
-                  color="palette.text.shade60"
+                  color="neutral.c70"
                   fontSize={3}
                   alwaysShowSign
                   date={operation.date}

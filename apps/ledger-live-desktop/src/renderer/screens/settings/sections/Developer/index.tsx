@@ -16,20 +16,20 @@ import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
 import ExchangeTestPartnerMode from "./ExchangeTestPartnerMode";
-import LottieTester from "../Experimental/LottieTester";
-import StorylyTester from "../Experimental/StorylyTester";
-import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
+import LottieTester from "./LottieTester";
+import PostOnboardingHubTester from "./PostOnboardingHubTester";
 import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import WalletSyncTester from "./WalletSync/WalletSyncTester";
-import SimpleHashTools from "./SimpleHashTools/SimpleHashTools";
 import MockAppUpdate from "./MockAppUpdate";
 import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
+import EnableThemeConsole from "./EnableThemeConsole";
 import BrazeTools from "./BrazeTools";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
-import NftsTools from "./NftsTools";
 import CustomCALRefInput from "./CustomCALRefInput";
+import EnvVariableOverride from "./EnvVariableOverride";
 import ModularDrawerDevTool from "./ModularDrawer";
+import CryptoAssetsListDevTool from "./CryptoAssetsList";
 import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
 import CustomLockScreenTester from "./CustomLockScreenTester";
 
@@ -88,10 +88,17 @@ const Default = () => {
       >
         <EnableAnalyticsConsole />
       </Row>
+      <Row
+        title={t("settings.developer.themeConsole.title")}
+        desc={t("settings.developer.themeConsole.desc")}
+      >
+        <EnableThemeConsole />
+      </Row>
       <RunLocalAppButton />
       <CustomLockScreenTester />
       <CustomLockScreenToggle />
       <FeatureFlagsSettings />
+      {__DEV__ && <EnvVariableOverride />}
       <Row
         title={t("settings.developer.enableLearnStagingUrl")}
         desc={t("settings.developer.enableLearnStagingUrlDesc")}
@@ -108,20 +115,10 @@ const Default = () => {
       </Row>
       <LottieTester />
       <PostOnboardingHubTester />
-      <FeatureToggle featureId="storyly">
-        <StorylyTester />
-      </FeatureToggle>
       <ExchangeDeveloperMode />
       <ExchangeTestPartnerMode />
       <FeatureToggle featureId="lldWalletSync">
         <WalletSyncTester />
-      </FeatureToggle>
-
-      <FeatureToggle featureId="llNftSupport">
-        <FeatureToggle featureId="nftsFromSimplehash">
-          <SimpleHashTools />
-        </FeatureToggle>
-        <NftsTools />
       </FeatureToggle>
 
       <BrazeTools />
@@ -135,6 +132,7 @@ const Default = () => {
         </Row>
       )}
       <ModularDrawerDevTool />
+      <CryptoAssetsListDevTool />
       <MockAccountGeneratorSection />
     </Body>
   );

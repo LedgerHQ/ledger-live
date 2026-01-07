@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -21,7 +21,6 @@ import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
-import { UnmountOnBlur } from "./utils/UnmountOnBlur";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -43,7 +42,7 @@ export default function MainNavigator() {
   const insets = useSafeAreaInsets();
   const tabBar = useMemo(
     () =>
-      ({ ...props }: BottomTabBarProps): JSX.Element =>
+      ({ ...props }: BottomTabBarProps): React.JSX.Element =>
         customTabBar({
           ...props,
           colors,
@@ -62,10 +61,6 @@ export default function MainNavigator() {
     [managerNavLockCallback],
   );
 
-  const unmountOnBlur = ({ children }: { children: React.ReactNode }) => (
-    <UnmountOnBlur>{children}</UnmountOnBlur>
-  );
-
   return (
     <Tab.Navigator
       tabBar={tabBar}
@@ -82,19 +77,15 @@ export default function MainNavigator() {
           },
         ],
         tabBarShowLabel: false,
-        tabBarActiveTintColor: colors.palette.primary.c80,
-        tabBarInactiveTintColor: colors.palette.neutral.c70,
+        tabBarActiveTintColor: colors.primary.c80,
+        tabBarInactiveTintColor: colors.neutral.c70,
         headerShown: false,
+        popToTopOnBlur: true,
       }}
-      screenLayout={unmountOnBlur}
     >
       <Tab.Screen
         name={NavigatorName.Portfolio}
         component={PortfolioNavigator}
-        layout={({ children }) => (
-          // never unmount Portfolio on navigation
-          <>{children}</>
-        )}
         options={{
           headerShown: false,
           tabBarIcon: props => <PortfolioTabIcon {...props} />,
@@ -113,10 +104,6 @@ export default function MainNavigator() {
       <Tab.Screen
         name={NavigatorName.Earn}
         component={EarnLiveAppNavigator}
-        layout={({ children }) => (
-          // dont unmount Earn on navigation
-          <>{children}</>
-        )}
         options={{
           freezeOnBlur: true,
           headerShown: false,
@@ -205,9 +192,6 @@ export default function MainNavigator() {
         options={{
           tabBarIcon: props => <ManagerTabIcon {...props} />,
           tabBarButtonTestID: "TabBarManager",
-        }}
-        layout={({ children }) => {
-          return <>{children}</>;
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {

@@ -7,8 +7,8 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import { Horizon } from "@stellar/stellar-sdk";
-import type { BalanceAsset, RawOperation, StellarMemo, StellarOperation } from "../types";
 import BigNumber from "bignumber.js";
+import type { BalanceAsset, RawOperation, StellarMemo, StellarOperation } from "../types";
 
 const currency = getCryptoCurrencyById("stellar");
 
@@ -129,7 +129,9 @@ async function formatOperation(
     date: new Date(rawOperation.created_at),
     senders: [rawOperation.source_account],
     recipients,
-    transactionSequenceNumber: Number(transaction.source_account_sequence) || undefined,
+    transactionSequenceNumber: new BigNumber(transaction.source_account_sequence).isNaN()
+      ? undefined
+      : new BigNumber(transaction.source_account_sequence),
     hasFailed: !rawOperation.transaction_successful,
     blockHash: blockHash,
     extra: {

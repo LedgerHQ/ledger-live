@@ -1,3 +1,37 @@
+// Common import restrictions
+const commonImportRestrictions = [
+  {
+    group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+    message: "Please remove the /lib import from live-common import.",
+  },
+  {
+    group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
+    message:
+      "Use 'LLM' alias instead of '~/newArch'. Replace '~/newArch' with 'LLM' in your imports.",
+  },
+];
+
+// Lodash import restriction
+const lodashImportRestriction = [
+  "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
+];
+
+// React-redux import restrictions
+const reactReduxImportRestrictions = [
+  {
+    name: "react-redux",
+    importNames: ["useSelector", "useDispatch", "useStore"],
+    message:
+      "Import typed hooks from '~/context/hooks' instead of 'react-redux' to ensure proper TypeScript typing.",
+  },
+  {
+    name: "reselect",
+    importNames: ["createStructuredSelector", "createSelector"],
+    message:
+      "Import typed hooks from '~/context/selectors' instead of 'reselect' to ensure proper TypeScript typing.",
+  },
+];
+
 module.exports = {
   env: {
     node: true,
@@ -43,15 +77,8 @@ module.exports = {
     "no-restricted-imports": [
       "error",
       {
-        patterns: [
-          {
-            group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
-            message: "Please remove the /lib import from live-common import.",
-          },
-        ],
-        paths: [
-          "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
-        ],
+        patterns: commonImportRestrictions,
+        paths: [...lodashImportRestriction, ...reactReduxImportRestrictions],
       },
     ],
     "i18next/no-literal-string": [
@@ -98,20 +125,41 @@ module.exports = {
   },
   overrides: [
     {
+      // Allow direct react-redux imports in hooks.ts/store.ts where typed hooks are defined
+      files: ["src/context/hooks.ts", "src/context/store.ts", "src/context/selectors.ts"],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: commonImportRestrictions,
+            paths: lodashImportRestriction,
+          },
+        ],
+      },
+    },
+    {
       files: [
         "src/**/*.test.{ts,tsx}",
         "src/screens/Settings/Debug/**/*",
         "src/screens/FeatureFlagsSettings/**/*",
         "src/components/AnalyticsConsole/**/*",
-        "src/components/StorylyStories/**/*",
         "src/screens/Settings/Experimental/**/*",
         "src/components/PerformanceConsole/**/*",
         "src/components/CustomImage/TestImage.tsx",
         "**/*Mock*",
+        "__tests__/**/*",
       ],
       rules: {
         "i18next/no-literal-string": "off",
         "no-console": "off",
+        // Allow direct react-redux imports in test files for mocking purposes
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: commonImportRestrictions,
+            paths: lodashImportRestriction,
+          },
+        ],
       },
     },
     {
@@ -121,6 +169,17 @@ module.exports = {
       },
       rules: {
         "@typescript-eslint/no-var-requires": "off",
+      },
+    },
+    {
+      // Enable type-aware linting for TypeScript files only
+      files: ["*.ts", "*.tsx"],
+      excludedFiles: ["src/mocks/**"],
+      parserOptions: {
+        project: true,
+      },
+      rules: {
+        "@typescript-eslint/no-deprecated": "error",
       },
     },
   ],

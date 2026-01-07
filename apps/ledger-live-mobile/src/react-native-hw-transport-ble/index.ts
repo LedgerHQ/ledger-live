@@ -1,6 +1,6 @@
 import Config from "react-native-config";
 import BleTransport from "@ledgerhq/react-native-hw-transport-ble";
-import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-mobile";
+import { DeviceManagementKitBLETransport } from "@ledgerhq/live-dmk-mobile";
 import makeMock from "./makeMock";
 import createAPDUMock from "../logic/createAPDUMock";
 import { Observer } from "rxjs";
@@ -33,8 +33,8 @@ interface CommonTransportConstructor {
     deviceOrId: (Device & DiscoveredDevice) | string,
     timeoutMs?: number,
     context?: TraceContext,
-    options?: { rxjsScheduler?: SchedulerLike },
-  ) => Promise<BleTransport | DeviceManagementKitTransport>;
+    options?: { rxjsScheduler?: SchedulerLike; matchDeviceByName?: string },
+  ) => Promise<BleTransport | DeviceManagementKitBLETransport>;
 }
 
 const names: { [key: string]: string } = {};
@@ -92,7 +92,7 @@ const getBLETransport = ({
     // when not in MOCK mode, return DeviceManagementKitTransport if enabled,
     // otherwise BleTransport
     return (
-      isLDMKEnabled ? DeviceManagementKitTransport : BleTransport
+      isLDMKEnabled ? DeviceManagementKitBLETransport : BleTransport
     ) as CommonTransportConstructor;
     // NOTE: Some method signatures are not compatible between BleTransport and DeviceManagementKitTransport
     // so we need to cast to CommonTransportConstructor

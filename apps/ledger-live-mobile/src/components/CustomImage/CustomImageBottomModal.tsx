@@ -1,21 +1,17 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import Button from "../Button";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import { NavigatorName, ScreenName } from "~/const";
 import QueuedDrawer, { Props as BottomModalProps } from "../QueuedDrawer";
-import ModalChoice from "./ModalChoice";
 import { importImageFromPhoneGallery } from "./imageUtils";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { TrackScreen } from "~/analytics";
-import DeviceAction from "../DeviceAction";
-import { useStaxRemoveImageDeviceAction } from "~/hooks/deviceActions";
 import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
-import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { useToastsActions } from "~/actions/toast";
+import styled from "styled-components/native";
 
 const analyticsDrawerName = "Choose an image to set as your device lockscreen";
 
@@ -27,16 +23,30 @@ const analyticsButtonChoosePhoneGalleryEventProps = {
 type Props = {
   isOpened?: boolean;
   onClose: BottomModalProps["onClose"];
-  setDeviceHasImage?: (arg0: boolean) => void;
+  setDeviceHasImage?: (hasImage: boolean) => void;
   deviceHasImage?: boolean;
   device: Device | null;
   deviceModelId: CLSSupportedDeviceModelId | null;
   referral?: string;
 };
 
+const Header = () => {
+  const { t } = useTranslation();
+  return (
+    <Flex justifyContent="center" alignSelf="center" mt={8} mb={6}>
+      <Text textAlign="center" variant="h3Inter" fontSize={24} fontWeight="semiBold">
+        {t("customImage.drawer.title")}
+      </Text>
+    </Flex>
+  );
+};
+
+const ButtonContainer = styled(Flex)`
+  flex-direction: column;
+  row-gap: ${p => p.theme.space[6]};
+`;
+
 const CustomImageBottomModal: React.FC<Props> = props => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isRemovingCustomImage, setIsRemovingCustomImage] = useState(false);
   const {
     isOpened,
     onClose,
@@ -46,129 +56,77 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     deviceModelId,
     referral = undefined,
   } = props;
+  const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
-  const { pushToast } = useToastsActions();
 
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
   const handleUploadFromPhone = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const importResult = await importImageFromPhoneGallery();
-      if (importResult !== null) {
-        navigation.navigate(NavigatorName.CustomImage, {
-          screen: ScreenName.CustomImagePreviewPreEdit,
-          params: {
-            ...importResult,
-            isPictureFromGallery: true,
-            device,
-            deviceModelId,
-            referral: referral,
-          },
-        });
-      }
-    } catch (error) {
-      console.error(error);
+    setLoading(true);
+    const result = await importImageFromPhoneGallery();
+    if (result !== null) {
       navigation.navigate(NavigatorName.CustomImage, {
-        screen: ScreenName.CustomImageErrorScreen,
-        params: { error: error as Error, device, deviceModelId },
+        screen: ScreenName.CustomImagePreviewPreEdit,
+        params: {
+          device,
+          deviceModelId,
+          referral: referral,
+          ...result,
+        },
       });
     }
-    setIsLoading(false);
     onClose && onClose();
-  }, [navigation, onClose, device, deviceModelId, referral]);
+    setLoading(false);
+  }, [device, deviceModelId, navigation, onClose, referral]);
 
-  const request = useMemo(() => ({ deviceId: device?.deviceId || "", request: {} }), [device]);
-
-  useEffect(() => {
-    return () => {
-      setIsRemovingCustomImage(false);
-    };
-  }, []);
-
-  const wrappedOnClose = useCallback(() => {
-    setIsRemovingCustomImage(false);
-    onClose && onClose();
-  }, [onClose]);
-
-  const onSuccess = useCallback(() => {
-    setIsRemovingCustomImage(false);
-    if (setDeviceHasImage) {
-      setDeviceHasImage(false);
-    }
-    wrappedOnClose();
-    pushToast({
-      id: "customImage.remove",
-      type: "success",
-      icon: "success",
-      title: t("customImage.toastRemove"),
+  const handleRemoveImage = useCallback(() => {
+    navigation.navigate(NavigatorName.CustomImage, {
+      screen: ScreenName.CustomImageRemoval,
+      params: {
+        device,
+        referral: referral,
+        setDeviceHasImage: setDeviceHasImage || (() => {}),
+      },
     });
-  }, [setDeviceHasImage, wrappedOnClose, pushToast, t]);
-
-  const onError = useCallback(
-    (error: Error) => {
-      if (error instanceof ImageDoesNotExistOnDevice) {
-        if (setDeviceHasImage) {
-          setDeviceHasImage(false);
-        }
-      }
-    },
-    [setDeviceHasImage],
-  );
-
-  const action = useStaxRemoveImageDeviceAction();
+  }, [navigation, device, referral, setDeviceHasImage]);
 
   return (
     <QueuedDrawer
       isRequestingToBeOpened={!!isOpened}
-      onClose={wrappedOnClose}
-      preventBackdropClick={isRemovingCustomImage}
+      onClose={onClose}
+      CustomHeader={loading ? () => null : Header}
     >
       <TrackScreen category={analyticsDrawerName} type="drawer" refreshSource={false} />
-      {isRemovingCustomImage && device ? (
-        <Flex alignItems="center">
-          <Flex flexDirection="row">
-            <DeviceAction
-              device={device}
-              request={request}
-              action={action}
-              onResult={onSuccess}
-              onError={onError}
-              location={
-                referral === HOOKS_TRACKING_LOCATIONS.myLedgerDashboard
-                  ? HOOKS_TRACKING_LOCATIONS.myLedgerDashboard
-                  : undefined
-              }
-            />
-          </Flex>
-        </Flex>
-      ) : isLoading ? (
+      {loading ? (
         <Flex m={10}>
           <InfiniteLoader />
         </Flex>
       ) : (
-        <>
-          <ModalChoice
+        <ButtonContainer>
+          <Button
             onPress={handleUploadFromPhone}
-            title={t("customImage.drawer.options.uploadFromPhone")}
-            iconName={"Upload"}
+            type="main"
+            iconPosition="left"
+            size="large"
+            Icon={() => <Icons.DoublePicture size="M" color="neutral.c00" />}
             event="button_clicked"
             eventProperties={analyticsButtonChoosePhoneGalleryEventProps}
-          />
-          <Flex mt={6} />
+          >
+            {t("customImage.drawer.options.uploadFromPhone")}
+          </Button>
           {deviceHasImage ? (
             <Button
-              mt={6}
               type="error"
-              iconName="Trash"
-              iconPosition="right"
+              iconPosition="left"
               outline
-              onPress={() => setIsRemovingCustomImage(true)}
+              size="large"
+              Icon={() => <Icons.Trash size="M" color="error.c60" />}
+              onPress={handleRemoveImage}
             >
               {t("customImage.drawer.options.remove")}
             </Button>
           ) : null}
-        </>
+        </ButtonContainer>
       )}
     </QueuedDrawer>
   );

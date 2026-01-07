@@ -1,10 +1,9 @@
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { Theme } from "@ledgerhq/native-ui/lib/styles/theme";
-import { useRoute } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { useRoute, NavigationProp, ParamListBase } from "@react-navigation/native";
 import React, { useCallback, useEffect, useState } from "react";
 import { Linking } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import styled from "styled-components/native";
 import { makeSetEarnMenuModalAction } from "~/actions/earn";
 import { track } from "~/analytics";
@@ -16,14 +15,16 @@ function isValidIntent(intent?: string): intent is "deposit" | "withdraw" {
   return ["deposit", "withdraw"].includes(intent ?? "");
 }
 
+export function isValidEarnManifestId(
+  manifestId?: string,
+): manifestId is "earn" | "earn-stg" | "earn-prd-eks" {
+  return ["earn", "earn-stg", "earn-prd-eks"].includes(manifestId ?? "");
+}
+
 /** TODO Should be a shared constant throughout the app for all events */
 const BUTTON_CLICKED_TRACK_EVENT = "button_clicked";
 
-export function EarnMenuDrawer({
-  navigation,
-}: {
-  navigation: StackNavigationProp<{ [key: string]: object | undefined }>;
-}) {
+export function EarnMenuDrawer({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
   const dispatch = useDispatch();
   const route = useRoute();
   const [modalOpened, setModalOpened] = useState(false);
@@ -58,7 +59,7 @@ export function EarnMenuDrawer({
                 onPress={async () => {
                   await track(BUTTON_CLICKED_TRACK_EVENT, { live_app, ...tracked });
                   closeDrawer();
-                  if (live_app === "earn" || live_app === "earn-stg") {
+                  if (isValidEarnManifestId(live_app)) {
                     const pathSegments = link.split("?");
                     const earnSearchParams = new URLSearchParams(pathSegments.pop());
                     const intent = earnSearchParams.get("intent") ?? undefined;

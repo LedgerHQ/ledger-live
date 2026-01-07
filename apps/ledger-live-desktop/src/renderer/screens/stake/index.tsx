@@ -1,21 +1,19 @@
-import { useCallback } from "react";
-import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
+import { useCallback, useMemo } from "react";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useHistory } from "react-router-dom";
 import { stakeDefaultTrack } from "./constants";
 import { track, trackPage } from "~/renderer/analytics/segment";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { useStake } from "LLD/hooks/useStake";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import {
-  ModularDrawerLocation,
-  openAssetAndAccountDrawer,
-  useModularDrawerVisibility,
-} from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 const DRAWER_FLOW = "stake";
 
@@ -34,7 +32,10 @@ const useStakeFlow = () => {
   const dispatch = useDispatch();
   const walletState = useSelector(walletSelector);
   const { enabledCurrencies, partnerSupportedAssets, getRouteToPlatformApp } = useStake();
-  const list = enabledCurrencies.concat(partnerSupportedAssets);
+  const list = useMemo(() => {
+    return enabledCurrencies.concat(partnerSupportedAssets);
+  }, [enabledCurrencies, partnerSupportedAssets]);
+  const earnDrawerConfigurationFlag = useFeature("ptxEarnDrawerConfiguration");
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -115,6 +116,8 @@ const useStakeFlow = () => {
     });
   }, [history.location.pathname]);
 
+  const { openAssetAndAccount } = useOpenAssetAndAccount();
+
   return useCallback(
     ({
       currencies,
@@ -124,9 +127,10 @@ const useStakeFlow = () => {
       entryPoint,
       returnTo,
     }: StakeFlowProps = {}) => {
-      const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
-        currencies: currencies || list,
-      });
+      dispatch(setFlowValue(DRAWER_FLOW));
+      dispatch(setSourceValue(source || ""));
+
+      const cryptoCurrencies = currencies || list;
 
       trackPage("Stake", "Drawer - Choose Asset", {
         ...stakeDefaultTrack,
@@ -147,19 +151,23 @@ const useStakeFlow = () => {
       };
 
       if (modularDrawerVisible) {
-        openAssetAndAccountDrawer({
+        // Add APY configuration for earn/stake functionality
+        const earnDrawerConfiguration = earnDrawerConfigurationFlag?.enabled
+          ? earnDrawerConfigurationFlag.params
+          : {};
+        openAssetAndAccount({
           currencies: cryptoCurrencies,
           useCase: "earn",
           onSuccess,
           onCancel: handleRequestClose,
-          flow: DRAWER_FLOW,
-          source: source ?? "",
+          areCurrenciesFiltered: cryptoCurrencies.length > 0,
+          drawerConfiguration: earnDrawerConfiguration,
         });
       } else {
         setDrawer(
           SelectAccountAndCurrencyDrawer,
           {
-            currencies: cryptoCurrencies,
+            currencyIds: cryptoCurrencies,
             flow: DRAWER_FLOW,
             source: source ?? "",
             onAccountSelected: (account, parentAccount) =>
@@ -180,11 +188,14 @@ const useStakeFlow = () => {
       }
     },
     [
+      dispatch,
+      earnDrawerConfigurationFlag,
       handleAccountSelected,
       handleRequestClose,
       history.location.pathname,
       list,
       modularDrawerVisible,
+      openAssetAndAccount,
     ],
   );
 };

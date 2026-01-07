@@ -14,6 +14,7 @@ import type {
   Stake,
   Reward,
   CraftedTransaction,
+  Validator,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 
@@ -123,8 +124,8 @@ const buildGetBalance = (networkFamily: string) =>
   };
 
 const buildGetSequence = (networkFamily: string) =>
-  async function getSequence(address: string): Promise<number> {
-    const { data } = await network<number, unknown>({
+  async function getSequence(address: string): Promise<bigint> {
+    const { data } = await network<bigint, unknown>({
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/info`,
     });
@@ -186,6 +187,14 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: bigint,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported");
+    },
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
@@ -197,5 +206,8 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
+    },
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
     },
   }) satisfies Api<any>;

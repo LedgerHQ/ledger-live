@@ -67,8 +67,8 @@ const FilterLine = styled(Touchable)`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 48;
-  padding-vertical: 12;
+  height: 48px;
+  padding: 12px 0;
 `;
 
 const ArrowIconContainer = styled(Flex).attrs({
@@ -198,7 +198,7 @@ const FilterModalComponent = ({
 
       return (
         <FilterLine
-          activeOpacity={0.5}
+          style={({ pressed }) => (pressed ? { opacity: 0.5 } : {})}
           onPress={onPress}
           event="ManagerAppFilterClick"
           eventProperties={{

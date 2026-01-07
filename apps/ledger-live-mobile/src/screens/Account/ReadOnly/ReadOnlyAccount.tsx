@@ -1,10 +1,9 @@
-import React, { useCallback, useMemo, useContext } from "react";
+import React, { useCallback, useContext } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { Trans, useTranslation } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useFocusEffect } from "@react-navigation/native";
 import ReadOnlyGraphCard from "~/components/ReadOnlyGraphCard";
@@ -23,29 +22,22 @@ import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
+import { useCurrencyById } from "@ledgerhq/cryptoassets/hooks";
 
 type Props = StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>;
 
 function ReadOnlyAccount({ route }: Props) {
-  const { currencyId, currencyType } = route.params;
+  const { currencyId } = route.params;
 
-  const currency: Currency | null = useMemo(
-    () =>
-      currencyId
-        ? currencyType === "CryptoCurrency"
-          ? getCryptoCurrencyById(currencyId)
-          : getTokenById(currencyId)
-        : null,
-    [currencyType, currencyId],
-  );
+  const { currency } = useCurrencyById(currencyId || "");
   const { t } = useTranslation();
 
   const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
 
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
-  const renderItem = useCallback(({ item }: ListRenderItemInfo<JSX.Element>) => item, []);
-  const keyExtractor = useCallback((_: JSX.Element, index: number) => String(index), []);
+  const renderItem = useCallback(({ item }: ListRenderItemInfo<React.JSX.Element>) => item, []);
+  const keyExtractor = useCallback((_: React.JSX.Element, index: number) => String(index), []);
 
   const { source, setSource, setScreen } = useContext(AnalyticsContext);
 

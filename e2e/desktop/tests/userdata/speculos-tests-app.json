@@ -25,7 +25,7 @@
       "pairExchanges": {},
       "developerMode": true,
       "loaded": true,
-      "shareAnalytics": true,
+      "shareAnalytics": false,
       "sharePersonalizedRecommandations": false,
       "hasSeenAnalyticsOptInPrompt": true,
       "sentryLogs": true,

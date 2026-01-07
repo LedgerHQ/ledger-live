@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { Flex, SelectableList } from "@ledgerhq/native-ui";
 import i18next from "i18next";
 import RNRestart from "react-native-restart";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/useAvailableLanguagesForDevice";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { firstValueFrom, from } from "rxjs";
@@ -27,6 +27,7 @@ import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/typ
 import Button from "~/components/Button";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { useSupportedLocales } from "~/hooks/languages/useSupportedLocales";
+import SafeAreaView from "~/components/SafeAreaView";
 
 type NavigationProps = CompositeScreenProps<
   StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingLanguage>,
@@ -155,9 +156,9 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
 
   return (
     <>
-      <Flex flex={1} p={6}>
+      <SafeAreaView isFlex edges={["bottom"]}>
         <ScrollView testID="scrollView-language-change">
-          <Flex mb={4}>
+          <Flex marginBottom={4} marginX={6}>
             <SelectableList currentValue={currentLocale} onChange={changeLanguage}>
               {supportedLocales.map((l, index) => (
                 <SelectableList.Element key={index + l} value={l}>
@@ -167,7 +168,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
             </SelectableList>
           </Flex>
         </ScrollView>
-      </Flex>
+      </SafeAreaView>
       <QueuedDrawer
         isRequestingToBeOpened={isDeviceLanguagePromptOpen}
         onClose={closeDeviceLanguagePrompt}

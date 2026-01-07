@@ -1,10 +1,14 @@
 {
   "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util",
     "follow-redirects",
     "form-data",
     "proxy-from-env"
   ],
   "ignoreUnused": [
+    "@ledgerhq/cryptoassets",
     "@ledgerhq/devices",
     "expect"
   ],
@@ -15,7 +19,9 @@
     "src/test/bot-specs.ts",
     "src/test/bridgeDatasetTest.ts",
     "src/test/cli.ts",
+    "src/test/fixtures.ts",
     "src/test/index.ts",
-    "src/test/speculos-deviceActions.ts"
+    "src/test/speculos-deviceActions.ts",
+    "src/supportedFeatures.ts"
   ]
 }

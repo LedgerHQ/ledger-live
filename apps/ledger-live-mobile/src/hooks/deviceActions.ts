@@ -1,15 +1,16 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { createAction as appCreateAction } from "@ledgerhq/live-common/hw/actions/app";
 import { createAction as transactionCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
+import { createAction as rawTransactionCreateAction } from "@ledgerhq/live-common/hw/actions/rawTransaction";
 import { createAction as startExchangeCreateAction } from "@ledgerhq/live-common/hw/actions/startExchange";
 import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
 import { createAction as managerCreateAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { createAction as signMessageCreateAction } from "@ledgerhq/live-common/hw/signMessage/index";
 import { createAction as completeExchangeCreateAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
-import { createAction as staxLoadImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenLoad";
-import { createAction as staxFetchImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenFetch";
+import { createAction as loadImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenLoad";
+import { createAction as fetchImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenFetch";
 import { createAction as installLanguageCreateAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
-import { createAction as staxRemoveImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenRemove";
+import { createAction as removeImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenRemove";
 import { createAction as renameDeviceCreateAction } from "@ledgerhq/live-common/hw/actions/renameDevice";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import renameDevice from "@ledgerhq/live-common/hw/renameDevice";
@@ -27,12 +28,12 @@ import {
   connectAppExecMock,
   initSwapExecMock,
   connectManagerExecMock,
-  staxFetchImageExecMock,
+  fetchImageExecMock,
   startExchangeExecMock,
   completeExchangeExecMock,
   installLanguageExecMock,
-  staxLoadImageExecMock,
-  staxRemoveImageExecMock,
+  loadImageExecMock,
+  removeImageExecMock,
   renameDeviceExecMock,
 } from "../../e2e/bridge/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -55,6 +56,18 @@ export function useTransactionDeviceAction() {
   return useMemo(
     () =>
       transactionCreateAction(
+        mock ? connectAppExecMock : connectAppFactory({ isLdmkConnectAppEnabled }),
+      ),
+    [isLdmkConnectAppEnabled, mock],
+  );
+}
+
+export function useRawTransactionDeviceAction() {
+  const mock = useEnv("MOCK");
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  return useMemo(
+    () =>
+      rawTransactionCreateAction(
         mock ? connectAppExecMock : connectAppFactory({ isLdmkConnectAppEnabled }),
       ),
     [isLdmkConnectAppEnabled, mock],
@@ -105,26 +118,26 @@ export function useInstallLanguageDeviceAction() {
   );
 }
 
-export function useStaxLoadImageDeviceAction() {
+export function useLoadImageDeviceAction() {
   const mock = useEnv("MOCK");
   return useMemo(
-    () => staxLoadImageCreateAction(mock ? staxLoadImageExecMock : customLockScreenLoad),
+    () => loadImageCreateAction(mock ? loadImageExecMock : customLockScreenLoad),
     [mock],
   );
 }
 
-export function useStaxFetchImageDeviceAction() {
+export function useFetchImageDeviceAction() {
   const mock = useEnv("MOCK");
   return useMemo(
-    () => staxFetchImageCreateAction(mock ? staxFetchImageExecMock : customLockScreenFetch),
+    () => fetchImageCreateAction(mock ? fetchImageExecMock : customLockScreenFetch),
     [mock],
   );
 }
 
-export function useStaxRemoveImageDeviceAction() {
+export function useRemoveImageDeviceAction() {
   const mock = useEnv("MOCK");
   return useMemo(
-    () => staxRemoveImageCreateAction(mock ? staxRemoveImageExecMock : customLockScreenRemove),
+    () => removeImageCreateAction(mock ? removeImageExecMock : customLockScreenRemove),
     [mock],
   );
 }
@@ -157,8 +170,8 @@ export function useRenameDeviceAction() {
   );
 }
 
-export function useSelectDevice() {
-  const [device, setDevice] = useState<Device | null | undefined>(null);
+export function useSelectDevice(defaultDevice?: Device) {
+  const [device, setDevice] = useState<Device | null | undefined>(defaultDevice || null);
 
   const onDeviceUpdated = useRef<() => void>();
   const registerDeviceSelection = useCallback((handler: () => void) => {

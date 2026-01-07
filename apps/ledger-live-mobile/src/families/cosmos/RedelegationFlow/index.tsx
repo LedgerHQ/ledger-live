@@ -1,13 +1,14 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
 import { getStackNavigatorConfig, defaultNavigationOptions } from "~/navigation/navigatorConfig";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
 import RedelegationSelectValidator from "./01-SelectValidator";
 import RedelegationAmount from "../shared/02-SelectAmount";
+import RedelegationBridgeTransaction from "../shared/03-BridgeTransaction";
 import SelectDevice from "~/screens/SelectDevice";
 import ConnectDevice from "~/screens/ConnectDevice";
 import RedelegationValidationError from "./04-ValidationError";
@@ -41,12 +42,7 @@ function RedelegationFlow() {
             />
           ),
           headerLeft: () => null,
-          headerStyle: {
-            ...defaultNavigationOptions.headerStyle,
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-          },
+          headerStyle: defaultNavigationOptions.headerStyle,
           gestureEnabled: false,
         }}
       />
@@ -83,6 +79,14 @@ function RedelegationFlow() {
             />
           ),
         })}
+      />
+      <Stack.Screen
+        name={ScreenName.CosmosRedelegationBridgeTransaction}
+        component={RedelegationBridgeTransaction}
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+        }}
       />
       <Stack.Screen
         name={ScreenName.CosmosRedelegationSelectDevice}
@@ -142,4 +146,4 @@ const options = {
   headerShown: false,
 };
 export { RedelegationFlow as component, options };
-const Stack = createStackNavigator<CosmosRedelegationFlowParamList>();
+const Stack = createNativeStackNavigator<CosmosRedelegationFlowParamList>();

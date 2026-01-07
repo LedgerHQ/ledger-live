@@ -22,12 +22,14 @@ import { broadcast } from "../broadcast";
 import resolver from "../hw-getAddress";
 import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
 import cardanoCoinConfig, { CardanoCoinConfig } from "../config";
+import { validateAddress } from "../validateAddress";
 
 export function buildCurrencyBridge(signerContext: SignerContext<CardanoSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
   const scanAccounts = makeScanAccounts({
     getAccountShape: makeGetAccountShape(signerContext),
     getAddressFn: getAddressWrapper(getAddress),
+    postSync: postSyncPatch,
   });
 
   return {
@@ -58,10 +60,14 @@ export function buildAccountBridge(
     sync,
     receive,
     signOperation: buildSignOperation(signerContext),
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     assignToAccountRaw,
     assignFromAccountRaw,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

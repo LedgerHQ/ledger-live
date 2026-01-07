@@ -70,7 +70,7 @@ describe("shouldRetainPendingOperation", () => {
     // Given
     const account = createAccount("12");
     const date = new Date();
-    const op = createOperation("12", [], 1, date);
+    const op = createOperation("12", [], BigInt(1), date);
 
     // When
     const result = addPendingOperation(account, op);
@@ -83,8 +83,8 @@ describe("shouldRetainPendingOperation", () => {
     // Given
     const account = createAccount("12");
     const date = new Date();
-    account.operations = [createOperation("12", [account.freshAddress], 1, date)];
-    const op = createOperation("12", [account.freshAddress], 2, date);
+    account.operations = [createOperation("12", [account.freshAddress], BigInt(1), date)];
+    const op = createOperation("12", [account.freshAddress], BigInt(2), date);
 
     // When
     const result = addPendingOperation(account, op);
@@ -97,8 +97,8 @@ describe("shouldRetainPendingOperation", () => {
     // Given
     const account = createAccount("12");
     const date = new Date();
-    account.operations = [createOperation("12", [account.freshAddress], 2, date)];
-    const op = createOperation("12", [account.freshAddress], 1, date);
+    account.operations = [createOperation("12", [account.freshAddress], BigInt(2), date)];
+    const op = createOperation("12", [account.freshAddress], BigInt(1), date);
 
     // When
     const result = addPendingOperation(account, op);
@@ -111,8 +111,8 @@ describe("shouldRetainPendingOperation", () => {
     // Given
     const account = createAccount("12");
     const date = new Date(getEnv("OPERATION_OPTIMISTIC_RETENTION") + 1);
-    account.operations = [createOperation("12", [], 1, date)];
-    const op = createOperation("12", [account.freshAddress], 3, date);
+    account.operations = [createOperation("12", [], BigInt(1), date)];
+    const op = createOperation("12", [account.freshAddress], BigInt(3), date);
 
     // When
     const result = addPendingOperation(account, op);
@@ -126,7 +126,7 @@ describe("shouldRetainPendingOperation", () => {
     const account = createAccount("12");
     const retentionThreshold = getEnv("OPERATION_OPTIMISTIC_RETENTION");
     const date = new Date(Date.now() - retentionThreshold - 1); // Exceeds threshold
-    const op = createOperation("12", [account.freshAddress], 1, date);
+    const op = createOperation("12", [account.freshAddress], BigInt(1), date);
 
     // When
     const result = addPendingOperation(account, op);
@@ -140,8 +140,8 @@ describe("shouldRetainPendingOperation", () => {
     // Given
     const account = createAccount("12");
     const retentionThreshold = getEnv("OPERATION_OPTIMISTIC_RETENTION");
-    const date = new Date(Date.now() - retentionThreshold + 1); // Within threshold
-    const op = createOperation("12", [account.freshAddress], 1, date);
+    const date = new Date(Date.now() - retentionThreshold + 1000); // Within threshold (1s buffer)
+    const op = createOperation("12", [account.freshAddress], BigInt(1), date);
 
     // When
     const result = addPendingOperation(account, op);
@@ -156,7 +156,7 @@ describe("shouldRetainPendingOperation", () => {
     const account = createAccount("12");
     const date = new Date();
     account.operations = [createOperation("12", [account.freshAddress], undefined, date)];
-    const op = createOperation("12", [account.freshAddress], 1, date);
+    const op = createOperation("12", [account.freshAddress], BigInt(1), date);
 
     // When
     const result = addPendingOperation(account, op);
@@ -170,8 +170,8 @@ describe("shouldRetainPendingOperation", () => {
     // Given
     const account = createAccount("12");
     const date = new Date();
-    account.operations = [createOperation("12", [], 1, date)];
-    const op = createOperation("12", [], 1, date);
+    account.operations = [createOperation("12", [], BigInt(1), date)];
+    const op = createOperation("12", [], BigInt(1), date);
 
     // When
     const result = addPendingOperation(account, op);
@@ -183,8 +183,8 @@ describe("shouldRetainPendingOperation", () => {
 
   it("should replace existing pending operation with same transactionSequenceNumber", () => {
     const account = createAccount("12");
-    const op1 = createOperation("12", ["addr"], 5);
-    const op2 = createOperation("12", ["addr"], 5); // same sequence
+    const op1 = createOperation("12", ["addr"], BigInt(5));
+    const op2 = createOperation("12", ["addr"], BigInt(5)); // same sequence
 
     const result = addPendingOperation(addPendingOperation(account, op1), op2);
 
@@ -198,7 +198,7 @@ describe("shouldRetainPendingOperation", () => {
     const senders = ["abc"];
 
     // First sync: we get a pending operation
-    const pendingOp = createOperation("12", senders, 42, now);
+    const pendingOp = createOperation("12", senders, BigInt(42), now);
     const withPending = addPendingOperation(account, pendingOp);
 
     expect(withPending.pendingOperations).toHaveLength(1);
@@ -265,7 +265,7 @@ function createTokenAccount(id: string): TokenAccount {
 export function createOperation(
   accountId: string,
   sender?: string[],
-  sequenceNumber?: number,
+  sequenceNumber?: bigint,
   date?: Date,
 ): Operation {
   return {
@@ -279,7 +279,8 @@ export function createOperation(
     recipients: [],
     blockHeight: undefined,
     blockHash: undefined,
-    transactionSequenceNumber: sequenceNumber,
+    transactionSequenceNumber:
+      typeof sequenceNumber === "bigint" ? new BigNumber(sequenceNumber.toString()) : undefined,
     accountId,
     date: date || new Date(),
     extra: null,

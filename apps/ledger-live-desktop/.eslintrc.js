@@ -1,3 +1,31 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+const path = require("path");
+
+const commonImportRestrictions = [
+  {
+    group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+    message: "Please remove the /lib import from live-common import.",
+  },
+  {
+    group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
+    message:
+      "Use 'LLD' alias instead of '~/newArch'. Replace '~/newArch' with 'LLD' in your imports.",
+  },
+];
+
+const lodashImportRestriction = [
+  "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
+];
+
+const reactReduxImportRestrictions = [
+  {
+    name: "react-redux",
+    importNames: ["useSelector", "useDispatch", "useStore"],
+    message:
+      "Import typed hooks from 'LLD/hooks/redux' instead of 'react-redux' to ensure proper TypeScript typing.",
+  },
+];
+
 const currencyFamiliesRules = {
   files: ["src/**"],
   excludedFiles: ["**/families/generated.ts", "**/families/*/**"],
@@ -18,21 +46,13 @@ const currencyFamiliesRules = {
 };
 
 const livecommonRules = {
-  files: ["src/**"],
+  files: ["src/**", "tests/**"],
   rules: {
     "no-restricted-imports": [
       "error",
       {
-        patterns: [
-          {
-            group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
-            message: "Please remove the /lib import from live-common import.",
-          },
-        ],
-
-        paths: [
-          "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
-        ],
+        patterns: commonImportRestrictions,
+        paths: [...lodashImportRestriction, ...reactReduxImportRestrictions],
       },
     ],
   },
@@ -44,8 +64,13 @@ module.exports = {
     es6: true,
     node: true,
   },
+  parser: "@typescript-eslint/parser",
   plugins: ["react", "react-hooks"],
-  extends: ["plugin:react/recommended", "plugin:react-hooks/recommended"],
+  extends: [
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:tailwindcss/recommended",
+  ],
   globals: {
     __DEV__: "readonly",
     INDEX_URL: "readonly",
@@ -75,10 +100,9 @@ module.exports = {
     "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
     "react/jsx-filename-extension": "off",
     "space-before-function-paren": "off",
-    "@typescript-eslint/ban-types": "off", // FIXME make an error later
     "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/no-use-before-define": "off", // FIXME make an error later
     "@typescript-eslint/no-non-null-assertion": "off", // Useful sometimes. Should not be abused.
+    "tailwindcss/no-custom-classname": "error",
 
     // Ignore live-common for the moment because this rule does not work with subpath exports
     // See: https://github.com/import-js/eslint-plugin-import/issues/1810
@@ -90,6 +114,24 @@ module.exports = {
   overrides: [
     currencyFamiliesRules,
     livecommonRules,
+    {
+      files: [
+        "src/newArch/hooks/redux.ts",
+        "src/**/*.test.tsx",
+        "src/**/*.test.ts",
+        "src/**/*.integration.tsx",
+        "src/**/*.integration.ts",
+      ],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: commonImportRestrictions,
+            paths: lodashImportRestriction,
+          },
+        ],
+      },
+    },
     {
       files: ["tests/**/*.test.ts", "tests/**/*.test.tsx", "tests/**/*.ts", "tests/**/*.tsx"],
       env: {
@@ -111,10 +153,24 @@ module.exports = {
         "@typescript-eslint/no-explicit-any": "warn",
       },
     },
+    {
+      // Enable type-aware linting for TypeScript files only
+      files: ["*.ts", "*.tsx"],
+      parserOptions: {
+        project: true,
+      },
+      rules: {
+        "@typescript-eslint/no-deprecated": "error",
+      },
+    },
   ],
   settings: {
     react: {
       version: "detect",
+    },
+    tailwindcss: {
+      config: path.join(__dirname, "./tailwind.config.ts"),
+      callees: ["cn"],
     },
   },
 };

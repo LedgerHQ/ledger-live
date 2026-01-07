@@ -49,7 +49,7 @@ const WalletSyncDebugger = () => {
                 defaultIndex={activeTabIndex}
                 index={activeTabIndex}
                 tabs={items.map(i => t(i.label))}
-                ids={items.map(i => `simplehash-${i.key}`)}
+                ids={items.map(i => `walletsync-${i.key}`)}
                 separator
                 withId
                 fullWidth

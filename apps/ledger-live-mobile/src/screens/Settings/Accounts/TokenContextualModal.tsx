@@ -9,18 +9,17 @@ import {
   getAccountContractExplorer,
   getDefaultExplorerView,
 } from "@ledgerhq/live-common/explorers";
-import { createStructuredSelector } from "reselect";
+import { createStructuredSelector } from "~/context/selectors";
 import { useNavigation } from "@react-navigation/native";
 import LText from "~/components/LText";
 import { blacklistToken } from "~/actions/settings";
 import TokenContractAddress from "../../Account/TokenContractAddress";
 import Button from "~/components/Button";
 import { parentAccountSelector } from "~/reducers/accounts";
-import ParentCurrencyIcon from "~/components/ParentCurrencyIcon";
+import CurrencyIcon from "~/components/CurrencyIcon";
 import BottomModalChoice from "~/components/BottomModalChoice";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
-import { State } from "~/reducers/types";
 import QueuedDrawer from "~/components/QueuedDrawer";
 
 const mapDispatchToProps = {
@@ -76,15 +75,16 @@ const TokenContextualModal = ({
     () => ({
       height: sharedHeight.value ?? 0,
     }),
-    [sharedHeight.value],
+    [sharedHeight],
   );
 
   if (!isOpened || !account) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const explorerView = mainAccount ? getDefaultExplorerView(mainAccount.currency) : null;
-  const url = explorerView
-    ? getAccountContractExplorer(explorerView, account, parentAccount!)
-    : null;
+  const url =
+    explorerView && parentAccount
+      ? getAccountContractExplorer(explorerView, account, parentAccount)
+      : null;
 
   return (
     <QueuedDrawer
@@ -92,7 +92,7 @@ const TokenContextualModal = ({
       preventBackdropClick={false}
       Icon={
         showingContextMenu ? (
-          <ParentCurrencyIcon size={48} currency={getAccountCurrency(account)} />
+          <CurrencyIcon size={48} currency={getAccountCurrency(account)} />
         ) : undefined
       }
       title={showingContextMenu ? account.token.name : undefined}
@@ -155,11 +155,7 @@ const TokenContextualModal = ({
   );
 };
 
-const mapStateToProps = createStructuredSelector<
-  State,
-  { account?: TokenAccount },
-  { parentAccount: Account | undefined }
->({
+const mapStateToProps = createStructuredSelector({
   parentAccount: parentAccountSelector,
 });
 

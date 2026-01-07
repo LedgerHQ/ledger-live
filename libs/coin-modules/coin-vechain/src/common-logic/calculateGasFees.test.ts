@@ -27,6 +27,8 @@ describe("calculateGasFees", () => {
     body: {},
   } as Transaction;
 
+  const mockOriginAddress = "0x742d35Cc6634C0532925a3b8D0B251d8c1743eC4";
+
   const mockClauses = [
     {
       to: "0x1234567890123456789012345678901234567890",
@@ -68,7 +70,7 @@ describe("calculateGasFees", () => {
     });
 
     it("should calculate gas fees for VET transfer", async () => {
-      const result = await calculateGasFees(mockTransaction, false);
+      const result = await calculateGasFees(mockTransaction, false, mockOriginAddress);
 
       expect(mockedParseAddress).toHaveBeenCalledWith(mockTransaction.recipient);
       expect(mockedCalculateClausesVet).toHaveBeenCalledWith(
@@ -76,7 +78,7 @@ describe("calculateGasFees", () => {
         mockTransaction.amount,
       );
       expect(mockedCalculateClausesVtho).not.toHaveBeenCalled();
-      expect(mockedEstimateGas).toHaveBeenCalledWith(mockClauses, mockTransaction.recipient);
+      expect(mockedEstimateGas).toHaveBeenCalledWith(mockClauses, mockOriginAddress);
       expect(mockThorClient.transactions.buildTransactionBody).toHaveBeenCalledWith(
         mockClauses,
         mockGasEstimation.totalGas,
@@ -97,7 +99,7 @@ describe("calculateGasFees", () => {
         maxPriorityFeePerGas: null,
       });
 
-      const result = await calculateGasFees(mockTransaction, false);
+      const result = await calculateGasFees(mockTransaction, false, mockOriginAddress);
 
       expect(result).toEqual({
         estimatedGas: 21000,
@@ -110,7 +112,7 @@ describe("calculateGasFees", () => {
     it("should handle transaction body with undefined gas values", async () => {
       mockThorClient.transactions.buildTransactionBody.mockResolvedValue({});
 
-      const result = await calculateGasFees(mockTransaction, false);
+      const result = await calculateGasFees(mockTransaction, false, mockOriginAddress);
 
       expect(result).toEqual({
         estimatedGas: 21000,
@@ -129,7 +131,7 @@ describe("calculateGasFees", () => {
       };
       mockedEstimateGas.mockResolvedValue(customGasEstimation);
 
-      const result = await calculateGasFees(mockTransaction, false);
+      const result = await calculateGasFees(mockTransaction, false, mockOriginAddress);
 
       expect(result).toEqual({
         estimatedGas: 50000,
@@ -148,7 +150,7 @@ describe("calculateGasFees", () => {
     });
 
     it("should calculate gas fees for VTHO transfer", async () => {
-      const result = await calculateGasFees(mockTransaction, true);
+      const result = await calculateGasFees(mockTransaction, true, mockOriginAddress);
 
       expect(mockedParseAddress).toHaveBeenCalledWith(mockTransaction.recipient);
       expect(mockedCalculateClausesVtho).toHaveBeenCalledWith(
@@ -156,7 +158,7 @@ describe("calculateGasFees", () => {
         mockTransaction.amount,
       );
       expect(mockedCalculateClausesVet).not.toHaveBeenCalled();
-      expect(mockedEstimateGas).toHaveBeenCalledWith(mockClauses, mockTransaction.recipient);
+      expect(mockedEstimateGas).toHaveBeenCalledWith(mockClauses, mockOriginAddress);
       expect(mockThorClient.transactions.buildTransactionBody).toHaveBeenCalledWith(
         mockClauses,
         mockGasEstimation.totalGas,
@@ -177,7 +179,7 @@ describe("calculateGasFees", () => {
         amount: new BigNumber("999999999999999999999999"),
       };
 
-      const result = await calculateGasFees(largeAmountTransaction, true);
+      const result = await calculateGasFees(largeAmountTransaction, true, mockOriginAddress);
 
       expect(mockedCalculateClausesVtho).toHaveBeenCalledWith(
         largeAmountTransaction.recipient,
@@ -195,7 +197,7 @@ describe("calculateGasFees", () => {
         recipient: undefined,
       } as any;
 
-      const result = await calculateGasFees(transactionWithoutRecipient, false);
+      const result = await calculateGasFees(transactionWithoutRecipient, false, mockOriginAddress);
 
       expect(mockedParseAddress).not.toHaveBeenCalled();
       expect(mockedCalculateClausesVet).not.toHaveBeenCalled();
@@ -216,7 +218,7 @@ describe("calculateGasFees", () => {
         recipient: null,
       } as any;
 
-      const result = await calculateGasFees(transactionWithNullRecipient, false);
+      const result = await calculateGasFees(transactionWithNullRecipient, false, mockOriginAddress);
 
       expect(result).toEqual({
         estimatedGas: 0,
@@ -229,7 +231,7 @@ describe("calculateGasFees", () => {
     it("should return zero values when parseAddress returns null/undefined", async () => {
       mockedParseAddress.mockReturnValue(false);
 
-      const result = await calculateGasFees(mockTransaction, false);
+      const result = await calculateGasFees(mockTransaction, false, mockOriginAddress);
 
       expect(mockedParseAddress).toHaveBeenCalledWith(mockTransaction.recipient);
       expect(mockedCalculateClausesVet).not.toHaveBeenCalled();
@@ -247,7 +249,7 @@ describe("calculateGasFees", () => {
     it("should return zero values when parseAddress returns empty string", async () => {
       mockedParseAddress.mockReturnValue(false);
 
-      const result = await calculateGasFees(mockTransaction, false);
+      const result = await calculateGasFees(mockTransaction, false, mockOriginAddress);
 
       expect(result).toEqual({
         estimatedGas: 0,
@@ -267,7 +269,7 @@ describe("calculateGasFees", () => {
       const error = new Error("Failed to calculate VET clauses");
       mockedCalculateClausesVet.mockRejectedValue(error);
 
-      await expect(calculateGasFees(mockTransaction, false)).rejects.toThrow(
+      await expect(calculateGasFees(mockTransaction, false, mockOriginAddress)).rejects.toThrow(
         "Failed to calculate VET clauses",
       );
     });
@@ -276,7 +278,7 @@ describe("calculateGasFees", () => {
       const error = new Error("Failed to calculate VTHO clauses");
       mockedCalculateClausesVtho.mockRejectedValue(error);
 
-      await expect(calculateGasFees(mockTransaction, true)).rejects.toThrow(
+      await expect(calculateGasFees(mockTransaction, true, mockOriginAddress)).rejects.toThrow(
         "Failed to calculate VTHO clauses",
       );
     });
@@ -286,7 +288,7 @@ describe("calculateGasFees", () => {
       const error = new Error("Failed to estimate gas");
       mockedEstimateGas.mockRejectedValue(error);
 
-      await expect(calculateGasFees(mockTransaction, false)).rejects.toThrow(
+      await expect(calculateGasFees(mockTransaction, false, mockOriginAddress)).rejects.toThrow(
         "Failed to estimate gas",
       );
     });
@@ -297,7 +299,7 @@ describe("calculateGasFees", () => {
       const error = new Error("Failed to build transaction body");
       mockThorClient.transactions.buildTransactionBody.mockRejectedValue(error);
 
-      await expect(calculateGasFees(mockTransaction, false)).rejects.toThrow(
+      await expect(calculateGasFees(mockTransaction, false, mockOriginAddress)).rejects.toThrow(
         "Failed to build transaction body",
       );
     });
@@ -316,7 +318,7 @@ describe("calculateGasFees", () => {
         amount: new BigNumber("0"),
       };
 
-      const result = await calculateGasFees(zeroAmountTransaction, false);
+      const result = await calculateGasFees(zeroAmountTransaction, false, mockOriginAddress);
 
       expect(mockedCalculateClausesVet).toHaveBeenCalledWith(
         zeroAmountTransaction.recipient,
@@ -333,7 +335,7 @@ describe("calculateGasFees", () => {
         vmErrors: [],
       });
 
-      const result = await calculateGasFees(mockTransaction, false);
+      const result = await calculateGasFees(mockTransaction, false, mockOriginAddress);
 
       expect(result).toEqual({
         estimatedGas: 0,
@@ -350,7 +352,7 @@ describe("calculateGasFees", () => {
       };
       mockThorClient.transactions.buildTransactionBody.mockResolvedValue(highGasTransactionBody);
 
-      const result = await calculateGasFees(mockTransaction, false);
+      const result = await calculateGasFees(mockTransaction, false, mockOriginAddress);
 
       expect(result).toEqual({
         estimatedGas: 21000,

@@ -30,7 +30,7 @@ describe("filterServiceStatusIncidents", () => {
       makeIncident({ components: [{ id: "3", name: "Unknown Component" }] }),
     ];
 
-    const result = filterServiceStatusIncidents(incidents, ["BTC"]);
+    const result = filterServiceStatusIncidents(incidents, ["BTC"], "notifications");
     expect(result.map(i => i.components?.[0].id)).toEqual(["1", "2"]);
   });
 
@@ -75,7 +75,7 @@ describe("filterServiceStatusIncidents", () => {
       makeIncident({ components: [{ id: `${index + 1}`, name }] }),
     );
 
-    const result = filterServiceStatusIncidents(incidents, ["BTC"]);
+    const result = filterServiceStatusIncidents(incidents, ["BTC"], "notifications");
     expect(result.length).toBe(LEDGER_COMPONENTS.length);
   });
 

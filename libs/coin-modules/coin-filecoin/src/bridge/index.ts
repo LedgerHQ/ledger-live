@@ -17,6 +17,7 @@ import { createTransaction } from "./createTransaction";
 import { getAccountShape } from "../common-logic/utils";
 import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
+import { validateAddress } from "./validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext<FilecoinSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -52,8 +53,12 @@ function buildAccountBridge(
     sync,
     receive,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

@@ -19,6 +19,7 @@ export default {
           BatteryStatusTypes.BATTERY_TEMPERATURE,
           BatteryStatusTypes.BATTERY_VOLTAGE,
         ],
+        deviceName: null,
       }).subscribe(o);
     });
   },

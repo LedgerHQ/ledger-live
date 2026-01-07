@@ -69,6 +69,7 @@ declare global {
   var getWebElementByTestId: typeof ElementHelpers.getWebElementByTestId;
   var getWebElementsByIdAndText: typeof ElementHelpers.getWebElementsByIdAndText;
   var getWebElementText: typeof ElementHelpers.getWebElementText;
+  var getWebElementValue: typeof ElementHelpers.getWebElementValue;
   var waitWebElementByTestId: typeof ElementHelpers.waitWebElementByTestId;
   var tapWebElementByTestId: typeof ElementHelpers.tapWebElementByTestId;
   var typeTextByWebTestId: typeof ElementHelpers.typeTextByWebTestId;
@@ -117,6 +118,7 @@ export default async () => {
   global.getWebElementByTestId = ElementHelpers.getWebElementByTestId;
   global.getWebElementsByIdAndText = ElementHelpers.getWebElementsByIdAndText;
   global.getWebElementText = ElementHelpers.getWebElementText;
+  global.getWebElementValue = ElementHelpers.getWebElementValue;
   global.waitWebElementByTestId = ElementHelpers.waitWebElementByTestId;
   global.tapWebElementByTestId = ElementHelpers.tapWebElementByTestId;
   global.typeTextByWebTestId = ElementHelpers.typeTextByWebTestId;

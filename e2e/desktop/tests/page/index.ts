@@ -6,14 +6,14 @@ import { AssetPage } from "./asset.page";
 import { BuyAndSellPage } from "./buyAndSell.page";
 import { DelegateDrawer } from "./drawer/delegate.drawer";
 import { DelegateModal } from "./modal/delegate.modal";
-import { Drawer } from "../component/drawer.component";
+import { Drawer } from "tests/component/drawer.component";
 import { EarnPage } from "./earn.dashboard.page";
-import { Layout } from "../component/layout.component";
+import { Layout } from "tests/component/layout.component";
 import { LedgerSyncDrawer } from "./drawer/ledger.sync.drawer";
 import { LiveApp } from "./liveApp.page";
 import { LockscreenPage } from "./lockscreen.page";
 import { MarketPage } from "./market.page";
-import { Modal } from "../component/modal.component";
+import { Modal } from "tests/component/modal.component";
 import { ModularDrawer } from "./drawer/modular.drawer";
 import { OnboardingPage } from "./onboarding.page";
 import { OperationDrawer } from "./drawer/operation.drawer";
@@ -29,6 +29,8 @@ import { SettingsPage } from "./settings.page";
 import { SpeculosPage } from "./speculos.page";
 import { SwapConfirmationDrawer } from "./drawer/swap.confirmation.drawer";
 import { SwapPage } from "./swap.page";
+import { ModularScanAccountsDrawer } from "./drawer/modular.scan.accounts.drawer";
+import { ModularDialog } from "./dialog/modular.dialog";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -48,6 +50,8 @@ export class Application extends PageHolder {
   public market = new MarketPage(this.page);
   public modal = new Modal(this.page);
   public modularDrawer = new ModularDrawer(this.page);
+  public modularDialog = new ModularDialog(this.page);
+  public scanAccountsDrawer = new ModularScanAccountsDrawer(this.page);
   public onboarding = new OnboardingPage(this.page);
   public operationDrawer = new OperationDrawer(this.page);
   public password = new PasswordlockModal(this.page);

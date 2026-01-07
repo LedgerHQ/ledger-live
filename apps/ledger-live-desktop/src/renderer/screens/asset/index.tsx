@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Redirect } from "react-router";
 import { Account } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -32,7 +32,7 @@ type Props = {
 };
 export default function AssetPage({ match }: Props) {
   const { t } = useTranslation();
-  const paperColor = useTheme().colors.palette.background.paper;
+  const paperColor = useTheme().colors.background.card;
   const range = useSelector(selectedTimeRangeSelector);
   const counterValue = useSelector(counterValueCurrencySelector);
   const countervalueFirst = useSelector(countervalueFirstSelector);
@@ -73,7 +73,12 @@ export default function AssetPage({ match }: Props) {
         <AccountDistribution accounts={accounts} />
       </Box>
       <Box mt={40}>
-        <OperationsList accounts={accounts} title={t("dashboard.recentActivity")} withAccount />
+        <OperationsList
+          accounts={accounts}
+          title={t("dashboard.recentActivity")}
+          withAccount
+          t={t}
+        />
       </Box>
     </Box>
   );

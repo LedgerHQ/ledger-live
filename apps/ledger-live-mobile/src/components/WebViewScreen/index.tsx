@@ -1,24 +1,18 @@
 import React, { ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import { SafeAreaView } from "react-native";
 import WebView, { WebViewMessageEvent } from "react-native-webview";
 import NetInfo from "@react-native-community/netinfo";
 import { useNavigation } from "@react-navigation/native";
 import styled from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
-
 import { Track } from "~/analytics";
-import extraStatusBarPadding from "~/logic/extraStatusBarPadding";
 import WebViewNoConnectionError from "./NoConnectionError";
 import WebViewLoading from "./Loading";
+import { SafeAreaView } from "react-native";
 
 const SafeContainer = styled(SafeAreaView)`
   flex: 1;
+  flex-grow: 1;
   background-color: ${p => p.theme.colors.background.main};
-  padding-top: ${extraStatusBarPadding}px;
-`;
-
-const StyledWebview = styled(WebView)`
-  background-color: transparent; // avoids white background before page loads
 `;
 
 export type Props = {
@@ -28,7 +22,7 @@ export type Props = {
   onMessage?: (_: WebViewMessageEvent) => void;
   renderHeader?: () => ReactNode;
   renderLoading?: () => ReactNode;
-  renderError?: () => JSX.Element;
+  renderError?: () => React.JSX.Element;
   enableNavigationOverride?: boolean;
 };
 
@@ -89,9 +83,10 @@ const WebViewScreen = ({
       <Flex flex={1}>
         {hasNetwork ? (
           <>
-            <StyledWebview
+            <WebView
               ref={ref}
               source={{ uri }}
+              style={{ backgroundColor: "transparent" }}
               onMessage={onMessage}
               onLoadEnd={handleOnLoad}
               renderError={renderError || defaultRenderError}

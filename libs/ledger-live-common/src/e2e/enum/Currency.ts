@@ -27,6 +27,10 @@ export class Currency {
 
   static readonly KAS = new Currency("Kaspa", "KAS", "kaspa", AppInfos.KASPA, [Network.KASPA]);
 
+  static readonly HBAR = new Currency("Hedera", "HBAR", "hedera", AppInfos.HEDERA, [
+    Network.HEDERA,
+  ]);
+
   static readonly tBTC = new Currency(
     "Bitcoin Testnet",
     "𝚝BTC",
@@ -68,7 +72,7 @@ export class Currency {
   );
   static readonly SOL = new Currency("Solana", "SOL", "solana", AppInfos.SOLANA, [Network.SOLANA]);
 
-  static readonly DOT = new Currency("Polkadot", "DOT", "polkadot", AppInfos.POLKADOT, [
+  static readonly DOT = new Currency("Polkadot", "DOT", "assethub_polkadot", AppInfos.POLKADOT, [
     Network.POLKADOT,
   ]);
   static readonly TRX = new Currency("Tron", "TRX", "tron", AppInfos.TRON, [Network.TRON]);
@@ -152,10 +156,6 @@ export class Currency {
     AppInfos.BNB_CHAIN,
     [Network.BNB_CHAIN, Network.POLYGON],
   );
-  static readonly BSC_SHIBA = new Currency("Shiba Inu", "SHIB", "bsc", AppInfos.BNB_CHAIN, [
-    Network.BNB_CHAIN,
-    Network.ETHEREUM,
-  ]);
   static readonly POL_DAI = new Currency(
     "(PoS) Dai Stablecoin",
     "DAI",
@@ -196,4 +196,21 @@ export class Currency {
   static readonly OP = new Currency("OP Mainnet", "OP", "optimism", AppInfos.ETHEREUM, [
     Network.OPTIMISM,
   ]);
+
+  static readonly SUI = new Currency("Sui", "SUI", "sui", AppInfos.SUI, [Network.SUI]);
+
+  static readonly BASE = new Currency("Base", "ETH", "base", AppInfos.BASE, [Network.BASE]);
+
+  static readonly VET = new Currency("Vechain", "VET", "vechain", AppInfos.VECHAIN, [
+    Network.VECHAIN,
+  ]);
+
+  static readonly SUI_USDC = new Currency(
+    "USD Coin",
+    "USDC",
+    "sui/coin/usdc_0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::usdc",
+    AppInfos.SUI,
+    [Network.SUI],
+    "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7",
+  );
 }

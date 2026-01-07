@@ -1,7 +1,6 @@
 import invariant from "invariant";
 import React, { memo, useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -10,7 +9,6 @@ import { useTheme } from "@react-navigation/native";
 import { TransactionResult } from "@ledgerhq/live-common/hw/actions/transaction";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
-import { accountScreenSelector } from "~/reducers/accounts";
 import DeviceAction from "~/components/DeviceAction";
 import { TrackScreen } from "~/analytics";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
@@ -22,6 +20,7 @@ import type {
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import logger from "~/logger";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 export type SignTransactionConnectDeviceProps = StackNavigatorProps<
   SignTransactionNavigatorParamList,
@@ -31,7 +30,7 @@ export type SignTransactionConnectDeviceProps = StackNavigatorProps<
 function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps) {
   const action = useTransactionDeviceAction();
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
   const { appName, dependencies, onSuccess } = route.params;
   const mainAccount = getMainAccount(account, parentAccount);
@@ -98,12 +97,10 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
   );
 
   const onSelectDeviceLink = useCallback(() => {
-    () => {
-      navigation.navigate(ScreenName.SignTransactionSelectDevice, {
-        ...route.params,
-        forceSelectDevice: true,
-      });
-    };
+    navigation.navigate(ScreenName.SignTransactionSelectDevice, {
+      ...route.params,
+      forceSelectDevice: true,
+    });
   }, [navigation, route.params]);
 
   return transaction ? (

@@ -7,9 +7,7 @@ import { useModularDrawerState } from "./hooks/useModularDrawerState";
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 
 import { AccountLike } from "@ledgerhq/types-live";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import { Observable } from "rxjs";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import {
   modularDrawerEnableAccountSelectionSelector,
   modularDrawerSearchValueSelector,
@@ -22,7 +20,7 @@ const SNAP_POINTS = ["70%", "92%"];
 /**
  * Props for the ModularDrawer component.
  */
-type ModularDrawerProps = {
+export type ModularDrawerProps = {
   // Core drawer state
   /** Whether the drawer is open */
   readonly isOpen: boolean;
@@ -39,9 +37,7 @@ type ModularDrawerProps = {
 
   // Account selection
   /** Callback fired when an account is selected */
-  readonly onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
-  /** Observable of accounts */
-  readonly accounts$?: Observable<WalletAPIAccount[]>;
+  readonly onAccountSelected: (account: AccountLike, parentAccount?: AccountLike) => void;
 
   /** The use case identifier for the drawer */
   readonly useCase?: string;
@@ -62,7 +58,6 @@ export function ModularDrawer({
   assetsConfiguration,
   networksConfiguration,
   onAccountSelected,
-  accounts$,
   useCase,
   areCurrenciesFiltered,
 }: ModularDrawerProps) {
@@ -95,7 +90,6 @@ export function ModularDrawer({
     shouldShowBackButton,
     hasOneCurrency,
     onAddNewAccount,
-    asset,
   } = useModularDrawerState({
     assetsSorted,
     currencyIds: currencies ?? [],
@@ -126,15 +120,14 @@ export function ModularDrawer({
           hasError: isError,
           refetch,
           loadNext,
+          assetsSorted,
         }}
         networksViewModel={{
           onNetworkSelected: handleNetwork,
           availableNetworks,
           networksConfiguration: networkConfigurationSanitized,
-          asset,
         }}
         accountsViewModel={{
-          accounts$,
           onAddNewAccount,
           asset: accountCurrency,
           onAccountSelected,

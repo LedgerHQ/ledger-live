@@ -1,12 +1,9 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { TokenCurrency, CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import {
-  listTokensForCryptoCurrency,
-  listTokenTypesForCryptoCurrency,
-} from "@ledgerhq/live-common/currencies/index";
+import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
 import { supportLinkByTokenType } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -61,15 +58,53 @@ const TokenParentSelection = ({
   );
 };
 const TokenSelection = ({
-  currency,
   token,
   onChangeToken,
+  networkFamily,
 }: {
-  currency: CryptoCurrency;
   token: TokenCurrency | undefined | null;
   onChangeToken: (token?: TokenCurrency | null) => void;
+  networkFamily: string;
 }) => {
-  const tokens = useMemo(() => listTokensForCryptoCurrency(currency), [currency]);
+  const {
+    data: tokensData,
+    isLoading,
+    error,
+    loadNext,
+  } = useTokensData({
+    networkFamily: networkFamily,
+  });
+
+  const handleMenuScrollToBottom = useCallback(() => {
+    loadNext?.();
+  }, [loadNext]);
+
+  if (error) {
+    return (
+      <>
+        <Label mt={30}>
+          <Trans i18nKey="receive.steps.chooseAccount.token" />
+        </Label>
+        <Box>
+          <Trans i18nKey="receive.steps.chooseAccount.errorLoadingTokens" />
+        </Box>
+      </>
+    );
+  }
+
+  if (isLoading && !tokensData?.tokens.length) {
+    return (
+      <>
+        <Label mt={30}>
+          <Trans i18nKey="receive.steps.chooseAccount.token" />
+        </Label>
+        <Box>
+          <Trans i18nKey="common.loading" />
+        </Box>
+      </>
+    );
+  }
+
   return (
     <>
       <Label mt={30}>
@@ -77,8 +112,10 @@ const TokenSelection = ({
       </Label>
       <SelectCurrency
         onChange={onChangeToken as (token?: CryptoOrTokenCurrency | null) => void}
-        currencies={tokens}
+        currencies={tokensData?.tokens || []}
         value={token}
+        onMenuScrollToBottom={handleMenuScrollToBottom}
+        isLoading={isLoading}
       />
     </>
   );
@@ -95,7 +132,7 @@ export default function StepAccount(props: Readonly<StepProps>) {
     accountError,
   } = props;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const tokenTypes = mainAccount ? listTokenTypesForCryptoCurrency(mainAccount.currency) : [];
+  const tokenTypes = mainAccount?.currency.tokenTypes ?? [];
 
   // Nb in the context of LL-6449 (nft integration) simplified the wording for the warning.
   const tokenType =
@@ -105,10 +142,15 @@ export default function StepAccount(props: Readonly<StepProps>) {
   const url = supportLinkByTokenType[tokenTypes[0] as keyof typeof supportLinkByTokenType];
   const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const StepReceiveAccountCustomAlert = specific?.StepReceiveAccountCustomAlert;
+  const receiveTokensConfig = specific?.receiveTokensConfig;
 
   return (
     <Box flow={1}>
-      <TrackPage category={`Receive Flow${eventType ? ` (${eventType})` : ""}`} name="Step 1" />
+      <TrackPage
+        category={`Receive Flow${eventType ? ` (${eventType})` : ""}`}
+        name="Step 1"
+        isTokenAdd={receiveTokenMode || account?.type === "TokenAccount"}
+      />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {accountError ? <ErrorBanner error={accountError} /> : null}
 
@@ -117,11 +159,11 @@ export default function StepAccount(props: Readonly<StepProps>) {
       ) : (
         <AccountSelection account={account} onChangeAccount={onChangeAccount} />
       )}
-      {receiveTokenMode && mainAccount ? (
+      {receiveTokenMode && mainAccount && receiveTokensConfig ? (
         <TokenSelection
-          currency={mainAccount.currency}
           token={token}
           onChangeToken={onChangeToken}
+          networkFamily={receiveTokensConfig.networkFamily}
         />
       ) : null}
 
@@ -163,11 +205,17 @@ export function StepAccountFooter({
   token,
   account,
   accountError,
+  parentAccount,
 }: StepProps) {
+  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
+  const receiveTokensConfig = specific?.receiveTokensConfig;
+  const shouldRequireToken = receiveTokenMode && receiveTokensConfig;
+
   return (
     <Button
       data-testid="modal-continue-button"
-      disabled={!account || (receiveTokenMode && !token) || accountError}
+      disabled={!account || (shouldRequireToken && !token) || accountError}
       primary
       onClick={() => transitionTo("device")}
     >

@@ -1,5 +1,8 @@
 import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
+import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
+import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import type {
   TezosAccount,
   TezosOperation,
@@ -7,9 +10,6 @@ import type {
   TezosResources,
   Transaction,
 } from "./bridge";
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
-import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
-import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 
 const currency = listCryptoCurrencies(true).find(c => c.id === "tezos")!;
 
@@ -47,6 +47,7 @@ export function createFixtureAccount(account?: Partial<TezosAccount>): TezosAcco
     swapHistory: [],
 
     tezosResources,
+    stakingPositions: account?.stakingPositions || [],
   };
 }
 

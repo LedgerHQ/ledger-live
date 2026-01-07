@@ -7,7 +7,7 @@ import { StyleSheet, View } from "react-native";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
 import ValidatorImage from "./ValidatorImage";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { SuiValidator } from "@ledgerhq/live-common/families/sui/types";
 
 const ValidatorRow = ({

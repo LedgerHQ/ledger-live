@@ -5,7 +5,6 @@ import buildTransaction, { isTokenType } from "./buildTransaction";
 import createTransaction from "./createTransaction";
 import BigNumber from "bignumber.js";
 import { APTOS_ASSET_ID, type TOKEN_TYPE } from "../constants";
-import type { AptosBalance } from "../types";
 
 export async function craftTransaction(
   aptosClient: AptosAPI,
@@ -15,7 +14,6 @@ export async function craftTransaction(
   newTx.amount = BigNumber(transactionIntent.amount.toString());
   newTx.recipient = transactionIntent.recipient;
   newTx.mode = transactionIntent.type;
-  newTx.useAllAmount = transactionIntent.amount === BigInt(0);
 
   const account = {
     freshAddress: transactionIntent.sender,
@@ -25,18 +23,6 @@ export async function craftTransaction(
 
   let tokenType: TOKEN_TYPE | undefined;
   const contractAddress = getContractAddress(transactionIntent);
-  let balance: AptosBalance | undefined;
-
-  if (newTx.useAllAmount === true) {
-    const balances = await aptosClient.getBalances(transactionIntent.sender);
-    balance = balances?.find(
-      b => b.contractAddress.toLowerCase() === contractAddress?.toLowerCase(),
-    );
-
-    if (balance !== undefined) {
-      newTx.amount = BigNumber(balance.amount.toString());
-    }
-  }
 
   if (transactionIntent.asset.type !== "native") {
     tokenType = transactionIntent.asset.type as TOKEN_TYPE;

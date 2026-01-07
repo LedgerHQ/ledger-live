@@ -1,11 +1,8 @@
 import { verifyAppValidationSendInfo } from "../../models/send";
 import { device } from "detox";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
-import {
-  AccountType,
-  getParentAccountName,
-  TokenAccount,
-} from "@ledgerhq/live-common/e2e/enum/Account";
+import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { getEnv } from "@ledgerhq/live-env";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import invariant from "invariant";
@@ -14,6 +11,7 @@ async function navigateToSubAccount(account: AccountType) {
   await app.account.openViaDeeplink();
   await app.account.goToAccountByName(getParentAccountName(account));
   await app.account.navigateToTokenInAccount(account);
+  await waitForElement(app.account.accountGraph(app.account.subAccountId(account)));
 }
 
 async function checkOperationInfos(
@@ -41,13 +39,24 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
       },
       ...(setAccountToCredit
         ? [
-            (userDataPath?: string) => {
-              return CLI.liveData({
+            async (userDataPath?: string) => {
+              await CLI.liveData({
                 currency: transaction.accountToCredit.currency.speculosApp.name,
                 index: transaction.accountToCredit.index,
                 appjson: userDataPath,
                 add: true,
               });
+
+              const parentAccountToCredit = transaction.accountToCredit.parentAccount;
+              invariant(parentAccountToCredit, "Parent account to credit is required");
+              const parentAccountToDebit = transaction.accountToDebit.parentAccount;
+              invariant(parentAccountToDebit, "Parent account to debit is required");
+
+              transaction.accountToCredit.address = await CLI.getAddressForAccount(
+                transaction.accountToCredit,
+              );
+
+              parentAccountToDebit.address = await CLI.getAddressForAccount(parentAccountToDebit);
             },
           ]
         : []),
@@ -57,8 +66,9 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
   await app.portfolio.waitForPortfolioPageToLoad();
 };
 
-export function runSendSPL(transaction: TransactionType, tmsLinks: string[]) {
+export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Send SPL tokens from 1 account to another", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction, true);
@@ -103,8 +113,10 @@ export function runSendSPLAddressValid(
   transaction: TransactionType,
   expectedWarningMessage: string,
   tmsLinks: string[],
+  tags: string[],
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Send token - valid address input", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction, false);
@@ -114,7 +126,7 @@ export function runSendSPLAddressValid(
       await app.send.openViaDeeplink();
       await app.common.performSearch(transaction.accountToDebit.currency.ticker);
       await app.common.selectAccount(transaction.accountToDebit);
-      const addressToCredit = transaction.accountToCredit.address || "";
+      const addressToCredit = Addresses.SOL_GIGA_2_ATA_ADDRESS;
       await app.send.setRecipient(addressToCredit, transaction.memoTag);
       await app.send.expectSendRecipientWarning(expectedWarningMessage);
     });
@@ -126,8 +138,10 @@ export function runSendSPLAddressInvalid(
   recipientContractAddress: string | undefined,
   expectedErrorMessage: string,
   tmsLinks: string[],
+  tags: string[],
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Send token - invalid address input", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction, false);
@@ -145,7 +159,7 @@ export function runSendSPLAddressInvalid(
 }
 
 export function runAddSubAccountTest(
-  asset: AccountType | TokenAccount,
+  asset: AccountType,
   tmslinks: string[],
   tags: string[],
   withParentAccount: boolean,
@@ -170,22 +184,38 @@ export function runAddSubAccountTest(
         async () => {
           if (withParentAccount) {
             await app.portfolio.tapTabSelector("Accounts");
-            await app.addAccount.tapAddNewOrExistingAccountButton();
+            await app.portfolio.tapAddNewOrExistingAccountButton();
           } else {
             await app.portfolio.addAccount();
           }
 
-          await app.addAccount.importWithYourLedger();
-          await app.common.performSearch(
-            asset?.parentAccount === undefined ? asset.currency.id : asset.currency.name,
-          );
-          await app.receive.selectCurrency(asset.currency.id);
+          const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
 
-          const networkId =
-            asset?.parentAccount === undefined
-              ? asset.currency.speculosApp.name.toLowerCase()
-              : asset?.parentAccount?.currency.id;
-          await app.receive.selectNetworkIfAsked(networkId);
+          if (isModularDrawer) {
+            await app.addAccount.importWithYourLedger();
+            await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
+            await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
+            const networkName =
+              asset?.parentAccount === undefined
+                ? asset.currency.speculosApp.name
+                : asset?.parentAccount?.currency.name;
+            await app.modularDrawer.selectNetworkIfAsked(networkName);
+          } else {
+            await app.addAccount.importWithYourLedger();
+            await app.common.performSearch(
+              asset?.parentAccount === undefined ? asset.currency.id : asset.currency.name,
+            );
+            if (asset.tokenType) {
+              await app.receive.selectCurrencyByType(asset.tokenType);
+            } else {
+              await app.receive.selectCurrency(asset.currency.id);
+            }
+            const networkId =
+              asset?.parentAccount === undefined
+                ? asset.currency.speculosApp.name.toLowerCase()
+                : asset?.parentAccount?.currency.id;
+            await app.receive.selectNetworkIfAsked(networkId);
+          }
 
           const accountId = await app.addAccount.addAccountAtIndex(
             asset?.parentAccount === undefined

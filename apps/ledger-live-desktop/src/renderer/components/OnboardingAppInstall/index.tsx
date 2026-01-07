@@ -13,6 +13,7 @@ import LockedModal from "./LockedModal";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { analyticsFlowName } from "../SyncOnboarding/Manual/shared";
 import { track, trackPage } from "~/renderer/analytics/segment";
+import { SeedOriginType } from "@ledgerhq/types-live";
 
 const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
 
@@ -23,8 +24,9 @@ type Props = {
    */
   deviceToRestore?: DeviceModelInfo | null | undefined;
   setHeaderLoader: (hasLoader: boolean) => void;
-  onComplete: () => void;
+  onComplete: (completedInstall?: boolean) => void;
   onError?: (error: Error) => void;
+  seedConfiguration?: SeedOriginType;
 };
 
 /**
@@ -38,6 +40,7 @@ const OnboardingAppInstallStep = ({
   setHeaderLoader,
   onComplete,
   onError,
+  seedConfiguration,
 }: Props) => {
   const { t } = useTranslation();
   const deviceInitialApps = useFeature("deviceInitialApps");
@@ -53,7 +56,7 @@ const OnboardingAppInstallStep = ({
     : deviceToRestore?.modelId;
 
   useEffect(() => {
-    if (deviceToRestore?.apps) {
+    if (deviceToRestore?.apps && deviceToRestore?.apps.length !== 0) {
       setDependencies(deviceToRestore.apps.map(app => app.name));
     } else if (deviceInitialApps?.params?.apps) {
       setDependencies(deviceInitialApps.params.apps);
@@ -91,44 +94,47 @@ const OnboardingAppInstallStep = ({
   );
 
   const handlePressSkip = useCallback(() => {
-    track("button_clicked2", { button: "maybe later", flow: analyticsFlowName });
-    onComplete();
-  }, [onComplete]);
+    track("button_clicked2", { button: "maybe later", flow: analyticsFlowName, seedConfiguration });
+    onComplete(false);
+  }, [onComplete, seedConfiguration]);
 
   const handlePressInstall = useCallback(() => {
     track("button_clicked2", {
       button: deviceToRestore ? "Restore applications" : "Install applications",
       flow: analyticsFlowName,
+      seedConfiguration,
     });
     setInProgress(true);
-  }, [deviceToRestore]);
+  }, [deviceToRestore, seedConfiguration]);
 
   const handleCancelModalRetryPressed = useCallback(() => {
     track("button_clicked2", {
       button: "Install now",
       flow: analyticsFlowName,
+      seedConfiguration,
     });
     handleRetry();
-  }, [handleRetry]);
+  }, [handleRetry, seedConfiguration]);
 
   const handleCancelModalSkipPressed = useCallback(() => {
     track("button_clicked2", {
       button: "I'll do this later",
       flow: analyticsFlowName,
+      seedConfiguration,
     });
-    onComplete();
-  }, [onComplete]);
+    onComplete(false);
+  }, [onComplete, seedConfiguration]);
 
   const handleInstallComplete = useCallback(() => {
     trackPage(
       `Set up ${productName}: Step 5  Successful`,
       undefined,
-      { flow: analyticsFlowName },
+      { flow: analyticsFlowName, seedConfiguration },
       true,
       true,
     );
-    onComplete();
-  }, [onComplete, productName]);
+    onComplete(true);
+  }, [onComplete, productName, seedConfiguration]);
 
   return (
     <>
@@ -138,6 +144,7 @@ const OnboardingAppInstallStep = ({
           flow={analyticsFlowName}
           type="modal"
           refreshSource={false}
+          seedConfiguration={seedConfiguration}
         />
       ) : null}
       <CancelModal
@@ -154,6 +161,7 @@ const OnboardingAppInstallStep = ({
             : `Set up ${productName}: Step 5 Install Apps`
         }
         flow={analyticsFlowName}
+        seedConfiguration={seedConfiguration}
       />
       {inProgress && device ? (
         <InstallSetOfApps

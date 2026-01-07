@@ -1,6 +1,6 @@
 import Braze from "@braze/react-native-sdk";
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import {
   setDynamicContentWalletCards,
   setDynamicContentAssetsCards,

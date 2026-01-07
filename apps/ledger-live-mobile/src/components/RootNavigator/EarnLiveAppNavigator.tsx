@@ -1,9 +1,9 @@
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { useRoute } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
@@ -13,19 +13,23 @@ import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
 import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
 import { EarnProtocolInfoDrawer } from "~/screens/PTX/Earn/EarnProtocolInfoDrawer";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
+import { useOpenStakeDrawer } from "LLM/features/Stake";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
 import type { BaseComposite, StackNavigatorProps } from "./types/helpers";
+import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 
-const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
+const Stack = createNativeStackNavigator<EarnLiveAppNavigatorParamList>();
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>
 >;
 
+type EarnNavigation = NavigationProp<ParamListBase>;
+
 const Earn = (props: NavigationProps) => {
   const dispatch = useDispatch();
   const paramAction = props.route.params?.action;
-  const navigation = props.navigation;
+  const navigation: EarnNavigation = props.navigation as unknown as EarnNavigation;
   const accounts = useSelector(flattenAccountsSelector);
   const route = useRoute();
 
@@ -33,6 +37,10 @@ const Earn = (props: NavigationProps) => {
     navigation,
     parentRoute: route,
     alwaysShowNoFunds: false,
+  });
+
+  const { handleOpenStakeDrawer } = useOpenStakeDrawer({
+    sourceScreenName: "earn_app_cta",
   });
 
   useEffect(() => {
@@ -65,12 +73,7 @@ const Earn = (props: NavigationProps) => {
           break;
         }
         case "stake":
-          navigation.navigate(NavigatorName.StakeFlow, {
-            screen: ScreenName.Stake,
-            params: {
-              parentRoute: route,
-            },
-          });
+          handleOpenStakeDrawer();
           break;
         case "stake-account": {
           const walletId = props.route.params?.accountId;
@@ -136,7 +139,16 @@ const Earn = (props: NavigationProps) => {
     deeplinkRouting();
 
     return () => clearDeepLink();
-  }, [paramAction, props.route.params, accounts, navigation, route, openStakingDrawer, dispatch]);
+  }, [
+    paramAction,
+    props.route.params,
+    accounts,
+    navigation,
+    route,
+    openStakingDrawer,
+    dispatch,
+    handleOpenStakeDrawer,
+  ]);
 
   return (
     <>
@@ -153,7 +165,7 @@ const Earn = (props: NavigationProps) => {
       />
       <EarnProtocolInfoDrawer />
       <EarnInfoDrawer />
-      <EarnMenuDrawer navigation={props.navigation} />
+      <EarnMenuDrawer navigation={navigation} />
     </>
   );
 };

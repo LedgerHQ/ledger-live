@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React, { useMemo } from "react";
-import { getDeviceTransactionConfig } from "@ledgerhq/live-common/transaction/index";
+import { useDeviceTransactionConfig } from "@ledgerhq/live-common/hooks/useDeviceTransactionConfig";
 import Alert from "~/renderer/components/Alert";
 import { Trans } from "react-i18next";
 import ConfirmTitle from "~/renderer/components/TransactionConfirm/ConfirmTitle";
@@ -22,7 +22,7 @@ const Title: TitleComponent = props => {
   const { transaction, account, parentAccount, status, device } = props;
   const transferTokenHelpUrl = useLocalizedUrl(urls.solana.splTokenInfo);
 
-  const fields = getDeviceTransactionConfig({
+  const { fields } = useDeviceTransactionConfig({
     account,
     parentAccount,
     transaction,
@@ -46,7 +46,7 @@ const Title: TitleComponent = props => {
         <ConfirmTitle title={undefined} typeTransaction={typeTransaction} {...props} />
         <Alert type="warning">
           <Trans i18nKey="solana.token.transferWarning">
-            <Link color="palette.warning.c60" onClick={() => openURL(transferTokenHelpUrl)} />
+            <Link color="warning.c60" onClick={() => openURL(transferTokenHelpUrl)} />
           </Trans>
         </Alert>
       </Box>
@@ -71,7 +71,7 @@ const TokenTransferFeeField = ({ account, transaction, field }: SolanaFieldCompo
   return (
     <TransactionConfirmField label={field.label}>
       <FormattedVal
-        color={"palette.text.shade80"}
+        color={"neutral.c80"}
         unit={unit}
         val={transaction.model.commandDescriptor.command.extensions.transferFee.transferFee}
         fontSize={3}

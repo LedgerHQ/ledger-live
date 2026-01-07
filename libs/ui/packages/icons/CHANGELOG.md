@@ -1,5 +1,53 @@
 # @ledgerhq/icons-ui
 
+## 0.17.0
+
+### Minor Changes
+
+- [#11549](https://github.com/LedgerHQ/ledger-live/pull/11549) [`6baa679`](https://github.com/LedgerHQ/ledger-live/commit/6baa679f53c04fff0e2a2e71ed2815d5ed78c856) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate to React-Native New-Architecture
+
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#11549](https://github.com/LedgerHQ/ledger-live/pull/11549) [`6baa679`](https://github.com/LedgerHQ/ledger-live/commit/6baa679f53c04fff0e2a2e71ed2815d5ed78c856) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate to React-Native New-Architecture
+
+## 0.16.0
+
+### Minor Changes
+
+- [#12449](https://github.com/LedgerHQ/ledger-live/pull/12449) [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update Apex assets
+
+## 0.16.0-next.0
+
+### Minor Changes
+
+- [#12449](https://github.com/LedgerHQ/ledger-live/pull/12449) [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update Apex assets
+
+## 0.15.0
+
+### Minor Changes
+
+- [#12126](https://github.com/LedgerHQ/ledger-live/pull/12126) [`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use pnpm catalog for react & react-dom
+
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#12126](https://github.com/LedgerHQ/ledger-live/pull/12126) [`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use pnpm catalog for react & react-dom
+
+## 0.14.0
+
+### Minor Changes
+
+- [#11714](https://github.com/LedgerHQ/ledger-live/pull/11714) [`aade218`](https://github.com/LedgerHQ/ledger-live/commit/aade21864a36bce4b81dcce7ae46fe73894f9d33) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add two new icons
+
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#11714](https://github.com/LedgerHQ/ledger-live/pull/11714) [`aade218`](https://github.com/LedgerHQ/ledger-live/commit/aade21864a36bce4b81dcce7ae46fe73894f9d33) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add two new icons
+
 ## 0.13.0
 
 ### Minor Changes

@@ -36,10 +36,12 @@ import { parseDeviceInfo } from "./getDeviceInfo";
 import {
   DeviceDisconnectedBeforeSendingApdu,
   DeviceDisconnectedWhileSendingError,
+  SendApduEmptyResponseError,
 } from "@ledgerhq/device-management-kit";
 
 export type UpdateFirmwareTaskArgs = {
   deviceId: DeviceId;
+  deviceName: string | null;
   updateContext: FirmwareUpdateContext;
 };
 
@@ -78,11 +80,13 @@ const waitForGetVersion = retryOnErrorsCommandWrapper({
   allowedDmkErrors: [
     new DeviceDisconnectedWhileSendingError(),
     new DeviceDisconnectedBeforeSendingApdu(),
+    new SendApduEmptyResponseError(),
   ],
 });
 
 function internalUpdateFirmwareTask({
   deviceId,
+  deviceName,
   updateContext,
 }: UpdateFirmwareTaskArgs): Observable<UpdateFirmwareTaskEvent> {
   const tracer = new LocalTracer(LOG_TYPE, {
@@ -90,7 +94,10 @@ function internalUpdateFirmwareTask({
   });
 
   return new Observable(subscriber => {
-    const sub = withTransport(deviceId)(({ transportRef }) =>
+    const sub = withTransport(
+      deviceId,
+      deviceName ? { matchDeviceByName: deviceName } : undefined,
+    )(({ transportRef }) =>
       concat(
         quitApp(transportRef.current).pipe(
           switchMap(() => {

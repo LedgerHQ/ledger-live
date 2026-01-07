@@ -1,5 +1,4 @@
 import AccountField from "./AccountField";
-import TokenSelect from "./TokenSelect";
 import CryptoCurrencySelect from "./CryptoCurrencySelect";
 import AsciiField from "./AsciiField";
 import CheckboxField from "./CheckboxField";
@@ -22,7 +21,6 @@ export type DataType =
 
 export default {
   checkbox: CheckboxField,
-  token: TokenSelect,
   cryptocurrency: CryptoCurrencySelect,
   derivationPath: AccountField,
   ascii: AsciiField,

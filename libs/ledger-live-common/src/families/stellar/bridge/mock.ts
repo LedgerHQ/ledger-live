@@ -19,11 +19,13 @@ import { formatCurrencyUnit } from "../../../currencies";
 import {
   scanAccounts,
   signOperation,
+  signRawOperation,
   broadcast,
   sync,
   isInvalidRecipient,
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
@@ -217,9 +219,11 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
+  signRawOperation,
   broadcast,
   estimateMaxSpendable,
   getSerializedAddressParameters,
+  validateAddress,
 };
 export default {
   currencyBridge,

@@ -5,9 +5,18 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
+      account_types:
+        description: Account types to monitor, separated with commas (,), or "pristine,average,big" (default)
+        required: false
+        default: "pristine,average,big"
       currencies:
         description: Currencies to monitor, separated with commas (,), or "all" (default)
         required: false
+        default: "all"
+      isolated:
+        description: Run each currency/account combination in isolated processes, true or false (default)
+        required: false
+        default: false
 
 jobs:
   run-monitoring:
@@ -23,3 +32,5 @@ jobs:
         timeout-minutes: 120
         with:
           MONITOR_FILTER_CURRENCIES: ${{ inputs.currencies }}
+          MONITOR_FILTER_ACCOUNT_TYPES: ${{ inputs.account_types }}
+          MONITOR_FILTER_ISOLATED: ${{ inputs.isolated }}

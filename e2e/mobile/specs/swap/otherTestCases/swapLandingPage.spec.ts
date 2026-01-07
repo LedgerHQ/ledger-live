@@ -1,10 +1,11 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSwapLandingPageTest } from "./swap.other";
 
 const swapTestConfig = {
   fromAccount: Account.ETH_1,
   toAccount: TokenAccount.ETH_USDC_1,
   tmsLinks: ["B2CQA-2918"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runSwapLandingPageTest(

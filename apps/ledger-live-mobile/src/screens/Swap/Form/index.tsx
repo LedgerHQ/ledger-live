@@ -5,7 +5,7 @@ import { Button, Flex } from "@ledgerhq/native-ui";
 import { ExchangeRate, OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { useSwapTransaction, usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTranslation } from "react-i18next";
 import {
   flattenAccounts,
@@ -136,7 +136,7 @@ export function SwapForm({
         };
       }, partnerAndExchangeRateDefault) ?? partnerAndExchangeRateDefault
     );
-  }, [exchangeRatesState.value, swapTransaction.swap.to.currency]);
+  }, [exchangeRatesState, swapTransaction.swap.to.currency]);
 
   const swapError =
     swapTransaction.fromAmountError instanceof NotEnoughBalance

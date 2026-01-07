@@ -1,15 +1,13 @@
 import React, { memo, useState } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
-import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/live-common/currencies/index";
 import Touchable from "~/components/Touchable";
 import { track } from "~/analytics";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
+import { useCurrencyById } from "@ledgerhq/cryptoassets/hooks";
 
 function AddAccount({ currencyId }: { currencyId?: string }) {
-  const currency = currencyId
-    ? findCryptoCurrencyById(currencyId) || findTokenById(currencyId)
-    : undefined;
+  const { currency } = useCurrencyById(currencyId || "");
   const [isAddModalOpened, setIsAddModalOpened] = useState(false);
 
   function openAddModal() {

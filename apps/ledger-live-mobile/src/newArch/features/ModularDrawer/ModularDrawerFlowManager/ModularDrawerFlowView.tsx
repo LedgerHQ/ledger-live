@@ -8,7 +8,7 @@ import NetworkSelection from "../screens/NetworkSelection";
 import AccountSelection from "../screens/AccountSelection";
 import { ModularDrawerFlowProps } from ".";
 import useScreenTransition from "./useScreenTransition";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { modularDrawerStepSelector } from "~/reducers/modularDrawer";
 
 export function ModularDrawerFlowView({
@@ -49,7 +49,11 @@ export function ModularDrawerFlowView({
     );
   };
 
-  return <View style={styles.container}>{activeSteps.map(renderAnimatedStep)}</View>;
+  return (
+    <View style={styles.container} testID="modular-drawer-flow-view">
+      {activeSteps.map(renderAnimatedStep)}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

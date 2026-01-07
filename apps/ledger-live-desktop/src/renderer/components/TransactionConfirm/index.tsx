@@ -5,7 +5,7 @@ import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getDeviceTransactionConfig } from "@ledgerhq/live-common/transaction/index";
+import { useDeviceTransactionConfig } from "@ledgerhq/live-common/hooks/useDeviceTransactionConfig";
 import Animation from "~/renderer/animations";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -24,7 +24,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,
   ff: "Inter|Medium",
-  color: "palette.text.shade80",
+  color: "neutral.c80",
   fontSize: 3,
 }))`
   word-break: break-all;
@@ -40,7 +40,7 @@ const AmountField = ({ account, status: { amount }, field }: FieldComponentProps
   return (
     <TransactionConfirmField label={field.label}>
       <FormattedVal
-        color={"palette.text.shade80"}
+        color={"neutral.c80"}
         unit={unit}
         val={amount}
         fontSize={3}
@@ -59,7 +59,7 @@ const FeesField = ({ account, parentAccount, status, field }: FieldComponentProp
   return (
     <TransactionConfirmField label={field.label}>
       <FormattedVal
-        color={"palette.text.shade80"}
+        color={"neutral.c80"}
         disableRounding
         unit={feesUnit}
         val={estimatedFees}
@@ -125,9 +125,9 @@ const TransactionConfirm = ({
   status,
 }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const type = useTheme().colors.palette.type;
+  const type = useTheme().theme;
 
-  const fields = getDeviceTransactionConfig({
+  const { fields, loading } = useDeviceTransactionConfig({
     account,
     parentAccount,
     transaction,
@@ -186,25 +186,27 @@ const TransactionConfirm = ({
           }}
           mb={20}
         >
-          {displayedFields.map((field, i) => {
-            const MaybeComponent = fieldComponents[field.type];
-            if (!MaybeComponent) {
-              console.warn(
-                `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
-              );
-              return null;
-            }
-            return (
-              <MaybeComponent
-                key={i}
-                field={field}
-                account={account}
-                parentAccount={parentAccount}
-                transaction={transaction}
-                status={status}
-              />
-            );
-          })}
+          {loading
+            ? null
+            : displayedFields.map((field, i) => {
+                const MaybeComponent = fieldComponents[field.type];
+                if (!MaybeComponent) {
+                  console.warn(
+                    `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
+                  );
+                  return null;
+                }
+                return (
+                  <MaybeComponent
+                    key={i}
+                    field={field}
+                    account={account}
+                    parentAccount={parentAccount}
+                    transaction={transaction}
+                    status={status}
+                  />
+                );
+              })}
         </Box>
       </Container>
       <ConfirmFooter

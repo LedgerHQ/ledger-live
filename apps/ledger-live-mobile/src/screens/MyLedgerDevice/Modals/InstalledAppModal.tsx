@@ -10,22 +10,13 @@ import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { App } from "@ledgerhq/types-live";
 import { urls } from "~/utils/urls";
 
-import { NavigatorName, ScreenName } from "~/const";
-
 import AppIcon from "../AppsList/AppIcon";
 
 import QueuedDrawer from "~/components/QueuedDrawer";
-import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
-import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
-
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
->;
+import { useModularDrawerController } from "LLM/features/ModularDrawer";
 
 type Props = {
   state: State;
-  navigation: NavigationProps["navigation"];
   disable: boolean;
 };
 
@@ -47,17 +38,21 @@ const ButtonsContainer = styled(Flex).attrs({
   width: "100%",
 })``;
 
-const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
+const InstallSuccessBar = ({ state, disable }: Props) => {
   const [hasBeenShown, setHasBeenShown] = useState(disable);
   const { installQueue, uninstallQueue, recentlyInstalledApps, appByName, installed } = state;
+
+  const { openDrawer } = useModularDrawerController();
+
   const onAddAccount = useCallback(() => {
-    navigation.navigate(NavigatorName.AssetSelection, {
-      context: AddAccountContexts.AddAccounts,
-      sourceScreenName: "InstalleAppModal",
+    openDrawer({
+      enableAccountSelection: false,
+      flow: "add_account",
+      source: "InstalleAppModal",
     });
 
     setHasBeenShown(true);
-  }, [navigation]);
+  }, [openDrawer]);
 
   const successInstalls = useMemo(
     () =>
@@ -96,7 +91,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   return (
     <QueuedDrawer isRequestingToBeOpened={successInstalls.length >= 1} onClose={onClose}>
       <Flex alignItems="center">
-        {app && <AppIcon app={app} size={48} radius={14} />}
+        {app && <AppIcon app={app} size={48} />}
         <TextContainer>
           <ModalText color="neutral.c100" fontWeight="medium" variant="h2">
             <Trans i18nKey="AppAction.install.done.title" />

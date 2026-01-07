@@ -2,8 +2,6 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { setEnv } from "@ledgerhq/live-env";
 import { ApplicationOptions } from "page";
 
-setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-
 const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
   CLI.liveData({
     currency: currencyApp.name,
@@ -11,6 +9,17 @@ const liveDataCommand = (currencyApp: { name: string }, index: number) => (userd
     add: true,
     appjson: userdataPath,
   });
+
+const liveDataWithAddressCommand = (account: Account) => async (userdataPath?: string) => {
+  await CLI.liveData({
+    currency: account.currency.speculosApp.name,
+    index: account.index,
+    add: true,
+    appjson: userdataPath,
+  });
+};
+
+setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
@@ -33,7 +42,7 @@ export async function runCreateNewAccountAndDepositTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: currentAccount.currency.speculosApp,
-        cliCommands: [liveDataCommand(currentAccount.currency.speculosApp, currentAccount.index)],
+        cliCommands: [liveDataWithAddressCommand(currentAccount)],
       });
     });
 
@@ -42,30 +51,32 @@ export async function runCreateNewAccountAndDepositTest(
     it("should create new account and deposit", async () => {
       await app.transferMenuDrawer.open();
       await app.transferMenuDrawer.navigateToReceive();
-      await app.receive.expectFirstStep();
-      await app.receive.selectAsset(currentAccount.currency.name);
-      await app.receive.createAccount();
+      await app.modularDrawer.selectCurrencyByTicker(currentAccount.currency.ticker);
+      await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
       await app.receive.continueCreateAccount();
-      await app.receive.expectAccountIsCreated(newAccount.accountName);
-      await app.common.selectAccount(newAccount);
       await app.receive.selectDontVerifyAddress();
       await app.receive.selectReconfirmDontVerify();
+      const address = await CLI.getAddressForAccount(newAccount);
+
       await app.receive.expectReceivePageIsDisplayed(
         newAccount.currency.ticker,
         newAccount.accountName,
       );
-      await app.receive.verifyAddress(newAccount.address);
+      await app.receive.verifyAddress(address);
     });
   });
 }
 
 export async function runSelectCryptoNetworkTest(
   account: Account,
+  networks: string[],
   withAccount: boolean,
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe(`Select crypto network with ${withAccount ? "account" : "no account"} for ${account.currency.ticker}`, () => {
+  describe(`Select crypto network with ${withAccount ? "account" : "no account"} for ${
+    account.currency.ticker
+  }`, () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -78,13 +89,20 @@ export async function runSelectCryptoNetworkTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`should select crypto network with ${withAccount ? "account" : "no account"} for ${account.currency.ticker}`, async () => {
-      const networks = ["ethereum", "optimism", "arbitrum", "zksync", "scroll"];
-      await app.receive.openViaDeeplink();
-      await app.receive.expectFirstStep();
-      await app.common.performSearch(account.currency.name);
-      await app.receive.selectAsset(account.currency.ticker);
-      await app.receive.expectSecondStepNetworks(networks);
+    it(`should select crypto network with ${withAccount ? "account" : "no account"} for ${
+      account.currency.ticker
+    }`, async () => {
+      if (withAccount) {
+        await app.portfolio.tapQuickActionReceiveButton();
+      } else {
+        await app.portfolioEmptyState.navigateToReceive();
+      }
+      await app.modularDrawer.performSearchByTicker(account.currency.ticker);
+      await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
+      await app.modularDrawer.validateNetworksScreen(networks);
+      await app.modularDrawer.selectNetwork(account.currency.networks[0]);
+      const accountName = account.parentAccount?.accountName ?? account.accountName;
+      await app.modularDrawer.validateAccountsScreen(withAccount ? [accountName] : undefined);
     });
   });
 }
@@ -104,10 +122,11 @@ export async function runSelectCryptoWithoutNetworkAndAccountTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`should select crypto without network and account for ${account.currency.ticker}`, async () => {
-      await app.receive.openViaDeeplink();
-      await app.receive.expectFirstStep();
-      await app.common.performSearch(account.currency.name);
-      await app.receive.selectAsset(account.currency.ticker);
+      await app.portfolioEmptyState.navigateToReceive();
+      await app.modularDrawer.validateAssetsScreen([account.currency.ticker]);
+      await app.modularDrawer.performSearchByTicker(account.currency.ticker);
+      await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
+      await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
       await app.receive.expectDeviceConnectionScreen();
     });
   });
@@ -115,7 +134,6 @@ export async function runSelectCryptoWithoutNetworkAndAccountTest(
 
 export async function runDepositInExistingAccountTest(
   account: Account,
-  networkName: string,
   tmsLinks: string[],
   tags: string[],
 ) {
@@ -124,23 +142,20 @@ export async function runDepositInExistingAccountTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        cliCommands: [liveDataCommand(account.currency.speculosApp, account.index)],
+        cliCommands: [liveDataWithAddressCommand(account)],
       });
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`should deposit in existing account for ${account.currency.ticker}`, async () => {
-      await app.receive.openViaDeeplink();
-      await app.receive.expectFirstStep();
-      await app.common.performSearch(account.currency.name);
-      await app.receive.selectAsset(account.currency.ticker);
-      await app.receive.selectNetwork(networkName);
-      await app.common.selectAccount(account);
+      await app.portfolio.tapQuickActionReceiveButton();
+      await app.modularDrawer.selectAsset(account);
       await app.receive.selectDontVerifyAddress();
       await app.receive.selectReconfirmDontVerify();
       await app.receive.expectReceivePageIsDisplayed(account.currency.ticker, account.accountName);
-      await app.receive.verifyAddress(account.address);
+      const address = await CLI.getAddressForAccount(account);
+      await app.receive.verifyAddress(address);
     });
   });
 }

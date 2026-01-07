@@ -5,7 +5,7 @@ import { DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Languages, Language } from "~/config/languages";
 import { firstValueFrom, from } from "rxjs";
 import { setLanguage, setLastSeenDevice } from "~/renderer/actions/settings";
@@ -18,7 +18,6 @@ import {
   getInitialLanguageAndLocale,
   languageSelector,
   lastSeenDeviceSelector,
-  useSystemLanguageSelector,
 } from "~/renderer/reducers/settings";
 import ChangeDeviceLanguagePromptDrawer from "./ChangeDeviceLanguagePromptDrawer";
 import { useSupportedLanguages } from "~/renderer/hooks/useSupportedLanguages";
@@ -30,12 +29,11 @@ type Props = {
 };
 
 const LanguageSelectComponent: React.FC<Props> = ({ disableLanguagePrompt }) => {
-  const useSystem = useSelector(useSystemLanguageSelector);
   const language = useSelector(languageSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
-  const supportedLanguages = useSupportedLanguages().languages;
+  const { locales: supportedLocales } = useSupportedLanguages();
 
   const { availableLanguages: availableDeviceLanguages } = useAvailableLanguagesForDevice(
     lastSeenDevice?.deviceInfo,
@@ -53,27 +51,19 @@ const LanguageSelectComponent: React.FC<Props> = ({ disableLanguagePrompt }) => 
     }
   }, [currentDevice, lastSeenDevice?.deviceInfo, dispatch]);
 
-  const languages = useMemo(
-    () =>
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      [{ value: null as Language | null, label: t(`language.system`) }].concat(
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        (Object.keys(supportedLanguages) as Array<keyof typeof Languages>).map(language => ({
-          value: language,
-          label: Languages[language].label,
-        })),
-      ),
-    [supportedLanguages, t],
-  );
+  const options = useMemo(() => {
+    return supportedLocales.map(language => {
+      return {
+        value: language,
+        label: Languages[language].label,
+      };
+    });
+  }, [supportedLocales]);
 
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const selectedLanguage = useMemo(
-    () => (useSystem ? languages[0] : languages.find(l => l.value === language)),
-    [language, languages, useSystem],
-  ) as {
-    value: Language | null;
-    label: string;
-  };
+  const currentLanguage = useMemo(
+    () => options.find(({ value }) => value === language) || options[0],
+    [language, options],
+  );
 
   useEffect(() => {
     if (i18n.language !== language) {
@@ -139,7 +129,7 @@ const LanguageSelectComponent: React.FC<Props> = ({ disableLanguagePrompt }) => 
 
   return (
     <>
-      <Track onUpdate event="LanguageSelect" currentRegion={selectedLanguage.value} />
+      <Track onUpdate event="LanguageSelect" currentRegion={currentLanguage.value} />
 
       <Select
         aria-label={
@@ -152,9 +142,9 @@ const LanguageSelectComponent: React.FC<Props> = ({ disableLanguagePrompt }) => 
         minWidth={260}
         isSearchable={false}
         onChange={avoidEmptyValue}
-        renderSelected={(item: { label: string } | undefined) => item && item.label}
-        value={selectedLanguage}
-        options={languages}
+        renderValue={({ data }) => data?.label}
+        value={currentLanguage}
+        options={options}
       />
     </>
   );

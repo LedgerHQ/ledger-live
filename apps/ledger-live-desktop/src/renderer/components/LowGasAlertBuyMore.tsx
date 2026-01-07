@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import Alert from "~/renderer/components/Alert";
@@ -26,7 +25,7 @@ type LowGasAlertBuyMoreProps = {
  * Usage:
  * <LowGasAlertBuyMore
  *    account={mainAccount}
- *    handleRequestClose={closeAllModal}
+ *    handleRequestClose={() => dispatch(closeAllModal())}
  *    gasPriceError={gasPriceError}
  *    trackingSource={"swap | send or whatever"}s
  * />
@@ -39,10 +38,9 @@ const LowGasAlertBuyMore = ({
   trackingSource,
 }: LowGasAlertBuyMoreProps) => {
   const history = useHistory();
-  const dispatch = useDispatch();
 
   const onBuyClick = useCallback(() => {
-    dispatch(handleRequestClose());
+    handleRequestClose();
     setTrackingSource(trackingSource);
     history.push({
       pathname: "/exchange",
@@ -52,7 +50,7 @@ const LowGasAlertBuyMore = ({
         mode: "buy",
       },
     });
-  }, [account.currency.id, account.id, history, dispatch, handleRequestClose, trackingSource]);
+  }, [account.currency.id, account.id, history, handleRequestClose, trackingSource]);
 
   if (!gasPriceError) return null;
   return (

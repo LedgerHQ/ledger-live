@@ -1,7 +1,7 @@
 import Prando from "prando";
 import { BigNumber } from "bignumber.js";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { listCryptoCurrencies, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/index";
+import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/index";
 import { getOperationAmountNumber } from "../operation";
 import { isAccountEmpty, emptyHistoryCache } from "../account";
 import { generateHistoryFromOperations } from "../account/balanceHistoryCache";
@@ -249,6 +249,7 @@ export type GenAccountOptions = {
   withNft?: boolean;
   tokenIds?: string[];
   bandwidth?: boolean;
+  tokensData?: TokenCurrency[];
 };
 
 export function genTokenAccount(
@@ -365,11 +366,13 @@ export function genAccount(
   ) {
     const tokenCount =
       typeof opts.subAccountsCount === "number" ? opts.subAccountsCount : rng.nextInt(0, 8);
-    const all = listTokensForCryptoCurrency(account.currency, {
-      withDelisted: true,
-    }).filter(
-      ({ id, delisted }) =>
-        (hardcodedMarketcap.includes(id) && !delisted) || opts.tokenIds?.includes(id),
+
+    // Use tokensData if provided, otherwise fallback to empty array
+    const availableTokens = opts.tokensData || [];
+
+    // Filter tokens based on hardcodedMarketcap and tokenIds if specified
+    const all = availableTokens.filter(
+      ({ id }) => hardcodedMarketcap.includes(id) || opts.tokenIds?.includes(id),
     );
     const tokensFromOpts = all.filter(t => opts.tokenIds?.includes(t.id));
 

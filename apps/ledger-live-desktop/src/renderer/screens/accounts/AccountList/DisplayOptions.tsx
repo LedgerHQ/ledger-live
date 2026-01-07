@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { setAccountsViewMode } from "~/renderer/actions/settings";
 import { accountsViewModeSelector } from "~/renderer/reducers/settings";
@@ -38,13 +38,13 @@ function DisplayOptions() {
     </>
   );
 }
-export default React.memo<{}>(DisplayOptions);
+export default React.memo(DisplayOptions);
 
 const ToggleButton = styled(Button)<{ active?: boolean }>`
   height: 30px;
   width: 30px;
   padding: 7px;
   background: ${p =>
-    p.active ? p.theme.colors.pillActiveBackground : p.theme.colors.palette.background.paper};
-  color: ${p => (p.active ? p.theme.colors.wallet : p.theme.colors.palette.divider)};
+    p.active ? p.theme.colors.pillActiveBackground : p.theme.colors.background.card};
+  color: ${p => (p.active ? p.theme.colors.wallet : p.theme.colors.neutral.c40)};
 `;

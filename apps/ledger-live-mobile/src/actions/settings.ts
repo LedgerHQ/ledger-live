@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { createAction } from "redux-actions";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import type { PortfolioRange } from "@ledgerhq/types-live";
 import { selectedTimeRangeSelector } from "../reducers/settings";
 import {
@@ -52,7 +52,6 @@ import {
   SettingsSetGeneralTermsVersionAccepted,
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
-  SettingsSetClosedNetworkBannerPayload,
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
@@ -66,6 +65,9 @@ import {
   SettingsSetMevProtectionPayload,
   SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
+  SettingsIsOnboardingFlowPayload,
+  SettingsIsOnboardingFlowReceiveSuccessPayload,
+  SettingsIsPostOnboardingFlowPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -116,6 +118,16 @@ export const clearLastSeenCustomImage = () =>
 
 export const completeOnboarding = createAction<SettingsCompleteOnboardingPayload>(
   SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
+);
+export const setIsOnboardingFlow = createAction<SettingsIsOnboardingFlowPayload>(
+  SettingsActionTypes.SETTINGS_SET_IS_ONBOARDING_FlOW,
+);
+export const setIsOnboardingFlowReceiveSuccess =
+  createAction<SettingsIsOnboardingFlowReceiveSuccessPayload>(
+    SettingsActionTypes.SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS,
+  );
+export const setIsPostOnboardingFlow = createAction<SettingsIsPostOnboardingFlowPayload>(
+  SettingsActionTypes.SETTINGS_SET_IS_POST_ONBOARDING_FlOW,
 );
 export const setHasInstalledAnyApp = createAction<SettingsSetHasInstalledAnyAppPayload>(
   SettingsActionTypes.SETTINGS_SET_HAS_INSTALLED_ANY_APP,
@@ -205,10 +217,7 @@ export const setNeverClickedOnAllowNotificationsButton =
   createAction<SettingsSetNeverClickedOnAllowNotificationsButton>(
     SettingsActionTypes.SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON,
   );
-export const setCloseNetworkBanner = createAction<SettingsSetClosedWithdrawBannerPayload>(
-  SettingsActionTypes.SET_CLOSED_NETWORK_BANNER,
-);
-export const setCloseWithdrawBanner = createAction<SettingsSetClosedNetworkBannerPayload>(
+export const setCloseWithdrawBanner = createAction<SettingsSetClosedWithdrawBannerPayload>(
   SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER,
 );
 export const setWalletTabNavigatorLastVisitedTab =

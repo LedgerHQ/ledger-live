@@ -7,6 +7,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import MarketList from "./MarketList";
 import { useMarket } from "./hooks/useMarket";
 import SearchInputComponent from "./components/SearchInputComponent";
+import { useMarketListVirtualization } from "./MarketList/useMarketListVirtualization";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -48,6 +49,7 @@ const SelectBarContainer = styled(Flex)`
 `;
 
 export default function Market() {
+  const marketData = useMarket();
   const {
     refresh,
     setCounterCurrency,
@@ -66,7 +68,7 @@ export default function Market() {
     refreshRate,
     marketCurrentPage,
     t,
-  } = useMarket();
+  } = marketData;
 
   /**
    * Reset the page to 1 when the component mounts to only refetch first page
@@ -85,6 +87,15 @@ export default function Market() {
   }, [marketCurrentPage, refetchData, refreshRate]);
 
   const { order, range, counterCurrency, search = "", liveCompatible } = marketParams;
+
+  const virtualization = useMarketListVirtualization({
+    itemCount: marketData.itemCount,
+    marketData: marketData.marketData,
+    loading: marketData.loading,
+    currenciesLength: marketData.currenciesLength,
+    onLoadNextPage: marketData.onLoadNextPage,
+    checkIfDataIsStaleAndRefetch: marketData.checkIfDataIsStaleAndRefetch,
+  });
 
   return (
     <Container>
@@ -139,7 +150,7 @@ export default function Market() {
           </Flex>
         </SelectBarContainer>
       </Flex>
-      <MarketList {...useMarket()} />
+      <MarketList {...marketData} virtualization={virtualization} />
     </Container>
   );
 }

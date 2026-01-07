@@ -12,7 +12,6 @@ import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/accou
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { isNftTransaction } from "@ledgerhq/live-nft";
 import { isOldestPendingOperation } from "@ledgerhq/live-common/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
@@ -38,6 +37,7 @@ import StepFees, { StepFeesFooter } from "./steps/StepFees";
 import StepMethod, { StepMethodFooter } from "./steps/StepMethod";
 import { StepSummaryFooter } from "./steps/StepSummaryFooter";
 import { St, StepId, StepProps } from "./types";
+import BigNumber from "bignumber.js";
 
 type Params = {
   account: AccountLike | undefined | null;
@@ -244,7 +244,7 @@ const Body = ({
   // if we are at this step (i.e: in this screen) it means the transaction is editable
   const isOldestEditableOperation = isOldestPendingOperation(
     mainAccount,
-    transactionToUpdate.nonce,
+    new BigNumber(transactionToUpdate.nonce),
   );
 
   const [editType, setEditType] = useState<StepProps["editType"]>(
@@ -313,8 +313,6 @@ const Body = ({
     haveFundToCancel,
     isOldestEditableOperation,
     transactionToUpdate,
-    // Used to display the NFT summary component in the summary step
-    isNFTSend: isNftTransaction(transaction),
     openModal,
     onClose,
     setSigned,

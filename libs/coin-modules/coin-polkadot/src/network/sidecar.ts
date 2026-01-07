@@ -27,6 +27,7 @@ import type {
 import { createRegistryAndExtrinsics } from "./common";
 import node from "./node";
 import { log } from "@ledgerhq/logs";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  * Returns the full indexer url for en route endpoint.
@@ -35,27 +36,47 @@ import { log } from "@ledgerhq/logs";
  *
  * @returns {string}
  */
-const getSidecarUrl = (route: string): string => {
-  const sidecarUrl = coinConfig.getCoinConfig().sidecar.url;
+const getSidecarUrl = (route: string, currency?: CryptoCurrency): string => {
+  const config = coinConfig.getCoinConfig(currency);
+  let sidecarUrl = config.sidecar.url;
+
+  if (
+    currency?.id === "assethub_polkadot" &&
+    route.startsWith("/pallets/staking") &&
+    !config.hasBeenMigrated
+  ) {
+    route = `/rc${route}`;
+  } else if (
+    currency?.id === "westend" &&
+    (route.startsWith("/pallets/staking") || route.startsWith("/transaction"))
+  ) {
+    // Fetch Staking Info from Westend AssetHub (remove /rc)
+    sidecarUrl = sidecarUrl.replace("/rc", "");
+  }
   return `${sidecarUrl}${route || ""}`;
 };
 
-const getElectionOptimisticThreshold = (): number => {
-  return coinConfig.getCoinConfig().staking?.electionStatusThreshold || 25;
+const getElectionOptimisticThreshold = (currency?: CryptoCurrency): number => {
+  return coinConfig.getCoinConfig(currency).staking?.electionStatusThreshold || 25;
 };
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
+const UNSUPPORTED_STAKING_NETWORKS = ["polkadot", "westend"];
 
 // blocks = 2 minutes 30
 
-async function callSidecar<T>(route: string, method: "GET" | "POST" = "GET", data?: unknown) {
-  const credentials = coinConfig.getCoinConfig().sidecar.credentials;
+async function callSidecar<T>(
+  route: string,
+  currency?: CryptoCurrency,
+  method: "GET" | "POST" = "GET",
+  data?: unknown,
+) {
+  const credentials = coinConfig.getCoinConfig(currency).sidecar.credentials;
   const headers = credentials ? { Authorization: "Basic " + credentials } : {};
-
   return network<T>({
     headers,
     method,
-    url: getSidecarUrl(route),
+    url: getSidecarUrl(route, currency),
     data,
   });
 }
@@ -68,8 +89,14 @@ async function callSidecar<T>(route: string, method: "GET" | "POST" = "GET", dat
  *
  * @returns {SidecarAccountBalanceInfo}
  */
-const fetchBalanceInfo = async (addr: string): Promise<SidecarAccountBalanceInfo> => {
-  const { data } = await callSidecar<SidecarAccountBalanceInfo>(`/accounts/${addr}/balance-info`);
+const fetchBalanceInfo = async (
+  addr: string,
+  currency?: CryptoCurrency,
+): Promise<SidecarAccountBalanceInfo> => {
+  const { data } = await callSidecar<SidecarAccountBalanceInfo>(
+    `/accounts/${addr}/balance-info`,
+    currency,
+  );
   return data;
 };
 
@@ -81,12 +108,12 @@ const fetchBalanceInfo = async (addr: string): Promise<SidecarAccountBalanceInfo
  *
  * @returns {string}
  */
-const fetchStashAddr = async (addr: string): Promise<string | null> => {
+const fetchStashAddr = async (addr: string, currency?: CryptoCurrency): Promise<string | null> => {
   const {
     data,
   }: {
     data: SidecarPalletStorageItem;
-  } = await callSidecar(`/pallets/staking/storage/ledger?keys[]=${addr}&key1=${addr}`);
+  } = await callSidecar(`/pallets/staking/storage/ledger?keys[]=${addr}&key1=${addr}`, currency);
   return data.value?.stash ?? null;
 };
 
@@ -98,12 +125,15 @@ const fetchStashAddr = async (addr: string): Promise<string | null> => {
  *
  * @returns {string}
  */
-const fetchControllerAddr = async (addr: string): Promise<string | null> => {
+const fetchControllerAddr = async (
+  addr: string,
+  currency?: CryptoCurrency,
+): Promise<string | null> => {
   const {
     data,
   }: {
     data: SidecarPalletStorageItem;
-  } = await callSidecar(`/pallets/staking/storage/bonded?keys[]=${addr}&key1=${addr}`);
+  } = await callSidecar(`/pallets/staking/storage/bonded?keys[]=${addr}&key1=${addr}`, currency);
   return data.value ?? null;
 };
 
@@ -115,8 +145,11 @@ const fetchControllerAddr = async (addr: string): Promise<string | null> => {
  *
  * @returns {SidecarStakingInfo}
  */
-const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
-  return node.fetchStakingInfo(addr);
+const fetchStakingInfo = async (
+  addr: string,
+  currency?: CryptoCurrency,
+): Promise<SidecarStakingInfo> => {
+  return node.fetchStakingInfo(addr, currency);
 };
 
 /**
@@ -126,8 +159,8 @@ const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
  *
  * @returns {Object}
  */
-const fetchConstants = async (): Promise<Record<string, any>> => {
-  return node.fetchConstants();
+const fetchConstants = async (currency?: CryptoCurrency): Promise<Record<string, any>> => {
+  return node.fetchConstants(currency);
 };
 
 /**
@@ -137,12 +170,12 @@ const fetchConstants = async (): Promise<Record<string, any>> => {
  *
  * @returns {SidecarPalletStorageItem}
  */
-const fetchActiveEra = async (): Promise<SidecarPalletStorageItem> => {
+const fetchActiveEra = async (currency?: CryptoCurrency): Promise<SidecarPalletStorageItem> => {
   const {
     data,
   }: {
     data: SidecarPalletStorageItem;
-  } = await callSidecar("/pallets/staking/storage/activeEra");
+  } = await callSidecar("/pallets/staking/storage/activeEra", currency);
   return data;
 };
 
@@ -154,9 +187,10 @@ const fetchActiveEra = async (): Promise<SidecarPalletStorageItem> => {
  *
  * @returns {string}
  */
-export const getMinimumBondBalance = async (): Promise<BigNumber> => {
+export const getMinimumBondBalance = async (currency?: CryptoCurrency): Promise<BigNumber> => {
   const { data }: { data: SidecarPalletStorageItem } = await callSidecar(
     `/pallets/staking/storage/minNominatorBond`,
+    currency,
   );
 
   return (data.value && new BigNumber(data.value)) || new BigNumber(0);
@@ -175,9 +209,10 @@ export const getMinimumBondBalance = async (): Promise<BigNumber> => {
  */
 const fetchValidators = async (
   status: SidecarValidatorsParamStatus = "all",
+  currency?: CryptoCurrency,
   addresses?: SidecarValidatorsParamAddresses,
 ): Promise<SidecarValidators> => {
-  return await node.fetchValidators(status, addresses);
+  return await node.fetchValidators(status, addresses, currency);
 };
 
 /**
@@ -187,12 +222,14 @@ const fetchValidators = async (
  *
  * @returns {SidecarPalletStakingProgress}
  */
-const fetchStakingProgress = async (): Promise<SidecarPalletStakingProgress> => {
+const fetchStakingProgress = async (
+  currency?: CryptoCurrency,
+): Promise<SidecarPalletStakingProgress> => {
   const {
     data,
   }: {
     data: SidecarPalletStakingProgress;
-  } = await callSidecar("/pallets/staking/progress");
+  } = await callSidecar("/pallets/staking/progress", currency);
   return data;
 };
 
@@ -205,6 +242,7 @@ const fetchStakingProgress = async (): Promise<SidecarPalletStakingProgress> => 
  */
 const fetchTransactionMaterial = async (
   // By default we don't want any metadata.
+  currency?: CryptoCurrency,
   withMetadata = false,
 ): Promise<SidecarTransactionMaterial> => {
   const params = withMetadata ? "?metadata=scale" : "?noMeta=true";
@@ -212,7 +250,7 @@ const fetchTransactionMaterial = async (
     data,
   }: {
     data: SidecarTransactionMaterial;
-  } = await callSidecar(`/transaction/material${params}`);
+  } = await callSidecar(`/transaction/material${params}`, currency);
   return data;
 };
 
@@ -223,12 +261,12 @@ const fetchTransactionMaterial = async (
  *
  * @returns {SidecarRuntimeSpec}
  */
-export const fetchChainSpec = async () => {
+export const fetchChainSpec = async (currency?: CryptoCurrency) => {
   const {
     data,
   }: {
     data: SidecarRuntimeSpec;
-  } = await callSidecar("/runtime/spec");
+  } = await callSidecar("/runtime/spec", currency);
   return data;
 };
 
@@ -240,8 +278,10 @@ export const fetchChainSpec = async () => {
  *
  * @returns {boolean}
  */
-export const isElectionClosed = async (): Promise<boolean> => {
-  const progress = await fetchStakingProgress();
+export const isElectionClosed = async (currency: CryptoCurrency): Promise<boolean> => {
+  if (UNSUPPORTED_STAKING_NETWORKS.includes(currency.id)) return true;
+
+  const progress = await fetchStakingProgress(currency);
   return !progress.electionStatus?.status?.Open;
 };
 
@@ -253,8 +293,8 @@ export const isElectionClosed = async (): Promise<boolean> => {
  *
  * @returns {boolean}
  */
-export const isNewAccount = async (addr: string): Promise<boolean> => {
-  const { nonce, free } = await fetchBalanceInfo(addr);
+export const isNewAccount = async (addr: string, currency?: CryptoCurrency): Promise<boolean> => {
+  const { nonce, free } = await fetchBalanceInfo(addr, currency);
   return new BigNumber(0).isEqualTo(nonce) && new BigNumber(0).isEqualTo(free);
 };
 
@@ -266,8 +306,11 @@ export const isNewAccount = async (addr: string): Promise<boolean> => {
  *
  * @returns {boolean}
  */
-export const isControllerAddress = async (addr: string): Promise<boolean> => {
-  const stash = await fetchStashAddr(addr);
+export const isControllerAddress = async (
+  addr: string,
+  currency?: CryptoCurrency,
+): Promise<boolean> => {
+  const stash = await fetchStashAddr(addr, currency);
   return !!stash;
 };
 
@@ -279,8 +322,11 @@ export const isControllerAddress = async (addr: string): Promise<boolean> => {
  *
  * @returns {string[]} - addresses that are not validators
  */
-export const verifyValidatorAddresses = async (validators: string[]): Promise<string[]> => {
-  const existingValidators = await fetchValidators("all", validators);
+export const verifyValidatorAddresses = async (
+  validators: string[],
+  currency?: CryptoCurrency,
+): Promise<string[]> => {
+  const existingValidators = await fetchValidators("all", currency, validators);
   const existingIds = existingValidators.map(v => v.accountId);
   return validators.filter(v => !existingIds.includes(v));
 };
@@ -291,9 +337,9 @@ export const verifyValidatorAddresses = async (validators: string[]): Promise<st
  * @async
  * @param {*} addr
  */
-export const getAccount = async (addr: string) => {
-  const balances = await getBalances(addr);
-  const stakingInfo = await getStakingInfo(addr);
+export const getAccount = async (addr: string, currency: CryptoCurrency) => {
+  const balances = await getBalances(addr, currency);
+  const stakingInfo = await getStakingInfo(addr, currency);
   const nominations = await getNominations(addr);
 
   const account = { ...balances, ...stakingInfo, nominations };
@@ -310,8 +356,8 @@ export const getAccount = async (addr: string) => {
  * @async
  * @param {*} addr - the account address
  */
-export const getBalances = async (addr: string) => {
-  const balanceInfo = await fetchBalanceInfo(addr);
+export const getBalances = async (addr: string, currency?: CryptoCurrency) => {
+  const balanceInfo = await fetchBalanceInfo(addr, currency);
 
   return {
     blockHeight: Number(balanceInfo.at.height),
@@ -328,11 +374,13 @@ export const getBalances = async (addr: string) => {
  * @async
  * @param {*} addr
  */
-export const getStakingInfo = async (addr: string) => {
-  const [stash, controller] = await Promise.all([fetchStashAddr(addr), fetchControllerAddr(addr)]);
-
+export const getStakingInfo = async (addr: string, currency: CryptoCurrency) => {
+  const [stash, controller] = await Promise.all([
+    fetchStashAddr(addr, currency),
+    fetchControllerAddr(addr, currency),
+  ]);
   // If account is not a stash, no need to fetch staking-info (it would return an error)
-  if (!controller) {
+  if (!controller || UNSUPPORTED_STAKING_NETWORKS.includes(currency.id)) {
     return {
       controller: null,
       stash: stash || null,
@@ -343,10 +391,11 @@ export const getStakingInfo = async (addr: string) => {
   }
 
   const [stakingInfo, activeEra, consts] = await Promise.all([
-    fetchStakingInfo(addr),
-    fetchActiveEra(),
-    getConstants(),
+    fetchStakingInfo(addr, currency),
+    fetchActiveEra(currency),
+    getConstants(currency),
   ]);
+
   const activeEraIndex = Number(activeEra.value?.index || 0);
   const activeEraStart = Number(activeEra.value?.start || 0);
   const blockTime = new BigNumber(consts?.babe?.expectedBlockTime || 6000); // 6000 ms
@@ -418,8 +467,8 @@ const getNominations = async (addr: string): Promise<PolkadotNomination[]> => {
  *
  * @async
  */
-export const getTransactionParams = async () => {
-  const material = await fetchTransactionMaterial();
+export const getTransactionParams = async (currency?: CryptoCurrency) => {
+  const material = await fetchTransactionMaterial(currency);
   return {
     blockHash: material.at.hash,
     blockNumber: material.at.height,
@@ -439,12 +488,15 @@ export const getTransactionParams = async () => {
  *
  * @returns {string>} - the broadcasted transaction's hah
  */
-export const submitExtrinsic = async (extrinsic: string): Promise<string> => {
+export const submitExtrinsic = async (
+  extrinsic: string,
+  currency?: CryptoCurrency,
+): Promise<string> => {
   const {
     data,
   }: {
     data: SidecarTransactionBroadcast;
-  } = await callSidecar("/transaction", "POST", {
+  } = await callSidecar("/transaction", currency, "POST", {
     tx: extrinsic,
   });
 
@@ -460,12 +512,15 @@ export const submitExtrinsic = async (extrinsic: string): Promise<string> => {
  *
  * @returns {SidecarPaymentInfo}
  */
-export const paymentInfo = async (extrinsic: string): Promise<SidecarPaymentInfo> => {
+export const paymentInfo = async (
+  extrinsic: string,
+  currency?: CryptoCurrency,
+): Promise<SidecarPaymentInfo> => {
   const {
     data,
   }: {
     data: SidecarPaymentInfo;
-  } = await callSidecar("/transaction/fee-estimate", "POST", {
+  } = await callSidecar("/transaction/fee-estimate", currency, "POST", {
     tx: extrinsic,
   });
   return data;
@@ -481,13 +536,14 @@ export const paymentInfo = async (extrinsic: string): Promise<SidecarPaymentInfo
  */
 export const getValidators = async (
   stashes: SidecarValidatorsParamStatus | SidecarValidatorsParamAddresses = "elected",
+  currency?: CryptoCurrency,
 ): Promise<PolkadotValidator[]> => {
   let validators;
 
   if (Array.isArray(stashes)) {
-    validators = await fetchValidators("all", stashes);
+    validators = await fetchValidators("all", currency, stashes);
   } else {
-    validators = await fetchValidators(stashes);
+    validators = await fetchValidators(stashes, currency);
   }
 
   return validators.map(v => ({
@@ -512,8 +568,23 @@ export const getValidators = async (
  *
  * @returns {PolkadotStakingProgress}
  */
-export const getStakingProgress = async (): Promise<PolkadotStakingProgress> => {
-  const [progress, consts] = await Promise.all([fetchStakingProgress(), getConstants()]);
+export const getStakingProgress = async (
+  currency: CryptoCurrency,
+): Promise<PolkadotStakingProgress> => {
+  if (UNSUPPORTED_STAKING_NETWORKS.includes(currency.id)) {
+    return {
+      electionClosed: true,
+      activeEra: 0,
+      maxNominatorRewardedPerValidator: 128,
+      bondingDuration: 28,
+    };
+  }
+
+  const [progress, consts] = await Promise.all([
+    fetchStakingProgress(currency),
+    getConstants(currency),
+  ]);
+
   const activeEra = Number(progress.activeEra);
   const currentBlock = Number(progress.at.height);
   const toggleEstimate = Number(progress.electionStatus?.toggleEstimate);
@@ -526,15 +597,15 @@ export const getStakingProgress = async (): Promise<PolkadotStakingProgress> => 
     activeEra &&
     currentBlock &&
     toggleEstimate &&
-    currentBlock >= toggleEstimate - getElectionOptimisticThreshold()
+    currentBlock >= toggleEstimate - getElectionOptimisticThreshold(currency)
       ? false
       : electionClosed;
   return {
     activeEra,
     electionClosed: optimisticElectionClosed,
     maxNominatorRewardedPerValidator:
-      Number(consts.staking.maxNominatorRewardedPerValidator) || 128,
-    bondingDuration: Number(consts.staking.bondingDuration) || 28,
+      Number(consts.staking?.maxNominatorRewardedPerValidator) || 128,
+    bondingDuration: Number(consts.staking?.bondingDuration) || 28,
   };
 };
 
@@ -545,13 +616,15 @@ export const getStakingProgress = async (): Promise<PolkadotStakingProgress> => 
  *
  * @returns {Object} - { registry, extrinsics }
  */
-export const getRegistry = async (): Promise<{
+export const getRegistry = async (
+  currency?: CryptoCurrency,
+): Promise<{
   registry: TypeRegistry;
   extrinsics: Extrinsics;
 }> => {
   const [material, spec] = await Promise.all([
-    getTransactionMaterialWithMetadata(),
-    fetchChainSpec(),
+    getTransactionMaterialWithMetadata(currency),
+    fetchChainSpec(currency),
   ]);
   return createRegistryAndExtrinsics(material, spec);
 };
@@ -559,8 +632,10 @@ export const getRegistry = async (): Promise<{
 /**
  * Get lastest block info
  */
-export const getLastBlock = async (): Promise<{ hash: string; height: number; time: Date }> => {
-  const { data } = await callSidecar<BlockInfo>("/blocks/head");
+export const getLastBlock = async (
+  currency?: CryptoCurrency,
+): Promise<{ hash: string; height: number; time: Date }> => {
+  const { data } = await callSidecar<BlockInfo>("/blocks/head", currency);
   return { hash: data.hash, height: parseInt(data.number), time: new Date() };
 };
 
@@ -577,8 +652,10 @@ export const getLastBlock = async (): Promise<{ hash: string; height: number; ti
  * @returns {Promise<Object>} consts
  */
 const getConstants = makeLRUCache(
-  async (): Promise<Record<string, any>> => fetchConstants(),
-  () => "polkadot",
+  async (currency: CryptoCurrency | undefined): Promise<Record<string, any>> => {
+    return fetchConstants(currency);
+  },
+  currency => currency?.id || "polkadot",
   // Store only one constants object since we only have polkadot.
   hours(1, 1),
 );
@@ -591,7 +668,8 @@ const getConstants = makeLRUCache(
  * @returns {Promise<Object>} consts
  */
 export const getTransactionMaterialWithMetadata = makeLRUCache(
-  async (): Promise<SidecarTransactionMaterial> => fetchTransactionMaterial(true),
-  () => "polkadot",
+  async (currency?: CryptoCurrency): Promise<SidecarTransactionMaterial> =>
+    fetchTransactionMaterial(currency, true),
+  currency => (currency ? currency.id : "polkadot"),
   hours(1),
 );

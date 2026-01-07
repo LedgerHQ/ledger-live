@@ -19,14 +19,7 @@ const Main = ({ shouldWeTrack, handleOpenPrivacyPolicy }: MainProps) => {
   return (
     <>
       <Track onMount mandatory={shouldWeTrack} event={page} page={page} />
-      <Flex
-        flexDirection={"column"}
-        rowGap={"32px"}
-        mx={"40px"}
-        height={"100%"}
-        pt={paddingTop}
-        overflowY="scroll"
-      >
+      <Flex flexDirection={"column"} rowGap={"32px"} mx={"40px"} flex={1} pt={paddingTop}>
         <HeaderTitle title={"analyticsOptInPrompt.common.title"} />
         <MainBody handleOpenPrivacyPolicy={() => handleOpenPrivacyPolicy(page)} />
       </Flex>

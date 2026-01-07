@@ -4,16 +4,16 @@ import {
   CreateAccountsCountAndApy,
   NetworkWithCount,
 } from "../utils/type";
-import { useInterestRatesByCurrencies } from "../hooks/useInterestRatesByCurrencies";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useInterestRatesByCurrencies } from "../../dada-client/hooks/useInterestRatesByCurrencies";
 import { getInterestRateForAsset } from "../utils/getInterestRateForAsset";
 
 export function useLeftAccountsApyModule(
   params: AccountModuleParams,
   useAccountData: (params: AccountModuleParams) => AccountDataItem[],
   accountsCountAndApy: CreateAccountsCountAndApy,
-  networks: CryptoOrTokenCurrency[],
-): NetworkWithCount[] {
+  accountsApy: CreateAccountsCountAndApy,
+): Array<NetworkWithCount> {
+  const { networks } = params;
   const accountData = useAccountData(params);
   const interestRates = useInterestRatesByCurrencies(networks);
 
@@ -27,14 +27,17 @@ export function useLeftAccountsApyModule(
 
     if ((!interestRate || interestRatePercentageRounded <= 0) && count <= 0) {
       return {
-        ...asset,
         count,
       };
     }
     return {
-      ...asset,
       leftElement: accountsCountAndApy({
         label: count > 0 ? label : undefined,
+        value: interestRatePercentageRounded,
+        type: interestRate?.type,
+      }),
+      description: count > 0 ? label : undefined,
+      apy: accountsApy({
         value: interestRatePercentageRounded,
         type: interestRate?.type,
       }),

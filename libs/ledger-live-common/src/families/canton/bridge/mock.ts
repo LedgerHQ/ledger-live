@@ -1,8 +1,9 @@
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { createApi } from "@ledgerhq/coin-canton/api/index";
-import { Transaction as CantonTransaction } from "@ledgerhq/coin-canton/types";
+import { Transaction as CantonTransaction, CantonAccount } from "@ledgerhq/coin-canton/types";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 // The calls data can be copied to mock-data.ts from the file.
 // This function creates a live API with logging for generating mock data
@@ -29,6 +30,7 @@ const createTransaction = (): CantonTransaction => {
     family: "canton",
     amount: new BigNumber(0),
     recipient: "",
+    tokenId: "Amulet",
     fee: null,
   };
 };
@@ -50,12 +52,12 @@ const getTransactionStatus = async (): Promise<any> => {
   };
 };
 
-const estimateMaxSpendable = ({ account }: { account: any }): Promise<BigNumber> => {
+const estimateMaxSpendable = ({ account }: { account: CantonAccount }): Promise<BigNumber> => {
   return Promise.resolve(account.balance || new BigNumber(0));
 };
 
 const prepareTransaction = async (
-  _account: any,
+  _account: CantonAccount,
   transaction: CantonTransaction,
 ): Promise<CantonTransaction> => {
   return {
@@ -64,17 +66,17 @@ const prepareTransaction = async (
   };
 };
 
-const sync = (_initialAccount: any): any => {
+const sync = (_initialAccount: CantonAccount): any => {
   return {
     subscribe: (observer: any) => {
-      observer.next((acc: any) => acc);
+      observer.next((acc: CantonAccount) => acc);
       observer.complete();
       return { unsubscribe: () => {} };
     },
   };
 };
 
-const receive = (_account: any, _opts: { deviceId: string }): any => {
+const receive = (_account: CantonAccount, _opts: { deviceId: string }): any => {
   return {
     subscribe: (observer: any) => {
       observer.next({
@@ -143,6 +145,10 @@ const scanAccounts = (): any => {
           lastSyncDate: new Date(),
           operations: [],
           pendingOperations: [],
+          cantonResources: {
+            instrumentUtxoCounts: {},
+            pendingTransferProposals: [],
+          },
         },
       });
       observer.complete();
@@ -155,7 +161,7 @@ const getSerializedAddressParameters = (): Buffer => {
   return Buffer.from("mock-address-params");
 };
 
-const accountBridge: AccountBridge<CantonTransaction> = {
+const accountBridge: AccountBridge<CantonTransaction, CantonAccount> = {
   createTransaction,
   updateTransaction,
   getTransactionStatus,
@@ -164,8 +170,12 @@ const accountBridge: AccountBridge<CantonTransaction> = {
   sync,
   receive,
   signOperation,
+  signRawOperation: () => {
+    throw new Error("signRawOperation is not supported");
+  },
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 
 const currencyBridge = {

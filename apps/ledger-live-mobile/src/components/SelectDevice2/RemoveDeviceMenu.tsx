@@ -1,32 +1,15 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { DeviceModelId } from "@ledgerhq/devices";
 import { disconnect } from "@ledgerhq/live-common/hw/index";
-import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 
 import Button from "../Button";
-
-import NanoS from "~/images/devices/NanoS";
-import Stax from "~/images/devices/Stax";
-import Europa from "~/images/devices/Europa";
-import NanoX from "~/images/devices/NanoX";
-
 import Trash from "~/icons/Trash";
-import QueuedDrawer from "../QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 import { removeKnownDevice } from "~/actions/ble";
-
-const illustrations = {
-  [DeviceModelId.nanoS]: NanoS,
-  [DeviceModelId.nanoSP]: NanoS,
-  [DeviceModelId.nanoX]: NanoX,
-  [DeviceModelId.blue]: NanoS,
-  [DeviceModelId.stax]: Stax,
-  [DeviceModelId.europa]: Europa,
-  [DeviceModelId.apex]: Europa,
-};
+import { DeviceIllustration } from "~/components/DeviceIllustration";
 
 const RemoveDeviceMenu = ({
   onHideMenu,
@@ -38,17 +21,6 @@ const RemoveDeviceMenu = ({
   open: boolean;
 }) => {
   const dispatch = useDispatch();
-  const { colors } = useTheme();
-
-  const illustration = useMemo(
-    () =>
-      (illustrations[device.modelId] ?? NanoX)({
-        color: colors.neutral.c100,
-        size: 200,
-        theme: colors.type as "light" | "dark",
-      }),
-    [device.modelId, colors],
-  );
 
   const onRemoveDevice = useCallback(async () => {
     dispatch(removeKnownDevice(device.deviceId));
@@ -60,7 +32,7 @@ const RemoveDeviceMenu = ({
   return (
     <QueuedDrawer isRequestingToBeOpened={open} onClose={onHideMenu}>
       <Flex alignItems="center" mb={8}>
-        {illustration}
+        <DeviceIllustration deviceModelId={device.modelId} />
       </Flex>
       <Button
         event="HardResetModalAction"

@@ -4,6 +4,8 @@ import { exec } from "child_process";
 import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
+import { readFile } from "fs/promises";
+import { NANO_APP_CATALOG_PATH } from "../utils/constants";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -28,7 +30,7 @@ export async function openDeeplink(path?: string) {
 }
 
 export const describeIfNotNanoS = (...args: Parameters<typeof describe>) =>
-  process.env.SPECULOS_DEVICE !== Device.LNS
+  process.env.SPECULOS_DEVICE !== Device.LNS.name
     ? describe(...args)
     : describe.skip("[not available on LNS] " + args[0], args[1]);
 
@@ -48,12 +50,20 @@ export function isRemoteIos(): boolean {
   return isSpeculosRemote() && isIos();
 }
 
-export async function addDelayBeforeInteractingWithDevice(
-  // TODO: QAA-683
-  ciDelay: number = 10_000,
-  localDelay: number = 0,
-) {
-  await delay(process.env.CI ? ciDelay : localDelay);
+/**
+ * Creates a regex string for Detox URL blacklisting
+ * @returns Formatted regex string for Detox
+ */
+function createDetoxURLBlacklistRegex(): string {
+  const patterns = [
+    ".*sdk.*.braze.*",
+    ".*.googleapis.com/.*",
+    ".*clients3.google.com.*",
+    ".*tron.coin.ledger.com/wallet/getBrokerage.*",
+    ".*crypto-assets-service.api.ledger.com.*",
+  ];
+
+  return `\\("${patterns.join('","')}"\\)`;
 }
 
 export async function launchApp() {
@@ -63,8 +73,7 @@ export async function launchApp() {
   await device.launchApp({
     launchArgs: {
       wsPort: port,
-      detoxURLBlacklistRegex:
-        '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*clients3.google.com.*",".*tron.coin.ledger.com/wallet/getBrokerage.*"\\)',
+      detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
       mock: "0",
       disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
       IS_TEST: true,
@@ -85,7 +94,7 @@ export function setupEnvironment() {
   setEnv("MOCK", "");
   process.env.MOCK = "";
   setEnv("DETOX", "1");
-  process.env.SPECULOS_DEVICE = process.env.SPECULOS_DEVICE || Device.LNX;
+  setEnv("E2E_NANO_APP_VERSION_PATH", NANO_APP_CATALOG_PATH);
 
   const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;
   const shouldBroadcast = disableBroadcastEnv === "0";
@@ -109,6 +118,14 @@ export const logMemoryUsage = async (): Promise<void> => {
     },
   );
 };
+
+export async function takeAppScreenshot(screenshotName: string) {
+  const screenshotPath = await device.takeScreenshot(screenshotName);
+  if (screenshotPath) {
+    const screenshotData = await readFile(screenshotPath);
+    await allure.attachment(`App Screenshot: ${screenshotName}`, screenshotData, "image/png");
+  }
+}
 
 export const normalizeText = (text: string) =>
   text

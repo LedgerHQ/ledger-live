@@ -22,6 +22,7 @@ import walletsync, {
   makeLocalIncrementalUpdate,
 } from "@ledgerhq/live-wallet/walletsync/index";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { Account, BridgeCacheSystem } from "@ledgerhq/types-live";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
@@ -30,17 +31,14 @@ import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
+import { getValidCryptoIconSize } from "@ledgerhq/live-common/helpers/cryptoIconSize";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { Loading } from "./Loading";
 import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { Tick } from "./Tick";
 import { State } from "./types";
 import { Actionable } from "./Actionable";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-
-/*
-import * as icons from "@ledgerhq/crypto-icons-ui/react";
-import { inferCryptoCurrencyIcon } from "@ledgerhq/live-common/currencies/cryptoIcons";
-*/
 
 const latestWalletStateSelector = (s: State): WSState => walletSyncStateSelector(s.walletState);
 
@@ -50,6 +48,7 @@ const localStateSelector = (state: State) => ({
     nonImportedAccountInfos: state.nonImportedAccounts,
   },
   accountNames: state.walletState.accountNames,
+  recentAddresses: state.walletState.recentAddresses,
 });
 
 const latestDistantStateSelector = (state: State) => state.walletState.walletSyncState.data;
@@ -391,6 +390,13 @@ function AccountRow({
   setAccountName: (id: string, name: string) => void;
   removeAccount: (id: string) => void;
 }) {
+  const currency = getAccountCurrency(account);
+
+  const ledgerId = currency.id;
+  const ticker = currency.ticker;
+  const network = currency.type === "TokenCurrency" ? currency.parentCurrency.id : undefined;
+  const validSize = getValidCryptoIconSize(20);
+
   return (
     <li
       style={{
@@ -401,6 +407,13 @@ function AccountRow({
         borderBottom: "1px solid #f0f0f0",
       }}
     >
+      <span style={{ marginRight: 10, display: "flex", alignItems: "center" }}>
+        {currency.type === "TokenCurrency" ? (
+          <CryptoIcon ledgerId={ledgerId} ticker={ticker} size={validSize} network={network} />
+        ) : (
+          <CryptoIcon ledgerId={ledgerId} ticker={ticker} size={validSize} />
+        )}
+      </span>
       <span style={{ flex: 1, minWidth: "50%" }}>
         <EditableAccountNameField
           name={accountNameWithDefaultSelector(walletState, account)}
@@ -477,32 +490,6 @@ function HeadlessShowAccounts({
   );
 }
 
-/*
-const CircleWrapper = styled.div<{ size: number }>`
-  border-radius: 50%;
-  border: 1px solid transparent;
-  background: ${p => p.color};
-  height: ${p => p.size}px;
-  width: ${p => p.size}px;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-`;
-
-function CryptoCurrencyIcon({ currency, size }: { currency: CryptoCurrency; size: number }) {
-  const color = getCurrencyColor(currency);
-  const IconCurrency = inferCryptoCurrencyIcon<
-    React.ComponentType<{ size: number; color: string }>
-  >(icons, currency);
-  if (!IconCurrency) return null;
-  return (
-    <CircleWrapper size={size} color={color}>
-      <IconCurrency size={size * 0.8} color="white" />
-    </CircleWrapper>
-  );
-}
-  */
-
 function EditableAccountNameField({
   name,
   setName,
@@ -554,6 +541,7 @@ function appForCurrency<T>(
 ): Observable<T> {
   return connectApp()({
     deviceId,
+    deviceName: null,
     request: {
       appName: currency.managerAppName,
       allowPartialDependencies: false,

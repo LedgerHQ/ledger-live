@@ -4,12 +4,14 @@ import {
   BlockInfo,
   Cursor,
   Page,
+  Validator,
   FeeEstimation,
   Operation,
   Pagination,
   Reward,
   Stake,
   TransactionIntent,
+  CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type TronConfig } from "../config";
 import {
@@ -31,6 +33,14 @@ export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
     broadcast,
     combine,
     craftTransaction,
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: bigint,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported");
+    },
     estimateFees: estimate,
     getBalance,
     lastBlock,
@@ -46,6 +56,9 @@ export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
+    },
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
     },
   };
 }

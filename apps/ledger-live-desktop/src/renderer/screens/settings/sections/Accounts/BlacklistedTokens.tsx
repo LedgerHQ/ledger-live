@@ -2,17 +2,24 @@ import { SettingsSection as Section, SettingsSectionRow as Row } from "../../Set
 import Text from "~/renderer/components/Text";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { findTokenById } from "@ledgerhq/live-common/currencies/index";
+import { loadBlacklistedTokenSections } from "@ledgerhq/live-common/account/index";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Box from "~/renderer/components/Box";
 import styled from "styled-components";
 import IconCross from "~/renderer/icons/Cross";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { showToken } from "~/renderer/actions/settings";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import IconAngleDown from "~/renderer/icons/AngleDown";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+
+type BlacklistedTokenSection = {
+  parentCurrency: CryptoCurrency;
+  tokens: TokenCurrency[];
+};
+
 export default function BlacklistedTokens() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -36,22 +43,27 @@ export default function BlacklistedTokens() {
     [dispatch],
   );
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const sections = [];
-  for (const tokenId of blacklistedTokenIds) {
-    const token = findTokenById(tokenId);
-    if (token) {
-      const parentCurrency = token.parentCurrency;
-      const index = sections.findIndex(s => s.parentCurrency === parentCurrency);
-      if (index < 0) {
-        sections.push({
-          parentCurrency,
-          tokens: [token],
-        });
-      } else {
-        sections[index].tokens.push(token);
-      }
-    }
-  }
+  const [sections, setSections] = useState<BlacklistedTokenSection[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    loadBlacklistedTokenSections(blacklistedTokenIds)
+      .then(loadedSections => {
+        if (mounted) {
+          setSections(loadedSections);
+        }
+      })
+      .catch(error => {
+        console.error("Failed to load blacklisted tokens:", error);
+        if (mounted) {
+          setSections([]);
+        }
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [blacklistedTokenIds]);
+
   const toggleCurrencySection = useCallback(() => {
     setSectionVisible(prevState => !prevState);
   }, [setSectionVisible]);
@@ -93,21 +105,21 @@ export default function BlacklistedTokens() {
           {sections.map(({ parentCurrency, tokens }) => (
             <Box key={parentCurrency.id}>
               <BlacklistedTokensSectionHeader>
-                <Text ff="Inter|Bold" fontSize={2} color="palette.text.shade40">
+                <Text ff="Inter|Bold" fontSize={2} color="neutral.c60">
                   {parentCurrency.name}
                 </Text>
               </BlacklistedTokensSectionHeader>
               <Body>
-                {tokens.map(token => (
+                {tokens.map((token: TokenCurrency) => (
                   <BlacklistedTokenRow key={token.id}>
-                    <CryptoCurrencyIcon currency={token} size={20} />
+                    <CryptoCurrencyIcon currency={token} size={28} />
                     <Text
                       style={{
                         marginLeft: 10,
                         flex: 1,
                       }}
                       ff="Inter|Medium"
-                      color="palette.text.shade100"
+                      color="neutral.c100"
                       fontSize={3}
                     >
                       {token.name}
@@ -126,11 +138,11 @@ export default function BlacklistedTokens() {
   );
 }
 const IconContainer = styled.div`
-  color: ${p => p.theme.colors.palette.text.shade60};
+  color: ${p => p.theme.colors.neutral.c70};
   text-align: center;
   &:hover {
     cursor: pointer;
-    color: ${p => p.theme.colors.palette.text.shade40};
+    color: ${p => p.theme.colors.neutral.c60};
   }
 `;
 const BlacklistedTokenRow = styled(Box).attrs({
@@ -141,7 +153,7 @@ const BlacklistedTokenRow = styled(Box).attrs({
 })`
   margin: 0px;
   &:not(:last-child) {
-    border-bottom: 1px solid ${p => p.theme.colors.palette.text.shade10};
+    border-bottom: 1px solid ${p => p.theme.colors.neutral.c30};
   }
   padding: 14px 6px;
 `;
@@ -151,7 +163,7 @@ const Body = styled(Box)`
   }
 `;
 const BlacklistedTokensSectionHeader = styled.div`
-  background: ${p => p.theme.colors.palette.background.default};
+  background: ${p => p.theme.colors.background.default};
   margin: 0 20px;
   padding: 2px 12px;
   border-radius: 4px;

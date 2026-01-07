@@ -18,11 +18,12 @@ import NodeError from "./Confirmation/NodeError";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { AccountLike } from "@ledgerhq/types-live";
 import { createTransactionBroadcastError } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
+import AbortButton from "~/renderer/components/AbortButton";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))<{
   shouldSpace?: boolean;
 }>`
@@ -34,7 +35,6 @@ function StepConfirmation({
   t,
   optimisticOperation,
   error,
-  isNFTSend,
   signed,
   currencyName,
   account,
@@ -43,12 +43,7 @@ function StepConfirmation({
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage
-          category="Send Flow"
-          name="Step Confirmed"
-          currencyName={currencyName}
-          isNFTSend={isNFTSend}
-        />
+        <TrackPage category="Send Flow" name="Step Confirmed" currencyName={currencyName} />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -141,14 +136,30 @@ export function StepConfirmationFooter({
           {t("send.steps.confirmation.success.cta")}
         </Button>
       ) : error ? (
-        <RetryButton
-          ml={2}
-          primary
-          onClick={() => {
-            onRetry();
-            transitionTo("summary");
-          }}
-        />
+        [
+          "LedgerAPI5xx",
+          "NetworkDown",
+          "DeviceLockedError",
+          "LockedDeviceError",
+          "UserRefusedOnDevice",
+        ].includes(error.name) ? (
+          <RetryButton
+            ml={2}
+            primary
+            onClick={() => {
+              onRetry();
+              transitionTo("summary");
+            }}
+          />
+        ) : (
+          <AbortButton
+            ml={2}
+            primary
+            onClick={() => {
+              closeModal();
+            }}
+          />
+        )
       ) : null}
     </>
   );

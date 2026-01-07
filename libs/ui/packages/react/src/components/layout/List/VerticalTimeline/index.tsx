@@ -14,14 +14,16 @@ export type Item = {
   estimatedTime?: number;
   hasLoader?: boolean;
   background?: ReactNode;
+  activeBackground?: string;
 };
 
 export type Props = BaseStyledProps & {
   steps?: Item[];
   onClickIndex?: (index: number) => void;
+  isNeutral?: boolean;
 };
 
-export default function VerticalTimeline({ steps, onClickIndex, ...props }: Props) {
+export default function VerticalTimeline({ steps, onClickIndex, isNeutral, ...props }: Props) {
   return (
     <Flex {...props} flexDirection="column" flex={1}>
       {steps?.map((step, index) => (
@@ -31,6 +33,7 @@ export default function VerticalTimeline({ steps, onClickIndex, ...props }: Prop
           isFirstItem={index === 0}
           isLastItem={index === steps.length - 1}
           onClick={onClickIndex ? () => onClickIndex(index) : undefined}
+          isNeutral={isNeutral}
         />
       ))}
     </Flex>

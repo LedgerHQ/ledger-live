@@ -1,501 +1,310 @@
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React, { memo } from "react";
 import { Trans } from "react-i18next";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import styled from "styled-components";
-import BigNumber from "bignumber.js";
-import { Account } from "@ledgerhq/types-live";
-import {
-  getDerivationModesForCurrency,
-  getDerivationScheme,
-  runAccountDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account/balanceHistoryCache";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
+import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
-import logger from "~/renderer/logger";
 import Spinner from "~/renderer/components/Spinner";
-import Text from "~/renderer/components/Text";
-import TransactionConfirm from "~/renderer/components/TransactionConfirm";
-import { CantonOnboardProgress, CantonOnboardResult } from "@ledgerhq/coin-canton/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { StepProps, StepId, OnboardingData } from "../types";
+import { TransactionConfirm } from "../components/TransactionConfirm";
+import { StepId, StepProps } from "../types";
+import { urls } from "~/config/urls";
+import { openURL } from "~/renderer/linking";
+import { isAxiosError } from "axios";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
-interface SigningData {
-  partyId: string;
-  publicKey: string;
-  transactionData: unknown;
-  combinedHash: string;
-  derivationPath?: string;
-}
+const SectionAccounts = memo(
+  ({
+    currency,
+    accountName,
+    editedNames,
+    creatableAccount,
+    importableAccounts,
+    isReonboarding,
+  }: Pick<
+    StepProps,
+    | "currency"
+    | "accountName"
+    | "editedNames"
+    | "creatableAccount"
+    | "importableAccounts"
+    | "isReonboarding"
+  >) => {
+    return (
+      <SectionAccountsStyled>
+        {importableAccounts?.length > 0 && (
+          <Box mb={4}>
+            <Box
+              horizontal
+              ff="Inter|Bold"
+              color="neutral.c100"
+              fontSize={2}
+              textTransform="uppercase"
+              mb={3}
+            >
+              <Trans
+                i18nKey="families.canton.addAccount.onboard.onboarded"
+                count={importableAccounts?.length}
+              />
+            </Box>
+            <Box flow={2}>
+              {importableAccounts.map((account, index) => (
+                <AccountRow
+                  key={account.id}
+                  account={account}
+                  accountName={
+                    editedNames[account.id] ||
+                    getDefaultAccountNameForCurrencyIndex({ currency, index })
+                  }
+                  isDisabled={false}
+                  hideAmount={false}
+                  isReadonly={true}
+                />
+              ))}
+            </Box>
+          </Box>
+        )}
 
-interface OnboardingResult {
-  partyId: string;
-  account: Partial<Account>;
-  address?: string;
-  publicKey?: string;
-  transactionHash?: string;
-}
+        <Box mb={4}>
+          <Box
+            horizontal
+            ff="Inter|Bold"
+            color="neutral.c100"
+            fontSize={2}
+            textTransform="uppercase"
+            mb={3}
+          >
+            <Trans
+              i18nKey={
+                isReonboarding
+                  ? "families.canton.addAccount.onboard.account"
+                  : "families.canton.addAccount.onboard.newAccount"
+              }
+            />
+          </Box>
+          {creatableAccount && (
+            <AccountRow
+              account={creatableAccount}
+              accountName={accountName}
+              isDisabled={false}
+              hideAmount={true}
+              isReadonly={true}
+            />
+          )}
+        </Box>
+      </SectionAccountsStyled>
+    );
+  },
+);
 
-const getStatusMessage = (status: OnboardStatus): string => {
+SectionAccounts.displayName = "SectionAccounts";
+
+const getStatusMessage = (status?: OnboardStatus): string => {
   switch (status) {
-    case OnboardStatus.INIT:
-      return "Initializing Canton onboarding...";
     case OnboardStatus.PREPARE:
-      return "Preparing onboarding transaction...";
-    case OnboardStatus.SIGN:
-      return "Please confirm the transaction on your device";
+      return "families.canton.addAccount.onboard.status.prepare";
     case OnboardStatus.SUBMIT:
-      return "Submitting onboarding transaction...";
-    case OnboardStatus.SUCCESS:
-      return "Onboarding completed successfully";
-    case OnboardStatus.ERROR:
-      return "Onboarding failed";
+      return "families.canton.addAccount.onboard.status.submit";
     default:
-      return "Processing...";
+      return "families.canton.addAccount.onboard.status.default";
   }
 };
 
-interface FooterProps {
-  currency: CryptoCurrency;
-  transitionTo: (stepId: StepId) => void;
-  onboardingCompleted: boolean;
-  isLoading?: boolean;
-  status?: OnboardStatus;
-}
+const getErrorMessage = (error: Error | null) => {
+  if (error instanceof UserRefusedOnDevice || error instanceof LockedDeviceError) {
+    return <Trans i18nKey={error.message} />;
+  }
+  return <Trans i18nKey="families.canton.addAccount.onboard.error" />;
+};
 
 export default function StepOnboard({
   device,
   currency,
-  selectedAccounts,
   accountName,
-  cantonBridge,
-  transitionTo: _transitionTo,
-  onAccountCreated: _onAccountCreated,
-  setOnboardingData,
-  setOnboardingCompleted,
-  setOnboardingStatus,
+  editedNames,
+  creatableAccount,
+  importableAccounts,
+  onboardingStatus,
   error,
-  setError,
-  clearError,
+  isReonboarding,
 }: StepProps) {
-  const selectedAccount = selectedAccounts[0];
-
-  // Create a placeholder account for display purposes during onboarding
-  const placeholderAccount = useMemo(() => {
-    return (
-      selectedAccount ||
-      (() => {
-        const derivationMode = getDerivationModesForCurrency(currency)[0];
-        const derivationScheme = getDerivationScheme({ derivationMode, currency });
-        const freshAddressPath = runAccountDerivationScheme(derivationScheme, currency, {
-          account: 0,
-        });
-
-        const accountId = encodeAccountId({
-          type: "js",
-          version: "2",
-          currencyId: currency.id,
-          xpubOrAddress: "canton-placeholder-address",
-          derivationMode,
-        });
-
-        return {
-          type: "Account" as const,
-          id: accountId,
-          seedIdentifier: "canton-onboard",
-          derivationMode,
-          index: 0,
-          freshAddress: "canton-placeholder-address",
-          freshAddressPath,
-          used: false,
-          balance: new BigNumber(0),
-          spendableBalance: new BigNumber(0),
-          blockHeight: 0,
-          currency,
-          operationsCount: 0,
-          operations: [],
-          pendingOperations: [],
-          lastSyncDate: new Date(),
-          creationDate: new Date(),
-          balanceHistoryCache: createEmptyHistoryCache(),
-          swapHistory: [],
-        };
-      })()
-    );
-  }, [selectedAccount, currency]);
-
-  const [status, setStatus] = useState<OnboardStatus>(OnboardStatus.INIT);
-  const [statusMessage, setStatusMessage] = useState("");
-  const [signingData, setSigningData] = useState<SigningData | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
-
-  const resetState = useCallback(() => {
-    setStatus(OnboardStatus.PREPARE);
-    setStatusMessage("Starting Canton onboarding...");
-    setSigningData(null);
-  }, []);
-
-  const handleStateUpdate = useCallback(
-    (newStatus: OnboardStatus, message?: string, newSigningData?: SigningData) => {
-      setStatus(newStatus);
-      if (message) {
-        setStatusMessage(message);
-      }
-      if (newSigningData) {
-        setSigningData(newSigningData);
-      }
-    },
-    [],
-  );
-
-  const handleFinish = useCallback(() => {
-    setStatus(OnboardStatus.SUCCESS);
-  }, []);
-
-  const handleError = useCallback(
-    (error: Error) => {
-      setError(error);
-      setStatus(OnboardStatus.ERROR);
-    },
-    [setError],
-  );
-
-  const retry = useCallback(() => {
-    setRetryCount(prev => prev + 1);
-  }, []);
-
-  useEffect(() => {
-    setOnboardingData?.(null as unknown as OnboardingData);
-    setOnboardingCompleted?.(false);
-
-    if (!device || !currency) {
-      new Error("Device or currency missing");
-      return;
-    }
-
-    let subscription: { unsubscribe: () => void } | null = null;
-
-    if (!cantonBridge.onboardAccount) {
-      throw new Error("Canton bridge does not support onboardAccount");
-    }
-
-    const accountIndex = 0;
-
-    const derivationMode = getDerivationModesForCurrency(currency)[0];
-    const derivationScheme = getDerivationScheme({ derivationMode, currency });
-    const derivationPath = runAccountDerivationScheme(derivationScheme, currency, {
-      account: accountIndex,
-    });
-
-    let onboardingResult: OnboardingResult | null = null;
-
-    subscription = cantonBridge
-      .onboardAccount(currency, device.deviceId, derivationPath)
-      .subscribe({
-        next: (progressData: CantonOnboardProgress | CantonOnboardResult) => {
-          logger.log("Canton onboarding progress", progressData);
-
-          // Handle progress updates (CantonOnboardProgress has status)
-          if ("status" in progressData) {
-            const statusMessage = getStatusMessage(progressData.status);
-            handleStateUpdate(progressData.status, statusMessage);
-            setOnboardingStatus?.(progressData.status);
-
-            if (progressData.status === OnboardStatus.SIGN) {
-              logger.log("Entering signing phase, storing transaction data");
-              const signingData: SigningData = {
-                partyId:
-                  ((progressData as Record<string, unknown>).partyId as string) ||
-                  "pending-party-id",
-                publicKey:
-                  ((progressData as Record<string, unknown>).publicKey as string) ||
-                  "pending-public-key",
-                transactionData:
-                  (progressData as Record<string, unknown>).transactionData || progressData,
-                combinedHash:
-                  ((progressData as Record<string, unknown>).combinedHash as string) ||
-                  ((progressData as Record<string, unknown>).combined_hash as string) ||
-                  "",
-                derivationPath: (progressData as Record<string, unknown>).derivationPath as string,
-              };
-              handleStateUpdate(progressData.status, statusMessage, signingData);
-            }
-          }
-
-          // Handle final result (CantonOnboardResult has partyId)
-          if ("partyId" in progressData && !("status" in progressData)) {
-            onboardingResult = {
-              partyId: progressData.partyId,
-              account: progressData.account,
-              // The bridge implementation doesn't provide these fields, so we'll use placeholders
-              publicKey: "generated-public-key",
-              address: progressData.partyId,
-            };
-          }
-        },
-        complete: () => {
-          logger.log("Canton onboarding completed successfully", onboardingResult);
-
-          if (onboardingResult?.partyId && onboardingResult?.account) {
-            const onboardingDataObject = {
-              partyId: onboardingResult.partyId,
-              address: onboardingResult.address || "",
-              publicKey: onboardingResult.publicKey || "",
-              device: device.deviceId,
-              accountIndex,
-              currency: currency.id,
-              accountName: accountName,
-              transactionHash: onboardingResult.transactionHash || "",
-              completedAccount: onboardingResult.account || placeholderAccount,
-            };
-
-            logger.log("[StepOnboard] Storing onboarding data:", onboardingDataObject);
-            setOnboardingData?.(onboardingDataObject as OnboardingData);
-
-            logger.log("[StepOnboard] Setting onboarding completed to true");
-            setOnboardingCompleted?.(true);
-
-            logger.log("[StepOnboard] Onboarding completion callbacks called");
-          } else {
-            logger.error("[StepOnboard] No partyId in onboarding result, not marking as completed");
-          }
-
-          setOnboardingStatus?.(OnboardStatus.SUCCESS);
-          handleFinish();
-        },
-        error: (error: Error) => {
-          logger.error("Canton account creation failed", error);
-          setOnboardingStatus?.(OnboardStatus.ERROR);
-          handleError(error);
-        },
-      });
-
-    return () => {
-      if (subscription) {
-        logger.log("Cleaning up onboarding subscription");
-        subscription.unsubscribe();
-      }
-    };
-  }, [
-    device,
-    currency,
-    retryCount,
-    cantonBridge,
-    accountName,
-    placeholderAccount,
-    handleStateUpdate,
-    handleFinish,
-    handleError,
-    setOnboardingData,
-    setOnboardingCompleted,
-    setOnboardingStatus,
-  ]);
-
-  const handleRetry = useCallback(() => {
-    clearError();
-    resetState();
-    retry();
-  }, [clearError, resetState, retry]);
-
-  const renderContent = (status: OnboardStatus) => {
-    switch (status) {
-      case OnboardStatus.PREPARE:
+  const link = useLocalizedUrl(urls.canton.learnMore);
+  const onClick = () => openURL(link);
+  const renderContent = (onboardingStatus?: OnboardStatus) => {
+    switch (onboardingStatus) {
+      case OnboardStatus.INIT:
         return (
           <Box>
-            <Box mb={4}>
-              <Box
-                horizontal
-                ff="Inter|Bold"
-                color="palette.text.shade100"
-                fontSize={2}
-                textTransform="uppercase"
-                mb={3}
-              >
-                <Trans i18nKey="addAccounts.sections.creatable.title" />
-              </Box>
+            <SectionAccounts
+              currency={currency}
+              accountName={accountName}
+              editedNames={editedNames}
+              creatableAccount={creatableAccount}
+              importableAccounts={importableAccounts}
+              isReonboarding={isReonboarding}
+            />
 
-              <AccountRow
-                account={placeholderAccount}
-                accountName={accountName}
-                isDisabled={true}
-                hideAmount={true}
-                isReadonly={true}
-              />
+            <Box>
+              <Alert type={isReonboarding ? "warning" : "hint"}>
+                <Trans
+                  i18nKey={
+                    isReonboarding
+                      ? "families.canton.addAccount.reonboard.init"
+                      : "families.canton.addAccount.onboard.init"
+                  }
+                />
+              </Alert>
             </Box>
-
-            <LoadingRow>
-              <Spinner color="palette.text.shade60" size={16} />
-              <Box ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
-                {statusMessage}
-              </Box>
-            </LoadingRow>
           </Box>
         );
 
       case OnboardStatus.SIGN:
-        if (!device) {
-          return (
-            <LoadingRow>
-              <Spinner color="palette.text.shade60" size={16} />
-            </LoadingRow>
-          );
-        }
-
-        return (
-          <TransactionConfirm
-            device={device}
-            account={placeholderAccount}
-            parentAccount={null}
-            transaction={
-              {
-                family: "canton",
-                mode: "onboarding",
-                recipient: signingData?.partyId || "",
-                amount: new BigNumber(0),
-                fee: new BigNumber(0),
-                onboardingData: signingData,
-              } as Transaction
-            }
-            status={
-              {
-                amount: new BigNumber(0),
-                totalSpent: new BigNumber(0),
-                estimatedFees: new BigNumber(0),
-                errors: {},
-                warnings: {},
-              } as TransactionStatus
-            }
-            manifestId="canton-onboarding"
-            manifestName="Canton Onboarding"
-          />
-        );
-
-      case OnboardStatus.SUBMIT:
-        return (
-          <Box>
-            <Box mb={4}>
-              <Box
-                horizontal
-                ff="Inter|Bold"
-                color="palette.text.shade100"
-                fontSize={2}
-                textTransform="uppercase"
-                mb={3}
-              >
-                <Trans i18nKey="addAccounts.sections.creatable.title" />
-              </Box>
-
-              <AccountRow
-                account={placeholderAccount}
-                accountName={accountName}
-                isDisabled={true}
-                hideAmount={true}
-                isReadonly={true}
-              />
-            </Box>
-
-            <LoadingRow>
-              <Spinner color="palette.text.shade60" size={16} />
-              <Box ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
-                {statusMessage}
-              </Box>
-            </LoadingRow>
-          </Box>
-        );
+        return <TransactionConfirm device={device} />;
 
       case OnboardStatus.SUCCESS:
         return (
           <Box>
-            <Box mb={4}>
-              <Box
-                horizontal
-                ff="Inter|Bold"
-                color="palette.text.shade100"
-                fontSize={2}
-                textTransform="uppercase"
-                mb={3}
-              >
-                <Trans i18nKey="addAccounts.sections.creatable.title" />
-              </Box>
-
-              <AccountRow
-                account={placeholderAccount}
-                accountName={accountName}
-                isDisabled={true}
-                hideAmount={true}
-                isReadonly={true}
-              />
-            </Box>
+            <SectionAccounts
+              currency={currency}
+              accountName={accountName}
+              editedNames={editedNames}
+              creatableAccount={creatableAccount}
+              importableAccounts={importableAccounts}
+              isReonboarding={isReonboarding}
+            />
 
             <Box>
-              <Alert>
-                <Trans i18nKey="canton.addAccount.combined.preapproval">
-                  Your Canton account has been created and signed on device.
-                </Trans>
+              <Alert type="success">
+                <Trans
+                  i18nKey={
+                    isReonboarding
+                      ? "families.canton.addAccount.reonboard.success"
+                      : "families.canton.addAccount.onboard.success"
+                  }
+                />
               </Alert>
             </Box>
           </Box>
         );
 
       case OnboardStatus.ERROR:
+        if (isAxiosError(error) && error.status === 429) {
+          return (
+            <Box>
+              <Alert type="error">
+                <Trans i18nKey="families.canton.addAccount.onboard.error429" />
+                <LinkWithExternalIcon
+                  style={{
+                    display: "inline-flex",
+                  }}
+                  onClick={onClick}
+                  label={<Trans i18nKey="common.learnMore" />}
+                />
+              </Alert>
+            </Box>
+          );
+        }
         return (
           <Box>
-            <Alert type="error" mb={4}>
-              {error && <Text mt={2}>{error.message}</Text>}
-            </Alert>
+            <SectionAccounts
+              currency={currency}
+              accountName={accountName}
+              editedNames={editedNames}
+              creatableAccount={creatableAccount}
+              importableAccounts={importableAccounts}
+              isReonboarding={isReonboarding}
+            />
 
-            <Button primary onClick={handleRetry}>
-              <Trans i18nKey="common.retry">Retry</Trans>
-            </Button>
+            <Box>
+              <Alert type="error">{getErrorMessage(error)}</Alert>
+            </Box>
           </Box>
         );
 
       default:
-        return <></>;
+        return (
+          <Box>
+            <SectionAccounts
+              currency={currency}
+              accountName={accountName}
+              editedNames={editedNames}
+              creatableAccount={creatableAccount}
+              importableAccounts={importableAccounts}
+              isReonboarding={isReonboarding}
+            />
+
+            <LoadingRow>
+              <Spinner color="neutral.c70" size={16} />
+              <Box ml={2} ff="Inter|Regular" color="neutral.c70" fontSize={4}>
+                <Trans i18nKey={getStatusMessage(onboardingStatus)} />
+              </Box>
+            </LoadingRow>
+          </Box>
+        );
     }
   };
 
-  return renderContent(status);
+  return renderContent(onboardingStatus);
 }
 
 export const StepOnboardFooter = ({
   currency,
+  isProcessing,
+  onboardingStatus,
+  onOnboardAccount,
+  onRetryOnboardAccount,
   transitionTo,
-  onboardingCompleted,
-  isLoading = false,
-  status,
-}: FooterProps) => {
-  const handleNext = useCallback(() => {
-    logger.log("[StepOnboardFooter] Continue button clicked:", {
-      onboardingCompleted,
-      isLoading,
-    });
-    if (onboardingCompleted && !isLoading) {
-      logger.log("StepOnboard: Transitioning to authorization");
-      transitionTo(StepId.AUTHORIZE);
-    } else {
-      logger.warn("StepOnboard: Cannot transition - conditions not met");
-    }
-  }, [onboardingCompleted, isLoading, transitionTo]);
+}: StepProps) => {
+  const skipCantonPreapprovalStep = useFeature("cantonSkipPreapprovalStep");
 
-  // Hide footer during signing phase
-  if (status === OnboardStatus.SIGN) {
+  if (onboardingStatus === OnboardStatus.SIGN) {
     return <></>;
   }
 
-  const isButtonDisabled = !onboardingCompleted || isLoading;
+  const renderContent = (onboardingStatus: OnboardStatus) => {
+    switch (onboardingStatus) {
+      case OnboardStatus.SUCCESS:
+        return (
+          <Button
+            primary
+            disabled={isProcessing}
+            onClick={() =>
+              transitionTo(skipCantonPreapprovalStep?.enabled ? StepId.FINISH : StepId.AUTHORIZE)
+            }
+          >
+            <Trans i18nKey="common.continue" />
+          </Button>
+        );
+      case OnboardStatus.ERROR:
+        return (
+          <Button primary disabled={isProcessing} onClick={onRetryOnboardAccount}>
+            <Trans i18nKey="common.tryAgain" />
+          </Button>
+        );
+      default:
+        return (
+          <Button primary disabled={isProcessing} onClick={onOnboardAccount}>
+            {isProcessing && (
+              <Box mr={2}>
+                <Spinner size={20} />
+              </Box>
+            )}
+            <Trans i18nKey="common.continue" />
+          </Button>
+        );
+    }
+  };
 
   return (
     <Box horizontal alignItems="center" justifyContent="space-between" grow>
-      {currency && <CurrencyBadge currency={currency} />}
-      <Button primary disabled={isButtonDisabled} onClick={handleNext}>
-        <Trans i18nKey="common.continue" />
-      </Button>
+      <CurrencyBadge currency={currency} />
+      {renderContent(onboardingStatus)}
     </Box>
   );
 };
@@ -509,5 +318,17 @@ const LoadingRow = styled(Box).attrs(() => ({
   mt: 1,
 }))`
   height: 48px;
-  border: 1px dashed ${p => p.theme.colors.palette.text.shade60};
+  border: 1px dashed ${p => p.theme.colors.neutral.c70};
+`;
+
+const SectionAccountsStyled = styled(Box)`
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
 `;

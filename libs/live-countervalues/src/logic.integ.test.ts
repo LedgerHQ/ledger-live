@@ -5,18 +5,18 @@ import {
   exportCountervalues,
   importCountervalues,
 } from "./logic";
-import { findCurrencyByTicker } from "./findCurrencyByTicker";
-import {
-  getFiatCurrencyByTicker,
-  getCryptoCurrencyById,
-  getTokenById,
-} from "@ledgerhq/cryptoassets";
+import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import { getBTCValues } from "./mock";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import Prando from "prando";
 import api from "./api";
 import { setEnv } from "@ledgerhq/live-env";
 import { pairId } from "./helpers";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+
+setupCalClientStore();
 
 const value = "ll-ci/0.0.0";
 setEnv("LEDGER_CLIENT_VERSION", value);
@@ -92,15 +92,26 @@ describe("API sanity", () => {
 });
 
 describe("extreme cases", () => {
-  const universe = Object.keys(getBTCValues())
-    .filter(t => t !== "USD")
-    .map(findCurrencyByTicker)
-    .filter(Boolean) as Currency[];
-  universe.sort((a, b) => a.ticker.localeCompare(b.ticker));
-  const prando = new Prando("orderingrng");
-  const sampleCount = Math.min(120, universe.length);
-  const i = prando.nextInt(0, universe.length - sampleCount);
-  const currencies = universe.slice(i, i + sampleCount);
+  let universe: Currency[] = [];
+  let currencies: Currency[] = [];
+  beforeAll(async () => {
+    const tickers = Object.keys(getBTCValues()).filter(t => t !== "USD");
+    universe = (
+      await Promise.all(
+        tickers.map(
+          async (ticker: string) =>
+            findCryptoCurrencyByTicker(ticker) ||
+            findFiatCurrencyByTicker(ticker) ||
+            (await getCryptoAssetsStore().findTokenById(ticker)),
+        ),
+      )
+    ).filter((currency): currency is Currency => currency != null);
+    universe.sort((a, b) => a.ticker.localeCompare(b.ticker));
+    const prando = new Prando("orderingrng");
+    const sampleCount = Math.min(120, universe.length);
+    const i = prando.nextInt(0, universe.length - sampleCount);
+    currencies = universe.slice(i, i + sampleCount);
+  });
 
   test("all tickers against USD", async () => {
     const state = await loadCountervalues(initialState, {
@@ -160,11 +171,11 @@ describe("extreme cases", () => {
 describe("WETH rules", () => {
   // this test is created to confirm the recent removal of weth/eth specific management is still functional in v3 context
   test("ethereum WETH have countervalues", async () => {
-    const weth = getTokenById("ethereum/erc20/weth");
+    const weth = await getCryptoAssetsStore().findTokenById("ethereum/erc20/weth");
     const state = await loadCountervalues(initialState, {
       trackingPairs: [
         {
-          from: weth,
+          from: weth!,
           to: usd,
           startDate: new Date(now - 10 * DAY),
         },
@@ -176,7 +187,7 @@ describe("WETH rules", () => {
     });
     const value = calculate(state, {
       disableRounding: true,
-      from: weth,
+      from: weth!,
       to: usd,
       value: 1000000,
     });
@@ -188,11 +199,11 @@ describe("HTTP 422 management of unsupported rates", () => {
   // context of this test: https://ledgerhq.atlassian.net/browse/LIVE-11339
   test("a cache that was accumulated needs to be cleared when a coin becomes disabled", async () => {
     // for this test, we start with weth
-    const weth = getTokenById("ethereum/erc20/weth");
+    const weth = await getCryptoAssetsStore().findTokenById("ethereum/erc20/weth");
     let state = await loadCountervalues(initialState, {
       trackingPairs: [
         {
-          from: weth,
+          from: weth!,
           to: usd,
           startDate: new Date(now - 10 * DAY),
         },
@@ -203,15 +214,15 @@ describe("HTTP 422 management of unsupported rates", () => {
     });
     let value = calculate(state, {
       disableRounding: true,
-      from: weth,
+      from: weth!,
       to: usd,
       value: 1000000,
     });
     expect(value).toBeGreaterThan(0);
     // we will now alter the state to replace the weth token to sether that we know has been disabled by the api
-    const sether = getTokenById("ethereum/erc20/sether");
-    const prevKey = pairId({ from: weth, to: usd });
-    const nextKey = pairId({ from: sether, to: usd });
+    const sether = await getCryptoAssetsStore().findTokenById("ethereum/erc20/sai");
+    const prevKey = pairId({ from: weth!, to: usd });
+    const nextKey = pairId({ from: sether!, to: usd });
     function mutateVisit(o: any) {
       // we traverse all Object and replace keys
       if (typeof o === "object" && o !== null) {
@@ -230,7 +241,7 @@ describe("HTTP 422 management of unsupported rates", () => {
     // at the moment, we still can calculate the value because we didn't refreshed yet
     value = calculate(state, {
       disableRounding: true,
-      from: sether,
+      from: sether!,
       to: usd,
       value: 1000000,
     });
@@ -239,7 +250,7 @@ describe("HTTP 422 management of unsupported rates", () => {
     state = await loadCountervalues(state, {
       trackingPairs: [
         {
-          from: sether,
+          from: sether!,
           to: usd,
           startDate: new Date(now - 100 * DAY),
         },
@@ -250,7 +261,7 @@ describe("HTTP 422 management of unsupported rates", () => {
     });
     value = calculate(state, {
       disableRounding: true,
-      from: sether,
+      from: sether!,
       to: usd,
       value: 1000000,
     });

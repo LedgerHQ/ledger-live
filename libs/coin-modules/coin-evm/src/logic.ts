@@ -6,13 +6,17 @@ import {
   Operation,
   TokenAccount,
 } from "@ledgerhq/types-live";
+import { TokenCurrency, CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import murmurhash from "imurmurhash";
 import { getEnv } from "@ledgerhq/live-env";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import {
+  decodeTokenAccountId,
+  encodeTokenAccountId,
+  getSyncHash as baseGetSyncHash,
+} from "@ledgerhq/coin-framework/account/index";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getNodeApi } from "./network/node/index";
 import { getCoinConfig } from "./config";
@@ -47,7 +51,7 @@ export const getDefaultFeeUnit = (currency: CryptoCurrency): Unit =>
  */
 export const getAdditionalLayer2Fees = async (
   currency: CryptoCurrency,
-  transaction: EvmTransaction,
+  transaction: EvmTransaction | string,
 ): Promise<BigNumber | undefined> => {
   switch (currency.id) {
     case "optimism":
@@ -180,22 +184,17 @@ export const __resetCALHash = (): void => {
  * This can be fixed by simply removing the account
  * and adding it again, now syncing from block 0.
  */
-export const getSyncHash = (
+export const getSyncHash = async (
   currency: CryptoCurrency,
   blacklistedTokenIds: string[] = [],
-): string => {
+): Promise<string> => {
+  const syncHash = await baseGetSyncHash(currency.id, blacklistedTokenIds);
   const isNftSupported = isNFTActive(currency);
 
   const config = getCoinConfig(currency).info;
   const { node = {}, explorer = {} } = config;
 
-  const stringToHash =
-    getCALHash(currency) +
-    blacklistedTokenIds.join("") +
-    isNftSupported +
-    JSON.stringify(node) +
-    JSON.stringify(explorer);
-
+  const stringToHash = syncHash + isNftSupported + JSON.stringify(node) + JSON.stringify(explorer);
   return `0x${murmurhash(stringToHash).result().toString(16)}`;
 };
 
@@ -216,14 +215,17 @@ export const getSyncHash = (
  * creating a duplicate that will cause issues.
  * (Incorrect NFT balance & React key dup)
  */
-export const attachOperations = (
+export const attachOperations = async (
   _coinOperations: Operation[],
   _tokenOperations: Operation[],
   _nftOperations: Operation[],
   _internalOperations: Operation[],
-  filters: { blacklistedTokenIds: string[] | undefined } = { blacklistedTokenIds: [] },
-): Operation[] => {
-  const { blacklistedTokenIds } = filters;
+  filters: {
+    blacklistedTokenIds: string[] | undefined;
+    findToken: (contractAddress: string) => Promise<TokenCurrency | undefined>;
+  },
+): Promise<Operation[]> => {
+  const { blacklistedTokenIds, findToken } = filters;
 
   // Creating deep copies of each Operation[] to prevent mutating the originals
   const coinOperations = _coinOperations.map(op => ({ ...op }));
@@ -235,9 +237,11 @@ export const attachOperations = (
     Required<Pick<Operation, "nftOperations" | "subOperations" | "internalOperations">>;
 
   // Helper to create a coin operation with type NONE as a parent of an orphan child operation
-  const makeCoinOpForOrphanChildOp = (childOp: Operation): OperationWithRequiredChildren => {
+  const makeCoinOpForOrphanChildOp = async (
+    childOp: Operation,
+  ): Promise<OperationWithRequiredChildren> => {
     const type = "NONE";
-    const { accountId } = decodeTokenAccountId(childOp.accountId);
+    const { accountId } = await decodeTokenAccountId(childOp.accountId);
     const id = encodeOperationId(accountId, childOp.hash, type);
 
     return {
@@ -277,12 +281,18 @@ export const attachOperations = (
 
   // Looping through token operations to potentially copy them as a child operation of a coin operation
   for (const tokenOperation of tokenOperations) {
-    const { token } = decodeTokenAccountId(tokenOperation.accountId);
+    const token = tokenOperation.contract && (await findToken(tokenOperation.contract));
     if (!token || blacklistedTokenIds?.includes(token.id)) continue;
+
+    const { accountId } = await decodeTokenAccountId(tokenOperation.accountId);
+    const tokenAccountId = encodeTokenAccountId(accountId, token);
+    const operationId = encodeOperationId(tokenAccountId, tokenOperation.hash, tokenOperation.type);
+    tokenOperation.id = operationId;
+    tokenOperation.accountId = tokenAccountId;
 
     let mainOperations = coinOperationsByHash[tokenOperation.hash];
     if (!mainOperations?.length) {
-      const noneOperation = makeCoinOpForOrphanChildOp(tokenOperation);
+      const noneOperation = await makeCoinOpForOrphanChildOp(tokenOperation);
       mainOperations = [noneOperation];
       coinOperations.push(noneOperation);
     }
@@ -297,7 +307,7 @@ export const attachOperations = (
   for (const nftOperation of nftOperations) {
     let mainOperations = coinOperationsByHash[nftOperation.hash];
     if (!mainOperations?.length) {
-      const noneOperation = makeCoinOpForOrphanChildOp(nftOperation);
+      const noneOperation = await makeCoinOpForOrphanChildOp(nftOperation);
       mainOperations = [noneOperation];
       coinOperations.push(noneOperation);
     }
@@ -312,7 +322,7 @@ export const attachOperations = (
   for (const internalOperation of internalOperations) {
     let mainOperations = coinOperationsByHash[internalOperation.hash];
     if (!mainOperations?.length) {
-      const noneOperation = makeCoinOpForOrphanChildOp(internalOperation);
+      const noneOperation = await makeCoinOpForOrphanChildOp(internalOperation);
       mainOperations = [noneOperation];
       coinOperations.push(noneOperation);
     }
@@ -353,12 +363,12 @@ export const getMessageProperties = async (
 // logic.ts
 export const createSwapHistoryMap = (
   initialAccount: Account | undefined,
-): Map<TokenCurrency, TokenAccount["swapHistory"]> => {
+): Map<string, TokenAccount["swapHistory"]> => {
   if (!initialAccount?.subAccounts) return new Map();
 
-  const swapHistoryMap = new Map<TokenCurrency, TokenAccount["swapHistory"]>();
+  const swapHistoryMap = new Map<string, TokenAccount["swapHistory"]>();
   for (const subAccount of initialAccount.subAccounts) {
-    swapHistoryMap.set(subAccount.token, subAccount.swapHistory);
+    swapHistoryMap.set(subAccount.token.id, subAccount.swapHistory);
   }
 
   return swapHistoryMap;

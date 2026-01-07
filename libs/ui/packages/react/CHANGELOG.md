@@ -1,5 +1,213 @@
 # @ledgerhq/react-ui
 
+## 0.42.0
+
+### Minor Changes
+
+- [#13112](https://github.com/LedgerHQ/ledger-live/pull/13112) [`e63194f`](https://github.com/LedgerHQ/ledger-live/commit/e63194f7dbd5ff2b0135c26aac3842a2be676b0a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - 🔧 Enforce @typescript-eslint/no-deprecated and Replace Deprecated APIs
+
+- [#13038](https://github.com/LedgerHQ/ledger-live/pull/13038) [`ef276b7`](https://github.com/LedgerHQ/ledger-live/commit/ef276b7654ab32c7253ee812ceac3f89316ded4b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Uses crypto-icons everywhere and drop the legacy crypto-icons-ui for design unification and performance gain
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+- [#13247](https://github.com/LedgerHQ/ledger-live/pull/13247) [`750665c`](https://github.com/LedgerHQ/ledger-live/commit/750665ceb8ec4579919595c8bc117216c6d4b758) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Remove pre-ldls cryptoicon
+
+## 0.42.0-next.0
+
+### Minor Changes
+
+- [#13112](https://github.com/LedgerHQ/ledger-live/pull/13112) [`e63194f`](https://github.com/LedgerHQ/ledger-live/commit/e63194f7dbd5ff2b0135c26aac3842a2be676b0a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - 🔧 Enforce @typescript-eslint/no-deprecated and Replace Deprecated APIs
+
+- [#13038](https://github.com/LedgerHQ/ledger-live/pull/13038) [`ef276b7`](https://github.com/LedgerHQ/ledger-live/commit/ef276b7654ab32c7253ee812ceac3f89316ded4b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Uses crypto-icons everywhere and drop the legacy crypto-icons-ui for design unification and performance gain
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+- [#13247](https://github.com/LedgerHQ/ledger-live/pull/13247) [`750665c`](https://github.com/LedgerHQ/ledger-live/commit/750665ceb8ec4579919595c8bc117216c6d4b758) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Remove pre-ldls cryptoicon
+
+## 0.41.2
+
+### Patch Changes
+
+- Updated dependencies [[`fe81926`](https://github.com/LedgerHQ/ledger-live/commit/fe81926afeb2df8e917e6bd1e4cbab13f09647fd), [`a3425cf`](https://github.com/LedgerHQ/ledger-live/commit/a3425cf0563667ac933765625e155f22db870ae1), [`903ea9c`](https://github.com/LedgerHQ/ledger-live/commit/903ea9cdacf704a0119de2803a4f409b775391a5), [`1416051`](https://github.com/LedgerHQ/ledger-live/commit/141605179eeffc4d475150a3cfdeee431c21c7ee), [`6baa679`](https://github.com/LedgerHQ/ledger-live/commit/6baa679f53c04fff0e2a2e71ed2815d5ed78c856)]:
+  - @ledgerhq/crypto-icons-ui@1.24.0
+  - @ledgerhq/icons-ui@0.17.0
+
+## 0.41.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`fe81926`](https://github.com/LedgerHQ/ledger-live/commit/fe81926afeb2df8e917e6bd1e4cbab13f09647fd), [`a3425cf`](https://github.com/LedgerHQ/ledger-live/commit/a3425cf0563667ac933765625e155f22db870ae1), [`903ea9c`](https://github.com/LedgerHQ/ledger-live/commit/903ea9cdacf704a0119de2803a4f409b775391a5), [`1416051`](https://github.com/LedgerHQ/ledger-live/commit/141605179eeffc4d475150a3cfdeee431c21c7ee), [`6baa679`](https://github.com/LedgerHQ/ledger-live/commit/6baa679f53c04fff0e2a2e71ed2815d5ed78c856)]:
+  - @ledgerhq/crypto-icons-ui@1.24.0-next.0
+  - @ledgerhq/icons-ui@0.17.0-next.0
+
+## 0.41.1
+
+### Patch Changes
+
+- Updated dependencies [[`42d9805`](https://github.com/LedgerHQ/ledger-live/commit/42d98050de48a1222bfca663dd4b8da7aafa3ee9)]:
+  - @ledgerhq/crypto-icons-ui@1.23.0
+
+## 0.41.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`42d9805`](https://github.com/LedgerHQ/ledger-live/commit/42d98050de48a1222bfca663dd4b8da7aafa3ee9)]:
+  - @ledgerhq/crypto-icons-ui@1.23.0-next.0
+
+## 0.41.0
+
+### Minor Changes
+
+- [#12462](https://github.com/LedgerHQ/ledger-live/pull/12462) [`44c8481`](https://github.com/LedgerHQ/ledger-live/commit/44c84816e0424200303fa4042194e93ae0a2ffbd) Thanks [@thesan](https://github.com/thesan)! - Change Ledger live svg logo to use L Wallet svg logo
+
+- [#12462](https://github.com/LedgerHQ/ledger-live/pull/12462) [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4) Thanks [@thesan](https://github.com/thesan)! - Rename Ledger Live Team to Ledger Wallet Team
+
+- [#12255](https://github.com/LedgerHQ/ledger-live/pull/12255) [`7e928f4`](https://github.com/LedgerHQ/ledger-live/commit/7e928f4a695fc51b0b9f009b1a273ba8de4d7f45) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - enhance icons from Market
+
+- [#12286](https://github.com/LedgerHQ/ledger-live/pull/12286) [`c13eccc`](https://github.com/LedgerHQ/ledger-live/commit/c13eccc6fd9f54cb7b57fd74d21e5565e9b8b2df) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add isNeutral prop and active background choice to vertical timeline
+
+### Patch Changes
+
+- Updated dependencies [[`b600bb7`](https://github.com/LedgerHQ/ledger-live/commit/b600bb70c65f5e151ad22a7d2b485363aa8eaea3), [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4), [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d), [`da727d3`](https://github.com/LedgerHQ/ledger-live/commit/da727d355b6911699cccb16bae6b0c7e9e2bea95), [`62f3021`](https://github.com/LedgerHQ/ledger-live/commit/62f3021603bbfda619ca0c4dcd72a2f61874c5d6), [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d)]:
+  - @ledgerhq/crypto-icons-ui@1.22.0
+  - @ledgerhq/ui-shared@0.5.0
+  - @ledgerhq/icons-ui@0.16.0
+
+## 0.41.0-next.0
+
+### Minor Changes
+
+- [#12462](https://github.com/LedgerHQ/ledger-live/pull/12462) [`44c8481`](https://github.com/LedgerHQ/ledger-live/commit/44c84816e0424200303fa4042194e93ae0a2ffbd) Thanks [@thesan](https://github.com/thesan)! - Change Ledger live svg logo to use L Wallet svg logo
+
+- [#12462](https://github.com/LedgerHQ/ledger-live/pull/12462) [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4) Thanks [@thesan](https://github.com/thesan)! - Rename Ledger Live Team to Ledger Wallet Team
+
+- [#12255](https://github.com/LedgerHQ/ledger-live/pull/12255) [`7e928f4`](https://github.com/LedgerHQ/ledger-live/commit/7e928f4a695fc51b0b9f009b1a273ba8de4d7f45) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - enhance icons from Market
+
+- [#12286](https://github.com/LedgerHQ/ledger-live/pull/12286) [`c13eccc`](https://github.com/LedgerHQ/ledger-live/commit/c13eccc6fd9f54cb7b57fd74d21e5565e9b8b2df) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add isNeutral prop and active background choice to vertical timeline
+
+### Patch Changes
+
+- Updated dependencies [[`b600bb7`](https://github.com/LedgerHQ/ledger-live/commit/b600bb70c65f5e151ad22a7d2b485363aa8eaea3), [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4), [`34b28dd`](https://github.com/LedgerHQ/ledger-live/commit/34b28dd5e819906daaa79db5fe6064674def5e7d), [`da727d3`](https://github.com/LedgerHQ/ledger-live/commit/da727d355b6911699cccb16bae6b0c7e9e2bea95), [`62f3021`](https://github.com/LedgerHQ/ledger-live/commit/62f3021603bbfda619ca0c4dcd72a2f61874c5d6), [`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d)]:
+  - @ledgerhq/crypto-icons-ui@1.22.0-next.0
+  - @ledgerhq/ui-shared@0.5.0-next.0
+  - @ledgerhq/icons-ui@0.16.0-next.0
+
+## 0.40.0
+
+### Minor Changes
+
+- [#12126](https://github.com/LedgerHQ/ledger-live/pull/12126) [`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use pnpm catalog for react & react-dom
+
+- [#12194](https://github.com/LedgerHQ/ledger-live/pull/12194) [`759b6c3`](https://github.com/LedgerHQ/ledger-live/commit/759b6c3c0ea39bef84ff340f8a3ee0dc8c48f9b4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LLD MAD fix address display
+
+### Patch Changes
+
+- Updated dependencies [[`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18), [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8), [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202)]:
+  - @ledgerhq/crypto-icons-ui@1.21.0
+  - @ledgerhq/icons-ui@0.15.0
+
+## 0.40.0-next.0
+
+### Minor Changes
+
+- [#12126](https://github.com/LedgerHQ/ledger-live/pull/12126) [`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use pnpm catalog for react & react-dom
+
+- [#12194](https://github.com/LedgerHQ/ledger-live/pull/12194) [`759b6c3`](https://github.com/LedgerHQ/ledger-live/commit/759b6c3c0ea39bef84ff340f8a3ee0dc8c48f9b4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LLD MAD fix address display
+
+### Patch Changes
+
+- Updated dependencies [[`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18), [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8), [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202)]:
+  - @ledgerhq/crypto-icons-ui@1.21.0-next.0
+  - @ledgerhq/icons-ui@0.15.0-next.0
+
+## 0.39.0
+
+### Minor Changes
+
+- [#11908](https://github.com/LedgerHQ/ledger-live/pull/11908) [`b038092`](https://github.com/LedgerHQ/ledger-live/commit/b03809244e08f5259b7be816366f368743591096) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix double dash when market trend is negative
+
+### Patch Changes
+
+- Updated dependencies [[`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed)]:
+  - @ledgerhq/crypto-icons-ui@1.20.0
+
+## 0.39.0-next.0
+
+### Minor Changes
+
+- [#11908](https://github.com/LedgerHQ/ledger-live/pull/11908) [`b038092`](https://github.com/LedgerHQ/ledger-live/commit/b03809244e08f5259b7be816366f368743591096) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix double dash when market trend is negative
+
+### Patch Changes
+
+- Updated dependencies [[`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed)]:
+  - @ledgerhq/crypto-icons-ui@1.20.0-next.0
+
+## 0.38.0
+
+### Minor Changes
+
+- [#11803](https://github.com/LedgerHQ/ledger-live/pull/11803) [`94d91da`](https://github.com/LedgerHQ/ledger-live/commit/94d91da4e1b19dc5132e11b4c63b0d2cda87c71b) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add auto focus to asset search input
+
+- [#11829](https://github.com/LedgerHQ/ledger-live/pull/11829) [`e6de5d9`](https://github.com/LedgerHQ/ledger-live/commit/e6de5d906be3e33a1c62b6f80985eca53fae94f0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Implement marketTrend modular parameters for the left and right elements of the mad assets page
+
+- [#11893](https://github.com/LedgerHQ/ledger-live/pull/11893) [`ffd388f`](https://github.com/LedgerHQ/ledger-live/commit/ffd388fde99bda2079ed4a30f7816b614e29be79) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add colored border on search focus
+
+- [#11843](https://github.com/LedgerHQ/ledger-live/pull/11843) [`4b7c1d3`](https://github.com/LedgerHQ/ledger-live/commit/4b7c1d37f2a11b5cf9ac40238e77f889d027c4ec) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add fix for layout shift
+
+- [#11868](https://github.com/LedgerHQ/ledger-live/pull/11868) [`f55291b`](https://github.com/LedgerHQ/ledger-live/commit/f55291b02f6a603e37eae2aee0c569e434982c21) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD MAD - add a Debug Duplicates devtool
+
+- [#11777](https://github.com/LedgerHQ/ledger-live/pull/11777) [`3c11d8e`](https://github.com/LedgerHQ/ledger-live/commit/3c11d8e0ad901a25dfd63e93e332ad73707a58a1) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Fix Tab Indicator Sync
+
+### Patch Changes
+
+- Updated dependencies [[`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8), [`12909c4`](https://github.com/LedgerHQ/ledger-live/commit/12909c464d22e72d741262df106d0b3ce7f9130a), [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92), [`aade218`](https://github.com/LedgerHQ/ledger-live/commit/aade21864a36bce4b81dcce7ae46fe73894f9d33)]:
+  - @ledgerhq/crypto-icons-ui@1.19.0
+  - @ledgerhq/icons-ui@0.14.0
+
+## 0.38.0-next.0
+
+### Minor Changes
+
+- [#11803](https://github.com/LedgerHQ/ledger-live/pull/11803) [`94d91da`](https://github.com/LedgerHQ/ledger-live/commit/94d91da4e1b19dc5132e11b4c63b0d2cda87c71b) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add auto focus to asset search input
+
+- [#11829](https://github.com/LedgerHQ/ledger-live/pull/11829) [`e6de5d9`](https://github.com/LedgerHQ/ledger-live/commit/e6de5d906be3e33a1c62b6f80985eca53fae94f0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Implement marketTrend modular parameters for the left and right elements of the mad assets page
+
+- [#11893](https://github.com/LedgerHQ/ledger-live/pull/11893) [`ffd388f`](https://github.com/LedgerHQ/ledger-live/commit/ffd388fde99bda2079ed4a30f7816b614e29be79) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add colored border on search focus
+
+- [#11843](https://github.com/LedgerHQ/ledger-live/pull/11843) [`4b7c1d3`](https://github.com/LedgerHQ/ledger-live/commit/4b7c1d37f2a11b5cf9ac40238e77f889d027c4ec) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add fix for layout shift
+
+- [#11868](https://github.com/LedgerHQ/ledger-live/pull/11868) [`f55291b`](https://github.com/LedgerHQ/ledger-live/commit/f55291b02f6a603e37eae2aee0c569e434982c21) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD MAD - add a Debug Duplicates devtool
+
+- [#11777](https://github.com/LedgerHQ/ledger-live/pull/11777) [`3c11d8e`](https://github.com/LedgerHQ/ledger-live/commit/3c11d8e0ad901a25dfd63e93e332ad73707a58a1) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Fix Tab Indicator Sync
+
+### Patch Changes
+
+- Updated dependencies [[`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8), [`12909c4`](https://github.com/LedgerHQ/ledger-live/commit/12909c464d22e72d741262df106d0b3ce7f9130a), [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92), [`aade218`](https://github.com/LedgerHQ/ledger-live/commit/aade21864a36bce4b81dcce7ae46fe73894f9d33)]:
+  - @ledgerhq/crypto-icons-ui@1.19.0-next.0
+  - @ledgerhq/icons-ui@0.14.0-next.0
+
+## 0.37.0
+
+### Minor Changes
+
+- [#11537](https://github.com/LedgerHQ/ledger-live/pull/11537) [`b34a43c`](https://github.com/LedgerHQ/ledger-live/commit/b34a43c290929ccab9380c2c2853bd320d4630b9) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - MAD DADA pagination
+
+### Patch Changes
+
+- Updated dependencies [[`5336021`](https://github.com/LedgerHQ/ledger-live/commit/53360213fe1545cfac761d872c0bd7a592697279), [`222bd7b`](https://github.com/LedgerHQ/ledger-live/commit/222bd7b69d32fd93562e9cb4bc1cf2840d0a0620)]:
+  - @ledgerhq/ui-shared@0.4.0
+
+## 0.37.0-next.0
+
+### Minor Changes
+
+- [#11537](https://github.com/LedgerHQ/ledger-live/pull/11537) [`b34a43c`](https://github.com/LedgerHQ/ledger-live/commit/b34a43c290929ccab9380c2c2853bd320d4630b9) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - MAD DADA pagination
+
+### Patch Changes
+
+- Updated dependencies [[`5336021`](https://github.com/LedgerHQ/ledger-live/commit/53360213fe1545cfac761d872c0bd7a592697279), [`222bd7b`](https://github.com/LedgerHQ/ledger-live/commit/222bd7b69d32fd93562e9cb4bc1cf2840d0a0620)]:
+  - @ledgerhq/ui-shared@0.4.0-next.0
+
 ## 0.36.0
 
 ### Minor Changes

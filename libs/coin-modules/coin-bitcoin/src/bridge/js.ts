@@ -22,12 +22,14 @@ import { SignerContext } from "../signer";
 import { broadcast } from "../broadcast";
 import { perCoinLogic } from "../logic";
 import resolver from "../hw-getAddress";
+import { validateAddress } from "../validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext) {
   const getAddress = resolver(signerContext);
   const scanAccounts = makeScanAccounts<BitcoinAccount>({
     getAccountShape: makeGetAccountShape(signerContext),
     getAddressFn: getAddressWrapper(getAddress),
+    postSync,
   });
 
   return {
@@ -76,11 +78,15 @@ function buildAccountBridge(signerContext: SignerContext) {
     receive,
     sync,
     signOperation: buildSignOperation(signerContext),
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast: wrappedBroadcast,
     assignFromAccountRaw,
     assignToAccountRaw,
     formatAccountSpecifics: formatters.formatAccountSpecifics,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

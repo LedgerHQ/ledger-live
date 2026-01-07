@@ -6,11 +6,13 @@ import { track } from "~/renderer/analytics/segment";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export type Props = {
   onClose: () => void;
   device: Device | null;
   displayTitle: boolean | null;
+  companionStep: "first-step" | "second-step";
 };
 
 const AnimatedText = styled.div<{ visible?: boolean | null }>`
@@ -18,15 +20,17 @@ const AnimatedText = styled.div<{ visible?: boolean | null }>`
   transition: opacity 0.6s linear;
 `;
 
-const Header = ({ onClose, device, displayTitle }: Props) => {
+const Header = ({ onClose, device, displayTitle, companionStep }: Props) => {
   const { t } = useTranslation();
+  const isSyncIncr1Enabled = useFeature("lldSyncOnboardingIncr1")?.enabled || false;
   const productName = device
     ? getDeviceModel(device.modelId).productName || device.modelId
     : "Ledger Device";
   const deviceName = device?.deviceName || productName;
-  const { colors } = useTheme();
+  const { theme } = useTheme();
 
-  const palette = colors.palette.type;
+  const palette = theme;
+  const title = companionStep === "first-step" ? "titleTwoStep" : "secureCryptoTitle";
 
   return (
     <Flex
@@ -49,7 +53,9 @@ const Header = ({ onClose, device, displayTitle }: Props) => {
       <Flex my={10} ml={120}>
         <AnimatedText visible={displayTitle}>
           <Text variant="h3Inter" fontSize="8" fontWeight="semiBold">
-            {t("syncOnboarding.manual.title", { deviceName })}
+            {isSyncIncr1Enabled
+              ? t(`syncOnboarding.manual.${title}`)
+              : t("syncOnboarding.manual.title", { deviceName })}
           </Text>
         </AnimatedText>
       </Flex>

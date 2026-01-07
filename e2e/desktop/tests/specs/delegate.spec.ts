@@ -1,11 +1,13 @@
-import { test } from "../fixtures/common";
+import { test } from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { CLI } from "../utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { getEnv } from "@ledgerhq/live-env";
-import { addTmsLink } from "tests/utils/allureUtils";
+import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -105,7 +107,7 @@ for (const account of e2eDelegationAccounts) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: account.delegate.account.currency.ticker,
+            currency: account.delegate.account.currency.id,
             index: account.delegate.account.index,
             add: true,
             appjson: appjsonPath,
@@ -114,10 +116,22 @@ for (const account of e2eDelegationAccounts) {
       ],
     });
 
+    const family = getFamilyByCurrencyId(account.delegate.account.currency.id);
+
     test(
       `[${account.delegate.account.currency.name}] Delegate`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${account.delegate.account.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
+          ...(account.delegate.account === Account.ATOM_1 ? ["@smoke"] : []),
+        ],
         annotation: { type: "TMS", description: account.xrayTicket },
       },
       async ({ app }) => {
@@ -179,7 +193,7 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: account.delegate.account.currency.ticker,
+            currency: account.delegate.account.currency.id,
             index: account.delegate.account.index,
             add: true,
             appjson: appjsonPath,
@@ -188,10 +202,21 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
       ],
     });
 
+    const family = getFamilyByCurrencyId(account.delegate.account.currency.id);
+
     test(
       `[${account.delegate.account.currency.name}] Delegate without broadcasting`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${account.delegate.account.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
+        ],
         annotation: { type: "TMS", description: account.xrayTicket },
       },
       async ({ app }) => {
@@ -256,7 +281,7 @@ test.describe("e2e delegation - Tezos", () => {
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: account.account.currency.ticker,
+          currency: account.account.currency.id,
           index: account.account.index,
           add: true,
           appjson: appjsonPath,
@@ -265,10 +290,21 @@ test.describe("e2e delegation - Tezos", () => {
     ],
   });
 
+  const family = getFamilyByCurrencyId(account.account.currency.id);
+
   test(
     "Tezos Delegation",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        `@${account.account.currency.id}`,
+        ...(family ? [`@family-${family}`] : []),
+      ],
       annotation: {
         type: "TMS",
         description: "B2CQA-3041",
@@ -303,7 +339,7 @@ test.describe("e2e delegation - Celo", () => {
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: account.account.currency.ticker,
+          currency: account.account.currency.id,
           index: account.account.index,
           add: true,
           appjson: appjsonPath,
@@ -312,10 +348,21 @@ test.describe("e2e delegation - Celo", () => {
     ],
   });
 
+  const family = getFamilyByCurrencyId(account.account.currency.id);
+
   test(
     "Celo Delegation",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        `@${account.account.currency.id}`,
+        ...(family ? [`@family-${family}`] : []),
+      ],
       annotation: {
         type: "TMS",
         description: "B2CQA-3042",
@@ -323,6 +370,7 @@ test.describe("e2e delegation - Celo", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await addBugLink(["NAPPS-1128"]);
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();
@@ -352,7 +400,7 @@ for (const validator of validators) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: validator.delegate.account.currency.ticker,
+            currency: validator.delegate.account.currency.id,
             index: validator.delegate.account.index,
             add: true,
             appjson: appjsonPath,
@@ -361,10 +409,21 @@ for (const validator of validators) {
       ],
     });
 
+    const family = getFamilyByCurrencyId(validator.delegate.account.currency.id);
+
     test(
       `[${validator.delegate.account.currency.name}] - Select validator`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${validator.delegate.account.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
+        ],
         annotation: { type: "TMS", description: validator.xrayTicket },
       },
       async ({ app }) => {
@@ -400,7 +459,7 @@ test.describe("Staking flow from different entry point", () => {
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: delegateAccount.account.currency.ticker,
+          currency: delegateAccount.account.currency.id,
           index: delegateAccount.account.index,
           add: true,
           appjson: appjsonPath,
@@ -409,10 +468,21 @@ test.describe("Staking flow from different entry point", () => {
     ],
   });
 
+  const family = getFamilyByCurrencyId(delegateAccount.account.currency.id);
+
   test(
     "Staking flow from portfolio entry point",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        `@${delegateAccount.account.currency.id}`,
+        ...(family ? [`@family-${family}`] : []),
+      ],
       annotation: {
         type: "TMS",
         description: "B2CQA-2769, B2CQA-3281, B2CQA-3289",
@@ -424,12 +494,12 @@ test.describe("Staking flow from different entry point", () => {
       await app.layout.goToPortfolio();
       await app.portfolio.startStakeFlow();
 
-      const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-      if (isModularDrawer) {
-        await app.modularDrawer.validateAssetsDrawerItems();
-        await app.modularDrawer.selectAssetByTickerAndName(delegateAccount.account.currency);
-        await app.modularDrawer.selectNetwork(delegateAccount.account.currency);
-        await app.modularDrawer.selectAccountByName(delegateAccount.account);
+      const selector = await getModularSelector(app, "ASSET");
+      if (selector) {
+        await selector.validateItems();
+        await selector.selectAsset(delegateAccount.account.currency);
+        await selector.selectNetwork(delegateAccount.account.currency);
+        await selector.selectAccountByName(delegateAccount.account);
       } else {
         await app.portfolio.expectChooseAssetToBeVisible();
         await app.assetDrawer.selectAsset(delegateAccount.account.currency);
@@ -444,7 +514,16 @@ test.describe("Staking flow from different entry point", () => {
   test(
     "Staking flow from market entry point",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        `@${delegateAccount.account.currency.id}`,
+        ...(family ? [`@family-${family}`] : []),
+      ],
       annotation: {
         type: "TMS",
         description: "B2CQA-2771, B2CQA-3289",
@@ -454,12 +533,12 @@ test.describe("Staking flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.layout.goToMarket();
-      await app.market.search(delegateAccount.account.currency.name);
+      await app.market.search(delegateAccount.account.currency.ticker);
       await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
 
-      const modularDrawerVisible = await app.modularDrawer.isModularAccountDrawerVisible();
-      if (modularDrawerVisible) {
-        await app.modularDrawer.selectAccountByName(delegateAccount.account);
+      const selector = await getModularSelector(app, "ACCOUNT");
+      if (selector) {
+        await selector.selectAccount(delegateAccount.account);
       } else {
         await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
       }
@@ -478,7 +557,7 @@ for (const currency of liveApps) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: currency.delegate.account.currency.ticker,
+            currency: currency.delegate.account.currency.id,
             index: currency.delegate.account.index,
             add: true,
             appjson: appjsonPath,
@@ -487,10 +566,21 @@ for (const currency of liveApps) {
       ],
     });
 
+    const family = getFamilyByCurrencyId(currency.delegate.account.currency.id);
+
     test(
       `[${currency.delegate.account.currency.name}] - Select validator`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${currency.delegate.account.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
+        ],
         annotation: { type: "TMS", description: currency.xrayTicket },
       },
       async ({ app }) => {

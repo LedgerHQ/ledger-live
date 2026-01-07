@@ -8,14 +8,14 @@ import {
   ViewStyle,
 } from "react-native";
 
-import TimelineItem from "./TimelineItem";
+import TimelineItem, { TimelineStep } from "./TimelineItem";
 import Flex from "../../Flex";
 import Text, { BaseTextProps } from "../../../Text";
 import { BaseStyledProps } from "src/components/styled";
-import { Item, ItemStatus } from "../types";
+import { ItemStatus } from "../types";
 
 export type Props = BaseStyledProps & {
-  steps?: Item[];
+  steps?: TimelineStep[];
   formatEstimatedTime?: (_: number) => string;
   setActiveIndex?: (arg0: number) => void;
   header?: React.ReactNode;
@@ -25,6 +25,10 @@ export type Props = BaseStyledProps & {
    * */
   autoScroll?: boolean;
   contentContainerStyle?: StyleProp<ViewStyle>;
+  /*
+   * Scroll a parent scrollview component if present
+   */
+  parentScrollRef?: null | React.RefObject<ScrollView>;
 };
 
 export default function VerticalTimeline({
@@ -34,6 +38,7 @@ export default function VerticalTimeline({
   header,
   autoScroll = true,
   contentContainerStyle,
+  parentScrollRef = null,
   ...props
 }: Props) {
   const scrollViewRef = useRef<ScrollView | null>(null);
@@ -58,15 +63,18 @@ export default function VerticalTimeline({
       {header}
       <Flex {...props} onLayout={onStepsContainerLayout} flexDirection="column">
         {steps?.map((step, index) => (
-          <View onLayout={autoScroll && step.status === "active" ? onActiveStepLayout : undefined}>
+          <View
+            key={step.title}
+            onLayout={autoScroll && step.status === "active" ? onActiveStepLayout : undefined}
+          >
             <TimelineItem
-              key={step.title}
               item={step}
               formatEstimatedTime={formatEstimatedTime}
               isFirstItem={index === 0}
               isLastItem={index === steps.length - 1}
               setActiveIndex={setActiveIndex}
               index={index}
+              parentScrollRef={parentScrollRef}
             />
           </View>
         ))}

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { Keyboard } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useIsFocused } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { isModalLockedSelector } from "~/reducers/appstate";
 import { DrawerInQueue, useQueuedDrawerContext } from "../QueuedDrawersContext";
 import { logDrawer } from "../utils/logDrawer";

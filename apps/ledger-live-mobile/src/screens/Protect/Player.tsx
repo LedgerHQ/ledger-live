@@ -17,7 +17,7 @@ import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { NavigatorName, ScreenName } from "~/const";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { counterValueCurrencySelector } from "~/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
 export type Props = RootComposite<

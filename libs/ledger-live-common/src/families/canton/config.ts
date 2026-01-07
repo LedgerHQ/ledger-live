@@ -6,13 +6,16 @@ export const cantonConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
-      nodeUrl: "https://canton-gateway.api.live.ledger.com/v1/node/ledger-mainnet-prd",
-      nodeId: "ledger-live-mainnet-prd",
+      nodeUrl: "https://canton-gateway.api.live.ledger.com/v1/node/ledger-live-mainnet",
+      nodeId: "ledger-live-mainnet",
       gatewayUrl: "https://canton-gateway.api.live.ledger.com",
       minReserve: 0,
       useGateway: true,
       networkType: "mainnet",
+      nativeInstrumentId: "Amulet",
+      fee: 0,
     },
   },
   config_currency_canton_network_devnet: {
@@ -20,28 +23,34 @@ export const cantonConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
-      nodeUrl: "https://wallet-validator-devnet-canton.ledger-test.com",
-      nodeId: "ledger-devnet-stg",
-      gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
+      nodeUrl: "https://canton-gateway-devnet.api.live.ledger-test.com/v1/node/ledger-live-devnet",
+      nodeId: "ledger-live-devnet",
+      gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
       minReserve: 0,
       useGateway: true,
       networkType: "devnet",
       nativeInstrumentId: "Amulet",
+      fee: 0,
     },
   },
-  config_currency_canton_network_localnet: {
+  config_currency_canton_network_testnet: {
     type: "object",
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
-      nodeUrl: "http://localhost:2975/v2",
-      nodeId: undefined,
-      gatewayUrl: undefined,
+      nodeUrl:
+        "https://canton-gateway-testnet.api.live.ledger-test.com/v1/node/ledger-live-testnet",
+      nodeId: "ledger-live-testnet",
+      gatewayUrl: "https://canton-gateway-testnet.api.live.ledger-test.com",
       minReserve: 0,
-      useGateway: false,
-      networkType: "localnet",
+      nativeInstrumentId: "Amulet",
+      useGateway: true,
+      networkType: "testnet",
+      fee: 0,
     },
   },
 };

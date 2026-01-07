@@ -1,3 +1,6 @@
+import { Step } from "jest-allure2-reporter/api";
+import { openDeeplink } from "../../helpers/commonHelpers";
+
 export default class MarketPage {
   marketRowTitleBaseId = "market-row-title-";
 
@@ -8,6 +11,16 @@ export default class MarketPage {
   starMarketListButton = () => getElementById("toggle-starred-currencies");
   marketQuickActionButton = (action: "send" | "receive" | "buy" | "sell" | "swap") =>
     getElementById(`market-quick-action-button-${action}`);
+
+  @Step("Open market detail via deeplink")
+  async openViaDeeplink(currencyId?: string) {
+    await openDeeplink(currencyId ? `market/${currencyId}` : "market");
+  }
+
+  @Step("Expect market detail page")
+  async expectMarketDetailPage() {
+    await detoxExpect(this.starButton()).toBeVisible();
+  }
 
   @Step("Search for asset")
   async searchAsset(asset: string) {

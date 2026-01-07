@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -8,17 +8,14 @@ import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getNFT } from "@ledgerhq/live-nft";
-import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-import { getNftCapabilities } from "@ledgerhq/coin-framework/nft/support";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { Account, AccountLike, NFT, Operation } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -32,8 +29,6 @@ import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import { St, StepId } from "./types";
-import { getLLDCoinFamily } from "~/renderer/families";
-import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 export type Data = {
   account?: AccountLike | undefined | null;
@@ -42,13 +37,10 @@ export type Data = {
   recipient?: string;
   amount?: BigNumber;
   disableBacks?: string[];
-  isNFTSend?: boolean;
   walletConnectProxy?: boolean;
-  nftId?: string;
-  nftCollection?: string;
   transaction?: Transaction;
-  onConfirmationHandler?: Function;
-  onFailHandler?: Function;
+  onConfirmationHandler?: () => void;
+  onFailHandler?: () => void;
   stepId?: StepId;
 };
 
@@ -67,7 +59,7 @@ type StateProps = {
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
 };
 type Props = {} & OwnProps & StateProps;
-const createSteps = (disableBacks: string[] = [], shouldSkipAmount = false): St[] => {
+const createSteps = (disableBacks: string[] = []): St[] => {
   const steps: Array<St | undefined> = [
     {
       id: "warning",
@@ -81,17 +73,15 @@ const createSteps = (disableBacks: string[] = [], shouldSkipAmount = false): St[
       component: StepRecipient,
       footer: StepRecipientFooter,
     },
-    shouldSkipAmount
-      ? undefined
-      : {
-          id: "amount",
-          label: <Trans i18nKey="send.steps.amount.title" />,
-          component: StepAmount,
-          footer: StepAmountFooter,
-          onBack: !disableBacks.includes("amount")
-            ? ({ transitionTo }) => transitionTo("recipient")
-            : null,
-        },
+    {
+      id: "amount",
+      label: <Trans i18nKey="send.steps.amount.title" />,
+      component: StepAmount,
+      footer: StepAmountFooter,
+      onBack: !disableBacks.includes("amount")
+        ? ({ transitionTo }) => transitionTo("recipient")
+        : null,
+    },
     {
       id: "summary",
       label: <Trans i18nKey="send.steps.summary.title" />,
@@ -143,14 +133,12 @@ const Body = ({
   updateAccountWithUpdater,
 }: Props) => {
   const openedFromAccount = !!params.account;
-  const isNFTSend = !!params.isNFTSend;
+
   const walletConnectProxy = !!params.walletConnectProxy;
 
   // initial values might coming from deeplink
   const [maybeAmount, setMaybeAmount] = useState(() => params.amount || null);
   const [maybeRecipient, setMaybeRecipient] = useState(() => params.recipient || null);
-  const maybeNFTId = useMemo(() => params.nftId, [params.nftId]);
-  const maybeNFTCollection = useMemo(() => params.nftCollection, [params.nftCollection]);
   const onResetMaybeAmount = useCallback(() => {
     setMaybeAmount(null);
   }, [setMaybeAmount]);
@@ -158,37 +146,7 @@ const Body = ({
     setMaybeRecipient(null);
   }, [setMaybeRecipient]);
 
-  // if it's an ERC721 transfer, it has no amount and since the
-  // "amount" step is also showing the gas selection options,
-  // having no quantity + no gas options should mean
-  // skipping the amount step completely
-  const shouldSkipAmount = useMemo(() => {
-    if (!isNFTSend) return false;
-
-    const parentAccount = params?.parentAccount;
-    const account = params?.account || accounts[0];
-
-    const mainAccount = getMainAccount(account, parentAccount);
-    const { currency } = mainAccount;
-
-    // FIXME to remove after ethereum -> evm migration
-    if (currency.family !== "evm") return false;
-
-    const { contract, tokenId } = maybeNFTId
-      ? decodeNftId(maybeNFTId)
-      : ({} as Record<string, undefined>);
-    const nft = getNFT(contract, tokenId, mainAccount.nfts);
-    const nftCapabilities = getNftCapabilities(nft);
-
-    try {
-      const config = getCurrencyConfiguration(currency);
-      return !config?.gasTracker && !nftCapabilities.hasQuantity;
-    } catch (err) {
-      console.warn(err);
-    }
-  }, [isNFTSend, params?.parentAccount, params?.account, accounts, maybeNFTId]);
-
-  const [steps] = useState(() => createSteps(params.disableBacks, shouldSkipAmount));
+  const [steps] = useState(() => createSteps(params.disableBacks));
 
   const {
     transaction,
@@ -217,12 +175,48 @@ const Body = ({
     const stepId = params?.startWithWarning ? "warning" : null;
     if (stepId) onChangeStepId(stepId);
   }, [onChangeStepId, params]);
+
+  // Apply pre-filled recipient and amount to transaction when skipping steps
+  useEffect(() => {
+    if (!transaction) return;
+
+    const bridge = getAccountBridge(account, parentAccount);
+    let updatedTransaction = transaction;
+    let hasChanges = false;
+
+    if (maybeRecipient && !transaction.recipient) {
+      updatedTransaction = bridge.updateTransaction(updatedTransaction, {
+        recipient: maybeRecipient,
+      });
+      hasChanges = true;
+      onResetMaybeRecipient();
+    }
+
+    if (maybeAmount && !maybeAmount.eq(transaction.amount || new BigNumber(0))) {
+      updatedTransaction = bridge.updateTransaction(updatedTransaction, { amount: maybeAmount });
+      hasChanges = true;
+      onResetMaybeAmount();
+    }
+
+    if (hasChanges) {
+      setTransaction(updatedTransaction);
+    }
+  }, [
+    maybeRecipient,
+    maybeAmount,
+    transaction,
+    account,
+    parentAccount,
+    setTransaction,
+    onResetMaybeRecipient,
+    onResetMaybeAmount,
+  ]);
+
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const currency = account ? getAccountCurrency(account) : undefined;
   const currencyName = currency ? currency.name : undefined;
-  const mainAccount = getMainAccount(account, parentAccount);
   const handleCloseModal = useCallback(() => {
     closeModal("MODAL_SEND");
   }, [closeModal]);
@@ -234,45 +228,7 @@ const Body = ({
     },
     [account, setAccount],
   );
-  const handleChangeNFT = useCallback(
-    (nextNft: NFT) => {
-      setAccount(mainAccount, undefined);
-      const specific = getLLDCoinFamily(mainAccount.currency.family);
-      if (!specific.nft || !transaction) return;
 
-      const bridge = getAccountBridge(mainAccount);
-      const newTransaction = specific.nft.injectNftIntoTransaction(
-        transaction,
-        {
-          contract: nextNft.contract,
-          tokenId: nextNft.tokenId,
-          quantity: new BigNumber(1),
-        },
-        nextNft.standard,
-      );
-
-      setTransaction(bridge?.updateTransaction(transaction, newTransaction));
-    },
-    [mainAccount, setAccount, setTransaction, transaction],
-  );
-  const handleChangeQuantities = useCallback(
-    (nextQuantity: string) => {
-      const specific = getLLDCoinFamily(mainAccount.currency.family);
-      if (!specific.nft || !transaction) return;
-
-      const bridge = getAccountBridge(mainAccount);
-      const newQuantity = new BigNumber(nextQuantity.replace(/\D/g, "") || 0);
-      const { quantity } = specific.nft.getNftTransactionProperties(transaction);
-
-      if (!transaction || !quantity?.eq(newQuantity)) {
-        const newTransaction = specific.nft.injectNftIntoTransaction(transaction, {
-          quantity: newQuantity,
-        });
-        setTransaction(bridge.updateTransaction(transaction, newTransaction));
-      }
-    },
-    [mainAccount, setTransaction, transaction],
-  );
   const handleRetry = useCallback(() => {
     setTransactionError(null);
     setOptimisticOperation(null);
@@ -308,12 +264,7 @@ const Body = ({
   }
   const error = transactionError || bridgeError;
   const stepperProps = {
-    title:
-      stepId === "warning"
-        ? t("common.information")
-        : isNFTSend
-          ? t("send.titleNft")
-          : t("send.title"),
+    title: stepId === "warning" ? t("common.information") : t("send.title"),
     stepId,
     steps,
     errorSteps,
@@ -347,12 +298,6 @@ const Body = ({
     walletConnectProxy,
     onConfirmationHandler: params.onConfirmationHandler,
     onFailHandler: params.onFailHandler,
-    isNFTSend,
-    maybeNFTId,
-    maybeNFTCollection,
-    onChangeQuantities: handleChangeQuantities,
-    onChangeNFT: handleChangeNFT,
-    shouldSkipAmount,
   };
 
   if (!status) {

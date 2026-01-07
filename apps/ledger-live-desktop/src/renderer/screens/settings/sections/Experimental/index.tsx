@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { EnvName, isEnvDefault } from "@ledgerhq/live-env";
 import { experimentalFeatures, isReadOnlyEnv, Feature } from "~/renderer/experimental";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import { openModal } from "~/renderer/actions/modals";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -15,9 +15,8 @@ import ExperimentalSwitch from "./ExperimentalSwitch";
 import ExperimentalInteger from "./ExperimentalInteger";
 import ExperimentalFloat from "./ExperimentalFloat";
 import FullNode from "~/renderer/screens/settings/sections/Accounts/FullNode";
-import LottieTester from "./LottieTester";
-import StorylyTester from "./StorylyTester";
-import PostOnboardingHubTester from "./PostOnboardingHubTester";
+import LottieTester from "../Developer/LottieTester";
+import PostOnboardingHubTester from "../Developer/PostOnboardingHubTester";
 import VaultSigner from "./VaultSigner";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -169,7 +168,6 @@ const SectionExperimental = () => {
         )}
         {process.env.SHOW_ETHEREUM_BRIDGE ? <EthereumBridgeRow /> : null}
         {process.env.DEBUG_LOTTIE ? <LottieTester /> : null}
-        {process.env.DEBUG_STORYLY ? <StorylyTester /> : null}
         {process.env.DEBUG_POSTONBOARDINGHUB ? <PostOnboardingHubTester /> : null}
         <VaultSigner />
         <FullNode />

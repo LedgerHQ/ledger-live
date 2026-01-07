@@ -1,7 +1,7 @@
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
@@ -129,7 +129,7 @@ const AccountBodyHeaderComponent = ({ account }: Props) => {
                 maxWidth: "65%",
               }}
             >
-              <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+              <Text ff="Inter|Medium|SemiBold" color="neutral.c70" fontSize={4}>
                 <Trans
                   i18nKey="celo.delegation.emptyState.description"
                   values={{

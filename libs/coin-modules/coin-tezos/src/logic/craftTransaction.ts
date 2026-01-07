@@ -1,7 +1,9 @@
 import { type OperationContents, OpKind } from "@taquito/rpc";
-import { getRevealFee } from "@taquito/taquito";
+import { getRevealFee, getRevealGasLimit } from "@taquito/taquito";
+import { log } from "@ledgerhq/logs";
 import coinConfig from "../config";
 import { UnsupportedTransactionMode } from "../types/errors";
+import { createMockSigner } from "../utils";
 import { getTezosToolkit } from "./tezosToolkit";
 
 export type TransactionFee = {
@@ -37,13 +39,32 @@ export async function craftTransaction(
 
   const tezosToolkit = getTezosToolkit();
 
+  // Configure signer for Taquito operations (same as in estimateFees)
+  if (publicKey) {
+    tezosToolkit.setProvider({
+      signer: createMockSigner(publicKey.publicKeyHash, publicKey.publicKey),
+    });
+  }
+
   const sourceData = await tezosToolkit.rpc.getContract(address);
   const counter = account.counter ?? Number(sourceData.counter);
 
   const contents: OperationContents[] = [];
 
   if (publicKey !== undefined) {
-    const revealFees = await tezosToolkit.estimate.reveal();
+    let revealFees;
+    try {
+      revealFees = await tezosToolkit.estimate.reveal();
+    } catch (error) {
+      // for some unknown reason, on some addresses the estimation fails with "inconsistent_hash" error, we fall back to
+      // another method from the SDK
+      log("estimate-error", "error estimating reveal fees, trying using getRevealGasLimit", {
+        error,
+      });
+      revealFees = {
+        gasLimit: getRevealGasLimit(address),
+      };
+    }
     const minRevealGasLimit = coinConfig.getCoinConfig().fees.minRevealGasLimit;
     const revealGasLimit = Math.max(revealFees?.gasLimit || 0, minRevealGasLimit);
     contents.push({

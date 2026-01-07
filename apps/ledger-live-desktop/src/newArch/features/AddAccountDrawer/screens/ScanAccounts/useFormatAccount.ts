@@ -1,42 +1,35 @@
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
-import { getBalanceAndFiatValue } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValue";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { Account as FormattedAccount } from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/AccountItem";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
-import { formatAddress } from "LLD/utils/formatAddress";
 import { useCallback } from "react";
-import { useSelector } from "react-redux";
-import { counterValueCurrencySelector, discreetModeSelector } from "~/renderer/reducers/settings";
+import { useSelector } from "LLD/hooks/redux";
+import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
+import { FormattedAccount } from "../AccountsAdded/types";
 
 export const useFormatAccount = (currency: CryptoCurrency) => {
   const walletState = useSelector(walletSelector);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
-  const counterValueState = useCountervaluesState();
+  const locale = useSelector(localeSelector);
 
   return useCallback(
     (account: Account): FormattedAccount => {
-      const { fiatValue, balance } = getBalanceAndFiatValue(
-        account,
-        counterValueState,
-        counterValueCurrency,
-        discreet,
-      );
-
       return {
-        address: formatAddress(account.freshAddress),
-        balance,
+        address: account.freshAddress,
+        balance: account.balance,
+        balanceUnit: account.currency.units[0],
         cryptoId: account.currency.id,
-        fiatValue: fiatValue ?? "",
+        // Formatting parameters
+        locale,
+        discreet,
+        // Other properties
         id: account.id,
         name: accountNameWithDefaultSelector(walletState, account),
         protocol: getTagDerivationMode(currency, account.derivationMode) ?? "",
         ticker: account.currency.ticker,
       };
     },
-    [counterValueCurrency, counterValueState, currency, discreet, walletState],
+    [currency, discreet, walletState, locale],
   );
 };

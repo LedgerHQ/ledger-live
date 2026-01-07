@@ -6,26 +6,25 @@ import { EVENTS_NAME } from "../modularDrawer.types";
 
 describe("useModularDrawerAnalytics", () => {
   it("tracks event with default params", () => {
-    const { result } = renderHook(() => useModularDrawerAnalytics());
+    const madState = { flow: "testFlow", source: "testSource" };
+
+    const { result } = renderHook(() => useModularDrawerAnalytics(), {
+      initialState: { modularDrawer: madState },
+    });
 
     const eventName = EVENTS_NAME.ASSET_CLICKED;
-    const params = { flow: "flowtest", source: "sourcetest", asset: "assettest", page: "pagetest" };
+    const params = { asset: "assettest", page: "pagetest" };
 
     result.current.trackModularDrawerEvent(eventName, params);
 
-    expect(track).toHaveBeenCalledWith(eventName, params);
+    expect(track).toHaveBeenCalledWith(eventName, { ...params, ...madState });
   });
 
   it("formats and tracks asset configuration when formatAssetConfig is true", () => {
     const { result } = renderHook(() => useModularDrawerAnalytics());
 
     const eventName = EVENTS_NAME.ASSET_CLICKED;
-    const params = {
-      flow: "flowtest",
-      source: "sourcetest",
-      asset: "assettest",
-      page: "pagetest",
-    };
+    const params = { asset: "assettest", page: "pagetest" };
 
     const assetsConfig: EnhancedModularDrawerConfiguration["assets"] = {
       filter: "topNetworks",
@@ -44,6 +43,8 @@ describe("useModularDrawerAnalytics", () => {
         filter: true,
         market_trend: false,
       },
+      flow: "",
+      source: "",
     });
   });
 
@@ -51,12 +52,7 @@ describe("useModularDrawerAnalytics", () => {
     const { result } = renderHook(() => useModularDrawerAnalytics());
 
     const eventName = EVENTS_NAME.NETWORK_CLICKED;
-    const params = {
-      flow: "flowtest",
-      source: "sourcetest",
-      network: "networktest",
-      page: "pagetest",
-    };
+    const params = { network: "networktest", page: "pagetest" };
     const networksConfig: EnhancedModularDrawerConfiguration["networks"] = {
       leftElement: "numberOfAccounts",
     };
@@ -69,6 +65,8 @@ describe("useModularDrawerAnalytics", () => {
     expect(track).toHaveBeenCalledWith(eventName, {
       ...params,
       network_component_features: expect.anything(),
+      flow: "",
+      source: "",
     });
   });
 });

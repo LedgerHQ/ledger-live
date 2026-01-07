@@ -7,3 +7,4 @@ export const CosmosDelegateAllFundsWarning = createCustomErrorClass(
 export const CosmosTooManyValidators = createCustomErrorClass("CosmosTooManyValidators");
 export const NotEnoughDelegationBalance = createCustomErrorClass("NotEnoughDelegationBalance");
 export const ClaimRewardsFeesWarning = createCustomErrorClass("ClaimRewardsFeesWarning");
+export const CosmosTooManyRedelegations = createCustomErrorClass("CosmosTooManyRedelegations");

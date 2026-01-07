@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { TokenAccount } from "@ledgerhq/types-live";
@@ -132,7 +132,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
         }}
       >
         {tronPower > 0 && formattedVotes.length > 0 ? (
-          <Button small color="palette.primary.main" onClick={() => voteOnClick()} mr={2}>
+          <Button small color="primary.c80" onClick={() => voteOnClick()} mr={2}>
             <Box horizontal flow={1} alignItems="center">
               <Vote size={12} />
               <Box>
@@ -164,7 +164,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
           >
             <Button
               onClick={() => claimOnClick()}
-              color="palette.primary.main"
+              color="primary.c80"
               disabled={!hasRewards || !canClaimRewards}
               small
             >
@@ -221,7 +221,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
               maxWidth: "65%",
             }}
           >
-            <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+            <Text ff="Inter|Medium|SemiBold" color="neutral.c70" fontSize={4}>
               <Trans
                 i18nKey={
                   tronPower > 0

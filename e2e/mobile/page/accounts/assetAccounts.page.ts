@@ -1,3 +1,4 @@
+import { Step } from "jest-allure2-reporter/api";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class AssetAccountsPage {
@@ -34,5 +35,16 @@ export default class AssetAccountsPage {
   @Step("Tap on asset quick action button ")
   async tapOnAssetQuickActionButton(action: "send" | "receive" | "buy" | "sell" | "swap") {
     await tapByElement(this.assetQuickActionButton(action));
+  }
+
+  @Step("Open asset page via deeplink")
+  async openAssetPageViaDeeplink(currencyId: string) {
+    await openDeeplink(`asset/${currencyId}`);
+  }
+
+  @Step("Expect asset page to be visible")
+  async expectAssetPage(currencyId?: string) {
+    const currency = currencyId?.toLowerCase() || "bitcoin";
+    await waitForElementById(this.accountAssetId(currency));
   }
 }

@@ -1,16 +1,21 @@
 import React, { useState, useCallback, useEffect } from "react";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { AccountLike } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import logger from "~/renderer/logger";
 import Modal from "~/renderer/components/Modal";
 import Body, { StepId } from "./Body";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveFlow";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import { closeModal } from "~/renderer/actions/modals";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
+import { GlobalModalData } from "../types";
+import { onboardingReceiveFlowSelector } from "~/renderer/reducers/onboarding";
 
 type State = {
   stepId: StepId;
@@ -18,13 +23,36 @@ type State = {
   verifyAddressError: Error | undefined | null;
 };
 
-const INITIAL_STATE = {
-  stepId: "account" as StepId,
-  isAddressVerified: null,
-  verifyAddressError: null,
-};
-const ReceiveModal = () => {
-  const [state, setState] = useState<State>(INITIAL_STATE);
+function getInitialState(
+  isNoahActive: boolean,
+  account: AccountLike | null | undefined,
+  isOnboardingFlow?: boolean,
+  activeCurrencyIds?: string[],
+): State {
+  const accountCurrency = account ? getAccountCurrency(account) : null;
+  const isValidAccount =
+    activeCurrencyIds && accountCurrency?.id
+      ? activeCurrencyIds.includes(accountCurrency.id)
+      : false;
+  const shouldUseReceiveOptions = isNoahActive && (!account || isValidAccount);
+  return {
+    stepId: !isOnboardingFlow && shouldUseReceiveOptions ? "receiveOptions" : "account",
+    isAddressVerified: null,
+    verifyAddressError: null,
+  };
+}
+
+const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
+  const noahFeature = useFeature("noah");
+  const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
+  const isNoahActive = noahFeature?.enabled === true && props?.shouldUseReceiveOptions !== false;
+  const initialState = getInitialState(
+    isNoahActive,
+    props?.account,
+    isOnboardingReceiveFlow,
+    noahFeature?.params?.activeCurrencyIds,
+  );
+  const [state, setState] = useState<State>(() => initialState);
 
   const { stepId, isAddressVerified, verifyAddressError } = state;
 
@@ -50,9 +78,9 @@ const ReceiveModal = () => {
   };
 
   const handleReset = () => {
-    setStepId(INITIAL_STATE.stepId);
-    setIsAddressVerified(INITIAL_STATE.isAddressVerified);
-    setVerifyAddressError(INITIAL_STATE.verifyAddressError);
+    setStepId(initialState.stepId);
+    setIsAddressVerified(initialState.isAddressVerified);
+    setVerifyAddressError(initialState.verifyAddressError);
   };
 
   const handleChangeAddressVerified = (isAddressVerified?: boolean | null, err?: Error | null) => {
@@ -77,7 +105,7 @@ const ReceiveModal = () => {
   const dispatch = useDispatch();
 
   const openAddAccounts = useCallback(() => {
-    openAssetFlow(true);
+    openAssetFlow();
     dispatch(closeModal("MODAL_RECEIVE"));
   }, [dispatch, openAssetFlow]);
 
@@ -90,6 +118,7 @@ const ReceiveModal = () => {
   if (!hasAccounts) return null;
 
   const isModalLocked = stepId === "receive" && isAddressVerified === null;
+
   return (
     <Modal
       name="MODAL_RECEIVE"

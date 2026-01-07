@@ -1,71 +1,30 @@
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { getCryptoAssetsStore, setCryptoAssetsStore } from ".";
-import * as legacy from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore, setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 describe("Testing CryptoAssetStore", () => {
-  it("should return the default methods from cryptoassets libs when feature flag does not exists", () => {
-    LiveConfig.setConfig({
-      some_other_feature: {
-        type: "boolean",
-        default: true,
-      },
-    });
-
-    const store = getCryptoAssetsStore();
-    expect(store).toEqual({
-      findTokenByAddress: legacy.findTokenByAddress,
-      getTokenById: legacy.getTokenById,
-      findTokenById: legacy.findTokenById,
-      findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
-      findTokenByTicker: legacy.findTokenByTicker,
-    });
+  beforeEach(() => {
+    // Reset the store before each test
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    setCryptoAssetsStore(undefined as unknown as CryptoAssetsStore);
   });
 
-  it("should return the default methods from cryptoassets libs when feature flag is disabled", () => {
-    LiveConfig.setConfig({
-      feature_cal_lazy_loading: {
-        type: "boolean",
-        default: false,
-      },
-    });
-
-    const store = getCryptoAssetsStore();
-    expect(store).toEqual({
-      findTokenByAddress: legacy.findTokenByAddress,
-      getTokenById: legacy.getTokenById,
-      findTokenById: legacy.findTokenById,
-      findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
-      findTokenByTicker: legacy.findTokenByTicker,
-    });
+  it("should throw an error when no store is set", () => {
+    expect(() => getCryptoAssetsStore()).toThrow("CryptoAssetsStore is not set");
   });
 
-  it("should throw an error when no store is set and feature flag is enabled", () => {
-    LiveConfig.setConfig({
-      feature_cal_lazy_loading: {
-        type: "boolean",
-        default: true,
-      },
-    });
-
-    expect(() => getCryptoAssetsStore()).toThrow(
-      "CryptoAssetsStore is not set. Please call setCryptoAssetsStore first.",
-    );
-  });
-
-  it("should throw return the new store when feature flag is enabled", () => {
-    LiveConfig.setConfig({
-      feature_cal_lazy_loading: {
-        type: "boolean",
-        default: true,
-      },
-    });
-
+  it("should return the store when it is set", () => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const newStore = {} as unknown as CryptoAssetsStore;
     setCryptoAssetsStore(newStore);
 
     const store = getCryptoAssetsStore();
     expect(store).toBe(newStore);
+  });
+
+  it("should work with mock store", () => {
+    const mockStore = setupMockCryptoAssetsStore();
+    const store = getCryptoAssetsStore();
+    expect(store).toBe(mockStore);
   });
 });

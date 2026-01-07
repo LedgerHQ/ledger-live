@@ -4,16 +4,14 @@ import { expect } from "@playwright/test";
 import axios from "axios";
 import * as path from "path";
 import { FileUtils } from "../utils/fileUtils";
-import fs from "fs/promises";
+import { mkdir, rename } from "fs/promises";
 
 export class SettingsPage extends AppPage {
   private manageLedgerSyncButton = this.page.getByRole("button", { name: "Manage" });
   private clearCacheButton = this.page.getByRole("button", { name: "Clear" });
   private confirmButton = this.page.getByRole("button", { name: "Confirm" });
   private accountsTab = this.page.getByTestId("settings-accounts-tab");
-  private aboutTab = this.page.getByTestId("settings-about-tab");
   private helpTab = this.page.getByTestId("settings-help-tab");
-  readonly experimentalTab = this.page.getByTestId("settings-experimental-tab");
   private ledgerSupport = this.page.getByTestId("ledgerSupport-link");
   private resetAppButton = this.page.getByTestId("reset-button");
   private viewUserDataButton = this.page.getByTestId("view-user-data-button");
@@ -37,19 +35,9 @@ export class SettingsPage extends AppPage {
     await this.accountsTab.click();
   }
 
-  @step("Go to Settings About tab")
-  async goToAboutTab() {
-    await this.aboutTab.click();
-  }
-
   @step("Go to Settings Help tab")
   async goToHelpTab() {
     await this.helpTab.click();
-  }
-
-  @step("Go to Settings Experimental tab")
-  async goToExperimentalTab() {
-    await this.experimentalTab.click();
   }
 
   @step("Change counter value to $0")
@@ -90,7 +78,7 @@ export class SettingsPage extends AppPage {
     try {
       const response = await axios.get(url);
       expect(response.status).toBe(200);
-    } catch (error) {
+    } catch {
       throw new Error(`Failed to fetch URL ${url}`);
     }
     expect(url).toBe("https://support.ledger.com");
@@ -110,14 +98,14 @@ export class SettingsPage extends AppPage {
   async clickExportLogs() {
     await this.exportLogsButton.click();
 
-    const originalFilePath = path.resolve("./ledgerlive-logs.txt");
-    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerlive-logs.txt");
+    const originalFilePath = path.resolve("./ledgerwallet-logs.txt");
+    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerwallet-logs.txt");
 
     const fileExists = await FileUtils.waitForFileToExist(originalFilePath, 5000);
     expect(fileExists).toBeTruthy();
 
     const targetDir = path.dirname(targetFilePath);
-    await fs.mkdir(targetDir, { recursive: true });
-    await fs.rename(originalFilePath, targetFilePath);
+    await mkdir(targetDir, { recursive: true });
+    await rename(originalFilePath, targetFilePath);
   }
 }

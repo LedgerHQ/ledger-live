@@ -2,7 +2,6 @@ import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
-import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Account, TokenAccount, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContextMenu";
@@ -19,13 +18,13 @@ import Star from "~/renderer/components/Stars/Star";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import Button from "~/renderer/components/Button";
 import { getLLDCoinFamily } from "~/renderer/families";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { accountNameSelector } from "@ledgerhq/live-wallet/store";
 const Row = styled(Box)`
-  background: ${p => p.theme.colors.palette.background.paper};
+  background: ${p => p.theme.colors.background.card};
   border-radius: 4px;
   border: 1px solid transparent;
   box-shadow: 0 4px 8px 0 #00000007;
@@ -40,11 +39,11 @@ const Row = styled(Box)`
   position: relative;
   transition: background-color ease-in-out 200ms;
   :hover {
-    border-color: ${p => p.theme.colors.palette.text.shade20};
+    border-color: ${p => p.theme.colors.neutral.c40};
   }
   :active:not(:focus-within) {
-    border-color: ${p => p.theme.colors.palette.text.shade20};
-    background: ${p => p.theme.colors.palette.action.hover};
+    border-color: ${p => p.theme.colors.neutral.c40};
+    background: ${p => p.theme.colors.opacityDefault.c10};
   }
 `;
 const RowContent = styled.div<{
@@ -58,8 +57,8 @@ const RowContent = styled.div<{
   opacity: ${p => (p.disabled ? 0.3 : 1)};
   padding: 16px 20px;
   & * {
-    color: ${p => (p.disabled ? p.theme.colors.palette.text.shade100 : "auto")};
-    fill: ${p => (p.disabled ? p.theme.colors.palette.text.shade100 : "auto")};
+    color: ${p => (p.disabled ? p.theme.colors.neutral.c100 : "auto")};
+    fill: ${p => (p.disabled ? p.theme.colors.neutral.c100 : "auto")};
   }
 `;
 const TokenContent = styled.div`
@@ -73,15 +72,15 @@ const TokenContentWrapper = styled.div`
 `;
 const TokenBarIndicator = styled.div`
   width: 15px;
-  border-left: 1px solid ${p => p.theme.colors.palette.divider};
+  border-left: 1px solid ${p => p.theme.colors.neutral.c40};
   z-index: 2;
-  margin-left: 29px;
+  margin-left: 33px;
   position: absolute;
   left: 0;
   margin-top: -16px;
   height: 100%;
   &:hover {
-    border-color: ${p => p.theme.colors.palette.text.shade60};
+    border-color: ${p => p.theme.colors.neutral.c70};
   }
 `;
 const TokenShowMoreIndicator = styled(Button)<{ expanded?: boolean }>`
@@ -90,8 +89,8 @@ const TokenShowMoreIndicator = styled(Button)<{ expanded?: boolean }>`
   color: ${p => p.theme.colors.wallet};
   align-items: center;
   justify-content: center;
-  border-top: 1px solid ${p => p.theme.colors.palette.divider};
-  background: ${p => p.theme.colors.palette.background.paper};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c40};
+  background: ${p => p.theme.colors.background.card};
   border-radius: 0px 0px 4px 4px;
   height: 32px;
   text-align: center;
@@ -165,7 +164,7 @@ const AccountRowItem = (props: Props) => {
   if (account.type !== "Account") {
     currency = account.token;
     mainAccount = parentAccount;
-    isToken = mainAccount && listTokenTypesForCryptoCurrency(mainAccount.currency).length > 0;
+    isToken = mainAccount && (mainAccount.currency.tokenTypes || []).length > 0;
     if (!mainAccount) return null;
   } else {
     currency = account.currency;
@@ -174,7 +173,7 @@ const AccountRowItem = (props: Props) => {
       subAccount => !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id),
     );
     disabled = !matchesSearch(walletState, search, account);
-    isToken = listTokenTypesForCryptoCurrency(currency).length > 0;
+    isToken = (currency.tokenTypes || []).length > 0;
     if (tokens) tokens = tokens.filter(t => matchesSearch(walletState, search, t));
   }
   const showTokensIndicator = Boolean(tokens && tokens.length > 0 && !hidden);
@@ -198,7 +197,7 @@ const AccountRowItem = (props: Props) => {
     accountNameSelector(walletState, { accountId: account.id }) || getDefaultAccountName(account);
   return (
     <div
-      className={`accounts-account-row-item ${tokens && tokens.length > 0 ? "has-tokens" : ""}`}
+      data-testid="accounts-account-row-item"
       style={{
         position: "relative",
       }}
@@ -216,10 +215,11 @@ const AccountRowItem = (props: Props) => {
         <Row key={mainAccount.id}>
           <RowContent
             disabled={disabled}
-            className="accounts-account-row-item-content"
             isSubAccountsExpanded={showTokensIndicator && expanded}
             onClick={onClickHandler}
-            data-testid={account.type === "Account" && `account-component-${accountName}`}
+            data-testid={
+              account.type === "Account" ? `account-component-${accountName}` : undefined
+            }
           >
             <Header account={account} />
             <Box flex="12%">

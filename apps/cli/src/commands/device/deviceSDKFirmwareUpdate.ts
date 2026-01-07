@@ -101,7 +101,7 @@ export default {
           mergeMap(() => {
             return concat(
               of(`Attempting to install firmware`),
-              updateFirmwareAction({ deviceId: device || "" }),
+              updateFirmwareAction({ deviceId: device || "", deviceName: null }),
             );
           }),
         )

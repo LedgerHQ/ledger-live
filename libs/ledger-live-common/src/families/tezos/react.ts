@@ -1,6 +1,6 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useEffect, useMemo, useState } from "react";
-import { Baker, Delegation } from "@ledgerhq/coin-tezos/types/index";
+import { Baker, Delegation, StakingPosition } from "@ledgerhq/coin-tezos/types/index";
 import { bakers } from "@ledgerhq/coin-tezos/network/index";
 
 export function useBakers(whitelistAddresses: string[]): Baker[] {
@@ -54,4 +54,23 @@ export function useRandomBaker(bakers: Baker[]): Baker {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bakers.length]);
   return bakers[randomBakerIndex];
+}
+
+export function useStakingPositions(account: AccountLike): StakingPosition[] {
+  const delegation = useDelegation(account);
+
+  return useMemo(() => {
+    if (account.type !== "Account" || !delegation?.address) return [];
+
+    return [
+      {
+        uid: account.freshAddress,
+        address: account.freshAddress,
+        delegate: delegation.address,
+        state: "active" as const,
+        asset: { type: "native" as const },
+        amount: BigInt(account.balance.toString()),
+      },
+    ];
+  }, [account, delegation]);
 }

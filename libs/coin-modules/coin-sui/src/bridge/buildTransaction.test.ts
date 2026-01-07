@@ -71,6 +71,7 @@ describe("buildTransaction", () => {
 
       // THEN
       expect(craftTransaction).toHaveBeenCalledWith({
+        intentType: "transaction",
         sender: mockAccount.freshAddress,
         recipient: mockTransaction.recipient,
         type: mockTransaction.mode,
@@ -107,6 +108,7 @@ describe("buildTransaction", () => {
 
       // THEN
       expect(craftTransaction).toHaveBeenCalledWith({
+        intentType: "transaction",
         sender: account.freshAddress,
         recipient: mockTransaction.recipient,
         type: mockTransaction.mode,

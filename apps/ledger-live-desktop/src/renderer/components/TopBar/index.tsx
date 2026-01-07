@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
@@ -11,8 +11,6 @@ import Box from "~/renderer/components/Box";
 import Tooltip from "~/renderer/components/Tooltip";
 import Breadcrumb from "~/renderer/components/Breadcrumb";
 import HelpSideBar from "~/renderer/modals/Help";
-import BreadCrumbNewArch from "LLD/components/BreadCrumb";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 // TODO: ActivityIndicator
 import ActivityIndicator from "./ActivityIndicator";
@@ -47,8 +45,6 @@ const TopBar = () => {
   const hasPassword = useSelector(hasPasswordSelector);
   const hasAccounts = useSelector(hasAccountsSelector);
   const discreetMode = useSelector(discreetModeSelector);
-  const nftReworked = useFeature("lldNftsGalleryNewArch");
-  const isNftReworkedEnabled = nftReworked?.enabled;
   const [helpSideBarVisible, setHelpSideBarVisible] = useState(false);
   const handleLock = useCallback(() => dispatch(lock()), [dispatch]);
   const handleDiscreet = useCallback(() => {
@@ -68,10 +64,10 @@ const TopBar = () => {
     }
   }, [history, location]);
   return (
-    <Container color="palette.text.shade80">
-      <Inner bg="palette.background.default">
+    <Container color="neutral.c80">
+      <Inner backgroundColor="background.default">
         <Box grow horizontal justifyContent="space-between">
-          {isNftReworkedEnabled ? <BreadCrumbNewArch /> : <Breadcrumb />}
+          <Breadcrumb />
           <Box horizontal>
             {hasAccounts && (
               <>

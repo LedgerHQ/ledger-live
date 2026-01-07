@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`accountWithMandatoryTokens ethereum 1`] = `
 [
@@ -7,6 +7,7 @@ exports[`accountWithMandatoryTokens ethereum 1`] = `
   "mock:1:ethereum::|2",
   "mock:1:ethereum::|3",
   "mock:1:ethereum::|4",
+  "mock:1:ethereum::+ethereum%2Ferc20%2F0x~!underscore!~project",
 ]
 `;
 

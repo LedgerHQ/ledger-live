@@ -1,7 +1,9 @@
-import ExtraDimensions from "react-native-extra-dimensions-android";
+import { Dimensions } from "react-native";
 
-export default () => ({
-  width: ExtraDimensions.get("REAL_WINDOW_WIDTH"),
-  height: ExtraDimensions.get("REAL_WINDOW_HEIGHT"),
-});
-export const softMenuBarHeight = () => ExtraDimensions.get("SOFT_MENU_BAR_HEIGHT");
+export default () => {
+  const screen = Dimensions.get("screen");
+  return {
+    width: screen.width,
+    height: screen.height,
+  };
+};

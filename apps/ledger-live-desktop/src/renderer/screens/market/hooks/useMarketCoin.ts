@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useTheme } from "styled-components";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import {
@@ -11,16 +11,16 @@ import { useCallback } from "react";
 import { useParams } from "react-router";
 import { setMarketOptions } from "~/renderer/actions/market";
 import { marketParamsSelector } from "~/renderer/reducers/market";
-import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
 import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
+import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
+import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 
 export const useMarketCoin = () => {
   const marketParams = useSelector(marketParamsSelector);
   const { colors } = useTheme();
   const dispatch = useDispatch();
   const { currencyId } = useParams<{ currencyId: string }>();
-  const { data: currenciesAll } = useFetchCurrencyAll();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
 
@@ -40,25 +40,36 @@ export const useMarketCoin = () => {
     id: currencyId,
   });
 
-  const { id, internalCurrency } = currency || {};
+  const { data: assetData } = assetsDataApi.useGetAssetDataQuery(
+    {
+      currencyIds: currency?.ledgerIds,
+      product: "lld",
+      version: __APP_VERSION__,
+      isStaging: false,
+      includeTestNetworks: false,
+    },
+    {
+      skip: !currency?.ledgerIds?.length,
+    },
+  );
+
+  const { id } = currency || {};
+
+  const ledgerCurrency = assetData && selectCurrency(assetData);
 
   const { onBuy, onStake, onSwap, availableOnBuy, availableOnStake, availableOnSwap } =
     useMarketActions({
       currency: currency,
       page: Page.MarketCoin,
-      currenciesAll,
     });
 
-  const color = internalCurrency
-    ? getCurrencyColor(internalCurrency, colors.background.main)
+  const color = ledgerCurrency
+    ? getCurrencyColor(ledgerCurrency, colors.background.main)
     : colors.primary.c80;
 
   const toggleStar = useCallback(() => {
-    if (isStarred) {
-      id && dispatch(removeStarredMarketCoins(id));
-    } else {
-      id && dispatch(addStarredMarketCoins(id));
-    }
+    if (!id) return;
+    dispatch(isStarred ? removeStarredMarketCoins(id) : addStarredMarketCoins(id));
   }, [dispatch, isStarred, id]);
 
   const changeRange = useCallback(

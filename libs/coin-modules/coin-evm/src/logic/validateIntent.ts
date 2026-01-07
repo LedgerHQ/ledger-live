@@ -1,9 +1,10 @@
-import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import type {
   AssetInfo,
   Balance,
+  BufferTxData,
   FeeEstimation,
+  MemoNotSupported,
   TransactionIntent,
   TransactionValidation,
 } from "@ledgerhq/coin-framework/api/types";
@@ -11,6 +12,7 @@ import {
   AmountRequired,
   ETHAddressNonEIP,
   FeeNotLoaded,
+  FeeTooHigh,
   GasLessThanEstimate,
   InvalidAddress,
   MaxFeeTooLow,
@@ -25,7 +27,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getFeesUnit } from "@ledgerhq/coin-framework/account/helpers";
 import { isNative, TransactionTypes } from "../types";
-import { DEFAULT_GAS_LIMIT } from "../utils";
+import { DEFAULT_GAS_LIMIT, isEthAddress } from "../utils";
 import { getGasTracker } from "../network/gasTracker";
 import estimateFees from "./estimateFees";
 import getBalance from "./getBalance";
@@ -33,6 +35,7 @@ import {
   getTransactionType,
   isApiGasOptions,
   isEip1559FeeEstimation,
+  isEip55Address,
   isLegacyFeeEstimation,
 } from "./common";
 
@@ -50,25 +53,38 @@ function findBalance(asset: AssetInfo, balances: Balance[]): Balance {
   return balances.find(b => assetsAreEqual(b.asset, asset)) ?? { asset, value: 0n };
 }
 
-// This regex will not work with Starknet since addresses are 65 caracters long after the 0x
-const ethAddressRegEx = /^(0x)?[0-9a-fA-F]{40}$/;
-
 /**
  * Validate the amount of a transaction for an account
  */
 async function validateAmount(
-  balances: Balance[],
-  intent: TransactionIntent,
+  balance: Balance,
+  amount: bigint,
   totalSpent: bigint,
+  isSmartContractInteraction: boolean,
 ): Promise<Pick<TransactionValidation, "errors" | "warnings">> {
-  const balance = findBalance(intent.asset, balances);
-
-  if (!intent.amount) {
+  // Smart contract transactions crafted outside of Ledger Wallet
+  // (e.g. Magic Eden) can have no amount
+  if (!amount && !isSmartContractInteraction) {
     return { errors: { amount: new AmountRequired() }, warnings: {} };
   }
 
   if (totalSpent > balance.value) {
     return { errors: { amount: new NotEnoughBalance() }, warnings: {} };
+  }
+
+  return { errors: {}, warnings: {} };
+}
+
+/**
+ * If sending ETH, warn if fees are more than 10% of the amount
+ */
+function validateFeeRatio(
+  asset: AssetInfo,
+  amount: bigint,
+  estimatedFees: FeeEstimation,
+): Pick<TransactionValidation, "errors" | "warnings"> {
+  if (isNative(asset) && amount > 0n && 10n * estimatedFees.value > amount) {
+    return { errors: {}, warnings: { feeTooHigh: new FeeTooHigh() } };
   }
 
   return { errors: {}, warnings: {} };
@@ -85,7 +101,7 @@ function validateRecipient(
     return { errors: { recipient: new RecipientRequired() }, warnings: {} };
   }
 
-  if (!intent.recipient.match(ethAddressRegEx)) {
+  if (!isEthAddress(intent.recipient)) {
     return {
       errors: {
         recipient: new InvalidAddress("", {
@@ -97,14 +113,7 @@ function validateRecipient(
   }
 
   // Check if address is respecting EIP-55
-  try {
-    const recipientChecksumed = ethers.getAddress(intent.recipient);
-    if (intent.recipient !== recipientChecksumed) {
-      // this case can happen if the user is entering an ICAP address.
-      throw new Error();
-    }
-  } catch (e) {
-    // either getAddress throws for a bad checksum or we throw manually if the recipient isn't the same.
+  if (!isEip55Address(intent.recipient)) {
     return { errors: {}, warnings: { recipient: new ETHAddressNonEIP() } }; // "Auto-verification not available: carefully verify the address"
   }
 
@@ -159,7 +168,7 @@ async function validateGas(
   // Gas Price
   if (!(hasLegacyGasPrice || hasEip1559GasPrice)) {
     errors.gasPrice = new FeeNotLoaded();
-  } else if (intent.recipient && estimatedFees.value > nativeBalance.value) {
+  } else if (intent.recipient && estimatedFees.value > nativeBalance.value && !intent.sponsored) {
     errors.gasPrice = new NotEnoughGas(undefined, {
       // "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
       fees: formatCurrencyUnit(
@@ -230,20 +239,69 @@ async function validateGas(
   return { errors, warnings };
 }
 
+function computeAmount(
+  intent: TransactionIntent,
+  estimatedFees: FeeEstimation,
+  balance: Balance,
+): bigint {
+  if (!intent.useAllAmount) return intent.amount;
+
+  if (isNative(intent.asset)) {
+    const additionalFees =
+      typeof estimatedFees.parameters?.additionalFees === "bigint"
+        ? estimatedFees.parameters.additionalFees
+        : 0n;
+    const totalFees = estimatedFees.value + additionalFees;
+
+    return balance.value > totalFees ? balance.value - totalFees : 0n;
+  }
+
+  return balance.value;
+}
+
+function refreshEstimationValue(
+  intent: TransactionIntent,
+  parameters: Record<string, unknown>,
+): bigint {
+  const gasLimit = typeof parameters.gasLimit === "bigint" ? parameters.gasLimit : 0n;
+  const transactionType = getTransactionType(intent.type);
+  let gasPrice = 0n;
+
+  if (transactionType === TransactionTypes.legacy && typeof parameters.gasPrice === "bigint") {
+    gasPrice = parameters.gasPrice;
+  }
+
+  if (transactionType === TransactionTypes.eip1559 && typeof parameters.maxFeePerGas === "bigint") {
+    gasPrice = parameters.maxFeePerGas;
+  }
+
+  return gasPrice * gasLimit;
+}
+
 export async function validateIntent(
   currency: CryptoCurrency,
-  intent: TransactionIntent,
+  intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
-  const estimatedFees = customFees ?? (await estimateFees(currency, intent));
+  const estimatedFees = customFees?.parameters
+    ? { ...customFees, value: refreshEstimationValue(intent, customFees.parameters) }
+    : await estimateFees(currency, intent);
   const balances = await getBalance(currency, intent.sender);
-  const totalSpent = isNative(intent.asset) ? intent.amount + estimatedFees.value : intent.amount;
+  const balance = findBalance(intent.asset, balances);
+  const amount = computeAmount(intent, estimatedFees, balance);
+  const additionalFees =
+    typeof estimatedFees.parameters?.additionalFees === "bigint"
+      ? estimatedFees.parameters.additionalFees
+      : 0n;
+  const totalFees = estimatedFees.value + additionalFees;
+  const totalSpent = isNative(intent.asset) && !intent.sponsored ? amount + totalFees : amount;
 
   const { errors: recipientErr, warnings: recipientWarn } = validateRecipient(currency, intent);
   const { errors: amountErr, warnings: amountWarn } = await validateAmount(
-    balances,
-    intent,
+    balance,
+    amount,
     totalSpent,
+    !!intent.data?.value?.length,
   );
   const { errors: gasErr, warnings: gasWarn } = await validateGas(
     currency,
@@ -251,23 +309,31 @@ export async function validateIntent(
     balances,
     estimatedFees,
   );
+  const { errors: feeRatioErr, warnings: feeRatioWarn } = validateFeeRatio(
+    intent.asset,
+    amount,
+    estimatedFees,
+  );
 
   const errors = {
     ...recipientErr,
     ...amountErr,
     ...gasErr,
+    ...feeRatioErr,
   };
   const warnings = {
     ...recipientWarn,
     ...amountWarn,
     ...gasWarn,
+    ...feeRatioWarn,
   };
 
   return {
     errors,
     warnings,
+    totalFees,
     estimatedFees: estimatedFees.value,
     totalSpent,
-    amount: intent.amount,
+    amount,
   };
 }

@@ -1,18 +1,19 @@
 {
   "name": "@ledgerhq/ledger-libs",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "scripts": {},
   "dependencies": {
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
     "eslint-plugin-react": "^7.33.2",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.1"
+    "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:"
   }
 }

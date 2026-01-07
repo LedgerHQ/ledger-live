@@ -4,7 +4,7 @@ import { useGetMembers } from "../../hooks/useGetMembers";
 import { UseQueryResult } from "@tanstack/react-query";
 import { MemberCredentials, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { memberCredentialsSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";

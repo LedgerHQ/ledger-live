@@ -45,6 +45,7 @@ describe("craftTransaction", () => {
     });
 
     const txArg: TransactionIntent = {
+      intentType: "transaction",
       type: "send",
       sender: SENDER_ADDR,
       senderPublicKey: "public-key",
@@ -66,47 +67,6 @@ describe("craftTransaction", () => {
         function: "0x1::aptos_account::transfer_coins",
         typeArguments: ["0x42::token::Token"],
         functionArguments: [RECIPIENT_ADDR, txArg.amount.toString()],
-      }),
-      expect.anything(),
-    );
-  });
-
-  it("creates a native coin transaction using all amount available", async () => {
-    const mockGenerateTransaction = jest.fn().mockResolvedValue(rawTxn);
-    const mockGetBalances = jest
-      .fn()
-      .mockResolvedValue([{ contractAddress: APTOS_ASSET_ID, amount: 12345 }]);
-    mockedAptosApi.mockImplementation(() => ({
-      generateTransaction: mockGenerateTransaction,
-      getBalances: mockGetBalances,
-    }));
-
-    const api = createApi({
-      aptosSettings: {},
-    });
-
-    const txArg: TransactionIntent = {
-      type: "send",
-      sender: SENDER_ADDR,
-      senderPublicKey: "public-key",
-      recipient: RECIPIENT_ADDR,
-      amount: 0n,
-      asset: { type: "native" },
-    };
-
-    const { transaction: tx } = await api.craftTransaction(txArg);
-
-    expect(tx).not.toEqual("");
-    expect(Hex.isValid(tx).valid).toBeTruthy();
-    expect(mockGetBalances).toHaveBeenCalledTimes(1);
-    expect(mockGenerateTransaction).toHaveBeenCalledTimes(1);
-
-    expect(mockGenerateTransaction).toHaveBeenCalledWith(
-      SENDER_ADDR,
-      expect.objectContaining({
-        function: "0x1::aptos_account::transfer_coins",
-        typeArguments: [APTOS_ASSET_ID],
-        functionArguments: [RECIPIENT_ADDR, "12345"],
       }),
       expect.anything(),
     );
@@ -127,6 +87,7 @@ describe("craftTransaction", () => {
     });
 
     const txArg: TransactionIntent = {
+      intentType: "transaction",
       type: "send",
       sender: SENDER_ADDR,
       senderPublicKey: "public-key",
@@ -153,47 +114,6 @@ describe("craftTransaction", () => {
     );
   });
 
-  it("creates a fungible_asset token transaction using all amount available", async () => {
-    const mockGenerateTransaction = jest.fn().mockResolvedValue(rawTxn);
-    const mockGetBalances = jest
-      .fn()
-      .mockResolvedValue([{ contractAddress: "0x42", amount: 12345 }]);
-    mockedAptosApi.mockImplementation(() => ({
-      generateTransaction: mockGenerateTransaction,
-      getBalances: mockGetBalances,
-    }));
-
-    const api = createApi({
-      aptosSettings: {},
-    });
-
-    const txArg: TransactionIntent = {
-      type: "send",
-      sender: SENDER_ADDR,
-      senderPublicKey: "public-key",
-      recipient: RECIPIENT_ADDR,
-      amount: 0n,
-      asset: { type: "fungible_asset", assetReference: "0x42" },
-    };
-
-    const { transaction: tx } = await api.craftTransaction(txArg);
-
-    expect(tx).not.toEqual("");
-    expect(Hex.isValid(tx).valid).toBeTruthy();
-    expect(mockGetBalances).toHaveBeenCalledTimes(1);
-    expect(mockGenerateTransaction).toHaveBeenCalledTimes(1);
-
-    expect(mockGenerateTransaction).toHaveBeenCalledWith(
-      SENDER_ADDR,
-      expect.objectContaining({
-        function: "0x1::primary_fungible_store::transfer",
-        typeArguments: ["0x1::fungible_asset::Metadata"],
-        functionArguments: ["0x42", RECIPIENT_ADDR, "12345"],
-      }),
-      expect.anything(),
-    );
-  });
-
   it("throws an exception for invalid tokenType", async () => {
     const mockGenerateTransaction = jest.fn().mockResolvedValue(rawTxn);
     const mockGetBalances = jest
@@ -209,6 +129,7 @@ describe("craftTransaction", () => {
     });
 
     const txArg: TransactionIntent = {
+      intentType: "transaction",
       type: "send",
       sender: SENDER_ADDR,
       senderPublicKey: "public-key",

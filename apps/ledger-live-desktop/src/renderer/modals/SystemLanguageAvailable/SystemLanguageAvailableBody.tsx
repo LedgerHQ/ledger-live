@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
@@ -23,7 +23,7 @@ export type Props = {
 const Title = styled(Text).attrs(() => ({
   ff: "Inter",
   fontSize: 18,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   textAlign: "center",
   fontWeight: 600,
   marginBottom: 16,
@@ -31,7 +31,7 @@ const Title = styled(Text).attrs(() => ({
 const Content = styled(Text).attrs(() => ({
   ff: "Inter",
   fontSize: 13,
-  color: "palette.text.shade50",
+  color: "neutral.c70",
   textAlign: "center",
   marginBottom: 18,
 }))``;
@@ -51,7 +51,7 @@ const LanguageBox = styled(Box).attrs(() => ({
   position: "absolute",
   top: 16,
   left: 16,
-  color: "palette.primary.main",
+  color: "primary.c80",
 }))``;
 const SystemLanguageAvailableBody = (props: Props) => {
   const { onClose, data } = props;

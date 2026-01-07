@@ -3,12 +3,12 @@ export const supportLinkByTokenType = {
   trc10: "https://support.ledger.com/article/360013062159-zd",
   trc20: "https://support.ledger.com/article/360013062159-zd",
   asa: "https://support.ledger.com/article/360015896040-zd",
-  nfts: "https://support.ledger.com/article/4404389453841-zd",
   spl: "https://support.ledger.com/article/7723954701469-zd",
 };
 
 const errors: Record<string, string> = {
   EthAppPleaseEnableContractData: "https://support.ledger.com/article/4405481324433-zd",
+  CeloAppPleaseEnableContractData: "https://support.ledger.com/article/4405481324433-zd",
   NotEnoughGas: "https://support.ledger.com/article/9096370252573-zd",
   CantOpenDevice: "https://support.ledger.com/article/115005165269-zd",
   WrongDeviceForAccount: "https://support.ledger.com/article/360025322153-zd",
@@ -47,6 +47,8 @@ export const urls = {
     "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
   buyNew:
     "https://shop.ledger.com/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
+  reborn:
+    "https://shop.ledger.com/pages/unlock-ledger-wallet-desktop?utm_source=ledger_wallet_destkop&utm_medium=self_referral&utm_content=onboarding-2",
   noDevice: {
     learnMore:
       "https://www.ledger.com?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
@@ -171,6 +173,8 @@ export const urls = {
     supportArticleLink: "https://support.ledger.com/article/4494505217565-zd",
     tokenAssociation:
       "https://support.ledger.com/article/How-to-manage-Hedera-tokens-with-Ledger-Live",
+    evmAddressVerification: "https://ledger.com/e14",
+    staking: "https://support.ledger.com/article/Staking-Hedera-HBAR-through-Ledger-Live",
   },
   celo: {
     ledgerByFigmentTC:
@@ -194,11 +198,11 @@ export const urls = {
   },
   howToUpdateNewLedger: "https://support.ledger.com/article/9305992683165-zd",
   genuineCheck: "https://support.ledger.com/article/4404389367057-zd",
-  whatAreOrdinals: "https://www.ledger.com/academy/bitcoin-ordinals",
   ledgerShop:
     "https://shop.ledger.com?utm_source=live&utm_medium=draw&utm_campaign=ledger_sync_lns_uncompatible&utm_content=to_shop",
   learnMoreLedgerSync:
     "https://www.ledger.com/blog-ledger-sync-synchronize-your-crypto-accounts-effortless-private-and-secure",
+  charonLearnMore: "https://shop.ledger.com/products/ledger-recovery-key",
 
   // Node errors
   txBroadcastErrors: {
@@ -214,6 +218,9 @@ export const urls = {
   },
   sanctionCompliance: {
     learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
+  },
+  canton: {
+    learnMore: "https://support.ledger.com/article/Canton-Network",
   },
 };
 

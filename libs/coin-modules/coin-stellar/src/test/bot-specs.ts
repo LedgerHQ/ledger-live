@@ -8,9 +8,8 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
-import { acceptTransaction } from "./bot-deviceActions";
 import type { Transaction } from "../types";
+import { acceptTransaction } from "./bot-deviceActions";
 
 const currency = getCryptoCurrencyById("stellar");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");
@@ -187,9 +186,8 @@ const stellar: AppSpec<Transaction> = {
           account.subAccounts && !findAssetUSDC(account.subAccounts),
           "already have subaccounts",
         );
-        const assetUSDC = findAssetUSDC<TokenCurrency>(
-          listTokensForCryptoCurrency(account.currency),
-        );
+        // Use empty array as fallback - tokens should be provided via tokensData option
+        const assetUSDC = findAssetUSDC<TokenCurrency>([]);
         invariant(assetUSDC, "USDC asset not found");
 
         const transaction = bridge.createTransaction(account);

@@ -20,6 +20,7 @@ import broadcast from "./broadcast";
 import createTransaction from "../logic/createTransaction";
 import { hydrate, preloadWithValidators } from "../preload";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { validateAddress } from "../logic/validateAddress";
 
 function makePreload() {
   return (currency: CryptoCurrency) => preloadWithValidators(currency);
@@ -60,9 +61,13 @@ function buildAccountBridge(
     sync,
     receive,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     assignToAccountRaw,
     assignFromAccountRaw,
+    validateAddress,
   };
 }
 

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Device } from "@ledgerhq/types-devices";
-import { SeedPathStatus } from "~/renderer/components/SyncOnboarding/Manual/SeedStep";
+import { SeedPathStatus } from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/types";
 import { track } from "../segment";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 

@@ -9,7 +9,7 @@ import React, {
   useRef,
 } from "react";
 import { Dimensions, type View } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { concatMap, from, interval } from "rxjs";
 import { inViewSetHasItems } from "~/actions/inView";
 import { inViewHasItemsSelector } from "~/reducers/inView";

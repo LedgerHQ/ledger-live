@@ -24,7 +24,7 @@ const Column = styled(TableLine).attrs<{
   strong?: boolean;
 }>(p => ({
   ff: "Inter|SemiBold",
-  color: p.strong ? "palette.text.shade100" : "palette.text.shade80",
+  color: p.strong ? "neutral.c100" : "neutral.c80",
   fontSize: 3,
 }))<{
   clickable?: boolean;
@@ -35,7 +35,7 @@ const Column = styled(TableLine).attrs<{
     p.clickable
       ? `
     &:hover {
-      color: ${p.theme.colors.palette.primary.main};
+      color: ${p.theme.colors.primary.c80};
     }
     `
       : ``}
@@ -85,7 +85,14 @@ type Props = {
   readonly onExternalLink: (address: string) => void;
 };
 export function Row({
-  stakingPosition: { stakedSuiId, validator, formattedAmount, status, principal },
+  stakingPosition: {
+    stakedSuiId,
+    validator,
+    formattedAmount,
+    status,
+    principal,
+    formattedEstimatedReward,
+  },
   onManageAction,
   onExternalLink,
 }: Props) {
@@ -125,7 +132,7 @@ export function Row({
             </ToolTip>
           </Box>
         ) : (
-          <Box color="warning" pl={2}>
+          <Box color="legacyWarning" pl={2}>
             <ToolTip content={<Trans i18nKey="sui.stake.inactiveTooltip" />}>
               <ExclamationCircleThin size={14} />
             </ToolTip>
@@ -135,6 +142,11 @@ export function Row({
       <Column>
         <Ellipsis>
           <Discreet>{formattedAmount}</Discreet>
+        </Ellipsis>
+      </Column>
+      <Column>
+        <Ellipsis>
+          <Discreet>{formattedEstimatedReward}</Discreet>
         </Ellipsis>
       </Column>
       <Column>

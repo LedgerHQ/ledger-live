@@ -11,6 +11,11 @@ import {
   TrustchainAlreadyInitializedWithOtherSeed,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
+jest.mock("~/renderer/reducers/walletSync", () => ({
+  ...jest.requireActual("~/renderer/reducers/walletSync"),
+  walletSyncOnboardingNewDeviceSelector: jest.fn().mockReturnValue(false),
+}));
+
 const device = { deviceId: "", modelId: DeviceModelId.stax, wired: true };
 const trustchain = {
   rootId: "trustchainId",
@@ -32,6 +37,7 @@ describe("useAddMember", () => {
       trustchain,
       type: TrustchainResultType.created,
     });
+
     const { result } = renderHook(() => useAddMember({ device }));
 
     await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
@@ -117,7 +123,8 @@ describe("useAddMember", () => {
     Mocks.memberCredentialsSelector.mockReturnValue(null);
     const { result } = renderHook(() => useAddMember({ device }));
 
-    expect(result.current.error).toBeInstanceOf(Error);
+    await waitFor(() => expect(result.current.error).toBeInstanceOf(Error)); // Wait for the setError
+
     expect(Mocks.sdk.getOrCreateTrustchain).not.toHaveBeenCalled();
     expect(Mocks.setTrustchain).not.toHaveBeenCalledWith(trustchain);
     expect(Mocks.setFlow).not.toHaveBeenCalled();
@@ -129,8 +136,8 @@ describe("useAddMember", () => {
     const { result } = renderHook(() => useAddMember({ device }));
 
     await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
+    await waitFor(() => expect(result.current.error).toBeInstanceOf(Error)); // Wait for the setError
 
-    expect(result.current.error).toBeInstanceOf(Error);
     expect(result.current.error?.message).toBe("Random error");
     expect(Mocks.setTrustchain).not.toHaveBeenCalled();
     expect(Mocks.setFlow).not.toHaveBeenCalled();
@@ -146,9 +153,11 @@ describe("useAddMember", () => {
   });
 });
 
-jest.mock("react-redux", () => {
+jest.mock("LLD/hooks/redux", () => {
+  const actual = jest.requireActual("LLD/hooks/redux");
   const dispatch = jest.fn();
   return {
+    ...actual,
     useDispatch: () => dispatch,
     useSelector: (selector: () => unknown) => selector(),
   };

@@ -1,5 +1,6 @@
 import network from "@ledgerhq/live-network";
-import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
+import type { LiveNetworkRequest, LiveNetworkResponse } from "@ledgerhq/live-network/network";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
 import coinConfig from "../config";
 import {
@@ -10,29 +11,45 @@ import {
   PreApprovalResult,
 } from "../types/onboard";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CantonSignature } from "../types/signer";
+import { TopologyChangeError } from "../types/errors";
 
-type OnboardingPrepareResponse = {
+export type OnboardingPrepareResponse = {
   party_id: string;
   party_name: string;
   public_key_fingerprint: string;
   transactions: {
     namespace_transaction: {
       serialized: string;
-      json: object;
+      transaction: {
+        operation: string;
+        serial: number;
+        mapping: Record<string, unknown>;
+      };
       hash: string;
     };
     party_to_key_transaction: {
       serialized: string;
-      json: object;
+      transaction: {
+        operation: string;
+        serial: number;
+        mapping: Record<string, unknown>;
+      };
       hash: string;
     };
     party_to_participant_transaction: {
       serialized: string;
-      json: object;
+      transaction: {
+        operation: string;
+        serial: number;
+        mapping: Record<string, unknown>;
+      };
       hash: string;
     };
     combined_hash: string;
   };
+  challenge_nonce?: string;
+  challenge_deadline?: number;
 };
 
 type OnboardingPrepareRequest = {
@@ -46,19 +63,43 @@ export type PrepareTransferResponse = {
   serialized: string;
 };
 
-export type PrepareTransferRequest = {
+type BaseTransferRequest = {
   type: "token-transfer-request";
   amount: string;
   recipient: string;
-  execute_before_secs: number;
   instrument_id: string;
+  instrument_admin?: string;
   reason?: string;
+};
+
+export type PrepareTransferRequest = BaseTransferRequest &
+  ({ execute_before_secs: number } | { execute_before: string });
+
+export type PrepareTransferInstructionRequest = {
+  type:
+    | "accept-transfer-instruction"
+    | "reject-transfer-instruction"
+    | "withdraw-transfer-instruction";
+  contract_id: string;
+  reason?: string;
+};
+
+export type TransferProposal = {
+  contract_id: string;
+  sender: string;
+  receiver: string;
+  amount: string;
+  instrument_id: string;
+  instrument_admin: string;
+  memo: string;
+  expires_at_micros: number;
 };
 
 type OnboardingSubmitRequest = {
   prepare_request: OnboardingPrepareRequest;
   prepare_response: OnboardingPrepareResponse;
   signature: string;
+  application_signature?: string;
 };
 
 type OnboardingSubmitResponse = {
@@ -75,10 +116,27 @@ type TransactionSubmitRequest = {
 
 type TransactionSubmitResponse = { update_id: string };
 
+type Asset = {
+  instrumentAdmin: string;
+  instrumentId: string;
+  issuer: string | null;
+  type: "token" | "native";
+};
+
+export type GetBalanceResponse =
+  | {
+      at_round: number;
+      balances: InstrumentBalance[];
+    }
+  // temporary backwards compatibility
+  | InstrumentBalance[];
+
 export type InstrumentBalance = {
   instrument_id: string;
-  amount: number;
+  amount: string;
+  admin_id: string;
   locked: boolean;
+  utxo_count: number;
 };
 
 type PartyInfo = {
@@ -135,6 +193,14 @@ export type TxInfo = {
   trace_context: string;
 };
 
+type OperationType =
+  | "pre-approval"
+  | "tap"
+  | "transfer"
+  | "transfer-proposal"
+  | "transfer-rejected"
+  | "transfer-withdrawn";
+
 export type OperationInfo =
   | {
       uid: string;
@@ -151,7 +217,7 @@ export type OperationInfo =
           value: string;
           asset: string;
           details: {
-            type: "pre-approval";
+            operationType: OperationType;
             metadata: {
               reason?: string;
             };
@@ -173,12 +239,9 @@ export type OperationInfo =
           type: string;
         };
       };
-      asset: {
-        type: "token";
-        issuer: string;
-      };
+      asset: Asset;
       details: {
-        type: "pre-approval";
+        operationType: OperationType;
       };
     }
   | {
@@ -196,7 +259,7 @@ export type OperationInfo =
           value: string;
           asset: string;
           details: {
-            type: "tap";
+            operationType: OperationType;
             metadata: {
               reason?: string;
             };
@@ -218,12 +281,9 @@ export type OperationInfo =
           type: string;
         };
       };
-      asset: {
-        type: "native";
-        issuer: null;
-      };
+      asset: Asset;
       details: {
-        type: "tap";
+        operationType: OperationType;
       };
     }
   | {
@@ -241,7 +301,7 @@ export type OperationInfo =
           value: string;
           asset: string;
           details: {
-            type: "transfer";
+            operationType: OperationType;
             metadata: {
               reason?: string;
             };
@@ -263,35 +323,66 @@ export type OperationInfo =
           type: string;
         };
       };
-      asset: {
-        type: "native";
-        issuer: null;
-      };
+      asset: Asset;
       details: {
-        type: "transfer";
+        operationType: OperationType;
       };
     };
 
-const getGatewayUrl = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency).gatewayUrl;
-const getNodeId = (currency: CryptoCurrency) =>
-  coinConfig.getCoinConfig(currency).nodeId || "ledger-devnet-stg";
-const getNetworkType = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency).networkType;
+export const SEPARATOR = "____";
 
-const gatewayNetwork = <T, U = unknown>(req: LiveNetworkRequest<U>) => {
+export const getKey = (id: string, adminId: string) => `${id}${SEPARATOR}${adminId}`;
+
+const getGatewayUrl = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency).gatewayUrl;
+const getNodeId = (currency: CryptoCurrency) => {
+  const overrideNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
+  if (overrideNodeId) {
+    return overrideNodeId;
+  }
+  return coinConfig.getCoinConfig(currency).nodeId || "ledger-live-devnet";
+};
+export const getNetworkType = (currency: CryptoCurrency) =>
+  coinConfig.getCoinConfig(currency).networkType;
+
+export const isPartyNotFound = (error: unknown): boolean => {
+  if (error instanceof Error) {
+    const errorMessage = error.message.toLowerCase().replace(/_/g, " ");
+    return errorMessage.includes("party") && errorMessage.includes("not found");
+  }
+  return false;
+};
+
+export const isPartyAlreadyExists = (error: unknown): boolean => {
+  if (error instanceof Error) {
+    const errorMessage = error.message.toLowerCase().replace(/_/g, " ");
+    return errorMessage.includes("party") && errorMessage.includes("already exists");
+  }
+  return false;
+};
+
+const gatewayNetwork = async <T, U = unknown>(
+  req: LiveNetworkRequest<U>,
+): Promise<LiveNetworkResponse<T>> => {
   const API_KEY = getEnv("CANTON_API_KEY");
-  return network<T, U>({
-    ...req,
-    headers: {
-      ...(req.headers || {}),
-      ...(API_KEY && { "X-Ledger-Canton-Api-Key": API_KEY }),
-    },
-  });
+  try {
+    return await network<T, U>({
+      ...req,
+      headers: {
+        ...(req.headers || {}),
+        ...(API_KEY && { "X-Ledger-Canton-Api-Key": API_KEY }),
+      },
+    });
+  } catch (error) {
+    if (isPartyNotFound(error)) {
+      throw new TopologyChangeError("Topology change detected. Re-onboarding required.");
+    }
+    throw error;
+  }
 };
 
 export async function prepareOnboarding(
   currency: CryptoCurrency,
   pubKey: string,
-  pubKeyType: string,
 ): Promise<OnboardingPrepareResponse> {
   const gatewayUrl = getGatewayUrl(currency);
   const nodeId = getNodeId(currency);
@@ -302,29 +393,117 @@ export async function prepareOnboarding(
     url: fullUrl,
     data: {
       public_key: pubKey,
-      public_key_type: pubKeyType,
+      public_key_type: "ed25519",
     },
   });
 
   return data;
 }
 
+export async function isTopologyChangeRequired(currency: CryptoCurrency, pubKey: string) {
+  try {
+    const response = await prepareOnboarding(currency, pubKey);
+    // if response is not undefined (we have a transaction to sign) topology change is required
+    if (response) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    if (isPartyAlreadyExists(error)) {
+      return false;
+    }
+    throw error;
+  }
+}
+
+const getIsTopologyChangeRequiredCacheKey = (currency: CryptoCurrency, pubKey: string): string => {
+  const nodeId = getNodeId(currency);
+  return `${pubKey}_${nodeId}`;
+};
+
+export const isTopologyChangeRequiredCached = makeLRUCache(
+  isTopologyChangeRequired,
+  getIsTopologyChangeRequiredCacheKey,
+  minutes(10),
+);
+
+export function clearIsTopologyChangeRequiredCache(currency: CryptoCurrency, pubKey: string): void {
+  const cacheKey = getIsTopologyChangeRequiredCacheKey(currency, pubKey);
+  isTopologyChangeRequiredCached.clear(cacheKey);
+}
+
+export type InstrumentInfo = {
+  id: string;
+  admin: string;
+};
+
+export type InstrumentsResponse = InstrumentInfo[];
+
+export async function getEnabledInstruments(currency: CryptoCurrency): Promise<Set<string>> {
+  try {
+    const { data } = await gatewayNetwork<InstrumentsResponse>({
+      method: "GET",
+      url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/instruments`,
+    });
+    return new Set(data.map(({ id, admin }) => getKey(id, admin)));
+  } catch (error) {
+    // If API fails, return empty array (fail-safe: only native instrument will work)
+    console.error("Failed to fetch enabled instruments:", error);
+    return new Set();
+  }
+}
+
+const getEnabledInstrumentsCacheKey = (currency: CryptoCurrency): string => {
+  const nodeId = getNodeId(currency);
+  return `instruments_${nodeId}`;
+};
+
+export const getEnabledInstrumentsCached = makeLRUCache(
+  getEnabledInstruments,
+  getEnabledInstrumentsCacheKey,
+  minutes(15),
+);
+
+export function clearEnabledInstrumentsCache(currency: CryptoCurrency): void {
+  const cacheKey = getEnabledInstrumentsCacheKey(currency);
+  getEnabledInstrumentsCached.clear(cacheKey);
+}
+
 export async function submitOnboarding(
   currency: CryptoCurrency,
-  prepareRequest: OnboardingPrepareRequest,
+  publicKey: string,
   prepareResponse: OnboardingPrepareResponse,
-  signature: string,
+  { signature, applicationSignature }: CantonSignature,
 ) {
-  const { data } = await gatewayNetwork<OnboardingSubmitResponse, OnboardingSubmitRequest>({
-    method: "POST",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/onboarding/submit`,
-    data: {
-      prepare_request: prepareRequest,
-      prepare_response: prepareResponse,
-      signature,
-    },
-  });
-  return data;
+  try {
+    const { data } = await gatewayNetwork<OnboardingSubmitResponse, OnboardingSubmitRequest>({
+      method: "POST",
+      url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/onboarding/submit`,
+      data: {
+        prepare_request: {
+          public_key: publicKey,
+          public_key_type: "ed25519",
+        },
+        prepare_response: prepareResponse,
+        signature,
+        ...(applicationSignature ? { application_signature: applicationSignature } : {}),
+      },
+    });
+    return data;
+  } catch (error) {
+    if (isPartyAlreadyExists(error)) {
+      // If party already exists, use party_id from prepare response
+      // The network layer strips custom properties from errors, so we can't extract partyId from error
+      return {
+        party: {
+          party_id: prepareResponse.party_id,
+          public_key: publicKey,
+        },
+      };
+    }
+
+    throw error;
+  }
 }
 
 export async function submit(
@@ -344,15 +523,28 @@ export async function submit(
   return data;
 }
 
-export async function getBalance(
+export async function prepare(
   currency: CryptoCurrency,
   partyId: string,
-): Promise<InstrumentBalance[]> {
-  const { data } = await gatewayNetwork<InstrumentBalance[]>({
+  params: PrepareTransferRequest | PrepareTransferInstructionRequest,
+) {
+  const { data } = await gatewayNetwork<
+    PrepareTransferResponse,
+    PrepareTransferRequest | PrepareTransferInstructionRequest
+  >({
+    method: "POST",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
+    data: params,
+  });
+  return data;
+}
+
+export async function getBalance(currency: CryptoCurrency, partyId: string) {
+  const { data } = await gatewayNetwork<GetBalanceResponse>({
     method: "GET",
     url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/balance`,
   });
-  return data;
+  return Array.isArray(data) ? data : data.balances;
 }
 
 export async function getPartyById(currency: CryptoCurrency, partyId: string): Promise<PartyInfo> {
@@ -421,19 +613,14 @@ enum TransactionType {
 export async function prepareTapRequest(
   currency: CryptoCurrency,
   { partyId, amount = 1000000 }: PrepareTapRequest,
-): Promise<PrepareTapResponse> {
-  if (getNetworkType(currency) === "mainnet") {
-    return {
-      serialized: "",
-      json: null,
-      hash: "",
-    };
-  }
-  const { data } = await gatewayNetwork<PrepareTapResponse, { amount: number; type: string }>({
+) {
+  const fixedPointAmount = BigInt(amount) * BigInt(10) ** BigInt(38);
+
+  const { data } = await gatewayNetwork<PrepareTapResponse, { amount: string; type: string }>({
     method: "POST",
     url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
     data: {
-      amount: parseInt(amount.toString(), 10), // Convert to integer to avoid scientific notation
+      amount: fixedPointAmount.toString(),
       type: TransactionType.TAP_REQUEST,
     },
   });
@@ -454,7 +641,7 @@ type SubmitTapRequestResponse = {
 export async function submitTapRequest(
   currency: CryptoCurrency,
   { partyId, serialized, signature }: SubmitTapRequestRequest,
-): Promise<SubmitTapRequestResponse> {
+) {
   const { data } = await gatewayNetwork<
     SubmitTapRequestResponse,
     Omit<SubmitTapRequestRequest, "partyId">
@@ -473,13 +660,16 @@ export async function prepareTransferRequest(
   currency: CryptoCurrency,
   partyId: string,
   params: PrepareTransferRequest,
-): Promise<PrepareTransferResponse> {
-  const { data } = await gatewayNetwork<PrepareTransferResponse, PrepareTransferRequest>({
-    method: "POST",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
-    data: params,
-  });
-  return data;
+) {
+  return prepare(currency, partyId, params);
+}
+
+export async function prepareTransferInstruction(
+  currency: CryptoCurrency,
+  partyId: string,
+  params: PrepareTransferInstructionRequest,
+) {
+  return prepare(currency, partyId, params);
 }
 
 export async function getLedgerEnd(currency: CryptoCurrency): Promise<number> {
@@ -490,10 +680,7 @@ export async function getLedgerEnd(currency: CryptoCurrency): Promise<number> {
   return data;
 }
 
-export async function preparePreApprovalTransaction(
-  currency: CryptoCurrency,
-  partyId: string,
-): Promise<PrepareTransactionResponse> {
+export async function preparePreApprovalTransaction(currency: CryptoCurrency, partyId: string) {
   const { data } = await gatewayNetwork<PrepareTransactionResponse, PrepareTransactionRequest>({
     method: "POST",
     url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
@@ -510,7 +697,7 @@ export async function submitPreApprovalTransaction(
   partyId: string,
   { serialized }: PrepareTransactionResponse,
   signature: string,
-): Promise<PreApprovalResult> {
+) {
   const { data } = await gatewayNetwork<SubmitTransactionResponse, SubmitTransactionRequest>({
     method: "POST",
     url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/submit`,
@@ -524,5 +711,71 @@ export async function submitPreApprovalTransaction(
     isApproved: true,
     submissionId: data.submission_id,
     updateId: data.update_id,
-  };
+  } satisfies PreApprovalResult;
 }
+
+export async function submitTransferInstruction(
+  currency: CryptoCurrency,
+  partyId: string,
+  serialized: string,
+  signature: string,
+) {
+  return submit(currency, partyId, serialized, signature);
+}
+
+type GetTransferPreApprovalResponse = {
+  contract_id: string;
+  receiver: string;
+  provider: string;
+  valid_from: string; // ISO 8601 date string
+  last_renewed_at: string; // ISO 8601 date
+  expires_at: string; // ISO 8601 date string
+};
+
+export async function getTransferPreApproval(currency: CryptoCurrency, partyId: string) {
+  const { data } = await gatewayNetwork<GetTransferPreApprovalResponse>({
+    method: "GET",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transfer-preapproval`,
+  });
+  return data;
+}
+
+export async function getPendingTransferProposals(currency: CryptoCurrency, partyId: string) {
+  const { data } = await gatewayNetwork<TransferProposal[]>({
+    method: "GET",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transfer-proposals?timestamp=${Date.now()}`,
+  });
+  return data;
+}
+
+// CAL API types
+export type CalToken = {
+  id: string;
+  name: string;
+  ticker: string;
+  network: string;
+  contract_address: string;
+  token_identifier: string;
+};
+
+/**
+ * Fetch Canton tokens from CAL service and create a map of id -> token_identifier
+ */
+async function getCalTokens(currency: CryptoCurrency): Promise<Map<string, string>> {
+  const calUrl = getEnv("CAL_SERVICE_URL");
+  const { data: calTokens } = await gatewayNetwork<CalToken[]>({
+    method: "GET",
+    url: `${calUrl}/v1/tokens?network=${currency.id}&output=id,name,ticker,network,contract_address,token_identifier,units,standard`,
+  });
+
+  // Map id -> token_identifier
+  const tokenIdentifierMap = new Map<string, string>();
+  for (const token of calTokens) {
+    tokenIdentifierMap.set(token.id, token.token_identifier);
+  }
+  return tokenIdentifierMap;
+}
+
+const getCalTokensCacheKey = (currency: CryptoCurrency): string => currency.id;
+
+export const getCalTokensCached = makeLRUCache(getCalTokens, getCalTokensCacheKey, minutes(30));

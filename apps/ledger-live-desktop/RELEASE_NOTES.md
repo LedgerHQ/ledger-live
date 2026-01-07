@@ -1,3 +1,45 @@
+# 2.135.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.135.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.133.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.132.0
+
+Ledger Live™ is now Ledger Wallet™
+
+# 2.131.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.131.0
+
+Clarified wording when adding an account to make the process easier to understand.
+
+# 2.130.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.130.0
+
+### 🌷 Improvements
+
+This release comes with improved My Ledger page look & feel and Custom Lock Screen UX for our Secure Touchscreen devices.
+
+# 2.128.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.128.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 2.126.2
 
 We fixed an issue that prevented Nano S users to send or swap USDT/stETH ERC-20 tokens

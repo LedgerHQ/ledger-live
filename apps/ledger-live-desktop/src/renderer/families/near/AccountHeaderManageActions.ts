@@ -1,7 +1,7 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { canStake } from "@ledgerhq/live-common/families/near/logic";
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { NearFamily } from "./types";

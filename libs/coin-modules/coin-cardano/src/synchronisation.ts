@@ -7,9 +7,8 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import type { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
@@ -79,12 +78,7 @@ export const makeGetAccountShape =
     });
 
     // when new tokens are added / blacklist changes, we need to sync again because we need to go through all operations again
-    const syncHash =
-      JSON.stringify(blacklistedTokenIds || []) +
-      "_" +
-      listTokensForCryptoCurrency(currency, {
-        withDelisted: true,
-      }).length;
+    const syncHash = await getSyncHash(currency.id, blacklistedTokenIds);
     const outdatedSyncHash = initialAccount?.syncHash !== syncHash;
 
     const requiredConfirmations = 90;
@@ -127,14 +121,16 @@ export const makeGetAccountShape =
     const utxos = prepareUtxos(newTransactions, stableUtxos, accountCredentialsMap);
     const utxosSum = utxos.reduce((total, u) => total.plus(u.amount), new BigNumber(0));
     const tokenBalance = mergeTokens(utxos.map(u => u.tokens).flat());
-    const subAccounts = buildSubAccounts({
-      initialAccount,
-      parentAccountId: accountId,
-      parentCurrency: currency,
-      newTransactions,
-      tokens: tokenBalance,
-      accountCredentialsMap,
-    }).filter(a => !blacklistedTokenIds?.includes(a.token.id));
+    const subAccounts = (
+      await buildSubAccounts({
+        initialAccount,
+        parentAccountId: accountId,
+        parentCurrency: currency,
+        newTransactions,
+        tokens: tokenBalance,
+        accountCredentialsMap,
+      })
+    ).filter(a => !blacklistedTokenIds?.includes(a.token.id));
 
     const stakeCredential = getAccountStakeCredential(xpub, accountIndex);
     const networkParams = getNetworkParameters(currency.id);

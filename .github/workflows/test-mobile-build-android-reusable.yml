@@ -32,6 +32,11 @@ on:
         required: false
         type: string
         default: "detox-ios-js-cache"
+      production_firebase:
+        description: Whether to build the Android app for production Firebase
+        required: false
+        type: boolean
+        default: false
     outputs:
       js-bundle-size:
         description: The JS bundle size of the built app
@@ -66,6 +71,11 @@ on:
         required: false
         type: string
         default: "detox-ios-js-cache"
+      production_firebase:
+        description: Whether to build the Android app for production Firebase
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   id-token: write
@@ -74,16 +84,16 @@ permissions:
 env:
   SHOULD_UPLOAD: ${{ (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
   cache-bucket: ll-gha-s3-cache
-  ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
+  ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-x86_64-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}.apk
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
-  ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk
+  ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}-androidTest.apk
 
 jobs:
-
   build-android-native:
     name: "Android Build Native"
     runs-on: [ledger-live-linux-8CPU-32RAM]
     if: ${{ inputs.build-android-native == true }}
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
@@ -97,7 +107,7 @@ jobs:
         with:
           install-proto: true
           skip-turbo-cache: "false"
-          skip-pnpm-cache: "false"
+          skip-pnpm-cache: "true"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -124,7 +134,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
 
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
@@ -150,25 +160,25 @@ jobs:
           SKIP_JS_BUNDLING: true
 
       - name: Upload Detox Native Build
-        uses: tespkg/actions-cache/save@v1
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
         with:
           path: |
-            ${{ env.ANDROID_APK_PATH }}
-            ${{ env.ANDROID_TESTBINARY_PATH }}
+            ${{ github.workspace }}/${{ env.ANDROID_APK_PATH }}
+            ${{ github.workspace }}/${{ env.ANDROID_TESTBINARY_PATH }}
           key: ${{ inputs.android-native-cache-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
 
   build-android-js:
     name: "Android Build JS"
-    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
+    timeout-minutes: 20
     if: ${{ inputs.build-android-js == true }}
     outputs:
-        js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
+      js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -190,7 +200,7 @@ jobs:
           install-proto: "true"
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
-          skip-pnpm-cache: "false"
+          skip-pnpm-cache: "true"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -202,8 +212,8 @@ jobs:
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
 
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
@@ -222,20 +232,19 @@ jobs:
           echo size=`ls -l ${{ env.ANDROID_JSBUNDLE_PATH }}  | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
-        uses: tespkg/actions-cache/save@v1
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
         with:
-          path: ${{ env.ANDROID_JSBUNDLE_PATH }}
+          path: ${{ github.workspace }}/${{ env.ANDROID_JSBUNDLE_PATH }}
           key: ${{ inputs.android-js-cache-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
 
   skip-android-js:
     name: "Android Build JS - Skip"
     if: ${{ inputs.build-android-js != true }}
-    runs-on: [ ubuntu-22.04 ]
+    runs-on: [ubuntu-22.04]
     steps:
       - run: echo "Skipping"

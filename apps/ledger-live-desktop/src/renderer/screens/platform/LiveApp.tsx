@@ -4,7 +4,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { Card } from "~/renderer/components/Box";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import { languageSelector } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { useTrack } from "~/renderer/analytics/segment";
@@ -72,7 +72,7 @@ export function LiveApp({ match, appId: propsAppId, location }: LiveAppProps) {
 
     history.push(returnTo || `/platform`);
   }, [history, returnTo, appId, swapTrackingProperties, track]);
-  const themeType = useTheme().colors.palette.type;
+  const themeType = useTheme().theme;
   const lang = useSelector(languageSelector);
   const params = {
     theme: themeType,

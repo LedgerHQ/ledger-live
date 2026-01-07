@@ -10,17 +10,16 @@ import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
-import { urls } from "~/config/urls";
-import { openURL } from "~/renderer/linking";
 import FlashMCU from "~/renderer/components/FlashMCU";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import IconCheck from "~/renderer/icons/Check";
-import { colors } from "~/renderer/styles/theme";
+import HelpCenterButton from "./components/HelpCenterButton";
+
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))``;
 const ChoiceBox = styled.div<{ selected?: boolean }>`
   display: flex;
@@ -28,7 +27,7 @@ const ChoiceBox = styled.div<{ selected?: boolean }>`
   border-radius: 4px;
   box-shadow: ${props => (props.selected ? "0 2px 4px 0 rgba(0, 0, 0, 0.08)" : null)};
   border: solid 1px
-    ${props => (props.selected ? props.theme.colors.wallet : props.theme.colors.palette.divider)};
+    ${props => (props.selected ? props.theme.colors.wallet : props.theme.colors.neutral.c40)};
   height: 48px;
   padding: 0 24px;
   margin-bottom: 8px;
@@ -61,7 +60,7 @@ const Choice = React.memo(ChoiceLocal);
 const DisclaimerStep = ({ desc }: { desc?: React.ReactNode }) => (
   <Box px={2}>
     {desc ? (
-      <Box ff="Inter" color="palette.text.shade80" fontSize={4} textAlign="center" mb={2}>
+      <Box ff="Inter" color="neutral.c80" fontSize={4} textAlign="center" mb={2}>
         {desc}
       </Box>
     ) : null}
@@ -85,11 +84,11 @@ const FlashStep = ({
       <Box mx={7} alignItems="center">
         <ProgressCircle size={64} progress={progress} />
       </Box>
-      <Box mx={7} mt={3} mb={2} ff="Inter|Regular" color="palette.text.shade100" textAlign="center">
+      <Box mx={7} mt={3} mb={2} ff="Inter|Regular" color="neutral.c100" textAlign="center">
         {t(`manager.modal.steps.flash`)}
       </Box>
       <Box mx={7} mt={2} mb={2}>
-        <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade80" fontSize={4}>
+        <Text ff="Inter|Regular" textAlign="center" color="neutral.c80" fontSize={4}>
           {t("manager.modal.mcuPin")}
         </Text>
       </Box>
@@ -104,7 +103,7 @@ type Props = {
   title?: React.ReactNode;
   subTitle?: React.ReactNode;
   desc: React.ReactNode;
-  renderIcon?: Function;
+  renderIcon?: () => React.ReactNode;
   confirmText?: string;
   cancelText?: string;
   onReject: (_?: { needHelp?: boolean }) => void;
@@ -207,7 +206,7 @@ class RepairModal extends PureComponent<Props, State> {
               )}
 
               {!isLoading && !error ? (
-                <Box py={2} px={5} color="palette.text.shade100" fontSize={4}>
+                <Box py={2} px={5} color="neutral.c100" fontSize={4}>
                   {availableRepairChoices.map(choice => (
                     <Choice
                       key={choice.id}
@@ -223,9 +222,7 @@ class RepairModal extends PureComponent<Props, State> {
           renderFooter={() =>
             !isLoading ? (
               <Box horizontal alignItems="center" flow={2} flex={1}>
-                <Button onClick={() => openURL(urls.troubleshootingUSB)} textColor={colors.wallet}>
-                  {t("common.help")}
-                </Button>
+                <HelpCenterButton t={t} />
                 <div
                   style={{
                     flex: 1,

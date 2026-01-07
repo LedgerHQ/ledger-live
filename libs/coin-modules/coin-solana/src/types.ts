@@ -13,7 +13,6 @@ import {
 import { ValidatorsAppValidator } from "./network/validator-app";
 import { TokenAccountState } from "./network/chain/account/token";
 import { PARSED_PROGRAMS } from "./network/chain/program/constants";
-import { SPLToken } from "@ledgerhq/cryptoassets/data/spl";
 
 export type TransferCommand = {
   kind: "transfer";
@@ -94,6 +93,7 @@ export type TokenRecipientDescriptor = {
   walletAddress: string;
   tokenAccAddress: string;
   shouldCreateAsAssociatedTokenAccount: boolean;
+  userInputType: "sol" | "ata";
 };
 
 export type TransferFeeCalculated = {
@@ -243,6 +243,7 @@ export type Transaction = TransactionCommon & {
   family: "solana";
   model: TransactionModel;
   raw?: string;
+  templateId?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -306,7 +307,6 @@ export type SolanaPreloadDataV1 = {
   version: "1";
   validatorsWithMeta: SolanaValidatorWithMeta[];
   validators: ValidatorsAppValidator[];
-  splTokens: SPLToken[] | null;
 };
 
 // exists for discriminated union to work

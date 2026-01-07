@@ -12,7 +12,7 @@ import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import {
   CurrentAccountHistDB,
   safeGetRefValue,
-  useManifestCurrencies,
+  useDAppManifestCurrencyIds,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { track } from "~/renderer/analytics/segment";
@@ -20,13 +20,12 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import {
-  ModularDrawerLocation,
-  openAssetAndAccountDrawer,
-  useModularDrawerVisibility,
-} from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { AccountLike } from "@ledgerhq/types-live";
+import { useDispatch } from "LLD/hooks/redux";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 export const initialWebviewState: WebviewState = {
   url: "",
@@ -190,32 +189,24 @@ export function useWebviewState(
     }));
   }, [webviewRef]);
 
-  const handleFailLoad = useCallback(
-    (errorEvent: {
-      errorCode: number;
-      errorDescription: string;
-      validatedURL: string;
-      isMainFrame: boolean;
-    }) => {
-      const { errorCode, validatedURL, isMainFrame } = errorEvent;
-      const fullURL = new URL(validatedURL);
-      const errorInfo = {
-        errorCode,
-        url: fullURL.hostname,
-      };
-      console.error("Web3AppView handleFailLoad", { errorInfo, isMainFrame });
-      track("useWebviewState", errorInfo);
+  const handleFailLoad = useCallback((errorEvent: Electron.DidFailLoadEvent) => {
+    const { errorCode, validatedURL, isMainFrame } = errorEvent;
+    const fullURL = new URL(validatedURL);
+    const errorInfo = {
+      errorCode,
+      url: fullURL.hostname,
+    };
+    console.error("Web3AppView handleFailLoad", { errorInfo, isMainFrame });
+    track("useWebviewState", errorInfo);
 
-      if (isMainFrame) {
-        setState(oldState => ({
-          ...oldState,
-          loading: false,
-          isAppUnavailable: true,
-        }));
-      }
-    },
-    [],
-  ) as unknown as EventListenerOrEventListenerObject;
+    if (isMainFrame) {
+      setState(oldState => ({
+        ...oldState,
+        loading: false,
+        isAppUnavailable: true,
+      }));
+    }
+  }, []);
 
   const handleCrashed = useCallback(() => {
     setState(oldState => ({
@@ -311,7 +302,7 @@ export function useSelectAccount({
     liveAppId: manifest.id,
   });
 
-  const currencies = useManifestCurrencies(manifest);
+  const currencyIds = useDAppManifestCurrencyIds(manifest);
   const { setCurrentAccountHist, setCurrentAccount, currentAccount } =
     useDappCurrentAccount(currentAccountHistDb);
 
@@ -335,29 +326,45 @@ export function useSelectAccount({
 
   const flow = manifest.name;
 
+  const dispatch = useDispatch();
+
+  const { openAssetAndAccount } = useOpenAssetAndAccount();
+
   const onSelectAccount = useCallback(() => {
-    modularDrawerVisible
-      ? openAssetAndAccountDrawer({
-          currencies,
-          onSuccess,
-          onCancel,
+    if (modularDrawerVisible) {
+      dispatch(setFlowValue(flow));
+      dispatch(setSourceValue(source));
+
+      openAssetAndAccount({
+        currencies: currencyIds,
+        onSuccess,
+        onCancel,
+        areCurrenciesFiltered: true,
+      });
+    } else {
+      setDrawer(
+        SelectAccountAndCurrencyDrawer,
+        {
           flow,
           source,
-          areCurrenciesFiltered: manifest.currencies !== "*",
-        })
-      : setDrawer(
-          SelectAccountAndCurrencyDrawer,
-          {
-            flow,
-            source,
-            currencies: currencies,
-            onAccountSelected: onSuccess,
-          },
-          {
-            onRequestClose: onCancel,
-          },
-        );
-  }, [currencies, flow, manifest.currencies, modularDrawerVisible, onCancel, onSuccess, source]);
+          currencyIds,
+          onAccountSelected: onSuccess,
+        },
+        {
+          onRequestClose: onCancel,
+        },
+      );
+    }
+  }, [
+    modularDrawerVisible,
+    dispatch,
+    flow,
+    source,
+    openAssetAndAccount,
+    currencyIds,
+    onSuccess,
+    onCancel,
+  ]);
 
   return { onSelectAccount, currentAccount };
 }

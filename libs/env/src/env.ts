@@ -31,7 +31,7 @@ const jsonParser = (v: unknown): JSONValue | undefined => {
   try {
     if (typeof v !== "string") throw new Error();
     return JSON.parse(v);
-  } catch (e) {
+  } catch {
     return undefined;
   }
 };
@@ -56,11 +56,6 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "Show theme debug overlay UI",
-  },
-  API_ICP_ENDPOINT: {
-    def: "https://icp.coin.ledger.com/",
-    parser: stringParser,
-    desc: "Rosetta API for ICP",
   },
   APTOS_API_ENDPOINT: {
     def: "https://apt.coin.ledger.com/node/v1",
@@ -108,7 +103,7 @@ const envDefinitions = {
     desc: "Node endpoint for celo",
   },
   ENABLE_CELO_TOKENS: {
-    def: false,
+    def: true,
     parser: boolParser,
     desc: "Enable token send and receive for Celo",
   },
@@ -161,11 +156,6 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://kaspa.coin.ledger.com",
     desc: "Kaspa API url",
-  },
-  API_KASPA_TESTNET_ENDPOINT: {
-    parser: stringParser,
-    def: "https://kaspa.coin.ledger-test.com",
-    desc: "Kaspa testnet API url",
   },
   API_STELLAR_HORIZON: {
     parser: stringParser,
@@ -252,6 +242,21 @@ const envDefinitions = {
     parser: intParser,
     desc: "solana transaction broadcast confirmation timeout",
   },
+  HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID: {
+    def: "0.0.163372",
+    parser: stringParser,
+    desc: "dead address that receives 1 tinybar from tx that is made to trigger rewards claiming",
+  },
+  HEDERA_STAKING_REWARD_ACCOUNT_ID: {
+    def: "0.0.800",
+    parser: stringParser,
+    desc: "hedera staking reward account id",
+  },
+  HEDERA_STAKING_LEDGER_NODE_ID: {
+    def: -1,
+    parser: intParser,
+    desc: "hedera staking ledger node id, used to determine the default validator",
+  },
   HEDERA_TOKEN_ASSOCIATION_MIN_USD: {
     def: 0.05,
     parser: floatParser,
@@ -261,6 +266,11 @@ const envDefinitions = {
     def: "https://hedera.coin.ledger.com",
     parser: stringParser,
     desc: "mirror node API for Hedera",
+  },
+  API_HEDERA_THIRDWEB_URL: {
+    def: "https://hedera-tokens.coin.ledger.com",
+    parser: stringParser,
+    desc: "Thirdweb API for Hedera",
   },
   API_VECHAIN_THOREST: {
     def: "https://vechain.coin.ledger.com",
@@ -331,6 +341,11 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "API key for Canton network gateway authentication",
+  },
+  CANTON_NODE_ID_OVERRIDE: {
+    def: "",
+    parser: stringParser,
+    desc: "(dev feature) Switch Canton gateway nodeId for testing different presets.",
   },
   COINAPPS: {
     def: "",
@@ -407,6 +422,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "switch the app into a DETOX mode for test purpose. Avoid falsy values.",
   },
+  E2E_NANO_APP_VERSION_PATH: {
+    def: "",
+    parser: stringParser,
+    desc: "Path for e2e nanoApp version artifacts (LLD and LLM)",
+  },
   EIP1559_MINIMUM_FEES_GATE: {
     def: true,
     parser: boolParser,
@@ -472,15 +492,10 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger generic explorer API",
   },
-  EXPLORER_STAGING: {
-    def: "https://explorers.api-01.live.ledger-stg.com",
+  EXPLORER_REGTEST: {
+    def: "http://localhost:9876",
     parser: stringParser,
-    desc: "Ledger staging explorer API",
-  },
-  EXPLORER_BETA: {
-    def: "https://explorers.api.live.ledger.com",
-    parser: stringParser,
-    desc: "Ledger generic explorer beta API",
+    desc: "Ledger regtest Bitcoin explorer API",
   },
   EXPLORER_SATSTACK: {
     def: "http://localhost:20000",
@@ -666,15 +681,15 @@ const envDefinitions = {
     parser: stringParser,
     desc: "(dev feature) seed to be used by speculos (device simulator)",
   },
+  PROVIDER_SESSION_ID_ENDPOINT: {
+    def: "https://buy.api.live.ledger.com/session",
+    parser: stringParser,
+    desc: "Request provider session id",
+  },
   SHOW_LEGACY_NEW_ACCOUNT: {
     def: false,
     parser: boolParser,
     desc: "allow the creation of legacy accounts",
-  },
-  SIMPLE_HASH_API_BASE: {
-    def: "https://simplehash.api.live.ledger.com/api/v0",
-    parser: stringParser,
-    desc: "SimpleHash API base url",
   },
   SKIP_ONBOARDING: {
     def: false,
@@ -690,6 +705,11 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "Device model id for speculos",
+  },
+  SPECULOS_FIRMWARE_VERSION: {
+    def: "",
+    parser: stringParser,
+    desc: "Firmware version for speculos",
   },
   SPECULOS_PID_OFFSET: {
     def: 0,
@@ -814,12 +834,12 @@ const envDefinitions = {
     desc: "Trustchain API Prod",
   },
   DADA_API_STAGING: {
-    def: "https://dada.api.ledger-test.com/v1/",
+    def: "https://dada.api.ledger-test.com/v1",
     parser: stringParser,
     desc: "Dynamic Assets Data Aggregator API Staging",
   },
   DADA_API_PROD: {
-    def: "https://dada.api.ledger.com/v1/",
+    def: "https://dada.api.ledger.com/v1",
     parser: stringParser,
     desc: "Dynamic Assets Data Aggregator API Prod",
   },
@@ -898,6 +918,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Cryptoassets list service url",
   },
+  CAL_SERVICE_URL_STAGING: {
+    def: "https://crypto-assets-service.api.ledger-test.com",
+    parser: stringParser,
+    desc: "Cryptoassets list service url (staging)",
+  },
+  PUSH_DEVICES_SERVICE_URL: {
+    def: "https://device-gateway.api.ledger.com",
+    parser: stringParser,
+    desc: "Push Devices Service url for device tracking",
+  },
   FEATURE_FLAGS: {
     def: "{}",
     parser: jsonParser,
@@ -972,6 +1002,11 @@ const envDefinitions = {
     def: "https://compliance.ledger.com/all_sanctioned_addresses_without_ticker.json",
     parser: stringParser,
     desc: "List of sanctioned addresses",
+  },
+  BIG_NUMBER_DECIMAL_PLACES: {
+    def: 40,
+    parser: intParser,
+    desc: "bignumber.js decimal places configuration",
   },
 };
 

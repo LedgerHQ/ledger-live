@@ -1,5 +1,5 @@
-import { listOperations } from "./listOperations";
 import type { APIDelegationType, APIRevealType, APITransactionType } from "../network/types";
+import { listOperations } from "./listOperations";
 
 const mockNetworkGetTransactions = jest.fn();
 jest.mock("../network", () => ({
@@ -83,45 +83,50 @@ describe("listOperations", () => {
   };
 
   it.each([
-    ["undelegate", undelegate],
-    ["delegate", delegate],
-    ["transfer", transfer],
-  ])("should return %s operation with proper recipient list", async (_label, operation) => {
-    // Given
-    mockNetworkGetTransactions.mockResolvedValue([operation]);
-    // When
-    const [results] = await listOperations("any address", options);
-    // Then
-    expect(results).toEqual([
-      {
-        id: `${operation.hash}-${operation.id}`,
-        asset: { type: "native" },
-        details: {
-          counter: operation.counter,
-          gasLimit: operation.gasLimit,
-          storageLimit: operation.storageLimit,
-        },
-        senders: [someSenderAddress],
-        recipients: [someDestinationAddress],
-        tx: {
-          block: {
-            hash: operation.block,
-            height: operation.level,
-            time: new Date(operation.timestamp),
+    ["undelegate", undelegate, "DELEGATE", "DELEGATE", 0n],
+    ["delegate", delegate, "UNDELEGATE", "UNDELEGATE", 0n],
+    ["transfer", transfer, "OUT", undefined, 724846n],
+  ])(
+    "should return %s operation with proper recipient list",
+    async (_label, operation, expectedType, expectedLedgerOpType, expectedAmount) => {
+      // Given
+      mockNetworkGetTransactions.mockResolvedValue([operation]);
+      // When
+      const [results] = await listOperations("any address", options);
+      // Then
+      expect(results).toEqual([
+        {
+          id: `${operation.hash}-${operation.id}`,
+          asset: { type: "native" },
+          details: {
+            counter: operation.counter,
+            gasLimit: operation.gasLimit,
+            storageLimit: operation.storageLimit,
+            ledgerOpType: expectedLedgerOpType,
           },
-          date: new Date(operation.timestamp),
-          hash: operation.hash,
-          fees: BigInt(
-            (operation.allocationFee ?? 0) +
-              (operation.bakerFee ?? 0) +
-              (operation.storageFee ?? 0),
-          ),
+          senders: [someSenderAddress],
+          recipients: [someDestinationAddress],
+          tx: {
+            block: {
+              hash: operation.block,
+              height: operation.level,
+              time: new Date(operation.timestamp),
+            },
+            date: new Date(operation.timestamp),
+            hash: operation.hash,
+            failed: false,
+            fees: BigInt(
+              (operation.allocationFee ?? 0) +
+                (operation.bakerFee ?? 0) +
+                (operation.storageFee ?? 0),
+            ),
+          },
+          type: expectedType,
+          value: expectedAmount,
         },
-        type: operation.type,
-        value: BigInt(operation.amount),
-      },
-    ]);
-  });
+      ]);
+    },
+  );
 
   it.each([
     ["undelegate", undelegate],
@@ -142,23 +147,27 @@ describe("listOperations", () => {
   );
 
   it.each([
-    ["undelegate", undelegate],
-    ["delegate", delegate],
-    ["transfer", transfer],
-    ["reveal", reveal],
-  ])("should return %s operation with expected details", async (_label, operation) => {
-    // Given
-    mockNetworkGetTransactions.mockResolvedValue([operation]);
-    // When
-    const [results, _] = await listOperations("any address", options);
-    // Then
-    expect(results.length).toEqual(1);
-    expect(results[0].details).toEqual({
-      counter: 65214462,
-      gasLimit: 4,
-      storageLimit: 5,
-    });
-  });
+    ["undelegate", undelegate, "DELEGATE"],
+    ["delegate", delegate, "UNDELEGATE"],
+    ["transfer", transfer, undefined],
+    ["reveal", reveal, "REVEAL"],
+  ])(
+    "should return %s operation with expected details",
+    async (_label, operation, expectedLedgerOpType) => {
+      // Given
+      mockNetworkGetTransactions.mockResolvedValue([operation]);
+      // When
+      const [results, _] = await listOperations("any address", options);
+      // Then
+      expect(results.length).toEqual(1);
+      expect(results[0].details).toEqual({
+        counter: 65214462,
+        gasLimit: 4,
+        storageLimit: 5,
+        ledgerOpType: expectedLedgerOpType,
+      });
+    },
+  );
 
   it.each([
     { ...undelegate, newDelegate: null, prevDelegate: null },

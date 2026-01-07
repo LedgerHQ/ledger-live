@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 
 import { useNavigation } from "@react-navigation/native";
 import { postOnboardingSetFinished } from "@ledgerhq/live-common/postOnboarding/actions";
@@ -11,7 +11,11 @@ export function useCompletePostOnboarding() {
 
   const closePostOnboarding = useCallback(() => {
     dispatch(postOnboardingSetFinished());
-    navigation.navigate(NavigatorName.Main);
+
+    navigation.navigate(NavigatorName.Main, {
+      screen: NavigatorName.Portfolio,
+      params: { screen: NavigatorName.WalletTab },
+    });
   }, [dispatch, navigation]);
 
   return closePostOnboarding;

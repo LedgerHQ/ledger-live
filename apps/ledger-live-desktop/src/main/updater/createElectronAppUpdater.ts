@@ -7,6 +7,7 @@ import pubKey from "./ledger-pubkey";
 import { UpdateDownloadedEvent } from "electron-updater";
 
 export default async ({ feedURL, info }: { feedURL: string; info: UpdateDownloadedEvent }) => {
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   const { version: updateVersion, path: filename, downloadedFile: filePath } = info;
   const hashFileURL = `${feedURL}/ledger-live-desktop-${updateVersion}.sha512sum`;
   const hashSigFileURL = `${feedURL}/ledger-live-desktop-${updateVersion}.sha512sum.sig`;
@@ -45,9 +46,10 @@ async function getDistantFileContent(url: string, binary = false) {
   }
   try {
     // @ts-expect-error axios versions mismatch, so types mismatch…
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     const res = await network(query);
     return res.data;
-  } catch (err) {
+  } catch {
     throw new UpdateFetchFileFail(url);
   }
 }

@@ -1,17 +1,16 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { CurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { Image } from "react-native";
 import { useTranslation } from "react-i18next";
-import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
-import { StyledIconContainer } from "./MarketRowItem.styled";
 import { useLocale } from "~/context/Locale";
 import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import { counterValueFormatter } from "LLM/features/Market/utils";
+import { StyledIconContainer } from "./MarketRowItem.styled";
 
 type Props = {
   index: number;
-  item: CurrencyData;
+  item: MarketCurrencyData;
   counterCurrency?: string;
   range?: string;
 };
@@ -19,7 +18,7 @@ type Props = {
 function MarketRowItem({ item, index, counterCurrency, range }: Props) {
   const { locale } = useLocale();
   const { t } = useTranslation();
-  const { internalCurrency, image, name, marketcap, marketcapRank, price, ticker } = item;
+  const { image, name, marketcap, marketcapRank, price, ticker } = item;
 
   const priceChangePercentage = item?.priceChangePercentage[range as KeysPriceChange];
 
@@ -32,19 +31,10 @@ function MarketRowItem({ item, index, counterCurrency, range }: Props) {
       py="16px"
       key={index}
     >
-      {internalCurrency ? (
-        <CircleCurrencyIcon
-          size={32}
-          currency={internalCurrency}
-          color={undefined}
-          sizeRatio={0.9}
-        />
-      ) : (
-        image && (
-          <StyledIconContainer>
-            <Image source={{ uri: image }} style={{ width: 30, height: 30 }} resizeMode="contain" />
-          </StyledIconContainer>
-        )
+      {image && (
+        <StyledIconContainer>
+          <Image source={{ uri: image }} style={{ width: 32, height: 32 }} resizeMode="contain" />
+        </StyledIconContainer>
       )}
       <Flex mx="4" flexDirection="column" justifyContent="center" alignItems="flex-start" flex={1}>
         <Text

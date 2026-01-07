@@ -58,9 +58,9 @@ describe("getAlpacaApi", () => {
         case "tron":
           return { family: "tron" };
         case "ethereum":
-          return { family: "evm" };
+          return { id: "ethereum", family: "evm" };
         case "sonic":
-          return { family: "evm" };
+          return { id: "sonic", family: "evm" };
         default:
           return undefined;
       }

@@ -1,9 +1,9 @@
 import { AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
-import run from "./run";
 import * as bridgeModule from "@ledgerhq/live-common/bridge/impl";
 import { makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import BigNumber from "bignumber.js";
+import run from "./run";
 
 describe("Coin Modules Monitoring", () => {
   beforeAll(() => {
@@ -41,59 +41,128 @@ describe("Coin Modules Monitoring", () => {
           },
         }),
       } as AccountBridge<TransactionCommon>);
-      jest
-        .spyOn(Date, "now")
-        .mockReturnValueOnce(3000) // Start scan big
-        .mockReturnValueOnce(3000) // Start scan average
-        .mockReturnValueOnce(3050) // End scan average
-        .mockReturnValueOnce(3000) // Start sync average
-        .mockReturnValueOnce(3025) // End sync average
-        .mockReturnValueOnce(3000) // Start scan pristine
-        .mockReturnValueOnce(3020) // End scan pristine
-        .mockReturnValueOnce(3000) // Start sync pristine
-        .mockReturnValueOnce(3010); // End sync pristine
 
-      const logs = await run(["solana"]);
+      const logs = await run(["solana"], ["pristine", "average", "big"]);
 
       expect(logs).toEqual({
-        entries: [
+        entries: expect.arrayContaining([
           {
-            duration: 50,
+            duration: expect.any(Number),
             currencyName: "solana",
             coinModuleName: "solana",
             operationType: "scan",
             accountType: "average",
             transactions: 500,
             accountAddressOrXpub: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
+            cpu: {
+              max: expect.any(Number),
+              average: expect.any(Number),
+              min: expect.any(Number),
+              p50: expect.any(Number),
+              p90: expect.any(Number),
+              p95: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            memory: {
+              max: expect.any(Number),
+              average: expect.any(Number),
+              min: expect.any(Number),
+              p50: expect.any(Number),
+              p90: expect.any(Number),
+              p95: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            totalNetworkCalls: 0, // no network call on unit tests
+            networkCallsByDomain: {},
           },
           {
-            duration: 25,
+            duration: expect.any(Number),
             currencyName: "solana",
             coinModuleName: "solana",
             operationType: "sync",
             accountType: "average",
             transactions: 500,
             accountAddressOrXpub: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
+            cpu: {
+              max: expect.any(Number),
+              average: expect.any(Number),
+              min: expect.any(Number),
+              p50: expect.any(Number),
+              p90: expect.any(Number),
+              p95: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            memory: {
+              max: expect.any(Number),
+              average: expect.any(Number),
+              min: expect.any(Number),
+              p50: expect.any(Number),
+              p90: expect.any(Number),
+              p95: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            totalNetworkCalls: 0, // no network call on unit tests
+            networkCallsByDomain: {},
           },
           {
-            duration: 20,
+            duration: expect.any(Number),
             currencyName: "solana",
             coinModuleName: "solana",
             operationType: "scan",
             accountType: "pristine",
             transactions: 0,
             accountAddressOrXpub: "Hbac8tM3SMbua9ZBqPRbEJ2n3FtikRJc7wFmZzpqbtBv",
+            cpu: {
+              max: expect.any(Number),
+              average: expect.any(Number),
+              min: expect.any(Number),
+              p50: expect.any(Number),
+              p90: expect.any(Number),
+              p95: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            memory: {
+              max: expect.any(Number),
+              average: expect.any(Number),
+              min: expect.any(Number),
+              p50: expect.any(Number),
+              p90: expect.any(Number),
+              p95: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            totalNetworkCalls: 0, // no network call on unit tests
+            networkCallsByDomain: {},
           },
           {
-            duration: 10,
+            duration: expect.any(Number),
             currencyName: "solana",
             coinModuleName: "solana",
             operationType: "sync",
             accountType: "pristine",
             transactions: 0,
             accountAddressOrXpub: "Hbac8tM3SMbua9ZBqPRbEJ2n3FtikRJc7wFmZzpqbtBv",
+            cpu: {
+              max: expect.any(Number),
+              average: expect.any(Number),
+              min: expect.any(Number),
+              p50: expect.any(Number),
+              p90: expect.any(Number),
+              p95: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            memory: {
+              max: expect.any(Number),
+              average: expect.any(Number),
+              min: expect.any(Number),
+              p50: expect.any(Number),
+              p90: expect.any(Number),
+              p95: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            totalNetworkCalls: 0, // no network call on unit tests
+            networkCallsByDomain: {},
           },
-        ],
+        ]),
         failed: true,
       });
     });

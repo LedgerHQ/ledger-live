@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { Platform } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { NavigationProp, useRoute } from "@react-navigation/native";
@@ -10,14 +10,6 @@ import ReceiveConnectDevice, {
   connectDeviceHeaderOptions,
 } from "~/screens/ReceiveFunds/03a-ConnectDevice";
 import ReceiveVerifyAddress from "~/screens/ReceiveFunds/03b-VerifyAddress";
-import ReceiveSelectCrypto from "~/screens/ReceiveFunds/01-SelectCrypto";
-import ReceiveSelectNetwork from "~/screens/ReceiveFunds/02-SelectNetwork";
-import ReceiveAddAccountSelectDevice, {
-  addAccountsSelectDeviceHeaderOptions,
-} from "~/screens/ReceiveFunds/02-AddAccountSelectDevice";
-import ReceiveSelectAccount from "~/screens/ReceiveFunds/02-SelectAccount";
-import ReceiveAddAccount from "~/screens/ReceiveFunds/02-AddAccount";
-
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
@@ -26,19 +18,21 @@ import { ReceiveFundsStackParamList } from "./types/ReceiveFundsNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { Flex } from "@ledgerhq/native-ui";
 import HelpButton from "~/screens/ReceiveFunds/HelpButton";
-import { useSelector } from "react-redux";
-import {
-  hasClosedNetworkBannerSelector,
-  hasClosedWithdrawBannerSelector,
-} from "~/reducers/settings";
+import { useSelector, useDispatch } from "~/context/hooks";
+import { hasClosedWithdrawBannerSelector, isOnboardingFlowSelector } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
+import ReceiveProvider from "~/screens/ReceiveFunds/01b-ReceiveProvider.";
+import { setIsOnboardingFlowReceiveSuccess } from "~/actions/settings";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const route = useRoute();
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
-  const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
+  const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
+  const dispatchRedux = useDispatch();
+  const localizedWithdrawCryptoUrl = useLocalizedUrl(urls.withdrawCrypto);
 
   const onClose = useCallback(() => {
     track("button_clicked", {
@@ -50,9 +44,14 @@ export default function ReceiveFundsNavigator() {
   const stackNavigationConfig = useMemo(
     () => ({
       ...getStackNavigatorConfig(colors, true),
-      headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
+      headerRight: () => (
+        <NavigationHeaderCloseButtonAdvanced
+          onClose={onClose}
+          disablePostOnboardingRedirect={isOnboardingFlow}
+        />
+      ),
     }),
-    [colors, onClose],
+    [colors, onClose, isOnboardingFlow],
   );
 
   const onConnectDeviceBack = useCallback((navigation: NavigationProp<Record<string, unknown>>) => {
@@ -68,7 +67,9 @@ export default function ReceiveFundsNavigator() {
       button: "HeaderRight Close",
       page: ScreenName.ReceiveConfirmation,
     });
-  }, []);
+
+    dispatchRedux(setIsOnboardingFlowReceiveSuccess(true));
+  }, [dispatchRedux]);
 
   const onVerificationConfirmationClose = useCallback(() => {
     track("button_clicked", {
@@ -84,67 +85,11 @@ export default function ReceiveFundsNavigator() {
         gestureEnabled: Platform.OS === "ios",
       }}
     >
-      {/* Select Crypto (see : apps/ledger-live-mobile/src/screens/AddAccounts/01-SelectCrypto.js) */}
       <Stack.Screen
-        name={ScreenName.ReceiveSelectCrypto}
-        component={ReceiveSelectCrypto}
+        name={ScreenName.ReceiveProvider}
+        component={ReceiveProvider}
         options={{
-          headerLeft: () => <NavigationHeaderBackButton />,
-          headerTitle: "",
-          headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
-        }}
-      />
-
-      <Stack.Screen
-        name={ScreenName.DepositSelectNetwork}
-        component={ReceiveSelectNetwork}
-        options={{
-          headerLeft: () => <NavigationHeaderBackButton />,
-          headerTitle: "",
-          headerRight: () => (
-            <Flex alignItems="center" justifyContent="center" flexDirection="row">
-              {hasClosedNetworkBanner && (
-                <HelpButton eventButton="Choose a network article" url={urls.chooseNetwork} />
-              )}
-              <NavigationHeaderCloseButtonAdvanced onClose={onClose} />
-            </Flex>
-          ),
-        }}
-      />
-
-      {/* Select Account */}
-      <Stack.Screen
-        name={ScreenName.ReceiveSelectAccount}
-        component={ReceiveSelectAccount}
-        options={{
-          headerTitle: "",
-        }}
-      />
-
-      {/* Select Account */}
-      <Stack.Screen
-        name={ScreenName.ReceiveAddAccountSelectDevice}
-        component={ReceiveAddAccountSelectDevice}
-        options={{
-          headerTitle: () => (
-            <StepHeader
-              subtitle={t("transfer.receive.stepperHeader.range", {
-                currentStep: "2",
-                totalSteps: 3,
-              })}
-              title={t("transfer.receive.stepperHeader.connectDevice")}
-            />
-          ),
-          ...addAccountsSelectDeviceHeaderOptions(onClose),
-        }}
-      />
-
-      {/* Select Account */}
-      <Stack.Screen
-        name={ScreenName.ReceiveAddAccount}
-        component={ReceiveAddAccount}
-        options={{
-          headerTitle: "",
+          header: undefined,
         }}
       />
 
@@ -182,16 +127,22 @@ export default function ReceiveFundsNavigator() {
         options={({ route }) => ({
           // Nice to know: headerTitle is manually set in a useEffect of ReceiveConfirmation
           headerTitle: "",
-          headerLeft: () => <NavigationHeaderBackButton />,
+          header: undefined,
+          headerLeft: () => (route.params?.hideBackButton ? null : <NavigationHeaderBackButton />),
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
               {hasClosedWithdrawBanner && (
-                <HelpButton url={urls.withdrawCrypto} eventButton="How to withdraw from exchange" />
+                <HelpButton
+                  url={localizedWithdrawCryptoUrl}
+                  eventButton="How to withdraw from exchange"
+                />
               )}
               <NavigationHeaderCloseButtonAdvanced
                 onClose={
                   route.params.verified ? onVerificationConfirmationClose : onConfirmationClose
                 }
+                disablePostOnboardingRedirect={isOnboardingFlow}
+                popToTop={isOnboardingFlow}
               />
             </Flex>
           ),
@@ -201,4 +152,4 @@ export default function ReceiveFundsNavigator() {
   );
 }
 
-const Stack = createStackNavigator<ReceiveFundsStackParamList>();
+const Stack = createNativeStackNavigator<ReceiveFundsStackParamList>();

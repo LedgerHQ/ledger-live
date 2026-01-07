@@ -1,5 +1,103 @@
 # @ledgerhq/hw-transport-node-hid-singleton
 
+## 6.31.16
+
+### Patch Changes
+
+- Updated dependencies [[`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe)]:
+  - @ledgerhq/errors@6.28.0
+  - @ledgerhq/devices@8.8.0
+  - @ledgerhq/hw-transport@6.31.15
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.16
+
+## 6.31.16-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe)]:
+  - @ledgerhq/errors@6.28.0-next.0
+  - @ledgerhq/devices@8.8.0-next.0
+  - @ledgerhq/hw-transport@6.31.15-next.0
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.16-next.0
+
+## 6.31.15
+
+### Patch Changes
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1
+  - @ledgerhq/devices@8.7.1
+  - @ledgerhq/hw-transport@6.31.14
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.15
+
+## 6.31.15-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1-hotfix.0
+  - @ledgerhq/devices@8.7.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.14-hotfix.0
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.15-hotfix.0
+
+## 6.31.14
+
+### Patch Changes
+
+- Updated dependencies [[`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d), [`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491)]:
+  - @ledgerhq/devices@8.7.0
+  - @ledgerhq/errors@6.27.0
+  - @ledgerhq/hw-transport@6.31.13
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.14
+
+## 6.31.14-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c1a4bfd`](https://github.com/LedgerHQ/ledger-live/commit/c1a4bfd34b46c6b6587d247673cadb3c078deb1d), [`759064d`](https://github.com/LedgerHQ/ledger-live/commit/759064d4815c636af2d73ba548a85b4f53e7b491)]:
+  - @ledgerhq/devices@8.7.0-next.0
+  - @ledgerhq/errors@6.27.0-next.0
+  - @ledgerhq/hw-transport@6.31.13-next.0
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.14-next.0
+
+## 6.31.13
+
+### Patch Changes
+
+- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
+  - @ledgerhq/errors@6.26.0
+  - @ledgerhq/devices@8.6.1
+  - @ledgerhq/hw-transport@6.31.12
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.13
+
+## 6.31.13-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
+  - @ledgerhq/errors@6.26.0-next.0
+  - @ledgerhq/devices@8.6.1-next.0
+  - @ledgerhq/hw-transport@6.31.12-next.0
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.13-next.0
+
+## 6.31.12
+
+### Patch Changes
+
+- Updated dependencies [[`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0)]:
+  - @ledgerhq/devices@8.6.0
+  - @ledgerhq/hw-transport@6.31.11
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.12
+
+## 6.31.12-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0)]:
+  - @ledgerhq/devices@8.6.0-next.0
+  - @ledgerhq/hw-transport@6.31.11-next.0
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.12-next.0
+
 ## 6.31.11
 
 ### Patch Changes

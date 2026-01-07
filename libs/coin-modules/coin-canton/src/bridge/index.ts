@@ -10,7 +10,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import cantonCoinConfig, { type CantonCoinConfig } from "../config";
 import resolver from "../signer";
-import { CantonCurrencyBridge, CantonSigner } from "../types";
+import { CantonCurrencyBridge, CantonSigner, CantonAccount } from "../types";
 import type { Transaction } from "../types";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
@@ -18,10 +18,12 @@ import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import { buildSignOperation } from "./signOperation";
-import { getAccountShape } from "./sync";
+import { makeGetAccountShape } from "./sync";
 import { updateTransaction } from "./updateTransaction";
 import { buildOnboardAccount, buildAuthorizePreapproval } from "./onboard";
-import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
+import { buildTransferInstruction } from "./acceptOffer";
+import { assignToAccountRaw, assignFromAccountRaw } from "./serialization";
+import { validateAddress } from "./validateAddress";
 
 export function createBridges(
   signerContext: SignerContext<CantonSigner>,
@@ -33,12 +35,13 @@ export function createBridges(
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
 
   const scanAccounts = makeScanAccounts({
-    getAccountShape: getAccountShape,
+    getAccountShape: makeGetAccountShape(signerContext),
     getAddressFn: getAddress,
   });
 
   const onboardAccount = buildOnboardAccount(signerContext);
   const authorizePreapproval = buildAuthorizePreapproval(signerContext);
+  const transferInstruction = buildTransferInstruction(signerContext);
 
   const currencyBridge: CantonCurrencyBridge = {
     preload: () => Promise.resolve({}),
@@ -46,26 +49,29 @@ export function createBridges(
     scanAccounts,
     onboardAccount,
     authorizePreapproval,
+    transferInstruction,
   };
 
   const signOperation = buildSignOperation(signerContext);
-  const sync = makeSync({ getAccountShape });
-  // we want one method per file
-  const accountBridge: AccountBridge<Transaction> = {
+  const sync = makeSync({ getAccountShape: makeGetAccountShape(signerContext) });
+
+  const accountBridge: AccountBridge<Transaction, CantonAccount> = {
     broadcast,
     createTransaction,
     updateTransaction,
-    // NOTE: use updateTransaction: defaultUpdateTransaction<Transaction>,
-    // if you don't need to update the transaction patch object
     prepareTransaction,
     getTransactionStatus,
     estimateMaxSpendable,
     sync,
     receive,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     assignToAccountRaw,
     assignFromAccountRaw,
     getSerializedAddressParameters,
+    validateAddress,
   };
 
   return {

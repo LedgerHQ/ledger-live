@@ -1,9 +1,9 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`injective currency bridge scanAccounts injective seed 1 1`] = `
 [
   {
-    "balance": "607564000016391",
+    "balance": "607564000016394",
     "currencyId": "injective",
     "derivationMode": "",
     "freshAddress": "inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt",
@@ -12,7 +12,7 @@ exports[`injective currency bridge scanAccounts injective seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "03f8e9b05b4de510b0b7d970060eac6a0f76d3c4eb07e11418c0747bc593c91c7d",
-    "spendableBalance": "506664000000016",
+    "spendableBalance": "506664000000019",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,

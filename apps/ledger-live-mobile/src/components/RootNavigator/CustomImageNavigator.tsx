@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { ScreenName } from "~/const";
@@ -11,7 +11,10 @@ import ErrorScreen from "~/screens/CustomImage/ErrorScreen";
 import Step0Welcome from "~/screens/CustomImage/Step0Welcome";
 import PreviewPreEdit from "~/screens/CustomImage/PreviewPreEdit";
 import PreviewPostEdit from "~/screens/CustomImage/PreviewPostEdit";
+import { CustomImageRemoval } from "~/screens/CustomImage/CustomImageRemoval";
 import { CustomImageNavigatorParamList } from "./types/CustomImageNavigator";
+
+const emptyComponent = () => null;
 
 export default function CustomImageNavigator() {
   const { colors } = useTheme();
@@ -68,8 +71,17 @@ export default function CustomImageNavigator() {
           headerRight: undefined,
         }}
       />
+      <Stack.Screen
+        name={ScreenName.CustomImageRemoval}
+        component={CustomImageRemoval}
+        options={{
+          title: "",
+          headerLeft: emptyComponent,
+          gestureEnabled: false,
+        }}
+      />
     </Stack.Navigator>
   );
 }
 
-const Stack = createStackNavigator<CustomImageNavigatorParamList>();
+const Stack = createNativeStackNavigator<CustomImageNavigatorParamList>();

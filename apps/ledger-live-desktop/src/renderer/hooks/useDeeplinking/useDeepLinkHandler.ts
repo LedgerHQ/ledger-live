@@ -1,14 +1,15 @@
 import { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
+
 import { useLocation, useHistory } from "react-router-dom";
 import {
   findCryptoCurrencyByKeyword,
   parseCurrencyUnit,
 } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { useStorylyContext } from "~/storyly/StorylyProvider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { usePostOnboardingDeeplinkHandler } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { setDrawerVisibility as setLedgerSyncDrawerVisibility } from "~/renderer/actions/walletSync";
@@ -16,18 +17,17 @@ import { CARD_APP_ID, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { getAccountsOrSubAccountsByCurrency, trackDeeplinkingEvent } from "./utils";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useRedirectToPostOnboardingCallback } from "../useAutoRedirectToPostOnboarding";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
+import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 
 export function useDeepLinkHandler() {
   const dispatch = useDispatch();
   const accounts = useSelector(accountsSelector);
   const location = useLocation();
   const history = useHistory();
-  const { setUrl } = useStorylyContext();
   const navigateToHome = useCallback(() => history.push("/"), [history]);
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
   const postOnboardingDeeplinkHandler = usePostOnboardingDeeplinkHandler(
@@ -40,12 +40,13 @@ export function useDeepLinkHandler() {
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     "deeplink",
   );
+  const openSendFlow = useOpenSendFlow();
 
   const navigate = useCallback(
     (
       pathname: string,
       state?: {
-        [k: string]: string | Object;
+        [k: string]: string | object;
       },
       search?: string,
     ) => {
@@ -103,7 +104,7 @@ export function useDeepLinkHandler() {
       const query = Object.fromEntries(searchParams);
 
       // With new Chrome behavior: host contains the main URL part, pathname contains the path
-      // ledgerlive://settings/about -> host: "settings", pathname: "/about"
+      // ledgerwallet://settings/about -> host: "settings", pathname: "/about"
       const url = urlObj.host;
       const path = pathname.replace(/(^\/+|\/+$)/g, "");
 
@@ -120,6 +121,7 @@ export function useDeepLinkHandler() {
         deeplinkChannel,
         deeplinkMedium,
         deeplinkCampaign,
+        deeplinkLocation,
       } = query;
 
       trackDeeplinkingEvent({
@@ -135,6 +137,7 @@ export function useDeepLinkHandler() {
         deeplinkChannel,
         deeplinkMedium,
         deeplinkCampaign,
+        deeplinkLocation,
         url,
       });
 
@@ -228,11 +231,12 @@ export function useDeepLinkHandler() {
           break;
         }
         case "swap": {
-          const { amountFrom, fromToken, toToken } = query;
+          const { amountFrom, fromToken, toToken, affiliate } = query;
 
           const state: {
             defaultToken?: { fromTokenId: string; toTokenId: string };
             defaultAmountFrom?: string;
+            affiliate?: string;
           } = {};
 
           if (fromToken !== toToken) {
@@ -241,6 +245,10 @@ export function useDeepLinkHandler() {
 
           if (amountFrom) {
             state.defaultAmountFrom = amountFrom;
+          }
+
+          if (affiliate) {
+            state.affiliate = affiliate;
           }
 
           navigate("/swap", state);
@@ -259,64 +267,136 @@ export function useDeepLinkHandler() {
           );
           break;
         }
-        case "delegate":
         case "receive":
+        case "delegate":
         case "send": {
-          const modal =
-            url === "send" ? "MODAL_SEND" : url === "receive" ? "MODAL_RECEIVE" : "MODAL_DELEGATE";
+          const modalMap = {
+            send: "MODAL_SEND",
+            delegate: "MODAL_DELEGATE",
+            receive: "MODAL_RECEIVE",
+          } as const;
+          const modal = modalMap[url];
           const { currency, recipient, amount } = query;
+          const sendRecipient = typeof recipient === "string" ? recipient : undefined;
+          const sendAmount = typeof amount === "string" ? amount : undefined;
 
           if (url === "delegate" && currency !== "tezos") return;
 
-          let foundCurrency;
-          try {
-            foundCurrency = getTokenOrCryptoCurrencyById(
-              typeof currency === "string" ? currency : "",
-            );
-          } catch (error) {
-            foundCurrency = null;
-          }
-
-          const openModalWithAccount = (
-            account: Account | TokenAccount,
-            parentAccount?: Account,
-          ) => {
+          /**
+           * Handles deep link navigation for send, receive, and delegate flows.
+           *
+           *
+           * @flow
+           * 1. **No currency parameter**
+           *    - Opens the modal without account pre-selection
+           *    - User can select any available account
+           *
+           * 2. **Currency not found**
+           *    - Redirects to Asset Flow to help user discover the asset
+           *    - (Not applicable to delegate flow)
+           *
+           * 3. **Currency found, but user has no accounts**
+           *    - Redirects to Add Account Flow
+           *    - Callback provided to reopen modal after account creation
+           *
+           * 4. **Currency found with existing accounts**
+           *    - Opens modal with first matching account pre-selected
+           *    - For tokens: includes both token account and parent account
+           *
+           * @example Basic flows
+           * ledgerwallet://send                    // Open send modal, no pre-selection
+           * ledgerwallet://receive?currency=btc    // Receive Bitcoin
+           * ledgerwallet://delegate?currency=tezos // Delegate Tezos
+           *
+           * @example Send with pre-filled data
+           * ledgerwallet://send?currency=ethereum&recipient=0x581A5bbcE3AED0B928B3F48842BaDA3F9C360d97&amount=0.0001
+           *
+           */
+          async function handleDeepLink() {
+            dispatch(closeAllModal());
             setDrawer();
-            dispatch(
-              openModal(modal, {
-                recipient,
-                account,
-                parentAccount,
-                amount:
-                  amount && typeof amount === "string" && foundCurrency
-                    ? parseCurrencyUnit(foundCurrency.units[0], amount)
-                    : undefined,
-              }),
+            if (!currency) {
+              if (url === "send") {
+                openSendFlow({
+                  recipient: sendRecipient,
+                  amount: sendAmount,
+                });
+              } else {
+                dispatch(
+                  openModal(modal, {
+                    ...(url === "receive" ? { shouldUseReceiveOptions: false } : {}),
+                  }),
+                );
+              }
+              return;
+            }
+
+            let foundCurrency;
+            try {
+              const currencyId = typeof currency === "string" ? currency : "";
+              foundCurrency =
+                findCryptoCurrencyByKeyword(currencyId) ||
+                (await getCryptoAssetsStore().findTokenById(currencyId)) ||
+                null;
+            } catch {
+              foundCurrency = null;
+            }
+
+            const openModalWithAccount = (
+              account: Account | TokenAccount,
+              parentAccount?: Account,
+            ) => {
+              if (url === "send") {
+                openSendFlow({
+                  account,
+                  parentAccount,
+                  recipient: sendRecipient,
+                  amount: sendAmount,
+                });
+                return;
+              }
+              dispatch(
+                openModal(modal, {
+                  ...(url === "receive" ? { shouldUseReceiveOptions: false } : {}),
+                  recipient,
+                  account,
+                  parentAccount,
+                  amount:
+                    amount && typeof amount === "string" && foundCurrency
+                      ? parseCurrencyUnit(foundCurrency.units[0], amount)
+                      : undefined,
+                }),
+              );
+            };
+
+            if (!foundCurrency) {
+              openAssetFlow();
+              return;
+            }
+
+            const matchingAccounts = getAccountsOrSubAccountsByCurrency(
+              foundCurrency,
+              accounts || [],
             );
-          };
 
-          if (!currency || !foundCurrency) {
-            // we fallback to default add account flow with asset selection
-            openAssetFlow(true);
-            return;
-          }
-          const found = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);
+            if (!matchingAccounts.length) {
+              openAddAccountFlow(foundCurrency, true, openModalWithAccount);
+              return;
+            }
 
-          if (!found.length) {
-            openAddAccountFlow(foundCurrency, true, openModalWithAccount);
-            return;
-          }
+            const [selectedAccount] = matchingAccounts;
 
-          const [chosen] = found;
-          dispatch(closeAllModal());
-          if (chosen?.type === "Account") {
-            openModalWithAccount(chosen);
-          } else {
-            const parentAccount = accounts.find(acc => acc.id === chosen?.parentId);
-            if (parentAccount && chosen) {
-              openModalWithAccount(chosen, parentAccount);
+            if (selectedAccount?.type === "Account") {
+              openModalWithAccount(selectedAccount);
+            } else {
+              const parentAccount = accounts.find(acc => acc.id === selectedAccount?.parentId);
+              if (parentAccount && selectedAccount) {
+                openModalWithAccount(selectedAccount, parentAccount);
+              }
             }
           }
+
+          handleDeepLink();
           break;
         }
         case "settings": {
@@ -367,16 +447,22 @@ export function useDeepLinkHandler() {
           break;
         }
         case "market":
-          navigate(`/market`);
+          if (path) {
+            navigate(`/market/${path}`);
+          } else {
+            navigate(`/market`);
+          }
+          break;
+        case "asset":
+          if (path) {
+            navigate(`/asset/${path}`);
+          }
           break;
         case "recover":
           navigate(`/recover/${path}`, undefined, search);
           break;
         case "recover-restore-flow":
           navigate("/recover-restore");
-          break;
-        case "storyly":
-          setUrl(deeplink);
           break;
         case "post-onboarding": {
           postOnboardingDeeplinkHandler(query.device);
@@ -402,8 +488,8 @@ export function useDeepLinkHandler() {
       openAddAccountFlow,
       openAssetFlow,
       postOnboardingDeeplinkHandler,
-      setUrl,
       tryRedirectToPostOnboardingOrRecover,
+      openSendFlow,
     ],
   );
 

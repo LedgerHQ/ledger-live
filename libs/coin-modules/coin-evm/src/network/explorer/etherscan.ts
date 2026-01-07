@@ -76,9 +76,14 @@ export const getLastCoinOperations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
+  const url =
+    explorer.type === "corescan"
+      ? `${explorer.uri}/accounts/list_of_txs_by_address/${address}`
+      : `${explorer.uri}?module=account&action=txlist&address=${address}`;
+
   const ops = await fetchWithRetries<EtherscanOperation[]>({
     method: "GET",
-    url: `${explorer.uri}?module=account&action=txlist&address=${address}`,
+    url,
     params: {
       tag: "latest",
       page: 1,
@@ -107,9 +112,14 @@ export const getLastTokenOperations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
+  const url =
+    explorer.type === "corescan"
+      ? `${explorer.uri}/accounts/list_of_erc20_transfer_events_by_address/${address}`
+      : `${explorer.uri}?module=account&action=tokentx&address=${address}`;
+
   const ops = await fetchWithRetries<EtherscanERC20Event[]>({
     method: "GET",
-    url: `${explorer.uri}?module=account&action=tokentx&address=${address}`,
+    url,
     params: {
       tag: "latest",
       page: 1,
@@ -136,11 +146,11 @@ export const getLastTokenOperations = async (
     opsByHash[op.hash].push(op);
   }
 
-  return Object.values(opsByHash)
-    .map(events =>
-      events.map((event, index) => etherscanERC20EventToOperations(accountId, event, index)),
-    )
-    .flat(2);
+  const allOperationsArrays = Object.values(opsByHash).map(events =>
+    events.map((event, index) => etherscanERC20EventToOperations(accountId, event, index)),
+  );
+
+  return allOperationsArrays.flat(2);
 };
 
 /**
@@ -159,9 +169,14 @@ export const getLastERC721Operations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
+  const url =
+    explorer.type === "corescan"
+      ? `${explorer.uri}/accounts/list_of_erc721_transfer_events_by_address/${address}`
+      : `${explorer.uri}?module=account&action=tokennfttx&address=${address}`;
+
   const ops = await fetchWithRetries<EtherscanERC721Event[]>({
     method: "GET",
-    url: `${explorer.uri}?module=account&action=tokennfttx&address=${address}`,
+    url,
     params: {
       tag: "latest",
       page: 1,
@@ -211,8 +226,8 @@ export const getLastERC1155Operations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
-  // Blockscout has no ERC1155 support yet
-  if (explorer.type === "blockscout") {
+  // Blockscout and Corescan have no ERC1155 support yet
+  if (["blockscout", "corescan"].includes(explorer.type)) {
     return [];
   }
 
@@ -298,6 +313,9 @@ export const getLastInternalOperations = async (
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
+
+  // Corescan has no support to get internal operations by address
+  if (explorer.type === "corescan") return [];
 
   const ops = await fetchWithRetries<EtherscanInternalTransaction[]>({
     method: "GET",

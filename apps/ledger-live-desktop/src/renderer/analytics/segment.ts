@@ -1,13 +1,13 @@
+import { AnalyticsBrowser } from "@segment/analytics-next";
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
-import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import {
+  getStablecoinYieldSetting,
+  getBitcoinYieldSetting,
+  getEthDepositScreenSetting,
+} from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { LiveConfig } from "@ledgerhq/live-config/lib-es/LiveConfig";
 import { getEnv } from "@ledgerhq/live-env";
-import {
-  GENESIS_PASS_COLLECTION_CONTRACT,
-  hasNftInAccounts,
-  INFINITY_PASS_COLLECTION_CONTRACT,
-} from "@ledgerhq/live-nft";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import type { AccountLike, Feature, FeatureId, Features } from "@ledgerhq/types-live";
 import { idsToLanguage } from "@ledgerhq/types-live";
@@ -18,7 +18,7 @@ import { ReplaySubject } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import user from "~/helpers/user";
-import { getVersionedRedirects } from "~/newArch/hooks/useVersionedStakePrograms";
+import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import logger from "~/renderer/logger";
 import type { State } from "~/renderer/reducers";
 import {
@@ -38,8 +38,16 @@ import {
 import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
+import {
+  onboardingIsSyncFlowSelector,
+  onboardingReceiveFlowSelector,
+  onboardingSyncFlowSelector,
+} from "../reducers/onboarding";
+import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
+import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
+import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 
-type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.AnyAction>, State>;
+type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.UnknownAction>, State>;
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -59,6 +67,7 @@ const getContext = () => ({
 });
 
 let storeInstance: ReduxStore | null | undefined; // is the redux store. it's also used as a flag to know if analytics is on or off.
+let analyticsInstance: AnalyticsBrowser | null = null;
 let analyticsFeatureFlagMethod:
   | null
   | (<T extends FeatureId>(key: T) => Feature<Features[T]["params"]> | null);
@@ -82,10 +91,12 @@ const getMarketWidgetAnalytics = (state: State) => {
 const getLedgerSyncAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
   const walletSync = analyticsFeatureFlagMethod("lldWalletSync");
+  const ledgerSyncOptimisation = analyticsFeatureFlagMethod("lwdLedgerSyncOptimisation");
 
   return {
     hasLedgerSync: !!walletSync?.enabled,
     ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
+    ledger_sync_revamp: !!ledgerSyncOptimisation?.enabled,
   };
 };
 
@@ -117,6 +128,7 @@ const getMADAttributes = () => {
     receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
     send_flow: madFeatureFlag?.params?.send_flow ?? false,
     isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
+    enableDialogDesktop: madFeatureFlag?.params?.enableDialogDesktop ?? false,
   };
 };
 
@@ -136,6 +148,7 @@ const getPtxAttributes = () => {
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
   const rawStakePrograms = analyticsFeatureFlagMethod("stakePrograms");
   const ptxCard = analyticsFeatureFlagMethod("ptxCard");
+  const ptxSwapLiveAppOnPortfolio = analyticsFeatureFlagMethod("ptxSwapLiveAppOnPortfolio");
 
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -165,6 +178,8 @@ const getPtxAttributes = () => {
       ? Object.keys(stakePrograms.params.redirects)
       : "flag not loaded";
   const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
+  const bitcoinYield = getBitcoinYieldSetting(stakePrograms);
+  const ethDepositScreen = getEthDepositScreenSetting(stakePrograms);
 
   return {
     isBatch1Enabled,
@@ -172,7 +187,10 @@ const getPtxAttributes = () => {
     isBatch3Enabled,
     stakingProvidersEnabled,
     ptxCard: ptxCard?.enabled,
+    ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio?.enabled,
     stablecoinYield,
+    bitcoinYield,
+    ethDepositScreen,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
   };
@@ -202,12 +220,28 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
+  const { postOnboardingInProgress } = hubStateSelector(state);
+
+  const isOnboardingReceiveFlow = onboardingReceiveFlowSelector(state);
+  const isOnboardingSyncFlow = onboardingIsSyncFlowSelector(state);
+  const onboardingSyncFlow = onboardingSyncFlowSelector(state);
+  const isOnboardingFlow = isOnboardingReceiveFlow || isOnboardingSyncFlow;
+
   const ptxAttributes = getPtxAttributes();
   const ldmkTransport = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkTransport")
     : { enabled: false };
   const ldmkConnectApp = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkConnectApp")
+    : { enabled: false };
+  const lldSyncOnboardingIncr1 = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("lldSyncOnboardingIncr1")
+    : { enabled: false };
+  const ldmkSolanaSigner = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkSolanaSigner")
+    : { enabled: false };
+  const nanoOnboardingFundWallet = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("nanoOnboardingFundWallet")
     : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
@@ -229,6 +263,19 @@ const extraProperties = (store: ReduxStore) => {
     : {};
   const sidebarCollapsed = sidebarCollapsedSelector(state);
 
+  const { combinedIds, stakeableAssets } = getTotalStakeableAssets(
+    accounts,
+    Array.isArray(ptxAttributes.stakingCurrenciesEnabled)
+      ? ptxAttributes.stakingCurrenciesEnabled
+      : [],
+    Array.isArray(ptxAttributes.partnerStakingCurrenciesEnabled)
+      ? ptxAttributes.partnerStakingCurrenciesEnabled
+      : [],
+  );
+  const stakeableAssetsList = stakeableAssets.map(
+    asset => `${asset.ticker} on ${asset.networkName}`,
+  );
+
   const accountsWithFunds = accounts
     ? [
         ...new Set(
@@ -238,16 +285,10 @@ const extraProperties = (store: ReduxStore) => {
         ),
       ]
     : [];
-  const blockchainsWithNftsOwned = accounts
-    ? [
-        ...new Set(
-          accounts.filter(account => account.nfts?.length).map(account => account.currency.ticker),
-        ),
-      ]
-    : [];
-  const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
-  const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
+
   const tokenWithFunds = getTokensWithFunds(accounts);
+
+  const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwd");
 
   return {
     ...mandatoryProperties,
@@ -264,9 +305,6 @@ const extraProperties = (store: ReduxStore) => {
     sessionId,
     sidebarCollapsed,
     accountsWithFunds,
-    blockchainsWithNftsOwned,
-    hasGenesisPass,
-    hasInfinityPass,
     tokenWithFunds,
     modelIdList: devices,
     ...ptxAttributes,
@@ -278,22 +316,56 @@ const extraProperties = (store: ReduxStore) => {
     madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
+    lldSyncOnboardingIncr1: Boolean(lldSyncOnboardingIncr1?.enabled),
+    nanoOnboardingFundWallet: Boolean(nanoOnboardingFundWallet?.enabled),
+    // For tracking receive flow events during onboarding
+    ...(postOnboardingInProgress && !isOnboardingFlow ? { flow: "post-onboarding" } : {}),
+    ...(isOnboardingFlow ? { flow: "Onboarding", ...onboardingSyncFlow } : {}),
+    isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
+    totalStakeableAssets: combinedIds.size,
+    stakeableAssets: stakeableAssetsList,
+    wallet40Attributes,
   };
 };
 
-function getAnalytics() {
-  const { analytics } = window;
-  if (typeof analytics === "undefined") {
-    logger.critical(new Error("window.analytics must not be undefined!"));
-  }
-  return analytics;
+function initializeSegment() {
+  if (analyticsInstance) return;
+
+  const writeKey = process.env.SEGMENT_WRITE_KEY || "olBQc203GA3fXVa48rJB9c3826CY1axp";
+
+  // Initialize Segment with cdnSettings to avoid fetching settings from CDN
+  analyticsInstance = AnalyticsBrowser.load({
+    writeKey,
+    cdnSettings: {
+      integrations: {
+        "Segment.io": {
+          apiKey: writeKey,
+          apiHost: "api.segment.io/v1",
+        },
+      },
+    },
+  });
 }
-export const start = async (store: ReduxStore) => {
+
+function getAnalytics(): AnalyticsBrowser | null {
+  return analyticsInstance;
+}
+export const startAnalytics = async (store: ReduxStore) => {
   if (!user || (!process.env.SEGMENT_TEST && (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN")))) return;
+  // calling user() first is essential because otherwise the store data will not reflect the user's preferences
+  // and hence canBeTracked will always be set to true...
   const { id } = await user();
   storeInstance = store;
+
+  const canBeTracked = trackingEnabledSelector(store.getState());
+  if (!canBeTracked) return;
+
+  // Initialize Segment with the write key from config
+  initializeSegment();
+
   const analytics = getAnalytics();
   if (!analytics) return;
+
   const allProperties = {
     ...extraProperties(store),
     userId: id,
@@ -315,7 +387,7 @@ export const trackSubject = new ReplaySubject<LoggableEvent>(30);
 function sendTrack(event: string, properties: object | undefined | null) {
   const analytics = getAnalytics();
   if (!analytics) return;
-  analytics.track(event, properties, {
+  analytics.track(event, properties ?? undefined, {
     context: getContext(),
   });
 }
@@ -346,6 +418,7 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
 export const updateIdentify = async () => {
   if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) return;
   const analytics = getAnalytics();
+  if (!analytics) return;
   const { id } = await user();
 
   const allProperties = {

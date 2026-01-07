@@ -1,5 +1,5 @@
 import { from, of, throwError, Observable, TimeoutError, timer } from "rxjs";
-import { map, catchError, first, timeout, repeat } from "rxjs/operators";
+import { map, catchError, first, timeout, repeat, switchMap } from "rxjs/operators";
 import { getVersion } from "../device/use-cases/getVersionUseCase";
 import { withDevice } from "./deviceAccess";
 import {
@@ -17,6 +17,7 @@ import {
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import { extractOnboardingState, OnboardingState } from "./extractOnboardingState";
 import { DeviceDisconnectedWhileSendingError } from "@ledgerhq/device-management-kit";
+import { quitApp } from "../deviceSDK/commands/quitApp";
 
 export type OnboardingStatePollingResult = {
   onboardingState: OnboardingState | null;
@@ -28,6 +29,7 @@ export type GetOnboardingStatePollingResult = Observable<OnboardingStatePollingR
 
 export type GetOnboardingStatePollingArgs = {
   deviceId: string;
+  deviceName: string | null;
   pollingPeriodMs: number;
   transportAbortTimeoutMs?: number;
   safeGuardTimeoutMs?: number;
@@ -51,15 +53,29 @@ export type GetOnboardingStatePollingArgs = {
  */
 export const getOnboardingStatePolling = ({
   deviceId,
+  deviceName,
   pollingPeriodMs,
   transportAbortTimeoutMs = pollingPeriodMs - 100,
   safeGuardTimeoutMs = pollingPeriodMs * 10, // Nb Empirical value
   allowedErrorChecks = [],
 }: GetOnboardingStatePollingArgs): GetOnboardingStatePollingResult => {
+  let hasQuitAppAlreadyRun = false;
+
   const getOnboardingStateOnce = (): Observable<OnboardingStatePollingResult> => {
-    return withDevice(deviceId, { openTimeoutMs: transportAbortTimeoutMs })(t =>
-      from(getVersion(t, { abortTimeoutMs: transportAbortTimeoutMs })),
-    ).pipe(
+    return withDevice(deviceId, {
+      openTimeoutMs: transportAbortTimeoutMs,
+      matchDeviceByName: deviceName ?? undefined,
+    })(t => {
+      const getVersionObs = from(getVersion(t, { abortTimeoutMs: transportAbortTimeoutMs }));
+
+      // only run quitApp the first time
+      if (hasQuitAppAlreadyRun) {
+        return getVersionObs;
+      }
+
+      hasQuitAppAlreadyRun = true;
+      return quitApp(t).pipe(switchMap(() => getVersionObs));
+    }).pipe(
       timeout(safeGuardTimeoutMs), // Throws a TimeoutError
       first(),
       catchError((error: unknown) => {
@@ -70,7 +86,6 @@ export const getOnboardingStatePolling = ({
           // Pushes the error to the next step to be processed (no retry from the beginning)
           return of(error as Error);
         }
-
         return throwError(() => error);
       }),
       map((event: FirmwareInfo | Error) => {

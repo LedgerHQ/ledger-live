@@ -12,4 +12,5 @@ export enum HOOKS_TRACKING_LOCATIONS {
   onboardingFlow = "Onboarding flow",
   sendModal = "Send Modal",
   genericDAppTransactionSend = "Generic DApp Transaction Send",
+  wapiRawTransactionSend = "Wallet-API Raw Transaction Send",
 }

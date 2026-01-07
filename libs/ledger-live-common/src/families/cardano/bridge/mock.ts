@@ -25,10 +25,12 @@ import {
 import {
   scanAccounts,
   signOperation,
+  signRawOperation,
   broadcast,
   sync,
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
@@ -168,8 +170,10 @@ const accountBridge: AccountBridge<CardanoTransaction> = {
   sync,
   receive,
   signOperation,
+  signRawOperation,
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 
 const currencyBridge: CurrencyBridge = {

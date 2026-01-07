@@ -17,7 +17,7 @@ import {
 } from "@ledgerhq/errors";
 import { LocalTracer, TraceContext, trace } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
-import { open, close } from ".";
+import { open, close, OpenOptions } from ".";
 
 const LOG_TYPE = "hw";
 
@@ -172,9 +172,10 @@ export class DeviceQueuedJobsManager {
  * @param deviceId
  * @param options contains optional configuration
  *   - openTimeoutMs: optional timeout that limits in time the open attempt of the matching registered transport.
+ *   - matchDeviceByName: optional name of the device to match.
  */
 export const withDevice =
-  (deviceId: string, options?: { openTimeoutMs?: number }) =>
+  (deviceId: string, options?: OpenOptions) =>
   <T>(job: (t: Transport) => Observable<T>): Observable<T> =>
     new Observable(o => {
       const queuedJobManager = DeviceQueuedJobsManager.getInstance();
@@ -221,7 +222,7 @@ export const withDevice =
             previousJobId: previousQueuedJob.id,
             currentJobId: jobId,
           });
-          return open(deviceId, options?.openTimeoutMs, tracer.getContext());
+          return open(deviceId, options, tracer.getContext());
         }) // open the transport
         .then(async transport => {
           tracer.trace("Got a Transport instance from open");

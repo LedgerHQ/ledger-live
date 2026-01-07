@@ -38,11 +38,15 @@ const getIconBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) =
   return theme.colors.primary.c80;
 };
 
-const CenterCircle = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
+const CenterCircle = styled(Flex)<{
+  status: ItemStatus;
+  isLastItem?: boolean;
+  isNeutral?: boolean;
+}>`
   border-radius: 9999px;
   width: 100%;
-  background: ${p => getIconBackground(p.theme, p.status, p.isLastItem)};
-  border: 2px solid ${p => getIconBorder(p.theme, p.status, p.isLastItem)};
+  background: ${p => getIconBackground(p.theme, p.status, p.isLastItem && !p.isNeutral)};
+  border: 2px solid ${p => getIconBorder(p.theme, p.status, p.isLastItem && !p.isNeutral)};
   align-items: center;
   justify-content: center;
   position: relative;
@@ -57,6 +61,7 @@ export type Props = FlexProps & {
   status: "inactive" | "active" | "completed";
   isFirstItem?: boolean;
   isLastItem?: boolean;
+  isNeutral?: boolean;
 };
 
 const topSegmentDefaultHeight = 23;
@@ -68,17 +73,17 @@ const Container = styled(Flex)`
   padding-top: ${topSegmentDefaultHeight}px;
 `;
 
-function TimelineIndicator({ status, isLastItem, ...props }: Props) {
+function TimelineIndicator({ status, isLastItem, isNeutral, ...props }: Props) {
   const { colors } = useTheme();
 
   return (
     <Container {...props}>
       <IconWrapper>
-        <CenterCircle status={status} isLastItem={isLastItem}>
+        <CenterCircle status={status} isLastItem={isLastItem} isNeutral={isNeutral}>
           {status === "completed" && (
             <Flex position="absolute">
               <CircledCheckSolidMedium
-                color={isLastItem ? colors.success.c70 : colors.primary.c80}
+                color={isLastItem && !isNeutral ? colors.success.c70 : colors.primary.c80}
                 size={20}
               />
             </Flex>

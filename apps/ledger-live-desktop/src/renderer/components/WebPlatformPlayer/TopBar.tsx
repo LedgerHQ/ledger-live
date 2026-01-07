@@ -9,7 +9,8 @@ import IconClose from "~/renderer/icons/Cross";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import LightBulb from "~/renderer/icons/LightBulb";
 import IconReload from "~/renderer/icons/UpdateCircle";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import LiveAppIcon from "./LiveAppIcon";
 import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
@@ -35,8 +36,8 @@ const Container = styled(Box).attrs(() => ({
   alignItems: "center",
 }))`
   padding: 10px 16px;
-  background-color: ${p => p.theme.colors?.palette.background.paper};
-  border-bottom: 1px solid ${p => p.theme.colors?.palette.text.shade10};
+  background-color: ${p => p.theme.colors?.background.card};
+  border-bottom: 1px solid ${p => p.theme.colors?.neutral.c30};
 `;
 
 const TitleContainer = styled(Box).attrs(() => ({
@@ -46,8 +47,7 @@ const TitleContainer = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
 }))`
   margin-right: 16px;
-  color: ${p =>
-    p.theme.colors?.palette.type === "dark" ? p.theme.colors.white : p.theme.colors?.black};
+  color: ${p => (p.theme.theme === "dark" ? p.theme.colors.white : p.theme.colors?.black)};
 
   > * + * {
     margin-left: 8px;
@@ -97,12 +97,12 @@ const ItemContainer = styled(Tabbable).attrs<ItemContainerProps>(p => ({
   }
 
   &:hover {
-    color: ${p => (p.disabled ? "" : p.theme.colors?.palette.text.shade100)};
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors?.palette.action.active, 0.05))};
+    color: ${p => (p.disabled ? "" : p.theme.colors?.neutral.c100)};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors?.opacityDefault.c10, 0.05))};
   }
 
   &:active {
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors?.palette.action.active, 0.1))};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors?.opacityDefault.c10, 0.1))};
   }
 `;
 
@@ -117,7 +117,7 @@ export const Separator = styled.div`
   margin-right: 16px;
   height: 15px;
   width: 1px;
-  background: ${p => p.theme.colors?.palette.divider};
+  background: ${p => p.theme.colors?.divider};
 `;
 
 export type TopBarConfig = {
@@ -162,7 +162,7 @@ export const TopBar = ({
     shouldDisplaySelectAccount = !!manifest.dapp,
   } = config;
 
-  const isInternalApp = id === "earn";
+  const isInternalProductionApp = ["earn", "earn-prd-eks"].includes(id);
 
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const dispatch = useDispatch();
@@ -228,7 +228,7 @@ export const TopBar = ({
 
   const isLoading = useDebounce(webviewState.loading, 100);
 
-  if (!enablePlatformDevTools && isInternalApp) {
+  if (!enablePlatformDevTools && isInternalProductionApp) {
     return null;
   }
 
@@ -262,7 +262,7 @@ export const TopBar = ({
       {enablePlatformDevTools ? (
         <>
           <Separator />
-          <ItemContainer isInteractive onClick={onOpenDevTools}>
+          <ItemContainer data-testid="live-app-devtools" isInteractive onClick={onOpenDevTools}>
             <LightBulb size={16} />
             <ItemContent>
               <Trans i18nKey="common.sync.devTools" />
@@ -324,11 +324,7 @@ export const TopBar = ({
                 </>
               ) : (
                 <>
-                  <CryptoCurrencyIcon
-                    circle
-                    currency={getAccountCurrency(currentAccount)}
-                    size={16}
-                  />
+                  <CryptoCurrencyIcon currency={getAccountCurrency(currentAccount)} size={16} />
                   <ItemContent>{currentAccountName}</ItemContent>
                 </>
               )}
@@ -343,7 +339,7 @@ export const TopBar = ({
         )}
 
         {shouldDisplayClose && (
-          <ItemContainer isInteractive onClick={onClose}>
+          <ItemContainer data-testid="live-app-close" isInteractive onClick={onClose}>
             <IconClose size={16} />
           </ItemContainer>
         )}

@@ -1,8 +1,9 @@
 import { Button, Icons } from "@ledgerhq/native-ui";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
+import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { setOnboardingHasDevice, setReadOnlyMode } from "~/actions/settings";
 import { track, updateIdentify } from "~/analytics";
@@ -12,6 +13,9 @@ import { NavigatorName, ScreenName } from "~/const";
 import { SelectionCards } from "./Cards/SelectionCard";
 import { NoLedgerYetModal } from "./NoLedgerYetModal";
 import OnboardingView from "./OnboardingView";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { urls } from "~/utils/urls";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList,
@@ -25,15 +29,21 @@ function PostWelcomeSelection() {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const currentNavigation = navigation.getParent()?.getParent()?.getState().routes[0].name;
   const isInOnboarding = currentNavigation === NavigatorName.BaseOnboarding;
+  const llmRebornABtest = useFeature("llmRebornABtest");
+  const localizedRebornUrl = useLocalizedUrl(urls.reborn);
 
   const [modalOpen, setModalOpen] = useState(false);
 
   const openModal = () => {
     identifyUser(null);
-    setModalOpen(true);
     track("button_clicked", {
       button: "I don’t have a Ledger yet",
     });
+    if (llmRebornABtest?.enabled) {
+      Linking.openURL(localizedRebornUrl);
+    } else {
+      setModalOpen(true);
+    }
   };
 
   const closeModal = () => {

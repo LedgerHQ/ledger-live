@@ -3,8 +3,8 @@ import { StyleSheet, SafeAreaView } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
-import DeviceSelector, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
+import { track, TrackScreen } from "~/analytics";
+import SelectDevice, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import DeviceActionModal from "~/components/DeviceActionModal";
 
 import {
@@ -16,7 +16,6 @@ import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackBut
 import { DeviceSelectionNavigatorParamsList } from "../../types";
 import { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/screens/AddAccount/types";
 import useSelectDeviceViewModel from "./useSelectDeviceViewModel";
-import SkipSelectDevice from "~/screens/SkipSelectDevice";
 
 // Defines some of the header options for this screen to be able to reset back to them.
 export const addAccountsSelectDeviceHeaderOptions = (
@@ -26,7 +25,7 @@ export const addAccountsSelectDeviceHeaderOptions = (
   headerLeft: () => <NavigationHeaderBackButton />,
 });
 
-export default function SelectDevice({
+export default function SelectDeviceScreen({
   route,
   navigation,
 }: StackNavigatorProps<
@@ -62,6 +61,10 @@ export default function SelectDevice({
     },
     [navigation, onHeaderCloseButton],
   );
+
+  /** Parameter used to prevent auto selection and force the user to manually select a device */
+  const forceSelectDevice = "forceSelectDevice" in route.params && route.params.forceSelectDevice;
+
   return (
     <SafeAreaView
       style={[
@@ -71,12 +74,13 @@ export default function SelectDevice({
         },
       ]}
     >
-      <SkipSelectDevice route={route} onResult={selectDevice} />
+      <TrackScreen name="device connection" />
       <Flex px={16} py={8} flex={1}>
-        <DeviceSelector
+        <SelectDevice
           onSelect={selectDevice}
           stopBleScanning={!!device || !isFocused}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
+          autoSelectLastConnectedDevice={!forceSelectDevice}
         />
       </Flex>
       <DeviceActionModal

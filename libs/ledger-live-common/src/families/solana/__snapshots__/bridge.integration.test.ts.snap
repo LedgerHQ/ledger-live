@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
 [
@@ -79,7 +79,7 @@ exports[`solana currency bridge scanAccounts solana seed 1 2`] = `
       "senders": [
         "7CZgkK494jMdoY8xpXY3ViLjpDGMbNikCzMtAT5cAjKk",
       ],
-      "transactionSequenceNumber": 1,
+      "transactionSequenceNumber": "1",
       "type": "IN",
       "value": "93394840",
     },
@@ -98,7 +98,7 @@ exports[`solana currency bridge scanAccounts solana seed 1 2`] = `
       "senders": [
         "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
       ],
-      "transactionSequenceNumber": 2,
+      "transactionSequenceNumber": "2",
       "type": "OUT",
       "value": "10005000",
     },
@@ -113,7 +113,7 @@ exports[`solana currency bridge scanAccounts solana seed 1 2`] = `
       "id": "js:2:solana:AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh:solanaMain-Y2U5SCQpi9YYukbAL4YSzGosVgff512HcbiDDfMag5dZYow5zT6ytbJaWEDdCZkNLCkQYuAHJ9fBjV7wKqgMTi4-NONE",
       "recipients": [],
       "senders": [],
-      "transactionSequenceNumber": 3,
+      "transactionSequenceNumber": "3",
       "type": "NONE",
       "value": "0",
     },

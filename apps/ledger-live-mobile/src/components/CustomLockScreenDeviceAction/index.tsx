@@ -1,5 +1,5 @@
 import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import { Image } from "react-native";
 import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
@@ -14,7 +14,7 @@ import CustomImageBottomModal from "../CustomImage/CustomImageBottomModal";
 import Button from "../wrappedUi/Button";
 import Link from "../wrappedUi/Link";
 import { screen, TrackScreen } from "~/analytics";
-import { useStaxLoadImageDeviceAction } from "~/hooks/deviceActions";
+import { useLoadImageDeviceAction } from "~/hooks/deviceActions";
 import { SettingsSetLastSeenCustomImagePayload } from "~/actions/types";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import {
@@ -58,7 +58,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   remountMe,
   referral,
 }) => {
-  const action = useStaxLoadImageDeviceAction();
+  const action = useLoadImageDeviceAction();
   const commandRequest = useMemo(() => ({ hexImage, deviceModelId }), [hexImage, deviceModelId]);
 
   const { t } = useTranslation();
@@ -116,7 +116,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
     }
   }, [CLSError]);
   const isError = !!error;
-  const isRefusedOnStaxError =
+  const refusedOnDevice =
     (error as unknown) instanceof ImageLoadRefusedOnDevice ||
     (error as unknown) instanceof ImageCommitRefusedOnDevice;
 
@@ -128,12 +128,12 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   }, [dispatch, error]);
 
   const handleRetry = useCallback(() => {
-    if (isRefusedOnStaxError) openModal();
+    if (refusedOnDevice) openModal();
     else remountMe();
-  }, [isRefusedOnStaxError, remountMe, openModal]);
+  }, [refusedOnDevice, remountMe, openModal]);
 
   const trackScreenName = isError
-    ? isRefusedOnStaxError
+    ? refusedOnDevice
       ? analyticsScreenNameRefusedOnStax
       : "Error: " + error.name
     : undefined;
@@ -148,8 +148,12 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
               t,
               error,
               device,
-              ...(isRefusedOnStaxError
-                ? { Icon: Icons.Warning, iconColor: "warning.c60", hasExportLogButton: false }
+              ...(refusedOnDevice
+                ? {
+                    Icon: Icons.WarningFill,
+                    iconColor: "warning.c60",
+                    hasExportLogButton: false,
+                  }
                 : {}),
             })}
             {}
@@ -160,14 +164,14 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
               onPress={handleRetry}
               event="button_clicked"
               eventProperties={
-                isRefusedOnStaxError
+                refusedOnDevice
                   ? analyticsRefusedOnStaxUploadAnotherEventProps
                   : analyticsErrorTryAgainEventProps
               }
             >
-              {isRefusedOnStaxError ? t("customImage.uploadAnotherImage") : t("common.retry")}
+              {refusedOnDevice ? t("customImage.uploadAnotherImage") : t("common.retry")}
             </Button>
-            {isRefusedOnStaxError ? (
+            {refusedOnDevice ? (
               <Flex py={7}>
                 <Link
                   size="large"
@@ -181,11 +185,11 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
             ) : null}
           </Flex>
         ) : imageLoadRequested && device ? (
-          <RenderImageLoadRequested device={device} deviceModelId={deviceModelId} />
+          <RenderImageLoadRequested device={device} deviceModelId={deviceModelId} fullscreen />
         ) : loadingImage && device && typeof progress === "number" ? (
           <RenderLoadingImage device={device} progress={progress} deviceModelId={deviceModelId} />
         ) : imageCommitRequested && device ? (
-          <RenderImageCommitRequested device={device} deviceModelId={deviceModelId} />
+          <RenderImageCommitRequested device={device} deviceModelId={deviceModelId} fullscreen />
         ) : (
           <DeviceActionDefaultRendering
             status={status}

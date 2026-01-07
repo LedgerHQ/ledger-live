@@ -1,6 +1,6 @@
 import { ipcRenderer, webFrame } from "electron";
 import React, { useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { getAllEnvs, getEnv } from "@ledgerhq/live-env";
 import { Account } from "@ledgerhq/types-live";
@@ -78,7 +78,7 @@ const ExportLogsBtn = ({
     if (!getEnv("PLAYWRIGHT_RUN")) {
       path = await ipcRenderer.invoke("show-save-dialog", {
         title: "Export logs",
-        defaultPath: `ledgerlive-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.txt`,
+        defaultPath: `ledgerwallet-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.txt`,
         filters: [
           {
             name: "All Files",
@@ -89,7 +89,7 @@ const ExportLogsBtn = ({
     } else {
       path = {
         canceled: false,
-        filePath: "./ledgerlive-logs.txt",
+        filePath: "./ledgerwallet-logs.txt",
       };
     }
 

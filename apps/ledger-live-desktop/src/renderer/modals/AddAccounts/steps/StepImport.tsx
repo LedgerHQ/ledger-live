@@ -1,11 +1,12 @@
 import React, { useEffect, PureComponent } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { concat, from, Subscription } from "rxjs";
 import { ignoreElements, filter, map, retry } from "rxjs/operators";
 import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import { openModal } from "~/renderer/actions/modals";
 import { DeviceShouldStayInApp, UnresponsiveDeviceError } from "@ledgerhq/errors";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
@@ -60,7 +61,7 @@ const LoadingRow = styled(Box).attrs(() => ({
   mt: 1,
 }))`
   height: 48px;
-  border: 1px dashed ${p => p.theme.colors.palette.text.shade60};
+  border: 1px dashed ${p => p.theme.colors.neutral.c70};
 `;
 const SectionAccounts = ({ defaultSelected, ...rest }: Props) => {
   // componentDidMount-like effect
@@ -226,7 +227,7 @@ class StepImport extends PureComponent<
     const { showAllCreatedAccounts } = this.state;
     return (
       <Box ml="auto" mr={3}>
-        <Box color="palette.text.shade60" horizontal alignItems="center">
+        <Box color="neutral.c70" horizontal alignItems="center">
           <Text fontSize={2}>
             <Trans i18nKey="addAccounts.createNewAccount.showAllAddressTypes" />
           </Text>
@@ -304,7 +305,7 @@ class StepImport extends PureComponent<
       creatable = (
         <Trans i18nKey="addAccounts.createNewAccount.noOperationOnLastAccount" parent="div">
           {" "}
-          <Text ff="Inter|SemiBold" color="palette.text.shade100">
+          <Text ff="Inter|SemiBold" color="neutral.c100">
             {getDefaultAccountName(alreadyEmptyAccount)}
           </Text>{" "}
         </Trans>
@@ -316,7 +317,7 @@ class StepImport extends PureComponent<
       creatable = (
         <Trans i18nKey="addAccounts.createNewAccount.noAccountToCreate" parent="div">
           {" "}
-          <Text ff="Inter|SemiBold" color="palette.text.shade100">
+          <Text ff="Inter|SemiBold" color="neutral.c100">
             {currencyName}
           </Text>{" "}
         </Trans>
@@ -366,8 +367,8 @@ class StepImport extends PureComponent<
 
           {scanStatus === "scanning" ? (
             <LoadingRow>
-              <Spinner color="palette.text.shade60" size={16} />
-              <Box ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
+              <Spinner color="neutral.c70" size={16} />
+              <Box ml={2} ff="Inter|Regular" color="neutral.c70" fontSize={4}>
                 {t("common.sync.syncing")}
               </Box>
             </LoadingRow>
@@ -386,9 +387,12 @@ export const StepImportFooter = ({
   onCloseModal,
   checkedAccountsIds,
   scannedAccounts,
+  existingAccounts,
   currency,
   err,
   t,
+  editedNames,
+  device,
 }: StepProps) => {
   const dispatch = useDispatch();
   const willCreateAccount = checkedAccountsIds.some(id => {
@@ -402,6 +406,31 @@ export const StepImportFooter = ({
   const count = checkedAccountsIds.length;
   const willClose = !willCreateAccount && !willAddAccounts;
   const isHandledError = err && err.name === "SatStackDescriptorNotImported";
+
+  const hasCantonCreatableAccounts = scannedAccounts.some(
+    a =>
+      checkedAccountsIds.includes(a.id) &&
+      a.currency?.family === "canton" &&
+      isCantonAccount(a) &&
+      !a.cantonResources.isOnboarded,
+  );
+
+  const goCantonOnboard = () => {
+    onCloseModal();
+    const mainCurrency = currency?.type === "TokenCurrency" ? currency.parentCurrency : currency;
+    dispatch(
+      openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
+        currency: mainCurrency,
+        device: device,
+        selectedAccounts: checkedAccountsIds
+          .map(id => scannedAccounts.find(a => a.id === id))
+          .filter((account): account is Account => Boolean(account)),
+        existingAccounts,
+        editedNames,
+      }),
+    );
+  };
+
   const ctaWording =
     scanStatus === "scanning"
       ? t("common.sync.syncing")
@@ -413,8 +442,12 @@ export const StepImportFooter = ({
   const onClick = willClose
     ? onCloseModal
     : async () => {
-        await onClickAdd();
-        transitionTo("finish");
+        if (hasCantonCreatableAccounts) {
+          goCantonOnboard();
+        } else {
+          await onClickAdd();
+          transitionTo("finish");
+        }
       };
   const goFullNode = () => {
     onCloseModal();

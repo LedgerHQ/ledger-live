@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Flex, Input, SelectInput, Text, VerticalTimeline } from "@ledgerhq/react-ui";
-import { useSelector } from "react-redux";
+import { Flex, Input, SelectInput, Text, VerticalTimeline } from "@ledgerhq/react-ui";
+import { Button } from "@ledgerhq/lumen-ui-react";
+import { useSelector } from "LLD/hooks/redux";
 import { DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/devices";
-import ButtonV2 from "~/renderer/components/Button";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import OnboardingAppInstallStep from "~/renderer/components/OnboardingAppInstall";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -108,15 +108,14 @@ const OnboardingAppInstallDebugScreen = () => {
       </Text>
       <Flex pt={8} alignItems="center">
         <Button
-          mr={6}
-          variant="main"
-          outline={true}
+          size="sm"
+          appearance="transparent"
           onClick={handleRemount}
           data-testid="reset-button"
         >
           Reset
         </Button>
-        <Flex flex={1} flexDirection="column" data-testid="input-option-selector">
+        <Flex ml={6} flex={1} flexDirection="column" data-testid="input-option-selector">
           <SelectInput
             isMulti={false}
             value={selectedDeviceToRestoreOption}
@@ -158,14 +157,14 @@ const OnboardingAppInstallDebugButton = () => {
   }, []);
 
   return (
-    <ButtonV2
-      small
-      primary
+    <Button
+      size="sm"
+      appearance="accent"
       onClick={handleOpenDebugScreen}
       data-testid="debug-install-set-of-apps-button"
     >
       {t("settings.developer.open")}
-    </ButtonV2>
+    </Button>
   );
 };
 

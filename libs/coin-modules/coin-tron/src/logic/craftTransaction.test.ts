@@ -22,6 +22,7 @@ describe("craftTransaction", () => {
 
   it("should craft a standard transaction", async () => {
     const transactionIntent: TransactionIntent = {
+      intentType: "transaction",
       asset: { type: "native" },
       type: "send",
       recipient: "recipient",
@@ -52,6 +53,7 @@ describe("craftTransaction", () => {
 
   it("should craft a TRC20 transaction", async () => {
     const transactionIntent: TransactionIntent = {
+      intentType: "transaction",
       type: "send",
       asset: {
         type: "trc20",
@@ -86,6 +88,7 @@ describe("craftTransaction", () => {
     const customFees: bigint = 99n;
     const amount: number = 1000;
     const transactionIntent = {
+      intentType: "transaction",
       asset: {
         type: "trc20",
         assetReference: "contractAddress",
@@ -112,6 +115,7 @@ describe("craftTransaction", () => {
   it("should not use any fees when user does not provide it for crafting a TRC20 transaction ", async () => {
     const amount = 1000;
     const transactionIntent = {
+      intentType: "transaction",
       asset: {
         type: "trc20",
         assetReference: "contractAddress",
@@ -141,6 +145,7 @@ describe("craftTransaction", () => {
       try {
         await craftTransaction(
           {
+            intentType: "transaction",
             asset: {
               type: "trc20",
               assetReference: "contractAddress",

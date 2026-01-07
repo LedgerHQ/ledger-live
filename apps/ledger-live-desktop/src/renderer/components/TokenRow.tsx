@@ -34,7 +34,7 @@ const NestedRow = styled(Box)`
     margin-bottom: 0px;
   }
   :active {
-    background: ${p => p.theme.colors.palette.action.hover};
+    background: ${p => p.theme.colors.opacityDefault.c10};
   }
 `;
 function TokenRow(props: Props) {
@@ -46,7 +46,6 @@ function TokenRow(props: Props) {
   return (
     <Row
       data-testid={`token-row-${currency.ticker.toUpperCase()}`}
-      className="token-row"
       onClick={onClickRow}
       tabIndex={-1}
     >

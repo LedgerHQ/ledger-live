@@ -1,42 +1,30 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Linking, FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { bleDevicesSelector } from "~/reducers/ble";
 import Animation from "../Animation";
 import BleDeviceItem from "./BleDeviceItem";
 import Link from "~/components/wrappedUi/Link";
 import lottie from "./assets/bluetooth.json";
 import { urls } from "~/utils/urls";
 import { TrackScreen, track } from "~/analytics";
+import { ScannedDevice } from "@ledgerhq/live-dmk-mobile";
+import { useOrderedBleScannedDevices } from "./hooks/useOrderedBleScannedDevices";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 const CANT_SEE_DEVICE_TIMEOUT = 5000;
 
 export type BleDevicesScanningProps = {
-  devices: Device[];
-  onDeviceSelect: (item: Device) => void;
+  devices: ScannedDevice[];
+  onDeviceSelect: (item: ScannedDevice) => void;
   filterByDeviceModelId?: FilterByDeviceModelId | FilterByDeviceModelId[];
   areKnownDevicesDisplayed?: boolean;
   areKnownDevicesPairable?: boolean;
 };
 
-/**
- * Runs a BLE scan and list seen devices
- *
- * This components should be wrapped in a RequiresBLE component.
- * This is the case in the BleDevicePairingFlow component.
- * If this is not the case, some BLE and locations errors are handled, but not as well as with RequiresBLE.
- *
- * @param onDeviceSelect Function called when the user selects a scanned device
- * @param filterByDeviceModelId The only model of the devices that will be scanned
- * @param areKnownDevicesDisplayed Choose to display seen devices that are already known by LLM
- * @param areKnownDevicesPairable Display already known devices in the same way as unknown devices, allowing to connect to them.
- */
 export const BleDevicesScanning: React.FC<BleDevicesScanningProps> = ({
   devices,
   onDeviceSelect,
@@ -67,24 +55,10 @@ export const BleDevicesScanning: React.FC<BleDevicesScanningProps> = ({
     Linking.openURL(urls.pairingIssues);
   }, []);
 
-  // If we want to filter on known devices:
-  const knownDevices = useSelector(bleDevicesSelector);
-  // .map creates a new array at each render and it was being used as a dependency on a useEffect
-  // inside useBleDevicesScanning, so we need to memo it.
-  const knownDeviceIds = useMemo(() => knownDevices.map(device => device.id), [knownDevices]);
-  const displayedDevices = useMemo(
-    () =>
-      devices
-        .map(item => ({
-          ...item,
-          isAlreadyKnown:
-            !areKnownDevicesPairable &&
-            Boolean(knownDeviceIds.some(deviceId => deviceId === item.deviceId)),
-        }))
-        // unknown devices go first, already known devices go last
-        .sort((a, b) => (a.isAlreadyKnown === b.isAlreadyKnown ? 0 : a.isAlreadyKnown ? 1 : -1)),
-    [areKnownDevicesPairable, devices, knownDeviceIds],
-  );
+  const { displayedDevices, knownDeviceIds } = useOrderedBleScannedDevices({
+    devices,
+    areKnownDevicesPairable,
+  });
 
   return (
     <Flex flex={1}>
@@ -101,7 +75,12 @@ export const BleDevicesScanning: React.FC<BleDevicesScanningProps> = ({
                 })
               : t("blePairingFlow.scanning.withoutProductName.title")}
           </Text>
-          <Text color="neutral.c70" textAlign="center" variant="body" fontWeight="medium">
+          <Text
+            color="neutral.c70"
+            variant="body"
+            fontWeight="medium"
+            style={{ marginHorizontal: 24, textAlign: "center" }}
+          >
             {t("blePairingFlow.scanning.description")}
           </Text>
         </Flex>
@@ -119,8 +98,9 @@ export const BleDevicesScanning: React.FC<BleDevicesScanningProps> = ({
                   deviceId: item.deviceId,
                   deviceName: item.deviceName,
                   wired: false,
-                  modelId: item.modelId as DeviceModelId,
+                  modelId: item.modelId,
                   isAlreadyKnown: item.isAlreadyKnown,
+                  grayedOut: item.grayedOut,
                 }}
                 areKnownDevicesPairable={false}
               />

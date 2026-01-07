@@ -9,11 +9,15 @@ export type PolkadotConfig = {
     url: string;
     credentials?: string;
   };
+  indexer: {
+    url: string;
+  };
   staking?: {
     electionStatusThreshold: number;
   };
   metadataShortener: {
     url: string;
+    id: string;
   };
   metadataHash: {
     url: string;

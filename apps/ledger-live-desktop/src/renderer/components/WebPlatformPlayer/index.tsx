@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
@@ -13,7 +13,7 @@ import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
 import { useCurrentAccountHistDB } from "~/renderer/screens/platform/v2/hooks";
 import { useMobileView, WebViewWrapperProps } from "~/renderer/hooks/useMobileView";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
-import { useACRECustomHandlers } from "./CustomHandlers";
+import { useACRECustomHandlers, useDeeplinkCustomHandlers } from "./CustomHandlers";
 
 export const Container = styled.div`
   display: flex;
@@ -46,13 +46,21 @@ export const WebViewWrapper = styled.div<WebViewWrapperProps>`
     mobileView.display ? `width: ${mobileView.width ?? 355}px;` : "width: 100%;"}
 `;
 
-export default function WebPlatformPlayer({ manifest, inputs, onClose, config, ...props }: Props) {
+export default function WebPlatformPlayer({
+  manifest,
+  inputs,
+  onClose,
+  config,
+  Loader,
+  ...props
+}: Props) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
   const accounts = useSelector(flattenAccountsSelector);
   const customACREHandlers = useACRECustomHandlers(manifest, accounts);
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
+  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const { mobileView, setMobileView } = useMobileView();
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
@@ -60,9 +68,10 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config, .
       ...loggerHandlers,
       ...customACREHandlers,
       ...customPTXHandlers,
+      ...customDeeplinkHandlers,
       ...props.customHandlers,
     };
-  }, [customACREHandlers, customPTXHandlers, props.customHandlers]);
+  }, [customACREHandlers, customPTXHandlers, props.customHandlers, customDeeplinkHandlers]);
 
   const onStateChange: WebviewProps["onStateChange"] = state => {
     setWebviewState(state);
@@ -92,6 +101,7 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config, .
             ref={webviewAPIRef}
             customHandlers={customHandlers}
             currentAccountHistDb={currentAccountHistDb}
+            Loader={Loader}
           />
         </WebViewWrapper>
       </Wrapper>

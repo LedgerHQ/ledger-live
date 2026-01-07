@@ -9,6 +9,12 @@ import {
 import { INITIAL_STATE } from "~/reducers/settings";
 import { State } from "~/reducers/types";
 
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
+  useAcceptedCurrency: () => mockUseAcceptedCurrency(),
+}));
+
+const mockUseAcceptedCurrency = jest.fn(() => () => true);
+
 const advanceTimers = () => {
   act(() => {
     jest.advanceTimersByTime(500);
@@ -85,6 +91,58 @@ describe("ModularDrawer modules integration", () => {
     expect(queryByText(/3.66% APY/i)).toBeNull();
   });
 
+  it("should display market trend on the left at assetSelection step", async () => {
+    const { getByText, queryAllByText, user } = render(
+      <ModularDrawerSharedNavigator
+        assetsConfiguration={{
+          leftElement: "marketTrend",
+        }}
+      />,
+      {
+        ...INITIAL_STATE,
+        overrideInitialState: (state: State) => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            overriddenFeatureFlags: mockedFF,
+          },
+        }),
+      },
+    );
+    await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+    advanceTimers();
+    expect(getByText(/ethereum/i)).toBeVisible();
+    const percentElements = queryAllByText(/[+-]?\d+\.?\d*%/);
+    expect(percentElements.length).toBeGreaterThan(0);
+  });
+
+  it("should display market trend on the right at assetSelection step", async () => {
+    const { getByText, queryAllByText, user } = render(
+      <ModularDrawerSharedNavigator
+        assetsConfiguration={{
+          rightElement: "marketTrend",
+        }}
+      />,
+      {
+        ...INITIAL_STATE,
+        overrideInitialState: (state: State) => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            overriddenFeatureFlags: mockedFF,
+          },
+        }),
+      },
+    );
+    await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+    advanceTimers();
+    expect(getByText(/ethereum/i)).toBeVisible();
+    const percentElements = queryAllByText(/[+-]?\d+\.?\d*%/);
+    expect(percentElements.length).toBeGreaterThan(0);
+    const priceElements = queryAllByText(/\$\d+\.?\d*/);
+    expect(priceElements.length).toBeGreaterThan(0);
+  });
+
   it("should display the number of accounts and apy indicator on network list", async () => {
     const { getByText, getAllByText, user } = render(
       <ModularDrawerSharedNavigator
@@ -141,7 +199,7 @@ describe("ModularDrawer modules integration", () => {
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
     advanceTimers();
     expect(getByText(/ethereum/i)).toBeVisible();
-    expect(getByText(/23.4663 eth/i)).toBeVisible();
+    expect(getByText(/34,478.4 ETH/i)).toBeVisible();
   });
 
   it("should display balance on the right at networkSelection step", async () => {
@@ -171,6 +229,6 @@ describe("ModularDrawer modules integration", () => {
     const ethereumElements = getAllByText(/ethereum/i);
     await user.press(ethereumElements[0]);
     advanceTimers();
-    expect(getByText(/23.4663 eth/i)).toBeVisible();
+    expect(getByText(/23.4663 ETH/i)).toBeVisible();
   });
 });

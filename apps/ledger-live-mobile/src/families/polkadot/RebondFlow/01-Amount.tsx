@@ -10,15 +10,13 @@ import {
   Keyboard,
   SafeAreaView,
 } from "react-native";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { StackScreenProps } from "@react-navigation/stack";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
@@ -32,15 +30,16 @@ import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
 import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { PolkadotRebondFlowParamList } from "./type";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigationProps = BaseComposite<
-  StackScreenProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondAmount>
+  NativeStackScreenProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondAmount>
 >;
 
 export default function PolkadotRebondAmount({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
   const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);

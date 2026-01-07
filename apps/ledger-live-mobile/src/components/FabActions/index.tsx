@@ -6,14 +6,14 @@ import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { Linking, TouchableOpacityProps } from "react-native";
 import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import InfoModal from "../InfoModal";
 import { useAnalytics } from "~/analytics";
 import { WrappedButtonProps } from "../wrappedUi/Button";
 import { NavigatorName } from "~/const";
 import { useRoute } from "@react-navigation/native";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 
 export type ModalOnDisabledClickComponentProps = {
@@ -46,7 +46,7 @@ export type ActionButtonEventProps = {
     component: React.ComponentType<ModalOnDisabledClickComponentProps>;
   };
   Component?: ComponentType;
-  enableActions?: string;
+  customHandler?: () => void;
 };
 
 export type ActionButtonEvent = ActionButtonEventProps & {
@@ -97,7 +97,8 @@ export const FabButtonBarProvider = ({
   );
   const [isModalInfoOpened, setIsModalInfoOpened] = useState<boolean>();
 
-  const navigation = useNavigation<StackNavigationProp<ParamListBase, string, NavigatorName>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<ParamListBase, string, NavigatorName>>();
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
@@ -117,7 +118,7 @@ export const FabButtonBarProvider = ({
       const typedOpts = options as { screen?: string; params?: object } | undefined;
 
       (
-        navigation as StackNavigationProp<{
+        navigation as NativeStackNavigationProp<{
           [key: string]: object | undefined;
         }>
       ).navigate(
@@ -139,7 +140,15 @@ export const FabButtonBarProvider = ({
 
   const onPress = useCallback(
     (data: Omit<ActionButtonEvent, "label" | "Icon">) => {
-      const { navigationParams, confirmModalProps, linkUrl, event, eventProperties, id } = data;
+      const {
+        navigationParams,
+        confirmModalProps,
+        linkUrl,
+        event,
+        eventProperties,
+        id,
+        customHandler,
+      } = data;
 
       if (readOnlyModeEnabled && !hasOrderedNano) {
         navigateToRebornFlow();
@@ -161,6 +170,8 @@ export const FabButtonBarProvider = ({
         setInfoModalProps(undefined);
         if (linkUrl) {
           Linking.openURL(linkUrl);
+        } else if (customHandler) {
+          customHandler();
         } else if (navigationParams) {
           onNavigate(...navigationParams);
         }

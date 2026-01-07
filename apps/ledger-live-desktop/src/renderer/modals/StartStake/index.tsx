@@ -1,10 +1,11 @@
 import { FC, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { closeModal } from "~/renderer/actions/modals";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useStake } from "~/newArch/hooks/useStake";
+import { useStake } from "LLD/hooks/useStake";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useHistory } from "react-router-dom";
 

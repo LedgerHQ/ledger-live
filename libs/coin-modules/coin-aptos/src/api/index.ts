@@ -6,6 +6,7 @@ import {
   Stake,
   Reward,
   Page,
+  Validator,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import type { AptosConfig as AptosConfigApi } from "../config";
@@ -26,6 +27,14 @@ export function createApi(config: AptosConfigApi): AlpacaApi {
     combine: (tx, signature, pubkey): string => combine(tx, signature, pubkey),
     craftTransaction: (transactionIntent, _customFees): Promise<CraftedTransaction> =>
       craftTransaction(client, transactionIntent),
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: bigint,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported");
+    },
     estimateFees: (transactionIntent: TransactionIntent) => client.estimateFees(transactionIntent),
     getBalance: (address): Promise<Balance[]> => getBalances(client, address),
     lastBlock: () => client.getLastBlock(),
@@ -42,6 +51,9 @@ export function createApi(config: AptosConfigApi): AlpacaApi {
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
+    },
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
     },
   };
 }

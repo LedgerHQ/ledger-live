@@ -10,6 +10,7 @@ import { Data as PlatformExchangeStartData } from "./Platform/Exchange/StartExch
 import { Data as PlatformExchangeCompleteData } from "./Platform/Exchange/CompleteExchange/Body";
 import { Data as ConnectDeviceData } from "./ConnectDevice/index";
 import { Params as SignTransactionData } from "./SignTransaction/Body";
+import { Params as SignRawTransactionData } from "./SignRawTransaction/Body";
 import { Props as ConfirmProps } from "./ConfirmModal";
 import { Props as ErrorProps } from "./ErrorModal";
 import { UserProps as AddAccountProps } from "./AddAccounts";
@@ -52,11 +53,8 @@ export type GlobalModalData = {
   MODAL_BLACKLIST_TOKEN: {
     token: TokenCurrency;
   };
-  MODAL_STORYLY_DEBUGGER: undefined;
   MODAL_LOTTIE_DEBUGGER: undefined;
   MODAL_WALLET_SYNC_DEBUGGER: undefined;
-  MODAL_SIMPLEHASH_TOOLS: undefined;
-  MODAL_NFTS_TOOLS: undefined;
   MODAL_BRAZE_TOOLS: undefined;
   MODAL_CREATE_LOCAL_APP: {
     manifest?: LiveAppManifest;
@@ -64,6 +62,7 @@ export type GlobalModalData = {
   MODAL_EXPORT_OPERATIONS: undefined;
   MODAL_START_STAKE: ModalStartStakeProps;
   MODAL_SIGN_TRANSACTION: SignTransactionData;
+  MODAL_SIGN_RAW_TRANSACTION: SignRawTransactionData;
   MODAL_SIGN_MESSAGE: SignMessageData;
   MODAL_TROUBLESHOOT_NETWORK: undefined;
   MODAL_NO_FUNDS_STAKE: {
@@ -77,12 +76,7 @@ export type GlobalModalData = {
   MODAL_PLATFORM_EXCHANGE_COMPLETE: PlatformExchangeCompleteData;
   MODAL_CONNECT_DEVICE: ConnectDeviceData;
   MODAL_EXCHANGE_CRYPTO_DEVICE: ExchangeCryptoDeviceDataProp;
-  MODAL_HIDE_NFT_COLLECTION: {
-    collectionId: string;
-    collectionName: string;
-    onClose?: () => void;
-    blockchain: string;
-  };
+
   MODAL_WEBSOCKET_BRIDGE: {
     origin?: string | undefined | null;
     appName?: string | undefined | null;
@@ -90,11 +84,6 @@ export type GlobalModalData = {
   MODAL_CONFIRM: ConfirmProps;
   MODAL_ERROR: ErrorProps;
   MODAL_VAULT_SIGNER: undefined;
-  MODAL_HIDE_INSCRIPTION: {
-    inscriptionName: string;
-    inscriptionId: string;
-    onClose?: () => void;
-  };
 };
 
 /**

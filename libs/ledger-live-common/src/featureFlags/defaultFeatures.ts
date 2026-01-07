@@ -8,6 +8,7 @@ import {
 import reduce from "lodash/reduce";
 import { BUY_SELL_UI_APP_ID } from "../wallet-api/constants";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 /**
  * Default disabled feature.
@@ -33,6 +34,7 @@ export const initFeature = <T>(opts?: Feature<T>) => {
  * Currency Features.
  */
 export const CURRENCY_DEFAULT_FEATURES = {
+  currencyPolkadot: { enabled: true },
   currencyArbitrum: DEFAULT_FEATURE,
   currencyArbitrumSepolia: DEFAULT_FEATURE,
   currencyAstar: DEFAULT_FEATURE,
@@ -96,6 +98,20 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyBerachain: DEFAULT_FEATURE,
   currencyHyperevm: DEFAULT_FEATURE,
   currencyCantonNetwork: DEFAULT_FEATURE,
+  currencyCantonNetworkDevnet: DEFAULT_FEATURE,
+  currencyCantonNetworkTestnet: DEFAULT_FEATURE,
+  currencyKaspa: DEFAULT_FEATURE,
+  currencyEthereumHoodi: DEFAULT_FEATURE,
+  currencyCore: DEFAULT_FEATURE,
+  currencyWestend: DEFAULT_FEATURE,
+  currencyAssetHubPolkadot: DEFAULT_FEATURE,
+  currencyAssetHubWestend: DEFAULT_FEATURE,
+  currencyMonad: DEFAULT_FEATURE,
+  currencyMonadTestnet: DEFAULT_FEATURE,
+  currencySomnia: DEFAULT_FEATURE,
+  currencyZeroGravity: DEFAULT_FEATURE,
+  currencyConcordium: DEFAULT_FEATURE,
+  currencyConcordiumTestnet: DEFAULT_FEATURE,
 };
 
 /**
@@ -103,6 +119,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
  */
 export const DEFAULT_FEATURES: Features = {
   ...CURRENCY_DEFAULT_FEATURES,
+  nanoOnboardingFundWallet: DEFAULT_FEATURE,
+  welcomeScreenVideoCarousel: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
@@ -122,7 +140,24 @@ export const DEFAULT_FEATURES: Features = {
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
   stakeAccountBanner: initFeature(),
+  lldOnboardingEnableSync: initFeature({
+    enabled: false,
+    params: {
+      nanos: false,
+      touchscreens: false,
+    },
+  }),
+  mixpanelAnalytics: initFeature({
+    enabled: false,
+    params: { record_sessions_percent: 100 },
+  }),
 
+  ptxSwapDetailedView: initFeature({
+    enabled: false,
+    params: {
+      variant: ABTestingVariants.variantA,
+    },
+  }),
   buyDeviceFromLive: {
     enabled: false,
     params: { debug: false, url: null },
@@ -188,6 +223,18 @@ export const DEFAULT_FEATURES: Features = {
       },
       openRecoverFromSidebar: true,
       protectId: "protect-simu",
+    },
+  },
+  recoverUpsellPostOnboarding: {
+    ...DEFAULT_FEATURE,
+    params: {
+      deviceIds: [
+        DeviceModelId.nanoSP,
+        DeviceModelId.nanoX,
+        DeviceModelId.stax,
+        DeviceModelId.europa,
+        DeviceModelId.apex,
+      ],
     },
   },
 
@@ -426,6 +473,18 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxEarnDrawerConfiguration: {
+    enabled: false,
+    params: {},
+  },
+
+  ptxEarnUi: {
+    enabled: false,
+    params: {
+      value: "v1",
+    },
+  },
+
   ptxSwapLiveAppMobile: {
     enabled: false,
     params: {
@@ -434,6 +493,10 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   ptxSwapLiveAppKycWarning: {
+    enabled: false,
+  },
+
+  ptxSwapLiveAppOnPortfolio: {
     enabled: false,
   },
 
@@ -464,13 +527,7 @@ export const DEFAULT_FEATURES: Features = {
   ptxSwapExodusProvider: DEFAULT_FEATURE,
 
   myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
-  nftsFromSimplehash: {
-    ...DEFAULT_FEATURE,
-    params: {
-      threshold: 75,
-      staleTime: 1000 * 60 * 15,
-    },
-  },
+
   marketperformanceWidgetDesktop: {
     enabled: false,
     params: {
@@ -497,7 +554,6 @@ export const DEFAULT_FEATURES: Features = {
       refreshTime: 3, //nb minutes
     },
   },
-  spamReportNfts: DEFAULT_FEATURE,
   lldWalletSync: {
     ...DEFAULT_FEATURE,
     params: {
@@ -514,13 +570,8 @@ export const DEFAULT_FEATURES: Features = {
       learnMoreLink: "",
     },
   },
-  lldNftsGalleryNewArch: DEFAULT_FEATURE,
-  lldnewArchOrdinals: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
-  llmMarketQuickActions: DEFAULT_FEATURE,
-  spamFilteringTx: DEFAULT_FEATURE,
-  lldSpamFilteringTx: DEFAULT_FEATURE,
   llmMemoTag: DEFAULT_FEATURE,
   lldMemoTag: DEFAULT_FEATURE,
   ldmkTransport: {
@@ -541,7 +592,6 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llmRebornLP: { ...DEFAULT_FEATURE, params: { variant: ABTestingVariants.variantA } },
-  llmRebornFlex: DEFAULT_FEATURE,
   llmAccountListUI: DEFAULT_FEATURE,
   llmLedgerSyncEntryPoints: {
     ...DEFAULT_FEATURE,
@@ -549,6 +599,8 @@ export const DEFAULT_FEATURES: Features = {
       manager: true,
       accounts: true,
       settings: true,
+      onboarding: true,
+      postOnboarding: true,
     },
   },
   lldLedgerSyncEntryPoints: {
@@ -558,8 +610,12 @@ export const DEFAULT_FEATURES: Features = {
       accounts: true,
       settings: true,
       onboarding: true,
+      postOnboarding: true,
     },
   },
+  lwmLedgerSyncOptimisation: DEFAULT_FEATURE,
+  lwdLedgerSyncOptimisation: DEFAULT_FEATURE,
+  lwmNewWordingOptInNotificationsDrawer: DEFAULT_FEATURE,
   lldNanoSUpsellBanners: {
     ...DEFAULT_FEATURE,
     params: {
@@ -601,9 +657,6 @@ export const DEFAULT_FEATURES: Features = {
   },
   llmThai: DEFAULT_FEATURE,
   lldThai: DEFAULT_FEATURE,
-  lldSolanaNfts: DEFAULT_FEATURE,
-  llmSolanaNfts: DEFAULT_FEATURE,
-  largemoverLandingpage: DEFAULT_FEATURE,
   llmMmkvMigration: {
     ...DEFAULT_FEATURE,
     params: {
@@ -622,6 +675,7 @@ export const DEFAULT_FEATURES: Features = {
       enableModularization: false,
       searchDebounceTime: 500,
       backendEnvironment: "PROD",
+      enableDialogDesktop: false,
     },
   },
   llmModularDrawer: {
@@ -638,7 +692,6 @@ export const DEFAULT_FEATURES: Features = {
       backendEnvironment: "PROD",
     },
   },
-  llNftSupport: DEFAULT_FEATURE,
   llNftEntryPoint: {
     ...DEFAULT_FEATURE,
     params: {
@@ -647,10 +700,9 @@ export const DEFAULT_FEATURES: Features = {
       chains: ["ethereum", "polygon", "base", "arbitrum"],
     },
   },
+  ldmkSolanaSigner: DEFAULT_FEATURE,
   ldmkConnectApp: DEFAULT_FEATURE,
   lldNetworkBasedAddAccount: DEFAULT_FEATURE,
-  llmOfacGeoBlocking: DEFAULT_FEATURE,
-  lldOfacGeoBlocking: DEFAULT_FEATURE,
   llmDatadog: {
     ...DEFAULT_FEATURE,
     params: {
@@ -680,7 +732,54 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {},
   },
+  llmHomescreen: DEFAULT_FEATURE,
   supportDeviceApex: DEFAULT_FEATURE,
+  llmSyncOnboardingIncr1: DEFAULT_FEATURE,
+  lldSyncOnboardingIncr1: DEFAULT_FEATURE,
+  noah: {
+    ...DEFAULT_FEATURE,
+    params: {
+      activeCurrencyIds: [],
+    },
+  },
+  newSendFlow: {
+    ...DEFAULT_FEATURE,
+    params: {
+      families: [],
+    },
+  },
+  cantonSkipPreapprovalStep: DEFAULT_FEATURE,
+  zcashShielded: DEFAULT_FEATURE,
+  llmNanoOnboardingFundWallet: DEFAULT_FEATURE,
+  lldRebornABtest: DEFAULT_FEATURE,
+  llmRebornABtest: DEFAULT_FEATURE,
+  lifiSolana: DEFAULT_FEATURE,
+  llmAnimatedSplashScreen: {
+    enabled: true,
+    params: {
+      ios: true,
+      android: true,
+    },
+  },
+  llmOnboardingEnableSync: initFeature({
+    enabled: false,
+    params: {
+      nanos: false,
+      touchscreens: false,
+    },
+  }),
+  lwmWallet40: {
+    ...DEFAULT_FEATURE,
+    params: {
+      marketBanner: true,
+    },
+  },
+  lwdWallet40: {
+    ...DEFAULT_FEATURE,
+    params: {
+      marketBanner: true,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings

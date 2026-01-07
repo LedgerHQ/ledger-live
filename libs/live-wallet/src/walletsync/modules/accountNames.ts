@@ -1,3 +1,24 @@
+/**
+ * @module accountNames
+ *
+ * This module is responsible for synchronizing custom account names across Live instances
+ * in the WalletSync system. It manages the mapping between account IDs and their
+ * user-defined names, ensuring that when a user renames an account on one Live instance,
+ * that name change is propagated to all other synchronized Live instances.
+ *
+ * Account names are off-chain data (not stored on the blockchain), and therefore need to
+ * be synchronized through the WalletSync system to ensure consistency across all Live instances.
+ *
+ * Key responsibilities:
+ * - Tracks local account name changes and prepares them for synchronization
+ * - Resolves incoming account name updates from other Live instances
+ * - Handles conflict resolution by accepting incoming state changes (last-write-wins strategy)
+ * - Maintains consistency between local state (Map<string, string>) and distant state (Record<string, string>)
+ *
+ * The module uses a replace-all strategy for updates, meaning any incoming state change
+ * will replace the entire account names mapping. While this simplifies conflict resolution,
+ * it may result in lost changes if multiple Live instances modify names simultaneously.
+ */
 import { WalletSyncDataManager } from "../types";
 import { z } from "zod";
 

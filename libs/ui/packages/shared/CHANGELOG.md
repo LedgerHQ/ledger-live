@@ -1,5 +1,37 @@
 # @ledgerhq/ui-shared
 
+## 0.5.0
+
+### Minor Changes
+
+- [#12462](https://github.com/LedgerHQ/ledger-live/pull/12462) [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4) Thanks [@thesan](https://github.com/thesan)! - Rename Ledger Live Team to Ledger Wallet Team
+
+- [#12334](https://github.com/LedgerHQ/ledger-live/pull/12334) [`da727d3`](https://github.com/LedgerHQ/ledger-live/commit/da727d355b6911699cccb16bae6b0c7e9e2bea95) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Adapt tsconfig to avoid build issue based on a prior merge that broke this
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#12462](https://github.com/LedgerHQ/ledger-live/pull/12462) [`eeec50e`](https://github.com/LedgerHQ/ledger-live/commit/eeec50ea4e45b295cca51faa5ec2fc6ae5eca3d4) Thanks [@thesan](https://github.com/thesan)! - Rename Ledger Live Team to Ledger Wallet Team
+
+- [#12334](https://github.com/LedgerHQ/ledger-live/pull/12334) [`da727d3`](https://github.com/LedgerHQ/ledger-live/commit/da727d355b6911699cccb16bae6b0c7e9e2bea95) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Adapt tsconfig to avoid build issue based on a prior merge that broke this
+
+## 0.4.0
+
+### Minor Changes
+
+- [#11616](https://github.com/LedgerHQ/ledger-live/pull/11616) [`5336021`](https://github.com/LedgerHQ/ledger-live/commit/53360213fe1545cfac761d872c0bd7a592697279) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Generic errors for Backend & internet issue on MAD
+
+- [#11553](https://github.com/LedgerHQ/ledger-live/pull/11553) [`222bd7b`](https://github.com/LedgerHQ/ledger-live/commit/222bd7b69d32fd93562e9cb4bc1cf2840d0a0620) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Display generic error message on MAD
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#11616](https://github.com/LedgerHQ/ledger-live/pull/11616) [`5336021`](https://github.com/LedgerHQ/ledger-live/commit/53360213fe1545cfac761d872c0bd7a592697279) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Generic errors for Backend & internet issue on MAD
+
+- [#11553](https://github.com/LedgerHQ/ledger-live/pull/11553) [`222bd7b`](https://github.com/LedgerHQ/ledger-live/commit/222bd7b69d32fd93562e9cb4bc1cf2840d0a0620) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Display generic error message on MAD
+
 ## 0.3.0
 
 ### Minor Changes

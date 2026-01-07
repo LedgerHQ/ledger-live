@@ -2,7 +2,7 @@ import { Box, Flex, Text, Icons, InfiniteLoader, Alert } from "@ledgerhq/native-
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Option, OptionProps } from "./Option";
-import styled from "styled-components";
+import styled from "styled-components/native";
 import {
   AnalyticsButton,
   AnalyticsPage,
@@ -21,9 +21,10 @@ import { AlertLedgerSyncDown } from "../../components/AlertLedgerSyncDown";
 import { useLedgerSyncStatus } from "../../hooks/useLedgerSyncStatus";
 import { TrustchainNotFound } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { useCustomTimeOut } from "../../hooks/useCustomTimeOut";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import { blockPasswordLock } from "~/actions/appstate";
 import { isNoTrustchainError } from "../../utils/errors";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
@@ -78,10 +79,13 @@ const WalletSyncManage = () => {
     });
   };
 
+  const ledgerSyncOptimisationFlag = useFeature("lwmLedgerSyncOptimisation");
   const Options: OptionProps[] = [
     {
       label: t("walletSync.walletSyncActivated.synchronize.title"),
-      description: t("walletSync.walletSyncActivated.synchronize.description"),
+      description: ledgerSyncOptimisationFlag?.enabled
+        ? t("walletSync.walletSyncActivated.synchronize.desc")
+        : t("walletSync.walletSyncActivated.synchronize.description"),
       onClick: goToSync,
       testId: "walletSync-synchronize",
       id: "synchronize",
@@ -195,6 +199,10 @@ const InstancesRow = styled(TouchableOpacity)<{ disabled?: boolean }>`
   }
 `;
 
-const Container = styled(Flex).attrs((p: { disabled?: boolean }) => ({
+type ContainerProps = {
+  disabled?: boolean;
+};
+
+const Container = styled(Flex).attrs<ContainerProps>(p => ({
   opacity: p.disabled ? 0.3 : 1,
-}))<{ disabled?: boolean }>``;
+}))``;

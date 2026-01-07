@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/native-ui";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -6,25 +6,14 @@ import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
 import { useMarketCoinData } from "LLM/features/Market/hooks/useMarketCoinData";
-
-// @FIXME workaround for main tokens
-const tokenIDToMarketID = {
-  "ethereum/erc20/usd_tether__erc20_": "tether",
-  "ethereum/erc20/usd__coin": "usd-coin",
-};
+import { resolveMarketId } from "LLM/features/Market/utils/marketIdResolver";
 
 const AssetMarketSection = ({ currency }: { currency: CryptoOrTokenCurrency }) => {
   const { t } = useTranslation();
-  const [selectedCurrency, setSelectedCurrency] = useState<string>(currency.id);
-  const { currency: fetchedCurrency, counterCurrency } = useMarketCoinData({
-    currencyId: selectedCurrency,
-  });
 
-  useEffect(() => {
-    setSelectedCurrency(
-      tokenIDToMarketID[currency.id as keyof typeof tokenIDToMarketID] || currency.id,
-    );
-  }, [currency]);
+  const { currency: fetchedCurrency, counterCurrency } = useMarketCoinData({
+    currencyId: resolveMarketId(currency.id),
+  });
 
   if (!fetchedCurrency?.price) return null;
 

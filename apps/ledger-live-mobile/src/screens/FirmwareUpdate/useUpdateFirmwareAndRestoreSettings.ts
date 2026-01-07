@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import { useUpdateFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useUpdateFirmware";
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   UpdateFirmwareActionState,
   updateFirmwareActionArgs,
@@ -30,9 +30,10 @@ import {
   useAppDeviceAction,
   useInstallLanguageDeviceAction,
   useManagerDeviceAction,
-  useStaxFetchImageDeviceAction,
-  useStaxLoadImageDeviceAction,
+  useFetchImageDeviceAction,
+  useLoadImageDeviceAction,
 } from "../../hooks/deviceActions";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 // Errors related to the device connection
 export const reconnectDeviceErrorClasses: Array<
@@ -93,8 +94,8 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   const [installedApps, setInstalledApps] = useState<string[]>([]);
 
   const installLanguageAction = useInstallLanguageDeviceAction();
-  const staxLoadImageAction = useStaxLoadImageDeviceAction();
-  const staxFetchImageAction = useStaxFetchImageDeviceAction();
+  const loadImageAction = useLoadImageDeviceAction();
+  const fetchImageAction = useFetchImageDeviceAction();
   const connectManagerAction = useManagerDeviceAction();
 
   // device action hooks only get triggered when they have a device passed to them
@@ -109,7 +110,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     connectManagerRequest,
   );
 
-  const staxFetchImageRequest = useMemo(
+  const fetchImageRequest = useMemo(
     () => ({
       // In the LLM fwm update flow, the error thrown because there is no image is caught and part of the normal flow
       // So we want it to throw the error.
@@ -118,13 +119,14 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     }),
     [device.modelId],
   );
-  const staxFetchImageState = staxFetchImageAction.useHook(
+  const fetchImageState = fetchImageAction.useHook(
     updateStep === "imageBackup" ? device : null,
-    staxFetchImageRequest,
+    fetchImageRequest,
   );
 
   const { updateState: updateActionState, triggerUpdate } = useUpdateFirmware({
-    deviceId: device?.deviceId ?? "",
+    deviceId: device.deviceId ?? "",
+    deviceName: device.deviceName ?? null,
     updateFirmwareAction,
   });
 
@@ -132,22 +134,26 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     () => ({ language: idsToLanguage[deviceInfo.languageId ?? 0] }),
     [deviceInfo.languageId],
   );
+
   const installLanguageState = installLanguageAction.useHook(
     updateStep === "languageRestore" ? device : null,
     installLanguageRequest,
   );
 
-  const staxLoadImageRequest = useMemo(
-    () => ({
-      hexImage: staxFetchImageState.hexImage ?? "",
-      padImage: false, // this is because the picture we fetch from the device already has the padding
-      deviceModelId: device.modelId,
-    }),
-    [staxFetchImageState.hexImage, device.modelId],
+  const loadImageRequest = useMemo(
+    () =>
+      isCustomLockScreenSupported(device.modelId)
+        ? {
+            hexImage: fetchImageState.hexImage ?? "",
+            padImage: false, // this is because the picture we fetch from the device already has the padding
+            deviceModelId: device.modelId,
+          }
+        : undefined,
+    [fetchImageState.hexImage, device.modelId],
   );
-  const staxLoadImageState = staxLoadImageAction.useHook(
-    updateStep === "imageRestore" && staxFetchImageState.hexImage ? device : null,
-    staxLoadImageRequest,
+  const loadImageState = loadImageAction.useHook(
+    updateStep === "imageRestore" && fetchImageState.hexImage ? device : null,
+    loadImageRequest,
   );
 
   const restoreAppsRequest = useMemo(
@@ -161,7 +167,6 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   );
 
   const connectAppAction = useAppDeviceAction();
-
   const restoreAppsState = connectAppAction.useHook(
     updateStep === "appsRestore" ? device : null,
     restoreAppsRequest,
@@ -176,7 +181,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   }, []);
 
   const proceedToImageBackup = useCallback(() => {
-    if (device.modelId === DeviceModelId.stax) {
+    if (isCustomLockScreenSupported(device.modelId)) {
       setUpdateStep("imageBackup");
     } else {
       proceedToFirmwareUpdate();
@@ -196,12 +201,12 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   }, [proceedToUpdateCompleted, installedApps.length]);
 
   const proceedToImageRestore = useCallback(() => {
-    if (staxFetchImageState.hexImage) {
+    if (fetchImageState.hexImage) {
       setUpdateStep("imageRestore");
     } else {
       proceedToAppsRestore();
     }
-  }, [proceedToAppsRestore, staxFetchImageState.hexImage]);
+  }, [proceedToAppsRestore, fetchImageState.hexImage]);
 
   const proceedToLanguageRestore = useCallback(() => {
     if (deviceInfo.languageId !== undefined && deviceInfo.languageId !== languageIds.english) {
@@ -235,18 +240,14 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         }
         break;
 
-      // TODO: Implement apps data backup
-      // case "appsDataBackup":
-      //   break;
-
       case "imageBackup":
         hasUnrecoverableError =
-          staxFetchImageState.error &&
-          !userSolvableErrorClasses.some(err => staxFetchImageState.error instanceof err);
+          fetchImageState.error &&
+          !userSolvableErrorClasses.some(err => fetchImageState.error instanceof err);
 
-        if (staxFetchImageState.imageFetched || hasUnrecoverableError) {
-          if (staxFetchImageState.error) {
-            log("FirmwareUpdate", "error while backing up stax image", staxFetchImageState.error);
+        if (fetchImageState.imageFetched || hasUnrecoverableError) {
+          if (fetchImageState.error) {
+            log("FirmwareUpdate", "error while backing up CLS image", fetchImageState.error);
           }
           proceedToFirmwareUpdate();
         }
@@ -292,16 +293,12 @@ export const useUpdateFirmwareAndRestoreSettings = ({
 
       case "imageRestore":
         hasUnrecoverableError =
-          staxLoadImageState.error &&
-          !userSolvableErrorClasses.some(err => staxLoadImageState.error instanceof err);
+          loadImageState.error &&
+          !userSolvableErrorClasses.some(err => loadImageState.error instanceof err);
 
-        if (
-          staxLoadImageState.imageLoaded ||
-          hasUnrecoverableError ||
-          !staxFetchImageState.hexImage
-        ) {
-          if (staxLoadImageState.error) {
-            log("FirmwareUpdate", "error while restoring stax image", staxLoadImageState.error);
+        if (loadImageState.imageLoaded || hasUnrecoverableError || !fetchImageState.hexImage) {
+          if (loadImageState.error) {
+            log("FirmwareUpdate", "error while restoring CLS image", loadImageState.error);
           }
           proceedToAppsRestore();
         }
@@ -335,11 +332,11 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     proceedToImageRestore,
     proceedToLanguageRestore,
     proceedToUpdateCompleted,
-    staxFetchImageState.error,
-    staxFetchImageState.imageFetched,
-    staxFetchImageState.hexImage,
-    staxLoadImageState.error,
-    staxLoadImageState.imageLoaded,
+    fetchImageState.error,
+    fetchImageState.imageFetched,
+    fetchImageState.hexImage,
+    loadImageState.error,
+    loadImageState.imageLoaded,
     triggerUpdate,
     updateActionState.step,
     updateActionState.error,
@@ -366,15 +363,15 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       reconnectDeviceErrorClasses.some(
         err =>
           connectManagerState.error instanceof err ||
-          staxFetchImageState.error instanceof err ||
-          staxLoadImageState.error instanceof err ||
+          fetchImageState.error instanceof err ||
+          loadImageState.error instanceof err ||
           restoreAppsState.error instanceof err ||
           installLanguageState.error instanceof err,
       ),
     [
       connectManagerState.error,
-      staxFetchImageState.error,
-      staxLoadImageState.error,
+      fetchImageState.error,
+      loadImageState.error,
       restoreAppsState.error,
       installLanguageState.error,
     ],
@@ -396,18 +393,18 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     () =>
       [
         connectManagerState.error,
-        staxFetchImageState.error,
+        fetchImageState.error,
         updateActionState.error,
         installLanguageState.error,
         restoreAppsState.error,
-        staxLoadImageState.error,
+        loadImageState.error,
       ].find(error => userSolvableErrorClasses.some(errorClass => error instanceof errorClass)),
     [
       connectManagerState.error,
       installLanguageState.error,
       restoreAppsState.error,
-      staxFetchImageState.error,
-      staxLoadImageState.error,
+      fetchImageState.error,
+      loadImageState.error,
       updateActionState.error,
     ],
   );
@@ -423,11 +420,11 @@ export const useUpdateFirmwareAndRestoreSettings = ({
 
     if (
       updateStep === "imageRestore" &&
-      staxLoadImageState.error &&
-      (staxLoadImageState.error instanceof ImageLoadRefusedOnDevice ||
-        (staxLoadImageState.error as unknown) instanceof ImageCommitRefusedOnDevice)
+      loadImageState.error &&
+      (loadImageState.error instanceof ImageLoadRefusedOnDevice ||
+        (loadImageState.error as unknown) instanceof ImageCommitRefusedOnDevice)
     ) {
-      return staxLoadImageState.error;
+      return loadImageState.error;
     }
 
     if (
@@ -439,21 +436,21 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     }
 
     return undefined;
-  }, [installLanguageState.error, staxLoadImageState.error, restoreAppsState.error, updateStep]);
+  }, [installLanguageState.error, loadImageState.error, restoreAppsState.error, updateStep]);
 
   const deviceLockedOrUnresponsive = useMemo(
     () =>
       updateActionState.lockedDevice ||
       connectManagerState.isLocked ||
-      staxFetchImageState.unresponsive ||
-      staxLoadImageState.unresponsive ||
+      fetchImageState.unresponsive ||
+      loadImageState.unresponsive ||
       restoreAppsState.isLocked ||
       installLanguageState.unresponsive,
     [
       updateActionState.lockedDevice,
       connectManagerState.isLocked,
-      staxFetchImageState.unresponsive,
-      staxLoadImageState.unresponsive,
+      fetchImageState.unresponsive,
+      loadImageState.unresponsive,
       restoreAppsState.isLocked,
       installLanguageState.unresponsive,
     ],
@@ -471,10 +468,10 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         triggerUpdate();
         break;
       case "imageBackup":
-        staxFetchImageState.onRetry();
+        fetchImageState.onRetry();
         break;
       case "imageRestore":
-        staxLoadImageState.onRetry();
+        loadImageState.onRetry();
         break;
       case "languageRestore":
         installLanguageState.onRetry();
@@ -486,8 +483,8 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     connectManagerState,
     installLanguageState,
     restoreAppsState,
-    staxFetchImageState,
-    staxLoadImageState,
+    fetchImageState,
+    loadImageState,
     triggerUpdate,
     updateStep,
   ]);
@@ -512,9 +509,9 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     startUpdate,
     updateStep,
     connectManagerState,
-    staxFetchImageState,
+    fetchImageState,
     updateActionState,
-    staxLoadImageState,
+    loadImageState,
     installLanguageState,
     restoreAppsState,
     retryCurrentStep,

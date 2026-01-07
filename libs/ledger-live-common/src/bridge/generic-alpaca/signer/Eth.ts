@@ -1,16 +1,18 @@
 import { filter, firstValueFrom } from "rxjs";
 import { EvmAddress, EvmSignature, EvmSigner } from "@ledgerhq/coin-evm/types/signer";
-import { CreateSigner } from "../../setup";
+import { CreateSigner, executeWithSigner } from "../../setup";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DmkSignerEth, LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import Transport from "@ledgerhq/hw-transport";
 import { getEnv } from "@ledgerhq/live-env";
 import { ResolutionConfig, LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { Signature } from "ethers";
+import type { DomainServiceResolution } from "@ledgerhq/types-live";
+import resolver from "@ledgerhq/coin-evm/hw-getAddress";
 
 export type Signer = {
   getAddress: (path: string) => Promise<EvmAddress>;
-  signTransaction: (path: string, tx: string) => Promise<string>;
+  signTransaction: (path: string, tx: string, domain?: DomainServiceResolution) => Promise<string>;
 };
 
 const isDmkTransport = (
@@ -37,13 +39,14 @@ export const createSigner: CreateSigner<Signer> = (transport: Transport) => {
 
   return {
     getAddress: signer.getAddress.bind(signer),
-    signTransaction: async (path, tx) => {
+    signTransaction: async (path, tx, domain) => {
       // Configure type of resolutions necessary for the clear signing
       const resolutionConfig: ResolutionConfig = {
         externalPlugins: true,
         erc20: true,
         nft: false,
         uniswapV3: true,
+        domains: domain && [domain],
       };
       const loadConfig: LoadConfig = {
         cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
@@ -68,3 +71,6 @@ export const createSigner: CreateSigner<Signer> = (transport: Transport) => {
     },
   };
 };
+
+export const context = executeWithSigner(createSigner);
+export const getAddress = resolver(context);

@@ -1,4 +1,4 @@
-import { BrowserWindow, screen, app, WebPreferences } from "electron";
+import { BrowserWindow, screen, app, WebPreferences, WebContents } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL, pathToFileURL } from "url";
@@ -78,16 +78,6 @@ export const loadWindow = async () => {
     fullUrl.searchParams.append("theme", theme || "");
     fullUrl.searchParams.append("appLocale", app.getLocale());
     fullUrl.searchParams.append("systemLocale", app.getSystemLocale());
-
-    if (__DEV__) {
-      const setUserAgent = (webContents: Electron.WebContents) => {
-        webContents.setUserAgent(`${webContents.getUserAgent()} LedgerLive/${__APP_VERSION__}`);
-      };
-      setUserAgent(mainWindow.webContents);
-      mainWindow.webContents.on("did-attach-webview", function (_event, webContents) {
-        setUserAgent(webContents);
-      });
-    }
 
     await mainWindow.loadURL(fullUrl.href);
   }
@@ -210,6 +200,31 @@ function setupMainWindowHandlers() {
     }
     return false;
   });
+
+  // Track and clean up a webview's DevTools WebContents to avoid orphaned DevTools windows.
+  mainWindow.webContents.on("did-attach-webview", function (_event, webContents) {
+    let devtoolContents: WebContents | null = null;
+    webContents.on("devtools-opened", () => {
+      devtoolContents = webContents.devToolsWebContents;
+      devtoolContents?.on("destroyed", () => {
+        devtoolContents = null;
+      });
+    });
+
+    webContents.on("destroyed", () => {
+      devtoolContents?.close();
+    });
+  });
+
+  if (__DEV__) {
+    const setUserAgent = (webContents: Electron.WebContents) => {
+      webContents.setUserAgent(`${webContents.getUserAgent()} LedgerLive/${__APP_VERSION__}`);
+    };
+    setUserAgent(mainWindow.webContents);
+    mainWindow.webContents.on("did-attach-webview", function (_event, webContents) {
+      setUserAgent(webContents);
+    });
+  }
 }
 
 /**
@@ -247,7 +262,7 @@ export async function applyWindowParams(
     const openDevTools = () => {
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.once("devtools-opened", () => {
-          mainWindow && mainWindow.focus();
+          if (mainWindow) mainWindow.focus();
         });
         mainWindow.webContents.openDevTools();
       }
@@ -259,20 +274,4 @@ export async function applyWindowParams(
     // Also try to open dev tools when the window is shown
     mainWindow.on("show", openDevTools);
   }
-}
-
-/**
- * Legacy function for backward compatibility
- * @deprecated Use createEarlyMainWindow() + applyWindowParams() instead
- */
-export async function createMainWindow(
-  {
-    dimensions,
-    positions,
-  }: { dimensions?: { width: number; height: number }; positions?: { x: number; y: number } },
-  settings: { theme: typeof theme },
-) {
-  const window = createEarlyMainWindow();
-  await applyWindowParams({ dimensions, positions }, settings);
-  return window;
 }

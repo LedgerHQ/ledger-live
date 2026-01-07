@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Dispatch, Action } from "redux";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -23,18 +23,13 @@ import {
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
-import { Layout } from "LLD/features/Collectibles/types/Layouts";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
-  RESET_HIDDEN_NFT_COLLECTIONS,
   TOGGLE_MARKET_WIDGET,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
-  UPDATE_NFT_COLLECTION_STATUS,
 } from "./constants";
-import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
-import { NftStatus } from "@ledgerhq/live-nft/types";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
@@ -50,14 +45,6 @@ export const setCountervalueFirst = (countervalueFirst: boolean) =>
 export const setAccountsViewMode = (accountsViewMode: "list" | "card" | undefined) =>
   saveSettings({
     accountsViewMode,
-  });
-export const setNftsViewMode = (nftsViewMode: "list" | "grid" | undefined) =>
-  saveSettings({
-    nftsViewMode,
-  });
-export const setCollectiblesViewMode = (collectiblesViewMode: Layout) =>
-  saveSettings({
-    collectiblesViewMode,
   });
 export const setSelectedTimeRange = (selectedTimeRange: PortfolioRange) =>
   saveSettings({
@@ -217,11 +204,6 @@ export const blacklistToken = (tokenId: string) => ({
   payload: tokenId,
 });
 
-export const hideOrdinalsAsset = (inscriptionId: string) => ({
-  type: "HIDE_ORDINALS_ASSET",
-  payload: inscriptionId,
-});
-
 export const setLastSeenCustomImage = (lastSeenCustomImage: {
   imageSize: number;
   imageHash: string;
@@ -244,23 +226,6 @@ export const showToken = (tokenId: string) => ({
   payload: tokenId,
 });
 
-export const updateNftStatus = (
-  blockchain: SupportedBlockchain,
-  collectionId: string,
-  status: NftStatus,
-) => ({
-  type: UPDATE_NFT_COLLECTION_STATUS,
-  payload: { blockchain, collectionId, status },
-});
-
-export const resetHiddenNftCollections = () => ({
-  type: RESET_HIDDEN_NFT_COLLECTIONS,
-});
-
-export const unhideOrdinalsAsset = (inscriptionId: string) => ({
-  type: "UNHIDE_ORDINALS_ASSET",
-  payload: inscriptionId,
-});
 type FetchSettings = (a: SettingsState) => (a: Dispatch<Action<"FETCH_SETTINGS">>) => void;
 export const fetchSettings: FetchSettings = (settings: SettingsState) => dispatch => {
   dispatch({
@@ -374,16 +339,6 @@ export const addStarredMarketCoins = (payload: string) => ({
 
 export const removeStarredMarketCoins = (payload: string) => ({
   type: "MARKET_REMOVE_STARRED_COINS",
-  payload,
-});
-
-export const setHasSeenOrdinalsDiscoveryDrawer = (payload: boolean) => ({
-  type: "SET_HAS_SEEN_ORDINALS_DISCOVERY_DRAWER",
-  payload,
-});
-
-export const setHasProtectedOrdinalsAssets = (payload: boolean) => ({
-  type: "SET_HAS_PROTECTED_ORDINALS_ASSETS",
   payload,
 });
 

@@ -15,6 +15,9 @@
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util",
     "jest-get-type",
     "jest-matcher-utils",
     "jest-message-util"
@@ -24,7 +27,9 @@
     "src/network/indexer.ts",
     "src/network/mock-network.ts",
     "src/test/bot-specs.ts",
-    "src/test/cantonTestUtils.ts"
+    "src/test/cantonTestUtils.ts",
+    "src/test/fixtures.ts",
+    "src/supportedFeatures.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices"

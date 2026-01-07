@@ -4,7 +4,6 @@ import React, { useCallback, useState, useEffect } from "react";
 import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Linking } from "react-native";
 import Switch from "~/components/Switch";
 import SafeAreaView from "~/components/SafeAreaView";
-import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -12,7 +11,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { ScreenName } from "~/const";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -31,13 +30,13 @@ import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { ExternalLinkMedium, InformationFill } from "@ledgerhq/native-ui/assets/icons";
 import { Flex, Link } from "@ledgerhq/native-ui";
 import { urls } from "~/utils/urls";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendAmountCoin>;
 
 export default function SendAmountCoin({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
   const { t } = useTranslation();
 
@@ -85,9 +84,9 @@ export default function SendAmountCoin({ navigation, route }: Props) {
     [setTransaction, account, parentAccount, transaction],
   );
   const toggleUseAllAmount = useCallback(() => {
-    if (!account) return;
+    if (!account || !transaction) return;
     const bridge = getAccountBridge(account, parentAccount);
-    if (!transaction) return;
+
     setTransaction(
       bridge.updateTransaction(transaction, {
         amount: new BigNumber(0),
@@ -200,7 +199,9 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                 </View>
                 <View style={styles.continueWrapper}>
                   <Button
-                    testID="amount-continue-button"
+                    testID={
+                      bridgePending ? "amount-continue-button-loading" : "amount-continue-button"
+                    }
                     event="SendAmountCoinContinue"
                     type="primary"
                     title={

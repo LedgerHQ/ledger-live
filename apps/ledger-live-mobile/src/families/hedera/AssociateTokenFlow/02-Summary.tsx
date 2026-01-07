@@ -1,16 +1,14 @@
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { View, SafeAreaView, StyleSheet } from "react-native";
-import { findTokenByAddress } from "@ledgerhq/live-common/currencies/index";
-import { HEDERA_TRANSACTION_KINDS } from "@ledgerhq/live-common/families/hedera/constants";
+import { useTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/hooks";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
-
 import SummaryToSection from "./SummaryToSection";
 import SummaryFromSection from "./SummaryFromSection";
 import type { HederaAssociateTokenFlowParamList } from "./types";
@@ -23,8 +21,8 @@ import NavigationScrollView from "~/components/NavigationScrollView";
 import TranslatedError from "~/components/TranslatedError";
 import Alert from "~/components/Alert";
 import AssociationInsufficientFundsError from "~/families/hedera/AssociateTokenFlow/AssociationInsufficientFundsError";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { urls } from "~/utils/urls";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<HederaAssociateTokenFlowParamList, ScreenName.HederaAssociateTokenSummary>
@@ -32,23 +30,26 @@ type Props = BaseComposite<
 
 export default function Summary({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   const { tokenAddress } = route.params;
-  const token = findTokenByAddress(tokenAddress);
+  const { token } = useTokenByAddressInCurrency(tokenAddress || "", "hedera");
 
   invariant(account, "hedera: account is required");
   invariant(token, `hedera: token with address ${tokenAddress} is not available`);
+  const mainAccount = getMainAccount(account, parentAccount);
 
   const { transaction, status, bridgeError, bridgePending } = useBridgeTransaction(() => {
     const bridge = getAccountBridge(account, parentAccount);
     const transaction = bridge.createTransaction(account);
     const updatedTransaction = bridge.updateTransaction(transaction, {
+      mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
+      assetReference: token.contractAddress,
+      assetOwner: mainAccount.freshAddress,
       properties: {
-        name: HEDERA_TRANSACTION_KINDS.TokenAssociate.name,
         token,
-      } satisfies Transaction["properties"],
-    });
+      },
+    } satisfies Partial<Transaction>);
 
     return {
       account,
@@ -64,7 +65,6 @@ export default function Summary({ navigation, route }: Props) {
     });
   }, [navigation, transaction, route]);
 
-  const mainAccount = getMainAccount(account, parentAccount);
   const transactionError = status.errors.transaction;
   const error = status.errors[Object.keys(status.errors)[0]];
 

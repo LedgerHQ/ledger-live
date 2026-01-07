@@ -1,6 +1,7 @@
 import * as braze from "@braze/web-sdk";
 import { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { LocationContentCard, NotificationContentCard, Platform } from "~/types/dynamicContent";
 import { notificationsContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { track } from "../analytics/segment";
@@ -71,7 +72,7 @@ export function useNotifications() {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         currentCard.url = currentCard.id;
-        isTrackedUser && braze.logContentCardClick(currentCard);
+        if (isTrackedUser) braze.logContentCardClick(currentCard);
       }
 
       track("contentcard_clicked", {

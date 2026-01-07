@@ -7,42 +7,24 @@ import React, {
   useState,
   PropsWithChildren,
 } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { Trans } from "react-i18next";
 
 import { State, AppsDistribution, Action } from "@ledgerhq/live-common/apps/index";
 import { App, DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
-
-import { Flex, Text, Button, Divider, IconsLegacy } from "@ledgerhq/native-ui";
-import styled, { useTheme } from "styled-components/native";
+import { Flex, Text, Button, Divider, Icons } from "@ledgerhq/native-ui";
+import styled from "styled-components/native";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/device/use-cases/isDeviceLocalizationSupported";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { lastSeenCustomImageSelector } from "~/reducers/settings";
 import DeviceAppStorage from "./DeviceAppStorage";
-
-import NanoS from "~/images/devices/NanoS";
-import Stax from "~/images/devices/Stax";
-import Europa from "~/images/devices/Europa";
-import Apex from "~/images/devices/Apex";
-import NanoX from "~/images/devices/NanoX";
-
 import DeviceName from "./DeviceName";
 import InstalledAppsModal from "../Modals/InstalledAppsModal";
-
 import DeviceLanguage from "./DeviceLanguage";
 import CustomLockScreen from "./CustomLockScreen";
 import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
-
-const illustrations = {
-  nanoS: NanoS,
-  nanoSP: NanoS,
-  nanoX: NanoX,
-  blue: NanoS,
-  stax: Stax,
-  europa: Europa,
-  apex: Apex,
-};
+import { DeviceIllustration } from "~/components/DeviceIllustration";
 
 type Props = PropsWithChildren<{
   distribution: AppsDistribution;
@@ -76,16 +58,11 @@ const DeviceCard = ({
   onLanguageChange,
   children,
 }: Props) => {
-  const { colors, theme } = useTheme();
   const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
   const isFirstCustomImageUpdate = useRef<boolean>(true);
 
   const { deviceModel } = state;
   const [appsModalOpen, setAppsModalOpen] = useState(false);
-
-  const [illustration] = useState(
-    illustrations[deviceModel.id]({ color: colors.neutral.c100, theme }),
-  );
 
   useEffect(() => {
     if (isFirstCustomImageUpdate.current) {
@@ -125,7 +102,7 @@ const DeviceCard = ({
     <BorderCard>
       {children}
       <Flex flexDirection={"row"} mt={20} mx={4} mb={8} alignItems="center">
-        {illustration}
+        <DeviceIllustration deviceModelId={deviceModel.id} />
         <Flex
           flex={1}
           flexDirection={"column"}
@@ -153,11 +130,11 @@ const DeviceCard = ({
             </Text>
           </Flex>
           <Flex flexDirection={"row"} alignItems={"center"} mt={2} mb={3}>
-            <IconsLegacy.CircledCheckSolidMedium size={18} color={"palette.success.c50"} />
+            <Icons.CheckmarkCircleFill size="S" color={"success.c50"} />
             <Text
               variant={"body"}
               fontWeight={"medium"}
-              color={"palette.neutral.c80"}
+              color={"neutral.c80"}
               numberOfLines={1}
               ml={2}
             >
@@ -215,7 +192,7 @@ const DeviceCard = ({
         state={state}
         dispatch={dispatch}
         appList={appList}
-        illustration={illustration}
+        illustration={<DeviceIllustration deviceModelId={deviceModel.id} />}
         deviceInfo={deviceInfo}
       />
     </BorderCard>

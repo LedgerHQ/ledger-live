@@ -22,12 +22,17 @@ export const getAccountIdFromWalletAccountId = (walletAccountId: string): string
 
 export const getWalletApiIdFromAccountId = (id: string): string => uuidv5(id, NAMESPACE);
 
+export const setWalletApiIdForAccountId = (accountId: string): void => {
+  const walletApiId = getWalletApiIdFromAccountId(accountId);
+  uuidToAccountId.set(walletApiId, accountId);
+};
+
 export function accountToWalletAPIAccount(
   walletState: WalletState,
   account: AccountLike,
   parentAccount?: Account | null,
 ): WalletAPIAccount {
-  const walletApiId = uuidv5(account.id, NAMESPACE);
+  const walletApiId = getWalletApiIdFromAccountId(account.id);
   uuidToAccountId.set(walletApiId, account.id);
 
   if (isTokenAccount(account)) {

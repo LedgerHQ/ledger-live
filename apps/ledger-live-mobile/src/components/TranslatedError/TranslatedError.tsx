@@ -9,7 +9,7 @@ type Props = {
   field?: "title" | "description";
 };
 
-export function TranslatedError({ error, field = "title" }: Props): JSX.Element | null {
+export function TranslatedError({ error, field = "title" }: Props): React.JSX.Element | null {
   const { t } = useTranslation();
   const links = useErrorLinks(error);
   if (!error) return null;
@@ -52,10 +52,10 @@ export function TranslatedError({ error, field = "title" }: Props): JSX.Element 
   if (error.name) {
     // the string id of a simple error message
     const simpleTranslationStringId = `errors.${error.name}.${field}`;
-    let translation = t(simpleTranslationStringId, arg);
+    let translation = t(simpleTranslationStringId, { ...arg });
 
     if (translation !== simpleTranslationStringId) {
-      if (typeof translation === "object" && "productName" in arg) {
+      if (typeof translation === "object" && Array.isArray(arg.productName)) {
         // it has specific translation for different device and platform
         const platform = Platform.OS;
         const device = arg.productName!.includes("Nano S") ? "nanoS" : "nanoX";
@@ -65,12 +65,12 @@ export function TranslatedError({ error, field = "title" }: Props): JSX.Element 
            * this case should not happen since you can't nativelly connect a Nano S to an iOS device
            * (but you can in local/dev by using a proxy with the simulator)
            */
-          return <Text>{t(`errors.generic.${field}`, arg)}</Text>;
+          return <Text>{t(`errors.generic.${field}`, { ...arg })}</Text>;
         }
 
         // the string id of a detailled (os and device specific) error message
         const detailedTranslationStringId = `errors.${error.name}.${field}.${platform}.${device}`;
-        translation = t(detailedTranslationStringId, arg);
+        translation = t(detailedTranslationStringId, { ...arg });
 
         if (translation !== detailedTranslationStringId) {
           return <Text>{translation}</Text>;
@@ -85,5 +85,5 @@ export function TranslatedError({ error, field = "title" }: Props): JSX.Element 
     }
   }
 
-  return <Text>{t(`errors.generic.${field}`, arg)}</Text>;
+  return <Text>{t(`errors.generic.${field}`, { ...arg })}</Text>;
 }

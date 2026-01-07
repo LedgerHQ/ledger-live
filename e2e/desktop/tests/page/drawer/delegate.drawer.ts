@@ -1,5 +1,5 @@
-import { step } from "../../misc/reporters/step";
-import { Drawer } from "../../component/drawer.component";
+import { step } from "tests/misc/reporters/step";
+import { Drawer } from "tests/component/drawer.component";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { expect } from "@playwright/test";
@@ -10,13 +10,6 @@ export class DelegateDrawer extends Drawer {
   private amountValue = this.page.getByTestId("amountReceived-drawer").first();
   private transactionType = this.page.getByTestId("transaction-type").first();
   private operationType = this.page.getByTestId("operation-type");
-  private addressValue = (address: string) =>
-    this.page.locator('[data-testid="drawer-content"]').locator(`text=${address}`);
-
-  @step("Verify address $0 is visible")
-  async addressValueIsVisible(address: string) {
-    await expect(this.addressValue(address)).toBeVisible();
-  }
 
   @step("Verify provider is visible")
   async providerIsVisible(account: Delegate) {

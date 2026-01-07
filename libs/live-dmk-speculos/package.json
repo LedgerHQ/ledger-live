@@ -1,0 +1,69 @@
+{
+  "name": "@ledgerhq/live-dmk-speculos",
+  "version": "0.3.0",
+  "description": "Ledger Device Management Kit transport module for LLD",
+  "private": true,
+  "license": "Apache-2.0",
+  "keywords": [
+    "Ledger"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-dmk-speculos",
+  "main": "lib-es/src/index.js",
+  "module": "lib-es/index.js",
+  "exports": {
+    ".": {
+      "require": "./lib/index.js",
+      "import": "./lib-es/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build:cjs": "tsc -p tsconfig.json",
+    "build:esm": "tsc -p tsconfig.json --module esnext --moduleResolution bundler --outDir lib-es",
+    "build": "pnpm run clean && pnpm run build:cjs && pnpm run build:esm",
+    "watch": "tsc --watch --project tsconfig.prod.json",
+    "watch:es": "pnpm watch",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit",
+    "unimported": "unimported",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/speculos-device-controller": "catalog:",
+    "@ledgerhq/device-transport-kit-speculos": "catalog:",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/node": "22.10.10",
+    "@vitejs/plugin-react": "4.3.4",
+    "@vitest/coverage-istanbul": "3.0.7",
+    "jsdom": "25.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rxjs": "catalog:",
+    "vite": "6.0.7",
+    "vitest": "2.1.9",
+    "ws": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rxjs": "catalog:"
+  }
+}

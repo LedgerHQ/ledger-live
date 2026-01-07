@@ -1,12 +1,11 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
 import SignSummary from "~/screens/SignMessage/01-Summary";
 import SelectDevice from "~/screens/SelectDevice";
 import SignConnectDevice from "~/screens/SignMessage/03-ConnectDevice";
-import SignValidationSuccess from "~/screens/SignMessage/04-ValidationSuccess";
 import SignValidationError from "~/screens/SignMessage/04-ValidationError";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
@@ -88,16 +87,6 @@ export default function SignMessageNavigator({
         }
       />
       <Stack.Screen
-        name={ScreenName.SignValidationSuccess}
-        component={SignValidationSuccess}
-        options={{
-          headerLeft: undefined,
-          headerShown: false,
-          headerRight: undefined,
-          gestureEnabled: false,
-        }}
-      />
-      <Stack.Screen
         name={ScreenName.SignValidationError}
         component={SignValidationError}
         options={{
@@ -107,4 +96,4 @@ export default function SignMessageNavigator({
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator<SignMessageNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<SignMessageNavigatorStackParamList>();

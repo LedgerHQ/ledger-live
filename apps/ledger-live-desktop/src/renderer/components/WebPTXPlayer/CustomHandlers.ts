@@ -3,10 +3,13 @@ import {
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
-import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import {
+  WalletAPICustomHandlers,
+  AccountIdFormatsResponse,
+} from "@ledgerhq/live-common/wallet-api/types";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { track } from "~/renderer/analytics/segment";
@@ -15,13 +18,24 @@ import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewEr
 import { WebviewProps } from "../Web3AppWebview/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { openModal } from "~/renderer/actions/modals";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getParentAccount,
+  isTokenAccount,
+  makeEmptyTokenAccount,
+} from "@ledgerhq/coin-framework/account/helpers";
+import {
+  decodeTokenAccountIdSync,
+  decodeTokenAccountId,
+} from "@ledgerhq/coin-framework/account/index";
 import logger from "~/renderer/logger";
-import { useStake } from "~/newArch/hooks/useStake";
+import { useStake } from "LLD/hooks/useStake";
 import { StakeFlowProps } from "~/renderer/screens/stake";
 import { useHistory } from "react-router";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { objectToURLSearchParams } from "@ledgerhq/live-common/wallet-api/helpers";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
@@ -29,6 +43,24 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
   const { getRouteToPlatformApp } = useStake();
   const history = useHistory();
   const walletState = useSelector(walletSelector);
+  const { state: liveAppRegistryState } = useRemoteLiveAppContext();
+  const { state: localLiveAppState } = useLocalLiveAppContext();
+
+  // Helper to get manifest by ID - checks local first, then remote
+  const getManifestById = useCallback(
+    (liveAppId: string) => {
+      // Check local manifests first (takes precedence)
+      const localManifest = localLiveAppState?.find(app => app.id === liveAppId);
+      if (localManifest) return localManifest;
+
+      // Fall back to remote manifests
+      return (
+        liveAppRegistryState.value?.liveAppFilteredById?.[liveAppId] ||
+        liveAppRegistryState.value?.liveAppById?.[liveAppId]
+      );
+    },
+    [liveAppRegistryState, localLiveAppState],
+  );
 
   const tracking = useMemo(
     () =>
@@ -51,6 +83,33 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           ),
       ),
     [],
+  );
+
+  const getAccount = useCallback(
+    async (accountId: string): Promise<AccountLike | null> => {
+      const foundAccount = accounts.find(acc => acc.id === accountId);
+
+      if (foundAccount) {
+        return foundAccount;
+      }
+
+      if (accountId.includes("+")) {
+        const { accountId: parentAccountId } = decodeTokenAccountIdSync(accountId);
+
+        const parentAccount = accounts.find(
+          acc => acc.type === "Account" && acc.id === parentAccountId,
+        ) as Account | undefined;
+
+        const { token } = await decodeTokenAccountId(accountId);
+
+        if (parentAccount && token) {
+          return makeEmptyTokenAccount(parentAccount, token);
+        }
+      }
+
+      return null;
+    },
+    [accounts],
   );
 
   const startStakeFlow = useCallback(
@@ -225,7 +284,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         }
         throw new Error("Unknown navigation action");
       },
-      "custom.getFunds": request => {
+      "custom.getFunds": async request => {
         const accountId = request.params?.accountId;
 
         if (!accountId) {
@@ -234,7 +293,10 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
 
         try {
           const id = getAccountIdFromWalletAccountId(accountId);
-          const account = accounts.find(acc => acc.id === id);
+          if (!id) {
+            throw new Error("Invalid accountId");
+          }
+          const account = await getAccount(id);
 
           if (!account) {
             throw new Error("Account not found");
@@ -255,6 +317,55 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           throw error;
         }
       },
+      "custom.getAccountIdFormats": async request => {
+        const { liveAppIds } = request.params || {};
+
+        if (!liveAppIds) {
+          throw new Error("Missing liveAppIds parameter");
+        }
+
+        if (!Array.isArray(liveAppIds)) {
+          throw new Error("liveAppIds must be an array");
+        }
+
+        try {
+          const results: AccountIdFormatsResponse = {};
+
+          // For each liveAppId, fetch the manifest and check if it uses uuid format
+          for (const liveAppId of liveAppIds) {
+            try {
+              const fetchedManifest = getManifestById(liveAppId);
+
+              if (fetchedManifest) {
+                results[liveAppId] = usesEncodedAccountIdFormat(fetchedManifest)
+                  ? "encoded"
+                  : "uuid";
+              } else {
+                // If manifest not found, default to "encoded" (safer fallback)
+                results[liveAppId] = "encoded";
+              }
+            } catch {
+              // On error, default to "encoded" format
+              results[liveAppId] = "encoded";
+            }
+          }
+
+          return results;
+        } catch (error) {
+          logger.error("Error in custom.getAccountIdFormats handler", error);
+          throw error;
+        }
+      },
     };
-  }, [accounts, tracking, manifest, dispatch, setDrawer, history, startStakeFlow]);
+  }, [
+    accounts,
+    tracking,
+    manifest,
+    dispatch,
+    setDrawer,
+    history,
+    startStakeFlow,
+    getManifestById,
+    getAccount,
+  ]);
 }

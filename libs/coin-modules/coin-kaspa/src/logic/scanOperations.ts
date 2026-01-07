@@ -14,25 +14,28 @@ export async function scanOperations(
   ).then(results => results.flat());
 
   for (const tx of fetchedTxs) {
-    const myInputAmount: BigNumber = tx.inputs.reduce((acc: BigNumber, v): BigNumber => {
+    const inputs = tx.inputs ?? [];
+    const outputs = tx.outputs ?? [];
+
+    const myInputAmount: BigNumber = inputs.reduce((acc: BigNumber, v): BigNumber => {
       if (addresses.includes(v.previous_outpoint_address)) {
         return acc.plus(BigNumber(v.previous_outpoint_amount));
       }
       return acc;
     }, BigNumber(0));
 
-    const myOutputAmount: BigNumber = tx.outputs.reduce((acc: BigNumber, v) => {
+    const myOutputAmount: BigNumber = outputs.reduce((acc: BigNumber, v) => {
       if (addresses.includes(v.script_public_key_address)) {
         return acc.plus(BigNumber(v.amount));
       }
       return acc;
     }, BigNumber(0));
 
-    const totalOutputAmount: BigNumber = tx.outputs.reduce(
+    const totalOutputAmount: BigNumber = outputs.reduce(
       (acc: BigNumber, v) => acc.plus(BigNumber(v.amount)),
       BigNumber(0),
     );
-    const totalInputAmount: BigNumber = tx.inputs.reduce(
+    const totalInputAmount: BigNumber = inputs.reduce(
       (acc: BigNumber, v) => acc.plus(BigNumber(v.previous_outpoint_amount)),
       BigNumber(0),
     );
@@ -44,9 +47,9 @@ export async function scanOperations(
       hash: tx.transaction_id,
       type: operationType,
       value: myOutputAmount.minus(myInputAmount).absoluteValue(),
-      fee: totalInputAmount.minus(totalOutputAmount),
-      senders: tx.inputs.map(inp => inp.previous_outpoint_address),
-      recipients: tx.outputs.map(output => output.script_public_key_address),
+      fee: inputs.length > 0 ? totalInputAmount.minus(totalOutputAmount) : BigNumber(0),
+      senders: inputs.map(inp => inp.previous_outpoint_address),
+      recipients: outputs.map(output => output.script_public_key_address),
       blockHeight: tx.accepting_block_blue_score,
       blockHash: tx.block_hash[0],
       accountId: accountId,

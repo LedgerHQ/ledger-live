@@ -1,6 +1,6 @@
 const path = require("path");
 const common = require("./common.esbuild");
-const { electronMainExternals, CopyPlugin } = require("@ledgerhq/esbuild-utils");
+const { CopyPlugin } = require("@ledgerhq/esbuild-utils");
 
 const rootFolder = path.resolve(__dirname, "..", "..");
 
@@ -15,7 +15,27 @@ module.exports = {
   // Picking the the main field first is safer.
   // See this comment: https://github.com/webpack/webpack/issues/4742#issuecomment-295115576
   mainFields: ["main", "module"],
-  external: [...electronMainExternals],
+  external: [
+    // Only exclude real Node.js built-ins and Electron APIs
+    "electron",
+    "fs",
+    "path",
+    "os",
+    "crypto",
+    "http",
+    "https",
+    "net",
+    "tls",
+    "child_process",
+    "util",
+    "events",
+    "stream",
+    "buffer",
+    "url",
+    "querystring",
+    "assert",
+    "zlib",
+  ],
   plugins: [
     ...common.plugins,
     CopyPlugin({

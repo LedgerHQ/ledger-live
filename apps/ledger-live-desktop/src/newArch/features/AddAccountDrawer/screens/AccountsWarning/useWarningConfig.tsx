@@ -1,5 +1,5 @@
 import { Icons } from "@ledgerhq/react-ui";
-import { AccountItem } from "@ledgerhq/react-ui/pre-ldls/index";
+import { FormattedAccountItem } from "../../components/FormattedAccountItem";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
@@ -42,19 +42,20 @@ export const useWarningConfig = (
 
   const handleClose = useCallback(() => setDrawer(), []);
 
-  const handleFundAccount = useCallback(() => {
-    emptyAccount && navigateToFundAccount(emptyAccount);
-  }, [emptyAccount, navigateToFundAccount]);
+  const handleFundAccount = useCallback(
+    () => emptyAccount && navigateToFundAccount(emptyAccount),
+    [emptyAccount, navigateToFundAccount],
+  );
 
   const emptyAccountWarning = {
-    icon: <Icons.WarningFill size="L" color="palette.warning.c70" />,
+    icon: <Icons.WarningFill size="L" color="warning.c70" />,
     title: t("modularAssetDrawer.scanAccounts.warning.title", { currency: currency.name }),
     description: t("modularAssetDrawer.scanAccounts.warning.description", {
       account: emptyAccountName,
     }),
     accountRow:
       formattedAccount && emptyAccount ? (
-        <AccountItem
+        <FormattedAccountItem
           account={formattedAccount}
           onClick={() => handleAccountClick(formattedAccount.id)}
           backgroundColor={colors.opacityDefault.c05}

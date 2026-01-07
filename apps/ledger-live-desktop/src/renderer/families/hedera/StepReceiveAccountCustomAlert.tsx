@@ -1,12 +1,12 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import type { AccountLike } from "@ledgerhq/types-live";
 import {
   isTokenAssociationRequired,
   isAutoTokenAssociationEnabled,
-} from "@ledgerhq/live-common/families/hedera/logic";
+} from "@ledgerhq/live-common/families/hedera/utils";
 import { isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { Link } from "@ledgerhq/react-ui";
 import { urls } from "~/config/urls";

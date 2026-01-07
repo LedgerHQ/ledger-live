@@ -15,6 +15,19 @@ export type FirmwareUpdateBannerProps = {
   onBackFromUpdate: (updateState: UpdateStep) => void;
 };
 
+const DeviceIcon = ({ deviceModelId }: { deviceModelId: DeviceModelId | undefined }) => {
+  switch (deviceModelId) {
+    case DeviceModelId.stax:
+      return <Icons.Stax color="primary.c80" size="M" />;
+    case DeviceModelId.europa:
+      return <Icons.Flex color="primary.c80" size="M" />;
+    case DeviceModelId.apex:
+      return <Icons.Apex color="primary.c80" size="M" />;
+    default:
+      return <Icons.Nano color="primary.c80" size="M" />;
+  }
+};
+
 const UpdateBanner = ({
   bannerVisible,
   lastConnectedDevice,
@@ -43,13 +56,7 @@ const UpdateBanner = ({
           pl={5}
         >
           <Flex flexDirection="row" alignItems="center" mb={5} mr={4}>
-            {lastConnectedDevice?.modelId === DeviceModelId.stax ? (
-              <Icons.Stax color="primary.c80" size="M" />
-            ) : lastConnectedDevice?.modelId === DeviceModelId.europa ? (
-              <Icons.Flex color="primary.c80" size="M" />
-            ) : (
-              <Icons.Nano color="primary.c80" size="M" />
-            )}
+            <DeviceIcon deviceModelId={lastConnectedDevice?.modelId} />
           </Flex>
           <Flex flexDirection="column" alignItems={"flex-start"} flexShrink={1}>
             <Text variant="h5" fontWeight="semiBold" pb={4}>

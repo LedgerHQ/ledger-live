@@ -7,9 +7,12 @@ export const solanaConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [
+          { id: "blockchain_txs", status: "active" },
+          { id: "staking_txs", status: "active" },
+        ],
       },
       token2022Enabled: false,
-      queuedInterval: 100,
       legacyOCMSMaxVersion: "1.8.0",
     } satisfies SolanaCoinConfig,
   },

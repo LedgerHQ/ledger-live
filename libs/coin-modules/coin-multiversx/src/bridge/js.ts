@@ -30,6 +30,7 @@ import type {
   Transaction,
   TransactionStatus,
 } from "../types";
+import { validateAddress } from "../validateAddress";
 
 export function buildCurrencyBridge(
   signerContext: SignerContext<MultiversXSigner>,
@@ -66,6 +67,9 @@ export function buildAccountBridge(
     sync,
     receive,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     assignFromAccountRaw,
     assignToAccountRaw,
@@ -74,6 +78,7 @@ export function buildAccountBridge(
     formatAccountSpecifics: formatters.formatAccountSpecifics,
     formatOperationSpecifics: formatters.formatOperationSpecifics,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

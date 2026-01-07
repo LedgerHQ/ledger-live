@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import CheckBox from "~/renderer/components/CheckBox";
@@ -20,6 +20,7 @@ import {
   StartExchangeErrorResult,
   StartExchangeSuccessResult,
 } from "@ledgerhq/live-common/hw/actions/startExchange";
+import { Operation } from "@ledgerhq/types-live";
 
 import CompleteExchange, {
   Data as CompleteExchangeData,
@@ -36,7 +37,7 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { useStartExchangeAction } from "../hooks/useConnectAppAction";
 
 const Divider = styled(Box)`
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 
 const ContentWrapper = styled.main`
@@ -97,6 +98,8 @@ export const LiveAppDrawer = () => {
       next(manifest, dismissDisclaimerChecked);
     }
   }, [dismissDisclaimerChecked, dispatch, payload]);
+
+  const [exchangeCompleted, setExchangeCompleted] = React.useState(false);
 
   const onCloseExchangeComplete = useCallback(() => {
     dispatch(closePlatformAppDrawer());
@@ -206,10 +209,20 @@ export const LiveAppDrawer = () => {
         }
         return null;
       }
-      case "EXCHANGE_COMPLETE":
-        return data && isCompleteExchangeData(data) ? (
-          <CompleteExchange data={data} onClose={onCloseExchangeComplete} />
-        ) : null;
+      case "EXCHANGE_COMPLETE": {
+        if (data && isCompleteExchangeData(data)) {
+          // Wrap onResult to track completion
+          const wrappedData = {
+            ...data,
+            onResult: (operation: Operation) => {
+              setExchangeCompleted(true);
+              data.onResult(operation);
+            },
+          };
+          return <CompleteExchange data={wrappedData} onClose={onCloseExchangeComplete} />;
+        }
+        return null;
+      }
       default:
         return null;
     }
@@ -222,6 +235,7 @@ export const LiveAppDrawer = () => {
     device?.modelId,
     action,
     dispatch,
+    setExchangeCompleted,
   ]);
 
   return (
@@ -229,12 +243,17 @@ export const LiveAppDrawer = () => {
       title={payload ? t(payload.title) : ""}
       isOpen={isOpen}
       onRequestClose={() => {
-        payload?.data?.onCancel?.({
-          error: new DrawerClosedError("User closed the drawer"),
-          name: "DrawerClosedError",
-          message: "User closed the drawer",
-        });
+        // Only call onCancel if exchange hasn't completed successfully
+        if (!exchangeCompleted) {
+          payload?.data?.onCancel?.({
+            error: new DrawerClosedError("User closed the drawer"),
+            name: "DrawerClosedError",
+            message: "User closed the drawer",
+          });
+        }
         dispatch(closePlatformAppDrawer());
+        // Reset state for next time
+        setExchangeCompleted(false);
       }}
       direction="left"
     >

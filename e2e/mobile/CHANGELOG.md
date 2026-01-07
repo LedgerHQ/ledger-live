@@ -1,5 +1,101 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.9.0
+
+### Minor Changes
+
+- [#13038](https://github.com/LedgerHQ/ledger-live/pull/13038) [`ef276b7`](https://github.com/LedgerHQ/ledger-live/commit/ef276b7654ab32c7253ee812ceac3f89316ded4b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Uses crypto-icons everywhere and drop the legacy crypto-icons-ui for design unification and performance gain
+
+- [#13156](https://github.com/LedgerHQ/ledger-live/pull/13156) [`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8) Thanks [@gre-ledger](https://github.com/gre-ledger)! - ws@8.18.3 in catalog
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#13038](https://github.com/LedgerHQ/ledger-live/pull/13038) [`ef276b7`](https://github.com/LedgerHQ/ledger-live/commit/ef276b7654ab32c7253ee812ceac3f89316ded4b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Uses crypto-icons everywhere and drop the legacy crypto-icons-ui for design unification and performance gain
+
+- [#13156](https://github.com/LedgerHQ/ledger-live/pull/13156) [`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8) Thanks [@gre-ledger](https://github.com/gre-ledger)! - ws@8.18.3 in catalog
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+## 0.8.0
+
+### Minor Changes
+
+- [#12563](https://github.com/LedgerHQ/ledger-live/pull/12563) [`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add DMK speculos transport and device controller
+
+- [#12891](https://github.com/LedgerHQ/ledger-live/pull/12891) [`c5cfce0`](https://github.com/LedgerHQ/ledger-live/commit/c5cfce008b12ddb2f9b4291807a3d4fdfdfb8949) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove select device
+
+- [#11549](https://github.com/LedgerHQ/ledger-live/pull/11549) [`6baa679`](https://github.com/LedgerHQ/ledger-live/commit/6baa679f53c04fff0e2a2e71ed2815d5ed78c856) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate to React-Native New-Architecture
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#12563](https://github.com/LedgerHQ/ledger-live/pull/12563) [`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add DMK speculos transport and device controller
+
+- [#12891](https://github.com/LedgerHQ/ledger-live/pull/12891) [`c5cfce0`](https://github.com/LedgerHQ/ledger-live/commit/c5cfce008b12ddb2f9b4291807a3d4fdfdfb8949) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove select device
+
+- [#11549](https://github.com/LedgerHQ/ledger-live/pull/11549) [`6baa679`](https://github.com/LedgerHQ/ledger-live/commit/6baa679f53c04fff0e2a2e71ed2815d5ed78c856) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate to React-Native New-Architecture
+
+## 0.7.0
+
+### Minor Changes
+
+- [#12566](https://github.com/LedgerHQ/ledger-live/pull/12566) [`68cbd45`](https://github.com/LedgerHQ/ledger-live/commit/68cbd45fed262e95d301351e55852dcfc020e542) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: add Deeplinks for asset page
+
+- [#12529](https://github.com/LedgerHQ/ledger-live/pull/12529) [`5b41dd5`](https://github.com/LedgerHQ/ledger-live/commit/5b41dd56e024a5d03ba0e49084113c04887395db) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cleanup llmMarketQuickActions Feature flag
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#12566](https://github.com/LedgerHQ/ledger-live/pull/12566) [`68cbd45`](https://github.com/LedgerHQ/ledger-live/commit/68cbd45fed262e95d301351e55852dcfc020e542) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: add Deeplinks for asset page
+
+- [#12529](https://github.com/LedgerHQ/ledger-live/pull/12529) [`5b41dd5`](https://github.com/LedgerHQ/ledger-live/commit/5b41dd56e024a5d03ba0e49084113c04887395db) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cleanup llmMarketQuickActions Feature flag
+
+## 0.6.0
+
+### Minor Changes
+
+- [#12141](https://github.com/LedgerHQ/ledger-live/pull/12141) [`3691bed`](https://github.com/LedgerHQ/ledger-live/commit/3691bed5f5706f010037f54e2396ad71e48cf208) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - update 1inch domain from .io to .com
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#12141](https://github.com/LedgerHQ/ledger-live/pull/12141) [`3691bed`](https://github.com/LedgerHQ/ledger-live/commit/3691bed5f5706f010037f54e2396ad71e48cf208) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - update 1inch domain from .io to .com
+
+## 0.5.0
+
+### Minor Changes
+
+- [#11944](https://github.com/LedgerHQ/ledger-live/pull/11944) [`12d86b2`](https://github.com/LedgerHQ/ledger-live/commit/12d86b226c89ec24ce956d18c6301a4dc415c719) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update B2CQA-650 test
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#11944](https://github.com/LedgerHQ/ledger-live/pull/11944) [`12d86b2`](https://github.com/LedgerHQ/ledger-live/commit/12d86b226c89ec24ce956d18c6301a4dc415c719) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update B2CQA-650 test
+
+## 0.4.0
+
+### Minor Changes
+
+- [#11989](https://github.com/LedgerHQ/ledger-live/pull/11989) [`9492d4a`](https://github.com/LedgerHQ/ledger-live/commit/9492d4a0071ff695113f67b873c215ff95a1e1ab) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update B2CQA-650 test
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#11989](https://github.com/LedgerHQ/ledger-live/pull/11989) [`9492d4a`](https://github.com/LedgerHQ/ledger-live/commit/9492d4a0071ff695113f67b873c215ff95a1e1ab) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update B2CQA-650 test
+
 ## 0.3.0
 
 ### Minor Changes

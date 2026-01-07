@@ -8,7 +8,7 @@ import { TokenAccount } from "@ledgerhq/types-live";
 import IconCoins from "~/renderer/icons/Coins";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useStake } from "LLD/hooks/useStake";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
 
 type Props = {
@@ -19,7 +19,10 @@ type Props = {
 const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const history = useHistory();
   const { getCanStakeCurrency, getRouteToPlatformApp } = useStake();
-  const availableOnStake = getCanStakeCurrency("bitcoin") || getCanStakeCurrency("bitcoin_testnet");
+  const availableOnStake =
+    getCanStakeCurrency("bitcoin") ||
+    getCanStakeCurrency("bitcoin_testnet") ||
+    getCanStakeCurrency("bitcoin_regtest");
   const walletState = useSelector(walletSelector);
   const label = useGetStakeLabelLocaleBased();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -30,7 +33,9 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   if (
     !bitcoinResources ||
     parentAccount ||
-    (currencyId !== "bitcoin" && currencyId !== "bitcoin_testnet")
+    (currencyId !== "bitcoin" &&
+      currencyId !== "bitcoin_testnet" &&
+      currencyId !== "bitcoin_regtest")
   )
     return null;
 

@@ -1,17 +1,7 @@
-import ReactNative from "react-native";
 import { DeviceModelId, Device } from "@ledgerhq/types-devices";
-import {
-  isOldFirmwareUpdateUxSupported,
-  isNewFirmwareUpdateUxSupported,
-} from "./isFirmwareUpdateSupported";
+import { isNewFirmwareUpdateUxSupported } from "./isFirmwareUpdateSupported";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 
-// {
-//   nanoS: ">=1.6.1",
-//   nanoX: ">=1.3.0",
-//   nanoSP: ">=1.0.0",
-//   stax: ">=1.0.0",
-// };
 const staxDevice = {
   modelId: DeviceModelId.stax,
 } as Device;
@@ -52,13 +42,23 @@ const nanoXNotSupportedDeviceModelInfo = {
   },
 } as DeviceModelInfo;
 
-const nanoSDevice = {
+const nanoSDeviceNotSupported = {
   modelId: DeviceModelId.nanoS,
 } as Device;
-const nanoSDeviceModelInfo = {
+const nanoSDeviceNotSupportedModelInfo = {
   modelId: DeviceModelId.nanoS,
   deviceInfo: {
     version: "1.6.0",
+  },
+} as DeviceModelInfo;
+
+const nanoSDeviceSupported = {
+  modelId: DeviceModelId.nanoS,
+} as Device;
+const nanoSDeviceSupportedModelInfo = {
+  modelId: DeviceModelId.nanoS,
+  deviceInfo: {
+    version: "1.6.1",
   },
 } as DeviceModelInfo;
 
@@ -100,130 +100,19 @@ describe("isNewFirmwareUpdateUxSupported", () => {
       isNewFirmwareUpdateUxSupported(nanoXSupportedDevice, nanoXSupportedDeviceModelInfo),
     ).toBe(true);
     expect(isNewFirmwareUpdateUxSupported(apexDevice, apexDeviceModelInfo)).toBe(true);
+    expect(isNewFirmwareUpdateUxSupported(nanoSPDevice, nanoSPDeviceModelInfo)).toBe(true);
+    expect(
+      isNewFirmwareUpdateUxSupported(nanoSDeviceSupported, nanoSDeviceSupportedModelInfo),
+    ).toBe(true);
   });
 
   it("should return false if new firmware update flow is not supported", () => {
-    expect(isNewFirmwareUpdateUxSupported(nanoSDevice, nanoSDeviceModelInfo)).toBe(false);
-    expect(isNewFirmwareUpdateUxSupported(nanoSPDevice, nanoSPDeviceModelInfo)).toBe(false);
+    expect(
+      isNewFirmwareUpdateUxSupported(nanoSDeviceNotSupported, nanoSDeviceNotSupportedModelInfo),
+    ).toBe(false);
     expect(isNewFirmwareUpdateUxSupported(blueDevice, blueDeviceModelInfo)).toBe(false);
     expect(
       isNewFirmwareUpdateUxSupported(nanoXNotSupportedDevice, nanoXNotSupportedDeviceModelInfo),
     ).toBe(false);
-  });
-});
-
-describe("isOldFirmwareUpdateUxSupported", () => {
-  let isFirmwareUpdateVersionSupportedSpy: jest.SpyInstance;
-  let PlatformSpy: jest.SpyInstance;
-  beforeEach(() => {
-    jest.restoreAllMocks();
-    isFirmwareUpdateVersionSupportedSpy = jest.spyOn(
-      jest.requireActual("@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported"),
-      "default",
-    );
-    PlatformSpy = jest.spyOn(ReactNative, "Platform", "get");
-  });
-
-  it("should return { updateSupported:false, updateSupportedButDeviceNotWired: false } if lastSeenDeviceModelInfo is falsy", () => {
-    const lastConnectedDevice = {} as Parameters<
-      typeof isOldFirmwareUpdateUxSupported
-    >[0]["lastConnectedDevice"];
-
-    const lastSeenDeviceModelInfo = null;
-
-    expect(
-      isOldFirmwareUpdateUxSupported({
-        lastSeenDeviceModelInfo,
-        lastConnectedDevice,
-      }),
-    ).toEqual({
-      updateSupported: false,
-      updateSupportedButDeviceNotWired: false,
-    });
-  });
-
-  it("should return { updateSupported:false, updateSupportedButDeviceNotWired: false } if isFirmwareUpdateVersionSupported returns false", () => {
-    const lastConnectedDevice = {} as Parameters<
-      typeof isOldFirmwareUpdateUxSupported
-    >[0]["lastConnectedDevice"];
-    const lastSeenDeviceModelInfo = {} as DeviceModelInfo;
-
-    isFirmwareUpdateVersionSupportedSpy.mockReturnValue(false);
-
-    expect(
-      isOldFirmwareUpdateUxSupported({
-        lastSeenDeviceModelInfo,
-        lastConnectedDevice,
-      }),
-    ).toEqual({
-      updateSupported: false,
-      updateSupportedButDeviceNotWired: false,
-    });
-  });
-
-  it("should return { updateSupported:false, updateSupportedButDeviceNotWired: false } if Platform.OS is not android", () => {
-    isFirmwareUpdateVersionSupportedSpy.mockReturnValue(true);
-    const lastConnectedDevice = {} as Parameters<
-      typeof isOldFirmwareUpdateUxSupported
-    >[0]["lastConnectedDevice"];
-    const lastSeenDeviceModelInfo = {} as DeviceModelInfo;
-
-    PlatformSpy.mockReturnValue({
-      OS: "ios",
-    } as typeof ReactNative.Platform);
-
-    expect(
-      isOldFirmwareUpdateUxSupported({
-        lastSeenDeviceModelInfo,
-        lastConnectedDevice,
-      }),
-    ).toEqual({
-      updateSupported: false,
-      updateSupportedButDeviceNotWired: false,
-    });
-  });
-
-  it("should return { updateSupported:false, updateSupportedButDeviceNotWired: true } if device is not wired", () => {
-    isFirmwareUpdateVersionSupportedSpy.mockReturnValue(true);
-    const lastConnectedDevice = {
-      wired: false,
-    } as Parameters<typeof isOldFirmwareUpdateUxSupported>[0]["lastConnectedDevice"];
-    const lastSeenDeviceModelInfo = {} as DeviceModelInfo;
-
-    PlatformSpy.mockReturnValue({
-      OS: "android",
-    } as typeof ReactNative.Platform);
-
-    expect(
-      isOldFirmwareUpdateUxSupported({
-        lastSeenDeviceModelInfo,
-        lastConnectedDevice,
-      }),
-    ).toEqual({
-      updateSupported: false,
-      updateSupportedButDeviceNotWired: true,
-    });
-  });
-
-  it("should return { updateSupported:true, updateSupportedButDeviceNotWired: false } if device is wired", () => {
-    isFirmwareUpdateVersionSupportedSpy.mockReturnValue(true);
-    const lastConnectedDevice = {
-      wired: true,
-    } as Parameters<typeof isOldFirmwareUpdateUxSupported>[0]["lastConnectedDevice"];
-    const lastSeenDeviceModelInfo = {} as DeviceModelInfo;
-
-    PlatformSpy.mockReturnValue({
-      OS: "android",
-    } as typeof ReactNative.Platform);
-
-    expect(
-      isOldFirmwareUpdateUxSupported({
-        lastSeenDeviceModelInfo,
-        lastConnectedDevice,
-      }),
-    ).toEqual({
-      updateSupported: true,
-      updateSupportedButDeviceNotWired: false,
-    });
   });
 });

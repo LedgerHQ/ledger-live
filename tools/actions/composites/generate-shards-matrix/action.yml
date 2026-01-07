@@ -12,6 +12,9 @@ inputs:
   event_name:
     description: "GitHub event name (workflow_dispatch or schedule)"
     required: true
+  ref:
+    description: "Branch ref"
+    required: true
 runs:
   using: "composite"
   steps:
@@ -29,29 +32,70 @@ runs:
       shell: bash
       run: |
         TEST_COUNT=$(echo "${{ steps.test-files.outputs.test_files_for_sharding }}" | wc -w)
+
         if [ "${{ github.event_name }}" = "schedule" ]; then
-          SHARD_COUNT=12
-        elif [[ "${{ github.ref }}" == *"release"* ]]; then
-          SHARD_COUNT=6
+          SHARD_COUNT_IOS=12
+          SHARD_COUNT_ANDROID=12
+        elif [[ "${{ inputs.ref }}" == *"release"* || "${{ inputs.ref }}" == *"hotfix"* ]]; then
+          SHARD_COUNT_IOS=6
+          SHARD_COUNT_ANDROID=12
         else
           SHARD_COUNT=$(( (TEST_COUNT + 14) / 15 ))
-          SHARD_COUNT=$(( SHARD_COUNT > 3 ? 3 : SHARD_COUNT ))
+          SHARD_COUNT_IOS=$(( SHARD_COUNT > 3 ? 3 : SHARD_COUNT ))
+          SHARD_COUNT_ANDROID=$(( SHARD_COUNT > 12 ? 12 : SHARD_COUNT ))
         fi
-        echo "SHARD_COUNT=$SHARD_COUNT" >> "$GITHUB_ENV"
+
+        echo "TEST_COUNT=$TEST_COUNT" >> "$GITHUB_ENV"
+        echo "SHARD_COUNT_IOS=$SHARD_COUNT_IOS" >> "$GITHUB_ENV"
+        echo "SHARD_COUNT_ANDROID=$SHARD_COUNT_ANDROID" >> "$GITHUB_ENV"
         echo "Calculated SHARD_COUNT=$SHARD_COUNT for event ${{ github.event_name }} on ref ${{ github.ref }} with $TEST_COUNT tests"
+
+    - name: Calculate intelligent timeouts
+      id: calc-timeouts
+      shell: bash
+      run: |
+        TEST_COUNT=${{ env.TEST_COUNT }}
+        SHARD_COUNT_IOS=${{ env.SHARD_COUNT_IOS }}
+        SHARD_COUNT_ANDROID=${{ env.SHARD_COUNT_ANDROID }}
+        TESTS_PER_SHARD_IOS=$(( (TEST_COUNT + SHARD_COUNT_IOS - 1) / SHARD_COUNT_IOS ))
+        TESTS_PER_SHARD_ANDROID=$(( (TEST_COUNT + SHARD_COUNT_ANDROID - 1) / SHARD_COUNT_ANDROID ))
+
+        # iOS timeout calculation: 5 minutes per test + 15 min overhead, min 30, max 300
+        IOS_TIMEOUT=$(( TESTS_PER_SHARD_IOS * 4 + 15 ))
+        (( IOS_TIMEOUT < 30 )) && IOS_TIMEOUT=30
+        (( IOS_TIMEOUT > 300 )) && IOS_TIMEOUT=300
+        ANDROID_TIMEOUT=90
+
+        echo "iOS timeout: ${IOS_TIMEOUT} minutes, ${TESTS_PER_SHARD_IOS} tests per shard, total ${SHARD_COUNT_IOS} shards"
+        echo "Android timeout: ${ANDROID_TIMEOUT} minutes, ${TESTS_PER_SHARD_ANDROID} tests per shard, total ${SHARD_COUNT_ANDROID} shards"
+
+        echo "ios_timeout=$IOS_TIMEOUT" >> "$GITHUB_OUTPUT"
+        echo "android_timeout=$ANDROID_TIMEOUT" >> "$GITHUB_OUTPUT"
 
     - name: Generate shards matrix JSON
       id: set-matrix
       shell: bash
       run: |
-        jq -cn --argjson count "${{ env.SHARD_COUNT }}" '[range(1; $count + 1) | { "shard": ., "total": $count }]' > matrix.json
-        echo "matrix=$(cat matrix.json)" >> "$GITHUB_OUTPUT"
-        echo "Generated matrix: $(cat matrix.json)"
+        jq -cn --argjson count "${{ env.SHARD_COUNT_IOS }}" '[range(1; $count + 1) | { "shard": ., "total": $count }]' > matrix_ios.json
+        jq -cn --argjson count "${{ env.SHARD_COUNT_ANDROID }}" '[range(1; $count + 1) | { "shard": ., "total": $count }]' > matrix_android.json
+        echo "matrix_ios=$(cat matrix_ios.json)" >> "$GITHUB_OUTPUT"
+        echo "matrix_android=$(cat matrix_android.json)" >> "$GITHUB_OUTPUT"
+        echo "Generated matrix_ios: $(cat matrix_ios.json)"
+        echo "Generated matrix_android: $(cat matrix_android.json)"
 
 outputs:
-  matrix:
-    description: "Shards matrix JSON"
-    value: ${{ steps.set-matrix.outputs.matrix }}
+  matrix_ios:
+    description: "Shards matrix JSON for iOS"
+    value: ${{ steps.set-matrix.outputs.matrix_ios }}
+  matrix_android:
+    description: "Shards matrix JSON for Android"
+    value: ${{ steps.set-matrix.outputs.matrix_android }}
   test_files_for_sharding:
     description: "All test files for sharding (multi-line, both platforms)"
     value: ${{ steps.test-files.outputs.test_files_for_sharding }}
+  ios_timeout:
+    description: "iOS timeout in minutes"
+    value: ${{ steps.calc-timeouts.outputs.ios_timeout }}
+  android_timeout:
+    description: "Android timeout in minutes"
+    value: ${{ steps.calc-timeouts.outputs.android_timeout }}

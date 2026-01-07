@@ -1,8 +1,8 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { TouchableOpacity, View, StyleSheet, SectionList } from "react-native";
-import { findTokenById } from "@ledgerhq/live-common/currencies/index";
+import { loadBlacklistedTokenSections as loadBlacklistedTokenSectionsBase } from "@ledgerhq/live-common/account/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DefaultTheme, useTheme } from "styled-components/native";
 import SettingsRow from "~/components/SettingsRow";
@@ -19,6 +19,23 @@ import { ScreenName } from "~/const";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import type { Theme } from "../../../colors";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+
+type BlacklistedTokenSection = {
+  key: string;
+  parentCurrency: TokenCurrency["parentCurrency"];
+  data: TokenCurrency[];
+};
+
+async function loadBlacklistedTokenSections(
+  tokenIds: string[],
+): Promise<BlacklistedTokenSection[]> {
+  const sections = await loadBlacklistedTokenSectionsBase(tokenIds);
+  return sections.map(section => ({
+    key: section.parentCurrency.id,
+    parentCurrency: section.parentCurrency,
+    data: section.tokens,
+  }));
+}
 
 export default function AccountsSettings({
   navigation,
@@ -80,25 +97,25 @@ export default function AccountsSettings({
     [currencies.length, t, navigation],
   );
 
-  const sections = useMemo(() => {
-    const tmpSections = [];
-    for (const tokenId of blacklistedTokenIds) {
-      const token = findTokenById(tokenId);
-      if (token) {
-        const parentCurrency = token.parentCurrency;
-        const index = tmpSections.findIndex(s => s.key === parentCurrency.id);
-        if (index < 0) {
-          tmpSections.push({
-            key: parentCurrency.id,
-            parentCurrency,
-            data: [token],
-          });
-        } else {
-          tmpSections[index].data.push(token);
+  const [sections, setSections] = useState<BlacklistedTokenSection[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    loadBlacklistedTokenSections(blacklistedTokenIds)
+      .then(loadedSections => {
+        if (mounted) {
+          setSections(loadedSections);
         }
-      }
-    }
-    return tmpSections;
+      })
+      .catch(error => {
+        console.error("Failed to load blacklisted tokens:", error);
+        if (mounted) {
+          setSections([]);
+        }
+      });
+    return () => {
+      mounted = false;
+    };
   }, [blacklistedTokenIds]);
 
   return (

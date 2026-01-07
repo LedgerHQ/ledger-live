@@ -1,9 +1,12 @@
-import { test } from "../fixtures/common";
+import { test } from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { CLI } from "../utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
+import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -30,12 +33,11 @@ const ethEarn = [
     provider: Provider.STADER_LABS,
     xrayTicket: "B2CQA-3677",
   },
-  //ToDo: enable when Kiln is back
-  // {
-  //   account: Account.ETH_1,
-  //   provider: Provider.KILN,
-  //   xrayTicket: "B2CQA-3678",
-  // },
+  {
+    account: Account.ETH_1,
+    provider: Provider.KILN,
+    xrayTicket: "B2CQA-3678",
+  },
 ];
 
 for (const { account, provider, xrayTicket } of ethEarn) {
@@ -44,22 +46,25 @@ for (const { account, provider, xrayTicket } of ethEarn) {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: account.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: account.currency.ticker,
-            index: account.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataWithAddressCommand(account)],
     });
+
+    const family = getFamilyByCurrencyId(account.currency.id);
 
     test(
       `ETH staking flow - Earn Dashboard - ${provider.name}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${account.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
+          ...(provider === Provider.LIDO ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: xrayTicket,
@@ -71,8 +76,12 @@ for (const { account, provider, xrayTicket } of ethEarn) {
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
         await app.earnDashboard.goToEarnMoreTab();
         await app.earnDashboard.clickStakeCurrencyButton(account.accountName);
+        const verifyProviderUrlPromise = app.earnDashboard.verifyProviderURL(
+          provider.uiName,
+          account,
+        );
         await app.delegate.goToProviderLiveApp(provider.uiName);
-        await app.earnDashboard.verifyProviderURL(provider.uiName, account);
+        await verifyProviderUrlPromise;
       },
     );
   });
@@ -89,7 +98,7 @@ test.describe("Inline Add Account", () => {
   test(
     "Inline Add Account",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: [
         {
           type: "TMS",
@@ -101,21 +110,18 @@ test.describe("Inline Add Account", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
       await app.earnDashboard.clickLearnMoreButton(account.currency.id);
-      const modularDrawerVisible = await app.modularDrawer.isModularAccountDrawerVisible();
-      if (modularDrawerVisible) {
-        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+      const selector = await getModularSelector(app, "ACCOUNT");
+      if (selector) {
+        await selector.clickOnAddAndExistingAccount();
+        await app.scanAccountsDrawer.selectFirstAccount();
+        await app.scanAccountsDrawer.clickContinueButton();
       } else {
         await app.delegateDrawer.clickOnAddAccountButton();
-      }
-
-      await app.addAccount.addAccounts();
-      await app.addAccount.done();
-
-      if (modularDrawerVisible) {
-        await app.modularDrawer.selectAccountByName(account);
-      } else {
+        await app.addAccount.addAccounts();
+        await app.addAccount.done();
         await app.delegateDrawer.selectAccountByName(account);
       }
+
       await app.addAccount.close();
       await app.layout.goToAccounts();
       await app.accounts.expectAccountsCountToBeNotNull();
@@ -124,14 +130,13 @@ test.describe("Inline Add Account", () => {
 });
 
 const earnDashboardCurrencies = [
-  //ToDo: enable when Kiln is back
-  // {
-  //   account: Account.ETH_1,
-  //   xrayTicket: "B2CQA-3679",
-  //   staking: false,
-  // },
   {
-    account: Account.SOL_1,
+    account: Account.ETH_1,
+    xrayTicket: "B2CQA-3679",
+    staking: false,
+  },
+  {
+    account: Account.SOL_4,
     xrayTicket: "B2CQA-3680",
     staking: false,
   },
@@ -145,22 +150,21 @@ const earnDashboardCurrencies = [
     xrayTicket: "B2CQA-3682",
     staking: false,
   },
-  //ToDo: enable when Kiln is back
-  // {
-  //   account: Account.NEAR_1,
-  //   xrayTicket: "B2CQA-3683",
-  //   staking: true,
-  // },
-  // {
-  //   account: Account.SOL_2,
-  //   xrayTicket: "B2CQA-3684",
-  //   staking: true,
-  // },
-  // {
-  //   account: Account.ATOM_1,
-  //   xrayTicket: "B2CQA-3685",
-  //   staking: true,
-  // },
+  {
+    account: Account.NEAR_1,
+    xrayTicket: "B2CQA-3683",
+    staking: true,
+  },
+  {
+    account: Account.SOL_2,
+    xrayTicket: "B2CQA-3684",
+    staking: true,
+  },
+  {
+    account: Account.ATOM_1,
+    xrayTicket: "B2CQA-3685",
+    staking: true,
+  },
 ];
 
 for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
@@ -172,7 +176,7 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: account.currency.ticker,
+            currency: account.currency.id,
             index: account.index,
             add: true,
             appjson: appjsonPath,
@@ -181,10 +185,22 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
       ],
     });
 
+    const family = getFamilyByCurrencyId(account.currency.id);
+
     test(
       `Correct Earn page - ${account.currency.ticker} - staking situation: ${staking}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        tag: [
+          "@NanoSP",
+          "@LNS",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${account.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
+          ...(account === Account.NEAR_1 ? ["@smoke"] : []),
+        ],
         annotation: {
           type: "TMS",
           description: xrayTicket,

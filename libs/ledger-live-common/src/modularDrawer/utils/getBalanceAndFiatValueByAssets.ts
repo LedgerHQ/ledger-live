@@ -1,14 +1,14 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib-es/currencies/formatCurrencyUnit";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { groupAccountsByAsset, type GroupedAccount } from "./groupAccountsByAsset";
 import { AssetType } from "./type";
 import { AccountLike } from "@ledgerhq/types-live";
-import { counterValueFormatter } from "./counterValueFormatter";
+import BigNumber from "bignumber.js";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 
-interface ExtendedAssetType extends AssetType {
-  balance?: string;
-  fiatValue?: string;
+export interface ExtendedAssetType extends AssetType {
+  currency: CryptoOrTokenCurrency;
+  balance: BigNumber;
+  fiatValue?: number;
 }
 
 export const getBalanceAndFiatValueByAssets = (
@@ -16,61 +16,40 @@ export const getBalanceAndFiatValueByAssets = (
   assets: CryptoOrTokenCurrency[],
   counterValuesState: CounterValuesState,
   targetCurrency: Currency,
-  isDiscreetMode: boolean = false,
-  userLocale: string,
 ): ExtendedAssetType[] => {
-  const groupedAccountsByAsset = groupAccountsByAsset(
-    accounts,
-    counterValuesState,
-    targetCurrency,
-    isDiscreetMode,
-  );
+  const groupedAccountsByAsset = groupAccountsByAsset(accounts, counterValuesState, targetCurrency);
 
   return assets.map(asset => {
     const assetGroup = groupedAccountsByAsset[asset.id];
 
     if (assetGroup) {
-      return formatAssetDetails(assetGroup, asset, targetCurrency, isDiscreetMode, userLocale);
+      return yieldAssetDetails(assetGroup, asset);
     }
 
     return {
       id: asset.id,
       name: asset.name,
       ticker: asset.ticker,
+      currency: asset,
+      balance: new BigNumber(0),
+      fiatValue: 0,
     };
   });
 };
 
-const formatAssetDetails = (
+const yieldAssetDetails = (
   assetGroup: GroupedAccount,
   asset: CryptoOrTokenCurrency,
-  targetCurrency: Currency,
-  isDiscreetMode: boolean,
-  userLocale: string,
 ): ExtendedAssetType => {
-  const assetDetails =
-    assetGroup.accounts[0].type === "Account"
-      ? assetGroup.accounts[0].currency
-      : assetGroup.accounts[0].token;
-
-  const formattedBalance = formatCurrencyUnit(assetDetails.units[0], assetGroup.totalBalance, {
-    showCode: true,
-    discreet: isDiscreetMode,
-  });
-
-  const formattedFiatValue = counterValueFormatter({
-    currency: targetCurrency.ticker,
-    value: assetGroup.totalFiatValue.toNumber(),
-    locale: userLocale,
-    allowZeroValue: true,
-    discreetMode: isDiscreetMode,
-  });
+  // Use the reference currency for consistent magnitude
+  const assetDetails = assetGroup.referenceCurrency;
 
   return {
     id: asset.id,
     name: asset.name,
     ticker: asset.ticker,
-    balance: formattedBalance,
-    fiatValue: formattedFiatValue,
+    currency: assetDetails,
+    balance: assetGroup.totalBalance,
+    fiatValue: assetGroup.totalFiatValue.toNumber(),
   };
 };

@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Bar from "~/renderer/components/Bar";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Link from "~/renderer/components/Link";
@@ -9,12 +8,12 @@ export const OpDetailsSection = styled(Box).attrs(() => ({
   justifyContent: "space-between",
   ff: "Inter|SemiBold",
   fontSize: 4,
-  color: "palette.text.shade60",
+  color: "neutral.c70",
 }))``;
 export const OpDetailsTitle = styled(Box).attrs<{ horizontal?: boolean }>(p => ({
   ff: "Inter|SemiBold",
   fontSize: 3,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   horizontal: p.horizontal || true,
 }))`
   justify-content: center;
@@ -37,7 +36,7 @@ export const GradientHover = styled(Box).attrs(() => ({
   justifyContent: "center",
   color: "wallet",
 }))`
-  background: ${p => p.theme.colors.palette.background.paper};
+  background: ${p => p.theme.colors.background.card};
   position: absolute;
   top: 0;
   right: 0;
@@ -46,13 +45,13 @@ export const GradientHover = styled(Box).attrs(() => ({
   background: linear-gradient(
     to right,
     rgba(255, 255, 255, 0),
-    ${p => p.theme.colors.palette.background.paper} 20%
+    ${p => p.theme.colors.background.card} 20%
   );
 `;
 export const OpDetailsData = styled(Box).attrs<{ justifyContent?: string; alignItems?: string }>(
   p => ({
     ff: "Inter",
-    color: p.color || "palette.text.shade80",
+    color: p.color || "neutral.c80",
     fontSize: 3,
     relative: true,
     flex: 1,
@@ -76,7 +75,7 @@ export const OpDetailsData = styled(Box).attrs<{ justifyContent?: string; alignI
 
   &:hover ${Address} {
     background: ${p => p.theme.colors.pillActiveBackground};
-    color: ${p => p.theme.colors.palette.primary.main};
+    color: ${p => p.theme.colors.primary.c80};
     font-weight: 400;
   }
 
@@ -85,13 +84,6 @@ export const OpDetailsData = styled(Box).attrs<{ justifyContent?: string; alignI
   }
 `;
 
-/**
- * @deprecated Bar being deprecated, this can be reworked to simpler code.
- */
-export const B = styled(Bar).attrs(() => ({
-  color: "palette.divider",
-  size: 1,
-}))``;
 export const TextEllipsis = styled.div`
   flex-shrink: 1;
   overflow: hidden;

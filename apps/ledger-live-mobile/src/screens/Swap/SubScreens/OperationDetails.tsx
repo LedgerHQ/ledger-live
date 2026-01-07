@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Icon, Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
 import { ScrollView, StyleSheet, View, Linking, TouchableOpacity } from "react-native";
@@ -21,7 +21,7 @@ import { SwapStatusIndicator, getStatusColor } from "../SwapStatusIndicator";
 import Footer from "../../OperationDetails/Footer";
 import { OperationDetailsParamList } from "../types";
 import { useMaybeAccountName } from "~/reducers/wallet";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 
 export function OperationDetails({ route }: OperationDetailsParamList) {
   const { swapOperation } = route.params;
@@ -66,7 +66,11 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
+        testID="swap-operation-details-scroll-view"
+      >
         {status ? <SwapStatusIndicator status={status} /> : null}
         {fromAccount && unitFrom && (
           <LText style={styles.fromAmount} color="grey">

@@ -1,6 +1,6 @@
 import { Button, Flex, Icons, IconsLegacy } from "@ledgerhq/native-ui";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useCallback, useState } from "react";
 import ConfirmationModal from "./ConfirmationModal";
 import type { Props as BottomModalProps } from "./QueuedDrawer";
@@ -10,9 +10,7 @@ import Touchable from "./Touchable";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { StyleProp, ViewStyle } from "react-native";
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const emptyFunction = () => {};
+import { NavigationHeaderBackButton } from "./NavigationHeaderBackButton";
 
 type Props = {
   /**
@@ -33,7 +31,7 @@ type Props = {
  * use `NavigationHeaderCloseButtonAdvanced` defined below.
  */
 export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(({ onPress, color }) => {
-  const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   return (
     <Touchable
       touchableTestID="NavigationHeaderCloseButton"
@@ -48,7 +46,7 @@ export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(({ onPres
 });
 
 export const NavigationHeaderCloseButtonRounded: React.FC<Props> = React.memo(({ onPress }) => {
-  const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   return (
     <Touchable
       onPress={() => (onPress ? onPress() : navigation.popToTop())}
@@ -92,6 +90,10 @@ type AdvancedProps = {
   confirmCTAConfig?: Partial<CtaConfig>;
   confirmButtonText?: React.ReactNode;
   rejectButtonText?: React.ReactNode;
+  popToTop?: boolean;
+  disablePostOnboardingRedirect?: boolean;
+  // All onboarding screens should only use back arrow as navigation to go back or close
+  isOnboarding?: boolean;
 };
 
 /**
@@ -108,7 +110,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     withConfirmation,
     confirmationTitle,
     confirmationDesc,
-    onClose = emptyFunction,
+    onClose,
     rounded = false,
     showButton = false,
     buttonText,
@@ -117,6 +119,9 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     confirmCTAConfig,
     confirmButtonText,
     rejectButtonText,
+    popToTop = false,
+    disablePostOnboardingRedirect = false,
+    isOnboarding = false,
   }) => {
     const navigation = useNavigation();
     const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
@@ -125,7 +130,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
 
     const close = useCallback(() => {
-      if (postOnboardingInProgress) {
+      if (postOnboardingInProgress && !disablePostOnboardingRedirect) {
         navigateToPostOnboardingHub();
         return;
       }
@@ -140,7 +145,12 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
       const parent = navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
       if (parent && "pop" in parent && preferDismiss) {
         const parentNavigation = parent;
-        if ("canGoBack" in parentNavigation && parentNavigation.canGoBack()) {
+
+        if (popToTop && "popToTop" in parentNavigation) {
+          parentNavigation.popToTop();
+          onClose?.();
+          return;
+        } else if ("canGoBack" in parentNavigation && parentNavigation.canGoBack()) {
           parentNavigation.pop();
           onClose?.();
           return;
@@ -152,7 +162,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
       if (navigation.canGoBack()) {
         navigation.goBack();
       }
-      onClose();
+      onClose?.();
     }, [
       navigateToPostOnboardingHub,
       navigation,
@@ -160,6 +170,8 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
       postOnboardingInProgress,
       preferDismiss,
       skipNavigation,
+      popToTop,
+      disablePostOnboardingRedirect,
     ]);
 
     const openConfirmationModal = useCallback(() => {
@@ -191,9 +203,10 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
           </Button>
         );
 
+      if (isOnboarding) return <NavigationHeaderBackButton onPress={onPress} />;
       if (rounded) return <NavigationHeaderCloseButtonRounded onPress={onPress} color={color} />;
       else return <NavigationHeaderCloseButton onPress={onPress} color={color} />;
-    }, [buttonText, showButton, onPress, rounded, color]);
+    }, [buttonText, showButton, onPress, rounded, color, isOnboarding]);
 
     return (
       <>

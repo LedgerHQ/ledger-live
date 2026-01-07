@@ -5,8 +5,8 @@ import get from "lodash/get";
 import set from "lodash/set";
 import cloneDeep from "lodash/cloneDeep";
 import { BigNumber } from "bignumber.js";
-import { StyleSheet, SafeAreaView, ScrollView } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { StyleSheet, ScrollView } from "react-native";
+import { useDispatch, useSelector } from "~/context/hooks";
 import { Alert, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import Share from "react-native-share";
@@ -18,6 +18,7 @@ import { SettingsActionTypes } from "~/actions/types";
 import { State } from "~/reducers/types";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import TextInput from "~/components/FocusedTextInput";
+import SafeAreaView from "~/components/SafeAreaView";
 
 const Separator = styled(Flex).attrs({
   width: "100%",
@@ -27,7 +28,7 @@ const Separator = styled(Flex).attrs({
 })``;
 
 export default function Store() {
-  const state = useSelector<State, State>(s => s);
+  const state = useSelector(s => s);
   const { colors } = useTheme();
 
   const [hasMadeChanges, setHasMadeChanges] = useState(false);
@@ -109,7 +110,7 @@ export default function Store() {
     debugger;
     if (__DEV__ && override) {
       dispatch({
-        action: SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE,
+        type: SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE,
         payload: appState,
       });
     }
@@ -119,7 +120,7 @@ export default function Store() {
     const exportState = async () => {
       const base64 = Buffer.from(JSON.stringify(state)).toString("base64");
       const date = new Date().toISOString().split("T")[0];
-      const humanReadableName = `ledger-live-mob-${date}-state`;
+      const humanReadableName = `ledgerwallet-mob-${date}-state`;
 
       const options = {
         failOnCancel: false,
@@ -186,7 +187,7 @@ export default function Store() {
           autoFocus
           autoCorrect={false}
           selectTextOnFocus
-          blurOnSubmit={true}
+          submitBehavior="blurAndSubmit"
           clearButtonMode="always"
           placeholder={String(currentValue)}
         />

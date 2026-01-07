@@ -25,8 +25,13 @@
     "src/postSyncPatch.ts",
     "src/serialization.ts",
     "src/signer.ts",
-    "src/synchronisation.unit.test.ts"
+    "src/synchronisation.unit.test.ts",
+    "src/test/bridge.dataset.ts",
+    "src/supportedFeatures.ts"
   ],
-  "ignoreUnresolved": [],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"],
   "ignoreUnused": []
 }

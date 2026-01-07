@@ -1,25 +1,22 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Dimensions, Linking, Platform, Share, View } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import QRCode from "react-native-qrcode-svg";
 import { useTranslation } from "react-i18next";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   makeEmptyTokenAccount,
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, IconsLegacy, Button, Box, BannerCard, Icons } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import { hasMemoTag } from "LLM/features/MemoTag/utils/hasMemoTag";
 import getWindowDimensions from "~/logic/getWindowDimensions";
-import { accountScreenSelector } from "~/reducers/accounts";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import ReceiveSecurityModal from "./ReceiveSecurityModal";
@@ -37,8 +34,8 @@ import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
 import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasClosedWithdrawBannerSelector } from "~/reducers/settings";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { setCloseWithdrawBanner } from "~/actions/settings";
-import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
 import { urls } from "~/utils/urls";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import Animated, {
@@ -53,6 +50,8 @@ import { NeedMemoTagModal } from "./NeedMemoTagModal";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import SanctionedAccountModal from "./SanctionedAccountModal";
 import { useToastsActions } from "~/actions/toast";
+import { getFreshAccountAddress } from "~/utils/address";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
@@ -69,13 +68,13 @@ const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>``;
 
 export default function ReceiveConfirmation({ navigation }: Props) {
   const route = useRoute<ScreenProps["route"]>();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   return account ? (
     <ReceiveConfirmationInner
       navigation={navigation}
       route={route}
-      account={account as Account | TokenAccount}
+      account={account}
       parentAccount={parentAccount ?? undefined}
     />
   ) : null;
@@ -93,19 +92,23 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const withdrawCryptoUrl = useLocalizedUrl(urls.withdrawCrypto);
   const [isUserAddressSanctioned, setIsUserAddressSanctioned] = useState(false);
 
+  const mainAccount = account && getMainAccount(account, parentAccount);
+  const currency = route.params?.currency || (account && getAccountCurrency(account));
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const [displayBanner, setDisplayBanner] = useState(!hasClosedWithdrawBanner);
   const { pushToast } = useToastsActions();
 
-  const onClose = useCallback(() => {
-    const mainAccount = account && getMainAccount(account, parentAccount);
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
+    sourceScreenName: "receive_confirmation",
+    currency: mainAccount?.currency,
+    hideBackButton: false,
+  });
 
+  const onClose = useCallback(() => {
     if (mainAccount) {
-      navigation.navigate(ScreenName.ReceiveSelectAccount, {
-        currency: mainAccount.currency,
-      });
+      handleOpenReceiveDrawer();
     }
-  }, [account, navigation, parentAccount]);
+  }, [mainAccount, handleOpenReceiveDrawer]);
 
   const onRetry = useCallback(() => {
     track("button_clicked", {
@@ -120,9 +123,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const { width } = getWindowDimensions();
   const QRSize = Math.round(width / 1.8 - 16);
   const QRContainerSize = QRSize + 16 * 4;
-
-  const mainAccount = account && getMainAccount(account, parentAccount);
-  const currency = route.params?.currency || (account && getAccountCurrency(account));
 
   const network = useMemo(() => {
     if (currency && currency.type === "TokenCurrency") {
@@ -170,13 +170,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     }
   }, [currency, route.params?.createTokenAccount, mainAccount, dispatch, hasAddedTokenAccount]);
 
-  const completeAction = useCompleteActionCallback();
-
-  useEffect(() => {
-    completeAction(PostOnboardingActionId.assetsTransfer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   useEffect(() => {
     navigation.setOptions({
       headerTitle: () => (
@@ -207,21 +200,24 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       triggerSuccessEvent();
     }
   }, [verified, isModalOpened, triggerSuccessEvent]);
+  const freshAccountAddress = useMemo(() => {
+    return mainAccount && getFreshAccountAddress(mainAccount);
+  }, [mainAccount]);
 
   const onShare = useCallback(() => {
     track("button_clicked", {
       button: "Share address",
       page: "Receive Account Qr Code",
     });
-    if (mainAccount?.freshAddress) {
-      Share.share({ message: mainAccount?.freshAddress });
+    if (freshAccountAddress) {
+      Share.share({ message: freshAccountAddress });
     }
-  }, [mainAccount?.freshAddress]);
+  }, [freshAccountAddress]);
 
   const onCopyAddress = useCallback(
     (eventName: string) => {
-      if (!mainAccount?.freshAddress) return;
-      Clipboard.setString(mainAccount.freshAddress);
+      if (!freshAccountAddress) return;
+      Clipboard.setString(freshAccountAddress);
       setCopied(true);
       track("button_clicked", {
         button: eventName,
@@ -244,7 +240,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
         title: t("transfer.receive.addressCopied"),
       });
     },
-    [mainAccount?.freshAddress, pushToast, t],
+    [freshAccountAddress, pushToast, t],
   );
 
   const mainAccountName = useMaybeAccountName(mainAccount);
@@ -262,7 +258,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       }),
       opacity: withTiming(bannerOpacity.value, { duration: 200 }),
     }),
-    [bannerHeight.value, bannerOpacity.value, hideBanner],
+    [bannerHeight, bannerOpacity, hideBanner],
   );
 
   const handleBannerClose = useCallback(() => {
@@ -273,15 +269,15 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   useEffect(() => {
     const checkUserAddressSanctioned = async () => {
       const mainAccount = account && getMainAccount(account, parentAccount);
-      if (mainAccount) {
+      if (mainAccount && freshAccountAddress) {
         setIsUserAddressSanctioned(
-          await isAddressSanctioned(mainAccount.currency, mainAccount.freshAddress),
+          await isAddressSanctioned(mainAccount.currency, freshAccountAddress),
         );
       }
     };
 
     checkUserAddressSanctioned();
-  }, [account, parentAccount]);
+  }, [account, parentAccount, freshAccountAddress]);
 
   if (!account || !currency || !mainAccount) return null;
 
@@ -340,7 +336,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
         <Flex p={0} alignItems="center" justifyContent="center">
           <StyledTouchableHightlight
             activeOpacity={1}
-            underlayColor={colors.palette.opacityDefault.c10}
+            underlayColor={colors.opacityDefault.c10}
             alignItems="center"
             justifyContent="center"
             width={QRContainerSize}
@@ -373,7 +369,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                 justifyContent="center"
                 testID={"receive-qr-code-container-" + mainAccountName}
               >
-                <QRCode size={QRSize} value={mainAccount.freshAddress} ecl="H" />
+                <QRCode size={QRSize} value={freshAccountAddress} ecl="H" />
                 <Flex
                   alignItems="center"
                   justifyContent="center"
@@ -382,13 +378,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                   bg="constant.white"
                   position="absolute"
                 >
-                  <CurrencyIcon
-                    currency={currency}
-                    color={colors.constant.white}
-                    bg={getCurrencyColor(currency) || colors.constant.black}
-                    size={48}
-                    circle
-                  />
+                  <CurrencyIcon currency={currency} size={48} />
                 </Flex>
               </Flex>
               <Text
@@ -398,7 +388,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                 textAlign={"center"}
                 mt={6}
               >
-                {mainAccount.freshAddress}
+                {freshAccountAddress}
               </Text>
             </View>
           </StyledTouchableHightlight>
@@ -479,7 +469,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
         backgroundColor="background.main"
         paddingBottom={insets.bottom}
       >
-        <Flex my={4}>
+        <Flex>
           <Button type="main" size="large" onPress={onRetry} testID="button-receive-confirmation">
             {t("transfer.receive.receiveConfirmation.verifyAddress")}
           </Button>
@@ -487,7 +477,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       </Flex>
       {isUserAddressSanctioned ? (
         <SanctionedAccountModal
-          userAddress={account.type === "Account" ? account.freshAddress : ""}
+          userAddress={account.type === "Account" ? getFreshAccountAddress(account) : ""}
           onClose={onClose}
         />
       ) : verified ? null : isModalOpened ? (

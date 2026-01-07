@@ -1,15 +1,25 @@
 import { Observable } from "rxjs";
-import { PublicKey } from "@hashgraph/sdk";
-import { Account, AccountBridge } from "@ledgerhq/types-live";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { buildUnsignedTransaction } from "../api/network";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { Transaction, HederaSigner } from "../types";
+import { DEFAULT_GAS_LIMIT, HEDERA_TRANSACTION_MODES } from "../constants";
+import { combine } from "../logic/combine";
+import { craftTransaction } from "../logic/craftTransaction";
+import {
+  serializeSignature,
+  serializeTransaction,
+  getHederaTransactionBodyBytes,
+  isTokenAssociateTransaction,
+  isStakingTransaction,
+} from "../logic/utils";
+import type { Transaction, HederaSigner, HederaTxData, HederaAccount } from "../types";
 
 export const buildSignOperation =
   (
     signerContext: SignerContext<HederaSigner>,
-  ): AccountBridge<Transaction, Account>["signOperation"] =>
+  ): AccountBridge<Transaction, HederaAccount>["signOperation"] =>
   ({ account, transaction, deviceId }) =>
     new Observable(o => {
       void (async function () {
@@ -18,18 +28,90 @@ export const buildSignOperation =
             type: "device-signature-requested",
           });
 
-          const hederaTransaction = await buildUnsignedTransaction({
-            account,
-            transaction,
-          });
+          let type: Transaction["mode"];
+          let asset: AssetInfo;
+          let data: HederaTxData | undefined;
+          const accountAddress = account.freshAddress;
+          const accountPublicKey = account.seedIdentifier;
+          const subAccount = findSubAccountById(account, transaction.subAccountId || "");
+          const isHTSTokenTransaction =
+            transaction.mode === HEDERA_TRANSACTION_MODES.Send &&
+            subAccount?.token.tokenType === "hts";
+          const isERC20TokenTransaction =
+            transaction.mode === HEDERA_TRANSACTION_MODES.Send &&
+            subAccount?.token.tokenType === "erc20";
 
-          const accountPublicKey = PublicKey.fromString(account.seedIdentifier);
+          if (isTokenAssociateTransaction(transaction)) {
+            type = HEDERA_TRANSACTION_MODES.TokenAssociate;
+            asset = {
+              type: transaction.properties.token.tokenType,
+              assetReference: transaction.properties.token.contractAddress,
+            };
+          } else if (isHTSTokenTransaction) {
+            type = HEDERA_TRANSACTION_MODES.Send;
+            asset = {
+              type: subAccount.token.tokenType,
+              assetReference: subAccount.token.contractAddress,
+              assetOwner: accountAddress,
+            };
+          } else if (isERC20TokenTransaction) {
+            type = HEDERA_TRANSACTION_MODES.Send;
+            asset = {
+              type: subAccount.token.tokenType,
+              assetReference: subAccount.token.contractAddress,
+              assetOwner: accountAddress,
+            };
+            data = {
+              type: "erc20",
+              gasLimit: BigInt((transaction.gasLimit ?? DEFAULT_GAS_LIMIT).toString()),
+            };
+          } else if (isStakingTransaction(transaction)) {
+            type = transaction.mode;
+            asset = {
+              type: "native",
+            };
+            data = {
+              type: "staking",
+              stakingNodeId: transaction.properties?.stakingNodeId,
+            };
+          } else {
+            type = HEDERA_TRANSACTION_MODES.Send;
+            asset = {
+              type: "native",
+            };
+          }
 
-          const res = await signerContext(deviceId, async signer => {
-            await hederaTransaction.signWith(accountPublicKey, async bodyBytes => {
-              return await signer.signTransaction(bodyBytes);
-            });
-            return hederaTransaction.toBytes();
+          const customFees: FeeEstimation | undefined = transaction.maxFee
+            ? { value: BigInt(transaction.maxFee.toString()) }
+            : undefined;
+
+          const signedTx = await signerContext(deviceId, async signer => {
+            const { tx } = await craftTransaction(
+              {
+                intentType: "transaction",
+                type,
+                asset,
+                amount: BigInt(transaction.amount.toString()),
+                sender: accountAddress,
+                recipient: transaction.recipient,
+                memo: {
+                  kind: "text",
+                  type: "string",
+                  value: transaction.memo ?? "",
+                },
+                ...(data && { data }),
+              },
+              customFees,
+            );
+
+            const txBodyBytes = getHederaTransactionBodyBytes(tx);
+            const signatureBytes = await signer.signTransaction(txBodyBytes);
+
+            return combine(
+              serializeTransaction(tx),
+              serializeSignature(signatureBytes),
+              accountPublicKey,
+            );
           });
 
           o.next({
@@ -45,8 +127,7 @@ export const buildSignOperation =
             type: "signed",
             signedOperation: {
               operation,
-              // NOTE: this needs to match the inverse operation in js-broadcast
-              signature: Buffer.from(res).toString("base64"),
+              signature: signedTx,
             },
           });
 

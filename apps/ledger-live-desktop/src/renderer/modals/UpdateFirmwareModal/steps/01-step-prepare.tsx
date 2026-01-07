@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Flex, ProgressLoader, IconsLegacy } from "@ledgerhq/react-ui";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
@@ -33,13 +33,13 @@ import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-ca
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   px: 7,
 }))``;
 
 const HighlightVersion = styled(Text).attrs(() => ({
   backgroundColor: "neutral.c40",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   ff: "Inter|SemiBold",
   variant: "subtitle",
   px: 2,
@@ -70,7 +70,7 @@ const Body = ({
   hasHash?: boolean;
 }) => {
   const { t } = useTranslation();
-  const type = useTheme().colors.palette.type;
+  const type = useTheme().theme;
   const deviceModel = getDeviceModel(deviceModelId);
   const from = deviceInfo.version;
   const to = firmware?.final.name;
@@ -172,6 +172,7 @@ const StepPrepare = ({
       deviceInfo.onboarded && isCustomLockScreenSupported(deviceModelId)
         ? customLockScreenFetch({
             deviceId,
+            deviceName: device?.deviceName ?? null,
             request: { allowedEmpty: true, deviceModelId },
           })
         : EMPTY;

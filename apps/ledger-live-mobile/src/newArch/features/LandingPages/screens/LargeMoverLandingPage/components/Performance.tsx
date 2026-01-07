@@ -2,7 +2,7 @@ import { Flex, Text, ProgressPoint } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { counterValueCurrencySelector } from "~/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import { useLocale } from "~/context/Locale";
 
@@ -30,7 +30,7 @@ export const Performance: React.FC<PerformanceProps> = ({ low, high, price }) =>
           <Text fontSize={14} fontWeight="bold">
             {counterValueFormatter({
               currency: counterValueCurrency.ticker,
-              value: low || 0,
+              value: low,
               locale,
               t,
             })}
@@ -43,7 +43,7 @@ export const Performance: React.FC<PerformanceProps> = ({ low, high, price }) =>
           <Text fontSize={14} fontWeight="bold">
             {counterValueFormatter({
               currency: counterValueCurrency.ticker,
-              value: high || 0,
+              value: high,
               locale,
               t,
             })}

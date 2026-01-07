@@ -1,8 +1,10 @@
 import { Box, Flex } from "@ledgerhq/native-ui";
-import React, { ComponentProps, useContext } from "react";
-import { Image, ImageProps, StyleSheet } from "react-native";
-import styled from "styled-components/native";
+import React, { ComponentProps, useContext, useMemo } from "react";
+import { Image, StyleSheet } from "react-native";
+import styled, { useTheme } from "styled-components/native";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import ForceTheme from "../theme/ForceTheme";
+import { getFramedPictureConfig } from "./framedPictureConfigs";
 
 /**
  * Set this to true to have visual indicators of how the foreground image (the content)
@@ -10,79 +12,11 @@ import ForceTheme from "../theme/ForceTheme";
  * */
 const DEBUG = false;
 
-/**
- * This is used to display a picture representing Ledger Stax and on top of it
- * a picture that is "framed" (as if it's displayed on the Ledger Stax screen).
- * The values must be taken from measurements on the Ledger Stax picture being
- * used.
- * Reminder of what Ledger Stax looks like to understand the purpose of this:
- * (I tried my best with this ASCII art)
- *  _____________
- * |____________ \ <- top edge
- * |            \ \
- * |            | |
- * |   screen   | |
- * |    of the  | |
- * | Ledger Stax| |
- * |            | |
- * |            | |
- * |____________/ /
- * |_____________/ <- bottom edge
- *
- *               ^
- *  right edge  _|
- */
-export type FramedPictureConfig = {
-  /**
-   * Height of the Ledger Stax picture
-   * */
-  frameHeight: number;
-  /**
-   * Width of the Ledger Stax picture
-   * */
-  frameWidth: number;
-  /**
-   * Height of the "screen" zone on the Ledger Stax picture
-   * */
-  innerHeight: number;
-  /**
-   * `innerHeight` * aspect ratio of custom lockscreen pictures (400px/670px)
-   * */
-  innerWidth: number;
-  /**
-   * Distance between
-   *  left border of the right edge of Ledger Stax in the picture
-   *  and
-   *  right border of the Ledger Stax picture
-   * */
-  innerRight: number;
-  /**
-   * Distance between
-   *  top border of the Ledger Stax picture
-   *  and
-   *  bottom border of the top edge of Ledger Stax in the picture
-   */
-  innerTop: number;
-  /**
-   * Border radius of the inner part of the screen of Ledger Stax in the picture
-   * (the screen border is curved on the top right and bottom right corner)
-   */
-  borderRightRadius: number;
-  borderLeftRadius?: number;
-  /**
-   * Source of the background picture representing a Ledger Stax
-   * */
-  backgroundSource?: ComponentProps<typeof Image>["source"];
-  resizeMode: ImageProps["resizeMode"];
-  /**
-   * Optional color to fill the space between the left edge of the Ledger Stax picture
-   * and the left edge of the "framed" picture.
-   */
-  leftPaddingColor?: string;
-  scale?: number;
-};
+const DEFAULT_SCALE_COEFFICIENT = 0.8;
 
 export type Props = Partial<ComponentProps<typeof Image>> & {
+  /** device model id to get model specific configuration */
+  deviceModelId: CLSSupportedDeviceModelId;
   /** source of the image inside */
   source?: ComponentProps<typeof Image>["source"];
   /** item to put in the background */
@@ -90,7 +24,6 @@ export type Props = Partial<ComponentProps<typeof Image>> & {
   /** float between 0 and 1 */
   loadingProgress?: number;
   children?: React.ReactNode | undefined;
-  framedPictureConfig: FramedPictureConfig;
 };
 
 const AbsoluteBackgroundContainer = styled(Flex).attrs({
@@ -110,10 +43,10 @@ const AbsoluteInnerImageContainer = styled(Flex).attrs({
  * a picture that is "framed" (as if it's displayed on the Ledger Stax screen).
  */
 const FramedPicture: React.FC<Props> = ({
+  deviceModelId,
   source,
   loadingProgress = 1,
   children,
-  framedPictureConfig,
   background,
   ...imageProps
 }) => {
@@ -129,8 +62,9 @@ const FramedPicture: React.FC<Props> = ({
     backgroundSource,
     resizeMode,
     leftPaddingColor,
-    scale = 1 / 4,
-  } = framedPictureConfig;
+    scaleCoefficient = DEFAULT_SCALE_COEFFICIENT,
+  } = useMemo(() => getFramedPictureConfig(deviceModelId), [deviceModelId]);
+  const { colors } = useTheme();
 
   return (
     <Box
@@ -139,13 +73,13 @@ const FramedPicture: React.FC<Props> = ({
        * that are causing "long white 1px white lines" with the background
        * picture and the foreground picture getting misaligned by 1px
        */
-      height={frameHeight * scale}
-      width={frameWidth * scale}
+      height={frameHeight * scaleCoefficient}
+      width={frameWidth * scaleCoefficient}
       style={{
         transform: [
-          { scale },
-          { translateX: (frameWidth * (scale - 1)) / 2 }, // centering the content after scaling
-          { translateY: (frameHeight * (scale - 1)) / 2 },
+          { scale: scaleCoefficient },
+          { translateX: (frameWidth * (scaleCoefficient - 1)) / 2 }, // centering the content after scaling
+          { translateY: (frameHeight * (scaleCoefficient - 1)) / 2 },
         ],
       }}
     >
@@ -185,6 +119,19 @@ const FramedPicture: React.FC<Props> = ({
               }}
             />
           ) : null}
+          <AbsoluteInnerImageContainer
+            style={{
+              width: innerWidth,
+              height: innerHeight,
+              top: innerTop,
+              right: innerRight,
+              borderTopRightRadius: borderRightRadius,
+              borderBottomRightRadius: borderRightRadius,
+              borderTopLeftRadius: borderLeftRadius,
+              borderBottomLeftRadius: borderLeftRadius,
+            }}
+            backgroundColor={colors.neutral.c30}
+          ></AbsoluteInnerImageContainer>
           <AbsoluteInnerImageContainer
             style={{
               right: innerRight,

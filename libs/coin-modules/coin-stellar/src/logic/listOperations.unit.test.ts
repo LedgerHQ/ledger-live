@@ -1,6 +1,6 @@
-import { listOperations } from "./listOperations";
-import coinConfig from "../config";
 import { Horizon } from "@stellar/stellar-sdk";
+import coinConfig from "../config";
+import { listOperations } from "./listOperations";
 
 jest.mock("@stellar/stellar-sdk");
 
@@ -112,7 +112,6 @@ describe("listOperations", () => {
             ledgerOpType: "OUT",
             sequence: undefined,
             memo: undefined,
-            status: "success",
           },
           senders: ["address"],
           recipients: ["receiver1"],
@@ -121,6 +120,7 @@ describe("listOperations", () => {
             date: new Date("2025-01-01"),
             fees: 111900n,
             hash: "transaction_hash1",
+            failed: false,
           },
           type: "OUT",
           value: 460600000n,
@@ -133,7 +133,6 @@ describe("listOperations", () => {
             ledgerOpType: "OUT",
             sequence: undefined,
             memo: undefined,
-            status: "failed",
           },
           senders: ["address"],
           recipients: ["receiver2"],
@@ -142,6 +141,7 @@ describe("listOperations", () => {
             date: new Date("2025-01-01"),
             fees: 11100n,
             hash: "transaction_hash1",
+            failed: true,
           },
           type: "OUT",
           value: 11100n,
@@ -154,7 +154,6 @@ describe("listOperations", () => {
             ledgerOpType: "IN",
             sequence: undefined,
             memo: undefined,
-            status: "success",
           },
           senders: ["sender"],
           recipients: ["address"],
@@ -163,6 +162,7 @@ describe("listOperations", () => {
             date: new Date("2025-01-01"),
             fees: 111n,
             hash: "transaction_hash2",
+            failed: false,
           },
           type: "IN",
           value: 505000000n,
@@ -248,7 +248,6 @@ describe("listOperations", () => {
             ledgerOpType: "OUT",
             sequence: undefined,
             memo: undefined,
-            status: "success",
           },
           senders: ["address"],
           recipients: ["receiver1"],
@@ -257,6 +256,7 @@ describe("listOperations", () => {
             date: new Date("2025-01-01"),
             fees: 111900n,
             hash: "transaction_hash1",
+            failed: false,
           },
           type: "OUT",
           value: 460600000n,
@@ -269,7 +269,6 @@ describe("listOperations", () => {
             ledgerOpType: "OUT",
             sequence: undefined,
             memo: undefined,
-            status: "failed",
           },
           senders: ["address"],
           recipients: ["receiver2"],
@@ -278,6 +277,7 @@ describe("listOperations", () => {
             date: new Date("2025-01-01"),
             fees: 11100n,
             hash: "transaction_hash1",
+            failed: true,
           },
           type: "OUT",
           value: 11100n,
@@ -327,6 +327,7 @@ describe("listOperations", () => {
             date: new Date("2025-01-01"),
             fees: 111900n,
             hash: "transaction_hash1",
+            failed: false,
           },
           type: "OUT",
           value: 460600000n,
@@ -338,7 +339,6 @@ describe("listOperations", () => {
               type: "MEMO_TEXT",
               value: "momo",
             },
-            status: "success",
           },
         },
       ],

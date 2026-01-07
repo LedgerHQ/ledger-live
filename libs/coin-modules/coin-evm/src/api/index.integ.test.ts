@@ -1,8 +1,14 @@
-import { Api, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import {
+  Api,
+  BufferTxData,
+  FeeEstimation,
+  MemoNotSupported,
+  Operation,
+  StakingTransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import { ethers } from "ethers";
-import * as legacy from "@ledgerhq/cryptoassets/tokens";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { EvmConfig } from "../config";
-import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 import { createApi } from "./index";
 
 describe.each([
@@ -14,6 +20,7 @@ describe.each([
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1",
       },
+      showNfts: true,
     },
   ],
   [
@@ -24,25 +31,27 @@ describe.each([
         type: "ledger",
         explorerId: "eth",
       },
+      showNfts: true,
     },
   ],
 ])("EVM Api (%s)", (_, config) => {
-  let module: Api;
+  let module: Api<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacy);
+    // Setup CAL client store (automatically set as global store)
+    setupCalClientStore();
     module = createApi(config as EvmConfig, "ethereum");
   });
 
   describe("getSequence", () => {
     it("returns 0 as next sequence for a pristine account", async () => {
-      expect(await module.getSequence("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551")).toEqual(0);
+      expect(await module.getSequence("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551")).toEqual(0n);
     });
 
     it("returns next sequence for an address", async () => {
       expect(
         await module.getSequence("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1"),
-      ).toBeGreaterThanOrEqual(17);
+      ).toBeGreaterThanOrEqual(17n);
     });
   });
 
@@ -53,6 +62,132 @@ describe.each([
       expect(result.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.height).toBeGreaterThan(0);
       expect(result.time).toBeInstanceOf(Date);
+    });
+  });
+
+  describe("getBlockInfo", () => {
+    it("returns block info for a specific height", async () => {
+      const lastBlock = await module.lastBlock();
+      const result = await module.getBlockInfo(lastBlock.height);
+
+      expect(result.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.height).toBe(lastBlock.height);
+      expect(result.time).toBeInstanceOf(Date);
+    });
+
+    it("returns block info for an older block", async () => {
+      const result = await module.getBlockInfo(20000000);
+
+      expect(result.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.height).toBe(20000000);
+      expect(result.time).toBeInstanceOf(Date);
+      expect(result.time!.getTime()).toBeLessThan(Date.now());
+    });
+
+    it("returns block info with parent for a block with height > 0", async () => {
+      const result = await module.getBlockInfo(20000000);
+
+      expect(result.parent?.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.parent?.height).toBe(19999999);
+      expect(result.parent?.height).toBe(result.height - 1);
+      expect(result.parent?.time).toBeInstanceOf(Date);
+      expect(result.parent?.time!.getTime()).toBeLessThan(result.time!.getTime());
+    });
+
+    it("returns block info without parent for genesis block", async () => {
+      const result = await module.getBlockInfo(0);
+
+      expect(result.height).toBe(0);
+      expect(result.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.time).toBeInstanceOf(Date);
+      expect(result.parent).toBeUndefined();
+    });
+
+    it("ensures parent block structure is correct", async () => {
+      const result = await module.getBlockInfo(20000000);
+
+      if (result.parent) {
+        expect(result.parent.height).toBeGreaterThanOrEqual(0);
+        expect(result.parent.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+        expect(result.parent.time).toBeInstanceOf(Date);
+        expect(result.parent.height).toBe(result.height - 1);
+      }
+    });
+  });
+
+  describe("getBlock", () => {
+    it("returns block with transactions for a specific height", async () => {
+      const lastBlock = await module.lastBlock();
+      const result = await module.getBlock(lastBlock.height);
+
+      expect(result.info.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.info.height).toBe(lastBlock.height);
+      expect(result.info.time).toBeInstanceOf(Date);
+      expect(result.transactions).toBeInstanceOf(Array);
+      result.transactions.forEach(tx => {
+        expect(tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+        expect(typeof tx.failed).toBe("boolean");
+        expect(tx.operations).toBeInstanceOf(Array);
+        expect(tx.fees).toBeGreaterThanOrEqual(0n);
+        expect(tx.feesPayer).toMatch(/^0x[A-Fa-f0-9]{40}$/);
+        tx.operations.forEach(op => {
+          expect(op.type).toBe("transfer");
+          expect(op.address).toMatch(/^0x[A-Fa-f0-9]{40}$/);
+          expect(op.asset).toEqual(expect.objectContaining({ type: expect.any(String) }));
+          expect(typeof op.amount).toBe("bigint");
+        });
+      });
+    });
+
+    it("returns block with transactions for an older block", async () => {
+      const result = await module.getBlock(20000000);
+
+      expect(result.info.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.info.height).toBe(20000000);
+      expect(result.info.time).toBeInstanceOf(Date);
+      expect(result.info.time!.getTime()).toBeLessThan(Date.now());
+      expect(result.transactions).toBeInstanceOf(Array);
+      expect(result.transactions.length).toBeGreaterThan(0);
+    });
+
+    it("returns block with parent for a block with height > 0", async () => {
+      const result = await module.getBlock(20000000);
+
+      expect(result.info.parent?.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.info.parent?.height).toBe(19999999);
+      expect(result.info.parent?.height).toBe(result.info.height - 1);
+      expect(result.info.parent?.time).toBeInstanceOf(Date);
+      expect(result.info.parent?.time!.getTime()).toBeLessThan(result.info.time!.getTime());
+    });
+
+    it("returns block without parent for genesis block", async () => {
+      const result = await module.getBlock(0);
+
+      expect(result.info.height).toBe(0);
+      expect(result.info.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(result.info.time).toBeInstanceOf(Date);
+      expect(result.info.parent).toBeUndefined();
+    });
+
+    it("returns block with operations extracted from transactions", async () => {
+      const result = await module.getBlock(20000000);
+
+      // Check that at least some transactions have operations
+      const transactionsWithOps = result.transactions.filter(tx => tx.operations.length > 0);
+      expect(transactionsWithOps.length).toBeGreaterThan(0);
+
+      // Verify operation structure
+      transactionsWithOps.forEach(tx => {
+        tx.operations.forEach(op => {
+          expect(op).toHaveProperty("type", "transfer");
+          expect(op).toHaveProperty("address");
+          expect(op).toHaveProperty("asset");
+          expect(op).toHaveProperty("amount");
+          if (op.peer) {
+            expect(op.peer).toMatch(/^0x[A-Fa-f0-9]{40}$/);
+          }
+        });
+      });
     });
   });
 
@@ -80,9 +215,11 @@ describe.each([
     it("crafts a transaction with the native asset", async () => {
       const { transaction: result } = await module.craftTransaction({
         type: `send-${mode}`,
+        intentType: "transaction",
         amount: 10n,
         sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
         recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+        data: { type: "buffer", value: Buffer.from([]) },
         asset: {
           type: "native",
         },
@@ -99,9 +236,11 @@ describe.each([
     it("crafts a transaction with the USDC asset", async () => {
       const { transaction: result } = await module.craftTransaction({
         type: `send-${mode}`,
+        intentType: "transaction",
         amount: 10n,
         sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
         recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+        data: { type: "buffer", value: Buffer.from([]) },
         asset: {
           type: "erc20",
           assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
@@ -155,25 +294,52 @@ describe.each([
       ).toEqual([[], ""]);
     });
 
-    it("lists operations for an address", async () => {
-      const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
-        minHeight: 200,
-        order: "asc",
-      });
-      expect(result.length).toBeGreaterThanOrEqual(52);
-      result.forEach(op => {
-        expect(["NONE", "FEES", "IN", "OUT"]).toContainEqual(op.type);
-        expect(op.senders.concat(op.recipients)).toContain(
-          "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
-        );
-        expect(op.value).toBeGreaterThanOrEqual(0n);
-        expect(op.tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
-        expect(op.tx.block.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
-        expect(op.tx.block.height).toBeGreaterThanOrEqual(200);
-        expect(op.tx.fees).toBeGreaterThan(0);
-        expect(op.tx.date).toBeInstanceOf(Date);
-      });
-    });
+    it.each([
+      [
+        "an ascending",
+        "asc",
+        (operations: Operation[]): boolean =>
+          operations.every((op, i) => i === 0 || op.tx.date >= operations[i - 1].tx.date),
+      ],
+      [
+        "a descending",
+        "desc",
+        (operations: Operation[]): boolean =>
+          operations.every((op, i) => i === 0 || op.tx.date <= operations[i - 1].tx.date),
+      ],
+    ] as const)(
+      "lists operations for an address with %s order",
+      async (_s, order, isCorrectlyOrdered) => {
+        const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
+          minHeight: 200,
+          order,
+        });
+        expect(result.length).toBeGreaterThanOrEqual(52);
+        result.forEach(op => {
+          expect([
+            "NONE",
+            "FEES",
+            "IN",
+            "OUT",
+            "DELEGATE",
+            "UNDELEGATE",
+            "REDELEGATE",
+            "NFT_IN",
+            "NFT_OUT",
+          ]).toContainEqual(op.type);
+          expect(op.senders.concat(op.recipients)).toContain(
+            "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
+          );
+          expect(op.value).toBeGreaterThanOrEqual(0n);
+          expect(op.tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+          expect(op.tx.block.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+          expect(op.tx.block.height).toBeGreaterThanOrEqual(200);
+          expect(op.tx.fees).toBeGreaterThan(0);
+          expect(op.tx.date).toBeInstanceOf(Date);
+        });
+        expect(isCorrectlyOrdered(result));
+      },
+    );
   });
 
   describe.each([
@@ -188,6 +354,7 @@ describe.each([
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
             nextBaseFee: null,
+            type: 0,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
@@ -205,6 +372,7 @@ describe.each([
             maxFeePerGas: expect.any(BigInt),
             maxPriorityFeePerGas: expect.any(BigInt),
             nextBaseFee: expect.any(BigInt),
+            type: 2,
           },
         });
         expect(estimation.value).toBeGreaterThan(0);
@@ -217,9 +385,11 @@ describe.each([
     it("estimates fees for native asset transfer", async () => {
       const result = await module.estimateFees({
         type: `send-${mode}`,
+        intentType: "transaction",
         amount: 100000000000000n, // 0.0001 ETH (smaller amount)
         sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-        recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+        recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        data: { type: "buffer", value: Buffer.from([]) },
         asset: {
           type: "native",
         },
@@ -231,14 +401,140 @@ describe.each([
     it("estimates fees for USDC token transfer", async () => {
       const result = await module.estimateFees({
         type: `send-${mode}`,
+        intentType: "transaction",
         amount: 1000000n, // 1 USDC (6 decimals)
         sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-        recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+        recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        data: { type: "buffer", value: Buffer.from([]) },
         asset: {
           type: "erc20",
           assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
         },
       });
+
+      expectEstimationForMode(result);
+    });
+  });
+});
+
+describe("EVM Api (SEI Network)", () => {
+  let module: Api<MemoNotSupported, BufferTxData>;
+
+  beforeAll(() => {
+    // Setup CAL client store (automatically set as global store)
+    setupCalClientStore();
+    const config = {
+      node: {
+        type: "external",
+        uri: "https://sei-evm-rpc.publicnode.com",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
+      },
+    };
+    module = createApi(config as EvmConfig, "sei_evm");
+  });
+
+  describe.each([
+    [
+      "legacy",
+      (transaction: ethers.Transaction): void => {
+        expect(transaction.type).toBe(0);
+        expect(typeof transaction.gasPrice).toBe("bigint");
+        expect(transaction.gasPrice).toBeGreaterThan(0);
+      },
+    ],
+    [
+      "eip1559",
+      (transaction: ethers.Transaction): void => {
+        expect(transaction.type).toBe(2);
+        expect(transaction.gasPrice).toBeNull();
+        expect(typeof transaction.maxFeePerGas).toBe("bigint");
+        expect(typeof transaction.maxPriorityFeePerGas).toBe("bigint");
+        expect(transaction.maxFeePerGas).toBeGreaterThan(0n);
+        expect(transaction.maxPriorityFeePerGas).toBeGreaterThan(0n);
+      },
+    ],
+  ])("craftTransaction", (mode, expectTransactionForMode) => {
+    it("crafts a delegate transaction", async () => {
+      const { transaction: result } = await module.craftTransaction({
+        type: `staking-${mode}`,
+        intentType: "staking" as const,
+        amount: 1000000000000000000n, // 1 SEI
+        mode: "delegate",
+        sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+        recipient: "0x0000000000000000000000000000000000001005",
+        valAddress: "seivaloper1ummny4p645xraxc4m7nphf7vxawfzt3p5hn47t",
+        data: { type: "buffer", value: Buffer.from([]) },
+        asset: {
+          type: "native",
+        },
+      } as StakingTransactionIntent<MemoNotSupported, BufferTxData>);
+
+      expect(result).toMatch(/^0x[A-Fa-f0-9]+$/);
+      expect(ethers.Transaction.from(result)).toMatchObject({
+        value: 1000000000000000000n,
+        to: "0x0000000000000000000000000000000000001005",
+      });
+      expectTransactionForMode(ethers.Transaction.from(result));
+    });
+  });
+
+  describe.each([
+    [
+      "legacy",
+      (estimation: FeeEstimation): void => {
+        expect(estimation).toEqual({
+          value: expect.any(BigInt),
+          parameters: {
+            gasPrice: expect.any(BigInt),
+            gasLimit: expect.any(BigInt),
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: null,
+            nextBaseFee: null,
+            type: 0,
+          },
+        });
+        expect(estimation.value).toBeGreaterThan(0);
+        expect(estimation.parameters?.gasPrice).toBeGreaterThan(0);
+      },
+    ],
+    [
+      "eip1559",
+      (estimation: FeeEstimation): void => {
+        expect(estimation).toEqual({
+          value: expect.any(BigInt),
+          parameters: {
+            gasPrice: null,
+            gasLimit: expect.any(BigInt),
+            maxFeePerGas: expect.any(BigInt),
+            maxPriorityFeePerGas: expect.any(BigInt),
+            nextBaseFee: expect.any(BigInt),
+            type: 2,
+          },
+        });
+        expect(estimation.value).toBeGreaterThan(0);
+        expect(estimation.parameters?.maxFeePerGas).toBeGreaterThan(0);
+        expect(estimation.parameters?.maxPriorityFeePerGas).toBeGreaterThan(0);
+        expect(estimation.parameters?.nextBaseFee).toBeGreaterThan(0);
+      },
+    ],
+  ])("estimateFees for %s transaction", (mode, expectEstimationForMode) => {
+    it("estimates fees for staking delegation", async () => {
+      const result = await module.estimateFees({
+        type: `staking-${mode}`,
+        intentType: "staking" as const,
+        amount: 1000000000000000000n, // 1 SEI
+        mode: "delegate",
+        sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+        recipient: "0x0000000000000000000000000000000000001005",
+        valAddress: "seivaloper1ummny4p645xraxc4m7nphf7vxawfzt3p5hn47t",
+        data: { type: "buffer", value: Buffer.from([]) },
+        asset: {
+          type: "native",
+        },
+      } as StakingTransactionIntent<MemoNotSupported, BufferTxData>);
 
       expectEstimationForMode(result);
     });

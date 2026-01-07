@@ -7,7 +7,7 @@ import FakeLink from "~/renderer/components/FakeLink";
 import { SpoilerIcon } from "~/renderer/components/Spoiler";
 import { openURL } from "~/renderer/linking";
 import AccountRow from "./AccountRow";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
@@ -72,7 +72,7 @@ function AccountsList({
             <Box
               horizontal
               ff="Inter|Bold"
-              color="palette.text.shade100"
+              color="neutral.c100"
               fontSize={2}
               textTransform="uppercase"
               cursor={collapsible ? "pointer" : undefined}

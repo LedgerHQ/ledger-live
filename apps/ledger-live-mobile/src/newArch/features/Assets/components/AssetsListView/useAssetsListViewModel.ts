@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { GestureResponderEvent } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useDistribution, useRefreshAccountsOrdering } from "~/actions/general";
 import { NavigatorName, ScreenName } from "~/const";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-kaspa",
-  "version": "1.0.0",
+  "version": "1.6.1",
   "description": "Ledger framework for Kaspa integration",
   "keywords": [
     "Ledger",
@@ -89,7 +89,7 @@
     "@bitcoinerlab/secp256k1": "^1.1.1",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
@@ -100,26 +100,26 @@
     "bip32": "4.0.0",
     "bip32-path": "^0.4.2",
     "eip55": "^2.1.0",
-    "expect": "^27.4.6",
+    "expect": "catalog:",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "lru-cache": "^7.14.1",
     "prando": "^6.0.1",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@types/invariant": "^2.2.2",
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
     "@types/numeral": "^2.0.2",
     "cross-env": "^7.0.3",
-    "jest": "^29.7.0",
+    "jest": "catalog:",
     "jest-sonar": "0.2.16",
     "timemachine": "^0.3.2",
-    "ts-jest": "^29.1.1"
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

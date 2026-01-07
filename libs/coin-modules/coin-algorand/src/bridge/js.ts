@@ -25,6 +25,7 @@ import {
   fromOperationExtraRaw,
   toOperationExtraRaw,
 } from "../serialization";
+import { validateAddress } from "../validateAddress";
 
 export function buildCurrencyBridge(signerContext: SignerContext<AlgorandSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -60,6 +61,9 @@ export function buildAccountBridge(
     assignFromAccountRaw,
     initAccount,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     estimateMaxSpendable,
     fromOperationExtraRaw,
@@ -67,6 +71,7 @@ export function buildAccountBridge(
     formatAccountSpecifics: formatters.formatAccountSpecifics,
     formatOperationSpecifics: formatters.formatOperationSpecifics,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

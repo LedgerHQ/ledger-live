@@ -19,7 +19,7 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import CurrencyIcon from "./CurrencyIcon";
 import { normalize } from "~/helpers/normalizeSize";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 const { height } = getWindowDimensions();
 type Props = {
@@ -60,7 +60,7 @@ export default function DelegationDrawer({
           left={
             icon || (
               <Circle size={iconWidth} bg={rgba(color, 0.2)}>
-                <CurrencyIcon size={iconWidth / 2} currency={currency} bg={"rgba(0,0,0,0)"} />
+                <CurrencyIcon size={iconWidth / 2} currency={currency} />
               </Circle>
             )
           }

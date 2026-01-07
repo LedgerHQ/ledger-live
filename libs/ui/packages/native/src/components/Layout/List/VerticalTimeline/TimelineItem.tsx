@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { LayoutChangeEvent, Pressable } from "react-native";
+import { LayoutChangeEvent, Pressable, ScrollView } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { Theme } from "src/styles/theme";
 import styled, { useTheme } from "styled-components/native";
@@ -10,14 +10,19 @@ import Text from "../../../Text";
 import Tag from "../../../tags/Tag";
 import TimelineIndicator from "./TimelineIndicator";
 
+export interface TimelineStep extends Item {
+  isNeutral?: boolean;
+}
+
 export type Props = {
-  item: Item;
+  item: TimelineStep;
   formatEstimatedTime?: (_: number) => string;
   isFirstItem?: boolean;
   isLastItem?: boolean;
   setActiveIndex?: (_: number) => void;
   index: number;
   withExtraMarginOnActiveStep?: boolean;
+  parentScrollRef?: null | React.RefObject<ScrollView>;
 };
 
 const getContainerBackground = (theme: Theme, status: ItemStatus) => {
@@ -29,10 +34,15 @@ const getContainerBackground = (theme: Theme, status: ItemStatus) => {
   return "transparent";
 };
 
-const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
+const getContainerBorder = (
+  theme: Theme,
+  status: ItemStatus,
+  isLastItem?: boolean,
+  isNeutral?: boolean,
+) => {
   if (status === "completed") {
     return "transparent";
-  } else if (isLastItem && status === "active") {
+  } else if (isLastItem && !isNeutral && status === "active") {
     return theme.colors.success.c70;
   } else if (status === "active") {
     return theme.colors.neutral.c40;
@@ -40,11 +50,11 @@ const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boole
   return "transparent";
 };
 
-const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
+const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean; isNeutral?: boolean }>`
   flex: 1;
   border-radius: ${(p) => p.theme.radii[2]}px;
   background: ${(p) => getContainerBackground(p.theme, p.status)};
-  border: 1px solid ${(p) => getContainerBorder(p.theme, p.status, p.isLastItem)};
+  border: 1px solid ${(p) => getContainerBorder(p.theme, p.status, p.isLastItem, p.isNeutral)};
   padding: 20px 16px;
   overflow: hidden;
 `;
@@ -57,6 +67,7 @@ export default function TimelineItem({
   setActiveIndex,
   index,
   withExtraMarginOnActiveStep,
+  parentScrollRef = null,
 }: Props) {
   const theme = useTheme();
   /**
@@ -71,8 +82,9 @@ export default function TimelineItem({
   const handleLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
       sharedHeight.value = withTiming(layout.height, { duration: 300 });
+      parentScrollRef?.current?.scrollToEnd({ animated: true });
     },
-    [sharedHeight],
+    [sharedHeight, parentScrollRef],
   );
 
   const animatedStyle = useAnimatedStyle(
@@ -97,6 +109,7 @@ export default function TimelineItem({
           status={item.status}
           isFirstItem={isFirstItem}
           isLastItem={isLastItem}
+          isNeutral={item.isNeutral}
           mr={4}
           topHeight={
             withExtraMarginOnActiveStep && !isFirstItem && item.status === "active"
@@ -107,6 +120,7 @@ export default function TimelineItem({
         <Container
           status={item.status}
           isLastItem={isLastItem}
+          isNeutral={item.isNeutral}
           mt={withExtraMarginOnActiveStep && !isFirstItem && item.status === "active" ? 4 : 0}
           mb={withExtraMarginOnActiveStep && !isLastItem && item.status === "active" ? 4 : 0}
         >
@@ -117,7 +131,7 @@ export default function TimelineItem({
               fontWeight={item.status === "active" ? "semiBold" : "medium"}
               flexShrink={1}
               color={
-                item.status === "completed" && isLastItem
+                item.status === "completed" && isLastItem && !item.isNeutral
                   ? "success.c70"
                   : item.status === "active"
                     ? "primary.c80"

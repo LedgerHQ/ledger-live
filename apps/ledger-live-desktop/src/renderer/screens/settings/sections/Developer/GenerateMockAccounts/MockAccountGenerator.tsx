@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
-import Button from "~/renderer/components/Button";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { generateRandomAccounts, injectMockAccounts } from "./utils";
 
 type Props = {
@@ -19,23 +19,22 @@ export default function MockAccountGenerator({ count, title, desc }: Props) {
       await injectMockAccounts(accounts, true);
     } catch (error) {
       console.error("Failed to generate mock accounts:", error);
-      alert(t("settings.developer.debugSimpleHash.mockAccounts.alerts.generateError"));
+      alert(t("settings.developer.mockAccounts.alerts.generateError"));
     }
   };
 
   return (
     <SettingsSectionRow title={title} desc={desc}>
       <Button
-        primary
+        appearance="accent"
+        size="sm"
         onClick={() => {
-          if (
-            window.confirm(t("settings.developer.debugSimpleHash.mockAccounts.alerts.confirmErase"))
-          ) {
+          if (window.confirm(t("settings.developer.mockAccounts.alerts.confirmErase"))) {
             handleGenerate();
           }
         }}
       >
-        {t("settings.developer.debugSimpleHash.mockAccounts.buttons.generateAccountsQuick", {
+        {t("settings.developer.mockAccounts.buttons.generateAccountsQuick", {
           count,
         })}
       </Button>

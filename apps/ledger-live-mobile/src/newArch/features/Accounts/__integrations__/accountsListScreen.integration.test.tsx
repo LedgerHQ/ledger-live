@@ -5,7 +5,7 @@ import { MockedAccounts } from "./mockedAccounts";
 import AccountsList from "../screens/AccountsList";
 import { AccountsListNavigator } from "../screens/AccountsList/types";
 import { ScreenName } from "~/const";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const INITIAL_STATE = {
   overrideInitialState: (state: State) => ({
@@ -44,7 +44,7 @@ describe("AccountsList Screen", () => {
     params: AccountsListNavigator[ScreenName.AccountsList],
     withoutAccount: boolean = false,
   ) => {
-    const Stack = createStackNavigator<AccountsListNavigator>();
+    const Stack = createNativeStackNavigator<AccountsListNavigator>();
 
     return renderWithReactQuery(
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -169,6 +169,6 @@ describe("AccountsList Screen", () => {
       getByText(/looks like you haven’t added an account yet. get started now/i),
     ).toBeVisible();
     expect(getByText("Add an account")).toBeVisible();
-    expect(getByText(/need help\? learn how to add an account to ledger live./i)).toBeVisible();
+    expect(getByText(/need help\? learn how to add an account to ledger wallet./i)).toBeVisible();
   });
 });

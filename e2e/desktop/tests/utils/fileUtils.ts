@@ -1,6 +1,8 @@
-import fs, { appendFile } from "fs/promises";
+import { access, appendFile, stat } from "fs/promises";
 import { expect } from "@playwright/test";
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
+
+export const NANO_APP_CATALOG_PATH = "tests/artifacts/appVersion/nano-app-catalog.json";
 
 export async function safeAppendFile(filePath: string, data: string) {
   try {
@@ -13,7 +15,7 @@ export async function safeAppendFile(filePath: string, data: string) {
 export class FileUtils {
   @step("get app.json size")
   static async getAppJsonSize(userdataFile: string) {
-    const fileStats = await fs.stat(userdataFile);
+    const fileStats = await stat(userdataFile);
     return fileStats.size;
   }
 
@@ -27,7 +29,7 @@ export class FileUtils {
     const startTime = Date.now();
     while (Date.now() - startTime < timeout) {
       try {
-        await fs.access(filePath);
+        await access(filePath);
         return true;
       } catch {
         await new Promise(resolve => setTimeout(resolve, 100));

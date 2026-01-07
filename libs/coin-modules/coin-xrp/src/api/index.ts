@@ -4,6 +4,7 @@ import {
   BlockInfo,
   Cursor,
   Page,
+  Validator,
   FeeEstimation,
   Operation,
   Pagination,
@@ -12,12 +13,14 @@ import {
   TransactionIntent,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
+import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
 import { log } from "@ledgerhq/logs";
 import coinConfig, { type XrpConfig } from "../config";
 import {
   broadcast,
   combine,
   craftTransaction,
+  craftRawTransaction,
   estimateFees,
   getBalance,
   getAccountInfo,
@@ -36,6 +39,7 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     broadcast,
     combine,
     craftTransaction: craft,
+    craftRawTransaction,
     estimateFees: estimate,
     getBalance,
     lastBlock,
@@ -49,13 +53,16 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     },
     getSequence: async (address: string) => {
       const accountInfo = await getAccountInfo(address);
-      return accountInfo.sequence;
+      return BigInt(accountInfo.sequence);
     },
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
+    },
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
     },
   };
 }
@@ -64,6 +71,9 @@ async function craft(
   transactionIntent: TransactionIntent<XrpMapMemo>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
+  if (isSendTransactionIntent(transactionIntent) === false) {
+    throw new Error("Only transaction intentType is supported");
+  }
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const estimatedFees = customFees?.value ?? (await estimateFees()).fees;
 

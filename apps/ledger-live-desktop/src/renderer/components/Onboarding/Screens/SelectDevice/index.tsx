@@ -1,7 +1,7 @@
 import React, { useCallback, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Flex, Text } from "@ledgerhq/react-ui";
@@ -11,6 +11,7 @@ import { track } from "~/renderer/analytics/segment";
 import OnboardingNavHeader from "../../OnboardingNavHeader";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { OnboardingContext } from "../../index";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 const SelectDeviceContainer = styled(Flex).attrs({
   height: "100%",
@@ -39,7 +40,7 @@ export function SelectDevice() {
   const handleDeviceSelect = useCallback(
     (deviceModelId: DeviceModelId) => {
       // TODO: use a feature flag to do this properly
-      track("Onboarding Device - Selection", { deviceModelId });
+      track("Onboarding Device - Selection", { deviceModelId, flow: "Onboarding" });
       if (isSyncOnboardingSupported(deviceModelId)) {
         history.push(`/onboarding/sync/${deviceModelId}`);
       } else {
@@ -52,6 +53,7 @@ export function SelectDevice() {
 
   return (
     <SelectDeviceContainer>
+      <TrackPage category="Onboarding Device - Selection" flow="Onboarding" />
       <OnboardingNavHeader
         onClickPrevious={() =>
           history.push(hasCompletedOnboarding ? "/settings/help" : "/onboarding/welcome")

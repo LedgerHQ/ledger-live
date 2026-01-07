@@ -38,6 +38,7 @@ export const useTrackOnboardingFlow = ({
       connectionType: device?.wired ? CONNECTION_TYPES.USB : CONNECTION_TYPES.BLE,
       platform: "LLM",
       page: "Onboarding",
+      flow: "onboarding",
     };
 
     if (seedPathStatus) {

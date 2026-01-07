@@ -148,7 +148,7 @@ describe.skip("testing xpub segwit transactions", () => {
     try {
       const { address: mineAddress } = await xpubs[2].xpub.getNewAddress(0, 0);
       await axios.post(`http://localhost:28443/chain/mine/${mineAddress}/1`);
-    } catch (e) {
+    } catch {
       // eslint-disable-next-line no-console
       console.log("praline error");
     }

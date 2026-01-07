@@ -1,15 +1,17 @@
-import { addDelayBeforeInteractingWithDevice, openDeeplink } from "../../helpers/commonHelpers";
+import { Step } from "jest-allure2-reporter/api";
+import { openDeeplink } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { normalizeText } from "../../helpers/commonHelpers";
 import fs from "fs/promises";
 import * as path from "path";
-import { FileUtils } from "utils/fileUtils";
+import { FileUtils } from "../../utils/fileUtils";
 
 export default class SwapPage {
   baseLink = "swap";
   confirmSwapOnDeviceDrawerId = "confirm-swap-on-device";
   swapSuccessTitleId = "swap-success-title";
+  swapOperationDetailsScrollViewId = "swap-operation-details-scroll-view";
   deviceActionLoading = "device-action-loading";
   operationRow = {
     rowBaseId: "swap-operation-row-",
@@ -50,6 +52,7 @@ export default class SwapPage {
   @Step("Open swap via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
+    await waitForElementById(app.common.walletApiWebview);
   }
 
   @Step("Expect swap page")
@@ -109,7 +112,7 @@ export default class SwapPage {
       normalizeText(`${swap.amount} ${swap.accountToDebit.currency.ticker}`),
     );
 
-    await scrollToId(this.operationDetails.toAmount);
+    await scrollToId(this.operationDetails.toAmount, this.swapOperationDetailsScrollViewId);
     jestExpect(normalizeText(await getTextOfElement(this.operationDetails.toAccount))).toEqual(
       normalizeText(swap.accountToCredit.accountName),
     );
@@ -121,14 +124,14 @@ export default class SwapPage {
   @Step("Click on export operations")
   async clickExportOperations() {
     await tapById(this.exportOperationsButton);
-    const filePath = path.resolve(__dirname, "../../artifacts/ledgerlive-swap-history.csv");
+    const filePath = path.resolve(__dirname, "../../artifacts/ledgerwallet-swap-history.csv");
     const fileExists = await FileUtils.waitForFileToExist(filePath, 5000);
     jestExpect(fileExists).toBeTruthy();
   }
 
   @Step("Check contents of exported operations file")
   async checkExportedFileContents(swap: SwapType, provider: Provider, id: string) {
-    const targetFilePath = path.resolve(__dirname, "../../artifacts/ledgerlive-swap-history.csv");
+    const targetFilePath = path.resolve(__dirname, "../../artifacts/ledgerwallet-swap-history.csv");
     const fileContents = await fs.readFile(targetFilePath, "utf-8");
 
     jestExpect(fileContents).toContain(provider.name);
@@ -145,29 +148,27 @@ export default class SwapPage {
   @Step("Verify the amounts and accept swap")
   async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
     await app.speculos.verifyAmountsAndAcceptSwap(swap, amount);
-    await addDelayBeforeInteractingWithDevice(40_000, 30_000);
   }
 
   @Step("Verify amounts and accept swap for different seed")
-  async verifyAmountsAndAcceptSwapForDifferentSeed(swap: SwapType, amount: string) {
-    await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount);
-    await addDelayBeforeInteractingWithDevice(40_000, 30_000);
+  async verifyAmountsAndAcceptSwapForDifferentSeed(
+    swap: SwapType,
+    amount: string,
+    errorMessage: string | null,
+  ) {
+    await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage);
   }
 
   @Step("Verify the amounts and reject swap")
   async verifyAmountsAndRejectSwap(swap: SwapType, amount: string) {
     await app.speculos.verifyAmountsAndRejectSwap(swap, amount);
-    await addDelayBeforeInteractingWithDevice(40_000, 20_000);
-  }
-
-  @Step("Verify device action loading is not visible")
-  async verifyDeviceActionLoadingNotVisible() {
-    await detoxExpect(getElementById(this.deviceActionLoading)).not.toBeVisible();
   }
 
   @Step("Wait for swap success and continue")
   async waitForSuccessAndContinue() {
-    await waitForElementById(this.swapSuccessTitleId);
+    await waitForElementById(this.swapSuccessTitleId, 60000, {
+      errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
+    });
     await tapById(app.common.proceedButtonId);
   }
 }

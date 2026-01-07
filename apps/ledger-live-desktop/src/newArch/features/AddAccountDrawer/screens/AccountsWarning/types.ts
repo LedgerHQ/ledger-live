@@ -19,6 +19,5 @@ export interface AccountsWarningProps {
   navigateToEditAccountName: (account: Account) => void;
   navigateToFundAccount: (account: Account) => void;
   emptyAccount?: Account;
-  source: string;
   isAccountSelectionFlow: boolean;
 }

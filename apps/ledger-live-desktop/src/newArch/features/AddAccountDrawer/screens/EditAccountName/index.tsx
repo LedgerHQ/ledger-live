@@ -4,7 +4,7 @@ import { TextInput } from "@ledgerhq/react-ui/pre-ldls/index";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";
 import {
@@ -14,16 +14,17 @@ import {
 } from "../../analytics/addAccount.types";
 import useAddAccountAnalytics from "../../analytics/useAddAccountAnalytics";
 import { FOOTER_PADDING_BOTTOM_PX, FOOTER_PADDING_TOP_PX } from "../styles";
+import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 interface Props {
   account: Account;
   navigateBack?: (track?: boolean) => void;
-  source: string;
 }
 
 const MAX_ACCOUNT_NAME_LENGTH = 50;
 
-const EditAccountName = ({ account, navigateBack, source }: Props) => {
+const EditAccountName = ({ account, navigateBack }: Props) => {
+  const source = useSelector(modularDrawerSourceSelector);
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -64,7 +65,7 @@ const EditAccountName = ({ account, navigateBack, source }: Props) => {
           textAlign="left"
           width="100%"
           lineHeight="32.4px"
-          color="palette.text.shade100"
+          color="neutral.c100"
           data-testid="scan-accounts-title"
         >
           {t("modularAssetDrawer.editAccountName.title")}

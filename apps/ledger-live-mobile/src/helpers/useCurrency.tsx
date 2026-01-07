@@ -1,22 +1,21 @@
-import { useMemo } from "react";
 import { useRoute } from "@react-navigation/native";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/live-common/currencies/index";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { useCurrencyById } from "@ledgerhq/cryptoassets/hooks";
 
 type NavigationProps = StackNavigatorProps<{
-  [key: string]: { currencyId: string; currencyType: string };
+  [key: string]: { currencyId: string };
 }>;
 
 const useCurrency = () => {
   const route = useRoute<NavigationProps["route"]>();
-  const { currencyId, currencyType } = route.params;
-  return useMemo(
-    () =>
-      currencyType === "CryptoCurrency"
-        ? getCryptoCurrencyById(currencyId)
-        : getTokenById(currencyId),
-    [currencyId, currencyType],
-  );
+  const { currencyId } = route.params;
+  const { currency } = useCurrencyById(currencyId || "");
+
+  if (!currency) {
+    throw new Error(`currency with id "${currencyId}" not found`);
+  }
+
+  return currency;
 };
 
 export default useCurrency;

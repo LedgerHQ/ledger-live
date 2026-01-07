@@ -1,15 +1,14 @@
 // import "../../__tests__/test-helpers/setup";
 import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
 import {
   NotEnoughBalance,
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
 } from "@ledgerhq/errors";
-
+import { HEDERA_TRANSACTION_MODES } from "../constants";
 import { fromTransactionRaw } from "../transaction";
+import type { Transaction } from "../types";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const hedera: CurrenciesData<Transaction> = {
   scanAccounts: [
     {
@@ -42,6 +41,7 @@ export const hedera: CurrenciesData<Transaction> = {
         {
           name: "Recipient and sender must not be the same",
           transaction: fromTransactionRaw({
+            mode: HEDERA_TRANSACTION_MODES.Send,
             family: "hedera",
             recipient: "0.0.751515",
             amount: "100000000",
@@ -56,6 +56,7 @@ export const hedera: CurrenciesData<Transaction> = {
         {
           name: "Amount Required",
           transaction: fromTransactionRaw({
+            mode: HEDERA_TRANSACTION_MODES.Send,
             family: "hedera",
             recipient: "0.0.751515",
             amount: "0",
@@ -70,6 +71,7 @@ export const hedera: CurrenciesData<Transaction> = {
         {
           name: "Not enough balance",
           transaction: fromTransactionRaw({
+            mode: HEDERA_TRANSACTION_MODES.Send,
             family: "hedera",
             recipient: "0.0.751515",
             amount: "1000000000000000",
@@ -84,6 +86,7 @@ export const hedera: CurrenciesData<Transaction> = {
         {
           name: "Send max",
           transaction: fromTransactionRaw({
+            mode: HEDERA_TRANSACTION_MODES.Send,
             family: "hedera",
             recipient: "0.0.751515",
             amount: "1000000000000000",

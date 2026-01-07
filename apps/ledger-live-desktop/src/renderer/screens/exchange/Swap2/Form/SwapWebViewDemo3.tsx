@@ -21,7 +21,7 @@ import { Account, AccountLike, TokenAccount, SwapOperation } from "@ledgerhq/typ
 import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLocation } from "react-router";
 import styled from "styled-components";
 import { reduce, firstValueFrom } from "rxjs";
@@ -29,7 +29,12 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { track } from "~/renderer/analytics/segment";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
-import { WebviewAPI, WebviewProps, WebviewState } from "~/renderer/components/Web3AppWebview/types";
+import {
+  WebviewAPI,
+  WebviewProps,
+  WebviewState,
+  WebviewLoader,
+} from "~/renderer/components/Web3AppWebview/types";
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { context } from "~/renderer/drawers/Provider";
@@ -57,6 +62,8 @@ import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
+import { SwapLoader } from "./SwapLoader";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -91,6 +98,8 @@ export type SwapProps = {
 
 export type SwapWebProps = {
   manifest: LiveAppManifest;
+  isEmbedded?: boolean;
+  Loader?: WebviewLoader;
 };
 
 type TokenParams = {
@@ -114,12 +123,8 @@ const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 const SWAP_USER_IP = getEnv("SWAP_USER_IP");
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
-const SwapWebView = ({ manifest }: SwapWebProps) => {
-  const {
-    colors: {
-      palette: { type: themeType },
-    },
-  } = useTheme();
+const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: SwapWebProps) => {
+  const { theme } = useTheme();
   const walletState = useSelector(walletSelector);
   const dispatch = useDispatch();
   const redirectToHistory = useRedirectToSwapHistory();
@@ -145,17 +150,22 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
     defaultAmountFrom?: string;
     from?: string;
     defaultToken?: TokenParams;
+    affiliate?: string;
   }>();
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
   // Remove after KYC AB Testing
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning")?.enabled;
-
+  const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio")?.enabled;
+  const lldModularDrawerFF = useFeature("lldModularDrawer");
+  const isLldModularDrawer = lldModularDrawerFF?.enabled && lldModularDrawerFF?.params?.live_app;
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
+  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customHandlers = useMemo(
     () => ({
       ...loggerHandlers,
       ...customPTXHandlers,
+      ...customDeeplinkHandlers,
       "custom.getFee": async ({
         params,
       }: {
@@ -167,6 +177,8 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
           customFeeConfig: object;
           SWAP_VERSION: string;
           gasLimit?: string;
+          data?: string;
+          recipient?: string;
         };
       }): Promise<{
         feesStrategy: string;
@@ -215,13 +227,15 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
           ...transaction,
           subAccountId,
           recipient:
-            mainAccount.currency.id === "bitcoin"
+            params.recipient ||
+            (mainAccount.currency.id === "bitcoin"
               ? getSegWitAbandonSeedAddress()
-              : getAbandonSeedAddress(mainAccount.currency.id),
+              : getAbandonSeedAddress(mainAccount.currency.id)),
           amount: convertToAtomicUnit({
             amount: new BigNumber(params.fromAmount),
             account: fromAccount,
           }),
+          data: (params.data && Buffer.from(params.data.replace("0x", ""), "hex")) || undefined,
           feesStrategy: params.feeStrategy || "medium",
           customGasLimit: params.gasLimit ? new BigNumber(params.gasLimit) : null,
           ...transformToBigNumbers(params.customFeeConfig),
@@ -335,7 +349,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
             gasPrice: string;
             value: string;
           }
-        | {}
+        | object
       > => {
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
         if (!realFromAccountId) {
@@ -355,7 +369,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
         try {
           const tx = await nodeAPI.getTransaction(mainAccount.currency, params.transactionHash);
           return Promise.resolve(tx);
-        } catch (error) {
+        } catch {
           // not a real error, the node just didn't find the transaction yet
           return Promise.resolve({});
         }
@@ -432,43 +446,51 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
     [customPTXHandlers],
   );
 
-  const hashString = useMemo(
-    () =>
-      new URLSearchParams({
-        ...(isOffline ? { isOffline: "true" } : {}),
-        ...(state?.defaultAccount
-          ? {
-              fromAccountId: accountToWalletAPIAccount(
-                walletState,
-                state?.defaultAccount,
-                state?.defaultParentAccount,
-              ).id,
-              amountFrom: state?.defaultAmountFrom || "",
-            }
-          : {}),
-        ...(state?.from
-          ? {
-              fromPath: simplifyFromPath(state?.from),
-            }
-          : {}),
-        ...(state?.defaultToken
-          ? {
-              fromTokenId: state.defaultToken.fromTokenId,
-              toTokenId: state.defaultToken.toTokenId,
-              amountFrom: state?.defaultAmountFrom || "",
-            }
-          : {}),
-      }).toString(),
-    [
-      isOffline,
-      state?.defaultAccount,
-      state?.defaultParentAccount,
-      state?.defaultAmountFrom,
-      state?.from,
-      state?.defaultToken,
-      walletState,
-    ],
-  );
+  const hashString = useMemo(() => {
+    const params = new URLSearchParams({
+      ...(isOffline ? { isOffline: "true" } : {}),
+      ...(state?.defaultAccount
+        ? {
+            toAccountId: accountToWalletAPIAccount(
+              walletState,
+              state?.defaultAccount,
+              state?.defaultParentAccount,
+            ).id,
+            amountFrom: state?.defaultAmountFrom || "",
+          }
+        : {}),
+      ...(state?.from
+        ? {
+            fromPath: simplifyFromPath(state?.from),
+          }
+        : {}),
+      ...(state?.defaultToken
+        ? {
+            fromTokenId: state.defaultToken.fromTokenId,
+            toTokenId: state.defaultToken.toTokenId,
+            fromToken: state.defaultToken.fromTokenId,
+            toToken: state.defaultToken.toTokenId,
+            amountFrom: state?.defaultAmountFrom || "",
+          }
+        : {}),
+      ...(state?.affiliate
+        ? {
+            affiliate: state.affiliate,
+          }
+        : {}),
+    }).toString();
+
+    return params;
+  }, [
+    isOffline,
+    state?.defaultAccount,
+    state?.defaultParentAccount,
+    state?.defaultAmountFrom,
+    state?.from,
+    state?.defaultToken,
+    state?.affiliate,
+    walletState,
+  ]);
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
     logger.critical(error);
@@ -519,7 +541,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
           manifest={manifestWithHash}
           inputs={{
             source: initialSource,
-            theme: themeType,
+            theme,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
             swapApiBase: SWAP_API_BASE,
@@ -531,11 +553,15 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
             shareAnalytics,
             hasSeenAnalyticsOptInPrompt,
             ptxSwapLiveAppKycWarning,
+            ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio ? "true" : "false",
+            isModularDrawer: isLldModularDrawer ? "true" : "false",
+            isEmbedded: isEmbedded ? "true" : "false",
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           customHandlers={customHandlers as never}
+          Loader={Loader}
         />
       </SwapWebAppWrapper>
     </>

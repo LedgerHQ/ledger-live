@@ -20,6 +20,7 @@ import { shouldUpgrade } from "../../apps";
 import { AppOp, SkippedAppOp } from "../../apps/types";
 import perFamilyAccount from "../../generated/account";
 import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { DeviceId } from "@ledgerhq/client-ids/ids";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getImplementation, ImplementationType } from "./implementations";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
@@ -44,6 +45,7 @@ export type State = {
   allowManagerGranted: boolean;
   device: Device | null | undefined;
   deviceInfo?: DeviceInfo | null | undefined;
+  deviceId: DeviceId | null | undefined;
   latestFirmware?: FirmwareUpdateContext | null | undefined;
   error: Error | null | undefined;
   derivation:
@@ -144,6 +146,7 @@ const getInitialState = (device?: Device | null | undefined, request?: AppReques
   allowManagerGranted: false,
   device: null,
   deviceInfo: null,
+  deviceId: null,
   latestFirmware: null,
   opened: false,
   appAndVersion: null,
@@ -311,6 +314,12 @@ const reducer = (state: State, e: Event): State => {
         listedApps: state.listedApps,
       };
 
+    case "device-id":
+      return {
+        ...state,
+        deviceId: e.deviceId,
+      };
+
     case "app-not-installed":
       return {
         ...getInitialState(state.device, state.request),
@@ -460,20 +469,21 @@ export const createAction = (
       () => inferCommandParams(appRequest), // for now i don't have better
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [
-        appRequest.appName, // eslint-disable-next-line react-hooks/exhaustive-deps
-        appRequest.account && appRequest.account.id, // eslint-disable-next-line react-hooks/exhaustive-deps
-        appRequest.currency && appRequest.currency.id,
+        appRequest.appName,
+        appRequest.account?.id,
+        appRequest.currency?.id,
         appRequest.dependencies,
       ],
     );
 
     const task: (arg0: ConnectAppInput) => Observable<ConnectAppEvent> = useCallback(
-      ({ deviceId, request }: ConnectAppInput) => {
+      ({ deviceId, deviceName, request }: ConnectAppInput) => {
         //To avoid redundant checks, we remove passed checks from the request.
         const { dependencies, requireLatestFirmware } = request;
 
         return connectAppExec({
           deviceId,
+          deviceName,
           request: {
             ...request,
             dependencies: dependenciesResolvedRef.current ? undefined : dependencies,

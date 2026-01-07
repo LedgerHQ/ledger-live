@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import storage from "LLM/storage";
 import semver from "semver";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
@@ -10,6 +10,7 @@ import {
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
+import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import TrackScreen from "~/analytics/TrackScreen";
@@ -25,8 +26,8 @@ import { walletSelector } from "~/reducers/wallet";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
-import { ProviderInterstitial } from "./BuySell/ProviderInterstitial";
-import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
+import { ProviderInterstitial } from "LLM/components/ProviderInterstitial";
+import SafeAreaView from "~/components/SafeAreaView";
 
 export type Props = StackNavigatorProps<
   PtxNavigatorParamList,
@@ -114,7 +115,7 @@ export function PtxScreen({ route, config }: Props) {
   const { softExit, ...searchInput } = Object.fromEntries(searchParams.entries());
 
   return manifest ? (
-    <>
+    <SafeAreaView edges={["bottom"]} isFlex>
       <TrackScreen category="Platform" name="App" />
       <WebPTXPlayer
         manifest={manifest}
@@ -138,7 +139,7 @@ export function PtxScreen({ route, config }: Props) {
         softExit={softExit === "true"}
         Interstitial={providerInterstitialEnabled ? ProviderInterstitial : undefined}
       />
-    </>
+    </SafeAreaView>
   ) : (
     <Flex flex={1} p={10} justifyContent="center" alignItems="center">
       {remoteLiveAppState.isLoading ? (

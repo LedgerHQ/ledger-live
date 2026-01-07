@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-evm",
-  "version": "0.7.4",
+  "version": "0.11.1",
   "private": true,
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
@@ -28,12 +28,12 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-evm": "workspace:^",
-    "@ledgerhq/context-module": "1.7.0",
-    "@ledgerhq/device-signer-kit-ethereum": "1.7.0",
-    "@ledgerhq/device-management-kit": "0.9.0",
+    "@ledgerhq/context-module": "catalog:",
+    "@ledgerhq/device-signer-kit-ethereum": "catalog:",
+    "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
-    "rxjs": "7.8.1"
+    "rxjs": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -48,12 +48,13 @@
   },
   "devDependencies": {
     "@ledgerhq/types-live": "workspace:^",
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "@types/node": "22.10.1",
-    "jest": "^29.7.0",
+    "jest": "catalog:",
     "rimraf": "^4.4.1",
-    "ts-jest": "^29.1.1",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "ts-node": "^10.4.0",
-    "ws": "8.18.0"
+    "ws": "catalog:"
   }
 }

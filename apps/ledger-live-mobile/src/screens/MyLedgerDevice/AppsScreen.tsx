@@ -8,8 +8,7 @@ import {
   SectionList,
   StyleSheet,
 } from "react-native";
-import { useSelector } from "react-redux";
-import { listTokens, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
+import { useSelector } from "~/context/hooks";
 import {
   distribute,
   Action,
@@ -40,14 +39,10 @@ import Searchbar from "./AppsList/Searchbar";
 import InstalledAppModal from "./Modals/InstalledAppModal";
 
 import NoResultsFound from "~/icons/NoResultsFound";
-import AppIcon from "./AppsList/AppIcon";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "~/components/Search";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/shared";
-import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
-import { ScreenName } from "~/const";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import ProviderWarning from "./ProviderWarning";
 import { UpdateStep } from "../FirmwareUpdate";
@@ -57,17 +52,12 @@ import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
 import { LNSUpsellBanner } from "LLM/features/LNSUpsell";
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
->;
-
 type Props = {
   state: State;
   dispatch: (_: Action) => void;
   setStorageWarning: (value: string | null) => void;
   deviceId: string;
   initialDeviceName?: string | null;
-  navigation: NavigationProps["navigation"];
   pendingInstalls: boolean;
   deviceInfo: DeviceInfo;
   device: Device;
@@ -88,7 +78,6 @@ const AppsScreen = ({
   deviceId,
   initialDeviceName,
   device,
-  navigation,
   pendingInstalls,
   deviceInfo,
   searchQuery,
@@ -137,90 +126,10 @@ const AppsScreen = ({
     },
   });
 
-  const tokens = listTokens();
-
-  const { installed, apps } = state;
-
-  const found = useMemo(
-    () =>
-      tokens.find(
-        token =>
-          isCurrencySupported(token.parentCurrency) &&
-          (token.name.toLowerCase().includes(query.toLowerCase()) ||
-            token.ticker.toLowerCase().includes(query.toLowerCase())),
-      ),
-    [query, tokens],
-  );
-
-  const parentInstalled = useMemo(
-    () =>
-      found?.parentCurrency &&
-      installed.find(({ name }) => name.toLowerCase() === found.parentCurrency.name.toLowerCase()),
-    [found, installed],
-  );
-
-  const parent = useMemo(
-    () =>
-      found?.parentCurrency &&
-      apps.find(({ name }) => name.toLowerCase() === found.parentCurrency.name.toLowerCase()),
-    [found, apps],
-  );
-
   const renderFooter = useCallback(
     (items?: App[]) => (
       <Flex>
-        {items ? null : found && parent ? (
-          <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
-            <Flex position="relative">
-              <AppIcon app={parent} size={48} radius={100} />
-              <Flex
-                position="absolute"
-                bottom={-2}
-                right={-2}
-                borderWidth={2}
-                borderRadius={100}
-                borderColor="background.main"
-              >
-                <AppIcon app={parent} size={18} radius={100} />
-              </Flex>
-            </Flex>
-            <Text color="neutral.c100" fontWeight="medium" variant="h2" mt={6} textAlign="center">
-              <Trans
-                i18nKey="manager.token.title"
-                values={{
-                  appName: parent.name,
-                }}
-              />
-            </Text>
-            <Flex>
-              <Text
-                color="neutral.c80"
-                fontWeight="medium"
-                variant="body"
-                pt={6}
-                textAlign="center"
-              >
-                {parentInstalled ? (
-                  <Trans
-                    i18nKey="manager.token.noAppNeeded"
-                    values={{
-                      appName: parent.name,
-                      tokenName: found.name,
-                    }}
-                  />
-                ) : (
-                  <Trans
-                    i18nKey="manager.token.installApp"
-                    values={{
-                      appName: parent.name,
-                      tokenName: found.name,
-                    }}
-                  />
-                )}
-              </Text>
-            </Flex>
-          </Flex>
-        ) : (
+        {items ? null : (
           <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
             <NoResultsFound />
             <Text color="neutral.c100" fontWeight="medium" variant="h2" mt={6} textAlign="center">
@@ -241,7 +150,7 @@ const AppsScreen = ({
         )}
       </Flex>
     ),
-    [found, parent, parentInstalled],
+    [],
   );
 
   const renderRow = useCallback(
@@ -411,11 +320,7 @@ const AppsScreen = ({
         render={renderList}
         renderEmptySearch={renderList}
       />
-      <InstalledAppModal
-        disable={update && update.length > 0}
-        state={state}
-        navigation={navigation}
-      />
+      <InstalledAppModal disable={update && update.length > 0} state={state} />
     </Flex>
   );
 };

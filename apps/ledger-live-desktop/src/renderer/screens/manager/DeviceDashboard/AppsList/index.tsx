@@ -1,6 +1,6 @@
 import React, { useState, memo, useCallback, useEffect, useRef } from "react";
 import { useLocation, useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { TFunction } from "i18next";
@@ -26,12 +26,12 @@ import NoResults from "~/renderer/icons/NoResults";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 
 // sticky top bar with extra width to cover card boxshadow underneath
 export const StickyTabBar = styled.div`
   position: sticky;
-  background-color: ${p => p.theme.colors.palette.background.default};
+  background-color: ${p => p.theme.colors.background.default};
   top: -${p => p.theme.space[3]}px;
   left: 0;
   right: 0;
@@ -48,8 +48,8 @@ const FilterHeader = styled.div<{ isIncomplete?: boolean }>`
   padding: 10px 20px;
   margin: 0px;
   align-items: center;
-  background-color: ${p => p.theme.colors.palette.background.paper};
-  box-shadow: 0 1px 0 0 ${p => p.theme.colors.palette.text.shade10};
+  background-color: ${p => p.theme.colors.background.card};
+  box-shadow: 0 1px 0 0 ${p => p.theme.colors.neutral.c30};
   border-radius: 4px 4px 0 0;
   position: sticky;
   top: ${p => (p.isIncomplete ? -p.theme.space[3] : p.theme.sizes.topBarHeight)}px;
@@ -111,7 +111,7 @@ const AppsList = ({
     if (q) setQuery(q);
     if (inputRef.current && inputRef.current && inputRef.current.focus) inputRef.current.focus();
   }, [search]);
-  const { installed: installedApps, uninstallQueue, apps } = state;
+  const { installed: installedApps, uninstallQueue } = state;
   const addAccount = useCallback(
     (currency: CryptoOrTokenCurrency) => {
       push("/accounts");
@@ -185,7 +185,7 @@ const AppsList = ({
       <Card mt={0}>
         {isDeviceTab && !installedApps.length ? (
           <Box pb={6} pt={8} data-testid="manager-no-apps-empty-state">
-            <Box mb={4} mt={5} horizontal color="palette.text.shade30" justifyContent="center">
+            <Box mb={4} mt={5} horizontal color="neutral.c40" justifyContent="center">
               <NoResults />
             </Box>
             <Text textAlign="center" ff="Inter|SemiBold" fontSize={6}>
@@ -229,13 +229,7 @@ const AppsList = ({
             {displayedAppList.length ? (
               displayedAppList.map((app: App) => mapApp(app, !isDeviceTab))
             ) : (
-              <Placeholder
-                query={query}
-                addAccount={addAccount}
-                dispatch={dispatch}
-                installed={installedApps}
-                apps={apps}
-              />
+              <Placeholder />
             )}
           </>
         )}

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Provider, useSelector } from "react-redux";
+import { Provider } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Store } from "redux";
 import { HashRouter as Router } from "react-router-dom";
-import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-desktop";
 import "./global.css";
@@ -29,12 +28,12 @@ import { themeSelector } from "./actions/general";
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
-import { StorylyProvider } from "~/storyly/StorylyProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import { allowDebugReactQuerySelector } from "./reducers/settings";
+import { ThemeProvider } from "@ledgerhq/lumen-ui-react";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -68,49 +67,47 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
 
   return (
     <StyleProvider selectedPalette={selectedPalette}>
-      <ThrowBlock
-        onError={() => {
-          if (!__DEV__) {
-            setReloadEnabled(false);
-          }
-        }}
-      >
-        <FirebaseRemoteConfigProvider>
-          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-            <ConnectEnvsToSentry />
-            <UpdaterProvider>
-              <AppDataStorageProvider>
-                <DeviceManagementKitProvider>
-                  <CountervaluesMarketcapBridgedProvider>
-                    <CountervaluesBridgedProvider initialState={initialCountervalues}>
-                      <ToastProvider>
-                        <AnnouncementProviderWrapper>
-                          <Router>
-                            <PostOnboardingProviderWrapped>
-                              <PlatformAppProviderWrapper>
-                                <DrawerProvider>
-                                  <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                                    <StorylyProvider>
-                                      <QueryClientProvider client={queryClient}>
-                                        <Default />
-                                        <ReactQueryDevtoolsProvider />
-                                      </QueryClientProvider>
-                                    </StorylyProvider>
-                                  </NftMetadataProvider>
-                                </DrawerProvider>
-                              </PlatformAppProviderWrapper>
-                            </PostOnboardingProviderWrapped>
-                          </Router>
-                        </AnnouncementProviderWrapper>
-                      </ToastProvider>
-                    </CountervaluesBridgedProvider>
-                  </CountervaluesMarketcapBridgedProvider>
-                </DeviceManagementKitProvider>
-              </AppDataStorageProvider>
-            </UpdaterProvider>
-          </FirebaseFeatureFlagsProvider>
-        </FirebaseRemoteConfigProvider>
-      </ThrowBlock>
+      <ThemeProvider defaultMode={selectedPalette}>
+        <ThrowBlock
+          onError={() => {
+            if (!__DEV__) {
+              setReloadEnabled(false);
+            }
+          }}
+        >
+          <FirebaseRemoteConfigProvider>
+            <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+              <ConnectEnvsToSentry />
+              <UpdaterProvider>
+                <AppDataStorageProvider>
+                  <DeviceManagementKitProvider>
+                    <CountervaluesMarketcapBridgedProvider>
+                      <CountervaluesBridgedProvider initialState={initialCountervalues}>
+                        <ToastProvider>
+                          <AnnouncementProviderWrapper>
+                            <Router>
+                              <PostOnboardingProviderWrapped>
+                                <PlatformAppProviderWrapper>
+                                  <DrawerProvider>
+                                    <QueryClientProvider client={queryClient}>
+                                      <Default />
+                                      <ReactQueryDevtoolsProvider />
+                                    </QueryClientProvider>
+                                  </DrawerProvider>
+                                </PlatformAppProviderWrapper>
+                              </PostOnboardingProviderWrapped>
+                            </Router>
+                          </AnnouncementProviderWrapper>
+                        </ToastProvider>
+                      </CountervaluesBridgedProvider>
+                    </CountervaluesMarketcapBridgedProvider>
+                  </DeviceManagementKitProvider>
+                </AppDataStorageProvider>
+              </UpdaterProvider>
+            </FirebaseFeatureFlagsProvider>
+          </FirebaseRemoteConfigProvider>
+        </ThrowBlock>
+      </ThemeProvider>
     </StyleProvider>
   );
 };

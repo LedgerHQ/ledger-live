@@ -10,12 +10,11 @@ import {
 } from "../types";
 import { TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
-import { getCryptoAssetsStore } from "../cryptoAssetsStore";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
-export function tokenIsListedOnLedger(currencyId: string, mint: string): boolean {
-  return (
-    getCryptoAssetsStore().findTokenByAddressInCurrency(mint, currencyId)?.type === "TokenCurrency"
-  );
+export async function tokenIsListedOnLedger(currencyId: string, mint: string): Promise<boolean> {
+  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(mint, currencyId);
+  return token?.type === "TokenCurrency";
 }
 
 export function isTokenAccountFrozen(account: AccountLike): boolean {

@@ -10,6 +10,7 @@ export interface WebviewTag extends Electron.WebviewTag {
 export type WebviewLoader = React.ComponentType<{
   manifest: LiveAppManifest;
   isLoading: boolean;
+  description?: string;
 }>;
 
 export type WebviewProps = {

@@ -155,14 +155,14 @@ describe("SUI SDK Integration tests", () => {
         recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
         errors: {},
       };
-      const tx = await createTransaction(address, transaction);
+      const { unsigned: tx } = await createTransaction(address, transaction);
       expect(tx).toBeInstanceOf(Uint8Array);
     });
   });
 
   describe("paymentInfo", () => {
     test("paymentInfo should return gas budget and fees", async () => {
-      const sender = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+      const sender = "0xad79719ac7edb44f6e253f1f771e8291e281a6aaf1e4789b52bf85336f525e8e";
       const fakeTransaction = {
         mode: "send" as const,
         family: "sui" as const,
@@ -220,9 +220,9 @@ describe("SUI SDK Integration tests", () => {
   });
 
   describe("getStakes", () => {
-    test("Account 0xea438b6ce07762ea61e04af4d405dfcf197d5f77d30765f365f75460380f3cce", async () => {
+    test("Account 0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d", async () => {
       const stakes = await getStakes(
-        "0xea438b6ce07762ea61e04af4d405dfcf197d5f77d30765f365f75460380f3cce",
+        "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
       );
       expect(stakes.length).toBeGreaterThan(0);
       stakes.forEach(stake => {

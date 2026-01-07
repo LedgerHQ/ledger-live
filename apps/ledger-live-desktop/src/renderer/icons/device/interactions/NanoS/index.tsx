@@ -19,10 +19,9 @@ const DeviceContainer = styled.div.attrs((p: { width?: number; height?: number }
 `;
 const DeviceSVG = styled.svg`
   overflow: visible;
-
-  .device {
-    transition: transform ease-in-out 700ms;
-  }
+`;
+const DeviceGroup = styled.g`
+  transition: transform ease-in-out 700ms;
 `;
 type Props = {
   open?: boolean;
@@ -37,7 +36,7 @@ type Props = {
 const NanoS = ({ xOffset = 0, open, usb, leftHint, rightHint, screen, angle, error }: Props) => (
   <DeviceContainer>
     <DeviceSVG width="131px" height="44px" viewBox="0 0 131 44">
-      <g className="device" transform={`translate(${xOffset || open ? -45 : 0}, 0)`}>
+      <DeviceGroup transform={`translate(${xOffset || open ? -45 : 0}, 0)`}>
         <USBCable x="-112" y="12" active={open && !!usb} state={usb} />
         <Frame
           error={error}
@@ -51,7 +50,7 @@ const NanoS = ({ xOffset = 0, open, usb, leftHint, rightHint, screen, angle, err
           <Screen error={error} active={!!screen} display={screen} x="16" y="50%" />
           <Swivel angle={open ? angle || 180 : 0} />
         </Frame>
-      </g>
+      </DeviceGroup>
     </DeviceSVG>
   </DeviceContainer>
 );

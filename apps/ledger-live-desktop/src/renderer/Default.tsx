@@ -2,7 +2,7 @@ import React, { useEffect, lazy, Suspense } from "react";
 import styled from "styled-components";
 import { ipcRenderer } from "electron";
 import { Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { LiveApp } from "~/renderer/screens/platform";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
@@ -22,10 +22,10 @@ import MainSideBar from "~/renderer/components/MainSideBar";
 import TriggerAppReady from "~/renderer/components/TriggerAppReady";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import DebugUpdater from "~/renderer/components/debug/DebugUpdater";
-import DebugTheme from "~/renderer/components/debug/DebugTheme";
 import DebugFirmwareUpdater from "~/renderer/components/debug/DebugFirmwareUpdater";
 import Page from "~/renderer/components/Page";
 import AnalyticsConsole from "~/renderer/components/AnalyticsConsole";
+import ThemeConsole from "~/renderer/components/ThemeConsole";
 import DebugMock from "~/renderer/components/debug/DebugMock";
 import DebugSkeletons from "~/renderer/components/debug/DebugSkeletons";
 import { DisableTransactionBroadcastWarning } from "~/renderer/components/debug/DisableTransactionBroadcastWarning";
@@ -51,6 +51,7 @@ import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreO
 import {
   hasCompletedOnboardingSelector,
   hasSeenAnalyticsOptInPromptSelector,
+  areSettingsLoaded,
 } from "~/renderer/reducers/settings";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -60,6 +61,10 @@ import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
+import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
+import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
+import { ModularDialogRoot } from "LLD/features/ModularDialog/ModularDialogRoot";
+import { SendFlowRoot } from "LLD/features/Send/SendFlowRoot";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -69,6 +74,7 @@ const Card = lazy(() => import("~/renderer/screens/card"));
 const Manager = lazy(() => import("~/renderer/screens/manager"));
 const Exchange = lazy(() => import("~/renderer/screens/exchange"));
 const Earn = lazy(() => import("~/renderer/screens/earn"));
+const Bank = lazy(() => import("~/renderer/screens/bank"));
 const SwapWeb = lazy(() => import("~/renderer/screens/swapWeb"));
 const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
 
@@ -80,10 +86,6 @@ const WelcomeScreenSettings = lazy(
 const SyncOnboarding = lazy(() => import("./components/SyncOnboarding"));
 const RecoverPlayer = lazy(() => import("~/renderer/screens/recover/Player"));
 
-const NFTGallery = lazy(() => import("~/renderer/screens/nft/Gallery"));
-const NFTGalleryNew = lazy(() => import("LLD/features/Collectibles/Nfts/screens/Gallery"));
-const NFTCollection = lazy(() => import("~/renderer/screens/nft/Gallery/Collection"));
-const NFTCollectionNew = lazy(() => import("LLD/features/Collectibles/Nfts/screens/Collection"));
 const RecoverRestore = lazy(() => import("~/renderer/components/RecoverRestore"));
 const Onboarding = lazy(() => import("~/renderer/components/Onboarding"));
 const PostOnboardingScreen = lazy(() => import("~/renderer/components/PostOnboardingScreen"));
@@ -194,13 +196,17 @@ export default function Default() {
   const { pathname } = location;
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const areSettingsLoadedSelector = useSelector(areSettingsLoaded);
   const accounts = useSelector(accountsSelector);
   const analyticsConsoleActive = useEnv("ANALYTICS_CONSOLE");
+  const themeConsoleActive = useEnv("DEBUG_THEME");
   const providerNumber = useEnv("FORCE_PROVIDER");
-  const ldmkFeatureFlag = useFeature("ldmkTransport");
-  const dmk = useDeviceManagementKit();
+  const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
 
-  useAccountsWithFundsListener(accounts, updateIdentify);
+  const dmk = useDeviceManagementKit();
+  const checkAccountsWithFunds = useCheckAccountWithFunds();
+
+  useAccountsWithFundsListener(accounts, updateIdentify, checkAccountsWithFunds);
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
@@ -212,18 +218,23 @@ export default function Default() {
 
   const analyticsFF = useFeature("lldAnalyticsOptInPrompt");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
-  const nftReworked = useFeature("lldNftsGalleryNewArch");
   const isLocked = useSelector(isLockedSelector);
   const dispatch = useDispatch();
-  const isNftReworkedEnabled = nftReworked?.enabled;
 
   useEffect(() => {
-    if (providerNumber && ldmkFeatureFlag?.enabled) {
+    if (typeof ldmkSolanaSignerFeatureFlag?.enabled === "boolean") {
+      setSolanaLdmkEnabled(ldmkSolanaSignerFeatureFlag?.enabled);
+    }
+  }, [ldmkSolanaSignerFeatureFlag]);
+
+  useEffect(() => {
+    // WebHID is now always enabled, set provider if specified
+    if (providerNumber) {
       dmk?.setProvider(providerNumber);
     }
     // setting provider only at initialisation
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ldmkFeatureFlag, dmk]);
+  }, [dmk]);
 
   useEffect(() => {
     if (
@@ -239,16 +250,32 @@ export default function Default() {
   }, [isLocked]);
 
   useEffect(() => {
+    if (!areSettingsLoadedSelector) {
+      return;
+    }
+
+    const wasHardReset = window.localStorage.getItem("hard-reset") === "1";
+
+    // If we just did a hard reset and onboarding is not completed, force redirect to onboarding
+    // even if we're on the settings page (where the reset button is)
+    if (wasHardReset && !hasCompletedOnboarding) {
+      history.replace("/onboarding");
+      window.localStorage.removeItem("hard-reset");
+      updateIdentify();
+      return;
+    }
+
+    // Normal onboarding check (when not after a reset)
     const userIsOnboardingOrSettingUp =
       pathname.includes("onboarding") ||
       pathname.includes("recover") ||
       pathname.includes("settings");
 
     if (!userIsOnboardingOrSettingUp && !hasCompletedOnboarding) {
-      history.push("/onboarding");
+      history.replace("/onboarding");
     }
     updateIdentify();
-  }, [history, pathname, hasCompletedOnboarding]);
+  }, [history, pathname, hasCompletedOnboarding, areSettingsLoadedSelector]);
 
   return (
     <>
@@ -265,7 +292,6 @@ export default function Default() {
                 <ContextMenuWrapper>
                   <ModalsLayer />
                   <DebugWrapper>
-                    {process.env.DEBUG_THEME ? <DebugTheme /> : null}
                     {process.env.MOCK ? <DebugMock /> : null}
                     {process.env.DEBUG_UPDATE ? <DebugUpdater /> : null}
                     {process.env.DEBUG_SKELETONS ? <DebugSkeletons /> : null}
@@ -276,6 +302,8 @@ export default function Default() {
                       value={process.env.DISABLE_TRANSACTION_BROADCAST}
                     />
                   ) : null}
+                  <ModularDialogRoot />
+                  <SendFlowRoot />
                   <Switch>
                     <Route
                       path="/onboarding"
@@ -327,8 +355,8 @@ export default function Default() {
                             <Box
                               grow
                               horizontal
-                              bg="palette.background.default"
-                              color="palette.text.shade60"
+                              bg="background.default"
+                              color="neutral.c70"
                               style={{
                                 width: "100%",
                                 height: "100%",
@@ -368,20 +396,9 @@ export default function Default() {
                                     path="/exchange/:appId?"
                                     render={withSuspense(Exchange)}
                                   />
-                                  <Route
-                                    exact
-                                    path="/account/:id/nft-collection"
-                                    render={withSuspense(
-                                      isNftReworkedEnabled ? NFTGalleryNew : NFTGallery,
-                                    )}
-                                  />
+
                                   <Route path="/swap-web" render={withSuspense(SwapWeb)} />
-                                  <Route
-                                    path="/account/:id/nft-collection/:collectionAddress?"
-                                    render={withSuspense(
-                                      isNftReworkedEnabled ? NFTCollectionNew : NFTCollection,
-                                    )}
-                                  />
+
                                   <Route
                                     path="/account/:parentId/:id"
                                     render={withSuspense(Account)}
@@ -394,6 +411,7 @@ export default function Default() {
                                     render={withSuspense(MarketCoin)}
                                   />
                                   <Route path="/market" render={withSuspense(Market)} />
+                                  <Route path="/bank" render={withSuspense(Bank)} />
                                 </Switch>
                               </Page>
                               <Drawer />
@@ -428,6 +446,7 @@ export default function Default() {
       </AppGeoBlocker>
 
       {analyticsConsoleActive ? <AnalyticsConsole /> : null}
+      {themeConsoleActive || process.env.DEBUG_THEME ? <ThemeConsole /> : null}
     </>
   );
 }

@@ -1,15 +1,39 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
-import { adaptCoreOperationToLiveOperation, extractBalance } from "./utils";
+import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
-import { buildSubAccounts, OperationCommon } from "./buildSubAccounts";
+import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
+import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
+import type { OperationCommon } from "./types";
+import type { Account } from "@ledgerhq/types-live";
+
+function isNftCoreOp(operation: Operation): boolean {
+  return (
+    typeof operation.details?.ledgerOpType === "string" &&
+    ["NFT_IN", "NFT_OUT"].includes(operation.details?.ledgerOpType)
+  );
+}
+
+function isIncomingCoreOp(operation: Operation): boolean {
+  const type =
+    typeof operation.details?.ledgerOpType === "string"
+      ? operation.details.ledgerOpType
+      : operation.type;
+
+  return type === "IN";
+}
+
+function isInternalLiveOp(operation: OperationCommon): boolean {
+  return !!operation.extra?.internal;
+}
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
     const { address, initialAccount, currency, derivationMode } = info;
-    const alpacaApi = getAlpacaApi(network, kind);
+    const alpacaApi = getAlpacaApi(currency.id, kind);
 
     if (alpacaApi.getChainSpecificRules) {
       const chainSpecificValidation = alpacaApi.getChainSpecificRules();
@@ -30,59 +54,78 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const balanceRes = await alpacaApi.getBalance(address);
     const nativeAsset = extractBalance(balanceRes, "native");
 
-    const assetsBalance = balanceRes
-      .filter(b => b.asset.type !== "native")
-      .filter(b => alpacaApi.getTokenFromAsset && alpacaApi.getTokenFromAsset(b.asset));
+    const allTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
     const nativeBalance = BigInt(nativeAsset?.value ?? "0");
 
     const spendableBalance = BigInt(nativeBalance - BigInt(nativeAsset?.locked ?? "0"));
 
-    const oldOps = (initialAccount?.operations || []) as OperationCommon[];
+    // Normalize pre-alpaca operations to the new accountId to keep UI rendering consistent
+    const oldOps = ((initialAccount?.operations || []) as OperationCommon[]).map(op =>
+      op.accountId === accountId
+        ? op
+        : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
+    );
     const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
+    const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
+    const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
 
-    const blockHeight = oldOps.length ? (oldOps[0].blockHeight ?? 0) + 1 : 0;
-    const paginationParams: any = { minHeight: blockHeight, order: "asc" };
-    if (lastPagingToken) {
+    // Calculate minHeight for pagination
+    const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
+    const paginationParams: Pagination = { minHeight, order: "desc" };
+    if (lastPagingToken && !syncFromScratch) {
       paginationParams.lastPagingToken = lastPagingToken;
     }
 
     const [newCoreOps] = await alpacaApi.listOperations(address, paginationParams);
-    const newOps = newCoreOps.map(op =>
-      adaptCoreOperationToLiveOperation(accountId, op),
-    ) as OperationCommon[];
-    const mergedOps = mergeOps(oldOps, newOps) as OperationCommon[];
+    const newOps = newCoreOps
+      .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
+      .map(op => adaptCoreOperationToLiveOperation(accountId, op)) as OperationCommon[];
 
-    const assetOperations: OperationCommon[] = [];
-    mergedOps.forEach(operation => {
-      if (
+    const newAssetOperations = newOps.filter(
+      operation =>
         operation?.extra?.assetReference &&
         operation?.extra?.assetOwner &&
-        !["OPT_IN", "OPT_OUT"].includes(operation.type)
-      ) {
-        assetOperations.push(operation);
-      }
+        !["OPT_IN", "OPT_OUT"].includes(operation.type),
+    );
+    const newInternalOperations = newOps.filter(isInternalLiveOp);
+    const newSubAccounts = await buildSubAccounts({
+      accountId,
+      allTokenAssetsBalances,
+      syncConfig,
+      operations: newAssetOperations,
+      getTokenFromAsset: alpacaApi.getTokenFromAsset,
     });
+    const subAccounts = syncFromScratch
+      ? newSubAccounts
+      : mergeSubAccounts(initialAccount?.subAccounts ?? [], newSubAccounts);
 
-    const subAccounts =
-      buildSubAccounts({
-        currency,
-        accountId,
-        assetsBalance,
-        syncConfig,
-        operations: assetOperations,
-        getTokenFromAsset: alpacaApi.getTokenFromAsset,
-      }) || [];
+    const newOpsWithSubs = newOps
+      .filter(operation => !isInternalLiveOp(operation))
+      .map(op => {
+        const subOperations = inferSubOperations(op.hash, newSubAccounts);
+        const internalOperations = newInternalOperations.filter(it => it.hash === op.hash);
 
-    const operations = mergedOps.map(op => {
-      const subOperations = inferSubOperations(op.hash, subAccounts);
+        return cleanedOperation({
+          ...op,
+          subOperations,
+          internalOperations,
+        });
+      });
+    // Try to refresh known pending and broadcasted operations (if not already updated)
+    // Useful for integrations without explorers
+    const operationsToRefresh = initialAccount?.pendingOperations.filter(
+      pendingOp =>
+        pendingOp.hash && // operation has been broadcasted
+        !newOpsWithSubs.some(newOp => pendingOp.hash === newOp.hash), // operation is not confirmed yet
+    );
+    const confirmedOperations =
+      alpacaApi.refreshOperations && operationsToRefresh?.length
+        ? await alpacaApi.refreshOperations(operationsToRefresh)
+        : [];
+    const newOperations = [...confirmedOperations, ...newOpsWithSubs];
+    const operations = mergeOps(syncFromScratch ? [] : oldOps, newOperations) as OperationCommon[];
 
-      return {
-        ...op,
-        subOperations,
-      };
-    });
-
-    const res = {
+    const res: Partial<Account> = {
       id: accountId,
       xpub: address,
       blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
@@ -91,6 +134,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       operations,
       subAccounts,
       operationsCount: operations.length,
+      syncHash,
     };
     return res;
   };

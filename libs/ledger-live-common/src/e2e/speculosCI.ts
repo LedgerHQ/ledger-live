@@ -7,7 +7,7 @@ import {
 import { SpeculosDevice } from "./speculos";
 import https from "https";
 
-const { SEED, GITHUB_TOKEN, AWS_ROLE, CLUSTER } = process.env;
+const { GITHUB_TOKEN, SPECULOS_IMAGE_TAG } = process.env;
 const GIT_API_URL = "https://api.github.com/repos/LedgerHQ/actions/actions/";
 const START_WORKFLOW_ID = "workflows/161487603/dispatches";
 const STOP_WORKFLOW_ID = "workflows/161487604/dispatches";
@@ -147,13 +147,11 @@ function createStartPayload(deviceParams: DeviceParams, runId: string) {
   return {
     ref: GITHUB_REF,
     inputs: {
+      speculos_version: SPECULOS_IMAGE_TAG?.split(":")[1] || "master",
       coin_app: appName,
       coin_app_version: appVersion,
       device: reverseModelMap[model],
       device_os_version: firmware,
-      aws_role: AWS_ROLE,
-      cluster: CLUSTER,
-      seed: SEED,
       run_id: runId,
       additional_args,
     },
@@ -170,6 +168,8 @@ export async function createSpeculosDeviceCI(
     return {
       id: runId,
       port: speculosPort,
+      appName: deviceParams.appName,
+      appVersion: deviceParams.appVersion,
     };
   } catch (e: unknown) {
     console.warn(
@@ -178,6 +178,8 @@ export async function createSpeculosDeviceCI(
     return {
       id: runId,
       port: 0,
+      appName: deviceParams.appName,
+      appVersion: deviceParams.appVersion,
     };
   }
 }
@@ -187,8 +189,6 @@ export async function releaseSpeculosDeviceCI(runId: string) {
     ref: GITHUB_REF,
     inputs: {
       run_id: runId.toString(),
-      aws_role: AWS_ROLE,
-      cluster: CLUSTER,
     },
   };
   await githubApiRequest({ urlSuffix: STOP_WORKFLOW_ID, data });

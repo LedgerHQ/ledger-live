@@ -5,58 +5,64 @@ import Button from "~/renderer/components/Button";
 import { CurrencyCircleIcon } from "~/renderer/components/CurrencyBadge";
 import { StepProps } from "../types";
 
-export default function StepFinish({ t, currency, selectedAccounts }: StepProps) {
+const StepFinish = ({
+  t,
+  currency,
+  creatableAccount,
+  importableAccounts,
+  isReonboarding,
+}: StepProps) => {
+  const accounts = [...importableAccounts, creatableAccount];
+
   return (
-    <Box alignItems="center" py={6}>
-      {currency ? <CurrencyCircleIcon currency={currency} size={50} showCheckmark /> : null}
+    <Box alignItems="center" py={6} role="status" aria-live="polite">
+      <CurrencyCircleIcon
+        currency={currency}
+        size={50}
+        showCheckmark
+        aria-label={`${currency.name} account created successfully`}
+      />
       <Title>
-        {t("addAccounts.success", {
-          count: selectedAccounts.length,
-        })}
+        {isReonboarding
+          ? t("families.canton.addAccount.reonboard.success")
+          : t("addAccounts.success", { count: accounts.length })}
       </Title>
       <Text>
-        {t("addAccounts.successDescription", {
-          count: selectedAccounts.length,
-        })}
+        {isReonboarding
+          ? t("families.canton.addAccount.reonboard.successDescription")
+          : t("addAccounts.successDescription", { count: accounts.length })}
       </Text>
     </Box>
   );
-}
+};
 
-export const StepFinishFooter = ({
-  t,
-  currency: _currency,
-  closeModal: _closeModal,
-  onAccountCreated,
-  onboardingData,
-}: StepProps) => {
-  const onGoStep1 = () => {
-    console.log("[StepFinish] Add Account clicked, calling onAccountCreated");
-    const completedAccount = onboardingData?.completedAccount;
-    if (completedAccount) {
-      onAccountCreated(completedAccount);
-    } else {
-      console.error("[StepFinish] No completed account found in modal state");
-    }
-  };
-
+export const StepFinishFooter = ({ t, onAddAccounts, onAddMore, isReonboarding }: StepProps) => {
   return (
-    <Box horizontal alignItems="center" justifyContent="space-between" grow>
+    <Box
+      horizontal
+      alignItems="center"
+      justifyContent={isReonboarding ? "flex-end" : "space-between"}
+      grow
+    >
+      {!isReonboarding && (
+        <Button
+          event="Page AddAccounts Step 4 AddMore"
+          data-testid="add-accounts-finish-add-more-button"
+          outlineGrey
+          onClick={onAddMore}
+          aria-label="Add more Canton accounts"
+        >
+          {t("addAccounts.cta.addMore")}
+        </Button>
+      )}
       <Button
-        event="Page AddAccounts Step 4 AddMore"
-        data-testid={"add-accounts-finish-add-more-button"}
-        outlineGrey
-        onClick={onGoStep1}
-      >
-        {t("addAccounts.cta.addMore")}
-      </Button>
-      <Button
-        event="Page AddAccounts Step 4 AddMore"
-        data-testid={"add-accounts-finish-close-button"}
+        event="Page AddAccounts Step 4 Close"
+        data-testid="add-accounts-finish-close-button"
         primary
-        onClick={onAccountCreated}
+        onClick={onAddAccounts}
+        aria-label="Complete Canton account setup"
       >
-        {t("common.done")}
+        {isReonboarding ? t("common.continue") : t("common.done")}
       </Button>
     </Box>
   );
@@ -66,7 +72,7 @@ const Title = styled(Box).attrs(() => ({
   ff: "Inter",
   fontSize: 5,
   mt: 2,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))`
   text-align: center;
 `;
@@ -78,3 +84,5 @@ const Text = styled(Box).attrs(() => ({
 }))`
   text-align: center;
 `;
+
+export default StepFinish;

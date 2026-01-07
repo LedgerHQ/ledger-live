@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 import { ScreenName } from "~/const";
@@ -11,6 +11,7 @@ import { useMarket } from "../../hooks/useMarket";
 import { getCurrentPage, isDataStale } from "../../utils";
 import { ViewToken } from "react-native";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
+import { useQueryClient } from "@tanstack/react-query";
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>
 >;
@@ -26,6 +27,7 @@ export const viewabilityConfig = {
 function useMarketListViewModel() {
   const llmRefreshMarketDataFeature = useFeature("llmRefreshMarketData");
   const { params } = useRoute<NavigationProps["route"]>();
+  const queryClient = useQueryClient();
 
   const REFRESH_RATE =
     Number(llmRefreshMarketDataFeature?.params?.refreshTime) > 0
@@ -41,7 +43,7 @@ function useMarketListViewModel() {
     starredMarketCoins,
     filterByStarredCurrencies,
     marketCurrentPage,
-    refresh,
+    updateMarketParams,
   } = useMarket();
 
   const { search, counterCurrency, range } = marketParams;
@@ -61,7 +63,7 @@ function useMarketListViewModel() {
 
   useEffect(() => {
     if (initialTop100) {
-      refresh({
+      updateMarketParams({
         limit: 100,
         starred: [],
         order: Order.MarketCapDesc,
@@ -69,7 +71,7 @@ function useMarketListViewModel() {
         liveCompatible: false,
       });
     }
-  }, [initialTop100, refresh]);
+  }, [initialTop100, updateMarketParams]);
 
   const onEndReached = useCallback(() => {
     dispatch(setMarketRequestParams({ page: (marketParams?.page || 1) + 1 }));
@@ -82,13 +84,23 @@ function useMarketListViewModel() {
 
   const refetchData = useCallback(
     (pageToRefetch: number) => {
-      const elem = marketResult.cachedMetadataMap.get(String(pageToRefetch - 1 ?? 0));
+      const elem = marketResult.cachedMetadataMap.get(String(pageToRefetch - 1));
       if (elem && isDataStale(elem.updatedAt, REFRESH_RATE)) {
         elem.refetch();
       }
     },
     [marketResult.cachedMetadataMap, REFRESH_RATE],
   );
+
+  const refetchAllPages = useCallback(() => {
+    marketResult.cachedMetadataMap.forEach(({ refetch }) => {
+      refetch();
+    });
+
+    // Also invalidate individual currency data to ensure detail screens show fresh data
+    queryClient.invalidateQueries({ queryKey: ["CurrencyDataRaw"] });
+    queryClient.invalidateQueries({ queryKey: ["CurrencyChartData"] });
+  }, [marketResult.cachedMetadataMap, queryClient]);
 
   const checkIfDataIsStaleAndRefetch = useCallback(
     (indexPosition: number) => {
@@ -106,7 +118,7 @@ function useMarketListViewModel() {
   const onViewableItemsChanged = ({ viewableItems }: { viewableItems: ViewToken[] }) => {
     const lastVisible = viewableItems.map((elem: ViewToken) => elem.index).at(-1);
     if (lastVisible) {
-      checkIfDataIsStaleAndRefetch(Number(lastVisible) + 2 ?? 0);
+      checkIfDataIsStaleAndRefetch(Number(lastVisible) + 2);
     }
   };
   const viewabilityConfigCallbackPairs = useRef([{ onViewableItemsChanged, viewabilityConfig }]);
@@ -123,12 +135,13 @@ function useMarketListViewModel() {
     filterByStarredCurrencies,
     starredMarketCoins,
     search,
-    loading: marketResult.isLoading,
-    refresh,
+    loading: marketResult.isFetching,
+    updateMarketParams,
     counterCurrency,
     range,
     onEndReached,
     refetchData,
+    refetchAllPages,
     refreshRate: REFRESH_RATE,
     marketCurrentPage,
     checkIfDataIsStaleAndRefetch,

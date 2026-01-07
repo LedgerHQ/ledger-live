@@ -1,24 +1,14 @@
-import * as legacyTokens from "@ledgerhq/cryptoassets/tokens";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { setCryptoAssetsStoreGetter } from "../../cryptoAssetsStore";
 
 /*
- * TODO change implementation when new CryptoAssesStore implemented with DADA
+ * Setup a mock CryptoAssetsStore for tests
  */
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStoreForCoinFramework({
-  findTokenById: legacyTokens.findTokenById,
-  findTokenByAddressInCurrency: legacyTokens.findTokenByAddressInCurrency,
-} as CryptoAssetsStore);
+const mockStore: CryptoAssetsStore = {
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+};
 
-setCryptoAssetsStoreGetter(
-  () =>
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    ({
-      findTokenById: legacyTokens.findTokenById,
-      findTokenByAddressInCurrency: legacyTokens.findTokenByAddressInCurrency,
-      findTokenByAddress: legacyTokens.findTokenByAddress,
-    }) as CryptoAssetsStore,
-);
+setCryptoAssetsStore(mockStore);

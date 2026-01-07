@@ -1,22 +1,25 @@
-import "@testing-library/react-native/extend-expect";
 import "react-native-gesture-handler/jestSetup";
 import "@shopify/flash-list/jestSetup";
 import "@mocks/console";
-import { ALLOWED_UNHANDLED_REQUESTS } from "./handlers";
 import { server } from "./server";
 import { NativeModules } from "react-native";
+import mockSafeAreaContext from "react-native-safe-area-context/jest/mock";
+import mockRNCNetInfo from "@react-native-community/netinfo/jest/netinfo-mock.js";
+import mockGorhomBottomSheet from "@gorhom/bottom-sheet/mock";
+import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
+import mockLocalize from "react-native-localize/mock";
+import { EventEmitter } from "events";
+
+// Disable max listeners warning for MSW (known issue with multiple tests)
+EventEmitter.defaultMaxListeners = 0;
+
 // Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/3.x/guides/testing#timers
 jest.useFakeTimers();
 jest.runAllTimers();
 
 beforeAll(() =>
   server.listen({
-    onUnhandledRequest(request, print) {
-      if (ALLOWED_UNHANDLED_REQUESTS.some(ignoredUrl => request.url.includes(ignoredUrl))) {
-        return;
-      }
-      print.warning();
-    },
+    onUnhandledRequest: "bypass",
   }),
 );
 afterEach(() => server.resetHandlers());
@@ -24,21 +27,37 @@ afterAll(() => server.close());
 
 NativeModules.RNAnalytics = {};
 
-const mockAnalytics = jest.genMockFromModule("@segment/analytics-react-native");
+const mockAnalytics = jest.createMockFromModule("@segment/analytics-react-native");
 
 // Overriding the default RNGH mocks
 // to replace TouchableNativeFeedback with TouchableOpacity
 // as the former breaks tests trying to press buttons
 jest.mock("react-native-gesture-handler", () => {
-  const TouchableOpacity = require("react-native").TouchableOpacity;
+  const RN = require("react-native");
+  const RNGH = jest.requireActual("react-native-gesture-handler");
+  const TouchableOpacity = RN.TouchableOpacity;
+  const ScrollView = RN.ScrollView;
+
   return {
-    ...require("react-native-gesture-handler/lib/commonjs/mocks").default,
+    ...RNGH,
+    TouchableOpacity,
+    TouchableWithoutFeedback: TouchableOpacity,
+    ScrollView,
+    Pressable: TouchableOpacity,
     RawButton: TouchableOpacity,
     BaseButton: TouchableOpacity,
     RectButton: TouchableOpacity,
     BorderlessButton: TouchableOpacity,
   };
 });
+
+jest.mock("react-native-gesture-handler/ReanimatedSwipeable");
+
+jest.mock("react-native-haptic-feedback", () => ({
+  default: {
+    trigger: jest.fn(),
+  },
+}));
 
 jest.mock("@segment/analytics-react-native", () => mockAnalytics);
 
@@ -52,26 +71,31 @@ jest.mock("react-native-share", () => ({
   default: jest.fn(),
 }));
 
-const mockPermissions = {
-  status: "granted",
-  expires: "never",
-  canAskAgain: true,
-  granted: true,
-};
-
 export const mockSimulateBarcodeScanned = jest.fn();
+export const mockGetCameraPermissionStatus = jest.fn(() => "granted");
 
-jest.mock("expo-camera", () => {
+jest.mock("react-native-vision-camera", () => {
+  const CameraMock = jest.fn(({ codeScanner }) => {
+    if (codeScanner?.onCodeScanned) {
+      mockSimulateBarcodeScanned.mockImplementation(code => {
+        codeScanner.onCodeScanned([code]);
+      });
+    }
+    return null;
+  });
+  CameraMock.getCameraPermissionStatus = mockGetCameraPermissionStatus;
+
   return {
-    CameraView: jest.fn(({ onBarcodeScanned }) => {
-      mockSimulateBarcodeScanned.mockImplementation(onBarcodeScanned);
-      return null;
-    }),
-    useCameraPermissions: jest.fn(() => [
-      mockPermissions,
-      jest.fn(() => Promise.resolve(mockPermissions)),
-      jest.fn(() => Promise.resolve(mockPermissions)),
-    ]),
+    Camera: CameraMock,
+    useCameraPermission: jest.fn(() => ({
+      hasPermission: true,
+      requestPermission: jest.fn(() => Promise.resolve(true)),
+    })),
+    useCameraDevice: jest.fn(() => ({
+      id: "mock-camera-device",
+      position: "back",
+    })),
+    useCodeScanner: jest.fn(config => config),
   };
 });
 
@@ -90,23 +114,25 @@ jest.mock("~/analytics/segment", () => ({
 }));
 
 // Mock of Native Modules
-jest.mock("react-native-localize", () => ({
-  getTimeZone: jest.fn(),
-  getLocales: jest.fn(),
-  getNumberFormatSettings: jest.fn(),
-  getCalendar: jest.fn(),
-  getCountry: jest.fn(),
-  getTemperatureUnit: jest.fn(),
-  getFirstWeekDay: jest.fn(),
-  uses24HourClock: jest.fn(),
-  findBestAvailableLanguage: jest.fn(),
-}));
+jest.mock("react-native-localize", () => mockLocalize);
 
-jest.mock("@react-native-async-storage/async-storage", () =>
-  require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
-);
+jest.mock("react-redux", () => {
+  const actual = jest.requireActual("react-redux");
+  const withTypesSupport = hook => {
+    hook.withTypes = () => hook;
+    return hook;
+  };
+  return {
+    ...actual,
+    useDispatch: withTypesSupport(actual.useDispatch),
+    useSelector: withTypesSupport(actual.useSelector),
+    useStore: withTypesSupport(actual.useStore),
+  };
+});
 
-jest.mock("@gorhom/bottom-sheet", () => require("@gorhom/bottom-sheet/mock"));
+jest.mock("@react-native-async-storage/async-storage", () => mockAsyncStorage);
+
+jest.mock("@gorhom/bottom-sheet", () => mockGorhomBottomSheet);
 
 jest.mock("react-native-version-number", () => ({
   appVersion: "1.0.0",
@@ -117,11 +143,11 @@ jest.mock("react-native-startup-time", () => ({
   getStartupTime: jest.fn(),
 }));
 
-jest.mock("@react-native-community/netinfo", () => ({ useNetInfo: () => ({ isConnected: true }) }));
+jest.mock("@react-native-community/netinfo", () => mockRNCNetInfo);
+
+jest.mock("react-native-safe-area-context", () => mockSafeAreaContext);
 
 require("react-native-reanimated").setUpTests();
-
-// Silence the warning: Animated: `useNativeDriver` is not supported because the native animated module is missing
 
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),
@@ -145,6 +171,20 @@ jest.mock("@react-native-firebase/messaging", () => ({
   })),
 }));
 
+/*
+ * Mock `@react-native-firebase/remote-config` because importing causes:
+ * SyntaxError: Cannot use import statement outside a module
+ */
+jest.mock("@react-native-firebase/remote-config", () => {
+  const rc = {
+    getValue: jest.fn().mockReturnValue(),
+    setConfigSettings: jest.fn().mockResolvedValue(null),
+    setDefaults: jest.fn().mockResolvedValue(null),
+    fetchAndActivate: jest.fn().mockResolvedValue(null),
+  };
+  return { getRemoteConfig: jest.fn().mockReturnValue(rc) };
+});
+
 jest.mock("@braze/react-native-sdk", () => ({}));
 
 jest.mock("react-native-webview", () => jest.fn());
@@ -155,10 +195,20 @@ jest.mock("react-native-device-info", () => ({
 
 const originalError = console.error;
 const originalWarn = console.warn;
+// eslint-disable-next-line no-console
+const originalLog = console.log;
 
-const EXCLUDED_ERRORS = [];
+const EXCLUDED_ERRORS = ["act(...)"];
 
-const EXCLUDED_WARNINGS = [];
+const EXCLUDED_WARNINGS = [
+  "[Reanimated] Writing",
+  "[Reanimated] Reading",
+  'getHost: "Invalid non-string URL" for scriptURL',
+  "@polkadot",
+  "Node of type rule not supported as an inline style",
+];
+
+const EXCLUDED_LOG_MESSAGES = ["Shims Injected", "Missing FileReader", "nextTick"];
 
 console.error = (...args) => {
   const error = args.join();
@@ -175,3 +225,20 @@ console.warn = (...args) => {
   }
   originalWarn.call(console, ...args);
 };
+// eslint-disable-next-line no-console
+console.log = (...args) => {
+  const log = args.join();
+  if (EXCLUDED_LOG_MESSAGES.some(excluded => log.includes(excluded))) {
+    return;
+  }
+  originalLog.call(console, ...args);
+};
+
+// Mock isCurrencySupported globally for tests
+jest.mock("@ledgerhq/coin-framework/currencies/support", () => {
+  const actual = jest.requireActual("@ledgerhq/coin-framework/currencies/support");
+  return {
+    ...actual,
+    isCurrencySupported: jest.fn(() => true),
+  };
+});

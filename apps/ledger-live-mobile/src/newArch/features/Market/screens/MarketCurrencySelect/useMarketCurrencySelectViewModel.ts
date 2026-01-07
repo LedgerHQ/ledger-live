@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { supportedCounterValuesSelector } from "~/reducers/settings";
 import { useNavigation } from "@react-navigation/native";
 import { useMarket } from "../../hooks/useMarket";

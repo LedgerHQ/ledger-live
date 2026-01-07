@@ -13,14 +13,13 @@ import {
   Linking,
   ListRenderItemInfo,
   RefreshControl,
-  SafeAreaView,
   SectionList,
   StyleSheet,
   Pressable,
   View,
 } from "react-native";
 import Share from "react-native-share";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { track, TrackScreen } from "~/analytics";
 import Alert from "~/components/Alert";
@@ -37,6 +36,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { sendFile } from "../../../../e2e/bridge/client";
 import { Text } from "react-native";
 import ExternalLink from "@ledgerhq/icons-ui/native/ExternalLink";
+import SafeAreaView from "~/components/SafeAreaView";
 
 // const SList : SectionList<MappedSwapOperation, SwapHistorySection> = SectionList;
 const AnimatedSectionList: typeof SectionList = Animated.createAnimatedComponent(
@@ -67,13 +67,18 @@ const History = () => {
   const syncAccounts = useSyncAllAccounts();
 
   // fix token account parent
-  const sections = useMemo(() => {
-    const history = getCompleteSwapHistory(accounts);
+  const [sections, setSections] = useState<SwapHistorySection[]>([]);
 
-    return history.map(section => ({
-      ...section,
-      data: section.data.map(item => ensureParentAccount(item, accounts)),
-    }));
+  useEffect(() => {
+    async function loadHistory() {
+      const history = await getCompleteSwapHistory(accounts);
+      const processedSections = history.map(section => ({
+        ...section,
+        data: section.data.map(item => ensureParentAccount(item, accounts)),
+      }));
+      setSections(processedSections);
+    }
+    loadHistory();
   }, [accounts]);
 
   const refreshSwapHistory = useCallback(() => {
@@ -159,7 +164,7 @@ const History = () => {
       }
     } else {
       try {
-        sendFile({ fileName: "ledgerlive-swap-history.csv", fileContent: mapped });
+        sendFile({ fileName: "ledgerwallet-swap-history.csv", fileContent: mapped });
       } catch (err) {
         logger.critical(err as Error);
       }
@@ -167,7 +172,11 @@ const History = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      isFlex
+      edges={["bottom"]}
+    >
       <TrackScreen category="Swap" name="Device History" />
       {sections.length ? (
         <View style={styles.alertWrapper}>

@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import Text from "../../Text";
 import Flex from "../../Layout/Flex";
 import styled, { useTheme } from "styled-components/native";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 
-const StyledTouchableOpacity = styled(TouchableOpacity)<{ width: number }>`
+const StyledPressable = styled(Pressable)<{ width: number }>`
   width: ${(p) => p.width}px;
   flex: 1;
   height: 100%;
@@ -43,14 +43,18 @@ const OptionButton = <T,>({
 }: OptionButtonProps<T>) => {
   const isSelected = selectedOption === option;
 
+  const onPress = () => {
+    handleSelectOption(option);
+  };
+
   return (
-    <StyledTouchableOpacity width={width} onPress={() => handleSelectOption(option)}>
+    <StyledPressable width={width} onPressIn={onPress} hitSlop={16}>
       <StyledFlex isSelected={isSelected}>
         <StyledText fontWeight="semiBold" isSelected={isSelected} numberOfLines={1}>
           {label}
         </StyledText>
       </StyledFlex>
-    </StyledTouchableOpacity>
+    </StyledPressable>
   );
 };
 
@@ -76,14 +80,14 @@ export default function DrawerTabSelector<T extends string | number>({
   const margin = 20;
   const width = labels[longuestLabel].length * widthFactor + margin;
   const semiWidth = width / 2;
-  const translateX = useSharedValue(-semiWidth);
+  const translateX = useSharedValue(selectedOption === options[0] ? -semiWidth : semiWidth);
 
   useEffect(() => {
     translateX.value = withSpring(selectedOption === options[0] ? -semiWidth : semiWidth, {
       damping: 30,
       stiffness: 80,
     });
-  }, [selectedOption, translateX, options]);
+  }, [selectedOption, translateX, options, semiWidth]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {

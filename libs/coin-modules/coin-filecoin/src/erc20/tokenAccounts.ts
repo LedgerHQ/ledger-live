@@ -1,10 +1,10 @@
 import cbor from "@zondax/cbor";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import { fetchERC20TokenBalance, fetchERC20Transactions } from "../api";
+import { fetchERC20TokenBalance, fetchERC20TransactionsWithPages } from "../api";
 import invariant from "invariant";
 import { ERC20Transfer, TxStatus } from "../types";
 import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -12,19 +12,17 @@ import { convertAddressFilToEth } from "../network";
 import { ethers } from "ethers";
 import contractABI from "./ERC20.json";
 import { RecipientRequired } from "@ledgerhq/errors";
-import { Unit } from "@ledgerhq/types-cryptoassets";
 import { AccountType } from "../bridge/utils";
-import { valueFromUnit } from "../common-logic/utils";
+import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 export const erc20TxnToOperation = (
   tx: ERC20Transfer,
   address: string,
   accountId: string,
-  unit: Unit,
 ): Operation[] => {
   try {
     const { to, from, timestamp, tx_hash, tx_cid, amount, height, status } = tx;
-    const value = valueFromUnit(new BigNumber(amount), unit);
+    const txAmount = new BigNumber(amount);
 
     const isSending = address.toLowerCase() === from.toLowerCase();
     const isReceiving = address.toLowerCase() === to.toLowerCase();
@@ -41,7 +39,7 @@ export const erc20TxnToOperation = (
         id: encodeOperationId(accountId, hash, "OUT"),
         hash,
         type: "OUT",
-        value: value,
+        value: txAmount,
         fee,
         blockHeight: height,
         blockHash: "",
@@ -59,7 +57,7 @@ export const erc20TxnToOperation = (
         id: encodeOperationId(accountId, hash, "IN"),
         hash,
         type: "IN",
-        value,
+        value: txAmount,
         fee,
         blockHeight: height,
         blockHash: "",
@@ -83,51 +81,71 @@ export const erc20TxnToOperation = (
 
 export async function buildTokenAccounts(
   filAddr: string,
+  lastHeight: number,
   parentAccountId: string,
   initialAccount?: Account,
 ): Promise<TokenAccount[]> {
   try {
-    const transfers = await fetchERC20Transactions(filAddr);
-    const transfersUntangled: { [addr: string]: ERC20Transfer[] } = transfers.reduce(
-      (prev: { [addr: string]: ERC20Transfer[] }, curr: ERC20Transfer) => {
-        curr.contract_address = curr.contract_address.toLowerCase();
-        if (prev[curr.contract_address]) {
-          prev[curr.contract_address] = [...prev[curr.contract_address], curr];
-        } else {
-          prev[curr.contract_address] = [curr];
+    const transfers = await fetchERC20TransactionsWithPages(filAddr, lastHeight);
+
+    if (!transfers.length) {
+      return initialAccount?.subAccounts ?? [];
+    }
+
+    // Group transfers by contract address (normalized to lowercase)
+    const transfersByContract = transfers.reduce<Record<string, ERC20Transfer[]>>(
+      (acc, transfer) => {
+        const contractAddr = transfer.contract_address.toLowerCase();
+        transfer.contract_address = contractAddr;
+
+        if (!acc[contractAddr]) {
+          acc[contractAddr] = [];
         }
-        return prev;
+        acc[contractAddr].push(transfer);
+        return acc;
       },
       {},
     );
 
-    const subs: TokenAccount[] = [];
-    for (const [cAddr, txns] of Object.entries(transfersUntangled)) {
-      const token = findTokenByAddressInCurrency(cAddr, "filecoin");
+    // Create lookup map for existing sub-accounts
+    const existingSubAccounts = new Map(
+      initialAccount?.subAccounts?.map(sa => [sa.token.contractAddress.toLowerCase(), sa]) ?? [],
+    );
+
+    // Track which existing accounts we've processed
+    const processedContracts = new Set<string>();
+    const tokenAccounts: TokenAccount[] = [];
+
+    // Process accounts with new transfers
+    for (const [contractAddr, txns] of Object.entries(transfersByContract)) {
+      processedContracts.add(contractAddr);
+
+      const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+        contractAddr,
+        "filecoin",
+      );
       if (!token) {
-        log("error", `filecoin token not found, addr: ${cAddr}`);
+        log("error", `filecoin token not found, addr: ${contractAddr}`);
         continue;
       }
 
-      const balance = await fetchERC20TokenBalance(filAddr, cAddr);
-      const bnBalance = new BigNumber(balance.toString());
+      const balance = await fetchERC20TokenBalance(filAddr, contractAddr);
+      const bnBalance = new BigNumber(balance);
       const tokenAccountId = encodeTokenAccountId(parentAccountId, token);
 
       const operations = txns
-        .flatMap(txn => erc20TxnToOperation(txn, filAddr, tokenAccountId, token.units[0]))
+        .flatMap(txn => erc20TxnToOperation(txn, filAddr, tokenAccountId))
         .flat()
         .sort((a, b) => b.date.getTime() - a.date.getTime());
 
+      // Skip if no operations and zero balance
       if (operations.length === 0 && bnBalance.isZero()) {
         continue;
       }
 
-      const maybeExistingSubAccount =
-        initialAccount &&
-        initialAccount.subAccounts &&
-        initialAccount.subAccounts.find(a => a.id === tokenAccountId);
+      const existingAccount = existingSubAccounts.get(contractAddr);
 
-      const sub: TokenAccount = {
+      const tokenAccount: TokenAccount = {
         type: AccountType.TokenAccount,
         id: tokenAccountId,
         parentId: parentAccountId,
@@ -135,17 +153,24 @@ export async function buildTokenAccounts(
         balance: bnBalance,
         spendableBalance: bnBalance,
         operationsCount: txns.length,
-        operations,
-        pendingOperations: maybeExistingSubAccount ? maybeExistingSubAccount.pendingOperations : [],
-        creationDate: operations.length > 0 ? operations[0].date : new Date(),
-        swapHistory: maybeExistingSubAccount ? maybeExistingSubAccount.swapHistory : [],
+        operations: mergeOps(existingAccount?.operations ?? [], operations),
+        pendingOperations: existingAccount?.pendingOperations ?? [],
+        creationDate: operations[operations.length - 1]?.date ?? new Date(),
+        swapHistory: existingAccount?.swapHistory ?? [],
         balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
       };
 
-      subs.push(sub);
+      tokenAccounts.push(tokenAccount);
     }
 
-    return subs;
+    // Add existing accounts that didn't have new transfers
+    for (const [contractAddr, existingAccount] of existingSubAccounts) {
+      if (!processedContracts.has(contractAddr)) {
+        tokenAccounts.push(existingAccount);
+      }
+    }
+
+    return tokenAccounts;
   } catch (e) {
     log("error", "filecoin error building token accounts", e);
     return [];

@@ -5,12 +5,14 @@ import {
   Cursor,
   FeeEstimation,
   Page,
+  Validator,
   Reward,
   Stake,
   TransactionIntent,
   Operation,
   Balance,
   Pagination,
+  CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type CantonConfig } from "../config";
 import { combine } from "../common-logic/transaction/combine";
@@ -25,6 +27,14 @@ export function createApi(config: CantonConfig): AlpacaApi {
     combine,
     craftTransaction(_transactionIntent: TransactionIntent, _customFees?: FeeEstimation) {
       throw new Error("craftTransaction is not supported");
+    },
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: bigint,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported");
     },
     estimateFees(_transactionIntent: TransactionIntent): Promise<FeeEstimation> {
       throw new Error("estimateFees is not supported");
@@ -49,6 +59,9 @@ export function createApi(config: CantonConfig): AlpacaApi {
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
+    },
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
     },
   };
 }

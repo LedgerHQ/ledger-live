@@ -11,13 +11,10 @@ import type {
 } from "@ledgerhq/device-management-kit";
 import {
   DeviceActionStatus,
-  DeviceDisconnectedWhileSendingError,
-  DeviceLockedError,
   DeviceSessionStateType,
   UserInteractionRequired,
   OutOfMemoryDAError,
-  SecureChannelError,
-  UnsupportedFirmwareDAError,
+  DeviceModelId,
 } from "@ledgerhq/device-management-kit";
 import type {
   ConnectAppDAOutput,
@@ -29,18 +26,22 @@ import {
   UserRefusedAllowManager,
   UserRefusedOnDevice,
   LatestFirmwareVersionRequired,
+  UnsupportedFeatureError,
 } from "@ledgerhq/errors";
+import { DeviceId } from "@ledgerhq/client-ids/ids";
 
 import type { SkippedAppOp } from "../apps/types";
 import { SkipReason } from "../apps/types";
 import { parseDeviceInfo } from "../deviceSDK/tasks/getDeviceInfo";
 import { ConnectAppEvent } from "./connectApp";
+import { NoSuchAppOnProvider } from "../errors";
 
 export class ConnectAppEventMapper {
   private openAppRequested: boolean = false;
   private permissionRequested: boolean = false;
   private lastSeenDeviceSent: boolean = false;
   private installPlan: InstallPlan | null = null;
+  private deviceId: string | undefined = undefined;
   private eventSubject = new Subject<ConnectAppEvent>();
 
   constructor(
@@ -163,6 +164,16 @@ export class ConnectAppEventMapper {
         if (intermediateValue.installPlan !== null) {
           this.handleInstallPlan(intermediateValue.installPlan);
         }
+        if (intermediateValue.deviceId) {
+          const deviceIdString = Buffer.from(intermediateValue.deviceId).toString("hex");
+          if (deviceIdString !== this.deviceId) {
+            this.deviceId = deviceIdString;
+            this.eventSubject.next({
+              type: "device-id",
+              deviceId: DeviceId.fromString(deviceIdString),
+            });
+          }
+        }
         break;
     }
   }
@@ -243,7 +254,8 @@ export class ConnectAppEventMapper {
       });
       this.eventSubject.complete();
     } else if (
-      error instanceof UnsupportedFirmwareDAError &&
+      "_tag" in error &&
+      error._tag === "UnsupportedFirmwareDAError" &&
       deviceState.sessionStateType !== DeviceSessionStateType.Connected
     ) {
       this.eventSubject.error(
@@ -254,12 +266,34 @@ export class ConnectAppEventMapper {
             deviceState.firmwareUpdateContext!.currentFirmware.version,
         }),
       );
-    } else if (error instanceof DeviceLockedError) {
+    } else if (
+      "_tag" in error &&
+      error._tag === "UnsupportedApplicationDAError" &&
+      deviceState.sessionStateType !== DeviceSessionStateType.Connected
+    ) {
+      if (deviceState.deviceModelId === DeviceModelId.NANO_S) {
+        // This will show an error modal with upsell link
+        this.eventSubject.error(
+          new NoSuchAppOnProvider(`Ledger Nano S does not support this feature`, {
+            appName: this.appName,
+          }),
+        );
+        return;
+      }
+      // This will show an error modal with contact support link
+      this.eventSubject.error(
+        new UnsupportedFeatureError(`App ${this.appName} not supported on this device`, {
+          appName: this.appName,
+          deviceModelId: deviceState.deviceModelId,
+          deviceVersion: deviceState.firmwareVersion?.os,
+        }),
+      );
+    } else if ("_tag" in error && error._tag === "DeviceLockedError") {
       this.eventSubject.next({ type: "lockedDevice" });
       this.eventSubject.complete();
-    } else if (error instanceof SecureChannelError) {
+    } else if ("_tag" in error && error._tag === "RefusedByUserDAError") {
       this.eventSubject.error(new UserRefusedAllowManager());
-    } else if (error instanceof DeviceDisconnectedWhileSendingError) {
+    } else if ("_tag" in error && error._tag === "DeviceDisconnectedWhileSendingError") {
       this.eventSubject.next({ type: "disconnected", expected: false });
     } else if ("_tag" in error && error._tag === "WebHidSendReportError") {
       this.eventSubject.next({ type: "disconnected", expected: false });

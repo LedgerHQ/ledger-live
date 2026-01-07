@@ -7,12 +7,11 @@ import { handleTransactionStatus } from "@ledgerhq/live-common/families/multiver
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
-import { Text } from "@ledgerhq/native-ui";
+import { Text, Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import BigNumber from "bignumber.js";
 
-import Icon from "react-native-vector-icons/Feather";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/multiversx/constants";
 
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -30,7 +29,7 @@ import { rgba } from "../../../../../../../colors";
 import type { SetDelegationPropsType } from "./types";
 
 import styles from "./styles";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import Config from "react-native-config";
 
 /*
@@ -292,7 +291,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
               </Animated.View>
 
               <Circle style={styles.changeDelegator} bg={colors.primary} size={26}>
-                <Icon size={13} name="edit-2" />
+                <Icons.PenEdit size="XS" />
               </Circle>
             </Circle>
           </Touchable>
@@ -321,7 +320,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
                 </Text>
 
                 <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary }]}>
-                  <Icon size={16} name="edit-2" color={colors.text} />
+                  <Icons.PenEdit size="XS" color={colors.text} />
                 </View>
               </View>
             </Touchable>

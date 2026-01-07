@@ -1,23 +1,23 @@
 import React, { useCallback, useMemo } from "react";
 import invariant from "invariant";
-import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import i18next from "i18next";
 import { useNavigation } from "@react-navigation/native";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import EvmLegacyCustomFees from "./EvmLegacyCustomFees";
 import Evm1559CustomFees from "./Evm1559CustomFees";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
 
 type Props = BaseComposite<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.EvmCustomFees>
 >;
 
 const options = {
-  title: <Trans i18nKey="send.summary.fees" />,
+  title: i18next.t("send.summary.fees"),
   headerLeft: null,
 };
 
@@ -27,7 +27,7 @@ export default function EvmCustomFees({ route }: Props) {
     transaction: baseTransaction,
     gasOptions,
   } = route.params;
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const navigation = useNavigation();
   invariant(account, "no account found");
   const mainAccount = getMainAccount(account, parentAccount);
@@ -54,18 +54,22 @@ export default function EvmCustomFees({ route }: Props) {
 
   const shouldUseEip1559 = transaction.type === 2;
 
-  return shouldUseEip1559 ? (
-    <Evm1559CustomFees
-      account={mainAccount}
-      transaction={transaction}
-      onValidateFees={onValidateFees}
-    />
-  ) : (
-    <EvmLegacyCustomFees
-      account={mainAccount}
-      transaction={transaction}
-      onValidateFees={onValidateFees}
-    />
+  return (
+    <SafeAreaViewFixed isFlex>
+      {shouldUseEip1559 ? (
+        <Evm1559CustomFees
+          account={mainAccount}
+          transaction={transaction}
+          onValidateFees={onValidateFees}
+        />
+      ) : (
+        <EvmLegacyCustomFees
+          account={mainAccount}
+          transaction={transaction}
+          onValidateFees={onValidateFees}
+        />
+      )}
+    </SafeAreaViewFixed>
   );
 }
 export { options, EvmCustomFees as component };

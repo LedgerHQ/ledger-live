@@ -2,6 +2,7 @@ import { TypeRegistry } from "@polkadot/types";
 import { craftTransaction, defaultExtrinsicArg } from "./craftTransaction";
 import { createFixtureAccount } from "../types/bridge.fixture";
 import { faker } from "@faker-js/faker";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const registry = new TypeRegistry();
 
@@ -21,7 +22,8 @@ jest.mock("../network", () => {
         registry: registry,
         extrinsics: mockExtrinsics(),
       }),
-    getTransactionParams: () => mockGetTransactionParams(),
+    getTransactionParams: (currency?: CryptoCurrency, { force } = { force: false }) =>
+      mockGetTransactionParams(currency, force),
     metadataHash: () => "0x12345678",
   };
 });
@@ -32,6 +34,7 @@ describe("craftTransaction", () => {
   afterEach(() => {
     mockExtrinsics.mockClear();
     spyRegistry?.mockRestore();
+    mockGetTransactionParams.mockClear();
   });
 
   it('returns send signed tx info (unsigned and registry) when transaction has mode "send"', async () => {
@@ -78,6 +81,10 @@ describe("craftTransaction", () => {
     expect(mockTransferKeepAlive.mock.lastCall[0]).toEqual(recipient);
     expect(mockTransferKeepAlive.mock.lastCall[1]).toEqual(amount.toString());
 
+    expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);
+    expect(mockGetTransactionParams.mock.lastCall[0]).toEqual(undefined);
+    expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(false);
+
     const expectedResult = {
       address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
       blockHash: "0xb10c4a54",
@@ -122,6 +129,10 @@ describe("craftTransaction", () => {
     expect(mockTransferAllowDeath.mock.lastCall[0]).toEqual(recipient);
     expect(mockTransferAllowDeath.mock.lastCall[1]).toEqual(amount.toString());
     expect(result.unsigned.method).toEqual(expectExtrinsicMethodHex);
+
+    expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);
+    expect(mockGetTransactionParams.mock.lastCall[0]).toEqual(undefined);
+    expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(false);
   });
 
   it.each([
@@ -157,6 +168,10 @@ describe("craftTransaction", () => {
       expect(mockWithdrawUnbonded).toHaveBeenCalledTimes(1);
       expect(mockWithdrawUnbonded.mock.lastCall[0]).toEqual(extrinsicNumSlashingSpans);
       expect(result.unsigned.method).toEqual(expectExtrinsicMethodHex);
+
+      expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);
+      expect(mockGetTransactionParams.mock.lastCall[0]).toEqual(undefined);
+      expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(false);
     },
   );
 
@@ -187,6 +202,10 @@ describe("craftTransaction", () => {
     expect(mockSetController).toHaveBeenCalledTimes(1);
     expect(mockSetController.mock.lastCall[0]).toBeUndefined();
     expect(result.unsigned.method).toEqual(expectExtrinsicMethodHex);
+
+    expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);
+    expect(mockGetTransactionParams.mock.lastCall[0]).toEqual(undefined);
+    expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(false);
   });
 
   it('returns an unsigned with first validator when transaction has mode "chill"', async () => {
@@ -216,5 +235,9 @@ describe("craftTransaction", () => {
     expect(mockChill).toHaveBeenCalledTimes(1);
     expect(mockChill.mock.lastCall[0]).toBeUndefined();
     expect(result.unsigned.method).toEqual(expectExtrinsicMethodHex);
+
+    expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);
+    expect(mockGetTransactionParams.mock.lastCall[0]).toEqual(undefined);
+    expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(false);
   });
 });

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/triple-slash-reference */
+/* eslint-disable no-var */
 /// <reference path=".//global.d.ts" />
 import type { Subject, Subscription } from "rxjs";
 import type { Server, WebSocket } from "ws";
@@ -33,6 +35,8 @@ declare global {
     e2eBridgeServer: Subject<ServerData>;
   };
 
+  var pendingCallbacks: Map<string, { callback: (data: string) => void }>;
+
   var app: Application;
   var Step: typeof StepType;
   var $TmsLink: typeof $TmsLinkType;
@@ -48,41 +52,46 @@ declare global {
   var AppInfos: typeof AppInfosType;
   var Swap: typeof SwapType;
 
+  var clearTextByElement: typeof NativeElementHelpers.clearTextByElement;
+  var countElementsById: typeof NativeElementHelpers.countElementsById;
   var detoxExpect: typeof NativeElementHelpers.expect;
+  var getAttributesOfElement: typeof NativeElementHelpers.getAttributesOfElement;
+  var getElementById: typeof NativeElementHelpers.getElementById;
+  var getElementByIdAndText: typeof NativeElementHelpers.getElementByIdAndText;
+  var getElementByText: typeof NativeElementHelpers.getElementByText;
+  var getElementsById: typeof NativeElementHelpers.getElementsById;
+  var getIdByRegexp: typeof NativeElementHelpers.getIdByRegexp;
+  var getIdOfElement: typeof NativeElementHelpers.getIdOfElement;
+  var getTextOfElement: typeof NativeElementHelpers.getTextOfElement;
+  var IsIdVisible: typeof NativeElementHelpers.isIdVisible;
+  var scrollToId: typeof NativeElementHelpers.scrollToId;
+  var scrollToText: typeof NativeElementHelpers.scrollToText;
+  var tapByElement: typeof NativeElementHelpers.tapByElement;
+  var tapById: typeof NativeElementHelpers.tapById;
+  var tapByText: typeof NativeElementHelpers.tapByText;
+  var typeTextByElement: typeof NativeElementHelpers.typeTextByElement;
+  var typeTextById: typeof NativeElementHelpers.typeTextById;
+  var waitForElement: typeof NativeElementHelpers.waitForElement;
   var waitForElementById: typeof NativeElementHelpers.waitForElementById;
   var waitForElementByText: typeof NativeElementHelpers.waitForElementByText;
   var waitForElementNotVisible: typeof NativeElementHelpers.waitForElementNotVisible;
-  var getElementById: typeof NativeElementHelpers.getElementById;
-  var getElementsById: typeof NativeElementHelpers.getElementsById;
-  var countElementsById: typeof NativeElementHelpers.countElementsById;
-  var getElementByText: typeof NativeElementHelpers.getElementByText;
-  var getElementByIdAndText: typeof NativeElementHelpers.getElementByIdAndText;
-  var IsIdVisible: typeof NativeElementHelpers.isIdVisible;
-  var tapById: typeof NativeElementHelpers.tapById;
-  var tapByText: typeof NativeElementHelpers.tapByText;
-  var tapByElement: typeof NativeElementHelpers.tapByElement;
-  var typeTextById: typeof NativeElementHelpers.typeTextById;
-  var typeTextByElement: typeof NativeElementHelpers.typeTextByElement;
-  var clearTextByElement: typeof NativeElementHelpers.clearTextByElement;
-  var scrollToText: typeof NativeElementHelpers.scrollToText;
-  var scrollToId: typeof NativeElementHelpers.scrollToId;
-  var getTextOfElement: typeof NativeElementHelpers.getTextOfElement;
-  var getIdByRegexp: typeof NativeElementHelpers.getIdByRegexp;
-  var getIdOfElement: typeof NativeElementHelpers.getIdOfElement;
 
+  var getCurrentWebviewUrl: typeof WebElementHelpers.getCurrentWebviewUrl;
+  var getValueByWebTestId: typeof WebElementHelpers.getValueByWebTestId;
+  var getWebElementByCssSelector: typeof WebElementHelpers.getWebElementByCssSelector;
   var getWebElementById: typeof WebElementHelpers.getWebElementById;
   var getWebElementByTag: typeof WebElementHelpers.getWebElementByTag;
   var getWebElementByTestId: typeof WebElementHelpers.getWebElementByTestId;
-  var getWebElementText: typeof WebElementHelpers.getWebElementText;
-  var getWebElementsByIdAndText: typeof WebElementHelpers.getWebElementsByIdAndText;
   var getWebElementsByCssSelector: typeof WebElementHelpers.getWebElementsByCssSelector;
+  var getWebElementsByIdAndText: typeof WebElementHelpers.getWebElementsByIdAndText;
   var getWebElementsText: typeof WebElementHelpers.getWebElementsText;
-  var waitWebElementByTestId: typeof WebElementHelpers.waitWebElementByTestId;
+  var getWebElementText: typeof WebElementHelpers.getWebElementText;
+  var scrollToWebElement: typeof WebElementHelpers.scrollToWebElement;
+  var tapWebElementByElement: typeof WebElementHelpers.tapWebElementByElement;
   var tapWebElementByTestId: typeof WebElementHelpers.tapWebElementByTestId;
   var typeTextByWebTestId: typeof WebElementHelpers.typeTextByWebTestId;
-  var getValueByWebTestId: typeof WebElementHelpers.getValueByWebTestId;
-  var tapWebElementByElement: typeof WebElementHelpers.tapWebElementByElement;
-  var scrollToWebElement: typeof WebElementHelpers.scrollToWebElement;
-  var getCurrentWebviewUrl: typeof WebElementHelpers.getCurrentWebviewUrl;
+  var waitForCurrentWebviewUrlToContain: typeof WebElementHelpers.waitForCurrentWebviewUrlToContain;
   var waitForWebElementToBeEnabled: typeof WebElementHelpers.waitForWebElementToBeEnabled;
+  var waitForWebElementToMatchRegex: typeof WebElementHelpers.waitForWebElementToMatchRegex;
+  var waitWebElementByTestId: typeof WebElementHelpers.waitWebElementByTestId;
 }

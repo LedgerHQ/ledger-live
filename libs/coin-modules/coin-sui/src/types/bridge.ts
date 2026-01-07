@@ -15,6 +15,7 @@ export type MappedStake = StakeObject & {
   validator: SuiValidator;
   stakedSuiId: string;
   formattedAmount: string;
+  formattedEstimatedReward: string;
 };
 
 /**
@@ -73,11 +74,23 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type SuiValidator = SuiValidatorSummary & { apy: number };
 
 /**
+ * Sui token data from CAL
+ */
+export type SuiToken = [
+  string, // parent currency id
+  string, // name
+  string, // ticker
+  string, // contract address
+  number, // precision
+  string, // ledgerSignature
+];
+
+/**
  * Sui currency data that will be preloaded.
  * You can for instance add a list of validators for Proof-of-Stake blockchains,
  * or any volatile data that could not be set as constants in the code (staking progress, fee estimation variables, etc.)
  */
-export type SuiPreloadData = { validators: SuiValidator[] };
+export type SuiPreloadData = { validators: SuiValidator[]; tokens: SuiToken[] };
 
 export type SuiAccount = Account & {
   // On some blockchain, an account can have resources (gained, delegated, ...)

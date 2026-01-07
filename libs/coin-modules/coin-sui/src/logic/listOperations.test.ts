@@ -11,6 +11,7 @@ const mockOperations: Page<Op> = {
         date: new Date("2024-03-20T10:00:00.000Z"),
         hash: "0x1234567890abcdef",
         fees: BigInt("1000000"),
+        failed: false,
         block: {
           height: 5,
         },
@@ -29,6 +30,7 @@ const mockOperations: Page<Op> = {
         date: new Date("2024-03-20T11:00:00.000Z"),
         hash: "0xabcdef1234567890",
         fees: BigInt("2000000"),
+        failed: false,
         block: {
           height: 5,
         },

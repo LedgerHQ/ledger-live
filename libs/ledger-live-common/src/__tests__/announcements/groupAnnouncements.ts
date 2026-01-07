@@ -1,7 +1,13 @@
-import timemachine from "timemachine";
 import { groupAnnouncements } from "../../notifications/AnnouncementProvider/helpers";
-timemachine.config({
-  dateString: "February 22, 2021 13:12:59",
+
+// Use Jest 30's fake timers instead of timemachine
+beforeAll(() => {
+  jest.useFakeTimers();
+  jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
+});
+
+afterAll(() => {
+  jest.useRealTimers();
 });
 const cache = {
   "announcement-id-a": {
@@ -90,7 +96,7 @@ describe("groupAnnouncements", () => {
         ],
       },
       {
-        day: new Date("2019-10-30T04:00:00.000Z"),
+        day: new Date("2019-10-31T00:00:00.000Z"),
         data: [
           {
             uuid: "announcement-id-b",
@@ -112,7 +118,7 @@ describe("groupAnnouncements", () => {
         ],
       },
       {
-        day: new Date("2019-09-28T04:00:00.000Z"),
+        day: new Date("2019-09-29T00:00:00.000Z"),
         data: [
           {
             uuid: "announcement-id-a",

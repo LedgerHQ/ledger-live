@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-algorand",
-  "version": "0.10.0",
+  "version": "0.15.1",
   "description": "Ledger Algorand Coin integration",
   "keywords": [
     "Ledger",
@@ -56,18 +56,19 @@
     "algo-msgpack-with-bigint": "^2.1.1",
     "algosdk": "1.13.1",
     "bignumber.js": "^9.1.2",
-    "expect": "^27.4.6",
+    "expect": "catalog:",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "prando": "^6.0.1",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.2",
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
+    "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^"
   },
   "scripts": {

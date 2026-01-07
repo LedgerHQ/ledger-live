@@ -1,26 +1,27 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useState, useCallback } from "react";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 import { Keyboard, StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useSelector } from "react-redux";
 import Button from "~/components/Button";
 import KeyboardView from "~/components/KeyboardView";
 import LText from "~/components/LText";
-import { accountScreenSelector } from "~/reducers/accounts";
 import CurrencyInput from "~/components/CurrencyInput";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "~/const";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
+import { popToScreen } from "~/helpers/navigationHelpers";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const options = {
-  title: <Trans i18nKey="send.summary.fees" />,
+  title: i18next.t("send.summary.fees"),
   headerLeft: undefined,
 };
 
@@ -34,7 +35,7 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { transaction } = route.params;
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(transaction.family === "stellar", "not stellar family");
   invariant(account, "no account found");
   const mainAccount = getMainAccount(account, parentAccount);
@@ -52,8 +53,7 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
     setCustomFee(BigNumber(customFee || 0));
     const bridge = getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
-    // @ts-expect-error: Type mismatch due to dynamic navigation params
-    navigation.navigate(currentNavigation, {
+    popToScreen(navigation, currentNavigation, {
       ...route.params,
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {

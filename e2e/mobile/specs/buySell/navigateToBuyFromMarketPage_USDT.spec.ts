@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runNavigateToBuyFromMarketPageTest } from "./buySell";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
@@ -10,9 +11,9 @@ const testConfig = {
     operation: OperationType.Buy,
   },
   tmsLinks: ["B2CQA-3414"],
-  provider: Provider.COINBASE,
+  provider: Provider.TRANSAK,
   paymentMethod: "card",
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runNavigateToBuyFromMarketPageTest(

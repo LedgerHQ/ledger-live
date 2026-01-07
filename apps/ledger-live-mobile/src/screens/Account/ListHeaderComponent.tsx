@@ -10,13 +10,14 @@ import {
 } from "@ledgerhq/types-live";
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
-import { TFunction } from "react-i18next";
+import type { TFunction } from "i18next";
 import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
+import { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
 import { isEditableOperation, isStuckOperation } from "@ledgerhq/live-common/operation";
 import AccountGraphCard from "~/components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
@@ -34,8 +35,10 @@ import { ActionButtonEvent } from "~/components/FabActions";
 import { EditOperationCard } from "~/components/EditOperationCard";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import WarningBannerStatus from "~/components/WarningBannerStatus";
+import WarningCustomBanner from "~/components/WarningCustomBanner";
 import ErrorWarning from "./ErrorWarning";
 import NftEntryPoint from "LLM/features/NftEntryPoint";
+import perFamilyPendingTransferProposals from "../../generated/PendingTransferProposals";
 
 type Props = {
   account?: AccountLike;
@@ -105,6 +108,9 @@ export function useListHeaderComponents({
     AccountBodyHeader && AccountBodyHeader({ account, parentAccount });
 
   const AccountSubHeader = (perFamilyAccountSubHeader as Record<string, MaybeComponent>)[family];
+  const PendingTransferProposals = (
+    perFamilyPendingTransferProposals as Record<string, MaybeComponent>
+  )[family];
 
   const AccountBalanceSummaryFooter =
     perFamilyAccountBalanceSummaryFooter[
@@ -119,6 +125,7 @@ export function useListHeaderComponents({
         CosmosAccount &
         PolkadotAccount &
         MultiversXAccount &
+        HederaAccount &
         NearAccount,
     });
 
@@ -128,7 +135,15 @@ export function useListHeaderComponents({
     .filter(pendingOperation => {
       return isEditableOperation({ account: mainAccount, operation: pendingOperation });
     })
-    .sort((a, b) => a.transactionSequenceNumber! - b.transactionSequenceNumber!);
+    .sort((a, b) => {
+      if (a.transactionSequenceNumber!.isLessThan(b.transactionSequenceNumber!)) {
+        return -1;
+      }
+      if (a.transactionSequenceNumber!.isGreaterThan(b.transactionSequenceNumber!)) {
+        return 1;
+      }
+      return 0;
+    });
 
   const isOperationStuck =
     oldestEditableOperation &&
@@ -159,6 +174,7 @@ export function useListHeaderComponents({
         currency={currency}
         key="WarningBannerStatus"
       />,
+      <WarningCustomBanner currencyConfig={currencyConfig} key="WarningCustomBanner" />,
       <ErrorWarning key="Header" />,
       !!AccountSubHeader && (
         <Box bg={colors.background.main} key="AccountSubHeader">
@@ -210,6 +226,13 @@ export function useListHeaderComponents({
                 parentAccount={account}
                 useCounterValue={shouldUseCounterValue}
               />
+            </SectionContainer>,
+          ]
+        : []),
+      ...(PendingTransferProposals
+        ? [
+            <SectionContainer px={2} key="PendingTransferProposals">
+              <PendingTransferProposals account={account} parentAccount={mainAccount} />
             </SectionContainer>,
           ]
         : []),

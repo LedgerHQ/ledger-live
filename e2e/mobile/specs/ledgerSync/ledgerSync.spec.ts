@@ -4,7 +4,7 @@ import { getFlags } from "../../bridge/server";
 import { describeIfNotNanoS } from "../../helpers/commonHelpers";
 
 const tmsLinks = ["B2CQA-2292", "B2CQA-2293", "B2CQA-2296"];
-const tags = ["@NanoSP", "@NanoX"];
+const tags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
 const ledgerKeyRingProtocolArgs = {
   apiBaseUrl: "",

@@ -1,14 +1,10 @@
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "styled-components/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import DeviceAction from "~/components/DeviceAction";
 import { renderLoading } from "~/components/DeviceAction/rendering";
 import { useSignedTxHandler } from "~/logic/screenTransactionHooks";
@@ -47,6 +43,10 @@ import type { NearStakingFlowParamList } from "~/families/near/StakingFlow/types
 import type { NearUnstakingFlowParamList } from "~/families/near/UnstakingFlow/types";
 import type { NearWithdrawingFlowParamList } from "~/families/near/WithdrawingFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "~/families/hedera/AssociateTokenFlow/types";
+import type { HederaDelegationFlowParamList } from "~/families/hedera/DelegationFlow/types";
+import type { HederaUndelegationFlowParamList } from "~/families/hedera/UndelegationFlow/types";
+import type { HederaRedelegationFlowParamList } from "~/families/hedera/RedelegationFlow/types";
+import type { HederaClaimRewardsFlowParamList } from "~/families/hedera/ClaimRewardsFlow/types";
 import { SolanaDelegationFlowParamList } from "~/families/solana/DelegationFlow/types";
 import { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 import { TezosDelegationFlowParamList } from "~/families/tezos/DelegationFlow/types";
@@ -56,6 +56,7 @@ import { SignedOperation } from "@ledgerhq/types-live";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { SuiStakingFlowParamList } from "~/families/sui/StakingFlow/types";
 import { SuiUnstakingFlowParamList } from "~/families/sui/UnstakingFlow/types";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props =
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendConnectDevice>
@@ -116,12 +117,19 @@ type Props =
   | StackNavigatorProps<
       HederaAssociateTokenFlowParamList,
       ScreenName.HederaAssociateTokenConnectDevice
+    >
+  | StackNavigatorProps<HederaDelegationFlowParamList, ScreenName.HederaDelegationConnectDevice>
+  | StackNavigatorProps<HederaUndelegationFlowParamList, ScreenName.HederaUndelegationConnectDevice>
+  | StackNavigatorProps<HederaRedelegationFlowParamList, ScreenName.HederaRedelegationConnectDevice>
+  | StackNavigatorProps<
+      HederaClaimRewardsFlowParamList,
+      ScreenName.HederaClaimRewardsConnectDevice
     >;
 
 export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
   // Assumes that it will always navigate to a "SelectDevice"
   // type of component accepting mostly the same params as this one.
-  (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
+  (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(
     route.name.replace("ConnectDevice", "SelectDevice"),
     {
       ...route.params,
@@ -132,14 +140,9 @@ export default function ConnectDevice({ route, navigation }: Props) {
   const action = useTransactionDeviceAction();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
-  const { appName, onSuccess, onError, analyticsPropertyFlow } = route.params;
-  const mainAccount = getMainAccount(account, parentAccount);
-  const { transaction, status } = useBridgeTransaction(() => ({
-    account: mainAccount,
-    transaction: route.params.transaction,
-  }));
+  const { appName, onSuccess, onError, analyticsPropertyFlow, transaction, status } = route.params;
   const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
   const handleTx = useSignedTxHandler({
     account,

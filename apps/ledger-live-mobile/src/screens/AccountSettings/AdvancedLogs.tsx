@@ -2,12 +2,10 @@ import invariant from "invariant";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { Alert } from "@ledgerhq/native-ui";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { getAccountCurrency, isAccount } from "@ledgerhq/live-common/account/index";
-import { accountScreenSelector } from "~/reducers/accounts";
 import LText from "~/components/LText";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { localeIds } from "../../languages";
@@ -15,6 +13,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { AccountSettingsNavigatorParamList } from "~/components/RootNavigator/types/AccountSettingsNavigator";
 import { ScreenName } from "~/const";
 import { useSettings } from "~/hooks";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.AdvancedLogs>
@@ -22,7 +21,7 @@ type NavigationProps = BaseComposite<
 
 export default function AdvancedLogs({ route }: NavigationProps) {
   const { locale } = useSettings();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   const { t } = useTranslation();
   const usefulData = {
     xpub: (isAccount(account) && account?.xpub) || undefined,

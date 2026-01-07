@@ -1,5 +1,5 @@
 import { AccountLikeArray, DailyOperationsSection } from "@ledgerhq/types-live";
-import { TFunction } from "i18next";
+import type { TFunction } from "i18next";
 
 export type InitialProps = {
   accounts: AccountLikeArray;

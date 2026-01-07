@@ -16,6 +16,9 @@ export type NodeApi = {
     gasUsed: string;
     gasPrice: string;
     value: string;
+    status: number | null;
+    from: string;
+    to: string | undefined;
   }>;
   getCoinBalance: (currency: CryptoCurrency, address: string) => Promise<BigNumber>;
   getTokenBalance: (
@@ -41,14 +44,14 @@ export type NodeApi = {
     currency: CryptoCurrency,
     blockHeight: number | "latest",
     // timestamp is in milliseconds
-  ) => Promise<{ hash: string; height: number; timestamp: number }>;
+  ) => Promise<{ hash: string; height: number; timestamp: number; transactionHashes?: string[] }>;
   getOptimismAdditionalFees: (
     currency: CryptoCurrency,
-    transaction: EvmTransaction,
+    transaction: EvmTransaction | string,
   ) => Promise<BigNumber>;
   getScrollAdditionalFees: (
     currency: CryptoCurrency,
-    transaction: EvmTransaction,
+    transaction: EvmTransaction | string,
   ) => Promise<BigNumber>;
 };
 

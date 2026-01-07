@@ -3,7 +3,6 @@ import {
   StyleSheet,
   View,
   TouchableWithoutFeedback,
-  FlatList,
   StyleProp,
   ViewStyle,
   ListRenderItem,
@@ -40,8 +39,8 @@ const CollapsibleList = <T,>({
   title,
   containerStyle,
   data,
-  itemHeight,
-  renderItem,
+  itemHeight = 46,
+  renderItem = renderListItem as ListRenderItem<T>,
   ...props
 }: Props<T>) => {
   const { colors } = useTheme();
@@ -100,8 +99,6 @@ const CollapsibleList = <T,>({
     };
   }, [openState]);
 
-  const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
-
   return (
     <Animated.View
       style={[
@@ -123,7 +120,7 @@ const CollapsibleList = <T,>({
           </LText>
         </View>
       </TouchableWithoutFeedback>
-      <AnimatedFlatList
+      <Animated.FlatList
         style={opacityStyle}
         data={data}
         renderItem={renderItem as ListRenderItem<unknown>}
@@ -135,10 +132,6 @@ const CollapsibleList = <T,>({
   );
 };
 
-CollapsibleList.defaultProps = {
-  itemHeight: 46,
-  renderItem: renderListItem,
-};
 const styles = StyleSheet.create({
   root: {
     borderRadius: 3,

@@ -11,7 +11,7 @@ const meta: Meta<typeof AccountItem> = {
   args: {
     onClick: onClick,
     account: {
-      address: "n4A9...Zgty",
+      address: "n4A9323232Zgty",
       balance: "0.118 ETH",
       cryptoId: "bitcoin",
       fiatValue: "$5,969.83",
@@ -31,7 +31,7 @@ export const TestAccount: Story = {
   args: {
     onClick: onClick,
     account: {
-      address: "n4A9...Zgty",
+      address: "n4A9323232Zgty",
       balance: "0.118 BTC",
       cryptoId: "bitcoin",
       fiatValue: "$5,969.83",
@@ -46,7 +46,7 @@ export const TestAccount: Story = {
 
     const name = canvas.getByText("Main BTC");
     const protocol = canvas.getByTestId("tag");
-    const address = canvas.getByText("n4A9...Zgty");
+    const address = canvas.getByText("n4A93...2Zgty");
     const addressIcon = canvas.getByRole("img");
     const fiatValue = canvas.getByText("$5,969.83");
     const balance = canvas.getByText("0.118 BTC");
@@ -65,7 +65,7 @@ export const TestWithoutProtocol: Story = {
   args: {
     onClick: onClick,
     account: {
-      address: "n4A9...Zgty",
+      address: "n4A9323232Zgty",
       balance: "0.118 BTC",
       cryptoId: "bitcoin",
       fiatValue: "$5,969.83",
@@ -87,7 +87,7 @@ export const TestWithoutAddressIcon: Story = {
   args: {
     onClick: onClick,
     account: {
-      address: "n4A9...Zgty",
+      address: "n4A9323232Zgty",
       balance: "0.118 BTC",
       fiatValue: "$5,969.83",
       id: "bitcoin",
@@ -107,7 +107,7 @@ export const TestWithoutAddressIcon: Story = {
 export const TestWithCheckbox: Story = {
   args: {
     account: {
-      address: "n4A9...Zgty",
+      address: "n4A9323232Zgty",
       balance: "0.118",
       cryptoId: "bitcoin",
       fiatValue: "$5,969.83",
@@ -137,7 +137,7 @@ export const TestWithCheckbox: Story = {
 export const TestWithArrow: Story = {
   args: {
     account: {
-      address: "n4A9...Zgty",
+      address: "n4A9323232Zgty",
       cryptoId: "bitcoin",
       fiatValue: "$5,969.83",
       id: "12345",
@@ -160,7 +160,7 @@ export const TestWithArrow: Story = {
 export const TestWithEdit: Story = {
   args: {
     account: {
-      address: "n4A9...Zgty",
+      address: "n4A9323232Zgty",
       cryptoId: "bitcoin",
       fiatValue: "$5,969.83",
       id: "12345",

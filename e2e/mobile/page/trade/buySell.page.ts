@@ -1,6 +1,7 @@
+import { Step } from "jest-allure2-reporter/api";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { BuySell, Fiat } from "@ledgerhq/live-common/lib/e2e/models/BuySell";
-import { openDeeplink, normalizeText } from "../../helpers/commonHelpers";
+import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
 
 export default class BuySellPage {
   cryptoCurrencySelector = "crypto-amount-option-button";
@@ -27,6 +28,7 @@ export default class BuySellPage {
   @Step("Open page via deeplink")
   async openViaDeeplink(page: "Buy" | "Sell") {
     await openDeeplink(page.toLowerCase());
+    await waitForElementById(app.common.walletApiWebview);
     await waitWebElementByTestId(this.cryptoCurrencySelector);
   }
 
@@ -53,8 +55,14 @@ export default class BuySellPage {
   @Step("Choose crypto asset if not selected")
   async chooseAssetIfNotSelected(account: AccountType) {
     await tapWebElementByTestId(this.cryptoCurrencySelector);
-    await this.selectCurrency(account.currency.id);
-    await app.common.selectAccount(account);
+    if (await app.modularDrawer.isFlowEnabled("live_app")) {
+      isIos()
+        ? await app.modularDrawer.selectAssetBuySellIosWorkaround(account)
+        : await app.modularDrawer.selectAsset(account);
+    } else {
+      await this.selectCurrency(account.currency.id);
+      await app.common.selectAccount(account);
+    }
     jestExpect(await getWebElementText(this.cryptoCurrencySelector)).toBe(account.currency.ticker);
     jestExpect(await getWebElementText(this.cryptoAccountSelector)).toBe(
       `${getParentAccountName(account)}${account.tokenType ? ` (${account.currency.ticker})` : ""}`,
@@ -76,13 +84,19 @@ export default class BuySellPage {
 
   @Step("Verify quick amount buttons functionality")
   async verifyQuickAmountButtonsFunctionality() {
-    const amounts = ["400", "800", "1600"] as const;
-    for (const amount of amounts) {
-      await tapWebElementByTestId(this.buyQuickAmountButtonId(amount));
+    const amountTests = [
+      { button: "400", expected: "400" },
+      { button: "800", expected: "800" },
+      { button: "1600", expected: "1,600" },
+    ] as const;
+
+    for (const { button, expected } of amountTests) {
+      await tapWebElementByTestId(this.buyQuickAmountButtonId(button));
       const value = await getValueByWebTestId(this.amountInputSectionId());
-      jestExpect(normalizeText(value)).toBe(amount);
+      jestExpect(normalizeText(value)).toBe(expected);
     }
   }
+
   @Step("Set amount to pay")
   async setAmountToPay(amount: string) {
     await typeTextByWebTestId(this.amountInputSectionId(), amount);
@@ -127,7 +141,7 @@ export default class BuySellPage {
     paymentMethod: string,
   ) {
     try {
-      const currentUrl = await getCurrentWebviewUrl();
+      const currentUrl = await waitForCurrentWebviewUrlToContain(provider.toLowerCase());
       jestExpect(currentUrl.toLowerCase()).toContain(provider.toLowerCase());
       jestExpect(currentUrl.toLowerCase()).toContain(buySell.crypto.currency.ticker.toLowerCase());
       jestExpect(currentUrl.toLowerCase()).toContain(buySell.fiat.currencyTicker.toLowerCase());

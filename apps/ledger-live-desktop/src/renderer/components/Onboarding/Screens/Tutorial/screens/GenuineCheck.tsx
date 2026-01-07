@@ -1,18 +1,26 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { AsideFooter, Bullet, Column, IllustrationContainer } from "../shared";
+import { AsideFooter, Bullet, Column, IllustrationContainer, TrackTutorialProps } from "../shared";
 import connectNano from "../assets/connectNano.png";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { OnboardingContext } from "../../../index";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { Device } from "@ledgerhq/types-devices";
 import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
-const Success = ({ device }: { device: Device }) => {
+const Success = ({ device, ...trackProps }: { device: Device } & TrackTutorialProps) => {
   const { t } = useTranslation();
   return (
     <Column>
+      <TrackPage
+        category="Set up device"
+        name="Final Step Your device is ready"
+        flow={trackProps.flow}
+        deviceModelId={trackProps.deviceModelId}
+        seedConfiguration={trackProps.seedConfiguration}
+      />
       <Bullet
         icon="CheckAlone"
         text={t("onboarding.screens.tutorial.screens.genuineCheck.success.title")}
@@ -29,7 +37,11 @@ type Props = {
   setConnectedDevice: (device: Device | null) => void;
 };
 
-export function GenuineCheck({ connectedDevice, setConnectedDevice }: Props) {
+export function GenuineCheck({
+  connectedDevice,
+  setConnectedDevice,
+  ...trackProps
+}: Props & TrackTutorialProps) {
   const { deviceModelId } = useContext(OnboardingContext);
   const device = useSelector(getCurrentDevice);
   const action = useConnectManagerAction();
@@ -45,7 +57,7 @@ export function GenuineCheck({ connectedDevice, setConnectedDevice }: Props) {
   }, []);
 
   return passed ? (
-    <Success device={connectedDevice} />
+    <Success device={connectedDevice} {...trackProps} />
   ) : (
     deviceModelId && (
       <DeviceAction

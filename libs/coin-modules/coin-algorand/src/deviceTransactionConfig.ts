@@ -1,4 +1,4 @@
-import { findTokenById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
@@ -20,14 +20,9 @@ const getSendFields = (
   status: TransactionStatus,
   account: AccountLike,
   addRecipient: boolean,
-) => {
+): Array<DeviceTransactionField> => {
   const { estimatedFees, amount } = status;
-  const fields: {
-    type: string;
-    label: string;
-    value?: string;
-    address?: string;
-  }[] = [];
+  const fields: Array<DeviceTransactionField> = [];
   fields.push({
     type: "text",
     label: "Type",
@@ -71,7 +66,7 @@ const getSendFields = (
   return fields;
 };
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   account,
   transaction,
   status,
@@ -79,15 +74,10 @@ function getDeviceTransactionConfig({
   account: AccountLike;
   transaction: AlgorandTransaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const { mode, assetId } = transaction;
   const { estimatedFees } = status;
-  let fields: {
-    type: string;
-    label: string;
-    value?: string;
-    address?: string;
-  }[] = [];
+  let fields: Array<DeviceTransactionField> = [];
 
   switch (mode) {
     case "send":
@@ -113,7 +103,7 @@ function getDeviceTransactionConfig({
       }
 
       if (assetId) {
-        const token = findTokenById(assetId);
+        const token = await getCryptoAssetsStore().findTokenById(assetId);
         fields.push({
           type: "text",
           label: "Asset ID",
@@ -132,7 +122,7 @@ function getDeviceTransactionConfig({
       break;
   }
 
-  return fields as Array<DeviceTransactionField>;
+  return fields;
 }
 
 export default getDeviceTransactionConfig;

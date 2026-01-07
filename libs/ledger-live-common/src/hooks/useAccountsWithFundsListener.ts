@@ -54,6 +54,7 @@ export function hasAccountsWithFundsChanged(accounts: Account[], oldAccounts: Ac
 function useAccountsWithFundsListener(
   accounts: Account[],
   callback: () => void,
+  callbackForAccounts: (accounts: Account[]) => void,
   debounceTimer: number = 3000,
 ) {
   const oldAccounts = useRef<Account[]>([]);
@@ -64,6 +65,7 @@ function useAccountsWithFundsListener(
         if (hasAccountsWithFundsChanged(accounts, oldAccounts.current)) {
           callback();
         }
+        callbackForAccounts(accounts);
         oldAccounts.current = accounts;
       }, debounceTimer),
     [accounts],

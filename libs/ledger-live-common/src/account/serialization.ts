@@ -62,11 +62,11 @@ export const fromOperationRaw = (
   return commonFromOperationRaw(operationRaw, accountId, subAccounts, fromOperationRaw);
 };
 
-export function fromAccountRaw(rawAccount: AccountRaw): Account {
+export async function fromAccountRaw(rawAccount: AccountRaw): Promise<Account> {
   const currency = getCryptoCurrencyById(rawAccount.currencyId);
   const bridge = getAccountBridgeByFamily(currency.family, rawAccount.id);
 
-  return commonFromAccountRaw(rawAccount, {
+  return await commonFromAccountRaw(rawAccount, {
     assignFromAccountRaw: bridge.assignFromAccountRaw,
     assignFromTokenAccountRaw: bridge.assignFromTokenAccountRaw,
     fromOperationExtraRaw: bridge.fromOperationExtraRaw,
@@ -99,7 +99,7 @@ const inferFamilyFromAccountId: (accountId: string) => string | null | undefined
     try {
       const { currencyId } = decodeAccountId(accountId);
       return getCryptoCurrencyById(currencyId).family;
-    } catch (e) {
+    } catch {
       return null;
     }
   },

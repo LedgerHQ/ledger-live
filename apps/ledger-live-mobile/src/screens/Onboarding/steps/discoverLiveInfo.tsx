@@ -4,7 +4,7 @@ import { Flex, Carousel, Text, Button, StoriesIndicator, Box } from "@ledgerhq/n
 import { useNavigation, useFocusEffect, CompositeNavigationProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
 import {
@@ -16,7 +16,6 @@ import {
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { NavigatorName, ScreenName } from "~/const";
 import { screen, track } from "~/analytics";
-
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import {
   RootNavigationComposite,
@@ -24,7 +23,7 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
-import Config from "react-native-config";
+import { DETOX_ENABLED } from "~/utils/constants";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.webp"),
@@ -102,7 +101,7 @@ const Item = ({
   }, [buyLedger]);
 
   return (
-    <Flex flex={1} backgroundColor={`background.main`}>
+    <Flex flex={1} backgroundColor={`background.main`} accessible={true}>
       <Svg width="100%" height={102} preserveAspectRatio="xMinYMin slice">
         <Defs>
           <LinearGradient
@@ -117,7 +116,12 @@ const Item = ({
             <Stop offset="100%" stopOpacity={0} stopColor={colors.neutral.c00} />
           </LinearGradient>
         </Defs>
-        <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />
+        <Rect
+          transform={[{ translateX: 0 }, { translateY: 0 }]}
+          width="100%"
+          height="100%"
+          fill="url(#myGradient)"
+        />
       </Svg>
       <Text
         variant="h4"
@@ -183,10 +187,25 @@ function DiscoverLiveInfo() {
   const autoChange = useCallback((index: number) => onChange(index, false), [onChange]);
   const manualChange = useCallback((index: number) => onChange(index, true), [onChange]);
 
+  if (DETOX_ENABLED) {
+    const lastIndex = slidesImages.length - 1;
+    return (
+      <StyledSafeAreaView>
+        <Item
+          title={t(`onboarding.discoverLive.${lastIndex}.title`)}
+          imageProps={{ source: slidesImages[lastIndex] }}
+          displayNavigationButtons={true}
+          currentIndex={slidesImages.length}
+          testID={`onboarding-discoverLive-${lastIndex}-title`}
+        />
+      </StyledSafeAreaView>
+    );
+  }
+
   return (
     <StyledSafeAreaView>
       <Carousel
-        autoDelay={Config.DETOX ? 0 : 6000}
+        autoDelay={DETOX_ENABLED ? 0 : 6000}
         scrollOnSidePress={true}
         restartAfterEnd={false}
         IndicatorComponent={StoriesIndicator}

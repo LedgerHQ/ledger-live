@@ -128,7 +128,6 @@ If you are using [Visual Studio Code](https://code.visualstudio.com/) IDE, we pr
 (you can use a .env or export environment variables)
 
 ```bash
-NO_DEBUG_COMMANDS=1
 NO_DEBUG_DB=1
 NO_DEBUG_ACTION=1
 NO_DEBUG_TAB_KEY=1

@@ -15,6 +15,7 @@ export async function craftTransaction(
   },
   transaction: {
     recipient?: string;
+    instrumentAdmin?: string;
     amount: BigNumber;
     tokenId: string;
     expireInSeconds: number;
@@ -27,11 +28,15 @@ export async function craftTransaction(
 }> {
   const params: PrepareTransferRequest = {
     recipient: transaction.recipient || "",
-    amount: transaction.amount.toString(),
+    amount: transaction.amount.toFixed(),
     type: "token-transfer-request" as const,
     execute_before_secs: transaction.expireInSeconds,
     instrument_id: transaction.tokenId,
   };
+
+  if (transaction.instrumentAdmin) {
+    params.instrument_admin = transaction.instrumentAdmin;
+  }
 
   if (transaction.memo) {
     params.reason = transaction.memo;

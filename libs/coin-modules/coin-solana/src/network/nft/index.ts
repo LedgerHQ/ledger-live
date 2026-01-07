@@ -1,5 +1,5 @@
 import { getEnv } from "@ledgerhq/live-env";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { NFTCollectionMetadataResponse, NFTMetadataResponse } from "@ledgerhq/types-live";
 import { CollectionMetadataInput, NftMetadataInput } from "@ledgerhq/coin-framework/nft/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

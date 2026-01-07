@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSendSPL } from "./subAccount";
 
 const transactionE2E = [
@@ -10,9 +11,10 @@ const transactionE2E = [
       "noTag",
     ),
     xrayTicket: ["B2CQA-3055", "B2CQA-3057"],
+    tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
   },
 ];
 
 for (const transaction of transactionE2E) {
-  runSendSPL(transaction.tx, transaction.xrayTicket);
+  runSendSPL(transaction.tx, transaction.xrayTicket, transaction.tag);
 }

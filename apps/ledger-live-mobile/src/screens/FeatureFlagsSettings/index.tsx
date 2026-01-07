@@ -24,7 +24,7 @@ import lowerCase from "lodash/lowerCase";
 import trim from "lodash/trim";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import FeatureFlagDetails, { TagDisabled, TagEnabled } from "./FeatureFlagDetails";
 import Alert from "~/components/Alert";
@@ -159,7 +159,9 @@ export default function DebugFeatureFlags() {
             {project}
           </Tag>
           <Flex flexDirection="row" justifyContent="space-between">
-            <Text mt={3}>{t("settings.debug.showBannerDesc")}</Text>
+            <Text flexShrink={1} mt={3}>
+              {t("settings.debug.showBannerDesc")}
+            </Text>
             <Switch checked={featureFlagsBannerVisible} onChange={setFeatureFlagBannerVisible} />
           </Flex>
           <Divider />

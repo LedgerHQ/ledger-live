@@ -42,7 +42,7 @@ export const getEthereumToTetherRatesMock = () => {
       provider: "oneinch",
       providerType: "DEX",
       providerURL:
-        "https://app.1inch.io/#/1/unified/swap/eth/usdt?https://app.1inch.isourceTokenAmount=10.135255432293584185",
+        "https://1inch.com/swap/#/1/unified/swap/eth/usdt?https://app.1inch.isourceTokenAmount=10.135255432293584185",
       from: "ethereum",
       to: "ethereum/erc20/usd_tether__erc20_",
       amountFrom: "10.135255432293584185",

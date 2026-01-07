@@ -6,7 +6,7 @@ import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../Se
 import RowItem from "../../RowItem";
 import ReleaseNotesButton from "./ReleaseNotesButton";
 import { setDeveloperMode } from "~/renderer/actions/settings";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { v4 as uuidv4 } from "uuid";
 import { developerModeSelector } from "~/renderer/reducers/settings";
@@ -46,7 +46,7 @@ const SectionHelp = () => {
         <Row
           dataTestId="version-row"
           title={t("settings.help.version")}
-          desc={`Ledger Live ${version}`}
+          desc={`Ledger Wallet ${version}`}
           onClick={onVersionClick}
         >
           <ReleaseNotesButton />

@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { Modal } from "../../component/modal.component";
-import { step } from "../../misc/reporters/step";
+import { Modal } from "tests/component/modal.component";
+import { step } from "tests/misc/reporters/step";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
@@ -97,12 +97,6 @@ export class AddAccountModal extends Modal {
     await this.continue();
     await this.waitForSync();
     await this.loadingSpinner.waitFor({ state: "hidden" });
-  }
-
-  @step("click `Add Accounts` button - mocked tests")
-  async addAccountsMocked() {
-    await this.addAccountsButton.click();
-    await expect(this.successAddLabel).toBeVisible();
   }
 
   @step("Click `Add Accounts` button")

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { useAptosMappedStakingPositions } from "@ledgerhq/live-common/families/aptos/react";
@@ -121,7 +121,7 @@ const Staking = ({ account }: { account: AptosAccount }) => {
               maxWidth: "65%",
             }}
           >
-            <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+            <Text ff="Inter|Medium|SemiBold" color="neutral.c70" fontSize={4}>
               <Trans
                 i18nKey="aptos.stake.emptyState.description"
                 values={{

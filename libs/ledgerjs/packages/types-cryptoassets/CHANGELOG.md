@@ -1,5 +1,77 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.31.0
+
+### Minor Changes
+
+- [#13036](https://github.com/LedgerHQ/ledger-live/pull/13036) [`5e0556a`](https://github.com/LedgerHQ/ledger-live/commit/5e0556a3bd0ea60277462eed10c997b17b09d299) Thanks [@jonezque](https://github.com/jonezque)! - Concordium metadata
+
+## 7.31.0-next.0
+
+### Minor Changes
+
+- [#13036](https://github.com/LedgerHQ/ledger-live/pull/13036) [`5e0556a`](https://github.com/LedgerHQ/ledger-live/commit/5e0556a3bd0ea60277462eed10c997b17b09d299) Thanks [@jonezque](https://github.com/jonezque)! - Concordium metadata
+
+## 7.30.0
+
+### Minor Changes
+
+- [#12277](https://github.com/LedgerHQ/ledger-live/pull/12277) [`da750a1`](https://github.com/LedgerHQ/ledger-live/commit/da750a16ee5f2c083114569b8ae3c708cceba06c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Make CryptoCurrency dynamically loadable.
+
+## 7.30.0-next.0
+
+### Minor Changes
+
+- [#12277](https://github.com/LedgerHQ/ledger-live/pull/12277) [`da750a1`](https://github.com/LedgerHQ/ledger-live/commit/da750a16ee5f2c083114569b8ae3c708cceba06c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Make CryptoCurrency dynamically loadable.
+
+## 7.29.0
+
+### Minor Changes
+
+- [#12014](https://github.com/LedgerHQ/ledger-live/pull/12014) [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton testnet + logo update
+
+- [#11660](https://github.com/LedgerHQ/ledger-live/pull/11660) [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Support Westend on LL
+
+## 7.29.0-next.0
+
+### Minor Changes
+
+- [#12014](https://github.com/LedgerHQ/ledger-live/pull/12014) [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton testnet + logo update
+
+- [#11660](https://github.com/LedgerHQ/ledger-live/pull/11660) [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Support Westend on LL
+
+## 7.28.0
+
+### Minor Changes
+
+- [#11948](https://github.com/LedgerHQ/ledger-live/pull/11948) [`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Simplify implementation of listTokenTypesForCryptoCurrency to not depend on bundled tokens.
+
+- [#11581](https://github.com/LedgerHQ/ledger-live/pull/11581) [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed) Thanks [@Canestin](https://github.com/Canestin)! - feature (lld,llm): integrate Core DAO Mainnet
+
+- [#11889](https://github.com/LedgerHQ/ledger-live/pull/11889) [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a) Thanks [@Canestin](https://github.com/Canestin)! - feat: ethereum hoodi testnet integration
+
+## 7.28.0-next.0
+
+### Minor Changes
+
+- [#11948](https://github.com/LedgerHQ/ledger-live/pull/11948) [`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Simplify implementation of listTokenTypesForCryptoCurrency to not depend on bundled tokens.
+
+- [#11581](https://github.com/LedgerHQ/ledger-live/pull/11581) [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed) Thanks [@Canestin](https://github.com/Canestin)! - feature (lld,llm): integrate Core DAO Mainnet
+
+- [#11889](https://github.com/LedgerHQ/ledger-live/pull/11889) [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a) Thanks [@Canestin](https://github.com/Canestin)! - feat: ethereum hoodi testnet integration
+
+## 7.27.0
+
+### Minor Changes
+
+- [#11672](https://github.com/LedgerHQ/ledger-live/pull/11672) [`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8) Thanks [@semeano](https://github.com/semeano)! - Kaspa commons libs
+
+## 7.27.0-next.0
+
+### Minor Changes
+
+- [#11672](https://github.com/LedgerHQ/ledger-live/pull/11672) [`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8) Thanks [@semeano](https://github.com/semeano)! - Kaspa commons libs
+
 ## 7.26.0
 
 ### Minor Changes

@@ -4,6 +4,7 @@ import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 LiveConfig.setConfig(liveConfig);
 LiveConfig.setAppinfo({
@@ -48,6 +49,7 @@ setSupportedCurrencies([
   "komodo",
   "zencash",
   "bitcoin_testnet",
+  "bitcoin_regtest",
   "ethereum_sepolia",
   "ethereum_holesky",
   "crypto_org",
@@ -75,4 +77,15 @@ setSupportedCurrencies([
   "sui",
   "mina",
   "babylon",
+  "kaspa",
+  "westend",
+  "assethub_westend",
+  "assethub_polkadot",
 ]);
+
+export function setupCryptoAssetsStore(): void {
+  // for now we use the test-helpers one
+  setupCalClientStore();
+}
+
+setupCryptoAssetsStore();

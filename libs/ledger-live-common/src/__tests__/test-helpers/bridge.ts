@@ -31,12 +31,11 @@ import type {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom } from "rxjs";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);
 // FIXME move out into DatasetTest to be defined in
 const blacklistOpsSumEq = {
-  currencies: ["ripple", "ethereum"],
+  currencies: ["ripple", "ethereum", "tezos", "assethub_polkadot"],
   impls: ["mock"],
 };
 
@@ -68,17 +67,19 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
   // covers all bridges through many different accounts
   // to test the common shared properties of bridges.
   const accountsRelated: Array<{
-    account: Account;
+    accountRaw: any;
     currencyData: CurrenciesData<T>;
     accountData: any;
     impl: string;
+    currency: CryptoCurrency;
   }> = [];
   const currenciesRelated: Array<{
     currencyData: CurrenciesData<T>;
     currency: CryptoCurrency;
   }> = [];
   const { implementations, currencies } = data;
-  Object.keys(currencies).forEach(currencyId => {
+
+  for (const currencyId of Object.keys(currencies)) {
     const currencyData = currencies[currencyId];
     const currency = getCryptoCurrencyById(currencyId);
     currenciesRelated.push({
@@ -87,31 +88,32 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
     });
 
     const accounts = currencyData.accounts || [];
-    accounts.forEach(accountData =>
-      implementations.forEach(impl => {
+    for (const accountData of accounts) {
+      for (const impl of implementations) {
         if (accountData.implementations && !accountData.implementations.includes(impl)) {
-          return;
+          continue;
         }
 
-        const account = fromAccountRaw({
+        const accountRaw = {
           ...accountData.raw,
           id: encodeAccountId({
             ...decodeAccountId(accountData.raw.id),
             type: impl,
           }),
-        });
+        };
         accountsRelated.push({
           currencyData,
           accountData,
-          account,
+          accountRaw,
           impl,
+          currency,
         });
-      }),
-    );
-  });
+      }
+    }
+  }
   const accountsFoundInScanAccountsMap = {};
 
-  currenciesRelated.map(({ currencyData, currency }) => {
+  currenciesRelated.forEach(({ currencyData, currency }) => {
     const bridge = getCurrencyBridge(currency);
 
     const scanAccounts = async apdus => {
@@ -337,29 +339,67 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
   });
 
   accountsRelated
-    .map(({ account, ...rest }) => {
-      const bridge = getAccountBridge(account, null);
-      if (!bridge) throw new Error("no bridge for " + account.id);
+    .map(({ accountRaw, ...rest }) => {
+      let accountPromise;
+      let bridgePromise;
       let accountSyncedPromise;
 
       // lazy eval so we don't run this yet
-      const getSynced = () =>
-        accountSyncedPromise || (accountSyncedPromise = syncAccount(bridge, account));
+      const getAccount = () => accountPromise || (accountPromise = fromAccountRaw(accountRaw));
+
+      const getBridge = async () => {
+        if (!bridgePromise) {
+          bridgePromise = getAccount().then(account => {
+            const bridge = getAccountBridge(account, null);
+            if (!bridge) throw new Error("no bridge for " + account.id);
+            return bridge;
+          });
+        }
+        return bridgePromise;
+      };
+
+      const getSynced = async () => {
+        if (!accountSyncedPromise) {
+          const account = await getAccount();
+          const bridge = await getBridge();
+          accountSyncedPromise = syncAccount(bridge, account);
+        }
+        return accountSyncedPromise;
+      };
+
+      const currency = rest.currency;
 
       return {
         getSynced,
-        bridge,
-        initialAccount: account,
+        getBridge,
+        getAccount,
+        initialAccountRaw: accountRaw,
+        initialAccountId: accountRaw.id,
+        initialAccountCurrency: currency,
         ...rest,
       };
     })
     .forEach(arg => {
-      const { getSynced, bridge, initialAccount, accountData, impl } = arg;
+      const {
+        getSynced,
+        getBridge,
+        getAccount,
+        initialAccountId,
+        initialAccountCurrency,
+        accountData,
+        impl,
+      } = arg;
 
       const makeTest = (name, fn) => {
         if (accountData.FIXME_tests && accountData.FIXME_tests.some(r => name.match(r))) {
           warnDev(
-            "FIXME test was skipped. " + name + " for " + getDefaultAccountName(initialAccount),
+            "FIXME test was skipped. " +
+              name +
+              " for " +
+              initialAccountCurrency.name +
+              " (" +
+              initialAccountId +
+              ")",
           );
           return;
         }
@@ -367,389 +407,415 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
         test(name, fn);
       };
 
-      describe(impl + " bridge on account " + getDefaultAccountName(initialAccount), () => {
-        describe("sync", () => {
-          makeTest("succeed", async () => {
-            const account = await getSynced();
-            expect(fromAccountRaw(toAccountRaw(account))).toBeDefined();
-          });
+      describe(
+        impl + " bridge on account " + initialAccountCurrency.name + " (" + initialAccountId + ")",
+        () => {
+          describe("sync", () => {
+            makeTest("succeed", async () => {
+              const account = await getSynced();
+              expect(fromAccountRaw(toAccountRaw(account))).toBeDefined();
+            });
 
-          if (impl !== "mock") {
-            const accFromScanAccounts = accountsFoundInScanAccountsMap[initialAccount.id];
+            if (impl !== "mock") {
+              const accFromScanAccounts = accountsFoundInScanAccountsMap[initialAccountId];
 
-            if (accFromScanAccounts) {
-              makeTest("matches the same account from scanAccounts", async () => {
-                const acc = await getSynced();
-                expect(acc).toMatchObject(accFromScanAccounts);
+              if (accFromScanAccounts) {
+                makeTest("matches the same account from scanAccounts", async () => {
+                  const acc = await getSynced();
+                  expect(acc).toMatchObject(accFromScanAccounts);
+                });
+              }
+            }
+            makeTest("account have no NaN values", async () => {
+              const account = await getSynced();
+              [account, ...(account.subAccounts || [])].forEach(a => {
+                expect(a.balance.isNaN()).toBe(false);
+                expect(a.operations.find(op => op.value.isNaN())).toBe(undefined);
+                expect(a.operations.find(op => op.fee.isNaN())).toBe(undefined);
+              });
+            });
+
+            if (
+              !blacklistOpsSumEq.currencies.includes(initialAccountCurrency.id) &&
+              !blacklistOpsSumEq.impls.includes(impl)
+            ) {
+              makeTest("balance is sum of ops", async () => {
+                const account = await getSynced();
+                expectBalanceIsOpsSum(account);
+
+                if (account.subAccounts) {
+                  account.subAccounts.forEach(expectBalanceIsOpsSum);
+                }
+              });
+              makeTest("balance and spendableBalance boundaries", async () => {
+                const account = await getSynced();
+                expect(account.balance).toBeInstanceOf(BigNumber);
+                expect(account.spendableBalance).toBeInstanceOf(BigNumber);
+                expect(account.balance.lt(0)).toBe(false);
+                expect(account.spendableBalance.lt(0)).toBe(false);
+                expect(account.spendableBalance.lte(account.balance)).toBe(true);
               });
             }
-          }
-          makeTest("account have no NaN values", async () => {
-            const account = await getSynced();
-            [account, ...(account.subAccounts || [])].forEach(a => {
-              expect(a.balance.isNaN()).toBe(false);
-              expect(a.operations.find(op => op.value.isNaN())).toBe(undefined);
-              expect(a.operations.find(op => op.fee.isNaN())).toBe(undefined);
-            });
-          });
 
-          if (
-            !blacklistOpsSumEq.currencies.includes(initialAccount.currency.id) &&
-            !blacklistOpsSumEq.impls.includes(impl)
-          ) {
-            makeTest("balance is sum of ops", async () => {
+            makeTest("existing operations object refs are preserved", async () => {
               const account = await getSynced();
-              expectBalanceIsOpsSum(account);
-
-              if (account.subAccounts) {
-                account.subAccounts.forEach(expectBalanceIsOpsSum);
-              }
-            });
-            makeTest("balance and spendableBalance boundaries", async () => {
-              const account = await getSynced();
-              expect(account.balance).toBeInstanceOf(BigNumber);
-              expect(account.spendableBalance).toBeInstanceOf(BigNumber);
-              expect(account.balance.lt(0)).toBe(false);
-              expect(account.spendableBalance.lt(0)).toBe(false);
-              expect(account.spendableBalance.lte(account.balance)).toBe(true);
-            });
-          }
-
-          makeTest("existing operations object refs are preserved", async () => {
-            const account = await getSynced();
-            const count = Math.floor(account.operations.length / 2);
-            const operations = account.operations.slice(count);
-            const copy = {
-              ...account,
-              operations,
-              blockHeight: 0,
-            };
-            const synced = await syncAccount(bridge, copy);
-            if (initialAccount.id.includes("ripple")) return; // ripple wont work because of the current implementation of pagination
-            expect(synced.operations.length).toBe(account.operations.length);
-            // same ops are restored
-            expect(synced.operations).toEqual(account.operations);
-            if (initialAccount.id.startsWith("ethereumjs")) return; // ethereumjs seems to have a bug on this, we ignore because the impl will be dropped.
-
-            // existing ops are keeping refs
-            synced.operations.slice(count).forEach((op, i) => {
-              expect(op).toStrictEqual(operations[i]);
-            });
-          });
-          makeTest("pendingOperations are cleaned up", async () => {
-            const account = await getSynced();
-            if (initialAccount.id.includes("ripple")) return; // ripple wont work because of the current implementation of pagination
-
-            if (account.operations.length) {
-              const operations = account.operations.slice(1);
-              const pendingOperations = [account.operations[0]];
+              const count = Math.floor(account.operations.length / 2);
+              const operations = account.operations.slice(count);
               const copy = {
                 ...account,
                 operations,
-                pendingOperations,
                 blockHeight: 0,
               };
+              const bridge = await getBridge();
               const synced = await syncAccount(bridge, copy);
+              expect(synced.operations.length).toBe(account.operations.length);
               // same ops are restored
               expect(synced.operations).toEqual(account.operations);
-              // pendingOperations is empty
-              expect(synced.pendingOperations).toEqual([]);
-            }
-          });
-          makeTest("there are no Operation dups (by id)", async () => {
-            const account = await getSynced();
-            const seen = {};
-            account.operations.forEach(op => {
-              expect(seen[op.id]).toBeUndefined();
-              seen[op.id] = op.id;
-            });
-          });
-        });
+              if (initialAccountId.startsWith("ethereumjs")) return; // ethereumjs seems to have a bug on this, we ignore because the impl will be dropped.
 
-        describe("createTransaction", () => {
-          makeTest("empty transaction is an object with empty recipient and zero amount", () => {
-            expect(bridge.createTransaction(initialAccount)).toMatchObject({
-              amount: new BigNumber(0),
-              recipient: "",
-            });
-          });
-          makeTest("empty transaction is equals to itself", () => {
-            expect(bridge.createTransaction(initialAccount)).toEqual(
-              bridge.createTransaction(initialAccount),
-            );
-          });
-          makeTest("empty transaction correctly serialize", () => {
-            const t = bridge.createTransaction(initialAccount);
-            expect(fromTransactionRaw(toTransactionRaw(t))).toEqual(t);
-          });
-          makeTest("transaction with amount and recipient correctly serialize", async () => {
-            const account = await getSynced();
-            const t = {
-              ...bridge.createTransaction(account),
-              amount: new BigNumber(1000),
-              recipient: account.freshAddress,
-            };
-            expect(fromTransactionRaw(toTransactionRaw(t))).toEqual(t);
-          });
-        });
-
-        describe("updateTransaction", () => {
-          // stability: function called twice will return the same object reference
-          // (=== convergence so we can stop looping, typically because transaction will be a hook effect dependency of prepareTransaction)
-          function expectStability(t, patch) {
-            const t2 = bridge.updateTransaction(t, patch);
-            const t3 = bridge.updateTransaction(t2, patch);
-            expect(t2).toBe(t3);
-          }
-
-          makeTest("ref stability on empty transaction", async () => {
-            const account = await getSynced();
-            const tx = bridge.createTransaction(account);
-            expectStability(tx, {});
-          });
-
-          makeTest("ref stability on self transaction", async () => {
-            const account = await getSynced();
-            const tx = bridge.createTransaction(account);
-            expectStability(tx, {
-              amount: new BigNumber(1000),
-              recipient: account.freshAddress,
-            });
-          });
-        });
-
-        describe("prepareTransaction", () => {
-          // stability: function called twice will return the same object reference
-          // (=== convergence so we can stop looping, typically because transaction will be a hook effect dependency of prepareTransaction)
-          async function expectStability(account, t) {
-            let t2 = await bridge.prepareTransaction(account, t);
-            let t3 = await bridge.prepareTransaction(account, t2);
-            t2 = omit(t2, arg.currencyData.IgnorePrepareTransactionFields || []);
-            t3 = omit(t3, arg.currencyData.IgnorePrepareTransactionFields || []);
-            expect(t2).toStrictEqual(t3);
-          }
-
-          makeTest("ref stability on empty transaction", async () => {
-            const account = await getSynced();
-            await expectStability(account, bridge.createTransaction(account));
-          });
-          makeTest("ref stability on self transaction", async () => {
-            const account = await getSynced();
-            await expectStability(account, {
-              ...bridge.createTransaction(account),
-              amount: new BigNumber(1000),
-              recipient: account.freshAddress,
-            });
-          });
-          makeTest("can be run in parallel and all yield same results", async () => {
-            const account = await getSynced();
-            const t = {
-              ...bridge.createTransaction(account),
-              amount: new BigNumber(1000),
-              recipient: account.freshAddress,
-            };
-            const stable = await bridge.prepareTransaction(account, t);
-            const first = omit(
-              await bridge.prepareTransaction(account, stable),
-              arg.currencyData.IgnorePrepareTransactionFields || [],
-            );
-            const concur = await Promise.all(
-              Array(3)
-                .fill(null)
-                .map(() => bridge.prepareTransaction(account, stable)),
-            );
-            concur.forEach(r => {
-              r = omit(r, arg.currencyData.IgnorePrepareTransactionFields || []);
-              expect(r).toEqual(first);
-            });
-          });
-        });
-
-        describe("getTransactionStatus", () => {
-          makeTest("can be called on an empty transaction", async () => {
-            const account = await getSynced();
-            const t = {
-              ...bridge.createTransaction(account),
-              feePerByte: new BigNumber(0.0001),
-            };
-            const s = await bridge.getTransactionStatus(account, t);
-            expect(s).toBeDefined();
-            expect(s.errors).toHaveProperty("recipient");
-            expect(s).toHaveProperty("totalSpent");
-            expect(s.totalSpent).toBeInstanceOf(BigNumber);
-            expect(s).toHaveProperty("estimatedFees");
-            expect(s.estimatedFees).toBeInstanceOf(BigNumber);
-            expect(s).toHaveProperty("amount");
-            expect(s.amount).toBeInstanceOf(BigNumber);
-            expect(s.amount).toEqual(new BigNumber(0));
-          });
-          makeTest("can be called on an empty prepared transaction", async () => {
-            const account = await getSynced();
-            const t = await bridge.prepareTransaction(account, {
-              ...bridge.createTransaction(account),
-              feePerByte: new BigNumber(0.0001),
-            });
-            const s = await bridge.getTransactionStatus(account, t);
-            expect(s).toBeDefined(); // FIXME i'm not sure if we can establish more shared properties
-          });
-          makeTest("Default empty recipient have a recipientError", async () => {
-            const account = await getSynced();
-            const t = {
-              ...bridge.createTransaction(account),
-              feePerByte: new BigNumber(0.0001),
-            };
-            const status = await bridge.getTransactionStatus(account, t);
-            expect(status.errors.recipient).toBeInstanceOf(RecipientRequired);
-          });
-          makeTest("invalid recipient have a recipientError", async () => {
-            const account = await getSynced();
-            const t = {
-              ...bridge.createTransaction(account),
-              feePerByte: new BigNumber(0.0001),
-              recipient: "invalidADDRESS",
-            };
-            const status = await bridge.getTransactionStatus(account, t);
-            expect(status.errors.recipient).toBeInstanceOf(InvalidAddress);
-          });
-          makeTest("Default empty amount has an amount error", async () => {
-            const account = await getSynced();
-            const t = await bridge.prepareTransaction(account, {
-              ...bridge.createTransaction(account),
-              feePerByte: new BigNumber(0.0001),
-            });
-            const status = await bridge.getTransactionStatus(account, t);
-            expect(status.errors.amount).toBeInstanceOf(AmountRequired);
-          });
-
-          const accountDataTest = accountData.test;
-
-          if (accountDataTest) {
-            makeTest("account specific test", async () =>
-              accountDataTest(expect, await getSynced(), bridge),
-            );
-          }
-
-          (accountData.transactions || []).forEach(
-            ({ name, transaction, expectedStatus, apdus, testSignedOperation, test: testFn }) => {
-              makeTest("transaction " + name, async () => {
-                const account: Account = await getSynced();
-                let t =
-                  typeof transaction === "function"
-                    ? transaction(bridge.createTransaction(account), account, bridge)
-                    : transaction;
-                t = await bridge.prepareTransaction(account, {
-                  feePerByte: new BigNumber(0.0001),
-                  ...t,
-                });
-                const s = await bridge.getTransactionStatus(account, t);
-
-                if (expectedStatus) {
-                  const es =
-                    typeof expectedStatus === "function"
-                      ? expectedStatus(account, t, s)
-                      : expectedStatus;
-                  const { errors, warnings } = es;
-
-                  // we match errors and warnings
-                  errors && expect(s.errors).toMatchObject(errors);
-                  warnings && expect(s.warnings).toMatchObject(warnings);
-                  // now we match rest of fields but using the raw version for better readability
-                  const restRaw: Record<string, any> = toTransactionStatusRaw(
-                    {
-                      ...s,
-                      ...es,
-                    },
-                    account.currency.family,
-                  );
-                  delete restRaw.errors;
-                  delete restRaw.warnings;
-
-                  for (const k in restRaw) {
-                    if (!(k in es)) {
-                      delete restRaw[k];
-                    }
-                  }
-
-                  expect(
-                    toTransactionStatusRaw(s as TransactionStatusCommon, account.currency.family),
-                  ).toMatchObject(restRaw);
-                }
-
-                if (testFn) {
-                  await testFn(expect, t, s, bridge);
-                }
-
-                if (Object.keys(s.errors).length === 0) {
-                  const { subAccountId } = t;
-                  const { subAccounts } = account;
-
-                  const inferSubAccount = () => {
-                    invariant(subAccounts, "sub accounts available");
-                    const a = (subAccounts as TokenAccount[]).find(a => a.id === subAccountId);
-                    invariant(a, "sub account not found");
-                    return a;
-                  };
-
-                  const obj = subAccountId
-                    ? {
-                        transaction: t as TransactionCommon,
-                        account: inferSubAccount() as AccountLike,
-                        parentAccount: account,
-                      }
-                    : {
-                        transaction: t as TransactionCommon,
-                        account: account as AccountLike,
-                      };
-
-                  if (
-                    (typeof t.mode !== "string" || t.mode === "send") &&
-                    t.model &&
-                    t.model.kind !== "stake.createAccount"
-                  ) {
-                    const estimation = await bridge.estimateMaxSpendable(obj);
-                    expect(estimation.gte(0)).toBe(true);
-                    expect(estimation.lte(obj.account.balance)).toBe(true);
-
-                    if (t.useAllAmount) {
-                      expect(estimation.toString()).toBe(s.amount.toString());
-                    }
-                  }
-                }
-
-                if (apdus && impl !== "mock") {
-                  const deviceId = await mockDeviceWithAPDUs(apdus);
-
-                  try {
-                    const signedOperation = await firstValueFrom(
-                      bridge
-                        .signOperation({
-                          account,
-                          deviceId,
-                          transaction: t,
-                        })
-                        .pipe(
-                          filter(e => e.type === "signed"),
-                          map((e: any) => e.signedOperation),
-                        ),
-                    );
-
-                    if (testSignedOperation) {
-                      await testSignedOperation(expect, signedOperation, account, t, s, bridge);
-                    }
-                  } finally {
-                    releaseMockDevice(deviceId);
-                  }
-                }
+              // existing ops are keeping refs
+              synced.operations.slice(count).forEach((op, i) => {
+                expect(op).toStrictEqual(operations[i]);
               });
-            },
-          );
-        });
-        describe("signOperation and broadcast", () => {
-          makeTest("method is available on bridge", async () => {
-            expect(typeof bridge.signOperation).toBe("function");
-            expect(typeof bridge.broadcast).toBe("function");
-          }); // NB for now we are not going farther because most is covered by bash tests
-        });
-      });
+            });
+            makeTest("pendingOperations are cleaned up", async () => {
+              const account = await getSynced();
+
+              if (account.operations.length) {
+                const operations = account.operations.slice(1);
+                const pendingOperations = [account.operations[0]];
+                const copy = {
+                  ...account,
+                  operations,
+                  pendingOperations,
+                  blockHeight: 0,
+                };
+                const bridge = await getBridge();
+                const synced = await syncAccount(bridge, copy);
+                // same ops are restored
+                expect(synced.operations).toEqual(account.operations);
+                // pendingOperations is empty
+                expect(synced.pendingOperations).toEqual([]);
+              }
+            });
+            makeTest("there are no Operation dups (by id)", async () => {
+              const account = await getSynced();
+              const seen = {};
+              account.operations.forEach(op => {
+                expect(seen[op.id]).toBeUndefined();
+                seen[op.id] = op.id;
+              });
+            });
+          });
+
+          describe("createTransaction", () => {
+            makeTest(
+              "empty transaction is an object with empty recipient and zero amount",
+              async () => {
+                const account = await getAccount();
+                const bridge = await getBridge();
+                expect(bridge.createTransaction(account)).toMatchObject({
+                  amount: new BigNumber(0),
+                  recipient: "",
+                });
+              },
+            );
+            makeTest("empty transaction is equals to itself", async () => {
+              const account = await getAccount();
+              const bridge = await getBridge();
+              expect(bridge.createTransaction(account)).toEqual(bridge.createTransaction(account));
+            });
+            makeTest("empty transaction correctly serialize", async () => {
+              const account = await getAccount();
+              const bridge = await getBridge();
+              const t = bridge.createTransaction(account);
+              expect(fromTransactionRaw(toTransactionRaw(t))).toEqual(t);
+            });
+            makeTest("transaction with amount and recipient correctly serialize", async () => {
+              const account = await getSynced();
+              const bridge = await getBridge();
+              const t = {
+                ...bridge.createTransaction(account),
+                amount: new BigNumber(1000),
+                recipient: account.freshAddress,
+              };
+              expect(fromTransactionRaw(toTransactionRaw(t))).toEqual(t);
+            });
+          });
+
+          describe("updateTransaction", () => {
+            // stability: function called twice will return the same object reference
+            // (=== convergence so we can stop looping, typically because transaction will be a hook effect dependency of prepareTransaction)
+            async function expectStability(t, patch) {
+              const bridge = await getBridge();
+              const t2 = bridge.updateTransaction(t, patch);
+              const t3 = bridge.updateTransaction(t2, patch);
+              expect(t2).toBe(t3);
+            }
+
+            makeTest("ref stability on empty transaction", async () => {
+              const account = await getSynced();
+              const bridge = await getBridge();
+              const tx = bridge.createTransaction(account);
+              await expectStability(tx, {});
+            });
+
+            makeTest("ref stability on self transaction", async () => {
+              const account = await getSynced();
+              const bridge = await getBridge();
+              const tx = bridge.createTransaction(account);
+              await expectStability(tx, {
+                amount: new BigNumber(1000),
+                recipient: account.freshAddress,
+              });
+            });
+          });
+
+          describe("prepareTransaction", () => {
+            // stability: function called twice will return the same object reference
+            // (=== convergence so we can stop looping, typically because transaction will be a hook effect dependency of prepareTransaction)
+            async function expectStability(account, t) {
+              const bridge = await getBridge();
+              let t2 = await bridge.prepareTransaction(account, t);
+              let t3 = await bridge.prepareTransaction(account, t2);
+              t2 = omit(t2, arg.currencyData.IgnorePrepareTransactionFields || []);
+              t3 = omit(t3, arg.currencyData.IgnorePrepareTransactionFields || []);
+              expect(t2).toStrictEqual(t3);
+            }
+
+            makeTest("ref stability on empty transaction", async () => {
+              const account = await getSynced();
+              const bridge = await getBridge();
+              await expectStability(account, bridge.createTransaction(account));
+            });
+            makeTest("ref stability on self transaction", async () => {
+              const account = await getSynced();
+              const bridge = await getBridge();
+              await expectStability(account, {
+                ...bridge.createTransaction(account),
+                amount: new BigNumber(1000),
+                recipient: account.freshAddress,
+              });
+            });
+            makeTest("can be run in parallel and all yield same results", async () => {
+              const account = await getSynced();
+              const bridge = await getBridge();
+              const t = {
+                ...bridge.createTransaction(account),
+                amount: new BigNumber(1000),
+                recipient: account.freshAddress,
+              };
+              const stable = await bridge.prepareTransaction(account, t);
+              const first = omit(
+                await bridge.prepareTransaction(account, stable),
+                arg.currencyData.IgnorePrepareTransactionFields || [],
+              );
+              const concur = await Promise.all(
+                Array(3)
+                  .fill(null)
+                  .map(() => bridge.prepareTransaction(account, stable)),
+              );
+              concur.forEach(r => {
+                r = omit(r, arg.currencyData.IgnorePrepareTransactionFields || []);
+                expect(r).toEqual(first);
+              });
+            });
+          });
+
+          describe("getTransactionStatus", () => {
+            makeTest("can be called on an empty transaction", async () => {
+              const account = await getSynced();
+              const bridge = await getBridge();
+              const t = {
+                ...bridge.createTransaction(account),
+                feePerByte: new BigNumber(0.0001),
+              };
+              const s = await bridge.getTransactionStatus(account, t);
+              expect(s).toBeDefined();
+              expect(s.errors).toHaveProperty("recipient");
+              expect(s).toHaveProperty("totalSpent");
+              expect(s.totalSpent).toBeInstanceOf(BigNumber);
+              expect(s).toHaveProperty("estimatedFees");
+              expect(s.estimatedFees).toBeInstanceOf(BigNumber);
+              expect(s).toHaveProperty("amount");
+              expect(s.amount).toBeInstanceOf(BigNumber);
+              expect(s.amount).toEqual(new BigNumber(0));
+            });
+            makeTest("can be called on an empty prepared transaction", async () => {
+              const bridge = await getBridge();
+              const account = await getSynced();
+              const t = await bridge.prepareTransaction(account, {
+                ...bridge.createTransaction(account),
+                feePerByte: new BigNumber(0.0001),
+              });
+              const s = await bridge.getTransactionStatus(account, t);
+              expect(s).toBeDefined(); // FIXME i'm not sure if we can establish more shared properties
+            });
+            makeTest("Default empty recipient have a recipientError", async () => {
+              const bridge = await getBridge();
+              const account = await getSynced();
+              const t = {
+                ...bridge.createTransaction(account),
+                feePerByte: new BigNumber(0.0001),
+              };
+              const status = await bridge.getTransactionStatus(account, t);
+              expect(status.errors.recipient).toBeInstanceOf(RecipientRequired);
+            });
+            makeTest("invalid recipient have a recipientError", async () => {
+              const bridge = await getBridge();
+              const account = await getSynced();
+              const t = {
+                ...bridge.createTransaction(account),
+                feePerByte: new BigNumber(0.0001),
+                recipient: "invalidADDRESS",
+              };
+              const status = await bridge.getTransactionStatus(account, t);
+              expect(status.errors.recipient).toBeInstanceOf(InvalidAddress);
+            });
+            makeTest("Default empty amount has an amount error", async () => {
+              const bridge = await getBridge();
+              const account = await getSynced();
+              const t = await bridge.prepareTransaction(account, {
+                ...bridge.createTransaction(account),
+                feePerByte: new BigNumber(0.0001),
+              });
+              const status = await bridge.getTransactionStatus(account, t);
+              expect(status.errors.amount).toBeInstanceOf(AmountRequired);
+            });
+
+            const accountDataTest = accountData.test;
+
+            if (accountDataTest) {
+              makeTest("account specific test", async () => {
+                const bridge = await getBridge();
+                return accountDataTest(expect, await getSynced(), bridge);
+              });
+            }
+
+            (accountData.transactions || []).forEach(
+              ({ name, transaction, expectedStatus, apdus, testSignedOperation, test: testFn }) => {
+                makeTest("transaction " + name, async () => {
+                  const bridge = await getBridge();
+                  const account: Account = await getSynced();
+                  let t =
+                    typeof transaction === "function"
+                      ? transaction(bridge.createTransaction(account), account, bridge)
+                      : transaction;
+                  t = await bridge.prepareTransaction(account, {
+                    feePerByte: new BigNumber(0.0001),
+                    ...t,
+                  });
+                  const s = await bridge.getTransactionStatus(account, t);
+
+                  if (expectedStatus) {
+                    const es =
+                      typeof expectedStatus === "function"
+                        ? expectedStatus(account, t, s)
+                        : expectedStatus;
+                    const { errors, warnings } = es;
+
+                    // we match errors and warnings
+                    errors && expect(s.errors).toMatchObject(errors);
+                    warnings && expect(s.warnings).toMatchObject(warnings);
+                    // now we match rest of fields but using the raw version for better readability
+                    const restRaw: Record<string, any> = toTransactionStatusRaw(
+                      {
+                        ...s,
+                        ...es,
+                      },
+                      account.currency.family,
+                    );
+                    delete restRaw.errors;
+                    delete restRaw.warnings;
+
+                    for (const k in restRaw) {
+                      if (!(k in es)) {
+                        delete restRaw[k];
+                      }
+                    }
+
+                    expect(
+                      toTransactionStatusRaw(s as TransactionStatusCommon, account.currency.family),
+                    ).toMatchObject(restRaw);
+                  }
+
+                  if (testFn) {
+                    await testFn(expect, t, s, bridge);
+                  }
+
+                  if (Object.keys(s.errors).length === 0) {
+                    const { subAccountId } = t;
+                    const { subAccounts } = account;
+
+                    const inferSubAccount = () => {
+                      invariant(subAccounts, "sub accounts available");
+                      const a = (subAccounts as TokenAccount[]).find(a => a.id === subAccountId);
+                      invariant(a, "sub account not found");
+                      return a;
+                    };
+
+                    const obj = subAccountId
+                      ? {
+                          transaction: t as TransactionCommon,
+                          account: inferSubAccount() as AccountLike,
+                          parentAccount: account,
+                        }
+                      : {
+                          transaction: t as TransactionCommon,
+                          account: account as AccountLike,
+                        };
+
+                    if (
+                      (typeof t.mode !== "string" || t.mode === "send") &&
+                      t.model &&
+                      t.model.kind !== "stake.createAccount"
+                    ) {
+                      const estimation = await bridge.estimateMaxSpendable(obj);
+                      expect(estimation.gte(0)).toBe(true);
+                      expect(estimation.lte(obj.account.balance)).toBe(true);
+
+                      if (t.useAllAmount) {
+                        expect(estimation.toString()).toBe(s.amount.toString());
+                      }
+                    }
+                  }
+
+                  if (apdus && impl !== "mock") {
+                    const deviceId = await mockDeviceWithAPDUs(apdus);
+
+                    try {
+                      const signedOperation = await firstValueFrom(
+                        bridge
+                          .signOperation({
+                            account,
+                            deviceId,
+                            transaction: t,
+                          })
+                          .pipe(
+                            filter((e: any) => e.type === "signed"),
+                            map((e: any) => e.signedOperation),
+                          ),
+                      );
+
+                      if (testSignedOperation) {
+                        await testSignedOperation(expect, signedOperation, account, t, s, bridge);
+                      }
+                    } finally {
+                      releaseMockDevice(deviceId);
+                    }
+                  }
+                });
+              },
+            );
+          });
+          describe("signOperation and broadcast", () => {
+            makeTest("method is available on bridge", async () => {
+              const bridge = await getBridge();
+              expect(typeof bridge.signOperation).toBe("function");
+              expect(typeof bridge.broadcast).toBe("function");
+            }); // NB for now we are not going farther because most is covered by bash tests
+          });
+        },
+      );
     });
 }

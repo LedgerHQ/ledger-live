@@ -1,12 +1,13 @@
 appId: com.ledger.live.nightly
 
 protocols:
-  name: Ledger Live
+  name: Ledger Wallet
   schemes:
     - ledgerlive
+    - ledgerwallet
 
-beforePack: scripts/beforePack.js
 afterSign: scripts/notarize.js
+afterPack: scripts/afterPack.js
 
 directories:
   buildResources: "build-nightly"
@@ -94,6 +95,10 @@ files:
       - "**/*.node"
   # Exclude files
   - "!node_modules"
+
+# Disable native module rebuilding since we removed all native dependencies (node-hid, usb)
+buildDependenciesFromSource: false
+npmRebuild: false
 
 publish:
   - provider: generic

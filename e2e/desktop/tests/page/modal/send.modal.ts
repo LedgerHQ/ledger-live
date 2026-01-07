@@ -1,10 +1,11 @@
 import { expect } from "@playwright/test";
-import { Modal } from "../../component/modal.component";
-import { step } from "../../misc/reporters/step";
-import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { Modal } from "tests/component/modal.component";
+import { step } from "tests/misc/reporters/step";
+import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 export class SendModal extends Modal {
-  private accountDebitPlaceholder = this.page.locator("#account-debit-placeholder input");
+  private accountDebitContainer = this.page.locator("#account-debit-placeholder");
+  private accountDebitInput = this.page.locator("#account-debit-placeholder input");
   readonly recipientInput = this.page.getByTestId("send-recipient-input");
   readonly tagInput = this.page.getByTestId("memo-tag-input");
   private checkDeviceLabel = this.page.locator(
@@ -14,7 +15,6 @@ export class SendModal extends Modal {
   private recipientAddressDisplayedValue = this.page.getByTestId("recipient-address");
   private recipientEnsDisplayed = this.page.getByTestId("transaction-recipient-ens");
   private amountDisplayedValue = this.page.getByTestId("transaction-amount");
-  private nftNameDisplayed = this.page.getByTestId("transaction-nft-name");
   private feeStrategy = (fee: string) => this.page.getByText(fee);
   private noTagButton = this.page.getByRole("button", { name: "Don’t add Tag" });
   private ENSAddressLabel = this.page.getByTestId("ens-address-sendModal");
@@ -31,7 +31,10 @@ export class SendModal extends Modal {
   }
 
   @step("Enter recipient as $0")
-  async fillRecipient(recipient: string) {
+  async fillRecipient(recipient: string | undefined) {
+    if (!recipient) {
+      throw new Error("Recipient address is not set");
+    }
     await this.recipientInput.clear();
     await this.recipientInput.fill(recipient);
   }
@@ -59,16 +62,6 @@ export class SendModal extends Modal {
     }
   }
 
-  @step("Craft NFT tx")
-  async craftNFTTx(tx: NFTTransaction) {
-    await this.fillRecipient(tx.accountToCredit.ensName || tx.accountToCredit.address);
-    const displayedAddress = await this.ENSAddressLabel.innerText();
-    expect(displayedAddress).toEqual(tx.accountToCredit.address);
-    await this.continue();
-    await this.chooseFeeStrategy(tx.speed);
-    await this.continue();
-  }
-
   @step("Fill tx information")
   async craftTx(tx: Transaction) {
     await this.fillRecipientInfo(tx);
@@ -83,19 +76,6 @@ export class SendModal extends Modal {
     if (tx.speed !== undefined) {
       await this.chooseFeeStrategy(tx.speed);
     }
-  }
-
-  @step("Verify tx information before confirming")
-  async expectNFTTxInfoValidity(tx: NFTTransaction) {
-    const displayedEns = await this.recipientEnsDisplayed.innerText();
-    expect(displayedEns).toEqual(tx.accountToCredit.ensName);
-
-    const displayedReceiveAddress = await this.recipientAddressDisplayedValue.innerText();
-    expect(displayedReceiveAddress).toEqual(tx.accountToCredit.address);
-
-    const displayedNftName = await this.nftNameDisplayed.innerText();
-    expect(displayedNftName).toEqual(expect.stringContaining(tx.nft.nftName));
-    await this.continue();
   }
 
   @step("Verify tx information before confirming")
@@ -171,9 +151,9 @@ export class SendModal extends Modal {
 
   @step("Select currency to debit")
   async selectDebitCurrency(tx: Transaction) {
-    await expect(this.accountDebitPlaceholder).toBeVisible();
-    await this.accountDebitPlaceholder.click();
-    await this.accountDebitPlaceholder.fill(tx.accountToDebit.currency.ticker);
+    await expect(this.accountDebitContainer).toBeVisible();
+    await this.accountDebitContainer.click();
+    await this.accountDebitInput.fill(tx.accountToDebit.currency.ticker);
     await this.dropdownOptions
       .locator(this.optionWithText(tx.accountToDebit.currency.ticker.toUpperCase()))
       .click();

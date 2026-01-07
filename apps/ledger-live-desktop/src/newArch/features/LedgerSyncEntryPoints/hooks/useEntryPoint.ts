@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -11,6 +11,8 @@ import ManagerEntryPoint from "../components/ManagerEntryPoint";
 import AccountsEntryPoint from "../components/AccountsEntryPoint";
 import SettingsEntryPoint from "../components/SettingsEntryPoint";
 import { AnalyticsPage } from "../../WalletSync/hooks/useLedgerSyncAnalytics";
+import PostOnboardingEntryPoint from "../components/PostOnboardingEntryPoint";
+import { LedgerSyncBanner } from "../components/LedgerSyncBanner/LedgerSyncBanner";
 
 export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true) {
   const { push } = useHistory();
@@ -25,13 +27,17 @@ export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true)
   const isDeviceEligible = Boolean(
     lastSeenDevice && lastSeenDevice.modelId !== DeviceModelId.nanoS,
   );
+  const isOptimisationEnabled = useFeature("lwdLedgerSyncOptimisation");
 
   const entryPointsData: EntryPointsData = {
     [EntryPoint.onboarding]: {
       enabled: featureLedgerSyncEntryPoints?.params?.onboarding ?? false,
       page: AnalyticsPage.Onboarding,
       onClick: () => {
-        track("banner_clicked", { banner: "Ledger Sync Activation", page: "Onboarding" });
+        track("banner_clicked", {
+          banner: "Ledger Sync Activation",
+          page: AnalyticsPage.Onboarding,
+        });
       },
       component: OnboardingEntryPoint,
     },
@@ -39,27 +45,38 @@ export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true)
       enabled: featureLedgerSyncEntryPoints?.params?.manager ?? false,
       page: AnalyticsPage.Manager,
       onClick: () => {
-        track("banner_clicked", { banner: "Ledger Sync Activation", page: "Manager" });
+        track("banner_clicked", { banner: "Ledger Sync Activation", page: AnalyticsPage.Manager });
         push("/settings");
       },
-      component: ManagerEntryPoint,
+      component: isOptimisationEnabled?.enabled ? LedgerSyncBanner : ManagerEntryPoint,
     },
     [EntryPoint.accounts]: {
       enabled: featureLedgerSyncEntryPoints?.params?.accounts ?? false,
       page: AnalyticsPage.Accounts,
       onClick: () => {
-        track("banner_clicked", { banner: "Ledger Sync Activation", page: "Accounts" });
+        track("banner_clicked", { banner: "Ledger Sync Activation", page: AnalyticsPage.Accounts });
         push("/settings");
       },
-      component: AccountsEntryPoint,
+      component: isOptimisationEnabled?.enabled ? LedgerSyncBanner : AccountsEntryPoint,
     },
     [EntryPoint.settings]: {
       enabled: featureLedgerSyncEntryPoints?.params?.settings ?? false,
       page: AnalyticsPage.Settings,
       onClick: () => {
-        track("banner_clicked", { banner: "Ledger Sync Activation", page: "Settings" });
+        track("banner_clicked", { banner: "Ledger Sync Activation", page: AnalyticsPage.Settings });
       },
-      component: SettingsEntryPoint,
+      component: isOptimisationEnabled?.enabled ? LedgerSyncBanner : SettingsEntryPoint,
+    },
+    [EntryPoint.postOnboarding]: {
+      enabled: featureLedgerSyncEntryPoints?.params?.postOnboarding ?? false,
+      page: AnalyticsPage.PostOnboarding,
+      onClick: () => {
+        track("banner_clicked", {
+          banner: "Ledger Sync Activation",
+          page: AnalyticsPage.PostOnboarding,
+        });
+      },
+      component: PostOnboardingEntryPoint,
     },
   };
 

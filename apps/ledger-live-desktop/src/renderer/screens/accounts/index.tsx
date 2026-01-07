@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -10,14 +10,18 @@ import { Redirect } from "react-router";
 import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import { accountsViewModeSelector, selectedTimeRangeSelector } from "~/renderer/reducers/settings";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AccountList from "./AccountList";
 import AccountsHeader from "./AccountsHeader";
+import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
+import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 
 export default function AccountsPage() {
   const mode = useSelector(accountsViewModeSelector);
   const range = useSelector(selectedTimeRangeSelector);
   const rawAccounts = useSelector(accountsSelector);
   const starredAccounts = useSelector(starredAccountsSelector);
+  const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");
   const flattenedAccounts = useFlattenSortAccounts({
     enforceHideEmptySubAccounts: true,
   });
@@ -51,13 +55,16 @@ export default function AccountsPage() {
         mode={mode}
       />
       <AccountsHeader />
+      {ledgerSyncOptimisationFlag?.enabled && (
+        <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} />
+      )}
       <AccountList onAccountClick={onAccountClick} accounts={accounts} range={range} mode={mode} />
       <LNSUpsellBanner location="accounts" mb={30} />
     </Box>
   );
 }
 export const GenericBox = styled(Box)`
-  background: ${p => p.theme.colors.palette.background.paper};
+  background: ${p => p.theme.colors.background.card};
   flex: 1;
   padding: 10px 20px;
   margin-bottom: 9px;

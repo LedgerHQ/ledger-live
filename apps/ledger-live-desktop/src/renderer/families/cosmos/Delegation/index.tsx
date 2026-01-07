@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { TokenAccount } from "@ledgerhq/types-live";
@@ -70,46 +70,44 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
     });
   }, [account.id, history]);
 
-  const onEarnRewards = useCallback(() => {
-    isCroAccount
-      ? goToStakekit()
-      : dispatch(
-          openModal("MODAL_COSMOS_REWARDS_INFO", {
-            account,
-          }),
-        );
-  }, [account, dispatch, isCroAccount, goToStakekit]);
-
-  const onDelegate = useCallback(() => {
-    isCroAccount
-      ? goToStakekit()
-      : dispatch(
-          openModal("MODAL_COSMOS_DELEGATE", {
-            account,
-          }),
-        );
-  }, [account, dispatch, isCroAccount, goToStakekit]);
-  const onClaimRewards = useCallback(() => {
-    isCroAccount
-      ? goToStakekit()
-      : dispatch(
-          openModal("MODAL_COSMOS_CLAIM_REWARDS", {
-            account,
-          }),
-        );
-  }, [account, dispatch, isCroAccount, goToStakekit]);
-
-  const onRedirect = useCallback(
-    (validatorAddress: string, modalName: DelegationActionsModalName) => {
+  const onEarnRewards = useCallback(
+    () =>
       isCroAccount
         ? goToStakekit()
         : dispatch(
-            openModal(modalName, {
+            openModal("MODAL_COSMOS_REWARDS_INFO", {
               account,
-              validatorAddress,
             }),
-          );
-    },
+          ),
+    [account, dispatch, isCroAccount, goToStakekit],
+  );
+
+  const onDelegate = useCallback(
+    () =>
+      isCroAccount
+        ? goToStakekit()
+        : dispatch(
+            openModal("MODAL_COSMOS_DELEGATE", {
+              account,
+            }),
+          ),
+    [account, dispatch, isCroAccount, goToStakekit],
+  );
+  const onClaimRewards = useCallback(
+    () =>
+      isCroAccount
+        ? goToStakekit()
+        : dispatch(
+            openModal("MODAL_COSMOS_CLAIM_REWARDS", {
+              account,
+            }),
+          ),
+    [account, dispatch, isCroAccount, goToStakekit],
+  );
+
+  const onRedirect = useCallback(
+    (validatorAddress: string, modalName: DelegationActionsModalName) =>
+      isCroAccount ? goToStakekit() : dispatch(openModal(modalName, { account, validatorAddress })),
     [account, dispatch, isCroAccount, goToStakekit],
   );
   const explorerView = getDefaultExplorerView(account.currency);
@@ -149,7 +147,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
                     id={"account-delegate-button"}
                     mr={2}
                     disabled={!delegationEnabled}
-                    color="palette.primary.main"
+                    color="primary.c80"
                     small
                     onClick={onDelegate}
                   >
@@ -168,7 +166,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
                 <Button
                   id={"account-rewards-button"}
                   disabled={!hasRewards}
-                  color="palette.primary.main"
+                  color="primary.c80"
                   small
                   onClick={onClaimRewards}
                 >
@@ -204,7 +202,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
                 maxWidth: "65%",
               }}
             >
-              <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+              <Text ff="Inter|Medium|SemiBold" color="neutral.c70" fontSize={4}>
                 <Trans
                   i18nKey="cosmos.delegation.emptyState.description"
                   values={{

@@ -10,7 +10,7 @@ import Box from "~/renderer/components/Box";
 import Header from "./Header";
 import Row from "./Row";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router";
 type Props = {
   accounts: AccountLike[];
@@ -68,7 +68,7 @@ export default function AccountDistribution({ accounts }: Props) {
   return (
     <>
       <Box horizontal alignItems="center">
-        <Text ff="Inter|Medium" fontSize={6} color="palette.text.shade100">
+        <Text ff="Inter|Medium" fontSize={6} color="neutral.c100">
           {t("accountDistribution.header", {
             count: accountDistribution.length,
           })}

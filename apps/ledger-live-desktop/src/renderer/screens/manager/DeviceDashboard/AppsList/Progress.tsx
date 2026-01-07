@@ -38,7 +38,7 @@ const Progress = ({ state, name, updating, installing, uninstalling, isCurrent }
           maxWidth="100%"
           data-testid={`manager-${name}-app-progress-bar`}
         >
-          <Text ff="Inter|SemiBold" fontSize={3} color="palette.primary.main">
+          <Text ff="Inter|SemiBold" fontSize={3} color="primary.c80">
             <Trans
               i18nKey={
                 updating
@@ -58,7 +58,7 @@ const Progress = ({ state, name, updating, installing, uninstalling, isCurrent }
           ) : installing && isCurrent && progress !== 1 ? (
             <ProgressBar infinite timing={1200} progress={progress || 0} />
           ) : (
-            <ProgressBar color="palette.text.shade20" progress={-1} />
+            <ProgressBar color="neutral.c40" progress={-1} />
           )}
         </Holder>
       </Box>

@@ -19,6 +19,7 @@ import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
 import { CasperCoinConfig } from "../config";
 import { setCoinConfig } from "../config";
+import { validateAddress } from "./validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext<CasperSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -54,8 +55,12 @@ function buildAccountBridge(
     sync,
     receive,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

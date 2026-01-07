@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, Flex, IconsLegacy, IconBadge } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
-import { TFunction } from "i18next";
+import type { TFunction } from "i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import Button from "~/components/wrappedUi/Button";
 import Link from "~/components/wrappedUi/Link";

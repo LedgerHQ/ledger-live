@@ -26,7 +26,7 @@ export type Props = {
   variant?: Variant;
   screen: string;
   eventProperties?: Record<string, unknown>;
-  topLeft?: JSX.Element | null;
+  topLeft?: React.JSX.Element | null;
   buttonLabel?: string;
   buttonSize?: WrappedButtonProps["size"];
   event?: string;
@@ -45,7 +45,7 @@ const useBuyDeviceBannerModel = ({
   imageStyle,
 }: Props) => {
   const { colors, theme } = useTheme();
-  const { navigate } =
+  const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   const revertTheme: ThemeProps["selectedPalette"] = theme === "light" ? "dark" : "light";
@@ -69,7 +69,7 @@ const useBuyDeviceBannerModel = ({
   }, [navigateToRebornFlow]);
 
   const handleSetupCtaOnPress = useCallback(() => {
-    navigate(NavigatorName.BaseOnboarding, {
+    navigation.navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
       params: {
         screen: ScreenName.OnboardingPostWelcomeSelection,
@@ -78,7 +78,7 @@ const useBuyDeviceBannerModel = ({
         },
       },
     });
-  }, [navigate]);
+  }, [navigation]);
 
   const onPress = useCallback(() => {
     if (variant === "setup") {

@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 import { compose } from "redux";
 import { Flex, Logos } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
-import type { TFunction } from "react-i18next";
+import type { TFunction } from "i18next";
 import type { Privacy } from "~/reducers/types";
 import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";

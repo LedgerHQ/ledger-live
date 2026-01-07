@@ -14,13 +14,11 @@ import sample from "lodash/sample";
 export const createAccount = (
   currency: CryptoCurrency,
   tokens?: string,
-  withNft = false,
 ): [Account, AccountUserData] => {
   const tokenIds = tokens ? tokens.split(",").map(t => t.toLowerCase().trim()) : undefined;
   const account = genAccount(uuidv4(), {
     currency,
     tokenIds: tokenIds && tokenIds.length > 0 ? tokenIds : undefined,
-    withNft,
   });
   const userData = accountUserDataExportSelector(liveWalletInitialState, { account });
   return [account, userData];
@@ -67,7 +65,6 @@ export const generateRandomAccounts = (count: number): [Account, AccountUserData
 export const generateAccountsForCurrencies = (
   currencies: CryptoCurrency[],
   tokens?: string,
-  withNft = false,
 ): [Account, AccountUserData][] => {
-  return currencies.map(currency => createAccount(currency, tokens, withNft));
+  return currencies.map(currency => createAccount(currency, tokens));
 };

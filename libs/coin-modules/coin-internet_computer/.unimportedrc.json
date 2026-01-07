@@ -34,5 +34,11 @@
     "src/types/index.ts",
     "src/types/signer.ts"
   ],
-  "ignoreUnresolved": ["form-data", "proxy-from-env", "follow-redirects"]
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util","form-data", "proxy-from-env", "follow-redirects"],
+  "ignoreUnimported": [
+    "src/supportedFeatures.ts"
+  ]
 }

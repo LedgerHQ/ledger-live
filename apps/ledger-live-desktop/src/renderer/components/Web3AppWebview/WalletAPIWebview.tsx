@@ -23,7 +23,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import getUser from "~/helpers/user";
 import { openExchangeDrawer } from "~/renderer/actions/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
@@ -44,11 +44,10 @@ import { useWebviewState } from "./helpers";
 import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import {
-  useModularDrawerVisibility,
-  ModularDrawerLocation,
-  openAssetAndAccountDrawer,
-} from "LLD/features/ModularDrawer";
+import { useModularDrawerVisibility, ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
@@ -56,6 +55,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { pushToast } = useToasts();
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { createDrawerConfiguration } = useDrawerConfiguration();
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -73,11 +73,12 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
 
   const flow = manifest.name;
 
+  const { openAssetAndAccount } = useOpenAssetAndAccount();
+
   return useMemo(
     () => ({
       "account.request": ({
-        accounts$,
-        currencies,
+        currencyIds,
         drawerConfiguration,
         areCurrenciesFiltered,
         useCase,
@@ -86,38 +87,44 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       }) => {
         ipcRenderer.send("show-app", {});
 
-        modularDrawerVisible
-          ? openAssetAndAccountDrawer({
-              accounts$,
-              drawerConfiguration,
-              currencies: areCurrenciesFiltered && !useCase ? currencies : undefined,
-              areCurrenciesFiltered,
+        // We agree that for useCase, we should send max 50 currencies if provided else use only useCase (e.g. buy)
+        const shouldUseCurrencies =
+          (useCase && currencyIds && currencyIds.length <= 50) || !useCase;
+
+        if (modularDrawerVisible) {
+          dispatch(setFlowValue(flow));
+          dispatch(setSourceValue(source));
+
+          const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
+
+          openAssetAndAccount({
+            drawerConfiguration: finalDrawerConfiguration,
+            currencies: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
+            areCurrenciesFiltered,
+            useCase,
+            onSuccess,
+            onCancel,
+          });
+        } else {
+          setDrawer(
+            SelectAccountAndCurrencyDrawer,
+            {
+              currencyIds: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
               useCase,
-              onSuccess,
-              onCancel,
+              onAccountSelected: (account, parentAccount) => {
+                setDrawer();
+                onSuccess(account, parentAccount);
+              },
               flow,
-              source,
-              includeTokens: true,
-            })
-          : setDrawer(
-              SelectAccountAndCurrencyDrawer,
-              {
-                currencies,
-                onAccountSelected: (account, parentAccount) => {
-                  setDrawer();
-                  onSuccess(account, parentAccount);
-                },
-                accounts$,
-                flow,
-                source,
+            },
+            {
+              onRequestClose: () => {
+                setDrawer();
+                onCancel();
               },
-              {
-                onRequestClose: () => {
-                  setDrawer();
-                  onCancel();
-                },
-              },
-            );
+            },
+          );
+        }
       },
       "account.receive": ({
         account,
@@ -184,6 +191,30 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
             manifestId: manifest.id,
             manifestName: manifest.name,
             location: HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend,
+          }),
+        );
+      },
+      "transaction.signRaw": ({
+        account,
+        parentAccount,
+        transaction,
+        options,
+        onSuccess,
+        onError,
+      }) => {
+        ipcRenderer.send("show-app", {});
+        dispatch(
+          openModal("MODAL_SIGN_RAW_TRANSACTION", {
+            transaction,
+            useApp: options?.hwAppId,
+            dependencies: options?.dependencies,
+            account,
+            parentAccount,
+            onResult: onSuccess,
+            onCancel: onError,
+            manifestId: manifest.id,
+            manifestName: manifest.name,
+            location: HOOKS_TRACKING_LOCATIONS.wapiRawTransactionSend,
           }),
         );
       },
@@ -261,7 +292,18 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
     }),
-    [modularDrawerVisible, flow, source, dispatch, manifest, pushToast, t, tracking],
+    [
+      modularDrawerVisible,
+      dispatch,
+      flow,
+      source,
+      createDrawerConfiguration,
+      openAssetAndAccount,
+      manifest,
+      pushToast,
+      t,
+      tracking,
+    ],
   );
 }
 
@@ -392,8 +434,7 @@ function useWebView(
         webview.removeEventListener("dom-ready", handleDomReady);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleDomReady, handleMessage, onLoad]);
+  }, [handleDomReady, handleMessage, onLoad, webviewRef]);
 
   const webviewStyle = useMemo(() => {
     return {

@@ -1,11 +1,11 @@
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { Transaction } from "./types";
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   transaction,
 }: {
   transaction: Transaction;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const fields: Array<DeviceTransactionField> = [];
 
   const confirmField = {

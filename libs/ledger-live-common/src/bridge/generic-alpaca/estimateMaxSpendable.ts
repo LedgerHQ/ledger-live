@@ -14,8 +14,9 @@ export function genericEstimateMaxSpendable(
       return account.spendableBalance;
     }
     const mainAccount = getMainAccount(account, parentAccount);
+    const alpacaApi = getAlpacaApi(mainAccount.currency.id, kind);
     const draftTransaction = {
-      ...createTransaction(account as any),
+      ...createTransaction(account),
       ...transaction,
       amount: mainAccount.spendableBalance,
       useAllAmount: true,
@@ -24,16 +25,17 @@ export function genericEstimateMaxSpendable(
     let fees = transaction?.fees;
     if (transaction?.fees === null || transaction?.fees === undefined) {
       fees = (
-        await getAlpacaApi(network, kind).estimateFees(
-          transactionToIntent(mainAccount, draftTransaction),
+        await alpacaApi.estimateFees(
+          transactionToIntent(mainAccount, draftTransaction, alpacaApi.computeIntentType),
         )
       ).value;
     }
-    const { amount } = await getAlpacaApi(network, kind).validateIntent(
-      transactionToIntent(account, { ...draftTransaction }),
+    // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22229
+    const { amount } = await alpacaApi.validateIntent(
+      transactionToIntent(account, { ...draftTransaction }, alpacaApi.computeIntentType),
       { value: transaction?.fees ? BigInt(transaction.fees.toString()) : 0n },
     );
-    if (network === "stellar") {
+    if (["stellar", "tezos", "evm"].includes(network)) {
       return amount > 0 ? new BigNumber(amount.toString()) : new BigNumber(0);
     }
     const bnFee = BigNumber(fees.toString());

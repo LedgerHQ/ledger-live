@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-bolos",
-  "version": "6.32.6",
+  "version": "6.32.11",
   "description": "List of commands for Ledger Hardware Wallet OS",
   "keywords": [
     "Ledger",
@@ -43,12 +43,13 @@
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:*",
     "@ledgerhq/hw-transport-node-hid-singleton": "workspace:^",
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
     "documentation": "14.0.2",
-    "jest": "^29.7.0",
+    "jest": "catalog:",
     "rimraf": "^4.4.1",
-    "ts-jest": "^29.1.1",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "ts-node": "^10.4.0"
   }
 }

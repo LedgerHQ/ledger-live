@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { DEFAULT_LANGUAGE_LOCALE, LanguageMap } from "~/languages";
 import { languageSelector } from "~/reducers/settings";
 import { useLocalizedUrl as useLocalizedUrlHook } from "@ledgerhq/live-common/hooks/useLocalizedUrl";
@@ -14,7 +14,7 @@ const languages: LanguageMap = {
   pt: "pt-br",
   ja: "ja",
   ko: "ko",
-  th: "",
+  th: "th",
   ar: "",
 };
 

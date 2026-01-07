@@ -6,7 +6,7 @@ import { Flex, Text, Link as TextLink } from "@ledgerhq/native-ui";
 import Video from "react-native-video";
 import { Linking, StyleSheet } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName, ScreenName } from "~/const";
 import StyledStatusBar from "~/components/StyledStatusBar";
@@ -126,8 +126,6 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     };
   }, [dispatch]);
 
-  const videoSource = videoSources.welcomeScreen;
-
   return (
     <ForceTheme selectedPalette={"dark"}>
       <Flex flex={1} position="relative" bg="constant.purple">
@@ -135,7 +133,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
         {videoMounted && (
           <Video
             disableFocus
-            source={videoSource}
+            source={videoSources.welcomeScreen}
             style={absoluteStyle}
             muted
             repeat
@@ -165,7 +163,12 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
               <Stop offset="100%" stopOpacity={0.8} stopColor="black" />
             </LinearGradient>
           </Defs>
-          <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />
+          <Rect
+            transform={[{ translateX: 0 }, { translateY: 0 }]}
+            width="100%"
+            height="100%"
+            fill="url(#myGradient)"
+          />
         </Svg>
         <Flex justifyContent="center" alignItems="center" flex={1} overflow="hidden">
           {/* @ts-expect-error Bindings for SafeAreaView are not written properly. */}

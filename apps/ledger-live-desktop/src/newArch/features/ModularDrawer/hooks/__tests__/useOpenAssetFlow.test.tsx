@@ -31,7 +31,7 @@ describe("useOpenAssetFlow", () => {
       },
     );
 
-    result.current.openAssetFlow(true);
+    result.current.openAssetFlow();
 
     expect(store.getState().modals.MODAL_ADD_ACCOUNTS).toEqual({
       isOpened: true,
@@ -68,7 +68,7 @@ describe("useOpenAssetFlow", () => {
     );
 
     // Should open the drawer
-    result.current.openAssetFlow(false);
+    result.current.openAssetFlow();
 
     expect(setDrawer).toHaveBeenCalledTimes(1);
     expect(setDrawer).toHaveBeenLastCalledWith(
@@ -79,9 +79,7 @@ describe("useOpenAssetFlow", () => {
           assets: { leftElement: "undefined", rightElement: "balance" },
           networks: { leftElement: "numberOfAccounts", rightElement: "balance" },
         },
-        flow: "add_account",
         onAssetSelected: expect.any(Function),
-        source: "test",
       },
       {
         closeButtonComponent: expect.any(Function),

@@ -1,9 +1,35 @@
 import type { Config } from "jest";
-import { pathsToModuleNameMapper } from "ts-jest";
 import type { ReporterOptions } from "jest-allure2-reporter";
-import { compilerOptions } from "./tsconfig.json";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { compilerOptions } = require("./tsconfig.json");
+
+function pathsToModuleNameMapper(
+  paths: Record<string, string[]>,
+  { prefix = "<rootDir>/" }: { prefix?: string } = {},
+): Record<string, string> {
+  const jestPaths: Record<string, string> = {};
+  if (!paths) return jestPaths;
+
+  Object.keys(paths).forEach(pathKey => {
+    const pathEntry = paths[pathKey];
+    const pathValues: string[] = Array.isArray(pathEntry) ? pathEntry : [pathEntry];
+    pathValues.forEach((pathValue: string) => {
+      const jestKey = pathKey.replace(/\*$/, "(.*)");
+      const jestValue = pathValue.replace(/\*$/, "$1");
+      jestPaths[jestKey] = `${prefix}${jestValue}`;
+    });
+  });
+
+  return jestPaths;
+}
+import { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
+import {
+  getDeviceFirmwareVersion,
+  getSpeculosModel,
+} from "@ledgerhq/live-common/e2e/speculosAppVersion";
 
 const jestAllure2ReporterOptions: ReporterOptions = {
+  extends: "detox-allure2-adapter/preset-detox",
   resultsDir: "artifacts",
   testCase: {
     links: {
@@ -17,6 +43,8 @@ const jestAllure2ReporterOptions: ReporterOptions = {
   },
   overwrite: false,
   environment: async ({ $ }) => ({
+    SPECULOS_DEVICE: process.env.SPECULOS_DEVICE,
+    SPECULOS_FIRMWARE_VERSION: await getDeviceFirmwareVersion(getSpeculosModel()),
     path: process.cwd(),
     "version.node": process.version,
     "version.jest": await $.manifest("jest", ["version"]),
@@ -25,27 +53,50 @@ const jestAllure2ReporterOptions: ReporterOptions = {
   }),
 };
 
-// Include problematic ESM packages and their submodules
+const detoxAllure2AdapterOptions: DetoxAllure2AdapterOptions = {
+  deviceLogs: false,
+  deviceScreenshots: false,
+  deviceVideos: false,
+  deviceViewHierarchy: false,
+};
+
 const ESM_PACKAGES = ["ky", "@polkadot"].join("|");
 
 const config: Config = {
   rootDir: ".",
   maxWorkers: process.env.CI ? 2 : 1,
-  preset: "ts-jest",
   transform: {
-    "^.+\\.(js|jsx)$": require.resolve("babel-jest"),
+    "^.+\\.(js|jsx)?$": "babel-jest",
     "^.+\\.(ts|tsx)?$": [
-      "ts-jest",
+      "@swc/jest",
       {
-        tsconfig: "<rootDir>/tsconfig.json",
-        babelConfig: true,
-        diagnostics: false,
+        jsc: {
+          target: "es2022",
+          parser: {
+            syntax: "typescript",
+            tsx: true,
+            decorators: true,
+            dynamicImport: true,
+          },
+          transform: {
+            react: {
+              runtime: "automatic",
+            },
+          },
+        },
+        sourceMaps: "inline",
+        module: {
+          type: "commonjs",
+        },
       },
     ],
   },
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
-    prefix: "<rootDir>/",
-  }),
+  moduleNameMapper: {
+    "^@ledgerhq/live-common/e2e/(.*)$": "<rootDir>/../../libs/ledger-live-common/src/e2e/$1",
+    ...pathsToModuleNameMapper(compilerOptions.paths, {
+      prefix: "<rootDir>/",
+    }),
+  },
   transformIgnorePatterns: [`/node_modules/(?!(${ESM_PACKAGES})/)`],
 
   setupFilesAfterEnv: ["<rootDir>/setup.ts"],
@@ -62,7 +113,7 @@ const config: Config = {
     eventListeners: [
       "jest-metadata/environment-listener",
       "jest-allure2-reporter/environment-listener",
-      "detox-allure2-adapter",
+      ["detox-allure2-adapter", detoxAllure2AdapterOptions],
     ],
   },
   verbose: true,

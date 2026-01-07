@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { allowDebugReactQuerySelector } from "~/renderer/reducers/settings";
 import { setAllowDebugReactQuery } from "~/renderer/actions/settings";
 import Track from "~/renderer/analytics/Track";
-import Switch from "~/renderer/components/Switch";
+import { Switch } from "@ledgerhq/lumen-ui-react";
 const AllowDebugReactQueryToggle = () => {
   const dispatch = useDispatch();
   const allowDebug = useSelector(allowDebugReactQuerySelector);
@@ -15,7 +15,7 @@ const AllowDebugReactQueryToggle = () => {
     <>
       <Track onUpdate event="AllowDebugReactQuery" />
       <Switch
-        isChecked={allowDebug}
+        selected={allowDebug}
         onChange={onSetAllowDebug}
         data-testid="settings-allow-debug-react-query"
       />

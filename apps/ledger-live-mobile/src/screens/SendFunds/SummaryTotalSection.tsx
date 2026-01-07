@@ -14,7 +14,7 @@ import Info from "~/icons/Info";
 import { withTheme, Theme } from "~/colors";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { InformationFill } from "@ledgerhq/native-ui/assets/icons";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;

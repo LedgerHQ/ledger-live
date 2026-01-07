@@ -6,7 +6,7 @@ This package contains the deterministic testing infrastructure for EVM-based coi
 
 - Deterministic testing scenarios for EVM-based coins
 - Support for multiple EVM chains (Ethereum, Polygon, Scroll, Blast, Sonic)
-- Integration with Speculos for hardware wallet simulation
+- Local signer written in Typescript
 - Integration with Anvil for local blockchain simulation
 
 ## Usage
@@ -28,3 +28,4 @@ await executeScenario(scenarioEthereum);
 
 - @ledgerhq/coin-tester
 - @ledgerhq/coin-evm
+- @ledgerhq/live-common

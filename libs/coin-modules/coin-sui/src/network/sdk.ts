@@ -34,14 +34,19 @@ import uniqBy from "lodash/unionBy";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
-import type { Transaction as TransactionType, SuiValidator, CreateExtrinsicArg } from "../types";
+import type {
+  Transaction as TransactionType,
+  SuiValidator,
+  CreateExtrinsicArg,
+  CoreTransaction,
+} from "../types";
 import { ensureAddressFormat } from "../utils";
 import coinConfig from "../config";
 import { getEnv } from "@ledgerhq/live-env";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { getCurrentSuiPreloadData } from "../bridge/preload";
 import { ONE_SUI } from "../constants";
-import bs58 from "bs58";
+import { getInputObjects } from "@mysten/signers/ledger";
 
 const apiMap: Record<string, SuiClient> = {};
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
@@ -103,38 +108,45 @@ export const getAllBalancesCached = makeLRUCache(
   (owner: string) => owner,
   minutes(1),
 );
-function isStaking(block?: SuiTransactionBlockKind): block is {
-  inputs: SuiCallArg[];
-  kind: "ProgrammableTransaction";
-  transactions: SuiTransaction[];
-} {
-  if (!block) return false;
-  if (block.kind === "ProgrammableTransaction") {
-    const move = block.transactions.find(item => "MoveCall" in item) as any;
-    return move?.MoveCall.function === "request_add_stake";
-  }
-  return false;
-}
 
-function isUnstaking(block?: SuiTransactionBlockKind): block is {
+type ProgrammableTransaction = {
   inputs: SuiCallArg[];
   kind: "ProgrammableTransaction";
   transactions: SuiTransaction[];
-} {
-  if (!block) return false;
-  if (block.kind === "ProgrammableTransaction") {
+};
+
+function hasMoveCallWithFunction(
+  functionName: string,
+  block?: SuiTransactionBlockKind,
+): block is ProgrammableTransaction {
+  if (block?.kind === "ProgrammableTransaction") {
     const move = block.transactions.find(
-      item => "MoveCall" in item && item["MoveCall"].function === "request_withdraw_stake",
+      item => "MoveCall" in item && item["MoveCall"].function === functionName,
     ) as any;
     return Boolean(move);
+  } else {
+    return false;
   }
-  return false;
 }
+
+function isStaking(block?: SuiTransactionBlockKind): block is ProgrammableTransaction {
+  return hasMoveCallWithFunction("request_add_stake", block);
+}
+
+function isUnstaking(block?: SuiTransactionBlockKind): block is ProgrammableTransaction {
+  return hasMoveCallWithFunction("request_withdraw_stake", block);
+}
+
+export type AccountBalance = {
+  coinType: string;
+  blockHeight: number;
+  balance: BigNumber;
+};
 
 /**
  * Get account balance (native and tokens)
  */
-export const getAccountBalances = async (addr: string) => {
+export const getAccountBalances = async (addr: string): Promise<AccountBalance[]> => {
   const balances = await getAllBalancesCached(addr);
   return balances.map(({ coinType, totalBalance }) => ({
     coinType,
@@ -190,7 +202,18 @@ export const getOperationRecipients = (transaction?: TransactionBlockData): stri
         recipients.push(String(input.value));
       }
     });
-    if (isUnstaking(transaction.transaction) || isStaking(transaction.transaction)) return [];
+    if (isStaking(transaction.transaction)) {
+      const address = transaction.transaction.inputs.find(
+        (input: SuiCallArg) => "valueType" in input && input.valueType === "address",
+      );
+      if (address && address.type === "pure" && address.valueType === "address") {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        recipients.push(address.value as string);
+      }
+    }
+    if (isUnstaking(transaction.transaction)) {
+      return [];
+    }
     return recipients;
   }
   return [];
@@ -337,32 +360,83 @@ export function transactionToOperation(
   };
 }
 
+// This function is only used by alpaca code path
+// Logic is similar to getOperationAmount, but we guarantee to return a positive amount in any case
+// If there is need to display negative amount for staking or unstaking, the view can handle it based on the type of the operation
+export const alpacaGetOperationAmount = (
+  address: string,
+  transaction: SuiTransactionBlockResponse,
+  coinType: string,
+): BigNumber => {
+  const zero = BigNumber(0);
+
+  const tx = transaction.transaction?.data.transaction;
+  const change = transaction.balanceChanges;
+  if (isStaking(tx) || isUnstaking(tx)) {
+    if (change) return removeFeesFromAmountForNative(change[0], getOperationFee(transaction)).abs();
+    return BigNumber(0);
+  } else {
+    return (
+      change
+        ?.filter(
+          balanceChange =>
+            typeof balanceChange.owner !== "string" &&
+            "AddressOwner" in balanceChange.owner &&
+            balanceChange.owner.AddressOwner === address &&
+            balanceChange.coinType === coinType,
+        )
+        .map(change => {
+          if (isSender(address, transaction.transaction?.data))
+            return removeFeesFromAmountForNative(change, getOperationFee(transaction)).abs();
+          else return BigNumber(change.amount).abs();
+        })
+        .reduce((acc, curr) => acc.plus(curr), zero) || zero
+    );
+  }
+};
+
 /**
+ * This function is only used by alpaca code path
+ *
  * @returns the operation converted. Note that if param `transaction` was retrieved as an "IN" operations, the type may be converted to "OUT".
  *    It happens for most "OUT" operations because the sender receive a new version of the coin objects.
  */
-export function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op {
+export function alpacaTransactionToOp(
+  address: string,
+  transaction: SuiTransactionBlockResponse,
+): Op {
   const type = getOperationType(address, transaction);
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
-  return {
+
+  const op: Op = {
     id: hash,
     tx: {
       date: getOperationDate(transaction),
       hash,
       fees: BigInt(getOperationFee(transaction).toString()),
       block: {
-        // agreed to return bigint
-        height: BigInt(transaction.checkpoint || "") as unknown as number,
+        height: Number.parseInt(transaction.checkpoint || "0"),
         time: getOperationDate(transaction),
       },
+      failed: transaction.effects?.status.status !== "success",
     },
     asset: toSuiAsset(coinType),
     recipients: getOperationRecipients(transaction.transaction?.data),
     senders: getOperationSenders(transaction.transaction?.data),
     type,
-    value: BigInt(getOperationAmount(address, transaction, coinType).toString()),
+    value: BigInt(alpacaGetOperationAmount(address, transaction, coinType).toString()),
   };
+
+  if (type === "DELEGATE" || type === "UNDELEGATE") {
+    // for staking, the amount is stored in the details
+    op.details = {
+      stakedAmount: op.value,
+    };
+    op.value = 0n;
+  }
+
+  return op;
 }
 
 /**
@@ -400,30 +474,84 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
  * @param transaction SUI RPC transaction block response
  */
 export function toBlockTransaction(transaction: SuiTransactionBlockResponse): BlockTransaction {
+  const operationFee = getOperationFee(transaction);
   return {
     hash: transaction.digest,
     failed: transaction.effects?.status.status !== "success",
-    operations: transaction.balanceChanges?.flatMap(toBlockOperation) || [],
-    fees: BigInt(getOperationFee(transaction).toString()),
+    operations:
+      transaction.balanceChanges?.flatMap(change =>
+        toBlockOperation(transaction, change, operationFee),
+      ) || [],
+    fees: BigInt(operationFee.toString()),
     feesPayer: transaction.transaction?.data.sender || "",
   };
+}
+
+export function removeFeesFromAmountForNative(change: BalanceChange, fees: BigNumber): BigNumber {
+  if (change.coinType === DEFAULT_COIN_TYPE) return BigNumber(change.amount).plus(fees);
+  return BigNumber(change.amount);
 }
 
 /**
  * Convert a SUI RPC transaction balance change to a {@link BlockOperation}.
  *
+ * @param transaction
  * @param change balance change
+ * @param fees transaction fees to be deducted from the amount if applicable
  */
-export function toBlockOperation(change: BalanceChange): BlockOperation[] {
+export function toBlockOperation(
+  transaction: SuiTransactionBlockResponse,
+  change: BalanceChange,
+  fees: BigNumber,
+): BlockOperation[] {
   if (typeof change.owner === "string" || !("AddressOwner" in change.owner)) return [];
-  return [
-    {
+  const address = change.owner.AddressOwner;
+  const operationType = getOperationType(address, transaction);
+
+  function transferOp(peer: string | undefined, amount: bigint): BlockOperation {
+    const op: BlockOperation = {
       type: "transfer",
-      address: change.owner.AddressOwner,
+      address: address,
       asset: toSuiAsset(change.coinType),
-      amount: BigInt(change.amount),
-    },
-  ];
+      amount: amount,
+    };
+    if (peer) op.peer = peer;
+    return op;
+  }
+
+  switch (operationType) {
+    case "IN":
+      return [
+        transferOp(getOperationSenders(transaction.transaction?.data).at(0), BigInt(change.amount)),
+      ];
+    case "OUT":
+      return [
+        transferOp(
+          getOperationRecipients(transaction.transaction?.data).at(0),
+          BigInt(removeFeesFromAmountForNative(change, fees).toString()),
+        ),
+      ];
+    case "DELEGATE":
+    case "UNDELEGATE":
+      return [
+        {
+          type: "other",
+          operationType: operationType,
+          address: change.owner.AddressOwner,
+          asset: toSuiAsset(change.coinType),
+          stakedAmount: BigInt(removeFeesFromAmountForNative(change, fees).toString()),
+        },
+      ];
+    default:
+      return [
+        {
+          type: "transfer",
+          address: address,
+          asset: toSuiAsset(change.coinType),
+          amount: BigInt(change.amount),
+        },
+      ];
+  }
 }
 
 /**
@@ -529,21 +657,6 @@ function convertApiOrderToSdkOrder(order: "asc" | "desc"): "ascending" | "descen
   return order === "asc" ? "ascending" : "descending";
 }
 
-type Cursor = {
-  out?: string;
-  in?: string;
-};
-
-function serializeCursor(cursor: Cursor): string {
-  return bs58.encode(Buffer.from(JSON.stringify(cursor)));
-}
-
-function deserializeCursor(b58cursor: string | undefined): Cursor {
-  return b58cursor
-    ? (JSON.parse(Buffer.from(bs58.decode(b58cursor)).toString()) as Cursor)
-    : ({} as Cursor);
-}
-
 function toSdkCursor(cursor: string | undefined): QueryTransactionBlocksParams["cursor"] {
   const ret: QueryTransactionBlocksParams["cursor"] = cursor;
   return ret;
@@ -553,20 +666,6 @@ function toSdkCursor(cursor: string | undefined): QueryTransactionBlocksParams["
  * Fetch operations for Alpaca
  * It fetches separately the "OUT" and "IN" operations and then merge them.
  * The cursor is composed of the last "OUT" and "IN" operation cursors.
- *
- * Warning:
- * Some IN operations are also OUT operations because the sender receive a new version of the coin objects,
- * and the complexity of this function don't go that far to detect it.
- * IN calls and OUT calls are not disjoint
- * Consequence: 2 successive calls of this function when passing cursor may return an operation we already saw in previous calls,
- * fetched as an OUT operation.
- *
- * Note: I think it's possible to detect duplicated IN oprations:
- * - if the address is the sender of the tx
- * - and there is some transfer to other address
- * - and the address is the single only owner of mutated or deleted object
- * when all that conditions are met, the transaction will be fetched as an OUT operation,
- * and it can be filtered out from the IN operations results.
  *
  * @returns the operations.
  *
@@ -579,42 +678,94 @@ export const getListOperations = async (
 ): Promise<Page<Op>> =>
   withApiImpl(async api => {
     const rpcOrder = convertApiOrderToSdkOrder(order);
-    const { out: outCursor, in: inCursor } = deserializeCursor(cursor);
 
     const [opsOut, opsIn] = await Promise.all([
       queryTransactions({
         api,
         addr,
         type: "OUT",
-        cursor: toSdkCursor(outCursor),
+        cursor: toSdkCursor(cursor),
         order: rpcOrder,
       }),
       queryTransactions({
         api,
         addr,
         type: "IN",
-        cursor: toSdkCursor(inCursor),
+        cursor: toSdkCursor(cursor),
         order: rpcOrder,
       }),
     ]);
 
-    const ops = [...opsOut.data, ...opsIn.data]
-      .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
-      .map(t => transactionToOp(addr, t));
+    const ops = dedupOperations(opsOut, opsIn, order);
 
-    const nextCursor: Cursor = {};
-    if (opsOut.hasNextPage && opsOut.nextCursor) {
-      nextCursor.out = opsOut.nextCursor;
-    }
-    if (opsIn.hasNextPage && opsIn.nextCursor) {
-      nextCursor.in = opsIn.nextCursor;
-    }
+    const operations = ops.operations
+      .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
+      .map(t => alpacaTransactionToOp(addr, t));
 
     return {
-      items: ops,
-      next: serializeCursor(nextCursor),
+      items: operations,
+      next: ops.cursor ?? "",
     };
   });
+
+const oldestOpTime = (ops: PaginatedTransactionResponse) =>
+  Number(ops.data[ops.data.length - 1]?.timestampMs ?? 0);
+const newestOpTime = (ops: PaginatedTransactionResponse) => Number(ops.data[0]?.timestampMs ?? 0);
+
+/**
+ * Some IN operations are also OUT operations because the sender receive a new version of the coin objects,
+ * So IN operations and OUT operations are not disjoint
+ * This function will takes the logical lowest operation of the two lists (according so sort order)
+ * and remove any higher operation of the other list.
+ *
+ * Most of the logic have been duplicated from filterOperations (used by bridge).
+ *
+ * Warning:
+ * This function removes some results, so it's not very efficient
+ * What we want is the FromOrToAddress filter from SUI RPC, but it's not supported yet
+ *
+ * Note: I think it's possible to detect duplicated IN oprations:
+ * - if the address is the sender of the tx
+ * - and there is some transfer to other address
+ * - and the address is the single only owner of mutated or deleted object
+ * when all that conditions are met, the transaction will be fetched as an OUT operation,
+ * and it can be filtered out from the IN operations results.
+ *
+ * @returns a chronologically sorted list of operations without duplicates and
+ *          a cursor that guarantee to not return any operation that was already returned in previous calls
+ *
+ */
+export const dedupOperations = (
+  outOps: PaginatedTransactionResponse,
+  inOps: PaginatedTransactionResponse,
+  order: "asc" | "desc",
+): LoadOperationResponse => {
+  // in asc order, the operations are sorted by timestamp in ascending order
+  // in desc order, the operations are sorted by timestamp in descending order
+
+  let lastOpTime: number = 0;
+  let nextCursor: string | null | undefined = undefined;
+  const findLastOpTime = order === "asc" ? newestOpTime : oldestOpTime;
+
+  // When we've reached the limit for either sent or received operations,
+  // we filter out extra operations to maintain correct chronological order
+  if (outOps.hasNextPage || inOps.hasNextPage) {
+    const lastOut = findLastOpTime(outOps);
+    const lastIn = findLastOpTime(inOps);
+    if (lastOut >= lastIn) {
+      nextCursor = outOps.nextCursor;
+      lastOpTime = lastOut;
+    } else {
+      nextCursor = inOps.nextCursor;
+      lastOpTime = lastIn;
+    }
+  }
+  const operations = [...outOps.data, ...inOps.data]
+    .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
+    .filter(op => Number(op.timestampMs) >= lastOpTime);
+
+  return { operations: uniqBy(operations, tx => tx.digest), cursor: nextCursor };
+};
 
 /**
  * Get a checkpoint (a.k.a, a block) metadata.
@@ -711,10 +862,15 @@ export const getCoinsForAmount = async (
  *
  * @param address - The sender's address
  * @param transaction - The transaction details including recipient, amount, and coin type
+ * @param withObjects - Return serialized input objects used in the transaction
  * @returns Promise<TransactionBlock> - A built transaction block ready for execution
  *
  */
-export const createTransaction = async (address: string, transaction: CreateExtrinsicArg) =>
+export const createTransaction = async (
+  address: string,
+  transaction: CreateExtrinsicArg,
+  withObjects: boolean = false,
+): Promise<CoreTransaction> =>
   withApi(async api => {
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(address));
@@ -779,7 +935,14 @@ export const createTransaction = async (address: string, transaction: CreateExtr
       }
     }
 
-    return tx.build({ client: api });
+    const serialized = await tx.build({ client: api });
+
+    if (withObjects) {
+      const { bcsObjects } = await getInputObjects(tx, api);
+      return { unsigned: serialized, objects: bcsObjects as Uint8Array[] };
+    }
+
+    return { unsigned: serialized };
   });
 
 /**
@@ -787,7 +950,7 @@ export const createTransaction = async (address: string, transaction: CreateExtr
  */
 export const paymentInfo = async (sender: string, fakeTransaction: TransactionType) =>
   withApi(async api => {
-    const txb = await createTransaction(sender, fakeTransaction);
+    const { unsigned: txb } = await createTransaction(sender, fakeTransaction);
     const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
     const fees = getTotalGasUsed(dryRunTxResponse.effects);
 
@@ -866,6 +1029,8 @@ export const queryTransactions = async (params: {
   cursor?: QueryTransactionBlocksParams["cursor"];
 }): Promise<PaginatedTransactionResponse> => {
   const { api, addr, type, cursor, order } = params;
+  // what we really want is te  FromOrToAddress filter, but it's not supported yet
+  // it would relieve a lot of complexity (see dedupOperations)
   const filter: QueryTransactionBlocksParams["filter"] =
     type === "IN" ? { ToAddress: addr } : { FromAddress: addr };
 

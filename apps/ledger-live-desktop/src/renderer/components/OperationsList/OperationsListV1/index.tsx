@@ -44,7 +44,7 @@ const ShowMore = styled(Box).attrs(() => ({
 const mapDispatchToProps = {
   openModal,
 };
-type Props = {
+export type Props = {
   account?: AccountLike;
   parentAccount?: Account | null;
   accounts?: AccountLike[];

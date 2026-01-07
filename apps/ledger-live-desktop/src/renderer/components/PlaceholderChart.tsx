@@ -18,7 +18,7 @@ class PlaceholderChart extends Component<Props> {
 
   render() {
     const { data, tickXScale, theme } = this.props;
-    const themeType = theme.colors.palette.type;
+    const themeType = theme.theme;
     const mappedData: Data = data.map((i: Item) => {
       const date = i.date.getTime();
       return {

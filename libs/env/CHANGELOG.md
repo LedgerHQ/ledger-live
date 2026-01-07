@@ -1,5 +1,145 @@
 # @ledgerhq/live-env
 
+## 2.23.0
+
+### Minor Changes
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+- [#12935](https://github.com/LedgerHQ/ledger-live/pull/12935) [`3e70677`](https://github.com/LedgerHQ/ledger-live/commit/3e706774f8c4e9b768ab18b67abc3471cf61b6b6) Thanks [@ishaba](https://github.com/ishaba)! - feat: canton account topology change
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+- [#12970](https://github.com/LedgerHQ/ledger-live/pull/12970) [`8d8e1b7`](https://github.com/LedgerHQ/ledger-live/commit/8d8e1b7bb26305af326ea21710248223d1e8653b) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: staking support in coin-hedera
+
+## 2.23.0-next.0
+
+### Minor Changes
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+- [#12935](https://github.com/LedgerHQ/ledger-live/pull/12935) [`3e70677`](https://github.com/LedgerHQ/ledger-live/commit/3e706774f8c4e9b768ab18b67abc3471cf61b6b6) Thanks [@ishaba](https://github.com/ishaba)! - feat: canton account topology change
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+- [#12970](https://github.com/LedgerHQ/ledger-live/pull/12970) [`8d8e1b7`](https://github.com/LedgerHQ/ledger-live/commit/8d8e1b7bb26305af326ea21710248223d1e8653b) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: staking support in coin-hedera
+
+## 2.22.0
+
+### Minor Changes
+
+- [#12608](https://github.com/LedgerHQ/ledger-live/pull/12608) [`a2ecb55`](https://github.com/LedgerHQ/ledger-live/commit/a2ecb55df9d383dc282f5fe489cb14386208215e) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: support for erc20 tokens in coin-hedera
+
+- [#12846](https://github.com/LedgerHQ/ledger-live/pull/12846) [`b113920`](https://github.com/LedgerHQ/ledger-live/commit/b11392056bc334fc1813c473569ad3ae7be08045) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update bignumber config
+
+## 2.22.0-next.0
+
+### Minor Changes
+
+- [#12608](https://github.com/LedgerHQ/ledger-live/pull/12608) [`a2ecb55`](https://github.com/LedgerHQ/ledger-live/commit/a2ecb55df9d383dc282f5fe489cb14386208215e) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: support for erc20 tokens in coin-hedera
+
+- [#12846](https://github.com/LedgerHQ/ledger-live/pull/12846) [`b113920`](https://github.com/LedgerHQ/ledger-live/commit/b11392056bc334fc1813c473569ad3ae7be08045) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update bignumber config
+
+## 2.21.0
+
+### Minor Changes
+
+- [#12635](https://github.com/LedgerHQ/ledger-live/pull/12635) [`c40e9da`](https://github.com/LedgerHQ/ledger-live/commit/c40e9da68452fe9827b9435ff2d162291186be73) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: mixpanel session replay
+
+## 2.21.0-next.0
+
+### Minor Changes
+
+- [#12635](https://github.com/LedgerHQ/ledger-live/pull/12635) [`c40e9da`](https://github.com/LedgerHQ/ledger-live/commit/c40e9da68452fe9827b9435ff2d162291186be73) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: mixpanel session replay
+
+## 2.20.0
+
+### Minor Changes
+
+- [#12316](https://github.com/LedgerHQ/ledger-live/pull/12316) [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726) Thanks [@qperrot](https://github.com/qperrot)! - Feature CoinTester Bitcoin and Currency regtest
+
+- [#12421](https://github.com/LedgerHQ/ledger-live/pull/12421) [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Introduce CAL client hook
+
+- [#12250](https://github.com/LedgerHQ/ledger-live/pull/12250) [`cadf2e1`](https://github.com/LedgerHQ/ledger-live/commit/cadf2e1dfb09248d3f77d96f94ae774425dbca75) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Buy flow pre-select asset in account selection drawer
+
+- [#12023](https://github.com/LedgerHQ/ledger-live/pull/12023) [`cbc0648`](https://github.com/LedgerHQ/ledger-live/commit/cbc064885d8e0459e40d327a2e5389204b3ec705) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - Retire rosetta usage on coin-internet_computer in favor of ICP canister usage
+
+## 2.20.0-next.0
+
+### Minor Changes
+
+- [#12316](https://github.com/LedgerHQ/ledger-live/pull/12316) [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726) Thanks [@qperrot](https://github.com/qperrot)! - Feature CoinTester Bitcoin and Currency regtest
+
+- [#12421](https://github.com/LedgerHQ/ledger-live/pull/12421) [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Introduce CAL client hook
+
+- [#12250](https://github.com/LedgerHQ/ledger-live/pull/12250) [`cadf2e1`](https://github.com/LedgerHQ/ledger-live/commit/cadf2e1dfb09248d3f77d96f94ae774425dbca75) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Buy flow pre-select asset in account selection drawer
+
+- [#12023](https://github.com/LedgerHQ/ledger-live/pull/12023) [`cbc0648`](https://github.com/LedgerHQ/ledger-live/commit/cbc064885d8e0459e40d327a2e5389204b3ec705) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - Retire rosetta usage on coin-internet_computer in favor of ICP canister usage
+
+## 2.19.0
+
+### Minor Changes
+
+- [#12159](https://github.com/LedgerHQ/ledger-live/pull/12159) [`f1f3845`](https://github.com/LedgerHQ/ledger-live/commit/f1f3845942e4cbce9c585dc65f6170ddbc319f19) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Add providerSessionId to noah manifest url
+
+## 2.19.0-next.0
+
+### Minor Changes
+
+- [#12159](https://github.com/LedgerHQ/ledger-live/pull/12159) [`f1f3845`](https://github.com/LedgerHQ/ledger-live/commit/f1f3845942e4cbce9c585dc65f6170ddbc319f19) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Add providerSessionId to noah manifest url
+
+## 2.18.0
+
+### Minor Changes
+
+- [#11838](https://github.com/LedgerHQ/ledger-live/pull/11838) [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6) Thanks [@semeano](https://github.com/semeano)! - Enable Celo tokens
+
+## 2.18.0-next.0
+
+### Minor Changes
+
+- [#11838](https://github.com/LedgerHQ/ledger-live/pull/11838) [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6) Thanks [@semeano](https://github.com/semeano)! - Enable Celo tokens
+
+## 2.17.0
+
+### Minor Changes
+
+- [#11717](https://github.com/LedgerHQ/ledger-live/pull/11717) [`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243) Thanks [@ishaba](https://github.com/ishaba)! - add canton api key
+
+- [#11190](https://github.com/LedgerHQ/ledger-live/pull/11190) [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111) Thanks [@semeano](https://github.com/semeano)! - [Kaspa] Coin support for LLD and LLM
+
+- [#11873](https://github.com/LedgerHQ/ledger-live/pull/11873) [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(env): remove EXPLORER_STAGING and EXPLORER_BETA
+
+- [#11841](https://github.com/LedgerHQ/ledger-live/pull/11841) [`2a58b72`](https://github.com/LedgerHQ/ledger-live/commit/2a58b720de42e63e59ea430bd03b2c95e903634c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix LLD translations
+
+## 2.17.0-next.0
+
+### Minor Changes
+
+- [#11717](https://github.com/LedgerHQ/ledger-live/pull/11717) [`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243) Thanks [@ishaba](https://github.com/ishaba)! - add canton api key
+
+- [#11190](https://github.com/LedgerHQ/ledger-live/pull/11190) [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111) Thanks [@semeano](https://github.com/semeano)! - [Kaspa] Coin support for LLD and LLM
+
+- [#11873](https://github.com/LedgerHQ/ledger-live/pull/11873) [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(env): remove EXPLORER_STAGING and EXPLORER_BETA
+
+- [#11841](https://github.com/LedgerHQ/ledger-live/pull/11841) [`2a58b72`](https://github.com/LedgerHQ/ledger-live/commit/2a58b720de42e63e59ea430bd03b2c95e903634c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix LLD translations
+
+## 2.16.0
+
+### Minor Changes
+
+- [#11562](https://github.com/LedgerHQ/ledger-live/pull/11562) [`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8) Thanks [@semeano](https://github.com/semeano)! - Kaspa coin integration (coin module)
+
+- [#11665](https://github.com/LedgerHQ/ledger-live/pull/11665) [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a) Thanks [@semeano](https://github.com/semeano)! - Disable Celo tokens via env var
+
+## 2.16.0-next.0
+
+### Minor Changes
+
+- [#11562](https://github.com/LedgerHQ/ledger-live/pull/11562) [`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8) Thanks [@semeano](https://github.com/semeano)! - Kaspa coin integration (coin module)
+
+- [#11665](https://github.com/LedgerHQ/ledger-live/pull/11665) [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a) Thanks [@semeano](https://github.com/semeano)! - Disable Celo tokens via env var
+
 ## 2.15.0
 
 ### Minor Changes

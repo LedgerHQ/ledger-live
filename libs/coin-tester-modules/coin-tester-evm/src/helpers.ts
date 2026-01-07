@@ -1,22 +1,18 @@
-import type Transport from "@ledgerhq/hw-transport";
 import { ethers } from "ethers";
 import { AccountBridge, CurrencyBridge, NFTStandard } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/index";
-import { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
-import { EvmSigner } from "@ledgerhq/coin-evm/types/signer";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
-import { Signer, createSigner } from "@ledgerhq/live-common/bridge/generic-alpaca/signer/Eth";
+import { Signer } from "@ledgerhq/live-common/bridge/generic-alpaca/signer/Eth";
 import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";
 import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
 
 export const ethereum = getCryptoCurrencyById("ethereum");
+export const core = getCryptoCurrencyById("core");
 export const sonic = getCryptoCurrencyById("sonic");
 export const polygon = getCryptoCurrencyById("polygon");
 export const scroll = getCryptoCurrencyById("scroll");
@@ -26,26 +22,15 @@ export const ERC721Interface = new ethers.Interface(ERC721_ABI);
 export const ERC1155Interface = new ethers.Interface(ERC1155_ABI);
 export const VITALIK = "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9";
 
-export function getBridges(
-  strategy: BridgeStrategy,
-  transport: Transport,
+export async function getBridges(
   network: string,
-): {
+  signer: Signer,
+): Promise<{
   currencyBridge: CurrencyBridge;
   accountBridge: AccountBridge<EvmTransaction>;
   getAddress: GetAddressFn;
-} {
-  if (strategy === "legacy") {
-    const context: SignerContext<EvmSigner> = (_, fn) => fn(new LegacySignerEth(transport));
-
-    return {
-      currencyBridge: buildCurrencyBridge(context),
-      accountBridge: buildAccountBridge(context),
-      getAddress: resolver(context),
-    };
-  }
-
-  const context: SignerContext<Signer> = (_, fn) => fn(createSigner(transport));
+}> {
+  const context: SignerContext<Signer> = (_, fn) => fn(signer);
   const getAddress = resolver(context);
 
   return {

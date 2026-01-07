@@ -1,6 +1,6 @@
 import { TFunction } from "i18next";
 import { BigNumber } from "bignumber.js";
-import { Account, AccountLike, NFT, Operation, ProtoNFT } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
@@ -31,15 +31,9 @@ export type StepProps = {
   maybeAmount?: BigNumber;
   onResetMaybeAmount: () => void;
   updateTransaction: (updater: (t: Transaction) => Transaction) => void;
-  onConfirmationHandler: Function;
-  onFailHandler: Function;
+  onConfirmationHandler: () => void;
+  onFailHandler: () => void;
   currencyName: string | undefined | null;
-  isNFTSend?: boolean;
   walletConnectProxy?: boolean;
-  maybeNFTId?: string;
-  maybeNFTCollection?: string;
-  onChangeQuantities: (a: string) => void;
-  onChangeNFT: (a: ProtoNFT | NFT) => void;
-  shouldSkipAmount: boolean;
 };
 export type St = Step<StepId, StepProps>;

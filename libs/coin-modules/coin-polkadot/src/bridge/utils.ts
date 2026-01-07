@@ -7,7 +7,7 @@ export const EXISTENTIAL_DEPOSIT = new BigNumber(10_000_000_000);
 export const EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN = new BigNumber(1_000_000_000); // Polkadot recommended Existential Deposit error margin
 export const MAX_NOMINATIONS = 16;
 export const MAX_UNLOCKINGS = 32;
-// eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+// eslint-disable-next-line @typescript-eslint/no-loss-of-precision, no-loss-of-precision
 export const MAX_AMOUNT_INPUT = 0xffffffffffffffff;
 export const FEES_SAFETY_BUFFER = new BigNumber(1000000000); // Arbitrary buffer for paying fees of next transactions
 
@@ -155,12 +155,17 @@ export const isElectionOpen = (): boolean => {
  */
 export const getNonce = (a: PolkadotAccount): number => {
   const lastPendingOp = a.pendingOperations[0];
-  const nonce = Math.max(
-    a.polkadotResources?.nonce || 0,
-    lastPendingOp && typeof lastPendingOp.transactionSequenceNumber === "number"
-      ? lastPendingOp.transactionSequenceNumber + 1
-      : 0,
-  );
+  const seq = lastPendingOp?.transactionSequenceNumber;
+  const nextSeq = BigNumber.isBigNumber(seq)
+    ? seq.isNaN()
+      ? 0
+      : seq.plus(1).toNumber()
+    : typeof seq === "number" && Number.isFinite(seq)
+      ? seq + 1
+      : 0;
+
+  const nonce = Math.max(a.polkadotResources?.nonce ?? 0, nextSeq);
+
   return nonce;
 };
 

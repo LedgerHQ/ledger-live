@@ -3,6 +3,7 @@ export {
   decodeAccountId,
   encodeTokenAccountId,
   decodeTokenAccountId,
+  decodeTokenAccountIdSync,
 } from "./accountId";
 export {
   createEmptyHistoryCache,
@@ -35,3 +36,4 @@ export {
 } from "./helpers";
 export { addPendingOperation } from "./pending";
 export { getReceiveFlowError, checkAccountSupported } from "./support";
+export { getSyncHash } from "./sync";

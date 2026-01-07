@@ -7,6 +7,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-console */
 
+const { withRozenite } = require("@rozenite/metro");
+const { withRozeniteReduxDevTools } = require("@rozenite/redux-devtools-plugin/metro");
 const path = require("path");
 const tsconfig = require("./tsconfig.json");
 
@@ -16,12 +18,12 @@ const forcedDependencies = [
   "react-native-svg",
   "styled-components",
   "react-native-reanimated",
+  "react-native-safe-area-context",
   "@tanstack/react-query",
   "react-native-linear-gradient",
 ];
 
 const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
-const { withSentryConfig } = require("@sentry/react-native/metro");
 const removeStarPath = moduleName => moduleName.replace("/*", "");
 
 const buildTsAlias = (conf = {}) =>
@@ -105,4 +107,13 @@ const metroConfig = {
   },
 };
 
-module.exports = withSentryConfig(mergeConfig(getDefaultConfig(__dirname), metroConfig));
+module.exports = withRozenite(mergeConfig(getDefaultConfig(__dirname), metroConfig), {
+  enabled: process.env.WITH_ROZENITE === "true",
+  include: [
+    "@rozenite/network-activity-plugin",
+    "@rozenite/react-navigation-plugin",
+    "@rozenite/redux-devtools-plugin",
+    "@rozenite/mmkv-plugin",
+  ],
+  enhanceMetroConfig: config => withRozeniteReduxDevTools(config),
+});

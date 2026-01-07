@@ -1,24 +1,27 @@
 import invariant from "invariant";
 import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { accountScreenSelector } from "~/reducers/accounts";
 import DeviceAction from "~/components/DeviceAction";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import { SignMessageNavigatorStackParamList } from "~/components/RootNavigator/types/SignMessageNavigator";
-import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import {
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "~/components/RootNavigator/types/helpers";
 import { useSignMessageDeviceAction } from "~/hooks/deviceActions";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 export default function ConnectDevice({
   route,
   navigation,
 }: StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignConnectDevice>) {
   const action = useSignMessageDeviceAction();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
   const mainAccount = getMainAccount(account, parentAccount);
 
@@ -34,10 +37,9 @@ export default function ConnectDevice({
         error: result.error,
       });
     } else if (result.signature) {
-      navigation.navigate(ScreenName.SignValidationSuccess, {
-        ...route.params,
-        signature: result.signature,
-      });
+      route.params.onConfirmationHandler?.(result.signature);
+
+      navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
     }
   };
 

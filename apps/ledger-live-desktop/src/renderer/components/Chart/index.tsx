@@ -102,7 +102,7 @@ export default function Chart({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<ChartJs | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout>();
-  const theme = useTheme().colors.palette;
+  const { colors } = useTheme();
   const [tooltip, setTooltip] = useState<ChartTooltipModel>();
   const valueKeyRef = useRef(valueKey);
   const generatedData = useMemo(() => {
@@ -152,10 +152,10 @@ export default function Chart({
             type: "time",
             gridLines: {
               display: false,
-              color: theme.text.shade10,
+              color: colors.neutral.c30,
             },
             ticks: {
-              fontColor: theme.text.shade60,
+              fontColor: colors.neutral.c70,
               fontFamily: "Inter",
               maxTicksLimit: 7,
               maxRotation: 0.1,
@@ -175,17 +175,17 @@ export default function Chart({
         yAxes: [
           {
             gridLines: {
-              color: theme.text.shade10,
+              color: colors.neutral.c30,
               borderDash: [5, 5],
               drawTicks: false,
               drawBorder: false,
-              zeroLineColor: theme.text.shade10,
+              zeroLineColor: colors.neutral.c30,
             },
             ticks: {
               suggestedMin: suggestedMin || 0,
               suggestedMax: suggestedMin || 10 ** Math.max(magnitude - 4, 1),
               maxTicksLimit: 4,
-              fontColor: theme.text.shade60,
+              fontColor: colors.neutral.c70,
               fontFamily: "Inter",
               padding: 10,
               callback: value => renderTickY(value),
@@ -203,7 +203,7 @@ export default function Chart({
         },
       },
     }),
-    [theme.text.shade10, theme.text.shade60, tickXScale, magnitude, renderTickY, suggestedMin],
+    [colors.neutral.c30, colors.neutral.c70, tickXScale, magnitude, renderTickY, suggestedMin],
   );
   useLayoutEffect(() => {
     if (chartRef.current) {

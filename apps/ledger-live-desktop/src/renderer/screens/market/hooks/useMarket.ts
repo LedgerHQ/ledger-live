@@ -1,4 +1,3 @@
-import { useFetchCurrencyFrom } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/utils/types";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
@@ -8,13 +7,12 @@ import {
 } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setMarketCurrentPage, setMarketOptions } from "~/renderer/actions/market";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
 import { marketCurrentPageSelector, marketParamsSelector } from "~/renderer/reducers/market";
 import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE, getCurrentPage, isDataStale } from "../utils";
-import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
 
 export function useMarket() {
@@ -26,8 +24,6 @@ export function useMarket() {
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const locale = useSelector(localeSelector);
 
-  const { data: currenciesAll } = useFetchCurrencyAll();
-
   const REFRESH_RATE =
     Number(lldRefreshMarketDataFeature?.params?.refreshTime) > 0
       ? REFETCH_TIME_ONE_MINUTE * Number(lldRefreshMarketDataFeature?.params?.refreshTime)
@@ -38,8 +34,6 @@ export function useMarket() {
   const starFilterOn = starred.length > 0;
 
   useInitSupportedCounterValues();
-
-  const { data: fromCurrencies } = useFetchCurrencyFrom();
 
   const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
 
@@ -142,11 +136,6 @@ export function useMarket() {
     });
   }, [order, refresh]);
 
-  const isItemLoaded = useCallback(
-    (index: number) => !!marketResult.data[index],
-    [marketResult.data],
-  );
-
   /**
    *
    * Refresh mechanism ----------------------------------------------
@@ -182,7 +171,6 @@ export function useMarket() {
    */
 
   return {
-    isItemLoaded,
     onLoadNextPage,
     toggleLiveCompatible,
     toggleFilterByStarredAccounts,
@@ -209,10 +197,8 @@ export function useMarket() {
     timeRangeValue,
     itemCount,
     locale,
-    fromCurrencies,
     loading,
     currenciesLength,
     refreshRate: REFRESH_RATE,
-    currenciesAll,
   };
 }

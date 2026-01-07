@@ -5,7 +5,7 @@ import { HeaderProps, Order } from "../types";
 import styled from "@ledgerhq/react-ui/components/styled";
 import { track } from "~/renderer/analytics/segment";
 import { useResize } from "~/renderer/hooks/useResize";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { selectedTimeRangeSelector } from "~/renderer/reducers/settings";
 import { useTheme } from "styled-components";
 
@@ -39,7 +39,7 @@ export function MarketPerformanceWidgetHeader({ onChangeOrder, order }: HeaderPr
 
       <Flex py={2} px={3} backgroundColor="opacityDefault.c05" borderRadius={32}>
         <Element
-          data-testId="market-best-performers"
+          data-testid="market-best-performers"
           alignItems="center"
           onClick={() => onClickButton(Order.asc)}
         >
@@ -56,7 +56,7 @@ export function MarketPerformanceWidgetHeader({ onChangeOrder, order }: HeaderPr
         </Element>
 
         <Element
-          data-testId="market-worst-performers"
+          data-testid="market-worst-performers"
           alignItems="center"
           ml={3}
           onClick={() => onClickButton(Order.desc)}

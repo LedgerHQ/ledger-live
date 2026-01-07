@@ -17,6 +17,7 @@ import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
 import resolver from "../signer";
 import type { Transaction, VechainSigner } from "../types";
+import { validateAddress } from "../common-logic/validateAddress";
 
 export function buildCurrencyBridge(signerContext: SignerContext<VechainSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -52,8 +53,12 @@ export function buildAccountBridge(
     sync,
     receive,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

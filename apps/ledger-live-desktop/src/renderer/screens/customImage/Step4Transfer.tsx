@@ -8,7 +8,7 @@ import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-case
 import StepFooter from "./StepFooter";
 import StepContainer from "./StepContainer";
 import TestImage from "~/renderer/components/CustomImage/TestImage";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import CustomLockScreenDeviceAction from "~/renderer/components/CustomImage/CustomLockScreenDeviceAction";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { analyticsDrawerName, analyticsFlowName, analyticsPageNames } from "./shared";
@@ -48,7 +48,8 @@ const StepTransfer: React.FC<Props> = props => {
     setNonce(nonce => nonce + 1);
   }, []);
 
-  const isRefusedOnStaxError =
+  // User refused loading the image OR committing the image
+  const userRefusedOnDevice =
     error instanceof ImageLoadRefusedOnDevice ||
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (error as unknown) instanceof ImageCommitRefusedOnDevice;
@@ -57,35 +58,27 @@ const StepTransfer: React.FC<Props> = props => {
     <StepContainer
       key={`${nonce}_customImage`}
       footer={
-        <StepFooter
-          previousStep={Step.chooseContrast}
-          previousLabel={t("common.back")}
-          previousDisabled={navigationBlocked}
-          setStep={setStep}
-          nextLabel={
-            error
-              ? isRefusedOnStaxError
+        error && (
+          <StepFooter
+            previousStep={Step.chooseContrast}
+            previousLabel={t("common.back")}
+            previousDisabled={navigationBlocked}
+            setStep={setStep}
+            nextLabel={
+              userRefusedOnDevice
                 ? t("customImage.steps.transfer.useAnotherPicture")
                 : t("common.retry")
-              : ""
-          }
-          onClickNext={error ? (isRefusedOnStaxError ? handleTryAnotherImage : onRetry) : undefined}
-          previousEventProperties={{
-            button: "Previous",
-          }}
-          nextEventProperties={
-            error
-              ? {
-                  button: error
-                    ? isRefusedOnStaxError
-                      ? "Upload another image"
-                      : "Retry"
-                    : undefined,
-                  drawer: analyticsDrawerName,
-                }
-              : {}
-          }
-        />
+            }
+            onClickNext={userRefusedOnDevice ? handleTryAnotherImage : onRetry}
+            previousEventProperties={{
+              button: "Previous",
+            }}
+            nextEventProperties={{
+              button: userRefusedOnDevice ? "Upload another image" : "Retry",
+              drawer: analyticsDrawerName,
+            }}
+          />
+        )
       }
     >
       {result ? (

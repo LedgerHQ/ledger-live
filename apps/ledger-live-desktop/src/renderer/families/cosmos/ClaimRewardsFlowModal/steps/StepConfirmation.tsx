@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
@@ -20,7 +20,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))<{
   shouldSpace?: boolean;
 }>`

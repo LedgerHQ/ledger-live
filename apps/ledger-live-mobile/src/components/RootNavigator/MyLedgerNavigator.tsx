@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { useSelector } from "react-redux";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useSelector } from "~/context/hooks";
 import { Box, IconsLegacy, Flex, Icons } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
@@ -63,7 +63,7 @@ export default function MyLedgerNavigator() {
   );
 }
 
-const Stack = createStackNavigator<MyLedgerNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<MyLedgerNavigatorStackParamList>();
 
 const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => {
   const hasAvailableUpdate = useSelector(hasAvailableUpdateSelector);
@@ -71,15 +71,18 @@ const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => 
 
   let icon;
   switch (lastSeenDevice?.modelId) {
+    case DeviceModelId.stax:
+      icon = <Icons.Stax size="M" color={color} />;
+      break;
+    case DeviceModelId.europa:
+      icon = <Icons.Flex size="M" color={color} />;
+      break;
+    case DeviceModelId.apex:
+      icon = <Icons.Apex size="M" color={color} />;
+      break;
     case DeviceModelId.nanoS:
     case DeviceModelId.nanoSP:
       icon = <IconsLegacy.NanoSFoldedMedium size={size} color={color} />;
-      break;
-    case DeviceModelId.stax:
-      icon = <IconsLegacy.StaxMedium size={size} color={color} />;
-      break;
-    case DeviceModelId.europa:
-      icon = <Icons.Flex color={color} />;
       break;
     case DeviceModelId.nanoX:
     default:

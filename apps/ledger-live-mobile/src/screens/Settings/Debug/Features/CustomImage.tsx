@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Icons, IconsLegacy } from "@ledgerhq/native-ui";
+import { Icons } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import SettingsRow from "~/components/SettingsRow";
 import { NavigatorName, ScreenName } from "~/const";
@@ -42,7 +42,7 @@ export default function CustomImage() {
       <SettingsRow
         title="Custom lockscreen Stax"
         desc="Convenient access to the flow"
-        iconLeft={<IconsLegacy.StaxMedium size={32} color="black" />}
+        iconLeft={<Icons.Stax size="M" color="black" />}
         onPress={handlePressStax}
       />
       <SettingsRow
@@ -54,7 +54,7 @@ export default function CustomImage() {
       <SettingsRow
         title="Custom lockscreen Apex"
         desc="Convenient access to the flow"
-        iconLeft={<Icons.Flex size="M" color="black" />}
+        iconLeft={<Icons.Apex size="M" color="black" />}
         onPress={handlePressApex}
       />
     </>

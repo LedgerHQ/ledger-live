@@ -64,15 +64,24 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
         return undefined;
       case LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE:
         setStepNumber(2);
-        recoverBannerWording = t("dashboard.recoverBanner.subscribeDone", { returnObjects: true });
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        recoverBannerWording = t("dashboard.recoverBanner.subscribeDone", {
+          returnObjects: true,
+        }) as RecoverBannerType;
         break;
       case LedgerRecoverSubscriptionStateEnum.BACKUP_VERIFY_IDENTITY:
         setStepNumber(3);
-        recoverBannerWording = t("dashboard.recoverBanner.verifyIdentity", { returnObjects: true });
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        recoverBannerWording = t("dashboard.recoverBanner.verifyIdentity", {
+          returnObjects: true,
+        }) as RecoverBannerType;
         break;
       case LedgerRecoverSubscriptionStateEnum.BACKUP_DEVICE_CONNECTION:
         setStepNumber(4);
-        recoverBannerWording = t("dashboard.recoverBanner.connectDevice", { returnObjects: true });
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        recoverBannerWording = t("dashboard.recoverBanner.connectDevice", {
+          returnObjects: true,
+        }) as RecoverBannerType;
         break;
       case LedgerRecoverSubscriptionStateEnum.BACKUP_DONE:
         setStepNumber(5);
@@ -111,10 +120,10 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
               radius={20}
               stroke={4}
               showPercentage={false}
-              frontStrokeColor={isWarning ? colors.palette.warning.c70 : undefined}
+              frontStrokeColor={isWarning ? colors.warning.c70 : undefined}
             />
             {isWarning ? (
-              <Icons.WarningFill color="palette.warning.c70" size="XS" />
+              <Icons.WarningFill color="warning.c70" size="XS" />
             ) : (
               <Text
                 display="block"

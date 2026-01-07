@@ -1,6 +1,7 @@
 {
   "entry": [
     "src/account.ts",
+    "src/api/index.ts",
     "src/bridge/index.ts",
     "src/test/cli.ts",
     "src/deviceTransactionConfig.ts",
@@ -15,15 +16,18 @@
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnresolved": [],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"],
   "ignoreUnimported": [
     "src/index.ts",
-    "src/logic.ts",
     "src/test/bot-specs.ts",
     "src/test/bridgeDatasetTest.ts",
     "src/test/cli.ts",
     "src/test/index.ts",
-    "src/test/speculos-deviceActions.ts"
+    "src/test/speculos-deviceActions.ts",
+    "src/supportedFeatures.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",

@@ -47,7 +47,7 @@ describe("Synchronize flow", () => {
 
     await user.click(await screen.findByTestId("walletSync-synchronize"));
 
-    await screen.findByText(/sync with the ledger live app on another phone/i);
+    await screen.findByText(/Sync with the Ledger Wallet app on another phone/i);
 
     act(() => {
       if (typeof requestDisplayDigits === "function") requestDisplayDigits("321");

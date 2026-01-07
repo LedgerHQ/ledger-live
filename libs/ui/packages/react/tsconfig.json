@@ -5,6 +5,7 @@
     "declarationMap": true,
     "jsx": "react",
     "lib": ["es2019", "dom"],
+    "types": ["jest"],
     "baseUrl": ".",
     "rootDir": "./src",
     "outDir": "./lib",

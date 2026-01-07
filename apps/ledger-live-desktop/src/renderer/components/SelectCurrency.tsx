@@ -11,7 +11,7 @@ import { CreateStylesReturnType } from "~/renderer/components/Select/createStyle
 import Box from "~/renderer/components/Box";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Text from "./Text";
-import { ThemeConfig } from "react-select/src/theme";
+import { StylesConfig } from "react-select";
 
 type CurrencyOption = CryptoOrTokenCurrency & {
   value: CryptoOrTokenCurrency;
@@ -33,9 +33,11 @@ type Props = {
   isDisabled?: boolean;
   id?: string;
   renderValueOverride?: ({ data }: { data: CurrencyOption }) => React.ReactNode;
-  stylesMap?: (a: ThemeConfig) => CreateStylesReturnType<CurrencyOption>;
+  stylesMap?: (a: StylesConfig<CurrencyOption>) => CreateStylesReturnType<CurrencyOption>;
   onMenuOpen?: () => void;
   small?: boolean;
+  onMenuScrollToBottom?: () => void;
+  isLoading?: boolean;
 };
 const getOptionValue = (data: CurrencyOption) => (data.currency as CryptoOrTokenCurrency).id;
 
@@ -56,6 +58,8 @@ const SelectCurrency = ({
   stylesMap,
   onMenuOpen,
   small,
+  onMenuScrollToBottom,
+  isLoading,
 }: Props) => {
   const { t } = useTranslation();
   const devMode = useEnv("MANAGER_DEV_MODE");
@@ -124,7 +128,7 @@ const SelectCurrency = ({
     <Select
       id={id}
       autoFocus={autoFocus}
-      value={selectedOption as CurrencyOption}
+      value={selectedOption}
       options={filteredOptions}
       filterOption={null}
       getOptionValue={getOptionValue}
@@ -143,6 +147,8 @@ const SelectCurrency = ({
       rowHeight={rowHeight}
       stylesMap={stylesMap}
       small={small}
+      onScrollEnd={onMenuScrollToBottom}
+      isLoading={isLoading}
     />
   );
 };
@@ -159,7 +165,7 @@ const OptionBox = styled(Box)`
 `;
 
 const OptionTitleBox = styled(Box).attrs(() => ({
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   ff: "Inter|SemiBold",
   fontSize: 4,
 }))`
@@ -170,7 +176,7 @@ const OptionTitleBox = styled(Box).attrs(() => ({
 `;
 
 const CurrencyLabel = styled(Text).attrs(() => ({
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   ff: "Inter|SemiBold",
   fontSize: 2,
 }))`
@@ -209,11 +215,11 @@ export function CurrencyOption({
   ) : (
     <>
       <OptionMultilineContainer flex="1">
-        <Text ff="Inter|SemiBold" fontSize={4} color="palette.text.shade100">
+        <Text ff="Inter|SemiBold" fontSize={4} color="neutral.c100">
           {currency.name}
         </Text>
         <Box horizontal alignItems="center">
-          <Text color="palette.text.shade40" ff="Inter|Medium" fontSize={3}>
+          <Text color="neutral.c60" ff="Inter|Medium" fontSize={3}>
             {currency.ticker}{" "}
             {isParentTagDisplayed && tagVariant === "thin"
               ? `(${(currency as TokenCurrency).parentCurrency.name})`
@@ -228,7 +234,7 @@ export function CurrencyOption({
   );
   return (
     <OptionBox role="option">
-      <CryptoCurrencyIcon circle currency={currency} size={26} />
+      <CryptoCurrencyIcon currency={currency} size={30} />
       {textContents}
     </OptionBox>
   );

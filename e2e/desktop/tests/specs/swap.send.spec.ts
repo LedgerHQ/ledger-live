@@ -1,155 +1,219 @@
-import test from "../fixtures/common";
+import test from "tests/fixtures/common";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { addTmsLink } from "../utils/allureUtils";
-import { getDescription } from "../utils/customJsonReporter";
-import { CLI } from "../utils/cliUtils";
-import {
-  setupEnv,
-  performSwapUntilQuoteSelectionStep,
-  performSwapUntilDeviceVerificationStep,
-} from "../utils/swapUtils";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "tests/utils/customJsonReporter";
+import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
+import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
-
-const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
-  CLI.liveData({
-    currency: currencyApp.name,
-    index,
-    add: true,
-    appjson: userdataPath,
-  });
 
 const swaps = [
   {
     fromAccount: Account.ETH_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2750, B2CQA-3135, B2CQA-620, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@ethereum",
+      "@family-evm",
+      "@bitcoin",
+      "@family-bitcoin",
+    ],
   },
   {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
     toAccount: Account.ETH_1,
     xrayTicket: "B2CQA-2744, B2CQA-2432, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: TokenAccount.ETH_USDT_1,
-    toAccount: TokenAccount.ETH_1,
-    xrayTicket: "B2CQA-2752, B2CQA-2048, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.ETH_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2748, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@smoke",
+      "@swapSmoke",
+      "@ethereum",
+      "@family-evm",
+      "@bitcoin",
+      "@family-bitcoin",
+    ],
   },
   {
     fromAccount: Account.ETH_1,
     toAccount: TokenAccount.ETH_USDT_1,
     xrayTicket: "B2CQA-2749, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.BTC_NATIVE_SEGWIT_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2747, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@swapSmoke",
+      "@ethereum",
+      "@family-evm",
+    ],
   },
   {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
     toAccount: TokenAccount.ETH_USDT_1,
     xrayTicket: "B2CQA-2746, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@bitcoin",
+      "@family-bitcoin",
+      "@ethereum",
+      "@family-evm",
+    ],
   },
   {
     fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2753, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: TokenAccount.ETH_USDT_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2751, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@swapSmoke",
+      "@ethereum",
+      "@family-evm",
+      "@bitcoin",
+      "@family-bitcoin",
+    ],
   },
   {
     fromAccount: Account.SOL_1,
     toAccount: Account.ETH_1,
     xrayTicket: "B2CQA-2775, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@solana",
+      "@family-solana",
+      "@family-evm",
+      "@ethereum",
+    ],
   },
   {
     fromAccount: Account.SOL_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2776, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.SOL_1,
-    toAccount: TokenAccount.ETH_USDT_1,
-    xrayTicket: "B2CQA-2777, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: TokenAccount.ETH_USDC_1,
-    toAccount: Account.ETH_1,
-    xrayTicket: "B2CQA-2830, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: TokenAccount.ETH_USDC_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2831, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@swapSmoke",
+      "@solana",
+      "@family-solana",
+      "@bitcoin",
+      "@family-bitcoin",
+    ],
   },
   {
     fromAccount: TokenAccount.ETH_USDC_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2832, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.ETH_1,
-    toAccount: Account.DOT_1,
-    xrayTicket: "B2CQA-3017, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.XRP_1,
-    toAccount: TokenAccount.ETH_USDC_1,
-    xrayTicket: "B2CQA-3075, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.ETH_1,
-    toAccount: Account.XRP_1,
-    xrayTicket: "B2CQA-3076, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@ethereum",
+      "@family-evm",
+      "@family-bitcoin",
+      "@bitcoin",
+    ],
   },
   {
     fromAccount: Account.XRP_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-3077, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.BTC_NATIVE_SEGWIT_1,
-    toAccount: Account.LTC_1,
-    xrayTicket: "B2CQA-3078, B2CQA-3450, B2CQA-3282",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@xrp",
+      "@family-xrp",
+      "@bitcoin",
+      "@family-bitcoin",
+    ],
   },
   //ToDo: enable once it's back in prod
   // {
   //   fromAccount: Account.APTOS_1,
   //   toAccount: Account.SOL_1,
   //   xrayTicket: "B2CQA-3081, B2CQA-3450, B2CQA-3281",
-  //   tag: ["@NanoSP", "@NanoX"],
+  //   tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@aptos", "@solana", "@family-solana","@family-aptos"],
   // },
+  //ToDo: enable once Hedera Swap E2E test issue fixed
+  // Task https://ledgerhq.atlassian.net/browse/LIVE-21744
+  //{
+  //  fromAccount: Account.HEDERA_1,
+  //  toAccount: Account.XRP_1,
+  //  xrayTicket: "B2CQA-3753",
+  //  tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@hedera", "@xrp", "@family-xrp", "@family-hedera"],
+  //},
+  {
+    fromAccount: TokenAccount.SUI_USDC_1,
+    toAccount: Account.SOL_1,
+    xrayTicket: "B2CQA-3907",
+    tag: [
+      "@NanoSP",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@sui",
+      "@solana",
+      "@family-solana",
+      "@family-sui",
+    ],
+  },
+  {
+    fromAccount: TokenAccount.CELO_1,
+    toAccount: Account.SOL_1,
+    xrayTicket: "B2CQA-4011",
+    tag: [
+      "@NanoSP",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@celo",
+      "@solana",
+      "@family-solana",
+      "@family-celo",
+    ],
+  },
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
@@ -176,11 +240,11 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         [
           {
             app: fromAccount.currency.speculosApp,
-            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+            cmd: liveDataWithAddressCommand(fromAccount),
           },
           {
             app: toAccount.currency.speculosApp,
-            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+            cmd: liveDataWithAddressCommand(toAccount),
           },
         ],
         { scope: "test" },
@@ -203,15 +267,9 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-        const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
+        await app.swap.selectExchangeWithoutKyc(electronApp);
 
-        await performSwapUntilDeviceVerificationStep(
-          app,
-          electronApp,
-          swap,
-          selectedProvider,
-          minAmount,
-        );
+        await app.swap.clickExchangeButton(electronApp);
         await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },

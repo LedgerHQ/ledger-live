@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
+import { View, StyleSheet, LayoutChangeEvent } from "react-native";
+import { useSelector } from "~/context/hooks";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -8,17 +8,16 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
-
-import { accountScreenSelector } from "~/reducers/accounts";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { ScreenName } from "~/const";
 import { TrackScreen, track } from "~/analytics";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import ReadOnlyWarning from "./ReadOnlyWarning";
 import NotSyncedWarning from "./NotSyncedWarning";
 import GenericErrorView from "~/components/GenericErrorView";
 import DeviceActionModal from "~/components/DeviceActionModal";
-import SkipSelectDevice from "../SkipSelectDevice";
 import byFamily from "../../generated/ConnectDevice";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import {
@@ -42,10 +41,28 @@ export default function ConnectDevice({
   navigation,
   route,
 }: StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConnectDevice>) {
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
   const action = useAppDeviceAction();
+
+  // Animated height to prevent layout shift during device discovery
+  const animatedHeight = useSharedValue(0);
+  const onLayout = useCallback(
+    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
+      if (layout.height > 0) {
+        animatedHeight.value = withTiming(layout.height, { duration: 200 });
+      }
+    },
+    [animatedHeight],
+  );
+
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      height: animatedHeight.value > 0 ? animatedHeight.value : undefined,
+    }),
+    [animatedHeight],
+  );
 
   useEffect(() => {
     const readOnlyTitle = "transfer.receive.titleReadOnly";
@@ -144,17 +161,22 @@ export default function ConnectDevice({
     return <NotSyncedWarning accountId={mainAccount.id} />;
   }
 
+  /** Parameter used to prevent auto selection and force the user to manually select a device */
+  const forceSelectDevice = "forceSelectDevice" in route.params && route.params.forceSelectDevice;
+
   return (
     <>
       <TrackScreen category="Deposit" name="Device Selection" />
-      <SkipSelectDevice route={route} onResult={setDevice} />
-      <Flex px={16} py={5} flex={1}>
-        <SelectDevice2
-          onSelect={setDevice}
-          stopBleScanning={!!device}
-          requestToSetHeaderOptions={requestToSetHeaderOptions}
-        />
-      </Flex>
+      <Animated.View style={[{ flex: 1 }, animatedStyle]}>
+        <Flex onLayout={onLayout} px={16} py={5} flex={1}>
+          <SelectDevice2
+            onSelect={setDevice}
+            stopBleScanning={!!device}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
+            autoSelectLastConnectedDevice={!forceSelectDevice}
+          />
+        </Flex>
+      </Animated.View>
       <DeviceActionModal
         action={action}
         device={device}

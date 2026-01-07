@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { accountWithMandatoryTokens, flattenAccounts } from "@ledgerhq/live-common/account/helpers";
 import { Flex } from "@ledgerhq/native-ui";
 import { isAccountEmpty, getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";
@@ -83,9 +83,9 @@ function ReceiveFunds({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView isFlex edges={["left", "right"]}>
+    <SafeAreaView isFlex edges={["left", "right", "bottom"]}>
       <TrackScreen category={category || ""} name="SelectAccount" />
-      <Flex m={6} style={{ flex: 1 }}>
+      <Flex marginX={6} marginTop={6} style={{ flex: 1 }}>
         <AccountSelector
           list={allAccounts}
           onSelectAccount={handleSelectAccount}

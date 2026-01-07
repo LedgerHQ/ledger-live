@@ -1,9 +1,11 @@
 import { expect } from "detox";
+import { Step } from "jest-allure2-reporter/api";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class AssetAccountsPage {
   baseLink = "account";
-  assetBalance = () => getElementById("asset-graph-balance");
+  assetBalanceId = "asset-graph-balance";
+  assetBalance = () => getElementById(this.assetBalanceId);
   titleId = (assetName: string) => `accounts-title-${assetName}`;
   accountAssetId = (assetName: string) => `account-assets-${assetName}`;
 
@@ -13,6 +15,7 @@ export default class AssetAccountsPage {
   }
 
   async expectAccountsBalance(expectedBalance: string) {
+    await waitForElementById(this.assetBalanceId);
     await expect(this.assetBalance()).toHaveText(expectedBalance);
   }
 
@@ -24,5 +27,14 @@ export default class AssetAccountsPage {
   async openViaDeeplink(currencyLong?: string) {
     const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
     await openDeeplink(link);
+  }
+
+  async openAssetPageViaDeeplink(currencyId: string) {
+    await openDeeplink(`asset/${currencyId}`);
+  }
+
+  async expectAssetPage(currencyId?: string) {
+    const currency = currencyId?.toLowerCase() || "bitcoin";
+    await waitForElementById(this.accountAssetId(currency));
   }
 }

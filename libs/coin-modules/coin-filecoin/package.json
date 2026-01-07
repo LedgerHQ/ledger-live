@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-filecoin",
-  "version": "1.11.0",
+  "version": "1.16.1",
   "description": "Ledger Filecoin Coin integration",
   "keywords": [
     "Ledger",
@@ -104,21 +104,22 @@
     "@ledgerhq/types-live": "workspace:^",
     "@zondax/cbor": "v8.1.0-zondax-no-bigint",
     "bignumber.js": "^9.1.2",
-    "ethers": "6.15.0",
+    "ethers": "catalog:",
     "invariant": "^2.2.2",
     "iso-filecoin": "^4.1.0",
     "lodash": "^4.17.21",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
-    "@types/semver": "^7.5.8",
-    "axios": "1.11.0",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.1"
+    "@types/semver": "catalog:",
+    "axios": "catalog:",
+    "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

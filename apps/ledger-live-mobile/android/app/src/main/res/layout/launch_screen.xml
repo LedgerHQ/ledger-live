@@ -4,10 +4,11 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="#000000">
+    android:background="#131214">
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher_foreground" />
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/splash_logo" />
 </LinearLayout>

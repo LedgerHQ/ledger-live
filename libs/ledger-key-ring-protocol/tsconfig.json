@@ -9,6 +9,5 @@
     "lib": ["es2020", "dom"],
     "outDir": "lib"
   },
-  "include": ["src/**/*"],
-  "exclude": ["src/__tests__/**/*"]
+  "include": ["src/**/*"]
 }

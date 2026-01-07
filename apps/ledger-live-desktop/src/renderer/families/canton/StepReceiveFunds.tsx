@@ -19,7 +19,7 @@ import LinkShowQRCode from "~/renderer/components/LinkShowQRCode";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
-import { Account, PostOnboardingActionId } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import Modal from "~/renderer/components/Modal";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
@@ -30,11 +30,12 @@ import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/in
 import { LOCAL_STORAGE_KEY_PREFIX } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
 import { StepProps } from "~/renderer/modals/Receive/Body";
 import { useAccountName } from "~/renderer/reducers/wallet";
-import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
 import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import MemoTagInfo from "LLD/features/MemoTag/components/MemoTagInfo";
 import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
+import { useSelector } from "LLD/hooks/redux";
+import { onboardingReceiveFlowSelector } from "~/renderer/reducers/onboarding";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -75,7 +76,7 @@ const Receive1ShareAddress = ({
             flex: 1,
           }}
           ff="Inter|SemiBold"
-          color="palette.text.shade100"
+          color="neutral.c100"
           fontSize={4}
         >
           {name ? (
@@ -112,7 +113,7 @@ const Receive1ShareAddress = ({
   );
 };
 const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
-  const type = useTheme().colors.palette.type;
+  const type = useTheme().theme;
   return (
     <>
       <Box horizontal alignItems="center" flow={2}>
@@ -121,7 +122,7 @@ const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
             flexShrink: "unset",
           }}
           ff="Inter|SemiBold"
-          color="palette.text.shade100"
+          color="neutral.c100"
           fontSize={4}
         >
           <span
@@ -171,10 +172,11 @@ const StepReceiveFunds = ({
   const mainAccount = account
     ? getMainAccount<CantonAccount>(account as CantonAccount, parentAccount as CantonAccount)
     : null;
-  invariant(account && mainAccount && mainAccount.cantonResources, "No account given");
+  invariant(account && mainAccount?.xpub, "No account given");
   const name = useAccountName(account);
   const initialDevice = useRef(device);
-  const address = mainAccount.cantonResources?.partyId;
+  const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
+  const address = mainAccount.xpub;
   const [modalVisible, setModalVisible] = useState(false);
   const hideQRCodeModal = useCallback(() => setModalVisible(false), [setModalVisible]);
   const showQRCodeModal = useCallback(() => setModalVisible(true), [setModalVisible]);
@@ -187,7 +189,6 @@ const StepReceiveFunds = ({
     onResetSkip();
   }, [device, isAddressVerified, onChangeAddressVerified, onResetSkip, transitionTo]);
 
-  const completeAction = useCompleteActionCallback();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const receivedCurrencyId: string | undefined =
     account && account.type !== "TokenAccount" ? account?.currency?.id : undefined;
@@ -196,14 +197,14 @@ const StepReceiveFunds = ({
     receiveStakingFlowConfig?.enabled &&
     receiveStakingFlowConfig?.params?.[receivedCurrencyId]?.enabled;
   const onFinishReceiveFlow = useCallback(() => {
-    completeAction(PostOnboardingActionId.assetsTransfer);
     const dismissModal =
       global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
     if (
       !dismissModal &&
       !receiveTokenMode &&
       isStakingEnabledForAccount &&
-      !isFromPostOnboardingEntryPoint
+      !isFromPostOnboardingEntryPoint &&
+      !isOnboardingReceiveFlow
     ) {
       track("button_clicked2", {
         button: "continue",
@@ -229,7 +230,7 @@ const StepReceiveFunds = ({
     name,
     onClose,
     transitionTo,
-    completeAction,
+    isOnboardingReceiveFlow,
   ]);
   return (
     <>
@@ -288,10 +289,7 @@ const StepReceiveFunds = ({
                 />
               </Alert>
               <Separator2 />
-              <Receive2NoDevice
-                onVerify={onVerify}
-                onContinue={() => onChangeAddressVerified(true)}
-              />
+              <Receive2NoDevice onVerify={onVerify} onContinue={onFinishReceiveFlow} />
             </>
           ) : device ? (
             // verification with device

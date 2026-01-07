@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/core";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useSelector } from "react-redux";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useSelector } from "~/context/hooks";
 import { Trans, useTranslation } from "react-i18next";
 import { Alert, Box, Flex, Text } from "@ledgerhq/native-ui";
 import { useSettings, useAccountUnit } from "~/hooks";
@@ -20,7 +20,7 @@ type Props = {
   account: AccountLike;
 };
 
-type Navigation = StackNavigationProp<BaseNavigatorStackParamList>;
+type Navigation = NativeStackNavigationProp<BaseNavigatorStackParamList>;
 type Route = EntryOf<BaseNavigatorStackParamList>;
 
 const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
@@ -42,7 +42,7 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
   const assetName = unit.code;
   const currentBalance = formatCurrencyUnit(unit, account.spendableBalance, {
     showCode: true,
-    locale: locale,
+    locale,
   });
 
   const routeToButtonLabel: Record<string, string> = useMemo(

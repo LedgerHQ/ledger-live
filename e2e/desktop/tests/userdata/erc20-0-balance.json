@@ -16,8 +16,8 @@
       "pairExchanges": {},
       "developerMode": false,
       "loaded": true,
-      "shareAnalytics": true,
-      "sharePersonalizedRecommandations": true,
+      "shareAnalytics": false,
+      "sharePersonalizedRecommandations": false,
       "hasSeenAnalyticsOptInPrompt": true,
       "sentryLogs": true,
       "lastUsedVersion": "99.99.99",
@@ -40923,6 +40923,431 @@
       "actionsCompleted": {},
       "lastActionCompleted": null,
       "postOnboardingInProgress": false
+    },
+    "cryptoAssets": {
+      "version": 1,
+      "tokens": [
+        {
+          "data": {
+            "id": "ethereum/erc20/usd_tether__erc20_",
+            "contractAddress": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Tether USD",
+            "ticker": "USDT",
+            "units": [{ "name": "USDT", "code": "USDT", "magnitude": 6 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3044022078c66ccea3e4dedb15a24ec3c783d7b582cd260daf62fd36afe9a8212a344aed0220160ba8c1c4b6a8aa6565bed20632a091aeeeb7bfdac67fc6589a6031acbf511c"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/pooled_staked_eth",
+            "contractAddress": "0x5DB5235b5C7e247488784986e58019fFFd98FdA4",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Pooled Staked ETH",
+            "ticker": "psETH",
+            "units": [{ "name": "psETH", "code": "psETH", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3044022040628b053fcdf76815c20e3574f9a5fdaf360bd1136be1903baec612c4b9ab57022045071f5c6c58f9ade96ab0e75621b0e5c5cfa9573895b912d58f84299491c1e9"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/dai_stablecoin_v2_0",
+            "contractAddress": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Dai Stablecoin v2.0",
+            "ticker": "DAI",
+            "units": [{ "name": "DAI", "code": "DAI", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3045022100b3aa979633284eb0f55459099333ab92cf06fdd58dc90e9c070000c8e968864c02207b10ec7d6609f51dda53d083a6e165a0abf3a77e13250e6f260772809b49aff5"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/enjin",
+            "contractAddress": "0xF629cBd94d3791C9250152BD8dfBDF380E2a3B9c",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "ENJIN",
+            "ticker": "ENJ",
+            "units": [{ "name": "ENJ", "code": "ENJ", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3045022100b7a34710edd5b66f3459458f72f6e6d5de5a07433e2ea43ac86285d8a666f4a102201c21822cb87ef478c5359526e329d0403aa1dd36e68567d4254c0c61f692e57f"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/wrapped_bitcoin",
+            "contractAddress": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Wrapped Bitcoin",
+            "ticker": "WBTC",
+            "units": [{ "name": "WBTC", "code": "WBTC", "magnitude": 8 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3045022100d733b3d1bc49a05698e14d8869834cf1911bef89cd98ea8d38f7c372b81a007b02206fb43deddc7508b567f330ba292eda1299410935434cb9795fec26ea1560dd2c"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/aragon_network_token",
+            "contractAddress": "0xa117000000f279D81A1D3cc75430fAA017FA5A2e",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Aragon Network Token",
+            "ticker": "ANT",
+            "units": [{ "name": "ANT", "code": "ANT", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3045022100fcf9f69e77485d1551e6cf37674dfabff1a9be52b947eb14426a44684773cf2502201a398a38ef8df93a73ad05bf77f302aa3351178d7ba367850e5f3e29228ca572"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/omg",
+            "contractAddress": "0xd26114cd6EE289AccF82350c8d8487fedB8A0C07",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "OMG",
+            "ticker": "OMG",
+            "units": [{ "name": "OMG", "code": "OMG", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "304402207f229943a0510425b5dcab5cffe0f60469d3d05c5557a1bbe9c0a07d4b704e66022011cd109363c875edcbdb5d7a5b3ab5ce3726d9a3cc08168f692b4862c8b4f4f7"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/kyber_network_crystal_v2",
+            "contractAddress": "0xdeFA4e8a7bcBA345F687a2f1456F5Edd9CE97202",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Kyber Network Crystal v2",
+            "ticker": "KNC",
+            "units": [{ "name": "KNC", "code": "KNC", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3044022054f4169a8c4ab3c306eed4a88dc01182061d4386db17fefc2a9dca7af61a059002207719dd30959ad83007c1d32cd42b98950dbd867f4cfe3b38f08fc4d290dc84f8"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/okb",
+            "contractAddress": "0x75231F58b43240C9718Dd58B4967c5114342a86c",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "OKB",
+            "ticker": "OKB",
+            "units": [{ "name": "OKB", "code": "OKB", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3045022100fe7fe01ec1634c7a30dd562691f674d7d21820c2b8e5e4817c1701e9648d4a2702201dc2b24e28f58407a5aa2efe27b4df922551cf46ac4322f49c950a75ca6af9a1"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/polygon_ecosystem_token",
+            "contractAddress": "0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Polygon Ecosystem Token",
+            "ticker": "POL",
+            "units": [{ "name": "POL", "code": "POL", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3044022077eff823709a0359c79d5460b8106b5276c6d0268efe4ff69299f8620606189602205789ad5c9f4ddfc966c7a7f0b9955d4ad2e4d9f5e4bf19d54cdd04f96be5250c"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/usds_stablecoin_0xdc035d45d973e3ec169d2276ddab16f1e407384f",
+            "contractAddress": "0xdc035d45d973e3ec169d2276ddab16f1e407384f",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "USDS Stablecoin",
+            "ticker": "USDS",
+            "units": [{ "name": "USDS", "code": "USDS", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3045022100eb90d44bf620cbcd93e0b9173f37dcb9086d8e41e6422a532a4bc926e137904a022027d7334ce12c333ea8fd9c3fcf335701a76c3529c39fd56208b1a7b09e6cd37b"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/yield_bearing_steakhouse_morpho_usdt_0x96b22eb7178d116797e57197e586b70fedae8fdd",
+            "contractAddress": "0x96B22EB7178d116797e57197e586b70FedAE8Fdd",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Yield Bearing Steakhouse Morpho USDT",
+            "ticker": "mstkeUSDT",
+            "units": [{ "name": "mstkeUSDT", "code": "mstkeUSDT", "magnitude": 6 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3045022100f622943391b0ea472e850ba42cad50af013c207bf9d6b28d2268f45199aeb84102205f87fc6d453971ddb48368d2d9541c7fc21b46f82e438d97550106410231b61d"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/yrise_finance",
+            "contractAddress": "0x6051C1354Ccc51b4d561e43b02735DEaE64768B8",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "yRise.Finance",
+            "ticker": "yRise",
+            "units": [{ "name": "yRise", "code": "yRise", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3044022049d807a1c9b21ffff07f2b3d11867450dbce4040d0608f74cce57f025b8ba207022055ddc0c6a735dd3d7ee773238f490c3c35be914fdfff8b55f900c0eaeb9af1fa"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/usd__coin",
+            "contractAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "USD Coin",
+            "ticker": "USDC",
+            "units": [{ "name": "USDC", "code": "USDC", "magnitude": 6 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3045022100b2e358726e4e6a6752cf344017c0e9d45b9a904120758d45f61b2804f9ad5299022015161ef28d8c4481bd9432c13562def9cce688bcfec896ef244c9a213f106cdd"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/1inch_token",
+            "contractAddress": "0x111111111117dC0aa78b770fA6A738034120C302",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "1INCH Token",
+            "ticker": "1INCH",
+            "units": [{ "name": "1INCH", "code": "1INCH", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "304402204623e5f1375c54a446157ae8a739204284cf053634b7abd083dc5f5d2675c4e702206ff94b4c84ba9e93f44065c38d7c92506621fa69ba04f767aa58221de8afbf17"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/yield_bearing_spark_dai_0xbd08c57f7448a5794bf4faee067ec71aa64ef26d",
+            "contractAddress": "0xbd08C57f7448a5794bf4faeE067EC71AA64ef26D",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Yield Bearing Spark DAI",
+            "ticker": "seDAI",
+            "units": [{ "name": "seDAI", "code": "seDAI", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3044022047c1ffb25a8866327122ec0a7657f422be57bbce61332eae0211eb2423546f1302203ead387f32fbb646c4640d1ff210103f2432d6d3e948fc115222db66a7cac1c2"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/yield_bearing_steakhouse_morpho_usdc_0x334f5d28a71432f8fc21c7b2b6f5dbbcd8b32a7b",
+            "contractAddress": "0x334F5d28a71432f8fc21C7B2B6F5dBbcD8B32A7b",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Yield Bearing Steakhouse Morpho USDC",
+            "ticker": "mstkeUSDC",
+            "units": [{ "name": "mstkeUSDC", "code": "mstkeUSDC", "magnitude": 6 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3044022018865082cf9d9e526f6863e8ca31673a954b101faa72f0a602b52fcdb9eb844202203d48c9f8b33888738c2f2798b5127a18d604aac08d266961436c963c51bf0536"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/usde",
+            "contractAddress": "0x4c9EDD5852cd905f086C759E8383e09bff1E68B3",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "USDe",
+            "ticker": "USDe",
+            "units": [{ "name": "USDe", "code": "USDe", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3044022000e2c60c0acae998c32f139ffe95ecc07bdc24ff7e9b6795cea7c7e63c66f9a7022073d5bb969f7c5c2191c4ced9d2889ff0d936b50bad72eb5ad79313a0e6a16382"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/yield_bearing_aave_dai_0x4ef971774c77865ff8ec35f274474cb0ed9c48fa",
+            "contractAddress": "0x4Ef971774c77865FF8Ec35f274474CB0eD9c48FA",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Yield Bearing AAVE DAI",
+            "ticker": "aeDAI",
+            "units": [{ "name": "aeDAI", "code": "aeDAI", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3045022100ac068d2aa67083a24dfbfb3ba2e2ccea8788d4e338542e7cd19df780713baf68022025d7290faa846de03401d8d79d2a58e2e3b2112c2d6c5516005995250b0856dc"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/yield_bearing_sky_usds_0x7daeba3f217614e409f85d3014d33923a6b03630",
+            "contractAddress": "0x7DAEBa3F217614E409F85d3014D33923a6b03630",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Yield Bearing Sky USDS",
+            "ticker": "seUSDS",
+            "units": [{ "name": "seUSDS", "code": "seUSDS", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3045022100da20eafc0da53d49e99f95961a35d9cc5b204d08ac09efc3e399a8e2f8b9e6340220509bcd026ef30b21ec6555ab037099569e9f2f54bb661df63d0b54ddde3cfb80"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/cro",
+            "contractAddress": "0xA0b73E1Ff0B80914AB6fe0444E65848C4C34450b",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Cronos Coin",
+            "ticker": "CRO",
+            "units": [{ "name": "CRO", "code": "CRO", "magnitude": 8 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "304402207516b954efe863842cfd13ec52b5282244190afb1670806ebada17b222a31fb402202209855189582452633836757941484a9888f58195546e4f9d10760b43d4d761"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/ethx",
+            "contractAddress": "0xA35b1B31Ce002FBF2058D22F30f95D405200A15b",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "ETHx",
+            "ticker": "ETHx",
+            "units": [{ "name": "ETHx", "code": "ETHx", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3045022100d05a1110d0ce06a3af99a98f78505fb215c898fcc53734e19484721c0d5adef802203d54002758df1210ac11a70ab78529b3e4dcb26ea64b15a289c27613dfa338c2"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/lc_staked_shared_eth_0xc4dcb059dd98b45b090da8982234c61d0b9e84f9",
+            "contractAddress": "0xC4DCB059dD98B45B090Da8982234C61D0b9e84f9",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "LC Staked Shared ETH",
+            "ticker": "lcETH",
+            "units": [{ "name": "lcETH", "code": "lcETH", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3045022100fa3ac648aafbe6025057bddf8a0aba36701e33dbf81edcec73cedce4918c1b5802205514bdee0f4e0dc13e1d380016a03f0efcabb559a589d48953407ee41abbcab4"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/steth",
+            "contractAddress": "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "LIDO Staked ETH",
+            "ticker": "stETH",
+            "units": [{ "name": "stETH", "code": "stETH", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "3045022100abdf606d3c95617ee65b0e52165ad768fc65fa155a9a049525bccc971e26b8de02205f22456404dde94dee363f9482f043b470768e128c38b262ee7970ce7fe899df"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/yield_bearing_compound_usdc_0xb9e62cb9b4ce8ec13c886fae67369da417ee2714",
+            "contractAddress": "0xB9E62Cb9b4cE8ec13c886FaE67369Da417EE2714",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Yield Bearing Compound USDC",
+            "ticker": "ceUSDC",
+            "units": [{ "name": "ceUSDC", "code": "ceUSDC", "magnitude": 6 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "30450221009d3a6b8e605c621e94730f7eea0b6dd75eea43adc2aa12a8a0ecfb7253ae91ba02201010b6b1b6e00e3955a588c9f22b2c53092cd3d3c83643b970651aff11c70959"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/yield_bearing_aave_usds_0xd88714e295da03a07bcb8ad4a4dbe87fa42d75f9",
+            "contractAddress": "0xD88714E295da03a07BcB8aD4a4dbE87fa42d75f9",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Yield Bearing AAVE USDS",
+            "ticker": "aeUSDS",
+            "units": [{ "name": "aeUSDS", "code": "aeUSDS", "magnitude": 18 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "30440220616fe24648b6bb1d301395ee8731542714c3e66e96efd175aa3de4207ac6267a0220646d579f243bbb2bf0bf13f70d54c745b8c4d95af3e56bac7125301292c9fd37"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/yield_bearing_aave_usdt_0x4d431856295413906075dd40266d83624e09c672",
+            "contractAddress": "0x4D431856295413906075dD40266d83624E09C672",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Yield Bearing AAVE USDT",
+            "ticker": "aeUSDT",
+            "units": [{ "name": "aeUSDT", "code": "aeUSDT", "magnitude": 6 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "304402205cd413296e909490fc2b2e0d2209c11dcb5f25cdd9ca953f089b96a4ea74ecfb022074503b9994b17cab789e19ff5c2b9fed747869dde647e9bd55e18a04854d1047"
+          },
+          "timestamp": 99999999999999
+        },
+        {
+          "data": {
+            "id": "ethereum/erc20/yield_bearing_aave_usdc_0xd2011d314acaa68e5401e7f5aec3be6d2c574dcf",
+            "contractAddress": "0xD2011d314aCAA68E5401E7f5AeC3Be6d2C574DCf",
+            "parentCurrencyId": "ethereum",
+            "tokenType": "erc20",
+            "name": "Yield Bearing AAVE USDC",
+            "ticker": "aeUSDC",
+            "units": [{ "name": "aeUSDC", "code": "aeUSDC", "magnitude": 6 }],
+            "delisted": false,
+            "disableCountervalue": false,
+            "ledgerSignature": "304502210095a2bd51c60b855c1face6d6582258c0b0767156ba4ad8b286d7159fccc3271402201b62596678e3b7583212d3d71b86dfa2bffbe2c19a84574ee998694491c6a7f1"
+          },
+          "timestamp": 99999999999999
+        }
+      ]
     }
   }
 }

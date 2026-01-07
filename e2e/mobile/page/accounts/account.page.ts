@@ -1,3 +1,4 @@
+import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
@@ -42,7 +43,7 @@ export default class AccountPage {
 
   @Step("Go to the account with the name")
   async goToAccountByName(name: string) {
-    await waitForElementById(this.baseAccountName + name);
+    await scrollToId(this.baseAccountName + name);
     await tapById(this.baseAccountName + name);
   }
 

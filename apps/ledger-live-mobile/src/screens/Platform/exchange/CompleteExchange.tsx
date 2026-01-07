@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
@@ -32,7 +32,11 @@ const PlatformCompleteExchange: React.FC<Props> = ({
 
   if (account.type === "TokenAccount") tokenCurrency = account.token;
 
-  const broadcast = useBroadcast({ account, parentAccount, broadcastConfig: { mevProtected } });
+  const broadcast = useBroadcast({
+    account,
+    parentAccount,
+    broadcastConfig: { mevProtected, sponsored: request.sponsored },
+  });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
@@ -111,6 +115,8 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           onResult={onCompleteExchange}
           request={request}
           location={HOOKS_TRACKING_LOCATIONS.swapFlow}
+          noCloseButton={true}
+          preventBackdropClick={true}
         />
       ) : (
         <DeviceActionModal
@@ -121,6 +127,8 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           onResult={onSign}
           request={signRequest}
           location={HOOKS_TRACKING_LOCATIONS.swapFlow}
+          noCloseButton={true}
+          preventBackdropClick={true}
         />
       )}
     </SafeAreaView>

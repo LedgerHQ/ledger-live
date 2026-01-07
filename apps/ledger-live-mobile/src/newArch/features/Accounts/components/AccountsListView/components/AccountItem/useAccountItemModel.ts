@@ -6,11 +6,12 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { Account, DerivationMode, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useMaybeAccountUnit } from "~/hooks";
 import { formatAddress } from "LLM/features/Accounts/utils/formatAddress";
 import { accountsSelector } from "~/reducers/accounts";
 import { useMaybeAccountName } from "~/reducers/wallet";
+import { getFreshAccountAddress } from "~/utils/address";
 
 export interface AccountItemProps {
   account: Account | TokenAccount;
@@ -35,7 +36,9 @@ const useAccountItemModel = ({
 
   const parentAccount = getParentAccount(account, allAccount);
   const formattedAddress = formatAddress(
-    isTokenAccount ? parentAccount.freshAddress : account.freshAddress,
+    isTokenAccount
+      ? getFreshAccountAddress(parentAccount)
+      : getFreshAccountAddress(account as Account),
   );
   const tag =
     account.type === "Account" &&

@@ -1,6 +1,12 @@
 import React, { useCallback, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { ApyIndicator, AssetItem, AssetType } from "@ledgerhq/native-ui/pre-ldls/index";
+import {
+  ApyIndicator,
+  AssetItem,
+  AssetType,
+  MarketPriceIndicator,
+  MarketPercentIndicator,
+} from "@ledgerhq/native-ui/pre-ldls/index";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import SkeletonList from "../../components/Skeleton/SkeletonList";
@@ -11,11 +17,7 @@ import {
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
 import { FlatList } from "react-native";
-import {
-  BottomSheetVirtualizedList,
-  useBottomSheetInternal,
-  useBottomSheet,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetVirtualizedList, useBottomSheet } from "@gorhom/bottom-sheet";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
 import { GenericError } from "../../components/GenericError";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -23,8 +25,12 @@ import { InfiniteLoader } from "@ledgerhq/native-ui";
 import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
 import { balanceItem } from "../../components/Balance";
 import { useBalanceDeps } from "../../hooks/useBalanceDeps";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import Config from "react-native-config";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -35,6 +41,7 @@ export type AssetSelectionStepProps = {
   hasError?: boolean;
   refetch?: () => void;
   loadNext?: () => void;
+  assetsSorted?: AssetData[];
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -48,21 +55,31 @@ const AssetSelection = ({
   hasError,
   refetch,
   loadNext,
+  assetsSorted,
 }: Readonly<AssetSelectionStepProps>) => {
-  const { isConnected } = useNetInfo();
+  const { isInternetReachable } = useNetInfo();
 
   const flow = useSelector(modularDrawerFlowSelector);
   const source = useSelector(modularDrawerSourceSelector);
 
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
-  const { collapse } = useBottomSheet();
+  const { collapse, snapToIndex } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
+
+  const expandToFullHeight = () => {
+    snapToIndex(1);
+    listRef.current?.scrollToIndex({ index: 0 });
+  };
+
+  const assetsMap = groupCurrenciesByAsset(assetsSorted || []);
 
   const assetConfigurationDeps = {
     ApyIndicator,
+    MarketPriceIndicator,
+    MarketPercentIndicator,
     useBalanceDeps,
     balanceItem,
+    assetsMap,
   };
 
   const makeAssetConfigurationHook = createAssetConfigurationHook(assetConfigurationDeps);
@@ -104,17 +121,9 @@ const AssetSelection = ({
     ],
   );
 
-  const handleSearchPressIn = () => {
-    listRef.current?.scrollToOffset({ offset: 0, animated: true });
-  };
+  const handleSearchFocus = () => {};
 
-  const handleSearchFocus = () => {
-    shouldHandleKeyboardEvents.value = true;
-  };
-
-  const handleSearchBlur = () => {
-    shouldHandleKeyboardEvents.value = false;
-  };
+  const handleSearchBlur = () => {};
 
   const renderItem = useCallback(
     ({ item }: { item: AssetType }) => <AssetItem {...item} onClick={handleAssetClick} />,
@@ -124,8 +133,13 @@ const AssetSelection = ({
   const renderContent = () => {
     if (isLoading) return <SkeletonList />;
 
-    if (hasError || !isConnected) {
-      return <GenericError onClick={refetch} type={!isConnected ? "internet" : "backend"} />;
+    if (hasError || isInternetReachable === false) {
+      return (
+        <GenericError
+          onClick={refetch}
+          type={isInternetReachable === false ? "internet" : "backend"}
+        />
+      );
     }
 
     return (
@@ -139,6 +153,7 @@ const AssetSelection = ({
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         ListEmptyComponent={<AssetsEmptyList />}
         contentContainerStyle={{
           paddingBottom: SAFE_MARGIN_BOTTOM,
@@ -146,7 +161,8 @@ const AssetSelection = ({
         }}
         onEndReached={loadNext}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={loadNext ? <InfiniteLoader size={20} /> : null}
+        ListFooterComponent={loadNext ? <InfiniteLoader mock={!!Config.DETOX} size={20} /> : null}
+        testID="modular-drawer-select-crypto-scrollView"
       />
     );
   };
@@ -167,11 +183,11 @@ const AssetSelection = ({
         flow={flow}
         onFocus={handleSearchFocus}
         onBlur={handleSearchBlur}
-        onPressIn={handleSearchPressIn}
+        onPressIn={expandToFullHeight}
       />
       {renderContent()}
     </>
   );
 };
 
-export default React.memo(AssetSelection);
+export default withDiscreetMode(React.memo(AssetSelection));

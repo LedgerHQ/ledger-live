@@ -2,7 +2,8 @@ import React from "react";
 import { Text } from "../../../components";
 import styled from "styled-components";
 import { withTokens } from "../../libs";
-import { CryptoIcon } from "../CryptoIcon/CryptoIcon";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import { formatAddress } from "./formatAddress";
 
 const Wrapper = styled.div`
   ${withTokens("spacing-xxxs", "colors-content-subdued-default-default")}
@@ -18,13 +19,16 @@ export const Address = ({
   cryptoId,
   ticker,
   parentId,
+  isShortened = false,
 }: {
   address: string;
   showIcon: boolean;
   cryptoId?: string;
   ticker?: string;
   parentId?: string;
+  isShortened?: boolean;
 }) => {
+  const formattedAddress = isShortened ? formatAddress(address) : address;
   return (
     <Wrapper>
       <Text
@@ -32,7 +36,7 @@ export const Address = ({
         fontSize="12px"
         color="var(--colors-content-subdued-default-default)"
       >
-        {address}
+        {formattedAddress}
       </Text>
       {showIcon && (
         <CryptoIcon ledgerId={cryptoId} network={parentId} ticker={ticker} size="20px" />

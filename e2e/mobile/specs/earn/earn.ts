@@ -45,10 +45,29 @@ export async function runInlineAddAccountTest(
     it(`Inline Add Account [${account.currency.speculosApp.name}]`, async () => {
       await app.transferMenuDrawer.open();
       await app.transferMenuDrawer.navigateToStake();
-      await app.stake.selectCurrency(account.currency.id);
-      await app.common.tapProceedButton();
-      await app.addAccount.addAccountAtIndex(`${account.currency.name} 1`, account.currency.id, 0);
-      await app.common.selectFirstAccount();
+
+      const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");
+
+      if (isModularDrawer) {
+        await app.modularDrawer.performSearchByTicker(account.currency.ticker);
+        await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
+        await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
+        await app.addAccount.addAccountAtIndex(
+          `${account.currency.name} 1`,
+          account.currency.id,
+          0,
+        );
+      } else {
+        await app.stake.selectCurrency(account.currency.id);
+        await app.common.tapProceedButton();
+        await app.addAccount.addAccountAtIndex(
+          `${account.currency.name} 1`,
+          account.currency.id,
+          0,
+        );
+        await app.common.selectFirstAccount();
+      }
+
       await app.earnDashboard.expectStakingProviderModalTitle("Select staking provider");
     });
   });
@@ -56,7 +75,6 @@ export async function runInlineAddAccountTest(
 
 export async function runStartETHStakingFromEarnDashboardTest(
   account: Account,
-  earnButtonId: string,
   provider: Provider,
   tmsLinks: string[],
   tags: string[],
@@ -69,14 +87,18 @@ export async function runStartETHStakingFromEarnDashboardTest(
         await beforeAllFunction({
           userdata: "skip-onboarding",
           speculosApp: account.currency.speculosApp,
-          featureFlags: {
-            ptxEarnLiveApp: {
-              enabled: true,
-              params: { manifest_id: "earn" },
-              overridesRemote: true,
+          cliCommands: [
+            async (userdataPath?: string) => {
+              await CLI.liveData({
+                currency: account.currency.speculosApp.name,
+                index: account.index,
+                add: true,
+                appjson: userdataPath,
+              });
+              account.address = await CLI.getAddressForAccount(account);
+              return account.address;
             },
-          },
-          cliCommands: [liveDataCommand(account.currency.speculosApp, account.index)],
+          ],
         });
       });
 
@@ -85,8 +107,8 @@ export async function runStartETHStakingFromEarnDashboardTest(
       it(`ETH staking flow - Earn Dashboard - Provider : ${provider.uiName}`, async () => {
         await app.portfolio.openEarnTab();
         await earnReady;
-        await app.earnDashboard.goToEarnMoreTab();
-        await app.earnDashboard.clickEarnCurrencyButton(earnButtonId);
+        await app.earnDashboard.goToTab("Earn Opportunities");
+        await app.earnDashboard.clickEarnCurrencyButton();
         await app.earnDashboard.expectStakingProviderModalTitle("Select staking provider");
         await app.earnDashboard.goToProviderLiveApp(provider);
         await app.earnDashboard.verifyProviderURL(provider, account);
@@ -100,7 +122,6 @@ export async function runCorrectEarnPageIsLoadedDependingOnUserStakingSituationT
   staking: boolean,
   tmsLinks: string[],
   tags: string[],
-  earnButtonId?: string,
 ) {
   describe("Correct Earn page is loaded depending on user's staking situation", () => {
     beforeAll(async () => {
@@ -117,16 +138,17 @@ export async function runCorrectEarnPageIsLoadedDependingOnUserStakingSituationT
       await app.portfolio.openEarnTab();
       await earnReady;
       if (staking) {
+        await app.earnDashboard.goToTab("My Rewards");
         await app.earnDashboard.verifyTotalDeposited();
         await app.earnDashboard.verifyTotalRewardsEarned();
         await app.earnDashboard.verifyDepositedAssets(account);
-        await app.earnDashboard.goToEarnMoreTab();
+        await app.earnDashboard.goToTab("Earn Opportunities");
         await app.earnDashboard.verifyAmountAvailableToEarn();
       } else {
-        await app.earnDashboard.goToEarnMoreTab();
+        await app.earnDashboard.goToTab("Earn Opportunities");
         await app.earnDashboard.verifyAmountAvailableToEarn();
         await app.earnDashboard.verifyRewardsPotentials();
-        await app.earnDashboard.verifyYourEligibleAssets(account, earnButtonId);
+        await app.earnDashboard.verifyAvailableAssets(account);
         await app.earnDashboard.verifyEarnByStackingButton();
       }
     });

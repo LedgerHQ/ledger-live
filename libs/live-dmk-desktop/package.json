@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-desktop",
-  "version": "0.9.4",
+  "version": "0.14.1",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -31,32 +31,33 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.9.0",
-    "@ledgerhq/device-transport-kit-web-hid": "1.2.0",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-transport-kit-web-hid": "catalog:",
+    "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^"
   },
   "devDependencies": {
-    "@testing-library/dom": "^9.3.4",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.1.0",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
     "@types/node": "22.10.10",
     "@vitejs/plugin-react": "4.3.4",
     "@vitest/coverage-istanbul": "3.0.7",
     "jsdom": "25.0.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "rxjs": "^7.8.1",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "rxjs": "catalog:",
     "vite": "6.0.7",
     "vitest": "2.1.9",
-    "ws": "8.18.0"
+    "ws": "catalog:"
   },
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "rxjs": "^7.8.1"
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "rxjs": "catalog:"
   }
 }

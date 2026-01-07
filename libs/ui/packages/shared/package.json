@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ui-shared",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "description": "Package with the shared assets and code between the React and React Native versions of the Ledger design system",
   "main": "lib/index.js",
   "typescriptMain": "index.ts",
@@ -24,7 +24,7 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/shared",
-  "author": "Ledger Live Team <team-live@ledger.fr>",
+  "author": "Ledger Wallet Team <team-live@ledger.fr>",
   "license": "MIT",
   "files": [
     "lib"

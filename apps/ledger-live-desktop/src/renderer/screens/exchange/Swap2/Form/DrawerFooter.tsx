@@ -14,7 +14,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const Terms = styled(Text).attrs({
   ff: "Inter|SemiBold",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   fontSize: 13,
 })``;
 
@@ -32,33 +32,50 @@ export function DrawerFooter({ provider }: { provider: string }) {
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning");
   const url = providerData?.termsOfUseUrl;
   const providerName = getProviderName(provider);
+  const ptxSwapDetailedView = useFeature("ptxSwapDetailedView");
+  const isDetailedViewEnabled = !!ptxSwapDetailedView?.enabled;
 
   const { acceptTerms, urls } = useMemo(() => {
     if (!ptxSwapLiveAppKycWarning?.enabled) {
+      let acceptTermsKey = "DeviceAction.swap.acceptTerms";
+      if (providerName === "Exodus") {
+        acceptTermsKey = "DeviceAction.swap.exodusAcceptTerms";
+      } else if (providerName === "NEAR Intents") {
+        acceptTermsKey = "DeviceAction.swap.nearIntentsAcceptTerms";
+      }
       return {
-        acceptTerms:
-          providerName === "Exodus"
-            ? "DeviceAction.swap.exodusAcceptTerms"
-            : "DeviceAction.swap.acceptTerms",
+        acceptTerms: acceptTermsKey,
         urls: [url],
       };
     }
-
     switch (providerName) {
       case "Exodus":
         return {
           acceptTerms: "DeviceAction.swap.exodusAcceptTerms",
           urls: [url],
         };
-      case "Changelly":
-        return {
-          acceptTerms: "DeviceAction.swap.changellyAcceptTerms",
-          urls: providerData?.usefulUrls,
-        };
+      case "Changelly": {
+        if (isDetailedViewEnabled) {
+          return {
+            acceptTerms: "DeviceAction.swap.changellyAcceptTerms",
+            urls: providerData?.usefulUrls,
+          };
+        } else {
+          return {
+            acceptTerms: "DeviceAction.swap.changellySimplifiedAcceptTerms",
+            urls: providerData?.usefulUrls,
+          };
+        }
+      }
       case "CIC":
         return {
           acceptTerms: "DeviceAction.swap.cicAcceptTerms",
           urls: providerData?.usefulUrls,
+        };
+      case "NEAR Intents":
+        return {
+          acceptTerms: "DeviceAction.swap.nearIntentsAcceptTerms",
+          urls: [url],
         };
       default:
         return {
@@ -66,7 +83,13 @@ export function DrawerFooter({ provider }: { provider: string }) {
           urls: [url],
         };
     }
-  }, [providerData?.usefulUrls, providerName, ptxSwapLiveAppKycWarning?.enabled, url]);
+  }, [
+    providerData?.usefulUrls,
+    providerName,
+    ptxSwapLiveAppKycWarning?.enabled,
+    url,
+    isDetailedViewEnabled,
+  ]);
 
   if (!url) {
     return null;
@@ -84,7 +107,7 @@ export function DrawerFooter({ provider }: { provider: string }) {
             <LinkWithExternalIcon
               key={`external-link-${idx}`}
               fontSize={13}
-              color="palette.text.shade60"
+              color="neutral.c70"
               onClick={() => openURL(usefulUrl!)}
               style={{ textDecoration: "underline" }}
             />

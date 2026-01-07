@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { FlatList } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useTranslation } from "react-i18next";
 import { Observable } from "rxjs";
 import { InfiniteLoader, Flex } from "@ledgerhq/native-ui";
@@ -30,13 +30,12 @@ export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds 
   const { t } = useTranslation();
   const knownDevices = useSelector(bleDevicesSelector);
   const [devices, setDevices] = useState<TransportBleDevice[]>([]);
-
   const isLDMKEnabled = useDeviceManagementKitEnabled();
 
   const filteredDevices = useMemo(() => {
     if (!deviceModelIds) return devices;
     return devices.filter(device => {
-      let modelId = "nanoX" as DeviceModelId;
+      let modelId = DeviceModelId.nanoX;
       const infos = device?.serviceUUIDs && getInfosForServiceUuid(device.serviceUUIDs[0]);
       if (infos) modelId = infos.deviceModel.id;
       return deviceModelIds.includes(modelId);
@@ -45,23 +44,25 @@ export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds 
 
   const renderItem = useCallback(
     ({ item }: { item: TransportBleDevice }) => {
-      const knownDevice = knownDevices.find(d => d.id === item.id);
-      let modelId = "nanoX" as DeviceModelId;
+      const isKnownDevice = knownDevices.some(d => d.id === item.id);
+      let modelId = DeviceModelId.nanoX;
       const infos = item.serviceUUIDs && getInfosForServiceUuid(item.serviceUUIDs[0]);
-      if (infos) modelId = infos.deviceModel.id;
-
-      const deviceMeta = {
+      if (infos) {
+        modelId = infos.deviceModel.id;
+      }
+      const deviceMeta: DeviceMeta = {
         deviceId: item.id,
         deviceName: item.localName ?? (item.name || undefined),
         wired: false,
         modelId,
       };
+
       return (
         <DeviceItem
           deviceMeta={deviceMeta}
           onSelect={() => onSelect(item, deviceMeta)}
-          disabled={!!knownDevice}
-          description={knownDevice ? t("PairDevices.alreadyPaired") : ""}
+          disabled={isKnownDevice}
+          description={isKnownDevice ? t("PairDevices.alreadyPaired") : ""}
         />
       );
     },
@@ -73,9 +74,9 @@ export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds 
       onTimeout();
     }, BLE_SCANNING_NOTHING_TIMEOUT);
 
-    const sub = Observable.create(getBLETransport({ isLDMKEnabled }).listen).subscribe({
-      next: (e: DescriptorEvent<TransportBleDevice>) => {
-        if (e.type === "add") {
+    const sub = new Observable(getBLETransport({ isLDMKEnabled }).listen).subscribe({
+      next: (e: DescriptorEvent<TransportBleDevice | null>) => {
+        if (e.type === "add" && e.descriptor) {
           clearTimeout(timeout);
           const device = e.descriptor;
           // FIXME seems like we have dup. ideally we'll remove them on the listen side!

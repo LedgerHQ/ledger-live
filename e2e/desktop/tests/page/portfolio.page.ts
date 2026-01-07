@@ -1,4 +1,4 @@
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { expect } from "@playwright/test";
 
@@ -113,12 +113,6 @@ export class PortfolioPage extends AppPage {
       await this.showAllButton.click();
     }
     await assetRowLocator.click();
-  }
-
-  @step("Scroll to operations")
-  async scrollToOperations() {
-    await this.page.waitForTimeout(500);
-    await this.operationList.scrollIntoViewIfNeeded();
   }
 
   @step("check operation history")

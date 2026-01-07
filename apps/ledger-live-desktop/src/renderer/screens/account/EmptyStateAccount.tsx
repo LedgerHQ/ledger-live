@@ -5,7 +5,6 @@ import { withTranslation, Trans } from "react-i18next";
 import { TFunction } from "i18next";
 import { openModal } from "~/renderer/actions/modals";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import IconReceive from "~/renderer/icons/Receive";
 import IconExchange from "~/renderer/icons/Exchange";
@@ -29,8 +28,7 @@ type OwnProps = {
 };
 type Props = OwnProps & {
   t: TFunction;
-
-  openModal: Function;
+  openModal: (name: string, data: Record<string, unknown>) => void;
 };
 function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
@@ -78,25 +76,25 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
           {hasTokens ? (
             <Trans i18nKey="account.emptyState.descToken">
               {"Make sure the"}
-              <Text ff="Inter|SemiBold" color="palette.text.shade100">
+              <Text ff="Inter|SemiBold" color="neutral.c100">
                 {mainAccount.currency.managerAppName}
               </Text>
               {"app is installed and start receiving"}
-              <Text ff="Inter|SemiBold" color="palette.text.shade100">
+              <Text ff="Inter|SemiBold" color="neutral.c100">
                 {mainAccount.currency.ticker}
               </Text>
               {"and"}
-              <Text ff="Inter|SemiBold" color="palette.text.shade100">
+              <Text ff="Inter|SemiBold" color="neutral.c100">
                 {account &&
                   account.type === "Account" &&
-                  listTokenTypesForCryptoCurrency(account.currency).join(", ")}
+                  (account.currency.tokenTypes || []).join(", ")}
                 {"tokens"}
               </Text>
             </Trans>
           ) : (
             <Trans i18nKey="account.emptyState.desc">
               {"Make sure the"}
-              <Text ff="Inter|SemiBold" color="palette.text.shade100">
+              <Text ff="Inter|SemiBold" color="neutral.c100">
                 {mainAccount.currency.managerAppName}
               </Text>
               {"app is installed and start receiving"}
@@ -135,12 +133,12 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
 const Title = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 6,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))``;
 const Description = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 4,
-  color: "palette.text.shade80",
+  color: "neutral.c80",
   textAlign: "center",
 }))``;
 

@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 
 export const hourFormat: Intl.DateTimeFormatOptions = {
@@ -61,10 +61,17 @@ export const useDateFormatter = (
 ) => {
   const locale = useSelector(localeSelector);
   const targetLanguage = forcedLanguage ?? locale;
-  const format = useMemo(
-    () => new Intl.DateTimeFormat(targetLanguage, intlOpts),
-    [targetLanguage, intlOpts],
-  );
+
+  const format = useMemo(() => {
+    // Force Gregorian calendar for Thailand (th-TH) which uses Buddhist calendar by default
+    const shouldForceGregorian = targetLanguage.startsWith("th");
+    const optionsWithCalendar = shouldForceGregorian
+      ? { ...intlOpts, calendar: "gregory" as const }
+      : intlOpts;
+
+    return new Intl.DateTimeFormat(targetLanguage, optionsWithCalendar);
+  }, [targetLanguage, intlOpts]);
+
   const f = useCallback((date: Date) => format.format(date), [format]);
   return f;
 };

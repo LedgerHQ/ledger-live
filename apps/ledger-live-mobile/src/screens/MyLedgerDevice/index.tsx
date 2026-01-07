@@ -1,13 +1,11 @@
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { firstValueFrom, from } from "rxjs";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { CommonActions } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
-import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
 import { useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
@@ -19,9 +17,12 @@ import UninstallAppDependenciesModal from "./Modals/UninstallAppDependenciesModa
 import { useLockNavigation } from "~/components/RootNavigator/CustomBlockRouterNavigator";
 import { setHasInstalledAnyApp, setLastSeenDeviceInfo } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
-import FirmwareUpdateScreen from "~/components/FirmwareUpdate";
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import {
+  BaseComposite,
+  BaseNavigation,
+  StackNavigatorProps,
+} from "~/components/RootNavigator/types/helpers";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { UpdateStep } from "../FirmwareUpdate";
 import {
@@ -34,13 +35,12 @@ type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
 >;
 
-const Manager = ({ navigation, route }: NavigationProps) => {
+const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
   const {
     device,
     deviceInfo,
     result,
     searchQuery,
-    firmwareUpdate,
     appsToRestore,
     updateModalOpened,
     tab = "CATALOG",
@@ -50,6 +50,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   const { deviceName } = result;
   const [state, dispatch] = useApps(result, device, appsToRestore);
   const reduxDispatch = useDispatch();
+  const baseNavigation = useNavigation<BaseNavigation>();
 
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   useEffect(() => {
@@ -73,7 +74,6 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   const pendingInstalls = installQueue.length + uninstallQueue.length > 0;
 
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
-  const latestFirmware = useLatestFirmware(deviceInfo);
   const [quitManagerAction, setQuitManagerAction] = useState<{
     type: string;
     payload?: object;
@@ -81,17 +81,6 @@ const Manager = ({ navigation, route }: NavigationProps) => {
     target?: string;
   } | null>(null);
 
-  const [isFirmwareUpdateOpen, setIsFirmwareUpdateOpen] = useState(false);
-  useEffect(() => {
-    if (
-      latestFirmware &&
-      firmwareUpdate &&
-      isFirmwareUpdateVersionSupported(deviceInfo, device.modelId)
-    ) {
-      setIsFirmwareUpdateOpen(true);
-    }
-  }, [device.modelId, deviceInfo, firmwareUpdate, latestFirmware]);
-  /** general error state */
   const [error, setError] = useState<Error | null>(null);
   /** storage warning modal state */
   const [storageWarning, setStorageWarning] = useState<string | null>(null);
@@ -125,8 +114,6 @@ const Manager = ({ navigation, route }: NavigationProps) => {
     reduxDispatch(setLastSeenDeviceInfo(dmi));
   }, [device, state.installed, deviceInfo, reduxDispatch]);
 
-  const installedApps = useMemo(() => state.installed.map(({ name }) => name), [state.installed]);
-
   /**
    * Resets the navigation params in order to unlock navigation
    * then trigger caught navigation action
@@ -147,48 +134,33 @@ const Manager = ({ navigation, route }: NavigationProps) => {
 
   const resetStorageWarning = useCallback(() => setStorageWarning(null), [setStorageWarning]);
 
-  const onCloseFirmwareUpdate = useCallback(
-    (restoreApps?: boolean) => {
-      setIsFirmwareUpdateOpen(false);
-      refreshDeviceInfo();
-
-      // removes the firmwareUpdate param from the stack navigation so we don't open the modal again
-      // if the user comes back to this page within the stack
-      navigation.dispatch(state => {
-        const routes = state.routes.map(route => ({
-          ...route,
-          params: { ...route.params, firmwareUpdate: false },
-        }));
-        return CommonActions.reset({ ...state, routes });
-      });
-      if (restoreApps) {
-        // we renavigate to the manager to force redetection of the apps and restore apps if needed
-        navigation.replace(ScreenName.MyLedgerChooseDevice, {
-          device,
-          appsToRestore: installedApps,
-          firmwareUpdate: false,
-        });
-      }
-    },
-    [device, installedApps, navigation, refreshDeviceInfo],
-  );
-
   const onBackFromNewUpdateUx = useCallback(
     (updateState: UpdateStep) => {
-      navigation.navigate(NavigatorName.Main, {
-        screen: NavigatorName.MyLedger,
-        params: {
-          screen: ScreenName.MyLedgerChooseDevice,
-          // If the fw update was completed or not yet started, we know the device in a correct state,
-          // we can automatically connect to it.
-          // Otherwise navigating back to the chooseDeviceScreen without settings a device
-          // so it does not try to automatically connect to the device while it
-          // might still be on an unknown state because the fw update was just stopped
-          params: ["start", "completed"].includes(updateState) ? { device } : {},
-        },
+      baseNavigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: NavigatorName.Main,
+            state: {
+              routes: [
+                {
+                  name: NavigatorName.MyLedger,
+                  state: {
+                    routes: [
+                      {
+                        name: ScreenName.MyLedgerChooseDevice,
+                        params: ["start", "completed"].includes(updateState) ? { device } : {},
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
       });
     },
-    [device, navigation],
+    [device, baseNavigation],
   );
 
   const appsInstallUninstallWithDependenciesContextValue = useMemo(
@@ -239,7 +211,6 @@ const Manager = ({ navigation, route }: NavigationProps) => {
           state={state}
           dispatch={dispatch}
           device={device}
-          navigation={navigation}
           setStorageWarning={setStorageWarning}
           deviceId={deviceId}
           initialDeviceName={deviceName}
@@ -273,15 +244,8 @@ const Manager = ({ navigation, route }: NavigationProps) => {
         onClose={onCloseUninstallAppDependenciesModal}
         uninstallAppsWithDependents={uninstallAppsWithDependents}
       />
-      <FirmwareUpdateScreen
-        device={device}
-        deviceInfo={deviceInfo}
-        isOpen={isFirmwareUpdateOpen}
-        onClose={onCloseFirmwareUpdate}
-        hasAppsToRestore={Boolean(appsToRestore?.length)}
-      />
     </>
   );
 };
 
-export default memo<NavigationProps>(Manager);
+export default memo<NavigationProps>(MyLedgerDevice);

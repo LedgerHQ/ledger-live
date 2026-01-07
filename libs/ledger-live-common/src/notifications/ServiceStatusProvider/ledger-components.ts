@@ -9,4 +9,5 @@ export const LEDGER_COMPONENTS = [
   "Trustchain",
   "Loyalty Program",
   "Card Program",
+  "Countervalue API",
 ] as const;

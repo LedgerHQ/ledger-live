@@ -13,13 +13,12 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import invariant from "invariant";
 import React, { Component, useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import Alert from "~/components/Alert";
 import Button from "~/components/Button";
@@ -34,7 +33,7 @@ import TranslatedError from "~/components/TranslatedError";
 import { NavigatorName, ScreenName } from "~/const";
 import AlertTriangle from "~/icons/AlertTriangle";
 import { useTransactionChangeFromNavigation } from "~/logic/screenTransactionHooks";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import SummaryAmountSection from "~/screens/SendFunds/SummaryAmountSection";
 import SummaryFromSection from "~/screens/SendFunds/SummaryFromSection";
 import SummaryToSection from "~/screens/SendFunds/SummaryToSection";
@@ -52,7 +51,7 @@ function EditTransactionSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { nextNavigation, overrideAmountLabel, transactionRaw, editType } = route.params;
 
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   invariant(account, "account is missing");
   invariant(transactionRaw, "transactionRaw is missing");
@@ -92,12 +91,15 @@ function EditTransactionSummary({ navigation, route }: Props) {
       // This component is used in a wild bunch of navigators.
       // nextNavigation is a param which can have too many shapes
       // Unfortunately for this reason let's keep it untyped for now.
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(nextNavigation, {
-        ...route.params,
-        transaction,
-        status,
-        selectDeviceLink: true,
-      })
+      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(
+        nextNavigation,
+        {
+          ...route.params,
+          transaction,
+          status,
+          selectDeviceLink: true,
+        },
+      )
     );
   }, [navigation, nextNavigation, route.params, transaction, status]);
 

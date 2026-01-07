@@ -1,13 +1,17 @@
 import { handleActions, ReducerMap } from "redux-actions";
 import type { Action } from "redux-actions";
-import { getFiatCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
+import {
+  getFiatCurrencyByTicker,
+  findFiatCurrencyByTicker,
+  findCryptoCurrencyByTicker,
+} from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@ledgerhq/live-env";
-import { createSelector } from "reselect";
+import { createSelector } from "~/context/selectors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { CurrencySettings, SettingsState, State } from "./types";
+import type { CurrencySettings, SettingsState, State, Theme } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 import type {
@@ -58,7 +62,6 @@ import type {
   SettingsSetOnboardingHasDevicePayload,
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
-  SettingsSetClosedNetworkBannerPayload,
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
@@ -72,13 +75,15 @@ import type {
   SettingsSetMevProtectionPayload,
   SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
+  SettingsIsOnboardingFlowPayload,
+  SettingsIsOnboardingFlowReceiveSuccessPayload,
+  SettingsIsPostOnboardingFlowPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
 } from "../actions/types";
 import { ScreenName } from "~/const";
-import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyByTicker";
 
 export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
@@ -115,7 +120,7 @@ export const INITIAL_STATE: SettingsState = {
   discreetMode: false,
   language: getDefaultLanguageLocale(),
   languageIsSetByUser: false,
-  locale: null,
+  locale: getDefaultLocale(),
   swap: {
     hasAcceptedIPSharing: false,
     acceptedProviders: [],
@@ -151,7 +156,6 @@ export const INITIAL_STATE: SettingsState = {
   hasBeenRedirectedToPostOnboarding: true, // will be set to false at the end of an onboarding, not false by default to avoid redirection for existing users
   onboardingType: null,
   depositFlow: {
-    hasClosedNetworkBanner: false,
     hasClosedWithdrawBanner: false,
   },
   userNps: null,
@@ -162,16 +166,23 @@ export const INITIAL_STATE: SettingsState = {
   fromLedgerSyncOnboarding: false,
   mevProtection: true,
   selectedTabPortfolioAssets: "Assets",
+  isOnboardingFlow: false,
+  isOnboardingFlowReceiveSuccess: false,
+  isPostOnboardingFlow: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
   `${from.ticker}_${to.ticker}`;
 
 const handlers: ReducerMap<SettingsState, SettingsPayload> = {
-  [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => ({
-    ...state,
-    ...(action as Action<SettingsImportPayload>).payload,
-  }),
+  [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => {
+    const payload = (action as Action<SettingsImportPayload>).payload;
+    return {
+      ...state,
+      ...payload,
+      locale: payload.locale ?? state.locale ?? getDefaultLocale(),
+    };
+  },
 
   [SettingsActionTypes.UPDATE_CURRENCY_SETTINGS]: (
     { currenciesSettings, ...state }: SettingsState,
@@ -279,6 +290,30 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       hasCompletedOnboarding: payload === false ? payload : true,
+    };
+  },
+
+  [SettingsActionTypes.SETTINGS_SET_IS_ONBOARDING_FlOW]: (state, action) => {
+    const payload = (action as Action<SettingsIsOnboardingFlowPayload>).payload;
+    return {
+      ...state,
+      isOnboardingFlow: !!payload,
+    };
+  },
+
+  [SettingsActionTypes.SETTINGS_SET_IS_ONBOARDING_FlOW_RECEIVE_SUCCESS]: (state, action) => {
+    const payload = (action as Action<SettingsIsOnboardingFlowReceiveSuccessPayload>).payload;
+    return {
+      ...state,
+      isOnboardingFlowReceiveSuccess: !!payload,
+    };
+  },
+
+  [SettingsActionTypes.SETTINGS_SET_IS_POST_ONBOARDING_FlOW]: (state, action) => {
+    const payload = (action as Action<SettingsIsPostOnboardingFlowPayload>).payload;
+    return {
+      ...state,
+      isPostOnboardingFlow: !!payload,
     };
   },
 
@@ -459,14 +494,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     onboardingType: (action as Action<SettingsSetOnboardingTypePayload>).payload,
   }),
 
-  [SettingsActionTypes.SET_CLOSED_NETWORK_BANNER]: (state, action) => ({
-    ...state,
-    depositFlow: {
-      ...state.depositFlow,
-      hasClosedNetworkBanner: (action as Action<SettingsSetClosedNetworkBannerPayload>).payload,
-    },
-  }),
-
   [SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER]: (state, action) => ({
     ...state,
     depositFlow: {
@@ -617,7 +644,9 @@ export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_S
 export const settingsStoreSelector = (state: State): SettingsState => state.settings;
 
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
-  findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
+  findFiatCurrencyByTicker(state.counterValue) ||
+  findCryptoCurrencyByTicker(state.counterValue) ||
+  getFiatCurrencyByTicker("USD");
 
 export const counterValueCurrencySelector = createSelector(
   settingsStoreSelector,
@@ -723,6 +752,10 @@ export const hasCompletedCustomImageFlowSelector = (state: State) =>
   state.settings.hasCompletedCustomImageFlow;
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding;
+export const isOnboardingFlowSelector = (state: State) => state.settings.isOnboardingFlow;
+export const isOnboardingFlowReceiveSuccessSelector = (state: State) =>
+  state.settings.isOnboardingFlowReceiveSuccess;
+export const isPostOnboardingFlowSelector = (state: State) => state.settings.isPostOnboardingFlow;
 export const hasInstalledAnyAppSelector = (state: State) => state.settings.hasInstalledAnyApp;
 export const countervalueFirstSelector = (state: State) => state.settings.graphCountervalueFirst;
 export const readOnlyModeEnabledSelector = (state: State) => state.settings.readOnlyModeEnabled;
@@ -753,6 +786,22 @@ export const themeSelector = (state: State) => {
   return val;
 };
 export const osThemeSelector = (state: State) => state.settings.osTheme;
+
+/**
+ * Selector that computes the resolved theme based on user preference and OS theme.
+ * If theme is "system", it returns the OS theme (defaulting to "dark" if not available).
+ * Otherwise, it returns the user's explicit theme choice.
+ */
+export const resolvedThemeSelector = createSelector(
+  themeSelector,
+  osThemeSelector,
+  (theme: Theme, osTheme: SettingsState["osTheme"]): "light" | "dark" => {
+    if (theme === "system") {
+      return osTheme === "light" ? "light" : "dark";
+    }
+    return theme === "light" ? "light" : "dark";
+  },
+);
 export const languageSelector = (state: State) =>
   state.settings.language || getDefaultLanguageLocale();
 export const languageIsSetByUserSelector = (state: State) => state.settings.languageIsSetByUser;
@@ -785,8 +834,6 @@ export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensi
 export const onboardingHasDeviceSelector = (state: State) => state.settings.onboardingHasDevice;
 export const isRebornSelector = (state: State) => state.settings.isReborn;
 export const onboardingTypeSelector = (state: State) => state.settings.onboardingType;
-export const hasClosedNetworkBannerSelector = (state: State) =>
-  state.settings.depositFlow.hasClosedNetworkBanner;
 export const hasClosedWithdrawBannerSelector = (state: State) =>
   state.settings.depositFlow.hasClosedWithdrawBanner;
 export const notificationsSelector = (state: State) => state.settings.notifications;

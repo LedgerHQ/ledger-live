@@ -3,13 +3,12 @@ import { useBleDevicePairing } from "@ledgerhq/live-common/ble/hooks/useBleDevic
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Flex } from "@ledgerhq/native-ui";
-
 import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
 import UnlockDeviceDrawer from "../UnlockDeviceDrawer";
 import { BleDevicePaired } from "./BleDevicePairingContent/BleDevicePaired";
-import { BleDevicePeerRemoved } from "./BleDevicePairingContent/BleDevicePeerRemoved";
 import { BleFailedPairing } from "./BleDevicePairingContent/BleFailedPairing";
 import { BleDevicePairingProgress } from "./BleDevicePairingContent/BleDevicePairingProgress";
+import { BleDevicePeerRemoved } from "./BleDevicePairingContent/BleDevicePeerRemoved";
 
 export type BleDevicePairingProps = {
   onPaired: (device: Device) => void;
@@ -65,10 +64,9 @@ const BleDevicePairing = ({
     content = (
       <BleDevicePeerRemoved onRetry={onRetry} onOpenHelp={onOpenHelp} pairingError={pairingError} />
     );
-  } else if (pairingError && !((pairingError as unknown) instanceof LockedDeviceError)) {
-    // TODO refactor this into the generic error rendering when possible.
+  } else if (pairingError && !(pairingError instanceof LockedDeviceError)) {
     content = (
-      <BleFailedPairing onRetry={onRetry} onOpenHelp={onOpenHelp} productName={productName} />
+      <BleFailedPairing productName={productName} onRetry={onRetry} onOpenHelp={onOpenHelp} />
     );
   } else {
     content = <BleDevicePairingProgress device={deviceToPair} productName={productName} />;
@@ -77,7 +75,6 @@ const BleDevicePairing = ({
   return (
     <Flex flex={1} width="100%">
       {content}
-
       {deviceLocked ? (
         <UnlockDeviceDrawer isOpen={true} device={deviceLocked} onClose={onRetry} />
       ) : null}

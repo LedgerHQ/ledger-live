@@ -8,7 +8,7 @@
 
 import { ipcRenderer } from "electron";
 import logo from "./logo.svg";
-import palettes from "~/renderer/styles/palettes";
+import { palettes } from "@ledgerhq/react-ui/styles/index";
 // When dashboard is ready, fade out the splash screen
 const appLoaded = () => {
   const rendererNode = document.getElementById("react-root");
@@ -55,7 +55,7 @@ window.addEventListener("DOMContentLoaded", () => {
   if (imgNode && loaderContainer) {
     imgNode.src = logo;
     loaderContainer.style.backgroundColor = "#000000";
-    loaderContainer.classList.add("loading");
+    loaderContainer.classList.add("fade-out");
   }
 
   // Send ready-to-show immediately

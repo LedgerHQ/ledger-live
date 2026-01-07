@@ -1,29 +1,8 @@
-import { Account, TokenAccount, TransactionCommon } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import { GenericTransaction } from "./types";
 
-export enum NetworkCongestionLevel {
-  LOW = "LOW",
-  MEDIUM = "MEDIUM",
-  HIGH = "HIGH",
-}
-
-export type NetworkInfo = {
-  fees: BigNumber;
-};
-
-export function createTransaction(account: Account | TokenAccount): TransactionCommon & {
-  family: string;
-  fees?: BigNumber | null;
-  tag?: number | null | undefined;
-  feeCustomUnit?: Unit | null | undefined;
-  memoType?: string | null;
-  memoValue?: string | null;
-  mode?: "send" | "changeTrust" | "send-legacy" | "send-eip1559";
-  assetReference?: string;
-  assetOwner?: string;
-  networkInfo?: NetworkInfo | null;
-} {
+export function createTransaction(account: Account | TokenAccount): GenericTransaction {
   const currency =
     account.type === "TokenAccount" ? account.token.parentCurrency : account.currency;
   switch (currency.family) {
@@ -51,12 +30,30 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
         assetOwner: "",
         networkInfo: null,
       };
+    case "tezos":
+      // note: default transaction for tezos, mode will be set by UI (send, stake, unstake)
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        fees: null,
+        recipient: "",
+        useAllAmount: false,
+        mode: "send",
+        networkInfo: null,
+      };
     case "evm": {
       return {
-        mode: "send-eip1559",
+        mode: "send",
+        type: 2,
         family: currency.family,
         amount: new BigNumber(0),
         recipient: "",
+        useAllAmount: false,
+        feesStrategy: "medium",
+        chainId: currency.ethereumLikeInfo?.chainId ?? 0,
+        gasLimit: new BigNumber(21000),
+        maxFeePerGas: new BigNumber(0),
+        maxPriorityFeePerGas: new BigNumber(0),
       };
     }
     default:

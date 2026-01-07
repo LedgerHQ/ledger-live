@@ -11,19 +11,13 @@ export default function StepConnectDevice({
   onOperationBroadcasted,
   onTransactionError,
   setSigned,
-  isNFTSend,
   onConfirmationHandler,
   onFailHandler,
   currencyName,
 }: StepProps) {
   return (
     <>
-      <TrackPage
-        category="Send Flow"
-        name="Step ConnectDevice"
-        currencyName={currencyName}
-        isNFTSend={isNFTSend}
-      />
+      <TrackPage category="Send Flow" name="Step ConnectDevice" currencyName={currencyName} />
       <GenericStepConnectDevice
         account={account}
         parentAccount={parentAccount}

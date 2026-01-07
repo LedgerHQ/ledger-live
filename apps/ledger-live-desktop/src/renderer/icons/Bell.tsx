@@ -13,14 +13,14 @@ const NotifBadge = styled.div`
   line-height: 16px;
   border-radius: 20px;
   background-color: ${p => p.theme.colors.alertRed};
-  color: ${p => p.theme.colors.palette.primary.contrastText};
+  color: ${p => p.theme.colors.neutral.c00};
   padding: 0 2px;
   position: absolute;
   top: -9px;
   right: -10px;
   font-size: 10px;
   font-weight: bold;
-  border: 2px solid ${p => p.theme.colors.palette.background.default};
+  border: 2px solid ${p => p.theme.colors.background.default};
   box-sizing: border-box;
 `;
 const BellIcon = ({ size, count }: { size: number; count?: number }) => {

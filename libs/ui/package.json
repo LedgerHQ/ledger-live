@@ -1,9 +1,8 @@
 {
   "name": "@ledgerhq/ui",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "devDependencies": {
-    "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/native-ui": "workspace:^",
     "@ledgerhq/react-ui": "workspace:^",

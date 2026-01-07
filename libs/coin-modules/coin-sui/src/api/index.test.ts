@@ -62,7 +62,7 @@ describe("api/index", () => {
     const txIntent = { foo: "bar" } as any;
     const { transaction: result } = await api.craftTransaction(txIntent);
     expect(result).toBe(unsigned.toString("hex"));
-    expect(logic.craftTransaction).toHaveBeenCalledWith(txIntent);
+    expect(logic.craftTransaction).toHaveBeenCalledWith(txIntent, true);
   });
 
   it("should call estimateFees via estimate wrapper and return FeeEstimation", async () => {
@@ -106,6 +106,7 @@ describe("api/index", () => {
         block: { height: 1 },
         fees: 1n,
         date: new Date(),
+        failed: false,
       },
     };
     const mockListOperations = jest

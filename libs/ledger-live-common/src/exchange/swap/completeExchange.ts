@@ -1,3 +1,4 @@
+import type { Account } from "@ledgerhq/types-live";
 import {
   DisconnectedDeviceDuringOperation,
   TransportStatusError,
@@ -13,12 +14,14 @@ import {
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import { Observable } from "rxjs";
 import { secp256k1 } from "@noble/curves/secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { TransactionRefusedOnDevice } from "../../errors";
+import { handleHederaTrustedFlow } from "../../families/hedera/exchange";
 import { withDevicePromise } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
 import { CompleteExchangeStep, convertTransportError } from "../error";
@@ -27,6 +30,7 @@ import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { getCryptoCurrencyById } from "../../currencies";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 
@@ -34,8 +38,16 @@ const completeExchange = (
   input: CompleteExchangeInputSwap,
 ): Observable<CompleteExchangeRequestEvent> => {
   let { transaction } = input; // TODO build a tx from the data
-
-  const { deviceId, exchange, provider, binaryPayload, signature, rateType, exchangeType } = input;
+  const {
+    deviceId,
+    deviceModelId,
+    exchange,
+    provider,
+    binaryPayload,
+    signature,
+    rateType,
+    exchangeType,
+  } = input;
 
   const { fromAccount, fromParentAccount } = exchange;
   const { toAccount, toParentAccount } = exchange;
@@ -151,6 +163,24 @@ const completeExchange = (
         currentStep = "CHECK_TRANSACTION_SIGNATURE";
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
+
+        // Hedera swap payload is filled with user account address,
+        // but the device app requires the related public key for verification.
+        // Since this key is stored on-chain, we use the TrustedService
+        // to fetch a signed descriptor linking the address to its public key.
+        const hederaCurrency = getCryptoCurrencyById("hedera");
+        let hederaAccount: Account | null = null;
+        if (payoutAccount.currency.family === hederaCurrency.family) {
+          hederaAccount = payoutAccount;
+        } else if (refundAccount.currency.family === hederaCurrency.family) {
+          hederaAccount = refundAccount;
+        }
+
+        if (hederaAccount) {
+          invariant(deviceModelId, "hedera: deviceModelId is not available");
+          await handleHederaTrustedFlow({ exchange, hederaAccount, deviceModelId });
+          if (unsubscribed) return;
+        }
 
         const payoutAddressParameters = payoutAccountBridge.getSerializedAddressParameters(
           payoutAccount,

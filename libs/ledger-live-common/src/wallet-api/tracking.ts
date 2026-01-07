@@ -56,18 +56,52 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     },
 
     // Sign transaction modal open
-    signTransactionRequested: (manifest: AppManifest) => {
-      track("WalletAPI SignTransaction", getEventData(manifest));
+    signTransactionRequested: (
+      manifest: AppManifest,
+      isEmbeddedSwap?: boolean,
+      partner?: string,
+    ) => {
+      const properties = {
+        ...getEventData(manifest),
+        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
+        ...(partner !== undefined && { partner }),
+      };
+      track("WalletAPI SignTransaction", properties);
     },
 
     // Failed to sign transaction (cancel or error)
-    signTransactionFail: (manifest: AppManifest) => {
-      track("WalletAPI SignTransaction Fail", getEventData(manifest));
+    signTransactionFail: (manifest: AppManifest, isEmbeddedSwap?: boolean, partner?: string) => {
+      const properties = {
+        ...getEventData(manifest),
+        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
+        ...(partner !== undefined && { partner }),
+      };
+      track("WalletAPI SignTransaction Fail", properties);
     },
 
     // Successfully signed transaction
-    signTransactionSuccess: (manifest: AppManifest) => {
-      track("WalletAPI SignTransaction Success", getEventData(manifest));
+    signTransactionSuccess: (manifest: AppManifest, isEmbeddedSwap?: boolean, partner?: string) => {
+      const properties = {
+        ...getEventData(manifest),
+        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
+        ...(partner !== undefined && { partner }),
+      };
+      track("WalletAPI SignTransaction Success", properties);
+    },
+
+    // Sign Raw transaction modal open
+    signRawTransactionRequested: (manifest: AppManifest) => {
+      track("WalletAPI SignRawTransaction", getEventData(manifest));
+    },
+
+    // Failed to sign raw transaction (cancel or error)
+    signRawTransactionFail: (manifest: AppManifest) => {
+      track("WalletAPI SignRawTransaction Fail", getEventData(manifest));
+    },
+
+    // Successfully signed raw transaction
+    signRawTransactionSuccess: (manifest: AppManifest) => {
+      track("WalletAPI SignRawTransaction Success", getEventData(manifest));
     },
 
     // Select account modal open
@@ -101,13 +135,23 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     },
 
     // Failed to broadcast a signed transaction
-    broadcastFail: (manifest: AppManifest) => {
-      track("WalletAPI Broadcast Fail", getEventData(manifest));
+    broadcastFail: (manifest: AppManifest, isEmbeddedSwap?: boolean, partner?: string) => {
+      const properties = {
+        ...getEventData(manifest),
+        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
+        ...(partner !== undefined && { partner }),
+      };
+      track("WalletAPI Broadcast Fail", properties);
     },
 
     // Successfully broadcast a signed transaction
-    broadcastSuccess: (manifest: AppManifest) => {
-      track("WalletAPI Broadcast Success", getEventData(manifest));
+    broadcastSuccess: (manifest: AppManifest, isEmbeddedSwap?: boolean, partner?: string) => {
+      const properties = {
+        ...getEventData(manifest),
+        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
+        ...(partner !== undefined && { partner }),
+      };
+      track("WalletAPI Broadcast Success", properties);
     },
 
     // Successfully broadcast a signed transaction
@@ -224,6 +268,28 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     },
     bitcoinFamilyAccountXpubSuccess: (manifest: AppManifest) => {
       track("WalletAPI bitcoin family account xpub success", getEventData(manifest));
+    },
+
+    // currency.list handler tracking
+    currencyListRequested: (manifest: AppManifest) => {
+      track("WalletAPI CurrencyList requested", getEventData(manifest));
+    },
+    currencyListSuccess: (manifest: AppManifest) => {
+      track("WalletAPI CurrencyList success", getEventData(manifest));
+    },
+    currencyListFail: (manifest: AppManifest) => {
+      track("WalletAPI CurrencyList fail", getEventData(manifest));
+    },
+
+    // account.list handler tracking
+    accountListRequested: (manifest: AppManifest) => {
+      track("WalletAPI AccountList requested", getEventData(manifest));
+    },
+    accountListSuccess: (manifest: AppManifest) => {
+      track("WalletAPI AccountList success", getEventData(manifest));
+    },
+    accountListFail: (manifest: AppManifest) => {
+      track("WalletAPI AccountList fail", getEventData(manifest));
     },
 
     dappSendTransactionRequested: (manifest: AppManifest, trackingData: DAppTrackingData) => {

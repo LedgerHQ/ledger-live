@@ -4,6 +4,7 @@ import { Device } from "@ledgerhq/types-devices";
 import { Account } from "@ledgerhq/types-live";
 import { Props as TouchableProps } from "~/components/Touchable";
 import { AddAccountContexts } from "./enums";
+import { CantonOnboardAccountParamList } from "~/families/canton/Onboard/types";
 
 export type AddAccountContextType = `${AddAccountContexts}`;
 
@@ -20,10 +21,6 @@ export type NetworkBasedAddAccountNavigator = {
     returnToSwap?: boolean;
     onSuccess?: (res: { scannedAccounts: Account[]; selected: Account[] }) => void;
   };
-  [ScreenName.SelectAccounts]: CommonParams & {
-    createTokenAccount?: boolean;
-  };
-
   [ScreenName.AddAccountsSuccess]: CommonParams & {
     accountsToAdd: Account[];
   };
@@ -38,6 +35,7 @@ export type NetworkBasedAddAccountNavigator = {
       style?: {
         paddingHorizontal?: TouchableProps["style"];
       };
-    }) => JSX.Element;
+    }) => React.JSX.Element;
   };
+  [ScreenName.CantonOnboardAccount]: CantonOnboardAccountParamList[ScreenName.CantonOnboardAccount];
 };

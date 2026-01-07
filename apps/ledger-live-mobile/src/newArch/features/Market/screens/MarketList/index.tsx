@@ -1,8 +1,10 @@
 import React, { MutableRefObject, useCallback, useContext, useEffect } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { Platform, RefreshControl, ViewToken } from "react-native";
-import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
-import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
+import { RefreshControl, ViewToken } from "react-native";
+import {
+  MarketCurrencyData,
+  MarketListRequestParams,
+} from "@ledgerhq/live-common/market/utils/types";
 import { useFocusEffect } from "@react-navigation/native";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
@@ -13,7 +15,6 @@ import ListFooter from "./components/ListFooter";
 import ListEmpty from "./components/ListEmpty";
 import ListRow from "./components/ListRow";
 import BottomSection from "./components/BottomSection";
-import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import usePullToRefresh from "../../hooks/usePullToRefresh";
 import useMarketListViewModel from "./useMarketListViewModel";
 import { LIMIT } from "~/reducers/market";
@@ -22,26 +23,20 @@ import { ScreenName } from "~/const";
 import { MARKET_LIST_VIEW_ID } from "~/utils/constants";
 import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 
-const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
-  CollapsibleHeaderFlatList<CurrencyData>,
-  {
-    progressViewOffset: Platform.OS === "android" ? 64 : 0,
-  },
-);
-
-const keyExtractor = (item: CurrencyData, index: number) => item.id + index;
+const keyExtractor = (item: MarketCurrencyData, index: number) => item.id + index;
 
 interface ViewProps {
-  marketData?: CurrencyData[];
+  marketData?: MarketCurrencyData[];
   filterByStarredCurrencies: boolean;
   starredMarketCoins: string[];
   search?: string;
   loading: boolean;
-  refresh: (param?: MarketListRequestParams) => void;
+  updateMarketParams: (param?: MarketListRequestParams) => void;
   counterCurrency?: string;
   range?: string;
   onEndReached?: () => void;
   refetchData: (pageToRefetch: number) => void;
+  refetchAllPages: () => void;
   resetMarketPageToInital: (page: number) => void;
   refreshRate: number;
   marketParams: MarketListRequestParams;
@@ -61,29 +56,33 @@ function View({
   starredMarketCoins,
   search,
   loading,
-  refresh,
+  updateMarketParams,
   counterCurrency,
   range,
   onEndReached,
   refreshRate,
   marketCurrentPage,
   refetchData,
+  refetchAllPages,
   viewabilityConfigCallbackPairs,
   resetMarketPageToInital,
   marketParams,
 }: ViewProps) {
   const { colors } = useTheme();
-  const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refresh });
+  const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({
+    loading,
+    refetch: refetchAllPages,
+  });
 
   const resetSearch = useCallback(
     () =>
-      refresh({
+      updateMarketParams({
         search: "",
         starred: [],
         liveCompatible: false,
         limit: LIMIT,
       }),
-    [refresh],
+    [updateMarketParams],
   );
 
   const { setSource, setScreen } = useContext(AnalyticsContext);
@@ -124,10 +123,9 @@ function View({
   const listProps = {
     contentContainerStyle: {
       paddingHorizontal: 16,
-      paddingBottom: TAB_BAR_SAFE_HEIGHT,
     },
     data: marketData,
-    renderItem: ({ item, index }: { item: CurrencyData; index: number }) => (
+    renderItem: ({ item, index }: { item: MarketCurrencyData; index: number }) => (
       <ListRow item={item} index={index} counterCurrency={counterCurrency} range={range} />
     ),
     onEndReached,
@@ -158,14 +156,14 @@ function View({
   };
 
   return (
-    <RefreshableCollapsibleHeaderFlatList
+    <CollapsibleHeaderFlatList<MarketCurrencyData>
       {...listProps}
       testID="market-list"
       stickyHeaderIndices={[0]}
       ListHeaderComponent={
         <WalletTabSafeAreaView edges={["left", "right"]}>
           <Flex backgroundColor={colors.background.main}>
-            <SearchHeader search={search} refresh={refresh} />
+            <SearchHeader search={search} updateMarketParams={updateMarketParams} />
             <BottomSection />
           </Flex>
         </WalletTabSafeAreaView>

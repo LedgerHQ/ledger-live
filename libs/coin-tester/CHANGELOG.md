@@ -1,5 +1,159 @@
 # @ledgerhq/coin-tester
 
+## 0.14.0
+
+### Minor Changes
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+- [#13126](https://github.com/LedgerHQ/ledger-live/pull/13126) [`ac82441`](https://github.com/LedgerHQ/ledger-live/commit/ac824414e167adc3b7fedaa397832e5b41d5f5c7) Thanks [@aussedatlo](https://github.com/aussedatlo)! - update speculos controller version
+
+### Patch Changes
+
+- Updated dependencies [[`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe)]:
+  - @ledgerhq/live-dmk-speculos@0.3.0
+
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+- [#13126](https://github.com/LedgerHQ/ledger-live/pull/13126) [`ac82441`](https://github.com/LedgerHQ/ledger-live/commit/ac824414e167adc3b7fedaa397832e5b41d5f5c7) Thanks [@aussedatlo](https://github.com/aussedatlo)! - update speculos controller version
+
+### Patch Changes
+
+- Updated dependencies [[`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe)]:
+  - @ledgerhq/live-dmk-speculos@0.3.0-next.0
+
+## 0.13.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-dmk-speculos@0.2.1
+
+## 0.13.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-dmk-speculos@0.2.1-hotfix.0
+
+## 0.13.0
+
+### Minor Changes
+
+- [#12563](https://github.com/LedgerHQ/ledger-live/pull/12563) [`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add DMK speculos transport and device controller
+
+### Patch Changes
+
+- Updated dependencies [[`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3)]:
+  - @ledgerhq/live-dmk-speculos@0.2.0
+
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#12563](https://github.com/LedgerHQ/ledger-live/pull/12563) [`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add DMK speculos transport and device controller
+
+### Patch Changes
+
+- Updated dependencies [[`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3)]:
+  - @ledgerhq/live-dmk-speculos@0.2.0-next.0
+
+## 0.12.0
+
+### Minor Changes
+
+- [#12499](https://github.com/LedgerHQ/ledger-live/pull/12499) [`48ad785`](https://github.com/LedgerHQ/ledger-live/commit/48ad785ce6f7f8fef27157b611e8c8e6e91bfe7e) Thanks [@qperrot](https://github.com/qperrot)! - Add tests on BTC coin tester regarding rbf and cancel
+
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#12499](https://github.com/LedgerHQ/ledger-live/pull/12499) [`48ad785`](https://github.com/LedgerHQ/ledger-live/commit/48ad785ce6f7f8fef27157b611e8c8e6e91bfe7e) Thanks [@qperrot](https://github.com/qperrot)! - Add tests on BTC coin tester regarding rbf and cancel
+
+## 0.11.0
+
+### Minor Changes
+
+- [#12321](https://github.com/LedgerHQ/ledger-live/pull/12321) [`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Bump axios version to 1.12.2
+
+- [#12316](https://github.com/LedgerHQ/ledger-live/pull/12316) [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726) Thanks [@qperrot](https://github.com/qperrot)! - Feature CoinTester Bitcoin and Currency regtest
+
+### Patch Changes
+
+- Updated dependencies [[`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.31.0
+
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#12321](https://github.com/LedgerHQ/ledger-live/pull/12321) [`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Bump axios version to 1.12.2
+
+- [#12316](https://github.com/LedgerHQ/ledger-live/pull/12316) [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726) Thanks [@qperrot](https://github.com/qperrot)! - Feature CoinTester Bitcoin and Currency regtest
+
+### Patch Changes
+
+- Updated dependencies [[`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.31.0-next.0
+
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.2
+
+## 0.10.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.2-next.0
+
+## 0.10.0
+
+### Minor Changes
+
+- [#11677](https://github.com/LedgerHQ/ledger-live/pull/11677) [`f8092e3`](https://github.com/LedgerHQ/ledger-live/commit/f8092e3b3b5df2e4a7b8ba9f83d393701854d7f7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-tester-evm): support the generic adapter
+
+- [#11809](https://github.com/LedgerHQ/ledger-live/pull/11809) [`2a3a861`](https://github.com/LedgerHQ/ledger-live/commit/2a3a861cbd6530f863824d0bab8ba8a170211e34) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - fix speculos waiting logs
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.1
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#11677](https://github.com/LedgerHQ/ledger-live/pull/11677) [`f8092e3`](https://github.com/LedgerHQ/ledger-live/commit/f8092e3b3b5df2e4a7b8ba9f83d393701854d7f7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-tester-evm): support the generic adapter
+
+- [#11809](https://github.com/LedgerHQ/ledger-live/pull/11809) [`2a3a861`](https://github.com/LedgerHQ/ledger-live/commit/2a3a861cbd6530f863824d0bab8ba8a170211e34) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - fix speculos waiting logs
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.1-next.0
+
+## 0.9.3
+
+### Patch Changes
+
+- Updated dependencies [[`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.0
+
+## 0.9.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.0-next.0
+
 ## 0.9.2
 
 ### Patch Changes

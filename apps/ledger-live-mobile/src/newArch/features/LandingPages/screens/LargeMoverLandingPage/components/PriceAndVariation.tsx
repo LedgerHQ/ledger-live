@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { counterValueCurrencySelector } from "~/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import Delta from "~/components/Delta";
 import { KeysPriceChange, MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
@@ -38,16 +38,10 @@ export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
 
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center">
-      <Text
-        fontWeight="semiBold"
-        fontSize="26px"
-        color="neutral.c100"
-        numberOfLines={1}
-        adjustsFontSizeToFit
-      >
+      <Text fontWeight="semiBold" fontSize="26px" color="neutral.c100" numberOfLines={1}>
         {counterValueFormatter({
           currency: counterValueCurrency.ticker,
-          value: price || 0,
+          value: price,
           locale,
           t,
         })}

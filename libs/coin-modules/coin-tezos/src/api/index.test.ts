@@ -1,8 +1,8 @@
 import type { Operation } from "@ledgerhq/coin-framework/api/types";
+import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import type { APIAccount } from "../network/types";
 import networkApi from "../network/tzkt";
 import { createApi } from "./index";
-import type { TezosTransactionIntent } from "./types";
 
 const DEFAULT_ESTIMATED_FEES = 300n;
 const DEFAULT_GAS_LIMIT = 30n;
@@ -24,11 +24,18 @@ jest.mock("../logic", () => ({
   rawEncode: () => Promise.resolve("tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ"),
 }));
 
-jest
-  .spyOn(networkApi, "getAccountByAddress")
-  .mockImplementation((_adress: string) =>
-    Promise.resolve({ type: "user", balance: 1000 } as APIAccount),
-  );
+jest.spyOn(networkApi, "getAccountByAddress").mockResolvedValue({
+  type: "user",
+  balance: 1000,
+  revealed: true,
+  address: "tz1test",
+  publicKey: "edpktest",
+  counter: 0,
+  delegationLevel: 0,
+  delegationTime: "2021-01-01T00:00:00Z",
+  numTransactions: 0,
+  firstActivityTime: "2021-01-01T00:00:00Z",
+} as APIAccount);
 
 const api = createApi({
   baker: {
@@ -74,6 +81,7 @@ describe("get operations", () => {
         time: new Date(),
       },
       date: new Date(),
+      failed: false,
     },
     type: "transaction",
     value: BigInt(1000),
@@ -94,12 +102,28 @@ describe("Testing craftTransaction function", () => {
   beforeEach(() => jest.clearAllMocks());
 
   it("should use estimated fees when user does not provide them for crafting a transaction ", async () => {
-    logicEstimateFees.mockResolvedValue({ estimatedFees: DEFAULT_ESTIMATED_FEES });
-    await api.craftTransaction({ type: "send", sender: {} } as TezosTransactionIntent);
+    logicEstimateFees.mockResolvedValue({
+      estimatedFees: DEFAULT_ESTIMATED_FEES,
+      gasLimit: DEFAULT_GAS_LIMIT,
+      storageLimit: DEFAULT_STORAGE_LIMIT,
+    });
+    await api.craftTransaction({
+      intentType: "transaction",
+      type: "send",
+      sender: "tz1test",
+      recipient: "tz1recipient",
+      amount: 1000n,
+    } as TransactionIntent);
     expect(logicEstimateFees).toHaveBeenCalledTimes(1);
     expect(logicCraftTransactionMock).toHaveBeenCalledWith(
-      expect.any(Object),
-      expect.objectContaining({ fee: { fees: DEFAULT_ESTIMATED_FEES.toString() } }),
+      expect.objectContaining({ address: "tz1test" }),
+      expect.objectContaining({
+        fee: expect.objectContaining({
+          fees: DEFAULT_ESTIMATED_FEES.toString(),
+          gasLimit: DEFAULT_GAS_LIMIT.toString(),
+          storageLimit: DEFAULT_STORAGE_LIMIT.toString(),
+        }),
+      }),
     );
   });
 
@@ -110,10 +134,23 @@ describe("Testing craftTransaction function", () => {
         estimatedFees: DEFAULT_ESTIMATED_FEES,
         gasLimit: DEFAULT_GAS_LIMIT,
         storageLimit: DEFAULT_STORAGE_LIMIT,
+        parameters: {
+          gasLimit: DEFAULT_GAS_LIMIT,
+          storageLimit: DEFAULT_STORAGE_LIMIT,
+        },
       });
-      await api.craftTransaction({ type: "send", sender: {} } as TezosTransactionIntent, {
-        value: customFees,
-      });
+      await api.craftTransaction(
+        {
+          intentType: "transaction",
+          type: "send",
+          sender: "tz1test",
+          recipient: "tz1recipient",
+          amount: 1000n,
+        } as TransactionIntent,
+        {
+          value: customFees,
+        },
+      );
       expect(logicEstimateFees).toHaveBeenCalledTimes(1);
       expect(logicCraftTransactionMock).toHaveBeenCalledWith(
         expect.any(Object),
@@ -138,7 +175,13 @@ describe("Testing estimateFees function", () => {
       gasLimit: DEFAULT_GAS_LIMIT,
       storageLimit: DEFAULT_STORAGE_LIMIT,
     });
-    const result = await api.estimateFees({ type: "send", sender: {} } as TezosTransactionIntent);
+    const result = await api.estimateFees({
+      intentType: "transaction",
+      type: "send",
+      sender: "tz1test",
+      recipient: "tz1recipient",
+      amount: 1000n,
+    } as TransactionIntent);
     expect(result).toEqual({
       value: DEFAULT_ESTIMATED_FEES,
       parameters: {
@@ -149,9 +192,44 @@ describe("Testing estimateFees function", () => {
   });
 
   it("should throw taquito errors", async () => {
-    logicEstimateFees.mockResolvedValue({ taquitoError: "test" });
+    logicEstimateFees.mockResolvedValue({
+      estimatedFees: DEFAULT_ESTIMATED_FEES,
+      gasLimit: DEFAULT_GAS_LIMIT,
+      storageLimit: DEFAULT_STORAGE_LIMIT,
+      taquitoError: "test",
+    });
     await expect(
-      api.estimateFees({ type: "send", sender: {} } as TezosTransactionIntent),
+      api.estimateFees({
+        intentType: "transaction",
+        type: "send",
+        sender: "tz1test",
+        recipient: "tz1recipient",
+        amount: 1000n,
+      } as TransactionIntent),
     ).rejects.toThrow("Fees estimation failed: test");
+  });
+
+  it("should not throw for delegate.unchanged errors", async () => {
+    logicEstimateFees.mockResolvedValue({
+      estimatedFees: DEFAULT_ESTIMATED_FEES,
+      gasLimit: DEFAULT_GAS_LIMIT,
+      storageLimit: DEFAULT_STORAGE_LIMIT,
+      taquitoError: "proto.022-PsRiotum.delegate.unchanged",
+    });
+    const result = await api.estimateFees({
+      intentType: "staking",
+      type: "delegate",
+      sender: "tz1test",
+      recipient: "tz1validator",
+      amount: 0n,
+    } as TransactionIntent);
+
+    expect(result).toEqual({
+      value: DEFAULT_ESTIMATED_FEES,
+      parameters: {
+        gasLimit: DEFAULT_GAS_LIMIT,
+        storageLimit: DEFAULT_STORAGE_LIMIT,
+      },
+    });
   });
 });

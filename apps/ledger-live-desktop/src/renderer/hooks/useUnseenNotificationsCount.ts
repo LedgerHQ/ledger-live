@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useLNSUpsellBannerState } from "LLD/features/LNSUpsell";
 import { notificationsContentCardSelector } from "../reducers/dynamicContent";
 import { anonymousUserNotificationsSelector } from "../reducers/settings";

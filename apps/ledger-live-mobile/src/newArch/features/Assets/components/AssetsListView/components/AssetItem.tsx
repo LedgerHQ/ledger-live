@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Asset } from "~/types/asset";
-import ParentCurrencyIcon from "~/components/ParentCurrencyIcon";
+import CurrencyIcon from "~/components/CurrencyIcon";
 import BigNumber from "bignumber.js";
 import CounterValue from "~/components/CounterValue";
 import Delta from "~/components/Delta";
@@ -23,7 +23,7 @@ const AssetItem: React.FC<AssetItemProps> = ({ asset, balance }) => {
 
   return (
     <>
-      <ParentCurrencyIcon currency={currency} size={40} forceIconScale={2} />
+      <CurrencyIcon currency={currency} size={40} />
       <Flex flex={1} flexShrink={1} testID={`assetItem-${currency.name}`}>
         <Text
           numberOfLines={1}

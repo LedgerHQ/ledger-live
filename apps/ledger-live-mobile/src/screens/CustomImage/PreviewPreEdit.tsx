@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import styled, { useTheme } from "styled-components/native";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import styled from "styled-components/native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData, Pressable } from "react-native";
@@ -10,7 +10,7 @@ import {
   StackNavigationState,
   useFocusEffect,
 } from "@react-navigation/native";
-import { StackNavigationEventMap } from "@react-navigation/stack";
+import { NativeStackNavigationEventMap } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -26,10 +26,7 @@ import {
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { NavigatorName, ScreenName } from "~/const";
-import {
-  downloadImageToFile,
-  importImageFromPhoneGallery,
-} from "~/components/CustomImage/imageUtils";
+import { importImageFromPhoneGallery } from "~/components/CustomImage/imageUtils";
 import { ImageFileUri } from "~/components/CustomImage/types";
 import FramedPicture from "~/components/CustomImage/FramedPicture";
 import ImageProcessor, {
@@ -46,7 +43,6 @@ import useCenteredImage, {
 import Button from "~/components/wrappedUi/Button";
 import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";
-import { getFramedPictureConfig } from "~/components/CustomImage/framedPictureConfigs";
 import {
   getAvailableDitheringConfigKeys,
   mapDitheringConfigKeyToConfig,
@@ -91,7 +87,7 @@ function Tab({
         <Text
           variant={"paragraph"}
           fontWeight={"semiBold"}
-          color={isActive ? "palette.neutral.c100" : "palette.neutral.c70"}
+          color={isActive ? "neutral.c100" : "neutral.c70"}
           textAlign={"center"}
         >
           {children}
@@ -103,9 +99,12 @@ function Tab({
 
 const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
-  const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>(null);
   const { params } = route;
-  const { isPictureFromGallery, device, isStaxEnabled } = params;
+
+  const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>({
+    imageFileUri: params.imageFileUri,
+  });
+  const { device } = params;
   const [deviceModelId, setSelectedDeviceModelId] = useState<CLSSupportedDeviceModelId>(
     params.deviceModelId ?? DeviceModelId.stax,
   );
@@ -114,11 +113,6 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     () => getScreenVisibleAreaDimensions(deviceModelId),
     [deviceModelId],
   );
-  const { colors } = useTheme();
-  const theme = colors.type as "light" | "dark";
-
-  const isImageUrl = "imageUrl" in params;
-  const isImageFileUri = "imageFileUri" in params;
 
   const forceDefaultNavigationBehaviour = useRef(false);
   const navigateToErrorScreen = useCallback(
@@ -137,37 +131,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     [navigateToErrorScreen, device],
   );
 
-  const isStaxEnabledImage = !!isStaxEnabled;
-  const imageType = isStaxEnabledImage ? "staxEnabledImage" : "customImage";
-
-  const imageFileUri = isImageFileUri ? params.imageFileUri : undefined;
-  const imageUrl = isImageUrl ? params.imageUrl : undefined;
-
-  /** LOAD SOURCE IMAGE FROM PARAMS */
-  useEffect(() => {
-    let dead = false;
-    if (imageFileUri) {
-      setLoadedImage({
-        imageFileUri,
-      });
-    } else if (imageUrl) {
-      const { resultPromise, cancel } = downloadImageToFile({ imageUrl });
-      resultPromise
-        .then(res => {
-          if (!dead) setLoadedImage(res);
-        })
-        .catch(e => {
-          if (!dead) handleError(e);
-        });
-      return () => {
-        dead = true;
-        cancel();
-      };
-    }
-    return () => {
-      dead = true;
-    };
-  }, [handleError, imageFileUri, imageUrl]);
+  const imageType = "customImage";
 
   /** IMAGE RESIZING */
 
@@ -189,7 +153,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
 
   useCenteredImage({
     targetDimensions: targetDisplayDimensions,
-    imageUri: imageUrl || loadedImage?.imageFileUri,
+    imageUri: loadedImage?.imageFileUri,
     onError: handleResizeError,
     onResult: handleResizeResult,
   });
@@ -266,10 +230,11 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     useCallback(() => {
       let dead = false;
       const listener: EventListenerCallback<
-        StackNavigationEventMap & EventMapCore<StackNavigationState<CustomImageNavigatorParamList>>,
+        NativeStackNavigationEventMap &
+          EventMapCore<StackNavigationState<CustomImageNavigatorParamList>>,
         "beforeRemove"
       > = e => {
-        if (forceDefaultNavigationBehaviour.current || !isPictureFromGallery) {
+        if (forceDefaultNavigationBehaviour.current) {
           navigation.dispatch(e.data.action);
           return;
         }
@@ -297,7 +262,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         dead = true;
         removeListener();
       };
-    }, [navigation, handleError, isPictureFromGallery]),
+    }, [navigation, handleError]),
   );
 
   const handleEditPicture = useCallback(() => {
@@ -389,15 +354,14 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
                 onError={handlePreviewImageError}
                 fadeDuration={0}
                 source={{ uri: processorPreviewImage?.imageBase64DataUri }}
-                framedPictureConfig={getFramedPictureConfig("preview", deviceModelId, theme)}
+                deviceModelId={deviceModelId}
               />
             </Flex>
           </Flex>
-          <Flex pb={8} px={8}>
+          <Flex pb={8} px={6}>
             <Button
               type="main"
               size="large"
-              outline
               mb={7}
               disabled={previewLoading}
               pending={rawResultLoading}
@@ -411,7 +375,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
             <Link
               size="large"
               onPress={handleEditPicture}
-              disabled={!loadedImage || previewLoading || isStaxEnabledImage}
+              disabled={!loadedImage || previewLoading}
               event="button_clicked"
               eventProperties={analyticsEditEventProps}
             >

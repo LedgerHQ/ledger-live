@@ -5,6 +5,7 @@ import { getAccount, getBalances, getRegistry } from "./sidecar";
 import mockServer, { SIDECAR_BASE_URL_TEST } from "./sidecar.mock";
 import * as node from "./node";
 import { SidecarAccountBalanceInfo, SidecarStakingInfo } from "./types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 jest.mock("./node", () => ({
   fetchConstants: jest.fn(),
@@ -16,6 +17,7 @@ jest.mock("./node", () => ({
 beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
 afterEach(() => mockServer.resetHandlers());
 afterAll(() => mockServer.close());
+const currency = getCryptoCurrencyById("assethub_polkadot");
 
 describe("getAccount", () => {
   let balanceResponseStub: Partial<SidecarAccountBalanceInfo> = {};
@@ -31,12 +33,17 @@ describe("getAccount", () => {
       sidecar: {
         url: SIDECAR_BASE_URL_TEST,
       },
+      indexer: {
+        url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
+      },
       metadataShortener: {
+        id: "dot-hub",
         url: "",
       },
       metadataHash: {
         url: "",
       },
+      hasBeenMigrated: true,
     }));
 
     mockServer.listen({ onUnhandledRequest: "error" });
@@ -71,7 +78,7 @@ describe("getAccount", () => {
     const lockedBalance = new BigNumber(balanceResponseStub.reserved!);
     const computedBalance = new BigNumber(balanceResponseStub.free!).plus(lockedBalance);
 
-    const account = await getAccount("addr");
+    const account = await getAccount("addr", currency);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,
@@ -125,7 +132,7 @@ describe("getAccount", () => {
     const lockedBalance = new BigNumber(balanceResponseStub.reserved!);
     const computedBalance = new BigNumber(balanceResponseStub.free!).plus(lockedBalance);
 
-    const account = await getAccount("addr");
+    const account = await getAccount("addr", currency);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,
@@ -221,7 +228,7 @@ describe("getAccount", () => {
       .plus(lockedBalance.minus(unlockingBalance))
       .plus(unlockingBalance.minus(unlockedBalance));
 
-    const account = await getAccount("addr");
+    const account = await getAccount("addr", currency);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,
@@ -249,9 +256,13 @@ describe("getBalances", () => {
         url: SIDECAR_BASE_URL_TEST,
       },
       metadataShortener: {
+        id: "dot",
         url: "",
       },
       metadataHash: {
+        url: "",
+      },
+      indexer: {
         url: "",
       },
     }));
@@ -295,10 +306,14 @@ describe("getRegistry", () => {
       node: {
         url: "https://httpbin.org/",
       },
+      indexer: {
+        url: "https://polkadot.coin.ledger.com",
+      },
       sidecar: {
         url: SIDECAR_BASE_URL_TEST,
       },
       metadataShortener: {
+        id: "dot",
         url: "",
       },
       metadataHash: {
@@ -310,7 +325,7 @@ describe("getRegistry", () => {
   });
 
   it("works", async () => {
-    const { registry, extrinsics } = await getRegistry();
+    const { registry, extrinsics } = await getRegistry(currency);
     expect(registry).not.toBeNull();
     expect(extrinsics).not.toBeNull();
   });

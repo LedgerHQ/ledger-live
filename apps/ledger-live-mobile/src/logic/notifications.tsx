@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { Linking, Platform } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { add, isBefore, parseISO } from "date-fns";
 import storage from "LLM/storage";
 import { getMessaging, AuthorizationStatus } from "@react-native-firebase/messaging";
@@ -59,7 +59,7 @@ export type DataOfUser = {
 };
 
 export type NotificationCategory = {
-  /** Whether or not the category is displayed in the Ledger Live notifications settings */
+  /** Whether or not the category is displayed in the Ledger Wallet notifications settings */
   displayed?: boolean;
   /** The key of the category */
   category?: string;

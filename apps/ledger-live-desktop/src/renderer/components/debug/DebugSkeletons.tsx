@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { toggleSkeletonVisibility } from "~/renderer/actions/application";
 import { alwaysShowSkeletonsSelector } from "~/renderer/reducers/application";
 import Box from "~/renderer/components/Box";

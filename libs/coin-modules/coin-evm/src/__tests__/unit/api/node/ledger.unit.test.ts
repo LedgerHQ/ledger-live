@@ -5,7 +5,7 @@ import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../../../errors";
-import * as LEDGER_GAS_TRACKER from "../../../../network/gasTracker/ledger";
+import { getGasOptions } from "../../../../network/gasTracker/ledger";
 import { Transaction as EvmTransaction } from "../../../../types";
 import { makeAccount } from "../../../fixtures/common.fixtures";
 import * as LEDGER_API from "../../../../network/node/ledger";
@@ -15,6 +15,12 @@ jest.useFakeTimers({ doNotFake: ["setTimeout"] });
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");
+jest.mock("../../../../network/gasTracker/ledger", () => ({
+  getGasOptions: jest.fn(),
+}));
+
+const mockGetGasOptions = getGasOptions as jest.Mock;
+
 (delay as jest.Mock).mockImplementation(
   () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
 );
@@ -99,7 +105,7 @@ describe("EVM Family", () => {
 
         expect(response).toEqual(true);
         // it should fail 2 times and succeed on the next try
-        expect(spy).toBeCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it("should throw after too many retries", async () => {
@@ -180,6 +186,9 @@ describe("EVM Family", () => {
           blockHeight: 17586913,
           blockHash: "0x6db17db08345729953a1408a56dcc588aa3d23e8cc917f2624b8bf047148cce2",
           nonce: 271392,
+          status: 1,
+          from: "0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5",
+          to: "0x6d2e03b7effeae98bd302a9f836d0d6ab0002766",
         });
       });
     });
@@ -387,7 +396,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the fee data based on the transaction's feesStrategy", async () => {
-        jest.spyOn(LEDGER_GAS_TRACKER, "getGasOptions").mockImplementation(async () => ({
+        mockGetGasOptions.mockImplementation(async () => ({
           slow: {
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(2),
@@ -442,7 +451,7 @@ describe("EVM Family", () => {
       });
 
       it("should return medium fee data if feesStrategy is not provided", async () => {
-        jest.spyOn(LEDGER_GAS_TRACKER, "getGasOptions").mockImplementation(async () => ({
+        mockGetGasOptions.mockImplementation(async () => ({
           slow: {
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(2),
@@ -558,11 +567,13 @@ describe("EVM Family", () => {
           hash: "0xhash",
           height: 123,
           timestamp: Date.now(),
+          transactionHashes: ["0xTx1", "0xTx2"],
         });
         expect(await LEDGER_API.getBlockByHeight(currency, "latest")).toEqual({
           hash: "0xhashLatest",
           height: 456,
           timestamp: Date.now(),
+          transactionHashes: ["0xTx3", "0xTx4"],
         });
       });
     });

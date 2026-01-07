@@ -20,11 +20,13 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   scanAccounts,
   signOperation,
+  signRawOperation,
   broadcast,
   sync,
   isInvalidRecipient,
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 const notCreatedAddresses: string[] = [];
@@ -143,8 +145,10 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
+  signRawOperation,
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),

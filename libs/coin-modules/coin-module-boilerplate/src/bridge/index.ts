@@ -12,6 +12,7 @@ import boilerplateCoinConfig, { type BoilerplateCoinConfig } from "../config";
 import resolver from "../signer";
 import { BoilerplateSigner } from "../types";
 import type { Transaction } from "../types";
+import { validateAddress } from "../common-logic/validateAddress";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
@@ -52,7 +53,11 @@ export function createBridges(
     sync,
     receive,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     getSerializedAddressParameters,
+    validateAddress,
   };
 
   return {

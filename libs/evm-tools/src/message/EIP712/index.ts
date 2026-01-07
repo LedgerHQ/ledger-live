@@ -4,8 +4,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { EIP712Message } from "@ledgerhq/types-live";
 import { AddressZero } from "@ethersproject/constants";
 import { _TypedDataEncoder as TypedDataEncoder } from "@ethersproject/hash";
-import EIP712CAL from "@ledgerhq/cryptoassets-evm-signatures/data/eip712";
-import EIP712CALV2 from "@ledgerhq/cryptoassets-evm-signatures/data/eip712_v2";
 import { CALServiceEIP712Response, MessageFilters } from "./types";
 
 // As defined in [spec](https://eips.ethereum.org/EIPS/eip-712), the properties below are all required.
@@ -50,12 +48,18 @@ export const getSchemaHashForMessage = (message: EIP712Message): string => {
  * in the CAL
  *
  * @param {EIP712Message} message
+ * @param {boolean} shouldUseV1Filters
+ * @param {string | null} calServiceURL
+ * @param {Record<string, any> | null | undefined} staticEIP712SignaturesV1 - Static EIP712 signatures v1 fallback
+ * @param {Record<string, any> | null | undefined} staticEIP712SignaturesV2 - Static EIP712 signatures v2 fallback
  * @returns {MessageFilters | undefined}
  */
 export const getFiltersForMessage = async (
   message: EIP712Message,
   shouldUseV1Filters?: boolean,
   calServiceURL?: string | null,
+  staticEIP712SignaturesV1?: Record<string, any> | null,
+  staticEIP712SignaturesV2?: Record<string, any> | null,
 ): Promise<MessageFilters | undefined> => {
   const schemaHash = getSchemaHashForMessage(message);
 
@@ -85,15 +89,20 @@ export const getFiltersForMessage = async (
 
       return filters;
     }
-    // Fallback to catch
-    throw new Error("Fallback to static file");
-  } catch (e) {
+    // Fall through to static fallback
+    throw new Error("No CAL service URL");
+  } catch {
+    // Static fallback from injected signatures (for external library users)
     const messageId = `${message.domain?.chainId ?? 0}:${verifyingContract}:${schemaHash}`;
 
-    if (shouldUseV1Filters) {
-      return EIP712CAL[messageId as keyof typeof EIP712CAL];
+    if (shouldUseV1Filters && staticEIP712SignaturesV1) {
+      return staticEIP712SignaturesV1[messageId] as MessageFilters | undefined;
     }
-    return EIP712CALV2[messageId as keyof typeof EIP712CALV2] as MessageFilters;
+    if (!shouldUseV1Filters && staticEIP712SignaturesV2) {
+      return staticEIP712SignaturesV2[messageId] as MessageFilters | undefined;
+    }
+
+    return undefined;
   }
 };
 
@@ -178,13 +187,21 @@ function formatDate(timestamp: string) {
 export const getEIP712FieldsDisplayedOnNano = async (
   messageData: EIP712Message,
   calServiceURL: string = getEnv("CAL_SERVICE_URL"),
+  staticEIP712SignaturesV1?: Record<string, any> | null,
+  staticEIP712SignaturesV2?: Record<string, any> | null,
 ): Promise<{ label: string; value: string | string[] }[] | null> => {
   if (!isEIP712Message(messageData)) {
     return null;
   }
   const { EIP712Domain, ...otherTypes } = messageData.types;
   const displayedInfos: { label: string; value: string | string[] }[] = [];
-  const filters = await getFiltersForMessage(messageData, false, calServiceURL);
+  const filters = await getFiltersForMessage(
+    messageData,
+    false,
+    calServiceURL,
+    staticEIP712SignaturesV1,
+    staticEIP712SignaturesV2,
+  );
 
   if (!filters) {
     const { types } = messageData;

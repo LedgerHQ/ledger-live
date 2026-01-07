@@ -1,9 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { TFunction } from "i18next";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Select from "~/renderer/components/Select";
@@ -12,6 +11,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/stellar/types";
+import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
 
 const EllipsisMiddle = ({ children }: { children: string }) => {
   const Start = styled(Box)`
@@ -49,34 +49,24 @@ const renderItem = ({
       key={id}
       horizontal
       alignItems="center"
-      color={isDisabled ? "palette.text.shade40" : "palette.text.shade100"}
+      color={isDisabled ? "neutral.c60" : "neutral.c100"}
       justifyContent="space-between"
     >
       <Box horizontal alignItems="center" justifyContent="flex-start" width="100%">
         <Box horizontal alignItems="center">
-          <FirstLetterIcon
-            color={isDisabled ? "palette.text.shade40" : "palette.text.shade100"}
-            label={name}
-          />
+          <FirstLetterIcon color={isDisabled ? "neutral.c60" : "neutral.c100"} label={name} />
           <Text ff="Inter|Medium">{name}</Text>
-          <Text fontSize={3} color="palette.text.shade40" mr="4px">
+          <Text fontSize={3} color="neutral.c60" mr="4px">
             - ID
           </Text>
         </Box>
-        <Box
-          horizontal
-          alignItems="center"
-          flex="1"
-          fontSize={3}
-          color="palette.text.shade40"
-          mr={2}
-        >
+        <Box horizontal alignItems="center" flex="1" fontSize={3} color="neutral.c60" mr={2}>
           <EllipsisMiddle>{assetIssuer}</EllipsisMiddle>
         </Box>
       </Box>
       {isDisabled && (
         <ToolTip content={<Trans i18nKey="stellar.addAsset.steps.assets.disabledTooltip" />}>
-          <Box color="warning">
+          <Box color="legacyWarning">
             <ExclamationCircleThin size={16} />
           </Box>
         </ToolTip>
@@ -106,16 +96,28 @@ export default function DelegationSelectorField({
   onChange: (_: TokenCurrency | undefined | null) => void;
 }) {
   const [query, setQuery] = useState("");
+
   const subAccounts = account.subAccounts;
-  const options = listTokensForCryptoCurrency(account.currency);
+
+  const { data, loadNext } = useTokensData({
+    networkFamily: account.currency.id,
+  });
+
+  const options = useMemo(() => data?.tokens || [], [data?.tokens]);
+
   const value = useMemo(
     () =>
       options.find(({ id }) => {
         const { assetCode, assetIssuer } = getAssetObject(id);
         return assetCode === transaction.assetReference && assetIssuer === transaction.assetOwner;
       }),
-    [options, transaction],
+    [options, transaction.assetOwner, transaction.assetReference],
   );
+
+  const onScrollEnd = useCallback(() => {
+    loadNext?.();
+  }, [loadNext]);
+
   return (
     <Box flow={1} mb={4}>
       <Select
@@ -136,6 +138,7 @@ export default function DelegationSelectorField({
           })
         }
         onChange={onChange}
+        onScrollEnd={onScrollEnd}
       />
     </Box>
   );

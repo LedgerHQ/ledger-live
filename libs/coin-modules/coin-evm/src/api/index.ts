@@ -10,16 +10,18 @@ import {
   TransactionIntent,
   Cursor,
   Page,
+  Validator,
   Stake,
   Reward,
   TransactionValidation,
   AssetInfo,
   CraftedTransaction,
+  BufferTxData,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BroadcastConfig } from "@ledgerhq/types-live";
-import { setCoinConfig, type EvmConfig } from "../config";
+import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
+import { EvmCoinConfig, setCoinConfig, type EvmConfig } from "../config";
 import {
   broadcast,
   combine,
@@ -32,10 +34,28 @@ import {
   validateIntent,
   getTokenFromAsset,
   getAssetFromToken,
+  computeIntentType,
+  refreshOperations,
+  getBlock,
+  getBlockInfo,
 } from "../logic/index";
 
-export function createApi(config: EvmConfig, currencyId: string): Api {
-  setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
+// NOTE Celo still relies on the EVM coin config and injects its own
+// while creating an unused instance of API
+// TODO Change to Record<string, EvmConfig> once Celo bridge is removed
+const configs: Record<string, EvmConfig | (() => EvmCoinConfig)> = {};
+
+export function createApi(
+  config: EvmConfig | (() => EvmCoinConfig),
+  currencyId: string,
+): Api<MemoNotSupported, BufferTxData> {
+  configs[currencyId] = config;
+  setCoinConfig(c => {
+    const evmConfig = configs[c.id];
+    return typeof evmConfig === "function"
+      ? evmConfig()
+      : { info: { ...evmConfig, status: { type: "active" } } };
+  });
   const currency = getCryptoCurrencyById(currencyId);
 
   return {
@@ -43,37 +63,50 @@ export function createApi(config: EvmConfig, currencyId: string): Api {
       broadcast(currency, { signature: tx, broadcastConfig }),
     combine,
     craftTransaction: (
-      transactionIntent: TransactionIntent<MemoNotSupported>,
+      transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
       customFees?: FeeEstimation,
     ): Promise<CraftedTransaction> => craftTransaction(currency, { transactionIntent, customFees }),
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: bigint,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported");
+    },
     estimateFees: (
-      transactionIntent: TransactionIntent<MemoNotSupported>,
-    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent),
+      transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
+      customFeesParameters?: FeeEstimation["parameters"],
+    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent, customFeesParameters),
     getBalance: (address: string): Promise<Balance[]> => getBalance(currency, address),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
       address: string,
       pagination: Pagination,
     ): Promise<[Operation<MemoNotSupported>[], string]> =>
-      listOperations(currency, address, pagination.minHeight),
-    getBlock(_height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
-    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+      listOperations(currency, address, pagination),
+    getBlock: (height: number): Promise<Block> => getBlock(currency, height),
+    getBlockInfo: (height: number): Promise<BlockInfo> => getBlockInfo(currency, height),
+    getStakes(_address: string): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    getSequence: (address: string): Promise<number> => getSequence(currency, address),
-    validateIntent: (intent: TransactionIntent): Promise<TransactionValidation> =>
-      validateIntent(currency, intent),
-    getTokenFromAsset: (asset: AssetInfo): TokenCurrency | undefined =>
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
+    },
+    getSequence: (address: string): Promise<bigint> => getSequence(currency, address),
+    validateIntent: (
+      intent: TransactionIntent<MemoNotSupported, BufferTxData>,
+      customFees?: FeeEstimation,
+    ): Promise<TransactionValidation> => validateIntent(currency, intent, customFees),
+    getTokenFromAsset: (asset: AssetInfo): Promise<TokenCurrency | undefined> =>
       getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
       getAssetFromToken(currency, token, owner),
+    computeIntentType,
+    refreshOperations: (operations: LiveOperation[]): Promise<LiveOperation[]> =>
+      refreshOperations(currency, operations),
   };
 }

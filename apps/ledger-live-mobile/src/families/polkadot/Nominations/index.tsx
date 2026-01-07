@@ -23,7 +23,7 @@ import type {
 
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ScreenName, NavigatorName } from "~/const";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import { urls } from "~/utils/urls";
@@ -44,9 +44,9 @@ import Illustration from "~/images/illustration/Illustration";
 import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useStake } from "LLM/hooks/useStake/useStake";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { walletSelector } from "~/reducers/wallet";
 
 type Props = {
@@ -137,7 +137,7 @@ export default function Nominations(props: Props) {
     }) => {
       setNomination(undefined);
       // This is complicated (even impossible?) to type properly…
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(route, {
+      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(route, {
         screen,
         params: { ...params, accountId: account.id },
       });

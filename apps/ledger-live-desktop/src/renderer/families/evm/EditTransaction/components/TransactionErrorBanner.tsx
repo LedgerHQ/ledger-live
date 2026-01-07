@@ -8,7 +8,7 @@ export const TransactionErrorBanner = ({
 }: {
   transactionHasBeenValidated: boolean;
   errors?: Record<string, Error>;
-}): JSX.Element => {
+}): React.JSX.Element => {
   if (transactionHasBeenValidated) {
     return <ErrorBanner error={new TransactionHasBeenValidatedError()} />;
   }

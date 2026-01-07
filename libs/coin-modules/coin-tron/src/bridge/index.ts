@@ -23,8 +23,9 @@ import {
   toOperationExtraRaw,
 } from "./serialization";
 import { buildSignOperation } from "./signOperation";
-import { getAccountShape, sync } from "./synchronization";
+import { getAccountShape, postSync, sync } from "./synchronization";
 import tronCoinConfig, { type TronCoinConfig } from "../config";
+import { validateAddress } from "../logic";
 
 function buildCurrencyBridge(signerContext: SignerContext<TronSigner>): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);
@@ -32,6 +33,7 @@ function buildCurrencyBridge(signerContext: SignerContext<TronSigner>): Currency
   const scanAccounts = makeScanAccounts({
     getAccountShape,
     getAddressFn: getAddressWrapper(getAddress),
+    postSync,
   });
 
   return {
@@ -58,12 +60,16 @@ function buildAccountBridge(
     sync,
     receive,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     assignFromAccountRaw,
     assignToAccountRaw,
     fromOperationExtraRaw,
     toOperationExtraRaw,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

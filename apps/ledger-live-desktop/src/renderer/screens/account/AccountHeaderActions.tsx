@@ -10,7 +10,8 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import { TFunction } from "i18next";
 import { withTranslation } from "react-i18next";
-import { connect, useSelector } from "react-redux";
+import { connect } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import { compose } from "redux";
 import styled from "styled-components";
@@ -43,6 +44,7 @@ import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/in
 import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useStake } from "LLD/hooks/useStake";
+import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -69,16 +71,16 @@ const ButtonSettings = styled(Tabbable).attrs<{ disabled?: boolean }>(() => ({
 }))`
   width: 40px;
   height: 40px;
-  border: 1px solid ${p => p.theme.colors.palette.text.shade60};
+  border: 1px solid ${p => p.theme.colors.neutral.c70};
   border-radius: 20px;
   &:hover {
-    color: ${p => (p.disabled ? "" : p.theme.colors.palette.text.shade100)};
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.divider, 0.2))};
-    border-color: ${p => p.theme.colors.palette.text.shade100};
+    color: ${p => (p.disabled ? "" : p.theme.colors.neutral.c100)};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.neutral.c40, 0.2))};
+    border-color: ${p => p.theme.colors.neutral.c100};
   }
 
   &:active {
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.divider, 0.3))};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.neutral.c40, 0.3))};
   }
 `;
 
@@ -98,7 +100,7 @@ type OwnProps = {
 };
 type Props = {
   t: TFunction;
-  openModal: Function;
+  openModal: (name: string, data: unknown) => void;
 } & OwnProps;
 
 const ActionItem = ({
@@ -188,9 +190,10 @@ const pageName = "Page Account";
 const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const { data: currenciesAll } = useFetchCurrencyAll();
   const mainAccount = getMainAccount(account, parentAccount);
-  const contrastText = useTheme().colors.palette.text.shade60;
+  const contrastText = useTheme().colors.neutral.c70;
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const specific = getLLDCoinFamily(mainAccount.currency.family);
+  const openSendFlow = useOpenSendFlow();
 
   const manage = specific?.accountHeaderManageActions;
   let manageList: ManageAction[] = [];
@@ -293,11 +296,11 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       button: "send",
       ...buttonSharedTrackingFields,
     });
-    openModal("MODAL_SEND", {
+    openSendFlow({
       parentAccount,
       account,
     });
-  }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
+  }, [openSendFlow, parentAccount, account, buttonSharedTrackingFields]);
 
   const onReceive = useCallback(() => {
     track("button_clicked2", {

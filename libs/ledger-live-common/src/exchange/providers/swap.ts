@@ -115,6 +115,26 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
     supportUrl: "https://criptointercambio.com/en/about",
     mainUrl: "https://criptointercambio.com/",
   },
+  cic_v2: {
+    name: "CIC",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
+        "0444a71652995d15ef0d4d6fe8de21a0c8ad48bdbfea7f789319973669785ca96abca9fd0c504c3074d9b654f0e3a76dde642a03efe4ccdee3af3ca4ba4afa202d",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "3044022078a73433ab6289027b7a169a260f180d16346f7ab55b06a22109f68a756d691d0220190edd6e1214c3309dc1b0afe90d217b728377491561383f2ee543e2c90188eb",
+      "hex",
+    ),
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+    termsOfUseUrl: "https://criptointercambio.com/terms-of-use",
+    supportUrl: "https://criptointercambio.com/en/about",
+    mainUrl: "https://criptointercambio.com/",
+  },
   moonpay: {
     name: "moonpay",
     publicKey: {
@@ -140,9 +160,9 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
     type: "DEX",
     needsKYC: false,
     needsBearerToken: false,
-    termsOfUseUrl: "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
-    supportUrl: "https://help.1inch.io/en/",
-    mainUrl: "https://1inch.io/",
+    termsOfUseUrl: "https://1inch.com/assets/Widget_1inch.com_Terms_of_Use.pdf",
+    supportUrl: "https://help.1inch.com/en/",
+    mainUrl: "https://1inch.com/",
   },
   paraswap: {
     type: "DEX",
@@ -170,6 +190,27 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
     },
     signature: Buffer.from(
       "304402207a9676f6971575cad70e4ef4d937ebdba82c51e6a0ab5343c11fefa18dff326d0220643f0718da68ead3fd9900eb90bca782d533d1698c8ea1435ae232ddf2e94229",
+      "hex",
+    ),
+  },
+  nearintents: {
+    type: "CEX",
+    name: "NEAR Intents",
+    needsBearerToken: false,
+    termsOfUseUrl: "https://swapkit.dev/terms-of-service/",
+    supportUrl: "https://ledgerhelp.swapkit.dev/",
+    mainUrl: "https://www.near.org/intents",
+    needsKYC: false,
+    version: 2,
+    publicKey: {
+      curve: "secp256r1",
+      data: Buffer.from(
+        "0480a453a91e728c5f622d966b90d15de6fdb6c267bb8147dd0e0d4e1c730d631594e724aaf2b2f526600f3713ce6bc2adbfdbaafd2121bfee64fce93fd59a9050",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "30440220331fca95bc6b8cf2264d72a0da9d791888c4ead9ed02bee4f6525f7e512911ca02204a78d416baa7b3fc8d6a82abbadda2e096abcbfa9a57769a8a20260d3e553b7d",
       "hex",
     ),
   },
@@ -205,13 +246,16 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
 };
 
 export const dexProvidersContractAddress: { [key: string]: string } = {
-  "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD": "Uniswap",
+  "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad": "Uniswap",
+  "0x111111125421ca6dc452d289314280a0f8842a65": "1inch",
+  "0x6a000f20005980200259b80c5102003040001068": "velora",
 };
 
 export const termsOfUse: { [key: string]: string } = {
   paraswap: "https://paraswap.io/tos",
-  "1inch": "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
+  "1inch": "https://1inch.com/assets/Widget_1inch.com_Terms_of_Use.pdf",
   Uniswap: "https://uniswap.org/terms-of-service",
+  velora: "https://www.velora.xyz/terms/terms-of-use",
 };
 
 export const privacyPolicy: { [key: string]: string } = {
@@ -305,4 +349,8 @@ export const getAvailableProviders = async (): Promise<string[]> => {
     return Object.keys(DEFAULT_SWAP_PROVIDERS).filter(p => p !== "changelly");
   }
   return Object.keys(await fetchAndMergeProviderData({ ledgerSignatureEnv, partnerSignatureEnv }));
+};
+
+export const getDefaultSwapProviderKeys = (): string[] => {
+  return Object.keys(DEFAULT_SWAP_PROVIDERS);
 };

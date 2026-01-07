@@ -35,8 +35,8 @@ describe("getDeviceTransactionConfig", () => {
   /**
    * Helper to get config fields
    */
-  const getConfigFields = (transaction: Transaction, account = createMockAccount()) =>
-    getDeviceTransactionConfig({
+  const getConfigFields = async (transaction: Transaction, account = createMockAccount()) =>
+    await getDeviceTransactionConfig({
       account,
       parentAccount: null,
       transaction,
@@ -47,14 +47,14 @@ describe("getDeviceTransactionConfig", () => {
     jest.clearAllMocks();
   });
 
-  test("should display chain ID, transaction type and amount fields for standard transactions", () => {
+  test("should display chain ID, transaction type and amount fields for standard transactions", async () => {
     // Create mock transaction
     const mockTransaction = createMockTransaction({
       amount: MOCK_AMOUNT,
     });
 
     // Get display fields
-    const fields = getConfigFields(mockTransaction);
+    const fields = await getConfigFields(mockTransaction);
 
     // Verify the results
     expect(fields).toHaveLength(4);
@@ -90,7 +90,7 @@ describe("getDeviceTransactionConfig", () => {
     expect(log).toHaveBeenCalledWith("debug", expect.stringContaining("Transaction config"));
   });
 
-  test("should include transferId field when provided in transaction", () => {
+  test("should include transferId field when provided in transaction", async () => {
     // Create mock transaction with transferId
     const mockTransaction = createMockTransaction({
       amount: MOCK_AMOUNT,
@@ -98,7 +98,7 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     // Get display fields
-    const fields = getConfigFields(mockTransaction);
+    const fields = await getConfigFields(mockTransaction);
 
     // Verify the results
     expect(fields).toHaveLength(5); // Chain ID, Type, Amount, Transfer ID fields
@@ -115,7 +115,7 @@ describe("getDeviceTransactionConfig", () => {
     });
   });
 
-  test("should not include transferId field when undefined in transaction", () => {
+  test("should not include transferId field when undefined in transaction", async () => {
     // Create mock transaction with explicitly undefined transferId
     const mockTransaction = createMockTransaction({
       amount: MOCK_AMOUNT,
@@ -123,21 +123,21 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     // Get display fields
-    const fields = getConfigFields(mockTransaction);
+    const fields = await getConfigFields(mockTransaction);
 
     // Verify no transferId field is present
     expect(fields).toHaveLength(4);
     expect(fields.map(field => field.label)).not.toContain("Transfer ID");
   });
 
-  test("should handle zero amount transactions correctly", () => {
+  test("should handle zero amount transactions correctly", async () => {
     // Create mock transaction with zero amount
     const mockTransaction = createMockTransaction({
       amount: new BigNumber(0),
     });
 
     // Get display fields
-    const fields = getConfigFields(mockTransaction);
+    const fields = await getConfigFields(mockTransaction);
 
     // Verify amount field has zero value
     const amountField = fields.find(field => field.label === "Amount");
@@ -149,7 +149,7 @@ describe("getDeviceTransactionConfig", () => {
     });
   });
 
-  test("should maintain consistent order of fields regardless of transaction properties", () => {
+  test("should maintain consistent order of fields regardless of transaction properties", async () => {
     // Create two transactions - one with transferId, one without
     const txWithTransferId = createMockTransaction({
       amount: MOCK_AMOUNT,
@@ -160,8 +160,8 @@ describe("getDeviceTransactionConfig", () => {
       amount: MOCK_AMOUNT,
     });
 
-    const fieldsWithId = getConfigFields(txWithTransferId);
-    const fieldsWithoutId = getConfigFields(txWithoutTransferId);
+    const fieldsWithId = await getConfigFields(txWithTransferId);
+    const fieldsWithoutId = await getConfigFields(txWithoutTransferId);
 
     // Verify field order consistency for common fields
     for (let i = 0; i < fieldsWithoutId.length; i++) {

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-eth",
-  "version": "6.45.17",
+  "version": "7.1.1",
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
     "Ledger",
@@ -29,17 +29,16 @@
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/rlp": "^5.7.0",
     "@ethersproject/transactions": "^5.7.0",
-    "@ledgerhq/cryptoassets-evm-signatures": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/evm-tools": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "bignumber.js": "^9.1.2",
-    "semver": "^7.3.5"
+    "semver": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -59,19 +58,20 @@
     "@ethersproject/bignumber": "^5.7.0",
     "@ethersproject/constants": "^5.7.0",
     "@ethersproject/units": "^5.7.0",
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
     "documentation": "14.0.2",
-    "jest": "^29.7.0",
+    "jest": "catalog:",
     "nock": "^13.0.5",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
-    "ts-jest": "^29.1.1",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "ts-node": "^10.4.0"
   },
   "overrides": {
     "@ethersproject/providers": {
-      "ws": "7.5.10"
+      "ws": "8.18.3"
     }
   }
 }

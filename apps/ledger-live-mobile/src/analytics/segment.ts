@@ -1,9 +1,8 @@
 /* eslint-disable no-console */
 import "crypto";
 import { v4 as uuid } from "uuid";
-import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
-import { Platform } from "react-native";
+import { Linking, Platform } from "react-native";
 import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
@@ -19,7 +18,11 @@ import React, { MutableRefObject, useCallback } from "react";
 import { ABTestingVariants, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
-import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import {
+  getStablecoinYieldSetting,
+  getBitcoinYieldSetting,
+  getEthDepositScreenSetting,
+} from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
@@ -41,6 +44,8 @@ import {
   mevProtectionSelector,
   seenDevicesSelector,
   isRebornSelector,
+  isOnboardingFlowSelector,
+  isPostOnboardingFlowSelector,
 } from "../reducers/settings";
 import { bleDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -53,11 +58,14 @@ import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { UserIdPlugin } from "./UserIdPlugin";
 import { BrazePlugin } from "./BrazePlugin";
 import { Maybe } from "../types/helpers";
-import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
+import { LAST_STARTUP_EVENTS } from "LLM/utils/logLastStartupEvents";
+import { resolveStartupEvents } from "LLM/utils/resolveStartupEvents";
+import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
+import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 
 const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -83,6 +91,7 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
     const ptxSwapLiveAppKycWarning = analyticsFeatureFlagMethod("ptxSwapLiveAppKycWarning");
+    const llmSyncOnboardingIncr1Flag = analyticsFeatureFlagMethod("llmSyncOnboardingIncr1");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -95,6 +104,7 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
     const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
+    const llmSyncOnboardingIncr1 = Boolean(llmSyncOnboardingIncr1Flag?.enabled);
 
     // Apply versioned redirects logic to the stakePrograms feature flag
     const appVersion = LiveConfig.instance.appVersion || "0.0.0";
@@ -112,6 +122,8 @@ const getFeatureFlagProperties = () => {
         : "flag not loaded";
 
     const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
+    const bitcoinYield = getBitcoinYieldSetting(stakePrograms);
+    const ethDepositScreen = getEthDepositScreenSetting(stakePrograms);
 
     updateIdentify({
       isBatch1Enabled,
@@ -120,10 +132,13 @@ const getFeatureFlagProperties = () => {
       stakingProvidersEnabled,
       ptxCard: ptxCard?.enabled,
       stablecoinYield,
+      bitcoinYield,
+      ethDepositScreen,
       stakingCurrenciesEnabled,
       partnerStakingCurrenciesEnabled,
       ptxSwapLiveAppMobileEnabled,
       ptxSwapLiveAppKycWarningEnabled,
+      llmSyncOnboardingIncr1,
     });
   })();
 };
@@ -133,10 +148,12 @@ runOnceWhen(() => !!analyticsFeatureFlagMethod && !!segmentClient, getFeatureFla
 const getLedgerSyncAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
   const ledgerSync = analyticsFeatureFlagMethod("llmWalletSync");
+  const ledgerSyncOptimisation = analyticsFeatureFlagMethod("lwmLedgerSyncOptimisation");
 
   return {
     hasLedgerSync: !!ledgerSync?.enabled,
     ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
+    ledger_sync_revamp: !!ledgerSyncOptimisation?.enabled,
   };
 };
 
@@ -219,6 +236,12 @@ const extraProperties = async (store: AppStore) => {
   const ldmkConnectApp = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkConnectApp")
     : { enabled: false };
+  const llmSyncOnboardingIncr1 = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("llmSyncOnboardingIncr1")
+    : { enabled: false };
+  const ldmkSolanaSigner = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkSolanaSigner")
+    : { enabled: false };
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -231,6 +254,8 @@ const extraProperties = async (store: AppStore) => {
       }
     : {};
 
+  const isOnboardingFlow = isOnboardingFlowSelector(state);
+  const isPostOnboardingFlow = isPostOnboardingFlowSelector(state);
   const onboardingHasDevice = onboardingHasDeviceSelector(state);
   const isReborn = isRebornSelector(state);
 
@@ -247,6 +272,7 @@ const extraProperties = async (store: AppStore) => {
   const notificationsBlacklisted = Object.entries(notifications)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)
     .map(([key]) => key);
+
   const accountsWithFunds = accounts
     ? [
         ...new Set(
@@ -272,13 +298,26 @@ const extraProperties = async (store: AppStore) => {
       ? Object.keys(stakePrograms.params.redirects)
       : [];
 
+  // Currency or token ids from all stakeable accounts & subAccounts with positive balance
+  const { combinedIds, stakeableAssets } = getTotalStakeableAssets(
+    accounts,
+    stakingCurrenciesEnabled,
+    partnerStakingCurrenciesEnabled,
+  );
+
+  const stakeableAssetsList = stakeableAssets.map(
+    asset => `${asset.ticker} on ${asset.networkName}`,
+  );
+
   const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
+  const bitcoinYield = getBitcoinYieldSetting(stakePrograms);
+  const ethDepositScreen = getEthDepositScreenSetting(stakePrograms);
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
   const tokenWithFunds = getTokensWithFunds(accounts);
   const migrationToMMKV = getMigrationUserProps();
-
+  const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwm");
   // NOTE: Currently there no reliable way to uniquely identify devices from DeviceModelInfo.
   // So device counts is approximated as follows:
   // Each model of device seen which was not connected in Bluetooth is counted as a 1 device.
@@ -286,6 +325,11 @@ const extraProperties = async (store: AppStore) => {
   const usbDeviceModelSeen = devices.filter(d => !seenBleModels.includes(d.modelId));
   const devicesCount = bleDevices.length + usbDeviceModelSeen.length;
   const modelIdQtyList = { ...aggregateData(bleDevices), ...aggregateData(usbDeviceModelSeen) };
+
+  const startupEvents = await resolveStartupEvents();
+  const legacyStartupTime = startupEvents.find(
+    ({ event }) => event === LAST_STARTUP_EVENTS.APP_STARTED,
+  )?.time;
 
   return {
     ...mandatoryProperties,
@@ -306,6 +350,9 @@ const extraProperties = async (store: AppStore) => {
     modelIdList: getUniqueModelIdList(devices),
     isReborn,
     onboardingHasDevice,
+    // For tracking receive flow events during onboarding
+    ...(isOnboardingFlow ? { flow: "onboarding" } : {}),
+    ...(isPostOnboardingFlow ? { flow: "post-onboarding" } : {}),
     ...(satisfaction
       ? {
           satisfaction,
@@ -315,12 +362,14 @@ const extraProperties = async (store: AppStore) => {
     notificationsBlacklisted,
     ...notificationsOptedIn,
     accountsWithFunds,
-    appTimeToInteractiveMilliseconds: appStartupTime,
+    appTimeToInteractiveMilliseconds: legacyStartupTime, // WARNING: this is not accurate in practice the splash is still blocking the user at this point
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
     nps,
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
     stablecoinYield,
+    bitcoinYield,
+    ethDepositScreen,
     ...ledgerSyncAtributes,
     ...rebornAttributes,
     ...mevProtectionAttributes,
@@ -328,9 +377,14 @@ const extraProperties = async (store: AppStore) => {
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
+    llmSyncOnboardingIncr1: llmSyncOnboardingIncr1?.enabled,
+    isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
     madAttributes,
+    totalStakeableAssets: combinedIds.size,
+    stakeableAssets: stakeableAssetsList,
+    wallet40Attributes,
   };
 };
 
@@ -338,6 +392,9 @@ const token = ANALYTICS_TOKEN;
 export const start = async (store: AppStore): Promise<SegmentClient | undefined> => {
   const { user, created } = await getOrCreateUser();
   storeInstance = store;
+
+  const initialUrl = await Linking.getInitialURL();
+  const isDeeplinkSession = !!initialUrl;
 
   if (created && ANALYTICS_LOGS) {
     console.log("analytics:identify", user.id);
@@ -361,17 +418,12 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
     }
     await updateIdentify();
   }
-  await track("Start");
+  await track("Start", { isDeeplinkSession });
 
   return segmentClient;
 };
 
 export const updateIdentify = async (additionalProperties?: UserTraits, mandatory?: boolean) => {
-  Sentry.addBreadcrumb({
-    category: "identify",
-    level: "debug",
-  });
-
   const state = storeInstance && storeInstance.getState();
   const isTracking = getIsTracking(state, mandatory);
   if (!storeInstance || !isTracking.enabled) {
@@ -421,13 +473,6 @@ export const track = async (
   eventProperties?: Error | Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
-  Sentry.addBreadcrumb({
-    message: event,
-    category: "track",
-    data: eventProperties || undefined,
-    level: "debug",
-  });
-
   const state = storeInstance && storeInstance.getState();
 
   const isTracking = getIsTracking(state, mandatory);
@@ -560,12 +605,6 @@ export const screen = async (
       currentRouteNameRef.current = fullScreenName;
     }
   }
-  Sentry.addBreadcrumb({
-    message: eventName,
-    category: "screen",
-    data: properties || {},
-    level: "info",
-  });
 
   const state = storeInstance && storeInstance.getState();
 

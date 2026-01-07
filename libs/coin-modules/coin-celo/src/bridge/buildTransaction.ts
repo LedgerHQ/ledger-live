@@ -8,7 +8,6 @@ import {
   CELO_STABLE_TOKENS,
   getStableTokenEnum,
   MAX_FEES_THRESHOLD_MULTIPLIER,
-  MAX_PRIORITY_FEE_PER_GAS,
 } from "../constants";
 
 const buildTransaction = async (account: CeloAccount, transaction: Transaction) => {
@@ -118,8 +117,9 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
     value = transaction.useAllAmount ? tokenAccount.balance : transaction.amount;
 
     const block = await kit.connection.web3.eth.getBlock("latest");
-    const baseFee = BigInt(block.baseFeePerGas || MAX_PRIORITY_FEE_PER_GAS);
-    const maxFeePerGas = baseFee + MAX_PRIORITY_FEE_PER_GAS;
+    const maxPriorityFeePerGas = await kit.connection.getMaxPriorityFeePerGas();
+    const baseFee = BigInt(block.baseFeePerGas || maxPriorityFeePerGas);
+    const maxFeePerGas = baseFee + BigInt(maxPriorityFeePerGas);
 
     let token;
     if (CELO_STABLE_TOKENS.includes(tokenAccount.token.id)) {
@@ -132,8 +132,6 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
       from: account.freshAddress,
       to: transaction.recipient,
       data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
-      maxFeePerGas: maxFeePerGas.toString(),
-      maxPriorityFeePerGas: await kit.connection.getMaxPriorityFeePerGas(),
       value: value.toFixed(),
     };
   } else {

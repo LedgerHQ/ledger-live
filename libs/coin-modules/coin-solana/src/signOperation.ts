@@ -42,9 +42,9 @@ const buildOptimisticOperation = (account: Account, transaction: Transaction): S
   const lastOpSeqNumber =
     account.pendingOperations[0]?.transactionSequenceNumber ??
     account.operations[0]?.transactionSequenceNumber ??
-    0;
+    new BigNumber(0);
 
-  optimisticOp.transactionSequenceNumber = lastOpSeqNumber + 1;
+  optimisticOp.transactionSequenceNumber = lastOpSeqNumber.plus(1);
 
   return optimisticOp;
 };
@@ -58,32 +58,36 @@ function getResolution(
     return;
   }
 
+  const baseResolution: Resolution = {
+    deviceModelId,
+    certificateSignatureKind,
+    ...(transaction.templateId && { templateId: transaction.templateId }),
+  };
   const { command } = transaction.model.commandDescriptor;
   switch (command.kind) {
     case "token.transfer": {
       if (command.recipientDescriptor.shouldCreateAsAssociatedTokenAccount) {
         return {
-          deviceModelId,
-          certificateSignatureKind,
+          ...baseResolution,
           tokenInternalId: command.tokenId,
           createATA: {
             address: command.recipientDescriptor.walletAddress,
             mintAddress: command.mintAddress,
           },
+          userInputType: command.recipientDescriptor.userInputType,
         };
       }
       return {
-        deviceModelId,
-        certificateSignatureKind,
+        ...baseResolution,
         tokenInternalId: command.tokenId,
         tokenAddress: command.recipientDescriptor.tokenAccAddress,
+        userInputType: command.recipientDescriptor.userInputType,
       };
     }
     // Not sure we need to handle this case as we don't use the TLV descriptor on the steps of createATA
     case "token.createATA": {
       return {
-        deviceModelId,
-        certificateSignatureKind,
+        ...baseResolution,
         createATA: {
           address: command.owner,
           mintAddress: command.mint,
@@ -96,7 +100,7 @@ function getResolution(
 export const buildSignOperation =
   (
     signerContext: SignerContext<SolanaSigner>,
-    api: () => Promise<ChainAPI>,
+    api: ChainAPI,
   ): AccountBridge<Transaction>["signOperation"] =>
   ({ account, deviceId, deviceModelId, transaction, certificateSignatureKind }) =>
     new Observable(subscriber => {
@@ -104,7 +108,7 @@ export const buildSignOperation =
         const [tx, recentBlockhash, signOnChainTransaction] = await buildTransactionWithAPI(
           account.freshAddress,
           transaction,
-          await api(),
+          api,
         );
 
         subscriber.next({

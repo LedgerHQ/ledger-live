@@ -1,6 +1,6 @@
 import type { FlashListProps } from "@shopify/flash-list";
 import { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { flattenAccountsSelector } from "~/reducers/accounts";

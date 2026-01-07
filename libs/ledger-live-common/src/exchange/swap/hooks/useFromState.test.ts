@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__tests__/test-helpers/dom-polyfill";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { renderHook, act } from "@testing-library/react";
 import BigNumber from "bignumber.js";
@@ -11,10 +11,38 @@ import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
 import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { genAccount } from "../../../mock/account";
 import { useFromState } from "./useFromState";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
-const USDT = getTokenById("ethereum/erc20/usd_tether__erc20_");
+LiveConfig.setConfig({
+  config_currency_bitcoin: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+    },
+  },
+  config_currency_ethereum: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+    },
+  },
+});
+const USDT = {
+  type: "TokenCurrency" as const,
+  id: "ethereum/erc20/usd_tether__erc20_",
+  name: "Tether USD (ERC-20)",
+  ticker: "USDT",
+  units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
+  contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+  parentCurrency: ETH,
+  tokenType: "erc20" as const,
+};
 
 jest.useFakeTimers();
 

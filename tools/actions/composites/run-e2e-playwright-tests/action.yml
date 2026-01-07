@@ -2,7 +2,7 @@ name: "Run Playwright Tests"
 description: "Run Playwright tests with xvfb-run and custom filters"
 inputs:
   speculos_device:
-    description: "Device to be used (nanoS, nanoSP, nanoX)"
+    description: "Device to be used (nanoS, nanoSP, nanoX, stax, flex, nanoGen5)"
     required: true
   test_filter:
     description: "Filter test pattern to execute specific test suites"
@@ -30,6 +30,9 @@ runs:
           nanoS)    device_tag='@LNS' ;;
           nanoSP)   device_tag='@NanoSP' ;;
           nanoX)    device_tag='@NanoX' ;;
+          stax)     device_tag='@Stax' ;;
+          flex)     device_tag='@Flex' ;;
+          nanoGen5)  device_tag='@NanoGen5' ;;
           *)        echo "Unknown SPECULOS_DEVICE: ${{ inputs.speculos_device }}"; exit 1 ;;
         esac
 
@@ -37,9 +40,9 @@ runs:
           # If test_filter contains a space but not a pipe, treat as OR by replacing spaces with pipes
           if [[ "${{ inputs.test_filter }}" == *' '* && "${{ inputs.test_filter }}" != *'|'* ]]; then
             or_filter=$(echo "${{ inputs.test_filter }}" | sed 's/ /|/g')
-            grep_filter="(?=.*$device_tag)(${or_filter})"
+            grep_filter="$device_tag.*($or_filter)|($or_filter).*$device_tag"
           else
-            grep_filter="(?=.*$device_tag)(${{ inputs.test_filter }})"
+            grep_filter="$device_tag.*(${{ inputs.test_filter }})|(${{ inputs.test_filter }}).*$device_tag"
           fi
         else
           grep_filter="$device_tag"

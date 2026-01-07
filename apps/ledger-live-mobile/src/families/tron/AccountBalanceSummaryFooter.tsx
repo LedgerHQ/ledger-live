@@ -2,9 +2,8 @@ import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById, toLocaleString } from "@ledgerhq/live-common/currencies/index";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
+import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import type { Account } from "@ledgerhq/types-live";
-import invariant from "invariant";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import InfoModal from "~/modals/Info";
 import type { ModalInfo } from "~/modals/Info";
@@ -14,7 +13,7 @@ import EnergyIcon from "~/icons/Energy";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: Account;
@@ -89,12 +88,10 @@ export default function AccountBalanceFooter({ account }: Props) {
 function useInfoCandidates(): Record<InfoName, ModalInfo[]> {
   const { t } = useTranslation();
   const currency = getCryptoCurrencyById("tron");
-  const TronIcon = getCryptoCurrencyIcon(currency);
-  invariant(TronIcon, "Icon is expected");
   return {
     available: [
       {
-        Icon: () => <TronIcon color={currency.color} size={18} />,
+        Icon: () => <CryptoIcon ledgerId={currency.id} ticker={currency.ticker} size={20} />,
         title: t("tron.info.available.title"),
         description: t("tron.info.available.description"),
       },

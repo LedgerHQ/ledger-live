@@ -2,10 +2,10 @@ import BigNumber from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getTransactions } from "../network/indexer";
 import { getAccountInfo, getBlockHeight } from "../network/node";
 
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { BoilerplateOperation } from "../network/types";
 import coinConfig from "../config";
 
@@ -40,7 +40,7 @@ const operationAdapter =
       senders: [Account],
       recipients: [Destination],
       date: new Date(),
-      transactionSequenceNumber: Sequence,
+      transactionSequenceNumber: new BigNumber(Sequence),
       extra: {},
     };
 

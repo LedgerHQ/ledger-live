@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { ApyType } from "../../utils/type";
-import { useInterestRatesByCurrencies } from "../useInterestRatesByCurrencies";
+import { ApyType } from "../../../dada-client/types/trend";
+import { useInterestRatesByCurrencies } from "../../../dada-client/hooks/useInterestRatesByCurrencies";
 import { getInterestRateForAsset } from "../../utils/getInterestRateForAsset";
 
 const createApyItem = ({

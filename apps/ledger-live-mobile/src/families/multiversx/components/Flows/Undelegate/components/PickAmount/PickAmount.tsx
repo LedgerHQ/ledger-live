@@ -21,7 +21,7 @@ import KeyboardView from "~/components/KeyboardView";
 
 import styles from "./styles";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.
@@ -239,7 +239,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                       values={{
                         amount: formatCurrencyUnit(unit, amount.minus(value), {
                           showCode: true,
-                          locale: locale,
+                          locale,
                         }),
                       }}
                     >

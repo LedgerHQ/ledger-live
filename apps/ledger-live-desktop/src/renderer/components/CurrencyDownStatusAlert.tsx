@@ -13,6 +13,7 @@ const CurrencyDownStatusAlert = ({ currencies, hideStatusIncidents }: Props) => 
 
   const { incidents } = useFilteredServiceStatus({
     tickers: currencies.map(c => c.ticker),
+    entryPoint: "flow",
   });
   if (!hideStatusIncidents)
     incidents

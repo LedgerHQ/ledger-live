@@ -34,9 +34,9 @@ export const isLedgerExplorerConfig = (
 export const isEtherscanLikeExplorerConfig = (
   explorerConfig: ExplorerConfig,
 ): explorerConfig is ExplorerConfig & {
-  type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder";
+  type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder" | "corescan";
 } => {
-  return ["etherscan", "blockscout", "teloscan", "klaytnfinder"].includes(
+  return ["etherscan", "blockscout", "teloscan", "klaytnfinder", "corescan"].includes(
     explorerConfig?.type as string,
   );
 };

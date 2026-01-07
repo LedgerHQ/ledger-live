@@ -52,7 +52,7 @@ const FeatureFlagEdit: React.FC<{
       // If value is invalid or missing, JSON parse will fail and error will be set
       JSON.parse(value);
       setError(undefined);
-    } catch (err) {
+    } catch {
       setError("Bad Format");
     }
   };
@@ -78,7 +78,7 @@ const FeatureFlagEdit: React.FC<{
     if (!featureFlagValue) return false;
     try {
       return featureFlagValue?.enabled;
-    } catch (e) {
+    } catch {
       return false;
     }
   }, [featureFlagValue]);

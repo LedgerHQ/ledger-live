@@ -6,11 +6,13 @@ import { getSerializedAddressParameters } from "@ledgerhq/coin-framework/bridge/
 import {
   scanAccounts,
   signOperation,
+  signRawOperation,
   broadcast,
   sync,
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
@@ -114,8 +116,10 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
+  signRawOperation,
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 
 const currencyBridge: CurrencyBridge = {

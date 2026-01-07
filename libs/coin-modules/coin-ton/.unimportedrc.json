@@ -1,4 +1,5 @@
 {
+  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
   "entry": [
     "src/bridge/js.ts",
     "src/errors.ts",
@@ -13,7 +14,9 @@
     "src/deviceTransactionConfig.ts",
     "src/hw-signMessage.ts",
     "src/specs.ts",
-    "src/speculos-deviceActions.ts"
+    "src/speculos-deviceActions.ts",
+    "src/test/bridge.dataset.ts",
+    "src/supportedFeatures.ts"
   ],
   "ignoreUnused": ["msw", "@ledgerhq/types-cryptoassets", "@ledgerhq/live-env"]
 }

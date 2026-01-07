@@ -4,7 +4,7 @@ import { runSelectCryptoWithoutNetworkAndAccountTest } from "./deposit";
 const testConfig = {
   account: Account.BTC_LEGACY_1,
   tmsLinks: ["B2CQA-1854"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runSelectCryptoWithoutNetworkAndAccountTest(

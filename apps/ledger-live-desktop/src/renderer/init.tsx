@@ -4,7 +4,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import "../config/configInit";
-import "../config/bridge-setup";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import i18n from "i18next";
@@ -20,18 +19,19 @@ import "~/renderer/styles/global";
 import "~/renderer/live-common-setup";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/i18n/init";
-import { hydrateCurrency, prepareCurrency } from "~/renderer/bridge/cache";
+import { hydrateCurrency } from "~/renderer/bridge/cache";
+import { setupCryptoAssetsStore } from "~/config/bridge-setup";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
-  getCryptoCurrencyById,
-  findCryptoCurrencyById,
-} from "@ledgerhq/live-common/currencies/index";
+  restoreTokensToCache,
+  PERSISTENCE_VERSION,
+} from "@ledgerhq/cryptoassets/cal-client/persistence";
 import logger, { enableDebugLogger } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import sentry from "~/sentry/renderer";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
-import { analyticsMiddleware } from "~/renderer/middlewares/analytics";
-import type { ReduxStore } from "~/renderer/createStore";
+import type { ReduxStore, AppDispatch } from "~/renderer/createStore";
 import createStore from "~/renderer/createStore";
 import events from "~/renderer/events";
 import { initAccounts } from "~/renderer/actions/accounts";
@@ -54,9 +54,11 @@ import { importMarketState } from "./actions/market";
 import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
 import { registerTransportModules } from "~/renderer/live-common-setup";
+import { setupRecentAddressesStore } from "./recentAddresses";
+import { startAnalytics } from "./analytics/segment";
+import { identitiesSlice } from "@ledgerhq/client-ids/store";
 
 const rootNode = document.getElementById("react-root");
-const TAB_KEY = 9;
 
 async function init() {
   // at this step. we know the app error handling will happen here. so we can unset the global onerror
@@ -105,18 +107,48 @@ async function init() {
       const timemachine = require("timemachine");
       timemachine.config({
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        dateString: require("../../tests/time").default,
+        dateString: require("../../tests/time.js").default,
       });
     }
   }
-  if (window.localStorage.getItem("hard-reset")) {
+  const hardResetFlag = window.localStorage.getItem("hard-reset");
+  const wasHardReset = hardResetFlag === "1";
+
+  if (wasHardReset) {
     await hardReset();
+    // Keep the flag so Default.tsx can detect it for redirect, it will be cleared there
   }
+
   const store = createStore({
     dbMiddleware,
-    analyticsMiddleware,
   });
+  const dispatch: AppDispatch = store.dispatch;
+
+  setupRecentAddressesStore(store);
+  setupCryptoAssetsStore(store);
+
+  // Hydrate persisted crypto assets tokens from app.json
+  // Cross-caching is automatic: tokens are cached under both ID and address lookups
+  try {
+    const persistedData = await getKey("app", "cryptoAssets");
+
+    // Check version and restore tokens
+    if (persistedData?.tokens) {
+      if (persistedData.version === PERSISTENCE_VERSION) {
+        const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+        await restoreTokensToCache(store.dispatch, persistedData, TOKEN_CACHE_TTL);
+      } else {
+        logger.warn(
+          `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${persistedData.version}), skipping restore`,
+        );
+      }
+    }
+  } catch (error) {
+    logger.error("Failed to load crypto assets tokens from app.json:", error);
+  }
+
   if (getEnv("PLAYWRIGHT_RUN")) {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (window as Window & { __STORE__?: ReduxStore }).__STORE__ = store;
   }
   sentry(() => sentryLogsSelector(store.getState()));
@@ -138,15 +170,21 @@ async function init() {
     deepLinkUrl = url;
   });
   const initialSettings = (await getKey("app", "settings")) || {};
+  // Make sure startAnalytics is always called after a first getKey() because otherwise
+  // will run into issues where shareAnalytics state will not reflect the user's preferences and always be set to true...
+  startAnalytics(store);
 
-  fetchSettings(
-    deepLinkUrl
-      ? {
-          ...initialSettings,
-          deepLinkUrl,
-        }
-      : initialSettings,
-  )(store.dispatch);
+  // Build settings to load, ensuring hasCompletedOnboarding is false after a hard reset
+  const settingsToLoad = { ...initialSettings };
+  if (wasHardReset) {
+    settingsToLoad.hasCompletedOnboarding = false;
+  }
+
+  if (deepLinkUrl) {
+    settingsToLoad.deepLinkUrl = deepLinkUrl;
+  }
+
+  fetchSettings(settingsToLoad)(store.dispatch);
   const state = store.getState();
   const language = languageSelector(state);
 
@@ -169,15 +207,17 @@ async function init() {
   if (accountData) {
     const e = initAccounts(accountData);
     store.dispatch(e);
-
-    // preload currency that's not in accounts list
-    if (e.payload.accounts.some(a => a.currency.id !== "ethereum")) {
-      prepareCurrency(getCryptoCurrencyById("ethereum"));
-    }
   } else {
     // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
   }
+
+  // Load persisted identities
+  const persistedIdentities = await getKey("app", "identities");
+  if (persistedIdentities) {
+    store.dispatch(identitiesSlice.actions.initFromPersisted(persistedIdentities));
+  }
+
   const initialCountervalues = await getKey("app", "countervalues");
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 
@@ -190,8 +230,8 @@ async function init() {
     );
   }
 
-  await fetchTrustchain()(store.dispatch);
-  await fetchWallet()(store.dispatch);
+  await dispatch(fetchTrustchain());
+  await dispatch(fetchWallet());
 
   const marketState = await getKey("app", "market");
   if (marketState) {
@@ -201,12 +241,12 @@ async function init() {
   webFrame.setVisualZoomLevelLimits(1, 1);
   const matcher = window.matchMedia("(prefers-color-scheme: dark)");
   const updateOSTheme = () => store.dispatch(setOSDarkMode(matcher.matches));
-  matcher.addListener(updateOSTheme);
+  matcher.addEventListener("change", updateOSTheme);
   events({
     store,
   });
   window.addEventListener("keydown", (e: KeyboardEvent) => {
-    if (e.which === TAB_KEY) {
+    if (e.key === "Tab") {
       if (!isGlobalTabEnabled()) enableGlobalTab();
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       logger.onTabKey(document.activeElement as HTMLElement);
@@ -215,7 +255,8 @@ async function init() {
   window.addEventListener("click", () => {
     if (isGlobalTabEnabled()) disableGlobalTab();
   });
-  window.addEventListener("beforeunload", async () => {
+
+  window.addEventListener("beforeunload", () => {
     // This event is triggered when we reload the app, we want it to forget what it knows
     reload();
   });
@@ -267,11 +308,12 @@ async function init() {
     },
   };
 }
-function r(Comp: JSX.Element) {
+function r(Comp: React.JSX.Element) {
   if (rootNode) {
     render(Comp, rootNode);
   }
 }
+
 init()
   .catch(e => {
     logger.critical(e);
@@ -279,7 +321,7 @@ init()
   })
   .catch(error => {
     const pre = document.createElement("pre");
-    pre.innerHTML = `Ledger Live crashed. Please contact Ledger support.
+    pre.innerHTML = `Ledger Wallet crashed. Please contact Ledger support.
   ${String(error)}
   ${String((error && error.stack) || "no stacktrace")}`;
     if (document.body) {

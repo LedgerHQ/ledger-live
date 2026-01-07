@@ -2,10 +2,12 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
+  BufferTxData,
   FeeEstimation,
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
+import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
 import ERC20ABI from "../abis/erc20.abi.json";
 import {
   ApiFeeData,
@@ -15,6 +17,7 @@ import {
   TransactionLikeWithPreparedParams,
 } from "../types";
 import { getNodeApi } from "../network/node";
+import { buildStakingTransactionParams } from "../staking";
 
 export function isApiGasOptions(options: unknown): options is ApiGasOptions {
   if (!options || typeof options !== "object") return false;
@@ -67,13 +70,24 @@ export function isEip1559FeeEstimation(
 }
 
 export function getTransactionType(intentType: string): TransactionTypes {
-  if (!["send-legacy", "send-eip1559"].includes(intentType)) {
+  if (!["send-legacy", "send-eip1559", "staking-legacy", "staking-eip1559"].includes(intentType)) {
     throw new Error(
-      `Unsupported intent type '${intentType}'. Must be 'send-legacy' or 'send-eip1559'`,
+      `Unsupported intent type '${intentType}'. Must be 'send-legacy', 'send-eip1559', 'staking-legacy', or 'staking-eip1559'`,
     );
   }
+  if (intentType === "send-legacy" || intentType === "staking-legacy") {
+    return TransactionTypes.legacy;
+  }
 
-  return intentType === "send-legacy" ? TransactionTypes.legacy : TransactionTypes.eip1559;
+  return TransactionTypes.eip1559;
+}
+
+export function isEip55Address(address: string): boolean {
+  try {
+    return address === ethers.getAddress(address);
+  } catch {
+    return false;
+  }
 }
 
 export function getErc20Data(recipient: string, amount: bigint): Buffer {
@@ -82,27 +96,45 @@ export function getErc20Data(recipient: string, amount: bigint): Buffer {
   return Buffer.from(data.slice(2), "hex");
 }
 
+function getCallData(intent: TransactionIntent<MemoNotSupported, BufferTxData>): Buffer {
+  const data = intent.data?.value;
+  if (Buffer.isBuffer(data) && data.length) return data;
+  return isNative(intent.asset) ? Buffer.from([]) : getErc20Data(intent.recipient, intent.amount);
+}
+
 export async function prepareUnsignedTxParams(
   currency: CryptoCurrency,
-  transactionIntent: TransactionIntent<MemoNotSupported>,
+  transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
+  customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<TransactionLikeWithPreparedParams> {
-  const { amount, asset, recipient, sender, type } = transactionIntent;
+  const { sender, type } = transactionIntent;
+
   const transactionType = getTransactionType(type);
   const node = getNodeApi(currency);
 
-  const to = isNative(asset) ? recipient : (asset.assetReference as string);
-  const data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
-  const value = isNative(asset) ? amount : 0n;
-
-  const gasLimit = await node.getGasEstimation(
-    { currency, freshAddress: sender },
-    { amount: BigNumber(value.toString()), recipient: to, data },
-  );
-
-  const feeData = await node.getFeeData(currency, {
-    type: transactionType,
-    feesStrategy: transactionIntent.feesStrategy,
-  });
+  // Build transaction parameters based on type
+  const { to, data, value } = isSendTransactionIntent(transactionIntent)
+    ? ((): { to: string; data: Buffer; value: bigint } => {
+        const { amount, asset, recipient } = transactionIntent;
+        return {
+          to: isNative(asset) ? recipient : (asset.assetReference as string),
+          data: getCallData(transactionIntent),
+          value: isNative(asset) ? amount : 0n,
+        };
+      })()
+    : buildStakingTransactionParams(currency, transactionIntent);
+  const gasLimit =
+    typeof customFeesParameters?.gasLimit === "bigint"
+      ? BigNumber(customFeesParameters.gasLimit.toString())
+      : // Implementations of `getGasEstimation` throw an error when
+        // trying to send more token asset than available.
+        // Fallback to an estimation of 0 to not break the UI.
+        await node
+          .getGasEstimation(
+            { currency, freshAddress: sender },
+            { amount: BigNumber(value.toString()), recipient: to, data },
+          )
+          .catch(() => new BigNumber(0));
 
   return {
     type: transactionType,
@@ -110,6 +142,5 @@ export async function prepareUnsignedTxParams(
     data: "0x" + data.toString("hex"),
     value,
     gasLimit,
-    feeData,
   };
 }

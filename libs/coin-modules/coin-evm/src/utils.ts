@@ -1,7 +1,12 @@
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import eip55 from "eip55";
-import { Transaction as EvmTransaction } from "./types";
+import type {
+  StakingTransactionIntent,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
+import type { Transaction as EvmTransaction } from "./types";
+import type { SeiDelegation } from "./types/staking";
 
 /**
  * Some addresses returned by the explorers are not 40 characters hex addresses
@@ -69,3 +74,83 @@ export const padHexString = (str: string): string => {
 export const DEFAULT_NONCE = -1;
 
 export const DEFAULT_GAS_LIMIT = new BigNumber(21000);
+
+export function isEthAddress(address: string): boolean {
+  return /^(0x)?[0-9a-fA-F]{40}$/.test(address);
+}
+
+/**
+ * Safely converts a value to BigInt, returning 0n if conversion fails
+ */
+export const safeBigInt = (value: string | number | bigint): bigint => {
+  try {
+    return BigInt(value.toString());
+  } catch {
+    return 0n;
+  }
+};
+
+export const isSeiDelegation = (candidate: unknown): candidate is SeiDelegation => {
+  return (
+    typeof candidate === "object" &&
+    candidate !== null &&
+    "balance" in candidate &&
+    typeof (candidate as Record<string, unknown>).balance === "object" &&
+    (candidate as Record<string, unknown>).balance !== null &&
+    "amount" in ((candidate as Record<string, unknown>).balance as Record<string, unknown>) &&
+    "denom" in ((candidate as Record<string, unknown>).balance as Record<string, unknown>)
+  );
+};
+
+export const isSeiDelegationArray = (candidate: unknown): candidate is SeiDelegation[] => {
+  return Array.isArray(candidate) && candidate.length > 0 && isSeiDelegation(candidate[0]);
+};
+
+/**
+ * Extracts delegation from decoded result with proper type safety
+ */
+export const extractSeiDelegation = (decoded: unknown): SeiDelegation | undefined => {
+  if (isSeiDelegationArray(decoded)) {
+    return decoded[0];
+  }
+  if (isSeiDelegation(decoded)) {
+    return decoded;
+  }
+  return undefined;
+};
+
+/**
+ * Gets amount from SEI delegation with safe conversion
+ */
+export const getSeiDelegationAmount = (delegation: SeiDelegation | undefined): bigint => {
+  if (!delegation) {
+    return 0n;
+  }
+
+  const amount = delegation.balance.amount;
+  if (typeof amount === "string" || typeof amount === "number" || typeof amount === "bigint") {
+    return safeBigInt(amount);
+  }
+
+  return 0n;
+};
+
+/**
+ * Gets amount from CELO decoded result with safe conversion
+ */
+export const getCeloAmount = (decoded: unknown): bigint => {
+  if (Array.isArray(decoded) && decoded.length > 0) {
+    const first = decoded[0];
+    if (first && typeof first.toString === "function") {
+      return safeBigInt(first.toString());
+    }
+  }
+  return 0n;
+};
+
+/**
+ * Checks if a transaction intent is a staking intent
+ */
+export function isStakingIntent(intent: TransactionIntent): intent is StakingTransactionIntent {
+  return intent.intentType === "staking";
+}

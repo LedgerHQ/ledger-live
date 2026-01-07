@@ -1,10 +1,9 @@
 import { useCallback } from "react";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { ParamListBase, RouteProp } from "@react-navigation/native";
+import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import perFamilyAccountActions from "../../generated/accountActions";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { walletSelector } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { getAccountSpendableBalance } from "@ledgerhq/coin-framework/lib/account/helpers";
@@ -16,7 +15,7 @@ export function useStakingDrawer({
   alwaysShowNoFunds,
   entryPoint = undefined,
 }: {
-  navigation: StackNavigationProp<{ [key: string]: object | undefined }>;
+  navigation: NavigationProp<ParamListBase>;
   parentRoute: RouteProp<ParamListBase> | undefined;
   alwaysShowNoFunds?: boolean | undefined;
   entryPoint?: "get-funds" | undefined;

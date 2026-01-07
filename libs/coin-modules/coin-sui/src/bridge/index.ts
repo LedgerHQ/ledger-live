@@ -21,6 +21,7 @@ import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { fromOperationExtraRaw, toOperationExtraRaw } from "./formatters";
 import { buildSignOperation } from "./signOperation";
 import { getAccountShape, sync } from "./synchronisation";
+import { validateAddress } from "./validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext<SuiSigner>): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);
@@ -55,12 +56,16 @@ function buildAccountBridge(
     sync,
     receive,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     assignFromAccountRaw,
     assignToAccountRaw,
     fromOperationExtraRaw,
     toOperationExtraRaw,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

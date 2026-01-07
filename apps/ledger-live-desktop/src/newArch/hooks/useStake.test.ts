@@ -8,8 +8,7 @@ import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 const raw: AccountRaw = {
   id: "js:2:ethereum:0x01:",
@@ -42,11 +41,17 @@ const rawTron: AccountRaw = {
   balance: "100000000000000",
 };
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStore({} as CryptoAssetsStore);
+setupMockCryptoAssetsStore({
+  getTokensSyncHash: async () => "test_hash",
+});
 
-const mockEthereumAccount = fromAccountRaw(raw);
-const mockTronAccount = fromAccountRaw(rawTron);
+let mockEthereumAccount: Awaited<ReturnType<typeof fromAccountRaw>>;
+let mockTronAccount: Awaited<ReturnType<typeof fromAccountRaw>>;
+
+beforeAll(async () => {
+  mockEthereumAccount = await fromAccountRaw(raw);
+  mockTronAccount = await fromAccountRaw(rawTron);
+});
 
 const mockUSDTTokenAccount: TokenAccount = {
   type: "TokenAccount",
@@ -106,6 +111,7 @@ const walletState: WalletState = {
     version: 0,
   },
   nonImportedAccountInfos: [],
+  recentAddresses: {},
 };
 
 const userData = accountRawToAccountUserData(raw);

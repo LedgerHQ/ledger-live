@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { Modal } from "../../component/modal.component";
-import { step } from "../../misc/reporters/step";
+import { Modal } from "tests/component/modal.component";
+import { step } from "tests/misc/reporters/step";
 
 export class DelegateModal extends Modal {
   private titleProvider = this.page.getByTestId("modal-provider-title");
@@ -31,7 +31,6 @@ export class DelegateModal extends Modal {
   private checkIcon = this.page
     .getByTestId("check-icon")
     .locator('path[fill]:not([fill="transparent"])');
-  readonly spendableBanner = this.page.getByTestId("modal-spendable-banner");
   readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
 
   @step("Get title provider on row $0")
@@ -40,18 +39,6 @@ export class DelegateModal extends Modal {
     const titleProvider = await this.titleProvider.nth(row - 1).textContent();
     expect(titleProvider).not.toBeNull();
     return titleProvider!;
-  }
-
-  @step("Get spendable banner value")
-  async getSpendableBannerValue() {
-    const amountValue = await this.spendableBanner.textContent();
-    return parseInt(amountValue!.replace(/[^0-9.]/g, ""));
-  }
-
-  @step("Get crypto amount")
-  async getCryptoAmount() {
-    const valueAmount = await this.cryptoAmountField.inputValue();
-    return parseInt(valueAmount);
   }
 
   @step("Verify first provider name is $0")

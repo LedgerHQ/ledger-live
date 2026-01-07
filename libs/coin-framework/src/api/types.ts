@@ -1,5 +1,5 @@
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BroadcastConfig } from "@ledgerhq/types-live";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
   height: number;
@@ -64,6 +64,9 @@ export type Operation<MemoType extends Memo = MemoNotSupported> = {
     block: BlockInfo; // block metadata
     fees: bigint; // network fees paid
     date: Date; // tx date (may differ from block time)
+
+    /** If the transaction has failed, fees have been paid but other balance changes are not effective.*/
+    failed: boolean;
   };
 };
 
@@ -260,6 +263,30 @@ export type Reward = {
   details?: Record<string, unknown>;
 };
 
+/**
+ * Computational payload processed by Blockchains, such as
+ * calldata on EVM or instruction data on Solana
+ */
+export interface TxData {
+  type: string;
+}
+
+/**
+ * Default implementation when no computational payload is supported
+ * by the underlying Blockchain
+ */
+export interface TxDataNotSupported extends TxData {
+  type: "none";
+}
+
+/**
+ * Implementation with bufferized computational payload
+ */
+export interface BufferTxData extends TxData {
+  type: "buffer";
+  value: Buffer;
+}
+
 export interface Memo {
   type: string;
 }
@@ -286,29 +313,61 @@ export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> ex
   memos: Map<keyof KindToValueMap, KindToValueMap[keyof KindToValueMap]>;
 }
 
-// FIXME: find better maybeMemo type without disabling the rule
-// eslint-disable-next-line @typescript-eslint/ban-types
-type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
+type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported
+  ? object
+  : { memo: MemoType };
 
-export type FeesStrategy = "slow" | "medium" | "fast";
+type MaybeTxData<TxDataType extends TxData> = TxDataType extends TxDataNotSupported
+  ? object
+  : { data: TxDataType };
 
-export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
+export type FeesStrategy = "slow" | "medium" | "fast" | "custom";
+
+export type StakingOperation = "delegate" | "undelegate" | "redelegate";
+
+export type TransactionIntent<
+  MemoType extends Memo = MemoNotSupported,
+  TxDataType extends TxData = TxDataNotSupported,
+> = {
+  intentType: "transaction" | "staking";
   type: string;
   sender: string;
-  senderPublicKey?: string;
-  expiration?: number;
   recipient: string;
   amount: bigint;
-  useAllAmount?: boolean;
   asset: AssetInfo;
-  sequence?: number;
+  useAllAmount?: boolean;
   feesStrategy?: FeesStrategy;
-} & MaybeMemo<MemoType>;
+  senderPublicKey?: string;
+  sequence?: bigint;
+  expiration?: number;
+  sponsored?: boolean;
+} & MaybeMemo<MemoType> &
+  MaybeTxData<TxDataType>;
+
+export type StakingTransactionIntent<
+  MemoType extends Memo = MemoNotSupported,
+  TxDataType extends TxData = TxDataNotSupported,
+> = TransactionIntent & {
+  intentType: "staking";
+  mode: StakingOperation;
+  valAddress: string;
+  dstValAddress?: string;
+} & MaybeMemo<MemoType> &
+  MaybeTxData<TxDataType>;
+
+export type SendTransactionIntent<
+  MemoType extends Memo = MemoNotSupported,
+  TxDataType extends TxData = TxDataNotSupported,
+> = TransactionIntent & {
+  intentType: "transaction";
+} & MaybeMemo<MemoType> &
+  MaybeTxData<TxDataType>;
 
 export type TransactionValidation = {
   errors: Record<string, Error>;
   warnings: Record<string, Error>;
   estimatedFees: bigint;
+  totalFees?: bigint;
   amount: bigint;
   totalSpent: bigint;
 };
@@ -350,6 +409,33 @@ export type Page<T> = {
   next?: Cursor | undefined;
 };
 
+/** A network validator */
+export type Validator = {
+  /** Address of the validator. */
+  address: string;
+
+  /** Human-readable name of the validator. */
+  name: string;
+
+  /** Human-readable description of the validator. */
+  description?: string | undefined;
+
+  /** URL of the entity running the validator. */
+  url?: string | undefined;
+
+  /** URL of the logo for the validator. */
+  logo?: string | undefined;
+
+  /** Amount of native asset in the pool (in base unit of chain native currency). */
+  balance?: bigint | undefined;
+
+  /** Validator commission (a bigint serialized as a string). */
+  commissionRate?: string | undefined;
+
+  /** Validator Annual Percentage Yield (floating point number between 0 and 1). */
+  apy?: number | undefined;
+};
+
 export type AccountInfo = {
   isNewAccount: boolean;
   balance: string;
@@ -358,13 +444,30 @@ export type AccountInfo = {
 };
 // NOTE: future proof export type Pagination = Record<string, unknown>;
 
-export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
+export type AddressValidationCurrencyParameters = {
+  currency: CryptoCurrency;
+  networkId: number;
+};
+
+export type AlpacaApi<
+  MemoType extends Memo = MemoNotSupported,
+  TxDataType extends TxData = TxDataNotSupported,
+> = {
   broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
-  estimateFees: (transactionIntent: TransactionIntent<MemoType>) => Promise<FeeEstimation>;
+  estimateFees: (
+    transactionIntent: TransactionIntent<MemoType, TxDataType>,
+    customFeesParameters?: FeeEstimation["parameters"],
+  ) => Promise<FeeEstimation>;
   craftTransaction: (
-    transactionIntent: TransactionIntent<MemoType>,
+    transactionIntent: TransactionIntent<MemoType, TxDataType>,
     customFees?: FeeEstimation,
+  ) => Promise<CraftedTransaction>;
+  craftRawTransaction: (
+    transaction: string,
+    sender: string,
+    publicKey: string,
+    sequence: bigint,
   ) => Promise<CraftedTransaction>;
   getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
@@ -413,6 +516,15 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
    * @see getStakes
    */
   getRewards: (address: string, cursor?: Cursor) => Promise<Page<Reward>>;
+  /**
+   * Get the list of validators available on the network.
+   * @param cursor a pagination cursor to resume listing (the implementation must guarantee the cursor is not volatile,
+   *         i.e. it can be used long after the last request and still provide consistent results - for instance,
+   *         a date or transaction hash).
+   *         The concrete implementation may return all validators in a single page when the underlying SDK
+   *         does not provide cursor-based pagination.
+   */
+  getValidators: (cursor?: Cursor) => Promise<Page<Validator>>;
 };
 
 export type ChainSpecificRules = {
@@ -422,16 +534,23 @@ export type ChainSpecificRules = {
   };
 };
 
-export type BridgeApi<MemoType extends Memo = MemoNotSupported> = {
+export type BridgeApi<
+  MemoType extends Memo = MemoNotSupported,
+  TxDataType extends TxData = TxDataNotSupported,
+> = {
   validateIntent: (
-    transactionIntent: TransactionIntent<MemoType>,
+    transactionIntent: TransactionIntent<MemoType, TxDataType>,
     customFees?: FeeEstimation,
   ) => Promise<TransactionValidation>;
-  getSequence: (address: string) => Promise<number>;
+  getSequence: (address: string) => Promise<bigint>;
   getChainSpecificRules?: () => ChainSpecificRules;
-  getTokenFromAsset?: (asset: AssetInfo) => TokenCurrency | undefined;
+  getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
+  computeIntentType?: (transaction: Record<string, unknown>) => string;
+  refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
 };
 
-export type Api<MemoType extends Memo = MemoNotSupported> = AlpacaApi<MemoType> &
-  BridgeApi<MemoType>;
+export type Api<
+  MemoType extends Memo = MemoNotSupported,
+  TxDataType extends TxData = TxDataNotSupported,
+> = AlpacaApi<MemoType, TxDataType> & BridgeApi<MemoType, TxDataType>;

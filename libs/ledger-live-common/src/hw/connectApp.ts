@@ -39,6 +39,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
 import { ConnectAppEventMapper } from "./connectAppEventMapper";
+import { DeviceId } from "@ledgerhq/client-ids/ids";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -48,6 +49,7 @@ export type RequiresDerivation = {
 };
 export type Input = {
   deviceId: string;
+  deviceName: string | null;
   request: ConnectAppRequest;
 };
 export type ConnectAppRequest = {
@@ -82,6 +84,10 @@ export type ConnectAppEvent =
     }
   | {
       type: "device-permission-granted";
+    }
+  | {
+      type: "device-id";
+      deviceId: DeviceId;
     }
   | {
       type: "app-not-installed";
@@ -524,10 +530,13 @@ export default function connectAppFactory(
   } = { isLdmkConnectAppEnabled: false },
 ) {
   if (!isLdmkConnectAppEnabled) {
-    return ({ deviceId, request }: Input): Observable<ConnectAppEvent> =>
-      withDevice(deviceId)(transport => cmd(transport, { deviceId, request }));
+    return ({ deviceId, deviceName, request }: Input): Observable<ConnectAppEvent> =>
+      withDevice(
+        deviceId,
+        deviceName ? { matchDeviceByName: deviceName } : undefined,
+      )(transport => cmd(transport, { deviceId, deviceName, request }));
   }
-  return ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
+  return ({ deviceId, deviceName, request }: Input): Observable<ConnectAppEvent> => {
     const {
       appName,
       requiresDerivation,
@@ -535,15 +544,18 @@ export default function connectAppFactory(
       requireLatestFirmware,
       allowPartialDependencies = false,
     } = request;
-    return withDevice(deviceId)(transport => {
+    return withDevice(
+      deviceId,
+      deviceName ? { matchDeviceByName: deviceName } : undefined,
+    )(transport => {
       if (!isDmkTransport(transport)) {
-        return cmd(transport, { deviceId, request });
+        return cmd(transport, { deviceId, deviceName, request });
       }
       const { dmk, sessionId } = transport;
       const deviceAction = new ConnectAppDeviceAction({
         input: {
           application: appNameToDependency(appName),
-          dependencies: dependencies ? dependencies.map(name => ({ name })) : [],
+          dependencies: dependencies ? dependencies.map(name => appNameToDependency(name)) : [],
           requireLatestFirmware,
           allowMissingApplication: allowPartialDependencies,
           unlockTimeout: 0, // Expect to fail immediately when device is locked

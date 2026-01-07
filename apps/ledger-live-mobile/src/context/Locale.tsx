@@ -1,7 +1,7 @@
 import React, { useMemo, useContext, useCallback, useEffect, useState } from "react";
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
-import type { TFunction } from "react-i18next";
+import type { TFunction } from "i18next";
 import { getTimeZone } from "react-native-localize";
 import storage from "LLM/storage";
 import { I18nManager } from "react-native";
@@ -9,9 +9,10 @@ import RNRestart from "react-native-restart";
 
 import { DEFAULT_LANGUAGE_LOCALE, getDefaultLanguageLocale, locales } from "../languages";
 import { setLanguage } from "~/actions/settings";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import { useSettings } from "~/hooks";
 import { useSupportedLocales } from "~/hooks/languages/useSupportedLocales";
+import { loadLocaleData } from "~/utils/localeLoader";
 
 try {
   if ("__setDefaultTimeZone" in Intl.DateTimeFormat) {
@@ -31,7 +32,7 @@ try {
 i18next.use(initReactI18next).init({
   fallbackLng: DEFAULT_LANGUAGE_LOCALE,
   resources: locales,
-  whitelist: Object.keys(locales),
+  supportedLngs: Object.keys(locales),
   ns: ["common"],
   defaultNS: "common",
   interpolation: {
@@ -43,7 +44,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const SUPPORTED_LANGUAGES = [
+export const SUPPORTED_LANGUAGES = [
   "en",
   "fr",
   "es",
@@ -89,6 +90,7 @@ export default function LocaleProvider({ children }: Props) {
   }, [currentLanguage, dispatch, language]);
 
   useEffect(() => {
+    loadLocaleData(currentLanguage);
     i18next.changeLanguage(currentLanguage);
   }, [currentLanguage]);
 

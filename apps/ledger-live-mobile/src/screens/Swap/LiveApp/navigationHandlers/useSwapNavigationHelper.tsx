@@ -37,6 +37,11 @@ export function useSwapNavigationHelper({ navigation }: { navigation: Navigation
           canGoBack = false;
         }
 
+        if (urlFromEvent.includes("quotes")) {
+          page = SwapWebviewAllowedPageNames.QuotesList;
+          canGoBack = true;
+        }
+
         navigation.setParams({ swapNavigationParams: { tab: tabParam, page: page, canGoBack } });
       }
     },

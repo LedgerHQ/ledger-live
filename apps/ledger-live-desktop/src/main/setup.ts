@@ -30,7 +30,7 @@ ipcMain.on("updater", (e, type) => {
 });
 
 /**
- * Saves logs from the renderer process and logs recorded from the internal process to a file.
+ * Saves logs from the renderer process to a file.
  */
 ipcMain.handle(
   "save-logs",
@@ -84,7 +84,7 @@ ipcMain.handle(
         await fs.writeFile(path.filePath, csv);
         return true;
       }
-    } catch (error) {
+    } catch {
       // ignore
     }
     return false;
@@ -125,7 +125,7 @@ ipcMain.handle("load-lss-config", async (): Promise<string | undefined | null> =
       log("satstack", `loaded lss.json file with length ${contents.length}`);
       return contents;
     }
-  } catch (e) {
+  } catch {
     log("satstack", "tried to load lss.json");
   }
   return undefined;

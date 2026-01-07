@@ -368,6 +368,7 @@ export const MintExtensions = array(
     GroupMemberPointerExt,
     TokenGroupExt,
     TokenGroupMemberExt,
+    UnknownExt,
   ]),
 );
 

@@ -1,11 +1,10 @@
 module.exports = {
   transform: {
     "^.+\\.(ts|tsx)?$": [
-      "ts-jest",
+      "@swc/jest",
       {
-        tsconfig: "tsconfig.json",
-        globals: {
-          isolatedModules: true,
+        jsc: {
+          target: "esnext",
         },
       },
     ],

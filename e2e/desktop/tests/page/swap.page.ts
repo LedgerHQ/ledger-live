@@ -1,15 +1,14 @@
 import { AppPage } from "./abstractClasses";
-import { waitFor } from "../utils/waitFor";
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 import { ElectronApplication, expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import fs from "fs/promises";
+import { mkdir, readFile, rename } from "fs/promises";
 import * as path from "path";
-import { FileUtils } from "../utils/fileUtils";
+import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 
 export class SwapPage extends AppPage {
@@ -22,15 +21,15 @@ export class SwapPage extends AppPage {
   private specificQuoteCardProviderName = (provider: string) =>
     `compact-quote-card-provider-name-${provider}`;
   private numberOfQuotes = "number-of-quotes";
-  private destinationCurrencyDropdown = this.page.getByTestId("destination-currency-dropdown");
-  private destinationCurrencyAmount = this.page.getByTestId("destination-currency-amount");
-  private feesValue = this.page.getByTestId("fees-value");
   private switchButton = "to-account-switch-accounts";
   private swapMaxToggle = "from-account-max-toggle";
   private quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
-
-  // Exchange Button Component
-  private exchangeButton = this.page.getByTestId("exchange-button");
+  private quotesCountdown = "quotes-countdown";
+  private networkFeesInfoIcon = "quoteCardTestId-networkFees-infoIcon";
+  private rateInfoIcon = "QuoteCard-rate-infoIcon";
+  private swapBtn = "execute-button";
+  private executeSwapBtn = "execute-swap-button-step-approval";
+  private continueBtn = this.page.locator("#sign-summary-continue-button");
 
   // Exchange Drawer Components
   readonly swapId = this.page.getByTestId("swap-id");
@@ -68,12 +67,26 @@ export class SwapPage extends AppPage {
   @step("Get provider list")
   async getProviderList(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
-    await expect(webview.getByTestId("number-of-quotes")).toBeVisible();
-    await expect(webview.getByTestId("quotes-countdown")).toBeVisible();
+    await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
+    await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
 
     return await webview
       .locator(`[data-testid^='${this.quoteCardProviderName}']`)
       .allTextContents();
+  }
+
+  @step("Check elements presence on swap approval step")
+  async checkElementsPresenceOnSwapApprovalStep(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
+    await expect(webview.getByTestId(this.networkFeesInfoIcon)).toBeVisible();
+    await expect(webview.getByTestId(this.quoteInfosFeesSelector)).toBeVisible();
+    await expect(webview.getByTestId(this.rateInfoIcon)).toBeVisible();
+  }
+
+  @step("Click Continue button")
+  async clickContinueButton() {
+    await this.continueBtn.click();
   }
 
   @step("Check quotes container infos")
@@ -87,7 +100,10 @@ export class SwapPage extends AppPage {
     const provider = Provider.getNameByUiName(providerList[0]);
     const baseProviderLocator = `quote-container-${provider}-`;
 
-    await webview.getByTestId(baseProviderLocator + "amount-label").click();
+    await webview
+      .getByTestId(baseProviderLocator + "amount-label")
+      .first()
+      .click();
     await expect(webview.getByTestId(baseProviderLocator + "amount-label")).toBeVisible();
     await expect(webview.getByTestId(baseProviderLocator + "fiatAmount-label")).toBeVisible();
     await expect(webview.getByTestId(baseProviderLocator + "networkFees-heading")).toBeVisible();
@@ -116,7 +132,7 @@ export class SwapPage extends AppPage {
     await this.checkExchangeButton(electronApp, providerList[0]);
   }
 
-  @step("Select specific provider $0")
+  @step("Select specific provider")
   async selectSpecificProvider(provider: Provider, electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
 
@@ -142,7 +158,7 @@ export class SwapPage extends AppPage {
 
     const providersWithoutKYC = providersList.filter(providerName => {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
-      if (process.env.SPECULOS_DEVICE === Device.LNS) {
+      if (process.env.SPECULOS_DEVICE === Device.LNS.name) {
         return provider && !provider.kyc && provider.availableOnLns;
       }
       return provider && !provider.kyc;
@@ -243,80 +259,46 @@ export class SwapPage extends AppPage {
     expect(bestOffer?.quote).toMatch(quoteContainers[0]);
   }
 
-  @step("Wait for exchange to be available")
-  async waitForExchangeToBeAvailable() {
-    return waitFor(() => this.exchangeButton.isEnabled(), 250, 10000);
-  }
-
   @step("Check exchange button is visible and enabled")
   async checkExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
 
-    const buttonText = [
-      Provider.ONE_INCH.uiName,
-      Provider.VELORA.uiName,
-      Provider.MOONPAY.uiName,
-    ].includes(provider)
-      ? `Continue with ${provider}`
-      : `Swap with ${provider}`;
-
-    const buttonLocator = webview.getByRole("button", { name: buttonText });
+    const buttonLocator = webview.getByRole("button", { name: new RegExp(provider, "i") });
     await expect(buttonLocator).toBeVisible();
     await expect(buttonLocator).toBeEnabled();
   }
 
   @step("Click Exchange button")
-  async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
+  async clickExchangeButton(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
-    const swapButton = webview.getByRole("button", { name: `Swap with ${provider}` });
+    const swapButton = webview.getByTestId(this.swapBtn);
     await expect(swapButton).toBeVisible();
     await expect(swapButton).toBeEnabled();
     await swapButton.click();
   }
 
+  @step("Click Execute Swap button")
+  async clickExecuteSwapButton(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    const executeSwapButton = webview.getByTestId(this.executeSwapBtn);
+    await expect(executeSwapButton).toBeVisible();
+    await expect(executeSwapButton).toBeEnabled();
+    await executeSwapButton.click();
+  }
+
   @step("Go to provider live app")
   async goToProviderLiveApp(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
-    const continueButton = webview.getByRole("button", { name: `Continue with ${provider}` });
+    const continueButton = webview.getByRole("button", { name: new RegExp(provider, "i") });
     await expect(continueButton).toBeVisible();
     await expect(continueButton).toBeEnabled();
     await continueButton.click();
-  }
-
-  @step("Select currency to swap to: $0")
-  async selectCurrencyToSwapTo(currencyToSwapTo: string) {
-    await this.waitForPageDomContentLoadedState();
-    await expect(this.destinationCurrencyDropdown).toBeEnabled();
-    await this.destinationCurrencyDropdown.click();
-    await this.page.keyboard.type(currencyToSwapTo);
-    await this.dropdownOptions.locator(this.optionWithText(currencyToSwapTo)).first().click();
-    const selectedCurrencyTo = this.destinationCurrencyDropdown.locator(this.dropdownSelectedValue);
-    await expect(selectedCurrencyTo).toHaveText(currencyToSwapTo);
-  }
-
-  @step("Retrieve destination currency amount value")
-  async getDestinationCurrencyAmountValue() {
-    return await this.destinationCurrencyAmount.inputValue();
   }
 
   @step("Retrieve send currency amount value")
   async getAmountToSend(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
     return await webview.getByTestId(this.fromAccountAmountInput).inputValue();
-  }
-
-  @step("Retrieve fees amount value")
-  async getFeesValue() {
-    const text = await this.feesValue.textContent();
-    return text ? text?.split(" ")[0] : "";
-  }
-
-  @step("Select currency to swap from")
-  async selectAssetFrom(electronApp: ElectronApplication, accountToSwapFrom: Account) {
-    const [, webview] = electronApp.windows();
-    await webview.getByTestId(this.fromAccountCoinSelector).click();
-    const networkName = accountToSwapFrom.parentAccount?.currency.name;
-    await this.chooseAssetDrawer.chooseFromAsset(accountToSwapFrom.currency.name, networkName);
   }
 
   @step("Check currency to swap from is $0")
@@ -338,8 +320,8 @@ export class SwapPage extends AppPage {
     await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(asset);
   }
 
-  @step("Check if asset is already selected")
-  async checkIfAssetIsAlreadySelected(
+  @step("Check if $0 asset is already selected")
+  async checkIfFromAssetIsAlreadySelected(
     asset: string,
     electronApp: ElectronApplication,
   ): Promise<boolean> {
@@ -355,10 +337,32 @@ export class SwapPage extends AppPage {
     return text?.includes(asset) ?? false;
   }
 
+  @step("Check if $0 asset is already selected")
+  async checkIfToAssetIsAlreadySelected(
+    asset: string,
+    electronApp: ElectronApplication,
+  ): Promise<boolean> {
+    const [, webview] = electronApp.windows();
+    const selector = webview.getByTestId(this.toAccountCoinSelector);
+
+    const text = await selector.textContent();
+    return text?.includes(asset) ?? false;
+  }
+
   @step("Fill in amount: $1")
   async fillInOriginCurrencyAmount(electronApp: ElectronApplication, amount: string) {
     const [, webview] = electronApp.windows();
-    await webview.getByTestId(this.fromAccountAmountInput).fill(amount);
+
+    const amountInput = webview.getByTestId(this.fromAccountAmountInput);
+
+    // Wait for input to be fully interactive after dialog closes
+    await expect(amountInput).toBeVisible();
+    await expect(amountInput).toBeEnabled();
+
+    // Click to focus the input before filling
+    await amountInput.click();
+    await amountInput.fill(amount);
+
     //wait for potential origin amount error to be loaded
     await this.page.waitForTimeout(500);
   }
@@ -370,8 +374,15 @@ export class SwapPage extends AppPage {
     await this.chooseAssetDrawer.chooseFromAsset(currency);
   }
 
+  @step("Select currency to swap from: $1")
+  async selectAssetFrom(electronApp: ElectronApplication, currency: string) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.fromAccountCoinSelector).click();
+    await this.chooseAssetDrawer.chooseFromAsset(currency);
+  }
+
   @step("Choose from asset $0")
-  async chooseFromAsset(currency: string, networkName?: string) {
+  async selectAsset(currency: string, networkName?: string) {
     await this.chooseAssetDrawer.chooseFromAsset(currency, networkName);
   }
 
@@ -516,20 +527,20 @@ export class SwapPage extends AppPage {
   async clickExportOperations() {
     await this.exportOperationsButton.click();
 
-    const originalFilePath = path.resolve("./ledgerlive-swap-history.csv");
-    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerlive-swap-history.csv");
+    const originalFilePath = path.resolve("./ledgerwallet-swap-history.csv");
+    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerwallet-swap-history.csv");
 
     const fileExists = await FileUtils.waitForFileToExist(originalFilePath, 5000);
     expect(fileExists).toBeTruthy();
     const targetDir = path.dirname(targetFilePath);
-    await fs.mkdir(targetDir, { recursive: true });
-    await fs.rename(originalFilePath, targetFilePath);
+    await mkdir(targetDir, { recursive: true });
+    await rename(originalFilePath, targetFilePath);
   }
 
   @step("Check contents of exported operations file")
   async checkExportedFileContents(swap: Swap, provider: Provider, id: string) {
-    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerlive-swap-history.csv");
-    const fileContents = await fs.readFile(targetFilePath, "utf-8");
+    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerwallet-swap-history.csv");
+    const fileContents = await readFile(targetFilePath, "utf-8");
 
     expect(fileContents).toContain(provider.name);
     expect(fileContents).toContain(id);
@@ -543,8 +554,8 @@ export class SwapPage extends AppPage {
   }
 
   async getMinimumAmount(accountFrom: Account, accountTo: Account) {
-    const amount = (await getMinimumSwapAmount(accountFrom, accountTo))?.toFixed(6) ?? "";
-    return amount ? parseFloat(amount).toString() : "";
+    const amount = await getMinimumSwapAmount(accountFrom, accountTo);
+    return amount ? Number.parseFloat(amount.toFixed(6)).toString() : "";
   }
 
   @step("Click on swap max")

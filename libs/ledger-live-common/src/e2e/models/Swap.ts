@@ -27,4 +27,12 @@ export class Swap extends Transaction {
   public get getAmount(): string {
     return this.amount;
   }
+
+  public get getAccountToDebit(): Account {
+    return this.accountToDebit;
+  }
+
+  public get getAccountToCredit(): Account {
+    return this.accountToCredit;
+  }
 }

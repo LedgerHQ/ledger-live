@@ -714,7 +714,7 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
     const serializedReport: MinimalSerializedReport = {
       results: results.map(convertSpecReport),
       environment: BOT_ENVIRONMENT,
-      seedHash: sha256(getEnv("SEED")),
+      seedHash: sha256(getEnv("SEED")).toString("hex"),
     };
 
     await Promise.all([

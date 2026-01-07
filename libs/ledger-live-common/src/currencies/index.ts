@@ -11,16 +11,7 @@ export {
   findCryptoCurrencyByScheme,
   findCryptoCurrencyByKeyword,
   findCryptoCurrencyByTicker,
-  listTokens,
-  listTokensForCryptoCurrency,
-  listTokenTypesForCryptoCurrency,
-  findTokenByTicker,
-  findTokenById,
-  findTokenByAddress,
-  hasTokenId,
   getAbandonSeedAddress,
-  getTokenById,
-  addTokens,
 } from "@ledgerhq/cryptoassets";
 export {
   encodeURIScheme,

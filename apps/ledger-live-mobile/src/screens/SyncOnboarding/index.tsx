@@ -14,11 +14,17 @@ import DesyncDrawer from "./DesyncDrawer";
 import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";
 import { PlainOverlay } from "./DesyncOverlay";
 import { track } from "~/analytics";
-import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
 import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
-import { useIsFocused } from "@react-navigation/core";
+import { useIsFocused, useNavigation } from "@react-navigation/core";
+import { TwoStepSyncOnboardingCompanion } from "./TwoStepStepper/TwoStepSyncOnboardingCompanion";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { NavigatorName, ScreenName } from "~/const";
+import { RootNavigation } from "~/components/RootNavigator/types/helpers";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { useSelector } from "~/context/hooks";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -31,6 +37,9 @@ const DESYNC_TIMEOUT_MS = 20000;
  * - know which steps it should display
  */
 export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps) => {
+  const rootNavigation = useNavigation<RootNavigation>();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+
   const { device } = route.params;
   const [currentStep, setCurrentStep] = useState<"loading" | "early-security-check" | "companion">(
     "loading",
@@ -59,6 +68,8 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
 
   const isFocused = useIsFocused();
 
+  const isSyncIncr1Enabled = useFeature("llmSyncOnboardingIncr1")?.enabled || false;
+
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
   // Depending on the current step, the close button triggers different paths
@@ -66,9 +77,40 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     if (currentStep === "early-security-check") {
       setIsESCMandatoryDrawerOpen(true);
     } else {
-      navigation.popToTop();
+      if (hasCompletedOnboarding) {
+        navigation.popToTop();
+      } else {
+        rootNavigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: NavigatorName.BaseOnboarding,
+              state: {
+                routes: [
+                  {
+                    name: NavigatorName.Onboarding,
+                    state: {
+                      routes: [
+                        {
+                          name: ScreenName.OnboardingWelcome,
+                        },
+                        {
+                          name: ScreenName.OnboardingPostWelcomeSelection,
+                        },
+                        {
+                          name: ScreenName.OnboardingDeviceSelection,
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        });
+      }
     }
-  }, [currentStep, navigation]);
+  }, [currentStep, rootNavigation, navigation, hasCompletedOnboarding]);
 
   // Updates dynamically the screen header to handle a possible overlay
   useEffect(() => {
@@ -77,15 +119,22 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       header: () => (
         <>
           <SafeAreaView edges={["top", "left", "right"]}>
-            <Flex my={5} flexDirection="row" justifyContent="flex-end" alignItems="center">
-              <NavigationHeaderCloseButton onPress={onCloseButtonPress} />
+            <Flex my={5} pl={5} flexDirection="row" justifyContent="flex-start" alignItems="center">
+              <NavigationHeaderBackButton onPress={onCloseButtonPress} />
             </Flex>
           </SafeAreaView>
           <PlainOverlay isOpen={isHeaderOverlayOpen} delay={headerOverlayDelayMs} />
         </>
       ),
     });
-  }, [device, navigation, isHeaderOverlayOpen, headerOverlayDelayMs, onCloseButtonPress]);
+  }, [
+    device,
+    navigation,
+    isHeaderOverlayOpen,
+    headerOverlayDelayMs,
+    onCloseButtonPress,
+    isSyncIncr1Enabled,
+  ]);
 
   const {
     onboardingState,
@@ -96,11 +145,12 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   } = useOnboardingStatePolling({
     device,
     pollingPeriodMs: POLLING_PERIOD_MS,
-    stopPolling: !isPollingOn,
+    stopPolling: !isPollingOn || !isFocused,
   });
 
   const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
     deviceId: device.deviceId,
+    deviceName: device.deviceName ?? null,
     toggleType: toggleOnboardingEarlyCheckType,
   });
 
@@ -283,7 +333,16 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       />
     );
   } else if (currentStep === "companion") {
-    stepContent = (
+    stepContent = isSyncIncr1Enabled ? (
+      <TwoStepSyncOnboardingCompanion
+        navigation={navigation}
+        device={device}
+        notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
+        onLostDevice={onLostDevice}
+        onShouldHeaderBeOverlaid={setIsHeaderOverlayOpen}
+        updateHeaderOverlayDelay={setHeaderOverlayDelayMs}
+      />
+    ) : (
       <SyncOnboardingCompanion
         navigation={navigation}
         device={device}

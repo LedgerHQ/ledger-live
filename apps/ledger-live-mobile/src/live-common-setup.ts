@@ -1,6 +1,6 @@
 import Config from "react-native-config";
 import { listen } from "@ledgerhq/logs";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv, getEnv } from "@ledgerhq/live-env";
 import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
@@ -15,6 +15,7 @@ import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTr
 import { prepareCurrency } from "./bridge/cache";
 import "./experimental";
 import logger, { ConsoleLogger } from "./logger";
+import BigNumber from "bignumber.js";
 
 const consoleLogger = ConsoleLogger.getLogger();
 listen(log => {
@@ -41,6 +42,9 @@ setSupportedCurrencies([
   "ethereum",
   "bsc",
   "polkadot",
+  "westend",
+  "assethub_westend",
+  "assethub_polkadot",
   "solana",
   "solana_testnet",
   "solana_devnet",
@@ -67,14 +71,17 @@ setSupportedCurrencies([
   "komodo",
   "zencash",
   "bitcoin_testnet",
+  "bitcoin_regtest",
   "ethereum_sepolia",
   "ethereum_holesky",
+  "ethereum_hoodi",
   "elrond", // NOTE: legacy 'multiversx' name, kept for compatibility
   "hedera",
   "cardano",
   "osmosis",
   "filecoin",
   "fantom",
+  "core",
   "cronos",
   "moonbeam",
   "songbird",
@@ -104,7 +111,7 @@ setSupportedCurrencies([
   "base_sepolia",
   "stacks",
   "telos_evm",
-  "sei_network_evm",
+  "sei_evm",
   "berachain",
   "hyperevm",
   "coreum",
@@ -134,7 +141,14 @@ setSupportedCurrencies([
   "babylon",
   "canton_network",
   "canton_network_devnet",
-  "canton_network_localnet",
+  "canton_network_testnet",
+  "kaspa",
+  "monad",
+  "monad_testnet",
+  "somnia",
+  "zero_gravity",
+  "concordium",
+  "concordium_testnet",
 ]);
 
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
@@ -156,3 +170,5 @@ process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
 setSecp256k1Instance(require("./logic/secp256k1"));
 
 prepareCurrency(getCryptoCurrencyById("ethereum"));
+
+BigNumber.set({ DECIMAL_PLACES: getEnv("BIG_NUMBER_DECIMAL_PLACES") });

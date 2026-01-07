@@ -1,3 +1,5 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Addresses } from "@ledgerhq/live-common/lib/e2e/enum/Addresses";
 import { runSwapWithDifferentSeedTest } from "./swap.other";
 
 const swapTestConfig = {
@@ -5,13 +7,17 @@ const swapTestConfig = {
   tmsLinks: ["B2CQA-3090"],
   userData: "speculos-x-other-account",
   errorMessage: null,
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  addressFrom: Addresses.BTC_NATIVE_SEGWIT_1,
+  addressTo: Addresses.ETH_OTHER_SEED,
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runSwapWithDifferentSeedTest(
   swapTestConfig.swap,
   swapTestConfig.userData,
   swapTestConfig.errorMessage,
+  swapTestConfig.addressFrom,
+  swapTestConfig.addressTo,
   swapTestConfig.tmsLinks,
   swapTestConfig.tags,
 );

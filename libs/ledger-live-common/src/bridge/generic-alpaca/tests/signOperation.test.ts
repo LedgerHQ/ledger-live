@@ -14,7 +14,7 @@ jest.mock("../utils", () => ({
   transactionToIntent: jest.fn(),
 }));
 describe("genericSignOperation", () => {
-  const networks = ["xrp", "stellar"];
+  const networks = ["xrp", "stellar", "tezos"];
   const kind = "local";
 
   const mockSignerContext = jest.fn();
@@ -23,15 +23,14 @@ describe("genericSignOperation", () => {
     signTransaction: jest.fn(),
   };
 
-  const account = {
-    freshAddressPath: "44'/144'/0'/0/0",
-    address: "rTestAddress",
-  } as any;
-
   const transaction = {
     amount: 100_000n,
     fees: 500n,
     tag: 1234,
+    recipientDomain: {
+      domain: "recipient.gen",
+      address: "recipient-address",
+    },
   } as any;
 
   const deviceId = "mockDevice";
@@ -43,7 +42,7 @@ describe("genericSignOperation", () => {
     },
   };
 
-  const unsignedTx = "unsignedTx";
+  const unsignedTx = { transaction: "unsignedTx" };
   const signedTx = "signedTx";
   const pubKey = "pubKey";
 
@@ -54,7 +53,7 @@ describe("genericSignOperation", () => {
       craftTransaction: jest.fn().mockResolvedValue(unsignedTx),
       getAccountInfo: jest.fn().mockResolvedValue(pubKey),
       combine: jest.fn().mockResolvedValue(signedTx),
-      getSequence: jest.fn().mockResolvedValue(1),
+      getSequence: jest.fn().mockResolvedValue(1n),
     });
 
     (transactionToIntent as jest.Mock).mockReturnValue(txIntent);
@@ -66,6 +65,12 @@ describe("genericSignOperation", () => {
   });
 
   networks.forEach(network => {
+    const account = {
+      freshAddressPath: "44'/144'/0'/0/0",
+      address: "rTestAddress",
+      currency: { id: network },
+    } as any;
+
     it(`emits full sign operation flow for ${network}`, async () => {
       const signOperation = genericSignOperation(network, kind)(mockSignerContext);
       const observable = signOperation({ account, transaction, deviceId });
@@ -82,7 +87,11 @@ describe("genericSignOperation", () => {
         },
       });
 
-      expect(transactionToIntent).toHaveBeenCalledWith(account, transaction);
+      expect(transactionToIntent).toHaveBeenCalledWith(account, transaction, undefined);
+      expect(mockSigner.signTransaction).toHaveBeenCalledWith("44'/144'/0'/0/0", "unsignedTx", {
+        domain: "recipient.gen",
+        address: "recipient-address",
+      });
       expect(txIntent.memo.memos.get("destinationTag")).toBe("1234");
     });
 

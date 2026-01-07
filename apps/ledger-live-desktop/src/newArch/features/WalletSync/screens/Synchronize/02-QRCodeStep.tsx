@@ -30,7 +30,6 @@ export default function SynchWithQRCodeStep({ sourcePage }: { sourcePage?: Analy
   const [currentOption, setCurrentOption] = useState<Options>(Options.MOBILE);
 
   const { startQRCodeProcessing, url, error, isLoading } = useQRCode({ sourcePage });
-  console.log("url", url);
   useEffect(() => {
     startQRCodeProcessing();
 

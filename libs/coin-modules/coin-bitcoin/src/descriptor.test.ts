@@ -6,18 +6,28 @@ import { inferDescriptorFromDeviceInfo, inferDescriptorFromAccount } from "./des
 import bitcoinDatasets from "./datasets/bitcoin";
 import { assignFromAccountRaw } from "./serialization";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStore({} as CryptoAssetsStore);
+setCryptoAssetsStore({
+  findTokenById: () => Promise.resolve(undefined),
+  findTokenByAddressInCurrency: () => Promise.resolve(undefined),
+  getTokensSyncHash: () => Promise.resolve("0"),
+} as CryptoAssetsStore);
 
 setSupportedCurrencies(["bitcoin"]);
 describe("inferDescriptorFromAccount", () => {
   invariant(bitcoinDatasets.accounts, "bitcoin datasets have accounts");
-  // FIXME: migrate away from invariant for more type guard
-  const [bitcoin1, bitcoin2] = bitcoinDatasets.accounts.map(a =>
-    fromAccountRaw(a.raw, { assignFromAccountRaw }),
-  );
+
+  let bitcoin1: any, bitcoin2: any;
+
+  beforeAll(async () => {
+    invariant(bitcoinDatasets.accounts, "bitcoin datasets have accounts in beforeAll");
+    [bitcoin1, bitcoin2] = await Promise.all(
+      bitcoinDatasets.accounts.map(a => fromAccountRaw(a.raw, { assignFromAccountRaw })),
+    );
+  });
+
   it("should work on bitcoin account 1", () => {
     expect(inferDescriptorFromAccount(bitcoin1)).toEqual({
       external:

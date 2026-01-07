@@ -1,13 +1,11 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { getMainAccount, getReceiveFlowError } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import SelectDevice2 from "~/components/SelectDevice2";
 import DeviceActionModal from "~/components/DeviceActionModal";
@@ -20,17 +18,18 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { ScreenName } from "~/const";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import Button from "~/components/wrappedUi/Button";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.VerifyAccount>
 >;
 
-const edges = ["left", "right"] as const;
+const edges = ["left", "right", "bottom"] as const;
 
 export default function VerifyAccount({ navigation, route }: NavigationProps) {
   const action = useAppDeviceAction();
   const { colors } = useTheme();
-  const { parentAccount } = useSelector(accountScreenSelector(route));
+  const { parentAccount } = useAccountScreen(route);
   const [device, setDevice] = useState<Device | null | undefined>();
   const [skipDevice, setSkipDevice] = useState(false);
 

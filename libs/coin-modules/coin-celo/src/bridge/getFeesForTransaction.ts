@@ -8,7 +8,6 @@ import {
   CELO_STABLE_TOKENS,
   getStableTokenEnum,
   MAX_FEES_THRESHOLD_MULTIPLIER,
-  MAX_PRIORITY_FEE_PER_GAS,
 } from "../constants";
 
 const getFeesForTransaction = async ({
@@ -38,6 +37,7 @@ const getFeesForTransaction = async ({
 
   const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
   const isTokenTransaction = tokenAccount?.type === "TokenAccount";
+  const maxPriorityFeePerGas = await kit.connection.getMaxPriorityFeePerGas();
 
   if ((transaction.mode === "unlock" || transaction.mode === "vote") && account.celoResources) {
     value = transaction.useAllAmount
@@ -111,8 +111,8 @@ const getFeesForTransaction = async ({
     value = transaction.useAllAmount ? tokenAccount.balance : transaction.amount;
 
     const block = await kit.connection.web3.eth.getBlock("latest");
-    const baseFee = BigInt(block.baseFeePerGas || MAX_PRIORITY_FEE_PER_GAS);
-    const maxFeePerGas = baseFee + MAX_PRIORITY_FEE_PER_GAS;
+    const baseFee = BigInt(block.baseFeePerGas || maxPriorityFeePerGas);
+    const maxFeePerGas = baseFee + BigInt(maxPriorityFeePerGas);
 
     let token;
     if (CELO_STABLE_TOKENS.includes(tokenAccount.token.id)) {
@@ -126,7 +126,7 @@ const getFeesForTransaction = async ({
       to: transaction.recipient,
       data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
       maxFeePerGas: maxFeePerGas.toString(),
-      maxPriorityFeePerGas: await kit.connection.getMaxPriorityFeePerGas(),
+      maxPriorityFeePerGas,
       value: value.toFixed(),
     };
 
@@ -142,8 +142,14 @@ const getFeesForTransaction = async ({
     gas = tx.gas ? Number(tx.gas) : 0;
   }
 
-  const gasPrice = new BigNumber(await kit.connection.gasPrice());
-  return gasPrice.times(gas);
+  // TODO: Should implement more clear logic for all flows
+  // current FIX is to align with node_modules/.pnpm/@celo+connect@7.0.0/node_modules/@celo/connect/lib/connection.js : setFeeMarketGas
+  const gasPrice = await kit.connection.gasPrice();
+  const maxFeePerGas =
+    ((BigInt(gasPrice) - BigInt(maxPriorityFeePerGas)) * BigInt(120)) / BigInt(100) +
+    BigInt(maxPriorityFeePerGas);
+  const maxFeePerGasNumber = new BigNumber(maxFeePerGas.toString());
+  return maxFeePerGasNumber.times(gas);
 };
 
 export default getFeesForTransaction;

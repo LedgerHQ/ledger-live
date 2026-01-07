@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
@@ -18,7 +18,10 @@ import { StackNavigatorProps } from "./types/helpers";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
-import ModularDrawerNavigator from "LLM/features/ModularDrawer/ModularDrawerNavigator";
+import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
+import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
+import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
+import AccountSettingsNavigator from "./AccountSettingsNavigator";
 
 const hitSlop = {
   bottom: 10,
@@ -58,7 +61,10 @@ export const ErrorHeaderInfo = ({ route, navigation }: ErrorHeaderInfoNavigatorP
 export default function BaseOnboardingNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true, undefined, true),
+    [colors],
+  );
   return (
     <Stack.Navigator
       screenOptions={{
@@ -75,6 +81,29 @@ export default function BaseOnboardingNavigator() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name={NavigatorName.ReceiveFunds}
+        component={ReceiveFundsNavigator}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={NavigatorName.AccountSettings}
+        component={AccountSettingsNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={NavigatorName.AddAccounts}
+        component={AddAccountsV2Navigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={NavigatorName.DeviceSelection}
+        component={DeviceSelectionNavigator}
+        options={{ headerShown: false }}
+      />
+
       <Stack.Screen
         name={ScreenName.PairDevices}
         component={PairDevices}
@@ -104,12 +133,7 @@ export default function BaseOnboardingNavigator() {
         component={WalletSyncNavigator}
         options={{ headerShown: false, gestureEnabled: false }}
       />
-      <Stack.Screen
-        name={NavigatorName.ModularDrawer}
-        component={ModularDrawerNavigator}
-        options={{ headerShown: false, gestureEnabled: false }}
-      />
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator<BaseOnboardingNavigatorParamList>();
+const Stack = createNativeStackNavigator<BaseOnboardingNavigatorParamList>();

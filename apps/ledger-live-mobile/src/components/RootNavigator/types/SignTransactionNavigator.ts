@@ -1,5 +1,5 @@
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
+import type { GasOptions, Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import type {
   CardanoAccount,
   Transaction as CardanoTransaction,
@@ -29,6 +29,10 @@ import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/fa
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
+import type {
+  Transaction as KaspaTransaction,
+  TransactionStatus as KaspaTransactionStatus,
+} from "@ledgerhq/live-common/families/kaspa/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -152,6 +156,37 @@ export type SignTransactionNavigatorParamList = {
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.KaspaEditCustomFees]: {
+    accountId: string;
+    parentId?: string;
+    transaction: KaspaTransaction;
+    status?: KaspaTransactionStatus;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+    sompiPerByte?: BigNumber | null;
+    setSompiPerByte?: (_: BigNumber) => void;
+  };
+  [ScreenName.StellarEditMemoValue]: {
+    accountId: string;
+    parentId?: string;
+    account: Account;
+    transaction: StellarTransaction;
+    memoType?: string;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
       | ScreenName.SwapForm;
   };
   [ScreenName.StellarEditCustomFees]: {

@@ -11,6 +11,7 @@ import type { IgnoredOSUpdates } from "@ledgerhq/types-live";
 export type UseGetLatestAvailableFirmwareArgs = {
   getLatestAvailableFirmwareAction?: typeof defaultGetLatestAvailableFirmwareAction;
   deviceId: string;
+  deviceName: string | null;
   isHookEnabled?: boolean;
   ignoredOSUpdates?: IgnoredOSUpdates;
 };
@@ -32,6 +33,7 @@ export type UseGetLatestAvailableFirmwareArgs = {
 export const useGetLatestAvailableFirmware = ({
   getLatestAvailableFirmwareAction = defaultGetLatestAvailableFirmwareAction,
   deviceId,
+  deviceName,
   isHookEnabled = true,
   ignoredOSUpdates,
 }: UseGetLatestAvailableFirmwareArgs): {
@@ -50,6 +52,7 @@ export const useGetLatestAvailableFirmware = ({
 
     const subscription = getLatestAvailableFirmwareAction({
       deviceId,
+      deviceName,
     }).subscribe({
       next: newValue => {
         const filteredValue = filterIgnoredFirmwareUpdates(newValue, ignoredOSUpdates);

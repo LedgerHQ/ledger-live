@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import upperFirst from "lodash/upperFirst";
 import { setLocale } from "~/renderer/actions/settings";
 import { languageSelector, localeSelector } from "~/renderer/reducers/settings";
@@ -72,7 +72,7 @@ const RegionSelectComponent: React.FC = () => {
         small
         minWidth={260}
         onChange={avoidEmptyValue}
-        renderSelected={(item: { label: string }) => item && item.label}
+        renderValue={({ data }) => data?.label}
         value={currentRegionOption}
         options={regionsOptions}
       />

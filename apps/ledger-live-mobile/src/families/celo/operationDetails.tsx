@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { BigNumber } from "bignumber.js";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { OperationType } from "@ledgerhq/types-live";
@@ -15,7 +15,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   operation: CeloOperation;
@@ -63,7 +63,7 @@ const OperationDetailsExtra = ({ operation, type, account }: Props) => {
     alwaysShowSign: false,
     showCode: true,
     discreet,
-    locale: locale,
+    locale,
   });
 
   switch (type) {

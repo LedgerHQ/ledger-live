@@ -2,7 +2,7 @@ import React, { ReactNode, useCallback, useState } from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/core";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import styled from "styled-components/native";
 import { setHasOrderedNano, setOnboardingHasDevice } from "~/actions/settings";
 import { ScreenName } from "~/const";
@@ -124,6 +124,8 @@ type HeaderProps = {
 };
 
 const StyledHeader = styled(Flex)`
+  position: relative;
+  overflow: hidden;
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
   padding: ${p => p.theme.space[6]}px;
@@ -132,9 +134,9 @@ const StyledHeader = styled(Flex)`
 
 const StyledImageContainer = styled(Flex)`
   transform: rotate(-20deg);
-  position: static;
-  top: -100px;
-  left: -50px;
+  position: absolute;
+  top: -130px;
+  left: -130px;
   align-items: center;
   justify-content: center;
 `;

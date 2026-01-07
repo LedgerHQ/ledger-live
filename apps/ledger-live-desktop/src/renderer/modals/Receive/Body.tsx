@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { TFunction } from "i18next";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
@@ -19,21 +20,31 @@ import StepConnectDevice, { StepConnectDeviceFooter } from "./steps/StepConnectD
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import StepReceiveFunds from "./steps/StepReceiveFunds";
 import StepReceiveStakingFlow, { StepReceiveStakingFooter } from "./steps/StepReceiveStakingFlow";
+import StepOptions from "./steps/StepOptions";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import { getReceiveFlowError } from "@ledgerhq/live-common/account/index";
+import {
+  onboardingReceiveFlowSelector,
+  setIsOnboardingReceiveFlow,
+} from "~/renderer/reducers/onboarding";
 
-export type StepId = "warning" | "account" | "device" | "receive" | "stakingFlow";
+export type StepId =
+  | "warning"
+  | "account"
+  | "device"
+  | "receive"
+  | "stakingFlow"
+  | "receiveOptions";
 
 export type Data = {
   account?: AccountLike | undefined | null;
   parentAccount?: Account | undefined | null;
   startWithWarning?: boolean;
   receiveTokenMode?: boolean;
-  receiveNFTMode?: boolean;
-  receiveOrdinalMode?: boolean;
   eventType?: string;
   isFromPostOnboardingEntryPoint?: boolean;
+  shouldUseReceiveOptions?: boolean;
 };
 
 export type OwnProps = {
@@ -61,8 +72,6 @@ export type StepProps = {
   parentAccount: Account | undefined | null;
   token: TokenCurrency | undefined | null;
   receiveTokenMode: boolean;
-  receiveNFTMode: boolean;
-  receiveOrdinalMode: boolean;
   closeModal: () => void;
   isAddressVerified: boolean | undefined | null;
   verifyAddressError: Error | undefined | null;
@@ -79,6 +88,11 @@ export type StepProps = {
 };
 export type St = Step<StepId, StepProps>;
 const createSteps = (): Array<St> => [
+  {
+    id: "receiveOptions",
+    excludeFromBreadcrumb: true,
+    component: StepOptions,
+  },
   {
     id: "warning",
     excludeFromBreadcrumb: true,
@@ -137,6 +151,8 @@ const Body = ({
   const [hideBreadcrumb, setHideBreadcrumb] = useState<boolean | undefined>(false);
   const [title, setTitle] = useState("");
   const [accountError, setAccountError] = useState<Error | undefined>(undefined);
+  const dispatch = useDispatch();
+  const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
   const currency = getAccountCurrency(account);
   const currencyName = currency ? currency.name : undefined;
   const computeAccountError = useCallback(
@@ -169,8 +185,16 @@ const Body = ({
     [setParentAccount, setAccount, computeAccountError],
   );
   const handleCloseModal = useCallback(() => {
+    if (isOnboardingReceiveFlow) {
+      dispatch(
+        setIsOnboardingReceiveFlow({
+          isFlow: false,
+          isSuccess: !!isAddressVerified,
+        }),
+      );
+    }
     closeModal("MODAL_RECEIVE");
-  }, [closeModal]);
+  }, [closeModal, dispatch, isOnboardingReceiveFlow, isAddressVerified]);
 
   const handleStepChange = useCallback(
     (e: Step<StepId, StepProps>) => onChangeStepId(e.id),
@@ -242,8 +266,6 @@ const Body = ({
     errorSteps,
     disabledSteps,
     receiveTokenMode: !!params.receiveTokenMode,
-    receiveNFTMode: !!params.receiveNFTMode,
-    receiveOrdinalMode: !!params.receiveOrdinalMode,
     hideBreadcrumb,
     token,
     isAddressVerified,

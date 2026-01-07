@@ -3,7 +3,7 @@ import { getFullnodeUrl } from "@mysten/sui/client";
 import coinConfig from "../config";
 import { estimateFees } from "./estimateFees";
 
-const SENDER = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+const SENDER = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
 const RECIPIENT = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
 
 describe("estimateFees", () => {
@@ -20,6 +20,7 @@ describe("estimateFees", () => {
 
   it("should estimate fees for native SUI transaction", async () => {
     const transactionIntent: TransactionIntent = {
+      intentType: "transaction",
       sender: SENDER,
       recipient: RECIPIENT,
       amount: BigInt(1000),
@@ -39,6 +40,7 @@ describe("estimateFees", () => {
       "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT";
 
     const transactionIntent: TransactionIntent = {
+      intentType: "transaction",
       sender: SENDER,
       recipient: RECIPIENT,
       amount: BigInt(1000),
@@ -58,6 +60,7 @@ describe("estimateFees", () => {
 
   it("should handle concurrent fee estimations", async () => {
     const transactionIntent: TransactionIntent = {
+      intentType: "transaction",
       sender: SENDER,
       recipient: RECIPIENT,
       amount: BigInt(1000),

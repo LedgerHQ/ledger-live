@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { setReportErrors } from "~/actions/settings";

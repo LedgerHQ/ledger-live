@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
@@ -35,12 +35,29 @@ const SectionGeneral = () => {
   const { shouldDisplayEntryPoint } = useEntryPoint(EntryPoint.settings);
   const mevLearnMoreLink = llMevProtectionFeatureFlag?.params?.link?.trim() || undefined;
   const { closeDrawer } = useActivationDrawer();
+  const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");
 
   return (
     <>
       <TrackPage category="Settings" name="Display" />
       <Body>
-        <LedgerSyncEntryPoint entryPoint={EntryPoint.settings} />
+        {!ledgerSyncOptimisationFlag?.enabled && (
+          <LedgerSyncEntryPoint entryPoint={EntryPoint.settings} />
+        )}
+        {!shouldDisplayEntryPoint ? (
+          <Row
+            title={t("settings.display.walletSync")}
+            desc={
+              ledgerSyncOptimisationFlag?.enabled
+                ? t("settings.display.walletSyncDescription")
+                : t("settings.display.walletSyncDesc")
+            }
+            dataTestId="setting-walletSync"
+            id="setting-walletSync"
+          >
+            <WalletSync />
+          </Row>
+        ) : null}
         <Row
           title={t("settings.display.counterValue")}
           desc={t("settings.display.counterValueDesc")}
@@ -68,15 +85,14 @@ const SectionGeneral = () => {
         >
           <ThemeSelect />
         </Row>
-
-        {!shouldDisplayEntryPoint ? (
+        {shouldDisplayEntryPoint && ledgerSyncOptimisationFlag?.enabled ? (
           <Row
             title={t("settings.display.walletSync")}
-            desc={t("settings.display.walletSyncDesc")}
+            desc={t("settings.display.walletSyncDescription")}
             dataTestId="setting-walletSync"
             id="setting-walletSync"
           >
-            <WalletSync />
+            <WalletSync variant="sync" />
           </Row>
         ) : null}
 

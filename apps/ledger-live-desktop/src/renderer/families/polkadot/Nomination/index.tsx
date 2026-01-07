@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import invariant from "invariant";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -118,15 +118,23 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
     };
   }, [unlockings, unlockedBalance]);
   const onEarnRewards = useCallback(() => {
-    history.push({
-      pathname: "/platform/stakekit",
-      state: {
-        yieldId: "polkadot-dot-validator-staking",
-        accountId: account.id,
-        returnTo: `/account/${account.id}`,
-      },
-    });
-  }, [account, history]);
+    if (["polkadot", "assethub_polkadot"].includes(account.currency.id)) {
+      history.push({
+        pathname: "/platform/stakekit",
+        state: {
+          yieldId: "polkadot-dot-validator-staking",
+          accountId: account.id,
+          returnTo: `/account/${account.id}`,
+        },
+      });
+    } else {
+      dispatch(
+        openModal("MODAL_POLKADOT_REWARDS_INFO", {
+          account,
+        }),
+      );
+    }
+  }, [account, dispatch, history]);
   const onNominate = useCallback(() => {
     dispatch(
       openModal("MODAL_POLKADOT_NOMINATE", {
@@ -285,7 +293,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
                 id={"account-nominate-button"}
                 mr={2}
                 disabled={!nominateEnabled}
-                color="palette.primary.main"
+                color="primary.c80"
                 small
                 onClick={onNominate}
               >
@@ -326,7 +334,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
                 maxWidth: "65%",
               }}
             >
-              <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+              <Text ff="Inter|Medium|SemiBold" color="neutral.c70" fontSize={4}>
                 <Trans
                   i18nKey="polkadot.nomination.emptyState.description"
                   values={{
@@ -401,7 +409,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
                 id={"account-rebond-button"}
                 disabled={electionOpen}
                 mr={2}
-                color="palette.primary.main"
+                color="primary.c80"
                 small
                 onClick={onRebond}
               >
@@ -431,7 +439,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
               <Button
                 id={"account-withdraw-button"}
                 disabled={!withdrawEnabled}
-                color="palette.primary.main"
+                color="primary.c80"
                 small
                 onClick={onWithdrawUnbonded}
               >

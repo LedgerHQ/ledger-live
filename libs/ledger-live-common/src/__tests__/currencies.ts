@@ -1,6 +1,5 @@
 import { BigNumber } from "bignumber.js";
 import {
-  listTokens,
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
   formatCurrencyUnit,
@@ -10,43 +9,6 @@ import {
   encodeURIScheme,
   sanitizeValueString,
 } from "../currencies";
-import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
-
-/*
-  skipped because ledgerjs data is now lighter (from the POV of hw-app-eth)
-  (using cryptoassets-evm-signatures instead of cryptoassets)
-*/
-test.skip("erc20 are all consistent with those on ledgerjs side", () => {
-  const normalList = listTokens();
-  const delistedList = listTokens({
-    withDelisted: true,
-  });
-  expect(delistedList.length).toBeGreaterThan(normalList.length);
-
-  for (const token of delistedList) {
-    if (token.delisted) {
-      expect(normalList.find(o => o.id === token.id)).toBeUndefined();
-    }
-
-    if (token.tokenType === "erc20") {
-      if (token.parentCurrency.family === "filecoin") {
-        continue;
-      }
-      const tokenData = byContractAddressAndChainId(
-        token.contractAddress,
-        token.parentCurrency.ethereumLikeInfo?.chainId || 0,
-      );
-
-      if (!tokenData) {
-        throw new Error(token.name + " not available in ledgerjs data");
-      }
-
-      expect(token.ticker.toLowerCase()).toBe(tokenData.ticker.toLowerCase());
-      expect(token.contractAddress.toLowerCase()).toBe(tokenData.contractAddress.toLowerCase());
-      expect(token.units[0].magnitude).toBe(tokenData.decimals);
-    }
-  }
-});
 
 test("can format a currency unit", () => {
   const btc = getCryptoCurrencyById("bitcoin").units[0];
@@ -319,6 +281,11 @@ test("decodeURIScheme", () => {
     address: "0x072b04a9b047C3c7a2A455FFF5264D785e6E55C9",
     amount: new BigNumber(0.0647).times(10 ** 18),
     gasPrice: new BigNumber(77000000000),
+  });
+  expect(
+    decodeURIScheme("ldg::1220691e945dc1b210f3b6be9fbad73efaf642bfb96022552f66c9e2b83b00cb20e8"),
+  ).toMatchObject({
+    address: "ldg::1220691e945dc1b210f3b6be9fbad73efaf642bfb96022552f66c9e2b83b00cb20e8",
   });
 });
 test("sanitizeValueString", () => {

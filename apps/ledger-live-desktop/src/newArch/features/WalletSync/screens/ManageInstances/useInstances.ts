@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import {
   walletSyncFakedSelector,
   walletSyncInstancesSelector,

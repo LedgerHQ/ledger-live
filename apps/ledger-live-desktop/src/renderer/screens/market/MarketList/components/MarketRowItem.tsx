@@ -1,13 +1,12 @@
 import React, { useCallback, memo } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { Flex, Text, Icon } from "@ledgerhq/react-ui";
+import { Flex, Text, Icon, Tooltip, Box } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { SmallMarketItemChart } from "./MarketItemChart";
-import { CurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { Button } from "../..";
 import { useTranslation } from "react-i18next";
 import { TableRow, TableCell } from "../../components/Table";
@@ -33,8 +32,16 @@ const EllipsisText = styled(Text)`
   white-space: nowrap;
 `;
 
-type Props = {
-  currency?: CurrencyData | null;
+const TooltipContainer = styled(Box)`
+  background-color: ${({ theme }) => theme.colors.neutral.c100};
+  padding: 10px;
+  border-radius: 4px;
+  display: flex;
+  gap: 8px;
+`;
+
+type MarketRowItemProps = {
+  currency?: MarketCurrencyData | null;
   counterCurrency?: string;
   style: React.CSSProperties;
   loading: boolean;
@@ -42,10 +49,9 @@ type Props = {
   isStarred: boolean;
   toggleStar: () => void;
   range?: string;
-  currenciesAll?: string[];
 };
 
-export const MarketRow = memo<Props>(function MarketRowItem({
+export const MarketRowItem = memo<MarketRowItemProps>(function MarketRowItem({
   style,
   currency,
   counterCurrency,
@@ -54,13 +60,12 @@ export const MarketRow = memo<Props>(function MarketRowItem({
   isStarred,
   toggleStar,
   range,
-  currenciesAll,
-}: Props) {
+}: MarketRowItemProps) {
   const history = useHistory();
   const { t } = useTranslation();
 
   const { onBuy, onStake, onSwap, availableOnBuy, availableOnSwap, availableOnStake } =
-    useMarketActions({ currency, page: Page.Market, currenciesAll });
+    useMarketActions({ currency, page: Page.Market });
   const earnStakeLabelCoin = useGetStakeLabelLocaleBased();
 
   const onCurrencyClick = useCallback(() => {
@@ -83,7 +88,9 @@ export const MarketRow = memo<Props>(function MarketRowItem({
   );
 
   const hasActions =
-    currency?.internalCurrency && (availableOnBuy || availableOnSwap || availableOnStake);
+    currency?.ledgerIds &&
+    currency?.ledgerIds.length > 0 &&
+    (availableOnBuy || availableOnSwap || availableOnStake);
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
@@ -109,32 +116,28 @@ export const MarketRow = memo<Props>(function MarketRowItem({
           <TableCell>{currency?.marketcapRank ?? "-"}</TableCell>
           <TableCell mr={3}>
             <CryptoCurrencyIconWrapper>
-              {currency.internalCurrency ? (
-                <CryptoCurrencyIcon
-                  currency={currency.internalCurrency}
-                  size={32}
-                  circle
-                  fallback={
-                    <img width="32px" height="32px" src={currency.image} alt={"currency logo"} />
-                  }
-                />
-              ) : (
-                <img width="32px" height="32px" src={currency.image} alt={"currency logo"} />
-              )}
+              <img width="32px" height="32px" src={currency.image} alt={"currency logo"} />
             </CryptoCurrencyIconWrapper>
-            <Flex
-              pl={3}
-              {...(hasActions ? { width: 86 } : {})}
-              overflow="hidden"
-              flexDirection="column"
-              alignItems="left"
-              pr={2}
+            <Tooltip
+              content={<TooltipContainer>{currency.name}</TooltipContainer>}
+              placement="top"
+              arrow={false}
             >
-              <EllipsisText variant="body">{currency.name}</EllipsisText>
-              <EllipsisText variant="small" color="neutral.c60">
-                {currency.ticker.toUpperCase()}
-              </EllipsisText>
-            </Flex>
+              <Flex
+                alignItems="left"
+                justifyContent="center"
+                flexDirection="column"
+                mr={2}
+                pl={3}
+                {...(hasActions ? { width: 86 } : {})}
+                overflow="hidden"
+              >
+                <EllipsisText variant="body">{currency.name}</EllipsisText>
+                <EllipsisText variant="small" color="neutral.c60">
+                  {currency.ticker.toUpperCase()}
+                </EllipsisText>
+              </Flex>
+            </Tooltip>
             {hasActions ? (
               <Flex flex={1}>
                 {availableOnBuy && (
@@ -214,50 +217,5 @@ export const MarketRow = memo<Props>(function MarketRowItem({
         </TableRow>
       )}
     </div>
-  );
-});
-
-type CurrencyRowProps = {
-  data: CurrencyData[]; // NB: CurrencyData.id is different to Currency.id
-  index: number;
-  counterCurrency?: string;
-  loading: boolean;
-  toggleStar: (id: string, isStarred: boolean) => void;
-  starredMarketCoins: string[];
-  locale: string;
-  swapAvailableIds: string[];
-  range?: string;
-  style: React.CSSProperties;
-  currenciesAll: string[];
-};
-
-export const CurrencyRow = memo(function CurrencyRowItem({
-  data,
-  index,
-  counterCurrency,
-  loading,
-  toggleStar,
-  starredMarketCoins,
-  locale,
-  style,
-  range,
-  currenciesAll,
-}: CurrencyRowProps) {
-  const currency = data ? data[index] : null;
-  const isStarred = currency && starredMarketCoins.includes(currency.id);
-
-  return (
-    <MarketRow
-      loading={!currency || (index === data.length && index > 50 && loading)}
-      currency={currency}
-      counterCurrency={counterCurrency}
-      isStarred={!!isStarred}
-      toggleStar={() => currency?.id && toggleStar(currency.id, !!isStarred)}
-      key={index}
-      locale={locale}
-      style={{ ...style }}
-      range={range}
-      currenciesAll={currenciesAll}
-    />
   );
 });

@@ -1,16 +1,12 @@
 import BigNumber from "bignumber.js";
 import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import { AssetInfo, Balance } from "@ledgerhq/coin-framework/api/types";
-
-export interface OperationCommon extends Operation {
-  extra: Record<string, any>;
-}
-
-export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
+import { mergeOps } from "../jsHelpers";
+import { cleanedOperation } from "./utils";
+import { OperationCommon } from "./types";
 
 function buildTokenAccount({
   parentAccountId,
@@ -31,13 +27,18 @@ function buildTokenAccount({
     new BigNumber(assetBalance.locked?.toString() || "0"),
   );
 
-  const tokenOperations = operations.map(op => ({
-    ...op,
-    id: encodeOperationId(id, op.hash, op.extra?.ledgerOpType),
-    accountId: id,
-    type: op.extra?.ledgerOpType,
-    value: op.extra?.assetAmount ? new BigNumber(op.extra?.assetAmount) : op.value,
-  }));
+  const tokenOperations = operations.map(op =>
+    cleanedOperation({
+      ...op,
+      id: encodeOperationId(id, op.hash, op.extra?.ledgerOpType),
+      accountId: id,
+      type: op.extra?.ledgerOpType,
+      contract: token.contractAddress,
+      value: op.extra?.assetAmount ? new BigNumber(op.extra?.assetAmount) : op.value,
+      senders: op.extra?.assetSenders ?? op.senders,
+      recipients: op.extra?.assetRecipients ?? op.recipients,
+    }),
+  );
 
   return {
     type: "TokenAccount",
@@ -55,47 +56,83 @@ function buildTokenAccount({
   };
 }
 
-export function buildSubAccounts({
-  currency,
+export async function buildSubAccounts({
   accountId,
-  assetsBalance,
+  allTokenAssetsBalances,
   syncConfig,
   operations,
   getTokenFromAsset,
 }: {
-  currency: CryptoCurrency;
   accountId: string;
-  assetsBalance: Balance[];
+  allTokenAssetsBalances: Balance[];
   syncConfig: SyncConfig;
   operations: OperationCommon[];
-  getTokenFromAsset?: (asset: AssetInfo) => TokenCurrency | undefined;
-}): TokenAccount[] | undefined {
+  getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
+}): Promise<TokenAccount[]> {
   const { blacklistedTokenIds = [] } = syncConfig;
-  const allTokens = listTokensForCryptoCurrency(currency);
-
-  if (allTokens.length === 0 || assetsBalance.length === 0) {
-    return undefined;
-  }
   const tokenAccounts: TokenAccount[] = [];
-  assetsBalance
-    .filter(b => b.asset.type !== "native") // NOTE: this could be removed, keeping here while fixing things up
-    .map(balance => {
-      const token = getTokenFromAsset && getTokenFromAsset(balance.asset);
-      // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
-      if (token && !blacklistedTokenIds.includes(token.id)) {
-        tokenAccounts.push(
-          buildTokenAccount({
-            parentAccountId: accountId,
-            assetBalance: balance,
-            token,
-            operations: operations.filter(
-              op =>
-                op.extra.assetReference === balance.asset?.["assetReference"] &&
-                op.extra.assetOwner === balance.asset?.["assetOwner"], // NOTE: we could narrow type
-            ),
-          }),
-        );
-      }
-    });
+
+  if (allTokenAssetsBalances.length === 0 || !getTokenFromAsset) {
+    return tokenAccounts;
+  }
+
+  for (const balance of allTokenAssetsBalances) {
+    const token = await getTokenFromAsset(balance.asset);
+    // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
+    if (token && !blacklistedTokenIds.includes(token.id)) {
+      tokenAccounts.push(
+        buildTokenAccount({
+          parentAccountId: accountId,
+          assetBalance: balance,
+          token,
+          operations: operations.filter(
+            op =>
+              op.extra.assetReference === balance.asset?.["assetReference"] &&
+              op.extra.assetOwner === balance.asset?.["assetOwner"], // NOTE: we could narrow type
+          ),
+        }),
+      );
+    }
+  }
+
   return tokenAccounts;
+}
+
+export function mergeSubAccounts(
+  oldSubAccounts: Array<TokenAccount>,
+  newSubAccounts: Array<TokenAccount>,
+): Array<TokenAccount> {
+  if (!oldSubAccounts.length) {
+    return newSubAccounts;
+  }
+
+  const oldSubAccountsByTokenId = Object.fromEntries(
+    oldSubAccounts.map(account => [account.token.id, account]),
+  );
+
+  const newSubAccountsToAdd: Array<TokenAccount> = [];
+
+  for (const newSubAccount of newSubAccounts) {
+    const existingSubAccount = oldSubAccountsByTokenId[newSubAccount.token.id];
+
+    if (!existingSubAccount) {
+      // New sub account does not exist yet. Just add it as is.
+      newSubAccountsToAdd.push(newSubAccount);
+      continue;
+    }
+
+    // New sub account is already known, probably outdated
+    const operations = mergeOps(existingSubAccount.operations, newSubAccount.operations);
+    oldSubAccountsByTokenId[newSubAccount.token.id] = {
+      ...existingSubAccount,
+      balance: newSubAccount.balance,
+      spendableBalance: newSubAccount.spendableBalance,
+      operations,
+      operationsCount: operations.length,
+    };
+  }
+
+  const updatedOldSubAccounts = Object.values(oldSubAccountsByTokenId);
+
+  return [...updatedOldSubAccounts, ...newSubAccountsToAdd];
 }

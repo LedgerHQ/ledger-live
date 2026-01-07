@@ -1,31 +1,35 @@
-import React, { PureComponent } from "react";
+import React, { PureComponent, useRef, useEffect, useMemo, useCallback } from "react";
 import ReactSelect, {
   components,
-  GroupTypeBase,
-  MenuListComponentProps,
-  OptionTypeBase,
+  GroupBase,
+  MenuListProps,
   Props as ReactSelectProps,
   StylesConfig,
-  ValueType,
+  OnChangeValue,
 } from "react-select";
 import AsyncReactSelect from "react-select/async";
 import { withTranslation } from "react-i18next";
-import { FixedSizeList as List } from "react-window";
+import { useVirtualizer, VirtualItem } from "@tanstack/react-virtual";
 import styled, { DefaultTheme, withTheme } from "styled-components";
 import debounce from "lodash/debounce";
 import createStyles from "./createStyles";
 import createRenderers from "./createRenderers";
-import { ThemeConfig } from "react-select/src/theme";
 
 export type Props<
-  OptionType extends OptionTypeBase = { label: string; value: string },
+  OptionType = { label: string; value: string },
   IsMulti extends boolean = false,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
+  GroupType extends GroupBase<OptionType> = GroupBase<OptionType>,
 > = {
-  onChange: (a?: ValueType<OptionType, IsMulti> | null) => void;
+  onChange: (a?: OnChangeValue<OptionType, IsMulti> | null) => void;
   // custom renders
   renderOption?: (a: { data: OptionType; isDisabled: boolean }) => React.ReactNode;
   renderValue?: (a: { data: OptionType; isDisabled: boolean }) => React.ReactNode;
+  /** @deprecated Use renderValue instead - accepts various legacy formats */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  renderSelected?: (a: any) => React.ReactNode;
+  /** @deprecated Not used in react-select v5 */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  itemToString?: (item: any) => string;
   // optional
   async?: boolean;
   isRight?: boolean;
@@ -37,119 +41,156 @@ export type Props<
   rowHeight?: number;
   disableOptionPadding?: boolean;
   error?: Error | undefined | null;
+  fakeFocusRight?: boolean;
   // NB at least a different rendering for now
-  stylesMap?: (a: ThemeConfig) => StylesConfig<OptionType, IsMulti, GroupType>;
+  stylesMap?: (
+    a: StylesConfig<OptionType, IsMulti, GroupType>,
+  ) => StylesConfig<OptionType, IsMulti, GroupType>;
   extraRenderers?: {
     [x: string]: (props: unknown) => React.ReactNode;
   };
-  // Allows overriding react-select components. See: https://react-select.com/components
   disabledTooltipText?: string;
   theme?: DefaultTheme;
-} & ReactSelectProps<OptionType, IsMulti, GroupType>;
+} & Omit<ReactSelectProps<OptionType, IsMulti, GroupType>, "onChange">;
 
 const Row = styled.div`
   max-width: 100%;
 `;
-class MenuList<
-  OptionType extends OptionTypeBase,
+
+type VirtualMenuListProps<
+  OptionType,
   IsMulti extends boolean,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
-> extends PureComponent<
-  MenuListComponentProps<OptionType, IsMulti, GroupType> & Props<OptionType, IsMulti, GroupType>
-> {
-  state: {
-    children: OptionType[] | null;
-    currentIndex: number;
-  } = {
-    children: null,
-    currentIndex: 0,
-  };
+  GroupType extends GroupBase<OptionType> = GroupBase<OptionType>,
+> = MenuListProps<OptionType, IsMulti, GroupType> & {
+  onScrollEnd?: () => void;
+};
 
-  static getDerivedStateFromProps(
-    { children }: { children: React.ReactNode },
-    state: { children: React.ReactNode },
-  ) {
-    if (children !== state.children) {
-      const currentIndex = Array.isArray(children)
-        ? Math.max(
-            children.findIndex(({ props: { isFocused } }) => isFocused),
-            0,
-          )
-        : 0;
-      return {
-        children,
-        currentIndex,
-      };
+function VirtualMenuList<
+  OptionType,
+  IsMulti extends boolean,
+  GroupType extends GroupBase<OptionType> = GroupBase<OptionType>,
+>(props: VirtualMenuListProps<OptionType, IsMulti, GroupType>) {
+  const { options, maxHeight, getValue, onScrollEnd, selectProps, children } = props;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { noOptionsMessage, rowHeight = 48, inputValue = "" } = selectProps as any;
+
+  const parentRef = useRef<HTMLDivElement>(null);
+  const hasScrolledRef = useRef(false);
+
+  const childrenArray = useMemo(
+    () =>
+      React.Children.toArray(children).map(child => {
+        if (!React.isValidElement(child) || !child.props.innerProps) return child;
+
+        const { onMouseMove, onMouseOver, ...restInnerProps } = child.props.innerProps;
+        return React.cloneElement(
+          child as React.ReactElement<{ innerProps?: Record<string, unknown> }>,
+          { innerProps: restInnerProps },
+        );
+      }),
+    [children],
+  );
+
+  const [value] = getValue();
+  const initialOffset = options.indexOf(value) * rowHeight;
+  const listHeight = Math.min(maxHeight, rowHeight * childrenArray.length);
+
+  const virtualizer = useVirtualizer({
+    count: childrenArray.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => rowHeight,
+    overscan: 8,
+  });
+
+  useEffect(() => {
+    if (!hasScrolledRef.current && initialOffset > 0 && parentRef.current) {
+      parentRef.current.scrollTop = initialOffset;
+      hasScrolledRef.current = true;
     }
-    return null;
+  }, [initialOffset]);
+
+  // Handle scroll end for infinite loading
+  const handleScroll = useCallback(() => {
+    if (!parentRef.current || !onScrollEnd) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = parentRef.current;
+    if (scrollTop + clientHeight >= scrollHeight - 10) {
+      onScrollEnd();
+    }
+  }, [onScrollEnd]);
+
+  useEffect(() => {
+    const scrollElement = parentRef.current;
+    if (!scrollElement || !onScrollEnd) return;
+
+    scrollElement.addEventListener("scroll", handleScroll);
+    return () => scrollElement.removeEventListener("scroll", handleScroll);
+  }, [handleScroll, onScrollEnd]);
+
+  if (!childrenArray.length) {
+    return noOptionsMessage?.({ inputValue }) ? (
+      <components.NoOptionsMessage {...props} innerProps={{}} />
+    ) : null;
   }
 
-  componentDidMount() {
-    this.scrollList();
-  }
+  const virtualItems = virtualizer.getVirtualItems();
 
-  componentDidUpdate() {
-    this.scrollList();
-  }
-
-  scrollList = () => {
-    const { currentIndex } = this.state;
-    if (this.list && this.list.current) {
-      this.list.current.scrollToItem(currentIndex);
-    }
-  };
-
-  list = React.createRef<List>();
-  render() {
-    const {
-      options,
-      maxHeight,
-      getValue,
-      selectProps: { noOptionsMessage, rowHeight },
-    } = this.props;
-    const { children } = this.state;
-    if (!children) return null;
-    const [value] = getValue();
-    const initialOffset = options.indexOf(value) * rowHeight;
-    const minHeight = Math.min(...[maxHeight, rowHeight * children.length]);
-    if (!children.length && noOptionsMessage) {
-      return <components.NoOptionsMessage {...this.props} innerProps={{}} />;
-    }
-    children.length &&
-      children.map(key => {
-        delete key.props.innerProps.onMouseMove; // NB: Removes lag on hover, see https://github.com/JedWatson/react-select/issues/3128#issuecomment-433834170
-        delete key.props.innerProps.onMouseOver;
-        return null;
-      });
-    return (
-      <List
-        className={"select-options-list"}
-        ref={this.list}
-        width="100%"
+  return (
+    <div
+      ref={parentRef}
+      style={{
+        width: "100%",
+        height: listHeight,
+        overflow: "auto",
+        overflowX: "hidden",
+      }}
+    >
+      <div
         style={{
-          overflowX: "hidden",
+          height: `${virtualizer.getTotalSize()}px`,
+          width: "100%",
+          position: "relative",
         }}
-        height={minHeight}
-        overscanCount={8}
-        itemCount={children.length}
-        itemSize={rowHeight}
-        initialScrollOffset={initialOffset}
       >
-        {({ index, style }) => (
-          <Row className={"option"} style={style}>
-            {/* @ts-expect-error I have no idea what's up here */}
-            {children[index]}
+        {virtualItems.map((virtualItem: VirtualItem) => (
+          <Row
+            key={virtualItem.key}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: `${virtualItem.size}px`,
+              transform: `translateY(${virtualItem.start}px)`,
+            }}
+          >
+            {childrenArray[virtualItem.index]}
           </Row>
-        )}
-      </List>
-    );
-  }
+        ))}
+      </div>
+    </div>
+  );
 }
+
+function createVirtualMenuList(onScrollEnd?: () => void) {
+  return function StableMenuList<
+    OptionType,
+    IsMulti extends boolean,
+    GroupType extends GroupBase<OptionType> = GroupBase<OptionType>,
+  >(menuListProps: MenuListProps<OptionType, IsMulti, GroupType>) {
+    return <VirtualMenuList {...menuListProps} onScrollEnd={onScrollEnd} />;
+  };
+}
+
 class Select<
-  OptionType extends OptionTypeBase = { label: string; value: string },
+  OptionType = { label: string; value: string },
   IsMulti extends boolean = false,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
-> extends PureComponent<Props<OptionType, IsMulti, GroupType>> {
+  GroupType extends GroupBase<OptionType> = GroupBase<OptionType>,
+> extends PureComponent<
+  Props<OptionType, IsMulti, GroupType> & {
+    onScrollEnd?: () => void;
+  }
+> {
   componentDidMount() {
     if (this.ref && this.props.autoFocus) {
       this.timeout = requestAnimationFrame(() => this.ref?.focus());
@@ -166,12 +207,10 @@ class Select<
 
   resizeHandler = debounce(
     () => {
-      this.ref && this.ref.blur();
+      if (this.ref) this.ref.blur();
     },
     200,
-    {
-      leading: true,
-    },
+    { leading: true },
   );
 
   handleChange: ReactSelectProps<OptionType, IsMulti, GroupType>["onChange"] = (
@@ -188,8 +227,9 @@ class Select<
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ref: ReactSelect<any, IsMulti> | undefined | null;
+  ref: any;
   timeout: number | undefined;
+
   render() {
     const {
       async,
@@ -214,9 +254,12 @@ class Select<
       rowHeight = small ? 34 : 48,
       autoFocus,
       extraRenderers,
+      onScrollEnd,
       ...props
     } = this.props;
-    const Comp = (async ? AsyncReactSelect : ReactSelect) as typeof ReactSelect;
+
+    const Comp = async ? AsyncReactSelect : ReactSelect;
+
     const baseStyles =
       theme &&
       createStyles(theme, {
@@ -228,49 +271,52 @@ class Select<
         error,
         rowHeight,
       });
+
     const baseStylesWithPlaceholder = {
       ...baseStyles,
       placeholder: (base: React.CSSProperties) => ({
         ...base,
-        color: theme?.colors.palette.text.shade40,
+        color: theme?.colors.neutral.c60,
       }),
     };
 
-    // @ts-expect-error This is complicated to get it right
-    const styles = stylesMap ? stylesMap(baseStylesWithPlaceholder) : baseStylesWithPlaceholder;
+    const styles = stylesMap
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        stylesMap(baseStylesWithPlaceholder as any)
+      : baseStylesWithPlaceholder;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const customComponents: any = virtual
+      ? {
+          MenuList: createVirtualMenuList(this.props.onScrollEnd),
+          ...createRenderers({
+            renderOption,
+            renderValue,
+            selectProps: this.props,
+          }),
+          ...(extraRenderers || {}),
+        }
+      : {
+          ...createRenderers({
+            renderOption,
+            renderValue,
+            selectProps: this.props,
+          }),
+          ...(extraRenderers || {}),
+        };
+
     return (
-      // @ts-expect-error This is complicated to get it right
       <Comp
         {...props}
-        // @ts-expect-error This is complicated to get it right
-        ref={c => (this.ref = c)}
+        ref={(c: unknown) => (this.ref = c)}
         autoFocus={autoFocus}
         value={value}
         maxMenuHeight={rowHeight * 4.5}
         classNamePrefix="select"
         options={options}
-        components={
-          virtual
-            ? {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                MenuList: MenuList as any,
-                ...createRenderers({
-                  renderOption,
-                  renderValue,
-                  selectProps: this.props,
-                }),
-                ...(extraRenderers || {}),
-              }
-            : {
-                ...createRenderers({
-                  renderOption,
-                  renderValue,
-                  selectProps: this.props,
-                }),
-                ...(extraRenderers || {}),
-              }
-        }
-        styles={styles}
+        components={customComponents}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        styles={styles as any}
         placeholder={placeholder}
         isDisabled={isDisabled}
         isLoading={isLoading}
@@ -282,10 +328,15 @@ class Select<
         captureMenuScroll={false}
         menuShouldBlockScroll
         menuPortalTarget={document.body}
+        // @ts-expect-error rowHeight is a custom prop passed through selectProps
         rowHeight={rowHeight}
         onChange={this.handleChange}
       />
     );
   }
 }
+
+// Type assertion required due to complex HOC composition (withTranslation + withTheme)
+// The wrapped component maintains the same API surface as the original Select class
+// eslint-disable-next-line
 export default withTranslation()(withTheme(Select)) as unknown as typeof Select;

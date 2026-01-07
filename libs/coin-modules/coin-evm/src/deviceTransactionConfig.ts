@@ -10,15 +10,15 @@ import { validateDomain } from "@ledgerhq/domain-service/utils/index";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { Transaction as EvmTransaction, TransactionStatus } from "./types";
-import { getCryptoAssetsStore } from "./cryptoAssetsStore";
 
 type DeviceTransactionField = CommonDeviceTransactionField;
 
-const inferDeviceTransactionConfigWalletApi = (
+const inferDeviceTransactionConfigWalletApi = async (
   transaction: EvmTransaction,
   mainAccount: Account,
-): Array<DeviceTransactionField> => {
+): Promise<Array<DeviceTransactionField>> => {
   if (!transaction.data) throw new Error();
   const abiCoder = ethers.AbiCoder.defaultAbiCoder();
   const fields: Array<DeviceTransactionField> = [];
@@ -31,7 +31,10 @@ const inferDeviceTransactionConfigWalletApi = (
     nft => nft.contract.toLowerCase() === transaction.recipient.toLowerCase(),
   );
 
-  const token = getCryptoAssetsStore().findTokenByAddress(transaction.recipient);
+  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+    transaction.recipient,
+    mainAccount.currency.id,
+  );
 
   // ERC20 fields
   if (token && Object.values<string>(ERC20_CLEAR_SIGNED_SELECTORS).includes(selector)) {
@@ -368,7 +371,7 @@ const inferDeviceTransactionConfigWalletApi = (
 /**
  * Method responsible for creating the summary of the screens visible on the nano
  */
-const getDeviceTransactionConfig = ({
+const getDeviceTransactionConfig = async ({
   account,
   parentAccount,
   transaction,
@@ -377,7 +380,7 @@ const getDeviceTransactionConfig = ({
   parentAccount: Account | null | undefined;
   transaction: EvmTransaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> => {
+}): Promise<Array<DeviceTransactionField>> => {
   const mainAccount = getMainAccount(account, parentAccount);
   const { mode } = transaction;
   const fields: Array<DeviceTransactionField> = [];
@@ -389,8 +392,8 @@ const getDeviceTransactionConfig = ({
       // For contract interactions
       if (transaction.data) {
         try {
-          fields.push(...inferDeviceTransactionConfigWalletApi(transaction, mainAccount));
-        } catch (e) {
+          fields.push(...(await inferDeviceTransactionConfigWalletApi(transaction, mainAccount)));
+        } catch {
           fields.push(
             {
               type: "text",

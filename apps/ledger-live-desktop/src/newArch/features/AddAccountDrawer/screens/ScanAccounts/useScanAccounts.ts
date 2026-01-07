@@ -4,8 +4,11 @@ import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Subscription } from "rxjs";
+import { openModal } from "~/renderer/actions/modals";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
 import * as RX from "rxjs/operators";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -22,6 +25,7 @@ import {
   getGroupedAccounts,
   getUnimportedAccounts,
 } from "./utils/processAccounts";
+import { useCantonCreatableAccounts } from "./hooks/useCantonCreatableAccounts";
 
 const selectImportable = (importable: Account[]) => (selected: string[]) => {
   const importableIds = importable.map(a => a.id);
@@ -48,6 +52,7 @@ export function useScanAccounts({
 }: UseScanAccountsProps) {
   const { trackAddAccountEvent } = useAddAccountAnalytics();
   const existingAccounts = useSelector(accountsSelector);
+  const device = useSelector(getCurrentDevice);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
@@ -155,12 +160,34 @@ export function useScanAccounts({
     selectedIds,
   ]);
 
+  const { hasCantonCreatableAccounts, selectedCantonCreatableAccounts } =
+    useCantonCreatableAccounts({
+      scannedAccounts,
+      selectedIds: filteredSelectedIds,
+    });
+
   const handleConfirm = useCallback(() => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
       button: "Confirm",
       page: ADD_ACCOUNT_PAGE_NAME.LOOKING_FOR_ACCOUNTS,
       flow: ADD_ACCOUNT_FLOW_NAME,
     });
+
+    if (hasCantonCreatableAccounts) {
+      setDrawer();
+
+      dispatch(
+        openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
+          currency,
+          device,
+          selectedAccounts: selectedCantonCreatableAccounts,
+          existingAccounts: existingAccounts,
+          editedNames: {},
+        }),
+      );
+
+      return;
+    }
 
     if (accountsToImport.length > 0) {
       setHasImportedAccounts(true);
@@ -179,9 +206,13 @@ export function useScanAccounts({
     accountsToImport,
     dispatch,
     existingAccounts,
-    scannedAccounts,
-    filteredSelectedIds,
     onComplete,
+    currency,
+    device,
+    hasCantonCreatableAccounts,
+    selectedCantonCreatableAccounts,
+    filteredSelectedIds,
+    scannedAccounts,
   ]);
 
   const toggleShowAllCreatedAccounts = useCallback(() => setShowAllCreatedAccounts(p => !p), []);
@@ -220,7 +251,11 @@ export function useScanAccounts({
     if (!scanning && !hasImportedAccounts) {
       if (alreadyEmptyAccount && !importableAccounts.length) {
         navigateToWarningScreen(WARNING_REASON.ALREADY_EMPTY_ACCOUNT, alreadyEmptyAccount);
-      } else if (!scannedAccounts.length && CustomNoAssociatedAccounts) {
+      } else if (
+        !importableAccounts.length &&
+        !creatableAccounts.length &&
+        CustomNoAssociatedAccounts
+      ) {
         navigateToWarningScreen(WARNING_REASON.NO_ASSOCIATED_ACCOUNTS);
       }
     }

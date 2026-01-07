@@ -1,12 +1,14 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import type { OperationType } from "@ledgerhq/types-live";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
-import { isValidExtra } from "@ledgerhq/live-common/families/hedera/logic";
+import {
+  isValidExtra,
+  getOperationDetailsExtraFields,
+} from "@ledgerhq/live-common/families/hedera/utils";
 import type { HederaAccount, HederaOperation } from "@ledgerhq/live-common/families/hedera/types";
 import { Link } from "@ledgerhq/react-ui";
 import { urls } from "~/config/urls";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import type {
   AddressCellProps,
@@ -14,6 +16,7 @@ import type {
   OperationDetailsPostAccountSectionProps,
 } from "~/renderer/families/types";
 import Alert from "~/renderer/components/Alert";
+import Ellipsis from "~/renderer/components/Ellipsis";
 import { Cell } from "~/renderer/components/OperationsList/AddressCell";
 import Box from "~/renderer/components/Box";
 import {
@@ -22,19 +25,17 @@ import {
   OpDetailsTitle,
   TextEllipsis,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
+import { useTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/hooks";
 
 const OperationDetailsPostAccountSection = ({
   operation,
 }: OperationDetailsPostAccountSectionProps<HederaAccount, HederaOperation>) => {
   const { t } = useTranslation();
+  const { token } = useTokenByAddressInCurrency(operation.extra.associatedTokenId || "", "hedera");
 
   if (operation.type !== "ASSOCIATE_TOKEN") {
     return null;
   }
-
-  const token = operation.extra.associatedTokenId
-    ? findTokenByAddressInCurrency(operation.extra.associatedTokenId, "hedera")
-    : null;
 
   if (!token) {
     return null;
@@ -52,21 +53,45 @@ const OperationDetailsPostAccountSection = ({
   );
 };
 
+const OperationDetailsExtra = ({
+  operation,
+}: OperationDetailsExtraProps<HederaAccount, HederaOperation>) => {
+  const extra = isValidExtra(operation.extra) ? operation.extra : null;
+
+  if (!extra) {
+    return null;
+  }
+
+  const extraFields = getOperationDetailsExtraFields(extra);
+
+  return (
+    <>
+      {extraFields.map(item => (
+        <OpDetailsSection key={item.key}>
+          <OpDetailsTitle>
+            <Trans i18nKey={`operationDetails.extra.${item.key}`} defaults={item.key} />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Ellipsis>{item.value}</Ellipsis>
+          </OpDetailsData>
+        </OpDetailsSection>
+      ))}
+    </>
+  );
+};
+
 const OperationDetailsPostAlert = ({
   account,
   operation,
 }: OperationDetailsExtraProps<HederaAccount, HederaOperation>) => {
   const dispatch = useDispatch();
+  const extra = isValidExtra(operation.extra) ? operation.extra : null;
+  const associatedTokenId = extra?.associatedTokenId;
+  const { token } = useTokenByAddressInCurrency(associatedTokenId || "", "hedera");
 
   if (operation.type !== "ASSOCIATE_TOKEN") {
     return null;
   }
-
-  const extra = isValidExtra(operation.extra) ? operation.extra : null;
-  const associatedTokenId = extra?.associatedTokenId;
-  const token = associatedTokenId
-    ? findTokenByAddressInCurrency(associatedTokenId, "hedera")
-    : null;
 
   if (!token) {
     return null;
@@ -99,18 +124,32 @@ const OperationDetailsPostAlert = ({
 };
 
 const AddressCell = ({ operation }: AddressCellProps<HederaOperation>) => {
-  const token = operation.extra.associatedTokenId
-    ? findTokenByAddressInCurrency(operation.extra.associatedTokenId, "hedera")
-    : null;
+  const { token } = useTokenByAddressInCurrency(operation.extra.associatedTokenId || "", "hedera");
 
   if (!token) {
+    return <Box flex="1" />;
+  }
+
+  return (
+    <Cell>
+      <Box color="neutral.c80" ff="Inter" fontSize={3}>
+        {token.contractAddress} ({token.name})
+      </Box>
+    </Cell>
+  );
+};
+
+const UpdateAccountAddressCell = ({ operation }: AddressCellProps<HederaOperation>) => {
+  const memo = operation.extra.memo;
+
+  if (!memo) {
     return null;
   }
 
   return (
     <Cell>
-      <Box color="palette.text.shade80" ff="Inter" fontSize={3}>
-        {token.contractAddress} ({token.name})
+      <Box color="neutral.c80" ff="Inter" fontSize={3}>
+        {memo}
       </Box>
     </Cell>
   );
@@ -118,10 +157,12 @@ const AddressCell = ({ operation }: AddressCellProps<HederaOperation>) => {
 
 const addressCell = {
   ASSOCIATE_TOKEN: AddressCell,
+  UPDATE_ACCOUNT: UpdateAccountAddressCell,
 } satisfies Partial<Record<OperationType, unknown>>;
 
 export default {
   OperationDetailsPostAccountSection,
   OperationDetailsPostAlert,
+  OperationDetailsExtra,
   addressCell,
 };

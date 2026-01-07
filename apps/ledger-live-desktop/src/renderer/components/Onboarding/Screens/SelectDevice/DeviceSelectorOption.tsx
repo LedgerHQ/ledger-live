@@ -11,9 +11,9 @@ const DeviceIllustrationContainer = styled(Flex)`
 
 type BorderProps = ThemeProps<DefaultTheme> & { isFirst: boolean; isLast: boolean };
 
-const bkgColor = (p: BorderProps) => p.theme.colors.palette.background.main;
-const bkgColorHover = (p: BorderProps) => p.theme.colors.palette.neutral.c20;
-const borderColorHover = (p: BorderProps) => p.theme.colors.palette.neutral.c40;
+const bkgColor = (p: BorderProps) => p.theme.colors.background.main;
+const bkgColorHover = (p: BorderProps) => p.theme.colors.neutral.c20;
+const borderColorHover = (p: BorderProps) => p.theme.colors.neutral.c40;
 
 const borderCSS = css`
   ${(p: BorderProps) => (p.isFirst ? "" : `border-left: 1px solid ${bkgColor(p)};`)}
@@ -92,7 +92,7 @@ export function DeviceSelectorOption({
     <Container data-testid={`v3-container-${id}`} {...{ id, isFirst, isLast }}>
       <ContentContainer>
         <DeviceIllustrationContainer>{illustration}</DeviceIllustrationContainer>
-        <DeviceName>{label}</DeviceName>
+        <DeviceName>{label.replace("\u00a0", " ")}</DeviceName>
         <SelectButton data-testid={`v3-${id}`} variant="main" onClick={onClick}>
           {t("onboarding.screens.selectDevice.selectLabel")}
         </SelectButton>

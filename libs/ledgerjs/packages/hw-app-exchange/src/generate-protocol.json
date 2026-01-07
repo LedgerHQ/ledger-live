@@ -95,6 +95,10 @@
             "deviceTransactionId": {
               "type": "bytes",
               "id": 7
+            },
+            "inExtraId": {
+              "type": "string",
+              "id": 8
             }
           }
         },

@@ -8,15 +8,19 @@ describe("Polkadot Api", () => {
   beforeAll(() => {
     module = createApi({
       node: {
-        url: "https://polkadot-rpc.publicnode.com",
+        url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
       },
       sidecar: {
-        url: "https://polkadot-sidecar.coin.ledger.com",
+        url: "https://polkadot-asset-hub-sidecar.coin.ledger.com",
+      },
+      indexer: {
+        url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
       },
       staking: {
         electionStatusThreshold: 25,
       },
       metadataShortener: {
+        id: "dot-hub",
         url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
       },
       metadataHash: {
@@ -32,6 +36,7 @@ describe("Polkadot Api", () => {
 
       // When
       const { value } = await module.estimateFees({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: address,
@@ -40,8 +45,8 @@ describe("Polkadot Api", () => {
       });
 
       // Then
-      expect(value).toBeGreaterThanOrEqual(BigInt(100000000));
-      expect(value).toBeLessThanOrEqual(BigInt(200000000));
+      expect(value).toBeGreaterThanOrEqual(BigInt(10000000));
+      expect(value).toBeLessThanOrEqual(BigInt(20000000));
     });
   });
 
@@ -94,6 +99,7 @@ describe("Polkadot Api", () => {
     it("returns a raw transaction", async () => {
       // When
       const result = await module.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: address,
@@ -104,7 +110,7 @@ describe("Polkadot Api", () => {
       // Then
       expect(result).toEqual({
         transaction:
-          "0x9404050300f578e65647d6c76b4d05a74e6c2d33d87f32d8d16959400b38ab97d758eb061928",
+          "0x94040a0300f578e65647d6c76b4d05a74e6c2d33d87f32d8d16959400b38ab97d758eb061928",
       });
     });
   });

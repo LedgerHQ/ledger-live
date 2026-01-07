@@ -15,7 +15,7 @@ import {
   voteStatus,
 } from "@ledgerhq/live-common/families/celo/logic";
 import { CeloAccount, CeloVote } from "@ledgerhq/live-common/families/celo/types";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Alert from "~/components/Alert";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import IlluRewards from "~/icons/images/Rewards";
@@ -38,7 +38,7 @@ import { formatAmount } from "./utils";
 import CheckCircle from "~/icons/CheckCircle";
 import Loader from "~/icons/Loader";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: Account;
@@ -73,7 +73,7 @@ function Delegations({ account }: Props) {
     }) => {
       setVote(undefined);
       // This is complicated (even impossible?) to type properly…
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(route, {
+      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(route, {
         screen,
         params: { ...params, accountId: account.id },
       });

@@ -3,7 +3,7 @@
  */
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import AccountWarningBanner from "../AccountWarningBanner";
+import { AccountWarningBanner, AccountWarningCustomBanner } from "../AccountWarningBanner";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
@@ -93,5 +93,107 @@ describe("AccountWarningBanner", () => {
     expect(screen.queryByTestId("migration-banner")).not.toBeInTheDocument();
     expect(screen.queryByTestId("feature-unavailable-banner")).not.toBeInTheDocument();
     expect(screen.queryByTestId("deprecated-banner")).not.toBeInTheDocument();
+  });
+});
+
+describe("AccountWarningCustomBanner", () => {
+  const mockCurrency: CryptoCurrency = {
+    id: "fantom",
+    name: "Fantom",
+    ticker: "FTM",
+    type: "CryptoCurrency",
+    managerAppName: "Mock Manager App",
+    coinType: 0,
+    scheme: "mock",
+    color: "#000000",
+    family: "mock-family",
+    explorerViews: [],
+    units: [],
+  };
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("does not render banner if currencyConfig is undefined", () => {
+    mockedGetCurrencyConfiguration.mockImplementation(() => {
+      throw new Error("No config found");
+    });
+
+    render(<AccountWarningCustomBanner currency={mockCurrency} />);
+
+    expect(screen.queryByTestId("custom-banner")).not.toBeInTheDocument();
+  });
+
+  it("renders nothing if no banner is defined in currencyConfig", () => {
+    mockedGetCurrencyConfiguration.mockReturnValue({
+      status: {
+        type: "active",
+      },
+    });
+
+    render(<AccountWarningCustomBanner currency={mockCurrency} />);
+
+    expect(screen.queryByTestId("custom-banner")).not.toBeInTheDocument();
+  });
+
+  it("renders nothing if banner.isDisplay is false", () => {
+    mockedGetCurrencyConfiguration.mockReturnValue({
+      customBanner: {
+        isDisplay: false,
+        bannerText: "Network maintenance soon",
+        bannerLink: "https://status.example.com",
+        bannerLinkText: "Learn more",
+      },
+      status: {
+        type: "active",
+      },
+    });
+
+    render(<AccountWarningCustomBanner currency={mockCurrency} />);
+
+    expect(screen.queryByTestId("custom-banner")).not.toBeInTheDocument();
+  });
+
+  it("renders the custom banner when isDisplay is true", () => {
+    const bannerText = "Important: Network maintenance on October 1st.";
+    const bannerLinkText = "Read more";
+
+    mockedGetCurrencyConfiguration.mockReturnValue({
+      customBanner: {
+        isDisplay: true,
+        bannerText,
+        bannerLink: "https://status.example.com",
+        bannerLinkText,
+      },
+      status: {
+        type: "active",
+      },
+    });
+
+    render(<AccountWarningCustomBanner currency={mockCurrency} />);
+
+    expect(screen.getByTestId("custom-banner")).toBeInTheDocument();
+    expect(screen.getByText(bannerText)).toBeInTheDocument();
+    expect(screen.getByText(bannerLinkText)).toBeInTheDocument();
+  });
+
+  it("renders the custom banner even without bannerLinkText", () => {
+    const bannerText = "Announcement without link text.";
+
+    mockedGetCurrencyConfiguration.mockReturnValue({
+      customBanner: {
+        isDisplay: true,
+        bannerText,
+      },
+      status: {
+        type: "active",
+      },
+    });
+
+    render(<AccountWarningCustomBanner currency={mockCurrency} />);
+
+    expect(screen.getByTestId("custom-banner")).toBeInTheDocument();
+    expect(screen.getByText(bannerText)).toBeInTheDocument();
   });
 });

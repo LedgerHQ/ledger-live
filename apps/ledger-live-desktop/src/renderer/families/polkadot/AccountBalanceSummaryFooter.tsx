@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import React from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
@@ -23,7 +23,7 @@ const Wrapper = styled(Box).attrs(() => ({
   p: 5,
   pb: 0,
 }))`
-  border-top: 1px solid ${p => p.theme.colors.palette.text.shade10};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c30};
 `;
 const BalanceDetail = styled(Box).attrs(() => ({
   flex: "0.25 0 auto",
@@ -36,7 +36,7 @@ const BalanceDetail = styled(Box).attrs(() => ({
 const TitleWrapper = styled(Box).attrs<{
   warning?: boolean;
 }>(props => ({
-  color: props.warning ? props.theme.colors.orange : "palette.text.shade60",
+  color: props.warning ? props.theme.colors.orange : "neutral.c70",
   horizontal: true,
   alignItems: "center",
   mb: 1,
@@ -55,7 +55,7 @@ const AmountValue = styled(Text).attrs<{
 }>(props => ({
   fontSize: 6,
   ff: "Inter|SemiBold",
-  color: props.warning ? props.theme.colors.orange : "palette.text.shade100",
+  color: props.warning ? props.theme.colors.orange : "neutral.c100",
 }))<{
   warning?: boolean;
 }>``;

@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { log } from "@ledgerhq/logs";
 import { delay } from "@ledgerhq/live-common/promise";
 import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
@@ -9,15 +9,7 @@ import { resetStore } from "~/renderer/store";
 import { cleanAccountsCache } from "~/renderer/actions/accounts";
 import { disable as disableDBMiddleware } from "./middlewares/db";
 import { clearBridgeCache } from "./bridge/cache";
-let lastKill = 0;
-export function recentlyKilledInternalProcess() {
-  return Date.now() - lastKill < 5000;
-}
-export async function killInternalProcess() {
-  lastKill = Date.now();
-  ipcRenderer.send("clean-processes");
-  return delay(1000);
-}
+
 function reload() {
   ipcRenderer.send("app-reload");
 }
@@ -26,9 +18,14 @@ export async function hardReset() {
   clearBridgeCache();
   log("clear-cache", "hardReset()");
   disableDBMiddleware();
-  resetAll();
+  await resetAll();
   resetStore();
+  // Preserve the hard-reset flag across localStorage.clear() so init.tsx can detect it
+  const hardResetFlag = window.localStorage.getItem("hard-reset");
   window.localStorage.clear();
+  if (hardResetFlag === "1") {
+    window.localStorage.setItem("hard-reset", "1");
+  }
 }
 export function useHardReset() {
   return () => {

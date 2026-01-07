@@ -91,7 +91,10 @@ export const getTransaction: NodeApi["getTransaction"] = (currency, txHash) =>
       nonce: tx.nonce,
       gasUsed: receipt.gasUsed.toString(),
       gasPrice: receipt.gasPrice.toString(),
+      status: receipt.status,
       value: tx.value.toString(),
+      from: tx.from,
+      to: tx.to ?? undefined,
     };
   });
 
@@ -192,7 +195,7 @@ export const getFeeData: NodeApi["getFeeData"] = (currency, transaction) =>
         // As a safety measure, if maxPriorityFeePerGas is zero
         // we enforce a 1 Gwei value
         const maxPriorityFeePerGas = maxPriorityFeeAverage.isZero()
-          ? new BigNumber(1e9) // 1 Gwei
+          ? getMaxPriorityFeePerGas(currency)
           : maxPriorityFeeAverage;
 
         const nextBaseFee = new BigNumber(
@@ -251,11 +254,14 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHei
   withApi(currency, async api => {
     const block = await api.getBlock(blockHeight);
 
+    const transactionHashes = block?.transactions as string[] | undefined;
+
     return {
       hash: block?.hash || "",
       height: block?.number ?? 0,
       // timestamp is returned in seconds by getBlock, we need milliseconds
       timestamp: (block?.timestamp ?? 0) * 1000,
+      ...(transactionHashes !== undefined && { transactionHashes }),
     };
   });
 
@@ -276,18 +282,23 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
       }
 
       // Fake signature is added to get the best approximation possible for the gas on L1
-      const serializedTransaction = ((): string | null => {
-        try {
-          return getSerializedTransaction(transaction, {
-            r: "0xffffffffffffffffffffffffffffffffffffffff",
-            s: "0xffffffffffffffffffffffffffffffffffffffff",
-            v: 27,
-          });
-        } catch (error) /* istanbul ignore next: just logs */ {
-          log("coin-evm", "getOptimismAdditionalFees: Transaction serializing failed", { error });
-          return null;
-        }
-      })();
+      const serializedTransaction =
+        typeof transaction === "string"
+          ? transaction
+          : ((): string | null => {
+              try {
+                return getSerializedTransaction(transaction, {
+                  r: "0xffffffffffffffffffffffffffffffffffffffff",
+                  s: "0xffffffffffffffffffffffffffffffffffffffff",
+                  v: 27,
+                });
+              } catch (error) /* istanbul ignore next: just logs */ {
+                log("coin-evm", "getOptimismAdditionalFees: Transaction serializing failed", {
+                  error,
+                });
+                return null;
+              }
+            })();
 
       if (!serializedTransaction) {
         return new BigNumber(0);
@@ -304,13 +315,16 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
       return new BigNumber(additionalL1Fees.toString());
     }),
   (currency, transaction) => {
-    const serializedTransaction = ((): string | null => {
-      try {
-        return getSerializedTransaction(transaction);
-      } catch (e) {
-        return null;
-      }
-    })();
+    const serializedTransaction =
+      typeof transaction === "string"
+        ? transaction
+        : ((): string | null => {
+            try {
+              return getSerializedTransaction(transaction);
+            } catch {
+              return null;
+            }
+          })();
 
     return "getOptimismL1BaseFee_" + currency.id + "_" + serializedTransaction;
   },
@@ -336,18 +350,21 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = (
     }
 
     // Fake signature is added to get the best approximation possible for the gas on L1
-    const serializedTransaction = ((): string | null => {
-      try {
-        return getSerializedTransaction(transaction, {
-          r: "0xffffffffffffffffffffffffffffffffffffffff",
-          s: "0xffffffffffffffffffffffffffffffffffffffff",
-          v: 27,
-        });
-      } catch (error) /* istanbul ignore next: just logs */ {
-        log("coin-evm", "getScrollAdditionalFees: Transaction serializing failed", { error });
-        return null;
-      }
-    })();
+    const serializedTransaction =
+      typeof transaction === "string"
+        ? transaction
+        : ((): string | null => {
+            try {
+              return getSerializedTransaction(transaction, {
+                r: "0xffffffffffffffffffffffffffffffffffffffff",
+                s: "0xffffffffffffffffffffffffffffffffffffffff",
+                v: 27,
+              });
+            } catch (error) /* istanbul ignore next: just logs */ {
+              log("coin-evm", "getScrollAdditionalFees: Transaction serializing failed", { error });
+              return null;
+            }
+          })();
 
     if (!serializedTransaction) {
       return new BigNumber(0);
@@ -363,6 +380,16 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = (
     const additionalL1Fees = await scrollGasOracle.getL1Fee(serializedTransaction);
     return new BigNumber(additionalL1Fees.toString());
   });
+
+/* Get default maxPriorityFeePerGas by chain */
+const getMaxPriorityFeePerGas = (currency: CryptoCurrency): BigNumber => {
+  switch (currency.id) {
+    case "zero_gravity":
+      return new BigNumber(2e9); // 2 Gwei
+    default:
+      return new BigNumber(1e9); // 1 Gwei
+  }
+};
 
 const node: NodeApi = {
   getBlockByHeight,

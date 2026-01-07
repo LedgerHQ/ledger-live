@@ -2,7 +2,6 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { View, StyleSheet } from "react-native";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -10,12 +9,12 @@ import {
   hasActivatableVotes,
   hasRevokableVotes,
 } from "@ledgerhq/live-common/families/celo/logic";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName, NavigatorName } from "~/const";
 import Button from "~/components/Button";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.CeloManageAssetsNavigator>
@@ -24,11 +23,11 @@ type NavigationProps = RootComposite<
 function ManageAssetsNavigator() {
   const { t } = useTranslation();
 
-  const navigation = useNavigation<NavigationProps["navigation"]>();
+  const navigation = useNavigation<NativeStackNavigationProp<Record<string, object | undefined>>>();
   navigation.setOptions({ title: t("celo.manage.title") });
 
   const route = useRoute<NavigationProps["route"]>();
-  const { account } = useSelector(accountScreenSelector(route?.params));
+  const { account } = useAccountScreen(route?.params);
   const { celoResources } = account as CeloAccount;
   const { votes } = celoResources;
 
@@ -43,7 +42,7 @@ function ManageAssetsNavigator() {
       params?: { [key: string]: unknown };
     }) => {
       // This is complicated (even impossible?) to type properly…
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(route, {
+      navigation.navigate(route, {
         screen,
         params: { ...params, accountId: account?.id },
       });

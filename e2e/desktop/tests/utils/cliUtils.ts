@@ -1,15 +1,19 @@
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync";
+import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/sdk";
 import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/lib/walletsync/index";
 import walletsync from "@ledgerhq/live-wallet/lib/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
 import { runCliCommand } from "./runCli";
-import SpeculosHttpTransport, {
+import {
+  DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
-} from "@ledgerhq/hw-transport-node-speculos-http";
+} from "@ledgerhq/live-dmk-speculos";
 import { retry } from "@ledgerhq/live-common/promise";
-import { registerTransportModule, unregisterAllTransportModules } from "@ledgerhq/live-common/hw";
+import {
+  registerTransportModule,
+  unregisterAllTransportModules,
+} from "@ledgerhq/live-common/hw/index";
 
 type LiveDataOpts = {
   currency?: string;
@@ -17,6 +21,14 @@ type LiveDataOpts = {
   scheme?: string;
   appjson?: string;
   add?: boolean;
+};
+
+type GetAddressOpts = {
+  currency?: string;
+  device?: string;
+  path?: string;
+  derivationMode?: string;
+  verify?: boolean;
 };
 
 type LedgerKeyRingProtocolOpts = {
@@ -210,8 +222,54 @@ export const CLI = {
 
     registerTransportModule({
       id: "speculos-http",
-      open: () => retry(() => SpeculosHttpTransport.open(req)),
+      open: () => retry(() => DeviceManagementKitTransportSpeculos.open(req)),
       disconnect: () => Promise.resolve(),
     });
+  },
+  getAddress: async (opts: GetAddressOpts) => {
+    const cliOpts = ["getAddress"];
+
+    if (opts.currency) {
+      cliOpts.push(`--currency+${opts.currency}`);
+    }
+
+    if (opts.device) {
+      cliOpts.push(`--device+${opts.device}`);
+    }
+
+    if (opts.path) {
+      cliOpts.push(`--path+${opts.path}`);
+    }
+
+    if (opts.derivationMode) {
+      cliOpts.push(`--derivationMode+${opts.derivationMode}`);
+    }
+
+    if (opts.verify) {
+      cliOpts.push("--verify");
+    }
+
+    const output = await runCliCommand(cliOpts.join("+"));
+    const lines = output
+      .split("\n")
+      .map(line => line.trim())
+      .filter(line => line.length > 0);
+
+    if (lines.length === 0) {
+      throw new Error("CLI getAddress returned empty output");
+    }
+
+    const jsonLine =
+      [...lines].reverse().find(line => line.startsWith("{") || line.startsWith("[")) ?? "";
+
+    if (!jsonLine) {
+      throw new Error("CLI getAddress output does not contain JSON");
+    }
+
+    try {
+      return JSON.parse(jsonLine);
+    } catch {
+      throw new Error("Failed to parse CLI getAddress output");
+    }
   },
 };

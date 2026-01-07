@@ -2,11 +2,13 @@ import {
   decodeTokenAccountId,
   encodeTokenAccountId,
   safeDecodeTokenId,
+  safeDecodeXpubOrAddress,
   safeEncodeTokenId,
+  safeEncodeXpubOrAddress,
 } from "./accountId";
 import tokenData from "./__fixtures__/binance-peg_dai_token.json";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import * as cryptoAssets from "../crypto-assets";
+import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -63,22 +65,57 @@ describe("coin-framework", () => {
     });
 
     describe("decodeTokenAccountId", () => {
-      it("should return an accountId and a token", () => {
+      it("should return an accountId and a token", async () => {
         jest
           .spyOn(cryptoAssets, "getCryptoAssetsStore")
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           .mockReturnValue({
-            findTokenById: (_: unknown) => TOKEN,
+            findTokenById: (_: unknown) => Promise.resolve(TOKEN),
+            findTokenByAddressInCurrency: (_: unknown, __: unknown) => Promise.resolve(TOKEN),
           } as CryptoAssetsStore);
 
         expect(
-          decodeTokenAccountId(
+          await decodeTokenAccountId(
             "js:2:0xkvn:+bsc%2Fbep20%2Fbinance~!dash!~peg~!underscore!~dai~!underscore!~token",
           ),
         ).toEqual({
           accountId: "js:2:0xkvn:",
           token: TOKEN,
         });
+      });
+    });
+
+    describe("safeEncodeXpubOrAddress", () => {
+      it("shouldn't throw with falsy xpubOrAddress", () => {
+        expect(safeEncodeXpubOrAddress(null as any)).toBe("");
+        expect(safeEncodeXpubOrAddress(undefined as any)).toBe("");
+        expect(safeEncodeXpubOrAddress("")).toBe("");
+      });
+
+      it("should encode double colons in xpubOrAddress", () => {
+        const xpubOrAddress =
+          "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec";
+        const expected =
+          "ldg~!colons!~1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec";
+
+        expect(safeEncodeXpubOrAddress(xpubOrAddress)).toBe(expected);
+      });
+    });
+
+    describe("safeDecodeXpubOrAddress", () => {
+      it("shouldn't throw with falsy encodedXpubOrAddress", () => {
+        expect(safeDecodeXpubOrAddress(null as any)).toBe("");
+        expect(safeDecodeXpubOrAddress(undefined as any)).toBe("");
+        expect(safeDecodeXpubOrAddress("")).toBe("");
+      });
+
+      it("should decode double colons from encoded xpubOrAddress", () => {
+        const encodedXpubOrAddress =
+          "ldg~!colons!~1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec";
+        const expected =
+          "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec";
+
+        expect(safeDecodeXpubOrAddress(encodedXpubOrAddress)).toBe(expected);
       });
     });
   });

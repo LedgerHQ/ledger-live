@@ -9,26 +9,39 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   CantonOnboardProgress,
   CantonOnboardResult,
-  CantonPreApprovalProgress,
-  CantonPreApprovalResult,
+  CantonAuthorizeProgress,
+  CantonAuthorizeResult,
 } from "./onboard";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TransferProposal } from "../network/gateway";
 
 export interface CantonCurrencyBridge extends CurrencyBridge {
   onboardAccount: (
     currency: CryptoCurrency,
     deviceId: string,
-    derivationPath: string,
+    creatableAccount: Account,
   ) => Observable<CantonOnboardProgress | CantonOnboardResult>;
   authorizePreapproval: (
     currency: CryptoCurrency,
     deviceId: string,
-    derivationPath: string,
+    creatableAccount: Account,
     partyId: string,
-  ) => Observable<CantonPreApprovalProgress | CantonPreApprovalResult>;
+  ) => Observable<CantonAuthorizeProgress | CantonAuthorizeResult>;
+  transferInstruction: (
+    currency: CryptoCurrency,
+    deviceId: string,
+    account: Account,
+    partyId: string,
+    contractId: string,
+    type:
+      | "accept-transfer-instruction"
+      | "reject-transfer-instruction"
+      | "withdraw-transfer-instruction",
+    reason?: string,
+  ) => Promise<void>;
 }
 
 export type NetworkInfo = {
@@ -47,26 +60,48 @@ export type Transaction = TransactionCommon & {
   family: "canton";
   fee: BigNumber | null | undefined;
   memo?: string;
+  tokenId: string;
+  expireInSeconds?: number;
+  instrumentAdmin?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "canton";
   fee: string | null | undefined;
   memo?: string;
+  tokenId: string;
+  expireInSeconds?: number;
+  instrumentAdmin?: string;
 };
+
+export enum DurationEnum {
+  ONE_DAY = "1d",
+  THREE_HOURS = "3h",
+  SIX_HOURS = "6h",
+  ONE_WEEK = "1w",
+  ONE_MONTH = "1m",
+}
 
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export type CantonResources = {
-  partyId: string;
+  isOnboarded: boolean;
+  instrumentUtxoCounts: Record<string, number>;
+  pendingTransferProposals: TransferProposal[];
+  publicKey?: string;
+  xpub?: string;
 };
 export type CantonResourcesRaw = {
-  partyId: string;
+  isOnboarded: boolean;
+  instrumentUtxoCounts: Record<string, number>;
+  pendingTransferProposals: TransferProposal[];
+  publicKey?: string;
+  xpub?: string;
 };
 
 export type CantonAccount = Account & {
-  cantonResources?: CantonResources;
+  cantonResources: CantonResources;
 };
 export type CantonAccountRaw = AccountRaw & {
   cantonResources: CantonResourcesRaw;

@@ -4,12 +4,16 @@ import { AdditionalProviderConfig } from "@ledgerhq/live-common/exchange/provide
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
+import {
+  getDefaultExplorerView,
+  getTransactionExplorer as getDefaultTransactionExplorer,
+} from "@ledgerhq/live-common/explorers";
+import { Divider } from "@ledgerhq/react-ui/index";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import uniq from "lodash/uniq";
 import React, { useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
@@ -24,12 +28,12 @@ import Text from "~/renderer/components/Text";
 import Tooltip from "~/renderer/components/Tooltip";
 import { DataList } from "~/renderer/drawers/OperationDetails";
 import {
-  B,
   GradientHover,
   OpDetailsData,
   OpDetailsSection,
   OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
+import { getLLDCoinFamily } from "~/renderer/families";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { dayFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -46,7 +50,7 @@ import { rgba } from "~/renderer/styles/helpers";
 
 const Value = styled(Box).attrs(() => ({
   fontSize: 4,
-  color: "palette.text.shade50",
+  color: "neutral.c70",
   ff: "Inter|Medium",
 }))<{ status?: string }>`
   flex: 1;
@@ -67,8 +71,8 @@ const Status = styled.div<{ status: string }>`
   }
 `;
 const WrapperClock = styled(Box).attrs(() => ({
-  bg: "palette.background.paper",
-  color: "palette.text.shade60",
+  bg: "background.card",
+  color: "neutral.c70",
 }))`
   border-radius: 50%;
   position: absolute;
@@ -78,7 +82,7 @@ const WrapperClock = styled(Box).attrs(() => ({
 `;
 const SelectableTextWrapper = styled(Box).attrs(p => ({
   ff: "Inter",
-  color: p.color || "palette.text.shade80",
+  color: p.color || "neutral.c80",
   fontSize: 4,
   relative: true,
 }))`
@@ -96,7 +100,7 @@ const SelectableTextWrapper = styled(Box).attrs(p => ({
   }
 
   &:hover ${Value} {
-    color: ${p => p.theme.colors.palette.text.shade100};
+    color: ${p => p.theme.colors.neutral.c100};
     font-weight: 400;
   }
 }
@@ -128,8 +132,12 @@ const SwapOperationDetails = ({
   const { t } = useTranslation();
   const mainCurrency =
     fromCurrency.type === "CryptoCurrency" ? fromCurrency : fromCurrency.parentCurrency;
+
+  const specific = mainCurrency ? getLLDCoinFamily(mainCurrency.family) : null;
+  const getTransactionExplorer = specific?.getTransactionExplorer;
+
+  let url: string | null | undefined;
   //Temporary feature before adding history to swap live app
-  let url;
   switch (provider) {
     case "lifi":
       url = "https://scan.li.fi/tx/$hash".replace("$hash", operation.hash);
@@ -137,8 +145,13 @@ const SwapOperationDetails = ({
     case "thorswap":
       url = "https://runescan.io/tx/$hash".replace("$hash", operation.hash);
       break;
+    case "nearintents":
+      url = "https://track.swapkit.dev/tx/$hash".replace("$hash", operation.hash);
+      break;
     default:
-      url = getTransactionExplorer(getDefaultExplorerView(mainCurrency), operation.hash);
+      url = getTransactionExplorer
+        ? getTransactionExplorer(getDefaultExplorerView(mainCurrency), operation)
+        : getDefaultTransactionExplorer(getDefaultExplorerView(mainCurrency), operation.hash);
       break;
   }
 
@@ -211,7 +224,7 @@ const SwapOperationDetails = ({
         ff="Inter|SemiBold"
         textAlign="center"
         fontSize={4}
-        color="palette.text.shade60"
+        color="neutral.c70"
         my={1}
       >
         <Trans i18nKey="swap.operationDetailsModal.title" />
@@ -219,7 +232,7 @@ const SwapOperationDetails = ({
       <Box my={2} alignItems="center">
         <Box selectable>
           <FormattedVal
-            color={normalisedFromAmount.isNegative() ? "palette.text.shade100" : undefined}
+            color={normalisedFromAmount.isNegative() ? "neutral.c100" : undefined}
             unit={fromUnit}
             alwaysShowSign
             showCode
@@ -229,7 +242,7 @@ const SwapOperationDetails = ({
             data-testid="swap-amount-from"
           />
         </Box>
-        <Box my={1} color={"palette.text.shade50"}>
+        <Box my={1} color={"neutral.c70"}>
           <IconArrowDown size={16} />
         </Box>
 
@@ -325,10 +338,10 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.date" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <Box data-testId="operation-date">{dateFormatted}</Box>
+          <Box data-testid="operation-date">{dateFormatted}</Box>
         </OpDetailsData>
       </OpDetailsSection>
-      <B />
+      <Divider />
       <OpDetailsSection>
         <OpDetailsTitle>
           <Trans i18nKey="swap.operationDetailsModal.from" />
@@ -336,9 +349,9 @@ const SwapOperationDetails = ({
         <OpDetailsData>
           <Box horizontal alignItems={"center"}>
             <Box mr={1} alignItems={"center"}>
-              <CryptoCurrencyIcon size={16} currency={fromCurrency} />
+              <CryptoCurrencyIcon size={22} currency={fromCurrency} />
             </Box>
-            <Box flex={1} color={"palette.text.shade100"} data-testid="swap-drawer-account-from">
+            <Box flex={1} color={"neutral.c100"} data-testid="swap-drawer-account-from">
               <Ellipsis>
                 <Link onClick={() => openAccount(fromAccount)}>{fromAccountName}</Link>
               </Ellipsis>
@@ -357,7 +370,7 @@ const SwapOperationDetails = ({
               showCode
               val={fromAmount}
               disableRounding
-              color={"palette.text.shade50"}
+              color={"neutral.c70"}
             />
           </Box>
         </OpDetailsData>
@@ -370,7 +383,7 @@ const SwapOperationDetails = ({
           <DataList lines={senders} t={t} />
         </OpDetailsData>
       </OpDetailsSection>
-      <B />
+      <Divider />
       <OpDetailsSection>
         <OpDetailsTitle>
           <Trans i18nKey="swap.operationDetailsModal.to" />
@@ -378,9 +391,9 @@ const SwapOperationDetails = ({
         <OpDetailsData>
           <Box horizontal alignItems={"center"}>
             <Box mr={1} alignItems={"center"}>
-              <CryptoCurrencyIcon size={16} currency={toCurrency} />
+              <CryptoCurrencyIcon size={22} currency={toCurrency} />
             </Box>
-            <Box flex={1} color={"palette.text.shade100"} data-testid="swap-drawer-account-to">
+            <Box flex={1} color={"neutral.c100"} data-testid="swap-drawer-account-to">
               <Ellipsis>
                 <Link onClick={() => openAccount(toAccount)}>{toAccountName}</Link>
               </Ellipsis>
@@ -400,7 +413,7 @@ const SwapOperationDetails = ({
               val={toAmount}
               fontSize={6}
               disableRounding
-              color={"palette.text.shade50"}
+              color={"neutral.c70"}
             />
           </Box>
         </OpDetailsData>

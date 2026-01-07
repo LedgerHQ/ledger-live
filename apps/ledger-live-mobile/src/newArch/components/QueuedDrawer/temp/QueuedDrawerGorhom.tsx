@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { StyleProp, ViewStyle } from "react-native";
+import { Platform, StyleProp, ViewStyle } from "react-native";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -12,9 +12,11 @@ import {
 } from "@gorhom/bottom-sheet";
 import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
 import { useTheme } from "styled-components/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useQueuedDrawerGorhom from "./useQueuedDrawerGorhom";
 import BackDrop from "./components/BackDrop";
 import Header from "./components/Header";
+import { Box } from "@ledgerhq/native-ui";
 
 export {
   BottomSheetFlatList,
@@ -157,8 +159,14 @@ const QueuedDrawerGorhom = ({
     >
       {renderHeader()}
       <IsInDrawerProvider>{children}</IsInDrawerProvider>
+      <OnscreenNavigationSafeArea />
     </BottomSheetModal>
   );
+};
+
+const OnscreenNavigationSafeArea = () => {
+  const insets = useSafeAreaInsets();
+  return <Box height={Platform.OS === "android" ? insets.bottom : 0} />;
 };
 
 export default React.memo(QueuedDrawerGorhom);

@@ -1,3 +1,4 @@
+import { Step } from "jest-allure2-reporter/api";
 import { log } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
@@ -9,7 +10,7 @@ export default class DiscoverPage {
     { name: "ParaSwap", url: " https://paraswap.io" },
     { name: "Kiln", url: " https://kiln.fi" },
     { name: "Lido", url: " https://lido.fi/" },
-    { name: "1inch", url: " https://1inch.io/" },
+    { name: "1inch", url: " https://1inch.com/" },
     { name: "BTCDirect", url: " https://btcdirect.eu/" },
     { name: "Banxa", url: " https://banxa.com/" },
     { name: "Bitrefill", url: " https://bitrefill.com" },

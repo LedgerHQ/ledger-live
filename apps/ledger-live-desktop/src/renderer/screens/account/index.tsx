@@ -5,7 +5,6 @@ import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { Redirect } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountSelector } from "~/renderer/reducers/accounts";
@@ -23,12 +22,9 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
 import useTheme from "~/renderer/hooks/useTheme";
-import Collections from "~/renderer/screens/nft/Collections";
-import NftCollections from "LLD/features/Collectibles/Nfts/Collections";
-import OrdinalsAccount from "LLD/features/Collectibles/Ordinals/screens/Account";
 import BalanceSummary from "./BalanceSummary";
 import AccountHeader from "./AccountHeader";
-import AccountWarningBanner from "./AccountWarningBanner";
+import { AccountWarningBanner, AccountWarningCustomBanner } from "./AccountWarningBanner";
 import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHeaderActions";
 import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
@@ -36,10 +32,6 @@ import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanne
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { isBitcoinBasedAccount, isBitcoinAccount } from "@ledgerhq/live-common/account/typeGuards";
-import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
-import { useNftSupportFeature } from "~/renderer/hooks/nfts/useNftSupportFeature";
 import NftEntryPoint from "LLD/features/NftEntryPoint";
 
 type Params = {
@@ -101,30 +93,19 @@ const AccountPage = ({
   const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const AccountBodyHeader = specific?.AccountBodyHeader;
   const AccountSubHeader = specific?.AccountSubHeader;
-  const bgColor = useTheme().colors.palette.background.paper;
+  const PendingTransferProposals = specific?.PendingTransferProposals;
+  const bgColor = useTheme().colors.background.card;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const { hiddenNftCollections } = useNftCollectionsStatus(true);
-
-  const { nftSupportEnabled } = useNftSupportFeature();
-
-  const nftReworked = useFeature("lldNftsGalleryNewArch");
-  const isNftReworkedEnabled = nftReworked?.enabled;
-
-  const ordinalsFF = useFeature("lldnewArchOrdinals");
-  const isOrdinalsEnabled = ordinalsFF?.enabled;
 
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
       const removeZeroAmountTokenOp =
         shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
-      // Remove operations coming from an NFT collection considered spam
-      const opFromBlacklistedNftCollection = operation?.nftOperations?.find(op =>
-        hiddenNftCollections.includes(`${account.id}|${op?.contract}`),
-      );
-      return !opFromBlacklistedNftCollection && !removeZeroAmountTokenOp;
+
+      return !removeZeroAmountTokenOp;
     },
-    [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
+    [shouldFilterTokenOpsZeroAmount],
   );
 
   const currency = mainAccount?.currency;
@@ -134,9 +115,6 @@ const AccountPage = ({
   }
 
   const color = getCurrencyColor(currency, bgColor);
-
-  const displayOrdinals =
-    isOrdinalsEnabled && isBitcoinBasedAccount(account) && isBitcoinAccount(account);
 
   return (
     <Box key={account.id}>
@@ -171,6 +149,7 @@ const AccountPage = ({
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
       </Box>
       <AccountWarningBanner currency={currency} />
+      <AccountWarningCustomBanner currency={currency} />
       {AccountSubHeader ? (
         <AccountSubHeader account={account} parentAccount={parentAccount} />
       ) : null}
@@ -190,19 +169,16 @@ const AccountPage = ({
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
-          {nftSupportEnabled && account.type === "Account" && isNFTActive(account.currency) ? (
-            isNftReworkedEnabled ? (
-              <NftCollections account={account} />
-            ) : (
-              <Collections account={account} />
-            )
-          ) : null}
+
+          {PendingTransferProposals && (
+            <PendingTransferProposals account={account as Account} parentAccount={mainAccount} />
+          )}
 
           {account.type === "Account" && <NftEntryPoint account={account} />}
 
-          {displayOrdinals ? <OrdinalsAccount account={account} /> : null}
           {account.type === "Account" ? <TokensList account={account} /> : null}
           <OperationsList
+            t={t}
             account={account}
             parentAccount={parentAccount}
             title={t("account.lastOperations")}

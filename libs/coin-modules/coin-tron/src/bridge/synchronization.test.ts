@@ -1,10 +1,10 @@
 import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { firstValueFrom, reduce } from "rxjs";
 import coinConfig, { TronCoinConfig } from "../config";
-import * as tronNetwork from "../network";
 import { mockServer, TRONGRID_BASE_URL_MOCKED } from "../network/index.mock";
 import { Transaction, TronAccount } from "../types";
 import accountFixture from "./fixtures/synchronization.account.fixture.json";
@@ -12,6 +12,42 @@ import { createBridges } from "./index";
 import { getAccountShape } from "./synchronization";
 import { setupServer } from "msw/node";
 import { AccountTronAPI } from "../network/types";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import type { NetworkInfo } from "../types/bridge";
+
+// Create mock functions inside the factory to avoid hoisting issues
+jest.mock("../network", () => {
+  const actual = jest.requireActual<typeof import("../network")>("../network");
+
+  // Create mocks that default to actual implementations
+  const mocks = {
+    getTronAccountNetwork: jest.fn(actual.getTronAccountNetwork),
+    getLastBlock: jest.fn(actual.getLastBlock),
+    fetchTronAccount: jest.fn(actual.fetchTronAccount),
+    fetchTronAccountTxs: jest.fn(actual.fetchTronAccountTxs),
+    getUnwithdrawnReward: jest.fn(actual.getUnwithdrawnReward),
+  };
+
+  return {
+    ...actual,
+    ...mocks,
+    // Export mocks for tests to access
+    __mocks: mocks,
+  };
+});
+
+// Import the mocked module to access the mocks
+import * as tronNetwork from "../network";
+
+// Get mock functions from the mocked module
+const mockFunctions = (tronNetwork as typeof tronNetwork & { __mocks: typeof mockFunctions })
+  .__mocks as {
+  getTronAccountNetwork: jest.Mock;
+  getLastBlock: jest.Mock;
+  fetchTronAccount: jest.Mock;
+  fetchTronAccountTxs: jest.Mock;
+  getUnwithdrawnReward: jest.Mock;
+};
 
 const currency = getCryptoCurrencyById("tron");
 const defaultSyncConfig = {
@@ -115,6 +151,91 @@ describe("sync", () => {
   let bridge: ReturnType<typeof createBridges>;
 
   beforeAll(() => {
+    // Mock the crypto assets store with the expected tokens
+    const parentCurrency = {
+      type: "CryptoCurrency",
+      id: "tron",
+      coinType: 195,
+      name: "Tron",
+      managerAppName: "Tron",
+      ticker: "TRX",
+      scheme: "tron",
+      color: "#D9012C",
+      family: "tron",
+      blockAvgTime: 9,
+      units: [{ name: "TRX", code: "TRX", magnitude: 6 }],
+      explorerViews: [
+        {
+          tx: "https://tronscan.org/#/transaction/$hash",
+          address: "https://tronscan.org/#/address/$address",
+        },
+      ],
+      keywords: ["trx", "tron"],
+    };
+
+    const mockTokens = {
+      "tron/trc10/1002000": {
+        type: "TokenCurrency",
+        id: "tron/trc10/1002000",
+        contractAddress: "TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg",
+        parentCurrency,
+        tokenType: "trc10",
+        name: "BitTorrent Old",
+        ticker: "BTTOLD",
+        delisted: true,
+        disableCountervalue: false,
+        ledgerSignature:
+          "0a0a426974546f7272656e7410061a46304402202e2502f36b00e57be785fc79ec4043abcdd4fdd1b58d737ce123599dffad2cb602201702c307f009d014a553503b499591558b3634ceee4c054c61cedd8aca94c02b",
+        units: [{ name: "BitTorrent Old", code: "BTTOLD", magnitude: 6 }],
+      },
+      "tron/trc20/tla2f6vpqdgre67v1736s7bj8ray5wyju7": {
+        type: "TokenCurrency",
+        id: "tron/trc20/tla2f6vpqdgre67v1736s7bj8ray5wyju7",
+        contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+        parentCurrency,
+        tokenType: "trc20",
+        name: "WINK",
+        ticker: "WIN",
+        delisted: false,
+        disableCountervalue: false,
+        ledgerSignature: null,
+        units: [{ name: "WINK", code: "WIN", magnitude: 6 }],
+      },
+      "tron/trc20/tcfll5dx5zjdknwuesxxi1vpwjlvmwzzy9": {
+        type: "TokenCurrency",
+        id: "tron/trc20/tcfll5dx5zjdknwuesxxi1vpwjlvmwzzy9",
+        contractAddress: "TCFLL5dx5ZJdKnWuesXxi1VPwjLVmWZZy9",
+        parentCurrency,
+        tokenType: "trc20",
+        name: "JUST GOV",
+        ticker: "JST",
+        delisted: false,
+        disableCountervalue: false,
+        ledgerSignature: null,
+        units: [{ name: "JUST GOV", code: "JST", magnitude: 18 }],
+      },
+    };
+
+    setupMockCryptoAssetsStore({
+      findTokenById: async (id: string): Promise<TokenCurrency | undefined> => {
+        return (
+          (mockTokens[id as keyof typeof mockTokens] as TokenCurrency | undefined) || undefined
+        );
+      },
+      findTokenByAddressInCurrency: async (
+        address: string,
+        currencyId: string,
+      ): Promise<TokenCurrency | undefined> => {
+        if (currencyId === "tron") {
+          const token = Object.values(mockTokens).find(
+            token => token.contractAddress.toLowerCase() === address.toLowerCase(),
+          );
+          return (token as TokenCurrency | undefined) || undefined;
+        }
+        return undefined;
+      },
+    });
+
     const signer = jest.fn();
     const coinConfig = (): TronCoinConfig => ({
       status: {
@@ -155,13 +276,18 @@ describe("sync", () => {
 });
 
 describe("scanAccounts", () => {
-  let spyGetTronAccountNetwork: jest.SpyInstance;
+  // Use the mock functions defined at module level
+  const mockGetTronAccountNetwork = mockFunctions.getTronAccountNetwork;
+  const mockGetLastBlock = mockFunctions.getLastBlock;
+  const mockFetchTronAccount = mockFunctions.fetchTronAccount;
+  const mockFetchTronAccountTxs = mockFunctions.fetchTronAccountTxs;
+  const mockGetUnwithdrawnReward = mockFunctions.getUnwithdrawnReward;
   const localMockServer = setupServer();
 
   const address = "TT2T17KZhoDu47i2E4FWxfG79zdkEWkU9N";
 
   beforeAll(() => {
-    spyGetTronAccountNetwork = jest.spyOn(tronNetwork, "getTronAccountNetwork");
+    setupMockCryptoAssetsStore();
 
     coinConfig.setCoinConfig(() => ({
       status: {
@@ -176,22 +302,25 @@ describe("scanAccounts", () => {
   });
 
   beforeEach(() => {
-    jest
-      .spyOn(tronNetwork, "getLastBlock")
-      .mockResolvedValueOnce({ height: 0, hash: "", time: new Date() });
-    jest.spyOn(tronNetwork, "fetchTronAccount").mockResolvedValueOnce([
+    // Reset mocks and set default implementations
+    mockGetLastBlock.mockReset();
+    mockFetchTronAccount.mockReset();
+    mockFetchTronAccountTxs.mockReset();
+    mockGetUnwithdrawnReward.mockReset();
+    mockGetTronAccountNetwork.mockReset();
+
+    mockGetLastBlock.mockResolvedValueOnce({ height: 0, hash: "", time: new Date() });
+    mockFetchTronAccount.mockResolvedValueOnce([
       {
         address,
       } as AccountTronAPI,
     ]);
-    jest.spyOn(tronNetwork, "fetchTronAccountTxs").mockResolvedValueOnce([]);
-    jest.spyOn(tronNetwork, "getUnwithdrawnReward").mockResolvedValueOnce(BigNumber(0));
-
-    spyGetTronAccountNetwork.mockClear();
+    mockFetchTronAccountTxs.mockResolvedValueOnce([]);
+    mockGetUnwithdrawnReward.mockResolvedValueOnce(BigNumber(0));
   });
 
   afterAll(() => {
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
 
     localMockServer.close();
   });
@@ -207,7 +336,7 @@ describe("scanAccounts", () => {
     },
   ])("returns an account flagged as used", async ({ freeNetLimit, expectedUsed }) => {
     // Given
-    spyGetTronAccountNetwork.mockResolvedValueOnce({
+    mockGetTronAccountNetwork.mockResolvedValueOnce({
       family: "tron",
       freeNetUsed: BigNumber(0),
       freeNetLimit: BigNumber(freeNetLimit),
@@ -215,7 +344,7 @@ describe("scanAccounts", () => {
       netLimit: BigNumber(0),
       energyUsed: BigNumber(0),
       energyLimit: BigNumber(0),
-    });
+    } as NetworkInfo);
     const addressResolver = {
       address: "TT2T17KZhoDu47i2E4FWxfG79zdkEWkU9N",
       path: "path",
@@ -236,7 +365,7 @@ describe("scanAccounts", () => {
     );
 
     // Then
-    expect(spyGetTronAccountNetwork).toHaveBeenCalledTimes(1);
+    expect(mockGetTronAccountNetwork).toHaveBeenCalledTimes(1);
     expect(account.used).toEqual(expectedUsed);
   });
 });

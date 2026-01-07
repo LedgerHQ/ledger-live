@@ -22,6 +22,16 @@ on:
         required: false
         type: boolean
         default: false
+      max-shards:
+        description: Max number of shards to use for detox tests (both ios and android)
+        required: false
+        type: number
+        default: 2
+      skip-pod-checks:
+        description: Whether to skip the pod lockfile checks
+        required: false
+        type: string
+        default: 'true'
 
   workflow_dispatch:
     inputs:
@@ -46,6 +56,16 @@ on:
         required: false
         type: boolean
         default: false
+      max-shards:
+        description: Max number of shards to use for detox tests (both ios and android)
+        required: false
+        type: number
+        default: 2
+      skip-pod-checks:
+        description: Whether to skip the pod lockfile checks
+        required: false
+        type: string
+        default: 'true'
 
 permissions:
   id-token: write
@@ -75,6 +95,7 @@ jobs:
       android_js_key: ${{ steps.cache-keys.outputs.android_js_key }}
       android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
       ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
+      shard_matrix: ${{ steps.generate-shard-matrix.outputs.matrix }}
     steps:
 
       - uses: actions/checkout@v4
@@ -94,8 +115,8 @@ jobs:
       - name: Determine cache keys
         id: cache-keys
         run: |
-          echo "ios_native_key=${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-2" >> $GITHUB_OUTPUT
-          echo "android_native_key=${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android" >> $GITHUB_OUTPUT
+          echo "ios_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-3" >> $GITHUB_OUTPUT
+          echo "android_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-3" >> $GITHUB_OUTPUT
           echo "ios_js_key=${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}" >> $GITHUB_OUTPUT
@@ -153,6 +174,13 @@ jobs:
           use-fallback: false
           lookup-only: true
 
+      - name: Generate shard matrix
+        id: generate-shard-matrix
+        run: |
+          max_shards=${{ inputs.max-shards || 2 }}
+          shard_indices=$(seq -s ',' 1 $max_shards)
+          echo "matrix={\"shardIndex\":[$shard_indices],\"shardTotal\":[$max_shards]}" >> $GITHUB_OUTPUT
+
   build-ios:
     name: "iOS Build"
     needs: [ determine-builds ]
@@ -184,11 +212,10 @@ jobs:
     name: "iOS Build / iOS Detox"
     needs: [ build-ios, determine-builds ]
     runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
+    timeout-minutes: 120
     strategy:
       fail-fast: false
-      matrix:
-        shardIndex: [1, 2]
-        shardTotal: [2]
+      matrix: ${{ fromJson(needs.determine-builds.outputs.shard_matrix) }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -261,37 +288,33 @@ jobs:
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm --ignore-scripts
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
 
       - name: Detox Post Install
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
       - name: Download Native Build
-        uses: tespkg/actions-cache/restore@v1
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
-          path: ${{ env.IOS_NATIVE_PATH }}
           key: ${{ needs.determine-builds.outputs.ios_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
 
       - name: Download JS Build
-        uses: tespkg/actions-cache/restore@v1
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
-          path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ needs.determine-builds.outputs.ios_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
 
       - name: Copy JS build
         run: |
@@ -336,10 +359,16 @@ jobs:
           path: apps/ledger-live-mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shardIndex }}.json
           name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shardIndex }}"
 
+      - name: Record Flake
+        if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/ios.**') != '' }}
+        run: |
+          echo "Flake detected for iOS tests"
+
   detox-tests-android:
     name: "Android Build / Android Detox"
     needs: [ build-android, determine-builds ]
     runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    timeout-minutes: 80
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -360,9 +389,7 @@ jobs:
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
     strategy:
       fail-fast: false
-      matrix:
-        shardIndex: [ 1, 2 ]
-        shardTotal: [ 2 ]
+      matrix: ${{ fromJson(needs.determine-builds.outputs.shard_matrix) }}
 
     steps:
       - uses: actions/checkout@v4
@@ -390,30 +417,24 @@ jobs:
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download Native Build
-        uses: tespkg/actions-cache/restore@v1
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
-          path: |
-            ${{ env.ANDROID_APK_PATH }}
-            ${{ env.ANDROID_TESTBINARY_PATH }}
           key: ${{ needs.determine-builds.outputs.android_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
 
       - name: Download JS Bundle
-        uses: tespkg/actions-cache/restore@v1
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         with:
-          path: ${{ env.ANDROID_JSBUNDLE_PATH }}
           key: ${{ needs.determine-builds.outputs.android_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
 
       - name: Prepare APK
         run: |
@@ -460,7 +481,7 @@ jobs:
         id: setup-caches
         with:
           install-proto: true
-          skip-pnpm-cache: "false"
+          skip-pnpm-cache: "true"
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -479,7 +500,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
@@ -511,6 +532,7 @@ jobs:
           bucket: ledger-live-cache
           endpoint: ${{ secrets.R2_ENDPOINT }}
           region: auto
+          destination: /
 
       - name: create AVD and generate snapshot for caching
         if: steps.detox-avd.outputs.cache-hit != 'true'
@@ -568,6 +590,11 @@ jobs:
           path: apps/ledger-live-mobile/artifacts/e2e-test-results-android-shard-${{ matrix.shardIndex }}.json
           name: "${{ needs.determine-builds.outputs.android_timing_cache_key }}-${{ matrix.shardIndex }}"
 
+      - name: Record Flake
+        if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/android.**') != '' }}
+        run: |
+          echo "Flake detected for Android tests"
+
       - name: Set job output based on detox result
         id: set-output
         if: ${{ !cancelled() }}
@@ -576,7 +603,7 @@ jobs:
   report-bundle-sizes:
     name: "Build Mobile > Report Bundle Sizes"
     runs-on: [ ubuntu-22.04 ]
-    if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != '' && !inputs.skip-bundle-size-reporting
+    if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != ''
     needs: [ build-ios, build-android ]
     steps:
       - name: generate token
@@ -592,6 +619,7 @@ jobs:
               \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}}
           }" > mobile.metafile.json
       - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
+        if: ${{ !inputs.skip-bundle-size-reporting }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
           baseBranch: ${{ inputs.base_ref || 'develop' }}
@@ -608,7 +636,7 @@ jobs:
     name: Merge iOS Timing Files
     needs: [ determine-builds, detox-tests-ios ]
     runs-on: ubuntu-24.04
-    if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure') }}
+    if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure')  && inputs.max-shards > 1 }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -636,7 +664,7 @@ jobs:
     name: Merge Android Timing Files
     needs: [ determine-builds, detox-tests-android ]
     runs-on: ubuntu-24.04
-    if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') }}
+    if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') && inputs.max-shards > 1 }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -662,9 +690,9 @@ jobs:
 
   test-pod-lockfile:
     name: "Test Pod Lockfile"
-    runs-on: [ general-pool, macOS, ARM64 ]
+    runs-on: [ macOS, ARM64 ]
     needs: [ determine-builds ]
-    if: needs.determine-builds.outputs.ios_native_exists == 'true'
+    if: needs.determine-builds.outputs.ios_native_exists == 'true' && inputs.skip-pod-checks != 'true'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -684,7 +712,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          pnpm i --filter="live-mobile..." --unsafe-perm --ignore-scripts
 
       - name: Test Pod Lockfile
         run: |

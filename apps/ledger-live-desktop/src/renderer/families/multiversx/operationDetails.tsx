@@ -14,7 +14,7 @@ import {
 import { Account, Operation } from "@ledgerhq/types-live";
 import React, { Fragment } from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { urls } from "~/config/urls";
 import Box from "~/renderer/components/Box/Box";
 import CounterValue from "~/renderer/components/CounterValue";
@@ -23,7 +23,6 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import {
   Address,
-  B,
   OpDetailsData,
   OpDetailsSection,
   OpDetailsTitle,
@@ -33,6 +32,7 @@ import { openURL } from "~/renderer/linking";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { Divider } from "@ledgerhq/react-ui/index";
 
 const getURLFeesInfo = ({ op }: { op: Operation; currencyId: string }): string | undefined => {
   if (op.fee.gt(200000)) {
@@ -145,7 +145,7 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps<Account, Multiv
             ) : null}
           </OpDetailsSection>
 
-          <B />
+          <Divider />
 
           <OpDetailsSection>
             <OpDetailsTitle>
@@ -181,7 +181,7 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps<Account, Multiv
             ) : null}
           </OpDetailsSection>
 
-          <B />
+          <Divider />
 
           <OpDetailsSection>
             <OpDetailsTitle>
@@ -235,11 +235,11 @@ const UndelegateAmountCell = ({
         unit={unit}
         showCode={true}
         fontSize={4}
-        color="palette.text.shade80"
+        color="neutral.c80"
       />
 
       <CounterValue
-        color="palette.text.shade60"
+        color="neutral.c70"
         fontSize={3}
         date={operation.date}
         currency={currency}

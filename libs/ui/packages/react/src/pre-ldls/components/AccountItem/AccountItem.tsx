@@ -201,6 +201,7 @@ export const AccountItem = ({
             ticker={ticker}
             parentId={parentId}
             showIcon={showIcon}
+            isShortened
           />
         </AccountInfoContainer>
         <BalanceContainer>

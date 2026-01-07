@@ -1,16 +1,10 @@
 import { Observable, Subject } from "rxjs";
-import { log } from "@ledgerhq/logs";
-
 import type { SuiPreloadData } from "../types";
 import { getValidators } from "../network/sdk";
 
 const PRELOAD_MAX_AGE = 30 * 60 * 1000; // 30 minutes
 
-let currentPreloadedData: SuiPreloadData = { validators: [] };
-
-function fromHydratePreloadData(data: SuiPreloadData): SuiPreloadData {
-  return { validators: data?.validators ?? [] };
-}
+let currentPreloadedData: SuiPreloadData = { validators: [], tokens: [] };
 
 const updates = new Subject<SuiPreloadData>();
 
@@ -36,13 +30,14 @@ export const getPreloadStrategy = () => ({
 
 export const preload = async (): Promise<SuiPreloadData> => {
   const validators = await getValidators();
-  log("sui/preload", "preloading sui data...");
-
-  return { validators };
+  return { validators, tokens: [] };
 };
 
 export const hydrate = (data: SuiPreloadData) => {
-  const hydrated = fromHydratePreloadData(data);
-
-  setSuiPreloadData(hydrated);
+  if (data) {
+    setSuiPreloadData({
+      validators: data.validators ?? [],
+      tokens: [],
+    });
+  }
 };

@@ -50,6 +50,7 @@ describe("createApi", () => {
   it("should pass parameters correctly", async () => {
     const api: AlpacaApi = createApi(mockTronConfig);
     const intent: TransactionIntent = {
+      intentType: "transaction",
       type: "send",
       sender: "sender",
       recipient: "recipient",

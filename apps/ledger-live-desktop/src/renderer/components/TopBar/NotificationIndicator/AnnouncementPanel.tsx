@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -21,14 +22,14 @@ import { languageSelector } from "~/renderer/reducers/settings";
 
 const DateRowContainer = styled.div`
   padding: 4px 16px;
-  background-color: ${({ theme }) => theme.colors.palette.background.default};
+  background-color: ${({ theme }) => theme.colors.background.default};
   border-radius: 4px;
   margin: 25px 0px;
 `;
 const levelThemes = {
   info: {
-    title: "palette.text.shade100",
-    text: "palette.text.shade50",
+    title: "neutral.c100",
+    text: "neutral.c70",
     background: undefined,
     icon: undefined,
     link: undefined,
@@ -43,8 +44,8 @@ const levelThemes = {
     padding: "16px",
   },
   alert: {
-    title: "palette.text.shade100",
-    text: "palette.text.shade50",
+    title: "neutral.c100",
+    text: "neutral.c70",
     background: "red",
     icon: "white",
     link: "white",
@@ -72,7 +73,7 @@ type DateRowProps = {
   date: Date;
 };
 const DateLabel = styled(Text).attrs({
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   ff: "Inter|SemiBold",
   fontSize: "11px",
   lineHeight: "18px",
@@ -156,7 +157,7 @@ function ArticleLink({ label, href, utmCampaign, color }: ArticleLinkProps) {
     return url;
   }, [href, utmCampaign]);
   const onLinkClick = useCallback(() => {
-    const isDeepLink = url.protocol === "ledgerlive:";
+    const isDeepLink = ["ledgerlive:", "ledgerwallet:"].includes(url.protocol);
     if (isDeepLink) {
       handler(null, url.href);
       dispatch(closeInformationCenter());
@@ -258,7 +259,7 @@ export function AnnouncementPanel() {
       <PanelContainer>
         <TrackPage category="Notification Center" name="notification_center_news" />
         <Text
-          color="palette.text.shade100"
+          color="neutral.c100"
           ff="Inter|SemiBold"
           fontSize="18px"
           lineHeight="21.78px"
@@ -268,7 +269,7 @@ export function AnnouncementPanel() {
         </Text>
         <Text
           mt="8px"
-          color="palette.text.shade50"
+          color="neutral.c70"
           ff="Inter|Regular"
           fontSize="13px"
           lineHeight="15.73px"

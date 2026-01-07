@@ -1,34 +1,23 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
-import { useDispatch as useReduxDispatch } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { StackScreenProps } from "@react-navigation/stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { TrackScreen } from "~/analytics";
-import SelectDeviceComp2 from "~/components/SelectDevice2";
+import SelectDevice from "~/components/SelectDevice2";
 import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
-import SkipSelectDevice from "./SkipSelectDevice";
-import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
-import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
-import { ScreenName } from "~/const";
-
-// TODO: FIX THE StackScreenProps<{ [key: string]: object }>
-type SelectDeviceNav =
-  | StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSelectDevice>
-  | StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveAddAccountSelectDevice>
-  | StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConnectDevice>;
+import { useDispatch } from "~/context/hooks";
 
 // Called from a bunch of different navigators with different params…
-export default function SelectDevice({
+export default function SelectDeviceScreen({
   navigation,
   route,
-}: StackScreenProps<{ [key: string]: object }>) {
+}: NativeStackScreenProps<{ [key: string]: object }>) {
   const { colors } = useTheme();
-  const dispatchRedux = useReduxDispatch();
+  const dispatch = useDispatch();
   const onNavigate = useCallback(
     (device: Device) => {
       // Assumes that it will always navigate to a "ConnectDevice"
@@ -43,16 +32,19 @@ export default function SelectDevice({
 
   const onSelect = useCallback(
     (device: Device) => {
-      dispatchRedux(setLastConnectedDevice(device));
-      dispatchRedux(setReadOnlyMode(false));
+      dispatch(setLastConnectedDevice(device));
+      dispatch(setReadOnlyMode(false));
       onNavigate(device);
     },
-    [dispatchRedux, onNavigate],
+    [dispatch, onNavigate],
   );
 
   // Does not react to an header update request: too many flows use this screen.
   // Keeping the header from the original flow.
   const requestToSetHeaderOptions = useCallback(() => undefined, []);
+
+  /** Parameter used to prevent auto selection and force the user to manually select a device */
+  const forceSelectDevice = "forceSelectDevice" in route.params && route.params.forceSelectDevice;
 
   return (
     <SafeAreaView
@@ -63,12 +55,12 @@ export default function SelectDevice({
         },
       ]}
     >
-      <SkipSelectDevice route={route as SelectDeviceNav["route"]} onResult={onNavigate} />
       <TrackScreen category={route.name.replace("SelectDevice", "")} name="SelectDevice" />
       <Flex px={16} pb={8} flex={1}>
-        <SelectDeviceComp2
+        <SelectDevice
           onSelect={onSelect}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
+          autoSelectLastConnectedDevice={!forceSelectDevice}
         />
       </Flex>
     </SafeAreaView>

@@ -11,6 +11,10 @@ import { getEnv } from "@ledgerhq/live-env";
 import { ValidatorsAppValidator } from "./network/validator-app";
 import BigNumber from "bignumber.js";
 
+const SIGNATURE_SIZE = 64;
+const DUMMY_SIGNATURE_FILL = 1;
+export const DUMMY_SIGNATURE = Buffer.alloc(SIGNATURE_SIZE, DUMMY_SIGNATURE_FILL);
+
 // Hardcoding the Ledger validators info as backup,
 // because backend is flaky and sometimes doesn't return it anymore
 export const LEDGER_VALIDATOR_BY_FIGMENT: ValidatorsAppValidator = {
@@ -174,7 +178,7 @@ export function swap(arr: any[], i: number, j: number) {
 }
 
 export type Functions<T> = keyof {
-  /* eslint-disable-next-line @typescript-eslint/ban-types*/
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   [K in keyof T as T[K] extends Function ? K : never]: T[K];
 };
 

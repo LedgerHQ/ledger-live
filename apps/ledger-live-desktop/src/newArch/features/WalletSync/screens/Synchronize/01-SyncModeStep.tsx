@@ -36,6 +36,7 @@ export default function SynchronizeModeStep({ goToQRCode, goToSyncWithDevice }: 
         testId="walletSync-synchronize-scan"
         title="walletSync.synchronize.chooseMethod.scan.title"
         onClick={goToQRCode}
+        description="walletSync.synchronize.chooseMethod.descriptionModal"
         leftIcon={
           <IconContainer alignItems="center" justifyContent="center">
             <Icons.QrCode size="M" color={colors.primary.c80} />

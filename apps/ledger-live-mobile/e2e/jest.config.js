@@ -26,15 +26,30 @@ const transformIncludePatterns = ["ky"];
 
 module.exports = async () => ({
   rootDir: "..",
-  maxWorkers: process.env.CI ? 2 : 1,
-  preset: "ts-jest",
+  maxWorkers: 1,
   transform: {
     "^.+\\.(js|jsx)?$": "babel-jest",
     "^.+\\.(ts|tsx)?$": [
-      "ts-jest",
+      "@swc/jest",
       {
-        babelConfig: "<rootDir>/e2e/babel.config.detox.js",
-        tsconfig: "<rootDir>/e2e/tsconfig.test.json",
+        jsc: {
+          target: "es2022",
+          parser: {
+            syntax: "typescript",
+            tsx: true,
+            decorators: true,
+            dynamicImport: true,
+          },
+          transform: {
+            react: {
+              runtime: "automatic",
+            },
+          },
+        },
+        sourceMaps: "inline",
+        module: {
+          type: "commonjs",
+        },
       },
     ],
   },

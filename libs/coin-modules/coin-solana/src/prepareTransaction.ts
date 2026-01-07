@@ -81,7 +81,7 @@ import { TokenAccountInfo } from "./network/chain/account/token";
 import { deriveRawCommandDescriptor, toLiveTransaction } from "./rawTransaction";
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { getCryptoAssetsStore } from "./cryptoAssetsStore";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,
@@ -194,6 +194,7 @@ const deriveTokenTransferCommandDescriptor = async (
     shouldCreateAsAssociatedTokenAccount: false,
     tokenAccAddress: "",
     walletAddress: "",
+    userInputType: "sol",
   };
 
   const tokenRecipientOrError = errors.recipient
@@ -345,6 +346,7 @@ async function getTokenRecipient(
         walletAddress: recipientAddress,
         shouldCreateAsAssociatedTokenAccount,
         tokenAccAddress: recipientAssociatedTokenAccountAddress,
+        userInputType: "sol",
       },
       recipientAccInfo: associatedTokenAccount,
     };
@@ -361,6 +363,7 @@ async function getTokenRecipient(
       walletAddress: recipientTokenAccount.owner.toBase58(),
       shouldCreateAsAssociatedTokenAccount: false,
       tokenAccAddress: recipientAddress,
+      userInputType: "ata",
     },
     recipientAccInfo: recipientTokenAccount,
   };
@@ -374,7 +377,10 @@ async function deriveCreateAssociatedTokenAccountCommandDescriptor(
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
 
-  const token = getCryptoAssetsStore().getTokenById(model.uiState.tokenId);
+  const token = await getCryptoAssetsStore().findTokenById(model.uiState.tokenId);
+  if (!token) {
+    throw new Error("Token " + model.uiState.tokenId + " not found");
+  }
   const mint = token.contractAddress;
   const tokenProgram = await getMaybeTokenMintProgram(mint, api);
 
@@ -502,6 +508,7 @@ async function deriveCreateApproveCommandDescriptor(
     shouldCreateAsAssociatedTokenAccount: false,
     tokenAccAddress: "",
     walletAddress: "",
+    userInputType: "sol",
   };
 
   const tokenRecipientOrError = errors.recipient
@@ -1005,7 +1012,7 @@ function validateAssociatedTokenAccountState(
     return new SolanaTokenAccountFrozen();
   }
   // do not check initialized state on ledger accounts
-  if (!(tokenAcc as SolanaTokenAccount).id && tokenAcc.state !== "initialized") {
+  if (!("id" in tokenAcc) && tokenAcc.state !== "initialized") {
     return new SolanaTokenAccounNotInitialized();
   }
 }

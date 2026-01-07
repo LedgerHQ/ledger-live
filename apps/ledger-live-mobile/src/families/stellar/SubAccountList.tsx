@@ -2,12 +2,11 @@ import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { useSelector } from "react-redux";
 import IconPlus from "~/icons/Plus";
 import Button from "~/components/Button";
 import { NavigatorName, ScreenName } from "~/const";
 import LText from "~/components/LText";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const ReceiveButton = ({ accountId }: { accountId: string }) => {
   const { colors } = useTheme();
@@ -34,13 +33,11 @@ const ReceiveButton = ({ accountId }: { accountId: string }) => {
 const Placeholder = ({ accountId }: { accountId: string }) => {
   const { colors } = useTheme();
   const navigation = useNavigation();
-  const { account } = useSelector(
-    accountScreenSelector({
-      params: {
-        accountId,
-      },
-    }),
-  );
+  const { account } = useAccountScreen({
+    params: {
+      accountId,
+    },
+  });
   const onReceiveClick = useCallback(() => {
     navigation.navigate(NavigatorName.StellarAddAssetFlow, {
       screen: ScreenName.StellarAddAssetSelectAsset,

@@ -6,6 +6,7 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
+import { urls } from "~/config/urls";
 import Box from "~/renderer/components/Box";
 import ValidatorRow, {
   ValidatorRowProps,
@@ -14,6 +15,7 @@ import ValidatorRow, {
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Image from "~/renderer/components/Image";
 import Text from "~/renderer/components/Text";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
 
@@ -27,12 +29,13 @@ type Props = {
 };
 function SolanaValidatorRow({ validator, active, onClick, unit, currency, disableHover }: Props) {
   const explorerView = getDefaultExplorerView(currency);
+  const ledgerValidatorUrl = useLocalizedUrl(urls.ledgerValidator);
   const onExternalLink = useCallback(() => {
     const url = validator.wwwUrl || getAddressExplorer(explorerView, validator.voteAccount);
     if (url) {
-      openURL(url);
+      openURL(url === urls.ledgerValidator ? ledgerValidatorUrl : url);
     }
-  }, [explorerView, validator]);
+  }, [explorerView, validator, ledgerValidatorUrl]);
   return (
     <StyledValidatorRow
       disableHover={disableHover ?? false}
@@ -119,7 +122,7 @@ const StyledValidatorRow = styled(ValidatorRow)<
 const ChosenMark = styled(Check).attrs<{
   active?: boolean;
 }>(p => ({
-  color: p.active ? p.theme.colors.palette.primary.main : "transparent",
+  color: p.active ? p.theme.colors.primary.c80 : "transparent",
   size: 14,
 }))<{
   active?: boolean;
@@ -128,6 +131,6 @@ const TotalStakeTitle = styled(Text)`
   font-size: 11px;
   font-weight: 500;
   text-align: right;
-  color: ${p => p.theme.colors.palette.text.shade60};
+  color: ${p => p.theme.colors.neutral.c70};
 `;
 export default SolanaValidatorRow;

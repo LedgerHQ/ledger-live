@@ -1,11 +1,10 @@
 import React from "react";
 import { Flex, Text, Icon, InfiniteLoader } from "@ledgerhq/react-ui";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { localeSelector } from "~/renderer/reducers/settings";
 import styled from "styled-components";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Button } from "..";
 import MarketCoinChart from "./components/MarketCoinChart";
 import MarketInfo from "./components/MarketInfo";
@@ -70,7 +69,7 @@ export default function MarketCoinScreen() {
 
   const earnStakeLabelCoin = useGetStakeLabelLocaleBased();
 
-  const { name, ticker, image, internalCurrency, price } = currency || {};
+  const { name, ticker, image, ledgerIds, price } = currency || {};
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
@@ -91,13 +90,6 @@ export default function MarketCoinScreen() {
               <Flex alignItems={"center"} justifyContent={"center"}>
                 <InfiniteLoader />
               </Flex>
-            ) : internalCurrency ? (
-              <CryptoCurrencyIcon
-                currency={internalCurrency}
-                size={56}
-                circle
-                fallback={<img width="56px" height="56px" src={image} alt={"currency logo"} />}
-              />
             ) : (
               <img width="56px" height="56px" src={image} alt={"currency logo"} />
             )}
@@ -115,7 +107,7 @@ export default function MarketCoinScreen() {
           </Flex>
         </Flex>
         <Flex flexDirection="row" alignItems="center" justifyContent="flex-end">
-          {internalCurrency && (
+          {ledgerIds && ledgerIds.length > 0 && (
             <>
               {availableOnBuy && (
                 <Button data-testid="market-coin-buy-button" variant="color" mr={1} onClick={onBuy}>

@@ -17,8 +17,8 @@ type Props = {
   initValue?: string;
   resetInitValue?: () => void;
   value: string | undefined;
-  placeholderTranslationKey: string;
-  hideError: boolean;
+  placeholderTranslationKey?: string;
+  hideError?: boolean;
   onChange: (recipient: string, maybeExtra?: OnChangeExtra | undefined) => void;
 };
 
@@ -30,8 +30,8 @@ const RecipientFieldBase = ({
   label,
   value,
   onChange,
-  placeholderTranslationKey,
-  hideError,
+  placeholderTranslationKey = "RecipientField.placeholder",
+  hideError = false,
 }: Props) => {
   const { recipient: recipientError } = status.errors;
   const { recipient: recipientWarning } = status.warnings;
@@ -59,11 +59,6 @@ const RecipientFieldBase = ({
       {StepRecipientCustomAlert && <StepRecipientCustomAlert status={status} />}
     </Box>
   );
-};
-
-RecipientFieldBase.defaultProps = {
-  placeholderTranslationKey: "RecipientField.placeholder",
-  hideError: false,
 };
 
 export default memo(RecipientFieldBase);

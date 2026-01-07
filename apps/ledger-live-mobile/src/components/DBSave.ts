@@ -6,12 +6,14 @@ import identity from "lodash/identity";
 import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useTrackingPairs } from "~/actions/general";
 import {
   saveAccounts,
   saveBle,
   saveCountervalues,
+  saveCryptoAssetsCacheState,
+  saveIdentities,
   saveLargeMoverState,
   saveMarketState,
   savePostOnboardingState,
@@ -28,6 +30,8 @@ import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
+import { extractPersistedCALFromState } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
 
 type MaybeState = Maybe<State>;
 
@@ -36,10 +40,18 @@ type Props<Data, Stats> = {
   lense: (_: State) => Data;
   getChangesStats: (next: State, prev: State) => Stats;
   save: (data: Data, changedStats: Stats) => Promise<void>;
+  saveAtStart?: boolean;
 };
 
-function useDBSaveEffect<D, S>({ lense, throttle = 500, save, getChangesStats }: Props<D, S>) {
+function useDBSaveEffect<D, S>({
+  lense,
+  throttle = 500,
+  save,
+  getChangesStats,
+  saveAtStart = false,
+}: Props<D, S>) {
   const state: MaybeState = useSelector(identity);
+  const forceSave = useRef(saveAtStart);
   const lastSavedState = useRef(state);
   // we keep an updated version of current props in "latestProps" ref
   const latestProps = useRef({
@@ -56,10 +68,10 @@ function useDBSaveEffect<D, S>({ lense, throttle = 500, save, getChangesStats }:
         const { lense, save, state, getChangesStats } = latestProps.current;
         if (lastSavedState?.current && state) {
           const changedStats = getChangesStats(lastSavedState.current, state); // we compare last saved with latest state
-          if (!changedStats) return; // if it's falsy, it means there is no changes
-
+          if (!changedStats && !forceSave.current) return; // if it's falsy, it means there is no changes
           await save(lense(state), changedStats); // we save it for real
           lastSavedState.current = state; // for the next round, we will be able to compare with latest successful state
+          forceSave.current = false;
         }
       }, throttle),
     [throttle],
@@ -126,6 +138,15 @@ const trustchainNotEquals = (a: State, b: State) => a.trustchain !== b.trustchai
 const compareWalletState = (a: State, b: State) =>
   walletStateExportShouldDiffer(a.wallet, b.wallet);
 const largeMoverNotEquals = (a: State, b: State) => a.largeMover !== b.largeMover;
+
+const cryptoAssetsNotEquals = (a: State, b: State) => {
+  // Compare RTK Query state reference
+  return a.cryptoAssetsApi !== b.cryptoAssetsApi;
+};
+const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identities;
+
+const extractIdentitiesForPersistence = (state: State) =>
+  exportIdentitiesForPersistence(state.identities);
 
 export const ConfigureDBSaveEffects = () => {
   const getPostOnboardingStateChanged = useCallback(
@@ -202,6 +223,21 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: largeMoverNotEquals,
     lense: exportLargeMoverSelector,
+  });
+
+  useDBSaveEffect({
+    save: saveCryptoAssetsCacheState,
+    throttle: 1000,
+    getChangesStats: cryptoAssetsNotEquals,
+    lense: extractPersistedCALFromState,
+  });
+
+  useDBSaveEffect({
+    save: saveIdentities,
+    throttle: 500,
+    getChangesStats: identitiesNotEquals,
+    lense: extractIdentitiesForPersistence,
+    saveAtStart: true, // since the middleware has already possibly saved the identities, we need to be sure to save it at start
   });
 
   return null;

@@ -1,27 +1,35 @@
-import React, { useCallback, useEffect } from "react";
-import { ApyIndicator, AssetList, AssetType } from "@ledgerhq/react-ui/pre-ldls";
+import React, { useCallback, useEffect, useMemo } from "react";
+import {
+  ApyIndicator,
+  AssetList,
+  AssetType,
+  MarketPercentIndicator,
+  MarketPriceIndicator,
+} from "@ledgerhq/react-ui/pre-ldls";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
 import { ListWrapper } from "LLD/features/ModularDrawer/components/ListWrapper";
 import SkeletonList from "LLD/features/ModularDrawer/components/SkeletonList";
 import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import GenericEmptyList from "LLD/components/GenericEmptyList";
 import { balanceItem } from "LLD/features/ModularDrawer/components/Balance";
 import { useBalanceDeps } from "LLD/features/ModularDrawer/hooks/useBalanceDeps";
+import { useSelector } from "LLD/hooks/redux";
+import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
 
 export type SelectAssetProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
-  source: string;
-  flow: string;
   scrollToTop: boolean;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
-  currenciesByProvider: CurrenciesByProviderId[];
   providersLoadingStatus: LoadingStatus;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   onScrolledToTop?: () => void;
   loadNext?: () => void;
+  assetsSorted?: AssetData[];
 };
 
 const CURRENT_PAGE = "Modular Asset Selection";
@@ -33,33 +41,48 @@ const LIST_HEIGHT = `calc(100% - ${MARGIN_BOTTOM}px)`;
 
 export const SelectAssetList = ({
   assetsToDisplay,
-  source,
-  flow,
   scrollToTop,
   assetsConfiguration,
-  currenciesByProvider,
   providersLoadingStatus,
   onAssetSelected,
   onScrolledToTop,
   loadNext,
+  assetsSorted,
 }: SelectAssetProps) => {
+  const assetsMap = groupCurrenciesByAsset(assetsSorted || []);
+
   const assetConfigurationDeps = {
     ApyIndicator,
+    MarketPriceIndicator,
+    MarketPercentIndicator,
     useBalanceDeps,
     balanceItem,
+    assetsMap,
   };
+  const isDebuggingDuplicates = useSelector(modularDrawerIsDebuggingDuplicatesSelector);
 
   const makeAssetConfigurationHook = createAssetConfigurationHook(assetConfigurationDeps);
 
   const transformAssets = makeAssetConfigurationHook({
     assetsConfiguration,
-    currenciesByProvider,
   });
 
-  const formattedAssets = transformAssets(assetsToDisplay);
+  const assetsTransformed = transformAssets(assetsToDisplay);
+  const formattedAssets = useMemo(() => {
+    return assetsTransformed.map(asset => {
+      const assetWithNetworks = assetsSorted?.find(c => c.networks[0]?.id === asset.id);
+
+      return {
+        ...asset,
+        numberOfNetworks: assetWithNetworks?.networks?.length,
+        assetId: assetWithNetworks?.asset.metaCurrencyId,
+      };
+    });
+  }, [assetsTransformed, assetsSorted]);
 
   const isLoading = [LoadingStatus.Pending, LoadingStatus.Idle].includes(providersLoadingStatus);
-  const shouldDisplayEmptyState = (!formattedAssets || formattedAssets.length === 0) && !isLoading;
+  const shouldDisplayEmptyState =
+    (!assetsTransformed || assetsTransformed.length === 0) && !isLoading;
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
   const onClick = useCallback(
@@ -72,8 +95,6 @@ export const SelectAssetList = ({
         {
           asset: selectedAsset.name,
           page: CURRENT_PAGE,
-          flow,
-          source,
         },
         {
           formatAssetConfig: true,
@@ -83,7 +104,7 @@ export const SelectAssetList = ({
 
       onAssetSelected(selectedAsset);
     },
-    [assetsToDisplay, trackModularDrawerEvent, flow, source, assetsConfiguration, onAssetSelected],
+    [assetsToDisplay, trackModularDrawerEvent, assetsConfiguration, onAssetSelected],
   );
 
   useEffect(() => {
@@ -108,6 +129,7 @@ export const SelectAssetList = ({
         onClick={onClick}
         onVisibleItemsScrollEnd={loadNext}
         hasNextPage={!!loadNext}
+        isDebuggingDuplicates={isDebuggingDuplicates}
       />
     </ListWrapper>
   );

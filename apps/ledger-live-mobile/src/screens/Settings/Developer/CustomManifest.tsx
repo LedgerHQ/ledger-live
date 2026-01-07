@@ -99,7 +99,7 @@ export default function CustomManifest({ navigation }: Props) {
   const onChange = useCallback((val: string) => {
     try {
       setManifest(val);
-    } catch (e) {
+    } catch {
       setManifest(val);
     }
   }, []);
@@ -140,7 +140,7 @@ export default function CustomManifest({ navigation }: Props) {
               try {
                 manifest !== null && addLocalManifest(JSON.parse(manifest));
                 setManifest(null);
-              } catch (e) {
+              } catch {
                 Alert.alert("Invalid JSON");
               }
             }}

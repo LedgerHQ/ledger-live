@@ -2,12 +2,9 @@ import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React from "react";
 import { act } from "react-dom/test-utils";
-import { Provider } from "react-redux";
 import { render, screen, userEvent } from "tests/testSetup";
-import { formatAddress } from "~/newArch/utils/formatAddress";
 import { openModal } from "~/renderer/actions/modals";
 import { track, trackPage } from "~/renderer/analytics/segment";
-import createStore from "~/renderer/createStore";
 import { State } from "~/renderer/reducers";
 import { ARB_ACCOUNT, BTC_ACCOUNT, HEDERA_ACCOUNT } from "../../__mocks__/accounts.mock";
 import {
@@ -149,12 +146,18 @@ jest.mock("~/renderer/analytics/segment", () => ({
   trackPage: jest.fn(),
 }));
 
-const setup = (currency = arbitrumCurrency, state?: State) =>
-  render(
-    <Provider store={createStore({ state })}>
-      <ModularDrawerAddAccountFlowManager currency={currency} source="MADSource" />
-    </Provider>,
-  );
+const setup = (currency = arbitrumCurrency, state?: Partial<State>) => {
+  const initialState = {
+    ...state,
+    modularDrawer: {
+      source: "MADSource",
+      flow: "Add account",
+      ...state?.modularDrawer,
+    },
+  };
+
+  return render(<ModularDrawerAddAccountFlowManager currency={currency} />, { initialState });
+};
 
 function expectTrackPage(
   n: number,
@@ -167,8 +170,8 @@ function expectTrackPage(
 
 describe("ModularDrawerAddAccountFlowManager", () => {
   beforeEach(() => {
-    (track as jest.Mock).mockReset();
-    (trackPage as jest.Mock).mockReset();
+    jest.mocked(track).mockReset();
+    jest.mocked(trackPage).mockReset();
   });
 
   it("should find and add an account", async () => {
@@ -245,7 +248,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
   });
 
   it("should hide previously added accounts and show new account", async () => {
-    setup(arbitrumCurrency, { accounts: [ARB_ACCOUNT] } as State);
+    setup(arbitrumCurrency, { accounts: [ARB_ACCOUNT] });
 
     await mockScanAccountsSubscription([ARB_ACCOUNT, NEW_ARB_ACCOUNT]);
 
@@ -273,10 +276,10 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     expect(screen.getByText(/2 accounts added to your portfolio/i)).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("button", { name: "Add funds to my account" }));
-    expect(screen.getByText(formatAddress(ARB_ACCOUNT.freshAddress))).toBeInTheDocument();
-    expect(screen.getByText(formatAddress(NEW_ARB_ACCOUNT.freshAddress))).toBeInTheDocument();
+    expect(screen.getByText(/0x10D...868BD/i)).toBeInTheDocument();
+    expect(screen.getByText(/0xf97...93921/i)).toBeInTheDocument();
 
-    await userEvent.click(screen.getByText(formatAddress(ARB_ACCOUNT.freshAddress)));
+    await userEvent.click(screen.getByText(/0xf97...93921/i));
     expect(screen.getByText(/buy crypto securely with cash/i)).toBeInTheDocument();
   });
 
@@ -314,7 +317,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
   });
 
   it("should error on already imported empty account", async () => {
-    setup(arbitrumCurrency, { accounts: [ARB_ACCOUNT, NEW_ARB_ACCOUNT] } as State);
+    setup(arbitrumCurrency, { accounts: [ARB_ACCOUNT, NEW_ARB_ACCOUNT] });
 
     await mockScanAccountsSubscription([ARB_ACCOUNT, NEW_ARB_ACCOUNT]);
 
@@ -330,7 +333,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     const OLD_NAME = "Arbitrum 2";
     const NEW_NAME = "My Edited Account";
 
-    setup(arbitrumCurrency, { accounts: [ARB_ACCOUNT, NEW_ARB_ACCOUNT] } as State);
+    setup(arbitrumCurrency, { accounts: [ARB_ACCOUNT, NEW_ARB_ACCOUNT] });
 
     await mockScanAccountsSubscription([ARB_ACCOUNT, NEW_ARB_ACCOUNT]);
     await userEvent.click(screen.getByRole("button", { name: /Edit account item/i }));

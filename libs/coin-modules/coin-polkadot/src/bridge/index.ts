@@ -26,6 +26,7 @@ import {
   fromOperationExtraRaw,
   toOperationExtraRaw,
 } from "./serialization";
+import { validateAddress } from "../logic/validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext<PolkadotSigner>): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);
@@ -60,6 +61,9 @@ function buildAccountBridge(
     sync,
     receive,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     assignFromAccountRaw,
     assignToAccountRaw,
@@ -68,6 +72,7 @@ function buildAccountBridge(
     formatAccountSpecifics: formatters.formatAccountSpecifics,
     formatOperationSpecifics: formatters.formatOperationSpecifics,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

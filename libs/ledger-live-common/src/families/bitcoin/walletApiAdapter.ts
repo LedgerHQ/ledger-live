@@ -35,6 +35,10 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
     liveTx.opReturnData = walletApiTransaction.opReturnData;
   }
 
+  if (walletApiTransaction.changeAddress) {
+    liveTx.changeAddress = walletApiTransaction.changeAddress;
+  }
+
   if (hasFeesProvided) {
     liveTx.feesStrategy = null;
   }

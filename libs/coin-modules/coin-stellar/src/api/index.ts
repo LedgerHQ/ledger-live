@@ -4,6 +4,7 @@ import {
   BlockInfo,
   Cursor,
   Page,
+  Validator,
   FeeEstimation,
   Operation,
   Pagination,
@@ -12,6 +13,10 @@ import {
   TransactionIntent,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
+import { xdr } from "@stellar/stellar-sdk";
+import { getEnv } from "@ledgerhq/live-env";
 import coinConfig, { type StellarConfig } from "../config";
 import {
   broadcast,
@@ -28,11 +33,8 @@ import {
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
 import { StellarBurnAddressError, StellarMemo } from "../types";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
-import { xdr } from "@stellar/stellar-sdk";
 import { fetchSequence } from "../network";
-import { getEnv } from "@ledgerhq/live-env";
+
 export function createApi(config: StellarConfig): Api<StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
@@ -40,6 +42,14 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
     broadcast,
     combine: compose,
     craftTransaction: craft,
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: bigint,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported");
+    },
     estimateFees: estimate,
     getBalance,
     lastBlock,
@@ -60,7 +70,7 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
     getSequence: async (address: string) => {
       const sequence = await fetchSequence(address);
       // NOTE: might not do plus one here, or if we do, rename to getNextValidSequence
-      return sequence.plus(1).toNumber();
+      return BigInt(sequence.plus(1).toFixed());
     },
     getTokenFromAsset,
     getAssetFromToken,
@@ -75,6 +85,9 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
         throwIfPendingOperation: true,
       },
     }),
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
+    },
   };
 }
 

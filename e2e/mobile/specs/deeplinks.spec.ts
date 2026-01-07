@@ -1,12 +1,13 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { waitSwapReady } from "../bridge/server";
+
 $TmsLink("B2CQA-1837");
-const tags: string[] = ["@NanoSP", "@LNS", "@NanoX"];
+const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 tags.forEach(tag => $Tag(tag));
 describe("DeepLinks Tests", () => {
   const nanoApp = AppInfos.ETHEREUM;
   const ethereumLong = "ethereum";
   const bitcoinLong = "bitcoin";
-  const zksyncName = "zksync";
-  const scrollName = "scroll";
 
   beforeAll(async () => {
     await app.init({
@@ -21,6 +22,15 @@ describe("DeepLinks Tests", () => {
           });
         },
       ],
+      featureFlags: {
+        ptxSwapLiveAppMobile: {
+          enabled: true,
+          params: {
+            manifest_id:
+              process.env.PRODUCTION === "true" ? "swap-live-app-aws" : "swap-live-app-stg-aws",
+          },
+        },
+      },
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
@@ -33,11 +43,6 @@ describe("DeepLinks Tests", () => {
   it("should open Account page", async () => {
     await app.assetAccountsPage.openViaDeeplink();
     await app.accounts.waitForAccountsPageToLoad();
-  });
-
-  it("should open Add Account drawer", async () => {
-    await app.addAccount.openViaDeeplink();
-    await app.receive.selectCurrency(ethereumLong);
   });
 
   it("should open ETH Account Asset page when given currency param", async () => {
@@ -69,7 +74,13 @@ describe("DeepLinks Tests", () => {
 
   it("should open Swap Form page", async () => {
     await app.swap.openViaDeeplink();
+    await waitSwapReady();
     await app.swap.expectSwapPage();
+  });
+
+  it("should open Market Detail page for Bitcoin", async () => {
+    await app.market.openViaDeeplink("bitcoin");
+    await app.market.expectMarketDetailPage();
   });
 
   it("should open Send pages", async () => {
@@ -82,12 +93,40 @@ describe("DeepLinks Tests", () => {
     await app.common.expectSearch(ethereumLong);
   });
 
-  it("should open Receive pages", async () => {
-    await app.receive.openViaDeeplink();
-    await app.receive.expectFirstStep();
-    await app.portfolio.openViaDeeplink();
-    await app.portfolio.waitForPortfolioPageToLoad();
-    await app.receive.receiveViaDeeplink(ethereumLong);
-    await app.receive.expectSecondStepNetworks([ethereumLong, zksyncName, scrollName]);
+  it("should open Asset page for Bitcoin", async () => {
+    await app.assetAccountsPage.openAssetPageViaDeeplink(bitcoinLong);
+    await app.assetAccountsPage.expectAssetPage(bitcoinLong);
+  });
+
+  it("should open Asset page for Ethereum", async () => {
+    await app.assetAccountsPage.openAssetPageViaDeeplink(ethereumLong);
+    await app.assetAccountsPage.expectAssetPage(ethereumLong);
+  });
+
+  describe("Open modular drawer via deeplinks", () => {
+    const TOP_CRYPTO_TICKERS = ["BTC", "ETH", "USDT", "XRP", "BNB"];
+
+    beforeEach(async () => {
+      await app.modularDrawer.tapDrawerCloseButton({ onlyIfVisible: true });
+    });
+
+    it("should open from Add Account", async () => {
+      await app.addAccount.openViaDeeplink();
+      await app.modularDrawer.validateAssetsScreen(TOP_CRYPTO_TICKERS);
+      await app.modularDrawer.tapDrawerCloseButton();
+    });
+
+    it("should open from Receive", async () => {
+      await app.receive.openViaDeeplink();
+      await app.modularDrawer.validateAssetsScreen(TOP_CRYPTO_TICKERS);
+      await app.modularDrawer.tapDrawerCloseButton();
+    });
+
+    it("should open from Receive in a selected account", async () => {
+      await app.portfolio.openViaDeeplink();
+      await app.portfolio.waitForPortfolioPageToLoad();
+      await app.receive.receiveViaDeeplink(ethereumLong);
+      await app.modularDrawer.validateAccountsScreen([Account.ETH_1.accountName]);
+    });
   });
 });

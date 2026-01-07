@@ -8,6 +8,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { ReducedAmountUtxoWarning, UtxoLimitReachedError } from "../types/errors";
 import { BigNumber } from "bignumber.js";
 import {
   calcMaxSpendableAmount,
@@ -19,6 +20,7 @@ import {
 } from "../logic";
 import { KaspaAccount, Transaction, TransactionStatus } from "../types";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
+import { MAX_UTXOS_PER_TX } from "../logic/constants";
 
 const getCachedUtxos = makeLRUCache(
   async (account: KaspaAccount) => {
@@ -83,10 +85,17 @@ const getTransactionStatus = async (
       if (transaction.amount.lt(20000000)) {
         errors.dustLimit = new DustLimit("");
       }
+      if (utxos.length > MAX_UTXOS_PER_TX) {
+        warnings.amount = new ReducedAmountUtxoWarning();
+      }
     }
 
     if (transaction.amount.gt(maxSpendableAmount) || maxSpendableAmount.eq(0)) {
-      errors.amount = new NotEnoughBalance();
+      if (utxos.length > MAX_UTXOS_PER_TX && account.balance.gt(transaction.amount)) {
+        errors.amount = new UtxoLimitReachedError();
+      } else {
+        errors.amount = new NotEnoughBalance();
+      }
     }
 
     if (Object.keys(errors).length === 0) {

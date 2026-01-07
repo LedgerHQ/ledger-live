@@ -1,6 +1,6 @@
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { Operation } from "@ledgerhq/types-live";
 import { Address, BitReader, BitString, Cell, Slice } from "@ton/core";
 import BigNumber from "bignumber.js";
@@ -203,8 +203,8 @@ export function mapJettonTxToOps(
   addr: string,
   addressBook: TonAddressBook,
   jettonTxMessageHashesMap?: Map<string, string>,
-): (tx: TonJettonTransfer) => TonOperation[] {
-  return (tx: TonJettonTransfer): TonOperation[] => {
+): (tx: TonJettonTransfer) => Promise<TonOperation[]> {
+  return async (tx: TonJettonTransfer): Promise<TonOperation[]> => {
     const accountAddr = Address.parse(addr).toString({ urlSafe: true, bounceable: false });
     if (accountAddr !== addr) throw Error(`[ton] unexpected address ${accountAddr} ${addr}`);
 
@@ -212,7 +212,7 @@ export function mapJettonTxToOps(
       urlSafe: true,
       bounceable: true,
     });
-    const tokenCurrency = findTokenByAddressInCurrency(
+    const tokenCurrency = await getCryptoAssetsStore().findTokenByAddressInCurrency(
       jettonMasterAddr.toLowerCase(),
       decodeAccountId(accountId).currencyId,
     );
@@ -298,7 +298,7 @@ export function dataToSlice(data: string): Slice | undefined {
 
     try {
       return Cell.fromBoc(buffer)[0].beginParse();
-    } catch (err) {
+    } catch {
       return new Slice(new BitReader(new BitString(buffer, 0, buffer.length * 8)), []);
     }
   }
@@ -339,7 +339,7 @@ export function decodeForwardPayload(payload: string | null): string {
     const comment = buffer.toString("utf-8");
 
     return comment;
-  } catch (error) {
+  } catch {
     // Silent failure, returning empty string
     return "";
   }

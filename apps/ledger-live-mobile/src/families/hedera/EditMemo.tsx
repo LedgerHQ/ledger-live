@@ -9,8 +9,9 @@ import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
 import { ScreenName } from "~/const";
 import TextInput from "~/components/FocusedTextInput";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { popToScreen } from "~/helpers/navigationHelpers";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.HederaEditMemo>
@@ -24,8 +25,7 @@ function HederaEditMemo({ navigation, route }: NavigationProps) {
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
-    // @ts-expect-error FIXME: No current/next navigation provided?
-    navigation.navigate(ScreenName.SendSummary, {
+    popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         memo,
@@ -76,7 +76,7 @@ function HederaEditMemo({ navigation, route }: NavigationProps) {
 
 const options = {
   title: i18next.t("send.summary.memo.title"),
-  headerLeft: undefined,
+  headerLeft: () => null,
 };
 export { HederaEditMemo as component, options };
 const styles = StyleSheet.create({

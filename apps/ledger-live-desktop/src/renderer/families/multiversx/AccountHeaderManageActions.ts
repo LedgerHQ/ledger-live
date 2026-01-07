@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { useMultiversXRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
 import { openModal } from "~/renderer/actions/modals";
@@ -63,6 +63,7 @@ const AccountHeaderManageActions = (props: {
         button: "stake",
       },
       accountActionsTestId: "stake-button",
+      disabled: !validators || validators.length === 0,
     },
   ];
 };

@@ -1,6 +1,6 @@
-import { CoreTransactionInfo, estimateFees } from "./estimateFees";
 import coinConfig, { TezosCoinConfig } from "../config";
 import { mockConfig } from "../test/config";
+import { CoreTransactionInfo, estimateFees } from "./estimateFees";
 
 describe("estimateFees", () => {
   beforeAll(() => {
@@ -22,7 +22,10 @@ describe("estimateFees", () => {
     },
   ];
 
-  it.each(accounts)("returns correct value", async account => {
+  it.each([
+    [accounts[0], "with xpub"],
+    [accounts[1], "without xpub"],
+  ])("returns correct value %s", async (account, _description) => {
     // Given
     const transaction = {
       mode: "send",
@@ -42,7 +45,10 @@ describe("estimateFees", () => {
     });
   });
 
-  it.each(accounts)("returns correct value when useAllAmount", async account => {
+  it.each([
+    [accounts[0], "with xpub"],
+    [accounts[1], "without xpub"],
+  ])("returns correct value when useAllAmount %s", async (account, _description) => {
     // Given
     const transaction = {
       mode: "send",

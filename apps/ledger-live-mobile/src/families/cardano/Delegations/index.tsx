@@ -10,7 +10,7 @@ import type {
 import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/staking";
 import { getDefaultExplorerView, getStakePoolExplorer } from "@ledgerhq/live-common/explorers";
 
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AccountLike } from "@ledgerhq/types-live";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
@@ -30,7 +30,7 @@ import DelegationRow from "./Row";
 import PoolImage from "../shared/PoolImage";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: CardanoAccount;
@@ -64,7 +64,7 @@ function Delegations({ account }: Props) {
       params?: { [key: string]: unknown };
     }) => {
       setDelegation(undefined);
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(route, {
+      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(route, {
         screen,
         params: { ...params, accountId: account.id },
       });

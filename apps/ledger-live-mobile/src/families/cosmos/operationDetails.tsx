@@ -7,12 +7,12 @@ import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmo
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import type { CosmosAccount, CosmosOperation } from "@ledgerhq/live-common/families/cosmos/types";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 function getURLFeesInfo(op: Operation, currencyId: string): string | null | undefined {
   return op.fee.gt(200000) ? cryptoFactory(currencyId).stakingDocUrl : undefined;
@@ -70,7 +70,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
         alwaysShowSign: false,
         showCode: true,
         discreet,
-        locale: locale,
+        locale,
       });
       ret = (
         <>
@@ -97,7 +97,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
         alwaysShowSign: false,
         showCode: true,
         discreet,
-        locale: locale,
+        locale,
       });
       ret = (
         <>
@@ -125,7 +125,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
         alwaysShowSign: false,
         showCode: true,
         discreet,
-        locale: locale,
+        locale,
       });
       ret = (
         <>
@@ -165,7 +165,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
                   alwaysShowSign: false,
                   showCode: true,
                   discreet,
-                  locale: locale,
+                  locale,
                 })
               }
               onPress={() => {

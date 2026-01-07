@@ -24,7 +24,7 @@ import { Transaction } from "../generated/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { getAccountBridge } from "../bridge";
 import { Exchange } from "../exchange/types";
-import { findTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -40,7 +40,7 @@ export type WalletAPIContext = {
   tracking: TrackingAPI;
 };
 
-export function receiveOnAccountLogic(
+export async function receiveOnAccountLogic(
   walletState: WalletState,
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
@@ -56,25 +56,25 @@ export function receiveOnAccountLogic(
   const accountId = getAccountIdFromWalletAccountId(walletAccountId);
   if (!accountId) {
     tracking.receiveFail(manifest);
-    return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
+    throw new Error(`accountId ${walletAccountId} unknown`);
   }
 
   const account = accounts.find(account => account.id === accountId);
 
   if (!account) {
     tracking.receiveFail(manifest);
-    return Promise.reject(new Error("Account required"));
+    throw new Error("Account required");
   }
 
   const parentAccount = getParentAccount(account, accounts);
   const mainAccount = getMainAccount(account, parentAccount);
-  const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+  const currency = tokenCurrency ? await getCryptoAssetsStore().findTokenById(tokenCurrency) : null;
   const receivingAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
   const accountAddress = accountToWalletAPIAccount(walletState, account, parentAccount).address;
   return uiNavigation(receivingAccount, parentAccount, accountAddress);
 }
 
-export function signTransactionLogic(
+export async function signTransactionLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
   transaction: WalletAPITransaction,
@@ -88,25 +88,27 @@ export function signTransactionLogic(
     },
   ) => Promise<SignedOperation>,
   tokenCurrency?: string,
+  isEmbeddedSwap?: boolean,
+  partner?: string,
 ): Promise<SignedOperation> {
-  tracking.signTransactionRequested(manifest);
+  tracking.signTransactionRequested(manifest, isEmbeddedSwap, partner);
 
   if (!transaction) {
-    tracking.signTransactionFail(manifest);
-    return Promise.reject(new Error("Transaction required"));
+    tracking.signTransactionFail(manifest, isEmbeddedSwap, partner);
+    throw new Error("Transaction required");
   }
 
   const accountId = getAccountIdFromWalletAccountId(walletAccountId);
   if (!accountId) {
-    tracking.signTransactionFail(manifest);
-    return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
+    tracking.signTransactionFail(manifest, isEmbeddedSwap, partner);
+    throw new Error(`accountId ${walletAccountId} unknown`);
   }
 
   const account = accounts.find(account => account.id === accountId);
 
   if (!account) {
-    tracking.signTransactionFail(manifest);
-    return Promise.reject(new Error("Account required"));
+    tracking.signTransactionFail(manifest, isEmbeddedSwap, partner);
+    throw new Error("Account required");
   }
 
   const parentAccount = getParentAccount(account, accounts);
@@ -116,7 +118,7 @@ export function signTransactionLogic(
     : account.currency.family;
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+  const currency = tokenCurrency ? await getCryptoAssetsStore().findTokenById(tokenCurrency) : null;
   const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
 
   const { canEditFees, liveTx, hasFeesProvided } = getWalletAPITransactionSignFlowInfos({
@@ -125,10 +127,8 @@ export function signTransactionLogic(
   });
 
   if (accountFamily !== liveTx.family) {
-    return Promise.reject(
-      new Error(
-        `Account and transaction must be from the same family. Account family: ${accountFamily}, Transaction family: ${liveTx.family}`,
-      ),
+    throw new Error(
+      `Account and transaction must be from the same family. Account family: ${accountFamily}, Transaction family: ${liveTx.family}`,
     );
   }
 
@@ -139,7 +139,42 @@ export function signTransactionLogic(
   });
 }
 
-export function broadcastTransactionLogic(
+export function signRawTransactionLogic(
+  { manifest, accounts, tracking }: WalletAPIContext,
+  walletAccountId: string,
+  transaction: string,
+  uiNavigation: (
+    account: AccountLike,
+    parentAccount: Account | undefined,
+    transaction: string,
+  ) => Promise<SignedOperation>,
+): Promise<SignedOperation> {
+  tracking.signRawTransactionRequested(manifest);
+
+  if (!transaction) {
+    tracking.signRawTransactionFail(manifest);
+    throw new Error("Transaction required");
+  }
+
+  const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+  if (!accountId) {
+    tracking.signRawTransactionFail(manifest);
+    throw new Error(`accountId ${walletAccountId} unknown`);
+  }
+
+  const account = accounts.find(account => account.id === accountId);
+
+  if (!account) {
+    tracking.signRawTransactionFail(manifest);
+    throw new Error("Account required");
+  }
+
+  const parentAccount = getParentAccount(account, accounts);
+
+  return uiNavigation(account, parentAccount, transaction);
+}
+
+export async function broadcastTransactionLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
   signedOperation: SignedOperation,
@@ -152,22 +187,22 @@ export function broadcastTransactionLogic(
 ): Promise<string> {
   if (!signedOperation) {
     tracking.broadcastFail(manifest);
-    return Promise.reject(new Error("Transaction required"));
+    throw new Error("Transaction required");
   }
 
   const accountId = getAccountIdFromWalletAccountId(walletAccountId);
   if (!accountId) {
     tracking.broadcastFail(manifest);
-    return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
+    throw new Error(`accountId ${walletAccountId} unknown`);
   }
 
   const account = accounts.find(account => account.id === accountId);
   if (!account) {
     tracking.broadcastFail(manifest);
-    return Promise.reject(new Error("Account required"));
+    throw new Error("Account required");
   }
 
-  const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+  const currency = tokenCurrency ? await getCryptoAssetsStore().findTokenById(tokenCurrency) : null;
   const parentAccount = getParentAccount(account, accounts);
   const mainAccount = getMainAccount(account, parentAccount);
   const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
@@ -379,7 +414,7 @@ export type CompleteExchangeUiRequest = {
   tokenCurrency?: string;
 };
 
-export function completeExchangeLogic(
+export async function completeExchangeLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
   {
     provider,
@@ -400,7 +435,7 @@ export function completeExchangeLogic(
 
   const realFromAccountId = getAccountIdFromWalletAccountId(fromAccountId);
   if (!realFromAccountId) {
-    return Promise.reject(new Error(`accountId ${fromAccountId} unknown`));
+    throw new Error(`accountId ${fromAccountId} unknown`);
   }
 
   // Nb get a hold of the actual accounts, and parent accounts
@@ -411,23 +446,23 @@ export function completeExchangeLogic(
   if (toAccountId) {
     const realToAccountId = getAccountIdFromWalletAccountId(toAccountId);
     if (!realToAccountId) {
-      return Promise.reject(new Error(`accountId ${toAccountId} unknown`));
+      throw new Error(`accountId ${toAccountId} unknown`);
     }
 
     toAccount = accounts.find(a => a.id === realToAccountId);
   }
 
   if (!fromAccount) {
-    return Promise.reject();
+    throw new Error("From account not found");
   }
 
   if (exchangeType === 0x00 && !toAccount) {
     // if we do a swap, a destination account must be provided
-    return Promise.reject();
+    throw new Error("To account required for swap");
   }
 
   const fromParentAccount = getParentAccount(fromAccount, accounts);
-  const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+  const currency = tokenCurrency ? await getCryptoAssetsStore().findTokenById(tokenCurrency) : null;
   const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : undefined;
   const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : undefined;
   const exchange = {
@@ -449,10 +484,8 @@ export function completeExchangeLogic(
   });
 
   if (liveTx.family !== mainFromAccountFamily) {
-    return Promise.reject(
-      new Error(
-        `Account and transaction must be from the same family. Account family: ${mainFromAccountFamily}, Transaction family: ${liveTx.family}`,
-      ),
+    throw new Error(
+      `Account and transaction must be from the same family. Account family: ${mainFromAccountFamily}, Transaction family: ${liveTx.family}`,
     );
   }
 

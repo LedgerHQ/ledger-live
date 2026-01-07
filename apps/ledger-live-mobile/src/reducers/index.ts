@@ -1,7 +1,6 @@
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
-import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
-import { combineReducers, Store } from "redux";
-import { ActionsPayload } from "../actions/types";
+import { combineReducers, type Store } from "redux";
+import { llmRTKApiReducers } from "~/context/rtkQueryApi";
 import accounts from "./accounts";
 import appstate from "./appstate";
 import auth from "./auth";
@@ -13,6 +12,7 @@ import inView from "./inView";
 import largeMover from "./largeMover";
 import market from "./market";
 import modularDrawer from "./modularDrawer";
+import receiveOptionsDrawer from "./receiveOptionsDrawer";
 import notifications from "./notifications";
 import protect from "./protect";
 import ratings from "./ratings";
@@ -20,26 +20,29 @@ import settings from "./settings";
 import swap from "./swap";
 import toasts from "./toast";
 import trustchain from "./trustchain";
-import { State } from "./types";
+import type { State } from "./types";
 import wallet from "./wallet";
 import walletconnect from "./walletconnect";
 import walletSync from "./walletSync";
+import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import type { UnknownAction } from "@reduxjs/toolkit";
 
 export type AppStore = Store<State>;
 
 const appReducer = combineReducers({
   accounts,
   appstate,
-  assetsDataApi: assetsDataApi.reducer,
   auth,
   ble,
   countervalues,
   dynamicContent,
   earn,
+  identities: identitiesSlice.reducer,
   inView,
   largeMover,
   market,
   modularDrawer,
+  receiveOptionsDrawer,
   notifications,
   postOnboarding,
   protect,
@@ -51,10 +54,11 @@ const appReducer = combineReducers({
   wallet,
   walletconnect,
   walletSync,
+  ...llmRTKApiReducers,
 });
 
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>
-const rootReducer = (state: State | undefined, action: ActionsPayload) => {
+const rootReducer = (state: State | undefined, action: UnknownAction) => {
   return appReducer(state, action);
 };
 

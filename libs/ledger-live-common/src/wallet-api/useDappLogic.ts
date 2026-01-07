@@ -8,15 +8,15 @@ import { getAccountBridge } from "../bridge";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
-import { findTokenByAddress, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { prepareMessageToSign } from "../hw/signMessage/index";
-import { CurrentAccountHistDB, UiHook, usePermission } from "./react";
+import { CurrentAccountHistDB, UiHook } from "./react";
 import BigNumber from "bignumber.js";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
 import { getTxType } from "./utils/txTrackingHelper";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 type MessageId = number | string | null;
 
@@ -29,15 +29,27 @@ interface JsonRpcRequestMessage<TParams = any> {
   params?: TParams;
 }
 
-const rejectedError = (message: string) => ({
-  code: 3,
+const errors = {
+  ParseError: -32700,
+  InvalidRequest: -32600,
+  MethodNotFound: -32601,
+  InvalidParams: -32602,
+  InternalError: -32603,
+  UserRejected: 4001,
+  Unauthorized: 4100,
+  UnsupportedMethod: 4200,
+  Disconnected: 4900,
+  ChainDisconnected: 4901,
+} as const;
+
+const rejectedError = (code: number, message: string, data: object = {}) => ({
+  code,
   message,
-  data: [
-    {
-      code: 104,
-      message: "Rejected",
-    },
-  ],
+  data: {
+    code,
+    message,
+    ...data,
+  },
 });
 
 // TODO remove any usage
@@ -87,6 +99,8 @@ export function useDappCurrentAccount(currentAccountHistDb?: CurrentAccountHistD
   return { currentAccount, setCurrentAccount, setCurrentAccountHist };
 }
 
+const globCurrencies = ["**"];
+
 function useDappAccountLogic({
   manifest,
   accounts,
@@ -99,7 +113,7 @@ function useDappAccountLogic({
   initialAccountId?: string;
 }) {
   const [initialAccountSelected, setInitialAccountSelected] = useState(false);
-  const { currencyIds } = usePermission(manifest);
+  const currencyIds = manifest.currencies === "*" ? globCurrencies : manifest.currencies;
   const { currentAccount, setCurrentAccount, setCurrentAccountHist } =
     useDappCurrentAccount(currentAccountHistDb);
   const currentParentAccount = useMemo(() => {
@@ -329,7 +343,7 @@ export function useDappLogic({
           JSON.stringify({
             id: data.id,
             jsonrpc: "2.0",
-            error: rejectedError("No network selected"),
+            error: rejectedError(errors.InternalError, "No network selected"),
           }),
         );
         return;
@@ -341,7 +355,7 @@ export function useDappLogic({
           JSON.stringify({
             id: data.id,
             jsonrpc: "2.0",
-            error: rejectedError("No account selected"),
+            error: rejectedError(errors.InternalError, "No account selected"),
           }),
         );
         return;
@@ -353,7 +367,7 @@ export function useDappLogic({
           JSON.stringify({
             id: data.id,
             jsonrpc: "2.0",
-            error: rejectedError("No parent account found"),
+            error: rejectedError(errors.InternalError, "No parent account found"),
           }),
         );
         return;
@@ -408,7 +422,7 @@ export function useDappLogic({
               JSON.stringify({
                 id: data.id,
                 jsonrpc: "2.0",
-                error: rejectedError("Invalid chainId"),
+                error: rejectedError(errors.InvalidParams, "Invalid chainId"),
               }),
             );
             break;
@@ -424,7 +438,7 @@ export function useDappLogic({
               JSON.stringify({
                 id: data.id,
                 jsonrpc: "2.0",
-                error: rejectedError(`Chain ID ${chainId} is not supported`),
+                error: rejectedError(errors.InvalidParams, `Chain ID ${chainId} is not supported`),
               }),
             );
             break;
@@ -433,7 +447,8 @@ export function useDappLogic({
           try {
             await new Promise<void>((resolve, reject) =>
               uiHook["account.request"]({
-                currencies: [getCryptoCurrencyById(requestedCurrency.currency)],
+                currencyIds: [requestedCurrency.currency],
+                areCurrenciesFiltered: true,
                 onSuccess: account => {
                   setCurrentAccountHist(manifest.id, account);
                   setCurrentAccount(account);
@@ -456,7 +471,7 @@ export function useDappLogic({
               JSON.stringify({
                 id: data.id,
                 jsonrpc: "2.0",
-                error: rejectedError(`error switching chain: ${error}`),
+                error: rejectedError(errors.UserRejected, `error switching chain: ${error}`),
               }),
             );
           }
@@ -482,8 +497,6 @@ export function useDappLogic({
 
               const transactionType = getTxType(signFlowInfos.liveTx as EvmTransaction);
 
-              const token = findTokenByAddress(tx.recipient);
-
               const accountCurrencyName =
                 currentAccount.type === "TokenAccount"
                   ? currentAccount.token.name
@@ -493,6 +506,11 @@ export function useDappLogic({
                 currentAccount.type === "TokenAccount"
                   ? currentAccount.token.parentCurrency.id
                   : currentAccount.currency.id;
+
+              const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+                tx.recipient,
+                accountNetwork,
+              );
 
               trackingData = {
                 type: transactionType,
@@ -549,13 +567,13 @@ export function useDappLogic({
                   result: optimisticOperation.hash,
                 }),
               );
-            } catch (error) {
+            } catch {
               tracking.dappSendTransactionFail(manifest, trackingData);
               postMessage(
                 JSON.stringify({
                   id: data.id,
                   jsonrpc: "2.0",
-                  error: rejectedError("Transaction declined"),
+                  error: rejectedError(errors.UserRejected, "Transaction declined"),
                 }),
               );
             }
@@ -603,13 +621,13 @@ export function useDappLogic({
                 result: signedMessage,
               }),
             );
-          } catch (error) {
+          } catch {
             tracking.dappPersonalSignFail(manifest);
             postMessage(
               JSON.stringify({
                 id: data.id,
                 jsonrpc: "2.0",
-                error: rejectedError("Personal message signed declined"),
+                error: rejectedError(errors.UserRejected, "Personal message signed declined"),
               }),
             );
           }
@@ -650,13 +668,13 @@ export function useDappLogic({
                 result: signedMessage,
               }),
             );
-          } catch (error) {
+          } catch {
             tracking.dappSignTypedDataFail(manifest);
             postMessage(
               JSON.stringify({
                 id: data.id,
                 jsonrpc: "2.0",
-                error: rejectedError("Typed Data message signed declined"),
+                error: rejectedError(errors.UserRejected, "Typed Data message signed declined"),
               }),
             );
           }

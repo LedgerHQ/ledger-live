@@ -4,7 +4,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { UseCaseOption } from "./UseCaseOption";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
@@ -59,7 +59,7 @@ const LeftColumn = styled(Flex).attrs({
 const LeftText = styled(Text).attrs(() => ({
   uppercase: true,
 }))`
-  color: ${p => p.theme.colors.palette.neutral.c100};
+  color: ${p => p.theme.colors.neutral.c100};
   max-width: 382px;
 `;
 

@@ -116,7 +116,22 @@ describe("estimateMaxSpendable", () => {
       });
 
       expect(result).toEqual(new BigNumber("999790000000000000000")); // 1000 - 0.21 VTHO
-      expect(mockedCalculateGasFees).toHaveBeenCalledWith(mockTransaction, true);
+      expect(mockedCalculateGasFees).toHaveBeenCalledWith(mockTransaction, true, "0x123");
+    });
+
+    it("should calculate max spendable for token account with sufficient balance, when parentAccount provided", async () => {
+      const result = await estimateMaxSpendable({
+        account: mockTokenAccount,
+        parentAccount: mockAccount,
+        transaction: mockTransaction,
+      });
+
+      expect(result).toEqual(new BigNumber("999790000000000000000")); // 1000 - 0.21 VTHO
+      expect(mockedCalculateGasFees).toHaveBeenCalledWith(
+        mockTransaction,
+        true,
+        mockAccount.freshAddress,
+      );
     });
 
     it("should return zero when gas fees exceed token balance", async () => {
@@ -175,7 +190,7 @@ describe("estimateMaxSpendable", () => {
         transaction: mockTransaction,
       });
 
-      expect(mockedCalculateGasFees).toHaveBeenCalledWith(mockTransaction, true);
+      expect(mockedCalculateGasFees).toHaveBeenCalledWith(mockTransaction, true, "0x123");
       expect(mockedCalculateGasFees).toHaveBeenCalledTimes(1);
     });
 
@@ -248,7 +263,7 @@ describe("estimateMaxSpendable", () => {
         transaction: tokenTransaction,
       });
 
-      expect(mockedCalculateGasFees).toHaveBeenCalledWith(tokenTransaction, true);
+      expect(mockedCalculateGasFees).toHaveBeenCalledWith(tokenTransaction, true, "0x123");
     });
   });
 

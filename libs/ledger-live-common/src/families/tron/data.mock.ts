@@ -1,22 +1,19 @@
 import { fromAccountRaw } from "../../account/serialization";
 import { TronAccount } from "@ledgerhq/coin-tron/types/index";
-import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 export const __NEXT_REWARD_DATE__ = new Date(Date.now() - 6 * 60 * 60 * 1000);
 
 export const __LAST_VOTING_DATE__ = new Date(Date.now() - 6 * 60 * 60 * 1000);
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStoreForCoinFramework({
-  findTokenById: (_: string) => undefined,
-  findTokenByAddressInCurrency: (_: string, __: string) => undefined,
-} as unknown as CryptoAssetsStore);
+setupMockCryptoAssetsStore({
+  getTokensSyncHash: async () => "test_hash",
+});
 
-export const mockAccount = fromAccountRaw({
+const mockAccountRaw = {
   id: "js:2:tron:TRON_ID:",
   seedIdentifier: "TRON_ID",
-  derivationMode: "",
+  derivationMode: "" as any,
   index: 0,
   freshAddress: "TRON_ID",
   freshAddressPath: "44'/195'/0'/0/0",
@@ -239,7 +236,6 @@ export const mockAccount = fromAccountRaw({
   currencyId: "tron",
   lastSyncDate: "2020-03-18T09:22:46.747Z",
   subAccounts: [],
-  // @ts-expect-error wat
   tronResources: {
     frozen: { bandwidth: null, energy: null },
     legacyFrozen: {
@@ -279,11 +275,17 @@ export const mockAccount = fromAccountRaw({
     lastWithdrawnRewardDate: __NEXT_REWARD_DATE__.toISOString(),
     lastVotedDate: __LAST_VOTING_DATE__.toISOString(),
   },
-}) as TronAccount;
-export const mockAccountNoReward = fromAccountRaw({
+};
+
+// Async function to create mock accounts
+export async function createMockAccount(): Promise<TronAccount> {
+  return (await fromAccountRaw(mockAccountRaw as any)) as TronAccount;
+}
+
+const mockAccountNoRewardRaw = {
   id: "js:2:tron:TRON_ID:",
   seedIdentifier: "TRON_ID",
-  derivationMode: "",
+  derivationMode: "" as any,
   index: 0,
   freshAddress: "TRON_ID",
   freshAddressPath: "44'/195'/0'/0/0",
@@ -461,7 +463,6 @@ export const mockAccountNoReward = fromAccountRaw({
   currencyId: "tron",
   lastSyncDate: "2020-03-18T09:22:46.747Z",
   subAccounts: [],
-  // @ts-expect-error wat
   tronResources: {
     frozen: { bandwidth: null, energy: null },
     unFrozen: {
@@ -502,11 +503,16 @@ export const mockAccountNoReward = fromAccountRaw({
     lastWithdrawnRewardDate: null,
     lastVotedDate: "2020-03-09T08:44:39.000Z",
   },
-}) as TronAccount;
-export const mockAccountNoVote = fromAccountRaw({
+};
+
+export async function createMockAccountNoReward(): Promise<TronAccount> {
+  return (await fromAccountRaw(mockAccountNoRewardRaw as any)) as TronAccount;
+}
+
+const mockAccountNoVoteRaw = {
   id: "js:2:tron:TRON_ID:",
   seedIdentifier: "TRON_ID",
-  derivationMode: "",
+  derivationMode: "" as any,
   index: 0,
   freshAddress: "TRON_ID",
   freshAddressPath: "44'/195'/0'/0/0",
@@ -632,7 +638,6 @@ export const mockAccountNoVote = fromAccountRaw({
   currencyId: "tron",
   lastSyncDate: "2020-03-18T09:22:46.747Z",
   subAccounts: [],
-  // @ts-expect-error wat
   tronResources: {
     frozen: {
       bandwidth: null,
@@ -675,21 +680,24 @@ export const mockAccountNoVote = fromAccountRaw({
     lastWithdrawnRewardDate: null,
     lastVotedDate: null,
   },
-}) as TronAccount;
+};
 
-export const mockAccountV2 = fromAccountRaw({
+export async function createMockAccountNoVote(): Promise<TronAccount> {
+  return (await fromAccountRaw(mockAccountNoVoteRaw as any)) as TronAccount;
+}
+
+const mockAccountV2Raw = {
   id: "js:2:tron:TRON_ID:",
   balance: "859005207",
   spendableBalance: "252128207",
   seedIdentifier: "TRON_ID",
-  derivationMode: "",
+  derivationMode: "" as any,
   index: 0,
   freshAddress: "TRON_ID",
   freshAddressPath: "44'/195'/0'/0/0",
   subAccounts: [],
   name: "Tron 2",
   pendingOperations: [],
-  // @ts-expect-error wat
   tronResources: {
     energy: "417",
     bandwidth: { freeUsed: "0", freeLimit: "600", gainedUsed: "0", gainedLimit: "584" },
@@ -2216,4 +2224,8 @@ export const mockAccountV2 = fromAccountRaw({
       hasFailed: false,
     },
   ],
-}) as TronAccount;
+};
+
+export async function createMockAccountV2(): Promise<TronAccount> {
+  return (await fromAccountRaw(mockAccountV2Raw as any)) as TronAccount;
+}

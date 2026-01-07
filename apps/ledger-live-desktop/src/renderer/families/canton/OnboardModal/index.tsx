@@ -1,50 +1,56 @@
-import React, { PureComponent } from "react";
-import { connect } from "react-redux";
-import { Trans, withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
+import invariant from "invariant";
+import React, { PureComponent } from "react";
+import { Trans, withTranslation } from "react-i18next";
+import { connect } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
-import { Account } from "@ledgerhq/types-live";
+import { Subscription } from "rxjs";
+import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
+import {
+  AuthorizeStatus,
+  OnboardStatus,
+  CantonAuthorizeProgress,
+  CantonAuthorizeResult,
+  CantonOnboardResult,
+  CantonOnboardProgress,
+} from "@ledgerhq/coin-canton/types";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { accountsSelector } from "~/renderer/reducers/accounts";
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal, openModal } from "~/renderer/actions/modals";
+import type { NavigationSnapshot } from "../hooks/topologyChangeError";
 import Modal from "~/renderer/components/Modal";
-import Stepper, { Step } from "~/renderer/components/Stepper";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import {
-  OnboardStatus,
-  PreApprovalStatus,
-  CantonPreApprovalProgress,
-  CantonPreApprovalResult,
-} from "@ledgerhq/coin-canton/types";
-import {
-  getDerivationScheme,
-  getDerivationModesForCurrency,
-  runAccountDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
+import Stepper, { type Step } from "~/renderer/components/Stepper";
 import logger from "~/renderer/logger";
+import { accountsSelector } from "~/renderer/reducers/accounts";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
 import StepAuthorize, { StepAuthorizeFooter } from "./steps/StepAuthorize";
-import StepOnboard, { StepOnboardFooter } from "./steps/StepOnboard";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
-import { Data, StepId, OnboardingData } from "./types";
+import StepOnboard, { StepOnboardFooter } from "./steps/StepOnboard";
+import { OnboardingResult, StepId, StepProps } from "./types";
+import { AxiosError } from "axios";
 
-export type Props = Data & {
-  device: Device | null | undefined;
-  existingAccounts: Account[];
-  closeModal: (a: string) => void;
-  addAccountsAction: typeof addAccountsAction;
+export type Props = {
   t: TFunction;
+  closeModal: typeof closeModal;
+  openModal: typeof openModal;
+  addAccountsAction: typeof addAccountsAction;
 } & UserProps;
 
 export type UserProps = {
-  // props from user
-  onClose?: () => void;
-} & Data;
+  currency: CryptoCurrency | null;
+  device: Device | null | undefined;
+  editedNames: { [accountId: string]: string };
+  selectedAccounts: Account[];
+  existingAccounts: Account[];
+  isReonboarding?: boolean;
+  accountToReonboard?: Account;
+  navigationSnapshot?: NavigationSnapshot;
+};
 
 const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
@@ -53,307 +59,438 @@ const mapStateToProps = createStructuredSelector({
 
 const mapDispatchToProps = {
   closeModal,
+  openModal,
   addAccountsAction,
 };
 
 type State = {
   stepId: StepId;
-  accountName: string;
-  isCreating: boolean;
-  error: Error | null;
-  onboardingData: OnboardingData | null;
-  onboardingCompleted: boolean;
+  error: AxiosError | null;
+  authorizeStatus: AuthorizeStatus;
   onboardingStatus: OnboardStatus;
-  authorizeStatus: PreApprovalStatus;
   isProcessing: boolean;
-  showConfirmation: boolean;
-  progress: number;
-  message: string;
-  preapprovalSubscription: { unsubscribe: () => void } | null;
+  onboardingResult: OnboardingResult | undefined;
+  isReonboarding: boolean;
 };
 
 const INITIAL_STATE: State = {
   stepId: StepId.ONBOARD,
-  accountName: "",
-  isCreating: false,
   error: null,
-  onboardingData: null,
-  onboardingCompleted: false,
+  authorizeStatus: AuthorizeStatus.INIT,
   onboardingStatus: OnboardStatus.INIT,
-  authorizeStatus: PreApprovalStatus.INIT,
   isProcessing: false,
-  showConfirmation: false,
-  progress: 0,
-  message: "",
-  preapprovalSubscription: null,
+  onboardingResult: undefined,
+  isReonboarding: false,
 };
+
+function getCreatableAccount(
+  selectedAccounts: Account[],
+  isReonboarding?: boolean,
+  accountToReonboard?: Account,
+): Account | undefined {
+  if (isReonboarding && accountToReonboard) {
+    return accountToReonboard;
+  }
+  return selectedAccounts.find(account => !account.used);
+}
+
+function getImportableAccounts(selectedAccounts: Account[]): Account[] {
+  return selectedAccounts.filter(account => account.used);
+}
+
+function resolveAccountName(
+  account: Account,
+  editedNames: { [accountId: string]: string },
+): string {
+  return editedNames[account.id] || getDefaultAccountName(account);
+}
+
+function resolveCreatableAccountName(
+  creatableAccount: Account | undefined,
+  currency: CryptoCurrency,
+  editedNames: { [accountId: string]: string },
+  importableAccountsCount: number,
+): string {
+  if (!creatableAccount) {
+    return `${currency.name} ${importableAccountsCount + 1}`;
+  }
+  return resolveAccountName(creatableAccount, editedNames);
+}
+
+type AddAccountsConfig = {
+  selectedAccounts: Account[];
+  existingAccounts: Account[];
+  editedNames: { [accountId: string]: string };
+  isReonboarding?: boolean;
+  accountToReonboard?: Account;
+  onboardingResult?: {
+    completedAccount: Account;
+  };
+};
+
+function prepareAccountsForReonboarding(
+  accountToReonboard: Account,
+  completedAccount: Account,
+  editedNames: { [accountId: string]: string },
+): {
+  accounts: Account[];
+  renamings: { [accountId: string]: string };
+} {
+  const updatedAccount = {
+    ...accountToReonboard,
+    ...completedAccount,
+    id: accountToReonboard.id,
+  };
+
+  return {
+    accounts: [updatedAccount],
+    renamings: {
+      [updatedAccount.id]:
+        editedNames[accountToReonboard.id] || getDefaultAccountName(updatedAccount),
+    },
+  };
+}
+
+function prepareAccountsForNewOnboarding(
+  importableAccounts: Account[],
+  completedAccount: Account | undefined,
+  editedNames: { [accountId: string]: string },
+): {
+  accounts: Account[];
+  renamings: { [accountId: string]: string };
+} {
+  const accounts = [...importableAccounts];
+  if (completedAccount) {
+    accounts.push(completedAccount);
+  }
+
+  // on previous step we don't have a partyId yet for onboarding account
+  // so editedNames use a temporary account ID
+  // since only one account is onboarded at a time, we cane filter out importableAccounts renamings
+  // what is left belongs to the onboarded account
+  const importableAccountIds = new Set(importableAccounts.map(acc => acc.id));
+  const [, completedAccountName] =
+    Object.entries(editedNames).find(([accountId]) => !importableAccountIds.has(accountId)) || [];
+
+  const renamings = Object.fromEntries(
+    accounts.map(account => {
+      let accountName = editedNames[account.id];
+
+      if (completedAccount && account.id === completedAccount.id && completedAccountName) {
+        accountName = completedAccountName;
+      }
+
+      return [account.id, accountName || getDefaultAccountName(account)];
+    }),
+  );
+
+  return { accounts, renamings };
+}
+
+function prepareAccountsForAdding(config: AddAccountsConfig): {
+  accounts: Account[];
+  renamings: { [accountId: string]: string };
+} {
+  const { selectedAccounts, editedNames, isReonboarding, accountToReonboard, onboardingResult } =
+    config;
+
+  const importableAccounts = getImportableAccounts(selectedAccounts);
+  const completedAccount = onboardingResult?.completedAccount;
+
+  if (isReonboarding && completedAccount && accountToReonboard) {
+    return prepareAccountsForReonboarding(accountToReonboard, completedAccount, editedNames);
+  }
+
+  return prepareAccountsForNewOnboarding(importableAccounts, completedAccount, editedNames);
+}
 
 class OnboardModal extends PureComponent<Props, State> {
   state: State = INITIAL_STATE;
-
-  componentWillUnmount() {
-    if (this.state.preapprovalSubscription) {
-      logger.log("Cleaning up preapproval subscription");
-      this.state.preapprovalSubscription.unsubscribe();
-    }
-  }
+  cantonBridge = this.props.currency
+    ? // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      (getCurrencyBridge(this.props.currency) as CantonCurrencyBridge)
+    : null;
+  onboardingSubscription: Subscription | undefined;
+  authorizeSubscription: Subscription | undefined;
 
   STEPS = [
     {
       id: StepId.ONBOARD,
-      label: <Trans i18nKey="canton.addAccount.steps.onboarding">Onboarding</Trans>,
+      label: <Trans i18nKey="families.canton.addAccount.onboard.title" />,
       component: StepOnboard,
       footer: StepOnboardFooter,
     },
     {
       id: StepId.AUTHORIZE,
-      label: <Trans i18nKey="canton.addAccount.steps.authorization">Authorization</Trans>,
+      label: <Trans i18nKey="families.canton.addAccount.auth.title" />,
       component: StepAuthorize,
       footer: StepAuthorizeFooter,
     },
     {
       id: StepId.FINISH,
-      label: <Trans i18nKey="canton.addAccount.steps.complete">Confirmation</Trans>,
+      label: <Trans i18nKey="families.canton.addAccount.finish.title" />,
       component: StepFinish,
       footer: StepFinishFooter,
     },
   ];
 
-  handleReset = () => this.setState({ ...INITIAL_STATE });
+  componentWillUnmount() {
+    this.handleUnsubscribe();
+  }
 
-  handleStepChange = (step: { id: StepId }) =>
-    this.setState({
-      stepId: step.id,
-    });
-
-  handleBeforeOpen = ({ data: _data }: { data: Data | undefined }) => {
-    // const primaryAccount = data.selectedAccounts[0];
-    // const accountName = data.editedNames[primaryAccount.id];
-    // this.setState({ accountName });
+  handleUnsubscribe = () => {
+    if (this.onboardingSubscription) {
+      this.onboardingSubscription.unsubscribe();
+    }
+    if (this.authorizeSubscription) {
+      this.authorizeSubscription.unsubscribe();
+    }
   };
 
-  handleAccountCreated = (_account: Account) => {
-    const {
-      addAccountsAction,
-      existingAccounts,
-      closeModal,
-      editedNames,
-      selectedAccounts,
-      currency,
-    } = this.props;
-    const { onboardingData } = this.state;
-    const address = onboardingData?.completedAccount?.freshAddress || "";
-    const derivationMode = onboardingData?.completedAccount?.derivationMode || "";
-    const xpubOrAddress = onboardingData?.completedAccount?.xpub || "";
-    const accountId = encodeAccountId({
-      type: "js",
-      version: "2",
-      currencyId: currency.id,
-      xpubOrAddress,
-      derivationMode,
-    });
-    const completedAccount = {
-      ...onboardingData?.completedAccount,
-      id: accountId,
-      freshAddress: address,
-      type: "Account" as const,
-    } as Account;
-    const selectedAccount = selectedAccounts[0];
+  handleRetryOnboardAccount = () => {
+    this.handleUnsubscribe();
+    this.setState({ ...INITIAL_STATE });
+  };
 
-    addAccountsAction({
-      scannedAccounts: [completedAccount],
-      existingAccounts,
-      selectedIds: [completedAccount.id],
-      renamings: {
-        [completedAccount.id]: selectedAccount
-          ? editedNames[selectedAccount.id] || getDefaultAccountName(selectedAccount)
-          : `${currency.name} 1`,
-      },
+  handleRetryPreapproval = () => {
+    this.handleUnsubscribe();
+    this.setState({
+      authorizeStatus: AuthorizeStatus.INIT,
+      isProcessing: false,
+      error: null,
     });
+  };
 
-    closeModal("MODAL_CANTON_ONBOARD_ACCOUNT");
+  handleStepChange = ({ id }: Step<StepId, StepProps>) => {
+    this.setState({ stepId: id });
   };
 
   transitionTo = (stepId: StepId) => {
     this.setState({ stepId });
   };
 
-  setOnboardingData = (data: OnboardingData) => {
-    this.setState({ onboardingData: data });
+  handleAddMore = () => {
+    const { closeModal, openModal, currency } = this.props;
+    this.handleAddAccounts();
+    closeModal("MODAL_CANTON_ONBOARD_ACCOUNT");
+    openModal("MODAL_ADD_ACCOUNTS", {
+      currency,
+    });
   };
 
-  setOnboardingCompleted = (completed: boolean) => {
-    this.setState({ onboardingCompleted: completed });
+  handleAddAccounts = () => {
+    const {
+      addAccountsAction,
+      closeModal,
+      openModal,
+      selectedAccounts,
+      existingAccounts,
+      editedNames,
+      isReonboarding,
+      accountToReonboard,
+      navigationSnapshot,
+    } = this.props;
+    const { onboardingResult } = this.state;
+
+    const { accounts, renamings } = prepareAccountsForAdding({
+      selectedAccounts,
+      existingAccounts,
+      editedNames,
+      isReonboarding,
+      accountToReonboard,
+      onboardingResult,
+    });
+
+    addAccountsAction({
+      scannedAccounts: accounts,
+      existingAccounts,
+      selectedIds: accounts.map(account => account.id),
+      renamings,
+    });
+
+    closeModal("MODAL_CANTON_ONBOARD_ACCOUNT");
+
+    // After re-onboarding, restore the previous state if it exists
+    if (isReonboarding && navigationSnapshot) {
+      if (navigationSnapshot.type === "modal") {
+        openModal(navigationSnapshot.modalName, navigationSnapshot.modalData);
+      } else if (navigationSnapshot.type === "transfer-proposal") {
+        const { action, contractId } = navigationSnapshot.props;
+        navigationSnapshot.handler(contractId, action);
+      }
+    }
   };
 
-  setOnboardingStatus = (status: OnboardStatus) => {
-    this.setState({ onboardingStatus: status });
-  };
+  handleOnboardAccount = () => {
+    const { currency, device, selectedAccounts, isReonboarding, accountToReonboard } = this.props;
+    const creatableAccount = getCreatableAccount(
+      selectedAccounts,
+      isReonboarding,
+      accountToReonboard,
+    );
 
-  setAuthorizeStatus = (status: PreApprovalStatus) => {
-    this.setState({ authorizeStatus: status });
-  };
-
-  setError = (error: Error | null) => {
-    this.setState({ error });
-  };
-
-  clearError = () => {
-    this.setState({ error: null });
-  };
-
-  handlePreapproval = () => {
-    console.log("[OnboardModal] Starting preapproval process");
+    invariant(creatableAccount, "creatableAccount is required");
+    invariant(device, "device is required");
+    invariant(currency, "currency is required");
 
     this.setState({
       isProcessing: true,
-      progress: 0,
-      message: "Starting transaction pre-approval...",
+      onboardingStatus: OnboardStatus.PREPARE,
+      error: null,
+      isReonboarding: isReonboarding || false,
+    });
+
+    if (this.onboardingSubscription) {
+      this.onboardingSubscription.unsubscribe();
+    }
+
+    this.onboardingSubscription = this.cantonBridge
+      ?.onboardAccount(currency, device.deviceId, creatableAccount)
+      .subscribe({
+        next: (data: CantonOnboardProgress | CantonOnboardResult) => {
+          if ("status" in data) {
+            this.setState({ onboardingStatus: data.status });
+          }
+
+          if ("account" in data && "partyId" in data) {
+            this.setState({
+              onboardingResult: {
+                partyId: data.partyId,
+                completedAccount: data.account,
+              },
+              onboardingStatus: OnboardStatus.SUCCESS,
+              isProcessing: false,
+            });
+          }
+        },
+        complete: () => {},
+        error: (error: AxiosError) => {
+          logger.error("[handleOnboardAccount] failed", error);
+          this.setState({
+            onboardingStatus: OnboardStatus.ERROR,
+            isProcessing: false,
+            error,
+          });
+        },
+      });
+  };
+
+  handleAuthorizePreapproval = () => {
+    const { onboardingResult } = this.state;
+    const { currency, device } = this.props;
+
+    invariant(onboardingResult, "onboardingResult is required");
+    invariant(device, "device is required");
+    invariant(currency, "currency is required");
+
+    this.setState({
+      isProcessing: true,
+      authorizeStatus: AuthorizeStatus.PREPARE,
       error: null,
     });
 
-    const { onboardingData } = this.state;
-    const { currency } = this.props;
+    const { completedAccount, partyId } = onboardingResult;
 
-    if (!onboardingData) {
-      this.setState({
-        error: new Error("No onboarding data found in modal state"),
-        isProcessing: false,
-      });
-      return;
+    if (this.authorizeSubscription) {
+      this.authorizeSubscription.unsubscribe();
     }
 
-    const { partyId, address: _address, device: deviceId, accountIndex } = onboardingData;
-
-    const derivationMode = getDerivationModesForCurrency(currency)[0];
-    const derivationScheme = getDerivationScheme({ derivationMode, currency });
-    const derivationPath = runAccountDerivationScheme(derivationScheme, currency, {
-      account: accountIndex,
-    });
-
-    const cantonBridge = getCurrencyBridge(currency) as CantonCurrencyBridge;
-    let preapprovalResult: CantonPreApprovalResult | null = null;
-
-    const subscription = cantonBridge
-      .authorizePreapproval(currency, deviceId, derivationPath, partyId)
+    this.authorizeSubscription = this.cantonBridge
+      ?.authorizePreapproval(currency, device.deviceId, completedAccount, partyId)
       .subscribe({
-        next: (progressData: CantonPreApprovalProgress | CantonPreApprovalResult) => {
-          if ("isApproved" in progressData) {
-            preapprovalResult = {
-              isApproved: progressData.isApproved,
-            };
-            this.setState({ showConfirmation: true });
-          }
-
-          if ("status" in progressData) {
-            this.setState({ authorizeStatus: progressData.status });
+        next: (data: CantonAuthorizeProgress | CantonAuthorizeResult) => {
+          if ("status" in data) {
+            this.setState({ authorizeStatus: data.status });
           }
         },
         complete: () => {
-          logger.log("Canton preapproval completed", preapprovalResult);
-
-          if (!preapprovalResult || !preapprovalResult.isApproved) {
-            const errorMessage = `Transaction pre-approval failed: Unknown error`;
-            logger.error(errorMessage);
-            this.setState({
-              error: new Error(errorMessage),
-              isProcessing: false,
-              preapprovalSubscription: null,
-            });
-            return;
-          }
-
-          this.setState({
-            progress: 100,
-            message: "Pre-approval completed successfully!",
-            preapprovalSubscription: null,
-          });
-
           this.transitionTo(StepId.FINISH);
         },
-        error: (error: Error) => {
-          logger.error("Canton preapproval failed", error);
+        error: (error: AxiosError) => {
+          logger.error("[handleAuthorizePreapproval] failed", error);
           this.setState({
-            error,
+            authorizeStatus: AuthorizeStatus.ERROR,
             isProcessing: false,
-            preapprovalSubscription: null,
+            error,
           });
         },
       });
-
-    this.setState({ preapprovalSubscription: subscription });
   };
 
   render() {
-    const { device, currency, t, selectedAccounts, editedNames } = this.props;
     const {
-      stepId,
-      accountName: _accountName,
-      isCreating: _isCreating,
-      error,
-      onboardingData,
-      onboardingCompleted,
-      onboardingStatus,
-      authorizeStatus,
-      isProcessing,
-      showConfirmation,
-      progress,
-      message,
-    } = this.state;
-
-    const cantonBridge = getCurrencyBridge(currency) as CantonCurrencyBridge;
-
-    const selectedAccount = selectedAccounts[0];
-    const resolvedAccountName = selectedAccount
-      ? editedNames[selectedAccount.id] || getDefaultAccountName(selectedAccount)
-      : `${currency.name} 1`;
-
-    const stepperProps = {
-      t,
-      accountName: resolvedAccountName,
       currency,
       device,
-      selectedAccounts,
       editedNames,
-      cantonBridge,
-      transitionTo: this.transitionTo,
-      onAccountCreated: this.handleAccountCreated,
-      addAccountsAction: this.props.addAccountsAction,
-      existingAccounts: this.props.existingAccounts,
-      closeModal: this.props.closeModal,
-      onboardingData,
-      onboardingCompleted,
+      selectedAccounts,
+      t,
+      isReonboarding,
+      accountToReonboard,
+    } = this.props;
+    const { authorizeStatus, isProcessing, onboardingResult, onboardingStatus, stepId, error } =
+      this.state;
+
+    invariant(device, "device is required"); // TODO: handle device reconnection
+    invariant(currency, "currency is required");
+
+    const importableAccounts = getImportableAccounts(selectedAccounts);
+    const creatableAccount = getCreatableAccount(
+      selectedAccounts,
+      isReonboarding,
+      accountToReonboard,
+    );
+    const accountName = resolveCreatableAccountName(
+      creatableAccount,
+      currency,
+      editedNames,
+      importableAccounts.length,
+    );
+
+    invariant(creatableAccount, "creatableAccount is required");
+
+    const stepperProps: StepProps = {
+      t,
+      device,
+      currency,
+      accountName,
+      editedNames,
+      creatableAccount,
+      importableAccounts,
+      isProcessing,
+      onboardingResult,
       onboardingStatus,
-      setOnboardingData: this.setOnboardingData,
-      setOnboardingCompleted: this.setOnboardingCompleted,
-      setOnboardingStatus: this.setOnboardingStatus,
-      setAuthorizeStatus: this.setAuthorizeStatus,
       authorizeStatus,
       error,
-      setError: this.setError,
-      clearError: this.clearError,
-      status: onboardingStatus,
-      isProcessing,
-      showConfirmation,
-      progress,
-      message,
-      handlePreapproval: this.handlePreapproval,
+      isReonboarding: isReonboarding || this.state.isReonboarding,
+      onAddAccounts: this.handleAddAccounts,
+      onAddMore: this.handleAddMore,
+      onAuthorizePreapproval: this.handleAuthorizePreapproval,
+      onOnboardAccount: this.handleOnboardAccount,
+      onRetryOnboardAccount: this.handleRetryOnboardAccount,
+      onRetryPreapproval: this.handleRetryPreapproval,
+      transitionTo: this.transitionTo,
     };
 
     return (
       <Modal
         centered
         name="MODAL_CANTON_ONBOARD_ACCOUNT"
-        onHide={this.handleReset}
-        onBeforeOpen={this.handleBeforeOpen}
         preventBackdropClick={stepId === StepId.ONBOARD}
         render={({ onClose }) => (
           <Stepper
-            title={<Trans i18nKey="canton.addAccount.title">Add Canton Account</Trans>}
+            title={
+              <Trans
+                i18nKey={
+                  isReonboarding || this.state.isReonboarding
+                    ? "families.canton.addAccount.reonboard.title"
+                    : "families.canton.addAccount.title"
+                }
+              />
+            }
             stepId={stepId}
             onStepChange={this.handleStepChange}
             onClose={onClose}
-            steps={this.STEPS as Step<StepId, unknown>[]}
+            steps={this.STEPS}
             noScroll={true}
             {...stepperProps}
           />
@@ -363,6 +500,9 @@ class OnboardModal extends PureComponent<Props, State> {
   }
 }
 
-const m = compose(connect(mapStateToProps, mapDispatchToProps), withTranslation())(OnboardModal);
+const m = compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withTranslation(),
+)(OnboardModal) as React.ComponentType<UserProps>;
 
 export default m;

@@ -21,10 +21,10 @@ const CameraWrapper = styled.div<{
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  background: ${p => p.theme.colors.palette.background.paper};
-  color: ${p => p.theme.colors.palette.text.shade60};
+  background: ${p => p.theme.colors.background.card};
+  color: ${p => p.theme.colors.neutral.c70};
   overflow: hidden;
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.03);
 
   > div:nth-of-type(2) {
@@ -37,7 +37,7 @@ const CameraWrapper = styled.div<{
       font-weight: 600;
       padding: 12px 24px;
       font-size: 13px;
-      color: ${p => p.theme.colors.palette.text.shade80};
+      color: ${p => p.theme.colors.neutral.c80};
     }
   }
 `;
@@ -71,7 +71,7 @@ const Close = styled.div`
   position: absolute;
   top: 12px;
   right: 12px;
-  color: ${p => p.theme.colors.palette.divider};
+  color: ${p => p.theme.colors.neutral.c40};
 `;
 export default class QRCodeCameraPickerCanvas extends PureComponent<
   {
@@ -105,7 +105,8 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
   componentDidMount() {
     let sum = 0;
     const onkeyup = (e: KeyboardEvent) => {
-      sum += e.which;
+      const keyCode = e.key.length === 1 ? e.key.charCodeAt(0) : 0;
+      sum += keyCode;
       if (sum === 439 && this.canvasSecond) {
         this.canvasSecond.style.filter = "hue-rotate(90deg)";
       }

@@ -1,5 +1,199 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.9.3
+
+### Patch Changes
+
+- Updated dependencies [[`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143), [`3e70677`](https://github.com/LedgerHQ/ledger-live/commit/3e706774f8c4e9b768ab18b67abc3471cf61b6b6), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe), [`8d8e1b7`](https://github.com/LedgerHQ/ledger-live/commit/8d8e1b7bb26305af326ea21710248223d1e8653b)]:
+  - @ledgerhq/live-env@2.23.0
+  - @ledgerhq/live-network@2.1.4
+
+## 1.9.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143), [`3e70677`](https://github.com/LedgerHQ/ledger-live/commit/3e706774f8c4e9b768ab18b67abc3471cf61b6b6), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe), [`8d8e1b7`](https://github.com/LedgerHQ/ledger-live/commit/8d8e1b7bb26305af326ea21710248223d1e8653b)]:
+  - @ledgerhq/live-env@2.23.0-next.0
+  - @ledgerhq/live-network@2.1.4-next.0
+
+## 1.9.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.1.3
+
+## 1.9.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.1.3-hotfix.0
+
+## 1.9.1
+
+### Patch Changes
+
+- Updated dependencies [[`a2ecb55`](https://github.com/LedgerHQ/ledger-live/commit/a2ecb55df9d383dc282f5fe489cb14386208215e), [`b113920`](https://github.com/LedgerHQ/ledger-live/commit/b11392056bc334fc1813c473569ad3ae7be08045)]:
+  - @ledgerhq/live-env@2.22.0
+  - @ledgerhq/live-network@2.1.2
+
+## 1.9.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a2ecb55`](https://github.com/LedgerHQ/ledger-live/commit/a2ecb55df9d383dc282f5fe489cb14386208215e), [`b113920`](https://github.com/LedgerHQ/ledger-live/commit/b11392056bc334fc1813c473569ad3ae7be08045)]:
+  - @ledgerhq/live-env@2.22.0-next.0
+  - @ledgerhq/live-network@2.1.2-next.0
+
+## 1.9.0
+
+### Minor Changes
+
+- [#12550](https://github.com/LedgerHQ/ledger-live/pull/12550) [`8cd8bbc`](https://github.com/LedgerHQ/ledger-live/commit/8cd8bbcbf9c06e2a601cce3b58f831d88b5e2d8e) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Change Near Intents display name to NEAR Intents, TC link extended to include more words
+
+- [#12657](https://github.com/LedgerHQ/ledger-live/pull/12657) [`3a5e317`](https://github.com/LedgerHQ/ledger-live/commit/3a5e317908246db5e816e6a8825218d228f09ed9) Thanks [@Justkant](https://github.com/Justkant)! - fix: correct mapping of 'apex' in DeviceModel for CAL certificates
+
+### Patch Changes
+
+- Updated dependencies [[`c40e9da`](https://github.com/LedgerHQ/ledger-live/commit/c40e9da68452fe9827b9435ff2d162291186be73)]:
+  - @ledgerhq/live-env@2.21.0
+  - @ledgerhq/live-network@2.1.1
+
+## 1.9.0-next.0
+
+### Minor Changes
+
+- [#12550](https://github.com/LedgerHQ/ledger-live/pull/12550) [`8cd8bbc`](https://github.com/LedgerHQ/ledger-live/commit/8cd8bbcbf9c06e2a601cce3b58f831d88b5e2d8e) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Change Near Intents display name to NEAR Intents, TC link extended to include more words
+
+- [#12657](https://github.com/LedgerHQ/ledger-live/pull/12657) [`3a5e317`](https://github.com/LedgerHQ/ledger-live/commit/3a5e317908246db5e816e6a8825218d228f09ed9) Thanks [@Justkant](https://github.com/Justkant)! - fix: correct mapping of 'apex' in DeviceModel for CAL certificates
+
+### Patch Changes
+
+- Updated dependencies [[`c40e9da`](https://github.com/LedgerHQ/ledger-live/commit/c40e9da68452fe9827b9435ff2d162291186be73)]:
+  - @ledgerhq/live-env@2.21.0-next.0
+  - @ledgerhq/live-network@2.1.1-next.0
+
+## 1.8.0
+
+### Minor Changes
+
+- [#12421](https://github.com/LedgerHQ/ledger-live/pull/12421) [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Introduce CAL client hook
+
+### Patch Changes
+
+- Updated dependencies [[`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e), [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726), [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4), [`cadf2e1`](https://github.com/LedgerHQ/ledger-live/commit/cadf2e1dfb09248d3f77d96f94ae774425dbca75), [`cbc0648`](https://github.com/LedgerHQ/ledger-live/commit/cbc064885d8e0459e40d327a2e5389204b3ec705)]:
+  - @ledgerhq/live-network@2.1.0
+  - @ledgerhq/live-env@2.20.0
+
+## 1.8.0-next.0
+
+### Minor Changes
+
+- [#12421](https://github.com/LedgerHQ/ledger-live/pull/12421) [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Introduce CAL client hook
+
+### Patch Changes
+
+- Updated dependencies [[`63e8f34`](https://github.com/LedgerHQ/ledger-live/commit/63e8f342f6b951ab77bb710b9971f033c05e579e), [`ccf788d`](https://github.com/LedgerHQ/ledger-live/commit/ccf788d7c0239ca95e76c3cc340f9a6bd09ea726), [`b962966`](https://github.com/LedgerHQ/ledger-live/commit/b962966525517c5cfa7f1f8826f8f2b9162189e4), [`cadf2e1`](https://github.com/LedgerHQ/ledger-live/commit/cadf2e1dfb09248d3f77d96f94ae774425dbca75), [`cbc0648`](https://github.com/LedgerHQ/ledger-live/commit/cbc064885d8e0459e40d327a2e5389204b3ec705)]:
+  - @ledgerhq/live-network@2.1.0-next.0
+  - @ledgerhq/live-env@2.20.0-next.0
+
+## 1.7.0
+
+### Minor Changes
+
+- [#12141](https://github.com/LedgerHQ/ledger-live/pull/12141) [`3691bed`](https://github.com/LedgerHQ/ledger-live/commit/3691bed5f5706f010037f54e2396ad71e48cf208) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - update 1inch domain from .io to .com
+
+### Patch Changes
+
+- Updated dependencies [[`f1f3845`](https://github.com/LedgerHQ/ledger-live/commit/f1f3845942e4cbce9c585dc65f6170ddbc319f19)]:
+  - @ledgerhq/live-env@2.19.0
+  - @ledgerhq/live-network@2.0.20
+
+## 1.7.0-next.0
+
+### Minor Changes
+
+- [#12141](https://github.com/LedgerHQ/ledger-live/pull/12141) [`3691bed`](https://github.com/LedgerHQ/ledger-live/commit/3691bed5f5706f010037f54e2396ad71e48cf208) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - update 1inch domain from .io to .com
+
+### Patch Changes
+
+- Updated dependencies [[`f1f3845`](https://github.com/LedgerHQ/ledger-live/commit/f1f3845942e4cbce9c585dc65f6170ddbc319f19)]:
+  - @ledgerhq/live-env@2.19.0-next.0
+  - @ledgerhq/live-network@2.0.20-next.0
+
+## 1.6.0
+
+### Minor Changes
+
+- [#11899](https://github.com/LedgerHQ/ledger-live/pull/11899) [`42f2449`](https://github.com/LedgerHQ/ledger-live/commit/42f244956720dfe13cf16334ef79064f651c67d0) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Add nearintents to swap config for drawer and cal info
+
+### Patch Changes
+
+- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
+  - @ledgerhq/live-env@2.18.0
+  - @ledgerhq/live-network@2.0.19
+
+## 1.6.0-next.0
+
+### Minor Changes
+
+- [#11899](https://github.com/LedgerHQ/ledger-live/pull/11899) [`42f2449`](https://github.com/LedgerHQ/ledger-live/commit/42f244956720dfe13cf16334ef79064f651c67d0) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Add nearintents to swap config for drawer and cal info
+
+### Patch Changes
+
+- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
+  - @ledgerhq/live-env@2.18.0-next.0
+  - @ledgerhq/live-network@2.0.19-next.0
+
+## 1.5.0
+
+### Minor Changes
+
+- [#11768](https://github.com/LedgerHQ/ledger-live/pull/11768) [`f671769`](https://github.com/LedgerHQ/ledger-live/commit/f6717696fcb2ad672a48fdd7f8654dedf11b4a65) Thanks [@CremaFR](https://github.com/CremaFR)! - Adding fallback CAL Near and local CDN near
+
+### Patch Changes
+
+- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e), [`2a58b72`](https://github.com/LedgerHQ/ledger-live/commit/2a58b720de42e63e59ea430bd03b2c95e903634c)]:
+  - @ledgerhq/live-env@2.17.0
+  - @ledgerhq/live-network@2.0.18
+
+## 1.5.0-next.0
+
+### Minor Changes
+
+- [#11768](https://github.com/LedgerHQ/ledger-live/pull/11768) [`f671769`](https://github.com/LedgerHQ/ledger-live/commit/f6717696fcb2ad672a48fdd7f8654dedf11b4a65) Thanks [@CremaFR](https://github.com/CremaFR)! - Adding fallback CAL Near and local CDN near
+
+### Patch Changes
+
+- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e), [`2a58b72`](https://github.com/LedgerHQ/ledger-live/commit/2a58b720de42e63e59ea430bd03b2c95e903634c)]:
+  - @ledgerhq/live-env@2.17.0-next.0
+  - @ledgerhq/live-network@2.0.18-next.0
+
+## 1.4.0
+
+### Minor Changes
+
+- [#11541](https://github.com/LedgerHQ/ledger-live/pull/11541) [`21ebab2`](https://github.com/LedgerHQ/ledger-live/commit/21ebab29b2b2a7650460ba6db3362ffacf6ab8dc) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add cic accept terms
+
+### Patch Changes
+
+- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/live-env@2.16.0
+  - @ledgerhq/live-network@2.0.17
+
+## 1.4.0-next.0
+
+### Minor Changes
+
+- [#11541](https://github.com/LedgerHQ/ledger-live/pull/11541) [`21ebab2`](https://github.com/LedgerHQ/ledger-live/commit/21ebab29b2b2a7650460ba6db3362ffacf6ab8dc) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add cic accept terms
+
+### Patch Changes
+
+- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/live-env@2.16.0-next.0
+  - @ledgerhq/live-network@2.0.17-next.0
+
 ## 1.3.1
 
 ### Patch Changes

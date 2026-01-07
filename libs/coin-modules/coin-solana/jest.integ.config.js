@@ -1,12 +1,22 @@
-const transformIncludePatterns = ["ky"];
+const transformIncludePatterns = ["ky", "superstruct"];
 
-/** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
+/** @type {import('jest').Config} */
 module.exports = {
-  preset: "ts-jest",
   testEnvironment: "node",
-  testRegex: ".integration.test.ts$",
-  testPathIgnorePatterns: ["lib/", "lib-es/", "bridge.integration.test.ts"],
+  testRegex: ".integ.test.ts$",
+  testPathIgnorePatterns: ["lib/", "lib-es/"],
+  testTimeout: 60_000,
+  forceExit: true,
+  passWithNoTests: true,
   transform: {
+    "^.+\\.(t|j)sx?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
     [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx)?$`]: [
       "@swc/jest",
       {

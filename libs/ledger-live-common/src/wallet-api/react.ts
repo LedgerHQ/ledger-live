@@ -1,29 +1,38 @@
 import { useMemo, useState, useEffect, useRef, useCallback, RefObject } from "react";
+import { useDispatch } from "react-redux";
 import semver from "semver";
 import { intervalToDuration } from "date-fns";
-
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-api-server";
-import { useWalletAPIServer as useWalletAPIServerRaw } from "@ledgerhq/wallet-api-server/lib/react";
+import {
+  WalletHandlers,
+  ServerConfig,
+  WalletAPIServer,
+  useWalletAPIServer as useWalletAPIServerRaw,
+} from "@ledgerhq/wallet-api-server";
 import { Transport, Permission } from "@ledgerhq/wallet-api-core";
-import { StateDB } from "../hooks/useDBRaw";
-import { Observable, firstValueFrom, Subject } from "rxjs";
 import { first } from "rxjs/operators";
+import { getEnv } from "@ledgerhq/live-env";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { WalletState } from "@ledgerhq/live-wallet/store";
+import { endpoints as calEndpoints } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
+import { InfiniteData } from "@reduxjs/toolkit/query/react";
+import type {
+  TokensDataWithPagination,
+  PageParam,
+} from "@ledgerhq/cryptoassets/lib/cal-client/state-manager/types";
+import { Subject } from "rxjs";
+import { StateDB } from "../hooks/useDBRaw";
 import {
   accountToWalletAPIAccount,
   currencyToWalletAPICurrency,
-  getAccountIdFromWalletAccountId,
+  setWalletApiIdForAccountId,
 } from "./converters";
 import { isWalletAPISupportedCurrency } from "./helpers";
 import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
-import {
-  listCurrencies,
-  findCryptoCurrencyById,
-  findTokenById,
-  getCryptoCurrencyById,
-} from "../currencies";
+import { listSupportedCurrencies } from "../currencies";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { TrackingAPI } from "./tracking";
 import {
   bitcoinFamilyAccountGetXPubLogic,
@@ -37,12 +46,11 @@ import {
   signTransactionLogic,
   bitcoinFamilyAccountGetAddressLogic,
   bitcoinFamilyAccountGetPublicKeyLogic,
+  signRawTransactionLogic,
 } from "./logic";
 import { getAccountBridge } from "../bridge";
-import { getEnv } from "@ledgerhq/live-env";
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Transaction } from "../generated/types";
 import {
   DISCOVER_INITIAL_CATEGORY,
@@ -51,8 +59,8 @@ import {
 } from "./constants";
 import { DiscoverDB } from "./types";
 import { LiveAppManifest } from "../platform/types";
-import { WalletState } from "@ledgerhq/live-wallet/store";
 import { ModularDrawerConfiguration } from "./ModularDrawer/types";
+import { useCurrenciesUnderFeatureFlag } from "../modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
@@ -61,75 +69,27 @@ export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   return ref.current;
 }
 
-export function useWalletAPIAccounts(
-  walletState: WalletState,
-  accounts: AccountLike[],
-): WalletAPIAccount[] {
-  return useMemo(() => {
-    return accounts.map(account => {
-      const parentAccount = getParentAccount(account, accounts);
-
-      return accountToWalletAPIAccount(walletState, account, parentAccount);
+export function useSetWalletAPIAccounts(accounts: AccountLike[]): void {
+  useEffect(() => {
+    accounts.forEach(account => {
+      setWalletApiIdForAccountId(account.id);
     });
-  }, [walletState, accounts]);
+  }, [accounts]);
 }
 
-export function useWalletAPICurrencies(): WalletAPICurrency[] {
-  return useMemo(() => {
-    return listCurrencies(true).reduce<WalletAPICurrency[]>((filtered, currency) => {
-      if (isWalletAPISupportedCurrency(currency)) {
-        filtered.push(currencyToWalletAPICurrency(currency));
-      }
-      return filtered;
-    }, []);
-  }, []);
-}
-
-export function useManifestCurrencies(manifest: AppManifest) {
+export function useDAppManifestCurrencyIds(manifest: AppManifest) {
   return useMemo(() => {
     return (
       manifest.dapp?.networks.map(network => {
-        return getCryptoCurrencyById(network.currency);
+        return network.currency;
       }) ?? []
     );
   }, [manifest.dapp?.networks]);
 }
 
-export function useGetAccountIds(
-  accounts$: Observable<WalletAPIAccount[]> | undefined,
-): Map<string, boolean> | undefined {
-  const [accounts, setAccounts] = useState<WalletAPIAccount[]>([]);
-
-  useEffect(() => {
-    if (!accounts$) {
-      return undefined;
-    }
-
-    const subscription = accounts$.subscribe(walletAccounts => {
-      setAccounts(walletAccounts);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [accounts$]);
-
-  return useMemo(() => {
-    if (!accounts$) {
-      return undefined;
-    }
-
-    return accounts.reduce((accountIds, account) => {
-      accountIds.set(getAccountIdFromWalletAccountId(account.id), true);
-      return accountIds;
-    }, new Map());
-  }, [accounts, accounts$]);
-}
-
 export interface UiHook {
   "account.request": (params: {
-    accounts$?: Observable<WalletAPIAccount[]>;
-    currencies: CryptoOrTokenCurrency[];
+    currencyIds?: string[];
     areCurrenciesFiltered?: boolean;
     useCase?: string;
     drawerConfiguration?: ModularDrawerConfiguration;
@@ -154,6 +114,14 @@ export interface UiHook {
   }) => void;
   "storage.get": WalletHandlers["storage.get"];
   "storage.set": WalletHandlers["storage.set"];
+  "transaction.signRaw": (params: {
+    account: AccountLike;
+    parentAccount: Account | undefined;
+    transaction: string;
+    options: Parameters<WalletHandlers["transaction.sign"]>[0]["options"];
+    onSuccess: (signedOperation: SignedOperation) => void;
+    onError: (error: Error) => void;
+  }) => void;
   "transaction.sign": (params: {
     account: AccountLike;
     parentAccount: Account | undefined;
@@ -194,11 +162,10 @@ export interface UiHook {
   }) => void;
 }
 
-export function usePermission(manifest: AppManifest): Permission {
+export function usePermission(manifest: AppManifest): Omit<Permission, "currencyIds"> {
   return useMemo(
     () => ({
-      currencyIds: manifest.currencies === "*" ? ["**"] : manifest.currencies,
-      methodIds: manifest.permissions as unknown as string[], // TODO remove when using the correct manifest type
+      methodIds: manifest.permissions,
     }),
     [manifest],
   );
@@ -228,7 +195,7 @@ export function useConfig({
       wallet,
       mevProtected,
     }),
-    [appId, tracking, userId, wallet],
+    [appId, mevProtected, tracking, userId, wallet],
   );
 }
 
@@ -320,6 +287,7 @@ export function useWalletAPIServer({
     "storage.get": uiStorageGet,
     "storage.set": uiStorageSet,
     "transaction.sign": uiTxSign,
+    "transaction.signRaw": uiTxSignRaw,
     "transaction.broadcast": uiTxBroadcast,
     "device.transport": uiDeviceTransport,
     "device.select": uiDeviceSelect,
@@ -335,18 +303,19 @@ export function useWalletAPIServer({
   onLoadError: () => void;
   widgetLoaded: boolean;
 } {
+  const dispatch = useDispatch<ThunkDispatch<any, any, UnknownAction>>();
+  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
   const permission = usePermission(manifest);
   const transport = useTransport(webviewHook.postMessage);
   const [widgetLoaded, setWidgetLoaded] = useState(false);
 
-  const walletAPIAccounts = useWalletAPIAccounts(walletState, accounts);
-  const walletAPICurrencies = useWalletAPICurrencies();
+  // We need to set the wallet API account IDs mapping upfront
+  // If we don't want the map to be empty when requesting an account
+  useSetWalletAPIAccounts(accounts);
 
   const { server, onMessage } = useWalletAPIServerRaw({
     transport,
     config,
-    accounts: walletAPIAccounts,
-    currencies: walletAPICurrencies,
     permission,
     customHandlers,
   });
@@ -355,45 +324,259 @@ export function useWalletAPIServer({
     tracking.load(manifest);
   }, [tracking, manifest]);
 
+  // TODO: refactor each handler into its own logic function for clarity
+  useEffect(() => {
+    server.setHandler("currency.list", async ({ currencyIds }) => {
+      tracking.currencyListRequested(manifest);
+
+      try {
+        // 1. Parse manifest currency patterns to determine what to include
+        const manifestCurrencyIds = manifest.currencies === "*" ? ["**"] : manifest.currencies;
+
+        // 2. Apply query filter early - intersect with manifest patterns
+        const queryCurrencyIdsSet = currencyIds ? new Set(currencyIds) : undefined;
+        let effectiveCurrencyIds = manifestCurrencyIds;
+
+        if (queryCurrencyIdsSet) {
+          // If we have a query filter, narrow down what we need to fetch
+          effectiveCurrencyIds = manifestCurrencyIds.flatMap(manifestId => {
+            if (manifestId === "**") {
+              // Query can ask for anything, so use the query list
+              return [...queryCurrencyIdsSet];
+            } else if (manifestId.endsWith("/**")) {
+              // Pattern like "ethereum/**" - keep tokens from query that match this family
+              const family = manifestId.slice(0, -3);
+              return [...queryCurrencyIdsSet].filter(qId => qId.startsWith(`${family}/`));
+            } else if (queryCurrencyIdsSet.has(manifestId)) {
+              // Specific currency/token that's in the query
+              return [manifestId];
+            }
+            // Not in query, skip it
+            return [];
+          });
+        }
+
+        // 3. Parse effective currency IDs to determine what to fetch
+        const includeAllCurrencies = effectiveCurrencyIds.includes("**");
+        const specificCurrencies = new Set<string>();
+        const tokenFamilies = new Set<string>();
+        const specificTokenIds = new Set<string>();
+
+        for (const id of effectiveCurrencyIds) {
+          if (id === "**") {
+            // Already handled above
+            continue;
+          } else if (id.endsWith("/**")) {
+            // Pattern like "ethereum/**" or "solana/**" - include tokens for this family
+            const family = id.slice(0, -3);
+            tokenFamilies.add(family);
+            // Additionally include the parent currency itself
+            specificCurrencies.add(family);
+          } else if (id.includes("/")) {
+            // Specific token ID like "ethereum/erc20/usd__coin"
+            specificTokenIds.add(id);
+          } else {
+            // Specific currency like "bitcoin" or "ethereum"
+            specificCurrencies.add(id);
+          }
+        }
+
+        // 4. Gather all supported parent currencies
+        const allCurrencies = listSupportedCurrencies().reduce<WalletAPICurrency[]>((acc, c) => {
+          if (isWalletAPISupportedCurrency(c) && !deactivatedCurrencyIds.has(c.id))
+            acc.push(currencyToWalletAPICurrency(c));
+          return acc;
+        }, []);
+
+        // 5. Determine which currencies to include based on patterns
+        let includedCurrencies: WalletAPICurrency[] = [];
+        if (includeAllCurrencies) {
+          includedCurrencies = allCurrencies;
+        } else {
+          includedCurrencies = allCurrencies.filter(c => specificCurrencies.has(c.id));
+        }
+
+        // 6. Fetch specific tokens by ID if any
+        const specificTokens: WalletAPICurrency[] = [];
+        if (specificTokenIds.size > 0) {
+          const tokenPromises = [...specificTokenIds].map(async tokenId => {
+            const token = await getCryptoAssetsStore().findTokenById(tokenId);
+            return token ? currencyToWalletAPICurrency(token) : null;
+          });
+          const resolvedTokens = await Promise.all(tokenPromises);
+          specificTokens.push(...resolvedTokens.filter((t): t is WalletAPICurrency => t !== null));
+        }
+
+        // 7. Determine which token families to fetch (only if not already fetched as specific tokens)
+        const familiesToFetch = new Set<string>();
+        if (includeAllCurrencies) {
+          // Fetch tokens for all currency families
+          allCurrencies.forEach(c => {
+            if (c.type === "CryptoCurrency") familiesToFetch.add(c.family);
+          });
+        } else if (tokenFamilies.size > 0) {
+          // Only fetch tokens for families explicitly marked with /**
+          tokenFamilies.forEach(family => familiesToFetch.add(family));
+        }
+
+        // 8. Fetch tokens for relevant families
+        const fetchAllPagesForFamily = async (family: string) => {
+          const args = { networkFamily: family, pageSize: 1000 };
+          let hasNextPage = true;
+          let data: InfiniteData<TokensDataWithPagination, PageParam> | undefined;
+
+          while (hasNextPage) {
+            const querySub = dispatch(
+              calEndpoints.getTokensData.initiate(
+                args,
+                data ? { direction: "forward" } : undefined,
+              ),
+            );
+
+            try {
+              const result = await querySub;
+              data = result.data;
+              hasNextPage = result.hasNextPage;
+              if (result.error) throw result.error;
+            } finally {
+              querySub.unsubscribe();
+            }
+          }
+
+          return (data?.pages ?? []).flatMap(p => p.tokens);
+        };
+
+        const tokensByFamily = await Promise.all(
+          [...familiesToFetch].map(f => fetchAllPagesForFamily(f)),
+        );
+
+        // 9. Combine all results (no additional filter needed since we pre-filtered)
+        const result = tokensByFamily.reduce<WalletAPICurrency[]>(
+          (acc, tokens) => [...acc, ...tokens.map(t => currencyToWalletAPICurrency(t))],
+          [...includedCurrencies, ...specificTokens],
+        );
+
+        tracking.currencyListSuccess(manifest);
+        return result;
+      } catch (err) {
+        tracking.currencyListFail(manifest);
+        throw err;
+      }
+    });
+  }, [walletState, manifest, server, tracking, dispatch, deactivatedCurrencyIds]);
+
+  useEffect(() => {
+    server.setHandler("account.list", ({ currencyIds }) => {
+      tracking.accountListRequested(manifest);
+
+      try {
+        // 1. Parse manifest currency patterns to determine what to include
+        const manifestCurrencyIds = manifest.currencies === "*" ? ["**"] : manifest.currencies;
+
+        // 2. Apply query filter early - intersect with manifest patterns
+        const queryCurrencyIdsSet = currencyIds ? new Set(currencyIds) : undefined;
+        let effectiveCurrencyIds = manifestCurrencyIds;
+
+        if (queryCurrencyIdsSet) {
+          // If we have a query filter, narrow down what we need to check
+          effectiveCurrencyIds = manifestCurrencyIds.flatMap(manifestId => {
+            if (manifestId === "**") {
+              // Query can ask for anything, so use the query list
+              return [...queryCurrencyIdsSet];
+            } else if (manifestId.endsWith("/**")) {
+              // Pattern like "ethereum/**" - keep tokens from query that match this family
+              const family = manifestId.slice(0, -3);
+              return [...queryCurrencyIdsSet].filter(qId => qId.startsWith(`${family}/`));
+            } else if (queryCurrencyIdsSet.has(manifestId)) {
+              // Specific currency/token that's in the query
+              return [manifestId];
+            }
+            // Not in query, skip it
+            return [];
+          });
+        }
+
+        // 3. Build a set of allowed currency IDs based on effective patterns
+        const allowedCurrencyIds = new Set<string>();
+        const includeAllCurrencies = effectiveCurrencyIds.includes("**");
+        const tokenFamilyPrefixes = new Set<string>();
+
+        for (const id of effectiveCurrencyIds) {
+          if (id === "**") {
+            // Will match all currencies
+            continue;
+          } else if (id.endsWith("/**")) {
+            // Pattern like "ethereum/**" - store prefix for matching
+            const family = id.slice(0, -3);
+            tokenFamilyPrefixes.add(family);
+          } else {
+            // Specific currency/token ID
+            allowedCurrencyIds.add(id);
+          }
+        }
+
+        // 4. Filter accounts based on effective currency IDs
+        const wapiAccounts = accounts.reduce<WalletAPIAccount[]>((acc, account) => {
+          const parentAccount = getParentAccount(account, accounts);
+          const accountCurrencyId =
+            account.type === "TokenAccount" ? account.token.id : account.currency.id;
+          const parentCurrencyId =
+            account.type === "TokenAccount" ? account.token.parentCurrency.id : account.currency.id;
+
+          // Check if account currency ID matches the effective patterns
+          const isAllowed =
+            includeAllCurrencies ||
+            allowedCurrencyIds.has(accountCurrencyId) ||
+            tokenFamilyPrefixes.has(parentCurrencyId);
+
+          if (isAllowed) {
+            acc.push(accountToWalletAPIAccount(walletState, account, parentAccount));
+          }
+
+          return acc;
+        }, []);
+
+        tracking.accountListSuccess(manifest);
+        return wapiAccounts;
+      } catch (err) {
+        tracking.accountListFail(manifest);
+        throw err;
+      }
+    });
+  }, [walletState, manifest, server, tracking, uiAccountRequest, accounts]);
+
   useEffect(() => {
     if (!uiAccountRequest) return;
 
     server.setHandler(
       "account.request",
-      async ({ accounts$, currencies$, drawerConfiguration, areCurrenciesFiltered, useCase }) => {
+      async ({ currencyIds, drawerConfiguration, areCurrenciesFiltered, useCase }) => {
         tracking.requestAccountRequested(manifest);
-        const currencies = await firstValueFrom(currencies$);
-
         return new Promise((resolve, reject) => {
-          // handle no curencies selected case
-          const currencyList = currencies.reduce<CryptoOrTokenCurrency[]>((prev, { id }) => {
-            const currency = findCryptoCurrencyById(id) || findTokenById(id);
-            if (currency) {
-              prev.push(currency);
-            }
-            return prev;
-          }, []);
-
           let done = false;
-          uiAccountRequest({
-            accounts$,
-            currencies: currencyList,
-            drawerConfiguration,
-            areCurrenciesFiltered,
-            useCase,
-            onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
-              if (done) return;
-              done = true;
-              tracking.requestAccountSuccess(manifest);
-              resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
-            },
-            onCancel: () => {
-              if (done) return;
-              done = true;
-              tracking.requestAccountFail(manifest);
-              reject(new Error("Canceled by user"));
-            },
-          });
+          try {
+            uiAccountRequest({
+              currencyIds,
+              drawerConfiguration,
+              areCurrenciesFiltered,
+              useCase,
+              onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
+                if (done) return;
+                done = true;
+                tracking.requestAccountSuccess(manifest);
+                resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
+              },
+              onCancel: () => {
+                if (done) return;
+                done = true;
+                tracking.requestAccountFail(manifest);
+                reject(new Error("Canceled by user"));
+              },
+            });
+          } catch (error) {
+            tracking.requestAccountFail(manifest);
+            reject(error);
+          }
         });
       },
     );
@@ -402,11 +585,11 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiAccountReceive) return;
 
-    server.setHandler("account.receive", ({ account, tokenCurrency }) =>
+    server.setHandler("account.receive", ({ accountId, tokenCurrency }) =>
       receiveOnAccountLogic(
         walletState,
         { manifest, accounts, tracking },
-        account.id,
+        accountId,
         (account, parentAccount, accountAddress) =>
           new Promise((resolve, reject) => {
             let done = false;
@@ -442,10 +625,10 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiMessageSign) return;
 
-    server.setHandler("message.sign", ({ account, message, options }) =>
+    server.setHandler("message.sign", ({ accountId, message, options }) =>
       signMessageLogic(
         { manifest, accounts, tracking },
-        account.id,
+        accountId,
         message.toString("hex"),
         (account: AccountLike, message: AnyMessage) =>
           new Promise((resolve, reject) => {
@@ -499,13 +682,18 @@ export function useWalletAPIServer({
 
     server.setHandler(
       "transaction.sign",
-      async ({ account, tokenCurrency, transaction, options }) => {
+      async ({ accountId, tokenCurrency, transaction, options }) => {
+        let currency: string | undefined;
         const signedOperation = await signTransactionLogic(
           { manifest, accounts, tracking },
-          account.id,
+          accountId,
           transaction,
-          (account, parentAccount, signFlowInfos) =>
-            new Promise((resolve, reject) => {
+          (account, parentAccount, signFlowInfos) => {
+            currency =
+              account.type === "TokenAccount"
+                ? account.token.parentCurrency.id
+                : account.currency.id;
+            return new Promise((resolve, reject) => {
               let done = false;
               return uiTxSign({
                 account,
@@ -525,11 +713,12 @@ export function useWalletAPIServer({
                   reject(error);
                 },
               });
-            }),
+            });
+          },
           tokenCurrency,
         );
 
-        return account.currency === "solana"
+        return currency === "solana"
           ? Buffer.from(signedOperation.signature, "hex")
           : Buffer.from(signedOperation.signature);
       },
@@ -537,14 +726,97 @@ export function useWalletAPIServer({
   }, [accounts, manifest, server, tracking, uiTxSign]);
 
   useEffect(() => {
+    if (!uiTxSignRaw) return;
+
+    server.setHandler(
+      "transaction.signRaw",
+      async ({ accountId, transaction, broadcast, options }) => {
+        const signedOperation = await signRawTransactionLogic(
+          { manifest, accounts, tracking },
+          accountId,
+          transaction,
+          (account, parentAccount, tx) =>
+            new Promise((resolve, reject) => {
+              let done = false;
+              return uiTxSignRaw({
+                account,
+                parentAccount,
+                transaction: tx,
+                options,
+                onSuccess: signedOperation => {
+                  if (done) return;
+                  done = true;
+                  tracking.signRawTransactionSuccess(manifest);
+                  resolve(signedOperation);
+                },
+                onError: error => {
+                  if (done) return;
+                  done = true;
+                  tracking.signRawTransactionFail(manifest);
+                  reject(error);
+                },
+              });
+            }),
+        );
+
+        let hash: string | undefined;
+        if (broadcast) {
+          hash = await broadcastTransactionLogic(
+            { manifest, accounts, tracking },
+            accountId,
+            signedOperation,
+            async (account, parentAccount, signedOperation) => {
+              const bridge = getAccountBridge(account, parentAccount);
+              const mainAccount = getMainAccount(account, parentAccount);
+
+              let optimisticOperation: Operation = signedOperation.operation;
+
+              if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+                try {
+                  optimisticOperation = await bridge.broadcast({
+                    account: mainAccount,
+                    signedOperation,
+                    broadcastConfig: { mevProtected: !!config.mevProtected },
+                  });
+                  tracking.broadcastSuccess(manifest);
+                } catch (error) {
+                  tracking.broadcastFail(manifest);
+                  throw error;
+                }
+              }
+
+              uiTxBroadcast &&
+                uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
+
+              return optimisticOperation.hash;
+            },
+          );
+        }
+
+        return {
+          signedTransactionHex: signedOperation.signature,
+          transactionHash: hash,
+        };
+      },
+    );
+  }, [accounts, config.mevProtected, manifest, server, tracking, uiTxBroadcast, uiTxSignRaw]);
+
+  useEffect(() => {
     if (!uiTxSign) return;
 
     server.setHandler(
       "transaction.signAndBroadcast",
-      async ({ account, tokenCurrency, transaction, options }) => {
+      async ({ accountId, tokenCurrency, transaction, options, meta }) => {
+        const sponsored = transaction.family === "ethereum" && transaction.sponsored;
+        // isEmbedded and partner are passed via meta (not transaction) as they're tracking params, not tx properties
+        const isEmbeddedSwap =
+          transaction.family === "ethereum" &&
+          (meta as { isEmbedded?: boolean } | undefined)?.isEmbedded;
+        const partner = (meta as { partner?: string } | undefined)?.partner;
+
         const signedTransaction = await signTransactionLogic(
           { manifest, accounts, tracking },
-          account.id,
+          accountId,
           transaction,
           (account, parentAccount, signFlowInfos) =>
             new Promise((resolve, reject) => {
@@ -557,23 +829,25 @@ export function useWalletAPIServer({
                 onSuccess: signedOperation => {
                   if (done) return;
                   done = true;
-                  tracking.signTransactionSuccess(manifest);
+                  tracking.signTransactionSuccess(manifest, isEmbeddedSwap, partner);
                   resolve(signedOperation);
                 },
                 onError: error => {
                   if (done) return;
                   done = true;
-                  tracking.signTransactionFail(manifest);
+                  tracking.signTransactionFail(manifest, isEmbeddedSwap, partner);
                   reject(error);
                 },
               });
             }),
           tokenCurrency,
+          isEmbeddedSwap,
+          partner,
         );
 
         return broadcastTransactionLogic(
           { manifest, accounts, tracking },
-          account.id,
+          accountId,
           signedTransaction,
           async (account, parentAccount, signedOperation) => {
             const bridge = getAccountBridge(account, parentAccount);
@@ -586,11 +860,14 @@ export function useWalletAPIServer({
                 optimisticOperation = await bridge.broadcast({
                   account: mainAccount,
                   signedOperation,
-                  broadcastConfig: { mevProtected: !!config.mevProtected },
+                  broadcastConfig: {
+                    mevProtected: !!config.mevProtected,
+                    sponsored,
+                  },
                 });
-                tracking.broadcastSuccess(manifest);
+                tracking.broadcastSuccess(manifest, isEmbeddedSwap, partner);
               } catch (error) {
-                tracking.broadcastFail(manifest);
+                tracking.broadcastFail(manifest, isEmbeddedSwap, partner);
                 throw error;
               }
             }
@@ -604,7 +881,7 @@ export function useWalletAPIServer({
         );
       },
     );
-  }, [accounts, manifest, server, tracking, uiTxBroadcast, uiTxSign]);
+  }, [accounts, config.mevProtected, manifest, server, tracking, uiTxBroadcast, uiTxSign]);
 
   const onLoad = useCallback(() => {
     tracking.loadSuccess(manifest);
@@ -834,8 +1111,8 @@ export function useWalletAPIServer({
       // retrofit of the exchange params to fit the old platform spec
       const request: CompleteExchangeRequest = {
         provider: params.provider,
-        fromAccountId: params.fromAccount.id,
-        toAccountId: params.exchangeType === "SWAP" ? params.toAccount.id : undefined,
+        fromAccountId: params.fromAccountId,
+        toAccountId: params.exchangeType === "SWAP" ? params.toAccountId : undefined,
         transaction: params.transaction,
         binaryPayload: params.binaryPayload.toString("hex"),
         signature: params.signature.toString("hex"),
@@ -873,7 +1150,7 @@ export function useWalletAPIServer({
   }, [uiExchangeComplete, accounts, manifest, server, tracking]);
 
   return {
-    widgetLoaded,
+    widgetLoaded: widgetLoaded,
     onMessage,
     onLoad,
     onReload,
@@ -1010,11 +1287,11 @@ export interface RecentlyUsed {
 
 export type RecentlyUsedManifest = AppManifest & { usedAt: UsedAt };
 export type UsedAt = {
-  unit: Intl.RelativeTimeFormatUnit;
+  unit?: Intl.RelativeTimeFormatUnit;
   diff: number;
 };
 
-function calculateTimeDiff(usedAt: string) {
+function calculateTimeDiff(usedAt: string): UsedAt {
   const start = new Date();
   const end = new Date(usedAt);
   const interval = intervalToDuration({ start, end });
@@ -1027,7 +1304,7 @@ function calculateTimeDiff(usedAt: string) {
     "minutes",
     "seconds",
   ];
-  let timeDiff = { unit: units[-1], diff: 0 };
+  let timeDiff: UsedAt = { unit: undefined, diff: 0 };
 
   for (const unit of units) {
     if (interval[unit] > 0) {
@@ -1076,9 +1353,9 @@ export function useRecentlyUsed(
                 ...res,
                 usedAt: calculateTimeDiff(recentlyUsed.usedAt),
               }
-            : res;
+            : undefined;
         })
-        .filter(manifest => manifest !== undefined) as RecentlyUsedManifest[],
+        .filter((manifest): manifest is RecentlyUsedManifest => manifest !== undefined),
     [recentlyUsedManifestsDb, manifests],
   );
   const append = useCallback(

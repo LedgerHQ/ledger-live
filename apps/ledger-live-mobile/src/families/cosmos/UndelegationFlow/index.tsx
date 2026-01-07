@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "~/components/StepHeader";
@@ -11,6 +11,7 @@ import SelectDevice from "~/screens/SelectDevice";
 import ConnectDevice from "~/screens/ConnectDevice";
 import UndelegationValidationError from "./03-ValidationError";
 import UndelegationValidationSuccess from "./03-ValidationSuccess";
+import UndelegationBridgeTransaction from "../shared/03-BridgeTransaction";
 import type { CosmosUndelegationFlowParamList } from "./types";
 
 const totalSteps = "3";
@@ -37,6 +38,14 @@ function UndelegationFlow() {
             />
           ),
         })}
+      />
+      <Stack.Screen
+        name={ScreenName.CosmosUndelegationBridgeTransaction}
+        component={UndelegationBridgeTransaction}
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+        }}
       />
       <Stack.Screen
         name={ScreenName.CosmosUndelegationSelectDevice}
@@ -96,4 +105,4 @@ const options = {
   headerShown: false,
 };
 export { UndelegationFlow as component, options };
-const Stack = createStackNavigator<CosmosUndelegationFlowParamList>();
+const Stack = createNativeStackNavigator<CosmosUndelegationFlowParamList>();

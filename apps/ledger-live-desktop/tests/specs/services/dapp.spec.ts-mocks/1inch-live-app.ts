@@ -3,7 +3,7 @@ export default JSON.stringify([
     id: "dummy-live-app",
     name: "1inch",
     private: false,
-    url: "https://app.1inch.io/",
+    url: "https://1inch.com/swap/",
     dapp: {
       nanoApp: "1inch",
       networks: [
@@ -34,7 +34,7 @@ export default JSON.stringify([
         },
       ],
     },
-    homepageUrl: "https://app.1inch.io/",
+    homepageUrl: "https://1inch.com/swap/",
     icon: "https://cdn.live.ledger.com/icons/platform/1inch.png",
     platforms: ["android", "ios", "desktop"],
     apiVersion: "^2.0.0",

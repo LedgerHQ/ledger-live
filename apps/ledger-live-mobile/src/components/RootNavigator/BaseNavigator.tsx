@@ -1,15 +1,12 @@
 import React, { useMemo } from "react";
 import {
-  createStackNavigator,
-  CardStyleInterpolators,
-  TransitionPresets,
-  StackNavigationOptions,
-} from "@react-navigation/stack";
+  createNativeStackNavigator,
+  NativeStackNavigationOptions,
+} from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
-import { useSelector } from "react-redux";
-import { Button, IconsLegacy } from "@ledgerhq/native-ui";
+import { useSelector } from "~/context/hooks";
 import { ScreenName, NavigatorName } from "~/const";
 import * as families from "~/families";
 import OperationDetails from "~/screens/OperationDetails";
@@ -83,18 +80,17 @@ import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
 import CustomErrorNavigator from "./CustomErrorNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
-import ModularDrawerNavigator from "LLM/features/ModularDrawer/ModularDrawerNavigator";
 import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
-import AssetSelectionNavigator from "LLM/features/AssetSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
 
-const Stack = createStackNavigator<BaseNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -107,6 +103,7 @@ export default function BaseNavigator() {
   >();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
+  const nativeStackScreenOptions: Partial<NativeStackNavigationOptions> = stackNavigationConfig;
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
@@ -116,19 +113,14 @@ export default function BaseNavigator() {
   return (
     <>
       <RootDrawer drawer={route.params?.drawer} />
-      <Stack.Navigator
-        screenOptions={{
-          ...stackNavigationConfig,
-          ...TransitionPresets.DefaultTransition,
-        }}
-      >
+      <Stack.Navigator screenOptions={nativeStackScreenOptions}>
         <Stack.Screen name={NavigatorName.Main} component={Main} options={{ headerShown: false }} />
         <Stack.Screen
           name={NavigatorName.BuyDevice}
           component={BuyDeviceNavigator}
           options={{
             headerShown: false,
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+            animation: "slide_from_bottom",
           }}
         />
         <Stack.Screen
@@ -141,15 +133,12 @@ export default function BaseNavigator() {
           component={PostBuyDeviceSetupNanoWallScreen}
           options={{
             headerShown: false,
-            presentation: "transparentModal",
-            headerMode: undefined,
-            cardStyle: { opacity: 1 },
             gestureEnabled: true,
             headerTitle: "",
             headerRight: () => null,
             headerBackButtonDisplayMode: "minimal",
             title: "",
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+            animation: "slide_from_bottom",
           }}
         />
         <Stack.Screen
@@ -202,16 +191,12 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={ScreenName.PlatformApp}
           component={LiveApp}
-          options={{
-            headerStyle: styles.headerNoShadow,
-          }}
+          options={{ headerStyle: styles.headerNoShadow }}
         />
         <Stack.Screen
           name={ScreenName.Recover}
           component={RecoverPlayer}
-          options={{
-            headerStyle: styles.headerNoShadow,
-          }}
+          options={{ headerStyle: styles.headerNoShadow }}
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
@@ -230,6 +215,16 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.SignTransaction}
           component={SignTransactionNavigator}
+          options={{ headerShown: false }}
+          listeners={({ route }) => ({
+            beforeRemove: () => {
+              route.params.onError(new Error("Signature interrupted by user"));
+            },
+          })}
+        />
+        <Stack.Screen
+          name={NavigatorName.SignRawTransaction}
+          component={SignRawTransactionNavigator}
           options={{ headerShown: false }}
           listeners={({ route }) => ({
             beforeRemove: () => {
@@ -311,25 +306,6 @@ export default function BaseNavigator() {
           name={ScreenName.OperationDetails}
           component={OperationDetails}
           options={({ route }) => {
-            if (route.params?.isSubOperation) {
-              return {
-                headerTitle: () => (
-                  <StepHeader
-                    subtitle={t("operationDetails.title")}
-                    title={
-                      route.params?.operation?.type
-                        ? t(`operations.types.${route.params.operation.type}`)
-                        : ""
-                    }
-                    testID="operationDetails-title"
-                  />
-                ),
-                headerLeft: () => <NavigationHeaderBackButton />,
-                headerRight: () => <NavigationHeaderCloseButton />,
-                cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-              };
-            }
-
             return {
               headerTitle: () => (
                 <StepHeader
@@ -343,8 +319,9 @@ export default function BaseNavigator() {
                 />
               ),
               headerLeft: () => <NavigationHeaderBackButton />,
-              headerRight: () => null,
-              cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+              headerRight: () =>
+                route.params?.isSubOperation ? <NavigationHeaderCloseButton /> : null,
+              animation: "slide_from_bottom",
             };
           }}
         />
@@ -372,7 +349,6 @@ export default function BaseNavigator() {
           options={{
             title: t("EditDeviceName.title"),
             headerLeft: () => null,
-            ...TransitionPresets.ModalPresentationIOS,
           }}
         />
         <Stack.Screen
@@ -391,7 +367,7 @@ export default function BaseNavigator() {
           options={{
             title: t("analytics.allocation.title"),
             headerRight: () => null,
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+            animation: "slide_from_bottom",
           }}
         />
         <Stack.Screen
@@ -410,11 +386,6 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={ScreenName.LedgerSyncDeepLinkHandler}
           component={LedgerSyncDeepLinkHandler}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={NavigatorName.ModularDrawer}
-          component={ModularDrawerNavigator}
           options={{ headerShown: false }}
         />
         {MarketNavigator({ Stack })}
@@ -476,7 +447,7 @@ export default function BaseNavigator() {
           const { component, options } = families[name as keyof typeof families];
           const screenName = name as keyof BaseNavigatorStackParamList;
           const screenComponent = component as React.ComponentType;
-          const screenOptions = options as StackNavigationOptions;
+          const screenOptions = options as NativeStackNavigationOptions;
           /* eslint-enable @typescript-eslint/consistent-type-assertions */
 
           return (
@@ -567,8 +538,9 @@ export default function BaseNavigator() {
           options={{
             gestureEnabled: false,
             headerTitle: () => null,
+            title: "",
             headerLeft: () => null,
-            headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
+            headerRight: () => <NavigationHeaderCloseButton />,
           }}
         />
         <Stack.Screen
@@ -580,12 +552,6 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.DeviceSelection}
           component={DeviceSelectionNavigator}
-          options={{ headerShown: false }}
-        />
-
-        <Stack.Screen
-          name={NavigatorName.AssetSelection}
-          component={AssetSelectionNavigator}
           options={{ headerShown: false }}
         />
 

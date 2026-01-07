@@ -3,7 +3,7 @@
 buildscript {
     ext {
         buildToolsVersion = "35.0.0"
-        minSdkVersion = 24
+        minSdkVersion = 25
         compileSdkVersion = 35
         targetSdkVersion = 35
         androidXCore = "1.13.1"
@@ -17,7 +17,6 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-		classpath("io.sentry:sentry-android-gradle-plugin:4.14.1")
         classpath("com.android.tools.build:gradle:8.4.2")
         classpath("com.facebook.react:react-native-gradle-plugin")
         // NOTE: Do not place your application dependencies here; they belong
@@ -55,9 +54,6 @@ allprojects {
         google()
         maven {
             url "$rootDir/../node_modules/detox/Detox-android"
-        }
-        maven {
-            url "$rootDir/../node_modules/expo-camera/android/maven"
         }
     }
     configurations.all {

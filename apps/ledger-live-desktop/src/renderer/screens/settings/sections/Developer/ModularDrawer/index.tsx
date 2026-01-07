@@ -1,29 +1,29 @@
 import React, { useEffect, useState, useCallback } from "react";
-import ButtonV2 from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { Flex, Button } from "@ledgerhq/react-ui/index";
+import { Flex } from "@ledgerhq/react-ui/index";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { useOpenAssetFlow as useOpenAssetFlowDrawer } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation, openAssetAndAccountDrawer } from "LLD/features/ModularDrawer";
 import { FeatureFlags } from "./FeatureFlags";
 import { DrawerConfiguration } from "./DrawerConfiguration";
 import { DevToolControls } from "./DevToolControls";
 import { useDrawerConfiguration, useDevToolState } from "./hooks";
 import { ModularDrawerDevToolContentProps } from "./types";
+import { useDispatch } from "LLD/hooks/redux";
+import {
+  setIsDebuggingDuplicates,
+  setFlowValue,
+  setSourceValue,
+} from "~/renderer/reducers/modularDrawer";
+import { Button } from "@ledgerhq/lumen-ui-react";
+import { useOpenAssetFlowDialog } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentProps) => {
   const { t } = useTranslation();
-  const {
-    includeTokens,
-    setIncludeTokens,
-    openModal,
-    setOpenModal,
-    location,
-    setLocation,
-    liveApp,
-    setLiveApp,
-  } = useDevToolState();
+  const { openModal, setOpenModal, location, setLocation, liveApp, setLiveApp } = useDevToolState();
+  const dispatch = useDispatch();
 
   const {
     assetsLeftElement,
@@ -37,7 +37,7 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
     drawerConfiguration,
   } = useDrawerConfiguration();
 
-  const { openAssetFlow } = useOpenAssetFlow(
+  const { openAssetFlow } = useOpenAssetFlowDrawer(
     location.value === ModularDrawerLocation.LIVE_APP
       ? { location: location.value, liveAppId: liveApp.value }
       : { location: location.value },
@@ -45,15 +45,44 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
     openModal ? "MODAL_RECEIVE" : undefined,
   );
 
+  const { openAssetFlowDialog } = useOpenAssetFlowDialog(
+    location.value === ModularDrawerLocation.LIVE_APP
+      ? { location: location.value, liveAppId: liveApp.value }
+      : { location: location.value },
+    "receive",
+    openModal ? "MODAL_RECEIVE" : undefined,
+  );
+
+  const debugDuplicates = () => {
+    dispatch(setIsDebuggingDuplicates(true));
+    openAssetFlowDialog({
+      assets: { leftElement: "undefined", rightElement: "undefined" },
+      networks: { leftElement: "undefined", rightElement: "undefined" },
+    });
+  };
+
   const openDrawerFunctions: Record<ModularDrawerLocation, () => void> = {
-    [ModularDrawerLocation.ADD_ACCOUNT]: () => openAssetFlow(includeTokens, drawerConfiguration),
-    [ModularDrawerLocation.LIVE_APP]: () =>
+    [ModularDrawerLocation.ADD_ACCOUNT]: () => openAssetFlow(drawerConfiguration),
+    [ModularDrawerLocation.LIVE_APP]: () => {
+      dispatch(setFlowValue("Dev Tool"));
+      dispatch(setSourceValue("Dev Tool"));
       openAssetAndAccountDrawer({
-        flow: "Dev Tool",
-        source: "Dev Tool",
-        includeTokens,
         drawerConfiguration,
-      }),
+      });
+    },
+    [ModularDrawerLocation.RECEIVE_FLOW]: () => {},
+    [ModularDrawerLocation.SEND_FLOW]: () => {},
+  };
+
+  const { openAssetAndAccount } = useOpenAssetAndAccount(true);
+
+  const openDrawerFunctionsDialog: Record<ModularDrawerLocation, () => void> = {
+    [ModularDrawerLocation.ADD_ACCOUNT]: () => openAssetFlowDialog(drawerConfiguration),
+    [ModularDrawerLocation.LIVE_APP]: () => {
+      dispatch(setFlowValue("Dev Tool"));
+      dispatch(setSourceValue("Dev Tool"));
+      openAssetAndAccount({ drawerConfiguration });
+    },
     [ModularDrawerLocation.RECEIVE_FLOW]: () => {},
     [ModularDrawerLocation.SEND_FLOW]: () => {},
   };
@@ -69,8 +98,6 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
             setLocation={setLocation}
             liveApp={liveApp}
             setLiveApp={setLiveApp}
-            includeTokens={includeTokens}
-            setIncludeTokens={setIncludeTokens}
             openModal={openModal}
             setOpenModal={setOpenModal}
           />
@@ -84,9 +111,19 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
             networksRightElement={networksRightElement}
             setNetworksRightElement={setNetworksRightElement}
           />
-          <Flex>
-            <Button variant="color" onClick={() => openDrawerFunctions[location.value]()}>
-              Open Drawer
+          <Flex columnGap={"12px"}>
+            <Button
+              appearance="base"
+              size="sm"
+              onClick={() => openDrawerFunctions[location.value]()}
+            >
+              {t("settings.developer.modularDrawerDevTool.openDrawer")}
+            </Button>
+            <Button size="sm" onClick={() => openDrawerFunctionsDialog[location.value]()}>
+              {t("settings.developer.modularDrawerDevTool.debugDialog")}
+            </Button>
+            <Button appearance="accent" size="sm" onClick={debugDuplicates}>
+              {t("settings.developer.modularDrawerDevTool.debugDuplicates")}
             </Button>
           </Flex>
         </Flex>
@@ -117,9 +154,9 @@ const ModularDrawerDevTool = () => {
       childrenContainerStyle={{ alignSelf: "flex-start" }}
       desc={<ModularDrawerDevToolContent expanded={contentExpanded} />}
     >
-      <ButtonV2 small primary onClick={toggleContentVisibility}>
+      <Button appearance="accent" size="sm" onClick={toggleContentVisibility}>
         {contentExpanded ? t("settings.developer.hide") : t("settings.developer.show")}
-      </ButtonV2>
+      </Button>
     </Row>
   );
 };

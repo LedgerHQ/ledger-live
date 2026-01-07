@@ -14,12 +14,11 @@ import { retry } from "@ledgerhq/live-common/promise";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
-import SpeculosHttpTransport, {
+import {
+  DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
-} from "@ledgerhq/hw-transport-node-speculos-http";
-import * as legacy from "@ledgerhq/cryptoassets/tokens";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+} from "@ledgerhq/live-dmk-speculos";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 let idCounter = 0;
 const mockTransports: Record<string, any> = {};
@@ -136,7 +135,8 @@ export function registerSpeculosTransport(apiPort: number) {
 
   registerTransportModule({
     id: "speculos-http",
-    open: () => retry(() => SpeculosHttpTransport.open(req as SpeculosHttpTransportOpts)),
+    open: () =>
+      retry(() => DeviceManagementKitTransportSpeculos.open(req as SpeculosHttpTransportOpts)),
     disconnect: () => Promise.resolve(),
   });
 }
@@ -152,13 +152,5 @@ export function closeAllDevices() {
   closeAllSpeculosDevices();
 }
 
-//TODO update when CAL is avalaible
-const legacyStore: CryptoAssetsStore = {
-  findTokenByAddress: legacy.findTokenByAddress,
-  getTokenById: legacy.getTokenById,
-  findTokenById: legacy.findTokenById,
-  findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
-  findTokenByTicker: legacy.findTokenByTicker,
-};
-
-setCryptoAssetsStore(legacyStore);
+// Setup CAL client store for CLI (automatically set as global store)
+setupCalClientStore();

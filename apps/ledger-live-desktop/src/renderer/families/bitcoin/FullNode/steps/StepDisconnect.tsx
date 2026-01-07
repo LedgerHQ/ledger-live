@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { cleanFullNodeDisconnect } from "~/renderer/actions/accounts";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
@@ -20,14 +20,7 @@ const Illustration = styled.div`
 const Disconnect = () => (
   <Box>
     <Illustration />
-    <Text
-      mx={30}
-      ff="Inter|Regular"
-      textAlign={"center"}
-      mt={32}
-      fontSize={4}
-      color="palette.text.shade50"
-    >
+    <Text mx={30} ff="Inter|Regular" textAlign={"center"} mt={32} fontSize={4} color="neutral.c70">
       <Trans i18nKey={"fullNode.modal.steps.disconnect.description"} />
     </Text>
   </Box>

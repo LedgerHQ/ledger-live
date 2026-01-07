@@ -1,8 +1,12 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
+import {
+  useDelegation,
+  useBaker,
+  useStakingPositions,
+} from "@ledgerhq/live-common/families/tezos/react";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
@@ -14,7 +18,7 @@ import IconChartLine from "~/renderer/icons/ChartLine";
 import Header from "./Header";
 import Row from "./Row";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
-import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
+import type { Delegation, TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 
@@ -33,8 +37,16 @@ const Delegation = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const delegation = useDelegation(account);
+  const stakingPositions = useStakingPositions(account);
+  const delegateAddr = stakingPositions[0]?.delegate || "";
+  const fallbackBaker = useBaker(delegateAddr);
 
   const stakingUrl = useLocalizedUrl(urls.stakingTezos);
+
+  // derive last stake op
+  const ops =
+    (account as TezosAccount).operations ?? (parentAccount as TezosAccount)?.operations ?? [];
+  const lastStake = ops.find(o => o?.type === "STAKE");
 
   return (
     <TableContainer mb={6}>
@@ -44,10 +56,27 @@ const Delegation = ({ account, parentAccount }: Props) => {
           "data-e2e": "title_Delegation",
         }}
       />
-      {delegation ? (
+      {delegation || stakingPositions.length > 0 ? (
         <>
           <Header />
-          <Row delegation={delegation} account={account} parentAccount={parentAccount} />
+          <Row
+            delegation={
+              delegation ||
+              ({
+                address: stakingPositions[0]?.delegate || "",
+                baker: fallbackBaker,
+                operation: {
+                  hash: lastStake?.hash || "",
+                  date: lastStake?.date || new Date(),
+                },
+                isPending: false,
+                receiveShouldWarnDelegation: false,
+                sendShouldWarnDelegation: false,
+              } as Delegation)
+            }
+            account={account}
+            parentAccount={parentAccount}
+          />
         </>
       ) : (
         <Wrapper horizontal>
@@ -56,7 +85,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
               maxWidth: "65%",
             }}
           >
-            <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+            <Text ff="Inter|Medium|SemiBold" color="neutral.c70" fontSize={4}>
               {t("delegation.delegationEarn", {
                 name: (account as TezosAccount).currency.name,
               })}

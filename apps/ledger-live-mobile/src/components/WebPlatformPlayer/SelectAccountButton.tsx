@@ -7,12 +7,6 @@ import Button from "~/components/Button";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { useSelectAccount } from "../Web3AppWebview/helpers";
-import {
-  ModularDrawerLocation,
-  useModularDrawerVisibility,
-  useModularDrawerController,
-} from "LLM/features/ModularDrawer";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
 
 type SelectAccountButtonProps = {
   manifest: AppManifest;
@@ -23,41 +17,12 @@ export default function SelectAccountButton({
   manifest,
   currentAccountHistDb,
 }: SelectAccountButtonProps) {
-  const { onSelectAccount, currentAccount, currencies, onSelectAccountSuccess } = useSelectAccount({
+  const { handleAddAccountPress, currentAccount } = useSelectAccount({
     manifest,
     currentAccountHistDb,
   });
 
   const currentAccountName = useMaybeAccountName(currentAccount);
-
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "llmModularDrawer",
-  });
-
-  const canOpenModularDrawer = isModularDrawerVisible({
-    location: ModularDrawerLocation.LIVE_APP,
-    liveAppId: manifest.id,
-  });
-
-  const { openDrawer } = useModularDrawerController();
-
-  const handleAddAccountPress = () => {
-    if (canOpenModularDrawer) {
-      openDrawer({
-        currencies: currencies.map(c => c.id),
-        areCurrenciesFiltered: manifest.currencies !== "*",
-        enableAccountSelection: true,
-        onAccountSelected: onSelectAccountSuccess,
-        flow: manifest.name,
-        source:
-          currentRouteNameRef.current === "Platform Catalog"
-            ? "Discover"
-            : currentRouteNameRef.current ?? "Unknown",
-      });
-    } else {
-      onSelectAccount();
-    }
-  };
 
   return (
     <Button

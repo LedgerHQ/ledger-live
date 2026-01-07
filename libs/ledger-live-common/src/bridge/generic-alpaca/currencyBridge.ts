@@ -3,6 +3,7 @@ import { CurrencyBridge } from "@ledgerhq/types-live";
 import { genericGetAccountShape } from "./getAccountShape";
 import { getSigner } from "./signer";
 import type { AlpacaSigner } from "./signer/types";
+import { postSync } from "./postSync";
 
 export function getAlpacaCurrencyBridge(
   network: string,
@@ -12,12 +13,11 @@ export function getAlpacaCurrencyBridge(
   const signer = customSigner ?? getSigner(network);
   return {
     preload: () => Promise.resolve({}),
-    hydrate: () => {
-      return;
-    },
+    hydrate: () => undefined,
     scanAccounts: makeScanAccounts({
       getAccountShape: genericGetAccountShape(network, kind),
       getAddressFn: signer.getAddress.bind(signer),
+      postSync,
     }),
   };
 }

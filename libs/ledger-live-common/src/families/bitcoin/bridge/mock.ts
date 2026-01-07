@@ -12,6 +12,7 @@ import {
   makeAccountBridgeReceive,
   scanAccounts,
   signOperation,
+  signRawOperation,
   broadcast,
   sync,
   isInvalidRecipient,
@@ -26,6 +27,7 @@ import cryptoFactory from "@ledgerhq/coin-bitcoin/wallet-btc/crypto/factory";
 import { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import { computeDustAmount } from "@ledgerhq/coin-bitcoin/wallet-btc/utils";
 import { getFeeItems } from "./api";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
@@ -129,8 +131,10 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
+  signRawOperation,
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 const currencyBridge: CurrencyBridge = {
   scanAccounts,

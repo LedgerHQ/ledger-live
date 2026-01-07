@@ -1,7 +1,7 @@
 import { JSONRPCRequest } from "json-rpc-2.0";
 import React, { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
@@ -24,6 +24,7 @@ import {
   useListPlatformCurrencies,
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
+import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 import { openModal } from "../../actions/modals";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
@@ -41,6 +42,8 @@ import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
@@ -88,7 +91,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const walletState = useSelector(walletSelector);
     const listAccounts = useListPlatformAccounts(walletState, accounts);
-    const listCurrencies = useListPlatformCurrencies();
+    const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+    const listCurrencies = useListPlatformCurrencies(deactivatedCurrencyIds);
 
     const { isModularDrawerVisible } = useModularDrawerVisibility({
       modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -98,11 +102,46 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       liveAppId: manifest.id,
     });
 
+    const { openAssetAndAccountPromise } = useOpenAssetAndAccount();
+
+    const openAssetAndAccountSelector = useCallback(
+      (currencyIds?: string[]) =>
+        openAssetAndAccountPromise({
+          currencies: currencyIds,
+          areCurrenciesFiltered: currencyIds && currencyIds.length > 0,
+        }),
+      [openAssetAndAccountPromise],
+    );
+
     const requestAccount = useCallback(
       (request: RequestAccountParams) => {
-        return requestAccountLogic(walletState, { manifest }, request, modularDrawerVisible);
+        const source =
+          currentRouteNameRef.current === "Platform Catalog"
+            ? "Discover"
+            : currentRouteNameRef.current ?? "Unknown";
+
+        const flow = manifest.name;
+
+        dispatch(setFlowValue(flow));
+        dispatch(setSourceValue(source));
+
+        return requestAccountLogic(
+          walletState,
+          { manifest },
+          request,
+          deactivatedCurrencyIds,
+          openAssetAndAccountSelector,
+          modularDrawerVisible,
+        );
       },
-      [walletState, manifest, modularDrawerVisible],
+      [
+        manifest,
+        dispatch,
+        walletState,
+        deactivatedCurrencyIds,
+        openAssetAndAccountSelector,
+        modularDrawerVisible,
+      ],
     );
 
     const receiveOnAccount = useCallback(

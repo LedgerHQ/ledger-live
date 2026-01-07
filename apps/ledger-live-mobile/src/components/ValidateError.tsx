@@ -10,7 +10,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { UpdateYourApp, LatestFirmwareVersionRequired } from "@ledgerhq/errors";
 import { RequiredFirmwareUpdate } from "./DeviceAction/rendering";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { LedgerError } from "~/types/error";
 
@@ -61,7 +61,7 @@ function ValidateError({ error, onClose, onRetry }: Props) {
     >
       <View style={styles.container}>
         {error instanceof LatestFirmwareVersionRequired && lastConnectedDevice ? (
-          <RequiredFirmwareUpdate t={t} navigation={navigation} device={lastConnectedDevice} />
+          <RequiredFirmwareUpdate navigation={navigation} device={lastConnectedDevice} />
         ) : (
           <>
             <GenericErrorView error={error} hasExportLogButton={!managerAppName} />

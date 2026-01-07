@@ -1,7 +1,7 @@
 import React, { ComponentProps, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View, BackHandler, Platform } from "react-native";
 import { SharedValue } from "react-native-reanimated";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { ScopeProvider } from "jotai-scope";
 import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
@@ -9,7 +9,10 @@ import { AppManifest, WalletAPICustomHandlers } from "@ledgerhq/live-common/wall
 import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
-import { useACRECustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
+import {
+  useACRECustomHandlers,
+  useDeeplinkCustomHandlers,
+} from "~/components/WebPlatformPlayer/CustomHandlers";
 import { usePTXCustomHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
@@ -65,14 +68,16 @@ const WebPlatformPlayer = ({
   const accounts = useSelector(flattenAccountsSelector);
   const customACREHandlers = useACRECustomHandlers(manifest, accounts);
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
+  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...loggerHandlers,
       ...customACREHandlers,
       ...customPTXHandlers,
+      ...customDeeplinkHandlers,
     };
-  }, [customACREHandlers, customPTXHandlers]);
+  }, [customACREHandlers, customPTXHandlers, customDeeplinkHandlers]);
 
   return (
     <ScopeProvider atoms={[currentAccountAtom]}>

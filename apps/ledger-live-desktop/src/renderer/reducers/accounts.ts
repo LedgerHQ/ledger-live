@@ -1,4 +1,4 @@
-import { createSelector, createSelectorCreator, defaultMemoize } from "reselect";
+import { createSelector, createSelectorCreator, lruMemoize } from "reselect";
 import { handleActions } from "redux-actions";
 import { Account, AccountUserData, AccountLike } from "@ledgerhq/types-live";
 import {
@@ -7,19 +7,14 @@ import {
   getAccountCurrency,
   isUpToDateAccount,
 } from "@ledgerhq/live-common/account/index";
-import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-import { groupByCurrency } from "@ledgerhq/live-nft";
 import { getEnv } from "@ledgerhq/live-env";
 import isEqual from "lodash/isEqual";
 import { State } from ".";
-import { nftCollectionsStatusByNetworkSelector } from "./settings";
 import { Handlers } from "./types";
 import { walletSelector } from "./wallet";
 import { isStarredAccountSelector } from "@ledgerhq/live-wallet/store";
 import { nestedSortAccounts, AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import { AddAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
-import { NftStatus } from "@ledgerhq/live-nft/types";
-import { nftCollectionParser } from "../hooks/nfts/useNftCollectionsStatus";
 
 /*
 FIXME
@@ -62,7 +57,7 @@ const handlers: AccountsHandlers = {
 };
 
 export default handleActions<AccountsState, HandlersPayloads[keyof HandlersPayloads]>(
-  handlers as unknown as AccountsHandlers<false>,
+  handlers as AccountsHandlers<false>,
   state,
 );
 
@@ -72,9 +67,20 @@ export const accountsSelector = (state: { accounts: AccountsState }): Account[] 
 
 // NB some components don't need to refresh every time an account is updated, usually it's only
 // when the balance/name/length/starred/swapHistory of accounts changes.
-const accountHash = (a: AccountLike) =>
-  `${a.id}-${a.balance.toString()}-swapHistory(${a.swapHistory?.length || "0"})`;
-const shallowAccountsSelectorCreator = createSelectorCreator(defaultMemoize, (a, b) =>
+const accountHash = (a: AccountLike) => {
+  const baseHash = `${a.id}-${a.balance.toString()}-swapHistory(${a.swapHistory?.length || "0"})`;
+  // Include Canton-specific data in hash to ensure selector detects changes to cantonResources
+  // Without this, when Canton accounts are synced and cantonResources is updated (e.g., instrumentUtxoCounts),
+  // the selector returns stale data because the hash doesn't change, causing components to miss
+  // important Canton-specific data like UTXO counts needed for transaction validation
+  // See: libs/coin-modules/coin-canton/src/bridge/sync.ts
+  if (a.type === "Account" && a.currency.family === "canton" && "cantonResources" in a) {
+    const cantonHash = `-cantonResources(${JSON.stringify(a.cantonResources)})`;
+    return baseHash + cantonHash;
+  }
+  return baseHash;
+};
+const shallowAccountsSelectorCreator = createSelectorCreator(lruMemoize, (a, b) =>
   isEqual(flattenAccounts(a).map(accountHash), flattenAccounts(b).map(accountHash)),
 );
 export const shallowAccountsSelector = shallowAccountsSelectorCreator(accountsSelector, a => a);
@@ -131,67 +137,5 @@ export const starredAccountsSelector = createSelector(
 );
 
 export const isUpToDateAccountSelector = createSelector(accountSelector, isUpToDateAccount);
-export const getAllNFTs = createSelector(accountsSelector, accounts =>
-  accounts.flatMap(account => account.nfts).filter(Boolean),
-);
-export const getNFTById = createSelector(
-  getAllNFTs,
-  (
-    _: State,
-    {
-      nftId,
-    }: {
-      nftId: string;
-    },
-  ) => nftId,
-  (nfts, nftId) => nfts.find(nft => nft?.id === nftId),
-);
-
-export const getNFTsByListOfIds = createSelector(
-  getAllNFTs,
-  (
-    _: State,
-    {
-      nftIds,
-    }: {
-      nftIds: string[];
-    },
-  ) => nftIds,
-  (nfts, nftIds) => nfts.filter(nft => nft && nft.id && nftIds.includes(nft.id)),
-);
 
 export const flattenAccountsSelector = createSelector(accountsSelector, flattenAccounts);
-
-/**
- * Returns the list of all the NFTs from non hidden collections accross all
- * accounts, ordered by last received.
- *
- * /!\ Use this with a deep equal comparison if possible as it will always
- * return a new array if `accounts` or `hiddenNftCollections` changes.
- *
- * Example:
- * ```
- * import isEqual from "lodash/isEqual";
- * // ...
- * const orderedVisibleNfts = useSelector(orderedVisibleNftsSelector, isEqual)
- * ```
- * */
-export const orderedVisibleNftsSelector = createSelector(
-  accountsSelector,
-  nftCollectionsStatusByNetworkSelector,
-  (_: State, hideSpams: boolean) => hideSpams,
-  (accounts, nftCollectionsStatusByNetwork, hideSpams) => {
-    const nfts = accounts.map(a => a.nfts ?? []).flat();
-
-    const hiddenNftCollections = nftCollectionParser(
-      nftCollectionsStatusByNetwork,
-      ([_, status]) =>
-        hideSpams ? status !== NftStatus.whitelisted : status === NftStatus.blacklisted,
-    );
-
-    const visibleNfts = nfts.filter(
-      nft => !hiddenNftCollections.includes(`${decodeNftId(nft.id).accountId}|${nft.contract}`),
-    );
-    return groupByCurrency(visibleNfts);
-  },
-);

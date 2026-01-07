@@ -9,8 +9,12 @@ const mockTransport = {
   send: jest.fn(),
   getTraceContext: jest.fn(),
 };
+const mockWithTransport = jest.fn(
+  (_deviceId: string, _options?: any) => callback =>
+    callback({ transportRef: { current: mockTransport } }),
+);
 jest.mock("../deviceSDK/transports/core", () => ({
-  withTransport: () => callback => callback({ transportRef: { current: mockTransport } }),
+  withTransport: (deviceId: string, options?: any) => mockWithTransport(deviceId, options),
 }));
 jest.mock("./getDeviceInfo", () => jest.fn(() => of([])));
 
@@ -24,7 +28,9 @@ describe("customLockScreenLoad", () => {
     mockTransport.send.mockResolvedValue(Buffer.from([0x42, 0x42, 0x43, 0x90, 0x00]));
 
     // when
-    const ret = await lastValueFrom(await customLockScreenLoad({ deviceId: "deviceId", request }));
+    const ret = await lastValueFrom(
+      await customLockScreenLoad({ deviceId: "deviceId", deviceName: null, request }),
+    );
 
     // then
     expect(mockTransport.send).toHaveBeenNthCalledWith(
@@ -78,9 +84,28 @@ describe("customLockScreenLoad", () => {
 
     // when
     try {
-      await lastValueFrom(await customLockScreenLoad({ deviceId: "nanoX", request }));
+      await lastValueFrom(
+        await customLockScreenLoad({ deviceId: "nanoX", deviceName: null, request }),
+      );
     } catch (err) {
       expect(err).toStrictEqual(error);
     }
+  });
+
+  it("should pass deviceName to withTransport", async () => {
+    const request = {
+      deviceModelId: DeviceModelId.stax as CLSSupportedDeviceModelId,
+      hexImage: "hello_world",
+    };
+    mockTransport.send.mockResolvedValue(Buffer.from([0x42, 0x42, 0x43, 0x90, 0x00]));
+
+    await lastValueFrom(
+      await customLockScreenLoad({ deviceId: "deviceId", deviceName: "My Device", request }),
+    );
+
+    expect(mockWithTransport).toHaveBeenCalledWith(
+      "deviceId",
+      expect.objectContaining({ matchDeviceByName: "My Device" }),
+    );
   });
 });

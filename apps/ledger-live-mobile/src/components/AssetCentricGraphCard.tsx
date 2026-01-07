@@ -2,7 +2,12 @@ import React, { useState, useCallback, memo, useMemo } from "react";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import Animated, { Extrapolation, interpolate, useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedStyle,
+  SharedValue,
+} from "react-native-reanimated";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Portfolio } from "@ledgerhq/types-live";
 import { useTimeRange } from "~/actions/settings";
@@ -12,13 +17,13 @@ import getWindowDimensions from "~/logic/getWindowDimensions";
 import { NoCountervaluePlaceholder } from "./CounterValue";
 import Graph from "./Graph";
 import { TransactionsPendingConfirmationWarningAllAccounts } from "./TransactionsPendingConfirmationWarning";
-import ParentCurrencyIcon from "./ParentCurrencyIcon";
 import FormatDate from "./DateFormat/FormatDate";
 import { ensureContrast } from "../colors";
 import { track } from "~/analytics";
 import { Item } from "./Graph/types";
 import { Merge } from "~/types/helpers";
 import { GraphPlaceholder } from "./Graph/Placeholder";
+import CurrencyIcon from "./CurrencyIcon";
 import { tokensWithUnsupportedGraph } from "./Graph/tokensWithUnsupportedGraph";
 
 const Placeholder = styled(Flex).attrs({
@@ -40,7 +45,7 @@ const SmallPlaceholder = styled(Placeholder).attrs({
 type Props = {
   assetPortfolio: Portfolio;
   counterValueCurrency: Currency;
-  currentPositionY: Animated.SharedValue<number>;
+  currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
   currency: Currency;
   accountsEmpty?: boolean;
@@ -74,7 +79,7 @@ function AssetCentricGraphCard({
       return { value: 0, countervalue: 0 };
     }
     return { value: currencyBalance, countervalue: currencyUnitValue.value };
-  }, [hoveredItem, accountsEmpty, currencyBalance, currencyUnitValue.value]);
+  }, [hoveredItem, accountsEmpty, currencyBalance, currencyUnitValue]);
 
   const items = [
     {
@@ -118,7 +123,7 @@ function AssetCentricGraphCard({
     return {
       opacity,
     };
-  }, [currentPositionY.value, graphCardEndPosition]);
+  }, [currentPositionY, graphCardEndPosition]);
 
   const graphColor = ensureContrast(getCurrencyColor(currency), colors.background.main);
 
@@ -141,7 +146,7 @@ function AssetCentricGraphCard({
       >
         <Animated.View style={[BalanceOpacity]}>
           <Flex alignItems="center">
-            <ParentCurrencyIcon size={32} currency={currency} />
+            <CurrencyIcon size={32} currency={currency} />
             <Flex alignItems="center">
               <Flex>
                 {!balanceHistory ? (

@@ -1,55 +1,47 @@
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { Account } from "@ledgerhq/types-live";
-import { formatAddress } from "LLD/utils/formatAddress";
-import { getBalanceAndFiatValue } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValue";
 import { useCallback } from "react";
-import { useSelector } from "react-redux";
-import { counterValueCurrencySelector, discreetModeSelector } from "~/renderer/reducers/settings";
+import { useSelector } from "LLD/hooks/redux";
+import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { getAccountProtocol } from "./getAccountProtocol";
 import { FormattedAccount } from "./types";
 
 export const useAccountsData = () => {
   const walletState = useSelector(walletSelector);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const countervaluesState = useCountervaluesState();
   const discreet = useSelector(discreetModeSelector);
 
   return {
     walletState,
-    counterValueCurrency,
-    countervaluesState,
     discreet,
   };
 };
 
 export const useAccountFormatter = () => {
-  const { walletState, counterValueCurrency, countervaluesState, discreet } = useAccountsData();
+  const { walletState, discreet } = useAccountsData();
+  const locale = useSelector(localeSelector);
 
   return useCallback(
     (account: Account): FormattedAccount => {
-      const { fiatValue, balance } = getBalanceAndFiatValue(
-        account,
-        countervaluesState,
-        counterValueCurrency,
-        discreet,
-      );
-
       const protocol = getAccountProtocol(account);
       const accountName = accountNameWithDefaultSelector(walletState, account);
 
       return {
-        address: formatAddress(account.freshAddress),
+        address: account.freshAddress,
         cryptoId: account.currency.id,
-        fiatValue,
-        balance,
+        // Raw values for UI formatting
+        balance: account.balance,
+        balanceUnit: account.currency.units[0],
+        // Formatting parameters
+        locale,
+        discreet,
+        // Other properties
         protocol: protocol || "",
         id: account.id,
         name: accountName,
         ticker: account.currency.ticker,
       };
     },
-    [counterValueCurrency, discreet, countervaluesState, walletState],
+    [discreet, walletState, locale],
   );
 };

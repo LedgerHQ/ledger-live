@@ -1,4 +1,5 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { initialIdentitiesState } from "@ledgerhq/client-ids/store";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
@@ -34,6 +35,7 @@ import { INITIAL_STATE as MODULAR_DRAWER_INITIAL_STATE } from "~/reducers/modula
 import { INITIAL_STATE as NOTIFICATIONS_INITIAL_STATE } from "~/reducers/notifications";
 import { INITIAL_STATE as PROTECT_INITIAL_STATE } from "~/reducers/protect";
 import { INITIAL_STATE as RATINGS_INITIAL_STATE } from "~/reducers/ratings";
+import { INITIAL_STATE as RECEIVE_OPTIONS_DRAWER_INITIAL_STATE } from "~/reducers/receiveOptionsDrawer";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
 import { INITIAL_STATE as SWAP_INITIAL_STATE } from "~/reducers/swap";
 import { INITIAL_STATE as TOASTS_INITIAL_STATE } from "~/reducers/toast";
@@ -44,7 +46,7 @@ import { INITIAL_STATE as AUTH_INITIAL_STATE } from "~/reducers/auth";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
-import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
+import { llmRtkApiInitialStates, applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
 
 const INITIAL_STATE: State = {
   accounts: ACCOUNTS_INITIAL_STATE,
@@ -53,10 +55,12 @@ const INITIAL_STATE: State = {
   countervalues: COUNTERVALUES_INITIAL_STATE,
   dynamicContent: DYNAMIC_CONTENT_INITIAL_STATE,
   earn: EARN_INITIAL_STATE,
+  identities: initialIdentitiesState,
   inView: IN_VIEW_INITIAL_STATE,
   largeMover: LARGE_MOVER_INITIAL_STATE,
   market: MARKET_INITIAL_STATE,
   modularDrawer: MODULAR_DRAWER_INITIAL_STATE,
+  receiveOptionsDrawer: RECEIVE_OPTIONS_DRAWER_INITIAL_STATE,
   notifications: NOTIFICATIONS_INITIAL_STATE,
   postOnboarding: POST_ONBOARDING_INITIAL_STATE,
   protect: PROTECT_INITIAL_STATE,
@@ -69,7 +73,7 @@ const INITIAL_STATE: State = {
   walletconnect: WALLET_CONNECT_INITIAL_STATE,
   walletSync: WALLETSYNC_INITIAL_STATE,
   auth: AUTH_INITIAL_STATE,
-  assetsDataApi: assetsDataApi.reducer(undefined, { type: "INIT" }),
+  ...llmRtkApiInitialStates,
 };
 
 type ExtraOptions = RenderOptions & {
@@ -86,8 +90,8 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
   return configureStore({
     reducer: reducers,
     middleware: getDefaultMiddleware =>
-      getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }).concat(
-        assetsDataApi.middleware,
+      applyLlmRTKApiMiddlewares(
+        getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
       ),
     preloadedState: overrideInitialState(INITIAL_STATE),
     devTools: false,
@@ -102,7 +106,7 @@ function CountervaluesProviders({
 }: {
   children: React.ReactNode;
   store: ReduxStore;
-}): JSX.Element {
+}): React.JSX.Element {
   // TODO This interim bridge is only a stop-gap. We’ll remove it once we either:
   // (a) separate counter-values user settings from the Firebase feature flag, or
   // (b) introduce a proper feature-flag provider that doesn’t break our tests.
@@ -141,7 +145,7 @@ function CountervaluesProviders({
  * @param {boolean} [props.withReactQuery=false] - Whether to include React Query's QueryClientProvider.
  * @param {boolean} [props.withLiveApp=false] - Whether to include the CustomLiveAppProvider.
  * @param {RenderType} [props.renderType=RenderType.DEFAULT] - The type of rendering context; determines which providers are included.
- * @returns {JSX.Element} A JSX element containing the necessary providers.
+ * @returns {React.JSX.Element} A JSX element containing the necessary providers.
  */
 function Providers({
   children,
@@ -155,7 +159,7 @@ function Providers({
   withReactQuery?: boolean;
   withLiveApp?: boolean;
   renderType?: RenderType;
-}): JSX.Element {
+}): React.JSX.Element {
   // Custom live app provider
   const content = withLiveApp ? (
     <CustomLiveAppProvider>

@@ -4,10 +4,7 @@
 
 import { renderHook } from "@testing-library/react";
 import React from "react";
-import * as redux from "react-redux";
-import { Provider } from "react-redux";
-import { combineReducers, legacy_createStore as createStore } from "redux";
-import settings from "../reducers/settings";
+import * as reduxHooks from "LLD/hooks/redux";
 import {
   dateEq,
   getDatesAround,
@@ -26,11 +23,13 @@ const MINUTE = 60 * SECOND;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 
-const store = createStore(
-  combineReducers({
-    settings,
-  }),
-);
+jest.mock("LLD/hooks/redux", () => {
+  const actual = jest.requireActual<typeof reduxHooks>("LLD/hooks/redux");
+  return {
+    ...actual,
+    useSelector: jest.fn(),
+  };
+});
 
 describe("useDateFormatter", () => {
   beforeAll(() => {
@@ -124,12 +123,10 @@ describe("useDateFormatter", () => {
 
   describe("useDateFormatter", () => {
     // Needed to wrap hook in a Redux Store
-    const HookWrapper = ({ children }: { children: React.ReactNode }) => (
-      <Provider store={store}>{children}</Provider>
-    );
+    const HookWrapper = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
     // prepare mocking useSelector
-    const spy = jest.spyOn(redux, "useSelector");
+    const spy = jest.spyOn(reduxHooks, "useSelector");
 
     let f: ReturnType<typeof useDateFormatter>;
 
@@ -165,6 +162,27 @@ describe("useDateFormatter", () => {
       setLocale_Mock("fr", "en");
       expect(f(date)).toEqual("2/1/2000");
     });
+
+    test("should force Gregorian calendar for Thailand locale", () => {
+      const date = new Date("February 1, 2024 10:00:00");
+      // Test with th-TH locale - should use Gregorian calendar (year 2024, not Buddhist year 2567)
+      setLocale_Mock("th-TH");
+      const formatted = f(date);
+      // The formatted date should contain "2024" (Gregorian) not "2567" (Buddhist)
+      // Format may vary but year should be 2024
+      expect(formatted).toContain("2024");
+      expect(formatted).not.toContain("2567");
+    });
+
+    test("should not force Gregorian calendar for non-Thai locales", () => {
+      const date = new Date("February 1, 2024 10:00:00");
+      // Test with Japanese locale - should use default calendar (may include imperial era)
+      setLocale_Mock("ja-JP");
+      const formatted = f(date);
+      // Should format the date (we don't force Gregorian for Japan)
+      expect(formatted).toBeTruthy();
+      expect(typeof formatted).toBe("string");
+    });
   });
 });
 
@@ -179,11 +197,9 @@ describe("useCalendarFormatter", () => {
   });
 
   // Needed to wrap hook in a Redux Store
-  const HookWrapper = ({ children }: { children: React.ReactNode }) => (
-    <Provider store={store}>{children}</Provider>
-  );
+  const HookWrapper = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
-  const spy = jest.spyOn(redux, "useSelector");
+  const spy = jest.spyOn(reduxHooks, "useSelector");
 
   let f: ReturnType<typeof useDateFormatter>;
 

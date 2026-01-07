@@ -8,16 +8,12 @@ import AccountItem from "./components/AccountItem";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import isEqual from "lodash/isEqual";
-import { getEstimatedListSize } from "LLM/utils/getEstimatedListSize";
-
-const ESTIMED_ITEM_SIZE = 150;
 
 type ViewProps = ReturnType<typeof useAccountsListViewModel>;
 
 const View: React.FC<ViewProps> = ({
   accountsToDisplay,
   isSyncEnabled,
-  limitNumberOfAccounts,
   ListFooterComponent,
   onAccountPress,
   onContentChange,
@@ -45,15 +41,9 @@ const View: React.FC<ViewProps> = ({
     [onAccountPress],
   );
 
-  const estimatedListSize = getEstimatedListSize({
-    limit: limitNumberOfAccounts,
-  });
-
   return (
     <List
       testID="AccountsList"
-      estimatedItemSize={ESTIMED_ITEM_SIZE}
-      estimatedListSize={estimatedListSize}
       renderItem={renderItem}
       data={accountsToDisplay}
       ListFooterComponent={ListFooterComponent}

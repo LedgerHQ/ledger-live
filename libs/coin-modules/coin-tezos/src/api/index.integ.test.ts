@@ -1,8 +1,10 @@
 import { localForger } from "@taquito/local-forging";
-import { createApi } from ".";
+import { SendTransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import type { TezosApi } from "./types";
+import { createApi } from ".";
 
 /**
+ * Ghostnet-specific integration tests
  * https://teztnets.com/ghostnet-about
  * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
  */
@@ -39,6 +41,7 @@ describe("Tezos Api", () => {
 
       // When
       const result = await module.estimateFees({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: address,
@@ -48,10 +51,56 @@ describe("Tezos Api", () => {
 
       // Then
       expect(result.value).toBeGreaterThanOrEqual(BigInt(0));
-      expect(result.parameters).toBeDefined();
       expect(result.parameters?.gasLimit).toBeGreaterThanOrEqual(BigInt(0));
       expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
     });
+  });
+
+  it.each([
+    [
+      "ed25519 / tz1",
+      "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
+      "6D9733FB7E27C56F032FAD41E4C0C90D58D0D5F1A253B2430B702071B57E47C1",
+    ],
+    [
+      "secp256k1 / tz2",
+      "tz2DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
+      "032fede4de54cf92381832a053f0787125fdc0d065d231585eb34d5eae327c0222",
+    ],
+    [
+      "P256 / tz3",
+      "tz3DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
+      "0466839a78481025e3613f65fcd4b492a492bedd1a3cba77ae48eaa1803611d8e5f4e23c0d0f3586e2095f4f83d09c841e1c17586b2356d5d3a3ed3f45bb3a857e",
+    ],
+  ])("does not fail when providing a %s address with pub key", async (_, sender, pubKey) => {
+    // When
+    const result = await module.estimateFees({
+      intentType: "transaction",
+      asset: { type: "native" },
+      type: "send",
+      sender: "tz3DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
+      senderPublicKey: pubKey,
+      recipient: sender,
+      amount: BigInt(100),
+    } as SendTransactionIntent);
+
+    // Then
+    expect(result.value).toBeGreaterThanOrEqual(BigInt(0));
+    expect(result.parameters?.gasLimit).toBeGreaterThanOrEqual(BigInt(0));
+    expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
+  });
+
+  it("fails when using an unsupported address type", async () => {
+    await expect(
+      module.estimateFees({
+        intentType: "transaction",
+        asset: { type: "native" },
+        type: "send",
+        sender: address,
+        recipient: "tz5heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
+        amount: BigInt(100),
+      }),
+    ).rejects.toThrow('Invalid address "tz5heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ"');
   });
 
   describe("listOperations", () => {
@@ -64,8 +113,13 @@ describe("Tezos Api", () => {
       tx.forEach(operation => {
         const isSenderOrReceipt =
           operation.senders.includes(address) || operation.recipients.includes(address);
-        expect(isSenderOrReceipt).toBeTruthy();
-        expect(operation.tx.block).toBeDefined();
+        expect(isSenderOrReceipt).toBe(true);
+        expect(operation.value).toBeGreaterThanOrEqual(0);
+        expect(operation.tx.hash).toMatch(/^o[1-9A-HJ-NP-Za-km-z]+/); // "o" + base58
+        expect(operation.tx.block.hash).toMatch(/^B[1-9A-HJ-NP-Za-km-z]+/); // "B" + base58
+        expect(operation.tx.block.height).toBeGreaterThanOrEqual(0);
+        expect(operation.tx.fees).toBeGreaterThan(0);
+        expect(operation.tx.date).toBeInstanceOf(Date);
       });
     });
 
@@ -97,8 +151,8 @@ describe("Tezos Api", () => {
       const result = await module.lastBlock();
 
       // Then
-      expect(result.hash).toBeDefined();
-      expect(result.height).toBeDefined();
+      expect(result.hash).toMatch(/^B[1-9A-HJ-NP-Za-km-z]+/); // "B" + base58
+      expect(result.height).toBeGreaterThan(0);
       expect(result.time).toBeInstanceOf(Date);
     });
   });
@@ -126,6 +180,7 @@ describe("Tezos Api", () => {
       const amount = BigInt(10);
       // When
       const { transaction: encodedTransaction } = await module.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type,
         sender: address,
@@ -150,6 +205,7 @@ describe("Tezos Api", () => {
 
     it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
       const { transaction: encodedTransaction } = await module.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: address,
@@ -167,6 +223,7 @@ describe("Tezos Api", () => {
       async (customFees: bigint) => {
         const { transaction: encodedTransaction } = await module.craftTransaction(
           {
+            intentType: "transaction",
             asset: { type: "native" },
             type: "send",
             sender: address,

@@ -33,7 +33,7 @@ type Props = {
 const Separator = styled.div`
   width: 100%;
   height: 1px;
-  background-color: ${p => p.theme.colors.palette.text.shade10};
+  background-color: ${p => p.theme.colors.neutral.c30};
   margin: 20px 0;
 `;
 const CoinControlModal = ({
@@ -70,12 +70,12 @@ const CoinControlModal = ({
 
             <Separator />
             <Box mt={0} mb={4} horizontal justifyContent="space-between">
-              <Text color="palette.text.shade50" ff="Inter|Regular" fontSize={13}>
+              <Text color="neutral.c70" ff="Inter|Regular" fontSize={13}>
                 <Trans i18nKey="bitcoin.selected" />
               </Text>
               <Box horizontal>
                 <Text
-                  color="palette.text.shade50"
+                  color="neutral.c70"
                   ff="Inter|Medium"
                   fontSize={13}
                   style={{
@@ -91,7 +91,7 @@ const CoinControlModal = ({
                     unit={unit}
                     showCode
                     fontSize={4}
-                    color="palette.text.shade100"
+                    color="neutral.c100"
                   />
                 </Text>
               </Box>
@@ -131,7 +131,7 @@ const CoinControlModal = ({
                         flexBasis: "40%",
                       }}
                     >
-                      <Text ff="Inter|Medium" fontSize={3} color="palette.text.shade50">
+                      <Text ff="Inter|Medium" fontSize={3} color="neutral.c70">
                         <Trans i18nKey="bitcoin.toSpend" />
                       </Text>
                     </Box>
@@ -142,7 +142,7 @@ const CoinControlModal = ({
                       showCode
                       fontSize={4}
                       ff="Inter|SemiBold"
-                      color="palette.text.shade100"
+                      color="neutral.c100"
                     />
                   </Box>
                   <Box horizontal alignItems="center">
@@ -151,7 +151,7 @@ const CoinControlModal = ({
                         flexBasis: "40%",
                       }}
                     >
-                      <Text ff="Inter|Medium" fontSize={3} color="palette.text.shade50">
+                      <Text ff="Inter|Medium" fontSize={3} color="neutral.c70">
                         <Trans i18nKey="bitcoin.toReturn" />
                       </Text>
                     </Box>
@@ -162,7 +162,7 @@ const CoinControlModal = ({
                       showCode
                       fontSize={4}
                       ff="Inter|SemiBold"
-                      color="palette.text.shade100"
+                      color="neutral.c100"
                     />
                   </Box>
                 </Box>

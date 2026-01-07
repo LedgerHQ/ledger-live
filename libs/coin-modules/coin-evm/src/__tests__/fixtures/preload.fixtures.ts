@@ -1,4 +1,4 @@
-import { ERC20Token } from "@ledgerhq/cryptoassets/types";
+import { ERC20Token } from "../../types/erc20";
 
 export const usdcDefinition: ERC20Token = [
   "ethereum",

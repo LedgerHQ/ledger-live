@@ -10,11 +10,9 @@ import { getOperatingSystemSupportStatus } from "~/support/os";
 // will be overriden by setShouldSendCallback
 let shouldSendCallback = () => false;
 let productionBuildSampleRate = 1;
-let tracesSampleRate = 0.0002;
 if (process.env.SENTRY_SAMPLE_RATE) {
   const v = parseFloat(process.env.SENTRY_SAMPLE_RATE);
   productionBuildSampleRate = v;
-  tracesSampleRate = v;
 }
 const ignoreErrors = [
   // networking conditions
@@ -47,6 +45,8 @@ const ignoreErrors = [
   "ERR_SSL_PROTOCOL_ERROR",
   "status code 404",
   "unable to get local issuer certificate",
+  "Failed to fetch",
+  "Failed to load",
   // API issues
   "LedgerAPI4xx",
   "LedgerAPI5xx",
@@ -73,16 +73,19 @@ const ignoreErrors = [
   "could not read from HID device",
   "DeviceOnDashboardExpected",
   "EthAppPleaseEnableContractData",
+  "CeloAppPleaseEnableContractData",
   "VechainAppPleaseEnableContractDataAndMultiClause",
   "failed with status code",
   "GetAppAndVersionUnsupportedFormat",
   "Invalid channel",
   "Ledger Device is busy",
+  "DeviceDisconnectedWhileSendingError",
   "ManagerDeviceLocked",
   "LockedDeviceError",
   "UnresponsiveDeviceError",
   "PairingFailed",
   "Ledger device: UNKNOWN_ERROR",
+  "UserRefusedOnDevice",
   // wrong My Ledger provider selected for the firmware of the connected device
   "FirmwareNotRecognized",
   // errors coming from the usage of a Transport implementation
@@ -118,7 +121,6 @@ export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMai
     environment: __DEV__ ? "development" : "production",
     ignoreErrors,
     sampleRate: __DEV__ ? 1 : productionBuildSampleRate,
-    tracesSampleRate: __DEV__ ? 1 : tracesSampleRate,
     initialScope: {
       tags: {
         git_commit: __GIT_REVISION__,
@@ -153,6 +155,15 @@ export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMai
     },
     beforeBreadcrumb(breadcrumb) {
       switch (breadcrumb.category) {
+        case "track": {
+          return {
+            ...breadcrumb,
+            data: {
+              ...breadcrumb.data,
+              sessionId: undefined,
+            },
+          };
+        }
         case "navigation":
         case "fetch":
         case "xhr": {
@@ -171,12 +182,6 @@ export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMai
             };
           }
           return breadcrumb;
-        }
-        case "console": {
-          if (pname === "internal") {
-            // ignore console of internal because it's used to send to main and too verbose
-            return null;
-          }
         }
       }
       return breadcrumb;

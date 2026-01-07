@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-key-ring-protocol",
-  "version": "0.6.4",
+  "version": "0.9.0",
   "description": "Ledger Key Ring Protocol layer",
   "keywords": [
     "Ledger"
@@ -63,17 +63,18 @@
     "@ledgerhq/speculos-transport": "workspace:*",
     "@ledgerhq/types-devices": "workspace:^",
     "base64-js": "1",
-    "isomorphic-ws": "5",
-    "rxjs": "^7.8.1",
-    "ws": "8"
+    "isomorphic-ws": "catalog:",
+    "rxjs": "catalog:",
+    "ws": "catalog:"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "bip39": "^3.0.4",
-    "expect": "^27.5.1",
-    "jest": "^29.7.0",
-    "msw": "^2.2.13",
-    "ts-jest": "^29.1.1",
+    "expect": "catalog:",
+    "jest": "catalog:",
+    "msw": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "ts-node": "^10.9.2"
   },
   "scripts": {

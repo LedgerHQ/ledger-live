@@ -5,7 +5,7 @@ import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { StackScreenProps } from "@react-navigation/stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 
@@ -36,7 +36,7 @@ const renderTransitionSlide = ({
   </Transitions.Slide>
 );
 
-type NavigationProp = StackScreenProps<OnboardingNavigatorParamList>;
+type NavigationProp = NativeStackScreenProps<OnboardingNavigatorParamList>;
 
 const Header = ({ step }: { step: number }) => {
   const { t } = useTranslation();
@@ -63,7 +63,6 @@ const Header = ({ step }: { step: number }) => {
         iconName="Close"
         size="large"
         onPress={() => {
-          // @ts-expect-error Complicated to type this properly
           navigation.navigate(ScreenName.OnboardingPairNew, {
             ...route.params,
           });
@@ -176,7 +175,12 @@ function OnboardingQuiz({ navigation, route }: Props) {
   return (
     <Flex bg={bg} flex={1}>
       <SafeAreaView style={{ flex: 1 }}>
-        <TrackScreen category="Onboarding" name="Quiz" />
+        <TrackScreen
+          category="Onboarding"
+          name="Quiz"
+          seedConfiguration="new_seed"
+          deviceModelId={route.params.deviceModelId}
+        />
         <FlowStepper
           activeIndex={index}
           renderTransition={renderTransitionSlide}

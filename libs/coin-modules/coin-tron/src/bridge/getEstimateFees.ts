@@ -49,6 +49,7 @@ const getFeesFromAccountActivation = async (
     }
 
     const transactionIntent: TransactionIntent = {
+      intentType: "transaction",
       type: transaction.mode,
       sender: account.freshAddress,
       recipient: transaction.recipient,

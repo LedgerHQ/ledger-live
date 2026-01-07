@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -275,6 +275,7 @@ export function Confirmation({
                   }
                 }}
                 onError={error => onError({ error })}
+                onClose={onCancel}
                 analyticsPropertyFlow="swap"
                 location={HOOKS_TRACKING_LOCATIONS.swapFlow}
               />
@@ -300,6 +301,7 @@ export function Confirmation({
                   }
                 }}
                 onError={error => onError({ error })}
+                onClose={onCancel}
                 analyticsPropertyFlow="swap"
                 location={HOOKS_TRACKING_LOCATIONS.swapFlow}
               />

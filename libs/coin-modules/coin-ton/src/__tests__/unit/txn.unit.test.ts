@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 // eslint-disable-next-line no-restricted-imports
 import { Builder, Slice } from "@ton/core";
 import flatMap from "lodash/flatMap";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { TonJettonTransfer, TonTransaction } from "../../bridge/bridgeHelpers/api.types";
 import {
   dataToSlice,
@@ -17,6 +18,9 @@ import {
   mockAddress,
   tonTransactionResponse,
 } from "../fixtures/common.fixtures";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+
+setupMockCryptoAssetsStore();
 
 describe("Transaction functions", () => {
   describe("mapTxToOps", () => {
@@ -135,14 +139,51 @@ describe("Transaction functions", () => {
   });
 
   describe("mapJettonToOps", () => {
+    beforeEach(() => {
+      setupMockCryptoAssetsStore({
+        findTokenByAddressInCurrency: async (address: string, _currencyId: string) => {
+          // The address is converted to lowercase in mapJettonTxToOps
+          // jetton_master from fixtures: "0:2F956143C461769579BAEF2E32CC2D7BC18283F40D20BB03E432CD603AC33FFC"
+          // Converted to friendly format and lowercased
+          if (
+            address === "eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not" ||
+            address.includes("2f956143c461769579baef2e32cc2d7bc18283f40d20bb03e432cd603ac33ffc")
+          ) {
+            return {
+              id: "ton/jetton/eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not",
+              type: "TokenCurrency" as const,
+              contractAddress: "EQAVLwfDxGF2LXm67Y4yzC17WYkd9A0gUWPkMS1gOsM__NOT",
+              parentCurrency: getCryptoCurrencyById("ton"),
+              tokenType: "jetton",
+              name: "NOT",
+              ticker: "NOT",
+              units: [
+                {
+                  name: "NOT",
+                  code: "NOT",
+                  magnitude: 9,
+                },
+              ],
+            };
+          }
+          return undefined;
+        },
+        getTokensSyncHash: async () => "0",
+      });
+    });
+
     it("should map an IN ton transaction without total_fees to a ledger operation", async () => {
       const { transaction_hash, amount, transaction_now, transaction_lt } =
         jettonTransferResponse.jetton_transfers[0];
 
-      const finalOperation = flatMap(
-        jettonTransferResponse.jetton_transfers,
-        mapJettonTxToOps(mockAccountId, mockAddress, tonTransactionResponse.address_book),
+      const jettonOpsMapper = mapJettonTxToOps(
+        mockAccountId,
+        mockAddress,
+        tonTransactionResponse.address_book,
       );
+      const finalOperation = (
+        await Promise.all(jettonTransferResponse.jetton_transfers.map(jettonOpsMapper))
+      ).flat();
 
       const tokenByCurrencyAddress = `${mockAccountId}+ton%2Fjetton%2Feqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm~!underscore!~~!underscore!~not`;
       expect(finalOperation).toEqual([
@@ -180,10 +221,12 @@ describe("Transaction functions", () => {
 
       const { transaction_hash, amount, transaction_now, transaction_lt } = jettonTransfers[0];
 
-      const finalOperation = flatMap(
-        jettonTransfers,
-        mapJettonTxToOps(mockAccountId, mockAddress, tonTransactionResponse.address_book),
+      const jettonOpsMapper = mapJettonTxToOps(
+        mockAccountId,
+        mockAddress,
+        tonTransactionResponse.address_book,
       );
+      const finalOperation = (await Promise.all(jettonTransfers.map(jettonOpsMapper))).flat();
 
       const tokenByCurrencyAddress = `${mockAccountId}+ton%2Fjetton%2Feqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm~!underscore!~~!underscore!~not`;
       expect(finalOperation).toEqual([

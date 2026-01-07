@@ -1,4 +1,4 @@
-import { Operation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { Operation, SendTransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import * as LogicFunctions from "../logic";
 import { GetTransactionsOptions } from "../network";
 import { NetworkInfo, XrpMapMemo } from "../types";
@@ -14,6 +14,18 @@ jest.mock("../network", () => ({
   getServerInfos: () => mockGetServerInfos(),
   getTransactions: (address: string, options: GetTransactionsOptions) =>
     mockGetTransactions(address, options),
+}));
+
+// Module-level mocks for logic functions
+const mockCraftTransaction = jest.fn();
+const mockGetNextValidSequence = jest.fn();
+const mockEstimateFees = jest.fn();
+
+jest.mock("../logic", () => ({
+  ...jest.requireActual("../logic"),
+  craftTransaction: (...args: unknown[]) => mockCraftTransaction(...args),
+  getNextValidSequence: (...args: unknown[]) => mockGetNextValidSequence(...args),
+  estimateFees: (...args: unknown[]) => mockEstimateFees(...args),
 }));
 
 describe("listOperations", () => {
@@ -49,7 +61,10 @@ describe("listOperations", () => {
         ledger_hash: "HASH_VALUE_BLOCK",
         hash: "HASH_VALUE",
         close_time_iso: "2000-01-01T00:00:01Z",
-        meta: { delivered_amount: deliveredAmount.toString() },
+        meta: {
+          delivered_amount: deliveredAmount.toString(),
+          TransactionResult: "tesSUCCESS",
+        },
         tx_json: {
           TransactionType: "Payment",
           Fee: fee.toString(),
@@ -64,7 +79,10 @@ describe("listOperations", () => {
         ledger_hash: "HASH_VALUE_BLOCK",
         hash: "HASH_VALUE",
         close_time_iso: "2000-01-01T00:00:01Z",
-        meta: { delivered_amount: deliveredAmount.toString() },
+        meta: {
+          delivered_amount: deliveredAmount.toString(),
+          TransactionResult: "tecAMM_ACCOUNT",
+        },
         tx_json: {
           TransactionType: "Payment",
           Fee: fee.toString(),
@@ -80,7 +98,10 @@ describe("listOperations", () => {
         ledger_hash: "HASH_VALUE_BLOCK",
         hash: "HASH_VALUE",
         close_time_iso: "2000-01-01T00:00:01Z",
-        meta: { delivered_amount: deliveredAmount.toString() },
+        meta: {
+          delivered_amount: deliveredAmount.toString(),
+          TransactionResult: "tesSUCCESS",
+        },
         tx_json: {
           TransactionType: "Payment",
           Fee: fee.toString(),
@@ -185,6 +206,7 @@ describe("listOperations", () => {
             hash: "HASH_VALUE",
             fees: fee,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
+            failed: false,
             block: {
               hash: "HASH_VALUE_BLOCK",
               height: 1,
@@ -213,6 +235,7 @@ describe("listOperations", () => {
             hash: "HASH_VALUE",
             fees: fee,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
+            failed: true,
             block: {
               hash: "HASH_VALUE_BLOCK",
               height: 1,
@@ -236,6 +259,7 @@ describe("listOperations", () => {
             hash: "HASH_VALUE",
             fees: fee,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
+            failed: false,
             block: {
               hash: "HASH_VALUE_BLOCK",
               height: 1,
@@ -259,18 +283,15 @@ describe("listOperations", () => {
 describe("Testing craftTransaction function", () => {
   const DEFAULT_ESTIMATED_FEES = 100n;
   const api = createApi({ node: "https://localhost" });
-  const logicCraftTransactionSpy = jest
-    .spyOn(LogicFunctions, "craftTransaction")
-    .mockImplementation((_address, _transaction, _publicKey) => {
+
+  beforeAll(() => {
+    mockCraftTransaction.mockImplementation((_address, _transaction, _publicKey) => {
       return Promise.resolve({ xrplTransaction: {} as never, serializedTransaction: "" });
     });
 
-  beforeAll(() => {
-    jest
-      .spyOn(LogicFunctions, "getNextValidSequence")
-      .mockImplementation(_address => Promise.resolve(0));
+    mockGetNextValidSequence.mockImplementation(_address => Promise.resolve(0));
 
-    jest.spyOn(LogicFunctions, "estimateFees").mockImplementation(_networkInfo => {
+    mockEstimateFees.mockImplementation(_networkInfo => {
       return Promise.resolve({
         networkInfo: {} as NetworkInfo,
         fees: DEFAULT_ESTIMATED_FEES,
@@ -278,13 +299,20 @@ describe("Testing craftTransaction function", () => {
     });
   });
 
+  afterEach(() => {
+    mockCraftTransaction.mockClear();
+  });
+
   it("should use custom user fees when user provides it for crafting a transaction", async () => {
     const customFees = 99n;
-    await api.craftTransaction({ sender: "foo" } as TransactionIntent<XrpMapMemo>, {
-      value: customFees,
-    });
+    await api.craftTransaction(
+      { intentType: "transaction", sender: "foo" } as SendTransactionIntent<XrpMapMemo>,
+      {
+        value: customFees,
+      },
+    );
 
-    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+    expect(mockCraftTransaction).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         fees: customFees,
@@ -294,9 +322,12 @@ describe("Testing craftTransaction function", () => {
   });
 
   it("should use default fees when user does not provide them for crafting a transaction", async () => {
-    await api.craftTransaction({ sender: "foo" } as TransactionIntent<XrpMapMemo>);
+    await api.craftTransaction({
+      intentType: "transaction",
+      sender: "foo",
+    } as SendTransactionIntent<XrpMapMemo>);
 
-    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+    expect(mockCraftTransaction).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         fees: DEFAULT_ESTIMATED_FEES,
@@ -307,11 +338,12 @@ describe("Testing craftTransaction function", () => {
 
   it("should pass signing pub key when user provides it for crafting a transaction", async () => {
     await api.craftTransaction({
+      intentType: "transaction",
       sender: "foo",
       senderPublicKey: "bar",
-    } as TransactionIntent<XrpMapMemo>);
+    } as SendTransactionIntent<XrpMapMemo>);
 
-    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+    expect(mockCraftTransaction).toHaveBeenCalledWith(
       expect.any(Object),
       expect.any(Object),
       "bar",
@@ -320,14 +352,15 @@ describe("Testing craftTransaction function", () => {
 
   it("should pass memos when user provides it for crafting a transaction", async () => {
     await api.craftTransaction({
+      intentType: "transaction",
       sender: "foo",
       memo: {
         type: "map",
         memos: new Map([["memos", ["testdata"]]]),
       },
-    } as TransactionIntent<XrpMapMemo>);
+    } as SendTransactionIntent<XrpMapMemo>);
 
-    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+    expect(mockCraftTransaction).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         // NOTE: before
@@ -340,10 +373,11 @@ describe("Testing craftTransaction function", () => {
 
   it("should not pass memos when user does not provide it for crafting a transaction", async () => {
     await api.craftTransaction({
+      intentType: "transaction",
       sender: "foo",
-    } as TransactionIntent<XrpMapMemo>);
+    } as SendTransactionIntent<XrpMapMemo>);
 
-    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+    expect(mockCraftTransaction).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         memos: undefined,
@@ -354,14 +388,15 @@ describe("Testing craftTransaction function", () => {
 
   it("should not pass memos when user provides an empty memo list it for crafting a transaction", async () => {
     await api.craftTransaction({
+      intentType: "transaction",
       sender: "foo",
       memo: {
         type: "map",
         memos: new Map(),
       },
-    } as TransactionIntent<XrpMapMemo>);
+    } as SendTransactionIntent<XrpMapMemo>);
 
-    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+    expect(mockCraftTransaction).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         memos: undefined,
@@ -372,14 +407,15 @@ describe("Testing craftTransaction function", () => {
 
   it("should pass destination tag when user provides it for crafting a transaction", async () => {
     await api.craftTransaction({
+      intentType: "transaction",
       sender: "foo",
       memo: {
         type: "map",
         memos: new Map([["destinationTag", "1337"]]),
       },
-    } as TransactionIntent<XrpMapMemo>);
+    } as SendTransactionIntent<XrpMapMemo>);
 
-    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+    expect(mockCraftTransaction).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         destinationTag: 1337, // logic should convert `value: string` -> `number`

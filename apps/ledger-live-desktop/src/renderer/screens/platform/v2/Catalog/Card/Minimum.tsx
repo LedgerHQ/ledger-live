@@ -4,7 +4,7 @@ import { Logo } from "./Logo";
 import { PropsCard } from "./types";
 import { useCard } from "./hooks";
 import { Container, Subtitle } from "./Layout";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { RecentlyUsedManifest } from "@ledgerhq/live-common/wallet-api/react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -15,10 +15,10 @@ export function MinimumCard(props: PropsCard<RecentlyUsedManifest | LiveAppManif
 
   const lang = useSelector(languageSelector);
   const usedAt = useMemo(() => {
-    if ("usedAt" in manifest) {
+    if ("usedAt" in manifest && manifest.usedAt.unit) {
       const rtf = new Intl.RelativeTimeFormat(lang);
       return rtf.format(-manifest.usedAt.diff, manifest.usedAt.unit);
-    } else return;
+    }
   }, [lang, manifest]);
 
   return (

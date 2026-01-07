@@ -1,18 +1,19 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { NavigatorName } from "~/const";
 import LText from "~/components/LText";
 import Button from "~/components/Button";
 import IconReceive from "~/icons/Receive";
 import PortfolioNoOpIllustration from "~/icons/PortfolioNoOpIllustration";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 export default function NoOpStatePortfolio() {
-  const navigation = useNavigation();
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
+    sourceScreenName: "portfolio",
+  });
 
   function navigateToReceive() {
-    navigation.navigate(NavigatorName.ReceiveFunds);
+    handleOpenReceiveDrawer();
   }
 
   return (

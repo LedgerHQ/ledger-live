@@ -21,8 +21,7 @@ import updateObjectAtPath from "lodash/set";
 import cloneDeep from "lodash/cloneDeep";
 import FormLiveAppSelector from "./FormLiveAppSelector";
 import FormLiveAppArrayInput from "./FormLiveAppArrayInput";
-import { useCategories, useWalletAPICurrencies } from "@ledgerhq/live-common/wallet-api/react";
-import { WalletAPICurrency } from "@ledgerhq/live-common/wallet-api/types";
+import { useCategories } from "@ledgerhq/live-common/wallet-api/react";
 
 import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import FormLiveAppArraySelect from "./FormLiveAppArraySelect";
@@ -55,15 +54,17 @@ function FormLocalManifest({
 
   const completeManifests = useManifests({ visibility: ["complete"] });
   const { categories } = useCategories(completeManifests);
-  const walletAPICurrencies: WalletAPICurrency[] = useWalletAPICurrencies();
 
   DEFAULT_VALUES.categories = categories.filter((category: string) => category !== "all");
-  DEFAULT_VALUES.currencies = walletAPICurrencies.map(currency => currency.id);
 
   const handleSwitchEthDapp = () => {
     setIsDapp(prevState => !prevState);
     setForm((prevState: LiveAppManifest) => {
-      !isDapp ? (prevState.dapp = cloneDeep(DEFAULT_FORM.dapp)) : delete prevState.dapp;
+      if (!isDapp) {
+        prevState.dapp = cloneDeep(DEFAULT_FORM.dapp);
+      } else {
+        delete prevState.dapp;
+      }
       return prevState;
     });
   };
@@ -79,7 +80,7 @@ function FormLocalManifest({
   const submitHandler = (e: KeyboardEvent) => {
     e.preventDefault();
     if (e.detail !== 0) {
-      formIsValid && addLocalManifest(form);
+      if (formIsValid) addLocalManifest(form);
       onClose();
     }
   };

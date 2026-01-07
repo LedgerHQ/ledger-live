@@ -17,11 +17,10 @@ export default ({ style }: Props) => (
       fill="#D5DFEC"
     />
     <Rect
-      x={0.201702}
       width={28.1089}
       height={28.1089}
       rx={5.40547}
-      transform="scale(1.24011 .6798) rotate(-45 61.951 8.979)"
+      transform="scale(1.24011 .6798) rotate(-45 61.951 8.979) translate(0.201702, 0)"
       fill="#FBFBFD"
       stroke="url(#paint0_linear)"
       strokeWidth={0.23002}
@@ -41,11 +40,10 @@ export default ({ style }: Props) => (
       fill="#D5DFEC"
     />
     <Rect
-      x={0.201702}
       width={28.1089}
       height={28.1089}
       rx={5.40547}
-      transform="scale(1.24011 .6798) rotate(-45 44.249 -34.807)"
+      transform="scale(1.24011 .6798) rotate(-45 44.249 -34.807) translate(0.201702, 0)"
       fill="#FBFBFD"
       stroke="url(#paint1_linear)"
       strokeWidth={0.23002}
@@ -73,11 +71,10 @@ export default ({ style }: Props) => (
       fill="#D5DFEC"
     />
     <Rect
-      x={0.201702}
       width={28.1089}
       height={28.1089}
       rx={5.40547}
-      transform="scale(1.24011 .6798) rotate(-45 132.483 53.707)"
+      transform="scale(1.24011 .6798) rotate(-45 132.483 53.707) translate(0.201702, 0)"
       fill="#FBFBFD"
       stroke="url(#paint2_linear)"
       strokeWidth={0.23002}
@@ -101,11 +98,10 @@ export default ({ style }: Props) => (
       fill="#D5DFEC"
     />
     <Rect
-      x={0.201702}
       width={28.1089}
       height={28.1089}
       rx={5.40547}
-      transform="scale(1.24011 .6798) rotate(-45 114.383 9.487)"
+      transform="scale(1.24011 .6798) rotate(-45 114.383 9.487) translate(0.201702, 0)"
       fill="#FBFBFD"
       stroke="url(#paint3_linear)"
       strokeWidth={0.23002}
@@ -125,11 +121,10 @@ export default ({ style }: Props) => (
       fill="#D5DFEC"
     />
     <Rect
-      x={0.201702}
       width={28.1089}
       height={28.1089}
       rx={5.40547}
-      transform="scale(1.24011 .6798) rotate(-45 95.833 -34.228)"
+      transform="scale(1.24011 .6798) rotate(-45 95.833 -34.228) translate(0.201702, 0)"
       fill="#FBFBFD"
       stroke="url(#paint4_linear)"
       strokeWidth={0.23002}
@@ -145,11 +140,10 @@ export default ({ style }: Props) => (
       fill="#D5DFEC"
     />
     <Rect
-      x={0.201702}
       width={28.1089}
       height={28.1089}
       rx={5.40547}
-      transform="scale(1.24011 .6798) rotate(-45 187.593 59.636)"
+      transform="scale(1.24011 .6798) rotate(-45 187.593 59.636) translate(0.201702, 0)"
       fill="#FBFBFD"
       stroke="url(#paint5_linear)"
       strokeWidth={0.23002}
@@ -165,11 +159,10 @@ export default ({ style }: Props) => (
       fill="#D5DFEC"
     />
     <Rect
-      x={0.201702}
       width={28.1089}
       height={28.1089}
       rx={5.40547}
-      transform="scale(1.24011 .6798) rotate(-45 169.89 15.849)"
+      transform="scale(1.24011 .6798) rotate(-45 169.89 15.849) translate(0.201702, 0)"
       fill="#FBFBFD"
       stroke="url(#paint6_linear)"
       strokeWidth={0.23002}

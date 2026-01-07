@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { notificationsSelector, trackingEnabledSelector } from "../reducers/settings";
 import { start, updateUserPreferences } from "./braze";
 

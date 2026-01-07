@@ -10,7 +10,7 @@ import {
 } from "styled-system";
 import fontFamily from "~/renderer/styles/styled/fontFamily";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   getDefaultExplorerView,
@@ -118,7 +118,7 @@ const AccountName = styled.input.attrs<BaseProps>(p => ({
   }
 
   :hover {
-    border-color: ${p => (!p.disabled ? p.theme.colors.palette.text.shade30 : "transparent")};
+    border-color: ${p => (!p.disabled ? p.theme.colors.neutral.c40 : "transparent")};
     cursor: text;
 
     + svg {
@@ -128,7 +128,7 @@ const AccountName = styled.input.attrs<BaseProps>(p => ({
 
   :focus {
     border-color: ${p => p.theme.colors.wallet};
-    background: ${p => (p.theme.colors.palette.type === "light" ? "#fff" : "none")};
+    background: ${p => (p.theme.theme === "light" ? "#fff" : "none")};
 
     + svg {
       display: none;
@@ -141,16 +141,16 @@ const IconButton = styled(Tabbable).attrs(() => ({
 }))`
   width: 34px;
   height: 34px;
-  border: 1px solid ${p => p.theme.colors.palette.text.shade60};
+  border: 1px solid ${p => p.theme.colors.neutral.c70};
   border-radius: 4px;
   &:hover {
-    color: ${p => (p.disabled ? "" : p.theme.colors.palette.text.shade100)};
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.divider, 0.2))};
-    border-color: ${p => p.theme.colors.palette.text.shade100};
+    color: ${p => (p.disabled ? "" : p.theme.colors.neutral.c100)};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.neutral.c40, 0.2))};
+    border-color: ${p => p.theme.colors.neutral.c100};
   }
 
   &:active {
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.divider, 0.3))};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.neutral.c40, 0.3))};
   }
 `;
 
@@ -233,14 +233,14 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
         )}
         <AccountNameBox horizontal alignItems="center" flow={2}>
           <AccountName
-            color="palette.text.shade100"
+            color="neutral.c100"
             disabled={account.type !== "Account"}
             ff="Inter|SemiBold"
             fontSize={7}
-            onFocus={() => {
+            onFocus={e => {
               setEditingName(true);
               setTimeout(() => {
-                document.execCommand("selectAll", false, undefined);
+                e.currentTarget.select();
               });
             }}
             onBlur={() => {
@@ -249,7 +249,7 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
                 window.getSelection()?.removeAllRanges();
               });
             }}
-            onKeyPress={submitNameChangeOnEnter}
+            onKeyDown={submitNameChangeOnEnter}
             onChange={e => setName(e.target.value)}
             disableEllipsis={editingName}
             value={name}

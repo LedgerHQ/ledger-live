@@ -13,7 +13,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
-
+import { popToScreen } from "~/helpers/navigationHelpers";
 const items = StellarMemoType.map(type => ({
   label: type,
   value: type,
@@ -37,8 +37,7 @@ const mapStateToProps = (_state: State, props: NavigationProps) => ({
 
     if (value === "NO_MEMO") {
       const bridge = getAccountBridge(account);
-      // @ts-expect-error FIXME: No current / next navigation params?
-      navigation.navigate(ScreenName.SendSummary, {
+      popToScreen(navigation, ScreenName.SendSummary, {
         accountId: account.id,
         transaction: bridge.updateTransaction(transaction, {
           memoType: value,
@@ -75,7 +74,7 @@ const Screen = connect(mapStateToProps)(
 );
 const options = {
   title: i18next.t("send.summary.memo.type"),
-  headerLeft: undefined,
+  headerLeft: () => null,
 };
 const styles = StyleSheet.create({
   memo: {

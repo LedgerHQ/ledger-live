@@ -9,6 +9,7 @@ import type { Account, TokenAccount, Operation } from "@ledgerhq/types-live";
 import { ActionButtonEvent } from "~/components/FabActions";
 import * as featureFlagsIndex from "@ledgerhq/live-common/featureFlags/index";
 import * as accountIndex from "@ledgerhq/live-common/account/index";
+import type { TFunction } from "i18next";
 
 /**
  * isAccountEmpty can not be spied because it is declared in multiple files
@@ -61,10 +62,10 @@ describe("Testing ListHeaderComponent Component", () => {
             label: {} as React.ReactNode,
           } as ActionButtonEvent,
         ],
-        t: () => "",
+        t: (() => "") as unknown as TFunction,
       });
 
-      expect(listHeaderComponents[6]).toBeDefined();
+      expect(listHeaderComponents[7]).toBeDefined();
     });
 
     it("should generate account earn header component when disable delegation is not configured", () => {
@@ -96,10 +97,10 @@ describe("Testing ListHeaderComponent Component", () => {
             label: {} as React.ReactNode,
           } as ActionButtonEvent,
         ],
-        t: () => "",
+        t: (() => "") as unknown as TFunction,
       });
 
-      expect(listHeaderComponents[6]).toBeDefined();
+      expect(listHeaderComponents[7]).toBeDefined();
     });
 
     it("should not generate account earn header component when we disable delegation", () => {
@@ -127,10 +128,10 @@ describe("Testing ListHeaderComponent Component", () => {
             label: {} as React.ReactNode,
           } as ActionButtonEvent,
         ],
-        t: () => "",
+        t: (() => "") as unknown as TFunction,
       });
 
-      expect(listHeaderComponents[6]).toBeUndefined();
+      expect(listHeaderComponents[7]).toBeUndefined();
     });
   });
 });

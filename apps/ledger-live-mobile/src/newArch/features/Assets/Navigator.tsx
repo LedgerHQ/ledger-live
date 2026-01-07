@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { Platform } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { ScreenName } from "~/const";
@@ -50,4 +50,4 @@ export default function Navigator() {
   );
 }
 
-const Stack = createStackNavigator<AssetsNavigatorParamsList>();
+const Stack = createNativeStackNavigator<AssetsNavigatorParamsList>();

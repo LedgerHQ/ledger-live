@@ -6,7 +6,7 @@ import { Unit } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, ValueChange } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -64,7 +64,7 @@ export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Pro
           />
         )}
         {valueChange.value === 0 ? (
-          <Text color={"palette.text.shade100"}>{"-"}</Text>
+          <Text color={"neutral.c100"}>{"-"}</Text>
         ) : (
           <FormattedVal
             unit={unit}
@@ -103,7 +103,7 @@ export function BalanceTotal({
             <FormattedVal
               inline
               animateTicker
-              color="palette.text.shade100"
+              color="neutral.c100"
               unit={unit}
               fontSize={8}
               showCode

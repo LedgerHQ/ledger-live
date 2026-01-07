@@ -1,12 +1,21 @@
-/** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 module.exports = {
-  preset: "ts-jest",
   passWithNoTests: true,
+  transform: {
+    "^.+\\.(t|j)sx?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
+  },
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
+    "!src/index.ts",
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",

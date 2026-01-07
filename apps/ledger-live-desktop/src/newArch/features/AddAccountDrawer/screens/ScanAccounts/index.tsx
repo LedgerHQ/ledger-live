@@ -1,36 +1,36 @@
 import { Box, Flex, Text } from "@ledgerhq/react-ui";
-import { AccountItem } from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/AccountItem";
 import { Account } from "@ledgerhq/types-live";
 import { LoadingOverlay } from "LLD/components/LoadingOverlay";
 import { default as React, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useTheme } from "styled-components";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { userThemeSelector } from "~/renderer/reducers/settings";
 import { ADD_ACCOUNT_FLOW_NAME, ADD_ACCOUNT_PAGE_NAME } from "../../analytics/addAccount.types";
 import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";
 import { ScrollContainer } from "../../components/ScrollContainer";
+import { FormattedAccountItem } from "../../components/FormattedAccountItem";
 import { CreatableAccountsList } from "./components/CreatableAccountsList";
 import { Footer } from "./components/Footer";
 import { ImportableAccountsList } from "./components/ImportableAccountsList";
 import { useFormatAccount } from "./useFormatAccount";
 import { useScanAccounts, type UseScanAccountsProps } from "./useScanAccounts";
+import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 interface Props extends UseScanAccountsProps {
   analyticsPropertyFlow?: string;
   onRetry?: () => void;
-  source: string;
 }
 
 const ScanAccounts = ({
   currency,
   deviceId,
-  source,
   onComplete,
   navigateToWarningScreen,
   onRetry,
 }: Props) => {
+  const source = useSelector(modularDrawerSourceSelector);
   const { colors } = useTheme();
   const currentTheme = useSelector(userThemeSelector);
   const { t } = useTranslation();
@@ -63,7 +63,7 @@ const ScanAccounts = ({
       const accountFormatted = formatAccount(account);
       return (
         <Box mb={16} key={account.id}>
-          <AccountItem
+          <FormattedAccountItem
             account={accountFormatted}
             backgroundColor={colors.opacityDefault.c05}
             rightElement={{
@@ -96,7 +96,7 @@ const ScanAccounts = ({
       {scanning ? <LoadingOverlay theme={currentTheme || "dark"} /> : null}
       <Flex marginBottom={24}>
         <Text
-          color="palette.text.shade100"
+          color="neutral.c100"
           data-testid="scan-accounts-title"
           flex={1}
           fontSize={24}
@@ -122,14 +122,21 @@ const ScanAccounts = ({
           />
         ) : null}
         {!scanning && creatableAccounts.length > 0 ? (
-          <CreatableAccountsList
-            creatableAccounts={creatableAccounts}
-            currency={currency}
-            newAccountSchemes={newAccountSchemes}
-            renderAccount={renderAccount}
-            showAllCreatedAccounts={showAllCreatedAccounts}
-            toggleShowAllCreatedAccounts={toggleShowAllCreatedAccounts}
-          />
+          <>
+            <TrackAddAccountScreen
+              page={ADD_ACCOUNT_PAGE_NAME.SELECT_ACCOUNT_TO_ADD}
+              source={source}
+              flow={ADD_ACCOUNT_FLOW_NAME}
+            />
+            <CreatableAccountsList
+              creatableAccounts={creatableAccounts}
+              currency={currency}
+              newAccountSchemes={newAccountSchemes}
+              renderAccount={renderAccount}
+              showAllCreatedAccounts={showAllCreatedAccounts}
+              toggleShowAllCreatedAccounts={toggleShowAllCreatedAccounts}
+            />
+          </>
         ) : null}
       </ScrollContainer>
       <Footer

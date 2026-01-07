@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { shallowEqual, useSelector } from "react-redux";
+import { shallowEqual } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
@@ -47,6 +48,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AnimatedContainer from "./AnimatedContainer";
 import storage from "LLM/storage";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
+import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
 import { DdRum } from "@datadog/mobile-react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
@@ -71,6 +73,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const isAccountListUIEnabled = accountListFF?.enabled;
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
+  useListenToHidDevices();
+  const isFocused = useIsFocused();
 
   const mmkvMigrationFF = useFeature("llmMmkvMigration");
 
@@ -135,10 +139,10 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const handleHeightChange = useCallback(
     (newHeight: number) => {
-      if (newHeight === 0) return;
+      if (newHeight === 0 || !isFocused) return;
       animatedHeight.value = newHeight;
     },
-    [animatedHeight],
+    [animatedHeight, isFocused],
   );
 
   const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
@@ -241,7 +245,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       <Animated.View style={{ flex: 1 }}>
         <RefreshableCollapsibleHeaderFlatList
           data={data}
-          renderItem={renderItem<JSX.Element>}
+          renderItem={renderItem<React.JSX.Element>}
           keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}

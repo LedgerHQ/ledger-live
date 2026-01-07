@@ -1,18 +1,43 @@
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account";
 import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { SolanaAccount } from "@ledgerhq/coin-solana/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 
 export const RECIPIENT = "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp";
 export const SOLANA = getCryptoCurrencyById("solana");
-export const SOLANA_USDC = getTokenById("solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v");
-export const SOLANA_CWIF = getTokenById("solana/spl/7atgf8kqo4wjrd5atgx7t1v2zvvykpjbffnevf1icfv1");
+
+export const SOLANA_USDC: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
+  contractAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  parentCurrency: SOLANA,
+  tokenType: "spl",
+  name: "USD Coin",
+  ticker: "USDC",
+  delisted: false,
+  disableCountervalue: false,
+  units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+} as TokenCurrency;
+
+export const SOLANA_CWIF: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "solana/spl/7atgf8kqo4wjrd5atgx7t1v2zvvykpjbffnevf1icfv1",
+  contractAddress: "7atgF8KQo4wJrD5ATGX7t1V2zVvykPJbFfNeVf1icFv1",
+  parentCurrency: SOLANA,
+  tokenType: "spl",
+  name: "Catwifhat",
+  ticker: "CWIF",
+  delisted: false,
+  disableCountervalue: false,
+  units: [{ name: "CWIF", code: "CWIF", magnitude: 2 }],
+} as TokenCurrency;
+
 export const SOLANA_VIRTUAL: TokenCurrency = {
   type: "TokenCurrency",
   id: "solana/spl/3iql8bfs2ve7mww4ehaqqhasbmrncrpxizwat2zfyr9y",
@@ -22,7 +47,32 @@ export const SOLANA_VIRTUAL: TokenCurrency = {
   contractAddress: "3iQL8BFS2vE7mww4ehAqQHAsbmRNCrPxizWAT2Zfyr9y",
   parentCurrency: SOLANA,
   tokenType: "spl",
+  delisted: false,
+  disableCountervalue: false,
 };
+
+setupMockCryptoAssetsStore({
+  findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
+    if (currencyId !== "solana") return undefined;
+    const normalizedAddress = address.toLowerCase();
+    if (normalizedAddress === SOLANA_USDC.contractAddress.toLowerCase()) {
+      return SOLANA_USDC;
+    }
+    if (normalizedAddress === SOLANA_CWIF.contractAddress.toLowerCase()) {
+      return SOLANA_CWIF;
+    }
+    if (normalizedAddress === SOLANA_VIRTUAL.contractAddress.toLowerCase()) {
+      return SOLANA_VIRTUAL;
+    }
+    return undefined;
+  },
+  findTokenById: async (id: string) => {
+    if (id === SOLANA_USDC.id) return SOLANA_USDC;
+    if (id === SOLANA_CWIF.id) return SOLANA_CWIF;
+    if (id === SOLANA_VIRTUAL.id) return SOLANA_VIRTUAL;
+    return undefined;
+  },
+});
 export const WITHDRAWABLE_AMOUNT = 2e9;
 
 export const makeAccount = (
@@ -206,6 +256,9 @@ export function initMSW() {
     http.get("https://earn.api.live.ledger.com/v0/network/solana/validator-details", () =>
       HttpResponse.json([]),
     ),
+    http.get("https://earn-dashboard.aws.stg.ldg-tech.com/figment/solana/validators_summary", () =>
+      HttpResponse.json([]),
+    ),
     http.get("https://crypto-assets-service.api.ledger.com/v1/tokens", ({ request }) => {
       const url = new URL(request.url);
       switch (url.searchParams.get("id")) {
@@ -252,7 +305,7 @@ export function initMSW() {
   mockServer.listen({
     onUnhandledRequest: request => {
       const hostname = new URL(request.url).hostname;
-      if (hostname === "localhost") return;
+      if (["127.0.0.1", "localhost"].includes(hostname)) return;
       throw new Error("Unhandled request");
     },
   });

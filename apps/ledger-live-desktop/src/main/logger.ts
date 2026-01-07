@@ -2,19 +2,10 @@ import { getEnv } from "@ledgerhq/live-env";
 import { Log } from "@ledgerhq/logs";
 export type { Log };
 
-// Runtime type check (type predicate) on the logs
-export function isALog(log: unknown): log is Log {
-  return (
-    (log as Log).id !== undefined &&
-    (log as Log).type !== undefined &&
-    (log as Log).date !== undefined
-  );
-}
-
 /**
  * Simple logger recording logs in memory (in the main process)
  *
- * Used to record logs coming from the internal process.
+ * Used to record logs from various processes.
  * The logs follow the structure of `Log` from `@ledgerhq/logs`
  *
  * Works as a singleton
@@ -137,7 +128,7 @@ export class ConsoleLogger {
           )}`,
         );
       }
-    } catch (_e) {
+    } catch {
       console.error("Badly formatted log");
     }
   }

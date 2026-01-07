@@ -10,8 +10,6 @@ interface DevToolControlsProps {
   setLocation: (location: LocationOption) => void;
   liveApp: LiveAppOption;
   setLiveApp: (liveApp: LiveAppOption) => void;
-  includeTokens: boolean;
-  setIncludeTokens: (includeTokens: boolean) => void;
   openModal: boolean;
   setOpenModal: (openModal: boolean) => void;
 }
@@ -21,8 +19,6 @@ export const DevToolControls: React.FC<DevToolControlsProps> = ({
   setLocation,
   liveApp,
   setLiveApp,
-  includeTokens,
-  setIncludeTokens,
   openModal,
   setOpenModal,
 }) => {
@@ -34,7 +30,7 @@ export const DevToolControls: React.FC<DevToolControlsProps> = ({
         options={LOCATIONS}
         onChange={setLocation}
       />
-      <LabeledSwitch label="Include Tokens" isChecked={includeTokens} onChange={setIncludeTokens} />
+
       {location.value === ModularDrawerLocation.ADD_ACCOUNT && (
         <LabeledSwitch
           label="Open Receive modal after adding an account?"

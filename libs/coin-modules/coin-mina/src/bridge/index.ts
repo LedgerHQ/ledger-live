@@ -19,6 +19,7 @@ import getTransactionStatus from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import buildSignOperation from "./signOperation";
 import makeCliTools from "./cli-transaction";
+import { validateAddress } from "./validateAddress";
 
 export { makeCliTools };
 
@@ -54,8 +55,12 @@ export function buildAccountBridge(
     sync,
     receive,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

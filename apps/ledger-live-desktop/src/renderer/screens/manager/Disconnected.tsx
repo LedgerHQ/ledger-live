@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { isDeviceModelId } from "@ledgerhq/devices/helpers";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
@@ -81,7 +81,7 @@ const Illustration = styled.div<{
   modelId: DeviceModelId;
 }>`
   // prettier-ignore
-  background: url('${p => illustrations[p.modelId][p.theme.colors.palette.type || "light"]}')
+  background: url('${p => illustrations[p.modelId][p.theme.theme || "light"]}')
     no-repeat top right;
   width: ${p => illustrations[p.modelId].width}px;
   height: ${p => illustrations[p.modelId].height}px;

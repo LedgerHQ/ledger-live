@@ -1,5 +1,6 @@
 /* eslint-disable consistent-return */
 import { Middleware } from "@reduxjs/toolkit";
+import throttle from "lodash/throttle";
 import { setKey } from "~/renderer/storage";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { actionTypePrefix as postOnboardingActionTypePrefix } from "@ledgerhq/live-common/postOnboarding/actions";
@@ -17,8 +18,10 @@ import {
   trustchainStoreActionTypePrefix,
   trustchainStoreSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { extractPersistedCALFromState } from "@ledgerhq/cryptoassets/cal-client/persistence";
 
 import { marketStoreSelector } from "../reducers/market";
+import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
 
 let DB_MIDDLEWARE_ENABLED = true;
 
@@ -39,7 +42,19 @@ function accountsExportSelector(state: State) {
   return all;
 }
 
-const DBMiddleware: Middleware<{}, State> = store => next => action => {
+// Throttled save for crypto assets cache (save at most once per 5 seconds)
+const saveCryptoAssetsCache = throttle((state: State) => {
+  try {
+    const persistedData = extractPersistedCALFromState(state);
+    if (persistedData.tokens.length > 0) {
+      setKey("app", "cryptoAssets", persistedData);
+    }
+  } catch (error) {
+    console.error("Failed to save crypto assets cache:", error);
+  }
+}, 5000);
+
+const DBMiddleware: Middleware<object, State> = store => next => action => {
   if (!isActionWithType(action)) {
     return next(action);
   }
@@ -65,6 +80,12 @@ const DBMiddleware: Middleware<{}, State> = store => next => action => {
     next(action);
     const state = store.getState();
     setKey("app", "market", marketStoreSelector(state));
+  } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("cryptoAssetsApi/")) {
+    // Handle RTK Query crypto assets actions (throttled save)
+    const res = next(action);
+    const state = store.getState();
+    saveCryptoAssetsCache(state);
+    return res;
   } else {
     const oldState = store.getState();
     const res = next(action);
@@ -78,6 +99,12 @@ const DBMiddleware: Middleware<{}, State> = store => next => action => {
 
     if (walletStateExportShouldDiffer(oldState.wallet, newState.wallet)) {
       setKey("app", "wallet", exportWalletState(newState.wallet));
+    }
+
+    // Save identities if state changed
+    if (oldState.identities !== newState.identities) {
+      const persisted = exportIdentitiesForPersistence(newState.identities);
+      setKey("app", "identities", persisted);
     }
     return res;
   }

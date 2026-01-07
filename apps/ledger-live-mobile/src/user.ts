@@ -7,6 +7,7 @@ let user: MaybeUser;
 async function updateUser() {
   user = {
     id: uuid(),
+    datadogId: uuid(),
   };
   await _updateUser(user);
   return {
@@ -15,7 +16,7 @@ async function updateUser() {
   };
 }
 
-export default async () => {
+const getOrCreateUser = async () => {
   if (!user) {
     user = await getUser();
   }
@@ -23,6 +24,7 @@ export default async () => {
   if (!user) {
     user = {
       id: uuid(),
+      datadogId: uuid(),
     };
     await setUser(user);
     return {
@@ -31,9 +33,20 @@ export default async () => {
     };
   }
 
+  // Migration: if existing user doesn't have datadogId, generate one
+  if (!user.datadogId) {
+    user = {
+      ...user,
+      datadogId: uuid(),
+    };
+    await _updateUser(user);
+  }
+
   return {
     user,
     created: false,
   };
 };
-export { updateUser };
+
+export default getOrCreateUser;
+export { updateUser, getOrCreateUser };

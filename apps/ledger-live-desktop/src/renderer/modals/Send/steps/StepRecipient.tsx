@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Trans } from "react-i18next";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getRecentAddressesStore } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -9,15 +9,13 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Label from "~/renderer/components/Label";
 import SelectAccount from "~/renderer/components/SelectAccount";
-import SelectNFT from "~/renderer/screens/nft/Send/SelectNFT";
 import SendRecipientFields, { getFields } from "../SendRecipientFields";
 import RecipientField from "../fields/RecipientField";
 import { StepProps } from "../types";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
-import { Account } from "@ledgerhq/types-live";
 import EditOperationPanel from "~/renderer/components/OperationsList/EditOperationPanel";
 import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setMemoTagInfoBoxDisplay } from "~/renderer/actions/UI";
 import {
   forceAutoFocusOnMemoFieldSelector,
@@ -38,6 +36,8 @@ import Alert from "~/renderer/components/Alert";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
+import { Account } from "@ledgerhq/types-live";
 
 const openSplTokenExtensionsArticle = () => openURL(urls.solana.splTokenExtensions);
 
@@ -53,15 +53,20 @@ const StepRecipient = ({
   status,
   maybeRecipient,
   onResetMaybeRecipient,
-  maybeNFTId,
   currencyName,
-  isNFTSend,
-  onChangeNFT,
-  maybeNFTCollection,
 }: StepProps) => {
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);
   const forceAutoFocusOnMemoField = useSelector(forceAutoFocusOnMemoFieldSelector);
   const lldMemoTag = useFeature("lldMemoTag");
+  const { isEnabledForFamily } = useNewSendFlowFeature();
+
+  const accountFilter = useMemo(
+    () => (acc: Account) => {
+      const family = acc.currency.family;
+      return !isEnabledForFamily(family);
+    },
+    [isEnabledForFamily],
+  );
 
   if (!status || !account) return null;
 
@@ -73,12 +78,7 @@ const StepRecipient = ({
 
   return (
     <Box flow={4}>
-      <TrackPage
-        category="Send Flow"
-        name="Step Recipient"
-        currencyName={currencyName}
-        isNFTSend={isNFTSend}
-      />
+      <TrackPage category="Send Flow" name="Step Recipient" currencyName={currencyName} />
       {isMemoTagBoxVisibile && lldMemoTag?.enabled ? (
         <MemoTagSendInfo />
       ) : (
@@ -90,31 +90,20 @@ const StepRecipient = ({
               <ErrorBanner dataTestId="sender-error" error={status.errors.sender} />
             </div>
           ) : null}
-          {isNFTSend ? (
-            <Box flow={1}>
-              <Label>{t("send.steps.recipient.nftRecipient")}</Label>
-              {account && (
-                <SelectNFT
-                  onSelect={onChangeNFT}
-                  maybeNFTId={maybeNFTId}
-                  maybeNFTCollection={maybeNFTCollection}
-                  account={account as Account}
-                />
-              )}
-            </Box>
-          ) : (
-            <Box flow={1}>
-              <Label>{t("send.steps.details.selectAccountDebit")}</Label>
-              <SelectAccount
-                id="account-debit-placeholder"
-                withSubAccounts
-                enforceHideEmptySubAccounts
-                autoFocus={!openedFromAccount && !forceAutoFocusOnMemoField}
-                onChange={onChangeAccount}
-                value={account}
-              />
-            </Box>
-          )}
+
+          <Box flow={1}>
+            <Label>{t("send.steps.details.selectAccountDebit")}</Label>
+            <SelectAccount
+              id="account-debit-placeholder"
+              withSubAccounts
+              enforceHideEmptySubAccounts
+              autoFocus={!openedFromAccount && !forceAutoFocusOnMemoField}
+              onChange={onChangeAccount}
+              value={account}
+              filter={accountFilter}
+            />
+          </Box>
+
           {extensions && hasProblematicExtension(extensions) ? (
             <Alert data-testid="spl-2022-problematic-extension" type="warning" small={true}>
               <Trans i18nKey="send.steps.details.splExtensionsWarning">
@@ -165,7 +154,6 @@ export const StepRecipientFooter = ({
   status,
   bridgePending,
   transitionTo,
-  shouldSkipAmount,
   transaction,
 }: StepProps) => {
   const dispatch = useDispatch();
@@ -189,25 +177,29 @@ export const StepRecipientFooter = ({
   const alwaysShowMemoTagInfo = useSelector(alwaysShowMemoTagInfoSelector);
 
   const handleOnNext = async () => {
-    const memoTagValue = getMemoTagValueByTransactionFamily(transaction as Transaction);
+    if (mainAccount && transaction) {
+      const store = getRecentAddressesStore();
+      const ensName = transaction.recipientDomain?.domain;
+      store.addAddress(mainAccount.currency.id, transaction.recipient, ensName);
+    }
     if (
+      transaction &&
       lldMemoTag?.enabled &&
-      !memoTagValue &&
-      MEMO_TAG_COINS.includes(transaction?.family as string) &&
+      typeof transaction.family === "string" &&
+      MEMO_TAG_COINS.includes(transaction.family) &&
       alwaysShowMemoTagInfo
     ) {
-      dispatch(
-        setMemoTagInfoBoxDisplay({
-          isMemoTagBoxVisible: true,
-        }),
-      );
-      return;
+      const memoTagValue = getMemoTagValueByTransactionFamily(transaction);
+      if (!memoTagValue) {
+        dispatch(
+          setMemoTagInfoBoxDisplay({
+            isMemoTagBoxVisible: true,
+          }),
+        );
+        return;
+      }
     }
-    if (shouldSkipAmount) {
-      transitionTo("summary");
-    } else {
-      transitionTo("amount");
-    }
+    transitionTo("amount");
   };
 
   const handleOnRefuseAddTag = () => {

@@ -1,39 +1,33 @@
-import React from "react";
-import { Trans } from "react-i18next";
-import { compose } from "redux";
-import { connect } from "react-redux";
+import React, { memo, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { setHideEmptyTokenAccounts } from "~/actions/settings";
-import withEnv from "~/logic/withEnv";
+import { hideEmptyTokenAccountsEnabledSelector } from "~/reducers/settings";
 
-type Props = {
-  hideEmptyTokenAccountsEnabled: boolean;
-  setHideEmptyTokenAccounts: (_: boolean) => void;
-};
+function HideEmptyTokenAccountsRow() {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
 
-const mapDispatchToProps = {
-  setHideEmptyTokenAccounts,
-};
+  const hideEmptyTokenAccountsEnabled = useSelector(hideEmptyTokenAccountsEnabledSelector);
 
-function HideEmptyTokenAccountsRow({
-  hideEmptyTokenAccountsEnabled,
-  setHideEmptyTokenAccounts,
-  ...props
-}: Props) {
+  const onChange = useCallback(
+    (enabled: boolean) => {
+      dispatch(setHideEmptyTokenAccounts(enabled));
+    },
+    [dispatch],
+  );
+
   return (
     <SettingsRow
-      {...props}
       event="HideEmptyTokenAccountsRow"
-      title={<Trans i18nKey="settings.display.hideEmptyTokenAccounts" />}
-      desc={<Trans i18nKey="settings.display.hideEmptyTokenAccountsDesc" />}
+      title={t("settings.display.hideEmptyTokenAccounts")}
+      desc={t("settings.display.hideEmptyTokenAccountsDesc")}
     >
-      <Switch checked={hideEmptyTokenAccountsEnabled} onChange={setHideEmptyTokenAccounts} />
+      <Switch checked={hideEmptyTokenAccountsEnabled} onChange={onChange} />
     </SettingsRow>
   );
 }
 
-export default compose<React.ComponentType<Record<string, unknown>>>(
-  withEnv("HIDE_EMPTY_TOKEN_ACCOUNTS", "hideEmptyTokenAccountsEnabled"),
-  connect(null, mapDispatchToProps),
-)(HideEmptyTokenAccountsRow);
+export default memo(HideEmptyTokenAccountsRow);

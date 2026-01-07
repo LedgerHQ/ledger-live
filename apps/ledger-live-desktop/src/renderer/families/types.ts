@@ -14,7 +14,6 @@ import {
   Account,
   AnyMessage,
   FeeStrategy,
-  NFTStandard,
   Operation,
   OperationType,
   TokenAccount,
@@ -319,6 +318,17 @@ export type LLDCoinFamily<
   StepReceiveAccountCustomAlert?: React.ComponentType<ReceiveStepProps & { account: AccountLike }>;
 
   /**
+   * Configuration for receive tokens mode using cal-client
+   * When present, the receive flow will use useTokensData hook instead of listTokensForCryptoCurrency
+   */
+  receiveTokensConfig?: {
+    /**
+     * The network family to pass to useTokensData hook (e.g. "hedera")
+     */
+    networkFamily: string;
+  };
+
+  /**
    * Change Receive funds with this component (example: Hedera)
    */
   StepReceiveFunds?: React.ComponentType<ReceiveStepProps>;
@@ -361,21 +371,20 @@ export type LLDCoinFamily<
   }>;
 
   /**
+   * Component to display pending transfer proposals
+   */
+  PendingTransferProposals?: React.ComponentType<{
+    account: A;
+    parentAccount: A;
+  }>;
+
+  /**
    * Customize the way the explorer URL to a transaction is built
    */
   getTransactionExplorer?: (
     explorerView: ExplorerView | null | undefined,
     operation: Operation,
   ) => string | null | undefined;
-
-  nft?: {
-    injectNftIntoTransaction: (
-      transaction: T,
-      nftProperties: Partial<NftProperties>,
-      standard?: NFTStandard,
-    ) => T;
-    getNftTransactionProperties: (transaction: T) => NftProperties;
-  };
 
   message?: {
     getMessageProperties: (message: AnyMessage) => Promise<MessageProperties | null>;
@@ -410,10 +419,4 @@ export type ManageAction = {
   disabled?: boolean;
   tooltip?: string;
   accountActionsTestId?: string;
-};
-
-export type NftProperties = {
-  tokenId: string | null;
-  contract: string | null;
-  quantity: BigNumber | null;
 };

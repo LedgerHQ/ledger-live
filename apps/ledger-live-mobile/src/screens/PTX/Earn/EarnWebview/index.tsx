@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 
 import { useEarnCustomHandlers } from "./useEarnWebviewCustomHandlers";
+import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
@@ -22,6 +23,7 @@ import {
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { track } from "~/analytics";
 import { ScreenName } from "~/const/navigation";
+import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 
 export enum MobileViewState {
   AmountInputScreen = "amount",
@@ -111,7 +113,14 @@ export const EarnWebview = ({ manifest, inputs }: Props) => {
   }, [webviewState.canGoBack, navigation, webviewState.url]);
 
   const accounts = useSelector(flattenAccountsSelector);
-  const customHandlers = useEarnCustomHandlers(manifest, accounts);
+  const customEarnHandlers = useEarnCustomHandlers(manifest, accounts);
+  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+  const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
+    return {
+      ...customEarnHandlers,
+      ...customDeeplinkHandlers,
+    };
+  }, [customEarnHandlers, customDeeplinkHandlers]);
 
   return (
     <SafeAreaView style={[styles.root]}>

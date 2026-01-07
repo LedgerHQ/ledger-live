@@ -7,3 +7,5 @@ export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
+export { validateIntent } from "./validateIntent";
+export { getStakes } from "./getStakes";

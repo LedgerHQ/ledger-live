@@ -1,20 +1,19 @@
 import React, { useCallback, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateSuccess from "~/components/ValidateSuccess";
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
-
 import {
   StackNavigatorNavigation,
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
+import Config from "react-native-config";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendValidationSuccess>,
@@ -23,7 +22,7 @@ type Props = CompositeScreenProps<
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   const currency = account ? getAccountCurrency(account) : null;
   useEffect(() => {
@@ -50,22 +49,17 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     });
   }, [account, route.params?.result, navigation, parentAccount]);
   return (
-    <View
-      style={[
-        styles.root,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
+    <SafeAreaViewFixed
+      isFlex
+      edges={["left", "right", "bottom"]}
+      useDetoxInsets={Config.DETOX === "1"}
+      style={{
+        backgroundColor: colors.background,
+      }}
     >
       <TrackScreen category="SendFunds" name="ValidationSuccess" currencyName={currency?.name} />
       <PreventNativeBack />
       <ValidateSuccess onClose={onClose} onViewDetails={goToOperationDetails} />
-    </View>
+    </SafeAreaViewFixed>
   );
 }
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-});

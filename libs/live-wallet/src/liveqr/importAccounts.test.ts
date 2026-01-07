@@ -1,170 +1,433 @@
-import type { AccountRaw } from "@ledgerhq/types-live";
-import {
-  SyncNewAccountsOutput,
-  importAccountsMakeItems,
-  importAccountsReduce,
-} from "./importAccounts";
-import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
-import { AccountData, accountDataToAccount } from "./cross";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import {
+  importAccountsReduce,
+  type ImportItem,
+  type ImportAccountsReduceInput,
+  type SyncNewAccountsOutput,
+} from "./importAccounts";
 
-setSupportedCurrencies(["ethereum"]);
-describe("importAccountsMakeItems", () => {
-  test("importing ethereum accounts", () => {
-    const resultAccounts: AccountData[] = [
-      {
-        id: "js:1:ethereum:0x01:",
-        name: "Ethereum 1",
-        seedIdentifier: "seed",
-        derivationMode: "",
-        freshAddress: "0x01",
-        currencyId: "ethereum",
-        index: 0,
-        balance: "51281813126095913",
-      },
-      {
-        id: "js:1:ethereum:0x02:",
-        name: "Ethereum 2",
-        seedIdentifier: "seed",
-        derivationMode: "",
-        freshAddress: "0x02",
-        currencyId: "ethereum",
-        index: 1,
-        balance: "1081392000000000",
-      },
-      {
-        id: "js:1:ethereum:0x04:",
-        name: "Ethereum 4",
-        seedIdentifier: "seed",
-        derivationMode: "",
-        freshAddress: "0x04",
-        currencyId: "ethereum",
-        index: 3,
-        balance: "1000000000000000",
-      },
-      {
-        id: "js:1:ethereum:0x03:",
-        name: "ETH3 name edited",
-        seedIdentifier: "seed",
-        derivationMode: "",
-        freshAddress: "0x03",
-        currencyId: "ethereum",
-        index: 2,
-        balance: "0",
-      },
-      {
-        id: "js:1:ethereum:0x05:",
-        name: "Ethereum 5",
-        seedIdentifier: "seed",
-        derivationMode: "",
-        freshAddress: "0x05",
-        currencyId: "ethereum",
-        index: 4,
-        balance: "0",
-      },
-    ];
-    const result = {
-      meta: {
-        exporterName: "desktop",
-        exporterVersion: "1.12.0",
-      },
-      accounts: resultAccounts,
-      settings: {
-        counterValue: "USD",
-        currenciesSettings: {},
-        pairExchanges: {},
-        developerModeEnabled: false,
-      },
-    };
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    setCryptoAssetsStore({} as CryptoAssetsStore);
-    const accounts = [
-      <AccountRaw>{
-        id: "js:1:ethereum:0x01:",
-        seedIdentifier: "0x01",
-        name: "Ethereum 1",
-        derivationMode: "",
-        index: 0,
-        freshAddress: "0x01",
-        freshAddressPath: "44'/60'/0'/0/0",
-        freshAddresses: [],
-        blockHeight: 8168983,
-        operations: [],
-        pendingOperations: [],
-        currencyId: "ethereum",
-        lastSyncDate: "2019-07-17T15:13:30.318Z",
-        balance: "51281813126095910",
-      },
-      <AccountRaw>{
-        id: "js:1:ethereum:0x02:",
-        seedIdentifier: "0x02",
-        name: "Ethereum 2",
-        derivationMode: "",
-        index: 1,
-        freshAddress: "0x02",
-        freshAddressPath: "44'/60'/1'/0/0",
-        freshAddresses: [],
-        blockHeight: 8168983,
-        operations: [],
-        pendingOperations: [],
-        currencyId: "ethereum",
-        lastSyncDate: "2019-07-17T15:13:29.306Z",
-        balance: "1081392000000000",
-      },
-      <AccountRaw>{
-        id: "js:1:ethereum:0x03:",
-        seedIdentifier: "seed",
-        name: "Ethereum 3",
-        derivationMode: "",
-        index: 2,
-        freshAddress: "0x03",
-        freshAddressPath: "44'/60'/2'/0/0",
-        freshAddresses: [],
-        blockHeight: 8168983,
-        operations: [],
-        pendingOperations: [],
-        currencyId: "ethereum",
-        lastSyncDate: "2019-07-17T15:13:29.306Z",
-        balance: "1081392000000000",
-      },
-    ].map(a => fromAccountRaw(a));
+setupMockCryptoAssetsStore({
+  getTokensSyncHash: async () => "0",
+});
 
-    const { items, accountNames } = importAccountsMakeItems({
-      result,
-      accounts,
+// Mock account factory using fromAccountRaw for proper Account structure
+const createMockAccount = async (
+  id: string,
+  name: string,
+  currencyId: string = "ethereum",
+  balance: string = "1000000000000000000",
+): Promise<Account> => {
+  const accountRaw: AccountRaw = {
+    id,
+    seedIdentifier: "seed",
+    name,
+    derivationMode: "",
+    index: 0,
+    freshAddress: `0x${id.slice(-2)}`,
+    freshAddressPath: "44'/60'/0'/0/0",
+    blockHeight: 0,
+    operations: [],
+    pendingOperations: [],
+    currencyId,
+    lastSyncDate: new Date().toISOString(),
+    balance,
+    spendableBalance: balance,
+    used: true,
+    creationDate: new Date().toISOString(),
+  };
+
+  return await fromAccountRaw(accountRaw);
+};
+
+describe("importAccountsReduce", () => {
+  let existingAccount1: Account;
+  let existingAccount2: Account;
+  let existingAccounts: Account[];
+  let newAccount1: Account;
+  let newAccount2: Account;
+  let updatedAccount1: Account;
+
+  beforeAll(async () => {
+    existingAccount1 = await createMockAccount("js:1:ethereum:0x01:", "Existing Account 1");
+    existingAccount2 = await createMockAccount("js:1:ethereum:0x02:", "Existing Account 2");
+    existingAccounts = [existingAccount1, existingAccount2];
+    newAccount1 = await createMockAccount("js:1:ethereum:0x03:", "New Account 1");
+    newAccount2 = await createMockAccount("js:1:ethereum:0x04:", "New Account 2");
+    updatedAccount1 = await createMockAccount("js:1:ethereum:0x01:", "Updated Account 1");
+  });
+
+  describe("create mode", () => {
+    it("should add new accounts when mode is 'create'", () => {
+      const items: ImportItem[] = [
+        {
+          initialAccountId: "js:1:ethereum:0x03:",
+          account: newAccount1,
+          mode: "create",
+        },
+        {
+          initialAccountId: "js:1:ethereum:0x04:",
+          account: newAccount2,
+          mode: "create",
+        },
+      ];
+
+      const syncResult: SyncNewAccountsOutput = {
+        synchronized: {
+          "js:1:ethereum:0x03:": newAccount1,
+          "js:1:ethereum:0x04:": newAccount2,
+        },
+        failed: {},
+      };
+
+      const input: ImportAccountsReduceInput = {
+        items,
+        selectedAccounts: ["js:1:ethereum:0x03:", "js:1:ethereum:0x04:"],
+        syncResult,
+      };
+
+      const result = importAccountsReduce(existingAccounts, input);
+
+      expect(result).toHaveLength(4);
+      expect(result).toContain(existingAccount1);
+      expect(result).toContain(existingAccount2);
+      expect(result).toContain(newAccount1);
+      expect(result).toContain(newAccount2);
     });
-    expect(items).toMatchObject([
-      {
-        initialAccountId: "js:1:ethereum:0x04:",
-        account: { id: "js:1:ethereum:0x04:" },
-        mode: "create",
-      },
-      {
-        initialAccountId: "js:1:ethereum:0x05:",
-        account: { id: "js:1:ethereum:0x05:" },
-        mode: "create",
-      },
-    ]);
-    const syncResult: SyncNewAccountsOutput = {
-      failed: {},
-      synchronized: {},
-    };
-    result.accounts.forEach(a => {
-      syncResult.synchronized[a.id] = accountDataToAccount(a)[0];
+
+    it("should not add accounts that already exist to prevent duplicates", () => {
+      const items: ImportItem[] = [
+        {
+          initialAccountId: "js:1:ethereum:0x01:",
+          account: existingAccount1,
+          mode: "create",
+        },
+      ];
+
+      const syncResult: SyncNewAccountsOutput = {
+        synchronized: {
+          "js:1:ethereum:0x01:": existingAccount1,
+        },
+        failed: {},
+      };
+
+      const input: ImportAccountsReduceInput = {
+        items,
+        selectedAccounts: ["js:1:ethereum:0x01:"],
+        syncResult,
+      };
+
+      const result = importAccountsReduce(existingAccounts, input);
+
+      expect(result).toHaveLength(2);
+      expect(result.filter(acc => acc.id === "js:1:ethereum:0x01:")).toHaveLength(1);
     });
-    const reduced = importAccountsReduce(accounts, {
-      items,
-      selectedAccounts: ["js:1:ethereum:0x03:", "js:1:ethereum:0x02:", "js:1:ethereum:0x05:"],
-      syncResult,
+
+    it("should handle account id remapping after sync", async () => {
+      const remappedAccount = await createMockAccount("js:1:ethereum:0x05:", "Remapped Account");
+
+      const items: ImportItem[] = [
+        {
+          initialAccountId: "js:1:ethereum:0x03:",
+          account: newAccount1, // original account
+          mode: "create",
+        },
+      ];
+
+      const syncResult: SyncNewAccountsOutput = {
+        synchronized: {
+          "js:1:ethereum:0x03:": remappedAccount, // account was remapped during sync
+        },
+        failed: {},
+      };
+
+      const input: ImportAccountsReduceInput = {
+        items,
+        selectedAccounts: ["js:1:ethereum:0x03:"],
+        syncResult,
+      };
+
+      const result = importAccountsReduce(existingAccounts, input);
+
+      expect(result).toHaveLength(3);
+      expect(result).toContain(remappedAccount);
+      expect(result).not.toContain(newAccount1);
     });
-    expect(accountNames.get("js:1:ethereum:0x03:")).toEqual("ETH3 name edited");
-    expect(reduced).toMatchObject([
-      { id: "js:1:ethereum:0x01:" },
-      { id: "js:1:ethereum:0x02:" },
-      { id: "js:1:ethereum:0x03:" },
-      { id: "js:1:ethereum:0x05:" },
-    ]);
+  });
+
+  describe("update mode", () => {
+    it("should update existing accounts when mode is 'update'", () => {
+      const items: ImportItem[] = [
+        {
+          initialAccountId: "js:1:ethereum:0x01:",
+          account: existingAccount1,
+          mode: "update",
+        },
+      ];
+
+      const syncResult: SyncNewAccountsOutput = {
+        synchronized: {
+          "js:1:ethereum:0x01:": updatedAccount1,
+        },
+        failed: {},
+      };
+
+      const input: ImportAccountsReduceInput = {
+        items,
+        selectedAccounts: ["js:1:ethereum:0x01:"],
+        syncResult,
+      };
+
+      const result = importAccountsReduce(existingAccounts, input);
+
+      expect(result).toHaveLength(2);
+      expect(result[0]).toBe(updatedAccount1);
+      expect(result[1]).toBe(existingAccount2);
+    });
+
+    it("should handle update when account id changed after sync", async () => {
+      const updatedAccountWithNewId = await createMockAccount(
+        "js:1:ethereum:0x99:",
+        "Updated with new ID",
+      );
+
+      const items: ImportItem[] = [
+        {
+          initialAccountId: "js:1:ethereum:0x01:",
+          account: existingAccount1,
+          mode: "update",
+        },
+      ];
+
+      const syncResult: SyncNewAccountsOutput = {
+        synchronized: {
+          "js:1:ethereum:0x01:": updatedAccountWithNewId, // account id changed during sync
+        },
+        failed: {},
+      };
+
+      const input: ImportAccountsReduceInput = {
+        items,
+        selectedAccounts: ["js:1:ethereum:0x01:"],
+        syncResult,
+      };
+
+      const result = importAccountsReduce(existingAccounts, input);
+
+      expect(result).toHaveLength(2);
+      expect(result[0]).toBe(updatedAccountWithNewId);
+      expect(result[1]).toBe(existingAccount2);
+    });
+
+    it("should not update if account is not found in existing accounts", () => {
+      const items: ImportItem[] = [
+        {
+          initialAccountId: "js:1:ethereum:0x99:", // non-existent account
+          account: newAccount1,
+          mode: "update",
+        },
+      ];
+
+      const syncResult: SyncNewAccountsOutput = {
+        synchronized: {
+          "js:1:ethereum:0x99:": newAccount1,
+        },
+        failed: {},
+      };
+
+      const input: ImportAccountsReduceInput = {
+        items,
+        selectedAccounts: ["js:1:ethereum:0x99:"],
+        syncResult,
+      };
+
+      const result = importAccountsReduce(existingAccounts, input);
+
+      expect(result).toHaveLength(2);
+      expect(result).toEqual(existingAccounts);
+    });
+  });
+
+  describe("filtering and selection", () => {
+    it("should only process selected accounts", () => {
+      const items: ImportItem[] = [
+        {
+          initialAccountId: "js:1:ethereum:0x03:",
+          account: newAccount1,
+          mode: "create",
+        },
+        {
+          initialAccountId: "js:1:ethereum:0x04:",
+          account: newAccount2,
+          mode: "create",
+        },
+      ];
+
+      const syncResult: SyncNewAccountsOutput = {
+        synchronized: {
+          "js:1:ethereum:0x03:": newAccount1,
+          "js:1:ethereum:0x04:": newAccount2,
+        },
+        failed: {},
+      };
+
+      const input: ImportAccountsReduceInput = {
+        items,
+        selectedAccounts: ["js:1:ethereum:0x03:"], // only first account selected
+        syncResult,
+      };
+
+      const result = importAccountsReduce(existingAccounts, input);
+
+      expect(result).toHaveLength(3);
+      expect(result).toContain(newAccount1);
+      expect(result).not.toContain(newAccount2);
+    });
+
+    it("should skip accounts not in syncResult.synchronized", () => {
+      const items: ImportItem[] = [
+        {
+          initialAccountId: "js:1:ethereum:0x03:",
+          account: newAccount1,
+          mode: "create",
+        },
+        {
+          initialAccountId: "js:1:ethereum:0x04:",
+          account: newAccount2,
+          mode: "create",
+        },
+      ];
+
+      const syncResult: SyncNewAccountsOutput = {
+        synchronized: {
+          "js:1:ethereum:0x03:": newAccount1,
+          // newAccount2 is missing from synchronized accounts
+        },
+        failed: {
+          "js:1:ethereum:0x04:": new Error("Sync failed"),
+        },
+      };
+
+      const input: ImportAccountsReduceInput = {
+        items,
+        selectedAccounts: ["js:1:ethereum:0x03:", "js:1:ethereum:0x04:"],
+        syncResult,
+      };
+
+      const result = importAccountsReduce(existingAccounts, input);
+
+      expect(result).toHaveLength(3);
+      expect(result).toContain(newAccount1);
+      expect(result).not.toContain(newAccount2);
+    });
+  });
+
+  describe("edge cases", () => {
+    it("should handle empty inputs", () => {
+      const input: ImportAccountsReduceInput = {
+        items: [],
+        selectedAccounts: [],
+        syncResult: { synchronized: {}, failed: {} },
+      };
+
+      const result = importAccountsReduce(existingAccounts, input);
+
+      expect(result).toEqual(existingAccounts);
+    });
+
+    it("should handle unsupported modes gracefully", () => {
+      const items: ImportItem[] = [
+        {
+          initialAccountId: "js:1:ethereum:0x03:",
+          account: newAccount1,
+          mode: "unsupported",
+        },
+      ];
+
+      const syncResult: SyncNewAccountsOutput = {
+        synchronized: {
+          "js:1:ethereum:0x03:": newAccount1,
+        },
+        failed: {},
+      };
+
+      const input: ImportAccountsReduceInput = {
+        items,
+        selectedAccounts: ["js:1:ethereum:0x03:"],
+        syncResult,
+      };
+
+      const result = importAccountsReduce(existingAccounts, input);
+
+      // Should not modify existing accounts for unsupported mode
+      expect(result).toEqual(existingAccounts);
+    });
+
+    it("should not mutate the original existingAccounts array", () => {
+      const originalAccounts = [...existingAccounts];
+
+      const items: ImportItem[] = [
+        {
+          initialAccountId: "js:1:ethereum:0x03:",
+          account: newAccount1,
+          mode: "create",
+        },
+      ];
+
+      const syncResult: SyncNewAccountsOutput = {
+        synchronized: {
+          "js:1:ethereum:0x03:": newAccount1,
+        },
+        failed: {},
+      };
+
+      const input: ImportAccountsReduceInput = {
+        items,
+        selectedAccounts: ["js:1:ethereum:0x03:"],
+        syncResult,
+      };
+
+      const result = importAccountsReduce(existingAccounts, input);
+
+      expect(existingAccounts).toEqual(originalAccounts);
+      expect(result).not.toBe(existingAccounts);
+    });
+
+    it("should handle mixed create and update operations", () => {
+      const items: ImportItem[] = [
+        {
+          initialAccountId: "js:1:ethereum:0x01:",
+          account: existingAccount1,
+          mode: "update",
+        },
+        {
+          initialAccountId: "js:1:ethereum:0x03:",
+          account: newAccount1,
+          mode: "create",
+        },
+      ];
+
+      const syncResult: SyncNewAccountsOutput = {
+        synchronized: {
+          "js:1:ethereum:0x01:": updatedAccount1,
+          "js:1:ethereum:0x03:": newAccount1,
+        },
+        failed: {},
+      };
+
+      const input: ImportAccountsReduceInput = {
+        items,
+        selectedAccounts: ["js:1:ethereum:0x01:", "js:1:ethereum:0x03:"],
+        syncResult,
+      };
+
+      const result = importAccountsReduce(existingAccounts, input);
+
+      expect(result).toHaveLength(3);
+      expect(result[0]).toBe(updatedAccount1); // updated
+      expect(result[1]).toBe(existingAccount2); // unchanged
+      expect(result[2]).toBe(newAccount1); // created
+    });
   });
 });

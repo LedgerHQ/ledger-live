@@ -9,16 +9,22 @@ import { NavigatorName, ScreenName } from "~/const";
 import { track, TrackScreen } from "~/analytics";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () => void }) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { colors } = useTheme();
 
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
+    sourceScreenName: "portfolio",
+  });
+
   const goToReceiveFunds = useCallback(() => {
     track("button_clicked", { button: "Receive" });
-    navigation.navigate(NavigatorName.ReceiveFunds);
-  }, [navigation]);
+
+    handleOpenReceiveDrawer();
+  }, [handleOpenReceiveDrawer]);
 
   const goToBuyCrypto = useCallback(() => {
     track("button_clicked", {

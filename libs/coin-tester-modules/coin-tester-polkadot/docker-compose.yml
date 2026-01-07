@@ -2,6 +2,8 @@ services:
   chopsticks:
     container_name: chopsticks
     platform: linux/x86_64
+    environment:
+      CHOPSTICKS_CONFIG: ${CHOPSTICKS_CONFIG}
     build:
       context: .
       dockerfile: chopsticks.Dockerfile

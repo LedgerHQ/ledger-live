@@ -2,55 +2,38 @@ import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
-import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
-import { OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { OnboardStatus, AuthorizeStatus } from "@ledgerhq/coin-canton/types";
 
-export type Data = {
-  currency: CryptoCurrency;
-  device: Device;
-  selectedAccounts: Account[];
-  editedNames: Record<string, string>;
-};
-
-export type OnboardingData = {
+export type OnboardingResult = {
   partyId: string;
-  address: string;
-  publicKey: string;
-  device: string;
-  accountIndex: number;
-  currency: string;
-  accountName: string;
-  transactionHash: string;
   completedAccount: Account;
 };
 
 export enum StepId {
-  AUTHORIZE,
-  ONBOARD,
-  FINISH,
+  ONBOARD = "ONBOARD",
+  AUTHORIZE = "AUTHORIZE",
+  FINISH = "FINISH",
 }
 
 export type StepProps = {
   t: TFunction;
-  accountName: string;
-  addAccountsAction: typeof addAccountsAction;
-  cantonBridge: CantonCurrencyBridge;
-  clearError: () => void;
-  closeModal: (modalName: string) => void;
+  device: Device;
   currency: CryptoCurrency;
-  device: Device | null | undefined;
-  editedNames: Record<string, string>;
+  accountName: string;
+  editedNames: { [accountId: string]: string };
+  creatableAccount: Account;
+  importableAccounts: Account[];
+  isProcessing: boolean;
+  onboardingResult: OnboardingResult | undefined;
+  onboardingStatus: OnboardStatus;
+  authorizeStatus: AuthorizeStatus;
   error: Error | null;
-  existingAccounts: Account[];
-  onAccountCreated: (account: Account) => void;
-  onboardingCompleted?: boolean;
-  onboardingData?: OnboardingData | null;
-  onboardingStatus?: OnboardStatus;
-  selectedAccounts: Account[];
-  setError: (error: Error | null) => void;
-  setOnboardingCompleted?: (completed: boolean) => void;
-  setOnboardingData?: (data: OnboardingData) => void;
-  setOnboardingStatus?: (status: OnboardStatus) => void;
+  isReonboarding?: boolean;
+  onAddAccounts: (accounts: Account[]) => void;
+  onAddMore: () => void;
+  onAuthorizePreapproval: () => void;
+  onOnboardAccount: () => void;
+  onRetryOnboardAccount: () => void;
+  onRetryPreapproval: () => void;
   transitionTo: (stepId: StepId) => void;
 };

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/cryptoassets",
-  "version": "13.27.0",
+  "version": "13.35.1",
   "description": "Ledger crypto-assets list",
   "keywords": [
     "Ledger"
@@ -25,7 +25,6 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
@@ -36,20 +35,29 @@
   },
   "dependencies": {
     "@ledgerhq/live-env": "workspace:^",
-    "axios": "1.11.0",
-    "bs58check": "^2.1.2",
-    "invariant": "2"
+    "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@reduxjs/toolkit": "catalog:",
+    "invariant": "2",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
-    "@types/bs58check": "^2.1.0",
-    "@types/jest": "^29.5.10",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
-    "documentation": "14.0.2",
-    "jest": "^29.7.0",
+    "@types/react": "^18.0.0",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-redux": "catalog:",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
-    "ts-jest": "^29.1.1",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "ts-node": "^10.7.0"
   },
   "typesVersions": {
@@ -73,6 +81,18 @@
     "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
+    "./cal-client": {
+      "require": "./lib/cal-client/index.js",
+      "default": "./lib-es/cal-client/index.js"
+    },
+    "./cal-client/test-helpers": {
+      "require": "./lib/cal-client/test-helpers.js",
+      "default": "./lib-es/cal-client/test-helpers.js"
+    },
+    "./state": {
+      "require": "./lib/state.js",
+      "default": "./lib-es/state.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"

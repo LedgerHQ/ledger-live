@@ -1,7 +1,7 @@
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { useMarketDataProvider } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { setMarketRequestParams } from "~/actions/market";
 import {
   marketParamsSelector,
@@ -19,7 +19,7 @@ export function useMarket() {
   const marketParams = useSelector(marketParamsSelector);
   const marketCurrentPage = useSelector(marketCurrentPageSelector);
 
-  const refresh = useCallback(
+  const updateMarketParams = useCallback(
     (payload?: MarketListRequestParams) => {
       dispatch(setMarketRequestParams(payload ?? {}));
     },
@@ -28,7 +28,7 @@ export function useMarket() {
 
   return {
     dispatch,
-    refresh,
+    updateMarketParams,
     starredMarketCoins,
     filterByStarredCurrencies,
     marketParams,

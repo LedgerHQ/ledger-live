@@ -6,6 +6,7 @@ import { getMainAccount } from "../../../account";
 import {
   scanAccounts,
   signOperation,
+  signRawOperation,
   broadcast,
   sync,
   makeAccountBridgeReceive,
@@ -16,6 +17,11 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getGasLimit } from "@ledgerhq/coin-evm/utils";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCurrencyConfiguration } from "../../../config";
+import { EvmConfigInfo, setCoinConfig } from "@ledgerhq/coin-evm/config";
+import { validateAddress } from "../../../bridge/validateAddress";
+
 const receive = makeAccountBridgeReceive();
 const defaultGetFees = (_a, t: any) => (t.gasPrice || new BigNumber(0)).times(getGasLimit(t));
 
@@ -109,6 +115,16 @@ const prepareTransaction = async (_a, t) => {
   return typedTransaction;
 };
 
+let isConfigLoaded = false;
+const loadCoinConfig = () => {
+  if (!isConfigLoaded) {
+    setCoinConfig((currency: CryptoCurrency) => {
+      isConfigLoaded = true;
+      return { info: getCurrencyConfiguration<EvmConfigInfo>(currency) };
+    });
+  }
+};
+
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
   updateTransaction,
@@ -118,8 +134,10 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
+  signRawOperation,
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),
@@ -129,4 +147,5 @@ const currencyBridge: CurrencyBridge = {
 export default {
   currencyBridge,
   accountBridge,
+  loadCoinConfig,
 };

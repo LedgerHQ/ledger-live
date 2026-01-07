@@ -1,5 +1,5 @@
+import { decode, encode } from "ripple-binary-codec";
 import { craftTransaction } from "./craftTransaction";
-import { decode } from "ripple-binary-codec";
 jest.mock("../network", () => ({
   getLedgerIndex: () => 1,
 }));
@@ -21,22 +21,23 @@ describe("craftTransaction", () => {
     const result = await craftTransaction(account, transaction);
 
     // Then
-    expect(result).toBeDefined();
-    expect(result.xrplTransaction).toEqual({
-      TransactionType: "Payment",
-      Account: "rPDf6SQStnNmw1knCu1ei7h6BcDAEUUqn5",
-      Amount: "100000000",
-      Destination: "rJe1St1G6BWMFmdrrcT7NdD3XT1NxTMEWN",
-      DestinationTag: undefined,
-      Fee: "100",
-      Flags: 2147483648,
-      Sequence: 2,
-      LastLedgerSequence: 21,
+    expect(result).toEqual({
+      xrplTransaction: {
+        TransactionType: "Payment",
+        Account: "rPDf6SQStnNmw1knCu1ei7h6BcDAEUUqn5",
+        Amount: "100000000",
+        Destination: "rJe1St1G6BWMFmdrrcT7NdD3XT1NxTMEWN",
+        DestinationTag: undefined,
+        Fee: "100",
+        Flags: 2147483648,
+        Sequence: 2,
+        LastLedgerSequence: 21,
+      },
+      serializedTransaction: encode(result.xrplTransaction),
     });
-    expect(result.serializedTransaction).toBeDefined();
   });
 
-  it("returns a valid transaction object when pubky is provided", async () => {
+  it("returns a valid transaction object when pubkey is provided", async () => {
     // Given
     const account = {
       address: "rPDf6SQStnNmw1knCu1ei7h6BcDAEUUqn5",
@@ -55,24 +56,58 @@ describe("craftTransaction", () => {
     const result = await craftTransaction(account, transaction, pubKey);
 
     // Then
-    expect(result).toBeDefined();
-    expect(result.xrplTransaction).toEqual({
-      TransactionType: "Payment",
-      Account: "rPDf6SQStnNmw1knCu1ei7h6BcDAEUUqn5",
-      Amount: "100000000",
-      Destination: "rJe1St1G6BWMFmdrrcT7NdD3XT1NxTMEWN",
-      DestinationTag: 123,
-      Fee: "100",
-      Flags: 2147483648,
-      Sequence: 2,
-      LastLedgerSequence: 21,
-      Memos: [{ Memo: { MemoData: "01", MemoFormat: "02", MemoType: "03" } }],
+    expect(result).toEqual({
+      xrplTransaction: {
+        TransactionType: "Payment",
+        Account: "rPDf6SQStnNmw1knCu1ei7h6BcDAEUUqn5",
+        Amount: "100000000",
+        Destination: "rJe1St1G6BWMFmdrrcT7NdD3XT1NxTMEWN",
+        DestinationTag: 123,
+        Fee: "100",
+        Flags: 2147483648,
+        Sequence: 2,
+        LastLedgerSequence: 21,
+        Memos: [{ Memo: { MemoData: "01", MemoFormat: "02", MemoType: "03" } }],
+      },
+      serializedTransaction: encode({ ...result.xrplTransaction, SigningPubKey: pubKey }),
     });
-    expect(result.serializedTransaction).toBeDefined();
     const binDecodedTx = decode(result.serializedTransaction);
     expect(binDecodedTx.Memos).toEqual([
       { Memo: { MemoData: "01", MemoFormat: "02", MemoType: "03" } },
     ]);
     expect(binDecodedTx.DestinationTag).toEqual(123);
+  });
+
+  it("returns expected transaction when destinationTag is set to zero", async () => {
+    // Given
+    const account = {
+      address: "rPDf6SQStnNmw1knCu1ei7h6BcDAEUUqn5",
+      nextSequenceNumber: 2,
+    };
+    const transaction = {
+      recipient: "rJe1St1G6BWMFmdrrcT7NdD3XT1NxTMEWN",
+      amount: BigInt(100_000_000),
+      fees: BigInt(100),
+      destinationTag: 0,
+    };
+
+    // When
+    const result = await craftTransaction(account, transaction);
+
+    // Then
+    expect(result).toEqual({
+      xrplTransaction: {
+        TransactionType: "Payment",
+        Account: "rPDf6SQStnNmw1knCu1ei7h6BcDAEUUqn5",
+        Amount: "100000000",
+        Destination: "rJe1St1G6BWMFmdrrcT7NdD3XT1NxTMEWN",
+        DestinationTag: 0,
+        Fee: "100",
+        Flags: 2147483648,
+        Sequence: 2,
+        LastLedgerSequence: 21,
+      },
+      serializedTransaction: encode(result.xrplTransaction),
+    });
   });
 });

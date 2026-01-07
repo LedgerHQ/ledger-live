@@ -5,6 +5,8 @@ import { fromPromise } from "xstate";
 import { useMachine } from "@xstate/react";
 import { serviceStatusMachine } from "./machine";
 import { LEDGER_COMPONENTS } from "./ledger-components";
+import { EntryPoint } from "./entry-points";
+
 type Props = {
   children: React.ReactNode;
   autoUpdateDelay: number;
@@ -51,25 +53,42 @@ function sanitizeName(name: string): string {
  *
  * @param {Incident[]} [incidents=[]] - List of incidents to filter.
  * @param {string[]} [tickers=[]] - List of currency tickers to match against incident components.
+ * @param {EntryPoint} [entryPoint] - Entry point where the incidents are displayed (specifically for Ledger components)
  * @returns {Incident[]} The list of incidents relevant to the provided tickers or Ledger components.
  */
 
 export function filterServiceStatusIncidents(
   incidents: Incident[] = [],
   tickers: string[] = [],
+  entryPoint?: EntryPoint,
 ): Incident[] {
-  if (!tickers.length || !incidents.length) return [];
+  if (!incidents.length) return [];
+  if (!tickers.length) return [];
 
-  const tickerRegex = new RegExp(`\\b(${tickers.map(escapeRegExp).join("|")})\\b`, "i");
+  const tickerRegex = tickers.length
+    ? new RegExp(`\\b(${tickers.map(escapeRegExp).join("|")})\\b`, "i")
+    : null;
 
   const ledgerComponentsSet = new Set(LEDGER_COMPONENTS.map(component => sanitizeName(component)));
 
   return incidents.filter(({ components }) => {
+    // Keep global incidents with no components
     if (!components?.length) return true;
 
     return components.some(({ name }) => {
       const sanitizedName = sanitizeName(name);
-      return ledgerComponentsSet.has(sanitizedName) || tickerRegex.test(sanitizedName);
+
+      // Show Ledger components only for Notification Center
+      if (entryPoint === "notifications" && ledgerComponentsSet.has(sanitizedName)) {
+        return true;
+      }
+
+      // Show coin/ticker-specific components for flows
+      if (tickerRegex && tickerRegex.test(sanitizedName)) {
+        return true;
+      }
+
+      return false;
     });
   });
 }
@@ -78,10 +97,13 @@ export function filterServiceStatusIncidents(
 export function useFilteredServiceStatus(filters?: ServiceStatusUserSettings): StatusContextType {
   const stateData = useContext(ServiceStatusContext);
   const { incidents, context } = stateData;
-
   const filteredIncidents = useMemo(() => {
-    return filterServiceStatusIncidents(incidents, filters?.tickers || context?.tickers);
-  }, [incidents, context, filters?.tickers]);
+    return filterServiceStatusIncidents(
+      incidents,
+      filters?.tickers || context?.tickers,
+      filters?.entryPoint,
+    );
+  }, [incidents, filters?.tickers, context?.tickers, filters?.entryPoint]);
 
   return { ...stateData, incidents: filteredIncidents };
 }
@@ -94,6 +116,7 @@ export const ServiceStatusProvider = ({
 }: Props): ReactElement => {
   const fetchData = useCallback(async () => {
     const serviceStatusSummary = await networkApi.fetchStatusSummary();
+
     return {
       incidents: serviceStatusSummary.incidents,
       updateTime: Date.now(),

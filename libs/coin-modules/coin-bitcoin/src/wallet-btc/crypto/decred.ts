@@ -4,7 +4,7 @@ import * as bjs from "bitcoinjs-lib";
 import bs58checkBase from "bs58check/base";
 import bs58check from "bs58check";
 import { blake256 as nobleBlake256 } from "@noble/hashes/blake1";
-import RIPEMD160 from "ripemd160";
+import { ripemd160 } from "@noble/hashes/ripemd160";
 import bs58 from "bs58";
 import BIP32 from "./bip32";
 
@@ -27,10 +27,7 @@ class Decred extends Base {
   // refer to decred spec https://devdocs.decred.org/developer-guides/addresses/
   static getAddressFromPk(publicKey: Buffer): string {
     const prefix = Buffer.from("073f", "hex");
-    const pkhash = Buffer.concat([
-      prefix,
-      new RIPEMD160().update(Decred.blake256(publicKey)).digest(),
-    ]);
+    const pkhash = Buffer.concat([prefix, Buffer.from(ripemd160(Decred.blake256(publicKey)))]);
     const checksum = Decred._blake256x2(pkhash).slice(0, 4);
     return bs58.encode(Buffer.concat([pkhash, checksum]));
   }
@@ -59,7 +56,7 @@ class Decred extends Base {
     }
     try {
       Decred.bs58check.decode(address, Decred._blake256x2);
-    } catch (error) {
+    } catch {
       return false;
     }
     return true;

@@ -108,6 +108,50 @@ describe("makeSync", () => {
 });
 
 describe("makeScanAccounts", () => {
+  it("calls postSync with initial and final account", async () => {
+    // Given
+    const addressResolver = {
+      address: "address",
+      path: "m/44'/0'/0'/0/0",
+      publicKey: "publicKey",
+    };
+    const currency = getCryptoCurrencyById("algorand");
+
+    const postSync = jest.fn((_initial, synced) => ({
+      ...synced,
+      // inject a custom field to assert transformation took place
+      blockHeight: 1234,
+    }));
+
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: () =>
+        Promise.resolve({
+          id: "acc-id", // mandatory
+          balanceHistoryCache: createEmptyHistoryCache(),
+        }),
+      getAddressFn: () => Promise.resolve(addressResolver),
+      postSync,
+    });
+
+    // When
+    const result = await firstValueFrom(
+      scanAccounts({
+        currency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {} },
+      }),
+    );
+
+    // Then
+    expect(result.account.blockHeight).toBe(1234);
+    expect(postSync).toHaveBeenCalledTimes(1);
+    const [initialArg, syncedArg] = postSync.mock.calls[0];
+    // initial account should not yet have blockHeight 1234
+    expect(initialArg.blockHeight).toBe(0);
+    // synced account is the version before postSync transformation (blockHeight still 0 there)
+    expect(syncedArg.blockHeight).toBe(0);
+  });
+
   it("returns the first account found when there is no one used previously", async () => {
     // Given
     const addressResolver = {

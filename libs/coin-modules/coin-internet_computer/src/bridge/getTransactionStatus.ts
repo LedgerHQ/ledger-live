@@ -7,7 +7,8 @@ import {
 } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { getAddress, validateAddress, validateMemo } from "./bridgeHelpers/addresses";
+import { getAddress } from "./bridgeHelpers/addresses";
+import { validateAddress, validateMemo } from "@zondax/ledger-live-icp/utils";
 import { Transaction, TransactionStatus } from "../types";
 import { InvalidMemoICP } from "../errors";
 

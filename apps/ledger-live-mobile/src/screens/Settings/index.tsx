@@ -1,5 +1,5 @@
 import React, { useRef, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { IconsLegacy, Flex } from "@ledgerhq/native-ui";
@@ -128,6 +128,7 @@ export default function Settings({
         desc={t("settings.developer.desc")}
         Icon={IconsLegacy.ToolMedium}
         onClick={() => navigation.navigate(ScreenName.DeveloperSettings)}
+        arrowRight
       />
       {debugVisible || __DEV__ ? (
         <SettingsCard

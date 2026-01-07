@@ -41,11 +41,20 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],
   );
-  if (!chosenVoteAccAddr && validators[0].validatorAddress === FIGMENT_NEAR_VALIDATOR_ADDRESS) {
+  if (
+    !chosenVoteAccAddr &&
+    validators.length &&
+    validators[0].validatorAddress === FIGMENT_NEAR_VALIDATOR_ADDRESS
+  ) {
     onChangeValidator({
       address: FIGMENT_NEAR_VALIDATOR_ADDRESS,
     });
   }
+
+  if (!validators.length) {
+    return null;
+  }
+
   return (
     <>
       {showAll && <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />}
@@ -79,7 +88,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   );
 };
 const ValidatorsFieldContainer = styled(Box)`
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 4px;
 `;
 const SeeAllButton = styled.div<{
@@ -89,7 +98,7 @@ const SeeAllButton = styled.div<{
   color: ${p => p.theme.colors.wallet};
   align-items: center;
   justify-content: center;
-  border-top: 1px solid ${p => p.theme.colors.palette.divider};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c40};
   height: 40px;
   cursor: pointer;
 

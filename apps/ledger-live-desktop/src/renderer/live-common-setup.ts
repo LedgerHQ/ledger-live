@@ -10,22 +10,14 @@ import { retry } from "@ledgerhq/live-common/promise";
 import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
 import { getUserId } from "~/helpers/user";
 import { setEnvOnAllThreads } from "./../helpers/env";
-import { IPCTransport } from "./IPCTransport";
 import logger from "./logger";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
-import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { overriddenFeatureFlagsSelector } from "~/renderer/reducers/settings";
 import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
-
-const isDeviceManagementKitEnabled = (store: Store) => {
-  const state = store.getState();
-  const localOverrides = overriddenFeatureFlagsSelector(state);
-  return getFeature({ key: "ldmkTransport", localOverrides })?.enabled;
-};
+import IPCTransport from "./IPCTransport";
 
 enum RendererTransportModule {
   DeviceManagementKit,
-  IPC,
+  IPC, // For Speculos and HTTP proxy via internal process
   Vault,
 }
 
@@ -39,7 +31,7 @@ enum RendererTransportModule {
  * This logic allows all transports to be registered at initialization time,
  * and then depending on a set of conditions, the right transport will be used.
  */
-export function registerTransportModules(store: Store) {
+export function registerTransportModules(_store: Store) {
   setEnvOnAllThreads("USER_ID", getUserId());
   const vaultTransportPrefixID = "vault-transport:";
 
@@ -50,10 +42,10 @@ export function registerTransportModules(store: Store) {
 
   function whichTransportModuleToUse(deviceId: string): RendererTransportModule {
     if (deviceId.startsWith(vaultTransportPrefixID)) return RendererTransportModule.Vault;
-    if (getEnv("SPECULOS_API_PORT")) return RendererTransportModule.IPC;
-    if (getEnv("DEVICE_PROXY_URL")) return RendererTransportModule.IPC;
-    if (isDeviceManagementKitEnabled(store)) return RendererTransportModule.DeviceManagementKit;
-    return RendererTransportModule.IPC;
+    if (getEnv("SPECULOS_API_PORT") || getEnv("DEVICE_PROXY_URL"))
+      return RendererTransportModule.IPC;
+    // Always use DeviceManagementKit for regular USB devices (WebHID)
+    return RendererTransportModule.DeviceManagementKit;
   }
 
   /**
@@ -85,11 +77,11 @@ export function registerTransportModules(store: Store) {
 
   /**
    * IPC Transport Module.
-   * It acts as a bridge with transports registered in the internal process:
-   * Node HID as well as HTTP transports (Speculos & Proxy).
+   * Handles Speculos and HTTP proxy via internal process.
+   * Uses IPC to communicate with internal process that manages actual transports.
    */
   registerTransportModule({
-    id: "ipc",
+    id: "ipc-transport",
     open: (id: string, timeoutMs?: number, context?: TraceContext) => {
       if (whichTransportModuleToUse(id) !== RendererTransportModule.IPC) return;
 
@@ -105,8 +97,15 @@ export function registerTransportModules(store: Store) {
         },
       });
 
-      // Retries in the `renderer` process if the open failed. No retry is done in the `internal` process to avoid multiplying retries.
-      return retry(() => IPCTransport.open(id, timeoutMs, context), {
+      // Use a descriptive ID that helps the internal process choose the right transport
+      let descriptor = "ipc";
+      if (getEnv("SPECULOS_API_PORT")) {
+        descriptor = "speculos";
+      } else if (getEnv("DEVICE_PROXY_URL")) {
+        descriptor = "proxy";
+      }
+
+      return retry(() => IPCTransport.open(descriptor, timeoutMs, context), {
         interval: 500,
         maxRetry: 4,
       });

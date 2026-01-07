@@ -1,13 +1,14 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex, Icons, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { ChevronRightMedium } from "@ledgerhq/native-ui/assets/icons";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { Pressable } from "react-native";
 
 export type RenderedDevice = Device & {
   isAlreadyKnown: boolean;
+  grayedOut: boolean;
 };
 
 type Props = {
@@ -16,23 +17,26 @@ type Props = {
   onSelect: () => void;
 };
 
+const DeviceIcon = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
+  switch (deviceModelId) {
+    case DeviceModelId.stax:
+      return <Icons.Stax size="S" />;
+    case DeviceModelId.europa:
+      return <Icons.Flex size="S" />;
+    case DeviceModelId.apex:
+      return <Icons.Apex size="S" />;
+    case DeviceModelId.nanoX:
+    default:
+      return <IconsLegacy.NanoXFoldedMedium size={20} />;
+  }
+};
+
 const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props) => {
   const { t } = useTranslation();
-  const { deviceName, isAlreadyKnown } = deviceMeta;
+  const { deviceName, isAlreadyKnown, grayedOut } = deviceMeta;
+  const isAKnownDevice = isAlreadyKnown && !areKnownDevicesPairable;
 
-  const deviceIcon = useMemo(() => {
-    switch (deviceMeta.modelId) {
-      case DeviceModelId.stax:
-        return <IconsLegacy.StaxMedium size={20} />;
-      case DeviceModelId.europa:
-        return <Icons.Flex size="S" />;
-      case DeviceModelId.nanoX:
-      default:
-        return <IconsLegacy.NanoXFoldedMedium size={20} />;
-    }
-  }, [deviceMeta.modelId]);
-
-  if (isAlreadyKnown && !areKnownDevicesPairable) {
+  if (isAKnownDevice || grayedOut) {
     return (
       <Flex mb={3} opacity="0.5">
         <Flex
@@ -42,14 +46,16 @@ const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props)
           borderRadius={8}
           padding={6}
         >
-          {deviceIcon}
+          <DeviceIcon deviceModelId={deviceMeta.modelId} />
           <Flex flexDirection="column">
             <Text flex={1} ml={4} variant="large" fontWeight="semiBold">
               {deviceName}
             </Text>
-            <Text flex={1} ml={4} variant="small">
-              {t("blePairingFlow.scanning.alreadyPaired")}
-            </Text>
+            {isAKnownDevice && (
+              <Text flex={1} ml={4} variant="small">
+                {t("blePairingFlow.scanning.alreadyPaired")}
+              </Text>
+            )}
           </Flex>
         </Flex>
       </Flex>
@@ -58,7 +64,13 @@ const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props)
 
   return (
     <Flex mb={3}>
-      <TouchableOpacity onPress={onSelect} testID={`device-scanned-${deviceMeta.deviceId}`}>
+      <Pressable
+        onPress={onSelect}
+        hitSlop={16}
+        pointerEvents="box-only"
+        accessible={true}
+        testID={`device-scanned-${deviceMeta.deviceId}`}
+      >
         <Flex
           alignItems="center"
           flexDirection="row"
@@ -66,13 +78,13 @@ const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props)
           borderRadius={8}
           padding={6}
         >
-          {deviceIcon}
+          <DeviceIcon deviceModelId={deviceMeta.modelId} />
           <Text flex={1} ml={4} variant="large" fontWeight="semiBold">
             {deviceName}
           </Text>
           <ChevronRightMedium size={20} color="neutral.c70" />
         </Flex>
-      </TouchableOpacity>
+      </Pressable>
     </Flex>
   );
 };

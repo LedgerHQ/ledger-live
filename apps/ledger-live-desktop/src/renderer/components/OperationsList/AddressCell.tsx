@@ -49,7 +49,7 @@ export const SplitAddress = ({
   );
 };
 export const Address = ({ value }: { value: string }) => (
-  <SplitAddress value={value} color="palette.text.shade80" ff="Inter" fontSize={3} />
+  <SplitAddress value={value} color="neutral.c80" ff="Inter" fontSize={3} />
 );
 const Left = styled.div`
   overflow: hidden;
@@ -88,13 +88,10 @@ type Props = {
 };
 const showSender = (o: Operation) => o.senders[0];
 const showRecipient = (o: Operation) => o.recipients[0];
-const showNothing = () => null;
 const perOperationType = {
   IN: showSender,
   REVEAL: showSender,
   REWARD_PAYOUT: showSender,
-  NFT_IN: showNothing,
-  NFT_OUT: showNothing,
   _: showRecipient,
 };
 class AddressCell extends PureComponent<Props> {

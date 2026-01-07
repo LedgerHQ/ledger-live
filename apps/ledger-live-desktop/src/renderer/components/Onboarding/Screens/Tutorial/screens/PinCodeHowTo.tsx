@@ -10,7 +10,7 @@ import { OnboardingContext } from "../../../index";
 
 export function PinCodeHowTo() {
   const { colors } = useTheme();
-  const color = colors.palette.primary.c80;
+  const color = colors.primary.c80;
   const steps = [
     {
       text: <Trans i18nKey="onboarding.screens.tutorial.screens.pinCodeHowTo.setUp.title" />,

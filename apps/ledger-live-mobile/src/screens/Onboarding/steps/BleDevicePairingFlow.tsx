@@ -8,7 +8,7 @@ import { Device } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { bleDevicePairingFlowHeaderOptions } from "~/screens/BleDevicePairingFlow";
 
@@ -59,6 +59,7 @@ const OnboardingBleDevicePairingFlow: React.FC<Props> = ({ navigation, route }) 
           filterByDeviceModelId={filterByDeviceModelId}
           onPairingSuccess={onPairingSuccess}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
+          isOnboarding
         />
       </Flex>
     </SafeAreaView>

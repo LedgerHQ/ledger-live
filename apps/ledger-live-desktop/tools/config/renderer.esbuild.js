@@ -9,6 +9,7 @@ const {
 } = require("@ledgerhq/esbuild-utils");
 const { DOTENV_FILE } = require("../utils");
 const common = require("./common.esbuild");
+const postcssTailwindPlugin = require("../plugins/postcss-tailwind-plugin");
 
 module.exports = {
   ...common,
@@ -25,6 +26,7 @@ module.exports = {
     ? [".v3.tsx", ".v3.ts", ".tsx", ".ts", ".js", ".jsx", ".json"]
     : [".tsx", ".ts", ".v3.tsx", ".v3.ts", ".js", ".jsx", ".json"],
   plugins: [
+    postcssTailwindPlugin(),
     ...common.plugins,
     AliasPlugin({
       // Alias react to prevent esbuild trying to resolve them wrongly.
@@ -41,7 +43,7 @@ module.exports = {
           entryPoints: ["src/renderer/index.ts", "renderer.bundle.css"],
           htmlTemplate: "src/renderer/index.html",
           filename: "index.html",
-          title: "Ledger Live",
+          title: "Ledger Wallet",
         },
       ],
     }),

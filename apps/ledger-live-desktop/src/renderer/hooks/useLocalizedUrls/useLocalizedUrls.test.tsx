@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { combineReducers, legacy_createStore as createStore } from "redux";
 import settings from "~/renderer/reducers/settings";
 import React from "react";
-import * as redux from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Provider } from "react-redux";
 import { useLocalizedUrl } from ".";
 import { urls } from "../../../config/urls";
@@ -13,19 +13,25 @@ const store = createStore(
   }),
 );
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const mockedUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;
+
+jest.mock("LLD/hooks/redux", () => {
+  return {
+    useSelector: jest.fn(),
+  };
+});
+
 describe("useLocalizedUrl", () => {
   // Needed to wrap hook in a Redux Store
   const HookWrapper = ({ children }: { children: React.ReactNode }) => (
     <Provider store={store}>{children}</Provider>
   );
 
-  // prepare mocking useSelector
-  const spy = jest.spyOn(redux, "useSelector");
-
   let localizedUrl: ReturnType<typeof useLocalizedUrl>;
 
   const setLocaleMockWithURL = (locale: string, url: string) => {
-    spy.mockReturnValue(locale);
+    mockedUseSelector.mockReturnValue(locale);
     const { result } = renderHook(() => useLocalizedUrl(url), {
       wrapper: HookWrapper,
     });
@@ -49,7 +55,7 @@ describe("useLocalizedUrl", () => {
     expect(localizedUrl).toEqual("https://www.ledger.com/zh-hans/staking");
 
     setLocaleMockWithURL("th", urls.ledgerValidator);
-    expect(localizedUrl).toEqual("https://www.ledger.com/staking");
+    expect(localizedUrl).toEqual("https://www.ledger.com/th/staking");
 
     setLocaleMockWithURL("en", urls.ledgerValidator);
     expect(localizedUrl).toEqual("https://www.ledger.com/staking");
@@ -77,7 +83,7 @@ describe("useLocalizedUrl", () => {
     expect(localizedUrl).toEqual("https://support.ledger.com/zh-cn/article/115005165269-zd");
 
     setLocaleMockWithURL("th", urls.troubleshootingUSB);
-    expect(localizedUrl).toEqual("https://support.ledger.com/article/115005165269-zd");
+    expect(localizedUrl).toEqual("https://support.ledger.com/th/article/115005165269-zd");
   });
 
   test("SHOP", () => {
@@ -98,7 +104,7 @@ describe("useLocalizedUrl", () => {
 
     setLocaleMockWithURL("th", urls.banners.blackfriday);
     expect(localizedUrl).toEqual(
-      "https://shop.ledger.com/pages/black-friday?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=banner_carousel",
+      "https://shop.ledger.com/th/pages/black-friday?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=banner_carousel",
     );
 
     setLocaleMockWithURL("en", urls.banners.blackfriday);

@@ -14,7 +14,7 @@ import {
 } from "./logic";
 import { CARDANO_MAX_SUPPLY } from "./constants";
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   account,
   transaction,
   parentAccount,
@@ -23,7 +23,7 @@ function getDeviceTransactionConfig({
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const { mode } = transaction;
   const fields: DeviceTransactionField[] = [];
   const mainAccount = getMainAccount(account, parentAccount);

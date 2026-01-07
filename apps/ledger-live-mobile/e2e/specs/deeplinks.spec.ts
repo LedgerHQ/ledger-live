@@ -5,12 +5,16 @@ describe("DeepLinks Tests", () => {
   const ethereumLong = "ethereum";
   const bitcoinLong = "bitcoin";
   const arbitrumLong = "arbitrum";
-  const bobaLong = "boba";
 
   beforeAll(async () => {
     await app.init({
       userdata: "1AccountBTC1AccountETHReadOnlyFalse",
       knownDevices: [knownDevices.nanoX],
+      featureFlags: {
+        noah: {
+          enabled: false,
+        },
+      },
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
@@ -23,11 +27,6 @@ describe("DeepLinks Tests", () => {
   it("should open Account page", async () => {
     await app.assetAccountsPage.openViaDeeplink();
     await app.accounts.waitForAccountsPageToLoad();
-  });
-
-  it("should open Add Account drawer", async () => {
-    await app.addAccount.openViaDeeplink();
-    await app.receive.selectCurrency(bitcoinLong);
   });
 
   it("should open ETH Account Asset page when given currency param", async () => {
@@ -62,6 +61,11 @@ describe("DeepLinks Tests", () => {
     await app.swap.expectSwapPage();
   });
 
+  it("should open Market Detail page for Bitcoin", async () => {
+    await app.market.openViaDeeplink("bitcoin");
+    await app.market.expectMarketDetailPage();
+  });
+
   it("should open Send pages", async () => {
     await app.send.openViaDeeplink();
     await app.send.expectFirstStep();
@@ -72,12 +76,30 @@ describe("DeepLinks Tests", () => {
     await app.common.expectSearch(ethereumLong);
   });
 
-  it("should open Receive pages", async () => {
-    await app.receive.openViaDeeplink();
-    await app.receive.expectFirstStep();
-    await app.portfolio.openViaDeeplink();
-    await app.portfolio.waitForPortfolioPageToLoad();
-    await app.receive.receiveViaDeeplink(ethereumLong);
-    await app.receive.expectSecondStepNetworks([ethereumLong, arbitrumLong, bobaLong]);
+  it("should open Asset page for Bitcoin", async () => {
+    await app.assetAccountsPage.openAssetPageViaDeeplink(bitcoinLong);
+    await app.assetAccountsPage.expectAssetPage(bitcoinLong);
+  });
+
+  it("should open Asset page for Ethereum", async () => {
+    await app.assetAccountsPage.openAssetPageViaDeeplink(ethereumLong);
+    await app.assetAccountsPage.expectAssetPage(ethereumLong);
+  });
+
+  it("should open Receive flow", async () => {
+    await app.modularDrawer.openReceiveDeeplink();
+    await app.modularDrawer.checkSelectAssetPage();
+    await app.modularDrawer.tapDrawerCloseButton();
+
+    await app.modularDrawer.openReceiveDeeplink(ethereumLong);
+    await app.modularDrawer.selectAccount(1);
+  });
+
+  it("should open Add Account flow", async () => {
+    await app.modularDrawer.openAddAccountDeeplink();
+    await app.modularDrawer.checkSelectAssetPage();
+    await app.modularDrawer.tapDrawerCloseButton();
+    await app.modularDrawer.openAddAccountDeeplink(ethereumLong);
+    await app.modularDrawer.selectNetworkIfAsked(arbitrumLong);
   });
 });

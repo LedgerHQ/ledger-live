@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { DrawerTabSelector, Flex } from "@ledgerhq/native-ui";
 import QrCode from "LLM/features/WalletSync/components/Synchronize/QrCode";
 import ScanQrCode from "../../components/Synchronize/ScanQrCode";
@@ -10,6 +10,7 @@ import {
   AnalyticsButton,
 } from "../../hooks/useLedgerSyncAnalytics";
 import { TrackScreen } from "~/analytics";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 
 interface Props {
   setSelectedOption: (option: OptionsType) => void;
@@ -26,6 +27,32 @@ const QrCodeMethod = ({
 }: Props) => {
   const { onClickTrack } = useLedgerSyncAnalytics();
   const { t } = useTranslation();
+  const prevOption = useRef(currentOption);
+
+  const opacity = useSharedValue(1);
+  const translateX = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      opacity: opacity.value,
+      transform: [{ translateX: translateX.value }],
+    }),
+    [opacity, translateX],
+  );
+
+  useEffect(() => {
+    if (prevOption.current === currentOption) return;
+
+    const direction = currentOption === Options.SCAN ? -1 : 1;
+
+    opacity.value = 0;
+    translateX.value = direction * 20;
+
+    opacity.value = withTiming(1, { duration: 200 });
+    translateX.value = withTiming(0, { duration: 200 });
+
+    prevOption.current = currentOption;
+  }, [currentOption, opacity, translateX]);
 
   const handleSelectOption = (option: OptionsType) => {
     setSelectedOption(option);
@@ -58,7 +85,7 @@ const QrCodeMethod = ({
   };
 
   return (
-    <Flex flexDirection={"column"} alignItems={"center"} rowGap={24} width={"100%"} height={"100%"}>
+    <Flex flexDirection={"column"} alignItems={"center"} rowGap={24}>
       <DrawerTabSelector
         options={[Options.SCAN, Options.SHOW_QR]}
         selectedOption={currentOption}
@@ -68,7 +95,7 @@ const QrCodeMethod = ({
           [Options.SHOW_QR]: t("walletSync.synchronize.qrCode.show.title"),
         }}
       />
-      {renderSwitch()}
+      <Animated.View style={animatedStyle}>{renderSwitch()}</Animated.View>
     </Flex>
   );
 };

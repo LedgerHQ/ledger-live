@@ -30,10 +30,12 @@ import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
-import { CountervaluesState } from "./countervalues";
-import { ToastState } from "./toast";
-import { ModularDrawerState } from "./modularDrawer";
-import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
+import type { CountervaluesState } from "./countervalues";
+import type { ToastState } from "./toast";
+import type { ModularDrawerState } from "./modularDrawer";
+import type { LLMRTKApiState } from "~/context/rtkQueryApi";
+import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
+import { IdentitiesState } from "@ledgerhq/client-ids/store";
 
 // === ACCOUNT STATE ===
 
@@ -140,7 +142,7 @@ export type DynamicContentState = {
   categoriesCards: CategoryContentCard[];
   /** Dynamic content cards displayed in the landing page as sticky CTA */
   landingPageStickyCtaCards: LandingPageStickyCtaContentCard[];
-  /** Dynamic content cards for Ledger Live Mobile */
+  /** Dynamic content cards for Ledger Wallet Mobile */
   mobileCards: BrazeContentCard[];
   /** Check if CC are loading */
   isLoading: boolean;
@@ -225,6 +227,9 @@ export type SettingsState = {
   orderAccounts: string;
   hasCompletedCustomImageFlow: boolean;
   hasCompletedOnboarding: boolean;
+  isOnboardingFlow: boolean;
+  isOnboardingFlowReceiveSuccess: boolean;
+  isPostOnboardingFlow: boolean;
   hasInstalledAnyApp: boolean;
   readOnlyModeEnabled: boolean;
   hasOrderedNano: boolean;
@@ -242,7 +247,7 @@ export type SettingsState = {
   discreetMode: boolean;
   language: string;
   languageIsSetByUser: boolean;
-  locale: string | null | undefined;
+  locale: string;
   swap: {
     hasAcceptedIPSharing: false;
     acceptedProviders: string[];
@@ -274,7 +279,6 @@ export type SettingsState = {
   hasBeenRedirectedToPostOnboarding: boolean;
   generalTermsVersionAccepted?: string;
   depositFlow: {
-    hasClosedNetworkBanner: boolean;
     hasClosedWithdrawBanner: boolean;
   };
   userNps: number | null;
@@ -375,19 +379,20 @@ export type LargeMoverState = {
 
 // === ROOT STATE ===
 
-export type State = {
+export type State = LLMRTKApiState & {
   accounts: AccountsState;
   appstate: AppState;
-  assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
   auth: AuthState;
   ble: BleState;
   countervalues: CountervaluesState;
   dynamicContent: DynamicContentState;
   earn: EarnState;
+  identities: IdentitiesState;
   inView: InViewState;
   largeMover: LargeMoverState;
   market: MarketState;
   modularDrawer: ModularDrawerState;
+  receiveOptionsDrawer: ReceiveOptionsDrawerState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;

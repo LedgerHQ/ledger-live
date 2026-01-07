@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import gt from "semver/functions/gt";
 import { lastUsedVersionSelector } from "~/renderer/reducers/settings";
 import { saveSettings } from "~/renderer/actions/settings";

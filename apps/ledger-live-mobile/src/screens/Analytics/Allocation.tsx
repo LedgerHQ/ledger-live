@@ -9,10 +9,16 @@ import DistributionCard, { DistributionItem } from "./DistributionCard";
 import { TrackScreen } from "~/analytics";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { normalize } from "~/helpers/normalizeSize";
+import SafeAreaView from "~/components/SafeAreaView";
 
-const Container = styled(Flex).attrs({
-  paddingVertical: 20,
+type ContainerProps = {
+  flex?: number;
+  alignItems?: string;
+};
+
+const Container = styled(SafeAreaView).attrs<ContainerProps>({
   flex: 1,
+  alignItems: "center",
 })``;
 
 const AssetWrapperContainer = styled(Flex).attrs({
@@ -38,7 +44,7 @@ function Allocation() {
   );
 
   return (
-    <Container alignItems="center">
+    <Container isFlex edges={["bottom"]}>
       <Flex px={6}>
         <Flex>
           <RingChart size={size} data={distribution.list} colors={colors} />

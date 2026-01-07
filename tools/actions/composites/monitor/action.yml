@@ -13,17 +13,25 @@ inputs:
   SUBMIT_LOGS:
     description: "Whether logs should be submitted to Datadog"
     required: false
+  MONITOR_FILTER_ACCOUNT_TYPES:
+    description: "Account types to filter on"
+    required: false
+    default: "pristine,average,big"
   MONITOR_FILTER_CURRENCIES:
     description: "Currencies to filter on"
     required: false
     default: all
+  MONITOR_FILTER_ISOLATED:
+    description: "Run each currency/account combination in isolated processes"
+    required: false
+    default: false
 
 runs:
   using: "composite"
   steps:
     - uses: pnpm/action-setup@v2
       with:
-        version: 9.12.3
+        version: 10.24.0
     - uses: actions/setup-node@v4
       with:
         node-version: 22.13.1
@@ -35,11 +43,23 @@ runs:
     - name: Build dependencies
       run: pnpm build:llc
       shell: bash
+    - name: Build coin-modules-monitoring
+      run: pnpm coin:modules:monitoring build
+      shell: bash
     - name: run monitoring
       env:
         DD_API_KEY: ${{ inputs.DD_API_KEY }}
         DD_APP_KEY: ${{ inputs.DD_APP_KEY }}
         DD_DOMAIN: ${{ inputs.DD_DOMAIN }}
         SUBMIT_LOGS: ${{ inputs.SUBMIT_LOGS }}
-      run: pnpm coin:modules:monitoring start ${{ inputs.MONITOR_FILTER_CURRENCIES }}
+      run: |
+        ISOLATED_FLAG=""
+        if [ "${{ inputs.MONITOR_FILTER_ISOLATED }}" = "true" ]; then
+          ISOLATED_FLAG="--isolated"
+        fi
+
+        pnpm coin:modules:monitoring start monitor \
+        --currencies "${{ inputs.MONITOR_FILTER_CURRENCIES }}"  \
+        --account-types "${{ inputs.MONITOR_FILTER_ACCOUNT_TYPES }}" \
+        $ISOLATED_FLAG
       shell: bash

@@ -1,4 +1,3 @@
-import { getTokenById } from "@ledgerhq/cryptoassets";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -87,7 +86,16 @@ describe("swap/utils/getAccountTuplesForCurrency", () => {
   });
 
   describe("TokenCurrency", () => {
-    const aaveToken = Object.freeze(getTokenById("ethereum/erc20/aave"));
+    const aaveToken = Object.freeze({
+      type: "TokenCurrency" as const,
+      id: "ethereum/erc20/aave",
+      name: "Aave Token",
+      ticker: "AAVE",
+      units: [{ name: "Aave Token", code: "AAVE", magnitude: 18 }],
+      contractAddress: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
+      parentCurrency: getCryptoCurrencyById("ethereum"),
+      tokenType: "erc20" as const,
+    });
 
     test("returns correct parent accounts including a new subAccount when a TokenCurrency is provided", () => {
       const ethAccounts = [

@@ -17,6 +17,8 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>UIDesignRequiresCompatibility</key>
+	<true />
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
@@ -36,9 +38,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.90.0</string>
+	<string>3.98.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -48,6 +52,7 @@
 			<string>com.ledger.live</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>ledgerwallet</string>
 				<string>ledgerlive</string>
 			</array>
 		</dict>
@@ -72,11 +77,11 @@
 		<true/>
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Ledger Live needs to connect to your Ledger device to manage your crypto assets</string>
+	<string>Ledger Wallet needs to connect to your Ledger device to manage your crypto assets</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>The Ledger Live app needs access device</string>
+	<string>The Ledger Wallet app needs access device</string>
 	<key>NSCameraUsageDescription</key>
-	<string>The Ledger Live app needs access to your camera to scan QR codes</string>
+	<string>The Ledger Wallet app needs access to your camera to scan QR codes</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>This app requires Face ID permission to authenticate using Face recognition.</string>
 	<key>NSMicrophoneUsageDescription</key>
@@ -85,32 +90,9 @@
 	<string>Allow $(PRODUCT_NAME) to access your photos</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>MuseoSans-Bold.otf</string>
-		<string>MuseoSans-Regular.otf</string>
-		<string>MuseoSans-SemiBold.otf</string>
-		<string>OpenSans-Bold.ttf</string>
-		<string>OpenSans-Regular.ttf</string>
-		<string>OpenSans-SemiBold.ttf</string>
-		<string>Rubik-Regular.ttf</string>
-		<string>AntDesign.ttf</string>
-		<string>Entypo.ttf</string>
-		<string>EvilIcons.ttf</string>
-		<string>Feather.ttf</string>
-		<string>FontAwesome.ttf</string>
-		<string>FontAwesome5_Brands.ttf</string>
-		<string>FontAwesome5_Regular.ttf</string>
-		<string>FontAwesome5_Solid.ttf</string>
-		<string>Foundation.ttf</string>
-		<string>Ionicons.ttf</string>
-		<string>MaterialCommunityIcons.ttf</string>
-		<string>MaterialIcons.ttf</string>
-		<string>Octicons.ttf</string>
-		<string>SimpleLineIcons.ttf</string>
-		<string>Zocial.ttf</string>
 		<string>Inter-Bold.otf</string>
 		<string>Inter-Regular.otf</string>
 		<string>Inter-SemiBold.otf</string>
-		<string>Fontisto.ttf</string>
 		<string>FontAwesome5_Pro_Brands.ttf</string>
 		<string>FontAwesome5_Pro_Light.ttf</string>
 		<string>FontAwesome5_Pro_Regular.ttf</string>

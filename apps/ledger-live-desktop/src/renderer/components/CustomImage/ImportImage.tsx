@@ -1,13 +1,12 @@
 import React, { useCallback } from "react";
-import { IconsLegacy } from "@ledgerhq/react-ui";
+import { Button, Icons } from "@ledgerhq/react-ui";
+import { useTranslation } from "react-i18next";
+import styled from "styled-components";
 import {
   ImageIncorrectFileTypeError,
   ImageLoadFromFileError,
 } from "@ledgerhq/live-common/customImage/errors";
 import { ImageBase64Data } from "./types";
-import styled from "styled-components";
-import ImportButton from "./ImportButton";
-import { useTranslation } from "react-i18next";
 
 type Props = {
   onResult: (res: ImageBase64Data) => void;
@@ -61,7 +60,7 @@ const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError, onClick }
             onResult({ imageBase64DataUri: reader.result });
         };
         reader.readAsDataURL(file);
-      } catch (e) {
+      } catch {
         onError(new ImageLoadFromFileError());
       }
       return () => {
@@ -82,14 +81,19 @@ const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError, onClick }
     [handleFile],
   );
   return (
-    <ImportButton
-      text={t("customImage.steps.choose.upload")}
-      Icon={IconsLegacy.UploadMedium}
+    <Button
+      variant="main"
+      size="medium"
+      iconPosition="left"
+      width="fit-content"
+      alignSelf="center"
+      Icon={<Icons.UploadCenterArrow size="S" />}
       data-testid="custom-image-import-image-button"
       onClick={onClick}
     >
+      {t("customImage.steps.choose.upload")}
       <ImageInput onChange={onChange} data-testid="custom-image-import-image-input" />
-    </ImportButton>
+    </Button>
   );
 };
 

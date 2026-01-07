@@ -1,5 +1,5 @@
 import { getOnboardingStatePolling } from "./getOnboardingStatePolling";
-import { from, Subscription, TimeoutError } from "rxjs";
+import { from, of, Subscription, TimeoutError } from "rxjs";
 import * as rxjsOperators from "rxjs/operators";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
@@ -14,7 +14,13 @@ import { getVersion } from "../device/use-cases/getVersionUseCase";
 import { extractOnboardingState, OnboardingState, OnboardingStep } from "./extractOnboardingState";
 import { SeedPhraseType } from "@ledgerhq/types-live";
 import { DeviceDisconnectedWhileSendingError } from "@ledgerhq/device-management-kit";
+import { quitApp } from "../deviceSDK/commands/quitApp";
 
+jest.mock("../deviceSDK/commands/quitApp", () => {
+  return {
+    quitApp: jest.fn(() => of(undefined)), // immediately-completing observable
+  };
+});
 jest.mock("./deviceAccess");
 jest.mock("../device/use-cases/getVersionUseCase");
 jest.mock("./extractOnboardingState");
@@ -42,6 +48,7 @@ const pollingPeriodMs = 1000;
 
 const mockedGetVersion = jest.mocked(getVersion);
 const mockedWithDevice = jest.mocked(withDevice);
+const mockedQuitApp = jest.mocked(quitApp);
 mockedWithDevice.mockReturnValue(job => from(job(new Transport())));
 
 const mockedExtractOnboardingState = jest.mocked(extractOnboardingState);
@@ -65,6 +72,7 @@ describe("getOnboardingStatePolling", () => {
   afterEach(() => {
     mockedGetVersion.mockClear();
     mockedExtractOnboardingState.mockClear();
+    mockedQuitApp.mockClear();
     jest.clearAllTimers();
     onboardingStatePollingSubscription?.unsubscribe();
   });
@@ -79,6 +87,7 @@ describe("getOnboardingStatePolling", () => {
 
         getOnboardingStatePolling({
           deviceId: device.deviceId,
+          deviceName: null,
           pollingPeriodMs,
         }).subscribe({
           next: value => {
@@ -107,6 +116,7 @@ describe("getOnboardingStatePolling", () => {
 
         getOnboardingStatePolling({
           deviceId: device.deviceId,
+          deviceName: null,
           pollingPeriodMs,
         }).subscribe({
           next: value => {
@@ -135,6 +145,7 @@ describe("getOnboardingStatePolling", () => {
 
         getOnboardingStatePolling({
           deviceId: device.deviceId,
+          deviceName: null,
           pollingPeriodMs,
         }).subscribe({
           next: value => {
@@ -164,6 +175,7 @@ describe("getOnboardingStatePolling", () => {
 
         getOnboardingStatePolling({
           deviceId: device.deviceId,
+          deviceName: null,
           pollingPeriodMs,
           safeGuardTimeoutMs,
         }).subscribe({
@@ -192,6 +204,7 @@ describe("getOnboardingStatePolling", () => {
 
         getOnboardingStatePolling({
           deviceId: device.deviceId,
+          deviceName: null,
           pollingPeriodMs,
         }).subscribe({
           error: error => {
@@ -221,6 +234,7 @@ describe("getOnboardingStatePolling", () => {
 
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
+        deviceName: null,
         pollingPeriodMs,
       }).subscribe({
         next: value => {
@@ -248,6 +262,7 @@ describe("getOnboardingStatePolling", () => {
 
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
+        deviceName: null,
         pollingPeriodMs,
       }).subscribe({
         next: value => {
@@ -281,6 +296,7 @@ describe("getOnboardingStatePolling", () => {
 
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
+        deviceName: null,
         pollingPeriodMs,
         safeGuardTimeoutMs: pollingPeriodMs * 10,
       }).subscribe({
@@ -300,6 +316,61 @@ describe("getOnboardingStatePolling", () => {
         },
       });
     });
+    it("should call quitApp before fetching the device version", done => {
+      mockedGetVersion.mockResolvedValue(aFirmwareInfo);
+      mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
+
+      const device = aDevice;
+
+      getOnboardingStatePolling({
+        deviceId: device.deviceId,
+        deviceName: null,
+        pollingPeriodMs,
+      }).subscribe({
+        next: value => {
+          try {
+            expect(value.onboardingState).toEqual(anOnboardingState);
+
+            expect(mockedQuitApp).toHaveBeenCalledTimes(1);
+
+            const firstCallArgs = (mockedQuitApp as jest.Mock).mock.calls[0];
+            expect(firstCallArgs[0]).toBeInstanceOf(Transport);
+
+            done();
+          } catch (err) {
+            done(err);
+          }
+        },
+        error: err => done(err),
+      });
+
+      jest.advanceTimersByTime(pollingPeriodMs - 1);
+    });
+
+    it("should call quitApp only once when polling", () => {
+      mockedGetVersion.mockResolvedValue(aFirmwareInfo);
+      mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
+
+      const device = aDevice;
+
+      onboardingStatePollingSubscription = getOnboardingStatePolling({
+        deviceId: device.deviceId,
+        deviceName: null,
+        pollingPeriodMs,
+      }).subscribe();
+
+      jest.advanceTimersByTime(pollingPeriodMs - 1);
+
+      expect(mockedQuitApp).toHaveBeenCalledTimes(1);
+      const firstCallArgs = (mockedQuitApp as jest.Mock).mock.calls[0];
+      expect(firstCallArgs[0]).toBeInstanceOf(Transport);
+
+      jest.advanceTimersByTime(pollingPeriodMs * 5);
+
+      expect(mockedQuitApp).toHaveBeenCalledTimes(1);
+
+      expect(mockedGetVersion.mock.calls.length).toBeGreaterThanOrEqual(1);
+    });
   });
 
   describe("When the device is in bootloader mode", () => {
@@ -310,6 +381,7 @@ describe("getOnboardingStatePolling", () => {
 
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
+        deviceName: null,
         pollingPeriodMs,
       }).subscribe({
         next: value => {
@@ -322,6 +394,31 @@ describe("getOnboardingStatePolling", () => {
           } catch (expectError) {
             done(expectError);
           }
+        },
+      });
+
+      jest.advanceTimersByTime(pollingPeriodMs - 1);
+    });
+  });
+
+  describe("When deviceName is provided", () => {
+    it("should pass deviceName to withDevice", done => {
+      mockedGetVersion.mockResolvedValue(aFirmwareInfo);
+      mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
+
+      const device = aDevice;
+
+      getOnboardingStatePolling({
+        deviceId: device.deviceId,
+        deviceName: "My Device",
+        pollingPeriodMs,
+      }).subscribe({
+        next: () => {
+          expect(mockedWithDevice).toHaveBeenCalledWith(
+            device.deviceId,
+            expect.objectContaining({ matchDeviceByName: "My Device" }),
+          );
+          done();
         },
       });
 

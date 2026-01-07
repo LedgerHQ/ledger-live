@@ -1,7 +1,7 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { ScopeProvider } from "jotai-scope";
 
 import { useNavigation } from "@react-navigation/native";
@@ -23,7 +23,7 @@ import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import { useACRECustomHandlers } from "./CustomHandlers";
+import { useACRECustomHandlers, useDeeplinkCustomHandlers } from "./CustomHandlers";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -68,7 +68,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     navigation.setOptions({
       headerTitleAlign: "left",
       headerLeft: () => null,
-      headerTitleContainerStyle: { marginHorizontal: 0 },
       headerTitle: () => (
         <Flex justifyContent={"center"} flex={1}>
           <HeaderTitle color="neutral.c70"> {manifest.homepageUrl}</HeaderTitle>
@@ -88,14 +87,16 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const accounts = useSelector(flattenAccountsSelector);
   const customACREHandlers = useACRECustomHandlers(manifest, accounts);
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
+  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...loggerHandlers,
       ...customACREHandlers,
       ...customPTXHandlers,
+      ...customDeeplinkHandlers,
     };
-  }, [customACREHandlers, customPTXHandlers]);
+  }, [customACREHandlers, customPTXHandlers, customDeeplinkHandlers]);
 
   return (
     <ScopeProvider atoms={[currentAccountAtom]}>

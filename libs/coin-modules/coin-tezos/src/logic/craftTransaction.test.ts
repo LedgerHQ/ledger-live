@@ -1,8 +1,8 @@
-import { craftTransaction, rawEncode } from "./craftTransaction";
-import { getTezosToolkit } from "./tezosToolkit";
-import coinConfig from "../config";
 import { OpKind } from "@taquito/rpc";
 import { getRevealFee } from "@taquito/taquito";
+import coinConfig from "../config";
+import { craftTransaction, rawEncode } from "./craftTransaction";
+import { getTezosToolkit } from "./tezosToolkit";
 
 type TransactionType = "send" | "delegate" | "undelegate";
 
@@ -21,6 +21,7 @@ describe("craftTransaction", () => {
     estimate: {
       reveal: jest.fn(),
     },
+    setProvider: jest.fn(),
   };
 
   beforeEach(() => {

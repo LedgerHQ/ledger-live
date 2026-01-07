@@ -1,24 +1,28 @@
-import { normalizeText } from "helpers/commonHelpers";
+import { Step } from "jest-allure2-reporter/api";
+import { normalizeText } from "../../helpers/commonHelpers";
 import { Provider } from "@ledgerhq/live-common/lib/e2e/enum/Provider";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class EarnDashboardPage {
-  stakingProviderModalTitle = "staking-provider-modal-title";
+  amountAvailableAssetsText = "Amount available to earn";
   amountAvailableToEarnBalanceCard = "Amount available to earn-balance-card";
+  assetsTitleId = "assets-title-text";
+  earnButtonSelector = '[data-testid^="stake-"][data-testid$="-button"]';
   getAssetsPlaceholderHero = "get-assets-placeholder-hero";
   rewardsPotentialBalanceCard = "Rewards you could earn-balance-card";
   rewardsPotentialText = "Rewards you could earn";
-  amountAvailableAssetsText = "Amount available to earn";
   stakeCryptoAssetsButton = "stake-crypto-assets-button";
-  assetsTitleId = "assets-title-text";
+  stakingProviderModalTitle = "staking-provider-modal-title";
+  tableEarnMoreSelector =
+    '[data-testid="earn-more-table"], [data-testid="multi-header-table-earn-more"]';
+  tableRewardsEarnedSelector =
+    '[data-testid="rewards-earned-table"], [data-testid="multi-header-table-rewards-earned"]';
   totalDepositedBalanceCard = "Total deposited-balance-card";
   totalDepositedText = "Total deposited";
   totalRewardsBalanceCard = "Total rewards-balance-card";
   totalRewardsText = "Total rewards";
-  earnMoreRewardTabButton = "tab-earn-more";
 
   stakingProviderTitle = (providerName: string) => `staking-provider-${providerName}-title`;
-  earnButton = (accountId?: string) => `stake-${accountId}-button`;
   assetsTitleText = (withStaking: boolean) =>
     withStaking ? "Deposited assets" : "Available assets";
 
@@ -34,8 +38,8 @@ export default class EarnDashboardPage {
   };
 
   @Step("Click on earn button")
-  async clickEarnCurrencyButton(id: string) {
-    const elem = getWebElementByTestId(this.earnButton(id), 0, "data-testid");
+  async clickEarnCurrencyButton() {
+    const elem = getWebElementByCssSelector(this.earnButtonSelector);
     await tapWebElementByElement(elem);
   }
 
@@ -105,18 +109,17 @@ export default class EarnDashboardPage {
     jestExpect(normalizeText(text)).toContain(this.totalDepositedText);
   }
 
-  @Step("Verify 'your eligible assets' is visible")
-  async verifyYourEligibleAssets(account: Account, id?: string) {
+  @Step("Verify 'available assets' is visible")
+  async verifyAvailableAssets(account: Account) {
     const assetTitleElement = getWebElementByTestId(this.assetsTitleId, 0, "data-test-id");
     await detoxExpect(assetTitleElement).toExist();
     await detoxExpect(assetTitleElement).toHaveText(this.assetsTitleText(false));
-    const rowsContent = await getWebElementsText("multi-header-table-earn-more");
-    jestExpect(normalizeText(rowsContent.join(" "))).toContain(
-      `${account.accountName} ${account.currency.ticker}`,
-    );
-    const button = getWebElementByTestId(this.earnButton(id), 0, "data-testid");
-    await detoxExpect(button).toExist();
-    await detoxExpect(button).toHaveText("Earn");
+    const rowsContent = await getWebElementsText(this.tableEarnMoreSelector);
+    const normalizedText = normalizeText(rowsContent.join(" "));
+    jestExpect(normalizedText).toContain(`${account.accountName} ${account.currency.ticker}`);
+    const earnButton = getWebElementByCssSelector(this.earnButtonSelector);
+    await detoxExpect(earnButton).toExist();
+    await detoxExpect(earnButton).toHaveText("Earn");
   }
 
   @Step("Verify Deposited assets is visible")
@@ -125,19 +128,20 @@ export default class EarnDashboardPage {
     await detoxExpect(assetTitleElement).toExist();
     await detoxExpect(assetTitleElement).toHaveText(this.assetsTitleText(true));
 
-    const rowsContent = await getWebElementsText("multi-header-table-rewards-earned");
+    const rowsContent = await getWebElementsText(this.tableRewardsEarnedSelector);
     jestExpect(normalizeText(rowsContent.join(" "))).toContain(
       `${account.accountName} ${account.currency.ticker}`,
     );
   }
 
-  @Step("Go to earn more tab")
-  async goToEarnMoreTab() {
+  @Step("Go to tab")
+  async goToTab(tabName: "My Rewards" | "Earn Opportunities") {
+    const tabTestId = tabName === "My Rewards" ? "tab-assets" : "tab-earn-more";
     try {
-      const button = getWebElementByTestId(this.earnMoreRewardTabButton, 0, "data-test-id");
+      const button = getWebElementByTestId(tabTestId, 0, "data-test-id");
       await tapWebElementByElement(button);
     } catch {
-      console.log("Earn more tab is not visible");
+      console.log(`${tabName} tab is not visible`);
     }
   }
 

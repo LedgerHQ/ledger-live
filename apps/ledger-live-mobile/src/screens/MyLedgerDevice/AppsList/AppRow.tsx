@@ -1,7 +1,5 @@
 import React, { memo, useMemo, useCallback } from "react";
-
 import { App } from "@ledgerhq/types-live";
-
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { State, Action } from "@ledgerhq/live-common/apps/index";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
@@ -10,7 +8,6 @@ import styled from "styled-components/native";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import manager from "@ledgerhq/live-common/manager/index";
 import AppIcon from "./AppIcon";
-
 import AppStateButton from "./AppStateButton";
 import ByteSize from "~/components/ByteSize";
 
@@ -22,16 +19,24 @@ type Props = {
   optimisticState: State;
 };
 
-const RowContainer = styled(Flex).attrs((p: { disabled?: boolean }) => ({
+type RowContainerProps = {
+  disabled?: boolean;
+};
+
+const RowContainer = styled(Flex).attrs<RowContainerProps>(p => ({
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "flex-start",
   paddingVertical: 14,
   height: 64,
   opacity: p.disabled ? 0.2 : 1,
-}))<{ disabled?: boolean }>``;
+}))``;
 
-const LabelContainer = styled(Flex).attrs({
+type LabelContainerProps = {
+  paddingHorizontal?: number;
+};
+
+const LabelContainer = styled(Flex).attrs<LabelContainerProps>({
   flexGrow: 0,
   flexShrink: 1,
   flexBasis: "50%",

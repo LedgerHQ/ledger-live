@@ -4,12 +4,12 @@ export const ONEINCH_MANIFEST = `{
   "name": "1inch local",
   "url": "https://dapp-browser.apps.ledger.com/v2/",
   "params": {
-    "dappUrl": "https://app.1inch.io/?ledgerLive=true",
+    "dappUrl": "https://1inch.com/swap/",
     "nanoApp": "1inch",
     "dappName": "1inch lld dappname",
     "networks": []
   },
-  "homepageUrl": "https://1inch.io/",
+  "homepageUrl": "https://1inch.com/",
   "icon": "https://cdn.live.ledger.com/icons/platform/1inch.png",
   "platforms": ["android", "ios", "desktop"],
   "apiVersion": "^2.0.0",
@@ -41,8 +41,8 @@ export const ONEINCH_MANIFEST_V3 = `{
   "author": "",
   "private": false,
   "name": "1inch local",
-  "url": "https://app.1inch.io/?ledgerLive=true",
-  "homepageUrl": "https://app.1inch.io/?ledgerLive=true",
+  "url": "https://1inch.com/swap/",
+  "homepageUrl": "https://1inch.com/swap/",
   "icon": "",
   "platforms": [
     "ios",
@@ -81,7 +81,7 @@ export const ONEINCH_MANIFEST_BUST = `{
   "url": "https://dapp-browser.apps.ledger.com/v2/",
   "cacheBustingId": 1,
   "params": {
-    "dappUrl": "https://app.1inch.io/?ledgerLive=true",
+    "dappUrl": "https://1inch.com/swap/",
     "nanoApp": "1inch",
     "dappName": "1inch lld dappname",
     "networks": [
@@ -102,7 +102,7 @@ export const ONEINCH_MANIFEST_BUST = `{
       }
     ]
   },
-  "homepageUrl": "https://1inch.io/",
+  "homepageUrl": "https://1inch.com/",
   "icon": "https://cdn.live.ledger.com/icons/platform/1inch.png",
   "platforms": ["android", "ios", "desktop"],
   "apiVersion": "^2.0.0",
@@ -136,7 +136,7 @@ export const ONEINCH_MANIFEST_NOCACHE = `{
   "url": "https://dapp-browser.apps.ledger.com/v2/",
   "nocache": true,
   "params": {
-    "dappUrl": "https://app.1inch.io/?ledgerLive=true",
+    "dappUrl": "https://1inch.com/swap/",
     "nanoApp": "1inch",
     "dappName": "1inch lld dappname",
     "networks": [
@@ -157,7 +157,7 @@ export const ONEINCH_MANIFEST_NOCACHE = `{
       }
     ]
   },
-  "homepageUrl": "https://1inch.io/",
+  "homepageUrl": "https://1inch.com/",
   "icon": "https://cdn.live.ledger.com/icons/platform/1inch.png",
   "platforms": ["android", "ios", "desktop"],
   "apiVersion": "^2.0.0",

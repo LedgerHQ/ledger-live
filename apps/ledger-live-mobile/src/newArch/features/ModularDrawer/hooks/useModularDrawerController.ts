@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { AccountLike } from "@ledgerhq/types-live";
 import {
   openModularDrawer,
@@ -15,11 +15,11 @@ import { generateCallbackId } from "../utils/callbackIdGenerator";
  *
  * This hook provides a centralized way to:
  * - Open/close the modular drawer
- * - Manage account selection callbacks and observables
+ * - Manage account selection callbacks
  * - Handle drawer state through Redux
  * - Clean up resources when drawer closes
  *
- * The hook uses a callback registry to manage callbacks and observables
+ * The hook uses a callback registry to manage callbacks
  * that need to persist across component re-renders, replacing direct
  * function references with stable IDs for Redux serialization.
  *
@@ -32,33 +32,21 @@ export const useModularDrawerController = () => {
     preselectedCurrencies,
     callbackId,
     enableAccountSelection,
-    accountsObservableId,
     assetsConfiguration,
     networksConfiguration,
     useCase,
     areCurrenciesFiltered,
   } = useSelector(modularDrawerStateSelector);
 
-  const {
-    registerCallback,
-    executeCallback,
-    unregisterCallback,
-    registerObservable,
-    getObservable,
-    unregisterObservable,
-    resetAll,
-  } = useCallbackRegistry();
+  const { registerCallback, executeCallback, unregisterCallback, resetAll } = useCallbackRegistry();
 
   const openDrawer = useCallback(
     (params?: DrawerParams) => {
-      const { onAccountSelected, accounts$, ...otherParams } = params || {};
+      const { onAccountSelected, ...otherParams } = params || {};
 
       resetAll();
       if (callbackId) {
         unregisterCallback(callbackId);
-      }
-      if (accountsObservableId) {
-        unregisterObservable(accountsObservableId);
       }
 
       let callbackIdToUse: string | undefined;
@@ -73,31 +61,14 @@ export const useModularDrawerController = () => {
         callbackIdToUse = id;
       }
 
-      let observableIdToUse: string | undefined;
-      if (accounts$) {
-        const id = generateCallbackId();
-        registerObservable(id, accounts$);
-        observableIdToUse = id;
-      }
-
       const paramsWithIds: DrawerRemoteParams = {
         ...otherParams,
         callbackId: callbackIdToUse,
-        accountsObservableId: observableIdToUse,
       };
 
       dispatch(openModularDrawer(paramsWithIds));
     },
-    [
-      dispatch,
-      registerCallback,
-      registerObservable,
-      unregisterCallback,
-      unregisterObservable,
-      resetAll,
-      callbackId,
-      accountsObservableId,
-    ],
+    [resetAll, callbackId, dispatch, unregisterCallback, registerCallback],
   );
 
   const closeDrawer = useCallback(() => {
@@ -114,10 +85,6 @@ export const useModularDrawerController = () => {
     [callbackId, executeCallback, closeDrawer],
   );
 
-  const getAccountsObservable = useCallback(() => {
-    return accountsObservableId ? getObservable(accountsObservableId) : undefined;
-  }, [accountsObservableId, getObservable]);
-
   return {
     isOpen,
     preselectedCurrencies,
@@ -129,6 +96,5 @@ export const useModularDrawerController = () => {
     openDrawer,
     closeDrawer,
     handleAccountSelected,
-    getAccountsObservable,
   };
 };

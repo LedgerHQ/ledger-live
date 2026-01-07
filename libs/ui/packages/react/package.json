@@ -1,8 +1,8 @@
 {
   "name": "@ledgerhq/react-ui",
-  "version": "0.36.0",
+  "version": "0.42.0",
   "description": "Ledger Live - Desktop UI",
-  "author": "Ledger Live Team <team-live@ledger.fr>",
+  "author": "Ledger Wallet Team <team-live@ledger.fr>",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -71,15 +71,15 @@
     "lint:css": "stylelint './src/**/*.{js,jsx,ts,tsx}' --fix",
     "typecheck": "tsc --p . --noEmit",
     "test": "pnpm -w -F ui build-and-test",
+    "test:jest": "jest --maxWorkers=50%",
+    "test:jest:coverage": "pnpm test:jest --ci --coverage",
     "unimported": "unimported"
   },
   "dependencies": {
-    "@floating-ui/react-dom": "^0.4.0",
-    "@ledgerhq/crypto-icons": "1.1.1",
-    "@ledgerhq/crypto-icons-ui": "workspace:^",
+    "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
-    "@tanstack/react-virtual": "3.13.6",
+    "@tanstack/react-virtual": "catalog:",
     "@tippyjs/react": "^4.2.6",
     "color": "^4.0.0",
     "embla-carousel-autoplay": "8.4.0",
@@ -87,10 +87,9 @@
     "framer-motion": "^11.3.28",
     "lodash": "4",
     "react-is": "^17.0.2",
-    "react-select": "^5.2.1",
+    "react-select": "^5.10.2",
     "react-spring": "8.0.27",
     "react-transition-group": "^4.4.2",
-    "react-window": "^1.8.6",
     "styled-system": "^5.1.5"
   },
   "peerDependencies": {
@@ -99,10 +98,10 @@
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
-    "@babel/core": "7.27.1",
-    "@babel/preset-env": "7.27.1",
-    "@babel/preset-react": "7.27.1",
-    "@babel/preset-typescript": "7.27.1",
+    "@babel/core": "7.28.5",
+    "@babel/preset-env": "7.28.5",
+    "@babel/preset-react": "7.28.5",
+    "@babel/preset-typescript": "7.28.5",
     "@storybook/addon-actions": "^8.6.12",
     "@storybook/addon-essentials": "^8.6.12",
     "@storybook/addon-interactions": "8.6.12",
@@ -116,18 +115,18 @@
     "@storybook/theming": "^8.6.12",
     "@svgr/core": "^5.5.0",
     "@svgr/plugin-svgo": "*",
-    "@testing-library/dom": "10.4.0",
-    "@testing-library/jest-dom": "6.6.3",
-    "@testing-library/react": "16.3.0",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
     "@testing-library/user-event": "14.5.2",
     "@types/color": "^3.0.2",
+    "@types/jest": "catalog:",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/lodash": "4",
     "@types/react": "~18.2.21",
     "@types/react-dom": "^18.2.13",
     "@types/react-is": "^17.0.3",
     "@types/react-transition-group": "^4.4.2",
-    "@types/react-window": "^1.8.5",
     "@types/styled-components": "^5.1.14",
     "@types/styled-system": "^5.1.12",
     "@vitest/expect": "3.1.1",
@@ -139,9 +138,10 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-storybook": "^0.12.0",
     "fs-extra": "^10.0.1",
+    "jest": "catalog:",
     "os-browserify": "0.3.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "rimraf": "^4.4.1",
     "storybook": "^8.6.12",
     "styled-components": "^5.3.3",
@@ -155,9 +155,6 @@
     "webpack": "*"
   },
   "dependenciesMeta": {
-    "@ledgerhq/crypto-icons-ui": {
-      "injected": true
-    },
     "@ledgerhq/icons-ui": {
       "injected": true
     }

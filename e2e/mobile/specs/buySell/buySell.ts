@@ -80,6 +80,10 @@ export async function runNavigateToBuyFromAccountPageTest(
         userdata: "skip-onboarding",
         speculosApp: buySell.crypto.currency.speculosApp,
         cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
+        featureFlags: {
+          // Forcing FF while LIVE-24337 is not fixed
+          llmAccountListUI: { enabled: true },
+        },
       });
     });
 
@@ -87,7 +91,7 @@ export async function runNavigateToBuyFromAccountPageTest(
     tags.forEach(tag => $Tag(tag));
     test(`Navigate to Buy / Sell [${buySell.crypto.currency.name}] asset from account page`, async () => {
       await app.accounts.openViaDeeplink();
-      await app.accounts.goToAccountByName(getParentAccountName(buySell.crypto));
+      await app.common.goToAccountByName(getParentAccountName(buySell.crypto));
       if (buySell.crypto.tokenType) {
         await app.account.navigateToTokenInAccount(buySell.crypto);
       }
@@ -110,11 +114,6 @@ export async function runNavigateToBuyFromMarketPageTest(
         userdata: "skip-onboarding",
         speculosApp: buySell.crypto.currency.speculosApp,
         cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
-        featureFlags: {
-          llmMarketQuickActions: {
-            enabled: true,
-          },
-        },
       });
     });
 

@@ -10,7 +10,7 @@ import { CryptoOrTokenCurrency, Currency, TokenCurrency } from "@ledgerhq/types-
 import { AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -41,6 +41,7 @@ export type Data = {
   magnitudeAwareRate?: BigNumber;
   refundAddress?: string;
   payoutAddress?: string;
+  sponsored?: boolean;
 };
 
 type ResultsState = {
@@ -112,7 +113,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     payoutAddress,
     ...exchangeParams
   } = data;
-  const { exchange, provider, transaction: transactionParams } = exchangeParams;
+  const { exchange, provider, transaction: transactionParams, sponsored } = exchangeParams;
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
   // toAccount exists only in swap mode
   const toAccount = "toAccount" in exchange ? exchange.toAccount : undefined;
@@ -148,7 +149,11 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   }, [toCurrency]);
 
   const mevProtected = useSelector(mevProtectionSelector);
-  const broadcastConfig = useMemo(() => ({ mevProtected }), [mevProtected]);
+  const broadcastConfig = useMemo(
+    () => ({ mevProtected, sponsored: !!sponsored }),
+    [mevProtected, sponsored],
+  );
+
   const broadcast = useBroadcast({ account, parentAccount, broadcastConfig });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();

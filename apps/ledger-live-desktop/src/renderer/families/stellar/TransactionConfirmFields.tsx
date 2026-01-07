@@ -32,7 +32,7 @@ const StellarMemoField = ({ transaction }: { transaction: Transaction }) => {
         }}
         ml={1}
         ff="Inter|Medium"
-        color="palette.text.shade80"
+        color="neutral.c80"
         fontSize={3}
       >
         {transaction.memoValue ? `${transaction.memoValue} ` : "[none]"}
@@ -44,7 +44,7 @@ const StellarMemoField = ({ transaction }: { transaction: Transaction }) => {
 // NB once we support other networks, we can make this not hardcoded.
 const StellarNetworkField = ({ field }: StellarFieldComponentProps) => (
   <TransactionConfirmField label={field.label}>
-    <Text ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
+    <Text ff="Inter|Medium" color="neutral.c80" fontSize={3}>
       {"Public"}
     </Text>
   </TransactionConfirmField>
@@ -53,7 +53,7 @@ const StellarAssetCodeField = ({ transaction, field }: StellarFieldComponentProp
   invariant(transaction.family === "stellar", "stellar transaction");
   return (
     <TransactionConfirmField label={field.label}>
-      <Text ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
+      <Text ff="Inter|Medium" color="neutral.c80" fontSize={3}>
         {transaction.assetReference}
       </Text>
     </TransactionConfirmField>
@@ -63,7 +63,7 @@ const StellarAssetIssuerField = ({ transaction, field }: StellarFieldComponentPr
   invariant(transaction.family === "stellar", "stellar transaction");
   return (
     <TransactionConfirmField label={field.label}>
-      <WrappedAssetIssuer ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
+      <WrappedAssetIssuer ff="Inter|Medium" color="neutral.c80" fontSize={3}>
         {transaction.assetOwner}
       </WrappedAssetIssuer>
     </TransactionConfirmField>

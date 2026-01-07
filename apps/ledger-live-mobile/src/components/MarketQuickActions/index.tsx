@@ -1,26 +1,32 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, QuickActionButtonProps, QuickActionList } from "@ledgerhq/native-ui";
 import { track } from "~/analytics";
-import { EntryOf } from "~/types/helpers";
 import useQuickActions, { QuickActionProps } from "../../hooks/useQuickActions";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 
 const stakeLabel = getStakeLabelLocaleBased();
 export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>) => {
   const { t } = useTranslation();
-  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const router = useRoute();
   const { quickActionsList } = useQuickActions(quickActionsProps);
+  const isAcceptedCurrency = useAcceptedCurrency();
+
+  const isCurrencySupported = isAcceptedCurrency(quickActionsProps.currency);
+  const hideQuickActions = !isCurrencySupported;
 
   const quickActionsData: QuickActionButtonProps[] = useMemo(
     () =>
-      (Object.entries(QUICK_ACTIONS) as EntryOf<typeof QUICK_ACTIONS>[]).flatMap(([key, prop]) => {
+      QUICK_ACTION_KEYS.flatMap(key => {
+        const prop = QUICK_ACTIONS[key];
         const quickActionsItem = quickActionsList[key];
-        if (!quickActionsItem) return [];
+
+        if (!quickActionsItem || hideQuickActions) return [];
 
         return {
           variant: "small",
@@ -29,13 +35,19 @@ export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>
           children: t(prop.name),
           onPress: () => {
             track("button_clicked", { button: prop.analytics, page: router.name });
-            navigation.navigate<keyof BaseNavigatorStackParamList>(...quickActionsItem.route);
+            if (quickActionsItem.customHandler) {
+              quickActionsItem.customHandler();
+            } else if (quickActionsItem.route) {
+              navigation.navigate<keyof BaseNavigatorStackParamList>(...quickActionsItem.route);
+            }
           },
           disabled: quickActionsItem.disabled,
         };
       }),
-    [quickActionsList, t, navigation, router.name],
+    [quickActionsList, hideQuickActions, t, router.name, navigation],
   );
+
+  if (quickActionsData.length === 0) return null;
 
   return (
     <Flex m={16}>
@@ -76,3 +88,5 @@ const QUICK_ACTIONS = {
     analytics: "quick_action_stake",
   },
 } as const;
+
+const QUICK_ACTION_KEYS = ["SEND", "RECEIVE", "BUY", "SELL", "SWAP", "STAKE"] as const;

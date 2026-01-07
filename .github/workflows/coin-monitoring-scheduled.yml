@@ -4,7 +4,7 @@ permissions:
   contents: read
 on:
   schedule:
-    - cron: "0 15 * * 1-5" # every working day at 3pm
+    - cron: "0 15 * * *" # every working day at 3pm
 
 jobs:
   run-monitoring:
@@ -22,7 +22,7 @@ jobs:
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
           DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
           DD_DOMAIN: datadoghq.eu
-          MONITOR_FILTER_CURRENCIES: all
+          MONITOR_FILTER_ISOLATED: true
           SUBMIT_LOGS: true
 
   monitoring-fail:

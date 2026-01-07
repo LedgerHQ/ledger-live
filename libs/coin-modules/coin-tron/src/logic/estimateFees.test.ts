@@ -5,6 +5,7 @@ import { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 describe("estimateFees", () => {
   it("should calculate fees for native trx transactionIntent", async () => {
     const transactionIntent: TransactionIntent = {
+      intentType: "transaction",
       type: "send",
       sender: "sender1",
       recipient: "recipient1",
@@ -18,6 +19,7 @@ describe("estimateFees", () => {
   });
   it("should calculate fees for trc10 transactionIntent", async () => {
     const transactionIntent: TransactionIntent = {
+      intentType: "transaction",
       type: "send",
       sender: "sender1",
       recipient: "recipient1",
@@ -35,6 +37,7 @@ describe("estimateFees", () => {
 
   it("should calculate fees for trc20 transactionIntent", async () => {
     const transactionIntent: TransactionIntent = {
+      intentType: "transaction",
       type: "send",
       sender: "sender1",
       recipient: "recipient1",

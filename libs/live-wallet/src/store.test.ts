@@ -101,17 +101,27 @@ describe("Wallet store", () => {
       currency: getCryptoCurrencyById("ethereum"),
       subAccountsCount: 3,
       operationsSize: 1,
+      tokenIds: [
+        "ethereum/erc20/usd_tether__erc20_",
+        "ethereum/erc20/usd__coin",
+        "ethereum/erc20/link_chainlink",
+      ],
     });
     const raw = toAccountRaw(account);
     raw.starred = true;
     raw.name = "foo";
-    raw.subAccounts![0].starred = true;
-    raw.subAccounts![1].starred = true;
+    if (raw.subAccounts && raw.subAccounts.length >= 2) {
+      raw.subAccounts[0].starred = true;
+      raw.subAccounts[1].starred = true;
+    }
     const userData = accountRawToAccountUserData(raw);
     expect(userData).toEqual({
       id: "mock:1:ethereum:foo:",
       name: "foo",
-      starredIds: ["mock:1:ethereum:foo:", "mock:1:ethereum:foo:|0", "mock:1:ethereum:foo:|1"],
+      starredIds:
+        raw.subAccounts && raw.subAccounts.length >= 2
+          ? ["mock:1:ethereum:foo:", "mock:1:ethereum:foo:|0", "mock:1:ethereum:foo:|1"]
+          : ["mock:1:ethereum:foo:"],
     });
   });
 
@@ -120,6 +130,11 @@ describe("Wallet store", () => {
       currency: getCryptoCurrencyById("ethereum"),
       subAccountsCount: 3,
       operationsSize: 1,
+      tokenIds: [
+        "ethereum/erc20/usd_tether__erc20_",
+        "ethereum/erc20/usd__coin",
+        "ethereum/erc20/link_chainlink",
+      ],
     });
     const btcAcc = genAccount("btc", {
       currency: getCryptoCurrencyById("bitcoin"),
@@ -133,11 +148,10 @@ describe("Wallet store", () => {
           {
             id: "mock:1:ethereum:eth:",
             name: "foo",
-            starredIds: [
-              "mock:1:ethereum:eth:",
-              "mock:1:ethereum:eth:|0",
-              "mock:1:ethereum:eth:|1",
-            ],
+            starredIds:
+              ethAcc.subAccounts && ethAcc.subAccounts.length >= 2
+                ? ["mock:1:ethereum:eth:", "mock:1:ethereum:eth:|0", "mock:1:ethereum:eth:|1"]
+                : ["mock:1:ethereum:eth:"],
           },
           {
             id: "mock:1:bitcoin:btc:",
@@ -152,7 +166,10 @@ describe("Wallet store", () => {
     expect(userData).toEqual({
       id: "mock:1:ethereum:eth:",
       name: "foo",
-      starredIds: ["mock:1:ethereum:eth:", "mock:1:ethereum:eth:|0", "mock:1:ethereum:eth:|1"],
+      starredIds:
+        ethAcc.subAccounts && ethAcc.subAccounts.length >= 2
+          ? ["mock:1:ethereum:eth:", "mock:1:ethereum:eth:|0", "mock:1:ethereum:eth:|1"]
+          : ["mock:1:ethereum:eth:"],
     });
 
     const userData2 = accountUserDataExportSelector(state, { account: btcAcc });
@@ -229,6 +246,7 @@ describe("Wallet store", () => {
       accountNames: [],
       starredAccountIds: [],
     },
+    recentAddresses: {},
   };
 
   it("allows partial wallet state", () => {
@@ -330,6 +348,11 @@ describe("Wallet store", () => {
       currency: getCryptoCurrencyById("ethereum"),
       subAccountsCount: 3,
       operationsSize: 1,
+      tokenIds: [
+        "ethereum/erc20/usd_tether__erc20_",
+        "ethereum/erc20/usd__coin",
+        "ethereum/erc20/link_chainlink",
+      ],
     });
     const btcAcc = genAccount("btc", {
       currency: getCryptoCurrencyById("bitcoin"),
@@ -343,11 +366,10 @@ describe("Wallet store", () => {
           {
             id: "mock:1:ethereum:eth:",
             name: "foo",
-            starredIds: [
-              "mock:1:ethereum:eth:",
-              "mock:1:ethereum:eth:|0",
-              "mock:1:ethereum:eth:|1",
-            ],
+            starredIds:
+              ethAcc.subAccounts && ethAcc.subAccounts.length >= 2
+                ? ["mock:1:ethereum:eth:", "mock:1:ethereum:eth:|0", "mock:1:ethereum:eth:|1"]
+                : ["mock:1:ethereum:eth:"],
           },
           {
             id: "mock:1:bitcoin:btc:",
@@ -369,12 +391,12 @@ describe("Wallet store", () => {
       nonImportedAccountInfos: exportedState.nonImportedAccountInfos,
       accountsData: {
         accountNames: [["mock:1:ethereum:eth:", "foo"]],
-        starredAccountIds: [
-          "mock:1:ethereum:eth:",
-          "mock:1:ethereum:eth:|0",
-          "mock:1:ethereum:eth:|1",
-        ],
+        starredAccountIds:
+          ethAcc.subAccounts && ethAcc.subAccounts.length >= 2
+            ? ["mock:1:ethereum:eth:", "mock:1:ethereum:eth:|0", "mock:1:ethereum:eth:|1"]
+            : ["mock:1:ethereum:eth:"],
       },
+      recentAddresses: {},
     });
     const stateImport2 = handlers.IMPORT_WALLET_SYNC(
       stateImport1,

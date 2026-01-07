@@ -18,13 +18,18 @@
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util",
       "follow-redirects",
       "form-data",
       "proxy-from-env"
   ],
   "ignoreUnimported": [
     "src/datasets/solana.scanAccounts.1.ts",
-    "src/tests/preload.fixtures.ts"
+    "src/tests/preload.fixtures.ts",
+    "src/test/bridge.dataset.ts",
+    "src/supportedFeatures.ts"
   ],
   "ignoreUnused": []
 }

@@ -6,7 +6,7 @@ import { ModalBody } from "~/renderer/components/Modal";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import Breadcrumb from "./Breadcrumb";
 import { useTrackAddAccountModal } from "~/renderer/analytics/hooks/useTrackAddAccountModal";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { LedgerError } from "../DeviceAction";
@@ -152,4 +152,4 @@ const Stepper = <T, StepProps>({
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default withTranslation()(Stepper) as <T, StepProps>(
   props: OwnProps<T, StepProps>,
-) => JSX.Element; // to preserve the generic types
+) => React.JSX.Element; // to preserve the generic types

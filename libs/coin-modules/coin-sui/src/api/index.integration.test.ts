@@ -27,6 +27,7 @@ describe("Sui Api", () => {
 
       // When
       const result: FeeEstimation = await module.estimateFees({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -39,7 +40,7 @@ describe("Sui Api", () => {
     });
   });
 
-  describe("listOperations for big account (testing cursor logic)", () => {
+  describe("listOperations, testing cursor logic", () => {
     // this account has a lot of operations
     const binance = "0x935029ca5219502a47ac9b69f556ccf6e2198b5e7815cf50f68846f723739cbd";
 
@@ -53,12 +54,18 @@ describe("Sui Api", () => {
 
       expect(operations1.length).toBeGreaterThan(2);
       expect(token1).toBeTruthy();
+
       const [operations2, _] = await module.listOperations(binance, {
         ...baseOpts,
         lastPagingToken: token1,
       });
       expect(operations2.length).toBeGreaterThan(2);
       expect(operations2[0].tx.hash).not.toBe(operations1[0].tx.hash);
+
+      // check that none of the operations in operations2 are in operations1
+      expect(
+        operations2.every(op2 => !operations1.some(op1 => op1.tx.hash === op2.tx.hash)),
+      ).toBeTruthy();
     }
 
     it("should fetch operations successfully in desc order", async () => {
@@ -69,6 +76,38 @@ describe("Sui Api", () => {
     });
     it("should fetch operations successfully in default order", async () => {
       await testListOperations(undefined);
+    });
+
+    it("shouldn't return cursor on last page", async () => {
+      const [operations, cursor] = await module.listOperations(
+        "0xd8908c165dee785924e7421a0fd0418a19d5daeec395fd505a92a0fd3117e428",
+        { minHeight: 0, order: "asc" },
+      );
+
+      // assume it has not a lot of operations
+      // at time of writing, it has only 2 operations
+      expect(operations.length).toBeLessThan(10);
+      expect(operations.length).toBeGreaterThan(0);
+
+      expect(cursor).toBe("");
+    });
+  });
+
+  describe("listOperations (staking)", () => {
+    let txs: Operation[];
+
+    beforeAll(async () => {
+      [txs] = await module.listOperations(
+        "0x13d73cab19d2cf14e39289b122ed93fb0f9edd00e4c829e0cefb1f0611c54a8f",
+        { minHeight: 0, order: "asc" },
+      );
+    });
+
+    it("should map undelegate operations when it's not the first move call", async () => {
+      const tx1 = txs.find(t => t.id === "4UtCqCH3oNEdaprZR9UjaMGg6HgLn3V3q3FEcvs5vieM");
+      expect(tx1?.type).toBe("UNDELEGATE");
+      const tx2 = txs.find(t => t.id === "JEGnHCx2mtpDin216kbUBXm7V5rdMSPSUmgYbP3yxTEf");
+      expect(tx2?.type).toBe("UNDELEGATE");
     });
   });
 
@@ -111,6 +150,20 @@ describe("Sui Api", () => {
       });
       expect(txs.length).toBeGreaterThanOrEqual(minHeightTxs.length);
     });
+
+    it("returns block height as a number", async () => {
+      expect(txs.every(t => typeof t.tx.block.height === "number")).toBeTruthy();
+    });
+
+    it("should fail when address is invalid", async () => {
+      // capture exception with jest
+      await expect(
+        module.listOperations("0xABCDEF0000000000000000000000000000000001", {
+          minHeight: 0,
+          order: "asc",
+        }),
+      ).rejects.toThrow("Invalid params");
+    });
   });
 
   describe("getBalance", () => {
@@ -147,20 +200,75 @@ describe("Sui Api", () => {
 
   describe("getBlock", () => {
     test("getBlock should get block by id or sequence number", async () => {
-      const block = await module.getBlock(164167623);
-      expect(block.info.height).toEqual(164167623);
-      expect(block.info.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
-      expect(block.info.time).toEqual(new Date(1751696298663));
-      expect(block.info.parent?.height).toEqual(164167622);
-      expect(block.info.parent?.hash).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
-      expect(block.transactions.length).toEqual(19);
+      const block = await module.getBlock(195177985);
+      expect(block.info.height).toEqual(195177985);
+      expect(block.info.hash).toEqual("AzoHwjcCXkeiWoBVyWwZcE171zjxochFmcr9eQoNQyYn");
+      expect(block.info.time).toEqual(new Date(1759138080141));
+      expect(block.info.parent?.height).toEqual(195177984);
+      expect(block.info.parent?.hash).toEqual("A15NYkPDyKLZS4Swik7AY2mnLxwFET4kyNV6ChZ8tVJP");
+      expect(block.transactions.length).toEqual(12);
+      const tx = block.transactions[9];
+      const senderOp = tx.operations[0];
+      const receipientOp = tx.operations[1];
+      expect(tx.hash).toEqual("J3ddkv4TRqr4LviCbA3JyJCji5Kg5BcaBTkd6nMY5WXN");
+      expect(tx.operations.length).toEqual(2);
+      expect(senderOp.address).toEqual(
+        "0x2c814ceb68d1cb7168207b16754b1cf57e735685c4e5d87c4f50906edcc57c1c",
+      );
+      expect(senderOp.peer).toEqual(
+        "0xb37b298c9164c28c8aaf989a49416e3c323b67bc2b96a54501b524419ebb4ead",
+      );
+      expect(senderOp.amount).toEqual(BigInt(-5));
+      expect(receipientOp.address).toEqual(
+        "0xb37b298c9164c28c8aaf989a49416e3c323b67bc2b96a54501b524419ebb4ead",
+      );
+      expect(receipientOp.peer).toEqual(
+        "0x2c814ceb68d1cb7168207b16754b1cf57e735685c4e5d87c4f50906edcc57c1c",
+      );
+      expect(receipientOp.amount).toEqual(BigInt(5));
+    });
+  });
+
+  describe("getValidators", () => {
+    it("returns at least a hundred validators with expected fields", async () => {
+      const page = await module.getValidators();
+
+      expect(Array.isArray(page.items)).toBeTruthy();
+      expect(page.items.length).toBeGreaterThanOrEqual(100);
+
+      const v = page.items[0];
+      expect(v).toHaveProperty("address");
+      expect(v).toHaveProperty("name");
+      expect(v).toHaveProperty("description");
+      expect(v).toHaveProperty("url");
+      expect(v).toHaveProperty("logo");
+      expect(v).toHaveProperty("balance");
+      expect(v).toHaveProperty("commissionRate");
+      expect(v).toHaveProperty("apy");
+
+      // values should not be empty
+      expect(typeof v.address).toBe("string");
+      expect(v.address.length).toBeGreaterThan(0);
+      expect(typeof v.name).toBe("string");
+      expect(v.name.length).toBeGreaterThan(0);
+      expect(typeof v.description).toBe("string");
+      expect((v.description as string).length).toBeGreaterThan(0);
+      expect(typeof v.url).toBe("string");
+      expect((v.url as string).length).toBeGreaterThan(0);
+      expect(typeof v.logo).toBe("string");
+      expect((v.logo as string).length).toBeGreaterThan(0);
+      expect(typeof v.balance === "bigint").toBeTruthy();
+      expect(v.balance as bigint).toBeGreaterThanOrEqual(0n);
+      expect(typeof v.commissionRate).toBe("string");
+      expect((v.commissionRate as string).length).toBeGreaterThan(0);
+      expect(typeof v.apy).toBe("number");
     });
   });
 
   describe("getStakes", () => {
-    test("Account 0xea438b6ce07762ea61e04af4d405dfcf197d5f77d30765f365f75460380f3cce", async () => {
+    test("Account 0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d", async () => {
       const stakes = await module.getStakes(
-        "0xea438b6ce07762ea61e04af4d405dfcf197d5f77d30765f365f75460380f3cce",
+        "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
       );
       expect(stakes.items.length).toBeGreaterThan(0);
       stakes.items.forEach(stake => {

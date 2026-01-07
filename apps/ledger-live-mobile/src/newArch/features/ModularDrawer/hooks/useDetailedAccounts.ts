@@ -1,106 +1,120 @@
 import { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
-import { Observable } from "rxjs";
+import { useSelector } from "~/context/hooks";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
-import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import orderBy from "lodash/orderBy";
-import keyBy from "lodash/keyBy";
 import { accountsSelector } from "~/reducers/accounts";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useModularDrawerAnalytics, MODULAR_DRAWER_PAGE_NAME } from "../analytics";
-import { formatDetailedAccount } from "../utils/formatdetailedAccount";
-import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { useBatchMaybeAccountName } from "~/reducers/wallet";
 import {
   getAccountTuplesForCurrency,
   AccountTuple,
 } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
-import { AccountUI } from "@ledgerhq/native-ui/lib/pre-ldls/index";
 import { AccountLike } from "@ledgerhq/types-live";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib-es/currencies/formatCurrencyUnit";
+import BigNumber from "bignumber.js";
+import { formatAddress } from "../../Accounts/utils/formatAddress";
+import { ExtendedRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
+import { useDetailedAccountsCore } from "@ledgerhq/live-common/modularDrawer/hooks/useDetailedAccountsCore";
+
+// Mobile-specific detailed account type that includes formatted strings for UI
+export type RawDetailedAccount = Omit<ExtendedRawDetailedAccount, "fiatValue" | "balance"> & {
+  fiatValue: string; // Formatted fiat value string
+  balance: string; // Formatted balance string
+};
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
   flow: string,
   source: string,
   onAccountSelected: ((account: AccountLike, parentAccount?: AccountLike) => void) | undefined,
-  accounts$?: Observable<WalletAPIAccount[]>,
 ) => {
-  const state = useCountervaluesState();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const accountIds = useGetAccountIds(accounts$);
-  const nestedAccounts = useSelector(accountsSelector);
+  const counterValuesState = useCountervaluesState();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const nestedAccounts = useSelector(accountsSelector);
+  const discreet = useSelector(discreetModeSelector);
 
   const isATokenCurrency = useMemo(() => isTokenCurrency(asset), [asset]);
 
   const accounts = useMemo(() => {
-    const accountTuples = getAccountTuplesForCurrency(asset, nestedAccounts, accountIds);
+    const accountTuples = getAccountTuplesForCurrency(asset, nestedAccounts);
     return orderBy(accountTuples, [(tuple: AccountTuple) => tuple.account.balance], ["desc"]);
-  }, [asset, nestedAccounts, accountIds]);
+  }, [asset, nestedAccounts]);
 
   const overridedAccountName = useBatchMaybeAccountName(accounts.map(({ account }) => account));
 
-  const detailedAccounts = useMemo(() => {
-    const accountNameMap = keyBy(
-      accounts
-        .map(({ account }, index) => ({
-          id: account.id,
-          name: overridedAccountName[index],
-        }))
-        .filter(item => item.name),
-      "id",
-    );
+  // Use the shared core hook for detailed accounts logic
+  const { createExtendedDetailedAccounts } = useDetailedAccountsCore(
+    counterValuesState,
+    counterValueCurrency,
+  );
 
-    const formattedAccounts = accounts.map(tuple => {
-      const account = tuple.account;
-      const protocol = getTagDerivationMode(account.currency, account.derivationMode) ?? "";
-      const currencyAccount = formatDetailedAccount(
-        account,
-        account.freshAddress,
-        state,
-        counterValueCurrency,
-      );
-
-      if (isATokenCurrency && tuple.subAccount) {
-        const formattedSubAccount = formatDetailedAccount(
-          tuple.subAccount,
-          account.freshAddress,
-          state,
-          counterValueCurrency,
-        );
-        const parentAccountName = accountNameMap[account.id]?.name;
-        return {
-          ...formattedSubAccount,
-          name: parentAccountName ?? formattedSubAccount.name,
-        };
-      } else {
-        const accountName = accountNameMap[account.id]?.name;
-        return {
-          ...currencyAccount,
-          protocol,
-          name: accountName ?? currencyAccount.name,
-        };
+  const detailedAccounts = useMemo((): RawDetailedAccount[] => {
+    const accountNameMap: Record<string, string> = {};
+    for (const [index, { account }] of accounts.entries()) {
+      const name = overridedAccountName[index];
+      if (name) {
+        accountNameMap[account.id] = name;
       }
+    }
+
+    // Get the base extended detailed accounts from shared logic
+    const extendedAccounts = createExtendedDetailedAccounts({
+      asset,
+      accountTuples: accounts,
+      accountNameMap,
+      isTokenCurrency: isATokenCurrency,
     });
 
-    return sortAccountsByFiatValue(formattedAccounts);
-  }, [accounts, state, counterValueCurrency, isATokenCurrency, overridedAccountName]);
+    // Add mobile-specific formatting for fiat value and balance
+    return extendedAccounts.map((extendedAccount): RawDetailedAccount => {
+      const { account, parentAccount } = extendedAccount;
+      // Get address from account, fallback to extendedAccount address
+      const accountAddress =
+        account.type === "Account" ? account.freshAddress : extendedAccount.address;
+      const address = formatAddress(accountAddress);
 
-  const handleAccountSelected = useCallback(
-    (account: AccountUI) => {
-      const isToken = Boolean(account.parentId);
-
-      const matchedTuple = accounts.find(
-        tuple => tuple.account.id === account.id || tuple.subAccount?.id === account.id,
+      const fiatValue = formatCurrencyUnit(
+        counterValueCurrency.units[0],
+        BigNumber(extendedAccount.fiatValue),
+        { showCode: true, discreet },
       );
 
-      const specificAccount = isToken ? matchedTuple?.subAccount : matchedTuple?.account;
-      const parentAccount = isToken ? matchedTuple?.account : undefined;
+      const balance = formatCurrencyUnit(extendedAccount.balanceUnit, extendedAccount.balance, {
+        showCode: true,
+        discreet,
+      });
 
+      return {
+        id: extendedAccount.id,
+        name: extendedAccount.name,
+        ticker: extendedAccount.ticker,
+        balance: balance, // Formatted string for mobile UI
+        balanceUnit: extendedAccount.balanceUnit,
+        fiatValue: fiatValue, // Formatted string for mobile UI
+        address,
+        cryptoId: extendedAccount.cryptoId,
+        parentId: extendedAccount.parentId,
+        account,
+        parentAccount,
+        protocol: extendedAccount.protocol,
+      };
+    });
+  }, [
+    accounts,
+    overridedAccountName,
+    isATokenCurrency,
+    counterValueCurrency.units,
+    discreet,
+    createExtendedDetailedAccounts,
+    asset,
+  ]);
+
+  const handleAccountSelected = useCallback(
+    (rawAccount: RawDetailedAccount) => {
       trackModularDrawerEvent("account_clicked", {
         page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
         flow,
@@ -108,12 +122,9 @@ export const useDetailedAccounts = (
         currency: asset.ticker,
       });
 
-      if (specificAccount) {
-        onAccountSelected?.(specificAccount, parentAccount);
-        return;
-      }
+      onAccountSelected?.(rawAccount.account, rawAccount.parentAccount);
     },
-    [accounts, trackModularDrawerEvent, flow, source, asset.ticker, onAccountSelected],
+    [trackModularDrawerEvent, flow, source, asset.ticker, onAccountSelected],
   );
 
   return { detailedAccounts, accounts, handleAccountSelected };

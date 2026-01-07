@@ -1,12 +1,12 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SkipReason } from "@ledgerhq/live-common/apps/types";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { Alert, Flex, ProgressLoader, VerticalTimeline } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { DeviceModelInfo } from "@ledgerhq/types-live";
+import { DeviceModelInfo, SeedOriginType } from "@ledgerhq/types-live";
 
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { TrackScreen, track } from "~/analytics";
@@ -27,6 +27,7 @@ type Props = {
   onResult: (done: boolean) => void;
   onError?: (error: Error) => void;
   debugLastSeenDeviceModelId?: DeviceModelId;
+  seedConfiguration?: SeedOriginType;
 };
 
 /**
@@ -44,9 +45,11 @@ const InstallSetOfApps = ({
   onError,
   remountMe,
   debugLastSeenDeviceModelId,
+  seedConfiguration,
 }: Props & { remountMe: () => void }) => {
   const action = useAppDeviceAction();
   const { t } = useTranslation();
+
   const [userConfirmed, setUserConfirmed] = useState(false);
   const productName = getDeviceModel(selectedDevice.modelId).productName;
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
@@ -55,12 +58,14 @@ const InstallSetOfApps = ({
   const shouldRestoreApps = restore && !!lastSeenDeviceModelId;
 
   const dependenciesToInstall = useMemo(() => {
-    if (shouldRestoreApps && lastSeenDevice) {
+    if (shouldRestoreApps && lastSeenDevice && lastSeenDevice.apps.length > 0) {
       return lastSeenDevice.apps.map(app => app.name);
     }
+
     if (shouldRestoreApps && !lastSeenDevice) {
       return [];
     }
+
     return dependencies;
   }, [shouldRestoreApps, dependencies, lastSeenDevice]);
 
@@ -106,7 +111,13 @@ const InstallSetOfApps = ({
 
   if (opened) {
     onResult(true);
-    return error ? null : <TrackScreen category="Step 5: Install apps - successful" />;
+    return error ? null : (
+      <TrackScreen
+        category="Step 5: Install apps - successful"
+        flow="onboarding"
+        seedConfiguration={seedConfiguration}
+      />
+    );
   }
 
   return userConfirmed ? (
@@ -147,7 +158,11 @@ const InstallSetOfApps = ({
           return (
             <>
               {!shouldRestoreApps && currentAppOp?.name === appName && (
-                <TrackScreen category={`Installing ${appName}`} />
+                <TrackScreen
+                  category={`Installing ${appName}`}
+                  flow="onboarding"
+                  seedConfiguration={seedConfiguration}
+                />
               )}
               <Item
                 key={appName}
@@ -167,7 +182,12 @@ const InstallSetOfApps = ({
         onModalHide={onWrappedError}
       >
         {error instanceof UserRefusedAllowManager ? (
-          <TrackScreen category="App restoration cancelled on device" refreshSource={false} />
+          <TrackScreen
+            category="App restoration cancelled on device"
+            refreshSource={false}
+            flow="onboarding"
+            seedConfiguration={seedConfiguration}
+          />
         ) : null}
         <Flex alignItems="center">
           <Flex flexDirection="row">
@@ -178,30 +198,54 @@ const InstallSetOfApps = ({
     </Flex>
   ) : shouldRestoreApps ? (
     <>
-      <TrackScreen category="Restore Applications Start" />
+      <TrackScreen
+        category="Restore Applications Start"
+        flow="onboarding"
+        seedConfiguration={seedConfiguration}
+      />
       <Restore
         deviceName={productName}
         onConfirm={() => {
-          track("button_clicked", { button: "Restore applications" });
+          track("button_clicked", {
+            button: "Restore applications",
+            flow: "onboarding",
+            seedConfiguration,
+          });
           setUserConfirmed(true);
         }}
         onReject={() => {
-          track("button_clicked", { button: "I'll do this later" });
+          track("button_clicked", {
+            button: "I'll do this later",
+            flow: "onboarding",
+            seedConfiguration,
+          });
           onResult(false);
         }}
       />
     </>
   ) : (
     <>
-      <TrackScreen category="Install Applications Start" />
+      <TrackScreen
+        category="Install Applications Start"
+        flow="onboarding"
+        seedConfiguration={seedConfiguration}
+      />
       <Confirmation
         productName={productName}
         onConfirm={() => {
-          track("button_clicked", { button: "Install applications" });
+          track("button_clicked", {
+            button: "Install applications",
+            flow: "onboarding",
+            seedConfiguration,
+          });
           setUserConfirmed(true);
         }}
         onReject={() => {
-          track("button_clicked", { button: "I'll do this later" });
+          track("button_clicked", {
+            button: "I'll do this later",
+            flow: "onboarding",
+            seedConfiguration,
+          });
           onResult(false);
         }}
       />

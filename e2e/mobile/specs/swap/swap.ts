@@ -16,7 +16,7 @@ const beforeAllFunction = async (swap: SwapType) => {
         enabled: true,
         params: {
           manifest_id:
-            process.env.PRODUCTION === "true" ? "swap-live-app-demo-3" : "swap-live-app-demo-3-stg",
+            process.env.PRODUCTION === "true" ? "swap-live-app-aws" : "swap-live-app-stg-aws",
         },
       },
       llmAnalyticsOptInPrompt: {
@@ -30,24 +30,49 @@ const beforeAllFunction = async (swap: SwapType) => {
     cliCommandsOnApp: [
       {
         app: swap.accountToDebit.currency.speculosApp,
-        cmd: (userdataPath?: string) => {
-          return CLI.liveData({
+        cmd: async (userdataPath?: string) => {
+          await CLI.liveData({
             currency: swap.accountToDebit.currency.speculosApp.name,
             index: swap.accountToDebit.index,
             add: true,
             appjson: userdataPath,
           });
+
+          const { address } = await CLI.getAddress({
+            currency: swap.accountToDebit.currency.speculosApp.name,
+            path: swap.accountToDebit.accountPath,
+            derivationMode: swap.accountToDebit.derivationMode,
+          });
+
+          swap.accountToDebit.address = address;
+          if (swap.accountToDebit.parentAccount) {
+            swap.accountToDebit.parentAccount.address = address;
+          }
+
+          return address;
         },
       },
       {
         app: swap.accountToCredit.currency.speculosApp,
-        cmd: (userdataPath?: string) => {
-          return CLI.liveData({
+        cmd: async (userdataPath?: string) => {
+          await CLI.liveData({
             currency: swap.accountToCredit.currency.speculosApp.name,
             index: swap.accountToCredit.index,
             add: true,
             appjson: userdataPath,
           });
+
+          const { address } = await CLI.getAddress({
+            currency: swap.accountToCredit.currency.speculosApp.name,
+            path: swap.accountToCredit.accountPath,
+            derivationMode: swap.accountToCredit.derivationMode,
+          });
+
+          swap.accountToCredit.address = address;
+          if (swap.accountToCredit.parentAccount) {
+            swap.accountToCredit.parentAccount.address = address;
+          }
+          return address;
         },
       },
     ],
@@ -85,10 +110,9 @@ export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) 
 
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
-      await app.swapLiveApp.tapExecuteSwap();
       await app.common.disableSynchronizationForiOS();
+      await app.swapLiveApp.tapExecuteSwap();
       await app.swap.verifyAmountsAndAcceptSwap(swap, swapAmount);
-      await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swap.waitForSuccessAndContinue();
     });
   });

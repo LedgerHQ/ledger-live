@@ -1,9 +1,9 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`xion currency bridge scanAccounts xion seed 1 1`] = `
 [
   {
-    "balance": "411630",
+    "balance": "411631",
     "currencyId": "xion",
     "derivationMode": "",
     "freshAddress": "xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez",
@@ -12,7 +12,7 @@ exports[`xion currency bridge scanAccounts xion seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
-    "spendableBalance": "114155",
+    "spendableBalance": "114156",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,

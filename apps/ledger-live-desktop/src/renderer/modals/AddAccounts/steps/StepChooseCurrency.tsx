@@ -1,10 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import {
-  listSupportedCurrencies,
-  listTokens,
-  isCurrencySupported,
-} from "@ledgerhq/live-common/currencies/index";
+import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { findTokenAccountByCurrency } from "@ledgerhq/live-common/account/index";
 import { supportLinkByTokenType } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -15,7 +11,7 @@ import CurrencyBadge from "~/renderer/components/CurrencyBadge";
 import Alert from "~/renderer/components/Alert";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import { StepProps } from "..";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import FullNodeStatus from "~/renderer/modals/AddAccounts/FullNodeStatus";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
@@ -23,234 +19,20 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 // TODO move to bitcoin family
 // eslint-disable-next-line no-restricted-imports
 import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { CryptoCurrencyId, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Feature } from "@ledgerhq/types-live";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-const listSupportedTokens = () =>
-  listTokens().filter(token => isCurrencySupported(token.parentCurrency));
+import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
-  const mock = useEnv("MOCK");
-
-  const aptos = useFeature("currencyAptos");
-  const aptosTestnet = useFeature("currencyAptosTestnet");
-  const axelar = useFeature("currencyAxelar");
-  const stargaze = useFeature("currencyStargaze");
-  const secretNetwork = useFeature("currencySecretNetwork");
-  const umee = useFeature("currencyUmee");
-  const desmos = useFeature("currencyDesmos");
-  const dydx = useFeature("currencyDydx");
-  const onomy = useFeature("currencyOnomy");
-  const seiNetwork = useFeature("currencySeiNetwork");
-  const quicksilver = useFeature("currencyQuicksilver");
-  const persistence = useFeature("currencyPersistence");
-  const avaxCChain = useFeature("currencyAvalancheCChain");
-  const stacks = useFeature("currencyStacks");
-  const optimism = useFeature("currencyOptimism");
-  const optimismSepolia = useFeature("currencyOptimismSepolia");
-  const arbitrum = useFeature("currencyArbitrum");
-  const arbitrumSepolia = useFeature("currencyArbitrumSepolia");
-  const rsk = useFeature("currencyRsk");
-  const bittorrent = useFeature("currencyBittorrent");
-  const energyWeb = useFeature("currencyEnergyWeb");
-  const astar = useFeature("currencyAstar");
-  const metis = useFeature("currencyMetis");
-  const boba = useFeature("currencyBoba");
-  const moonriver = useFeature("currencyMoonriver");
-  const velasEvm = useFeature("currencyVelasEvm");
-  const syscoin = useFeature("currencySyscoin");
-  const internetComputer = useFeature("currencyInternetComputer");
-  const telosEvm = useFeature("currencyTelosEvm");
-  const coreum = useFeature("currencyCoreum");
-  const polygonZkEvm = useFeature("currencyPolygonZkEvm");
-  const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
-  const base = useFeature("currencyBase");
-  const baseSepolia = useFeature("currencyBaseSepolia");
-  const klaytn = useFeature("currencyKlaytn");
-  const injective = useFeature("currencyInjective");
-  const vechain = useFeature("currencyVechain");
-  const casper = useFeature("currencyCasper");
-  const neonEvm = useFeature("currencyNeonEvm");
-  const lukso = useFeature("currencyLukso");
-  const linea = useFeature("currencyLinea");
-  const lineaSepolia = useFeature("currencyLineaSepolia");
-  const blast = useFeature("currencyBlast");
-  const blastSepolia = useFeature("currencyBlastSepolia");
-  const scroll = useFeature("currencyScroll");
-  const scrollSepolia = useFeature("currencyScrollSepolia");
-  const icon = useFeature("currencyIcon");
-  const ton = useFeature("currencyTon");
-  const etherlink = useFeature("currencyEtherlink");
-  const zksync = useFeature("currencyZkSync");
-  const zksyncSepolia = useFeature("currencyZkSyncSepolia");
-  const mantra = useFeature("currencyMantra");
-  const xion = useFeature("currencyXion");
-  const zenrock = useFeature("currencyZenrock");
-  const sonic = useFeature("currencySonic");
-  const sonicBlaze = useFeature("currencySonicBlaze");
-  const sui = useFeature("currencySui");
-  const mina = useFeature("currencyMina");
-  const babylon = useFeature("currencyBabylon");
-  const seiNetworkEvm = useFeature("currencySeiNetworkEvm");
-  const berachain = useFeature("currencyBerachain");
-  const hyperevm = useFeature("currencyHyperevm");
-  const canton = useFeature("currencyCantonNetwork");
-
-  const featureFlaggedCurrencies = useMemo(
-    (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
-      aptos,
-      aptos_testnet: aptosTestnet,
-      axelar,
-      stargaze,
-      secret_network: secretNetwork,
-      umee,
-      desmos,
-      dydx,
-      onomy,
-      sei_network: seiNetwork,
-      quicksilver,
-      persistence,
-      avalanche_c_chain: avaxCChain,
-      stacks,
-      optimism,
-      optimism_sepolia: optimismSepolia,
-      arbitrum,
-      arbitrum_sepolia: arbitrumSepolia,
-      rsk,
-      bittorrent,
-      energy_web: energyWeb,
-      astar,
-      metis,
-      boba,
-      moonriver,
-      velas_evm: velasEvm,
-      syscoin,
-      internet_computer: internetComputer,
-      telos_evm: telosEvm,
-      sei_network_evm: seiNetworkEvm,
-      berachain: berachain,
-      hyperevm: hyperevm,
-      coreum,
-      polygon_zk_evm: polygonZkEvm,
-      polygon_zk_evm_testnet: polygonZkEvmTestnet,
-      base,
-      base_sepolia: baseSepolia,
-      klaytn,
-      injective,
-      vechain,
-      casper,
-      neon_evm: neonEvm,
-      lukso,
-      linea,
-      ton,
-      linea_sepolia: lineaSepolia,
-      blast,
-      blast_sepolia: blastSepolia,
-      scroll,
-      scroll_sepolia: scrollSepolia,
-      icon,
-      etherlink,
-      zksync,
-      zksync_sepolia: zksyncSepolia,
-      mantra,
-      xion,
-      zenrock,
-      sonic,
-      sonic_blaze: sonicBlaze,
-      sui,
-      mina,
-      babylon,
-      canton_network: canton,
-    }),
-    [
-      aptos,
-      aptosTestnet,
-      axelar,
-      stargaze,
-      secretNetwork,
-      umee,
-      desmos,
-      dydx,
-      onomy,
-      seiNetwork,
-      quicksilver,
-      persistence,
-      avaxCChain,
-      stacks,
-      optimism,
-      optimismSepolia,
-      arbitrum,
-      arbitrumSepolia,
-      rsk,
-      bittorrent,
-      energyWeb,
-      astar,
-      metis,
-      boba,
-      moonriver,
-      velasEvm,
-      syscoin,
-      internetComputer,
-      telosEvm,
-      coreum,
-      polygonZkEvm,
-      polygonZkEvmTestnet,
-      base,
-      baseSepolia,
-      klaytn,
-      injective,
-      vechain,
-      casper,
-      neonEvm,
-      lukso,
-      linea,
-      ton,
-      lineaSepolia,
-      blast,
-      blastSepolia,
-      scroll,
-      scrollSepolia,
-      icon,
-      etherlink,
-      zksync,
-      zksyncSepolia,
-      mantra,
-      xion,
-      zenrock,
-      sonic,
-      sonicBlaze,
-      sui,
-      mina,
-      babylon,
-      berachain,
-      hyperevm,
-      seiNetworkEvm,
-      canton,
-    ],
-  );
+  const isAcceptedCurrency = useAcceptedCurrency();
 
   const currencies = useMemo(() => {
-    const supportedCurrenciesAndTokens =
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens());
-
-    const deactivatedCurrencyIds = new Set(
-      mock
-        ? [] // mock mode: all currencies are available for playwrigth tests
-        : Object.entries(featureFlaggedCurrencies)
-            .filter(([, feature]) => !feature?.enabled)
-            .map(([id]) => id),
-    );
-
-    return supportedCurrenciesAndTokens.filter(
-      c =>
-        (c.type === "CryptoCurrency" && !deactivatedCurrencyIds.has(c.id)) ||
-        (c.type === "TokenCurrency" && !deactivatedCurrencyIds.has(c.parentCurrency.id)),
-    );
-  }, [featureFlaggedCurrencies, mock]);
+    // Only list supported currencies, tokens are no longer listed here
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    return (listSupportedCurrencies() as CryptoOrTokenCurrency[]).filter(isAcceptedCurrency);
+  }, [isAcceptedCurrency]);
 
   const url =
     currency && currency.type === "TokenCurrency"

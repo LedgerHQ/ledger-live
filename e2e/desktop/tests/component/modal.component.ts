@@ -1,6 +1,6 @@
 import { Locator } from "@playwright/test";
-import { step } from "../misc/reporters/step";
-import { Component } from "../page/abstractClasses";
+import { step } from "tests/misc/reporters/step";
+import { Component } from "tests/page/abstractClasses";
 
 export class Modal extends Component {
   readonly container = this.page.locator(
@@ -23,17 +23,6 @@ export class Modal extends Component {
     await this.closeButton.click();
   }
 
-  @step("Wait for modal to appear")
-  async waitForModalToAppear() {
-    await this.container.waitFor({ state: "attached" });
-    await this.backdrop.waitFor({ state: "attached" });
-  }
-
-  @step("Wait for modal to disappear")
-  async waitForModalToDisappear() {
-    await this.container.waitFor({ state: "detached" });
-  }
-
   @step("Toggle Max Amount")
   async toggleMaxAmount() {
     await this.maxAmountCheckbox.click();
@@ -42,11 +31,6 @@ export class Modal extends Component {
   @step("Click Continue button")
   async continueAmountModal() {
     await this.continueButton.click();
-  }
-
-  @step("Continue to sign transaction")
-  async continueToSignTransaction() {
-    await this.continueButton.click({ force: true });
   }
 
   @step("continue until option is displayed")

@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setLastSeenCustomImage } from "~/renderer/actions/settings";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/customLockScreenLoad";
@@ -7,7 +7,7 @@ import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { getEnv } from "@ledgerhq/live-env";
 import { useTranslation } from "react-i18next";
-import { Theme, Flex, IconsLegacy } from "@ledgerhq/react-ui";
+import { Theme, Flex, Icons } from "@ledgerhq/react-ui";
 import useTheme from "~/renderer/hooks/useTheme";
 import { DeviceActionDefaultRendering } from "~/renderer/components/DeviceAction";
 import Button from "~/renderer/components/ButtonV3";
@@ -61,7 +61,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     inlineRetry = true,
     restore = false,
   } = props;
-  const type: Theme["theme"] = useTheme().colors.palette.type;
+  const type: Theme["theme"] = useTheme().theme;
   const device = getEnv("MOCK") ? mockedDevice : props.device;
   const commandRequest = useMemo(
     () => ({ hexImage, padImage, deviceModelId }),
@@ -96,16 +96,16 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
 
   const { error, imageLoadRequested, loadingImage, imageCommitRequested, progress } = status;
   const isError = !!error;
-  const isRefusedOnStaxError = checkIfIsRefusedOnStaxError(error);
+  const refusedOnDevice = checkIfIsRefusedOnStaxError(error);
 
   useEffect(() => {
     if (!error) return;
-    onError && onError(error);
+    onError?.(error);
   }, [error, onError]);
 
   const shouldNavBeBlocked = !!validDevice && !isError;
   useEffect(() => {
-    blockNavigation && blockNavigation(shouldNavBeBlocked);
+    blockNavigation?.(shouldNavBeBlocked);
   }, [shouldNavBeBlocked, blockNavigation]);
 
   const handleRetry = useCallback(() => {
@@ -123,14 +123,12 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
           deviceModelId={deviceModelId}
           progress={progress}
           source={source}
-          type={type}
         />
       ) : imageCommitRequested && device ? (
         <RenderImageCommitRequested
           device={device}
           deviceModelId={deviceModelId}
           source={source}
-          type={type}
           restore={restore}
         />
       ) : isError ? (
@@ -139,18 +137,18 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
             t,
             error,
             device: device ?? undefined,
-            ...(isRefusedOnStaxError
-              ? { Icon: IconsLegacy.CircledAlertMedium, iconColor: "warning.c50" }
+            ...(refusedOnDevice
+              ? { Icon: () => <Icons.WarningFill />, iconColor: "warning.c50" }
               : {}),
           })}
           {inlineRetry ? (
             <Button size="large" variant="main" outline={false} onClick={handleRetry}>
-              {isRefusedOnStaxError
+              {refusedOnDevice
                 ? t("customImage.steps.transfer.uploadAnotherImage")
                 : t("common.retry")}
             </Button>
           ) : null}
-          {isRefusedOnStaxError ? (
+          {refusedOnDevice ? (
             <Button size="large" onClick={onSkip}>
               {t("customImage.steps.transfer.doThisLater")}
             </Button>

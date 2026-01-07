@@ -10,6 +10,8 @@ import { doubleDecodeGoToURL } from "../utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "../utils/getAccountAddressesUtils";
 import { waitFor } from "../utils/waitFor";
 import { ModularDrawer } from "./drawer/modular.drawer";
+import { ModularDialog } from "./dialog/modular.dialog";
+import { getModularSelectorFromInstances } from "../utils/modularSelectorUtils";
 
 interface ProviderConfig {
   buyParams: Record<string, (buySell: BuySell) => string | number>;
@@ -41,6 +43,7 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
   private modularDrawer = new ModularDrawer(this.page);
+  private modularDialog = new ModularDialog(this.page);
 
   private standardSellParams: Record<string, (buySell: BuySell) => string | number> = {
     cryptoAmount: buySell => buySell.amount,
@@ -125,19 +128,26 @@ export class BuyAndSellPage extends WebViewAppPage {
   }
 
   private async selectAssetInDrawer(account: AccountType) {
-    const isModularDrawer = await this.modularDrawer.isModularAssetsDrawerVisible();
-    if (isModularDrawer) {
-      await this.selectAssetInModularDrawer(account);
+    const selector = await getModularSelectorFromInstances(
+      this.page,
+      this.modularDrawer,
+      this.modularDialog,
+    );
+    if (selector) {
+      await this.selectAssetInModularSelector(account, selector);
     } else {
       await this.selectAssetInLegacyDrawer(account);
     }
   }
 
-  private async selectAssetInModularDrawer(account: AccountType) {
-    await this.modularDrawer.validateAssetsDrawerItems();
-    await this.modularDrawer.selectAssetByTickerAndName(account.currency);
-    await this.modularDrawer.selectNetwork(account.currency);
-    await this.modularDrawer.selectAccountByName(account);
+  private async selectAssetInModularSelector(
+    account: AccountType,
+    selector: ModularDrawer | ModularDialog,
+  ) {
+    await selector.validateItems();
+    await selector.selectAsset(account.currency);
+    await selector.selectNetwork(account.currency);
+    await selector.selectAccountByName(account);
   }
 
   private async selectAssetInLegacyDrawer(account: AccountType) {
@@ -218,6 +228,7 @@ export class BuyAndSellPage extends WebViewAppPage {
     if (await this.isTextVisible(this.showMoreQuotes)) {
       await this.clickElementByText(this.showMoreQuotes);
     }
+    await this.scrollToElement(this.provider(providerName));
     await this.clickElement(this.provider(providerName));
     await this.verifyElementText(this.formCta, `${operation} with ${providerName}`);
   }

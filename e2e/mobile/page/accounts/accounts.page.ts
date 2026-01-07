@@ -1,10 +1,11 @@
+import { Step } from "jest-allure2-reporter/api";
 import { log } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
 
 export default class AccountsPage extends CommonPage {
-  private baseLink = "accounts";
-  private listTitle = "accounts-list-title";
+  private readonly baseLink = "accounts";
+  private readonly listTitle = "accounts-list-title";
 
   emptyAccountDisplay = () => getElementById("empty-accounts-component");
 

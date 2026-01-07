@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { saveSettings } from "~/renderer/actions/settings";
 import Track from "~/renderer/analytics/Track";

@@ -1,36 +1,14 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { CurrenciesByProviderId } from "../../deposit/type";
-import { haveOneCommonProvider } from "./haveOneCommonProvider";
-import { getBalanceAndFiatValue } from "./getBalanceAndFiatValue";
+export { groupCurrenciesByAsset } from "./groupCurrenciesByAsset";
+export { sortAccountsByFiatValue } from "./sortAccountsByFiatValue";
 
-function isCorrespondingCurrency(
+const getBaseId = (currency: CryptoOrTokenCurrency) =>
+  currency.type === "CryptoCurrency" ? currency.id : currency.parentCurrency.id;
+
+function belongsToSameNetwork(
   elem: CryptoOrTokenCurrency,
   network: CryptoOrTokenCurrency,
 ): boolean {
-  if (elem.type === "TokenCurrency") {
-    return elem.parentCurrency?.id === network.id || elem.id === network.id;
-  }
-  if (elem.type === "CryptoCurrency") {
-    return elem.id === network.id;
-  }
-  return false;
+  return getBaseId(elem) === getBaseId(network);
 }
-
-const getEffectiveCurrency = (
-  currency: CryptoOrTokenCurrency,
-  provider: CurrenciesByProviderId,
-  currencyIds: string[],
-) => {
-  const isCurrencyFiltered = currencyIds.includes(currency.id);
-
-  if (isCurrencyFiltered) return currency;
-
-  return provider.currenciesByNetwork.find(elem => currencyIds.includes(elem.id)) ?? currency;
-};
-
-export {
-  isCorrespondingCurrency,
-  getEffectiveCurrency,
-  haveOneCommonProvider,
-  getBalanceAndFiatValue,
-};
+export { getBaseId, belongsToSameNetwork };

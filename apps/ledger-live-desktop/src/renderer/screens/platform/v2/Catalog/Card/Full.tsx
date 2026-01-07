@@ -5,7 +5,7 @@ import { PropsCard } from "./types";
 import { useCard } from "./hooks";
 import { Container, Subtitle } from "./Layout";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { useTheme } from "styled-components";
 import { Cta } from "./Cta";
@@ -20,7 +20,7 @@ export function FullCard(props: PropsCard<LiveAppManifest>) {
 
   const { manifest } = props;
   const highlighted = !!manifest.highlight;
-  const textColor = highlighted ? "white" : theme.colors.palette.text.shade100;
+  const textColor = highlighted ? "white" : theme.colors.neutral.c100;
 
   const subtitle = useMemo(
     () =>

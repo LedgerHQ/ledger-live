@@ -1,19 +1,20 @@
 {
   "name": "@ledgerhq/dummy-wallet-app",
-  "version": "0.7.4",
+  "version": "0.11.1",
   "private": true,
   "dependencies": {
     "@ledgerhq/hw-app-eth": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-common": "workspace:*",
-    "@ledgerhq/wallet-api-client": "^1.10.0",
-    "@ledgerhq/wallet-api-client-react": "^1.4.13",
-    "@ledgerhq/wallet-api-simulator": "^1.2.13",
+    "@ledgerhq/wallet-api-client": "^1.12.6",
+    "@ledgerhq/wallet-api-client-react": "^1.4.22",
+    "@ledgerhq/wallet-api-deeplink-module": "workspace:*",
+    "@ledgerhq/wallet-api-simulator": "^2.0.1",
     "@solana/web3.js": "1.95.4",
     "bignumber.js": "^9.1.2",
     "buffer": "^6.0.3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "scripts": {
     "start": "vite",
@@ -34,12 +35,12 @@
     ]
   },
   "devDependencies": {
-    "@types/jest": "^27.0.1",
+    "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.13",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
     "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",

@@ -3,7 +3,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
-import { useLocalizedUrl } from "~/newArch/hooks/useLocalizedUrls";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 type Props = {
   onClose: () => void;

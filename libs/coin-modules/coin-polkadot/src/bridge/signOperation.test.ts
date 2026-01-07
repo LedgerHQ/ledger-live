@@ -12,6 +12,8 @@ import {
   fixtureTxMaterialWithMetadata,
 } from "../network/sidecar.fixture";
 import coinConfig from "../config";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 jest.mock("../config");
 const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
@@ -25,10 +27,12 @@ const mockPaymentInfo = jest.fn().mockResolvedValue({
   partialFee: "155099814",
 });
 
+const shortenMetadataMock = jest.fn();
 jest.mock("../network", () => ({
   ...jest.requireActual("../network").default,
   metadataHash: () => jest.fn().mockResolvedValue(""),
-  shortenMetadata: () => jest.fn().mockResolvedValue(""),
+  shortenMetadata: (transaction: string, currency?: CryptoCurrency) =>
+    shortenMetadataMock(transaction, currency),
 }));
 jest.mock("../network/sidecar", () => ({
   getRegistry: () => mockRegistry(),
@@ -75,6 +79,14 @@ describe("signOperation", () => {
     });
   });
 
+  beforeEach(() => {
+    shortenMetadataMock.mockResolvedValue("");
+  });
+
+  afterEach(() => {
+    shortenMetadataMock.mockClear();
+  });
+
   it("returns events in the right order", done => {
     // GIVEN
     const account = createFixtureAccount();
@@ -99,6 +111,9 @@ describe("signOperation", () => {
         eventIdx++;
 
         if (eventIdx === expectedEvent.length) {
+          expect(shortenMetadataMock).toHaveBeenCalledTimes(1);
+          const currency = getCryptoCurrencyById(account.currency.id);
+          expect(shortenMetadataMock.mock.lastCall[1]).toEqual(currency);
           done();
         }
       } catch (err) {
@@ -116,6 +131,7 @@ describe("signOperation", () => {
     const observer = {
       error: (e: Error) => {
         expect(e.name).toMatch("FeeNotLoaded");
+        expect(shortenMetadataMock).not.toHaveBeenCalled();
         done();
       },
     };
@@ -164,7 +180,11 @@ describe("signOperation", () => {
       // WHEN & THEN
       const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
         (e: SignOperationEvent) => {
-          if (e.type === "signed") {
+          if (e.type === "device-signature-granted") {
+            expect(shortenMetadataMock).toHaveBeenCalledTimes(1);
+            const currency = getCryptoCurrencyById(account.currency.id);
+            expect(shortenMetadataMock.mock.lastCall[1]).toEqual(currency);
+          } else if (e.type === "signed") {
             const { operation } = e.signedOperation;
             expect(operation.recipients[0]).toEqual(transaction.recipient);
             expect(operation.fee).toEqual(new BigNumber(0));
@@ -190,7 +210,11 @@ describe("signOperation", () => {
     // WHEN & THEN
     const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
       (e: SignOperationEvent) => {
-        if (e.type === "signed") {
+        if (e.type === "device-signature-granted") {
+          expect(shortenMetadataMock).toHaveBeenCalledTimes(1);
+          const currency = getCryptoCurrencyById(account.currency.id);
+          expect(shortenMetadataMock.mock.lastCall[1]).toEqual(currency);
+        } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
             index: 0,
@@ -215,7 +239,11 @@ describe("signOperation", () => {
     // WHEN & THEN
     const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
       (e: SignOperationEvent) => {
-        if (e.type === "signed") {
+        if (e.type === "device-signature-granted") {
+          expect(shortenMetadataMock).toHaveBeenCalledTimes(1);
+          const currency = getCryptoCurrencyById(account.currency.id);
+          expect(shortenMetadataMock.mock.lastCall[1]).toEqual(currency);
+        } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
             index: 0,
@@ -244,7 +272,11 @@ describe("signOperation", () => {
     // WHEN & THEN
     const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
       (e: SignOperationEvent) => {
-        if (e.type === "signed") {
+        if (e.type === "device-signature-granted") {
+          expect(shortenMetadataMock).toHaveBeenCalledTimes(1);
+          const currency = getCryptoCurrencyById(account.currency.id);
+          expect(shortenMetadataMock.mock.lastCall[1]).toEqual(currency);
+        } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
             index: 0,
@@ -273,7 +305,11 @@ describe("signOperation", () => {
     // WHEN & THEN
     const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
       (e: SignOperationEvent) => {
-        if (e.type === "signed") {
+        if (e.type === "device-signature-granted") {
+          expect(shortenMetadataMock).toHaveBeenCalledTimes(1);
+          const currency = getCryptoCurrencyById(account.currency.id);
+          expect(shortenMetadataMock.mock.lastCall[1]).toEqual(currency);
+        } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
             index: 0,
@@ -304,7 +340,11 @@ describe("signOperation", () => {
     // WHEN & THEN
     const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
       (e: SignOperationEvent) => {
-        if (e.type === "signed") {
+        if (e.type === "device-signature-granted") {
+          expect(shortenMetadataMock).toHaveBeenCalledTimes(1);
+          const currency = getCryptoCurrencyById(account.currency.id);
+          expect(shortenMetadataMock.mock.lastCall[1]).toEqual(currency);
+        } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
             index: 0,

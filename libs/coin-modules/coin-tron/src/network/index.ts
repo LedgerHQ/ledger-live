@@ -58,11 +58,11 @@ export async function post<T, U extends object = any>(endPoint: string, body: T)
 
   // Ugly but trongrid send a 200 status event if there are errors
   if ("Error" in data) {
-    log("tron-error", stringify(data.Error as any), {
-      endPoint,
-      body,
-    });
-    throw new Error(stringify(data.Error as any));
+    const error = data.Error as any;
+    const message = stringify(error);
+    const nonEmptyMessage = message === "" ? error.toString() : message;
+    log("tron-error", nonEmptyMessage, { endPoint, body });
+    throw new Error(nonEmptyMessage);
   }
 
   return data;
@@ -361,7 +361,7 @@ export async function fetchTronAccount(addr: string): Promise<AccountTronAPI[]> 
   try {
     const data = await fetch(`/v1/accounts/${addr}`);
     return data.data;
-  } catch (e) {
+  } catch {
     return [];
   }
 }
@@ -629,7 +629,7 @@ export const fetchTronContract = async (addr: string): Promise<Record<string, an
       value: decode58Check(addr),
     });
     return Object.keys(data).length !== 0 ? data : undefined;
-  } catch (e) {
+  } catch {
     return undefined;
   }
 };
@@ -783,7 +783,7 @@ export const getUnwithdrawnReward = async (addr: string): Promise<BigNumber> => 
       `/wallet/getReward?address=${encodeURIComponent(decode58Check(addr))}`,
     );
     return new BigNumber(reward);
-  } catch (e) {
+  } catch {
     return Promise.resolve(new BigNumber(0));
   }
 };

@@ -3,31 +3,20 @@ import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { SearchInput } from "@ledgerhq/react-ui";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { setDrawer } from "../Provider";
-import Fuse from "fuse.js";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import Text from "~/renderer/components/Text";
 import { CurrencyList } from "./CurrencyList";
 import SelectAccountDrawer from "./SelectAccountDrawer";
-import { Observable } from "rxjs";
-import { getEnv } from "@ledgerhq/live-env";
 import { track } from "~/renderer/analytics/segment";
+import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
+import BigSpinner from "~/renderer/components/BigSpinner";
+import { useMarketcapIds } from "@ledgerhq/live-countervalues-react";
 
 const TRACK_PAGE_NAME = "Asset/Network selection";
 
-const options = {
-  includeScore: false,
-  threshold: 0.1,
-  // Search in `ticker`, `name`, `keywords` values
-  keys: getEnv("CRYPTO_ASSET_SEARCH_KEYS"),
-  shouldSort: false,
-};
-function fuzzySearch(currencies: Currency[], searchValue: string): Currency[] {
-  const fuse = new Fuse(currencies, options);
-  return fuse.search(searchValue).map(res => res.item);
-}
 const SelectAccountAndCurrencyDrawerContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -37,11 +26,7 @@ const SelectAccountAndCurrencyDrawerContainer = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-`;
-const SelectorContent = styled.div`
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
+  height: 100%;
 `;
 const HeaderContainer = styled.div`
   padding: 40px 0px 32px 0px;
@@ -51,11 +36,22 @@ const HeaderContainer = styled.div`
   align-items: center;
   justify-content: center;
 `;
+export const Loader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+`;
+
 export type SelectAccountAndCurrencyDrawerProps = {
   onClose?: () => void;
-  currencies: CryptoOrTokenCurrency[];
+  currencyIds?: string[];
+  useCase?: string;
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
-  accounts$?: Observable<WalletAPIAccount[]>;
   flow?: string;
   source?: string;
 };
@@ -65,31 +61,62 @@ const SearchInputContainer = styled.div`
 `;
 
 function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerProps) {
-  const { currencies, onAccountSelected, onClose, accounts$, flow, source } = props;
+  const { currencyIds, useCase, onAccountSelected, onClose, flow, source } = props;
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
 
-  // sorting them by marketcap
-  const sortedCurrencies = useCurrenciesByMarketcap(currencies);
+  const isAcceptedCurrency = useAcceptedCurrency();
+  const devMode = useEnv("MANAGER_DEV_MODE");
 
-  // performing fuzzy search if there is a valid searchValue
-  const filteredCurrencies = useMemo(() => {
-    if (searchValue.length < 2) {
-      return sortedCurrencies;
-    }
-    return fuzzySearch(sortedCurrencies, searchValue);
-  }, [searchValue, sortedCurrencies]);
+  const { data, isLoading, loadNext } = useAssetsData({
+    search: searchValue,
+    currencyIds,
+    product: "lld",
+    version: __APP_VERSION__,
+    areCurrenciesFiltered: currencyIds && currencyIds.length > 0,
+    isStaging: false,
+    includeTestNetworks: devMode,
+    useCase,
+  });
+
+  // Pagination is a bit strange with this because we order by market cap
+  // but it works fine and keeps the old/expected order as much as possible
+  const ids = useMarketcapIds();
+
+  // TODO: Make sure we don't have delisted tokens here too
+  const assetsToDisplay = useMemo(() => {
+    if (!data) return [];
+
+    const orderedSet = ids.reduce<Set<CryptoOrTokenCurrency>>((acc, id) => {
+      const currency = data.cryptoOrTokenCurrencies[id];
+      if (currency && isAcceptedCurrency(currency)) {
+        acc.add(currency);
+      }
+      return acc;
+    }, new Set());
+
+    data.currenciesOrder.metaCurrencyIds
+      .flatMap(metaCurrencyId => {
+        const assetsIds = data.cryptoAssets[metaCurrencyId]?.assetsIds;
+        return assetsIds ? Object.values(assetsIds) : [];
+      })
+      .forEach(currencyId => {
+        const currency = data.cryptoOrTokenCurrencies[currencyId];
+        if (currency && isAcceptedCurrency(currency)) {
+          orderedSet.add(currency);
+        }
+      });
+
+    return Array.from(orderedSet);
+  }, [data, ids, isAcceptedCurrency]);
 
   const handleCurrencySelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
-      const selectedCurrency = currencies.find(({ id }) => id === currency.id);
-      if (!selectedCurrency) return;
-
       const network =
         currency.type === "TokenCurrency" ? currency.parentCurrency?.name : currency.name;
 
       track("asset_network_clicked ", {
-        asset: selectedCurrency.ticker,
+        asset: currency.ticker,
         network,
         flow,
         source,
@@ -98,7 +125,6 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
       setDrawer(
         SelectAccountDrawer,
         {
-          accounts$,
           currency,
           onAccountSelected,
           onRequestBack: () =>
@@ -111,15 +137,11 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
         },
       );
     },
-    [currencies, flow, source, accounts$, onAccountSelected, onClose, props],
+    [flow, source, onAccountSelected, onClose, props],
   );
-  if (currencies.length === 1) {
+  if (currencyIds && currencyIds.length === 1) {
     return (
-      <SelectAccountDrawer
-        currency={currencies[0]}
-        onAccountSelected={onAccountSelected}
-        accounts$={accounts$}
-      />
+      <SelectAccountDrawer currency={assetsToDisplay[0]} onAccountSelected={onAccountSelected} />
     );
   }
   return (
@@ -127,27 +149,33 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
       <HeaderContainer>
         <Text
           ff="Inter|Medium"
-          color="palette.text.shade100"
+          color="neutral.c100"
           fontSize="24px"
-          style={{
-            textTransform: "uppercase",
-          }}
+          textTransform="uppercase"
           data-testid="select-asset-drawer-title"
         >
           {t("drawers.selectCurrency.title")}
         </Text>
       </HeaderContainer>
-      <SelectorContent>
-        <SearchInputContainer>
-          <SearchInput
-            data-testid="select-asset-drawer-search-input"
-            value={searchValue}
-            onChange={setSearchValue}
-          />
-        </SearchInputContainer>
-        {/* @ts-expect-error compatibility issue betwenn CryptoOrTokenCurrency and Currency (which includes Fiat) and the SelectAccountDrawer components  */}
-        <CurrencyList currencies={filteredCurrencies} onCurrencySelect={handleCurrencySelected} />
-      </SelectorContent>
+      <SearchInputContainer>
+        <SearchInput
+          data-testid="select-asset-drawer-search-input"
+          value={searchValue}
+          onChange={setSearchValue}
+        />
+      </SearchInputContainer>
+      {isLoading ? (
+        <Loader>
+          <BigSpinner size={50} />
+        </Loader>
+      ) : (
+        <CurrencyList
+          currencies={assetsToDisplay}
+          onCurrencySelect={handleCurrencySelected}
+          onVisibleItemsScrollEnd={loadNext}
+          hasNextPage={!!loadNext}
+        />
+      )}
     </SelectAccountAndCurrencyDrawerContainer>
   );
 }

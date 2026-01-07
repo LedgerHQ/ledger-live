@@ -62,4 +62,12 @@ export class AppInfos {
   static readonly LTC = new AppInfos("Litecoin");
 
   static readonly KASPA = new AppInfos("Kaspa");
+
+  static readonly HEDERA = new AppInfos("Hedera");
+
+  static readonly SUI = new AppInfos("Sui");
+
+  static readonly BASE = new AppInfos("Base");
+
+  static readonly VECHAIN = new AppInfos("Vechain");
 }

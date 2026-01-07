@@ -1,9 +1,11 @@
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { MissingCoinConfig } from "./errors";
+import type { FeatureConfig } from "./features/types";
 
 type ConfigStatus =
   | {
       type: "active";
+      features?: FeatureConfig[];
     }
   | {
       type: "under_maintenance";
@@ -40,8 +42,16 @@ type ConfigStatus =
       type: "deprecated";
     };
 
+type Banner = {
+  isDisplay: boolean;
+  bannerText: string;
+  bannerLink?: string;
+  bannerLinkText?: string;
+};
+
 export type CurrencyConfig = {
   status: ConfigStatus;
+  customBanner?: Banner;
   [key: string]: unknown;
 };
 

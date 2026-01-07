@@ -1,6 +1,5 @@
 import winston, { LogEntry } from "winston";
 import Transport from "winston-transport";
-import { summarize } from "./summarize";
 import { captureException, captureBreadcrumb } from "~/sentry/renderer";
 const { format } = winston;
 const { combine, json, timestamp } = format;
@@ -77,7 +76,6 @@ export function enableDebugLogger(filter?: (log: LogEntry) => boolean) {
   }
   add(consoleT);
 }
-const logCmds = !process.env.NO_DEBUG_COMMANDS;
 const logDb = !process.env.NO_DEBUG_DB;
 const logRedux = !process.env.NO_DEBUG_ACTION;
 const logTabkey = !process.env.NO_DEBUG_TAB_KEY;
@@ -87,59 +85,23 @@ const logAnalytics = !process.env.NO_DEBUG_ANALYTICS;
 const logApdu = !process.env.NO_DEBUG_DEVICE;
 const logCountervalues = !process.env.NO_DEBUG_COUNTERVALUES;
 const ANALYTICS_TYPE = "analytics";
+
+type RTKQueryMeta = {
+  arg?: unknown;
+  endpointName?: string;
+  requestId?: string;
+  requestStatus?: string;
+};
+
+function isRTKQueryMeta(meta: unknown): meta is RTKQueryMeta {
+  return (
+    typeof meta === "object" &&
+    meta !== null &&
+    ("arg" in meta || "endpointName" in meta || "requestId" in meta)
+  );
+}
+
 export default {
-  onCmd: (type: string, id: string, spentTime: number, data?: unknown) => {
-    if (logCmds) {
-      switch (type) {
-        case "cmd.START":
-          logger.log(
-            "info",
-            `CMD ${id}.send()`,
-            summarize({
-              type,
-              data,
-            }),
-          );
-          break;
-        case "cmd.NEXT":
-          logger.log(
-            "info",
-            `● CMD ${id}`,
-            summarize({
-              type,
-              data,
-            }),
-          );
-          break;
-        case "cmd.COMPLETE":
-          logger.log("info", `✔ CMD ${id} finished in ${spentTime.toFixed(0)}ms`, {
-            type,
-          });
-          captureBreadcrumb({
-            level: "debug",
-            category: "command",
-            message: `✔ ${id}`,
-          });
-          break;
-        case "cmd.ERROR":
-          logger.log(
-            "warn",
-            `✖ CMD ${id} error`,
-            summarize({
-              type,
-              data,
-            }),
-          );
-          captureBreadcrumb({
-            level: "error",
-            category: "command",
-            message: `✖ ${id}`,
-          });
-          break;
-        default:
-      }
-    }
-  },
   onDB: (way: "read" | "write" | "clear", name: string) => {
     const msg = `📁  ${way} ${name}`;
     if (logDb) {
@@ -150,11 +112,38 @@ export default {
   },
   // tracks Redux actions (NB not all actions are serializable)
 
-  onReduxAction: (action: { type: string }) => {
+  onReduxAction: (action: { type: string; meta?: unknown; error?: unknown; payload?: unknown }) => {
     if (logRedux) {
-      logger.log("debug", `⚛️  ${action.type}`, {
+      const logData: Record<string, unknown> = {
         type: "action",
-      });
+      };
+
+      // Extract RTK Query details for better logging
+      if (action.type.includes("/executeQuery/") || action.type.includes("/executeMutation/")) {
+        if (isRTKQueryMeta(action.meta)) {
+          if (action.meta.arg) {
+            logData.queryArg = action.meta.arg;
+          }
+          if (action.meta.endpointName) {
+            logData.endpointName = action.meta.endpointName;
+          }
+          if (action.meta.requestId) {
+            logData.requestId = action.meta.requestId;
+          }
+        }
+
+        // For rejected actions, include error details
+        if (action.type.includes("/rejected")) {
+          if (action.error) {
+            logData.error = action.error;
+          }
+          if (action.payload) {
+            logData.payload = action.payload;
+          }
+        }
+      }
+
+      logger.log("debug", `⚛️  ${action.type}`, logData);
     }
   },
   // tracks keyboard events

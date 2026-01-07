@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { RouteComponentProps, useHistory } from "react-router-dom";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
@@ -16,6 +16,7 @@ import styled from "styled-components";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StaticContext } from "react-router";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { SeedOriginType } from "@ledgerhq/types-live";
 
 const pollingPeriodMs = 1000;
 
@@ -26,6 +27,7 @@ export type RecoverComponentParams = {
 export type RecoverState = {
   fromOnboarding?: boolean;
   deviceId?: string;
+  seedConfiguration?: SeedOriginType;
 };
 
 const FullscreenWrapper = styled.div`
@@ -37,7 +39,7 @@ const FullscreenWrapper = styled.div`
   width: 100vw;
   height: 100vh;
   z-index: 20;
-  background-color: ${p => p.theme.colors.palette.background.default};
+  background-color: ${p => p.theme.colors.background.default};
 `;
 
 export default function RecoverPlayer({
@@ -52,7 +54,7 @@ export default function RecoverPlayer({
   const localManifest = useLocalLiveAppManifest(params.appId);
   const remoteManifest = useRemoteLiveAppManifest(params.appId);
   const manifest = localManifest || remoteManifest;
-  const theme = useTheme().colors.palette.type;
+  const theme = useTheme().theme;
   const history = useHistory();
   const onClose = useCallback(() => history.goBack(), [history]);
   const recoverConfig = useFeature("protectServicesDesktop");

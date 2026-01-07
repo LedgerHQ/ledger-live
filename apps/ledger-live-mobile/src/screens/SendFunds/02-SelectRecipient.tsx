@@ -19,7 +19,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Trans, useTranslation } from "react-i18next";
 import { Linking, Platform, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { useSelector } from "react-redux";
 import { TrackScreen, track } from "~/analytics";
 import Alert from "~/components/Alert";
 import Button from "~/components/Button";
@@ -33,12 +32,12 @@ import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import TranslatedError from "~/components/TranslatedError";
 import { ScreenName } from "~/const";
-import { accountScreenSelector } from "~/reducers/accounts";
-import { currencySettingsForAccountSelector } from "~/reducers/settings";
-import type { State } from "~/reducers/types";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForAccount";
 import { MemoTagDrawer } from "LLM/features/MemoTag/components/MemoTagDrawer";
 import { useMemoTagInput } from "LLM/features/MemoTag/hooks/useMemoTagInput";
 import { hasMemoDisclaimer } from "LLM/features/MemoTag/utils/hasMemoTag";
+import { useExpiryDurationInput } from "LLM/features/ExpiryDuration/hooks/useExpiryDurationInput";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
 import perFamilySendSelectRecipient from "../../generated/SendSelectRecipient";
@@ -64,15 +63,11 @@ export default function SendSelectRecipient({ route }: Props) {
   const navigation = useNavigation<Navigation["navigation"]>();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is missing");
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const currencySettings = useSelector((s: State) =>
-    currencySettingsForAccountSelector(s.settings, {
-      account: mainAccount,
-    }),
-  );
+  const currencySettings = useCurrencySettingsForAccount(mainAccount);
   const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution") ?? {};
   const isCurrencySupported =
     params?.supportedCurrencyIds?.includes(mainAccount.currency.id) || false;
@@ -143,6 +138,17 @@ export default function SendSelectRecipient({ route }: Props) {
   );
 
   const memoTag = useMemoTagInput(
+    mainAccount.currency.family,
+    useCallback(
+      patch => {
+        const bridge = getAccountBridge(account, parentAccount);
+        setTransaction(bridge.updateTransaction(transaction, patch(transaction)));
+      },
+      [account, parentAccount, setTransaction, transaction],
+    ),
+  );
+
+  const expiryDuration = useExpiryDurationInput(
     mainAccount.currency.family,
     useCallback(
       patch => {
@@ -360,7 +366,7 @@ export default function SendSelectRecipient({ route }: Props) {
 
             {CustomRecipientAlert && (
               <View style={styles.customRecipientAlertContainer}>
-                <CustomRecipientAlert status={status} />
+                <CustomRecipientAlert status={status} account={mainAccount} />
               </View>
             )}
 
@@ -375,6 +381,15 @@ export default function SendSelectRecipient({ route }: Props) {
                 <Text mt={4} pl={2} color="alert">
                   <TranslatedError error={memoTag.error} />
                 </Text>
+              </View>
+            )}
+
+            {expiryDuration?.Input && (
+              <View style={styles.expiryDurationInputContainer}>
+                <expiryDuration.Input
+                  testID="expiry-duration-input"
+                  onChange={expiryDuration.handleChange}
+                />
               </View>
             )}
 
@@ -476,6 +491,9 @@ const styles = StyleSheet.create({
   },
   memoTagInputContainer: {
     marginTop: 32,
+  },
+  expiryDurationInputContainer: {
+    marginTop: 8,
   },
   infoBox: {
     marginTop: 24,

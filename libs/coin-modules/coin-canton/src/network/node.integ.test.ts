@@ -7,6 +7,7 @@ describe.skip("Node (localnet)", () => {
     coinConfig.setCoinConfig(() => ({
       gatewayUrl: "http://gateway.url",
       nodeUrl: "http://localhost:2975/v2",
+      nativeInstrumentId: "Amulet",
       networkType: "localnet",
       status: { type: "active" },
     }));
@@ -26,6 +27,7 @@ describe.skip("Node (devnet)", () => {
     coinConfig.setCoinConfig(() => ({
       nodeUrl: "https://wallet-validator-devnet-canton.ledger-test.com/v2",
       networkType: "devnet",
+      nativeInstrumentId: "Amulet",
       status: { type: "active" },
       gatewayUrl: "http://gateway.url",
     }));

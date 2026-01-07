@@ -177,7 +177,7 @@ describe("EVM Family", () => {
 
         expect(response).toBe(true);
         // it should fail 2 times and succeed on the next try
-        expect(spy).toBeCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it("should throw after too many retries", async () => {
@@ -219,6 +219,9 @@ describe("EVM Family", () => {
           gasPrice: "789",
           gasUsed: "122",
           value: "456",
+          status: 1,
+          from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+          to: "0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C",
         });
       });
     });
@@ -358,6 +361,35 @@ describe("EVM Family", () => {
       expect(await RPC_API.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx)).toEqual({
         maxFeePerGas: new BigNumber("1000000026"),
         maxPriorityFeePerGas: new BigNumber(1e9),
+        gasPrice: null,
+        nextBaseFee: new BigNumber("13"),
+      });
+    });
+
+    it("should return the expected payload for an EIP1559 tx when network returns 0 priority fee for 0G", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
+        if (method === "eth_feeHistory") {
+          return {
+            reward: [
+              ["0x0", "0x0"],
+              ["0x0", "0x0"],
+              ["0x0", "0x0"],
+              ["0x0", "0x0"],
+            ],
+            baseFeePerGas: ["0x12", "0x10", "0x10", "0xe", "0xd"],
+            gasUsedRatio: [0.026089875, 0.406803, 0, 0.0866665],
+          };
+        }
+      });
+
+      expect(
+        await RPC_API.getFeeData(
+          { ...fakeCurrency, id: "zero_gravity" } as CryptoCurrency,
+          eip1559Tx,
+        ),
+      ).toEqual({
+        maxFeePerGas: new BigNumber("2000000026"),
+        maxPriorityFeePerGas: new BigNumber(2e9),
         gasPrice: null,
         nextBaseFee: new BigNumber("13"),
       });

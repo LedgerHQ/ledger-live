@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useMemo, useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
@@ -166,7 +166,7 @@ const Delegation = (props: DelegationPropsType) => {
                     id={"account-delegate-button"}
                     mr={2}
                     disabled={!delegationEnabled}
-                    color="palette.primary.main"
+                    color="primary.c80"
                     small={true}
                     onClick={onDelegate}
                   >
@@ -186,7 +186,7 @@ const Delegation = (props: DelegationPropsType) => {
                 <Button
                   id="account-rewards-button"
                   disabled={!hasRewards}
-                  color="palette.primary.main"
+                  color="primary.c80"
                   small={true}
                   onClick={onClaimRewards}
                 >
@@ -211,7 +211,7 @@ const Delegation = (props: DelegationPropsType) => {
                 maxWidth: "65%",
               }}
             >
-              <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+              <Text ff="Inter|Medium|SemiBold" color="neutral.c70" fontSize={4}>
                 <Trans
                   i18nKey="elrond.delegation.emptyState.description"
                   values={{

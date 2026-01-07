@@ -9,7 +9,7 @@ export default class DiscoverPage {
     { name: "ParaSwap", url: " https://paraswap.io" },
     { name: "Kiln", url: " https://kiln.fi" },
     { name: "Lido", url: " https://lido.fi/" },
-    { name: "1inch", url: " https://1inch.io/" },
+    { name: "1inch", url: " https://1inch.com/" },
     { name: "BTCDirect", url: " https://btcdirect.eu/" },
     { name: "Banxa", url: " https://banxa.com/" },
     { name: "Bitrefill", url: " https://bitrefill.com" },
@@ -52,7 +52,7 @@ export default class DiscoverPage {
     jestExpect(title).toBe("Ledger Platform Apps");
 
     const url = await getWebElementById("__next").getCurrentUrl();
-    jestExpect(url).toContain("app.1inch.io");
+    jestExpect(url).toContain("1inch.com%2Fswap");
     jestExpect(url).toContain("usdt");
     jestExpect(url).toContain("sourceTokenAmount%3D");
     jestExpect(url).toContain("currency%22%3A%22ethereum");

@@ -23,13 +23,14 @@ message UDecimal {
 }
 
 message NewSellResponse {
-    string   trader_email = 1;           // traderEmail
-    string   in_currency = 2;            // inCurrency
-    bytes    in_amount = 3;              // inAmount
-    string   in_address = 4;             // account
-    string   out_currency = 5;           // outCurrency
-    UDecimal out_amount = 6;             // outAmount
-    bytes    device_transaction_id = 7;  // nonce
+    string   trader_email = 1;          // traderEmail
+    string   in_currency = 2;           // inCurrency
+    bytes    in_amount = 3;             // inAmount
+    string   in_address = 4;            // account
+    string   out_currency = 5;          // outCurrency
+    UDecimal out_amount = 6;            // outAmount
+    bytes    device_transaction_id = 7; // nonce
+    string   in_extra_id = 8;           // inExtraId
 }
 
 message NewFundResponse {

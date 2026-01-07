@@ -80,6 +80,9 @@ export const getTransaction: NodeApi["getTransaction"] = async (currency, hash) 
     gasPrice: ledgerTransaction.gas_price,
     gasUsed: ledgerTransaction.gas_used,
     value: ledgerTransaction.value,
+    status: ledgerTransaction.status,
+    from: ledgerTransaction.from,
+    to: ledgerTransaction.to,
   };
 };
 
@@ -267,15 +270,18 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
     throw new LedgerNodeUsedIncorrectly();
   }
 
+  const params: Record<string, boolean> = {
+    mevProtected: Boolean(broadcastConfig?.mevProtected),
+    sponsored: Boolean(broadcastConfig?.sponsored),
+  };
+
   const { result: hash } = await fetchWithRetries<{
     result: string;
   }>({
     method: "POST",
     url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/tx/send`,
     data: { tx: signedTxHex },
-    params: {
-      mevProtected: Boolean(broadcastConfig?.mevProtected),
-    },
+    params,
   });
   return hash;
 };
@@ -294,7 +300,7 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
   }
 
   if (blockHeight === "latest") {
-    const { hash, height, time } = await fetchWithRetries<{
+    const { hash, height, time, txs } = await fetchWithRetries<{
       hash: string;
       height: number;
       time: string;
@@ -304,14 +310,14 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
       url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/block/current`,
     });
 
-    return { hash, height, timestamp: new Date(time).getTime() };
+    return { hash, height, timestamp: new Date(time).getTime(), transactionHashes: txs };
   }
 
   /**
    * for some reason, this explorer endpoint doesn't return the block object
    * but an array of one element with the requested block
    */
-  const [{ hash, height, time }] = await fetchWithRetries<
+  const [{ hash, height, time, txs }] = await fetchWithRetries<
     [
       {
         hash: string;
@@ -329,6 +335,7 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
     hash,
     height,
     timestamp: new Date(time).getTime(),
+    transactionHashes: txs,
   };
 };
 
@@ -356,17 +363,20 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = a
   }
 
   // Fake signature is added to get the best approximation possible for the gas on L1
-  const serializedTransaction = ((): string | null => {
-    try {
-      return getSerializedTransaction(transaction, {
-        r: "0xffffffffffffffffffffffffffffffffffffffff",
-        s: "0xffffffffffffffffffffffffffffffffffffffff",
-        v: 27,
-      });
-    } catch (e) {
-      return null;
-    }
-  })();
+  const serializedTransaction =
+    typeof transaction === "string"
+      ? transaction
+      : ((): string | null => {
+          try {
+            return getSerializedTransaction(transaction, {
+              r: "0xffffffffffffffffffffffffffffffffffffffff",
+              s: "0xffffffffffffffffffffffffffffffffffffffff",
+              v: 27,
+            });
+          } catch {
+            return null;
+          }
+        })();
   if (!serializedTransaction) {
     return new BigNumber(0);
   }
@@ -422,17 +432,20 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = async
   }
 
   // Fake signature is added to get the best approximation possible for the gas on L1
-  const serializedTransaction = ((): string | null => {
-    try {
-      return getSerializedTransaction(transaction, {
-        r: "0xffffffffffffffffffffffffffffffffffffffff",
-        s: "0xffffffffffffffffffffffffffffffffffffffff",
-        v: 27,
-      });
-    } catch (e) {
-      return null;
-    }
-  })();
+  const serializedTransaction =
+    typeof transaction === "string"
+      ? transaction
+      : ((): string | null => {
+          try {
+            return getSerializedTransaction(transaction, {
+              r: "0xffffffffffffffffffffffffffffffffffffffff",
+              s: "0xffffffffffffffffffffffffffffffffffffffff",
+              v: 27,
+            });
+          } catch {
+            return null;
+          }
+        })();
   if (!serializedTransaction) {
     return new BigNumber(0);
   }

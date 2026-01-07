@@ -5,12 +5,12 @@ import type {
   HederaResources,
   HederaResourcesRaw,
 } from "../../types";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import { getMockedCurrency, getMockedTokenCurrency } from "./currency.fixture";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getMockedCurrency, getMockedHTSTokenCurrency } from "./currency.fixture";
 
 const defaultMockedCurrency = getMockedCurrency();
-const defaultMockedTokenCurrency = getMockedTokenCurrency();
+const defaultMockedTokenCurrency = getMockedHTSTokenCurrency();
 const defaultMockAccountId = "js:2:hedera:0.0.1234567:hederaBip44";
 const defaultMockTokenAccountId = `${defaultMockAccountId}+${defaultMockedTokenCurrency.id}`;
 const defaultBalance = new BigNumber(100000000);
@@ -19,11 +19,13 @@ const defaultTokenBalance = new BigNumber(10);
 export const mockHederaResources: HederaResources = {
   maxAutomaticTokenAssociations: 0,
   isAutoTokenAssociationEnabled: false,
+  delegation: null,
 };
 
 export const mockHederaResourcesRaw: HederaResourcesRaw = {
   maxAutomaticTokenAssociations: 0,
   isAutoTokenAssociationEnabled: false,
+  delegation: null,
 };
 
 /**
@@ -120,4 +122,33 @@ export const getMockedTokenAccount = (
     },
     ...overrides,
   };
+};
+
+export const MAINNET_TEST_ACCOUNTS = {
+  pristine: {
+    accountId: "0.0.800000",
+    publicKey: "3608128be58bfb7e753068e0bc82430ec77e51eed578e0a7055a0bd1296fe334",
+  },
+  withoutTokens: {
+    accountId: "0.0.8000000",
+    publicKey: "96eae0821a63a138f37e0a60a83f9a0317fa11dde4d7669a62afb5ced2158141",
+  },
+  withTokens: {
+    accountId: "0.0.8835924",
+    publicKey: "34e26415574250721e8869bd33ea2678c2bbccff5fc70bd8b0ec9239295fd2cf",
+    associatedTokenWithBalance: "0.0.456858",
+    associatedTokenWithoutBalance: "0.0.7243470",
+    notAssociatedToken: "0.0.3176721",
+  },
+  withQuickBalanceChanges: {
+    accountId: "0.0.10176637",
+  },
+  activeStaking: {
+    accountId: "0.0.8835924",
+    publicKey: "34e26415574250721e8869bd33ea2678c2bbccff5fc70bd8b0ec9239295fd2cf",
+  },
+  inactiveStaking: {
+    accountId: "0.0.9806001",
+    publicKey: "0283ef0997da7161c9a3aec45c57f4e074cb67916c97c1e5339d9f988e702e0450",
+  },
 };

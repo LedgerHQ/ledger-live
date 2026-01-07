@@ -77,6 +77,7 @@ jobs:
     secrets: inherit
     with:
       macos-specificity-runner-label: "performance-pool"
+      skip-pod-checks: "false"
 
   # Tests
   test-libraries:
@@ -107,6 +108,21 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
     secrets: inherit
 
+  test-additional:
+    name: "Test Additional"
+    if: ${{!github.event.pull_request.head.repo.fork}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    secrets: inherit
+
+  notify-e2e-required:
+    name: "Notify E2E Required"
+    needs: determine-affected
+    if: ${{ always() && needs.determine-affected.result == 'success' && github.event_name == 'pull_request' && github.event.pull_request.draft == false && !github.event.pull_request.head.repo.fork }}
+    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@develop
+    secrets: inherit
+    with:
+      affected_paths: ${{ needs.determine-affected.outputs.paths }}
+
   scan-sonar:
     name: "Sonar Cloud"
     needs:
@@ -114,11 +130,12 @@ jobs:
       - test-mobile
       - test-libraries
     uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
+    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success')}}
     secrets: inherit
     with:
       should_download_desktop_coverage: ${{ needs.test-desktop.outputs.coverage_generated }}
       should_download_mobile_coverage: ${{ needs.test-mobile.outputs.coverage_generated }}
-      should_download_libs_coverage: ${{ needs.test-libs.outputs.coverage_generated }}
+      should_download_libs_coverage: ${{ needs.test-libraries.outputs.coverage_generated }}
 
   # Final Check required
   ok:
@@ -132,6 +149,7 @@ jobs:
       - test-design-system
       - build-web-tools
       - test-cli
+      - test-additional
       - determine-affected
     runs-on: ubuntu-22.04
     if: always() && !cancelled() && needs.determine-affected.result == 'success'

@@ -1,14 +1,16 @@
 import { Operation } from "@ledgerhq/coin-framework/api/types";
 import network from "../network";
 import { PolkadotOperation } from "../types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export async function listOperations(
   addr: string,
   { limit, startAt }: { limit: number; startAt?: number | undefined },
+  currency?: CryptoCurrency,
 ): Promise<[Operation[], number]> {
   //The accountId is used to map Operations to Live types.
   const fakeAccountId = "";
-  const operations = await network.getOperations(fakeAccountId, addr, startAt, limit);
+  const operations = await network.getOperations(fakeAccountId, addr, currency, startAt, limit);
   const blockHeight = operations.length > 0 ? operations.slice(-1)[0].blockHeight ?? 0 : 0;
   return [operations.map(convertToCoreOperation), blockHeight];
 }
@@ -29,6 +31,7 @@ const convertToCoreOperation = (operation: PolkadotOperation): Operation => {
         time: date,
       },
       date: date,
+      failed: operation.hasFailed ?? false,
     },
     type,
     value: BigInt(value.toString()),

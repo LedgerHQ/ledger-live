@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
-import { TFunction } from "i18next";
+import type { TFunction } from "i18next";
 import { Account } from "@ledgerhq/types-live";
 import {
   PolkadotNomination,

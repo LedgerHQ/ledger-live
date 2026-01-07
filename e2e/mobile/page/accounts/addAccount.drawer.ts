@@ -1,3 +1,4 @@
+import { Step } from "jest-allure2-reporter/api";
 import { delay, openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
 import { retryUntilTimeout } from "../../utils/retry";
@@ -11,7 +12,6 @@ export default class AddAccountDrawer extends CommonPage {
   closeAddAccountButtonId = "button-close-add-account";
   addFundsButtonId = "button-add-funds";
   actionDrawerReceiveButtonId = "action-drawer-receive-button";
-  addNewOrExistingAccount = "add-new-account-button";
 
   accountIdAccountDrawer = (currency: string) => `js:2:${currency}:.*`;
 
@@ -91,13 +91,5 @@ export default class AddAccountDrawer extends CommonPage {
   @Step("Click on 'Receive' in action drawer")
   async tapReceiveActionDrawer() {
     await tapById(this.actionDrawerReceiveButtonId);
-  }
-
-  @Step("Tap on (Add new or existing account) button")
-  async tapAddNewOrExistingAccountButton() {
-    if (!(await IsIdVisible(this.addNewOrExistingAccount))) {
-      await scrollToId(this.addNewOrExistingAccount, undefined, 400);
-    }
-    await tapById(this.addNewOrExistingAccount);
   }
 }

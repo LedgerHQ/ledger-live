@@ -25,58 +25,38 @@ type ModularDrawerNetworkComponentFeatures = {
 
 export type ModularDrawerEventParams = {
   [EVENTS_NAME.MODULAR_ASSET_SELECTION]: {
-    flow: string;
-    source: string;
     formatAssetConfig?: boolean;
     asset_component_features?: ModularDrawerAssetComponentFeatures;
   };
   [EVENTS_NAME.MODULAR_NETWORK_SELECTION]: {
-    flow: string;
-    source: string;
     formatNetworkConfig?: boolean;
     network_component_features?: ModularDrawerNetworkComponentFeatures;
   };
-  [EVENTS_NAME.MODULAR_ACCOUNT_SELECTION]: {
-    flow: string;
-    source: string;
-  };
-  [EVENTS_NAME.MODULAR_FUND_ACCOUNT_LIST]: {
-    flow: string;
-    source: string;
-  };
+  [EVENTS_NAME.MODULAR_ACCOUNT_SELECTION]: object;
+  [EVENTS_NAME.MODULAR_FUND_ACCOUNT_LIST]: object;
   [EVENTS_NAME.ASSET_CLICKED]: {
-    flow: string;
-    source: string;
     asset: string;
     page: string;
     formatAssetConfig?: boolean;
     asset_component_features?: ModularDrawerAssetComponentFeatures;
   };
   [EVENTS_NAME.NETWORK_CLICKED]: {
-    flow: string;
-    source: string;
     network: string;
     page: string;
     formatNetworkConfig?: boolean;
     network_component_features?: ModularDrawerNetworkComponentFeatures;
   };
   [EVENTS_NAME.ACCOUNT_CLICKED]: {
-    flow: string;
-    source: string;
     currency: string;
     page: string;
   };
   [EVENTS_NAME.ASSET_SEARCHED]: {
-    flow: string;
-    source: string;
     formatAssetConfig?: boolean;
     asset_component_features?: ModularDrawerAssetComponentFeatures;
     searched_value: string;
     page: string;
   };
   [EVENTS_NAME.BUTTON_CLICKED]: {
-    flow: string;
-    source?: string;
     page: string;
     button: string;
   };

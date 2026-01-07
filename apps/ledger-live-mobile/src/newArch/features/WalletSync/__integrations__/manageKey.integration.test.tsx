@@ -68,6 +68,6 @@ describe("ManageKey", () => {
 
     await user.press(await screen.findByTestId("delete-trustchain"));
 
-    expect(await screen.findByText(/Your Ledger Live apps are no longer synched/i)).toBeVisible();
+    expect(await screen.findByText(/Your Ledger Wallet apps are no longer synced/i)).toBeVisible();
   });
 });

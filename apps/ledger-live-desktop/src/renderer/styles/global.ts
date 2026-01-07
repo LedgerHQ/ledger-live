@@ -8,7 +8,7 @@ export const GlobalStyle = createGlobalStyle`
   ${reset};
 
   #react-root {
-    background-color: ${p => p.theme.colors.palette.background.default};
+    background-color: ${p => p.theme.colors.background.default};
   }
 
   .tippy-content {
@@ -16,8 +16,8 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   .tippy-tooltip.ledger-theme {
-    background-color: ${p => p.theme.colors.palette.text.shade100};
-    color: ${p => p.theme.colors.palette.background.default};
+    background-color: ${p => p.theme.colors.neutral.c100};
+    color: ${p => p.theme.colors.background.default};
     border-radius: ${radii[1]}px;
   }
 
@@ -26,23 +26,23 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   .tippy-box[data-theme~='ledger'] > .tippy-svg-arrow {
-    fill: ${p => p.theme.colors.palette.text.shade100};
+    fill: ${p => p.theme.colors.neutral.c100};
   }
 
-  .tippy-box[data-theme~='ledger'].bg-alertRed > .tippy-svg-arrow {
-    fill: ${p => p.theme.colors.alertRed};
+  .tippy-box[data-theme~='ledger'].bg-error-strong > .tippy-svg-arrow {
+    fill: ${p => p.theme.colors.error.c50};
   }
 
   .tippy-box[data-theme~='ledger'].bg-palette-background-default > .tippy-svg-arrow {
-    fill: ${p => p.theme.colors.palette.background.default};
+    fill: ${p => p.theme.colors.background.default};
   }
 
   .tippy-box[data-theme~='ledger'].bg-palette-background-paper > .tippy-svg-arrow {
-    fill: ${p => p.theme.colors.palette.background.paper};
+    fill: ${p => p.theme.colors.background.card};
   }
 
   .tippy-tooltip.ledger-theme .tippy-svg-arrow {
-    fill: ${p => p.theme.colors.palette.text.shade100};
+    fill: ${p => p.theme.colors.neutral.c100};
   }
 
   .tippy-tooltip[data-placement^=bottom]>.tippy-svg-arrow {
@@ -50,17 +50,40 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   .tippy-popper.ledger-theme .tippy-roundarrow {
-    fill: ${p => p.theme.colors.palette.text.shade100};
+    fill: ${p => p.theme.colors.neutral.c100};
   }
 
   .select__control:hover, .select__control-is-focused {
-    border-color: ${p => p.theme.colors.palette.divider};
+    border-color: ${p => p.theme.colors.neutral.c40};
   }
 
   .select__single-value {
     color: inherit !important;
     right: 0;
     left: 15px;
+  }
+
+  /* react-select v5 input styling fix */
+  .select__input-container {
+    color: ${p => p.theme.colors.neutral.c80} !important;
+    caret-color: ${p => p.theme.colors.neutral.c80};
+    visibility: visible !important;
+  }
+
+  .select__input-container input,
+  .select__input input,
+  [class*="select__input"] input {
+    color: ${p => p.theme.colors.neutral.c80} !important;
+    caret-color: ${p => p.theme.colors.neutral.c80} !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* Ensure the input wrapper is visible when menu is open */
+  .select__control--menu-is-open .select__input-container,
+  .select__control--menu-is-open .select__input-container input {
+    color: ${p => p.theme.colors.neutral.c80} !important;
+    opacity: 1 !important;
   }
 
   ::selection {

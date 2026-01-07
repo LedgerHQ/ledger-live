@@ -1,3 +1,5 @@
+// TODO Remove dependency to `"@ledgerhq/types-live"` once
+// the legacy bridge is deleted
 import eip55 from "eip55";
 import BigNumber from "bignumber.js";
 import {
@@ -6,7 +8,7 @@ import {
 } from "@ledgerhq/coin-framework/nft/nftOperationId";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   EtherscanOperation,
@@ -16,7 +18,7 @@ import {
   EtherscanInternalTransaction,
 } from "../types";
 import { safeEncodeEIP55 } from "../utils";
-import { getCryptoAssetsStore } from "../cryptoAssetsStore";
+import { detectEvmStakingOperationType } from "../staking/detectOperationType";
 
 /**
  * Adapter to convert an Etherscan operation into Ledger Live Operations.
@@ -26,7 +28,7 @@ export const etherscanOperationToOperations = (
   accountId: string,
   etherscanOp: EtherscanOperation,
 ): Operation[] => {
-  const { xpubOrAddress: address } = decodeAccountId(accountId);
+  const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(etherscanOp.from);
   const to = safeEncodeEIP55(etherscanOp.to);
@@ -40,34 +42,44 @@ export const etherscanOperationToOperations = (
   }
   if (from === checksummedAddress) {
     const isContractInteraction = new RegExp(/0[xX][0-9a-fA-F]{8}/).test(etherscanOp.methodId); // 0x + 4 bytes selector
-    types.push(isContractInteraction ? "FEES" : "OUT");
+    const stakingType = detectEvmStakingOperationType(currencyId, to, etherscanOp.methodId);
+    types.push(stakingType ?? (isContractInteraction ? "FEES" : "OUT"));
   }
   if (!types.length) {
     types.push("NONE");
   }
 
-  return types.map(
-    type =>
-      ({
-        id: encodeOperationId(accountId, etherscanOp.hash, type),
-        hash: etherscanOp.hash,
-        type,
-        value: type === "OUT" || type === "FEES" ? (hasFailed ? fee : value.plus(fee)) : value,
-        fee,
-        senders: [from],
-        recipients: [to],
-        blockHeight: parseInt(etherscanOp.blockNumber, 10),
-        blockHash: etherscanOp.blockHash,
-        transactionSequenceNumber: parseInt(etherscanOp.nonce, 10),
-        accountId: accountId,
-        date: new Date(parseInt(etherscanOp.timeStamp, 10) * 1000),
-        subOperations: [],
-        nftOperations: [],
-        internalOperations: [],
-        hasFailed,
-        extra: {},
-      }) as Operation,
-  );
+  const valueIncludesFees = ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"];
+
+  return types.map(type => {
+    let operationValue: BigNumber = value;
+
+    if (valueIncludesFees.includes(type) && hasFailed) {
+      operationValue = fee;
+    } else if (valueIncludesFees.includes(type)) {
+      operationValue = value.plus(fee);
+    }
+
+    return {
+      id: encodeOperationId(accountId, etherscanOp.hash, type),
+      hash: etherscanOp.hash,
+      type,
+      value: operationValue,
+      fee,
+      senders: [from],
+      recipients: [to],
+      blockHeight: parseInt(etherscanOp.blockNumber, 10),
+      blockHash: etherscanOp.blockHash,
+      transactionSequenceNumber: new BigNumber(etherscanOp.nonce),
+      accountId: accountId,
+      date: new Date(parseInt(etherscanOp.timeStamp, 10) * 1000),
+      subOperations: [],
+      nftOperations: [],
+      internalOperations: [],
+      hasFailed,
+      extra: {},
+    } as Operation;
+  });
 };
 
 /**
@@ -81,14 +93,8 @@ export const etherscanERC20EventToOperations = (
   event: EtherscanERC20Event,
   index = 0,
 ): Operation[] => {
-  const { currencyId, xpubOrAddress: address } = decodeAccountId(accountId);
-  const tokenCurrency = getCryptoAssetsStore().findTokenByAddressInCurrency(
-    event.contractAddress,
-    currencyId,
-  );
-  if (!tokenCurrency) return [];
+  const { xpubOrAddress: address } = decodeAccountId(accountId);
 
-  const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency);
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(event.from);
   const to = safeEncodeEIP55(event.to);
@@ -106,18 +112,21 @@ export const etherscanERC20EventToOperations = (
   return types.map(
     type =>
       ({
-        id: encodeSubOperationId(tokenAccountId, event.hash, type, index),
+        // NOTE Bridge implementations replace property `id`
+        id: encodeSubOperationId(accountId, event.hash, type, index),
         hash: event.hash,
         type,
         value,
         fee,
         senders: [from],
         recipients: [to],
-        contract: tokenCurrency.contractAddress,
+        contract: eip55.encode(event.contractAddress),
         blockHeight: parseInt(event.blockNumber, 10),
         blockHash: event.blockHash,
-        transactionSequenceNumber: parseInt(event.nonce, 10),
-        accountId: tokenAccountId,
+        transactionSequenceNumber: new BigNumber(event.nonce),
+        // NOTE Bridge implementations replace property `accountId`
+        // TODO Remove property once the legacy bridge is deleted
+        accountId,
         date: new Date(parseInt(event.timeStamp, 10) * 1000),
         extra: {},
       }) as Operation,
@@ -164,7 +173,7 @@ export const etherscanERC721EventToOperations = (
         recipients: [to],
         blockHeight: parseInt(event.blockNumber, 10),
         blockHash: event.blockHash,
-        transactionSequenceNumber: parseInt(event.nonce, 10),
+        transactionSequenceNumber: new BigNumber(event.nonce),
         accountId,
         standard: "ERC721",
         contract,
@@ -214,7 +223,7 @@ export const etherscanERC1155EventToOperations = (
         recipients: [to],
         blockHeight: parseInt(event.blockNumber, 10),
         blockHash: event.blockHash,
-        transactionSequenceNumber: parseInt(event.nonce, 10),
+        transactionSequenceNumber: new BigNumber(event.nonce),
         accountId,
         standard: "ERC1155",
         contract,

@@ -23,7 +23,7 @@ release:
   catalog:
     en-US:
       name: "Ledger Live: Crypto & NFT App"
-      short_description: Ledger Live Mobile 3.40.0
+      short_description: Ledger Live Mobile 3.96.0
       long_description: >-
         From the company that produced the world's most secure crypto hardware
         device comes the world's most accessible and complete Web3 wallet:
@@ -68,12 +68,6 @@ release:
         ParaSwap and 1inch. All that from the safe ecosystem of Ledger Live.
 
 
-        MANAGE NFTs
-
-        Easily collect, visualize and send your Ethereum NFTs secured by your
-        hardware wallet.
-
-
         CHECK CRYPTO MARKET PRICES
 
         Get a crypto market watchlist directly in your Ledger Live app: price,
@@ -98,11 +92,10 @@ release:
         (KMD), Horizen (ZEN), Stakenet (XSN), ERC-20 and BEP-20 tokens.
 
 
-
         COMPATIBILITY
 
         Ledger Live mobile application is fully compatible with the Ledger Nano
-        X via Bluetooth connection and with the Ledger Nano S and S Plus using
+        X, Ledger Stax and Ledger Flex via Bluetooth connection, and with the Ledger Nano S and S Plus using
         an OTG kit
 
 
@@ -114,15 +107,30 @@ release:
         **Rewards are not guaranteed. Ledger provides no advice or
         recommendations on use of staking services.
       new_in_version: >-
-        Removed Features
-        Viacoin (VIA), Peercoin (PPC), and Vertcoin (VTC) are no longer supported.
-
-        Fix
-        We fixed a bug that caused an error when trying to send or stake Injective (INJ).
+        Improvement:
+        Clarified wording when adding an account to make the process easier to understand.
       saga_features: ""
   media:
     - purpose: screenshot
-      uri: ./media/splash.webp
+      uri: ./media/1.png
+    - purpose: screenshot
+      uri: ./media/2.png
+    - purpose: screenshot
+      uri: ./media/3.png
+    - purpose: screenshot
+      uri: ./media/4.png
+    - purpose: screenshot
+      uri: ./media/5.png
+    - purpose: screenshot
+      uri: ./media/6.png
+    - purpose: screenshot
+      uri: ./media/7.png
+    - purpose: screenshot
+      uri: ./media/8.png
+    - purpose: screenshot
+      uri: ./media/9.png
+    - purpose: banner
+      uri: ./media/banner.png
   files:
     - purpose: install
       uri: ../app/build/outputs/apk/release/app-arm64-v8a-release.apk

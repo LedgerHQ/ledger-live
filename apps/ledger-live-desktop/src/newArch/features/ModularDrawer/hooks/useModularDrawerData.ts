@@ -1,11 +1,12 @@
 import { useMemo } from "react";
-import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
-import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
-import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAssetsData";
+import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
 interface UseModularDrawerDataProps {
   currencyIds?: string[];
@@ -19,6 +20,7 @@ export function useModularDrawerData({
   areCurrenciesFiltered,
 }: UseModularDrawerDataProps) {
   const modularDrawerFeature = useFeature("lldModularDrawer");
+  const devMode = useEnv("MANAGER_DEV_MODE");
 
   const isStaging = useMemo(
     () => modularDrawerFeature?.params?.backendEnvironment === "STAGING",
@@ -34,9 +36,10 @@ export function useModularDrawerData({
     useCase,
     areCurrenciesFiltered,
     isStaging,
+    includeTestNetworks: devMode,
   });
 
-  const assetsSorted = useMemo(() => {
+  const assetsSorted: AssetData[] | undefined = useMemo(() => {
     if (!data?.currenciesOrder.metaCurrencyIds) return undefined;
 
     return data.currenciesOrder.metaCurrencyIds
@@ -47,6 +50,7 @@ export function useModularDrawerData({
           asset: {
             ...data.cryptoAssets[currencyId],
             id: firstNetworkId,
+            metaCurrencyId: currencyId,
           },
           networks: Object.values(data.cryptoAssets[currencyId].assetsIds)
             .map(assetId => data.cryptoOrTokenCurrencies[assetId])
@@ -59,17 +63,6 @@ export function useModularDrawerData({
 
   const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });
 
-  const currenciesByProvider: CurrenciesByProviderId[] = useMemo(() => {
-    if (!assetsSorted || !data) return [];
-
-    return assetsSorted.map(assetData => ({
-      currenciesByNetwork: assetData.networks
-        .map(network => findCryptoCurrencyById(network.id) ?? findTokenById(network.id))
-        .filter((currency): currency is NonNullable<typeof currency> => currency !== undefined),
-      providerId: assetData.asset.id,
-    }));
-  }, [assetsSorted, data]);
-
   const sortedCryptoCurrencies = useMemo(() => {
     if (!assetsSorted || !data) return [];
 
@@ -81,12 +74,10 @@ export function useModularDrawerData({
   return {
     data,
     isLoading,
-    isSuccess,
     error,
     refetch,
     loadingStatus,
     assetsSorted,
-    currenciesByProvider,
     sortedCryptoCurrencies,
     loadNext,
   };

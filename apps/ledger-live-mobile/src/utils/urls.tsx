@@ -28,6 +28,8 @@ export const urls = {
     ru: "https://www.ledger.com/ru/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     pt: "https://www.ledger.com/pt-br/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
   },
+  reborn:
+    "https://shop.ledger.com/pages/unlock-ledger-wallet-mobile?utm_source=ledger_wallet_mobile&utm_medium=self_referral&utm_content=onboarding-2",
   trackingPolicy: {
     en: "https://shop.ledger.com/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     fr: "https://shop.ledger.com/fr/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
@@ -61,6 +63,8 @@ export const urls = {
     "https://shop.ledger.com/products/ledger-nano-x?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
   buyFlex:
     "https://shop.ledger.com/products/ledger-flex?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
+  hardwareWallet:
+    "https://shop.ledger.com/pages/hardware-wallet?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=swap",
   playstore: "https://play.google.com/store/apps/details?id=com.ledger.live",
   applestoreRate: "https://apps.apple.com/app/id1361671700?action=write-review",
   applestore: "https://apps.apple.com/app/id1361671700",
@@ -72,6 +76,7 @@ export const urls = {
   erc20: "https://support.ledger.com/article/4404389645329-zd",
   errors: {
     EthAppPleaseEnableContractData: "https://support.ledger.com/article/4405481324433-zd",
+    CeloAppPleaseEnableContractData: "https://support.ledger.com/article/4405481324433-zd",
     NotEnoughGas: "https://support.ledger.com/article/9096370252573-zd",
     PeerRemovedPairing: "https://support.ledger.com/article/360025864773-zd",
     PairingFailed: "https://support.ledger.com/article/360025864773-zd",
@@ -82,6 +87,8 @@ export const urls = {
     TronSendTrc20ToNewAccountForbidden: "https://support.ledger.com/article/6516823445533-zd",
     AddressesSanctionedError:
       "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
+    BleForgetDevice:
+      "https://support.ledger.com/article/How-to-remove-a-Ledger-device-from-your-phone-s-Bluetooth-settings",
   },
   multipleAddresses: "https://support.ledger.com/article/360033802154-zd",
   delegation:
@@ -117,11 +124,49 @@ export const urls = {
       changelly: {
         main: "https://changelly.com/",
         tos: "https://changelly.com/terms-of-use",
+        amlKyc: "https://changelly.com/aml-kyc",
+        support: "https://support.changelly.com/en/support/tickets/new",
       },
       cic: {
         main: "https://criptointercambio.com/",
         support: "https://criptointercambio.com/en/about",
         tos: "https://criptointercambio.com/terms-of-use",
+      },
+      exodus: {
+        main: "https://www.exodus.com/",
+        tos: "https://www.exodus.com/terms/",
+      },
+      lifi: {
+        main: "https://lifi.io/",
+        tos: "https://li.fi/legal/terms-and-conditions/",
+      },
+      uniswap: {
+        main: "https://uniswap.org/",
+        tos: "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",
+      },
+      velora: {
+        main: "https://www.velora.xyz/",
+        tos: "https://files.paraswap.io/tos_v4.pdf",
+      },
+      thorswap: {
+        main: "https://www.thorswap.finance/",
+        tos: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
+      },
+      nearintents: {
+        main: "https://www.near.org/intents",
+        tos: "https://swapkit.dev/terms-of-service/",
+      },
+      oneinch: {
+        main: "https://1inch.com/",
+        tos: "https://1inch.com/assets/Widget_1inch.com_Terms_of_Use.pdf",
+      },
+      moonpay: {
+        main: "https://www.moonpay.com/",
+        tos: "https://www.moonpay.com/legal/terms_of_use_row",
+      },
+      paraswap: {
+        main: "https://www.paraswap.io/",
+        tos: "https://files.paraswap.io/tos_v4.pdf",
       },
     },
   },
@@ -202,6 +247,11 @@ export const urls = {
       "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
     tokenAssociation:
       "https://support.ledger.com/article/How-to-manage-Hedera-tokens-with-Ledger-Live",
+    evmAddressVerification: "https://ledger.com/e14",
+    staking: "https://support.ledger.com/article/Staking-Hedera-HBAR-through-Ledger-Live",
+  },
+  canton: {
+    learnMore: "https://support.ledger.com/article/Canton-Network",
   },
   fwUpdateReleaseNotes: {
     nanoS: "https://support.ledger.com/article/360010446000-zd",
@@ -232,4 +282,6 @@ export const urls = {
   geoBlock: {
     learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
   },
+  nanoSUpgradeProgram: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
+  nanoSLimitations: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
 };

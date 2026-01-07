@@ -1,3 +1,4 @@
+import type { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike, AccountRaw, AccountRawLike } from "@ledgerhq/types-live";
 import type { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
@@ -42,6 +43,7 @@ export type StartExchangeInput = {
 
 interface CompleteExchangeInputCommon {
   rateType?: RateTypes;
+  deviceModelId?: DeviceModelId;
   deviceId?: string;
   provider: string;
   binaryPayload: string;

@@ -61,7 +61,6 @@ describe("useTrackSwapFlow", () => {
       initialProps: { ...defaultArgs, requestOpenApp: "Bitcoin" },
     });
 
-    // @ts-expect-error: requestOpenApp is not null initially
     rerender({ ...defaultArgs, requestOpenApp: null, error: new UserRefusedOnDevice() });
 
     expect(track).toHaveBeenCalledWith(
@@ -80,7 +79,6 @@ describe("useTrackSwapFlow", () => {
       initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
     });
 
-    // @ts-expect-error: requestOpenApp is not null initially
     rerender({ ...defaultArgs, requestOpenApp: null, error: null });
 
     expect(track).toHaveBeenCalledWith(
@@ -104,7 +102,6 @@ describe("useTrackSwapFlow", () => {
     rerender({
       ...defaultArgs,
       device: wiredDevice,
-      // @ts-expect-error: requestOpenApp is not null initially
       requestOpenApp: null,
       error: new UserRefusedOnDevice(),
     });

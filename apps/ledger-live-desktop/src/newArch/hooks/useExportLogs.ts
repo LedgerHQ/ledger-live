@@ -4,7 +4,7 @@ import { webFrame, ipcRenderer } from "electron";
 import { useCallback, useState } from "react";
 import { useTechnicalDateTimeFn } from "~/renderer/hooks/useDateFormatter";
 import logger from "~/renderer/logger";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { saveLogs } from "~/helpers/saveLogs";
 
@@ -30,7 +30,7 @@ export function useExportLogs() {
 
       const path = await ipcRenderer.invoke("show-save-dialog", {
         title: "Export logs",
-        defaultPath: `ledgerlive-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.txt`,
+        defaultPath: `ledgerwallet-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.txt`,
         filters: [{ name: "All Files", extensions: ["txt"] }],
       });
 

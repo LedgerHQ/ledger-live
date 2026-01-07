@@ -1,10 +1,6 @@
 import { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
-import { Observable } from "rxjs";
+import { useSelector } from "LLD/hooks/redux";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
-import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import {
   AccountTuple,
@@ -12,104 +8,73 @@ import {
 } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
-import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
-import { formatDetailedAccount } from "../utils/formatDetailedAccount";
+import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
+import { useDetailedAccountsCore } from "@ledgerhq/live-common/modularDrawer/hooks/useDetailedAccountsCore";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
-import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDrawer.types";
-import { useOpenAssetFlow } from "./useOpenAssetFlow";
+import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import orderBy from "lodash/orderBy";
-import keyBy from "lodash/keyBy";
+import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
-  flow: string,
-  source: string,
-  accounts$?: Observable<WalletAPIAccount[]>,
-  onAccountSelected?: (account: Account) => void,
+  onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void,
 ) => {
-  const discreet = useDiscreetMode();
-  const state = useCountervaluesState();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const counterValuesState = useCountervaluesState();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const source = useSelector(modularDrawerSourceSelector);
+
   const { openAddAccountFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     source,
   );
 
-  const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const isATokenCurrency = useMemo(() => isTokenCurrency(asset), [asset]);
 
   const accounts = useMemo(() => {
-    const accountTuples = getAccountTuplesForCurrency(asset, nestedAccounts, accountIds);
+    const accountTuples = getAccountTuplesForCurrency(asset, nestedAccounts);
     return orderBy(accountTuples, [(tuple: AccountTuple) => tuple.account.balance], ["desc"]);
-  }, [asset, nestedAccounts, accountIds]);
+  }, [asset, nestedAccounts]);
 
   const overridedAccountName = useBatchMaybeAccountName(accounts.map(({ account }) => account));
 
-  const detailedAccounts = useMemo(() => {
-    const accountNameMap = keyBy(
-      accounts
-        .map(({ account }, index) => ({
-          id: account.id,
-          name: overridedAccountName[index],
-        }))
-        .filter(item => item.name),
-      "id",
-    );
+  // Use the shared core hook for detailed accounts logic
+  const { createBaseDetailedAccounts } = useDetailedAccountsCore(
+    counterValuesState,
+    counterValueCurrency,
+  );
 
-    const formattedAccounts = accounts.map(tuple => {
-      const account = tuple.account;
-      const protocol = getTagDerivationMode(account.currency, account.derivationMode) ?? "";
-      const currencyAccount = formatDetailedAccount(
-        account,
-        account.freshAddress,
-        state,
-        counterValueCurrency,
-        discreet,
-      );
-
-      if (isATokenCurrency && tuple.subAccount) {
-        const formattedSubAccount = formatDetailedAccount(
-          tuple.subAccount,
-          account.freshAddress,
-          state,
-          counterValueCurrency,
-          discreet,
-        );
-        const parentAccountName = accountNameMap[account.id]?.name;
-        return {
-          ...formattedSubAccount,
-          name: parentAccountName ?? formattedSubAccount.name,
-        };
-      } else {
-        const accountName = accountNameMap[account.id]?.name;
-        return {
-          ...currencyAccount,
-          protocol,
-          name: accountName ?? currencyAccount.name,
-        };
+  const detailedAccounts: BaseRawDetailedAccount[] = useMemo(() => {
+    const accountNameMap: Record<string, string> = {};
+    for (const [index, { account }] of accounts.entries()) {
+      const name = overridedAccountName[index];
+      if (name) {
+        accountNameMap[account.id] = name;
       }
-    });
+    }
 
-    return sortAccountsByFiatValue(formattedAccounts);
-  }, [accounts, state, counterValueCurrency, discreet, isATokenCurrency, overridedAccountName]);
+    return createBaseDetailedAccounts({
+      asset,
+      accountTuples: accounts,
+      accountNameMap,
+      isTokenCurrency: isATokenCurrency,
+    });
+  }, [accounts, isATokenCurrency, overridedAccountName, createBaseDetailedAccounts, asset]);
 
   const onAddAccountClick = useCallback(() => {
     trackModularDrawerEvent("button_clicked", {
       button: "Add a new account",
       page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
-      flow,
-      source,
     });
     openAddAccountFlow(asset, false, onAccountSelected);
-  }, [asset, flow, openAddAccountFlow, source, trackModularDrawerEvent, onAccountSelected]);
+  }, [trackModularDrawerEvent, openAddAccountFlow, asset, onAccountSelected]);
 
   return { detailedAccounts, accounts, onAddAccountClick };
 };

@@ -7,14 +7,14 @@ import { getSwapAPIBaseURL, getSwapUserIP } from ".";
 
 function createSwapIntentHashes({
   provider,
-  fromAccountId,
-  toAccountId,
-  amount,
+  fromAccountAddress,
+  toAccountAddress,
+  fromAmount,
 }: {
   provider: string;
-  fromAccountId?: string;
-  toAccountId?: string;
-  amount?: string;
+  fromAccountAddress?: string;
+  toAccountAddress?: string;
+  fromAmount?: string;
 }) {
   // for example '2025-08-01' used to add a one day unique nonce to the swap intent hash
   const currentday = new Date().toISOString().split("T")[0];
@@ -24,9 +24,9 @@ function createSwapIntentHashes({
     .update(
       JSON.stringify({
         provider,
-        fromAccountId,
-        toAccountId,
-        amount,
+        fromAccountAddress,
+        toAccountAddress,
+        fromAmount,
         currentday,
       }),
     )
@@ -36,9 +36,9 @@ function createSwapIntentHashes({
     .createHash("sha256")
     .update(
       JSON.stringify({
-        fromAccountId,
-        toAccountId,
-        amount,
+        fromAccountAddress,
+        toAccountAddress,
+        fromAmount,
         currentday,
       }),
     )
@@ -52,9 +52,9 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   swapId = "",
   transactionId,
   swapAppVersion,
-  fromAccountId,
-  toAccountId,
-  amount,
+  fromAccountAddress,
+  toAccountAddress,
+  fromAmount,
   ...rest
 }) => {
   if (isIntegrationTestEnv())
@@ -70,9 +70,9 @@ export const postSwapAccepted: PostSwapAccepted = async ({
 
   const { swapIntentWithProvider, swapIntentWithoutProvider } = createSwapIntentHashes({
     provider,
-    fromAccountId,
-    toAccountId,
-    amount,
+    fromAccountAddress,
+    toAccountAddress,
+    fromAmount,
   });
 
   try {
@@ -99,13 +99,14 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   provider,
   swapId = "",
   swapAppVersion,
-  fromAccountId,
-  toAccountId,
-  amount,
+  fromAccountAddress,
+  toAccountAddress,
+  fromAmount,
   seedIdFrom,
   seedIdTo,
   refundAddress,
   payoutAddress,
+  data,
   ...rest
 }) => {
   if (isIntegrationTestEnv()) return mockPostSwapCancelled({ provider, swapId, ...rest });
@@ -120,19 +121,14 @@ export const postSwapCancelled: PostSwapCancelled = async ({
 
   const { swapIntentWithProvider, swapIntentWithoutProvider } = createSwapIntentHashes({
     provider,
-    fromAccountId,
-    toAccountId,
-    amount,
+    fromAccountAddress,
+    toAccountAddress,
+    fromAmount,
   });
 
   // Check if the refundAddress and payoutAddress match the account addresses, just to eliminate this supposition
   const payloadAddressMatchAccountAddress =
-    fromAccountId &&
-    toAccountId &&
-    refundAddress &&
-    payoutAddress &&
-    fromAccountId.includes(refundAddress) &&
-    toAccountId.includes(payoutAddress);
+    fromAccountAddress === refundAddress && toAccountAddress === payoutAddress;
 
   try {
     const ipHeader = getSwapUserIP();
@@ -143,7 +139,8 @@ export const postSwapCancelled: PostSwapCancelled = async ({
 
     const shouldIncludeAddresses =
       rest.statusCode === "WrongDeviceForAccountPayout" ||
-      rest.statusCode === "WrongDeviceForAccountRefund";
+      rest.statusCode === "WrongDeviceForAccountRefund" ||
+      rest.statusCode === "FeeNotLoaded";
 
     const requestData = {
       provider,
@@ -151,11 +148,15 @@ export const postSwapCancelled: PostSwapCancelled = async ({
       swapIntentWithProvider,
       swapIntentWithoutProvider,
       payloadAddressMatchAccountAddress,
-      fromAccountId: shouldIncludeAddresses ? fromAccountId : undefined,
-      toAccountId: shouldIncludeAddresses ? toAccountId : undefined,
-      payloadRefundAddress: shouldIncludeAddresses ? refundAddress : undefined,
-      payloadPayoutAddress: shouldIncludeAddresses ? payoutAddress : undefined,
+      fromAmount,
+      ...(shouldIncludeAddresses && {
+        fromAccountAddress,
+        toAccountAddress,
+        payloadRefundAddress: refundAddress,
+        payloadPayoutAddress: payoutAddress,
+      }),
       maybeSeedMatch: seedIdFrom === seedIdTo, // Only true if both accounts are from the same seed and from the same chain type
+      data,
       ...rest,
     };
 

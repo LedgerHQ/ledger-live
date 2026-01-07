@@ -1,7 +1,7 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import React from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box/Box";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -20,7 +20,7 @@ const Wrapper = styled(Box).attrs(() => ({
   p: 5,
   pb: 0,
 }))`
-  border-top: 1px solid ${p => p.theme.colors.palette.text.shade10};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c30};
 `;
 const BalanceDetail = styled(Box).attrs(() => ({
   flex: "0.25 0 auto",
@@ -38,7 +38,7 @@ const TitleWrapper = styled(Box).attrs(() => ({
 const Title = styled(Text).attrs(() => ({
   fontSize: 4,
   ff: "Inter|Medium",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
 }))`
   line-height: ${p => p.theme.space[4]}px;
   margin-right: ${p => p.theme.space[1]}px;
@@ -46,7 +46,7 @@ const Title = styled(Text).attrs(() => ({
 const AmountValue = styled(Text).attrs(() => ({
   fontSize: 6,
   ff: "Inter|SemiBold",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))``;
 
 type Props = {
@@ -64,6 +64,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const _delegatedBalance = new BigNumber(
     stakes.reduce((sum, s) => sum + (s.delegation?.stake ?? 0), 0),
   );
+  const _inactiveStake = new BigNumber(stakes.reduce((sum, s) => sum + s.activation.inactive, 0));
   const _delegatedWithdrawableBalance = new BigNumber(
     stakes.reduce((sum, s) => sum + s.withdrawable, 0),
   );
@@ -76,6 +77,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   };
   const spendableBalance = formatCurrencyUnit(unit, _spendableBalance, formatConfig);
   const delegatedBalance = formatCurrencyUnit(unit, _delegatedBalance, formatConfig);
+  const inactiveStake = formatCurrencyUnit(unit, _inactiveStake, formatConfig);
   const delegatedWithdrawableBalance = formatCurrencyUnit(
     unit,
     _delegatedWithdrawableBalance,
@@ -109,6 +111,21 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           <Discreet>{delegatedBalance}</Discreet>
         </AmountValue>
       </BalanceDetail>
+      {_inactiveStake.gt(0) && (
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="solana.delegation.inactiveStakeTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="solana.delegation.inactiveStakeTitle" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{inactiveStake}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+      )}
       {_delegatedWithdrawableBalance.gt(0) && (
         <BalanceDetail>
           <ToolTip content={<Trans i18nKey="solana.delegation.withdrawableInfoTooltip" />}>

@@ -4,6 +4,9 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
 import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
+import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
+import { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
+import { CommonAddAccountNavigatorParamsList } from "./BaseNavigator";
 
 export type OnboardingPreQuizModalNavigatorParamList = {
   [ScreenName.OnboardingPreQuizModal]: { onNext?: () => void };
@@ -13,7 +16,11 @@ export type OnboardingNavigatorParamList = {
   [ScreenName.OnboardingWelcome]: undefined;
   [ScreenName.OnboardingPostWelcomeSelection]: { userHasDevice: boolean };
   [ScreenName.OnboardingWelcomeBack]: undefined;
-  [ScreenName.GetDevice]: undefined;
+  [NavigatorName.DeviceSelection]?: Partial<
+    NavigatorScreenParams<DeviceSelectionNavigatorParamsList>
+  >;
+  [NavigatorName.AddAccounts]?: Partial<NavigatorScreenParams<AddAccountsNavigatorParamList>> &
+    CommonAddAccountNavigatorParamsList;
   [ScreenName.OnboardingLanguage]: undefined;
   [ScreenName.OnboardingTermsOfUse]: undefined;
   [ScreenName.OnboardingDeviceSelection]: undefined;
@@ -40,6 +47,14 @@ export type OnboardingNavigatorParamList = {
     showSeedWarning?: boolean;
     isProtectFlow?: boolean;
     fromAccessExistingWallet?: boolean;
+    isRestoreSeed?: boolean;
+  };
+  [ScreenName.OnboardingSecureYourCrypto]: {
+    deviceModelId?: DeviceModelId;
+  };
+  [ScreenName.OnboardingFundSuccess]: {
+    receiveFlowSuccess: boolean;
+    deviceModelId?: DeviceModelId;
   };
   [ScreenName.OnboardingProtectFlow]: {
     deviceModelId: DeviceModelId;

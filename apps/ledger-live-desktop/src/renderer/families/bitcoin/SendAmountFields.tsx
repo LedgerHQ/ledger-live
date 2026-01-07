@@ -15,21 +15,18 @@ import CoinControlModal from "./CoinControlModal";
 import { FeesField } from "./FeesField";
 import { BitcoinFamily } from "./types";
 import useBitcoinPickingStrategy from "./useBitcoinPickingStrategy";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { CoinControlModal as NewArchCoinControlModal } from "LLD/features/Collectibles/Ordinals/components/CoinControlModal";
 
 type Props = NonNullable<BitcoinFamily["sendAmountFields"]>["component"];
 
 const Separator = styled.div`
   width: 100%;
   height: 1px;
-  background-color: ${p => p.theme.colors.palette.text.shade10};
+  background-color: ${p => p.theme.colors.neutral.c30};
   margin: 20px 0;
 `;
 const Fields: Props = ({
   transaction,
   account,
-  parentAccount,
   onChange,
   status,
   updateTransaction,
@@ -38,7 +35,6 @@ const Fields: Props = ({
 }) => {
   const bridge = getAccountBridge(account);
   const { t } = useTranslation();
-  const isOrdinalsFFEnabled = useFeature("lldnewArchOrdinals")?.enabled;
   const [coinControlOpened, setCoinControlOpened] = useState(false);
   const [isAdvanceMode, setAdvanceMode] = useState(
     !transaction.feesStrategy || transaction.feesStrategy === "custom",
@@ -113,10 +109,10 @@ const Fields: Props = ({
           <Box flow={2}>
             <Box horizontal alignItems="center">
               <Box>
-                <Text ff="Inter|Regular" fontSize={12} color="palette.text.shade50">
+                <Text ff="Inter|Regular" fontSize={12} color="neutral.c70">
                   {t("bitcoin.strategy")}
                 </Text>
-                <Text ff="Inter|Regular" fontSize={13} color="palette.text.shade100">
+                <Text ff="Inter|Regular" fontSize={13} color="neutral.c100">
                   {item ? item.label : null}
                 </Text>
               </Box>
@@ -136,29 +132,16 @@ const Fields: Props = ({
               </Box>
             </Box>
             <Separator />
-            {isOrdinalsFFEnabled ? (
-              <NewArchCoinControlModal
-                transaction={transaction}
-                account={account}
-                // @ts-expect-error We use the same onChangeTrack function on 2 components yet their onChange signature is different, please halp
-                onChange={onChangeAndTrack}
-                status={status}
-                isOpened={coinControlOpened}
-                onClose={onCoinControlClose}
-                updateTransaction={updateTransaction}
-              />
-            ) : (
-              <CoinControlModal
-                transaction={transaction}
-                account={account}
-                // @ts-expect-error We use the same onChangeTrack function on 2 components yet their onChange signature is different, please halp
-                onChange={onChangeAndTrack}
-                status={status}
-                isOpened={coinControlOpened}
-                onClose={onCoinControlClose}
-                updateTransaction={updateTransaction}
-              />
-            )}
+            <CoinControlModal
+              transaction={transaction}
+              account={account}
+              // @ts-expect-error We use the same onChangeTrack function on 2 components yet their onChange signature is different, please halp
+              onChange={onChangeAndTrack}
+              status={status}
+              isOpened={coinControlOpened}
+              onClose={onCoinControlClose}
+              updateTransaction={updateTransaction}
+            />
           </Box>
         </Box>
       ) : (
@@ -168,7 +151,6 @@ const Fields: Props = ({
             onClick={onFeeStrategyClick}
             transaction={transaction}
             account={account}
-            parentAccount={parentAccount}
             suffixPerByte={true}
             mapStrategies={mapStrategies}
             status={status}

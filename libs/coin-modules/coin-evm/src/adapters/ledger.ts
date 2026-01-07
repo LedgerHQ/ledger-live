@@ -1,3 +1,5 @@
+// TODO Remove dependency to `"@ledgerhq/types-live"` once
+// the legacy bridge is deleted
 import eip55 from "eip55";
 import BigNumber from "bignumber.js";
 import {
@@ -6,7 +8,7 @@ import {
 } from "@ledgerhq/coin-framework/nft/nftOperationId";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   LedgerExplorerOperation,
@@ -16,7 +18,6 @@ import {
   LedgerExplorerInternalTransaction,
 } from "../types";
 import { safeEncodeEIP55 } from "../utils";
-import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 
 /**
  * Adapter to convert a Ledger Explorer operation
@@ -58,7 +59,7 @@ export const ledgerOperationToOperations = (
         recipients: [to],
         blockHeight: ledgerOp.block.height,
         blockHash: ledgerOp.block.hash,
-        transactionSequenceNumber: ledgerOp.nonce_value,
+        transactionSequenceNumber: new BigNumber(ledgerOp.nonce_value),
         accountId,
         date,
         subOperations: [],
@@ -81,14 +82,8 @@ export const ledgerERC20EventToOperations = (
 ): Operation[] => {
   const { accountId, hash, fee, blockHeight, blockHash, transactionSequenceNumber, date } =
     coinOperation;
-  const { currencyId, xpubOrAddress: address } = decodeAccountId(accountId);
-  const tokenCurrency = getCryptoAssetsStore().findTokenByAddressInCurrency(
-    event.contract,
-    currencyId,
-  );
-  if (!tokenCurrency) return [];
+  const { xpubOrAddress: address } = decodeAccountId(accountId);
 
-  const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency);
   const from = safeEncodeEIP55(event.from);
   const to = safeEncodeEIP55(event.to);
   const checksummedAddress = eip55.encode(address);
@@ -105,18 +100,21 @@ export const ledgerERC20EventToOperations = (
   return types.map(
     type =>
       ({
-        id: encodeSubOperationId(tokenAccountId, hash, type, index),
+        // NOTE Bridge implementations replace property `id`
+        id: encodeSubOperationId(accountId, hash, type, index),
         hash: hash,
         type: type,
         value,
         fee: fee,
         senders: [from],
         recipients: [to],
-        contract: tokenCurrency.contractAddress,
+        contract: eip55.encode(event.contract),
         blockHeight: blockHeight,
         blockHash: blockHash,
         transactionSequenceNumber: transactionSequenceNumber,
-        accountId: tokenAccountId,
+        // NOTE Bridge implementations replace property `accountId`
+        // TODO Remove property once the legacy bridge is deleted
+        accountId,
         date,
         extra: {},
       }) as Operation,

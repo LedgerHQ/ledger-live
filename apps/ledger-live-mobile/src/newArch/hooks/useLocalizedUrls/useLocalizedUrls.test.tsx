@@ -1,11 +1,25 @@
 import { combineReducers, legacy_createStore as createStore } from "redux";
 import React from "react";
-import * as redux from "react-redux";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import { useLocalizedUrl } from ".";
 import { renderHook } from "@testing-library/react-native";
 import settings from "~/reducers/settings";
 import { urls } from "~/utils/urls";
+
+jest.mock("react-redux", () => {
+  const actual = jest.requireActual("react-redux");
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const mockUseSelector = jest.fn() as jest.Mock & { withTypes: () => jest.Mock };
+  mockUseSelector.withTypes = () => mockUseSelector;
+  return {
+    ...actual,
+    useSelector: mockUseSelector,
+  };
+});
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const mockedUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;
+
 const store = createStore(
   combineReducers({
     settings,
@@ -18,18 +32,19 @@ describe("useLocalizedUrl", () => {
     <Provider store={store}>{children}</Provider>
   );
 
-  // prepare mocking useSelector
-  const spy = jest.spyOn(redux, "useSelector");
-
   let localizedUrl: ReturnType<typeof useLocalizedUrl>;
 
   const setLocaleMockWithURL = (locale: string, url: string) => {
-    spy.mockReturnValue(locale);
+    mockedUseSelector.mockReturnValue(locale);
     const { result } = renderHook(() => useLocalizedUrl(url), {
       wrapper: HookWrapper,
     });
     localizedUrl = result.current;
   };
+
+  beforeEach(() => {
+    mockedUseSelector.mockReset();
+  });
 
   test("LEDGER", () => {
     setLocaleMockWithURL("fr", urls.resources.ledgerAcademy);
@@ -59,7 +74,7 @@ describe("useLocalizedUrl", () => {
 
     setLocaleMockWithURL("th", urls.resources.ledgerAcademy);
     expect(localizedUrl).toEqual(
-      "https://www.ledger.com/academy/?utm_source=ledger_live&utm_medium=self_referral&utm_content=help_mobile",
+      "https://www.ledger.com/th/academy/?utm_source=ledger_live&utm_medium=self_referral&utm_content=help_mobile",
     );
   });
 
@@ -74,7 +89,7 @@ describe("useLocalizedUrl", () => {
     expect(localizedUrl).toEqual("https://support.ledger.com/zh-cn/article/360025864773-zd");
 
     setLocaleMockWithURL("th", urls.pairingIssues);
-    expect(localizedUrl).toEqual("https://support.ledger.com/article/360025864773-zd");
+    expect(localizedUrl).toEqual("https://support.ledger.com/th/article/360025864773-zd");
 
     setLocaleMockWithURL("en", urls.pairingIssues);
     expect(localizedUrl).toEqual("https://support.ledger.com/article/360025864773-zd");
@@ -98,7 +113,7 @@ describe("useLocalizedUrl", () => {
 
     setLocaleMockWithURL("th", urls.banners.blackfriday);
     expect(localizedUrl).toEqual(
-      "https://shop.ledger.com/pages/black-friday?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=banner_carousel",
+      "https://shop.ledger.com/th/pages/black-friday?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=banner_carousel",
     );
 
     setLocaleMockWithURL("en", urls.banners.blackfriday);

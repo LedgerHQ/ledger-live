@@ -1,7 +1,7 @@
 import { mapTxToOps } from "@ledgerhq/coin-stacks/bridge/utils/misc";
 import { fetchFullTxs } from "@ledgerhq/coin-stacks/network/api";
 import flatMap from "lodash/flatMap";
-import "../../../__tests__/test-helpers/setup";
+import "../../../__tests__/test-helpers/setup.integration";
 import { encodeAccountId } from "../../../account";
 
 describe("sync for token transfers", () => {
@@ -16,10 +16,10 @@ describe("sync for token transfers", () => {
   });
 
   test("sync build operations only for transfer type txn", async () => {
-    const rawTxs = await fetchFullTxs(address);
+    const [transfers] = await fetchFullTxs(address);
 
     // Contains operations for txn of type token_transfer
-    const operations = flatMap(rawTxs, mapTxToOps(accountId, address));
+    const operations = flatMap(transfers, mapTxToOps(accountId, address));
 
     expect(operations.length).toBeTruthy();
   });

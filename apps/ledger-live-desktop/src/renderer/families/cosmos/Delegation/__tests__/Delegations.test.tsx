@@ -38,7 +38,9 @@ describe("Cosmos Delegations Component", () => {
 
     render(<Delegations account={mockCosmosAccount} />, {
       initialState: {
-        ...INITIAL_STATE,
+        settings: {
+          ...INITIAL_STATE,
+        },
       },
     });
 
@@ -52,7 +54,9 @@ describe("Cosmos Delegations Component", () => {
 
     render(<Delegations account={mockCosmosAccount} />, {
       initialState: {
-        ...INITIAL_STATE,
+        settings: {
+          ...INITIAL_STATE,
+        },
       },
     });
 
@@ -68,7 +72,11 @@ describe("Cosmos Delegations Component", () => {
 
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const { container } = render(<Delegations account={mockCosmosAccount} />, {
-      initialState: { ...INITIAL_STATE },
+      initialState: {
+        settings: {
+          ...INITIAL_STATE,
+        },
+      },
     }) as unknown as RenderResult;
 
     expect(container).toBeEmptyDOMElement();

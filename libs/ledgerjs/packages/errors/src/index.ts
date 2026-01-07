@@ -51,6 +51,12 @@ export const EnpointConfigError = createCustomErrorClass("EnpointConfig");
 export const EthAppPleaseEnableContractData = createCustomErrorClass(
   "EthAppPleaseEnableContractData",
 );
+export const SolAppPleaseEnableContractData = createCustomErrorClass(
+  "SolAppPleaseEnableContractData",
+);
+export const CeloAppPleaseEnableContractData = createCustomErrorClass(
+  "CeloAppPleaseEnableContractData",
+);
 export const FeeEstimationFailed = createCustomErrorClass("FeeEstimationFailed");
 export const FirmwareNotRecognized = createCustomErrorClass("FirmwareNotRecognized");
 export const HardResetFail = createCustomErrorClass("HardResetFail");
@@ -64,6 +70,8 @@ export const LatestMCUInstalledError = createCustomErrorClass("LatestMCUInstalle
 export const LatestFirmwareVersionRequired = createCustomErrorClass(
   "LatestFirmwareVersionRequired",
 );
+export const UnsupportedFeatureError = createCustomErrorClass("UnsupportedFeatureError");
+export const NanoSNotSupported = createCustomErrorClass("NanoSNotSupported");
 export const UnknownMCU = createCustomErrorClass("UnknownMCU");
 export const LedgerAPIError = createCustomErrorClass("LedgerAPIError");
 export const LedgerAPIErrorWithMessage = createCustomErrorClass("LedgerAPIErrorWithMessage");
@@ -197,17 +205,6 @@ export const ReplacementTransactionUnderpriced = createCustomErrorClass(
 // Bitcoin family
 export const OpReturnDataSizeLimit = createCustomErrorClass("OpReturnSizeLimit");
 export const DustLimit = createCustomErrorClass("DustLimit");
-
-// Hedera family
-export const HederaInsufficientFundsForAssociation = createCustomErrorClass(
-  "HederaInsufficientFundsForAssociation",
-);
-export const HederaRecipientTokenAssociationRequired = createCustomErrorClass(
-  "HederaRecipientTokenAssociationRequired",
-);
-export const HederaRecipientTokenAssociationUnverified = createCustomErrorClass(
-  "HederaRecipientTokenAssociationUnverified",
-);
 
 // Language
 export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");

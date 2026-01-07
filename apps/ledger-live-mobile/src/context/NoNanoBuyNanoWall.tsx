@@ -1,5 +1,5 @@
-import { useSelector } from "react-redux";
-import { CardStyleInterpolators, StackNavigationOptions } from "@react-navigation/stack";
+import { useSelector } from "~/context/hooks";
+import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import BuyDeviceNavigator from "~/components/RootNavigator/BuyDeviceNavigator";
 import {
   hasCompletedOnboardingSelector,
@@ -14,8 +14,8 @@ import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWa
  */
 export const useNoNanoBuyNanoWallScreenOptions = ():
   | {
-      component: () => JSX.Element;
-      options: StackNavigationOptions;
+      component: () => React.JSX.Element;
+      options: NativeStackNavigationOptions;
     }
   | object => {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -28,14 +28,12 @@ export const useNoNanoBuyNanoWallScreenOptions = ():
       options: {
         headerShown: false,
         presentation: "transparentModal",
-        headerMode: "screen",
-        cardStyle: { opacity: 1 },
+        contentStyle: { opacity: 1 },
         gestureEnabled: true,
-        headerTitle: () => null,
+        headerTitle: "",
         headerRight: () => null,
         headerBackButtonDisplayMode: "minimal",
         title: undefined,
-        cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid,
       },
     };
   }
@@ -43,7 +41,8 @@ export const useNoNanoBuyNanoWallScreenOptions = ():
     component: BuyDeviceNavigator,
     options: {
       headerShown: false,
-      cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+      presentation: "transparentModal",
+      animation: "slide_from_bottom",
     },
   };
 };

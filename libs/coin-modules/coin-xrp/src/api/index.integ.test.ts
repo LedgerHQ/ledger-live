@@ -1,6 +1,6 @@
 import { decode } from "ripple-binary-codec";
-import { createApi } from ".";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { createApi } from ".";
 //import { decode, encodeForSigning } from "ripple-binary-codec";
 //import { sign } from "ripple-keypairs";
 
@@ -15,6 +15,7 @@ describe("Xrp Api (testnet)", () => {
 
       // When
       const result = await api.estimateFees({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -42,7 +43,13 @@ describe("Xrp Api (testnet)", () => {
       tx.forEach(operation => {
         const isSenderOrReceipt =
           operation.senders.includes(SENDER) || operation.recipients.includes(SENDER);
-        expect(isSenderOrReceipt).toBeTruthy();
+        expect(isSenderOrReceipt).toBe(true);
+        expect(operation.value).toBeGreaterThanOrEqual(200);
+        expect(operation.tx.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+        expect(operation.tx.block.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+        expect(operation.tx.block.height).toBeGreaterThanOrEqual(0);
+        expect(operation.tx.fees).toBeGreaterThan(0);
+        expect(operation.tx.date).toBeInstanceOf(Date);
       });
     });
 
@@ -83,6 +90,25 @@ describe("Xrp Api (testnet)", () => {
         txDesc[txDesc.length - 1].tx.block.height,
       );
     });
+
+    it("returns operations with correct status", async () => {
+      // When
+      const SENDER_WITH_TRANSACTIONS = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8";
+      const FAILED_TRANSACTIONS = new Set([
+        "8C0D8EF7C52BE287F951ECDF01526D2ABF3BF189C56D0B59607DE1A192E72511",
+      ]);
+      const [operations] = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
+        minHeight: 200,
+        order: "desc",
+      });
+      expect(operations.length).toBeGreaterThanOrEqual(200);
+
+      // Then
+      // Check if status matches reference
+      for (const operation of operations) {
+        expect(operation.tx.failed).toBe(FAILED_TRANSACTIONS.has(operation.tx.hash));
+      }
+    });
   });
 
   describe("lastBlock", () => {
@@ -91,8 +117,8 @@ describe("Xrp Api (testnet)", () => {
       const result = await api.lastBlock();
 
       // Then
-      expect(result.hash).toBeDefined();
-      expect(result.height).toBeDefined();
+      expect(result.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+      expect(result.height).toBeGreaterThan(0);
       expect(result.time).toBeInstanceOf(Date);
     });
   });
@@ -115,7 +141,7 @@ describe("Xrp Api (testnet)", () => {
       const result = await api.getBalance(SENDER_WITH_NO_TRANSACTION);
 
       // Then
-      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" }, locked: 1000000n }]);
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" }, locked: 0n }]);
     });
   });
 
@@ -125,6 +151,7 @@ describe("Xrp Api (testnet)", () => {
     it("returns a raw transaction", async () => {
       // When
       const { transaction: result } = await api.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -141,6 +168,7 @@ describe("Xrp Api (testnet)", () => {
 
     it("should use default fees when user does not provide them for crafting a transaction", async () => {
       const { transaction: result } = await api.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -161,6 +189,7 @@ describe("Xrp Api (testnet)", () => {
       const customFees = 99n;
       const { transaction: result } = await api.craftTransaction(
         {
+          intentType: "transaction",
           asset: { type: "native" },
           type: "send",
           sender: SENDER,
@@ -192,6 +221,7 @@ describe("Xrp Api (mainnet)", () => {
 
       // When
       const result = await api.estimateFees({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -224,7 +254,13 @@ describe("Xrp Api (mainnet)", () => {
       ops.forEach(operation => {
         const isSenderOrReceipt =
           operation.senders.includes(SENDER) || operation.recipients.includes(SENDER);
-        expect(isSenderOrReceipt).toBeTruthy();
+        expect(isSenderOrReceipt).toBe(true);
+        expect(operation.value).toBeGreaterThanOrEqual(0);
+        expect(operation.tx.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+        expect(operation.tx.block.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+        expect(operation.tx.block.height).toBeGreaterThanOrEqual(0);
+        expect(operation.tx.fees).toBeGreaterThan(0);
+        expect(operation.tx.date).toBeInstanceOf(Date);
       });
     });
 
@@ -270,8 +306,8 @@ describe("Xrp Api (mainnet)", () => {
   describe("lastBlock", () => {
     it("returns last block info", async () => {
       const result = await api.lastBlock();
-      expect(result.hash).toBeDefined();
-      expect(result.height).toBeDefined();
+      expect(result.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+      expect(result.height).toBeGreaterThan(0);
       expect(result.time).toBeInstanceOf(Date);
     });
   });
@@ -289,6 +325,7 @@ describe("Xrp Api (mainnet)", () => {
 
     it("returns a raw transaction", async () => {
       const { transaction: result } = await api.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -304,6 +341,7 @@ describe("Xrp Api (mainnet)", () => {
 
     it("should use default fees when user does not provide them for crafting a transaction", async () => {
       const { transaction: result } = await api.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -324,6 +362,7 @@ describe("Xrp Api (mainnet)", () => {
       const customFees = 99n;
       const { transaction: result } = await api.craftTransaction(
         {
+          intentType: "transaction",
           asset: { type: "native" },
           type: "send",
           sender: SENDER,

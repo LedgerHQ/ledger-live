@@ -3,8 +3,8 @@ import Text from "~/renderer/components/Text";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
+
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getAccountTuplesForCurrency } from "~/renderer/components/PerCurrencySelectAccount/state";
@@ -16,8 +16,6 @@ import { RowContainer, RowInnerContainer } from "./shared";
 import styled from "styled-components";
 import Plus from "~/renderer/icons/Plus";
 import { darken } from "~/renderer/styles/helpers";
-import { Observable } from "rxjs";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useTranslation } from "react-i18next";
 import { useAccountName } from "~/renderer/reducers/wallet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
@@ -29,25 +27,23 @@ const AddIconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: ${({ theme }) => darken(theme.colors.palette.primary.main, 0.3)};
-  color: ${({ theme }) => theme.colors.palette.primary.main};
+  background: ${({ theme }) => darken(theme.colors.primary.c80, 0.3)};
+  color: ${({ theme }) => theme.colors.primary.c80};
 `;
 
 type Props = {
   currency: CryptoCurrency | TokenCurrency;
   onAccountSelect: (account: AccountLike, parentAccount?: Account) => void;
-  accounts$?: Observable<WalletAPIAccount[]>;
 };
 
-export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
+export function AccountList({ currency, onAccountSelect }: Props) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
 
   const accountTuples = useMemo(() => {
-    return getAccountTuplesForCurrency(currency, nestedAccounts, false, accountIds);
-  }, [nestedAccounts, currency, accountIds]);
+    return getAccountTuplesForCurrency(currency, nestedAccounts, false);
+  }, [nestedAccounts, currency]);
   const openAddAccounts = useCallback(() => {
     dispatch(
       openModal("MODAL_ADD_ACCOUNTS", {
@@ -58,7 +54,7 @@ export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
 
   return (
     <>
-      <RowContainer onClick={openAddAccounts} id="add-account" data-testId="add-account-button">
+      <RowContainer onClick={openAddAccounts} id="add-account" data-testid="add-account-button">
         <RowInnerContainer>
           <Box horizontal alignItems="center">
             <AddIconContainer>
@@ -129,7 +125,7 @@ function Row({
             flexShrink: 1,
           }}
         >
-          <CryptoCurrencyIcon circle currency={accountCurrency} size={24} />
+          <CryptoCurrencyIcon currency={accountCurrency} size={32} />
           <Text
             ff="Inter|SemiBold"
             color="inherit"
@@ -148,7 +144,7 @@ function Row({
         </Box>
         <Box horizontal alignItems="center" marginLeft="12px">
           <FormattedVal
-            color="palette.text.shade50"
+            color="neutral.c70"
             val={subAccount ? subAccount.spendableBalance : account.spendableBalance}
             unit={unit}
             showCode

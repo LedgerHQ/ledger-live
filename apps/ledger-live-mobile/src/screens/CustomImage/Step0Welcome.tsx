@@ -1,18 +1,24 @@
-import React, { useCallback, useState } from "react";
-import { StackScreenProps } from "@react-navigation/stack";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/core";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import CustomImageBottomModal from "~/components/CustomImage/CustomImageBottomModal";
 import BottomButtonsContainer from "~/components/CustomImage/BottomButtonsContainer";
 import Button from "~/components/wrappedUi/Button";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { TrackScreen } from "~/analytics";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import EuropaWelcomeView from "./EuropaWelcomeView";
-import StaxWelcomeView from "./StaxWelcomeView";
+import Animation from "~/components/Animation";
+import STAX_CLS_PREVIEW from "~/animations/device/customLockScreen/stax.json";
+import FLEX_CLS_PREVIEW from "~/animations/device/customLockScreen/flex.json";
+import APEX_CLS_PREVIEW from "~/animations/device/customLockScreen/apex.json";
+import { useTheme } from "styled-components/native";
+import { importImageFromPhoneGallery } from "~/components/CustomImage/imageUtils";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 
 const analyticsScreenName = "Introduction of the customization flow";
 const analyticsButtonEventProps = {
@@ -20,9 +26,8 @@ const analyticsButtonEventProps = {
 };
 
 const Step0Welcome: React.FC<
-  StackScreenProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep0Welcome>
+  NativeStackScreenProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep0Welcome>
 > = ({ route }) => {
-  const [modalOpened, setModalOpened] = useState(false);
   const { t } = useTranslation();
 
   /**
@@ -30,33 +35,63 @@ const Step0Welcome: React.FC<
    */
   const { params: { device, deviceModelId } = { deviceModelId: null } } = route;
 
-  const openModal = useCallback(() => {
-    setModalOpened(true);
-  }, [setModalOpened]);
+  const [waitingForUserPicture, setWaitingForUserPicture] = useState(false);
+  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
-  const closeModal = useCallback(() => {
-    setModalOpened(false);
-  }, [setModalOpened]);
+  useEffect(() => {
+    let dead = false;
+    if (waitingForUserPicture) {
+      importImageFromPhoneGallery().then(res => {
+        if (dead) return;
+        if (res !== null) {
+          navigation.navigate(NavigatorName.CustomImage, {
+            screen: ScreenName.CustomImagePreviewPreEdit,
+            params: {
+              ...res,
+              device,
+              deviceModelId,
+              referral: route?.params?.referral,
+            },
+          });
+        }
+        setWaitingForUserPicture(false);
+      });
+    }
+    return () => {
+      dead = true;
+    };
+  }, [waitingForUserPicture, device, deviceModelId, navigation, route?.params?.referral]);
+
+  const handlePressChoosePicture = useCallback(async () => {
+    setWaitingForUserPicture(true);
+  }, [setWaitingForUserPicture]);
+
+  const animationSource = useMemo(() => {
+    switch (deviceModelId) {
+      case DeviceModelId.stax:
+        return STAX_CLS_PREVIEW;
+      case DeviceModelId.europa:
+        return FLEX_CLS_PREVIEW;
+      case DeviceModelId.apex:
+        return APEX_CLS_PREVIEW;
+      default:
+        return "";
+    }
+  }, [deviceModelId]);
+
+  const { colors } = useTheme();
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <TrackScreen category={analyticsScreenName} />
-      <Flex flex={1} mt={8} justifyContent={"space-between"}>
-        <Flex>
-          {deviceModelId === DeviceModelId.europa ? <EuropaWelcomeView /> : <StaxWelcomeView />}
-
-          <Flex px={7} mt={11}>
-            <Text
-              variant="h4"
-              fontWeight="semiBold"
-              textAlign="center"
-              testID="custom-image-welcome-title"
-            >
-              {t("customImage.landingPage.title", {
-                productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
-              })}
-            </Text>
-          </Flex>
+      <Flex flex={1} mt={8} alignItems={"center"} justifyContent={"space-between"} pb={8}>
+        <Flex my={"auto"} testID="custom-image-welcome-title">
+          <Animation source={animationSource} style={{ width: "100%" }} />
+          <Text variant="h4" fontWeight="semiBold" textAlign="center" mt={-10}>
+            {t("customImage.landingPage.title", {
+              productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
+            })}
+          </Text>
         </Flex>
         <BottomButtonsContainer>
           <Button
@@ -64,22 +99,24 @@ const Step0Welcome: React.FC<
             size="large"
             type="main"
             outline={false}
-            onPress={openModal}
+            onPress={handlePressChoosePicture}
             event="button_clicked"
+            disabled={waitingForUserPicture}
             eventProperties={analyticsButtonEventProps}
             testID="custom-image-choose-picture-button"
+            iconPosition="left"
+            Icon={() =>
+              waitingForUserPicture ? (
+                <InfiniteLoader size={24} />
+              ) : (
+                <Icons.DoublePicture color={colors.neutral.c00} size="M" />
+              )
+            }
           >
             {t("customImage.landingPage.choosePicture")}
           </Button>
         </BottomButtonsContainer>
       </Flex>
-      <CustomImageBottomModal
-        device={device}
-        isOpened={modalOpened}
-        onClose={closeModal}
-        deviceModelId={deviceModelId}
-        referral={route?.params?.referral}
-      />
     </SafeAreaView>
   );
 };

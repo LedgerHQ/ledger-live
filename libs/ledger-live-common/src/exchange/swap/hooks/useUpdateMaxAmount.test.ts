@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__tests__/test-helpers/dom-polyfill";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { act, renderHook } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import { checkAccountSupported } from "../../../account/index";
@@ -19,7 +19,16 @@ jest.mock("../../../families/evm/bridge/mock");
 const mockedEstimateMaxSpendable = jest.mocked(ethBridge.accountBridge.estimateMaxSpendable);
 
 const ETH = getCryptoCurrencyById("ethereum");
-const USDT = getTokenById("ethereum/erc20/usd_tether__erc20_");
+const USDT = {
+  type: "TokenCurrency" as const,
+  id: "ethereum/erc20/usd_tether__erc20_",
+  name: "Tether USD (ERC-20)",
+  ticker: "USDT",
+  units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
+  contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+  parentCurrency: ETH,
+  tokenType: "erc20" as const,
+};
 
 const parentAccount = genAccount("parent-account", {
   currency: ETH,
@@ -57,20 +66,20 @@ describe("updateAmountUsingMax", () => {
     });
 
     expect(result.current.isMaxEnabled).toBe(false);
-    expect(setFromAmount).toBeCalledTimes(0);
+    expect(setFromAmount).toHaveBeenCalledTimes(0);
     await act(async () => result.current.toggleMax());
     expect(result.current.isMaxEnabled).toBe(true);
 
     // Lest resort solution, since waitFor and other helpers will not work here.
 
-    expect(setFromAmount).toBeCalledTimes(1);
+    expect(setFromAmount).toHaveBeenCalledTimes(1);
     expect(setFromAmount.mock.calls[0][0]).toBe(amount);
     setFromAmount.mockClear();
 
     await act(async () => result.current.toggleMax());
     expect(result.current.isMaxEnabled).toBe(false);
 
-    expect(setFromAmount).toBeCalledTimes(1);
+    expect(setFromAmount).toHaveBeenCalledTimes(1);
     expect(setFromAmount.mock.calls[0][0]).toBe(ZERO);
   });
 
@@ -106,7 +115,7 @@ describe("updateAmountUsingMax", () => {
 
     // Updating dependencies when the toggle is off should not do anything.
     propsVariants.forEach(rerender);
-    expect(setFromAmount).toBeCalledTimes(0);
+    expect(setFromAmount).toHaveBeenCalledTimes(0);
 
     mockedEstimateMaxSpendable.mockResolvedValue(new BigNumber(0));
     await act(async () => result.current.toggleMax());
@@ -118,7 +127,7 @@ describe("updateAmountUsingMax", () => {
       setFromAmount.mockReset();
       mockedEstimateMaxSpendable.mockResolvedValue(amount);
       await act(async () => rerender(props));
-      expect(setFromAmount).toBeCalledTimes(1);
+      expect(setFromAmount).toHaveBeenCalledTimes(1);
       expect(setFromAmount.mock.calls[0][0]).toBe(amount);
       idx += 1;
     }

@@ -11,14 +11,16 @@ import { RawPlatformSignedTransaction } from "@ledgerhq/live-common/platform/raw
 import { serializePlatformAccount } from "@ledgerhq/live-common/platform/serializers";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
+import { isPlatformSupportedCurrency } from "@ledgerhq/live-common/platform/helpers";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { selectAccountAndCurrency } from "../../drawers/DataSelector/logic";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import { openAssetAndAccountDrawerPromise } from "LLD/features/ModularDrawer";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { AssetAndAccountResult } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 const trackingLiveAppSDKLogic = trackingWrapper(track);
 
@@ -40,6 +42,8 @@ export const requestAccountLogic = async (
   walletState: WalletState,
   { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch" | "tracking" | "mevProtected">,
   { currencies, includeTokens }: RequestAccountParams,
+  deactivatedCurrencyIds: Set<string>,
+  openAssetAndAccountSelector: (currencyIds?: string[]) => Promise<AssetAndAccountResult>,
   modularDrawerVisible?: boolean,
 ) => {
   trackingLiveAppSDKLogic.platformRequestAccountRequested(manifest);
@@ -51,6 +55,14 @@ export const requestAccountLogic = async (
    * JSONRPC requests. So we need to make sure the array is properly typed.
    */
   const safeCurrencies = currencies?.filter(c => typeof c === "string") ?? undefined;
+  const currencyIds =
+    !includeTokens && !safeCurrencies
+      ? listSupportedCurrencies().reduce<string[]>((acc, currency) => {
+          if (isPlatformSupportedCurrency(currency) && !deactivatedCurrencyIds.has(currency.id))
+            acc.push(currency.id);
+          return acc;
+        }, [])
+      : safeCurrencies;
 
   const source =
     currentRouteNameRef.current === "Platform Catalog"
@@ -60,14 +72,8 @@ export const requestAccountLogic = async (
   const flow = manifest.name;
 
   const { account, parentAccount } = modularDrawerVisible
-    ? await openAssetAndAccountDrawerPromise({
-        assetIds: safeCurrencies,
-        includeTokens,
-        flow,
-        source,
-        areCurrenciesFiltered: manifest.currencies !== "*",
-      })
-    : await selectAccountAndCurrency(safeCurrencies, includeTokens, flow, source);
+    ? await openAssetAndAccountSelector(currencyIds)
+    : await selectAccountAndCurrency(currencyIds, flow, source);
 
   return serializePlatformAccount(accountToPlatformAccount(walletState, account, parentAccount));
 };

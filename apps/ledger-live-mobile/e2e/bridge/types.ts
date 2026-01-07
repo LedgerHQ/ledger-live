@@ -15,7 +15,10 @@ import { ExchangeRequestEvent } from "@ledgerhq/live-common/hw/actions/startExch
 import { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/platform/types";
 import { RemoveImageEvent } from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
-import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import {
+  SettingsSetOverriddenFeatureFlagsPlayload,
+  SettingsSetOverriddenFeatureFlagPlayload,
+} from "~/actions/types";
 import WebSocket from "ws";
 
 export type ServerData =
@@ -70,6 +73,7 @@ export type MessageData =
     }
   | { type: "importBle"; id: string; payload: BleState }
   | { type: "overrideFeatureFlags"; id: string; payload: SettingsSetOverriddenFeatureFlagsPlayload }
+  | { type: "overrideFeatureFlag"; id: string; payload: SettingsSetOverriddenFeatureFlagPlayload }
   | { type: "setGlobals"; id: string; payload: { [key: string]: unknown } }
   | { type: "swapSetup"; id: string }
   | { type: "waitSwapReady"; id: string }
@@ -102,11 +106,11 @@ export const startExchangeExecMock = (): Observable<ExchangeRequestEvent> =>
   mockDeviceEventSubject as Observable<ExchangeRequestEvent>;
 export const connectManagerExecMock = (): Observable<ConnectManagerEvent> =>
   mockDeviceEventSubject as Observable<ConnectManagerEvent>;
-export const staxFetchImageExecMock = (): Observable<FetchImageEvent> =>
+export const fetchImageExecMock = (): Observable<FetchImageEvent> =>
   mockDeviceEventSubject as Observable<FetchImageEvent>;
-export const staxLoadImageExecMock = (): Observable<LoadImageEvent> =>
+export const loadImageExecMock = (): Observable<LoadImageEvent> =>
   mockDeviceEventSubject as Observable<LoadImageEvent>;
-export const staxRemoveImageExecMock = (): Observable<RemoveImageEvent> =>
+export const removeImageExecMock = (): Observable<RemoveImageEvent> =>
   mockDeviceEventSubject as Observable<RemoveImageEvent>;
 export const installLanguageExecMock = (): Observable<InstallLanguageEvent> =>
   mockDeviceEventSubject as Observable<InstallLanguageEvent>;

@@ -1,12 +1,11 @@
 import React from "react";
-import { StyleSheet, View, SafeAreaView, Pressable } from "react-native";
-import { useSelector } from "react-redux";
+import { StyleSheet, View, Pressable } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
+import { useSelector } from "~/context/hooks";
 import { Trans, useTranslation } from "react-i18next";
 import Config from "react-native-config";
 import styled, { useTheme } from "styled-components/native";
-
 import type { DerivationMode } from "@ledgerhq/types-live";
-
 import { accountsSelector } from "~/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { TrackScreen } from "~/analytics";
@@ -16,7 +15,6 @@ import CancelButton from "~/components/CancelButton";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
-
 import useScanDeviceAccountsViewModel from "./useScanDeviceAccountsViewModel";
 import AnimatedGradient from "./components/AnimatedGradient";
 import ScanDeviceAccountsFooter from "./components/ScanDeviceAccountsFooter";
@@ -31,7 +29,7 @@ const StyledPressable = styled(Pressable)`
   border-style: dotted;
   border-color: ${({ theme }) => theme.colors.opacityDefault.c10};
   padding: 16px;
-  margin-vertical: 8px;
+  margin: 8px 0;
   border-radius: 12px;
   display: flex;
   flex-direction: row;
@@ -96,7 +94,7 @@ function ScanDeviceAccounts() {
     >
       <TrackScreen name={pageTrackingEvent?.eventName} {...pageTrackingEvent?.payload} />
       <PreventNativeBack />
-      {scanning || !scannedAccounts.length ? (
+      {scanning || scannedAccounts.length === 0 ? (
         <Flex px={6} style={styles.headerTitle}>
           <Text
             variant="h4"
@@ -108,7 +106,7 @@ function ScanDeviceAccounts() {
           </Text>
         </Flex>
       ) : (
-        !cantCreateAccount && (
+        <>
           <Flex px={6} style={styles.headerTitle}>
             <Text
               variant="h4"
@@ -119,7 +117,8 @@ function ScanDeviceAccounts() {
               <Trans i18nKey="addAccounts.scanDeviceAccounts.title" />
             </Text>
           </Flex>
-        )
+          <TrackScreen name="Select account to add" {...pageTrackingEvent?.payload} />
+        </>
       )}
       {scanning ? <AnimatedGradient /> : null}
       <NavigationScrollView style={styles.inner} contentContainerStyle={styles.innerContent}>
@@ -180,7 +179,7 @@ function ScanDeviceAccounts() {
           );
         })}
       </NavigationScrollView>
-      {!!scannedAccounts.length && (
+      {sections.some(s => s.data.length > 0) && (
         <ScanDeviceAccountsFooter
           isScanning={scanning}
           canRetry={
@@ -218,7 +217,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: "transparent",
-    marginTop: 50,
   },
   headerTitle: {
     marginTop: 50,

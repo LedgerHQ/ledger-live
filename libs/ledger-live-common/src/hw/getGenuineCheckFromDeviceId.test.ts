@@ -85,6 +85,7 @@ describe("getGenuineCheckFromDeviceId", () => {
         let step = 1;
         getGenuineCheckFromDeviceId({
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
           lockedDeviceTimeoutMs: 1000,
         }).subscribe({
           next: ({ socketEvent, lockedDevice }: GetGenuineCheckFromDeviceIdResult) => {
@@ -147,6 +148,7 @@ describe("getGenuineCheckFromDeviceId", () => {
         let step = 1;
         getGenuineCheckFromDeviceId({
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
           lockedDeviceTimeoutMs: 1000,
         }).subscribe({
           next: ({ socketEvent, lockedDevice }: GetGenuineCheckFromDeviceIdResult) => {
@@ -227,6 +229,7 @@ describe("getGenuineCheckFromDeviceId", () => {
         let step = 1;
         const subscriber = getGenuineCheckFromDeviceId({
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
           lockedDeviceTimeoutMs: 1000,
         }).subscribe({
           next: ({ socketEvent, lockedDevice }: GetGenuineCheckFromDeviceIdResult) => {
@@ -257,8 +260,8 @@ describe("getGenuineCheckFromDeviceId", () => {
         // Step 2: Triggers any existing retry (if stopped correctly, there should be no retry)
         jest.runOnlyPendingTimers();
         // Checks if it was stopped correctly
-        expect(mockedGetDeviceInfo).toBeCalledTimes(1);
-        expect(mockedGenuineCheck).toBeCalledTimes(0);
+        expect(mockedGetDeviceInfo).toHaveBeenCalledTimes(1);
+        expect(mockedGenuineCheck).toHaveBeenCalledTimes(0);
         done();
       });
     });
@@ -286,6 +289,7 @@ describe("getGenuineCheckFromDeviceId", () => {
         let step = 1;
         getGenuineCheckFromDeviceId({
           deviceId: "A_DEVICE_ID",
+          deviceName: null,
           lockedDeviceTimeoutMs: 1000,
         }).subscribe({
           next: ({ socketEvent, lockedDevice }: GetGenuineCheckFromDeviceIdResult) => {
