@@ -34,10 +34,10 @@ export type FeaturesMap = {
   blockchain?: BlockchainTxsFeatures[];
   staking?: StakingTxsFeatures[];
   native_assets?: NativeAssetsFeatures[];
-  dApps?: DAppsFeatures;
+  dApps?: DAppsFeatures[];
   memos?: MemosFeature[];
   tokens?: TokensFeature[];
-  gasOptions?: GasOptionsFeature;
+  gasOptions?: GasOptionsFeature[];
 };
 
 /**

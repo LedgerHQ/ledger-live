@@ -484,7 +484,8 @@
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/rxjs/operators/throwIf.ts",
     "src/utils/addressUtils.ts",
-    "src/walletSync/getEnvironmentParams.ts"
+    "src/walletSync/getEnvironmentParams.ts",
+    "src/bridge/features.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/hw-app-eth",

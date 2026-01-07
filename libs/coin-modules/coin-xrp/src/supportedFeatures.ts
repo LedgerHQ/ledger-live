@@ -3,5 +3,5 @@ import type { FeaturesMap } from "@ledgerhq/coin-framework/features/types";
 export const supportedFeatures: FeaturesMap = {
   blockchain: ["blockchain_txs"],
   memos: ["memo_craft", "memo_history"],
-  dApps: "wallet_api",
+  dApps: ["wallet_api"],
 };

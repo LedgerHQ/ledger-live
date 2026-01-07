@@ -25,19 +25,9 @@ import { supportedFeatures as iconFeatures } from "@ledgerhq/coin-icon/supported
 import { supportedFeatures as cantonFeatures } from "@ledgerhq/coin-canton/supportedFeatures";
 import { supportedFeatures as kaspaFeatures } from "@ledgerhq/coin-kaspa/supportedFeatures";
 
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  FeaturesMap,
-  BlockchainTxsFeatures,
-  StakingTxsFeatures,
-  NativeAssetsFeatures,
-  DAppsFeatures,
-  TokensFeature,
-  MemosFeature,
-  GasOptionsFeature,
-} from "@ledgerhq/coin-framework/features/types";
+import { FeaturesMap, Feature } from "@ledgerhq/coin-framework/features/types";
 
-const features = {
+const featuresRegistry: Record<string, FeaturesMap> = {
   tezos: tezosFeatures,
   bitcoin: bitcoinFeatures,
   evm: evmFeatures,
@@ -66,58 +56,37 @@ const features = {
   kaspa: kaspaFeatures,
 };
 
-export const getSupportedFeatures = (
-  currency: CryptoOrTokenCurrency,
+/**
+ * Get the full features maps for a given currency
+ */
+export function getFeaturesMap(family: string): FeaturesMap | null {
+  if (!family) {
+    return null;
+  }
+
+  const fullDescriptor = featuresRegistry[family];
+
+  if (fullDescriptor) {
+    return fullDescriptor;
+  }
+
+  return null;
+}
+
+export const isSupportedFeature = (
+  family: string,
   key: keyof FeaturesMap,
-): unknown[] => {
-  const family = currency.id;
-  const familyFeatures = features[family];
-  return (familyFeatures?.[key] as unknown[]) || [];
-};
-
-export const hasStakingFeature = (
-  currency: CryptoOrTokenCurrency,
-  key: StakingTxsFeatures,
+  feature: Feature,
 ): boolean => {
-  const family = currency.id;
-  return features[family]?.staking?.includes(key) || false;
-};
+  const features = getFeaturesMap(family);
+  if (!features) {
+    return false;
+  }
 
-export const hasBlockchainFeature = (
-  currency: CryptoOrTokenCurrency,
-  key: BlockchainTxsFeatures,
-): boolean => {
-  const family = currency.id;
-  return features[family]?.blockchain?.includes(key) || false;
-};
+  const featureValue = features[key];
+  if (featureValue === undefined) {
+    return false;
+  }
 
-export const hasNativeAssetsFeature = (
-  currency: CryptoOrTokenCurrency,
-  key: NativeAssetsFeatures,
-): boolean => {
-  const family = currency.id;
-  return features[family]?.native_assets?.includes(key) || false;
-};
-
-export const hasDAppsFeature = (currency: CryptoOrTokenCurrency, key: DAppsFeatures): boolean => {
-  const family = currency.id;
-  return features[family]?.dApps?.includes(key) || false;
-};
-
-export const hasMemosFeature = (currency: CryptoOrTokenCurrency, key: MemosFeature): boolean => {
-  const family = currency.id;
-  return features[family]?.memos?.includes(key) || false;
-};
-
-export const hasTokensFeature = (currency: CryptoOrTokenCurrency, key: TokensFeature): boolean => {
-  const family = currency.id;
-  return features[family]?.tokens?.includes(key) || false;
-};
-
-export const hasGasOptionsFeature = (
-  currency: CryptoOrTokenCurrency,
-  key: GasOptionsFeature,
-): boolean => {
-  const family = currency.id;
-  return features[family]?.gasOptions?.includes(key) || false;
+  return featureValue.some(f => f === feature);
 };

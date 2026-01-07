@@ -5,5 +5,5 @@ export const supportedFeatures: FeaturesMap = {
   staking: ["staking_txs"],
   memos: ["memo_craft", "memo_history"],
   tokens: ["tokens_balance", "tokens_history", "tokens_craft"],
-  dApps: "wallet_api",
+  dApps: ["wallet_api"],
 };

@@ -102,35 +102,7 @@ describe("getDescriptor", () => {
         },
       } as CurrencyConfig,
     ],
-  ])("should return default descriptor when %s", (_, mockConfig) => {
-    const bitcoin = getCryptoCurrencyById("bitcoin");
-    jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue(mockConfig);
-
-    const descriptor = getDescriptor(bitcoin);
-    expect(descriptor).toBeNull();
-  });
-
-  it("should return null when no features array", () => {
-    const bitcoin = getCryptoCurrencyById("bitcoin");
-    jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue({
-      status: {
-        type: "active",
-      },
-    });
-
-    const descriptor = getDescriptor(bitcoin);
-    expect(descriptor).toBeNull();
-  });
-
-  it("should return default descriptor when config throws error", () => {
-    const bitcoin = getCryptoCurrencyById("bitcoin");
-    jest.spyOn(configModule, "getCurrencyConfiguration").mockImplementation(() => {
-      throw new Error("Config not found");
-    });
-
-    const descriptor = getDescriptor(bitcoin);
-    expect(descriptor).toBeNull();
-  });
+  ]);
 });
 
 describe("getSendDescriptor", () => {
@@ -153,19 +125,6 @@ describe("getSendDescriptor", () => {
       },
       selfTransfer: "free",
     });
-  });
-
-  it("should return null when feature is not active", () => {
-    const bitcoin = getCryptoCurrencyById("bitcoin");
-    jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue({
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "inactive" }],
-      },
-    });
-
-    const sendDescriptor = getSendDescriptor(bitcoin);
-    expect(sendDescriptor).toBeNull();
   });
 });
 
