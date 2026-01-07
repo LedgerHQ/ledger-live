@@ -184,7 +184,7 @@ function StakingAmount({ navigation, route }: Props) {
                       values={{
                         amount: formatCurrencyUnit(unit, remaining, {
                           showCode: true,
-                          locale: locale,
+                          locale,
                         }),
                       }}
                     >

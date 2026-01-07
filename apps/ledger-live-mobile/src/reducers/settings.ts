@@ -11,7 +11,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { CurrencySettings, SettingsState, State } from "./types";
+import type { CurrencySettings, SettingsState, State, Theme } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 import type {
@@ -120,7 +120,7 @@ export const INITIAL_STATE: SettingsState = {
   discreetMode: false,
   language: getDefaultLanguageLocale(),
   languageIsSetByUser: false,
-  locale: null,
+  locale: getDefaultLocale(),
   swap: {
     hasAcceptedIPSharing: false,
     acceptedProviders: [],
@@ -175,10 +175,14 @@ const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
   `${from.ticker}_${to.ticker}`;
 
 const handlers: ReducerMap<SettingsState, SettingsPayload> = {
-  [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => ({
-    ...state,
-    ...(action as Action<SettingsImportPayload>).payload,
-  }),
+  [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => {
+    const payload = (action as Action<SettingsImportPayload>).payload;
+    return {
+      ...state,
+      ...payload,
+      locale: payload.locale ?? state.locale ?? getDefaultLocale(),
+    };
+  },
 
   [SettingsActionTypes.UPDATE_CURRENCY_SETTINGS]: (
     { currenciesSettings, ...state }: SettingsState,
@@ -782,6 +786,22 @@ export const themeSelector = (state: State) => {
   return val;
 };
 export const osThemeSelector = (state: State) => state.settings.osTheme;
+
+/**
+ * Selector that computes the resolved theme based on user preference and OS theme.
+ * If theme is "system", it returns the OS theme (defaulting to "dark" if not available).
+ * Otherwise, it returns the user's explicit theme choice.
+ */
+export const resolvedThemeSelector = createSelector(
+  themeSelector,
+  osThemeSelector,
+  (theme: Theme, osTheme: SettingsState["osTheme"]): "light" | "dark" => {
+    if (theme === "system") {
+      return osTheme === "light" ? "light" : "dark";
+    }
+    return theme === "light" ? "light" : "dark";
+  },
+);
 export const languageSelector = (state: State) =>
   state.settings.language || getDefaultLanguageLocale();
 export const languageIsSetByUserSelector = (state: State) => state.settings.languageIsSetByUser;

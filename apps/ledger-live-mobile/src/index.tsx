@@ -20,7 +20,6 @@ import { init } from "../e2e/bridge/client";
 import logger from "./logger";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import {
-  osThemeSelector,
   hasSeenAnalyticsOptInPromptSelector,
   hasCompletedOnboardingSelector,
   trackingEnabledSelector,
@@ -290,8 +289,7 @@ function RebootProvider({ children }: { children: React.ReactNode }) {
 }
 
 const StylesProvider = ({ children }: { children: React.ReactNode }) => {
-  const { theme } = useSettings();
-  const osTheme = useSelector(osThemeSelector);
+  const { osTheme, resolvedTheme } = useSettings();
   const dispatch = useDispatch();
 
   const compareOsTheme = useCallback(() => {
@@ -311,10 +309,6 @@ const StylesProvider = ({ children }: { children: React.ReactNode }) => {
     const sub = AppState.addEventListener("change", osThemeChangeHandler);
     return () => sub.remove();
   }, [compareOsTheme]);
-  const resolvedTheme = useMemo(
-    () => (((theme === "system" && osTheme) || theme) === "light" ? "light" : "dark"),
-    [theme, osTheme],
-  );
 
   return (
     <StyleProvider selectedPalette={resolvedTheme}>

@@ -60,7 +60,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
       const value = formatCurrencyUnit(unit, frozenAmount || new BigNumber(0), {
         showCode: true,
         discreet,
-        locale: locale,
+        locale,
       });
       return <Section title={t("operationDetails.extra.frozenAmount")} value={value} />;
     }
@@ -69,7 +69,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
       const value = formatCurrencyUnit(unit, unfreezeAmount || new BigNumber(0), {
         showCode: true,
         discreet,
-        locale: locale,
+        locale,
       });
       return <Section title={t("operationDetails.extra.unfreezeAmount")} value={value} />;
     }

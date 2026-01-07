@@ -29,7 +29,7 @@ function OperationDetailsExtra({ account, operation }: Props) {
     alwaysShowSign: false,
     showCode: true,
     discreet,
-    locale: locale,
+    locale,
   });
 
   return (

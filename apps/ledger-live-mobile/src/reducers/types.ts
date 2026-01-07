@@ -247,7 +247,7 @@ export type SettingsState = {
   discreetMode: boolean;
   language: string;
   languageIsSetByUser: boolean;
-  locale: string | null | undefined;
+  locale: string;
   swap: {
     hasAcceptedIPSharing: false;
     acceptedProviders: string[];
