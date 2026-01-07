@@ -47,6 +47,7 @@ import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useStake } from "LLD/hooks/useStake";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
+import generic from "~/renderer/ui/staking";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -197,10 +198,17 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   const contrastText = useTheme().colors.neutral.c70;
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const specific = getLLDCoinFamily(mainAccount.currency.family);
+  const specific = getLLDCoinFamily(family);
   const openSendFlow = useOpenSendFlow();
 
-  const manage = specific?.accountHeaderManageActions;
+  let manage = specific?.accountHeaderManageActions;
+
+  // Load generic ui
+  // if (["xrp", "stellar", "evm", "tezos"].includes(family)) {
+  if (family === "tezos" && generic.accountHeaderManageActions) {
+    manage = generic.accountHeaderManageActions;
+  }
+
   let manageList: ManageAction[] = [];
   if (manage) {
     const familyManageActions = manage({ account, parentAccount });

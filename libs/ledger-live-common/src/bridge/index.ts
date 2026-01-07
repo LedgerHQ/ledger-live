@@ -1,6 +1,7 @@
 import type { ScanAccountEvent, ScanAccountEventRaw } from "@ledgerhq/types-live";
 import { fromAccountRaw, toAccountRaw } from "../account";
 export { getCurrencyBridge, getAccountBridge } from "./impl";
+export { getAlpacaApi } from "./generic-alpaca/alpaca";
 
 export async function fromScanAccountEventRaw(raw: ScanAccountEventRaw): Promise<ScanAccountEvent> {
   switch (raw.type) {

@@ -35,6 +35,7 @@ import { getLLDCoinFamily } from "~/renderer/families";
 import NftEntryPoint from "LLD/features/NftEntryPoint";
 import { useCoinModuleFeature } from "@ledgerhq/live-common/featureFlags/useCoinModuleFeature";
 import { CoinFamily } from "@ledgerhq/live-common/bridge/features";
+import GenericAccountBodyHeader from "~/renderer/ui/staking/AccountBodyHeader";
 
 type Params = {
   id: string;
@@ -94,9 +95,18 @@ const AccountPage = ({
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const family = (mainAccount?.currency.family as CoinFamily) || "";
-  const AccountBodyHeader = specific?.AccountBodyHeader;
+
   const AccountSubHeader = specific?.AccountSubHeader;
   const PendingTransferProposals = specific?.PendingTransferProposals;
+
+  let AccountBodyHeader = specific?.AccountBodyHeader;
+
+  // Load generic ui
+  // if (["xrp", "stellar", "evm", "tezos"].includes(family)) {
+  if (family === "tezos") {
+    AccountBodyHeader = GenericAccountBodyHeader;
+  }
+
   const bgColor = useTheme().colors.background.card;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const hasNativeHistory = useCoinModuleFeature("nativeHistory", family);

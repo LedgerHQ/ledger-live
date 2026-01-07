@@ -88,6 +88,7 @@ export const urls = {
     blue: "https://support.ledger.com/article/4404382075537-zd",
   },
   maxSpendable: "https://support.ledger.com/article/360012960679-zd",
+  staking: "https://shop.ledger.com/pages/staking",
   stakingEthereum:
     "https://www.ledger.com/staking/staking-ethereum?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=ethereum",
   stakingCosmos:
