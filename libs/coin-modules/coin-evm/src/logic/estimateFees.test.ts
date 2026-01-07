@@ -477,4 +477,49 @@ describe("estimateFees", () => {
       },
     });
   });
+
+  it("uses custom gas limit from customFeesParameters", async () => {
+    const customGasLimit = new BigNumber("50000");
+    jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
+    mockNodeApi.getFeeData.mockResolvedValue({
+      gasPrice: new BigNumber("20000000000"),
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      nextBaseFee: null,
+    });
+    mockGetGasTracker.mockReturnValue(null);
+
+    const result = await estimateFees(
+      mockCurrency,
+      {
+        intentType: "transaction",
+        type: "send-legacy",
+        amount: BigInt("1000000000000000000"),
+        asset: { type: "native" },
+        recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        sender: "0xsender",
+        feesStrategy: "custom",
+        data: { type: "buffer", value: Buffer.from([]) },
+      } as SendTransactionIntent<MemoNotSupported, BufferTxData>,
+      {
+        gasLimit: BigInt(customGasLimit.toFixed()),
+        gasPrice: new BigNumber(30000000000),
+      },
+    );
+
+    // Should not call getGasEstimation when custom gas limit is provided
+    expect(mockNodeApi.getGasEstimation).not.toHaveBeenCalled();
+
+    expect(result).toEqual({
+      value: 1500000000000000n, // 50000 * 30000000000
+      parameters: {
+        gasPrice: 30000000000n,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null,
+        nextBaseFee: null,
+        gasLimit: 50000n,
+        type: 0,
+      },
+    });
+  });
 });
