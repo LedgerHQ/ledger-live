@@ -65,6 +65,7 @@ import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakeProgr
 import { LAST_STARTUP_EVENTS } from "LLM/utils/logLastStartupEvents";
 import { resolveStartupEvents } from "LLM/utils/resolveStartupEvents";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
+import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 
 const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -316,7 +317,7 @@ const extraProperties = async (store: AppStore) => {
   const mevProtectionAttributes = getMEVAttributes(state);
   const tokenWithFunds = getTokensWithFunds(accounts);
   const migrationToMMKV = getMigrationUserProps();
-
+  const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwm");
   // NOTE: Currently there no reliable way to uniquely identify devices from DeviceModelInfo.
   // So device counts is approximated as follows:
   // Each model of device seen which was not connected in Bluetooth is counted as a 1 device.
@@ -383,6 +384,7 @@ const extraProperties = async (store: AppStore) => {
     madAttributes,
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
+    wallet40Attributes,
   };
 };
 

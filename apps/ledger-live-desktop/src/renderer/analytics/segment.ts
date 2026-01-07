@@ -46,6 +46,7 @@ import {
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import mixpanel from "mixpanel-browser";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
+import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.UnknownAction>, State>;
 
@@ -289,6 +290,8 @@ const extraProperties = (store: ReduxStore) => {
 
   const tokenWithFunds = getTokensWithFunds(accounts);
 
+  const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwd");
+
   return {
     ...mandatoryProperties,
     appVersion: __APP_VERSION__,
@@ -324,6 +327,7 @@ const extraProperties = (store: ReduxStore) => {
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
+    wallet40Attributes,
   };
 };
 

@@ -291,6 +291,8 @@ export type Features = CurrencyFeatures & {
   llmAnimatedSplashScreen: Feature_LlmAnimatedSplashScreen;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
+  lwmWallet40: Feature_LwmWallet40;
+  lwdWallet40: Feature_LwdWallet40;
 };
 
 /**
@@ -777,6 +779,21 @@ export type IgnoredOSUpdatesByPlatform = { [M in DeviceModelId]?: IgnoredOSUpdat
 export type Feature_OnboardingIgnoredOSUpdates = Feature<{
   [P in Platform]?: IgnoredOSUpdatesByPlatform;
 }>;
+
+type Feature_Wallet40_Params = {
+  marketBanner: boolean;
+};
+
+export type Feature_LwmWallet40 = Feature<
+  {
+    // Add specific LWM params
+  } & Feature_Wallet40_Params
+>;
+export type Feature_LwdWallet40 = Feature<
+  {
+    //  Add specific LWD params
+  } & Feature_Wallet40_Params
+>;
 
 /**
  * Utils types.
