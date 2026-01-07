@@ -11,7 +11,7 @@
       "orderAccounts": "balance|desc",
       "countervalueFirst": false,
       "autoLockTimeout": 10,
-      "selectedTimeRange": "month",
+      "selectedTimeRange": "week",
       "currenciesSettings": {},
       "pairExchanges": {},
       "developerMode": false,
