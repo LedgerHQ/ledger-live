@@ -272,7 +272,8 @@
       "@exodus/patch-broken-hermes-typed-arrays": "patches/@exodus__patch-broken-hermes-typed-arrays.patch",
       "@taquito/http-utils": "patches/@taquito__http-utils.patch",
       "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch",
-      "react-native@0.77.3": "patches/react-native@0.77.3.patch"
+      "react-native@0.77.3": "patches/react-native@0.77.3.patch",
+      "@craftzdog/react-native-buffer": "patches/@craftzdog__react-native-buffer.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

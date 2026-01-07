@@ -237,9 +237,56 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
+  - NitroModules (0.32.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-callinvoker
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - OpenTelemetrySwiftApi (1.13.1)
   - PLCrashReporter (1.12.0)
   - PromisesObjC (2.4.0)
+  - QuickCrypto (1.0.6):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - NitroModules
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-callinvoker
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RCT-Folly (2024.11.18.00):
     - boost
     - DoubleConversion
@@ -2457,6 +2504,8 @@ DEPENDENCIES:
   - "glog (from `../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_14c2edb3720326136761d6cd0ff61f24/node_modules/react-native/third-party-podspecs/glog.podspec`)"
   - "hermes-engine (from `../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_14c2edb3720326136761d6cd0ff61f24/node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)"
   - lottie-react-native (from `../node_modules/lottie-react-native`)
+  - NitroModules (from `../node_modules/react-native-nitro-modules`)
+  - QuickCrypto (from `../node_modules/react-native-quick-crypto`)
   - "RCT-Folly (from `../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_14c2edb3720326136761d6cd0ff61f24/node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)"
   - "RCT-Folly/Fabric (from `../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_14c2edb3720326136761d6cd0ff61f24/node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)"
   - "RCTDeprecation (from `../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_14c2edb3720326136761d6cd0ff61f24/node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)"
@@ -2645,6 +2694,10 @@ EXTERNAL SOURCES:
     :tag: hermes-2024-11-25-RNv0.77.0-d4f25d534ab744866448b36ca3bf3d97c08e638c
   lottie-react-native:
     :path: "../node_modules/lottie-react-native"
+  NitroModules:
+    :path: "../node_modules/react-native-nitro-modules"
+  QuickCrypto:
+    :path: "../node_modules/react-native-quick-crypto"
   RCT-Folly:
     :podspec: "../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_14c2edb3720326136761d6cd0ff61f24/node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTDeprecation:
@@ -2903,9 +2956,11 @@ SPEC CHECKSUMS:
   lottie-react-native: 6cb05b7b4ea463afe657e3b46784f067858e1a5d
   MultiplatformBleAdapter: b1fddd0d499b96b607e00f0faa8e60648343dc1d
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
+  NitroModules: 1603bae3e45767b671d971c73ef9b363259c761e
   OpenTelemetrySwiftApi: aaee576ed961e0c348af78df58b61300e95bd104
   PLCrashReporter: db59ef96fa3d25f3650040d02ec2798cffee75f2
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
+  QuickCrypto: 0f94e2fb4d1005fdd48e1dfca6a0e428ad1973d4
   RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
   RCTDeprecation: 6ee92578d332db1d4e03267d3ae98bcf8b780863
   RCTRequired: 5b3da0e0f91fddda935574b81748c3e3d3649ee7

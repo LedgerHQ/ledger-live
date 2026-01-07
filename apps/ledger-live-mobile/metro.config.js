@@ -89,10 +89,16 @@ const metroConfig = {
       net: require.resolve("react-native-tcp-socket"),
       tls: require.resolve("tls"),
       ...buildTsAlias(tsconfig.compilerOptions.paths),
+      crypto: require.resolve("react-native-quick-crypto"),
     },
     resolveRequest: (context, moduleName, platform) => {
       if (["tls", "http2", "dns"].includes(moduleName)) {
         return { type: "empty" };
+      }
+
+      if (moduleName === "crypto") {
+        // when importing crypto, resolve to react-native-quick-crypto
+        return context.resolveRequest(context, "react-native-quick-crypto", platform);
       }
 
       try {
