@@ -774,6 +774,126 @@ export const DEFAULT_FEATURES: Features = {
       touchscreens: false,
     },
   }),
+
+  blockchainBlocks: {
+    enabled: true,
+    params: {
+      featureId: "blockchain_blocks",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
+
+  blockchainTxs: {
+    enabled: true,
+    params: {
+      featureId: "blockchains_txs",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
+
+  walletApi: {
+    enabled: true,
+    params: {
+      featureId: "wallet_api",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
+
+  nativeCraft: {
+    enabled: true,
+    params: {
+      featureId: "native_craft",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
+
+  nativeBalance: {
+    enabled: true,
+    params: {
+      featureId: "native_balance",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
+
+  nativeHistory: {
+    enabled: true,
+    params: {
+      featureId: "native_history",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
+
+  tokensCraft: {
+    enabled: true,
+    params: {
+      featureId: "tokens_craft",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
+
+  tokensBalance: {
+    enabled: true,
+    params: {
+      featureId: "tokens_balance",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
+
+  tokensHistory: {
+    enabled: true,
+    params: {
+      featureId: "tokens_history",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
+
+  memoCraft: {
+    enabled: true,
+    params: {
+      featureId: "memo_craft",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
+
+  memoHistory: {
+    enabled: true,
+    params: {
+      featureId: "memo_history",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
+
+  stakingTxs: {
+    enabled: true,
+    params: {
+      featureId: "staking_txs",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
+
+  stakingHistory: {
+    enabled: true,
+    params: {
+      featureId: "staking_history",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
+
+  stakingStakes: {
+    enabled: true,
+    params: {
+      featureId: "staking_stakes",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
+
+  stakingRewards: {
+    enabled: true,
+    params: {
+      featureId: "staking_rewards",
+      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings

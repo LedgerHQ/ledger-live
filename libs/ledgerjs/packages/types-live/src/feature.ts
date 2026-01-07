@@ -291,6 +291,21 @@ export type Features = CurrencyFeatures & {
   llmAnimatedSplashScreen: Feature_LlmAnimatedSplashScreen;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
+  blockchainBlocks: Feature_CoinModule;
+  blockchainTxs: Feature_CoinModule;
+  stakingTxs: Feature_CoinModule;
+  stakingHistory: Feature_CoinModule;
+  stakingRewards: Feature_CoinModule;
+  stakingStakes: Feature_CoinModule;
+  nativeBalance: Feature_CoinModule;
+  nativeCraft: Feature_CoinModule;
+  nativeHistory: Feature_CoinModule;
+  tokensBalance: Feature_CoinModule;
+  tokensCraft: Feature_CoinModule;
+  tokensHistory: Feature_CoinModule;
+  memoCraft: Feature_CoinModule;
+  memoHistory: Feature_CoinModule;
+  walletApi: Feature_CoinModule;
 };
 
 /**
@@ -763,6 +778,14 @@ export type Feature_LlmAnimatedSplashScreen = Feature<Record<string, boolean>>;
 export type Feature_OnboardingEnableSync = Feature<{
   nanos: boolean;
   touchscreens: boolean;
+}>;
+
+export type Feature_CoinModule = Feature<{
+  featureId: string;
+  featureConfig: Array<{
+    status: "dev" | "experimental" | "released";
+    families: string[];
+  }>;
 }>;
 
 /**
