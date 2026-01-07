@@ -16,7 +16,7 @@ const beforeAllFunction = async (swap: SwapType) => {
         enabled: true,
         params: {
           manifest_id:
-            process.env.PRODUCTION === "true" ? "swap-live-app-demo-3" : "swap-live-app-demo-3-stg",
+            process.env.PRODUCTION === "true" ? "swap-live-app-aws" : "swap-live-app-stg-aws",
         },
       },
       llmAnalyticsOptInPrompt: {
