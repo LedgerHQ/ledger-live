@@ -48,6 +48,7 @@ import {
   bitcoinFamilyAccountGetPublicKeyLogic,
   signRawTransactionLogic,
 } from "./logic";
+import { handlers as featureFlagsHandlers } from "./FeatureFlags";
 import { getAccountBridge } from "../bridge";
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
@@ -313,11 +314,21 @@ export function useWalletAPIServer({
   // If we don't want the map to be empty when requesting an account
   useSetWalletAPIAccounts(accounts);
 
+  // Merge featureFlags handler with customHandlers
+  const mergedCustomHandlers = useMemo(() => {
+    const featureFlagsHandlersInstance = featureFlagsHandlers({ manifest });
+
+    return {
+      ...customHandlers,
+      ...featureFlagsHandlersInstance,
+    };
+  }, [manifest, customHandlers]);
+
   const { server, onMessage } = useWalletAPIServerRaw({
     transport,
     config,
     permission,
-    customHandlers,
+    customHandlers: mergedCustomHandlers,
   });
 
   useEffect(() => {
@@ -1350,9 +1361,9 @@ export function useRecentlyUsed(
           const res = manifests.find(manifest => manifest.id === recentlyUsed.id);
           return res
             ? {
-                ...res,
-                usedAt: calculateTimeDiff(recentlyUsed.usedAt),
-              }
+              ...res,
+              usedAt: calculateTimeDiff(recentlyUsed.usedAt),
+            }
             : undefined;
         })
         .filter((manifest): manifest is RecentlyUsedManifest => manifest !== undefined),
@@ -1393,9 +1404,9 @@ export function useRecentlyUsed(
           recentlyUsed:
             state.recentlyUsed.length >= MAX_RECENTLY_USED_LENGTH
               ? [
-                  { id: manifest.id, usedAt: new Date().toISOString() },
-                  ...state.recentlyUsed.slice(0, -1),
-                ]
+                { id: manifest.id, usedAt: new Date().toISOString() },
+                ...state.recentlyUsed.slice(0, -1),
+              ]
               : [{ id: manifest.id, usedAt: new Date().toISOString() }, ...state.recentlyUsed],
         };
       });
