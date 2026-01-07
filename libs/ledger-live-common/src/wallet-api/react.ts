@@ -321,8 +321,8 @@ export function useWalletAPIServer({
     const featureFlagsHandlersInstance = featureFlagsHandlers({ manifest });
 
     return {
-      ...customHandlers,
       ...featureFlagsHandlersInstance,
+      ...customHandlers,
     };
   }, [manifest, customHandlers]);
 
@@ -1438,9 +1438,9 @@ export function useRecentlyUsed(
           const res = manifests.find(manifest => manifest.id === recentlyUsed.id);
           return res
             ? {
-              ...res,
-              usedAt: calculateTimeDiff(recentlyUsed.usedAt),
-            }
+                ...res,
+                usedAt: calculateTimeDiff(recentlyUsed.usedAt),
+              }
             : undefined;
         })
         .filter((manifest): manifest is RecentlyUsedManifest => manifest !== undefined),
@@ -1481,9 +1481,9 @@ export function useRecentlyUsed(
           recentlyUsed:
             state.recentlyUsed.length >= MAX_RECENTLY_USED_LENGTH
               ? [
-                { id: manifest.id, usedAt: new Date().toISOString() },
-                ...state.recentlyUsed.slice(0, -1),
-              ]
+                  { id: manifest.id, usedAt: new Date().toISOString() },
+                  ...state.recentlyUsed.slice(0, -1),
+                ]
               : [{ id: manifest.id, usedAt: new Date().toISOString() }, ...state.recentlyUsed],
         };
       });
