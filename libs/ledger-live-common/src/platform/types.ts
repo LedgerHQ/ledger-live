@@ -129,6 +129,7 @@ export type LiveAppManifest = {
   currencies: string[] | "*";
   visibility: Visibility;
   highlight?: boolean;
+  featureFlags?: string[];
   providerTestBaseUrl?: string;
   providerTestId?: string;
   content: {
@@ -177,6 +178,7 @@ export const LiveAppManifestSchema = z
     currencies: z.union([z.array(z.string().trim()).min(1), z.literal("*")]),
     visibility: z.enum(["complete", "searchable", "deep"]),
     highlight: z.boolean().optional(),
+    featureFlags: z.array(z.string().trim()).optional(),
     content: z.object({
       cta: z.record(z.string()).optional(),
       subtitle: z.record(z.string()).optional(),
