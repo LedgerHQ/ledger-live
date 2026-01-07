@@ -33,6 +33,7 @@ import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
 import NftEntryPoint from "LLD/features/NftEntryPoint";
+import { useCoinModuleFeature } from "@ledgerhq/live-common/featureFlags/useCoinModuleFeature";
 
 type Params = {
   id: string;
@@ -91,11 +92,15 @@ const AccountPage = ({
 }: Props) => {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
+  const family = mainAccount?.currency.family || "";
   const AccountBodyHeader = specific?.AccountBodyHeader;
   const AccountSubHeader = specific?.AccountSubHeader;
   const PendingTransferProposals = specific?.PendingTransferProposals;
   const bgColor = useTheme().colors.background.card;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
+  const hasNativeHistory = useCoinModuleFeature("nativeHistory", family);
+  const hasStakingHistory = useCoinModuleFeature("stakingHistory", family);
+  const hasTokensHistory = useCoinModuleFeature("tokensHistory", family);
 
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
@@ -177,13 +182,15 @@ const AccountPage = ({
           {account.type === "Account" && <NftEntryPoint account={account} />}
 
           {account.type === "Account" ? <TokensList account={account} /> : null}
-          <OperationsList
-            t={t}
-            account={account}
-            parentAccount={parentAccount}
-            title={t("account.lastOperations")}
-            filterOperation={filterOperations}
-          />
+          {hasNativeHistory || hasStakingHistory || hasTokensHistory ? (
+            <OperationsList
+              t={t}
+              account={account}
+              parentAccount={parentAccount}
+              title={t("account.lastOperations")}
+              filterOperation={filterOperations}
+            />
+          ) : null}
         </>
       ) : (
         <EmptyStateAccount account={account} parentAccount={parentAccount} />
