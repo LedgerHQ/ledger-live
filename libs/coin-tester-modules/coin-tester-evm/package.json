@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-evm",
-  "version": "1.12.1",
+  "version": "1.11.2",
   "description": "Ledger EVM Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -76,13 +76,14 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport": "workspace:*",
+    "@swc/core": "1.4.11",
+    "@swc/jest": "0.2.36",
     "@types/bluebird": "^3.5.42",
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.10",
     "dotenv": "^16.4.5",
-    "jest": "catalog:",
+    "jest": "^29.7.0",
     "rimraf": "^5.0.5",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
+    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }

@@ -1,5 +1,4 @@
 import { expect } from "detox";
-import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class PortfolioPage {

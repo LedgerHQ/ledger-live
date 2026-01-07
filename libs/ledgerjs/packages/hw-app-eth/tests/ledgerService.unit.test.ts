@@ -2,57 +2,14 @@ import axios from "axios";
 import { getSerializedTransaction, transactionData, transactionContracts } from "./fixtures/utils";
 import { ERC1155_CLEAR_SIGNED_SELECTORS, ERC721_CLEAR_SIGNED_SELECTORS } from "../src/utils";
 import partialPluginResponse from "./fixtures/REST/Paraswap-Plugin.json";
-import { getLoadConfig } from "../src/services/ledger/loadConfig";
-import signatureCALEth from "./fixtures/SignatureCALEth";
-import { ResolutionConfig } from "../src/services/types";
-import { ledgerService } from "../src/Eth";
-
-// Mock axios
-jest.mock("axios");
-
-// Mock the service modules with wrapped real implementations
-jest.mock("../src/services/ledger/contracts", () => {
-  const actual = jest.requireActual("../src/services/ledger/contracts");
-  return {
-    ...actual,
-    loadInfosForContractMethod: jest.fn(actual.loadInfosForContractMethod),
-  };
-});
-
-jest.mock("../src/services/ledger/erc20", () => {
-  const actual = jest.requireActual("../src/services/ledger/erc20");
-  return {
-    ...actual,
-    findERC20SignaturesInfo: jest.fn(actual.findERC20SignaturesInfo),
-    byContractAddressAndChainId: jest.fn(actual.byContractAddressAndChainId),
-  };
-});
-
-jest.mock("../src/services/ledger/nfts", () => {
-  const actual = jest.requireActual("../src/services/ledger/nfts");
-  return {
-    ...actual,
-    getNFTInfo: jest.fn(actual.getNFTInfo),
-    loadNftPlugin: jest.fn(actual.loadNftPlugin),
-  };
-});
-
-jest.mock("../src/modules/Uniswap", () => {
-  const actual = jest.requireActual("../src/modules/Uniswap");
-  return {
-    ...actual,
-    loadInfosForUniswap: jest.fn(actual.loadInfosForUniswap),
-    getCommandsAndTokensFromUniswapCalldata: jest.fn(
-      actual.getCommandsAndTokensFromUniswapCalldata,
-    ),
-  };
-});
-
-// Import mocked modules after jest.mock calls
 import * as contractServices from "../src/services/ledger/contracts";
+import { getLoadConfig } from "../src/services/ledger/loadConfig";
 import * as erc20Services from "../src/services/ledger/erc20";
 import * as nftServices from "../src/services/ledger/nfts";
+import signatureCALEth from "./fixtures/SignatureCALEth";
 import * as uniswapModule from "../src/modules/Uniswap";
+import { ResolutionConfig } from "../src/services/types";
+import { ledgerService } from "../src/Eth";
 
 const loadConfig = getLoadConfig({ staticERC20Signatures: { 1: signatureCALEth } });
 const resolutionConfig: ResolutionConfig = {
@@ -61,6 +18,16 @@ const resolutionConfig: ResolutionConfig = {
   externalPlugins: true,
   uniswapV3: true,
 };
+
+jest.mock("axios");
+
+jest.spyOn(contractServices, "loadInfosForContractMethod");
+jest.spyOn(nftServices, "loadNftPlugin");
+jest.spyOn(nftServices, "getNFTInfo");
+jest.spyOn(erc20Services, "findERC20SignaturesInfo");
+jest.spyOn(erc20Services, "byContractAddressAndChainId");
+jest.spyOn(uniswapModule, "loadInfosForUniswap");
+jest.spyOn(uniswapModule, "getCommandsAndTokensFromUniswapCalldata");
 
 describe("Ledger Service", () => {
   describe("Transaction resolution", () => {
@@ -724,8 +691,7 @@ describe("Ledger Service", () => {
         expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(2);
         expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(2);
         expect(uniswapModule.loadInfosForUniswap).toHaveBeenCalledTimes(1);
-        // Note: getCommandsAndTokensFromUniswapCalldata is called internally by loadInfosForUniswap,
-        // so it doesn't go through the mock when using jest.mock with wrapped real implementations
+        expect(uniswapModule.getCommandsAndTokensFromUniswapCalldata).toHaveBeenCalledTimes(1);
         expect(nftServices.getNFTInfo).not.toHaveBeenCalled();
         expect(nftServices.loadNftPlugin).not.toHaveBeenCalled();
       });
@@ -767,8 +733,7 @@ describe("Ledger Service", () => {
         expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(2);
         expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(2);
         expect(uniswapModule.loadInfosForUniswap).toHaveBeenCalledTimes(1);
-        // Note: getCommandsAndTokensFromUniswapCalldata is called internally by loadInfosForUniswap,
-        // so it doesn't go through the mock when using jest.mock with wrapped real implementations
+        expect(uniswapModule.getCommandsAndTokensFromUniswapCalldata).toHaveBeenCalledTimes(1);
         expect(nftServices.getNFTInfo).not.toHaveBeenCalled();
         expect(nftServices.loadNftPlugin).not.toHaveBeenCalled();
       });

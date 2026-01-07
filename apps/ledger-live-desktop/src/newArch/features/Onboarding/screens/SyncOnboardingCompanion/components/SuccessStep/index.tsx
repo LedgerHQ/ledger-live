@@ -16,7 +16,6 @@ const SuccessStep = ({ deviceName }: { deviceName: string }) => {
       rowGap={24}
       flex="1 0 0"
       alignSelf="stretch"
-      data-testid="sync-onboarding-success-step"
     >
       <Flex
         width={72}

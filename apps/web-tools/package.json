@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.27.1",
+  "version": "0.26.1",
   "private": true,
   "browser": {
     "fs": false,
@@ -57,7 +57,7 @@
     "react-table": "^6.11.4",
     "react-tooltip": "^5.30.0",
     "rxjs": "catalog:",
-    "semver": "catalog:",
+    "semver": "^7.7.3",
     "styled-components": "catalog:",
     "stylis": "catalog:",
     "typescript": "5.4.3",
@@ -72,6 +72,6 @@
     "@types/react-dom": "^18.3.7",
     "@types/react-inspector": "^4.0.6",
     "@types/react-table": "^7.7.20",
-    "@types/semver": "catalog:"
+    "@types/semver": "^7.7.1"
   }
 }

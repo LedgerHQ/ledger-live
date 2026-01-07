@@ -1,6 +1,6 @@
 import { SearchInput } from "@ledgerhq/native-ui";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import React, { memo, useState, useEffect, useRef } from "react";
+import React, { memo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { track } from "~/analytics";
@@ -15,7 +15,6 @@ function SearchHeader({ search, updateMarketParams }: Props) {
   const [inputSearch, setInputSearch] = useState(search);
   const debouncedSearch = useDebounce(inputSearch, 300);
   const { t } = useTranslation();
-  const prevSearchRef = useRef(search);
 
   useEffect(() => {
     track("Page Market Query", {
@@ -30,12 +29,7 @@ function SearchHeader({ search, updateMarketParams }: Props) {
   }, [debouncedSearch, updateMarketParams]);
 
   useEffect(() => {
-    // Only sync when search prop is externally reset (e.g. via "Clear" button)
-    // Detect this by checking if search changed FROM non-empty TO empty
-    if (!!prevSearchRef.current && !search) {
-      setInputSearch(search);
-    }
-    prevSearchRef.current = search;
+    setInputSearch(search);
   }, [search]);
 
   return (

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-kaspa",
-  "version": "1.6.1",
+  "version": "1.5.1",
   "description": "Ledger framework for Kaspa integration",
   "keywords": [
     "Ledger",
@@ -100,7 +100,7 @@
     "bip32": "4.0.0",
     "bip32-path": "^0.4.2",
     "eip55": "^2.1.0",
-    "expect": "catalog:",
+    "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "lru-cache": "^7.14.1",
@@ -111,15 +111,14 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@types/invariant": "^2.2.2",
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "@types/numeral": "^2.0.2",
     "cross-env": "^7.0.3",
-    "jest": "catalog:",
+    "jest": "^29.7.0",
     "jest-sonar": "0.2.16",
     "timemachine": "^0.3.2",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "ts-jest": "^29.1.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

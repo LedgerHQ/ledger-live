@@ -36,5 +36,4 @@ export type DerivationMode =
   | "sui"
   | "aptos"
   | "minabip44"
-  | "canton"
-  | "cashaddr";
+  | "canton";

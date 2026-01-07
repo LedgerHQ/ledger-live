@@ -121,7 +121,6 @@ const BodyWrapper = styled.div.attrs(({ state }: { state: TransitionStatus }) =>
   transform: scale(1.1);
   opacity: 0;
   transition: all 200ms cubic-bezier(0.3, 1, 0.5, 0.8);
-  outline: none;
 `;
 export type RenderProps<Name extends keyof ModalData> = {
   onClose: () => void;

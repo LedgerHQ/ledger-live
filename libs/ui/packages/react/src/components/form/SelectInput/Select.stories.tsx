@@ -8,6 +8,7 @@ import Grid from "../../layout/Grid";
 import SearchMedium from "@ledgerhq/icons-ui/reactLegacy/SearchMedium";
 import SelectInput, { Props } from "./index";
 import { Option } from "./Option";
+import { VirtualMenuList } from "./VirtualMenuList";
 import { ValueContainer } from "./ValueContainer";
 import { StoryTemplate } from "../../helpers";
 
@@ -484,6 +485,33 @@ DisabledOption.parameters = {
     description: {
       story:
         "Using the `isOptionDisabled` prop, options having a value that matches 'lemon' are disabled.",
+    },
+  },
+};
+
+const hugeOptions = new Array(10000).fill(0).map((_, i) => ({ label: "" + i, value: "" + i }));
+export const VirtualList: StoryTemplate<Props<SelectItem>> = args => {
+  const [value, setValue] = React.useState<SelectItem | null>(null);
+
+  return (
+    <SelectInput
+      options={hugeOptions}
+      value={value}
+      onChange={setValue}
+      components={{
+        MenuList: VirtualMenuList,
+      }}
+      menuPortalTarget={document.body}
+      {...args}
+    />
+  );
+};
+
+VirtualList.parameters = {
+  docs: {
+    description: {
+      story:
+        "This control contains a list of 10_000 elements. It uses the `VirtualMenuList` component to render the list inside a `react-window` wrapper.",
     },
   },
 };

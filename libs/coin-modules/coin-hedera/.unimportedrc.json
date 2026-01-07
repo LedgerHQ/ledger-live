@@ -16,10 +16,7 @@
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util"],
+  "ignoreUnresolved": [],
   "ignoreUnimported": [
     "src/index.ts",
     "src/test/bot-specs.ts",

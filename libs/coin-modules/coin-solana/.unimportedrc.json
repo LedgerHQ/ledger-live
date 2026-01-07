@@ -18,9 +18,6 @@
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util",
       "follow-redirects",
       "form-data",
       "proxy-from-env"

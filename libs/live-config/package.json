@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-config",
-  "version": "3.3.0",
+  "version": "3.2.0",
   "description": "Ledger Live configuration tools",
   "license": "Apache-2.0",
   "keywords": [
@@ -32,14 +32,13 @@
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.14",
     "@types/lodash": "^4.14.202",
     "@types/node": "^22.10.10",
-    "jest": "catalog:",
-    "jest-environment-jsdom": "catalog:",
-    "semver": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "semver": "^7.3.5",
+    "ts-jest": "^29.1.1"
   },
   "typesVersions": {
     "*": {

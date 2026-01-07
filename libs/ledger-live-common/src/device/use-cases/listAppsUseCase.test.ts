@@ -2,12 +2,8 @@ import { listAppsUseCase } from "./listAppsUseCase";
 import Transport from "@ledgerhq/hw-transport";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { HttpManagerApiRepository } from "@ledgerhq/device-core";
-import * as listAppsModule from "../../apps/listApps";
 
-jest.mock("../../apps/listApps", () => ({
-  ...jest.requireActual("../../apps/listApps"),
-  listApps: jest.fn(),
-}));
+const listAppsModule = jest.requireActual("../../apps/listApps");
 
 jest.mock("@ledgerhq/live-env", () => {
   const actual = jest.requireActual("@ledgerhq/live-env");
@@ -30,16 +26,16 @@ jest.mock("@ledgerhq/live-env", () => {
 });
 
 describe("listAppsUseCase", () => {
-  const mockedListApps = jest.mocked(listAppsModule.listApps);
-
+  let listAppsSpy: jest.SpyInstance;
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.restoreAllMocks();
+    listAppsSpy = jest.spyOn(listAppsModule, "listApps").mockImplementation(jest.fn());
   });
 
   it("should call listApps with the correct parameters", () => {
     listAppsUseCase({} as Transport, {} as DeviceInfo);
 
-    expect(mockedListApps).toHaveBeenCalledWith({
+    expect(listAppsSpy).toHaveBeenCalledWith({
       transport: {},
       deviceInfo: {},
       deviceProxyModel: "mockDeviceProxyModel",

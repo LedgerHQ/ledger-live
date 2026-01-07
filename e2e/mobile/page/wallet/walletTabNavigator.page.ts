@@ -1,4 +1,3 @@
-import { Step } from "jest-allure2-reporter/api";
 import {
   ScreenName,
   NavigatorName,

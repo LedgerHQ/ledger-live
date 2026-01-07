@@ -2,9 +2,6 @@
   "entry": ["src/index.ts"],
   "ignoreUnimported": [],
   "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util",
     "@mswjs/interceptors",
     "@mswjs/interceptors/presets/node",
     "json-stringify-safe",

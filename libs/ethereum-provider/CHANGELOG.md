@@ -1,23 +1,5 @@
 # @ledgerhq/ethereum-provider
 
-## 0.5.0
-
-### Minor Changes
-
-- [#13182](https://github.com/LedgerHQ/ledger-live/pull/13182) [`472a715`](https://github.com/LedgerHQ/ledger-live/commit/472a715b9889a9b93bfdc372a8e9ea76374adb22) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): align dapp JSON-RPC errors with EIP-1193
-
-  Normalize dapp error codes and payload shape in useDappLogic
-  Make ethereum provider message parsing accept object payloads as well as strings
-
-## 0.5.0-next.0
-
-### Minor Changes
-
-- [#13182](https://github.com/LedgerHQ/ledger-live/pull/13182) [`472a715`](https://github.com/LedgerHQ/ledger-live/commit/472a715b9889a9b93bfdc372a8e9ea76374adb22) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): align dapp JSON-RPC errors with EIP-1193
-
-  Normalize dapp error codes and payload shape in useDappLogic
-  Make ethereum provider message parsing accept object payloads as well as strings
-
 ## 0.4.0
 
 ### Minor Changes

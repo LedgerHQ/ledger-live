@@ -72,7 +72,6 @@ export const AssetListItem = ({
       trailingContent={rightElement}
       onClick={handleClick}
       data-testid={`asset-item-ticker-${ticker.toLowerCase()}`}
-      className="-outline-offset-2"
     />
   );
 };

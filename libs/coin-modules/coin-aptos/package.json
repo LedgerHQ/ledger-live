@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-aptos",
-  "version": "3.8.1",
+  "version": "3.7.1",
   "description": "Ledger Aptos Coin integration",
   "keywords": [
     "Ledger",
@@ -98,7 +98,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@noble/hashes": "1.8.0",
     "bignumber.js": "^9.1.2",
-    "expect": "catalog:",
+    "expect": "^27.4.6",
     "got": "11.8.5",
     "graphql": "^16.10.0",
     "invariant": "^2.2.4",
@@ -110,14 +110,13 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.14",
     "@types/lodash": "^4.17.14",
-    "@types/semver": "catalog:",
+    "@types/semver": "^7.5.8",
     "axios": "catalog:",
-    "jest": "catalog:",
+    "jest": "^29.7.0",
     "react": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "ts-jest": "^29.2.5"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

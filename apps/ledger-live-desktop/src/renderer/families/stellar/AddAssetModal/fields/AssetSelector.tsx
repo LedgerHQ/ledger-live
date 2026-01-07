@@ -96,6 +96,8 @@ export default function DelegationSelectorField({
   onChange: (_: TokenCurrency | undefined | null) => void;
 }) {
   const [query, setQuery] = useState("");
+  const [lastItemIndex, setLastItemIndex] = useState<number | undefined>(undefined);
+  const [keepLastScrollPosition, setLastKeepScrollPosition] = useState(false);
 
   const subAccounts = account.subAccounts;
 
@@ -115,8 +117,16 @@ export default function DelegationSelectorField({
   );
 
   const onScrollEnd = useCallback(() => {
-    loadNext?.();
-  }, [loadNext]);
+    if (loadNext) {
+      setLastItemIndex(data ? data.tokens.length - 1 : 0);
+      setLastKeepScrollPosition(true);
+      loadNext();
+    }
+  }, [data, loadNext]);
+
+  const onMenuClose = useCallback(() => {
+    setLastKeepScrollPosition(false);
+  }, []);
 
   return (
     <Box flow={1} mb={4}>
@@ -138,7 +148,10 @@ export default function DelegationSelectorField({
           })
         }
         onChange={onChange}
+        lastItemIndex={lastItemIndex}
+        keepLastScrollPosition={keepLastScrollPosition}
         onScrollEnd={onScrollEnd}
+        onMenuClose={onMenuClose}
       />
     </Box>
   );

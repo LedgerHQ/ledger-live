@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSendInvalidAmountTest } from "../send";
 
 const transaction = new Transaction(Account.DOT_1, Account.DOT_3, "0.5");

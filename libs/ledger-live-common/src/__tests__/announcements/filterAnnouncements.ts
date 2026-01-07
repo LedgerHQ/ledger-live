@@ -1,3 +1,4 @@
+import timemachine from "timemachine";
 import {
   filterAnnouncements,
   localizeAnnouncements,
@@ -5,13 +6,11 @@ import {
 import api from "../test-helpers/announcements";
 import packageJSON from "../../../package.json";
 
-jest.mock("../../../package.json");
-
-// Use Jest 30's fake timers instead of timemachine
-beforeAll(() => {
-  jest.useFakeTimers();
-  jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
+timemachine.config({
+  dateString: "February 22, 2021 13:12:59",
 });
+
+jest.mock("../../../package.json");
 
 let rawAnnouncements;
 let announcements;
@@ -20,7 +19,7 @@ describe("filterAnnouncements", () => {
     rawAnnouncements = await api.fetchAnnouncements();
   });
   afterAll(() => {
-    jest.useRealTimers();
+    timemachine.reset();
   });
   describe("language filters", () => {
     describe("with context.language = 'en'", () => {
@@ -305,7 +304,9 @@ describe("filterAnnouncements", () => {
 
     describe("with current date higher than publish date", () => {
       beforeAll(() => {
-        jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
+        timemachine.config({
+          dateString: "February 22, 2021 13:12:59",
+        });
       });
 
       beforeEach(() => {
@@ -313,7 +314,7 @@ describe("filterAnnouncements", () => {
       });
 
       afterEach(() => {
-        // No need to reset, jest.useFakeTimers() is already active
+        timemachine.reset();
       });
 
       it(`should return all the article posted before `, () => {
@@ -379,7 +380,9 @@ describe("filterAnnouncements", () => {
 
     describe("with current date lower than publish date", () => {
       beforeEach(() => {
-        jest.setSystemTime(new Date("October 10, 2019 13:12:59"));
+        timemachine.config({
+          dateString: "October 10, 2019 13:12:59",
+        });
       });
 
       it("should return only the article posted before", () => {
@@ -408,16 +411,22 @@ describe("filterAnnouncements", () => {
       });
     });
     afterAll(() => {
-      jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
+      timemachine.config({
+        dateString: "February 22, 2021 13:12:59",
+      });
     });
   });
   describe("expired_at filters", () => {
     beforeAll(() => {
-      jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
+      timemachine.config({
+        dateString: "February 22, 2021 13:12:59",
+      });
     });
 
     afterAll(() => {
-      jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
+      timemachine.config({
+        dateString: "February 22, 2021 13:12:59",
+      });
     });
 
     const context = {
@@ -493,7 +502,9 @@ describe("filterAnnouncements", () => {
     });
     describe("with current date higher than expiration date", () => {
       beforeEach(() => {
-        jest.setSystemTime(new Date("April 22, 2021 13:12:59"));
+        timemachine.config({
+          dateString: "April 22, 2021 13:12:59",
+        });
       });
 
       it("should return only non-expired announcements", () => {
@@ -525,11 +536,15 @@ describe("filterAnnouncements", () => {
 
   describe("appVersion filters", () => {
     beforeAll(() => {
-      jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
+      timemachine.config({
+        dateString: "February 22, 2021 13:12:59",
+      });
     });
 
     afterAll(() => {
-      jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
+      timemachine.config({
+        dateString: "February 22, 2021 13:12:59",
+      });
     });
 
     const context = {
@@ -599,12 +614,16 @@ describe("filterAnnouncements", () => {
 
   describe("liveCommonVersions filters", () => {
     beforeAll(() => {
-      jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
+      timemachine.config({
+        dateString: "February 22, 2021 13:12:59",
+      });
       packageJSON.version = "12.41.2";
     });
 
     afterAll(() => {
-      jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
+      timemachine.config({
+        dateString: "February 22, 2021 13:12:59",
+      });
     });
 
     const context = {

@@ -1,6 +1,5 @@
-import { DerivationMode, type CryptoAssetsStore } from "@ledgerhq/types-live";
+import { DerivationMode } from "@ledgerhq/types-live";
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization";
-import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { TezosAccountRaw } from "../types";
 import { loadAccountDelegation, listBakers } from "../network/bakers";
 import whitelist from "../network/bakers.whitelist-default";
@@ -43,13 +42,6 @@ const accountTZrevealedDelegating = makeAccountRaw(
 describe("tezos bakers", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig((): TezosCoinConfig => mockConfig as TezosCoinConfig);
-    // Initialize CryptoAssetsStore for integration tests
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    setCryptoAssetsStore({
-      findTokenById: async () => undefined,
-      findTokenByAddressInCurrency: async () => undefined,
-      getTokensSyncHash: async () => "0",
-    } as CryptoAssetsStore);
   });
 
   test("atleast 10 whitelisted bakers are online", async () => {

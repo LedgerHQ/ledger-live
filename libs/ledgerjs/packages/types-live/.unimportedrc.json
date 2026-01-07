@@ -2,10 +2,7 @@
   "entry": [
     "src/index.ts"
   ],
-  "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util"],
+  "ignoreUnresolved": [],
   "ignoreUnused": [],
   "ignoreUnimported": [
     "src/crypto-assets/type.ts"

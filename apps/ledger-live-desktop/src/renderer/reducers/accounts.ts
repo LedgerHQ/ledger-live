@@ -1,4 +1,4 @@
-import { createSelector, createSelectorCreator, lruMemoize } from "reselect";
+import { createSelector, createSelectorCreator, defaultMemoize } from "reselect";
 import { handleActions } from "redux-actions";
 import { Account, AccountUserData, AccountLike } from "@ledgerhq/types-live";
 import {
@@ -80,7 +80,7 @@ const accountHash = (a: AccountLike) => {
   }
   return baseHash;
 };
-const shallowAccountsSelectorCreator = createSelectorCreator(lruMemoize, (a, b) =>
+const shallowAccountsSelectorCreator = createSelectorCreator(defaultMemoize, (a, b) =>
   isEqual(flattenAccounts(a).map(accountHash), flattenAccounts(b).map(accountHash)),
 );
 export const shallowAccountsSelector = shallowAccountsSelectorCreator(accountsSelector, a => a);

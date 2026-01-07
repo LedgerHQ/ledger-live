@@ -13,10 +13,7 @@
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util"],
+  "ignoreUnresolved": [],
   "ignoreUnimported": [
     "src/account.ts",
     "src/bridge/broadcast.ts",

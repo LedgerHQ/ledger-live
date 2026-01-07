@@ -1,5 +1,4 @@
 {
-  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
   "entry": [
     "src/index.ts",
     "src/api/index.ts",

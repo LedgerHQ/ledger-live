@@ -38,11 +38,7 @@ import {
 import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
-import {
-  onboardingIsSyncFlowSelector,
-  onboardingReceiveFlowSelector,
-  onboardingSyncFlowSelector,
-} from "../reducers/onboarding";
+import { onboardingReceiveFlowSelector } from "../reducers/onboarding";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import mixpanel from "mixpanel-browser";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
@@ -220,12 +216,8 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
-  const { postOnboardingInProgress } = hubStateSelector(state);
-
   const isOnboardingReceiveFlow = onboardingReceiveFlowSelector(state);
-  const isOnboardingSyncFlow = onboardingIsSyncFlowSelector(state);
-  const onboardingSyncFlow = onboardingSyncFlowSelector(state);
-  const isOnboardingFlow = isOnboardingReceiveFlow || isOnboardingSyncFlow;
+  const { postOnboardingInProgress } = hubStateSelector(state);
 
   const ptxAttributes = getPtxAttributes();
   const ldmkTransport = analyticsFeatureFlagMethod
@@ -318,8 +310,8 @@ const extraProperties = (store: ReduxStore) => {
     lldSyncOnboardingIncr1: Boolean(lldSyncOnboardingIncr1?.enabled),
     nanoOnboardingFundWallet: Boolean(nanoOnboardingFundWallet?.enabled),
     // For tracking receive flow events during onboarding
-    ...(postOnboardingInProgress && !isOnboardingFlow ? { flow: "post-onboarding" } : {}),
-    ...(isOnboardingFlow ? { flow: "Onboarding", ...onboardingSyncFlow } : {}),
+    ...(isOnboardingReceiveFlow ? { flow: "Onboarding" } : {}),
+    ...(postOnboardingInProgress ? { flow: "post-onboarding" } : {}),
     ...sessionReplayProperties,
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     totalStakeableAssets: combinedIds.size,

@@ -9,11 +9,10 @@
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",
     "eslint-plugin-react": "^7.33.2",
-    "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1"
   }
 }

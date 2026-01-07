@@ -9,7 +9,7 @@ import {
   getAccountContractExplorer,
   getDefaultExplorerView,
 } from "@ledgerhq/live-common/explorers";
-import { createStructuredSelector } from "~/context/selectors";
+import { createStructuredSelector } from "reselect";
 import { useNavigation } from "@react-navigation/native";
 import LText from "~/components/LText";
 import { blacklistToken } from "~/actions/settings";
@@ -20,6 +20,7 @@ import CurrencyIcon from "~/components/CurrencyIcon";
 import BottomModalChoice from "~/components/BottomModalChoice";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
+import { State } from "~/reducers/types";
 import QueuedDrawer from "~/components/QueuedDrawer";
 
 const mapDispatchToProps = {
@@ -155,7 +156,11 @@ const TokenContextualModal = ({
   );
 };
 
-const mapStateToProps = createStructuredSelector({
+const mapStateToProps = createStructuredSelector<
+  State,
+  { account?: TokenAccount },
+  { parentAccount: Account | undefined }
+>({
   parentAccount: parentAccountSelector,
 });
 

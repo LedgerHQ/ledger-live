@@ -228,14 +228,14 @@ describe("CosmosApi", () => {
         gas_info: {},
       });
 
-      await expect(cosmosApi.simulate([])).rejects.toThrow();
+      await expect(cosmosApi.simulate([])).rejects.toThrowError();
     });
 
     it("should throw an error when the network call fails", async () => {
       mockedNetwork.mockImplementation(() => {
         throw new Error();
       });
-      await expect(cosmosApi.simulate([])).rejects.toThrow();
+      await expect(cosmosApi.simulate([])).rejects.toThrowError();
     });
   });
 

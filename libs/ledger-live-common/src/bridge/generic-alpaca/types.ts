@@ -44,7 +44,7 @@ export type GenericTransaction = TransactionCommon & {
   fees?: BigNumber | null;
   storageLimit?: BigNumber | null;
   customFees?: {
-    parameters: { fees?: BigNumber | null };
+    parameters: { fees?: BigNumber | null; gasLimit?: BigNumber | null };
   };
   tag?: number | null | undefined;
   nonce?: BigNumber | null | undefined;
@@ -80,7 +80,7 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
   fees?: string | null;
   storageLimit?: string | null;
   customFees?: {
-    parameters: { fees?: string | null };
+    parameters: { fees?: string | null; gasLimit?: string | null };
   };
   tag?: number | null | undefined;
   nonce?: string | null | undefined;

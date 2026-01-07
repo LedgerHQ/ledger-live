@@ -1,6 +1,6 @@
 import type { Action, ReducerMap } from "redux-actions";
 import { handleActions } from "redux-actions";
-import { createSelector } from "~/context/selectors";
+import { createSelector } from "reselect";
 import {
   EarnActionTypes,
   EarnPayload,

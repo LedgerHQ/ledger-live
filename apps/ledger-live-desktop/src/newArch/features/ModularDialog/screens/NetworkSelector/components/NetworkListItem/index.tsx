@@ -32,7 +32,6 @@ export const NetworkListItem = ({
       trailingContent={rightElement}
       onClick={onClick}
       data-testid={`network-item-name-${currency.name}`}
-      className="-outline-offset-2"
     />
   );
 };

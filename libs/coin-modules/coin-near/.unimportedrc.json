@@ -1,5 +1,4 @@
 {
-  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
   "entry": [
     "src/account.ts",
     "src/bridge/js.ts",

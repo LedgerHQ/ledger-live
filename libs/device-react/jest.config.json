@@ -1,10 +1,10 @@
 {
   "transform": {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
+    "^.+\\.(ts|tsx)?$": [
+      "ts-jest",
       {
-        "jsc": {
-          "target": "esnext"
+        "globals": {
+          "isolatedModules": true
         }
       }
     ]

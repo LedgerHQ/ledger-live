@@ -5,6 +5,7 @@ import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq
 import BigNumber from "bignumber.js";
 import { firstValueFrom, reduce } from "rxjs";
 import coinConfig, { TronCoinConfig } from "../config";
+import * as tronNetwork from "../network";
 import { mockServer, TRONGRID_BASE_URL_MOCKED } from "../network/index.mock";
 import { Transaction, TronAccount } from "../types";
 import accountFixture from "./fixtures/synchronization.account.fixture.json";
@@ -13,41 +14,6 @@ import { getAccountShape } from "./synchronization";
 import { setupServer } from "msw/node";
 import { AccountTronAPI } from "../network/types";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import type { NetworkInfo } from "../types/bridge";
-
-// Create mock functions inside the factory to avoid hoisting issues
-jest.mock("../network", () => {
-  const actual = jest.requireActual<typeof import("../network")>("../network");
-
-  // Create mocks that default to actual implementations
-  const mocks = {
-    getTronAccountNetwork: jest.fn(actual.getTronAccountNetwork),
-    getLastBlock: jest.fn(actual.getLastBlock),
-    fetchTronAccount: jest.fn(actual.fetchTronAccount),
-    fetchTronAccountTxs: jest.fn(actual.fetchTronAccountTxs),
-    getUnwithdrawnReward: jest.fn(actual.getUnwithdrawnReward),
-  };
-
-  return {
-    ...actual,
-    ...mocks,
-    // Export mocks for tests to access
-    __mocks: mocks,
-  };
-});
-
-// Import the mocked module to access the mocks
-import * as tronNetwork from "../network";
-
-// Get mock functions from the mocked module
-const mockFunctions = (tronNetwork as typeof tronNetwork & { __mocks: typeof mockFunctions })
-  .__mocks as {
-  getTronAccountNetwork: jest.Mock;
-  getLastBlock: jest.Mock;
-  fetchTronAccount: jest.Mock;
-  fetchTronAccountTxs: jest.Mock;
-  getUnwithdrawnReward: jest.Mock;
-};
 
 const currency = getCryptoCurrencyById("tron");
 const defaultSyncConfig = {
@@ -276,17 +242,14 @@ describe("sync", () => {
 });
 
 describe("scanAccounts", () => {
-  // Use the mock functions defined at module level
-  const mockGetTronAccountNetwork = mockFunctions.getTronAccountNetwork;
-  const mockGetLastBlock = mockFunctions.getLastBlock;
-  const mockFetchTronAccount = mockFunctions.fetchTronAccount;
-  const mockFetchTronAccountTxs = mockFunctions.fetchTronAccountTxs;
-  const mockGetUnwithdrawnReward = mockFunctions.getUnwithdrawnReward;
+  let spyGetTronAccountNetwork: jest.SpyInstance;
   const localMockServer = setupServer();
 
   const address = "TT2T17KZhoDu47i2E4FWxfG79zdkEWkU9N";
 
   beforeAll(() => {
+    spyGetTronAccountNetwork = jest.spyOn(tronNetwork, "getTronAccountNetwork");
+
     setupMockCryptoAssetsStore();
 
     coinConfig.setCoinConfig(() => ({
@@ -302,25 +265,22 @@ describe("scanAccounts", () => {
   });
 
   beforeEach(() => {
-    // Reset mocks and set default implementations
-    mockGetLastBlock.mockReset();
-    mockFetchTronAccount.mockReset();
-    mockFetchTronAccountTxs.mockReset();
-    mockGetUnwithdrawnReward.mockReset();
-    mockGetTronAccountNetwork.mockReset();
-
-    mockGetLastBlock.mockResolvedValueOnce({ height: 0, hash: "", time: new Date() });
-    mockFetchTronAccount.mockResolvedValueOnce([
+    jest
+      .spyOn(tronNetwork, "getLastBlock")
+      .mockResolvedValueOnce({ height: 0, hash: "", time: new Date() });
+    jest.spyOn(tronNetwork, "fetchTronAccount").mockResolvedValueOnce([
       {
         address,
       } as AccountTronAPI,
     ]);
-    mockFetchTronAccountTxs.mockResolvedValueOnce([]);
-    mockGetUnwithdrawnReward.mockResolvedValueOnce(BigNumber(0));
+    jest.spyOn(tronNetwork, "fetchTronAccountTxs").mockResolvedValueOnce([]);
+    jest.spyOn(tronNetwork, "getUnwithdrawnReward").mockResolvedValueOnce(BigNumber(0));
+
+    spyGetTronAccountNetwork.mockClear();
   });
 
   afterAll(() => {
-    jest.clearAllMocks();
+    jest.restoreAllMocks();
 
     localMockServer.close();
   });
@@ -336,7 +296,7 @@ describe("scanAccounts", () => {
     },
   ])("returns an account flagged as used", async ({ freeNetLimit, expectedUsed }) => {
     // Given
-    mockGetTronAccountNetwork.mockResolvedValueOnce({
+    spyGetTronAccountNetwork.mockResolvedValueOnce({
       family: "tron",
       freeNetUsed: BigNumber(0),
       freeNetLimit: BigNumber(freeNetLimit),
@@ -344,7 +304,7 @@ describe("scanAccounts", () => {
       netLimit: BigNumber(0),
       energyUsed: BigNumber(0),
       energyLimit: BigNumber(0),
-    } as NetworkInfo);
+    });
     const addressResolver = {
       address: "TT2T17KZhoDu47i2E4FWxfG79zdkEWkU9N",
       path: "path",
@@ -365,7 +325,7 @@ describe("scanAccounts", () => {
     );
 
     // Then
-    expect(mockGetTronAccountNetwork).toHaveBeenCalledTimes(1);
+    expect(spyGetTronAccountNetwork).toHaveBeenCalledTimes(1);
     expect(account.used).toEqual(expectedUsed);
   });
 });

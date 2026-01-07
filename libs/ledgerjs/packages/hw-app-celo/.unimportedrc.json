@@ -2,10 +2,7 @@
   "entry": [
     "src/Polkadot.ts"
   ],
-  "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util"],
+  "ignoreUnresolved": [],
   "ignoreUnused": [
     "@celo/connect",
     "@celo/contractkit",

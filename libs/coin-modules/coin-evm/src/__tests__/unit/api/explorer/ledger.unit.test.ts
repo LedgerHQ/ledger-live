@@ -98,7 +98,7 @@ describe("EVM Family", () => {
 
         expect(response).toEqual([]);
         // it should fail 2 times and succeed on the next try
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toBeCalledTimes(3);
       });
 
       it("should throw after too many retries", async () => {

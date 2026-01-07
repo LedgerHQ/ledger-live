@@ -1,47 +1,31 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { JsonRpcProvider } from "ethers";
-import { withApi } from "../network/node/rpc.common";
-import { encodeStakingData, decodeStakingResult } from "../staking/encoder";
-import { getValidators } from "../staking/validators";
+import * as RPC_API from "../network/node/rpc.common";
+import * as ENCODER from "../staking/encoder";
+import * as VALIDATORS from "../staking/validators";
 import { getStakes } from "./getStakes";
-
-jest.mock("../network/node/rpc.common", () => ({
-  withApi: jest.fn(),
-}));
-
-jest.mock("../staking/encoder", () => ({
-  encodeStakingData: jest.fn(),
-  decodeStakingResult: jest.fn(),
-}));
-
-jest.mock("../staking/validators", () => ({
-  getValidators: jest.fn(),
-}));
-
-const mockWithApi = withApi as jest.Mock;
-const mockEncodeStakingData = encodeStakingData as jest.Mock;
-const mockDecodeStakingResult = decodeStakingResult as jest.Mock;
-const mockGetValidators = getValidators as jest.Mock;
 
 describe("EVM Staking - getStakes", () => {
   const address = "0x1234567890abcdef1234567890abcdef12345678";
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.restoreAllMocks();
     jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   it("should return stake objects with positive amounts for supported currencies", async () => {
     const currency = getCryptoCurrencyById("celo");
 
-    mockWithApi.mockImplementation(async (_cur, fn) => {
+    jest.spyOn(RPC_API, "withApi").mockImplementation(async (_cur, fn) => {
       const api = { call: jest.fn().mockResolvedValue("0x") } as unknown as JsonRpcProvider;
       return fn(api);
     });
 
-    mockEncodeStakingData.mockReturnValue("0xdeadbeef");
-    mockDecodeStakingResult.mockReturnValue([{ toString: (): string => "1000000" }] as any);
+    jest.spyOn(ENCODER, "encodeStakingData").mockReturnValue("0xdeadbeef");
+    jest
+      .spyOn(ENCODER, "decodeStakingResult")
+      .mockReturnValue([{ toString: (): string => "1000000" }] as any);
 
     const result = await getStakes(currency, address);
 
@@ -69,12 +53,14 @@ describe("EVM Staking - getStakes", () => {
   it("should filter out stakes with zero amounts", async () => {
     const currency = getCryptoCurrencyById("celo");
 
-    mockWithApi.mockImplementation(async (_cur, fn) => {
+    jest.spyOn(RPC_API, "withApi").mockImplementation(async (_cur, fn) => {
       const api = { call: jest.fn().mockResolvedValue("0x") } as unknown as JsonRpcProvider;
       return fn(api);
     });
-    mockEncodeStakingData.mockReturnValue("0xdeadbeef");
-    mockDecodeStakingResult.mockReturnValue([{ toString: (): string => "0" }] as any);
+    jest.spyOn(ENCODER, "encodeStakingData").mockReturnValue("0xdeadbeef");
+    jest
+      .spyOn(ENCODER, "decodeStakingResult")
+      .mockReturnValue([{ toString: (): string => "0" }] as any);
 
     const result = await getStakes(currency, address);
 
@@ -86,22 +72,23 @@ describe("EVM Staking - getStakes", () => {
   it("should handle multiple validators and filter zero amounts", async () => {
     const currency = getCryptoCurrencyById("sei_evm");
 
-    mockGetValidators.mockResolvedValue(["seivaloper1abc", "seivaloper1def"]);
+    jest.spyOn(VALIDATORS, "getValidators").mockResolvedValue(["seivaloper1abc", "seivaloper1def"]);
 
-    mockWithApi.mockImplementation(async (_cur, fn) => {
+    jest.spyOn(RPC_API, "withApi").mockImplementation(async (_cur, fn) => {
       const api = { call: jest.fn().mockResolvedValue("0x") } as unknown as JsonRpcProvider;
       return fn(api);
     });
 
-    mockEncodeStakingData.mockReturnValue("0xdeadbeef");
+    jest.spyOn(ENCODER, "encodeStakingData").mockReturnValue("0xdeadbeef");
 
-    mockDecodeStakingResult.mockReturnValueOnce([
+    const decodeSpy = jest.spyOn(ENCODER, "decodeStakingResult");
+    decodeSpy.mockReturnValueOnce([
       {
         balance: { amount: "0", denom: "usei" },
         delegation: { delegator_address: address, validator_address: "seivaloper1abc" },
       },
     ] as any);
-    mockDecodeStakingResult.mockReturnValueOnce([
+    decodeSpy.mockReturnValueOnce([
       {
         balance: { amount: "42", denom: "usei" },
         delegation: { delegator_address: address, validator_address: "seivaloper1def" },
@@ -139,13 +126,13 @@ describe("EVM Staking - getStakes", () => {
   it("should handle RPC call failures gracefully without crashing", async () => {
     const currency = getCryptoCurrencyById("celo");
 
-    mockWithApi.mockImplementation(async (_cur, fn) => {
+    jest.spyOn(RPC_API, "withApi").mockImplementation(async (_cur, fn) => {
       const api = {
         call: jest.fn().mockRejectedValue(new Error("rpc error")),
       } as unknown as JsonRpcProvider;
       return fn(api);
     });
-    mockEncodeStakingData.mockReturnValue("0xdeadbeef");
+    jest.spyOn(ENCODER, "encodeStakingData").mockReturnValue("0xdeadbeef");
 
     const result = await getStakes(currency, address);
 
@@ -157,7 +144,7 @@ describe("EVM Staking - getStakes", () => {
   it("should handle SEI when no validators are available", async () => {
     const currency = getCryptoCurrencyById("sei_evm");
 
-    mockGetValidators.mockResolvedValue([]);
+    jest.spyOn(VALIDATORS, "getValidators").mockResolvedValue([]);
 
     const result = await getStakes(currency, address);
 
@@ -169,7 +156,7 @@ describe("EVM Staking - getStakes", () => {
   it("should survive network failures during validator fetching", async () => {
     const currency = getCryptoCurrencyById("sei_evm");
 
-    mockGetValidators.mockRejectedValue(new Error("Network unreachable"));
+    jest.spyOn(VALIDATORS, "getValidators").mockRejectedValue(new Error("Network unreachable"));
 
     const result = await getStakes(currency, address);
 
@@ -193,7 +180,7 @@ describe("EVM Staking - getStakes", () => {
   it("should handle extreme edge cases and system failures", async () => {
     const currency = getCryptoCurrencyById("celo");
 
-    mockWithApi.mockImplementation(async () => {
+    jest.spyOn(RPC_API, "withApi").mockImplementation(async () => {
       throw new Error("API Error");
     });
 

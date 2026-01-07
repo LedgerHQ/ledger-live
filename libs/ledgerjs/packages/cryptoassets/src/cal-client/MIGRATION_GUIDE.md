@@ -32,7 +32,7 @@ data: {
 
 ## Integration on LLD
 
-**Pagination:** Use `@tanstack/react-virtual` or implement scroll detection to call `loadNext`
+**Pagination:** Use `react-window`'s `InfiniteLoader` + `FixedSizeList` with `loadMoreItems` callback, or implement scroll detection to call `loadNext`
 
 ## Integration on LLM
 

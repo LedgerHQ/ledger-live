@@ -1,15 +1,7 @@
+/** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 module.exports = {
+  preset: "ts-jest",
   testEnvironment: "node",
-  transform: {
-    "^.+\\.(ts|tsx)$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-  },
   passWithNoTests: true,
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.[tj]s"],
   collectCoverageFrom: [

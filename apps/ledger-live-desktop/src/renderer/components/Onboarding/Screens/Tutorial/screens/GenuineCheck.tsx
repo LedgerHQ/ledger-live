@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { AsideFooter, Bullet, Column, IllustrationContainer, TrackTutorialProps } from "../shared";
+import { AsideFooter, Bullet, Column, IllustrationContainer } from "../shared";
 import connectNano from "../assets/connectNano.png";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { useSelector } from "LLD/hooks/redux";
@@ -10,17 +10,11 @@ import { Device } from "@ledgerhq/types-devices";
 import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
-const Success = ({ device, ...trackProps }: { device: Device } & TrackTutorialProps) => {
+const Success = ({ device }: { device: Device }) => {
   const { t } = useTranslation();
   return (
     <Column>
-      <TrackPage
-        category="Set up device"
-        name="Final Step Your device is ready"
-        flow={trackProps.flow}
-        deviceModelId={trackProps.deviceModelId}
-        seedConfiguration={trackProps.seedConfiguration}
-      />
+      <TrackPage category="Set up device" name="Final Step Your device is ready" />
       <Bullet
         icon="CheckAlone"
         text={t("onboarding.screens.tutorial.screens.genuineCheck.success.title")}
@@ -37,11 +31,7 @@ type Props = {
   setConnectedDevice: (device: Device | null) => void;
 };
 
-export function GenuineCheck({
-  connectedDevice,
-  setConnectedDevice,
-  ...trackProps
-}: Props & TrackTutorialProps) {
+export function GenuineCheck({ connectedDevice, setConnectedDevice }: Props) {
   const { deviceModelId } = useContext(OnboardingContext);
   const device = useSelector(getCurrentDevice);
   const action = useConnectManagerAction();
@@ -57,7 +47,7 @@ export function GenuineCheck({
   }, []);
 
   return passed ? (
-    <Success device={connectedDevice} {...trackProps} />
+    <Success device={connectedDevice} />
   ) : (
     deviceModelId && (
       <DeviceAction

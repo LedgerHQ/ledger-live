@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-modules-monitoring",
-  "version": "2.7.1",
+  "version": "2.6.4",
   "description": "Push monitoring metrics to Datadog",
   "license": "Apache-2.0",
   "scripts": {
@@ -27,13 +27,14 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@swc/core": "catalog:",
-    "@swc/jest": "catalog:",
+    "@swc/core": "1.4.11",
+    "@swc/jest": "0.2.36",
     "@types/command-line-args": "5.2.3",
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",
     "bignumber.js": "^9.1.2",
-    "jest": "catalog:",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
     "tsx": "^4.7.1"
   },
   "typesVersions": {

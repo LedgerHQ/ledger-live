@@ -1,8 +1,9 @@
-import { Addresses } from "./Addresses";
 import { Currency } from "./Currency";
 import { TokenType } from "./TokenType";
 
 export class Account {
+  public address?: string;
+
   constructor(
     public readonly currency: Currency,
     public readonly accountName: string,
@@ -12,7 +13,6 @@ export class Account {
     public readonly ensName?: string,
     public readonly derivationMode?: string,
     public readonly parentAccount?: Account,
-    public address?: string,
   ) {}
 
   static readonly ADA_1 = new Account(Currency.ADA, "Cardano 1", 0, "1852'/1815'/0'/0/3");
@@ -27,24 +27,8 @@ export class Account {
   static readonly ATOM_1 = new Account(Currency.ATOM, "Cosmos 1", 0, "44'/118'/0'/0/0");
   static readonly ATOM_2 = new Account(Currency.ATOM, "Cosmos 2", 1, "44'/118'/1'/0/0");
 
-  static readonly BCH_1 = new Account(
-    Currency.BCH,
-    "Bitcoin Cash 1",
-    0,
-    "44'/145'/0'/0/2",
-    undefined,
-    undefined,
-    "cashaddr",
-  );
-  static readonly BCH_2 = new Account(
-    Currency.BCH,
-    "Bitcoin Cash 2",
-    1,
-    "44'/145'/1'/0/2",
-    undefined,
-    undefined,
-    "cashaddr",
-  );
+  static readonly BCH_1 = new Account(Currency.BCH, "Bitcoin Cash 1", 0, "44'/145'/0'/0/2");
+  static readonly BCH_2 = new Account(Currency.BCH, "Bitcoin Cash 2", 1, "44'/145'/1'/0/2");
 
   static readonly BSC_1 = new Account(Currency.BSC, "BNB Chain 1", 0, "44'/60'/0'/0/0");
   static readonly BSC_2 = new Account(Currency.BSC, "BNB Chain 2", 1, "44'/60'/1'/0/0");
@@ -250,19 +234,8 @@ export class TokenAccount extends Account {
     parentAccount: Account,
     ensName?: string,
     derivationMode?: string,
-    address?: string,
   ) {
-    super(
-      currency,
-      accountName,
-      index,
-      path,
-      tokenType,
-      ensName,
-      derivationMode,
-      parentAccount,
-      address,
-    );
+    super(currency, accountName, index, path, tokenType, ensName, derivationMode, parentAccount);
   }
 
   static readonly ETH_LIDO = new TokenAccount(
@@ -308,9 +281,6 @@ export class TokenAccount extends Account {
     Account.SOL_1.accountPath,
     TokenType.SPL,
     Account.SOL_1,
-    undefined,
-    undefined,
-    Addresses.SOL_GIGA_1_ATA_ADDRESS,
   );
   static readonly SOL_GIGA_2 = new TokenAccount(
     Currency.SOL_GIGA,

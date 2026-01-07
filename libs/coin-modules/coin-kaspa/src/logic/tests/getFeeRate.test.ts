@@ -59,6 +59,6 @@ describe("getFeeRate", () => {
       networkInfo: [],
     };
 
-    expect(() => getFeeRate(transaction)).toThrow("Invalid fee strategy provided");
+    expect(() => getFeeRate(transaction)).toThrowError("Invalid fee strategy provided");
   });
 });

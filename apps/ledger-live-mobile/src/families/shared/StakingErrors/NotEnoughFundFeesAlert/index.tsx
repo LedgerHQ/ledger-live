@@ -42,7 +42,7 @@ const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {
   const assetName = unit.code;
   const currentBalance = formatCurrencyUnit(unit, account.spendableBalance, {
     showCode: true,
-    locale,
+    locale: locale,
   });
 
   const routeToButtonLabel: Record<string, string> = useMemo(

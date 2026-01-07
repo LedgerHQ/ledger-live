@@ -6,7 +6,7 @@ import { IconTransactionType } from "../../api/api-type";
 import { isTestnet } from "../../logic";
 import { getCoinConfig } from "../../config";
 import querystring from "querystring";
-import * as _constants from "../../constants";
+import * as contants from "../../constants";
 
 // Mock the necessary modules and functions
 jest.mock("@ledgerhq/live-network/network");
@@ -17,20 +17,12 @@ jest.mock("../../config");
 jest.mock("querystring");
 jest.mock("@ledgerhq/logs");
 
-// Mock constants with a mutable LIMIT
-let mockLimit = 100;
-jest.mock("../../constants", () => ({
-  ...jest.requireActual("../../constants"),
-  get LIMIT() {
-    return mockLimit;
-  },
-}));
-
 describe("ICON API", () => {
   const networkMock = network as jest.Mock;
   const isTestnetMock = isTestnet as jest.Mock;
   const getCoinConfigMock = getCoinConfig as jest.Mock;
   const querystringMock = querystring.stringify as jest.Mock;
+  const mockedLogic = jest.mocked(contants);
 
   isTestnetMock.mockReturnValue(true);
   getCoinConfigMock.mockReturnValue({
@@ -50,7 +42,8 @@ describe("ICON API", () => {
       const skip = 0;
       const network = { id: "icon" } as CryptoCurrency;
       const maxLength = 10;
-      mockLimit = 10;
+      // @ts-expect-error type
+      mockedLogic.LIMIT = 10;
 
       const tx1 = {
         hash: "tx1",
@@ -83,13 +76,14 @@ describe("ICON API", () => {
         url: `testnet-url/transactions/address/${addr}?address=${addr}&skip=${skip}&limit=${10}`,
       });
     });
-    it("should recursively fetch operation list correctly with pagination", async () => {
+    it("should recursively fetch operation list correctly", async () => {
       const accountId = "accountId";
       const addr = "hx123";
       const skip = 0;
       const network = { id: "icon" } as CryptoCurrency;
       const maxLength = 10;
-      mockLimit = 2; // set a small limit for easier testing
+      // @ts-expect-error type
+      mockedLogic.LIMIT = 2; // set a small limit for easier testing
 
       const tx1 = {
         hash: "tx1",

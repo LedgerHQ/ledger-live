@@ -8,7 +8,6 @@ import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 jest.mock("@ledgerhq/live-common/account/helpers", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/account/helpers"),
   getAccountCurrency: jest.fn(),
 }));
 

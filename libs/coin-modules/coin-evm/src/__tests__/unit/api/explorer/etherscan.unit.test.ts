@@ -87,7 +87,7 @@ describe("EVM Family", () => {
 
         expect(response).toBe(true);
         // it should fail 2 times and succeed on the next try
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toBeCalledTimes(3);
       });
 
       it("should throw after too many retries", async () => {
@@ -125,7 +125,7 @@ describe("EVM Family", () => {
 
         expect(response).toBe(true);
         // it should fail 2 times and succeed on the next try
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toBeCalledTimes(3);
       });
     });
 
@@ -192,7 +192,7 @@ describe("EVM Family", () => {
           etherscanCoinOperations.map(op => etherscanOperationToOperations(account.id, op)).flat(),
         );
         expect(response.length).toBe(4);
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=txlist&address=${account.freshAddress}`,
           params: {
@@ -222,7 +222,7 @@ describe("EVM Family", () => {
           etherscanCoinOperations.map(op => etherscanOperationToOperations(account.id, op)).flat(),
         );
         expect(response.length).toBe(4);
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=txlist&address=${account.freshAddress}`,
           params: {
@@ -253,7 +253,7 @@ describe("EVM Family", () => {
           etherscanCoinOperations.map(op => etherscanOperationToOperations(account.id, op)).flat(),
         );
         expect(response.length).toBe(4);
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=txlist&address=${account.freshAddress}`,
           params: {
@@ -333,7 +333,7 @@ describe("EVM Family", () => {
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
           ].flat(),
         );
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=tokentx&address=${account.freshAddress}`,
           params: {
@@ -366,7 +366,7 @@ describe("EVM Family", () => {
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
           ].flat(),
         );
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=tokentx&address=${account.freshAddress}`,
           params: {
@@ -400,7 +400,7 @@ describe("EVM Family", () => {
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
           ].flat(),
         );
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=tokentx&address=${account.freshAddress}`,
           params: {
@@ -480,7 +480,7 @@ describe("EVM Family", () => {
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
           ].flat(),
         );
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=tokennfttx&address=${account.freshAddress}`,
           params: {
@@ -513,7 +513,7 @@ describe("EVM Family", () => {
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
           ].flat(),
         );
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=tokennfttx&address=${account.freshAddress}`,
           params: {
@@ -547,7 +547,7 @@ describe("EVM Family", () => {
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
           ].flat(),
         );
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=tokennfttx&address=${account.freshAddress}`,
           params: {
@@ -627,7 +627,7 @@ describe("EVM Family", () => {
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
           ].flat(),
         );
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=token1155tx&address=${account.freshAddress}`,
           params: {
@@ -660,7 +660,7 @@ describe("EVM Family", () => {
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
           ].flat(),
         );
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=token1155tx&address=${account.freshAddress}`,
           params: {
@@ -694,7 +694,7 @@ describe("EVM Family", () => {
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
           ].flat(),
         );
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=token1155tx&address=${account.freshAddress}`,
           params: {
@@ -797,7 +797,7 @@ describe("EVM Family", () => {
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
           ].flat(),
         );
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=txlistinternal&address=${account.freshAddress}`,
           params: {
@@ -830,7 +830,7 @@ describe("EVM Family", () => {
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
           ].flat(),
         );
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=txlistinternal&address=${account.freshAddress}`,
           params: {
@@ -864,7 +864,7 @@ describe("EVM Family", () => {
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
           ].flat(),
         );
-        expect(spy).toHaveBeenCalledWith({
+        expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=txlistinternal&address=${account.freshAddress}`,
           params: {

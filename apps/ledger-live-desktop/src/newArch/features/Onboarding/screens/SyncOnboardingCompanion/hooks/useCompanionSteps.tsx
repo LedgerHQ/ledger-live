@@ -10,8 +10,8 @@ import { useTheme } from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import OnboardingAppInstallStep from "~/renderer/components/OnboardingAppInstall";
-import SeedStep from "../components/SeedStep";
-import { SeedPathStatus } from "../types";
+import SeedStep from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/SeedStep";
+import { SeedPathStatus } from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/types";
 
 import StepText from "LLD/features/Onboarding/components/StepText";
 import BackupBackground from "../assets/BackupBackground";

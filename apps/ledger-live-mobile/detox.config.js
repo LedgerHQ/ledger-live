@@ -5,7 +5,7 @@ const androidArch = process.env.CI ? "x86_64" : "arm64-v8a";
 /** @type {Detox.DetoxConfig} */
 module.exports = {
   testRunner: {
-    $0: "jest",
+    $0: "ts-jest",
     args: {
       config: "e2e/jest.config.js",
     },

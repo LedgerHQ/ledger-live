@@ -1,0 +1,50 @@
+---
+"@ledgerhq/react-native-hw-transport-ble": minor
+"@ledgerhq/coin-module-boilerplate": minor
+"@ledgerhq/hw-transport-http": minor
+"@ledgerhq/coin-multiversx": minor
+"@ledgerhq/hw-app-btc": minor
+"@ledgerhq/hw-app-eth": minor
+"@actions/turborepo-gh-cache": minor
+"@actions/turborepo-s3-cache": minor
+"@ledgerhq/coin-filecoin": minor
+"@ledgerhq/coin-polkadot": minor
+"@actions/submit-bot-report": minor
+"@ledgerhq/coin-bitcoin": minor
+"@ledgerhq/coin-cardano": minor
+"@ledgerhq/coin-stellar": minor
+"@ledgerhq/coin-vechain": minor
+"@ledgerhq/coin-casper": minor
+"@ledgerhq/coin-hedera": minor
+"@ledgerhq/coin-solana": minor
+"@ledgerhq/coin-stacks": minor
+"@ledgerhq/ledger-key-ring-protocol": minor
+"@ledgerhq/errors": minor
+"@ledgerhq/coin-kaspa": minor
+"@ledgerhq/coin-icon": minor
+"@ledgerhq/coin-mina": minor
+"@ledgerhq/coin-tron": minor
+"@ledgerhq/coin-evm": minor
+"@ledgerhq/coin-sui": minor
+"@ledgerhq/coin-ton": minor
+"@ledgerhq/coin-xrp": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
+"@ledgerhq/native-ui": minor
+"@ledgerhq/react-ui": minor
+"@ledgerhq/dummy-wallet-app": minor
+"@ledgerhq/coin-framework": minor
+"@ledgerhq/domain-service": minor
+"@ledgerhq/live-config": minor
+"@ledgerhq/live-wallet": minor
+"@ledgerhq/live-github-bot": minor
+"@ledgerhq/live-hooks": minor
+"@ledgerhq/evm-tools": minor
+"ledger-live-desktop-e2e-tests": minor
+"ledger-live-mobile-e2e-tests": minor
+"@ledgerhq/live-cli": minor
+"@ledgerhq/live-env": minor
+---
+
+upgrade typescript-eslint rules & versions

@@ -1,4 +1,3 @@
-import { Step } from "jest-allure2-reporter/api";
 import AssetAccountsPage from "./accounts/assetAccounts.page";
 import AccountPage from "./accounts/account.page";
 import AccountsPage from "./accounts/accounts.page";

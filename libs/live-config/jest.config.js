@@ -1,15 +1,11 @@
 module.exports = {
+  preset: "ts-jest",
   testEnvironment: "jsdom",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
-  transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
+  globals: {
+    "ts-jest": {
+      isolatedModules: true,
+    },
   },
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
   reporters: [

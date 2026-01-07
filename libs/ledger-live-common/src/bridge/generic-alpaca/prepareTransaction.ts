@@ -23,7 +23,6 @@ function assetInfosFallback(transaction: GenericTransaction): {
 
 function propagateField(estimation: FeeEstimation, field: string, dest: GenericTransaction): void {
   const value = estimation?.parameters?.[field];
-
   if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string") return;
 
   switch (field) {
@@ -56,6 +55,7 @@ export function genericPrepareTransaction(
       ? await getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
       : assetInfosFallback(transaction);
     const customParametersFees = transaction.customFees?.parameters?.fees;
+    const customParametersGasLimit = transaction.customFees?.parameters?.gasLimit;
 
     /**
      * Ticking `useAllAmount` constantly resets the amount to 0. This is problematic
@@ -90,6 +90,9 @@ export function genericPrepareTransaction(
           gasPrice: transaction.gasPrice,
           maxFeePerGas: transaction.maxFeePerGas,
           maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+          gasLimit: customParametersGasLimit
+            ? BigInt(customParametersGasLimit.toFixed())
+            : undefined,
           gasOptions: transaction.gasOptions,
         });
     const fees = new BigNumber(estimation.value.toString());
@@ -103,6 +106,9 @@ export function genericPrepareTransaction(
         customFees: {
           parameters: {
             fees: customParametersFees ? new BigNumber(customParametersFees.toString()) : undefined,
+            gasLimit: customParametersGasLimit
+              ? new BigNumber(customParametersGasLimit.toString())
+              : undefined,
           },
         },
       };

@@ -1,20 +1,12 @@
+/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
+  preset: "ts-jest",
   testEnvironment: "node",
   passWithNoTests: true,
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   modulePathIgnorePatterns: [
     "/bridge.integration.test.ts", // this file is tested at the live-common level
   ],
-  transform: {
-    "^.+\\.(ts|tsx)$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-  },
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",

@@ -2,7 +2,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { defer, from, repeat, catchError, map, Observable, of } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/devices/index";
 import { SendApduTimeoutError } from "@ledgerhq/device-management-kit";
@@ -61,12 +61,7 @@ export function isLockedDevicePolling(
   );
 }
 
-export function useIsDeviceLockedPolling({ device, enabled }: Params): {
-  result: IsDeviceLockedResult;
-  retry: () => void;
-} {
-  const [nonce, setNonce] = useState(0);
-
+export function useIsDeviceLockedPolling({ device, enabled }: Params): IsDeviceLockedResult {
   const [result, setResult] = useState<IsDeviceLockedResult>({
     type: IsDeviceLockedResultType.undetermined,
   });
@@ -79,20 +74,13 @@ export function useIsDeviceLockedPolling({ device, enabled }: Params): {
       next: res => {
         setResult(res);
       },
-      error: error => {
-        setResult({ type: IsDeviceLockedResultType.error, error });
-      },
     });
 
     return () => {
       sub.unsubscribe();
       setResult({ type: IsDeviceLockedResultType.undetermined });
     };
-  }, [enabled, device, nonce]);
+  }, [enabled, device]);
 
-  const retry = useCallback(() => {
-    setNonce(nonce => nonce + 1);
-  }, []);
-
-  return { result, retry };
+  return result;
 }

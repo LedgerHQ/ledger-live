@@ -4,17 +4,7 @@ import { Operation, SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getAccountShape } from "./synchronisation";
 import { CosmosAccount } from "./types";
-
-// Mock the cryptoFactory module
-jest.mock("./chain/chain", () => {
-  const actual = jest.requireActual("./chain/chain");
-  return {
-    __esModule: true,
-    default: jest.fn(actual.default),
-  };
-});
-
-import cryptoFactory from "./chain/chain";
+import * as cryptoFactoryModule from "./chain/chain";
 
 const testAccounts = [
   {
@@ -35,9 +25,8 @@ const testAccounts = [
 
 describe.each(testAccounts)("Testing synchronisation", ({ id, unit, address, lcd, version }) => {
   let result: Partial<CosmosAccount>;
-
   beforeEach(async () => {
-    (cryptoFactory as jest.Mock).mockReturnValue({
+    jest.spyOn(cryptoFactoryModule, "default").mockReturnValue({
       lcd,
       stakingDocUrl: "",
       unbondingPeriod: 0,
@@ -48,7 +37,7 @@ describe.each(testAccounts)("Testing synchronisation", ({ id, unit, address, lcd
       defaultGas: 0,
       minGasPrice: 0,
       version,
-    } as any);
+    });
     result = await getAccountShape(
       {
         address,
@@ -62,10 +51,6 @@ describe.each(testAccounts)("Testing synchronisation", ({ id, unit, address, lcd
       {} as SyncConfig,
     );
   }, 30000);
-
-  afterEach(() => {
-    (cryptoFactory as jest.Mock).mockClear();
-  });
 
   function sumOf(amounts: BigNumber[]): BigNumber {
     return amounts.reduce((acc, curr) => acc.plus(curr), BigNumber(0));
@@ -136,7 +121,7 @@ describe("Testing CosmosHub opperation", () => {
   let operations: Operation[];
 
   beforeAll(async () => {
-    (cryptoFactory as jest.Mock).mockReturnValue({
+    jest.spyOn(cryptoFactoryModule, "default").mockReturnValue({
       lcd: "https://cosmoshub4.coin.ledger.com",
       stakingDocUrl: "",
       unbondingPeriod: 0,
@@ -147,7 +132,7 @@ describe("Testing CosmosHub opperation", () => {
       defaultGas: 0,
       minGasPrice: 0,
       version: "v1beta1",
-    } as any);
+    });
     const result = await getAccountShape(
       {
         address: testAccounts[0].address,
@@ -164,10 +149,6 @@ describe("Testing CosmosHub opperation", () => {
       operations = result.operations;
     }
   }, 30000);
-
-  afterAll(() => {
-    (cryptoFactory as jest.Mock).mockClear();
-  });
 
   it("should fetch operations successfully", async () => {
     expect(Array.isArray(operations)).toBeDefined();
@@ -225,7 +206,7 @@ describe("Testing Injective opperation", () => {
   let operations: Operation[];
 
   beforeAll(async () => {
-    (cryptoFactory as jest.Mock).mockReturnValue({
+    jest.spyOn(cryptoFactoryModule, "default").mockReturnValue({
       lcd: "https://injective-rest.publicnode.com",
       stakingDocUrl: "",
       unbondingPeriod: 0,
@@ -236,7 +217,7 @@ describe("Testing Injective opperation", () => {
       defaultGas: 0,
       minGasPrice: 0,
       version: "v1beta1",
-    } as any);
+    });
     const result = await getAccountShape(
       {
         address: testAccounts[1].address,
@@ -253,10 +234,6 @@ describe("Testing Injective opperation", () => {
       operations = result.operations;
     }
   }, 30000);
-
-  afterAll(() => {
-    (cryptoFactory as jest.Mock).mockClear();
-  });
 
   it("should fetch operations successfully", async () => {
     expect(Array.isArray(operations)).toBeDefined();

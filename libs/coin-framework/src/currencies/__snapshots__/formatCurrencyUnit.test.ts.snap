@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format 0G unit (0G) 1`] = `"0,012345678900000000- -0G"`;
 

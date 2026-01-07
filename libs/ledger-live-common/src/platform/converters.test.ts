@@ -41,8 +41,8 @@ describe("getPlatformTransactionSignFlowInfos", () => {
     getPlatformTransactionSignFlowInfos(tx);
 
     // Then
-    expect(bitcoinBridge).toHaveBeenCalledTimes(1);
-    expect(evmBridge).toHaveBeenCalledTimes(0);
+    expect(bitcoinBridge).toBeCalledTimes(1);
+    expect(evmBridge).toBeCalledTimes(0);
   });
 
   it("should call the evm bridge for PlatformTransaction tx of ethereum family", () => {
@@ -57,8 +57,8 @@ describe("getPlatformTransactionSignFlowInfos", () => {
     getPlatformTransactionSignFlowInfos(tx);
 
     // Then
-    expect(evmBridge).toHaveBeenCalledTimes(1);
-    expect(bitcoinBridge).toHaveBeenCalledTimes(0);
+    expect(evmBridge).toBeCalledTimes(1);
+    expect(bitcoinBridge).toBeCalledTimes(0);
   });
 
   it("should use its fallback if the bridge doesn't exist", () => {
@@ -82,8 +82,8 @@ describe("getPlatformTransactionSignFlowInfos", () => {
       getPlatformTransactionSignFlowInfos(platformTx);
 
     // Then
-    expect(evmBridge).toHaveBeenCalledTimes(0);
-    expect(bitcoinBridge).toHaveBeenCalledTimes(0);
+    expect(evmBridge).toBeCalledTimes(0);
+    expect(bitcoinBridge).toBeCalledTimes(0);
     expect(canEditFees).toBe(false);
     expect(hasFeesProvided).toBe(false);
     expect(liveTx).toEqual(expectedLiveTx);

@@ -2,11 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import {
   components,
+  GroupTypeBase,
+  OptionTypeBase,
   OptionProps,
   PlaceholderProps,
-  DropdownIndicatorProps,
-  ClearIndicatorProps,
-  InputProps,
+  IndicatorProps,
 } from "react-select";
 import Box from "~/renderer/components/Box";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
@@ -15,53 +15,30 @@ import IconAngleDown from "~/renderer/icons/AngleDown";
 import IconCross from "~/renderer/icons/Cross";
 import { useTranslation } from "react-i18next";
 import SearchIcon from "~/renderer/icons/Search";
+import { Props as SelectProps } from "~/renderer/components/Select";
 import { rgba } from "~/renderer/styles/helpers";
 
 const InputWrapper = styled(Box)`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  & input {
-    color: ${p => p.theme.colors.neutral.c80} !important;
-    caret-color: ${p => p.theme.colors.neutral.c80} !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    background: transparent !important;
-  }
   & input::placeholder {
     color: ${p => p.theme.colors.neutral.c40};
   }
-
-  /* react-select v5 specific selectors */
-  & > div {
-    color: ${p => p.theme.colors.neutral.c80} !important;
-  }
 `;
 
-const HiddenInputWrapper = styled.div`
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-`;
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default ({
+export default <
+  OptionType extends OptionTypeBase = { label: string; value: string },
+  IsMulti extends boolean = false,
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
+>({
   renderOption,
   renderValue,
   selectProps,
 }: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  renderOption?: (a: any) => React.ReactNode;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  renderValue?: (a: any) => React.ReactNode;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  selectProps: any;
+  renderOption?: (a: { data: OptionType; isDisabled: boolean }) => React.ReactNode;
+  renderValue?: (a: { data: OptionType; isDisabled: boolean }) => React.ReactNode;
+  selectProps: SelectProps<OptionType, IsMulti, GroupType>;
 }) => ({
   ...STYLES_OVERRIDE,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Option: function Option(props: OptionProps<any, any>) {
+  Option: function Option(props: OptionProps<OptionType, IsMulti>) {
     const { data, isSelected, isDisabled } = props;
     const { disabledTooltipText } = selectProps;
     return (
@@ -73,11 +50,11 @@ export default ({
               flex: 1,
             }}
           >
-            {renderOption ? renderOption(props) : data?.label}
+            {renderOption ? renderOption(props) : data.label}
           </Box>
           {isSelected && (
-            <InformativeContainer color="primary.c80">
-              <IconCheck size={12} />
+            <InformativeContainer color="wallet">
+              <IconCheck size={12} color={props.theme.colors.wallet} />
             </InformativeContainer>
           )}
           {isDisabled && disabledTooltipText && (
@@ -89,20 +66,19 @@ export default ({
       </components.Option>
     );
   },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  SingleValue: function SingleValue(props: any) {
+  SingleValue: function SingleValue(props: OptionProps<{ label: string; value: string }, false>) {
     const { data, selectProps } = props;
     const { isSearchable, menuIsOpen } = selectProps;
     return menuIsOpen && isSearchable ? null : (
       <components.SingleValue {...props}>
-        {renderValue ? renderValue(props) : data?.label}
+        {renderValue ? renderValue(props) : data.label}
       </components.SingleValue>
     );
   },
 });
 const STYLES_OVERRIDE = {
   DropdownIndicator: function DropdownIndicator(
-    props: DropdownIndicatorProps<{ label: string; value: string }, false>,
+    props: IndicatorProps<{ label: string; value: string }, false>,
   ) {
     return (
       <components.DropdownIndicator {...props}>
@@ -111,7 +87,7 @@ const STYLES_OVERRIDE = {
     );
   },
   ClearIndicator: function ClearIndicator(
-    props: ClearIndicatorProps<{ label: string; value: string }, false>,
+    props: IndicatorProps<{ label: string; value: string }, false>,
   ) {
     return (
       <components.ClearIndicator {...props}>
@@ -119,26 +95,35 @@ const STYLES_OVERRIDE = {
       </components.ClearIndicator>
     );
   },
-  Placeholder: function Placeholder(
-    props: PlaceholderProps<{ label: string; value: string }, false>,
-  ) {
+  Placeholder: function Input(props: PlaceholderProps<{ label: string; value: string }, false>) {
     const { selectProps } = props;
     const { isSearchable, menuIsOpen } = selectProps;
     return menuIsOpen && isSearchable ? null : <components.Placeholder {...props} />;
   },
-  Input: function Input(props: InputProps<{ label: string; value: string }, false>) {
+  Input: function Input(props: OptionProps<{ label: string; value: string }, false>) {
     const { t } = useTranslation();
     const { selectProps } = props;
     const { isSearchable, menuIsOpen } = selectProps;
     return menuIsOpen && isSearchable ? (
-      <InputWrapper color={"neutral.c60"} horizontal pr={3}>
+      <InputWrapper color={"neutral.c60"} alignItems="center" horizontal pr={3}>
         <SearchIcon size={16} />
-        <components.Input {...props} placeholder={t("common.searchWithoutEllipsis")} />
+        <components.Input
+          {...props}
+          // @ts-expect-error TODO: bindings might be wrong here?
+          style={{
+            marginLeft: 10,
+          }}
+          placeholder={t("common.searchWithoutEllipsis")}
+        />
       </InputWrapper>
     ) : (
-      <HiddenInputWrapper>
-        <components.Input {...props} />
-      </HiddenInputWrapper>
+      <components.Input
+        {...props}
+        // @ts-expect-error TODO: bindings might be wrong here?
+        style={{
+          opacity: 0,
+        }}
+      />
     );
   },
 };

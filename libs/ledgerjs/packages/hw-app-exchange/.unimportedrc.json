@@ -1,17 +1,4 @@
 {
   "entry": ["src/index.ts"],
-  "ignoreUnused": ["jest-sonar", "protobufjs-cli"],
-  "ignorePatterns": [
-    "**/*.test.{js,jsx,ts,tsx}",
-    "**/*.spec.{js,jsx,ts,tsx}",
-    "**/*.integ.test.{js,jsx,ts,tsx}"
-  ],
-  "ignoreUnimported": [
-    "src/setupTests.ts",
-    "src/Exchange.integ.test.ts",
-    "src/Exchange.test.ts",
-    "src/ReturnCode.test.ts",
-    "src/SellUtils.test.ts",
-    "src/SwapUtils.test.ts"
-  ]
+  "ignoreUnused": ["jest-sonar", "protobufjs-cli"]
 }

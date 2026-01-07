@@ -32,7 +32,7 @@ import useCompanionSteps, {
   Step,
   StepKey,
 } from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/hooks/useCompanionSteps";
-import TwoStepCompanion from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/TwoStepCompanion";
+import TwoStepCompanion from "./TwoStepCompanion";
 
 const POLLING_PERIOD_MS = 1000;
 

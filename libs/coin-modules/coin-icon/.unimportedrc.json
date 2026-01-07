@@ -32,10 +32,7 @@
     "src/uiConfig.ts",
     "src/supportedFeatures.ts"
   ],
-  "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util"],
+  "ignoreUnresolved": [],
   "ignoreUnused": [
     "@faker-js/faker",
     "@ledgerhq/live-env",

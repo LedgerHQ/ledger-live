@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester",
-  "version": "0.14.0",
+  "version": "0.13.1",
   "description": "Deterministic testing of Ledger coin-modules",
   "license": "Apache-2.0",
   "scripts": {
@@ -25,11 +25,10 @@
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@types/jest": "catalog:",
+    "@types/jest": "^28.1.8",
     "@types/node": "^22.10.10",
-    "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
+    "jest": "^28.1.3",
+    "ts-jest": "^28.0.8",
     "typescript": "^5.1.3"
   },
   "typesVersions": {

@@ -1,5 +1,4 @@
 {
-  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
   "entry": [
     "src/api/index.ts",
     "src/bridge/deviceTransactionConfig.ts",

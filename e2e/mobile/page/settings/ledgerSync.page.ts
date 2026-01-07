@@ -1,4 +1,3 @@
-import { Step } from "jest-allure2-reporter/api";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 
 export default class LedgerSyncPage {

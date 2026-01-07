@@ -18,12 +18,11 @@
     "coverage": "jest --coverage"
   },
   "devDependencies": {
-    "@types/jest": "catalog:",
+    "@types/jest": "29.5.14",
     "axios": "catalog:",
-    "jest": "catalog:",
+    "jest": "^29.7.0",
     "nock": "14.0.3",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
+    "ts-jest": "29.3.2",
     "ts-node": "10.9.2",
     "typescript": "5.8.3"
   }

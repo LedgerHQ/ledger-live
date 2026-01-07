@@ -11,7 +11,7 @@ import {
   ProgressBar,
 } from "@ledgerhq/react-ui";
 import { Direction } from "@ledgerhq/react-ui/components/layout/Drawer/index";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Route, Switch, useHistory, useLocation } from "react-router-dom";
@@ -23,7 +23,7 @@ import {
   setHasBeenUpsoldRecover,
   setLastOnboardedDevice,
 } from "~/renderer/actions/settings";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track } from "~/renderer/analytics/segment";
 import { HideRecoverySeed } from "~/renderer/components/Onboarding/Help/HideRecoverySeed";
 import { PinHelp } from "~/renderer/components/Onboarding/Help/PinHelp";
 import { RecoverySeed } from "~/renderer/components/Onboarding/Help/RecoverySeed";
@@ -58,22 +58,13 @@ import { SecureYourCrypto } from "~/renderer/components/Onboarding/Screens/Tutor
 import { WelcomeToWalletWithFunds } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/WelcomeToWalletWithFunds";
 import { WelcomeToWalletWithoutFunds } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/WelcomeToWalletWithoutFunds";
 import {
-  onboardingIsSyncFlowSelector,
   onboardingReceiveFlowSelector,
   onboardingReceiveSuccessSelector,
   setIsOnboardingReceiveFlow,
-  setOnboardingSyncFlow,
 } from "~/renderer/reducers/onboarding";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { EnableSync } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/EnableSync";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/lib-es/store";
-import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel";
-import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
-import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
-import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
-import { walletSyncDrawerVisibilitySelector } from "~/renderer/reducers/walletSync";
 
 const FlowStepperContainer = styled(Flex)`
   width: 100%;
@@ -232,7 +223,6 @@ export enum ScreenId {
   pairMyNano = "pair-my-nano",
   genuineCheck = "genuine-check",
   recoverHowTo = "recover-how-to",
-  enableSync = "enable-sync",
   secureYourCrypto = "secure-your-crypto",
   welcomeToWalletWithFunds = "welcome-to-wallet-with-funds",
   welcomeToWalletWithoutFunds = "welcome-to-wallet-without-funds",
@@ -316,21 +306,13 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     return {
       seedConfiguration: USE_CASE_SEED_CONFIG[useCase],
       deviceModelId,
-      flow: "Onboarding",
     };
   }, [deviceModelId, useCase]);
   const history = useHistory<{ fromRecover: boolean } | undefined>();
   const [quizzOpen, setQuizOpen] = useState(false);
-  const syncDrawerOpen = useSelector(walletSyncDrawerVisibilitySelector);
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
-  const isOnboardingSyncFlow = useSelector(onboardingIsSyncFlowSelector);
   const isOnboardingReceiveSuccess = useSelector(onboardingReceiveSuccessSelector);
-  const trustchain = useSelector(trustchainSelector);
-  const isLedgerSyncActive = Boolean(trustchain?.rootId);
   const nanoOnboardingFundWalletFeature = useFeature("nanoOnboardingFundWallet")?.enabled;
-  const nanoOnboardingEnableSyncFeature = useFeature("lldOnboardingEnableSync")?.params?.nanos;
-  const initialIsLedgerSyncActive = useRef(isLedgerSyncActive);
-  const hasSyncStep = nanoOnboardingEnableSyncFeature && !initialIsLedgerSyncActive.current;
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const recoverFF = useFeature("protectServicesDesktop");
@@ -376,12 +358,6 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     "receive",
     "MODAL_RECEIVE",
   );
-
-  const { openDrawer, closeDrawer } = useLedgerSyncEntryPointViewModel({
-    entryPoint: EntryPoint.onboarding,
-    needEligibleDevice: true,
-    onboardingNewDevice: true,
-  });
 
   const completeOnboarding = useCallback(() => {
     dispatch(
@@ -659,18 +635,9 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         },
         canContinue: !!connectedDevice,
         next: () => {
-          if (useCase === OnboardingUseCase.setupDevice) {
-            if (nanoOnboardingFundWalletFeature) {
-              if (hasSyncStep) {
-                history.push(`${path}/${ScreenId.enableSync}`);
-                return;
-              } else {
-                history.push(`${path}/${ScreenId.secureYourCrypto}`);
-                return;
-              }
-            }
-          }
-          completeOnboarding();
+          if (useCase === OnboardingUseCase.setupDevice && nanoOnboardingFundWalletFeature)
+            history.push(`${path}/${ScreenId.secureYourCrypto}`);
+          else completeOnboarding();
         },
         previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
       },
@@ -686,25 +653,6 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           fromRecover
             ? history.push(recoverDiscoverPath)
             : history.push("/onboarding/select-use-case"),
-      },
-      {
-        id: ScreenId.enableSync,
-        component: EnableSync,
-        useCases: [OnboardingUseCase.setupDevice],
-        next: () => {
-          track("button_clicked", {
-            button: "Continue",
-            ...trackProperties,
-          });
-          dispatch(setOnboardingSyncFlow({ seedConfiguration: trackProperties.seedConfiguration }));
-          openDrawer();
-        },
-        nextSecondary: () => {
-          track("button_clicked", { button: "Maybe later", ...trackProperties });
-          trackPage("Set up device: Ledger Sync Reject", null, { ...trackProperties });
-          history.push(`${path}/${ScreenId.secureYourCrypto}`);
-        },
-        previous: () => history.push(`${path}/${ScreenId.genuineCheck}`),
       },
       {
         id: ScreenId.secureYourCrypto,
@@ -724,13 +672,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           track("Onboarding - Maybe later", trackProperties);
           history.push(`${path}/${ScreenId.welcomeToWalletWithoutFunds}`);
         },
-        previous: () => {
-          if (hasSyncStep) {
-            history.push(`${path}/${ScreenId.enableSync}`);
-            return;
-          }
-          history.push(`${path}/${ScreenId.genuineCheck}`);
-        },
+        previous: () => history.push(`${path}/${ScreenId.genuineCheck}`),
       },
       {
         id: ScreenId.welcomeToWalletWithFunds,
@@ -745,24 +687,16 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         next: completeOnboarding,
       },
     ];
-
-    if (nanoOnboardingFundWalletFeature) {
-      if (hasSyncStep) {
-        return unfilteredScreens;
-      } else {
-        return unfilteredScreens.filter(({ id }) => id !== ScreenId.enableSync);
-      }
-    }
-
-    return unfilteredScreens.filter(
-      ({ id }) =>
-        ![
-          ScreenId.enableSync,
-          ScreenId.secureYourCrypto,
-          ScreenId.welcomeToWalletWithFunds,
-          ScreenId.welcomeToWalletWithoutFunds,
-        ].includes(id),
-    );
+    return nanoOnboardingFundWalletFeature
+      ? unfilteredScreens
+      : unfilteredScreens.filter(
+          ({ id }) =>
+            ![
+              ScreenId.secureYourCrypto,
+              ScreenId.welcomeToWalletWithFunds,
+              ScreenId.welcomeToWalletWithoutFunds,
+            ].includes(id),
+        );
   }, [
     completeOnboarding,
     connectedDevice,
@@ -771,14 +705,12 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     history,
     nanoOnboardingFundWalletFeature,
     openAssetFlow,
-    openDrawer,
     path,
     recoverDiscoverPath,
     trackProperties,
     useCase,
     userChosePinCodeHimself,
     userUnderstandConsequences,
-    hasSyncStep,
   ]);
 
   const steps = useMemo(() => {
@@ -823,12 +755,6 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     }
 
     if (useCase === OnboardingUseCase.setupDevice && nanoOnboardingFundWalletFeature) {
-      if (hasSyncStep) {
-        stepList.push({
-          name: "enableSync",
-          screens: [ScreenId.enableSync],
-        });
-      }
       stepList.push({
         name: "secureYourCrypto",
         screens: [
@@ -840,7 +766,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     }
 
     return stepList;
-  }, [nanoOnboardingFundWalletFeature, useCase, hasSyncStep]);
+  }, [nanoOnboardingFundWalletFeature, useCase]);
 
   const currentScreenIndex = useMemo(
     () => screens.findIndex(s => s.id === currentStep),
@@ -950,19 +876,6 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     dispatch,
   ]);
 
-  useEffect(() => {
-    if (isLedgerSyncActive && currentStep === ScreenId.enableSync && !syncDrawerOpen) {
-      trackPage("Set up device: Step 4 Ledger Sync Success", null, trackProperties);
-      history.push(`${path}/${ScreenId.secureYourCrypto}`);
-    }
-  }, [isLedgerSyncActive, history, path, currentStep, syncDrawerOpen, trackProperties]);
-
-  useEffect(() => {
-    if (isOnboardingSyncFlow && currentStep !== ScreenId.enableSync) {
-      dispatch(setOnboardingSyncFlow(null));
-    }
-  }, [dispatch, isOnboardingSyncFlow, currentStep]);
-
   return (
     <>
       <QuizzPopin isOpen={quizzOpen} onWin={quizSucceeds} onLose={quizFails} onClose={quizFails} />
@@ -1017,13 +930,6 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         </Flex>
       </Drawer>
 
-      <WalletSyncDrawer
-        currentPage={AnalyticsPage.Onboarding}
-        onClose={() => {
-          closeDrawer();
-        }}
-      />
-
       <FlowStepper
         illustration={CurrentScreen.Illustration}
         AsideFooter={CurrentScreen.Footer}
@@ -1050,7 +956,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
                 path={`${path}/${id}`}
                 render={props => {
                   const Screen: React.ElementType = component;
-                  return <Screen {...props} {...screenProps} {...trackProperties} />;
+                  return <Screen {...props} {...screenProps} />;
                 }}
               />
             );

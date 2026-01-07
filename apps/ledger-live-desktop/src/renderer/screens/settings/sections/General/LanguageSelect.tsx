@@ -142,7 +142,7 @@ const LanguageSelectComponent: React.FC<Props> = ({ disableLanguagePrompt }) => 
         minWidth={260}
         isSearchable={false}
         onChange={avoidEmptyValue}
-        renderValue={({ data }) => data?.label}
+        renderSelected={(item: { label: string } | undefined) => item && item.label}
         value={currentLanguage}
         options={options}
       />

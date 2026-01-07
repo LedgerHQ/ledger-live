@@ -26,7 +26,7 @@ export function runPortfolioTransactionsHistoryTest(
     it("Transaction history displayed when user added his accounts", async () => {
       await app.portfolio.openViaDeeplink();
       await app.portfolio.checkTransactionAllocationSection();
-      await app.portfolio.selectAndClickOnLastOperation("Received");
+      await app.portfolio.selectAndClickOnLastOperation();
       await app.operationDetails.checkTransactionDetailsVisibility();
     });
   });

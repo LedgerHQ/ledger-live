@@ -8,11 +8,7 @@
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util"
-  ],
+  "ignoreUnresolved": [],
   "ignoreUnused": [],
   "ignoreUnimported": [
     "src/ZCash.ts"

@@ -93,17 +93,11 @@ export const useFlows = () => {
     dispatch(setFlow({ flow: currentFlow, step: stepsRecord[newStep] }));
   };
 
-  const goToWelcomeScreenWalletSync = (onboardingNewDevice?: boolean) => {
+  const goToWelcomeScreenWalletSync = () => {
     if (trustchain?.rootId) {
       dispatch(setFlow({ flow: Flow.LedgerSyncActivated, step: Step.LedgerSyncActivated }));
     } else {
-      dispatch(
-        setFlow({
-          flow: Flow.Activation,
-          step: onboardingNewDevice ? Step.DeviceAction : Step.CreateOrSynchronize,
-          onboardingNewDevice,
-        }),
-      );
+      dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
     }
   };
 

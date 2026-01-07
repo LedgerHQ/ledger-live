@@ -227,7 +227,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                       values={{
                         amount: formatCurrencyUnit(unit, maxSpendable.minus(amount), {
                           showCode: true,
-                          locale,
+                          locale: locale,
                         }),
                       }}
                     >

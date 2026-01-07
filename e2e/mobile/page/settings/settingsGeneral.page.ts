@@ -1,5 +1,3 @@
-import { Step } from "jest-allure2-reporter/api";
-
 export default class SettingsGeneralPage {
   passwordSettingsSwitch = () => getElementById("password-settings-switch");
   passwordTextInput = () => getElementById("password-text-input");

@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/domain-service",
   "description": "Ledger service responsible for domain handling",
-  "version": "1.5.1",
+  "version": "1.4.3",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -76,17 +76,16 @@
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
-    "@testing-library/jest-dom": "catalog:",
-    "@testing-library/dom": "catalog:",
-    "@testing-library/react": "catalog:",
-    "@types/jest": "catalog:",
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^14.1.2",
+    "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",
+    "@types/testing-library__jest-dom": "^5.14.5",
     "cross-env": "^7.0.3",
     "eslint-plugin-jest": "^27.4.2",
-    "jest": "catalog:",
-    "jest-environment-jsdom": "catalog:",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "react-test-renderer": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "ts-jest": "^29.1.1"
   }
 }

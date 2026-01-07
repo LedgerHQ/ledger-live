@@ -260,8 +260,8 @@ describe("getGenuineCheckFromDeviceId", () => {
         // Step 2: Triggers any existing retry (if stopped correctly, there should be no retry)
         jest.runOnlyPendingTimers();
         // Checks if it was stopped correctly
-        expect(mockedGetDeviceInfo).toHaveBeenCalledTimes(1);
-        expect(mockedGenuineCheck).toHaveBeenCalledTimes(0);
+        expect(mockedGetDeviceInfo).toBeCalledTimes(1);
+        expect(mockedGenuineCheck).toBeCalledTimes(0);
         done();
       });
     });

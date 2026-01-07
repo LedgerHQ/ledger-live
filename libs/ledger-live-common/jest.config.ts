@@ -42,6 +42,7 @@ if (process.env.CI) {
 }
 
 const defaultConfig = {
+  preset: "ts-jest",
   globals: {
     Buffer: Uint8Array,
   },
@@ -61,14 +62,6 @@ const defaultConfig = {
   testRegex,
   coverageReporters: ["json", ["lcov", { projectRoot: "../../" }], "json-summary", "text"],
   transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
     [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.jsx?$`]: [
       "@swc/jest",
       {

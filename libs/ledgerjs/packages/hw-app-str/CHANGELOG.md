@@ -1,29 +1,5 @@
 # @ledgerhq/hw-app-str
 
-## 7.3.0
-
-### Minor Changes
-
-- [#13137](https://github.com/LedgerHQ/ledger-live/pull/13137) [`7da392a`](https://github.com/LedgerHQ/ledger-live/commit/7da392a6f4b220913050ce1baa4003a76c0b24e9) Thanks [@overcat](https://github.com/overcat)! - Add `signMessage` method for message signing.
-
-### Patch Changes
-
-- Updated dependencies [[`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143)]:
-  - @ledgerhq/errors@6.28.0
-  - @ledgerhq/hw-transport@6.31.15
-
-## 7.3.0-next.0
-
-### Minor Changes
-
-- [#13137](https://github.com/LedgerHQ/ledger-live/pull/13137) [`7da392a`](https://github.com/LedgerHQ/ledger-live/commit/7da392a6f4b220913050ce1baa4003a76c0b24e9) Thanks [@overcat](https://github.com/overcat)! - Add `signMessage` method for message signing.
-
-### Patch Changes
-
-- Updated dependencies [[`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143)]:
-  - @ledgerhq/errors@6.28.0-next.0
-  - @ledgerhq/hw-transport@6.31.15-next.0
-
 ## 7.2.10
 
 ### Patch Changes

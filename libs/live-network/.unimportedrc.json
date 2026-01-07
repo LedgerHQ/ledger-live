@@ -7,8 +7,5 @@
     "src/network.ts"
   ],
   "ignoreUnimported": [],
-  "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util"]
+  "ignoreUnresolved": []
 }

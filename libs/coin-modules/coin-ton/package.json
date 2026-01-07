@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-ton",
-  "version": "0.18.1",
+  "version": "0.17.2",
   "description": "Ton Coin integration",
   "keywords": [
     "Ledger",
@@ -57,7 +57,7 @@
     "@ton/crypto": "^3.3.0",
     "@ton/ton": "^15.4.0",
     "bignumber.js": "^9.1.2",
-    "expect": "catalog:",
+    "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "msw": "catalog:",
@@ -66,11 +66,10 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
-    "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

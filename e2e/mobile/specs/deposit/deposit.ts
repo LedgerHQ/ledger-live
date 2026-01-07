@@ -17,6 +17,16 @@ const liveDataWithAddressCommand = (account: Account) => async (userdataPath?: s
     add: true,
     appjson: userdataPath,
   });
+
+  const { address } = await CLI.getAddress({
+    currency: account.currency.speculosApp.name,
+    path: account.accountPath,
+    derivationMode: account.derivationMode,
+  });
+
+  account.address = address;
+
+  return address;
 };
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
@@ -56,13 +66,11 @@ export async function runCreateNewAccountAndDepositTest(
       await app.receive.continueCreateAccount();
       await app.receive.selectDontVerifyAddress();
       await app.receive.selectReconfirmDontVerify();
-      const address = await CLI.getAddressForAccount(newAccount);
-
       await app.receive.expectReceivePageIsDisplayed(
         newAccount.currency.ticker,
         newAccount.accountName,
       );
-      await app.receive.verifyAddress(address);
+      await app.receive.verifyAddress(newAccount.address);
     });
   });
 }
@@ -154,8 +162,7 @@ export async function runDepositInExistingAccountTest(
       await app.receive.selectDontVerifyAddress();
       await app.receive.selectReconfirmDontVerify();
       await app.receive.expectReceivePageIsDisplayed(account.currency.ticker, account.accountName);
-      const address = await CLI.getAddressForAccount(account);
-      await app.receive.verifyAddress(address);
+      await app.receive.verifyAddress(account.address);
     });
   });
 }

@@ -7,8 +7,7 @@ import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import { DelegationType } from "~/renderer/families/multiversx/types";
-// FilterOptionOption type for react-select v5 filter callback
-type FilterOptionOption<T> = { label: string; value: string; data: T };
+import { Option } from "react-select/src/filters";
 
 type NoOptionsMessageCallbackType = {
   inputValue: string;
@@ -71,8 +70,8 @@ const Dropdown = (props: Props) => {
     [t],
   );
   const filterOptions = useCallback(
-    (option: FilterOptionOption<DelegationType>, needle: string): boolean =>
-      option.data.validator?.identity?.name
+    (option: Option, needle: string): boolean =>
+      option.data.validator.identity.name
         ? option.data.validator.identity.name.toLowerCase().includes(needle.toLowerCase())
         : false,
     [],

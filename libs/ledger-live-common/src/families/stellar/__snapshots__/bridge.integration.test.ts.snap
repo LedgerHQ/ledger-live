@@ -1,19 +1,19 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
 [
   {
-    "balance": "341065050",
+    "balance": "341065045",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "freshAddressPath": "44'/148'/0'",
     "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
     "index": 0,
-    "operationsCount": 170,
+    "operationsCount": 165,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "311064950",
+    "spendableBalance": "311064945",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": "0x1ceb1f53",
@@ -468,31 +468,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "e7c2bf17815f95988484019e6de3b6cbe628e1b619e67793c25fcfa5353e1f5d",
-      "blockHeight": 60597655,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Own CVX & Start Earning XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "0e53fc1192dbcecae60c835e861e9066f781fda0e0d01e9cb4ec655c53a4080f",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-0e53fc1192dbcecae60c835e861e9066f781fda0e0d01e9cb4ec655c53a4080f-IN",
-      "internalOperations": [],
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GDQSSFWDRI4B2Q7RR2UWQWYU7QPFOBNWB5M5KZVMWYLFQQMA7CXCJFAD",
-      ],
-      "transactionSequenceNumber": "259046734800363006",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "b9d39c8c122b2d90115d5acdd54ea685094f3ba4098bd5bc9d6c058c4d34cd82",
       "blockHeight": 57521497,
       "extra": {
@@ -863,31 +838,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
       ],
       "transactionSequenceNumber": "224182342070055682",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "52207f74d0e8c416e6b9a7e340a15846d36c04a30ccd9cb34bc6cea9fb47b8d2",
-      "blockHeight": 60553568,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy MRV & Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "2744e3ba5b45fb95e0fc016885c973e5d327b3fae9efff218318fdb0ff60e8e8",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-2744e3ba5b45fb95e0fc016885c973e5d327b3fae9efff218318fdb0ff60e8e8-IN",
-      "internalOperations": [],
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GDAABWNAFRTEN6GBGC65JD7DZCV7GUHIZNULLDPCDB6KE2ENDRQKRE5O",
-      ],
-      "transactionSequenceNumber": "258991797873685263",
       "type": "IN",
       "value": "1",
     },
@@ -3518,31 +3468,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "9266316a687d13464883fd6bca50ada91a5734711628a463540a06f974f45d3b",
-      "blockHeight": 60590421,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Stake PRM & profit instantly",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "bb1a58aa6808ab6411b264b5fadc8b2f72f0bc6f2b238f27915fa91a4db4c883",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-bb1a58aa6808ab6411b264b5fadc8b2f72f0bc6f2b238f27915fa91a4db4c883-IN",
-      "internalOperations": [],
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GAXZBI4RVRAFHVAYNTGBFXVAKSM6FWQTZMUD6GCXQBYOCIDXZXIEVVGS",
-      ],
-      "transactionSequenceNumber": "259108998941253039",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "267d39cf1e8e5d69cb54cc1adeeb0bc39e9963dd00b36bc9646d3bd3d7b179c5",
       "blockHeight": 54011812,
       "extra": {
@@ -3788,31 +3713,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GDAABWNAFRTEN6GBGC65JD7DZCV7GUHIZNULLDPCDB6KE2ENDRQKRE5O",
       ],
       "transactionSequenceNumber": "258991797873677762",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "b43cc277a4dddc63b4eae047fb1e8c9eb2c2fc7b0355dbfdbd2c84ac9fae1171",
-      "blockHeight": 60609885,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy MRV & Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "cefebdb331bd03965b770f5d75887cfd870addc9006384d8f85340a7897da185",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-cefebdb331bd03965b770f5d75887cfd870addc9006384d8f85340a7897da185-IN",
-      "internalOperations": [],
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GDAABWNAFRTEN6GBGC65JD7DZCV7GUHIZNULLDPCDB6KE2ENDRQKRE5O",
-      ],
-      "transactionSequenceNumber": "258991797873689275",
       "type": "IN",
       "value": "1",
     },
@@ -4338,31 +4238,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
       ],
       "transactionSequenceNumber": "224182342070063366",
-      "type": "IN",
-      "value": "1",
-    },
-    {
-      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "47a2c5e886a798c31a2163d9d52dbbb9521f25f577d600e34c59ffea43ee5156",
-      "blockHeight": 60601131,
-      "extra": {
-        "memo": {
-          "type": "MEMO_TEXT",
-          "value": "Buy MRV & Earn Native XLM!",
-        },
-      },
-      "fee": "10000",
-      "hasFailed": false,
-      "hash": "fb66dceaef7f6172cfdc65ff0e15d49012836af08ca18a655c23ba279e31591a",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-fb66dceaef7f6172cfdc65ff0e15d49012836af08ca18a655c23ba279e31591a-IN",
-      "internalOperations": [],
-      "recipients": [
-        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-      ],
-      "senders": [
-        "GDAABWNAFRTEN6GBGC65JD7DZCV7GUHIZNULLDPCDB6KE2ENDRQKRE5O",
-      ],
-      "transactionSequenceNumber": "258991797873687269",
       "type": "IN",
       "value": "1",
     },

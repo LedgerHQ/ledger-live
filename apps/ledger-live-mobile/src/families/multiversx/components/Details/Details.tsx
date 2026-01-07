@@ -38,7 +38,7 @@ const Details = (props: DetailsPropsType) => {
     alwaysShowSign: false,
     showCode: true,
     discreet,
-    locale,
+    locale: locale,
   });
 
   /*

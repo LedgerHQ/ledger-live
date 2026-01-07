@@ -1,4 +1,3 @@
-import { Step } from "jest-allure2-reporter/api";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
 import { urls } from "../../../../apps/ledger-live-mobile/src/utils/urls";

@@ -31,16 +31,10 @@ export async function verifyAppValidationSendInfo(transaction: TransactionType, 
   }
 
   if (currenciesForValidationRecipient.includes(currency)) {
-    if (!addressRecipient) {
-      throw new Error("Recipient address is not set");
-    }
     await app.deviceValidation.expectAddress(addressRecipient);
   }
 
   if (currenciesForValidationSender.includes(currency)) {
-    if (!addressSender) {
-      throw new Error("Sender address is not set");
-    }
     await app.deviceValidation.expectAddress(addressSender);
   }
 

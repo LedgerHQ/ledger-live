@@ -34,7 +34,8 @@ const CounterValueSelectComponent: React.FC = () => {
         small
         minWidth={260}
         onChange={handleChangeCounterValue}
-        renderValue={({ data }) => data?.label}
+        itemToString={(item: { name: string }) => item.name}
+        renderSelected={(item: { name: string }) => item && item.name}
         options={supportedCounterValues}
         value={cvOption}
       />

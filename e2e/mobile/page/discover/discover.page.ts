@@ -1,4 +1,3 @@
-import { Step } from "jest-allure2-reporter/api";
 import { log } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 

@@ -32,15 +32,7 @@ const EllipsisText = styled(Text)`
   white-space: nowrap;
 `;
 
-const TooltipContainer = styled(Box)`
-  background-color: ${({ theme }) => theme.colors.neutral.c100};
-  padding: 10px;
-  border-radius: 4px;
-  display: flex;
-  gap: 8px;
-`;
-
-type MarketRowItemProps = {
+type Props = {
   currency?: MarketCurrencyData | null;
   counterCurrency?: string;
   style: React.CSSProperties;
@@ -51,7 +43,7 @@ type MarketRowItemProps = {
   range?: string;
 };
 
-export const MarketRowItem = memo<MarketRowItemProps>(function MarketRowItem({
+export const MarketRow = memo<Props>(function MarketRowItem({
   style,
   currency,
   counterCurrency,
@@ -60,7 +52,7 @@ export const MarketRowItem = memo<MarketRowItemProps>(function MarketRowItem({
   isStarred,
   toggleStar,
   range,
-}: MarketRowItemProps) {
+}: Props) {
   const history = useHistory();
   const { t } = useTranslation();
 
@@ -219,3 +211,52 @@ export const MarketRowItem = memo<MarketRowItemProps>(function MarketRowItem({
     </div>
   );
 });
+
+type CurrencyRowProps = {
+  data: MarketCurrencyData[]; // NB: MarketCurrencyData.id is different to Currency.id
+  index: number;
+  counterCurrency?: string;
+  loading: boolean;
+  toggleStar: (id: string, isStarred: boolean) => void;
+  starredMarketCoins: string[];
+  locale: string;
+  range?: string;
+  style: React.CSSProperties;
+};
+
+export const CurrencyRow = memo(function CurrencyRowItem({
+  data,
+  index,
+  counterCurrency,
+  loading,
+  toggleStar,
+  starredMarketCoins,
+  locale,
+  style,
+  range,
+}: CurrencyRowProps) {
+  const currency = data ? data[index] : null;
+  const isStarred = currency && starredMarketCoins.includes(currency.id);
+
+  return (
+    <MarketRow
+      loading={!currency || (index === data.length && index > 50 && loading)}
+      currency={currency}
+      counterCurrency={counterCurrency}
+      isStarred={!!isStarred}
+      toggleStar={() => currency?.id && toggleStar(currency.id, !!isStarred)}
+      key={index}
+      locale={locale}
+      style={{ ...style }}
+      range={range}
+    />
+  );
+});
+
+const TooltipContainer = styled(Box)`
+  background-color: ${({ theme }) => theme.colors.neutral.c100};
+  padding: 10px;
+  border-radius: 4px;
+  display: flex;
+  gap: 8px;
+`;

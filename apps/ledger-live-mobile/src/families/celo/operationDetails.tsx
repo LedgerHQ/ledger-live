@@ -63,7 +63,7 @@ const OperationDetailsExtra = ({ operation, type, account }: Props) => {
     alwaysShowSign: false,
     showCode: true,
     discreet,
-    locale,
+    locale: locale,
   });
 
   switch (type) {

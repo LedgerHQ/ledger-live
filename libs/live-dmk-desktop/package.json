@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-desktop",
-  "version": "0.14.1",
+  "version": "0.13.1",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -41,9 +41,9 @@
     "@ledgerhq/types-devices": "workspace:^"
   },
   "devDependencies": {
-    "@testing-library/dom": "catalog:",
-    "@testing-library/jest-dom": "catalog:",
-    "@testing-library/react": "catalog:",
+    "@testing-library/dom": "^9.3.4",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
     "@types/node": "22.10.10",
     "@vitejs/plugin-react": "4.3.4",
     "@vitest/coverage-istanbul": "3.0.7",

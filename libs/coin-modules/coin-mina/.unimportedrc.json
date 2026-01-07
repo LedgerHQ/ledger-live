@@ -18,10 +18,7 @@
     "src/test/fixtures.ts",
     "src/supportedFeatures.ts"
   ],
-  "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util"],
+  "ignoreUnresolved": [],
   "ignoreUnused": [
     "lodash"
   ]

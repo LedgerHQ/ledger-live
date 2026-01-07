@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-exchange",
-  "version": "0.18.2",
+  "version": "0.18.1",
   "description": "Ledger Hardware Wallet Cosmos Application API",
   "keywords": [
     "Ledger",
@@ -37,13 +37,12 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@noble/curves": "1.9.7",
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",
     "bip32-path": "^0.4.2",
     "documentation": "14.0.2",
-    "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
     "ts-node": "^10.4.0"
   },
   "scripts": {
@@ -55,9 +54,9 @@
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache --ignore-pattern '**/setupTests.ts'",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "test": "jest --config=jest.config.ts --runInBand",
+    "test": "jest --config=jest.config.ts",
     "test-integ": "jest --config=jest.integ.config.ts",
     "unimported": "unimported"
   }

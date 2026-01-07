@@ -207,8 +207,7 @@
       "SENDING" : "送信中",
       "BURN" : "バーン済み",
       "ASSOCIATE_TOKEN" : "トークンの関連付け",
-      "CONTRACT_CALL" : "コントラクトコール",
-      "UPDATE_ACCOUNT" : "アカウント更新"
+      "CONTRACT_CALL" : "コントラクトコール"
     },
     "edit" : {
       "title" : "速度を上げる、またはキャンセルする",
@@ -480,9 +479,7 @@
       "kaspa_title" : "Ledger Nano S™はKaspaのスワップに対応していません",
       "kaspa_description" : "Kaspaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "celo_title" : "Ledger Nano S™は、Celoのスワップに対応していません",
-      "celo_description" : "Celoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
-      "monad_title" : "Ledger Nano S™はMonadのスワップに対応していません",
-      "monad_description" : "Monadをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
+      "celo_description" : "Celoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
     },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
@@ -847,7 +844,7 @@
     "stake" : "ステーキング",
     "delegatedAssets" : "デリゲートされた資産",
     "undelegating" : "デリゲート解除中",
-    "availableBalanceTooltip" : "今すぐ利用可能な資金です。",
+    "availableBalanceTooltip" : "これは利用可能額です。",
     "frozenAssetsTooltip" : "凍結された資産はTronの投票に使われます。こちらが合計票数です。",
     "bandwidthTooltip" : "資産を凍結して、バンド幅を獲得",
     "energyTooltip" : "資産を凍結して、エネルギーを獲得",
@@ -1426,7 +1423,7 @@
   },
   "postOnboarding" : {
     "postOnboardingScreen" : {
-      "title" : "次のステップとは？",
+      "title" : "次に、{{productName}}を使用して... ",
       "titleCompleted" : "これで準備完了です！\nポートフォリオの構築をお楽しみください。",
       "exploreCTA" : "ポートフォリオを探索"
     },
@@ -1435,22 +1432,19 @@
     },
     "postOnboardingBanner" : {
       "title" : "{{productName}}の次のステップは？",
-      "description" : "資産を保護して、さらに活用しましょう。",
+      "description" : "取引所やウォレットから資産を転送や暗号資産の購入、ロック画面のカスタマイズ、Ledger Recoverのサブスクリプション契約が可能です。",
       "link" : "次のステップを見る",
       "dismiss" : "後で"
     },
     "actions" : {
-      "deviceOnboarded" : {
-        "titleCompleted" : "Ledgerデバイスのセットアップ"
-      },
       "buyCrypto" : {
-        "title" : "Ledger Wallet経由で暗号資産を購入",
-        "description" : "500種類以上のコインやトークンから選べます。",
+        "title" : "暗号資産を購入する",
+        "description" : "500種類以上のコインと、お客様のお好みに合った最高の見積もりから選択。",
         "actionCompletedPopupLabel" : "購入済み暗号資産"
       },
       "assetsTransfer" : {
-        "title" : "資産を転送する",
-        "description" : "取引所やウォレットから転送しましょう。",
+        "title" : "資産をLedgerに転送する",
+        "description" : "あらゆる取引所やウォレットから、直接Ledgerにアクセス。",
         "actionCompletedPopupLabel" : "転送済み資産"
       },
       "syncAccounts" : {
@@ -1870,13 +1864,7 @@
       "transferAmount" : "送付額",
       "validatorsCount" : "バリデータ（{{number}}）",
       "version" : "バージョン",
-      "accountCreationFee" : "アカウント作成手数料",
-      "associatedTokenId" : "関連トークンID",
-      "targetStakingNodeId" : "ターゲットノードID",
-      "previousStakingNodeId" : "以前のノードID",
-      "gasConsumed" : "消費ガス量",
-      "gasUsed" : "使用ガス量",
-      "gasLimit" : "ガスリミット"
+      "accountCreationFee" : "アカウント作成手数料"
     }
   },
   "operationList" : {
@@ -4506,7 +4494,6 @@
       "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。",
       "walletSync" : "Ledger同期",
       "walletSyncDesc" : "さまざまなスマートフォンやコンピューター間でLedger Wallet暗号資産アカウントを同期します。",
-      "walletSyncDescription" : "PCを買い替えた時やスマホを使用する際も、ポートフォリオを常に最新の状態に保てます。",
       "mevProtection" : "MEV保護",
       "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります。",
       "mevProtectionLearnMore" : "プライバシーに関する通知",
@@ -4541,10 +4528,6 @@
       "analyticsConsole" : {
         "title" : "アナリティクスコンソールを許可",
         "desc" : "アナリティクスコンソールを表示し、開くのを許可します。"
-      },
-      "themeConsole" : {
-        "title" : "テーマ切り替え",
-        "desc" : "テーマを素早く切り替えるためのフローティングオーバーレイを表示します。"
       },
       "brazeTools" : {
         "title" : "Brazeツール",
@@ -5492,7 +5475,7 @@
           },
           "welcomeToWalletWithFunds" : {
             "title" : "準備が整いました",
-            "description" : "Ledgerデバイスの準備が整いました。暗号資産をLedger Walletに送付済みの場合は、数分以内に受け取れます。",
+            "description" : "Ledgerデバイスの準備が整いました。暗号資産を送付済みの場合は、数分以内に受け取れます。",
             "buttons" : {
               "next" : "続行"
             }
@@ -5834,23 +5817,10 @@
     "canton" : {
       "commentPlaceholder" : "任意",
       "comment" : "コメント",
-      "account" : {
-        "lockedBalance" : "ロック済み",
-        "lockedBalanceTooltip" : "他者に送信したオファーによりロックされている資金です。オファーはいつでもキャンセル可能です。あるいは、受取人が承諾または拒否するのを待つこともできます。",
-        "withdrawableBalance" : "出金可能",
-        "withdrawableBalanceTooltip" : "期限切れのオファーから回収可能な資金です。「引き出し」を行うと、利用可能残高に戻すことができます。"
-      },
       "addAccount" : {
         "title" : "Cantonアカウントを追加",
-        "reonboard" : {
-          "title" : "アカウントの更新が必要です",
-          "init" : "Cantonネットワークでトポロジーの変更が検出されました。利用を継続するには、アカウントの再設定（再オンボーディング）を行ってください。",
-          "success" : "アカウントが正常に更新されました",
-          "successDescription" : "これでアカウントのご利用を継続できます"
-        },
         "onboard" : {
           "title" : "初期設定",
-          "account" : "アカウント",
           "newAccount" : "新しいアカウント",
           "init" : "「続行」をクリックして新しいCantonアカウントを設定してください",
           "onboarded" : "設定済みアカウント",
@@ -5867,9 +5837,6 @@
           "title" : "アクセス許可",
           "validator" : "許可する",
           "hint" : "このアカウントへの入金は自動的に受け入れます。",
-          "reonboard" : {
-            "hint" : "トポロジーの変更が検出されました。資金を自動的に受け取り続けるには、Ledgerバリデーターを再承認してください。"
-          },
           "error" : "認証に失敗しました。もう一度お試しください。",
           "validatorLabel" : "Ledgerバリデーター",
           "validatorDescription" : "資金の自動受領"
@@ -5877,9 +5844,6 @@
         "finish" : {
           "title" : "確認"
         }
-      },
-      "topologyChangeError" : {
-        "message" : "トポロジーの変更を検出しました。再オンボーディング（設定）が必要です。"
       },
       "tooManyUtxos" : {
         "title" : "対応が必要です：UTXOが多すぎます",
@@ -6915,15 +6879,6 @@
       "title" : "EVMアドレスの検証が必要です",
       "description" : "承認する前に、Ledgerデバイスに表示されているEVMアドレスを検証してください。"
     },
-    "HederaRedundantStakingNodeIdError" : {
-      "title" : "すでにこのノードへ委任しています"
-    },
-    "HederaInvalidStakingNodeIdError" : {
-      "title" : "選択されたノードは有効なバリデータではありません"
-    },
-    "HederaNoStakingRewardsError" : {
-      "title" : "受け取る報酬はありません"
-    },
     "ImageIncorrectFileTypeError" : {
       "title" : "ファイルからの画像の読み込みに失敗しました。",
       "description" : "画像でもう一度お試しください。"
@@ -7252,152 +7207,6 @@
         }
       }
     },
-    "account" : {
-      "header" : {
-        "actions" : {
-          "stake" : {
-            "alreadyDelegatedTooltip" : "残高のすべてがすでに委任されています"
-          }
-        }
-      },
-      "balanceFooter" : {
-        "delegated" : {
-          "tooltip" : "Hederaでステーキングする場合、残高のすべてが委任されますが、流動性は維持されます"
-        },
-        "claimable" : {
-          "tooltip" : "報酬は、取引を行うたびに自動的に受け取ることができます。手動で受け取ることも可能です。"
-        }
-      },
-      "bodyHeader" : {
-        "delegatedPositions" : {
-          "header" : "デリゲート",
-          "button" : "報酬獲得を申請",
-          "columns" : {
-            "inactiveTooltip" : "バリデータが見つかりません",
-            "overstakedTooltip" : "このノードはステーキング量が過剰なため、APYが通常より低くなっています",
-            "activeTooltip" : "委任した数量に対して報酬が発生します",
-            "delegated" : "デリゲート",
-            "rewards" : "報酬"
-          },
-          "actions" : {
-            "redelegation" : "再デリゲート",
-            "undelegation" : "デリゲート解除",
-            "claimRewards" : "報酬獲得を申請"
-          }
-        }
-      }
-    },
-    "delegation" : {
-      "totalStake" : "合計ステーキング量",
-      "flow" : {
-        "title" : "デリゲート",
-        "steps" : {
-          "validator" : {
-            "title" : "バリデーター",
-            "rowTitle" : "ノード{{index}}：{{name}}",
-            "rowSubtitlePercentage" : "上限の{{percentage}}%ステーキング済み",
-            "rowSubtitleOverstaked" : "ノードのステーキング量が過剰です"
-          },
-          "amount" : {
-            "title" : "数量",
-            "alert" : "Hederaのステーキングでは、残高のすべてがステーキングされます。流動性は完全に維持され、ロックアップ期間やスラッシングのリスクはありません。ステーキング報酬の発生開始まで、最大48時間かかる場合があります。",
-            "learnMore" : "詳細はこちら"
-          },
-          "connectDevice" : {
-            "title" : "デバイス"
-          },
-          "confirmation" : {
-            "title" : "確認",
-            "success" : {
-              "title" : "資産が正常にデリゲートされました。",
-              "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
-              "cta" : "詳細を表示"
-            },
-            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
-          }
-        }
-      }
-    },
-    "undelegation" : {
-      "flow" : {
-        "title" : "資産のデリゲートを解除",
-        "steps" : {
-          "summary" : {
-            "title" : "数量",
-            "validatorLabel" : "バリデータ",
-            "amountLabel" : "デリゲート解除額",
-            "alert" : "委任を解除すると、残高と未受領の報酬は即座にアカウントに入金されます。ステーキングの一部のみを委任解除することはできません。",
-            "learnMore" : "詳細はこちら"
-          },
-          "connectDevice" : {
-            "title" : "デバイス"
-          },
-          "confirmation" : {
-            "title" : "確認",
-            "success" : {
-              "title" : "資産のデリゲートを正常に解除しました。",
-              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
-              "cta" : "詳細を表示"
-            },
-            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
-          }
-        }
-      }
-    },
-    "redelegation" : {
-      "flow" : {
-        "title" : "資産を再デリゲートする",
-        "steps" : {
-          "validators" : {
-            "title" : "バリデーター",
-            "currentValidatorLabel" : "現在のデリゲート",
-            "newValidatorLabel" : "新しいデリゲート",
-            "newValidatorSelectPlaceholder" : "バリデータを選択",
-            "removedValidatorSelectPlaceholder" : "以前選択したバリデータは現在利用できません",
-            "newValidatorSelectNoOption" : "\"{{validatorName}}\"に一致するバリデーターがありません。",
-            "amountLabel" : "再デリゲート額",
-            "alert" : "Hederaのステーキングでは、残高のすべてがステーキングされます。流動性は完全に維持され、ロックアップ期間やスラッシングのリスクはありません。ステーキング報酬の発生開始まで、最大48時間かかる場合があります。",
-            "learnMore" : "詳細はこちら"
-          },
-          "connectDevice" : {
-            "title" : "デバイス"
-          },
-          "confirmation" : {
-            "title" : "確認",
-            "success" : {
-              "title" : "資産を正常に再デリゲートしました。",
-              "text" : "ブロックチェーンがトランザクションを承認後、デリゲートが更新されます",
-              "cta" : "詳細を表示"
-            },
-            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
-          }
-        }
-      }
-    },
-    "claimRewards" : {
-      "flow" : {
-        "title" : "報酬獲得を申請",
-        "steps" : {
-          "rewards" : {
-            "title" : "報酬",
-            "description" : "以下のバリデーターから<0>{{formattedClaimableRewards}}</0>を獲得しました。続行をクリックすると、獲得した報酬が自動的に利用可能残高に加算されます。",
-            "currentValidatorLabel" : "デリゲート"
-          },
-          "connectDevice" : {
-            "title" : "デバイス"
-          },
-          "confirmation" : {
-            "title" : "確認",
-            "success" : {
-              "title" : "報酬の受け取りが完了しました",
-              "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
-              "cta" : "詳細を表示"
-            },
-            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
-          }
-        }
-      }
-    },
     "send" : {
       "memo" : {
         "label" : "メモ (任意)",
@@ -7469,7 +7278,7 @@
     },
     "postOnboarding" : {
       "title" : "ロック画面をカスタマイズ",
-      "description" : "お気に入りのデジタルアートや写真を、デバイスのロック画面に表示しましょう。",
+      "description" : "{{productName}}のロック画面として設定するデジタルアートまたは写真を選択。",
       "actionCompletedPopupLabel" : "デバイスがパーソナライズされました"
     },
     "customImageSet" : "ロック画面がカスタマイズされました",
@@ -7592,20 +7401,12 @@
   "walletSync" : {
     "title" : "Ledger同期",
     "close" : "閉じる",
-    "banner" : {
-      "title" : "ウォレットが同期されていません",
-      "description" : "PCを買い替えた時やスマホを使用する際も、ポートフォリオを常に最新の状態に保てます。",
-      "cta" : "ウォレットを同期する"
-    },
     "activate" : {
       "title" : "このコンピューターに対してLedger同期をオンにしますか？",
       "description" : "新しいデバイスに移行した場合でも、すべての携帯電話とコンピューター間で暗号資産アカウントを自動的に同期します。",
       "cta" : "Ledger Syncをオンにする",
       "alreadySync" : "すでにオンにしました",
-      "learnMore" : "Ledger Syncの仕組みは？",
-      "titleModal" : "ウォレットを同期",
-      "descriptionModal" : "パソコンの買い替え時やスマホの利用時も、ポートフォリオを常に最新の状態に保てます。すべてはLedgerデバイスによって安全に守られます。",
-      "ctaModal" : "続行"
+      "learnMore" : "Ledger Syncの仕組みは？"
     },
     "entryPoints" : {
       "accounts" : {
@@ -7682,11 +7483,6 @@
         "title" : "同期に成功しました！",
         "desc" : "暗号資産アカウントの変更は、同期されたスマホおよびコンピューター上のLedger Walletアプリ全体に自動的に表示されるようになります。 "
       },
-      "complete" : {
-        "title" : "同期完了",
-        "description" : "これ以降、ポートフォリオはすべてのデバイス間で自動的に同期されます。",
-        "syncAnother" : "モバイル版Ledgerをお使いですか？QRコードをスキャン "
-      },
       "synchAnother" : "別のLedger Walletアプリと同期する",
       "close" : "閉じる"
     },
@@ -7698,7 +7494,7 @@
         "cancel" : "同期を維持"
       },
       "deleteBackupSuccess" : {
-        "title" : "Ledger Walletアプリの同期が解除されました",
+        "title" : "Ledger Walletアプリは同期されなくなりました",
         "description" : "いつでも同期を再度オンにすることができます"
       },
       "deleteBackupError" : {
@@ -7716,8 +7512,7 @@
         "connectDevice" : {
           "title" : "Ledgerを使用",
           "description" : "Ledgerに署名して同期する"
-        },
-        "descriptionModal" : "別のスマホですでにLedger Walletを同期している場合は選択してください"
+        }
       },
       "qrCode" : {
         "title" : "Ledger Walletアプリを同期",
@@ -7854,17 +7649,6 @@
     "genericError" : {
       "title" : "ネットワークエラー発生",
       "description" : "問題が発生しました。再試行するか、Ledgerサポートにご連絡ください。",
-      "cta" : "再試行"
-    },
-    "errors" : {
-      "network" : {
-        "title" : "接続に失敗しました。",
-        "description" : "インターネットに接続されていません。接続をご確認の上、もう一度お試しください。"
-      },
-      "backend" : {
-        "title" : "接続に失敗しました。",
-        "description" : "システムでエラーが発生しました。後でもう一度お試しください。"
-      },
       "cta" : "再試行"
     }
   },

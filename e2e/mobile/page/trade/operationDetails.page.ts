@@ -1,5 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
-import { Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
+import { getAccountAddress, Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
 
 export default class OperationDetailsPage {
   titleId = "operationDetails-title";
@@ -38,12 +37,13 @@ export default class OperationDetailsPage {
     await scrollToId(this.recipientId, this.operationDetailsScrollViewId);
     const recipientElement = getElementById(this.recipientId);
 
-    const expected = recipient.address;
-    if (expected) {
-      await detoxExpect(recipientElement).toHaveText(expected);
+    let expected: string;
+    if (await IsIdVisible(this.operationDetailsConfirmed)) {
+      expected = getAccountAddress(recipient);
     } else {
-      throw new Error("Recipient address is undefined");
+      expected = recipient.address;
     }
+    await detoxExpect(recipientElement).toHaveText(expected);
   }
 
   @Step("Check recipient as provider")

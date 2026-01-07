@@ -136,6 +136,11 @@ export function useMarket() {
     });
   }, [order, refresh]);
 
+  const isItemLoaded = useCallback(
+    (index: number) => !!marketResult.data[index],
+    [marketResult.data],
+  );
+
   /**
    *
    * Refresh mechanism ----------------------------------------------
@@ -171,6 +176,7 @@ export function useMarket() {
    */
 
   return {
+    isItemLoaded,
     onLoadNextPage,
     toggleLiveCompatible,
     toggleFilterByStarredAccounts,

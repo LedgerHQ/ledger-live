@@ -27,7 +27,7 @@ afterAll(() => server.close());
 
 NativeModules.RNAnalytics = {};
 
-const mockAnalytics = jest.createMockFromModule("@segment/analytics-react-native");
+const mockAnalytics = jest.genMockFromModule("@segment/analytics-react-native");
 
 // Overriding the default RNGH mocks
 // to replace TouchableNativeFeedback with TouchableOpacity

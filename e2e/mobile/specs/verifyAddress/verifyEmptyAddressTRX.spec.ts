@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 describe("Verify Address warnings", () => {
   const account = Account.TRX_3;
 

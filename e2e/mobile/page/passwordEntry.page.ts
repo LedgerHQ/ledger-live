@@ -1,5 +1,3 @@
-import { Step } from "jest-allure2-reporter/api";
-
 export default class PasswordEntryPage {
   getPasswordTextInput = () => getElementById("password-text-input");
   getLogin = () => getElementByText("Log in");

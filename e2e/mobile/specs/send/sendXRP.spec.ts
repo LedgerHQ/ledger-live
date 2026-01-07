@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSendTest } from "./send";
 
 // Existing issue LIVE-22207

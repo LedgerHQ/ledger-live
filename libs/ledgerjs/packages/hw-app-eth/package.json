@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-eth",
-  "version": "7.1.1",
+  "version": "7.0.1",
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
     "Ledger",
@@ -38,7 +38,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
-    "semver": "catalog:"
+    "semver": "^7.3.5"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -58,15 +58,14 @@
     "@ethersproject/bignumber": "^5.7.0",
     "@ethersproject/constants": "^5.7.0",
     "@ethersproject/units": "^5.7.0",
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",
     "documentation": "14.0.2",
-    "jest": "catalog:",
+    "jest": "^29.7.0",
     "nock": "^13.0.5",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
+    "ts-jest": "^29.1.1",
     "ts-node": "^10.4.0"
   },
   "overrides": {

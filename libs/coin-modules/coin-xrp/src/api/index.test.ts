@@ -16,18 +16,6 @@ jest.mock("../network", () => ({
     mockGetTransactions(address, options),
 }));
 
-// Module-level mocks for logic functions
-const mockCraftTransaction = jest.fn();
-const mockGetNextValidSequence = jest.fn();
-const mockEstimateFees = jest.fn();
-
-jest.mock("../logic", () => ({
-  ...jest.requireActual("../logic"),
-  craftTransaction: (...args: unknown[]) => mockCraftTransaction(...args),
-  getNextValidSequence: (...args: unknown[]) => mockGetNextValidSequence(...args),
-  estimateFees: (...args: unknown[]) => mockEstimateFees(...args),
-}));
-
 describe("listOperations", () => {
   const api = createApi({ node: "https://localhost" });
 
@@ -283,24 +271,23 @@ describe("listOperations", () => {
 describe("Testing craftTransaction function", () => {
   const DEFAULT_ESTIMATED_FEES = 100n;
   const api = createApi({ node: "https://localhost" });
-
-  beforeAll(() => {
-    mockCraftTransaction.mockImplementation((_address, _transaction, _publicKey) => {
+  const logicCraftTransactionSpy = jest
+    .spyOn(LogicFunctions, "craftTransaction")
+    .mockImplementation((_address, _transaction, _publicKey) => {
       return Promise.resolve({ xrplTransaction: {} as never, serializedTransaction: "" });
     });
 
-    mockGetNextValidSequence.mockImplementation(_address => Promise.resolve(0));
+  beforeAll(() => {
+    jest
+      .spyOn(LogicFunctions, "getNextValidSequence")
+      .mockImplementation(_address => Promise.resolve(0));
 
-    mockEstimateFees.mockImplementation(_networkInfo => {
+    jest.spyOn(LogicFunctions, "estimateFees").mockImplementation(_networkInfo => {
       return Promise.resolve({
         networkInfo: {} as NetworkInfo,
         fees: DEFAULT_ESTIMATED_FEES,
       });
     });
-  });
-
-  afterEach(() => {
-    mockCraftTransaction.mockClear();
   });
 
   it("should use custom user fees when user provides it for crafting a transaction", async () => {
@@ -312,7 +299,7 @@ describe("Testing craftTransaction function", () => {
       },
     );
 
-    expect(mockCraftTransaction).toHaveBeenCalledWith(
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         fees: customFees,
@@ -327,7 +314,7 @@ describe("Testing craftTransaction function", () => {
       sender: "foo",
     } as SendTransactionIntent<XrpMapMemo>);
 
-    expect(mockCraftTransaction).toHaveBeenCalledWith(
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         fees: DEFAULT_ESTIMATED_FEES,
@@ -343,7 +330,7 @@ describe("Testing craftTransaction function", () => {
       senderPublicKey: "bar",
     } as SendTransactionIntent<XrpMapMemo>);
 
-    expect(mockCraftTransaction).toHaveBeenCalledWith(
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.any(Object),
       "bar",
@@ -360,7 +347,7 @@ describe("Testing craftTransaction function", () => {
       },
     } as SendTransactionIntent<XrpMapMemo>);
 
-    expect(mockCraftTransaction).toHaveBeenCalledWith(
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         // NOTE: before
@@ -377,7 +364,7 @@ describe("Testing craftTransaction function", () => {
       sender: "foo",
     } as SendTransactionIntent<XrpMapMemo>);
 
-    expect(mockCraftTransaction).toHaveBeenCalledWith(
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         memos: undefined,
@@ -396,7 +383,7 @@ describe("Testing craftTransaction function", () => {
       },
     } as SendTransactionIntent<XrpMapMemo>);
 
-    expect(mockCraftTransaction).toHaveBeenCalledWith(
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         memos: undefined,
@@ -415,7 +402,7 @@ describe("Testing craftTransaction function", () => {
       },
     } as SendTransactionIntent<XrpMapMemo>);
 
-    expect(mockCraftTransaction).toHaveBeenCalledWith(
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         destinationTag: 1337, // logic should convert `value: string` -> `number`

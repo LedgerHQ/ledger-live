@@ -1,3 +1,4 @@
+/** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 module.exports = {
   passWithNoTests: true,
   collectCoverageFrom: [
@@ -9,17 +10,8 @@ module.exports = {
     "!src/__snapshots__/**/*.ts",
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
+  preset: "ts-jest",
   testEnvironment: "node",
-  transform: {
-    "^.+\\.(ts|tsx)$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-  },
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   reporters: [
     "default",

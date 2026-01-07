@@ -1,4 +1,3 @@
-import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class PortfolioPage {
@@ -42,8 +41,6 @@ export default class PortfolioPage {
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
   walletTabSelector = (id: "Wallet" | "Market") =>
     getElementById(`${this.walletTabSelectorBase}${id}`);
-  operationByType = (operationType?: string) =>
-    getElementByIdAndText(this.operationRowDate, new RegExp(`.*${operationType ?? ""}.*`, "i"));
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
@@ -204,8 +201,8 @@ export default class PortfolioPage {
   }
 
   @Step("Click on selected last operation")
-  async selectAndClickOnLastOperation(operationType?: string) {
-    await tapByElement(this.operationByType(operationType));
+  async selectAndClickOnLastOperation() {
+    await tapById(this.operationRowDate);
   }
 
   @Step("Tap on tab selector")

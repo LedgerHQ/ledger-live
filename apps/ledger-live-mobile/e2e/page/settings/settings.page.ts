@@ -1,5 +1,3 @@
-import { Step } from "jest-allure2-reporter/api";
-
 export default class SettingsPage {
   settingsGeneralButtonId = "general-settings-card";
 

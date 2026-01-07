@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-filecoin",
-  "version": "1.16.1",
+  "version": "1.15.1",
   "description": "Ledger Filecoin Coin integration",
   "keywords": [
     "Ledger",
@@ -113,13 +113,12 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
-    "@types/semver": "catalog:",
+    "@types/semver": "^7.5.8",
     "axios": "catalog:",
-    "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

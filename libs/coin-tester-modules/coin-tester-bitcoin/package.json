@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-bitcoin",
-  "version": "1.2.4",
+  "version": "1.2.2",
   "description": "Ledger BTC Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -72,12 +72,11 @@
     "docker-compose": "^1.1.0"
   },
   "devDependencies": {
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.10",
     "dotenv": "^16.4.5",
-    "jest": "catalog:",
+    "jest": "^29.7.0",
     "tsx": "^4.19.3",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
+    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }

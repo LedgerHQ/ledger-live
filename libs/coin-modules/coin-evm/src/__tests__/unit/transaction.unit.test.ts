@@ -2,13 +2,7 @@ import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { toErrorRaw } from "@ledgerhq/coin-framework/lib/serialization/transaction";
 import { transactionToEthersTransaction } from "../../adapters";
-import { getTransactionCount } from "../../network/node/rpc.common";
-
-jest.mock("../../network/node/rpc.common", () => ({
-  getTransactionCount: jest.fn(),
-}));
-
-const mockGetTransactionCount = getTransactionCount as jest.Mock;
+import * as nodeApi from "../../network/node/rpc.common";
 import {
   account,
   eip1559Tx,
@@ -342,7 +336,7 @@ describe("EVM Family", () => {
 
     describe("getSerializedTransaction", () => {
       beforeAll(() => {
-        mockGetTransactionCount.mockImplementation(() => Promise.resolve(0));
+        jest.spyOn(nodeApi, "getTransactionCount").mockImplementation(() => Promise.resolve(0));
       });
 
       describe("without customGasLimit", () => {

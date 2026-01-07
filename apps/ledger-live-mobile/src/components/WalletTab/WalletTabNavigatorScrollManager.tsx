@@ -33,7 +33,7 @@ export default function WalletTabNavigatorScrollManager({
   useEffect(() => {
     const listenerId = scrollY.addListener(({ value }) => {
       if (currentRouteName) {
-        scrollableOffsetMap.current[currentRouteName] = Math.max(value, 0); // prevent negative offset
+        scrollableOffsetMap.current[currentRouteName] = value;
       }
     });
     return () => {

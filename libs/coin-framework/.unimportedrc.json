@@ -68,9 +68,6 @@
     "src/features/types.ts"
   ],
   "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util",
     "@ledgerhq/live-dmk-speculos",
     "src/utils.ts",
     "src/uiConfig/types.ts",

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/devices",
-  "version": "8.8.0",
+  "version": "8.7.1",
   "description": "Ledger devices",
   "keywords": [
     "Ledger"
@@ -56,18 +56,17 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "rxjs": "catalog:",
-    "semver": "catalog:"
+    "semver": "^7.3.5"
   },
   "devDependencies": {
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",
-    "@types/semver": "catalog:",
+    "@types/semver": "^7.3.9",
     "documentation": "14.0.2",
-    "jest": "catalog:",
+    "jest": "^29.7.0",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
+    "ts-jest": "^29.1.1",
     "ts-node": "^10.4.0"
   },
   "scripts": {

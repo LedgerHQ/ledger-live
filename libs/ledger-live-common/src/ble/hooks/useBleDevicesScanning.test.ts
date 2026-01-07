@@ -304,7 +304,7 @@ describe("useBleDevicesScanning", () => {
         jest.advanceTimersByTime(restartScanningTimeoutMs - 1000);
       });
 
-      expect(mockBleTransportListenUnsubscribe).toHaveBeenCalledTimes(
+      expect(mockBleTransportListenUnsubscribe).toBeCalledTimes(
         nbUnsubscribesHappeningBecauseOfRenderHook,
       );
 
@@ -313,7 +313,7 @@ describe("useBleDevicesScanning", () => {
         jest.advanceTimersByTime(1000);
       });
 
-      expect(mockBleTransportListenUnsubscribe).toHaveBeenCalledTimes(
+      expect(mockBleTransportListenUnsubscribe).toBeCalledTimes(
         nbUnsubscribesHappeningBecauseOfRenderHook + 1,
       );
       expect(result.current.scannedDevices).toHaveLength(2);

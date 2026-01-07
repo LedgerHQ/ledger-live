@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-vechain",
-  "version": "2.14.1",
+  "version": "2.13.1",
   "description": "Ledger VeChain Coin integration",
   "keywords": [
     "Ledger",
@@ -113,12 +113,11 @@
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "dotenv": "^16.4.5",
-    "jest": "catalog:",
+    "jest": "^29.7.0",
     "msw": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "ts-jest": "^29.1.1"
   }
 }

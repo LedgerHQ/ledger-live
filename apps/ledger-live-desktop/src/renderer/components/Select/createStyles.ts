@@ -1,17 +1,17 @@
-import { GroupBase, StylesConfig } from "react-select";
+import { GroupTypeBase, OptionTypeBase, StylesConfig } from "react-select";
 import { DefaultTheme } from "styled-components";
 import { ff } from "~/renderer/styles/helpers";
 
 export type CreateStylesReturnType<
-  OptionType,
+  OptionType extends OptionTypeBase,
   IsMulti extends boolean = false,
-  GroupType extends GroupBase<OptionType> = GroupBase<OptionType>,
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
 > = StylesConfig<OptionType, IsMulti, GroupType>;
 
 export default <
-  OptionType,
+  OptionType extends OptionTypeBase,
   IsMulti extends boolean,
-  GroupType extends GroupBase<OptionType> = GroupBase<OptionType>,
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
 >(
   theme: DefaultTheme,
   {
@@ -62,11 +62,6 @@ export default <
   input: styles => ({
     ...styles,
     color: theme.colors.neutral.c80,
-    // react-select v5 fix: ensure input text and caret are visible
-    "& input": {
-      color: "inherit !important",
-      caretColor: theme.colors.neutral.c80,
-    },
   }),
   indicatorSeparator: styles => ({
     ...styles,

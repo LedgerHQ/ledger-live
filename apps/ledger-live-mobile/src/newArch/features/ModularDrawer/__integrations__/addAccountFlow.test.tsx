@@ -78,7 +78,7 @@ jest.mock("~/hooks/useIsDeviceLockedPolling/useIsDeviceLockedPolling", () => {
   return {
     ...jest.requireActual("~/hooks/useIsDeviceLockedPolling/useIsDeviceLockedPolling"),
     useIsDeviceLockedPolling: () => {
-      return { result: { type: IsDeviceLockedResultType.unlocked }, retry: jest.fn() };
+      return { type: IsDeviceLockedResultType.unlocked };
     },
   };
 });

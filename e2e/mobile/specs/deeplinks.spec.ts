@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { waitSwapReady } from "../bridge/server";
 
 $TmsLink("B2CQA-1837");

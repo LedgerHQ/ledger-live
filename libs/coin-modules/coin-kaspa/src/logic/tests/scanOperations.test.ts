@@ -1,21 +1,11 @@
 import expect from "expect";
 import { BigNumber } from "bignumber.js";
 import { scanOperations } from "../scanOperations";
-
-// Module-level mock for getTransactions
-const mockGetTransactions = jest.fn();
-jest.mock("../../network", () => ({
-  ...jest.requireActual("../../network"),
-  getTransactions: (...args: unknown[]) => mockGetTransactions(...args),
-}));
+import * as lib from "../../network";
 
 describe("scan transactions for multiple addresses", () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it.each([0, 1])("One address", async afterValue => {
-    mockGetTransactions.mockResolvedValueOnce({
+    jest.spyOn(lib, "getTransactions").mockResolvedValueOnce({
       nextPageAfter: null,
       transactions: [
         {
@@ -196,7 +186,7 @@ describe("scan transactions for multiple addresses", () => {
   });
 
   it("Empty input (mining tx)", async () => {
-    mockGetTransactions.mockResolvedValueOnce({
+    jest.spyOn(lib, "getTransactions").mockResolvedValueOnce({
       nextPageAfter: null,
       transactions: [
         {
@@ -318,5 +308,9 @@ describe("scan transactions for multiple addresses", () => {
         "kaspa:qrvqn64vxkcevdev6k2y49slxw4ls57cjzdqmqkcgh9wu7xmghk57v4ehla0t",
       ),
     ).toBe(true);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 });

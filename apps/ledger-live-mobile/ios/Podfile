@@ -7,10 +7,6 @@ podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties
 ENV['RCT_NEW_ARCH_ENABLED'] = '1'
 ENV['EX_DEV_CLIENT_NETWORK_INSPECTOR'] = podfile_properties['EX_DEV_CLIENT_NETWORK_INSPECTOR']
 
-# Disable location services for the app because it's not used in the app
-# it's used by react-native-vision-camera
-$VCEnableLocation = false
-
 platform :ios, podfile_properties['ios.deploymentTarget'] || '15.1'
 install! 'cocoapods',
   :deterministic_uuids => false
@@ -34,12 +30,12 @@ target 'ledgerlivemobile' do
       'ios'
     ]
   end
-
+ 
   config = use_native_modules!(config_command)
 
   use_frameworks! :linkage => :static
   $RNFirebaseAsStaticFramework = true
-
+  
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.

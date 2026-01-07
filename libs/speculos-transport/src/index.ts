@@ -1,6 +1,4 @@
 import { spawn, exec, ChildProcessWithoutNullStreams } from "child_process";
-import { createServer } from "node:net";
-import { randomInt, randomUUID } from "node:crypto";
 import { log } from "@ledgerhq/logs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
@@ -12,7 +10,7 @@ export type SpeculosDevice = {
   transport: SpeculosTransport;
   id: string;
   appPath: string;
-  ports: Awaited<ReturnType<typeof getPorts>>;
+  ports: ReturnType<typeof getPorts>;
 };
 
 export type SpeculosTransport = DeviceManagementKitTransportSpeculos | SpeculosTransportWebsocket;
@@ -36,6 +34,7 @@ export type SpeculosDeviceInternal =
     };
 
 // FIXME we need to figure out a better system, using a filesystem file?
+let idCounter: number;
 const isSpeculosWebsocket = getEnv("SPECULOS_USE_WEBSOCKET");
 const data: Record<string, SpeculosDeviceInternal | undefined> = {};
 
@@ -104,61 +103,17 @@ function inferSDK(firmware: string, model: string): string | undefined {
   if (existingSdks.includes(begin + shortVersion + ".elf")) return shortVersion;
 }
 
-async function isPortAvailable(port: number): Promise<boolean> {
-  return new Promise(resolve => {
-    const server = createServer();
-
-    server.once("error", () => {
-      resolve(false);
-    });
-
-    server.once("listening", () => {
-      server.close();
-      resolve(true);
-    });
-
-    server.listen(port);
-  });
-}
-
-async function getRandomAvailablePort(exclude: number[] = []): Promise<number> {
-  const BASE_PORT = 30000;
-  const MAX_PORT = 60000;
-  const MAX_PORT_RETRIES = 10;
-
-  for (let attempt = 0; attempt < MAX_PORT_RETRIES; attempt++) {
-    const port = randomInt(BASE_PORT, MAX_PORT + 1);
-
-    if (exclude.includes(port)) {
-      continue;
-    }
-
-    if (await isPortAvailable(port)) {
-      return port;
-    }
-  }
-
-  throw new Error(`Failed to find an available port after ${MAX_PORT_RETRIES} attempts`);
-}
-
-const getPorts = async (isSpeculosWebsocket?: boolean) => {
-  const usedPorts: number[] = [];
-  const getPort = async () => {
-    const port = await getRandomAvailablePort(usedPorts);
-    usedPorts.push(port);
-    return port;
-  };
-
+const getPorts = (idCounter: number, isSpeculosWebsocket?: boolean) => {
   if (isSpeculosWebsocket) {
-    const apduPort = await getPort();
-    const vncPort = await getPort();
-    const buttonPort = await getPort();
-    const automationPort = await getPort();
+    const apduPort = 30000 + idCounter;
+    const vncPort = 35000 + idCounter;
+    const buttonPort = 40000 + idCounter;
+    const automationPort = 45000 + idCounter;
 
     return { apduPort, vncPort, buttonPort, automationPort };
   } else {
-    const apiPort = await getPort();
-    const vncPort = await getPort();
+    const apiPort = 30000 + idCounter;
+    const vncPort = 35000 + idCounter;
 
     return { apiPort, vncPort };
   }
@@ -194,7 +149,7 @@ export type DeviceParams = {
 };
 
 /**
- * instantiate a speculos device that runs through docker
+ * instanciate a speculos device that runs through docker
  */
 export async function createSpeculosDevice(
   arg: DeviceParams,
@@ -211,8 +166,9 @@ export async function createSpeculosDevice(
     dependency,
     dependencies,
   } = arg;
-  const speculosID = `speculosID-${randomUUID()}`;
-  const ports = await getPorts(isSpeculosWebsocket);
+  idCounter = idCounter ?? getEnv("SPECULOS_PID_OFFSET");
+  const speculosID = `speculosID-${++idCounter}`;
+  const ports = getPorts(idCounter, isSpeculosWebsocket);
 
   const sdk = inferSDK(firmware, model);
 

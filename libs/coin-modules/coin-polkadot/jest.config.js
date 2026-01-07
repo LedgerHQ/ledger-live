@@ -1,15 +1,7 @@
+/** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 module.exports = {
+  preset: "ts-jest",
   passWithNoTests: true,
-  transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-  },
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",

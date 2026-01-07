@@ -16,21 +16,11 @@ if (process.env.CI) {
 }
 
 const defaultConfig = {
-  transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "es2022",
-          parser: {
-            syntax: "typescript",
-            tsx: true,
-            decorators: false,
-            dynamicImport: true,
-          },
-        },
-      },
-    ],
+  preset: "ts-jest",
+  globals: {
+    "ts-jest": {
+      tsconfig: "./src/__tests__/tsconfig.json",
+    },
   },
   testEnvironment: "node",
   coverageDirectory: "./coverage/",

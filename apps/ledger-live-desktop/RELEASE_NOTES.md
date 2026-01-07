@@ -1,11 +1,3 @@
-# 2.135.1
-
-This release includes small security improvements, UI tweaks, and minor bug fixes.
-
-# 2.135.0
-
-This release includes small security improvements, UI tweaks, and minor bug fixes.
-
 # 2.133.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.

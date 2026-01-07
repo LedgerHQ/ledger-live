@@ -69,7 +69,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         disableRounding: true,
-        locale,
+        locale: locale,
       });
       return (
         <>
@@ -94,7 +94,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         disableRounding: true,
-        locale,
+        locale: locale,
       });
       return (
         <>
@@ -108,7 +108,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         disableRounding: true,
-        locale,
+        locale: locale,
       });
       return (
         <>
@@ -122,7 +122,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         disableRounding: true,
-        locale,
+        locale: locale,
       });
       return (
         <>

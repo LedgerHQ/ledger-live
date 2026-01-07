@@ -1,22 +1,15 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Title, Column, SubTitle, TrackTutorialProps } from "../shared";
+import { Title, Column, SubTitle } from "../shared";
 import { Flex, Icons } from "@ledgerhq/react-ui/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
-export function WelcomeToWalletWithoutFunds(trackProps: Readonly<TrackTutorialProps>) {
+export function WelcomeToWalletWithoutFunds() {
   const { t } = useTranslation();
 
   return (
     <Column>
-      <TrackPage
-        category="Set up device"
-        name="End of onboarding"
-        receiveFlowEnded={false}
-        flow={trackProps.flow}
-        deviceModelId={trackProps.deviceModelId}
-        seedConfiguration={trackProps.seedConfiguration}
-      />
+      <TrackPage category="Set up device" name="End of onboarding" receiveFlowEnded={false} />
       <Title>{t("onboarding.screens.tutorial.screens.welcomeToWalletWithoutFunds.title")}</Title>
       <SubTitle>
         {t("onboarding.screens.tutorial.screens.welcomeToWalletWithoutFunds.description")}

@@ -195,10 +195,6 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
     overridesDerivation: "44'/6767'/<account>'/0'/0'",
     tag: "canton",
   },
-  cashaddr: {
-    addressFormat: "cashaddr",
-    tag: "cashaddr",
-  },
 });
 
 // WIP

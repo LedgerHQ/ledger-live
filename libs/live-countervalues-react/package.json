@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-countervalues-react",
-  "version": "0.7.6",
+  "version": "0.7.4",
   "description": "Ledger Live countervalues React module",
   "keywords": [
     "Ledger"
@@ -34,15 +34,13 @@
     "bignumber.js": "9"
   },
   "devDependencies": {
-    "@types/jest": "catalog:",
-    "@testing-library/dom": "catalog:",
-    "@testing-library/react": "catalog:",
+    "@types/jest": "^29.5.10",
+    "@testing-library/react": "14",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "jest": "catalog:",
-    "jest-environment-jsdom": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "ts-jest": "^29.1.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

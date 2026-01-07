@@ -204,12 +204,12 @@ function DelegationAmount({ navigation, route }: Props) {
                             min: formatCurrencyUnit(unit, min, {
                               showCode: true,
                               showAllDigits: true,
-                              locale,
+                              locale: locale,
                             }),
                             max: formatCurrencyUnit(unit, initialMax, {
                               showCode: true,
                               showAllDigits: true,
-                              locale,
+                              locale: locale,
                             }),
                           }}
                         >
@@ -239,7 +239,7 @@ function DelegationAmount({ navigation, route }: Props) {
                       values={{
                         amount: formatCurrencyUnit(unit, max, {
                           showCode: true,
-                          locale,
+                          locale: locale,
                         }),
                       }}
                     >
@@ -256,7 +256,7 @@ function DelegationAmount({ navigation, route }: Props) {
                       values={{
                         amount: formatCurrencyUnit(unit, redelegatedBalance.plus(value), {
                           showCode: true,
-                          locale,
+                          locale: locale,
                         }),
                         name: route.params.validator?.name ?? "",
                       }}

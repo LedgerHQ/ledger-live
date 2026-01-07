@@ -32,7 +32,7 @@ const PilldDaysSelect: React.FC = () => {
       small
       minWidth={90}
       onChange={avoidEmptyValue}
-      renderValue={({ data }) => data?.label}
+      renderSelected={(item: { label: unknown }) => item && item.label}
       value={mappedSelected}
       options={mappedOptions}
     />

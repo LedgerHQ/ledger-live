@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runUserRefusesTransactionTest } from "./swap.other";
 
 const userRefusesTransactionSwapTestConfig = {

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-canton",
-  "version": "0.12.1",
+  "version": "0.11.1",
   "description": "Canton coin integration",
   "keywords": [
     "Ledger",
@@ -115,13 +115,12 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.12",
     "dotenv": "^16.4.5",
-    "expect": "catalog:",
-    "jest": "catalog:",
+    "expect": "^27.4.6",
+    "jest": "^29.7.0",
     "protobufjs-cli": "1.1.2",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.4.5"
   },
   "scripts": {

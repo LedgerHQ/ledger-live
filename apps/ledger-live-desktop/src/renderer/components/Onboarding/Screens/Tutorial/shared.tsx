@@ -6,12 +6,6 @@ import { BoxProps } from "@ledgerhq/react-ui/components/layout/Box/index";
 import { SwitchProps } from "@ledgerhq/react-ui/components/form/Switch/index";
 import { TextProps } from "@ledgerhq/react-ui/components/asorted/Text/index";
 
-export interface TrackTutorialProps {
-  seedConfiguration?: string;
-  flow?: string;
-  deviceModelId?: string;
-}
-
 export const AnimationContainer: StyledComponent<"div", DefaultTheme, BoxProps> = styled(Flex)`
   overflow-x: clip;
   width: 324px;

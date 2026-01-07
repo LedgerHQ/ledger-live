@@ -1,7 +1,7 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-env";
-import { getEstimatedFees } from "../../../utils";
+import * as liveEnv from "@ledgerhq/live-env";
+import * as utils from "../../../utils";
 import type { Transaction } from "../../../types/index";
 import {
   hasMinimumFundsToCancel,
@@ -9,17 +9,10 @@ import {
 } from "../../../editTransaction/hasMinimumFunds";
 import { getCoinConfig } from "../../../config";
 
-jest.mock("@ledgerhq/live-env", () => ({
-  getEnv: jest.fn(),
-}));
+jest.mock("@ledgerhq/live-env");
 jest.mock("../../../logic");
-jest.mock("../../../utils", () => ({
-  ...jest.requireActual("../../../utils"),
-  getEstimatedFees: jest.fn(),
-}));
-
-const mockGetEnv = getEnv as jest.Mock;
-const mockGetEstimatedFees = getEstimatedFees as jest.Mock;
+const mockedUtils = jest.mocked(utils);
+const mockedLiveEnv = jest.mocked(liveEnv);
 
 jest.mock("../../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
@@ -46,28 +39,28 @@ describe("hasMinimumFunds", () => {
       const transactionToUpdate: Transaction = { type } as Transaction;
       test("should return true if has enough funds", () => {
         // Mock the necessary dependencies
-        mockGetEnv.mockReturnValue(new BigNumber(2) as any);
-        mockGetEstimatedFees.mockReturnValue(new BigNumber(100));
+        jest.spyOn(liveEnv, "getEnv").mockReturnValue(new BigNumber(2) as any);
+        jest.spyOn(utils, "getEstimatedFees").mockReturnValue(new BigNumber(100));
         mainAccount.balance = new BigNumber(201);
 
         const result = hasMinimumFundsToCancel({ mainAccount, transactionToUpdate });
 
         expect(result).toBe(true);
-        expect(mockGetEnv).toHaveBeenCalledWith(envVar);
-        expect(mockGetEstimatedFees).toHaveBeenCalledWith(transactionToUpdate);
+        expect(mockedLiveEnv.getEnv).toHaveBeenCalledWith(envVar);
+        expect(mockedUtils.getEstimatedFees).toHaveBeenCalledWith(transactionToUpdate);
       });
 
       test("should return false if does not have enough funds", () => {
         // Mock the necessary dependencies
-        mockGetEnv.mockReturnValue(new BigNumber(2) as any);
-        mockGetEstimatedFees.mockReturnValue(new BigNumber(100));
+        jest.spyOn(liveEnv, "getEnv").mockReturnValue(new BigNumber(2) as any);
+        jest.spyOn(utils, "getEstimatedFees").mockReturnValue(new BigNumber(100));
         mainAccount.balance = new BigNumber(200);
 
         const result = hasMinimumFundsToCancel({ mainAccount, transactionToUpdate });
 
         expect(result).toBe(false);
-        expect(mockGetEnv).toHaveBeenCalledWith(envVar);
-        expect(mockGetEstimatedFees).toHaveBeenCalledWith(transactionToUpdate);
+        expect(mockedLiveEnv.getEnv).toHaveBeenCalledWith(envVar);
+        expect(mockedUtils.getEstimatedFees).toHaveBeenCalledWith(transactionToUpdate);
       });
     });
   });
@@ -102,8 +95,8 @@ describe("hasMinimumFunds", () => {
 
         test("should return true if has enough funds", () => {
           // Mock the necessary dependencies
-          mockGetEnv.mockReturnValue(new BigNumber(2) as any);
-          mockGetEstimatedFees.mockReturnValue(new BigNumber(100));
+          jest.spyOn(liveEnv, "getEnv").mockReturnValue(new BigNumber(2) as any);
+          jest.spyOn(utils, "getEstimatedFees").mockReturnValue(new BigNumber(100));
           mainAccount.balance = new BigNumber(defaultBalance + 1);
 
           const result = hasMinimumFundsToSpeedUp({
@@ -113,14 +106,14 @@ describe("hasMinimumFunds", () => {
           });
 
           expect(result).toBe(true);
-          expect(mockGetEnv).toHaveBeenCalledWith(envVar);
-          expect(mockGetEstimatedFees).toHaveBeenCalledWith(transactionToUpdate);
+          expect(mockedLiveEnv.getEnv).toHaveBeenCalledWith(envVar);
+          expect(mockedUtils.getEstimatedFees).toHaveBeenCalledWith(transactionToUpdate);
         });
 
         test("should return false if does not have enough funds", () => {
           // Mock the necessary dependencies
-          mockGetEnv.mockReturnValue(new BigNumber(2) as any);
-          mockGetEstimatedFees.mockReturnValue(new BigNumber(100));
+          jest.spyOn(liveEnv, "getEnv").mockReturnValue(new BigNumber(2) as any);
+          jest.spyOn(utils, "getEstimatedFees").mockReturnValue(new BigNumber(100));
           mainAccount.balance = new BigNumber(defaultBalance);
 
           const result = hasMinimumFundsToSpeedUp({
@@ -130,8 +123,8 @@ describe("hasMinimumFunds", () => {
           });
 
           expect(result).toBe(false);
-          expect(mockGetEnv).toHaveBeenCalledWith(envVar);
-          expect(mockGetEstimatedFees).toHaveBeenCalledWith(transactionToUpdate);
+          expect(mockedLiveEnv.getEnv).toHaveBeenCalledWith(envVar);
+          expect(mockedUtils.getEstimatedFees).toHaveBeenCalledWith(transactionToUpdate);
         });
       });
     });

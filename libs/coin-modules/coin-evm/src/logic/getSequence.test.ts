@@ -1,34 +1,16 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getTransactionCount as externalGetTransactionCount } from "../network/node/rpc.common";
+import * as externalNode from "../network/node/rpc.common";
 import ledgerNode from "../network/node/ledger";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import { getSequence } from "./getSequence";
 
-jest.mock("../network/node/rpc.common", () => ({
-  getTransactionCount: jest.fn(),
-}));
-
-jest.mock("../network/node/ledger", () => ({
-  __esModule: true,
-  default: {
-    getTransactionCount: jest.fn(),
-  },
-}));
-
-const mockExternalGetTransactionCount = externalGetTransactionCount as jest.Mock;
-const mockLedgerGetTransactionCount = ledgerNode.getTransactionCount as jest.Mock;
-
 describe("getSequence", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it.each([
-    ["an external node", "external", mockExternalGetTransactionCount],
-    ["a ledger node", "ledger", mockLedgerGetTransactionCount],
-  ])("returns next sequence for an address using %s", async (_, type, mockGetTransactionCount) => {
+    ["an external node", "external", externalNode],
+    ["a ledger node", "ledger", ledgerNode],
+  ])("returns next sequence for an address using %s", async (_, type, node) => {
     setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
-    mockGetTransactionCount.mockResolvedValue(42);
+    jest.spyOn(node, "getTransactionCount").mockResolvedValue(42);
 
     expect(await getSequence({} as CryptoCurrency, "")).toEqual(42n);
   });

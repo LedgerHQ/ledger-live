@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runUserClearApplicationCacheTest } from "./settings";
 
 const testConfig = {

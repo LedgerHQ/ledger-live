@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "5.8.1",
+  "version": "5.7.2",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
@@ -100,7 +100,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bs58check": "catalog:",
-    "expect": "catalog:",
+    "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "rxjs": "catalog:",
@@ -112,13 +112,12 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/bs58check": "catalog:",
     "@types/invariant": "^2.2.2",
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "dotenv": "^16.4.5",
-    "jest": "catalog:",
+    "jest": "^29.7.0",
     "msw": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.4.5"
   },
   "scripts": {
@@ -133,7 +132,7 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
+    "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js",
     "test-integ:debug": "DOTENV_CONFIG_PATH=.env.integ.test node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "unimported": "unimported"
   }

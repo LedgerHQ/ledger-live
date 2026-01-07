@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-xrp",
-  "version": "7.10.1",
+  "version": "7.9.1",
   "description": "Ledger XRP Coin integration",
   "keywords": [
     "Ledger",
@@ -116,13 +116,12 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.12",
     "dotenv": "^16.4.5",
-    "expect": "catalog:",
-    "jest": "catalog:",
+    "expect": "^27.4.6",
+    "jest": "^29.7.0",
     "ripple-keypairs": "^2.0.0",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.4.5"
   },
   "scripts": {
@@ -138,7 +137,7 @@
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "test-watch": "jest --watch",
-    "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
+    "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js",
     "test-integ:debug": "DOTENV_CONFIG_PATH=.env.integ.test node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported"

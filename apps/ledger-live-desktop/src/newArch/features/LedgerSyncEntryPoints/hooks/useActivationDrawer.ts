@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { walletSyncFakedSelector, walletSyncStepSelector } from "~/renderer/reducers/walletSync";
 import { useFlows } from "../../WalletSync/hooks/useFlows";
 
-export function useActivationDrawer(onboardingNewDevice?: boolean) {
+export function useActivationDrawer() {
   const dispatch = useDispatch();
   const { goToWelcomeScreenWalletSync } = useFlows();
   const hasBeenFaked = useSelector(walletSyncFakedSelector);
@@ -19,7 +19,7 @@ export function useActivationDrawer(onboardingNewDevice?: boolean) {
 
   const openDrawer = () => {
     if (!hasBeenFaked) {
-      goToWelcomeScreenWalletSync(onboardingNewDevice);
+      goToWelcomeScreenWalletSync();
     }
     dispatch(setDrawerVisibility(true));
   };

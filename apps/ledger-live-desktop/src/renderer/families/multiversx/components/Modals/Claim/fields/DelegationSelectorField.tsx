@@ -10,8 +10,7 @@ import { TFunction } from "i18next";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { DelegationType } from "~/renderer/families/multiversx/types";
 import { Transaction, MultiversXProvider } from "@ledgerhq/live-common/families/multiversx/types";
-// FilterOptionOption type for react-select v5 filter callback
-type FilterOptionOption<T> = { label: string; value: string; data: T };
+import { Option } from "react-select/src/filters";
 
 type NoOptionsMessageCallbackType = {
   inputValue: string;
@@ -91,8 +90,8 @@ const DelegationSelectorField = (props: DelegationSelectorFieldType) => {
     [t],
   );
   const filterOptions = useCallback(
-    (option: FilterOptionOption<OptionType>, needle: string): boolean =>
-      BigNumber(option.data.delegation?.claimableRewards || 0).gt(0) && option.data.identity?.name
+    (option: Option, needle: string): boolean =>
+      BigNumber(option.data.delegation.claimableRewards).gt(0) && option.data.identity.name
         ? option.data.identity.name.toLowerCase().includes(needle.toLowerCase())
         : false,
     [],

@@ -1,5 +1,4 @@
-import { Step } from "jest-allure2-reporter/api";
-import * as fs from "fs/promises";
+import fs from "fs/promises";
 
 export class FileUtils {
   @Step("get app.json size")

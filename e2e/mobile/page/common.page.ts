@@ -1,4 +1,3 @@
-import { Step } from "jest-allure2-reporter/api";
 import { removeSpeculosAndDeregisterKnownSpeculos } from "../utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { delay, isIos } from "../helpers/commonHelpers";

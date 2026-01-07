@@ -3,6 +3,7 @@ import { estimateFees } from "../logic/estimateFees";
 import { prepareTransaction } from "./prepareTransaction";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
+import * as utils from "./utils";
 import type { EstimateFeesResult } from "../types";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
 import {
@@ -11,14 +12,6 @@ import {
 } from "../test/fixtures/currency.fixture";
 
 jest.mock("../logic/estimateFees");
-
-jest.mock("./utils", () => ({
-  ...jest.requireActual("./utils"),
-  calculateAmount: jest.fn(),
-}));
-
-import * as utils from "./utils";
-const mockCalculateAmount = utils.calculateAmount as jest.Mock;
 
 describe("prepareTransaction", () => {
   const mockAccount = getMockedAccount();
@@ -36,7 +29,7 @@ describe("prepareTransaction", () => {
     jest.clearAllMocks();
 
     (estimateFees as jest.Mock).mockResolvedValue(mockFeeEstimation);
-    mockCalculateAmount.mockResolvedValue(mockCalculatedAmount);
+    jest.spyOn(utils, "calculateAmount").mockResolvedValue(mockCalculatedAmount);
   });
 
   it("should set amount and maxFee from utils", async () => {

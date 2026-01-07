@@ -1,17 +1,5 @@
 # @ledgerhq/types-cryptoassets
 
-## 7.31.0
-
-### Minor Changes
-
-- [#13036](https://github.com/LedgerHQ/ledger-live/pull/13036) [`5e0556a`](https://github.com/LedgerHQ/ledger-live/commit/5e0556a3bd0ea60277462eed10c997b17b09d299) Thanks [@jonezque](https://github.com/jonezque)! - Concordium metadata
-
-## 7.31.0-next.0
-
-### Minor Changes
-
-- [#13036](https://github.com/LedgerHQ/ledger-live/pull/13036) [`5e0556a`](https://github.com/LedgerHQ/ledger-live/commit/5e0556a3bd0ea60277462eed10c997b17b09d299) Thanks [@jonezque](https://github.com/jonezque)! - Concordium metadata
-
 ## 7.30.0
 
 ### Minor Changes

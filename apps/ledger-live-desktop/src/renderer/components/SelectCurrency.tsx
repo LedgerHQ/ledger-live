@@ -11,7 +11,7 @@ import { CreateStylesReturnType } from "~/renderer/components/Select/createStyle
 import Box from "~/renderer/components/Box";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Text from "./Text";
-import { StylesConfig } from "react-select";
+import { ThemeConfig } from "react-select/src/theme";
 
 type CurrencyOption = CryptoOrTokenCurrency & {
   value: CryptoOrTokenCurrency;
@@ -33,10 +33,12 @@ type Props = {
   isDisabled?: boolean;
   id?: string;
   renderValueOverride?: ({ data }: { data: CurrencyOption }) => React.ReactNode;
-  stylesMap?: (a: StylesConfig<CurrencyOption>) => CreateStylesReturnType<CurrencyOption>;
+  stylesMap?: (a: ThemeConfig) => CreateStylesReturnType<CurrencyOption>;
   onMenuOpen?: () => void;
   small?: boolean;
   onMenuScrollToBottom?: () => void;
+  lastItemIndex?: number;
+  keepLastScrollPosition?: boolean;
   isLoading?: boolean;
 };
 const getOptionValue = (data: CurrencyOption) => (data.currency as CryptoOrTokenCurrency).id;
@@ -59,6 +61,8 @@ const SelectCurrency = ({
   onMenuOpen,
   small,
   onMenuScrollToBottom,
+  lastItemIndex,
+  keepLastScrollPosition,
   isLoading,
 }: Props) => {
   const { t } = useTranslation();
@@ -148,6 +152,8 @@ const SelectCurrency = ({
       stylesMap={stylesMap}
       small={small}
       onScrollEnd={onMenuScrollToBottom}
+      lastItemIndex={lastItemIndex}
+      keepLastScrollPosition={keepLastScrollPosition}
       isLoading={isLoading}
     />
   );

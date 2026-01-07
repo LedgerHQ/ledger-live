@@ -130,6 +130,36 @@ const completeExchange = (
 
         if (unsubscribed) return;
 
+        const isLifi = provider.toLowerCase() === "lifi";
+        // The result of estimateGas is quite accurate in calculating how much gas the user will have to pay
+        // for after the execution of the transaction,
+        // but it does not represent how much gas the blockchain requires to successfully evaluate a transaction.
+        // This is due to gas refunds of storage slots that get set and cleaned in the same transaction,
+        // gas buffers in some implementations and other things.
+        // Please always add a buffer on top of that value, LiFi recommends 25-30%.
+        const LIFI_GAS_LIMIT_BUFFER_MULTIPLIER = 1.3;
+
+        if (
+          isLifi &&
+          transaction.family === "evm" &&
+          transaction.gasLimit &&
+          BigNumber.isBigNumber(transaction.gasLimit)
+        ) {
+          const gasLimit = transaction.gasLimit
+            .times(LIFI_GAS_LIMIT_BUFFER_MULTIPLIER)
+            .integerValue(BigNumber.ROUND_UP);
+          const transactionFixed = {
+            ...transaction,
+            fees: undefined, // to be recalculated
+            customFees: {
+              parameters: {
+                gasLimit,
+              },
+            },
+          };
+          transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
+        }
+
         const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
           refundAccount,
           transaction,
@@ -155,6 +185,7 @@ const completeExchange = (
           exchange.transactionType === ExchangeTypes.SwapNg
             ? { payload: Buffer.from("." + binaryPayload), format: "jws" }
             : { payload: Buffer.from(binaryPayload, "hex"), format: "raw" };
+
         await exchange.processTransaction(payload, estimatedFees, format);
         if (unsubscribed) return;
 

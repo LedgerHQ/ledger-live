@@ -53,7 +53,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const formattedRewards = formatCurrencyUnit(unit, rewards, {
     showCode: true,
     disableRounding: true,
-    locale,
+    locale: locale,
   });
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.AlgorandClaimRewardsSelectDevice, {

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/react-native-hid",
-  "version": "6.34.0",
+  "version": "6.33.1",
   "nativePackage": true,
   "description": "Ledger Hardware Wallet Web implementation of the communication layer, using U2F api",
   "keywords": [
@@ -36,14 +36,13 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",
     "documentation": "14.0.2",
-    "jest": "catalog:",
+    "jest": "^29.7.0",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
+    "ts-jest": "^29.1.1",
     "ts-node": "^10.4.0",
     "yarn-add-no-save": "^1.0.3"
   },

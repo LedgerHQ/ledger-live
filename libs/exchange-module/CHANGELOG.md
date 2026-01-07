@@ -1,21 +1,5 @@
 # @ledgerhq/wallet-api-exchange-module
 
-## 0.20.0
-
-### Minor Changes
-
-- [#12938](https://github.com/LedgerHQ/ledger-live/pull/12938) [`48175fa`](https://github.com/LedgerHQ/ledger-live/commit/48175fa38e438fe406595da1df33b82a37b8af61) Thanks [@qperrot](https://github.com/qperrot)! - Support changeAddress on Bitcoin
-
-- [#13162](https://github.com/LedgerHQ/ledger-live/pull/13162) [`2681620`](https://github.com/LedgerHQ/ledger-live/commit/2681620460f09613f540da5e25cc8ccb5a785da8) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add isEmbeddedSwap tracking param to allow passing information for Swap on Portfolio to transaction handler tracking events
-
-## 0.20.0-next.0
-
-### Minor Changes
-
-- [#12938](https://github.com/LedgerHQ/ledger-live/pull/12938) [`48175fa`](https://github.com/LedgerHQ/ledger-live/commit/48175fa38e438fe406595da1df33b82a37b8af61) Thanks [@qperrot](https://github.com/qperrot)! - Support changeAddress on Bitcoin
-
-- [#13162](https://github.com/LedgerHQ/ledger-live/pull/13162) [`2681620`](https://github.com/LedgerHQ/ledger-live/commit/2681620460f09613f540da5e25cc8ccb5a785da8) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add isEmbeddedSwap tracking param to allow passing information for Swap on Portfolio to transaction handler tracking events
-
 ## 0.19.1
 
 ### Patch Changes

@@ -21,17 +21,6 @@ import BigNumber from "bignumber.js";
 
 import * as converters from "./converters";
 import * as signMessage from "../hw/signMessage/index";
-
-jest.mock("./converters", () => ({
-  ...jest.requireActual("./converters"),
-  getAccountIdFromWalletAccountId: jest.fn(),
-  accountToWalletAPIAccount: jest.fn(),
-}));
-
-jest.mock("../hw/signMessage/index", () => ({
-  ...jest.requireActual("../hw/signMessage/index"),
-  prepareMessageToSign: jest.fn(),
-}));
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackingAPI } from "./tracking";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
@@ -41,13 +30,6 @@ import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/te
 
 // Setup mock store for unit tests
 setupMockCryptoAssetsStore();
-
-// Global mocked functions
-const mockedGetAccountIdFromWalletAccountId = jest.mocked(
-  converters.getAccountIdFromWalletAccountId,
-);
-const mockedAccountToWalletAPIAccount = jest.mocked(converters.accountToWalletAPIAccount);
-const mockedPrepareMessageToSign = jest.mocked(signMessage.prepareMessageToSign);
 
 describe("receiveOnAccountLogic", () => {
   // Given
@@ -63,17 +45,16 @@ describe("receiveOnAccountLogic", () => {
   });
 
   const uiNavigation = jest.fn();
+  const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
+    converters,
+    "getAccountIdFromWalletAccountId",
+  );
 
   beforeEach(() => {
     mockWalletAPIReceiveRequested.mockClear();
     mockWalletAPIReceiveFail.mockClear();
     uiNavigation.mockClear();
-    mockedGetAccountIdFromWalletAccountId.mockClear();
-    mockedAccountToWalletAPIAccount.mockClear();
-    // Default implementation for accountToWalletAPIAccount
-    mockedAccountToWalletAPIAccount.mockImplementation((_walletState, _account, _parentAccount) => {
-      return createWalletAPIAccount();
-    });
+    getAccountIdFromWalletAccountIdSpy.mockClear();
   });
 
   describe("when nominal case", () => {
@@ -84,7 +65,7 @@ describe("receiveOnAccountLogic", () => {
 
     beforeEach(() => {
       uiNavigation.mockResolvedValueOnce(expectedResult);
-      mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
     });
 
     it("calls uiNavigation callback with an accountAddress", async () => {
@@ -93,7 +74,7 @@ describe("receiveOnAccountLogic", () => {
         ...createWalletAPIAccount(),
         address: "Converted address",
       };
-      mockedAccountToWalletAPIAccount.mockReturnValueOnce(convertedAccount);
+      jest.spyOn(converters, "accountToWalletAPIAccount").mockReturnValueOnce(convertedAccount);
 
       // When
       const result = await receiveOnAccountLogic(
@@ -124,7 +105,7 @@ describe("receiveOnAccountLogic", () => {
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
 
     beforeEach(() => {
-      mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(undefined);
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(undefined);
     });
 
     it("returns an error", async () => {
@@ -182,6 +163,11 @@ describe("completeExchangeLogic", () => {
   });
 
   const uiNavigation = jest.fn();
+  const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
+    converters,
+    "getAccountIdFromWalletAccountId",
+  );
+
   beforeAll(() => {
     setSupportedCurrencies(["bitcoin", "ethereum"]);
   });
@@ -192,7 +178,7 @@ describe("completeExchangeLogic", () => {
   beforeEach(() => {
     mockWalletAPICompleteExchangeRequested.mockClear();
     uiNavigation.mockClear();
-    mockedGetAccountIdFromWalletAccountId.mockClear();
+    getAccountIdFromWalletAccountIdSpy.mockClear();
   });
 
   describe("when nominal case", () => {
@@ -239,7 +225,7 @@ describe("completeExchangeLogic", () => {
         chainId: 1,
       };
 
-      mockedGetAccountIdFromWalletAccountId
+      getAccountIdFromWalletAccountIdSpy
         .mockReturnValueOnce(fromAccountId)
         .mockReturnValueOnce(toAccountId);
 
@@ -306,7 +292,7 @@ describe("completeExchangeLogic", () => {
         maxPriorityFeePerGas: undefined,
       };
 
-      mockedGetAccountIdFromWalletAccountId
+      getAccountIdFromWalletAccountIdSpy
         .mockReturnValueOnce(fromAccountId)
         .mockReturnValueOnce(toAccountId);
 
@@ -358,7 +344,7 @@ describe("completeExchangeLogic", () => {
           rate: 1,
         };
 
-        mockedGetAccountIdFromWalletAccountId
+        getAccountIdFromWalletAccountIdSpy
           .mockReturnValueOnce(fromAccountId)
           .mockReturnValueOnce(toAccountId);
 
@@ -390,7 +376,7 @@ describe("completeExchangeLogic", () => {
         rate: 1,
       };
 
-      mockedGetAccountIdFromWalletAccountId
+      getAccountIdFromWalletAccountIdSpy
         .mockReturnValueOnce(fromAccountId)
         .mockReturnValueOnce(toAccountId);
 
@@ -428,7 +414,7 @@ describe("completeExchangeLogic", () => {
         rate: 1,
       };
 
-      mockedGetAccountIdFromWalletAccountId
+      getAccountIdFromWalletAccountIdSpy
         .mockReturnValueOnce(fromAccountId)
         .mockReturnValueOnce(toAccountId);
 
@@ -456,10 +442,15 @@ describe("broadcastTransactionLogic", () => {
 
   const uiNavigation = jest.fn();
 
+  const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
+    converters,
+    "getAccountIdFromWalletAccountId",
+  );
+
   beforeEach(() => {
     mockWalletAPIBroadcastFail.mockClear();
     uiNavigation.mockClear();
-    mockedGetAccountIdFromWalletAccountId.mockClear();
+    getAccountIdFromWalletAccountIdSpy.mockClear();
   });
 
   describe("when nominal case", () => {
@@ -469,7 +460,7 @@ describe("broadcastTransactionLogic", () => {
     const signedTransaction = createSignedOperation();
 
     beforeEach(() => {
-      mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
     });
 
     it("calls uiNavigation callback with a signedOperation", async () => {
@@ -511,7 +502,7 @@ describe("broadcastTransactionLogic", () => {
     const signedTransaction = createSignedOperation();
 
     beforeEach(() => {
-      mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(nonFoundAccountId);
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(nonFoundAccountId);
     });
 
     it("returns an error", async () => {
@@ -559,30 +550,36 @@ describe("signMessageLogic", () => {
 
   const uiNavigation = jest.fn();
 
+  const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
+    converters,
+    "getAccountIdFromWalletAccountId",
+  );
+
   beforeEach(() => {
     mockWalletAPISignMessageRequested.mockClear();
     mockWalletAPISignMessageFail.mockClear();
     uiNavigation.mockClear();
-    mockedGetAccountIdFromWalletAccountId.mockClear();
+    getAccountIdFromWalletAccountIdSpy.mockClear();
   });
 
   describe("when nominal case", () => {
     // Given
     const accountId = "js:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
+    const spyPrepareMessageToSign = jest.spyOn(signMessage, "prepareMessageToSign");
 
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
 
     beforeEach(() => {
-      mockedPrepareMessageToSign.mockClear();
-      mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+      spyPrepareMessageToSign.mockClear();
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
     });
 
     it("calls uiNavigation callback with a signedOperation", async () => {
       // Given
       const expectedResult = "Function called";
       const formattedMessage = createMessageData();
-      mockedPrepareMessageToSign.mockReturnValueOnce(formattedMessage);
+      spyPrepareMessageToSign.mockReturnValueOnce(formattedMessage);
       uiNavigation.mockResolvedValueOnce(expectedResult);
 
       // When
@@ -612,7 +609,7 @@ describe("signMessageLogic", () => {
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
 
     beforeEach(() => {
-      mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(nonFoundAccountId);
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(nonFoundAccountId);
     });
 
     it("returns an error", async () => {
@@ -646,7 +643,7 @@ describe("signMessageLogic", () => {
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
 
     beforeEach(() => {
-      mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(tokenAccountId);
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(tokenAccountId);
     });
 
     it("returns an error", async () => {
@@ -675,17 +672,18 @@ describe("signMessageLogic", () => {
     // Given
     const accountId = "js:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
+    const spyPrepareMessageToSign = jest.spyOn(signMessage, "prepareMessageToSign");
 
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
 
     beforeEach(() => {
-      mockedPrepareMessageToSign.mockClear();
-      mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+      spyPrepareMessageToSign.mockClear();
+      getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
     });
 
     it("returns an error", async () => {
       // Given
-      mockedPrepareMessageToSign.mockImplementationOnce(() => {
+      spyPrepareMessageToSign.mockImplementationOnce(() => {
         throw new Error("Some error");
       });
 
@@ -700,7 +698,7 @@ describe("signMessageLogic", () => {
 
     it("calls the tracking for error", async () => {
       // Given
-      mockedPrepareMessageToSign.mockImplementationOnce(() => {
+      spyPrepareMessageToSign.mockImplementationOnce(() => {
         throw new Error("Some error");
       });
 
@@ -745,11 +743,16 @@ describe("bitcoinFamilyAccountGetAddressLogic", () => {
     accountsParams: [{ id: "11" }, { id: "12" }, { id: "13", currency: bitcoinCrypto }],
   });
 
+  const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
+    converters,
+    "getAccountIdFromWalletAccountId",
+  );
+
   beforeEach(() => {
     mockBitcoinFamilyAccountAddressRequested.mockClear();
     mockBitcoinFamilyAccountAddressFail.mockClear();
     mockBitcoinFamilyAccountAddressSuccess.mockClear();
-    mockedGetAccountIdFromWalletAccountId.mockClear();
+    getAccountIdFromWalletAccountIdSpy.mockClear();
   });
 
   const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
@@ -773,7 +776,7 @@ describe("bitcoinFamilyAccountGetAddressLogic", () => {
   ])("returns an error when $desc", async ({ accountId, errorMessage }) => {
     // Given
 
-    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
 
     // When
     await expect(async () => {
@@ -789,7 +792,7 @@ describe("bitcoinFamilyAccountGetAddressLogic", () => {
   it("should return the address", async () => {
     // Given
     const accountId = "js:2:bitcoin:0x013:";
-    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
 
     // When
     const result = await bitcoinFamilyAccountGetAddressLogic(context, walletAccountId);
@@ -804,7 +807,7 @@ describe("bitcoinFamilyAccountGetAddressLogic", () => {
   it("should return the address with a derivationPath", async () => {
     // Given
     const accountId = "js:2:bitcoin:0x013:";
-    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
 
     // When
     const result = await bitcoinFamilyAccountGetAddressLogic(context, walletAccountId, "0/1");
@@ -834,11 +837,16 @@ describe("bitcoinFamilyAccountGetPublicKeyLogic", () => {
     accountsParams: [{ id: "11" }, { id: "12" }, { id: "13", currency: bitcoinCrypto }],
   });
 
+  const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
+    converters,
+    "getAccountIdFromWalletAccountId",
+  );
+
   beforeEach(() => {
     mockBitcoinFamilyAccountPublicKeyRequested.mockClear();
     mockBitcoinFamilyAccountPublicKeyFail.mockClear();
     mockBitcoinFamilyAccountPublicKeySuccess.mockClear();
-    mockedGetAccountIdFromWalletAccountId.mockClear();
+    getAccountIdFromWalletAccountIdSpy.mockClear();
   });
 
   const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
@@ -862,7 +870,7 @@ describe("bitcoinFamilyAccountGetPublicKeyLogic", () => {
   ])("returns an error when $desc", async ({ accountId, errorMessage }) => {
     // Given
 
-    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
 
     // When
     await expect(async () => {
@@ -878,7 +886,7 @@ describe("bitcoinFamilyAccountGetPublicKeyLogic", () => {
   it("should return the PublicKey", async () => {
     // Given
     const accountId = "js:2:bitcoin:0x013:";
-    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
 
     // When
     const result = await bitcoinFamilyAccountGetPublicKeyLogic(context, walletAccountId);
@@ -893,7 +901,7 @@ describe("bitcoinFamilyAccountGetPublicKeyLogic", () => {
   it("should return the PublicKey with a derivationPath", async () => {
     // Given
     const accountId = "js:2:bitcoin:0x013:";
-    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
 
     // When
     const result = await bitcoinFamilyAccountGetPublicKeyLogic(context, walletAccountId, "0/1");
@@ -923,11 +931,16 @@ describe("bitcoinFamilyAccountGetXPubLogic", () => {
     accountsParams: [{ id: "11" }, { id: "12" }, { id: "13", currency: bitcoinCrypto }],
   });
 
+  const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
+    converters,
+    "getAccountIdFromWalletAccountId",
+  );
+
   beforeEach(() => {
     mockBitcoinFamilyAccountXpubRequested.mockClear();
     mockBitcoinFamilyAccountXpubFail.mockClear();
     mockBitcoinFamilyAccountXpubSuccess.mockClear();
-    mockedGetAccountIdFromWalletAccountId.mockClear();
+    getAccountIdFromWalletAccountIdSpy.mockClear();
   });
 
   const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
@@ -951,7 +964,7 @@ describe("bitcoinFamilyAccountGetXPubLogic", () => {
   ])("returns an error when $desc", async ({ accountId, errorMessage }) => {
     // Given
 
-    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
 
     // When
     await expect(async () => {
@@ -967,7 +980,7 @@ describe("bitcoinFamilyAccountGetXPubLogic", () => {
   it("should return the xpub", async () => {
     // Given
     const accountId = "js:2:bitcoin:0x013:";
-    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(accountId);
+    getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
 
     // When
     const result = await bitcoinFamilyAccountGetXPubLogic(context, walletAccountId);

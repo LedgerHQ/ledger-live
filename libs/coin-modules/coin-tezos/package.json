@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tezos",
-  "version": "6.11.1",
+  "version": "6.10.1",
   "description": "Tezos Coin integration",
   "keywords": [
     "Ledger",
@@ -89,12 +89,11 @@
     "@taquito/local-forging": "^23.0.0-RC.0",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.4",
-    "jest": "catalog:",
+    "jest": "^29.7.0",
     "msw": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
+    "ts-jest": "^29.1.4",
     "typescript": "^5.4.5"
   },
   "scripts": {

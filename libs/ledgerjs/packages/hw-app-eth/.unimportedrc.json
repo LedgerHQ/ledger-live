@@ -6,9 +6,6 @@
     "@ledgerhq/hw-transport-mocker",
     "jest-sonar"
   ],
-  "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util"],
+  "ignoreUnresolved": [],
   "ignoreUnimported": []
 }

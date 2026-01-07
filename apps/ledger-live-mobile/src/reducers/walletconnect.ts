@@ -1,6 +1,6 @@
 import { handleActions } from "redux-actions";
 import type { Action, ReducerMap } from "redux-actions";
-import { createSelector } from "~/context/selectors";
+import { createSelector } from "reselect";
 import type { State, WalletConnectState } from "./types";
 import { WalletConnectPayload, WalletConnectSetUriPayload } from "../actions/types";
 

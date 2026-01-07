@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-icon",
-  "version": "0.16.1",
+  "version": "0.15.2",
   "description": "Ledger Icon Coin integration",
   "keywords": [
     "Ledger",
@@ -56,7 +56,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
-    "expect": "catalog:",
+    "expect": "^27.4.6",
     "icon-sdk-js": "1.5.2",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
@@ -66,14 +66,13 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
-    "@types/jest": "catalog:",
+    "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
-    "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1"
   },
   "scripts": {
-    "coverage": "jest --coverage --passWithNoTests",
+    "coverage": "jest --coverage",
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
     "prewatch": "pnpm build",

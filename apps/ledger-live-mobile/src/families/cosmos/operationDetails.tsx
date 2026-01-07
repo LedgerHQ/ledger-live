@@ -70,7 +70,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
         alwaysShowSign: false,
         showCode: true,
         discreet,
-        locale,
+        locale: locale,
       });
       ret = (
         <>
@@ -97,7 +97,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
         alwaysShowSign: false,
         showCode: true,
         discreet,
-        locale,
+        locale: locale,
       });
       ret = (
         <>
@@ -125,7 +125,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
         alwaysShowSign: false,
         showCode: true,
         discreet,
-        locale,
+        locale: locale,
       });
       ret = (
         <>
@@ -165,7 +165,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
                   alwaysShowSign: false,
                   showCode: true,
                   discreet,
-                  locale,
+                  locale: locale,
                 })
               }
               onPress={() => {

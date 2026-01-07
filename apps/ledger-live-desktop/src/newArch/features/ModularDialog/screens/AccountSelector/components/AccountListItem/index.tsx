@@ -47,7 +47,6 @@ export const AccountListItem = ({ onClick, account }: AccountListItemProps) => {
       trailingContent={renderTrailingContent(balance, fiatValue)}
       onClick={onClick}
       data-testid={`account-row-${name}`}
-      className="-outline-offset-2"
     />
   );
 };

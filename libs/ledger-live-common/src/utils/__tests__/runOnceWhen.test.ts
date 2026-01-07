@@ -15,8 +15,8 @@ describe("runOnceWhen function", () => {
 
     jest.advanceTimersByTime(100);
 
-    expect(callback).toHaveBeenCalled();
-    expect(conditionFunc).toHaveBeenCalled();
+    expect(callback).toBeCalled();
+    expect(conditionFunc).toBeCalled();
   });
 
   test("calls the callback function when the condition is fulfilled after < maxWaitTimeMS", () => {
@@ -27,15 +27,15 @@ describe("runOnceWhen function", () => {
 
     jest.advanceTimersByTime(100);
 
-    expect(callback).not.toHaveBeenCalled();
-    expect(conditionFunc).toHaveBeenCalled();
+    expect(callback).not.toBeCalled();
+    expect(conditionFunc).toBeCalled();
 
     conditionFunc.mockReturnValue(true);
 
     jest.advanceTimersByTime(100);
 
-    expect(callback).toHaveBeenCalled();
-    expect(conditionFunc).toHaveBeenCalled();
+    expect(callback).toBeCalled();
+    expect(conditionFunc).toBeCalled();
   });
 
   test("does not call the callback function when the condition is never fulfilled", () => {
@@ -48,8 +48,8 @@ describe("runOnceWhen function", () => {
     // (but not any new timers that get created during that process)
     jest.runOnlyPendingTimers();
 
-    expect(callback).not.toHaveBeenCalled();
-    expect(conditionFunc).toHaveBeenCalled();
+    expect(callback).not.toBeCalled();
+    expect(conditionFunc).toBeCalled();
   });
 
   test("stops checking after the maximum wait time has passed", () => {
@@ -66,6 +66,6 @@ describe("runOnceWhen function", () => {
     // Number of times conditionFunc gets called should be
     expect(conditionFunc).toHaveBeenCalledTimes(5000 / 100);
 
-    expect(callback).not.toHaveBeenCalled();
+    expect(callback).not.toBeCalled();
   });
 });

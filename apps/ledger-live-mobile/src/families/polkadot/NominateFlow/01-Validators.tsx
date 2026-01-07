@@ -124,7 +124,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
     alwaysShowSign: false,
     showCode: true,
     discreet: false,
-    locale,
+    locale: locale,
   });
   const maxNominatorRewardedPerValidator = staking?.maxNominatorRewardedPerValidator || 300;
   const sorted = useSortedValidators(searchQuery, polkadotValidators, nominations);

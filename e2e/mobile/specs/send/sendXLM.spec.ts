@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSendTest } from "./send";
 
 const transaction = new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag");

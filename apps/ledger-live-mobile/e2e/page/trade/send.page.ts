@@ -1,5 +1,4 @@
 import { expect } from "detox";
-import { Step } from "jest-allure2-reporter/api";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 import { TradePageUtil } from "./trade-page.util";
 
