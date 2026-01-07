@@ -1,0 +1,17 @@
+diff --git a/index.js b/index.js
+index 52b6946977b6b4a5a81ef39e866a7e5243b62955..c93d2b176613ed74b7b6aa7832ceff4f12d0ee97 100644
+--- a/index.js
++++ b/index.js
+@@ -9,11 +9,7 @@
+ 'use strict'
+ 
+ // Fall back to base64-js in every other environment (Node, browser tests, etc.).
+-const isReactNative =
+-  typeof navigator === 'object' &&
+-  navigator != null &&
+-  navigator.product === 'ReactNative'
+-const base64 = isReactNative ? require('react-native-quick-base64') : require('base64-js')
++const base64 = require('react-native-quick-base64')
+ const ieee754 = require('ieee754')
+ const customInspectSymbol =
+   (typeof Symbol === 'function' && typeof Symbol['for'] === 'function') // eslint-disable-line dot-notation

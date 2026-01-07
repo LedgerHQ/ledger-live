@@ -1,4 +1,8 @@
 import "react-native-get-random-values";
+// We install after node-libs-react-native to override the Buffer implementation
+import QuickCrypto from "react-native-quick-crypto";
+global.crypto = QuickCrypto;
+
 // Injects node.js shims.
 // https://github.com/parshap/node-libs-react-native
 import "node-libs-react-native/globals";
