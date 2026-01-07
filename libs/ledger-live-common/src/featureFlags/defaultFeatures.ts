@@ -768,6 +768,18 @@ export const DEFAULT_FEATURES: Features = {
       touchscreens: false,
     },
   }),
+  lwmWallet40: {
+    ...DEFAULT_FEATURE,
+    params: {
+      marketBanner: true,
+    },
+  },
+  lwdWallet40: {
+    ...DEFAULT_FEATURE,
+    params: {
+      marketBanner: true,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings

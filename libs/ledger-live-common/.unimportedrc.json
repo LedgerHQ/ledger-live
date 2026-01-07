@@ -3,6 +3,7 @@
     "src/account/helpers.ts",
     "src/account/index.ts",
     "src/account/serialization.ts",
+    "src/analytics/featureFlagHelpers/wallet40.ts",
     "src/apps/filtering.ts",
     "src/apps/formatting.ts",
     "src/apps/hw.ts",
