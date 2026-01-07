@@ -122,10 +122,16 @@ const metroConfig = {
       ...buildTsAlias(tsconfig.compilerOptions.paths),
       // @features/* aliases are dynamically generated for each feature
       ...buildFeaturesAliases(),
+      crypto: require.resolve("react-native-quick-crypto"),
     },
     resolveRequest: (context, moduleName, platform) => {
       if (["tls", "http2", "dns"].includes(moduleName)) {
         return { type: "empty" };
+      }
+
+      if (moduleName === "crypto") {
+        // when importing crypto, resolve to react-native-quick-crypto
+        return context.resolveRequest(context, "react-native-quick-crypto", platform);
       }
 
       try {
