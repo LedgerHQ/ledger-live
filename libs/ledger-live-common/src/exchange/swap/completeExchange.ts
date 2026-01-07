@@ -33,6 +33,7 @@ import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/erro
 import { getCryptoCurrencyById } from "../../currencies";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
+const LIFI_GAS_LIMIT_BUFFER_MULTIPLIER = 1.3;
 
 const completeExchange = (
   input: CompleteExchangeInputSwap,
@@ -137,7 +138,6 @@ const completeExchange = (
         // This is due to gas refunds of storage slots that get set and cleaned in the same transaction,
         // gas buffers in some implementations and other things.
         // Please always add a buffer on top of that value, LiFi recommends 25-30%.
-        const LIFI_GAS_LIMIT_BUFFER_MULTIPLIER = 1.3;
 
         if (
           isLifi &&
