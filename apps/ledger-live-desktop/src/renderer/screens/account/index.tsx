@@ -106,6 +106,7 @@ const AccountPage = ({
   const isNativeAccount = account?.type === "Account";
   const tokensBalanceEnabled = useCoinModuleFeature("tokensBalance", family);
   const nativeBalanceEnabled = useCoinModuleFeature("nativeBalance", family);
+  const hasBlockFeature = useCoinModuleFeature("blockchainBlocks", family);
 
   let showBalanceSummary = true;
   if (isTokenAccount) {
@@ -160,7 +161,6 @@ const AccountPage = ({
         style={{
           width: "100%",
           overflowX: "visible",
-          marginBottom: "30px",
         }}
       >
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
@@ -172,6 +172,20 @@ const AccountPage = ({
       ) : null}
       {!isAccountEmpty(account) ? (
         <>
+          {hasBlockFeature ? (
+            <Box
+              horizontal
+              pb={1}
+              flow={4}
+              style={{
+                width: "100%",
+                overflowX: "visible",
+                justifyContent: "end",
+              }}
+            >
+              Block: ❒ {account.blockHeight}
+            </Box>
+          ) : null}
           {showBalanceSummary ? (
             <Box mb={7}>
               <BalanceSummary
