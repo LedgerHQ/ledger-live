@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSendInvalidTokenAmountTest } from "../send";
 
 const transaction = new Transaction(
@@ -13,4 +12,5 @@ runSendInvalidTokenAmountTest(
     /You need \d+\.\d+ BNB in your account to pay for transaction fees on the BNB Chain network\. .*/,
   ),
   ["B2CQA-2700"],
+  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@bsc", "@family-evm"],
 );

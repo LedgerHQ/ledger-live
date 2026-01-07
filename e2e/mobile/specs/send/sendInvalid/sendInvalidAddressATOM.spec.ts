@@ -7,4 +7,5 @@ runSendInvalidAddressTest(
   "Destination and source accounts must not be the same.",
   undefined,
   ["B2CQA-2713"],
+  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@cosmos", "@family-cosmos"],
 );

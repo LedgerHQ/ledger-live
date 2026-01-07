@@ -7,7 +7,7 @@ const swapCheckProviderTestConfig = {
   toAccount: TokenAccount.ETH_USDT_1,
   provider: Provider.ONE_INCH,
   tmsLinks: ["B2CQA-3120"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
 runSwapCheckProvider(
