@@ -8,7 +8,7 @@ export const celoConfig: Record<string, ConfigInfo> = {
         type: "active",
         features: [
           { id: "blockchain_txs", type: "active" },
-          { id: "staking_txs", type: "active" },
+          { id: "staking_craft", type: "active" },
         ],
       },
       node: {

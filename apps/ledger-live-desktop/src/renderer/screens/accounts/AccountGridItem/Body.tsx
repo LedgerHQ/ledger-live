@@ -2,20 +2,24 @@ import React from "react";
 import { useBalanceHistoryWithCountervalue } from "~/renderer/actions/portfolio";
 import { PortfolioRange, AccountLike } from "@ledgerhq/types-live";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import Chart from "~/renderer/components/ChartPreview";
 import useTheme from "~/renderer/hooks/useTheme";
 import { Data } from "~/renderer/components/Chart/types";
+import { useCoinModuleFeature } from "@ledgerhq/live-common/featureFlags/useCoinModuleFeature";
+import { CoinFamily } from "@ledgerhq/live-common/bridge/features";
+import { Account } from "@ledgerhq/types-live";
 
 type Props = {
   account: AccountLike;
   range: PortfolioRange;
+  parentAccount?: Account | null;
 };
 
-function Body({ account, range }: Props) {
+function Body({ account, range, parentAccount }: Props) {
   const { history, countervalueAvailable, countervalueChange } = useBalanceHistoryWithCountervalue({
     account,
     range,
@@ -23,6 +27,24 @@ function Body({ account, range }: Props) {
   const bgColor = useTheme().colors.background.card;
   const currency = getAccountCurrency(account);
   const color = useCurrencyColor(currency, bgColor);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const isTokenAccount = account.type === "TokenAccount";
+  const isNativeAccount = account.type === "Account";
+  const family = (mainAccount?.currency.family as CoinFamily) || "";
+  const tokensBalanceEnabled = useCoinModuleFeature("tokensBalance", family);
+  const nativeBalanceEnabled = useCoinModuleFeature("nativeBalance", family);
+
+  let showBalance = true;
+  if (isTokenAccount) {
+    showBalance = tokensBalanceEnabled;
+  } else if (isNativeAccount) {
+    showBalance = nativeBalanceEnabled;
+  }
+
+  if (!showBalance) {
+    return null;
+  }
+
   return (
     <Box flow={4}>
       <Box flow={2} horizontal>

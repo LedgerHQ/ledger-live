@@ -34,7 +34,7 @@ import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
 import NftEntryPoint from "LLD/features/NftEntryPoint";
 import { useCoinModuleFeature } from "@ledgerhq/live-common/featureFlags/useCoinModuleFeature";
-import { CoinFamily } from "@ledgerhq/live-common/lib-es/bridge/features";
+import { CoinFamily } from "@ledgerhq/live-common/bridge/features";
 
 type Params = {
   id: string;
@@ -93,7 +93,7 @@ const AccountPage = ({
 }: Props) => {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
-  const family = mainAccount?.currency.family as CoinFamily || "";
+  const family = (mainAccount?.currency.family as CoinFamily) || "";
   const AccountBodyHeader = specific?.AccountBodyHeader;
   const AccountSubHeader = specific?.AccountSubHeader;
   const PendingTransferProposals = specific?.PendingTransferProposals;
@@ -102,6 +102,17 @@ const AccountPage = ({
   const hasNativeHistory = useCoinModuleFeature("nativeHistory", family);
   const hasStakingHistory = useCoinModuleFeature("stakingHistory", family);
   const hasTokensHistory = useCoinModuleFeature("tokensHistory", family);
+  const isTokenAccount = account?.type === "TokenAccount";
+  const isNativeAccount = account?.type === "Account";
+  const tokensBalanceEnabled = useCoinModuleFeature("tokensBalance", family);
+  const nativeBalanceEnabled = useCoinModuleFeature("nativeBalance", family);
+
+  let showBalanceSummary = true;
+  if (isTokenAccount) {
+    showBalanceSummary = tokensBalanceEnabled;
+  } else if (isNativeAccount) {
+    showBalanceSummary = nativeBalanceEnabled;
+  }
 
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
@@ -161,16 +172,18 @@ const AccountPage = ({
       ) : null}
       {!isAccountEmpty(account) ? (
         <>
-          <Box mb={7}>
-            <BalanceSummary
-              mainAccount={mainAccount}
-              account={account}
-              parentAccount={parentAccount}
-              chartColor={color}
-              countervalueFirst={countervalueFirst}
-              setCountervalueFirst={setCountervalueFirst}
-            />
-          </Box>
+          {showBalanceSummary ? (
+            <Box mb={7}>
+              <BalanceSummary
+                mainAccount={mainAccount}
+                account={account}
+                parentAccount={parentAccount}
+                chartColor={color}
+                countervalueFirst={countervalueFirst}
+                setCountervalueFirst={setCountervalueFirst}
+              />
+            </Box>
+          ) : null}
           <AccountStakeBanner account={account} />
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />

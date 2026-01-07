@@ -13,7 +13,7 @@ export const cosmosConfig: CosmosConfig = {
         type: "active",
         features: [
           { id: "blockchain_txs", type: "active" },
-          { id: "staking_txs", type: "active" },
+          { id: "staking_craft", type: "active" },
         ],
       },
     },
@@ -28,7 +28,7 @@ export const cosmosConfig: CosmosConfig = {
         type: "active",
         features: [
           { id: "blockchain_txs", type: "active" },
-          { id: "staking_txs", type: "active" },
+          { id: "staking_craft", type: "active" },
         ],
       },
     },

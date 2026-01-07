@@ -18,6 +18,7 @@ type Props = {
   parentAccount: Account;
   onClick: (b: AccountLike, a: Account) => void;
   range: PortfolioRange;
+  showBalance?: boolean;
 };
 const NestedRow = styled(Box)`
   flex: 1;
@@ -38,7 +39,15 @@ const NestedRow = styled(Box)`
   }
 `;
 function TokenRow(props: Props) {
-  const { account, parentAccount, onClick, range, nested, disableRounding } = props;
+  const {
+    account,
+    parentAccount,
+    onClick,
+    range,
+    nested,
+    disableRounding,
+    showBalance = true,
+  } = props;
   const onClickRow = () => onClick(account, parentAccount);
   const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
@@ -50,9 +59,13 @@ function TokenRow(props: Props) {
       tabIndex={-1}
     >
       <Header nested={nested} account={account} />
-      <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
-      <Countervalue account={account} currency={currency} range={range} />
-      <Delta account={account} range={range} />
+      {showBalance && (
+        <>
+          <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
+          <Countervalue account={account} currency={currency} range={range} />
+          <Delta account={account} range={range} />
+        </>
+      )}
       <Star accountId={account.id} />
     </Row>
   );
