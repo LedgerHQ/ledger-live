@@ -172,7 +172,7 @@ const AccountPage = ({
       ) : null}
       {!isAccountEmpty(account) ? (
         <>
-          {hasBlockFeature ? (
+          {hasBlockFeature && account.blockHeight ? (
             <Box
               horizontal
               pb={1}
