@@ -834,7 +834,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       featureGroup: "tokens",
       featureId: "tokens_craft",
-      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+      featureConfig: [{ status: "released", families: ["evm", "stellar"] }],
     },
   },
 
@@ -843,7 +843,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       featureGroup: "tokens",
       featureId: "tokens_balance",
-      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+      featureConfig: [{ status: "released", families: ["evm", "stellar"] }],
     },
   },
 
@@ -852,7 +852,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       featureGroup: "tokens",
       featureId: "tokens_history",
-      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+      featureConfig: [{ status: "released", families: ["evm", "stellar"] }],
     },
   },
 
@@ -861,7 +861,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       featureGroup: "memo",
       featureId: "memo_craft",
-      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+      featureConfig: [{ status: "released", families: ["xrp", "stellar"] }],
     },
   },
 
@@ -870,7 +870,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       featureGroup: "memo",
       featureId: "memo_history",
-      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+      featureConfig: [{ status: "released", families: ["xrp", "stellar"] }],
     },
   },
 
@@ -879,7 +879,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       featureGroup: "staking",
       featureId: "staking_craft",
-      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+      featureConfig: [{ status: "released", families: ["tezos"] }],
     },
   },
 
@@ -888,7 +888,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       featureGroup: "staking",
       featureId: "staking_history",
-      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+      featureConfig: [{ status: "released", families: ["tezos"] }],
     },
   },
 
@@ -897,7 +897,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       featureGroup: "staking",
       featureId: "staking_stakes",
-      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+      featureConfig: [{ status: "released", families: ["tezos"] }],
     },
   },
 
@@ -906,7 +906,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       featureGroup: "staking",
       featureId: "staking_rewards",
-      featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
+      featureConfig: [{ status: "released", families: ["tezos"] }],
     },
   },
 };

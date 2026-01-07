@@ -4,6 +4,9 @@ import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
+import { useCoinModuleFeature } from "@ledgerhq/live-common/featureFlags/useCoinModuleFeature";
+import { CoinFamily } from "@ledgerhq/live-common/bridge/features";
+
 type Props = {
   onChange: (a: Transaction) => void;
   transaction: Transaction;
@@ -32,13 +35,14 @@ const TagField = ({ onChange, account, transaction, autoFocus }: Props) => {
     },
     [onChange, account, transaction],
   );
-  return (
+  const hasMemoFeature = useCoinModuleFeature("memoCraft", account.currency.family as CoinFamily);
+  return hasMemoFeature ? (
     <MemoTagField
       value={String(transaction.tag || "")}
       onChange={onChangeTag}
       autoFocus={autoFocus}
     />
-  );
+  ) : null;
 };
 export default {
   component: TagField,

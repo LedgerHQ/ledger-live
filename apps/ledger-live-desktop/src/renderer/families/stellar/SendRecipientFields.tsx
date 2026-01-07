@@ -7,6 +7,8 @@ import MemoTypeField from "./MemoTypeField";
 import MemoValueField from "./MemoValueField";
 import { TransactionStatus, Transaction } from "@ledgerhq/live-common/families/stellar/types";
 import { Account } from "@ledgerhq/types-live";
+import { useCoinModuleFeature } from "@ledgerhq/live-common/featureFlags/useCoinModuleFeature";
+import { CoinFamily } from "@ledgerhq/live-common/bridge/features";
 
 const Root = ({
   transaction,
@@ -19,8 +21,9 @@ const Root = ({
   onChange: (t: Transaction) => void;
   status: TransactionStatus;
 }) => {
+  const hasMemoFeature = useCoinModuleFeature("memoCraft", account.currency.family as CoinFamily);
   const memoActivated = transaction.memoType && transaction.memoType !== "NO_MEMO";
-  return (
+  return hasMemoFeature ? (
     <Box flow={1}>
       <Box mb={10}>
         <Label>
@@ -45,7 +48,7 @@ const Root = ({
         ) : null}
       </Box>
     </Box>
-  );
+  ) : null;
 };
 export default {
   component: Root,
