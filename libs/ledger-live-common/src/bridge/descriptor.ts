@@ -1,7 +1,5 @@
-import type { CryptoOrTokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { FeatureId, FeatureConfig } from "@ledgerhq/coin-framework/features/types";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "./impl";
-import { getCurrencyConfiguration } from "../config/index";
 import { descriptor as algorandDescriptor } from "../families/algorand/descriptor";
 import { descriptor as aptosDescriptor } from "../families/aptos/descriptor";
 import { descriptor as bitcoinDescriptor } from "../families/bitcoin/descriptor";
@@ -131,23 +129,6 @@ const descriptorRegistry: Record<string, CoinDescriptor> = {
   vechain: vechainDescriptor,
   xrp: xrpDescriptor,
 };
-
-function isFeatureActive(currency: CryptoCurrency, featureId: FeatureId): boolean {
-  try {
-    const currencyConfig = getCurrencyConfiguration(currency);
-
-    if (currencyConfig.status.type !== "active") {
-      return false;
-    }
-
-    // Type guard
-    const features = (currencyConfig.status as { type: "active"; features?: FeatureConfig[] })
-      .features;
-    return features?.find(f => f.id === featureId)?.status === "active";
-  } catch {
-    return false;
-  }
-}
 
 /**
  * Get the full descriptor for a given currency via the CurrencyBridge
