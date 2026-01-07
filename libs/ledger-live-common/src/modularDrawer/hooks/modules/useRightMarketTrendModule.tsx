@@ -18,15 +18,19 @@ export const useRightMarketTrendModule = ({
   currencies,
   useBalanceDeps,
   MarketPriceIndicator,
+  enabled = true,
 }: {
   currencies: CryptoOrTokenCurrency[];
   useBalanceDeps: UseBalanceDeps;
   MarketPriceIndicator: React.ComponentType<{ percent: number; price: string }>;
+  enabled?: boolean;
 }) => {
   const marketByCurrencies = useMarketByCurrencies(currencies);
   const { counterValueCurrency, locale } = useBalanceDeps();
 
   return useMemo(() => {
+    if (!enabled) return currencies;
+
     return currencies.map(currency => {
       const currencyMarket = marketByCurrencies[currency.id];
 
@@ -53,5 +57,12 @@ export const useRightMarketTrendModule = ({
         }),
       };
     });
-  }, [currencies, marketByCurrencies, counterValueCurrency.ticker, locale, MarketPriceIndicator]);
+  }, [
+    currencies,
+    marketByCurrencies,
+    counterValueCurrency.ticker,
+    locale,
+    MarketPriceIndicator,
+    enabled,
+  ]);
 };

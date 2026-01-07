@@ -1,57 +1,17 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { createUseLeftAccountsModule } from "../hooks/useLeftAccounts";
+import { useMemo } from "react";
+import { useLeftAccountsModule } from "../hooks/useLeftAccounts";
 import { useLeftAccountsApyModule } from "../hooks/useLeftAccountsApy";
-import { createUseRightBalanceNetwork } from "../hooks/useRightBalanceNetwork";
+import { useRightBalanceNetwork } from "../hooks/useRightBalanceNetwork";
 import {
   CreateNetworkConfigurationHookProps,
   NetworkConfigurationDeps,
   Network,
-  NetworkHook,
-  AccountModuleParams,
   BalanceUI,
   NetworkLeftElementKind,
   NetworkRightElementKind,
 } from "../utils/type";
 import { compareByBalanceThenFiat } from "../utils/sortByBalance";
-
-const getLeftElement =
-  (NetworkConfigurationDeps: NetworkConfigurationDeps) =>
-  (leftElement?: NetworkLeftElementKind): NetworkHook | undefined => {
-    switch (leftElement) {
-      case "undefined":
-        return undefined;
-      case "numberOfAccountsAndApy":
-        return (params: AccountModuleParams) =>
-          useLeftAccountsApyModule(
-            params,
-            NetworkConfigurationDeps.useAccountData,
-            NetworkConfigurationDeps.accountsCountAndApy,
-            NetworkConfigurationDeps.accountsApy,
-          );
-      case "numberOfAccounts":
-      default:
-        return createUseLeftAccountsModule({
-          useAccountData: NetworkConfigurationDeps.useAccountData,
-          accountsCount: NetworkConfigurationDeps.accountsCount,
-        });
-    }
-  };
-
-const getRightElement =
-  (NetworkConfigurationDeps: NetworkConfigurationDeps) =>
-  (rightElement?: NetworkRightElementKind): NetworkHook | undefined => {
-    switch (rightElement) {
-      case "undefined":
-        return undefined;
-      case "balance":
-      default:
-        return (params: { networks: CryptoOrTokenCurrency[] }) =>
-          createUseRightBalanceNetwork({
-            useBalanceDeps: NetworkConfigurationDeps.useBalanceDeps,
-            balanceItem: NetworkConfigurationDeps.balanceItem,
-          })({ networks: params.networks });
-    }
-  };
 
 type NetworksWithComponents = CryptoOrTokenCurrency &
   Network & {
@@ -83,13 +43,9 @@ const sortNetworks = (
 };
 
 export const createNetworkConfigurationHook =
-  (NetworkConfigurationDeps: NetworkConfigurationDeps) =>
+  (deps: NetworkConfigurationDeps) =>
   ({ networksConfig }: CreateNetworkConfigurationHookProps) => {
     const { leftElement, rightElement } = networksConfig ?? {};
-    const leftHook = getLeftElement(NetworkConfigurationDeps)(leftElement);
-    const rightHook = getRightElement(NetworkConfigurationDeps)(rightElement);
-
-    const hooks = [rightHook, leftHook].filter((hook): hook is NetworkHook => Boolean(hook));
 
     return (
       networks: CryptoOrTokenCurrency[],
@@ -102,28 +58,54 @@ export const createNetworkConfigurationHook =
           description?: string;
         }
     > => {
-      const hookResults = hooks.map(hook =>
-        hook({
-          networks,
-        }),
+      // Call all hooks unconditionally at the top level with enabled based on configuration
+      const rightBalanceResult = useRightBalanceNetwork({
+        networks,
+        useBalanceDeps: deps.useBalanceDeps,
+        balanceItem: deps.balanceItem,
+        enabled: rightElement === "balance" || rightElement === undefined,
+      });
+      const leftAccountsResult = useLeftAccountsModule({
+        networks,
+        useAccountData: deps.useAccountData,
+        accountsCount: deps.accountsCount,
+        enabled: leftElement === "numberOfAccounts" || leftElement === undefined,
+      });
+      const leftAccountsApyResult = useLeftAccountsApyModule(
+        { networks },
+        deps.useAccountData,
+        deps.accountsCountAndApy,
+        deps.accountsApy,
+        leftElement === "numberOfAccountsAndApy",
       );
 
-      const networksWithComponents = networks.map((network, index) => {
-        const asset = network.type === "TokenCurrency" ? network.parentCurrency : network;
+      return useMemo(() => {
+        const getRightResult = (index: number) => {
+          if (rightElement === "undefined") return undefined;
+          return rightBalanceResult[index];
+        };
 
-        const merged: NetworksWithComponents = { ...asset };
+        const getLeftResult = (index: number) => {
+          if (leftElement === "undefined") return undefined;
+          if (leftElement === "numberOfAccountsAndApy") return leftAccountsApyResult[index];
+          return leftAccountsResult[index];
+        };
 
-        for (const hookResult of hookResults) {
-          if (hookResult[index]) {
-            Object.assign(merged, hookResult[index]);
-          }
-        }
+        const networksWithComponents = networks.map((network, index) => {
+          const asset = network.type === "TokenCurrency" ? network.parentCurrency : network;
+          const rightResult = getRightResult(index);
+          const leftResult = getLeftResult(index);
 
-        return merged;
-      });
+          return {
+            ...asset,
+            ...rightResult,
+            ...leftResult,
+          };
+        });
 
-      sortNetworks(networksWithComponents, leftElement, rightElement);
+        sortNetworks(networksWithComponents, leftElement, rightElement);
 
-      return networksWithComponents;
+        return networksWithComponents;
+      }, [networks, rightBalanceResult, leftAccountsResult, leftAccountsApyResult]);
     };
   };

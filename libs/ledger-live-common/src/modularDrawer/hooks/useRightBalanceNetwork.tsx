@@ -8,38 +8,39 @@ export type NetworkDeps = {
   useBalanceDeps: UseBalanceDeps;
 };
 
-type Params = {
-  networks: CryptoOrTokenCurrency[];
-};
+export function useRightBalanceNetwork({
+  networks,
+  useBalanceDeps,
+  balanceItem,
+  enabled = true,
+}: NetworkDeps & { networks: CryptoOrTokenCurrency[]; enabled?: boolean }): Array<{
+  rightElement?: React.ReactNode;
+  balanceData?: BalanceUI;
+}> {
+  const { flattenedAccounts, state, counterValueCurrency } = useBalanceDeps();
 
-export function createUseRightBalanceNetwork({ useBalanceDeps, balanceItem }: NetworkDeps) {
-  return function useRightBalanceNetwork({ networks }: Params): Array<{
-    rightElement?: React.ReactNode;
-    balanceData?: BalanceUI;
-  }> {
-    const { flattenedAccounts, state, counterValueCurrency } = useBalanceDeps();
+  if (!enabled) return networks.map(() => ({}));
 
-    const networkBalanceData = getBalanceAndFiatValueByAssets(
-      flattenedAccounts,
-      networks,
-      state,
-      counterValueCurrency,
-    );
+  const networkBalanceData = getBalanceAndFiatValueByAssets(
+    flattenedAccounts,
+    networks,
+    state,
+    counterValueCurrency,
+  );
 
-    const balanceMap = new Map(networkBalanceData.map(b => [b.id, b]));
+  const balanceMap = new Map(networkBalanceData.map(b => [b.id, b]));
 
-    return networks.map(network => {
-      const currency = network.type === "TokenCurrency" ? network.parentCurrency : network;
-      const balanceData = balanceMap.get(network.id) || {
-        currency,
-        balance: new BigNumber(0),
-        fiatValue: 0,
-      };
+  return networks.map(network => {
+    const currency = network.type === "TokenCurrency" ? network.parentCurrency : network;
+    const balanceData = balanceMap.get(network.id) || {
+      currency,
+      balance: new BigNumber(0),
+      fiatValue: 0,
+    };
 
-      return {
-        rightElement: balanceItem(balanceData),
-        balanceData,
-      };
-    });
-  };
+    return {
+      rightElement: balanceItem(balanceData),
+      balanceData,
+    };
+  });
 }

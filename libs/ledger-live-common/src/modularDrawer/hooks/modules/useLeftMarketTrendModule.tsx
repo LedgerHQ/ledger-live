@@ -13,10 +13,13 @@ const createMarketTrendItem = ({
 export const useLeftMarketTrendModule = (
   currencies: CryptoOrTokenCurrency[],
   MarketPercentIndicator: React.ComponentType<{ percent: number }>,
+  enabled = true,
 ) => {
   const marketByCurrencies = useMarketByCurrencies(currencies);
 
   return useMemo(() => {
+    if (!enabled) return currencies;
+
     return currencies.map(currency => {
       const currencyMarket = marketByCurrencies[currency.id];
 
@@ -32,5 +35,5 @@ export const useLeftMarketTrendModule = (
         }),
       };
     });
-  }, [currencies, marketByCurrencies, MarketPercentIndicator]);
+  }, [currencies, marketByCurrencies, MarketPercentIndicator, enabled]);
 };

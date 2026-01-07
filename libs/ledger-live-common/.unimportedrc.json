@@ -481,6 +481,7 @@
     "src/modularDrawer/utils/index.ts",
     "src/modularDrawer/utils/sortByBalance.tsx",
     "src/modularDrawer/utils/type.ts",
+    "src/modularDrawer/test-helpers.tsx",
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/rxjs/operators/throwIf.ts",
     "src/utils/addressUtils.ts",

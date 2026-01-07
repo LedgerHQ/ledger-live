@@ -1,20 +1,23 @@
 import { ReactNode } from "react";
 import { AccountModuleParams, AccountDataItem, NetworkWithCount } from "../utils/type";
 
-export const createUseLeftAccountsModule = ({
+export function useLeftAccountsModule({
+  networks,
   useAccountData,
   accountsCount,
-}: {
+  enabled = true,
+}: AccountModuleParams & {
   useAccountData: (params: AccountModuleParams) => AccountDataItem[];
   accountsCount: (args: { label: string }) => ReactNode;
-}) => {
-  return function useLeftAccountsModule(params: AccountModuleParams): Array<NetworkWithCount> {
-    const accountData = useAccountData(params);
+  enabled?: boolean;
+}): Array<NetworkWithCount> {
+  const accountData = useAccountData({ networks });
 
-    return accountData.map(({ label, count }) => ({
-      leftElement: count > 0 ? accountsCount({ label }) : undefined,
-      description: count > 0 ? label : undefined,
-      count,
-    }));
-  };
-};
+  if (!enabled) return accountData.map(() => ({ count: 0 }));
+
+  return accountData.map(({ label, count }) => ({
+    leftElement: count > 0 ? accountsCount({ label }) : undefined,
+    description: count > 0 ? label : undefined,
+    count,
+  }));
+}

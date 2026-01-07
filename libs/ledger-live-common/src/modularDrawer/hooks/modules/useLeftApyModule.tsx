@@ -17,10 +17,13 @@ const createApyItem = ({
 export const useLeftApyModule = (
   currencies: CryptoOrTokenCurrency[],
   ApyIndicator: React.ComponentType<{ value: number; type: ApyType }>,
+  enabled = true,
 ) => {
   const interestRates = useInterestRatesByCurrencies(currencies);
 
   return useMemo(() => {
+    if (!enabled) return currencies;
+
     return currencies.map(currency => {
       const { interestRate, interestRatePercentageRounded } = getInterestRateForAsset(
         currency,
@@ -40,5 +43,5 @@ export const useLeftApyModule = (
         }),
       };
     });
-  }, [currencies, interestRates, ApyIndicator]);
+  }, [currencies, interestRates, ApyIndicator, enabled]);
 };
