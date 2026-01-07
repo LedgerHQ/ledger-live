@@ -639,7 +639,7 @@ export const removeMemberLedgerSync = withDeviceController(
   ({ getButtonsController }) =>
     async () => {
       const buttons = getButtonsController();
-      await waitFor(DeviceLabels.CONNECT_WITH);
+      await waitFor(DeviceLabels.CONNECT_TO);
 
       if (isTouchDevice()) {
         await pressAndRelease(DeviceLabels.CONNECT);
@@ -648,17 +648,17 @@ export const removeMemberLedgerSync = withDeviceController(
         await waitFor(DeviceLabels.CONFIRM_CHANGE);
         await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
         await waitFor(DeviceLabels.TURN_ON_SYNC);
-        await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+        await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
         await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
         await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
       } else {
-        await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
+        await pressUntilTextFound(DeviceLabels.CONNECT_TO_LEDGER_SYNC);
         await buttons.both();
         await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
         await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER, true);
         await buttons.both();
         await waitFor(DeviceLabels.TURN_ON_SYNC);
-        await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+        await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
         await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
         await buttons.both();
       }
@@ -667,19 +667,20 @@ export const removeMemberLedgerSync = withDeviceController(
 
 export const activateLedgerSync = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
-  await waitFor(DeviceLabels.CONNECT_WITH);
+  await waitFor(DeviceLabels.CONNECT_TO);
 
   if (isTouchDevice()) {
-    await pressAndRelease(DeviceLabels.CONNECT_WITH_LEDGER_SYNC);
+    await pressAndRelease(DeviceLabels.CONNECT_TO_LEDGER_SYNC);
   } else {
-    await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
+    await pressUntilTextFound(DeviceLabels.CONNECT_TO_LEDGER_SYNC);
+    await buttons.right();
     await buttons.both();
   }
   await waitFor(DeviceLabels.TURN_ON_SYNC);
   if (isTouchDevice()) {
     await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
   } else {
-    await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+    await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
     await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
     await buttons.both();
   }
