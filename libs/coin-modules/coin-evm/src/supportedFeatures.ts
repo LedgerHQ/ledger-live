@@ -5,4 +5,5 @@ export const supportedFeatures: FeaturesMap = {
   tokens: ["tokens_balance", "tokens_history", "tokens_craft"],
   gasOptions: ["token_craft_gas"],
   dApps: ["wallet_api"],
+  native_assets: ["native_craft", "native_balance", "native_history"],
 };

@@ -39,7 +39,7 @@ export default function AccountCard({
         onClick={onClick}
       >
         <AccountCardHeader account={account} parentAccount={parentAccount} />
-        <AccountCardBody account={account} range={range} />
+        <AccountCardBody account={account} range={range} parentAccount={parentAccount} />
       </Card>
     </AccountContextMenu>
   );

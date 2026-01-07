@@ -13,6 +13,9 @@ import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivation
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useAccountName } from "~/renderer/reducers/wallet";
 import { Divider } from "@ledgerhq/react-ui/index";
+import { useCoinModuleFeature } from "@ledgerhq/live-common/featureFlags/useCoinModuleFeature";
+import { CoinFamily } from "@ledgerhq/live-common/bridge/features";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 
 function HeadText(props: { account: AccountLike; title: string; name: string }) {
   const { title, name, account } = props;
@@ -56,6 +59,20 @@ const Header = ({
   const currency = getAccountCurrency(account);
   const unit = useAccountUnit(account);
   const name = useAccountName(account);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const isTokenAccount = account.type === "TokenAccount";
+  const isNativeAccount = account.type === "Account";
+  const family = (mainAccount?.currency.family as CoinFamily) || "";
+  const tokensBalanceEnabled = useCoinModuleFeature("tokensBalance", family);
+  const nativeBalanceEnabled = useCoinModuleFeature("nativeBalance", family);
+
+  let showBalance = true;
+  if (isTokenAccount) {
+    showBalance = tokensBalanceEnabled;
+  } else if (isNativeAccount) {
+    showBalance = nativeBalanceEnabled;
+  }
+
   let title;
   switch (account.type) {
     case "Account":
@@ -79,17 +96,19 @@ const Header = ({
         <Star accountId={account.id} />
       </Box>
       <Divider />
-      <Box justifyContent="center">
-        <FormattedVal
-          alwaysShowSign={false}
-          animateTicker={false}
-          ellipsis
-          color="neutral.c100"
-          unit={unit}
-          showCode
-          val={account.balance}
-        />
-      </Box>
+      {showBalance ? (
+        <Box justifyContent="center">
+          <FormattedVal
+            alwaysShowSign={false}
+            animateTicker={false}
+            ellipsis
+            color="neutral.c100"
+            unit={unit}
+            showCode
+            val={account.balance}
+          />
+        </Box>
+      ) : null}
     </Box>
   );
 };

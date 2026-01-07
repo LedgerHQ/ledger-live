@@ -23,6 +23,8 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { accountNameSelector } from "@ledgerhq/live-wallet/store";
+import { useCoinModuleFeature } from "@ledgerhq/live-common/featureFlags/useCoinModuleFeature";
+import { CoinFamily } from "@ledgerhq/live-common/bridge/features";
 const Row = styled(Box)`
   background: ${p => p.theme.colors.background.card};
   border-radius: 4px;
@@ -156,6 +158,13 @@ const AccountRowItem = (props: Props) => {
 
   const onClickHandler = () => onClick(account, parentAccount);
   const unit = useAccountUnit(account);
+  const isTokenAccount = account.type === "TokenAccount";
+  const isNativeAccount = account.type === "Account";
+  const tempMainAccount = isTokenAccount ? parentAccount : account;
+  const family = (tempMainAccount?.currency.family as CoinFamily) || "";
+  const tokensBalanceEnabled = useCoinModuleFeature("tokensBalance", family);
+  const nativeBalanceEnabled = useCoinModuleFeature("nativeBalance", family);
+
   let currency;
   let mainAccount: Account | null | undefined;
   let tokens;
@@ -176,6 +185,14 @@ const AccountRowItem = (props: Props) => {
     isToken = (currency.tokenTypes || []).length > 0;
     if (tokens) tokens = tokens.filter(t => matchesSearch(walletState, search, t));
   }
+
+  let showBalance = true;
+  if (isTokenAccount) {
+    showBalance = tokensBalanceEnabled;
+  } else if (isNativeAccount) {
+    showBalance = nativeBalanceEnabled;
+  }
+
   const showTokensIndicator = Boolean(tokens && tokens.length > 0 && !hidden);
   const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family).tokenList : null;
   const hasSpecificTokenWording = specific?.hasSpecificTokenWording;
@@ -227,9 +244,31 @@ const AccountRowItem = (props: Props) => {
                 <AccountSyncStatusIndicator accountId={mainAccount.id} account={account} />
               </div>
             </Box>
-            <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
-            <Countervalue account={account} currency={currency} range={range} />
-            <Delta account={account} range={range} />
+            {showBalance ? (
+              <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
+            ) : (
+              <Box flex="30%" justifyContent="center" fontSize={4}>
+                <Text color="neutral.c70">—</Text>
+              </Box>
+            )}
+            {showBalance ? (
+              <Countervalue account={account} currency={currency} range={range} />
+            ) : (
+              <Box flex="20%">
+                <Text color="neutral.c70" fontSize={3}>
+                  —
+                </Text>
+              </Box>
+            )}
+            {showBalance ? (
+              <Delta account={account} range={range} />
+            ) : (
+              <Box flex="10%" justifyContent="flex-end">
+                <Text color="neutral.c70" fontSize={3}>
+                  —
+                </Text>
+              </Box>
+            )}
             <Star accountId={account.id} />
           </RowContent>
           {showTokensIndicator && expanded ? (
@@ -246,6 +285,7 @@ const AccountRowItem = (props: Props) => {
                           account={token}
                           parentAccount={mainAccount}
                           onClick={onClick}
+                          showBalance={tokensBalanceEnabled}
                         />
                       )}
                     </AccountContextMenu>

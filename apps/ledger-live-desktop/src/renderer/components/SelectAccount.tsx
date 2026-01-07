@@ -26,6 +26,8 @@ import { openModal } from "../actions/modals";
 import { useAccountUnit } from "../hooks/useAccountUnit";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { useAccountName, walletSelector } from "../reducers/wallet";
+import { useCoinModuleFeature } from "@ledgerhq/live-common/featureFlags/useCoinModuleFeature";
+import { CoinFamily } from "@ledgerhq/live-common/bridge/features";
 
 const mapStateToProps = createStructuredSelector({
   accounts: shallowAccountsSelector,
@@ -128,6 +130,21 @@ export const AccountOption = React.memo<AccountOptionProps>(function AccountOpti
   const name = useAccountName(account);
   const nested = "TokenAccount" === account.type;
   const balance = account.spendableBalance || account.balance;
+
+  const isTokenAccount = account.type === "TokenAccount";
+  const isNativeAccount = account.type === "Account";
+  const family: CoinFamily = isTokenAccount
+    ? (account.token.parentCurrency.family as CoinFamily)
+    : ((currency.type === "CryptoCurrency" ? currency.family : "evm") as CoinFamily);
+  const tokensBalanceEnabled = useCoinModuleFeature("tokensBalance", family);
+  const nativeBalanceEnabled = useCoinModuleFeature("nativeBalance", family);
+
+  let showBalance = true;
+  if (isTokenAccount) {
+    showBalance = tokensBalanceEnabled;
+  } else if (isNativeAccount) {
+    showBalance = nativeBalanceEnabled;
+  }
   const textContents = singleLineLayout ? (
     <>
       <Box flex="1" horizontal alignItems="center">
@@ -138,9 +155,11 @@ export const AccountOption = React.memo<AccountOptionProps>(function AccountOpti
         </Box>
         {!hideDerivationTag && <AccountTagDerivationMode account={account} />}
       </Box>
-      <Box>
-        <FormattedVal color="neutral.c70" val={balance} unit={unit} showCode />
-      </Box>
+      {showBalance ? (
+        <Box>
+          <FormattedVal color="neutral.c70" val={balance} unit={unit} showCode />
+        </Box>
+      ) : null}
     </>
   ) : (
     <OptionMultilineContainer flex="1">
@@ -152,16 +171,18 @@ export const AccountOption = React.memo<AccountOptionProps>(function AccountOpti
         </Box>
         {!hideDerivationTag && <AccountTagDerivationMode account={account} margin="0" />}
       </Box>
-      <Box>
-        <FormattedVal
-          color="neutral.c60"
-          ff="Inter|Medium"
-          fontSize={3}
-          val={balance}
-          unit={unit}
-          showCode
-        />
-      </Box>
+      {showBalance ? (
+        <Box>
+          <FormattedVal
+            color="neutral.c60"
+            ff="Inter|Medium"
+            fontSize={3}
+            val={balance}
+            unit={unit}
+            showCode
+          />
+        </Box>
+      ) : null}
     </OptionMultilineContainer>
   );
   return (

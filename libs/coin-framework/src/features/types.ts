@@ -3,7 +3,7 @@
  */
 export type BlockchainTxsFeatures = "blockchain_blocks" | "blockchain_txs";
 export type StakingTxsFeatures =
-  | "staking_txs"
+  | "staking_craft"
   | "staking_history"
   | "staking_stakes"
   | "staking_rewards";

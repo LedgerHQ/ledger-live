@@ -5,6 +5,8 @@ import {
   isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
+import { useCoinModuleFeature } from "@ledgerhq/live-common/featureFlags/useCoinModuleFeature";
+import type { CoinFamily } from "@ledgerhq/live-common/bridge/features";
 
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
@@ -339,6 +341,12 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     <ActionItem {...item} key={item.accountActionsTestId} />
   ));
 
+  const family = (mainAccount.currency.family as CoinFamily) || "";
+  const isTokenAccount = account.type === "TokenAccount";
+  const nativeCraftEnabled = useCoinModuleFeature("nativeCraft", family);
+  const tokensCraftEnabled = useCoinModuleFeature("tokensCraft", family);
+  const canSendFeature = isTokenAccount ? tokensCraftEnabled : nativeCraftEnabled;
+
   const NonEmptyAccountHeader = (
     <FadeInButtonsContainer data-testid="account-buttons-group" show={showButtons}>
       {manageActions.length > 0 ? manageActionsHeader : null}
@@ -346,7 +354,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       {availableOnSwap ? swapHeader : null}
       {availableOnBuy ? buyHeader : null}
       {availableOnSell && sellHeader}
-      {canSend(account, parentAccount) ? (
+      {canSend(account, parentAccount) && canSendFeature ? (
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
       ) : null}
       <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />

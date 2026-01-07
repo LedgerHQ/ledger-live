@@ -21,6 +21,8 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import AngleDown from "~/renderer/icons/AngleDown";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
+import { useCoinModuleFeature } from "@ledgerhq/live-common/featureFlags/useCoinModuleFeature";
+import { CoinFamily } from "@ledgerhq/live-common/bridge/features";
 
 type Props = {
   account: Account;
@@ -54,14 +56,16 @@ function TokensList({ account }: Props) {
   }, [dispatch, account]);
   const [collapsed, setCollapsed] = useState(true);
   const toggleCollapse = useCallback(() => setCollapsed(s => !s), []);
+  const { currency } = account;
+  const family = (currency.family as CoinFamily) || "";
+  const tokensBalanceEnabled = useCoinModuleFeature("tokensBalance", family);
+
   if (!account.subAccounts) return null;
 
   const subAccounts = listSubAccounts(account).filter(subAccount => {
     return !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id);
   });
 
-  const { currency } = account;
-  const family = currency.family;
   const tokenTypes = currency.tokenTypes || [];
   const isTokenAccount = tokenTypes.length > 0;
   const isEmpty = subAccounts.length === 0;
@@ -130,6 +134,7 @@ function TokensList({ account }: Props) {
             parentAccount={account}
             onClick={onAccountClick}
             disableRounding
+            showBalance={tokensBalanceEnabled}
           />
         </AccountContextMenu>
       ))}

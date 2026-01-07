@@ -878,7 +878,7 @@ export const DEFAULT_FEATURES: Features = {
     enabled: true,
     params: {
       featureGroup: "staking",
-      featureId: "staking_txs",
+      featureId: "staking_craft",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
   },
