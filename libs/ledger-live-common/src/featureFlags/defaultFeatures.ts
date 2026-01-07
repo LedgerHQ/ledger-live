@@ -778,6 +778,7 @@ export const DEFAULT_FEATURES: Features = {
   blockchainBlocks: {
     enabled: true,
     params: {
+      featureGroup: "blockchain",
       featureId: "blockchain_blocks",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
@@ -786,6 +787,7 @@ export const DEFAULT_FEATURES: Features = {
   blockchainTxs: {
     enabled: true,
     params: {
+      featureGroup: "blockchain",
       featureId: "blockchains_txs",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
@@ -794,6 +796,7 @@ export const DEFAULT_FEATURES: Features = {
   walletApi: {
     enabled: true,
     params: {
+      featureGroup: "dApps",
       featureId: "wallet_api",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
@@ -802,6 +805,7 @@ export const DEFAULT_FEATURES: Features = {
   nativeCraft: {
     enabled: true,
     params: {
+      featureGroup: "native_assets",
       featureId: "native_craft",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
@@ -810,6 +814,7 @@ export const DEFAULT_FEATURES: Features = {
   nativeBalance: {
     enabled: true,
     params: {
+      featureGroup: "native_assets",
       featureId: "native_balance",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
@@ -818,6 +823,7 @@ export const DEFAULT_FEATURES: Features = {
   nativeHistory: {
     enabled: true,
     params: {
+      featureGroup: "native_assets",
       featureId: "native_history",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
@@ -826,6 +832,7 @@ export const DEFAULT_FEATURES: Features = {
   tokensCraft: {
     enabled: true,
     params: {
+      featureGroup: "tokens",
       featureId: "tokens_craft",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
@@ -834,6 +841,7 @@ export const DEFAULT_FEATURES: Features = {
   tokensBalance: {
     enabled: true,
     params: {
+      featureGroup: "tokens",
       featureId: "tokens_balance",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
@@ -842,6 +850,7 @@ export const DEFAULT_FEATURES: Features = {
   tokensHistory: {
     enabled: true,
     params: {
+      featureGroup: "tokens",
       featureId: "tokens_history",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
@@ -850,6 +859,7 @@ export const DEFAULT_FEATURES: Features = {
   memoCraft: {
     enabled: true,
     params: {
+      featureGroup: "memo",
       featureId: "memo_craft",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
@@ -858,6 +868,7 @@ export const DEFAULT_FEATURES: Features = {
   memoHistory: {
     enabled: true,
     params: {
+      featureGroup: "memo",
       featureId: "memo_history",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
@@ -866,6 +877,7 @@ export const DEFAULT_FEATURES: Features = {
   stakingTxs: {
     enabled: true,
     params: {
+      featureGroup: "staking",
       featureId: "staking_txs",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
@@ -874,6 +886,7 @@ export const DEFAULT_FEATURES: Features = {
   stakingHistory: {
     enabled: true,
     params: {
+      featureGroup: "staking",
       featureId: "staking_history",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
@@ -882,6 +895,7 @@ export const DEFAULT_FEATURES: Features = {
   stakingStakes: {
     enabled: true,
     params: {
+      featureGroup: "staking",
       featureId: "staking_stakes",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },
@@ -890,6 +904,7 @@ export const DEFAULT_FEATURES: Features = {
   stakingRewards: {
     enabled: true,
     params: {
+      featureGroup: "staking",
       featureId: "staking_rewards",
       featureConfig: [{ status: "released", families: ["evm", "xrp", "stellar", "tezos"] }],
     },

@@ -782,6 +782,7 @@ export type Feature_OnboardingEnableSync = Feature<{
 
 export type Feature_CoinModule = Feature<{
   featureId: string;
+  featureGroup: string;
   featureConfig: Array<{
     status: "dev" | "experimental" | "released";
     families: string[];
