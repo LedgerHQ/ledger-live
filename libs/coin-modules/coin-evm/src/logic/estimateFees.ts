@@ -105,6 +105,7 @@ export async function estimateFees(
   const { type, to, data, value, gasLimit } = await prepareUnsignedTxParams(
     currency,
     transactionIntent,
+    customFeesParameters,
   );
 
   // Some apps including, including Magic Eden, set the nonce to -1
