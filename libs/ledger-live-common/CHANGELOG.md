@@ -1,5 +1,14 @@
 # @ledgerhq/live-common
 
+## 34.56.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`a2aa565`](https://github.com/LedgerHQ/ledger-live/commit/a2aa565653bdddb86620b714c8e2e3066adb4975)]:
+  - @ledgerhq/coin-evm@2.38.0-next.2
+  - @ledgerhq/coin-celo@1.8.2-next.2
+  - @ledgerhq/live-signer-evm@0.11.2-next.2
+
 ## 34.56.0-next.1
 
 ### Patch Changes

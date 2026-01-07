@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.38.0-next.2
+
+### Minor Changes
+
+- [#13560](https://github.com/LedgerHQ/ledger-live/pull/13560) [`a2aa565`](https://github.com/LedgerHQ/ledger-live/commit/a2aa565653bdddb86620b714c8e2e3066adb4975) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): reduce batch size in `getBalance`
+
 ## 2.38.0-next.1
 
 ### Minor Changes

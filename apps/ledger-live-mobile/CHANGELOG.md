@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.101.0-next.2
+
+### Minor Changes
+
+- [#13557](https://github.com/LedgerHQ/ledger-live/pull/13557) [`fb0a711`](https://github.com/LedgerHQ/ledger-live/commit/fb0a7110d832f1b7cbd49269ee187781bb8e5c02) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix LWM crash when device BLE pairing has been removed
+
+- [#13560](https://github.com/LedgerHQ/ledger-live/pull/13560) [`a2aa565`](https://github.com/LedgerHQ/ledger-live/commit/a2aa565653bdddb86620b714c8e2e3066adb4975) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): reduce batch size in `getBalance`
+
+### Patch Changes
+
+- Updated dependencies [[`a2aa565`](https://github.com/LedgerHQ/ledger-live/commit/a2aa565653bdddb86620b714c8e2e3066adb4975)]:
+  - @ledgerhq/coin-evm@2.38.0-next.2
+
 ## 3.101.0-next.1
 
 ### Minor Changes
