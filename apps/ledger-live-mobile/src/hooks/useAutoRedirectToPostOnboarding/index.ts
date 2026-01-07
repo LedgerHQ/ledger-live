@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useOpenPostOnboardingCallback } from "./useOpenPostOnboardingCallback";
 import { useShouldRedirect } from "./useShouldRedirect";

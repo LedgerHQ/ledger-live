@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Linking } from "react-native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { ScreenName } from "~/const";

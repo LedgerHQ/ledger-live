@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { Account, DerivationMode, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { useMaybeAccountUnit } from "~/hooks";
 import { formatAddress } from "LLM/features/Accounts/utils/formatAddress";
 import { accountsSelector } from "~/reducers/accounts";

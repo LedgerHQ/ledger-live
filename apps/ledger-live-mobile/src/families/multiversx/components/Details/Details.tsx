@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useMultiversXPreloadData } from "@ledgerhq/live-common/families/multiversx/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 
 import type { MultiversXPreloadData } from "@ledgerhq/live-common/families/multiversx/types";

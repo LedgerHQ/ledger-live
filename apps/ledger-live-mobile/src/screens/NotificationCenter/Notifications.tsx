@@ -11,7 +11,7 @@ import { NotificationCard, Box, Flex, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import Swipeable, { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";

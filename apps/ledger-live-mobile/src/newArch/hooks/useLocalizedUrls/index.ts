@@ -1,4 +1,4 @@
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { DEFAULT_LANGUAGE_LOCALE, LanguageMap } from "~/languages";
 import { languageSelector } from "~/reducers/settings";
 import { useLocalizedUrl as useLocalizedUrlHook } from "@ledgerhq/live-common/hooks/useLocalizedUrl";

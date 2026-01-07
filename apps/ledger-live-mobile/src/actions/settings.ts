@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { createAction } from "redux-actions";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import type { PortfolioRange } from "@ledgerhq/types-live";
 import { selectedTimeRangeSelector } from "../reducers/settings";
 import {

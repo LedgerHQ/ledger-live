@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { Trans, useTranslation } from "react-i18next";
 import { View } from "react-native";
 

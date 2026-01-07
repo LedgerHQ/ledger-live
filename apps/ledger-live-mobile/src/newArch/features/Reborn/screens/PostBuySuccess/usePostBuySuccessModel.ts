@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/core";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import {
   RootNavigationComposite,
   StackNavigatorNavigation,

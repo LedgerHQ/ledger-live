@@ -1,4 +1,4 @@
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { createAction } from "redux-actions";
 import { Payload } from "~/reducers/toast";
 

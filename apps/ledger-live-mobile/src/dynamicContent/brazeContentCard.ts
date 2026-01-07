@@ -1,6 +1,6 @@
 import Braze from "@braze/react-native-sdk";
 import { useCallback, useRef } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { track } from "~/analytics";
 import { setDismissedContentCard } from "~/actions/settings";
 import { trackingEnabledSelector } from "~/reducers/settings";

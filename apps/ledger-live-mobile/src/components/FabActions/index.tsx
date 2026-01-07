@@ -13,7 +13,7 @@ import { WrappedButtonProps } from "../wrappedUi/Button";
 import { NavigatorName } from "~/const";
 import { useRoute } from "@react-navigation/native";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 
 export type ModalOnDisabledClickComponentProps = {

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { add, isBefore, parseISO } from "date-fns";
 import storage from "LLM/storage";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";

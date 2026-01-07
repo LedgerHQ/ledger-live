@@ -10,7 +10,7 @@ import {
   TrustchainAlreadyInitializedWithOtherSeed,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { setTrustchain, trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
 import { AnalyticsEvents } from "LLM/features/Analytics/enums";
 import { track } from "~/analytics";

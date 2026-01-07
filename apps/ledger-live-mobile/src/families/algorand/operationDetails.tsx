@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import Section from "~/screens/OperationDetails/Section";
 import OperationStatusIcon from "~/icons/OperationStatusIcon";

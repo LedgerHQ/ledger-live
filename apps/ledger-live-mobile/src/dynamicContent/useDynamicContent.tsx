@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCallback, useMemo } from "react";
 import { useBrazeContentCard } from "./brazeContentCard";

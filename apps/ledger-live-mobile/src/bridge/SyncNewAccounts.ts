@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { accountsSelector } from "../reducers/accounts";
 

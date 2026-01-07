@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { useTranslation } from "react-i18next";
 import { Switch } from "@ledgerhq/native-ui";
 import { NavigatorName } from "~/const";

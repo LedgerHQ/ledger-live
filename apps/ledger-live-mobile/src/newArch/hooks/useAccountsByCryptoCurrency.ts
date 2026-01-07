@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { shallowEqual } from "react-redux";
 import type {
   CryptoOrTokenCurrency,

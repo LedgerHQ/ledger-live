@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useAcceptGeneralTerms } from "~/logic/terms";

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Keyboard } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { isModalLockedSelector } from "~/reducers/appstate";
 import { DrawerInQueue, useQueuedDrawerContext } from "./QueuedDrawersContext";
 import { logDrawer } from "./utils/logDrawer";

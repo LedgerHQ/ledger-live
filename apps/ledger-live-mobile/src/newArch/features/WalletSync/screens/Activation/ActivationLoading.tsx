@@ -11,7 +11,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import lottie from "~/animations/lottie.json";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { hasCompletedOnboardingSelector, onboardingTypeSelector } from "~/reducers/settings";
 import { completeOnboarding, setIsReborn, setOnboardingHasDevice } from "~/actions/settings";
 import PreventNativeBack from "~/components/PreventNativeBack";

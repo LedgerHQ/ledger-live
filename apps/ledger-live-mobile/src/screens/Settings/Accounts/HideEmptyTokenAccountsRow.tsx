@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { setHideEmptyTokenAccounts } from "~/actions/settings";

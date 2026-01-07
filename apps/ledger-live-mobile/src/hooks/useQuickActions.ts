@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useRoute } from "@react-navigation/native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";

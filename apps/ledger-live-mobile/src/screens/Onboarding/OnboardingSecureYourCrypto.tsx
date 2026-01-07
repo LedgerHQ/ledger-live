@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { Flex, Text, SlideIndicator } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/core";

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { FlatList } from "react-native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { useTranslation } from "react-i18next";
 import { Observable } from "rxjs";
 import { InfiniteLoader, Flex } from "@ledgerhq/native-ui";

@@ -4,7 +4,7 @@ import {
 } from "@ledgerhq/live-common/modularDrawer/hooks/useNetworkAccountCounts";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
 
 type AccountModuleParams = {

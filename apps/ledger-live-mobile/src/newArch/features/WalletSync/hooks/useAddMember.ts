@@ -3,7 +3,7 @@ import {
   setTrustchain,
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import {
   NoTrustchainInitialized,

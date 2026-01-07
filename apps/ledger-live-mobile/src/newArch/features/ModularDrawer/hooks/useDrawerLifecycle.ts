@@ -7,7 +7,7 @@ import {
   useModularDrawerAnalytics,
 } from "../analytics/useModularDrawerAnalytics";
 
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import {
   modularDrawerFlowSelector,
   modularDrawerStepSelector,

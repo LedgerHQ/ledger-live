@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { bleDevicesSelector } from "~/reducers/ble";
 import { ScannedDevice } from "@ledgerhq/live-dmk-mobile";
 
