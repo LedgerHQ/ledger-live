@@ -1,10 +1,10 @@
 import useFeature from "./useFeature";
-import { isSupportedFeature } from "../bridge/features";
+import { CoinFamily, isSupportedFeature } from "../bridge/features";
 import type { FeatureId } from "@ledgerhq/types-live";
 
 export const useCoinModuleFeature = <T extends FeatureId>(
   featureId: T,
-  family: string,
+  family: CoinFamily,
 ): boolean => {
   const coinModuleFeature = useFeature<T>(featureId) as any;
 

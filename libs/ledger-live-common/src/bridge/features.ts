@@ -15,19 +15,19 @@ import { supportedFeatures as filecoinFeatures } from "@ledgerhq/coin-filecoin/s
 import { supportedFeatures as celoFeatures } from "@ledgerhq/coin-celo/supportedFeatures";
 import { supportedFeatures as stacksFeatures } from "@ledgerhq/coin-stacks/supportedFeatures";
 import { supportedFeatures as vechainFeatures } from "@ledgerhq/coin-vechain/supportedFeatures";
-// import { supportedFeatures as suiFeatures } from "@ledgerhq/coin-sui/supportedFeatures";
 import { supportedFeatures as stellarFeatures } from "@ledgerhq/coin-stellar/supportedFeatures";
-// import { supportedFeatures as internetComputerFeatures } from "@ledgerhq/coin-internet-computer/src/supportedFeatures";
 import { supportedFeatures as tonFeatures } from "@ledgerhq/coin-ton/supportedFeatures";
 import { supportedFeatures as multiversXFeatures } from "@ledgerhq/coin-multiversx/supportedFeatures";
 import { supportedFeatures as hederaFeatures } from "@ledgerhq/coin-hedera/supportedFeatures";
 import { supportedFeatures as iconFeatures } from "@ledgerhq/coin-icon/supportedFeatures";
 import { supportedFeatures as cantonFeatures } from "@ledgerhq/coin-canton/supportedFeatures";
 import { supportedFeatures as kaspaFeatures } from "@ledgerhq/coin-kaspa/supportedFeatures";
+import { supportedFeatures as suiFeatures } from "@ledgerhq/coin-sui/supportedFeatures";
+import { supportedFeatures as internetComputerFeatures } from "@ledgerhq/coin-internet_computer/supportedFeatures";
 
-import { FeaturesMap, Feature } from "@ledgerhq/coin-framework/features/types";
+import { FeaturesMap, FeatureValue } from "@ledgerhq/coin-framework/features/types";
 
-const featuresRegistry: Record<string, FeaturesMap> = {
+const featuresRegistry = {
   tezos: tezosFeatures,
   bitcoin: bitcoinFeatures,
   evm: evmFeatures,
@@ -45,21 +45,26 @@ const featuresRegistry: Record<string, FeaturesMap> = {
   celo: celoFeatures,
   stacks: stacksFeatures,
   vechain: vechainFeatures,
-  // sui: suiFeatures,
+  sui: suiFeatures,
   stellar: stellarFeatures,
-  // internet_computer: internetComputerFeatures,
+  internet_computer: internetComputerFeatures,
   ton: tonFeatures,
   multiversx: multiversXFeatures,
   hedera: hederaFeatures,
   icon: iconFeatures,
   canton: cantonFeatures,
   kaspa: kaspaFeatures,
-};
+} as const satisfies Record<string, FeaturesMap>;
+
+/**
+ * Valid coin family names
+ */
+export type CoinFamily = keyof typeof featuresRegistry;
 
 /**
  * Get the full features maps for a given currency
  */
-export function getFeaturesMap(family: string): FeaturesMap | null {
+export function getFeaturesMap(family: CoinFamily): FeaturesMap | null {
   if (!family) {
     return null;
   }
@@ -73,10 +78,10 @@ export function getFeaturesMap(family: string): FeaturesMap | null {
   return null;
 }
 
-export const isSupportedFeature = (
-  family: string,
-  key: keyof FeaturesMap,
-  feature: Feature,
+export const isSupportedFeature = <K extends keyof FeaturesMap>(
+  family: CoinFamily,
+  key: K,
+  feature: FeatureValue<K>,
 ): boolean => {
   const features = getFeaturesMap(family);
   if (!features) {

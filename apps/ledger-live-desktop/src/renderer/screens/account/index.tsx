@@ -34,6 +34,7 @@ import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
 import NftEntryPoint from "LLD/features/NftEntryPoint";
 import { useCoinModuleFeature } from "@ledgerhq/live-common/featureFlags/useCoinModuleFeature";
+import { CoinFamily } from "@ledgerhq/live-common/lib-es/bridge/features";
 
 type Params = {
   id: string;
@@ -92,7 +93,7 @@ const AccountPage = ({
 }: Props) => {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
-  const family = mainAccount?.currency.family || "";
+  const family = mainAccount?.currency.family as CoinFamily || "";
   const AccountBodyHeader = specific?.AccountBodyHeader;
   const AccountSubHeader = specific?.AccountSubHeader;
   const PendingTransferProposals = specific?.PendingTransferProposals;

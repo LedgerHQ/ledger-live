@@ -1,23 +1,21 @@
 /**
- * Intent types for blockchain_txs feature
+ * Feature intent types
  */
 export type BlockchainTxsFeatures = "blockchain_blocks" | "blockchain_txs";
-
-/**
- * Intent types for staking_txs feature
- */
 export type StakingTxsFeatures =
   | "staking_txs"
   | "staking_history"
   | "staking_stakes"
   | "staking_rewards";
-
 export type NativeAssetsFeatures = "native_craft" | "native_balance" | "native_history";
 export type DAppsFeatures = "wallet_api";
 export type TokensFeature = "tokens_balance" | "tokens_history" | "tokens_craft";
 export type GasOptionsFeature = "token_craft_gas";
 export type MemosFeature = "memo_craft" | "memo_history";
 
+/**
+ * Union of all feature intent types
+ */
 export type Feature =
   | BlockchainTxsFeatures
   | StakingTxsFeatures
@@ -28,17 +26,22 @@ export type Feature =
   | MemosFeature;
 
 /**
- * Mapping from feature ID to its supported intents
+ * Mapping from feature category to its supported intents
  */
 export type FeaturesMap = {
   blockchain?: BlockchainTxsFeatures[];
   staking?: StakingTxsFeatures[];
   native_assets?: NativeAssetsFeatures[];
   dApps?: DAppsFeatures[];
-  memos?: MemosFeature[];
+  memo?: MemosFeature[];
   tokens?: TokensFeature[];
   gasOptions?: GasOptionsFeature[];
 };
+
+/**
+ * Extract the feature type for a given feature key
+ */
+export type FeatureValue<K extends keyof FeaturesMap> = NonNullable<FeaturesMap[K]>[number];
 
 /**
  * Alias for FeaturesMap for backward compatibility
@@ -46,7 +49,7 @@ export type FeaturesMap = {
 export type SupportedFeatures = FeaturesMap;
 
 /**
- * Feature ID type - represents a feature identifier
+ * Feature category identifier
  */
 export type FeatureId = keyof FeaturesMap;
 
