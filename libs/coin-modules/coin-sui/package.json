@@ -110,6 +110,10 @@
       "require": "./lib/uiConfig.js",
       "default": "./lib-es/uiConfig.js"
     },
+    "./supportedFeatures": {
+      "require": "./lib/supportedFeatures.js",
+      "default": "./lib-es/supportedFeatures.js"
+    },
     ".": {
       "require": "./lib/index.js",
       "default": "./lib-es/index.js"
