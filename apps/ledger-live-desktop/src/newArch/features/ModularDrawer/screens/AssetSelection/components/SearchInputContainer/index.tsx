@@ -20,6 +20,7 @@ const SearchInputContainer = () => {
         onDebouncedChange={handleDebouncedChange}
         onChange={handleSearch}
         data-testid="modular-asset-drawer-search-input"
+        style={{ outline: "none" }}
       />
     </Box>
   );
