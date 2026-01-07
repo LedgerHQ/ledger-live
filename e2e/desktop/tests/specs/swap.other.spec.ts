@@ -1347,7 +1347,7 @@ test.describe("Swap history", () => {
   });
 
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "swap-history",
     speculosApp: app,
   });
 

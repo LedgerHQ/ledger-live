@@ -338,7 +338,7 @@ export function runSwapHistoryOperationsTest(
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunction({
-        userdata: "speculos-tests-app",
+        userdata: "swap-history",
         speculosApp: AppInfos.EXCHANGE,
       });
     });
@@ -367,7 +367,7 @@ export function runExportSwapHistoryOperationsTest(
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunction({
-        userdata: "speculos-tests-app",
+        userdata: "swap-history",
         speculosApp: AppInfos.EXCHANGE,
       });
     });
