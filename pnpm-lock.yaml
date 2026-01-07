@@ -10216,6 +10216,9 @@ importers:
       tsup:
         specifier: 7.3.0
         version: 7.3.0(typescript@5.4.3)
+      tsx:
+        specifier: 4.20.6
+        version: 4.20.6
       unzipper:
         specifier: 0.10.14
         version: 0.10.14
