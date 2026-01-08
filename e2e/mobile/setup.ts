@@ -10,27 +10,53 @@ import http from "http";
 const broadcastOriginalValue = getEnv("DISABLE_TRANSACTION_BROADCAST");
 setupEnvironment();
 
+// Handle uncaught exceptions from TLS socket serialization errors.
+// When jest-worker serializes test results, destroyed TLS sockets cause:
+// "TypeError: Cannot read properties of null (reading 'reading')"
+// This handler prevents the crash from propagating and killing the worker.
+process.on("uncaughtException", error => {
+  if (
+    error instanceof TypeError &&
+    error.message?.includes("Cannot read properties of null") &&
+    error.stack?.includes("structured-clone")
+  ) {
+    console.warn("[E2E] Caught TLS socket serialization error, attempting recovery...");
+    // Force cleanup to prevent further issues
+    https.globalAgent.destroy();
+    http.globalAgent.destroy();
+    global.gc?.();
+    // Don't rethrow - let the test continue
+    return;
+  }
+  // Rethrow other errors
+  throw error;
+});
+
 /**
- * Cleans up HTTP/HTTPS connections and global state to prevent TLS socket serialization errors.
- * This is needed because jest-worker uses @ungap/structured-clone to serialize test results,
- * which can fail if the state contains references to destroyed TLS sockets from remote
- * Speculos HTTPS connections.
+ * Cleans up HTTP/HTTPS connections to prevent TLS socket serialization errors.
+ * When jest-worker tries to serialize test results using @ungap/structured-clone,
+ * references to destroyed TLS sockets cause "Cannot read properties of null (reading 'reading')" errors.
+ * This cleanup destroys all keep-alive connections from the global HTTP agents.
  */
 function cleanupConnections() {
-  // Force close any lingering HTTP/HTTPS connections
-  https.globalAgent.destroy();
-  http.globalAgent.destroy();
+  try {
+    // Destroy all HTTP/HTTPS agent connections
+    https.globalAgent.destroy();
+    http.globalAgent.destroy();
 
-  // Clear global state that might hold socket references
-  if (globalThis.speculosDevices) {
-    globalThis.speculosDevices.clear();
-  }
-  if (globalThis.proxySubscriptions) {
-    globalThis.proxySubscriptions.clear();
-  }
+    // Clear global state that might hold socket references
+    if (globalThis.speculosDevices) {
+      globalThis.speculosDevices.clear();
+    }
+    if (globalThis.proxySubscriptions) {
+      globalThis.proxySubscriptions.clear();
+    }
 
-  // Force garbage collection if available
-  global.gc?.();
+    // Force garbage collection if available
+    global.gc?.();
+  } catch {
+    // Ignore cleanup errors
+  }
 }
 
 beforeAll(
@@ -44,6 +70,12 @@ beforeAll(
   },
   process.env.CI ? 150000 : 120000,
 );
+
+// Clean up connections after EACH test to prevent TLS socket serialization errors
+// This is critical because the crash happens when jest-worker serializes the test result
+afterEach(() => {
+  cleanupConnections();
+});
 
 afterAll(async () => {
   if (IS_FAILED && process.env.CI) {
