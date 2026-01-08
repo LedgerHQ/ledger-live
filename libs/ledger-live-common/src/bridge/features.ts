@@ -89,9 +89,9 @@ export const isSupportedFeature = <K extends keyof FeaturesMap>(
   }
 
   const featureValue = features[key];
-  if (featureValue === undefined) {
+  if (!featureValue) {
     return false;
   }
 
-  return featureValue.some(f => f === feature);
+  return (featureValue as readonly FeatureValue<K>[]).includes(feature);
 };

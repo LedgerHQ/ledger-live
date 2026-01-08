@@ -1,6 +1,6 @@
 import React from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import Text from "~/renderer/components/Text";
@@ -15,7 +15,6 @@ import { useAccountName } from "~/renderer/reducers/wallet";
 import { Divider } from "@ledgerhq/react-ui/index";
 import { useCoinModuleFeature } from "@ledgerhq/live-common/featureFlags/useCoinModuleFeature";
 import { CoinFamily } from "@ledgerhq/live-common/bridge/features";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 
 function HeadText(props: { account: AccountLike; title: string; name: string }) {
   const { title, name, account } = props;

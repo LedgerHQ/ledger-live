@@ -1,6 +1,6 @@
 import React from "react";
 import { useBalanceHistoryWithCountervalue } from "~/renderer/actions/portfolio";
-import { PortfolioRange, AccountLike } from "@ledgerhq/types-live";
+import { PortfolioRange, AccountLike, Account } from "@ledgerhq/types-live";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
@@ -11,13 +11,12 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { Data } from "~/renderer/components/Chart/types";
 import { useCoinModuleFeature } from "@ledgerhq/live-common/featureFlags/useCoinModuleFeature";
 import { CoinFamily } from "@ledgerhq/live-common/bridge/features";
-import { Account } from "@ledgerhq/types-live";
 
-type Props = {
+type Props = Readonly<{
   account: AccountLike;
   range: PortfolioRange;
   parentAccount?: Account | null;
-};
+}>;
 
 function Body({ account, range, parentAccount }: Props) {
   const { history, countervalueAvailable, countervalueChange } = useBalanceHistoryWithCountervalue({

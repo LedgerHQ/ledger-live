@@ -173,7 +173,7 @@ const AccountPage = ({
       ) : null}
       {!isAccountEmpty(account) ? (
         <>
-          {hasBlockFeature && account.blockHeight ? (
+          {hasBlockFeature && mainAccount.blockHeight ? (
             <Box
               horizontal
               pb={1}
@@ -184,7 +184,7 @@ const AccountPage = ({
                 justifyContent: "end",
               }}
             >
-              Block: ❒ {account.blockHeight}
+              Block: ❒ {mainAccount.blockHeight}
             </Box>
           ) : null}
           {showBalanceSummary ? (
