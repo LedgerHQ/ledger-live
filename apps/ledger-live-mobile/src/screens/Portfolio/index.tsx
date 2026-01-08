@@ -41,6 +41,7 @@ import { ContentCardLocation } from "~/dynamicContent/types";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
+import MarketBanner from "LLM/features/MarketBanner";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 export { default as PortfolioTabIcon } from "./TabIcon";
 import Animated, { useSharedValue } from "react-native-reanimated";
@@ -163,6 +164,9 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           />
         ) : null}
       </WalletTabSafeAreaView>,
+      <Box mt={6} key="MarketBanner">
+        <MarketBanner />
+      </Box>,
       showAssets ? (
         isAccountListUIEnabled ? (
           <AnimatedContainer onHeightChange={handleHeightChange}>
