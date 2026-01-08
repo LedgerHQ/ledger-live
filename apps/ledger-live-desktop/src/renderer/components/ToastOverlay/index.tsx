@@ -4,7 +4,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { Toast } from "./Toast";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import { openInformationCenter } from "~/renderer/actions/UI";
+import { openInformationCenter } from "~/renderer/reducers/UI";
 const Wrapper = styled.div`
   position: absolute;
   bottom: 0;
@@ -20,7 +20,7 @@ export function ToastOverlay() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const onOpenInformationCenter = useCallback(
-    () => dispatch(openInformationCenter("announcement")),
+    () => dispatch(openInformationCenter({ tabId: "announcement" })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );

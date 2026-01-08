@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { autoLockTimeoutSelector } from "~/renderer/reducers/settings";
-import { lock } from "~/renderer/actions/application";
+import { lock } from "~/renderer/reducers/application";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 import debounce from "lodash/debounce";
 

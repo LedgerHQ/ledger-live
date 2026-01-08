@@ -3,7 +3,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { Prompt, PromptProps, useHistory } from "react-router-dom";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { setNavigationLock } from "~/renderer/actions/application";
+import { setNavigationLock } from "~/renderer/reducers/application";
 
 type Props = {
   /** set to tru if navigation should be locked */

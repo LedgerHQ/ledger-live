@@ -9,7 +9,7 @@ import Button from "~/renderer/components/Button";
 import InputPassword from "~/renderer/components/InputPassword";
 import Label from "~/renderer/components/Label";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
-import { setHasPassword } from "~/renderer/actions/application";
+import { setHasPassword } from "~/renderer/reducers/application";
 type MaybePasswordIncorrectError = ReturnType<typeof PasswordIncorrectError> | undefined | null;
 const DisablePasswordModal = () => {
   const dispatch = useDispatch();

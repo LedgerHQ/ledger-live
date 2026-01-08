@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import LiveAppIcon from "./LiveAppIcon";
-import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
+import { openPlatformAppInfoDrawer } from "~/renderer/reducers/UI";
 import { useSelectAccount } from "../Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";

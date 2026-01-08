@@ -1,8 +1,10 @@
-import { handleActions } from "redux-actions";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { State } from "~/renderer/reducers";
-import { Handlers } from "./types";
 import { Data as CompleteExchangeData } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
+import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 export type PlatformAppDrawerInfo = {
   type: "DAPP_INFO";
@@ -13,29 +15,34 @@ export type PlatformAppDrawerInfo = {
 export type PlatformAppDrawerDisclaimer = {
   type: "DAPP_DISCLAIMER";
   manifest?: LiveAppManifest | null;
-  title: string;
-  next: () => void;
+  title: string | null;
+  disclaimerId: string;
+  next: (manifest: AppManifest, isChecked: boolean) => void;
 };
 
 export type StartExchangeAppDrawer = {
   type: "EXCHANGE_START";
   title: string;
   data: {
-    exchangeType: number;
-    onResult: () => void;
-    onCancel: () => void;
+    exchangeType: ExchangeType;
+    provider?: string;
+    fromAccountId?: string;
+    toAccountId?: string;
+    tokenCurrency?: string;
+    onResult: (result: { nonce: string; device: Device }) => void;
+    onCancel: (cancelResult: { error: Error; device: Device }) => void;
   };
 };
 
 export type CompleteExchangeAppDrawer = {
-  type: "EXCHANGE_COMPLETED";
+  type: "EXCHANGE_COMPLETE";
   title: string;
   data: CompleteExchangeData;
 };
 
-export type ExchangeAppDrawer = CompleteExchangeAppDrawer & StartExchangeAppDrawer;
+export type ExchangeAppDrawer = StartExchangeAppDrawer | CompleteExchangeAppDrawer;
 
-export type PlatformAppDrawers = PlatformAppDrawerInfo & PlatformAppDrawerDisclaimer;
+export type PlatformAppDrawers = PlatformAppDrawerInfo | PlatformAppDrawerDisclaimer;
 
 export type UIState = {
   informationCenter: {
@@ -44,7 +51,7 @@ export type UIState = {
   };
   platformAppDrawer: {
     isOpen: boolean;
-    payload?: PlatformAppDrawers | null;
+    payload?: PlatformAppDrawers | ExchangeAppDrawer | null;
   };
   isMemoTagBoxVisible: boolean;
   forceAutoFocusOnMemoField: boolean;
@@ -63,94 +70,115 @@ const initialState: UIState = {
   forceAutoFocusOnMemoField: false,
 };
 
-type OpenPayload = {
-  tabId?: string;
-};
+const uiSlice = createSlice({
+  name: "UI",
+  initialState,
+  reducers: {
+    openInformationCenter: (state, action: PayloadAction<{ tabId?: string }>) => {
+      state.informationCenter.isOpen = true;
+      state.informationCenter.tabId = action.payload.tabId || "announcement";
+    },
+    setTabInformationCenter: (state, action: PayloadAction<{ tabId: string }>) => {
+      state.informationCenter.tabId = action.payload.tabId;
+    },
+    closeInformationCenter: state => {
+      state.informationCenter.isOpen = false;
+    },
+    openPlatformAppInfoDrawer: (
+      state,
+      action: PayloadAction<{ manifest: LiveAppManifest | undefined | null }>,
+    ) => {
+      return {
+        ...state,
+        platformAppDrawer: {
+          isOpen: true,
+          payload: {
+            type: "DAPP_INFO",
+            title: "platform.app.informations.title",
+            manifest: action.payload.manifest,
+          },
+        },
+      };
+    },
+    openPlatformAppDisclaimerDrawer: (
+      state,
+      action: PayloadAction<{
+        manifest: LiveAppManifest | undefined | null;
+        disclaimerId: string;
+        next: (manifest: AppManifest, isChecked: boolean) => void;
+      }>,
+    ) => {
+      return {
+        ...state,
+        platformAppDrawer: {
+          isOpen: true,
+          payload: {
+            type: "DAPP_DISCLAIMER",
+            manifest: action.payload.manifest,
+            title: null,
+            disclaimerId: action.payload.disclaimerId,
+            next: action.payload.next,
+          },
+        },
+      };
+    },
+    openExchangeDrawer: (
+      state,
+      action: PayloadAction<
+        | {
+            type: "EXCHANGE_START";
+            exchangeType: ExchangeType;
+            provider?: string;
+            fromAccountId?: string;
+            toAccountId?: string;
+            tokenCurrency?: string;
+            onResult: (result: { nonce: string; device: Device }) => void;
+            onCancel: (cancelResult: { error: Error; device: Device }) => void;
+          }
+        | ({
+            type: "EXCHANGE_COMPLETE";
+          } & CompleteExchangeData)
+      >,
+    ) => {
+      const { type, ...data } = action.payload;
+      return {
+        ...state,
+        platformAppDrawer: {
+          isOpen: true,
+          payload: {
+            type,
+            title: "swap2.exchangeDrawer.title",
+            data,
+          } as ExchangeAppDrawer,
+        },
+      };
+    },
+    closePlatformAppDrawer: state => {
+      state.platformAppDrawer.isOpen = false;
+    },
+    setMemoTagInfoBoxDisplay: (
+      state,
+      action: PayloadAction<{
+        isMemoTagBoxVisible: boolean;
+        forceAutoFocusOnMemoField?: boolean;
+      }>,
+    ) => {
+      state.isMemoTagBoxVisible = action.payload.isMemoTagBoxVisible;
+      state.forceAutoFocusOnMemoField = !!action.payload?.forceAutoFocusOnMemoField;
+    },
+  },
+});
 
-type ToggleMemoDisplayPayload = {
-  isMemoTagBoxVisible: boolean;
-  forceAutoFocusOnMemoField?: boolean;
-};
-
-type HandlersPayloads = {
-  INFORMATION_CENTER_OPEN: OpenPayload;
-  INFORMATION_CENTER_SET_TAB: OpenPayload;
-  INFORMATION_CENTER_CLOSE: never;
-  PLATFORM_APP_DRAWER_OPEN: PlatformAppDrawers;
-  PLATFORM_APP_DRAWER_CLOSE: never;
-  EXCHANGE_APP_DRAWER_OPEN: ExchangeAppDrawer;
-  TOGGLE_MEMOTAG_DISPLAY: ToggleMemoDisplayPayload;
-};
-type UIHandlers<PreciseKey = true> = Handlers<UIState, HandlersPayloads, PreciseKey>;
-
-const handlers: UIHandlers = {
-  INFORMATION_CENTER_OPEN: (state, { payload }) => {
-    const { tabId } = payload;
-    return {
-      ...state,
-      informationCenter: {
-        ...state.informationCenter,
-        isOpen: true,
-        tabId: tabId || "announcement",
-      },
-    };
-  },
-  INFORMATION_CENTER_SET_TAB: (state, { payload }) => {
-    const { tabId } = payload;
-    return {
-      ...state,
-      informationCenter: {
-        ...state.informationCenter,
-        tabId: tabId,
-      },
-    };
-  },
-  INFORMATION_CENTER_CLOSE: state => {
-    return {
-      ...state,
-      informationCenter: {
-        ...state.informationCenter,
-        isOpen: false,
-      },
-    };
-  },
-  PLATFORM_APP_DRAWER_OPEN: (state, { payload }) => {
-    return {
-      ...state,
-      platformAppDrawer: {
-        isOpen: true,
-        payload,
-      },
-    };
-  },
-  PLATFORM_APP_DRAWER_CLOSE: state => {
-    return {
-      ...state,
-      platformAppDrawer: {
-        ...state.platformAppDrawer,
-        isOpen: false,
-      },
-    };
-  },
-  EXCHANGE_APP_DRAWER_OPEN: (state, { payload }) => {
-    return {
-      ...state,
-      platformAppDrawer: {
-        isOpen: true,
-        payload,
-      },
-    };
-  },
-  TOGGLE_MEMOTAG_DISPLAY: (state, { payload }) => {
-    return {
-      ...state,
-      isMemoTagBoxVisible: payload.isMemoTagBoxVisible,
-      forceAutoFocusOnMemoField: !!payload?.forceAutoFocusOnMemoField,
-    };
-  },
-};
-
-// Selectors
+export const {
+  openInformationCenter,
+  setTabInformationCenter,
+  closeInformationCenter,
+  openPlatformAppInfoDrawer,
+  openPlatformAppDisclaimerDrawer,
+  openExchangeDrawer,
+  closePlatformAppDrawer,
+  setMemoTagInfoBoxDisplay,
+} = uiSlice.actions;
 
 export const informationCenterStateSelector = (state: State): UIState["informationCenter"] =>
   state.UI.informationCenter;
@@ -161,9 +189,5 @@ export const memoTagBoxVisibilitySelector = (state: State): UIState["isMemoTagBo
 export const forceAutoFocusOnMemoFieldSelector = (
   state: State,
 ): UIState["forceAutoFocusOnMemoField"] => state.UI.forceAutoFocusOnMemoField;
-// Exporting reducer
 
-export default handleActions<UIState, HandlersPayloads[keyof HandlersPayloads]>(
-  handlers as unknown as UIHandlers<false>,
-  initialState,
-);
+export default uiSlice.reducer;

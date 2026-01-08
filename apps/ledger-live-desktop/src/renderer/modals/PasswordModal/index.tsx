@@ -9,7 +9,7 @@ import Modal, { ModalBody } from "~/renderer/components/Modal";
 import PasswordForm from "./PasswordForm";
 import { setEncryptionKey, removeEncryptionKey, isEncryptionKeyCorrect } from "~/renderer/storage";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
-import { setHasPassword } from "~/renderer/actions/application";
+import { setHasPassword } from "~/renderer/reducers/application";
 type MaybePasswordIncorrectError = ReturnType<typeof PasswordIncorrectError> | undefined | null;
 const PasswordModal = () => {
   const { t } = useTranslation();

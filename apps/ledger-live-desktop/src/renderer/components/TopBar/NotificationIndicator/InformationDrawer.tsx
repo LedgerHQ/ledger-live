@@ -10,7 +10,7 @@ import { CSSTransition } from "react-transition-group";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 
 import { informationCenterStateSelector } from "~/renderer/reducers/UI";
-import { setTabInformationCenter } from "~/renderer/actions/UI";
+import { setTabInformationCenter } from "~/renderer/reducers/UI";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { useUnseenNotificationsCount } from "~/renderer/hooks/useUnseenNotificationsCount";
 
@@ -88,7 +88,7 @@ export const InformationDrawer = ({
           fullWidth
           tabs={tabs.map(({ label }) => label)}
           onIndexChange={newTabIndex => {
-            dispatch(setTabInformationCenter(tabs[newTabIndex].id));
+            dispatch(setTabInformationCenter({ tabId: tabs[newTabIndex].id }));
           }}
           index={tabs.findIndex(tab => tab.id === tabId)}
         />

@@ -16,7 +16,7 @@ import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator
 import EditOperationPanel from "~/renderer/components/OperationsList/EditOperationPanel";
 import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { setMemoTagInfoBoxDisplay } from "~/renderer/actions/UI";
+import { setMemoTagInfoBoxDisplay } from "~/renderer/reducers/UI";
 import {
   forceAutoFocusOnMemoFieldSelector,
   memoTagBoxVisibilitySelector,

@@ -7,7 +7,7 @@ import { InformationDrawer } from "./InformationDrawer";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { informationCenterStateSelector } from "~/renderer/reducers/UI";
-import { openInformationCenter, closeInformationCenter } from "~/renderer/actions/UI";
+import { openInformationCenter, closeInformationCenter } from "~/renderer/reducers/UI";
 import { track } from "~/renderer/analytics/segment";
 import { useUnseenNotificationsCount } from "~/renderer/hooks/useUnseenNotificationsCount";
 import { useHistory } from "react-router";
@@ -28,7 +28,7 @@ export function NotificationIndicator() {
       button: "Notification Center",
       page: history.location.pathname,
     });
-    dispatch(openInformationCenter(undefined));
+    dispatch(openInformationCenter({ tabId: undefined }));
   }, [dispatch, history.location.pathname]);
 
   return (

@@ -8,7 +8,7 @@ import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
 import { useHardReset } from "~/renderer/reset";
 import { fetchAccounts } from "~/renderer/actions/accounts";
 import { fetchTrustchain } from "~/renderer/actions/trustchain";
-import { unlock } from "~/renderer/actions/application";
+import { unlock } from "~/renderer/reducers/application";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import Box from "~/renderer/components/Box";
 import InputPassword from "~/renderer/components/InputPassword";

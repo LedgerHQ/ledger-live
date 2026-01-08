@@ -50,7 +50,7 @@ import { isDisconnectedWhileSendingApduError } from "@ledgerhq/live-dmk-desktop"
 
 import { urls } from "~/config/urls";
 import { closeAllModal } from "~/renderer/actions/modals";
-import { closePlatformAppDrawer } from "~/renderer/actions/UI";
+import { closePlatformAppDrawer } from "~/renderer/reducers/UI";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Animation from "~/renderer/animations";

@@ -3,7 +3,7 @@ import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { SendWorkflow } from ".";
 import { closeSendFlowDialog, sendFlowStateSelector } from "~/renderer/reducers/sendFlow";
-import { setMemoTagInfoBoxDisplay } from "~/renderer/actions/UI";
+import { setMemoTagInfoBoxDisplay } from "~/renderer/reducers/UI";
 
 export function SendFlowRoot() {
   const dispatch = useDispatch();

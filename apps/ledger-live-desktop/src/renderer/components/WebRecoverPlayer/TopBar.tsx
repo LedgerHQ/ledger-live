@@ -17,7 +17,7 @@ import IconClose from "~/renderer/icons/Cross";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 
 import { WebviewState, WebviewAPI } from "../Web3AppWebview/types";
-import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
+import { openPlatformAppInfoDrawer } from "~/renderer/reducers/UI";
 import Spinner from "../Spinner";
 
 const Container = styled(Box).attrs(() => ({

@@ -36,7 +36,7 @@ import createStore from "~/renderer/createStore";
 import events from "~/renderer/events";
 import { initAccounts } from "~/renderer/actions/accounts";
 import { fetchSettings, setDeepLinkUrl } from "~/renderer/actions/settings";
-import { lock, setOSDarkMode } from "~/renderer/actions/application";
+import { lock, setOSDarkMode } from "~/renderer/reducers/application";
 import {
   languageSelector,
   sentryLogsSelector,

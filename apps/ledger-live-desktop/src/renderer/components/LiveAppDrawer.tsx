@@ -8,7 +8,7 @@ import Button from "~/renderer/components/Button";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import { dismissBanner } from "~/renderer/actions/settings";
-import { closePlatformAppDrawer } from "~/renderer/actions/UI";
+import { closePlatformAppDrawer } from "~/renderer/reducers/UI";
 import { platformAppDrawerStateSelector } from "~/renderer/reducers/UI";
 import Text from "./Text";
 import { AppDetails } from "./Platform/AppDetails";

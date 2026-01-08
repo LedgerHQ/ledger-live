@@ -11,7 +11,7 @@ import { languageSelector, lastSeenDeviceSelector } from "~/renderer/reducers/se
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { ServiceStatusProvider } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import { openInformationCenter } from "~/renderer/actions/UI";
+import { openInformationCenter } from "~/renderer/reducers/UI";
 import { track } from "~/renderer/analytics/segment";
 import fetchApi from "../../../tests/mocks/notificationsHelpers";
 import networkApi from "../../../tests/mocks/serviceStatusHelpers";
@@ -109,7 +109,7 @@ export function AnnouncementProviderWrapper({ children }: Props) {
           title: content.title,
           text: content.text,
           icon,
-          callback: () => dispatch(openInformationCenter("announcement")),
+          callback: () => dispatch(openInformationCenter({ tabId: "announcement" })),
         });
       }
     },

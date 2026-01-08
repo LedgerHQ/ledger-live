@@ -1,5 +1,5 @@
 import { ipcRenderer } from "electron";
-import { lock } from "./actions/application";
+import { lock } from "./reducers/application";
 import { hasEncryptionKey } from "~/renderer/storage";
 import { Store } from "redux";
 

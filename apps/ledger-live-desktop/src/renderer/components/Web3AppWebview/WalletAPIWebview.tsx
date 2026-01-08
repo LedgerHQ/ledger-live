@@ -25,7 +25,7 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import getUser from "~/helpers/user";
-import { openExchangeDrawer } from "~/renderer/actions/UI";
+import { openExchangeDrawer } from "~/renderer/reducers/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { track } from "~/renderer/analytics/segment";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";

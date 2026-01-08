@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { dismissedBannersSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import { openPlatformAppDisclaimerDrawer } from "~/renderer/actions/UI";
+import { openPlatformAppDisclaimerDrawer } from "~/renderer/reducers/UI";
 import { AppCard } from "~/renderer/components/Platform/AppCard";
 import { Banner } from "./Banner";
 import { TwitterBanner } from "./TwitterBanner";

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { lock } from "~/renderer/actions/application";
+import { lock } from "~/renderer/reducers/application";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import { hasAccountsSelector } from "~/renderer/reducers/accounts";
 import { Bar, ItemContainer } from "./shared";
