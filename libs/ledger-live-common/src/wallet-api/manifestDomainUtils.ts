@@ -13,13 +13,34 @@ export function getDomain(url: string): string | null {
 }
 
 /**
- * Checks if two URLs are on the same domain
+ * Extracts the protocol from a URL string
+ */
+export function getProtocol(url: string): string | null {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.protocol;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Checks if two URLs are on the same domain and protocol
  */
 export function isSameDomain(url1: string | undefined, url2: string | undefined): boolean {
   if (!url1 || !url2) return false;
   const domain1 = getDomain(url1);
   const domain2 = getDomain(url2);
-  return domain1 !== null && domain2 !== null && domain1 === domain2;
+  const protocol1 = getProtocol(url1);
+  const protocol2 = getProtocol(url2);
+  return (
+    domain1 !== null &&
+    domain2 !== null &&
+    protocol1 !== null &&
+    protocol2 !== null &&
+    domain1 === domain2 &&
+    protocol1 === protocol2
+  );
 }
 
 /**

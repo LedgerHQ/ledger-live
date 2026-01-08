@@ -1,4 +1,4 @@
-import { getDomain, isSameDomain, applyCustomDappUrl } from "./manifestDomainUtils";
+import { getDomain, getProtocol, isSameDomain, applyCustomDappUrl } from "./manifestDomainUtils";
 
 describe("manifestDomainUtils", () => {
   describe("getDomain", () => {
@@ -35,25 +35,65 @@ describe("manifestDomainUtils", () => {
     });
   });
 
+  describe("getProtocol", () => {
+    it("should extract http protocol", () => {
+      expect(getProtocol("http://example.com/path")).toBe("http:");
+    });
+
+    it("should extract https protocol", () => {
+      expect(getProtocol("https://example.com/path")).toBe("https:");
+    });
+
+    it("should extract protocol from URL with port", () => {
+      expect(getProtocol("https://example.com:3000/path")).toBe("https:");
+    });
+
+    it("should extract protocol from URL with query parameters", () => {
+      expect(getProtocol("https://example.com/path?query=value")).toBe("https:");
+    });
+
+    it("should extract protocol from URL with hash", () => {
+      expect(getProtocol("https://example.com/path#section")).toBe("https:");
+    });
+
+    it("should return null for invalid URL", () => {
+      expect(getProtocol("not-a-valid-url")).toBe(null);
+    });
+
+    it("should return null for empty string", () => {
+      expect(getProtocol("")).toBe(null);
+    });
+  });
+
   describe("isSameDomain", () => {
-    it("should return true for same domains", () => {
+    it("should return true for same domains and protocols", () => {
       expect(isSameDomain("https://example.com/path1", "https://example.com/path2")).toBe(true);
     });
 
-    it("should return true for same domains with different protocols", () => {
-      expect(isSameDomain("http://example.com/path1", "https://example.com/path2")).toBe(true);
+    it("should return false for same domains with different protocols", () => {
+      expect(isSameDomain("http://example.com/path1", "https://example.com/path2")).toBe(false);
     });
 
-    it("should return true for same domains with different ports", () => {
+    it("should return true for same domains and protocols with different ports", () => {
       expect(isSameDomain("https://example.com:3000/path1", "https://example.com:8080/path2")).toBe(
         true,
       );
     });
 
-    it("should return true for same domains with different query params", () => {
+    it("should return true for same domains and protocols with different query params", () => {
       expect(isSameDomain("https://example.com/path?a=1", "https://example.com/path?b=2")).toBe(
         true,
       );
+    });
+
+    it("should return true for same domains and protocols with different paths", () => {
+      expect(isSameDomain("https://example.com/path1", "https://example.com/path2")).toBe(true);
+    });
+
+    it("should return true for same domains and protocols with different hashes", () => {
+      expect(
+        isSameDomain("https://example.com/path#section1", "https://example.com/path#section2"),
+      ).toBe(true);
     });
 
     it("should return false for different domains", () => {
@@ -64,6 +104,14 @@ describe("manifestDomainUtils", () => {
       expect(isSameDomain("https://app.example.com/path", "https://api.example.com/path")).toBe(
         false,
       );
+    });
+
+    it("should return false for http vs https", () => {
+      expect(isSameDomain("http://example.com/path", "https://example.com/path")).toBe(false);
+    });
+
+    it("should return false for https vs http", () => {
+      expect(isSameDomain("https://example.com/path", "http://example.com/path")).toBe(false);
     });
 
     it("should return false when first URL is undefined", () => {
@@ -143,6 +191,20 @@ describe("manifestDomainUtils", () => {
 
         expect(result).toBe(manifest);
       });
+
+      it("should not apply customDappUrl when protocol differs", () => {
+        const manifest = {
+          id: "app1",
+          params: {
+            dappUrl: "https://example.com/original",
+          },
+        };
+
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+        const result = applyCustomDappUrl(manifest, "http://example.com/custom");
+
+        expect(result).toBe(manifest);
+      });
     });
 
     describe("manifest with dapp flag and url", () => {
@@ -175,6 +237,21 @@ describe("manifestDomainUtils", () => {
 
         // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = applyCustomDappUrl(manifest, "https://malicious.com/custom");
+
+        expect(result).toEqual(manifest);
+        expect(result).toBe(manifest);
+      });
+
+      it("should not apply customDappUrl when protocol differs", () => {
+        const manifest = {
+          id: "app1",
+          dapp: true,
+          url: "https://example.com/original",
+          name: "My App",
+        };
+
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+        const result = applyCustomDappUrl(manifest, "http://example.com/custom");
 
         expect(result).toEqual(manifest);
         expect(result).toBe(manifest);
