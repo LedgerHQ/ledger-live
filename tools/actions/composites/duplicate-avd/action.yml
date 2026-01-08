@@ -76,4 +76,3 @@ runs:
         echo ""
         echo "📋 Final AVD list:"
         ls -la "${AVD_DIR}/"
-

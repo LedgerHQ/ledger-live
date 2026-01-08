@@ -672,7 +672,7 @@ jobs:
           destination: /
 
       - name: Duplicate AVDs for parallel testing
-        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@support/qaa_850_e2e_tests_parallel_test
         with:
           source_avd_name: ${{ env.AVD_NAME }}
           target_suffixes: "_2,_3"
