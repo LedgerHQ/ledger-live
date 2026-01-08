@@ -15,6 +15,7 @@ import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers"
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { liveDataWithParentAddressCommand, liveDataCommand } from "tests/utils/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 const subAccounts = [
   {
@@ -58,7 +59,7 @@ for (const token of subAccounts) {
       {
         tag: [
           "@NanoSP",
-          "@LNS",
+          ...(token.account.parentAccount?.currency.id === Currency.SUI.id ? [] : ["@LNS"]),
           "@NanoX",
           "@Stax",
           "@Flex",
@@ -118,7 +119,7 @@ for (const token of subAccountReceive) {
       {
         tag: [
           "@NanoSP",
-          "@LNS",
+          ...(token.account.parentAccount?.currency.id === Currency.SUI.id ? [] : ["@LNS"]),
           "@NanoX",
           "@Stax",
           "@Flex",
@@ -169,7 +170,7 @@ for (const token of subAccounts) {
       {
         tag: [
           "@NanoSP",
-          "@LNS",
+          ...(token.account.parentAccount?.currency.id === Currency.SUI.id ? [] : ["@LNS"]),
           "@NanoX",
           "@Stax",
           "@Flex",
@@ -591,7 +592,7 @@ test.describe("Send token (subAccount) - e2e ", () => {
   test(
     `Send from ${tokenValidSend.tx.accountToDebit.accountName} to ${tokenValidSend.tx.accountToCredit.accountName} - e2e`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@sui", "@family-sui"],
+      tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@sui", "@family-sui"],
       annotation: { type: "TMS", description: tokenValidSend.xrayTicket },
     },
     async ({ app }) => {

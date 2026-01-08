@@ -209,7 +209,7 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
       {
         tag: [
           "@NanoSP",
-          "@LNS",
+          ...(account.delegate.account.currency.id !== Currency.MULTIVERS_X.id ? ["@LNS"] : []),
           "@NanoX",
           "@Stax",
           "@Flex",
@@ -416,7 +416,7 @@ for (const validator of validators) {
       {
         tag: [
           "@NanoSP",
-          "@LNS",
+          ...(validator.delegate.account.currency.id !== Currency.MULTIVERS_X.id ? ["@LNS"] : []),
           "@NanoX",
           "@Stax",
           "@Flex",
