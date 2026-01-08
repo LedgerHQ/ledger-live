@@ -85,6 +85,10 @@ describe("manifestDomainUtils", () => {
     it("should return false when second URL is invalid", () => {
       expect(isSameDomain("https://example.com/path", "not-a-url")).toBe(false);
     });
+
+    it("should return false when both URLLs are invalid", () => {
+      expect(isSameDomain("not-a-url", "not-a-url")).toBe(false);
+    });
   });
 
   describe("applyCustomDappUrl", () => {
@@ -98,6 +102,7 @@ describe("manifestDomainUtils", () => {
           },
         };
 
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = applyCustomDappUrl(manifest, "https://example.com/custom");
 
         expect(result).toEqual({
@@ -118,6 +123,7 @@ describe("manifestDomainUtils", () => {
           },
         };
 
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = applyCustomDappUrl(manifest, "https://malicious.com/custom");
 
         expect(result).toEqual(manifest);
@@ -132,6 +138,7 @@ describe("manifestDomainUtils", () => {
           },
         };
 
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = applyCustomDappUrl(manifest, "https://api.example.com/custom");
 
         expect(result).toBe(manifest);
@@ -147,6 +154,7 @@ describe("manifestDomainUtils", () => {
           name: "My App",
         };
 
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = applyCustomDappUrl(manifest, "https://example.com/custom");
 
         expect(result).toEqual({
@@ -165,6 +173,7 @@ describe("manifestDomainUtils", () => {
           name: "My App",
         };
 
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = applyCustomDappUrl(manifest, "https://malicious.com/custom");
 
         expect(result).toEqual(manifest);
@@ -187,6 +196,7 @@ describe("manifestDomainUtils", () => {
           params: { dappUrl: "https://example.com/original" },
         };
 
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         expect(applyCustomDappUrl(manifest, null)).toBe(manifest);
       });
 
@@ -196,6 +206,7 @@ describe("manifestDomainUtils", () => {
           params: { dappUrl: "https://example.com/original" },
         };
 
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         expect(applyCustomDappUrl(manifest, undefined)).toBe(manifest);
       });
 
@@ -205,6 +216,7 @@ describe("manifestDomainUtils", () => {
           params: { dappUrl: "https://example.com/original" },
         };
 
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         expect(applyCustomDappUrl(manifest, "")).toBe(manifest);
       });
 
@@ -214,6 +226,7 @@ describe("manifestDomainUtils", () => {
           name: "My App",
         };
 
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         expect(applyCustomDappUrl(manifest, "https://example.com/custom")).toBe(manifest);
       });
 
@@ -223,6 +236,7 @@ describe("manifestDomainUtils", () => {
           params: { otherParam: "value" },
         };
 
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         expect(applyCustomDappUrl(manifest, "https://example.com/custom")).toBe(manifest);
       });
 
@@ -233,6 +247,7 @@ describe("manifestDomainUtils", () => {
           name: "My App",
         };
 
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         expect(applyCustomDappUrl(manifest, "https://example.com/custom")).toBe(manifest);
       });
 
@@ -246,6 +261,7 @@ describe("manifestDomainUtils", () => {
           url: "https://example.com/fallback",
         };
 
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = applyCustomDappUrl(manifest, "https://example.com/custom");
 
         expect(result).toEqual({
