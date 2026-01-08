@@ -63,7 +63,7 @@ const nodeModulesPaths = [
 
 const metroConfig = {
   projectRoot: path.resolve(__dirname),
-  watchFolders: [projectRootDir],
+  watchFolders: [projectRootDir, "/Users/quentin.jaccarino/Documents/Projects/wasm-crypto-test"],
   transformer: {
     getTransformOptions: async () => ({
       transform: {
@@ -90,6 +90,7 @@ const metroConfig = {
       tls: require.resolve("tls"),
       ...buildTsAlias(tsconfig.compilerOptions.paths),
       crypto: require.resolve("react-native-quick-crypto"),
+      "@polkadot/wasm-crypto": require.resolve("react-native-polkadot-wasm"),
     },
     resolveRequest: (context, moduleName, platform) => {
       if (["tls", "http2", "dns"].includes(moduleName)) {
@@ -99,6 +100,14 @@ const metroConfig = {
       if (moduleName === "crypto") {
         // when importing crypto, resolve to react-native-quick-crypto
         return context.resolveRequest(context, "react-native-quick-crypto", platform);
+      }
+
+      // Handle @polkadot/wasm-crypto local resolution
+      if (moduleName === "@polkadot/wasm-crypto") {
+        return {
+          filePath: require.resolve("react-native-polkadot-wasm"),
+          type: "sourceFile",
+        };
       }
 
       try {

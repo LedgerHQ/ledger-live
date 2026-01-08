@@ -2474,12 +2474,36 @@ PODS:
   - sovran-react-native (1.1.3):
     - React-Core
   - TOCropViewController (2.5.3)
+  - uniffi-bindgen-react-native (0.29.3-1):
+    - React-Core
   - VisionCamera (4.7.3):
     - VisionCamera/Core (= 4.7.3)
     - VisionCamera/React (= 4.7.3)
   - VisionCamera/Core (4.7.3)
   - VisionCamera/React (4.7.3):
     - React-Core
+  - WasmCryptoTest (0.1.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - uniffi-bindgen-react-native (= 0.29.3-1)
+    - Yoga
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -2611,6 +2635,7 @@ DEPENDENCIES:
   - "segment-analytics-react-native (from `../node_modules/@segment/analytics-react-native`)"
   - "sovran-react-native (from `../node_modules/@segment/sovran-react-native`)"
   - VisionCamera (from `../node_modules/react-native-vision-camera`)
+  - WasmCryptoTest (from `../node_modules/react-native-polkadot-wasm`)
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_14c2edb3720326136761d6cd0ff61f24/node_modules/react-native/ReactCommon/yoga`)"
 
 SPEC REPOS:
@@ -2649,6 +2674,7 @@ SPEC REPOS:
     - SDWebImageWebPCoder
     - SocketRocket
     - TOCropViewController
+    - uniffi-bindgen-react-native
 
 EXTERNAL SOURCES:
   boost:
@@ -2904,6 +2930,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@segment/sovran-react-native"
   VisionCamera:
     :path: "../node_modules/react-native-vision-camera"
+  WasmCryptoTest:
+    :path: "../node_modules/react-native-polkadot-wasm"
   Yoga:
     :path: "../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=2b53c1e5f1809d0b579eb158f0090709b837442527d3897d1f563069_14c2edb3720326136761d6cd0ff61f24/node_modules/react-native/ReactCommon/yoga"
 
@@ -3067,7 +3095,9 @@ SPEC CHECKSUMS:
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   sovran-react-native: a3ad3f8ff90c2002b2aa9790001a78b0b0a38594
   TOCropViewController: 20a14b6a7a098308bf369e7c8d700dc983a974e6
+  uniffi-bindgen-react-native: 125eae9e3a0cf34bf8f3d4b0ceed517df7cc0733
   VisionCamera: b51af005669c6642dd1b4fca434eda4c1778de87
+  WasmCryptoTest: 521da56e9091f4e693a4be5f73f9d55f8a0796a6
   Yoga: 2b02f3f767761bb4ffd25b1bb56fd264be57bd6b
 
 PODFILE CHECKSUM: 383b3ba2e67deedb3aaf06cab144a449c950c986
