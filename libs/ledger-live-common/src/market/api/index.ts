@@ -31,7 +31,7 @@ export async function fetchList({
   page = 1,
   order = Order.MarketCapDesc,
   search = "",
-  liveCoinsList = [],
+  liveCompatible = false,
   starred = [],
   range = "24",
 }: MarketListRequestParams): Promise<MarketItemResponse[]> {
@@ -44,7 +44,7 @@ export async function fetchList({
       sort: getSortParam(order, range),
       ...(search.length >= 2 && { filter: search }),
       ...(starred.length > 0 && { ids: starred.sort().join(",") }),
-      ...(liveCoinsList.length > 1 && { ids: liveCoinsList.sort().join(",") }),
+      ...(liveCompatible && { supported: liveCompatible }),
       ...([Order.topLosers, Order.topGainers].includes(order) && { top: 100 }),
     },
   });

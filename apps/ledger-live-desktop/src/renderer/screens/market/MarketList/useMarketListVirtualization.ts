@@ -21,6 +21,7 @@ export const useMarketListVirtualization = ({
   checkIfDataIsStaleAndRefetch,
 }: UseMarketListVirtualizationParams) => {
   const parentRef = useRef<HTMLDivElement>(null);
+  const lastFetchedIndexRef = useRef<number>(-1);
 
   const rowVirtualizer = useVirtualizer({
     count: itemCount,
@@ -36,10 +37,25 @@ export const useMarketListVirtualization = ({
   useEffect(() => {
     if (lastVirtualItemIndex === -1 || loading) return;
 
-    if (lastVirtualItemIndex >= marketData.length - 1 && currenciesLength > 0) {
+    const hasMoreData = itemCount > marketData.length;
+    if (!hasMoreData || currenciesLength === 0) return;
+
+    const shouldFetch =
+      lastVirtualItemIndex >= marketData.length - 1 &&
+      lastFetchedIndexRef.current < marketData.length;
+
+    if (shouldFetch) {
+      lastFetchedIndexRef.current = marketData.length;
       onLoadNextPage();
     }
-  }, [marketData.length, currenciesLength, onLoadNextPage, loading, lastVirtualItemIndex]);
+  }, [
+    itemCount,
+    marketData.length,
+    currenciesLength,
+    onLoadNextPage,
+    loading,
+    lastVirtualItemIndex,
+  ]);
 
   useEffect(() => {
     const scrollElement = parentRef.current;

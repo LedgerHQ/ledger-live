@@ -12,8 +12,7 @@ import { starredMarketCoinsSelector } from "~/reducers/settings";
 
 export function useMarket() {
   const dispatch = useDispatch();
-  const { supportedCurrencies, liveCoinsList, supportedCounterCurrencies } =
-    useMarketDataProvider();
+  const { supportedCurrencies, supportedCounterCurrencies } = useMarketDataProvider();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const filterByStarredCurrencies: boolean = useSelector(marketFilterByStarredCurrenciesSelector);
   const marketParams = useSelector(marketParamsSelector);
@@ -32,7 +31,6 @@ export function useMarket() {
     starredMarketCoins,
     filterByStarredCurrencies,
     marketParams,
-    liveCoinsList,
     supportedCurrencies,
     supportedCounterCurrencies,
     marketCurrentPage,
