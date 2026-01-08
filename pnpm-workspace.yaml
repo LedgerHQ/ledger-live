@@ -24,7 +24,7 @@ catalog:
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.2
   "@ledgerhq/device-transport-kit-speculos": 1.1.2
   "@ledgerhq/device-transport-kit-web-hid": 1.2.2
-  "@ledgerhq/lumen-design-core": 0.0.36
+  "@ledgerhq/lumen-design-core": 0.0.39
   "@ledgerhq/speculos-device-controller": 0.2.1
   "@react-native/assets-registry": 0.77.3
   "@react-native/babel-plugin-codegen": 0.77.3
