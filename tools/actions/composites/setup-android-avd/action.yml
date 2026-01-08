@@ -1,5 +1,5 @@
 name: "Setup Android AVD"
-description: "Setup Android Virtual Devices for E2E testing with caching support"
+description: "Setup Android Virtual Device for E2E testing with caching support"
 inputs:
   ref:
     description: "The branch which triggered this workflow"
@@ -17,22 +17,22 @@ inputs:
     description: "System image target"
     required: true
   avd_name:
-    description: "Name for the first AVD"
+    description: "Name for the AVD"
     required: true
   avd_cores:
-    description: "Number of CPU cores for AVDs"
+    description: "Number of CPU cores for AVD"
     required: true
   avd_ram_size:
-    description: "RAM size for AVDs"
+    description: "RAM size for AVD"
     required: true
   avd_heap_size:
-    description: "Heap size for AVDs"
+    description: "Heap size for AVD"
     required: true
   avd_options:
     description: "Emulator options"
     required: true
   cache_key:
-    description: "Cache key for storing the AVDs"
+    description: "Cache key for storing the AVD"
     required: true
   r2_access_key:
     description: "R2 access key for cache upload"
@@ -65,51 +65,17 @@ runs:
 
     - name: Create .android directory
       shell: bash
-      run: mkdir /home/runner/.android/
+      run: mkdir -p /home/runner/.android/
 
-    - name: Create first AVD and generate snapshot
+    - name: Create AVD and generate snapshot
       uses: reactivecircus/android-emulator-runner@v2
-      id: create-avd-1
+      id: create-avd
       with:
         api-level: ${{ inputs.avd_api }}
         arch: ${{ inputs.avd_arch }}
         profile: ${{ inputs.avd_profile }}
         target: ${{ inputs.avd_target }}
         avd-name: ${{ inputs.avd_name }}
-        force-avd-creation: true
-        cores: ${{ inputs.avd_cores }}
-        ram-size: ${{ inputs.avd_ram_size }}
-        disable-linux-hw-accel: false
-        emulator-options: ${{ inputs.avd_options }}
-        heap-size: ${{ inputs.avd_heap_size }}
-        script: ${{ inputs.wait_script_path }}
-
-    - name: Create second AVD and generate snapshot
-      uses: reactivecircus/android-emulator-runner@v2
-      id: create-avd-2
-      with:
-        api-level: ${{ inputs.avd_api }}
-        arch: ${{ inputs.avd_arch }}
-        profile: ${{ inputs.avd_profile }}
-        target: ${{ inputs.avd_target }}
-        avd-name: ${{ inputs.avd_name }}_2
-        force-avd-creation: true
-        cores: ${{ inputs.avd_cores }}
-        ram-size: ${{ inputs.avd_ram_size }}
-        disable-linux-hw-accel: false
-        emulator-options: ${{ inputs.avd_options }}
-        heap-size: ${{ inputs.avd_heap_size }}
-        script: ${{ inputs.wait_script_path }}
-
-    - name: Create third AVD and generate snapshot
-      uses: reactivecircus/android-emulator-runner@v2
-      id: create-avd-3
-      with:
-        api-level: ${{ inputs.avd_api }}
-        arch: ${{ inputs.avd_arch }}
-        profile: ${{ inputs.avd_profile }}
-        target: ${{ inputs.avd_target }}
-        avd-name: ${{ inputs.avd_name }}_3
         force-avd-creation: true
         cores: ${{ inputs.avd_cores }}
         ram-size: ${{ inputs.avd_ram_size }}
