@@ -239,7 +239,7 @@ jobs:
       - name: Check if Android AVD cache exists
         id: check-avd
         if: ${{ inputs.tests_type != 'iOS Only' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@support/qaa_850_e2e_tests_parallel_test
         with:
           key: ${{ steps.cache-keys.outputs.avd_cache_key }}
           accessKey: ${{ secrets.R2_ACCESS_KEY_ID }}
