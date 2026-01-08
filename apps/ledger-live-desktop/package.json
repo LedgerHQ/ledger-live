@@ -213,7 +213,7 @@
     "@types/trust__keyto": "1.0.4",
     "@types/uuid": "8.3.4",
     "@types/write-file-atomic": "4.0.3",
-    "allure-playwright": "2.15.1",
+    "allure-playwright": "catalog:",
     "autoprefixer": "10.4.22",
     "axios": "catalog:",
     "buffer": "6.0.3",
