@@ -289,7 +289,7 @@
     "eslint-plugin-react": "7.34.1",
     "eslint-plugin-react-hooks": "4.6.0",
     "expect": "catalog:",
-    "express": "4.19.2",
+    "express": "4.20.0",
     "jest": "catalog:",
     "jest-allure2-reporter": "2.2.8",
     "jest-circus": "catalog:",

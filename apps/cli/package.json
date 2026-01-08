@@ -57,7 +57,7 @@
     "body-parser": "1.20.3",
     "command-line-args": "5.2.1",
     "cors": "2.8.5",
-    "express": "4.19.2",
+    "express": "4.20.0",
     "got": "14.4.7",
     "invariant": "2.2.4",
     "lodash": "4.17.21",
