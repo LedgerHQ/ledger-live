@@ -16,6 +16,7 @@ import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateB
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import RecoverBanner from "~/components/RecoverBanner";
+import { MarketBanner } from "@ledgerhq/features/market-banner";
 import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
@@ -152,6 +153,9 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       <WalletTabSafeAreaView key="portfolioHeaderElements" edges={["left", "right"]}>
         <Flex px={6} key="FirmwareUpdateBanner">
           <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+        </Flex>
+        <Flex px={6} key="MarketBanner">
+          <MarketBanner />
         </Flex>
         <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />
         {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mt={7} />}

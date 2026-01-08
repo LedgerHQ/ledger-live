@@ -10,6 +10,7 @@
 const { withRozenite } = require("@rozenite/metro");
 const { withRozeniteReduxDevTools } = require("@rozenite/redux-devtools-plugin/metro");
 const path = require("path");
+const fs = require("fs");
 const tsconfig = require("./tsconfig.json");
 
 const forcedDependencies = [
@@ -21,6 +22,8 @@ const forcedDependencies = [
   "react-native-safe-area-context",
   "@tanstack/react-query",
   "react-native-linear-gradient",
+  "@ledgerhq/lumen-ui-rnative",
+  "@ledgerhq/lumen-design-core",
 ];
 
 const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
@@ -36,6 +39,21 @@ const buildTsAlias = (conf = {}) =>
   );
 
 const projectRootDir = path.join(__dirname, "..", "..");
+
+// Build feature aliases: scan features/ and create @ledgerhq/features/* aliases
+// Note: Feature directories must follow kebab-case naming convention
+const buildFeatureAliases = () => {
+  const featuresDir = path.resolve(projectRootDir, "features");
+  if (!fs.existsSync(featuresDir)) return {};
+
+  return fs.readdirSync(featuresDir).reduce((aliases, featureName) => {
+    const srcPath = path.resolve(featuresDir, featureName, "src");
+    if (fs.existsSync(srcPath)) {
+      aliases[`@ledgerhq/features/${featureName}`] = srcPath;
+    }
+    return aliases;
+  }, {});
+};
 
 function forceDependency(moduleName, filters, nodeModulesPaths) {
   const matches = filters.some(
@@ -63,7 +81,7 @@ const nodeModulesPaths = [
 
 const metroConfig = {
   projectRoot: path.resolve(__dirname),
-  watchFolders: [projectRootDir],
+  watchFolders: [projectRootDir, path.resolve(projectRootDir, "features")],
   transformer: {
     getTransformOptions: async () => ({
       transform: {
@@ -89,6 +107,7 @@ const metroConfig = {
       net: require.resolve("react-native-tcp-socket"),
       tls: require.resolve("tls"),
       ...buildTsAlias(tsconfig.compilerOptions.paths),
+      ...buildFeatureAliases(),
     },
     resolveRequest: (context, moduleName, platform) => {
       if (["tls", "http2", "dns"].includes(moduleName)) {

@@ -1,6 +1,7 @@
 packages:
   - "apps/*"
   - "e2e/*"
+  - "features/*"
   - "libs/*"
   - "tests/*"
   - "libs/coin-modules/*"
@@ -25,6 +26,8 @@ catalog:
   "@ledgerhq/device-transport-kit-speculos": 1.1.2
   "@ledgerhq/device-transport-kit-web-hid": 1.2.2
   "@ledgerhq/lumen-design-core": 0.0.39
+  "@ledgerhq/lumen-ui-react": 0.0.61
+  "@ledgerhq/lumen-ui-rnative": 0.0.49
   "@ledgerhq/speculos-device-controller": 0.2.1
   "@react-native/assets-registry": 0.77.3
   "@react-native/babel-plugin-codegen": 0.77.3
@@ -54,6 +57,7 @@ catalog:
   axios: 1.13.2
   babel-jest: 30.2.0
   bs58: ^4.0.1
+  clsx: 2.1.1
   bs58check: ^2.1.2
   electron: 38.2.0
   ethers: 6.15.0
@@ -82,6 +86,7 @@ catalog:
   reselect: 5.1.1
   rxjs: 7.8.2
   tailwindcss: ^3.4.0
+  tailwind-merge: 3.4.0
   ws: 8.18.3
   semver: 7.7.3
   "@types/semver": 7.7.1

@@ -29,6 +29,7 @@ import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import SwapWebViewEmbedded from "./components/SwapWebViewEmbedded";
 import BannerSection from "./components/BannerSection";
+import { MarketBanner } from "@ledgerhq/features/market-banner";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -76,6 +77,7 @@ export default function DashboardPage() {
   return (
     <>
       <BannerSection />
+      <MarketBanner />
       {!ptxSwapLiveAppOnPortfolio?.enabled && <FeaturedButtons />}
       <TrackPage
         category="Portfolio"

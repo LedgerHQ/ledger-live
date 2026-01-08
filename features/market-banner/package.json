@@ -1,0 +1,39 @@
+{
+  "name": "@ledgerhq/features/market-banner",
+  "version": "0.0.1",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "react-native": "src/index.native.ts",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ledgerhq/live-common": "workspace:*",
+    "clsx": "catalog:",
+    "tailwind-merge": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-native": ">0.70",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-design-core": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.1",
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@jest/globals": "catalog:",
+    "jest": "catalog:",
+    "typescript": "5.4.3",
+    "@typescript-eslint/parser": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-design-core": "catalog:"
+  }
+}
