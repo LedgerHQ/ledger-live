@@ -46,7 +46,8 @@ const Delegation = ({ account, parentAccount }: Props) => {
 
   const showStakingPositions = useCoinModuleFeature(
     "stakingStakes",
-    (account as Account).currency.family,
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    (account as Account).currency.family as any,
   );
 
   if (!showStakingPositions) return null;
@@ -107,8 +108,10 @@ const Delegation = ({ account, parentAccount }: Props) => {
               onClick={() => {
                 dispatch(
                   openModal("MODAL_DELEGATE", {
-                    parentAccount,
-                    account,
+                    /* eslint-disable  @typescript-eslint/no-explicit-any */
+                    parentAccount: parentAccount as any,
+                    /* eslint-disable  @typescript-eslint/no-explicit-any */
+                    account: account as any,
                   }),
                 );
               }}

@@ -61,6 +61,7 @@ const ContextMenu = ({ account }: Props) => {
       onClick: () =>
         dispatch(
           openModal("MODAL_DELEGATE", {
+            /* eslint-disable  @typescript-eslint/no-explicit-any */
             account: account as any,
             eventType: "redelegate",
             stepId: "summary",
@@ -74,6 +75,7 @@ const ContextMenu = ({ account }: Props) => {
       onClick: () =>
         dispatch(
           openModal("MODAL_DELEGATE", {
+            /* eslint-disable  @typescript-eslint/no-explicit-any */
             account: account as any,
             eventType: "undelegate",
             stepId: "summary",

@@ -13,7 +13,6 @@ import UserPlusIcon from "~/renderer/icons/UserPlus";
 import BakerImage from "../../BakerImage";
 import { StepProps } from "../types";
 import { Baker } from "~/renderer/types/staking";
-import { useBakers } from "~/renderer/react/hooks";
 import { Account } from "@ledgerhq/types-live";
 
 const Row = styled(Box).attrs(() => ({
