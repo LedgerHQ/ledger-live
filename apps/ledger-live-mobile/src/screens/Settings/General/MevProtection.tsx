@@ -9,6 +9,8 @@ import Track from "~/analytics/Track";
 import { track } from "~/analytics";
 import { Linking } from "react-native";
 import styled from "styled-components/native";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { urls } from "~/utils/urls";
 
 const StyledText = styled(Text).attrs(() => ({
   color: "neutral.c70",
@@ -19,7 +21,7 @@ const StyledText = styled(Text).attrs(() => ({
 const MevProtectionRow = () => {
   const { t } = useTranslation();
   const mevProctection = useSelector(mevProtectionSelector);
-
+  const mevProtectionUrl = useLocalizedUrl(urls.mevProtection);
   const dispatch = useDispatch();
 
   const onPressLink = (url: string) => Linking.openURL(url);
@@ -46,11 +48,7 @@ const MevProtectionRow = () => {
       <Text variant="body" fontWeight="medium" color="neutral.c70">
         {t("settings.display.mevProtectionDesc")}
       </Text>
-      <StyledText
-        onPress={() => onPressLink(t("settings.display.mevProtectionLearnMoreUrl"))}
-        variant="body"
-        fontWeight="medium"
-      >
+      <StyledText onPress={() => onPressLink(mevProtectionUrl)} variant="body" fontWeight="medium">
         {t("settings.display.mevProtectionLearnMore")}
       </StyledText>
     </Flex>

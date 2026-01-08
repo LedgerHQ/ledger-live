@@ -25,6 +25,8 @@ import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
 import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 const SectionGeneral = () => {
   const hasPassword = useSelector(hasPasswordSelector);
@@ -34,6 +36,7 @@ const SectionGeneral = () => {
   const { shouldDisplayEntryPoint } = useEntryPoint(EntryPoint.settings);
   const { closeDrawer } = useActivationDrawer();
   const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");
+  const mevProtectionUrl = useLocalizedUrl(urls.mevProtection);
 
   return (
     <>
@@ -122,7 +125,7 @@ const SectionGeneral = () => {
           dataTestId="setting-mevProtection"
           id="setting-mevProtection"
           linkText={t("settings.display.mevProtectionLearnMore")}
-          externalUrl={t("settings.display.mevProtectionLearnMoreUrl")}
+          externalUrl={mevProtectionUrl}
         >
           <MevProtectionRow />
         </Row>

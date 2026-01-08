@@ -25,9 +25,7 @@ export default function GeneralSettings() {
       <DateFormatRow />
       <ThemeSettingsRow />
       <AuthSecurityToggle />
-      <FeatureToggle featureId="llMevProtection">
-        <MevProtection />
-      </FeatureToggle>
+      <MevProtection />
       <ReportErrorsRow />
       <AnalyticsRow />
       <FeatureToggle featureId="llmAnalyticsOptInPrompt">
