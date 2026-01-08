@@ -6,13 +6,15 @@ import { getAccountNumFromPath } from "../common-logic";
 import invariant from "invariant";
 import { UserRefusedAddress } from "@ledgerhq/errors";
 
+const USER_REFUSED_ACTION = "27013";
+
 const resolver = (signerContext: SignerContext<MinaSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
     const account = getAccountNumFromPath(path);
     invariant(account !== undefined, "Invalid account path, supported: 44'/12586'/<account>'/0/0");
     const r = await signerContext(deviceId, signer => signer.getAddress(account, verify || false));
 
-    if (r.returnCode === "27013") {
+    if (r.returnCode === USER_REFUSED_ACTION) {
       throw new UserRefusedAddress();
     }
     invariant(r.publicKey, "[mina] getAddress: expected publicKey to be defined");
