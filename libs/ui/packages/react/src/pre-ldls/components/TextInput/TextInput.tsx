@@ -108,6 +108,7 @@ const StyledInput = styled.input`
     color: var(--colors-border-disabled-default);
     cursor: not-allowed;
   }
+  outline: none;
 `;
 
 const Fieldset = styled.fieldset<{
