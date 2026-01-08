@@ -46,7 +46,7 @@ export function getErrorName(error: unknown): string | undefined {
 }
 
 export function getErrorMessage(error: unknown): string {
-  if (typeof error === "string") return error;
+  if (typeof error === "string") return error.trim() ? error : "Unknown error";
 
   return get(error, "message") || get(error, "cause.message") || "Unknown error";
 }
