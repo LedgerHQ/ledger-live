@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import {
   fontSize,
@@ -168,6 +168,7 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
   // local state of the name
   const [name, setName] = useState(storeAccountName);
   const [editingName, setEditingName] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const explorerView = getDefaultExplorerView(mainAccount.currency);
@@ -233,14 +234,15 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
         )}
         <AccountNameBox horizontal alignItems="center" flow={2}>
           <AccountName
+            ref={inputRef}
             color="neutral.c100"
             disabled={account.type !== "Account"}
             ff="Inter|SemiBold"
             fontSize={7}
-            onFocus={e => {
+            onFocus={() => {
               setEditingName(true);
               setTimeout(() => {
-                e.currentTarget.select();
+                inputRef.current?.select();
               });
             }}
             onBlur={() => {
