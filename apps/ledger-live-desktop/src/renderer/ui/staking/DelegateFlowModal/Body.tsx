@@ -23,7 +23,6 @@ import StepValidator from "./steps/StepValidator";
 import StepCustom, { StepCustomFooter } from "./steps/StepCustom";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import { StepId, Step } from "./types";
-import { useBakers } from "~/renderer/react/hooks";
 
 export type Data = {
   account?: Account | TokenAccount;
@@ -212,7 +211,7 @@ const Body = async ({ stepId, params, onChangeStepId, onClose }: Props) => {
     return transaction && params.mode === "undelegate"
       ? titles.undelegate
       : (stepId ? titles[stepId] : undefined) || titles.account;
-  }, [stepId, titles, transaction]);
+  }, [stepId, titles, transaction, params.mode]);
 
   const errorSteps = [];
   if (transactionError) {
