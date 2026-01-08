@@ -8,6 +8,7 @@ import {
 } from "./types";
 import { WALLET_API_FAMILIES } from "./constants";
 import { includes } from "../helpers";
+import { isSameDomain } from "./manifestDomainUtils";
 
 export function isWalletAPISupportedCurrency(
   currency: Currency,
@@ -68,50 +69,13 @@ export function getClientHeaders(params: getHostHeadersParams): Record<string, s
 }
 
 /**
- * Normalizes a hostname to lowercase and converts internationalized domain names to punycode.
- * @param hostname - The hostname to normalize
- * @returns The normalized hostname
- */
-function normalizeHostname(hostname: string): string {
-  try {
-    // Create a URL with a dummy protocol to leverage URL normalization
-    const url = new URL(`https://${hostname}`);
-    // URL constructor already handles punycode conversion and lowercasing
-    return url.hostname.toLowerCase();
-  } catch {
-    // If URL parsing fails, just lowercase the hostname
-    return hostname.toLowerCase();
-  }
-}
-
-/**
- * Checks if a hostname matches a whitelist pattern.
- * Supports exact matches and wildcard patterns (*.example.com).
- * @param hostname - The normalized hostname to check
- * @param pattern - The whitelist pattern (e.g., "example.com" or "*.example.com")
- * @returns true if the hostname matches the pattern
- */
-function matchesPattern(hostname: string, pattern: string): boolean {
-  // Normalize the pattern
-  const normalizedPattern = normalizeHostname(pattern);
-  if (normalizedPattern.startsWith("*.")) {
-    const domain = normalizedPattern.slice(2); // Remove "*."
-    // Match if hostname ends with .domain or is exactly domain
-    return hostname === domain || hostname.endsWith(`.${domain}`);
-  }
-
-  // Exact match
-  return hostname === normalizedPattern;
-}
-
-/**
- * Validates a URL against a list of whitelisted domains with proper hostname parsing.
- * Only HTTPS URLs are allowed. Validates the hostname, not the full URL string.
+ * Validates a URL by checking if it's on the same domain as the manifest URL.
+ * Only HTTPS URLs are allowed.
  * @param url - The URL to validate
- * @param whitelistedDomains - Array of allowed domain patterns (e.g., ["ledger.com", "*.ledger.com"])
- * @returns true if the URL is valid and matches a whitelisted domain
+ * @param manifestUrl - The manifest URL to check same domain against
+ * @returns true if the URL is valid and is on the same domain as manifestUrl
  */
-const isWhitelistedDomain = (url: string, whitelistedDomains: string[]): boolean => {
+const isWhitelistedDomain = (url: string, manifestUrl: string): boolean => {
   try {
     // Parse the URL
     const parsedUrl = new URL(url);
@@ -124,19 +88,13 @@ const isWhitelistedDomain = (url: string, whitelistedDomains: string[]): boolean
       return false;
     }
 
-    // Normalize the hostname (lowercase + punycode)
-    const hostname = normalizeHostname(parsedUrl.hostname);
-
-    // Check against whitelist patterns
-    const isValid = whitelistedDomains.some(pattern => matchesPattern(hostname, pattern));
-
-    if (!isValid) {
-      console.error(
-        `#isWhitelistedDomain:: invalid URL: hostname '${hostname}' is not whitelisted`,
-      );
+    // Check if URL is on the same domain as manifest URL
+    if (!isSameDomain(url, manifestUrl)) {
+      console.error(`#isWhitelistedDomain:: invalid URL: not on the same domain as manifest URL`);
+      return false;
     }
 
-    return isValid;
+    return true;
   } catch (error) {
     // Invalid URL format
     console.error(`#isWhitelistedDomain:: invalid URL format: ${error}`);
@@ -146,7 +104,7 @@ const isWhitelistedDomain = (url: string, whitelistedDomains: string[]): boolean
 
 export const getInitialURL = (inputs, manifest) => {
   try {
-    if (inputs?.goToURL && isWhitelistedDomain(inputs?.goToURL, manifest.domains)) {
+    if (inputs?.goToURL && isWhitelistedDomain(inputs?.goToURL, manifest.url)) {
       return inputs?.goToURL;
     }
 

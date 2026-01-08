@@ -93,25 +93,41 @@ describe("wallet-api helpers", () => {
     });
 
     describe("legitimate URLs", () => {
-      it("should allow exact domain match", () => {
+      it("should reject URL not on same domain as manifest", () => {
         const inputs = {
           goToURL: "https://ledger.com",
         };
         const result = getInitialURL(inputs, mockManifest);
-        expect(result).toBe(inputs.goToURL);
+        expect(result).toBe(mockManifest.url);
       });
 
-      it("should allow exact domain match with path", () => {
+      it("should reject URL with different domain even with path", () => {
         const inputs = {
           goToURL: "https://ledger.com/page?param=value",
+        };
+        const result = getInitialURL(inputs, mockManifest);
+        expect(result).toBe(mockManifest.url);
+      });
+
+      it("should reject URL on different domain", () => {
+        const inputs = {
+          goToURL: "https://approved.io/some/path",
+        };
+        const result = getInitialURL(inputs, mockManifest);
+        expect(result).toBe(mockManifest.url);
+      });
+
+      it("should allow URL on same domain as manifest URL", () => {
+        const inputs = {
+          goToURL: "https://default.example.com/different/path",
         };
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
       });
 
-      it("should allow another whitelisted domain", () => {
+      it("should allow URL on same domain as manifest URL with different path and params", () => {
         const inputs = {
-          goToURL: "https://approved.io/some/path",
+          goToURL: "https://default.example.com/page?test=value",
         };
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
@@ -119,19 +135,19 @@ describe("wallet-api helpers", () => {
 
       it("should be case-insensitive for domain matching", () => {
         const inputs = {
-          goToURL: "https://LEDGER.COM/path",
+          goToURL: "https://DEFAULT.EXAMPLE.COM/path",
         };
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
       });
 
-      it("should be case-insensitive for whitelist patterns", () => {
+      it("should allow URL on same domain with different case", () => {
         const manifestWithUppercase = {
           url: "https://default.example.com/",
           domains: ["LEDGER.COM"],
         };
         const inputs = {
-          goToURL: "https://ledger.com",
+          goToURL: "https://DEFAULT.EXAMPLE.COM/page",
         };
         const result = getInitialURL(inputs, manifestWithUppercase);
         expect(result).toBe(inputs.goToURL);
@@ -139,28 +155,28 @@ describe("wallet-api helpers", () => {
     });
 
     describe("wildcard pattern matching", () => {
-      it("should allow subdomain matching with wildcard", () => {
+      it("should reject subdomain not matching manifest domain", () => {
         const inputs = {
           goToURL: "https://test.subdomain.ledger.com",
         };
         const result = getInitialURL(inputs, mockManifest);
-        expect(result).toBe(inputs.goToURL);
+        expect(result).toBe(mockManifest.url);
       });
 
-      it("should allow nested subdomain matching with wildcard", () => {
+      it("should reject nested subdomain not matching manifest domain", () => {
         const inputs = {
           goToURL: "https://a.b.subdomain.ledger.com",
         };
         const result = getInitialURL(inputs, mockManifest);
-        expect(result).toBe(inputs.goToURL);
+        expect(result).toBe(mockManifest.url);
       });
 
-      it("should allow exact match of wildcard base domain", () => {
+      it("should reject domain not matching manifest domain", () => {
         const inputs = {
           goToURL: "https://subdomain.ledger.com",
         };
         const result = getInitialURL(inputs, mockManifest);
-        expect(result).toBe(inputs.goToURL);
+        expect(result).toBe(mockManifest.url);
       });
 
       it("should reject subdomain not matching wildcard pattern", () => {
@@ -181,25 +197,25 @@ describe("wallet-api helpers", () => {
     });
 
     describe("internationalized domain names", () => {
-      it("should handle IDN domains (punycode)", () => {
+      it("should handle IDN domains (punycode) on same domain", () => {
         const manifestWithIDN = {
-          url: "https://default.example.com/",
+          url: "https://münchen.de/",
           domains: ["münchen.de"],
         };
         const inputs = {
-          goToURL: "https://xn--mnchen-3ya.de", // punycode for münchen.de
+          goToURL: "https://xn--mnchen-3ya.de/page", // punycode for münchen.de
         };
         const result = getInitialURL(inputs, manifestWithIDN);
         expect(result).toBe(inputs.goToURL);
       });
 
-      it("should handle IDN domains in unicode form", () => {
+      it("should handle IDN domains in unicode form on same domain", () => {
         const manifestWithIDN = {
-          url: "https://default.example.com/",
+          url: "https://xn--mnchen-3ya.de/",
           domains: ["münchen.de"],
         };
         const inputs = {
-          goToURL: "https://münchen.de",
+          goToURL: "https://münchen.de/page",
         };
         const result = getInitialURL(inputs, manifestWithIDN);
         expect(result).toBe(inputs.goToURL);
@@ -223,17 +239,17 @@ describe("wallet-api helpers", () => {
         expect(result).toBe(mockManifest.url);
       });
 
-      it("should handle URL with port", () => {
+      it("should handle URL with port on same domain", () => {
         const inputs = {
-          goToURL: "https://ledger.com:8080/path",
+          goToURL: "https://default.example.com:8080/path",
         };
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
       });
 
-      it("should handle URL with authentication", () => {
+      it("should handle URL with authentication on same domain", () => {
         const inputs = {
-          goToURL: "https://user:pass@ledger.com/path",
+          goToURL: "https://user:pass@default.example.com/path",
         };
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
@@ -270,14 +286,14 @@ describe("wallet-api helpers", () => {
         expect(result).not.toContain("evil.example");
       });
 
-      it("should allow deeplink with legitimate goToURL", () => {
-        // Simulates: ledgerlive://discover/<appId>?goToURL=https://ledger.com/page
+      it("should allow deeplink with goToURL on same domain", () => {
+        // Simulates: ledgerlive://discover/<appId>?goToURL=https://default.example.com/page
         const inputs = {
-          goToURL: "https://ledger.com/page",
+          goToURL: "https://default.example.com/page",
         };
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
-        expect(result).toContain("ledger.com");
+        expect(result).toContain("default.example.com");
       });
     });
 
@@ -337,19 +353,19 @@ describe("wallet-api helpers", () => {
       expect(result).toContain("params=%7B%22foo%22%3A%22bar%22%7D"); // JSON.stringify({foo: "bar"}) encoded
     });
 
-    it("should use goToURL as-is when whitelisted (without adding params)", () => {
+    it("should use goToURL as-is when on same domain (without adding params)", () => {
       const manifest = {
         url: "https://example.com",
         domains: ["allowed.com"],
         params: { foo: "bar" },
       };
       const inputs = {
-        goToURL: "https://allowed.com/page",
+        goToURL: "https://example.com/page",
         customParam: "value",
       };
       const result = getInitialURL(inputs, manifest);
 
-      expect(result).toBe("https://allowed.com/page");
+      expect(result).toBe("https://example.com/page");
       expect(result).not.toContain("customParam");
       expect(result).not.toContain("params");
     });
