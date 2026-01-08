@@ -34,7 +34,6 @@ export type MarketListRequestParams = {
   order?: Order;
   search?: string;
   liveCompatible?: boolean;
-  liveCoinsList?: string[];
 };
 
 export type MarketListRequestResult = {

@@ -6,10 +6,6 @@ import {
   getSupportedCoinsList,
   supportedCounterCurrencies,
 } from "../api";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-
-import { useMemo } from "react";
-import { listSupportedCurrencies } from "../../currencies";
 import { currencyFormatter, format } from "../utils/currencyFormatter";
 import { QUERY_KEY } from "../utils/queryKeys";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH, ONE_DAY } from "../utils/timers";
@@ -24,26 +20,12 @@ import {
 } from "../utils/types";
 
 export function useMarketDataProvider() {
-  const supportedCurrenciesInLIve = listSupportedCurrencies();
-
-  const liveCompatibleIds: string[] = supportedCurrenciesInLIve
-    .map(({ id }: CryptoCurrency) => id)
-    .filter(Boolean);
   const { data: supportedCounterCurrencies } = useSupportedCounterCurrencies();
   const { data: supportedCurrencies } = useSupportedCurrencies();
-
-  const liveCoinsList = useMemo(
-    () =>
-      (supportedCurrencies || [])
-        ?.filter(({ id }) => liveCompatibleIds.includes(id))
-        .map(({ id }) => id),
-    [liveCompatibleIds, supportedCurrencies],
-  );
 
   return {
     supportedCounterCurrencies,
     supportedCurrencies,
-    liveCoinsList,
   };
 }
 
@@ -92,8 +74,7 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
           counterCurrency: props.counterCurrency,
           ...(props.search && props.search?.length >= 2 && { search: search }),
           ...(props.starred && props.starred?.length >= 1 && { starred: props.starred }),
-          ...(props.liveCoinsList &&
-            props.liveCoinsList?.length >= 1 && { liveCoinsList: props.liveCoinsList }),
+          ...(props.liveCompatible && { liveCompatible: props.liveCompatible }),
           ...(props.order &&
             [Order.topLosers, Order.topGainers].includes(props.order) && { range: props.range }),
         },
