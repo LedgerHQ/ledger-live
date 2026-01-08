@@ -178,7 +178,7 @@ jobs:
           echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-" >> $GITHUB_OUTPUT
-          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_3-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
+          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_4-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
@@ -675,6 +675,13 @@ jobs:
           endpoint: ${{ secrets.R2_ENDPOINT }}
           region: auto
           destination: /
+
+      - name: Duplicate AVDs for parallel testing
+        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
+        with:
+          source_avd_name: ${{ env.AVD_NAME }}
+          target_suffixes: "_2,_3"
+          avd_api: ${{ env.AVD_API }}
 
       - name: Boot Android Emulators in Background
         run: |

@@ -1,0 +1,70 @@
+name: "Duplicate Android AVD"
+description: "Duplicate an existing AVD for parallel testing"
+inputs:
+  source_avd_name:
+    description: "Name of the source AVD to duplicate"
+    required: true
+  target_suffixes:
+    description: "Comma-separated suffixes for duplicated AVDs (e.g., '_2,_3')"
+    required: true
+  avd_api:
+    description: "Android API level"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Duplicate AVDs
+      shell: bash
+      run: |
+        AVD_NAME="${{ inputs.source_avd_name }}"
+        AVD_DIR="/home/runner/.android/avd"
+
+        echo "📋 Source AVD: ${AVD_NAME}"
+        echo "📁 AVD Directory: ${AVD_DIR}"
+
+        # Verify source AVD exists
+        if [ ! -d "${AVD_DIR}/${AVD_NAME}.avd" ]; then
+          echo "❌ Error: Source AVD '${AVD_NAME}' not found at ${AVD_DIR}/${AVD_NAME}.avd"
+          ls -la "${AVD_DIR}/" || echo "AVD directory does not exist"
+          exit 1
+        fi
+
+        echo "✅ Source AVD found"
+
+        IFS=',' read -ra SUFFIXES <<< "${{ inputs.target_suffixes }}"
+        for suffix in "${SUFFIXES[@]}"; do
+          NEW_NAME="${AVD_NAME}${suffix}"
+          echo ""
+          echo "🔄 Creating duplicate AVD: ${NEW_NAME}"
+
+          # Copy the AVD folder
+          cp -r "${AVD_DIR}/${AVD_NAME}.avd" "${AVD_DIR}/${NEW_NAME}.avd"
+
+          # Create the .ini file with updated path
+          cat > "${AVD_DIR}/${NEW_NAME}.ini" << EOF
+        avd.ini.encoding=UTF-8
+        path=${AVD_DIR}/${NEW_NAME}.avd
+        path.rel=avd/${NEW_NAME}.avd
+        target=android-${{ inputs.avd_api }}
+        EOF
+
+          # Update hardware-qemu.ini if it exists (contains avd name references)
+          if [ -f "${AVD_DIR}/${NEW_NAME}.avd/hardware-qemu.ini" ]; then
+            sed -i "s|${AVD_NAME}|${NEW_NAME}|g" "${AVD_DIR}/${NEW_NAME}.avd/hardware-qemu.ini"
+            echo "  ✓ Updated hardware-qemu.ini"
+          fi
+
+          # Update config.ini if it exists (may contain avd.name)
+          if [ -f "${AVD_DIR}/${NEW_NAME}.avd/config.ini" ]; then
+            sed -i "s|avd.name=${AVD_NAME}|avd.name=${NEW_NAME}|g" "${AVD_DIR}/${NEW_NAME}.avd/config.ini"
+            echo "  ✓ Updated config.ini"
+          fi
+
+          echo "✅ Created duplicate AVD: ${NEW_NAME}"
+        done
+
+        echo ""
+        echo "📋 Final AVD list:"
+        ls -la "${AVD_DIR}/"
+
