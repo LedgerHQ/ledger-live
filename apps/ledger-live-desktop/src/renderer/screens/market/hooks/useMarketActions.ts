@@ -13,10 +13,6 @@ import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/ut
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { isAvailableOnBuy, isAvailableOnStake, isAvailableOnSwap } from "../utils";
 import { useStake } from "LLD/hooks/useStake";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { setDrawer } from "~/renderer/drawers/Provider";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useLazyLedgerCurrency } from "@ledgerhq/live-common/dada-client/hooks/useLazyLedgerCurrency";
 import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
@@ -56,32 +52,6 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
     },
     currency,
   );
-
-  const onAccountSelected = useCallback(
-    (account: Account | TokenAccount, parentAccount?: Account) => {
-      setDrawer();
-      // For token accounts, we use the token account directly
-      // The swap should handle TokenAccount properly
-      history.push({
-        pathname: "/swap",
-        state: {
-          defaultAccount: account,
-          defaultParentAccount: parentAccount,
-        },
-      });
-    },
-    [history],
-  );
-
-  const { openAddAccountFlow } = useOpenAssetFlow(
-    { location: ModularDrawerLocation.ADD_ACCOUNT },
-    "market",
-  );
-
-  const openAddAccounts = useCallback(async () => {
-    const ledgerCurrency = await getLedgerCurrency();
-    if (ledgerCurrency) openAddAccountFlow(ledgerCurrency, true, onAccountSelected);
-  }, [getLedgerCurrency, onAccountSelected, openAddAccountFlow]);
 
   const onBuy = useCallback(
     async (e: React.SyntheticEvent<HTMLButtonElement>) => {
@@ -131,8 +101,6 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
           Boolean,
         );
 
-        if (!defaultAccount) return openAddAccounts();
-
         history.push({
           pathname: "/swap",
           state: {
@@ -140,7 +108,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
             defaultAccount,
             defaultAmountFrom: "0",
             defaultParentAccount:
-              "parentId" in defaultAccount && defaultAccount.parentId
+              defaultAccount && "parentId" in defaultAccount && defaultAccount.parentId
                 ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
                 : null,
             from: history.location.pathname,
@@ -148,15 +116,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
         });
       }
     },
-    [
-      getLedgerCurrency,
-      currency?.ticker,
-      page,
-      swapDefaultTrack,
-      flattenedAccounts,
-      openAddAccounts,
-      history,
-    ],
+    [getLedgerCurrency, currency?.ticker, page, swapDefaultTrack, flattenedAccounts, history],
   );
 
   const onStake = useCallback(
