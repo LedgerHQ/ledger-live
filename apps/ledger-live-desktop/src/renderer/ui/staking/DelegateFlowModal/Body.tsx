@@ -3,7 +3,6 @@ import { bindActionCreators } from "redux";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
 import { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
-// import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import { getAccountBridge, getAlpacaApi } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount, addPendingOperation } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";

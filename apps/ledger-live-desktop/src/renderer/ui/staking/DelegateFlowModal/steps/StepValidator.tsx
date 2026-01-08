@@ -2,8 +2,7 @@ import React, { useCallback, useRef } from "react";
 import invariant from "invariant";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
+import { getAccountBridge, getAlpacaApi } from "@ledgerhq/live-common/bridge/index";
 import { openURL } from "~/renderer/linking";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -15,6 +14,7 @@ import BakerImage from "../../BakerImage";
 import { StepProps } from "../types";
 import { Baker } from "~/renderer/types/staking";
 import { useBakers } from "~/renderer/react/hooks";
+import { Account } from "@ledgerhq/types-live";
 
 const Row = styled(Box).attrs(() => ({
   horizontal: true,
@@ -78,7 +78,7 @@ const BakerRow = ({ baker, onClick }: { baker: Baker; onClick: (a: Baker) => voi
   </Row>
 );
 
-const StepValidator = ({
+const StepValidator = async ({
   account,
   parentAccount,
   transaction,
@@ -88,7 +88,8 @@ const StepValidator = ({
 }: StepProps) => {
   invariant(account, "account is required");
   const contentRef = useRef(null);
-  const bakers = useBakers(whitelist);
+  const alpacaApi = getAlpacaApi((account as Account).currency.id, "local");
+  const validators = await alpacaApi.getValidators().then(v => v.items);
 
   const onBakerClick = useCallback(
     (baker: Baker) => {
@@ -137,8 +138,18 @@ const StepValidator = ({
           }}
         >
           <ModalContent ref={contentRef}>
-            {bakers.map(baker => (
-              <BakerRow baker={baker} key={baker.name} onClick={onBakerClick} />
+            {validators.map(baker => (
+              <BakerRow
+                baker={{
+                  address: baker.address,
+                  logoURL: baker.logo || "",
+                  capacityStatus: "normal",
+                  name: baker.name,
+                  nominalYield: `${(baker.commissionRate as unknown as number) || 0} %`,
+                }}
+                key={baker.name}
+                onClick={onBakerClick}
+              />
             ))}
           </ModalContent>
         </Box>
