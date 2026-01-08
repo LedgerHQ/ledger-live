@@ -14,6 +14,7 @@ interface LogContentCardWrapperProps {
   id: string;
   children: React.ReactNode;
   additionalProps?: object;
+  displayedPosition?: number;
 }
 
 const PERCENTAGE_OF_CARD_VISIBLE = 0.5;
@@ -22,6 +23,7 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
   id,
   children,
   additionalProps,
+  displayedPosition,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const isTrackedUser = useSelector(trackingEnabledSelector);
@@ -45,6 +47,7 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
               id: currentCard.id,
               ...currentCard.extras,
               ...additionalProps,
+              displayedPosition,
             });
           } else if (
             anonymousUserNotifications[currentCard.id as string] !==
@@ -77,7 +80,14 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
         intersectionObserver.unobserve(currentRef);
       }
     };
-  }, [currentCard, isTrackedUser, additionalProps, dispatch, anonymousUserNotifications]);
+  }, [
+    currentCard,
+    isTrackedUser,
+    additionalProps,
+    dispatch,
+    anonymousUserNotifications,
+    displayedPosition,
+  ]);
 
   return (
     <Box width="100%" ref={ref}>

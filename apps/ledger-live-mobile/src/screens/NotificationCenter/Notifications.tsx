@@ -208,7 +208,7 @@ export default function NotificationCenter() {
       const visibleCards = viewableItems.map(({ item }) => item.id);
       const newlyVisibleCards = visibleCards.filter(id => !visibleCardsRef.current.includes(id));
       visibleCardsRef.current = visibleCards;
-      newlyVisibleCards.forEach(logImpressionCard);
+      newlyVisibleCards.forEach(id => logImpressionCard(id));
     },
     [logImpressionCard],
   );

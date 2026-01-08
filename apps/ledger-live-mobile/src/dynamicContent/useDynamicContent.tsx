@@ -90,6 +90,8 @@ const useDynamicContent = () => {
         layout?: string;
         location?: string;
         landingPage?: string;
+        displayedPosition?: number;
+        campaignName?: string;
       },
     ) => {
       track(event, params);
