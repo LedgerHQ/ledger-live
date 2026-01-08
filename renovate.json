@@ -96,5 +96,5 @@
   "prConcurrentLimit": 10,
   "separateMinorPatch": true,
   "timezone": "Europe/Paris",
-  "enabledManagers": ["npm"]
+  "enabledManagers": ["npm", "github-actions"]
 }
