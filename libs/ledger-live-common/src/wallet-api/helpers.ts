@@ -1,10 +1,11 @@
 import { isCryptoCurrency, isTokenCurrency } from "../currencies";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import {
+import type {
   WalletAPICurrency,
   WalletAPISupportedCurrency,
   WalletAPIERC20TokenCurrency,
   WalletAPICryptoCurrency,
+  AppManifest,
 } from "./types";
 import { WALLET_API_FAMILIES } from "./constants";
 import { includes } from "../helpers";
@@ -38,10 +39,13 @@ export function isWalletAPITokenCurrency(
 export function isWalletAPIERC20TokenCurrency(
   currency: WalletAPICurrency,
 ): currency is WalletAPIERC20TokenCurrency {
-  return (currency as WalletAPIERC20TokenCurrency).standard === "ERC20";
+  return currency.type === "TokenCurrency" && currency.standard === "ERC20";
 }
 
-export function addParamsToURL(url: URL, inputs?: Record<string, string | undefined>): void {
+export function addParamsToURL(
+  url: URL,
+  inputs?: Record<string, string | boolean | undefined>,
+): void {
   if (inputs) {
     const keys = Object.keys(inputs);
 
@@ -50,7 +54,7 @@ export function addParamsToURL(url: URL, inputs?: Record<string, string | undefi
       const value = inputs[key];
 
       if (value !== undefined) {
-        url.searchParams.set(key, value);
+        url.searchParams.set(key, String(value));
       }
     }
   }
@@ -102,9 +106,15 @@ const isWhitelistedDomain = (url: string, manifestUrl: string): boolean => {
   }
 };
 
-export const getInitialURL = (inputs, manifest) => {
+export const getInitialURL = (
+  inputs: Record<string, string | boolean | undefined> | undefined,
+  manifest: AppManifest,
+) => {
   try {
-    if (inputs?.goToURL && isWhitelistedDomain(inputs?.goToURL, manifest.url)) {
+    if (
+      typeof inputs?.goToURL === "string" &&
+      isWhitelistedDomain(inputs.goToURL, manifest.url.toString())
+    ) {
       return inputs?.goToURL;
     }
 

@@ -12,6 +12,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://evil.example/?next=ledger.com",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         // Should fall back to manifest.url, not use goToURL
         expect(result).toBe(mockManifest.url);
@@ -21,6 +22,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://evil.example/#ledger.com",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -29,6 +31,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://evil.example/ledger.com/redirect",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -37,6 +40,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://ledger.com.evil.example",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -45,6 +49,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://ledger.com.fake.io",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -55,6 +60,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "http://ledger.com",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -63,6 +69,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "javascript:alert(1)",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -71,6 +78,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "data:text/html,<script>alert(1)</script>",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -79,6 +87,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "file:///etc/passwd",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -87,6 +96,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "ftp://ledger.com",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -97,6 +107,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://ledger.com",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -105,6 +116,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://ledger.com/page?param=value",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -113,6 +125,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://approved.io/some/path",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -121,6 +134,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://default.example.com/different/path",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
       });
@@ -129,6 +143,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://default.example.com/page?test=value",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
       });
@@ -137,6 +152,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://DEFAULT.EXAMPLE.COM/path",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
       });
@@ -149,6 +165,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://DEFAULT.EXAMPLE.COM/page",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, manifestWithUppercase);
         expect(result).toBe(inputs.goToURL);
       });
@@ -159,6 +176,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://test.subdomain.ledger.com",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -167,6 +185,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://a.b.subdomain.ledger.com",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -175,6 +194,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://subdomain.ledger.com",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -183,6 +203,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://test.wrong.ledger.com",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -191,6 +212,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://notsubdomain.ledger.com",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -205,6 +227,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://xn--mnchen-3ya.de/page", // punycode for münchen.de
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, manifestWithIDN);
         expect(result).toBe(inputs.goToURL);
       });
@@ -217,6 +240,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://münchen.de/page",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, manifestWithIDN);
         expect(result).toBe(inputs.goToURL);
       });
@@ -227,6 +251,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "not-a-valid-url",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -235,6 +260,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -243,6 +269,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://default.example.com:8080/path",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
       });
@@ -251,17 +278,20 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://user:pass@default.example.com/path",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
       });
 
       it("should work when goToURL is not provided", () => {
         const inputs = {};
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
 
       it("should work when inputs is undefined", () => {
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(undefined, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -270,6 +300,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
       });
@@ -281,6 +312,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://evil.example/?next=ledger.com",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(mockManifest.url);
         expect(result).not.toContain("evil.example");
@@ -291,6 +323,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://default.example.com/page",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, mockManifest);
         expect(result).toBe(inputs.goToURL);
         expect(result).toContain("default.example.com");
@@ -306,6 +339,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://any.domain.com",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, manifestWithGenericPattern);
         // Should reject because "https://" is not a valid hostname pattern
         expect(result).toBe(manifestWithGenericPattern.url);
@@ -319,6 +353,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "http://any.domain.com", // HTTP should be rejected
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, manifestWithHttpPattern);
         expect(result).toBe(manifestWithHttpPattern.url);
       });
@@ -331,6 +366,7 @@ describe("wallet-api helpers", () => {
         const inputs = {
           goToURL: "https://any.domain.com",
         };
+        // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
         const result = getInitialURL(inputs, manifestWithWildcard);
         // "*" alone should not match any domain for security reasons
         expect(result).toBe(manifestWithWildcard.url);
@@ -346,6 +382,7 @@ describe("wallet-api helpers", () => {
         params: { foo: "bar" },
       };
       const inputs = { customParam: "value" };
+      // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
       const result = getInitialURL(inputs, manifest);
 
       expect(result).toContain("example.com");
@@ -363,6 +400,7 @@ describe("wallet-api helpers", () => {
         goToURL: "https://example.com/page",
         customParam: "value",
       };
+      // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
       const result = getInitialURL(inputs, manifest);
 
       expect(result).toBe("https://example.com/page");
