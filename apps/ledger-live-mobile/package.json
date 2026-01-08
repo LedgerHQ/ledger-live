@@ -229,7 +229,6 @@
     "@babel/plugin-transform-arrow-functions": "7.27.1",
     "@babel/plugin-transform-class-properties": "7.27.1",
     "@babel/plugin-transform-class-static-block": "7.28.3",
-    "@babel/plugin-transform-flow-strip-types": "7.27.1",
     "@babel/plugin-transform-export-namespace-from": "7.27.1",
     "@babel/plugin-transform-flow-strip-types": "7.27.1",
     "@babel/plugin-transform-named-capturing-groups-regex": "7.27.1",
