@@ -175,7 +175,7 @@
     "@ledgerhq/live-cli": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
-    "@playwright/test": "^1.55.0",
+    "@playwright/test": "catalog:",
     "@rspack/cli": "catalog:",
     "@rspack/core": "catalog:",
     "@rspack/dev-server": "catalog:",

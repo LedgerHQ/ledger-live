@@ -18,7 +18,7 @@
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/types-devices": "6.27.0",
     "@ledgerhq/types-live": "workspace:^",
-    "@playwright/test": "^1.51.0",
+    "@playwright/test": "catalog:",
     "@types/node": "22.10.10",
     "allure-js-commons": "^3.2.1",
     "allure-playwright": "^3.2.1",
@@ -32,6 +32,6 @@
     "@types/invariant": "2.2.37",
     "@types/lodash": "4.17.16",
     "electron": "catalog:",
-    "playwright": "1.51.1"
+    "playwright": "catalog:"
   }
 }
