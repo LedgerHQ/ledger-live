@@ -5,6 +5,7 @@ async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
     userdata: options.userdata,
     speculosApp: options.speculosApp,
+    cliCommands: options.cliCommands,
   });
   await app.portfolio.waitForPortfolioPageToLoad();
 }
@@ -16,18 +17,27 @@ export function runPortfolioTransactionsHistoryTest(
   describe("Portfolio transaction history", () => {
     beforeAll(async () => {
       await beforeAllFunction({
-        userdata: "speculos-tests-app",
+        userdata: "skip-onboarding",
         speculosApp: currency.speculosApp,
+        cliCommands: [
+          async (userdataPath?: string) => {
+            await CLI.liveData({
+              currency: currency.id,
+              index: 0,
+              appjson: userdataPath,
+              add: true,
+            });
+          },
+        ],
       });
     });
 
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
     it("Transaction history displayed when user added his accounts", async () => {
-      await app.portfolio.openViaDeeplink();
-      await app.portfolio.checkTransactionAllocationSection();
-      await app.portfolio.selectAndClickOnLastOperation("Received");
-      await app.operationDetails.checkTransactionDetailsVisibility();
+      await app.portfolio.checkTransactionHistorySection();
+      await app.portfolio.selectAndClickOnLastOperation("Sent");
+      await app.operationDetails.checkTransactionDetailsVisibility(currency.speculosApp.name);
     });
   });
 }
