@@ -5,11 +5,11 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
-import { openModal, closeAllModal } from "~/renderer/actions/modals";
+import { openModal, closeAllModal } from "~/renderer/reducers/modals";
 import { useDeepLinkHandler } from "./useDeepLinkHandler";
 import BigNumber from "bignumber.js";
 
-jest.mock("~/renderer/actions/modals", () => ({
+jest.mock("~/renderer/reducers/modals", () => ({
   openModal: jest.fn(() => ({ type: "OPEN_MODAL" })),
   closeAllModal: jest.fn(() => ({ type: "CLOSE_ALL_MODAL" })),
 }));

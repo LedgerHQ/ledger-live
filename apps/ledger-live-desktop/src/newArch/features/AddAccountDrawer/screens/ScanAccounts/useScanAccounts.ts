@@ -6,7 +6,7 @@ import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Subscription } from "rxjs";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import * as RX from "rxjs/operators";

@@ -1,6 +1,6 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useHistory } from "react-router";

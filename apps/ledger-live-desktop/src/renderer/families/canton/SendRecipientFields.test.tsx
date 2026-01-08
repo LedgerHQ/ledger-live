@@ -10,9 +10,10 @@ import { cleanup, render, screen, waitFor } from "tests/testSetup";
 import SendRecipientFields from "./SendRecipientFields";
 import { createMockAccount } from "./__tests__/testUtils";
 
-jest.mock("~/renderer/actions/modals", () => ({
-  closeAllModal: jest.fn(() => ({ type: "CLOSE_ALL_MODAL" })),
-  openModal: jest.fn(() => ({ type: "OPEN_MODAL" })),
+jest.mock("~/renderer/reducers/modals", () => ({
+  closeAllModal: jest.fn(),
+  openModal: jest.fn(),
+  modalsStateSelector: jest.fn(() => ({})),
 }));
 jest.mock("react-i18next", () => ({
   ...jest.requireActual("react-i18next"),
@@ -43,9 +44,15 @@ const createMockTransactionStatus = (
 
 describe("SendRecipientFields", () => {
   const mockOnChange = jest.fn();
+  const { closeAllModal, openModal } = jest.requireMock("~/renderer/reducers/modals");
 
   beforeEach(() => {
     jest.clearAllMocks();
+    closeAllModal.mockReturnValue({ type: "modals/closeAllModal", payload: undefined });
+    openModal.mockImplementation((name: string, data: unknown) => ({
+      type: "modals/openModal",
+      payload: { name, data },
+    }));
   });
 
   afterEach(() => {
@@ -98,8 +105,6 @@ describe("SendRecipientFields", () => {
   });
 
   it("should open TooManyUtxosModal when TooManyUtxosCritical is present", async () => {
-    const { closeAllModal, openModal } = jest.requireMock("~/renderer/actions/modals");
-
     const criticalStatus = createMockTransactionStatus({
       warnings: {
         tooManyUtxos: new TooManyUtxosCritical(),
@@ -117,8 +122,6 @@ describe("SendRecipientFields", () => {
   });
 
   it("should not open modal when TooManyUtxosCritical is not present", () => {
-    const { closeAllModal, openModal } = jest.requireMock("~/renderer/actions/modals");
-
     render(<SendRecipientFields.component {...defaultProps} />);
 
     expect(closeAllModal).not.toHaveBeenCalled();

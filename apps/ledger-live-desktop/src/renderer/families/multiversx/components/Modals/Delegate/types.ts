@@ -9,7 +9,7 @@ import {
   MultiversXProvider,
 } from "@ledgerhq/live-common/families/multiversx/types";
 import { Step } from "~/renderer/components/Stepper";
-import { OpenModal } from "~/renderer/actions/modals";
+import { OpenModal } from "~/renderer/reducers/modals";
 export type StepId = "validator" | "amount" | "connectDevice" | "confirmation";
 
 export type StepProps = {

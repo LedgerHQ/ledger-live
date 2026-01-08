@@ -7,7 +7,7 @@ import { ignoreElements, filter, map, retry } from "rxjs/operators";
 import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { DeviceShouldStayInApp, UnresponsiveDeviceError } from "@ledgerhq/errors";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import uniq from "lodash/uniq";

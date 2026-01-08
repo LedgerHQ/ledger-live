@@ -6,7 +6,7 @@ import WarnBox from "~/renderer/components/WarnBox";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { DelegationType } from "~/renderer/families/multiversx/types";
 import {
   MultiversXAccount,

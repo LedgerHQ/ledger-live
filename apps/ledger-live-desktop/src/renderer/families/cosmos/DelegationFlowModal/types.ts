@@ -6,7 +6,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import { OpenModal } from "~/renderer/actions/modals";
+import { OpenModal } from "~/renderer/reducers/modals";
 import { Operation } from "@ledgerhq/types-live";
 export type StepId = "validator" | "amount" | "connectDevice" | "confirmation";
 export type StepProps = {

@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
-import { openModal, closeModal } from "~/renderer/actions/modals";
+import { openModal, closeModal } from "~/renderer/reducers/modals";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";

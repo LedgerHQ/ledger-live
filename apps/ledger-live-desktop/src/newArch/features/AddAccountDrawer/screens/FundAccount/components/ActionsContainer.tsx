@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import {
   ADD_ACCOUNT_EVENTS_NAME,

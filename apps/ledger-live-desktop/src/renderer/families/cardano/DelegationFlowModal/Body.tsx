@@ -16,7 +16,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { closeModal, openModal } from "~/renderer/reducers/modals";
 import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
 import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";

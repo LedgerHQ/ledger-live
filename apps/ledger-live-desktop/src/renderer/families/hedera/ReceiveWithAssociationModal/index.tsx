@@ -3,7 +3,7 @@ import logger from "~/renderer/logger";
 import Modal from "~/renderer/components/Modal";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { openModal, closeModal } from "~/renderer/actions/modals";
+import { openModal, closeModal } from "~/renderer/reducers/modals";
 import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveFlow";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";

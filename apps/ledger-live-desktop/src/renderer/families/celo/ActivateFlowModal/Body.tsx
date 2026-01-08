@@ -13,7 +13,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import Track from "~/renderer/analytics/Track";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { OpenModal, openModal } from "~/renderer/actions/modals";
+import { OpenModal, openModal } from "~/renderer/reducers/modals";
 
 import Stepper from "~/renderer/components/Stepper";
 import StepVote, { StepVoteFooter } from "./steps/StepVote";

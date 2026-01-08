@@ -10,7 +10,7 @@ import IconCoins from "~/renderer/icons/Coins";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useHistory } from "react-router";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { useDispatch } from "LLD/hooks/redux";
 
 type Props = {

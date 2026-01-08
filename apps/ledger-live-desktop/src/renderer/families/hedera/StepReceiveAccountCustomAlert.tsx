@@ -10,7 +10,7 @@ import {
 import { isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { Link } from "@ledgerhq/react-ui";
 import { urls } from "~/config/urls";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";

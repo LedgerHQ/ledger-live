@@ -16,7 +16,7 @@ import {
   overriddenFeatureFlagsSelector,
 } from "~/renderer/reducers/settings";
 import { isNavigationLocked } from "~/renderer/reducers/application";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { setSidebarCollapsed } from "~/renderer/actions/settings";
 import useExperimental from "~/renderer/hooks/useExperimental";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";

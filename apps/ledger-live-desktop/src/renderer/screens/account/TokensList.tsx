@@ -5,7 +5,7 @@ import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/accou
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import IconPlus from "~/renderer/icons/Plus";

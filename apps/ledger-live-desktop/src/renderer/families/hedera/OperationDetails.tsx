@@ -9,7 +9,7 @@ import type { HederaAccount, HederaOperation } from "@ledgerhq/live-common/famil
 import { Link } from "@ledgerhq/react-ui";
 import { urls } from "~/config/urls";
 import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import type {
   AddressCellProps,
   OperationDetailsExtraProps,

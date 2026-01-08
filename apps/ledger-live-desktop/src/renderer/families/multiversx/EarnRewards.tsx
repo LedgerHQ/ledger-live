@@ -19,7 +19,7 @@ import Unbondings from "~/renderer/families/multiversx/components/Unbondings";
 import Delegations from "~/renderer/families/multiversx/components/Delegations";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import {
   DelegationType,
   MultiversXFamily,

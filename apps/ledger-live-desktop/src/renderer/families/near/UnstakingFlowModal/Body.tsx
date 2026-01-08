@@ -16,7 +16,7 @@ import { St, StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { OpenModal, openModal } from "~/renderer/actions/modals";
+import { OpenModal, openModal } from "~/renderer/reducers/modals";
 
 import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";

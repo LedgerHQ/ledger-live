@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
 import IconStar from "~/renderer/icons/Star";

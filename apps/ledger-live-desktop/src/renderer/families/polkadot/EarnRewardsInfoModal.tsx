@@ -3,7 +3,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import WarnBox from "~/renderer/components/WarnBox";

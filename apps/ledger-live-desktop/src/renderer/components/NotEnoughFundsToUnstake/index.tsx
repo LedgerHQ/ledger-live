@@ -10,7 +10,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { track } from "~/renderer/analytics/segment";
 import { useHistory } from "react-router";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 
 const NotEnoughFundsToUnstake = ({

@@ -23,7 +23,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { closeModal, openModal } from "~/renderer/reducers/modals";
 import Stepper from "~/renderer/components/Stepper";
 import logger from "~/renderer/logger";
 import StepConfirmation, {

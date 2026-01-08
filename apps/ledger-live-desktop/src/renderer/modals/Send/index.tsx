@@ -5,7 +5,7 @@ import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
 import { setMemoTagInfoBoxDisplay } from "~/renderer/reducers/UI";
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/reducers/modals";
 import { isModalOpened, getModalData } from "~/renderer/reducers/modals";
 import { openSendFlowDialog } from "~/renderer/reducers/sendFlow";
 import type { State } from "~/renderer/reducers";

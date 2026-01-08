@@ -33,7 +33,7 @@ import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/in
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { firstValueFrom } from "rxjs";

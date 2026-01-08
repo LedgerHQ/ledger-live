@@ -7,7 +7,7 @@ import {
   Transaction,
   AlgorandAccount,
 } from "@ledgerhq/live-common/families/algorand/types";
-import { OpenModal } from "~/renderer/actions/modals";
+import { OpenModal } from "~/renderer/reducers/modals";
 
 export type StepId = "assets" | "connectDevice" | "confirmation";
 export type StepProps = {

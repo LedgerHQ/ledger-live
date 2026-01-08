@@ -4,7 +4,7 @@ import { EnvName, isEnvDefault } from "@ledgerhq/live-env";
 import { experimentalFeatures, isReadOnlyEnv, Feature } from "~/renderer/experimental";
 import { useDispatch } from "LLD/hooks/redux";
 import { setEnvOnAllThreads } from "~/helpers/env";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import Alert from "~/renderer/components/Alert";

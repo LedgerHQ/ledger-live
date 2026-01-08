@@ -13,7 +13,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/reducers/modals";
 import Stepper, { Step } from "~/renderer/components/Stepper";
 import StepAccount, { StepAccountFooter } from "./steps/StepAccount";
 import StepConnectDevice, { StepConnectDeviceFooter } from "./steps/StepConnectDevice";

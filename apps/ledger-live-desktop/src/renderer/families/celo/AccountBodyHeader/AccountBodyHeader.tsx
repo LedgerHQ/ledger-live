@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { urls } from "~/config/urls";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";

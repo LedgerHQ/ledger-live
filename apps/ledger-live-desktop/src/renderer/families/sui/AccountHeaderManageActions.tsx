@@ -1,5 +1,5 @@
 import IconCoins from "~/renderer/icons/Coins";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";

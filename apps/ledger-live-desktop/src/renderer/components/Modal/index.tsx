@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import styled, { CSSProperties, DefaultTheme } from "styled-components";
 import noop from "lodash/noop";
 import { Transition, TransitionStatus } from "react-transition-group";
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/reducers/modals";
 import { isModalOpened, getModalData } from "~/renderer/reducers/modals";
 import { ModalData } from "~/renderer/modals/types";
 import Snow, { isSnowTime } from "~/renderer/extra/Snow";

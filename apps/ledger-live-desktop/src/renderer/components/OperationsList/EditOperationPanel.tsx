@@ -5,7 +5,7 @@ import invariant from "invariant";
 import React, { memo, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { closeModal, openModal } from "~/renderer/reducers/modals";
 import Alert from "~/renderer/components/Alert";
 import Link from "~/renderer/components/Link";
 

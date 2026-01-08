@@ -31,7 +31,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { urls } from "~/config/urls";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import Alert from "~/renderer/components/Alert";

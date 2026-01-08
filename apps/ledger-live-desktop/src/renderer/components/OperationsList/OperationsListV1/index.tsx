@@ -13,7 +13,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import logger from "~/renderer/logger";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";

@@ -6,7 +6,7 @@ import { TFunction } from "i18next";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { Account } from "@ledgerhq/types-live";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import Box from "~/renderer/components/Box";
 import DownloadCloud from "~/renderer/icons/DownloadCloud";
 import Label from "~/renderer/components/Label";

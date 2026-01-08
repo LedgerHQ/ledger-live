@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import gt from "semver/functions/gt";
 import { lastUsedVersionSelector } from "~/renderer/reducers/settings";
 import { saveSettings } from "~/renderer/actions/settings";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 const IsNewVersion = () => {
   const dispatch = useDispatch();
   const lastUsedVersion = useSelector(lastUsedVersionSelector);

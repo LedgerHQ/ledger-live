@@ -1,7 +1,7 @@
 import { useDispatch } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import IconCoins from "~/renderer/icons/Coins";
 import type { HederaFamily } from "~/renderer/families/hedera/types";

@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import {
   SendActionDefault,
   ReceiveActionDefault,

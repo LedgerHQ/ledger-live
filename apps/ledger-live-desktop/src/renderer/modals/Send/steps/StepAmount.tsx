@@ -13,7 +13,7 @@ import AccountFooter from "../AccountFooter";
 import SendAmountFields from "../SendAmountFields";
 import AmountField from "../fields/AmountField";
 import { StepProps } from "../types";
-import { closeAllModal } from "~/renderer/actions/modals";
+import { closeAllModal } from "~/renderer/reducers/modals";
 import { useDispatch } from "LLD/hooks/redux";
 import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
 

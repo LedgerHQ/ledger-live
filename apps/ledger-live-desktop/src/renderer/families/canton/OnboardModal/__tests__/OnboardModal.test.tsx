@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions */
 import React from "react";
 import { cleanup, fireEvent, render, screen, waitFor } from "tests/testSetup";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { closeModal, openModal } from "~/renderer/reducers/modals";
 import type { NavigationSnapshot } from "../../hooks/topologyChangeError";
 import OnboardModal from "../index";
 import { StepId } from "../types";
@@ -26,7 +26,7 @@ jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({
   })),
 }));
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({ getCurrencyBridge: jest.fn() }));
-jest.mock("~/renderer/actions/modals", () => ({
+jest.mock("~/renderer/reducers/modals", () => ({
   closeModal: jest.fn((name: string) => ({
     type: "MODAL_CLOSE",
     payload: { name },

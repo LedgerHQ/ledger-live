@@ -21,7 +21,7 @@ import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { closeModal, openModal } from "~/renderer/reducers/modals";
 import type { NavigationSnapshot } from "../hooks/topologyChangeError";
 import Modal from "~/renderer/components/Modal";
 import Stepper, { type Step } from "~/renderer/components/Stepper";

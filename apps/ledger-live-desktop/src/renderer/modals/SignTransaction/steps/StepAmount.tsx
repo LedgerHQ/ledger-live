@@ -11,7 +11,7 @@ import AccountFooter from "../AccountFooter";
 import SendAmountFields from "../SendAmountFields";
 import { StepProps } from "../types";
 import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
-import { closeAllModal } from "~/renderer/actions/modals";
+import { closeAllModal } from "~/renderer/reducers/modals";
 import { useDispatch } from "LLD/hooks/redux";
 
 const StepAmount = ({

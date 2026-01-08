@@ -19,7 +19,7 @@ import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import Track from "~/renderer/analytics/Track";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { OpenModal, openModal } from "~/renderer/actions/modals";
+import { OpenModal, openModal } from "~/renderer/reducers/modals";
 import Stepper from "~/renderer/components/Stepper";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import logger from "~/renderer/logger";

@@ -1,7 +1,7 @@
 import { FC, useEffect } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/reducers/modals";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";

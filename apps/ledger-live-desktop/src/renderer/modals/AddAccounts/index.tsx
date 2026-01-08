@@ -10,7 +10,7 @@ import logger from "~/renderer/logger";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { closeModal, openModal } from "~/renderer/reducers/modals";
 import Track from "~/renderer/analytics/Track";
 import Stepper, { Step } from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";

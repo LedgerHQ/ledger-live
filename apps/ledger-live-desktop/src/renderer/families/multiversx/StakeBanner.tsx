@@ -12,7 +12,7 @@ import {
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { AccountBannerState } from "@ledgerhq/live-common/families/multiversx/banner";
 
 const StakeBanner: React.FC<{ account: MultiversXAccount }> = ({ account }) => {

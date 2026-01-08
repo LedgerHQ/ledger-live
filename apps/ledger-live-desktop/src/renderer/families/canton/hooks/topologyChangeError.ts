@@ -3,7 +3,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import type { Dispatch } from "redux";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { closeModal, openModal } from "~/renderer/reducers/modals";
 import type { ModalData } from "~/renderer/modals/types";
 import type { TransferProposalAction } from "../PendingTransferProposals/types";
 import { isCantonCurrency } from "../utils/currency";

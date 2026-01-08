@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { isAcceptedTerms, acceptTerms } from "~/renderer/terms";
 
 const IsTermOfUseUpdated = () => {

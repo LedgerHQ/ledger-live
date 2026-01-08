@@ -2,7 +2,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { canStake } from "@ledgerhq/live-common/families/aptos/staking";
 import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { AptosFamily } from "./types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";

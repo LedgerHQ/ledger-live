@@ -19,7 +19,7 @@ import {
   Divider,
 } from "~/renderer/families/multiversx/blocks/Delegation";
 import { openURL } from "~/renderer/linking";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import {
   MULTIVERSX_EXPLORER_URL,
   MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,

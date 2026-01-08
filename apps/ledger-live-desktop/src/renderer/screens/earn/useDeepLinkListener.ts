@@ -1,4 +1,4 @@
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import useStakeFlow from "~/renderer/screens/stake";
 import { useHistory, useLocation } from "react-router-dom";

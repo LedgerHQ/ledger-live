@@ -15,7 +15,7 @@ import {
   Wrapper,
   Withdraw,
 } from "~/renderer/families/multiversx/blocks/Delegation";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { UnbondingType } from "~/renderer/families/multiversx/types";
 import {
   MULTIVERSX_EXPLORER_URL,

@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
-import { closeAllModal } from "~/renderer/actions/modals";
+import { closeAllModal } from "~/renderer/reducers/modals";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 

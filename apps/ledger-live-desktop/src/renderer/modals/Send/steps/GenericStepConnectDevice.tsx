@@ -9,7 +9,7 @@ import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/reducers/modals";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";

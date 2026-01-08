@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import Box from "~/renderer/components/Box";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import BondIcon from "~/renderer/icons/LinkIcon";

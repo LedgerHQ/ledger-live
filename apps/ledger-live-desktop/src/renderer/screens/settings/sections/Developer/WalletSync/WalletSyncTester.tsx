@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
 import { Button } from "@ledgerhq/lumen-ui-react";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 
 const WalletSyncTester = () => {
   const { t } = useTranslation();

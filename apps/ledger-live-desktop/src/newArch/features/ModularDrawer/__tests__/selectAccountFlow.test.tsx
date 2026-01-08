@@ -5,6 +5,7 @@ import { render, screen, waitFor } from "tests/testSetup";
 import ModalsLayer from "~/renderer/ModalsLayer";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
+import { openModal } from "~/renderer/reducers/modals";
 import {
   ARB_ACCOUNT,
   BASE_ACCOUNT,
@@ -201,15 +202,11 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     await waitFor(() => expect(screen.getByText(/select account/i)).toBeVisible());
     expect(screen.getByText(/add new or existing account/i)).toBeVisible();
     await user.click(screen.getByText(/add new or existing account/i));
-    expect(mockDispatch).toHaveBeenCalledWith({
-      payload: {
-        data: {
-          currency: bitcoinCurrencyResult,
-        },
-        name: "MODAL_ADD_ACCOUNTS",
-      },
-      type: "MODAL_OPEN",
-    });
+    expect(mockDispatch).toHaveBeenCalledWith(
+      openModal("MODAL_ADD_ACCOUNTS", {
+        currency: bitcoinCurrencyResult,
+      }),
+    );
 
     useDispatchMock.mockImplementation(actualUseDispatch);
   });

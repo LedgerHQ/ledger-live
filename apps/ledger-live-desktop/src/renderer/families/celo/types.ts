@@ -7,7 +7,7 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/celo/types";
 import { LLDCoinFamily } from "../types";
-import { OpenModal } from "~/renderer/actions/modals";
+import { OpenModal } from "~/renderer/reducers/modals";
 import { Operation } from "@ledgerhq/types-live";
 
 export type CoreStakingFlowModalStepProps = {

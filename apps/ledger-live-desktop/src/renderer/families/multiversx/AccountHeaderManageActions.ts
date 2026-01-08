@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { useMultiversXRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";

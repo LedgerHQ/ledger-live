@@ -4,7 +4,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { Flex } from "@ledgerhq/react-ui";
 import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
 import { urls } from "~/config/urls";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";

@@ -6,7 +6,7 @@ import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useSh
 import { useManifestWithSessionId } from "@ledgerhq/live-common/hooks/useManifestWithSessionId";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import Card from "~/renderer/components/Box/Card";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import { WebviewLoader } from "~/renderer/components/Web3AppWebview/types";

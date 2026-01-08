@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getAccountTuplesForCurrency } from "~/renderer/components/PerCurrencySelectAccount/state";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";

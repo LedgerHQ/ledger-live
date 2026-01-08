@@ -10,7 +10,7 @@ import {
   canUnbond,
   hasPendingOperationType,
 } from "@ledgerhq/live-common/families/polkadot/logic";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import Box from "~/renderer/components/Box";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import BondIcon from "~/renderer/icons/LinkIcon";

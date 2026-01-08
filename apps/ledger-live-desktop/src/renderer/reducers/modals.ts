@@ -1,7 +1,6 @@
-import { handleActions } from "redux-actions";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { State } from "~/renderer/reducers";
 import { ModalData } from "~/renderer/modals/types";
-import { Handlers } from "./types";
 
 export type ModalsState = {
   [Name in keyof ModalData]?:
@@ -14,62 +13,73 @@ export type ModalsState = {
       };
 };
 
-const state: ModalsState = {};
+const initialState: ModalsState = {};
 
 export type OpenPayload<Name extends keyof ModalData = keyof ModalData> = {
   name: Name;
   data?: ModalData[Name];
 };
 
-type HandlersPayloads = {
-  MODAL_OPEN: OpenPayload;
-  MODAL_CLOSE: {
-    name: string;
-  };
-  MODAL_CLOSE_ALL: never;
-  MODAL_SET_DATA: OpenPayload;
-};
-type ModalsHandlers<PreciseKey = true> = Handlers<ModalsState, HandlersPayloads, PreciseKey>;
+export type OpenModal = <Name extends keyof ModalData>(
+  name: Name,
+  data: ModalData[Name],
+) => { name: Name; data: ModalData[Name] };
 
-const handlers: ModalsHandlers = {
-  MODAL_OPEN: (state, { payload }) => {
-    const { name, data } = payload;
-    return {
-      ...state,
-      [name]: {
-        isOpened: true,
-        data,
+const modalsSlice = createSlice({
+  name: "modals",
+  initialState,
+  reducers: {
+    openModal: {
+      reducer: (state, action: PayloadAction<OpenPayload>) => {
+        const { name, data } = action.payload;
+        return {
+          ...state,
+          [name]: {
+            isOpened: true,
+            data,
+          },
+        };
       },
-    };
-  },
-  MODAL_CLOSE: (state, { payload }) => {
-    const { name } = payload;
-    return {
-      ...state,
-      [name]: {
-        isOpened: false,
+      prepare: <Name extends keyof ModalData>(name: Name, data: ModalData[Name]) => ({
+        payload: { name, data },
+      }),
+    },
+    closeModal: {
+      reducer: (state, action: PayloadAction<{ name: keyof ModalData }>) => {
+        const { name } = action.payload;
+        return {
+          ...state,
+          [name]: {
+            isOpened: false,
+          },
+        };
       },
-    };
-  },
-  MODAL_CLOSE_ALL: () => {
-    return {};
-  },
-  MODAL_SET_DATA: <Name extends keyof ModalData>(
-    state: ModalsState,
-    { payload }: { payload: OpenPayload<Name> },
-  ) => {
-    const { name, data } = payload;
-    return {
-      ...state,
-      [name]: {
-        ...state[name],
-        data,
+      prepare: (name: keyof ModalData) => ({
+        payload: { name },
+      }),
+    },
+    closeAllModal: () => {
+      return {};
+    },
+    setDataModal: {
+      reducer: (state, action: PayloadAction<OpenPayload>) => {
+        const { name, data } = action.payload;
+        return {
+          ...state,
+          [name]: {
+            ...state[name],
+            data,
+          },
+        };
       },
-    };
+      prepare: <Name extends keyof ModalData>(name: Name, data: ModalData[Name]) => ({
+        payload: { name, data },
+      }),
+    },
   },
-};
+});
 
-// Selectors
+export const { openModal, closeModal, closeAllModal, setDataModal } = modalsSlice.actions;
 
 export const modalsStateSelector = (state: State): ModalsState => state.modals;
 
@@ -86,10 +96,4 @@ export const getModalData = <Name extends keyof ModalData>(
   }
 };
 
-// Exporting reducer
-
-export default handleActions<ModalsState, HandlersPayloads[keyof HandlersPayloads]>(
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  handlers as unknown as ModalsHandlers<false>,
-  state,
-);
+export default modalsSlice.reducer;

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { useDispatch } from "LLD/hooks/redux";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import Track from "~/renderer/analytics/Track";

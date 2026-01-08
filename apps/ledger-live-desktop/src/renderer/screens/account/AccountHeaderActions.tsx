@@ -15,7 +15,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import { compose } from "redux";
 import styled from "styled-components";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import Star from "~/renderer/components/Stars/Star";

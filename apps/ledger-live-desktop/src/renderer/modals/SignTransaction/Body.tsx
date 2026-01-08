@@ -9,7 +9,7 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import Stepper from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { closeModal, openModal } from "~/renderer/reducers/modals";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Track from "~/renderer/analytics/Track";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";

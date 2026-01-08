@@ -9,7 +9,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/multiversx/types";
-import { OpenModal } from "~/renderer/actions/modals";
+import { OpenModal } from "~/renderer/reducers/modals";
 export type StepId = "claimRewards" | "connectDevice" | "confirmation";
 export type StepProps = {
   t: TFunction;

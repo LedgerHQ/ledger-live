@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import BigNumber from "bignumber.js";
 import { openSendFlowDialog, type SendFlowParams } from "~/renderer/reducers/sendFlow";
 import { useNewSendFlowFeature } from "./useNewSendFlowFeature";

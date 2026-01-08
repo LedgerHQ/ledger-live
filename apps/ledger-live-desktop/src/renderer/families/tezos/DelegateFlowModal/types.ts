@@ -3,7 +3,7 @@ import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/tezos/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step as StepperProps } from "~/renderer/components/Stepper";
-import { OpenModal } from "~/renderer/actions/modals";
+import { OpenModal } from "~/renderer/reducers/modals";
 
 export type StepId =
   | "starter"

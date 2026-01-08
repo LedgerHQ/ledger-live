@@ -6,7 +6,7 @@ import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
 import { getAccountBannerState as getNearBannerState } from "@ledgerhq/live-common/families/near/banner";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { useDispatch } from "LLD/hooks/redux";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 

@@ -3,7 +3,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { setEncryptionKey, removeEncryptionKey, isEncryptionKeyCorrect } from "~/renderer/storage";
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/reducers/modals";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import InputPassword from "~/renderer/components/InputPassword";

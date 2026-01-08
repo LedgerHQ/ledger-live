@@ -6,7 +6,7 @@ import {
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Operation } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
-import { OpenModal } from "~/renderer/actions/modals";
+import { OpenModal } from "~/renderer/reducers/modals";
 import { Step } from "~/renderer/components/Stepper";
 export type StepId = "validator" | "amount" | "connectDevice" | "confirmation";
 export type StepProps = {

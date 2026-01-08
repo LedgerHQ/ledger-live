@@ -4,7 +4,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { urls } from "~/config/urls";
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/reducers/modals";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";

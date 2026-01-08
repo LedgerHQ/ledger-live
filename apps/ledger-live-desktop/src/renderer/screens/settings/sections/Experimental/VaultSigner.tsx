@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { vaultSignerSelector } from "~/renderer/reducers/settings";
 import { setVaultSigner } from "~/renderer/actions/settings";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import Switch from "~/renderer/components/Switch";
 
 const VaultSigner = () => {

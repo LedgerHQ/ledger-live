@@ -12,7 +12,7 @@ import Alert from "~/renderer/components/Alert";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import { StepProps } from "..";
 import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import FullNodeStatus from "~/renderer/modals/AddAccounts/FullNodeStatus";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";

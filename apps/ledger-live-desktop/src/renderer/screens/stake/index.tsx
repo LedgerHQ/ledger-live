@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import { stakeDefaultTrack } from "./constants";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { useStake } from "LLD/hooks/useStake";
 import { walletSelector } from "~/renderer/reducers/wallet";

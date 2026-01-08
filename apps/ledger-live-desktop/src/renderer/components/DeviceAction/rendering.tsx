@@ -49,7 +49,7 @@ import { DmkError, isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/l
 import { isDisconnectedWhileSendingApduError } from "@ledgerhq/live-dmk-desktop";
 
 import { urls } from "~/config/urls";
-import { closeAllModal } from "~/renderer/actions/modals";
+import { closeAllModal } from "~/renderer/reducers/modals";
 import { closePlatformAppDrawer } from "~/renderer/reducers/UI";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";

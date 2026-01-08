@@ -4,6 +4,7 @@ import * as reduxHooks from "LLD/hooks/redux";
 import { render, screen, waitFor } from "tests/testSetup";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
+import { openModal } from "~/renderer/reducers/modals";
 import {
   ARB_ACCOUNT,
   BASE_ACCOUNT,
@@ -207,15 +208,11 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
     expect(screen.getByText(/add account/i)).toBeVisible();
     await user.click(screen.getByText(/add account/i));
-    expect(mockDispatch).toHaveBeenCalledWith({
-      payload: {
-        data: {
-          currency: bitcoinCurrencyResult,
-        },
-        name: "MODAL_ADD_ACCOUNTS",
-      },
-      type: "MODAL_OPEN",
-    });
+    expect(mockDispatch).toHaveBeenCalledWith(
+      openModal("MODAL_ADD_ACCOUNTS", {
+        currency: bitcoinCurrencyResult,
+      }),
+    );
 
     useDispatchMock.mockImplementation(actualUseDispatch);
   });

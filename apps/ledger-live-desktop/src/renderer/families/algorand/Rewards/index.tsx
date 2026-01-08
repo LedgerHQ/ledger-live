@@ -3,7 +3,7 @@ import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import Box from "~/renderer/components/Box/Box";
 import Button from "~/renderer/components/Button";
 import CounterValue from "~/renderer/components/CounterValue";

@@ -24,7 +24,7 @@ import setupNanoDark from "./assets/setupNanoDark.png";
 import restoreUsingRecoverDark from "./assets/restoreUsingRecoverDark.png";
 
 import Illustration from "~/renderer/components/Illustration";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 
 registerAssets([
   connectNanoLight,

@@ -11,7 +11,7 @@ import DropDownSelector, {
 } from "~/renderer/components/DropDownSelector";
 import Switch from "~/renderer/components/Switch";
 import Tooltip from "~/renderer/components/Tooltip";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { useHideEmptyTokenAccounts } from "~/renderer/actions/settings";
 import { Icons } from "@ledgerhq/react-ui";
 

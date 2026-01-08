@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import React from "react";
 import { act } from "react-dom/test-utils";
 import { render, screen, userEvent } from "tests/testSetup";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { State } from "~/renderer/reducers";
 import { ARB_ACCOUNT, BTC_ACCOUNT, HEDERA_ACCOUNT } from "../../__mocks__/accounts.mock";
@@ -135,8 +135,8 @@ jest.mock("react-router-dom", () => ({
   useHistory: () => ({ push }),
 }));
 
-jest.mock("~/renderer/actions/modals", () => ({
-  ...jest.requireActual("~/renderer/actions/modals"),
+jest.mock("~/renderer/reducers/modals", () => ({
+  ...jest.requireActual("~/renderer/reducers/modals"),
   openModal: jest.fn().mockReturnValue({ type: "" }),
 }));
 

@@ -6,7 +6,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/aptos/types";
-import { OpenModal } from "~/renderer/actions/modals";
+import { OpenModal } from "~/renderer/reducers/modals";
 
 export type StepId = "amount" | "device" | "confirmation";
 

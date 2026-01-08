@@ -8,7 +8,7 @@ import { setAccountName as actionSetAccountName } from "@ledgerhq/live-wallet/st
 import { AccountNameRequiredError } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { urls } from "~/config/urls";
-import { setDataModal } from "~/renderer/actions/modals";
+import { setDataModal } from "~/renderer/reducers/modals";
 import { removeAccount, updateAccount } from "~/renderer/actions/accounts";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
 import TrackPage from "~/renderer/analytics/TrackPage";

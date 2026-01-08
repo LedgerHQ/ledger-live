@@ -12,7 +12,7 @@ import { Currency } from "@ledgerhq/types-cryptoassets";
 import logger from "~/renderer/logger";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/reducers/modals";
 import { colors } from "~/renderer/styles/theme";
 import Modal from "~/renderer/components/Modal";
 import ModalBody from "~/renderer/components/Modal/ModalBody";

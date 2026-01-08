@@ -18,7 +18,7 @@ import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/accoun
 import Track from "~/renderer/analytics/Track";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/reducers/modals";
 import Stepper, { Step } from "~/renderer/components/Stepper";
 import StepConnectDevice, {
   StepConnectDeviceFooter,

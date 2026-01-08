@@ -7,7 +7,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/polkadot/types";
-import { OpenModal } from "~/renderer/actions/modals";
+import { OpenModal } from "~/renderer/reducers/modals";
 export type Mode = "withdrawUnbonded" | "chill" | "claimRewards" | "setController";
 export type StepId = "info" | "connectDevice" | "confirmation";
 

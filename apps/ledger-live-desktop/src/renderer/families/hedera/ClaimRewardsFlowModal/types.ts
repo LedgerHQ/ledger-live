@@ -7,7 +7,7 @@ import type {
 } from "@ledgerhq/live-common/families/hedera/types";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Step } from "~/renderer/components/Stepper";
-import type { OpenModal } from "~/renderer/actions/modals";
+import type { OpenModal } from "~/renderer/reducers/modals";
 
 export type StepId = "rewards" | "connectDevice" | "confirmation";
 

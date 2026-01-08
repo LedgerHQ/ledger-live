@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { languageSelector, getInitialLanguageAndLocale } from "~/renderer/reducers/settings";
 import { pushedLanguages } from "~/config/languages";
 import { useSupportedLanguages } from "../hooks/useSupportedLanguages";

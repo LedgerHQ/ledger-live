@@ -17,7 +17,7 @@ import type { Device } from "@ledgerhq/types-devices";
 import Track from "~/renderer/analytics/Track";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { OpenModal, closeModal, openModal } from "~/renderer/actions/modals";
+import { OpenModal, closeModal, openModal } from "~/renderer/reducers/modals";
 import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";

@@ -4,7 +4,7 @@ import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { IconType } from "../../types";
 import { CeloFamily } from "../types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";

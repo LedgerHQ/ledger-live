@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { closeModal, openModal } from "~/renderer/reducers/modals";
 import { createMockAccount, createMockCantonCurrency } from "../__tests__/testUtils";
 import { createMockDevice } from "../OnboardModal/__tests__/testUtils";
 import { handleTopologyChangeError, type NavigationSnapshot } from "./topologyChangeError";
 
-jest.mock("~/renderer/actions/modals");
+jest.mock("~/renderer/reducers/modals");
 
 const mockOpenModal = openModal as jest.MockedFunction<typeof openModal>;
 const mockCloseModal = closeModal as jest.MockedFunction<typeof closeModal>;

@@ -17,7 +17,7 @@ import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
 import { WebviewProps } from "../Web3AppWebview/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import {
   getParentAccount,
   isTokenAccount,

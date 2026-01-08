@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { openModal, closeAllModal } from "~/renderer/actions/modals";
+import { openModal, closeAllModal } from "~/renderer/reducers/modals";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { usePostOnboardingDeeplinkHandler } from "@ledgerhq/live-common/postOnboarding/hooks/index";

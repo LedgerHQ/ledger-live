@@ -1,7 +1,7 @@
 import React, { SyntheticEvent, useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import Button from "~/renderer/components/Button";
 const ReleaseNotesButton = () => {
   const { t } = useTranslation();

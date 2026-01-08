@@ -7,7 +7,7 @@ import { Trans } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { urls } from "~/config/urls";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";

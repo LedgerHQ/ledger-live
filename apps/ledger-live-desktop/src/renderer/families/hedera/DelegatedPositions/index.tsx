@@ -12,7 +12,7 @@ import { useHederaEnrichedDelegation } from "@ledgerhq/live-common/families/hede
 import { useStake } from "LLD/hooks/useStake";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { openURL } from "~/renderer/linking";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import DelegateIcon from "~/renderer/icons/Delegate";

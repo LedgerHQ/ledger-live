@@ -11,7 +11,7 @@ import DelegateIcon from "~/renderer/icons/Delegate";
 import { openURL } from "~/renderer/linking";
 import { Header } from "./Header";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/sui/constants";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { DelegateModalName } from "../modals";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { canStake } from "@ledgerhq/live-common/families/sui/logic";

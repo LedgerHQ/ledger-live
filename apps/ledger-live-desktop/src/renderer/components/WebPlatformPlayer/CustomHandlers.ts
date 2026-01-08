@@ -9,7 +9,7 @@ import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types"
 import { handlers as acreHandlers } from "@ledgerhq/live-common/wallet-api/ACRE/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/ACRE/tracking";
 import { track } from "~/renderer/analytics/segment";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";

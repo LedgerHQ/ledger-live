@@ -35,7 +35,7 @@ import { mevProtectionSelector, shareAnalyticsSelector } from "~/renderer/reduce
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { NetworkErrorScreen } from "./NetworkError";

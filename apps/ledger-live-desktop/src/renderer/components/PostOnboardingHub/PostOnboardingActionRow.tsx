@@ -7,7 +7,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { track } from "~/renderer/analytics/segment";
 import styled from "styled-components";
 import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/reducers/modals";
 import { AllModalNames } from "~/renderer/modals/types";
 import { useHistory } from "react-router";
 import { useCompleteActionCallback } from "./logic/useCompleteAction";

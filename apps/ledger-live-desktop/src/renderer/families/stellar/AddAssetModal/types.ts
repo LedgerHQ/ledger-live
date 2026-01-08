@@ -3,7 +3,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stellar/types";
-import { OpenModal } from "~/renderer/actions/modals";
+import { OpenModal } from "~/renderer/reducers/modals";
 export type StepId = "assets" | "connectDevice" | "confirmation";
 export type StepProps = {
   t: TFunction;

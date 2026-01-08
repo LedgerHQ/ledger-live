@@ -7,7 +7,7 @@ import type {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/hedera/types";
-import type { OpenModal } from "~/renderer/actions/modals";
+import type { OpenModal } from "~/renderer/reducers/modals";
 
 export type StepId = "validator" | "amount" | "connectDevice" | "confirmation";
 

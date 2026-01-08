@@ -5,7 +5,7 @@ import { StepProps } from "../types";
 import { signMessageExec, createAction } from "@ledgerhq/live-common/hw/signMessage/index";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/reducers/modals";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";

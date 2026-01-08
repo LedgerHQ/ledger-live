@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Check from "../icons/CheckFull";
 import TrackPage from "../analytics/TrackPage";
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/reducers/modals";
 import Rewards from "../images/rewards.svg";
 import Text from "./Text";
 import Button from "./Button";

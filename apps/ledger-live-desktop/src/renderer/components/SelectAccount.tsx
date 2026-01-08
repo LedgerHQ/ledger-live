@@ -22,7 +22,7 @@ import AccountTagDerivationMode from "./AccountTagDerivationMode";
 import Button from "~/renderer/components/Button";
 import Plus from "~/renderer/icons/Plus";
 import Text from "./Text";
-import { openModal } from "../actions/modals";
+import { openModal } from "../reducers/modals";
 import { useAccountUnit } from "../hooks/useAccountUnit";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { useAccountName, walletSelector } from "../reducers/wallet";

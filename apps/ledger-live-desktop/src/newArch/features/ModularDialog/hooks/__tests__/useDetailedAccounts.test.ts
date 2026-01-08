@@ -56,15 +56,17 @@ describe("useDetailedAccounts", () => {
     const onAddAccountClick = result.current.onAddAccountClick;
     expect(onAddAccountClick).toBeDefined();
     onAddAccountClick();
-    expect(mockDispatch).toHaveBeenCalledWith({
-      payload: {
-        data: {
-          currency: asset,
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: expect.stringContaining("openModal"),
+        payload: {
+          name: "MODAL_ADD_ACCOUNTS",
+          data: {
+            currency: asset,
+          },
         },
-        name: "MODAL_ADD_ACCOUNTS",
-      },
-      type: "MODAL_OPEN",
-    });
+      }),
+    );
   });
 
   it("should return accounts for a token currency", () => {
