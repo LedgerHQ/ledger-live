@@ -107,7 +107,7 @@ const AccountPage = ({
   const tokensBalanceEnabled = useCoinModuleFeature("tokensBalance", family);
   const nativeBalanceEnabled = useCoinModuleFeature("nativeBalance", family);
   const hasBlockFeature = useCoinModuleFeature("blockchainBlocks", family);
-  const stakingCraftEnabled = useCoinModuleFeature("stakingTxs", family);
+  const stakingStakesEnabled = useCoinModuleFeature("stakingStakes", family);
 
   let showBalanceSummary = true;
   if (isTokenAccount) {
@@ -173,7 +173,7 @@ const AccountPage = ({
       ) : null}
       {!isAccountEmpty(account) ? (
         <>
-          {hasBlockFeature && account.blockHeight ? (
+          {hasBlockFeature && mainAccount.blockHeight ? (
             <Box
               horizontal
               pb={1}
@@ -184,7 +184,7 @@ const AccountPage = ({
                 justifyContent: "end",
               }}
             >
-              Block: ❒ {account.blockHeight}
+              Block: ❒ {mainAccount.blockHeight}
             </Box>
           ) : null}
           {showBalanceSummary ? (
@@ -199,10 +199,10 @@ const AccountPage = ({
               />
             </Box>
           ) : null}
-          <AccountStakeBanner account={account} parentAccount={parentAccount} />
-          {AccountBodyHeader && stakingCraftEnabled ? (
+          {stakingStakesEnabled && <AccountStakeBanner account={account} />}
+          {AccountBodyHeader && stakingStakesEnabled && (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
-          ) : null}
+          )}
 
           {PendingTransferProposals && (
             <PendingTransferProposals account={account as Account} parentAccount={mainAccount} />
