@@ -55,6 +55,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
 import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 import { renderItem } from "LLM/utils/renderItem";
+import { MoodSection } from "LLM/features/Mood";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -155,6 +156,9 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
         </Flex>
         <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />
+        <Box mt={4} mb={4} key="MoodSection">
+          <MoodSection />
+        </Box>
         {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mt={7} />}
         {!isLNSUpsellBannerShown && showAssets ? (
           <ContentCardsLocation

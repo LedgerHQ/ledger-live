@@ -2677,6 +2677,9 @@
       "title": "Market gainers (24H)",
       "seeMarket": "See all"
     },
+    "mood": {
+      "title": "Mood"
+    },
     "walletBalance": "Wallet balance",
     "seeAllAssets": "See all assets",
     "seeAllAccounts": "See all accounts",

@@ -31,6 +31,7 @@ import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
 import Assets from "../Assets";
 import { UpdateStep } from "~/screens/FirmwareUpdate";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
+import { MoodSection } from "LLM/features/Mood";
 
 const maxAssetsToDisplay = 5;
 
@@ -87,6 +88,9 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
         />
+      </Box>,
+      <Box mt={4} mb={4} key="MoodSection">
+        <MoodSection />
       </Box>,
       ...(hasOrderedNano
         ? [
