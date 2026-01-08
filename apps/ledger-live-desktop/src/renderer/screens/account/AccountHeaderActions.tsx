@@ -192,6 +192,9 @@ const pageName = "Page Account";
 const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const { data: currenciesAll } = useFetchCurrencyAll();
   const mainAccount = getMainAccount(account, parentAccount);
+  const family = (mainAccount.currency.family as CoinFamily) || "";
+  const stakingCraftEnabled = useCoinModuleFeature("stakingTxs", family);
+
   const contrastText = useTheme().colors.neutral.c70;
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const specific = getLLDCoinFamily(mainAccount.currency.family);
@@ -202,6 +205,10 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   if (manage) {
     const familyManageActions = manage({ account, parentAccount });
     manageList = familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
+  }
+
+  if (!stakingCraftEnabled) {
+    manageList = manageList.filter(action => action.key !== "Stake");
   }
 
   const SendAction = specific?.accountActions?.SendAction || SendActionDefault;
@@ -316,7 +323,11 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 
   const manageActions: RenderActionParams[] = manageList
-    .filter(item => (canOnlyStakeUsingLedgerLive && item.key === "Stake") || item.key !== "Stake")
+    .filter(
+      item =>
+        (canOnlyStakeUsingLedgerLive && item.key === "Stake" && stakingCraftEnabled) ||
+        item.key !== "Stake",
+    )
     .map(item => ({
       ...item,
       contrastText,
@@ -341,7 +352,6 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     <ActionItem {...item} key={item.accountActionsTestId} />
   ));
 
-  const family = (mainAccount.currency.family as CoinFamily) || "";
   const isTokenAccount = account.type === "TokenAccount";
   const nativeCraftEnabled = useCoinModuleFeature("nativeCraft", family);
   const tokensCraftEnabled = useCoinModuleFeature("tokensCraft", family);
@@ -350,7 +360,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const NonEmptyAccountHeader = (
     <FadeInButtonsContainer data-testid="account-buttons-group" show={showButtons}>
       {manageActions.length > 0 ? manageActionsHeader : null}
-      {canStakeUsingPlatformApp ? stakeViaPlatformHeader : null}
+      {canStakeUsingPlatformApp && stakingCraftEnabled ? stakeViaPlatformHeader : null}
       {availableOnSwap ? swapHeader : null}
       {availableOnBuy ? buyHeader : null}
       {availableOnSell && sellHeader}

@@ -107,6 +107,7 @@ const AccountPage = ({
   const tokensBalanceEnabled = useCoinModuleFeature("tokensBalance", family);
   const nativeBalanceEnabled = useCoinModuleFeature("nativeBalance", family);
   const hasBlockFeature = useCoinModuleFeature("blockchainBlocks", family);
+  const stakingCraftEnabled = useCoinModuleFeature("stakingTxs", family);
 
   let showBalanceSummary = true;
   if (isTokenAccount) {
@@ -198,8 +199,8 @@ const AccountPage = ({
               />
             </Box>
           ) : null}
-          <AccountStakeBanner account={account} />
-          {AccountBodyHeader ? (
+          <AccountStakeBanner account={account} parentAccount={parentAccount} />
+          {AccountBodyHeader && stakingCraftEnabled ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
 
