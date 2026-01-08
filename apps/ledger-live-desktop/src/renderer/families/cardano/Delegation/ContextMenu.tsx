@@ -32,6 +32,15 @@ type Props = {
 const ContextMenu = ({ account }: Props) => {
   const dispatch = useDispatch();
   const theme = useTheme();
+
+  const hasRewardsWithNoDrepDelegation =
+    account.cardanoResources.delegation?.rewards.isGreaterThan(0) &&
+    account.cardanoResources.delegation?.dRepHex === undefined;
+
+  const modalNameForUndelegate = hasRewardsWithNoDrepDelegation
+    ? "MODAL_CARDANO_UNDELEGATE_SELF_TX_INFO"
+    : "MODAL_CARDANO_UNDELEGATE";
+
   const items = [
     {
       key: "redelegate",
@@ -66,7 +75,7 @@ const ContextMenu = ({ account }: Props) => {
       ),
       onClick: () =>
         dispatch(
-          openModal("MODAL_CARDANO_UNDELEGATE", {
+          openModal(modalNameForUndelegate, {
             account,
           }),
         ),
