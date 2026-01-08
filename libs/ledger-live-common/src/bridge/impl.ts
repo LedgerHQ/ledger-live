@@ -50,7 +50,7 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
 
   if (alpacaized[currency.family]) {
     if (!currencyBridgeCache[currency.family]) {
-      currencyBridgeCache[currency.family] = getAlpacaCurrencyBridge(currency.family, "local");
+      currencyBridgeCache[currency.family] = getAlpacaCurrencyBridge(currency.family, "network");
     }
     return currencyBridgeCache[currency.family];
   }
@@ -104,7 +104,7 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
 
   if (alpacaized[family]) {
     if (!bridgeCache[family]) {
-      bridgeCache[family] = wrapAccountBridge(getAlpacaAccountBridge(family, "local"));
+      bridgeCache[family] = wrapAccountBridge(getAlpacaAccountBridge(family, "network"));
     }
     return bridgeCache[family];
   }

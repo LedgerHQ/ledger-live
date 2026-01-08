@@ -6,6 +6,8 @@ import { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { GenericTransaction } from "./types";
+import { computeIntentType } from "../computeIntentType";
+import { getAssetFromToken } from "./token";
 
 function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
   return !a && !b ? true : !a || !b ? false : a.eq(b);
@@ -43,16 +45,17 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
 }
 
 export function genericPrepareTransaction(
-  _network: string,
+  network: string,
   kind: string,
 ): AccountBridge<GenericTransaction>["prepareTransaction"] {
   return async (account, transaction) => {
-    const { getAssetFromToken, computeIntentType, estimateFees, validateIntent } = getAlpacaApi(
-      account.currency.id,
-      kind,
-    );
+    const { estimateFees, validateIntent } = getAlpacaApi(account.currency.id, kind);
     const { assetReference, assetOwner } = getAssetFromToken
-      ? await getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
+      ? await getAssetInfos(
+          transaction,
+          account.freshAddress,
+          getAssetFromToken(network, account.currency),
+        )
       : assetInfosFallback(transaction);
     const customParametersFees = transaction.customFees?.parameters?.fees;
     const customParametersGasLimit = transaction.customGasLimit;
@@ -82,7 +85,7 @@ export function genericPrepareTransaction(
         assetReference,
         amount,
       },
-      computeIntentType,
+      computeIntentType(network),
     );
     const estimation: FeeEstimation = customParametersFees
       ? { value: BigInt(customParametersFees.toFixed()) }
@@ -139,7 +142,7 @@ export function genericPrepareTransaction(
               assetOwner,
               assetReference,
             },
-            computeIntentType,
+            computeIntentType(network),
           ),
           extractBalances(account, getAssetFromToken),
         );
