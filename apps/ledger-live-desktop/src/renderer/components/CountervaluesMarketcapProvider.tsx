@@ -2,7 +2,7 @@ import { CountervaluesMarketcapProvider } from "@ledgerhq/live-countervalues-rea
 import React, { useMemo } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { bindActionCreators } from "redux";
-import { countervaluesActions } from "../actions/countervalues";
+import { countervaluesActions } from "../reducers/countervalues";
 import {
   useCountervaluesMarketcapIds,
   useCountervaluesMarketcapLastUpdated,

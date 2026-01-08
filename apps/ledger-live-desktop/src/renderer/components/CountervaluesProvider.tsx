@@ -9,7 +9,7 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { bindActionCreators } from "redux";
 import { setKey } from "~/renderer/storage";
-import { countervaluesActions } from "../actions/countervalues";
+import { countervaluesActions } from "../reducers/countervalues";
 import { useCalculateCountervaluesUserSettings } from "../actions/general";
 import {
   useCountervaluesPollingIsPolling,

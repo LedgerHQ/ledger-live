@@ -25,7 +25,7 @@ import {
   userThemeSelector,
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "../reducers/wallet";
-import { countervaluesActions } from "./countervalues";
+import { countervaluesActions } from "../reducers/countervalues";
 import { useExtraSessionTrackingPair } from "./deprecated/ondemand-countervalues";
 import { useMarketPerformanceTrackingPairs } from "./marketperformance";
 
