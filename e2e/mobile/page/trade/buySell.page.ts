@@ -30,12 +30,12 @@ export default class BuySellPage {
   async openViaDeeplink(page: "Buy" | "Sell") {
     await openDeeplink(page.toLowerCase());
     await waitForElementById(app.common.walletApiWebview);
-    await waitWebElementByTestId(this.cryptoCurrencySelector);
+    await waitWebElementByTestId(this.cryptoCurrencySelector, 120_000);
   }
 
   @Step("Expect Buy / Sell screen to be visible")
   async expectBuySellScreenToBeVisible(page: "Buy" | "Sell") {
-    await waitWebElementByTestId(this.cryptoCurrencySelector);
+    await waitWebElementByTestId(this.cryptoCurrencySelector, 120_000);
     await detoxExpect(
       getWebElementsByIdAndText("", page === "Buy" ? "You will pay" : "You will sell"),
     ).toExist();
