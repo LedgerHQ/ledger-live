@@ -58,8 +58,9 @@ export default function Summary({ navigation, route }: Props) {
     navigation.navigate(ScreenName.HederaAssociateTokenSelectDevice, {
       ...route.params,
       transaction,
+      status,
     });
-  }, [navigation, transaction, route]);
+  }, [navigation, transaction, status, route]);
 
   const transactionError = status.errors.transaction;
   const error = status.errors[Object.keys(status.errors)[0]];
