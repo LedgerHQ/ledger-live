@@ -239,39 +239,14 @@ jobs:
       - name: Check if Android AVD cache exists
         id: check-avd
         if: ${{ inputs.tests_type != 'iOS Only' }}
-        shell: bash
-        run: |
-          CACHE_KEY="${{ steps.cache-keys.outputs.avd_cache_key }}"
-          echo "🔍 Checking for cache key: $CACHE_KEY"
-
-          # Install AWS CLI if not available
-          if ! command -v aws &> /dev/null; then
-            echo "📦 Installing AWS CLI..."
-            curl -sS "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip -q awscliv2.zip
-            sudo ./aws/install --update
-            rm -rf awscliv2.zip aws
-          fi
-
-          # Use aws s3 ls to check if cache exists (more compatible with R2)
-          echo "🔎 Running: aws s3 ls s3://ledger-live-cache/${CACHE_KEY}/"
-          RESULT=$(aws s3 ls "s3://ledger-live-cache/${CACHE_KEY}/" \
-            --endpoint-url "https://${{ secrets.R2_ENDPOINT }}" \
-            --region auto 2>&1) || true
-
-          echo "📋 Result: $RESULT"
-
-          if echo "$RESULT" | grep -q "cache.tzst"; then
-            echo "cache-hit=true" >> $GITHUB_OUTPUT
-            echo "✅ AVD cache found"
-          else
-            echo "cache-hit=false" >> $GITHUB_OUTPUT
-            echo "❌ AVD cache not found (key: ${CACHE_KEY}/cache.tzst)"
-          fi
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ""
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+        with:
+          key: ${{ steps.cache-keys.outputs.avd_cache_key }}
+          accessKey: ${{ secrets.R2_ACCESS_KEY_ID }}
+          secretKey: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          bucket: ledger-live-cache
+          endpoint: ${{ secrets.R2_ENDPOINT }}
+          region: auto
 
   build-ios:
     name: "iOS Build"
