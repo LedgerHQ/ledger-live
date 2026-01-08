@@ -193,14 +193,19 @@ export function createRendererConfig(
             filename: "assets/[name]-[hash][ext]",
           },
         },
-        // JSON files in src/ - emit as assets and load via require() at runtime
-        // This replicates esbuild's JsonPlugin behavior for reduced bundle size
-        {
-          test: /\.json$/,
-          include: path.resolve(rootFolder, "src"),
-          type: "javascript/auto",
-          use: [path.resolve(__dirname, "animationJsonLoader.cjs")],
-        },
+        // JSON files in src/ - emit as assets and load via require() at runtime (prod only)
+        // In dev mode, rspack's default JSON handler inlines them for HMR compatibility
+        // In prod mode, this replicates esbuild's JsonPlugin behavior for reduced bundle size
+        ...(isDev
+          ? []
+          : [
+              {
+                test: /\.json$/,
+                include: path.resolve(rootFolder, "src"),
+                type: "javascript/auto" as const,
+                use: [path.resolve(__dirname, "animationJsonLoader.cjs")],
+              },
+            ]),
       ],
     },
     plugins: [
