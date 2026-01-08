@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useStore, useSelector, useDispatch } from "~/context/store";
+import { useStore, useSelector, useDispatch } from "~/context/hooks";
 import noop from "lodash/noop";
 import { CloudSyncSDK } from "@ledgerhq/live-wallet/cloudsync/index";
 import walletsync, {

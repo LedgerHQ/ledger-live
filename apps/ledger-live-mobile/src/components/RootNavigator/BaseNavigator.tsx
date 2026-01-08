@@ -6,7 +6,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { ScreenName, NavigatorName } from "~/const";
 import * as families from "~/families";
 import OperationDetails from "~/screens/OperationDetails";

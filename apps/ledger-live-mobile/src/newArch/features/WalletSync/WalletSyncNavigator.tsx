@@ -20,7 +20,7 @@ import { track } from "~/analytics";
 import { AnalyticsPage } from "./hooks/useLedgerSyncAnalytics";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 
 const Stack = createNativeStackNavigator<WalletSyncNavigatorStackParamList>();
 

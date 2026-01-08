@@ -54,7 +54,6 @@ export async function runNavigateToBuyFromPortfolioPageTest(
         userdata: "skip-onboarding",
         speculosApp: buySell.crypto.currency.speculosApp,
         cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
-
       });
     });
 

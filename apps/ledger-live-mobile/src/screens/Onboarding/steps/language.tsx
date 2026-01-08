@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { Flex, SelectableList } from "@ledgerhq/native-ui";
 import i18next from "i18next";
 import RNRestart from "react-native-restart";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/useAvailableLanguagesForDevice";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { firstValueFrom, from } from "rxjs";

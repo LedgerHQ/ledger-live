@@ -22,7 +22,7 @@ const reactReduxImportRestrictions = [
     name: "react-redux",
     importNames: ["useSelector", "useDispatch", "useStore"],
     message:
-      "Import typed hooks from '~/context/store' instead of 'react-redux' to ensure proper TypeScript typing.",
+      "Import typed hooks from '~/context/hooks' instead of 'react-redux' to ensure proper TypeScript typing.",
   },
   {
     name: "reselect",
@@ -125,8 +125,8 @@ module.exports = {
   },
   overrides: [
     {
-      // Allow direct react-redux imports in store.ts where typed hooks are defined
-      files: ["src/context/store.ts", "src/context/selectors.ts"],
+      // Allow direct react-redux imports in hooks.ts/store.ts where typed hooks are defined
+      files: ["src/context/hooks.ts", "src/context/store.ts", "src/context/selectors.ts"],
       rules: {
         "no-restricted-imports": [
           "error",

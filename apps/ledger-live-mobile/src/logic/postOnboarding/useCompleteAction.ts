@@ -1,5 +1,5 @@
 import { useCallback, useContext } from "react";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { PostOnboardingContext } from "@ledgerhq/live-common/postOnboarding/PostOnboardingProvider";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";

@@ -46,7 +46,7 @@ import EarnDark from "~/images/illustration/Dark/_003.webp";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useStake } from "LLM/hooks/useStake/useStake";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { walletSelector } from "~/reducers/wallet";
 
 type Props = {

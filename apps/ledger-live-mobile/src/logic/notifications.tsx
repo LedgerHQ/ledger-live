@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { Linking, Platform } from "react-native";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { add, isBefore, parseISO } from "date-fns";
 import storage from "LLM/storage";
 import { getMessaging, AuthorizationStatus } from "@react-native-firebase/messaging";

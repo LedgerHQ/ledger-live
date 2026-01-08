@@ -282,7 +282,6 @@ export type Features = CurrencyFeatures & {
   cantonSkipPreapprovalStep: DefaultFeature;
   noah: Feature_Noah;
   newSendFlow: Feature_NewSendFlow;
-  lldSessionReplay: Feature_LldSessionReplay;
   zcashShielded: DefaultFeature;
   llmNanoOnboardingFundWallet: DefaultFeature;
   lldRebornABtest: DefaultFeature;
@@ -306,6 +305,8 @@ export type Features = CurrencyFeatures & {
   memoCraft: Feature_CoinModule;
   memoHistory: Feature_CoinModule;
   walletApi: Feature_CoinModule;
+  lwmWallet40: Feature_LwmWallet40;
+  lwdWallet40: Feature_LwdWallet40;
 };
 
 /**
@@ -802,13 +803,24 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
   [P in Platform]?: IgnoredOSUpdatesByPlatform;
 }>;
 
+type Feature_Wallet40_Params = {
+  marketBanner: boolean;
+};
+
+export type Feature_LwmWallet40 = Feature<
+  {
+    // Add specific LWM params
+  } & Feature_Wallet40_Params
+>;
+export type Feature_LwdWallet40 = Feature<
+  {
+    //  Add specific LWD params
+  } & Feature_Wallet40_Params
+>;
+
 /**
  * Utils types.
  */
 export type FeatureMap<T = Feature> = { [key in FeatureId]: T };
 export type OptionalFeatureMap<T = Feature> = { [key in FeatureId]?: T };
 export type FeatureParam<T extends FeatureId> = Features[T]["params"];
-
-export type Feature_LldSessionReplay = Feature<{
-  sampling: number;
-}>;

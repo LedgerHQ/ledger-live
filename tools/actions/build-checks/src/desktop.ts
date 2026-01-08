@@ -8,11 +8,13 @@ import {
   Reporter,
   submitCommentToPR,
   DesktopMetafileSlug,
+  desktopMetafilesKeys,
   formatSize,
   getMetafileDuplicates,
   getMetafileBundleSize,
   formatMarkdownBoldList,
 } from "./logic";
+import { getMetafileFormat } from "./metafile";
 
 type Inputs = {
   baseBranch: string;
@@ -127,13 +129,21 @@ function checksAgainstReference(
   });
 
   // diff on the lib duplicates state
+  // Note: esbuild and rspack have different duplicate detection approaches:
+  // - esbuild: looks at import resolution to same package from different paths
+  // - rspack: looks at pnpm paths for same package with different versions
+  // When comparing across formats, we still compare the results
+
+  const currentFormat = detectMetafilesFormat(metafiles);
+  const refFormat = detectMetafilesFormat(reference);
+  core.info(`Metafile formats - current: ${currentFormat}, reference: ${refFormat}`);
 
   const newDuplicates: Record<string, string[]> = {};
   const removedDuplicates: Record<string, string[]> = {};
   for (const slug of slugsOfInterest) {
     const duplicatesRef = getMetafileDuplicates(reference, slug as DesktopMetafileSlug);
     const duplicates = getMetafileDuplicates(metafiles, slug as DesktopMetafileSlug);
-    core.info(`${slug} duplicates: ${duplicates.join(", ")}`);
+    core.info(`${slug} duplicates: ${duplicates.length} packages`);
     const added = duplicates.filter(d => !duplicatesRef.includes(d));
     const removed = duplicatesRef.filter(d => !duplicates.includes(d));
     for (const lib of added) {
@@ -163,4 +173,23 @@ function checksAgainstReference(
       `\`${lib}\` library is no longer duplicated in ${formatMarkdownBoldList(bundles)}`,
     );
   }
+}
+
+/**
+ * Detect the format of a metafiles collection (esbuild or rspack)
+ */
+function detectMetafilesFormat(metafiles: DesktopMetafiles): "esbuild" | "rspack" | "unknown" {
+  // Check the renderer metafile as it's the most important one
+  const key = desktopMetafilesKeys.renderer;
+  const m = metafiles[key];
+  if (m) {
+    return getMetafileFormat(m);
+  }
+  // Fallback to main
+  const mainKey = desktopMetafilesKeys.main;
+  const mainM = metafiles[mainKey];
+  if (mainM) {
+    return getMetafileFormat(mainM);
+  }
+  return "unknown";
 }

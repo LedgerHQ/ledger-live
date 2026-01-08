@@ -2,7 +2,7 @@ import { useNavigation, useRoute } from "@react-navigation/core";
 import { useEffect, useCallback, useState, useRef, useMemo } from "react";
 import { concat, from, Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import uniq from "lodash/uniq";
 import type { Account } from "@ledgerhq/types-live";

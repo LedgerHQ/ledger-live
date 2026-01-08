@@ -7,7 +7,7 @@ import { useModularDrawerState } from "./hooks/useModularDrawerState";
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 
 import { AccountLike } from "@ledgerhq/types-live";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import {
   modularDrawerEnableAccountSelectionSelector,
   modularDrawerSearchValueSelector,

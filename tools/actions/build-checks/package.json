@@ -7,6 +7,8 @@
   "private": true,
   "scripts": {
     "build": "tsup --target node20 -d build src/main.ts",
+    "test": "tsx src/metafile.test.ts",
+    "cli": "tsx src/cli.ts",
     "lint": "eslint ./ --cache",
     "lint:fix": "pnpm lint --fix",
     "dev": "pnpm dlx ts-node src/test.ts"
@@ -18,6 +20,7 @@
     "@types/unzipper": "0.10.9",
     "stream-json": "1.8.0",
     "tsup": "7.3.0",
+    "tsx": "4.20.6",
     "unzipper": "0.10.14"
   }
 }

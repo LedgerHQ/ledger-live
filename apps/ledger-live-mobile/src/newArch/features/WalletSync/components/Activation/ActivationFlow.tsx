@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback } from "react";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import Activation from ".";
 import ActivationModal from "./ActivationModal";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";

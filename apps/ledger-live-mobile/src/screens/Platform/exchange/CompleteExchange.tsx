@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";

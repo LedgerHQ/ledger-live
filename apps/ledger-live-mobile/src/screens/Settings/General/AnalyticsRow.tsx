@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { Trans, useTranslation } from "react-i18next";
 import { Alert, Button, Text, Switch } from "@ledgerhq/native-ui";
 import { GraphGrowAltMedium } from "@ledgerhq/native-ui/assets/icons";

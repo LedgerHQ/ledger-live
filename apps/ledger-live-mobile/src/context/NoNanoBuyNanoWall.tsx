@@ -1,4 +1,4 @@
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import BuyDeviceNavigator from "~/components/RootNavigator/BuyDeviceNavigator";
 import {

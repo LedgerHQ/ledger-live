@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { flattenAccounts } from "@ledgerhq/coin-framework/account/helpers";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { accountsSelector } from "~/reducers/accounts";

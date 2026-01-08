@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
 import OperationsHistory from "../WalletCentricSections/OperationsHistory";
 

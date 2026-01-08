@@ -1,0 +1,22 @@
+import type { AnalyticsFeatureFlagMethod, Platform } from "../types";
+
+const FEATURE_FLAG_KEYS = {
+  lwm: "lwmWallet40",
+  lwd: "lwdWallet40",
+} as const;
+
+export const getWallet40Attributes = (
+  analyticsFeatureFlagMethod: AnalyticsFeatureFlagMethod | null,
+  platform: Platform,
+) => {
+  if (!analyticsFeatureFlagMethod) return false;
+
+  const featureFlagKey = FEATURE_FLAG_KEYS[platform];
+  const wallet40FeatureFlag = analyticsFeatureFlagMethod(featureFlagKey);
+  const isEnabled = wallet40FeatureFlag?.enabled ?? false;
+
+  return {
+    isEnabled,
+    marketBanner: wallet40FeatureFlag?.params?.marketBanner ?? false,
+  };
+};

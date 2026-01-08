@@ -10,7 +10,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import SkipLedgerSyncDrawer from "./SkipLedgerSyncDrawer";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { TrackScreen, track, screen } from "~/analytics";
 import { SeedOriginType } from "@ledgerhq/types-live";
 

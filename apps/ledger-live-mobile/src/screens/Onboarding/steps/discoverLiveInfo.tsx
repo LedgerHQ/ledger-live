@@ -4,7 +4,7 @@ import { Flex, Carousel, Text, Button, StoriesIndicator, Box } from "@ledgerhq/n
 import { useNavigation, useFocusEffect, CompositeNavigationProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
 import {

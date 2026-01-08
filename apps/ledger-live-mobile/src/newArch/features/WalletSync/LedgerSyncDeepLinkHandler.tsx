@@ -1,6 +1,6 @@
 import { StackActions, useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { setLedgerSyncActivateDrawer } from "~/actions/walletSync";
 import { NavigatorName, ScreenName } from "~/const";

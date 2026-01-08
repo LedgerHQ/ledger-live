@@ -6,7 +6,7 @@ import {
   QRCodeWSClosed,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import {
   trustchainSelector,
   memberCredentialsSelector,

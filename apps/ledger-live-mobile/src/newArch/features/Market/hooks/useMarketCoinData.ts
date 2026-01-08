@@ -3,7 +3,7 @@ import {
   useCurrencyData,
 } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { marketParamsSelector } from "~/reducers/market";
 
 type HookProps = {

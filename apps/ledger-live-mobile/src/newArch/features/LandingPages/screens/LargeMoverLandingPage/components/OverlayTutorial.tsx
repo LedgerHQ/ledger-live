@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { PromisableButton } from "@ledgerhq/native-ui/lib/components/cta/Button/index";
 import { BlurView } from "@react-native-community/blur";
 import { StyleSheet } from "react-native";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { track, TrackScreen } from "~/analytics";
 import { PAGE_NAME } from "../const";
 import { setTutorial } from "~/actions/largeMoverLandingPage";

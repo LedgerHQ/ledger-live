@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { trace } from "@ledgerhq/logs";
 import { Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
