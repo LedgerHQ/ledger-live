@@ -16,6 +16,7 @@ import {
 import { setSelectedTabPortfolioAssets } from "~/actions/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
+import MarketBanner from "LLM/features/MarketBanner";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useListsAnimation, { type TabListType } from "./useListsAnimation";
 import TabSection, { TAB_OPTIONS } from "./TabSection";
@@ -139,6 +140,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
       <Box my={24}>
         <PortfolioQuickActionsBar />
       </Box>
+      <MarketBanner />
       {isAccountListUIEnabled ? (
         <TabSection
           handleToggle={handleToggle}

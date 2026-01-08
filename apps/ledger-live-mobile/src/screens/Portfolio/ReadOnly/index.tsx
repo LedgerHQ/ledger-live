@@ -20,6 +20,7 @@ import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner"
 import BuyDeviceBanner, {
   IMAGE_PROPS_BUY_DEVICE_FLEX,
 } from "LLM/features/Reborn/components/BuyDeviceBanner";
+import MarketBanner from "LLM/features/MarketBanner";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
@@ -94,6 +95,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
             </Box>,
           ]
         : []),
+      <MarketBanner key="MarketBanner" />,
       <Box background={colors.background.main} px={6} mt={6} key="Assets">
         <Assets assets={assets} />
         <Button type="shade" size="large" outline mt={6} onPress={goToAssets}>
