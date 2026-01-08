@@ -110,6 +110,7 @@ const AccountName = styled.input.attrs<BaseProps>(p => ({
   text-overflow: ellipsis;
   display: inline-block;
   background-color: transparent;
+  outline: none;
 
   + svg {
     display: inline;
