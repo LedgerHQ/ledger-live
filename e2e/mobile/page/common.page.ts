@@ -78,7 +78,7 @@ export default class CommonPage {
 
   @Step("Go to the account")
   async goToAccount(accountId: string) {
-    await scrollToId(this.accountItemNameRegExp, this.assetScreenFlatlistId);
+    await scrollToId(this.accountItemRegExp(accountId), this.assetScreenFlatlistId);
     await tapByElement(this.accountItem(accountId));
   }
 
