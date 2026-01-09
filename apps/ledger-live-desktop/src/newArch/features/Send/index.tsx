@@ -4,9 +4,10 @@ import { SendFlowOrchestrator } from "./SendFlowOrchestrator";
 import { SEND_FLOW_STEP, type SendFlowInitParams } from "./types";
 import { createStepRegistry } from "../FlowWizard/FlowWizardOrchestrator";
 import { SendFlowLayout } from "./components/SendFlowLayout";
+import { RecipientScreen } from "./screens/Recipient/RecipientScreen";
 
 const stepRegistry = createStepRegistry({
-  [SEND_FLOW_STEP.RECIPIENT]: () => <></>,
+  [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
   [SEND_FLOW_STEP.AMOUNT]: () => <></>,
   [SEND_FLOW_STEP.SIGNATURE]: () => <></>,
   [SEND_FLOW_STEP.CONFIRMATION]: () => <></>,
