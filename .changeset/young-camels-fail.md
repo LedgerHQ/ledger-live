@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-common": minor
+"@ledgerhq/live-common": patch
 ---
 
 fix(wallet-api): secure domain validation for goToURL parameter

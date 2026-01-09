@@ -1,5 +1,34 @@
 # @ledgerhq/live-common
 
+## 34.55.2-hotfix.1
+
+### Patch Changes
+
+- [#13607](https://github.com/LedgerHQ/ledger-live/pull/13607) [`da30d1c`](https://github.com/LedgerHQ/ledger-live/commit/da30d1c86145b44d2e744b5aedd03a93fc75b067) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): secure domain validation for goToURL parameter
+
+  Replace regex-based URL validation with proper hostname parsing to prevent
+  manifest domain allowlist bypass. The previous implementation matched patterns
+  against the full URL string, allowing attackers to bypass restrictions with
+  URLs like "https://evil.example/?next=ledger.com" when "ledger.com" was
+  whitelisted.
+
+  Security improvements:
+
+  - Parse and validate URL hostname instead of full URL string
+  - Enforce HTTPS-only scheme for goToURL (reject http, javascript, data, etc.)
+  - Normalize hostnames (lowercase + punycode) for consistent matching
+  - Support exact domain matches and \*.subdomain.example.com wildcards
+  - Explicitly reject "\*" wildcard pattern (no match-all allowed)
+  - Filter out rejected goToURL from query parameters to prevent leakage
+
+  Add comprehensive test coverage for malicious bypass attempts, scheme
+  validation, wildcard patterns, IDN support, and deeplink attack scenarios.
+
+  Fixes vulnerability where deeplinks like:
+  ledgerlive://discover/<appId>?goToURL=https://evil.example/?next=ledger.com
+  could bypass domain restrictions and load unauthorized websites in the
+  Live App webview.
+
 ## 34.55.2-hotfix.0
 
 ### Patch Changes
