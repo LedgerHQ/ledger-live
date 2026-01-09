@@ -35,12 +35,21 @@ export function createRendererConfig(
     devtool: isDev ? "eval-source-map" : "source-map",
     resolve: {
       ...commonConfig.resolve,
+      // Platform-specific file resolution:
+      // .web.tsx/.web.ts are resolved first for desktop platform
+      // This enables shared features packages with .web and .native variants
       extensions: process.env.V3
-        ? [".v3.tsx", ".v3.ts", ".tsx", ".ts", ".js", ".jsx", ".json"]
-        : [".tsx", ".ts", ".v3.tsx", ".v3.ts", ".js", ".jsx", ".json"],
+        ? [".v3.tsx", ".v3.ts", ".web.tsx", ".web.ts", ".tsx", ".ts", ".js", ".jsx", ".json"]
+        : [".web.tsx", ".web.ts", ".tsx", ".ts", ".v3.tsx", ".v3.ts", ".js", ".jsx", ".json"],
       mainFields: ["browser", "module", "main"],
       // Don't require file extensions in imports for ESM modules
       fullySpecified: false,
+      // Module resolution paths - needed for features folder to find react, etc.
+      modules: [
+        path.resolve(lldRoot, "node_modules"),
+        path.resolve(lldRoot, "..", "..", "node_modules"),
+        "node_modules",
+      ],
       alias: {
         ...commonConfig.resolve?.alias,
         LLD: path.resolve(lldRoot, "src", "mvvm"),
@@ -119,6 +128,12 @@ export function createRendererConfig(
         // TypeScript/JavaScript with React support
         {
           test: /\.(ts|tsx)$/,
+          include: [
+            path.resolve(lldRoot, "src"),
+            path.resolve(lldRoot, "tests"),
+            path.resolve(lldRoot, "tools"),
+            path.resolve(lldRoot, "..", "..", "features"),
+          ],
           exclude: /node_modules/,
           loader: "builtin:swc-loader",
           options: {
