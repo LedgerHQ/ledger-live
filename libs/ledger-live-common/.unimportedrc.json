@@ -306,6 +306,8 @@
     "src/wallet-api/tracking.ts",
     "src/wallet-api/types.ts",
     "src/wallet-api/useDappLogic.ts",
+    "src/wallet-api/useLiveAppManifest.ts",
+    "src/wallet-api/manifestDomainUtils.ts",
     "src/wallet-api/utils/appendQueryParamsToDappURL.ts",
     "src/wallet-api/utils/appendQueryParamsToManifestURL.ts",
     "src/wallet-api/utils/deriveAccountIdForManifest.ts",
