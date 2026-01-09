@@ -14,13 +14,29 @@ setupEnvironment();
 // When jest-worker serializes test results, destroyed TLS sockets cause:
 // "TypeError: Cannot read properties of null (reading 'reading')"
 // This handler prevents the crash from propagating and killing the worker.
-process.on("uncaughtException", error => {
+process.on("uncaughtException", async error => {
   if (
     error instanceof TypeError &&
     error.message?.includes("Cannot read properties of null") &&
     error.stack?.includes("structured-clone")
   ) {
     console.warn("[E2E] Caught TLS socket serialization error, attempting recovery...");
+
+    // Log diagnostic info to identify the source
+    try {
+      const { DeviceManagementKitTransportSpeculos } = await import("@ledgerhq/live-dmk-speculos");
+      const info = DeviceManagementKitTransportSpeculos.getByBaseInfo();
+      console.warn("[E2E] DMK byBase state:", JSON.stringify(info));
+      if (info.count > 0) {
+        console.warn(
+          "[E2E] DMK byBase had entries - this is likely the source of the TLS socket error!",
+        );
+        await DeviceManagementKitTransportSpeculos.closeAll();
+      }
+    } catch {
+      console.warn("[E2E] Could not check DMK byBase state");
+    }
+
     // Force cleanup to prevent further issues
     https.globalAgent.destroy();
     http.globalAgent.destroy();

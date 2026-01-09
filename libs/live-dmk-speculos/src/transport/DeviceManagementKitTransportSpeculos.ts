@@ -108,6 +108,10 @@ export default class SpeculosHttpTransport extends Transport {
       };
 
       this.byBase.set(baseUrl, deviceManagementEntry);
+      log(
+        "speculos-transport",
+        `[byBase] Added entry for ${baseUrl}, total entries: ${this.byBase.size}`,
+      );
     } else {
       deviceManagementEntry.timeout = connectionTimeoutMs;
     }
@@ -226,16 +230,27 @@ export default class SpeculosHttpTransport extends Transport {
    */
   static async closeByBaseUrl(baseUrl: string): Promise<void> {
     const entry = this.byBase.get(baseUrl);
-    if (!entry) return;
+    if (!entry) {
+      log("speculos-transport", `[byBase] No entry found for ${baseUrl}`);
+      return;
+    }
 
     try {
       if (entry.sessionId && entry.dmk?.disconnect) {
+        log(
+          "speculos-transport",
+          `[byBase] Disconnecting session ${entry.sessionId} for ${baseUrl}`,
+        );
         await entry.dmk.disconnect({ sessionId: entry.sessionId });
       }
     } catch {
       // Ignore disconnect errors - connection might already be closed
     } finally {
       this.byBase.delete(baseUrl);
+      log(
+        "speculos-transport",
+        `[byBase] Removed entry for ${baseUrl}, remaining: ${this.byBase.size}`,
+      );
     }
   }
 
@@ -245,18 +260,41 @@ export default class SpeculosHttpTransport extends Transport {
    */
   static async closeAll(): Promise<void> {
     const entries = Array.from(this.byBase.entries());
+    log("speculos-transport", `[byBase] closeAll() cleaning up ${entries.length} entries`);
+
+    if (entries.length === 0) {
+      return;
+    }
+
     await Promise.allSettled(
       entries.map(async ([baseUrl, entry]) => {
         try {
           if (entry.sessionId && entry.dmk?.disconnect) {
+            log("speculos-transport", `[byBase] Disconnecting ${baseUrl}`);
             await entry.dmk.disconnect({ sessionId: entry.sessionId });
           }
-        } catch {
-          // Ignore disconnect errors
+        } catch (err) {
+          log("speculos-transport", `[byBase] Error disconnecting ${baseUrl}: ${err}`);
         } finally {
           this.byBase.delete(baseUrl);
         }
       }),
     );
+
+    log("speculos-transport", `[byBase] closeAll() complete, remaining: ${this.byBase.size}`);
+  }
+
+  /**
+   * Get diagnostic info about the current state of byBase.
+   * Useful for debugging TLS socket serialization errors.
+   */
+  static getByBaseInfo(): { count: number; urls: string[]; hasActiveSessions: boolean } {
+    const urls = Array.from(this.byBase.keys());
+    const hasActiveSessions = Array.from(this.byBase.values()).some(e => !!e.sessionId);
+    return {
+      count: this.byBase.size,
+      urls,
+      hasActiveSessions,
+    };
   }
 }
