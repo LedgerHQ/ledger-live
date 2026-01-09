@@ -48,6 +48,46 @@ process.on("uncaughtException", async error => {
   throw error;
 });
 
+// DEBUG FLAG: Set to true to force the TLS socket crash
+// This creates a destroyed TLS socket and stores it in globalThis,
+// causing jest-worker serialization to fail with "Cannot read properties of null (reading 'reading')"
+const DEBUG_FORCE_TLS_CRASH = true;
+
+/**
+ * Creates a destroyed TLS socket and stores it in globalThis to force the crash.
+ * jest-worker uses @ungap/structured-clone to serialize test results.
+ * When it encounters a destroyed TLS socket, it crashes.
+ */
+async function createDestroyedSocketForTesting() {
+  if (!DEBUG_FORCE_TLS_CRASH) return;
+
+  console.warn("[E2E DEBUG] Creating destroyed TLS socket to force crash...");
+
+  return new Promise<void>(resolve => {
+    // Create an HTTPS request to any server
+    const req = https.request("https://example.com", res => {
+      // Get the socket and immediately destroy it
+      const socket = res.socket;
+
+      // Store the socket reference in globalThis BEFORE destroying
+      // This is what causes the crash - jest-worker will try to serialize globalThis
+      // and find this destroyed socket
+      (globalThis as Record<string, unknown>).__debugDestroyedSocket = socket;
+
+      socket?.destroy();
+      console.warn("[E2E DEBUG] Destroyed socket stored in globalThis.__debugDestroyedSocket");
+      resolve();
+    });
+
+    req.on("error", () => {
+      // Ignore errors, just ensure we resolve
+      resolve();
+    });
+
+    req.end();
+  });
+}
+
 /**
  * Cleans up HTTP/HTTPS connections and DeviceManagementKit transport to prevent TLS socket serialization errors.
  * When jest-worker tries to serialize test results using @ungap/structured-clone,
@@ -55,6 +95,12 @@ process.on("uncaughtException", async error => {
  */
 async function cleanupConnections() {
   try {
+    // When DEBUG_FORCE_TLS_CRASH is true, skip ALL cleanup to force the crash
+    if (DEBUG_FORCE_TLS_CRASH) {
+      console.warn("[E2E DEBUG] Skipping all cleanup to force TLS crash!");
+      return;
+    }
+
     // CRITICAL: Clean up DeviceManagementKitTransportSpeculos connections.
     // When Speculos stops, the TLS socket is destroyed but references remain in the static byBase map.
     // jest-worker's serialization then fails when accessing the destroyed socket.
@@ -63,6 +109,11 @@ async function cleanupConnections() {
       await DeviceManagementKitTransportSpeculos.closeAll();
     } catch {
       // Module might not be loaded - ignore
+    }
+
+    // Clean up debug socket if it exists
+    if ((globalThis as Record<string, unknown>).__debugDestroyedSocket) {
+      delete (globalThis as Record<string, unknown>).__debugDestroyedSocket;
     }
 
     // Destroy all HTTP/HTTPS agent connections
@@ -99,6 +150,8 @@ beforeAll(
 // Clean up connections after EACH test to prevent TLS socket serialization errors
 // This is critical because the crash happens when jest-worker serializes the test result
 afterEach(async () => {
+  // DEBUG: Create destroyed socket BEFORE cleanup to test if cleanup prevents the crash
+  await createDestroyedSocketForTesting();
   await cleanupConnections();
 });
 
