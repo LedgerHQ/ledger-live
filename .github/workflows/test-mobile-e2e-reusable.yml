@@ -314,12 +314,7 @@ jobs:
     name: iOS E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
     needs: [build-ios, determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    runs-on:
-      [
-        "${{ github.event_name == 'schedule' && 'performance-pool' || 'general-pool' }}",
-        macOS,
-        ARM64,
-      ]
+    runs-on: [macOS, ARM64]
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
       LANG: en_US.UTF-8
