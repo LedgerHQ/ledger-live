@@ -1,5 +1,5 @@
 import { createSelector, createSelectorCreator, lruMemoize } from "reselect";
-import { handleActions } from "redux-actions";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Account, AccountUserData, AccountLike } from "@ledgerhq/types-live";
 import {
   flattenAccounts,
@@ -10,56 +10,79 @@ import {
 import { getEnv } from "@ledgerhq/live-env";
 import isEqual from "lodash/isEqual";
 import { State } from ".";
-import { Handlers } from "./types";
 import { walletSelector } from "./wallet";
 import { isStarredAccountSelector } from "@ledgerhq/live-wallet/store";
 import { nestedSortAccounts, AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import { AddAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 
-/*
-FIXME
-where is the accounts ordering source of truth?
-we could go => Map<string, Account> accounts
-but we can't because nestedSortAccounts
-*/
-
 export type AccountsState = Account[];
-const state: AccountsState = [];
 
-type HandlersPayloads = {
-  REORDER_ACCOUNTS: { comparator: AccountComparator };
-  INIT_ACCOUNTS: { accounts: Account[]; accountsUserData: AccountUserData[] };
-  ADD_ACCOUNTS: AddAccountsAction["payload"];
-  UPDATE_ACCOUNT: { accountId: string; updater: (a: Account) => Account };
-  REMOVE_ACCOUNT: Account;
-  CLEAN_FULLNODE_DISCONNECT: never;
-  CLEAN_ACCOUNTS_CACHE: never;
-  REPLACE_ACCOUNTS: Account[];
-};
+const initialState: AccountsState = [];
 
-type AccountsHandlers<PreciseKey = true> = Handlers<AccountsState, HandlersPayloads, PreciseKey>;
+const accountsSlice = createSlice({
+  name: "accounts",
+  initialState,
+  reducers: {
+    reorderAccounts: (state, action: PayloadAction<{ comparator: AccountComparator }>) => {
+      return nestedSortAccounts(state as Account[], action.payload.comparator);
+    },
+    initAccounts: (
+      _state,
+      action: PayloadAction<{ accounts: Account[]; accountsUserData: AccountUserData[] }>,
+    ) => {
+      return action.payload.accounts;
+    },
+    addAccounts: (_state, action: PayloadAction<AddAccountsAction["payload"]>) => {
+      return action.payload.allAccounts;
+    },
+    updateAccount: (
+      state,
+      action: PayloadAction<{ accountId: string; updater: (a: Account) => Account }>,
+    ) => {
+      const { accountId, updater } = action.payload;
+      return (state as Account[]).map(existingAccount => {
+        if (existingAccount.id !== accountId) {
+          return existingAccount;
+        }
+        return updater(existingAccount as Account);
+      });
+    },
+    removeAccount: (state, action: PayloadAction<Account>) => {
+      return (state as Account[]).filter(acc => acc.id !== action.payload.id);
+    },
+    cleanFullNodeDisconnect: state => {
+      return (state as Account[]).filter(acc => acc.currency.id !== "bitcoin");
+    },
+    cleanAccountsCache: state => {
+      return (state as Account[]).map(clearAccount);
+    },
+    replaceAccounts: (_state, action: PayloadAction<Account[]>) => {
+      return action.payload;
+    },
+  },
+  extraReducers: builder => {
+    builder.addMatcher(
+      (action): action is PayloadAction<AddAccountsAction["payload"]> =>
+        action.type === "ADD_ACCOUNTS",
+      (_state, action) => {
+        return action.payload.allAccounts;
+      },
+    );
+  },
+});
 
-const handlers: AccountsHandlers = {
-  REORDER_ACCOUNTS: (state, { payload: { comparator } }) => nestedSortAccounts(state, comparator),
-  INIT_ACCOUNTS: (_, { payload: { accounts } }) => accounts,
-  ADD_ACCOUNTS: (_, { payload }) => payload.allAccounts,
-  UPDATE_ACCOUNT: (state, { payload: { accountId, updater } }) =>
-    state.map(existingAccount => {
-      if (existingAccount.id !== accountId) {
-        return existingAccount;
-      }
-      return updater(existingAccount);
-    }),
-  REMOVE_ACCOUNT: (state, { payload: account }) => state.filter(acc => acc.id !== account.id),
-  CLEAN_FULLNODE_DISCONNECT: state => state.filter(acc => acc.currency.id !== "bitcoin"),
-  CLEAN_ACCOUNTS_CACHE: state => state.map(clearAccount),
-  REPLACE_ACCOUNTS: (state, { payload }) => payload,
-};
+export const {
+  reorderAccounts,
+  initAccounts,
+  addAccounts,
+  updateAccount,
+  removeAccount,
+  cleanFullNodeDisconnect,
+  cleanAccountsCache,
+  replaceAccounts,
+} = accountsSlice.actions;
 
-export default handleActions<AccountsState, HandlersPayloads[keyof HandlersPayloads]>(
-  handlers as AccountsHandlers<false>,
-  state,
-);
+export default accountsSlice.reducer;
 
 // Selectors
 

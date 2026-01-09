@@ -4,6 +4,7 @@ import { getKey } from "~/renderer/storage";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { ThunkResult } from "./types";
+import { initAccounts as initAccountsAction } from "~/renderer/reducers/accounts";
 
 export const removeAccount = (payload: Account) => ({
   type: "DB:REMOVE_ACCOUNT",
@@ -15,13 +16,10 @@ export const initAccounts = (data: [Account, AccountUserData][]) => {
   const accountsUserData = data
     .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
     .map(([, userData]) => userData);
-  return {
-    type: "INIT_ACCOUNTS",
-    payload: {
-      accounts,
-      accountsUserData,
-    },
-  };
+  return initAccountsAction({
+    accounts,
+    accountsUserData,
+  });
 };
 
 export const replaceAccounts = (accounts: Account[]) => ({
