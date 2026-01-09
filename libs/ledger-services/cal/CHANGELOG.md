@@ -1,5 +1,19 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.10.0-next.0
+
+### Minor Changes
+
+- [#13468](https://github.com/LedgerHQ/ledger-live/pull/13468) [`9874905`](https://github.com/LedgerHQ/ledger-live/commit/98749050026e6b19a207065b312dc99770af639d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Dedup MSW lib inside monorepo
+
+- [#13371](https://github.com/LedgerHQ/ledger-live/pull/13371) [`f9a893e`](https://github.com/LedgerHQ/ledger-live/commit/f9a893e972a52ac2a4953efa3a5dccb614da79e6) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - add cic_v2
+
+### Patch Changes
+
+- Updated dependencies [[`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4), [`fba1e31`](https://github.com/LedgerHQ/ledger-live/commit/fba1e31386e589a93adb19bc4f6eae55129e19ea)]:
+  - @ledgerhq/live-env@2.24.0-next.0
+  - @ledgerhq/live-network@2.1.5-next.0
+
 ## 1.9.3
 
 ### Patch Changes

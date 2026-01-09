@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { InfiniteLoader } from "@ledgerhq/react-ui";
+import { cn } from "LLD/utils/cn";
 
 interface VirtualItem {
   key: string | number | bigint;
@@ -69,6 +70,14 @@ type VirtualListProps<T> = {
    * React component or node to display at the bottom of the list, after all items.
    */
   bottomComponent?: React.ReactNode;
+  /**
+   * Optional test ID for the container element.
+   */
+  testId?: string;
+  /**
+   * Optional additional className for the container element.
+   */
+  className?: string;
 };
 
 const DefaultLoadingComponent = () => (
@@ -94,6 +103,8 @@ export const VirtualList = <T,>({
   scrollToTop = false,
   bottomComponent,
   threshold = 5,
+  testId,
+  className,
 }: VirtualListProps<T>) => {
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -174,7 +185,12 @@ export const VirtualList = <T,>({
   );
 
   return (
-    <div ref={parentRef} className="size-full overflow-auto" style={{ scrollbarWidth: "none" }}>
+    <div
+      ref={parentRef}
+      className={cn("size-full overflow-auto", className)}
+      style={{ scrollbarWidth: "none" }}
+      data-testid={testId}
+    >
       <div
         className="relative flex w-full flex-col"
         style={{ height: `${rowVirtualizer.getTotalSize()}px` }}

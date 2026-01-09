@@ -37,6 +37,7 @@ import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForA
 import { MemoTagDrawer } from "LLM/features/MemoTag/components/MemoTagDrawer";
 import { useMemoTagInput } from "LLM/features/MemoTag/hooks/useMemoTagInput";
 import { hasMemoDisclaimer } from "LLM/features/MemoTag/utils/hasMemoTag";
+import { useExpiryDurationInput } from "LLM/features/ExpiryDuration/hooks/useExpiryDurationInput";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
 import perFamilySendSelectRecipient from "../../generated/SendSelectRecipient";
@@ -137,6 +138,17 @@ export default function SendSelectRecipient({ route }: Props) {
   );
 
   const memoTag = useMemoTagInput(
+    mainAccount.currency.family,
+    useCallback(
+      patch => {
+        const bridge = getAccountBridge(account, parentAccount);
+        setTransaction(bridge.updateTransaction(transaction, patch(transaction)));
+      },
+      [account, parentAccount, setTransaction, transaction],
+    ),
+  );
+
+  const expiryDuration = useExpiryDurationInput(
     mainAccount.currency.family,
     useCallback(
       patch => {
@@ -372,6 +384,15 @@ export default function SendSelectRecipient({ route }: Props) {
               </View>
             )}
 
+            {expiryDuration?.Input && (
+              <View style={styles.expiryDurationInputContainer}>
+                <expiryDuration.Input
+                  testID="expiry-duration-input"
+                  onChange={expiryDuration.handleChange}
+                />
+              </View>
+            )}
+
             {isSomeIncomingTxPending ? (
               <View style={styles.pendingIncomingTxWarning}>
                 <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
@@ -470,6 +491,9 @@ const styles = StyleSheet.create({
   },
   memoTagInputContainer: {
     marginTop: 32,
+  },
+  expiryDurationInputContainer: {
+    marginTop: 8,
   },
   infoBox: {
     marginTop: 24,

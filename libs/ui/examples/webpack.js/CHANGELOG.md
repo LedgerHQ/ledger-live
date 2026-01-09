@@ -1,5 +1,16 @@
 # webpack.js-example
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#13500](https://github.com/LedgerHQ/ledger-live/pull/13500) [`510d1be`](https://github.com/LedgerHQ/ledger-live/commit/510d1beba5c8ec0372eec5fabd1c02ab64693667) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update @babel/\* libraries and react-select
+
+### Patch Changes
+
+- Updated dependencies [[`510d1be`](https://github.com/LedgerHQ/ledger-live/commit/510d1beba5c8ec0372eec5fabd1c02ab64693667)]:
+  - @ledgerhq/react-ui@0.43.0-next.0
+
 ## 0.3.4
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components/native";
-import Text from "../../Text";
+import Text, { BaseTextProps } from "../../Text";
 import TemplateTabs, { BaseTabsProps, TabItemProps } from "../TemplateTabs";
 
 const TabBox = styled.TouchableOpacity`
@@ -11,7 +11,11 @@ const TabBox = styled.TouchableOpacity`
   margin-left: ${(p) => p.theme.space[1]}px;
 `;
 
-const TabText = styled(Text).attrs<TabItemProps>((p) => ({
+type TabTextProps = BaseTextProps & {
+  size?: "small" | "medium";
+};
+
+const TabText = styled(Text).attrs<TabTextProps>((p) => ({
   // Avoid conflict with styled-system's size property by nulling size and renaming it
   size: undefined,
   lineHeight: p.size === "medium" ? "40px" : "26px",

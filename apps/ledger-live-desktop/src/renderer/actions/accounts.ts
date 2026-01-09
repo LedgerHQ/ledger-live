@@ -1,9 +1,9 @@
-import { Dispatch } from "redux";
 import { Account, AccountUserData } from "@ledgerhq/types-live";
 import { AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import { getKey } from "~/renderer/storage";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { ThunkResult } from "./types";
 
 export const removeAccount = (payload: Account) => ({
   type: "DB:REMOVE_ACCOUNT",
@@ -29,17 +29,20 @@ export const replaceAccounts = (accounts: Account[]) => ({
   payload: accounts,
 });
 
-export const reorderAccounts = (comparator: AccountComparator) => (dispatch: Dispatch) =>
-  dispatch({
-    type: "DB:REORDER_ACCOUNTS",
-    payload: { comparator },
-  });
+export const reorderAccounts =
+  (comparator: AccountComparator): ThunkResult =>
+  (dispatch, _getState, _extra) =>
+    dispatch({
+      type: "DB:REORDER_ACCOUNTS",
+      payload: { comparator },
+    });
 
-export const fetchAccounts = () => async (dispatch: Dispatch) => {
-  const data = await getKey("app", "accounts", []);
-  if (!data) throw new PasswordIncorrectError("app accounts seems to still be encrypted");
-  return dispatch(initAccounts(data));
-};
+export const fetchAccounts =
+  (): ThunkResult<Promise<void>> => async (dispatch, _getState, _extra) => {
+    const data = await getKey("app", "accounts", []);
+    if (!data) throw new PasswordIncorrectError("app accounts seems to still be encrypted");
+    dispatch(initAccounts(data));
+  };
 
 type UpdateAccountAction = {
   type: string;

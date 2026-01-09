@@ -40,8 +40,6 @@ export interface CurrenciesOrder {
   key: string;
   /** Sort order (e.g., "desc") */
   order: string;
-  /** Ordered list of currency IDs */
-  currenciesIds: string[];
   /** Ordered list of meta-currency IDs */
   metaCurrencyIds: string[];
 }

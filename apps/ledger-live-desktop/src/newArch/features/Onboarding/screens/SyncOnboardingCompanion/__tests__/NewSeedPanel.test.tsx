@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import React from "react";
 import { render, screen } from "tests/testSetup";
 
@@ -24,6 +21,7 @@ const getInitialState = (isOnboardingReceiveSuccess: boolean = false): Partial<S
   onboarding: {
     isOnboardingReceiveFlow: false,
     isOnboardingReceiveSuccess,
+    onboardingSyncFlow: null,
   },
 });
 

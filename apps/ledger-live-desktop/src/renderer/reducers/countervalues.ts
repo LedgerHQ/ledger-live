@@ -1,6 +1,6 @@
 import { exportCountervalues, initialState } from "@ledgerhq/live-countervalues/logic";
 import type { CountervaluesSettings, CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { handleActions } from "redux-actions";
 import type { CountervaluesHandlersPayloads, Handlers } from "./types";
 

@@ -4,7 +4,7 @@ import {
   hasSeenAnalyticsOptInPromptSelector,
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setHasSeenAnalyticsOptInPrompt } from "~/renderer/actions/settings";
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
 import { ABTestingVariants } from "@ledgerhq/types-live";

@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { autoLockTimeoutSelector } from "~/renderer/reducers/settings";
 import { setAutoLockTimeout } from "~/renderer/actions/settings";
 import Select from "~/renderer/components/Select";
@@ -59,7 +60,7 @@ const PasswordAutoLockSelect = () => {
       minWidth={260}
       isSearchable={false}
       onChange={avoidEmptyValue}
-      renderSelected={(item: { name: string }) => item && item.name}
+      renderValue={({ data }) => data?.label}
       value={currentTimeout}
       options={timeouts}
     />

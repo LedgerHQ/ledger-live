@@ -5,7 +5,7 @@ import {
   catalogProviderSelector,
   languageSelector,
 } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";

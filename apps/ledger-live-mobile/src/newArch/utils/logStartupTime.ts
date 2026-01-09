@@ -7,7 +7,9 @@ export const startupFirstImportTime = Date.now();
 export type StartupEvent = { event: string; time: number };
 export const startupEvents: StartupEvent[] = [];
 
-export function logStartupEvent(eventName: string) {
+export function logStartupEvent(eventName: string): StartupEvent {
   if (__DEV__) console.timeLog("LogStartupTime", eventName);
-  startupEvents.push({ event: eventName, time: Date.now() });
+  const event = { event: eventName, time: Date.now() };
+  startupEvents.push(event);
+  return event;
 }

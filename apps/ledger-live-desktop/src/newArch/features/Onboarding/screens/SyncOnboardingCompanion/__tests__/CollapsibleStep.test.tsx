@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import React, { ComponentProps } from "react";
 import { render, screen } from "tests/testSetup";
 import { Text } from "@ledgerhq/react-ui/index";

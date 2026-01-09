@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Provider, useSelector } from "react-redux";
+import { Provider } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Store } from "redux";
 import { HashRouter as Router } from "react-router-dom";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/index";

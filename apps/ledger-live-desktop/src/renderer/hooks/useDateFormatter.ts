@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 
 export const hourFormat: Intl.DateTimeFormatOptions = {

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { AnimatePresence } from "framer-motion";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { MODULAR_DRAWER_STEP, ModularDrawerFlowManagerProps, ModularDrawerStep } from "./types";

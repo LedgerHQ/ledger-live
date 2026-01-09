@@ -1,5 +1,5 @@
 import React, { useState, useCallback, memo, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { Prompt, PromptProps, useHistory } from "react-router-dom";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";

@@ -12,9 +12,10 @@ import lottie from "~/animations/lottie.json";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "~/context/store";
-import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { hasCompletedOnboardingSelector, onboardingTypeSelector } from "~/reducers/settings";
 import { completeOnboarding, setIsReborn, setOnboardingHasDevice } from "~/actions/settings";
 import PreventNativeBack from "~/components/PreventNativeBack";
+import { OnboardingType } from "~/reducers/types";
 
 type Props = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncLoading>
@@ -30,14 +31,15 @@ export function ActivationLoading({ route }: Props) {
   const subtitle = created ? "walletSync.loading.activation" : "walletSync.loading.synch";
   useLoadingStep(created);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const onboardingType = useSelector(onboardingTypeSelector);
 
   useEffect(() => {
-    if (!hasCompletedOnboarding) {
+    if (!hasCompletedOnboarding && onboardingType !== OnboardingType.setupNew) {
       dispatch(completeOnboarding());
       dispatch(setIsReborn(false));
       dispatch(setOnboardingHasDevice(true));
     }
-  }, [dispatch, hasCompletedOnboarding]);
+  }, [dispatch, hasCompletedOnboarding, onboardingType]);
 
   return (
     <>

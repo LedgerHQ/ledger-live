@@ -16,7 +16,7 @@ import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import GenericEmptyList from "LLD/components/GenericEmptyList";
 import { balanceItem } from "LLD/features/ModularDrawer/components/Balance";
 import { useBalanceDeps } from "LLD/features/ModularDrawer/hooks/useBalanceDeps";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";

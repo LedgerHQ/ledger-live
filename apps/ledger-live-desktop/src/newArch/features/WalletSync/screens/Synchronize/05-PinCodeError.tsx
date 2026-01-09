@@ -2,7 +2,7 @@ import React from "react";
 import { Error } from "../../components/Error";
 import { useTranslation } from "react-i18next";
 import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 

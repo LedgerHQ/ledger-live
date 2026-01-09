@@ -1,7 +1,8 @@
 import { ipcRenderer } from "electron";
 import React, { memo, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
-import { connect, useSelector } from "react-redux";
+import { connect } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { createStructuredSelector } from "reselect";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";

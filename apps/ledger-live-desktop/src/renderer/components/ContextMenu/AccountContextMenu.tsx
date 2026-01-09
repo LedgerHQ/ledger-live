@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
@@ -23,6 +23,7 @@ import { State } from "~/renderer/reducers";
 import { useStake } from "LLD/hooks/useStake";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import IconCoins from "~/renderer/icons/Coins";
+import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 
 type Props = {
   account: AccountLike;
@@ -51,6 +52,7 @@ export default function AccountContextMenu({
   const { getCanStakeCurrency, getRouteToPlatformApp } = useStake();
   const stakeLabel = useGetStakeLabelLocaleBased();
   const walletState = useSelector(walletSelector);
+  const openSendFlow = useOpenSendFlow();
 
   const menuItems = useMemo(() => {
     const currency = getAccountCurrency(account);
@@ -60,12 +62,10 @@ export default function AccountContextMenu({
         label: "accounts.contextMenu.send",
         Icon: IconSend,
         callback: () =>
-          dispatch(
-            openModal("MODAL_SEND", {
-              account,
-              parentAccount,
-            }),
-          ),
+          openSendFlow({
+            account,
+            parentAccount: parentAccount ?? undefined,
+          }),
       },
       {
         label: "accounts.contextMenu.receive",
@@ -198,6 +198,7 @@ export default function AccountContextMenu({
     dispatch,
     history,
     stakeLabel,
+    openSendFlow,
     isStarred,
     refreshAccountsOrdering,
   ]);

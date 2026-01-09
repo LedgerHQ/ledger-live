@@ -53,7 +53,6 @@ describe("useAssetsData", () => {
         interestRates: {},
         markets: {},
         currenciesOrder: {
-          currenciesIds: ["bitcoin"],
           metaCurrencyIds: ["bitcoin"],
           key: "marketCap",
           order: "desc",
@@ -67,7 +66,6 @@ describe("useAssetsData", () => {
         interestRates: {},
         markets: {},
         currenciesOrder: {
-          currenciesIds: ["ethereum"],
           metaCurrencyIds: ["ethereum"],
           key: "marketCap",
           order: "desc",
@@ -99,7 +97,6 @@ describe("useAssetsData", () => {
       interestRates: {},
       markets: {},
       currenciesOrder: {
-        currenciesIds: ["bitcoin", "ethereum"],
         metaCurrencyIds: ["bitcoin", "ethereum"],
         key: "marketCap",
         order: "desc",
@@ -136,7 +133,6 @@ describe("useAssetsData", () => {
         interestRates: {},
         markets: {},
         currenciesOrder: {
-          currenciesIds: [],
           metaCurrencyIds: [],
           key: "marketCap",
           order: "desc",
@@ -168,7 +164,6 @@ describe("useAssetsData", () => {
         interestRates: {},
         markets: {},
         currenciesOrder: {
-          currenciesIds: [],
           metaCurrencyIds: [],
           key: "marketCap",
           order: "desc",

@@ -10,7 +10,7 @@ import {
 } from "styled-system";
 import fontFamily from "~/renderer/styles/styled/fontFamily";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   getDefaultExplorerView,

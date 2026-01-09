@@ -7,7 +7,7 @@ import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";
 import { ADD_ACCOUNT_FLOW_NAME, ADD_ACCOUNT_PAGE_NAME } from "../../analytics/addAccount.types";
 import { useAccountFormatter } from "../AccountsAdded/hooks";
 import { ActionsContainer } from "./components";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 interface Props {

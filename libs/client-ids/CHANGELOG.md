@@ -1,5 +1,20 @@
 # @ledgerhq/client-ids
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#13493](https://github.com/LedgerHQ/ledger-live/pull/13493) [`0f41528`](https://github.com/LedgerHQ/ledger-live/commit/0f415284044c2bfa622dad33fea01cb5f2cee034) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Make client-ids package public to be published on npm
+
+- [#13259](https://github.com/LedgerHQ/ledger-live/pull/13259) [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Bump styled-components to v6 on mobile and icons to prepare react 19 migration
+
+- [#13368](https://github.com/LedgerHQ/ledger-live/pull/13368) [`fba1e31`](https://github.com/LedgerHQ/ledger-live/commit/fba1e31386e589a93adb19bc4f6eae55129e19ea) Thanks [@gre-ledger](https://github.com/gre-ledger)! - set PUSH_DEVICES_SERVICE_URL value and make sure the error case is rate limited.
+
+### Patch Changes
+
+- Updated dependencies [[`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4), [`fba1e31`](https://github.com/LedgerHQ/ledger-live/commit/fba1e31386e589a93adb19bc4f6eae55129e19ea)]:
+  - @ledgerhq/live-env@2.24.0-next.0
+
 ## 0.2.1
 
 ### Patch Changes

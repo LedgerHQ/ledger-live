@@ -5,7 +5,7 @@ This package contains the deterministic testing infrastructure for Solana in Led
 ## Features
 
 - Deterministic testing scenarios for Solana
-- Integration with Speculos for hardware wallet simulation
+- Local signer written in Typescript
 - Integration with Agave for local blockchain simulation
 
 ## Usage

@@ -3,7 +3,7 @@ import { Currency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import React from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import FormattedVal, { OwnProps as FormattedValProps } from "~/renderer/components/FormattedVal";
 import useTheme from "~/renderer/hooks/useTheme";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";

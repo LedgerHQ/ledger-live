@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useMemo } from "react";
 import * as braze from "@braze/web-sdk";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import {
   anonymousUserNotificationsSelector,
   trackingEnabledSelector,

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setSentryLogs } from "~/renderer/actions/settings";
 import { sentryLogsSelector } from "~/renderer/reducers/settings";
 import Track from "~/renderer/analytics/Track";

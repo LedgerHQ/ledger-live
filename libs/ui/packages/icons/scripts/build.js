@@ -63,7 +63,9 @@ const reactSvgStyledComponent = `
 import styled from "styled-components";
 import { system } from "styled-system";
 
-export default styled.svg\`
+export default styled.svg.withConfig({
+  shouldForwardProp: (prop) => true,
+})\`
   \${system({
     color: {
       property: "color",
@@ -85,9 +87,12 @@ const fillSystem = system({
   },
 });
 
-export default styled(Svg).attrs((props:  SvgProps) => ({
+const StyledSvg = styled(Svg).attrs<SvgProps & { xmlns?: string }>((props) => ({
   ...fillSystem(props),
+  xmlns: props.xmlns || "http://www.w3.org/2000/svg",
 }))\`\`;
+
+export default StyledSvg;
 `;
 
 // Component template

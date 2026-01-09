@@ -1,7 +1,7 @@
 import { Button, Flex, IconsLegacy, InvertThemeV3, Logos, Text } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import styled, { useTheme } from "styled-components";
 import { saveSettings } from "~/renderer/actions/settings";

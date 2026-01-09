@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import {
   setShareAnalytics,

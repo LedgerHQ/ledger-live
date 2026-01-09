@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-aptos",
-  "version": "3.8.1",
+  "version": "3.9.0-next.0",
   "description": "Ledger Aptos Coin integration",
   "keywords": [
     "Ledger",
@@ -112,7 +112,7 @@
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.14",
     "@types/lodash": "^4.17.14",
-    "@types/semver": "^7.5.8",
+    "@types/semver": "catalog:",
     "axios": "catalog:",
     "jest": "^29.7.0",
     "react": "catalog:",

@@ -4,7 +4,7 @@ import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/lib/cloudsync/i
 import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/lib/walletsync/index";
 import walletsync from "@ledgerhq/live-wallet/lib/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
-import { runCliCommandWithRetry } from "./runCli";
+import { runCliCommand, runCliCommandWithRetry } from "./runCli";
 import {
   registerTransportModule,
   unregisterAllTransportModules,
@@ -22,6 +22,14 @@ export type LiveDataOpts = {
   scheme?: string;
   appjson?: string;
   add?: boolean;
+};
+
+type GetAddressOpts = {
+  currency?: string;
+  device?: string;
+  path?: string;
+  derivationMode?: string;
+  verify?: boolean;
 };
 
 type LedgerKeyRingProtocolOpts = {
@@ -220,6 +228,39 @@ export const CLI = {
       id: "speculos-http",
       open: () => retry(() => DeviceManagementKitTransportSpeculos.open(req)),
       disconnect: () => Promise.resolve(),
+    });
+  },
+  getAddress: async (opts: GetAddressOpts) => {
+    const cliOpts = ["getAddress"];
+
+    if (opts.currency) {
+      cliOpts.push(`--currency+${opts.currency}`);
+    }
+
+    if (opts.device) {
+      cliOpts.push(`--device+${opts.device}`);
+    }
+
+    if (opts.path) {
+      cliOpts.push(`--path+${opts.path}`);
+    }
+
+    if (opts.derivationMode) {
+      cliOpts.push(`--derivationMode+${opts.derivationMode}`);
+    }
+
+    if (opts.verify) {
+      cliOpts.push("--verify");
+    }
+
+    return runCliCommand(cliOpts.join("+")).then(output => {
+      const lines = output
+        .split("\n")
+        .map(line => line.trim())
+        .filter(line => line.length > 0);
+
+      const lastLine = lines[lines.length - 1] ?? "";
+      return JSON.parse(lastLine);
     });
   },
 };

@@ -1,13 +1,12 @@
 import React, { useMemo } from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { AccountVirtualList } from "../AccountVirtualList";
-import { ListWrapper } from "../../../../components/ListWrapper";
-import { useModularDrawerAnalytics } from "../../../../analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../../../../analytics/modularDrawer.types";
+import { useModularDialogAnalytics } from "../../../../analytics/useModularDialogAnalytics";
+import { MODULAR_DIALOG_PAGE_NAME } from "../../../../analytics/modularDialog.types";
 import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import {
   localeSelector,
   discreetModeSelector,
@@ -22,16 +21,13 @@ type AccountSelectorContentProps = {
   bottomComponent: React.ReactNode;
 };
 
-const TITLE_HEIGHT = 52;
-const LIST_HEIGHT = `calc(100% - ${TITLE_HEIGHT}px)`;
-
 export const AccountSelectorContent = ({
   detailedAccounts,
   accounts,
   onAccountSelected,
   bottomComponent,
 }: AccountSelectorContentProps) => {
-  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const { trackModularDialogEvent } = useModularDialogAnalytics();
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -47,21 +43,22 @@ export const AccountSelectorContent = ({
               locale,
             })
           : "",
-      fiatValue:
-        account.fiatValue !== undefined && account.fiatValue !== null
-          ? formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(account.fiatValue), {
-              showCode: true,
-              discreet,
-              locale,
-            })
-          : "",
+      fiatValue: formatCurrencyUnit(
+        counterValueCurrency.units[0],
+        new BigNumber(account.fiatValue),
+        {
+          showCode: true,
+          discreet,
+          locale,
+        },
+      ),
     }));
   }, [detailedAccounts, locale, discreet, counterValueCurrency]);
 
   const trackAccountClick = (name: string) => {
-    trackModularDrawerEvent("account_clicked", {
+    trackModularDialogEvent("account_clicked", {
       currency: name,
-      page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
+      page: MODULAR_DIALOG_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
     });
   };
 
@@ -81,12 +78,10 @@ export const AccountSelectorContent = ({
   };
 
   return (
-    <ListWrapper customHeight={LIST_HEIGHT}>
-      <AccountVirtualList
-        bottomComponent={bottomComponent}
-        accounts={formattedAccounts}
-        onClick={onAccountClick}
-      />
-    </ListWrapper>
+    <AccountVirtualList
+      bottomComponent={bottomComponent}
+      accounts={formattedAccounts}
+      onClick={onAccountClick}
+    />
   );
 };

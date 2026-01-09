@@ -4,6 +4,37 @@ import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from ".
 import { device } from "detox";
 import { getCurrencyManagerApp } from "../../models/currencies";
 
+const beforeAllFunction = async (delegation: DelegateType) => {
+  await app.init({
+    speculosApp: delegation.account.currency.speculosApp,
+    featureFlags: {
+      llmAccountListUI: { enabled: true },
+    },
+    cliCommands: [
+      async (userdataPath?: string) => {
+        await CLI.liveData({
+          currency: delegation.account.currency.speculosApp.name,
+          index: delegation.account.index,
+          add: true,
+          appjson: userdataPath,
+        });
+
+        const { address } = await CLI.getAddress({
+          currency: delegation.account.currency.speculosApp.name,
+          path: delegation.account.accountPath,
+          derivationMode: delegation.account.derivationMode,
+        });
+
+        delegation.account.address = address;
+
+        return address;
+      },
+    ],
+  });
+
+  await app.portfolio.waitForPortfolioPageToLoad();
+};
+
 export function runDelegateTest(
   delegation: DelegateType,
   tmsLinks: string[],
@@ -13,21 +44,7 @@ export function runDelegateTest(
   tags.forEach(tag => $Tag(tag));
   describe("Delegate", () => {
     beforeAll(async () => {
-      await app.init({
-        speculosApp: delegation.account.currency.speculosApp,
-        cliCommands: [
-          (userdataPath?: string) => {
-            return CLI.liveData({
-              currency: delegation.account.currency.id,
-              index: delegation.account.index,
-              add: true,
-              appjson: userdataPath,
-            });
-          },
-        ],
-      });
-
-      await app.portfolio.waitForPortfolioPageToLoad();
+      await beforeAllFunction(delegation);
     });
 
     it(`Delegate on ${delegation.account.currency.name}`, async () => {
@@ -70,21 +87,7 @@ export async function runDelegateCelo(delegation: DelegateType, tmsLinks: string
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe(`Delegate flow on CELO`, () => {
     beforeAll(async () => {
-      await app.init({
-        speculosApp: delegation.account.currency.speculosApp,
-        cliCommands: [
-          (userdataPath?: string) => {
-            return CLI.liveData({
-              currency: delegation.account.currency.id,
-              index: delegation.account.index,
-              add: true,
-              appjson: userdataPath,
-            });
-          },
-        ],
-      });
-
-      await app.portfolio.waitForPortfolioPageToLoad();
+      await beforeAllFunction(delegation);
     });
 
     it(`Delegate on CELO`, async () => {
@@ -116,21 +119,7 @@ export async function runDelegateTezos(delegation: DelegateType, tmsLinks: strin
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe(`Delegate flow on TEZOS`, () => {
     beforeAll(async () => {
-      await app.init({
-        speculosApp: delegation.account.currency.speculosApp,
-        cliCommands: [
-          (userdataPath?: string) => {
-            return CLI.liveData({
-              currency: delegation.account.currency.id,
-              index: delegation.account.index,
-              add: true,
-              appjson: userdataPath,
-            });
-          },
-        ],
-      });
-
-      await app.portfolio.waitForPortfolioPageToLoad();
+      await beforeAllFunction(delegation);
     });
 
     it(`Delegate on TEZOS`, async () => {

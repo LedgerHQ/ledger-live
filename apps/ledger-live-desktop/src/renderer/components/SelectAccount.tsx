@@ -8,8 +8,9 @@ import { Trans, withTranslation } from "react-i18next";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import styled from "styled-components";
 import React, { useCallback, useState, useMemo } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
-import { createFilter, components, MenuListComponentProps } from "react-select";
+import { connect } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { createFilter, components, MenuListProps } from "react-select";
 import { createStructuredSelector } from "reselect";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
@@ -201,7 +202,7 @@ function AddAccountButton() {
   );
 }
 const AddAccountFooter = (small?: boolean) =>
-  function AddAccountFooter(props: MenuListComponentProps<Option, false>) {
+  function AddAccountFooter(props: MenuListProps<Option, false>) {
     const { children } = props;
     const dispatch = useDispatch();
     const openAddAccounts = useCallback(() => {
@@ -239,7 +240,7 @@ type OwnProps = {
   placeholder?: string;
   showAddAccount?: boolean;
   disabledTooltipText?: string;
-} & Omit<SelectProps, "onChange">;
+} & Omit<SelectProps<Option>, "onChange" | "value">;
 type Props = OwnProps & {
   accounts: Account[];
   small?: boolean;

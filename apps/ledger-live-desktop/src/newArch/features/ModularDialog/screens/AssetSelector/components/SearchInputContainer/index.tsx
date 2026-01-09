@@ -1,27 +1,26 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Search } from "@ledgerhq/react-ui/pre-ldls";
+import { Search } from "LLD/components/Search";
 import { useSearch } from "./useSearch";
-import { Box } from "@ledgerhq/react-ui/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const SearchInputContainer = () => {
   const { t } = useTranslation();
-  const modularDrawer = useFeature("lldModularDrawer");
+  const modularDialog = useFeature("lldModularDrawer");
 
   const { handleDebouncedChange, handleSearch, displayedValue } = useSearch();
 
   return (
-    <Box flex={1} paddingRight="8px" paddingLeft="8px" marginBottom="24px">
+    <div className="mb-12 px-8 pt-4">
       <Search
         value={displayedValue ?? ""}
-        debounceTime={modularDrawer?.params?.searchDebounceTime}
         placeholder={t("modularAssetDrawer.searchPlaceholder")}
-        onDebouncedChange={handleDebouncedChange}
+        debounceTime={modularDialog?.params?.searchDebounceTime}
         onChange={handleSearch}
-        data-testid="modular-asset-drawer-search-input"
+        onDebouncedChange={handleDebouncedChange}
+        data-testid="modular-asset-dialog-search-input"
       />
-    </Box>
+    </div>
   );
 };
 

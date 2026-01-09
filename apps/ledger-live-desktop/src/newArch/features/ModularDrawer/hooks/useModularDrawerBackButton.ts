@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ModularDrawerStep } from "../types";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
 
 interface UseModularDrawerBackButtonProps {

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import isEqual from "lodash/isEqual";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { FeatureFlagsProvider, isFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { Feature, FeatureId } from "@ledgerhq/types-live";

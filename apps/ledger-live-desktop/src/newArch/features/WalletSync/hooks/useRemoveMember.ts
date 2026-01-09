@@ -3,7 +3,7 @@ import {
   setTrustchain,
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk } from "./useTrustchainSdk";

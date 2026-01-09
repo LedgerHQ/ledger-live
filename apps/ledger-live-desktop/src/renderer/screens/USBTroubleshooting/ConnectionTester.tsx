@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled, { useTheme } from "styled-components";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Box from "~/renderer/components/Box";

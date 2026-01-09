@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { walletSyncFlowSelector, walletSyncNextStepSelector } from "~/renderer/reducers/walletSync";
 import { useWalletSyncUserState } from "../components/WalletSyncContext";

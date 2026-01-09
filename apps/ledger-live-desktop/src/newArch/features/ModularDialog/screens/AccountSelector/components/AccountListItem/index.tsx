@@ -1,6 +1,6 @@
 import React from "react";
-import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { ListItem } from "@ledgerhq/lumen-ui-react";
+import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import { formatAddress } from "../../../../components/Address/formatAddress";
 
 export type Account = {
@@ -37,19 +37,13 @@ export const AccountListItem = ({ onClick, account }: AccountListItemProps) => {
   const { name, balance, fiatValue, address, ticker, cryptoId, parentId } = account;
   const formattedAddress = formatAddress(address);
 
+  const networkId = parentId ?? cryptoId;
+
   return (
     <ListItem
       title={name}
       description={formattedAddress}
-      descriptionTag={
-        <CryptoIcon
-          size="16px"
-          ledgerId={cryptoId}
-          network={parentId}
-          ticker={ticker}
-          overridesRadius="4px"
-        />
-      }
+      descriptionTag={<SquaredCryptoIcon size="16px" ledgerId={networkId} ticker={ticker} />}
       trailingContent={renderTrailingContent(balance, fiatValue)}
       onClick={onClick}
       data-testid={`account-row-${name}`}

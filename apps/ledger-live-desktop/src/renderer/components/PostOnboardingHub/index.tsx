@@ -5,7 +5,7 @@ import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/
 import PostOnboardingActionRow from "./PostOnboardingActionRow";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { setHasRedirectedToPostOnboarding } from "~/renderer/actions/settings";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/lib-es/store";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 

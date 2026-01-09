@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import {
@@ -11,26 +11,38 @@ import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
 import { useDetailedAccountsCore } from "@ledgerhq/live-common/modularDrawer/hooks/useDetailedAccountsCore";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
-import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDrawer.types";
+import { useModularDialogAnalytics } from "../analytics/useModularDialogAnalytics";
+import { MODULAR_DIALOG_PAGE_NAME } from "../analytics/modularDialog.types";
 import { useOpenAssetFlowDialog } from "./useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import orderBy from "lodash/orderBy";
 import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
+import { setDrawer } from "~/renderer/drawers/Provider";
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void,
 ) => {
-  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const { trackModularDialogEvent } = useModularDialogAnalytics();
   const counterValuesState = useCountervaluesState();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const source = useSelector(modularDrawerSourceSelector);
   const { openAddAccountFlow } = useOpenAssetFlowDialog(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     source,
+  );
+
+  // Wrapper to close the drawer after account selection (from Dialog)
+  const wrappedOnAccountSelected = useCallback(
+    (account: AccountLike, parentAccount?: Account) => {
+      if (onAccountSelected) {
+        onAccountSelected(account, parentAccount);
+        setDrawer();
+      }
+    },
+    [onAccountSelected],
   );
 
   const nestedAccounts = useSelector(accountsSelector);
@@ -68,12 +80,12 @@ export const useDetailedAccounts = (
   }, [accounts, isATokenCurrency, overridedAccountName, createBaseDetailedAccounts, asset]);
 
   const onAddAccountClick = useCallback(() => {
-    trackModularDrawerEvent("button_clicked", {
+    trackModularDialogEvent("button_clicked", {
       button: "Add a new account",
-      page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
+      page: MODULAR_DIALOG_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
     });
-    openAddAccountFlow(asset, false, onAccountSelected);
-  }, [asset, openAddAccountFlow, trackModularDrawerEvent, onAccountSelected]);
+    openAddAccountFlow(asset, false, wrappedOnAccountSelected);
+  }, [asset, openAddAccountFlow, trackModularDialogEvent, wrappedOnAccountSelected]);
 
   return { detailedAccounts, accounts, onAddAccountClick };
 };

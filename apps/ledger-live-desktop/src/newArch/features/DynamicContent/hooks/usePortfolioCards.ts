@@ -1,6 +1,6 @@
 import * as braze from "@braze/web-sdk";
 import { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { track } from "~/renderer/analytics/segment";
 import { setPortfolioCards } from "~/renderer/actions/dynamicContent";

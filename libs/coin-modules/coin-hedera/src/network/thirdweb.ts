@@ -56,7 +56,7 @@ async function getERC20TransactionsForAccount({
   transactionFetcher?: typeof fetchERC20Transactions; // optional dependency injection for testing
 }): Promise<HederaThirdwebTransaction[]> {
   const allTransactions: HederaThirdwebTransaction[] = [];
-  const evmAddress = toEVMAddress(address);
+  const evmAddress = await toEVMAddress(address);
 
   if (contractAddresses.length === 0) {
     return allTransactions;

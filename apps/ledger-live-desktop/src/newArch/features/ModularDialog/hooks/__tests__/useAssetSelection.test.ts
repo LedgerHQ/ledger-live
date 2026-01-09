@@ -14,7 +14,6 @@ jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () =>
 }));
 
 describe("useAssetSelection", () => {
-  const mockCurrencyIds = ["cardano", "bitcoin", "ethereum"];
   const mockEthereum = {
     id: "ethereum",
     name: "Ethereum",
@@ -39,7 +38,7 @@ describe("useAssetSelection", () => {
 
   it("returns all currencies when all are supported", () => {
     const mockSorted = [mockEthereum, mockBitcoin, mockCardano, mockNeo];
-    const { result } = renderHook(() => useAssetSelection(mockCurrencyIds, mockSorted));
+    const { result } = renderHook(() => useAssetSelection(mockSorted));
     // All currencies are supported
     expect(result.current.assetsToDisplay).toEqual([
       mockEthereum,
@@ -47,13 +46,11 @@ describe("useAssetSelection", () => {
       mockCardano,
       mockNeo,
     ]);
-    expect(result.current.currencyIdsSet).toEqual(new Set(["cardano", "bitcoin", "ethereum"]));
   });
 
   it("returns all supported assets even if currencyIds is empty", () => {
     const mockSorted = [mockEthereum, mockBitcoin, mockCardano];
-    const { result } = renderHook(() => useAssetSelection([], mockSorted));
+    const { result } = renderHook(() => useAssetSelection(mockSorted));
     expect(result.current.assetsToDisplay).toEqual([mockEthereum, mockBitcoin, mockCardano]);
-    expect(result.current.currencyIdsSet).toEqual(new Set());
   });
 });

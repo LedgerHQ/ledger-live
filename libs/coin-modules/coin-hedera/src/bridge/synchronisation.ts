@@ -29,7 +29,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
 ): Promise<Partial<HederaAccount>> => {
   const { currency, derivationMode, address, initialAccount } = info;
   invariant(address, "hedera: address is expected");
-  const evmAddress = toEVMAddress(address);
+  const evmAddress = await toEVMAddress(address);
   invariant(evmAddress, "hedera: evm address is missing");
 
   const liveAccountId = encodeAccountId({

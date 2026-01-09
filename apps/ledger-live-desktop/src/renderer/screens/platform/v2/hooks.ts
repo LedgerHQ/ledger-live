@@ -14,7 +14,7 @@ import {
 } from "@ledgerhq/live-common/wallet-api/react";
 import { SearchRaw, useSearch } from "@ledgerhq/live-common/hooks/useSearch";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useDB } from "~/renderer/storage";
 import { dismissedBannersSelector } from "~/renderer/reducers/settings";
 import { dismissBanner } from "~/renderer/actions/settings";

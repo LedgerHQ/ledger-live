@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.18.0-next.0
+
+### Minor Changes
+
+- [#13259](https://github.com/LedgerHQ/ledger-live/pull/13259) [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Bump styled-components to v6 on mobile and icons to prepare react 19 migration
+
 ## 0.17.0
 
 ### Minor Changes

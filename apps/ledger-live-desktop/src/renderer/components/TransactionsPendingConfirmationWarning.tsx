@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { AccountLike } from "@ledgerhq/types-live";
 import { isAccountBalanceUnconfirmed } from "@ledgerhq/live-common/account/index";

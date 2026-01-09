@@ -1,7 +1,7 @@
 import { ChangeEvent, useCallback } from "react";
-import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
-import { useDispatch, useSelector } from "react-redux";
+import { useModularDialogAnalytics } from "LLD/features/ModularDialog/analytics/useModularDialogAnalytics";
+import { MODULAR_DIALOG_PAGE_NAME } from "LLD/features/ModularDialog/analytics/modularDialog.types";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSearch";
 import { modularDrawerSearchedSelector, setSearchedValue } from "~/renderer/reducers/modularDrawer";
 
@@ -16,14 +16,14 @@ export const useSearch = (): SearchResult => {
 
   const searchedValue = useSelector(modularDrawerSearchedSelector);
 
-  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const { trackModularDialogEvent } = useModularDialogAnalytics();
 
   const onTrackSearch = useCallback(
     (query: string) => {
-      trackModularDrawerEvent(
+      trackModularDialogEvent(
         "asset_searched",
         {
-          page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
+          page: MODULAR_DIALOG_PAGE_NAME.MODULAR_ASSET_SELECTION,
           searched_value: query,
         },
         {
@@ -31,7 +31,7 @@ export const useSearch = (): SearchResult => {
         },
       );
     },
-    [trackModularDrawerEvent],
+    [trackModularDialogEvent],
   );
 
   const onPersistSearchValue = useCallback(

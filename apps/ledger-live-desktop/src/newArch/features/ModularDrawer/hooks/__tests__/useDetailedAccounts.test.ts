@@ -1,4 +1,3 @@
-import * as reactRedux from "react-redux";
 import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
@@ -7,7 +6,13 @@ import { ethereumCurrency } from "../../../__mocks__/useSelectAssetFlow.mock";
 import { mockDispatch } from "../../../__tests__/shared";
 import { useDetailedAccounts } from "../useDetailedAccounts";
 
-jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
+jest.mock("LLD/hooks/redux", () => {
+  const actual = jest.requireActual("LLD/hooks/redux");
+  return {
+    ...actual,
+    useDispatch: () => mockDispatch,
+  };
+});
 
 describe("useDetailedAccounts", () => {
   it("should return formatted accounts for a crypto currency", () => {

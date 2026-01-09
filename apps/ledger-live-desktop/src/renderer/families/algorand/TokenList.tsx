@@ -1,6 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import IconPlus from "~/renderer/icons/Plus";

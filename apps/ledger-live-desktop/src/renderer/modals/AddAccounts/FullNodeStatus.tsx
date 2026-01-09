@@ -3,7 +3,6 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
 // TODO move to bitcoin family
-// eslint-disable-next-line no-restricted-imports
 import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import Box from "~/renderer/components/Box";

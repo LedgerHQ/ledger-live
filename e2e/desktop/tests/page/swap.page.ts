@@ -27,6 +27,8 @@ export class SwapPage extends AppPage {
   private quotesCountdown = "quotes-countdown";
   private networkFeesInfoIcon = "quoteCardTestId-networkFees-infoIcon";
   private rateInfoIcon = "QuoteCard-rate-infoIcon";
+  private swapBtn = "execute-button";
+  private executeSwapBtn = "execute-swap-button-step-approval";
   private continueBtn = this.page.locator("#sign-summary-continue-button");
 
   // Exchange Drawer Components
@@ -98,7 +100,10 @@ export class SwapPage extends AppPage {
     const provider = Provider.getNameByUiName(providerList[0]);
     const baseProviderLocator = `quote-container-${provider}-`;
 
-    await webview.getByTestId(baseProviderLocator + "amount-label").click();
+    await webview
+      .getByTestId(baseProviderLocator + "amount-label")
+      .first()
+      .click();
     await expect(webview.getByTestId(baseProviderLocator + "amount-label")).toBeVisible();
     await expect(webview.getByTestId(baseProviderLocator + "fiatAmount-label")).toBeVisible();
     await expect(webview.getByTestId(baseProviderLocator + "networkFees-heading")).toBeVisible();
@@ -258,28 +263,33 @@ export class SwapPage extends AppPage {
   async checkExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
 
-    const buttonText = [Provider.VELORA.uiName, Provider.MOONPAY.uiName].includes(provider)
-      ? `Continue with ${provider}`
-      : `Swap with ${provider}`;
-
-    const buttonLocator = webview.getByRole("button", { name: buttonText });
+    const buttonLocator = webview.getByRole("button", { name: new RegExp(provider, "i") });
     await expect(buttonLocator).toBeVisible();
     await expect(buttonLocator).toBeEnabled();
   }
 
   @step("Click Exchange button")
-  async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
+  async clickExchangeButton(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
-    const swapButton = webview.getByRole("button", { name: `Swap with ${provider}` });
+    const swapButton = webview.getByTestId(this.swapBtn);
     await expect(swapButton).toBeVisible();
     await expect(swapButton).toBeEnabled();
     await swapButton.click();
   }
 
+  @step("Click Execute Swap button")
+  async clickExecuteSwapButton(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    const executeSwapButton = webview.getByTestId(this.executeSwapBtn);
+    await expect(executeSwapButton).toBeVisible();
+    await expect(executeSwapButton).toBeEnabled();
+    await executeSwapButton.click();
+  }
+
   @step("Go to provider live app")
   async goToProviderLiveApp(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
-    const continueButton = webview.getByRole("button", { name: `Continue with ${provider}` });
+    const continueButton = webview.getByRole("button", { name: new RegExp(provider, "i") });
     await expect(continueButton).toBeVisible();
     await expect(continueButton).toBeEnabled();
     await continueButton.click();
@@ -342,7 +352,17 @@ export class SwapPage extends AppPage {
   @step("Fill in amount: $1")
   async fillInOriginCurrencyAmount(electronApp: ElectronApplication, amount: string) {
     const [, webview] = electronApp.windows();
-    await webview.getByTestId(this.fromAccountAmountInput).fill(amount);
+
+    const amountInput = webview.getByTestId(this.fromAccountAmountInput);
+
+    // Wait for input to be fully interactive after dialog closes
+    await expect(amountInput).toBeVisible();
+    await expect(amountInput).toBeEnabled();
+
+    // Click to focus the input before filling
+    await amountInput.click();
+    await amountInput.fill(amount);
+
     //wait for potential origin amount error to be loaded
     await this.page.waitForTimeout(500);
   }

@@ -2,9 +2,9 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import React, { memo } from "react";
 import { RectButton, Gesture, GestureDetector } from "react-native-gesture-handler";
 import { TokenAccount, Account } from "@ledgerhq/types-live";
-import { createStructuredSelector } from "reselect";
-import { connect } from "react-redux";
 import { useSelector } from "~/context/store";
+import { createStructuredSelector } from "~/context/selectors";
+import { connect } from "react-redux";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
@@ -13,7 +13,6 @@ import { accountSelector } from "~/reducers/accounts";
 import { selectedTimeRangeSelector } from "~/reducers/settings";
 import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import Delta from "./Delta";
-import { State as RootState } from "~/reducers/types";
 import { useAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
@@ -100,13 +99,7 @@ const AccountCv = ({ children }: { children?: React.ReactNode }) => (
   </Text>
 );
 
-const mapStateToProps = createStructuredSelector<
-  RootState,
-  { accountId?: string; parentAccount?: Account },
-  {
-    parentAccount: Account | undefined;
-  }
->({
+const mapStateToProps = createStructuredSelector({
   parentAccount: accountSelector,
 });
 

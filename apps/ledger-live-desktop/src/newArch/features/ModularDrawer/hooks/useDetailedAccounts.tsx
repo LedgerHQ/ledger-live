@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import {

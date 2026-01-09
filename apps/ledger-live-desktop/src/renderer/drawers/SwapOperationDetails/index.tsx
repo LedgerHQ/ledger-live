@@ -13,7 +13,7 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import uniq from "lodash/uniq";
 import React, { useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";

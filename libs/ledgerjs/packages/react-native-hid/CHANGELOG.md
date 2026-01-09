@@ -1,5 +1,17 @@
 # @ledgerhq/react-native-hid
 
+## 6.35.0-next.0
+
+### Minor Changes
+
+- [#13259](https://github.com/LedgerHQ/ledger-live/pull/13259) [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Bump styled-components to v6 on mobile and icons to prepare react 19 migration
+
+### Patch Changes
+
+- Updated dependencies [[`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae)]:
+  - @ledgerhq/devices@8.9.0-next.0
+  - @ledgerhq/hw-transport@6.31.16-next.0
+
 ## 6.34.0
 
 ### Minor Changes

@@ -19,7 +19,7 @@ import EditAccountName from "./screens/EditAccountName";
 import FundAccount from "./screens/FundAccount";
 import ScanAccounts from "./screens/ScanAccounts";
 import { useAddAccountFlowNavigation } from "./useAddAccountFlowNavigation";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setFlowValue } from "~/renderer/reducers/modularDrawer";
 import { ADD_ACCOUNT_FLOW_NAME } from "./analytics/addAccount.types";
 

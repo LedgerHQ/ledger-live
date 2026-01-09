@@ -11,7 +11,6 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
 
 // TODO move to bitcoin family
-// eslint-disable-next-line no-restricted-imports
 import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
 
 const Dot = styled.div<{

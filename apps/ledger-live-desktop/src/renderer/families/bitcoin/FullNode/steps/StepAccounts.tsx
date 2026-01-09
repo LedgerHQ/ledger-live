@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";

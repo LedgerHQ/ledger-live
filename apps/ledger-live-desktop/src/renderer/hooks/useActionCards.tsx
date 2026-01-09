@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { actionContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import * as braze from "@braze/web-sdk";
 import { setActionCards } from "~/renderer/actions/dynamicContent";

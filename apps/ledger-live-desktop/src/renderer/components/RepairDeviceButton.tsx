@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import repairFw from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import RepairModal from "~/renderer/modals/RepairModal";
 import logger from "~/renderer/logger";

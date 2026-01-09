@@ -104,7 +104,6 @@ export const mockAssetsData = {
   currenciesOrder: {
     key: "marketCap",
     order: "desc",
-    currenciesIds: ["injective", "ethereum/erc20/injective_token", "bsc/bep20/injective_protocol"],
     metaCurrencyIds: ["urn:crypto:meta-currency:injective_protocol"],
   },
 };
@@ -177,7 +176,6 @@ export const mockBitcoinAssetsData = {
   currenciesOrder: {
     key: "marketCap",
     order: "desc",
-    currenciesIds: ["bitcoin", "ethereum/erc20/wrapped_bitcoin"],
     metaCurrencyIds: ["bitcoin"],
   },
 };
@@ -258,7 +256,6 @@ export const mockUsdcAssetsData = {
   currenciesOrder: {
     key: "marketCap",
     order: "desc",
-    currenciesIds: ["ethereum/erc20/usd_coin", "polygon/erc20/usd_coin"],
     metaCurrencyIds: ["usdc"],
   },
 };

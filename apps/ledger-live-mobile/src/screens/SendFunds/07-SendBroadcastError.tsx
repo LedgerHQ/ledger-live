@@ -29,7 +29,13 @@ export default function SendBroadcastError({ navigation, route }: Props) {
 
   const { account } = useAccountScreen(route);
   const currency = account ? getAccountCurrency(account) : null;
-  const temporaryErrors = ["LedgerAPI5xx", "NetworkDown"];
+  const temporaryErrors = [
+    "LedgerAPI5xx",
+    "NetworkDown",
+    "DeviceLockedError",
+    "LockedDeviceError",
+    "UserRefusedOnDevice",
+  ];
 
   const error = route.params?.error;
   const helperUrl = error?.url ?? urls.faq;
@@ -146,7 +152,11 @@ function InformativeBanner({
   );
 }
 
-const InformativeBannerButton = styled(Button).attrs({
+type InformativeBannerButtonProps = {
+  activeOpacity?: number;
+};
+
+const InformativeBannerButton = styled(Button).attrs<InformativeBannerButtonProps>({
   isNewIcon: true,
   iconPosition: "left",
   size: "small",

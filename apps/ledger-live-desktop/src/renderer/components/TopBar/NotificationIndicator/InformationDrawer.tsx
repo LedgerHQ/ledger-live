@@ -7,7 +7,8 @@ import { AnnouncementPanel } from "~/renderer/components/TopBar/NotificationIndi
 import { ServiceStatusPanel } from "~/renderer/components/TopBar/NotificationIndicator/ServiceStatusPanel";
 import { useTranslation } from "react-i18next";
 import { CSSTransition } from "react-transition-group";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
+
 import { informationCenterStateSelector } from "~/renderer/reducers/UI";
 import { setTabInformationCenter } from "~/renderer/actions/UI";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";

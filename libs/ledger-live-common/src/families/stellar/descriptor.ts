@@ -7,11 +7,15 @@ export const descriptor: CoinDescriptor = {
       memo: {
         type: "typed",
         options: StellarMemoType,
+        defaultOption: "MEMO_ID",
       },
     },
     fees: {
       hasPresets: false,
       hasCustom: true,
+    },
+    errors: {
+      userRefusedTransaction: "StellarUserRefusedError",
     },
   },
 };

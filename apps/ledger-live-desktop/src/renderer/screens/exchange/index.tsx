@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import semver from "semver";
 import { RouteComponentProps, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import Card from "~/renderer/components/Box/Card";
 import {
   counterValueCurrencySelector,

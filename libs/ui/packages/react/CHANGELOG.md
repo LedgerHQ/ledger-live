@@ -1,5 +1,16 @@
 # @ledgerhq/react-ui
 
+## 0.43.0-next.0
+
+### Minor Changes
+
+- [#13500](https://github.com/LedgerHQ/ledger-live/pull/13500) [`510d1be`](https://github.com/LedgerHQ/ledger-live/commit/510d1beba5c8ec0372eec5fabd1c02ab64693667) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update @babel/\* libraries and react-select
+
+### Patch Changes
+
+- Updated dependencies [[`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4)]:
+  - @ledgerhq/icons-ui@0.18.0-next.0
+
 ## 0.42.0
 
 ### Minor Changes

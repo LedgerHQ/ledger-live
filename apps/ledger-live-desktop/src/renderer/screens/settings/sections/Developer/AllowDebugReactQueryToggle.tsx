@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { allowDebugReactQuerySelector } from "~/renderer/reducers/settings";
 import { setAllowDebugReactQuery } from "~/renderer/actions/settings";
 import Track from "~/renderer/analytics/Track";

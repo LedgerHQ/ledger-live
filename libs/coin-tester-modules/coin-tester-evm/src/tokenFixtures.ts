@@ -5,7 +5,7 @@ import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const polygon = getCryptoCurrencyById("polygon");
-const scroll = getCryptoCurrencyById("scroll_sepolia");
+const scroll = getCryptoCurrencyById("scroll");
 const blast = getCryptoCurrencyById("blast");
 const sonic = getCryptoCurrencyById("sonic");
 const core = getCryptoCurrencyById("core");

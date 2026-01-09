@@ -1,7 +1,7 @@
 import { ipcRenderer } from "electron";
 import React, { useMemo, useEffect, useState, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import OperationRow from "./OperationRow";
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";

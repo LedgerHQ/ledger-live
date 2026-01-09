@@ -1,3 +1,5 @@
+import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+
 describe("Send flow", () => {
   beforeAll(async () => {
     await app.init({
@@ -13,10 +15,10 @@ describe("Send flow", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
     await app.send.openViaDeeplink();
     await app.send.selectAccount("Ethereum 1");
-    await app.send.setRecipient(Account.SANCTIONED_ETH.address);
+    await app.send.setRecipient(Addresses.SANCTIONED_ETHEREUM);
     await app.send.expectSendRecipientTitleError("Keeping you safe");
     await app.send.expectSendRecipientDescriptionError(
-      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Account.SANCTIONED_ETH.address}`,
+      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Addresses.SANCTIONED_ETHEREUM}`,
     );
     await app.send.expectLearnMoreLink();
     await app.send.expectContinueButtonDisabled();
@@ -30,12 +32,12 @@ describe("Send flow", () => {
     await app.send.selectAccount("Sanctioned Ethereum");
     await app.send.expectSendSenderTitleError("Keeping you safe");
     await app.send.expectSendSenderDescriptionError(
-      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Account.SANCTIONED_ETH.address}`,
+      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Addresses.SANCTIONED_ETHEREUM}`,
     );
     await app.send.expectLearnMoreLink();
     await app.send.expectContinueButtonDisabled();
 
-    await app.send.setRecipient(Account.ETH_1.address);
+    await app.send.setRecipient(Addresses.SANCTIONED_ETHEREUM);
     await app.send.expectContinueButtonDisabled();
   });
 
@@ -47,15 +49,15 @@ describe("Send flow", () => {
     await app.send.selectAccount("Sanctioned Ethereum");
     await app.send.expectSendSenderTitleError("Keeping you safe");
     await app.send.expectSendSenderDescriptionError(
-      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Account.SANCTIONED_ETH.address}`,
+      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Addresses.SANCTIONED_ETHEREUM}`,
     );
     await app.send.expectLearnMoreLink();
     await app.send.expectContinueButtonDisabled();
 
-    await app.send.setRecipient(Account.SANCTIONED_ETH.address);
+    await app.send.setRecipient(Addresses.SANCTIONED_ETHEREUM);
     await app.send.expectSendRecipientTitleError("Keeping you safe");
     await app.send.expectSendRecipientDescriptionError(
-      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Account.SANCTIONED_ETH.address}`,
+      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Addresses.SANCTIONED_ETHEREUM}`,
     );
     await app.send.expectLearnMoreLink();
     await app.send.expectContinueButtonDisabled();

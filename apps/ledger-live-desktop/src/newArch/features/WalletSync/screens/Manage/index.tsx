@@ -2,7 +2,7 @@ import { Box, Flex, Text, Icons, InfiniteLoader } from "@ledgerhq/react-ui";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import useTheme from "~/renderer/hooks/useTheme";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { Option, OptionProps } from "./Option";

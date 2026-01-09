@@ -8,7 +8,7 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import Disconnected from "./Disconnected";
 import { setLastSeenDevice } from "~/renderer/actions/settings";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { context } from "~/renderer/drawers/Provider";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";

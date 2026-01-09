@@ -4,7 +4,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { UseCaseOption } from "./UseCaseOption";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";

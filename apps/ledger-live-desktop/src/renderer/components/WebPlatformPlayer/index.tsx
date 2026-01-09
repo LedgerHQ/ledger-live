@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { ipcRenderer } from "electron";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";

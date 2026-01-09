@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import { openModal } from "../actions/modals";
 

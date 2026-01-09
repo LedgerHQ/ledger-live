@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { setDrawerVisibility } from "~/renderer/actions/walletSync";
 import { walletSyncFakedSelector } from "~/renderer/reducers/walletSync";
 import Button from "~/renderer/components/Button";

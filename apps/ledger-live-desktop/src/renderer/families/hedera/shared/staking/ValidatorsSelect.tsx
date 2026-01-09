@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Option } from "react-select/src/filters";
+// FilterOptionOption type for react-select v5 filter callback
+type FilterOptionOption<T> = { label: string; value: string; data: T };
 import styled from "styled-components";
 import { Box } from "@ledgerhq/react-ui";
 import type { HederaAccount, HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
@@ -42,10 +43,13 @@ export default function ValidatorsSelect({
     [unit],
   );
 
-  const filterOptions = useCallback((option: Option, search: string): boolean => {
-    const validator = option.data as HederaValidator;
-    return filterValidatorBySearchTerm(validator, search);
-  }, []);
+  const filterOptions = useCallback(
+    (option: FilterOptionOption<HederaValidator>, search: string): boolean => {
+      const validator = option.data;
+      return filterValidatorBySearchTerm(validator, search);
+    },
+    [],
+  );
 
   const value = useMemo(() => {
     return options.find(v => v.nodeId === selectedValidatorNodeId) ?? null;

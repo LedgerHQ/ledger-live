@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";

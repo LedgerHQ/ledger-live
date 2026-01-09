@@ -25,7 +25,7 @@ import {
   setHasInstalledApps,
   setLastSeenDeviceInfo,
 } from "~/renderer/actions/settings";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import {
   hasInstalledAppsSelector,
   lastSeenCustomImageSelector,

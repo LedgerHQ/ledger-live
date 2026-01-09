@@ -40,13 +40,13 @@ import {
 } from "./common";
 
 function assetsAreEqual(asset1: AssetInfo, asset2: AssetInfo): boolean {
-  if (asset1.type !== asset2.type) return false;
+  if (asset1.type === "native" && asset2.type === "native") return true;
 
   if ("assetReference" in asset1 && "assetReference" in asset2) {
     return asset1.assetReference === asset2.assetReference;
   }
 
-  return asset1.type === "native";
+  return false;
 }
 
 function findBalance(asset: AssetInfo, balances: Balance[]): Balance {

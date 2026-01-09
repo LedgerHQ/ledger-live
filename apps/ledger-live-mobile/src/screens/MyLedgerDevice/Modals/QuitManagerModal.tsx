@@ -40,7 +40,7 @@ const ButtonsContainer = styled(Flex).attrs({
 const CancelButton = styled(TouchableOpacity)`
   align-items: center;
   justify-content: center;
-  margin-top: 25;
+  margin-top: 25px;
 `;
 
 const QuitManagerModal = ({

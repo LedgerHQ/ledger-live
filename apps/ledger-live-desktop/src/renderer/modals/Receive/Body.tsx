@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { compose } from "redux";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { connect } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { TFunction } from "i18next";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";

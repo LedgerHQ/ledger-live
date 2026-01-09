@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { setTheme } from "~/renderer/actions/settings";
 import { userThemeSelector } from "~/renderer/reducers/settings";

@@ -4,7 +4,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { Card } from "~/renderer/components/Box";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import { languageSelector } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
 import { useTrack } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../exchange/Swap2/utils";

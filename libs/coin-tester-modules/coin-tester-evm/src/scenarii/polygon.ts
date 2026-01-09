@@ -3,16 +3,15 @@ import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, initMswHandlers, setBlock, indexBlocks } from "../indexer";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
 import { callMyDealer, getBridges, polygon, VITALIK } from "../helpers";
-import { defaultNanoApp } from "../constants";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDC_ON_POLYGON } from "../tokenFixtures";
+import { buildSigner } from "../signer";
 
 type PolygonScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -59,10 +58,8 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
 export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic Polygon Transactions",
   setup: async () => {
-    const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
-      spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
-      spawnAnvil("https://polygon-bor-rpc.publicnode.com"),
-    ]);
+    const signer = await buildSigner();
+    await spawnAnvil("https://polygon-bor-rpc.publicnode.com", signer.exportMnemonic());
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
@@ -115,8 +112,7 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
     });
     initMswHandlers(getCoinConfig(polygon).info);
 
-    const onSignerConfirmation = getOnSpeculosConfirmation();
-    const { currencyBridge, accountBridge, getAddress } = getBridges(transport, "polygon");
+    const { currencyBridge, accountBridge, getAddress } = await getBridges("polygon", signer);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: polygon,
@@ -135,7 +131,7 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
       dose: ethers.parseUnits("100", USDC_ON_POLYGON.units[0].magnitude),
     });
 
-    return { currencyBridge, accountBridge, account: scenarioAccount, onSignerConfirmation };
+    return { currencyBridge, accountBridge, account: scenarioAccount };
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
@@ -159,6 +155,6 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
   },
   teardown: async () => {
     resetIndexer();
-    await Promise.all([killSpeculos(), killAnvil()]);
+    await killAnvil();
   },
 };

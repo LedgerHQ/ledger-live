@@ -1,6 +1,6 @@
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";

@@ -10,8 +10,17 @@ jest.mock("~/renderer/actions/modals");
 const mockOpenModal = openModal as jest.MockedFunction<typeof openModal>;
 const mockCloseModal = closeModal as jest.MockedFunction<typeof closeModal>;
 
+const mockDispatch = jest.fn();
+
+jest.mock("LLD/hooks/redux", () => {
+  const actual = jest.requireActual("LLD/hooks/redux");
+  return {
+    ...actual,
+    useDispatch: () => mockDispatch,
+  };
+});
+
 describe("handleTopologyChangeError", () => {
-  const mockDispatch = jest.fn();
   const mockDevice = createMockDevice({
     deviceId: "device1",
   });

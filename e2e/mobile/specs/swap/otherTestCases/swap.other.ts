@@ -18,6 +18,28 @@ const liveDataCommand = (currencyApp: { name: string }, index: number) => (userd
     appjson: userdataPath,
   });
 
+const liveDataWithAddressCommand = (account: Account) => async (userdataPath?: string) => {
+  await CLI.liveData({
+    currency: account.currency.speculosApp.name,
+    index: account.index,
+    add: true,
+    appjson: userdataPath,
+  });
+
+  const { address } = await CLI.getAddress({
+    currency: account.currency.speculosApp.name,
+    path: account.accountPath,
+    derivationMode: account.derivationMode,
+  });
+
+  account.address = address;
+  if (account.parentAccount) {
+    account.parentAccount.address = address;
+  }
+
+  return address;
+};
+
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
     userdata: options.userdata,
@@ -120,6 +142,8 @@ export function runSwapWithDifferentSeedTest(
   swap: SwapType,
   userData: string,
   errorMessage: string | null,
+  addressFrom: string,
+  addressTo: string,
   tmsLinks: string[],
   tags: string[],
 ) {
@@ -135,6 +159,8 @@ export function runSwapWithDifferentSeedTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Swap using a different seed - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
+      swap.accountToDebit.address = addressFrom;
+      swap.accountToCredit.address = addressTo;
       const minAmount = await app.swapLiveApp.getMinimumAmount(
         swap.accountToDebit,
         swap.accountToCredit,
@@ -173,11 +199,11 @@ export function runSwapLandingPageTest(
         cliCommandsOnApp: [
           {
             app: fromAccount.currency.speculosApp,
-            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+            cmd: liveDataWithAddressCommand(fromAccount),
           },
           {
             app: toAccount.currency.speculosApp,
-            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+            cmd: liveDataWithAddressCommand(toAccount),
           },
         ],
       });
@@ -218,17 +244,11 @@ export function runTooLowAmountForQuoteSwapsTest(
         cliCommandsOnApp: [
           {
             app: swap.accountToDebit.currency.speculosApp,
-            cmd: liveDataCommand(
-              swap.accountToDebit.currency.speculosApp,
-              swap.accountToDebit.index,
-            ),
+            cmd: liveDataWithAddressCommand(swap.accountToDebit),
           },
           {
             app: swap.accountToCredit.currency.speculosApp,
-            cmd: liveDataCommand(
-              swap.accountToCredit.currency.speculosApp,
-              swap.accountToCredit.index,
-            ),
+            cmd: liveDataWithAddressCommand(swap.accountToCredit),
           },
         ],
       });
@@ -277,11 +297,11 @@ export function runUserRefusesTransactionTest(
         cliCommandsOnApp: [
           {
             app: fromAccount.currency.speculosApp,
-            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+            cmd: liveDataWithAddressCommand(fromAccount),
           },
           {
             app: toAccount.currency.speculosApp,
-            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+            cmd: liveDataWithAddressCommand(toAccount),
           },
         ],
       });
@@ -338,6 +358,8 @@ export function runExportSwapHistoryOperationsTest(
   swap: SwapType,
   provider: Provider,
   swapId: string,
+  addressFrom: string,
+  addressTo: string,
   tmsLinks: string[],
   tags: string[],
 ) {
@@ -353,6 +375,8 @@ export function runExportSwapHistoryOperationsTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Export swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
+      swap.accountToDebit.address = addressFrom;
+      swap.accountToCredit.address = addressTo;
       await app.swap.goToSwapHistory();
       await app.swap.clickExportOperations();
       await app.swap.checkExportedFileContents(swap, provider, swapId);
@@ -481,11 +505,11 @@ export function runSwapCheckProvider(
         cliCommandsOnApp: [
           {
             app: fromAccount.currency.speculosApp,
-            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+            cmd: liveDataWithAddressCommand(fromAccount),
           },
           {
             app: toAccount.currency.speculosApp,
-            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+            cmd: liveDataWithAddressCommand(toAccount),
           },
         ],
       });
@@ -568,17 +592,11 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
         cliCommandsOnApp: [
           {
             app: swap.accountToDebit.currency.speculosApp,
-            cmd: liveDataCommand(
-              swap.accountToDebit.currency.speculosApp,
-              swap.accountToDebit.index,
-            ),
+            cmd: liveDataWithAddressCommand(swap.accountToDebit),
           },
           {
             app: swap.accountToCredit.currency.speculosApp,
-            cmd: liveDataCommand(
-              swap.accountToCredit.currency.speculosApp,
-              swap.accountToCredit.index,
-            ),
+            cmd: liveDataWithAddressCommand(swap.accountToCredit),
           },
         ],
       });

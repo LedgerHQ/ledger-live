@@ -3,7 +3,7 @@ import { Account } from "@ledgerhq/types-live";
 import { LoadingOverlay } from "LLD/components/LoadingOverlay";
 import { default as React, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useTheme } from "styled-components";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { userThemeSelector } from "~/renderer/reducers/settings";

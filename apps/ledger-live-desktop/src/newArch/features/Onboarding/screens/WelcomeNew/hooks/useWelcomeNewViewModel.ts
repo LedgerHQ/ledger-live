@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import { saveSettings } from "~/renderer/actions/settings";
 import { openURL } from "~/renderer/linking";

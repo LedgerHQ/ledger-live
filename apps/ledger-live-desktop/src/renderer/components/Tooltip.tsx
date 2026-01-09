@@ -1,7 +1,6 @@
 import React from "react";
 import Tippy from "@tippyjs/react";
 import styled from "styled-components";
-import get from "lodash/get";
 import { followCursor as followCursorPlugin, roundArrow, Placement } from "tippy.js";
 import useTheme from "~/renderer/hooks/useTheme";
 const ContentContainer = styled.div.attrs<{ bg: string }>(p => ({
@@ -57,7 +56,7 @@ const ToolTip = ({
   containerStyle,
 }: Props) => {
   const colors = useTheme().colors;
-  const bg = tooltipBg ? get(colors, tooltipBg, tooltipBg) : colors.neutral.c100;
+  const bg = tooltipBg === "error-strong" ? colors.error.c50 : colors.neutral.c100;
   return (
     <Tippy
       {...defaultTippyOptions}
@@ -68,7 +67,8 @@ const ToolTip = ({
       disabled={!(!!content && enabled)}
       placement={placement}
       hideOnClick={hideOnClick}
-      className={`bg-${tooltipBg ? tooltipBg.replace(/\./g, "-") : "default"}`}
+      // eslint-disable-next-line tailwindcss/no-custom-classname
+      className={tooltipBg ? `bg-${tooltipBg}` : "bg-base"}
     >
       <ChildrenContainer style={containerStyle}>{children}</ChildrenContainer>
     </Tippy>

@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useMemo, useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";

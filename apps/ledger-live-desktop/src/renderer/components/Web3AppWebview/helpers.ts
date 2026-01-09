@@ -23,7 +23,7 @@ import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappL
 import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { AccountLike } from "@ledgerhq/types-live";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 

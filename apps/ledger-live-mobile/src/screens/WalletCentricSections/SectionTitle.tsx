@@ -18,7 +18,16 @@ type Props = {
   testID?: string;
 };
 
-const StyledTouchableOpacity = styled.TouchableOpacity.attrs({
+type StyledTouchableOpacityProps = {
+  justifyContent?: string;
+  alignItems?: string;
+  px?: number;
+  mx?: number;
+  py?: number;
+  my?: number;
+};
+
+const StyledTouchableOpacity = styled.TouchableOpacity.attrs<StyledTouchableOpacityProps>({
   justifyContent: "center",
   alignItems: "flex-end",
   px: 7,

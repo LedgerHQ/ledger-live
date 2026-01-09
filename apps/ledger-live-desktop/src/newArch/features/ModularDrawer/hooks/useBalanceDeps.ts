@@ -1,7 +1,7 @@
 import { flattenAccounts } from "@ledgerhq/coin-framework/account/helpers";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 
