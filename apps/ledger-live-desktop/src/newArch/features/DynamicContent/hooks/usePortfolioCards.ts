@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { track } from "~/renderer/analytics/segment";
-import { setPortfolioCards } from "~/renderer/actions/dynamicContent";
+import { setPortfolioCards } from "~/renderer/reducers/dynamicContent";
 import { setDismissedContentCards } from "~/renderer/actions/settings";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";

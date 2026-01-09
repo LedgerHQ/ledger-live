@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { actionContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import * as braze from "@braze/web-sdk";
-import { setActionCards } from "~/renderer/actions/dynamicContent";
+import { setActionCards } from "~/renderer/reducers/dynamicContent";
 import { openURL } from "~/renderer/linking";
 import { track } from "../analytics/segment";
 import { trackingEnabledSelector } from "../reducers/settings";

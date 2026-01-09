@@ -3,7 +3,7 @@ import {
   setPortfolioCards,
   setActionCards,
   setNotificationsCards,
-} from "~/renderer/actions/dynamicContent";
+} from "~/renderer/reducers/dynamicContent";
 import {
   portfolioContentCardSelector,
   actionContentCardSelector,

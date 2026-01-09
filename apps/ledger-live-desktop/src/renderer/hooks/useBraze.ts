@@ -20,7 +20,7 @@ import {
   setDesktopCards,
   setNotificationsCards,
   setPortfolioCards,
-} from "../actions/dynamicContent";
+} from "../reducers/dynamicContent";
 import {
   clearDismissedContentCards,
   purgeExpiredAnonymousUserNotifications,
