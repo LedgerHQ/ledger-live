@@ -5,8 +5,7 @@ import { Card } from "~/renderer/components/Box";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
 import { useTrack } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../exchange/Swap2/utils";
 
@@ -60,6 +59,8 @@ export function LiveApp({ match, appId: propsAppId, location }: LiveAppProps) {
     );
   }, [search, customDappUrl, urlParams?.customDappUrl, internalParams?.customDappUrl]);
 
+  const manifest = useLiveAppManifest(appId, _customDappUrl);
+
   const handleClose = useCallback(() => {
     if (returnTo?.startsWith("/swap")) {
       track("button_click", {
@@ -81,24 +82,6 @@ export function LiveApp({ match, appId: propsAppId, location }: LiveAppProps) {
     ...internalParams,
   };
 
-  const localManifest = useLocalLiveAppManifest(appId);
-  const remoteManifest = useRemoteLiveAppManifest(appId);
-  let manifest = localManifest || remoteManifest;
-  if (_customDappUrl && manifest && manifest.params && "dappUrl" in manifest.params) {
-    manifest = {
-      ...manifest,
-      params: {
-        ...manifest.params,
-        dappUrl: _customDappUrl,
-      },
-    };
-  }
-  if (_customDappUrl && manifest && manifest.dapp) {
-    manifest = {
-      ...manifest,
-      url: _customDappUrl,
-    };
-  }
   // TODO for next urlscheme evolutions:
   // - check if local settings allow to launch an app from this branch, else display an error
   // - check if the app is available in store, else display a loader if apps are getting fetched from remote, else display an error stating that the app doesn't exist

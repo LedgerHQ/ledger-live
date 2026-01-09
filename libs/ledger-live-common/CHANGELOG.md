@@ -1,5 +1,85 @@
 # @ledgerhq/live-common
 
+## 34.55.2
+
+### Patch Changes
+
+- [#13602](https://github.com/LedgerHQ/ledger-live/pull/13602) [`48d299c`](https://github.com/LedgerHQ/ledger-live/commit/48d299c8ee3386f00b956b83a16df5c3fcfa908b) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): add domain validation for customDappUrl
+
+  Add security checks to ensure customDappUrl can only be applied when it
+  matches the domain of the original manifest URL (params.dappUrl or
+  manifest.url for dapp manifests).
+
+  This prevents potential security issues from cross-domain URL manipulation
+  while maintaining backward compatibility for same-domain URL customization.
+
+- [#13607](https://github.com/LedgerHQ/ledger-live/pull/13607) [`da30d1c`](https://github.com/LedgerHQ/ledger-live/commit/da30d1c86145b44d2e744b5aedd03a93fc75b067) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): secure domain validation for goToURL parameter
+
+  Replace regex-based URL validation with proper hostname parsing to prevent
+  manifest domain allowlist bypass. The previous implementation matched patterns
+  against the full URL string, allowing attackers to bypass restrictions with
+  URLs like "https://evil.example/?next=ledger.com" when "ledger.com" was
+  whitelisted.
+
+  Security improvements:
+
+  - Parse and validate URL hostname instead of full URL string
+  - Enforce HTTPS-only scheme for goToURL (reject http, javascript, data, etc.)
+  - Normalize hostnames (lowercase + punycode) for consistent matching
+  - Support exact domain matches and \*.subdomain.example.com wildcards
+  - Explicitly reject "\*" wildcard pattern (no match-all allowed)
+  - Filter out rejected goToURL from query parameters to prevent leakage
+
+  Add comprehensive test coverage for malicious bypass attempts, scheme
+  validation, wildcard patterns, IDN support, and deeplink attack scenarios.
+
+  Fixes vulnerability where deeplinks like:
+  ledgerlive://discover/<appId>?goToURL=https://evil.example/?next=ledger.com
+  could bypass domain restrictions and load unauthorized websites in the
+  Live App webview.
+
+## 34.55.2-hotfix.1
+
+### Patch Changes
+
+- [#13607](https://github.com/LedgerHQ/ledger-live/pull/13607) [`da30d1c`](https://github.com/LedgerHQ/ledger-live/commit/da30d1c86145b44d2e744b5aedd03a93fc75b067) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): secure domain validation for goToURL parameter
+
+  Replace regex-based URL validation with proper hostname parsing to prevent
+  manifest domain allowlist bypass. The previous implementation matched patterns
+  against the full URL string, allowing attackers to bypass restrictions with
+  URLs like "https://evil.example/?next=ledger.com" when "ledger.com" was
+  whitelisted.
+
+  Security improvements:
+
+  - Parse and validate URL hostname instead of full URL string
+  - Enforce HTTPS-only scheme for goToURL (reject http, javascript, data, etc.)
+  - Normalize hostnames (lowercase + punycode) for consistent matching
+  - Support exact domain matches and \*.subdomain.example.com wildcards
+  - Explicitly reject "\*" wildcard pattern (no match-all allowed)
+  - Filter out rejected goToURL from query parameters to prevent leakage
+
+  Add comprehensive test coverage for malicious bypass attempts, scheme
+  validation, wildcard patterns, IDN support, and deeplink attack scenarios.
+
+  Fixes vulnerability where deeplinks like:
+  ledgerlive://discover/<appId>?goToURL=https://evil.example/?next=ledger.com
+  could bypass domain restrictions and load unauthorized websites in the
+  Live App webview.
+
+## 34.55.2-hotfix.0
+
+### Patch Changes
+
+- [#13602](https://github.com/LedgerHQ/ledger-live/pull/13602) [`48d299c`](https://github.com/LedgerHQ/ledger-live/commit/48d299c8ee3386f00b956b83a16df5c3fcfa908b) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): add domain validation for customDappUrl
+
+  Add security checks to ensure customDappUrl can only be applied when it
+  matches the domain of the original manifest URL (params.dappUrl or
+  manifest.url for dapp manifests).
+
+  This prevents potential security issues from cross-domain URL manipulation
+  while maintaining backward compatibility for same-domain URL customization.
+
 ## 34.55.1
 
 ### Patch Changes
