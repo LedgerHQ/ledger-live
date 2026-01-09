@@ -167,17 +167,11 @@ export default class TestEnvironment extends DetoxEnvironment {
 
       // Clean up DeviceManagementKit transport connections to prevent TLS socket errors
       // The static byBase Map can hold stale connections that cause "Cannot read properties of null"
-      // Using dynamic import to avoid module loading side effects during environment initialization
       try {
         const { DeviceManagementKitTransportSpeculos } = await import(
           "@ledgerhq/live-dmk-speculos"
         );
-        for (const [_baseUrl, entry] of DeviceManagementKitTransportSpeculos.byBase) {
-          if (entry.sessionId && entry.dmk?.disconnect) {
-            await entry.dmk.disconnect({ sessionId: entry.sessionId }).catch(() => {});
-          }
-        }
-        DeviceManagementKitTransportSpeculos.byBase.clear();
+        await DeviceManagementKitTransportSpeculos.closeAll();
       } catch {
         // Ignore cleanup errors
       }

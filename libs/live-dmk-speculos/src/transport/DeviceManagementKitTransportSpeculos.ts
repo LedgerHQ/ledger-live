@@ -214,5 +214,49 @@ export default class SpeculosHttpTransport extends Transport {
       this.buttonClient = undefined;
       this.automationEvents.complete?.();
     }
+
+    // Clean up the byBase entry for this transport's baseUrl
+    await SpeculosHttpTransport.closeByBaseUrl(this.baseUrl);
+  }
+
+  /**
+   * Disconnect and remove a specific entry from byBase.
+   * This prevents TLS socket serialization errors when the connection is closed
+   * but references to the destroyed socket remain in the static map.
+   */
+  static async closeByBaseUrl(baseUrl: string): Promise<void> {
+    const entry = this.byBase.get(baseUrl);
+    if (!entry) return;
+
+    try {
+      if (entry.sessionId && entry.dmk?.disconnect) {
+        await entry.dmk.disconnect({ sessionId: entry.sessionId });
+      }
+    } catch {
+      // Ignore disconnect errors - connection might already be closed
+    } finally {
+      this.byBase.delete(baseUrl);
+    }
+  }
+
+  /**
+   * Disconnect all sessions and clear the byBase map.
+   * Call this during test teardown to prevent TLS socket serialization errors.
+   */
+  static async closeAll(): Promise<void> {
+    const entries = Array.from(this.byBase.entries());
+    await Promise.allSettled(
+      entries.map(async ([baseUrl, entry]) => {
+        try {
+          if (entry.sessionId && entry.dmk?.disconnect) {
+            await entry.dmk.disconnect({ sessionId: entry.sessionId });
+          }
+        } catch {
+          // Ignore disconnect errors
+        } finally {
+          this.byBase.delete(baseUrl);
+        }
+      }),
+    );
   }
 }

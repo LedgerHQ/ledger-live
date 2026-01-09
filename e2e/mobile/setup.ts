@@ -33,13 +33,22 @@ process.on("uncaughtException", error => {
 });
 
 /**
- * Cleans up HTTP/HTTPS connections to prevent TLS socket serialization errors.
+ * Cleans up HTTP/HTTPS connections and DeviceManagementKit transport to prevent TLS socket serialization errors.
  * When jest-worker tries to serialize test results using @ungap/structured-clone,
  * references to destroyed TLS sockets cause "Cannot read properties of null (reading 'reading')" errors.
- * This cleanup destroys all keep-alive connections from the global HTTP agents.
  */
-function cleanupConnections() {
+async function cleanupConnections() {
   try {
+    // CRITICAL: Clean up DeviceManagementKitTransportSpeculos connections.
+    // When Speculos stops, the TLS socket is destroyed but references remain in the static byBase map.
+    // jest-worker's serialization then fails when accessing the destroyed socket.
+    try {
+      const { DeviceManagementKitTransportSpeculos } = await import("@ledgerhq/live-dmk-speculos");
+      await DeviceManagementKitTransportSpeculos.closeAll();
+    } catch {
+      // Module might not be loaded - ignore
+    }
+
     // Destroy all HTTP/HTTPS agent connections
     https.globalAgent.destroy();
     http.globalAgent.destroy();
@@ -73,8 +82,8 @@ beforeAll(
 
 // Clean up connections after EACH test to prevent TLS socket serialization errors
 // This is critical because the crash happens when jest-worker serializes the test result
-afterEach(() => {
-  cleanupConnections();
+afterEach(async () => {
+  await cleanupConnections();
 });
 
 afterAll(async () => {
@@ -85,5 +94,5 @@ afterAll(async () => {
   closeBridge();
   closeProxy();
   await app.common.removeSpeculos();
-  cleanupConnections();
+  await cleanupConnections();
 });
