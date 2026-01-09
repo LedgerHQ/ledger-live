@@ -14,9 +14,10 @@ import { PostOnboardingActionId } from "@ledgerhq/types-live";
 
 type Props = {
   isNewBackup: boolean;
+  sourcePage?: AnalyticsPage;
 };
 
-export default function ActivationFinalStep({ isNewBackup }: Props) {
+export default function ActivationFinalStep({ isNewBackup, sourcePage }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const completeAction = useCompleteActionCallback();
@@ -51,7 +52,7 @@ export default function ActivationFinalStep({ isNewBackup }: Props) {
     <Success
       title={t(title)}
       description={t(desc)}
-      withCta
+      withCta={sourcePage !== AnalyticsPage.OnboardingSync}
       withClose
       onClick={goToSync}
       onClose={onClose}

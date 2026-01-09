@@ -30,6 +30,7 @@ describe("TwoStepCompanion", () => {
         installStep={MockInstallStep}
         deviceName="stax"
         handleComplete={mockHandleComplete}
+        hasSyncStep
       />,
     );
 
@@ -55,6 +56,7 @@ describe("TwoStepCompanion", () => {
         installStep={MockInstallStep}
         deviceName="stax"
         handleComplete={mockHandleComplete}
+        hasSyncStep
       />,
     );
 
@@ -83,6 +85,7 @@ describe("TwoStepCompanion", () => {
           installStep={MockInstallStep}
           deviceName="stax"
           handleComplete={mockHandleComplete}
+          hasSyncStep
         />,
       );
 
@@ -108,6 +111,7 @@ describe("TwoStepCompanion", () => {
           installStep={MockInstallStep}
           deviceName="stax"
           handleComplete={mockHandleComplete}
+          hasSyncStep
         />,
       );
 
@@ -134,6 +138,7 @@ describe("TwoStepCompanion", () => {
         installStep={MockInstallStep}
         deviceName="stax"
         handleComplete={mockHandleComplete}
+        hasSyncStep
       />,
     );
 

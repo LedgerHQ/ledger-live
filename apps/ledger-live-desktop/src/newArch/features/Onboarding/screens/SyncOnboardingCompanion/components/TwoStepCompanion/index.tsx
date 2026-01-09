@@ -16,6 +16,7 @@ interface TwoStepCompanionProps {
   deviceName: string;
   handleComplete: () => void;
   seedConfiguration?: SeedOriginType;
+  hasSyncStep: boolean;
 }
 
 const TwoStepCompanion = ({
@@ -26,10 +27,13 @@ const TwoStepCompanion = ({
   deviceName,
   handleComplete,
   seedConfiguration,
+  hasSyncStep,
 }: TwoStepCompanionProps) => {
   const { t } = useTranslation();
 
-  const isSecondStepActive = activeStepKey > StepKey.Seed;
+  const isSecondStepActive = hasSyncStep
+    ? activeStepKey > StepKey.Sync
+    : activeStepKey > StepKey.Seed;
   const isSuccess = activeStepKey === StepKey.Success;
   const hasFinishedSecondStep = activeStepKey > StepKey.Apps;
   const isReady = activeStepKey === StepKey.Ready;
