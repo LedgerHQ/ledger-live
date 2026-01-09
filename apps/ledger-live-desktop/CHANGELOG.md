@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.135.2-hotfix.0
+
+### Patch Changes
+
+- [#13602](https://github.com/LedgerHQ/ledger-live/pull/13602) [`48d299c`](https://github.com/LedgerHQ/ledger-live/commit/48d299c8ee3386f00b956b83a16df5c3fcfa908b) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): add domain validation for customDappUrl
+
+  Add security checks to ensure customDappUrl can only be applied when it
+  matches the domain of the original manifest URL (params.dappUrl or
+  manifest.url for dapp manifests).
+
+  This prevents potential security issues from cross-domain URL manipulation
+  while maintaining backward compatibility for same-domain URL customization.
+
+- Updated dependencies [[`48d299c`](https://github.com/LedgerHQ/ledger-live/commit/48d299c8ee3386f00b956b83a16df5c3fcfa908b)]:
+  - @ledgerhq/live-common@34.55.2-hotfix.0
+  - @ledgerhq/live-dmk-desktop@0.14.2-hotfix.0
+
 ## 2.135.1
 
 ### Patch Changes

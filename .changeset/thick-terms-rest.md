@@ -1,7 +1,7 @@
 ---
-"ledger-live-desktop": minor
-"live-mobile": minor
-"@ledgerhq/live-common": minor
+"ledger-live-desktop": patch
+"live-mobile": patch
+"@ledgerhq/live-common": patch
 ---
 
 fix(wallet-api): add domain validation for customDappUrl
