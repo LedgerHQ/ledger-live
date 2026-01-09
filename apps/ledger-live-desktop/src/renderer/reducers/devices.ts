@@ -1,49 +1,18 @@
-import { handleActions } from "redux-actions";
 import { getEnv } from "@ledgerhq/live-env";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { Handlers } from "./types";
 import { SettingsState } from "./settings";
 import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
-import { createSelector } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type DevicesState = {
-  /**
-   * only two possibilities: either there is a device or there isn't
-   * (no third possibility undefined)
-   * */
   currentDevice: Device | null;
   devices: Device[];
 };
+
 const initialState: DevicesState = {
   currentDevice: null,
   devices: [],
-};
-
-type HandlersPayloads = {
-  RESET_DEVICES: never;
-  ADD_DEVICE: Device;
-  REMOVE_DEVICE: Device;
-};
-type DevicesHandlers<PreciseKey = true> = Handlers<DevicesState, HandlersPayloads, PreciseKey>;
-
-const handlers: DevicesHandlers = {
-  RESET_DEVICES: () => initialState,
-  ADD_DEVICE: (state, { payload: device }) =>
-    setCurrentDevice({
-      ...state,
-      devices: [...state.devices, device].filter(
-        (v, i, s) => s.findIndex(t => t.deviceId === v.deviceId) === i,
-      ),
-    }),
-  REMOVE_DEVICE: (state, { payload: device }) => ({
-    ...state,
-    currentDevice:
-      state.currentDevice && state.currentDevice.deviceId === device.deviceId
-        ? null
-        : state.currentDevice,
-    devices: state.devices.filter(d => d.deviceId !== device.deviceId),
-  }),
 };
 
 function setCurrentDevice(state: DevicesState) {
@@ -53,6 +22,34 @@ function setCurrentDevice(state: DevicesState) {
     currentDevice,
   };
 }
+
+const devicesSlice = createSlice({
+  name: "devices",
+  initialState,
+  reducers: {
+    resetDevices: () => initialState,
+    addDevice: (state, action: PayloadAction<Device>) => {
+      const device = action.payload;
+      const devices = [...state.devices, device].filter(
+        (v, i, s) => s.findIndex(t => t.deviceId === v.deviceId) === i,
+      );
+      return setCurrentDevice({ ...state, devices });
+    },
+    removeDevice: (state, action: PayloadAction<Device>) => {
+      const device = action.payload;
+      return {
+        ...state,
+        currentDevice:
+          state.currentDevice && state.currentDevice.deviceId === device.deviceId
+            ? null
+            : state.currentDevice,
+        devices: state.devices.filter(d => d.deviceId !== device.deviceId),
+      };
+    },
+  },
+});
+
+export const { resetDevices, addDevice, removeDevice } = devicesSlice.actions;
 
 export const getCurrentDevice = createSelector(
   [
@@ -95,7 +92,4 @@ export const getCurrentDevice = createSelector(
   },
 );
 
-export default handleActions<DevicesState, HandlersPayloads[keyof HandlersPayloads]>(
-  handlers as unknown as DevicesHandlers<false>,
-  initialState,
-);
+export default devicesSlice.reducer;

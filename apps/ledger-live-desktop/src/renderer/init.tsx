@@ -46,7 +46,7 @@ import {
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
 import { expectOperatingSystemSupportStatus } from "~/support/os";
-import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
+import { addDevice, removeDevice, resetDevices } from "~/renderer/reducers/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
 import { LogEntry } from "winston";

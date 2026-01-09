@@ -4,7 +4,7 @@ import { Subscription, Observable } from "rxjs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDeviceManagementKit, DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
+import { addDevice, removeDevice, resetDevices } from "~/renderer/reducers/devices";
 
 export const useListenToHidDevices = () => {
   const dispatch = useDispatch();
