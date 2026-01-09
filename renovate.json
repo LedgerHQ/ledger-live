@@ -44,6 +44,18 @@
       "prPriority": 10
     },
     {
+      "description": "Lumen UI RNative - version updates",
+      "matchPackageNames": ["@ledgerhq/lumen-ui-rnative"],
+      "matchFileNames": ["apps/ledger-live-mobile/package.json"],
+      "commitMessagePrefix": "chore(mobile):",
+      "commitMessageTopic": "update {{depName}}",
+      "commitMessageExtra": "to {{newVersion}}",
+      "labels": ["dependencies", "ui", "lumen"],
+      "reviewers": ["team:live-hub"],
+      "assignees": ["team:live-hub"],
+      "prPriority": 10
+    },
+    {
       "description": "Core Ownership Rules",
       "reviewers": ["team:live-hub"],
       "assignees": ["team:live-hub"],
