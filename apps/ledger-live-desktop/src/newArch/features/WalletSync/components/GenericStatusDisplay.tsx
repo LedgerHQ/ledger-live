@@ -18,6 +18,7 @@ export type GenericProps = {
   specificCta?: string;
   /** When true, uses a full height layout with content centered and buttons at bottom */
   fullHeight?: boolean;
+  testId?: string;
 };
 
 const Container = styled(Box)`
@@ -41,6 +42,7 @@ export const GenericStatusDisplay = ({
   type,
   specificCta,
   fullHeight = false,
+  testId: dataTestId,
 }: GenericProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -54,7 +56,13 @@ export const GenericStatusDisplay = ({
           <Icons.CheckmarkCircleFill size={"L"} color={colors.success.c60} />
         )}
       </Container>
-      <Text fontSize={24} variant="h4Inter" color="neutral.c100" textAlign="center">
+      <Text
+        fontSize={24}
+        variant="h4Inter"
+        color="neutral.c100"
+        textAlign="center"
+        data-testid={dataTestId}
+      >
         {title}
       </Text>
       <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">
