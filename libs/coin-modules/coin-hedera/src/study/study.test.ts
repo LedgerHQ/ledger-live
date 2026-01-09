@@ -15,6 +15,7 @@ import coinConfig from "../config";
 const STUDY_DIR = __dirname;
 const RESULTS_CSV_FILE = path.join(STUDY_DIR, "results.csv");
 const RESULTS_LOG_FILE = path.join(STUDY_DIR, "results.log");
+const REPORT_FILE = path.join(STUDY_DIR, "report.txt");
 const BLOCKS_DIR = path.join(STUDY_DIR, "blocks");
 
 // Check intervals in milliseconds
@@ -342,29 +343,36 @@ function renderDetailedBreakdown(
 // ============================================================================
 
 function runAnalysis(): void {
-  log(`\n${"#".repeat(60)}`);
-  log(`# PERIODIC ANALYSIS - ${new Date().toISOString()}`);
-  log("#".repeat(60));
+  const reportLines: string[] = [];
+  const reportLog = (msg: string) => {
+    log(msg);
+    reportLines.push(msg);
+  };
+
+  const timestamp = new Date().toISOString();
+  reportLog(`${"#".repeat(60)}`);
+  reportLog(`# ANALYSIS REPORT - ${timestamp}`);
+  reportLog("#".repeat(60));
 
   if (!fs.existsSync(RESULTS_CSV_FILE)) {
-    log(`No results file found at ${RESULTS_CSV_FILE}.`);
+    reportLog(`No results file found at ${RESULTS_CSV_FILE}.`);
     return;
   }
 
   const { changed, unchanged } = parseResultsCsv();
 
   if (changed.size === 0 && unchanged.size === 0) {
-    log("No check results found in the CSV file yet.");
+    reportLog("No check results found in the CSV file yet.");
     return;
   }
 
   // Display histogram
   const histogram = renderHistogram(changed, unchanged);
-  log(histogram);
+  reportLog(histogram);
 
   // Display detailed breakdown
   const breakdown = renderDetailedBreakdown(changed, unchanged);
-  log(breakdown);
+  reportLog(breakdown);
 
   // Calculate total changes
   const totalChanged = [...changed.values()].reduce((a, b) => a + b, 0);
@@ -373,14 +381,17 @@ function runAnalysis(): void {
 
   if (total > 0) {
     const changeRate = (totalChanged / total) * 100;
-    log(`\n📈 Overall change rate: ${changeRate.toFixed(2)}%`);
+    reportLog(`\n📈 Overall change rate: ${changeRate.toFixed(2)}%`);
 
     if (changeRate > 0) {
-      log(`\n⚠️ Warning: ${totalChanged} block(s) changed so far.`);
+      reportLog(`\n⚠️ Warning: ${totalChanged} block(s) changed so far.`);
     }
   }
 
-  log("#".repeat(60) + "\n");
+  reportLog("#".repeat(60));
+
+  // Save report to file (overwrite)
+  fs.writeFileSync(REPORT_FILE, reportLines.join("\n") + "\n");
 }
 
 // ============================================================================

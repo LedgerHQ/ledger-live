@@ -27,10 +27,10 @@ All output files are created in this directory:
 
 - `results.csv` - CSV with all check results
 - `results.log` - Detailed log file
+- `report.txt` - Latest analysis report (overwritten every 10 minutes)
 - `blocks/` - Directory containing block snapshots when changes are detected
-  - `blocks/<height>.0.json` - Original block
-  - `blocks/<height>.<interval>.json` - Block after interval (e.g., `1h`)
-  - `blocks/<height>.<interval>.diff` - Diff between original and changed block
+  - `blocks/<height>.<interval>.json` - Block at specific interval (e.g., `0`, `1min`, `5min`)
+  - `blocks/<height>.<prev>-<curr>.diff` - Diff between consecutive intervals (e.g., `1min-5min`)
 
 ## Check intervals
 
