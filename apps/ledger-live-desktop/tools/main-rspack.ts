@@ -41,7 +41,8 @@ class Electron {
     if (!this.instance) {
       const args = (process.env.ELECTRON_ARGS || "").split(/[ ]+/).filter(Boolean);
       if (args.length) console.log("Electron starts with", args);
-      this.instance = this.execa(this.electronPath, [this.bundlePath, ...args]);
+      // reject: false prevents throwing when process is killed during reload
+      this.instance = this.execa(this.electronPath, [this.bundlePath, ...args], { reject: false });
       this.instance.stdout?.pipe(process.stdout);
       this.instance.stderr?.pipe(process.stderr);
     }
@@ -49,7 +50,7 @@ class Electron {
 
   stop() {
     if (this.instance) {
-      this.instance.cancel();
+      this.instance.kill();
       this.instance = null;
     }
   }

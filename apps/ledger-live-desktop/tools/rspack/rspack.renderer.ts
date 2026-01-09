@@ -3,6 +3,9 @@ import { rspack, type RspackOptions } from "@rspack/core";
 import ReactRefreshPlugin from "@rspack/plugin-react-refresh";
 import { commonConfig, rootFolder } from "./rspack.common";
 import { buildRendererEnv, buildDotEnvDefine, DOTENV_FILE, lldRoot } from "./utils";
+// PostCSS plugins - imported here to resolve from ledger-live-desktop context
+import tailwindcss from "tailwindcss";
+import autoprefixer from "autoprefixer";
 
 /**
  * Creates the rspack configuration for the Electron renderer process
@@ -164,10 +167,25 @@ export function createRendererConfig(
           },
           type: "javascript/auto",
         },
-        // CSS - using rspack's native CSS handling
+        // CSS - using PostCSS for Tailwind CSS processing
         {
           test: /\.css$/,
-          type: "css",
+          use: [
+            {
+              loader: "postcss-loader",
+              options: {
+                postcssOptions: {
+                  // Plugins imported at top of file to resolve from ledger-live-desktop context
+                  plugins: [
+                    tailwindcss({ config: path.resolve(rootFolder, "tailwind.config.ts") }),
+                    autoprefixer,
+                  ],
+                },
+              },
+            },
+          ],
+          // Use 'css/auto' to support both regular CSS and CSS Modules (*.module.css)
+          type: "css/auto",
         },
         // Font files
         {
