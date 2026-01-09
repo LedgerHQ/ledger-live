@@ -144,6 +144,12 @@ function deepEqual(a: unknown, b: unknown): boolean {
   return jsonStringify(a) === jsonStringify(b);
 }
 
+// Strip ANSI escape codes from string (used for diff output)
+function stripAnsi(str: string): string {
+  // eslint-disable-next-line no-control-regex
+  return str.replace(/\x1B\[[0-9;]*[a-zA-Z]/g, "");
+}
+
 interface BlockChangeFiles {
   originalFile: string;
   afterFile: string;
@@ -468,7 +474,7 @@ describe("Block Consistency", () => {
               });
 
               if (isChanged) {
-                const blockDiff = diff(captured.content, currentBlock) ?? "";
+                const blockDiff = stripAnsi(diff(captured.content, currentBlock) ?? "");
                 const files = saveBlockChangeFiles(
                   blockHeight,
                   interval,
