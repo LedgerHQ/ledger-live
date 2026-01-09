@@ -20,6 +20,7 @@ const BLOCKS_DIR = path.join(STUDY_DIR, "blocks");
 // Check intervals in milliseconds
 const CHECK_INTERVALS_MS = [
   60_000, // 1min
+  120_000, // 2min
   300_000, // 5min
   600_000, // 10min
   1_200_000, // 20min
@@ -68,10 +69,10 @@ const CSV_HEADER = "timestamp,block_height,interval_ms,interval_label,status\n";
 
 interface CapturedBlock {
   height: number;
-  content: Block;
   capturedAt: number;
   checksDone: number[];
-  originalSaved: boolean; // Track if original block has been saved to file
+  // Store block content at each interval (key is interval in ms, 0 = original)
+  blockAtInterval: Map<number, Block>;
 }
 
 interface CheckResult {
@@ -151,37 +152,37 @@ function stripAnsi(str: string): string {
 }
 
 interface BlockChangeFiles {
-  originalFile: string;
+  beforeFile: string;
   afterFile: string;
   diffFile: string;
 }
 
 function saveBlockChangeFiles(
   height: number,
-  intervalMs: number,
-  originalBlock: Block,
+  prevIntervalMs: number,
+  currIntervalMs: number,
+  beforeBlock: Block,
   afterBlock: Block,
   blockDiff: string,
-  captured: CapturedBlock,
 ): BlockChangeFiles {
-  const intervalLabel = formatInterval(intervalMs);
+  const prevLabel = prevIntervalMs === 0 ? "0" : formatInterval(prevIntervalMs);
+  const currLabel = formatInterval(currIntervalMs);
 
-  // Save original block (only if not already saved)
-  const originalFile = `${BLOCKS_DIR}/${height}.0.json`;
-  if (!captured.originalSaved) {
-    fs.writeFileSync(originalFile, jsonStringify(originalBlock, 2));
-    captured.originalSaved = true;
+  // Save before block (previous interval)
+  const beforeFile = `${BLOCKS_DIR}/${height}.${prevLabel}.json`;
+  if (!fs.existsSync(beforeFile)) {
+    fs.writeFileSync(beforeFile, jsonStringify(beforeBlock, 2));
   }
 
-  // Save after block
-  const afterFile = `${BLOCKS_DIR}/${height}.${intervalLabel}.json`;
+  // Save after block (current interval)
+  const afterFile = `${BLOCKS_DIR}/${height}.${currLabel}.json`;
   fs.writeFileSync(afterFile, jsonStringify(afterBlock, 2));
 
-  // Save diff
-  const diffFile = `${BLOCKS_DIR}/${height}.${intervalLabel}.diff`;
+  // Save diff with interval range in name
+  const diffFile = `${BLOCKS_DIR}/${height}.${prevLabel}-${currLabel}.diff`;
   fs.writeFileSync(diffFile, blockDiff);
 
-  return { originalFile, afterFile, diffFile };
+  return { beforeFile, afterFile, diffFile };
 }
 
 function appendResultToCsv(result: CheckResult): void {
@@ -433,12 +434,13 @@ describe("Block Consistency", () => {
         if (height !== lastHeight) {
           try {
             const content = await getBlock(height);
+            const blockAtInterval = new Map<number, Block>();
+            blockAtInterval.set(0, content); // Store original at interval 0
             capturedBlocks.set(height, {
               height,
-              content,
               capturedAt: now,
               checksDone: [],
-              originalSaved: false,
+              blockAtInterval,
             });
             log(`[${formatTime(now)}] 📦 Captured block ${height}`);
             lastHeight = height;
@@ -456,14 +458,26 @@ describe("Block Consistency", () => {
       for (const [blockHeight, captured] of capturedBlocks) {
         const elapsed = now - captured.capturedAt;
 
-        for (const interval of CHECK_INTERVALS_MS) {
+        for (let i = 0; i < CHECK_INTERVALS_MS.length; i++) {
+          const interval = CHECK_INTERVALS_MS[i];
           // Check if we've passed this interval and haven't checked yet
           if (elapsed >= interval && !captured.checksDone.includes(interval)) {
             try {
               const currentBlock = await getBlock(blockHeight);
 
-              // Compare blocks (already normalized at fetch time)
-              const isChanged = !deepEqual(captured.content, currentBlock);
+              // Find the previous interval (0 for the first check)
+              const prevInterval = i === 0 ? 0 : CHECK_INTERVALS_MS[i - 1];
+              const prevBlock = captured.blockAtInterval.get(prevInterval);
+
+              if (!prevBlock) {
+                log(
+                  `[${formatTime(now)}] ⚠️ No previous block for interval ${formatInterval(prevInterval)}`,
+                );
+                continue;
+              }
+
+              // Compare to previous interval's block
+              const isChanged = !deepEqual(prevBlock, currentBlock);
 
               // Record result to CSV
               appendResultToCsv({
@@ -474,21 +488,22 @@ describe("Block Consistency", () => {
               });
 
               if (isChanged) {
-                const blockDiff = stripAnsi(diff(captured.content, currentBlock) ?? "");
+                const prevLabel = prevInterval === 0 ? "0" : formatInterval(prevInterval);
+                const blockDiff = stripAnsi(diff(prevBlock, currentBlock) ?? "");
                 const files = saveBlockChangeFiles(
                   blockHeight,
+                  prevInterval,
                   interval,
-                  captured.content,
+                  prevBlock,
                   currentBlock,
                   blockDiff,
-                  captured,
                 );
 
-                const errorMsg = `BLOCK ${blockHeight} CHANGED after ${formatInterval(interval)}!`;
+                const errorMsg = `BLOCK ${blockHeight} CHANGED between ${prevLabel} and ${formatInterval(interval)}!`;
                 log(`[${formatTime(now)}] ❌ ${errorMsg}`);
-                log(`  Original: ${files.originalFile}`);
-                log(`  After:    ${files.afterFile}`);
-                log(`  Diff:     ${files.diffFile}`);
+                log(`  Before: ${files.beforeFile}`);
+                log(`  After:  ${files.afterFile}`);
+                log(`  Diff:   ${files.diffFile}`);
 
                 errors.push(errorMsg);
               } else {
@@ -497,6 +512,8 @@ describe("Block Consistency", () => {
                 );
               }
 
+              // Store current block for next interval comparison
+              captured.blockAtInterval.set(interval, currentBlock);
               captured.checksDone.push(interval);
             } catch (e) {
               log(`[${formatTime(now)}] ⚠️ Error re-checking block ${blockHeight}: ${e}`);
