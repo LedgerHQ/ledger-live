@@ -8409,5 +8409,31 @@
     "actions": {
       "swap": "Swap"
     }
+  },
+  "deeplinkInstallApp": {
+    "confirmation": {
+      "title": "Install {{appName}}?",
+      "genericDescription": "The {{appName}} app will be installed on your Ledger device.",
+      "recoveryKeyDescription": "You will be able to update directly on your Ledger Stax with the Recovery Key Updater app.",
+      "installCTA": "Install {{appName}}"
+    },
+    "deviceSelection": {
+      "title": "Choose a Ledger"
+    },
+    "installing": {
+      "title": "Installing {{appName}}...",
+      "description": "Please keep your {{productName}} connected",
+      "resolving": "Preparing installation...",
+      "connecting": "Connecting to device..."
+    },
+    "success": {
+      "title": "{{appName}} successfully installed",
+      "genericDescription": "You can now use the {{appName}} app on your Ledger device.",
+      "recoveryKeyDescription": "Launch the app on your Ledger device to check for Ledger Recovery Key Updates."
+    },
+    "error": {
+      "title": "Failed to install {{appName}}",
+      "description": "Something went wrong during installation. Please try again."
+    }
   }
 }

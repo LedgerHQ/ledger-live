@@ -363,6 +363,13 @@ export type LargeMoverState = {
   tutorial: boolean;
 };
 
+// === DEEPLINK INSTALL APP STATE ===
+
+export type DeeplinkInstallAppState = {
+  isDrawerOpen: boolean;
+  appToInstall: string | null;
+};
+
 // === ROOT STATE ===
 
 export type State = LLMRTKApiState & {
@@ -371,6 +378,7 @@ export type State = LLMRTKApiState & {
   auth: AuthState;
   ble: BleState;
   countervalues: CountervaluesState;
+  deeplinkInstallApp: DeeplinkInstallAppState;
   dynamicContent: DynamicContentState;
   earn: EarnState;
   identities: IdentitiesState;

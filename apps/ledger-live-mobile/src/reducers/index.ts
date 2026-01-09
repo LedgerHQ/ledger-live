@@ -6,6 +6,7 @@ import appstate from "./appstate";
 import auth from "./auth";
 import ble from "./ble";
 import countervalues from "./countervalues";
+import deeplinkInstallApp from "./deeplinkInstallApp";
 import dynamicContent from "./dynamicContent";
 import earn from "./earn";
 import inView from "./inView";
@@ -36,6 +37,7 @@ const appReducer = combineReducers({
   auth,
   ble,
   countervalues,
+  deeplinkInstallApp,
   dynamicContent,
   earn,
   identities: identitiesSlice.reducer,
