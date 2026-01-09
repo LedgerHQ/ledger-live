@@ -192,6 +192,33 @@ describe("ModularDrawer integration", () => {
     });
   });
 
+  it("should not crash when tapping search input with empty asset list", async () => {
+    const { getByText, getByPlaceholderText, getByTestId, user } = render(
+      <ModularDrawerSharedNavigator />,
+    );
+
+    await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+    advanceTimers();
+
+    const searchInput = getByPlaceholderText(/search/i);
+
+    // First, search for something that returns no results
+    await user.type(searchInput, "zzzzzzz");
+
+    await waitFor(() => {
+      expect(getByText(/no assets found/i)).toBeVisible();
+    });
+
+    // Now tap on the search input again - this should not crash
+    await user.press(searchInput);
+
+    advanceTimers();
+
+    // Verify the drawer is still visible and functional
+    expect(getByTestId("modular-drawer-search-input")).toBeVisible();
+    expect(getByText(/no assets found/i)).toBeVisible();
+  });
+
   it("should allow full navigation: asset → network → account", async () => {
     const { getByText, user } = render(<ModularDrawerSharedNavigator />, {
       ...INITIAL_STATE,
