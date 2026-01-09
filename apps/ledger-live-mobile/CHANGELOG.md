@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.101.0-next.3
+
+### Minor Changes
+
+- [#13613](https://github.com/LedgerHQ/ledger-live/pull/13613) [`ce09091`](https://github.com/LedgerHQ/ledger-live/commit/ce09091693814d9be026836e89ce6f5f8469380d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Search crash in MAD
+
 ## 3.101.0-next.2
 
 ### Minor Changes
