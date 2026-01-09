@@ -157,7 +157,29 @@ export class Account {
   static readonly ETH_3 = new Account(Currency.ETH, "Ethereum 3", 3, "44'/60'/2'/0/0");
   static readonly SANCTIONED_ETH = new Account(Currency.ETH, "Sanctioned Ethereum", 0, "");
 
-  static readonly HEDERA_1 = new Account(Currency.HBAR, "Hedera 1", 0, "44/3030");
+  // Hedera accounts use pre-configured addresses because account IDs cannot be derived from path
+  static readonly HEDERA_1 = new Account(
+    Currency.HBAR,
+    "Hedera 1",
+    0,
+    "44/3030",
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    "0.0.10216539",
+  );
+  static readonly HEDERA_2 = new Account(
+    Currency.HBAR,
+    "Hedera 2",
+    1,
+    "44/3030",
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    "0.0.10219428",
+  );
 
   static readonly INJ_1 = new Account(Currency.INJ, "Injective 1", 0, "44'/60'/0'/0/0");
 

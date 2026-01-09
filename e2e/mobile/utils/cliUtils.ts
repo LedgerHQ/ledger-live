@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/lib/cloudsync/index";
@@ -16,6 +17,7 @@ import {
 } from "@ledgerhq/live-dmk-speculos";
 import { isRemoteIos } from "../helpers/commonHelpers";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 export type LiveDataOpts = {
   currency: string;
@@ -265,6 +267,11 @@ export const CLI = {
     });
   },
   getAddressForAccount: async (account: Account) => {
+    if (account.currency.id === Currency.HBAR.id) {
+      invariant(account.address, "hedera: account address must be pre-set");
+      return account.address;
+    }
+
     const addressInfo = await CLI.getAddress({
       currency: account.currency.speculosApp.name,
       path: account.accountPath,
