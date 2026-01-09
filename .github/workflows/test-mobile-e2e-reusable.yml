@@ -251,7 +251,7 @@ jobs:
   build-ios:
     name: "iOS Build"
     needs: [determine-builds]
-    if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
+    if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
     with:
       ref: ${{ inputs.ref || github.sha }}
@@ -305,7 +305,7 @@ jobs:
 
   detox-tests-ios:
     name: iOS E2E Tests
-    needs: [build-ios, determine-builds]
+    needs: [determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on:
       [
@@ -384,22 +384,26 @@ jobs:
         run: |
           LOG_FILE="e2e/mobile/artifacts/simulator-boot.log"
           mkdir -p e2e/mobile/artifacts
-          nohup bash -c '
-            echo "🔧 Creating iOS Simulator 2"
-            xcrun simctl create "iOS Simulator 2" "iPhone 15"
-            echo "🔧 Creating iOS Simulator 3"
-            xcrun simctl create "iOS Simulator 3" "iPhone 15"
-            echo "🛫 Booting simulator..."
-            xcrun simctl boot "iOS Simulator" || true
-            xcrun simctl bootstatus "iOS Simulator"
-            echo "✅ Simulator is now fully booted"
-            xcrun simctl boot "iOS Simulator 2" || true
-            xcrun simctl bootstatus "iOS Simulator 2"
-            echo "✅ Simulator 2 is now fully booted"
-            xcrun simctl boot "iOS Simulator 3" || true
-            xcrun simctl bootstatus "iOS Simulator 3"
-            echo "✅ Simulator 3 is now fully booted"
-          ' > "$LOG_FILE" 2>&1 &
+          xcrun simctl delete 'iOS Simulator'
+          rm -rf ~/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS*.simruntime
+          rm -rf ~/Library/Developer/CoreSimulator
+          rm -rf ~/Library/Developer/Xcode/DerivedData
+          rm -rf ~/Library/Caches/com.apple.dt.Xcode/Downloads/*
+          rm -rf ~/Library/Caches/com.apple.dt.Xcode/DerivedData/*
+          rm -rf ~/Library/Caches/com.apple.dt.Xcode/Simulator/*
+          xcrun simctl list runtimes
+          xcodebuild -exportPath ~/Downloads -downloadPlatform iOS -buildVersion 26.2
+          xcrun simctl list runtimes
+          xcrun simctl create 'iOS Simulator' 'iPhone 15' 'com.apple.CoreSimulator.SimRuntime.iOS-26-2'
+          echo "🔧 Creating iOS Simulator 2"
+          xcrun simctl create "iOS Simulator 2" "iPhone 15" 'com.apple.CoreSimulator.SimRuntime.iOS-26-2'
+          echo "🛫 Booting simulator..."
+          xcrun simctl boot "iOS Simulator" || true
+          xcrun simctl bootstatus "iOS Simulator"
+          echo "✅ Simulator is now fully booted"
+          xcrun simctl boot "iOS Simulator 2" || true
+          xcrun simctl bootstatus "iOS Simulator 2"            
+          echo "✅ Simulator 2 is now fully booted"
           echo "ℹ️ Simulator boot started in background."
         shell: bash
 
