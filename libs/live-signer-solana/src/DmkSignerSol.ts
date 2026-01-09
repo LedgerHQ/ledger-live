@@ -13,6 +13,7 @@ import {
   SignMessageDAError,
   SignTransactionDAError,
   SignerSolana,
+  UserInputType,
 } from "@ledgerhq/device-signer-kit-solana";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import bs58 from "bs58";
@@ -141,8 +142,14 @@ export class DmkSignerSol implements SolanaSigner {
     txBuffer: Uint8Array,
     resolution?: Resolution | undefined,
   ): Promise<SolanaSignature> {
+    const transactionResolutionContext = resolution
+      ? {
+          ...resolution,
+          userInputType: resolution.userInputType as UserInputType,
+        }
+      : undefined;
     const { observable } = this.dmkSigner.signTransaction(path, txBuffer, {
-      transactionResolutionContext: resolution,
+      transactionResolutionContext,
       skipOpenApp: true,
     });
     return new Promise<SolanaSignature>((resolve, reject) => {
