@@ -77,6 +77,7 @@ export enum ScreenName {
   DelegationSummary = "DelegationSummary",
   DelegationValidationError = "DelegationValidationError",
   DelegationValidationSuccess = "DelegationValidationSuccess",
+  DeeplinkInstallAppDeviceSelection = "DeeplinkInstallAppDeviceSelection",
   DeveloperCustomManifest = "DeveloperCustomManifest",
   DeveloperSettings = "DeveloperSettings",
   DeviceConnect = "DeviceConnect",

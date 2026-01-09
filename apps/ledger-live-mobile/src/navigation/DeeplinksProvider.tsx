@@ -29,6 +29,9 @@ import {
 import { blockPasswordLock } from "../actions/appstate";
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
 import { logLastStartupEvents } from "LLM/utils/logLastStartupEvents";
+import { isValidInstallApp } from "LLM/features/DeeplinkInstallApp";
+import { openDeeplinkInstallAppDrawer } from "~/actions/deeplinkInstallApp";
+import { LAST_STARTUP_EVENTS, logLastStartupEvents } from "LLM/utils/logLastStartupEvents";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import { STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 
@@ -741,7 +744,6 @@ export const DeeplinksProvider = ({
               return getStateFromPath(url.href?.split("://")[1], config);
             }
           }
-
           if (hostname === "swap") {
             const swapParams = new URLSearchParams();
             const fromPath = searchParams.get("fromPath");
@@ -761,6 +763,25 @@ export const DeeplinksProvider = ({
             const swapSearch = swapParams.toString();
             const pathWithParams = swapSearch ? `swap?${swapSearch}` : "swap";
             return getStateFromPath(pathWithParams, config);
+          }
+          // Handle wallet deeplink with installApp param
+          // ledgerlive://wallet?installApp=RecoveryKeyUpdater
+          if (hostname === "wallet" || hostname === "portfolio") {
+            const installApp = searchParams.get("installApp");
+
+            if (installApp && isValidInstallApp(installApp)) {
+              // Open install drawer with the app config in a single action
+              dispatch(openDeeplinkInstallAppDrawer({ appToInstall: installApp }));
+
+              // Track the deeplink
+              track(TRACKING_EVENT, {
+                url: hostname,
+                installApp,
+              });
+            }
+
+            // Navigate to portfolio/wallet view
+            return getStateFromPath("portfolio", config);
           }
 
           if ((hostname === "discover" || hostname === "recover") && platform) {

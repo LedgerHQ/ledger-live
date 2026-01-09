@@ -82,6 +82,8 @@ import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCu
 import CustomErrorNavigator from "./CustomErrorNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
+import { DeeplinkInstallAppDrawer } from "LLM/features/DeeplinkInstallApp";
+import DeeplinkInstallAppDeviceSelection from "LLM/features/DeeplinkInstallApp/screens/DeviceSelectionScreen";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -201,6 +203,7 @@ export default function BaseNavigator() {
   return (
     <>
       <RootDrawer drawer={route.params?.drawer} />
+      <DeeplinkInstallAppDrawer />
       <Stack.Navigator screenOptions={nativeStackScreenOptions}>
         <Stack.Screen name={NavigatorName.Main} component={Main} options={{ headerShown: false }} />
         <Stack.Screen
@@ -643,6 +646,12 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.DeviceSelection}
           component={DeviceSelectionNavigator}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name={ScreenName.DeeplinkInstallAppDeviceSelection}
+          component={DeeplinkInstallAppDeviceSelection}
           options={{ headerShown: false }}
         />
 

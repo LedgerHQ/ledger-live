@@ -11,4 +11,5 @@ export enum HOOKS_TRACKING_LOCATIONS {
   ledgerSyncFlow = "Ledger Sync",
   swapFlow = "Swap Flow",
   onboardingFlow = "Onboarding Flow",
+  deeplinkInstallApp = "Deeplink Install App",
 }
