@@ -106,7 +106,17 @@ export function createApi(
     getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
       getAssetFromToken(currency, token, owner),
     computeIntentType,
-    refreshOperations: (operations: LiveOperation[]): Promise<LiveOperation[]> =>
-      refreshOperations(currency, operations),
+    /**
+     * Only expose this method if the chain has no explorer (the only chain that passes a function
+     * is Celo that works with an explorer)
+     * Not exposing this methods ensures that we don't try to force the update of pending operations
+     * in the context of the generic adapter and wait for explorers more accurate results instead
+     */
+    ...(typeof config !== "function" && config.explorer.type === "none"
+      ? {
+          refreshOperations: (operations: LiveOperation[]): Promise<LiveOperation[]> =>
+            refreshOperations(currency, operations),
+        }
+      : {}),
   };
 }

@@ -73,6 +73,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
         },
         explorer: {
           type: "etherscan",
+          noCache: true,
           uri: "https://proxyetherscan.api.live.ledger.com/v2/api/146",
         },
         showNfts: true,
@@ -91,6 +92,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
           },
           explorer: {
             type: "etherscan",
+            noCache: true,
             uri: "https://proxyetherscan.api.live.ledger.com/v2/api/146",
           },
           showNfts: true,

@@ -7,10 +7,15 @@ import { listOperations } from "./listOperations";
 
 describe("listOperations", () => {
   it.each([
-    ["an etherscan explorer", "etherscan", etherscanExplorer],
-    ["a ledger explorer", "ledger", ledgerExplorer],
-  ])("lists latest operations using %s", async (_, type, explorer) => {
-    setCoinConfig(() => ({ info: { explorer: { type } } }) as unknown as EvmCoinConfig);
+    ["an etherscan explorer", { type: "etherscan" }, etherscanExplorer.explorerApi],
+    [
+      "a no cache etherscan explorer",
+      { type: "etherscan", noCache: true },
+      etherscanExplorer.explorerApiNoChache,
+    ],
+    ["a ledger explorer", { type: "ledger" }, ledgerExplorer],
+  ])("lists latest operations using %s", async (_, config, explorer) => {
+    setCoinConfig(() => ({ info: { explorer: config } }) as unknown as EvmCoinConfig);
     jest.spyOn(explorer, "getLastOperations").mockResolvedValue({
       lastCoinOperations: [
         {
