@@ -1,7 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId, PostOnboardingState } from "@ledgerhq/types-live";
-import { handleActions } from "redux-actions";
-import type { ReducerMap } from "redux-actions";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createSelector, Selector } from "reselect";
 
 export const initialState: PostOnboardingState = {
@@ -14,57 +13,66 @@ export const initialState: PostOnboardingState = {
   postOnboardingInProgress: false,
 };
 
-type PartialNewStatePayload = { newState: Partial<PostOnboardingState> };
-type InitPayload = {
-  deviceModelId: DeviceModelId;
-  actionsIds: PostOnboardingActionId[];
-};
-type SetActionCompletedPayload = {
-  actionId: PostOnboardingActionId;
-};
-export type Payload = undefined | PartialNewStatePayload | InitPayload | SetActionCompletedPayload;
-
-const handlers: ReducerMap<PostOnboardingState, Payload> = {
-  POST_ONBOARDING_IMPORT_STATE: (_, { payload }): PostOnboardingState =>
-    (payload as PartialNewStatePayload).newState as PostOnboardingState,
-  POST_ONBOARDING_INIT: (_, { payload }) => {
-    const { deviceModelId, actionsIds } = payload as InitPayload;
-    return {
-      deviceModelId,
-      walletEntryPointDismissed: false,
-      entryPointFirstDisplayedDate: new Date(),
-      actionsToComplete: actionsIds,
-      actionsCompleted: Object.fromEntries(actionsIds.map(id => [id, false])),
-      lastActionCompleted: null,
-      postOnboardingInProgress: true,
-    };
+const postOnboardingSlice = createSlice({
+  name: "postOnboarding",
+  initialState,
+  reducers: {
+    importPostOnboardingState: (
+      _state,
+      action: PayloadAction<{ newState: Partial<PostOnboardingState> }>,
+    ): PostOnboardingState => {
+      return action.payload.newState as PostOnboardingState;
+    },
+    initPostOnboarding: (
+      _state,
+      action: PayloadAction<{
+        deviceModelId: DeviceModelId;
+        actionsIds: PostOnboardingActionId[];
+      }>,
+    ) => {
+      const { deviceModelId, actionsIds } = action.payload;
+      return {
+        deviceModelId,
+        walletEntryPointDismissed: false,
+        entryPointFirstDisplayedDate: new Date(),
+        actionsToComplete: actionsIds,
+        actionsCompleted: Object.fromEntries(actionsIds.map(id => [id, false])),
+        lastActionCompleted: null,
+        postOnboardingInProgress: true,
+      };
+    },
+    setPostOnboardingActionCompleted: (
+      state,
+      action: PayloadAction<{ actionId: PostOnboardingActionId }>,
+    ) => {
+      state.actionsCompleted[action.payload.actionId] = true;
+      state.lastActionCompleted = action.payload.actionId;
+    },
+    clearPostOnboardingLastActionCompleted: state => {
+      state.lastActionCompleted = null;
+    },
+    hidePostOnboardingWalletEntryPoint: state => {
+      state.walletEntryPointDismissed = true;
+      state.entryPointFirstDisplayedDate = null;
+    },
+    postOnboardingSetFinished: state => {
+      state.postOnboardingInProgress = false;
+    },
   },
-  POST_ONBOARDING_SET_ACTION_COMPLETED: (state, { payload }) => {
-    const { actionId } = payload as SetActionCompletedPayload;
-    const actionsCompleted = { ...state.actionsCompleted, [actionId]: true };
-    return {
-      ...state,
-      actionsCompleted,
-      lastActionCompleted: actionId,
-    };
-  },
-  POST_ONBOARDING_CLEAR_LAST_ACTION_COMPLETED: state => ({
-    ...state,
-    lastActionCompleted: null,
-  }),
-  POST_ONBOARDING_HIDE_WALLET_ENTRY_POINT: state => ({
-    ...state,
-    walletEntryPointDismissed: true,
-    entryPointFirstDisplayedDate: null,
-  }),
+});
 
-  POST_ONBOARDING_SET_FINISHED: state => ({
-    ...state,
-    postOnboardingInProgress: false,
-  }),
-};
+export const {
+  importPostOnboardingState,
+  initPostOnboarding,
+  setPostOnboardingActionCompleted,
+  clearPostOnboardingLastActionCompleted,
+  hidePostOnboardingWalletEntryPoint,
+  postOnboardingSetFinished,
+} = postOnboardingSlice.actions;
 
-export default handleActions<PostOnboardingState, Payload>(handlers, initialState);
+export const actionTypePrefix = "postOnboarding/";
+
+export default postOnboardingSlice.reducer;
 
 /**
  * remove this function once we can safely assume no user has a LL holding in

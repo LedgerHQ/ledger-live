@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
-import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
+import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { track } from "~/renderer/analytics/segment";
 

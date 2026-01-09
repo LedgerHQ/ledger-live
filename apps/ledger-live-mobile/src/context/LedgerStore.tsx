@@ -1,7 +1,7 @@
 import React, { useEffect, useState, ReactNode, useCallback } from "react";
 import { Provider } from "react-redux";
 import { Store } from "redux";
-import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
+import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";

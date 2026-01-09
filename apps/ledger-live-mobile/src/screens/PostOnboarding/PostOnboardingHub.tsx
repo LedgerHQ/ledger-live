@@ -6,7 +6,7 @@ import {
   useAllPostOnboardingActionsCompleted,
   usePostOnboardingHubState,
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
+import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { getDeviceModel } from "@ledgerhq/devices";
 import PostOnboardingActionRow from "~/components/PostOnboarding/PostOnboardingActionRow";

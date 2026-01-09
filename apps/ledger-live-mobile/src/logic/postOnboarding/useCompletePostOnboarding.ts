@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useDispatch } from "~/context/hooks";
 
 import { useNavigation } from "@react-navigation/native";
-import { postOnboardingSetFinished } from "@ledgerhq/live-common/postOnboarding/actions";
+import { postOnboardingSetFinished } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { NavigatorName } from "~/const";
 
 export function useCompletePostOnboarding() {

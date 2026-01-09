@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { entryPointFirstDisplayedDateSelector } from "../reducer";
 import { useEffect } from "react";
-import { hidePostOnboardingWalletEntryPoint } from "../actions";
+import { hidePostOnboardingWalletEntryPoint } from "../reducer";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "./usePostOnboardingEntryPointVisibleOnWallet";
 
 const millisecondsInADay = 1000 * 60 * 60 * 24;

@@ -3,7 +3,7 @@ import { Middleware } from "@reduxjs/toolkit";
 import throttle from "lodash/throttle";
 import { setKey } from "~/renderer/storage";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { actionTypePrefix as postOnboardingActionTypePrefix } from "@ledgerhq/live-common/postOnboarding/actions";
+import { actionTypePrefix as postOnboardingActionTypePrefix } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { isActionWithType } from "./utils";
 
 import { settingsStoreSelector, areSettingsLoaded } from "./../reducers/settings";

@@ -2,7 +2,10 @@
  * @jest-environment jsdom
  */
 import { renderHook } from "@testing-library/react";
-import { entryPointFirstDisplayedDateSelector } from "../reducer";
+import {
+  entryPointFirstDisplayedDateSelector,
+  hidePostOnboardingWalletEntryPoint,
+} from "../reducer";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "./usePostOnboardingEntryPointVisibleOnWallet";
 import { useAutoDismissPostOnboardingEntryPoint } from "./useAutoDismissPostOnboardingEntryPoint";
 
@@ -42,9 +45,7 @@ describe("useAutoDismissPostOnboardingEntryPoint", () => {
 
     renderHook(() => useAutoDismissPostOnboardingEntryPoint());
 
-    expect(mockedDispatch).toHaveBeenCalledWith({
-      type: "POST_ONBOARDING_HIDE_WALLET_ENTRY_POINT",
-    });
+    expect(mockedDispatch).toHaveBeenCalledWith(hidePostOnboardingWalletEntryPoint());
   });
 
   it("should be true if the entry point has been displayed less than 7 days ago", () => {

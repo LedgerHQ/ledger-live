@@ -5,7 +5,7 @@ import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
-import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
+import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/reducer";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 // We can't use new createRoot for now. We have issues we react-redux 7.x and lazy load of components

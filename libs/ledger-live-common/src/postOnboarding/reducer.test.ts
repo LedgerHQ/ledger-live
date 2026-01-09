@@ -13,7 +13,7 @@ import {
   setPostOnboardingActionCompleted,
   clearPostOnboardingLastActionCompleted,
   hidePostOnboardingWalletEntryPoint,
-} from "./actions";
+} from "./reducer";
 
 const initializationParamsA: Parameters<typeof initPostOnboarding> = [
   {

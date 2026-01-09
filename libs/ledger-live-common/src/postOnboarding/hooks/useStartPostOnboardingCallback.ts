@@ -3,7 +3,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import { useCallback } from "react";
 import { useFeatureFlags } from "../../featureFlags";
-import { initPostOnboarding, postOnboardingSetFinished } from "../actions";
+import { initPostOnboarding, postOnboardingSetFinished } from "../reducer";
 
 type StartPostOnboardingOptions = {
   deviceModelId: DeviceModelId;

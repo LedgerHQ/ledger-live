@@ -115,7 +115,6 @@
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
     "react-redux": "catalog:",
-    "redux-actions": "catalog:",
     "@reduxjs/toolkit": "catalog:"
   },
   "peerDependenciesMeta": {
@@ -129,9 +128,6 @@
       "optional": true
     },
     "react-redux": {
-      "optional": true
-    },
-    "redux-actions": {
       "optional": true
     },
     "@reduxjs/toolkit": {
@@ -234,7 +230,6 @@
     "@types/bchaddrjs": "^0.4.0",
     "@types/pako": "^2.0.0",
     "@types/qs": "^6.9.7",
-    "@types/redux-actions": "^2.6.2",
     "@xstate/react": "^5.0.2",
     "@zondax/ledger-casper": "^2.6.1",
     "@zondax/ledger-cosmos-js": "3.0.3",
@@ -317,7 +312,6 @@
     "react-native": "catalog:",
     "react-test-renderer": "catalog:",
     "react-redux": "catalog:",
-    "redux-actions": "catalog:",
     "timemachine": "^0.3.2",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
