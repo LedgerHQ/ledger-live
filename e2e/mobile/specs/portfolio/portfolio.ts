@@ -34,7 +34,7 @@ export function runPortfolioTransactionsHistoryTest(
 
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
-    it("Transaction history displayed when user added his accounts", async () => {
+    it(`[${currency.ticker}] Transaction history displayed when user added his accounts`, async () => {
       await app.portfolio.checkTransactionHistorySection();
       await app.portfolio.selectAndClickOnLastOperation("Sent");
       await app.operationDetails.checkTransactionDetailsVisibility(currency.speculosApp.name);
