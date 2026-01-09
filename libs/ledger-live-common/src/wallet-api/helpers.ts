@@ -118,7 +118,7 @@ export const getInitialURL = (
       return inputs?.goToURL;
     }
 
-    const url = new URL(manifest.url);
+    const url = new URL(manifest.url.toString());
 
     // Filter out goToURL from inputs to prevent it from being added as a query parameter
     // when validation fails
