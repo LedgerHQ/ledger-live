@@ -34,7 +34,6 @@ import type {
   SettingsSetLocalePayload,
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetNotificationsPayload,
-  SettingsSetNeverClickedOnAllowNotificationsButton,
   SettingsSetOrderAccountsPayload,
   SettingsSetOsThemePayload,
   SettingsSetPairsPayload,
@@ -510,13 +509,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
   }),
 
-  [SettingsActionTypes.SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON]: (state, action) => ({
-    ...state,
-    neverClickedOnAllowNotificationsButton: (
-      action as Action<SettingsSetNeverClickedOnAllowNotificationsButton>
-    ).payload,
-  }),
-
   [SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB]: (state, action) => ({
     ...state,
     walletTabNavigatorLastVisitedTab: (
@@ -837,8 +829,6 @@ export const onboardingTypeSelector = (state: State) => state.settings.onboardin
 export const hasClosedWithdrawBannerSelector = (state: State) =>
   state.settings.depositFlow.hasClosedWithdrawBanner;
 export const notificationsSelector = (state: State) => state.settings.notifications;
-export const neverClickedOnAllowNotificationsButtonSelector = (s: State) =>
-  s.settings.neverClickedOnAllowNotificationsButton;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
 export const dateFormatSelector = (state: State) => state.settings.dateFormat;

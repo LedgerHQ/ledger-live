@@ -4,3 +4,9 @@ export const getIsNotifEnabled = async (): Promise<boolean> => {
   const permission = await getMessaging().hasPermission();
   return permission === AuthorizationStatus.AUTHORIZED;
 };
+
+export const getNotificationPermissionStatus = async (): Promise<
+  (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus]
+> => {
+  return getMessaging().hasPermission();
+};

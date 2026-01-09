@@ -24,6 +24,7 @@ import {
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import { DETOX_ENABLED } from "~/utils/constants";
+import { useNotifications } from "~/logic/notifications";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.webp"),
@@ -63,6 +64,8 @@ const Item = ({
 
   const screenName = useMemo(() => `Reborn Story Step ${currentIndex}`, [currentIndex]);
 
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
+
   const onClick = useCallback(
     (value: string) => {
       track("button_clicked", {
@@ -94,7 +97,8 @@ const Item = ({
     dispatch(setIsReborn(true));
     dispatch(setOnboardingHasDevice(false));
     onClick("Explore without a device");
-  }, [dispatch, exploreLedger, onClick]);
+    tryTriggerPushNotificationDrawerAfterAction("onboarding");
+  }, [dispatch, exploreLedger, onClick, tryTriggerPushNotificationDrawerAfterAction]);
 
   const pressBuy = useCallback(() => {
     buyLedger();

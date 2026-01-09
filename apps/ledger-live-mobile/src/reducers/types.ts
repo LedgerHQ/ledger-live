@@ -36,6 +36,7 @@ import type { ModularDrawerState } from "./modularDrawer";
 import type { LLMRTKApiState } from "~/context/rtkQueryApi";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
+import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 
 // === ACCOUNT STATE ===
 
@@ -112,10 +113,20 @@ export type BleState = {
 // === NOTIFICATIONS STATE ===
 
 export type NotificationsState = {
+  /** The authorization status of the system notifications */
+  permissionStatus?: FirebaseMessagingTypes.AuthorizationStatus;
   /** Boolean indicating whether the push notifications modal is opened or closed */
   isPushNotificationsModalOpen: boolean;
   /** Type of the push notifications modal to display (either the generic one or the market one) */
-  notificationsModalType: string;
+  drawerSource:
+    | "generic"
+    | "onboarding"
+    | "send"
+    | "receive"
+    | "buy"
+    | "swap"
+    | "stake"
+    | "add_favorite_coin";
   /** The route name of the current screen displayed in the app, it is updated every time the displayed screen change */
   currentRouteName?: string;
   /** The event that triggered the oppening of the push notifications modal */
