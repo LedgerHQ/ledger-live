@@ -18,8 +18,18 @@ const RESULTS_LOG_FILE = path.join(STUDY_DIR, "results.log");
 const REPORT_FILE = path.join(STUDY_DIR, "report.txt");
 const BLOCKS_DIR = path.join(STUDY_DIR, "blocks");
 
+// Analysis interval
+const ANALYSIS_INTERVAL_MS = 1 * 60 * 1000;
+
 // Check intervals in milliseconds
-const CHECK_INTERVALS_MS = [
+const CHECK_INTERVALS_SHORT = [
+  1_000, 2_000, 3_000, 4_000, 5_000, 6_000, 7_000, 8_000, 9_000, 10_000, 11_000, 12_000, 13_000,
+  14_000, 15_000, 16_000, 17_000, 18_000, 19_000, 20_000, 21_000, 22_000, 23_000, 24_000, 25_000,
+  26_000, 27_000, 28_000, 29_000, 30_000, 40_000, 50_000, 60_000,
+];
+
+// Check intervals in milliseconds
+const CHECK_INTERVALS_LONG = [
   60_000, // 1min
   120_000, // 2min
   300_000, // 5min
@@ -42,6 +52,9 @@ const CHECK_INTERVALS_MS = [
   28_800_000, // 8h
   43_200_000, // 12h
 ];
+
+// Check intervals in milliseconds
+const CHECK_INTERVALS_MS = CHECK_INTERVALS_SHORT;
 
 // Logging helper - writes to log file instead of console
 function log(message: string): void {
@@ -398,9 +411,6 @@ function runAnalysis(): void {
 // Tests
 // ============================================================================
 
-// Analysis interval: 10 minutes
-const ANALYSIS_INTERVAL_MS = 10 * 60 * 1000;
-
 describe("Block Consistency", () => {
   // Set a very long timeout for this test suite
   jest.setTimeout(24 * 60 * 60 * 1000);
@@ -425,7 +435,7 @@ describe("Block Consistency", () => {
 
     // Run until all captured blocks have completed all checks
     // or we've been running for the max interval + some buffer
-    const maxRunTime = Math.max(...CHECK_INTERVALS_MS) + 60_000; // max interval + 1 min buffer
+    const maxRunTime = Math.max(...CHECK_INTERVALS_MS) + 60 * 60_000; // max interval + 1 min buffer
     const startTime = Date.now();
 
     while (Date.now() - startTime < maxRunTime) {
@@ -554,7 +564,7 @@ describe("Block Consistency", () => {
       }
 
       // Wait before next iteration
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
 
     // Assert no errors occurred
