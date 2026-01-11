@@ -384,6 +384,8 @@ jobs:
             xcrun simctl create "iOS Simulator 2" "iPhone 15"
             echo "🔧 Creating iOS Simulator 3"
             xcrun simctl create "iOS Simulator 3" "iPhone 15"
+            xcrun simctl create "iOS Simulator 4" "iPhone 15"
+            xcrun simctl create "iOS Simulator 5" "iPhone 15"
             echo "🛫 Booting simulator..."
             xcrun simctl boot "iOS Simulator" || true
             xcrun simctl bootstatus "iOS Simulator"
@@ -394,6 +396,12 @@ jobs:
             xcrun simctl boot "iOS Simulator 3" || true
             xcrun simctl bootstatus "iOS Simulator 3"
             echo "✅ Simulator 3 is now fully booted"
+            xcrun simctl boot "iOS Simulator 4" || true
+            xcrun simctl bootstatus "iOS Simulator 4"
+            echo "✅ Simulator 4 is now fully booted"
+            xcrun simctl boot "iOS Simulator 5" || true
+            xcrun simctl bootstatus "iOS Simulator 5"
+            echo "✅ Simulator 5 is now fully booted"
           ' > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Simulator boot started in background."
         shell: bash
