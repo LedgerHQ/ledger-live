@@ -64,7 +64,7 @@ const ESM_PACKAGES = ["ky", "@polkadot"].join("|");
 
 const config: Config = {
   rootDir: ".",
-  maxWorkers: 5,
+  maxWorkers: process.env.CI ? 3 : 1,
   transform: {
     "^.+\\.(js|jsx)?$": "babel-jest",
     "^.+\\.(ts|tsx)?$": [

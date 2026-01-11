@@ -106,18 +106,6 @@ module.exports = {
         name: "iOS Simulator 3",
       },
     },
-    simulator4: {
-      type: "ios.simulator",
-      device: {
-        name: "iOS Simulator 4",
-      },
-    },
-    simulator5: {
-      type: "ios.simulator",
-      device: {
-        name: "iOS Simulator 5",
-      },
-    },
     emulator: {
       type: "android.emulator",
       device: {
