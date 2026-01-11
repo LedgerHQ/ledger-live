@@ -174,7 +174,7 @@ process.on("uncaughtException", async error => {
 // DEBUG FLAG: Set to true to force the TLS socket crash
 // This creates a destroyed TLS socket and stores it in globalThis,
 // causing jest-worker serialization to fail with "Cannot read properties of null (reading 'reading')"
-const DEBUG_FORCE_TLS_CRASH = true; // TODO: Set back to false after testing
+const DEBUG_FORCE_TLS_CRASH = false;
 
 /**
  * Forces a TLS socket crash by creating a real TLS connection and destroying it.
