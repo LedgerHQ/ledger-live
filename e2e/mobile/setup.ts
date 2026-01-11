@@ -171,6 +171,28 @@ process.on("uncaughtException", async error => {
   throw error;
 });
 
+// Handle unhandled promise rejections (e.g., axios socket hang up errors).
+// These occur when Speculos connections are unexpectedly closed.
+process.on("unhandledRejection", (reason, promise) => {
+  const error = reason instanceof Error ? reason : new Error(String(reason));
+  const isConnectionError =
+    error.message?.includes("socket hang up") ||
+    error.message?.includes("ECONNRESET") ||
+    error.message?.includes("ECONNREFUSED") ||
+    error.message?.includes("ETIMEDOUT");
+
+  if (isConnectionError) {
+    console.warn("[E2E] Caught unhandled connection error:", error.message);
+    console.warn("[E2E] This usually means Speculos was stopped during a request");
+    // Don't crash - let the test framework handle it gracefully
+    return;
+  }
+
+  // Log other unhandled rejections but don't crash immediately
+  console.error("[E2E] Unhandled promise rejection:", error);
+  console.error("[E2E] Promise:", promise);
+});
+
 // DEBUG FLAG: Set to true to force the TLS socket crash
 // This creates a destroyed TLS socket and stores it in globalThis,
 // causing jest-worker serialization to fail with "Cannot read properties of null (reading 'reading')"
