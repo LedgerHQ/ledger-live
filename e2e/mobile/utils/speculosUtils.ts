@@ -4,6 +4,7 @@ import {
   startSpeculos,
   stopSpeculos,
   takeScreenshot,
+  Dependency,
 } from "@ledgerhq/live-common/e2e/speculos";
 import invariant from "invariant";
 import { setEnv } from "@ledgerhq/live-env";
@@ -18,6 +19,20 @@ import path from "path";
 
 import { CLI } from "./cliUtils";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+
+/**
+ * Sets Exchange app dependencies using the local `specs` instance.
+ * This ensures dependencies are set on the same object that `launchSpeculos` reads.
+ */
+export function setExchangeDependencies(dependencies: Dependency[]) {
+  const map = new Map<string, Dependency>();
+  for (const dep of dependencies) {
+    if (!map.has(dep.name)) {
+      map.set(dep.name, dep);
+    }
+  }
+  specs["Exchange"].dependencies = Array.from(map.values());
+}
 
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
