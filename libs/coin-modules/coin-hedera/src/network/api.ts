@@ -161,10 +161,11 @@ async function getAccountTokens(address: string): Promise<HederaMirrorToken[]> {
   return tokens;
 }
 
-async function getLatestTransaction(): Promise<HederaMirrorTransaction> {
+async function getLatestTransaction(before: Date): Promise<HederaMirrorTransaction> {
   const params = new URLSearchParams({
     limit: "1",
     order: "desc",
+    timestamp: `lte:${before.getTime() / 1000}`,
   });
 
   const res = await network<HederaMirrorTransactionsResponse>({
