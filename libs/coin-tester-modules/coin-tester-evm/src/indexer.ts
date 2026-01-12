@@ -668,12 +668,13 @@ export const setBlock = (blockHeight: number): void => {
   fromBlock = blockHeight;
 };
 
-export const indexBlocks = async () => {
+export const indexBlocks = async (chainId: number) => {
   if (!fromBlock) {
     throw new Error("fromBlock is not set");
   }
-
-  const provider = new ethers.JsonRpcProvider(process.env.RPC);
+  const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545", chainId, {
+    staticNetwork: true,
+  });
   let latestBlockNumber = await provider.getBlockNumber();
   const toBlock = Math.min(fromBlock + MAX_BLOCK_RANGE, latestBlockNumber);
   const rangeSize = toBlock - fromBlock + 1;

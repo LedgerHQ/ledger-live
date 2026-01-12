@@ -53,7 +53,21 @@ const makeScenarioTransactions = ({ address }: { address: string }): SonicScenar
     },
   };
 
-  return [scenarioSendSTransaction, scenarioSendUSDCTransaction];
+  const scenarioSendMaxSTransaction: SonicScenarioTransaction = {
+    name: "Send Max S",
+    useAllAmount: true,
+    recipient: VITALIK,
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+    },
+  };
+
+  return [scenarioSendSTransaction, scenarioSendUSDCTransaction, scenarioSendMaxSTransaction];
 };
 
 export const scenarioSonic: Scenario<EvmTransaction, Account> = {
@@ -102,7 +116,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
 
     initMswHandlers(getCoinConfig(sonic).info);
 
-    const { currencyBridge, accountBridge, getAddress } = await getBridges("sonic", signer);
+    const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: sonic,
@@ -140,13 +154,14 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks();
+    await indexBlocks(sonic.ethereumLikeInfo?.chainId || 146);
   },
   afterAll: account => {
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("20", USDC_ON_SONIC.units[0].magnitude).toString(),
     );
+    expect(account.operations.length).toBe(4);
   },
   teardown: async () => {
     resetIndexer();

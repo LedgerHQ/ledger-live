@@ -16,7 +16,7 @@ import { buildSigner } from "../signer";
 type CoreScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
 const makeScenarioTransactions = ({ address }: { address: string }): CoreScenarioTransaction[] => {
-  const scenarioSendSTransaction: CoreScenarioTransaction = {
+  const scenarioSendCoreTransaction: CoreScenarioTransaction = {
     name: "Send 1 CORE",
     amount: new BigNumber(1e18),
     recipient: VITALIK,
@@ -52,7 +52,21 @@ const makeScenarioTransactions = ({ address }: { address: string }): CoreScenari
     },
   };
 
-  return [scenarioSendSTransaction];
+  const scenarioSendMaxCoreTransaction: CoreScenarioTransaction = {
+    name: "Send Max CORE",
+    useAllAmount: true,
+    recipient: VITALIK,
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+    },
+  };
+
+  return [scenarioSendCoreTransaction, scenarioSendMaxCoreTransaction];
 };
 
 export const scenarioCore: Scenario<EvmTransaction, Account> = {
@@ -99,7 +113,7 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
 
     initMswHandlers(getCoinConfig(core).info);
 
-    const { currencyBridge, accountBridge, getAddress } = await getBridges("core", signer);
+    const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: core,
@@ -137,7 +151,7 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks();
+    await indexBlocks(core.ethereumLikeInfo?.chainId || 1116);
   },
   afterAll: _account => {
     // TODO: uncomment when explorer is ready
