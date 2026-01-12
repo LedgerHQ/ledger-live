@@ -843,6 +843,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Dynamic Assets Data Aggregator API Prod",
   },
+  CMC_API_URL: {
+    def: "https://proxycmc.api.live.ledger.com/v3",
+    parser: stringParser,
+    desc: "CoinMarketCap API",
+  },
   PLATFORM_DEBUG: {
     def: false,
     parser: boolParser,

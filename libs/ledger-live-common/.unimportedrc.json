@@ -318,7 +318,9 @@
     "src/modularDrawer/utils/sortAccountsByFiatValue.ts",
     "src/modularDrawer/index.ts",
     "src/test-helpers/cryptoAssetsStore.ts",
-    "src/bridge/generic-alpaca/registerValidateAddress.ts"
+    "src/bridge/generic-alpaca/registerValidateAddress.ts",
+    "src/cmc-client/index.ts",
+    "src/cmc-client/__mocks__/fearAndGreed.mock.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
