@@ -119,6 +119,32 @@ describe("getAssetFromToken", () => {
     });
   });
 
+  it("computes the asset of the FXRP token", () => {
+    expect(
+      getAssetFromToken(
+        { id: "flare" } as CryptoCurrency,
+        {
+          parentCurrency: { id: "flare" },
+          tokenType: "erc20",
+          contractAddress: "0xad552a648c74d49e10027ab8a618a3ad4901c5be",
+          name: "FXRP",
+          units: [{ name: "FXRP", code: "FXRP", magnitude: 6 }],
+        } as unknown as TokenCurrency,
+        "owner",
+      ),
+    ).toEqual({
+      assetReference: "0xAd552A648C74D49E10027AB8a618A3ad4901c5bE",
+      assetOwner: "owner",
+      name: "FXRP",
+      type: "erc20",
+      unit: {
+        code: "FXRP",
+        magnitude: 6,
+        name: "FXRP",
+      },
+    });
+  });
+
   it("fails to compute an asset from a token if the main currency is not its parent", () => {
     expect(() =>
       getAssetFromToken(
