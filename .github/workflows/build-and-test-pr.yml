@@ -52,7 +52,7 @@ jobs:
     name: "Build Desktop"
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@support/build-checks
     secrets: inherit
 
   test-desktop:
