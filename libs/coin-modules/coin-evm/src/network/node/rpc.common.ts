@@ -277,7 +277,16 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHei
 export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = makeLRUCache(
   async (currency, transaction) =>
     withApi(currency, async api => {
-      if (!["optimism", "optimism_sepolia", "base", "base_sepolia"].includes(currency.id)) {
+      if (
+        ![
+          "optimism",
+          "optimism_sepolia",
+          "base",
+          "base_sepolia",
+          "blast",
+          "blast_sepolia",
+        ].includes(currency.id)
+      ) {
         return new BigNumber(0);
       }
 
