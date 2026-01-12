@@ -9,7 +9,11 @@ import type { AleoCoinConfig } from "@ledgerhq/coin-aleo/config";
 import makeCliTools from "@ledgerhq/coin-aleo/test/cli";
 import aleoAddressResolver from "@ledgerhq/coin-aleo/signer/getAddress";
 import aleoViewKeyResolver from "@ledgerhq/coin-aleo/signer/getViewKey";
-import type { AleoSigner, Transaction as AleoTransaction } from "@ledgerhq/coin-aleo/types/index";
+import type {
+  AleoAccount,
+  AleoSigner,
+  Transaction as AleoTransaction,
+} from "@ledgerhq/coin-aleo/types/index";
 import type Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
 import { createResolver, executeWithSigner, type CreateSigner } from "../../bridge/setup";
@@ -33,7 +37,7 @@ const getCurrencyConfig = (currency?: CryptoCurrency) => {
   return getCurrencyConfiguration<AleoCoinConfig>(currency);
 };
 
-const bridge: Bridge<AleoTransaction> = createBridges(
+const bridge: Bridge<AleoTransaction, AleoAccount> = createBridges(
   executeWithSigner(createSigner),
   getCurrencyConfig,
 );

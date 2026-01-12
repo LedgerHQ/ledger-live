@@ -2,16 +2,17 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { type GetAccountShape, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type { Operation } from "@ledgerhq/types-live";
+import { getBalance } from "../logic";
+import type { AleoAccount } from "../types";
 
-export const getAccountShape: GetAccountShape<Account> = async infos => {
-  const { initialAccount, address, derivationMode, currency, index } = infos;
+export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
+  const { initialAccount, address, derivationMode, currency } = infos;
   let viewKey: string | undefined;
 
   if (initialAccount) {
     viewKey = decodeAccountId(initialAccount.id).customData;
-    invariant(viewKey, `aleo: viewKey is missing in ${address} initialAccount`);
+    invariant(viewKey, `aleo: viewKey is missing in initialAccount ${initialAccount.id}`);
   }
 
   const accountId = encodeAccountId({
@@ -25,41 +26,28 @@ export const getAccountShape: GetAccountShape<Account> = async infos => {
     }),
   });
 
-  let balance = new BigNumber(0);
+  const balances = await getBalance(currency, address);
+  const nativeBalance = balances.find(b => b.asset.type === "native")?.value ?? BigInt(0);
+  const transparentBalance = new BigNumber(nativeBalance.toString());
+  const privateBalance = null;
+  const spendableBalance = transparentBalance.plus(privateBalance ?? 0);
+
+  const blockHeight = 0;
   const operations: Operation[] = [];
-  const blockHeight = 1;
-
-  // mock some operations in first account for e2e test
-  if (index === 0) {
-    balance = balance.plus(1);
-    const mockHash = "mockmockmockmockmockmockmockmockmockmock";
-    const type = "IN";
-
-    operations.push({
-      id: encodeOperationId(accountId, mockHash, type),
-      accountId,
-      type,
-      hash: mockHash,
-      senders: ["aleo1mock"],
-      recipients: [address],
-      date: new Date(),
-      blockHeight,
-      blockHash: "abc",
-      fee: new BigNumber(0),
-      value: new BigNumber(1),
-      extra: {},
-    });
-  }
 
   return {
     type: "Account",
     id: accountId,
-    balance,
-    spendableBalance: balance,
+    balance: spendableBalance,
+    spendableBalance: spendableBalance,
     blockHeight,
     operations,
     operationsCount: operations.length,
     lastSyncDate: new Date(),
+    aleoResources: {
+      transparentBalance,
+      privateBalance,
+    },
   };
 };
 

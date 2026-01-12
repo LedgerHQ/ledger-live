@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { Account, AccountRaw } from "@ledgerhq/types-live";
+import type { AleoAccount, AleoAccountRaw, AleoResources, AleoResourcesRaw } from "../../types";
 import { getMockedCurrency } from "./currency.fixture";
 
 const defaultMockedCurrency = getMockedCurrency();
@@ -7,7 +7,17 @@ const defaultBalance = new BigNumber(100000);
 const defaultMockAccountId =
   "js:2:aleo:aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f::AViewKey123";
 
-export const getMockedAccount = (overrides?: Partial<Account>): Account => {
+export const mockAleoResources: AleoResources = {
+  transparentBalance: new BigNumber(0),
+  privateBalance: null,
+};
+
+export const mockAleoResourcesRaw: AleoResourcesRaw = {
+  transparentBalance: "0",
+  privateBalance: null,
+};
+
+export const getMockedAccount = (overrides?: Partial<AleoAccount>): AleoAccount => {
   return {
     type: "Account",
     id: defaultMockAccountId,
@@ -33,11 +43,12 @@ export const getMockedAccount = (overrides?: Partial<Account>): Account => {
     },
     swapHistory: [],
     subAccounts: [],
+    aleoResources: mockAleoResources,
     ...overrides,
   };
 };
 
-export const getMockedAccountRaw = (overrides?: Partial<AccountRaw>): AccountRaw => {
+export const getMockedAccountRaw = (overrides?: Partial<AleoAccountRaw>): AleoAccountRaw => {
   return {
     id: defaultMockAccountId,
     seedIdentifier: "",
@@ -62,6 +73,7 @@ export const getMockedAccountRaw = (overrides?: Partial<AccountRaw>): AccountRaw
     },
     swapHistory: [],
     subAccounts: [],
+    aleoResources: mockAleoResourcesRaw,
     ...overrides,
   };
 };

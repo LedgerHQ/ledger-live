@@ -1,10 +1,40 @@
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
-import { patchAccountWithViewKey } from "./utils";
+import { parseMicrocredits, patchAccountWithViewKey } from "./utils";
 
 describe("logic utils", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe("parseMicrocredits", () => {
+    it("should parse valid microcredits string and remove u64 suffix", () => {
+      const result = parseMicrocredits("1000000u64");
+
+      expect(result).toBe("1000000");
+    });
+
+    it("should parse zero microcredits", () => {
+      const result = parseMicrocredits("0u64");
+
+      expect(result).toBe("0");
+    });
+
+    it("should parse large microcredits values", () => {
+      const result = parseMicrocredits("999999999999999u64");
+
+      expect(result).toBe("999999999999999");
+    });
+
+    it("should throw error when u64 suffix is missing", () => {
+      const value = "1000000";
+      expect(() => parseMicrocredits(value)).toThrow(`aleo: invalid balance format (${value})`);
+    });
+
+    it("should throw error for invalid format", () => {
+      const value = "1000000u32";
+      expect(() => parseMicrocredits(value)).toThrow(`aleo: invalid balance format (${value})`);
+    });
   });
 
   describe("patchAccountWithViewKey", () => {
