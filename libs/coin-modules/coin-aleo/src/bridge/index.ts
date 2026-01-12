@@ -13,15 +13,18 @@ import type {
 } from "@ledgerhq/types-live";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import type { Observable } from "rxjs";
-import type { Transaction as AleoTransaction } from "../types/index";
+import type { CoinConfig } from "@ledgerhq/coin-framework/config";
+import aleoCoinConfig, { type AleoCoinConfig } from "../config";
+import type { AleoAccount, Transaction as AleoTransaction } from "../types/index";
 import type { AleoSigner } from "../types/signer";
-import resolver from "../signer/getAddress";
 import { validateAddress } from "../logic/validateAddress";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import { getAccountShape, sync } from "./sync";
+import resolver from "../signer/getAddress";
 import { createTransaction } from "./createTransaction";
-import { prepareTransaction } from "./prepareTransaction";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
+import { prepareTransaction } from "./prepareTransaction";
+import { assignToAccountRaw, assignFromAccountRaw } from "./serialization";
+import { getAccountShape, sync } from "./sync";
 
 export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -40,7 +43,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): C
 
 export function buildAccountBridge(
   signerContext: SignerContext<AleoSigner>,
-): AccountBridge<AleoTransaction> {
+): AccountBridge<AleoTransaction, AleoAccount> {
   const getAddress = resolver(signerContext);
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
 
@@ -49,6 +52,8 @@ export function buildAccountBridge(
     updateTransaction: updateTransaction<AleoTransaction>,
     prepareTransaction,
     getTransactionStatus,
+    assignToAccountRaw,
+    assignFromAccountRaw,
     sync,
     receive,
     signOperation: () => {
@@ -66,7 +71,12 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<AleoSigner>): Bridge<AleoTransaction> {
+export function createBridges(
+  signerContext: SignerContext<AleoSigner>,
+  coinConfig: CoinConfig<AleoCoinConfig>,
+): Bridge<AleoTransaction, AleoAccount> {
+  aleoCoinConfig.setCoinConfig(coinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
