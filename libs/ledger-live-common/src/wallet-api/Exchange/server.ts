@@ -586,7 +586,7 @@ export const handlers = ({
         // tx.amount should be BigNumber
         tx.amount = new BigNumber(tx.amount);
 
-        return await new Promise((resolve, reject) =>
+        return new Promise((resolve, reject) =>
           uiSwap({
             exchangeParams: {
               exchangeType: ExchangeType.SWAP,
