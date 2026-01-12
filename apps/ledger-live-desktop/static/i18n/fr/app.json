@@ -86,6 +86,7 @@
     "continue" : "Continuer",
     "previous" : "Précédent",
     "learnMore" : "En savoir plus",
+    "learnMoreWithEllipsis" : "En savoir plus...",
     "help" : "Aide",
     "needHelp" : "Besoin d’aide ?",
     "areYouSure" : "Êtes-vous sûr(e) ?",
@@ -106,6 +107,7 @@
     "reset" : "Réinitialiser",
     "retry" : "Réessayer",
     "range" : "Période",
+    "start" : "Démarrer",
     "stop" : "Arrêter",
     "updateNow" : "Mettre à jour",
     "close" : "Fermer",
@@ -122,9 +124,15 @@
     "featureFlags" : "Feature flag",
     "ldmkEnabled" : "Transport LDMK",
     "information" : "Informations",
+    "increase" : "Augmenter",
+    "max" : "Max",
+    "min" : "Min",
+    "set" : "Définir",
+    "follow" : "Suivre",
     "search" : "Rechercher...",
     "searchWithoutEllipsis" : "Rechercher",
     "manage" : "Gérer",
+    "none" : "Aucun",
     "tryAgain" : "Réessayer",
     "lockScreen" : {
       "title" : "Bienvenue",
@@ -207,7 +215,10 @@
       "SENDING" : "Envoi",
       "BURN" : "Brûlé",
       "ASSOCIATE_TOKEN" : "Association de token",
-      "CONTRACT_CALL" : "Appel de contrat"
+      "CONTRACT_CALL" : "Appel de contrat",
+      "UPDATE_ACCOUNT" : "Compte mis à jour",
+      "STAKE_NEURON" : "Staké",
+      "TOP_UP_NEURON" : "Approvisionné"
     },
     "edit" : {
       "title" : "Accélérer ou annuler",
@@ -479,7 +490,9 @@
       "kaspa_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Kaspa",
       "kaspa_description" : "Pour échanger des Kaspa, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "celo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Celo",
-      "celo_description" : "Pour échanger des Celo, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+      "celo_description" : "Pour échanger des Celo, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "monad_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Monad",
+      "monad_description" : "Pour échanger des Monad, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Choisir un prestataire pour le Swap",
@@ -844,7 +857,7 @@
     "stake" : "Staker",
     "delegatedAssets" : "Actifs délégués",
     "undelegating" : "Délégation interrompue",
-    "availableBalanceTooltip" : "Ce montant est disponible.",
+    "availableBalanceTooltip" : "Actifs que vous pouvez utiliser dès maintenant.",
     "frozenAssetsTooltip" : "Les actifs gelés sont utilisés pour voter sur TRON. Cela représente votre nombre total de votes.",
     "bandwidthTooltip" : "Gelez des actifs pour gagner de la Bande passante.",
     "energyTooltip" : "Gelez des actifs pour gagner de l’Énergie.",
@@ -1423,7 +1436,7 @@
   },
   "postOnboarding" : {
     "postOnboardingScreen" : {
-      "title" : "Utilisez ensuite votre {{productName}} pour... ",
+      "title" : "Et maintenant ?",
       "titleCompleted" : "Parfait !\nVous pouvez maintenant explorer votre portefeuille.",
       "exploreCTA" : "Explorer mon portefeuille"
     },
@@ -1432,19 +1445,22 @@
     },
     "postOnboardingBanner" : {
       "title" : "Que faire ensuite avec votre {{productName}} ?",
-      "description" : "Transférez vos actifs depuis une plateforme d’échange ou un wallet, achetez des cryptos, personnalisez votre fond d’écran, ou abonnez-vous à Ledger Recover.",
+      "description" : "Sécurisez vos actifs et exploitez tout leur potentiel.",
       "link" : "Explorer",
       "dismiss" : "Plus tard"
     },
     "actions" : {
+      "deviceOnboarded" : {
+        "titleCompleted" : "Configurez votre appareil Ledger"
+      },
       "buyCrypto" : {
-        "title" : "Acheter des cryptos",
-        "description" : "Choisissez parmi plus de 500 cryptos et dénichez les meilleures offres.",
+        "title" : "Achetez des cryptos via Ledger Wallet",
+        "description" : "Faites votre choix parmi plus de 500 cryptos.",
         "actionCompletedPopupLabel" : "Crypto achetée"
       },
       "assetsTransfer" : {
-        "title" : "Transférer vos actifs vers votre Ledger",
-        "description" : "Directement depuis la plateforme d’échange ou le wallet de votre choix vers votre Ledger.",
+        "title" : "Transférez vos actifs",
+        "description" : "Envoyez-les depuis la plateforme ou le wallet de votre choix.",
         "actionCompletedPopupLabel" : "Actifs transférés"
       },
       "syncAccounts" : {
@@ -1864,7 +1880,13 @@
       "transferAmount" : "Montant transféré",
       "validatorsCount" : "Validateurs ({{number}})",
       "version" : "Version",
-      "accountCreationFee" : "Frais de création de compte"
+      "accountCreationFee" : "Frais de création de compte",
+      "associatedTokenId" : "ID du token associé",
+      "targetStakingNodeId" : "ID du nœud cible",
+      "previousStakingNodeId" : "ID du nœud précédent",
+      "gasConsumed" : "Gaz consommé",
+      "gasUsed" : "Gaz utilisé",
+      "gasLimit" : "Limite de gaz"
     }
   },
   "operationList" : {
@@ -4494,6 +4516,7 @@
       "stockDesc" : "Choisissez Ouest pour afficher les hausses du marché en bleu ou Est pour les afficher en rouge.",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Synchronisez vos comptes crypto Ledger Wallet sur différents téléphones et ordinateurs.",
+      "walletSyncDescription" : "Gardez votre portefeuille à jour, même en changeant d’ordinateur ou sur téléphone.",
       "mevProtection" : "Protection MEV",
       "mevProtectionDesc" : "Activez la protection contre la MEV pour des transactions plus fiables sur Ethereum.",
       "mevProtectionLearnMore" : "Avis de confidentialité",
@@ -4528,6 +4551,10 @@
       "analyticsConsole" : {
         "title" : "Autoriser la console analytique",
         "desc" : "Affichez et autorisez l’ouverture de la console analytique."
+      },
+      "themeConsole" : {
+        "title" : "Sélecteur de thème",
+        "desc" : "Affichez une fenêtre flottante pour changer de thème rapidement."
       },
       "brazeTools" : {
         "title" : "Outils pour Braze",
@@ -5475,7 +5502,7 @@
           },
           "welcomeToWalletWithFunds" : {
             "title" : "Tout est prêt",
-            "description" : "Votre appareil Ledger est bien configuré. Si vous avez envoyé des cryptos, vous les recevrez dans quelques minutes.",
+            "description" : "Votre appareil Ledger est bien configuré. Si vous avez envoyé des cryptos vers Ledger Wallet, vous les recevrez dans quelques minutes.",
             "buttons" : {
               "next" : "Continuer"
             }
@@ -5817,10 +5844,32 @@
     "canton" : {
       "commentPlaceholder" : "Facultatif",
       "comment" : "Commentaire",
+      "expiryDuration" : {
+        "label" : "Durée de validité",
+        "summaryLabel" : "Expiration de l’offre",
+        "threeHours" : "3 heures",
+        "sixHours" : "6 heures",
+        "oneDay" : "1 jour",
+        "oneWeek" : "1 semaine",
+        "oneMonth" : "30 jours"
+      },
+      "account" : {
+        "lockedBalance" : "Immobilisé",
+        "lockedBalanceTooltip" : "Vos actifs sont immobilisés dans des offres que vous avez envoyées. Vous pouvez annuler ces offres à tout moment, ou attendre que les bénéficiaires les acceptent ou les rejettent.",
+        "withdrawableBalance" : "Disponible au retrait",
+        "withdrawableBalanceTooltip" : "Actifs que vous pouvez récupérer des offres que vous avez envoyées et qui ont expiré. Transférez-les vers votre solde disponible."
+      },
       "addAccount" : {
         "title" : "Ajouter un compte Canton",
+        "reonboard" : {
+          "title" : "Mise à jour du compte requise",
+          "init" : "Un changement de topologie a été détecté dans le réseau Canton. Veuillez ajouter à nouveau votre compte pour continuer à l’utiliser.",
+          "success" : "Compte bien mis à jour",
+          "successDescription" : "Vous pouvez désormais continuer à utiliser votre compte."
+        },
         "onboard" : {
           "title" : "Ajout",
+          "account" : "Compte",
           "newAccount" : "Nouveau compte",
           "init" : "Pour configurer votre nouveau compte Canton, cliquez sur Continuer",
           "onboarded" : "Comptes ajoutés",
@@ -5837,6 +5886,9 @@
           "title" : "Autorisation",
           "validator" : "Autoriser",
           "hint" : "Accepter automatiquement les actifs versés sur ce compte.",
+          "reonboard" : {
+            "hint" : "Un changement de topologie a été détecté. Veuillez autoriser à nouveau le validateur Ledger pour continuer à recevoir automatiquement des actifs."
+          },
           "error" : "Échec de l’autorisation. Veuillez réessayer.",
           "validatorLabel" : "Validateur Ledger",
           "validatorDescription" : "Acceptation automatique des actifs"
@@ -5844,6 +5896,9 @@
         "finish" : {
           "title" : "Confirmation"
         }
+      },
+      "topologyChangeError" : {
+        "message" : "Changement de topologie détecté. Mise à jour du compte requise."
       },
       "tooManyUtxos" : {
         "title" : "Action requise : trop de UTXO",
@@ -5855,10 +5910,12 @@
       "pendingTransactions" : {
         "title" : "Transactions en attente ({{count}})",
         "incoming" : {
-          "title" : "Offres entrantes ({{count}})"
+          "title" : "Transfert entrant à vérifier ({{count}})",
+          "detailsTitle" : "Détails du transfert entrant"
         },
         "outgoing" : {
-          "title" : "Offres sortantes ({{count}})"
+          "title" : "Offres sortantes ({{count}})",
+          "detailsTitle" : "Détails du transfert sortant"
         },
         "pending" : "En attente",
         "expired" : "Expiré",
@@ -6090,7 +6147,7 @@
     },
     "DeviceHalted" : {
       "title" : "Veuillez redémarrer votre appareil Ledger et réessayer.",
-      "description" : "Une erreur inattendue s’est produite. Veuillez réessayer."
+      "description" : "Une erreur inattendue est survenue. Veuillez réessayer."
     },
     "DeviceNotOnboarded" : {
       "title" : "Votre appareil n’est pas encore prêt à être utilisé.",
@@ -6098,7 +6155,7 @@
     },
     "DeviceSocketFail" : {
       "title" : "Veuillez redémarrer votre appareil Ledger et réessayer.",
-      "description" : "Une erreur inattendue s’est produite. Veuillez réessayer ({{message}})."
+      "description" : "Une erreur inattendue est survenue. Veuillez réessayer ({{message}})."
     },
     "DeviceSocketNoBulkStatus" : {
       "title" : "Échec de la connexion",
@@ -6217,7 +6274,7 @@
       "description" : "Vérifiez votre connexion Internet."
     },
     "NetworkError" : {
-      "title" : "Une erreur réseau s’est produite",
+      "title" : "Une erreur réseau est survenue",
       "description" : "Veuillez réessayer plus tard."
     },
     "NoAddressesFound" : {
@@ -6879,6 +6936,18 @@
       "title" : "Vérification de l’adresse EVM requise",
       "description" : "Veuillez vérifier l’adresse EVM affichée sur votre appareil Ledger avant de confirmer."
     },
+    "HederaRedundantStakingNodeIdError" : {
+      "title" : "Vous stakez déjà avec ce nœud"
+    },
+    "HederaInvalidStakingNodeIdError" : {
+      "title" : "Le nœud sélectionné n’est pas valide"
+    },
+    "HederaNoStakingRewardsError" : {
+      "title" : "Aucune récompense à demander"
+    },
+    "HederaMemoIsTooLong" : {
+      "title" : "Mémo trop long. Longueur maximale : {{maxLength}} caractères."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Échec du chargement de l’image.",
       "description" : "Veuillez réessayer avec un autre format d’image."
@@ -7162,6 +7231,36 @@
     },
     "UtxoLimitReachedError" : {
       "title" : "Montant supérieur aux limites UTXO"
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "Pour {{purpose}}, le montant minimal est de {{amount}}."
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "Le délai de dissolution doit être d’au moins {{min}}."
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "Le délai de dissolution doit être inférieur à {{max}}."
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "Le nouveau délai de dissolution doit être plus long que le délai actuel."
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "Neurone non trouvé"
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "Identifiant principal incorrect"
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "La hotkey existe déjà"
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "Le montant divisé est supérieur au montant maximum autorisé"
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "Cette opération transférera le montant vers un neurone afin d’augmenter le montant staké."
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "Cette opération transférera le montant vers un nouveau neurone. Après confirmation, le neurone sera disponible pour effectuer d’autres opérations."
     }
   },
   "cryptoOrg" : {
@@ -7207,6 +7306,152 @@
         }
       }
     },
+    "account" : {
+      "header" : {
+        "actions" : {
+          "stake" : {
+            "alreadyDelegatedTooltip" : "L’intégralité de votre solde est déjà stakée"
+          }
+        }
+      },
+      "balanceFooter" : {
+        "delegated" : {
+          "tooltip" : "Lorsque vous stakez sur Hedera, la totalité de votre solde est mise en staking et reste liquide."
+        },
+        "claimable" : {
+          "tooltip" : "Les récompenses seront demandées automatiquement après chaque transaction. Vous pouvez aussi les demander manuellement."
+        }
+      },
+      "bodyHeader" : {
+        "delegatedPositions" : {
+          "header" : "Délégation",
+          "button" : "Demander les récompenses",
+          "columns" : {
+            "inactiveTooltip" : "Validateur non trouvé",
+            "overstakedTooltip" : "Ce nœud est sur-staké : son APY est moins intéressant.",
+            "activeTooltip" : "Les montants stakés génèrent des récompenses",
+            "delegated" : "Staké",
+            "rewards" : "Récompenses"
+          },
+          "actions" : {
+            "redelegation" : "Modifier",
+            "undelegation" : "Déstaker",
+            "claimRewards" : "Demander les récompenses"
+          }
+        }
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Stake total",
+      "flow" : {
+        "title" : "Staker",
+        "steps" : {
+          "validator" : {
+            "title" : "Validateurs",
+            "rowTitle" : "Nœud {{index}} : {{name}}",
+            "rowSubtitlePercentage" : "{{percentage}}% du maximum staké",
+            "rowSubtitleOverstaked" : "Le nœud est sur-staké"
+          },
+          "amount" : {
+            "title" : "Montant",
+            "alert" : "Lorsque vous stakez sur Hedera, la totalité de votre solde est mise en staking. Elle reste liquide, sans durée minimale ni risque de slashing. Vous devrez peut-être patienter jusqu’à 48 heures avant de commencer à obtenir des récompenses de staking.",
+            "learnMore" : "En savoir plus"
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Vous avez mis vos actifs en staking",
+              "text" : "Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur le réseau.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "flow" : {
+        "title" : "Déstaker des actifs",
+        "steps" : {
+          "summary" : {
+            "title" : "Montant",
+            "validatorLabel" : "Validateur",
+            "amountLabel" : "Montant à arrêter",
+            "alert" : "Une fois le staking interrompu, votre solde et les récompenses en attente seront encaissés. Il n’est pas possible de déstaker partiellement un solde.",
+            "learnMore" : "En savoir plus"
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Vous avez déstaké vos actifs",
+              "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
+    "redelegation" : {
+      "flow" : {
+        "title" : "Redéléguer des actifs",
+        "steps" : {
+          "validators" : {
+            "title" : "Validateurs",
+            "currentValidatorLabel" : "Actuel",
+            "newValidatorLabel" : "Nouveau",
+            "newValidatorSelectPlaceholder" : "Sélectionner un validateur",
+            "removedValidatorSelectPlaceholder" : "Le validateur précédemment sélectionné n’est plus disponible",
+            "newValidatorSelectNoOption" : "Aucun validateur correspondant à \"{{validatorName}}\"",
+            "amountLabel" : "Montant à redéléguer",
+            "alert" : "Lorsque vous stakez sur Hedera, la totalité de votre solde est mise en staking. Elle reste liquide, sans durée minimale ni risque de slashing. Vous devrez peut-être patienter jusqu’à 48 heures avant de commencer à obtenir des récompenses de staking.",
+            "learnMore" : "En savoir plus"
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Vous avez redélégué vos actifs",
+              "text" : "La redélégation sera mise à jour une fois votre transaction confirmée sur le réseau.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "Demander les récompenses",
+        "steps" : {
+          "rewards" : {
+            "title" : "Récompenses",
+            "description" : "Vous avez gagné <0>{{formattedClaimableRewards}}</0> avec le validateur ci-dessous. En choisissant Continuer, vous demanderez à percevoir immédiatement ce montant et il sera automatiquement ajouté à votre solde disponible.",
+            "currentValidatorLabel" : "Délégation"
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Vous avez bien demandé vos récompenses",
+              "text" : "Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur le réseau.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "Mémo (facultatif)",
@@ -7230,6 +7475,11 @@
         "text" : "Une fois la transaction confirmée, vous pourrez recevoir votre token. Cliquez <0>ici</0> pour commencer à recevoir.",
         "learnMore" : "En savoir plus"
       }
+    }
+  },
+  "dialogs" : {
+    "selectAccount" : {
+      "addAccount" : "Ajouter"
     }
   },
   "drawers" : {
@@ -7278,7 +7528,7 @@
     },
     "postOnboarding" : {
       "title" : "Personnaliser le fond d’écran",
-      "description" : "Choisissez une œuvre d’art numérique ou image comme fond d’écran de votre {{productName}}.",
+      "description" : "Affichez votre image préférée sur l’écran de verrouillage de votre appareil.",
       "actionCompletedPopupLabel" : "Appareil personnalisé"
     },
     "customImageSet" : "Fond d’écran personnalisé",
@@ -7401,12 +7651,20 @@
   "walletSync" : {
     "title" : "Ledger Sync",
     "close" : "Fermer",
+    "banner" : {
+      "title" : "Votre wallet n’est pas synchronisé",
+      "description" : "Gardez votre portefeuille à jour, même en changeant d’ordinateur ou sur téléphone.",
+      "cta" : "Synchroniser mon wallet"
+    },
     "activate" : {
       "title" : "Activer Ledger Sync pour cet ordinateur ?",
       "description" : "Vos comptes crypto seront automatiquement synchronisés sur tous vos téléphones et ordinateurs, même si vous changez d’appareil.",
       "cta" : "Activer Ledger Sync",
       "alreadySync" : "Je l’ai déjà activé",
-      "learnMore" : "Comment fonctionne Ledger Sync ?"
+      "learnMore" : "Comment fonctionne Ledger Sync ?",
+      "titleModal" : "Synchronisez votre wallet",
+      "descriptionModal" : "Gardez votre portefeuille à jour sur votre téléphone et même si vous changez d’ordinateur, tout en restant protégés par votre appareil Ledger.",
+      "ctaModal" : "Continuer"
     },
     "entryPoints" : {
       "accounts" : {
@@ -7483,6 +7741,11 @@
         "title" : "Synchronisation réussie !",
         "desc" : "Les mouvements sur vos comptes crypto apparaîtront automatiquement sur toutes les applications Ledger Wallet de vos téléphones et ordinateurs synchronisés. "
       },
+      "complete" : {
+        "title" : "Synchronisation effectuée",
+        "description" : "Votre portefeuille est désormais automatiquement synchronisé sur l’ensemble de vos appareils.",
+        "syncAnother" : "Vous utilisez Ledger sur votre mobile ? Scannez le code QR "
+      },
       "synchAnother" : "Synchroniser avec une autre application Ledger Wallet",
       "close" : "Fermer"
     },
@@ -7512,7 +7775,8 @@
         "connectDevice" : {
           "title" : "Utiliser mon Ledger",
           "description" : "Synchronisez en signant avec votre appareil Ledger."
-        }
+        },
+        "descriptionModal" : "Choisissez cette option si Ledger Wallet est synchronisé sur un autre téléphone."
       },
       "qrCode" : {
         "title" : "Synchroniser vos applications Ledger Wallet",
@@ -7557,7 +7821,7 @@
       "title" : "Ledger Wallet est synchronisé sur :",
       "remove" : "Retirer",
       "deleteInstanceSuccess" : "Votre application Ledger Wallet sur {{instanceName}} n’est plus connectée à Ledger Sync",
-      "deleteInstanceError" : "Une erreur s’est produite lors de la désynchronisation de {{instanceName}}"
+      "deleteInstanceError" : "Une erreur est survenue lors de la désynchronisation de {{instanceName}}"
     },
     "deviceAction" : {
       "title" : "Continuez sur votre Ledger {{wording}}",
@@ -7630,7 +7894,7 @@
     "connectYourDevice" : {
       "title" : "Connectez et déverrouillez votre appareil."
     },
-    "searchPlaceholder" : "Rechercher par nom ou adresse",
+    "searchPlaceholder" : "Rechercher",
     "emptyAssetList" : "Aucun actif trouvé",
     "selectAsset" : "Sélectionner un actif",
     "selectNetwork" : "Sélectionner un réseau",
@@ -7647,8 +7911,19 @@
       }
     },
     "genericError" : {
-      "title" : "Une erreur réseau s’est produite",
+      "title" : "Une erreur réseau est survenue",
       "description" : "Une erreur est survenue. Veuillez réessayer ou contacter l’Assistance Ledger.",
+      "cta" : "Réessayer"
+    },
+    "errors" : {
+      "network" : {
+        "title" : "Échec de la connexion",
+        "description" : "Aucune connexion Internet. Veuillez réessayer."
+      },
+      "backend" : {
+        "title" : "Échec de la connexion",
+        "description" : "Une erreur est survenue de notre côté. Veuillez réessayer plus tard."
+      },
       "cta" : "Réessayer"
     }
   },
@@ -7681,6 +7956,303 @@
       "transparentBalanceTooltip" : "Le solde qui est visible publiquement.",
       "privateBalance" : "Solde privé",
       "privateBalanceTooltip" : "Le solde qui est demeure masqué."
+    }
+  },
+  "internetComputer" : {
+    "memoField" : {
+      "increaseStake" : "Cette transaction va augmenter le montant en staking d’un neurone existant. Saisissez le montant à staker dans le champ ci-dessus.",
+      "createNeuron" : "Cette transaction va créer un neurone avec les ICP stakés. Saisissez le montant à staker dans le champ ci-dessus.",
+      "tooltip" : "Internet Computer l’utilise pour identifier la transaction de staking d’ICP dans le neurone."
+    },
+    "stakeBanner" : {
+      "confirmFollowing" : {
+        "title" : "Confirmer le suivi",
+        "description" : "Le suivi de votre neurone doit être confirmé dans {{days}} jours et {{hours}} heures.",
+        "altDescription" : "Vous perdez des récompenses. Confirmez le suivi du neurone pour continuer à générer des récompenses.",
+        "cta" : "Confirmer le suivi"
+      },
+      "syncNeurons" : {
+        "title" : "Synchronisez vos ICP stakés",
+        "description" : "Les ICP que vous stakez ont été synchronisés il y a {{days}} jours et {{hours}} heures. Pour afficher les dernières informations, effectuez une synchronisation régulière.",
+        "altDescription" : "Synchronisez vos neurones pour afficher les dernières informations.",
+        "cta" : "Synchroniser"
+      },
+      "lockNeurons" : {
+        "title" : "Immobilisez vos neurones",
+        "description" : "Un ou plusieurs de vos neurones ne sont pas immobilisés. Si vous ne les immobilisez pas, vous ne pouvez pas recevoir de récompense. Les neurones génèrent des récompenses en participant à la gouvernance d’ICP, et seuls les neurones immobilisés pendant plus de six mois peuvent voter.",
+        "cta" : "Gérer mes neurones"
+      },
+      "addFollowees" : {
+        "title" : "Ajoutez des neurones à suivre",
+        "description" : "Un ou plusieurs de vos neurones ne suivent aucun neurone. Si vous ne suivez aucun neurone, vous pourriez ne pas obtenir de récompense. Pour générer des récompenses, les neurones doivent voter directement (par exemple, avec la dApp NNS) ou suivre des neurones qui le font.",
+        "cta" : "Gérer mes neurones"
+      },
+      "stakeICP" : {
+        "title" : "Stakez vos ICP",
+        "description" : "Stakez des ICP et recevez des récompenses en participant à la gouvernance du réseau.",
+        "cta" : "Staker mes ICP"
+      }
+    },
+    "headerManageActions" : {
+      "stakeICP" : {
+        "title" : "Stakez vos ICP",
+        "tooltip" : "Créer des neurones pour staker des ICP."
+      },
+      "manageNeurons" : {
+        "title" : "Gérez vos neurones",
+        "tooltip" : "Gérer les neurones actifs."
+      }
+    },
+    "summaryFooter" : {
+      "stakedBalanceTooltip" : "Montant total des tokens ICP actuellement stakés dans des neurones. Les ICP mis en staking génèrent des récompenses de vote et permettent de participer à la gouvernance du réseau.",
+      "totalMaturityTooltip" : "Le total des récompenses générées par le staking, incluant à la fois les récompenses (\"maturity\") stakées et liquides. Vous pouvez soit restaker ces récompenses, soit les récupérer sous forme d’ICP liquides.",
+      "totalMaturity" : "Maturité totale",
+      "stakedBalance" : "Solde de staking",
+      "stakedMaturity" : "Maturité stakée",
+      "stakedMaturityTooltip" : "La part de vos récompenses de maturité automatiquement restakées dans des neurones, qui continuent à générer de nouvelles récompenses.",
+      "liquidMaturity" : "Maturité liquide",
+      "liquidMaturityTooltip" : "La part des récompenses de maturité que vous pouvez demander sous la forme de tokens ICP liquides ou que vous pouvez staker dans des neurones."
+    },
+    "confirmation" : {
+      "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer.",
+      "success" : "{{action}} réussi(e)",
+      "syncAccounts" : "Veuillez synchroniser vos comptes pour afficher les mises à jour."
+    },
+    "sync" : "Synchroniser",
+    "lastSynced" : "Dernière synchronisation",
+    "listNeurons" : {
+      "timeUntilRewardLoss" : "Temps restant avant la perte des récompenses",
+      "warnbox" : "Aucun neurone trouvé. Essayez de synchroniser les neurones créés via la dApp NNS ou stakez pour créer de nouveaux neurones."
+    },
+    "common" : {
+      "confirmation" : "Confirmation",
+      "connectDevice" : {
+        "title" : "Appareil"
+      },
+      "neuronId" : "Identifiant du neurone",
+      "neuronIds" : "Identifiants des neurones",
+      "state" : "Statut",
+      "action" : "Action",
+      "balance" : "Solde",
+      "maturity" : "Maturité",
+      "currentBalance" : "Solde actuel",
+      "amount" : "Montant",
+      "stake" : "Stake",
+      "followees" : "Neurones suivis",
+      "votingPower" : "Droit de vote",
+      "hotkey" : "Hotkey",
+      "neuron" : "Neurone",
+      "neurons" : "Neurones",
+      "disburse" : "Obtenir",
+      "startDissolving" : "Lancer la dissolution",
+      "stopDissolving" : "Arrêter la dissolution",
+      "dissolveDelay" : "Délai de dissolution",
+      "dissolveState" : "Statut de la dissolution",
+      "dissolveStateUnlocked" : "Dégelé",
+      "dissolveStateLocked" : "Immobilisé",
+      "dissolveStateDissolving" : "Dissolution en cours",
+      "dissolveStateDissolved" : "Dissous",
+      "inactiveNeuron" : "Neurone inactif",
+      "activeNeuron" : "Neurone actif",
+      "confirmFollowing" : "Confirmer le suivi"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "Rafraîchir le droit de vote"
+    },
+    "manageNeuronFlow" : {
+      "title" : "Gérer les neurones",
+      "manageAction" : {
+        "title" : "Gérer l’action du neurone"
+      },
+      "stakeMaturity" : {
+        "title" : "Stakez vos récompenses de maturité",
+        "description" : "Choisissez la part de récompenses de maturité disponibles à staker dans ce neurone.",
+        "confirmStake" : "Confirmer le staking",
+        "maturityAvailable" : "Maturité disponible"
+      },
+      "splitNeuron" : {
+        "title" : "Diviser le neurone",
+        "transactionFee" : "Frais de transaction",
+        "confirmSplit" : "Confirmer la division"
+      },
+      "setDissolveDelay" : {
+        "title" : "Définir le délai de dissolution",
+        "balance" : "Solde",
+        "dissolveDelay" : "Délai de dissolution",
+        "dissolveDelayTooltip" : "Le délai de dissolution est la durée minimale à attendre pour que le neurone soit dégelé et que les ICP soient à nouveau disponibles. Remarque : le délai de dissolution ne diminue que lorsque le neurone est en cours de dissolution.",
+        "votingPowerDescription" : "Seuls les neurones avec un délai de dissolution d’au moins six mois peuvent obtenir un pouvoir de vote.",
+        "dissolveDelayInput" : "Délai de dissolution (jours)",
+        "inputPlaceholder" : "Saisir le délai de dissolution",
+        "updateDelay" : "Actualiser le délai"
+      },
+      "selectFollowees" : {
+        "title" : "Identifiant du neurone suivi",
+        "altTitle" : "Sélectionner les neurones à suivre",
+        "placeholder" : "Saisir l’identifiant du neurone",
+        "options" : "Options de suivi"
+      },
+      "selectTopics" : {
+        "title" : "Sélection des sujets à suivre",
+        "warnbox" : "Suivez des neurones pour automatiser vos votes et recevoir le plus de récompenses de vote possible. Vous pouvez suivre des neurones sur des thématiques spécifiques ou sur l’ensemble des sujets.",
+        "listOfTopics" : "Liste des sujets disponibles à suivre",
+        "addAction" : "Ajouter des neurones à suivre"
+      },
+      "addHotKey" : {
+        "title" : "Ajouter une hotkey"
+      },
+      "manage" : {
+        "title" : "Gérer le neurone",
+        "header" : {
+          "hotkeyControlDescription" : "Ce neurone est géré par une hotkey, ce qui limite son contrôle à partir de Ledger Live.",
+          "hotkeyControl" : "Contrôle de la hotkey",
+          "votingPower" : "Pouvoir de vote",
+          "noVotingPower" : "Aucun pouvoir de vote"
+        },
+        "votingPower" : {
+          "title" : "Pouvoir de vote",
+          "titleTooltip" : "Le délai de dissolution doit être d’au moins 6 mois pour que le neurone ait un droit de vote.",
+          "value" : "Valeur",
+          "staked" : "ICP stakés",
+          "increaseStake" : "Augmenter le montant staké",
+          "ageBonus" : "Bonus d’ancienneté",
+          "ageBonusTooltip" : "Votre neurone peut être immobilisé, dégelé ou en cours de dissolution. Lorsqu’il est immobilisé, le neurone accumule un bonus d’ancienneté, tandis que son délai de dissolution reste constant. Lorsqu’un neurone entre en dissolution, son bonus est à 0, mais son délai de dissolution commence à diminuer progressivement. Une fois le délai de dissolution arrivé à 0, le neurone est dégelé et les ICP qu’il contient peuvent être envoyés vers n’importe quel compte ICP.",
+          "dissolveDelayBonus" : "Bonus de délai de dissolution",
+          "dissolveDelayBonusTooltip" : "Le bonus de délai de dissolution est un bonus ajouté au pouvoir de vote du neurone en fonction de la durée de son délai de dissolution. Plus la durée est longue, plus le bonus est élevé.",
+          "confirmFollowing" : "Confirmer le suivi",
+          "confirmFollowingTooltip" : "Les neurones ICP inactifs depuis 6 mois ne génèrent plus de récompenses de vote. Pour ne pas perdre vos récompenses, votez manuellement, modifiez ou confirmez vos suivis."
+        },
+        "maturity" : {
+          "title" : "Maturité",
+          "description" : "Obtenez des récompenses en participant aux votes sur les propositions et/ou en suivant des neurones actifs.",
+          "staked" : "Staké",
+          "stakedTooltip" : "Les récompenses de maturité stakées contribuent au droit de vote du neurone. En revanche, vous ne pouvez pas les utiliser pour créer un nouveau neurone.",
+          "available" : "Disponible",
+          "availableTooltip" : "Les récompenses de maturité peuvent être stakées ou utilisées pour créer un nouveau neurone contenant un certain montant d’ICP. Le montant obtenu fait l’objet d’un processus non déterministe, appelé modulation de la maturité.",
+          "stakeAction" : "Staker",
+          "spawnNeuronAction" : "Créer un neurone"
+        },
+        "hotKeys" : {
+          "title" : "Hotkeys",
+          "description" : "Les hotkeys vous permettent de contrôler votre neurone via Ledger Live.",
+          "addHotKey" : "Ajouter une hotkey",
+          "removeAction" : "Supprimer",
+          "noHotKeys" : "Aucune hotkey trouvée"
+        },
+        "advancedDetails" : {
+          "title" : "Informations et paramètres avancés",
+          "dateCreated" : "Date de création",
+          "dissolveDate" : "Date de dissolution",
+          "neuronAccount" : "Compte du neurone",
+          "splitNeuronAction" : "Diviser le neurone",
+          "autoStakeMaturityAction" : "Staking automatique de maturité"
+        },
+        "following" : {
+          "title" : "Suivi",
+          "description" : "Le suivi vous permet de déléguer vos votes à un autre neurone. La délégation de vos droits de vote ne vous empêche pas de générer des récompenses. Vous pouvez modifier le suivi à tout moment.",
+          "warnbox" : "Si vous ne suivez aucun neurone, vous pourriez ne pas obtenir de récompense. Pour générer des récompenses, les neurones doivent voter directement (par exemple, avec la dApp NNS) ou suivre des neurones qui le font.",
+          "followNeuronsAction" : "Suivre des neurones"
+        }
+      },
+      "listNeuron" : {
+        "title" : "Sélectionner le neurone",
+        "warnbox" : "Sélectionnez un neurone dans la liste ci-dessous pour gérer les paramètres relatifs au staking, à la maturité et au délai de dissolution."
+      }
+    },
+    "manageNeuron" : {
+      "actions" : {
+        "increase_stake" : "Augmentation du montant staké",
+        "create_neuron" : "Création du neurone",
+        "start_dissolving" : "Lancement de la dissolution",
+        "stop_dissolving" : "Arrêt de la dissolution",
+        "list_neurons" : "Création de la liste de neurones",
+        "disburse" : "Obtenir les récompenses",
+        "spawn_neuron" : "Création d’un nouveau neurone",
+        "add_hot_key" : "Ajout d’une hotkey",
+        "stake_maturity" : "Staking de la maturité",
+        "refresh_voting_power" : "Actualisation des droits de vote",
+        "increase_dissolve_delay" : "Augmentation du délai de dissolution",
+        "auto_stake_maturity" : "Staking automatique de maturité",
+        "spawn_neuron_from_maturity" : "Création d’un nouveau neurone avec de la maturité",
+        "set_auto_stake_maturity" : "Définir le staking automatique de maturité",
+        "set_dissolve_delay" : "Définition du délai le dissolution",
+        "remove_hot_key" : "Suppression de la hotkey",
+        "follow" : "Suivi de neurones",
+        "split_neuron" : "Division de neurone"
+      },
+      "followTopic" : {
+        "0" : {
+          "title" : "Tout sauf la Gouvernance et les SNS & Neurons’ Fund",
+          "description" : "Suivez des neurones sur toutes les propositions, à l’exception de la Gouvernance et des SNS & Neurons’ Fund."
+        },
+        "1" : {
+          "title" : "Gestion des neurones",
+          "description" : ""
+        },
+        "2" : {
+          "title" : "Taux de change",
+          "description" : "Toutes les propositions qui fournissent des informations en temps réel sur la valeur de l’ICP, mesurée en droits de tirage spéciaux (DTS) du FMI, afin que le NNS puisse convertir l’ICP en cycles à un taux maintenant un coût réel constant pour la puissance de calcul."
+        },
+        "3" : {
+          "title" : "Économie du réseau",
+          "description" : "Propositions qui régissent l’économie du réseau, par exemple pour déterminer les récompenses à verser aux opérateurs de nœuds."
+        },
+        "4" : {
+          "title" : "Gouvernance",
+          "description" : "Toutes les propositions liées à la gouvernance, telles que celles visant à neutraliser des canisters malveillants susceptibles de porter atteinte au réseau."
+        },
+        "5" : {
+          "title" : "Administration des nœuds",
+          "description" : "Toutes les propositions relatives à l’administration des nœuds, par exemple pour mettre à niveau ou configurer le système d’exploitation, mettre à niveau ou configurer le cadre afférent aux machines virtuelles, ou mettre à niveau ou configurer le logiciel de réplication des nœuds."
+        },
+        "6" : {
+          "title" : "Gestion des participants",
+          "description" : "Toutes les propositions relatives à l’administration des participants au réseau, par exemple pour accorder ou révoquer des DCID (identifiants centres de données) ou des NOID (identifiants opérateurs de nœuds)."
+        },
+        "7" : {
+          "title" : "Gestion sous-réseaux",
+          "description" : "Toutes les propositions qui gèrent les sous-réseaux du réseau, par exemple la création de nouveaux sous-réseaux, l’ajout ou la suppression de nœuds de sous-réseau, ou encore la division de sous-réseaux."
+        },
+        "8" : {
+          "title" : "Gestion des canisters du protocole",
+          "description" : "Toutes les propositions relatives à la gestion des canisters du protocole, qui sont indispensables au fonctionnement du protocole ICP."
+        },
+        "9" : {
+          "title" : "Vérification",
+          "description" : "Propositions destinées à mettre à jour les données KYC pour se conformer aux exigences réglementaires, notamment lors de la distribution initiale des ICP sous forme de neurones (Genesis)."
+        },
+        "10" : {
+          "title" : "Récompenses des fournisseurs de nœuds",
+          "description" : "Propositions relatives aux récompenses des fournisseurs de nœuds."
+        },
+        "12" : {
+          "title" : "Déploiement de la version OS IC",
+          "description" : "Propositions relatives aux mises à jour de la version réplique d’un sous-réseau."
+        },
+        "13" : {
+          "title" : "Choix de la version OS IC",
+          "description" : "Propositions relatives à la validation et la mise hors service des versions répliques."
+        },
+        "14" : {
+          "title" : "SNS & Neurons’ Fund",
+          "description" : "Propositions relatives au SNS et au Neurons’ Fund."
+        },
+        "15" : {
+          "title" : "Gestion nœuds Boundary API",
+          "description" : "Propositions relatives à la gestion des nœuds Boundary API."
+        },
+        "16" : {
+          "title" : "Location sous-réseaux",
+          "description" : "Toutes les propositions relatives à la location de sous-réseaux, par exemple une demande de location d’un sous-réseau."
+        },
+        "17" : {
+          "title" : "Gestion des canisters du protocole",
+          "description" : "Toutes les propositions relatives à la gestion des canisters du protocole, qui sont indispensables au fonctionnement du protocole ICP."
+        },
+        "18" : {
+          "title" : "Gestion des Service Nervous Systems (SNS)",
+          "description" : "Toutes les propositions relatives à la gestion des canisters des Service Nervous Systems (SNS), notamment la mise à jour des canisters concernés, et la gestion des WASM du cadre SNS via le SNS-W."
+        }
+      }
     }
   }
 }
