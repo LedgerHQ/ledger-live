@@ -56,6 +56,8 @@ export const getAdditionalLayer2Fees = async (
   switch (currency.id) {
     case "optimism":
     case "optimism_sepolia":
+    case "blast":
+    case "blast_sepolia":
     case "base":
     case "base_sepolia": {
       const nodeApi = getNodeApi(currency);
