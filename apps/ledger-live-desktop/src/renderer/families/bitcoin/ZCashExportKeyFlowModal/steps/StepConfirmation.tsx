@@ -21,7 +21,7 @@ const Container = styled(Box).attrs(() => ({
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 
-function StepConfirmation({ t, status, error }: Readonly<StepProps>) {
+function StepConfirmation({ t, error }: Readonly<StepProps>) {
   if (!error) {
     return (
       <Container>
@@ -38,9 +38,7 @@ function StepConfirmation({ t, status, error }: Readonly<StepProps>) {
         />
       </Container>
     );
-  }
-
-  if (error) {
+  } else {
     return (
       <Container>
         <TrackPage
@@ -57,13 +55,12 @@ function StepConfirmation({ t, status, error }: Readonly<StepProps>) {
       </Container>
     );
   }
-  return null;
 }
 
-export function StepConfirmationFooter({ account, onRetry, error, onClose }: Readonly<StepProps>) {
+export function StepConfirmationFooter({ onRetry, error, closeModal }: Readonly<StepProps>) {
   return (
     <Box horizontal alignItems="right">
-      <Button data-testid="modal-close-button" ml={2} onClick={onClose}>
+      <Button data-testid="modal-close-button" ml={2} onClick={closeModal}>
         <Trans i18nKey="common.close" />
       </Button>
       {error ? <RetryButton primary ml={2} onClick={onRetry} /> : null}

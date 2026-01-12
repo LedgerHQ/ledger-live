@@ -6,28 +6,12 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { DisconnectedDevice } from "@ledgerhq/errors";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { Trans } from "react-i18next";
-import styled from "styled-components";
 import useTheme from "~/renderer/hooks/useTheme";
 import Box from "~/renderer/components/Box";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import { StepProps } from "../types";
 import { Text as TextUI, Alert as AlertUI } from "@ledgerhq/react-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-
-const Separator = styled.div`
-  border-top: 1px solid #99999933;
-  margin: 50px 0;
-`;
-const Separator2 = styled.div`
-  border-top: 1px solid #99999933;
-  margin-top: 50px;
-`;
-const QRCodeWrapper = styled.div`
-  border: 24px solid white;
-  height: 208px;
-  width: 208px;
-  background: white;
-`;
 
 const ExportUfvkOnDevice = ({ device }: { device: Device }) => {
   const type = useTheme().theme;
@@ -57,7 +41,8 @@ const ExportUfvkOnDevice = ({ device }: { device: Device }) => {
 };
 
 const StepExport = (props: StepProps) => {
-  const { account, device, isUfvkExported, transitionTo, onUfvkExported } = props;
+  const { account, device, isUfvkExported, transitionTo, onUfvkExported, onUfvkExportError } =
+    props;
 
   const mainAccount = account ? getMainAccount(account) : null;
   invariant(account && mainAccount, "No account given");
@@ -73,14 +58,14 @@ const StepExport = (props: StepProps) => {
           deviceId: device.deviceId,
           verify: true,
         }),
-      ).then(value => {
-        console.log(value);
-      });
+      );
 
-      onUfvkExported(true);
+      onUfvkExported("ufvk");
       transitionTo("confirmation");
-    } catch (error) {}
-  }, [device, mainAccount, transitionTo, onUfvkExported]);
+    } catch (error) {
+      onUfvkExportError(error as Error);
+    }
+  }, [device, mainAccount, transitionTo, onUfvkExported, onUfvkExportError]);
 
   useEffect(() => {
     if (!isUfvkExported) {

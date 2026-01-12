@@ -18,7 +18,7 @@ const Container = styled(Box).attrs(() => ({
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 
-function StepIntro({ t, account }: Readonly<StepProps>) {
+function StepIntro({ account }: Readonly<StepProps>) {
   invariant(account, "account required");
 
   return (
@@ -48,12 +48,12 @@ function StepIntro({ t, account }: Readonly<StepProps>) {
   );
 }
 
-export function StepExportFooter({ account, transitionTo, onClose }: Readonly<StepProps>) {
+export function StepExportFooter({ account, transitionTo, closeModal }: Readonly<StepProps>) {
   invariant(account, "account required");
 
   return (
     <Box horizontal>
-      <Button mr={1} secondary onClick={onClose}>
+      <Button mr={1} secondary onClick={closeModal}>
         <Trans i18nKey="common.cancel" />
       </Button>
       <Button id="export-key-continue-button" primary onClick={() => transitionTo("device")}>

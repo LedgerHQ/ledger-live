@@ -26,6 +26,7 @@ const currencies = [
   { currency: Currency.TON, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" },
   { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
   { currency: Currency.BASE, xrayTicket: "B2CQA-4226, B2CQA-4227, B2CQA-4228" },
+  { currency: Currency.ZEC, xrayTicket: "B2CQA-XXXX" },
 ];
 
 for (const currency of currencies) {

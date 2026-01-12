@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
@@ -74,17 +74,22 @@ const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] 
 
   const showComponent = getFeature("zcashShielded");
 
+  // TODO: BitcoinAccount needs a new prop for private balance and ufvk
+  const { spendableBalance } = account;
+  const privateInfo = account.type === "Account" ? account.privateInfo : null;
+
+  useEffect(() => {
+    if (privateInfo?.key && syncState === "disabled") {
+      setSyncState("running");
+    }
+  }, [privateInfo, syncState]);
+
   if (
     account.type !== "Account" ||
     (account.currency.id as Currency) !== "zcash" ||
     !showComponent?.enabled
   )
     return null;
-
-  // TODO: BitcoinAccount needs a new prop for private balance
-  // const { spendableBalance, privateBalance } = account;
-  const { spendableBalance } = account;
-  const privateBalance = BigNumber(0);
 
   const formatConfig = {
     alwaysShowSign: false,
@@ -94,7 +99,7 @@ const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] 
   };
 
   const _transparentBalance = spendableBalance ?? BigNumber(0);
-  const _privateBalance = privateBalance ?? BigNumber(0);
+  const _privateBalance = privateInfo?.balance ?? BigNumber(0);
   const _availableBalance = _transparentBalance.plus(_privateBalance);
 
   const transparentBalanceLabel = formatCurrencyUnit(unit, _transparentBalance, formatConfig);
@@ -106,12 +111,7 @@ const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] 
       case "disabled":
         // Open modal to import UFVK
         dispatch(openModal("MODAL_ZCASH_EXPORT_KEY", { account }));
-        setSyncState("running");
         break;
-      // case "ready":
-      //   // Open modal to start sync
-      //   setSyncState("running");
-      //   break;
       case "running":
         // Pause block processing task
         setSyncState("paused");

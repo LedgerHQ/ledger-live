@@ -15,9 +15,11 @@ export type StepProps = {
   error: Error | undefined;
   transitionTo: (a: string) => void;
   onRetry: () => void;
+  onClose: () => void;
   openModal: OpenModal;
   closeModal: () => void;
-  onUfvkExported: (b?: boolean | null, e?: Error | null) => void;
+  onUfvkExported: (key: string) => void;
+  onUfvkExportError: (e: Error) => void;
 };
 
-export type St = Step<StepId, StepProps>;
+export type StepperProps = Step<StepId, StepProps>;

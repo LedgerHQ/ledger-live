@@ -51,6 +51,7 @@ import {
 import { withDeviceController } from "./deviceInteraction/DeviceController";
 import { sanitizeError } from ".";
 import { sendVechain } from "./families/vechain";
+import { sendBTCBasedCoin as sendZcash } from "./families/bitcoin";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -364,6 +365,14 @@ export const specs: Specs = {
       appName: "Vechain",
     },
     dependencies: [],
+  },
+  Zcash: {
+    currency: getCryptoCurrencyById("zcash"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Zcash",
+    },
+    dependency: "",
   },
 };
 
@@ -909,6 +918,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.VET.id:
       await sendVechain(tx);
+      break;
+    case Currency.ZEC.id:
+      await sendZcash(tx);
       break;
     default:
       throw new Error(`Unsupported currency: ${tx.accountToDebit.currency.ticker}`);

@@ -33,9 +33,11 @@ const ExportKeyModal = () => {
     setState(currentState => ({ ...currentState, stepId }));
 
   const onHandleUfvkExported = (isUfvkExported: boolean, error?: Error | undefined | null) => {
+    // Change error name in the future to "UserRefusdUfvkExport"
     if (error && error.name !== "UserRefusedAddress") {
       logger.critical(error);
     }
+
     setIsUfvkExported(isUfvkExported);
     setExportError(error);
   };
@@ -55,9 +57,9 @@ const ExportKeyModal = () => {
           stepId={stepId}
           isUfvkExported={state.isUfvkExported}
           ufvkExportError={state.ufvkExportError}
-          onClose={onClose}
           onChangeStepId={onHandleStepChange}
-          onChangeUfvkExported={onHandleUfvkExported}
+          onUfvkExported={onHandleUfvkExported}
+          onClose={onClose}
           params={data ?? {}}
         />
       )}
