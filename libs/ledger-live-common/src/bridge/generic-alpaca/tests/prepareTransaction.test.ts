@@ -12,6 +12,7 @@ jest.mock("../alpaca", () => ({
 
 jest.mock("../utils", () => ({
   transactionToIntent: jest.fn(),
+  extractBalances: jest.fn(),
 }));
 
 describe("genericPrepareTransaction", () => {
