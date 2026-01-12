@@ -57738,6 +57738,7 @@ async function downloadMetafilesFromArtifact(githubToken, url, type = "desktop")
       "Content-Type": "application/json"
     }
   });
+  core.info("Metafiles downloaded, extracting...");
   const blob = await res.blob();
   const stream = import_stream.Readable.fromWeb(blob.stream());
   return type === "desktop" ? zipStreamToDesktopMetafiles(stream) : zipStreamToMobileMetafiles(stream);
@@ -57747,6 +57748,7 @@ function zipStreamToDesktopMetafiles(stream) {
   return new Promise((resolve, reject) => {
     stream.pipe((0, import_unzipper.Parse)()).on("entry", (entry) => {
       const fileName = entry.path;
+      core.info("Begin parsing file: " + fileName);
       if (fileName.includes("metafile")) {
         entry.pipe((0, import_stream_json.parser)()).pipe((0, import_StreamValues.streamValues)()).on(
           "data",

@@ -130,6 +130,7 @@ export async function downloadMetafilesFromArtifact(
       "Content-Type": "application/json",
     },
   });
+  core.info("Metafiles downloaded, extracting...");
   const blob = await res.blob();
   const stream = Readable.fromWeb(blob.stream());
   return type === "desktop"
@@ -144,6 +145,7 @@ function zipStreamToDesktopMetafiles(stream: Readable): Promise<DesktopMetafiles
       .pipe(Parse())
       .on("entry", entry => {
         const fileName = entry.path;
+        core.info("Begin parsing file: " + fileName);
         if (fileName.includes("metafile")) {
           entry
             .pipe(parser())
