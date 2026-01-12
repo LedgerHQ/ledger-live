@@ -586,7 +586,7 @@ export const handlers = ({
         // tx.amount should be BigNumber
         tx.amount = new BigNumber(tx.amount);
 
-        return new Promise((resolve, reject) =>
+        return await new Promise((resolve, reject) =>
           uiSwap({
             exchangeParams: {
               exchangeType: ExchangeType.SWAP,
@@ -631,18 +631,21 @@ export const handlers = ({
               resolve({ operationHash, swapId });
             },
             onCancel: error => {
+              const rawErrorName = getErrorName(error);
+              const rawErrorMessage = getErrorMessage(error);
+
               const completeExchangeError =
                 // step provided in libs/ledger-live-common/src/exchange/platform/transfer/completeExchange.ts
                 error instanceof CompleteExchangeError
                   ? error
-                  : new CompleteExchangeError("INIT", getErrorMessage(error));
+                  : new CompleteExchangeError("INIT", rawErrorName, rawErrorMessage);
 
               postSwapCancelled({
                 provider: provider,
                 swapId: swapId,
                 swapStep: getSwapStepFromError(completeExchangeError),
-                statusCode: completeExchangeError.name,
-                errorMessage: completeExchangeError.message,
+                statusCode: completeExchangeError.title || completeExchangeError.name,
+                errorMessage: completeExchangeError.message || rawErrorMessage,
                 sourceCurrencyId: fromCurrency.id,
                 targetCurrencyId: toCurrency?.id,
                 hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
