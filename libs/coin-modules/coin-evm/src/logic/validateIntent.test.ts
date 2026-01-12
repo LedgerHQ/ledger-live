@@ -83,7 +83,6 @@ describe("validateIntent", () => {
       lastNftOperations: [],
       lastTokenOperations: [],
     });
-    jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(50));
     jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
       slow: {
         maxFeePerGas: null,
@@ -124,6 +123,7 @@ describe("validateIntent", () => {
       const res = await validateIntent(
         {} as CryptoCurrency,
         eip1559Intent({ amount: 1n, asset: { type: assetType } }),
+        [{ value: 50n, asset: { type: "native" } }],
         {
           value: 2n,
           parameters: { gasLimit: 2n, maxFeePerGas: 1n },
@@ -139,6 +139,7 @@ describe("validateIntent", () => {
       const res = await validateIntent(
         {} as CryptoCurrency,
         eip1559Intent({ amount: 1n, recipient: "" }),
+        [{ value: 50n, asset: { type: "native" } }],
       );
 
       expect(res.errors).toEqual(
@@ -152,6 +153,7 @@ describe("validateIntent", () => {
       const res = await validateIntent(
         { name: "Ethereum" } as CryptoCurrency,
         eip1559Intent({ amount: 1n, recipient: "invalid-address" }),
+        [{ value: 50n, asset: { type: "native" } }],
       );
 
       expect(res.errors).toEqual(
@@ -170,6 +172,7 @@ describe("validateIntent", () => {
           amount: 1n,
           recipient: "XE89MW3Y75UITCQ4F53YDKR25UFLB1640YM", // ICAP version of recipient address
         }),
+        [{ value: 50n, asset: { type: "native" } }],
       );
       expect(res.errors).toEqual(
         expect.objectContaining({
@@ -187,6 +190,7 @@ describe("validateIntent", () => {
           amount: 1n,
           recipient: "0xe2ca7390e76c5a992749bb622087310d2e63ca29",
         }),
+        [{ value: 50n, asset: { type: "native" } }],
       );
 
       expect(res.warnings).toEqual(
@@ -206,6 +210,7 @@ describe("validateIntent", () => {
           asset: { type: "native" },
           data: { type: "buffer", value: Buffer.from([0xca, 0xfe]) },
         }),
+        [{ value: 50n, asset: { type: "native" } }],
       );
 
       expect(res.errors).toEqual(
@@ -222,6 +227,7 @@ describe("validateIntent", () => {
           amount: 0n,
           asset: { type: "native" },
         }),
+        [{ value: 50n, asset: { type: "native" } }],
       );
 
       expect(res.errors).toEqual(
@@ -241,6 +247,7 @@ describe("validateIntent", () => {
           amount: 0n,
           asset: { type: "erc20" },
         }),
+        [{ value: 50n, asset: { type: "native" } }],
       );
 
       expect(res.errors).toEqual(
@@ -251,13 +258,13 @@ describe("validateIntent", () => {
     });
 
     it("detects native asset sending intent with an error", async () => {
-      jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(10));
       const res = await validateIntent(
         {} as CryptoCurrency,
         eip1559Intent({
           amount: 20n,
           asset: { type: "native" },
         }),
+        [{ value: 10n, asset: { type: "native" } }],
       );
 
       expect(res.errors).toEqual(
@@ -277,9 +284,6 @@ describe("validateIntent", () => {
           { contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" } as Operation,
         ],
       });
-      const getTokenBalance = jest
-        .spyOn(ledgerNode, "getTokenBalance")
-        .mockResolvedValue(new BigNumber(10));
 
       const res = await validateIntent(
         {} as CryptoCurrency,
@@ -289,17 +293,19 @@ describe("validateIntent", () => {
           amount: 20n,
           asset: { type: "erc20", assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" },
         }),
+        [
+          { value: 50n, asset: { type: "native" } },
+          {
+            value: 10n,
+            asset: { type: "erc20", assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" },
+          },
+        ],
       );
 
       expect(res.errors).toEqual(
         expect.objectContaining({
           amount: new NotEnoughBalance(),
         }),
-      );
-      expect(getTokenBalance).toHaveBeenCalledWith(
-        {},
-        "sender-address",
-        "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       );
     });
   });
@@ -311,7 +317,12 @@ describe("validateIntent", () => {
         ["an eip1559 intent", eip1559Intent],
       ])("for %s", (_s, createIntent) => {
         it("detects missing fees with an error", async () => {
-          const res = await validateIntent({} as CryptoCurrency, createIntent({}), { value: 0n });
+          const res = await validateIntent(
+            {} as CryptoCurrency,
+            createIntent({}),
+            [{ value: 50n, asset: { type: "native" } }],
+            { value: 0n },
+          );
 
           expect(res.errors).toEqual(
             expect.objectContaining({
@@ -321,10 +332,15 @@ describe("validateIntent", () => {
         });
 
         it("detects a missing gasLimit with an error", async () => {
-          const res = await validateIntent({} as CryptoCurrency, createIntent({}), {
-            value: 0n,
-            parameters: { gasLimit: undefined },
-          });
+          const res = await validateIntent(
+            {} as CryptoCurrency,
+            createIntent({}),
+            [{ value: 50n, asset: { type: "native" } }],
+            {
+              value: 0n,
+              parameters: { gasLimit: undefined },
+            },
+          );
 
           expect(res.errors).toEqual(
             expect.objectContaining({
@@ -334,10 +350,15 @@ describe("validateIntent", () => {
         });
 
         it("detects a gasLimit = 0 with an error", async () => {
-          const res = await validateIntent({} as CryptoCurrency, createIntent({}), {
-            value: 0n,
-            parameters: { gasLimit: 0n },
-          });
+          const res = await validateIntent(
+            {} as CryptoCurrency,
+            createIntent({}),
+            [{ value: 50n, asset: { type: "native" } }],
+            {
+              value: 0n,
+              parameters: { gasLimit: 0n },
+            },
+          );
 
           expect(res.errors).toEqual(
             expect.objectContaining({
@@ -347,10 +368,15 @@ describe("validateIntent", () => {
         });
 
         it("detects a customGasLimit = 0 with an error", async () => {
-          const res = await validateIntent({} as CryptoCurrency, createIntent({}), {
-            value: 0n,
-            parameters: { customGasLimit: 0n },
-          });
+          const res = await validateIntent(
+            {} as CryptoCurrency,
+            createIntent({}),
+            [{ value: 50n, asset: { type: "native" } }],
+            {
+              value: 0n,
+              parameters: { customGasLimit: 0n },
+            },
+          );
 
           expect(res.errors).toEqual(
             expect.objectContaining({
@@ -360,11 +386,10 @@ describe("validateIntent", () => {
         });
 
         it("if the recipient has been set, detects fees being too high for the account balance with an error", async () => {
-          jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(10));
-
           const notEnoughBalanceRes = await validateIntent(
             { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
             createIntent({ recipient: "recipient-address" }),
+            [{ value: 10n, asset: { type: "native" } }],
             {
               value: 11n,
               parameters: {
@@ -378,6 +403,7 @@ describe("validateIntent", () => {
           const notEnoughBalanceSponsoredRes = await validateIntent(
             { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
             createIntent({ recipient: "recipient-address", sponsored: true }),
+            [{ value: 10n, asset: { type: "native" } }],
             {
               value: 11n,
               parameters: {
@@ -391,6 +417,7 @@ describe("validateIntent", () => {
           const enoughBalanceRes = await validateIntent(
             { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
             createIntent({ recipient: "recipient-address" }),
+            [{ value: 10n, asset: { type: "native" } }],
             {
               value: 9n,
               parameters: {
@@ -420,11 +447,10 @@ describe("validateIntent", () => {
         });
 
         it("if the recipient has not been set, does not detect gas being too high", async () => {
-          jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(10));
-
           const notEnoughBalanceRes = await validateIntent(
             { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
             createIntent({ recipient: "" }),
+            [{ value: 10n, asset: { type: "native" } }],
             {
               value: 11n,
               parameters: { gasPrice: 1n, maxFeePerGas: 1n, maxPriorityFeePerGas: 1n },
@@ -433,6 +459,7 @@ describe("validateIntent", () => {
           const enoughBalanceRes = await validateIntent(
             { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
             createIntent({ recipient: "" }),
+            [{ value: 10n, asset: { type: "native" } }],
             {
               value: 9n,
               parameters: { gasPrice: 1n, maxFeePerGas: 1n, maxPriorityFeePerGas: 1n },
@@ -452,10 +479,15 @@ describe("validateIntent", () => {
         });
 
         it("detects gas limit being too low in a tx with an error", async () => {
-          const res = await validateIntent({} as CryptoCurrency, createIntent({}), {
-            value: 0n,
-            parameters: { gasLimit: 20000n }, // min should be 21000
-          });
+          const res = await validateIntent(
+            {} as CryptoCurrency,
+            createIntent({}),
+            [{ value: 50n, asset: { type: "native" } }],
+            {
+              value: 0n,
+              parameters: { gasLimit: 20000n }, // min should be 21000
+            },
+          );
 
           expect(res.errors).toEqual(
             expect.objectContaining({
@@ -465,10 +497,15 @@ describe("validateIntent", () => {
         });
 
         it("detects custom gas limit being too low in a tx with an error", async () => {
-          const res = await validateIntent({} as CryptoCurrency, createIntent({}), {
-            value: 0n,
-            parameters: { customGasLimit: 20000n }, // min should be 21000
-          });
+          const res = await validateIntent(
+            {} as CryptoCurrency,
+            createIntent({}),
+            [{ value: 50n, asset: { type: "native" } }],
+            {
+              value: 0n,
+              parameters: { customGasLimit: 20000n }, // min should be 21000
+            },
+          );
 
           expect(res.errors).toEqual(
             expect.objectContaining({
@@ -478,13 +515,18 @@ describe("validateIntent", () => {
         });
 
         it("detects customGasLimit being lower than gasLimit with a warning", async () => {
-          const res = await validateIntent({} as CryptoCurrency, createIntent({}), {
-            value: 0n,
-            parameters: {
-              gasLimit: 22000n,
-              customGasLimit: 21000n,
+          const res = await validateIntent(
+            {} as CryptoCurrency,
+            createIntent({}),
+            [{ value: 50n, asset: { type: "native" } }],
+            {
+              value: 0n,
+              parameters: {
+                gasLimit: 22000n,
+                customGasLimit: 21000n,
+              },
             },
-          });
+          );
 
           expect(res.warnings).toEqual(
             expect.objectContaining({
@@ -497,10 +539,15 @@ describe("validateIntent", () => {
 
     describe("eip1559 specific", () => {
       it("detects a maxPriorityFeePerGas = 0 with an error", async () => {
-        const res = await validateIntent({} as CryptoCurrency, eip1559Intent({}), {
-          value: 0n,
-          parameters: { maxPriorityFeePerGas: 0n, maxFeePerGas: 2n },
-        });
+        const res = await validateIntent(
+          {} as CryptoCurrency,
+          eip1559Intent({}),
+          [{ value: 50n, asset: { type: "native" } }],
+          {
+            value: 0n,
+            parameters: { maxPriorityFeePerGas: 0n, maxFeePerGas: 2n },
+          },
+        );
 
         expect(res.errors).toEqual(
           expect.objectContaining({
@@ -510,10 +557,15 @@ describe("validateIntent", () => {
       });
 
       it("detects maxFeePerGas being greater than max gasOptions maxFeePerGas with an error", async () => {
-        const res = await validateIntent({} as CryptoCurrency, eip1559Intent({}), {
-          value: 0n,
-          parameters: { maxPriorityFeePerGas: 6n, maxFeePerGas: 5n },
-        });
+        const res = await validateIntent(
+          {} as CryptoCurrency,
+          eip1559Intent({}),
+          [{ value: 50n, asset: { type: "native" } }],
+          {
+            value: 0n,
+            parameters: { maxPriorityFeePerGas: 6n, maxFeePerGas: 5n },
+          },
+        );
 
         expect(res.errors).toEqual(
           expect.objectContaining({
@@ -544,10 +596,15 @@ describe("validateIntent", () => {
           },
         });
 
-        const res = await validateIntent({} as CryptoCurrency, eip1559Intent({}), {
-          value: 0n,
-          parameters: { maxPriorityFeePerGas: 4n, maxFeePerGas: 5n },
-        });
+        const res = await validateIntent(
+          {} as CryptoCurrency,
+          eip1559Intent({}),
+          [{ value: 50n, asset: { type: "native" } }],
+          {
+            value: 0n,
+            parameters: { maxPriorityFeePerGas: 4n, maxFeePerGas: 5n },
+          },
+        );
 
         expect(res.warnings).toEqual(
           expect.objectContaining({
@@ -578,10 +635,15 @@ describe("validateIntent", () => {
           },
         });
 
-        const res = await validateIntent({} as CryptoCurrency, eip1559Intent({}), {
-          value: 0n,
-          parameters: { maxPriorityFeePerGas: 1n, maxFeePerGas: 5n },
-        });
+        const res = await validateIntent(
+          {} as CryptoCurrency,
+          eip1559Intent({}),
+          [{ value: 50n, asset: { type: "native" } }],
+          {
+            value: 0n,
+            parameters: { maxPriorityFeePerGas: 1n, maxFeePerGas: 5n },
+          },
+        );
 
         expect(res.warnings).toEqual(
           expect.objectContaining({
@@ -612,10 +674,15 @@ describe("validateIntent", () => {
           },
         });
 
-        const res = await validateIntent({} as CryptoCurrency, eip1559Intent({}), {
-          value: 0n,
-          parameters: { maxPriorityFeePerGas: 1n, maxFeePerGas: 5n },
-        });
+        const res = await validateIntent(
+          {} as CryptoCurrency,
+          eip1559Intent({}),
+          [{ value: 50n, asset: { type: "native" } }],
+          {
+            value: 0n,
+            parameters: { maxPriorityFeePerGas: 1n, maxFeePerGas: 5n },
+          },
+        );
 
         expect(res.warnings).toEqual(
           expect.objectContaining({
@@ -699,8 +766,6 @@ describe("validateIntent", () => {
           lastNftOperations: [],
           lastTokenOperations: [{ contract: "contract-address" } as Operation],
         });
-        jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(20000000));
-        jest.spyOn(ledgerNode, "getTokenBalance").mockResolvedValue(new BigNumber(10));
 
         const res = await validateIntent(
           {} as CryptoCurrency,
@@ -709,6 +774,10 @@ describe("validateIntent", () => {
             recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
             asset,
           }),
+          [
+            { value: 20000000n, asset: { type: "native" } },
+            { value: 10n, asset: { type: "erc20", assetReference: "contract-address" } },
+          ],
           {
             value: 105000n,
             parameters: { gasLimit: 21000n, gasPrice: 5n, ...additionalFees },
@@ -732,8 +801,6 @@ describe("validateIntent", () => {
           lastNftOperations: [],
           lastTokenOperations: [{ contract: "contract-address" } as Operation],
         });
-        jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(20000000));
-        jest.spyOn(ledgerNode, "getTokenBalance").mockResolvedValue(new BigNumber(10));
         jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
           slow: {
             maxFeePerGas: null,
@@ -762,6 +829,10 @@ describe("validateIntent", () => {
             recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
             asset,
           }),
+          [
+            { value: 20000000n, asset: { type: "native" } },
+            { value: 10n, asset: { type: "erc20", assetReference: "contract-address" } },
+          ],
           {
             value: 105000n,
             parameters: {
@@ -790,8 +861,6 @@ describe("validateIntent", () => {
           lastNftOperations: [],
           lastTokenOperations: [{ contract: "contract-address" } as Operation],
         });
-        jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(20000000));
-        jest.spyOn(ledgerNode, "getTokenBalance").mockResolvedValue(new BigNumber(10));
         const getGasOptions = jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
           slow: {
             maxFeePerGas: null,
@@ -820,6 +889,10 @@ describe("validateIntent", () => {
             recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
             asset,
           }),
+          [
+            { value: 20000000n, asset: { type: "native" } },
+            { value: 10n, asset: { type: "erc20", assetReference: "contract-address" } },
+          ],
           {
             value: 105000n,
             parameters: {
@@ -877,6 +950,10 @@ describe("validateIntent", () => {
             amount: 2n,
             recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
           }),
+          [
+            { value: 20000000n, asset: { type: "native" } },
+            { value: 10n, asset: { type: "erc20", assetReference: "contract-address" } },
+          ],
           estimation,
         ),
       ).toMatchObject({ amount: 2n, estimatedFees: 15n, totalSpent: 17n });

@@ -30,7 +30,6 @@ import { isNative, TransactionTypes } from "../types";
 import { DEFAULT_GAS_LIMIT, isEthAddress } from "../utils";
 import { getGasTracker } from "../network/gasTracker";
 import estimateFees from "./estimateFees";
-import getBalance from "./getBalance";
 import {
   getTransactionType,
   isApiGasOptions,
@@ -281,12 +280,12 @@ function refreshEstimationValue(
 export async function validateIntent(
   currency: CryptoCurrency,
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
+  balances: Balance[],
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
   const estimatedFees = customFees?.parameters
     ? { ...customFees, value: refreshEstimationValue(intent, customFees.parameters) }
     : await estimateFees(currency, intent);
-  const balances = await getBalance(currency, intent.sender);
   const balance = findBalance(intent.asset, balances);
   const amount = computeAmount(intent, estimatedFees, balance);
   const additionalFees =

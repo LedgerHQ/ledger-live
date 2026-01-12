@@ -2,7 +2,7 @@ import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
-import { buildOptimisticOperation, transactionToIntent } from "./utils";
+import { buildOptimisticOperation, extractBalances, transactionToIntent } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/coin-framework/derivation";
 import { MapMemo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
@@ -116,6 +116,7 @@ export const genericSignOperation =
           // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22227
           const { amount } = await alpacaApi.validateIntent(
             transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
+            extractBalances(account, alpacaApi.getAssetFromToken),
             { value: fees, parameters: feesParameters },
           );
           transaction.amount = new BigNumber(amount.toString());
