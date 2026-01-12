@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { openModal } from "~/renderer/actions/modals";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { useStake } from "LLD/hooks/useStake";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import IconCoins from "~/renderer/icons/Coins";
@@ -17,7 +17,7 @@ type Props = {
 
 const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const label = useGetStakeLabelLocaleBased();
   const walletState = useSelector(walletSelector);
   const { getRouteToPlatformApp } = useStake();
@@ -33,8 +33,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     (yieldId: string) => {
       const value = "/platform/stakekit";
 
-      history.push({
-        pathname: value,
+      navigate(value, {
         state: {
           yieldId,
           accountId: account.id,
@@ -42,7 +41,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         },
       });
     },
-    [account.id, history],
+    [account.id, navigate],
   );
 
   const onClickStakeModal = useCallback(() => {
@@ -61,7 +60,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
 
     if (route) {
       // Redirect to platform app (earn, stakekit, etc.)
-      history.push(route);
+      navigate(route);
     } else if (account.type === "Account") {
       // Fallback: open existing modal if no platform app available
       dispatch(
@@ -70,7 +69,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         }),
       );
     }
-  }, [account, dispatch, parentAccount, getRouteToPlatformApp, walletState, history]);
+  }, [account, dispatch, parentAccount, getRouteToPlatformApp, walletState, navigate]);
 
   const getStakeAction = useCallback(() => {
     if (isEthereumAccount) {

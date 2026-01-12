@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Switch, Route, useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
@@ -58,9 +58,8 @@ const getItems = (t: (a: string) => string, devMode?: boolean) => {
 // Props are passed from the <Route /> component in <Default />
 const Settings = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
-  const match = useRouteMatch();
   const accounts = useSelector(shallowAccountsSelector);
   const accountsCount = accounts.length;
   const devMode = useSelector(developerModeSelector);
@@ -75,19 +74,17 @@ const Settings = () => {
   const handleChangeTab = useCallback(
     (index: number) => {
       const item = items[index];
-      const url = `${match.url}/${item.key}`;
+      const url = `/settings/${item.key}`;
       if (location.pathname !== url) {
         setTrackingSource("settings tab");
-        history.push({
-          pathname: url,
-        });
+        navigate(url);
         setActiveTabIndex(index);
       }
     },
-    [match, history, location, items],
+    [navigate, location, items],
   );
   useEffect(() => {
-    const url = `${match.url}/${items[activeTabIndex].key}`;
+    const url = `/settings/${items[activeTabIndex].key}`;
     if (location.pathname === "/settings") {
       setActiveTabIndex(0);
       return;
@@ -97,11 +94,11 @@ const Settings = () => {
     // instead of an exact match. In the meantime this should be enough, allowing for sub navigation.
     if (!location.pathname.startsWith(url)) {
       const idx = items.findIndex(val => {
-        return location.pathname.startsWith(`${match.url}/${val.key}`);
+        return location.pathname.startsWith(`/settings/${val.key}`);
       });
       setActiveTabIndex(idx > -1 && idx !== activeTabIndex ? idx : 0);
     }
-  }, [match, history, location, items, activeTabIndex]);
+  }, [navigate, location, items, activeTabIndex]);
   return (
     <Box pb={4} selectable>
       <Box ff="Inter|SemiBold" color="neutral.c100" fontSize={7} mb={5} data-e2e="settings_title">
@@ -122,12 +119,12 @@ const Settings = () => {
           fontSize={14}
           height={46}
         />
-        <Switch>
+        <Routes>
           {processedItems.map(i => (
-            <Route key={i.key} path={`${match.url}/${i.key}/:a?`} component={i.value} />
+            <Route key={i.key} path={`${i.key}/*`} element={<i.value />} />
           ))}
-          <Route component={defaultItem.value} />
-        </Switch>
+          <Route path="*" element={<defaultItem.value />} />
+        </Routes>
       </Section>
     </Box>
   );

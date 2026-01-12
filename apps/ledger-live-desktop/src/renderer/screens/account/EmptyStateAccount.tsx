@@ -15,7 +15,7 @@ import darkEmptyStateAccount from "~/renderer/images/dark-empty-state-account.sv
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import styled from "styled-components";
-import { useHistory, withRouter } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
@@ -34,7 +34,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
   const { isCurrencyAvailable } = useRampCatalog();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
 
@@ -44,15 +44,14 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
     mainAccount.subAccounts[0].type === "TokenAccount";
   const onBuy = useCallback(() => {
     setTrackingSource("empty state account");
-    history.push({
-      pathname: "/exchange",
+    navigate("/exchange", {
       state: {
         currency: currency?.id,
         account: mainAccount?.id,
         mode: "buy", // buy or sell
       },
     });
-  }, [currency, history, mainAccount]);
+  }, [currency, navigate, mainAccount]);
   if (!mainAccount) return null;
   return (
     <Box mt={10} alignItems="center" selectable>
@@ -144,7 +143,6 @@ const Description = styled(Box).attrs(() => ({
 
 const ConnectedEmptyStateAccount = compose<React.ComponentType<OwnProps>>(
   connect(null, mapDispatchToProps),
-  withRouter,
   withTranslation(),
 )(EmptyStateAccount);
 export default ConnectedEmptyStateAccount;

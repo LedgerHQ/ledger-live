@@ -5,7 +5,7 @@ import { TokenAccount } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { openModal } from "~/renderer/actions/modals";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import IconCoins from "~/renderer/icons/Coins";
@@ -20,7 +20,7 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const label = useGetStakeLabelLocaleBased();
-  const history = useHistory();
+  const navigate = useNavigate();
   const mainAccount = getMainAccount(account, parentAccount);
   const { cosmosResources } = mainAccount;
   const earnRewardEnabled = canDelegate(mainAccount);
@@ -37,8 +37,7 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
         }),
       );
     } else {
-      history.push({
-        pathname: value,
+      navigate(value, {
         state: {
           yieldId: "cronos-cro-native-staking",
           accountId: account.id,
@@ -46,7 +45,7 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
         },
       });
     }
-  }, [history, account, dispatch, earnRewardEnabled, parentAccount]);
+  }, [navigate, account, dispatch, earnRewardEnabled, parentAccount]);
 
   const onClick = useCallback(() => {
     if (account.type !== "Account") return;

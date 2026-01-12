@@ -2,7 +2,7 @@ import { Button, Flex, IconsLegacy, InvertThemeV3, Logos, Text } from "@ledgerhq
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import styled, { useTheme } from "styled-components";
 import { saveSettings } from "~/renderer/actions/settings";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
@@ -93,15 +93,15 @@ export function WelcomeOld() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const trustchain = useSelector(trustchainSelector);
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { colors, theme } = useTheme();
 
   useEffect(() => {
     if (hasCompletedOnboarding && !trustchain) {
-      history.push("/onboarding/select-device");
+      navigate("/onboarding/select-device");
     }
-  }, [hasCompletedOnboarding, history, trustchain]);
+  }, [hasCompletedOnboarding, navigate, trustchain]);
 
   const urlBuyNew = useLocalizedUrl(urls.buyNew);
   const buyNew = () => openURL(urlBuyNew);
@@ -121,8 +121,8 @@ export function WelcomeOld() {
 
   const skipOnboarding = useCallback(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
-    history.push("/settings");
-  }, [dispatch, history]);
+    navigate("/settings");
+  }, [dispatch, navigate]);
 
   const handleOpenFeatureFlagsDrawer = useCallback((nb: string) => {
     if (nb === "1") countTitle.current++;
@@ -141,8 +141,8 @@ export function WelcomeOld() {
 
   const handleAcceptTermsAndGetStarted = useCallback(() => {
     acceptTerms();
-    history.push("/onboarding/select-device");
-  }, [history]);
+    navigate("/onboarding/select-device");
+  }, [navigate]);
 
   useEffect(() => {
     return () => {
@@ -191,7 +191,7 @@ export function WelcomeOld() {
         </Presentation>
         <ProductHighlight>
           {isFeatureFlagsSettingsButtonDisplayed && (
-            <Button variant="main" outline mb="24px" onClick={() => history.push("/settings")}>
+            <Button variant="main" outline mb="24px" onClick={() => navigate("/settings")}>
               {t("settings.title")}
             </Button>
           )}

@@ -9,7 +9,7 @@ import {
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import {
   lastOnboardedDeviceSelector,
   onboardingUseCaseSelector,
@@ -19,7 +19,7 @@ import { setHasBeenUpsoldRecover } from "~/renderer/actions/settings";
 
 export function useOpenRecoverCallback() {
   const dispatch = useDispatch();
-  const history = useHistory<{ fromRecover: boolean } | undefined>();
+  const navigate = useNavigate();
   const onboardingUseCase = useSelector(onboardingUseCaseSelector);
   const recoverFF = useFeature("protectServicesDesktop");
   const upsellPath = useUpsellPath(recoverFF);
@@ -31,7 +31,7 @@ export function useOpenRecoverCallback() {
   return useCallback(
     async ({ fallbackRedirection }: { fallbackRedirection: () => void }) => {
       function redirect(path: string) {
-        history.push(path);
+        navigate(path);
         dispatch(setHasBeenUpsoldRecover(true));
       }
       if (!navigator.onLine) {
@@ -61,7 +61,7 @@ export function useOpenRecoverCallback() {
     [
       devicePairingPath,
       dispatch,
-      history,
+      navigate,
       lastOnboardedDevice,
       onboardingUseCase,
       recoverFF,

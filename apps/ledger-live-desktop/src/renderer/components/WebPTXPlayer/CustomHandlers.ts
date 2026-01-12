@@ -30,7 +30,7 @@ import {
 import logger from "~/renderer/logger";
 import { useStake } from "LLD/hooks/useStake";
 import { StakeFlowProps } from "~/renderer/screens/stake";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { objectToURLSearchParams } from "@ledgerhq/live-common/wallet-api/helpers";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
@@ -41,7 +41,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
   const { getRouteToPlatformApp } = useStake();
-  const history = useHistory();
+  const navigate = useNavigate();
   const walletState = useSelector(walletSelector);
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
@@ -143,16 +143,14 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         // Push to history with both state and query params
         const searchStr = `?${queryParams.toString() ?? ""}`;
 
-        history.push({
-          pathname: platformAppRoute.pathname.toString(),
-          search: searchStr,
+        navigate(`${platformAppRoute.pathname.toString()}${searchStr}`, {
           state: stateObj, // Keep state object for components that rely on it
         });
       } else {
         dispatch(openModal("MODAL_START_STAKE", { account, parentAccount, source }));
       }
     },
-    [dispatch, getRouteToPlatformApp, history, walletState],
+    [dispatch, getRouteToPlatformApp, navigate, walletState],
   );
 
   return useMemo<WalletAPICustomHandlers>(() => {
@@ -238,7 +236,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
 
         if (action === "go-back") {
           // Handle back navigation using history
-          history.goBack();
+          navigate(-1);
           return { success: true };
         } else if (action === "redirect-provider") {
           const { currencyId, accountId, source } = request.params || {};
@@ -363,7 +361,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
     manifest,
     dispatch,
     setDrawer,
-    history,
+    navigate,
     startStakeFlow,
     getManifestById,
     getAccount,

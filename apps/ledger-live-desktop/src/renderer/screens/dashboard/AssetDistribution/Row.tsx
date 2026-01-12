@@ -4,7 +4,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import styled from "styled-components";
 import CounterValue, { NoCountervaluePlaceholder } from "~/renderer/components/CounterValue";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import useTheme from "~/renderer/hooks/useTheme";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Price from "~/renderer/components/Price";
@@ -86,7 +86,7 @@ const Value = styled.div`
 `;
 const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => {
   const theme = useTheme();
-  const history = useHistory();
+  const navigate = useNavigate();
   const locale = useSelector(localeSelector);
   const color = useCurrencyColor(currency, theme.colors.background.card);
   const percentage = Math.floor(distribution * 10000) / 100;
@@ -97,10 +97,8 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
   const icon = <CryptoCurrencyIcon currency={currency} size={22} />;
   const onClick = useCallback(() => {
     setTrackingSource("asset allocation");
-    history.push({
-      pathname: `/asset/${currency.id}`,
-    });
-  }, [currency, history]);
+    navigate(`/asset/${currency.id}`);
+  }, [currency, navigate]);
   return (
     <Wrapper onClick={onClick} data-testid={`asset-row-${currency.name.toLowerCase()}`}>
       <Asset>

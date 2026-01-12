@@ -1,5 +1,5 @@
 import { useSelector } from "LLD/hooks/redux";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
@@ -15,7 +15,7 @@ import PostOnboardingEntryPoint from "../components/PostOnboardingEntryPoint";
 import { LedgerSyncBanner } from "../components/LedgerSyncBanner/LedgerSyncBanner";
 
 export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true) {
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const featureLedgerSyncEntryPoints = useFeature("lldLedgerSyncEntryPoints");
   const featureWalletSync = useFeature("lldWalletSync");
   const trustchain = useSelector(trustchainSelector);
@@ -46,7 +46,7 @@ export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true)
       page: AnalyticsPage.Manager,
       onClick: () => {
         track("banner_clicked", { banner: "Ledger Sync Activation", page: AnalyticsPage.Manager });
-        push("/settings");
+        navigate("/settings");
       },
       component: isOptimisationEnabled?.enabled ? LedgerSyncBanner : ManagerEntryPoint,
     },
@@ -55,7 +55,7 @@ export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true)
       page: AnalyticsPage.Accounts,
       onClick: () => {
         track("banner_clicked", { banner: "Ledger Sync Activation", page: AnalyticsPage.Accounts });
-        push("/settings");
+        navigate("/settings");
       },
       component: isOptimisationEnabled?.enabled ? LedgerSyncBanner : AccountsEntryPoint,
     },

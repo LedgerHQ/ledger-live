@@ -1,5 +1,5 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Routes, Route } from "react-router";
 import styled, { createGlobalStyle } from "styled-components";
 import Box from "~/renderer/components/Box";
 import SwapHistory from "./History";
@@ -46,8 +46,10 @@ const Swap2 = () => {
       <GlobalStyle />
       <SwapNavbar />
       <Main>
-        <Route path="/swap" component={SwapApp} exact />
-        <Route path="/swap/history" component={SwapHistory} exact />
+        <Routes>
+          <Route path="/" element={<SwapApp />} />
+          <Route path="/history" element={<SwapHistory />} />
+        </Routes>
       </Main>
     </Body>
   );

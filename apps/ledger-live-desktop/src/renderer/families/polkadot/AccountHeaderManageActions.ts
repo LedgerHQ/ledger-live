@@ -9,7 +9,7 @@ import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/in
 import IconCoins from "~/renderer/icons/Coins";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "LLD/hooks/redux";
 
@@ -27,13 +27,12 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
   const { polkadotResources } = mainAccount;
   const hasBondedBalance = polkadotResources.lockedBalance && polkadotResources.lockedBalance.gt(0);
   const hasPendingBondOperation = hasPendingOperationType(mainAccount, "BOND");
-  const history = useHistory();
+  const navigate = useNavigate();
   if (!polkadotResources || parentAccount) return null;
 
   const onClick = () => {
     if (["polkadot", "assethub_polkadot"].includes(mainAccount.currency.id)) {
-      history.push({
-        pathname: "/platform/stakekit",
+      navigate("/platform/stakekit", {
         state: {
           yieldId: "polkadot-dot-validator-staking",
           accountId: account.id,

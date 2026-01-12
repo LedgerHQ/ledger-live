@@ -3,7 +3,7 @@ import { appendQueryParamsToManifestURL } from "@ledgerhq/live-common/wallet-api
 import { Flex } from "@ledgerhq/react-ui";
 import { AccountLike, EthStakingProvider } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { track } from "~/renderer/analytics/segment";
 import { ProviderItem } from "./component/ProviderItem";
 import { getTrackProperties } from "./utils/getTrackProperties";
@@ -19,10 +19,10 @@ type Props = {
 
 export type StakeOnClickProps = {
   provider: EthStakingProvider;
-  manifest: LiveAppManifest;
+  manifest: LiveAppManifest | null;
 };
 export function EthStakingModalBody({ source, onClose, account, providers }: Props) {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const stakeOnClick = useCallback(
     ({
@@ -38,22 +38,24 @@ export function EthStakingModalBody({ source, onClose, account, providers }: Pro
         button: providerConfigID,
         ...trackProperties,
       });
-      const customDappUrl = queryParams && appendQueryParamsToManifestURL(manifest, queryParams);
+      const customDappUrl =
+        queryParams && manifest && appendQueryParamsToManifestURL(manifest, queryParams);
 
-      history.push({
-        pathname: value,
-        ...(customDappUrl ? { customDappUrl } : {}),
+      navigate(value, {
         state: {
-          accountId: deriveAccountIdForManifest(
-            account.id,
-            getWalletApiIdFromAccountId(account.id),
-            manifest,
-          ),
+          accountId: manifest
+            ? deriveAccountIdForManifest(
+                account.id,
+                getWalletApiIdFromAccountId(account.id),
+                manifest,
+              )
+            : getWalletApiIdFromAccountId(account.id),
+          ...(customDappUrl ? { customDappUrl: customDappUrl.toString() } : {}),
         },
       });
       onClose?.();
     },
-    [history, account.id, onClose, source],
+    [navigate, account.id, onClose, source],
   );
 
   return (

@@ -11,13 +11,13 @@ import Header from "./Header";
 import Row from "./Row";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 type Props = {
   accounts: AccountLike[];
 };
 export default function AccountDistribution({ accounts }: Props) {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const total = accounts.reduce((total, a) => total.plus(a.balance), BigNumber(0));
   const accountDistribution = useMemo(
@@ -39,7 +39,7 @@ export default function AccountDistribution({ accounts }: Props) {
   );
 
   if (accountDistribution.length === 0) {
-    history.push("/");
+    navigate("/");
   }
 
   const cardRef = useRef(null);

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router";
 import useTheme from "~/renderer/hooks/useTheme";
 import { Card } from "~/renderer/components/Box";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
@@ -10,41 +10,27 @@ import { useTrack } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../exchange/Swap2/utils";
 
 export type LiveAppProps = {
-  match: {
-    params: {
-      appId: string;
-    };
-    isExact: boolean;
-    path: string;
-    url: string;
-  };
   appId?: string;
-  location: {
-    hash: string;
-    params: {
-      [key: string]: string;
-    };
-    pathname: string;
-    search: string;
-    customDappUrl?: string;
-  };
 };
 
-export function LiveApp({ match, appId: propsAppId, location }: LiveAppProps) {
-  const history = useHistory();
+export function LiveApp({ appId: propsAppId }: LiveAppProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const routeParams = useParams<{ appId: string }>();
   const track = useTrack();
   const swapTrackingProperties = useGetSwapTrackingProperties();
-  const { params: internalParams, search } = location;
+  const { search } = location;
+  const internalParams =
+    (location as { params?: { [key: string]: string | undefined } }).params || {};
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const { state: urlParams, customDappUrl } = useLocation() as ReturnType<typeof useLocation> &
-    LiveAppProps["location"] & {
-      state: {
-        returnTo: string;
-        accountId?: string;
-        customDappUrl?: string;
-      };
-    };
-  const appId = propsAppId || match.params?.appId;
+  const urlParams = location.state as {
+    returnTo?: string;
+    accountId?: string;
+    customDappUrl?: string;
+    [key: string]: string | undefined;
+  } | null;
+  const customDappUrl = (location as { customDappUrl?: string }).customDappUrl;
+  const appId = propsAppId || routeParams.appId;
   const returnTo = useMemo<string | undefined>(() => {
     const params = new URLSearchParams(search);
     return urlParams?.returnTo || params.get("returnTo") || internalParams?.returnTo;
@@ -71,8 +57,8 @@ export function LiveApp({ match, appId: propsAppId, location }: LiveAppProps) {
       });
     }
 
-    history.push(returnTo || `/platform`);
-  }, [history, returnTo, appId, swapTrackingProperties, track]);
+    navigate(returnTo || `/platform`);
+  }, [navigate, returnTo, appId, swapTrackingProperties, track]);
   const themeType = useTheme().theme;
   const lang = useSelector(languageSelector);
   const params = {

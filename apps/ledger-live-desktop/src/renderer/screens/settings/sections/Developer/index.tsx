@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Switch, Route } from "react-router-dom";
+import { Routes, Route } from "react-router";
 import user from "~/helpers/user";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
@@ -140,13 +140,10 @@ const Default = () => {
 const SectionDeveloper = () => (
   <>
     <TrackPage category="Settings" name="Developer" />
-    <Switch>
-      <Route
-        path="/settings/developer/custom-locksscreen-assets"
-        component={CustomLockScreenAssets}
-      />
-      <Route component={Default} />
-    </Switch>
+    <Routes>
+      <Route path="custom-locksscreen-assets" element={<CustomLockScreenAssets />} />
+      <Route path="*" element={<Default />} />
+    </Routes>
   </>
 );
 export default SectionDeveloper;

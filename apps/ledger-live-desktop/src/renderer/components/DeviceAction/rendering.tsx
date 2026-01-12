@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-deprecated */
 import React, { Fragment, useCallback, useContext, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { connect } from "react-redux";
 import { useDispatch } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
@@ -349,7 +349,7 @@ const OpenManagerBtn = ({
   mt?: number;
   ml?: number;
 }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { setDrawer } = useContext(context);
 
   const onClick = useCallback(() => {
@@ -360,10 +360,7 @@ const OpenManagerBtn = ({
     });
     const search = urlParams.toString();
     setTrackingSource("device action open manager button");
-    history.push({
-      pathname: "/manager",
-      search: search ? `?${search}` : "",
-    });
+    navigate(`/manager${search ? `?${search}` : ""}`);
     closeAllModal();
     closePlatformAppDrawer();
     setDrawer(undefined);
@@ -371,7 +368,7 @@ const OpenManagerBtn = ({
     updateApp,
     firmwareUpdate,
     appName,
-    history,
+    navigate,
     closeAllModal,
     closePlatformAppDrawer,
     setDrawer,
@@ -387,14 +384,14 @@ const OpenManagerBtn = ({
 const OpenOnboardingBtn = () => {
   const { setDrawer } = useContext(context);
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onClick = useCallback(() => {
     setTrackingSource("device action open onboarding button");
     dispatch(closeAllModal());
     setDrawer(undefined);
-    history.push("/onboarding");
-  }, [dispatch, history, setDrawer]);
+    navigate("/onboarding");
+  }, [dispatch, navigate, setDrawer]);
 
   return (
     <Button primary onClick={onClick}>
@@ -706,7 +703,7 @@ export const renderLockedDeviceError = ({
 export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
   ({ t, device }: { t: TFunction; device?: Device | null }) => {
     const productName = device ? getDeviceModel(device.modelId).productName : null;
-    const history = useHistory();
+    const navigate = useNavigate();
     const { setDrawer } = useContext(context);
     const dispatch = useDispatch();
 
@@ -715,15 +712,15 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
       dispatch(closeAllModal());
       setDrawer(undefined);
       if (!device?.modelId) {
-        history.push("/onboarding");
+        navigate("/onboarding");
       } else {
-        history.push(
+        navigate(
           isSyncOnboardingSupported(device.modelId)
             ? `/sync-onboarding/${device.modelId}`
             : "/onboarding",
         );
       }
-    }, [device?.modelId, dispatch, history, setDrawer]);
+    }, [device?.modelId, dispatch, navigate, setDrawer]);
 
     return (
       <Wrapper id="error-device-not-onboarded">
@@ -755,12 +752,12 @@ const FirmwareNotRecognizedErrorComponent: React.FC<{
   onRetry?: (() => void) | null | undefined;
 }> = ({ onRetry }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const goToExperimentalSettings = () => {
     setDrawer();
     dispatch(closeAllModal());
-    history.push("/settings/experimental");
+    navigate("/settings/experimental");
   };
   return (
     <Wrapper>

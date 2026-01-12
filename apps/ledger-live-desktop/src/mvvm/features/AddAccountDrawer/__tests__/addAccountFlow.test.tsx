@@ -127,12 +127,12 @@ jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampC
   }),
 }));
 
-const push = jest.fn();
+const mockNavigate = jest.fn();
 
-jest.mock("react-router-dom", () => ({
+jest.mock("react-router", () => ({
   __esModule: true,
-  ...jest.requireActual("react-router-dom"),
-  useHistory: () => ({ push }),
+  ...jest.requireActual("react-router"),
+  useNavigate: () => mockNavigate,
 }));
 
 jest.mock("~/renderer/actions/modals", () => ({
@@ -226,7 +226,8 @@ describe("ModularDrawerAddAccountFlowManager", () => {
 
     const buy = screen.getByText(/buy crypto securely with cash/i);
     await userEvent.click(buy);
-    expect(push).toHaveBeenCalledWith(
+    expect(mockNavigate).toHaveBeenCalledWith(
+      "/exchange",
       expect.objectContaining({ state: expect.objectContaining({ mode: "buy" }) }),
     );
 

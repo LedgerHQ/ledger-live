@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import styled from "styled-components";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { LNSUpsellBanner } from "LLD/features/LNSUpsell";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import { Redirect } from "react-router";
+import { Navigate } from "react-router";
 import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import { accountsViewModeSelector, selectedTimeRangeSelector } from "~/renderer/reducers/settings";
@@ -29,22 +29,20 @@ export default function AccountsPage() {
     () => (mode === "card" ? flattenedAccounts : rawAccounts),
     [mode, flattenedAccounts, rawAccounts],
   );
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onAccountClick = useCallback(
     (account: AccountLike, parentAccount?: Account | null) => {
       setTrackingSource("accounts page");
-      history.push({
-        pathname: parentAccount
-          ? `/account/${parentAccount.id}/${account.id}`
-          : `/account/${account.id}`,
-      });
+      navigate(
+        parentAccount ? `/account/${parentAccount.id}/${account.id}` : `/account/${account.id}`,
+      );
     },
-    [history],
+    [navigate],
   );
 
   if (!accounts.length) {
-    return <Redirect to="/" />;
+    return <Navigate to="/" replace />;
   }
   return (
     <Box>

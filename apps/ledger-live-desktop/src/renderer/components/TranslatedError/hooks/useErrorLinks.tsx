@@ -1,5 +1,5 @@
 import React, { ReactElement, useMemo } from "react";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import * as S from "../styles";
 import { openURL } from "~/renderer/linking";
 import { getSafeStringLinks, isAbsoluteUrl } from "../utils";
@@ -7,7 +7,7 @@ import { getSafeStringLinks, isAbsoluteUrl } from "../utils";
 export function useErrorLinks(error?: Error | null): Record<string, ReactElement> {
   const safeStringLinks = getSafeStringLinks(error);
 
-  const history = useHistory();
+  const navigate = useNavigate();
   return useMemo(() => {
     if (safeStringLinks.length > 0) {
       return safeStringLinks.reduce((prev, curr, index) => {
@@ -29,8 +29,7 @@ export function useErrorLinks(error?: Error | null): Record<string, ReactElement
           [`link${index}`]: (
             <S.Button
               onClick={() =>
-                history.push({
-                  pathname,
+                navigate(pathname, {
                   state: Object.fromEntries(searchParams.entries()),
                 })
               }

@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { DeviceAlreadySetup } from "@ledgerhq/live-common/errors";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -31,7 +31,7 @@ import Image from "../Image";
 
 const RecoverRestore = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const recoverFF = useFeature("protectServicesDesktop");
   const currentDevice = useSelector(getCurrentDevice);
   const [state, setState] = useState<OnboardingState>();
@@ -102,16 +102,14 @@ const RecoverRestore = () => {
         case DeviceModelId.nanoX:
         case DeviceModelId.nanoSP:
           setDeviceModelId(currentDevice.modelId);
-          history.push({
-            pathname: `/onboarding/${OnboardingUseCase.recover}/${ScreenId.pairMyNano}`,
+          navigate(`/onboarding/${OnboardingUseCase.recover}/${ScreenId.pairMyNano}`, {
             state: {
               fromRecover: true,
             },
           });
           break;
         case DeviceModelId.stax:
-          history.push({
-            pathname: `/onboarding/sync/${currentDevice.modelId}`,
+          navigate(`/onboarding/sync/${currentDevice.modelId}`, {
             state: { fromRecover: true },
           });
           break;
@@ -119,7 +117,7 @@ const RecoverRestore = () => {
           break;
       }
     }
-  }, [currentDevice?.modelId, history, setDeviceModelId, state]);
+  }, [currentDevice?.modelId, navigate, setDeviceModelId, state]);
 
   const onRetry = useCallback(() => {
     setState(undefined);
@@ -140,7 +138,7 @@ const RecoverRestore = () => {
     return (
       <Flex width="100%" height="100%" position="relative">
         <Flex position="relative" height="100%" width="100%" flexDirection="column">
-          <OnboardingNavHeader onClickPrevious={() => history.push(recoverDiscoverPath)} />
+          <OnboardingNavHeader onClickPrevious={() => navigate(recoverDiscoverPath)} />
           {renderError({
             t,
             error: new DeviceAlreadySetup("", { device: currentDevice?.modelId ?? "device" }),
@@ -154,7 +152,7 @@ const RecoverRestore = () => {
   return (
     <Flex width="100%" height="100%" position="relative">
       <Flex position="relative" height="100%" width="100%" flexDirection="column">
-        <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
+        <OnboardingNavHeader onClickPrevious={() => navigate("/onboarding/select-device")} />
         <Flex flex={1} alignItems="center" justifyContent="center" flexDirection="column">
           <Image resource={connectDeviceImage} alt="connect your device" />
           <Text
