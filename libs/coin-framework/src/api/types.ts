@@ -540,6 +540,7 @@ export type BridgeApi<
 > = {
   validateIntent: (
     transactionIntent: TransactionIntent<MemoType, TxDataType>,
+    balances: Balance[],
     customFees?: FeeEstimation,
   ) => Promise<TransactionValidation>;
   getSequence: (address: string) => Promise<bigint>;

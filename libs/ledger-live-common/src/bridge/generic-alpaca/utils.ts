@@ -3,12 +3,13 @@ import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
 import {
+  AssetInfo,
   Balance,
   Operation as CoreOperation,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   FeeData,
   FeeDataRaw,
@@ -33,6 +34,34 @@ export function extractBalance(balances: Balance[], type: string): Balance {
       value: 0n,
     }
   );
+}
+
+export function extractBalances(
+  account: Account,
+  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo,
+): Balance[] {
+  const balances: Balance[] = [
+    {
+      value: BigInt(account.balance.toFixed()),
+      asset: { type: "native" },
+      locked: BigInt(account.balance.minus(account.spendableBalance).toFixed()),
+    },
+  ];
+
+  if (!account.subAccounts?.length || !getAssetFromToken) {
+    return balances;
+  }
+
+  for (const subAccount of account.subAccounts) {
+    const asset = getAssetFromToken(subAccount.token, account.freshAddress);
+    balances.push({
+      value: BigInt(subAccount.balance.toFixed()),
+      asset,
+      locked: BigInt(subAccount.balance.minus(subAccount.spendableBalance).toFixed()),
+    });
+  }
+
+  return balances;
 }
 
 function isStringArray(value: unknown): value is string[] {

@@ -99,8 +99,9 @@ export function createApi(
     getSequence: (address: string): Promise<bigint> => getSequence(currency, address),
     validateIntent: (
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
+      balances: Balance[],
       customFees?: FeeEstimation,
-    ): Promise<TransactionValidation> => validateIntent(currency, intent, customFees),
+    ): Promise<TransactionValidation> => validateIntent(currency, intent, balances, customFees),
     getTokenFromAsset: (asset: AssetInfo): Promise<TokenCurrency | undefined> =>
       getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
