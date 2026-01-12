@@ -86,6 +86,7 @@
     "continue" : "계속",
     "previous" : "이전",
     "learnMore" : "자세히 알아보기",
+    "learnMoreWithEllipsis" : "자세히 알아보기",
     "help" : "도움말",
     "needHelp" : "도움이 필요하십니까?",
     "areYouSure" : "확실합니까?",
@@ -106,6 +107,7 @@
     "reset" : "재설정",
     "retry" : "다시 시도",
     "range" : "범위",
+    "start" : "시작하기",
     "stop" : "중지",
     "updateNow" : "지금 업데이트",
     "close" : "닫기",
@@ -122,9 +124,15 @@
     "featureFlags" : "기능 플래그",
     "ldmkEnabled" : "LDMK 전송",
     "information" : "정보",
+    "increase" : "증액",
+    "max" : "최대",
+    "min" : "최소",
+    "set" : "설정하기",
+    "follow" : "팔로우",
     "search" : "검색 중...",
     "searchWithoutEllipsis" : "검색",
     "manage" : "관리",
+    "none" : "없음",
     "tryAgain" : "다시 시도하세요",
     "lockScreen" : {
       "title" : "다시 돌아오신 것을 환영합니다.",
@@ -207,7 +215,10 @@
       "SENDING" : "보내기",
       "BURN" : "소각됨",
       "ASSOCIATE_TOKEN" : "토큰 연동",
-      "CONTRACT_CALL" : "컨트랙트 콜(Contract call)"
+      "CONTRACT_CALL" : "컨트랙트 콜(Contract call)",
+      "UPDATE_ACCOUNT" : "업데이트된 계정",
+      "STAKE_NEURON" : "스테이킹 완료",
+      "TOP_UP_NEURON" : "충전 완료"
     },
     "edit" : {
       "title" : "속도 올리기 또는 취소",
@@ -295,7 +306,7 @@
     "accounts" : "계정",
     "manager" : "내 Ledger",
     "earn" : "수익",
-    "exchange" : "구매 / 판매",
+    "exchange" : "매수 / 매도",
     "swap" : "스왑",
     "refer" : "친구 추천",
     "lend" : "대출",
@@ -479,7 +490,9 @@
       "kaspa_title" : "Ledger Nano S™는 카스파 스왑을 지원하지 않습니다.",
       "kaspa_description" : "카스파를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
       "celo_title" : "Ledger Nano S™는 셀로 스왑을 지원하지 않습니다.",
-      "celo_description" : "셀로를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
+      "celo_description" : "셀로를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "monad_title" : "Ledger Nano S™는 모나드(Monad) 스왑을 지원하지 않습니다.",
+      "monad_description" : "모나드를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요."
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -844,7 +857,7 @@
     "stake" : "스테이킹",
     "delegatedAssets" : "위임된 자산",
     "undelegating" : "위임 해제",
-    "availableBalanceTooltip" : "가처분 금액입니다.",
+    "availableBalanceTooltip" : "지금 바로 사용 가능한 자산입니다.",
     "frozenAssetsTooltip" : "트론 투표 과정에 동결 자산이 사용되었습니다. 총 투표 수를 나타내는 숫자입니다.",
     "bandwidthTooltip" : "자산을 동결하여 대역폭을 확보합니다",
     "energyTooltip" : "자산을 동결하여 에너지를 확보합니다",
@@ -1423,7 +1436,7 @@
   },
   "postOnboarding" : {
     "postOnboardingScreen" : {
-      "title" : "다음으로 {{productName}}를 사용해... ",
+      "title" : "이제 다음 단계는?",
       "titleCompleted" : "이제 모두 준비 끝!\n계속해서 내 포트폴리오를 살펴보세요.",
       "exploreCTA" : "내 포트폴리오 살펴보기"
     },
@@ -1432,19 +1445,22 @@
     },
     "postOnboardingBanner" : {
       "title" : "{{productName}}의 다음 단계는 무엇인가요?",
-      "description" : "거래소나 지갑에서 자산을 전송하고, 암호화폐를 구매하고, 잠금 화면을 맞춤 설정하거나 Ledger Recover를 구독하세요.",
+      "description" : "자산을 안전하게 관리하며 수익을 창출해 보세요.",
       "link" : "다음 단계를 확인하세요",
       "dismiss" : "다음에 결정하기"
     },
     "actions" : {
+      "deviceOnboarded" : {
+        "titleCompleted" : "Ledger 장치 설정하기"
+      },
       "buyCrypto" : {
-        "title" : "암호화폐 구매",
-        "description" : "500가지 이상의 코인과 최고의 견적을 살펴보고 선호에 맞게 선택하세요.",
+        "title" : "Ledger Wallet을 통한 암호화폐 매수",
+        "description" : "500가지 이상의 코인과 토큰을 자유롭게 거래해 보세요.",
         "actionCompletedPopupLabel" : "구매한 암호화폐"
       },
       "assetsTransfer" : {
-        "title" : "자산을 Ledger로 이체하세요",
-        "description" : "모든 거래소나 지갑에서 Ledger로 바로 전송하세요.",
+        "title" : "자산 이체",
+        "description" : "거래소나 지갑에서 자산을 이체하세요.",
         "actionCompletedPopupLabel" : "자산 이체 완료"
       },
       "syncAccounts" : {
@@ -1554,7 +1570,7 @@
     "transactionsPendingConfirmation" : "일부 트랜잭션이 아직 확인되지 않았습니다. 트랜잭션이 확인된 후 잔액에 반영되며 사용이 가능합니다.",
     "featuredButtons" : {
       "buySell" : {
-        "title" : "구매 / 판매",
+        "title" : "매수 / 매도",
         "description" : "신뢰할 수 있는 Ledger 파트너사와 거래"
       },
       "swap" : {
@@ -1864,7 +1880,13 @@
       "transferAmount" : "이전 금액",
       "validatorsCount" : "검증인 ({{number}})",
       "version" : "버전",
-      "accountCreationFee" : "계정 생성 수수료"
+      "accountCreationFee" : "계정 생성 수수료",
+      "associatedTokenId" : "연동된 토큰 ID",
+      "targetStakingNodeId" : "대상 노드 ID",
+      "previousStakingNodeId" : "이전 노드 ID",
+      "gasConsumed" : "소모된 가스비",
+      "gasUsed" : "사용된 가스비",
+      "gasLimit" : "가스 한도"
     }
   },
   "operationList" : {
@@ -4494,6 +4516,7 @@
       "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다.",
       "walletSync" : "Ledger 동기화",
       "walletSyncDesc" : "여러 휴대전화와 컴퓨터에서 Ledger Wallet 암호화폐 계정 동기화",
+      "walletSyncDescription" : "PC와 모바일 어디서든, 포트폴리오를 항상 최신 상태로 유지하세요",
       "mevProtection" : "MEV 보호",
       "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
       "mevProtectionLearnMore" : "개인정보 관련 고지",
@@ -4528,6 +4551,10 @@
       "analyticsConsole" : {
         "title" : "분석 콘솔 허용",
         "desc" : "분석 콘솔 열기를 표시하고 허용합니다."
+      },
+      "themeConsole" : {
+        "title" : "테마 토글",
+        "desc" : "테마를 빠르게 전환할 수 있도록 플로팅 오버레이를 표시합니다."
       },
       "brazeTools" : {
         "title" : "브레이즈 도구",
@@ -5475,7 +5502,7 @@
           },
           "welcomeToWalletWithFunds" : {
             "title" : "모든 준비 완료",
-            "description" : "Ledger 장치의 준비가 완료되었습니다. 송금을 완료했다면 몇 분 내에 받을 수 있습니다.",
+            "description" : "Ledger 장치의 준비가 완료되었습니다. Ledger Wallet에 송금을 완료했다면 몇 분 내에 받을 수 있습니다.",
             "buttons" : {
               "next" : "계속"
             }
@@ -5817,10 +5844,32 @@
     "canton" : {
       "commentPlaceholder" : "선택 사항",
       "comment" : "코멘트",
+      "expiryDuration" : {
+        "label" : "만료 기간",
+        "summaryLabel" : "기간 한정 요청",
+        "threeHours" : "3시간",
+        "sixHours" : "6시간",
+        "oneDay" : "1일",
+        "oneWeek" : "1주",
+        "oneMonth" : "30일"
+      },
+      "account" : {
+        "lockedBalance" : "잠금",
+        "lockedBalanceTooltip" : "자산이 다른 사람에게 보낸 제안에 락업되어 있습니다. 언제든지 해당 제안을 취소할 수도 있고, 상대방이 수락/거절할 때까지 기다릴 수도 있습니다.",
+        "withdrawableBalance" : "출금 가능",
+        "withdrawableBalanceTooltip" : "기한이 만료된 제안에서 회수 가능한 자산입니다. 인출하여 가용 수량으로 되돌릴 수 있습니다."
+      },
       "addAccount" : {
         "title" : "Canton 계정 추가",
+        "reonboard" : {
+          "title" : "계정 업데이트 필요",
+          "init" : "캔톤(Canton) 네트워크에서 토폴로지 변경이 감지되었습니다 계속해서 사용하려면 계정을 다시 등록하세요.",
+          "success" : "계정 업데이트 완료",
+          "successDescription" : "이제 계정을 계속 사용하실 수 있습니다."
+        },
         "onboard" : {
           "title" : "온보딩",
+          "account" : "계정",
           "newAccount" : "새 계정",
           "init" : "계속을 클릭해 새 Canton 계정을 설정합니다",
           "onboarded" : "온보딩한 계정",
@@ -5837,6 +5886,9 @@
           "title" : "승인",
           "validator" : "승인",
           "hint" : "이 계정으로 자금을 받으면 자동으로 승인합니다.",
+          "reonboard" : {
+            "hint" : "토폴로지 변경이 감지되었습니다. 계속해서 자금을 자동 수신하려면 Ledger 검증인을 다시 승인하세요."
+          },
           "error" : "승인에 실패했습니다. 다시 시도해 주세요.",
           "validatorLabel" : "Ledger 검증인",
           "validatorDescription" : "자동 자금 수락"
@@ -5844,6 +5896,9 @@
         "finish" : {
           "title" : "확인"
         }
+      },
+      "topologyChangeError" : {
+        "message" : "토폴로지 변경이 감지되었습니다. 재등록이 필요합니다."
       },
       "tooManyUtxos" : {
         "title" : "조치 필요: 다수의 UTXO가 감지됨",
@@ -5855,10 +5910,12 @@
       "pendingTransactions" : {
         "title" : "보류 중인 트랜잭션({{count}})",
         "incoming" : {
-          "title" : "입금 요청({{count}})"
+          "title" : "수신 이체 검토 ({{count}})",
+          "detailsTitle" : "수신 이체 세부 내역"
         },
         "outgoing" : {
-          "title" : "출금 요청({{count}})"
+          "title" : "출금 요청({{count}})",
+          "detailsTitle" : "발신 이체 세부 내역"
         },
         "pending" : "대기 중",
         "expired" : "만료됨",
@@ -6879,6 +6936,18 @@
       "title" : "EVM 주소 인증 필요",
       "description" : "승인 전, Ledger 장치에 표시된 EVM 주소를 확인하세요."
     },
+    "HederaRedundantStakingNodeIdError" : {
+      "title" : "이미 이 노드에 위임 중입니다"
+    },
+    "HederaInvalidStakingNodeIdError" : {
+      "title" : "선택한 노드는 유효한 검증인이 아닙니다"
+    },
+    "HederaNoStakingRewardsError" : {
+      "title" : "수령할 보상이 없습니다"
+    },
+    "HederaMemoIsTooLong" : {
+      "title" : "메모가 너무 깁니다. 최대 길이는 {{maxLength}}자 입니다."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "파일 이미지 로딩 실패.",
       "description" : "다른 이미지로 재시도해보세요."
@@ -7162,6 +7231,36 @@
     },
     "UtxoLimitReachedError" : {
       "title" : "UTXO 제한을 초과하는 수량입니다."
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "{{amount}} 이상부터 {{purpose}}할 수 있어요."
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "해제 대기 기간은 {{min}} 이상이어야 합니다."
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "해제 대기 기간은 {{max}} 미만이어야 합니다."
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "새로운 해제 대기 기간은 현재 해제 대기 기간보다 길어야 합니다."
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "뉴런을 찾을 수 없습니다."
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "유효하지 않은 Principal ID입니다"
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "해당 단축키는 이미 존재합니다"
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "분할 수량이 허용 최대치를 초과했습니다"
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "기존 뉴런의 지분을 늘리기 위해 해당 수량이 전송됩니다."
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "해당 수량이 새로운 뉴런으로 전송됩니다. 확인이 완료되면 해당 뉴런으로 추가 작업이 가능합니다."
     }
   },
   "cryptoOrg" : {
@@ -7207,6 +7306,152 @@
         }
       }
     },
+    "account" : {
+      "header" : {
+        "actions" : {
+          "stake" : {
+            "alreadyDelegatedTooltip" : "이미 전체 수량이 위임되었습니다"
+          }
+        }
+      },
+      "balanceFooter" : {
+        "delegated" : {
+          "tooltip" : "헤데라에서 스테이킹하는 경우, 남아 있는 전체 수량이 자동 위임되며 잠기지 않은 유동적인 상태를 유지합니다."
+        },
+        "claimable" : {
+          "tooltip" : "보상은 매번 트랜잭션 후 자동으로 수령되지만, 직접 신청할 수도 있습니다."
+        }
+      },
+      "bodyHeader" : {
+        "delegatedPositions" : {
+          "header" : "위임",
+          "button" : "보상 수령",
+          "columns" : {
+            "inactiveTooltip" : "검증인을 찾을 수 없습니다",
+            "overstakedTooltip" : "이 노드는 스테이킹 한도를 초과하여 연간 수익률이 최적 수준보다 낮습니다",
+            "activeTooltip" : "위임된 수량이 보상을 생성합니다",
+            "delegated" : "위임됨",
+            "rewards" : "보상"
+          },
+          "actions" : {
+            "redelegation" : "재위임",
+            "undelegation" : "위임 해제",
+            "claimRewards" : "보상 수령"
+          }
+        }
+      }
+    },
+    "delegation" : {
+      "totalStake" : "총 스테이킹",
+      "flow" : {
+        "title" : "위임하기",
+        "steps" : {
+          "validator" : {
+            "title" : "검증인",
+            "rowTitle" : "Node {{index}}: {{name}}",
+            "rowSubtitlePercentage" : "최대 스테이킹 가능 수량의 {{percentage}}%가 스테이킹됨",
+            "rowSubtitleOverstaked" : "노드가 한도를 초과하여 스테이킹되었습니다"
+          },
+          "amount" : {
+            "title" : "수량",
+            "alert" : "헤데라에서 스테이킹하는 경우, 남아 있는 전체 수량이 스테이킹되고, 온전히 유동적인 상태를 유지해 락업 기간이나 슬래싱 리스크가 없습니다. 스테이킹 보상이 시작되기까지 최대 48시간을 대기해야 할 수 있습니다.",
+            "learnMore" : "자세히 알아보기"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 위임했습니다",
+              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "flow" : {
+        "title" : "위임 해제 자산",
+        "steps" : {
+          "summary" : {
+            "title" : "수량",
+            "validatorLabel" : "검증인",
+            "amountLabel" : "위임 해제 수량",
+            "alert" : "위임을 해제하면, 스테이킹한 수량과 보류 중인 보상이 즉시 지급됩니다. 자금의 일부만 위임 해제할 수는 없습니다.",
+            "learnMore" : "자세히 알아보기"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 위임 해제했습니다.",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "redelegation" : {
+      "flow" : {
+        "title" : "자산 재위임",
+        "steps" : {
+          "validators" : {
+            "title" : "검증인",
+            "currentValidatorLabel" : "현재 위임",
+            "newValidatorLabel" : "새로운 위임",
+            "newValidatorSelectPlaceholder" : "검증인 선택",
+            "removedValidatorSelectPlaceholder" : "이전에 선택한 검증인을 더 이상 이용할 수 없습니다.",
+            "newValidatorSelectNoOption" : "'{{validatorName}}'와/과 일치하는 검증인이 없습니다",
+            "amountLabel" : "재위임할 금액",
+            "alert" : "헤데라에서 스테이킹하는 경우, 남아 있는 전체 수량이 스테이킹되고, 온전히 유동적인 상태를 유지해 락업 기간이나 슬래싱 리스크가 없습니다. 스테이킹 보상이 시작되기까지 최대 48시간을 대기해야 할 수 있습니다.",
+            "learnMore" : "자세히 알아보기"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "귀하의 자산을 성공적으로 재위임했습니다",
+              "text" : "블록체인이 트랜잭션 확인을 마치고 나면 재위임이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "보상 수령",
+        "steps" : {
+          "rewards" : {
+            "title" : "보상",
+            "description" : "아래 검증인으로부터 <0>{{formattedClaimableRewards}}</0>의 수익을 획득했습니다. '계속'을 클릭하면, 바로 보상을 수령하고 이용 가능 잔액에 자동 추가됩니다.",
+            "currentValidatorLabel" : "위임"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "보상을 성공적으로 수령했습니다.",
+              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "메모(선택)",
@@ -7230,6 +7475,11 @@
         "text" : "해당 트랜잭션의 확인이 완료되면 토큰 수령이 가능해집니다. <0>여기를 클릭</0>하여 수령 절차를 시작하세요.",
         "learnMore" : "자세히 알아보기"
       }
+    }
+  },
+  "dialogs" : {
+    "selectAccount" : {
+      "addAccount" : "새 계정 추가"
     }
   },
   "drawers" : {
@@ -7278,7 +7528,7 @@
     },
     "postOnboarding" : {
       "title" : "잠금화면을 취향대로 꾸며보세요",
-      "description" : "{{productName}}의 잠금 화면으로 설정할 디지털 아트나 사진을 선택하세요.",
+      "description" : "좋아하는 디지털 아트나 사진을 장치 잠금 화면으로 설정할 수 있어요.",
       "actionCompletedPopupLabel" : "장치 커스텀 완료"
     },
     "customImageSet" : "잠금화면 꾸미기 완료",
@@ -7401,12 +7651,20 @@
   "walletSync" : {
     "title" : "Ledger 동기화",
     "close" : "닫기",
+    "banner" : {
+      "title" : "지갑이 동기화되지 않았습니다",
+      "description" : "새 휴대폰이나 컴퓨터에서도 포트폴리오를 항상 최신 상태로 관리하세요",
+      "cta" : "지갑 동기화"
+    },
     "activate" : {
       "title" : "이 컴퓨터에서 Ledger 동기화를 켜시겠습니까?",
       "description" : "이렇게 하면 새 장치로 전환할 때에도 모든 휴대전화와 컴퓨터에서 암호화폐 계정이 자동으로 동기화됩니다.",
       "cta" : "Ledger 동기화 켜기",
       "alreadySync" : "장치를 이미 켰습니다",
-      "learnMore" : "Ledger 동기화는 어떤 원리인가요?"
+      "learnMore" : "Ledger 동기화는 어떤 원리인가요?",
+      "titleModal" : "지갑 동기화",
+      "descriptionModal" : "휴대폰과 컴퓨터를 번갈아 사용하더라도 항상 Ledger 장치의 확실한 보안은 물론, 최신 상태로 업데이트된 포트폴리오를 확인할 수 있습니다.",
+      "ctaModal" : "계속"
     },
     "entryPoints" : {
       "accounts" : {
@@ -7483,6 +7741,11 @@
         "title" : "동기화 성공",
         "desc" : "암호화폐 계정의 변경 사항은 이제 동기화된 휴대폰과 컴퓨터의 Ledger Wallet 앱에 자동으로 표시됩니다. "
       },
+      "complete" : {
+        "title" : "동기화 완료",
+        "description" : "이제부터 모든 장치에서 포트폴리오가 자동으로 동기화됩니다.",
+        "syncAnother" : "모바일에서 Ledger를 사용하시나요? QR 코드를 스캔하세요 "
+      },
       "synchAnother" : "다른 Ledger Wallet 앱과 동기화",
       "close" : "닫기"
     },
@@ -7494,7 +7757,7 @@
         "cancel" : "동기화 유지"
       },
       "deleteBackupSuccess" : {
-        "title" : "Ledger Wallet 앱이 더 이상 동기화되지 않습니다",
+        "title" : "Ledger Wallet 앱 동기화가 해제되었습니다",
         "description" : "언제든지 동기화를 다시 켤 수 있습니다."
       },
       "deleteBackupError" : {
@@ -7512,7 +7775,8 @@
         "connectDevice" : {
           "title" : "Ledger 장치를 사용하세요",
           "description" : "Ledger 장치에 서명하여 동기화합니다"
-        }
+        },
+        "descriptionModal" : "다른 휴대폰에서 Ledger Wallet 앱이 동기화되어 있는 경우 선택하세요"
       },
       "qrCode" : {
         "title" : "Ledger Wallet 앱 동기화",
@@ -7630,7 +7894,7 @@
     "connectYourDevice" : {
       "title" : "장치를 연결하고 잠금을 해제하세요"
     },
-    "searchPlaceholder" : "이름 또는 주소로 검색",
+    "searchPlaceholder" : "검색",
     "emptyAssetList" : "자산을 찾을 수 없습니다",
     "selectAsset" : "자산 선택",
     "selectNetwork" : "네트워크 선택",
@@ -7650,6 +7914,17 @@
       "title" : "네트워크 오류가 발생했습니다",
       "description" : "문제가 발생했습니다. 확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서로 문의하세요.",
       "cta" : "다시 시도"
+    },
+    "errors" : {
+      "network" : {
+        "title" : "연결에 실패했습니다",
+        "description" : "인터넷에 연결되지 않았습니다. 다시 시도해 주세요"
+      },
+      "backend" : {
+        "title" : "연결에 실패했습니다",
+        "description" : "문제가 발생했습니다. 나중에 다시 시도해 주세요"
+      },
+      "cta" : "다시 시도하세요"
     }
   },
   "nftEntryPoint" : {
@@ -7681,6 +7956,303 @@
       "transparentBalanceTooltip" : "누구나 볼 수 있는 수량",
       "privateBalance" : "비공개 수량",
       "privateBalanceTooltip" : "타인에게 공개되지 않은 수량"
+    }
+  },
+  "internetComputer" : {
+    "memoField" : {
+      "increaseStake" : "이 트랜잭션으로 기존 뉴런의 지분이 늘어납니다. 위의 수량 필드에 스테이킹할 수량을 입력하세요.",
+      "createNeuron" : "이 트랜잭션으로 스테이킹된 ICP를 가진 새 뉴런이 생성됩니다. 위의 수량 필드에 스테이킹할 수량을 입력하세요.",
+      "tooltip" : "인터넷 컴퓨터는 이 입력 값을 사용해 ICP를 뉴런에 스테이킹하는 트랜잭션을 식별합니다."
+    },
+    "stakeBanner" : {
+      "confirmFollowing" : {
+        "title" : "팔로잉 상태 확인",
+        "description" : "뉴런 팔로잉을 {{days}}일 {{hours}}시간 이내에 확인해야 합니다",
+        "altDescription" : "보상을 놓칠 수 있어요. 계속 보상을 받으려면 뉴런 팔로잉을 확인하세요.",
+        "cta" : "팔로잉 상태 확인하기"
+      },
+      "syncNeurons" : {
+        "title" : "스테이킹된 ICP 동기화하기",
+        "description" : "스테이킹한 ICP는 {{days}}일 {{hours}}시간 전에 마지막으로 동기화되었습니다. 최신 정보를 확인하고 싶다면, 정기적인 동기화를 권장합니다.",
+        "altDescription" : "최신 정보를 확인하고 싶다면, 뉴런 동기화를 권장합니다.",
+        "cta" : "뉴런 동기화하기"
+      },
+      "lockNeurons" : {
+        "title" : "뉴런 잠그기",
+        "description" : "하나 이상의 뉴런이 잠금 해제 상태입니다. 보상은 뉴런이 ICP 거버넌스에 참여할 때만 지급되며, 6개월 이상 잠금된 뉴런만 투표에 사용할 수 있기 때문에 뉴런을 잠그지 않으면 보상을 받을 수 없습니다.",
+        "cta" : "뉴런 관리"
+      },
+      "addFollowees" : {
+        "title" : "팔로우 대상 추가하기",
+        "description" : "하나 이상의 뉴런에 팔로우 대상이 없습니다. 팔로우 중인 뉴런이 없으면 보상을 받지 못할 수 있습니다. 보상을 받으려면 NNS Dapp 등으로 직접 투표하거나, 투표에 참여하는 다른 뉴런을 팔로우해야 합니다.",
+        "cta" : "뉴런 관리"
+      },
+      "stakeICP" : {
+        "title" : "ICP 스테이킹",
+        "description" : "ICP를 스테이킹하고 거버넌스에 참여해 보상을 받으세요.",
+        "cta" : "ICP 스테이킹"
+      }
+    },
+    "headerManageActions" : {
+      "stakeICP" : {
+        "title" : "ICP 스테이킹",
+        "tooltip" : "ICP를 스테이킹할 뉴런 생성"
+      },
+      "manageNeurons" : {
+        "title" : "뉴런 관리",
+        "tooltip" : "활성 뉴런 관리"
+      }
+    },
+    "summaryFooter" : {
+      "stakedBalanceTooltip" : "현재 뉴런에 스테이킹된 ICP 토큰의 총 수량입니다. 스테이킹된 ICP는 투표 보상을 받으며, 거버넌스에 사용될 수 있습니다.",
+      "totalMaturityTooltip" : "스테이킹으로 누적된 총 보상에는 스테이킹된 보상과 유동 누적 보상이 모두 포함됩니다. 이렇게 누적된 보상은 리스테이킹하거나 Liquid ICP로 전환할 수 있습니다.",
+      "totalMaturity" : "총 누적 보상",
+      "stakedBalance" : "스테이킹 잔액",
+      "stakedMaturity" : "스테이킹된 누적 보상",
+      "stakedMaturityTooltip" : "누적 보상 중 자동으로 뉴런에 리스테이킹되어, 추가 보상을 계속 얻고 있는 비율입니다.",
+      "liquidMaturity" : "유동 누적 보상",
+      "liquidMaturityTooltip" : "Liquid ICP 토큰으로 전환하거나 뉴런에 스테이킹할 수 있는 누적 보상 비율입니다."
+    },
+    "confirmation" : {
+      "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요.",
+      "success" : "{{action}} 완료",
+      "syncAccounts" : "업데이트된 내용을 보려면 계정을 동기화하세요."
+    },
+    "sync" : "동기화",
+    "lastSynced" : "마지막 동기화",
+    "listNeurons" : {
+      "timeUntilRewardLoss" : "보상 유지까지 남은 시간",
+      "warnbox" : "뉴런을 찾을 수 없습니다. NNS Dapp에서 생성한 기존 뉴런을 동기화하거나, 스테이킹으로 새 뉴런을 생성해 보세요."
+    },
+    "common" : {
+      "confirmation" : "확인",
+      "connectDevice" : {
+        "title" : "장치"
+      },
+      "neuronId" : "뉴런 ID",
+      "neuronIds" : "뉴런 ID",
+      "state" : "상태",
+      "action" : "작업 선택",
+      "balance" : "잔액",
+      "maturity" : "누적 보상",
+      "currentBalance" : "현재 잔액",
+      "amount" : "금액",
+      "stake" : "스테이킹",
+      "followees" : "팔로우 대상",
+      "votingPower" : "투표 권한",
+      "hotkey" : "단축키",
+      "neuron" : "뉴런",
+      "neurons" : "뉴런",
+      "disburse" : "인출",
+      "startDissolving" : "해제 시작",
+      "stopDissolving" : "해제 중지",
+      "dissolveDelay" : "해제 대기 기간",
+      "dissolveState" : "해제 상태",
+      "dissolveStateUnlocked" : "잠금 해제",
+      "dissolveStateLocked" : "잠금",
+      "dissolveStateDissolving" : "해제 진행 중",
+      "dissolveStateDissolved" : "해제 완료",
+      "inactiveNeuron" : "비활성 뉴런",
+      "activeNeuron" : "활성 뉴런",
+      "confirmFollowing" : "팔로잉 상태 확인하기"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "투표 권한 새로고침"
+    },
+    "manageNeuronFlow" : {
+      "title" : "뉴런 관리",
+      "manageAction" : {
+        "title" : "뉴런 활동 관리"
+      },
+      "stakeMaturity" : {
+        "title" : "누적 보상 스테이킹",
+        "description" : "이 뉴런에 스테이킹할 누적 보상 수량을 선택하세요.",
+        "confirmStake" : "스테이킹 확인",
+        "maturityAvailable" : "사용 가능한 누적 보상"
+      },
+      "splitNeuron" : {
+        "title" : "뉴런 분할",
+        "transactionFee" : "트랜잭션 수수료",
+        "confirmSplit" : "분할 확인"
+      },
+      "setDissolveDelay" : {
+        "title" : "해제 대기 기간 설정",
+        "balance" : "잔액",
+        "dissolveDelay" : "해제 대기 기간",
+        "dissolveDelayTooltip" : "해제 대기 기간은 뉴런의 잠금이 해제되어 ICP를 다시 사용할 수 있을 때까지 기다려야 하는 최소 시간입니다. 대기 기간은 뉴런이 해제 중일 때만 줄어듭니다.",
+        "votingPowerDescription" : "투표 권한은 해제 대기 기간이 6개월 이상인 뉴런에 부여됩니다.",
+        "dissolveDelayInput" : "해제 대기 기간(일)",
+        "inputPlaceholder" : "해제 대기 기간 입력",
+        "updateDelay" : "해제 대기 기간 수정"
+      },
+      "selectFollowees" : {
+        "title" : "팔로우 대상 뉴런 ID",
+        "altTitle" : "팔로우 대상 선택",
+        "placeholder" : "뉴런 ID 입력",
+        "options" : "팔로잉 옵션"
+      },
+      "selectTopics" : {
+        "title" : "주제 선택",
+        "warnbox" : "뉴런을 팔로우하면 투표가 자동으로 진행되고, 최대 보상도 받을 수 있어요. 주제를 선택해 팔로우하거나, 모든 주제를 팔로우하세요.",
+        "listOfTopics" : "팔로우 가능한 주제 목록",
+        "addAction" : "팔로우 대상 추가"
+      },
+      "addHotKey" : {
+        "title" : "단축키 추가"
+      },
+      "manage" : {
+        "title" : "뉴런 관리",
+        "header" : {
+          "hotkeyControlDescription" : "이 뉴런은 단축키로 제어되며, Ledger Live 인터페이스에서는 일부 기능만 사용할 수 있습니다.",
+          "hotkeyControl" : "단축키 제어",
+          "votingPower" : "투표 권한",
+          "noVotingPower" : "투표 권한 없음"
+        },
+        "votingPower" : {
+          "title" : "투표 권한",
+          "titleTooltip" : "뉴런이 투표 권한을 가지려면 해제 대기 기간이 6개월 이상이어야 합니다.",
+          "value" : "가치",
+          "staked" : "스테이킹된 ICP",
+          "increaseStake" : "스테이킹 증액",
+          "ageBonus" : "장기 보유 보너스(Age Bonus)",
+          "ageBonusTooltip" : "뉴런은 <strong>잠금</strong>, <strong>잠금 해제</strong>, 또는 <strong>잠금 해제 중</strong>일 수 있습니다. 잠금 상태에서는 해제 대기 기간이 유지되는 동안 장기 보유 보너스(Age Bonus)가 누적됩니다. 뉴런이 해제 중 일때는 장기 보유 보너스가 0으로 초기화되며, 시간이 지남에 따라 해제 대기 기간이 점차 줄어듭니다. 해제 대기 기간이 0에 도달하면 뉴런은 잠금 해제 상태가 되며, 보유한 ICP는 원하는 ICP 계정으로 전송할 수 있습니다.",
+          "dissolveDelayBonus" : "해제 대기 보너스",
+          "dissolveDelayBonusTooltip" : "해제 대기 보너스는 해제 대기 기간에 따라 뉴런의 투표 권한에 추가로 적용되는 보너스입니다. 해제 대기 기간이 길수록 보너스도 높아집니다.",
+          "confirmFollowing" : "팔로잉 상태 확인하기",
+          "confirmFollowingTooltip" : "ICP 뉴런이 6개월 동안 비활성 상태이면 투표 보상을 받지 못하게 됩니다. 보상을 계속 받으려면 직접 투표하거나, 팔로잉을 수정 또는 확인하세요."
+        },
+        "maturity" : {
+          "title" : "누적 보상",
+          "description" : "제안에 투표하거나 활성 뉴런을 팔로우하면 보상을 받을 수 있습니다.",
+          "staked" : "스테이킹 완료",
+          "stakedTooltip" : "스테이킹된 누적 보상은 뉴런의 투표 영향력 강화에 사용되지만, 새로운 뉴런으로 분리할 수는 없습니다.",
+          "available" : "이용 가능",
+          "availableTooltip" : "이용 가능한 누적 보상은 스테이킹하거나 소각하여 새로운 뉴런으로 전환할 수 있습니다. 이때 생성되는 뉴런은 매번 결과가 달라질 수 있는 ‘누적 보상 조정(maturity modulation)’이라는 비결정적 절차를 통해 산정된 ICP를 포함합니다.",
+          "stakeAction" : "스테이킹",
+          "spawnNeuronAction" : "뉴런 생성"
+        },
+        "hotKeys" : {
+          "title" : "단축키",
+          "description" : "Ledger Live 인터페이스에서 단축키를 사용해 뉴런을 제어할 수 있습니다.",
+          "addHotKey" : "단축키 추가",
+          "removeAction" : "제거",
+          "noHotKeys" : "단축키를 찾을 수 없습니다"
+        },
+        "advancedDetails" : {
+          "title" : "고급 정보 및 설정",
+          "dateCreated" : "생성일",
+          "dissolveDate" : "해제일",
+          "neuronAccount" : "뉴런 계정",
+          "splitNeuronAction" : "뉴런 분할",
+          "autoStakeMaturityAction" : "누적 보상 자동 스테이킹"
+        },
+        "following" : {
+          "title" : "팔로잉",
+          "description" : "팔로잉 기능을 사용하면 다른 뉴런 보유자에게 투표 권한을 위임할 수 있습니다. 투표 권한을 위임해도 보상은 계속 받을 수 있으며, 팔로잉은 언제든지 변경할 수 있습니다.",
+          "warnbox" : "팔로우 중인 뉴런이 없으면 보상을 받지 못할 수 있습니다. 보상을 받으려면 NNS Dapp 등으로 직접 투표하거나, 투표에 참여하는 다른 뉴런을 팔로우해야 합니다.",
+          "followNeuronsAction" : "뉴런 팔로우하기"
+        }
+      },
+      "listNeuron" : {
+        "title" : "뉴런 선택",
+        "warnbox" : "아래 목록에서 뉴런을 선택해 스테이킹, 누적 보상, 해제 대기 기간을 관리하세요."
+      }
+    },
+    "manageNeuron" : {
+      "actions" : {
+        "increase_stake" : "스테이킹 증액 중",
+        "create_neuron" : "뉴런 생성 중",
+        "start_dissolving" : "해제 시작 중",
+        "stop_dissolving" : "해제 중단 중",
+        "list_neurons" : "뉴런 목록 불러오는 중",
+        "disburse" : "뉴런 인출 중",
+        "spawn_neuron" : "보상으로 뉴런 생성 중",
+        "add_hot_key" : "단축키 추가 중",
+        "stake_maturity" : "누적 보상 스테이킹 중",
+        "refresh_voting_power" : "투표 권한 새로고침 중",
+        "increase_dissolve_delay" : "해제 대기 기간 늘리는 중",
+        "auto_stake_maturity" : "누적 보상 자동 스테이킹",
+        "spawn_neuron_from_maturity" : "누적 보상으로 뉴런 생성 중",
+        "set_auto_stake_maturity" : "누적 보상 자동 스테이킹 설정하기",
+        "set_dissolve_delay" : "해제 대기 기간 설정하기",
+        "remove_hot_key" : "단축키 제거 중",
+        "follow" : "팔로우 중인 뉴런",
+        "split_neuron" : "뉴런 분할 중"
+      },
+      "followTopic" : {
+        "0" : {
+          "title" : "모든 주제(거버넌스, SNS 및 뉴런 자금 제외)",
+          "description" : "거버넌스, SNS 및 뉴런 자금을 제외한 모든 제안 주제에서 뉴런 팔로우하기"
+        },
+        "1" : {
+          "title" : "뉴런 관리",
+          "description" : ""
+        },
+        "2" : {
+          "title" : "환율",
+          "description" : "IMF SDR로 측정한 ICP 가치에 대한 ‘실시간’ 정보를 제공하는 모든 제안입니다. 이 정보를 통해 NNS는 ICP를 사이클로 환전할 수 있으며, ICP 가격이 변동하더라도 실제 계산 비용은 일정하게 유지됩니다."
+        },
+        "3" : {
+          "title" : "네트워크 경제",
+          "description" : "네트워크 경제를 관리하는 제안입니다 (예: 노드 운영자에게 지급할 보상 결정)."
+        },
+        "4" : {
+          "title" : "거버넌스",
+          "description" : "네트워크에 해를 끼치는 악성 캐니스터를 동결하는 등의 작업을 포함해, 거버넌스를 관리하는 모든 제안입니다."
+        },
+        "5" : {
+          "title" : "노드 관리",
+          "description" : "OS, 가상 머신 프레임워크, 노드 복제 소프트웨어 등의 업그레이드나 구성을 포함해, 노드 머신을 관리하는 모든 제안입니다."
+        },
+        "6" : {
+          "title" : "참여자 관리",
+          "description" : "DCID(데이터 센터 ID)나 NOID(노드 운영자 ID)를 부여하거나 해지하는 등의 작업을 포함해, 네트워크 참여자를 관리하는 모든 제안입니다."
+        },
+        "7" : {
+          "title" : "서브넷 관리",
+          "description" : "새로운 서브넷 생성, 서브넷 노드 추가 및 제거, 서브넷 분할 등의 작업을 포함해, 네트워크 서브넷을 관리하는 모든 제안입니다."
+        },
+        "8" : {
+          "title" : "프로토콜 캐니스터 관리",
+          "description" : "ICP 프로토콜의 일부로 간주되며, 프로토콜의 정상적인 작동에 필수적인 프로토콜 캐니스터를 관리하는 모든 제안입니다."
+        },
+        "9" : {
+          "title" : "고객확인제도",
+          "description" : "뉴런 형태로 진행된 ICP 초기 분배 과정 등에서, 규제 목적에 따라 KYC 정보를 업데이트하는 제안입니다."
+        },
+        "10" : {
+          "title" : "노드 제공자 보상",
+          "description" : "노드 제공자에게 보상을 제공하는 제안"
+        },
+        "12" : {
+          "title" : "IC OS 버전 배포",
+          "description" : "서브넷 복제본 버전 업데이트를 처리하는 제안"
+        },
+        "13" : {
+          "title" : "IC OS 버전 선출",
+          "description" : "복제본 버전의 승인 및 폐기를 처리하는 제안"
+        },
+        "14" : {
+          "title" : "SNS & 뉴런 자금",
+          "description" : "SNS 및 뉴런 자금 관련 제안"
+        },
+        "15" : {
+          "title" : "API 경계 노드 관리",
+          "description" : "API 경계 노드 관리 관련 제안"
+        },
+        "16" : {
+          "title" : "서브넷 임대",
+          "description" : "서브넷 임대 요청 등의 작업을 포함해, 서브넷 임대와 관련된 모든 제안"
+        },
+        "17" : {
+          "title" : "프로토콜 캐니스터 관리",
+          "description" : "ICP 프로토콜의 일부로 간주되며, 프로토콜의 정상적인 작동에 필수적인 프로토콜 캐니스터를 관리하는 모든 제안입니다."
+        },
+        "18" : {
+          "title" : "서비스 신경계 관리",
+          "description" : "관련 캐니스터 업그레이드나 SNS-W를 통한 SNS 프레임워크 캐니스터 WASM 관리를 포함해, 서비스 신경계(SNS) 캐니스터를 관리하는 모든 제안입니다."
+        }
+      }
     }
   }
 }
