@@ -67,7 +67,7 @@ export default function StepOptions(props: Readonly<StepProps>) {
   }
 
   return (
-    <Box>
+    <Box data-testid="receive-step-options">
       <TrackPage category="receive_drawer" type="drawer" />
       <Option onClick={handleGoToBankProvider}>
         <IconWrapper>

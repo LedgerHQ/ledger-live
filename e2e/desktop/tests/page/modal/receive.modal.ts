@@ -13,6 +13,7 @@ export class ReceiveModal extends Modal {
   private addressDisplayedValue = this.page.locator("#address-field");
   private selectAccount = this.page.getByText("Choose a crypto asset");
   private warningMessage = this.page.locator('div[type="warning"]');
+  private receiveMenu = this.page.getByTestId("receive-step-options");
   readonly selectAccountInput = this.page.locator('[placeholder="Search"]');
 
   private sendAssetWarningMessage = (
@@ -54,6 +55,16 @@ export class ReceiveModal extends Modal {
     await expect(this.warningMessage).toContainText(
       this.sendAssetWarningMessage(account, specificTokens),
     );
+  }
+
+  @step("Verify receive menu visibility")
+  async expectRecieveMenu() {
+    await expect(this.receiveMenu).toBeVisible();
+  }
+
+  @step("Click receive button")
+  async clickReceive() {
+    await this.page.getByText("Via crypto address").click();
   }
 
   @step("Verify TRON address activation warning message")
