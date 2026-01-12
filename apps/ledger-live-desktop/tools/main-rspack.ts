@@ -162,17 +162,36 @@ const build = async (argv: { port?: number }) => {
 
   // Generate metafiles if requested
   if (process.env.GENERATE_METAFILES) {
-    console.log("\n📊 Generating metafiles...");
+    const isLite = process.env.GENERATE_METAFILES === "lite";
+    console.log(`\n📊 Generating metafiles${isLite ? " (lite mode)" : ""}...`);
 
     results.forEach(({ name, stats }) => {
       if (stats) {
         const metafile = stats.toJson({
           assets: true,
-          chunks: true,
+          chunks: !isLite, // Include chunks in full mode for tools like statoscope
           modules: true,
         });
+
+        // In lite mode, minimize metafile: keep only essential data for bundle size and duplicate detection
+        // This removes sourcemaps, reasons, and other verbose data that makes files huge
+        const finalMetafile = isLite
+          ? {
+              assets: (metafile.assets || []).map((asset: any) => ({
+                name: asset.name,
+                size: asset.size,
+              })),
+              modules: (metafile.modules || [])
+                .map((mod: any) => ({
+                  ...(mod.identifier && { identifier: mod.identifier }),
+                  ...(mod.name && { name: mod.name }),
+                }))
+                .filter((mod: any) => mod.identifier || mod.name),
+            }
+          : metafile;
+
         const metafilePath = path.join(lldRoot, `metafile.${name}.json`);
-        fs.writeFileSync(metafilePath, JSON.stringify(metafile, null, 2), "utf-8");
+        fs.writeFileSync(metafilePath, JSON.stringify(finalMetafile, null, 2), "utf-8");
         console.log(`   Written: metafile.${name}.json`);
       }
     });

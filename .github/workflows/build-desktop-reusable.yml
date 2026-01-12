@@ -76,7 +76,7 @@ jobs:
         id: build-app
         run: pnpm build:lld --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         env:
-          GENERATE_METAFILES: 1
+          GENERATE_METAFILES: "lite"
 
       - name: Upload ${{ matrix.config.name }} app
         uses: actions/upload-artifact@v4
