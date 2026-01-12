@@ -4,13 +4,20 @@ import invariant from "invariant";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DmkSignerAleo } from "@ledgerhq/live-signer-aleo";
 import { createBridges } from "@ledgerhq/coin-aleo/bridge/index";
+import type { AleoCoinConfig } from "@ledgerhq/coin-aleo/config";
 import makeCliTools from "@ledgerhq/coin-aleo/test/cli";
 import aleoAddressResolver from "@ledgerhq/coin-aleo/signer/getAddress";
 import aleoViewKeyResolver from "@ledgerhq/coin-aleo/signer/getViewKey";
-import type { AleoSigner, Transaction as AleoTransaction } from "@ledgerhq/coin-aleo/types/index";
+import type {
+  AleoAccount,
+  AleoSigner,
+  Transaction as AleoTransaction,
+} from "@ledgerhq/coin-aleo/types/index";
 import type Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
 import { createResolver, executeWithSigner, type CreateSigner } from "../../bridge/setup";
+import { getCurrencyConfiguration } from "../../config";
+import { getCryptoCurrencyById } from "../../currencies";
 import { createViewKeyResolver } from "./hw/getViewKey/resolver";
 
 type TransportWithDmk = Transport &
@@ -25,7 +32,14 @@ const createSigner: CreateSigner<AleoSigner> = (transport: TransportWithDmk) => 
   return new DmkSignerAleo(transport.dmk, transport.sessionId);
 };
 
-const bridge: Bridge<AleoTransaction> = createBridges(executeWithSigner(createSigner));
+const getCurrencyConfig = () => {
+  return getCurrencyConfiguration<AleoCoinConfig>(getCryptoCurrencyById("aleo"));
+};
+
+const bridge: Bridge<AleoTransaction, AleoAccount> = createBridges(
+  executeWithSigner(createSigner),
+  getCurrencyConfig,
+);
 
 const resolver = createResolver(createSigner, aleoAddressResolver);
 const viewKeyResolver = createViewKeyResolver(createSigner, aleoViewKeyResolver);
