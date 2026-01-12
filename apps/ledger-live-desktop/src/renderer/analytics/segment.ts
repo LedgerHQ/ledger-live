@@ -6,7 +6,7 @@ import {
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
-import { LiveConfig } from "@ledgerhq/live-config/lib-es/LiveConfig";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getEnv } from "@ledgerhq/live-env";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import type { AccountLike, Feature, FeatureId, Features } from "@ledgerhq/types-live";

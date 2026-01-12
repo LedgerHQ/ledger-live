@@ -22,6 +22,16 @@
   "publishConfig": {
     "access": "public"
   },
+  "exports": {
+    ".": {
+      "import": "./lib-es/withStaticURLs.js",
+      "require": "./lib/withStaticURLs.js"
+    },
+    "./WebSocketTransport": {
+      "import": "./lib-es/WebSocketTransport.js",
+      "require": "./lib/WebSocketTransport.js"
+    }
+  },
   "main": "lib/withStaticURLs.js",
   "module": "lib-es/withStaticURLs.js",
   "types": "lib/withStaticURLs.d.ts",
