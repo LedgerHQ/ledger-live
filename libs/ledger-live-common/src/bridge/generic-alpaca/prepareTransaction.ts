@@ -55,7 +55,7 @@ export function genericPrepareTransaction(
       ? await getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
       : assetInfosFallback(transaction);
     const customParametersFees = transaction.customFees?.parameters?.fees;
-    const customParametersGasLimit = transaction.customFees?.parameters?.gasLimit;
+    const customParametersGasLimit = transaction.customGasLimit;
 
     /**
      * Ticking `useAllAmount` constantly resets the amount to 0. This is problematic
@@ -106,11 +106,11 @@ export function genericPrepareTransaction(
         customFees: {
           parameters: {
             fees: customParametersFees ? new BigNumber(customParametersFees.toString()) : undefined,
-            gasLimit: customParametersGasLimit
-              ? new BigNumber(customParametersGasLimit.toString())
-              : undefined,
           },
         },
+        customGasLimit: customParametersGasLimit
+          ? new BigNumber(customParametersGasLimit.toFixed())
+          : undefined,
       };
 
       // Propagate needed fields

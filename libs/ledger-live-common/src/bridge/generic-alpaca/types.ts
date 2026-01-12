@@ -44,7 +44,7 @@ export type GenericTransaction = TransactionCommon & {
   fees?: BigNumber | null;
   storageLimit?: BigNumber | null;
   customFees?: {
-    parameters: { fees?: BigNumber | null; gasLimit?: BigNumber | null };
+    parameters: { fees?: BigNumber | null };
   };
   tag?: number | null | undefined;
   nonce?: BigNumber | null | undefined;
@@ -67,6 +67,7 @@ export type GenericTransaction = TransactionCommon & {
   networkInfo?: NetworkInfo | null;
   chainId?: number | null;
   gasLimit?: BigNumber | null;
+  customGasLimit?: BigNumber | null;
   gasPrice?: BigNumber | null;
   maxFeePerGas?: BigNumber | null;
   maxPriorityFeePerGas?: BigNumber | null;
@@ -80,7 +81,7 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
   fees?: string | null;
   storageLimit?: string | null;
   customFees?: {
-    parameters: { fees?: string | null; gasLimit?: string | null };
+    parameters: { fees?: string | null };
   };
   tag?: number | null | undefined;
   nonce?: string | null | undefined;
@@ -103,6 +104,7 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
   networkInfo?: NetworkInfoRaw | null;
   chainId?: number | null;
   gasLimit?: string | null;
+  customGasLimit?: string | null;
   gasPrice?: string | null;
   maxFeePerGas?: string | null;
   maxPriorityFeePerGas?: string | null;
