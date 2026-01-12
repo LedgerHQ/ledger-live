@@ -15,7 +15,7 @@ import { getAdditionalLayer2Fees } from "../logic";
 import { prepareUnsignedTxParams } from "./common";
 import { getSequence } from "./getSequence";
 
-function computeAdditionalFees(
+async function computeAdditionalFees(
   currency: CryptoCurrency,
   unsignedTransaction: TransactionLike,
 ): Promise<BigNumber | undefined> {
@@ -29,7 +29,11 @@ function computeAdditionalFees(
     },
   };
 
-  return getAdditionalLayer2Fees(currency, Transaction.from(transaction).serialized);
+  try {
+    return await getAdditionalLayer2Fees(currency, Transaction.from(transaction).serialized);
+  } catch {
+    return new BigNumber(0);
+  }
 }
 
 function toApiFeeData(feeData: FeeData): ApiFeeData {
