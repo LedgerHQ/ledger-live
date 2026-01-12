@@ -109,7 +109,7 @@ env:
   AVD_PROFILE: pixel_7_pro
   AVD_TARGET: google_apis
   AVD_NAME: "Android_Emulator"
-  AVD_CORES: 4
+  AVD_CORES: 3
   AVD_RAM_SIZE: 5120M
   AVD_HEAP_SIZE: 1023M
   AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
@@ -394,6 +394,12 @@ jobs:
             xcrun simctl boot "iOS Simulator 3" || true
             xcrun simctl bootstatus "iOS Simulator 3"
             echo "✅ Simulator 3 is now fully booted"
+            echo "🔧 Creating iOS Simulator 4"
+            xcrun simctl create "iOS Simulator 4" "iPhone 15"
+            echo "🛫 Booting simulator..."
+            xcrun simctl boot "iOS Simulator 4" || true
+            xcrun simctl bootstatus "iOS Simulator 4"
+            echo "✅ Simulator 4 is now fully booted"
           ' > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Simulator boot started in background."
         shell: bash
@@ -675,7 +681,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@support/qaa_850_e2e_tests_parallel_test
         with:
           source_avd_name: ${{ env.AVD_NAME }}
-          target_suffixes: "_2,_3"
+          target_suffixes: "_2,_3,_4"
           avd_api: ${{ env.AVD_API }}
 
       - name: Boot Android Emulators in Background
@@ -690,6 +696,7 @@ jobs:
             $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }} ${{ env.AVD_OPTIONS }}  2>&1 | ts "EMU1" &
             $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_2 ${{ env.AVD_OPTIONS }} 2>&1 | ts "EMU2" &
             $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_3 ${{ env.AVD_OPTIONS }} 2>&1 | ts "EMU3" &
+            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_4 ${{ env.AVD_OPTIONS }} 2>&1 | ts "EMU4" &
 
             log "⏳ Waiting for 3 emulators to connect..."
             while [ "$(adb devices | grep -c emulator)" -lt 3 ]; do sleep 2; done
@@ -701,8 +708,10 @@ jobs:
             log "✅ emulator-5556 booted"
             adb -s emulator-5558 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
             log "✅ emulator-5558 booted"
+            adb -s emulator-5560 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
+            log "✅ emulator-5560 booted"
 
-            log "✅ All 3 emulators are fully booted"
+            log "✅ All 4 emulators are fully booted"
           ' > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Android emulators boot started in background."
         shell: bash

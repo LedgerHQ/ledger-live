@@ -106,6 +106,12 @@ module.exports = {
         name: "iOS Simulator 3",
       },
     },
+    simulator4: {
+      type: "ios.simulator",
+      device: {
+        name: "iOS Simulator 4",
+      },
+    },
     emulator: {
       type: "android.emulator",
       device: {
@@ -126,6 +132,14 @@ module.exports = {
       type: "android.emulator",
       device: {
         avdName: "Android_Emulator_3",
+      },
+      gpuMode: "swiftshader_indirect",
+      headless: !!process.env.CI,
+    },
+    emulator4: {
+      type: "android.emulator",
+      device: {
+        avdName: "Android_Emulator_4",
       },
       gpuMode: "swiftshader_indirect",
       headless: !!process.env.CI,
