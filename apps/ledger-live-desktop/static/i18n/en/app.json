@@ -7840,7 +7840,8 @@
     }
   },
   "marketBanner": {
-    "title": "Explore market"
+    "title": "Explore market",
+    "genericError": "Connection failed"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
