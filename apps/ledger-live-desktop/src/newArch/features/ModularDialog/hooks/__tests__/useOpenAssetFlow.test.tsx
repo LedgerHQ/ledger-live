@@ -1,7 +1,7 @@
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { renderHook } from "tests/testSetup";
 import { useOpenAssetFlowDialog } from "../useOpenAssetFlow";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 describe("useOpenAssetFlowDialog", () => {
   it("should handle openAssetFlowDialog", () => {

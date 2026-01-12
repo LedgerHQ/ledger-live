@@ -1,6 +1,6 @@
 import { CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
 import { CountervaluesMarketcapProvider } from "@ledgerhq/live-countervalues-react/CountervaluesMarketcapProvider";
-import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/lib-es/types";
+import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   RenderHookResult,
