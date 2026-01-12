@@ -1,5 +1,49 @@
 # @ledgerhq/live-common
 
+## 34.56.0-next.3
+
+### Minor Changes
+
+- [#13651](https://github.com/LedgerHQ/ledger-live/pull/13651) [`398b3d8`](https://github.com/LedgerHQ/ledger-live/commit/398b3d85d2de4a520d5ae78a18135f8d163aad5b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(llc): do not recompute balances
+
+### Patch Changes
+
+- Updated dependencies [[`398b3d8`](https://github.com/LedgerHQ/ledger-live/commit/398b3d85d2de4a520d5ae78a18135f8d163aad5b)]:
+  - @ledgerhq/coin-stellar@6.10.0-next.1
+  - @ledgerhq/coin-hedera@1.17.0-next.1
+  - @ledgerhq/coin-evm@2.38.0-next.3
+  - @ledgerhq/coin-xrp@7.11.0-next.1
+  - @ledgerhq/coin-framework@6.12.0-next.1
+  - @ledgerhq/coin-celo@1.8.2-next.3
+  - @ledgerhq/live-signer-evm@0.11.2-next.3
+  - @ledgerhq/coin-algorand@0.15.2-next.1
+  - @ledgerhq/coin-aptos@3.9.0-next.1
+  - @ledgerhq/coin-bitcoin@0.28.0-next.1
+  - @ledgerhq/coin-canton@0.13.0-next.1
+  - @ledgerhq/coin-cardano@0.16.2-next.1
+  - @ledgerhq/coin-casper@2.6.0-next.1
+  - @ledgerhq/coin-cosmos@0.22.0-next.1
+  - @ledgerhq/coin-filecoin@1.17.0-next.1
+  - @ledgerhq/coin-icon@0.16.2-next.1
+  - @ledgerhq/coin-internet_computer@1.13.0-next.1
+  - @ledgerhq/coin-kaspa@1.6.2-next.1
+  - @ledgerhq/coin-mina@1.6.0-next.1
+  - @ledgerhq/coin-multiversx@0.9.2-next.1
+  - @ledgerhq/coin-near@0.18.0-next.1
+  - @ledgerhq/coin-polkadot@6.15.0-next.1
+  - @ledgerhq/coin-solana@0.40.0-next.1
+  - @ledgerhq/coin-stacks@0.13.2-next.1
+  - @ledgerhq/coin-sui@0.20.0-next.1
+  - @ledgerhq/coin-tezos@6.12.0-next.1
+  - @ledgerhq/coin-ton@0.19.0-next.1
+  - @ledgerhq/coin-tron@5.9.0-next.1
+  - @ledgerhq/coin-vechain@2.15.0-next.1
+  - @ledgerhq/live-countervalues@0.10.5-next.1
+  - @ledgerhq/live-countervalues-react@0.7.7-next.1
+  - @ledgerhq/live-wallet@0.18.0-next.1
+  - @ledgerhq/live-signer-canton@0.6.0-next.1
+  - @ledgerhq/live-signer-solana@0.9.0-next.1
+
 ## 34.55.2
 
 ### Patch Changes

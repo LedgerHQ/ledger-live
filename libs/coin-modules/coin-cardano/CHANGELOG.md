@@ -1,5 +1,12 @@
 # @ledgerhq/coin-cardano
 
+## 0.16.2-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`398b3d8`](https://github.com/LedgerHQ/ledger-live/commit/398b3d85d2de4a520d5ae78a18135f8d163aad5b)]:
+  - @ledgerhq/coin-framework@6.12.0-next.1
+
 ## 0.16.2-next.0
 
 ### Patch Changes

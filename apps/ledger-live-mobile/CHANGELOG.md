@@ -1,5 +1,25 @@
 # live-mobile
 
+## 3.101.0-next.4
+
+### Minor Changes
+
+- [#13651](https://github.com/LedgerHQ/ledger-live/pull/13651) [`398b3d8`](https://github.com/LedgerHQ/ledger-live/commit/398b3d85d2de4a520d5ae78a18135f8d163aad5b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(llc): do not recompute balances
+
+### Patch Changes
+
+- Updated dependencies [[`398b3d8`](https://github.com/LedgerHQ/ledger-live/commit/398b3d85d2de4a520d5ae78a18135f8d163aad5b)]:
+  - @ledgerhq/coin-evm@2.38.0-next.3
+  - @ledgerhq/coin-framework@6.12.0-next.1
+  - @ledgerhq/coin-canton@0.13.0-next.1
+  - @ledgerhq/coin-cosmos@0.22.0-next.1
+  - @ledgerhq/coin-filecoin@1.17.0-next.1
+  - @ledgerhq/coin-multiversx@0.9.2-next.1
+  - @ledgerhq/coin-stacks@0.13.2-next.1
+  - @ledgerhq/live-countervalues@0.10.5-next.1
+  - @ledgerhq/live-countervalues-react@0.7.7-next.1
+  - @ledgerhq/live-wallet@0.18.0-next.1
+
 ## 3.100.2
 
 ### Patch Changes
