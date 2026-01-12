@@ -7989,6 +7989,9 @@
       "cta": "Try again"
     }
   },
+  "marketBanner": {
+    "title": "Explore market"
+  },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
     "entry": {
