@@ -89,10 +89,9 @@ export const validateIntent = async (
     errors.amount = new AmountRequired();
   }
 
-  const destinationTag =
-    transactionIntent.memo && transactionIntent.memo.memos
-      ? transactionIntent.memo.memos.get("destinationTag")
-      : undefined;
+  const destinationTag = transactionIntent.memo?.memos
+    ? transactionIntent.memo.memos.get("destinationTag")
+    : undefined;
   if (destinationTag && typeof destinationTag === "string" && !validateMemo(destinationTag)) {
     errors.transaction = new XrpInvalidMemoError();
   }
