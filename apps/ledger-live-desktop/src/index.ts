@@ -8,4 +8,5 @@ if (getEnv("PLAYWRIGHT_RUN") && getEnv("MOCK")) {
   });
 }
 
+console.log("this is a test");
 require("./main");
