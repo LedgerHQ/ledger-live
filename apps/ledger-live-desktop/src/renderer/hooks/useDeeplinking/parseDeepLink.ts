@@ -44,10 +44,7 @@ export function parseDeepLink(deeplink: string): ParsedDeeplink {
   };
 }
 
-function extractTrackingData(
-  query: Record<string, string>,
-  url: string,
-): DeeplinkTrackingData {
+function extractTrackingData(query: Record<string, string>, url: string): DeeplinkTrackingData {
   return {
     ajsPropSource: query.ajs_prop_source,
     ajsPropCampaign: query.ajs_prop_campaign,

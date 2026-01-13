@@ -22,7 +22,6 @@ export const accountHandler: DeeplinkHandler<"account"> = (route, { accounts, na
 
   if (!currency || typeof currency !== "string") return;
 
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const foundCurrency = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
   if (!foundCurrency || foundCurrency.type === "FiatCurrency") return;
 

@@ -37,11 +37,7 @@ export function useDeepLinkHandler() {
   const openSendFlow = useOpenSendFlow();
 
   const navigate: NavigateFn = useCallback(
-    (
-      pathname: string,
-      state?: { [k: string]: string | object },
-      search?: string,
-    ) => {
+    (pathname: string, state?: { [k: string]: string | object }, search?: string) => {
       const hasNewPathname = pathname !== location.pathname;
       const hasNewSearch = typeof search === "string" && search !== location.search;
       const hasNewState = JSON.stringify(state) !== JSON.stringify(location.state);
