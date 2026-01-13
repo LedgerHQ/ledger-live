@@ -8258,7 +8258,7 @@
     },
     "transactionCannotBeCreated": {
       "title": "Partner unavailable",
-      "description": "Changelly cannot process this transaction. Error code 8HBB-{{randomCode}}"
+      "description": "The swap provider cannot process this transaction. Error code 8HBB-{{randomCode}}"
     },
     "swapQuoteLowLiquidity": {
       "title": "Partner unavailable",
