@@ -12,7 +12,7 @@ import { View, Text } from "react-native";
 import * as registryModule from "../registry";
 import { StepId } from "../types";
 import * as useAccountOnboardingModule from "@ledgerhq/live-common/hooks/useAccountOnboarding";
-import * as storeModule from "~/context/store";
+import * as hooksModule from "~/context/hooks";
 
 jest.mock("@ledgerhq/live-common/hooks/useAccountOnboarding", () => ({
   useOnboardingFlow: jest.fn(),
@@ -37,7 +37,7 @@ jest.mock("../registry", () => ({
   getOnboardingBridge: jest.fn(),
 }));
 
-jest.mock("~/context/store", () => {
+jest.mock("~/context/hooks", () => {
   const mockUseSelectorFn = jest.fn((selector: any) => {
     const selectorStr = selector?.toString() || "";
     if (selectorStr.includes("lastConnectedDeviceSelector")) {
@@ -131,7 +131,7 @@ describe("AccountsOnboard Integration", () => {
     getOnboardingConfig.mockReturnValue(mockOnboardingConfig);
     getOnboardingBridge.mockReturnValue(mockOnboardingBridge);
 
-    const { useSelector, useDispatch } = jest.mocked(storeModule);
+    const { useSelector, useDispatch } = jest.mocked(hooksModule);
     useSelector.mockImplementation((selector: any) => {
       const selectorStr = selector?.toString() || "";
       if (selectorStr.includes("lastConnectedDeviceSelector")) {
