@@ -61,7 +61,7 @@ jobs:
           skip-turbo-cache: "false"
 
       - name: Network config
-        run: pnpm setup && pnpm i @unrs/resolver-binding-linux-x64-gnu -g
+        run: pnpm setup && source /home/runner/.bashrc && pnpm i @unrs/resolver-binding-linux-x64-gnu -g
 
       - name: install dependencies
         run: pnpm i -F "./libs/**" -F "./apps/cli/**" -F "@ledgerhq/ledger-live"
