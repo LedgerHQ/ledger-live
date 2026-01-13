@@ -26,8 +26,10 @@ export const walletConnectHandler: DeeplinkHandler<"wc"> = (route, { navigate, c
   const { uri, query } = route;
   const wcPathname = `/platform/${WC_ID}`;
 
+  // Only prevent requests if already on the wallet connect live-app
   if (currentPathname === wcPathname) {
     try {
+      // Prevent a request from updating the live-app url and reloading it
       if (!uri || new URL(uri).searchParams.get("requestId")) {
         return;
       }

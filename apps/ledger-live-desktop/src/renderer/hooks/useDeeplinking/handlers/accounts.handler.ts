@@ -28,6 +28,7 @@ export const accountHandler: DeeplinkHandler<"account"> = (route, { accounts, na
   const foundAccounts = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);
   if (!foundAccounts.length) return;
 
+  // Navigate to a specific account if a valid 'address' is provided and the account currency matches the 'currency' param in the deeplink URL
   if (address && typeof address === "string") {
     const account = accounts.find(
       acc =>
