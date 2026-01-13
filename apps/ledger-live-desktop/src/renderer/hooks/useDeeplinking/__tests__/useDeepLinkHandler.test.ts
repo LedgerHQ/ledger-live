@@ -6,7 +6,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
-import { useDeepLinkHandler } from "./useDeepLinkHandler";
+import { useDeepLinkHandler } from "../useDeepLinkHandler";
 import BigNumber from "bignumber.js";
 
 jest.mock("~/renderer/actions/modals", () => ({
@@ -34,7 +34,7 @@ jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index", () => ({
   usePostOnboardingDeeplinkHandler: () => jest.fn(),
 }));
 
-jest.mock("../useAutoRedirectToPostOnboarding", () => ({
+jest.mock("../../useAutoRedirectToPostOnboarding", () => ({
   useRedirectToPostOnboardingCallback: () => jest.fn(() => false),
 }));
 
@@ -87,7 +87,7 @@ const mockGetAccountsOrSubAccountsByCurrency = jest.fn(
   (_currency: CryptoOrTokenCurrency, _accounts: Account[]): (Account | TokenAccount)[] => [],
 );
 
-jest.mock("./utils", () => ({
+jest.mock("../utils", () => ({
   trackDeeplinkingEvent: jest.fn(),
   getAccountsOrSubAccountsByCurrency: jest.fn((currency, accounts) =>
     mockGetAccountsOrSubAccountsByCurrency(currency, accounts),

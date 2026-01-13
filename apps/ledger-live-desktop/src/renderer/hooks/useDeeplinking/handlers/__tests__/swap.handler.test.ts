@@ -22,15 +22,7 @@ describe("swap.handler", () => {
   });
 
   describe("swapHandler", () => {
-    it("navigates to swap page with no params", () => {
-      const context = createMockContext();
-
-      swapHandler({ type: "swap", fromToken: "bitcoin", toToken: "ethereum" }, context);
-
-      expect(context.navigate).toHaveBeenCalledWith("/swap", {});
-    });
-
-    it("sets default tokens when fromToken and toToken are different", () => {
+    it("navigates to swap page with default tokens when fromToken and toToken are different", () => {
       const context = createMockContext();
 
       swapHandler({ type: "swap", fromToken: "bitcoin", toToken: "ethereum" }, context);
@@ -48,7 +40,7 @@ describe("swap.handler", () => {
       expect(context.navigate).toHaveBeenCalledWith("/swap", {});
     });
 
-    it("sets defaultAmountFrom when provided", () => {
+    it("sets defaultAmountFrom when provided along with default tokens", () => {
       const context = createMockContext();
 
       swapHandler(
@@ -57,11 +49,12 @@ describe("swap.handler", () => {
       );
 
       expect(context.navigate).toHaveBeenCalledWith("/swap", {
+        defaultToken: { fromTokenId: "bitcoin", toTokenId: "ethereum" },
         defaultAmountFrom: "0.5",
       });
     });
 
-    it("sets affiliate when provided", () => {
+    it("sets affiliate when provided along with default tokens", () => {
       const context = createMockContext();
 
       swapHandler(
@@ -70,6 +63,7 @@ describe("swap.handler", () => {
       );
 
       expect(context.navigate).toHaveBeenCalledWith("/swap", {
+        defaultToken: { fromTokenId: "bitcoin", toTokenId: "ethereum" },
         affiliate: "partner123",
       });
     });
