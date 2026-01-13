@@ -6,6 +6,7 @@ import { allure } from "jest-allure2-reporter/api";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { readFile } from "fs/promises";
 import { NANO_APP_CATALOG_PATH } from "../utils/constants";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -109,7 +110,9 @@ export const logMemoryUsage = async (): Promise<void> => {
     `top ${topArgs} | grep "${pid}" | awk '{print ${isLinux ? "$6" : "$8"}}'`,
     async (error: Error | null, stdout: string, stderr: string): Promise<void> => {
       if (error || stderr) {
-        log.error(`Error getting memory usage:\n Error: ${error}\n Stderr: ${stderr}`);
+        log.error(
+          `Error getting memory usage:\n Error: ${sanitizeError(error)}\n Stderr: ${stderr}`,
+        );
         return;
       }
       const logMessage = `📦 Detox Memory Usage: ${stdout.trim()}`;
@@ -120,10 +123,14 @@ export const logMemoryUsage = async (): Promise<void> => {
 };
 
 export async function takeAppScreenshot(screenshotName: string) {
-  const screenshotPath = await device.takeScreenshot(screenshotName);
-  if (screenshotPath) {
-    const screenshotData = await readFile(screenshotPath);
-    await allure.attachment(`App Screenshot: ${screenshotName}`, screenshotData, "image/png");
+  try {
+    const screenshotPath = await device.takeScreenshot(screenshotName);
+    if (screenshotPath) {
+      const screenshotData = await readFile(screenshotPath);
+      await allure.attachment(`App Screenshot: ${screenshotName}`, screenshotData, "image/png");
+    }
+  } catch (error) {
+    log.error(`Error taking app screenshot: ${sanitizeError(error)}`);
   }
 }
 

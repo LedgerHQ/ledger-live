@@ -3,6 +3,7 @@ import { Circus } from "@jest/types";
 import { logMemoryUsage, takeAppScreenshot, setupEnvironment } from "./helpers/commonHelpers";
 import * as detox from "detox/internals";
 import { Subject } from "rxjs";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
@@ -164,9 +165,26 @@ export default class TestEnvironment extends DetoxEnvironment {
         this.global.proxySubscriptions.clear();
       }
 
+      // Clean up DeviceManagementKit transport connections to prevent TLS socket errors
+      // The static byBase Map can hold stale connections that cause "Cannot read properties of null"
+      // Using dynamic import to avoid module loading side effects during environment initialization
+      try {
+        const { DeviceManagementKitTransportSpeculos } = await import(
+          "@ledgerhq/live-dmk-speculos"
+        );
+        for (const [_baseUrl, entry] of DeviceManagementKitTransportSpeculos.byBase) {
+          if (entry.sessionId && entry.dmk?.disconnect) {
+            await entry.dmk.disconnect({ sessionId: entry.sessionId }).catch(() => {});
+          }
+        }
+        DeviceManagementKitTransportSpeculos.byBase.clear();
+      } catch {
+        // Ignore cleanup errors
+      }
+
       global.gc?.();
     } catch (error) {
-      console.info("Error during environment teardown :", error);
+      console.info("Error during environment teardown :", sanitizeError(error));
     }
 
     await super.teardown();

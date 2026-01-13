@@ -60,10 +60,10 @@ runs:
         TESTS_PER_SHARD_IOS=$(( (TEST_COUNT + SHARD_COUNT_IOS - 1) / SHARD_COUNT_IOS ))
         TESTS_PER_SHARD_ANDROID=$(( (TEST_COUNT + SHARD_COUNT_ANDROID - 1) / SHARD_COUNT_ANDROID ))
 
-        # iOS timeout calculation: 5 minutes per test + 15 min overhead, min 30, max 300
-        IOS_TIMEOUT=$(( TESTS_PER_SHARD_IOS * 4 + 15 ))
+        # iOS timeout calculation: 3 minutes per test + 15 min overhead, min 30, max 120
+        IOS_TIMEOUT=$(( TESTS_PER_SHARD_IOS * 3 + 15 ))
         (( IOS_TIMEOUT < 30 )) && IOS_TIMEOUT=30
-        (( IOS_TIMEOUT > 300 )) && IOS_TIMEOUT=300
+        (( IOS_TIMEOUT > 120 )) && IOS_TIMEOUT=120
         ANDROID_TIMEOUT=90
 
         echo "iOS timeout: ${IOS_TIMEOUT} minutes, ${TESTS_PER_SHARD_IOS} tests per shard, total ${SHARD_COUNT_IOS} shards"
