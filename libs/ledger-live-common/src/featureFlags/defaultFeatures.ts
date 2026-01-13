@@ -613,7 +613,10 @@ export const DEFAULT_FEATURES: Features = {
   },
   lwmLedgerSyncOptimisation: DEFAULT_FEATURE,
   lwdLedgerSyncOptimisation: DEFAULT_FEATURE,
-  lwmNewWordingOptInNotificationsDrawer: DEFAULT_FEATURE,
+  lwmNewWordingOptInNotificationsDrawer: {
+    ...DEFAULT_FEATURE,
+    params: { variant: ABTestingVariants.variantA },
+  },
   lldNanoSUpsellBanners: {
     ...DEFAULT_FEATURE,
     params: {

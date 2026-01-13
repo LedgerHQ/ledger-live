@@ -159,7 +159,9 @@ const QueuedDrawerNative = ({
   const onBackdropPress = useCallback(() => {
     if (!enablePanDownToClose) return;
 
-    _onBackdropPress?.();
+    if (_onBackdropPress) {
+      _onBackdropPress();
+    }
 
     closeAnim(() => {
       requestAnimationFrame(() => {

@@ -123,7 +123,6 @@ export type NotificationsState = {
     | "onboarding"
     | "send"
     | "receive"
-    | "buy"
     | "swap"
     | "stake"
     | "add_favorite_coin";
