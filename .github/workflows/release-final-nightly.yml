@@ -45,9 +45,6 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
           npmrc-location: "$HOME/.npmrc"
 
-      - name: Network config
-        run: pnpm i @unrs/resolver-binding-linux-x64-gnu -g
-
       - name: Get checked out commit SHA
         id: get-sha
         run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
@@ -62,6 +59,9 @@ jobs:
         with:
           install-proto: true
           skip-turbo-cache: "false"
+
+      - name: Network config
+        run: pnpm i @unrs/resolver-binding-linux-x64-gnu -g
 
       - name: install dependencies
         run: pnpm i -F "./libs/**" -F "./apps/cli/**" -F "@ledgerhq/ledger-live"
