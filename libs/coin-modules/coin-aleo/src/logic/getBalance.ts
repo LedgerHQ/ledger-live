@@ -1,7 +1,7 @@
-import invariant from "invariant";
 import type { Balance } from "@ledgerhq/coin-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { apiClient } from "../network/api";
+import { parseMicrocredits } from "./utils";
 
 export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {
   const microcreditsU64 = await apiClient.getAccountBalance(currency, address);
@@ -10,8 +10,7 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
     return [];
   }
 
-  invariant(microcreditsU64.endsWith("u64"), `aleo: invalid balance format (${microcreditsU64})`);
-  const microcredits = microcreditsU64.slice(0, -3);
+  const microcredits = parseMicrocredits(microcreditsU64);
 
   const balances: Balance[] = [
     {
