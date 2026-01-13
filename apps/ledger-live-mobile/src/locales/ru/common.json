@@ -1107,6 +1107,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Нет вознаграждений для получения"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "Слишком длинное Memo. Максимум – {{maxLength}} символов"
+    },
     "NearNewAccountWarning" : {
       "title" : "Адрес получателя ещё не создан. Для его создания протокол требует перевод {{formattedNewAccountStorageCost}}."
     },
@@ -1936,7 +1939,7 @@
       "recoveryPhrase" : {
         "title" : "Ваша секретная фраза восстановления",
         "desc" : "Фраза восстановления — уникальная последовательность из 24 слов для восстановления ваших приватных ключей.",
-        "desc_1" : "Ваш Ledger Nano генерирует уникальную фразу восстановления. У Ledger нет к ней доступа.",
+        "desc_1" : "Ваше устройство Ledger Nano генерирует уникальную фразу восстановления. У Ledger нет к ней доступа.",
         "cta" : "Продолжить",
         "checkboxDesc" : "Я осознаю, что если моя фраза восстановления попадёт в чужие руки, криптоактивы будут в опасности."
       },
@@ -2380,7 +2383,7 @@
     },
     "genuineCheckNonGenuineDrawer" : {
       "title" : "Не удалось проверить устройство {{ productName }} на подлинность",
-      "description" : "Этот {{productName}} небезопасен для использования. Обратитесь в Поддержку Ledger",
+      "description" : "Этим {{productName}} пользоваться небезопасно. Обратитесь в Поддержку Ledge",
       "supportCta" : "Связаться с Поддержкой Ledger"
     },
     "allowManagerDrawer" : {
@@ -2397,7 +2400,7 @@
         "description" : "Она поможет подтвердить, что у вас оригинальное устройство {{productName}}."
       },
       "completed" : {
-        "title" : "{{productName}} подлинный",
+        "title" : "Устройство {{productName}} подлинное",
         "description" : ""
       },
       "refused" : {
@@ -2500,8 +2503,8 @@
       "supportCta" : "Связаться с Поддержкой"
     },
     "earlySecurityCheckCompletedStep" : {
-      "title" : "{{productName}} подлинный",
-      "subtitle" : "Этот {{productName}} безопасен для использования. Можно приступать к настройке.",
+      "title" : "Устройство {{productName}} подлинное",
+      "subtitle" : "Этим {{productName}} пользоваться безопасно. Можно приступать к настройке.",
       "description" : "Коснитесь {{productName}} для начала настройки."
     },
     "pinStep" : {
@@ -2509,6 +2512,20 @@
       "doneTitle" : "ПИН-код установлен",
       "description" : "ПИН-код позволяет разблокировать {{productName}} и защитить его от посторонних, что в целом актуально для любых паролей.",
       "continueOnDevice" : "Установите ПИН-код на {{productName}}."
+    },
+    "syncStep" : {
+      "title" : "Синхронизация",
+      "doneTitle" : "Кошелёк синхронизирован",
+      "descriptionTitle" : "Синхронизируйте кошельки",
+      "description" : "Держите портфель в актуальном состоянии, переключаясь между смартфонами и ПК",
+      "skipCta" : "Отложить",
+      "skip" : {
+        "title" : "Вы уверены?",
+        "description" : "Если вы пропустите этот этап, вам придётся вручную добавлять все счета и историю операций при переходе на новый смартфон или ПК.",
+        "descriptionEmphasis" : "Отключить функцию всегда можно в Настройках.",
+        "skipCTA" : "Пропустить",
+        "syncCTA" : "Синхронизировать"
+      }
     },
     "seedStep" : {
       "title" : "Настройка и резервная копия",
@@ -4681,7 +4698,7 @@
       "connectExistingLedger" : "Подключить уже настроенный Ledger",
       "connectExistingLedgerDescription" : "Если Ledger уже настроен",
       "setUpNewLedger" : "Настроить новый Ledger",
-      "setUpNewLedgerDescription" : "Если Ledger ещё не настроен",
+      "setUpNewLedgerDescription" : "Если Ledger ещё не настроено",
       "buyDeviceCTA" : "<0>Хотите новое устройство Ledger? </0><1>Купите его</1>",
       "item" : {
         "usb" : "Подключен через USB",
@@ -6355,6 +6372,7 @@
       "netApy" : "Чистая прибыль в год",
       "stakeActivationState" : "Состояние",
       "stakeActivePercent" : "Активно",
+      "inactiveStake" : "Выводимые вознаграждения",
       "stakeAvailableBalance" : "Доступно",
       "actions" : {
         "activate" : "Активировать",
@@ -8225,6 +8243,15 @@
     }
   },
   "canton" : {
+    "expiryDuration" : {
+      "label" : "Срок действия",
+      "summaryLabel" : "Предложенная экспирация",
+      "threeHours" : "3 часа",
+      "sixHours" : "6 часов",
+      "oneDay" : "1 д",
+      "oneWeek" : "1 неделя",
+      "oneMonth" : "30 дн"
+    },
     "account" : {
       "lockedBalance" : "Заблокировано",
       "lockedBalanceTooltip" : "Ваши криптоактивы заблокированы в предложениях, которые вы отправили другим пользователям. Вы можете отменить их в любое время или дождаться ответа получателя.",
