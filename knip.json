@@ -41,12 +41,7 @@
         "src/webviewPreloader/dappPreloader.ts",
         "src/webviewPreloader/index.ts"
       ],
-      "ignore": [
-        "src/newArch/features/Collectibles/**",
-        ".storybook/stub.ts",
-        "src/renderer/mockServiceWorker.js",
-        "src/newArch/utils/cn.ts"
-      ],
+      "ignore": [".storybook/stub.ts", "src/renderer/mockServiceWorker.js", "src/mvvm/utils/cn.ts"],
       "ignoreDependencies": [
         "prop-types",
         "allure-commandline",

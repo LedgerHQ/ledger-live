@@ -1,17 +1,17 @@
 ---
 alwaysApply: true
-description: React New Architecture engineering rules (newArch) for Ledger Live
+description: React MVVM Architecture engineering rules (mvvm) for Ledger Wallet
 globs: ["**/*.ts", "**/*.tsx"]
 ---
 
-# React New Architecture (`newArch`)
+# React MVVM Architecture (`mvvm`)
 
-_Mandatory rules for all files inside `src/newArch/`._
+_Mandatory rules for all files inside `src/mvvm/`._
 
 ## Migration Principles
 
-- New code must conform to `newArch` patterns.
-- Upon completion, `src/newArch` replaces `src/` entirely.
+- New code must conform to `mvvm` patterns.
+- Upon completion, `src/mvvm` replaces `src/` entirely.
 - Applies equally to `ledger-live-mobile` and `ledger-live-desktop` codebases.
 - Code reviews enforce strict adherence.
 
@@ -20,7 +20,7 @@ _Mandatory rules for all files inside `src/newArch/`._
 ### High-Level Structure
 
 ```
-src/newArch/
+src/mvvm/
 ├── features/
 │   └── FeatureName/
 │       ├── __integrations__/
@@ -45,7 +45,7 @@ src/newArch/
 - Place elements inside the closest folder matching their reuse scope.
 - Screen-specific building blocks stay inside the screen folder.
 - Feature-level components belong to `FeatureName/components/`.
-- Global shared UI belongs to `src/newArch/components/`.
+- Global shared UI belongs to `src/mvvm/components/`.
 
 ## Component & File Patterns
 
@@ -97,10 +97,10 @@ src/newArch/
 
 ### Integration Tests
 
-- Every new feature under `src/newArch/` **must include an integration test** located inside its `__integrations__/` folder.
+- Every new feature under `src/mvvm/` **must include an integration test** located inside its `__integrations__/` folder.
 - A **minimal integration test** must be created as soon as the feature folder is added.
 - This test should be expanded and updated progressively as the feature grows.
-- Integration tests ensure that screens, components, hooks, and navigation work together as expected within the New Architecture.
+- Integration tests ensure that screens, components, hooks, and navigation work together as expected within the MVVM Architecture.
 - use MSW to mock Network API calls
 
 ### Hooks & Utils
@@ -112,5 +112,5 @@ src/newArch/
 ### General Guidelines
 
 - Prefer **integration-first** testing where possible, to validate the complete behavior of the feature.
-- Keep mocks minimal—favor realistic wiring of components through the New Architecture patterns.
+- Keep mocks minimal—favor realistic wiring of components through the MVVM Architecture patterns.
 - Follow the project's existing **custom test renderer** conventions and best practices.

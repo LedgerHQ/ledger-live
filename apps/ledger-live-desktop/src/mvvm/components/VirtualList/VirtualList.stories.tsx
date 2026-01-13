@@ -40,7 +40,7 @@ const meta: Meta<typeof VirtualList<{ i: number }>> = {
       </div>
     ),
   ],
-  title: "NewArch/Components/VirtualList",
+  title: "MVVM/Components/VirtualList",
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",

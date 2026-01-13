@@ -17,7 +17,7 @@
     ],
     "paths": {
       "LLM/*": [
-        "../../apps/ledger-live-mobile/src/newArch/*"
+        "../../apps/ledger-live-mobile/src/mvvm/*"
       ],
       "~/*": [
         "../../apps/ledger-live-mobile/src/*"
