@@ -7,7 +7,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { getSigner, getValidateAddress } from "./signer";
+import { getSigner } from "./signer";
 import { genericPrepareTransaction } from "./prepareTransaction";
 import { genericGetTransactionStatus } from "./getTransactionStatus";
 import { genericEstimateMaxSpendable } from "./estimateMaxSpendable";
@@ -17,6 +17,7 @@ import { genericSignOperation } from "./signOperation";
 import { genericSignRawOperation } from "./signRawOperation";
 import type { AlpacaSigner } from "./signer/types";
 import { postSync } from "./postSync";
+import { getValidateAddress } from "./validateAddress";
 
 export function getAlpacaAccountBridge(
   network: string,
