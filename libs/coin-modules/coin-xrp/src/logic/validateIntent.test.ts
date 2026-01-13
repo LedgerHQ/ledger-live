@@ -1,7 +1,6 @@
 import { TransactionIntent } from "@ledgerhq/coin-framework/lib-es/api/types";
 import { XrpMapMemo } from "../types";
 import { XrpInvalidMemoError } from "./errors";
-import * as utils from "./utils";
 import { validateIntent } from "./validateIntent";
 import * as logicValidateMemo from "./validateMemo";
 

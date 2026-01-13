@@ -1,12 +1,20 @@
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { StacksMemoTooLong } from "../errors";
-import * as logicValidateMemo from "../logic/validateMemo";
 import { Transaction } from "../types";
 import { getTransactionStatus } from "./getTransactionStatus";
+import * as logicValidateMemo from "../logic/validateMemo";
+
+jest.mock("../logic/validateMemo", () => {
+  const actual = jest.requireActual("../logic/validateMemo");
+  return {
+    ...actual,
+    validateMemo: jest.fn(actual.validateMemo), // replace with mock
+  };
+});
 
 describe("getTransactionStatus", () => {
-  const spiedValidateMemo = jest.spyOn(logicValidateMemo, "validateMemo");
+  const spiedValidateMemo = logicValidateMemo.validateMemo as jest.Mock;
 
   it("should not set error on transaction when memo is validated", async () => {
     spiedValidateMemo.mockReturnValueOnce(true);
