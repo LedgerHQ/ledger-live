@@ -4968,6 +4968,55 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  aleo: {
+    type: "CryptoCurrency",
+    id: "aleo",
+    coinType: CoinType.ALEO,
+    name: "Aleo",
+    managerAppName: "Aleo",
+    ticker: "ALEO",
+    scheme: "aleo",
+    color: "#121212",
+    family: "aleo",
+    units: [
+      {
+        name: "Aleo",
+        code: "ALEO",
+        magnitude: 6,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.provable.com/transaction/$hash",
+        address: "https://explorer.provable.com/address/$address",
+      },
+    ],
+  },
+  aleo_testnet: {
+    type: "CryptoCurrency",
+    id: "aleo_testnet",
+    coinType: CoinType.ALEO,
+    name: "Aleo (Testnet)",
+    managerAppName: "Aleo",
+    ticker: "ALEO",
+    scheme: "aleo_testnet",
+    color: "#121212",
+    family: "aleo",
+    isTestnetFor: "aleo",
+    units: [
+      {
+        name: "Aleo",
+        code: "ALEO",
+        magnitude: 6,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://testnet.explorer.provable.com/transaction/$hash",
+        address: "https://testnet.explorer.provable.com/address/$address",
+      },
+    ],
+  },
 };
 
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
