@@ -1107,6 +1107,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Aucune récompense à demander"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "Mémo trop long. Longueur maximale : {{maxLength}} caractères."
+    },
     "NearNewAccountWarning" : {
       "title" : "Le compte du bénéficiaire n’a pas encore été créé. Pour le créer, le protocole nécessite un transfert de {{formattedNewAccountStorageCost}}."
     },
@@ -2509,6 +2512,20 @@
       "doneTitle" : "Code PIN configuré",
       "description" : "Comme tout mot de passe ou code d’accès, le code PIN vous permet de déverrouiller votre {{productName}} et de le protéger contre tout accès indésirable.",
       "continueOnDevice" : "Définissez votre code PIN sur votre {{productName}}."
+    },
+    "syncStep" : {
+      "title" : "Synchronisation",
+      "doneTitle" : "Wallet synchronisé",
+      "descriptionTitle" : "Synchronisez votre wallet",
+      "description" : "Votre portefeuille reste à jour, même en changeant de téléphone ou sur ordinateur.",
+      "skipCta" : "Plus tard",
+      "skip" : {
+        "title" : "Êtes-vous sûr(e) ?",
+        "description" : "Si vous passez cette étape, vous devrez ajouter manuellement tous vos comptes, soldes et historiques si vous changez de téléphone ou d’ordinateur.",
+        "descriptionEmphasis" : "Vous pouvez toujours désactiver cette option dans les paramètres.",
+        "skipCTA" : "Oui, ignorer",
+        "syncCTA" : "Non, synchroniser"
+      }
     },
     "seedStep" : {
       "title" : "Configuration et sauvegarde",
@@ -6355,6 +6372,7 @@
       "netApy" : "APY net",
       "stakeActivationState" : "Statut",
       "stakeActivePercent" : "Actif",
+      "inactiveStake" : "Récompenses disponibles",
       "stakeAvailableBalance" : "Solde disponible",
       "actions" : {
         "activate" : "Activer",
@@ -8225,6 +8243,15 @@
     }
   },
   "canton" : {
+    "expiryDuration" : {
+      "label" : "Durée de validité",
+      "summaryLabel" : "Expiration de l’offre",
+      "threeHours" : "3 heures",
+      "sixHours" : "6 heures",
+      "oneDay" : "1 jour",
+      "oneWeek" : "1 semaine",
+      "oneMonth" : "30 jours"
+    },
     "account" : {
       "lockedBalance" : "Immobilisé",
       "lockedBalanceTooltip" : "Vos actifs sont immobilisés dans des offres que vous avez envoyées. Vous pouvez annuler ces offres à tout moment, ou attendre que les bénéficiaires les acceptent ou les rejettent.",
