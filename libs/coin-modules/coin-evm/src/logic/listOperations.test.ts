@@ -91,6 +91,21 @@ describe("listOperations", () => {
           hasFailed: true,
           extra: {},
         },
+        {
+          id: "coin-op-6",
+          accountId: "",
+          type: "NONE",
+          senders: ["contract-address"],
+          recipients: ["address"],
+          value: new BigNumber(0),
+          hash: "coin-op-6-tx-hash",
+          blockHeight: 20,
+          blockHash: "coin-op-6-block-hash",
+          fee: new BigNumber(0),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(6),
+          extra: {},
+        },
       ],
       lastTokenOperations: [
         {
@@ -159,6 +174,21 @@ describe("listOperations", () => {
           transactionSequenceNumber: new BigNumber(5),
           extra: {},
         },
+        {
+          id: "internal-op-2",
+          accountId: "",
+          type: "IN",
+          senders: ["contract-address"],
+          recipients: ["address"],
+          value: new BigNumber(5),
+          hash: "coin-op-6-tx-hash",
+          blockHeight: 20,
+          blockHash: "token-op-3-block-hash",
+          fee: new BigNumber(0),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(6),
+          extra: {},
+        },
       ],
     });
 
@@ -203,6 +233,25 @@ describe("listOperations", () => {
             failed: true,
           },
           details: { sequence: BigNumber(2) },
+        },
+        {
+          id: "coin-op-6",
+          type: "NONE",
+          senders: ["contract-address"],
+          recipients: ["address"],
+          value: 0n,
+          asset: { type: "native" },
+          tx: {
+            hash: "coin-op-6-tx-hash",
+            block: {
+              height: 20,
+              hash: "coin-op-6-block-hash",
+            },
+            fees: 0n,
+            date: new Date("2025-02-20"),
+            failed: false,
+          },
+          details: { sequence: BigNumber(6) },
         },
         {
           id: "token-op-1",
@@ -309,6 +358,28 @@ describe("listOperations", () => {
           details: {
             internal: true,
             sequence: new BigNumber(5),
+          },
+        },
+        {
+          id: "internal-op-2",
+          type: "IN",
+          recipients: ["address"],
+          senders: ["contract-address"],
+          value: 5n,
+          asset: { type: "native" },
+          tx: {
+            block: {
+              hash: "coin-op-6-block-hash",
+              height: 20,
+            },
+            date: new Date("2025-02-20"),
+            failed: false,
+            fees: 0n,
+            hash: "coin-op-6-tx-hash",
+          },
+          details: {
+            internal: true,
+            sequence: new BigNumber(6),
           },
         },
       ],
