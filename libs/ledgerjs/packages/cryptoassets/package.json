@@ -40,6 +40,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "invariant": "2",
+    "redux": "catalog:",
     "zod": "^3.22.4"
   },
   "devDependencies": {

@@ -1,5 +1,16 @@
-import { PerformanceObserver, PerformanceObserverCallback } from "node:perf_hooks";
+import {
+  PerformanceObserver,
+  PerformanceObserverCallback,
+  PerformanceEntry,
+} from "node:perf_hooks";
 import { AuditResult, NetworkAuditResult } from "./types";
+
+interface HttpPerformanceEntry extends PerformanceEntry {
+  detail?: {
+    req?: { url: string };
+    res?: { headers: Record<string, string> };
+  };
+}
 
 export class SlowFrameDetector {
   _count = 0;
@@ -137,8 +148,9 @@ export class NetworkAudit {
         if (entry.duration) {
           this._totalTime = (this._totalTime || 0) + entry.duration;
         }
-        const req = (entry.detail as any)?.req;
-        const res = (entry.detail as any)?.res;
+        const httpEntry = entry as HttpPerformanceEntry;
+        const req = httpEntry.detail?.req;
+        const res = httpEntry.detail?.res;
         if (res && req) {
           const { url } = req;
           if (this._urlsSeen.has(url)) {
