@@ -2461,6 +2461,54 @@
       }
     }
   },
+  "newSendFlow" : {
+    "title" : "ส่ง {{currency}}",
+    "available" : "สามารถใช้ได้: {{amount}}",
+    "placeholder" : "ป้อน Address หรือ ENS",
+    "placeholderNoENS" : "ป้อน Address",
+    "recent" : "ล่าสุด",
+    "myAccounts" : "บัญชีของฉัน",
+    "sendTo" : "ส่งไปยัง {{address}}",
+    "addressMatched" : "ที่อยู่ถูกต้องและตรงกัน",
+    "addressNotFound" : "ไม่พบที่อยู่",
+    "alreadyUsed" : "{{date}} ถูกใช้งานแล้ว",
+    "recentSendWillAppear" : "การส่งล่าสุดของคุณจะแสดงที่นี่",
+    "remove" : "ลบออก",
+    "enterTag" : "ป้อน {{tag}}",
+    "firstInteraction" : {
+      "title" : "คุณกำลังส่งไปยังที่อยู่ใหม่",
+      "description" : "ตรวจสอบว่า Address ถูกต้อง หากไม่แน่ใจ ให้ส่งจำนวนเล็กน้อยก่อน"
+    },
+    "sanctioned" : {
+      "title" : "ที่อยู่นี้ถูกระบุว่าไม่ปลอดภัย",
+      "description" : "Ledger ไม่อนุญาตให้ส่งไปยังที่อยู่นี้ เนื่องจากถูกระบุว่าไม่ปลอดภัย",
+      "helpCenter" : "ศูนย์ช่วยเหลือ"
+    },
+    "errors" : {
+      "incorrectFormat" : "รูปแบบของที่อยู่ไม่ถูกต้อง",
+      "incompatibleAsset" : "ไม่สามารถใช้ที่อยู่นี้กับสินทรัพย์ที่เลือกได้",
+      "walletNotExist" : "ไม่พบวอลเล็ตนี้"
+    },
+    "skipMemo" : {
+      "title" : "ข้ามการเพิ่ม {{tag}}?",
+      "warning" : "สินทรัพย์อาจหายไป หากผู้รับต้องการ {{tag}} ในการรับ"
+    },
+    "tagHelp" : {
+      "title" : "{{tag}} คืออะไร?",
+      "description" : "จำเป็นต้องมี {{tag}} เมื่อส่ง {{currency}} ไปยังตลาดซื้อขายคริปโต นี่คือฟีเจอร์ที่ใช้ระบุตัวผู้รับของธุรกรรม หากไม่ใส่ Memo {{tag}} อาจทำให้สูญเสียเงินทุนได้"
+    },
+    "networkFeesInFiat" : "ค่าธรรมเนียมเครือข่ายในรูปแบบ {{currency}}",
+    "feesAmount" : "ยอดค่าธรรมเนียม {{unit}}",
+    "gasLimit" : "ปริมาณแก๊สสูงสุด ({{unit}}",
+    "feesPaid" : "ค่าธรรมเนียมที่ต้องชำระให้กับเครือข่ายเพื่อทำธุรกรรมของคุณ",
+    "insufficientBalanceFees" : "ยอดคงเหลือไม่เพียงพอสำหรับค่าธรรมเนียมเครือข่าย",
+    "amountToSend" : "จำนวนที่จะส่งใน {{currency}}",
+    "coinToSend" : "เหรียญที่จะส่ง",
+    "coinControlCustom" : "การเลือกเหรียญเฉพาะที่กำหนดเอง",
+    "aboveMaximum" : "เกินยอดคงเหลือสูงสุด",
+    "transactionSigned" : "ลงนามธุรกรรมสำเร็จแล้ว",
+    "processingTransaction" : "กำลังประมวลผลธุรกรรมของคุณ"
+  },
   "releaseNotes" : {
     "title" : "Release Notes",
     "version" : "แอป Ledger Wallet {{versionNb}}"
@@ -3699,6 +3747,8 @@
       "activeTooltip" : "จำนวนที่ใช้งานซึ่งสร้าง Reward",
       "inactiveTooltip" : "จำนวนที่ไม่มีการใช้งานซึ่งไม่สร้าง Reward",
       "delegatedInfoTooltip" : "จำนวนทั้งหมดที่ Delegate ให้กับผู้ตรวจสอบ",
+      "inactiveStakeTooltip" : "สเตคกิ้งที่ไม่ได้ใช้งานอยู่จะสามารถถอนออกได้โดยไม่กระทบต่อการมอบหมายของคุณ",
+      "inactiveStakeTitle" : "Reward ที่สามารถถอนได้",
       "withdrawableInfoTooltip" : "จำนวนทั้งหมดที่สามารถถอนได้จากการ Delegate",
       "withdrawableTitle" : "สามารถถอนได้",
       "statusUpdateNotice" : "สถานะของการ Delegate จะได้รับการอัปเดตเมื่อมีการยืนยันธุรกรรม",
@@ -4636,7 +4686,10 @@
       },
       "modularDrawerDevTool" : {
         "title" : "Modular Drawer Dev Tool",
-        "description" : "ช่วยให้คุณสามารถทดสอบ Modular Drawer ได้ง่ายขึ้น"
+        "description" : "ช่วยให้คุณสามารถทดสอบ Modular Drawer ได้ง่ายขึ้น",
+        "openDrawer" : "เปิดลิ้นชัก",
+        "debugDialog" : "กล่องข้อความจากการ Debug",
+        "debugDuplicates" : "สำเนาของการ Debug"
       },
       "cryptoAssetsList" : {
         "title" : "รายการสินทรัพย์คริปโต",
@@ -5187,6 +5240,7 @@
           "recoveryPhrase" : "Recovery Phrase",
           "hideRecoveryPhrase" : "ซ่อน Recovery Phrase",
           "pairNano" : "เชื่อมต่อ Nano",
+          "enableSync" : "การซิงโครไนซ์",
           "secureYourCrypto" : "ปกป้องคริปโตของคุณ"
         },
         "screens" : {
@@ -5479,6 +5533,14 @@
             "help" : {
               "help" : "ต้องการความช่วยเหลือ",
               "descr" : "ไม่แน่ใจว่าจะต้องทำอะไรบ้าง? รับความช่วยเหลือเพื่อดำเนินการขั้นตอนนี้ให้เสร็จสิ้น"
+            }
+          },
+          "enableSync" : {
+            "title" : "เปิดการซิงค์สำหรับวอลเล็ตของคุณ",
+            "description" : "พอร์ตของคุณจะอัปเดตอยู่เสมอ ไม่ว่าจะสลับไปใช้งานบนมือถือหรือคอมพิวเตอร์",
+            "buttons" : {
+              "next" : "ดำเนินการต่อ",
+              "nextSecondary" : "ฉันจะจัดการทีหลัง"
             }
           },
           "secureYourCrypto" : {
@@ -5834,6 +5896,15 @@
     "canton" : {
       "commentPlaceholder" : "ไม่บังคับ",
       "comment" : "ความคิดเห็น",
+      "expiryDuration" : {
+        "label" : "ช่วงเวลาหมดอายุ",
+        "summaryLabel" : "ข้อเสนอใกล้หมดอายุ",
+        "threeHours" : "3 ชั่วโมง",
+        "sixHours" : "6 ชั่วโมง",
+        "oneDay" : "1 วัน",
+        "oneWeek" : "1 สัปดาห์",
+        "oneMonth" : "30 วัน"
+      },
       "account" : {
         "lockedBalance" : "ถูกล็อก",
         "lockedBalanceTooltip" : "มีการล็อกเงินทุนของคุณไว้ในข้อเสนอที่คุณส่งให้บุคคลอื่น คุณสามารถยกเลิกข้อเสนอเหล่านี้ได้ทุกเมื่อ หรือรอให้ผู้รับยอมรับหรือปฏิเสธ",
@@ -5891,10 +5962,12 @@
       "pendingTransactions" : {
         "title" : "{{count}} ธุรกรรมที่ค้างอยู่",
         "incoming" : {
-          "title" : "{{count}} ข้อเสนอใหม่ที่เข้ามา"
+          "title" : "({{count}}) การโอนเข้าที่รอตรวจสอบ",
+          "detailsTitle" : "รายละเอียดการโอนเข้า"
         },
         "outgoing" : {
-          "title" : "{{count}} ข้อเสนอที่ส่งออก"
+          "title" : "{{count}} ข้อเสนอที่ส่งออก",
+          "detailsTitle" : "รายละเอียดการโอนออก"
         },
         "pending" : "รอดำเนินการ",
         "expired" : "หมดอายุแล้ว",
@@ -6924,6 +6997,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "ไม่มี Reward ให้เคลม"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "Memo ยาวเกินไป ความยาวสูงสุดคือ {{maxLength}} ตัวอักษร"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "การโหลดรูปภาพจากไฟล์ล้มเหลว",
       "description" : "โปรดลองอีกครั้งด้วยภาพ"
@@ -7421,6 +7497,12 @@
         "text" : "เมื่อมีการยืนยันธุรกรรมนี้แล้ว คุณจะสามารถรับโทเคนของคุณได้ <0>คลิกที่นี่</0> เพื่อเริ่มขั้นตอนการรับ",
         "learnMore" : "เรียนรู้เพิ่มเติม"
       }
+    }
+  },
+  "dialogs" : {
+    "selectAccount" : {
+      "description" : "คุณยังไม่มีบัญชี {{network}} โปรดเพิ่มบัญชีเพื่อดำเนินการต่อ",
+      "addAccount" : "เพิ่มบัญชี"
     }
   },
   "drawers" : {
