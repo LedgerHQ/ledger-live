@@ -1,3 +1,4 @@
+import aleo from "@ledgerhq/coin-aleo/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
 import aptos from "@ledgerhq/coin-aptos/transaction";
 import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
@@ -27,6 +28,7 @@ import sui from "@ledgerhq/coin-sui/transaction";
 import mina from "@ledgerhq/coin-mina/transaction";
 
 export default {
+  aleo,
   algorand,
   aptos,
   bitcoin,

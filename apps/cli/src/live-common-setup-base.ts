@@ -133,6 +133,8 @@ setSupportedCurrencies([
   "zero_gravity",
   "concordium",
   "concordium_testnet",
+  "aleo",
+  "aleo_testnet",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

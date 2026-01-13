@@ -2480,6 +2480,64 @@ importers:
         specifier: ^4.7.1
         version: 4.10.3
 
+  libs/coin-modules/coin-aleo:
+    dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+    devDependencies:
+      '@ledgerhq/disable-network-setup':
+        specifier: workspace:^
+        version: link:../../disable-network-setup
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.8
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.8)
+      '@types/invariant':
+        specifier: ^2.2.2
+        version: 2.2.37
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.17.21
+      eslint-plugin-jest:
+        specifier: ^27.4.2
+        version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@30.2.0)(typescript@5.4.3)
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+
   libs/coin-modules/coin-algorand:
     dependencies:
       '@ledgerhq/coin-framework':
@@ -5733,6 +5791,9 @@ importers:
       '@ledgerhq/client-ids':
         specifier: workspace:^
         version: link:../client-ids
+      '@ledgerhq/coin-aleo':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-aleo
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-modules/coin-algorand
@@ -5931,6 +5992,9 @@ importers:
       '@ledgerhq/live-promise':
         specifier: workspace:^
         version: link:../promise
+      '@ledgerhq/live-signer-aleo':
+        specifier: workspace:^
+        version: link:../live-signer-aleo
       '@ledgerhq/live-signer-canton':
         specifier: workspace:^
         version: link:../live-signer-canton
@@ -9031,6 +9095,52 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)
+
+  libs/live-signer-aleo:
+    dependencies:
+      '@ledgerhq/coin-aleo':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-aleo
+      '@ledgerhq/context-module':
+        specifier: 1.11.1
+        version: 1.11.1(@ledgerhq/device-management-kit@0.13.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 0.13.0(rxjs@7.8.2)
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/errors
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+    devDependencies:
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-live
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.8
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.8)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 22.10.1
+        version: 22.10.1
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@22.10.1)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3))
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.1)(typescript@5.4.3)
+      ws:
+        specifier: 'catalog:'
+        version: 8.18.3
 
   libs/live-signer-canton:
     dependencies:
@@ -21831,10 +21941,6 @@ packages:
 
   acorn-walk@7.2.0:
     resolution: {integrity: sha512-OPdCF6GsMIP+Az+aWfAAOEt2/+iVDKE7oy6lJ098aoe59oAmK76qV6Gw60SbZ8jHuG2wH058GF4pLFbYamYrVA==}
-    engines: {node: '>=0.4.0'}
-
-  acorn-walk@8.3.2:
-    resolution: {integrity: sha512-cjkyv4OtNCIeqhHrfS81QWXoCBPExR/J62oyEqepVw8WaQeSqpW2uhuLPh1m9eWhDuOo/jUXVTlifvesOWp/4A==}
     engines: {node: '>=0.4.0'}
 
   acorn-walk@8.3.4:
@@ -53768,7 +53874,7 @@ snapshots:
 
   '@typescript-eslint/utils@5.62.0(eslint@8.57.0)(typescript@5.4.3)':
     dependencies:
-      '@eslint-community/eslint-utils': 4.4.0(eslint@8.57.0)
+      '@eslint-community/eslint-utils': 4.9.0(eslint@8.57.0)
       '@types/json-schema': 7.0.15
       '@types/semver': 7.7.1
       '@typescript-eslint/scope-manager': 5.62.0
@@ -53783,7 +53889,7 @@ snapshots:
 
   '@typescript-eslint/utils@5.62.0(eslint@8.57.0)(typescript@5.6.3)':
     dependencies:
-      '@eslint-community/eslint-utils': 4.4.0(eslint@8.57.0)
+      '@eslint-community/eslint-utils': 4.9.0(eslint@8.57.0)
       '@types/json-schema': 7.0.15
       '@types/semver': 7.7.1
       '@typescript-eslint/scope-manager': 5.62.0
@@ -54846,8 +54952,6 @@ snapshots:
       acorn: 8.15.0
 
   acorn-walk@7.2.0: {}
-
-  acorn-walk@8.3.2: {}
 
   acorn-walk@8.3.4:
     dependencies:
@@ -73189,8 +73293,8 @@ snapshots:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
       '@types/node': 20.12.12
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
+      acorn: 8.15.0
+      acorn-walk: 8.3.4
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
@@ -73211,8 +73315,8 @@ snapshots:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
       '@types/node': 20.12.12
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
+      acorn: 8.15.0
+      acorn-walk: 8.3.4
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
@@ -73233,8 +73337,8 @@ snapshots:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
       '@types/node': 22.10.1
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
+      acorn: 8.15.0
+      acorn-walk: 8.3.4
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
@@ -73255,8 +73359,8 @@ snapshots:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
       '@types/node': 22.10.10
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
+      acorn: 8.15.0
+      acorn-walk: 8.3.4
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
@@ -73277,8 +73381,8 @@ snapshots:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
       '@types/node': 22.10.10
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
+      acorn: 8.15.0
+      acorn-walk: 8.3.4
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
@@ -73298,8 +73402,8 @@ snapshots:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
+      acorn: 8.15.0
+      acorn-walk: 8.3.4
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
@@ -73319,8 +73423,8 @@ snapshots:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
+      acorn: 8.15.0
+      acorn-walk: 8.3.4
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
@@ -73340,8 +73444,8 @@ snapshots:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
+      acorn: 8.15.0
+      acorn-walk: 8.3.4
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
@@ -73362,8 +73466,8 @@ snapshots:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
       '@types/node': 20.5.1
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
+      acorn: 8.15.0
+      acorn-walk: 8.3.4
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
@@ -73382,8 +73486,8 @@ snapshots:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
       '@types/node': 22.10.10
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
+      acorn: 8.15.0
+      acorn-walk: 8.3.4
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2

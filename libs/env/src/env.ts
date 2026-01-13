@@ -277,6 +277,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Thorest API for VeChain",
   },
+  ALEO_MAINNET_NODE_ENDPOINT: {
+    def: "https://api.explorer.provable.com/v2/mainnet",
+    parser: stringParser,
+    desc: "Aleo mainnet node URL",
+  },
+  ALEO_TESTNET_NODE_ENDPOINT: {
+    def: "https://api.explorer.provable.com/v2/testnet",
+    parser: stringParser,
+    desc: "Aleo testnet node URL",
+  },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
     parser: stringParser,

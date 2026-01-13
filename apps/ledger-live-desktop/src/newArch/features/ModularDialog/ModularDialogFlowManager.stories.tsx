@@ -18,7 +18,7 @@ import { ModularDialogFlowManagerProps } from "./types";
 import modularDrawerReducer, { openDialog } from "~/renderer/reducers/modularDrawer";
 import { useDispatch } from "LLD/hooks/redux";
 import { setEnv } from "@ledgerhq/live-env";
-import { setSupportedCurrencies } from "@ledgerhq/coin-framework/lib-es/currencies/support";
+import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
 import {
   makeMockedFeatureFlagsProviderWrapper,
   makeMockedContextValue,

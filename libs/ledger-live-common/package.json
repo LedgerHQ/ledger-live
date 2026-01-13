@@ -140,6 +140,7 @@
   "dependencies": {
     "@blooo/hw-app-acre": "^1.1.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
+    "@ledgerhq/coin-aleo": "workspace:^",
     "@ledgerhq/coin-algorand": "workspace:^",
     "@ledgerhq/coin-aptos": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
@@ -208,6 +209,7 @@
     "@ledgerhq/live-hooks": "workspace:*",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
+    "@ledgerhq/live-signer-aleo": "workspace:^",
     "@ledgerhq/live-signer-canton": "workspace:^",
     "@ledgerhq/live-signer-evm": "workspace:^",
     "@ledgerhq/live-signer-solana": "workspace:^",
