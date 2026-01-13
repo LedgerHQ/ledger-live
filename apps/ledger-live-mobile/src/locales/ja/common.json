@@ -1107,6 +1107,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "受け取る報酬はありません"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "メモが長すぎます。最大{{maxLength}}文字まで入力可能です"
+    },
     "NearNewAccountWarning" : {
       "title" : "受取人アカウントはまだ作成されていません。このプロトコルでは、作成するのに{{formattedNewAccountStorageCost}}の転送コストが必要です。"
     },
@@ -2509,6 +2512,20 @@
       "doneTitle" : "PINコードが設定されました",
       "description" : "他のパスワードやパスコードと同様に、PINを使用すると、{{productName}}のロックを解除し、不要なアクセスを防ぐことができます。",
       "continueOnDevice" : "{{productName}}にPINを設定します。"
+    },
+    "syncStep" : {
+      "title" : "同期",
+      "doneTitle" : "ウォレット同期済み",
+      "descriptionTitle" : "ウォレットを同期",
+      "description" : "スマホの機種変更時やPC利用時も、ポートフォリオを常に最新の状態に保てます。",
+      "skipCta" : "あとで行う",
+      "skip" : {
+        "title" : "本当によろしいですか？",
+        "description" : "スキップした場合、新しいスマホやパソコンに切り替える際、すべてのアカウント、残高、履歴を手動で再度追加する必要があります。",
+        "descriptionEmphasis" : "設定からいつでも無効にできます。",
+        "skipCTA" : "はい、スキップします",
+        "syncCTA" : "いいえ、ウォレットを同期します"
+      }
     },
     "seedStep" : {
       "title" : "セットアップとバックアップ",
@@ -6355,6 +6372,7 @@
       "netApy" : "実質年利",
       "stakeActivationState" : "状態",
       "stakeActivePercent" : "アクティブ",
+      "inactiveStake" : "出金可能な報酬",
       "stakeAvailableBalance" : "利用可能残高",
       "actions" : {
         "activate" : "有効化",
@@ -8225,6 +8243,15 @@
     }
   },
   "canton" : {
+    "expiryDuration" : {
+      "label" : "有効期間",
+      "summaryLabel" : "オファーの有効期限",
+      "threeHours" : "3時間",
+      "sixHours" : "6時間",
+      "oneDay" : "1日間",
+      "oneWeek" : "1週間",
+      "oneMonth" : "30日間"
+    },
     "account" : {
       "lockedBalance" : "ロック済み",
       "lockedBalanceTooltip" : "他者に送信したオファーによりロックされている資金です。オファーはいつでもキャンセル可能です。あるいは、受取人が承諾または拒否するのを待つこともできます。",
