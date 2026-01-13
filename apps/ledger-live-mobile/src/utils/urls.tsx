@@ -1,4 +1,6 @@
 export const urls = {
+  mevProtection:
+    "https://support.ledger.com/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
   faq: "https://support.ledger.com/",
   chatbot: "https://ledgercustomersuccess.my.salesforce-sites.com/fullscreenbot",
   contact: "https://support.ledger.com/",
