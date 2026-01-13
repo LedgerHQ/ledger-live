@@ -296,7 +296,7 @@
     "accounts" : "계정",
     "manager" : "내 Ledger",
     "earn" : "수익",
-    "exchange" : "구매 / 판매",
+    "exchange" : "매수 / 매도",
     "swap" : "스왑",
     "refer" : "친구 추천",
     "lend" : "대출",
@@ -1560,7 +1560,7 @@
     "transactionsPendingConfirmation" : "일부 트랜잭션이 아직 확인되지 않았습니다. 트랜잭션이 확인된 후 잔액에 반영되며 사용이 가능합니다.",
     "featuredButtons" : {
       "buySell" : {
-        "title" : "구매 / 판매",
+        "title" : "매수 / 매도",
         "description" : "신뢰할 수 있는 Ledger 파트너사와 거래"
       },
       "swap" : {
@@ -2460,6 +2460,54 @@
         "checkbox.label" : "다시 보지 않기"
       }
     }
+  },
+  "newSendFlow" : {
+    "title" : "{{currency}} 전송",
+    "available" : "사용 가능 {{amount}}",
+    "placeholder" : "주소 또는 ENS를 입력하세요",
+    "placeholderNoENS" : "주소 입력",
+    "recent" : "최근 항목",
+    "myAccounts" : "내 계정",
+    "sendTo" : "{{address}}로 보내기",
+    "addressMatched" : "주소 일치함",
+    "addressNotFound" : "주소를 찾을 수 없음",
+    "alreadyUsed" : "이미 사용됨 · {{date}}",
+    "recentSendWillAppear" : "최근 전송 내역이 여기에 표시됩니다",
+    "remove" : "제거",
+    "enterTag" : "{{tag}} 입력",
+    "firstInteraction" : {
+      "title" : "새로운 주소로 전송 중입니다",
+      "description" : "올바른 주소인지 확인하세요. 확신할 수 없다면 소액을 먼저 보내보세요."
+    },
+    "sanctioned" : {
+      "title" : "경고 표시된 주소",
+      "description" : "이 주소는 위험이 감지된 주소로 분류되어 Ledger에서 전송을 허용하지 않습니다.",
+      "helpCenter" : "지원 센터"
+    },
+    "errors" : {
+      "incorrectFormat" : "잘못된 주소 형식",
+      "incompatibleAsset" : "선택한 자산과 호환되지 않는 주소입니다",
+      "walletNotExist" : "지갑이 존재하지 않습니다"
+    },
+    "skipMemo" : {
+      "title" : "{{tag}} 입력을 건너뛰시겠습니까?",
+      "warning" : "수령인이 {{tag}}를 요구하는 경우, 자산을 분실할 수 있습니다."
+    },
+    "tagHelp" : {
+      "title" : "{{tag}}란 무엇인가요?",
+      "description" : "거래소로 {{currency}} 전송 시 {{tag}} 입력이 필요합니다. 이는 트랜잭션 수신자를 식별하는 기능으로, {{tag}} 메모를 입력하지 않으면 자산을 분실할 수 있습니다."
+    },
+    "networkFeesInFiat" : "네트워크 수수료 {{currency}}",
+    "feesAmount" : "수수료({{unit}})",
+    "gasLimit" : "가스 한도({{unit}})",
+    "feesPaid" : "네트워크에 지불하는 트랜잭션 처리 수수료",
+    "insufficientBalanceFees" : "네트워크 수수료를 지불할 잔액이 부족합니다",
+    "amountToSend" : "보낼 수량({{currency}})",
+    "coinToSend" : "보낼 코인",
+    "coinControlCustom" : "코인 직접 선택",
+    "aboveMaximum" : "최대 수량 초과",
+    "transactionSigned" : "트랜잭션 서명 완료",
+    "processingTransaction" : "트랜잭션을 처리 중입니다"
   },
   "releaseNotes" : {
     "title" : "릴리즈 노트",
@@ -3699,6 +3747,8 @@
       "activeTooltip" : "활성 금액은 보상을 창출합니다",
       "inactiveTooltip" : "비활성 금액은 보상을 창출하지 않습니다",
       "delegatedInfoTooltip" : "검증인에게 위임된 총 금액입니다.",
+      "inactiveStakeTooltip" : "위임을 해제하지 않고도 인출할 수 있는 비활성 스테이킹 수량을 의미합니다.",
+      "inactiveStakeTitle" : "인출 가능 보상",
       "withdrawableInfoTooltip" : "위임자로부터 인출할 수 있는 총액입니다.",
       "withdrawableTitle" : "출금 가능",
       "statusUpdateNotice" : "거래 확인 후 위임 상태가 업데이트됩니다.",
@@ -4636,7 +4686,10 @@
       },
       "modularDrawerDevTool" : {
         "title" : "Modular Drawer Dev Tool",
-        "description" : "Modular Drawer를 간편하게 테스트할 수 있는 개발자 도구입니다."
+        "description" : "Modular Drawer를 간편하게 테스트할 수 있는 개발자 도구입니다.",
+        "openDrawer" : "Drawer 열기",
+        "debugDialog" : "디버그 대화상자",
+        "debugDuplicates" : "중복 항목 디버그"
       },
       "cryptoAssetsList" : {
         "title" : "암호화폐 목록",
@@ -5187,6 +5240,7 @@
           "recoveryPhrase" : "복구 문구",
           "hideRecoveryPhrase" : "복구 문구 숨기기",
           "pairNano" : "Nano 연결하기",
+          "enableSync" : "동기화",
           "secureYourCrypto" : "소중한 암호화폐를 안전하게"
         },
         "screens" : {
@@ -5479,6 +5533,14 @@
             "help" : {
               "help" : "도움 요청",
               "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
+            }
+          },
+          "enableSync" : {
+            "title" : "지갑 동기화 활성화",
+            "description" : "새 스마트폰이나 컴퓨터에서도 포트폴리오를 항상 최신 상태로 관리하세요.",
+            "buttons" : {
+              "next" : "계속",
+              "nextSecondary" : "나중에 하기"
             }
           },
           "secureYourCrypto" : {
@@ -5834,6 +5896,15 @@
     "canton" : {
       "commentPlaceholder" : "선택 사항",
       "comment" : "코멘트",
+      "expiryDuration" : {
+        "label" : "만료 기간",
+        "summaryLabel" : "기간 한정 요청",
+        "threeHours" : "3시간",
+        "sixHours" : "6시간",
+        "oneDay" : "1일",
+        "oneWeek" : "1주",
+        "oneMonth" : "30일"
+      },
       "account" : {
         "lockedBalance" : "잠금",
         "lockedBalanceTooltip" : "자산이 다른 사람에게 보낸 제안에 락업되어 있습니다. 언제든지 해당 제안을 취소할 수도 있고, 상대방이 수락/거절할 때까지 기다릴 수도 있습니다.",
@@ -5891,10 +5962,12 @@
       "pendingTransactions" : {
         "title" : "보류 중인 트랜잭션({{count}})",
         "incoming" : {
-          "title" : "입금 요청({{count}})"
+          "title" : "수신 이체 검토 ({{count}})",
+          "detailsTitle" : "수신 이체 세부 내역"
         },
         "outgoing" : {
-          "title" : "출금 요청({{count}})"
+          "title" : "출금 요청({{count}})",
+          "detailsTitle" : "발신 이체 세부 내역"
         },
         "pending" : "대기 중",
         "expired" : "만료됨",
@@ -6924,6 +6997,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "수령할 보상이 없습니다"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "메모가 너무 깁니다. 최대 길이는 {{maxLength}}자 입니다."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "파일 이미지 로딩 실패.",
       "description" : "다른 이미지로 재시도해보세요."
@@ -7421,6 +7497,12 @@
         "text" : "해당 트랜잭션의 확인이 완료되면 토큰 수령이 가능해집니다. <0>여기를 클릭</0>하여 수령 절차를 시작하세요.",
         "learnMore" : "자세히 알아보기"
       }
+    }
+  },
+  "dialogs" : {
+    "selectAccount" : {
+      "description" : "아직 {{network}} 계정이 없습니다. 계속하려면 계정을 추가하세요",
+      "addAccount" : "계정 추가"
     }
   },
   "drawers" : {

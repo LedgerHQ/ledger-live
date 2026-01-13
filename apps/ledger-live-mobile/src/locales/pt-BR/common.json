@@ -1107,6 +1107,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Sem recompensas para resgatar"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "O memo é muito longo. O comprimento máximo é {{maxLength}} caracteres"
+    },
     "NearNewAccountWarning" : {
       "title" : "A conta receptora ainda não foi criada. O protocolo requer uma transferência de {{formattedNewAccountStorageCost}} para criá-la."
     },
@@ -2509,6 +2512,20 @@
       "doneTitle" : "PIN definido",
       "description" : "Assim como qualquer senha ou código de acesso, o PIN permite que você desbloqueie sua {{productName}} e evite acessos indesejados.",
       "continueOnDevice" : "Crie seu PIN na sua {{productName}}."
+    },
+    "syncStep" : {
+      "title" : "Sincronização",
+      "doneTitle" : "Carteira sincronizada",
+      "descriptionTitle" : "Sincronize sua carteira",
+      "description" : "Mantenha seu portfólio atualizado ao trocar de smartphone ou usar um computador",
+      "skipCta" : "Farei isso mais tarde",
+      "skip" : {
+        "title" : "Tem certeza?",
+        "description" : "Se você pular esta etapa, terá que re-adicionar manualmente todas as suas contas, saldos e histórico se mudar para um novo smartphone ou computador.",
+        "descriptionEmphasis" : "Você pode sempre desativar nas configurações.",
+        "skipCTA" : "Sim, pular",
+        "syncCTA" : "Não, sincronizar minha carteira"
+      }
     },
     "seedStep" : {
       "title" : "Configuração e backup",
@@ -6355,6 +6372,7 @@
       "netApy" : "APY líquido",
       "stakeActivationState" : "Estado",
       "stakeActivePercent" : "Ativo",
+      "inactiveStake" : "Recompensas Sacáveis",
       "stakeAvailableBalance" : "Saldo Disponível",
       "actions" : {
         "activate" : "Ativar",
@@ -8225,6 +8243,15 @@
     }
   },
   "canton" : {
+    "expiryDuration" : {
+      "label" : "Duração da validade",
+      "summaryLabel" : "Validade da oferta",
+      "threeHours" : "3 horas",
+      "sixHours" : "6 horas",
+      "oneDay" : "1 dia",
+      "oneWeek" : "1 semana",
+      "oneMonth" : "30 dias"
+    },
     "account" : {
       "lockedBalance" : "Bloqueado",
       "lockedBalanceTooltip" : "Seus fundos estão bloqueados em ofertas que você enviou a outras pessoas. Você pode cancelar essas ofertas a qualquer momento ou esperar que o destinatário aceite ou recuse.",

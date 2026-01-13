@@ -2461,6 +2461,54 @@
       }
     }
   },
+  "newSendFlow" : {
+    "title" : "发送 {{currency}}",
+    "available" : "可用 {{amount}}",
+    "placeholder" : "请输入地址或 ENS",
+    "placeholderNoENS" : "输入地址",
+    "recent" : "最近",
+    "myAccounts" : "我的账户",
+    "sendTo" : "发送到 {{address}}",
+    "addressMatched" : "已匹配地址",
+    "addressNotFound" : "未找到地址",
+    "alreadyUsed" : "已使用 · {{date}}",
+    "recentSendWillAppear" : "您最近的发送会显示在此处",
+    "remove" : "删除",
+    "enterTag" : "输入备注 {{tag}}",
+    "firstInteraction" : {
+      "title" : "您正在发送至新地址",
+      "description" : "核实地址是否正确。如有疑问，请先发送小额资金。"
+    },
+    "sanctioned" : {
+      "title" : "已标记地址",
+      "description" : "该地址已被标记，Ledger 不允许向其发送。",
+      "helpCenter" : "帮助中心"
+    },
+    "errors" : {
+      "incorrectFormat" : "地址格式不正确",
+      "incompatibleAsset" : "地址与所选资产不兼容。",
+      "walletNotExist" : "钱包不存在"
+    },
+    "skipMemo" : {
+      "title" : "跳过添加备注 {{tag}}？",
+      "warning" : "如果接收方要求备注 {{tag}}，您的资产可能会丢失。"
+    },
+    "tagHelp" : {
+      "title" : "什么是备注 {{tag}}？",
+      "description" : "向加密货币交易所发送 {{currency}} 时，需要输入备注 {{tag}}。这是用于识别交易接收人的功能。不包含备注 {{tag}} 可能会导致资金损失。"
+    },
+    "networkFeesInFiat" : "网络费用为 {{currency}}",
+    "feesAmount" : "费用数额 ({{unit}})",
+    "gasLimit" : "Gas 限值 ({{unit}})",
+    "feesPaid" : "支付给网络用于处理交易的费用",
+    "insufficientBalanceFees" : "余额不足以支付网络费用",
+    "amountToSend" : "发送数额为 ({{currency}})",
+    "coinToSend" : "发送币种",
+    "coinControlCustom" : "自定义币种选择",
+    "aboveMaximum" : "高于最大余额",
+    "transactionSigned" : "交易已签署",
+    "processingTransaction" : "您的交易正在处理中"
+  },
   "releaseNotes" : {
     "title" : "版本说明",
     "version" : "Ledger Wallet {{versionNb}}"
@@ -3699,6 +3747,8 @@
       "activeTooltip" : "活跃的数额产生奖励",
       "inactiveTooltip" : "未激活的数额不产生奖励",
       "delegatedInfoTooltip" : "委托至验证者的总数额。",
+      "inactiveStakeTooltip" : "无需解除委托即可提取的非活跃质押。",
+      "inactiveStakeTitle" : "可提取奖励",
       "withdrawableInfoTooltip" : "可从委托提取的总数额。",
       "withdrawableTitle" : "可提取",
       "statusUpdateNotice" : "交易确认后，委托状态将更新。",
@@ -4636,7 +4686,10 @@
       },
       "modularDrawerDevTool" : {
         "title" : "模块化抽屉开发工具",
-        "description" : "助您轻松测试模块化抽屉"
+        "description" : "助您轻松测试模块化抽屉",
+        "openDrawer" : "打开抽屉",
+        "debugDialog" : "调试对话",
+        "debugDuplicates" : "调试副本"
       },
       "cryptoAssetsList" : {
         "title" : "加密资产列表",
@@ -5187,6 +5240,7 @@
           "recoveryPhrase" : "恢复短语",
           "hideRecoveryPhrase" : "隐藏恢复短语",
           "pairNano" : "连接 Nano",
+          "enableSync" : "同步",
           "secureYourCrypto" : "保护您的加密货币"
         },
         "screens" : {
@@ -5479,6 +5533,14 @@
             "help" : {
               "help" : "需要帮助",
               "descr" : "不知道如何操作？获取完成此步骤的帮助。"
+            }
+          },
+          "enableSync" : {
+            "title" : "为您的钱包启用同步",
+            "description" : "在您换用手机或使用电脑时，及时更新自己的资产组合。",
+            "buttons" : {
+              "next" : "继续",
+              "nextSecondary" : "以后再说"
             }
           },
           "secureYourCrypto" : {
@@ -5834,6 +5896,15 @@
     "canton" : {
       "commentPlaceholder" : "可选",
       "comment" : "备注",
+      "expiryDuration" : {
+        "label" : "有效期时长",
+        "summaryLabel" : "要约有效期",
+        "threeHours" : "3 小时",
+        "sixHours" : "6 小时",
+        "oneDay" : "1 天",
+        "oneWeek" : "1 周",
+        "oneMonth" : "30 天"
+      },
       "account" : {
         "lockedBalance" : "已锁定",
         "lockedBalanceTooltip" : "您的资金锁定在您发送给他人的要约中。您可以随时取消这些要约，或者等待接收方接受或拒绝。",
@@ -5891,10 +5962,12 @@
       "pendingTransactions" : {
         "title" : "待处理交易 ({{count}})",
         "incoming" : {
-          "title" : "收到的报价 ({{count}})"
+          "title" : "待审核的转账转入 ({{count}})",
+          "detailsTitle" : "转账转入详情"
         },
         "outgoing" : {
-          "title" : "发出的报价 ({{count}})"
+          "title" : "发出的报价 ({{count}})",
+          "detailsTitle" : "转账转出详情"
         },
         "pending" : "待处理",
         "expired" : "已逾期",
@@ -6924,6 +6997,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "暂无可领取的奖励"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "Memo 备注太长。最大长度为 {{maxLength}} 个字符"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "从文件加载图片失败。",
       "description" : "请使用图片再试一次。"
@@ -7421,6 +7497,12 @@
         "text" : "该交易确认后，您便能够接收您的代币。<0>点击此处</0>启动接收流程。",
         "learnMore" : "了解更多"
       }
+    }
+  },
+  "dialogs" : {
+    "selectAccount" : {
+      "description" : "您还没有 {{network}} 账户。请添加一个账户后继续。",
+      "addAccount" : "添加账户"
     }
   },
   "drawers" : {

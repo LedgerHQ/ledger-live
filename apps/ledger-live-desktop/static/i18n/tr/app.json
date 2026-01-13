@@ -2461,6 +2461,54 @@
       }
     }
   },
+  "newSendFlow" : {
+    "title" : "{{currency}} gönder",
+    "available" : "Mevcut: {{amount}}",
+    "placeholder" : "Adres ya da ENS adı girin",
+    "placeholderNoENS" : "Adresi girin",
+    "recent" : "Son kullanılanlar",
+    "myAccounts" : "Hesaplarım",
+    "sendTo" : "{{address}} adresine gönder",
+    "addressMatched" : "Adres eşleşti",
+    "addressNotFound" : "Adres bulunamadı",
+    "alreadyUsed" : "Daha önce kullanıldı · {{date}}",
+    "recentSendWillAppear" : "Son gönderme işleminiz burada görüntülenecek",
+    "remove" : "Kaldır",
+    "enterTag" : "{{tag}} gir",
+    "firstInteraction" : {
+      "title" : "Yeni bir adrese gönderiyorsunuz",
+      "description" : "Adresin doğru olduğunu doğrulayın. Emin değilseniz önce küçük bir tutar gönderin."
+    },
+    "sanctioned" : {
+      "title" : "İşaretlenmiş adres",
+      "description" : "Bu adres işaretlenmiş ve Ledger bu adrese gönderim yapamıyor.",
+      "helpCenter" : "Yardım merkezi"
+    },
+    "errors" : {
+      "incorrectFormat" : "Yanlış adres formatı",
+      "incompatibleAsset" : "Adres seçili varlıkla uyumlu değil",
+      "walletNotExist" : "Böyle bir cüzdan yok"
+    },
+    "skipMemo" : {
+      "title" : "{{tag}} ekleme atlansın mı?",
+      "warning" : "Alıcı bir {{tag}} gerektiriyorsa varlığınız kaybolabilir."
+    },
+    "tagHelp" : {
+      "title" : "{{tag}} nedir?",
+      "description" : "Bir kripto para borsasına {{currency}} gönderirken bir {{tag}} bilgisi gerekir. Bu, işlemin alıcısını tespit etmek için kullanılan bir özelliktir. {{tag}} memosunun eklenmediği durumlarda fonlar kaybolabilir."
+    },
+    "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
+    "feesAmount" : "Ücret tutarı ({{unit}})",
+    "gasLimit" : "Gas limiti ({{unit}})",
+    "feesPaid" : "İşleminizi başlatabilmek için ağa ödenen ücretler",
+    "insufficientBalanceFees" : "Ağ ücretlerini karşılayacak kadar bakiye mevcut değil.",
+    "amountToSend" : "({{currency}}) olarak gönderilecek tutar",
+    "coinToSend" : "Gönderilecek coin",
+    "coinControlCustom" : "Özel coin seçimi",
+    "aboveMaximum" : "Maksimum bakiyenin üzerinde",
+    "transactionSigned" : "İşlem imzalandı",
+    "processingTransaction" : "İşleminiz gerçekleştiriliyor"
+  },
   "releaseNotes" : {
     "title" : "Sürüm notları",
     "version" : "Ledger Wallet {{versionNb}}"
@@ -3699,6 +3747,8 @@
       "activeTooltip" : "Aktif yetkilendirme tutarı ödül üretir",
       "inactiveTooltip" : "Aktif olmayan yetkilendirme tutarı ödül üretmez",
       "delegatedInfoTooltip" : "Doğrulayıcılara yetkisi devredilen toplam tutar.",
+      "inactiveStakeTooltip" : "Yetki devrinizi devre dışı bırakmadan çekilebilecek aktif olmayan stake.",
+      "inactiveStakeTitle" : "Çekilebilir Ödüller",
       "withdrawableInfoTooltip" : "Yetki devirlerinden çekilebilecek toplam tutar.",
       "withdrawableTitle" : "Çekilebilir bakiye",
       "statusUpdateNotice" : "İşlem onaylandığında yetki devrinin durumu güncellenir.",
@@ -4636,7 +4686,10 @@
       },
       "modularDrawerDevTool" : {
         "title" : "Modular Drawer Geliştirici Aracı",
-        "description" : "Modular Drawer’ı kolayca test etmenize olanak tanır"
+        "description" : "Modular Drawer’ı kolayca test etmenize olanak tanır",
+        "openDrawer" : "Çekmeceyi Aç",
+        "debugDialog" : "Diyaloğu Ayıkla",
+        "debugDuplicates" : "Yinelemeleri Ayıkla"
       },
       "cryptoAssetsList" : {
         "title" : "Kripto Varlık Listesi",
@@ -5187,6 +5240,7 @@
           "recoveryPhrase" : "Kurtarma ifadesi",
           "hideRecoveryPhrase" : "Kurtarma ifadenizi saklayın",
           "pairNano" : "Nano'yu bağla",
+          "enableSync" : "Senkronizasyon",
           "secureYourCrypto" : "Kriptolarınızı güvende tutun"
         },
         "screens" : {
@@ -5479,6 +5533,14 @@
             "help" : {
               "help" : "Yardım gerekli",
               "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
+            }
+          },
+          "enableSync" : {
+            "title" : "Cüzdanınız için senkronizasyonu etkinleştirin",
+            "description" : "Farklı telefonlar arasında geçiş yaparken veya bilgisayar kullanırken portföyünüzün güncel kalmasını sağlayın.",
+            "buttons" : {
+              "next" : "Devam",
+              "nextSecondary" : "Daha sonra yapacağım"
             }
           },
           "secureYourCrypto" : {
@@ -5834,6 +5896,15 @@
     "canton" : {
       "commentPlaceholder" : "Tercihe bağlı",
       "comment" : "Yorum",
+      "expiryDuration" : {
+        "label" : "Sona erme süresi",
+        "summaryLabel" : "Teklifin Süresi Doluyor",
+        "threeHours" : "3 saat",
+        "sixHours" : "6 saat",
+        "oneDay" : "1 gün",
+        "oneWeek" : "1 hafta",
+        "oneMonth" : "30 gün"
+      },
       "account" : {
         "lockedBalance" : "Kilitli",
         "lockedBalanceTooltip" : "Fonlarınız, başkalarına gönderdiğiniz tekliflerde kilitlenmiş durumda. Bu teklifleri istediğiniz zaman iptal edebilir veya alıcının kabul etmesini ya da reddetmesini bekleyebilirsiniz.",
@@ -5891,10 +5962,12 @@
       "pendingTransactions" : {
         "title" : "Bekleyen İşlemler ({{count}})",
         "incoming" : {
-          "title" : "Gelen Teklifler ({{count}})"
+          "title" : "İncelenecek gelen transfer ({{count}})",
+          "detailsTitle" : "Gelen transfer bilgileri"
         },
         "outgoing" : {
-          "title" : "Giden Teklifler ({{count}})"
+          "title" : "Giden Teklifler ({{count}})",
+          "detailsTitle" : "Giden transfer bilgileri"
         },
         "pending" : "Beklemede",
         "expired" : "Süresi doldu",
@@ -6924,6 +6997,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Alınacak hiçbir ödül yok"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "Memo çok uzun Uzunluk en fazla {{maxLength}} karakter olmalıdır"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Dosyadan görüntü yüklenemedi.",
       "description" : "Lütfen bir görüntü seçerek tekrar deneyin."
@@ -7421,6 +7497,12 @@
         "text" : "Bu işlem onaylandığında token’ınızı alabileceksiniz. Akışı başlatmak için <0>buraya tıklayın</0>.",
         "learnMore" : "Daha fazla bilgi"
       }
+    }
+  },
+  "dialogs" : {
+    "selectAccount" : {
+      "description" : "Henüz hiçbir {{network}} hesabınız yok. Devam etmek için lütfen bir tane ekleyin.",
+      "addAccount" : "Hesap ekle"
     }
   },
   "drawers" : {
