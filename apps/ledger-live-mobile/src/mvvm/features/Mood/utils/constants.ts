@@ -39,6 +39,11 @@ export function getMoodColor(value: number): string {
 // Mock data for each mood level
 export const MOCK_MOOD_DATA: MoodData[] = [
   {
+    value: 0,
+    level: "greed",
+    label: "Greedy",
+  },
+  {
     value: 70,
     level: "greed",
     label: "Greedy",

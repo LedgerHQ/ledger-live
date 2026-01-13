@@ -17,9 +17,22 @@ interface MoodArcProps {
 
 export default function MoodArc({ value }: MoodArcProps) {
   const { colors } = useTheme();
-  const angle = (-180 + (value / 100) * 180) * (Math.PI / 180);
-  const cursorX = CX + R * Math.cos(angle);
-  const cursorY = CY + R * Math.sin(angle);
+  const startX = 3.37572;
+  const startY = 28.8056;
+  const endX = 39.7877;
+  const endY = 28.8041;
+
+  const startAngle = Math.atan2(startY - CY, startX - CX);
+  const endAngle = Math.atan2(endY - CY, endX - CX);
+
+  let angleRange = endAngle - startAngle;
+  if (angleRange < 0) {
+    angleRange += 2 * Math.PI;
+  }
+
+  const currentAngle = startAngle + (value / 100) * angleRange;
+  const cursorX = CX + R * Math.cos(currentAngle);
+  const cursorY = CY + R * Math.sin(currentAngle);
 
   return (
     <Svg
