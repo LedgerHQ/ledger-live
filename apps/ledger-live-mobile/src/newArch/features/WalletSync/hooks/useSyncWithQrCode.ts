@@ -12,7 +12,7 @@ import {
 import { setTrustchain, trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
-import { AnalyticsEvents } from "LLM/features/Analytics/enums";
+import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
 import { track } from "~/analytics";
 import { Steps } from "../types/Activation";
 import { NavigatorName, ScreenName } from "~/const";
