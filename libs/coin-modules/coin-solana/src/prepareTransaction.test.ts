@@ -3,10 +3,10 @@ import { Account, VersionedMessage } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { transaction } from "./__tests__/fixtures/helpers.fixture";
 import { SolanaMemoIsTooLong } from "./errors";
-import * as logicValidateMemo from "./logic/validateMemo";
 import { ChainAPI } from "./network";
 import { prepareTransaction } from "./prepareTransaction";
 import { SolanaAccount, Transaction, TransferTransaction } from "./types";
+import * as logicValidateMemo from "./logic/validateMemo";
 
 jest.mock("./estimateMaxSpendable", () => {
   const originalModule = jest.requireActual("./estimateMaxSpendable");
@@ -20,9 +20,16 @@ jest.mock("./estimateMaxSpendable", () => {
     ),
   };
 });
+jest.mock("./logic/validateMemo", () => {
+  const actual = jest.requireActual("./logic/validateMemo");
+  return {
+    ...actual,
+    validateMemo: jest.fn(actual.validateMemo), // replace with mock
+  };
+});
 
 describe("testing prepareTransaction", () => {
-  const spiedValidateMemo = jest.spyOn(logicValidateMemo, "validateMemo");
+  const spiedValidateMemo = logicValidateMemo.validateMemo as jest.Mock;
 
   it("packs a 'NotEnoughGas' error if the sender can not afford the fees during a token transfer", async () => {
     const preparedTransaction = await prepareTransaction(

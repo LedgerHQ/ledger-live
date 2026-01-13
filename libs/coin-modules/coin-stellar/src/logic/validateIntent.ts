@@ -1,10 +1,4 @@
 import {
-  FeeEstimation,
-  TransactionIntent,
-  TransactionValidation,
-} from "@ledgerhq/coin-framework/api/types";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import {
   AmountRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -37,7 +31,6 @@ import {
   StellarSourceHasMultiSign,
   StellarWrongMemoFormat,
 } from "../types";
-import { getBalance } from "./getBalance";
 import { isAccountMultiSign, isAddressValid } from "./utils";
 import { validateMemo } from "./validateMemo";
 
