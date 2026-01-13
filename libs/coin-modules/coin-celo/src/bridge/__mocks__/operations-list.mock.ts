@@ -25,13 +25,13 @@ export const erc20Operation = {
       height: 2000,
       hash: "0xsa",
     },
-    date: new Date(),
+    date: new Date("2026-01-09"),
     failed: false,
-    fees: BigInt(525072996210000),
+    fees: BigNumber(525072996210000),
     hash: "0xs",
   },
   type: "OUT",
-  value: BigInt(0),
+  value: BigNumber(0),
 };
 
 export const nativeOperation = {
@@ -49,11 +49,11 @@ export const nativeOperation = {
       height: 2000,
       hash: "0xsa",
     },
-    date: new Date(),
+    date: new Date("2026-01-09"),
     failed: false,
-    fees: BigInt(525072996210000),
+    fees: BigNumber(525072996210000),
     hash: "0xs",
   },
   type: "OUT",
-  value: BigInt(0),
+  value: BigNumber(0),
 };

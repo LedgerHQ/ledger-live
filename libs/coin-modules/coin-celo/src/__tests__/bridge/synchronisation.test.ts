@@ -60,8 +60,8 @@ describe("When getting the account shape", () => {
     expect(result).toMatchObject({
       blockHeight: 4444,
       syncHash: "0x0000000000000000000000000000000000001d00",
+      operations: [],
     });
-    expect(result.operations?.length).toBe(0);
   });
 
   it("returns the account with 1 erc20 operation", async () => {
@@ -75,17 +75,55 @@ describe("When getting the account shape", () => {
 
     // When
     const result = await getAccountShape(defaultInfo, defaultConfig);
-
     // Then
     expect(result).toMatchObject({
       blockHeight: 4444,
+      operations: [],
+      subAccounts: [
+        {
+          balance: undefined,
+          balanceHistoryCache: {
+            DAY: {
+              balances: [],
+              latestDate: null,
+            },
+            HOUR: {
+              balances: [],
+              latestDate: null,
+            },
+            WEEK: {
+              balances: [],
+              latestDate: null,
+            },
+          },
+          creationDate: new Date("2026-01-09"),
+          id: "js:2:celo:0x79D5A290D7ba4b99322d91b577589e8d0BF87072:+0xcc",
+          operations: [
+            {
+              id: "js:2:celo:address",
+              hash: "0xs",
+              type: "UNLOCK",
+              value: new BigNumber(200000000000000000000),
+              senders: ["0x5a40FEE4eFebE3c85eDD3C79E15e221B7261a000"],
+              recipients: ["0x0000000000000000000000000000000000001d00"],
+              blockHeight: 2000,
+              blockHash: "0xsa",
+              accountId: "js:2:celo:0x79D5A290D7ba4b99322d91b577589e8d0BF87072:+0xcc",
+              date: new Date("2026-01-09"),
+              hasFailed: false,
+              fee: new BigNumber(525072996210000),
+              transactionSequenceNumber: new BigNumber(0),
+              extra: {},
+              isSubAccount: true,
+            },
+          ],
+        },
+      ],
       celoResources: {
         registrationStatus: true,
         pendingWithdrawals: [],
       },
     });
-    expect(result.operations?.length).toBe(0);
-    expect(result.subAccounts?.length).toBe(1);
   });
 
   it("returns the account with 1 native operation", async () => {
@@ -103,8 +141,26 @@ describe("When getting the account shape", () => {
     expect(result).toMatchObject({
       blockHeight: 4444,
       operationsCount: 1,
+      operations: [
+        {
+          id: "js:2:celo:address",
+          hash: "0xs",
+          type: "OUT",
+          value: new BigNumber(0),
+          senders: ["0x5a40FEE4eFebE3c85eDD3C79E15e221B7261a000"],
+          recipients: ["0x5a40FEE4eFebE3c85eDD3C79E15e221B7261a000"],
+          blockHeight: 2000,
+          blockHash: "0xsa",
+          accountId: "js:2:celo:0x79D5A290D7ba4b99322d91b577589e8d0BF87072:",
+          date: new Date("2026-01-09"),
+          hasFailed: false,
+          fee: new BigNumber(525072996210000),
+          transactionSequenceNumber: new BigNumber(0),
+          extra: {},
+          isSubAccount: false,
+        },
+      ],
     });
-    expect(result.operations?.length).toBe(1);
   });
 
   it("returns the account with correct id, and celo resources", async () => {
@@ -119,7 +175,6 @@ describe("When getting the account shape", () => {
     const result = await getAccountShape(defaultInfo, defaultConfig);
 
     // Then
-    expect(result).toBeDefined();
     expect(result).toMatchObject({
       id: "js:2:celo:0x79D5A290D7ba4b99322d91b577589e8d0BF87072:",
       celoResources: {
