@@ -91,7 +91,7 @@ export function SendHeader() {
       />
       {showRecipientInput ? (
         <AddressInput
-          className="mb-24 px-24"
+          className="-mt-12 mb-24 px-24"
           value={recipientSearch.value}
           onChange={e => recipientSearch.setValue(e.target.value)}
           onClear={recipientSearch.clear}

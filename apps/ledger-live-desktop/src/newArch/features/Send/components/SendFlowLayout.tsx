@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { Dialog, DialogContent, DialogBody } from "@ledgerhq/lumen-ui-react";
+import { cn } from "LLD/utils/cn";
 import { useSendFlowNavigation, useSendFlowData } from "../context/SendFlowContext";
 import type { StepRegistry, StepRenderer } from "../../FlowWizard/types";
 import { FLOW_STATUS } from "../../FlowWizard/types";
@@ -32,6 +33,15 @@ export function SendFlowLayout({ stepRegistry, isOpen, onClose }: SendFlowLayout
 
   const dialogHeight = currentStepConfig?.height ?? "fixed";
 
+  const dialogBodyClassName = useMemo(
+    () =>
+      cn(
+        "-mb-24 gap-32 px-24 py-16 text-base [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        dialogHeight === "hug" ? "basis-auto" : "basis-0",
+      ),
+    [dialogHeight],
+  );
+
   const statusGradientClass = useMemo(() => {
     if (state.flowStatus === FLOW_STATUS.ERROR) {
       return "bg-gradient-error";
@@ -51,7 +61,7 @@ export function SendFlowLayout({ stepRegistry, isOpen, onClose }: SendFlowLayout
           />
         )}
         <SendHeader />
-        <DialogBody className="-mb-24 basis-0 gap-32 px-24 py-16 text-base [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <DialogBody className={dialogBodyClassName}>
           {StepComponent && (
             <div key={currentStep} className="animate-fade-in">
               <StepComponent />
