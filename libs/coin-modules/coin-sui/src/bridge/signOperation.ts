@@ -9,7 +9,7 @@ import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
 import type { SuiAccount, SuiSigner, Transaction } from "../types";
-import { withApi } from "../network/sdk";
+import { withApi } from "../network/api";
 
 /**
  * Sign Transaction with Ledger hardware

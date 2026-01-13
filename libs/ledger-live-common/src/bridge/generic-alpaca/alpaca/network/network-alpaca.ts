@@ -15,6 +15,8 @@ import type {
   Reward,
   CraftedTransaction,
   Validator,
+  Direction,
+  AccountTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 

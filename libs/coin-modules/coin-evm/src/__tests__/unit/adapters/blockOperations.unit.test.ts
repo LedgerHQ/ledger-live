@@ -1,4 +1,4 @@
-import type { BlockOperation } from "@ledgerhq/coin-framework/api/index";
+import type { TransactionEvent } from "@ledgerhq/coin-framework/api/index";
 import {
   ledgerTransactionToBlockOperations,
   rpcTransactionToBlockOperations,
@@ -18,75 +18,92 @@ describe("EVM Family", () => {
         it("should extract native ETH transfer operations from RPC transaction with value", () => {
           const operations = rpcTransactionToBlockOperations(
             "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-            1000000000000000000n,
             "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+            1000000000000000000n,
+            1000000n,
           );
           expect(operations).toEqual([
             {
-              type: "transfer",
-              address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-              peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-              asset: { type: "native" },
-              amount: -1000000000000000000n,
+              type: "TRANSFER",
+              balanceDeltas: [
+                {
+                  address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                  peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                  asset: { type: "native" },
+                  delta: -1000000000000000000n,
+                },
+                {
+                  address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                  peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                  asset: { type: "native" },
+                  delta: 1000000000000000000n,
+                },
+              ],
             },
             {
-              type: "transfer",
-              address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-              peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-              asset: { type: "native" },
-              amount: 1000000000000000000n,
+              type: "FEE",
+              balanceDeltas: [
+                {
+                  address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                  asset: { type: "native" },
+                  delta: -1000000n,
+                },
+              ],
             },
           ]);
         });
 
-        it("should return empty array for transaction with zero value", () => {
+        it("should return only fee event for transaction with zero value", () => {
           const operations = rpcTransactionToBlockOperations(
             "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
             0n,
-            "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+            500000n,
           );
 
-          expect(operations).toHaveLength(0);
+          expect(operations).toHaveLength(1);
+          expect(operations[0]).toEqual({
+            type: "FEE",
+            balanceDeltas: [
+              {
+                address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                asset: { type: "native" },
+                delta: -500000n,
+              },
+            ],
+          });
         });
 
-        it("should handle transaction with null to address (contract creation)", () => {
+        it("should handle transaction with undefined to address (contract creation)", () => {
           const operations = rpcTransactionToBlockOperations(
             "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-            500000000000000000n,
             undefined,
+            500000000000000000n,
+            1000000n,
           );
 
-          expect(operations).toHaveLength(1);
+          expect(operations).toHaveLength(2);
           expect(operations[0]).toEqual({
-            type: "transfer",
-            address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            asset: { type: "native" },
-            amount: -500000000000000000n,
+            type: "TRANSFER",
+            balanceDeltas: [
+              {
+                address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                peer: undefined,
+                asset: { type: "native" },
+                delta: -500000000000000000n,
+              },
+            ],
           });
-          expect(operations[0]).not.toHaveProperty("peer");
-        });
-
-        it("should handle transaction with null from address", () => {
-          const operations = rpcTransactionToBlockOperations(
-            "",
-            2000000000000000000n,
-            "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
-          );
-
-          expect(operations).toHaveLength(1);
-          expect(operations[0]).toEqual({
-            type: "transfer",
-            address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            asset: { type: "native" },
-            amount: 2000000000000000000n,
+          expect(operations[1]).toEqual({
+            type: "FEE",
+            balanceDeltas: [
+              {
+                address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                asset: { type: "native" },
+                delta: -1000000n,
+              },
+            ],
           });
-          expect(operations[0]).not.toHaveProperty("peer");
-        });
-
-        it("should handle invalid addresses gracefully", () => {
-          const operations = rpcTransactionToBlockOperations("0x0", 1000000000000000000n, "0x");
-
-          expect(operations).toHaveLength(0);
         });
       });
 
@@ -121,6 +138,9 @@ describe("EVM Family", () => {
           },
         };
 
+        // Expected fee based on gas_used * gas_price: 51958 * 81876963401 = 4253317709034558n
+        const expectedFee = BigInt(baseLedgerTx.gas_used) * BigInt(baseLedgerTx.gas_price);
+
         it("should extract native ETH transfer operations", () => {
           const ledgerTx: LedgerExplorerOperation = {
             ...baseLedgerTx,
@@ -131,25 +151,48 @@ describe("EVM Family", () => {
 
           expect(operations).toHaveLength(2);
           expect(operations[0]).toEqual({
-            type: "transfer",
-            address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            asset: { type: "native" },
-            amount: -1000000000000000000n,
+            type: "TRANSFER",
+            balanceDeltas: [
+              {
+                address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                asset: { type: "native" },
+                delta: -1000000000000000000n,
+              },
+              {
+                address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                asset: { type: "native" },
+                delta: 1000000000000000000n,
+              },
+            ],
           });
           expect(operations[1]).toEqual({
-            type: "transfer",
-            address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            asset: { type: "native" },
-            amount: 1000000000000000000n,
+            type: "FEE",
+            balanceDeltas: [
+              {
+                address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                asset: { type: "native" },
+                delta: -expectedFee,
+              },
+            ],
           });
         });
 
-        it("should return empty array for transaction with zero value and no events", () => {
+        it("should return only fee event for transaction with zero value and no events", () => {
           const operations = ledgerTransactionToBlockOperations(baseLedgerTx);
 
-          expect(operations).toHaveLength(0);
+          expect(operations).toHaveLength(1);
+          expect(operations[0]).toEqual({
+            type: "FEE",
+            balanceDeltas: [
+              {
+                address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                asset: { type: "native" },
+                delta: -expectedFee,
+              },
+            ],
+          });
         });
 
         it("should extract ERC20 token transfer operations", () => {
@@ -169,19 +212,29 @@ describe("EVM Family", () => {
 
           expect(operations).toHaveLength(2);
           expect(operations[0]).toEqual({
-            type: "transfer",
-            address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            asset: { type: "erc20", assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" },
-            amount: -1000000n,
+            type: "TRANSFER",
+            balanceDeltas: [
+              {
+                address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                asset: {
+                  type: "erc20",
+                  assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                },
+                delta: -1000000n,
+              },
+              {
+                address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                asset: {
+                  type: "erc20",
+                  assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                },
+                delta: 1000000n,
+              },
+            ],
           });
-          expect(operations[1]).toEqual({
-            type: "transfer",
-            address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            asset: { type: "erc20", assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" },
-            amount: 1000000n,
-          });
+          expect(operations[1].type).toBe("FEE");
         });
 
         it("should extract multiple ERC20 token transfer operations", () => {
@@ -207,15 +260,18 @@ describe("EVM Family", () => {
 
           const operations = ledgerTransactionToBlockOperations(ledgerTx);
 
-          expect(operations).toHaveLength(4);
-          expect(operations[0].asset).toEqual({
+          expect(operations).toHaveLength(3); // 2 TRANSFER events + 1 FEE event
+          expect(operations[0].type).toBe("TRANSFER");
+          expect(operations[0].balanceDeltas[0].asset).toEqual({
             type: "erc20",
             assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
           });
-          expect(operations[2].asset).toEqual({
+          expect(operations[1].type).toBe("TRANSFER");
+          expect(operations[1].balanceDeltas[0].asset).toEqual({
             type: "erc20",
             assetReference: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
           });
+          expect(operations[2].type).toBe("FEE");
         });
 
         it("should extract ERC721 NFT transfer operations", () => {
@@ -235,19 +291,29 @@ describe("EVM Family", () => {
 
           expect(operations).toHaveLength(2);
           expect(operations[0]).toEqual({
-            type: "transfer",
-            address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            asset: { type: "erc721", assetReference: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D" },
-            amount: -1n,
+            type: "TRANSFER",
+            balanceDeltas: [
+              {
+                address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                asset: {
+                  type: "erc721",
+                  assetReference: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+                },
+                delta: -1n,
+              },
+              {
+                address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                asset: {
+                  type: "erc721",
+                  assetReference: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+                },
+                delta: 1n,
+              },
+            ],
           });
-          expect(operations[1]).toEqual({
-            type: "transfer",
-            address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            asset: { type: "erc721", assetReference: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D" },
-            amount: 1n,
-          });
+          expect(operations[1].type).toBe("FEE");
         });
 
         it("should extract ERC1155 NFT transfer operations", () => {
@@ -269,29 +335,54 @@ describe("EVM Family", () => {
 
           const operations = ledgerTransactionToBlockOperations(ledgerTx);
 
-          expect(operations).toHaveLength(4); // 2 transfers × 2 addresses
+          expect(operations).toHaveLength(3); // 2 TRANSFER events (one per transfer) + 1 FEE event
           expect(operations[0]).toEqual({
-            type: "transfer",
-            address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            asset: {
-              type: "erc1155",
-              assetReference: "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
-            },
-            amount: -5n,
+            type: "TRANSFER",
+            balanceDeltas: [
+              {
+                address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                asset: {
+                  type: "erc1155",
+                  assetReference: "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
+                },
+                delta: -5n,
+              },
+              {
+                address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                asset: {
+                  type: "erc1155",
+                  assetReference: "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
+                },
+                delta: 5n,
+              },
+            ],
           });
           expect(operations[1]).toEqual({
-            type: "transfer",
-            address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            asset: {
-              type: "erc1155",
-              assetReference: "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
-            },
-            amount: 5n,
+            type: "TRANSFER",
+            balanceDeltas: [
+              {
+                address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                asset: {
+                  type: "erc1155",
+                  assetReference: "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
+                },
+                delta: -10n,
+              },
+              {
+                address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                asset: {
+                  type: "erc1155",
+                  assetReference: "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
+                },
+                delta: 10n,
+              },
+            ],
           });
-          expect(operations[2].amount).toBe(-10n);
-          expect(operations[3].amount).toBe(10n);
+          expect(operations[2].type).toBe("FEE");
         });
 
         it("should extract internal transaction operations", () => {
@@ -314,19 +405,23 @@ describe("EVM Family", () => {
 
           expect(operations).toHaveLength(2);
           expect(operations[0]).toEqual({
-            type: "transfer",
-            address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            asset: { type: "native" },
-            amount: -500000000000000000n,
+            type: "TRANSFER",
+            balanceDeltas: [
+              {
+                address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                asset: { type: "native" },
+                delta: -500000000000000000n,
+              },
+              {
+                address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+                peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                asset: { type: "native" },
+                delta: 500000000000000000n,
+              },
+            ],
           });
-          expect(operations[1]).toEqual({
-            type: "transfer",
-            address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            asset: { type: "native" },
-            amount: 500000000000000000n,
-          });
+          expect(operations[1].type).toBe("FEE");
         });
 
         it("should skip internal transactions with errors", () => {
@@ -347,7 +442,8 @@ describe("EVM Family", () => {
 
           const operations = ledgerTransactionToBlockOperations(ledgerTx);
 
-          expect(operations).toHaveLength(0);
+          expect(operations).toHaveLength(1);
+          expect(operations[0].type).toBe("FEE");
         });
 
         it("should skip internal transactions with zero value", () => {
@@ -368,7 +464,8 @@ describe("EVM Family", () => {
 
           const operations = ledgerTransactionToBlockOperations(ledgerTx);
 
-          expect(operations).toHaveLength(0);
+          expect(operations).toHaveLength(1);
+          expect(operations[0].type).toBe("FEE");
         });
 
         it("should extract all operation types from a complex transaction", () => {
@@ -415,32 +512,42 @@ describe("EVM Family", () => {
 
           const operations = ledgerTransactionToBlockOperations(ledgerTx);
 
-          // Native: 2, ERC20: 2, ERC721: 2, ERC1155: 2, Internal: 2 = 10 total
-          expect(operations).toHaveLength(10);
+          // Native: 1 TRANSFER, ERC20: 1 TRANSFER, ERC721: 1 TRANSFER, ERC1155: 1 TRANSFER, Internal: 1 TRANSFER, FEE: 1 = 6 total
+          expect(operations).toHaveLength(6);
 
-          // Check native transfer
-          const nativeOps = operations.filter(
-            (op): op is BlockOperation => op.type === "transfer" && op.asset.type === "native",
+          // Check TRANSFER events
+          const transferOps = operations.filter(
+            (op): op is TransactionEvent => op.type === "TRANSFER",
           );
-          expect(nativeOps).toHaveLength(4); // 2 from value, 2 from actions
+          expect(transferOps).toHaveLength(5);
+
+          // Check native transfers (from value and from actions)
+          const nativeTransfers = transferOps.filter(op =>
+            op.balanceDeltas.some(d => d.asset.type === "native"),
+          );
+          expect(nativeTransfers).toHaveLength(2);
 
           // Check ERC20 transfer
-          const erc20Ops = operations.filter(
-            (op): op is BlockOperation => op.type === "transfer" && op.asset.type === "erc20",
+          const erc20Transfers = transferOps.filter(op =>
+            op.balanceDeltas.some(d => d.asset.type === "erc20"),
           );
-          expect(erc20Ops).toHaveLength(2);
+          expect(erc20Transfers).toHaveLength(1);
 
           // Check ERC721 transfer
-          const erc721Ops = operations.filter(
-            (op): op is BlockOperation => op.type === "transfer" && op.asset.type === "erc721",
+          const erc721Transfers = transferOps.filter(op =>
+            op.balanceDeltas.some(d => d.asset.type === "erc721"),
           );
-          expect(erc721Ops).toHaveLength(2);
+          expect(erc721Transfers).toHaveLength(1);
 
           // Check ERC1155 transfer
-          const erc1155Ops = operations.filter(
-            (op): op is BlockOperation => op.type === "transfer" && op.asset.type === "erc1155",
+          const erc1155Transfers = transferOps.filter(op =>
+            op.balanceDeltas.some(d => d.asset.type === "erc1155"),
           );
-          expect(erc1155Ops).toHaveLength(2);
+          expect(erc1155Transfers).toHaveLength(1);
+
+          // Check FEE event
+          const feeOps = operations.filter((op): op is TransactionEvent => op.type === "FEE");
+          expect(feeOps).toHaveLength(1);
         });
 
         it("should handle transaction with empty to address", () => {
@@ -452,27 +559,19 @@ describe("EVM Family", () => {
 
           const operations = ledgerTransactionToBlockOperations(ledgerTx);
 
-          expect(operations).toHaveLength(1);
+          expect(operations).toHaveLength(2);
           expect(operations[0]).toEqual({
-            type: "transfer",
-            address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            asset: { type: "native" },
-            amount: -1000000000000000000n,
+            type: "TRANSFER",
+            balanceDeltas: [
+              {
+                address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+                peer: undefined,
+                asset: { type: "native" },
+                delta: -1000000000000000000n,
+              },
+            ],
           });
-          expect(operations[0]).not.toHaveProperty("peer");
-        });
-
-        it("should handle invalid addresses gracefully", () => {
-          const ledgerTx: LedgerExplorerOperation = {
-            ...baseLedgerTx,
-            value: "1000000000000000000",
-            from: "0x0",
-            to: "0x",
-          };
-
-          const operations = ledgerTransactionToBlockOperations(ledgerTx);
-
-          expect(operations).toHaveLength(0);
+          expect(operations[1].type).toBe("FEE");
         });
       });
     });

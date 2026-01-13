@@ -45,7 +45,7 @@ import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { getCurrentSuiPreloadData } from "../bridge/preload";
 import { ONE_SUI } from "../constants";
 import { getInputObjects } from "@mysten/signers/ledger";
-import { AccountBalance } from "../../lib/network/sdk";
+import { AccountBalance } from "../../src/types/sdk";
 import { isStaking, isUnstaking } from "./utils";
 import { withApi } from "./api";
 
@@ -308,13 +308,13 @@ export const mergeTransactions = (
   // in asc order, the operations are sorted by timestamp in ascending order
   // in desc order, the operations are sorted by timestamp in descending order
 
-  const getOldestTransactionTime = (txs: SuiTransactionBlockResponse[]): number =>
+  const getOldestTransactionTime = (txs: readonly SuiTransactionBlockResponse[]): number =>
     Number(txs[txs.length - 1]?.timestampMs ?? 0);
 
-  const getNewestTransactionTime = (txs: SuiTransactionBlockResponse[]): number =>
+  const getNewestTransactionTime = (txs: readonly SuiTransactionBlockResponse[]): number =>
     Number(txs[0]?.timestampMs ?? 0);
 
-  const getLastTransactionTime = (txs: SuiTransactionBlockResponse[]): number =>
+  const getLastTransactionTime = (txs: readonly SuiTransactionBlockResponse[]): number =>
     direction === "asc" ? getNewestTransactionTime(txs) : getOldestTransactionTime(txs);
 
   // When we've reached the limit for either sent or received operations,
@@ -345,7 +345,7 @@ export function toAccountTransaction(transaction: SuiTransactionBlockResponse): 
     ...tx,
     block: {
       height: Number.parseInt(transaction.checkpoint || "0"),
-      time: tx.time,
+      time: tx.time!,
     },
   };
 }
@@ -403,7 +403,7 @@ export const mergeTransactionsForLive = (
     (transactionsOut.items.length === TRANSACTIONS_LIMIT ||
       transactionsIn.items.length === TRANSACTIONS_LIMIT)
   ) {
-    const getLastTransactionTime = (txs: SuiTransactionBlockResponse[]): number =>
+    const getLastTransactionTime = (txs: readonly SuiTransactionBlockResponse[]): number =>
       Number(txs[txs.length - 1]?.timestampMs ?? 0);
 
     const sendTime = getLastTransactionTime(transactionsOut.items);
@@ -416,13 +416,16 @@ export const mergeTransactionsForLive = (
       filterTimestamp = receiveTime;
     }
   }
-  const transactions: SuiTransactionBlockResponse[] = [...transactionsOut.items, ...transactionsIn.items]
+  const transactions: SuiTransactionBlockResponse[] = [
+    ...transactionsOut.items,
+    ...transactionsIn.items,
+  ]
     .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
     .filter(op => Number(op.timestampMs) >= filterTimestamp);
 
   return {
     items: uniqBy<SuiTransactionBlockResponse>(transactions, tx => tx.digest),
-    cursor: nextCursor,
+    next: nextCursor,
   };
 };
 
@@ -663,7 +666,7 @@ export const queryTransactionBlocksByAddress = async ({
     } while (next !== undefined && items.length < TRANSACTIONS_LIMIT);
 
     return { items, next };
-  } catch (error: unknown) {
+  } catch (error: any) {
     if (error.type === "InvalidParams") {
       log("coin:sui", "(network/sdk): loadOperations failed with cursor, retrying without it", {
         error,

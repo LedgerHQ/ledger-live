@@ -57,16 +57,23 @@ async function getTransactionFromHash(
 ): Promise<BlockTransaction | null> {
   const txInfo = await nodeApi.getTransaction(currency, txHash);
 
-  const failed = txInfo.status === 0;
-  const fees = BigInt(txInfo.gasUsed) * BigInt(txInfo.gasPrice);
-
-  const operations = rpcTransactionToBlockOperations(txInfo.from, BigInt(txInfo.value), txInfo.to);
+  const events = rpcTransactionToBlockOperations(
+    txInfo.from,
+    txInfo.to,
+    BigInt(txInfo.value),
+    BigInt(txInfo.gasUsed) * BigInt(txInfo.gasPrice),
+  );
 
   return {
-    hash: txHash,
-    failed,
-    operations,
-    fees,
-    feesPayer: txInfo.from,
+    id: txHash,
+    failed: txInfo.status === 0,
+    events,
+    details: {
+      status: txInfo.status,
+      nonce: txInfo.nonce,
+      value: txInfo.value,
+      gasUsed: txInfo.gasUsed,
+      gasPrice: txInfo.gasPrice,
+    },
   };
 }

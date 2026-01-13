@@ -11,7 +11,8 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { type Operation } from "@ledgerhq/types-live";
 import { getAccountBalances, getLiveOperations, getStakesRaw } from "../network";
-import { AccountBalance, DEFAULT_COIN_TYPE } from "../network/sdk";
+import { DEFAULT_COIN_TYPE } from "../network/sdk";
+import { AccountBalance } from "../types/sdk";
 import { SuiOperationExtra, SuiAccount } from "../types";
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";

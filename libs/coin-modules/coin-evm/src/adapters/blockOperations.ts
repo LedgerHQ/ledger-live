@@ -1,46 +1,37 @@
-import type {
-  AssetInfo,
-  BlockOperation,
-  TransferBlockOperation,
-} from "@ledgerhq/coin-framework/api/index";
+import type { AssetInfo, TransactionEvent } from "@ledgerhq/coin-framework/api/index";
 import { LedgerExplorerOperation } from "../types";
 import { safeEncodeEIP55 } from "../utils";
 
 /**
- * Helper function to add transfer operations for a from/to pair.
- * Creates two operations: one for the sender (negative amount) and one for the receiver (positive amount).
+ * Helper function to add transfer events for a from/to pair.
+ * Creates two events: one for the sender (negative amount) and one for the receiver (positive amount).
  */
-function addTransferOperations(
-  operations: BlockOperation[],
-  from: string | null,
+function addTransferEvent(
+  events: TransactionEvent[],
+  from: string | undefined,
   to: string | undefined,
   asset: AssetInfo,
   amount: bigint,
 ): void {
-  const encodedFrom = from ? safeEncodeEIP55(from) : "";
-  const encodedTo = to ? safeEncodeEIP55(to) : "";
+  const encodedFrom = from ? safeEncodeEIP55(from) : undefined;
+  const encodedTo = to ? safeEncodeEIP55(to) : undefined;
 
-  if (encodedFrom) {
-    const op: TransferBlockOperation = {
-      type: "transfer",
-      address: encodedFrom,
-      ...(encodedTo ? { peer: encodedTo } : {}),
-      asset,
-      amount: -amount,
-    };
-    operations.push(op);
-  }
+  events.push({
+    type: "TRANSFER",
+    balanceDeltas: [
+      ...(encodedFrom ? [{ address: encodedFrom, peer: encodedTo, asset, delta: -amount }] : []),
+      ...(encodedTo ? [{ address: encodedTo, peer: encodedFrom, asset, delta: amount }] : []),
+    ],
+  });
+}
 
-  if (encodedTo) {
-    const op: TransferBlockOperation = {
-      type: "transfer",
-      address: encodedTo,
-      ...(encodedFrom ? { peer: encodedFrom } : {}),
-      asset,
-      amount,
-    };
-    operations.push(op);
-  }
+function addFeeEvent(events: TransactionEvent[], from: string, fees: bigint): void {
+  const encodedFrom = safeEncodeEIP55(from);
+
+  events.push({
+    type: "FEE",
+    balanceDeltas: [{ address: encodedFrom, asset: { type: "native" }, delta: -fees }],
+  });
 }
 
 /**
@@ -49,26 +40,29 @@ function addTransferOperations(
  */
 export function rpcTransactionToBlockOperations(
   from: string,
-  value: bigint,
   to: string | undefined,
-): BlockOperation[] {
-  const operations: BlockOperation[] = [];
+  value: bigint,
+  fees: bigint,
+): TransactionEvent[] {
+  const events: TransactionEvent[] = [];
 
   if (value && value > 0n) {
-    addTransferOperations(operations, from, to, { type: "native" }, value);
+    addTransferEvent(events, from, to, { type: "native" }, value);
   }
 
-  return operations;
+  addFeeEvent(events, from, fees);
+
+  return events;
 }
 
 export function ledgerTransactionToBlockOperations(
   ledgerTx: LedgerExplorerOperation,
-): BlockOperation[] {
-  const operations: BlockOperation[] = [];
+): TransactionEvent[] {
+  const events: TransactionEvent[] = [];
 
   if (ledgerTx.value && BigInt(ledgerTx.value) > 0n) {
-    addTransferOperations(
-      operations,
+    addTransferEvent(
+      events,
       ledgerTx.from,
       ledgerTx.to,
       { type: "native" },
@@ -79,8 +73,8 @@ export function ledgerTransactionToBlockOperations(
   // Extract ERC20 token transfers
   for (const event of ledgerTx.transfer_events) {
     const contract = safeEncodeEIP55(event.contract);
-    addTransferOperations(
-      operations,
+    addTransferEvent(
+      events,
       event.from,
       event.to,
       { type: "erc20", assetReference: contract },
@@ -91,8 +85,8 @@ export function ledgerTransactionToBlockOperations(
   // Extract ERC721 NFT transfers
   for (const event of ledgerTx.erc721_transfer_events) {
     const contract = safeEncodeEIP55(event.contract);
-    addTransferOperations(
-      operations,
+    addTransferEvent(
+      events,
       event.sender,
       event.receiver,
       { type: "erc721", assetReference: contract },
@@ -105,8 +99,8 @@ export function ledgerTransactionToBlockOperations(
     const contract = safeEncodeEIP55(event.contract);
 
     for (const transfer of event.transfers) {
-      addTransferOperations(
-        operations,
+      addTransferEvent(
+        events,
         event.sender,
         event.receiver,
         { type: "erc1155", assetReference: contract },
@@ -123,9 +117,11 @@ export function ledgerTransactionToBlockOperations(
 
     const value = BigInt(action.value);
     if (value > 0n) {
-      addTransferOperations(operations, action.from, action.to, { type: "native" }, value);
+      addTransferEvent(events, action.from, action.to, { type: "native" }, value);
     }
   }
 
-  return operations;
+  addFeeEvent(events, ledgerTx.from, BigInt(ledgerTx.gas_used) * BigInt(ledgerTx.gas_price));
+
+  return events;
 }

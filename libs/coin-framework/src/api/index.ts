@@ -3,6 +3,7 @@
  * One consumer of this API is Alpaca.
  */
 
+export * from "./compat";
 export * from "./errors";
 export * from "./types";
 export * from "./utils";

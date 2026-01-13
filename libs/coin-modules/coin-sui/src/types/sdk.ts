@@ -1,7 +1,4 @@
-import {
-  SuiCallArg,
-  SuiTransaction,
-} from "@mysten/sui/client";
+import { SuiCallArg, SuiTransaction } from "@mysten/sui/client";
 import BigNumber from "bignumber.js";
 
 export type ProgrammableTransaction = {

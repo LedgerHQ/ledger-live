@@ -90,7 +90,7 @@ export type Block<MemoType extends Memo = MemoNotSupported> = {
    * It should include at least all transactions where an EOA is involved, however it is OK to ignore other types of
    * transactions that cannot cause balance changes (eg: validator vote transactions on Solana).
    */
-  transactions: ReadonlyArray<BlockTransaction<MemoType>>;
+  transactions: readonly BlockTransaction<MemoType>[];
 };
 
 /** A transaction returned by {@link AlpacaApi#getBlock}. */
@@ -99,7 +99,7 @@ export type BlockTransaction<MemoType extends Memo = MemoNotSupported> = {
   id: string;
 
   /** Transaction date. */
-  time?: Date;
+  time?: Date | undefined;
 
   /**
    * Indicates the transaction has been published in a block, but its instructions have not been executed.
@@ -114,7 +114,7 @@ export type BlockTransaction<MemoType extends Memo = MemoNotSupported> = {
    * Use a `Memo` interface like `StringMemo<"text">`, `MapMemo<Kind, Value>`, or `MyMemo`.
    * Defaults to `MemoNotSupported`.
    */
-  memo?: MemoType;
+  memo?: MemoType | undefined;
 
   /**
    * The operations/instructions included in this transaction.
@@ -122,10 +122,10 @@ export type BlockTransaction<MemoType extends Memo = MemoNotSupported> = {
    * It must include at least all events that caused a balance change. Ignoring other events or not is implementation
    * specific.
    */
-  events: ReadonlyArray<TransactionEvent>;
+  events: readonly TransactionEvent[];
 
   /** Network specific details for this transaction. */
-  details?: Record<string, unknown>;
+  details?: Record<string, unknown> | undefined;
 };
 
 /** A transaction returned by {@link AlpacaApi#getTransactions}. */
@@ -163,19 +163,19 @@ export type TransactionEvent = {
   type: TransactionEventType;
 
   /** Balance deltas caused by this event, if any. */
-  balanceDeltas: ReadonlyArray<BalanceDelta>;
+  balanceDeltas: readonly BalanceDelta[];
 
   /** Network specific details for this event. */
-  details?: Record<string, unknown>;
+  details?: Record<string, unknown> | undefined;
 };
 
 /**
- * TODO
+ * Type of {@link TransactionEvent}.
  */
 export type TransactionEventType =
   // shared types
 
-  /** Default/fallback when event type is not known (should ony be used as an exception). */
+  /** Default/fallback when event type is not known (should only be used as an exception). */
   | "UNKNOWN"
   /** Simple transfer (send or receive). */
   | "TRANSFER"
@@ -185,8 +185,20 @@ export type TransactionEventType =
   | "DELEGATE"
   /** Un-delegate assets from a staking validator, in a proof of stake blockchain. */
   | "UNDELEGATE"
+  /** Renew a delegation, or switch it to a different validator. */
+  | "REDELEGATE"
+  /** Receive staking rewards. */
+  | "REWARD"
   /** Permanently destroy some assets. */
   | "BURN"
+  /** Mint some assets. */
+  | "MINT"
+  /** Asset airdrop (eg, from a faucet). */
+  | "AIRDROP"
+  /** Participate in an on-chain vote. */
+  | "VOTE"
+  /** Call a smart contract. */
+  | "CONTRACT_CALL"
 
   // blockchain specific types
 
@@ -194,66 +206,58 @@ export type TransactionEventType =
   | "TEZOS_CREATE"
   /** Tezos specific: account reveal operation. */
   | "TEZOS_REVEAL"
-  /** Cosmos specific: TODO. */
-  | "COSMOS_REDELEGATE"
-  /** Cosmos specific: TODO. */
-  | "COSMOS_REWARD"
-  /** Tron specific: TODO. */
-  | "TRON_FEES"
-  /** Tron specific: TODO. */
+  /** Tron specific: freeze TRX to get resources such as bandwidth or energy. */
   | "TRON_FREEZE"
-  /** Tron specific: TODO. */
+  /** Tron specific: unfreeze TRX. */
   | "TRON_UNFREEZE"
-  /** Tron specific: TODO. */
+  /** Tron specific: withdraw unfrozen TRX balance after waiting period. */
   | "TRON_WITHDRAW_EXPIRE_UNFREEZE"
-  /** Tron specific: TODO. */
+  /** Tron specific: cancel the delegation of bandwidth or energy resources to other accounts. */
   | "TRON_UNDELEGATE_RESOURCE"
-  /** Tron specific: TODO. */
+  /** Tron specific: unfreeze TRX (legacy protocol). */
   | "TRON_LEGACY_UNFREEZE"
-  /** Polkadot specific: TODO. */
-  | "POLKADOT_VOTE"
-  /** Polkadot specific: TODO. */
-  | "POLKADOT_REWARD_PAYOUT"
-  /** Polkadot specific: TODO. */
+  /** Polkadot specific: lock assets for staking. */
   | "POLKADOT_BOND"
-  /** Polkadot specific: TODO. */
+  /** Polkadot specific: unlock assets from staking. */
   | "POLKADOT_UNBOND"
-  /** Polkadot specific: TODO. */
+  /** Polkadot specific: withdraw unbonded assets after waiting period. */
   | "POLKADOT_WITHDRAW_UNBONDED"
-  /** Polkadot specific: TODO. */
+  /** Polkadot specific: resets the controller of a stash to the stash itself. */
   | "POLKADOT_SET_CONTROLLER"
-  /** Polkadot specific: TODO. */
+  /** Polkadot specific: penalize a validator misconduct, removing a percentage of their nominators' stake. */
   | "POLKADOT_SLASH"
-  /** Polkadot specific: TODO. */
+  /** Polkadot specific: delegate assets to a staking validator. */
   | "POLKADOT_NOMINATE"
-  /** Polkadot specific: TODO. */
+  /** Polkadot specific: temporarily pause validating/nominating for an era. */
   | "POLKADOT_CHILL"
-  /** EVM specific: TODO. */
+  /** EVM specific: authorize another address to spend a specified amount of their tokens on their behalf. */
   | "EVM_APPROVE"
-  /** Algorand specific: TODO. */
+  /** Algorand specific: opt-in to an asset (required before you can receive an asset). */
   | "ALGORAND_OPT_IN"
-  /** Algorand specific: TODO. */
+  /** Algorand specific: opt-in from interactions with an asset. */
   | "ALGORAND_OPT_OUT"
-  /** Celo specific: TODO. */
+  /** Celo specific: lock CELO to participate in validator elections. */
   | "CELO_LOCK"
-  /** Celo specific: TODO. */
+  /** Celo specific: unlock CELO. */
   | "CELO_UNLOCK"
-  /** Celo specific: TODO. */
+  /** Celo specific: withdraw unlocked CELO after waiting period. */
   | "CELO_WITHDRAW"
-  /** Celo specific: TODO. */
+  /** Celo specific: revoke delegated locked CELO. */
   | "CELO_REVOKE"
-  /** Celo specific: TODO. */
+  /** Celo specific: activate pending votes in validator elections to begin earning rewards. */
   | "CELO_ACTIVATE"
-  /** Celo specific: TODO. */
+  /** Celo specific: register an account, required before locking CELO or participating in governance. */
   | "CELO_REGISTER"
-  /** NEAR specific: TODO. */
+  /** NEAR specific: delegate assets to a staking validator. */
   | "NEAR_STAKE"
-  /** NEAR specific: TODO. */
+  /** NEAR specific: un-delegate assets from a staking validator. */
   | "NEAR_UNSTAKE"
-  /** NEAR specific: TODO. */
+  /** NEAR specific: withdraw unstaked assets after waiting period. */
   | "NEAR_WITHDRAW_UNSTAKED"
   /** Hedera specific: associate a token with an account. */
   | "HEDERA_ASSOCIATE_TOKEN"
+  /** Hedera specific: update an account attributes. */
+  | "HEDERA_UPDATE_ACCOUNT"
   /** Canton specific: setup automatic approval for incoming Canton Coin transfers. */
   | "CANTON_PRE_APPROVE"
   /** Canton specific: emit an outgoing transfer offer. */
@@ -275,7 +279,7 @@ export type BalanceDelta = {
   address: string;
 
   /** The address of the peer participant in the transfer (optional as it may not always be known). */
-  peer?: string;
+  peer?: string | undefined;
 
   /** The transferred asset. */
   asset: AssetInfo;
@@ -516,28 +520,21 @@ export type CraftedTransaction = {
   details?: Record<string, unknown>;
 };
 
-// TODO rename start to minHeight
-//       and add a `token: string` field to the pagination if we really need to support pagination
-//       (which is not the case for now)
-//       for now start is used as a minHeight from which we want to fetch ALL operations
-//       limit is unused for now
-//       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
-// Future-proof pagination type as suggested in the comment
 export type Pagination = {
   minHeight: number;
-  lastPagingToken?: string;
-  pagingToken?: string;
+  lastPagingToken?: Cursor; // FIXME WTF, rename to cursor ?
+  pagingToken?: Cursor; // FIXME WTF is this shit ?
   limit?: number;
-  order?: "asc" | "desc";
+  order?: Direction;
 };
-// NOTE: future proof export type Pagination = Record<string, unknown>;
+
 /** A pagination cursor. */
 export type Cursor = string;
 export type Direction = "asc" | "desc";
 
 /** A paginated response. */
 export type Page<T> = {
-  items: ReadonlyArray<T>;
+  items: readonly T[];
   next?: Cursor | undefined;
 };
 
