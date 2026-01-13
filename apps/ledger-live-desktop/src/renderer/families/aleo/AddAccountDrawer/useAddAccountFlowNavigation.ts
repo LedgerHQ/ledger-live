@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -97,7 +97,7 @@ export const useAddAccountFlowNavigation = ({
     setDrawer();
   }, []);
 
-  const navigateBack = useCallback(
+  const navigateBack = useMemo(
     (track: boolean = true) => {
       switch (currentStep) {
         case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.EDIT_ACCOUNT_NAME: {

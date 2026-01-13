@@ -9,7 +9,7 @@ import {
   createAction,
   getViewKeyExec,
   type Request,
-  type ActionResult,
+  type ViewKeysByAccountId,
 } from "@ledgerhq/live-common/families/aleo/hw/getViewKey/index";
 import { DeviceActionDefaultRendering } from "~/renderer/components/DeviceAction";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
@@ -25,7 +25,7 @@ import ViewKeyConfirmation from "./ViewKeyConfirmation";
 interface Props {
   selectedAccounts: Account[];
   currency: CryptoCurrency;
-  onResult: (result: ActionResult) => void;
+  onResult: (result: ViewKeysByAccountId) => void;
   onCancel: () => void;
 }
 

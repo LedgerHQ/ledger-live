@@ -1,6 +1,6 @@
-import { Button, Flex, Icons } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Button, Flex, Icons } from "@ledgerhq/react-ui";
 import { FooterProps } from "LLD/features/AddAccountDrawer/screens/ScanAccounts/components/Footer";
 import useAddAccountAnalytics from "LLD/features/AddAccountDrawer/analytics/useAddAccountAnalytics";
 import {
@@ -32,6 +32,42 @@ export const ScanAccountsFooter = ({
     stopSubscription();
   };
 
+  const renderButton = () => {
+    if (scanning && importableAccounts.length === 0) {
+      return null;
+    }
+
+    if (scanning) {
+      return (
+        <Button
+          alignItems="center"
+          flex={1}
+          Icon={<Icons.Pause />}
+          iconPosition="left"
+          onClick={handleStopScanning}
+          size="xl"
+          variant="main"
+        >
+          {t("modularAssetDrawer.scanAccounts.cta.stopScanning")}
+        </Button>
+      );
+    }
+
+    return (
+      <Button
+        alignItems="center"
+        color="neutral.c100"
+        disabled={selectedIds.length === 0}
+        flex={1}
+        onClick={handleConfirm}
+        size="xl"
+        variant="main"
+      >
+        {t("aleo.addAccount.stepViewKeyWarning.cta.shareKey", { count: selectedIds.length })}
+      </Button>
+    );
+  };
+
   return (
     <Flex
       justifyContent="flex-end"
@@ -39,33 +75,7 @@ export const ScanAccountsFooter = ({
       paddingTop={FOOTER_PADDING_TOP_PX}
       zIndex={1}
     >
-      {scanning ? (
-        importableAccounts.length === 0 ? null : (
-          <Button
-            alignItems="center"
-            flex={1}
-            Icon={<Icons.Pause />}
-            iconPosition="left"
-            onClick={handleStopScanning}
-            size="xl"
-            variant="main"
-          >
-            {t("modularAssetDrawer.scanAccounts.cta.stopScanning")}
-          </Button>
-        )
-      ) : (
-        <Button
-          alignItems="center"
-          color="neutral.c100"
-          disabled={selectedIds.length === 0}
-          flex={1}
-          onClick={handleConfirm}
-          size="xl"
-          variant="main"
-        >
-          {t("aleo.addAccount.stepViewKeyWarning.cta.shareKey", { count: selectedIds.length })}
-        </Button>
-      )}
+      {renderButton()}
     </Flex>
   );
 };

@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { catchError, concatMap, defer, from, map, scan, type Observable } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
@@ -12,7 +12,7 @@ import type { ConnectAppEvent, Input as ConnectAppInput } from "../../../../hw/c
 import { withDevice } from "../../../../hw/deviceAccess";
 import { viewKeyResolver } from "../../setup";
 
-type ViewKeysByAccountId = Record<string, string> | null;
+export type ViewKeysByAccountId = Record<string, string> | null;
 
 type BaseState = {
   error: Error | null;
@@ -32,8 +32,6 @@ type ViewKeyProgress = {
   completed: number;
   total: number;
 };
-
-export type ActionResult = ViewKeysByAccountId;
 
 export interface Request extends AppRequest {
   selectedAccounts: Account[];
@@ -102,6 +100,28 @@ export const createAction = (
 
     const { device, opened, inWrongDeviceForAccount, error } = appState;
 
+    const handleProgress = useCallback((progress: ViewKeyProgress) => {
+      const isComplete = progress.completed === progress.total;
+
+      setState(prev => ({
+        ...prev,
+        error: null,
+        result: isComplete ? progress.viewKeys : null,
+        sharePending: !isComplete,
+        shareProgress: progress,
+      }));
+    }, []);
+
+    const handleError = useCallback((error: Error) => {
+      setState(prev => ({
+        ...prev,
+        error,
+        sharePending: false,
+      }));
+
+      taskFired.current = false;
+    }, []);
+
     useEffect(() => {
       if (!device || !opened || inWrongDeviceForAccount || error || taskFired.current) {
         return;
@@ -122,34 +142,14 @@ export const createAction = (
       const subscription = withDevice(device.deviceId)(transport =>
         getViewKey(transport, request),
       ).subscribe({
-        next: (progress: ViewKeyProgress) => {
-          const isComplete = progress.completed === progress.total;
-
-          setState(prev => ({
-            ...prev,
-            error: null,
-            result: isComplete ? progress.viewKeys : null,
-            sharePending: !isComplete,
-            shareProgress: progress,
-          }));
-        },
-        error: e => {
-          const error = e instanceof Error ? e : new Error(String(e));
-
-          setState(prev => ({
-            ...prev,
-            error,
-            sharePending: false,
-          }));
-
-          taskFired.current = false;
-        },
+        next: handleProgress,
+        error: handleError,
       });
 
       return () => {
         subscription.unsubscribe();
       };
-    }, [device, opened, inWrongDeviceForAccount, error, request]);
+    }, [device, opened, inWrongDeviceForAccount, error, request, handleProgress, handleError]);
 
     return {
       ...appState,
@@ -160,6 +160,6 @@ export const createAction = (
 
   return {
     useHook,
-    mapResult: (state: State): ActionResult => state.result,
+    mapResult: (state: State): ViewKeysByAccountId => state.result,
   };
 };

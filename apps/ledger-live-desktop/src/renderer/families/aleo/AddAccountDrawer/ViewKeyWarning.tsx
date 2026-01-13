@@ -59,9 +59,9 @@ const ViewKeyWarning = ({ onAllow, onCancel }: Props) => {
             </Trans>
           </Text>
           <Flex flexDirection="column" alignItems="flex-start" width="100%" mb={6}>
-            {bulletPointTranslationKeys.map((i18nKey, index) => (
+            {bulletPointTranslationKeys.map(i18nKey => (
               <BulletRow
-                key={index}
+                key={i18nKey}
                 step={{
                   icon: (
                     <Flex marginTop="7px" justifyContent="center">

@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from "@ledgerhq/react-ui";
 import { Account } from "@ledgerhq/types-live";
 import { LoadingOverlay } from "LLD/components/LoadingOverlay";
-import { default as React, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { useTheme } from "styled-components";
