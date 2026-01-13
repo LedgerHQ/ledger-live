@@ -8,7 +8,7 @@ type ErrorContentProps = Readonly<{
   error?: Error | null;
 }>;
 
-export function ErrorContent({ error }: ErrorContentProps) {
+export const ErrorContent = ({ error }: ErrorContentProps) => {
   const { t } = useTranslation();
   const { handleExportLogs } = useExportLogs();
 
@@ -26,15 +26,10 @@ export function ErrorContent({ error }: ErrorContentProps) {
         <p className="text-muted body-2">
           <TranslatedError error={error} field="description" />
         </p>
-        <button
-          type="button"
-          style={{ color: "#D4A0FF" }}
-          onClick={handleExportLogs}
-          className="mt-4 text-muted body-2"
-        >
+        <button type="button" onClick={handleExportLogs} className="mt-4 text-interactive body-2">
           {t("settings.exportLogs.title")}
         </button>
       </div>
     </>
   );
-}
+};

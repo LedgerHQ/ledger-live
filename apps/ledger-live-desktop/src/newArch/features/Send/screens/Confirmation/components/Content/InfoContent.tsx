@@ -7,7 +7,7 @@ type InfoContentProps = Readonly<{
   descriptionKey: string;
 }>;
 
-export function InfoContent({ titleKey, descriptionKey }: InfoContentProps) {
+export const InfoContent = ({ titleKey, descriptionKey }: InfoContentProps) => {
   const { t } = useTranslation();
 
   return (
@@ -19,4 +19,4 @@ export function InfoContent({ titleKey, descriptionKey }: InfoContentProps) {
       </div>
     </>
   );
-}
+};

@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Spot } from "@ledgerhq/lumen-ui-react";
 
-export function SuccessContent() {
+export const SuccessContent = () => {
   const { t } = useTranslation();
 
   return (
@@ -16,4 +16,4 @@ export function SuccessContent() {
       </div>
     </>
   );
-}
+};

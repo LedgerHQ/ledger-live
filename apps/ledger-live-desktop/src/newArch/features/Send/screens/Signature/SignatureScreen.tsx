@@ -1,10 +1,11 @@
 import React from "react";
-import { Trans } from "react-i18next";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
-import { useSignatureViewModel } from "./useSignatureViewModel";
+import { SimplifiedTransactionConfirm } from "./components/SimplifiedTransactionConfirm";
+import { useSignatureViewModel } from "./hooks/useSignatureViewModel";
+import { LockedDevicePrompt } from "./components/LockedDevicePrompt";
+import { PendingState } from "./components/PendingState";
 
 const Result = (
   props:
@@ -16,30 +17,38 @@ const Result = (
         transactionSignError: Error;
       },
 ) => {
-  if (!("signedOperation" in props)) return null;
-  return (
-    <>
-      <DeviceBlocker />
-      <Trans i18nKey="send.steps.confirmation.pending.title" />
-    </>
-  );
+  if (!("signedOperation" in props)) {
+    return null;
+  }
+  // Show pending state after signature during broadcast
+  return <PendingState messageKey="send.steps.confirmation.pending.title" />;
 };
 
-export function SignatureScreen() {
+export const SignatureScreen = () => {
   const { account, transaction, action, request, onDeviceActionResult, finishWithError } =
     useSignatureViewModel();
 
-  if (!account || !transaction) return null;
+  if (!account || !transaction) {
+    return null;
+  }
 
   return (
-    <DeviceAction
-      action={action}
-      // @ts-expect-error This request type is not compatible with the action expected shape.
-      request={request}
-      Result={Result}
-      onResult={onDeviceActionResult}
-      onError={finishWithError}
-      analyticsPropertyFlow="send"
-    />
+    <div className="-mt-12 mb-24">
+      <DeviceAction
+        action={action}
+        // @ts-expect-error This request type is not compatible with the action expected shape.
+        request={request}
+        Result={Result}
+        onResult={onDeviceActionResult}
+        onError={finishWithError}
+        analyticsPropertyFlow="send"
+        renderLockedDevice={({ device, onRetry }) =>
+          device ? <LockedDevicePrompt deviceModelId={device.modelId} onRetry={onRetry} /> : null
+        }
+        renderDeviceSignatureRequested={({ device }) => (
+          <SimplifiedTransactionConfirm device={device} />
+        )}
+      />
+    </div>
   );
-}
+};
