@@ -41,6 +41,13 @@ runs:
           # Copy the AVD folder
           cp -r "${AVD_DIR}/${AVD_NAME}.avd" "${AVD_DIR}/${NEW_NAME}.avd"
 
+          # Update snapshot hardware.ini to match new AVD name for fast snapshot boots
+          SNAPSHOT_DIR="${AVD_DIR}/${NEW_NAME}.avd/snapshots/default_boot"
+          if [ -f "${SNAPSHOT_DIR}/hardware.ini" ]; then
+            sed -i "s|${AVD_NAME}|${NEW_NAME}|g" "${SNAPSHOT_DIR}/hardware.ini"
+            echo "  ✓ Updated snapshots/default_boot/hardware.ini"
+          fi
+
           # Create the .ini file with updated path
           cat > "${AVD_DIR}/${NEW_NAME}.ini" << EOF
         avd.ini.encoding=UTF-8
@@ -58,6 +65,8 @@ runs:
           # Update config.ini if it exists (may contain avd.name)
           if [ -f "${AVD_DIR}/${NEW_NAME}.avd/config.ini" ]; then
             sed -i "s|avd.name=${AVD_NAME}|avd.name=${NEW_NAME}|g" "${AVD_DIR}/${NEW_NAME}.avd/config.ini"
+            # Also update AvdId if present
+            sed -i "s|AvdId=${AVD_NAME}|AvdId=${NEW_NAME}|g" "${AVD_DIR}/${NEW_NAME}.avd/config.ini"
             echo "  ✓ Updated config.ini"
           fi
 
