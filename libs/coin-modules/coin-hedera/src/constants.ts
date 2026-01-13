@@ -53,6 +53,8 @@ export const DEFAULT_GAS_PRICE_TINYBARS = new BigNumber(100);
 
 export const HEDERA_MAINNET_CHAIN_ID = 295;
 
+export const MEMO_CHARACTER_LIMIT = 100;
+
 /**
  * Enum representing the delegation status of a Hedera account
  */
@@ -128,3 +130,15 @@ export const MAP_STAKING_MODE_TO_METHOD: Record<string, string> = {
   [HEDERA_TRANSACTION_MODES.Redelegate]: "Redelegate",
   [HEDERA_TRANSACTION_MODES.ClaimRewards]: "Claim Rewards",
 };
+
+/**
+ * Operation types where fees should be excluded from value of native HBAR operations.
+ */
+export const OP_TYPES_EXCLUDING_FEES: OperationType[] = [
+  "OUT",
+  "DELEGATE",
+  "UNDELEGATE",
+  "REDELEGATE",
+  "UPDATE_ACCOUNT",
+  "CONTRACT_CALL",
+];

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Icon, Text } from "@ledgerhq/react-ui";
@@ -75,11 +75,12 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
     history.push({
       pathname: "/exchange",
       state: {
+        account: isTokenAccount(account) ? parentAccount?.id : account.id,
         currency: currency.id,
         mode: "buy",
       },
     });
-  }, [currency, history, dispatch]);
+  }, [history, dispatch, account, parentAccount?.id, currency.id]);
 
   const onSwap = useCallback(() => {
     track("button_clicked2", {

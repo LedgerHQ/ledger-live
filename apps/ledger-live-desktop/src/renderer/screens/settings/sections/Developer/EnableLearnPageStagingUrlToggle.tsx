@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { enableLearnPageStagingUrlSelector } from "~/renderer/reducers/settings";
 import { setEnableLearnPageStagingUrl } from "~/renderer/actions/settings";
 import { Switch } from "@ledgerhq/lumen-ui-react";

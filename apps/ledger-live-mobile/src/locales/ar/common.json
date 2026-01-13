@@ -1107,6 +1107,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "لا توجد مكافآت للمطالبة بها"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "الملاحظة (تسمية الوجهة) طويلة جداً. الحد الأقصى للطول هو {{maxLength}} حرف"
+    },
     "NearNewAccountWarning" : {
       "title" : "حساب المُستلِم لم يتم إنشاؤه بعد. البروتوكول يتطلب تحويل {{formattedNewAccountStorageCost}} لإنشائه."
     },
@@ -2509,6 +2512,20 @@
       "doneTitle" : "تم إعداد كود PIN",
       "description" : "كما هو الحال مع أي كلمة مرور أو كود مرور، كود PIN يتيح إلغاء قفل جهازك {{productName}} ومنع الوصول غير المرغوب فيه.",
       "continueOnDevice" : "قم بإعداد كود PIN الخاص بك على جهازك {{productName}}."
+    },
+    "syncStep" : {
+      "title" : "المزامنة",
+      "doneTitle" : "تمت مزامنة المحفظة",
+      "descriptionTitle" : "مزامنة محفظتك",
+      "description" : "حافظ على محفظتك الاستثمارية مُحدّثةً عند تبديل الهواتف أو استخدام الكمبيوتر",
+      "skipCta" : "سأفعل هذا لاحقاً",
+      "skip" : {
+        "title" : "هل أنت متأكد؟",
+        "description" : "إذا تخطيت هذا، سيتعين عليك إعادة إضافة جميع حساباتك وأرصدتك وسجلّك يدوياً، إذا قمت بالتبديل إلى هاتف أو كمبيوتر جديد.",
+        "descriptionEmphasis" : "يمكنك دائماً تعطيله من إعداداتك.",
+        "skipCTA" : "نعم، تخطي",
+        "syncCTA" : "لا، مزامنة محفظتي"
+      }
     },
     "seedStep" : {
       "title" : "الإعداد والنسخ الاحتياطي",
@@ -6355,6 +6372,7 @@
       "netApy" : "صافي المردود المئوي السنوي (APY)",
       "stakeActivationState" : "الولاية",
       "stakeActivePercent" : "نشِط",
+      "inactiveStake" : "المكافآت القابلة للسحب",
       "stakeAvailableBalance" : "الرصيد المتاح",
       "actions" : {
         "activate" : "تنشيط",
@@ -8225,6 +8243,15 @@
     }
   },
   "canton" : {
+    "expiryDuration" : {
+      "label" : "مدة انتهاء الصلاحية",
+      "summaryLabel" : "انتهاء صلاحية عرض",
+      "threeHours" : "3 ساعات",
+      "sixHours" : "6 ساعات",
+      "oneDay" : "1 يوم",
+      "oneWeek" : "1 أسبوع",
+      "oneMonth" : "30 يوماً"
+    },
     "account" : {
       "lockedBalance" : "مُقفل",
       "lockedBalanceTooltip" : "أموالك مُقفلة في عروض أرسلتها لآخرين. يمكنك إلغاء هذه العروض في أي وقت، أو انتظار قبول أو رفض المستلم.",

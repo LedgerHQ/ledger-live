@@ -4,7 +4,7 @@ import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { memo, useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
 import Link from "~/renderer/components/Link";

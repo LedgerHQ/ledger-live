@@ -9,6 +9,7 @@ jest.mock("@ledgerhq/live-network/network");
 
 const account = {
   id: "accountId",
+  freshAddress: "cosmos1testaddress",
   currency: { id: "cosmos", units: [{}, { code: "atom" }] },
   spendableBalance: new BigNumber("1000000000"),
   seedIdentifier: "seedIdentifier",

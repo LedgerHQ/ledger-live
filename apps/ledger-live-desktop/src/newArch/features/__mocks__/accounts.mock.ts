@@ -21,7 +21,7 @@ export const getBalanceHistoryWithCountervalue: Mock = fn(() => ({
   ],
 }));
 export const getPortfolioCount: Mock = fn(() => 0);
-export const useCountervaluesState: Mock = fn(() => {});
+export const useCountervaluesState: Mock = fn(() => ({ cache: { "USD arbitrum": "" } }));
 export const accountsSelector: Mock = fn(state => state.accounts);
 export const counterValueCurrencySelector: Mock = fn(state => state.currency);
 export const discreetModeSelector: Mock = fn(state => state.discreet);
@@ -86,3 +86,4 @@ export const getLLDCoinFamily = () => ({});
 export const isAccountEmpty = () => false;
 export const languageSelector = () => ({});
 export const openURL = () => {};
+export const useCalculate = () => 100;

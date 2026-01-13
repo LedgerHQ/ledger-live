@@ -9,65 +9,102 @@ import { WithDevice } from "../../src/types";
 
 setEnv("GET_CALLS_RETRY", 0);
 
+/**
+ * Volatile headers added by Node.js or MSW that vary between versions.
+ */
+const VOLATILE_HEADERS = new Set([
+  "user-agent",
+  "content-length",
+  "connection",
+  "accept-encoding",
+  "host",
+]);
+
+/**
+ * Normalizes Headers into a plain object for stable comparison.
+ */
+function getCleanHeaders(headers: Headers): Record<string, string> {
+  const clean: Record<string, string> = {};
+  headers.forEach((value, key) => {
+    const lowKey = key.toLowerCase();
+    if (!VOLATILE_HEADERS.has(lowKey)) {
+      clean[lowKey] = value;
+    }
+  });
+  return clean;
+}
+
+/**
+ * Helper to convert the recorded headers (unknown/object) into a Headers instance
+ */
+function toHeaders(recordHeaders: unknown): Headers {
+  const headers = new Headers();
+  if (recordHeaders && typeof recordHeaders === "object") {
+    Object.entries(recordHeaders).forEach(([key, value]) => {
+      if (typeof value === "string") {
+        headers.append(key, value);
+      }
+    });
+  }
+  return headers;
+}
+
 export async function replayTrustchainSdkTests<Json extends JsonShape>(
   json: Json,
   scenario: (deviceId: string, scenarioOptions: ScenarioOptions) => Promise<void>,
 ) {
-  // This replays, in order, all HTTP queries we have saved in json records
   let httpTransactionIndex = 0;
+
   const mockServer = setupServer(
     http.all("*", async ({ request }) => {
-      const id = "http(" + httpTransactionIndex + "): ";
+      const id = `http(${httpTransactionIndex}): `;
       const expected = json.http.transactions[httpTransactionIndex++];
+
       if (!expected) {
-        throw new Error("unexpected HTTP request has occured: " + request.url.toString());
+        throw new Error(`${id}unexpected HTTP request: ${request.method} ${request.url}`);
       }
-      expect(id + request.method + " " + request.url.toString()).toEqual(
-        id + expected.request.method + " " + expected.request.url,
-      );
+
+      // MSW 2.7.3+ normalization: Extract body as text.
+      // Treat empty strings as undefined to match legacy JSON records.
+      const rawBody = await request.text();
+      const actualBody = rawBody === "" ? undefined : rawBody;
+      const expectedBody = expected.request.body === "" ? undefined : expected.request.body;
 
       expect({
-        url: request.url.toString(),
         method: request.method,
-        body: request.body ? await request.text() : undefined,
-        headers: headersToJson(request.headers),
+        url: request.url.toString(),
+        body: actualBody,
+        headers: getCleanHeaders(request.headers),
       }).toEqual({
-        url: expected.request.url,
         method: expected.request.method,
-        body: expected.request.body,
-        headers: expected.request.headers,
+        url: expected.request.url,
+        body: expectedBody,
+        headers: getCleanHeaders(toHeaders(expected.request.headers)),
       });
 
-      const response = new HttpResponse(expected.response.body, {
+      return new HttpResponse(expected.response.body, {
         status: expected.response.status,
         headers: expected.response.headers as Record<string, string>,
       });
-      HttpResponse.json;
-      return response;
     }),
   );
 
-  // This replays, in order, all crypto randomKeypair we have saved in json records
+  // Replay crypto spies
   let randomKeypairIndex = 0;
   jest.spyOn(crypto, "randomKeypair").mockImplementation(() => {
     const emits = json.crypto.randomKeypairOutputs[randomKeypairIndex++];
-    if (!emits) {
-      throw new Error("unexpected randomKeypair call");
-    }
+    if (!emits) throw new Error("unexpected randomKeypair call");
     const privateKey = crypto.from_hex(emits);
     return crypto.keypairFromSecretKey(privateKey);
   });
 
-  // This replays, in order, all crypto randomBytes we have saved in json records
   let randomBytesIndex = 0;
   jest.spyOn(crypto, "randomBytes").mockImplementation((size: number) => {
     const emits = json.crypto.randomBytesOutputs[randomBytesIndex++];
-    if (!emits) {
-      throw new Error("unexpected randomBytes call");
-    }
+    if (!emits) throw new Error("unexpected randomBytes call");
     const bytes = crypto.from_hex(emits);
     if (bytes.length !== size) {
-      throw new Error("unexpected randomBytes size. Expected " + size + " but got " + bytes.length);
+      throw new Error(`unexpected randomBytes size. Expected ${size} but got ${bytes.length}`);
     }
     return bytes;
   });
@@ -76,11 +113,12 @@ export async function replayTrustchainSdkTests<Json extends JsonShape>(
 
   mockServer.listen();
   mockServer.resetHandlers();
+
   try {
-    // This replays, in order, all APDUs we have saved in json records
     const transport = await openTransportReplayer(recordStore);
     const device = { id: "", transport };
     const withDevice: WithDevice = () => fn => fn(device.transport);
+
     const options: ScenarioOptions = {
       withDevice,
       sdkForName: name =>
@@ -89,15 +127,16 @@ export async function replayTrustchainSdkTests<Json extends JsonShape>(
           { applicationId: 16, name, apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING") },
           withDevice,
         ),
-      pauseRecorder: () => Promise.resolve(), // replayer don't need to pause
-      switchDeviceSeed: async () => device, // nothing to actually do, we will continue replaying
+      pauseRecorder: () => Promise.resolve(),
+      switchDeviceSeed: async () => device,
     };
+
     await scenario(device.id, options);
   } finally {
     mockServer.close();
+    jest.restoreAllMocks();
   }
 
-  // verify we have consumed all the expected calls
   expect({
     httpCalls: httpTransactionIndex,
     randomKeypairCalls: randomKeypairIndex,
@@ -117,11 +156,11 @@ type JsonShape = {
         url: string;
         method: string;
         body?: string;
-        headers: unknown;
+        headers: Record<string, unknown>;
       };
       response: {
         status: number;
-        headers: unknown;
+        headers: Record<string, string>;
         body?: string;
       };
     }[];
@@ -131,11 +170,3 @@ type JsonShape = {
     randomBytesOutputs: string[];
   };
 };
-
-function headersToJson(headers) {
-  const obj: Record<string, string> = {};
-  for (const [key, value] of headers) {
-    obj[key] = value;
-  }
-  return obj;
-}

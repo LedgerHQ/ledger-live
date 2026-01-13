@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";

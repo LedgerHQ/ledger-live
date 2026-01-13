@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Text } from "@ledgerhq/native-ui";
-import {
-  type GroupedStartupEvent,
-  resolveStartupEvents,
-  STARTUP_EVENTS,
-} from "LLM/utils/resolveStartupEvents";
+import { LAST_STARTUP_EVENT_VALUES } from "LLM/utils/logLastStartupEvents";
+import { type GroupedStartupEvent, resolveStartupEvents } from "LLM/utils/resolveStartupEvents";
 import SettingsRow from "~/components/SettingsRow";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 
 export default function Performance() {
   const [startupEvents, setStartupEvents] = useState<GroupedStartupEvent[]>([]);
   const [startupTime, setStartupTime] = useState<number>();
+
   useEffect(() => {
     resolveStartupEvents().then(events => {
+      setStartupTime(
+        [...events].reverse().find(e => LAST_STARTUP_EVENT_VALUES.includes(e.event))?.time ?? 0,
+      );
       setStartupEvents(events);
-      setStartupTime(events.find(({ event }) => event === STARTUP_EVENTS.STARTED)?.time);
     });
   }, []);
 

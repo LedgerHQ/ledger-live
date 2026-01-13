@@ -30,7 +30,6 @@ const handleEthereumAssets = (
   Object.assign(res.markets, {
     [name]: { ...jsonResponse.markets[name] },
   });
-  res.currenciesOrder.currenciesIds.push(name);
 
   if (!res.currenciesOrder.metaCurrencyIds.includes("urn:crypto:meta-currency:ethereum")) {
     res.currenciesOrder.metaCurrencyIds.push("urn:crypto:meta-currency:ethereum");
@@ -55,7 +54,6 @@ const handleFilteredCurrencyIds = (currencyIds: string[]) => {
     currenciesOrder: {
       key: "marketCap",
       order: "desc",
-      currenciesIds: [],
       metaCurrencyIds: [],
     },
   };
@@ -99,7 +97,6 @@ const handleFilteredCurrencyIds = (currencyIds: string[]) => {
     Object.assign(res.markets, {
       bitcoin: { ...jsonResponse.markets.bitcoin },
     });
-    res.currenciesOrder.currenciesIds.push("bitcoin");
     res.currenciesOrder.metaCurrencyIds.push("bitcoin");
   }
 
@@ -123,7 +120,6 @@ const handleFilteredCurrencyIds = (currencyIds: string[]) => {
     Object.assign(res.markets, {
       "ethereum/erc20/usd__coin": { ...jsonResponse.markets["ethereum/erc20/usd__coin"] },
     });
-    res.currenciesOrder.currenciesIds.push("ethereum/erc20/usd__coin");
     res.currenciesOrder.metaCurrencyIds.push("urn:crypto:meta-currency:usd_coin");
   }
 

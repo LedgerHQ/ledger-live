@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { openModal } from "~/renderer/actions/modals";

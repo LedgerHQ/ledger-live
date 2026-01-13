@@ -26,6 +26,7 @@ export enum Network {
   ARBITRUM = "Arbitrum",
   OPTIMISM = "Optimism",
   BASE = "Base",
+  VECHAIN = "Vechain",
   SCROLL = "Scroll",
   NEAR = "NEAR",
   OSMOSIS = "Osmosis",

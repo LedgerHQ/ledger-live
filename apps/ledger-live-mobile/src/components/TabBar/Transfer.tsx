@@ -29,17 +29,15 @@ import lightAnimSource from "~/animations/mainButton/light.json";
 import darkAnimSource from "~/animations/mainButton/dark.json";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 
-const MainButton = proxyStyled(Touchable).attrs({
-  backgroundColor: "primary.c80",
+const MainButton = proxyStyled(Touchable).attrs<BaseStyledProps>(p => ({
+  backgroundColor: p.theme.colors.primary.c80,
   height: MAIN_BUTTON_SIZE,
   width: MAIN_BUTTON_SIZE,
   borderRadius: MAIN_BUTTON_SIZE / 2,
   overflow: "hidden",
-})<BaseStyledProps>`
-  border-radius: 40px;
-  align-items: center;
-  justify-content: center;
-`;
+  alignItems: "center",
+  justifyContent: "center",
+}))``;
 
 const hitSlop = {
   top: 10,
@@ -51,15 +49,14 @@ const hitSlop = {
 export default () => null;
 
 const AnimatedDrawerContainer = Animated.createAnimatedComponent(
-  styled(Flex).attrs({
+  styled(Flex).attrs<BaseStyledProps>(p => ({
+    position: "absolute",
     alignSelf: "flex-end",
     justifyContent: "flex-end",
-    position: "absolute",
-    bottom: 0,
-    backgroundColor: "background.main",
-    borderTopRightRadius: "24px",
-    borderTopLeftRadius: "24px",
-  })``,
+    backgroundColor: p.theme.colors.background.main,
+    borderTopRightRadius: 24,
+    borderTopLeftRadius: 24,
+  }))``,
 );
 
 const BackdropPressable = Animated.createAnimatedComponent(styled(Pressable)`
@@ -214,6 +211,7 @@ export function TransferTabIcon() {
           animatedProps={drawerContainerProps}
           style={[
             {
+              bottom: -bottomInset,
               width: screenWidth,
               maxHeight: drawerHeight,
               paddingBottom: bottomInset + 16 + MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM,
@@ -230,7 +228,7 @@ export function TransferTabIcon() {
         disabled={lockSubject.getValue()}
         hitSlop={hitSlop}
         onPress={onPressButton}
-        bottom={MAIN_BUTTON_BOTTOM + bottomInset}
+        bottom={MAIN_BUTTON_BOTTOM}
         testID="transfer-button"
       >
         <Lottie

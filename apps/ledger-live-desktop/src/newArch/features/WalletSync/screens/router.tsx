@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Flow, walletSyncFlowSelector } from "~/renderer/reducers/walletSync";
 import WalletSyncManageBackup from "./ManageBackup";
 import SynchronizeWallet from "./Synchronize";

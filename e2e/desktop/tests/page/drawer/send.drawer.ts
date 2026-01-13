@@ -1,7 +1,6 @@
 import { step } from "../../misc/reporters/step";
 import { Drawer } from "../../component/drawer.component";
 import { expect } from "@playwright/test";
-import { getAccountAddress } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 export class SendDrawer extends Drawer {
@@ -16,7 +15,10 @@ export class SendDrawer extends Drawer {
   private operationToAccount = this.page.getByTestId("operation-to");
 
   @step("Verify address is visible")
-  async addressValueIsVisible(address: string) {
+  async addressValueIsVisible(address: string | undefined) {
+    if (!address) {
+      throw new Error("Recipient address is not set");
+    }
     await expect(this.addressValue(address)).toBeVisible();
   }
 
@@ -35,7 +37,10 @@ export class SendDrawer extends Drawer {
   @step("Verify that the information of the transaction is visible")
   async expectReceiverInfos(tx: Transaction) {
     await this.amountValue.waitFor();
-    await expect(this.addressValue(getAccountAddress(tx.accountToCredit))).toBeVisible();
+    if (!tx.accountToCredit.address) {
+      throw new Error("Recipient address is not set");
+    }
+    await expect(this.addressValue(tx.accountToCredit.address)).toBeVisible();
     await expect(this.amountValue).toBeVisible();
     const displayedAmount = await this.amountValue.innerText();
     expect(displayedAmount).toEqual(expect.stringContaining(tx.amount));
@@ -56,6 +61,9 @@ export class SendDrawer extends Drawer {
 
   @step("Verify drawer accounts")
   async expectDrawerAccounts(tx: Transaction) {
+    if (!tx.accountToCredit.address || !tx.accountToDebit.address) {
+      throw new Error("Account addresses are not set");
+    }
     await expect(this.operationToAccount).toContainText(tx.accountToCredit.address);
     await expect(this.operationFromAccount).toContainText(tx.accountToDebit.address);
   }

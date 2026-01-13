@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-deprecated */
 import React, { Fragment, useCallback, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import styled from "styled-components";

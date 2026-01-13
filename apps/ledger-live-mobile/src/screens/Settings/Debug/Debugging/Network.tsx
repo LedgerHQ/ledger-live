@@ -10,7 +10,11 @@ import {
 } from "@ledgerhq/live-common/network-troubleshooting/index";
 import NavigationScrollView from "~/components/NavigationScrollView";
 
-const Bullet = styled(Flex).attrs((p: { backgroundColor: string }) => ({
+type BulletProps = {
+  backgroundColor: string;
+};
+
+const Bullet = styled(Flex).attrs<BulletProps>(p => ({
   backgroundColor: p.backgroundColor,
 }))`
   width: 8px;

@@ -1107,6 +1107,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Alınacak hiçbir ödül yok"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "Memo çok uzun Uzunluk en fazla {{maxLength}} karakter olmalıdır"
+    },
     "NearNewAccountWarning" : {
       "title" : "Alıcı hesabı henüz oluşturulmadı. Bu protokol, alıcı hesabı oluşturmak için {{formattedNewAccountStorageCost}} tutarında bir aktarım yapılmasını gerektiriyor."
     },
@@ -2509,6 +2512,20 @@
       "doneTitle" : "PIN kodu belirlendi",
       "description" : "PIN kodu, tüm parolalar ve giriş kodları gibi {{productName}} cihazınızın kilidini açmanızı ve istenmeyen erişimleri önlemenizi sağlar.",
       "continueOnDevice" : "{{productName}} cihazınızda PIN Kodunuzu belirleyin."
+    },
+    "syncStep" : {
+      "title" : "Senkronizasyon",
+      "doneTitle" : "Cüzdan senkronize edildi",
+      "descriptionTitle" : "Cüzdanınızı senkronize edin",
+      "description" : "Farklı telefonlar arasında geçiş yaparken veya bilgisayar kullanırken portföyünüzün güncel kalmasını sağlayın",
+      "skipCta" : "Daha sonra yapacağım",
+      "skip" : {
+        "title" : "Emin misiniz?",
+        "description" : "Bu işlemi atlarsanız, yeni bir telefona veya bilgisayara geçtiğinizde tüm hesaplarınız, bakiyeleriniz ve geçmişinizi manuel olarak yeniden eklemeniz gerekecektir.",
+        "descriptionEmphasis" : "Bunu istediğiniz zaman ayarlardan devre dışı bırakabilirsiniz.",
+        "skipCTA" : "Evet, atla",
+        "syncCTA" : "Hayır, cüzdanımı senkronize et"
+      }
     },
     "seedStep" : {
       "title" : "Kurulum ve yedekleme",
@@ -4622,7 +4639,7 @@
   "EditDeviceName" : {
     "title" : "Cihazın adını değiştirin",
     "charactersRemaining" : "{{remainingCount}} karakter kaldı",
-    "action" : "İsmi belirle",
+    "action" : "Adı belirle",
     "rename" : "İsmi değiştir",
     "success" : "Cihazın adı '{{deviceName}}' olarak değiştirildi"
   },
@@ -6355,6 +6372,7 @@
       "netApy" : "Net APY",
       "stakeActivationState" : "Durum",
       "stakeActivePercent" : "Aktif",
+      "inactiveStake" : "Çekilebilir Ödüller",
       "stakeAvailableBalance" : "Mevcut bakiye",
       "actions" : {
         "activate" : "Etkinleştir",
@@ -8225,6 +8243,15 @@
     }
   },
   "canton" : {
+    "expiryDuration" : {
+      "label" : "Sona erme süresi",
+      "summaryLabel" : "Teklifin Süresi Doluyor",
+      "threeHours" : "3 saat",
+      "sixHours" : "6 saat",
+      "oneDay" : "1 gün",
+      "oneWeek" : "1 hafta",
+      "oneMonth" : "30 gün"
+    },
     "account" : {
       "lockedBalance" : "Kilitli",
       "lockedBalanceTooltip" : "Fonlarınız, başkalarına gönderdiğiniz tekliflerde kilitlenmiş durumda. Bu teklifleri istediğiniz zaman iptal edebilir veya alıcının kabul etmesini ya da reddetmesini bekleyebilirsiniz.",

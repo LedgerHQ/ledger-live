@@ -16,7 +16,7 @@ import { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import Box from "~/renderer/components/Box/Box";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";

@@ -3,7 +3,7 @@ import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { FormattedAccount } from "../AccountsAdded/types";

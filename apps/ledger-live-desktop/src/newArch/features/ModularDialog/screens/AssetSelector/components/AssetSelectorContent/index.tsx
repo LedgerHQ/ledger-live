@@ -1,17 +1,16 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { AssetType } from "@ledgerhq/react-ui/pre-ldls";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useModularDrawerAnalytics } from "../../../../analytics/useModularDrawerAnalytics";
-import { ListWrapper } from "../../../../components/ListWrapper";
+import { AssetType } from "../../../../types";
+import { useModularDialogAnalytics } from "../../../../analytics/useModularDialogAnalytics";
 import SkeletonList from "../../../../components/SkeletonList";
 import { MarketPriceIndicator, MarketPercentIndicator } from "../../../../components/Market";
 import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
-import GenericEmptyList from "LLD/components/GenericEmptyList";
+import EmptyList from "../../../../components/EmptyList";
 import { balanceItem } from "../../../../components/Balance";
 import { useBalanceDeps } from "../../../../hooks/useBalanceDeps";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
@@ -75,14 +74,14 @@ export const AssetSelectorContent = ({
   const isLoading = [LoadingStatus.Pending, LoadingStatus.Idle].includes(providersLoadingStatus);
   const shouldDisplayEmptyState =
     (!assetsTransformed || assetsTransformed.length === 0) && !isLoading;
-  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const { trackModularDialogEvent } = useModularDialogAnalytics();
 
   const onClick = useCallback(
     (asset: AssetType) => {
       const selectedAsset = assetsToDisplay.find(({ id }) => id === asset.id);
       if (!selectedAsset) return;
 
-      trackModularDrawerEvent(
+      trackModularDialogEvent(
         "asset_clicked",
         {
           asset: selectedAsset.name,
@@ -96,7 +95,7 @@ export const AssetSelectorContent = ({
 
       onAssetSelected(selectedAsset);
     },
-    [assetsToDisplay, trackModularDrawerEvent, assetsConfiguration, onAssetSelected],
+    [assetsToDisplay, trackModularDialogEvent, assetsConfiguration, onAssetSelected],
   );
 
   useEffect(() => {
@@ -110,19 +109,17 @@ export const AssetSelectorContent = ({
   }
 
   if (shouldDisplayEmptyState) {
-    return <GenericEmptyList />;
+    return <EmptyList />;
   }
 
   return (
-    <ListWrapper data-testid="asset-selector-list-container">
-      <AssetVirtualList
-        scrollToTop={scrollToTop}
-        assets={formattedAssets}
-        onClick={onClick}
-        onVisibleItemsScrollEnd={loadNext}
-        hasNextPage={!!loadNext}
-        isDebuggingDuplicates={isDebuggingDuplicates}
-      />
-    </ListWrapper>
+    <AssetVirtualList
+      scrollToTop={scrollToTop}
+      assets={formattedAssets}
+      onClick={onClick}
+      onVisibleItemsScrollEnd={loadNext}
+      hasNextPage={!!loadNext}
+      isDebuggingDuplicates={isDebuggingDuplicates}
+    />
   );
 };

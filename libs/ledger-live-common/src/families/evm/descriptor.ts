@@ -9,5 +9,9 @@ export const descriptor: CoinDescriptor = {
       hasPresets: true,
       hasCustom: true,
     },
+    selfTransfer: "free",
+    errors: {
+      userRefusedTransaction: "UserRefusedOnDevice",
+    },
   },
 };

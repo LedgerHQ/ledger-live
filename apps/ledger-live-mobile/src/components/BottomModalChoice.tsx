@@ -12,8 +12,8 @@ const hitSlop = {
 
 const Container = styled(Touchable)<{ opacity: number }>`
   flex-direction: row;
-  padding-vertical: 15px;
-  margin-vertical: 5px;
+  padding: 15px 0;
+  margin: 5px 0;
   align-items: center;
   opacity: ${p => p.opacity};
 `;

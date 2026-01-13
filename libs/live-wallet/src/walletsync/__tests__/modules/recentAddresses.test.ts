@@ -10,67 +10,76 @@ describe("recentAddress", () => {
       {
         localData: {} as RecentAddressesState,
         latestState: {
-          ethereum: [{ address: "some random address", index: 0 }],
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
         } as DistantRecentAddressesState,
       },
       {
         localData: {} as RecentAddressesState,
         latestState: {
-          ethereum: [{ address: "some random address", index: 0 }],
-          solana: [{ address: "some random address on Solana", index: 0 }],
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
+          solana: [{ address: "some random address on Solana", index: 0, lastUsed: 1 }],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address"],
-        },
+          ethereum: [{ address: "some random address", lastUsed: 1 }],
+        } as RecentAddressesState,
         latestState: {} as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address", "some random address 2"],
-        },
+          ethereum: [
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
+          ],
+        } as RecentAddressesState,
         latestState: {
-          ethereum: [{ address: "some random address", index: 0 }],
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          solana: ["some random address"],
-        },
+          solana: [{ address: "some random address", lastUsed: 1 }],
+        } as RecentAddressesState,
         latestState: {
-          ethereum: [{ address: "some random address", index: 0 }],
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address"],
-          solana: ["some random address on Solana"],
-        },
+          ethereum: [{ address: "some random address", lastUsed: 1 }],
+          solana: [{ address: "some random address on Solana", lastUsed: 1 }],
+        } as RecentAddressesState,
         latestState: {
-          ethereum: [{ address: "some random address", index: 0 }],
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address"],
-          solana: ["some random address on Solana", "some random address on Solana 2"],
-        },
-        latestState: {
-          ethereum: [{ address: "some random address", index: 0 }],
-          solana: [{ address: "some random address on Solana", index: 0 }],
-        } as DistantRecentAddressesState,
-      },
-      {
-        localData: {
-          ethereum: ["some random address"],
-          solana: ["some random address on Solana 2", "some random address on Solana 3"],
-        },
-        latestState: {
-          ethereum: [{ address: "some random address", index: 0 }],
+          ethereum: [{ address: "some random address", lastUsed: 1 }],
           solana: [
-            { address: "some random address on Solana", index: 0 },
-            { address: "some random address on Solana 2", index: 1 },
+            { address: "some random address on Solana", lastUsed: 1 },
+            { address: "some random address on Solana 2", lastUsed: 2 },
+          ],
+        } as RecentAddressesState,
+        latestState: {
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
+          solana: [{ address: "some random address on Solana", index: 0, lastUsed: 1 }],
+        } as DistantRecentAddressesState,
+      },
+      {
+        localData: {
+          ethereum: [{ address: "some random address", lastUsed: 1 }],
+          solana: [
+            { address: "some random address on Solana 2", lastUsed: 2 },
+            { address: "some random address on Solana 3", lastUsed: 3 },
+          ],
+        } as RecentAddressesState,
+        latestState: {
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
+          solana: [
+            { address: "some random address on Solana", index: 0, lastUsed: 1 },
+            { address: "some random address on Solana 2", index: 1, lastUsed: 2 },
           ],
         } as DistantRecentAddressesState,
       },
@@ -87,7 +96,13 @@ describe("recentAddress", () => {
         Object.entries(localData).forEach(([key, value]) => {
           const nextState = result.nextState;
           expect(nextState[key]).toEqual(
-            expect.arrayContaining(value.map((address, index) => ({ address, index }))),
+            expect.arrayContaining(
+              value.map((entry, index) => ({
+                address: entry.address,
+                index,
+                lastUsed: entry.lastUsed,
+              })),
+            ),
           );
         });
       },
@@ -99,114 +114,146 @@ describe("recentAddress", () => {
         latestState: {} as DistantRecentAddressesState,
       },
       {
-        localData: { ethereum: ["some random address"] } as RecentAddressesState,
+        localData: {
+          ethereum: [{ address: "some random address", lastUsed: 1 }],
+        } as RecentAddressesState,
         latestState: {
-          ethereum: [{ address: "some random address", index: 0 }],
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address", "some random address 2"],
+          ethereum: [
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
+          ],
         } as RecentAddressesState,
         latestState: {
           ethereum: [
-            { address: "some random address", index: 0 },
-            { address: "some random address 2", index: 1 },
+            { address: "some random address", index: 0, lastUsed: 1 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
           ],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address", "some random address 2"],
+          ethereum: [
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
+          ],
         } as RecentAddressesState,
         latestState: {
           ethereum: [
-            { address: "some random address 2", index: 1 },
-            { address: "some random address", index: 0 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
+            { address: "some random address", index: 0, lastUsed: 1 },
           ],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address"],
-          solana: ["some random address on Solana"],
+          ethereum: [{ address: "some random address", lastUsed: 1 }],
+          solana: [{ address: "some random address on Solana", lastUsed: 1 }],
         } as RecentAddressesState,
         latestState: {
-          ethereum: [{ address: "some random address", index: 0 }],
-          solana: [{ address: "some random address on Solana", index: 0 }],
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
+          solana: [{ address: "some random address on Solana", index: 0, lastUsed: 1 }],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address", "some random address 2"],
-          solana: ["some random address on Solana"],
-        } as RecentAddressesState,
-        latestState: {
           ethereum: [
-            { address: "some random address", index: 0 },
-            { address: "some random address 2", index: 1 },
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
           ],
-          solana: [{ address: "some random address on Solana", index: 0 }],
-        } as DistantRecentAddressesState,
-      },
-      {
-        localData: {
-          ethereum: ["some random address", "some random address 2"],
-          solana: ["some random address on Solana"],
+          solana: [{ address: "some random address on Solana", lastUsed: 1 }],
         } as RecentAddressesState,
         latestState: {
           ethereum: [
-            { address: "some random address 2", index: 1 },
-            { address: "some random address", index: 0 },
+            { address: "some random address", index: 0, lastUsed: 1 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
           ],
-          solana: [{ address: "some random address on Solana", index: 0 }],
+          solana: [{ address: "some random address on Solana", index: 0, lastUsed: 1 }],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address", "some random address 2"],
-          solana: ["some random address on Solana", "some random address 2 on Solana"],
+          ethereum: [
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
+          ],
+          solana: [{ address: "some random address on Solana", lastUsed: 1 }],
         } as RecentAddressesState,
         latestState: {
           ethereum: [
-            { address: "some random address", index: 0 },
-            { address: "some random address 2", index: 1 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
+            { address: "some random address", index: 0, lastUsed: 1 },
+          ],
+          solana: [{ address: "some random address on Solana", index: 0, lastUsed: 1 }],
+        } as DistantRecentAddressesState,
+      },
+      {
+        localData: {
+          ethereum: [
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
           ],
           solana: [
-            { address: "some random address on Solana", index: 0 },
-            { address: "some random address 2 on Solana", index: 1 },
+            { address: "some random address on Solana", lastUsed: 1 },
+            { address: "some random address 2 on Solana", lastUsed: 2 },
+          ],
+        } as RecentAddressesState,
+        latestState: {
+          ethereum: [
+            { address: "some random address", index: 0, lastUsed: 1 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
+          ],
+          solana: [
+            { address: "some random address on Solana", index: 0, lastUsed: 1 },
+            { address: "some random address 2 on Solana", index: 1, lastUsed: 2 },
           ],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address", "some random address 2"],
-          solana: ["some random address on Solana", "some random address 2 on Solana"],
+          ethereum: [
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
+          ],
+          solana: [
+            { address: "some random address on Solana", lastUsed: 1 },
+            { address: "some random address 2 on Solana", lastUsed: 2 },
+          ],
         } as RecentAddressesState,
         latestState: {
           ethereum: [
-            { address: "some random address", index: 0 },
-            { address: "some random address 2", index: 1 },
+            { address: "some random address", index: 0, lastUsed: 1 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
           ],
           solana: [
-            { address: "some random address 2 on Solana", index: 1 },
-            { address: "some random address on Solana", index: 0 },
+            { address: "some random address 2 on Solana", index: 1, lastUsed: 2 },
+            { address: "some random address on Solana", index: 0, lastUsed: 1 },
           ],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address", "some random address 2"],
-          solana: ["some random address on Solana", "some random address 2 on Solana"],
+          ethereum: [
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
+          ],
+          solana: [
+            { address: "some random address on Solana", lastUsed: 1 },
+            { address: "some random address 2 on Solana", lastUsed: 2 },
+          ],
         } as RecentAddressesState,
         latestState: {
           ethereum: [
-            { address: "some random address 2", index: 1 },
-            { address: "some random address", index: 0 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
+            { address: "some random address", index: 0, lastUsed: 1 },
           ],
           solana: [
-            { address: "some random address 2 on Solana", index: 1 },
-            { address: "some random address on Solana", index: 0 },
+            { address: "some random address 2 on Solana", index: 1, lastUsed: 2 },
+            { address: "some random address on Solana", index: 0, lastUsed: 1 },
           ],
         } as DistantRecentAddressesState,
       },
@@ -237,12 +284,16 @@ describe("recentAddress", () => {
 
     it.each([
       [{} as DistantRecentAddressesState],
-      [{ ethereum: [{ address: "some random address", index: 0 }] } as DistantRecentAddressesState],
+      [
+        {
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
+        } as DistantRecentAddressesState,
+      ],
       [
         {
           ethereum: [
-            { address: "some random address", index: 0 },
-            { address: "some random address 2", index: 1 },
+            { address: "some random address", index: 0, lastUsed: 1 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
           ],
         } as DistantRecentAddressesState,
       ],
@@ -267,114 +318,146 @@ describe("recentAddress", () => {
         incomingState: {} as DistantRecentAddressesState,
       },
       {
-        localData: { ethereum: ["some random address"] } as RecentAddressesState,
+        localData: {
+          ethereum: [{ address: "some random address", lastUsed: 1 }],
+        } as RecentAddressesState,
         incomingState: {
-          ethereum: [{ address: "some random address", index: 0 }],
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address", "some random address 2"],
+          ethereum: [
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
+          ],
         } as RecentAddressesState,
         incomingState: {
           ethereum: [
-            { address: "some random address", index: 0 },
-            { address: "some random address 2", index: 1 },
+            { address: "some random address", index: 0, lastUsed: 1 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
           ],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address", "some random address 2"],
+          ethereum: [
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
+          ],
         } as RecentAddressesState,
         incomingState: {
           ethereum: [
-            { address: "some random address 2", index: 1 },
-            { address: "some random address", index: 0 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
+            { address: "some random address", index: 0, lastUsed: 1 },
           ],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address"],
-          solana: ["some random address on Solana"],
+          ethereum: [{ address: "some random address", lastUsed: 1 }],
+          solana: [{ address: "some random address on Solana", lastUsed: 1 }],
         } as RecentAddressesState,
         incomingState: {
-          ethereum: [{ address: "some random address", index: 0 }],
-          solana: [{ address: "some random address on Solana", index: 0 }],
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
+          solana: [{ address: "some random address on Solana", index: 0, lastUsed: 1 }],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address", "some random address 2"],
-          solana: ["some random address on Solana"],
-        } as RecentAddressesState,
-        incomingState: {
           ethereum: [
-            { address: "some random address", index: 0 },
-            { address: "some random address 2", index: 1 },
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
           ],
-          solana: [{ address: "some random address on Solana", index: 0 }],
-        } as DistantRecentAddressesState,
-      },
-      {
-        localData: {
-          ethereum: ["some random address", "some random address 2"],
-          solana: ["some random address on Solana"],
+          solana: [{ address: "some random address on Solana", lastUsed: 1 }],
         } as RecentAddressesState,
         incomingState: {
           ethereum: [
-            { address: "some random address 2", index: 1 },
-            { address: "some random address", index: 0 },
+            { address: "some random address", index: 0, lastUsed: 1 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
           ],
-          solana: [{ address: "some random address on Solana", index: 0 }],
+          solana: [{ address: "some random address on Solana", index: 0, lastUsed: 1 }],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address", "some random address 2"],
-          solana: ["some random address on Solana", "some random address 2 on Solana"],
+          ethereum: [
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
+          ],
+          solana: [{ address: "some random address on Solana", lastUsed: 1 }],
         } as RecentAddressesState,
         incomingState: {
           ethereum: [
-            { address: "some random address", index: 0 },
-            { address: "some random address 2", index: 1 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
+            { address: "some random address", index: 0, lastUsed: 1 },
+          ],
+          solana: [{ address: "some random address on Solana", index: 0, lastUsed: 1 }],
+        } as DistantRecentAddressesState,
+      },
+      {
+        localData: {
+          ethereum: [
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
           ],
           solana: [
-            { address: "some random address on Solana", index: 0 },
-            { address: "some random address 2 on Solana", index: 1 },
+            { address: "some random address on Solana", lastUsed: 1 },
+            { address: "some random address 2 on Solana", lastUsed: 2 },
+          ],
+        } as RecentAddressesState,
+        incomingState: {
+          ethereum: [
+            { address: "some random address", index: 0, lastUsed: 1 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
+          ],
+          solana: [
+            { address: "some random address on Solana", index: 0, lastUsed: 1 },
+            { address: "some random address 2 on Solana", index: 1, lastUsed: 2 },
           ],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address", "some random address 2"],
-          solana: ["some random address on Solana", "some random address 2 on Solana"],
+          ethereum: [
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
+          ],
+          solana: [
+            { address: "some random address on Solana", lastUsed: 1 },
+            { address: "some random address 2 on Solana", lastUsed: 2 },
+          ],
         } as RecentAddressesState,
         incomingState: {
           ethereum: [
-            { address: "some random address", index: 0 },
-            { address: "some random address 2", index: 1 },
+            { address: "some random address", index: 0, lastUsed: 1 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
           ],
           solana: [
-            { address: "some random address 2 on Solana", index: 1 },
-            { address: "some random address on Solana", index: 0 },
+            { address: "some random address 2 on Solana", index: 1, lastUsed: 2 },
+            { address: "some random address on Solana", index: 0, lastUsed: 1 },
           ],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address", "some random address 2"],
-          solana: ["some random address on Solana", "some random address 2 on Solana"],
+          ethereum: [
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
+          ],
+          solana: [
+            { address: "some random address on Solana", lastUsed: 1 },
+            { address: "some random address 2 on Solana", lastUsed: 2 },
+          ],
         } as RecentAddressesState,
         incomingState: {
           ethereum: [
-            { address: "some random address 2", index: 1 },
-            { address: "some random address", index: 0 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
+            { address: "some random address", index: 0, lastUsed: 1 },
           ],
           solana: [
-            { address: "some random address 2 on Solana", index: 1 },
-            { address: "some random address on Solana", index: 0 },
+            { address: "some random address 2 on Solana", index: 1, lastUsed: 2 },
+            { address: "some random address on Solana", index: 0, lastUsed: 1 },
           ],
         } as DistantRecentAddressesState,
       },
@@ -397,53 +480,55 @@ describe("recentAddress", () => {
       {
         localData: {} as RecentAddressesState,
         incomingState: {
-          ethereum: [{ address: "some random address", index: 0 }],
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
         } as DistantRecentAddressesState,
       },
       {
-        localData: { ethereum: ["some random address"] } as RecentAddressesState,
+        localData: {
+          ethereum: [{ address: "some random address", lastUsed: 1 }],
+        } as RecentAddressesState,
         incomingState: {
           ethereum: [
-            { address: "some random address", index: 0 },
-            { address: "some random address 2", index: 1 },
+            { address: "some random address", index: 0, lastUsed: 1 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
           ],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address"],
-        },
+          ethereum: [{ address: "some random address", lastUsed: 1 }],
+        } as RecentAddressesState,
         incomingState: {
-          ethereum: [{ address: "some random address", index: 0 }],
-          solana: [{ address: "some random address on Solana", index: 0 }],
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
+          solana: [{ address: "some random address on Solana", index: 0, lastUsed: 1 }],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address"],
-          solana: ["some random address on Solana"],
-        },
+          ethereum: [{ address: "some random address", lastUsed: 1 }],
+          solana: [{ address: "some random address on Solana", lastUsed: 1 }],
+        } as RecentAddressesState,
         incomingState: {
-          ethereum: [{ address: "some random address", index: 0 }],
+          ethereum: [{ address: "some random address", index: 0, lastUsed: 1 }],
           solana: [
-            { address: "some random address on Solana", index: 0 },
-            { address: "some random address on Solana 2", index: 1 },
+            { address: "some random address on Solana", index: 0, lastUsed: 1 },
+            { address: "some random address on Solana 2", index: 1, lastUsed: 2 },
           ],
         } as DistantRecentAddressesState,
       },
       {
         localData: {
-          ethereum: ["some random address"],
-          solana: ["some random address on Solana"],
-        },
+          ethereum: [{ address: "some random address", lastUsed: 1 }],
+          solana: [{ address: "some random address on Solana", lastUsed: 1 }],
+        } as RecentAddressesState,
         incomingState: {
           ethereum: [
-            { address: "some random address", index: 0 },
-            { address: "some random address 2", index: 1 },
+            { address: "some random address", index: 0, lastUsed: 1 },
+            { address: "some random address 2", index: 1, lastUsed: 2 },
           ],
           solana: [
-            { address: "some random address on Solana", index: 0 },
-            { address: "some random address on Solana 2", index: 1 },
+            { address: "some random address on Solana", index: 0, lastUsed: 1 },
+            { address: "some random address on Solana 2", index: 1, lastUsed: 2 },
           ],
         } as DistantRecentAddressesState,
       },
@@ -461,7 +546,7 @@ describe("recentAddress", () => {
         Object.keys(incomingState).forEach(key => {
           update[key] = incomingState[key]
             .sort((current, other) => current.index - other.index)
-            .map(data => data.address);
+            .map(data => ({ address: data.address, lastUsed: data.lastUsed ?? Date.now() }));
         });
 
         expect(result).toEqual({
@@ -475,8 +560,15 @@ describe("recentAddress", () => {
   describe("applyUpdate", () => {
     it.each([
       [{}],
-      [{ ethereum: ["some random address"] }],
-      [{ ethereum: ["some random address", "some random address 2"] }],
+      [{ ethereum: [{ address: "some random address", lastUsed: 1 }] }],
+      [
+        {
+          ethereum: [
+            { address: "some random address", lastUsed: 1 },
+            { address: "some random address 2", lastUsed: 2 },
+          ],
+        },
+      ],
     ])("should return updated data #%#", (update: RecentAddressesState) => {
       const result = manager.applyUpdate({}, update);
       expect(result).toEqual(update);

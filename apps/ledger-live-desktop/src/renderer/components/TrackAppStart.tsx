@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { deepLinkUrlSelector, hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import Track from "~/renderer/analytics/Track";
 const TrackAppStart = () => {

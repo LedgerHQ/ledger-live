@@ -24,6 +24,12 @@ const reactReduxImportRestrictions = [
     message:
       "Import typed hooks from '~/context/store' instead of 'react-redux' to ensure proper TypeScript typing.",
   },
+  {
+    name: "reselect",
+    importNames: ["createStructuredSelector", "createSelector"],
+    message:
+      "Import typed hooks from '~/context/selectors' instead of 'reselect' to ensure proper TypeScript typing.",
+  },
 ];
 
 module.exports = {
@@ -120,7 +126,7 @@ module.exports = {
   overrides: [
     {
       // Allow direct react-redux imports in store.ts where typed hooks are defined
-      files: ["src/context/store.ts"],
+      files: ["src/context/store.ts", "src/context/selectors.ts"],
       rules: {
         "no-restricted-imports": [
           "error",

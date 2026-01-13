@@ -131,7 +131,7 @@ export default function TimelineItem({
               fontWeight={item.status === "active" ? "semiBold" : "medium"}
               flexShrink={1}
               color={
-                item.status === "completed" && isLastItem
+                item.status === "completed" && isLastItem && !item.isNeutral
                   ? "success.c70"
                   : item.status === "active"
                     ? "primary.c80"

@@ -864,38 +864,36 @@ describe("Staking Operations", () => {
 
       const operation = sdk.alpacaTransactionToOp(address, mockStakingTx(address, "-1001050000"));
 
-      expect(operation.id).toEqual("delegate_tx_digest_123");
-      expect(operation.type).toEqual("DELEGATE");
-      expect(operation.senders).toEqual([address]);
-      expect(operation.recipients).toEqual([]);
-      expect(operation.value).toEqual(1000000000n); // The function returns minus of the balance change
-      expect(operation.asset).toEqual({ type: "native" });
-      expect(operation.tx.block.hash).toBeUndefined();
+      expect(operation).toMatchObject({
+        id: "delegate_tx_digest_123",
+        type: "DELEGATE",
+        senders: [address],
+        recipients: [],
+        value: 0n,
+        asset: { type: "native" },
+        tx: { block: expect.any(Object) },
+        details: {
+          stakedAmount: 1000000000n,
+        },
+      });
     });
 
     test("transactionToOp should map unstaking transaction correctly", () => {
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
 
       const operation = sdk.alpacaTransactionToOp(address, mockUnstakingTx(address, "998950000"));
-
-      expect(operation.id).toEqual("undelegate_tx_digest_456");
-      expect(operation.type).toEqual("UNDELEGATE");
-      expect(operation.senders).toEqual([address]);
-      expect(operation.recipients).toEqual([]);
-      expect(operation.value).toEqual(1000000000n);
-      expect(operation.asset).toEqual({ type: "native" });
-      expect(operation.tx.block.hash).toBeUndefined();
-    });
-  });
-
-  describe("Operation Extra Information", () => {
-    test("getOperationExtra should be a function", () => {
-      expect(typeof sdk.getOperationExtra).toBe("function");
-    });
-
-    test("getOperationExtra should return a Promise", () => {
-      const result = sdk.getOperationExtra("test_digest");
-      expect(result).toBeInstanceOf(Promise);
+      expect(operation).toMatchObject({
+        id: "undelegate_tx_digest_456",
+        type: "UNDELEGATE",
+        senders: [address],
+        recipients: [],
+        value: 0n,
+        asset: { type: "native" },
+        tx: { block: expect.any(Object) },
+        details: {
+          stakedAmount: 1000000000n,
+        },
+      });
     });
   });
 });
@@ -1909,7 +1907,7 @@ describe("filterOperations", () => {
           operationType: "DELEGATE",
           address: address,
           asset: { type: "native" },
-          amount: -10000000000n,
+          stakedAmount: -10000000000n,
         },
       ]);
     });
@@ -1932,7 +1930,7 @@ describe("filterOperations", () => {
           operationType: "UNDELEGATE",
           address: address,
           asset: { type: "native" },
-          amount: 10000000000n,
+          stakedAmount: 10000000000n,
         },
       ]);
     });
@@ -2122,7 +2120,7 @@ describe("getCoinsForAmount", () => {
     });
   });
 
-  describe.only("dedup", () => {
+  describe("dedup", () => {
     const outs: PaginatedTransactionResponse = {
       data: [],
       hasNextPage: false,

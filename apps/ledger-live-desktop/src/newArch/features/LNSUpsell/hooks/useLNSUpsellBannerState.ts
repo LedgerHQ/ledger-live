@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { desktopContentCardSelector } from "~/renderer/reducers/dynamicContent";

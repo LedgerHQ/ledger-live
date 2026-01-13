@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";

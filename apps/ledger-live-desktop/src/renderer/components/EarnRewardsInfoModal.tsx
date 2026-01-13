@@ -9,7 +9,7 @@ import Text from "./Text";
 import Button from "./Button";
 import Box from "./Box";
 import Modal, { ModalBody } from "./Modal";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { ModalData } from "../modals/types";
 
 type Props<Name extends keyof ModalData> = {

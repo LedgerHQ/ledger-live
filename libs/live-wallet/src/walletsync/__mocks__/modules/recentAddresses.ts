@@ -13,7 +13,10 @@ export const genState = (index: number) => {
   for (let i = 0; i < index + 1; i++) {
     recentAddressesState["currency-" + i.toString()] = [];
     for (let j = 0; j < 12; j++) {
-      recentAddressesState["currency-" + i.toString()].push(`some random address at index ${j}`);
+      recentAddressesState["currency-" + i.toString()].push({
+        address: `some random address at index ${j}`,
+        lastUsed: Date.now(),
+      });
     }
   }
 
@@ -38,7 +41,9 @@ export const similarLocalState = (
       return (
         state[key] &&
         state[key].length === otherState[key].length &&
-        otherState[key].every(address => state[key].includes(address))
+        otherState[key].every(otherAddr =>
+          state[key].some(stateAddr => stateAddr.address === otherAddr.address),
+        )
       );
     })
   );

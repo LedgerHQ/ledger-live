@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useRef, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setTheme } from "~/renderer/actions/settings";
 import { themeSelector } from "~/renderer/actions/general";
 import { useTheme, ThemeMode, IconButton } from "@ledgerhq/lumen-ui-react";

@@ -31,7 +31,6 @@ export type TabsProps = BaseTabsProps & {
 };
 
 export const TabsContainer = styled(FlexBox)<{ stretchItems: boolean }>`
-  // Avoid conflict with styled-system's size property by nulling size and renaming it
   size: undefined;
   flex-direction: row;
   width: 100%;
@@ -45,13 +44,28 @@ const TemplateTabsGroup = ({
   stretchItems = false,
   ...props
 }: TabsProps): React.ReactElement => {
-  const { labels, activeIndex, onChange, Item } = props;
+  const {
+    labels,
+    activeIndex,
+    onChange,
+    Item,
+    activeBg,
+    activeColor,
+    disabled,
+    inactiveBg,
+    inactiveColor,
+  } = props;
   return (
     <TabsContainer columnGap={gap} stretchItems={stretchItems} {...props}>
       {labels.map((label, index) => (
         <Item
           key={index}
           {...props}
+          activeBg={activeBg}
+          activeColor={activeColor}
+          disabled={disabled}
+          inactiveBg={inactiveBg}
+          inactiveColor={inactiveColor}
           index={index}
           isActive={index === activeIndex}
           label={label}

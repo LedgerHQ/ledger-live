@@ -47,24 +47,28 @@ function RecoverBanner() {
   }, [protectID]);
 
   const recoverBannerSelected: RecoverBannerType | undefined = useMemo(() => {
-    let recoverBannerWording: RecoverBannerType;
-
     switch (storageData) {
       case LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION:
         setStepNumber(1);
         return undefined;
       case LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE:
         setStepNumber(2);
-        recoverBannerWording = t("portfolio.recoverBanner.subscribeDone", { returnObjects: true });
-        break;
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        return t("portfolio.recoverBanner.subscribeDone", {
+          returnObjects: true,
+        }) as RecoverBannerType;
       case LedgerRecoverSubscriptionStateEnum.BACKUP_VERIFY_IDENTITY:
         setStepNumber(3);
-        recoverBannerWording = t("portfolio.recoverBanner.verifyIdentity", { returnObjects: true });
-        break;
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        return t("portfolio.recoverBanner.verifyIdentity", {
+          returnObjects: true,
+        }) as RecoverBannerType;
       case LedgerRecoverSubscriptionStateEnum.BACKUP_DEVICE_CONNECTION:
         setStepNumber(4);
-        recoverBannerWording = t("portfolio.recoverBanner.connectDevice", { returnObjects: true });
-        break;
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        return t("portfolio.recoverBanner.connectDevice", {
+          returnObjects: true,
+        }) as RecoverBannerType;
       case LedgerRecoverSubscriptionStateEnum.BACKUP_DONE:
         setStepNumber(5);
         return undefined;
@@ -72,8 +76,6 @@ function RecoverBanner() {
         setStepNumber(0);
         return undefined;
     }
-
-    return recoverBannerWording;
   }, [storageData, t]);
 
   const onRedirectRecover = () => {

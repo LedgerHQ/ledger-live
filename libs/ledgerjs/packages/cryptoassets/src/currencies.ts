@@ -320,7 +320,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "avalanche_c_chain",
     coinType: CoinType.ETH,
     name: "Avalanche C-Chain",
-    managerAppName: "Avalanche",
+    managerAppName: "Ethereum",
     ticker: "AVAX",
     scheme: "avalanche_c_chain",
     color: "#E84142",

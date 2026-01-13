@@ -1,7 +1,7 @@
 import React, { Component, useEffect } from "react";
 import BigNumber from "bignumber.js";
 import { Trans, useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
 import {
   EConnResetError,

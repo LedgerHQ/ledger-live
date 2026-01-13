@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { lastOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { useShouldRedirect } from "./useShouldRedirect";
 import { useOpenRecoverCallback } from "./useOpenRecoverCallback";

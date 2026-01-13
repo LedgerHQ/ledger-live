@@ -6,7 +6,7 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import { MissingData } from "./MissingData";
 import { fontSizes } from "@ledgerhq/react-ui/styles/theme";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { useHistory } from "react-router-dom";
 import { track } from "~/renderer/analytics/segment";

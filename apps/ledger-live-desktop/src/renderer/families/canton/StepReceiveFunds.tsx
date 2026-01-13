@@ -34,7 +34,7 @@ import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import MemoTagInfo from "LLD/features/MemoTag/components/MemoTagInfo";
 import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { onboardingReceiveFlowSelector } from "~/renderer/reducers/onboarding";
 
 const Separator = styled.div`

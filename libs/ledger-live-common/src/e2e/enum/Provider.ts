@@ -11,7 +11,9 @@ export class Provider {
   static readonly ONE_INCH = new Provider("oneinch", "1inch", false, false, true);
   static readonly VELORA = new Provider("velora", "Velora", false, false, true);
   static readonly MOONPAY = new Provider("moonpay", "MoonPay", true, false, true);
-  static readonly THORCHAIN = new Provider("thorswap", "THORChain", false, true, false);
+  //TODO: THORCHAIN is actually kyc: false but due to the speculos crashing with native flow the bug needs to be fixed first before activating
+  //and adapting the flow accordingly
+  static readonly THORCHAIN = new Provider("thorswap", "THORChain", true, true, false);
   static readonly UNISWAP = new Provider("uniswap", "Uniswap", false, false, false);
   static readonly LIFI = new Provider("lifi", "LI.FI", false, true, false);
   static readonly CIC = new Provider("cic", "CIC", false, true, true);

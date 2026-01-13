@@ -11,7 +11,7 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useHistory } from "react-router";
 import { openModal } from "~/renderer/actions/modals";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 
 type Props = {
   account: PolkadotAccount | TokenAccount;

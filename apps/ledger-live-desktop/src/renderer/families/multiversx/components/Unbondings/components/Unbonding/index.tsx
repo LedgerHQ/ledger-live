@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import Box from "~/renderer/components/Box/Box";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";

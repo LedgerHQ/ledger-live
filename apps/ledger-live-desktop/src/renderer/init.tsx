@@ -31,7 +31,7 @@ import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/
 import sentry from "~/sentry/renderer";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
-import type { ReduxStore } from "~/renderer/createStore";
+import type { ReduxStore, AppDispatch } from "~/renderer/createStore";
 import createStore from "~/renderer/createStore";
 import events from "~/renderer/events";
 import { initAccounts } from "~/renderer/actions/accounts";
@@ -122,6 +122,7 @@ async function init() {
   const store = createStore({
     dbMiddleware,
   });
+  const dispatch: AppDispatch = store.dispatch;
 
   setupRecentAddressesStore(store);
   setupCryptoAssetsStore(store);
@@ -229,8 +230,8 @@ async function init() {
     );
   }
 
-  await fetchTrustchain()(store.dispatch);
-  await fetchWallet()(store.dispatch);
+  await dispatch(fetchTrustchain());
+  await dispatch(fetchWallet());
 
   const marketState = await getKey("app", "market");
   if (marketState) {

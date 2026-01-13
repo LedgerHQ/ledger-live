@@ -68,7 +68,9 @@ const AssetSelection = ({
 
   const expandToFullHeight = () => {
     snapToIndex(1);
-    listRef.current?.scrollToIndex({ index: 0 });
+    if (formattedAssets.length > 0) {
+      listRef.current?.scrollToIndex({ index: 0 });
+    }
   };
 
   const assetsMap = groupCurrenciesByAsset(assetsSorted || []);

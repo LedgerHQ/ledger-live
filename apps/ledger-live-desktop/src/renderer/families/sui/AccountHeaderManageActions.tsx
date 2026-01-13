@@ -2,7 +2,7 @@ import IconCoins from "~/renderer/icons/Coins";
 import { openModal } from "~/renderer/actions/modals";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
 import { canStake } from "@ledgerhq/live-common/families/sui/logic";
 

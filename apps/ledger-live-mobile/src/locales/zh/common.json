@@ -1107,6 +1107,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "暂无可领取的奖励"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "Memo 备注太长。最大长度为 {{maxLength}} 个字符"
+    },
     "NearNewAccountWarning" : {
       "title" : "尚未创建接收人账户。该协议需要 {{formattedNewAccountStorageCost}} 转账才能创建账户。"
     },
@@ -2509,6 +2512,20 @@
       "doneTitle" : "识别码已设置",
       "description" : "就像其他密码一样，识别码可以让您解锁 {{productName}}，同时防止他人未经许可访问。",
       "continueOnDevice" : "在您的 {{productName}} 上设置识别码。"
+    },
+    "syncStep" : {
+      "title" : "同步",
+      "doneTitle" : "钱包已同步",
+      "descriptionTitle" : "同步您的钱包",
+      "description" : "在您换用手机或使用电脑时，及时更新自己的资产组合",
+      "skipCta" : "以后再说",
+      "skip" : {
+        "title" : "是否确定?",
+        "description" : "如果跳过此步骤，当您更换手机或电脑时，将需要手动重新添加所有账户、余额及历史记录。",
+        "descriptionEmphasis" : "您可以随时在设置中禁用此功能。",
+        "skipCTA" : "是，跳过",
+        "syncCTA" : "否，同步我的钱包"
+      }
     },
     "seedStep" : {
       "title" : "设置与备份",
@@ -6355,6 +6372,7 @@
       "netApy" : "净年收益率",
       "stakeActivationState" : "状态",
       "stakeActivePercent" : "活跃",
+      "inactiveStake" : "可提取奖励",
       "stakeAvailableBalance" : "可用余额",
       "actions" : {
         "activate" : "激活",
@@ -8225,6 +8243,15 @@
     }
   },
   "canton" : {
+    "expiryDuration" : {
+      "label" : "有效期时长",
+      "summaryLabel" : "要约有效期",
+      "threeHours" : "3 小时",
+      "sixHours" : "6 小时",
+      "oneDay" : "1 天",
+      "oneWeek" : "1 周",
+      "oneMonth" : "30 天"
+    },
     "account" : {
       "lockedBalance" : "已锁定",
       "lockedBalanceTooltip" : "您的资金锁定在您发送给他人的要约中。您可以随时取消这些要约，或者等待接收方接受或拒绝。",

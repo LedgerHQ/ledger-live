@@ -12,7 +12,7 @@ import { ScrollContainer } from "../../components/ScrollContainer";
 import { AccountList, ActionButtons, SuccessIcon, Title } from "./components";
 import { useAccountFormatter } from "./hooks";
 import { AccountsAddedProps } from "./types";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 const AccountsAdded = ({

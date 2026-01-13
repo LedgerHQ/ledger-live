@@ -12,7 +12,7 @@ export const AddAccountButton = ({ onAddAccountClick }: Props) => {
 
   return (
     <CardButton
-      title={t("drawers.selectAccount.addAccount")}
+      title={t("dialogs.selectAccount.addAccount")}
       icon={Plus}
       hideChevron
       appearance="outline"

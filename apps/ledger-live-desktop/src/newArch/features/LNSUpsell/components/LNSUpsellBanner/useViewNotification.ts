@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { OFFLINE_SEEN_DELAY } from "LLD/features/DynamicContent/utils/constants";
 import type { LNSBannerLocation } from "LLD/features/LNSUpsell/types";
 import { anonymousUserNotificationsSelector } from "~/renderer/reducers/settings";

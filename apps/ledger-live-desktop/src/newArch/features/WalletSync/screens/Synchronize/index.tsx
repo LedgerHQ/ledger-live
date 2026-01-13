@@ -1,6 +1,6 @@
 import { Flex } from "@ledgerhq/react-ui";
 import React, { forwardRef, useImperativeHandle } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { FlowOptions, useFlows } from "../../hooks/useFlows";

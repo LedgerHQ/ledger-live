@@ -6,7 +6,7 @@ import { Unit } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, ValueChange } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router-dom";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";

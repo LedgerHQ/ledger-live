@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { StepProps } from "../../types";
 import { idsToLanguage, Language as DeviceLanguages, languageIds } from "@ledgerhq/types-live";
 import { Button, Flex, Link } from "@ledgerhq/react-ui";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { DEFAULT_LANGUAGE, Languages } from "~/config/languages";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/useAvailableLanguagesForDevice";

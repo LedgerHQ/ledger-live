@@ -20,7 +20,13 @@ beforeEach(() => {
   mockDomMeasurements();
 });
 
-const mockCurrencies = currencies.map(currency => currency.id);
+const dialogParamsMockCurrencies = {
+  isOpen: true,
+  dialogParams: {
+    currencies: currencies.map(currency => currency.id),
+    onAssetSelected: mockOnAssetSelected,
+  },
+};
 
 const mixedCurrencies = [
   baseCurrency,
@@ -29,7 +35,14 @@ const mixedCurrencies = [
   bitcoinCurrency,
   ethereumCurrency,
 ];
-const mixedCurrenciesIds = mixedCurrencies.map(currency => currency.id);
+
+const dialogParamsMixedCurrencies = {
+  isOpen: true,
+  dialogParams: {
+    currencies: mixedCurrencies.map(currency => currency.id),
+    onAssetSelected: mockOnAssetSelected,
+  },
+};
 
 const waitForSkeletonToBeRemoved = async () => {
   // Wait for the asset list to be rendered (skeletons are replaced with actual content)
@@ -43,13 +56,9 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
     jest.clearAllMocks();
   });
   it("should render AssetSelection step with correct props", async () => {
-    render(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-      />,
-      { initialState: { modularDrawer: { isOpen: true } } },
-    );
+    render(<ModularDialogFlowManager />, {
+      initialState: { modularDrawer: dialogParamsMockCurrencies },
+    });
 
     expect(screen.getAllByText(/select asset/i)[0]).toBeVisible();
 
@@ -60,13 +69,9 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
   });
 
   it("should call onAssetSelected when an asset is selected", async () => {
-    const { user } = render(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-      />,
-      { initialState: { modularDrawer: { isOpen: true } } },
-    );
+    const { user } = render(<ModularDialogFlowManager />, {
+      initialState: { modularDrawer: dialogParamsMockCurrencies },
+    });
 
     await waitForSkeletonToBeRemoved();
 
@@ -77,13 +82,9 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
   });
 
   it("should navigate to NetworkSelection step after asset selection", async () => {
-    const { user } = render(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-      />,
-      { initialState: { modularDrawer: { isOpen: true } } },
-    );
+    const { user } = render(<ModularDialogFlowManager />, {
+      initialState: { modularDrawer: dialogParamsMockCurrencies },
+    });
 
     await waitForSkeletonToBeRemoved();
 
@@ -97,13 +98,9 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
   });
 
   it("should call onAssetSelected after network selection", async () => {
-    const { user } = render(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-      />,
-      { initialState: { modularDrawer: { isOpen: true } } },
-    );
+    const { user } = render(<ModularDialogFlowManager />, {
+      initialState: { modularDrawer: dialogParamsMockCurrencies },
+    });
 
     await waitForSkeletonToBeRemoved();
 
@@ -118,13 +115,9 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
 
   // This test is to ensure that we display the provider currency if the currency is not in the sortedCryptoCurrencies then display the network currencies it refers to the setAssetsToDisplay in the useMemo done inside ModularDialogFlowManager.tsx
   it("should display the provider currency if the currency is not in the sortedCryptoCurrencies then display the network currencies", async () => {
-    const { user } = render(
-      <ModularDialogFlowManager
-        currencies={mixedCurrenciesIds}
-        onAssetSelected={mockOnAssetSelected}
-      />,
-      { initialState: { modularDrawer: { isOpen: true } } },
-    );
+    const { user } = render(<ModularDialogFlowManager />, {
+      initialState: { modularDrawer: dialogParamsMixedCurrencies },
+    });
 
     await waitForSkeletonToBeRemoved();
 
@@ -144,13 +137,9 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
   });
 
   it("should handle the search in the assetsSelection screen when I have no provider currencies but only provided currencies", async () => {
-    const { user } = render(
-      <ModularDialogFlowManager
-        currencies={mixedCurrenciesIds}
-        onAssetSelected={mockOnAssetSelected}
-      />,
-      { initialState: { modularDrawer: { isOpen: true } } },
-    );
+    const { user } = render(<ModularDialogFlowManager />, {
+      initialState: { modularDrawer: dialogParamsMixedCurrencies },
+    });
 
     await waitForSkeletonToBeRemoved();
 
@@ -177,13 +166,9 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
   });
 
   it("should display the empty state when there are no assets", async () => {
-    const { user } = render(
-      <ModularDialogFlowManager
-        currencies={mockCurrencies}
-        onAssetSelected={mockOnAssetSelected}
-      />,
-      { initialState: { modularDrawer: { isOpen: true } } },
-    );
+    const { user } = render(<ModularDialogFlowManager />, {
+      initialState: { modularDrawer: dialogParamsMockCurrencies },
+    });
 
     await waitForSkeletonToBeRemoved();
 

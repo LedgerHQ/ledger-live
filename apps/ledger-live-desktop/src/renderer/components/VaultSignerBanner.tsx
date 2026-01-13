@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
 import { vaultSigner } from "~/config/urls";
 

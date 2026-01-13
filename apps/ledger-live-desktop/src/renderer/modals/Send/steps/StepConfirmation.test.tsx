@@ -70,6 +70,30 @@ describe("StepConfirmationFooter", () => {
     expect(screen.getByRole("button")).toHaveTextContent("Retry");
   });
 
+  it("renders RetryButton when error is DeviceLockedError", () => {
+    render(
+      <StepConfirmationFooter {...baseProps} error={{ name: "DeviceLockedError" } as Error} />,
+    );
+
+    expect(screen.getByRole("button")).toHaveTextContent("Retry");
+  });
+
+  it("renders RetryButton when error is LockedDeviceError", () => {
+    render(
+      <StepConfirmationFooter {...baseProps} error={{ name: "LockedDeviceError" } as Error} />,
+    );
+
+    expect(screen.getByRole("button")).toHaveTextContent("Retry");
+  });
+
+  it("renders RetryButton when error is UserRefusedOnDevice", () => {
+    render(
+      <StepConfirmationFooter {...baseProps} error={{ name: "UserRefusedOnDevice" } as Error} />,
+    );
+
+    expect(screen.getByRole("button")).toHaveTextContent("Retry");
+  });
+
   it("renders AbortButton when error is not 5xx", () => {
     render(<StepConfirmationFooter {...baseProps} error={{ name: "LedgerAPI4xx" } as Error} />);
 

@@ -8,7 +8,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getKey, setKey } from "~/renderer/storage";
 import { cryptoCurrenciesSelector } from "~/renderer/reducers/accounts";
 import { languageSelector, lastSeenDeviceSelector } from "~/renderer/reducers/settings";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { ServiceStatusProvider } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { openInformationCenter } from "~/renderer/actions/UI";

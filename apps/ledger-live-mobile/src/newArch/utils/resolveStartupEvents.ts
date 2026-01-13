@@ -3,11 +3,6 @@ import { startupEvents, startupFirstImportTime, type StartupEvent } from "./logS
 
 export type GroupedStartupEvent = StartupEvent & { count: number };
 
-export const STARTUP_EVENTS = {
-  LEGACY_STARTED: "App started",
-  STARTED: "Splash screen faded",
-} as const;
-
 const startupTsp = new Promise<number>(resolve => {
   // On dev it doesn't make sense to compare to the app starting time due to metro start time
   // And also because react-native-startup-time does not reset on reload (so it keeps on increasing).

@@ -8,7 +8,7 @@ import { SettingsSectionRow as Row } from "../../SettingsSection";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { Flex } from "@ledgerhq/react-ui";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";

@@ -90,18 +90,23 @@ const variantProps: Record<
   },
 };
 
-const NotificationContainer = styled(FlexBox).attrs(
-  (p: FlexBoxProps & { variant: NotificationVariant }) => ({
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    bg: variantProps[p.variant]?.bg ?? variantProps.primary.bg,
-    p: variantProps[p.variant]?.padding,
-    borderRadius: variantProps[p.variant]?.borderRadius ?? 1,
-  }),
-)``;
+type NotificationContainerProps = FlexBoxProps & {
+  variant: NotificationVariant;
+};
 
-const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs({
+const NotificationContainer = styled(FlexBox).attrs<NotificationContainerProps>((p) => ({
+  width: "100%",
+  flexDirection: "row",
+  alignItems: "center",
+  bg: variantProps[p.variant]?.bg ?? variantProps.primary.bg,
+  p: variantProps[p.variant]?.padding,
+  borderRadius: variantProps[p.variant]?.borderRadius ?? 1,
+}))``;
+
+const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs<{
+  p?: number;
+  m?: number;
+}>({
   p: 5,
   m: -5,
 })`

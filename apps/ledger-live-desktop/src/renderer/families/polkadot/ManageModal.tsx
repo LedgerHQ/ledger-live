@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import invariant from "invariant";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled, { css } from "styled-components";
 import { Trans } from "react-i18next";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";

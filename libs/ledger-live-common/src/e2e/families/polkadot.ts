@@ -15,6 +15,9 @@ export const sendPolkadot = withDeviceController(
       const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
       expect(isAmountCorrect).toBeTruthy();
 
+      if (!tx.accountToCredit.address) {
+        throw new Error("Recipient address is not set");
+      }
       const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
       expect(isAddressCorrect).toBeTruthy();
 

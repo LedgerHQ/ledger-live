@@ -4,12 +4,10 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { TopBar } from "./TopBar";
 import { MemoryRouter } from "react-router";
 import { render, screen } from "@testing-library/react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 
-jest.mock("react-redux", () => {
-  const actual = jest.requireActual("react-redux");
+jest.mock("LLD/hooks/redux", () => {
   return {
-    ...actual,
     useSelector: jest.fn(),
   };
 });
@@ -83,7 +81,7 @@ describe("TopBar", () => {
   };
 
   it("does not render if isInternalApp is true and dev tools are disabled", () => {
-    (useSelector as jest.Mock).mockReturnValue(false);
+    (useSelector as unknown as jest.Mock).mockReturnValue(false);
 
     render(
       <MemoryRouter initialEntries={["/"]}>
@@ -96,7 +94,7 @@ describe("TopBar", () => {
   });
 
   it("renders refresh and dev tools buttons when dev tools are enabled", () => {
-    (useSelector as jest.Mock).mockReturnValue(true);
+    (useSelector as unknown as jest.Mock).mockReturnValue(true);
 
     render(
       <MemoryRouter initialEntries={["/"]}>
@@ -108,7 +106,7 @@ describe("TopBar", () => {
   });
 
   it("renders only refresh button when on an external app and dev tools disabled", () => {
-    (useSelector as jest.Mock).mockReturnValue(false);
+    (useSelector as unknown as jest.Mock).mockReturnValue(false);
 
     render(
       <MemoryRouter initialEntries={["/"]}>

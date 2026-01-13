@@ -29,8 +29,8 @@ export const GlobalStyle = createGlobalStyle`
     fill: ${p => p.theme.colors.neutral.c100};
   }
 
-  .tippy-box[data-theme~='ledger'].bg-alertRed > .tippy-svg-arrow {
-    fill: ${p => p.theme.colors.alertRed};
+  .tippy-box[data-theme~='ledger'].bg-error-strong > .tippy-svg-arrow {
+    fill: ${p => p.theme.colors.error.c50};
   }
 
   .tippy-box[data-theme~='ledger'].bg-palette-background-default > .tippy-svg-arrow {
@@ -61,6 +61,29 @@ export const GlobalStyle = createGlobalStyle`
     color: inherit !important;
     right: 0;
     left: 15px;
+  }
+
+  /* react-select v5 input styling fix */
+  .select__input-container {
+    color: ${p => p.theme.colors.neutral.c80} !important;
+    caret-color: ${p => p.theme.colors.neutral.c80};
+    visibility: visible !important;
+  }
+
+  .select__input-container input,
+  .select__input input,
+  [class*="select__input"] input {
+    color: ${p => p.theme.colors.neutral.c80} !important;
+    caret-color: ${p => p.theme.colors.neutral.c80} !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* Ensure the input wrapper is visible when menu is open */
+  .select__control--menu-is-open .select__input-container,
+  .select__control--menu-is-open .select__input-container input {
+    color: ${p => p.theme.colors.neutral.c80} !important;
+    opacity: 1 !important;
   }
 
   ::selection {

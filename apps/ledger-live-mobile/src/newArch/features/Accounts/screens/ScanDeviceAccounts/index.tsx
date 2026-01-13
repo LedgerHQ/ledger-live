@@ -29,7 +29,7 @@ const StyledPressable = styled(Pressable)`
   border-style: dotted;
   border-color: ${({ theme }) => theme.colors.opacityDefault.c10};
   padding: 16px;
-  margin-vertical: 8px;
+  margin: 8px 0;
   border-radius: 12px;
   display: flex;
   flex-direction: row;

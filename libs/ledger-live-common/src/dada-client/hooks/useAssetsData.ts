@@ -10,7 +10,6 @@ const emptyData = () => ({
   interestRates: {},
   markets: {},
   currenciesOrder: {
-    currenciesIds: [],
     metaCurrencyIds: [],
     key: "",
     order: "",
@@ -63,7 +62,6 @@ export function useAssetsData({
       Object.assign(acc.interestRates, page.interestRates);
       Object.assign(acc.markets, page.markets);
 
-      acc.currenciesOrder.currenciesIds.push(...page.currenciesOrder.currenciesIds);
       acc.currenciesOrder.metaCurrencyIds.push(...page.currenciesOrder.metaCurrencyIds);
 
       acc.currenciesOrder.key = page.currenciesOrder.key;

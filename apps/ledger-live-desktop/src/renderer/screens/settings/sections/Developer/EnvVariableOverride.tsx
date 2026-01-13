@@ -161,7 +161,7 @@ export const EnvVariableContent = ({
               />
             ))}
           </div>
-          <div className="mt-3">
+          <div className="mt-4">
             <Button
               size="sm"
               appearance="accent"

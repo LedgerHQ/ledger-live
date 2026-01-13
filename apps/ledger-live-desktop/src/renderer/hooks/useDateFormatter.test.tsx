@@ -4,10 +4,7 @@
 
 import { renderHook } from "@testing-library/react";
 import React from "react";
-import * as redux from "react-redux";
-import { Provider } from "react-redux";
-import { combineReducers, legacy_createStore as createStore } from "redux";
-import settings from "../reducers/settings";
+import * as reduxHooks from "LLD/hooks/redux";
 import {
   dateEq,
   getDatesAround,
@@ -26,11 +23,13 @@ const MINUTE = 60 * SECOND;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 
-const store = createStore(
-  combineReducers({
-    settings,
-  }),
-);
+jest.mock("LLD/hooks/redux", () => {
+  const actual = jest.requireActual<typeof reduxHooks>("LLD/hooks/redux");
+  return {
+    ...actual,
+    useSelector: jest.fn(),
+  };
+});
 
 describe("useDateFormatter", () => {
   beforeAll(() => {
@@ -124,12 +123,10 @@ describe("useDateFormatter", () => {
 
   describe("useDateFormatter", () => {
     // Needed to wrap hook in a Redux Store
-    const HookWrapper = ({ children }: { children: React.ReactNode }) => (
-      <Provider store={store}>{children}</Provider>
-    );
+    const HookWrapper = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
     // prepare mocking useSelector
-    const spy = jest.spyOn(redux, "useSelector");
+    const spy = jest.spyOn(reduxHooks, "useSelector");
 
     let f: ReturnType<typeof useDateFormatter>;
 
@@ -200,11 +197,9 @@ describe("useCalendarFormatter", () => {
   });
 
   // Needed to wrap hook in a Redux Store
-  const HookWrapper = ({ children }: { children: React.ReactNode }) => (
-    <Provider store={store}>{children}</Provider>
-  );
+  const HookWrapper = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
-  const spy = jest.spyOn(redux, "useSelector");
+  const spy = jest.spyOn(reduxHooks, "useSelector");
 
   let f: ReturnType<typeof useDateFormatter>;
 

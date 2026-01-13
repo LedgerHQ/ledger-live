@@ -1,5 +1,5 @@
 import React, { useCallback, useState, memo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
 import styled from "styled-components";

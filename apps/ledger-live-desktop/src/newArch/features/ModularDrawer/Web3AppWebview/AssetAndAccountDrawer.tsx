@@ -8,7 +8,7 @@ import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-a
 
 import { setDrawer } from "~/renderer/drawers/Provider";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { modularDrawerFlowSelector } from "~/renderer/reducers/modularDrawer";

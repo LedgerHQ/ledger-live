@@ -5,7 +5,7 @@ import { HeaderProps, Order } from "../types";
 import styled from "@ledgerhq/react-ui/components/styled";
 import { track } from "~/renderer/analytics/segment";
 import { useResize } from "~/renderer/hooks/useResize";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { selectedTimeRangeSelector } from "~/renderer/reducers/settings";
 import { useTheme } from "styled-components";
 

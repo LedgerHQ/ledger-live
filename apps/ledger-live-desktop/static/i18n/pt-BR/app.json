@@ -2461,6 +2461,54 @@
       }
     }
   },
+  "newSendFlow" : {
+    "title" : "Enviar {{currency}}",
+    "available" : "Disponível: {{amount}}",
+    "placeholder" : "Digite o endereço ou ENS",
+    "placeholderNoENS" : "Digite o endereço",
+    "recent" : "Recente",
+    "myAccounts" : "Minhas contas",
+    "sendTo" : "Enviar para {{address}}",
+    "addressMatched" : "O endereço correspondeu",
+    "addressNotFound" : "Endereço não encontrado",
+    "alreadyUsed" : "Já usado · {{date}}",
+    "recentSendWillAppear" : "O seu envio recente aparecerá aqui",
+    "remove" : "Remover",
+    "enterTag" : "Inserir {{tag}}",
+    "firstInteraction" : {
+      "title" : "Você está enviando a um novo endereço",
+      "description" : "Verifique se o endereço está correto. Em caso de dúvida, envie uma pequena quantia primeiro."
+    },
+    "sanctioned" : {
+      "title" : "Endereço suspeito",
+      "description" : "Esse endereço foi identificado como suspeito e a Ledger não permite que você envie a ele.",
+      "helpCenter" : "Central de ajuda"
+    },
+    "errors" : {
+      "incorrectFormat" : "Formato de endereço incorreto",
+      "incompatibleAsset" : "O endereço não é compatível com o ativo selecionado",
+      "walletNotExist" : "A carteira não existe"
+    },
+    "skipMemo" : {
+      "title" : "Pular adicionar a {{tag}}?",
+      "warning" : "O seu ativo pode ser perdido se a {{tag}} for necessária pelo seu recipiente"
+    },
+    "tagHelp" : {
+      "title" : "O que é uma {{tag}}?",
+      "description" : "Uma {{tag}} é necessária ao enviar {{currency}} para uma corretora de criptomoedas. É um recursos usado para identificar o recipiente da transação. Não incluir a memo {{tag}} pode resultar em perda de fundos."
+    },
+    "networkFeesInFiat" : "Taxas de rede em {{currency}}",
+    "feesAmount" : "Quantia da taxa ({{unit}})",
+    "gasLimit" : "Limite de gás ({{unit}})",
+    "feesPaid" : "Taxas pagas à rede para processar sua transação",
+    "insufficientBalanceFees" : "Saldo insuficiente para cobrir as taxas de rede",
+    "amountToSend" : "Quantia a enviar em ({{currency}})",
+    "coinToSend" : "Moeda a enviar",
+    "coinControlCustom" : "Seleção de moeda personalizada",
+    "aboveMaximum" : "Saldo acima do máximo",
+    "transactionSigned" : "Transação assinada",
+    "processingTransaction" : "A sua transação está sendo processada"
+  },
   "releaseNotes" : {
     "title" : "Notas de lançamento",
     "version" : "Ledger Wallet {{versionNb}}"
@@ -3699,6 +3747,8 @@
       "activeTooltip" : "A quantia ativa gera recompensas",
       "inactiveTooltip" : "A quantia inativa não gera recompensas",
       "delegatedInfoTooltip" : "Quantia total que é delegada aos validadores.",
+      "inactiveStakeTooltip" : "Staking inativos podem ser sacados sem desativar a sua delegação.",
+      "inactiveStakeTitle" : "Recompensas Sacáveis",
       "withdrawableInfoTooltip" : "Quantia total que pode ser sacada das delegações.",
       "withdrawableTitle" : "Sacáveis",
       "statusUpdateNotice" : "O status da delegação será atualizado quando a transação for confirmada.",
@@ -4636,7 +4686,10 @@
       },
       "modularDrawerDevTool" : {
         "title" : "Ferramenta de Desenvolvedor do Menu Modular",
-        "description" : "Permite que você teste o menu modular facilmente"
+        "description" : "Permite que você teste o menu modular facilmente",
+        "openDrawer" : "Abrir Painel",
+        "debugDialog" : "Depurar Diálogo",
+        "debugDuplicates" : "Depurar Duplicados"
       },
       "cryptoAssetsList" : {
         "title" : "Lista de Criptoativos",
@@ -5187,6 +5240,7 @@
           "recoveryPhrase" : "Frase de recuperação",
           "hideRecoveryPhrase" : "Ocultar frase de recuperação",
           "pairNano" : "Conectar Nano",
+          "enableSync" : "Sincronização",
           "secureYourCrypto" : "Proteja sua cripto"
         },
         "screens" : {
@@ -5479,6 +5533,14 @@
             "help" : {
               "help" : "Preciso de ajuda",
               "descr" : "Não sabe o que fazer agora? Peça ajuda para encerrar esta etapa."
+            }
+          },
+          "enableSync" : {
+            "title" : "Habilite a sincronização para a sua carteira",
+            "description" : "Mantenha seu portfólio atualizado ao trocar de smartphone ou usar um computador.",
+            "buttons" : {
+              "next" : "Continuar",
+              "nextSecondary" : "Farei isso mais tarde"
             }
           },
           "secureYourCrypto" : {
@@ -5834,6 +5896,15 @@
     "canton" : {
       "commentPlaceholder" : "Opcional",
       "comment" : "Comentário",
+      "expiryDuration" : {
+        "label" : "Duração da validade",
+        "summaryLabel" : "Validade da oferta",
+        "threeHours" : "3 horas",
+        "sixHours" : "6 horas",
+        "oneDay" : "1 dia",
+        "oneWeek" : "1 semana",
+        "oneMonth" : "30 dias"
+      },
       "account" : {
         "lockedBalance" : "Bloqueado",
         "lockedBalanceTooltip" : "Seus fundos estão bloqueados em ofertas que você enviou a outras pessoas. Você pode cancelar essas ofertas a qualquer momento ou esperar que o destinatário aceite ou recuse.",
@@ -5891,10 +5962,12 @@
       "pendingTransactions" : {
         "title" : "Transações pendentes ({{count}})",
         "incoming" : {
-          "title" : "Ofertas recebidas ({{count}})"
+          "title" : "Transferência de entrada para rever ({{count}})",
+          "detailsTitle" : "Detalhes da transferência de entrada"
         },
         "outgoing" : {
-          "title" : "Ofertas de saída ({{count}})"
+          "title" : "Ofertas de saída ({{count}})",
+          "detailsTitle" : "Detalhes da transferência de saída"
         },
         "pending" : "Pendente",
         "expired" : "Expirada",
@@ -6924,6 +6997,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Sem recompensas para resgatar"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "O memo é muito longo. O comprimento máximo é {{maxLength}} caracteres"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Falha no carregamento da imagem do arquivo.",
       "description" : "Tente novamente com uma imagem."
@@ -7421,6 +7497,12 @@
         "text" : "Assim que esta transação for confirmada, você poderá receber seu token. <0>Clique aqui</0> para começar o fluxo de recebimento.",
         "learnMore" : "Saiba mais"
       }
+    }
+  },
+  "dialogs" : {
+    "selectAccount" : {
+      "description" : "Você ainda não tem contas {{network}}. Adicione uma para continuar",
+      "addAccount" : "Adicionar conta"
     }
   },
   "drawers" : {

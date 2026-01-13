@@ -2,6 +2,7 @@ export enum EntryPoint {
   manager = "manager",
   accounts = "accounts",
   settings = "settings",
+  onboarding = "onboarding",
   postOnboarding = "postOnboarding",
 }
 

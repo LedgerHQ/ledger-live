@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { getEnv } from "@ledgerhq/live-env";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import styled from "styled-components";

@@ -3,7 +3,8 @@ import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import useStakeFlow from "~/renderer/screens/stake";
 import { useHistory, useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import logger from "~/renderer/logger";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";

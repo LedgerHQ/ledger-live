@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useHistory } from "react-router";
 import {
   lastOnboardedDeviceSelector,

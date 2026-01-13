@@ -5,7 +5,7 @@ import { Flex } from "@ledgerhq/react-ui";
 import { Error } from "../../components/Error";
 import { BackupDeletedProps } from "./types";
 import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSyncAnalytics";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { setDrawerVisibility } from "~/renderer/actions/walletSync";
 
 export default function BackupDeleted({ isSuccessful }: BackupDeletedProps) {

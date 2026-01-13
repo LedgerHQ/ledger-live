@@ -76,12 +76,17 @@ export default function RequestAccountsSelectCrypto({ navigation, route }: Props
       return acc;
     }, new Set());
 
-    data.currenciesOrder.currenciesIds.forEach(id => {
-      const currency = data.cryptoOrTokenCurrencies[id];
-      if (currency && isAcceptedCurrency(currency)) {
-        orderedSet.add(currency);
-      }
-    });
+    data.currenciesOrder.metaCurrencyIds
+      .flatMap(metaCurrencyId => {
+        const assetsIds = data.cryptoAssets[metaCurrencyId]?.assetsIds;
+        return assetsIds ? Object.values(assetsIds) : [];
+      })
+      .forEach(currencyId => {
+        const currency = data.cryptoOrTokenCurrencies[currencyId];
+        if (currency && isAcceptedCurrency(currency)) {
+          orderedSet.add(currency);
+        }
+      });
 
     return Array.from(orderedSet);
   }, [data, ids, isAcceptedCurrency]);

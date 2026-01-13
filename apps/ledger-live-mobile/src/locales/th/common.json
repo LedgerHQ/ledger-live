@@ -1107,6 +1107,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "ไม่มี Reward ให้เคลม"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "Memo ยาวเกินไป ความยาวสูงสุดคือ {{maxLength}} ตัวอักษร"
+    },
     "NearNewAccountWarning" : {
       "title" : "ยังไม่ได้สร้างบัญชีผู้รับ Protocol ต้องมีการโอน {{formattedNewAccountStorageCost}} เพื่อสร้าง"
     },
@@ -2509,6 +2512,20 @@
       "doneTitle" : "ชุด PIN",
       "description" : "PIN ช่วยให้คุณปลดล็อก {{productName}} ของคุณและป้องกันการเข้าถึงที่ไม่พึงประสงค์ เช่นเดียวกับรหัสผ่านหรือรหัสยืนยัน",
       "continueOnDevice" : "ตั้งค่า PIN ของคุณบน {{productName}}"
+    },
+    "syncStep" : {
+      "title" : "การซิงโครไนซ์",
+      "doneTitle" : "วอลเล็ตที่ซิงค์แล้ว",
+      "descriptionTitle" : "ซิงค์วอลเล็ตของคุณ",
+      "description" : "พอร์ตของคุณจะอัปเดตอยู่เสมอ ไม่ว่าจะสลับไปใช้งานบนมือถือหรือคอมพิวเตอร์",
+      "skipCta" : "ทำภายหลัง",
+      "skip" : {
+        "title" : "คุณแน่ใจหรือไม่?",
+        "description" : "หากคุณข้ามขั้นตอนนี้ คุณจะต้องเพิ่มบัญชี ยอดคงเหลือในบัญชี และประวัติธุรกรรมใหม่ทั้งหมดด้วยตัวเอง หากคุณเปลี่ยนไปใช้โทรศัพท์หรือคอมพิวเตอร์เครื่องใหม่",
+        "descriptionEmphasis" : "คุณสามารถปิดการใช้งานได้ตลอดเวลาในเมนูการตั้งค่า",
+        "skipCTA" : "ใช่! ข้ามขั้นตอนนี้",
+        "syncCTA" : "ไม่! ซิงค์วอลเล็ตของฉัน"
+      }
     },
     "seedStep" : {
       "title" : "การติดตั้งและสำรองข้อมูล",
@@ -6355,6 +6372,7 @@
       "netApy" : "อัตราผลตอบแทนต่อปี (APY) สุทธิ",
       "stakeActivationState" : "State",
       "stakeActivePercent" : "ใช้งานอยู่",
+      "inactiveStake" : "Reward ที่สามารถถอนได้",
       "stakeAvailableBalance" : "ยอดคงเหลือในบัญชีที่ใช้ได้",
       "actions" : {
         "activate" : "เปิดใช้งาน",
@@ -8225,6 +8243,15 @@
     }
   },
   "canton" : {
+    "expiryDuration" : {
+      "label" : "ช่วงเวลาหมดอายุ",
+      "summaryLabel" : "ข้อเสนอใกล้หมดอายุ",
+      "threeHours" : "3 ชั่วโมง",
+      "sixHours" : "6 ชั่วโมง",
+      "oneDay" : "1 วัน",
+      "oneWeek" : "1 สัปดาห์",
+      "oneMonth" : "30 วัน"
+    },
     "account" : {
       "lockedBalance" : "ถูกล็อก",
       "lockedBalanceTooltip" : "มีการล็อกเงินทุนของคุณไว้ในข้อเสนอที่คุณส่งให้บุคคลอื่น คุณสามารถยกเลิกข้อเสนอเหล่านี้ได้ทุกเมื่อ หรือรอให้ผู้รับยอมรับหรือปฏิเสธ",

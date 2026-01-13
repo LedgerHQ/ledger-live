@@ -4,7 +4,7 @@ import { AlgorandAccount, AlgorandOperation } from "@ledgerhq/live-common/famili
 import { BigNumber } from "bignumber.js";
 import React from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box/Box";
 import CounterValue from "~/renderer/components/CounterValue";

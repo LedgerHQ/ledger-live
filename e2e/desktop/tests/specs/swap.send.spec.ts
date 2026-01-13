@@ -5,18 +5,10 @@ import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { CLI } from "tests/utils/cliUtils";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
+import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
-
-const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
-  CLI.liveData({
-    currency: currencyApp.name,
-    index,
-    add: true,
-    appjson: userdataPath,
-  });
 
 const swaps = [
   {
@@ -248,11 +240,11 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         [
           {
             app: fromAccount.currency.speculosApp,
-            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+            cmd: liveDataWithAddressCommand(fromAccount),
           },
           {
             app: toAccount.currency.speculosApp,
-            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+            cmd: liveDataWithAddressCommand(toAccount),
           },
         ],
         { scope: "test" },
@@ -275,9 +267,9 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-        const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
+        await app.swap.selectExchangeWithoutKyc(electronApp);
 
-        await app.swap.clickExchangeButton(electronApp, selectedProvider);
+        await app.swap.clickExchangeButton(electronApp);
         await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },

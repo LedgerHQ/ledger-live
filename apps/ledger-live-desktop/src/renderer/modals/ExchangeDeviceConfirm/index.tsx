@@ -11,7 +11,7 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import Modal from "~/renderer/components/Modal";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
 import Box from "~/renderer/components/Box";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";

@@ -1,7 +1,7 @@
 import { Box, Flex, Icons, Link, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled, { useTheme } from "styled-components";
 import { setFlow } from "~/renderer/actions/walletSync";
 import ButtonV3 from "~/renderer/components/ButtonV3";

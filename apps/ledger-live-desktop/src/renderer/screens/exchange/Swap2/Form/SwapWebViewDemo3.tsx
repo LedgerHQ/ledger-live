@@ -21,7 +21,7 @@ import { Account, AccountLike, TokenAccount, SwapOperation } from "@ledgerhq/typ
 import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLocation } from "react-router";
 import styled from "styled-components";
 import { reduce, firstValueFrom } from "rxjs";

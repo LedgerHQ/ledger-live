@@ -2,7 +2,8 @@ import React, { useCallback } from "react";
 import Switch from "~/renderer/components/Switch";
 import Track from "~/renderer/analytics/Track";
 import { track } from "~/renderer/analytics/segment";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { setMevProtection } from "~/renderer/actions/settings";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 

@@ -1107,6 +1107,9 @@
     "HederaNoStakingRewardsError": {
       "title": "No rewards to claim"
     },
+    "HederaMemoIsTooLong": {
+      "title": "Memo is too long. Max length is {{maxLength}} characters"
+    },
     "NearNewAccountWarning": {
       "title": "The recipient account is not created yet. The protocol requires a {{formattedNewAccountStorageCost}} transfer to create it."
     },
@@ -2509,6 +2512,20 @@
       "doneTitle": "PIN set",
       "description": "Just like any password or passcode, the PIN lets you unlock your {{productName}} and prevent unwanted access.",
       "continueOnDevice": "Set your PIN on your {{productName}}."
+    },
+    "syncStep": {
+      "title": "Synchronization",
+      "doneTitle": "Wallet synched",
+      "descriptionTitle": "Sync your wallet",
+      "description": "Keep your portfolio up to date when switching phones or using a computer",
+      "skipCta": "I’ll do it later",
+      "skip": {
+        "title": "Are you sure?",
+        "description": "If you skip this, you'll have to manually re-add all your accounts, balances, and history if you switch to a new phone or computer.",
+        "descriptionEmphasis": "You can always disable it from your settings.",
+        "skipCTA": "Yes, skip",
+        "syncCTA": "No, sync my wallet"
+      }
     },
     "seedStep": {
       "title": "Setup and backup",
@@ -6358,6 +6375,7 @@
       "netApy": "Net APY",
       "stakeActivationState": "State",
       "stakeActivePercent": "Active",
+      "inactiveStake": "Withdrawable Rewards",
       "stakeAvailableBalance": "Available balance",
       "actions": {
         "activate": "Activate",
@@ -8232,6 +8250,15 @@
     }
   },
   "canton": {
+    "expiryDuration": {
+      "label": "Expiry duration",
+      "summaryLabel": "Expiry Offer",
+      "threeHours": "3 hours",
+      "sixHours": "6 hours",
+      "oneDay": "1 day",
+      "oneWeek": "1 week",
+      "oneMonth": "30 days"
+    },
     "account": {
       "lockedBalance": "Locked",
       "lockedBalanceTooltip": "Your funds are locked in offers you've sent to others. You can cancel these offers any time, or wait for the recipient to accept or reject.",

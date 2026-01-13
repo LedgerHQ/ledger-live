@@ -1107,6 +1107,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "수령할 보상이 없습니다"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "메모가 너무 깁니다. 최대 길이는 {{maxLength}}자 입니다."
+    },
     "NearNewAccountWarning" : {
       "title" : "수령인 계정이 아직 생성되지 않았습니다. 프로토콜을 생성하려면 {{formattedNewAccountStorageCost}} 전송이 필요합니다."
     },
@@ -2510,6 +2513,20 @@
       "description" : "다른 비밀번호와 마찬가지로 PIN을 사용하면 {{productName}}의 잠금을 해제하고 원치 않는 액세스를 방지할 수 있습니다.",
       "continueOnDevice" : "{{productName}}에 PIN을 설정하세요."
     },
+    "syncStep" : {
+      "title" : "동기화",
+      "doneTitle" : "지갑 동기화",
+      "descriptionTitle" : "지갑 동기화",
+      "description" : "새 휴대폰이나 컴퓨터에서도 포트폴리오를 항상 최신 상태로 관리하세요.",
+      "skipCta" : "나중에 할게요",
+      "skip" : {
+        "title" : "정말 건너뛸까요?",
+        "description" : "이 단계를 건너뛰면 휴대폰이나 컴퓨터 변경 시 모든 계정, 잔액 및 트랜잭션 내역을 수동으로 다시 추가해야 합니다.",
+        "descriptionEmphasis" : "해당 기능은 설정에서 언제든지 비활성화할 수 있습니다.",
+        "skipCTA" : "네, 건너뛸게요",
+        "syncCTA" : "아니요, 지갑을 동기화할게요"
+      }
+    },
     "seedStep" : {
       "title" : "설정 및 백업",
       "doneTitle" : "비밀 복구 문구 확인됨",
@@ -3626,7 +3643,7 @@
       "description" : "암호화폐를 안전하게 현금으로 매도하세요."
     },
     "exchange" : {
-      "title" : "구매 / 판매",
+      "title" : "매수 / 매도",
       "connectingTo" : "{{provider}}에 연결"
     },
     "stake" : {
@@ -6166,7 +6183,7 @@
     },
     "unlockings" : {
       "header" : "본딩 해제",
-      "withdrawUnbonded" : "언본딩된 출금",
+      "withdrawUnbonded" : "언본딩 자산 출금",
       "rebond" : "재본딩"
     },
     "manage" : {
@@ -6180,7 +6197,7 @@
         "description" : "본딩된 금액을 다시 이용하려면 우선 언본딩해야 합니다. 28일의 언본딩 기간이 지난 후 출금할 수 있습니다."
       },
       "withdrawUnbonded" : {
-        "title" : "언본딩된 출금",
+        "title" : "언본딩 자산 출금",
         "description" : "언본딩된 금액을 다시 가용 잔금으로 가져오려면 직접 출금해야 합니다."
       },
       "nominate" : {
@@ -6313,7 +6330,7 @@
     "simpleOperation" : {
       "modes" : {
         "withdrawUnbonded" : {
-          "title" : "언본딩된 출금",
+          "title" : "언본딩 자산 출금",
           "description" : "언본딩된 자산을 가용 잔액으로 출금하세요."
         },
         "chill" : {
@@ -6355,6 +6372,7 @@
       "netApy" : "순 연간 수익률",
       "stakeActivationState" : "상태",
       "stakeActivePercent" : "활성",
+      "inactiveStake" : "인출 가능 보상",
       "stakeAvailableBalance" : "이용 가능 잔액",
       "actions" : {
         "activate" : "활성화",
@@ -8225,6 +8243,15 @@
     }
   },
   "canton" : {
+    "expiryDuration" : {
+      "label" : "만료 기간",
+      "summaryLabel" : "기간 한정 요청",
+      "threeHours" : "3시간",
+      "sixHours" : "6시간",
+      "oneDay" : "1일",
+      "oneWeek" : "1주",
+      "oneMonth" : "30일"
+    },
     "account" : {
       "lockedBalance" : "잠금",
       "lockedBalanceTooltip" : "자산이 다른 사람에게 보낸 제안에 락업되어 있습니다. 언제든지 해당 제안을 취소할 수도 있고, 상대방이 수락/거절할 때까지 기다릴 수도 있습니다.",

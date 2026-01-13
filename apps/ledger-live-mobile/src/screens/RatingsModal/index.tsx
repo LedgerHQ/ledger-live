@@ -72,7 +72,9 @@ const RatingsModal = () => {
       init: <Init closeModal={closeModal} setStep={setStep} />,
       enjoy: <Enjoy closeModal={closeModal} />,
       disappointed: <Disappointed closeModal={closeModal} setStep={setStep} />,
-      disappointedForm: <DisappointedForm setStep={setStep} equipmentId={equipmentId} />,
+      disappointedForm: (
+        <DisappointedForm setStep={setStep} equipmentId={equipmentId} closeModal={closeModal} />
+      ),
       disappointedDone: <DisappointedDone closeModal={closeModal} />,
     };
 

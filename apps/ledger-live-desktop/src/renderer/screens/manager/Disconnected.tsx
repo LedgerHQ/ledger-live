@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { isDeviceModelId } from "@ledgerhq/devices/helpers";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";

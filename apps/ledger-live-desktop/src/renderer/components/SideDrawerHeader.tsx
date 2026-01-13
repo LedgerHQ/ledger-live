@@ -77,11 +77,7 @@ const SideDrawerHeader = ({
           }}
         >
           {onRequestBack ? (
-            <Button
-              onClick={onRequestBack}
-              className="sidedrawer-close"
-              data-testid="drawer-close-button"
-            >
+            <Button onClick={onRequestBack} data-testid="drawer-close-button">
               <IconAngleLeft size={12} />
               <Text ff="Inter|Medium" fontSize={4} color="neutral.c60">
                 <Trans i18nKey="common.back" />

@@ -31,5 +31,12 @@ export const NetworkVirtualList = ({ networks, onClick }: NetworkVirtualListProp
     [onClick],
   );
 
-  return <VirtualList itemHeight={64} items={networks} renderItem={renderNetworkItem} />;
+  return (
+    <VirtualList
+      itemHeight={64}
+      items={networks}
+      renderItem={renderNetworkItem}
+      className="pb-20"
+    />
+  );
 };

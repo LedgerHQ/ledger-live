@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { Flex, Text } from "@ledgerhq/react-ui";

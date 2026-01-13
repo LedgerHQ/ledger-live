@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { ipcRenderer } from "electron";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { areSettingsLoaded, deepLinkUrlSelector } from "~/renderer/reducers/settings";
 import { useDeepLinkHandler } from "./useDeepLinkHandler";
 import { setDeepLinkUrl } from "~/renderer/actions/settings";

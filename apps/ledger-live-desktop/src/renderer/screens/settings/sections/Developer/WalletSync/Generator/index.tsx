@@ -3,7 +3,7 @@ import Select from "~/renderer/components/Select";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { Switch, Button } from "@ledgerhq/lumen-ui-react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import {
   addInstance,
   setFaked,

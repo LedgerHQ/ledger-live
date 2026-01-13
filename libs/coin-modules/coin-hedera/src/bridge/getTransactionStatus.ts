@@ -10,7 +10,11 @@ import {
 import type { Account, AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account";
 import { getEnv } from "@ledgerhq/live-env";
-import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
+import {
+  HEDERA_OPERATION_TYPES,
+  HEDERA_TRANSACTION_MODES,
+  MEMO_CHARACTER_LIMIT,
+} from "../constants";
 import {
   HederaInsufficientFundsForAssociation,
   HederaRecipientTokenAssociationRequired,
@@ -19,6 +23,7 @@ import {
   HederaInvalidStakingNodeIdError,
   HederaRedundantStakingNodeIdError,
   HederaNoStakingRewardsError,
+  HederaMemoIsTooLong,
 } from "../errors";
 import { estimateFees } from "../logic/estimateFees";
 import {
@@ -61,6 +66,14 @@ function validateRecipient(account: Account, recipient: string): Error | null {
   return null;
 }
 
+function validateMemo(memo: string | undefined): Error | null {
+  if (memo && memo.length > MEMO_CHARACTER_LIMIT) {
+    return new HederaMemoIsTooLong(undefined, { maxLength: MEMO_CHARACTER_LIMIT });
+  }
+
+  return null;
+}
+
 async function handleTokenAssociateTransaction(
   account: Account,
   transaction: TransactionTokenAssociate,
@@ -79,6 +92,11 @@ async function handleTokenAssociateTransaction(
   const amount = BigNumber(0);
   const totalSpent = amount.plus(estimatedFees.tinybars);
   const isAssociationFlow = isTokenAssociationRequired(account, transaction.properties.token);
+  const memoError = validateMemo(transaction.memo);
+
+  if (memoError) {
+    errors.memo = memoError;
+  }
 
   if (isAssociationFlow) {
     const hbarBalance = account.balance.dividedBy(10 ** account.currency.units[0].magnitude);
@@ -118,9 +136,14 @@ async function handleHTSTokenTransaction(
   ]);
 
   const recipientError = validateRecipient(account, transaction.recipient);
+  const memoError = validateMemo(transaction.memo);
 
   if (recipientError) {
     errors.recipient = recipientError;
+  }
+
+  if (memoError) {
+    errors.memo = memoError;
   }
 
   if (!errors.recipient) {
@@ -189,9 +212,14 @@ async function handleERC20TokenTransaction(
   ]);
 
   const recipientError = validateRecipient(account, transaction.recipient);
+  const memoError = validateMemo(transaction.memo);
 
   if (recipientError) {
     errors.recipient = recipientError;
+  }
+
+  if (memoError) {
+    errors.memo = memoError;
   }
 
   if (transaction.amount.eq(0)) {
@@ -231,9 +259,14 @@ async function handleCoinTransaction(
   ]);
 
   const recipientError = validateRecipient(account, transaction.recipient);
+  const memoError = validateMemo(transaction.memo);
 
   if (recipientError) {
     errors.recipient = recipientError;
+  }
+
+  if (memoError) {
+    errors.memo = memoError;
   }
 
   if (transaction.amount.eq(0) && !transaction.useAllAmount) {
@@ -265,6 +298,11 @@ async function handleStakingTransaction(account: HederaAccount, transaction: Tra
   });
   const amount = BigNumber(0);
   const totalSpent = amount.plus(estimatedFees.tinybars);
+  const memoError = validateMemo(transaction.memo);
+
+  if (memoError) {
+    errors.memo = memoError;
+  }
 
   if (
     transaction.mode === HEDERA_TRANSACTION_MODES.Delegate ||

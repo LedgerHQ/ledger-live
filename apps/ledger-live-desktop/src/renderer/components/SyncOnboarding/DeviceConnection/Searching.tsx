@@ -8,7 +8,7 @@ import { OnboardingContext } from "../../Onboarding";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import Animation from "~/renderer/animations";
 import useTheme from "~/renderer/hooks/useTheme";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/isSyncOnboardingSupported";
 

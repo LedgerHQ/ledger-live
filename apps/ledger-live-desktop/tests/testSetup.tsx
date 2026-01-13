@@ -208,6 +208,7 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
  * @param {Props} [options.initialProps] - The initial props to be passed to the hook.
  * @param {DeepPartial<State>} [options.initialState] - The initial state for the Redux store.
  * @param {ReduxStore} [options.store] - The Redux store to be used.
+ * @param {Boolean} [options.minimal] - Does not include all providers when true.
  *
  * @returns {RenderHookResult<Result, Props>} The rendered hook result with the context providers and store.
  */
@@ -218,6 +219,7 @@ function renderHook<Result, Props>(
     initialProps?: Props;
     initialState?: DeepPartial<State>;
     store?: ReduxStore;
+    minimal?: boolean;
   } = {},
 ): RenderHookResult<Result, Props> & { store: ReduxStore } {
   const {
@@ -225,13 +227,14 @@ function renderHook<Result, Props>(
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     store = createStore({ state: initialState as State, dbMiddleware }),
+    minimal = true,
   } = options;
 
   return {
     store,
     ...rtlRenderHook(hook, {
       wrapper: ({ children }) => (
-        <Providers store={store} minimal>
+        <Providers store={store} minimal={minimal}>
           {children}
         </Providers>
       ),

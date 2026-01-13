@@ -2,24 +2,19 @@ import React from "react";
 import { render, screen, act } from "@tests/test-renderer";
 import { INITIAL_TEST, WalletSyncSettingsNavigator } from "./shared";
 import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import { BarcodeScanningResult } from "expo-camera";
+import { Code } from "react-native-vision-camera";
 
 import { mockSimulateBarcodeScanned } from "@tests/jest-setup";
 
-const MOCK_BARCODE: BarcodeScanningResult = {
-  cornerPoints: [],
-  bounds: {
-    origin: {
-      x: 0,
-      y: 0,
-    },
-    size: {
-      height: 0,
-      width: 0,
-    },
+const MOCK_CODE: Code = {
+  value: "mock-qr-code-data",
+  type: "qr",
+  frame: {
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
   },
-  type: "",
-  data: "",
 };
 
 jest.mock("@ledgerhq/ledger-key-ring-protocol/qrcode/index", () => ({
@@ -47,11 +42,16 @@ describe("SynchronizeWithQrCode", () => {
     await user.press(await screen.findByText(/ledger sync/i));
     await user.press(await screen.findByText(/I already turned it on/i));
     await user.press(await screen.findByText(/scan qr code/i));
+
+    // First verify Show QR tab works
     await user.press(screen.queryAllByText(/show qr/i)[0]);
     expect(screen.getByTestId("ws-qr-code-displayed")).toBeVisible();
 
+    // Switch to Scan tab to enable camera scanning
+    await user.press(screen.queryAllByText(/scan/i)[0]);
+
     await act(() => {
-      mockSimulateBarcodeScanned(MOCK_BARCODE);
+      mockSimulateBarcodeScanned(MOCK_CODE);
     });
 
     // Call programmatically the requestQRCodeInput function to display the pin code input

@@ -6,7 +6,6 @@ const verboseRenderer = require("listr-verbose-renderer");
 const path = require("path");
 const rimraf = require("rimraf");
 const pkg = require("../../package.json");
-const Draft = require("./draft");
 const healthChecksTasks = require("./health-checks");
 
 require("dotenv").config();
@@ -135,41 +134,6 @@ const buildTasks = args => [
   },
 ];
 
-const draftTasks = args => {
-  let draft;
-
-  return [
-    {
-      title: "Health checks",
-      task: () => setupList(healthChecksTasks, args),
-    },
-    {
-      title: "Authenticate on GitHub",
-      task: ctx => {
-        const { repo, tag, token } = ctx;
-        draft = new Draft(repo, tag, token);
-      },
-    },
-    {
-      title: "Check if draft already exists",
-      task: async ctx => {
-        ctx.draftExists = await draft.check();
-      },
-    },
-    {
-      title: "Create draft on GitHub",
-      skip: ctx => (ctx.draftExists ? "Draft already exists." : false),
-      task: () => {
-        let body = "";
-        if (args.nightly) {
-          body = process.env.RELEASE_BODY;
-        }
-        draft.create(body);
-      },
-    },
-  ];
-};
-
 const mainTask = (args = {}) => {
   const { dirty, publish } = args;
 
@@ -262,17 +226,6 @@ yargs
       // ignore
     },
     args => runTasks(healthChecksTasks, args),
-  )
-  .command(
-    "draft",
-    "Prepare release on GitHub",
-    yargs =>
-      yargs.option("nightly", {
-        alias: "n",
-        type: "boolean",
-        describe: "used to disabled some check for nightly build",
-      }),
-    args => runTasks(draftTasks, args),
   )
   .option("verbose", {
     alias: "v",

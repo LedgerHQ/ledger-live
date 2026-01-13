@@ -1,5 +1,5 @@
 import React, { useState, useCallback, SyntheticEvent } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { setEncryptionKey, removeEncryptionKey, isEncryptionKeyCorrect } from "~/renderer/storage";

@@ -46,7 +46,6 @@ function TokenRow(props: Props) {
   return (
     <Row
       data-testid={`token-row-${currency.ticker.toUpperCase()}`}
-      className="token-row"
       onClick={onClickRow}
       tabIndex={-1}
     >
