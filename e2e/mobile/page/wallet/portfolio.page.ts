@@ -126,6 +126,8 @@ export default class PortfolioPage {
 
   @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
+    // Wait for accounts list to be visible (React 19 timing fix for Android)
+    await waitForElementById(this.accountsListView, 10000);
     await scrollToId(this.allocationSectionTitleId, this.accountsListView, 400);
 
     if (await IsIdVisible(this.assetItemId(currencyName))) {
