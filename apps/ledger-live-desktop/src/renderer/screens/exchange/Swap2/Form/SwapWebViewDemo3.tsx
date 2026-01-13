@@ -64,6 +64,7 @@ import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
 import { SwapLoader } from "./SwapLoader";
+import { useDiscreetMode } from "~/renderer/components/Discreet";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -141,6 +142,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   const currentVersion = __APP_VERSION__;
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const devMode = useSelector(developerModeSelector);
+  const discreetMode = useDiscreetMode();
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -556,6 +558,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
             ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio ? "true" : "false",
             isModularDrawer: isLldModularDrawer ? "true" : "false",
             isEmbedded: isEmbedded ? "true" : "false",
+            discreetMode,
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
