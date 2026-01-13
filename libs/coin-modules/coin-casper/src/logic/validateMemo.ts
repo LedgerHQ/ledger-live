@@ -10,7 +10,7 @@ export const CASPER_MAX_TRANSFER_ID = "18446744073709551615";
  * @returns true if transfer id is valid, otherwise false
  */
 export function validateMemo(transferId?: string): boolean {
-  if (!transferId || !transferId.length) {
+  if (!transferId?.length) {
     return true;
   }
 
