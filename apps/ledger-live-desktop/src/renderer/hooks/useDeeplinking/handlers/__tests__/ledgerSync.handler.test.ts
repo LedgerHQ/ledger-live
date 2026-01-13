@@ -8,7 +8,9 @@ jest.mock("~/renderer/actions/walletSync", () => ({
 
 const mockSetDrawerVisibility = jest.mocked(setDrawerVisibility);
 
-const createMockContext = (overrides: Partial<DeeplinkHandlerContext> = {}): DeeplinkHandlerContext => ({
+const createMockContext = (
+  overrides: Partial<DeeplinkHandlerContext> = {},
+): DeeplinkHandlerContext => ({
   dispatch: jest.fn(),
   accounts: [],
   navigate: jest.fn(),
@@ -29,9 +31,9 @@ describe("ledgerSync.handler", () => {
   describe("ledgerSyncHandler", () => {
     it("navigates to settings display and opens Ledger Sync drawer", () => {
       const context = createMockContext();
-      
+
       ledgerSyncHandler({ type: "ledgersync" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith("/settings/display");
       expect(context.dispatch).toHaveBeenCalledWith(mockSetDrawerVisibility(true));
     });

@@ -1,6 +1,6 @@
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { findCryptoCurrencyByKeyword, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { closeAllModal, openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { sendHandler, receiveHandler, delegateHandler } from "../transactionFlow.handler";
@@ -38,7 +38,9 @@ const mockOpenModal = jest.mocked(openModal);
 const mockCloseAllModal = jest.mocked(closeAllModal);
 const mockSetDrawer = jest.mocked(setDrawer);
 
-const createMockContext = (overrides: Partial<DeeplinkHandlerContext> = {}): DeeplinkHandlerContext => ({
+const createMockContext = (
+  overrides: Partial<DeeplinkHandlerContext> = {},
+): DeeplinkHandlerContext => ({
   dispatch: jest.fn(),
   accounts: [],
   navigate: jest.fn(),
@@ -70,9 +72,9 @@ describe("transactionFlow.handler", () => {
   describe("sendHandler", () => {
     it("opens send flow without account when no currency specified", async () => {
       const context = createMockContext();
-      
+
       await sendHandler({ type: "send" }, context);
-      
+
       expect(mockCloseAllModal).toHaveBeenCalled();
       expect(mockSetDrawer).toHaveBeenCalled();
       expect(context.openSendFlow).toHaveBeenCalledWith({
@@ -83,13 +85,16 @@ describe("transactionFlow.handler", () => {
 
     it("passes recipient and amount when provided", async () => {
       const context = createMockContext();
-      
-      await sendHandler({
-        type: "send",
-        recipient: "0x123",
-        amount: "1.5",
-      }, context);
-      
+
+      await sendHandler(
+        {
+          type: "send",
+          recipient: "0x123",
+          amount: "1.5",
+        },
+        context,
+      );
+
       expect(context.openSendFlow).toHaveBeenCalledWith({
         recipient: "0x123",
         amount: "1.5",
@@ -99,9 +104,9 @@ describe("transactionFlow.handler", () => {
     it("opens asset flow when currency is not found", async () => {
       mockFindCryptoCurrencyByKeyword.mockReturnValue(undefined);
       const context = createMockContext();
-      
+
       await sendHandler({ type: "send", currency: "unknown" }, context);
-      
+
       expect(context.openAssetFlow).toHaveBeenCalled();
     });
 
@@ -110,9 +115,9 @@ describe("transactionFlow.handler", () => {
       mockFindCryptoCurrencyByKeyword.mockReturnValue(mockCurrency);
       mockGetAccountsOrSubAccountsByCurrency.mockReturnValue([]);
       const context = createMockContext();
-      
+
       await sendHandler({ type: "send", currency: "ethereum" }, context);
-      
+
       expect(context.openAddAccountFlow).toHaveBeenCalledWith(
         mockCurrency,
         true,
@@ -126,14 +131,17 @@ describe("transactionFlow.handler", () => {
       mockFindCryptoCurrencyByKeyword.mockReturnValue(mockCurrency);
       mockGetAccountsOrSubAccountsByCurrency.mockReturnValue([mockAccount]);
       const context = createMockContext({ accounts: [mockAccount] });
-      
-      await sendHandler({
-        type: "send",
-        currency: "ethereum",
-        recipient: "0x456",
-        amount: "2.0",
-      }, context);
-      
+
+      await sendHandler(
+        {
+          type: "send",
+          currency: "ethereum",
+          recipient: "0x456",
+          amount: "2.0",
+        },
+        context,
+      );
+
       expect(context.openSendFlow).toHaveBeenCalledWith({
         account: mockAccount,
         parentAccount: undefined,
@@ -146,9 +154,9 @@ describe("transactionFlow.handler", () => {
   describe("receiveHandler", () => {
     it("opens receive modal without account when no currency specified", async () => {
       const context = createMockContext();
-      
+
       await receiveHandler({ type: "receive" }, context);
-      
+
       expect(mockCloseAllModal).toHaveBeenCalled();
       expect(context.dispatch).toHaveBeenCalledWith(
         mockOpenModal("MODAL_RECEIVE", { shouldUseReceiveOptions: false }),
@@ -161,9 +169,9 @@ describe("transactionFlow.handler", () => {
       mockFindCryptoCurrencyByKeyword.mockReturnValue(mockCurrency);
       mockGetAccountsOrSubAccountsByCurrency.mockReturnValue([mockAccount]);
       const context = createMockContext({ accounts: [mockAccount] });
-      
+
       await receiveHandler({ type: "receive", currency: "bitcoin" }, context);
-      
+
       expect(context.dispatch).toHaveBeenCalledWith(
         mockOpenModal("MODAL_RECEIVE", {
           shouldUseReceiveOptions: false,
@@ -179,18 +187,18 @@ describe("transactionFlow.handler", () => {
   describe("delegateHandler", () => {
     it("does nothing when currency is not tezos", async () => {
       const context = createMockContext();
-      
+
       await delegateHandler({ type: "delegate", currency: "ethereum" }, context);
-      
+
       expect(mockCloseAllModal).not.toHaveBeenCalled();
       expect(context.dispatch).not.toHaveBeenCalled();
     });
 
     it("does nothing when no currency is provided", async () => {
       const context = createMockContext();
-      
+
       await delegateHandler({ type: "delegate" }, context);
-      
+
       expect(mockCloseAllModal).not.toHaveBeenCalled();
       expect(context.dispatch).not.toHaveBeenCalled();
     });
@@ -201,9 +209,9 @@ describe("transactionFlow.handler", () => {
       mockFindCryptoCurrencyByKeyword.mockReturnValue(mockCurrency);
       mockGetAccountsOrSubAccountsByCurrency.mockReturnValue([mockAccount]);
       const context = createMockContext({ accounts: [mockAccount] });
-      
+
       await delegateHandler({ type: "delegate", currency: "tezos" }, context);
-      
+
       expect(mockCloseAllModal).toHaveBeenCalled();
       expect(context.dispatch).toHaveBeenCalledWith(
         mockOpenModal("MODAL_DELEGATE", {

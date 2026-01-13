@@ -17,7 +17,9 @@ import { getAccountsOrSubAccountsByCurrency } from "../../utils";
 const mockFindCryptoCurrencyByKeyword = jest.mocked(findCryptoCurrencyByKeyword);
 const mockGetAccountsOrSubAccountsByCurrency = jest.mocked(getAccountsOrSubAccountsByCurrency);
 
-const createMockContext = (overrides: Partial<DeeplinkHandlerContext> = {}): DeeplinkHandlerContext => ({
+const createMockContext = (
+  overrides: Partial<DeeplinkHandlerContext> = {},
+): DeeplinkHandlerContext => ({
   dispatch: jest.fn(),
   accounts: [],
   navigate: jest.fn(),
@@ -49,27 +51,27 @@ describe("accounts.handler", () => {
   describe("accountsHandler", () => {
     it("navigates to accounts list when no address provided", () => {
       const context = createMockContext();
-      
+
       accountsHandler({ type: "accounts" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith("/accounts");
     });
 
     it("navigates to specific account when valid address is found", () => {
       const mockAccount = createMockAccount("bitcoin", "bc1qtest123");
       const context = createMockContext({ accounts: [mockAccount] });
-      
+
       accountsHandler({ type: "accounts", address: "bc1qtest123" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith(`/account/${mockAccount.id}`);
     });
 
     it("navigates to accounts list when address not found", () => {
       const mockAccount = createMockAccount("bitcoin", "bc1qtest123");
       const context = createMockContext({ accounts: [mockAccount] });
-      
+
       accountsHandler({ type: "accounts", address: "nonexistent" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith("/accounts");
     });
   });
@@ -77,27 +79,27 @@ describe("accounts.handler", () => {
   describe("accountHandler", () => {
     it("does nothing when currency is not provided", () => {
       const context = createMockContext();
-      
+
       accountHandler({ type: "account" }, context);
-      
+
       expect(context.navigate).not.toHaveBeenCalled();
     });
 
     it("does nothing when currency is not found", () => {
       mockFindCryptoCurrencyByKeyword.mockReturnValue(null);
       const context = createMockContext();
-      
+
       accountHandler({ type: "account", currency: "unknown" }, context);
-      
+
       expect(context.navigate).not.toHaveBeenCalled();
     });
 
     it("does nothing when currency is a FiatCurrency", () => {
       mockFindCryptoCurrencyByKeyword.mockReturnValue({ type: "FiatCurrency" } as any);
       const context = createMockContext();
-      
+
       accountHandler({ type: "account", currency: "usd" }, context);
-      
+
       expect(context.navigate).not.toHaveBeenCalled();
     });
 
@@ -106,9 +108,9 @@ describe("accounts.handler", () => {
       mockFindCryptoCurrencyByKeyword.mockReturnValue(mockCurrency);
       mockGetAccountsOrSubAccountsByCurrency.mockReturnValue([]);
       const context = createMockContext();
-      
+
       accountHandler({ type: "account", currency: "bitcoin" }, context);
-      
+
       expect(context.navigate).not.toHaveBeenCalled();
     });
 
@@ -118,9 +120,9 @@ describe("accounts.handler", () => {
       mockFindCryptoCurrencyByKeyword.mockReturnValue(mockCurrency);
       mockGetAccountsOrSubAccountsByCurrency.mockReturnValue([mockAccount]);
       const context = createMockContext({ accounts: [mockAccount] });
-      
+
       accountHandler({ type: "account", currency: "bitcoin", address: "bc1qtest123" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith(`/account/${mockAccount.id}`);
     });
 
@@ -130,9 +132,9 @@ describe("accounts.handler", () => {
       mockFindCryptoCurrencyByKeyword.mockReturnValue(mockCurrency);
       mockGetAccountsOrSubAccountsByCurrency.mockReturnValue([mockAccount]);
       const context = createMockContext({ accounts: [mockAccount] });
-      
+
       accountHandler({ type: "account", currency: "ethereum" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith(`/account/${mockAccount.id}`);
     });
 
@@ -146,9 +148,9 @@ describe("accounts.handler", () => {
       mockFindCryptoCurrencyByKeyword.mockReturnValue(mockCurrency);
       mockGetAccountsOrSubAccountsByCurrency.mockReturnValue([tokenAccount]);
       const context = createMockContext();
-      
+
       accountHandler({ type: "account", currency: "ethereum" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith("/account/parent-account-1/token-account-1");
     });
   });

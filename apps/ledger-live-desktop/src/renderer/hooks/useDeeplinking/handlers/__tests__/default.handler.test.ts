@@ -1,7 +1,9 @@
 import { defaultHandler } from "../default.handler";
 import { DeeplinkHandlerContext } from "../../types";
 
-const createMockContext = (overrides: Partial<DeeplinkHandlerContext> = {}): DeeplinkHandlerContext => ({
+const createMockContext = (
+  overrides: Partial<DeeplinkHandlerContext> = {},
+): DeeplinkHandlerContext => ({
   dispatch: jest.fn(),
   accounts: [],
   navigate: jest.fn(),
@@ -24,9 +26,9 @@ describe("default.handler", () => {
       const context = createMockContext({
         tryRedirectToPostOnboardingOrRecover: jest.fn(() => false),
       });
-      
+
       defaultHandler({ type: "default" }, context);
-      
+
       expect(context.tryRedirectToPostOnboardingOrRecover).toHaveBeenCalled();
       expect(context.navigate).toHaveBeenCalledWith("/");
     });
@@ -35,9 +37,9 @@ describe("default.handler", () => {
       const context = createMockContext({
         tryRedirectToPostOnboardingOrRecover: jest.fn(() => true),
       });
-      
+
       defaultHandler({ type: "default" }, context);
-      
+
       expect(context.tryRedirectToPostOnboardingOrRecover).toHaveBeenCalled();
       expect(context.navigate).not.toHaveBeenCalled();
     });

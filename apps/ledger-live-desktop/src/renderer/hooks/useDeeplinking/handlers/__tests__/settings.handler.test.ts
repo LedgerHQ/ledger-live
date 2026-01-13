@@ -1,7 +1,9 @@
-import { settingsHandler, isValidSettingsPath } from "../settings.handler";
+import { settingsHandler } from "../settings.handler";
 import { DeeplinkHandlerContext } from "../../types";
 
-const createMockContext = (overrides: Partial<DeeplinkHandlerContext> = {}): DeeplinkHandlerContext => ({
+const createMockContext = (
+  overrides: Partial<DeeplinkHandlerContext> = {},
+): DeeplinkHandlerContext => ({
   dispatch: jest.fn(),
   accounts: [],
   navigate: jest.fn(),
@@ -22,73 +24,58 @@ describe("settings.handler", () => {
   describe("settingsHandler", () => {
     it("navigates to main settings when no path", () => {
       const context = createMockContext();
-      
+
       settingsHandler({ type: "settings", path: "" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith("/settings");
     });
 
     it("maps general to display", () => {
       const context = createMockContext();
-      
+
       settingsHandler({ type: "settings", path: "general" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith("/settings/display");
     });
 
     it("navigates to accounts settings", () => {
       const context = createMockContext();
-      
+
       settingsHandler({ type: "settings", path: "accounts" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith("/settings/accounts");
     });
 
     it("navigates to about settings", () => {
       const context = createMockContext();
-      
+
       settingsHandler({ type: "settings", path: "about" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith("/settings/about");
     });
 
     it("navigates to help settings", () => {
       const context = createMockContext();
-      
+
       settingsHandler({ type: "settings", path: "help" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith("/settings/help");
     });
 
     it("navigates to experimental settings", () => {
       const context = createMockContext();
-      
+
       settingsHandler({ type: "settings", path: "experimental" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith("/settings/experimental");
     });
 
     it("navigates to main settings for unknown path", () => {
       const context = createMockContext();
-      
+
       settingsHandler({ type: "settings", path: "unknown" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith("/settings");
-    });
-  });
-
-  describe("isValidSettingsPath", () => {
-    it("returns true for valid paths", () => {
-      expect(isValidSettingsPath("accounts")).toBe(true);
-      expect(isValidSettingsPath("about")).toBe(true);
-      expect(isValidSettingsPath("help")).toBe(true);
-      expect(isValidSettingsPath("experimental")).toBe(true);
-    });
-
-    it("returns false for invalid paths", () => {
-      expect(isValidSettingsPath("unknown")).toBe(false);
-      expect(isValidSettingsPath("general")).toBe(false); // general is mapped, not valid as-is
-      expect(isValidSettingsPath("")).toBe(false);
     });
   });
 });

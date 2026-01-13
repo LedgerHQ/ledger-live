@@ -1,7 +1,5 @@
 import { DeeplinkHandler } from "../types";
 
-const VALID_SETTINGS_PATHS = ["accounts", "about", "help", "experimental"] as const;
-
 export const settingsHandler: DeeplinkHandler<"settings"> = (route, { navigate }) => {
   const { path } = route;
 
@@ -23,7 +21,3 @@ export const settingsHandler: DeeplinkHandler<"settings"> = (route, { navigate }
       break;
   }
 };
-
-export function isValidSettingsPath(path: string): path is (typeof VALID_SETTINGS_PATHS)[number] {
-  return VALID_SETTINGS_PATHS.includes(path as (typeof VALID_SETTINGS_PATHS)[number]);
-}

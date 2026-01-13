@@ -10,7 +10,9 @@ jest.mock("~/renderer/actions/modals", () => ({
 const mockOpenModal = jest.mocked(openModal);
 const mockCloseAllModal = jest.mocked(closeAllModal);
 
-const createMockContext = (overrides: Partial<DeeplinkHandlerContext> = {}): DeeplinkHandlerContext => ({
+const createMockContext = (
+  overrides: Partial<DeeplinkHandlerContext> = {},
+): DeeplinkHandlerContext => ({
   dispatch: jest.fn(),
   accounts: [],
   navigate: jest.fn(),
@@ -31,13 +33,16 @@ describe("bridge.handler", () => {
   describe("bridgeHandler", () => {
     it("closes all modals and opens WebSocket bridge modal", () => {
       const context = createMockContext();
-      
-      bridgeHandler({
-        type: "bridge",
-        origin: "https://example.com",
-        appName: "MyApp",
-      }, context);
-      
+
+      bridgeHandler(
+        {
+          type: "bridge",
+          origin: "https://example.com",
+          appName: "MyApp",
+        },
+        context,
+      );
+
       expect(context.dispatch).toHaveBeenCalledWith(mockCloseAllModal());
       expect(context.dispatch).toHaveBeenCalledWith(
         mockOpenModal("MODAL_WEBSOCKET_BRIDGE", {
@@ -49,9 +54,9 @@ describe("bridge.handler", () => {
 
     it("handles missing origin and appName", () => {
       const context = createMockContext();
-      
+
       bridgeHandler({ type: "bridge" }, context);
-      
+
       expect(context.dispatch).toHaveBeenCalledWith(mockCloseAllModal());
       expect(context.dispatch).toHaveBeenCalledWith(
         mockOpenModal("MODAL_WEBSOCKET_BRIDGE", {

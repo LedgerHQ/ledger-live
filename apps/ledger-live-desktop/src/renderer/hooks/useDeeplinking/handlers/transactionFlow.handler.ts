@@ -46,13 +46,7 @@ async function handleTransactionFlow(
   amount: string | undefined,
   context: DeeplinkHandlerContext,
 ): Promise<void> {
-  const {
-    dispatch,
-    accounts,
-    openAddAccountFlow,
-    openAssetFlow,
-    openSendFlow,
-  } = context;
+  const { dispatch, accounts, openAddAccountFlow, openAssetFlow, openSendFlow } = context;
 
   const modalMap = {
     send: "MODAL_SEND",
@@ -94,10 +88,7 @@ async function handleTransactionFlow(
     foundCurrency = null;
   }
 
-  const openModalWithAccount = (
-    account: Account | TokenAccount,
-    parentAccount?: Account,
-  ) => {
+  const openModalWithAccount = (account: Account | TokenAccount, parentAccount?: Account) => {
     if (flowType === "send") {
       openSendFlow({
         account,

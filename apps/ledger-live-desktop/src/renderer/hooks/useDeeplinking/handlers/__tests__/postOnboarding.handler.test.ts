@@ -1,7 +1,9 @@
 import { postOnboardingHandler } from "../postOnboarding.handler";
 import { DeeplinkHandlerContext } from "../../types";
 
-const createMockContext = (overrides: Partial<DeeplinkHandlerContext> = {}): DeeplinkHandlerContext => ({
+const createMockContext = (
+  overrides: Partial<DeeplinkHandlerContext> = {},
+): DeeplinkHandlerContext => ({
   dispatch: jest.fn(),
   accounts: [],
   navigate: jest.fn(),
@@ -22,31 +24,37 @@ describe("postOnboarding.handler", () => {
   describe("postOnboardingHandler", () => {
     it("calls postOnboardingDeeplinkHandler with device", () => {
       const context = createMockContext();
-      
-      postOnboardingHandler({
-        type: "post-onboarding",
-        device: "stax",
-      }, context);
-      
+
+      postOnboardingHandler(
+        {
+          type: "post-onboarding",
+          device: "stax",
+        },
+        context,
+      );
+
       expect(context.postOnboardingDeeplinkHandler).toHaveBeenCalledWith("stax");
     });
 
     it("calls postOnboardingDeeplinkHandler without device", () => {
       const context = createMockContext();
-      
+
       postOnboardingHandler({ type: "post-onboarding" }, context);
-      
+
       expect(context.postOnboardingDeeplinkHandler).toHaveBeenCalledWith(undefined);
     });
 
     it("handles various device types", () => {
       const context = createMockContext();
-      
-      postOnboardingHandler({
-        type: "post-onboarding",
-        device: "nanoX",
-      }, context);
-      
+
+      postOnboardingHandler(
+        {
+          type: "post-onboarding",
+          device: "nanoX",
+        },
+        context,
+      );
+
       expect(context.postOnboardingDeeplinkHandler).toHaveBeenCalledWith("nanoX");
     });
   });

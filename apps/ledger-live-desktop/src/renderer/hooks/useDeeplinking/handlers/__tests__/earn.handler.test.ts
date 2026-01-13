@@ -1,7 +1,9 @@
 import { earnHandler } from "../earn.handler";
 import { DeeplinkHandlerContext } from "../../types";
 
-const createMockContext = (overrides: Partial<DeeplinkHandlerContext> = {}): DeeplinkHandlerContext => ({
+const createMockContext = (
+  overrides: Partial<DeeplinkHandlerContext> = {},
+): DeeplinkHandlerContext => ({
   dispatch: jest.fn(),
   accounts: [],
   navigate: jest.fn(),
@@ -22,39 +24,48 @@ describe("earn.handler", () => {
   describe("earnHandler", () => {
     it("navigates to earn dashboard when no path", () => {
       const context = createMockContext();
-      
-      earnHandler({
-        type: "earn",
-        path: "",
-        search: "",
-      }, context);
-      
+
+      earnHandler(
+        {
+          type: "earn",
+          path: "",
+          search: "",
+        },
+        context,
+      );
+
       expect(context.navigate).toHaveBeenCalledWith("/earn", undefined, "");
     });
 
     it("passes search params to earn dashboard", () => {
       const context = createMockContext();
-      
-      earnHandler({
-        type: "earn",
-        path: "",
-        search: "?action=stake",
-      }, context);
-      
+
+      earnHandler(
+        {
+          type: "earn",
+          path: "",
+          search: "?action=stake",
+        },
+        context,
+      );
+
       expect(context.navigate).toHaveBeenCalledWith("/earn", undefined, "?action=stake");
     });
 
     it("navigates with deposit intent when path is deposit", () => {
       const context = createMockContext();
-      
-      earnHandler({
-        type: "earn",
-        path: "deposit",
-        cryptoAssetId: "ethereum",
-        accountId: "account-123",
-        search: "?ref=campaign",
-      }, context);
-      
+
+      earnHandler(
+        {
+          type: "earn",
+          path: "deposit",
+          cryptoAssetId: "ethereum",
+          accountId: "account-123",
+          search: "?ref=campaign",
+        },
+        context,
+      );
+
       expect(context.navigate).toHaveBeenCalledWith(
         "/earn",
         {
@@ -68,13 +79,16 @@ describe("earn.handler", () => {
 
     it("uses empty strings for missing deposit params", () => {
       const context = createMockContext();
-      
-      earnHandler({
-        type: "earn",
-        path: "deposit",
-        search: "",
-      }, context);
-      
+
+      earnHandler(
+        {
+          type: "earn",
+          path: "deposit",
+          search: "",
+        },
+        context,
+      );
+
       expect(context.navigate).toHaveBeenCalledWith(
         "/earn",
         {
@@ -88,13 +102,16 @@ describe("earn.handler", () => {
 
     it("navigates without deposit intent for other paths", () => {
       const context = createMockContext();
-      
-      earnHandler({
-        type: "earn",
-        path: "stake",
-        search: "",
-      }, context);
-      
+
+      earnHandler(
+        {
+          type: "earn",
+          path: "stake",
+          search: "",
+        },
+        context,
+      );
+
       expect(context.navigate).toHaveBeenCalledWith("/earn", undefined, "");
     });
   });

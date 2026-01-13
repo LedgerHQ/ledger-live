@@ -1,7 +1,9 @@
 import { buyHandler } from "../buy.handler";
 import { DeeplinkHandlerContext } from "../../types";
 
-const createMockContext = (overrides: Partial<DeeplinkHandlerContext> = {}): DeeplinkHandlerContext => ({
+const createMockContext = (
+  overrides: Partial<DeeplinkHandlerContext> = {},
+): DeeplinkHandlerContext => ({
   dispatch: jest.fn(),
   accounts: [],
   navigate: jest.fn(),
@@ -22,18 +24,22 @@ describe("buy.handler", () => {
   describe("buyHandler", () => {
     it("navigates to exchange page", () => {
       const context = createMockContext();
-      
+
       buyHandler({ type: "buy", search: "" }, context);
-      
+
       expect(context.navigate).toHaveBeenCalledWith("/exchange", undefined, "");
     });
 
     it("passes search params through to exchange page", () => {
       const context = createMockContext();
-      
+
       buyHandler({ type: "buy", search: "?currency=btc&amount=100" }, context);
-      
-      expect(context.navigate).toHaveBeenCalledWith("/exchange", undefined, "?currency=btc&amount=100");
+
+      expect(context.navigate).toHaveBeenCalledWith(
+        "/exchange",
+        undefined,
+        "?currency=btc&amount=100",
+      );
     });
   });
 });
