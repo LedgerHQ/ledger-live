@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components/native";
+import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -18,8 +18,8 @@ const ANIMATION_DURATION = 800;
 const STAGGER_DELAY = 100;
 
 const SkeletonTile = ({ index }: SkeletonTileProps) => {
-  const { colors } = useTheme();
-  const skeletonColor = colors.opacityDefault.c10;
+  const { theme } = useTheme();
+  const skeletonColor = theme.colors.bg.muted;
 
   const opacity = useSharedValue(0.4);
 
@@ -48,7 +48,7 @@ const SkeletonTile = ({ index }: SkeletonTileProps) => {
 
   return (
     <View
-      style={[styles.container, { backgroundColor: colors.opacityDefault.c05 }]}
+      style={[styles.container, { backgroundColor: theme.colors.bg.mutedTransparent }]}
       testID={`market-banner-skeleton-${index}`}
     >
       <Flex alignItems="center" justifyContent="center" flex={1} rowGap={8}>

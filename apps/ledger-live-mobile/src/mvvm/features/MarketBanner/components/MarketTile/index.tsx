@@ -1,14 +1,11 @@
 import React, { useCallback, useMemo } from "react";
-import { Tile, TileContent, TileTitle, TileDescription } from "@ledgerhq/lumen-ui-rnative";
-import { Text } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components/native";
+import { Tile, TileContent, TileTitle, TileDescription, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "react-i18next";
+import { getChangePercentage } from "@ledgerhq/live-common/market/utils/index";
 import { MarketTileProps } from "../../types";
-import { getChangePercentage } from "../../utils";
 import MarketTileIcon from "../MarketTileIcon";
 
 const MarketTile = ({ item, index, range, onPress }: MarketTileProps) => {
-  const { colors } = useTheme();
   const { t } = useTranslation();
 
   const handlePress = useCallback(() => {
@@ -18,7 +15,6 @@ const MarketTile = ({ item, index, range, onPress }: MarketTileProps) => {
   const priceChange = useMemo(() => getChangePercentage(item, range), [item, range]);
 
   const isPositive = priceChange >= 0;
-  const changeColor = isPositive ? colors.success.c50 : colors.error.c50;
   const changeSign = isPositive ? "+" : "";
 
   const accessibilityLabel = t("marketBanner.tile.accessibilityLabel", {
@@ -40,7 +36,7 @@ const MarketTile = ({ item, index, range, onPress }: MarketTileProps) => {
       <TileContent>
         <TileTitle>{item.name}</TileTitle>
         <TileDescription>
-          <Text color={changeColor}>
+          <Text lx={{ color: isPositive ? "success" : "error" }}>
             {changeSign}
             {priceChange.toFixed(2)}%
           </Text>

@@ -35,4 +35,3 @@ const MarketBanner = ({ testID }: MarketBannerProps) => {
 };
 
 export default React.memo(MarketBanner);
-export { MarketBanner };

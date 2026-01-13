@@ -3,10 +3,13 @@ import { useSelector } from "~/context/hooks";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useMarketPerformers } from "@ledgerhq/live-common/market/hooks/useMarketPerformers";
+import {
+  MarketItemPerformer,
+  filterMarketPerformersByAvailability,
+} from "@ledgerhq/live-common/market/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { counterValueCurrencySelector, selectedTimeRangeSelector } from "~/reducers/settings";
@@ -38,20 +41,6 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
     [currenciesForSwapAll],
   );
 
-  const isAvailableToTrade = useCallback(
-    (id: string, ledgerIds?: string[]): boolean => {
-      const canBuy = isCurrencyAvailable(id, "onRamp");
-      const canSwap = currenciesForSwapAllSet.has(id);
-      const canBuyOrSwapViaLedgerIds =
-        ledgerIds?.some(
-          lrId => isCurrencyAvailable(lrId, "onRamp") || currenciesForSwapAllSet.has(lrId),
-        ) ?? false;
-
-      return canBuy || canSwap || canBuyOrSwapViaLedgerIds;
-    },
-    [currenciesForSwapAllSet, isCurrencyAvailable],
-  );
-
   const { data, isLoading, isError } = useMarketPerformers({
     sort: "asc",
     counterCurrency: counterValueCurrency.ticker,
@@ -65,14 +54,13 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
   const filteredItems = useMemo(() => {
     if (!data) return [];
 
-    const availableItems = data.filter(item => isAvailableToTrade(item.id, item.ledgerIds));
-
-    if (availableItems.length === 0) {
-      return data.slice(0, MARKET_BANNER_TILE_COUNT);
-    }
-
-    return availableItems.slice(0, MARKET_BANNER_TILE_COUNT);
-  }, [data, isAvailableToTrade]);
+    return filterMarketPerformersByAvailability(
+      data,
+      isCurrencyAvailable,
+      currenciesForSwapAllSet,
+      MARKET_BANNER_TILE_COUNT,
+    );
+  }, [data, isCurrencyAvailable, currenciesForSwapAllSet]);
 
   const navigateToMarket = useCallback(() => {
     marketNavigation.navigate(NavigatorName.Market, {

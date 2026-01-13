@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
-import { Text } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components/native";
+import { Text } from "@ledgerhq/lumen-ui-rnative";
+import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 
 const ICON_SIZE = 32;
 
@@ -11,7 +11,7 @@ interface MarketTileIconProps {
 }
 
 const MarketTileIcon = ({ imageUrl, name }: MarketTileIconProps) => {
-  const { colors } = useTheme();
+  const { theme } = useTheme();
   const [imageError, setImageError] = useState(false);
 
   // Use market image URL, fallback to letter if no image or error
@@ -30,10 +30,10 @@ const MarketTileIcon = ({ imageUrl, name }: MarketTileIconProps) => {
   // Fallback: show first letter in a circle
   return (
     <View
-      style={[styles.letterFallback, { backgroundColor: colors.opacityDefault.c10 }]}
+      style={[styles.letterFallback, { backgroundColor: theme.colors.bg.muted }]}
       testID="market-tile-icon-fallback"
     >
-      <Text variant="small" fontWeight="semiBold" color="neutral.c100">
+      <Text typography="body3SemiBold" lx={{ color: "base" }}>
         {name.charAt(0).toUpperCase()}
       </Text>
     </View>

@@ -1,18 +1,12 @@
 import React, { useCallback, useRef } from "react";
-import {
-  FlatList,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
-import { Flex, Text, Icons } from "@ledgerhq/native-ui";
+import { FlatList, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import { Flex } from "@ledgerhq/native-ui";
+import { Text, Pressable } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "react-i18next";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
-import MarketTile from "../MarketTile";
-import ViewAllTile from "../ViewAllTile";
-import SkeletonTile from "../SkeletonTile";
+import BannerItem, { ListItem } from "../BannerItem";
+import { ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
 
 interface MarketBannerViewProps {
   items: MarketItemPerformer[];
@@ -24,8 +18,6 @@ interface MarketBannerViewProps {
   onSwipe: () => void;
   testID?: string;
 }
-
-type ListItem = MarketItemPerformer | { type: "viewAll" } | { type: "skeleton"; id: number };
 
 const TILE_TOTAL_WIDTH = 98;
 
@@ -42,7 +34,7 @@ const MarketBannerView = ({
   const { t } = useTranslation();
   const hasTrackedSwipe = useRef(false);
 
-  const handleScroll = useCallback(
+  const handleSwipe = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const { contentOffset } = event.nativeEvent;
       if (contentOffset.x > 20 && !hasTrackedSwipe.current) {
@@ -58,17 +50,15 @@ const MarketBannerView = ({
     : [...items, { type: "viewAll" as const }];
 
   const renderItem = useCallback(
-    (props: { item: ListItem; index: number }) => {
-      const { item, index } = props;
-      if ("type" in item && item.type === "viewAll") {
-        return <ViewAllTile onPress={onViewAllPress} />;
-      }
-      if ("type" in item && item.type === "skeleton") {
-        return <SkeletonTile index={index} />;
-      }
-
-      return <MarketTile item={item} index={index} range={range} onPress={onTilePress} />;
-    },
+    (props: { item: ListItem; index: number }) => (
+      <BannerItem
+        item={props.item}
+        index={props.index}
+        range={range}
+        onTilePress={onTilePress}
+        onViewAllPress={onViewAllPress}
+      />
+    ),
     [range, onTilePress, onViewAllPress],
   );
 
@@ -90,20 +80,19 @@ const MarketBannerView = ({
 
   return (
     <Flex testID={testID} mb={24}>
-      <TouchableOpacity
+      <Pressable
         onPress={onSectionTitlePress}
-        activeOpacity={0.7}
         accessibilityLabel={t("marketBanner.title")}
         accessibilityHint={t("marketBanner.viewAllAccessibilityHint")}
         accessibilityRole="button"
       >
-        <Flex flexDirection="row" alignItems="center" mb={4} style={styles.header}>
-          <Text variant="h5" fontWeight="semiBold" color="neutral.c100">
+        <Flex flexDirection="row" alignItems="center" mb={4} px={16}>
+          <Text typography="heading4SemiBold" lx={{ color: "base" }}>
             {t("marketBanner.title")}
           </Text>
-          <Icons.ChevronRight size="S" color="neutral.c70" />
+          <ChevronRight size={20} color="base" />
         </Flex>
-      </TouchableOpacity>
+      </Pressable>
 
       <FlatList
         data={listData}
@@ -111,8 +100,8 @@ const MarketBannerView = ({
         keyExtractor={keyExtractor}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.listContent}
-        onScroll={handleScroll}
+        contentContainerStyle={{ paddingHorizontal: 16 }}
+        onScroll={handleSwipe}
         scrollEventThrottle={16}
         getItemLayout={getItemLayout}
         testID="market-banner-list"
@@ -120,16 +109,5 @@ const MarketBannerView = ({
     </Flex>
   );
 };
-
-const HORIZONTAL_PADDING = 16;
-
-const styles = StyleSheet.create({
-  header: {
-    paddingHorizontal: HORIZONTAL_PADDING,
-  },
-  listContent: {
-    paddingHorizontal: HORIZONTAL_PADDING,
-  },
-});
 
 export default React.memo(MarketBannerView);

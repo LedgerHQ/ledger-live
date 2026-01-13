@@ -10,7 +10,7 @@ import { useSelector } from "LLD/hooks/redux";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { useHistory } from "react-router-dom";
 import { track } from "~/renderer/analytics/segment";
-import { getChangePercentage } from "../utils";
+import { getChangePercentage } from "@ledgerhq/live-common/market/utils/index";
 
 export function WidgetList({ data, order, range, top, enableNewFeature }: PropsBody) {
   const noData = data.length === 0;

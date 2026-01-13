@@ -457,6 +457,7 @@
     "src/market/hooks/useMarketDataProvider.ts",
     "src/market/hooks/useMarketPerformers.ts",
     "src/market/utils/currencyFormatter.ts",
+    "src/market/utils/fixtures.ts",
     "src/market/utils/index.ts",
     "src/market/utils/queryKeys.ts",
     "src/market/utils/timers.ts",
