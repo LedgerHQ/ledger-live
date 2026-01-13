@@ -153,4 +153,14 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     mainUrl: "https://www.velora.xyz/",
     needsKYC: false,
   },
+  okx: {
+    type: "DEX",
+    useInExchangeApp: true,
+    displayName: "OKX",
+    termsOfUseUrl: "https://web3.okx.com/help/okx-web3-build-user-agreement",
+    supportUrl: "https://web3.okx.com/build/dev-docs/wallet-api/support",
+    mainUrl: "https://web3.okx.com/",
+    usefulUrls: ["https://web3.okx.com/explorer"],
+    needsKYC: false,
+  },
 };
