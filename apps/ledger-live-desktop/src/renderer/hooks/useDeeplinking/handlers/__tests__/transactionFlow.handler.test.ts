@@ -55,6 +55,7 @@ const createMockContext = (
 
 const createMockAccount = (currencyId: string): Account => {
   const currency = getCryptoCurrencyById(currencyId);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return {
     id: `${currencyId}-account-1`,
     type: "Account" as const,
