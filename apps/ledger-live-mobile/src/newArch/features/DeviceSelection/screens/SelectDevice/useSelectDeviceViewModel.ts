@@ -40,23 +40,20 @@ export default function useSelectDeviceViewModel(
     (meta: AppResult) => {
       setDevice(null);
 
-      const { inline } = route.params;
       const params = {
         ...route.params,
         ...meta,
         context,
         sourceScreenName: ScreenName.SelectDevice,
       };
-      if (inline) {
-        navigation.replace(NavigatorName.AddAccounts, {
-          screen: ScreenName.ScanDeviceAccounts,
-          params,
-        });
-      } else
-        navigation.navigate(NavigatorName.AddAccounts, {
-          screen: ScreenName.ScanDeviceAccounts,
-          params,
-        });
+
+      // Always use navigate instead of replace to keep SelectDevice in the stack.
+      // This allows retry navigation when device errors occur (e.g., device locked).
+      // Previously, inline flows used replace which prevented retry navigation.
+      navigation.navigate(NavigatorName.AddAccounts, {
+        screen: ScreenName.ScanDeviceAccounts,
+        params,
+      });
     },
     [navigation, route, context],
   );

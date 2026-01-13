@@ -46,7 +46,7 @@ export default function useScanDeviceAccountsViewModel({
   const [onlyNewAccounts, setOnlyNewAccounts] = useState(true);
   const [showAllCreatedAccounts, setShowAllCreatedAccounts] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [cancelled, setCancelled] = useState(false);
+  const cancelledRef = useRef(false);
   const scanSubscription = useRef<Subscription | null>(null);
   const [isAddingAccounts, setIsAddinAccounts] = useState<boolean>(false);
   const dispatch = useDispatch();
@@ -58,6 +58,7 @@ export default function useScanDeviceAccountsViewModel({
     inline,
     returnToSwap,
     onCloseNavigation,
+    navigationDepth,
     context,
   } = route.params || {};
 
@@ -103,14 +104,27 @@ export default function useScanDeviceAccountsViewModel({
       },
     });
   }, [blacklistedTokenIds, currency, deviceId]);
+
   const restartSubscription = useCallback(() => {
     setScanning(true);
     setScannedAccounts([]);
     setSelectedIds([]);
     setError(null);
-    setCancelled(false);
+    cancelledRef.current = false;
     startSubscription();
   }, [startSubscription]);
+
+  const handleRetry = useCallback(() => {
+    // In inline flows (e.g., Receive), navigate back to device selection
+    // to allow user to reconnect/unlock device instead of retrying on same screen
+    if (inline && error) {
+      // Simply go back to SelectDevice which is already in the stack
+      navigation.goBack();
+      return;
+    }
+
+    restartSubscription();
+  }, [inline, error, navigation, restartSubscription]);
   const stopSubscription = useCallback(
     (syncUI = true) => {
       if (scanSubscription.current) {
@@ -169,6 +183,16 @@ export default function useScanDeviceAccountsViewModel({
     },
     [selectedIds],
   );
+
+  // Close inline flow: drawer + navigation
+  const closeInlineFlow = useCallback(() => {
+    if (onCloseNavigation) {
+      onCloseNavigation();
+    }
+    const parent = navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+    parent?.pop(navigationDepth ?? 2);
+  }, [navigation, onCloseNavigation, navigationDepth]);
+
   const importAccounts = useCallback(() => {
     const accountsToAdd = scannedAccounts.filter(a => selectedIds.includes(a.id));
     if (currency.id.includes("canton_network")) {
@@ -191,7 +215,8 @@ export default function useScanDeviceAccountsViewModel({
     const { onSuccess } = route.params;
 
     if (inline) {
-      navigation.goBack();
+      closeInlineFlow();
+
       if (onSuccess) {
         onSuccess({
           scannedAccounts,
@@ -227,19 +252,27 @@ export default function useScanDeviceAccountsViewModel({
     scannedAccounts,
     selectedIds,
     dispatch,
+    closeInlineFlow,
     analyticsMetadata?.AccountsFound?.onContinue,
     analyticsMetadata?.AccountsFound?.onAccountsAdded,
   ]);
 
   const onCancel = useCallback(() => {
     setError(null);
-    setCancelled(true);
+    cancelledRef.current = true;
   }, []);
+
   const onModalHide = useCallback(() => {
-    if (cancelled) {
-      navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
+    // Use ref to avoid stale closure issue with cancelled state
+    if (cancelledRef.current) {
+      if (inline) {
+        closeInlineFlow();
+      } else {
+        navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()?.pop();
+      }
     }
-  }, [cancelled, navigation]);
+  }, [inline, closeInlineFlow, navigation]);
+
   const viewAllCreatedAccounts = useCallback(() => setShowAllCreatedAccounts(true), []);
 
   const onAccountNameChange = useCallback(
@@ -350,7 +383,7 @@ export default function useScanDeviceAccountsViewModel({
     onModalHide,
     onPressAccount,
     quitFlow,
-    restartSubscription,
+    handleRetry,
     scannedAccounts,
     scanning,
     sections: sanitizedSections,

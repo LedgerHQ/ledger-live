@@ -85,6 +85,7 @@ jest.mock("~/hooks/useIsDeviceLockedPolling/useIsDeviceLockedPolling", () => {
 
 let triggerNext: (accounts: Account[]) => void = () => null;
 let triggerComplete: () => void = () => null;
+let triggerError: ((error: Error) => void) | null = null;
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   __esModule: true,
@@ -93,15 +94,20 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
       new Observable<{ account: Account }>(subscriber => {
         const originalNext = triggerNext;
         const originalComplete = triggerComplete;
+        const originalError = triggerError;
         triggerNext = (accounts: Account[]) => {
           accounts.forEach(account => subscriber.next({ account }));
         };
         triggerComplete = () => {
           subscriber.complete();
         };
+        triggerError = (error: Error) => {
+          subscriber.error(error);
+        };
         return () => {
           triggerNext = originalNext;
           triggerComplete = originalComplete;
+          triggerError = originalError;
         };
       }),
     preload: () => Promise.resolve(true),
@@ -211,5 +217,209 @@ describe("AddAccountFlow with MAD", () => {
     expect(getByText(/receive BTC/i)).toBeVisible();
     await user.press(getByTestId(/NavigationHeaderCloseButton/i));
     expect(getByText(/add funds to my account/i)).toBeVisible();
+  });
+
+  it("should return to device selection on retry when device is locked in inline flow", async () => {
+    const { user, getByText, queryByText, getByTestId } = render(
+      <ModularDrawerSharedNavigator flow="not_add_account" />,
+    );
+
+    // Navigate through the add account flow
+    expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
+    await user.press(getByText(WITH_ACCOUNT_SELECTION));
+    advanceTimers();
+
+    expect(getByText(/bitcoin/i)).toBeVisible();
+    await user.press(getByText(/bitcoin/i));
+    advanceTimers();
+
+    expect(getByText(/add new or existing account/i)).toBeVisible();
+    await user.press(getByText(/add new or existing account/i));
+    advanceTimers();
+
+    expect(getByText(/connect device/i)).toBeVisible();
+    advanceTimers();
+
+    const deviceItem = getByText(/ledger stax/i);
+    expect(deviceItem).toBeVisible();
+    await user.press(deviceItem);
+    advanceTimers();
+
+    // Wait for scanning to start
+    await waitFor(() => {
+      expect(getByText(/checking the blockchain/i)).toBeVisible();
+    });
+
+    // Trigger device locked error
+    await act(() => {
+      triggerError?.(new Error("Device locked"));
+    });
+
+    // Wait for error modal to appear
+    await waitFor(() => {
+      expect(queryByText("Device locked")).toBeVisible();
+    });
+
+    // Click Retry button (only Retry has testID="proceed-button", not Cancel)
+    const retryButton = getByTestId("proceed-button");
+    await user.press(retryButton);
+
+    // Should return to device selection screen (not to wallet)
+    await waitFor(() => {
+      expect(getByText(/connect device/i)).toBeVisible();
+      expect(queryByText(/checking the blockchain/i)).not.toBeVisible();
+    });
+  });
+
+  it("should close flow and return to initial screen when clicking X button on error modal in inline flow", async () => {
+    const { user, getByText, queryByText, getByTestId } = render(
+      <ModularDrawerSharedNavigator flow="not_add_account" />,
+    );
+
+    // Navigate through the add account flow
+    expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
+    await user.press(getByText(WITH_ACCOUNT_SELECTION));
+    advanceTimers();
+
+    expect(getByText(/bitcoin/i)).toBeVisible();
+    await user.press(getByText(/bitcoin/i));
+    advanceTimers();
+
+    expect(getByText(/add new or existing account/i)).toBeVisible();
+    await user.press(getByText(/add new or existing account/i));
+    advanceTimers();
+
+    expect(getByText(/connect device/i)).toBeVisible();
+    advanceTimers();
+
+    const deviceItem = getByText(/ledger stax/i);
+    expect(deviceItem).toBeVisible();
+    await user.press(deviceItem);
+    advanceTimers();
+
+    // Wait for scanning to start
+    await waitFor(() => {
+      expect(getByText(/checking the blockchain/i)).toBeVisible();
+    });
+
+    // Trigger device locked error
+    await act(() => {
+      triggerError?.(new Error("Device locked"));
+    });
+
+    // Wait for error modal to appear
+    await waitFor(() => {
+      expect(queryByText("Device locked")).toBeVisible();
+    });
+
+    // Click X button to close error modal - should close entire flow
+    const closeButton = getByTestId("modal-close-button");
+    await user.press(closeButton);
+
+    // Should close the entire flow and return to the initial screen
+    await waitFor(() => {
+      expect(queryByText(/checking the blockchain/i)).not.toBeVisible();
+      expect(queryByText(/connect device/i)).not.toBeVisible();
+      expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
+    });
+  });
+
+  it("should close flow and return to device selection when clicking X button on error modal in non-inline flow", async () => {
+    const { user, getByText, queryByText, getByTestId } = render(
+      <ModularDrawerSharedNavigator flow="add_account" />,
+    );
+
+    // Navigate through the add account flow
+    expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
+    await user.press(getByText(WITH_ACCOUNT_SELECTION));
+    advanceTimers();
+
+    expect(getByText(/bitcoin/i)).toBeVisible();
+    await user.press(getByText(/bitcoin/i));
+    advanceTimers();
+
+    expect(getByText(/add new or existing account/i)).toBeVisible();
+    await user.press(getByText(/add new or existing account/i));
+    advanceTimers();
+
+    expect(getByText(/connect device/i)).toBeVisible();
+    advanceTimers();
+
+    const deviceItem = getByText(/ledger stax/i);
+    expect(deviceItem).toBeVisible();
+    await user.press(deviceItem);
+    advanceTimers();
+
+    // Wait for scanning to start
+    await waitFor(() => {
+      expect(getByText(/checking the blockchain/i)).toBeVisible();
+    });
+
+    // Trigger device locked error
+    await act(() => {
+      triggerError?.(new Error("Device locked"));
+    });
+
+    // Wait for error modal to appear
+    await waitFor(() => {
+      expect(queryByText("Device locked")).toBeVisible();
+    });
+
+    // Click X button to close error modal - should close the flow
+    const closeButton = getByTestId("modal-close-button");
+    await user.press(closeButton);
+
+    // For non-inline flows, should pop the navigation and return to device selection
+    await waitFor(() => {
+      expect(queryByText(/checking the blockchain/i)).not.toBeVisible();
+      expect(queryByText("Device locked")).not.toBeVisible();
+      expect(getByText(/connect device/i)).toBeVisible();
+    });
+  });
+
+  it("should close inline flow and return to initial screen after account creation", async () => {
+    const { user, getByText, queryByText } = render(
+      <ModularDrawerSharedNavigator flow="not_add_account" />,
+    );
+
+    // Navigate through the add account flow
+    expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
+    await user.press(getByText(WITH_ACCOUNT_SELECTION));
+    advanceTimers();
+
+    expect(getByText(/bitcoin/i)).toBeVisible();
+    await user.press(getByText(/bitcoin/i));
+    advanceTimers();
+
+    expect(getByText(/add new or existing account/i)).toBeVisible();
+    await user.press(getByText(/add new or existing account/i));
+    advanceTimers();
+
+    expect(getByText(/connect device/i)).toBeVisible();
+    advanceTimers();
+
+    const deviceItem = getByText(/ledger stax/i);
+    expect(deviceItem).toBeVisible();
+    await user.press(deviceItem);
+    advanceTimers();
+
+    // Wait for scanning to start
+    await waitFor(() => {
+      expect(getByText(/checking the blockchain/i)).toBeVisible();
+    });
+
+    // Complete scanning
+    await mockScanAccountsSubscription([BTC_ACCOUNT]);
+    expect(getByText(/we found 1 account/i)).toBeVisible();
+
+    // Confirm account addition
+    await user.press(getByText(/confirm/i));
+
+    // Should close the entire flow and return to the initial screen
+    await waitFor(() => {
+      expect(queryByText(/checking the blockchain/i)).not.toBeVisible();
+      expect(queryByText(/connect device/i)).not.toBeVisible();
+      expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
+    });
   });
 });
