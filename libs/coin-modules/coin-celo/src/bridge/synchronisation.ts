@@ -39,7 +39,7 @@ const getTypeFromString = (value: string) => {
 };
 
 let evmAPI: ReturnType<typeof createApi> | null = null;
-const getApi = (configEvm: any, currencyId: string) => {
+const getApi = (configEvm: Parameters<typeof createApi>[0], currencyId: string) => {
   if (!evmAPI) {
     evmAPI = createApi(configEvm, currencyId);
   }
@@ -88,9 +88,7 @@ const getOperationsList = async ({
 }) => {
   const { address, currency, initialAccount } = info;
   const blacklistedTokenIds = config.blacklistedTokenIds || [];
-  const configEvm = {
-    ...getCoinConfig(currency).info,
-  } as const;
+  const configEvm = getCoinConfig(currency).info;
 
   const syncHash = await getSyncHash(currency, blacklistedTokenIds);
   const shouldSyncFromScratch =
@@ -176,7 +174,7 @@ const getSubAccounts = async ({
         token: item.token,
         balance: new BigNumber(0),
         spendableBalance: new BigNumber(0),
-        creationDate: new Date(),
+        creationDate: item.date,
         operations: [],
         operationsCount: 0,
         pendingOperations: [],
@@ -263,9 +261,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
 
   const shouldSyncFromScratch =
     syncHash !== initialAccount?.syncHash || initialAccount === undefined;
-  const operations = shouldSyncFromScratch
-    ? mergeOps([], nativeOperations)
-    : mergeOps(oldOperations, nativeOperations);
+  const operations = mergeOps(shouldSyncFromScratch ? [] : oldOperations, nativeOperations);
 
   const initialSubAccounts = initialAccount?.subAccounts?.filter(item => {
     return item.token.ticker !== "CELO";
@@ -284,11 +280,11 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
 
   const shape: Partial<CeloAccount> = {
     id: accountId,
-    balance: balance.plus(lockedBalance) || new BigNumber(0),
+    balance: balance.plus(lockedBalance),
     blockHeight: blockInfo.height || 0,
     operations,
     operationsCount: operations.length,
-    spendableBalance: balance || new BigNumber(0),
+    spendableBalance: balance,
     subAccounts: getEnv("ENABLE_CELO_TOKENS") ? subAccounts : [],
     syncHash: syncHash,
     celoResources: {
