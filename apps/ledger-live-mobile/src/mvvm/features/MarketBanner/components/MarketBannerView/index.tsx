@@ -1,7 +1,18 @@
 import React, { useCallback, useRef } from "react";
+<<<<<<< HEAD:apps/ledger-live-mobile/src/mvvm/features/MarketBanner/components/MarketBannerView/index.tsx
 import { FlatList, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import { Text, Pressable } from "@ledgerhq/lumen-ui-rnative";
+=======
+import {
+  FlatList,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  StyleSheet,
+  Pressable,
+} from "react-native";
+import { Flex, Text, Icons } from "@ledgerhq/native-ui";
+>>>>>>> c9459a93fa (fix(review): update as requested int he review):apps/ledger-live-mobile/src/newArch/features/MarketBanner/components/MarketBannerView/index.tsx
 import { useTranslation } from "react-i18next";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
@@ -100,7 +111,11 @@ const MarketBannerView = ({
         keyExtractor={keyExtractor}
         horizontal
         showsHorizontalScrollIndicator={false}
+<<<<<<< HEAD:apps/ledger-live-mobile/src/mvvm/features/MarketBanner/components/MarketBannerView/index.tsx
         contentContainerStyle={{ paddingHorizontal: 16 }}
+=======
+        contentContainerStyle={styles.listContent}
+>>>>>>> c9459a93fa (fix(review): update as requested int he review):apps/ledger-live-mobile/src/newArch/features/MarketBanner/components/MarketBannerView/index.tsx
         onScroll={handleSwipe}
         scrollEventThrottle={16}
         getItemLayout={getItemLayout}
