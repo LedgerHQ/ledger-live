@@ -7,17 +7,18 @@ import useDynamicContent from "~/dynamicContent/useDynamicContent";
 type Props = {
   id: string;
   children: React.ReactNode;
+  displayedPosition?: number;
 };
 
-export default function LogContentCardWrapper({ id, children }: Props) {
+export default function LogContentCardWrapper({ id, children, displayedPosition }: Props) {
   const ref = useRef<View>(null);
   const { logImpressionCard } = useDynamicContent();
 
   useInViewContext(
     ({ isInView }) => {
-      if (isInView) logImpressionCard(id);
+      if (isInView) logImpressionCard(id, displayedPosition);
     },
-    [id, logImpressionCard],
+    [id, logImpressionCard, displayedPosition],
     ref,
   );
 
