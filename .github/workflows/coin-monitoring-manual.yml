@@ -24,10 +24,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         with:
           install-proto: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@chore/express-update
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@chore/test-turborepo-gh-cache
         id: monitoring
         timeout-minutes: 120
         with:

@@ -33,10 +33,10 @@ jobs:
         shell: bash
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/test-turborepo-gh-cache
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         id: setup-caches
         with:
           install-proto: true
@@ -67,18 +67,18 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/express-update
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/test-turborepo-gh-cache
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
 
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/express-update
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/test-turborepo-gh-cache
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
 
       - name: tag nightly ref
-        uses: LedgerHQ/ledger-live/tools/actions/composites/create-or-update-tag@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/create-or-update-tag@chore/test-turborepo-gh-cache
         with:
           ref: ${{ steps.get-sha.outputs.sha }}
           tagName: nightly

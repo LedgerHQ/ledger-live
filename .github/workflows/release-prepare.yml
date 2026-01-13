@@ -28,10 +28,10 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/test-turborepo-gh-cache
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         id: setup-caches
         with:
           install-proto: true
@@ -70,7 +70,7 @@ jobs:
           git fetch origin develop main
 
       - name: Merge into main
-        uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@chore/test-turborepo-gh-cache
         with:
           base-branch: "main"
           head-branch: "${{ inputs.ref }}"
@@ -89,7 +89,7 @@ jobs:
   release-final:
     name: "Prepare Release > Publish packages and apps"
     needs: prepare-release
-    uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@chore/express-update
+    uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@chore/test-turborepo-gh-cache
     with:
       ref: main
       caller: release-prepare

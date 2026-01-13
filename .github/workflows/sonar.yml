@@ -22,9 +22,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/test-turborepo-gh-cache
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         id: caches
         with:
           skip-turbo-cache: "false"

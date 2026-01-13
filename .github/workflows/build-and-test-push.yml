@@ -16,22 +16,22 @@ jobs:
   # LLD
   build-desktop:
     name: "Build Desktop"
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@chore/express-update
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@chore/test-turborepo-gh-cache
     secrets: inherit
 
   test-desktop:
     name: "Test Desktop"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@chore/express-update
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@chore/test-turborepo-gh-cache
     secrets: inherit
 
   test-mobile:
     name: "Test Mobile"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@chore/express-update
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@chore/test-turborepo-gh-cache
     secrets: inherit
 
   build-test-mobile:
     name: "Build & Test Mobile"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@chore/express-update
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@chore/test-turborepo-gh-cache
     secrets: inherit
     with:
       macos-specificity-runner-label: "performance-pool"
@@ -42,22 +42,22 @@ jobs:
   # Tests
   test-libraries:
     name: "Test Libraries"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@chore/express-update
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@chore/test-turborepo-gh-cache
     secrets: inherit
 
   test-design-system:
     name: "Test UI Libs"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@chore/express-update
+    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@chore/test-turborepo-gh-cache
     secrets: inherit
 
   build-web-tools:
     name: "Build Web Tools"
-    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@chore/express-update
+    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@chore/test-turborepo-gh-cache
     secrets: inherit
 
   test-cli:
     name: "Test CLI"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@chore/express-update
+    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@chore/test-turborepo-gh-cache
     secrets: inherit
 
   # Final Check required

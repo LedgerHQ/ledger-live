@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         id: setup-caches
         with:
           install-proto: true
@@ -33,7 +33,7 @@ jobs:
         run: pnpm i --filter='!./apps/**'
 
       - name: generate super report
-        uses: LedgerHQ/ledger-live/tools/actions/generate-bot-super-report@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/generate-bot-super-report@chore/test-turborepo-gh-cache
         with:
           branch: ${{inputs.branch}}
           environment: ${{inputs.environment}}

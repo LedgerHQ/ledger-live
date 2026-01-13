@@ -32,7 +32,7 @@ jobs:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         id: setup-caches
         with:
           install-proto: true

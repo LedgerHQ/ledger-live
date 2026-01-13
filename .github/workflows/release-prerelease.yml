@@ -37,9 +37,9 @@ jobs:
           ref: ${{ inputs.ref }}
           token: ${{ steps.generate-token.outputs.token }}
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/test-turborepo-gh-cache
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         id: setup-caches
         with:
           install-proto: true
@@ -49,7 +49,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'release') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/test-turborepo-gh-cache
         with:
           from_level: patch
           to_level: minor
@@ -57,7 +57,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/test-turborepo-gh-cache
         with:
           from_level: minor
           to_level: patch
@@ -65,15 +65,15 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/test-turborepo-gh-cache
         with:
           from_level: major
           to_level: patch
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/express-update
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/test-turborepo-gh-cache
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/express-update
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/test-turborepo-gh-cache
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -81,11 +81,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/express-update
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/test-turborepo-gh-cache
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/express-update
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/test-turborepo-gh-cache
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile

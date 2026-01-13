@@ -124,7 +124,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         with:
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
@@ -144,21 +144,21 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
 
       - name: Flake alert - ArgumentError
-        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@chore/test-turborepo-gh-cache
         if: failure() && steps.install-dependencies.outputs.error == 'ArgumentError - pathname contains null byte'
         with:
           live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
           halt_runner: true
 
       - name: Flake alert - Reruns
-        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@chore/test-turborepo-gh-cache
         if: success() && steps.install-dependencies.outputs.total_attempts == 2
         with:
           live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
           custom_message: "${{ steps.install-dependencies.outputs.total_attempts }} attempts happened on install dependencies and it was eventually successful :face_with_raised_eyebrow:"
 
       - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@chore/test-turborepo-gh-cache
         with:
           command: pnpm build:llm:deps
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -172,7 +172,7 @@ jobs:
           PRODUCTION: ${{ inputs.production_firebase }}
 
       - name: Upload Detox Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@chore/test-turborepo-gh-cache
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           path: ${{ github.workspace }}/${{ env.IOS_NATIVE_PATH }}
@@ -211,7 +211,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         with:
           install-proto: "true"
           skip-pod-cache: "true"
@@ -232,7 +232,7 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
 
       - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@chore/test-turborepo-gh-cache
         with:
           command: pnpm build:llm:deps
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -247,7 +247,7 @@ jobs:
         run: echo size=`ls -l ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle  | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@chore/test-turborepo-gh-cache
         with:
           path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ inputs.ios-js-cache-key }}

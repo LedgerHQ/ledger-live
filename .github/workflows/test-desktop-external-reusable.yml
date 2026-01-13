@@ -35,11 +35,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         id: setup-caches
         with:
           install-proto: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@chore/express-update
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@chore/test-turborepo-gh-cache
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -74,11 +74,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         id: setup-caches
         with:
           install-proto: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@chore/express-update
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@chore/test-turborepo-gh-cache
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -105,11 +105,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         id: setup-caches
         with:
           install-proto: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@chore/express-update
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@chore/test-turborepo-gh-cache
         id: setup-test-desktop
         with:
           skip_ruby: true
@@ -181,7 +181,7 @@ jobs:
             fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
       - name: prepare comment with screenshots
         id: comment
-        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@chore/test-turborepo-gh-cache
         with:
           images: images.json
           no-actor: true

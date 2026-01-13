@@ -54,7 +54,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/test-turborepo-gh-cache
       - uses: actions/setup-python@v4
         with:
           python-version: "3.13.0"
@@ -63,12 +63,12 @@ jobs:
           ruby-version: 3.3.0
           bundler-cache: true
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         id: setup-caches
         with:
           install-proto: true
       - name: Build desktop
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@chore/test-turborepo-gh-cache
         id: build-desktop
         with:
           os: ${{ steps.os.outputs.result }}

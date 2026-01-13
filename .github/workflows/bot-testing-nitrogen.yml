@@ -40,7 +40,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
       - name: Run the bot
-        uses: LedgerHQ/ledger-live/tools/actions/composites/bot@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/bot@chore/test-turborepo-gh-cache
         id: bot
         timeout-minutes: 120
         with:

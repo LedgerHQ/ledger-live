@@ -22,12 +22,12 @@ jobs:
           ref: develop
           token: ${{ steps.generate-token.outputs.token }}
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/test-turborepo-gh-cache
       - name: create release branch
         run: |
           git checkout -b $RELEASE_BRANCH
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         id: setup-caches
         with:
           install-proto: true
@@ -36,7 +36,7 @@ jobs:
       - name: Move patch updates to minor
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/test-turborepo-gh-cache
         with:
           from_level: patch
           to_level: minor

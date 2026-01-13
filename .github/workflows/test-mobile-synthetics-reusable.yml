@@ -135,7 +135,7 @@ jobs:
           fi
 
       - name: Run performance tests
-        uses: LedgerHQ/ledger-live/tools/actions/mobile-performance-test@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/mobile-performance-test@chore/test-turborepo-gh-cache
         id: test-results
         with:
           api-key: ${{ secrets.DATADOG_API_KEY }}

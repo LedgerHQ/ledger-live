@@ -35,7 +35,7 @@ jobs:
           sparse-checkout: tools/actions/composites
 
       - name: Generate ref/tag version to use during main checkout
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@chore/test-turborepo-gh-cache
         id: format-app-tag
         with:
           tag_version: ${{ github.event.inputs.tag_version }}
@@ -47,13 +47,13 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/test-turborepo-gh-cache
       - name: create hotfix branch
         run: |
           git checkout -b hotfix
           git push -u origin hotfix
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/test-turborepo-gh-cache
         id: setup-caches
         with:
           install-proto: true
@@ -63,7 +63,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/test-turborepo-gh-cache
         with:
           from_level: minor
           to_level: patch
@@ -71,7 +71,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/express-update
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/test-turborepo-gh-cache
         with:
           from_level: major
           to_level: patch
