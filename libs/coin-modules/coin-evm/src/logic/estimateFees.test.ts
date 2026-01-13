@@ -561,6 +561,7 @@ describe("estimateFees", () => {
     expect(result).toEqual({
       value: 1500000000000000n, // 50000 * 30000000000
       parameters: {
+        additionalFees: 0n,
         gasPrice: 30000000000n,
         maxPriorityFeePerGas: null,
         maxFeePerGas: null,
