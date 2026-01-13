@@ -5,7 +5,6 @@ export const settingsHandler: DeeplinkHandler<"settings"> = (route, { navigate }
 
   switch (path) {
     case "general":
-      // "general" maps to "display" in the actual route
       navigate("/settings/display");
       break;
 

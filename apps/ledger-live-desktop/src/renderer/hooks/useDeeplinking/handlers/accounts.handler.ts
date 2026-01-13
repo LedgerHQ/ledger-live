@@ -21,11 +21,10 @@ export const accountHandler: DeeplinkHandler<"account"> = (route, { accounts, na
   const { currency, address } = route;
 
   if (!currency || typeof currency !== "string") return;
-
-  const foundCurrency = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
-  if (!foundCurrency || foundCurrency.type === "FiatCurrency") return;
-
-  const foundAccounts = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
+  if (!c || c.type === "FiatCurrency") return;
+  const foundAccounts = getAccountsOrSubAccountsByCurrency(c, accounts || []);
   if (!foundAccounts.length) return;
 
   // Navigate to a specific account if a valid 'address' is provided and the account currency matches the 'currency' param in the deeplink URL

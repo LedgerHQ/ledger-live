@@ -7,8 +7,9 @@ export const addAccountHandler: DeeplinkHandler<"add-account"> = (
 ) => {
   const { currency } = route;
 
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const foundCurrency = findCryptoCurrencyByKeyword(
-    typeof currency === "string" ? currency.toUpperCase() : "",
+    typeof currency === "string" ? currency?.toUpperCase() : "",
   );
 
   if (foundCurrency) {

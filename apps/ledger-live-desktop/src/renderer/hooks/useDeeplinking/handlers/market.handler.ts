@@ -6,7 +6,7 @@ export const marketHandler: DeeplinkHandler<"market"> = (route, { navigate }) =>
   if (path) {
     navigate(`/market/${path}`);
   } else {
-    navigate("/market");
+    navigate(`/market`);
   }
 };
 
