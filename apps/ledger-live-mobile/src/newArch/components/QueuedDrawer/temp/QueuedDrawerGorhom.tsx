@@ -1,22 +1,17 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Platform, StyleProp, ViewStyle } from "react-native";
+import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useQueuedDrawerGorhom from "./useQueuedDrawerGorhom";
+import { Box } from "@ledgerhq/native-ui";
 import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetModalProps,
+  BottomSheet,
+  BottomSheetProps,
   BottomSheetFlatList,
   BottomSheetScrollView,
   BottomSheetSectionList,
   BottomSheetVirtualizedList,
-  useBottomSheetTimingConfigs,
-} from "@gorhom/bottom-sheet";
-import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
-import { useTheme } from "styled-components/native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import useQueuedDrawerGorhom from "./useQueuedDrawerGorhom";
-import BackDrop from "./components/BackDrop";
-import Header from "./components/Header";
-import { Box } from "@ledgerhq/native-ui";
+} from "@ledgerhq/lumen-ui-rnative";
 
 export {
   BottomSheetFlatList,
@@ -25,7 +20,7 @@ export {
   BottomSheetVirtualizedList,
 };
 
-export type Props = Omit<BottomSheetModalProps, "snapPoints" | "children"> & {
+export type Props = Omit<BottomSheetProps, "snapPoints" | "children"> & {
   isRequestingToBeOpened?: boolean;
   isForcingToBeOpened?: boolean;
   title?: string;
@@ -35,10 +30,11 @@ export type Props = Omit<BottomSheetModalProps, "snapPoints" | "children"> & {
   onClose?: () => void;
   onModalHide?: () => void;
   preventBackdropClick?: boolean;
+  testID?: string;
   style?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
   children: React.ReactNode;
-  snapPoints?: (string | number)[];
+  snapPoints?: number[] | string[] | "small" | "full" | "fullWithOffset" | "medium" | null;
   enableDynamicSizing?: boolean;
 };
 
@@ -55,20 +51,18 @@ const QueuedDrawerGorhom = ({
   containerStyle,
   children,
   title,
-  snapPoints = ["70%", "90%"],
+  testID,
   enableDynamicSizing = false,
   ...rest
 }: Props) => {
-  const { colors } = useTheme();
-
   const {
     bottomSheetRef,
     areDrawersLocked,
     handleUserClose,
     handleDismiss,
+
     onBack: hookOnBack,
     enablePanDownToClose,
-    showBackdropPress,
   } = useQueuedDrawerGorhom({
     isRequestingToBeOpened,
     isForcingToBeOpened,
@@ -78,89 +72,29 @@ const QueuedDrawerGorhom = ({
     preventBackdropClick,
   });
 
-  const animationConfigs = useBottomSheetTimingConfigs({
-    duration: 150,
-  });
-
   const onBackdropPress = useCallback(() => {
     handleUserClose();
   }, [handleUserClose]);
 
-  const renderBackdrop = useCallback(
-    (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
-      <BackDrop showBackdropPress={showBackdropPress} onPress={onBackdropPress} {...props} />
-    ),
-    [showBackdropPress, onBackdropPress],
-  );
-
-  const renderHeader = useCallback(() => {
-    const shouldShowHeader = title || hasBackButton || (!noCloseButton && !areDrawersLocked);
-
-    if (!shouldShowHeader) return null;
-
-    return (
-      <Header
-        title={title}
-        hasBackButton={hasBackButton}
-        hookOnBack={hookOnBack}
-        noCloseButton={noCloseButton}
-        areDrawersLocked={areDrawersLocked}
-        handleCloseUserEvent={handleUserClose}
-      />
-    );
-  }, [title, hasBackButton, noCloseButton, areDrawersLocked, hookOnBack, handleUserClose]);
-
-  const finalSnapPoints = useMemo(
-    () => (enableDynamicSizing ? undefined : snapPoints),
-    [enableDynamicSizing, snapPoints],
-  );
-
-  const backgroundStyle = useMemo(
-    () => ({
-      backgroundColor: colors.background.drawer,
-      borderTopLeftRadius: 24,
-      borderTopRightRadius: 24,
-    }),
-    [colors.background.drawer],
-  );
-
-  const handleIndicatorStyle = useMemo(
-    () => ({
-      display: "none" as const,
-    }),
-    [],
-  );
-
-  const combinedStyle = useMemo(
-    () => [
-      style,
-      {
-        paddingHorizontal: 16,
-      },
-    ],
-    [style],
-  );
+  const handleBack = hasBackButton ? hookOnBack : undefined;
 
   return (
-    <BottomSheetModal
+    <BottomSheet
       ref={bottomSheetRef}
-      index={0}
-      snapPoints={finalSnapPoints}
+      testID={testID}
       enableDynamicSizing={enableDynamicSizing}
       enablePanDownToClose={enablePanDownToClose}
-      android_keyboardInputMode="adjustResize"
-      backdropComponent={renderBackdrop}
-      onDismiss={handleDismiss}
-      animationConfigs={animationConfigs}
-      backgroundStyle={backgroundStyle}
-      handleIndicatorStyle={handleIndicatorStyle}
-      style={combinedStyle}
+      onClose={handleDismiss}
+      enableBlurKeyboardOnGesture={true}
+      onBack={handleBack}
+      onBackdropPress={onBackdropPress}
+      hideCloseButton={areDrawersLocked}
+      detached={true}
       {...rest}
     >
-      {renderHeader()}
       <IsInDrawerProvider>{children}</IsInDrawerProvider>
       <OnscreenNavigationSafeArea />
-    </BottomSheetModal>
+    </BottomSheet>
   );
 };
 

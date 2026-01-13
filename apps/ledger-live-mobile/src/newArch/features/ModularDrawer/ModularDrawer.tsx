@@ -108,7 +108,6 @@ export function ModularDrawer({
       hasBackButton={shouldShowBackButton}
       onBack={handleBackButton}
       enablePanDownToClose
-      keyboardBehavior="extend"
     >
       <ModularDrawerFlowManager
         assetsViewModel={{

@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { SearchProps, useSearch } from "./useSearch";
 import { Flex } from "@ledgerhq/native-ui";
-import { Search } from "@ledgerhq/native-ui/pre-ldls/index";
+import { Search } from "LLM/components/Search";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type Props = SearchProps & {
@@ -30,17 +30,17 @@ const SearchInputContainer = ({
   });
 
   return (
-    <Flex mb={4}>
+    <Flex mb={4} px={16}>
       <Search
         onFocus={onFocus}
         onBlur={onBlur}
         onPressIn={onPressIn}
-        value={displayedValue}
-        debounceTime={modularDrawer?.params?.searchDebounceTime}
+        value={displayedValue ?? ""}
         placeholder={t("modularDrawer.searchPlaceholder")}
+        debounceTime={modularDrawer?.params?.searchDebounceTime}
+        onChange={handleSearch}
         onDebouncedChange={handleDebouncedChange}
-        onChange={e => handleSearch(e.nativeEvent.text)}
-        testID="modular-drawer-search-input"
+        data-testid="modular-asset-dialog-search-input"
       />
     </Flex>
   );

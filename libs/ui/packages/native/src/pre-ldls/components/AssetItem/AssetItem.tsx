@@ -13,10 +13,6 @@ export type AssetType = {
   rightElement?: React.ReactNode;
 };
 
-type AssetItemProps = AssetType & {
-  onClick: (asset: AssetType) => void;
-};
-
 const Wrapper = styled(Pressable)`
   flex-direction: row;
   align-items: center;
@@ -39,14 +35,7 @@ const LeftElementWrapper = styled(View)`
   gap: 4px;
 `;
 
-export const AssetItem = ({
-  name,
-  ticker,
-  id,
-  onClick,
-  leftElement,
-  rightElement,
-}: AssetItemProps) => {
+export const AssetItem = ({ name, ticker, id, leftElement, rightElement }: AssetType) => {
   const theme = useTheme();
   const colorType = theme.colors.type === "dark" ? "dark" : "light";
   const tokens = useTokens(colorType, [
@@ -60,13 +49,9 @@ export const AssetItem = ({
 
   return (
     <Wrapper
-      onPress={() => onClick({ name, ticker, id })}
-      style={({ pressed }) => ({
+      style={{
         paddingVertical: Number(tokens["spacing-xxs"]),
-        borderRadius: Number(tokens["radius-s"]),
-        backgroundColor: String(tokens["colors-surface-transparent-default"]),
-        opacity: pressed ? 0.7 : 1,
-      })}
+      }}
       testID={`asset-item-${ticker}`}
     >
       <CryptoIcon size={48} ledgerId={id} ticker={ticker} />

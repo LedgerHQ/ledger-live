@@ -1,8 +1,9 @@
 import React from "react";
 import Animated from "react-native-reanimated";
 import { View, StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
+import { BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import { ModularDrawerStep } from "../types";
-import { Title } from "../components/Title";
 import AssetSelection from "../screens/AssetSelection";
 import NetworkSelection from "../screens/NetworkSelection";
 import AccountSelection from "../screens/AccountSelection";
@@ -11,11 +12,18 @@ import useScreenTransition from "./useScreenTransition";
 import { useSelector } from "~/context/hooks";
 import { modularDrawerStepSelector } from "~/reducers/modularDrawer";
 
+const TranslationKeyMap: Record<ModularDrawerStep, string> = {
+  [ModularDrawerStep.Asset]: "modularDrawer.selectAsset",
+  [ModularDrawerStep.Network]: "modularDrawer.selectNetwork",
+  [ModularDrawerStep.Account]: "modularDrawer.selectAccount",
+};
+
 export function ModularDrawerFlowView({
   assetsViewModel,
   networksViewModel,
   accountsViewModel,
 }: ModularDrawerFlowProps) {
+  const { t } = useTranslation();
   const currentStep = useSelector(modularDrawerStepSelector);
 
   const { activeSteps, getStepAnimations } = useScreenTransition(currentStep);
@@ -40,11 +48,11 @@ export function ModularDrawerFlowView({
     return (
       <Animated.View
         key={`${step}`}
-        style={[{ flex: 1 }, stepAnimations.animatedStyle]}
+        style={[stepAnimations.animatedStyle]}
         testID={`${step}-screen`}
       >
-        <Title step={step} />
-        {renderStepContent(step)}
+        <BottomSheetHeader title={t(TranslationKeyMap[step])} spacing appearance="expanded" />
+        <View style={{ flex: 1 }}>{renderStepContent(step)}</View>
       </Animated.View>
     );
   };

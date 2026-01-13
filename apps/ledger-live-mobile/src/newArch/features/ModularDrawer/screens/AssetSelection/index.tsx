@@ -2,10 +2,10 @@ import React, { useCallback, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   ApyIndicator,
-  AssetItem,
   AssetType,
   MarketPriceIndicator,
   MarketPercentIndicator,
+  CryptoIcon,
 } from "@ledgerhq/native-ui/pre-ldls/index";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
@@ -16,8 +16,7 @@ import {
   EVENTS_NAME,
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
-import { FlatList } from "react-native";
-import { BottomSheetVirtualizedList, useBottomSheet } from "@gorhom/bottom-sheet";
+import { FlatList, View } from "react-native";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
 import { GenericError } from "../../components/GenericError";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -31,6 +30,17 @@ import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import Config from "react-native-config";
+import { BottomSheetVirtualizedList } from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import { useBottomSheet } from "@gorhom/bottom-sheet";
+import {
+  ListItem,
+  ListItemLeading,
+  ListItemTitle,
+  ListItemDescription,
+  ListItemTrailing,
+  Text,
+} from "@ledgerhq/lumen-ui-rnative";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -127,14 +137,45 @@ const AssetSelection = ({
 
   const handleSearchBlur = () => {};
 
+  const styles = useStyleSheet(
+    theme => ({
+      infoWrapper: {
+        rowGap: theme.spacings.s4,
+        marginLeft: theme.spacings.s8,
+        flex: 1,
+      },
+      leftElementWrapper: {
+        flexDirection: "row",
+        gap: theme.spacings.s4,
+      },
+    }),
+    [],
+  );
+
   const renderItem = useCallback(
-    ({ item }: { item: AssetType }) => <AssetItem {...item} onClick={handleAssetClick} />,
-    [handleAssetClick],
+    ({ item }: { item: AssetType }) => (
+      <ListItem onPress={() => handleAssetClick(item)}>
+        <ListItemLeading lx={{ flex: 0 }}>
+          <CryptoIcon size={48} ledgerId={item.id} ticker={item.ticker} />
+        </ListItemLeading>
+        <View style={styles.infoWrapper}>
+          <ListItemTitle>{item.name}</ListItemTitle>
+          <View style={styles.leftElementWrapper}>
+            <ListItemDescription lx={{ flex: 0 }}>
+              <Text typography="body3" lx={{ color: "muted" }}>
+                {item.ticker}
+              </Text>
+              {item.leftElement}
+            </ListItemDescription>
+          </View>
+        </View>
+        <ListItemTrailing>{item.rightElement}</ListItemTrailing>
+      </ListItem>
+    ),
+    [styles.infoWrapper, styles.leftElementWrapper, handleAssetClick],
   );
 
   const renderContent = () => {
-    if (isLoading) return <SkeletonList />;
-
     if (hasError || isInternetReachable === false) {
       return (
         <GenericError
@@ -149,7 +190,7 @@ const AssetSelection = ({
         ref={listRef}
         scrollToOverflowEnabled
         data={formattedAssets}
-        keyExtractor={item => item.id}
+        keyExtractor={(item: AssetType) => item.id}
         getItemCount={items => items.length}
         getItem={(items, index) => items[index]}
         renderItem={renderItem}
