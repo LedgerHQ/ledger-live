@@ -135,7 +135,7 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
   return (
     <SafeAreaView style={[styles.root, { bottom: headerHeight }]}>
       <TrackScreen category="Swap" name="Swap Error Screen" {...sharedSwapTracking} {...error} />
-      <Flex justifyContent="center" alignItems="center">
+      <Flex justifyContent="center" alignItems="center" px={6}>
         <Icons.DeleteCircleFill color="red" size="XXL" />
         <Text variant="h3Inter" fontWeight="bold" fontSize={25} textAlign={"center"} mt={24}>
           {title}
