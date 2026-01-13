@@ -1,6 +1,6 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AppDispatch } from "~/renderer/store";
+import { AppDispatch } from "~/renderer/createStore";
 
 export type NavigateFn = (
   pathname: string,
