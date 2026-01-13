@@ -12,10 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
         with:
           install-proto: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@chore/express-update
         id: monitoring
         timeout-minutes: 120
         with:

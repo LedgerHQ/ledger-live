@@ -95,7 +95,7 @@ runs:
         node --prof lib/bot/cli.js
       shell: bash
     - name: submit bot report
-      uses: LedgerHQ/ledger-live/tools/actions/submit-bot-report@develop
+      uses: LedgerHQ/ledger-live/tools/actions/submit-bot-report@chore/express-update
       with:
         path: libs/ledger-live-common/botreport
         githubSha: ${{github.sha}}

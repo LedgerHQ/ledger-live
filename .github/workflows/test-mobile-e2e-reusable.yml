@@ -143,7 +143,7 @@ jobs:
 
       - name: Generate shards matrix and test files
         id: generate-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@chore/express-update
         with:
           test_directory: e2e/mobile
           test_filter: ${{ inputs.test_filter || '' }}
@@ -227,7 +227,7 @@ jobs:
     name: "iOS Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@chore/express-update
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: "general-pool"
@@ -243,7 +243,7 @@ jobs:
     name: "Android Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@chore/express-update
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-turbo-cache: false
@@ -317,7 +317,7 @@ jobs:
 
       - name: Generate timing-based shards
         id: timing-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@chore/express-update
         with:
           test_filter: ${{ needs.determine-builds.outputs.test_files_for_sharding || inputs.test_filter || '' }}
           test_directory: e2e/mobile
@@ -351,7 +351,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
         with:
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
@@ -374,7 +374,7 @@ jobs:
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
       - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@chore/express-update
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_native_key }}
@@ -385,7 +385,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@chore/express-update
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_js_key }}
@@ -401,7 +401,7 @@ jobs:
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
       - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@chore/express-update
         with:
           command: pnpm build:llm:deps
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -409,7 +409,7 @@ jobs:
           disable_cache: false
 
       - name: Build CLI
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@chore/express-update
         with:
           command: pnpm build:cli
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -418,14 +418,14 @@ jobs:
 
       - name: Setup Speculos image and Coin Apps
         id: setup-speculos
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@chore/express-update
         with:
           coinapps_path: ${{ env.COINAPPS }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@chore/express-update
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
@@ -544,7 +544,7 @@ jobs:
 
       - name: Generate timing-based shards
         id: timing-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@chore/express-update
         with:
           test_filter: ${{ needs.determine-builds.outputs.test_files_for_sharding || inputs.test_filter || '' }}
           test_directory: e2e/mobile
@@ -570,7 +570,7 @@ jobs:
           packages: "tools platform-tools"
 
       - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@chore/express-update
         with:
           key: ${{ needs.determine-builds.outputs.android_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -580,7 +580,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Bundle
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@chore/express-update
         with:
           key: ${{ needs.determine-builds.outputs.android_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -600,7 +600,7 @@ jobs:
           /usr/local/lib/android/sdk/build-tools/34.0.0/apksigner sign --ks ${{ secrets.ANDROID_KEYSTORE_PATH }} --ks-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --ks-key-alias staging --key-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} ${{ env.ANDROID_APK_PATH }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
         id: setup-caches
         with:
           install-proto: true
@@ -628,7 +628,7 @@ jobs:
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
       - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@chore/express-update
         with:
           command: pnpm build:llm:deps
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -637,7 +637,7 @@ jobs:
 
       - name: Download android emulator
         timeout-minutes: 10
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@chore/express-update
         id: detox-avd
         with:
           key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME_2 }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
@@ -683,7 +683,7 @@ jobs:
           script: ./tools/scripts/wait_emulator_idle.sh
 
       - name: Cache android emulator
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@chore/express-update
         if: steps.detox-avd.outputs.cache-hit != 'true'
         with:
           path: |
@@ -699,14 +699,14 @@ jobs:
 
       - name: Setup Speculos image and Coin Apps
         id: setup-speculos
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@chore/express-update
         with:
           coinapps_path: ${{ env.COINAPPS }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Build CLI
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@chore/express-update
         with:
           command: pnpm build:cli
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -714,7 +714,7 @@ jobs:
           disable_cache: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@chore/express-update
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
@@ -776,7 +776,7 @@ jobs:
           path: ios-test-artifacts
           pattern: ios-test-artifacts*
           merge-multiple: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@chore/express-update
         if: ${{ !cancelled() }}
         id: upload
         with:
@@ -788,13 +788,13 @@ jobs:
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@chore/express-update
         with:
           allure-results-path: ios-test-artifacts
           platform: iOS
       - name: Aggregate test results
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@chore/express-update
         with:
           total_shards: ${{ fromJSON(needs.determine-builds.outputs.matrix_ios)[0].total }}
           status_1: ${{ needs.detox-tests-ios.outputs.status_1 }}
@@ -827,7 +827,7 @@ jobs:
           path: android-test-artifacts
           pattern: android-test-artifacts*
           merge-multiple: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@chore/express-update
         id: upload
         if: ${{ !cancelled() }}
         with:
@@ -839,13 +839,13 @@ jobs:
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@chore/express-update
         with:
           allure-results-path: android-test-artifacts
           platform: android
       - name: Aggregate test results
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@chore/express-update
         with:
           total_shards: ${{ fromJSON(needs.determine-builds.outputs.matrix_android)[0].total }}
           status_1: ${{ needs.detox-tests-android.outputs.status_1 }}
@@ -1085,7 +1085,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@chore/express-update
         with:
           platform: ios
           artifacts_dir: e2e/mobile/artifacts
@@ -1112,7 +1112,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@chore/express-update
         with:
           platform: android
           artifacts_dir: e2e/mobile/artifacts

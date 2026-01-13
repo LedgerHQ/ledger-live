@@ -42,7 +42,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         run: |
           git checkout $GITHUB_SHA
-      - uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@chore/express-update
         id: affected
         with:
           ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
@@ -72,7 +72,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
         with:
           install-proto: true
           skip-turbo-cache: "false"

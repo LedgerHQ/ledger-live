@@ -42,7 +42,7 @@ jobs:
     name: "Turbo Affected"
     needs: pre_job
     if: ${{!github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true'}}
-    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@chore/express-update
     with:
       head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
       base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
@@ -52,28 +52,28 @@ jobs:
     name: "Build Desktop"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@chore/express-update
     secrets: inherit
 
   test-desktop:
     name: "Test Desktop"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@chore/express-update
     secrets: inherit
 
   test-mobile:
     name: "Test Mobile"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@chore/express-update
     secrets: inherit
 
   build-test-mobile:
     name: "Build & Test Mobile"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@chore/express-update
     secrets: inherit
     with:
       macos-specificity-runner-label: "performance-pool"
@@ -84,41 +84,41 @@ jobs:
     name: "Test Libraries"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@chore/express-update
     secrets: inherit
 
   test-design-system:
     name: "Test UI Libs"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs/ui') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@chore/express-update
     secrets: inherit
 
   build-web-tools:
     name: "Build Web Tools"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'apps/web-tools') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@chore/express-update
     secrets: inherit
 
   test-cli:
     name: "Test CLI"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'apps/cli') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@chore/express-update
     secrets: inherit
 
   test-additional:
     name: "Test Additional"
     if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@chore/express-update
     secrets: inherit
 
   notify-e2e-required:
     name: "Notify E2E Required"
     needs: determine-affected
     if: ${{ always() && needs.determine-affected.result == 'success' && github.event_name == 'pull_request' && github.event.pull_request.draft == false && !github.event.pull_request.head.repo.fork }}
-    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@chore/express-update
     secrets: inherit
     with:
       affected_paths: ${{ needs.determine-affected.outputs.paths }}
@@ -129,7 +129,7 @@ jobs:
       - test-desktop
       - test-mobile
       - test-libraries
-    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@chore/express-update
     if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success')}}
     secrets: inherit
     with:

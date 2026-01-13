@@ -66,11 +66,11 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/express-update
 
       - name: Setup the toolchain
         id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/express-update
         with:
           install-proto: "true"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -78,14 +78,14 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@chore/express-update
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@chore/express-update
         id: update-snapshots
         with:
           os: ubuntu-22.04
