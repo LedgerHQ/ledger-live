@@ -1,143 +1,112 @@
-import React, { PureComponent } from "react";
-import { compose } from "redux";
-import { withRouter, RouteComponentProps } from "react-router-dom";
+import React, { useState, useCallback, useRef, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import repairFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
-import { withTranslation } from "react-i18next";
-import { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
 import logger from "~/renderer/logger";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import RepairModal from "~/renderer/modals/RepairModal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { Subscription } from "rxjs";
 
-type OwnProps = {
+type Props = {
   buttonProps?: ButtonProps;
   onRepair?: (a: boolean) => void;
 };
-type Props = OwnProps & {
-  t: TFunction;
-  history: RouteComponentProps["history"];
-};
-type State = {
-  opened: boolean;
-  isLoading: boolean;
-  error: Error | undefined | null;
-  progress: number;
-};
-class RepairDeviceButton extends PureComponent<Props, State> {
-  state = {
-    opened: false,
-    isLoading: false,
-    error: null,
-    progress: 0,
-  };
 
-  componentWillUnmount() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-    if (this.sub) this.sub.unsubscribe();
-  }
+function RepairDeviceButton({ buttonProps, onRepair }: Props) {
+  const { t } = useTranslation();
+  const history = useHistory();
+  const [opened, setOpened] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [progress, setProgress] = useState(0);
 
-  open = () =>
-    this.setState({
-      opened: true,
-      error: null,
-    });
+  const subRef = useRef<Subscription | undefined>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>();
 
-  sub: Subscription | undefined;
-  timeout: NodeJS.Timeout | undefined;
-  close = () => {
-    const { onRepair } = this.props;
-    if (this.sub) this.sub.unsubscribe();
-    if (this.timeout) clearTimeout(this.timeout);
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      if (subRef.current) {
+        subRef.current.unsubscribe();
+      }
+    };
+  }, []);
+
+  const open = useCallback(() => {
+    setOpened(true);
+    setError(null);
+  }, []);
+
+  const close = useCallback(() => {
+    if (subRef.current) subRef.current.unsubscribe();
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     if (onRepair) {
       onRepair(false);
     }
-    this.setState({
-      opened: false,
-      isLoading: false,
-      error: null,
-      progress: 0,
-    });
-  };
+    setOpened(false);
+    setIsLoading(false);
+    setError(null);
+    setProgress(0);
+  }, [onRepair]);
 
-  repair = (version?: string | null) => {
-    if (this.state.isLoading) return;
-    const { history, onRepair } = this.props;
-    if (onRepair) {
-      onRepair(true);
-    }
-    this.timeout = setTimeout(
-      () =>
-        this.setState({
-          isLoading: true,
-        }),
-      500,
-    );
-    this.sub = repairFirmwareUpdate("", version).subscribe({
-      next: patch => {
-        this.setState(patch);
-      },
-      error: (error: Error) => {
-        logger.critical(error);
-        if (this.timeout) clearTimeout(this.timeout);
-        this.setState({
-          error,
-          isLoading: false,
-          progress: 0,
-        });
-      },
-      complete: () => {
-        if (this.timeout) clearTimeout(this.timeout);
-        this.setState(
-          {
-            opened: false,
-            isLoading: false,
-            progress: 0,
-          },
-          () => {
-            setTrackingSource("settings help repair device");
-            history.push({
-              pathname: "/manager",
-            });
-          },
-        );
-        if (onRepair) {
-          onRepair(false);
-        }
-      },
-    });
-  };
+  const repair = useCallback(
+    (version?: string | null) => {
+      if (isLoading) return;
+      if (onRepair) {
+        onRepair(true);
+      }
+      timeoutRef.current = setTimeout(() => setIsLoading(true), 500);
+      subRef.current = repairFirmwareUpdate("", version).subscribe({
+        next: patch => {
+          if (patch.progress !== undefined) setProgress(patch.progress);
+        },
+        error: (err: Error) => {
+          logger.critical(err);
+          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          setError(err);
+          setIsLoading(false);
+          setProgress(0);
+        },
+        complete: () => {
+          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          setOpened(false);
+          setIsLoading(false);
+          setProgress(0);
+          setTrackingSource("settings help repair device");
+          history.push("/manager");
+          if (onRepair) {
+            onRepair(false);
+          }
+        },
+      });
+    },
+    [isLoading, history, onRepair],
+  );
 
-  render() {
-    const { t, buttonProps } = this.props;
-    const { opened, isLoading, error, progress } = this.state;
-    return (
-      <>
-        <Button {...buttonProps} primary onClick={this.open} event="RepairDeviceButton">
-          {t("settings.repairDevice.button")}
-        </Button>
+  return (
+    <>
+      <Button {...buttonProps} primary onClick={open} event="RepairDeviceButton">
+        {t("settings.repairDevice.button")}
+      </Button>
 
-        <RepairModal
-          cancellable
-          analyticsName="RepairDevice"
-          isOpened={opened}
-          onReject={this.close}
-          repair={this.repair}
-          isLoading={isLoading}
-          title={t("settings.repairDevice.title")}
-          desc={t("settings.repairDevice.desc")}
-          progress={progress}
-          error={error}
-          enableSomethingElseChoice={false}
-        />
-      </>
-    );
-  }
+      <RepairModal
+        cancellable
+        analyticsName="RepairDevice"
+        isOpened={opened}
+        onReject={close}
+        repair={repair}
+        isLoading={isLoading}
+        title={t("settings.repairDevice.title")}
+        desc={t("settings.repairDevice.desc")}
+        progress={progress}
+        error={error}
+        enableSomethingElseChoice={false}
+      />
+    </>
+  );
 }
-const RepairDeviceButtonOut = compose<React.ComponentType<OwnProps>>(
-  withTranslation(),
-  withRouter,
-)(RepairDeviceButton);
-export default RepairDeviceButtonOut;
+
+export default RepairDeviceButton;
