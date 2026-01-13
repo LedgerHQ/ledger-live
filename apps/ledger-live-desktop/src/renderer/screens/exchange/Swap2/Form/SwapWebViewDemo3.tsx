@@ -558,7 +558,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
             ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio ? "true" : "false",
             isModularDrawer: isLldModularDrawer ? "true" : "false",
             isEmbedded: isEmbedded ? "true" : "false",
-            discreetMode,
+            discreetMode: discreetMode ? "true" : "false",
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
