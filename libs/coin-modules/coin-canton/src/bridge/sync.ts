@@ -4,7 +4,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import type { Operation, OperationType, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getBalance } from "../common-logic/account/getBalance";
 import coinConfig from "../config";
@@ -156,7 +156,7 @@ export async function filterDisabledTokenAccounts(
 export function makeGetAccountShape(
   signerContext: SignerContext<CantonSigner>,
 ): GetAccountShape<CantonAccount> {
-  return async info => {
+  return async (info, _config: SyncConfig) => {
     const { address, currency, derivationMode, derivationPath, initialAccount } = info;
 
     let isOnboarded = initialAccount?.cantonResources?.isOnboarded ?? false;
