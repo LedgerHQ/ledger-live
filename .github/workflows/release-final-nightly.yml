@@ -46,7 +46,7 @@ jobs:
           npmrc-location: "$HOME/.npmrc"
 
       - name: Network config
-        run: echo "network-concurrency=4" >> ~/.npmrc
+        run: pnpm i @unrs/resolver-binding-linux-x64-gnu -g
 
       - name: Get checked out commit SHA
         id: get-sha
