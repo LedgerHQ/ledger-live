@@ -48,7 +48,7 @@ export function executeHandler(
   const handler = deeplinkRegistry[route.type];
 
   if (handler) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
     return (handler as any)(route, context);
   }
 

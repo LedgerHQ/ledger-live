@@ -1,4 +1,4 @@
-import { Account } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { accountsHandler, accountHandler } from "../accounts.handler";
@@ -34,6 +34,7 @@ const createMockContext = (
 
 const createMockAccount = (currencyId: string, address: string = "address123"): Account => {
   const currency = getCryptoCurrencyById(currencyId);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return {
     id: `${currencyId}-account-1`,
     type: "Account" as const,
@@ -95,6 +96,7 @@ describe("accounts.handler", () => {
     });
 
     it("does nothing when currency is a FiatCurrency", () => {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-explicit-any
       mockFindCryptoCurrencyByKeyword.mockReturnValue({ type: "FiatCurrency" } as any);
       const context = createMockContext();
 
@@ -140,11 +142,12 @@ describe("accounts.handler", () => {
 
     it("navigates to token account with parent path", () => {
       const mockCurrency = getCryptoCurrencyById("ethereum");
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const tokenAccount = {
         id: "token-account-1",
         type: "TokenAccount" as const,
         parentId: "parent-account-1",
-      };
+      } as unknown as TokenAccount;
       mockFindCryptoCurrencyByKeyword.mockReturnValue(mockCurrency);
       mockGetAccountsOrSubAccountsByCurrency.mockReturnValue([tokenAccount]);
       const context = createMockContext();
