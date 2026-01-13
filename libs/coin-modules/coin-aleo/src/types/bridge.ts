@@ -2,6 +2,7 @@ import type BigNumber from "bignumber.js";
 import type {
   Account,
   AccountRaw,
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -37,3 +38,7 @@ export type AleoAccount = Account & {
 export type AleoAccountRaw = AccountRaw & {
   aleoResources: AleoResourcesRaw;
 };
+
+export type AleoOperationExtra = Record<string, unknown>;
+
+export type AleoOperation = Operation<AleoOperationExtra>;
