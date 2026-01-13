@@ -46,7 +46,7 @@ export function createRendererConfig(
       fullySpecified: false,
       alias: {
         ...commonConfig.resolve?.alias,
-        LLD: path.resolve(lldRoot, "src", "newArch"),
+        LLD: path.resolve(lldRoot, "src", "mvvm"),
         "styled-components": styledComponentsPath,
         // Fix tests/time.js import for TIMEMACHINE feature
         "../../tests/time.js": path.resolve(rootFolder, "tests", "time.ts"),

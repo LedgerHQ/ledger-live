@@ -3,10 +3,7 @@
  */
 import { renderHook, waitFor } from "tests/testSetup";
 import { useMarketListVirtualization } from "./useMarketListVirtualization";
-import {
-  mockDomMeasurements,
-  setRefCurrent,
-} from "~/renderer/../newArch/features/__tests__/shared";
+import { mockDomMeasurements, setRefCurrent } from "LLD/features/__tests__/shared";
 import { mockMarketData } from "./__fixtures__/marketData";
 
 describe("useMarketListVirtualization", () => {

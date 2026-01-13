@@ -5,9 +5,9 @@ const commonImportRestrictions = [
     message: "Please remove the /lib import from live-common import.",
   },
   {
-    group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
+    group: ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
     message:
-      "Use 'LLM' alias instead of '~/newArch'. Replace '~/newArch' with 'LLM' in your imports.",
+      "Use 'LLM' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLM' in your imports.",
   },
 ];
 

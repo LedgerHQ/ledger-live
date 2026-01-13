@@ -7,9 +7,8 @@ const commonImportRestrictions = [
     message: "Please remove the /lib import from live-common import.",
   },
   {
-    group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
-    message:
-      "Use 'LLD' alias instead of '~/newArch'. Replace '~/newArch' with 'LLD' in your imports.",
+    group: ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
+    message: "Use 'LLD' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLD' in your imports.",
   },
 ];
 
@@ -116,7 +115,7 @@ module.exports = {
     livecommonRules,
     {
       files: [
-        "src/newArch/hooks/redux.ts",
+        "src/mvvm/hooks/redux.ts",
         "src/**/*.test.tsx",
         "src/**/*.test.ts",
         "src/**/*.integration.tsx",
