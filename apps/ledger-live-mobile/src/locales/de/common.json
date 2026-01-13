@@ -1107,6 +1107,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Keine Prämien zum Einlösen vorhanden"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "Memo ist zu lang. Maximale Länge: {{maxLength}} Zeichen"
+    },
     "NearNewAccountWarning" : {
       "title" : "Das Empfängerkonto wurde noch nicht erstellt. Das Protokoll erfordert einen Transfer von {{formattedNewAccountStorageCost}}, um es zu erstellen."
     },
@@ -2509,6 +2512,20 @@
       "doneTitle" : "PIN festgelegt",
       "description" : "Wie bei Passwörtern üblich, ermöglicht dir die PIN, dein {{productName}}-Gerät zu entsperren und es vor unbefugtem Zugriff zu schützen.",
       "continueOnDevice" : "Lege die PIN für dein {{productName}}-Gerät fest."
+    },
+    "syncStep" : {
+      "title" : "Synchronisierung",
+      "doneTitle" : "Wallet synchronisiert",
+      "descriptionTitle" : "Wallet synchronisieren",
+      "description" : "Halte dein Portfolio aktuell, wenn du dein Handy wechselst oder einen Computer verwendest.",
+      "skipCta" : "Ich erledige das später",
+      "skip" : {
+        "title" : "Bist du sicher?",
+        "description" : "Wenn du diesen Schritt überspringst, musst du alle deine Konten, Salden und Verlaufsdaten manuell neu hinzufügen, wenn du zu einem neuen Handy oder Computer wechselst.",
+        "descriptionEmphasis" : "Du kannst die Option jederzeit in deinen Einstellungen deaktivieren.",
+        "skipCTA" : "Ja, überspringen",
+        "syncCTA" : "Nein, meine Wallet synchronisieren"
+      }
     },
     "seedStep" : {
       "title" : "Einrichtung und Backup",
@@ -6355,6 +6372,7 @@
       "netApy" : "Netto-APY",
       "stakeActivationState" : "Status",
       "stakeActivePercent" : "Aktiv",
+      "inactiveStake" : "Abhebbare Rewards",
       "stakeAvailableBalance" : "Verfügbares Guthaben",
       "actions" : {
         "activate" : "Aktivieren",
@@ -8225,6 +8243,15 @@
     }
   },
   "canton" : {
+    "expiryDuration" : {
+      "label" : "Ablauffrist",
+      "summaryLabel" : "Ablaufangebot",
+      "threeHours" : "3 Stunden",
+      "sixHours" : "6 Stunden",
+      "oneDay" : "1 Tag",
+      "oneWeek" : "1 Woche",
+      "oneMonth" : "30 Tage"
+    },
     "account" : {
       "lockedBalance" : "Gesperrt",
       "lockedBalanceTooltip" : "Deine Assets sind in Angeboten blockiert, die du an Dritte gesendet hast. Du kannst diese Angebote jederzeit stornieren oder aber abwarten, bis der Empfänger sie annimmt oder ablehnt.",
