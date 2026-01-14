@@ -77,5 +77,139 @@ describe("apiClient", () => {
         url: `${customNodeUrl}/programs/program/credits.aleo/mapping/account/${mockAddress}`,
       });
     });
+
+    describe("getAccountPublicTransactions", () => {
+      const mockTx1 = { id: "tx1", block_number: 100 };
+      const mockTx2 = { id: "tx2", block_number: 101 };
+      const mockTx3 = { id: "tx3", block_number: 102 };
+
+      it("should fetch transactions with default parameters", async () => {
+        mockNetwork.mockResolvedValue({
+          data: { transactions: [mockTx1, mockTx2], next_cursor: null },
+        });
+
+        const result = await apiClient.getAccountPublicTransactions({
+          currency: mockCurrency,
+          address: mockAddress,
+          pagingToken: null,
+          fetchAllPages: false,
+        });
+
+        expect(result.transactions).toEqual([mockTx1, mockTx2]);
+        expect(mockNetwork).toHaveBeenCalledWith({
+          method: "GET",
+          url: expect.stringContaining(`${mockNodeUrl}/transactions/address/${mockAddress}`),
+        });
+      });
+
+      it("should handle pagination with fetchAllPages true", async () => {
+        mockNetwork
+          .mockResolvedValueOnce({
+            data: { transactions: [mockTx1, mockTx2], next_cursor: { block_number: 101 } },
+          })
+          .mockResolvedValueOnce({
+            data: { transactions: [mockTx3], next_cursor: null },
+          });
+
+        const result = await apiClient.getAccountPublicTransactions({
+          currency: mockCurrency,
+          address: mockAddress,
+          pagingToken: null,
+          fetchAllPages: true,
+        });
+
+        expect(result.transactions).toHaveLength(3);
+        expect(result.transactions).toEqual([mockTx1, mockTx2, mockTx3]);
+        expect(mockNetwork).toHaveBeenCalledTimes(2);
+      });
+
+      it("should respect limit when fetchAllPages is false", async () => {
+        const transactions = Array.from({ length: 60 }, (_, i) => ({
+          id: `tx${i}`,
+          block_number: i,
+        }));
+
+        mockNetwork.mockResolvedValue({
+          data: { transactions: transactions.slice(0, 60), next_cursor: { block_number: 60 } },
+        });
+
+        const result = await apiClient.getAccountPublicTransactions({
+          currency: mockCurrency,
+          address: mockAddress,
+          pagingToken: null,
+          limit: 50,
+          fetchAllPages: false,
+        });
+
+        expect(result.transactions).toHaveLength(50);
+        expect(result.nextCursor).toBe("49");
+      });
+
+      it("should use pagingToken when provided", async () => {
+        mockNetwork.mockResolvedValue({
+          data: { transactions: [mockTx2], next_cursor: null },
+        });
+
+        await apiClient.getAccountPublicTransactions({
+          currency: mockCurrency,
+          address: mockAddress,
+          pagingToken: "100",
+          fetchAllPages: false,
+        });
+
+        expect(mockNetwork).toHaveBeenCalledWith({
+          method: "GET",
+          url: expect.stringContaining("cursor_block_number=100"),
+        });
+      });
+
+      it("should handle empty transactions list", async () => {
+        mockNetwork.mockResolvedValue({
+          data: { transactions: [], next_cursor: null },
+        });
+
+        const result = await apiClient.getAccountPublicTransactions({
+          currency: mockCurrency,
+          address: mockAddress,
+          pagingToken: null,
+          fetchAllPages: false,
+        });
+
+        expect(result.transactions).toEqual([]);
+        expect(result.nextCursor).toBeNull();
+      });
+
+      it("should apply custom order parameter", async () => {
+        mockNetwork.mockResolvedValue({
+          data: { transactions: [mockTx1], next_cursor: null },
+        });
+
+        await apiClient.getAccountPublicTransactions({
+          currency: mockCurrency,
+          address: mockAddress,
+          pagingToken: null,
+          order: "asc",
+          fetchAllPages: false,
+        });
+
+        expect(mockNetwork).toHaveBeenCalledWith({
+          method: "GET",
+          url: expect.stringContaining("order=asc"),
+        });
+      });
+
+      it("should throw error on network failure", async () => {
+        mockNetwork.mockRejectedValue(new Error("Network error"));
+
+        await expect(
+          apiClient.getAccountPublicTransactions({
+            currency: mockCurrency,
+            address: mockAddress,
+            pagingToken: null,
+            fetchAllPages: false,
+          }),
+        ).rejects.toThrow("Network error");
+      });
+    });
   });
 });
