@@ -6,7 +6,6 @@ import { MarketBannerProps } from "./types";
 const MarketBanner = ({ testID }: MarketBannerProps) => {
   const {
     items,
-    isLoading,
     isError,
     isEnabled,
     range,
@@ -16,14 +15,14 @@ const MarketBanner = ({ testID }: MarketBannerProps) => {
     onSwipe,
   } = useMarketBannerViewModel();
 
-  if (!isEnabled || isError) {
+  if (!isEnabled) {
     return null;
   }
 
   return (
     <MarketBannerView
+      isError={isError}
       items={items}
-      isLoading={isLoading}
       range={range}
       onTilePress={onTilePress}
       onViewAllPress={onViewAllPress}

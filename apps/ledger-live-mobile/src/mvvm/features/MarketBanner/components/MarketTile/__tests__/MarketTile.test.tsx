@@ -24,7 +24,7 @@ describe("MarketTile", () => {
         <MarketTile item={bitcoin} index={0} range="day" onPress={mockOnPress} />,
       );
 
-      expect(getByText("Bitcoin")).toBeTruthy();
+      expect(getByText("BTC")).toBeTruthy();
     });
 
     it("renders tile with testID based on index", () => {
