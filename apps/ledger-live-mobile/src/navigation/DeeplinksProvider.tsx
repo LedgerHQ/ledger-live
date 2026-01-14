@@ -40,6 +40,7 @@ import {
   logSecurityEvent,
   EarnDeeplinkAction,
   validateEarnDepositScreen,
+  validateLargeMoverCurrencyIds,
 } from "./deeplinks/validation";
 import { AppLoadingManager, AppLoadingManagerProps } from "LLM/features/LaunchScreen";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
@@ -595,6 +596,18 @@ export const DeeplinksProvider = ({
             });
 
           const platform = pathname.split("/")[1];
+
+          if (hostname === "landing-page-large-mover") {
+            const currencyIds = searchParams.get("currencyIds");
+
+            const validatedCurrencyIds = validateLargeMoverCurrencyIds(currencyIds);
+            if (!validatedCurrencyIds) {
+              // Redirect to market list when currencyIds is missing or invalid
+              return;
+            }
+            url.searchParams.set("currencyIds", validatedCurrencyIds);
+            return getStateFromPath(url.href?.split("://")[1], config);
+          }
 
           // Handle modular drawer deeplinks (receive & add-account)
           if (hostname === "receive" || hostname === "add-account") {
