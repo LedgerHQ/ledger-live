@@ -1,9 +1,9 @@
-import { ConcordiumConfig } from "../config";
+import type { ConcordiumCoinConfig } from "../types/config";
 import { createApi } from ".";
 
 describe("createApi", () => {
   it("should return every api methods", () => {
-    expect(createApi({} as ConcordiumConfig)).toEqual({
+    expect(createApi({} as ConcordiumCoinConfig, "concordium")).toEqual({
       broadcast: expect.any(Function),
       combine: expect.any(Function),
       craftRawTransaction: expect.any(Function),

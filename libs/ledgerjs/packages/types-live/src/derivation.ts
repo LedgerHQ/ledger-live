@@ -37,7 +37,4 @@ export type DerivationMode =
   | "aptos"
   | "minabip44"
   | "canton"
-  | "cashaddr"
-  | "celo"
-  | "celoMM"
-  | "celoEvm";
+  | "concordium";

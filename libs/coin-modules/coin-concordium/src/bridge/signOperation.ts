@@ -1,11 +1,16 @@
-import { Observable } from "rxjs";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import {
+  AccountAddress,
+  AccountTransactionType,
+  CcdAmount,
+} from "@ledgerhq/concordium-sdk-adapter";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
-import { combine, craftTransaction, getNextValidSequence } from "../common-logic";
-import { Transaction, ConcordiumSigner, ConcordiumNativeTransaction } from "../types";
+import { Observable } from "rxjs";
+import { combine, craftTransaction, estimateFees, getNextValidSequence } from "../common-logic";
+import { ConcordiumSigner, Transaction } from "../types";
 
 export const buildSignOperation =
   (signerContext: SignerContext<ConcordiumSigner>): AccountBridge<Transaction>["signOperation"] =>
@@ -15,76 +20,83 @@ export const buildSignOperation =
         const { fee } = transaction;
         if (!fee) throw new FeeNotLoaded();
 
-        try {
-          // o observables allows to define steps of the signing process with the device
-          o.next({
-            type: "device-signature-requested",
-          });
+        o.next({
+          type: "device-signature-requested",
+        });
 
-          const nextSequenceNumber = await getNextValidSequence(account.freshAddress);
+        const nextSequenceNumber = await getNextValidSequence(
+          account.freshAddress,
+          account.currency,
+        );
 
-          const signature = await signerContext(deviceId, async signer => {
-            const { freshAddressPath: derivationPath } = account;
-            const { publicKey } = await signer.getAddress(derivationPath);
+        const payload = {
+          amount: CcdAmount.fromMicroCcd(transaction.amount.toString()),
+          toAddress: AccountAddress.fromBase58(transaction.recipient),
+        };
 
-            const { nativeTransaction, serializedTransaction } = await craftTransaction(
-              {
-                address: account.freshAddress,
-                publicKey,
-              },
-              {
-                recipient: transaction.recipient,
-                amount: transaction.amount,
-                fee: fee,
-              },
-            );
+        const estimation = await estimateFees(
+          "",
+          account.currency,
+          AccountTransactionType.Transfer,
+          payload,
+        );
 
-            const transactionSignature = await signer.signTransaction(
-              derivationPath,
-              serializedTransaction,
-            );
+        const signature = await signerContext(deviceId, async signer => {
+          const { freshAddressPath: derivationPath } = account;
+          const { publicKey } = await signer.getAddress(derivationPath);
 
-            return combine(serializedTransaction, transactionSignature, publicKey);
-          });
-
-          o.next({
-            type: "device-signature-granted",
-          });
-
-          // We create an optimistic operation here, the framework will then replace this transaction with the one returned by the indexer
-          const hash = "";
-          const operation: Operation = {
-            id: encodeOperationId(account.id, hash, "OUT"),
-            hash,
-            accountId: account.id,
-            type: "OUT",
-            value: transaction.amount,
-            fee,
-            blockHash: null,
-            blockHeight: null,
-            senders: [account.freshAddress],
-            recipients: [transaction.recipient],
-            date: new Date(),
-            transactionSequenceNumber: new BigNumber(nextSequenceNumber),
-            extra: {},
-          };
-
-          o.next({
-            type: "signed",
-            signedOperation: {
-              operation,
-              signature,
+          // Follow standard Ledger Live pattern: craft transaction, then sign
+          // Note: estimation returns bigint, convert to BigNumber for transaction crafting
+          // The .toString() conversion is intentional for BigNumber precision safety
+          const { nativeTransaction, serializedTransaction } = await craftTransaction(
+            {
+              address: account.freshAddress,
+              publicKey,
+              nextSequenceNumber,
             },
-          });
-        } catch (e) {
-          if (e instanceof Error) {
-            throw new Error(
-              (e as Error & { data?: { resultMessage?: string } })?.data?.resultMessage,
-            );
-          }
+            {
+              recipient: transaction.recipient,
+              amount: transaction.amount,
+              fee: new BigNumber(estimation.cost.toString()),
+              energy: estimation.energy,
+            },
+          );
 
-          throw e;
-        }
+          // Sign the native transaction structure with the device
+          const transactionSignature = await signer.signTransfer(nativeTransaction, derivationPath);
+
+          // Combine serialized transaction from SDK with device signature
+          return combine(serializedTransaction, transactionSignature);
+        });
+
+        o.next({
+          type: "device-signature-granted",
+        });
+
+        const hash = "";
+        const operation: Operation = {
+          id: encodeOperationId(account.id, hash, "OUT"),
+          hash,
+          accountId: account.id,
+          type: "OUT",
+          value: transaction.amount,
+          fee: new BigNumber(estimation.cost.toString()),
+          blockHash: null,
+          blockHeight: null,
+          senders: [account.freshAddress],
+          recipients: [transaction.recipient],
+          date: new Date(),
+          transactionSequenceNumber: new BigNumber(nextSequenceNumber),
+          extra: {},
+        };
+
+        o.next({
+          type: "signed",
+          signedOperation: {
+            operation,
+            signature,
+          },
+        });
       }
 
       main().then(

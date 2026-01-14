@@ -1,54 +1,50 @@
 import {
   AlpacaApi,
-  Block,
-  BlockInfo,
+  CraftedTransaction,
   Cursor,
-  Page,
-  Validator,
   FeeEstimation,
+  Page,
   Reward,
   Stake,
   TransactionIntent,
-  CraftedTransaction,
+  Validator,
 } from "@ledgerhq/coin-framework/api/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import coinConfig, { type ConcordiumConfig } from "../config";
 import {
-  broadcast,
+  broadcast as broadcastLogic,
   combine,
-  craftTransaction,
-  estimateFees,
+  craftTransaction as craftTransactionLogic,
+  craftRawTransaction as craftRawTransactionLogic,
+  estimateFees as estimateFeesLogic,
   getBalance,
+  getBlock as getBlockLogic,
+  getBlockInfo as getBlockInfoLogic,
   getNextValidSequence,
   lastBlock,
   listOperations,
 } from "../common-logic";
+import coinConfig from "../config";
+import type { ConcordiumConfig } from "../types/config";
 
-export function createApi(config: ConcordiumConfig): AlpacaApi {
+export function createApi(config: ConcordiumConfig, currencyId: string): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
+  const currency = getCryptoCurrencyById(currencyId);
 
   return {
-    broadcast,
+    broadcast: (tx: string) => broadcastLogic(tx, currency),
     combine,
-    craftTransaction: craft,
-    craftRawTransaction: (
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
-    estimateFees: estimate,
-    getBalance,
-    lastBlock,
-    listOperations,
-    getBlock(_height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
+    craftTransaction: (transactionIntent: TransactionIntent) =>
+      craftTransaction(transactionIntent, currency),
+    craftRawTransaction,
+    estimateFees: (transactionIntent: TransactionIntent) =>
+      estimateFees(transactionIntent, currency),
+    getBalance: (address: string) => getBalance(address, currency),
+    lastBlock: () => lastBlock(currency),
+    listOperations: (address: string, pagination) => listOperations(address, pagination, currency),
+    getBlock: (height: number) => getBlockLogic(height, currency),
+    getBlockInfo: (height: number) => getBlockInfoLogic(height, currency),
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
@@ -61,20 +57,41 @@ export function createApi(config: ConcordiumConfig): AlpacaApi {
   };
 }
 
-async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {
-  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
-  const tx = await craftTransaction(
+async function craftTransaction(
+  transactionIntent: TransactionIntent,
+  currency: CryptoCurrency,
+): Promise<CraftedTransaction> {
+  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender, currency);
+  const { serializedTransaction } = await craftTransactionLogic(
     { address: transactionIntent.sender, nextSequenceNumber },
     {
       recipient: transactionIntent.recipient,
       amount: new BigNumber(transactionIntent.amount.toString()),
     },
   );
-  return { transaction: tx.serializedTransaction };
+  return { transaction: serializedTransaction };
 }
 
-async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
-  const { serializedTransaction } = await craftTransaction(
+async function craftRawTransaction(
+  transaction: string,
+  sender: string,
+  publicKey: string,
+  sequence: bigint,
+): Promise<CraftedTransaction> {
+  const { serializedTransaction } = await craftRawTransactionLogic(
+    transaction,
+    sender,
+    publicKey,
+    sequence,
+  );
+  return { transaction: serializedTransaction };
+}
+
+async function estimateFees(
+  transactionIntent: TransactionIntent,
+  currency: CryptoCurrency,
+): Promise<FeeEstimation> {
+  const { serializedTransaction } = await craftTransactionLogic(
     { address: transactionIntent.sender },
     {
       recipient: transactionIntent.recipient,
@@ -82,7 +99,7 @@ async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstima
     },
   );
 
-  const value = await estimateFees(serializedTransaction);
+  const estimation = await estimateFeesLogic(serializedTransaction, currency);
 
-  return { value };
+  return { value: estimation.cost };
 }

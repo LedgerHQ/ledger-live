@@ -4,8 +4,9 @@ import { broadcast as broadcastLogic } from "../common-logic";
 import { Transaction } from "../types";
 
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
+  account,
   signedOperation: { signature, operation },
 }) => {
-  const hash = await broadcastLogic(signature);
+  const hash = await broadcastLogic(signature, account.currency);
   return patchOperationWithHash(operation, hash);
 };

@@ -1,3 +1,4 @@
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -9,12 +10,11 @@ import {
   NotEnoughSpendableBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { Transaction, TransactionStatus } from "../types";
+import BigNumber from "bignumber.js";
 import { isRecipientValid } from "../common-logic/utils";
 import coinConfig from "../config";
+import { Transaction, TransactionStatus } from "../types";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -25,7 +25,7 @@ export const getTransactionStatus: AccountBridge<
   const warnings: Record<string, Error> = {};
 
   // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
-  const reserveAmount = new BigNumber(coinConfig.getCoinConfig().minReserve);
+  const reserveAmount = new BigNumber(coinConfig.getCoinConfig(account.currency).minReserve);
   const estimatedFees = new BigNumber(transaction.fee || 0);
   const totalSpent = new BigNumber(transaction.amount).plus(estimatedFees);
   const amount = new BigNumber(transaction.amount);

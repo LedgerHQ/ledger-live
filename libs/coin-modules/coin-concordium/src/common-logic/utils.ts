@@ -1,18 +1,26 @@
-import BigNumber from "bignumber.js";
+import { AccountAddress } from "@ledgerhq/concordium-sdk-adapter";
 
-export const UINT32_MAX = new BigNumber(2).pow(32).minus(1);
-
-export const validateTag = (tag: BigNumber) => {
-  return (
-    !tag.isNaN() && tag.isFinite() && tag.isInteger() && tag.isPositive() && tag.lte(UINT32_MAX)
-  );
-};
-
+/**
+ * Validates a Concordium account address using the SDK.
+ * Checks that the address is exactly 50 characters, valid base58check encoding, and uses version byte 1.
+ */
 export function isRecipientValid(recipient: string): boolean {
-  return recipient.length > 0;
+  try {
+    AccountAddress.fromBase58(recipient);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-export const encode = (transaction: string, signature: string, publicKey?: string) => {
-  // sample encoding
-  return `${transaction}${publicKey}${signature}encodedTx`;
+/**
+ * Encodes a signed Concordium transaction as JSON for storage in signed operations.
+ * The encoded format is later parsed by broadcast() to submit to wallet-proxy.
+ * Returns a JSON string with separate transaction body and signature.
+ */
+export const encodeSignedTransaction = (transaction: string, signature: string) => {
+  return JSON.stringify({
+    transactionBody: transaction,
+    signature: signature,
+  });
 };

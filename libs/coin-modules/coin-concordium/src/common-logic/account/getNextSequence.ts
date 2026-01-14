@@ -1,6 +1,10 @@
-import { getNextSequence } from "../../network/node";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getAccountNonce } from "../../network/proxyClient";
 
-// Could be getAccountInfo so it is used in both bridge and api
-export async function getNextValidSequence(address: string): Promise<number> {
-  return await getNextSequence(address);
+export async function getNextValidSequence(
+  address: string,
+  currency: CryptoCurrency,
+): Promise<number> {
+  const result = await getAccountNonce(currency, address);
+  return result.nonce;
 }
