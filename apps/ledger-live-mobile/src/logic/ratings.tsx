@@ -21,7 +21,7 @@ import { track } from "~/analytics";
 import { setNotificationsModalLocked } from "~/actions/notifications";
 
 export type RatingsHappyMoment = {
-  timeout?: number;
+  timeout?: ReturnType<typeof setTimeout>;
   /** Name of the route that will trigger the rating flow */
   // eslint-disable-next-line camelcase
   route_name: string;
@@ -185,13 +185,13 @@ const useRatings = () => {
         // @ts-expect-error TYPINGS
         if (isHappyMomentTriggered(happyMoment, ratingsNewRoute)) {
           dispatch(setNotificationsModalLocked(true));
-          const timeout = setTimeout(() => {
+          const timeout: ReturnType<typeof setTimeout> = setTimeout(() => {
             setRatingsModalOpenCallback(true);
           }, happyMoment.timer);
           dispatch(
+            // @ts-expect-error happyMoment comes from feature flag with loose typing
             setRatingsHappyMoment({
               ...happyMoment,
-              // @ts-expect-error TYPINGS
               timeout,
             }),
           );

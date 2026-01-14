@@ -1,8 +1,9 @@
 /* eslint-disable no-var */
 import { globalSetup } from "detox/runners/jest";
 import { Step } from "jest-allure2-reporter/api";
-import { ServerData } from "./bridge/types";
+import { ServerData, MessageData } from "./bridge/types";
 import { Subject } from "rxjs";
+import WebSocket from "ws";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
@@ -32,6 +33,53 @@ type TransactionType = typeof Transaction;
 type FeeType = typeof Fee;
 type AppInfosType = typeof AppInfos;
 type SwapType = typeof Swap;
+
+interface GlobalExtensions {
+  IS_FAILED: boolean;
+  app: Application;
+  webSocket: {
+    wss: WebSocket.Server | undefined;
+    ws: WebSocket | undefined;
+    messages: { [id: string]: MessageData };
+    e2eBridgeServer: Subject<ServerData>;
+  };
+  Step: StepType;
+  jestExpect: expectType;
+  Currency: CurrencyType;
+  Delegate: DelegateType;
+  Account: AccountType;
+  Transaction: TransactionType;
+  Fee: FeeType;
+  AppInfos: AppInfosType;
+  Swap: SwapType;
+  waitForElementById: typeof ElementHelpers.waitForElementById;
+  waitForElementByText: typeof ElementHelpers.waitForElementByText;
+  getElementById: typeof ElementHelpers.getElementById;
+  getElementsById: typeof ElementHelpers.getElementsById;
+  getElementByText: typeof ElementHelpers.getElementByText;
+  getWebElementById: typeof ElementHelpers.getWebElementById;
+  getWebElementByTag: typeof ElementHelpers.getWebElementByTag;
+  IsIdVisible: typeof ElementHelpers.IsIdVisible;
+  tapById: typeof ElementHelpers.tapById;
+  tapByText: typeof ElementHelpers.tapByText;
+  tapByElement: typeof ElementHelpers.tapByElement;
+  typeTextById: typeof ElementHelpers.typeTextById;
+  typeTextByElement: typeof ElementHelpers.typeTextByElement;
+  clearTextByElement: typeof ElementHelpers.clearTextByElement;
+  performScroll: typeof ElementHelpers.performScroll;
+  scrollToText: typeof ElementHelpers.scrollToText;
+  scrollToId: typeof ElementHelpers.scrollToId;
+  getTextOfElement: typeof ElementHelpers.getTextOfElement;
+  getIdByRegexp: typeof ElementHelpers.getIdByRegexp;
+  getIdOfElement: typeof ElementHelpers.getIdOfElement;
+  getWebElementByTestId: typeof ElementHelpers.getWebElementByTestId;
+  getWebElementsByIdAndText: typeof ElementHelpers.getWebElementsByIdAndText;
+  getWebElementText: typeof ElementHelpers.getWebElementText;
+  getWebElementValue: typeof ElementHelpers.getWebElementValue;
+  waitWebElementByTestId: typeof ElementHelpers.waitWebElementByTestId;
+  tapWebElementByTestId: typeof ElementHelpers.tapWebElementByTestId;
+  typeTextByWebTestId: typeof ElementHelpers.typeTextByWebTestId;
+}
 
 declare global {
   var IS_FAILED: boolean;
@@ -75,51 +123,54 @@ declare global {
   var typeTextByWebTestId: typeof ElementHelpers.typeTextByWebTestId;
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const g = globalThis as unknown as GlobalExtensions & typeof globalThis;
+
 export default async () => {
   await globalSetup();
-  global.IS_FAILED = false;
+  g.IS_FAILED = false;
 
-  global.app = new Application();
-  global.webSocket = {
+  g.app = new Application();
+  g.webSocket = {
     wss: undefined,
     ws: undefined,
     messages: {},
     e2eBridgeServer: new Subject<ServerData>(),
   };
-  global.jestExpect = expect;
-  global.Currency = Currency;
-  global.Delegate = Delegate;
-  global.Account = Account;
-  global.Transaction = Transaction;
-  global.Fee = Fee;
-  global.AppInfos = AppInfos;
-  global.Swap = Swap;
+  g.jestExpect = expect;
+  g.Currency = Currency;
+  g.Delegate = Delegate;
+  g.Account = Account;
+  g.Transaction = Transaction;
+  g.Fee = Fee;
+  g.AppInfos = AppInfos;
+  g.Swap = Swap;
 
-  global.waitForElementById = ElementHelpers.waitForElementById;
-  global.waitForElementByText = ElementHelpers.waitForElementByText;
-  global.getElementById = ElementHelpers.getElementById;
-  global.getElementsById = ElementHelpers.getElementsById;
-  global.getElementByText = ElementHelpers.getElementByText;
-  global.getWebElementById = ElementHelpers.getWebElementById;
-  global.getWebElementByTag = ElementHelpers.getWebElementByTag;
-  global.IsIdVisible = ElementHelpers.IsIdVisible;
-  global.tapById = ElementHelpers.tapById;
-  global.tapByText = ElementHelpers.tapByText;
-  global.tapByElement = ElementHelpers.tapByElement;
-  global.typeTextById = ElementHelpers.typeTextById;
-  global.typeTextByElement = ElementHelpers.typeTextByElement;
-  global.clearTextByElement = ElementHelpers.clearTextByElement;
-  global.performScroll = ElementHelpers.performScroll;
-  global.scrollToText = ElementHelpers.scrollToText;
-  global.scrollToId = ElementHelpers.scrollToId;
-  global.getTextOfElement = ElementHelpers.getTextOfElement;
-  global.getIdByRegexp = ElementHelpers.getIdByRegexp;
-  global.getIdOfElement = ElementHelpers.getIdOfElement;
-  global.getWebElementByTestId = ElementHelpers.getWebElementByTestId;
-  global.getWebElementsByIdAndText = ElementHelpers.getWebElementsByIdAndText;
-  global.getWebElementText = ElementHelpers.getWebElementText;
-  global.getWebElementValue = ElementHelpers.getWebElementValue;
-  global.waitWebElementByTestId = ElementHelpers.waitWebElementByTestId;
-  global.tapWebElementByTestId = ElementHelpers.tapWebElementByTestId;
-  global.typeTextByWebTestId = ElementHelpers.typeTextByWebTestId;
+  g.waitForElementById = ElementHelpers.waitForElementById;
+  g.waitForElementByText = ElementHelpers.waitForElementByText;
+  g.getElementById = ElementHelpers.getElementById;
+  g.getElementsById = ElementHelpers.getElementsById;
+  g.getElementByText = ElementHelpers.getElementByText;
+  g.getWebElementById = ElementHelpers.getWebElementById;
+  g.getWebElementByTag = ElementHelpers.getWebElementByTag;
+  g.IsIdVisible = ElementHelpers.IsIdVisible;
+  g.tapById = ElementHelpers.tapById;
+  g.tapByText = ElementHelpers.tapByText;
+  g.tapByElement = ElementHelpers.tapByElement;
+  g.typeTextById = ElementHelpers.typeTextById;
+  g.typeTextByElement = ElementHelpers.typeTextByElement;
+  g.clearTextByElement = ElementHelpers.clearTextByElement;
+  g.performScroll = ElementHelpers.performScroll;
+  g.scrollToText = ElementHelpers.scrollToText;
+  g.scrollToId = ElementHelpers.scrollToId;
+  g.getTextOfElement = ElementHelpers.getTextOfElement;
+  g.getIdByRegexp = ElementHelpers.getIdByRegexp;
+  g.getIdOfElement = ElementHelpers.getIdOfElement;
+  g.getWebElementByTestId = ElementHelpers.getWebElementByTestId;
+  g.getWebElementsByIdAndText = ElementHelpers.getWebElementsByIdAndText;
+  g.getWebElementText = ElementHelpers.getWebElementText;
+  g.getWebElementValue = ElementHelpers.getWebElementValue;
+  g.waitWebElementByTestId = ElementHelpers.waitWebElementByTestId;
+  g.tapWebElementByTestId = ElementHelpers.tapWebElementByTestId;
+  g.typeTextByWebTestId = ElementHelpers.typeTextByWebTestId;
 };

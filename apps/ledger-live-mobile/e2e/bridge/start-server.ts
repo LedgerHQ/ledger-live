@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-/* 
+/*
 
 This script will allow you to upload app.json userdata files into LLM
 
@@ -15,14 +15,27 @@ https://ledgerhq.atlassian.net/wiki/spaces/PTX/pages/4295000160/Switch+devices+w
 import { access, constants } from "fs";
 import path from "path";
 import { init, loadConfig } from "./server";
-import { ServerData } from "./types";
+import { ServerData, MessageData } from "./types";
 import { Subject } from "rxjs";
+import WebSocket from "ws";
 
 const filePath = process.argv[2];
 
 const fullFilePath = path.resolve("e2e", "userdata", `${filePath}.json`);
 
-global.webSocket = {
+interface GlobalExtensions {
+  webSocket: {
+    wss: WebSocket.Server | undefined;
+    ws: WebSocket | undefined;
+    messages: { [id: string]: MessageData };
+    e2eBridgeServer: Subject<ServerData>;
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const g = globalThis as unknown as GlobalExtensions & typeof globalThis;
+
+g.webSocket = {
   wss: undefined,
   ws: undefined,
   messages: {},

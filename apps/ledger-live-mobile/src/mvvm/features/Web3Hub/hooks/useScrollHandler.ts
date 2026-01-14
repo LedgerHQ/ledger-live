@@ -47,9 +47,11 @@ export function useWebviewScrollHandler(clampUpperBound: number) {
   const layoutY = useSharedValue(0);
 
   // Trick until we can properly use reanimated with the webview
-  const timeoutRef = useRef<{ timeout?: NodeJS.Timeout; prevY: number; prevLayoutY: number }>(
-    initialTimeoutRef,
-  );
+  const timeoutRef = useRef<{
+    timeout?: ReturnType<typeof setTimeout>;
+    prevY: number;
+    prevLayoutY: number;
+  }>(initialTimeoutRef);
 
   const onScroll = useCallback(
     (event: Parameters<NoOptionals<WebviewProps>["onScroll"]>[0]) => {

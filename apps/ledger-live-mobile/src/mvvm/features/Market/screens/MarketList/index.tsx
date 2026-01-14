@@ -117,7 +117,9 @@ function View({
   useEffect(() => {
     const intervalId = setInterval(() => refetchData(marketCurrentPage ?? 1), refreshRate);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [marketCurrentPage, refetchData, refreshRate]);
 
   const listProps = {

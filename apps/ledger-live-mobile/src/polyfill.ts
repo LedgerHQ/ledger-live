@@ -19,8 +19,15 @@ loadLocaleData(defaultLanguage);
 import "@azure/core-asynciterator-polyfill";
 import { Platform } from "react-native";
 
+interface GlobalExtensions {
+  Buffer: typeof Buffer;
+}
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const g = globalThis as unknown as GlobalExtensions & typeof globalThis;
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-global.Buffer = require("buffer").Buffer;
+g.Buffer = require("buffer").Buffer;
 
 if (!console.assert) {
   // eslint-disable-next-line @typescript-eslint/no-empty-function

@@ -5,13 +5,20 @@ import EquipmentIdRow from "./EquipmentIdRow";
 
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 
+interface GlobalExtensions {
+  HermesInternal?: unknown;
+}
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const g = globalThis as unknown as GlobalExtensions & typeof globalThis;
+
 export default function Information() {
   return (
     <SettingsNavigationScrollView>
       <EquipmentIdRow />
       <SettingsRow title={"JS Engine"}>
         <Text variant={"body"} fontWeight={"medium"} color={"primary.c80"}>
-          {global.HermesInternal ? "Hermes" : "Jsc"}
+          {g.HermesInternal ? "Hermes" : "Jsc"}
         </Text>
       </SettingsRow>
     </SettingsNavigationScrollView>

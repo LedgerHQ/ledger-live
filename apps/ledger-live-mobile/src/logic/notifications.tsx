@@ -43,7 +43,7 @@ export type DataOfUser = {
 };
 
 export type EventTrigger = {
-  timeout: NodeJS.Timeout;
+  timeout: ReturnType<typeof setTimeout>;
   /** Name of the current screen route that will maybe trigger the push notification modal */
   route_name: ScreenName;
   /** In milliseconds, delay before triggering the push notification modal */
@@ -375,7 +375,7 @@ const useNotifications = () => {
   const openDrawer = useCallback(
     (drawerSource: NotificationsState["drawerSource"], routeName: ScreenName, timer = 0) => {
       dispatch(setRatingsModalLocked(true));
-      const timeout = setTimeout(() => {
+      const timeout: ReturnType<typeof setTimeout> = setTimeout(() => {
         setPushNotificationsModalOpenCallback(true, drawerSource);
       }, timer);
       dispatch(

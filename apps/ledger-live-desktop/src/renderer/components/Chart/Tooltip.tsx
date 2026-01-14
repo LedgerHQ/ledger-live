@@ -77,6 +77,7 @@ const Tooltip = ({ tooltip, renderTooltip, color, data }: TooltipProps) => {
       </div>
       <animated.div
         style={{
+          // @ts-expect-error - react-spring v8 interpolate has incomplete types
           transform: interpolate([x, y], (x, y) => `translate3d(${x}px,${y - 35}px,0)`),
           pointerEvents: "none",
           position: "absolute",
