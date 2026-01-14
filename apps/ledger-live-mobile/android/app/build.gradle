@@ -231,19 +231,4 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1"
 }
 
-// Ensure all packages generate codegen before app's CMake configuration (New Architecture)
-// This fixes "directory does not exist" CMake errors for packages' codegen/jni directories
-afterEvaluate {
-    def cmakeTasks = tasks.matching { it.name.startsWith('configureCMake') }
-    def codegenTasks = project.rootProject.subprojects.collect { subproject ->
-        subproject.tasks.findByName('generateCodegenArtifactsFromSchema')
-    }.findAll { it != null }
-    
-    cmakeTasks.each { cmakeTask ->
-        codegenTasks.each { codegenTask ->
-            cmakeTask.dependsOn codegenTask
-        }
-    }
-}
-
 apply plugin: 'kotlin-android'

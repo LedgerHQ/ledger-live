@@ -38,7 +38,7 @@
     "ios:sync:profiles": "bundle exec fastlane ios sync_ios_profiles",
     "ios:bundle-visualizer": "react-native-bundle-visualizer --platform ios --dev false",
     "android:apk:local": "bundle exec fastlane android apk_local --env android.staging",
-    "preandroid:apk": "bundle install",
+    "preandroid:apk": "bundle install && node scripts/ensure-codegen-dirs.mjs",
     "android:apk": "bundle exec fastlane android apk --env android.staging",
     "preandroid:ci:playstore": "bundle install",
     "android:ci:playstore": "bundle exec fastlane android ci_playstore --env android.release",
