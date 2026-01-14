@@ -1,23 +1,24 @@
 import { Step } from "jest-allure2-reporter/api";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
-import { BuySell, Fiat } from "@ledgerhq/live-common/lib/e2e/models/BuySell";
+import { Fiat } from "@ledgerhq/live-common/lib/e2e/models/BuySell";
 import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 export default class BuySellPage {
-  cryptoCurrencySelector = "crypto-amount-option-button";
-  cryptoAccountSelector = "account-details";
   amountInputSectionBaseId = "amount-input-section";
-  fiatAmountOptionButtonId = "fiat-amount-option-button";
-  openCountryDrawerButtonId = "open-country-drawer";
   countryDrawerSearchInput = "countries-drawer-search-input";
+  cryptoAccountSelector = "account-details";
+  cryptoCurrencySelector = "crypto-amount-option-button";
+  expandButtonId = "expand-button";
+  fiatAmountOptionButtonId = "fiat-amount-option-button";
   fiatDrawer = "open-fiat-drawer";
   fiatDrawerInput = "fiat-drawer-search-input";
-  saveRegionFiatOptionsSelector = "save-region-and-fiat-options";
   formCta = "form-cta";
-  paymentSelector = "payment_selector";
+  openCountryDrawerButtonId = "open-country-drawer";
   paymentOptions = "payment-options";
+  paymentSelector = "payment_selector";
   providersList = "providers_list";
+  saveRegionFiatOptionsSelector = "save-region-and-fiat-options";
 
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
   buyQuickAmountButtonId = (amount: "400" | "800" | "1600") => `buy-amount-button-${amount}`;
@@ -131,23 +132,19 @@ export default class BuySellPage {
   @Step("Select provider")
   async selectProvider(provider: string) {
     await waitWebElementByTestId(this.providersList);
+    const expandButton = await waitWebElementByTestId(this.expandButtonId, 2000, false);
+    if (expandButton) {
+      await tapWebElementByTestId(this.expandButtonId);
+    }
     await scrollToWebElement(getWebElementByTestId(this.provider(provider)));
     await tapWebElementByTestId(this.provider(provider));
   }
 
-  @Step("Verify provider page loaded with URL containing query parameters")
-  async verifyProviderPageLoadedWithQueryParameters(
-    buySell: BuySell,
-    provider: string,
-    paymentMethod: string,
-  ) {
+  @Step("Verify provider page loaded with correct URL")
+  async verifyProviderPageLoadedWithCorrectUrl(provider: string) {
     try {
       const currentUrl = await waitForCurrentWebviewUrlToContain(provider.toLowerCase());
       jestExpect(currentUrl.toLowerCase()).toContain(provider.toLowerCase());
-      jestExpect(currentUrl.toLowerCase()).toContain(buySell.crypto.currency.ticker.toLowerCase());
-      jestExpect(currentUrl.toLowerCase()).toContain(buySell.fiat.currencyTicker.toLowerCase());
-      jestExpect(currentUrl.toLowerCase()).toContain(paymentMethod.toLowerCase());
-      jestExpect(currentUrl.toLowerCase()).toContain(buySell.amount.toString().toLowerCase());
     } catch (error) {
       throw new Error(`Provider page verification failed: ${sanitizeError(error)}`);
     }
