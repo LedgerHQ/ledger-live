@@ -36,8 +36,6 @@ export const urls = {
     "https://www.ledger.com/pages/ledger-nano-x#utm_source=Ledger%20Live%20Desktop%20App&utm_medium=Ledger%20Live&utm_campaign=Ledger%20Live%20Desktop%20-%20Banner%20LNX",
   // Ledger support
   faq: "https://support.ledger.com",
-  mevProtection:
-    "https://support.ledger.com/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
   chatbot: "https://ledgercustomersuccess.my.salesforce-sites.com/fullscreenbot",
   ledgerStatus: "https://status.ledger.com/",
   syncErrors: "https://support.ledger.com/article/360012207759-zd",
@@ -200,7 +198,6 @@ export const urls = {
     "https://shop.ledger.com?utm_source=live&utm_medium=draw&utm_campaign=ledger_sync_lns_uncompatible&utm_content=to_shop",
   learnMoreLedgerSync:
     "https://www.ledger.com/blog-ledger-sync-synchronize-your-crypto-accounts-effortless-private-and-secure",
-  charonLearnMore: "https://shop.ledger.com/products/ledger-recovery-key",
 
   // Node errors
   txBroadcastErrors: {
@@ -219,6 +216,9 @@ export const urls = {
   },
   canton: {
     learnMore: "https://support.ledger.com/article/Canton-Network",
+  },
+  concordium: {
+    learnMore: "https://support.ledger.com",
   },
 };
 

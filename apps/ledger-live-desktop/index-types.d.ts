@@ -39,8 +39,6 @@ declare namespace Electron {
 }
 
 interface Window {
-  // Electron's nodeIntegration provides require on window
-  require: NodeJS.Require;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
 
@@ -49,6 +47,7 @@ interface Window {
     appLoaded: () => void;
     reloadRenderer: () => void;
     openWindow: (id: number) => void;
+    grpc: any;
   };
 
   // for debugging purposes

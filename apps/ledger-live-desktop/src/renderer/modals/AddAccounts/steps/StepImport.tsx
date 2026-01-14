@@ -1,5 +1,5 @@
 import React, { useEffect, PureComponent } from "react";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { concat, from, Subscription } from "rxjs";
@@ -7,6 +7,7 @@ import { ignoreElements, filter, map, retry } from "rxjs/operators";
 import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
+import { isConcordiumAccount } from "@ledgerhq/coin-concordium/bridge/serialization";
 import { openModal } from "~/renderer/actions/modals";
 import { DeviceShouldStayInApp, UnresponsiveDeviceError } from "@ledgerhq/errors";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
@@ -61,7 +62,7 @@ const LoadingRow = styled(Box).attrs(() => ({
   mt: 1,
 }))`
   height: 48px;
-  border: 1px dashed ${p => p.theme.colors.neutral.c70};
+  border: 1px dashed ${p => p.theme.colors.palette.text.shade60};
 `;
 const SectionAccounts = ({ defaultSelected, ...rest }: Props) => {
   // componentDidMount-like effect
@@ -227,7 +228,7 @@ class StepImport extends PureComponent<
     const { showAllCreatedAccounts } = this.state;
     return (
       <Box ml="auto" mr={3}>
-        <Box color="neutral.c70" horizontal alignItems="center">
+        <Box color="palette.text.shade60" horizontal alignItems="center">
           <Text fontSize={2}>
             <Trans i18nKey="addAccounts.createNewAccount.showAllAddressTypes" />
           </Text>
@@ -299,7 +300,7 @@ class StepImport extends PureComponent<
       creatable = (
         <Trans i18nKey="addAccounts.createNewAccount.noOperationOnLastAccount" parent="div">
           {" "}
-          <Text ff="Inter|SemiBold" color="neutral.c100">
+          <Text ff="Inter|SemiBold" color="palette.text.shade100">
             {getDefaultAccountName(alreadyEmptyAccount)}
           </Text>{" "}
         </Trans>
@@ -311,7 +312,7 @@ class StepImport extends PureComponent<
       creatable = (
         <Trans i18nKey="addAccounts.createNewAccount.noAccountToCreate" parent="div">
           {" "}
-          <Text ff="Inter|SemiBold" color="neutral.c100">
+          <Text ff="Inter|SemiBold" color="palette.text.shade100">
             {currencyName}
           </Text>{" "}
         </Trans>
@@ -361,8 +362,8 @@ class StepImport extends PureComponent<
 
           {scanStatus === "scanning" ? (
             <LoadingRow>
-              <Spinner color="neutral.c70" size={16} />
-              <Box ml={2} ff="Inter|Regular" color="neutral.c70" fontSize={4}>
+              <Spinner color="palette.text.shade60" size={16} />
+              <Box ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
                 {t("common.sync.syncing")}
               </Box>
             </LoadingRow>
@@ -407,11 +408,35 @@ export const StepImportFooter = ({
       !a.cantonResources.isOnboarded,
   );
 
+  const hasConcordiumCreatableAccounts = scannedAccounts.some(
+    a =>
+      checkedAccountsIds.includes(a.id) &&
+      a.currency?.family === "concordium" &&
+      isConcordiumAccount(a) &&
+      !a.concordiumResources.isOnboarded,
+  );
+
   const goCantonOnboard = () => {
     onCloseModal();
     const mainCurrency = currency?.type === "TokenCurrency" ? currency.parentCurrency : currency;
     dispatch(
       openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
+        currency: mainCurrency,
+        device: device,
+        selectedAccounts: checkedAccountsIds
+          .map(id => scannedAccounts.find(a => a.id === id))
+          .filter((account): account is Account => Boolean(account)),
+        existingAccounts,
+        editedNames,
+      }),
+    );
+  };
+
+  const goConcordiumOnboard = () => {
+    onCloseModal();
+    const mainCurrency = currency?.type === "TokenCurrency" ? currency.parentCurrency : currency;
+    dispatch(
+      openModal("MODAL_CONCORDIUM_ONBOARD_ACCOUNT", {
         currency: mainCurrency,
         device: device,
         selectedAccounts: checkedAccountsIds
@@ -436,6 +461,8 @@ export const StepImportFooter = ({
     : async () => {
         if (hasCantonCreatableAccounts) {
           goCantonOnboard();
+        } else if (hasConcordiumCreatableAccounts) {
+          goConcordiumOnboard();
         } else {
           await onClickAdd();
           transitionTo("finish");

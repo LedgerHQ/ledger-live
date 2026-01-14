@@ -267,6 +267,8 @@
     "minute": "Minute",
     "minute_other": "Minutes",
     "minute_short": "min",
+    "second": "Second",
+    "second_other": "Seconds",
     "second_short": "sec",
     "hour": "Hour",
     "hour_other": "Hours",
@@ -484,9 +486,7 @@
       "celo_title": "Ledger Nano S™ does not support swapping Celo",
       "celo_description": "To swap Celo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "monad_title": "Ledger Nano S™ does not support swapping Monad",
-      "monad_description": "To swap Monad, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "zcash_title": "Ledger Nano S™ does not support swapping Zcash",
-      "zcash_description": "To swap Zcash, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "monad_description": "To swap Monad, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
@@ -723,7 +723,7 @@
     "stake": "Stake",
     "delegatedAssets": "Delegated assets",
     "undelegating": "Undelegating",
-    "availableBalanceTooltip": "Funds you can use right now.",
+    "availableBalanceTooltip": "This amount is disposable.",
     "frozenAssetsTooltip": "Frozen assets are used in the Tron voting process. This represents your total number of votes.",
     "bandwidthTooltip": "Freeze assets to gain bandwidth",
     "energyTooltip": "Freeze assets to gain energy",
@@ -1186,17 +1186,6 @@
         "description": "You can transfer crypto from any exchange or wallet to your Ledger Wallet for maximum security.",
         "depositButton": "Secure my crypto",
         "skipButton": "Maybe later"
-      },
-      "sync": {
-        "timelineTitle": "Wallet sync",
-        "timelineTitleCompleted": "Sync enabled",
-        "title": "Enable sync for your wallet",
-        "description": "Keep your portfolio up to date when switching computers or using a phone",
-        "skipButton": "I’ll do it later",
-        "skipTitle": "Skip enabling sync?",
-        "skipDescription": "If you skip, you'll have to manually re-add all your crypto accounts if you ever switch to a new phone or computer. You can always disable it from your Ledger Wallet settings.",
-        "skipConfirm": "Yes, skip",
-        "skipNo": "No, enable sync"
       },
       "backup": {
         "title": "Backup for your Secret Recovery Phrase",
@@ -3638,8 +3627,6 @@
       "activeTooltip": "Active amount generate rewards",
       "inactiveTooltip": "Inactive amount does not generate rewards",
       "delegatedInfoTooltip": "Total amount that is delegated to validators.",
-      "inactiveStakeTooltip": "Inactive stake that can be withdrawn without deactivating your delegation.",
-      "inactiveStakeTitle": "Withdrawable Rewards",
       "withdrawableInfoTooltip": "Total amount that is withdrawable from delegations.",
       "withdrawableTitle": "Withdrawable",
       "statusUpdateNotice": "The status of the delegation will be updated when the transaction is confirmed.",
@@ -4455,7 +4442,6 @@
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Wallet crypto accounts across different phones and computers.",
-      "walletSyncDescription": "Keep your portfolio up to date when switching computers or use a phone",
       "mevProtection": "MEV Protection",
       "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
       "mevProtectionLearnMore": "Privacy notice"
@@ -4489,10 +4475,6 @@
       "analyticsConsole": {
         "title": "Allow Analytics Console",
         "desc": "Display and allow opening analytics console."
-      },
-      "themeConsole": {
-        "title": "Theme Toggle",
-        "desc": "Display a floating overlay to quickly switch themes."
       },
       "brazeTools": {
         "title": "Braze Tools",
@@ -4584,10 +4566,7 @@
       },
       "modularDrawerDevTool": {
         "title": "Modular Drawer Dev Tool",
-        "description": "Allows you to test the Modular Drawer easily",
-        "openDrawer": "Open Drawer",
-        "debugDialog": "Debug Dialog",
-        "debugDuplicates": "Debug Duplicates"
+        "description": "Allows you to test the Modular Drawer easily"
       },
       "walletFeaturesDevTool": {
         "title": "Wallet Features Dev Tool",
@@ -5145,7 +5124,6 @@
           "recoveryPhrase": "Recovery phrase",
           "hideRecoveryPhrase": "Hide recovery phrase",
           "pairNano": "Connect nano",
-          "enableSync": "Synchronization",
           "secureYourCrypto": "Secure your crypto"
         },
         "screens": {
@@ -5438,14 +5416,6 @@
             "help": {
               "help": "Need help",
               "descr": "Don't know what you have to do? Get some help to close this step."
-            }
-          },
-          "enableSync": {
-            "title": "Enable sync for your wallet",
-            "description": "Keep your portfolio up to date when switching phones or using a computer.",
-            "buttons": {
-              "next": "Continue",
-              "nextSecondary": "I'll do it later"
             }
           },
           "secureYourCrypto": {
@@ -5804,28 +5774,14 @@
     "canton": {
       "commentPlaceholder": "Optional",
       "comment": "Comment",
-      "expiryDuration": {
-        "label": "Expiry duration",
-        "summaryLabel": "Expiry Offer",
-        "threeHours": "3 hours",
-        "sixHours": "6 hours",
-        "oneDay": "1 day",
-        "oneWeek": "1 week",
-        "oneMonth": "30 days"
-      },
-      "account": {
-        "lockedBalance": "Locked",
-        "lockedBalanceTooltip": "Your funds are locked in offers you've sent to others. You can cancel these offers any time, or wait for the recipient to accept or reject.",
-        "withdrawableBalance": "Withdrawable",
-        "withdrawableBalanceTooltip": "Funds you can reclaim from offers you sent that have expired. Withdraw to move these back to your available balance."
-      },
       "addAccount": {
         "title": "Add Canton Account",
         "reonboard": {
           "title": "Account Update Required",
           "init": "A topology change has been detected in the Canton network. Please re-onboard your account to continue using it.",
           "success": "Account updated successfully",
-          "successDescription": "You can now continue using your account"
+          "successDescription": "You can now continue using your account",
+          "successDescription_other": "You can now continue using your accounts"
         },
         "onboard": {
           "title": "Onboarding",
@@ -5834,6 +5790,8 @@
           "init": "Set up your new Canton account by clicking Continue",
           "onboarded": "Onboarded accounts",
           "success": "Your new Canton account has been created and onboarded.",
+          "successDescription": "You can now use your account",
+          "successDescription_other": "You can now use your accounts",
           "error": "Failed to onboard new account. Please try again.",
           "error429": "Canton Network currently supports a limited number of account creations per day. Please try again later.",
           "status": {
@@ -5870,12 +5828,10 @@
       "pendingTransactions": {
         "title": "Pending Transactions ({{count}})",
         "incoming": {
-          "title": "Incoming transfer to review ({{count}})",
-          "detailsTitle": "Incoming transfer details"
+          "title": "Incoming Offers ({{count}})"
         },
         "outgoing": {
-          "title": "Outgoing Offers ({{count}})",
-          "detailsTitle": "Outgoing transfer details"
+          "title": "Outgoing Offers ({{count}})"
         },
         "pending": "Pending",
         "expired": "Expired",
@@ -5923,6 +5879,62 @@
               "description": "The transfer offer has been successfully withdrawn."
             }
           }
+        }
+      }
+    },
+    "concordium": {
+      "addAccount": {
+        "title": "Add Concordium Account",
+        "acknowledge": {
+          "title": "Acknowledgement",
+          "description": "Concordium requires identity verification (KYC) for all accounts. To create your account, you'll complete this process in the Concordium ID app.",
+          "list": {
+            "1": "<0>You'll be redirected outside Ledger Live</0> to complete identity verification",
+            "2": "<0>Identity verification is mandatory</0> – Required by Concordium's blockchain protocol",
+            "3": "<0>Your Ledger stays secure</0> – Only you can sign and create accounts with your device",
+            "4": "<0>Already verified with Concordium?</0> – Your existing identity can be reused"
+          },
+          "allow": "Allow"
+        },
+        "identity": {
+          "title": "Connect",
+          "account": "Account",
+          "newAccount": "New Account",
+          "init": "Pressing Allow means you’re ready to continue to the KYC identity check needed to verify your account.",
+          "scanQRCode": "Scan the QR code with your mobile device to connect your Concordium ID app.",
+          "connecting": "Connecting to Concordium ID app...",
+          "onboarded": "Onboarded accounts",
+          "success": "Successfully connected to Concordium ID app.",
+          "error": "Failed to onboard new account. Please try again.",
+          "errorTimeout": "Connection timed out. The mobile app may not have connected or the session proposal was rejected. Please try again.",
+          "status": {
+            "prepare": "Preparing account onboarding...",
+            "submit": "Onboarding account...",
+            "default": "Processing..."
+          }
+        },
+        "create": {
+          "title": "Create Account",
+          "init": {
+            "title": "Successfully connected to Concordium ID app"
+          },
+          "prepare": {
+            "title": "To create an account, match the code below in the Concordium ID app",
+            "resendButton": "Resend confirmation",
+            "resendDescription": "Confirmation can be resend in <0>{{count}}</0> {{unit}}"
+          },
+          "success": "Your Concordium account has been created successfully.",
+          "error": "Failed to create account. Please try again.",
+          "button": "Create",
+          "processing": "Processing...",
+          "status": {
+            "prepare": "Preparing account creation...",
+            "submit": "Creating account...",
+            "default": "Processing..."
+          }
+        },
+        "finish": {
+          "title": "Confirmation"
         }
       }
     },
@@ -6144,11 +6156,6 @@
     "LatestFirmwareVersionRequired": {
       "title": "Update Device Firmware",
       "description": "Please update your device firmware to the latest version to access this feature"
-    },
-    "UnsupportedFeatureError": {
-      "title": "Unsupported feature",
-      "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details.",
-      "ctaLabel": "Contact Ledger Support"
     },
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
@@ -7396,12 +7403,6 @@
       }
     }
   },
-  "dialogs": {
-    "selectAccount": {
-      "description": "You don't have {{network}} accounts yet. Please add one to continue",
-      "addAccount": "Add account"
-    }
-  },
   "drawers": {
     "selectCurrency": {
       "title": "choose asset"
@@ -7664,11 +7665,6 @@
         "title": "Sync successful!",
         "desc": "Changes in your crypto accounts will now automatically appear across Ledger Wallet apps on synched phones and computers. "
       },
-      "complete": {
-        "title": "Sync complete",
-        "description": "From now on, your portfolio will automatically stay sync across all your devices.",
-        "syncAnother": "Using Ledger on Mobile? Scan QR code "
-      },
       "synchAnother": "Sync with another Ledger Wallet app",
       "close": "Close"
     },
@@ -7680,7 +7676,7 @@
         "cancel": "Keep sync"
       },
       "deleteBackupSuccess": {
-        "title": "Your Ledger Wallet apps are no longer synced",
+        "title": "Your Ledger Wallet apps are no longer synched",
         "description": "You can turn on sync anytime"
       },
       "deleteBackupError": {
@@ -7835,17 +7831,6 @@
       "title": "A network error occurred",
       "description": "Something went wrong, please try again or contact Ledger Support if in doubt.",
       "cta": "Retry"
-    },
-    "errors": {
-      "network": {
-        "title": "Connection failed",
-        "description": "No internet connection. Please try again"
-      },
-      "backend": {
-        "title": "Connection failed",
-        "description": "Something went wrong on our end. Please try again later"
-      },
-      "cta": "Try again"
     }
   },
   "marketBanner": {
