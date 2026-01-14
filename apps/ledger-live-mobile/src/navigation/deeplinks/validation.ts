@@ -290,6 +290,14 @@ export function validateEarnDepositScreen(
   };
 }
 
+export function validateLargeMoverCurrencyIds(currencyIds: string | null): string | null {
+  if (!currencyIds || currencyIds?.trim() === "") {
+    return null;
+  }
+
+  return currencyIds.trim().toUpperCase();
+}
+
 /**
  * Validates earn menu modal parameters
  */
