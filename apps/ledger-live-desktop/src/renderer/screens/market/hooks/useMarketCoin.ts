@@ -15,14 +15,18 @@ import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/
 import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
 import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { findCryptoCurrencyByKeyword } from "@ledgerhq/cryptoassets/currencies";
 
 export const useMarketCoin = () => {
   const marketParams = useSelector(marketParamsSelector);
   const { colors } = useTheme();
   const dispatch = useDispatch();
-  const { currencyId } = useParams<{ currencyId: string }>();
-  const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
+  const params = useParams<{ currencyId: string }>();
+  const starredMarketCoins = useSelector(starredMarketCoinsSelector);
   const { supportedCounterCurrencies } = useMarketDataProvider();
+
+  const currencyId =
+    findCryptoCurrencyByKeyword(params.currencyId.toLowerCase())?.id ?? params.currencyId;
 
   const isStarred = starredMarketCoins.includes(currencyId);
   const locale = useSelector(localeSelector);
