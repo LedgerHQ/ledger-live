@@ -6,9 +6,8 @@ import {
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import concordiumCoinConfig, { CONCORDIUM_USE_SOFTWARE_SIGNER } from "../config";
+import concordiumCoinConfig from "../config";
 import resolver from "../signer";
-import { createMockSigner, generateMockKeyPair } from "../test/concordiumTestUtils";
 import type { Transaction } from "../types";
 import { ConcordiumAccount, ConcordiumCurrencyBridge, ConcordiumSigner } from "../types";
 import type { ConcordiumCoinConfig } from "../types/config";
@@ -24,21 +23,11 @@ import { buildSignOperation } from "./signOperation";
 import { getAccountShape } from "./sync";
 import { updateTransaction } from "./updateTransaction";
 
-function createMockSignerContext(): SignerContext<ConcordiumSigner> {
-  return <U>(_deviceId: string, fn: (signer: ConcordiumSigner) => Promise<U>): Promise<U> => {
-    const keyPair = generateMockKeyPair();
-    const mockSigner = createMockSigner(keyPair);
-    return fn(mockSigner);
-  };
-}
-
 export function createBridges(
   signerContext: SignerContext<ConcordiumSigner>,
   coinConfig: CoinConfig<ConcordiumCoinConfig>,
 ) {
   concordiumCoinConfig.setCoinConfig(coinConfig);
-
-  signerContext = CONCORDIUM_USE_SOFTWARE_SIGNER ? createMockSignerContext() : signerContext;
 
   const getAddress = resolver(signerContext);
   const receive = buildReceive(signerContext);

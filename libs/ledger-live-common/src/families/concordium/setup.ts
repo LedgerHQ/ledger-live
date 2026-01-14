@@ -1,11 +1,6 @@
 import type { ConcordiumSigner } from "@ledgerhq/coin-concordium";
 import { createBridges } from "@ledgerhq/coin-concordium/bridge/index";
-import { CONCORDIUM_USE_SOFTWARE_SIGNER } from "@ledgerhq/coin-concordium/config";
 import concordiumResolver from "@ledgerhq/coin-concordium/signer";
-import {
-  createMockSigner,
-  generateMockKeyPair,
-} from "@ledgerhq/coin-concordium/test/concordiumTestUtils";
 import type { ConcordiumCoinConfig } from "@ledgerhq/coin-concordium/types";
 import { ConcordiumAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-concordium/types";
 import Concordium from "@ledgerhq/hw-app-concordium";
@@ -18,11 +13,6 @@ import { getCurrencyConfiguration } from "../../config";
 import type { Resolver } from "../../hw/getAddress/types";
 
 const createSigner: CreateSigner<ConcordiumSigner> = (transport: Transport) => {
-  if (CONCORDIUM_USE_SOFTWARE_SIGNER) {
-    const keyPair = generateMockKeyPair();
-    return createMockSigner(keyPair);
-  }
-
   const hwApp = new Concordium(transport);
 
   return {

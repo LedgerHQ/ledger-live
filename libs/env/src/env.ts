@@ -898,11 +898,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "WalletConnect Project ID for concordium",
   },
-  CONCORDIUM_USE_SOFTWARE_SIGNER: {
-    parser: boolParser,
-    def: false,
-    desc: "Use software signer for Concordium testing/development instead of hardware device",
-  },
   PLAYWRIGHT_RUN: {
     def: false,
     parser: boolParser,

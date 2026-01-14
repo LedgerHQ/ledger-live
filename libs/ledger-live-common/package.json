@@ -29,12 +29,6 @@
       ],
       "test-helpers/*": [
         "lib/test-helpers/*"
-      ],
-      "hooks/useAccountOnboarding": [
-        "lib/hooks/useAccountOnboarding/index"
-      ],
-      "hooks/useAccountOnboarding/*": [
-        "lib/hooks/useAccountOnboarding/*"
       ]
     }
   },
@@ -62,16 +56,6 @@
     "./hooks": {
       "require": "./lib/hooks/index.js",
       "default": "./lib-es/hooks/index.js"
-    },
-    "./hooks/useAccountOnboarding": {
-      "types": "./lib/hooks/useAccountOnboarding/index.d.ts",
-      "require": "./lib/hooks/useAccountOnboarding/index.js",
-      "default": "./lib-es/hooks/useAccountOnboarding/index.js"
-    },
-    "./hooks/useAccountOnboarding/*": {
-      "types": "./lib/hooks/useAccountOnboarding/*.d.ts",
-      "require": "./lib/hooks/useAccountOnboarding/*.js",
-      "default": "./lib-es/hooks/useAccountOnboarding/*.js"
     },
     "./e2e": {
       "require": "./lib/e2e/index.js",
