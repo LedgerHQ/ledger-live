@@ -6,8 +6,10 @@ import { getTransactionStatus } from "./getTransactionStatus";
 import * as logicValidateMemo from "./logic/validateMemo";
 import { TonAccount, Transaction } from "./types";
 
+jest.mock("./logic/validateMemo");
+
 describe("getTransactionStatus", () => {
-  const spiedValidateMemo = jest.spyOn(logicValidateMemo, "validateMemo");
+  const spiedValidateMemo = logicValidateMemo.validateMemo as jest.Mock;
 
   beforeEach(() => {
     spiedValidateMemo.mockClear();

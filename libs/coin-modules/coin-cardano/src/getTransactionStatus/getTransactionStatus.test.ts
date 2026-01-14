@@ -12,13 +12,18 @@ import { getTransactionStatus } from "./getTransactionStatus";
 import * as handler from "./handler";
 
 jest.mock("../logic/validateMemo");
+jest.mock("./handler", () => {
+  const actual = jest.requireActual("./handler");
+  return {
+    ...actual,
+    getTransactionStatusByTransactionMode: jest.fn(actual.getTransactionStatusByTransactionMode),
+  };
+});
 
 describe("getTransactionStatus", () => {
-  const spiedValidateMemo = jest.spyOn(logicValidateMemo, "validateMemo");
-  const spiedGetTransactionStatusByTransactionMode = jest.spyOn(
-    handler,
-    "getTransactionStatusByTransactionMode",
-  );
+  const spiedValidateMemo = logicValidateMemo.validateMemo as jest.Mock;
+  const spiedGetTransactionStatusByTransactionMode =
+    handler.getTransactionStatusByTransactionMode as jest.Mock;
   const spiedIsAddressSanctioned = jest.spyOn(sanction, "isAddressSanctioned");
   const spiedGetCoinConfig = jest.spyOn(coinConfig, "getCoinConfig");
 

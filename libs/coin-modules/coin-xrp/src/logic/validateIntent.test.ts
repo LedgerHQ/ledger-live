@@ -28,13 +28,15 @@ jest.mock("./utils", () => ({
   }),
 }));
 
+jest.mock("./validateMemo");
+
 const reserveBase = 10_000_000n; // 10 XRP (drops)
 
 const SENDER = "rPSCfmnX3t9jQJG5RNcZtSaP5UhExZDue4";
 const RECIPIENT = "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe";
 
 describe("validateIntent", () => {
-  const spiedValidateMemo = jest.spyOn(logicValidateMemo, "validateMemo");
+  const spiedValidateMemo = logicValidateMemo.validateMemo as jest.Mock;
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -360,7 +362,7 @@ describe("validateIntent", () => {
           memos,
         },
       } as TransactionIntent<XrpMapMemo>,
-      { value: 10_000n },
+      [{ value: 10_000n, asset: { type: "native" }, locked: 0n }],
     );
     expect(status.errors.transaction).not.toBeDefined();
 
@@ -401,7 +403,13 @@ describe("validateIntent", () => {
           memos,
         },
       } as TransactionIntent<XrpMapMemo>,
-      { value: 10_000n },
+      [
+        {
+          value: 10_000n,
+          asset: { type: "native" },
+          locked: 0n,
+        },
+      ],
     );
     expect(status.errors.transaction).toBeInstanceOf(XrpInvalidMemoError);
 

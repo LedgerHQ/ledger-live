@@ -18,6 +18,15 @@ import { CasperAccount, Transaction } from "../types";
 import * as bridgeHelpersAddresses from "./bridgeHelpers/addresses";
 import { getTransactionStatus } from "./getTransactionStatus";
 
+jest.mock("../logic/validateMemo");
+jest.mock("./bridgeHelpers/addresses", () => {
+  const actual = jest.requireActual("./bridgeHelpers/addresses");
+  return {
+    ...actual,
+    isAddressValid: jest.fn(actual.isAddressValid),
+  };
+});
+
 describe("getTransactionStatus", () => {
   // Create fixtures
   const mockAccount = createMockAccount();

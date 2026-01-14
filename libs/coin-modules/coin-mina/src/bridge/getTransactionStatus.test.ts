@@ -21,12 +21,19 @@ jest.mock("@ledgerhq/coin-framework/currencies", () => ({
   formatCurrencyUnit: jest.fn().mockReturnValue("0.1 MINA"),
 }));
 jest.mock("./getEstimatedFees");
+jest.mock("../logic/validateMemo", () => {
+  const actual = jest.requireActual("../logic/validateMemo");
+  return {
+    ...actual,
+    validateMemo: jest.fn(actual.validateMemo), // replace with mock
+  };
+});
 
 describe("getTransactionStatus", () => {
   // Standard test fixtures
   const mockAccount = createMockAccount();
   const mockTransaction = createMockTransaction({ amount: new BigNumber(800) });
-  const spiedValidateMemo = jest.spyOn(logicValidateMemo, "validateMemo");
+  const spiedValidateMemo = logicValidateMemo.validateMemo as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();

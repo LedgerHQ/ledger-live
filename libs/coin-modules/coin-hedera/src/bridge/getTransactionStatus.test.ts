@@ -55,30 +55,10 @@ jest.mock("../preload-data", () => ({
   getCurrentHederaPreloadData: jest.fn(),
 }));
 
-// Mock validateMemo if it exists as a separate module in this branch
-// In develop branch, validateMemo is a local function, so this mock won't be used
-jest.mock("../logic/validateMemo", () => {
-  try {
-    const actual = jest.requireActual("../logic/validateMemo");
-    return {
-      ...actual,
-      validateMemo: jest.fn(),
-    };
-  } catch {
-    // Module doesn't exist (develop branch), return empty mock
-    return {
-      validateMemo: jest.fn(),
-    };
-  }
-});
-
 import * as estimateFees from "../logic/estimateFees";
 import * as logicUtils from "../logic/utils";
 import * as preloadData from "../preload-data";
 import { getTransactionStatus } from "./getTransactionStatus";
-
-// Import validateMemo if it exists as a separate module (feature branch)
-import * as logicValidateMemo from "../logic/validateMemo";
 
 const mockEstimateFees = estimateFees.estimateFees as jest.Mock;
 const mockGetCurrencyToUSDRate = logicUtils.getCurrencyToUSDRate as jest.Mock;
@@ -86,7 +66,6 @@ const mockCheckAccountTokenAssociationStatus =
   logicUtils.checkAccountTokenAssociationStatus as jest.Mock;
 const mockGetCurrentHederaPreloadData = preloadData.getCurrentHederaPreloadData as jest.Mock;
 const mockFindSubAccountById = accountHelpers.findSubAccountById as jest.Mock;
-const mockValidateMemo = logicValidateMemo?.validateMemo as jest.Mock | undefined;
 
 describe("getTransactionStatus", () => {
   const mockedEstimatedFee: EstimateFeesResult = { tinybars: new BigNumber(1) };
@@ -108,10 +87,6 @@ describe("getTransactionStatus", () => {
     mockFindSubAccountById.mockImplementation(
       jest.requireActual("@ledgerhq/coin-framework/account").findSubAccountById,
     );
-    // Mock validateMemo if it exists as a separate module
-    if (mockValidateMemo) {
-      mockValidateMemo.mockReturnValue(true);
-    }
   });
 
   afterAll(() => {

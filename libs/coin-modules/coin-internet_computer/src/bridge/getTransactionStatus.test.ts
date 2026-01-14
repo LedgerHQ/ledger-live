@@ -7,9 +7,10 @@ import { Transaction } from "../types";
 import { getTransactionStatus } from "./getTransactionStatus";
 
 jest.mock("@zondax/ledger-live-icp/utils");
+jest.mock("../logic/validateMemo");
 
 describe("getTransactionStatus", () => {
-  const spiedValidateMemo = jest.spyOn(logicValidateMemo, "validateMemo");
+  const spiedValidateMemo = logicValidateMemo.validateMemo as jest.Mock;
   const spiedValidateAddress = jest.mocked(validateAddress);
 
   beforeEach(() => {
