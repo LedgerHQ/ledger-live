@@ -469,10 +469,6 @@ platform :android do
     end
 
     gradle(task: "clean", project_dir: 'android/')
-    
-    # Create codegen directories after clean to fix RN 0.79 New Architecture CMake errors
-    sh("node", "../scripts/ensure-codegen-dirs.mjs")
-    
     if (options[:local])
       gradle(
         tasks: tasks,
