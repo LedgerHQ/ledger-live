@@ -14,14 +14,24 @@ import { addStarredMarketCoins, removeStarredMarketCoins } from "~/actions/setti
 import VersionNumber from "react-native-version-number";
 import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { findCryptoCurrencyByKeyword } from "@ledgerhq/cryptoassets/currencies";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
 >;
 
-function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
+function useMarketDetailViewModel({ route }: NavigationProps) {
   const { params } = route;
-  const { currencyId, resetSearchOnUmount } = params;
+
+  const currencyId = useMemo(() => {
+    const currency = findCryptoCurrencyByKeyword(params.currencyId.toLowerCase());
+
+    if (!currency) {
+      return params.currencyId;
+    }
+
+    return currency.id;
+  }, [params.currencyId]);
 
   const { marketParams, dataChart, loadingChart, loading, currency, refetch } =
     useMarketCoinDataWithChart({
@@ -71,16 +81,6 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
     }
   }, [readOnlyModeEnabled]);
 
-  useEffect(() => {
-    const resetState = () => {
-      // selectCurrency();
-    };
-    const sub = navigation.addListener("blur", resetState);
-    return () => {
-      sub();
-    };
-  }, [resetSearchOnUmount, navigation]);
-
   const allAccounts = useSelector(accountsSelector).filter(
     account => account.currency.id === currencyId,
   );
@@ -96,10 +96,14 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   );
 
   const toggleStar = useCallback(() => {
-    const action = isStarred ? removeStarredMarketCoins : addStarredMarketCoins;
-    dispatch(action(currencyId));
-
-    if (!isStarred) tryTriggerPushNotificationDrawerAfterAction("add_favorite_coin");
+    const nextIsStarred = !isStarred;
+    if (nextIsStarred) {
+      dispatch(addStarredMarketCoins(currencyId));
+      tryTriggerPushNotificationDrawerAfterAction("add_favorite_coin");
+    }
+    if (!nextIsStarred) {
+      dispatch(removeStarredMarketCoins(currencyId));
+    }
   }, [dispatch, isStarred, currencyId, tryTriggerPushNotificationDrawerAfterAction]);
 
   return {
