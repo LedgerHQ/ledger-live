@@ -8,7 +8,7 @@ jest.mock("../../featureFlags/firebaseFeatureFlags");
 const mockGetFeature = jest.mocked(getFeature);
 
 describe("getFeatureFlagsForLiveApp", () => {
-  const createMockManifest = (featureFlags?: string[]): LiveAppManifest => {
+  const createMockManifest = (featureFlags?: string[] | "*"): LiveAppManifest => {
     return {
       id: "test-app",
       name: "Test App",
@@ -143,5 +143,25 @@ describe("getFeatureFlagsForLiveApp", () => {
       flag2: null,
       flag3: mockFeature,
     });
+  });
+
+  it("should allow all feature flags when manifest featureFlags is wildcard '*' string", () => {
+    const manifest = createMockManifest("*");
+    const mockFeature = createMockFeature(true);
+
+    mockGetFeature.mockReturnValue(mockFeature);
+
+    const result = getFeatureFlagsForLiveApp({
+      requestedFeatureFlagIds: ["flag1", "flag2", "flag3", "flag4"],
+      manifest,
+    });
+
+    expect(result).toEqual({
+      flag1: mockFeature,
+      flag2: mockFeature,
+      flag3: mockFeature,
+      flag4: mockFeature,
+    });
+    expect(mockGetFeature).toHaveBeenCalledTimes(4);
   });
 });
