@@ -97,6 +97,9 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     },
     sendVerify: {
       [AppInfos.SOLANA.name]: DeviceLabels.TRANSFER,
+      [AppInfos.RIPPLE.name]: DeviceLabels.TRANSACTION_TYPE,
+      [AppInfos.COSMOS.name]: DeviceLabels.TYPE_SEND,
+      [AppInfos.POLKADOT.name]: DeviceLabels.CHAIN_STATEMINT,
       default: DeviceLabels.REVIEW_OPERATION,
     },
     sendConfirm: {
@@ -107,6 +110,8 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.VECHAIN.name]: DeviceLabels.SIGN,
       [AppInfos.APTOS.name]: DeviceLabels.APPROVE,
       [AppInfos.SUI.name]: DeviceLabels.ACCEPT,
+      [AppInfos.BITCOIN_CASH.name]: DeviceLabels.ACCEPT,
+      [AppInfos.DOGECOIN.name]: DeviceLabels.ACCEPT,
       [AppInfos.BITCOIN.name]: DeviceLabels.CONTINUE,
       default: DeviceLabels.CAPS_APPROVE,
     },
