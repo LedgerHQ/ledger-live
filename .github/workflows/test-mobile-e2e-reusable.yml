@@ -380,10 +380,6 @@ jobs:
           LOG_FILE="e2e/mobile/artifacts/simulator-boot.log"
           mkdir -p e2e/mobile/artifacts
           nohup bash -c '
-            echo "🔧 Creating iOS Simulator 2"
-            xcrun simctl create "iOS Simulator 2" "iPhone 15"
-            echo "🔧 Creating iOS Simulator 3"
-            xcrun simctl create "iOS Simulator 3" "iPhone 15"
             echo "🛫 Booting simulator..."
             xcrun simctl boot "iOS Simulator" || true
             xcrun simctl bootstatus "iOS Simulator"
@@ -394,9 +390,6 @@ jobs:
             xcrun simctl boot "iOS Simulator 3" || true
             xcrun simctl bootstatus "iOS Simulator 3"
             echo "✅ Simulator 3 is now fully booted"
-            echo "🔧 Creating iOS Simulator 4"
-            xcrun simctl create "iOS Simulator 4" "iPhone 15"
-            echo "🛫 Booting simulator..."
             xcrun simctl boot "iOS Simulator 4" || true
             xcrun simctl bootstatus "iOS Simulator 4"
             echo "✅ Simulator 4 is now fully booted"
