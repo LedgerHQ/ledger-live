@@ -256,6 +256,9 @@ export function initMSW() {
     http.get("https://earn.api.live.ledger.com/v0/network/solana/validator-details", () =>
       HttpResponse.json([]),
     ),
+    http.get("https://earn-dashboard.aws.stg.ldg-tech.com/figment/solana/validators_summary", () =>
+      HttpResponse.json([]),
+    ),
     http.get("https://crypto-assets-service.api.ledger.com/v1/tokens", ({ request }) => {
       const url = new URL(request.url);
       switch (url.searchParams.get("id")) {
@@ -302,7 +305,7 @@ export function initMSW() {
   mockServer.listen({
     onUnhandledRequest: request => {
       const hostname = new URL(request.url).hostname;
-      if (hostname === "localhost") return;
+      if (["127.0.0.1", "localhost"].includes(hostname)) return;
       throw new Error("Unhandled request");
     },
   });

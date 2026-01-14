@@ -1,10 +1,10 @@
 import { type OperationContents, OpKind } from "@taquito/rpc";
 import { getRevealFee, getRevealGasLimit } from "@taquito/taquito";
+import { log } from "@ledgerhq/logs";
 import coinConfig from "../config";
 import { UnsupportedTransactionMode } from "../types/errors";
-import { getTezosToolkit } from "./tezosToolkit";
 import { createMockSigner } from "../utils";
-import { log } from "@ledgerhq/logs";
+import { getTezosToolkit } from "./tezosToolkit";
 
 export type TransactionFee = {
   fees?: string;

@@ -15,9 +15,9 @@ export const IconWrapper = styled.div<{
   font-size: ${p => p.size / 2}px;
   font-family: "Inter";
   font-weight: bold;
-  color: ${p => p.theme.colors?.palette.secondary.main};
-  background-color: ${p => p.theme.colors?.palette.background.paper};
-  box-shadow: inset 0 0 0 1px ${p => p.theme.colors?.palette.divider};
+  color: ${p => p.theme.colors?.neutral.c100};
+  background-color: ${p => p.theme.colors?.background.card};
+  box-shadow: inset 0 0 0 1px ${p => p.theme.colors?.divider};
   border-radius: 8px;
   display: flex;
   overflow: hidden;

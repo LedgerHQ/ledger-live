@@ -30,7 +30,7 @@ import DelegationRow from "./Row";
 import PoolImage from "../shared/PoolImage";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: CardanoAccount;

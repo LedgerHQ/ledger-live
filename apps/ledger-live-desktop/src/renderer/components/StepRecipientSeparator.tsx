@@ -8,9 +8,9 @@ const Separator = styled.div`
   & > div {
     flex: 1;
     height: 1px;
-    background: ${p => p.theme.colors.palette.divider};
+    background: ${p => p.theme.colors.neutral.c40};
     &:nth-of-type(2) {
-      color: ${p => p.theme.colors.palette.primary.main};
+      color: ${p => p.theme.colors.primary.c80};
       flex: unset;
       display: flex;
       align-items: center;
@@ -19,7 +19,7 @@ const Separator = styled.div`
       border-radius: 36px;
       background: transparent;
       justify-content: center;
-      border: 1px solid ${p => p.theme.colors.palette.divider};
+      border: 1px solid ${p => p.theme.colors.neutral.c40};
     }
   }
 `;

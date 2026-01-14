@@ -30,10 +30,11 @@ test("Keyboard shortcuts", async ({ page }) => {
 
   // test that CTRL+SHIFT+I doesn't open devtools
   await test.step("it doesn't open devtools", async () => {
-    os.platform() === "darwin"
-      ? await page.keyboard.press("Meta+Shift+I")
-      : await page.keyboard.press("Control+Shift+I");
-
+    if (os.platform() === "darwin") {
+      await page.keyboard.press("Meta+Shift+I");
+    } else {
+      await page.keyboard.press("Control+Shift+I");
+    }
     const isDevToolsOpened = await page.evaluate(
       () =>
         // https://stackoverflow.com/questions/7798748/find-out-whether-chrome-console-is-open

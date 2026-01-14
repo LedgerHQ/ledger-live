@@ -10,9 +10,9 @@ import {
 } from "@ledgerhq/errors";
 import { validateAddress, ValidationResult } from "@taquito/utils";
 import api from "../network/tzkt";
-import { estimateFees } from "./estimateFees";
 import { InvalidAddressBecauseAlreadyDelegated } from "../types/errors";
 import { mapIntentTypeToTezosMode } from "../utils";
+import { estimateFees } from "./estimateFees";
 
 /**
  * Validates basic recipient and amount for send transactions

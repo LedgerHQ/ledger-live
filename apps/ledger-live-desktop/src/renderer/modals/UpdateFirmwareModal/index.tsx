@@ -67,9 +67,11 @@ const UpdateModal = ({
     isDisconnectedWhileSendingApduError(err);
 
   const onRequestCancel = useCallback(() => {
-    (showDisclaimer && !isDeviceDisconnected) || stateStepId === STEPS.FINISH || cancel
-      ? onRequestClose()
-      : setCancel(true);
+    if ((showDisclaimer && !isDeviceDisconnected) || stateStepId === STEPS.FINISH || cancel) {
+      onRequestClose();
+    } else {
+      setCancel(true);
+    }
   }, [cancel, showDisclaimer, isDeviceDisconnected, stateStepId, onRequestClose]);
 
   const steps = useMemo(
@@ -88,7 +90,7 @@ const UpdateModal = ({
 
   const handleReset = useCallback(
     (isRetry?: boolean) => {
-      !isRetry && setStateStepId(steps[0].id);
+      if (!isRetry) setStateStepId(steps[0].id);
       setNonce(curr => curr++);
       setErr(null);
     },

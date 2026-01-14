@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { closeModal } from "~/renderer/actions/modals";
@@ -106,12 +106,12 @@ const PasswordModal = () => {
         onClose={onClose}
         render={() => (
           <>
-            <Box ff="Inter|Regular" color="palette.text.shade100" textAlign="center" mb={2} mt={3}>
+            <Box ff="Inter|Regular" color="neutral.c100" textAlign="center" mb={2} mt={3}>
               {hasPassword
                 ? t("password.changePassword.subTitle")
                 : t("password.setPassword.subTitle")}
             </Box>
-            <Box ff="Inter" color="palette.text.shade80" fontSize={4} textAlign="center" px={4}>
+            <Box ff="Inter" color="neutral.c80" fontSize={4} textAlign="center" px={4}>
               {t("password.setPassword.desc")}
             </Box>
             <PasswordForm

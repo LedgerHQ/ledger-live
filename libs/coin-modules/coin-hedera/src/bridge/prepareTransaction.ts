@@ -1,8 +1,14 @@
+import BigNumber from "bignumber.js";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
+import { getEnv } from "@ledgerhq/live-env";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
+import {
+  HEDERA_OPERATION_TYPES,
+  HEDERA_TRANSACTION_MODES,
+  MAP_STAKING_MODE_TO_MEMO,
+} from "../constants";
 import { estimateFees } from "../logic/estimateFees";
-import { isTokenAssociateTransaction } from "../logic/utils";
+import { isTokenAssociateTransaction, isStakingTransaction } from "../logic/utils";
 import type { EstimateFeesParams, Transaction } from "../types";
 import { calculateAmount } from "./utils";
 
@@ -32,6 +38,8 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     operationType = HEDERA_OPERATION_TYPES.TokenTransfer;
   } else if (isERC20TokenTransaction) {
     operationType = HEDERA_OPERATION_TYPES.ContractCall;
+  } else if (isStakingTransaction(transaction)) {
+    operationType = HEDERA_OPERATION_TYPES.CryptoUpdate;
   } else {
     operationType = HEDERA_OPERATION_TYPES.CryptoTransfer;
   }
@@ -77,6 +85,16 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   // ERC20 transactions should have gas limit set (tinybars fee is calculated based on gas)
   if (isERC20TokenTransaction && estimatedFees.gas) {
     transaction.gasLimit = estimatedFees.gas;
+  }
+
+  if (isStakingTransaction(transaction)) {
+    transaction.memo = MAP_STAKING_MODE_TO_MEMO[transaction.mode];
+
+    // claiming staking rewards is triggered by sending 1 tinybar to staking reward account
+    if (transaction.mode === HEDERA_TRANSACTION_MODES.ClaimRewards) {
+      transaction.recipient = getEnv("HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID");
+      transaction.amount = new BigNumber(1);
+    }
   }
 
   return transaction;

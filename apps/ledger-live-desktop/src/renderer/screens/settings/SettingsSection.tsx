@@ -12,7 +12,7 @@ export const SettingsSectionBody = styled(Box)`
   > * + * {
     position: relative;
     &:after {
-      background: ${p => p.theme.colors.palette.divider};
+      background: ${p => p.theme.colors.neutral.c40};
       content: "";
       display: block;
       height: 1px;
@@ -33,7 +33,7 @@ export const SettingsSectionRowContainer = styled(Box).attrs<{
   alignItems: "center",
   relative: true,
   justifyContent: "space-between",
-  backgroundColor: p.inset ? p.theme.colors.palette.text.shade5 : "transparent",
+  backgroundColor: p.inset ? p.theme.colors.neutral.c40 : "transparent",
   borderRadius: p.inset ? 4 : 0,
 }))<{ inset?: boolean }>``;
 
@@ -81,14 +81,14 @@ export const SettingsSectionRow = ({
       }}
     >
       {title && (
-        <Box ff="Inter|SemiBold" color="palette.text.shade100" fontSize={14}>
+        <Box ff="Inter|SemiBold" color="neutral.c100" fontSize={14}>
           {title}
         </Box>
       )}
       <Box
         ff="Inter"
         fontSize={3}
-        color="palette.text.shade60"
+        color="neutral.c70"
         mt={1}
         mr={1}
         style={{
@@ -100,7 +100,7 @@ export const SettingsSectionRow = ({
       </Box>
       {externalUrl && (
         <Flex
-          color="palette.text.shade60"
+          color="neutral.c70"
           mr={1}
           style={{
             ...(descContainerStyle || {}),
@@ -108,7 +108,7 @@ export const SettingsSectionRow = ({
         >
           <Link
             alwaysUnderline
-            color="palette.text.shade60"
+            color="neutral.c70"
             textProps={{
               fontFamily: "Inter",
               fontSize: 3,

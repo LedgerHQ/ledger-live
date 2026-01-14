@@ -45,7 +45,7 @@ const Wrapper = styled.div<{
 `;
 const Baker = styled.div`
   flex: 1.5;
-  color: ${p => p.theme.colors.palette.text.shade100};
+  color: ${p => p.theme.colors.neutral.c100};
   > :first-child {
     margin-right: 6px;
     border-radius: 50%;
@@ -98,12 +98,12 @@ const Row = ({ account, parentAccount, delegation }: Props) => {
     <Wrapper isPending={delegation.isPending}>
       <Baker onClick={openBaker}>
         <BakerImage baker={delegation.baker} />
-        <Ellipsis ff="Inter|SemiBold" color="palette.text.shade100" fontSize={3}>
+        <Ellipsis ff="Inter|SemiBold" color="neutral.c100" fontSize={3}>
           {name}
         </Ellipsis>
       </Baker>
       <Address onClick={openTx}>
-        <Text ff="Inter|Medium" color="palette.primary.main" fontSize={3}>
+        <Text ff="Inter|Medium" color="primary.c80" fontSize={3}>
           {shortAddressPreview(delegation.operation.hash)}
         </Text>
       </Address>
@@ -114,20 +114,20 @@ const Row = ({ account, parentAccount, delegation }: Props) => {
           unit={unit}
           showCode
           fontSize={3}
-          color="palette.text.shade80"
+          color="neutral.c80"
         />
       </Base>
       <Base>
         <CounterValue
           ff="Inter|SemiBold"
-          color="palette.text.shade80"
+          color="neutral.c80"
           fontSize={3}
           currency={currency}
           value={account.balance}
         />
       </Base>
       <Base>
-        <Text ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
+        <Text ff="Inter|Medium" color="neutral.c80" fontSize={3}>
           {diffInDays ? (
             <Trans
               i18nKey="delegation.durationDays"

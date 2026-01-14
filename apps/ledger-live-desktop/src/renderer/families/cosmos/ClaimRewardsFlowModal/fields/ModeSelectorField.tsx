@@ -31,25 +31,25 @@ export default function ModeSelectorField({
       alignSelf="center"
     >
       <ToggleButton value={mode} options={options} onChange={onChange} />
-      <Box horizontal alignItems="center" justifyContent="center" color="palette.text.shade60">
+      <Box horizontal alignItems="center" justifyContent="center" color="neutral.c70">
         <Popover
           position="right"
           content={
             <Box px={2}>
               <Box alignItems="start" justifyContent="start" my={2}>
-                <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
+                <Text ff="Inter|SemiBold" fontSize={4} color="primary.c80">
                   <Trans i18nKey="cosmos.claimRewards.flow.steps.claimRewards.compound" />
                 </Text>
-                <Text fontSize={3} textAlign="left" color="palette.text.shade80">
+                <Text fontSize={3} textAlign="left" color="neutral.c80">
                   <Trans i18nKey="cosmos.claimRewards.flow.steps.claimRewards.compoundDescription" />
                 </Text>
               </Box>
 
               <Box alignItems="start" justifyContent="start" my={2}>
-                <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
+                <Text ff="Inter|SemiBold" fontSize={4} color="primary.c80">
                   <Trans i18nKey="cosmos.claimRewards.flow.steps.claimRewards.claim" />
                 </Text>
-                <Text fontSize={3} textAlign="left" color="palette.text.shade80">
+                <Text fontSize={3} textAlign="left" color="neutral.c80">
                   <Trans i18nKey="cosmos.claimRewards.flow.steps.claimRewards.claimDescription" />
                 </Text>
               </Box>

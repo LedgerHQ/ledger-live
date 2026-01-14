@@ -2,7 +2,6 @@ import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -12,7 +11,6 @@ import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import LText from "~/components/LText";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import FilteredSearchBar from "~/components/FilteredSearchBar";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
@@ -24,6 +22,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { StellarAddAssetFlowParamList } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
 import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const Row = ({
   item,
@@ -91,7 +90,7 @@ type Props = StackNavigatorProps<
 
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account);
   const bridge = getAccountBridge(mainAccount);

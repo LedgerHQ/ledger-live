@@ -13,6 +13,8 @@ const EVM_RAND_ADDRESS = "0x123000000000000000000000000000000000dEaD";
  * DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
  */
 const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
+  aleo: "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv",
+  aleo_testnet: "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv",
   algorand: "PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI",
   // https://snowtrace.io/address/0x000000000000000000000000000000000000dead/tokens
   avalanche_c_chain: EVM_DEAD_ADDRESS,
@@ -135,7 +137,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   mina: "B62qmphduibdMJQjEvnnDizL9kVV4ripuiE9adR2wsqtegJaxHJzCic",
   babylon: "bbn1vh34djka7ug2gww9njrsmmr7emj3dx3paz5sj4",
   hyperevm: EVM_DEAD_ADDRESS,
-  sei_network_evm: EVM_DEAD_ADDRESS,
+  sei_evm: EVM_DEAD_ADDRESS,
   berachain: EVM_DEAD_ADDRESS,
   canton_network: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
   canton_network_devnet: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -144,6 +146,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   monad_testnet: EVM_DEAD_ADDRESS,
   somnia: EVM_DEAD_ADDRESS,
   zero_gravity: EVM_DEAD_ADDRESS,
+  concordium: "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w",
+  concordium_testnet: "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w",
 };
 
 /**

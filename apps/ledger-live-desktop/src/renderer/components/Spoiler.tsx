@@ -26,7 +26,7 @@ type TitleProps = {
 const Title = styled(Text).attrs<TitleProps>(p => ({
   ff: p.ff ? p.ff : "Inter|Bold",
   fontSize: p.fontSize ? p.fontSize : 2,
-  color: p.color ? p.color : "palette.text.shade100",
+  color: p.color ? p.color : "neutral.c100",
   tabIndex: 0,
 }))<TitleProps>`
   text-transform: ${p => (!p.textTransform ? "auto" : "uppercase")};
@@ -70,7 +70,7 @@ class Spoiler extends PureComponent<Props, State> {
           onClick={this.toggle}
           horizontal
           flow={1}
-          color="palette.text.shade100"
+          color="neutral.c100"
           cursor="pointer"
           alignItems="center"
         >

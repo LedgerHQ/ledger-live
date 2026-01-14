@@ -31,7 +31,7 @@ const jsonParser = (v: unknown): JSONValue | undefined => {
   try {
     if (typeof v !== "string") throw new Error();
     return JSON.parse(v);
-  } catch (e) {
+  } catch {
     return undefined;
   }
 };
@@ -242,6 +242,21 @@ const envDefinitions = {
     parser: intParser,
     desc: "solana transaction broadcast confirmation timeout",
   },
+  HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID: {
+    def: "0.0.163372",
+    parser: stringParser,
+    desc: "dead address that receives 1 tinybar from tx that is made to trigger rewards claiming",
+  },
+  HEDERA_STAKING_REWARD_ACCOUNT_ID: {
+    def: "0.0.800",
+    parser: stringParser,
+    desc: "hedera staking reward account id",
+  },
+  HEDERA_STAKING_LEDGER_NODE_ID: {
+    def: -1,
+    parser: intParser,
+    desc: "hedera staking ledger node id, used to determine the default validator",
+  },
   HEDERA_TOKEN_ASSOCIATION_MIN_USD: {
     def: 0.05,
     parser: floatParser,
@@ -261,6 +276,16 @@ const envDefinitions = {
     def: "https://vechain.coin.ledger.com",
     parser: stringParser,
     desc: "Thorest API for VeChain",
+  },
+  ALEO_MAINNET_NODE_ENDPOINT: {
+    def: "https://api.explorer.provable.com/v2/mainnet",
+    parser: stringParser,
+    desc: "Aleo mainnet node URL",
+  },
+  ALEO_TESTNET_NODE_ENDPOINT: {
+    def: "https://api.explorer.provable.com/v2/testnet",
+    parser: stringParser,
+    desc: "Aleo testnet node URL",
   },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
@@ -326,6 +351,11 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "API key for Canton network gateway authentication",
+  },
+  CANTON_NODE_ID_OVERRIDE: {
+    def: "",
+    parser: stringParser,
+    desc: "(dev feature) Switch Canton gateway nodeId for testing different presets.",
   },
   COINAPPS: {
     def: "",
@@ -561,11 +591,6 @@ const envDefinitions = {
     def: 1000,
     parser: intParser,
     desc: "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs",
-  },
-  MIXPANEL_API_HOST: {
-    def: "https://api.mixpanel.com",
-    parser: stringParser,
-    desc: "Mixpanel API host URL",
   },
   MAPPING_SERVICE: {
     def: "https://mapping-service.api.ledger.com",
@@ -828,6 +853,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Dynamic Assets Data Aggregator API Prod",
   },
+  CMC_API_URL: {
+    def: "https://proxycmc.api.live.ledger.com/v3",
+    parser: stringParser,
+    desc: "CoinMarketCap API",
+  },
   PLATFORM_DEBUG: {
     def: false,
     parser: boolParser,
@@ -907,6 +937,11 @@ const envDefinitions = {
     def: "https://crypto-assets-service.api.ledger-test.com",
     parser: stringParser,
     desc: "Cryptoassets list service url (staging)",
+  },
+  PUSH_DEVICES_SERVICE_URL: {
+    def: "https://device-gateway.api.ledger.com",
+    parser: stringParser,
+    desc: "Push Devices Service url for device tracking",
   },
   FEATURE_FLAGS: {
     def: "{}",

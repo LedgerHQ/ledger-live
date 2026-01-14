@@ -57,7 +57,7 @@ const NominationError = styled(Box).attrs<{
   py: "8px",
   px: 3,
   fontSize: 4,
-  bg: "palette.background.default",
+  bg: "background.default",
   ff: "Inter|SemiBold",
   color: p.isError ? p.theme.colors.pearl : p.theme.colors.orange,
 }))<{
@@ -65,7 +65,7 @@ const NominationError = styled(Box).attrs<{
 }>`
   border-style: solid;
   border-width: 1px 1px 0 1px;
-  border-color: ${p => p.theme.colors.palette.divider};
+  border-color: ${p => p.theme.colors.neutral.c40};
   border-top-left-radius: ${radii[1]}px;
   border-top-right-radius: ${radii[1]}px;
 `;
@@ -165,10 +165,7 @@ const ValidatorField = ({
 
   /** auto focus first input on mount */
   useEffect(() => {
-    if (containerRef && containerRef.current && containerRef.current.querySelector) {
-      const firstInput = containerRef.current.querySelector("input");
-      if (firstInput && firstInput.focus) firstInput.focus();
-    }
+    containerRef.current?.querySelector("input")?.focus();
   }, []);
   const renderItem = useCallback(
     (validator: PolkadotValidator, i: number): React.ReactNode => {

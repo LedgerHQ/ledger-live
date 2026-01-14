@@ -181,7 +181,7 @@ const FirmwareUpdate = (props: Props) => {
       right={
         <Box alignItems={"flex-end"} horizontal>
           {manager.firmwareUpdateRequiresUserToUninstallApps(device.modelId, deviceInfo) && (
-            <Box px={4} horizontal alignItems="center" color="palette.primary.contrastText">
+            <Box px={4} horizontal alignItems="center" color="neutral.c00">
               <IconInfoCircle size={12} />
               <Text
                 style={{

@@ -1,6 +1,7 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import Track from "~/renderer/analytics/Track";
 import { setCurrencySettings } from "~/renderer/actions/settings";
@@ -75,7 +76,7 @@ function CurrencyRows({ currency }: Props) {
         </Row>
       ) : (
         <SettingsSectionRowContainer>
-          <Box ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
+          <Box ff="Inter|SemiBold" color="neutral.c100" fontSize={4}>
             <Trans i18nKey="settings.currencies.placeholder" />
           </Box>
         </SettingsSectionRowContainer>

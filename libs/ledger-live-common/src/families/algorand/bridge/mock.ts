@@ -24,6 +24,7 @@ import {
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { assignToAccountRaw, assignFromAccountRaw } from "@ledgerhq/coin-algorand/serialization";
 import { initAccount } from "@ledgerhq/coin-algorand/initAccount";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
@@ -110,6 +111,7 @@ const accountBridge: AccountBridge<AlgorandTransaction, any> = {
   signRawOperation,
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 const currencyBridge: CurrencyBridge = {
   scanAccounts,

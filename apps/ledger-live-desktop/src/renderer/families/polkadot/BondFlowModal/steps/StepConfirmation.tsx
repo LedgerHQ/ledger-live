@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import React, { useCallback, useRef } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -25,7 +25,7 @@ import { State } from "~/renderer/reducers";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))<{
   shouldSpace?: boolean;
 }>`

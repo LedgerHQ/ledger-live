@@ -9,7 +9,7 @@ type Props = {
   field?: "title" | "description";
 };
 
-export function TranslatedError({ error, field = "title" }: Props): JSX.Element | null {
+export function TranslatedError({ error, field = "title" }: Props): React.JSX.Element | null {
   const { t } = useTranslation();
   const links = useErrorLinks(error);
   if (!error) return null;

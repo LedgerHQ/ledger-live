@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { setEnv, getEnv } from "@ledgerhq/live-env";
 import { setTestProviderInfo } from "@ledgerhq/live-common/exchange/providers/index";
 import Input from "~/renderer/components/Input";
-import Switch from "~/renderer/components/Switch";
+import { Switch, Button } from "@ledgerhq/lumen-ui-react";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
 import { SettingsSectionRow } from "../../SettingsSection";
 
@@ -56,17 +55,16 @@ const ExchangeDeveloperMode = () => {
             ></Input>
             <Button
               disabled={buttonIsDisabled}
-              small
-              primary
+              size="sm"
+              appearance="accent"
               onClick={handleOnClickApplyProvider}
-              style={{ minWidth: 64, display: "flex", justifyContent: "center" }}
             >
               {t("common.apply")}
             </Button>
           </>
         ) : null}
 
-        <Switch isChecked={enableExchangeDevMode} onChange={handleChangeSwitch} />
+        <Switch selected={enableExchangeDevMode} onChange={handleChangeSwitch} />
       </Box>
     </SettingsSectionRow>
   );

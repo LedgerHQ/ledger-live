@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import ButtonV2 from "~/renderer/components/Button";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { Flex, Button } from "@ledgerhq/react-ui/index";
+import { Flex } from "@ledgerhq/react-ui/index";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { CryptoAssetsListDevToolContentProps } from "./types";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -23,7 +23,7 @@ export const CryptoAssetsListDevToolContent = (props: CryptoAssetsListDevToolCon
       {props.expanded && (
         <Flex flexDirection="column" rowGap={4} mt={2}>
           <Flex columnGap={"12px"}>
-            <Button variant="color" onClick={openTokenListDrawer}>
+            <Button size="sm" appearance="accent" onClick={openTokenListDrawer}>
               {t("settings.developer.cryptoAssetsList.openTokenList")}
             </Button>
           </Flex>
@@ -55,9 +55,9 @@ const CryptoAssetsListDevTool = () => {
       childrenContainerStyle={{ alignSelf: "flex-start" }}
       desc={<CryptoAssetsListDevToolContent expanded={contentExpanded} />}
     >
-      <ButtonV2 small primary onClick={toggleContentVisibility}>
+      <Button size="sm" appearance="accent" onClick={toggleContentVisibility}>
         {contentExpanded ? t("settings.developer.hide") : t("settings.developer.show")}
-      </ButtonV2>
+      </Button>
     </Row>
   );
 };

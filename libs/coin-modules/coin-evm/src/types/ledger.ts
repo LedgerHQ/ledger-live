@@ -69,3 +69,10 @@ export type LedgerExplorerOperation = {
     time: string;
   };
 };
+
+export type LedgerExplorerBlock = {
+  hash: string;
+  height: number;
+  time: string;
+  txs: string[];
+};

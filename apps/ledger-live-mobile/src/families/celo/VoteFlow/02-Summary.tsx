@@ -6,15 +6,13 @@ import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
 import { defaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
 import { AccountLike } from "@ledgerhq/types-live";
-import { Text } from "@ledgerhq/native-ui";
+import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import Button from "~/components/Button";
@@ -24,24 +22,24 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
-import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorImage from "../ValidatorImage";
 import Selectable from "../components/Selectable";
 import Line from "../components/Line";
 import Words from "../components/Words";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloVoteFlowParamList } from "./types";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
 import SupportLinkError from "~/components/SupportLinkError";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteSummary>;
 
 export default function VoteSummary({ navigation, route }: Props) {
   const { validator } = route.params;
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   invariant(account, "account must be defined");
 
@@ -344,7 +342,7 @@ const ChangeDelegator = () => {
   const { colors } = useTheme();
   return (
     <Circle style={styles.changeDelegator} bg={colors.primary} size={26}>
-      <Icon size={13} name="edit-2" />
+      <Icons.PenEdit size="XS" />
     </Circle>
   );
 };

@@ -6,7 +6,7 @@ import {
 } from "react-native";
 import { useTheme } from "styled-components/native";
 import Text from "../../Text";
-import proxyStyled from "../../../components/styled";
+import proxyStyled, { BaseStyledProps } from "../../../components/styled";
 
 export type SwitchProps = {
   checked: boolean;
@@ -16,7 +16,7 @@ export type SwitchProps = {
   testID?: string;
 } & Omit<Partial<NativeSwitchProps>, "onChange">;
 
-const Pressable = proxyStyled(BasePressable).attrs({
+const Pressable = proxyStyled(BasePressable).attrs<BaseStyledProps>({
   flexDirection: "row",
   alignItems: "center",
 })``;

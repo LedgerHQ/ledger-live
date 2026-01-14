@@ -173,7 +173,7 @@ const OperationDetailsExtra = ({
                   disableRounding={true}
                   showCode
                   fontSize={4}
-                  color="palette.text.shade60"
+                  color="neutral.c70"
                 />
               </Box>
             </OpDetailsData>
@@ -207,7 +207,7 @@ const OperationDetailsExtra = ({
                     disableRounding={true}
                     showCode
                     fontSize={4}
-                    color="palette.text.shade60"
+                    color="neutral.c70"
                   />
                 </Box>
               </OpDetailsData>
@@ -231,7 +231,7 @@ const OperationDetailsExtra = ({
                   disableRounding={true}
                   showCode
                   fontSize={4}
-                  color="palette.text.shade60"
+                  color="neutral.c70"
                 />
               </Box>
             </OpDetailsData>
@@ -254,7 +254,7 @@ const OperationDetailsExtra = ({
                   disableRounding={true}
                   showCode
                   fontSize={4}
-                  color="palette.text.shade60"
+                  color="neutral.c70"
                 />
               </Box>
             </OpDetailsData>
@@ -279,10 +279,10 @@ const BondAmountCell = ({ operation, currency, unit }: AmountCellExtraProps<Polk
   const amount = new BigNumber(operation.extra.bondedAmount ?? 0);
   return !amount.isZero() ? (
     <>
-      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"neutral.c80"} />
 
       <CounterValue
-        color="palette.text.shade60"
+        color="neutral.c70"
         fontSize={3}
         date={operation.date}
         currency={currency}
@@ -299,10 +299,10 @@ const UnbondAmountCell = ({
   const amount = operation.extra.unbondedAmount ?? new BigNumber(0);
   return !amount.isZero() ? (
     <>
-      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"neutral.c80"} />
 
       <CounterValue
-        color="palette.text.shade60"
+        color="neutral.c70"
         fontSize={3}
         date={operation.date}
         currency={currency}
@@ -319,10 +319,10 @@ const WithdrawUnbondedAmountCell = ({
   const amount = operation.extra.withdrawUnbondedAmount ?? new BigNumber(0);
   return !amount.isZero() ? (
     <>
-      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"neutral.c80"} />
 
       <CounterValue
-        color="palette.text.shade60"
+        color="neutral.c70"
         fontSize={3}
         date={operation.date}
         currency={currency}

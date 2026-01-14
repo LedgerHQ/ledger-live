@@ -1,3 +1,4 @@
+import { Step } from "jest-allure2-reporter/api";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class AssetAccountsPage {

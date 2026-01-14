@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCallback, useMemo } from "react";
 import { useBrazeContentCard } from "./brazeContentCard";
@@ -90,6 +90,8 @@ const useDynamicContent = () => {
         layout?: string;
         location?: string;
         landingPage?: string;
+        displayedPosition?: number;
+        campaignName?: string;
       },
     ) => {
       track(event, params);

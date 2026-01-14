@@ -53,7 +53,7 @@ export default (urls: In): typeof Transport => {
                       descriptor: url,
                     });
                   }
-                } catch (e) {
+                } catch {
                   // nothing
                   if (seen[url]) {
                     delete seen[url];

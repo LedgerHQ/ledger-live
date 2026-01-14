@@ -49,7 +49,7 @@ export const SplitAddress = ({
   );
 };
 export const Address = ({ value }: { value: string }) => (
-  <SplitAddress value={value} color="palette.text.shade80" ff="Inter" fontSize={3} />
+  <SplitAddress value={value} color="neutral.c80" ff="Inter" fontSize={3} />
 );
 const Left = styled.div`
   overflow: hidden;

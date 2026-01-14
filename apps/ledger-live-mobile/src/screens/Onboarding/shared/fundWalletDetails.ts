@@ -1,0 +1,1 @@
+export const FUND_WALLET_STEPS_LENGTH = 10;

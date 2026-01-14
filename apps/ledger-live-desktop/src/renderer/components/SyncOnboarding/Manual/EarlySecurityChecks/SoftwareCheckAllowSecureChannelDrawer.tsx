@@ -13,13 +13,11 @@ export type Props = {
 
 const SoftwareCheckAllowSecureChannelDrawer = ({ deviceModelId }: Props) => {
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { theme } = useTheme();
 
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center" height="100%">
-      <Animation
-        animation={getDeviceAnimation(deviceModelId, colors.palette.type, "allowManager") as object}
-      />
+      <Animation animation={getDeviceAnimation(deviceModelId, theme, "allowManager") as object} />
       <Text variant="h5Inter" fontWeight="semiBold" mt={6}>
         {t("syncOnboarding.manual.softwareCheckAllowSecureChannelDrawer.title")}
       </Text>

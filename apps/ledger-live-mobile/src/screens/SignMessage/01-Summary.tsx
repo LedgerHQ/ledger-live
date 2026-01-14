@@ -6,17 +6,16 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
-import ParentCurrencyIcon from "~/components/ParentCurrencyIcon";
+import CurrencyIcon from "~/components/CurrencyIcon";
 import { SignMessageNavigatorStackParamList } from "~/components/RootNavigator/types/SignMessageNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import WalletIcon from "~/icons/Wallet";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { useAccountName } from "~/reducers/wallet";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import CopyButton from "./Components/CopyButton";
 import { useTheme } from "styled-components/native";
 
@@ -79,7 +78,7 @@ function SignSummary({
 }: StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignSummary>) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   invariant(account, "account not found");
 
@@ -137,7 +136,7 @@ function SignSummary({
             </LText>
             <View style={styles.headerContainer}>
               <View style={styles.headerIconContainer}>
-                <ParentCurrencyIcon size={18} currency={mainAccount.currency} />
+                <CurrencyIcon size={18} currency={mainAccount.currency} />
               </View>
               <LText semiBold secondary numberOfLines={1}>
                 {maybeAccountName}

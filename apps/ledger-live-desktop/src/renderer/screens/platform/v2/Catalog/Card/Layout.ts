@@ -48,7 +48,7 @@ export const Container: StyledComponent<
           }
         `
       : p.highlighted
-        ? highlightedTheme[p.theme.colors.palette.type]
+        ? highlightedTheme[p.theme.theme]
         : css`
           &:hover,
           &:focus {

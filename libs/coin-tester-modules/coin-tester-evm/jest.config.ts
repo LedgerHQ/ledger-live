@@ -3,9 +3,22 @@ import type { Config } from "jest";
 const transformIncludePatterns = ["ky"];
 
 const config: Config = {
-  preset: "ts-jest",
   testEnvironment: "node",
   transform: {
+    "^.+\\.tsx?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "es2022",
+          parser: {
+            syntax: "typescript",
+            tsx: false,
+            decorators: false,
+            dynamicImport: true,
+          },
+        },
+      },
+    ],
     [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx)?$`]: [
       "@swc/jest",
       {

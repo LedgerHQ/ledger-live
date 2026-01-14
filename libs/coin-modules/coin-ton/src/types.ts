@@ -330,6 +330,7 @@ export interface TonTransaction {
   payload?: TonPayloadFormat;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface TonCell extends Cell {}
 
 export type TonOperationExtra = {

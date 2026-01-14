@@ -111,7 +111,7 @@ setSupportedCurrencies([
   "base_sepolia",
   "stacks",
   "telos_evm",
-  "sei_network_evm",
+  "sei_evm",
   "berachain",
   "hyperevm",
   "coreum",
@@ -147,6 +147,10 @@ setSupportedCurrencies([
   "monad_testnet",
   "somnia",
   "zero_gravity",
+  "concordium",
+  "concordium_testnet",
+  "aleo",
+  "aleo_testnet",
 ]);
 
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))

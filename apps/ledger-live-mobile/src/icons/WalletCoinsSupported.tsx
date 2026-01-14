@@ -15,8 +15,7 @@ const SvgComponent = ({
         maskType: "alpha",
       }}
       maskUnits={"userSpaceOnUse" as const}
-      x={1}
-      y={-5}
+      transform={[{ translateX: 1 }, { translateY: -5 }]}
       width={95}
       height={65}
     >
@@ -28,7 +27,7 @@ const SvgComponent = ({
       />
     </Mask>
     <G mask="url(#a)">
-      <Rect x={1} width={50} height={50} rx={25} fill="#F7931A" />
+      <Rect transform={[{ translateX: 1 }]} width={50} height={50} rx={25} fill="#F7931A" />
       <Path
         d="M34.837 22.55c.394-2.626-1.607-4.038-4.342-4.98l.887-3.56-2.165-.539-.865 3.465c-.569-.143-1.153-.275-1.735-.408l.87-3.488-2.165-.54-.887 3.558c-.471-.108-.935-.213-1.384-.326l.003-.011-2.988-.746-.576 2.313s1.608.369 1.574.392c.877.219 1.035.799 1.009 1.26l-1.01 4.054c.06.015.137.038.225.072l-.23-.057-1.415 5.68c-.108.265-.38.665-.994.514.022.03-1.574-.393-1.574-.393L16 31.29l2.82.702c.523.132 1.037.27 1.542.399l-.896 3.599 2.164.539.887-3.56c.592.16 1.166.308 1.727.448l-.884 3.544 2.165.539.896-3.592c3.695.7 6.472.418 7.64-2.923.943-2.69-.045-4.242-1.99-5.254 1.417-.326 2.482-1.257 2.767-3.18Zm-4.95 6.94c-.668 2.691-5.198 1.237-6.667.872l1.191-4.769c1.469.368 6.177 1.093 5.476 3.898Zm.67-6.978c-.61 2.447-4.379 1.203-5.6.898l1.077-4.323c1.222.304 5.16.872 4.524 3.425Z"
         fill="#fff"
@@ -40,8 +39,7 @@ const SvgComponent = ({
         maskType: "alpha",
       }}
       maskUnits={"userSpaceOnUse" as const}
-      x={41}
-      y={-5}
+      transform={[{ translateX: 41 }, { translateY: -5 }]}
       width={95}
       height={65}
     >
@@ -53,7 +51,7 @@ const SvgComponent = ({
       />
     </Mask>
     <G mask="url(#b)">
-      <Rect x={41} width={50} height={50} rx={25} fill="#0EBDCD" />
+      <Rect transform={[{ translateX: 41 }]} width={50} height={50} rx={25} fill="#0EBDCD" />
       <Path d="M73.81 24.375 65.999 12.5l-7.811 11.875 7.81 4.535 7.812-4.535Z" fill="#fff" />
       <Path d="m65.999 37.5 7.816-10.814L66 31.22l-7.811-4.534 7.81 10.814Z" fill="#fff" />
     </G>
@@ -63,8 +61,7 @@ const SvgComponent = ({
         maskType: "alpha",
       }}
       maskUnits={"userSpaceOnUse" as const}
-      x={81}
-      y={-5}
+      transform={[{ translateX: 81 }, { translateY: -5 }]}
       width={150}
       height={65}
     >
@@ -76,7 +73,7 @@ const SvgComponent = ({
       />
     </Mask>
     <G mask="url(#c)">
-      <Rect x={81} width={50} height={50} rx={25} fill="#00A478" />
+      <Rect transform={[{ translateX: 81 }]} width={50} height={50} rx={25} fill="#00A478" />
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -85,7 +82,7 @@ const SvgComponent = ({
       />
     </G>
     <Rect
-      x={121}
+      transform={[{ translateX: 121 }]}
       width={76}
       height={50}
       rx={25}

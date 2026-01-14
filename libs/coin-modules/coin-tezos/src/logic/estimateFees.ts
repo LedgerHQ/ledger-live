@@ -1,7 +1,6 @@
 import { COST_PER_BYTE, getRevealFee, ORIGINATION_SIZE, Estimate } from "@taquito/taquito";
 import { validatePublicKey, ValidationResult } from "@taquito/utils";
 import { log } from "@ledgerhq/logs";
-import { getTezosToolkit } from "./tezosToolkit";
 import { TezosOperationMode } from "../types/model";
 import { UnsupportedTransactionMode } from "../types/errors";
 import {
@@ -12,6 +11,7 @@ import {
   OP_SIZE_XTZ_TRANSFER,
   normalizePublicKeyForAddress,
 } from "../utils";
+import { getTezosToolkit } from "./tezosToolkit";
 
 export type CoreAccountInfo = {
   address: string;

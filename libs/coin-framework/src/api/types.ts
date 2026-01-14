@@ -1,4 +1,4 @@
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
@@ -313,13 +313,12 @@ export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> ex
   memos: Map<keyof KindToValueMap, KindToValueMap[keyof KindToValueMap]>;
 }
 
-// FIXME: find better maybeMemo type without disabling the rule
-// eslint-disable-next-line @typescript-eslint/ban-types
-type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
+type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported
+  ? object
+  : { memo: MemoType };
 
 type MaybeTxData<TxDataType extends TxData> = TxDataType extends TxDataNotSupported
-  ? // eslint-disable-next-line @typescript-eslint/ban-types
-    {}
+  ? object
   : { data: TxDataType };
 
 export type FeesStrategy = "slow" | "medium" | "fast" | "custom";
@@ -341,6 +340,7 @@ export type TransactionIntent<
   senderPublicKey?: string;
   sequence?: bigint;
   expiration?: number;
+  sponsored?: boolean;
 } & MaybeMemo<MemoType> &
   MaybeTxData<TxDataType>;
 
@@ -444,6 +444,11 @@ export type AccountInfo = {
 };
 // NOTE: future proof export type Pagination = Record<string, unknown>;
 
+export type AddressValidationCurrencyParameters = {
+  currency: CryptoCurrency;
+  networkId: number;
+};
+
 export type AlpacaApi<
   MemoType extends Memo = MemoNotSupported,
   TxDataType extends TxData = TxDataNotSupported,
@@ -535,6 +540,7 @@ export type BridgeApi<
 > = {
   validateIntent: (
     transactionIntent: TransactionIntent<MemoType, TxDataType>,
+    balances: Balance[],
     customFees?: FeeEstimation,
   ) => Promise<TransactionValidation>;
   getSequence: (address: string) => Promise<bigint>;

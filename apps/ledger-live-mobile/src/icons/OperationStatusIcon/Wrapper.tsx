@@ -36,7 +36,7 @@ export default function Wrapper({ size, Icon, failed, confirmed, type }: Props) 
     <Svg viewBox="0 0 26 26" width={size} height={size}>
       <G fill={color}>
         <Rect id="bg" opacity={opacity} width="24" height="24" rx="12" />
-        <G x="6" y="6">
+        <G transform={[{ translateX: 6 }, { translateY: 6 }]}>
           <Icon size={12} color={color} />
         </G>
         {!confirmed ? (

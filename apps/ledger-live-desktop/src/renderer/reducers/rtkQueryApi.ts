@@ -1,13 +1,19 @@
-import type { Middleware, Reducer } from "@reduxjs/toolkit";
+import type { Middleware, Reducer, Tuple } from "@reduxjs/toolkit";
 import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { marketApi } from "@ledgerhq/live-common/market/state-manager/api";
 import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import { pushDevicesApi } from "@ledgerhq/client-ids/api";
+import { cmcApi } from "@ledgerhq/live-common/cmc-client/state-manager/api";
 
 // Add new RTK Query API here:
 const APIs = {
   [assetsDataApi.reducerPath]: assetsDataApi,
+  [cmcApi.reducerPath]: cmcApi,
   [cryptoAssetsApi.reducerPath]: cryptoAssetsApi,
+  [marketApi.reducerPath]: marketApi,
   [ofacGeoBlockApi.reducerPath]: ofacGeoBlockApi,
+  [pushDevicesApi.reducerPath]: pushDevicesApi,
 };
 
 /*
@@ -31,4 +37,9 @@ export const lldRTKApiReducers = Object.fromEntries(
   lldRTKApis.map(api => [api.reducerPath, api.reducer]),
 ) as ExtractAPIReducers<typeof APIs>;
 
-export const lldRTKApiMiddlewares = lldRTKApis.map(api => api.middleware);
+export function applyLldRTKApiMiddlewares<M extends Tuple<Middleware[]>>(middleware: M) {
+  return lldRTKApis.reduce<Tuple<Middleware[]>>(
+    (middleware, api) => middleware.concat(api.middleware),
+    middleware,
+  );
+}

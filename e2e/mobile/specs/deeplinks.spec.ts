@@ -1,7 +1,8 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { waitSwapReady } from "../bridge/server";
 
 $TmsLink("B2CQA-1837");
-const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"];
+const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 tags.forEach(tag => $Tag(tag));
 describe("DeepLinks Tests", () => {
   const nanoApp = AppInfos.ETHEREUM;
@@ -26,9 +27,7 @@ describe("DeepLinks Tests", () => {
           enabled: true,
           params: {
             manifest_id:
-              process.env.PRODUCTION === "true"
-                ? "swap-live-app-demo-3"
-                : "swap-live-app-demo-3-stg",
+              process.env.PRODUCTION === "true" ? "swap-live-app-aws" : "swap-live-app-stg-aws",
           },
         },
       },

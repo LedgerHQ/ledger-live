@@ -175,7 +175,12 @@ function OnboardingQuiz({ navigation, route }: Props) {
   return (
     <Flex bg={bg} flex={1}>
       <SafeAreaView style={{ flex: 1 }}>
-        <TrackScreen category="Onboarding" name="Quiz" />
+        <TrackScreen
+          category="Onboarding"
+          name="Quiz"
+          seedConfiguration="new_seed"
+          deviceModelId={route.params.deviceModelId}
+        />
         <FlowStepper
           activeIndex={index}
           renderTransition={renderTransitionSlide}

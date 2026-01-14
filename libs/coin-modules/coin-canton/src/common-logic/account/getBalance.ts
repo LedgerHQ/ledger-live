@@ -6,6 +6,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 export type CantonBalance = Balance & {
   utxoCount: number;
   instrumentId: string;
+  adminId: string;
 };
 
 const useGateway = (currency: CryptoCurrency) =>
@@ -23,6 +24,7 @@ function adaptInstrument(currency: CryptoCurrency, instrument: InstrumentBalance
         : { type: "token", assetReference: instrument.instrument_id },
     utxoCount: instrument.utxo_count,
     instrumentId: instrument.instrument_id,
+    adminId: instrument.admin_id,
   };
 }
 

@@ -32,6 +32,7 @@ type Props = {
   emptyState?: React.ReactNode;
   collapsed?: boolean;
   flex?: string;
+  style?: React.CSSProperties;
 };
 class SideBarList extends Component<Props> {
   render() {
@@ -43,6 +44,7 @@ class SideBarList extends Component<Props> {
       emptyState,
       collapsed,
       flex = "auto",
+      style,
     } = this.props;
     return (
       <>
@@ -57,6 +59,7 @@ class SideBarList extends Component<Props> {
         )}
         {children ? (
           <ListWrapper
+            style={style}
             collapsed={collapsed}
             scroll={scroll}
             flow={2}
@@ -67,7 +70,7 @@ class SideBarList extends Component<Props> {
             {children}
           </ListWrapper>
         ) : emptyState ? (
-          <Box px={4} ff="Inter|Regular" selectable fontSize={3} color="palette.text.shade60">
+          <Box px={4} ff="Inter|Regular" selectable fontSize={3} color="neutral.c70">
             {emptyState}
           </Box>
         ) : null}
@@ -84,7 +87,7 @@ const SideBarListTitle: StyledComponent<
 > = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   ff: "Inter|ExtraBold",
   fontSize: 1,
   px: 4,

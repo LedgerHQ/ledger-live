@@ -57,13 +57,7 @@ function Rule({ type, children }: RuleProps) {
       >
         <RuleIcon size={12} />
       </RuleIconContainer>
-      <Text
-        ml="16px"
-        color="palette.text.shade100"
-        ff="Inter|Regular"
-        fontSize={13}
-        style={{ flex: 1 }}
-      >
+      <Text ml="16px" color="neutral.c100" ff="Inter|Regular" fontSize={13} style={{ flex: 1 }}>
         {children}
       </Text>
     </RuleContainer>
@@ -83,7 +77,7 @@ export function HideRecoverySeed(props: { handleNextInDrawer: () => void }) {
     <>
       <ScrollArea isInsideDrawer>
         <HideRecoverySeedContainer>
-          <Text mb="32px" color="palette.text.shade100" variant="h3">
+          <Text mb="32px" color="neutral.c100" variant="h3">
             {t("onboarding.drawers.whereToHide.title")}
           </Text>
           <Rule type="error">

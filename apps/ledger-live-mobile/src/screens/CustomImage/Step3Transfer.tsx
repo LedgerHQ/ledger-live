@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { Flex } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";

@@ -42,7 +42,7 @@ export const prepareTransaction: AccountBridge<
           .reduce((total, o) => total.plus(o.amount), new BigNumber(0));
 
     patch = { fees: transactionFees, amount: transactionAmount };
-  } catch (error) {
+  } catch {
     patch = { fees: new BigNumber(0), amount: transaction.amount };
   }
 

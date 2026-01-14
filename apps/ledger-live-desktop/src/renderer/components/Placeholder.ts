@@ -5,8 +5,7 @@ export const PlaceholderLine = styled.div<{
   height?: number;
   dark?: boolean;
 }>`
-  background-color: ${p =>
-    p.dark ? p.theme.colors.palette.text.shade80 : p.theme.colors.palette.text.shade20};
+  background-color: ${p => (p.dark ? p.theme.colors.neutral.c80 : p.theme.colors.neutral.c40)};
   width: ${p => p.width}px;
   height: ${p => p.height || 10}px;
   border-radius: 5px;

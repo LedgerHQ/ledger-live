@@ -17,11 +17,12 @@ import {
 } from "@ledgerhq/coin-canton/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { closeModal, openModal } from "~/renderer/actions/modals";
+import type { NavigationSnapshot } from "../hooks/topologyChangeError";
 import Modal from "~/renderer/components/Modal";
 import Stepper, { type Step } from "~/renderer/components/Stepper";
 import logger from "~/renderer/logger";
@@ -46,6 +47,9 @@ export type UserProps = {
   editedNames: { [accountId: string]: string };
   selectedAccounts: Account[];
   existingAccounts: Account[];
+  isReonboarding?: boolean;
+  accountToReonboard?: Account;
+  navigationSnapshot?: NavigationSnapshot;
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -66,6 +70,7 @@ type State = {
   onboardingStatus: OnboardStatus;
   isProcessing: boolean;
   onboardingResult: OnboardingResult | undefined;
+  isReonboarding: boolean;
 };
 
 const INITIAL_STATE: State = {
@@ -75,7 +80,129 @@ const INITIAL_STATE: State = {
   onboardingStatus: OnboardStatus.INIT,
   isProcessing: false,
   onboardingResult: undefined,
+  isReonboarding: false,
 };
+
+function getCreatableAccount(
+  selectedAccounts: Account[],
+  isReonboarding?: boolean,
+  accountToReonboard?: Account,
+): Account | undefined {
+  if (isReonboarding && accountToReonboard) {
+    return accountToReonboard;
+  }
+  return selectedAccounts.find(account => !account.used);
+}
+
+function getImportableAccounts(selectedAccounts: Account[]): Account[] {
+  return selectedAccounts.filter(account => account.used);
+}
+
+function resolveAccountName(
+  account: Account,
+  editedNames: { [accountId: string]: string },
+): string {
+  return editedNames[account.id] || getDefaultAccountName(account);
+}
+
+function resolveCreatableAccountName(
+  creatableAccount: Account | undefined,
+  currency: CryptoCurrency,
+  editedNames: { [accountId: string]: string },
+  importableAccountsCount: number,
+): string {
+  if (!creatableAccount) {
+    return `${currency.name} ${importableAccountsCount + 1}`;
+  }
+  return resolveAccountName(creatableAccount, editedNames);
+}
+
+type AddAccountsConfig = {
+  selectedAccounts: Account[];
+  existingAccounts: Account[];
+  editedNames: { [accountId: string]: string };
+  isReonboarding?: boolean;
+  accountToReonboard?: Account;
+  onboardingResult?: {
+    completedAccount: Account;
+  };
+};
+
+function prepareAccountsForReonboarding(
+  accountToReonboard: Account,
+  completedAccount: Account,
+  editedNames: { [accountId: string]: string },
+): {
+  accounts: Account[];
+  renamings: { [accountId: string]: string };
+} {
+  const updatedAccount = {
+    ...accountToReonboard,
+    ...completedAccount,
+    id: accountToReonboard.id,
+  };
+
+  return {
+    accounts: [updatedAccount],
+    renamings: {
+      [updatedAccount.id]:
+        editedNames[accountToReonboard.id] || getDefaultAccountName(updatedAccount),
+    },
+  };
+}
+
+function prepareAccountsForNewOnboarding(
+  importableAccounts: Account[],
+  completedAccount: Account | undefined,
+  editedNames: { [accountId: string]: string },
+): {
+  accounts: Account[];
+  renamings: { [accountId: string]: string };
+} {
+  const accounts = [...importableAccounts];
+  if (completedAccount) {
+    accounts.push(completedAccount);
+  }
+
+  // on previous step we don't have a partyId yet for onboarding account
+  // so editedNames use a temporary account ID
+  // since only one account is onboarded at a time, we cane filter out importableAccounts renamings
+  // what is left belongs to the onboarded account
+  const importableAccountIds = new Set(importableAccounts.map(acc => acc.id));
+  const [, completedAccountName] =
+    Object.entries(editedNames).find(([accountId]) => !importableAccountIds.has(accountId)) || [];
+
+  const renamings = Object.fromEntries(
+    accounts.map(account => {
+      let accountName = editedNames[account.id];
+
+      if (completedAccount && account.id === completedAccount.id && completedAccountName) {
+        accountName = completedAccountName;
+      }
+
+      return [account.id, accountName || getDefaultAccountName(account)];
+    }),
+  );
+
+  return { accounts, renamings };
+}
+
+function prepareAccountsForAdding(config: AddAccountsConfig): {
+  accounts: Account[];
+  renamings: { [accountId: string]: string };
+} {
+  const { selectedAccounts, editedNames, isReonboarding, accountToReonboard, onboardingResult } =
+    config;
+
+  const importableAccounts = getImportableAccounts(selectedAccounts);
+  const completedAccount = onboardingResult?.completedAccount;
+
+  if (isReonboarding && completedAccount && accountToReonboard) {
+    return prepareAccountsForReonboarding(accountToReonboard, completedAccount, editedNames);
+  }
+
+  return prepareAccountsForNewOnboarding(importableAccounts, completedAccount, editedNames);
+}
 
 class OnboardModal extends PureComponent<Props, State> {
   state: State = INITIAL_STATE;
@@ -152,35 +279,27 @@ class OnboardModal extends PureComponent<Props, State> {
   };
 
   handleAddAccounts = () => {
-    const { addAccountsAction, closeModal, selectedAccounts, existingAccounts, editedNames } =
-      this.props;
+    const {
+      addAccountsAction,
+      closeModal,
+      openModal,
+      selectedAccounts,
+      existingAccounts,
+      editedNames,
+      isReonboarding,
+      accountToReonboard,
+      navigationSnapshot,
+    } = this.props;
     const { onboardingResult } = this.state;
-    const importableAccounts = selectedAccounts.filter(account => account.used);
-    const completedAccount = onboardingResult?.completedAccount;
-    const accounts = [...importableAccounts];
-    if (completedAccount) {
-      accounts.push(completedAccount);
-    }
 
-    // on previous step we don’t have a partyId yet for onboarding account
-    // so editedNames use a temporary account ID
-    // since only one account is onboarded at a time, we cane filter out importableAccounts renamings
-    // what is left belongs to the onboarded account
-    const importableAccountIds = new Set(importableAccounts.map(acc => acc.id));
-    const [, completedAccountName] =
-      Object.entries(editedNames).find(([accountId]) => !importableAccountIds.has(accountId)) || [];
-
-    const renamings = Object.fromEntries(
-      accounts.map(account => {
-        let accountName = editedNames[account.id];
-
-        if (completedAccount && account.id === completedAccount.id && completedAccountName) {
-          accountName = completedAccountName;
-        }
-
-        return [account.id, accountName || getDefaultAccountName(account)];
-      }),
-    );
+    const { accounts, renamings } = prepareAccountsForAdding({
+      selectedAccounts,
+      existingAccounts,
+      editedNames,
+      isReonboarding,
+      accountToReonboard,
+      onboardingResult,
+    });
 
     addAccountsAction({
       scannedAccounts: accounts,
@@ -190,11 +309,25 @@ class OnboardModal extends PureComponent<Props, State> {
     });
 
     closeModal("MODAL_CANTON_ONBOARD_ACCOUNT");
+
+    // After re-onboarding, restore the previous state if it exists
+    if (isReonboarding && navigationSnapshot) {
+      if (navigationSnapshot.type === "modal") {
+        openModal(navigationSnapshot.modalName, navigationSnapshot.modalData);
+      } else if (navigationSnapshot.type === "transfer-proposal") {
+        const { action, contractId } = navigationSnapshot.props;
+        navigationSnapshot.handler(contractId, action);
+      }
+    }
   };
 
   handleOnboardAccount = () => {
-    const { currency, device, selectedAccounts } = this.props;
-    const creatableAccount = selectedAccounts.find(account => !account.used);
+    const { currency, device, selectedAccounts, isReonboarding, accountToReonboard } = this.props;
+    const creatableAccount = getCreatableAccount(
+      selectedAccounts,
+      isReonboarding,
+      accountToReonboard,
+    );
 
     invariant(creatableAccount, "creatableAccount is required");
     invariant(device, "device is required");
@@ -204,6 +337,7 @@ class OnboardModal extends PureComponent<Props, State> {
       isProcessing: true,
       onboardingStatus: OnboardStatus.PREPARE,
       error: null,
+      isReonboarding: isReonboarding || false,
     });
 
     if (this.onboardingSubscription) {
@@ -284,19 +418,33 @@ class OnboardModal extends PureComponent<Props, State> {
   };
 
   render() {
-    const { currency, device, editedNames, selectedAccounts, t } = this.props;
+    const {
+      currency,
+      device,
+      editedNames,
+      selectedAccounts,
+      t,
+      isReonboarding,
+      accountToReonboard,
+    } = this.props;
     const { authorizeStatus, isProcessing, onboardingResult, onboardingStatus, stepId, error } =
       this.state;
 
     invariant(device, "device is required"); // TODO: handle device reconnection
     invariant(currency, "currency is required");
 
-    const importableAccounts = selectedAccounts.filter(account => account.used);
-    const creatableAccount = selectedAccounts.find(account => !account.used);
-
-    const accountName = creatableAccount
-      ? editedNames[creatableAccount.id] || getDefaultAccountName(creatableAccount)
-      : `${currency.name} ${importableAccounts.length + 1}`;
+    const importableAccounts = getImportableAccounts(selectedAccounts);
+    const creatableAccount = getCreatableAccount(
+      selectedAccounts,
+      isReonboarding,
+      accountToReonboard,
+    );
+    const accountName = resolveCreatableAccountName(
+      creatableAccount,
+      currency,
+      editedNames,
+      importableAccounts.length,
+    );
 
     invariant(creatableAccount, "creatableAccount is required");
 
@@ -313,6 +461,7 @@ class OnboardModal extends PureComponent<Props, State> {
       onboardingStatus,
       authorizeStatus,
       error,
+      isReonboarding: isReonboarding || this.state.isReonboarding,
       onAddAccounts: this.handleAddAccounts,
       onAddMore: this.handleAddMore,
       onAuthorizePreapproval: this.handleAuthorizePreapproval,
@@ -329,7 +478,15 @@ class OnboardModal extends PureComponent<Props, State> {
         preventBackdropClick={stepId === StepId.ONBOARD}
         render={({ onClose }) => (
           <Stepper
-            title={<Trans i18nKey="families.canton.addAccount.title" />}
+            title={
+              <Trans
+                i18nKey={
+                  isReonboarding || this.state.isReonboarding
+                    ? "families.canton.addAccount.reonboard.title"
+                    : "families.canton.addAccount.title"
+                }
+              />
+            }
             stepId={stepId}
             onStepChange={this.handleStepChange}
             onClose={onClose}

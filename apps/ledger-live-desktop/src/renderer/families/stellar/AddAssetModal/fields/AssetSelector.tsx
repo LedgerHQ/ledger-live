@@ -49,34 +49,24 @@ const renderItem = ({
       key={id}
       horizontal
       alignItems="center"
-      color={isDisabled ? "palette.text.shade40" : "palette.text.shade100"}
+      color={isDisabled ? "neutral.c60" : "neutral.c100"}
       justifyContent="space-between"
     >
       <Box horizontal alignItems="center" justifyContent="flex-start" width="100%">
         <Box horizontal alignItems="center">
-          <FirstLetterIcon
-            color={isDisabled ? "palette.text.shade40" : "palette.text.shade100"}
-            label={name}
-          />
+          <FirstLetterIcon color={isDisabled ? "neutral.c60" : "neutral.c100"} label={name} />
           <Text ff="Inter|Medium">{name}</Text>
-          <Text fontSize={3} color="palette.text.shade40" mr="4px">
+          <Text fontSize={3} color="neutral.c60" mr="4px">
             - ID
           </Text>
         </Box>
-        <Box
-          horizontal
-          alignItems="center"
-          flex="1"
-          fontSize={3}
-          color="palette.text.shade40"
-          mr={2}
-        >
+        <Box horizontal alignItems="center" flex="1" fontSize={3} color="neutral.c60" mr={2}>
           <EllipsisMiddle>{assetIssuer}</EllipsisMiddle>
         </Box>
       </Box>
       {isDisabled && (
         <ToolTip content={<Trans i18nKey="stellar.addAsset.steps.assets.disabledTooltip" />}>
-          <Box color="warning">
+          <Box color="legacyWarning">
             <ExclamationCircleThin size={16} />
           </Box>
         </ToolTip>
@@ -106,8 +96,6 @@ export default function DelegationSelectorField({
   onChange: (_: TokenCurrency | undefined | null) => void;
 }) {
   const [query, setQuery] = useState("");
-  const [lastItemIndex, setLastItemIndex] = useState<number | undefined>(undefined);
-  const [keepLastScrollPosition, setLastKeepScrollPosition] = useState(false);
 
   const subAccounts = account.subAccounts;
 
@@ -127,16 +115,8 @@ export default function DelegationSelectorField({
   );
 
   const onScrollEnd = useCallback(() => {
-    if (loadNext) {
-      setLastItemIndex(data ? data.tokens.length - 1 : 0);
-      setLastKeepScrollPosition(true);
-      loadNext();
-    }
-  }, [data, loadNext]);
-
-  const onMenuClose = useCallback(() => {
-    setLastKeepScrollPosition(false);
-  }, []);
+    loadNext?.();
+  }, [loadNext]);
 
   return (
     <Box flow={1} mb={4}>
@@ -158,10 +138,7 @@ export default function DelegationSelectorField({
           })
         }
         onChange={onChange}
-        lastItemIndex={lastItemIndex}
-        keepLastScrollPosition={keepLastScrollPosition}
         onScrollEnd={onScrollEnd}
-        onMenuClose={onMenuClose}
       />
     </Box>
   );

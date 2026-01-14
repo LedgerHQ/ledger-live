@@ -33,7 +33,7 @@ export type CosmosDelegationFlowParamList = {
     accountId: string;
     transaction: Transaction;
     status: TransactionStatus;
-    validator: CosmosValidatorItem;
+    validator: CosmosValidatorItem | undefined;
     validatorSrc?: CosmosValidatorItem;
     min?: BigNumber;
     max?: BigNumber;

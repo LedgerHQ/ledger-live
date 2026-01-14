@@ -23,7 +23,7 @@ const AppRowContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-top: 1px solid ${p => p.theme.colors.palette.text.shade10};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c30};
   padding: 20px;
   font-size: 12px;
 `;
@@ -42,7 +42,7 @@ const AppTitleAndSubtitleContainer = styled.div`
 const AppTitleText = styled(Text).attrs({
   ff: "Inter|Bold",
   fontSize: 3,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 })`
   flex-shrink: 1;
   white-space: nowrap;
@@ -53,7 +53,7 @@ const AppTitleText = styled(Text).attrs({
 const AppSubtitleText = styled(Text).attrs({
   ff: "Inter|Regular",
   fontSize: 3,
-  color: "palette.text.shade60",
+  color: "neutral.c70",
 })`
   flex-shrink: 1;
   white-space: nowrap;
@@ -169,7 +169,7 @@ const Item = ({
             <Box>
               <IconCheckFull size={16} />
             </Box>
-            <Ellipsis ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
+            <Ellipsis ml={2} ff="Inter|Regular" color="neutral.c70" fontSize={3}>
               <Trans i18nKey="manager.applist.item.supported" />
             </Ellipsis>
           </>
@@ -178,7 +178,7 @@ const Item = ({
             <Box>
               <IconInfoCircleFull size={16} />
             </Box>
-            <Ellipsis ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
+            <Ellipsis ml={2} ff="Inter|Regular" color="neutral.c70" fontSize={3}>
               <Trans i18nKey="manager.applist.item.not_supported" />
             </Ellipsis>
           </>

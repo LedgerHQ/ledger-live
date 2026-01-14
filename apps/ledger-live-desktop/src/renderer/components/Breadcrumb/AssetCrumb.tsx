@@ -14,7 +14,7 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { DistributionItem } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { hideEmptyTokenAccountsSelector } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 
 type ItemShape = {
   key: string;
@@ -31,7 +31,7 @@ export default function AssetCrumb() {
   const renderItem = useCallback(
     ({ item, isActive }: { item: ItemShape; isActive: boolean }) => (
       <Item key={item.currency.id} isActive={isActive}>
-        <CryptoCurrencyIcon size={16} currency={item.currency} />
+        <CryptoCurrencyIcon size={22} currency={item.currency} />
         <Text ff={`Inter|${isActive ? "SemiBold" : "Regular"}`} fontSize={4}>
           {item.label}
         </Text>
@@ -103,7 +103,7 @@ export default function AssetCrumb() {
         {({ isOpen }) =>
           activeItem ? (
             <TextLink>
-              <CryptoCurrencyIcon size={14} currency={activeItem.currency} />
+              <CryptoCurrencyIcon size={20} currency={activeItem.currency} />
               <Button>{activeItem.currency.name}</Button>
               <AngleDown>
                 {isOpen ? <IconAngleUp size={16} /> : <IconAngleDown size={16} />}

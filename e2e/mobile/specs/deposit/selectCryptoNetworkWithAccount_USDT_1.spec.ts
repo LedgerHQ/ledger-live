@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { assetAvailableNetworks } from "@ledgerhq/live-common/lib/e2e/data/assetsDrawer";
 import { runSelectCryptoNetworkTest } from "./deposit";
 
@@ -6,7 +7,7 @@ const testConfig = {
   networks: assetAvailableNetworks.USDT.networks,
   withAccount: true,
   tmsLinks: ["B2CQA-1857"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runSelectCryptoNetworkTest(

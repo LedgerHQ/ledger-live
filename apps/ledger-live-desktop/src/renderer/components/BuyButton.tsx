@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import Button from "~/renderer/components/Button";
 import { useHistory } from "react-router-dom";
 import { closeAllModal } from "~/renderer/actions/modals";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";

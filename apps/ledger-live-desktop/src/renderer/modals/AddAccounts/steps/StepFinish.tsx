@@ -67,7 +67,7 @@ const Title = styled(Box).attrs(() => ({
   ff: "Inter",
   fontSize: 5,
   mt: 2,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))`
   text-align: center;
 `;

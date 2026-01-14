@@ -1,6 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import IconPlus from "~/renderer/icons/Plus";
@@ -13,7 +13,7 @@ const ReceiveButton = ({ account }: { account: AlgorandAccount }) => {
     dispatch(openModal("MODAL_ALGORAND_OPT_IN", { account }));
   };
   return (
-    <Button small color="palette.primary.main" onClick={onReceiveClick}>
+    <Button small color="primary.c80" onClick={onReceiveClick}>
       <Box horizontal flow={1} alignItems="center">
         <IconPlus size={12} />
         <Box>

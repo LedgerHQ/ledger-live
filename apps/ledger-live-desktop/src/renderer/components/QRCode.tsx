@@ -44,7 +44,6 @@ class QRCode extends PureComponent<Props> {
     const px = size * (window.devicePixelRatio || 1);
     return (
       <canvas
-        className="visible-for-spectron"
         style={{
           cursor: "none",
           width: `${size}px`,

@@ -21,7 +21,7 @@ import { isRestoreStepEnabled } from "../helpers/createFirmwareUpdateSteps";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))``;
 
 type BodyProps = {

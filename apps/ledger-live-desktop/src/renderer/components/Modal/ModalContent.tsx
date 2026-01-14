@@ -35,10 +35,7 @@ const ContentScrollableContainerGradient = styled.div.attrs<{
     opacity: p.opacity,
   },
 }))<{ opacity?: number }>`
-  background: linear-gradient(
-    rgba(255, 255, 255, 0),
-    ${p => p.theme.colors.palette.background.paper}
-  );
+  background: linear-gradient(rgba(255, 255, 255, 0), ${p => p.theme.colors.background.card});
   transition: opacity 150ms;
   height: 40px;
   position: absolute;

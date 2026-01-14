@@ -1,0 +1,87 @@
+import React, { useMemo } from "react";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import { AccountVirtualList } from "../AccountVirtualList";
+import { useModularDialogAnalytics } from "../../../../analytics/useModularDialogAnalytics";
+import { MODULAR_DIALOG_PAGE_NAME } from "../../../../analytics/modularDialog.types";
+import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
+import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { useSelector } from "LLD/hooks/redux";
+import {
+  localeSelector,
+  discreetModeSelector,
+  counterValueCurrencySelector,
+} from "~/renderer/reducers/settings";
+import BigNumber from "bignumber.js";
+
+type AccountSelectorContentProps = {
+  onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
+  accounts: AccountTuple[];
+  detailedAccounts: BaseRawDetailedAccount[];
+  bottomComponent: React.ReactNode;
+};
+
+export const AccountSelectorContent = ({
+  detailedAccounts,
+  accounts,
+  onAccountSelected,
+  bottomComponent,
+}: AccountSelectorContentProps) => {
+  const { trackModularDialogEvent } = useModularDialogAnalytics();
+  const locale = useSelector(localeSelector);
+  const discreet = useSelector(discreetModeSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+
+  const formattedAccounts = useMemo(() => {
+    return detailedAccounts.map(account => ({
+      ...account,
+      balance:
+        account.balance !== undefined && account.balance !== null && account.balanceUnit
+          ? formatCurrencyUnit(account.balanceUnit, account.balance, {
+              showCode: true,
+              discreet,
+              locale,
+            })
+          : "",
+      fiatValue: formatCurrencyUnit(
+        counterValueCurrency.units[0],
+        new BigNumber(account.fiatValue),
+        {
+          showCode: true,
+          discreet,
+          locale,
+        },
+      ),
+    }));
+  }, [detailedAccounts, locale, discreet, counterValueCurrency]);
+
+  const trackAccountClick = (name: string) => {
+    trackModularDialogEvent("account_clicked", {
+      currency: name,
+      page: MODULAR_DIALOG_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
+    });
+  };
+
+  const onAccountClick = (accountId: string) => {
+    const currencyAccount = accounts.find(({ account }) => account.id === accountId);
+    if (currencyAccount) {
+      onAccountSelected(currencyAccount.account);
+      trackAccountClick(currencyAccount.account.currency.name);
+      return;
+    }
+
+    const tupleWithSub = accounts.find(({ subAccount }) => subAccount?.id === accountId);
+    if (tupleWithSub?.subAccount) {
+      onAccountSelected(tupleWithSub.subAccount, tupleWithSub.account);
+      trackAccountClick(tupleWithSub.subAccount.token.ticker);
+    }
+  };
+
+  return (
+    <AccountVirtualList
+      bottomComponent={bottomComponent}
+      accounts={formattedAccounts}
+      onClick={onAccountClick}
+    />
+  );
+};

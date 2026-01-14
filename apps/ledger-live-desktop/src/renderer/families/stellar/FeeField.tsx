@@ -53,7 +53,7 @@ const FeeField = ({
             <Trans i18nKey="fees.feesAmount" />
           </Label>
           {networkCongestionLevel ? (
-            <Text ff="Inter|Regular" fontSize={12} color="palette.text.shade50">
+            <Text ff="Inter|Regular" fontSize={12} color="neutral.c70">
               <Trans
                 i18nKey={`families.stellar.networkCongestionLevel.${networkCongestionLevel}`}
               />{" "}
@@ -86,7 +86,7 @@ const FeeField = ({
 };
 const InputRight = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   fontSize: 4,
   justifyContent: "center",
 }))`

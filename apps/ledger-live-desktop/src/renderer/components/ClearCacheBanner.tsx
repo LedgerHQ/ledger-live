@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import TopBanner from "~/renderer/components/TopBanner";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import { Trans } from "react-i18next";
@@ -18,7 +18,7 @@ export default function ClearCacheBanner() {
       setIsLoading(true);
       softReset();
       dispatch(setShowClearCacheBanner(false));
-    } catch (err) {
+    } catch {
       setIsLoading(false);
     }
   }, [dispatch, softReset]);
@@ -40,7 +40,7 @@ export default function ClearCacheBanner() {
   );
 }
 const Link = styled.span`
-  color: ${p => p.theme.colors.palette.primary.contrastText};
+  color: ${p => p.theme.colors.neutral.c00};
   text-decoration: underline;
   cursor: pointer;
 `;

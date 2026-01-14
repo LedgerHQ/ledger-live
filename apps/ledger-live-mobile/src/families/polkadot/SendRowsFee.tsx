@@ -19,7 +19,7 @@ import { ScreenName } from "~/const";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { PolkadotBondFlowParamList } from "./BondFlow/types";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Navigation = CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>

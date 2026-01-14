@@ -125,6 +125,9 @@ export interface CurrencyBridge {
   // Scan all available accounts with a device
   scanAccounts(info: ScanInfo): Observable<ScanAccountEvent>;
   getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;
+  // Get the UI descriptor for this currency (defines structure for transaction flows)
+  // Returns descriptor with inputs, fees configuration, etc.
+  getDescriptor?: (currency: CryptoCurrency) => Record<string, unknown>;
   nftResolvers?: {
     nftMetadata: (arg: {
       contract: string;
@@ -137,6 +140,11 @@ export interface CurrencyBridge {
     }) => Promise<NFTCollectionMetadataResponse>;
   };
 }
+
+export type AddressValidationCurrencyParameters = {
+  currency: CryptoCurrency;
+  networkId: number;
+};
 
 /**
  * Abstraction related to an account
@@ -212,6 +220,10 @@ interface SendReceiveAccountBridge<
   // broadcasting a signed transaction to network
   // returns an optimistic Operation that this transaction is likely to create in the future
   broadcast: BroadcastFnSignature<A>;
+  validateAddress: (
+    address: string,
+    parameters: Partial<AddressValidationCurrencyParameters>,
+  ) => Promise<boolean>;
 }
 
 interface SerializationAccountBridge<

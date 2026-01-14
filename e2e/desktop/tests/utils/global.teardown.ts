@@ -32,6 +32,9 @@ export default async function globalTeardown() {
       return window.getAllEnvs();
     });
 
-    writeFileSync(environmentFilePath, formatFlagsData(featureFlags) + formatEnvData(appEnvs));
+    writeFileSync(environmentFilePath, formatFlagsData(featureFlags) + formatEnvData(appEnvs), {
+      encoding: "utf8",
+      flag: "a",
+    });
   }
 }

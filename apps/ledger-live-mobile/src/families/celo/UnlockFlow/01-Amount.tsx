@@ -9,7 +9,6 @@ import {
   Keyboard,
   SafeAreaView,
 } from "react-native";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
@@ -17,7 +16,6 @@ import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
@@ -30,8 +28,9 @@ import { getFirstStatusError, hasStatusError } from "../../helpers";
 import SendRowsFee from "../SendRowsFee";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloUnlockFlowParamList } from "./types";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import SupportLinkError from "~/components/SupportLinkError";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloUnlockFlowParamList, ScreenName.CeloUnlockAmount>
@@ -39,7 +38,7 @@ type Props = BaseComposite<
 
 export default function UnlockAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
 
   const bridge = getAccountBridge(account, parentAccount);

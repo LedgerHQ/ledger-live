@@ -1,5 +1,123 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.18.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`50bae0f`](https://github.com/LedgerHQ/ledger-live/commit/50bae0f13a95ef166b2c5609ccbcf5ef01ba1579), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59)]:
+  - @ledgerhq/live-env@2.25.0-next.0
+  - @ledgerhq/types-devices@6.28.0-next.0
+  - @ledgerhq/hw-transport@6.32.0-next.0
+  - @ledgerhq/devices@8.10.0-next.0
+  - @ledgerhq/errors@6.29.0-next.0
+  - @ledgerhq/logs@6.14.0-next.0
+  - @ledgerhq/live-dmk-shared@0.18.0-next.0
+
+## 0.17.1
+
+### Patch Changes
+
+- Updated dependencies [[`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae), [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4), [`fba1e31`](https://github.com/LedgerHQ/ledger-live/commit/fba1e31386e589a93adb19bc4f6eae55129e19ea)]:
+  - @ledgerhq/devices@8.9.0
+  - @ledgerhq/live-dmk-shared@0.17.0
+  - @ledgerhq/live-env@2.24.0
+  - @ledgerhq/hw-transport@6.31.16
+
+## 0.17.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae), [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4), [`fba1e31`](https://github.com/LedgerHQ/ledger-live/commit/fba1e31386e589a93adb19bc4f6eae55129e19ea)]:
+  - @ledgerhq/devices@8.9.0-next.0
+  - @ledgerhq/live-dmk-shared@0.17.0-next.0
+  - @ledgerhq/live-env@2.24.0-next.0
+  - @ledgerhq/hw-transport@6.31.16-next.0
+
+## 0.17.0
+
+### Minor Changes
+
+- [#13156](https://github.com/LedgerHQ/ledger-live/pull/13156) [`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8) Thanks [@gre-ledger](https://github.com/gre-ledger)! - ws@8.18.3 in catalog
+
+- [#13175](https://github.com/LedgerHQ/ledger-live/pull/13175) [`60dbe7d`](https://github.com/LedgerHQ/ledger-live/commit/60dbe7d5b1197b1fa6c53827dd824cd425e03810) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix old-to-new device name matching logic, for Nano X
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+### Patch Changes
+
+- Updated dependencies [[`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83), [`57b711d`](https://github.com/LedgerHQ/ledger-live/commit/57b711db894454d06db02a8179a3b756943f5a90), [`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143), [`3e70677`](https://github.com/LedgerHQ/ledger-live/commit/3e706774f8c4e9b768ab18b67abc3471cf61b6b6), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe), [`8d8e1b7`](https://github.com/LedgerHQ/ledger-live/commit/8d8e1b7bb26305af326ea21710248223d1e8653b)]:
+  - @ledgerhq/errors@6.28.0
+  - @ledgerhq/live-dmk-shared@0.16.0
+  - @ledgerhq/live-env@2.23.0
+  - @ledgerhq/devices@8.8.0
+  - @ledgerhq/hw-transport@6.31.15
+
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#13156](https://github.com/LedgerHQ/ledger-live/pull/13156) [`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8) Thanks [@gre-ledger](https://github.com/gre-ledger)! - ws@8.18.3 in catalog
+
+- [#13175](https://github.com/LedgerHQ/ledger-live/pull/13175) [`60dbe7d`](https://github.com/LedgerHQ/ledger-live/commit/60dbe7d5b1197b1fa6c53827dd824cd425e03810) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix old-to-new device name matching logic, for Nano X
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+### Patch Changes
+
+- Updated dependencies [[`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83), [`57b711d`](https://github.com/LedgerHQ/ledger-live/commit/57b711db894454d06db02a8179a3b756943f5a90), [`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143), [`3e70677`](https://github.com/LedgerHQ/ledger-live/commit/3e706774f8c4e9b768ab18b67abc3471cf61b6b6), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe), [`8d8e1b7`](https://github.com/LedgerHQ/ledger-live/commit/8d8e1b7bb26305af326ea21710248223d1e8653b)]:
+  - @ledgerhq/errors@6.28.0-next.0
+  - @ledgerhq/live-dmk-shared@0.16.0-next.0
+  - @ledgerhq/live-env@2.23.0-next.0
+  - @ledgerhq/devices@8.8.0-next.0
+  - @ledgerhq/hw-transport@6.31.15-next.0
+
+## 0.16.1
+
+### Patch Changes
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`e585ca1`](https://github.com/LedgerHQ/ledger-live/commit/e585ca1d5d8d4f883b857582a208fdaa14f17c58) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix old-to-new device name matching logic, for Nano X
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1
+  - @ledgerhq/devices@8.7.1
+  - @ledgerhq/hw-transport@6.31.14
+  - @ledgerhq/live-dmk-shared@0.15.1
+
+## 0.16.1-hotfix.0
+
+### Patch Changes
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`e585ca1`](https://github.com/LedgerHQ/ledger-live/commit/e585ca1d5d8d4f883b857582a208fdaa14f17c58) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix old-to-new device name matching logic, for Nano X
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1-hotfix.0
+  - @ledgerhq/devices@8.7.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.14-hotfix.0
+  - @ledgerhq/live-dmk-shared@0.15.1-hotfix.0
+
+## 0.16.0
+
+### Minor Changes
+
+- [#12712](https://github.com/LedgerHQ/ledger-live/pull/12712) [`cb22fe2`](https://github.com/LedgerHQ/ledger-live/commit/cb22fe2e8b5890885cc1d3c9d6600bf2231cbd6a) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Map DMK InvalidGetFirmwareMetadataResponseError error to FirmwareNotRecognizedErrorComponent
+
+- [#12777](https://github.com/LedgerHQ/ledger-live/pull/12777) [`39b27b3`](https://github.com/LedgerHQ/ledger-live/commit/39b27b32b293c8c9f218fe82dfaa082273eb5210) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Auto-pairing mechanism for BLE device that randomized their MAC address
+
+- [#12953](https://github.com/LedgerHQ/ledger-live/pull/12953) [`3b56965`](https://github.com/LedgerHQ/ledger-live/commit/3b56965ede1545d6cad9045a4aa88099e5e3ef9b) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix a DMK initialisation bug
+
+- [#11549](https://github.com/LedgerHQ/ledger-live/pull/11549) [`6baa679`](https://github.com/LedgerHQ/ledger-live/commit/6baa679f53c04fff0e2a2e71ed2815d5ed78c856) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate to React-Native New-Architecture
+
+- [#11943](https://github.com/LedgerHQ/ledger-live/pull/11943) [`aae83b9`](https://github.com/LedgerHQ/ledger-live/commit/aae83b968a6cc3a4bba17924091eebd2fdcfbb24) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Add DMK react native HID transport
+
+### Patch Changes
+
+- Updated dependencies [[`a2ecb55`](https://github.com/LedgerHQ/ledger-live/commit/a2ecb55df9d383dc282f5fe489cb14386208215e), [`b113920`](https://github.com/LedgerHQ/ledger-live/commit/b11392056bc334fc1813c473569ad3ae7be08045)]:
+  - @ledgerhq/live-env@2.22.0
+
 ## 0.16.0-next.0
 
 ### Minor Changes

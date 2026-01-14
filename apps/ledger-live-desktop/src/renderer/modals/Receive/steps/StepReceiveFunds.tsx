@@ -31,7 +31,8 @@ import { getEnv } from "@ledgerhq/live-env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { openModal } from "~/renderer/actions/modals";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getLLDCoinFamily } from "~/renderer/families";
@@ -84,7 +85,7 @@ const Receive1ShareAddress = ({
             flex: 1,
           }}
           ff="Inter|SemiBold"
-          color="palette.text.shade100"
+          color="neutral.c100"
           fontSize={4}
         >
           {name ? (
@@ -121,7 +122,7 @@ const Receive1ShareAddress = ({
   );
 };
 const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
-  const type = useTheme().colors.palette.type;
+  const type = useTheme().theme;
   return (
     <>
       <Box horizontal alignItems="center" flow={2}>
@@ -130,7 +131,7 @@ const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
             flexShrink: "unset",
           }}
           ff="Inter|SemiBold"
-          color="palette.text.shade100"
+          color="neutral.c100"
           fontSize={4}
         >
           <span

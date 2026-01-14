@@ -14,18 +14,45 @@ export default function PortfolioNoOpIllustration() {
         <Rect
           width="255"
           height="55"
-          x=".5"
-          y=".5"
+          transform={[{ translateX: 0.5 }, { translateY: 0.5 }]}
           fill="#FFF"
           fillOpacity=".5"
           stroke="#D8D8D8"
           rx="4"
         />
         <G opacity=".6" transform="translate(14 14)">
-          <Rect width="56" height="2" x="170" y="8" fill="#999" fillRule="nonzero" rx="1" />
-          <Rect width="56" height="2" x="38" y="8" fill="#999" fillRule="nonzero" rx="1" />
-          <Rect width="40" height="2" x="186" y="18" fill="#D8D8D8" fillRule="nonzero" rx="1" />
-          <Rect width="40" height="2" x="38" y="18" fill="#D8D8D8" fillRule="nonzero" rx="1" />
+          <Rect
+            width="56"
+            height="2"
+            transform={[{ translateX: 170 }, { translateY: 8 }]}
+            fill="#999"
+            fillRule="nonzero"
+            rx="1"
+          />
+          <Rect
+            width="56"
+            height="2"
+            transform={[{ translateX: 38 }, { translateY: 8 }]}
+            fill="#999"
+            fillRule="nonzero"
+            rx="1"
+          />
+          <Rect
+            width="40"
+            height="2"
+            transform={[{ translateX: 186 }, { translateY: 18 }]}
+            fill="#D8D8D8"
+            fillRule="nonzero"
+            rx="1"
+          />
+          <Rect
+            width="40"
+            height="2"
+            transform={[{ translateX: 38 }, { translateY: 18 }]}
+            fill="#D8D8D8"
+            fillRule="nonzero"
+            rx="1"
+          />
           <G fill="#66BE54" opacity=".2">
             <Rect width="28" height="28" rx="14" />
           </G>

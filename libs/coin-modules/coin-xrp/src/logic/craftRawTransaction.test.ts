@@ -1,6 +1,6 @@
-import { craftRawTransaction } from "./craftRawTransaction";
 import { encode, decode } from "ripple-binary-codec";
 import { SignerEntry } from "../types";
+import { craftRawTransaction } from "./craftRawTransaction";
 
 // --- Mocks ---
 const mockEstimateFees = jest.fn();

@@ -5,7 +5,6 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import { TrackScreen } from "~/analytics";
-import SkipSelectDevice from "../../SkipSelectDevice";
 import { DeviceMeta } from "./Modal/Confirmation";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
@@ -65,12 +64,12 @@ export function Connect({
   return (
     <Flex padding={4}>
       <TrackScreen category="Swap Form" name="ConnectDeviceListApps" provider={provider} />
-      <SkipSelectDevice onResult={setDevice} />
       <Flex height="100%" px={2} py={2}>
         <SelectDevice2
           onSelect={setDevice}
           stopBleScanning={!!device}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
+          autoSelectLastConnectedDevice
         />
       </Flex>
       <DeviceActionModal

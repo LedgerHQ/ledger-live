@@ -1,12 +1,12 @@
 import React from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { Route, Switch, useRouteMatch, RouteComponentProps } from "react-router-dom";
+import CompletionScreen from "LLD/features/Onboarding/screens/SyncOnboardingCompletion";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import SyncOnboardingDeviceConnection, {
   SyncOnboardingDeviceConnectionProps,
 } from "./DeviceConnection";
 import SyncOnboardingManual, { SyncOnboardingScreenProps } from "./Manual";
-import CompletionScreen from "./Manual/SyncOnboardingCompanion/CompletionScreen";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 
 export type DeviceConnectionRouteProps = RouteComponentProps<SyncOnboardingDeviceConnectionProps>;

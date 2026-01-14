@@ -87,7 +87,7 @@ function Tab({
         <Text
           variant={"paragraph"}
           fontWeight={"semiBold"}
-          color={isActive ? "palette.neutral.c100" : "palette.neutral.c70"}
+          color={isActive ? "neutral.c100" : "neutral.c70"}
           textAlign={"center"}
         >
           {children}

@@ -1,3 +1,4 @@
+import React from "react";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { StepProps as ReceiveStepProps } from "~/renderer/modals/Receive/Body";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/canton/types";
@@ -8,5 +9,6 @@ export type CantonFamily = LLDCoinFamily<Account, Transaction, TransactionStatus
   TooManyUtxosModal: React.ComponentType<{ account: Account }>;
   PendingTransferProposals: React.ComponentType<{
     account: Account;
+    parentAccount: Account;
   }>;
 };

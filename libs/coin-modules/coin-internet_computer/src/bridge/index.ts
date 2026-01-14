@@ -17,6 +17,7 @@ import { createTransaction } from "./createTransaction";
 import { getAccountShape } from "./bridgeHelpers/account";
 import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
+import { validateAddress } from "./validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext<ICPSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -57,6 +58,7 @@ function buildAccountBridge(
     },
     broadcast,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

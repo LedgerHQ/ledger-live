@@ -2,13 +2,12 @@ import "@ledgerhq/react-ui/assets/fonts";
 import React, { useMemo } from "react";
 import { ThemeProvider, DefaultTheme } from "styled-components";
 import defaultTheme from "./theme";
-import palettes from "./palettes";
 import { GlobalStyle } from "./global";
 import {
   defaultTheme as V3dDfaultTheme,
   palettes as V3Palettes,
 } from "@ledgerhq/react-ui/styles/index";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { themeSelector } from "../actions/general";
 type Props = {
   children: React.ReactNode;
@@ -16,9 +15,6 @@ type Props = {
 };
 
 const StyleProvider = ({ children, selectedPalette }: Props) => {
-  // V2 palettes are not typed in TS so we need to explicity type them as any
-  // eslint-disable-next-line
-  const palettesAny: any = palettes;
   const v3SelectedPalettes = selectedPalette === "light" ? "light" : "dark";
   // @ts-expect-error This is a hack to get the v2 palette in the v3 theme
   const theme: DefaultTheme = useMemo(
@@ -28,13 +24,10 @@ const StyleProvider = ({ children, selectedPalette }: Props) => {
       colors: {
         ...V3Palettes[v3SelectedPalettes],
         ...defaultTheme.colors,
-        palette: {
-          ...V3Palettes[v3SelectedPalettes],
-          ...palettesAny[v3SelectedPalettes],
-        },
       },
+      theme: selectedPalette,
     }),
-    [palettesAny, v3SelectedPalettes],
+    [v3SelectedPalettes, selectedPalette],
   );
   return (
     <ThemeProvider theme={theme}>

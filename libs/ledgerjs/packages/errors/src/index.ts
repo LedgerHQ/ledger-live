@@ -70,6 +70,8 @@ export const LatestMCUInstalledError = createCustomErrorClass("LatestMCUInstalle
 export const LatestFirmwareVersionRequired = createCustomErrorClass(
   "LatestFirmwareVersionRequired",
 );
+export const UnsupportedFeatureError = createCustomErrorClass("UnsupportedFeatureError");
+export const NanoSNotSupported = createCustomErrorClass("NanoSNotSupported");
 export const UnknownMCU = createCustomErrorClass("UnknownMCU");
 export const LedgerAPIError = createCustomErrorClass("LedgerAPIError");
 export const LedgerAPIErrorWithMessage = createCustomErrorClass("LedgerAPIErrorWithMessage");

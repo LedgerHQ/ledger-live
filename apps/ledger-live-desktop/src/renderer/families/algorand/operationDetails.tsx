@@ -4,7 +4,7 @@ import { AlgorandAccount, AlgorandOperation } from "@ledgerhq/live-common/famili
 import { BigNumber } from "bignumber.js";
 import React from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box/Box";
 import CounterValue from "~/renderer/components/CounterValue";
@@ -70,10 +70,10 @@ const OperationDetailsExtra = ({
           </OpDetailsTitle>
           <OpDetailsData>
             <Box alignItems="flex-end">
-              <FormattedVal unit={unit} showCode val={rewards} color="palette.text.shade80" />
+              <FormattedVal unit={unit} showCode val={rewards} color="neutral.c80" />
               <Box horizontal justifyContent="flex-end">
                 <CounterValue
-                  color="palette.text.shade60"
+                  color="neutral.c70"
                   fontSize={3}
                   currency={currency}
                   value={rewards}
@@ -81,7 +81,7 @@ const OperationDetailsExtra = ({
                   prefix={
                     <Box
                       mr={1}
-                      color="palette.text.shade60"
+                      color="neutral.c70"
                       style={{
                         width: "auto",
                       }}
@@ -148,11 +148,11 @@ const AmountCell = ({ amount, operation, currency, unit }: AmountCellProps<Algor
           showCode
           fontSize={4}
           alwaysShowSign
-          color={amount.isNegative() ? "palette.text.shade80" : undefined}
+          color={amount.isNegative() ? "neutral.c80" : undefined}
         />
       </ToolTip>
       <CounterValue
-        color="palette.text.shade60"
+        color="neutral.c70"
         fontSize={3}
         alwaysShowSign
         date={operation.date}

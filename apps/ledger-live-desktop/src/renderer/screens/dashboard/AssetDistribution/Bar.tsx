@@ -13,7 +13,7 @@ const Wrapper = styled.div<{
 }>`
   height: ${p => p.height}px;
   flex-grow: 1;
-  background-color: ${p => p.backgroundColor || p.theme.colors.palette.divider};
+  background-color: ${p => p.backgroundColor || p.theme.colors.neutral.c40};
   border-radius: ${p => p.height}px;
   overflow: hidden;
 `;

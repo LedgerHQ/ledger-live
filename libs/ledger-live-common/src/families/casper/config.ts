@@ -6,6 +6,10 @@ export const casperConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: {
         type: "active",
+        features: [
+          { id: "blockchain_txs", status: "active" },
+          { id: "staking_txs", status: "active" },
+        ],
       },
       infra: {
         API_CASPER_NODE_ENDPOINT: "https://casper.coin.ledger.com/node/",

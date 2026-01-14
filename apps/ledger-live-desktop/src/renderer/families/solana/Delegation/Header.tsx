@@ -6,7 +6,7 @@ import { HeaderWrapper } from "~/renderer/components/TableContainer";
 
 export const TableLine = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   horizontal: true,
   alignItems: "center",
   justifyContent: "flex-start",

@@ -15,8 +15,8 @@ const TooltipContainer = styled.div.attrs<TooltipContainerProps>(({ opacity }) =
   },
 }))<TooltipContainerProps>`
   transform: translate3d(-50%, -100%, 0);
-  background: ${p => p.theme.colors.palette.background.paper};
-  border: 1px solid ${p => p.theme.colors.palette.text.shade10};
+  background: ${p => p.theme.colors.background.card};
+  border: 1px solid ${p => p.theme.colors.neutral.c30};
   border-radius: 4px;
   width: 150px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.03);
@@ -71,7 +71,7 @@ const Tooltip = ({ tooltip, renderTooltip, color, data }: TooltipProps) => {
             r="4"
             stroke={color}
             strokeWidth="2"
-            fill={theme.colors.palette.background.paper}
+            fill={theme.colors.background.card}
           />
         </svg>
       </div>

@@ -84,8 +84,8 @@ function SummaryToSection({ transaction, currency }: Props) {
     <SummaryRowCustom
       label={t("send.summary.to")}
       iconLeft={
-        <Circle bg={colors.palette.opacityDefault.c05} size={34}>
-          <QrCode size="S" color={colors.palette.primary.c80} />
+        <Circle bg={colors.opacityDefault.c05} size={34}>
+          <QrCode size="S" color={colors.primary.c80} />
         </Circle>
       }
       data={

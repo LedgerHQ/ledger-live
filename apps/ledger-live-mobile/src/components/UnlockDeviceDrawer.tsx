@@ -1,9 +1,7 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useTheme } from "styled-components/native";
-import { renderConnectYourDevice as ConnectYourDevice } from "./DeviceAction/rendering";
+import { ConnectYourDevice } from "./DeviceAction/rendering";
 import QueuedDrawer from "./QueuedDrawer";
 
 export type Props = {
@@ -20,14 +18,10 @@ export type Props = {
 };
 
 const UnlockDeviceDrawer: React.FC<Props> = ({ isOpen, device, onClose }) => {
-  const { t } = useTranslation();
-  const { colors } = useTheme();
-  const theme = colors.type as "dark" | "light";
-
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} preventBackdropClick>
       <Flex flexDirection="row">
-        <ConnectYourDevice t={t} device={device} isLocked theme={theme} />
+        <ConnectYourDevice device={device} isLocked />
       </Flex>
     </QueuedDrawer>
   );

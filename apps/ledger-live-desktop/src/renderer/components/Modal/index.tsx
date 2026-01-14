@@ -109,8 +109,8 @@ const BodyWrapper = styled.div.attrs(({ state }: { state: TransitionStatus }) =>
     ...transitionsScale[state as keyof typeof transitionsScale],
   } as CSSProperties,
 }))<{ state: TransitionStatus; width?: number }>`
-  background: ${p => p.theme.colors.palette.background.paper};
-  color: ${p => p.theme.colors.palette.text.shade80};
+  background: ${p => p.theme.colors.background.card};
+  color: ${p => p.theme.colors.neutral.c80};
   width: ${p => p.width || 500}px;
   border-radius: 3px;
   box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
@@ -121,6 +121,7 @@ const BodyWrapper = styled.div.attrs(({ state }: { state: TransitionStatus }) =>
   transform: scale(1.1);
   opacity: 0;
   transition: all 200ms cubic-bezier(0.3, 1, 0.5, 0.8);
+  outline: none;
 `;
 export type RenderProps<Name extends keyof ModalData> = {
   onClose: () => void;
@@ -171,7 +172,7 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
 
   handleKeyup = (e: KeyboardEvent) => {
     const { onClose, preventBackdropClick } = this.props;
-    if (e.which === 27 && onClose && !preventBackdropClick) {
+    if (e.key === "Escape" && onClose && !preventBackdropClick) {
       onClose();
     }
   };
@@ -222,7 +223,7 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
   /** combined with tab-index 0 this will allow tab navigation into the modal disabling tab navigation behind it */
   setFocus = (r: HTMLDivElement) => {
     /** only pull focus if focus is out of modal ie: no input autofocused in modal */
-    r && !r.contains(document.activeElement) && r.focus();
+    if (r && !r.contains(document.activeElement)) r.focus();
   };
 
   swallowClick = (e: React.UIEvent) => {

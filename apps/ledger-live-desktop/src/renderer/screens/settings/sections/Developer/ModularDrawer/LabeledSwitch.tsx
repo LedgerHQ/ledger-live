@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/react-ui/index";
-import Switch from "~/renderer/components/Switch";
+import { Switch } from "@ledgerhq/lumen-ui-react";
 
 interface LabeledSwitchProps {
   label: string;
@@ -14,7 +14,7 @@ export const LabeledSwitch: React.FC<LabeledSwitchProps> = ({ label, isChecked, 
       <Text variant="body" fontSize="14px" mr="2">
         {label}
       </Text>
-      <Switch isChecked={isChecked} onChange={onChange} />
+      <Switch selected={isChecked} onChange={onChange} />
     </Flex>
   );
 };

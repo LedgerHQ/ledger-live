@@ -15,7 +15,7 @@ export type ErrorDisplayProps = {
   list?: boolean;
   supportLink?: string;
   warning?: boolean;
-  Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
+  Icon?: (props: { color?: string | undefined; size?: number | undefined }) => React.JSX.Element;
 };
 
 const ErrorDisplay = ({

@@ -10,7 +10,7 @@ export type Props = {
   boxed?: boolean;
 };
 
-const ProviderIcon = ({ name, size = "S", boxed = true }: Props): JSX.Element | null => {
+const ProviderIcon = ({ name, size = "S", boxed = true }: Props): React.JSX.Element | null => {
   const iconUrl = getProviderIconUrl({ boxed, name });
   return (
     <Styles.Contianer size={size}>

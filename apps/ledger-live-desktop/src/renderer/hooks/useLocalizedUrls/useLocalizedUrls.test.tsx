@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { combineReducers, legacy_createStore as createStore } from "redux";
 import settings from "~/renderer/reducers/settings";
 import React from "react";
-import * as redux from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Provider } from "react-redux";
 import { useLocalizedUrl } from ".";
 import { urls } from "../../../config/urls";
@@ -13,19 +13,25 @@ const store = createStore(
   }),
 );
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const mockedUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;
+
+jest.mock("LLD/hooks/redux", () => {
+  return {
+    useSelector: jest.fn(),
+  };
+});
+
 describe("useLocalizedUrl", () => {
   // Needed to wrap hook in a Redux Store
   const HookWrapper = ({ children }: { children: React.ReactNode }) => (
     <Provider store={store}>{children}</Provider>
   );
 
-  // prepare mocking useSelector
-  const spy = jest.spyOn(redux, "useSelector");
-
   let localizedUrl: ReturnType<typeof useLocalizedUrl>;
 
   const setLocaleMockWithURL = (locale: string, url: string) => {
-    spy.mockReturnValue(locale);
+    mockedUseSelector.mockReturnValue(locale);
     const { result } = renderHook(() => useLocalizedUrl(url), {
       wrapper: HookWrapper,
     });

@@ -1,6 +1,7 @@
 import { EnvName } from "@ledgerhq/live-env";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { getFeature, DEFAULT_FEATURES } from "../featureFlags";
+import axios, { AxiosError } from "axios";
 
 export const getAllFeatureFlags = (
   appLanguage?: string,
@@ -52,4 +53,37 @@ export const formatEnvData = (data: { [key in EnvName]: unknown }) => {
     allureData += `ENV.${key} = ${value}\n`;
   }
   return allureData;
+};
+
+/**
+ * Sanitizes an error to remove circular references (e.g., from AxiosError objects).
+ * This prevents Jest serialization failures when processing test results.
+ * Always returns a clean Error object with only serializable properties.
+ */
+export const sanitizeError = (error: unknown): Error => {
+  if (!axios.isAxiosError(error)) {
+    if (error instanceof Error) {
+      // Create a new clean error to avoid any circular references
+      const sanitized = new Error(error.message);
+      sanitized.name = error.name;
+      if (error.stack) {
+        sanitized.stack = error.stack;
+      }
+      return sanitized;
+    }
+    return new Error(String(error ?? "Unknown error"));
+  }
+
+  const err = error as AxiosError;
+  const sanitized = new Error(err.message || "Axios request failed");
+
+  Object.assign(sanitized, {
+    name: err.name,
+    code: err.code,
+    url: err.config?.url,
+    method: err.config?.method,
+    status: err.response?.status,
+  });
+
+  return sanitized;
 };

@@ -1,3 +1,4 @@
+import { Step } from "jest-allure2-reporter/api";
 import { Feature_ModularDrawer } from "@ledgerhq/types-live";
 import { getFlags } from "../../bridge/server";
 import { Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
@@ -64,7 +65,6 @@ export default class ModularDrawer {
 
   @Step("Perform search on modular drawer by ticker")
   async performSearchByTicker(ticker: string) {
-    await waitForElementById(this.searchBarId);
     await typeTextByElement(this.searchBar(), ticker);
   }
 
@@ -82,6 +82,7 @@ export default class ModularDrawer {
     if (await IsIdVisible(this.networkBasedTitleIdMAD)) {
       const id = this.networkItemIdMAD(networkName);
       if (!(await IsIdVisible(id))) {
+        await getElementById(this.networkBasedTitleIdMAD).swipe("up");
         await scrollToId(id, this.networkSelectionScrollViewId);
       }
       await tapById(id, 0);

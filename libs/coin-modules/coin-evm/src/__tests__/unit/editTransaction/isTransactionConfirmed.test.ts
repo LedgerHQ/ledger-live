@@ -1,13 +1,16 @@
 import { isTransactionConfirmed } from "../../../editTransaction/isTransactionConfirmed";
-import * as nodeApi from "../../../network/node/rpc.common";
+import { getTransaction } from "../../../network/node/rpc.common";
 import { getCoinConfig } from "../../../config";
 
 jest.mock("../../../config");
+jest.mock("../../../network/node/rpc.common", () => ({
+  getTransaction: jest.fn(),
+}));
+
 const mockGetConfig = jest.mocked(getCoinConfig);
+const mockGetTransaction = getTransaction as jest.Mock;
 
 describe("isTransactionConfirmed", () => {
-  const mockedNodeApi = jest.mocked(nodeApi);
-
   beforeEach(() => {
     mockGetConfig.mockImplementation((): any => {
       return {
@@ -27,12 +30,12 @@ describe("isTransactionConfirmed", () => {
     const hash = "transactionHash";
     const blockHeight = 12345;
 
-    jest.spyOn(nodeApi, "getTransaction").mockResolvedValue({ blockHeight } as any);
+    mockGetTransaction.mockResolvedValue({ blockHeight } as any);
 
     const result = await isTransactionConfirmed({ currency, hash });
 
     expect(result).toBe(true);
-    expect(mockedNodeApi.getTransaction).toHaveBeenCalledWith(currency, hash);
+    expect(mockGetTransaction).toHaveBeenCalledWith(currency, hash);
   });
 
   test("should return false if blockHeight is null", async () => {
@@ -40,11 +43,11 @@ describe("isTransactionConfirmed", () => {
     const hash = "transactionHash";
     const blockHeight = null;
 
-    jest.spyOn(nodeApi, "getTransaction").mockResolvedValue({ blockHeight } as any);
+    mockGetTransaction.mockResolvedValue({ blockHeight } as any);
 
     const result = await isTransactionConfirmed({ currency, hash });
 
     expect(result).toBe(false);
-    expect(mockedNodeApi.getTransaction).toHaveBeenCalledWith(currency, hash);
+    expect(mockGetTransaction).toHaveBeenCalledWith(currency, hash);
   });
 });

@@ -58,13 +58,17 @@ function getResolution(
     return;
   }
 
+  const baseResolution: Resolution = {
+    deviceModelId,
+    certificateSignatureKind,
+    ...(transaction.templateId && { templateId: transaction.templateId }),
+  };
   const { command } = transaction.model.commandDescriptor;
   switch (command.kind) {
     case "token.transfer": {
       if (command.recipientDescriptor.shouldCreateAsAssociatedTokenAccount) {
         return {
-          deviceModelId,
-          certificateSignatureKind,
+          ...baseResolution,
           tokenInternalId: command.tokenId,
           createATA: {
             address: command.recipientDescriptor.walletAddress,
@@ -74,8 +78,7 @@ function getResolution(
         };
       }
       return {
-        deviceModelId,
-        certificateSignatureKind,
+        ...baseResolution,
         tokenInternalId: command.tokenId,
         tokenAddress: command.recipientDescriptor.tokenAccAddress,
         userInputType: command.recipientDescriptor.userInputType,
@@ -84,8 +87,7 @@ function getResolution(
     // Not sure we need to handle this case as we don't use the TLV descriptor on the steps of createATA
     case "token.createATA": {
       return {
-        deviceModelId,
-        certificateSignatureKind,
+        ...baseResolution,
         createATA: {
           address: command.owner,
           mintAddress: command.mint,

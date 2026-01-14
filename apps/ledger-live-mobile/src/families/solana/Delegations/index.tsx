@@ -38,7 +38,7 @@ import UndelegateIcon from "~/icons/Undelegate";
 import ValidatorImage from "../shared/ValidatorImage";
 import DelegationLabelRight from "./LabelRight";
 import DelegationRow from "./Row";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: SolanaAccount;
@@ -174,6 +174,24 @@ function Delegations({ account }: Props) {
           </Text>
         ),
       },
+      ...(stake.activation.inactive > 0
+        ? [
+            {
+              label: t("solana.delegation.inactiveStake"),
+              Component: (
+                <Text
+                  numberOfLines={1}
+                  fontWeight="semiBold"
+                  ellipsizeMode="middle"
+                  style={[styles.valueText]}
+                  color="live"
+                >
+                  {formatAmount(stake.activation.inactive)}
+                </Text>
+              ),
+            },
+          ]
+        : []),
       {
         label: t("solana.delegation.stakeAvailableBalance"),
         Component: (

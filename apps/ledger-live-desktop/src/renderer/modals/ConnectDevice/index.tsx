@@ -30,7 +30,7 @@ export default function ConnectDevice({ appName = "BOLOS" }: Data) {
             if (data?.onCancel) {
               data.onCancel("Interrupted by user");
             }
-            onClose && onClose();
+            onClose?.();
           }}
           render={() => (
             <Box alignItems={"center"} px={32}>
@@ -39,7 +39,7 @@ export default function ConnectDevice({ appName = "BOLOS" }: Data) {
                 request={request}
                 onResult={res => {
                   data?.onResult(res);
-                  onClose && onClose();
+                  onClose?.();
                 }}
               />
             </Box>

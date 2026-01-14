@@ -5,7 +5,7 @@ export function extractDappURLFromManifest(manifest: LiveAppManifest): URL | und
     try {
       const url = new URL(manifest.params.dappUrl);
       return url;
-    } catch (error) {
+    } catch {
       // Invalid URL
       return undefined;
     }
@@ -19,7 +19,7 @@ export function extractDappURLFromManifest(manifest: LiveAppManifest): URL | und
     try {
       const url = new URL(manifest.params.dappURL);
       return url;
-    } catch (error) {
+    } catch {
       // Invalid URL
       return undefined;
     }
@@ -31,7 +31,7 @@ export function extractDappURLFromManifest(manifest: LiveAppManifest): URL | und
       }
       const url = new URL(manifest.url);
       return url;
-    } catch (error) {
+    } catch {
       // Invalid URL
       return undefined;
     }

@@ -1,5 +1,39 @@
 # @ledgerhq/errors
 
+## 6.29.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+## 6.28.0
+
+### Minor Changes
+
+- [#13189](https://github.com/LedgerHQ/ledger-live/pull/13189) [`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add new error type `UnsupportedFeatureError`
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+## 6.28.0-next.0
+
+### Minor Changes
+
+- [#13189](https://github.com/LedgerHQ/ledger-live/pull/13189) [`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add new error type `UnsupportedFeatureError`
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+## 6.27.1
+
+### Patch Changes
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add new error type `UnsupportedFeatureError`
+
+## 6.27.1-hotfix.0
+
+### Patch Changes
+
+- [#13257](https://github.com/LedgerHQ/ledger-live/pull/13257) [`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add new error type `UnsupportedFeatureError`
+
 ## 6.27.0
 
 ### Minor Changes

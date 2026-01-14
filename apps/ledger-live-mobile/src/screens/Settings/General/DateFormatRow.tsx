@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import SettingsRow from "~/components/SettingsRow";
 import { DateFormatDrawer } from "./DateFormatDrawer";
 import { track } from "~/analytics";

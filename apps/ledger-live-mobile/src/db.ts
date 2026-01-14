@@ -20,6 +20,7 @@ import type {
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 import { type PersistedCAL } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { PersistedIdentities } from "@ledgerhq/client-ids/store";
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
@@ -311,4 +312,11 @@ export async function saveCryptoAssetsCacheState(persistedData: PersistedCAL): P
   if (persistedData.tokens.length > 0) {
     await storage.save("cryptoAssetsCache", persistedData);
   }
+}
+
+export function getIdentities(): Promise<PersistedIdentities | null> {
+  return storage.get("identities") as Promise<PersistedIdentities | null>;
+}
+export async function saveIdentities(persistedData: PersistedIdentities): Promise<void> {
+  await storage.save("identities", persistedData);
 }

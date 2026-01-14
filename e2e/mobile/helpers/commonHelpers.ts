@@ -4,7 +4,9 @@ import { exec } from "child_process";
 import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
-import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
+import { readFile } from "fs/promises";
+import { NANO_APP_CATALOG_PATH } from "../utils/constants";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -47,14 +49,6 @@ export function isSpeculosRemote(): boolean {
 
 export function isRemoteIos(): boolean {
   return isSpeculosRemote() && isIos();
-}
-
-export async function addDelayBeforeInteractingWithDevice(
-  // TODO: QAA-683
-  ciDelay: number = 10_000,
-  localDelay: number = 0,
-) {
-  await delay(process.env.CI ? ciDelay : localDelay);
 }
 
 /**
@@ -101,8 +95,7 @@ export function setupEnvironment() {
   setEnv("MOCK", "");
   process.env.MOCK = "";
   setEnv("DETOX", "1");
-  setEnv("E2E_NANO_APP_VERSION_PATH", "artifacts/appVersion/nano-app-catalog.json");
-  process.env.SPECULOS_DEVICE = getSpeculosModel();
+  setEnv("E2E_NANO_APP_VERSION_PATH", NANO_APP_CATALOG_PATH);
 
   const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;
   const shouldBroadcast = disableBroadcastEnv === "0";
@@ -117,7 +110,9 @@ export const logMemoryUsage = async (): Promise<void> => {
     `top ${topArgs} | grep "${pid}" | awk '{print ${isLinux ? "$6" : "$8"}}'`,
     async (error: Error | null, stdout: string, stderr: string): Promise<void> => {
       if (error || stderr) {
-        log.error(`Error getting memory usage:\n Error: ${error}\n Stderr: ${stderr}`);
+        log.error(
+          `Error getting memory usage:\n Error: ${sanitizeError(error)}\n Stderr: ${stderr}`,
+        );
         return;
       }
       const logMessage = `📦 Detox Memory Usage: ${stdout.trim()}`;
@@ -126,6 +121,18 @@ export const logMemoryUsage = async (): Promise<void> => {
     },
   );
 };
+
+export async function takeAppScreenshot(screenshotName: string) {
+  try {
+    const screenshotPath = await device.takeScreenshot(screenshotName);
+    if (screenshotPath) {
+      const screenshotData = await readFile(screenshotPath);
+      await allure.attachment(`App Screenshot: ${screenshotName}`, screenshotData, "image/png");
+    }
+  } catch (error) {
+    log.error(`Error taking app screenshot: ${sanitizeError(error)}`);
+  }
+}
 
 export const normalizeText = (text: string) =>
   text

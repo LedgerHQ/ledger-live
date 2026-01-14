@@ -16,7 +16,7 @@ const TitleContainer = styled(Box)<{
   pointer-events: none;
 `;
 const ModalTitle = styled(Box).attrs(() => ({
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   ff: "Inter|Medium",
   fontSize: 6,
 }))`
@@ -24,7 +24,7 @@ const ModalTitle = styled(Box).attrs(() => ({
   line-height: 1;
 `;
 const ModalSubTitle = styled(Box).attrs(() => ({
-  color: "palette.text.shade50",
+  color: "neutral.c70",
   ff: "Inter|Regular",
   fontSize: 3,
 }))`
@@ -38,7 +38,7 @@ const ModalHeaderAction = styled(Tabbable).attrs(() => ({
   p: 3,
 }))<{ right?: boolean }>`
   border-radius: 8px;
-  color: ${p => p.color || p.theme.colors.palette.text.shade60};
+  color: ${p => p.color || p.theme.colors.neutral.c70};
   top: 0;
   align-self: ${p => (p.right ? "flex-end" : "flex-start")};
   line-height: 0;
@@ -49,12 +49,12 @@ const ModalHeaderAction = styled(Tabbable).attrs(() => ({
 
     &:hover,
     &:hover ${Text} {
-      color: ${p.theme.colors.palette.text.shade80};
+      color: ${p.theme.colors.neutral.c80};
     }
 
     &:active,
     &:active ${Text} {
-      color: ${p.theme.colors.palette.text.shade100};
+      color: ${p.theme.colors.neutral.c100};
     }
 
     ${Text} {
@@ -99,7 +99,7 @@ const ModalHeader = ({
         <ModalHeaderAction onClick={onBack} data-testid="modal-back-button">
           <IconAngleLeft size={12} />
           {backButtonComponent || (
-            <Text ff="Inter|Medium" fontSize={4} color="palette.text.shade40">
+            <Text ff="Inter|Medium" fontSize={4} color="neutral.c60">
               {t("common.back")}
             </Text>
           )}

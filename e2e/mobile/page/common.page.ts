@@ -1,7 +1,9 @@
+import { Step } from "jest-allure2-reporter/api";
 import { removeSpeculosAndDeregisterKnownSpeculos } from "../utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { delay, isIos } from "../helpers/commonHelpers";
 import { device } from "detox";
+import ErrorPage from "./error.page";
 
 export default class CommonPage {
   assetScreenFlatlistId = "asset-screen-flatlist";
@@ -15,6 +17,8 @@ export default class CommonPage {
   deviceItem = (deviceId: string): string => `device-item-${deviceId}`;
   deviceItemRegex = /device-item-.*/;
   walletApiWebview = "wallet-api-webview";
+
+  errorPage = new ErrorPage();
 
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById("NavigationHeaderCloseButton");

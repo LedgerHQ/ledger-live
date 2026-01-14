@@ -1,5 +1,90 @@
 # @ledgerhq/coin-tester
 
+## 0.16.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b)]:
+  - @ledgerhq/types-devices@6.28.0-next.0
+  - @ledgerhq/live-dmk-speculos@0.5.0-next.0
+
+## 0.15.0
+
+### Minor Changes
+
+- [#13381](https://github.com/LedgerHQ/ledger-live/pull/13381) [`b394f1d`](https://github.com/LedgerHQ/ledger-live/commit/b394f1ddca998a384d5e8032899d7f9a356cc4cc) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Bump speculos version to remove duplications
+
+### Patch Changes
+
+- Updated dependencies [[`b394f1d`](https://github.com/LedgerHQ/ledger-live/commit/b394f1ddca998a384d5e8032899d7f9a356cc4cc)]:
+  - @ledgerhq/live-dmk-speculos@0.4.0
+
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#13381](https://github.com/LedgerHQ/ledger-live/pull/13381) [`b394f1d`](https://github.com/LedgerHQ/ledger-live/commit/b394f1ddca998a384d5e8032899d7f9a356cc4cc) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Bump speculos version to remove duplications
+
+### Patch Changes
+
+- Updated dependencies [[`b394f1d`](https://github.com/LedgerHQ/ledger-live/commit/b394f1ddca998a384d5e8032899d7f9a356cc4cc)]:
+  - @ledgerhq/live-dmk-speculos@0.4.0-next.0
+
+## 0.14.0
+
+### Minor Changes
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+- [#13126](https://github.com/LedgerHQ/ledger-live/pull/13126) [`ac82441`](https://github.com/LedgerHQ/ledger-live/commit/ac824414e167adc3b7fedaa397832e5b41d5f5c7) Thanks [@aussedatlo](https://github.com/aussedatlo)! - update speculos controller version
+
+### Patch Changes
+
+- Updated dependencies [[`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe)]:
+  - @ledgerhq/live-dmk-speculos@0.3.0
+
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+- [#13126](https://github.com/LedgerHQ/ledger-live/pull/13126) [`ac82441`](https://github.com/LedgerHQ/ledger-live/commit/ac824414e167adc3b7fedaa397832e5b41d5f5c7) Thanks [@aussedatlo](https://github.com/aussedatlo)! - update speculos controller version
+
+### Patch Changes
+
+- Updated dependencies [[`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe)]:
+  - @ledgerhq/live-dmk-speculos@0.3.0-next.0
+
+## 0.13.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-dmk-speculos@0.2.1
+
+## 0.13.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-dmk-speculos@0.2.1-hotfix.0
+
+## 0.13.0
+
+### Minor Changes
+
+- [#12563](https://github.com/LedgerHQ/ledger-live/pull/12563) [`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add DMK speculos transport and device controller
+
+### Patch Changes
+
+- Updated dependencies [[`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3)]:
+  - @ledgerhq/live-dmk-speculos@0.2.0
+
 ## 0.13.0-next.0
 
 ### Minor Changes

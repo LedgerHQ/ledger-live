@@ -94,7 +94,7 @@ const AccountPage = ({
   const AccountBodyHeader = specific?.AccountBodyHeader;
   const AccountSubHeader = specific?.AccountSubHeader;
   const PendingTransferProposals = specific?.PendingTransferProposals;
-  const bgColor = useTheme().colors.palette.background.paper;
+  const bgColor = useTheme().colors.background.card;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
 
   const filterOperations = useCallback(
@@ -170,7 +170,9 @@ const AccountPage = ({
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
 
-          {PendingTransferProposals && <PendingTransferProposals account={account as Account} />}
+          {PendingTransferProposals && (
+            <PendingTransferProposals account={account as Account} parentAccount={mainAccount} />
+          )}
 
           {account.type === "Account" && <NftEntryPoint account={account} />}
 

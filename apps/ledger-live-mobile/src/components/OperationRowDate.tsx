@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
-import { useSelector } from "react-redux";
-import { createSelector } from "reselect";
+import { useSelector } from "~/context/hooks";
+import { createSelector } from "~/context/selectors";
 import { localeSelector } from "~/reducers/settings";
 
 type Props = {

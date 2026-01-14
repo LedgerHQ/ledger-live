@@ -15,14 +15,11 @@ export default styled(Box).attrs(p => ({
   &:hover {
     text-decoration: underline;
     color: ${p =>
-      lighten(
-        get(p.theme.colors, p.color) || p.color || p.theme.colors.palette.primary.main,
-        0.05,
-      )};
+      lighten(get(p.theme.colors, p.color) || p.color || p.theme.colors.primary.c80, 0.05)};
   }
 
   &:active {
     color: ${p =>
-      darken(get(p.theme.colors, p.color) || p.color || p.theme.colors.palette.primary.main, 0.1)};
+      darken(get(p.theme.colors, p.color) || p.color || p.theme.colors.primary.c80, 0.1)};
   }
 `;

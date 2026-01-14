@@ -80,7 +80,7 @@ These tests validate protobuf serialization, and the logic that splits DAML tran
 
 Test data is stored in two files:
 
-- `src/test/prepare-transfer.json` — a sample transaction request (`token-transfer-request`) from the [Gateway API](https://canton-gateway.api.live.ledger-test.com/docs/openapi/redoc/index.html#operation/postV1NodeNode_preset_idPartyParty_idTransactionPrepare)
+- `src/test/prepare-transfer.json` — a sample transaction request (`token-transfer-request`) from the [Gateway API](https://canton-gateway-devnet.api.live.ledger-test.com/docs/openapi/redoc/index.html#operation/postV1NodeNode_preset_idPartyParty_idTransactionPrepare)
 - `src/test/prepare-transfer-serialized.json` — the expected serialized output, generated using [split_tx_util.py](https://github.com/LedgerHQ/app-canton/blob/develop/scripts/split_tx_util.py)
 
 After updating protobuf bindings, make sure both files are refreshed with the latest Gateway data and serialized output.

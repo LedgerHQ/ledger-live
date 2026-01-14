@@ -16,6 +16,7 @@ import {
   preparePreApprovalTransaction,
   submitPreApprovalTransaction,
   getTransferPreApproval,
+  clearIsTopologyChangeRequiredCache,
 } from "../network/gateway";
 import { signTransaction } from "../common-logic/transaction/sign";
 import {
@@ -90,7 +91,9 @@ export const buildOnboardAccount =
 
         let { partyId } = await isAccountOnboarded(currency, publicKey);
 
-        if (partyId) {
+        // Skip submission only if account is onboarded on network but has no local xpub.
+        // For re-onboarding (account has xpub), always proceed to submit a new onboarding transaction.
+        if (partyId && !account.xpub) {
           const onboardedAccount = createOnboardedAccount(account, partyId, currency);
           o.next({ partyId, account: onboardedAccount }); // success
           return;
@@ -108,6 +111,8 @@ export const buildOnboardAccount =
         o.next({ status: OnboardStatus.SUBMIT });
 
         await submitOnboarding(currency, publicKey, preparedTransaction, signature);
+
+        clearIsTopologyChangeRequiredCache(currency, publicKey);
 
         const onboardedAccount = createOnboardedAccount(account, partyId, currency);
         o.next({ partyId, account: onboardedAccount }); // success

@@ -8,11 +8,11 @@ import { State } from "~/reducers/types";
 import Touchable from "~/components/Touchable";
 
 const StyledTouchable = styled(Touchable)`
-  background-color: ${p => p.theme.colors.palette.background.main};
+  background-color: ${p => p.theme.colors.background.main};
   padding: ${p => p.theme.space[5]}px ${p => p.theme.space[4]}px;
   flex-direction: row;
   align-items: center;
-  border-bottom-color: ${p => p.theme.colors.palette.neutral.c40};
+  border-bottom-color: ${p => p.theme.colors.neutral.c40};
   border-bottom-width: 1px;
 `;
 

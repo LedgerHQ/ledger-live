@@ -1,0 +1,45 @@
+---
+globs: ["*.test.*", "*.spec.*", "**/tests/**", "**/__tests__/**"]
+description: General, Desktop, and Mobile testing patterns for Ledger Wallet
+alwaysApply: true
+---
+
+# Testing Rules
+
+- **Stack:** Jest, MSW, coin-tester
+- **File Structure:**
+  - Tests next to source files
+  - `.test.ts` / `.spec.ts`
+  - `__tests__` for grouped tests
+  - `__integrations__` for integration tests
+- **Test Types:** Unit, Integration (prefer integration for complex features)
+- **Rules:**
+  - Test behavior, not implementation
+  - Deterministic tests
+  - Keep mocks minimal
+  - use MSW for Network API calls (use same pattern as `apps/ledger-live-mobile/__tests__/server.ts` with `handlers`)
+  - Integrate Redux when relevant
+  - Async: use `async/await` + `waitFor`
+- **Test Data:** Fixtures under `__fixtures__`, use factories/builders, avoid hardcoded/unrealistic values
+- **Maintenance:** Keep tests minimal/focused, remove obsolete tests
+- **Query Priority:** ByRole > ByLabelText > ByText > ByTestId
+
+---
+
+# Desktop Testing
+
+- **Environment:** ledger-live-desktop
+- **Render function:** imported from `tests/testSetup`
+- **Mocking Network** `apps/ledger-live-desktop/tests/server.ts`
+- **Stack:** + React Testing Library + MSW
+- **Command** inside ledger-live-desktop `pnpm test:jest "filename"` or `pnpm test:jest` to run them all
+
+---
+
+# Mobile Testing
+
+- **Environment:** ledger-live-mobile
+- **Render function:** imported from `@tests/test-renderer`
+- **Mocking Network** `apps/ledger-live-mobile/__tests__/server.ts`
+- **Stack:** + React Native Testing Library + MSW
+- **Command** inside ledger-live-mobile `pnpm test:jest "filename"` or `pnpm test:jest` to run them all

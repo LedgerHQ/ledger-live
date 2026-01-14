@@ -3,7 +3,7 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 
 export const ValidatorsFieldContainer = styled(Box)`
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 4px;
 `;
 export const SeeAllButton = styled.div<{
@@ -13,7 +13,7 @@ export const SeeAllButton = styled.div<{
   color: ${p => p.theme.colors.wallet};
   align-items: center;
   justify-content: center;
-  border-top: 1px solid ${p => p.theme.colors.palette.divider};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c40};
   height: 40px;
   cursor: pointer;
 

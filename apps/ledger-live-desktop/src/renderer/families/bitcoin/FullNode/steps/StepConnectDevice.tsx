@@ -78,44 +78,20 @@ const StepConnectDevice = ({
           <CheckWrapper size={50}>
             <IconCheck size={20} />
           </CheckWrapper>
-          <Text
-            ff="Inter|SemiBold"
-            textAlign={"center"}
-            mt={32}
-            fontSize={6}
-            color="palette.text.shade100"
-          >
+          <Text ff="Inter|SemiBold" textAlign={"center"} mt={32} fontSize={6} color="neutral.c100">
             <Trans i18nKey="fullNode.modal.steps.device.connectionSteps.success.header" />
           </Text>
-          <Text
-            ff="Inter|Regular"
-            mt={2}
-            textAlign={"center"}
-            fontSize={3}
-            color="palette.text.shade50"
-          >
+          <Text ff="Inter|Regular" mt={2} textAlign={"center"} fontSize={3} color="neutral.c70">
             <Trans i18nKey="fullNode.modal.steps.device.connectionSteps.success.description" />
           </Text>
         </Box>
       ) : (
         <Box alignItems="center">
           <BigSpinner size={50} />
-          <Text
-            ff="Inter|SemiBold"
-            textAlign={"center"}
-            mt={32}
-            fontSize={6}
-            color="palette.text.shade100"
-          >
+          <Text ff="Inter|SemiBold" textAlign={"center"} mt={32} fontSize={6} color="neutral.c100">
             <Trans i18nKey="fullNode.modal.steps.device.connectionSteps.pending.header" />
           </Text>
-          <Text
-            ff="Inter|Regular"
-            mt={2}
-            textAlign={"center"}
-            fontSize={3}
-            color="palette.text.shade50"
-          >
+          <Text ff="Inter|Regular" mt={2} textAlign={"center"} fontSize={3} color="neutral.c70">
             <Trans i18nKey="fullNode.modal.steps.device.connectionSteps.pending.description" />
           </Text>
         </Box>

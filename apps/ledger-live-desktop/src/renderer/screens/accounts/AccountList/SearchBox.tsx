@@ -21,7 +21,7 @@ const SearchInput = styled.input`
   font-weight: 500;
   font-size: 13px;
   cursor: text;
-  color: ${p => p.theme.colors.palette.text.shade100};
+  color: ${p => p.theme.colors.neutral.c100};
   &::placeholder {
     color: #999999;
     font-weight: 500;
@@ -32,7 +32,7 @@ const SearchIconContainer = styled(Box).attrs<{
   focused?: boolean;
 }>(p => ({
   style: {
-    color: p.focused ? p.theme.colors.palette.text.shade100 : p.theme.colors.palette.text.shade40,
+    color: p.focused ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c60,
   },
 }))<{
   focused?: boolean;

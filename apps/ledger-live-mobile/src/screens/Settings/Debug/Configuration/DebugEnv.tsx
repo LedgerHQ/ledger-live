@@ -3,10 +3,11 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import Config from "react-native-config";
 import { EnvName, setEnvUnsafe, getAllEnvs, getDefinition } from "@ledgerhq/live-env";
 import { Flex, Button, Text, Tag, Alert } from "@ledgerhq/native-ui";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { Pressable } from "react-native";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import TextInput from "~/components/TextInput";
 import SectionSeparator from "~/components/SectionSeparator";
+import { useToastsActions } from "~/actions/toast";
 
 export default function DebugEnv() {
   const [value, setValue] = useState<string>("");
@@ -17,6 +18,7 @@ export default function DebugEnv() {
     [key: string]: string;
   }>({});
 
+  const { pushToast } = useToastsActions();
   const envs = useMemo(() => {
     const envs = getAllEnvs();
     const definitions = envDefinitions;
@@ -53,9 +55,18 @@ export default function DebugEnv() {
     setResetIndex(resetIndex + 1);
   }, [value, resetIndex]);
 
-  const onPress = useCallback((env: string) => {
-    Clipboard.setString(env);
-  }, []);
+  const onPress = useCallback(
+    (env: string) => {
+      Clipboard.setString(env);
+      pushToast({
+        id: `debug_toast_${env}`,
+        type: "success",
+        icon: "success",
+        title: "Copied to clipboard",
+      });
+    },
+    [pushToast],
+  );
 
   return (
     <NavigationScrollView>
@@ -88,7 +99,7 @@ export default function DebugEnv() {
           {Object.entries(envs)
             .filter(([key]) => key.includes(filter))
             .map(([key, value]) => (
-              <TouchableOpacity onPress={() => onPress(key)} key={key}>
+              <Pressable onPress={() => onPress(key)} key={key}>
                 <Flex mb={8}>
                   <Tag
                     uppercase={false}
@@ -103,7 +114,7 @@ export default function DebugEnv() {
                   </Text>
                   <Text color="neutral.c80">{JSON.stringify(value) || "UNSET"}</Text>
                 </Flex>
-              </TouchableOpacity>
+              </Pressable>
             ))}
         </Flex>
       </Flex>

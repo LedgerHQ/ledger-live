@@ -4,9 +4,6 @@ import { isGlobalTabEnabled } from "~/config/global-tab";
 import { rgba } from "~/renderer/styles/helpers";
 import Box, { BoxProps } from "./Box";
 
-const KEY_ENTER = 13;
-const KEY_SPACE = 32;
-
 export const focusedShadowStyle = `
   0 0 0 1px ${rgba("#0a84ff", 0.5)} inset,
   0 0 0 1px ${rgba("#0a84ff", 0.3)},
@@ -49,8 +46,7 @@ export default class Tabbable extends Component<
   handleKeyPress = (e: React.KeyboardEvent) => {
     const { isFocused } = this.state;
     const { onClick } = this.props;
-    const canPress =
-      (e.which === KEY_ENTER || e.which === KEY_SPACE) && isGlobalTabEnabled() && isFocused;
+    const canPress = (e.key === "Enter" || e.key === "Space") && isGlobalTabEnabled() && isFocused;
     if (canPress && onClick) {
       e.preventDefault();
       onClick(e);
@@ -67,7 +63,7 @@ export default class Tabbable extends Component<
         isFocused={isFocused}
         onFocus={this.handleFocus}
         onBlur={this.handleBlur}
-        onKeyPress={this.handleKeyPress}
+        onKeyDown={this.handleKeyPress}
       />
     );
   }

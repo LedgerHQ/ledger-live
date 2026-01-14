@@ -78,7 +78,7 @@ class StatusError extends PureComponent<{
     const { onClick, error } = this.props;
     return (
       <Tooltip
-        tooltipBg="alertRed"
+        tooltipBg="error-strong"
         content={
           <Box
             style={{

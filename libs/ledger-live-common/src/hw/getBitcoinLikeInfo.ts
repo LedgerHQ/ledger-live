@@ -26,7 +26,7 @@ const getBitcoinLikeInfo = (
         message,
         short,
       };
-    } catch (e) {
+    } catch {
       // in such case, we are in an old firmware we no longer support
       return null;
     }

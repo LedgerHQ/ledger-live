@@ -1,5 +1,71 @@
 # @ledgerhq/react-ui
 
+## 0.44.0-next.0
+
+### Minor Changes
+
+- [#13528](https://github.com/LedgerHQ/ledger-live/pull/13528) [`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Migrate from react-window to TanStack Virtual
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+- [#13488](https://github.com/LedgerHQ/ledger-live/pull/13488) [`3ba59d4`](https://github.com/LedgerHQ/ledger-live/commit/3ba59d4dbdf69945e40d0cd000bcb0a68d2a916a) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Remove outline:none reset for a11y
+
+- [#13589](https://github.com/LedgerHQ/ledger-live/pull/13589) [`5127fc6`](https://github.com/LedgerHQ/ledger-live/commit/5127fc6c3aba783e66633ddb13403a6a36211cd8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix some outline style on LWD
+
+## 0.43.0
+
+### Minor Changes
+
+- [#13500](https://github.com/LedgerHQ/ledger-live/pull/13500) [`510d1be`](https://github.com/LedgerHQ/ledger-live/commit/510d1beba5c8ec0372eec5fabd1c02ab64693667) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update @babel/\* libraries and react-select
+
+### Patch Changes
+
+- Updated dependencies [[`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4)]:
+  - @ledgerhq/icons-ui@0.18.0
+
+## 0.43.0-next.0
+
+### Minor Changes
+
+- [#13500](https://github.com/LedgerHQ/ledger-live/pull/13500) [`510d1be`](https://github.com/LedgerHQ/ledger-live/commit/510d1beba5c8ec0372eec5fabd1c02ab64693667) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update @babel/\* libraries and react-select
+
+### Patch Changes
+
+- Updated dependencies [[`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4)]:
+  - @ledgerhq/icons-ui@0.18.0-next.0
+
+## 0.42.0
+
+### Minor Changes
+
+- [#13112](https://github.com/LedgerHQ/ledger-live/pull/13112) [`e63194f`](https://github.com/LedgerHQ/ledger-live/commit/e63194f7dbd5ff2b0135c26aac3842a2be676b0a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - 🔧 Enforce @typescript-eslint/no-deprecated and Replace Deprecated APIs
+
+- [#13038](https://github.com/LedgerHQ/ledger-live/pull/13038) [`ef276b7`](https://github.com/LedgerHQ/ledger-live/commit/ef276b7654ab32c7253ee812ceac3f89316ded4b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Uses crypto-icons everywhere and drop the legacy crypto-icons-ui for design unification and performance gain
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+- [#13247](https://github.com/LedgerHQ/ledger-live/pull/13247) [`750665c`](https://github.com/LedgerHQ/ledger-live/commit/750665ceb8ec4579919595c8bc117216c6d4b758) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Remove pre-ldls cryptoicon
+
+## 0.42.0-next.0
+
+### Minor Changes
+
+- [#13112](https://github.com/LedgerHQ/ledger-live/pull/13112) [`e63194f`](https://github.com/LedgerHQ/ledger-live/commit/e63194f7dbd5ff2b0135c26aac3842a2be676b0a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - 🔧 Enforce @typescript-eslint/no-deprecated and Replace Deprecated APIs
+
+- [#13038](https://github.com/LedgerHQ/ledger-live/pull/13038) [`ef276b7`](https://github.com/LedgerHQ/ledger-live/commit/ef276b7654ab32c7253ee812ceac3f89316ded4b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Uses crypto-icons everywhere and drop the legacy crypto-icons-ui for design unification and performance gain
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+- [#13247](https://github.com/LedgerHQ/ledger-live/pull/13247) [`750665c`](https://github.com/LedgerHQ/ledger-live/commit/750665ceb8ec4579919595c8bc117216c6d4b758) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Remove pre-ldls cryptoicon
+
+## 0.41.2
+
+### Patch Changes
+
+- Updated dependencies [[`fe81926`](https://github.com/LedgerHQ/ledger-live/commit/fe81926afeb2df8e917e6bd1e4cbab13f09647fd), [`a3425cf`](https://github.com/LedgerHQ/ledger-live/commit/a3425cf0563667ac933765625e155f22db870ae1), [`903ea9c`](https://github.com/LedgerHQ/ledger-live/commit/903ea9cdacf704a0119de2803a4f409b775391a5), [`1416051`](https://github.com/LedgerHQ/ledger-live/commit/141605179eeffc4d475150a3cfdeee431c21c7ee), [`6baa679`](https://github.com/LedgerHQ/ledger-live/commit/6baa679f53c04fff0e2a2e71ed2815d5ed78c856)]:
+  - @ledgerhq/crypto-icons-ui@1.24.0
+  - @ledgerhq/icons-ui@0.17.0
+
 ## 0.41.2-next.0
 
 ### Patch Changes

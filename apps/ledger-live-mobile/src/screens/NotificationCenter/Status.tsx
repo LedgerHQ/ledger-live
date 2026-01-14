@@ -9,6 +9,7 @@ import { Incident } from "@ledgerhq/live-common/notifications/ServiceStatusProvi
 import { FlatList } from "react-native";
 import { TrackScreen } from "~/analytics";
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
+import { HtmlTextRenderer } from "./HtmlTextRenderer";
 
 const DATA_TRACKING_DRAWER_NAME = "Notification Center Status";
 const Container = styled(SettingsNavigationScrollView)``;
@@ -17,6 +18,7 @@ const IncidentBox = styled(Flex)``;
 export default function StatusCenter() {
   const { incidents } = useFilteredServiceStatus({ entryPoint: "notifications" });
   const { colors, space } = useTheme();
+  // Fallback to a mock list so the screen always shows a few sample rows.
 
   const ListItem = (incident: Incident) => {
     return (
@@ -31,11 +33,14 @@ export default function StatusCenter() {
           <Text variant="body" fontWeight="medium" color="neutral.c100" mb={3}>
             {incident.name}
           </Text>
-          {incident.incident_updates?.length && (
-            <Text variant="body" fontWeight="medium" color="neutral.c70">
-              {incident.incident_updates[0].body}
-            </Text>
-          )}
+          {incident.incident_updates?.length ? (
+            <HtmlTextRenderer
+              html={incident.incident_updates[0].body ?? ""}
+              variant="body"
+              fontWeight="medium"
+              color="neutral.c70"
+            />
+          ) : null}
         </Flex>
       </IncidentBox>
     );

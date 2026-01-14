@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
 import type { ServiceStatusApi, ServiceStatusSummary } from "../types";
 
@@ -8,7 +8,7 @@ const statusVersion = () => getEnv("STATUS_API_VERSION");
 
 async function fetchStatusSummary(): Promise<ServiceStatusSummary> {
   const url = `${baseStatusUrl()}/v${statusVersion()}/summary.json`;
-  const { data } = await network({
+  const { data } = await network<ServiceStatusSummary>({
     method: "GET",
     url,
   });

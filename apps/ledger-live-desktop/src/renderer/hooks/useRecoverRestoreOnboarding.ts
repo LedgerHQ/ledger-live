@@ -3,14 +3,16 @@ import getUser from "~/helpers/user";
 import { getStoreValue } from "~/renderer/store";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { saveSettings } from "~/renderer/actions/settings";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { useLocation } from "react-router-dom";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
+import { SeedPathStatus } from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/types";
 
 const ONBOARDED_VIA_RECOVER_RESTORE_USER_PREFIX = "ONBOARDED_VIA_RECOVER_RESTORE_USER_";
 
-export const useRecoverRestoreOnboarding = (seedPathStatus?: string) => {
+export const useRecoverRestoreOnboarding = (seedPathStatus?: SeedPathStatus) => {
   const { pathname } = useLocation();
   const dispatch = useDispatch();
   const isLocked = useSelector(isLockedSelector);

@@ -60,7 +60,11 @@ function FormLocalManifest({
   const handleSwitchEthDapp = () => {
     setIsDapp(prevState => !prevState);
     setForm((prevState: LiveAppManifest) => {
-      !isDapp ? (prevState.dapp = cloneDeep(DEFAULT_FORM.dapp)) : delete prevState.dapp;
+      if (!isDapp) {
+        prevState.dapp = cloneDeep(DEFAULT_FORM.dapp);
+      } else {
+        delete prevState.dapp;
+      }
       return prevState;
     });
   };
@@ -76,7 +80,7 @@ function FormLocalManifest({
   const submitHandler = (e: KeyboardEvent) => {
     e.preventDefault();
     if (e.detail !== 0) {
-      formIsValid && addLocalManifest(form);
+      if (formIsValid) addLocalManifest(form);
       onClose();
     }
   };

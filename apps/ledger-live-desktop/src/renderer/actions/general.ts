@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { createSelector } from "reselect";
 // TODO make a generic way to implement this for each family
-// eslint-disable-next-line no-restricted-imports
 import { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/staking";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";

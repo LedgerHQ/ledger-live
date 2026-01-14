@@ -72,7 +72,6 @@ describe("getAccountTransactions", () => {
       fetchAllPages: true,
     });
 
-    expect(result.transactions).toHaveLength(3);
     expect(result.transactions.map(tx => tx.consensus_timestamp)).toEqual(["1", "3", "4"]);
     expect(result.nextCursor).toBeNull();
     expect(mockedNetwork).toHaveBeenCalledTimes(5);
@@ -118,7 +117,6 @@ describe("getAccountTransactions", () => {
       fetchAllPages: false,
     });
 
-    expect(result.transactions).toHaveLength(2);
     expect(result.transactions.map(tx => tx.consensus_timestamp)).toEqual(["1", "3"]);
     expect(result.nextCursor).toBe("3");
     expect(mockedNetwork).toHaveBeenCalledTimes(3);
@@ -126,6 +124,8 @@ describe("getAccountTransactions", () => {
 });
 
 describe("getAccount", () => {
+  const mockAddress = "0.0.1234";
+
   beforeEach(() => {
     jest.resetAllMocks();
   });
@@ -133,7 +133,7 @@ describe("getAccount", () => {
   it("should call the correct endpoint and return account data", async () => {
     mockedNetwork.mockResolvedValueOnce(
       getMockResponse({
-        account: "0.0.1234",
+        account: mockAddress,
         max_automatic_token_associations: 0,
         balance: {
           balance: 1000,
@@ -143,12 +143,28 @@ describe("getAccount", () => {
       }),
     );
 
-    const result = await apiClient.getAccount("0.0.1234");
+    const result = await apiClient.getAccount(mockAddress);
     const requestUrl = mockedNetwork.mock.calls[0][0].url;
 
-    expect(result.account).toEqual("0.0.1234");
-    expect(requestUrl).toContain("/api/v1/accounts/0.0.1234");
+    expect(result.account).toEqual(mockAddress);
+    expect(requestUrl).toContain(`/api/v1/accounts/${mockAddress}?transactions=false`);
     expect(mockedNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it("supports timestamp filter", async () => {
+    const mockAccount = { account: mockAddress, staked_node_id: null };
+    const timestamp = "lt:1762202064.065172388";
+
+    (network as jest.Mock).mockResolvedValueOnce({ data: mockAccount });
+
+    const result = await apiClient.getAccount(mockAddress, timestamp);
+    const requestUrl = mockedNetwork.mock.calls[0][0].url;
+
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(mockAccount);
+    expect(requestUrl).toContain(
+      `/api/v1/accounts/${mockAddress}?transactions=false&timestamp=${encodeURIComponent(timestamp)}`,
+    );
   });
 });
 
@@ -267,6 +283,7 @@ describe("findTransactionByContractCall", () => {
     const mockedResults: HederaMirrorTransaction = {
       transfers: [],
       token_transfers: [],
+      staking_reward_transfers: [],
       charged_tx_fee: 100,
       transaction_id: "xxxxxxxxxxxxxx",
       transaction_hash: "xxxxxxxxxxxxx",
@@ -300,6 +317,7 @@ describe("findTransactionByContractCall", () => {
           {
             transfers: [],
             token_transfers: [],
+            staking_reward_transfers: [],
             charged_tx_fee: 100,
             transaction_hash: "xxxxxxxxxxxxx",
             consensus_timestamp: "xxxxxxxxxxxxx",
@@ -310,6 +328,7 @@ describe("findTransactionByContractCall", () => {
           {
             transfers: [],
             token_transfers: [],
+            staking_reward_transfers: [],
             charged_tx_fee: 100,
             transaction_hash: "xxxxxxxxxxxxx",
             consensus_timestamp: "xxxxxxxxxxxxx",
@@ -317,7 +336,7 @@ describe("findTransactionByContractCall", () => {
             entity_id: "0.0.1111",
             name: "CONTRACTCALL",
           },
-        ],
+        ] satisfies Partial<HederaMirrorTransaction>[],
       }),
     );
 
@@ -406,14 +425,33 @@ describe("getTransactionsByTimestampRange", () => {
     jest.resetAllMocks();
   });
 
+  it("should include account.id query param if address is provided", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      getMockResponse({ transactions: [], links: { next: null } }),
+    );
+
+    await apiClient.getTransactionsByTimestampRange({
+      address: "0.0.1234",
+      startTimestamp: "gte:1000.000000000",
+      endTimestamp: "lt:2000.000000000",
+    });
+
+    const requestUrl = mockedNetwork.mock.calls[0][0].url;
+    expect(requestUrl).toContain("account.id=0.0.1234");
+  });
+
   it("should include correct query params with timestamp range", async () => {
     mockedNetwork.mockResolvedValueOnce(
       getMockResponse({ transactions: [], links: { next: null } }),
     );
 
-    await apiClient.getTransactionsByTimestampRange("1000.000000000", "2000.000000000");
+    await apiClient.getTransactionsByTimestampRange({
+      startTimestamp: "gte:1000.000000000",
+      endTimestamp: "lt:2000.000000000",
+    });
 
     const requestUrl = mockedNetwork.mock.calls[0][0].url;
+    expect(requestUrl).not.toContain("account.id=");
     expect(requestUrl).toContain("timestamp=gte%3A1000.000000000");
     expect(requestUrl).toContain("timestamp=lt%3A2000.000000000");
     expect(requestUrl).toContain("limit=100");
@@ -425,10 +463,10 @@ describe("getTransactionsByTimestampRange", () => {
       getMockResponse({ transactions: [], links: { next: null } }),
     );
 
-    const result = await apiClient.getTransactionsByTimestampRange(
-      "1000.000000000",
-      "2000.000000000",
-    );
+    const result = await apiClient.getTransactionsByTimestampRange({
+      startTimestamp: "gte:1000.000000000",
+      endTimestamp: "lt:2000.000000000",
+    });
 
     expect(result).toEqual([]);
     expect(mockedNetwork).toHaveBeenCalledTimes(1);
@@ -445,12 +483,11 @@ describe("getTransactionsByTimestampRange", () => {
       }),
     );
 
-    const result = await apiClient.getTransactionsByTimestampRange(
-      "1000.000000000",
-      "2000.000000000",
-    );
+    const result = await apiClient.getTransactionsByTimestampRange({
+      startTimestamp: "gte:1000.000000000",
+      endTimestamp: "lt:2000.000000000",
+    });
 
-    expect(result).toHaveLength(2);
     expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1500.123456789", "1750.987654321"]);
     expect(mockedNetwork).toHaveBeenCalledTimes(1);
   });
@@ -476,12 +513,11 @@ describe("getTransactionsByTimestampRange", () => {
         }),
       );
 
-    const result = await apiClient.getTransactionsByTimestampRange(
-      "1000.000000000",
-      "2000.000000000",
-    );
+    const result = await apiClient.getTransactionsByTimestampRange({
+      startTimestamp: "gte:1000.000000000",
+      endTimestamp: "lt:2000.000000000",
+    });
 
-    expect(result).toHaveLength(3);
     expect(result.map(tx => tx.consensus_timestamp)).toEqual([
       "1100.000000000",
       "1200.000000000",
@@ -511,13 +547,94 @@ describe("getTransactionsByTimestampRange", () => {
         }),
       );
 
-    const result = await apiClient.getTransactionsByTimestampRange(
-      "1000.000000000",
-      "2000.000000000",
-    );
+    const result = await apiClient.getTransactionsByTimestampRange({
+      startTimestamp: "gte:1000.000000000",
+      endTimestamp: "lt:2000.000000000",
+    });
 
-    expect(result).toHaveLength(2);
     expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1100.000000000", "1300.000000000"]);
     expect(mockedNetwork).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe("getNodes", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it("should return all nodes if only one page is needed", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      getMockResponse({
+        nodes: [
+          { node_id: 0, node_account_id: "0.0.3" },
+          { node_id: 1, node_account_id: "0.0.4" },
+        ],
+        links: { next: null },
+      }),
+    );
+
+    const result = await apiClient.getNodes({ fetchAllPages: true });
+    const requestUrl = mockedNetwork.mock.calls[0][0].url;
+
+    expect(result.nodes.map(n => n.node_id)).toEqual([0, 1]);
+    expect(requestUrl).toContain("/api/v1/network/nodes");
+    expect(requestUrl).toContain("limit=100");
+    expect(requestUrl).toContain("order=desc");
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it("should keep fetching if fetchAllPages and links.next is present", async () => {
+    mockedNetwork
+      .mockResolvedValueOnce(
+        getMockResponse({
+          nodes: [{ node_id: 0, node_account_id: "0.0.3" }],
+          links: { next: "/next-1" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        getMockResponse({
+          nodes: [{ node_id: 1, node_account_id: "0.0.4" }],
+          links: { next: "/next-2" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        getMockResponse({
+          nodes: [{ node_id: 2, node_account_id: "0.0.5" }],
+          links: { next: null },
+        }),
+      );
+
+    const result = await apiClient.getNodes({ fetchAllPages: true });
+
+    expect(result.nodes.map(n => n.node_id)).toEqual([0, 1, 2]);
+    expect(mockedNetwork).toHaveBeenCalledTimes(3);
+  });
+
+  it("should paginate if fetchAllPages is not set", async () => {
+    mockedNetwork
+      .mockResolvedValueOnce(
+        getMockResponse({
+          nodes: [
+            { node_id: 0, node_account_id: "0.0.3" },
+            { node_id: 1, node_account_id: "0.0.4" },
+          ],
+          links: { next: "/next-1" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        getMockResponse({
+          nodes: [{ node_id: 2, node_account_id: "0.0.5" }],
+          links: { next: null },
+        }),
+      );
+
+    const result = await apiClient.getNodes({
+      limit: 2,
+      fetchAllPages: false,
+    });
+
+    expect(result.nodes.map(tx => tx.node_id)).toEqual([0, 1]);
+    expect(result.nextCursor).toBe("1");
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
   });
 });

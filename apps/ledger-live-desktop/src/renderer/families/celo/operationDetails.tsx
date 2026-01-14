@@ -58,7 +58,7 @@ const OperationDetailsExtra = ({
                     unit={unit}
                     showCode
                     fontSize={4}
-                    color="palette.text.shade60"
+                    color="neutral.c70"
                   />
                 </Box>
               </OpDetailsData>
@@ -102,7 +102,7 @@ const OperationDetailsExtra = ({
                     unit={unit}
                     showCode
                     fontSize={4}
-                    color="palette.text.shade60"
+                    color="neutral.c70"
                   />
                 </Box>
               </OpDetailsData>

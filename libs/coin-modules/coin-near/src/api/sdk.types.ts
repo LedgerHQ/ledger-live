@@ -21,7 +21,7 @@ export type NearTransaction = {
   };
   included_in_block_hash: string;
   block_timestamp: string;
-  actions: [
+  actions?: [
     {
       action: string;
       deposit: string;

@@ -36,7 +36,7 @@ const seiValidatorApi: ValidatorApi = {
 
 export const getValidatorApi = (currencyId: string): ValidatorApi | undefined => {
   switch (currencyId) {
-    case "sei_network_evm":
+    case "sei_evm":
       return seiValidatorApi;
     default:
       return undefined;

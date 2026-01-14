@@ -6,7 +6,7 @@ import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import SettingsRow from "~/components/SettingsRow";
 import { reboot } from "~/actions/appstate";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import { replaceAccounts } from "~/actions/accounts";
 
 const generateMockAccounts = (count: number) =>

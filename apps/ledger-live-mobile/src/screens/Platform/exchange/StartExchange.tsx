@@ -10,7 +10,6 @@ import {
   ResultStart,
 } from "~/components/RootNavigator/types/PlatformExchangeNavigator";
 import SelectDevice2 from "~/components/SelectDevice2";
-import SkipSelectDevice from "~/screens/SkipSelectDevice";
 import { ScreenName } from "~/const";
 import { useStartExchangeDeviceAction } from "~/hooks/deviceActions";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
@@ -45,12 +44,12 @@ export default function PlatformStartExchange({ navigation, route }: Props) {
   const request = useMemo(() => route.params.request, [route.params.request]);
   return (
     <SafeAreaView style={styles.root} edges={["bottom"]}>
-      <SkipSelectDevice onResult={setDevice} />
       <Flex px={16} flex={1} mt={8}>
         <SelectDevice2
           onSelect={setDevice}
           stopBleScanning={!!device}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
+          autoSelectLastConnectedDevice
         />
       </Flex>
       <DeviceActionModal

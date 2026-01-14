@@ -1,23 +1,22 @@
 import invariant from "invariant";
 import React from "react";
-import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { Transaction } from "@ledgerhq/live-common/families/sui/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { accountScreenSelector } from "~/reducers/accounts";
 import SelectAmount from "../shared/02-SelectAmount";
 import { ScreenName } from "~/const";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SuiUnstakingFlowParamList } from "./types";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<SuiUnstakingFlowParamList, ScreenName.SuiUnstakingAmount>
 >;
 
 function UnstakingAmount({ navigation, route }: Props) {
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   invariant(account, "account required");
   const bridge = getAccountBridge(account, undefined);
   const mainAccount = getMainAccount(account, undefined);

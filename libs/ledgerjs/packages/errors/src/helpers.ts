@@ -71,7 +71,7 @@ export const deserializeError = (object: any): Error | undefined => {
           object = msg;
         }
       }
-    } catch (e) {
+    } catch {
       // nothing
     }
 
@@ -96,7 +96,7 @@ export const deserializeError = (object: any): Error | undefined => {
               error[prop] = object[prop];
             }
           }
-        } catch (e) {
+        } catch {
           // sometimes setting a property can fail (e.g. .name)
         }
       }

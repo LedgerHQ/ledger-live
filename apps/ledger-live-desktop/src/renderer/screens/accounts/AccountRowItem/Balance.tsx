@@ -16,7 +16,7 @@ class Balance extends PureComponent<{
           alwaysShowSign={false}
           animateTicker={false}
           ellipsis
-          color="palette.text.shade100"
+          color="neutral.c100"
           unit={unit}
           showCode
           val={balance}

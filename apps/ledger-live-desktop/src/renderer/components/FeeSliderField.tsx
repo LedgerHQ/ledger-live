@@ -96,7 +96,7 @@ const FeeSliderField = ({ range, value, onChange, unit, error, defaultValue }: P
         fontSize="12px"
         horizontal
         justifyContent="space-between"
-        color="palette.text.shade60"
+        color="neutral.c70"
       >
         <Text>
           <Trans i18nKey="fees.slow" />

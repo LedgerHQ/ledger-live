@@ -2,7 +2,7 @@ import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/accoun
 import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box/Box";
 import Button from "~/renderer/components/Button";
@@ -55,10 +55,10 @@ const RewardsSection = ({
             showCode
             fontSize={5}
             disableRounding
-            color="palette.text.shade100"
+            color="neutral.c100"
           />
           <CounterValue
-            color="palette.text.shade60"
+            color="neutral.c70"
             fontSize={3}
             currency={currency}
             value={rewards}

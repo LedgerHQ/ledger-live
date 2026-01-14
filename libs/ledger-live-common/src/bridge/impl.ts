@@ -23,6 +23,7 @@ import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/erro
 // Removed: stores are now managed globally by @ledgerhq/cryptoassets/cal-client/store
 
 const alpacaized = {
+  evm: true,
   xrp: true,
   stellar: true,
   tezos: true,
@@ -35,7 +36,13 @@ const currencyBridgeCache: Record<string, CurrencyBridge> = {};
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   if (getEnv("MOCK")) {
     const mockBridge = mockBridges[currency.family];
-    if (mockBridge) return mockBridge.currencyBridge;
+    // TODO Remove once we delete mock bridges tests
+    if (mockBridge) {
+      if (typeof mockBridge.loadCoinConfig === "function") {
+        mockBridge.loadCoinConfig();
+      }
+      return mockBridge.currencyBridge;
+    }
     throw new CurrencyNotSupported("no mock implementation available for currency " + currency.id, {
       currencyName: currency.id,
     });
@@ -85,13 +92,19 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
 
     if (type === "mock") {
       const mockBridge = mockBridges[family];
-      if (mockBridge) return wrapAccountBridge(mockBridge.accountBridge);
+      // TODO Remove once we delete mock bridges tests
+      if (mockBridge) {
+        if (typeof mockBridge.loadCoinConfig === "function") {
+          mockBridge.loadCoinConfig();
+        }
+        return wrapAccountBridge(mockBridge.accountBridge);
+      }
     }
   }
 
   if (alpacaized[family]) {
     if (!bridgeCache[family]) {
-      bridgeCache[family] = getAlpacaAccountBridge(family, "local");
+      bridgeCache[family] = wrapAccountBridge(getAlpacaAccountBridge(family, "local"));
     }
     return bridgeCache[family];
   }

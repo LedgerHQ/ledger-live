@@ -6,16 +6,16 @@ import { Theme as OldTheme } from "~/renderer/styles/theme";
 
 const getPalette = (theme: DefaultTheme) => ({
   default: {
-    primary: theme.colors.palette.primary.main,
-    primaryHover: lighten(theme.colors.palette.primary.main, 0.1),
-    secondary: theme.colors.palette.divider,
-    buttonInner: theme.colors.palette.primary.contrastText,
+    primary: theme.colors.primary.c80,
+    primaryHover: lighten(theme.colors.primary.c80, 0.1),
+    secondary: theme.colors.neutral.c40,
+    buttonInner: theme.colors.neutral.c00,
   },
   error: {
     primary: theme.colors.alertRed,
     primaryHover: lighten(theme.colors.alertRed, 0.1),
-    secondary: theme.colors.palette.divider,
-    buttonInner: theme.colors.palette.primary.contrastText,
+    secondary: theme.colors.neutral.c40,
+    buttonInner: theme.colors.neutral.c00,
   },
 });
 

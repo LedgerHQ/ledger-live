@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import { setAnalytics, setPersonalizedRecommendations } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";

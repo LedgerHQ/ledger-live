@@ -39,9 +39,10 @@ const FeatureFlagDetails: React.FC<Props> = props => {
     enabledOverriddenForCurrentVersion,
   } = flagValue || {};
 
-  const handleClick = useCallback(() => {
-    focused ? setFocusedName(undefined) : setFocusedName(flagName);
-  }, [focused, flagName, setFocusedName]);
+  const handleClick = useCallback(
+    () => (focused ? setFocusedName(undefined) : setFocusedName(flagName)),
+    [focused, flagName, setFocusedName],
+  );
 
   if (!flagValue) return null;
 

@@ -27,6 +27,19 @@ runs:
   steps:
     - id: branch-name
       uses: tj-actions/branch-names@v6
+    - name: Set report path
+      id: report-path
+      shell: bash
+      run: |
+        REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+        BRANCH="${{ steps.branch-name.outputs.current_branch }}"
+        SUFFIX="${{ inputs.report_path_suffix || inputs.platform }}"
+        if [ "${{ github.repository }}" != "LedgerHQ/ledger-live" ]; then
+          PATH_VALUE="${REPO_NAME}-${BRANCH}-${SUFFIX}"
+        else
+          PATH_VALUE="${BRANCH}-${SUFFIX}"
+        fi
+        echo "path=${PATH_VALUE}" >> "$GITHUB_OUTPUT"
     - name: Publish report on Allure Server
       id: publish-report
       uses: LedgerHQ/send-to-allure-server-action@2.1.2
@@ -36,7 +49,7 @@ runs:
         build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         username: ${{ inputs.login }}
         password: ${{ inputs.password }}
-        path: "${{ steps.branch-name.outputs.current_branch }}-${{ inputs.report_path_suffix || inputs.platform }}"
+        path: ${{ steps.report-path.outputs.path }}
         allure-results: ${{ inputs.path }}
     - name: Write Allure report in summary
       shell: bash

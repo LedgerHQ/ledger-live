@@ -11,12 +11,12 @@ export default function getEnvironmentParams(
 ): EnvironmentParams {
   return {
     cloudSyncApiBaseUrl:
-      environment && environment === "PROD"
-        ? getEnv("CLOUD_SYNC_API_PROD")
-        : getEnv("CLOUD_SYNC_API_STAGING"),
+      environment && environment === "STAGING"
+        ? getEnv("CLOUD_SYNC_API_STAGING")
+        : getEnv("CLOUD_SYNC_API_PROD"),
     trustchainApiBaseUrl:
-      environment && environment === "PROD"
-        ? getEnv("TRUSTCHAIN_API_PROD")
-        : getEnv("TRUSTCHAIN_API_STAGING"),
+      environment && environment === "STAGING"
+        ? getEnv("TRUSTCHAIN_API_STAGING")
+        : getEnv("TRUSTCHAIN_API_PROD"),
   };
 }

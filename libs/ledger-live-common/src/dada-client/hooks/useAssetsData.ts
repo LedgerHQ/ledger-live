@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useGetAssetsDataInfiniteQuery } from "../state-manager/api";
 import { AssetsDataWithPagination, GetAssetsDataParams } from "../state-manager/types";
+import { parseError } from "../utils/errorUtils";
 
 const emptyData = () => ({
   cryptoAssets: {},
@@ -9,7 +10,6 @@ const emptyData = () => ({
   interestRates: {},
   markets: {},
   currenciesOrder: {
-    currenciesIds: [],
     metaCurrencyIds: [],
     key: "",
     order: "",
@@ -62,7 +62,6 @@ export function useAssetsData({
       Object.assign(acc.interestRates, page.interestRates);
       Object.assign(acc.markets, page.markets);
 
-      acc.currenciesOrder.currenciesIds.push(...page.currenciesOrder.currenciesIds);
       acc.currenciesOrder.metaCurrencyIds.push(...page.currenciesOrder.metaCurrencyIds);
 
       acc.currenciesOrder.key = page.currenciesOrder.key;
@@ -77,11 +76,14 @@ export function useAssetsData({
 
   const isInitialLoading = isLoading || (isFetching && !isFetchingNextPage);
 
+  const errorInfo = useMemo(() => parseError(error), [error]);
+
   return {
     data: joinedPages,
     isLoading: isInitialLoading,
     isFetchingNextPage,
     error,
+    errorInfo,
     loadNext: hasMore ? fetchNextPage : undefined,
     isSuccess,
     isError,

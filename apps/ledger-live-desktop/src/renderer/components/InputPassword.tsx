@@ -9,12 +9,12 @@ import IconEye from "~/renderer/icons/Eye";
 import IconEyeOff from "~/renderer/icons/EyeOff";
 
 const InputRight = styled(Box).attrs(() => ({
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   justifyContent: "center",
   pr: 3,
 }))`
   &:hover {
-    color: ${p => p.theme.colors.palette.text.shade80};
+    color: ${p => p.theme.colors.neutral.c80};
   }
 `;
 

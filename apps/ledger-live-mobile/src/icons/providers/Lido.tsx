@@ -23,7 +23,14 @@ export function Lido({ size = BASE_SIZE, outline }: Props) {
         fill="#fff"
         d="M16 18.2 10.8 15l-.2.3a7 7 0 0 0 .9 8.3 6.2 6.2 0 0 0 9 0 7 7 0 0 0 .9-8.3l-.1-.3-5.3 3.2Z"
       />
-      <Rect width={31} height={31} x={0.5} y={0.5} rx={7.5} stroke={outline} stroke-opacity={0.1} />
+      <Rect
+        width={31}
+        height={31}
+        transform={[{ translateX: 0.5 }, { translateY: 0.5 }]}
+        rx={7.5}
+        stroke={outline}
+        stroke-opacity={0.1}
+      />
     </Svg>
   );
 }

@@ -4,7 +4,8 @@ import { ItemContainer } from "../shared";
 import IconBell from "~/renderer/icons/Bell";
 import { useTranslation } from "react-i18next";
 import { InformationDrawer } from "./InformationDrawer";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { informationCenterStateSelector } from "~/renderer/reducers/UI";
 import { openInformationCenter, closeInformationCenter } from "~/renderer/actions/UI";
 import { track } from "~/renderer/analytics/segment";

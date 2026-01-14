@@ -19,7 +19,7 @@ export async function verify(msgContent: string, sigContent: Buffer, pubKeyConte
     const message = hash.digest();
 
     // Convert signature from DER format
-    const signature = secp256k1.Signature.fromDER(sigContent).normalizeS();
+    const signature = secp256k1.Signature.fromBytes(sigContent, "der");
 
     // Convert public key
     // Parse pem key to JWK
@@ -28,13 +28,13 @@ export async function verify(msgContent: string, sigContent: Buffer, pubKeyConte
     const blk = jwk.toString("blk", "public");
     // Convert string to Buffer
     const publicKey = Buffer.from(blk, "hex");
-    const verified = secp256k1.verify(signature.toCompactRawBytes(), message, publicKey, {
+    const verified = secp256k1.verify(signature.toBytes("compact"), message, publicKey, {
       prehash: false,
     });
     if (!verified) {
       throw new UpdateIncorrectSig();
     }
-  } catch (e) {
+  } catch {
     throw new UpdateIncorrectSig();
   }
 }

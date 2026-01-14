@@ -2,9 +2,9 @@ import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { urls } from "~/config/urls";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -14,6 +14,7 @@ import Text from "~/renderer/components/Text";
 import Error from "~/renderer/icons/Error";
 import { openURL } from "~/renderer/linking";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 
 type Props = Readonly<{
   account: Account;
@@ -25,20 +26,17 @@ export default function TooManyUtxosModal({ account }: Props) {
   const dispatch = useDispatch();
   const learnMoreUrl = useLocalizedUrl(urls.canton.learnMore);
   const cantonAccount = account as CantonAccount;
+  const openSendFlow = useOpenSendFlow();
 
   const handleOpenSendFlow = useCallback(() => {
     dispatch(closeModal("MODAL_CANTON_TOO_MANY_UTXOS"));
-    dispatch(
-      openModal("MODAL_SEND", {
-        account: cantonAccount,
-        recipient: cantonAccount.xpub,
-        amount: cantonAccount.spendableBalance.multipliedBy(
-          CANTON_REASONABLE_CONSOLIDATE_MULTIPLIER,
-        ),
-        stepId: "amount",
-      }),
-    );
-  }, [dispatch, cantonAccount]);
+    openSendFlow({
+      account: cantonAccount,
+      recipient: cantonAccount.xpub,
+      amount: cantonAccount.spendableBalance.multipliedBy(CANTON_REASONABLE_CONSOLIDATE_MULTIPLIER),
+      fromMAD: false,
+    });
+  }, [dispatch, cantonAccount, openSendFlow]);
 
   const handleLearnMore = useCallback(() => {
     openURL(learnMoreUrl);
@@ -62,27 +60,21 @@ export default function TooManyUtxosModal({ account }: Props) {
                 <Text
                   ff="Inter|SemiBold"
                   fontSize={6}
-                  color="palette.text.shade100"
+                  color="neutral.c100"
                   textAlign="center"
                   mb={3}
                 >
                   <Trans i18nKey="families.canton.tooManyUtxos.title" />
                 </Text>
 
-                <Text
-                  ff="Inter|Regular"
-                  fontSize={4}
-                  color="palette.text.shade80"
-                  textAlign="center"
-                  mb={4}
-                >
+                <Text ff="Inter|Regular" fontSize={4} color="neutral.c80" textAlign="center" mb={4}>
                   <Trans i18nKey="families.canton.tooManyUtxos.description" />
                 </Text>
 
                 <Text
                   ff="Inter|SemiBold"
                   fontSize={4}
-                  color="palette.text.shade100"
+                  color="neutral.c100"
                   textAlign="center"
                   mb={4}
                 >

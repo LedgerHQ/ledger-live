@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import Button from "~/renderer/components/Button";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import { useHistory } from "react-router-dom";
 import Box from "~/renderer/components/Box";
 import { Flex, Theme, Text, Icons } from "@ledgerhq/react-ui";
@@ -16,7 +16,7 @@ import { AnimationWrapper } from "~/renderer/components/DeviceAction/rendering";
 
 const CustomLockScreenAssets = () => {
   const history = useHistory();
-  const type: Theme["theme"] = useTheme().colors.palette.type;
+  const type: Theme["theme"] = useTheme().theme;
 
   const onBack = useCallback(() => {
     history.push({ pathname: "/settings/developer" });
@@ -30,17 +30,15 @@ const CustomLockScreenAssets = () => {
   return (
     <Box grow shrink p={3}>
       <Flex justifyContent="space-between" alignItems="center" margin={4}>
-        <Button color="palette.text.shade100" fontSize={12} onClick={onBack} variant="tertiary">
-          <Icons.ArrowLeft size="S" style={{ marginRight: 8 }} />
+        <Button
+          size="sm"
+          appearance="no-background"
+          onClick={onBack}
+          icon={() => <Icons.ArrowLeft size="S" />}
+        >
           {"Back"}
         </Button>
-        <Text
-          variant="h2Inter"
-          color="palette.text.shade100"
-          margin={"0 auto"}
-          fontSize={24}
-          pr={50}
-        >
+        <Text variant="h2Inter" color="neutral.c100" margin={"0 auto"} fontSize={24} pr={50}>
           {"Custom lockscreen assets"}
         </Text>
       </Flex>

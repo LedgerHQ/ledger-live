@@ -9,12 +9,10 @@ import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { SafeAreaView, StyleSheet, View } from "react-native";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";
-import { accountScreenSelector } from "~/reducers/accounts";
 import Selectable from "../components/Selectable";
 import Line from "../components/Line";
 import Words from "../components/Words";
@@ -22,6 +20,7 @@ import ErrorAndWarning from "../components/ErrorAndWarning";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloActivateFlowParamList } from "./types";
 import SupportLinkError from "~/components/SupportLinkError";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloActivateFlowParamList, ScreenName.CeloActivateSummary>
@@ -30,7 +29,7 @@ type Props = BaseComposite<
 export default function ActivateSummary({ navigation, route }: Props) {
   const { validator } = route.params;
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   invariant(account, "account must be defined");
 

@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
 import type { RampCatalog } from "../types";
 import mockData from "./mock.json";
@@ -10,14 +10,14 @@ const api = {
       return mockData as RampCatalog;
     }
 
-    const { data } = await network({
+    const { data } = await network<RampCatalog>({
       method: "GET",
       headers: {
         Origin: "http://localhost:3000",
       },
       url: `${getEnv("BUY_API_BASE")}/provider/currencies?currency=crypto`,
     });
-    return data as RampCatalog;
+    return data;
   },
 };
 

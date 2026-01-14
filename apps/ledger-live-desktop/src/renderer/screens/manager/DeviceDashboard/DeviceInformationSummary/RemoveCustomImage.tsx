@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Button, Divider, Flex, Icons, Text } from "@ledgerhq/react-ui";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { createAction } from "@ledgerhq/live-common/hw/actions/customLockScreenRemove";
 import removeImage from "@ledgerhq/live-common/hw/customLockScreenRemove";
@@ -34,7 +34,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose, onRemoved }) => {
     setCompleted(true);
     setRunning(false);
     dispatch(clearLastSeenCustomImage());
-    onRemoved && onRemoved();
+    onRemoved?.();
   }, [dispatch, onRemoved]);
 
   const onError = useCallback(

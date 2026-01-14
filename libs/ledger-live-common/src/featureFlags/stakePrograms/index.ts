@@ -44,7 +44,7 @@ export const getBitcoinYieldSetting = (stakePrograms: Feature_StakePrograms | nu
 };
 
 export const getEthDepositScreenSetting = (stakePrograms: Feature_StakePrograms | null): string => {
-  /** Check if Ethereum has "earn" provider configured in redirects with cohort. */
+  /** Check if Ethereum has "earn" provider configured in redirects with ethDepositCohort. */
   const ethereumRedirect = stakePrograms?.enabled
     ? stakePrograms?.params?.redirects?.["ethereum"]
     : undefined;
@@ -55,8 +55,8 @@ export const getEthDepositScreenSetting = (stakePrograms: Feature_StakePrograms 
     return "standard";
   }
 
-  // Extract cohort from queryParams
-  const cohort = ethereumRedirect.queryParams?.cohort;
+  // Extract ethDepositCohort from queryParams
+  const ethDepositCohort = ethereumRedirect.queryParams?.ethDepositCohort;
 
-  return cohort ?? "missing_cohort_value";
+  return ethDepositCohort ?? "missing_cohort_value";
 };

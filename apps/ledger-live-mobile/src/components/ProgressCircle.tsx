@@ -18,7 +18,7 @@ export default ({ size = 53, backgroundColor, progressColor, progress }: Props) 
   return (
     <Svg width={size} height={size} viewBox="0 0 76 76">
       <Circle cx={CENTER} cy={CENTER} r={R} fill="none" stroke={stroke} strokeWidth={4} />
-      <G rotation={-90} originX={CENTER} originY={CENTER}>
+      <G transform={`rotate(-90 ${CENTER} ${CENTER})`}>
         <Circle
           cx={CENTER}
           cy={CENTER}
@@ -36,8 +36,7 @@ export default ({ size = 53, backgroundColor, progressColor, progress }: Props) 
         stroke="none"
         fontSize={16}
         fontWeight="bold"
-        x={CENTER - 6}
-        y={CENTER + 6}
+        transform={[{ translateX: CENTER - 6 }, { translateY: CENTER + 6 }]}
         textAnchor="middle"
       >
         {Math.floor(progress * 1e2)}%

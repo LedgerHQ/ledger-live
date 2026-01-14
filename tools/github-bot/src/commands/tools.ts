@@ -55,7 +55,7 @@ export const commands = (
         });
         return;
       }
-    } catch (error) {
+    } catch {
       await octokit.issues.createComment({
         ...context.repo(),
         issue_number: issue.number,

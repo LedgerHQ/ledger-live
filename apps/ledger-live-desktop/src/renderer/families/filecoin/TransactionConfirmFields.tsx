@@ -13,7 +13,7 @@ const FilecoinField = ({ field }: { transaction: Transaction; field: DeviceTrans
         textAlign="right"
         ml={1}
         ff="Inter|Medium"
-        color="palette.text.shade80"
+        color="neutral.c80"
         fontSize={3}
       >
         {(field as ExtraDeviceTransactionField)?.value || ""}

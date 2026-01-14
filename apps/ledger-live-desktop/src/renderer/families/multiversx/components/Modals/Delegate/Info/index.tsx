@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import WarnBox from "~/renderer/components/WarnBox";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";

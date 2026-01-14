@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setMarketCurrentPage, setMarketOptions } from "~/renderer/actions/market";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
 import { marketCurrentPageSelector, marketParamsSelector } from "~/renderer/reducers/market";
@@ -35,12 +35,9 @@ export function useMarket() {
 
   useInitSupportedCounterValues();
 
-  const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
+  const { supportedCounterCurrencies } = useMarketDataProvider();
 
-  const marketResult = useMarketDataHook({
-    ...marketParams,
-    liveCoinsList: liveCompatible ? liveCoinsList : [],
-  });
+  const marketResult = useMarketDataHook(marketParams);
 
   const timeRanges = useMemo(
     () =>
@@ -136,11 +133,6 @@ export function useMarket() {
     });
   }, [order, refresh]);
 
-  const isItemLoaded = useCallback(
-    (index: number) => !!marketResult.data[index],
-    [marketResult.data],
-  );
-
   /**
    *
    * Refresh mechanism ----------------------------------------------
@@ -176,7 +168,6 @@ export function useMarket() {
    */
 
   return {
-    isItemLoaded,
     onLoadNextPage,
     toggleLiveCompatible,
     toggleFilterByStarredAccounts,

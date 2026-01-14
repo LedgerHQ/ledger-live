@@ -11,6 +11,8 @@ import Illustration from "~/images/illustration/Illustration";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { Step } from "./steps/setupDevice/scenes/BaseStepperView";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FUND_WALLET_STEPS_LENGTH } from "./shared/fundWalletDetails";
 
 const scenes = [QuizzFinal, QuizzFinal] as Step[];
 
@@ -21,6 +23,7 @@ type NavigationProps = RootComposite<
 function OnboardingStepQuizFinal() {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const route = useRoute<NavigationProps["route"]>();
+  const isFundWalletEnabled = Boolean(useFeature("llmNanoOnboardingFundWallet")?.enabled);
 
   const { success, deviceModelId } = route.params;
 
@@ -50,15 +53,28 @@ function OnboardingStepQuizFinal() {
     });
   }, [navigation, route.params]);
 
+  const fundWalletExtraProps = isFundWalletEnabled
+    ? {
+        extraStepsLength: FUND_WALLET_STEPS_LENGTH,
+        overrideActiveIndex: 8,
+      }
+    : {};
+
   return (
     <>
-      <TrackScreen category="Onboarding" name="PairNew" />
+      <TrackScreen
+        category="Onboarding"
+        name="PairNew"
+        seedConfiguration="new_seed"
+        deviceModelId={deviceModelId}
+      />
       <BaseStepperView
         onNext={nextPage}
         steps={scenes}
         metadata={metadata}
         deviceModelId={deviceModelId}
         params={{ success }}
+        {...fundWalletExtraProps}
       />
     </>
   );

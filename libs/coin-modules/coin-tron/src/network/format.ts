@@ -160,7 +160,7 @@ export const formatTrongridTxResponse = (
     }
 
     return txInfo;
-  } catch (e) {
+  } catch {
     log("tron-error", "could not parse transaction", tx);
     return undefined;
   }

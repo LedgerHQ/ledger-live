@@ -20,10 +20,10 @@ export const ValidatorRow: React.FC<ValidatorRowProps> = ({ isSelected, disabled
       </ValidatorIcon>
 
       <Box ml={3} flex={1}>
-        <Text fontSize={4} fontWeight="600" color="palette.text.shade100">
+        <Text fontSize={4} fontWeight="600" color="neutral.c100">
           <Trans i18nKey="families.canton.addAccount.auth.validatorLabel" />
         </Text>
-        <Text fontSize={3} color="palette.text.shade60">
+        <Text fontSize={3} color="neutral.c70">
           <Trans i18nKey="families.canton.addAccount.auth.validatorDescription" />
         </Text>
       </Box>

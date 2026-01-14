@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -55,7 +55,7 @@ export default function Row({
   );
   const parentAccount =
     account.type !== "Account" ? accounts.find(a => a.id === account.parentId) : null;
-  const color = useCurrencyColor(currency, theme.colors.palette.background.paper);
+  const color = useCurrencyColor(currency, theme.colors.background.card);
   const displayName = useAccountName(account);
   const parentDisplayName = useMaybeAccountName(parentAccount);
   const percentage = Math.floor(distribution * 10000) / 100;
@@ -70,12 +70,12 @@ export default function Row({
           {icon}
           <Box>
             {parentAccount ? (
-              <Ellipsis fontSize={10} color="palette.text.shade80">
+              <Ellipsis fontSize={10} color="neutral.c80">
                 <Text ff="Inter|SemiBold">{parentDisplayName}</Text>
               </Ellipsis>
             ) : null}
             <ToolTip content={displayName} delay={1200}>
-              <Ellipsis ff="Inter|SemiBold" color="palette.text.shade100" fontSize={3}>
+              <Ellipsis ff="Inter|SemiBold" color="neutral.c100" fontSize={3}>
                 {displayName}
               </Ellipsis>
             </ToolTip>
@@ -84,7 +84,7 @@ export default function Row({
         <Distribution>
           {!!distribution && (
             <>
-              <Text ff="Inter" color="palette.text.shade100" fontSize={3}>
+              <Text ff="Inter" color="neutral.c100" fontSize={3}>
                 {`${percentage}%`}
               </Text>
               <Bar progress={isVisible ? percentage : 0} progressColor={color} />
@@ -93,13 +93,7 @@ export default function Row({
         </Distribution>
         <Amount>
           <Ellipsis>
-            <FormattedVal
-              color={"palette.text.shade80"}
-              unit={unit}
-              val={amount}
-              fontSize={3}
-              showCode
-            />
+            <FormattedVal color={"neutral.c80"} unit={unit} val={amount} fontSize={3} showCode />
           </Ellipsis>
         </Amount>
         <Value>
@@ -109,12 +103,12 @@ export default function Row({
                 currency={currency}
                 value={amount}
                 disableRounding
-                color="palette.text.shade100"
+                color="neutral.c100"
                 fontSize={3}
                 showCode
               />
             ) : (
-              <Text ff="Inter" color="palette.text.shade100" fontSize={3}>
+              <Text ff="Inter" color="neutral.c100" fontSize={3}>
                 {"-"}
               </Text>
             )}
@@ -144,7 +138,7 @@ const Wrapper = styled.div`
   }
 
   &:hover {
-    background: ${p => p.theme.colors.palette.background.default};
+    background: ${p => p.theme.colors.background.default};
   }
 `;
 const AccountWrapper = styled.div`
@@ -183,8 +177,8 @@ const Dots = styled.div`
   width: 5%;
   justify-content: flex-end;
   cursor: pointer;
-  color: ${p => p.theme.colors.palette.text.shade50};
+  color: ${p => p.theme.colors.neutral.c70};
   &:hover {
-    color: ${p => p.theme.colors.palette.text.shade80};
+    color: ${p => p.theme.colors.neutral.c80};
   }
 `;

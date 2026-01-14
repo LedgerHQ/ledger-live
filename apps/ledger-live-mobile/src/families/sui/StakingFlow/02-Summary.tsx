@@ -5,15 +5,13 @@ import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/curr
 import { useLedgerFirstShuffledValidatorsSui } from "@ledgerhq/live-common/families/sui/react";
 import { SuiValidator } from "@ledgerhq/live-common/families/sui/types";
 import { AccountLike } from "@ledgerhq/types-live";
-import { Text } from "@ledgerhq/native-ui";
+import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View, TextStyle, StyleProp } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import Button from "~/components/Button";
@@ -23,15 +21,15 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
-import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorImage from "../shared/ValidatorImage";
 import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
 import { getFirstStatusError, hasStatusError } from "../../helpers";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SuiStakingFlowParamList } from "./types";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import Config from "react-native-config";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingValidator>
@@ -40,7 +38,7 @@ type Props = BaseComposite<
 export default function StakingSummary({ navigation, route }: Props) {
   const { validator } = route.params;
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   invariant(account, "account must be defined");
 
@@ -60,7 +58,7 @@ export default function StakingSummary({ navigation, route }: Props) {
           account,
           transaction: bridge.updateTransaction(t, {
             mode: "delegate",
-            recipient: chosenValidator.suiAddress,
+            recipient: chosenValidator?.suiAddress ?? "",
           }),
         };
       }
@@ -85,6 +83,8 @@ export default function StakingSummary({ navigation, route }: Props) {
     if (tmpTransaction) {
       updateTransaction(_ => tmpTransaction);
     }
+
+    if (!chosenValidator) return;
 
     if (chosenValidator.suiAddress !== transaction.recipient) {
       setTransaction(
@@ -398,7 +398,7 @@ const ChangeValidator = () => {
   const { colors } = useTheme();
   return (
     <Circle style={styles.changeValidator} bg={colors.primary} size={26}>
-      <Icon size={13} name="edit-2" />
+      <Icons.PenEdit size="XS" />
     </Circle>
   );
 };
@@ -441,7 +441,7 @@ const Selectable = ({ name, testID }: { readonly name: string; readonly testID: 
       </Text>
 
       <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary }]}>
-        <Icon size={16} name="edit-2" color={colors.text} />
+        <Icons.PenEdit size="XS" color={colors.text} />
       </View>
     </View>
   );

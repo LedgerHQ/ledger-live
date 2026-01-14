@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { setEnv } from "@ledgerhq/live-env";
 import { IconsLegacy } from "@ledgerhq/native-ui";

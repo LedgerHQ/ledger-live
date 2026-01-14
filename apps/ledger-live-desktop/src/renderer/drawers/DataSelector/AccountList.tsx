@@ -3,7 +3,8 @@ import Text from "~/renderer/components/Text";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
+
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getAccountTuplesForCurrency } from "~/renderer/components/PerCurrencySelectAccount/state";
@@ -26,8 +27,8 @@ const AddIconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: ${({ theme }) => darken(theme.colors.palette.primary.main, 0.3)};
-  color: ${({ theme }) => theme.colors.palette.primary.main};
+  background: ${({ theme }) => darken(theme.colors.primary.c80, 0.3)};
+  color: ${({ theme }) => theme.colors.primary.c80};
 `;
 
 type Props = {
@@ -124,7 +125,7 @@ function Row({
             flexShrink: 1,
           }}
         >
-          <CryptoCurrencyIcon circle currency={accountCurrency} size={24} />
+          <CryptoCurrencyIcon currency={accountCurrency} size={32} />
           <Text
             ff="Inter|SemiBold"
             color="inherit"
@@ -143,7 +144,7 @@ function Row({
         </Box>
         <Box horizontal alignItems="center" marginLeft="12px">
           <FormattedVal
-            color="palette.text.shade50"
+            color="neutral.c70"
             val={subAccount ? subAccount.spendableBalance : account.spendableBalance}
             unit={unit}
             showCode

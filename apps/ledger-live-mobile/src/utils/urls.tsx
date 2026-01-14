@@ -1,4 +1,6 @@
 export const urls = {
+  mevProtection:
+    "https://support.ledger.com/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
   faq: "https://support.ledger.com/",
   chatbot: "https://ledgercustomersuccess.my.salesforce-sites.com/fullscreenbot",
   contact: "https://support.ledger.com/",
@@ -28,6 +30,8 @@ export const urls = {
     ru: "https://www.ledger.com/ru/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     pt: "https://www.ledger.com/pt-br/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
   },
+  reborn:
+    "https://shop.ledger.com/pages/unlock-ledger-wallet-mobile?utm_source=ledger_wallet_mobile&utm_medium=self_referral&utm_content=onboarding-2",
   trackingPolicy: {
     en: "https://shop.ledger.com/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     fr: "https://shop.ledger.com/fr/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
@@ -246,6 +250,7 @@ export const urls = {
     tokenAssociation:
       "https://support.ledger.com/article/How-to-manage-Hedera-tokens-with-Ledger-Live",
     evmAddressVerification: "https://ledger.com/e14",
+    staking: "https://support.ledger.com/article/Staking-Hedera-HBAR-through-Ledger-Live",
   },
   canton: {
     learnMore: "https://support.ledger.com/article/Canton-Network",
@@ -279,4 +284,6 @@ export const urls = {
   geoBlock: {
     learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
   },
+  nanoSUpgradeProgram: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
+  nanoSLimitations: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
 };

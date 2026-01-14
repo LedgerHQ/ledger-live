@@ -1,5 +1,198 @@
 # @ledgerhq/types-live
 
+## 6.93.0-next.0
+
+### Minor Changes
+
+- [#13510](https://github.com/LedgerHQ/ledger-live/pull/13510) [`8754614`](https://github.com/LedgerHQ/ledger-live/commit/87546149a62b81f8a25bb6222626592ead629f62) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - feat(lwd,lwm): removed llMevProtection feature flag, updated i18n files with mev url
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+- [#13314](https://github.com/LedgerHQ/ledger-live/pull/13314) [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: coin-aleo template
+
+- [#13579](https://github.com/LedgerHQ/ledger-live/pull/13579) [`7f05536`](https://github.com/LedgerHQ/ledger-live/commit/7f0553665e9c8721f263825cc79994bfc6729d9b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add Wallet 4.0 feature flags. Add analytics for the feature flags on LWM and LWD.
+
+### Patch Changes
+
+- Updated dependencies [[`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b)]:
+  - @ledgerhq/client-ids@0.4.0-next.0
+
+## 6.92.0
+
+### Minor Changes
+
+- [#13477](https://github.com/LedgerHQ/ledger-live/pull/13477) [`7e12cd3`](https://github.com/LedgerHQ/ledger-live/commit/7e12cd30f47d42cd8dac35cfa475abdd9ad44e19) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: expand descriptors usage: generic error messages and allow default memo option
+
+- [#13466](https://github.com/LedgerHQ/ledger-live/pull/13466) [`4455451`](https://github.com/LedgerHQ/ledger-live/commit/445545117cf0196d7c5a303df21041c23b91844c) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: delete lwm_optimize_opt_in_notifications_to_opt_out_users ff
+
+- [#13259](https://github.com/LedgerHQ/ledger-live/pull/13259) [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Bump styled-components to v6 on mobile and icons to prepare react 19 migration
+
+- [#13492](https://github.com/LedgerHQ/ledger-live/pull/13492) [`e57fa40`](https://github.com/LedgerHQ/ledger-live/commit/e57fa40a1bb480ebcc03120a1aab3b02e249bf8d) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - feat(lwm): removed largermoverLandingPage feature flag
+
+- [#13482](https://github.com/LedgerHQ/ledger-live/pull/13482) [`e844b3b`](https://github.com/LedgerHQ/ledger-live/commit/e844b3bd5f8a4b21cf94e0a598c22a2a42791490) Thanks [@sergiubreban](https://github.com/sergiubreban)! - Adds earn ui feature flag
+
+- [#13306](https://github.com/LedgerHQ/ledger-live/pull/13306) [`c2d4259`](https://github.com/LedgerHQ/ledger-live/commit/c2d425989b600732f4fb0a88993e2673e93698a7) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add ledger sync step to llm two step sync companion
+
+- [#13427](https://github.com/LedgerHQ/ledger-live/pull/13427) [`9e80ecc`](https://github.com/LedgerHQ/ledger-live/commit/9e80ecc5ef6da4f39a184d3c555c8d7c439754a8) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: feature flags for notifications optimizations
+
+- [#13400](https://github.com/LedgerHQ/ledger-live/pull/13400) [`ffa9e7e`](https://github.com/LedgerHQ/ledger-live/commit/ffa9e7e58dd60d0f568362a95e14ba5d130c2d07) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: save timestamp in the recentlAddresses store
+
+- [#13512](https://github.com/LedgerHQ/ledger-live/pull/13512) [`4caf2ef`](https://github.com/LedgerHQ/ledger-live/commit/4caf2eff2aff2a6f1048ccf8e94295c954554ae1) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: add removeAddress method + store ens address
+
+- [#13258](https://github.com/LedgerHQ/ledger-live/pull/13258) [`c4045c7`](https://github.com/LedgerHQ/ledger-live/commit/c4045c714ee0fb1f02f6e75cae04e99cdea01ae4) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - Add ledger sync step to non touchscreen device onboarding flow
+
+### Patch Changes
+
+- Updated dependencies [[`0f41528`](https://github.com/LedgerHQ/ledger-live/commit/0f415284044c2bfa622dad33fea01cb5f2cee034), [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4), [`fba1e31`](https://github.com/LedgerHQ/ledger-live/commit/fba1e31386e589a93adb19bc4f6eae55129e19ea)]:
+  - @ledgerhq/client-ids@0.3.0
+
+## 6.92.0-next.0
+
+### Minor Changes
+
+- [#13477](https://github.com/LedgerHQ/ledger-live/pull/13477) [`7e12cd3`](https://github.com/LedgerHQ/ledger-live/commit/7e12cd30f47d42cd8dac35cfa475abdd9ad44e19) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: expand descriptors usage: generic error messages and allow default memo option
+
+- [#13466](https://github.com/LedgerHQ/ledger-live/pull/13466) [`4455451`](https://github.com/LedgerHQ/ledger-live/commit/445545117cf0196d7c5a303df21041c23b91844c) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: delete lwm_optimize_opt_in_notifications_to_opt_out_users ff
+
+- [#13259](https://github.com/LedgerHQ/ledger-live/pull/13259) [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Bump styled-components to v6 on mobile and icons to prepare react 19 migration
+
+- [#13492](https://github.com/LedgerHQ/ledger-live/pull/13492) [`e57fa40`](https://github.com/LedgerHQ/ledger-live/commit/e57fa40a1bb480ebcc03120a1aab3b02e249bf8d) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - feat(lwm): removed largermoverLandingPage feature flag
+
+- [#13482](https://github.com/LedgerHQ/ledger-live/pull/13482) [`e844b3b`](https://github.com/LedgerHQ/ledger-live/commit/e844b3bd5f8a4b21cf94e0a598c22a2a42791490) Thanks [@sergiubreban](https://github.com/sergiubreban)! - Adds earn ui feature flag
+
+- [#13306](https://github.com/LedgerHQ/ledger-live/pull/13306) [`c2d4259`](https://github.com/LedgerHQ/ledger-live/commit/c2d425989b600732f4fb0a88993e2673e93698a7) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add ledger sync step to llm two step sync companion
+
+- [#13427](https://github.com/LedgerHQ/ledger-live/pull/13427) [`9e80ecc`](https://github.com/LedgerHQ/ledger-live/commit/9e80ecc5ef6da4f39a184d3c555c8d7c439754a8) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: feature flags for notifications optimizations
+
+- [#13400](https://github.com/LedgerHQ/ledger-live/pull/13400) [`ffa9e7e`](https://github.com/LedgerHQ/ledger-live/commit/ffa9e7e58dd60d0f568362a95e14ba5d130c2d07) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: save timestamp in the recentlAddresses store
+
+- [#13512](https://github.com/LedgerHQ/ledger-live/pull/13512) [`4caf2ef`](https://github.com/LedgerHQ/ledger-live/commit/4caf2eff2aff2a6f1048ccf8e94295c954554ae1) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: add removeAddress method + store ens address
+
+- [#13258](https://github.com/LedgerHQ/ledger-live/pull/13258) [`c4045c7`](https://github.com/LedgerHQ/ledger-live/commit/c4045c714ee0fb1f02f6e75cae04e99cdea01ae4) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - Add ledger sync step to non touchscreen device onboarding flow
+
+### Patch Changes
+
+- Updated dependencies [[`0f41528`](https://github.com/LedgerHQ/ledger-live/commit/0f415284044c2bfa622dad33fea01cb5f2cee034), [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4), [`fba1e31`](https://github.com/LedgerHQ/ledger-live/commit/fba1e31386e589a93adb19bc4f6eae55129e19ea)]:
+  - @ledgerhq/client-ids@0.3.0-next.0
+
+## 6.91.1
+
+### Patch Changes
+
+- Updated dependencies [[`3e488d1`](https://github.com/LedgerHQ/ledger-live/commit/3e488d1f7e2972cebe8ebc519b5c56cfc8fb48ad)]:
+  - @ledgerhq/client-ids@0.2.1
+
+## 6.91.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`3e488d1`](https://github.com/LedgerHQ/ledger-live/commit/3e488d1f7e2972cebe8ebc519b5c56cfc8fb48ad)]:
+  - @ledgerhq/client-ids@0.2.1-hotfix.0
+
+## 6.91.0
+
+### Minor Changes
+
+- [#12996](https://github.com/LedgerHQ/ledger-live/pull/12996) [`19a54fd`](https://github.com/LedgerHQ/ledger-live/commit/19a54fd89a2d3c7481aebc28817870875f9d44dc) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LWM ledger sync optimisation
+
+- [#13115](https://github.com/LedgerHQ/ledger-live/pull/13115) [`450f518`](https://github.com/LedgerHQ/ledger-live/commit/450f518d4cedb828c5fe1e7ccffaabd483f53226) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - [LIFI Solana] Forward data passed by LiveApp
+
+- [#13049](https://github.com/LedgerHQ/ledger-live/pull/13049) [`30be235`](https://github.com/LedgerHQ/ledger-live/commit/30be2354822b3497c69322294ff1dab43375be50) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LWD ledger sync optimisation
+
+- [#13345](https://github.com/LedgerHQ/ledger-live/pull/13345) [`0924eed`](https://github.com/LedgerHQ/ledger-live/commit/0924eed6a633793999e8657076140523e30ae40b) Thanks [@thesan](https://github.com/thesan)! - Put the animated splash screen under feature flag
+
+- [#12967](https://github.com/LedgerHQ/ledger-live/pull/12967) [`5e8d6be`](https://github.com/LedgerHQ/ledger-live/commit/5e8d6be609dd37c48d747890e56189e0716d5273) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Validate address implementation on all currencies
+
+- [#13003](https://github.com/LedgerHQ/ledger-live/pull/13003) [`768718d`](https://github.com/LedgerHQ/ledger-live/commit/768718df029bc8799b88c0299925dc56302b0c53) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add recoverUpsellPostOnboarding feature flag to select deviceIds for recover upsell
+
+- [#13007](https://github.com/LedgerHQ/ledger-live/pull/13007) [`a5ad7d4`](https://github.com/LedgerHQ/ledger-live/commit/a5ad7d4578c06db3e40f260451b644c27e20cb62) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add onboarding secure your crypto step for nano
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+- [#13167](https://github.com/LedgerHQ/ledger-live/pull/13167) [`e44d216`](https://github.com/LedgerHQ/ledger-live/commit/e44d216d516df87e13f033ed64fedc1ce96380f4) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Concordium module init
+
+- [#12970](https://github.com/LedgerHQ/ledger-live/pull/12970) [`8d8e1b7`](https://github.com/LedgerHQ/ledger-live/commit/8d8e1b7bb26305af326ea21710248223d1e8653b) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: staking support in coin-hedera
+
+- [#13185](https://github.com/LedgerHQ/ledger-live/pull/13185) [`07de7a8`](https://github.com/LedgerHQ/ledger-live/commit/07de7a87415ae4d1126e751d6a4d521ced3065e3) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add llmRebornABtest feature flag no device welcome redirect
+
+- [#13089](https://github.com/LedgerHQ/ledger-live/pull/13089) [`d37fa4b`](https://github.com/LedgerHQ/ledger-live/commit/d37fa4baf4534161bffe5033ce44fc7780c79d89) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add postonboarding action row for completed onboarded device
+
+- [#13091](https://github.com/LedgerHQ/ledger-live/pull/13091) [`34248c3`](https://github.com/LedgerHQ/ledger-live/commit/34248c306479dafe6335b2c176daf25064c85b3b) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: add descriptors (+supported features) and helpers for each coins
+
+- [#13180](https://github.com/LedgerHQ/ledger-live/pull/13180) [`2d9f320`](https://github.com/LedgerHQ/ledger-live/commit/2d9f32087eea12ae9d5ea2347b277b8bf4e60f55) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Integrates new modular asset modal flow behind a feature flag
+
+- [#13154](https://github.com/LedgerHQ/ledger-live/pull/13154) [`c56ab86`](https://github.com/LedgerHQ/ledger-live/commit/c56ab86ab65597caf87a09b7596faa54f3104bd4) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add lldRebornABtest feature flag with reborn welcome redirect
+
+### Patch Changes
+
+- Updated dependencies [[`4fda9b7`](https://github.com/LedgerHQ/ledger-live/commit/4fda9b727e83db9c3b940793d8c19060f32f921c)]:
+  - @ledgerhq/client-ids@0.2.0
+
+## 6.91.0-next.0
+
+### Minor Changes
+
+- [#12996](https://github.com/LedgerHQ/ledger-live/pull/12996) [`19a54fd`](https://github.com/LedgerHQ/ledger-live/commit/19a54fd89a2d3c7481aebc28817870875f9d44dc) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LWM ledger sync optimisation
+
+- [#13115](https://github.com/LedgerHQ/ledger-live/pull/13115) [`450f518`](https://github.com/LedgerHQ/ledger-live/commit/450f518d4cedb828c5fe1e7ccffaabd483f53226) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - [LIFI Solana] Forward data passed by LiveApp
+
+- [#13049](https://github.com/LedgerHQ/ledger-live/pull/13049) [`30be235`](https://github.com/LedgerHQ/ledger-live/commit/30be2354822b3497c69322294ff1dab43375be50) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LWD ledger sync optimisation
+
+- [#13345](https://github.com/LedgerHQ/ledger-live/pull/13345) [`0924eed`](https://github.com/LedgerHQ/ledger-live/commit/0924eed6a633793999e8657076140523e30ae40b) Thanks [@thesan](https://github.com/thesan)! - Put the animated splash screen under feature flag
+
+- [#12967](https://github.com/LedgerHQ/ledger-live/pull/12967) [`5e8d6be`](https://github.com/LedgerHQ/ledger-live/commit/5e8d6be609dd37c48d747890e56189e0716d5273) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Validate address implementation on all currencies
+
+- [#13003](https://github.com/LedgerHQ/ledger-live/pull/13003) [`768718d`](https://github.com/LedgerHQ/ledger-live/commit/768718df029bc8799b88c0299925dc56302b0c53) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add recoverUpsellPostOnboarding feature flag to select deviceIds for recover upsell
+
+- [#13007](https://github.com/LedgerHQ/ledger-live/pull/13007) [`a5ad7d4`](https://github.com/LedgerHQ/ledger-live/commit/a5ad7d4578c06db3e40f260451b644c27e20cb62) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add onboarding secure your crypto step for nano
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+- [#13167](https://github.com/LedgerHQ/ledger-live/pull/13167) [`e44d216`](https://github.com/LedgerHQ/ledger-live/commit/e44d216d516df87e13f033ed64fedc1ce96380f4) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Concordium module init
+
+- [#12970](https://github.com/LedgerHQ/ledger-live/pull/12970) [`8d8e1b7`](https://github.com/LedgerHQ/ledger-live/commit/8d8e1b7bb26305af326ea21710248223d1e8653b) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: staking support in coin-hedera
+
+- [#13185](https://github.com/LedgerHQ/ledger-live/pull/13185) [`07de7a8`](https://github.com/LedgerHQ/ledger-live/commit/07de7a87415ae4d1126e751d6a4d521ced3065e3) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add llmRebornABtest feature flag no device welcome redirect
+
+- [#13089](https://github.com/LedgerHQ/ledger-live/pull/13089) [`d37fa4b`](https://github.com/LedgerHQ/ledger-live/commit/d37fa4baf4534161bffe5033ce44fc7780c79d89) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add postonboarding action row for completed onboarded device
+
+- [#13091](https://github.com/LedgerHQ/ledger-live/pull/13091) [`34248c3`](https://github.com/LedgerHQ/ledger-live/commit/34248c306479dafe6335b2c176daf25064c85b3b) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: add descriptors (+supported features) and helpers for each coins
+
+- [#13180](https://github.com/LedgerHQ/ledger-live/pull/13180) [`2d9f320`](https://github.com/LedgerHQ/ledger-live/commit/2d9f32087eea12ae9d5ea2347b277b8bf4e60f55) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Integrates new modular asset modal flow behind a feature flag
+
+- [#13154](https://github.com/LedgerHQ/ledger-live/pull/13154) [`c56ab86`](https://github.com/LedgerHQ/ledger-live/commit/c56ab86ab65597caf87a09b7596faa54f3104bd4) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add lldRebornABtest feature flag with reborn welcome redirect
+
+### Patch Changes
+
+- Updated dependencies [[`4fda9b7`](https://github.com/LedgerHQ/ledger-live/commit/4fda9b727e83db9c3b940793d8c19060f32f921c)]:
+  - @ledgerhq/client-ids@0.2.0-next.0
+
+## 6.90.0
+
+### Minor Changes
+
+- [#12867](https://github.com/LedgerHQ/ledger-live/pull/12867) [`fd031d7`](https://github.com/LedgerHQ/ledger-live/commit/fd031d77ca7ed011ec492700fd4d7bc86c518907) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Configure the noah feature via firebase
+
+- [#12608](https://github.com/LedgerHQ/ledger-live/pull/12608) [`a2ecb55`](https://github.com/LedgerHQ/ledger-live/commit/a2ecb55df9d383dc282f5fe489cb14386208215e) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: support for erc20 tokens in coin-hedera
+
+- [#12677](https://github.com/LedgerHQ/ledger-live/pull/12677) [`fe81926`](https://github.com/LedgerHQ/ledger-live/commit/fe81926afeb2df8e917e6bd1e4cbab13f09647fd) Thanks [@semeano](https://github.com/semeano)! - Add 0G coin
+
+- [#12610](https://github.com/LedgerHQ/ledger-live/pull/12610) [`927ae64`](https://github.com/LedgerHQ/ledger-live/commit/927ae64db0bb04af54e25623655a001a68e0f2d3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add DMK solana signer behind FF
+
+- [#12734](https://github.com/LedgerHQ/ledger-live/pull/12734) [`903ea9c`](https://github.com/LedgerHQ/ledger-live/commit/903ea9cdacf704a0119de2803a4f409b775391a5) Thanks [@semeano](https://github.com/semeano)! - Add Monad testnet
+
+- [#12992](https://github.com/LedgerHQ/ledger-live/pull/12992) [`38d5880`](https://github.com/LedgerHQ/ledger-live/commit/38d5880ca6c3cc8808182e9d0f046b204914d34a) Thanks [@jonezque](https://github.com/jonezque)! - feat: canton added new tx types for offer
+
+- [#12667](https://github.com/LedgerHQ/ledger-live/pull/12667) [`0d33751`](https://github.com/LedgerHQ/ledger-live/commit/0d33751bb2ae599d0d26ce6a8efdbe01757f12fb) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add ledger sync entrypoint in postonboarding flow in LLM
+
+- [#12745](https://github.com/LedgerHQ/ledger-live/pull/12745) [`aadcec6`](https://github.com/LedgerHQ/ledger-live/commit/aadcec66847b800f79452ba1df09149e0a1cb9e8) Thanks [@jonezque](https://github.com/jonezque)! - feat: pending offers to show, accept, cancel for canton network
+
+- [#12834](https://github.com/LedgerHQ/ledger-live/pull/12834) [`ed8532b`](https://github.com/LedgerHQ/ledger-live/commit/ed8532bad754ca2b5f1788c6e92f4646b775ec79) Thanks [@semeano](https://github.com/semeano)! - Add zcash shielded feature flag
+
+- [#12819](https://github.com/LedgerHQ/ledger-live/pull/12819) [`88a5018`](https://github.com/LedgerHQ/ledger-live/commit/88a501871d58c980f18495b5b32012a3eaa9ab2c) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add Swap Live App widget to Portfolio page
+
+- [#12675](https://github.com/LedgerHQ/ledger-live/pull/12675) [`9659a34`](https://github.com/LedgerHQ/ledger-live/commit/9659a34d9998d5c4dff8618bf6cef7d16403680d) Thanks [@semeano](https://github.com/semeano)! - Add Somnia coin
+
 ## 6.90.0-next.0
 
 ### Minor Changes

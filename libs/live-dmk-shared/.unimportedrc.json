@@ -8,6 +8,9 @@
     "**/*.test.{ts,tsx}"
   ],
   "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util",
     "@ledgerhq/device-management-kit"
   ],
   "ignoreUnused": [

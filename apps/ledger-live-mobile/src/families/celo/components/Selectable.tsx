@@ -1,8 +1,7 @@
 import React, { memo } from "react";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
-import { Text } from "@ledgerhq/native-ui";
+import { Text, Icons } from "@ledgerhq/native-ui";
 import { rgba } from "../../../colors";
 
 const Selectable = ({ name }: { name: string }) => {
@@ -19,7 +18,7 @@ const Selectable = ({ name }: { name: string }) => {
       </Text>
 
       <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary }]}>
-        <Icon size={16} name="edit-2" color={colors.text} />
+        <Icons.PenEdit size="XS" color={colors.text} />
       </View>
     </View>
   );

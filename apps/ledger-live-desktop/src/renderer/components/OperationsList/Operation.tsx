@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
@@ -21,7 +21,7 @@ const OperationRow = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
 }))<{ isOptimistic: boolean }>`
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
   height: 68px;
   opacity: ${p => (p.isOptimistic ? 0.5 : 1)};
   cursor: pointer;
@@ -71,7 +71,6 @@ function OperationComponent({
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
   return (
     <OperationRow
-      className="operation-row"
       isOptimistic={isOptimistic}
       onClick={onClickOnOperation}
       data-testid={`operation-row-${operation.id}`}

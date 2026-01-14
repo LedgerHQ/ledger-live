@@ -16,8 +16,7 @@ const Illustration: StyledComponent<"div", DefaultTheme, BoxProps & Props> = sty
   height: p.height ? `${p.height}px` : `${p.size}px`,
 }))<Props>`
   // prettier-ignore
-  background: url('${p =>
-    p.theme.colors.palette.type === "light" ? p.lightSource : p.darkSource}');
+  background: url('${p => (p.theme.theme === "light" ? p.lightSource : p.darkSource)}');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;

@@ -1,6 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { StacksNetwork } from "../network/api.types";
+import { StacksNetwork } from "../network/api";
 
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";

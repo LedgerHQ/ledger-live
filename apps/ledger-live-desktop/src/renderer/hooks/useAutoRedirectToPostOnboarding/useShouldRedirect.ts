@@ -1,11 +1,11 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { shouldRedirectToPostOnboardingOrRecoverUpsell } from "@ledgerhq/live-common/postOnboarding/logic/shouldRedirectToPostOnboardingOrRecoverUpsell";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   hasBeenRedirectedToPostOnboardingSelector,
   hasBeenUpsoldRecoverSelector,
   lastOnboardedDeviceSelector,
 } from "~/renderer/reducers/settings";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 /**
  * Returns whether the user should be redirected to the Protect upsell or the post onboarding
@@ -17,16 +17,17 @@ export function useShouldRedirect(): {
   const hasBeenUpsoldRecover = useSelector(hasBeenUpsoldRecoverSelector);
   const hasRedirectedToPostOnboarding = useSelector(hasBeenRedirectedToPostOnboardingSelector);
   const lastOnboardedDevice = useSelector(lastOnboardedDeviceSelector);
+  const recoverUpsellFeature = useFeature("recoverUpsellPostOnboarding");
+
+  const supportedDeviceModels =
+    recoverUpsellFeature?.enabled && recoverUpsellFeature?.params?.deviceIds
+      ? [...recoverUpsellFeature.params.deviceIds]
+      : [];
+
   return shouldRedirectToPostOnboardingOrRecoverUpsell({
     hasBeenUpsoldRecover,
     hasRedirectedToPostOnboarding,
     lastConnectedDevice: lastOnboardedDevice,
-    supportedDeviceModels: [
-      DeviceModelId.nanoSP,
-      DeviceModelId.nanoX,
-      DeviceModelId.stax,
-      DeviceModelId.europa,
-      DeviceModelId.apex,
-    ],
+    supportedDeviceModels,
   });
 }

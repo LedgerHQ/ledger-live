@@ -2,7 +2,6 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTranslation, Trans } from "react-i18next";
-import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import type {
   Transaction as PolkadotTransaction,
@@ -13,7 +12,6 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Button, Alert, Text, Log } from "@ledgerhq/native-ui";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import TranslatedError from "~/components/TranslatedError";
@@ -21,6 +19,7 @@ import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { PolkadotSimpleOperationFlowParamList } from "./types";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Navigation = StackNavigatorProps<
   PolkadotSimpleOperationFlowParamList,
@@ -41,7 +40,7 @@ export default function PolkadotSimpleOperationStarted({ navigation, route }: Na
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { mode } = route.params;
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = getAccountBridge(account, parentAccount);

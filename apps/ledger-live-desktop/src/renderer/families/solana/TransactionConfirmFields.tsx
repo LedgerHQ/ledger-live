@@ -46,7 +46,7 @@ const Title: TitleComponent = props => {
         <ConfirmTitle title={undefined} typeTransaction={typeTransaction} {...props} />
         <Alert type="warning">
           <Trans i18nKey="solana.token.transferWarning">
-            <Link color="palette.warning.c60" onClick={() => openURL(transferTokenHelpUrl)} />
+            <Link color="warning.c60" onClick={() => openURL(transferTokenHelpUrl)} />
           </Trans>
         </Alert>
       </Box>
@@ -71,7 +71,7 @@ const TokenTransferFeeField = ({ account, transaction, field }: SolanaFieldCompo
   return (
     <TransactionConfirmField label={field.label}>
       <FormattedVal
-        color={"palette.text.shade80"}
+        color={"neutral.c80"}
         unit={unit}
         val={transaction.model.commandDescriptor.command.extensions.transferFee.transferFee}
         fontSize={3}

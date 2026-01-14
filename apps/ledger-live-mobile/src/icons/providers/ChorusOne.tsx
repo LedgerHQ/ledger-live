@@ -8,7 +8,14 @@ export function ChorusOne({ size = 32, outline = "black", ...props }: Props) {
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
       <Rect width="32" height="32" rx="8" fill="#F1F1F1" />
-      <Rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke={outline} strokeOpacity="0.2" />
+      <Rect
+        transform={[{ translateX: 0.5 }, { translateY: 0.5 }]}
+        width="31"
+        height="31"
+        rx="7.5"
+        stroke={outline}
+        strokeOpacity="0.2"
+      />
       <Path
         fillRule="evenodd"
         clipRule="evenodd"

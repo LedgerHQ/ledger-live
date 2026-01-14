@@ -23,7 +23,6 @@ type Props = {
   onClick: (a: OnClickType) => void;
   transaction: Transaction;
   account: Account;
-  parentAccount: Account | undefined | null;
   strategies: FeeStrategy[];
   mapStrategies?: (a: FeeStrategy) => FeeStrategy & {
     [x: string]: unknown;
@@ -41,16 +40,16 @@ const FeesWrapper = styled(Box)<{ selected?: boolean; disabled?: boolean; error:
     `1px solid ${
       p.selected
         ? p.error
-          ? p.theme.colors.palette.warning.c70
-          : p.theme.colors.palette.primary.main
-        : p.theme.colors.palette.divider
+          ? p.theme.colors.warning.c70
+          : p.theme.colors.primary.c80
+        : p.theme.colors.neutral.c40
     }`};
   ${p => (p.selected ? "box-shadow: 0px 0px 0px 4px rgba(138, 128, 219, 0.3);" : "")}
   padding: 20px 16px;
   width: 100%;
   font-family: "Inter";
   border-radius: 4px;
-  ${p => (p.disabled ? `background: ${p.theme.colors.palette.background.default};` : "")};
+  ${p => (p.disabled ? `background: ${p.theme.colors.background.default};` : "")};
 
   &:hover {
     cursor: ${p => (p.disabled ? "unset" : "pointer")};
@@ -60,11 +59,11 @@ const FeesHeader = styled(Box)<{ selected?: boolean; disabled?: boolean; error: 
   color: ${p =>
     p.selected
       ? p.error
-        ? p.theme.colors.palette.warning.c70
-        : p.theme.colors.palette.primary.main
+        ? p.theme.colors.warning.c70
+        : p.theme.colors.primary.c80
       : p.disabled
-        ? p.theme.colors.palette.text.shade20
-        : p.theme.colors.palette.text.shade50};
+        ? p.theme.colors.neutral.c40
+        : p.theme.colors.neutral.c70};
 `;
 const FeesValue = styled(Box)`
   flex-direction: row;
@@ -73,14 +72,13 @@ const FeesValue = styled(Box)`
 const SelectFeeStrategy = ({
   transaction,
   account,
-  parentAccount,
   onClick,
   strategies,
   mapStrategies,
   suffixPerByte,
   status,
 }: Props) => {
-  const mainAccount = getMainAccount(account, parentAccount);
+  const mainAccount = getMainAccount(account);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
   const { t } = useTranslation();
@@ -101,13 +99,13 @@ const SelectFeeStrategy = ({
             selected={selected}
             disabled={disabled}
             error={!!messageGas}
-            onClick={() => {
+            onClick={() =>
               !disabled &&
-                onClick({
-                  amount: s.amount,
-                  feesStrategy: label,
-                });
-            }}
+              onClick({
+                amount: s.amount,
+                feesStrategy: label,
+              })
+            }
           >
             <FeesHeader
               horizontal
@@ -132,7 +130,7 @@ const SelectFeeStrategy = ({
                 <CounterValue
                   currency={feesCurrency}
                   value={amount}
-                  color={disabled ? "palette.text.shade20" : "palette.text.shade50"}
+                  color={disabled ? "neutral.c40" : "neutral.c70"}
                   fontSize={3}
                   mr={2}
                   showCode
@@ -142,13 +140,7 @@ const SelectFeeStrategy = ({
               <FormattedVal
                 noShrink
                 inline
-                color={
-                  selected
-                    ? "palette.primary.main"
-                    : disabled
-                      ? "palette.text.shade40"
-                      : "palette.text.shade100"
-                }
+                color={selected ? "primary.c80" : disabled ? "neutral.c60" : "neutral.c100"}
                 fontSize={3}
                 fontWeight="600"
                 val={amount}

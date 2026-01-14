@@ -1,5 +1,144 @@
 # @ledgerhq/live-wallet
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`50bae0f`](https://github.com/LedgerHQ/ledger-live/commit/50bae0f13a95ef166b2c5609ccbcf5ef01ba1579), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59)]:
+  - @ledgerhq/live-env@2.25.0-next.0
+  - @ledgerhq/hw-transport-mocker@6.31.0-next.0
+  - @ledgerhq/types-devices@6.28.0-next.0
+  - @ledgerhq/hw-transport@6.32.0-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.7.0-next.0
+  - @ledgerhq/errors@6.29.0-next.0
+  - @ledgerhq/logs@6.14.0-next.0
+  - @ledgerhq/speculos-transport@0.5.0-next.0
+  - @ledgerhq/live-network@2.2.0-next.0
+
+## 0.10.0
+
+### Minor Changes
+
+- [#13468](https://github.com/LedgerHQ/ledger-live/pull/13468) [`9874905`](https://github.com/LedgerHQ/ledger-live/commit/98749050026e6b19a207065b312dc99770af639d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Dedup MSW lib inside monorepo
+
+- [#13364](https://github.com/LedgerHQ/ledger-live/pull/13364) [`81a193d`](https://github.com/LedgerHQ/ledger-live/commit/81a193da5abf0d5f3a129bd78895dd450ce29ca1) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update axios to 1.13.2
+
+### Patch Changes
+
+- Updated dependencies [[`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4), [`fba1e31`](https://github.com/LedgerHQ/ledger-live/commit/fba1e31386e589a93adb19bc4f6eae55129e19ea)]:
+  - @ledgerhq/live-env@2.24.0
+  - @ledgerhq/hw-transport@6.31.16
+  - @ledgerhq/speculos-transport@0.4.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.6.1
+  - @ledgerhq/live-network@2.1.5
+  - @ledgerhq/hw-transport-mocker@6.30.1
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#13468](https://github.com/LedgerHQ/ledger-live/pull/13468) [`9874905`](https://github.com/LedgerHQ/ledger-live/commit/98749050026e6b19a207065b312dc99770af639d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Dedup MSW lib inside monorepo
+
+- [#13364](https://github.com/LedgerHQ/ledger-live/pull/13364) [`81a193d`](https://github.com/LedgerHQ/ledger-live/commit/81a193da5abf0d5f3a129bd78895dd450ce29ca1) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update axios to 1.13.2
+
+### Patch Changes
+
+- Updated dependencies [[`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4), [`fba1e31`](https://github.com/LedgerHQ/ledger-live/commit/fba1e31386e589a93adb19bc4f6eae55129e19ea)]:
+  - @ledgerhq/live-env@2.24.0-next.0
+  - @ledgerhq/hw-transport@6.31.16-next.0
+  - @ledgerhq/speculos-transport@0.4.1-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.6.1-next.0
+  - @ledgerhq/live-network@2.1.5-next.0
+  - @ledgerhq/hw-transport-mocker@6.30.1-next.0
+
+## 0.9.0
+
+### Minor Changes
+
+- [#13156](https://github.com/LedgerHQ/ledger-live/pull/13156) [`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8) Thanks [@gre-ledger](https://github.com/gre-ledger)! - ws@8.18.3 in catalog
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+- [#13156](https://github.com/LedgerHQ/ledger-live/pull/13156) [`fb3631e`](https://github.com/LedgerHQ/ledger-live/commit/fb3631ef74e9f10fea15fd7daf812306f6d2bc07) Thanks [@gre-ledger](https://github.com/gre-ledger)! - isomorphic-ws@5.0.0 in catalog
+
+### Patch Changes
+
+- Updated dependencies [[`e63194f`](https://github.com/LedgerHQ/ledger-live/commit/e63194f7dbd5ff2b0135c26aac3842a2be676b0a), [`ef276b7`](https://github.com/LedgerHQ/ledger-live/commit/ef276b7654ab32c7253ee812ceac3f89316ded4b), [`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143), [`3e70677`](https://github.com/LedgerHQ/ledger-live/commit/3e706774f8c4e9b768ab18b67abc3471cf61b6b6), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe), [`8d8e1b7`](https://github.com/LedgerHQ/ledger-live/commit/8d8e1b7bb26305af326ea21710248223d1e8653b)]:
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.6.0
+  - @ledgerhq/speculos-transport@0.4.0
+  - @ledgerhq/errors@6.28.0
+  - @ledgerhq/live-env@2.23.0
+  - @ledgerhq/hw-transport-mocker@6.30.0
+  - @ledgerhq/hw-transport@6.31.15
+  - @ledgerhq/live-network@2.1.4
+
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#13156](https://github.com/LedgerHQ/ledger-live/pull/13156) [`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8) Thanks [@gre-ledger](https://github.com/gre-ledger)! - ws@8.18.3 in catalog
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+- [#13156](https://github.com/LedgerHQ/ledger-live/pull/13156) [`fb3631e`](https://github.com/LedgerHQ/ledger-live/commit/fb3631ef74e9f10fea15fd7daf812306f6d2bc07) Thanks [@gre-ledger](https://github.com/gre-ledger)! - isomorphic-ws@5.0.0 in catalog
+
+### Patch Changes
+
+- Updated dependencies [[`e63194f`](https://github.com/LedgerHQ/ledger-live/commit/e63194f7dbd5ff2b0135c26aac3842a2be676b0a), [`ef276b7`](https://github.com/LedgerHQ/ledger-live/commit/ef276b7654ab32c7253ee812ceac3f89316ded4b), [`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143), [`3e70677`](https://github.com/LedgerHQ/ledger-live/commit/3e706774f8c4e9b768ab18b67abc3471cf61b6b6), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe), [`8d8e1b7`](https://github.com/LedgerHQ/ledger-live/commit/8d8e1b7bb26305af326ea21710248223d1e8653b)]:
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.6.0-next.0
+  - @ledgerhq/speculos-transport@0.4.0-next.0
+  - @ledgerhq/errors@6.28.0-next.0
+  - @ledgerhq/live-env@2.23.0-next.0
+  - @ledgerhq/hw-transport-mocker@6.30.0-next.0
+  - @ledgerhq/hw-transport@6.31.15-next.0
+  - @ledgerhq/live-network@2.1.4-next.0
+
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1
+  - @ledgerhq/hw-transport@6.31.14
+  - @ledgerhq/live-network@2.1.3
+  - @ledgerhq/speculos-transport@0.3.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.5.6
+  - @ledgerhq/hw-transport-mocker@6.29.14
+
+## 0.8.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.14-hotfix.0
+  - @ledgerhq/live-network@2.1.3-hotfix.0
+  - @ledgerhq/speculos-transport@0.3.1-hotfix.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.5.6-hotfix.0
+  - @ledgerhq/hw-transport-mocker@6.29.14-hotfix.0
+
+## 0.8.0
+
+### Minor Changes
+
+- [#12796](https://github.com/LedgerHQ/ledger-live/pull/12796) [`53deeef`](https://github.com/LedgerHQ/ledger-live/commit/53deeef592b7d566b4e7a636fa34d7ad59dd43ad) Thanks [@thesan](https://github.com/thesan)! - recover from 4xx somehow caused by problematic JWTs
+
+### Patch Changes
+
+- Updated dependencies [[`a2ecb55`](https://github.com/LedgerHQ/ledger-live/commit/a2ecb55df9d383dc282f5fe489cb14386208215e), [`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3), [`b113920`](https://github.com/LedgerHQ/ledger-live/commit/b11392056bc334fc1813c473569ad3ae7be08045)]:
+  - @ledgerhq/live-env@2.22.0
+  - @ledgerhq/speculos-transport@0.3.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.5.5
+  - @ledgerhq/live-network@2.1.2
+
 ## 0.8.0-next.0
 
 ### Minor Changes

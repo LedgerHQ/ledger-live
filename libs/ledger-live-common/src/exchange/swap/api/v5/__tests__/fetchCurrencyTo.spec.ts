@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 
 import { fetchCurrencyTo } from "../fetchCurrencyTo";
 import { fetchCurrencyToMock } from "../__mocks__/fetchCurrencyTo.mocks";

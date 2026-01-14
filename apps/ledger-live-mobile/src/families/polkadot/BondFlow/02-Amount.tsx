@@ -11,7 +11,6 @@ import {
   SafeAreaView,
   Linking,
 } from "react-native";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
@@ -22,7 +21,6 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { urls } from "~/utils/urls";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
@@ -39,7 +37,8 @@ import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { PolkadotBondFlowParamList } from "./types";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const options = [
   {
@@ -79,7 +78,7 @@ type Props = BaseComposite<
 
 export default function PolkadotBondAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
   const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;

@@ -6,13 +6,27 @@ type Props = SvgProps & { size?: number; outline?: ColorValue };
 
 const BASE_SIZE = 32;
 
-export function P2P({ size = BASE_SIZE, outline, ...props }: Props): JSX.Element {
+export function P2P({ size = BASE_SIZE, outline, ...props }: Props): React.JSX.Element {
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
       <Rect width="32" height="32" rx="8" fill="#1540DC" />
-      <Rect x={0.5} y={0.5} width={31} height={31} rx={7.5} stroke={outline} stroke-opacity={0.1} />
+      <Rect
+        transform={[{ translateX: 0.5 }, { translateY: 0.5 }]}
+        width={31}
+        height={31}
+        rx={7.5}
+        stroke={outline}
+        stroke-opacity={0.1}
+      />
       <G>
-        <Rect width="19.2" height="19.2" rx="9.6" x="6.4" y="6.4" fill="white" opacity="0" />
+        <Rect
+          transform={[{ translateX: 6.4 }, { translateY: 6.4 }]}
+          width="19.2"
+          height="19.2"
+          rx="9.6"
+          fill="white"
+          opacity="0"
+        />
         <Path
           fillRule="evenodd"
           clipRule="evenodd"

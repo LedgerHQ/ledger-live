@@ -12,7 +12,7 @@ import CounterValue from "~/components/CounterValue";
 import { TrackScreen, useAnalytics } from "~/analytics";
 import { ScreenName } from "~/const";
 import { sharedSwapTracking, SWAP_VERSION } from "../utils";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 
 export function SelectProvider({ navigation, route }: SelectProviderParamList) {
   const {

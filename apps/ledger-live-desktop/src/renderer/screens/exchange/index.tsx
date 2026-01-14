@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import semver from "semver";
 import { RouteComponentProps, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import Card from "~/renderer/components/Box/Card";
 import {
   counterValueCurrencySelector,
@@ -51,7 +51,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const manifest = localManifest || mockManifest || remoteManifest;
-  const themeType = useTheme().colors.palette.type;
+  const themeType = useTheme().theme;
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
   const walletState = useSelector(walletSelector);
 

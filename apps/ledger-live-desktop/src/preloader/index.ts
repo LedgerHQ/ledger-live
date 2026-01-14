@@ -8,7 +8,7 @@
 
 import { ipcRenderer } from "electron";
 import logo from "./logo.svg";
-import palettes from "~/renderer/styles/palettes";
+import { palettes } from "@ledgerhq/react-ui/styles/index";
 // When dashboard is ready, fade out the splash screen
 const appLoaded = () => {
   const rendererNode = document.getElementById("react-root");

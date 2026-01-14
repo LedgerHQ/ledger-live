@@ -1,5 +1,93 @@
 # @ledgerhq/react-native-hid
 
+## 6.36.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b)]:
+  - @ledgerhq/hw-transport@6.32.0-next.0
+  - @ledgerhq/devices@8.10.0-next.0
+  - @ledgerhq/errors@6.29.0-next.0
+  - @ledgerhq/logs@6.14.0-next.0
+
+## 6.35.0
+
+### Minor Changes
+
+- [#13259](https://github.com/LedgerHQ/ledger-live/pull/13259) [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Bump styled-components to v6 on mobile and icons to prepare react 19 migration
+
+### Patch Changes
+
+- Updated dependencies [[`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae)]:
+  - @ledgerhq/devices@8.9.0
+  - @ledgerhq/hw-transport@6.31.16
+
+## 6.35.0-next.0
+
+### Minor Changes
+
+- [#13259](https://github.com/LedgerHQ/ledger-live/pull/13259) [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Bump styled-components to v6 on mobile and icons to prepare react 19 migration
+
+### Patch Changes
+
+- Updated dependencies [[`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae)]:
+  - @ledgerhq/devices@8.9.0-next.0
+  - @ledgerhq/hw-transport@6.31.16-next.0
+
+## 6.34.0
+
+### Minor Changes
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+### Patch Changes
+
+- Updated dependencies [[`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe)]:
+  - @ledgerhq/errors@6.28.0
+  - @ledgerhq/devices@8.8.0
+  - @ledgerhq/hw-transport@6.31.15
+
+## 6.34.0-next.0
+
+### Minor Changes
+
+- [#13155](https://github.com/LedgerHQ/ledger-live/pull/13155) [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe) Thanks [@gre-ledger](https://github.com/gre-ledger)! - rxjs@7.8.2 everywhere
+
+### Patch Changes
+
+- Updated dependencies [[`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe)]:
+  - @ledgerhq/errors@6.28.0-next.0
+  - @ledgerhq/devices@8.8.0-next.0
+  - @ledgerhq/hw-transport@6.31.15-next.0
+
+## 6.33.1
+
+### Patch Changes
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1
+  - @ledgerhq/devices@8.7.1
+  - @ledgerhq/hw-transport@6.31.14
+
+## 6.33.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1-hotfix.0
+  - @ledgerhq/devices@8.7.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.14-hotfix.0
+
+## 6.33.0
+
+### Minor Changes
+
+- [#11943](https://github.com/LedgerHQ/ledger-live/pull/11943) [`aae83b9`](https://github.com/LedgerHQ/ledger-live/commit/aae83b968a6cc3a4bba17924091eebd2fdcfbb24) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Add DMK react native HID transport
+
 ## 6.33.0-next.0
 
 ### Minor Changes

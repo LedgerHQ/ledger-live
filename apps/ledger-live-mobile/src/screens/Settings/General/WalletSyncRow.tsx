@@ -8,13 +8,14 @@ import {
   AnalyticsPage,
   AnalyticsButton,
 } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { activateDrawerSelector } from "~/reducers/walletSync";
 import { setLedgerSyncActivateDrawer } from "~/actions/walletSync";
 import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const WalletSyncRow = () => {
   const { t } = useTranslation();
@@ -30,7 +31,7 @@ const WalletSyncRow = () => {
     setCurrentStep(Steps.Activation);
   }, [dispatch, setCurrentStep]);
   const trustchain = useSelector(trustchainSelector);
-
+  const ledgerSyncOptimisationFlag = useFeature("lwmLedgerSyncOptimisation");
   const navigateToWalletSyncActivationScreen = useCallback(() => {
     // Here we need to check if the user has a backup or not to determine the screen to navigate to
     onClickTrack({ button: AnalyticsButton.LedgerSync, page: AnalyticsPage.SettingsGeneral });
@@ -49,7 +50,11 @@ const WalletSyncRow = () => {
       <SettingsRow
         event="WalletSyncSettingsRow"
         title={t("settings.display.walletSync")}
-        desc={t("settings.display.walletSyncDesc")}
+        desc={
+          ledgerSyncOptimisationFlag?.enabled
+            ? t("settings.display.walletSyncDescription")
+            : t("settings.display.walletSyncDesc")
+        }
         arrowRight
         onPress={navigateToWalletSyncActivationScreen}
         testID="wallet-sync-button"

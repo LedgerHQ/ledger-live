@@ -1,6 +1,6 @@
-import { CoreTransactionInfo, estimateFees } from "./estimateFees";
 import coinConfig, { TezosCoinConfig } from "../config";
 import { mockConfig } from "../test/config";
+import { CoreTransactionInfo, estimateFees } from "./estimateFees";
 
 describe("estimateFees", () => {
   beforeAll(() => {

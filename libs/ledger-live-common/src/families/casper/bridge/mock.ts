@@ -35,6 +35,7 @@ import {
   CASPER_MINIMUM_VALID_AMOUNT_MOTES,
 } from "../consts";
 import { getMainAccount } from "../../../account";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
@@ -172,6 +173,7 @@ const accountBridge: AccountBridge<Transaction> = {
   broadcast,
   estimateMaxSpendable,
   getSerializedAddressParameters,
+  validateAddress,
 };
 export default {
   currencyBridge,

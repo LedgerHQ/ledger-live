@@ -9,7 +9,7 @@ test.describe("Portfolio", () => {
   test(
     "Charts are displayed when user added his accounts",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
         description: "B2CQA-927, B2CQA-928, B2CQA-3038",

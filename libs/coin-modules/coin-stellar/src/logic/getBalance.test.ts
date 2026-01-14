@@ -1,7 +1,7 @@
-import { getBalance } from "./getBalance";
-import { fetchAccount } from "../network";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { fetchAccount } from "../network";
+import { getBalance } from "./getBalance";
 
 jest.mock("../network", () => ({
   fetchAccount: jest.fn(),

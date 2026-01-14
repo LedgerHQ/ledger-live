@@ -12,8 +12,9 @@ import {
   TransactionValidation,
   TransactionIntent,
   FeeEstimation,
+  Balance,
 } from "@ledgerhq/coin-framework/api/types";
-import { isAddressValid, isAccountMultiSign, isMemoValid } from "./utils";
+import BigNumber from "bignumber.js";
 import { fetchAccountNetworkInfo, getRecipientAccount } from "../network";
 import {
   StellarWrongMemoFormat,
@@ -28,13 +29,13 @@ import {
   StellarSourceHasMultiSign,
   StellarMemo,
 } from "../types";
-import BigNumber from "bignumber.js";
-import { getBalance } from "./getBalance";
 import { fetchAccount } from "../network/horizon";
 import { BASE_RESERVE, MIN_BALANCE } from "../network/serialization";
+import { isAddressValid, isAccountMultiSign, isMemoValid } from "./utils";
 
 export const validateIntent = async (
   transactionIntent: TransactionIntent<StellarMemo>,
+  balances: Balance[],
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> => {
   const errors: Record<string, Error> = {};
@@ -53,7 +54,6 @@ export const validateIntent = async (
     ? BigInt(Math.round(networkInfo.baseReserve.toNumber() * 10)) / 10n
     : 0n;
   const isAssetPayment = transactionIntent.asset.type !== "native";
-  const balances = await getBalance(transactionIntent.sender);
   const nativeBalance = BigInt(balance.toString());
   const nativeAmountAvailable = BigInt(spendableBalance.toString()) - estimatedFees;
   let amount = 0n;

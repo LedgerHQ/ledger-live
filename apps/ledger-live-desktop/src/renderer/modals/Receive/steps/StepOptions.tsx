@@ -11,7 +11,7 @@ import { rgba } from "~/renderer/styles/helpers";
 import Text from "~/renderer/components/Text";
 
 const Option = styled(Box)`
-  background-color: ${p => rgba(p.theme.colors.palette.secondary.main, 0.05)};
+  background-color: ${p => rgba(p.theme.colors.neutral.c100, 0.05)};
   border: 1px solid transparent;
   border-radius: 8px;
   cursor: pointer;
@@ -29,8 +29,8 @@ const Option = styled(Box)`
 
 const IconWrapper = styled(Box)`
   align-items: center;
-  background-color: ${p => rgba(p.theme.colors.palette.secondary.main, 0.05)};
-  border: 1px ${p => rgba(p.theme.colors.palette.secondary.main, 0.1)} solid;
+  background-color: ${p => rgba(p.theme.colors.neutral.c100, 0.05)};
+  border: 1px ${p => rgba(p.theme.colors.neutral.c100, 0.1)} solid;
   border-radius: 100%;
   display: flex;
   height: 40px;
@@ -76,10 +76,10 @@ export default function StepOptions(props: Readonly<StepProps>) {
           <Icons.Bank size={"M"} />
         </IconWrapper>
         <Content>
-          <Text color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4}>
+          <Text color="neutral.c100" ff="Inter|SemiBold" fontSize={4}>
             <Trans i18nKey="receive.steps.options.fromBank.title" />
           </Text>
-          <Text color="palette.text.shade60" ff="Inter|Regular" fontSize={3}>
+          <Text color="neutral.c70" ff="Inter|Regular" fontSize={3}>
             <Trans i18nKey="receive.steps.options.fromBank.description" />
           </Text>
         </Content>
@@ -89,10 +89,10 @@ export default function StepOptions(props: Readonly<StepProps>) {
           <Icons.CoinsCrypto size={"M"} />
         </IconWrapper>
         <Content>
-          <Text color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4}>
+          <Text color="neutral.c100" ff="Inter|SemiBold" fontSize={4}>
             <Trans i18nKey="receive.steps.options.fromCrypto.title" />
           </Text>
-          <Text color="palette.text.shade60" ff="Inter|Regular" fontSize={3}>
+          <Text color="neutral.c70" ff="Inter|Regular" fontSize={3}>
             <Trans i18nKey="receive.steps.options.fromCrypto.description" />
           </Text>
         </Content>

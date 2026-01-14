@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, Animated, TextStyle, StyleProp } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
-import Icon from "react-native-vector-icons/Feather";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountCurrency, shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -19,8 +17,7 @@ import {
 import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
-import { Alert } from "@ledgerhq/native-ui";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { Alert, Icons } from "@ledgerhq/native-ui";
 import { rgba } from "../../../colors";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
@@ -36,7 +33,8 @@ import BakerImage from "../BakerImage";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { TezosDelegationFlowParamList } from "./types";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { NotEnoughBalanceToDelegate } from "@ledgerhq/errors";
 import NotEnoughFundFeesAlert from "~/families/shared/StakingErrors/NotEnoughFundFeesAlert";
 import Config from "react-native-config";
@@ -61,7 +59,7 @@ const ChangeDelegator = () => {
   const { colors } = useTheme();
   return (
     <Circle style={styles.changeDelegator} bg={colors.live} size={26}>
-      <Icon size={13} name="edit-2" color={colors.white} />
+      <Icons.PenEdit size="XS" color={colors.white} />
     </Circle>
   );
 };
@@ -99,7 +97,7 @@ const BakerSelection = ({ name, readOnly }: { name: string; readOnly?: boolean }
       </LText>
       {readOnly ? null : (
         <View style={[styles.bakerSelectionIcon, { backgroundColor: colors.live }]}>
-          <Icon size={16} name="edit-2" color={colors.white} />
+          <Icons.PenEdit size="S" color={colors.white} />
         </View>
       )}
     </View>
@@ -108,7 +106,7 @@ const BakerSelection = ({ name, readOnly }: { name: string; readOnly?: boolean }
 
 export default function DelegationSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const { t } = useTranslation();
   const [defaultBaker] = useBakers(whitelist);
 

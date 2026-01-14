@@ -32,6 +32,11 @@ on:
         required: false
         type: string
         default: "detox-ios-js-cache"
+      production_firebase:
+        description: Whether to build the Android app for production Firebase
+        required: false
+        type: boolean
+        default: false
     outputs:
       js-bundle-size:
         description: The JS bundle size of the built app
@@ -66,6 +71,11 @@ on:
         required: false
         type: string
         default: "detox-ios-js-cache"
+      production_firebase:
+        description: Whether to build the Android app for production Firebase
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   id-token: write
@@ -74,12 +84,11 @@ permissions:
 env:
   SHOULD_UPLOAD: ${{ (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
   cache-bucket: ll-gha-s3-cache
-  ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
+  ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-x86_64-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}.apk
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
-  ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk
+  ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}-androidTest.apk
 
 jobs:
-
   build-android-native:
     name: "Android Build Native"
     runs-on: [ledger-live-linux-8CPU-32RAM]
@@ -165,11 +174,11 @@ jobs:
 
   build-android-js:
     name: "Android Build JS"
-    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     timeout-minutes: 20
     if: ${{ inputs.build-android-js == true }}
     outputs:
-        js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
+      js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -236,6 +245,6 @@ jobs:
   skip-android-js:
     name: "Android Build JS - Skip"
     if: ${{ inputs.build-android-js != true }}
-    runs-on: [ ubuntu-22.04 ]
+    runs-on: [ubuntu-22.04]
     steps:
       - run: echo "Skipping"

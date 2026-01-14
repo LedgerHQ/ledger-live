@@ -39,7 +39,7 @@ export function CurrencyList({
               flexShrink: 1,
             }}
           >
-            <CryptoCurrencyIcon circle currency={currency} size={24} />
+            <CryptoCurrencyIcon currency={currency} size={32} />
             <Text
               ff="Inter|SemiBold"
               color="inherit"
@@ -56,7 +56,7 @@ export function CurrencyList({
             </Text>
             <Text
               ff="Inter|Medium"
-              color="palette.text.shade50"
+              color="neutral.c70"
               fontSize="13px"
               style={{
                 marginLeft: 4,

@@ -47,10 +47,7 @@ const ValidatorGroupsField = ({
 
   /** auto focus first input on mount */
   useEffect(() => {
-    if (containerRef && containerRef.current && containerRef.current.querySelector) {
-      const firstInput = containerRef.current.querySelector("input");
-      if (firstInput && firstInput.focus) firstInput.focus();
-    }
+    containerRef.current?.querySelector("input")?.focus();
   }, []);
   if (!status) return null;
   const renderItem = (validatorGroup: CeloValidatorGroup, validatorGroupIdx: number) => {

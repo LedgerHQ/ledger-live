@@ -8,7 +8,7 @@ import {
   ViewToken,
   useWindowDimensions,
 } from "react-native";
-import Animated, { Layout, SlideInRight } from "react-native-reanimated";
+import Animated, { LinearTransition, SlideInRight } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 import { ContentLayoutBuilder } from "~/contentCards/layouts/utils";
 import Pagination from "./pagination";
@@ -62,7 +62,7 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
   useInViewContext(
     ({ isInView }) => {
       isInViewRef.current = isInView;
-      if (isInView) visibleCardsRef.current.forEach(logImpressionCard);
+      if (isInView) visibleCardsRef.current.forEach(id => logImpressionCard(id));
     },
     [logImpressionCard],
     viewRef,
@@ -72,7 +72,7 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
       const visibleCards = viewableItems.map(({ item }) => item.props.metadata.id);
       const newlyVisibleCards = visibleCards.filter(id => !visibleCardsRef.current.includes(id));
       visibleCardsRef.current = visibleCards;
-      if (isInViewRef.current) newlyVisibleCards.forEach(logImpressionCard);
+      if (isInViewRef.current) newlyVisibleCards.forEach(id => logImpressionCard(id));
     },
     [logImpressionCard],
   );
@@ -100,7 +100,7 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
           <Animated.View
             key={item.props.metadata.id}
             entering={SlideInRight}
-            layout={Layout.duration(100)}
+            layout={LinearTransition.duration(100)}
             style={{
               width: width - separatorWidth * 2,
               flex: 1,

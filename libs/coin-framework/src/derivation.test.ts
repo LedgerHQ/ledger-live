@@ -84,6 +84,7 @@ describe("getDerivationModesForCurrency", () => {
     ["bitcoin_gold", ["unsplit", "segwit_unsplit", "segwit", ""]], // forkedFrom + supportsSegwit
     ["tezos", ["galleonL", "tezboxL", "tezosbip44h", "tezbox"]], // disableBIP44
     ["solana", ["solanaMain", "solanaBip44Change", "solanaSub"]], // backward compatible change in getDerivationModesForCurrency
+    ["celo", ["celo", "celoMM", "celoEvm"]], // backward compatible change in getDerivationModesForCurrency
   ];
 
   let envBackup: boolean;
@@ -201,6 +202,11 @@ describe("getSeedIdentifierDerivation", () => {
       currencyId: "ripple",
       mode: "" as DerivationMode,
       expectedSeedPath: `44'/144'/0'`,
+    },
+    {
+      currencyId: "celo",
+      mode: "" as DerivationMode,
+      expectedSeedPath: `44'/52752'/0'`,
     },
   ])("$currencyId", ({ currencyId, mode, expectedSeedPath }) => {
     const fun = getSeedIdentifierDerivation(getCryptoCurrencyById(currencyId), mode);

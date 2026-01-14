@@ -1,7 +1,11 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-
+import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
 async function selectCurrency(account: Account, isFromCurrency: boolean = true) {
-  const currentCurrencyText = await app.swapLiveApp.getFromCurrencyTexts();
+  // Check the appropriate field based on whether we're selecting FROM or TO
+  const currentCurrencyText = isFromCurrency
+    ? await app.swapLiveApp.getFromCurrencyTexts()
+    : await app.swapLiveApp.getToCurrencyTexts();
+
   if (currentCurrencyText.includes(account.currency.ticker)) {
     return;
   }
@@ -30,6 +34,7 @@ export async function performSwapUntilQuoteSelectionStep(
   await selectCurrency(accountToCredit, false);
   await app.swapLiveApp.inputAmount(amount);
   if (continueToQuotes) {
+    await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, floatNumberRegex, 20000);
     await app.swapLiveApp.tapGetQuotesButton();
     await app.swapLiveApp.waitForQuotes();
   }

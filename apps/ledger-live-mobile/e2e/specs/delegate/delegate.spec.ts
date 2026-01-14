@@ -1,3 +1,5 @@
+import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+
 describe("Delegate flow", () => {
   beforeAll(async () => {
     await app.init({ userdata: "EthAccountXrpAccountReadOnlyFalse" });
@@ -28,12 +30,12 @@ describe("Delegate flow", () => {
       selectedAccount.id,
       ["ethereum"],
       "100000000",
-      Account.ETH_2.address,
+      Addresses.ETH_2,
     );
 
     await app.send.expectSendSummaryTitleError("Keeping you safe");
     await app.send.expectSendSummaryDescriptionError(
-      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Account.SANCTIONED_ETH.address}`,
+      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Addresses.SANCTIONED_ETHEREUM}`,
     );
     await app.send.expectLearnMoreLink();
     await app.send.expectContinueButtonDisabled();

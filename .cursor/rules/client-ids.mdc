@@ -1,0 +1,65 @@
+# Client IDs Library (`@ledgerhq/client-ids`)
+
+## Purpose
+
+The `client-ids` library provides **unified, privacy-protected ID management** for Ledger Live. It isolates sensitive identifiers (DeviceId, UserId, DatadogId) and prevents accidental exposure through logging or serialization.
+
+## Core Principles
+
+### 1. **All ID Usage Must Go Through This Library**
+
+- **Never** create raw string IDs for devices, users, or analytics
+- **Always** use `DeviceId`, `UserId`, or `DatadogId` classes from `@ledgerhq/client-ids/ids`
+- IDs are protected by Symbols and automatically redacted in logs/JSON
+
+### 2. **Privacy Protection**
+
+- IDs are stored in Symbol fields to prevent accidental access
+- `toString()` and `toJSON()` return `[DeviceId:REDACTED]` by default
+- Actual ID values are only accessible through **explicit export methods**
+
+### 3. **Explicit Use Cases**
+
+- Every ID usage must be **explicitly declared** through a dedicated export method (e.g., `exportUserIdForSomethingSomething()`)
+- Export methods represent **specific, documented use cases** and can only be called from allowlisted files
+- The `export-rules.json` file serves as a **registry of all allowed use cases**, ensuring each ID export is intentional and justified
+- **Export at the last end**: Only export IDs at system boundaries (API calls, persistence) - never in the middle of processing
+- The `check-export-rules.mjs` script enforces that all ID exports match declared use cases at build time
+
+## Usage Requirements
+
+### Creating IDs
+
+Two scenarios:
+
+**1. Using an existing ID for a new use case:**
+- Add a new export method (e.g., `exportUserIdForSomethingSomething()`)
+- Add your file to `libs/client-ids/export-rules.json` allowlist:
+  ```json
+  {
+    "libs/client-ids/src/ids/UserId.ts": {
+      "exportUserIdForSomethingSomething": [
+        "your/new/file/path.ts"  // Add here
+      ]
+    }
+  }
+  ```
+- Justify the usage in a code comment explaining why this file needs to export the ID
+- Use the method only from the allowlisted file (at the system boundary)
+
+**2. Introducing a new kind of ID:**
+- Create a new class in `libs/client-ids/src/ids/` (e.g., `NewId.ts`)
+- Follow the pattern from `DeviceId.ts`: Symbol storage, redacted toString/toJSON, export methods
+- Add export methods with allowlist rules in `export-rules.json`
+
+```typescript
+import { DeviceId } from "@ledgerhq/client-ids/ids";
+
+// ✅ Correct: Use the library
+const deviceId = DeviceId.fromString("device-123");
+
+// ❌ Wrong: Don't use raw strings
+const deviceId = "device-123"; // BAD
+```
+
+

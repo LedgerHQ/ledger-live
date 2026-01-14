@@ -16,7 +16,7 @@ const ShowMore = styled(Button)<{
   color: ${p => p.theme.colors.wallet};
   align-items: center;
   justify-content: center;
-  border-top: 1px solid ${p => p.theme.colors.palette.divider};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 0px 0px 4px 4px;
   height: 32px;
   text-align: center;

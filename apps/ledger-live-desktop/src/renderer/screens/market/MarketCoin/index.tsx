@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Text, Icon, InfiniteLoader } from "@ledgerhq/react-ui";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { localeSelector } from "~/renderer/reducers/settings";

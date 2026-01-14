@@ -167,7 +167,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
 };
 
 const ValidatorsFieldContainer = styled(Box)`
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 4px;
 `;
 
@@ -178,7 +178,7 @@ const SeeAllButton = styled.div<{
   color: ${p => p.theme.colors.wallet};
   align-items: center;
   justify-content: center;
-  border-top: 1px solid ${p => p.theme.colors.palette.divider};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c40};
   height: 40px;
   cursor: pointer;
 

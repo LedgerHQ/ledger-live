@@ -1,18 +1,31 @@
 import BigNumber from "bignumber.js";
+import { getEnv } from "@ledgerhq/live-env";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Pagination } from "@ledgerhq/coin-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { encodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
 import { parseTransfers } from "../network/utils";
-import type { HederaMirrorToken, HederaMirrorTransaction, HederaOperationExtra } from "../types";
-import { base64ToUrlSafeBase64, getMemoFromBase64, getSyntheticBlock } from "./utils";
+import type {
+  HederaMirrorToken,
+  HederaMirrorTransaction,
+  HederaOperationExtra,
+  StakingAnalysis,
+} from "../types";
+import {
+  analyzeStakingOperation,
+  base64ToUrlSafeBase64,
+  getMemoFromBase64,
+  getSyntheticBlock,
+} from "./utils";
 
 const txNameToCustomOperationType: Record<string, OperationType> = {
   TOKENASSOCIATE: "ASSOCIATE_TOKEN",
   CONTRACTCALL: "CONTRACT_CALL",
+  CRYPTOUPDATEACCOUNT: "UPDATE_ACCOUNT",
 };
 
 function getCommonOperationData(
@@ -127,20 +140,45 @@ function processTransfers({
   ledgerAccountId,
   commonData,
   mirrorTokens,
+  stakingAnalysis,
 }: {
   rawTx: HederaMirrorTransaction;
   address: string;
   ledgerAccountId: string;
   commonData: ReturnType<typeof getCommonOperationData>;
   mirrorTokens: HederaMirrorToken[];
-}): Operation<HederaOperationExtra> | null {
+  stakingAnalysis: StakingAnalysis | null;
+}): Operation<HederaOperationExtra>[] {
+  const coinOperations: Operation<HederaOperationExtra>[] = [];
   const transfers = rawTx.transfers ?? [];
-  if (transfers.length === 0) return null;
+
+  if (transfers.length === 0) {
+    return [];
+  }
 
   const { type, value, senders, recipients } = parseTransfers(transfers, address);
   const { hash, fee, timestamp, blockHeight, blockHash, hasFailed } = commonData;
   const extra = { ...commonData.extra };
-  const operationType = txNameToCustomOperationType[rawTx.name] ?? type;
+  let operationType = txNameToCustomOperationType[rawTx.name] ?? type;
+
+  // update operation type and extra fields if staking analysis is available
+  if (stakingAnalysis) {
+    operationType = stakingAnalysis.operationType;
+    extra.previousStakingNodeId = stakingAnalysis.previousStakingNodeId;
+    extra.targetStakingNodeId = stakingAnalysis.targetStakingNodeId;
+    extra.stakedAmount = new BigNumber(stakingAnalysis.stakedAmount.toString());
+  }
+
+  // each transfer may trigger staking reward claim
+  const stakingReward = rawTx.staking_reward_transfers.reduce((acc, transfer) => {
+    const transferAmount = new BigNumber(transfer.amount);
+
+    if (transfer.account === address) {
+      acc = acc.plus(transferAmount);
+    }
+
+    return acc;
+  }, new BigNumber(0));
 
   // try to enrich ASSOCIATE_TOKEN operation with extra.associatedTokenId
   // this value is used by custom OperationDetails components in Hedera family
@@ -155,7 +193,30 @@ function processTransfers({
     }
   }
 
-  return {
+  // add REWARD operation representing staking reward transfers
+  if (stakingReward.gt(0)) {
+    const stakingRewardHash = `${hash}-staking-reward`;
+    const stakingRewardType: OperationType = "REWARD";
+    // offset timestamp by +1ms to ensure it appears just before the operation that triggered it
+    const stakingRewardTimestamp = new Date(timestamp.getTime() + 1);
+
+    coinOperations.push({
+      id: encodeOperationId(ledgerAccountId, stakingRewardHash, stakingRewardType),
+      accountId: ledgerAccountId,
+      type: stakingRewardType,
+      value: stakingReward,
+      recipients: [address],
+      senders: [getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID")],
+      hash: stakingRewardHash,
+      fee: new BigNumber(0),
+      date: stakingRewardTimestamp,
+      blockHeight,
+      blockHash,
+      extra,
+    });
+  }
+
+  coinOperations.push({
     id: encodeOperationId(ledgerAccountId, hash, operationType),
     accountId: ledgerAccountId,
     type: operationType,
@@ -169,7 +230,9 @@ function processTransfers({
     blockHash,
     hasFailed,
     extra,
-  };
+  });
+
+  return coinOperations;
 }
 
 export async function listOperations({
@@ -216,6 +279,12 @@ export async function listOperations({
   for (const rawTx of mirrorResult.transactions) {
     const commonData = getCommonOperationData(rawTx, useEncodedHash, useSyntheticBlocks);
 
+    // try to distinguish staking operations for CRYPTOUPDATEACCOUNT transactions
+    const stakingAnalysis =
+      rawTx.name === HEDERA_TRANSACTION_NAMES.UpdateAccount
+        ? await analyzeStakingOperation(address, rawTx)
+        : null;
+
     // process token transfers
     const tokenResult = await processTokenTransfers({
       rawTx,
@@ -231,15 +300,16 @@ export async function listOperations({
 
     // process regular transfers only if there were no token transfers
     if (!tokenResult) {
-      const coinOperation = processTransfers({
+      const newCoinOperations = processTransfers({
         rawTx,
         address,
         ledgerAccountId,
         commonData,
         mirrorTokens,
+        stakingAnalysis,
       });
 
-      if (coinOperation) coinOperations.push(coinOperation);
+      coinOperations.push(...newCoinOperations);
     }
   }
 

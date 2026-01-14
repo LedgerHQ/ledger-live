@@ -360,7 +360,7 @@ export class LedgerLiveEthereumProvider extends EventEmitter implements EIP1193P
     }
 
     try {
-      const message = JSON.parse(data) as ReceivedMessageType;
+      const message: ReceivedMessageType = typeof data === "object" ? data : JSON.parse(data);
 
       // Always expect jsonrpc to be set to '2.0'
       if (message.jsonrpc !== JSON_RPC_VERSION) {

@@ -20,7 +20,6 @@ export * as StepperStory from "./Navigation/Stepper/Stepper.stories";
 export * as BoxedIconStory from "./Icon/BoxedIcon.stories";
 export * as IconBoxStory from "./Icon/IconBox.stories";
 export * as AssetIconsStory from "./Icon/AssetsIcons.stories";
-export * as CryptoIconsStory from "./Icon/CryptoIcons.stories";
 export * as ProgressLoaderStory from "./Loader/ProgressLoader.stories";
 export * as InfiniteLoaderStory from "./Loader/InfiniteLoader.stories";
 export * as BaseInputStory from "./Form/Input/BaseInput.stories";

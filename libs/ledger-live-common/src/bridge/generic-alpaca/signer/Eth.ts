@@ -1,6 +1,6 @@
 import { filter, firstValueFrom } from "rxjs";
 import { EvmAddress, EvmSignature, EvmSigner } from "@ledgerhq/coin-evm/types/signer";
-import { CreateSigner } from "../../setup";
+import { CreateSigner, executeWithSigner } from "../../setup";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DmkSignerEth, LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import Transport from "@ledgerhq/hw-transport";
@@ -8,6 +8,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { ResolutionConfig, LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { Signature } from "ethers";
 import type { DomainServiceResolution } from "@ledgerhq/types-live";
+import resolver from "@ledgerhq/coin-evm/hw-getAddress";
 
 export type Signer = {
   getAddress: (path: string) => Promise<EvmAddress>;
@@ -70,3 +71,6 @@ export const createSigner: CreateSigner<Signer> = (transport: Transport) => {
     },
   };
 };
+
+export const context = executeWithSigner(createSigner);
+export const getAddress = resolver(context);

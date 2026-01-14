@@ -30,7 +30,7 @@ type PillProps = {
 
 const Pill = styled(Tabbable).attrs<PillProps>(p => ({
   ff: p.bordered ? "Inter|Bold" : "Inter|SemiBold",
-  color: p.isActive ? "wallet" : "palette.text.shade60",
+  color: p.isActive ? "wallet" : "neutral.c70",
   bg: p.isActive ? rgba(p.theme.colors.wallet, 0.1) : "",
   px: p.bordered ? 2 : 3,
   fontSize: 3,
@@ -39,19 +39,19 @@ const Pill = styled(Tabbable).attrs<PillProps>(p => ({
   justifyContent: "center",
 }))<PillProps>`
   border: ${p => (p.bordered ? "1px solid" : "none")};
-  border-color: ${p => (p.isActive ? p.theme.colors.wallet : p.theme.colors.palette.divider)};
+  border-color: ${p => (p.isActive ? p.theme.colors.wallet : p.theme.colors.neutral.c40)};
   height: 28px;
   outline: none;
   cursor: ${p => (p.isActive ? "default" : "pointer")};
   min-width: ${p => (p.bordered ? "40px" : "")};
 
   &:hover {
-    color: ${p => (p.isActive ? p.theme.colors.wallet : p.theme.colors.palette.text.shade100)};
+    color: ${p => (p.isActive ? p.theme.colors.wallet : p.theme.colors.neutral.c100)};
   }
 
   &:focus {
     color: ${p => p.theme.colors.wallet};
-    background-color: ${p => (p.isActive ? "" : rgba(p.theme.colors.palette.text.shade100, 0.02))};
+    background-color: ${p => (p.isActive ? "" : rgba(p.theme.colors.neutral.c100, 0.02))};
   }
 `;
 function Pills<V, I extends Item<V>>(props: Props<V, I>) {

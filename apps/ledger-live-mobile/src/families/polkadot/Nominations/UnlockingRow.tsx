@@ -10,7 +10,7 @@ import CounterValue from "~/components/CounterValue";
 import LText from "~/components/LText";
 import DateFromNow from "~/components/DateFromNow";
 import { WithdrawAction } from "./Actions";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   amount: BigNumber;

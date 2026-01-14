@@ -9,7 +9,7 @@ import {
   WalletAPICustomHandlers,
   AccountIdFormatsResponse,
 } from "@ledgerhq/live-common/wallet-api/types";
-import type { AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useMemo, useState, useRef, useEffect, useCallback } from "react";
 import { track } from "~/analytics";
@@ -21,8 +21,15 @@ import { WebviewProps } from "../Web3AppWebview/types";
 import Config from "react-native-config";
 import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
 import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/errors";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getParentAccount,
+  isTokenAccount,
+  makeEmptyTokenAccount,
+} from "@ledgerhq/coin-framework/account/helpers";
+import {
+  decodeTokenAccountIdSync,
+  decodeTokenAccountId,
+} from "@ledgerhq/coin-framework/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
@@ -33,6 +40,7 @@ import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/uti
 
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 const drawerClosedError = new DrawerClosedError("User closed the drawer");
+const unknownSwapError = new Error("Unknown swap error");
 
 type CustomExchangeHandlersHookType = {
   manifest: WebviewProps["manifest"];
@@ -68,6 +76,33 @@ export function useCustomExchangeHandlers({
     parentRoute: route,
     alwaysShowNoFunds: false,
   });
+
+  const getAccount = useCallback(
+    async (accountId: string): Promise<AccountLike | null> => {
+      const foundAccount = accounts.find(acc => acc.id === accountId);
+
+      if (foundAccount) {
+        return foundAccount;
+      }
+
+      if (accountId.includes("+")) {
+        const { accountId: parentAccountId } = decodeTokenAccountIdSync(accountId);
+
+        const parentAccount = accounts.find(
+          acc => acc.type === "Account" && acc.id === parentAccountId,
+        ) as Account | undefined;
+
+        const { token } = await decodeTokenAccountId(accountId);
+
+        if (parentAccount && token) {
+          return makeEmptyTokenAccount(parentAccount, token);
+        }
+      }
+
+      return null;
+    },
+    [accounts],
+  );
 
   // Helper to get manifest by ID - checks local first, then remote
   const getManifestById = useCallback(
@@ -141,31 +176,37 @@ export function useCustomExchangeHandlers({
         const accountId = request.params?.accountId;
 
         return new Promise<void>((resolve, reject) => {
-          try {
-            if (accountId) {
-              const id = getAccountIdFromWalletAccountId(accountId);
-              const account = accounts.find(acc => acc.id === id);
+          (async () => {
+            try {
+              if (accountId) {
+                const id = getAccountIdFromWalletAccountId(accountId);
+                if (!id) {
+                  reject(new Error("Invalid accountId"));
+                  return;
+                }
+                const account = await getAccount(id);
 
-              if (!account) {
-                reject(new Error("Account not found"));
-                return;
+                if (!account) {
+                  reject(new Error("Account not found"));
+                  return;
+                }
+
+                navigation.navigate(NavigatorName.NoFundsFlow, {
+                  screen: ScreenName.NoFunds,
+                  params: {
+                    account,
+                    parentAccount: isTokenAccount(account)
+                      ? getParentAccount(account, accounts)
+                      : undefined,
+                  },
+                });
+
+                resolve();
               }
-
-              navigation.navigate(NavigatorName.NoFundsFlow, {
-                screen: ScreenName.NoFunds,
-                params: {
-                  account,
-                  parentAccount: isTokenAccount(account)
-                    ? getParentAccount(account, accounts)
-                    : undefined,
-                },
-              });
-
-              resolve();
+            } catch (error) {
+              reject(error);
             }
-          } catch (error) {
-            reject(error);
-          }
+          })();
         });
       },
       "custom.navigate": async (request: {
@@ -230,7 +271,7 @@ export function useCustomExchangeHandlers({
               // If manifest not found, default to "encoded" (safer fallback)
               results[liveAppId] = "encoded";
             }
-          } catch (error) {
+          } catch {
             // On error, default to "encoded" format
             results[liveAppId] = "encoded";
           }
@@ -330,12 +371,12 @@ export function useCustomExchangeHandlers({
             });
           },
           "custom.exchange.error": ({ error }) => {
-            navigation.navigate(NavigatorName.CustomError, {
-              screen: ScreenName.CustomErrorScreen,
-              params: {
-                error,
-                displayError: error instanceof AddressesSanctionedError,
-              },
+            if (handleLoaderDrawer) {
+              navigation.pop();
+            }
+
+            navigation.navigate(ScreenName.SwapCustomError, {
+              error: error ?? unknownSwapError,
             });
           },
           "custom.isReady": async () => {
@@ -413,6 +454,7 @@ export function useCustomExchangeHandlers({
     handleOpenStakeDrawer,
     goToAccountStakeFlow,
     getManifestById,
+    getAccount,
   ]);
 }
 

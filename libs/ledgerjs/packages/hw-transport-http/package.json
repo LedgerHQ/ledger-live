@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-http",
-  "version": "6.31.0",
+  "version": "6.33.0-next.0",
   "description": "Ledger Hardware Wallet communication layer over http",
   "keywords": [
     "Ledger",
@@ -22,6 +22,16 @@
   "publishConfig": {
     "access": "public"
   },
+  "exports": {
+    ".": {
+      "import": "./lib-es/withStaticURLs.js",
+      "require": "./lib/withStaticURLs.js"
+    },
+    "./WebSocketTransport": {
+      "import": "./lib-es/WebSocketTransport.js",
+      "require": "./lib/WebSocketTransport.js"
+    }
+  },
   "main": "lib/withStaticURLs.js",
   "module": "lib-es/withStaticURLs.js",
   "types": "lib/withStaticURLs.d.ts",
@@ -31,7 +41,7 @@
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/logs": "workspace:^",
     "axios": "catalog:",
-    "ws": "^7.5.2"
+    "ws": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -47,13 +57,14 @@
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "devDependencies": {
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
     "documentation": "14.0.2",
-    "jest": "^29.7.0",
+    "jest": "catalog:",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
-    "ts-jest": "^29.1.1",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "ts-node": "^10.4.0"
   }
 }

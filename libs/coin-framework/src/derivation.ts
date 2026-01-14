@@ -195,6 +195,20 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
     overridesDerivation: "44'/6767'/<account>'/0'/0'",
     tag: "canton",
   },
+  cashaddr: {
+    addressFormat: "cashaddr",
+    tag: "cashaddr",
+  },
+  celo: {
+    tag: "Legacy",
+  },
+  celoMM: {
+    overridesDerivation: "44'/60'/0'/0/<account>",
+    tag: "Metamask",
+  },
+  celoEvm: {
+    overridesDerivation: "44'/60'/<account>'/0'/0'",
+  },
 });
 
 // WIP
@@ -238,6 +252,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   canton_network: ["canton"],
   canton_network_devnet: ["canton"],
   canton_network_testnet: ["canton"],
+  celo: ["celo", "celoMM", "celoEvm"],
 };
 
 export function isDerivationMode(mode: string): mode is DerivationMode {
@@ -381,6 +396,7 @@ const disableBIP44: Record<string, boolean> = {
   canton_network: true,
   canton_network_devnet: true,
   canton_network_testnet: true,
+  celo: true,
 };
 type SeedInfo = {
   purpose: number;

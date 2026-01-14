@@ -1,5 +1,5 @@
 $TmsLink("B2CQA-2344");
-const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"];
+const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 tags.forEach(tag => $Tag(tag));
 describe("Change Language", () => {
   const langButtonText = [

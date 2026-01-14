@@ -1,3 +1,5 @@
+import { Step } from "jest-allure2-reporter/api";
+
 export default class StakePage {
   delegationSummaryValidatorId = (currencyId: string) =>
     `${currencyId}-delegation-summary-validator`;

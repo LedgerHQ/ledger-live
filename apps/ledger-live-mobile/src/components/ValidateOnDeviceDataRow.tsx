@@ -101,9 +101,13 @@ export function TextValueField({
         {label}
       </LText>
       <View style={styles.dataRowValue}>
-        <LText numberOfLines={numberOfLines} testID={testID} style={styles.valueText}>
-          {value}
-        </LText>
+        {typeof value === "string" || typeof value === "number" ? (
+          <LText numberOfLines={numberOfLines} testID={testID} style={styles.valueText}>
+            {value}
+          </LText>
+        ) : (
+          value
+        )}
       </View>
     </View>
   );

@@ -12,7 +12,7 @@ export const liveAppContext = createContext<LiveAppContextType>({
   getLocalLiveAppManifestById: id => id,
 });
 
-export function LocalLiveAppProvider({ children, db }: LiveAppProviderProps): JSX.Element {
+export function LocalLiveAppProvider({ children, db }: LiveAppProviderProps): React.JSX.Element {
   const { state, addLocalManifest, removeLocalManifestById, getLocalLiveAppManifestById } =
     useLocalLiveApp(db);
 

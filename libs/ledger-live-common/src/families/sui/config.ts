@@ -7,6 +7,7 @@ export const suiConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
         url: getEnv("API_SUI_NODE_PROXY"),

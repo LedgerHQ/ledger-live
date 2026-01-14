@@ -23,3 +23,27 @@ export async function checkForErrorModals(
     );
   }
 }
+
+/**
+ * Checks if an error element is visible on screen and throws if found.
+ * Used for fail-fast behavior when waiting for elements.
+ *
+ * @param errorElementId - The test ID of the error element to check for
+ * @param errorCheckTimeout - How long to wait when checking for the error element (in ms)
+ * @throws {Error} If the error element is visible, with the error text if available
+ */
+export async function checkForErrorElement(
+  errorElementId: string,
+  errorCheckTimeout: number,
+): Promise<void> {
+  const hasError = await IsIdVisible(errorElementId, errorCheckTimeout);
+
+  if (hasError) {
+    const errorText = await getTextOfElement(errorElementId);
+    throw new Error(
+      errorText
+        ? `Error detected while waiting for element: ${errorText}`
+        : `Error element '${String(errorElementId)}' detected while waiting for element`,
+    );
+  }
+}

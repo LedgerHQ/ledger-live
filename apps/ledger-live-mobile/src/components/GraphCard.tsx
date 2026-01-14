@@ -9,7 +9,7 @@ import Animated, {
   interpolate,
   useAnimatedStyle,
 } from "react-native-reanimated";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import Delta from "./Delta";
 import { TransactionsPendingConfirmationWarningAllAccounts } from "./TransactionsPendingConfirmationWarning";
 import CurrencyUnitValue from "./CurrencyUnitValue";

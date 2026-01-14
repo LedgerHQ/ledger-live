@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
 import type { AnnouncementsApi, RawAnnouncement } from "../types";
 
@@ -10,7 +10,7 @@ const announcementsVersion = () => getEnv("ANNOUNCEMENTS_API_VERSION");
 
 async function fetchAnnouncements(): Promise<RawAnnouncement[]> {
   const url = `${baseAnnouncementsUrl()}/v${announcementsVersion()}/data.json?t=${Date.now()}`;
-  const { data } = await network({
+  const { data } = await network<RawAnnouncement[]>({
     method: "GET",
     headers: {
       Origin: "http://localhost:3000",

@@ -9,7 +9,7 @@ export type RawCardProps = BoxProps & {
 };
 
 export const RawCard = styled(Box).attrs<RawCardProps>(p => ({
-  bg: p.bg || "palette.background.paper",
+  bg: p.bg || "background.card",
   boxShadow: 0,
   borderRadius: 1,
   color: p.color || "inherit",
@@ -24,7 +24,7 @@ const Card = ({ title, ...props }: CardProps) => {
   if (title) {
     return (
       <Box flow={4} grow>
-        <Text color="palette.text.shade100" ff="Inter" fontSize={6}>
+        <Text color="neutral.c100" ff="Inter" fontSize={6}>
           {title}
         </Text>
         <RawCard {...props} grow />

@@ -16,10 +16,10 @@ const Footer = ({ total, used }: Props) => {
   const percentVotesUsed = Math.floor(100 * (used / total)) / 100;
   if (percentVotesUsed >= 1) return null;
   return (
-    <Box bg="palette.action.hover" horizontal alignItems="center" px={4} py={2}>
+    <Box bg="opacityDefault.c10" horizontal alignItems="center" px={4} py={2}>
       <ProgressCircle size={50} progress={percentVotesUsed} />
       <Box ml={2}>
-        <Text ff="Inter|SemiBold" fontSize={3} color="palette.text.shade100">
+        <Text ff="Inter|SemiBold" fontSize={3} color="neutral.c100">
           <Trans
             i18nKey="tron.voting.remainingVotes.title"
             values={{
@@ -27,7 +27,7 @@ const Footer = ({ total, used }: Props) => {
             }}
           />
         </Text>
-        <Text ff="Inter|Medium" fontSize={3} color="palette.text.shade60">
+        <Text ff="Inter|Medium" fontSize={3} color="neutral.c70">
           <Trans i18nKey="tron.voting.remainingVotes.description" />
         </Text>
       </Box>

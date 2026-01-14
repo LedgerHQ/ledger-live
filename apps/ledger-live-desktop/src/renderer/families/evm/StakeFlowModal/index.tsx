@@ -10,6 +10,7 @@ import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Modal from "~/renderer/components/Modal";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import EthStakeIllustration from "~/renderer/icons/EthStakeIllustration";
 import { openURL } from "~/renderer/linking";
 import { EthStakingModalBody } from "./EthStakingModalBody";
@@ -73,6 +74,9 @@ const StakeModal = ({ account, source }: Props) => {
         (scrollableContainerRef.current?.clientHeight ?? 0),
     );
   }, [selected, setIsScrollable]);
+
+  const restakingUrl = urls.ledgerAcademy.whatIsEthereumRestaking;
+  const howToStakeEthUrl = useLocalizedUrl(urls.ledgerAcademy.ethereumStakingHowToStakeEth);
 
   if (!ethStakingProviders?.enabled) {
     return null;
@@ -210,13 +214,7 @@ const StakeModal = ({ account, source }: Props) => {
                 cursor: "pointer",
               }}
               width="100%"
-              onClick={() =>
-                openURL(
-                  selected === "restaking"
-                    ? urls.ledgerAcademy.whatIsEthereumRestaking
-                    : urls.ledgerAcademy.ethereumStakingHowToStakeEth,
-                )
-              }
+              onClick={() => openURL(selected === "restaking" ? restakingUrl : howToStakeEthUrl)}
             >
               <Flex flexShrink={0} alignItems="center" justifyContent="center">
                 <Flex
@@ -236,13 +234,13 @@ const StakeModal = ({ account, source }: Props) => {
                   </Text>
                 </Box>
                 <Box>
-                  <Text ff="Inter|SemiBold" fontSize={13} color={colors.palette.text.shade60}>
+                  <Text ff="Inter|SemiBold" fontSize={13} color={colors.neutral.c70}>
                     {t("ethereum.stake.readAbout")}
                   </Text>
                 </Box>
               </Box>
               <Flex flexShrink={0} alignItems="center" justifyContent="center">
-                <Icons.ExternalLink size="M" color={colors.palette.text.shade60} />
+                <Icons.ExternalLink size="M" color={colors.neutral.c70} />
               </Flex>
             </Flex>
           </Footer>

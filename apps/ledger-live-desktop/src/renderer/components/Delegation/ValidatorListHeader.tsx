@@ -9,7 +9,7 @@ const Separator = styled.div`
   margin: 0 10px;
   height: 13px;
   width: 1px;
-  background-color: ${p => p.theme.colors.palette.text.shade60};
+  background-color: ${p => p.theme.colors.neutral.c70};
 `;
 type ValidatorListHeaderProps = {
   votesSelected: number;

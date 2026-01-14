@@ -1,5 +1,91 @@
 # @ledgerhq/hw-app-btc
 
+## 10.16.0-next.0
+
+### Minor Changes
+
+- [#13537](https://github.com/LedgerHQ/ledger-live/pull/13537) [`7e33c7b`](https://github.com/LedgerHQ/ledger-live/commit/7e33c7b3de128e0c076176e98f8065f7cf7ad733) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - feat: btc recovery app support
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b)]:
+  - @ledgerhq/hw-transport@6.32.0-next.0
+  - @ledgerhq/logs@6.14.0-next.0
+
+## 10.15.0
+
+### Minor Changes
+
+- [#13431](https://github.com/LedgerHQ/ledger-live/pull/13431) [`d1a83d9`](https://github.com/LedgerHQ/ledger-live/commit/d1a83d942d98e52eeac3d459f5f8ac763d4b6c13) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update to latest bs58 libs.
+
+- [#13426](https://github.com/LedgerHQ/ledger-live/pull/13426) [`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae) Thanks [@gre-ledger](https://github.com/gre-ledger)! - update semver library (minor)
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.16
+
+## 10.15.0-next.0
+
+### Minor Changes
+
+- [#13431](https://github.com/LedgerHQ/ledger-live/pull/13431) [`d1a83d9`](https://github.com/LedgerHQ/ledger-live/commit/d1a83d942d98e52eeac3d459f5f8ac763d4b6c13) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update to latest bs58 libs.
+
+- [#13426](https://github.com/LedgerHQ/ledger-live/pull/13426) [`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae) Thanks [@gre-ledger](https://github.com/gre-ledger)! - update semver library (minor)
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.16-next.0
+
+## 10.14.0
+
+### Minor Changes
+
+- [#13112](https://github.com/LedgerHQ/ledger-live/pull/13112) [`e63194f`](https://github.com/LedgerHQ/ledger-live/commit/e63194f7dbd5ff2b0135c26aac3842a2be676b0a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - 🔧 Enforce @typescript-eslint/no-deprecated and Replace Deprecated APIs
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.15
+
+## 10.14.0-next.0
+
+### Minor Changes
+
+- [#13112](https://github.com/LedgerHQ/ledger-live/pull/13112) [`e63194f`](https://github.com/LedgerHQ/ledger-live/commit/e63194f7dbd5ff2b0135c26aac3842a2be676b0a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - 🔧 Enforce @typescript-eslint/no-deprecated and Replace Deprecated APIs
+
+- [#13142](https://github.com/LedgerHQ/ledger-live/pull/13142) [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - upgrade typescript-eslint rules & versions
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.15-next.0
+
+## 10.13.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.14
+
+## 10.13.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.14-hotfix.0
+
+## 10.13.0
+
+### Minor Changes
+
+- [#12610](https://github.com/LedgerHQ/ledger-live/pull/12610) [`927ae64`](https://github.com/LedgerHQ/ledger-live/commit/927ae64db0bb04af54e25623655a001a68e0f2d3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add DMK solana signer behind FF
+
 ## 10.13.0-next.0
 
 ### Minor Changes

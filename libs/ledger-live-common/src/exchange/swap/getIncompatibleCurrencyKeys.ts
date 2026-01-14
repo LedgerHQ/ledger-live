@@ -83,6 +83,14 @@ const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
     title: "swap.incompatibility.celo_title",
     description: "swap.incompatibility.celo_description",
   },
+  monad: {
+    title: "swap.incompatibility.monad_title",
+    description: "swap.incompatibility.monad_description",
+  },
+  zcash: {
+    title: "swap.incompatibility.zcash_title",
+    description: "swap.incompatibility.zcash_description",
+  },
 };
 
 export const getIncompatibleCurrencyKeys = (exchange: ExchangeSwap) => {

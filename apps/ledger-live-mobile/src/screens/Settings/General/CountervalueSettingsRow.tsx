@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
 import { counterValueCurrencySelector } from "~/reducers/settings";

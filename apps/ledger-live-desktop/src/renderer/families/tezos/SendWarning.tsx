@@ -14,16 +14,16 @@ const IconWrapper = styled(Box).attrs(() => ({
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  background-color: ${p => p.theme.colors.palette.action.hover};
+  background-color: ${p => p.theme.colors.opacityDefault.c10};
 `;
 const SendWarning = () => (
   <Box flow={4} px={5}>
-    <IconWrapper color="palette.primary.main">
+    <IconWrapper color="primary.c80">
       <InfoCircle size={26} />
     </IconWrapper>
 
     <Box mt={25}>
-      <Text ff="Inter|Regular" color="palette.text.shade80" textAlign="center" fontSize={4}>
+      <Text ff="Inter|Regular" color="neutral.c80" textAlign="center" fontSize={4}>
         <Trans i18nKey="send.steps.warning.tezos.text" />
       </Text>
     </Box>

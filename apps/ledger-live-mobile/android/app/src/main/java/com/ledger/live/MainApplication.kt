@@ -38,7 +38,6 @@ class MainApplication : Application(), ReactApplication, ShareApplication {
                   // Packages that cannot be autolinked yet can be added manually here, for example:
                   // add(MyReactNativePackage())
                   add(NativeModulesPackage())
-                  add(BackgroundRunnerPackager())
                 }
 
             override fun getJSMainModuleName(): String = "index"

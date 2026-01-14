@@ -1,7 +1,3 @@
-import { validateIntent } from "./validateIntent";
-import * as estimateFeesModule from "./estimateFees";
-import tzktApi from "../network/tzkt";
-import coinConfig from "../config";
 import {
   RecipientRequired,
   InvalidAddress,
@@ -9,13 +5,26 @@ import {
   AmountRequired,
   NotEnoughBalance,
 } from "@ledgerhq/errors";
+import coinConfig from "../config";
+import { validateIntent } from "./validateIntent";
+
+// Module-level mocks
+const mockEstimateFees = jest.fn();
+jest.mock("./estimateFees", () => ({
+  estimateFees: (...args: unknown[]) => mockEstimateFees(...args),
+}));
+
+const mockGetAccountByAddress = jest.fn();
+jest.mock("../network/tzkt", () => ({
+  __esModule: true,
+  default: {
+    getAccountByAddress: (...args: unknown[]) => mockGetAccountByAddress(...args),
+  },
+}));
 
 describe("validateIntent", () => {
   const senderAddress = "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oSM8";
   const validRecipient = "tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx";
-
-  const mockEstimateFees = jest.spyOn(estimateFeesModule, "estimateFees");
-  const mockGetAccountByAddress = jest.spyOn(tzktApi, "getAccountByAddress");
 
   beforeEach(() => {
     jest.clearAllMocks();

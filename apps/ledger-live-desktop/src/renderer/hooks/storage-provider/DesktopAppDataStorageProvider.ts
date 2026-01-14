@@ -28,7 +28,7 @@ export class DesktopAppDataStorageProvider implements AppDataStorageProvider<App
       if (isAppStorageType(parsedData)) {
         return Promise.resolve(parsedData);
       }
-    } catch (error: unknown) {
+    } catch {
       throw new BackupAppDataError("Cannot parse the data(SyntaxError).");
     }
     throw new BackupAppDataError("Invalid data type.");
@@ -46,7 +46,7 @@ export class DesktopAppDataStorageProvider implements AppDataStorageProvider<App
     try {
       const data = JSON.stringify(value);
       return Promise.resolve(global.localStorage.setItem(key, data));
-    } catch (error: unknown) {
+    } catch {
       throw new BackupAppDataError("Cannot stringify the data(TypeError).");
     }
   }

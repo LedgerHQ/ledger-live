@@ -47,13 +47,15 @@ const StepFooter: React.FC<Props> = props => {
     onClickNext,
   } = props;
 
-  const handleNext = useCallback(() => {
-    onClickNext ? onClickNext() : nextStep && setStep && setStep(nextStep);
-  }, [onClickNext, nextStep, setStep]);
+  const handleNext = useCallback(
+    () => (onClickNext ? onClickNext() : nextStep && setStep?.(nextStep)),
+    [onClickNext, nextStep, setStep],
+  );
 
-  const handlePrevious = useCallback(() => {
-    onClickPrevious ? onClickPrevious() : previousStep && setStep && setStep(previousStep);
-  }, [onClickPrevious, previousStep, setStep]);
+  const handlePrevious = useCallback(
+    () => (onClickPrevious ? onClickPrevious() : previousStep && setStep?.(previousStep)),
+    [onClickPrevious, previousStep, setStep],
+  );
 
   const showPrevious = !previousHidden && (previousStep || onClickPrevious);
   const showNext = !nextHidden && (nextStep || onClickNext);

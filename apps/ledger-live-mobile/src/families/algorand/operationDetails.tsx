@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import Section from "~/screens/OperationDetails/Section";
 import OperationStatusIcon from "~/icons/OperationStatusIcon";
@@ -14,7 +14,7 @@ import {
   AlgorandOperationExtra,
 } from "@ledgerhq/live-common/families/algorand/types";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   operation: AlgorandOperation;
@@ -28,7 +28,7 @@ function OperationDetailsExtra({ operation, account }: Props) {
   const { locale } = useSettings();
   const formattedRewards = operation.extra.rewards?.gt(0)
     ? formatCurrencyUnit(unit, operation.extra.rewards, {
-        locale: locale,
+        locale,
         disableRounding: true,
         alwaysShowSign: false,
         showCode: true,

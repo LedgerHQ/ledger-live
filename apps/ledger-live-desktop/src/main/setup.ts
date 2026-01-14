@@ -84,7 +84,7 @@ ipcMain.handle(
         await fs.writeFile(path.filePath, csv);
         return true;
       }
-    } catch (error) {
+    } catch {
       // ignore
     }
     return false;
@@ -125,7 +125,7 @@ ipcMain.handle("load-lss-config", async (): Promise<string | undefined | null> =
       log("satstack", `loaded lss.json file with length ${contents.length}`);
       return contents;
     }
-  } catch (e) {
+  } catch {
     log("satstack", "tried to load lss.json");
   }
   return undefined;

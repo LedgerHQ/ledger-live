@@ -2,10 +2,9 @@ import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView, ListRenderItem } from "react-native";
 import { Trans } from "react-i18next";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import { useSelector } from "react-redux";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { accountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
+import { useAccountsByCryptoCurrency } from "LLM/hooks/useAccountsByCryptoCurrency";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
 import FilteredSearchBar from "~/components/FilteredSearchBar";
@@ -98,7 +97,7 @@ const List = ({
 function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { currency, allowAddAccount, onSuccess } = route.params;
-  const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency));
+  const accounts = useAccountsByCryptoCurrency(currency);
   const onSelect = useCallback(
     (account: AccountLike, parentAccount?: Account) => {
       const n =

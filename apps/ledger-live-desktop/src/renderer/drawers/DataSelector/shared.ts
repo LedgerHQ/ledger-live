@@ -6,11 +6,11 @@ export const RowContainer = styled.div`
   cursor: pointer;
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.palette.background.default};
+    background-color: ${({ theme }) => theme.colors.background.default};
   }
 
   &:active {
-    color: ${({ theme }) => theme.colors.palette.text.shade80};
+    color: ${({ theme }) => theme.colors.neutral.c80};
   }
 `;
 export const RowInnerContainer = styled.div`
@@ -23,7 +23,7 @@ export const RowInnerContainer = styled.div`
   padding: 14px 12px;
 `;
 export const CurrencyLabel = styled(Text).attrs(() => ({
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   ff: "Inter|SemiBold",
   fontSize: 2,
 }))`

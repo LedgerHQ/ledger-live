@@ -1,5 +1,79 @@
 # @ledgerhq/device-react
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b)]:
+  - @ledgerhq/device-core@0.8.0-next.0
+
+## 0.3.7
+
+### Patch Changes
+
+- Updated dependencies [[`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae)]:
+  - @ledgerhq/device-core@0.7.0
+
+## 0.3.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae)]:
+  - @ledgerhq/device-core@0.7.0-next.0
+
+## 0.3.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.6.12
+
+## 0.3.6-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.6.12-hotfix.0
+
+## 0.3.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.6.11
+
+## 0.3.5-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.6.11-next.0
+
+## 0.3.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.6.10
+
+## 0.3.4-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.6.10-hotfix.0
+
+## 0.3.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.6.9
+
 ## 0.3.3-next.0
 
 ### Patch Changes

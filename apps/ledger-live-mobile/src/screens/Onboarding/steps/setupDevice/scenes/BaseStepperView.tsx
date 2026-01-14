@@ -15,7 +15,7 @@ const Scene = ({ children }: { children: React.ReactNode }) => <Flex flex={1}>{c
 
 export type Metadata = {
   id: string;
-  illustration: JSX.Element | null;
+  illustration: React.JSX.Element | null;
   drawer: null | { route: string; screen: string };
 };
 
@@ -42,10 +42,14 @@ const ImageHeader = ({
   activeIndex,
   onBack,
   metadata,
+  extraStepsLength = 0,
+  overrideActiveIndex,
 }: {
   activeIndex: number;
   onBack: () => void;
   metadata: Metadata[];
+  extraStepsLength?: number;
+  overrideActiveIndex?: number;
 }) => {
   const stepData = metadata[activeIndex];
 
@@ -58,10 +62,10 @@ const ImageHeader = ({
       height={48}
     >
       <Button Icon={() => <IconsLegacy.ArrowLeftMedium size={24} />} onPress={onBack} />
-      {metadata.length <= 1 ? null : (
+      {metadata.length + extraStepsLength <= 1 ? null : (
         <SlideIndicator
-          slidesLength={metadata.length}
-          activeIndex={activeIndex}
+          slidesLength={metadata.length + extraStepsLength}
+          activeIndex={overrideActiveIndex || activeIndex}
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           onChange={() => {}}
         />
@@ -97,9 +101,9 @@ type StepProp =
   | { onNext: () => void; deviceModelId: DeviceModelId };
 
 export type Step = {
-  (props: StepProp): JSX.Element;
+  (props: StepProp): React.JSX.Element;
   id: string;
-  Next: (props: StepProp) => JSX.Element;
+  Next: (props: StepProp) => React.JSX.Element;
   contentContainerStyle?: StyleProp<ViewStyle>;
 };
 
@@ -109,10 +113,14 @@ function BaseStepperView({
   metadata,
   deviceModelId,
   params,
+  extraStepsLength,
+  overrideActiveIndex,
 }: {
   onNext: () => void;
   steps: Step[];
   metadata: Metadata[];
+  extraStepsLength?: number;
+  overrideActiveIndex?: number;
   deviceModelId?: DeviceModelId;
   params?: object;
 }) {
@@ -140,7 +148,7 @@ function BaseStepperView({
         renderTransition={renderTransitionSlide}
         transitionDuration={transitionDuration}
         progressBarProps={{ opacity: 0 }}
-        extraProps={{ onBack: handleBack, metadata }}
+        extraProps={{ onBack: handleBack, metadata, extraStepsLength, overrideActiveIndex }}
       >
         {steps.map((Children, i) => (
           <Scene key={Children.id + i}>

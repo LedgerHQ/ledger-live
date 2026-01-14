@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import SettingsRow from "~/components/SettingsRow";
 import {
   completeOnboarding,

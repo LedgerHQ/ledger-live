@@ -5,8 +5,8 @@ import {
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
+import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import { cosmos } from "@keplr-wallet/cosmos";
 import { Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 
 import { buildTransaction, txToMessages } from "./buildTransaction";
@@ -80,7 +80,7 @@ describe("txToMessages", () => {
         transaction.amount = new BigNumber(1000);
         const { protoMsgs } = txToMessages(account, transaction);
         const [protoMsg] = protoMsgs;
-        const value = cosmos.bank.v1beta1.MsgSend.decode(protoMsg.value);
+        const value = MsgSend.decode(protoMsg.value);
         expect(protoMsg).toBeTruthy();
         expect(protoMsg.typeUrl).toContain("MsgSend");
         expect(value.toAddress).toEqual(transaction.recipient);
@@ -94,7 +94,7 @@ describe("txToMessages", () => {
         transaction.amount = veryBigNumber;
         const { protoMsgs } = txToMessages(account, transaction);
         const [protoMsg] = protoMsgs;
-        const value = cosmos.bank.v1beta1.MsgSend.decode(protoMsg.value);
+        const value = MsgSend.decode(protoMsg.value);
         expect(value.amount[0].amount?.includes("e")).toEqual(false);
       });
 

@@ -18,6 +18,12 @@ mockGetConfig.mockImplementation((currency: any): any => {
     case "blockscout-coin": {
       return { info: { explorer: { type: "blockscout", uri: "working" } } };
     }
+    case "etherscan-coin-no-cache": {
+      return { info: { explorer: { type: "etherscan", uri: "working", noCache: true } } };
+    }
+    case "blockscout-coin-no-cache": {
+      return { info: { explorer: { type: "blockscout", uri: "working", noCache: true } } };
+    }
     case "ledger-coin": {
       return { info: { explorer: { type: "ledger", explorerId: "eth" } } };
     }
@@ -45,8 +51,16 @@ describe("EVM Family", () => {
         const explorerA = getExplorerApi({ id: "etherscan-coin" } as any);
         const explorerB = getExplorerApi({ id: "blockscout-coin" } as any);
 
-        expect(explorerA).toBe(etherscanLikeApi);
-        expect(explorerB).toBe(etherscanLikeApi);
+        expect(explorerA).toBe(etherscanLikeApi.explorerApi);
+        expect(explorerB).toBe(etherscanLikeApi.explorerApi);
+      });
+
+      it("should return the no cache etherscan api", () => {
+        const explorerA = getExplorerApi({ id: "etherscan-coin-no-cache" } as any);
+        const explorerB = getExplorerApi({ id: "blockscout-coin-no-cache" } as any);
+
+        expect(explorerA).toBe(etherscanLikeApi.explorerApiNoChache);
+        expect(explorerB).toBe(etherscanLikeApi.explorerApiNoChache);
       });
 
       it("should return the ledger api", () => {

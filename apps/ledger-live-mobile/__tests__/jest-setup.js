@@ -8,6 +8,11 @@ import mockRNCNetInfo from "@react-native-community/netinfo/jest/netinfo-mock.js
 import mockGorhomBottomSheet from "@gorhom/bottom-sheet/mock";
 import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
 import mockLocalize from "react-native-localize/mock";
+import { EventEmitter } from "events";
+
+// Disable max listeners warning for MSW (known issue with multiple tests)
+EventEmitter.defaultMaxListeners = 0;
+
 // Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/3.x/guides/testing#timers
 jest.useFakeTimers();
 jest.runAllTimers();
@@ -22,7 +27,7 @@ afterAll(() => server.close());
 
 NativeModules.RNAnalytics = {};
 
-const mockAnalytics = jest.genMockFromModule("@segment/analytics-react-native");
+const mockAnalytics = jest.createMockFromModule("@segment/analytics-react-native");
 
 // Overriding the default RNGH mocks
 // to replace TouchableNativeFeedback with TouchableOpacity
@@ -46,6 +51,8 @@ jest.mock("react-native-gesture-handler", () => {
   };
 });
 
+jest.mock("react-native-gesture-handler/ReanimatedSwipeable");
+
 jest.mock("react-native-haptic-feedback", () => ({
   default: {
     trigger: jest.fn(),
@@ -64,26 +71,31 @@ jest.mock("react-native-share", () => ({
   default: jest.fn(),
 }));
 
-const mockPermissions = {
-  status: "granted",
-  expires: "never",
-  canAskAgain: true,
-  granted: true,
-};
-
 export const mockSimulateBarcodeScanned = jest.fn();
+export const mockGetCameraPermissionStatus = jest.fn(() => "granted");
 
-jest.mock("expo-camera", () => {
+jest.mock("react-native-vision-camera", () => {
+  const CameraMock = jest.fn(({ codeScanner }) => {
+    if (codeScanner?.onCodeScanned) {
+      mockSimulateBarcodeScanned.mockImplementation(code => {
+        codeScanner.onCodeScanned([code]);
+      });
+    }
+    return null;
+  });
+  CameraMock.getCameraPermissionStatus = mockGetCameraPermissionStatus;
+
   return {
-    CameraView: jest.fn(({ onBarcodeScanned }) => {
-      mockSimulateBarcodeScanned.mockImplementation(onBarcodeScanned);
-      return null;
-    }),
-    useCameraPermissions: jest.fn(() => [
-      mockPermissions,
-      jest.fn(() => Promise.resolve(mockPermissions)),
-      jest.fn(() => Promise.resolve(mockPermissions)),
-    ]),
+    Camera: CameraMock,
+    useCameraPermission: jest.fn(() => ({
+      hasPermission: true,
+      requestPermission: jest.fn(() => Promise.resolve(true)),
+    })),
+    useCameraDevice: jest.fn(() => ({
+      id: "mock-camera-device",
+      position: "back",
+    })),
+    useCodeScanner: jest.fn(config => config),
   };
 });
 
@@ -103,6 +115,20 @@ jest.mock("~/analytics/segment", () => ({
 
 // Mock of Native Modules
 jest.mock("react-native-localize", () => mockLocalize);
+
+jest.mock("react-redux", () => {
+  const actual = jest.requireActual("react-redux");
+  const withTypesSupport = hook => {
+    hook.withTypes = () => hook;
+    return hook;
+  };
+  return {
+    ...actual,
+    useDispatch: withTypesSupport(actual.useDispatch),
+    useSelector: withTypesSupport(actual.useSelector),
+    useStore: withTypesSupport(actual.useStore),
+  };
+});
 
 jest.mock("@react-native-async-storage/async-storage", () => mockAsyncStorage);
 
@@ -126,6 +152,7 @@ require("react-native-reanimated").setUpTests();
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),
   track: jest.fn(),
+  updateIdentify: jest.fn(),
 }));
 
 jest.mock("@react-native-firebase/messaging", () => ({

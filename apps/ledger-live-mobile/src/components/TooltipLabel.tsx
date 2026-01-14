@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { Icons } from "@ledgerhq/native-ui";
 import LText, { Opts as LTextProps } from "./LText";
 import QueuedDrawer from "./QueuedDrawer";
 
@@ -24,7 +24,7 @@ const TooltipLabel = ({ label, tooltip, color = "grey", style, testID }: Props) 
         <LText style={[styles.label, style]} color={color} testID={testID}>
           {label}
         </LText>
-        <Icon size={13} color={colors[color as keyof typeof colors]} name={"info-circle"} />
+        <Icons.Information size="XS" color={colors[color as keyof typeof colors]} />
       </TouchableOpacity>
       <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={close} style={styles.modal}>
         <LText semiBold style={styles.tooltip}>

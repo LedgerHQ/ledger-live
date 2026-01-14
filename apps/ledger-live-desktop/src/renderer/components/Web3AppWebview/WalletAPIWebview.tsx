@@ -23,7 +23,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import getUser from "~/helpers/user";
 import { openExchangeDrawer } from "~/renderer/actions/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
@@ -44,13 +44,10 @@ import { useWebviewState } from "./helpers";
 import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import {
-  useModularDrawerVisibility,
-  ModularDrawerLocation,
-  openAssetAndAccountDrawer,
-} from "LLD/features/ModularDrawer";
+import { useModularDrawerVisibility, ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
@@ -76,6 +73,8 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
 
   const flow = manifest.name;
 
+  const { openAssetAndAccount } = useOpenAssetAndAccount();
+
   return useMemo(
     () => ({
       "account.request": ({
@@ -98,7 +97,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
 
           const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
 
-          openAssetAndAccountDrawer({
+          openAssetAndAccount({
             drawerConfiguration: finalDrawerConfiguration,
             currencies: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
             areCurrenciesFiltered,
@@ -299,6 +298,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       flow,
       source,
       createDrawerConfiguration,
+      openAssetAndAccount,
       manifest,
       pushToast,
       t,

@@ -1,8 +1,6 @@
 /* istanbul ignore file: untested because empty */
 
-type CliTools = {
-  // Define properties and methods of the CliTools object here
-};
+type CliTools = object;
 
 // Needed by sync-families-dispatch script
 // libs/ledger-live-common/scripts/sync-families-dispatch.mjs

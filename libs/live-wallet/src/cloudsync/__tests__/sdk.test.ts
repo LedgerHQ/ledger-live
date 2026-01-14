@@ -104,13 +104,13 @@ describe("CloudSyncSDK basics", () => {
     mswServer.close();
   });
 
-  const schema = z.object({
+  const _schema = z.object({
     value: z.string(),
   });
-  type Data = z.infer<typeof schema>;
+  type Data = z.infer<typeof _schema>;
 
   let trustchainSdk: MockSDK;
-  let sdk: CloudSyncSDK<typeof schema>;
+  let sdk: CloudSyncSDK<typeof _schema>;
   let trustchain: Trustchain;
   let creds: MemberCredentials;
 

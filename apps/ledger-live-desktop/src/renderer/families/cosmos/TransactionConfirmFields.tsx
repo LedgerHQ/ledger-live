@@ -21,7 +21,7 @@ import { CosmosAccount, Transaction } from "@ledgerhq/live-common/families/cosmo
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   mb: 4,
   px: 5,
 }))`
@@ -30,7 +30,7 @@ const Info = styled(Box).attrs(() => ({
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,
   ff: "Inter|Medium",
-  color: "palette.text.shade80",
+  color: "neutral.c80",
   fontSize: 3,
 }))`
   word-break: break-all;
@@ -40,7 +40,7 @@ const FieldText = styled(Text).attrs(() => ({
 const AddressText = styled(Text).attrs(() => ({
   ml: 1,
   ff: "Inter|Medium",
-  color: "palette.text.shade80",
+  color: "neutral.c80",
   fontSize: 3,
 }))`
   word-break: break-all;
@@ -51,7 +51,7 @@ const AddressText = styled(Text).attrs(() => ({
       ? `
       cursor: pointer;
     &:hover {
-      color: ${p.theme.colors.palette.primary.main};
+      color: ${p.theme.colors.primary.c80};
     }
   `
       : ``}
@@ -152,7 +152,7 @@ export const CosmosValidatorAmountField = ({
     <TransactionConfirmField label={field.label}>
       <FieldText>
         <FormattedVal
-          color={"palette.text.shade80"}
+          color={"neutral.c80"}
           unit={unit}
           val={validators[0].amount}
           fontSize={3}

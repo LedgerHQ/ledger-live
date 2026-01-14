@@ -22,6 +22,7 @@ describe("getBalance", () => {
 
     (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
     (apiClient.getAccountTokens as jest.Mock).mockResolvedValue([]);
+    (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [] });
 
     const result = await getBalance(mockCurrency, address);
 
@@ -29,7 +30,6 @@ describe("getBalance", () => {
     expect(apiClient.getAccount).toHaveBeenCalledWith(address);
     expect(apiClient.getAccountTokens).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
-    expect(result).toHaveLength(1);
     expect(result).toEqual([
       {
         asset: { type: "native" },
@@ -71,6 +71,7 @@ describe("getBalance", () => {
 
     (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
     (apiClient.getAccountTokens as jest.Mock).mockResolvedValue(mockMirrorTokens);
+    (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [] });
 
     const result = await getBalance(mockCurrency, address);
 
@@ -80,7 +81,6 @@ describe("getBalance", () => {
     expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
     expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledTimes(1);
     expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledWith("0.0.7890", "hedera");
-    expect(result).toHaveLength(2);
     expect(result).toEqual(
       expect.arrayContaining([
         {
@@ -99,6 +99,51 @@ describe("getBalance", () => {
         },
       ]),
     );
+  });
+
+  it("should return stake", async () => {
+    const address = "0.0.12345";
+    const mockCurrency = getMockedCurrency();
+    const mockMirrorAccount = {
+      account: address,
+      staked_node_id: 5,
+      balance: {
+        balance: 100,
+      },
+      pending_reward: 100,
+    };
+    const mockMirrorNode = {
+      node_id: 5,
+      node_account_id: "0.0.5",
+      description: "Hosted for Wipro | Amsterdam, Netherlands",
+      max_stake: 45000000000000000,
+      stake: 45000000000000000,
+    };
+
+    (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
+    (apiClient.getAccountTokens as jest.Mock).mockResolvedValue([]);
+    (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [mockMirrorNode] });
+
+    const result = await getBalance(mockCurrency, address);
+
+    expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
+    expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(apiClient.getNodes).toHaveBeenCalledTimes(1);
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      asset: { type: "native" },
+      value: BigInt(mockMirrorAccount.balance.balance),
+      stake: {
+        uid: address,
+        address,
+        asset: { type: "native" },
+        state: "active",
+        amount: BigInt(mockMirrorAccount.balance.balance + mockMirrorAccount.pending_reward),
+        amountDeposited: BigInt(mockMirrorAccount.balance.balance),
+        amountRewarded: BigInt(mockMirrorAccount.pending_reward),
+        delegate: mockMirrorNode.node_account_id,
+      },
+    });
   });
 
   it("should skip tokens not found in CAL", async () => {
@@ -147,24 +192,26 @@ describe("getBalance", () => {
 
     (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
     (apiClient.getAccountTokens as jest.Mock).mockResolvedValue(mockMirrorTokens);
+    (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [] });
 
     const result = await getBalance(mockCurrency, address);
 
-    expect(result).toHaveLength(2);
-    expect(result[0]).toEqual({
-      asset: { type: "native" },
-      value: BigInt("1000000000"),
-    });
-    expect(result[1]).toEqual({
-      value: BigInt("5000"),
-      asset: {
-        type: mockTokenHTS.tokenType,
-        assetReference: mockTokenHTS.contractAddress,
-        assetOwner: address,
-        name: mockTokenHTS.name,
-        unit: mockTokenHTS.units[0],
+    expect(result).toEqual([
+      {
+        asset: { type: "native" },
+        value: BigInt("1000000000"),
       },
-    });
+      {
+        value: BigInt("5000"),
+        asset: {
+          type: mockTokenHTS.tokenType,
+          assetReference: mockTokenHTS.contractAddress,
+          assetOwner: address,
+          name: mockTokenHTS.name,
+          unit: mockTokenHTS.units[0],
+        },
+      },
+    ]);
   });
 
   it("should throw when failing to getAccount data", async () => {
@@ -174,6 +221,7 @@ describe("getBalance", () => {
 
     (apiClient.getAccount as jest.Mock).mockRejectedValue(error);
     (apiClient.getAccountTokens as jest.Mock).mockResolvedValue([]);
+    (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [] });
 
     await expect(getBalance(mockCurrency, address)).rejects.toThrow(error);
   });
@@ -190,6 +238,7 @@ describe("getBalance", () => {
 
     (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
     (apiClient.getAccountTokens as jest.Mock).mockRejectedValue(error);
+    (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [] });
 
     await expect(getBalance(mockCurrency, address)).rejects.toThrow(error);
   });

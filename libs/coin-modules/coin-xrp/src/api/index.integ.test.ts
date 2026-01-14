@@ -1,6 +1,6 @@
 import { decode } from "ripple-binary-codec";
-import { createApi } from ".";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { createApi } from ".";
 //import { decode, encodeForSigning } from "ripple-binary-codec";
 //import { sign } from "ripple-keypairs";
 
@@ -43,7 +43,13 @@ describe("Xrp Api (testnet)", () => {
       tx.forEach(operation => {
         const isSenderOrReceipt =
           operation.senders.includes(SENDER) || operation.recipients.includes(SENDER);
-        expect(isSenderOrReceipt).toBeTruthy();
+        expect(isSenderOrReceipt).toBe(true);
+        expect(operation.value).toBeGreaterThanOrEqual(200);
+        expect(operation.tx.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+        expect(operation.tx.block.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+        expect(operation.tx.block.height).toBeGreaterThanOrEqual(0);
+        expect(operation.tx.fees).toBeGreaterThan(0);
+        expect(operation.tx.date).toBeInstanceOf(Date);
       });
     });
 
@@ -111,8 +117,8 @@ describe("Xrp Api (testnet)", () => {
       const result = await api.lastBlock();
 
       // Then
-      expect(result.hash).toBeDefined();
-      expect(result.height).toBeDefined();
+      expect(result.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+      expect(result.height).toBeGreaterThan(0);
       expect(result.time).toBeInstanceOf(Date);
     });
   });
@@ -248,7 +254,13 @@ describe("Xrp Api (mainnet)", () => {
       ops.forEach(operation => {
         const isSenderOrReceipt =
           operation.senders.includes(SENDER) || operation.recipients.includes(SENDER);
-        expect(isSenderOrReceipt).toBeTruthy();
+        expect(isSenderOrReceipt).toBe(true);
+        expect(operation.value).toBeGreaterThanOrEqual(0);
+        expect(operation.tx.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+        expect(operation.tx.block.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+        expect(operation.tx.block.height).toBeGreaterThanOrEqual(0);
+        expect(operation.tx.fees).toBeGreaterThan(0);
+        expect(operation.tx.date).toBeInstanceOf(Date);
       });
     });
 
@@ -294,8 +306,8 @@ describe("Xrp Api (mainnet)", () => {
   describe("lastBlock", () => {
     it("returns last block info", async () => {
       const result = await api.lastBlock();
-      expect(result.hash).toBeDefined();
-      expect(result.height).toBeDefined();
+      expect(result.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+      expect(result.height).toBeGreaterThan(0);
       expect(result.time).toBeInstanceOf(Date);
     });
   });

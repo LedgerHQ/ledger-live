@@ -44,6 +44,7 @@ export type ExchangeSwapParams = ExchangeStartSwapParams & {
   };
   swapAppVersion?: string;
   sponsored?: boolean;
+  isEmbedded?: boolean;
 };
 
 export type ExchangeStartResult = {
@@ -95,6 +96,8 @@ export type SwapResult = {
 };
 
 export type SwapLiveError = {
+  name: string;
+  message: string;
   type?: string;
   cause: {
     message?: string;

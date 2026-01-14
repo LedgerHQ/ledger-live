@@ -7,7 +7,7 @@ import { NodeApi } from "../network/node/types";
 import { ExplorerApi } from "../network/explorer/types";
 import { getStakes } from "./getStakes";
 
-export const TOKEN_BALANCE_BATCH_SIZE = 10;
+export const TOKEN_BALANCE_BATCH_SIZE = 8;
 
 /**
  * Get all assets linked to the user (native, tokens, ...)

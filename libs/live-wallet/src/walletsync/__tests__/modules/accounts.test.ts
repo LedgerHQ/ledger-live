@@ -102,6 +102,9 @@ const dummyContext: WalletSyncDataManagerResolutionContext = {
     getSerializedAddressParameters: () => {
       throw new Error("not implemented");
     },
+    validateAddress: () => {
+      throw new Error("not implemented");
+    },
   }),
   bridgeCache: {
     hydrateCurrency: () => Promise.resolve(null),

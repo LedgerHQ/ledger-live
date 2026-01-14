@@ -63,14 +63,14 @@ export default function DeviceName({ device, initialDeviceName, disabled, device
         <TouchableOpacity onPress={onPress} disabled={disabled} hitSlop={hitSlop}>
           <Flex
             ml={3}
-            backgroundColor={disabled ? "palette.neutral.c30" : "palette.primary.c30"}
+            backgroundColor={disabled ? "neutral.c30" : "primary.c30"}
             borderRadius={14}
             width={28}
             height={28}
             alignItems="center"
             justifyContent="center"
           >
-            <PenMedium size={16} color={disabled ? "palette.neutral.c80" : "palette.primary.c80"} />
+            <PenMedium size={16} color={disabled ? "neutral.c80" : "primary.c80"} />
           </Flex>
         </TouchableOpacity>
       )}

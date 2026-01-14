@@ -13,7 +13,7 @@ export function canSend(account: AccountLike, parentAccount: Account | null | un
       getMainAccount(account, parentAccount),
     );
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 }

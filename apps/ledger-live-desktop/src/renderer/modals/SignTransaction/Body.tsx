@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+
 import { useTranslation } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
@@ -61,7 +62,7 @@ function useSteps(canEditFees = false): St[] {
         footer: StepSummaryFooter,
         onBack: canEditFees ? ({ transitionTo }) => transitionTo("amount") : null,
         backButtonComponent: canEditFees ? (
-          <Text ff="Inter|Bold" fontSize={4} color="palette.primary.main">
+          <Text ff="Inter|Bold" fontSize={4} color="primary.c80">
             {t("common.adjustFees")}
           </Text>
         ) : undefined,

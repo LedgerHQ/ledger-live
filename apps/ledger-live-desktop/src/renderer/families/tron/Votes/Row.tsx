@@ -19,7 +19,7 @@ const Column = styled(TableLine).attrs<{
   strong?: boolean;
 }>(p => ({
   ff: "Inter|SemiBold",
-  color: p.strong ? "palette.text.shade100" : "palette.text.shade80",
+  color: p.strong ? "neutral.c100" : "neutral.c80",
   fontSize: 3,
 }))<{
   clickable?: boolean;
@@ -45,9 +45,8 @@ const IconContainer = styled.div<{ isSR: boolean }>`
   height: 24px;
   border-radius: 4px;
   background-color: ${p =>
-    p.isSR ? p.theme.colors.palette.action.hover : p.theme.colors.palette.divider};
-  color: ${p =>
-    p.isSR ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade60};
+    p.isSR ? p.theme.colors.opacityDefault.c10 : p.theme.colors.neutral.c40};
+  color: ${p => (p.isSR ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c70)};
 `;
 const Row = ({ validator, address, amount, isSR, duration, percentTP, explorerView }: Props) => {
   const srURL = explorerView && getAddressExplorer(explorerView, address);

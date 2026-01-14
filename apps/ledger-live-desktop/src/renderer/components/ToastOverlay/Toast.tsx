@@ -11,17 +11,17 @@ import { useTranslation } from "react-i18next";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import Box from "~/renderer/components/Box";
 const Content = styled.div`
-  color: ${p => p.theme.colors.palette.background.paper};
+  color: ${p => p.theme.colors.background.card};
   padding: 16px;
   display: flex;
   flex-direction: row;
 `;
 
 const Wrapper = styled(animated.div)<{
-  onClick?: Function;
+  onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }>`
   cursor: ${p => (p.onClick ? "pointer" : "auto")};
-  background-color: ${p => p.theme.colors.palette.text.shade100};
+  background-color: ${p => p.theme.colors.neutral.c100};
   position: relative;
   overflow: hidden;
   height: auto;
@@ -33,7 +33,7 @@ const Wrapper = styled(animated.div)<{
 const DismissWrapper = styled.div`
   position: absolute;
   cursor: pointer;
-  color: ${p => p.theme.colors.palette.background.paper};
+  color: ${p => p.theme.colors.background.card};
   display: flex;
   top: 17px;
   right: 17px;
@@ -124,7 +124,7 @@ export function Toast({
     }
   }, [duration, id, onDismiss, toastListIds]);
 
-  const onClick: React.MouseEventHandler<HTMLInputElement> = useCallback(
+  const onClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
     event => {
       if (typeof callback === "function") {
         callback();

@@ -8,7 +8,7 @@ import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
-import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;

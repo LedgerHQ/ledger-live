@@ -9,7 +9,7 @@ import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-commo
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { Text } from "@ledgerhq/native-ui";
 import {
   PolkadotAccount,
@@ -34,7 +34,7 @@ import OperationStatusWrapper from "~/icons/OperationStatusIcon/Wrapper";
 
 import NominationInfo from "./components/NominationInfo";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 function getURLWhatIsThis(op: PolkadotOperation): string | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
@@ -69,7 +69,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         disableRounding: true,
-        locale: locale,
+        locale,
       });
       return (
         <>
@@ -94,7 +94,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         disableRounding: true,
-        locale: locale,
+        locale,
       });
       return (
         <>
@@ -108,7 +108,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         disableRounding: true,
-        locale: locale,
+        locale,
       });
       return (
         <>
@@ -122,7 +122,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         disableRounding: true,
-        locale: locale,
+        locale,
       });
       return (
         <>

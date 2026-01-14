@@ -6,6 +6,7 @@ export const algorandConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
       },
     },
   },

@@ -149,7 +149,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
     try {
       const res = await fs.readFile(p, "utf-8");
       tips = res;
-    } catch (error) {
+    } catch {
       // ignore error, file is not found
     }
 

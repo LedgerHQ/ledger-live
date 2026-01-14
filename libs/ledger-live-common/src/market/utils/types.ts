@@ -10,6 +10,12 @@ export type MarketCoin = {
 export type ChartDataPoint = [number, number];
 export type MarketCoinDataChart = Record<string, Array<ChartDataPoint>>;
 
+export type MarketChartApiResponse = {
+  prices: ChartDataPoint[];
+  market_caps: ChartDataPoint[];
+  total_volumes: ChartDataPoint[];
+};
+
 export enum Order {
   MarketCapDesc = "desc",
   MarketCapAsc = "asc",
@@ -28,7 +34,6 @@ export type MarketListRequestParams = {
   order?: Order;
   search?: string;
   liveCompatible?: boolean;
-  liveCoinsList?: string[];
 };
 
 export type MarketListRequestResult = {

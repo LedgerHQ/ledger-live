@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { css, DefaultTheme, ThemedStyledProps } from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { colors } from "~/renderer/styles/theme";
 import { openURL } from "~/renderer/linking";
 import { dismissedBannersSelector } from "~/renderer/reducers/settings";
@@ -54,8 +54,7 @@ const getStyle = (p: ThemedStyledProps<ContainerProps, DefaultTheme>) => {
     case "hint":
       return {
         backgroundColor: p.theme.colors.pillActiveBackground,
-        // FIXME: use color palette
-        textColor: p.theme.colors.palette.primary.main,
+        textColor: p.theme.colors.primary.c80,
         px: 16,
         py: 16,
       };
@@ -82,32 +81,32 @@ const getStyle = (p: ThemedStyledProps<ContainerProps, DefaultTheme>) => {
       };
     case "security":
       return {
-        backgroundColor: p.theme.colors.palette.background.default,
-        textColor: p.theme.colors.palette.text.shade80,
-        borderColor: p.theme.colors.palette.text.shade20,
+        backgroundColor: p.theme.colors.background.default,
+        textColor: p.theme.colors.neutral.c80,
+        borderColor: p.theme.colors.neutral.c40,
         px: 24,
         py: 24,
       };
     case "help":
       return {
-        backgroundColor: p.theme.colors.palette.background.paper,
-        textColor: p.theme.colors.palette.text.shade80,
-        borderColor: p.theme.colors.palette.text.shade20,
+        backgroundColor: p.theme.colors.background.card,
+        textColor: p.theme.colors.neutral.c80,
+        borderColor: p.theme.colors.neutral.c40,
         px: 24,
         py: 24,
       };
     case "twitter":
       return {
-        backgroundColor: p.theme.colors.palette.background.paper,
-        textColor: p.theme.colors.palette.text.shade80,
+        backgroundColor: p.theme.colors.background.card,
+        textColor: p.theme.colors.neutral.c80,
         px: 16,
         py: 16,
       };
     case "danger":
       return {
-        backgroundColor: p.theme.colors.palette.background.paper,
+        backgroundColor: p.theme.colors.background.card,
         textColor: p.theme.colors.alertRed,
-        borderColor: p.theme.colors.palette.text.shade20,
+        borderColor: p.theme.colors.neutral.c40,
         px: 24,
         py: 24,
       };
@@ -115,10 +114,8 @@ const getStyle = (p: ThemedStyledProps<ContainerProps, DefaultTheme>) => {
     default:
       return {
         backgroundColor:
-          p.theme.colors.palette.type === "light"
-            ? p.theme.colors.palette.text.shade5
-            : p.theme.colors.palette.text.shade10,
-        textColor: p.theme.colors.palette.text.shade70,
+          p.theme.theme === "light" ? p.theme.colors.neutral.c20 : p.theme.colors.neutral.c30,
+        textColor: p.theme.colors.neutral.c80,
         px: 16,
         py: 16,
       };

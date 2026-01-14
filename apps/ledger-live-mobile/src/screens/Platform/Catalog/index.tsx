@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useBanner } from "~/components/banners/hooks";
 import TrackScreen from "~/analytics/TrackScreen";

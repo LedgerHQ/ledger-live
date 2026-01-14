@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -39,7 +39,7 @@ const Header = styled(Box).attrs({
 const Title = styled(Box).attrs(p => ({
   ff: "Inter|SemiBold",
   fontSize: 7,
-  color: p.theme.colors.palette.secondary.main,
+  color: p.theme.colors.neutral.c100,
 }))``;
 
 export function Catalog() {

@@ -78,7 +78,7 @@ export function regenPods(app: Probot) {
       });
 
       if (res.status >= 300) return;
-    } catch (error) {
+    } catch {
       // Ignore error
     }
 

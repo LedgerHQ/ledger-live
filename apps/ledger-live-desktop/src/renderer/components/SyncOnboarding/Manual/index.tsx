@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";

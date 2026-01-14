@@ -61,7 +61,7 @@ const Snow = ({ numFlakes }: Props) => {
       setDimension(containerRef.current.getBoundingClientRect());
     };
     const ro = new ResizeObserver(throttle(updateDimension, 250));
-    containerRef.current && ro.observe(containerRef.current);
+    if (containerRef.current) ro.observe(containerRef.current);
     updateDimension();
     return () => {
       ro.disconnect();
@@ -99,7 +99,7 @@ const Snow = ({ numFlakes }: Props) => {
     };
     loopId = requestAnimationFrame(updateFlakes);
     return () => {
-      typeof loopId !== "undefined" && cancelAnimationFrame(loopId);
+      if (loopId) cancelAnimationFrame(loopId);
     };
   }, [dimension, numFlakes]);
   return (

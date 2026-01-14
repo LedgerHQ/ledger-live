@@ -1,7 +1,7 @@
 import network from "@ledgerhq/live-network/network";
-import { asBaker, cache, type TezosApiBaker } from "./bakers";
 import coinConfig, { TezosCoinConfig } from "../config";
 import { mockConfig } from "../test/config";
+import { asBaker, cache, type TezosApiBaker } from "./bakers";
 
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);

@@ -4,9 +4,17 @@
     "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "outDir": "lib",
-    "typeRoots": ["./node_modules/@types", "./types/@taquito"]
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types/@taquito"
+    ]
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*"
+  ]
 }

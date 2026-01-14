@@ -1,7 +1,7 @@
 import { Observable } from "rxjs";
-import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { DEFAULT_GAS_LIMIT, HEDERA_TRANSACTION_MODES } from "../constants";
@@ -12,13 +12,14 @@ import {
   serializeTransaction,
   getHederaTransactionBodyBytes,
   isTokenAssociateTransaction,
+  isStakingTransaction,
 } from "../logic/utils";
-import type { Transaction, HederaSigner, HederaTxData } from "../types";
+import type { Transaction, HederaSigner, HederaTxData, HederaAccount } from "../types";
 
 export const buildSignOperation =
   (
     signerContext: SignerContext<HederaSigner>,
-  ): AccountBridge<Transaction, Account>["signOperation"] =>
+  ): AccountBridge<Transaction, HederaAccount>["signOperation"] =>
   ({ account, transaction, deviceId }) =>
     new Observable(o => {
       void (async function () {
@@ -63,6 +64,15 @@ export const buildSignOperation =
             data = {
               type: "erc20",
               gasLimit: BigInt((transaction.gasLimit ?? DEFAULT_GAS_LIMIT).toString()),
+            };
+          } else if (isStakingTransaction(transaction)) {
+            type = transaction.mode;
+            asset = {
+              type: "native",
+            };
+            data = {
+              type: "staking",
+              stakingNodeId: transaction.properties?.stakingNodeId,
             };
           } else {
             type = HEDERA_TRANSACTION_MODES.Send;

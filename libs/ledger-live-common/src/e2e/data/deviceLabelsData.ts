@@ -104,6 +104,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.TRON.name]: DeviceLabels.SIGN,
       [AppInfos.STELLAR.name]: DeviceLabels.SIGN,
       [AppInfos.RIPPLE.name]: DeviceLabels.SIGN,
+      [AppInfos.VECHAIN.name]: DeviceLabels.SIGN,
       [AppInfos.APTOS.name]: DeviceLabels.APPROVE,
       [AppInfos.SUI.name]: DeviceLabels.ACCEPT,
       [AppInfos.BITCOIN.name]: DeviceLabels.CONTINUE,
@@ -112,6 +113,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
   },
   [DeviceModelId.stax]: TOUCHSCREEN_DEVICE_CONFIG,
   [DeviceModelId.europa]: TOUCHSCREEN_DEVICE_CONFIG,
+  [DeviceModelId.apex]: TOUCHSCREEN_DEVICE_CONFIG,
   default: {
     receiveVerify: {
       [AppInfos.BNB_CHAIN.name]: DeviceLabels.VERIFY_BSC,
@@ -160,6 +162,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.TRON.name]: DeviceLabels.SIGN,
       [AppInfos.STELLAR.name]: DeviceLabels.SIGN,
       [AppInfos.RIPPLE.name]: DeviceLabels.SIGN,
+      [AppInfos.VECHAIN.name]: DeviceLabels.SIGN,
       [AppInfos.APTOS.name]: DeviceLabels.APPROVE,
       [AppInfos.SUI.name]: DeviceLabels.ACCEPT,
       [AppInfos.BITCOIN.name]: DeviceLabels.SIGN_TRANSACTION,

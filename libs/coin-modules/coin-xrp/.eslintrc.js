@@ -12,6 +12,16 @@ module.exports = {
         "jest/globals": true,
       },
       plugins: ["jest"],
+      rules: {
+        "jest/no-restricted-matchers": [
+          "error",
+          {
+            toBeFalsy: null,
+            toBeTruthy: null,
+            toBeDefined: null,
+          },
+        ],
+      },
     },
   ],
   rules: {
@@ -20,5 +30,6 @@ module.exports = {
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": "warn",
     "import/no-cycle": ["error"],
+    "import/order": ["error"],
   },
 };

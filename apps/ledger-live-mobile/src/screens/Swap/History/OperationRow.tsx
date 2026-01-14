@@ -10,7 +10,7 @@ import { ScreenName } from "~/const";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
   const { colors } = useTheme();

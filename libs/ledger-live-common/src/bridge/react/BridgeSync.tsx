@@ -48,7 +48,7 @@ export const BridgeSync = ({
   prepareCurrency,
   hydrateCurrency,
   blacklistedTokenIds,
-}: Props): JSX.Element => {
+}: Props): React.JSX.Element => {
   useHydrate({
     accounts,
     hydrateCurrency,

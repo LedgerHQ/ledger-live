@@ -19,6 +19,8 @@ const mockTracking = {
   completeExchangeSuccess: jest.fn(),
   completeExchangeFail: jest.fn(),
   completeExchangeNoParams: jest.fn(),
+  swapPayloadRequested: jest.fn(),
+  swapResponseRetrieved: jest.fn(),
 };
 const testAppManifest = {
   id: "12",

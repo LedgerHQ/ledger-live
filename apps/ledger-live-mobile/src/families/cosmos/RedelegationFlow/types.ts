@@ -43,7 +43,10 @@ export type CosmosRedelegationFlowParamList = {
     value?: BigNumber;
     redelegatedBalance?: BigNumber;
     mode?: string;
-    nextScreen: ScreenName.CosmosRedelegationValidator | ScreenName.CosmosRedelegationSelectDevice;
+    nextScreen:
+      | ScreenName.CosmosRedelegationValidator
+      | ScreenName.CosmosRedelegationSelectDevice
+      | ScreenName.CosmosRedelegationBridgeTransaction;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.CosmosRedelegationSelectDevice]: {
@@ -52,6 +55,16 @@ export type CosmosRedelegationFlowParamList = {
     transaction?: Transaction;
     status?: TransactionStatus;
     validatorName: CosmosValidatorItem["name"];
+    source?: RouteProp<ParamListBase, ScreenName>;
+  };
+  [ScreenName.CosmosRedelegationBridgeTransaction]: {
+    accountId: string;
+    parentId?: string;
+    transaction?: Transaction;
+    status?: TransactionStatus;
+    validator?: CosmosValidatorItem;
+    validatorName: CosmosValidatorItem["name"];
+    mode?: string;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.CosmosRedelegationConnectDevice]: {

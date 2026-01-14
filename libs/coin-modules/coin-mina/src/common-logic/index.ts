@@ -14,7 +14,7 @@ export function isValidAddress(address: string) {
     }
     const decodedAddress = Buffer.from(bs58check.decode(address)).toString("hex");
     return !!decodedAddress && decodedAddress.length === MINA_DECODED_ADDRESS_LENGTH;
-  } catch (ex) {
+  } catch {
     return false;
   }
 }
@@ -41,7 +41,7 @@ export const getAccountNumFromPath = (path: string): number | undefined => {
       return acc;
     }
     return;
-  } catch (e) {
+  } catch {
     return;
   }
 };

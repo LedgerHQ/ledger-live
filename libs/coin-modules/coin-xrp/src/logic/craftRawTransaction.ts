@@ -1,9 +1,9 @@
 import { CraftedTransaction } from "@ledgerhq/coin-framework/api/index";
 import { decode, encode } from "ripple-binary-codec";
-import { getLedgerIndex } from "../network";
-import { estimateFees } from "./estimateFees";
 import { JsonObject } from "ripple-binary-codec/dist/types/serialized-type";
+import { getLedgerIndex } from "../network";
 import { SignerEntry } from "../types";
+import { estimateFees } from "./estimateFees";
 import { sortSignersByNumericAddress } from "./utils";
 
 const LEDGER_OFFSET = 20;

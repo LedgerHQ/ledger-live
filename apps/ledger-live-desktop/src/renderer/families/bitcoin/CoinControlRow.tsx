@@ -41,19 +41,18 @@ const Container = styled(Box).attrs<{
   padding: 15px;
   border-radius: 4px;
   align-items: center;
-  border: 1px solid ${p => p.theme.colors.palette.text.shade20};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   ${p =>
     p.disabled
       ? `
-    background-color: ${p.theme.colors.palette.text.shade10};
+    background-color: ${p.theme.colors.neutral.c30};
     `
       : `
       cursor: pointer;
     `}
 
   &:hover {
-    border-color: ${p =>
-      p.disabled ? p.theme.colors.palette.text.shade20 : p.theme.colors.palette.primary.main};
+    border-color: ${p => (p.disabled ? p.theme.colors.neutral.c40 : p.theme.colors.primary.c80)};
   }
 `;
 export const CoinControlRow = ({
@@ -134,11 +133,11 @@ export const CoinControlRow = ({
           unit={unit}
           showCode
           fontSize={4}
-          color="palette.text.shade100"
+          color="neutral.c100"
           ff="Inter|SemiBold"
         />
         {utxo.blockHeight ? (
-          <Text ff="Inter|Medium" fontSize={3} color={"palette.text.shade50"}>
+          <Text ff="Inter|Medium" fontSize={3} color={"neutral.c70"}>
             {confirmations + ` confirmation${confirmations > 1 ? "s" : ""}`}
           </Text>
         ) : (
@@ -152,7 +151,7 @@ export const CoinControlRow = ({
           flex: 1,
         }}
       >
-        <Text color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4}>
+        <Text color="neutral.c100" ff="Inter|SemiBold" fontSize={4}>
           <SplitAddress value={utxo.address || ""} />
         </Text>
 
@@ -161,7 +160,7 @@ export const CoinControlRow = ({
             style={{
               whiteSpace: "nowrap",
             }}
-            color="palette.text.shade50"
+            color="neutral.c70"
             ff="Inter|Medium"
             fontSize={3}
           >
@@ -180,7 +179,7 @@ export const CoinControlRow = ({
               style={{
                 whiteSpace: "nowrap",
               }}
-              color="palette.text.shade50"
+              color="neutral.c70"
               ff="Inter|Medium"
               fontSize={3}
             >

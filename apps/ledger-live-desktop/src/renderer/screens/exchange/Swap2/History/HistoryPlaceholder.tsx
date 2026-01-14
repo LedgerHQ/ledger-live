@@ -14,10 +14,10 @@ const HistoryPlaceholder = () => {
   const { t } = useTranslation();
   return (
     <Wrapper>
-      <Text ff="Inter|SemiBold" fontSize={16} color="palette.text.shade100">
+      <Text ff="Inter|SemiBold" fontSize={16} color="neutral.c100">
         {t("swap2.history.empty.title")}
       </Text>
-      <Text ff="Inter|Regular" fontSize={12} color="palette.text.shade50">
+      <Text ff="Inter|Regular" fontSize={12} color="neutral.c70">
         {t("swap2.history.empty.description")}
       </Text>
     </Wrapper>

@@ -1,3 +1,4 @@
+import { Step } from "jest-allure2-reporter/api";
 import AssetAccountsPage from "./accounts/assetAccounts.page";
 import AccountPage from "./accounts/account.page";
 import AccountsPage from "./accounts/accounts.page";
@@ -32,11 +33,8 @@ import ModularDrawer from "./drawer/modular.drawer";
 
 import path from "path";
 import fs from "fs";
-import { setupEnvironment } from "../helpers/commonHelpers";
 import { InitializationManager, InitOptions } from "../utils/initUtil";
 import { randomUUID } from "crypto";
-
-setupEnvironment();
 
 export type ApplicationOptions = InitOptions;
 

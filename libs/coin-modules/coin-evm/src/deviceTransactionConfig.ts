@@ -393,7 +393,7 @@ const getDeviceTransactionConfig = async ({
       if (transaction.data) {
         try {
           fields.push(...(await inferDeviceTransactionConfigWalletApi(transaction, mainAccount)));
-        } catch (e) {
+        } catch {
           fields.push(
             {
               type: "text",

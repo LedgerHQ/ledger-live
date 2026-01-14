@@ -46,10 +46,7 @@ export class SpeculosPage extends AppPage {
 
   @step("Verify amounts and accept swap")
   async verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
-    await verifyAmountsAndAcceptSwap(swap, amount),
-      {
-        timeout: 120000,
-      };
+    await verifyAmountsAndAcceptSwap(swap, amount);
   }
 
   @step("Verify amounts and accept swap for different seed")
@@ -58,18 +55,12 @@ export class SpeculosPage extends AppPage {
     amount: string,
     errorMessage: string | null,
   ) {
-    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage),
-      {
-        timeout: 120000,
-      };
+    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage);
   }
 
   @step("Verify amounts and reject swap")
   async verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
-    await verifyAmountsAndRejectSwap(swap, amount),
-      {
-        timeout: 120000,
-      };
+    await verifyAmountsAndRejectSwap(swap, amount);
   }
 
   @step("Activate expert mode")

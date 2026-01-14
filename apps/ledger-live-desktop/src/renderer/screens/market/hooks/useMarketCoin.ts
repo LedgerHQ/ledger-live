@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useTheme } from "styled-components";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import {
@@ -22,7 +22,7 @@ export const useMarketCoin = () => {
   const dispatch = useDispatch();
   const { currencyId } = useParams<{ currencyId: string }>();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
+  const { supportedCounterCurrencies } = useMarketDataProvider();
 
   const isStarred = starredMarketCoins.includes(currencyId);
   const locale = useSelector(localeSelector);
@@ -68,11 +68,8 @@ export const useMarketCoin = () => {
     : colors.primary.c80;
 
   const toggleStar = useCallback(() => {
-    if (isStarred) {
-      id && dispatch(removeStarredMarketCoins(id));
-    } else {
-      id && dispatch(addStarredMarketCoins(id));
-    }
+    if (!id) return;
+    dispatch(isStarred ? removeStarredMarketCoins(id) : addStarredMarketCoins(id));
   }, [dispatch, isStarred, id]);
 
   const changeRange = useCallback(
@@ -115,7 +112,6 @@ export const useMarketCoin = () => {
     changeCounterCurrency,
     currency,
     supportedCounterCurrencies,
-    liveCoinsList,
     availableOnBuy,
     availableOnStake,
     availableOnSwap,

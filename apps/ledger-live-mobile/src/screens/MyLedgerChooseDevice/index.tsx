@@ -138,7 +138,6 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         <SelectDevice2
           onSelect={onSelectDevice}
           stopBleScanning={!!device}
-          displayServicesWidget
           requestToSetHeaderOptions={requestToSetHeaderOptions}
           withMyLedgerTracking
           hasPostOnboardingEntryPointCard

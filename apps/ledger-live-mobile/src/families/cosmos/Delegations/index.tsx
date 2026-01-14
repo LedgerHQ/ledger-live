@@ -55,7 +55,7 @@ import AccountBanner from "~/components/AccountBanner";
 import { getAccountBannerProps as getCosmosBannerProps } from "../utils";
 import ValidatorImage from "../shared/ValidatorImage";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 

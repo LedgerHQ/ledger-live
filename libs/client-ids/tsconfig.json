@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "downlevelIteration": true,
+    "lib": ["es2020", "dom"],
+    "outDir": "lib"
+  },
+  "include": ["src/**/*"]
+}
+

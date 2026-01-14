@@ -20,10 +20,8 @@ type Props = {
   footer?: React.ReactNode;
   hasBackButton?: boolean;
   hasCloseButton?: boolean;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  customBackAction?: () => {};
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  customCloseAction?: () => {};
+  customBackAction?: () => void;
+  customCloseAction?: () => void;
   centerTitle?: boolean;
 };
 

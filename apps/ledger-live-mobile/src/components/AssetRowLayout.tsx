@@ -9,7 +9,7 @@ import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import Delta from "./Delta";
-import ParentCurrencyIcon from "./ParentCurrencyIcon";
+import CurrencyIcon from "./CurrencyIcon";
 
 type Props = {
   balance: BigNumber;
@@ -51,7 +51,7 @@ const AssetRowLayout = ({
         />
       )}
       <Flex flexDirection="row" pt={topLink ? 0 : 6} pb={bottomLink ? 0 : 6} alignItems="center">
-        <ParentCurrencyIcon currency={currency} size={40} />
+        <CurrencyIcon currency={currency} size={40} />
         <Flex flex={1} justifyContent="center" ml={4}>
           <Flex mb={1} flexDirection="row" justifyContent="space-between">
             <Flex flexGrow={1} flexShrink={1} flexDirection="row" alignItems="center">

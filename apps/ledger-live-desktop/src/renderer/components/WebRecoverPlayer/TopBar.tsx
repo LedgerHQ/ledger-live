@@ -1,6 +1,6 @@
 import React, { RefObject, useCallback, useEffect, useRef, useMemo } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -26,8 +26,8 @@ const Container = styled(Box).attrs(() => ({
   alignItems: "center",
 }))`
   padding: 10px 16px;
-  background-color: ${p => p.theme.colors.palette.background.paper};
-  border-bottom: 1px solid ${p => p.theme.colors.palette.text.shade10};
+  background-color: ${p => p.theme.colors.background.card};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c30};
 `;
 
 const ItemContainer = styled(Tabbable).attrs(p => ({
@@ -64,12 +64,12 @@ const ItemContainer = styled(Tabbable).attrs(p => ({
   }
 
   &:hover {
-    color: ${p => (p.disabled ? "" : p.theme.colors.palette.text.shade100)};
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.action.active, 0.05))};
+    color: ${p => (p.disabled ? "" : p.theme.colors.neutral.c100)};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.opacityDefault.c10, 0.05))};
   }
 
   &:active {
-    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.action.active, 0.1))};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.opacityDefault.c10, 0.1))};
   }
 `;
 
@@ -84,7 +84,7 @@ export const Separator = styled.div`
   margin-right: 16px;
   height: 15px;
   width: 1px;
-  background: ${p => p.theme.colors.palette.divider};
+  background: ${p => p.theme.colors.neutral.c40};
 `;
 
 const RightContainer = styled(Box).attrs(() => ({

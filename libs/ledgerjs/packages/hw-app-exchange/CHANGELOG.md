@@ -1,5 +1,69 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.19.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b)]:
+  - @ledgerhq/hw-transport@6.32.0-next.0
+  - @ledgerhq/errors@6.29.0-next.0
+
+## 0.18.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.16
+
+## 0.18.3-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.16-next.0
+
+## 0.18.2
+
+### Patch Changes
+
+- Updated dependencies [[`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143)]:
+  - @ledgerhq/errors@6.28.0
+  - @ledgerhq/hw-transport@6.31.15
+
+## 0.18.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4be69a7`](https://github.com/LedgerHQ/ledger-live/commit/4be69a71dcd7624a1cba8dd1b1847ef009eb2d83), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143)]:
+  - @ledgerhq/errors@6.28.0-next.0
+  - @ledgerhq/hw-transport@6.31.15-next.0
+
+## 0.18.1
+
+### Patch Changes
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1
+  - @ledgerhq/hw-transport@6.31.14
+
+## 0.18.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`b68b749`](https://github.com/LedgerHQ/ledger-live/commit/b68b749b53c9583dd983ab057faa89fced1e541e)]:
+  - @ledgerhq/errors@6.27.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.14-hotfix.0
+
+## 0.18.0
+
+### Minor Changes
+
+- [#12563](https://github.com/LedgerHQ/ledger-live/pull/12563) [`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add DMK speculos transport and device controller
+
 ## 0.18.0-next.0
 
 ### Minor Changes

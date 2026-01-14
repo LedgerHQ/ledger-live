@@ -259,12 +259,7 @@ interface DefaultTheme {
   fontSizes: number[];
   space: number[];
   shadows: string[];
-  colors: ColorPalette & {
-    /**
-     * @deprecated Do not use the .palette prefix anymore!
-     */
-    palette: ColorPalette;
-  };
+  colors: ColorPalette;
   fontWeights: Record<string, string>;
   breakpoints: Record<screensBreakpoints, string>;
   zIndexes: number[];
@@ -302,10 +297,7 @@ const theme: DefaultTheme = {
   fontWeights,
   space,
   shadows,
-  colors: {
-    palette: palettes.light,
-    ...palettes.light,
-  },
+  colors: palettes.light,
   animations,
   overflow,
   transition,

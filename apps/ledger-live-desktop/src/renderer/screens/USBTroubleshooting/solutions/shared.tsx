@@ -22,7 +22,7 @@ export const DeviceSelectorWrapper: StyledComponent<"div", DefaultTheme, FlexBox
   flexDirection: "column",
 })``;
 export const Number = styled(Text).attrs({
-  color: "palette.primary.main",
+  color: "primary.c80",
   ff: "Inter|Medium",
   fontSize: 3,
 })`
@@ -30,12 +30,12 @@ export const Number = styled(Text).attrs({
   letter-spacing: 0.2em;
 `;
 export const Title = styled(Text).attrs({
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   ff: "Inter|SemiBold",
   fontSize: 22,
 })``;
 export const Subtitle = styled(Text).attrs({
-  color: "palette.text.shade80",
+  color: "neutral.c80",
   ff: "Inter|Regular",
   fontSize: 14,
   textAlign: "center",
@@ -79,7 +79,7 @@ const Container = styled(Box).attrs(() => ({
   horizontal: true,
 }))`
   align-items: center;
-  color: ${p => p.theme.colors.palette.primary.main};
+  color: ${p => p.theme.colors.primary.c80};
   display: inline-flex;
   text-decoration: underline;
 

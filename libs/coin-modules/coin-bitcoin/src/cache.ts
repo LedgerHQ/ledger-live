@@ -43,15 +43,20 @@ export const calculateFees = makeLRUCache(
 export const validateRecipient: (
   currency: CryptoCurrency,
   recipient: string | null | undefined,
+  changeAddress?: string | undefined,
 ) => Promise<{
   recipientError: Error | null | undefined;
   recipientWarning: Error | null | undefined;
+  changeAddressError: Error | null | undefined;
+  changeAddressWarning: Error | null | undefined;
 }> = makeLRUCache(
-  async (currency, recipient) => {
+  async (currency, recipient, changeAddress) => {
     if (!recipient) {
       return {
         recipientError: new RecipientRequired(""),
         recipientWarning: null,
+        changeAddressError: null,
+        changeAddressWarning: null,
       };
     }
 
@@ -60,18 +65,35 @@ export const validateRecipient: (
         currency,
         recipient,
       });
+      if (changeAddress) {
+        const changeAddressWarning = await isValidRecipient({
+          currency,
+          recipient: changeAddress,
+        });
+        return {
+          recipientError: null,
+          recipientWarning,
+          changeAddressError: null,
+          changeAddressWarning,
+        };
+      }
       return {
         recipientError: null,
         recipientWarning,
+        changeAddressError: null,
+        changeAddressWarning: null,
       };
     } catch (e) {
       return {
         recipientError: e instanceof Error ? e : null,
         recipientWarning: null,
+        changeAddressError: null,
+        changeAddressWarning: null,
       };
     }
   },
-  (currency, recipient) => `${currency.id}_${recipient || ""}`,
+  (currency, recipient, changeAddress) =>
+    `${currency.id}_${recipient || ""}_${changeAddress || ""}`,
 );
 
 export const isTaprootRecipient: (currency: CryptoCurrency, recipient: string) => Promise<boolean> =

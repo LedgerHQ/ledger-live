@@ -59,7 +59,7 @@ export const isFeature = (key: string): boolean => {
       return false;
     }
     return true;
-  } catch (error) {
+  } catch {
     console.error(`Failed to check if feature "${key}" exists`);
     return false;
   }
@@ -105,7 +105,7 @@ export const getFeature: GetFeature = args => {
     }
 
     return checkFeatureFlagVersion(feature);
-  } catch (_error: unknown) {
+  } catch {
     // console.error(`Failed to retrieve feature "${key}"`);
     return null;
   }

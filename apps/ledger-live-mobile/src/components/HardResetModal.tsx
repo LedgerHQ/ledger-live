@@ -27,5 +27,4 @@ function HardResetModal() {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export default memo<{}>(HardResetModal);
+export default memo(HardResetModal);

@@ -1,5 +1,6 @@
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { ScreenName } from "~/const";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 export type WalletSyncNavigatorStackParamList = {
   [ScreenName.WalletSyncActivationInit]: undefined;
@@ -12,7 +13,11 @@ export type WalletSyncNavigatorStackParamList = {
     created: boolean;
   };
 
-  [ScreenName.WalletSyncActivationProcess]: undefined;
+  [ScreenName.WalletSyncActivationProcess]:
+    | undefined
+    | {
+        device?: Device;
+      };
   [ScreenName.WalletSyncActivated]: undefined;
 
   [ScreenName.WalletSyncManageKeyDeleteSuccess]: undefined;

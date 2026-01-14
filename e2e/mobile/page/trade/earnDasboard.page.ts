@@ -1,4 +1,5 @@
-import { normalizeText } from "helpers/commonHelpers";
+import { Step } from "jest-allure2-reporter/api";
+import { normalizeText } from "../../helpers/commonHelpers";
 import { Provider } from "@ledgerhq/live-common/lib/e2e/enum/Provider";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 

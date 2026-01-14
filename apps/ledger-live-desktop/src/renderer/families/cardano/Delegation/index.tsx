@@ -1,6 +1,6 @@
 import React from "react";
 import invariant from "invariant";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { urls } from "~/config/urls";
@@ -64,7 +64,7 @@ const Delegation = ({ account }: Props) => {
               maxWidth: "65%",
             }}
           >
-            <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+            <Text ff="Inter|Medium|SemiBold" color="neutral.c70" fontSize={4}>
               {t("delegation.delegationEarn", {
                 name: account.currency.name,
               })}

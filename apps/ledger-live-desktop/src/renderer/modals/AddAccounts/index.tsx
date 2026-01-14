@@ -291,7 +291,7 @@ class AddAccounts extends PureComponent<Props, State> {
         render={({ onClose }) => {
           const handleCloseModal = () => {
             this.props.onClose?.();
-            onClose && onClose();
+            onClose?.();
             this.onFlowFinished();
           };
           return (

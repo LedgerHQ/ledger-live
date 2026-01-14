@@ -13,7 +13,7 @@ type Props = {
 const Wrapper = styled(Box).attrs({
   horizontal: true,
   alignItems: "center",
-  backgroundColor: "palette.text.shade10",
+  backgroundColor: "neutral.c30",
   borderRadius: 4,
 })`
   margin-top: 40px;
@@ -30,7 +30,7 @@ const ConnectTroubleshooting = ({
   return visible ? (
     <Wrapper p={2} horizontal alignItems="center">
       <Box p={2} horizontal justifyContent="center">
-        <Text ff="Inter|Regular" fontSize={4} color="palette.text.shade100">
+        <Text ff="Inter|Regular" fontSize={4} color="neutral.c100">
           <Trans i18nKey="connectTroubleshooting.desc" />
         </Text>
       </Box>

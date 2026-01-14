@@ -11,7 +11,7 @@ export const MAX_MEMO_LENGTH = 500;
 export const isValidBase58Address = (address: string): boolean => {
   try {
     return Boolean(new PublicKey(address));
-  } catch (_) {
+  } catch {
     return false;
   }
 };
@@ -72,7 +72,8 @@ export function withdrawableFromStake({
   switch (activation.state) {
     case "active":
     case "activating":
-      return stakeAccBalance - rentExemptReserve - activation.active - activation.inactive;
+      // Allow withdrawal of inactive stake (e.g., Jito MEV rewards) without deactivating
+      return stakeAccBalance - rentExemptReserve - activation.active;
     case "deactivating":
       return stakeAccBalance - rentExemptReserve - activation.active;
     case "inactive":

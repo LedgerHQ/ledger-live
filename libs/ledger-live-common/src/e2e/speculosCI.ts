@@ -6,8 +6,9 @@ import {
 } from "@ledgerhq/speculos-transport";
 import { SpeculosDevice } from "./speculos";
 import https from "https";
+import { sanitizeError } from "./index";
 
-const { SEED, GITHUB_TOKEN, AWS_ROLE, CLUSTER, SPECULOS_IMAGE_TAG } = process.env;
+const { GITHUB_TOKEN, SPECULOS_IMAGE_TAG } = process.env;
 const GIT_API_URL = "https://api.github.com/repos/LedgerHQ/actions/actions/";
 const START_WORKFLOW_ID = "workflows/161487603/dispatches";
 const STOP_WORKFLOW_ID = "workflows/161487604/dispatches";
@@ -58,11 +59,8 @@ async function githubApiRequest<T = unknown>({
     });
     return response.data;
   } catch (error) {
-    console.warn(
-      `API Request failed: ${method} ${url}`,
-      axios.isAxiosError(error) ? error.response?.data : (error as Error).message,
-    );
-    throw error;
+    console.warn(`API Request failed: ${method} ${url}`, sanitizeError(error));
+    throw sanitizeError(error);
   }
 }
 
@@ -152,9 +150,6 @@ function createStartPayload(deviceParams: DeviceParams, runId: string) {
       coin_app_version: appVersion,
       device: reverseModelMap[model],
       device_os_version: firmware,
-      aws_role: AWS_ROLE,
-      cluster: CLUSTER,
-      seed: SEED,
       run_id: runId,
       additional_args,
     },
@@ -174,9 +169,10 @@ export async function createSpeculosDeviceCI(
       appName: deviceParams.appName,
       appVersion: deviceParams.appVersion,
     };
-  } catch (e: unknown) {
+  } catch (error) {
     console.warn(
-      `Creating remote speculos ${deviceParams.appName}:${deviceParams.appVersion} failed with ${String(e)}`,
+      `Failed to create remote Speculos ${deviceParams.appName}:${deviceParams.appVersion}:`,
+      sanitizeError(error),
     );
     return {
       id: runId,
@@ -192,9 +188,11 @@ export async function releaseSpeculosDeviceCI(runId: string) {
     ref: GITHUB_REF,
     inputs: {
       run_id: runId.toString(),
-      aws_role: AWS_ROLE,
-      cluster: CLUSTER,
     },
   };
-  await githubApiRequest({ urlSuffix: STOP_WORKFLOW_ID, data });
+  try {
+    await githubApiRequest({ urlSuffix: STOP_WORKFLOW_ID, data });
+  } catch (error) {
+    console.warn(`Failed to release remote Speculos ${runId}:`, sanitizeError(error));
+  }
 }

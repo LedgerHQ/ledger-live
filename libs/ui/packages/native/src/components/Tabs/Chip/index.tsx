@@ -40,9 +40,7 @@ export const ChipTab = ({
     <Text
       variant="small"
       fontWeight="semiBold"
-      color={
-        isActive ? activeColor ?? "palette.neutral.c100" : inactiveColor ?? "palette.neutral.c80"
-      }
+      color={isActive ? activeColor ?? "neutral.c100" : inactiveColor ?? "neutral.c80"}
       textAlign="center"
     >
       {label}

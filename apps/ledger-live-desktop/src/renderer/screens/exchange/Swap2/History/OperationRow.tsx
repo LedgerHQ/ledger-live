@@ -32,7 +32,7 @@ export const getStatusColor = (status: string, theme: DefaultTheme) => {
   if (operationStatusList.finishedKO.includes(status)) {
     return theme.colors.alertRed;
   }
-  return theme.colors.palette.text.shade50;
+  return theme.colors.neutral.c70;
 };
 
 const Status = styled.div<{ status: string }>`
@@ -49,8 +49,8 @@ const Status = styled.div<{ status: string }>`
   }
 `;
 const WrapperClock = styled(Box).attrs(() => ({
-  bg: "palette.background.paper",
-  color: "palette.text.shade60",
+  bg: "background.card",
+  color: "neutral.c70",
 }))`
   border-radius: 50%;
   position: absolute;
@@ -59,7 +59,7 @@ const WrapperClock = styled(Box).attrs(() => ({
   padding: 1px;
 `;
 const Row = styled(Box)<{ isOptimistic?: boolean; toExists?: boolean }>`
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
   height: 68px;
   opacity: ${p => (p.isOptimistic || !p.toExists ? 0.5 : 1)};
   cursor: pointer;
@@ -110,7 +110,6 @@ const OperationRow = ({
 
   return (
     <Row
-      className={"swap-history-row"}
       toExists={toExists}
       horizontal
       key={swapId}
@@ -132,7 +131,7 @@ const OperationRow = ({
         <Text
           data-testid={`swap-history-provider-${swapId}`}
           ff={"Inter|SemiBold"}
-          color={"palette.text.shade100"}
+          color={"neutral.c100"}
           fontSize={3}
         >
           {getProviderName(provider)}
@@ -140,7 +139,7 @@ const OperationRow = ({
         <Text
           data-testid={`swap-history-date-${swapId}`}
           ff={"Inter|Regular"}
-          color={"palette.text.shade50"}
+          color={"neutral.c70"}
           fontSize={3}
         >
           {dateFormatted}
@@ -148,33 +147,33 @@ const OperationRow = ({
       </Box>
       <Box horizontal mx={20}>
         <Box alignItems="center" justifyContent="center">
-          <CryptoCurrencyIcon size={16} currency={fromCurrency} />
+          <CryptoCurrencyIcon size={22} currency={fromCurrency} />
         </Box>
         <Tooltip delay={1200} content={fromAccountName}>
           <Ellipsis
             data-testid={`swap-history-from-account-${swapId}`}
             ff="Inter|SemiBold"
             ml={1}
-            color="palette.text.shade100"
+            color="neutral.c100"
             fontSize={3}
           >
             {fromAccountName}
           </Ellipsis>
         </Tooltip>
       </Box>
-      <Box color={"palette.text.shade30"}>
+      <Box color={"neutral.c40"}>
         <IconArrowRight size={16} />
       </Box>
       <Box horizontal mx={20}>
         <Box alignItems="center" justifyContent="center">
-          <CryptoCurrencyIcon size={16} currency={toCurrency} />
+          <CryptoCurrencyIcon size={22} currency={toCurrency} />
         </Box>
         <Tooltip delay={1200} content={toAccountName}>
           <Ellipsis
             data-testid={`swap-history-to-account-${swapId}`}
             ff="Inter|SemiBold"
             ml={1}
-            color="palette.text.shade100"
+            color="neutral.c100"
             fontSize={3}
           >
             {toAccountName}
@@ -187,7 +186,7 @@ const OperationRow = ({
         </Text>
         <Text data-testid={`swap-history-from-amount-${swapId}`} ff={"Inter|SemiBold"} fontSize={3}>
           <FormattedVal
-            color="palette.text.shade60"
+            color="neutral.c70"
             alwaysShowSign
             val={fromAmount.times(-1)}
             unit={unitFrom}

@@ -1,6 +1,8 @@
 /* istanbul ignore file: pure exports */
+// TODO Include these methods in `BridgeApi`
+// https://ledgerhq.atlassian.net/browse/LIVE-19921
 
-import { getEditTransactionStatus } from "../bridge/getTransactionStatus";
+import { getEditTransactionStatus } from "./getTransactionStatus";
 import { getEditTransactionPatch } from "./getEditTransactionPatch";
 import { getFormattedFeeFields } from "./getFormattedFeeFields";
 import { getMinFees } from "./getMinEditTransactionFees";

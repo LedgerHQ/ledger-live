@@ -18,7 +18,7 @@ const IconContainer = styled.div`
   justify-content: center;
   width: 24px;
   height: 24px;
-  color: ${p => p.theme.colors.palette.text.shade60};
+  color: ${p => p.theme.colors.neutral.c70};
 `;
 
 const InfoContainer = styled(Box).attrs(() => ({
@@ -36,14 +36,14 @@ const Title = styled(Box).attrs(() => ({
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  color: ${p => p.theme.colors.palette.text.shade100};
+  color: ${p => p.theme.colors.neutral.c100};
   ${IconContainer} {
     background-color: rgba(0, 0, 0, 0);
-    color: ${p => p.theme.colors.palette.primary.main};
+    color: ${p => p.theme.colors.primary.c80};
     opacity: 0;
   }
   &:hover {
-    color: ${p => p.theme.colors.palette.primary.main};
+    color: ${p => p.theme.colors.primary.c80};
   }
   &:hover > ${IconContainer} {
     opacity: 1;
@@ -62,7 +62,7 @@ const SubTitle = styled(Box).attrs(() => ({
 }))`
   font-size: 11px;
   font-weight: 500;
-  color: ${p => p.theme.colors.palette.text.shade60};
+  color: ${p => p.theme.colors.neutral.c70};
 `;
 
 const Status = styled(Text)<{
@@ -70,21 +70,20 @@ const Status = styled(Text)<{
 }>`
   font-size: 11px;
   font-weight: 700;
-  color: ${p => (p.isElected ? p.theme.colors.positiveGreen : p.theme.colors.palette.text.shade60)};
+  color: ${p => (p.isElected ? p.theme.colors.positiveGreen : p.theme.colors.neutral.c70)};
 `;
 
 const TotalStake = styled.span`
   margin-left: 4px;
   padding-left: 4px;
-  border-left: 1px solid ${p => p.theme.colors.palette.text.shade30};
+  border-left: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 const NominatorsCount = styled.span<{
   isOversubscribed?: boolean;
 }>`
   font-size: 11px;
   font-weight: 700;
-  color: ${p =>
-    p.isOversubscribed ? p.theme.colors.warning : p.theme.colors.palette.text.shade100};
+  color: ${p => (p.isOversubscribed ? p.theme.colors.legacyWarning : p.theme.colors.neutral.c100)};
 `;
 
 const Commission = styled.span`
@@ -114,8 +113,7 @@ const Row = styled(Box).attrs(() => ({
   border: 1px solid transparent;
   position: relative;
   overflow: visible;
-  border-color: ${p =>
-    p.active ? p.theme.colors.palette.primary.main : p.theme.colors.palette.divider};
+  border-color: ${p => (p.active ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c40)};
   ${p =>
     p.active
       ? `&:before {
@@ -125,7 +123,7 @@ const Row = styled(Box).attrs(() => ({
         top: 0;
         left: 0;
         position: absolute;
-        background-color: ${p.theme.colors.palette.primary.main};
+        background-color: ${p.theme.colors.primary.c80};
       }`
       : ""}
 
@@ -178,9 +176,10 @@ const ValidatorRow = ({
     [onExternalLink, address],
   );
 
-  const onToggle = useCallback(() => {
-    onUpdateVote && (!disabled || isSelected) && onUpdateVote(address, !isSelected);
-  }, [onUpdateVote, address, disabled, isSelected]);
+  const onToggle = useCallback(
+    () => onUpdateVote && (!disabled || isSelected) && onUpdateVote(address, !isSelected),
+    [onUpdateVote, address, disabled, isSelected],
+  );
 
   const formattedCommission = useMemo(
     () => (commissionBN ? `${commissionBN.multipliedBy(100).toFixed(2)} %` : "-"),

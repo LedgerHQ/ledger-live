@@ -19,6 +19,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { assignToAccountRaw, assignFromAccountRaw } from "@ledgerhq/coin-multiversx/serialization";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
@@ -103,6 +104,7 @@ const accountBridge: AccountBridge<Transaction, any> = {
   signRawOperation,
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 const currencyBridge: CurrencyBridge = {
   scanAccounts,

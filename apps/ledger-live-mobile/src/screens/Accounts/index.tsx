@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, FlatListProps, ListRenderItemInfo } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { useFocusEffect } from "@react-navigation/native";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";

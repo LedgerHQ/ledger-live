@@ -49,7 +49,7 @@ export const DeviceIllustration = styled.img.attrs<{
   src: illustrations[
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (process.env.OVERRIDE_MODEL_ID || p.deviceModel.id) as keyof typeof illustrations
-  ][p.theme.colors.palette.type || "light"],
+  ][p.theme.theme || "light"],
 }))<{
   deviceModel: DeviceModel;
 }>`
@@ -57,7 +57,7 @@ export const DeviceIllustration = styled.img.attrs<{
   top: 0;
   left: 50%;
   max-height: 100%;
-  filter: drop-shadow(0px 5px 7px ${p => p.theme.colors.palette.text.shade10});
+  filter: drop-shadow(0px 5px 7px ${p => p.theme.colors.neutral.c30});
   transform: translateX(-50%);
   user-select: none;
   pointer-events: none;

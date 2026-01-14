@@ -5,7 +5,7 @@ export function SectionHeader({
   children,
   iconLeft,
   renderRight,
-}: PropsWithChildren<{ iconLeft: string; renderRight?: () => React.ReactElement<{}> }>) {
+}: PropsWithChildren<{ iconLeft: string; renderRight?: () => React.ReactElement }>) {
   return (
     <Flex marginY={1}>
       <Flex alignItems="center" flex={1}>

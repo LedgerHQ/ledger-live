@@ -11,7 +11,7 @@ import {
 import type { TronOperation, Vote } from "@ledgerhq/live-common/families/tron/types";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
@@ -19,7 +19,7 @@ import DelegationInfo from "~/components/DelegationInfo";
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { urls } from "~/utils/urls";
 
 const infoURL = urls.feesTron;
@@ -60,7 +60,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
       const value = formatCurrencyUnit(unit, frozenAmount || new BigNumber(0), {
         showCode: true,
         discreet,
-        locale: locale,
+        locale,
       });
       return <Section title={t("operationDetails.extra.frozenAmount")} value={value} />;
     }
@@ -69,7 +69,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
       const value = formatCurrencyUnit(unit, unfreezeAmount || new BigNumber(0), {
         showCode: true,
         discreet,
-        locale: locale,
+        locale,
       });
       return <Section title={t("operationDetails.extra.unfreezeAmount")} value={value} />;
     }

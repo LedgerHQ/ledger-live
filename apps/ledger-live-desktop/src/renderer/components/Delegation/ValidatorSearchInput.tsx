@@ -17,7 +17,7 @@ const SearchContainer = styled(Box).attrs(() => ({
   noMargin: boolean;
 }>`
   margin: 0 ${p => (p.noMargin === true ? "0px" : p.theme.overflow.trackSize)}px;
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
 
   > input::placeholder,
   > input {
@@ -28,12 +28,12 @@ const Placeholder = styled(Box).attrs(() => ({
   alignItems: "center",
   justifyContent: "center",
   borderRadius: 4,
-  color: "palette.text.shade50",
+  color: "neutral.c70",
   mt: 3,
   p: 3,
   flex: "1",
 }))`
-  border: 1px solid ${p => p.theme.colors.palette.divider};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   margin-right: ${p => p.theme.overflow.trackSize}px;
 `;
 type ValidatorSearchInputProps = {

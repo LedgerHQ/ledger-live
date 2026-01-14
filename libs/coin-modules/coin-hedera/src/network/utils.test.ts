@@ -207,8 +207,7 @@ describe("network utils", () => {
         erc20Token.contractAddress,
       );
 
-      expect(res).toHaveLength(mockedSupportedTokenIds.length);
-      expect(res).toMatchObject(mockedResponse);
+      expect(res).toEqual(mockedResponse);
     });
 
     it("returns empty array when there are no supported ERC20 tokens", async () => {
@@ -265,8 +264,7 @@ describe("network utils", () => {
 
       const result = await getERC20Operations([mockThirdwebTransaction]);
 
-      expect(result).toHaveLength(1);
-      expect(result).toMatchObject([
+      expect(result).toEqual([
         {
           thirdwebTransaction: mockThirdwebTransaction,
           mirrorTransaction: mockMirrorTransaction,
@@ -299,7 +297,7 @@ describe("network utils", () => {
 
       const result = await getERC20Operations(mockThirdwebTransactions);
 
-      expect(result).toHaveLength(0);
+      expect(result).toEqual([]);
       expect(apiClient.getContractCallResult).not.toHaveBeenCalled();
       expect(apiClient.findTransactionByContractCall).not.toHaveBeenCalled();
     });
@@ -328,7 +326,7 @@ describe("network utils", () => {
 
       const result = await getERC20Operations([mockThirdwebTransactions]);
 
-      expect(result).toHaveLength(0);
+      expect(result).toEqual([]);
     });
   });
 

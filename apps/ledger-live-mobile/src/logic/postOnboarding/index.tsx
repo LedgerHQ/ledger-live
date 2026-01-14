@@ -95,14 +95,14 @@ export function getPostOnboardingActionsForDevice(
 ): PostOnboardingAction[] {
   switch (deviceModelId) {
     case DeviceModelId.nanoS:
-      /** Set here the list of actions for the post onboarding of the Nano S */
-      return [];
+      // Post-onboarding actions for Nano S (no custom lock screen or sync step).
+      return [assetsTransferAction, buyCryptoAction];
     case DeviceModelId.nanoSP:
-      /** Set here the list of actions for the post onboarding of the Nano SP */
-      return [];
+      // Post-onboarding actions for Nano S Plus (no custom lock screen step).
+      return [assetsTransferAction, buyCryptoAction, syncAccountsAction];
     case DeviceModelId.nanoX:
-      /** Set here the list of actions for the post onboarding of the Nano X */
-      return [];
+      // Post-onboarding actions for Nano X (no custom lock screen step).
+      return [assetsTransferAction, buyCryptoAction, syncAccountsAction];
     case DeviceModelId.stax:
       if (mock) return staxPostOnboardingActionsMock;
       return staxPostOnboardingActions;

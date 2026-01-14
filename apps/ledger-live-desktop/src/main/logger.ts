@@ -128,7 +128,7 @@ export class ConsoleLogger {
           )}`,
         );
       }
-    } catch (_e) {
+    } catch {
       console.error("Badly formatted log");
     }
   }

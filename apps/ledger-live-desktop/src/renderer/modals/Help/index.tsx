@@ -28,10 +28,10 @@ const ItemContainer = styled.a`
   cursor: pointer;
   text-decoration: none;
   &:not(:last-child) {
-    border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
+    border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
   }
   & ${Box} svg {
-    color: ${p => p.theme.colors.palette.text.shade50};
+    color: ${p => p.theme.colors.neutral.c70};
   }
   &:hover {
     filter: brightness(85%);
@@ -41,7 +41,7 @@ const ItemContainer = styled.a`
   }
 `;
 const IconContainer = styled.div`
-  color: ${p => p.theme.colors.palette.primary.main};
+  color: ${p => p.theme.colors.primary.c80};
   display: flex;
   align-items: center;
 `;
@@ -62,10 +62,10 @@ const Item = ({
         <Icon size={24} />
       </IconContainer>
       <Box ml={12} flex={1}>
-        <Text ff="Inter|SemiBold" fontSize={4} color={"palette.text.shade100"}>
+        <Text ff="Inter|SemiBold" fontSize={4} color={"neutral.c100"}>
           {title}
         </Text>
-        <Text ff="Inter|Regular" fontSize={3} color={"palette.text.shade60"}>
+        <Text ff="Inter|Regular" fontSize={3} color={"neutral.c70"}>
           {desc}
         </Text>
       </Box>
@@ -89,7 +89,7 @@ const HelpSideDrawer = ({ isOpened, onClose }: { isOpened: boolean; onClose: () 
         <TrackPage category="SideDrawer" name="Help" />
 
         <Box py={60} px={40}>
-          <Text ff="Inter|SemiBold" fontSize={22} mb={20} color={"palette.text.shade100"}>
+          <Text ff="Inter|SemiBold" fontSize={22} mb={20} color={"neutral.c100"}>
             <Trans i18nKey="help.title" />
           </Text>
           <Item

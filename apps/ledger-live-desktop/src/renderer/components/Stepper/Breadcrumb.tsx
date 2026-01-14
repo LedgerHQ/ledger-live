@@ -27,7 +27,7 @@ const Bar = styled.div<{
   current: number;
   disabled: Array<number> | undefined | null;
 }>`
-  background: ${p => p.theme.colors.palette.text.shade20};
+  background: ${p => p.theme.colors.neutral.c40};
   flex-grow: 1;
   height: 1px;
   left: ${p => p.start}%;
@@ -56,7 +56,7 @@ const Bar = styled.div<{
   }
 
   &:before {
-    background: ${p => p.theme.colors.palette.text.shade20};
+    background: ${p => p.theme.colors.neutral.c40};
     left: ${p => (p.disabled ? `${p.disabled[0]}%` : 0)};
     right: ${p => (p.disabled ? `${p.disabled[1]}%` : "auto")};
     z-index: 2;
@@ -95,7 +95,7 @@ class Breadcrumb<Item extends ItemBase> extends PureComponent<Props<Item>> {
 
     return (
       <Container>
-        <Box mb={mb} bg="palette.background.paper" relative>
+        <Box mb={mb} bg="background.card" relative>
           <Wrapper>
             {items
               .filter(i => !i.excludeFromBreadcrumb)

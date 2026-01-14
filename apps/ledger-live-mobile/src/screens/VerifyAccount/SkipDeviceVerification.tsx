@@ -42,7 +42,7 @@ const SkipDeviceVerification = ({ onCancel, onConfirm, account }: Props) => {
         />
       </LText>
       <View style={styles.account}>
-        <CurrencyIcon color={colors.live} size={16} currency={currency} />
+        <CurrencyIcon size={16} currency={currency} />
         <LText style={styles.accountName} semiBold>
           {accountName}
         </LText>

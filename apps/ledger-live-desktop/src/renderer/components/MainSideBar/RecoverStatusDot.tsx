@@ -82,7 +82,7 @@ const RecoverStatusDot = ({ collapsed }: RecoverStatusNotificationProps) => {
       <Icons.WarningRoundedFill
         size="XS"
         style={{
-          color: colors.palette.warning.c70,
+          color: colors.warning.c70,
           right: "-3px",
           top: "-8px",
           position: "absolute",

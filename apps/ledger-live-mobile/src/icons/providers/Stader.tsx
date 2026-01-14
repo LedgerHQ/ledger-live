@@ -6,15 +6,14 @@ type Props = SvgProps & { size?: number; outline?: ColorValue };
 
 const BASE_SIZE = 32;
 
-export function Stader({ size = BASE_SIZE, outline, ...props }: Props): JSX.Element {
+export function Stader({ size = BASE_SIZE, outline, ...props }: Props): React.JSX.Element {
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
       <Rect
         fill="#F3F0EB"
         width="31"
         height="31"
-        x={0.5}
-        y={0.5}
+        transform={[{ translateX: 0.5 }, { translateY: 0.5 }]}
         rx={7.5}
         stroke={outline}
         stroke-opacity={0.1}

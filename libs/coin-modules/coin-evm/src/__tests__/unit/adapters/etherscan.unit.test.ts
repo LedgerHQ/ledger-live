@@ -1370,13 +1370,13 @@ describe("EVM Family", () => {
           const accountId = encodeAccountId({
             type: "js",
             version: "2",
-            currencyId: "sei_network_evm",
+            currencyId: "sei_evm",
             xpubOrAddress: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
             derivationMode: "",
           });
 
           const expectedOperation: Operation = {
-            id: "js:2:sei_network_evm:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1-DELEGATE",
+            id: "js:2:sei_evm:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1-DELEGATE",
             hash: "0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1",
             accountId,
             blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
@@ -1428,13 +1428,13 @@ describe("EVM Family", () => {
           const accountId = encodeAccountId({
             type: "js",
             version: "2",
-            currencyId: "sei_network_evm",
+            currencyId: "sei_evm",
             xpubOrAddress: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
             derivationMode: "",
           });
 
           const expectedOperation: Operation = {
-            id: "js:2:sei_network_evm:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1-REDELEGATE",
+            id: "js:2:sei_evm:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1-REDELEGATE",
             hash: "0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1",
             accountId,
             blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
@@ -1484,13 +1484,13 @@ describe("EVM Family", () => {
           const accountId = encodeAccountId({
             type: "js",
             version: "2",
-            currencyId: "sei_network_evm",
+            currencyId: "sei_evm",
             xpubOrAddress: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
             derivationMode: "",
           });
 
           const expectedOperation: Operation = {
-            id: "js:2:sei_network_evm:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1-UNDELEGATE",
+            id: "js:2:sei_evm:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1-UNDELEGATE",
             hash: "0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1",
             accountId,
             blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",

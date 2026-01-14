@@ -11,7 +11,7 @@ function getBranchColor(branch: LiveAppManifest["branch"], colors: Theme["colors
     case "soon":
       return colors.neutral.c00;
     case "experimental":
-      return colors.warning;
+      return colors.warning.c70;
     case "debug":
       return colors.opacityDefault.c40;
     default:
@@ -40,7 +40,7 @@ const AppName = styled(Box).attrs(p => ({
   ff: "Inter|SemiBold",
   fontSize: 5,
   textAlign: "left",
-  color: p.theme.colors.palette.secondary.main,
+  color: p.theme.colors.neutral.c100,
 }))`
   line-height: 18px;
 `;
@@ -71,7 +71,7 @@ const BranchBadge = styled(Box).attrs<{ branch: LiveAppManifest["branch"] }>(p =
   ${p =>
     p.branch === "soon" &&
     `
-    background: ${p.theme.colors.palette.text.shade20};
+    background: ${p.theme.colors.neutral.c40};
     border-width: 0;
   `}
 `;

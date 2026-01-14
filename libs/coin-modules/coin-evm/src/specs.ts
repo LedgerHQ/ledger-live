@@ -51,7 +51,7 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   blast_sepolia: 0.001,
   hyperevm: 0.001,
   berachain: 0.001,
-  sei_network_evm: 0.001,
+  sei_evm: 0.001,
   monad: 0.05,
   monad_testnet: 0.05,
   somnia: 0.001,

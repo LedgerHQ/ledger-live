@@ -60,7 +60,7 @@ const SelectAccountDrawer = ({ currency, onAccountSelected }: SelectAccountDrawe
       <HeaderContainer>
         <Text
           ff="Inter|Medium"
-          color="palette.text.shade100"
+          color="neutral.c100"
           fontSize="24px"
           style={{
             textTransform: "uppercase",

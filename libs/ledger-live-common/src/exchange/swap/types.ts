@@ -214,7 +214,9 @@ export type SwapStateAcceptedRequest = SwapStateRequest & {
   transactionId: string;
 };
 
-export type SwapStateCancelledRequest = SwapStateRequest;
+export type SwapStateCancelledRequest = SwapStateRequest & {
+  data?: string;
+};
 
 export type PostSwapAccepted = (arg0: SwapStateAcceptedRequest) => Promise<null>;
 

@@ -1,18 +1,18 @@
 import {
   AmountRequired,
   FeeNotLoaded,
-  FeeRequired,
   FeeTooHigh,
   InvalidAddress,
-  InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughSpendableBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
+import * as gateway from "../network/gateway";
 import { createMockAccount } from "../test/fixtures";
 import { CantonAccount, TooManyUtxosCritical, TooManyUtxosWarning, Transaction } from "../types";
+import { TopologyChangeError } from "../types/errors";
 import {
   getTransactionStatus,
   TO_MANY_UTXOS_CRITICAL_COUNT,
@@ -20,7 +20,9 @@ import {
 } from "./getTransactionStatus";
 
 jest.mock("../config", () => ({ getCoinConfig: jest.fn() }));
+jest.mock("../network/gateway");
 const mockCoinConfig = jest.mocked(coinConfig);
+const mockedGateway = gateway as jest.Mocked<typeof gateway>;
 
 describe("getTransactionStatus", () => {
   const mockAccount: CantonAccount = {
@@ -28,8 +30,11 @@ describe("getTransactionStatus", () => {
       balance: new BigNumber(1000),
       spendableBalance: new BigNumber(1000),
       freshAddress: "test::33333333333333333333333333333333333333333333333333333333333333333333",
+      xpub: "test-party-id",
     }),
     cantonResources: {
+      pendingTransferProposals: [],
+      publicKey: "test-public-key",
       instrumentUtxoCounts: {
         Amulet: 5,
       },
@@ -44,6 +49,7 @@ describe("getTransactionStatus", () => {
       status: { type: "active" },
       nativeInstrumentId: "Amulet",
     });
+    mockedGateway.isTopologyChangeRequiredCached.mockResolvedValue(false);
   });
 
   describe("fee validation", () => {
@@ -287,6 +293,7 @@ describe("getTransactionStatus", () => {
       const accountWithTooManyUtxos = {
         ...mockAccount,
         cantonResources: {
+          ...mockAccount.cantonResources,
           instrumentUtxoCounts: {
             Amulet: TO_MANY_UTXOS_CRITICAL_COUNT + 1,
           },
@@ -311,7 +318,7 @@ describe("getTransactionStatus", () => {
       const accountWithManyUtxos = {
         ...mockAccount,
         cantonResources: {
-          pendingTransferProposals: [],
+          ...mockAccount.cantonResources,
           instrumentUtxoCounts: {
             Amulet: TO_MANY_UTXOS_WARNING_COUNT + 1,
           },
@@ -339,6 +346,7 @@ describe("getTransactionStatus", () => {
       const accountWithFewUtxos = {
         ...mockAccount,
         cantonResources: {
+          ...mockAccount.cantonResources,
           instrumentUtxoCounts: {
             Amulet: TO_MANY_UTXOS_WARNING_COUNT - 1,
           },
@@ -362,6 +370,7 @@ describe("getTransactionStatus", () => {
       const accountWithManyUtxos = {
         ...mockAccount,
         cantonResources: {
+          ...mockAccount.cantonResources,
           instrumentUtxoCounts: {
             Amulet: 25,
           },
@@ -380,6 +389,89 @@ describe("getTransactionStatus", () => {
 
       expect(result.warnings.tooManyUtxos).toBeUndefined();
       expect(result.errors.utxoCount).toBeUndefined();
+    });
+  });
+
+  describe("topology validation", () => {
+    it("should return TopologyChangeError when isTopologyChangeRequiredCached returns true", async () => {
+      // GIVEN
+      const accountWithPartyId: CantonAccount = {
+        ...mockAccount,
+        xpub: "test-party-id",
+      };
+      mockedGateway.isTopologyChangeRequiredCached.mockResolvedValue(true);
+
+      const transaction: Transaction = {
+        family: "canton",
+        amount: new BigNumber(100),
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
+        fee: new BigNumber(10),
+        tokenId: "",
+      };
+
+      // WHEN
+      const result = await getTransactionStatus(accountWithPartyId, transaction);
+
+      // THEN
+      expect(result.errors.topologyChange).toBeInstanceOf(TopologyChangeError);
+      expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
+        accountWithPartyId.currency,
+        "test-public-key",
+      );
+    });
+
+    it("should not return topology error when isTopologyChangeRequiredCached returns false", async () => {
+      // GIVEN
+      const accountWithPartyId: CantonAccount = {
+        ...mockAccount,
+        xpub: "test-party-id",
+      };
+      mockedGateway.isTopologyChangeRequiredCached.mockResolvedValue(false);
+
+      const transaction: Transaction = {
+        family: "canton",
+        amount: new BigNumber(100),
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
+        fee: new BigNumber(10),
+        tokenId: "",
+      };
+
+      // WHEN
+      const result = await getTransactionStatus(accountWithPartyId, transaction);
+
+      // THEN
+      expect(result.errors.topologyChange).toBeUndefined();
+      expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
+        accountWithPartyId.currency,
+        "test-public-key",
+      );
+    });
+
+    it("should not return topology error when isTopologyChangeRequiredCached throws an error", async () => {
+      // GIVEN
+      const accountWithPartyId: CantonAccount = {
+        ...mockAccount,
+        xpub: "test-party-id",
+      };
+      mockedGateway.isTopologyChangeRequiredCached.mockRejectedValue(new Error("Network error"));
+
+      const transaction: Transaction = {
+        family: "canton",
+        amount: new BigNumber(100),
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
+        fee: new BigNumber(10),
+        tokenId: "",
+      };
+
+      // WHEN
+      const result = await getTransactionStatus(accountWithPartyId, transaction);
+
+      // THEN
+      expect(result.errors.topologyChange).toBeUndefined();
+      expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
+        accountWithPartyId.currency,
+        "test-public-key",
+      );
     });
   });
 });

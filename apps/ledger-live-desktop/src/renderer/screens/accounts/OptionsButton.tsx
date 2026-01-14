@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import Track from "~/renderer/analytics/Track";
 import Box from "~/renderer/components/Box";
@@ -16,7 +16,7 @@ import { useHideEmptyTokenAccounts } from "~/renderer/actions/settings";
 import { Icons } from "@ledgerhq/react-ui";
 
 const Separator = styled.div`
-  background-color: ${p => p.theme.colors.palette.divider};
+  background-color: ${p => p.theme.colors.neutral.c40};
   height: 1px;
   margin-top: 8px;
   margin-bottom: 8px;
@@ -29,8 +29,8 @@ const Item = styled(DropDownItem)<{ disableHover?: boolean }>`
   align-items: center;
 `;
 type ItemType = DropDownItemType & {
-  icon?: JSX.Element;
-  onClick?: Function;
+  icon?: React.JSX.Element;
+  onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   type?: "separator";
 };
 const OptionsButton = () => {
@@ -123,4 +123,4 @@ const OptionsButton = () => {
     </DropDownSelector>
   );
 };
-export default React.memo<{}>(OptionsButton);
+export default React.memo(OptionsButton);

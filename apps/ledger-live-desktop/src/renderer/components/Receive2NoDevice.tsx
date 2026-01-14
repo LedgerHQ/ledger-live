@@ -6,8 +6,8 @@ const Receive2NoDevice = ({
   onVerify,
   onContinue,
 }: {
-  onVerify: Function;
-  onContinue?: Function;
+  onVerify: () => void;
+  onContinue?: () => void;
 }) => {
   return (
     <>

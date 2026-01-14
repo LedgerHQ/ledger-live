@@ -21,7 +21,7 @@ import {
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
-import { setCoinConfig, type EvmConfig } from "../config";
+import { EvmCoinConfig, setCoinConfig, type EvmConfig } from "../config";
 import {
   broadcast,
   combine,
@@ -36,13 +36,26 @@ import {
   getAssetFromToken,
   computeIntentType,
   refreshOperations,
+  getBlock,
+  getBlockInfo,
 } from "../logic/index";
 
+// NOTE Celo still relies on the EVM coin config and injects its own
+// while creating an unused instance of API
+// TODO Change to Record<string, EvmConfig> once Celo bridge is removed
+const configs: Record<string, EvmConfig | (() => EvmCoinConfig)> = {};
+
 export function createApi(
-  config: EvmConfig,
+  config: EvmConfig | (() => EvmCoinConfig),
   currencyId: string,
 ): Api<MemoNotSupported, BufferTxData> {
-  setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
+  configs[currencyId] = config;
+  setCoinConfig(c => {
+    const evmConfig = configs[c.id];
+    return typeof evmConfig === "function"
+      ? evmConfig()
+      : { info: { ...evmConfig, status: { type: "active" } } };
+  });
   const currency = getCryptoCurrencyById(currencyId);
 
   return {
@@ -72,12 +85,8 @@ export function createApi(
       pagination: Pagination,
     ): Promise<[Operation<MemoNotSupported>[], string]> =>
       listOperations(currency, address, pagination),
-    getBlock(_height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
+    getBlock: (height: number): Promise<Block> => getBlock(currency, height),
+    getBlockInfo: (height: number): Promise<BlockInfo> => getBlockInfo(currency, height),
     getStakes(_address: string): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
@@ -90,14 +99,25 @@ export function createApi(
     getSequence: (address: string): Promise<bigint> => getSequence(currency, address),
     validateIntent: (
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
+      balances: Balance[],
       customFees?: FeeEstimation,
-    ): Promise<TransactionValidation> => validateIntent(currency, intent, customFees),
+    ): Promise<TransactionValidation> => validateIntent(currency, intent, balances, customFees),
     getTokenFromAsset: (asset: AssetInfo): Promise<TokenCurrency | undefined> =>
       getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
       getAssetFromToken(currency, token, owner),
     computeIntentType,
-    refreshOperations: (operations: LiveOperation[]): Promise<LiveOperation[]> =>
-      refreshOperations(currency, operations),
+    /**
+     * Only expose this method if the chain has no explorer (the only chain that passes a function
+     * is Celo that works with an explorer)
+     * Not exposing this methods ensures that we don't try to force the update of pending operations
+     * in the context of the generic adapter and wait for explorers more accurate results instead
+     */
+    ...(typeof config !== "function" && config.explorer.type === "none"
+      ? {
+          refreshOperations: (operations: LiveOperation[]): Promise<LiveOperation[]> =>
+            refreshOperations(currency, operations),
+        }
+      : {}),
   };
 }

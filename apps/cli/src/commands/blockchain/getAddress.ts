@@ -1,5 +1,5 @@
 import { from } from "rxjs";
-import { mergeMap } from "rxjs/operators";
+import { mergeMap, map } from "rxjs/operators";
 import { asDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getAddress from "@ledgerhq/live-common/hw/getAddress/index";
@@ -60,7 +60,7 @@ export default {
               derivationMode: asDerivationMode(arg.derivationMode || ""),
               verify: arg.verify,
             }),
-          ),
+          ).pipe(map(result => JSON.stringify(result))),
         );
       }),
     ),

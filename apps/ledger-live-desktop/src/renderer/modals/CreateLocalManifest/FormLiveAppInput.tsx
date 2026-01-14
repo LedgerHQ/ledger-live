@@ -52,10 +52,10 @@ function FormLiveAppInput({
           autoFocus={autoFocus}
           onChange={(value: number | string) => {
             if (type === "number") {
-              !isNaN(Number(value)) && handleChange(path, Number(value));
+              if (!isNaN(Number(value))) handleChange(path, Number(value));
               return;
             }
-            typeof value !== "number" && handleChange(path, value);
+            if (typeof value !== "number") handleChange(path, value);
           }}
           value={String(value)}
         />

@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
+
 import { useLocation, useHistory } from "react-router-dom";
 import {
   findCryptoCurrencyByKeyword,
@@ -16,10 +17,11 @@ import { CARD_APP_ID, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { getAccountsOrSubAccountsByCurrency, trackDeeplinkingEvent } from "./utils";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useRedirectToPostOnboardingCallback } from "../useAutoRedirectToPostOnboarding";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 
 export function useDeepLinkHandler() {
   const dispatch = useDispatch();
@@ -38,12 +40,13 @@ export function useDeepLinkHandler() {
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     "deeplink",
   );
+  const openSendFlow = useOpenSendFlow();
 
   const navigate = useCallback(
     (
       pathname: string,
       state?: {
-        [k: string]: string | Object;
+        [k: string]: string | object;
       },
       search?: string,
     ) => {
@@ -274,6 +277,8 @@ export function useDeepLinkHandler() {
           } as const;
           const modal = modalMap[url];
           const { currency, recipient, amount } = query;
+          const sendRecipient = typeof recipient === "string" ? recipient : undefined;
+          const sendAmount = typeof amount === "string" ? amount : undefined;
 
           if (url === "delegate" && currency !== "tezos") return;
 
@@ -311,11 +316,18 @@ export function useDeepLinkHandler() {
             dispatch(closeAllModal());
             setDrawer();
             if (!currency) {
-              dispatch(
-                openModal(modal, {
-                  ...(url === "receive" ? { shouldUseReceiveOptions: false } : {}),
-                }),
-              );
+              if (url === "send") {
+                openSendFlow({
+                  recipient: sendRecipient,
+                  amount: sendAmount,
+                });
+              } else {
+                dispatch(
+                  openModal(modal, {
+                    ...(url === "receive" ? { shouldUseReceiveOptions: false } : {}),
+                  }),
+                );
+              }
               return;
             }
 
@@ -326,7 +338,7 @@ export function useDeepLinkHandler() {
                 findCryptoCurrencyByKeyword(currencyId) ||
                 (await getCryptoAssetsStore().findTokenById(currencyId)) ||
                 null;
-            } catch (error) {
+            } catch {
               foundCurrency = null;
             }
 
@@ -334,6 +346,15 @@ export function useDeepLinkHandler() {
               account: Account | TokenAccount,
               parentAccount?: Account,
             ) => {
+              if (url === "send") {
+                openSendFlow({
+                  account,
+                  parentAccount,
+                  recipient: sendRecipient,
+                  amount: sendAmount,
+                });
+                return;
+              }
               dispatch(
                 openModal(modal, {
                   ...(url === "receive" ? { shouldUseReceiveOptions: false } : {}),
@@ -468,6 +489,7 @@ export function useDeepLinkHandler() {
       openAssetFlow,
       postOnboardingDeeplinkHandler,
       tryRedirectToPostOnboardingOrRecover,
+      openSendFlow,
     ],
   );
 

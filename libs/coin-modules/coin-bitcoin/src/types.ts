@@ -145,6 +145,7 @@ export type Transaction = TransactionCommon & {
   feePerByte: BigNumber | null | undefined;
   networkInfo: NetworkInfo | null | undefined;
   opReturnData?: Buffer | undefined;
+  changeAddress?: string | undefined;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -154,18 +155,21 @@ export type TransactionRaw = TransactionCommonRaw & {
   feePerByte: string | null | undefined;
   networkInfo: NetworkInfoRaw | null | undefined;
   opReturnData?: Buffer | undefined;
+  changeAddress?: string | undefined;
 };
 
 export type TransactionStatus = TransactionStatusCommon & {
   txInputs: BitcoinInput[] | undefined;
   txOutputs: BitcoinOutput[] | undefined;
   opReturnData: string | undefined;
+  changeAddress: string | undefined;
 };
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw & {
   txInputs: BitcoinInputRaw[] | undefined;
   txOutputs: BitcoinOutputRaw[] | undefined;
   opReturnData: string | undefined;
+  changeAddress: string | undefined;
 };
 
 export type BitcoinAccount = Account & { bitcoinResources: BitcoinResources };

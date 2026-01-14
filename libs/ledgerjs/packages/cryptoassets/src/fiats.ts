@@ -42,7 +42,7 @@ const byTicker: Record<string, FiatCurrency> = {
   BOB: fiat("Bolivian Boliviano", "BOB", "Bs", 2),
   BRL: fiat("Brazilian Real", "BRL", "R$", 2),
   BSD: fiat("Bahamian Dollar", "BSD", "$", 2),
-  BTC: fiat("Bitcoin", "BTC", "Ƀ", 8),
+  BTC: fiat("Bitcoin", "BTC", "₿", 8),
   BTN: fiat("Bhutanese Ngultrum", "BTN", "Nu.", 1),
   BWP: fiat("Botswana Pula", "BWP", "P", 2),
   BYN: fiat("Belarusian Ruble", "BYN", "р.", 2),

@@ -11,7 +11,7 @@ interface ABIFunction {
 
 const STAKING_ABIS: Record<string, StakingABI> = {
   // Sei EVM staking contract
-  sei_network_evm: seiAbi,
+  sei_evm: seiAbi,
 
   // Celo staking contract
   celo: celoAbi,

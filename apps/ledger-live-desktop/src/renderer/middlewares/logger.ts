@@ -3,7 +3,7 @@ import logger from "~/renderer/logger";
 import { State } from "../reducers";
 import { isActionWithType } from "./utils";
 
-const loggerMiddleware: Middleware<{}, State> = () => next => action => {
+const loggerMiddleware: Middleware<object, State> = () => next => action => {
   if (isActionWithType(action)) {
     logger.onReduxAction(action);
   }

@@ -1,9 +1,7 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import PreventNativeBack from "~/components/PreventNativeBack";
@@ -15,6 +13,7 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import type { CeloVoteFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteValidationSuccess>
@@ -22,7 +21,7 @@ type Props = BaseComposite<
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
 
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();

@@ -30,11 +30,13 @@ import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
-import { CountervaluesState } from "./countervalues";
-import { ToastState } from "./toast";
-import { ModularDrawerState } from "./modularDrawer";
-import { LLMRTKApiState } from "~/context/rtkQueryApi";
-import { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
+import type { CountervaluesState } from "./countervalues";
+import type { ToastState } from "./toast";
+import type { ModularDrawerState } from "./modularDrawer";
+import type { LLMRTKApiState } from "~/context/rtkQueryApi";
+import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
+import { IdentitiesState } from "@ledgerhq/client-ids/store";
+import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 
 // === ACCOUNT STATE ===
 
@@ -111,10 +113,19 @@ export type BleState = {
 // === NOTIFICATIONS STATE ===
 
 export type NotificationsState = {
+  /** The authorization status of the system notifications */
+  permissionStatus?: FirebaseMessagingTypes.AuthorizationStatus;
   /** Boolean indicating whether the push notifications modal is opened or closed */
   isPushNotificationsModalOpen: boolean;
   /** Type of the push notifications modal to display (either the generic one or the market one) */
-  notificationsModalType: string;
+  drawerSource:
+    | "generic"
+    | "onboarding"
+    | "send"
+    | "receive"
+    | "swap"
+    | "stake"
+    | "add_favorite_coin";
   /** The route name of the current screen displayed in the app, it is updated every time the displayed screen change */
   currentRouteName?: string;
   /** The event that triggered the oppening of the push notifications modal */
@@ -246,7 +257,7 @@ export type SettingsState = {
   discreetMode: boolean;
   language: string;
   languageIsSetByUser: boolean;
-  locale: string | null | undefined;
+  locale: string;
   swap: {
     hasAcceptedIPSharing: false;
     acceptedProviders: string[];
@@ -386,6 +397,7 @@ export type State = LLMRTKApiState & {
   countervalues: CountervaluesState;
   dynamicContent: DynamicContentState;
   earn: EarnState;
+  identities: IdentitiesState;
   inView: InViewState;
   largeMover: LargeMoverState;
   market: MarketState;

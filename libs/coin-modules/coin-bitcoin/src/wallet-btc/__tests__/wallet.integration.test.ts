@@ -117,4 +117,45 @@ describe("testing wallet", () => {
     });
     expect(Buffer.from(tx, "hex")).toHaveLength(20);
   });
+
+  it("should allow to build a transaction with changeAddress output", async () => {
+    const receiveAddress = await wallet.getAccountNewReceiveAddress(account);
+    const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
+    const changeAddress = await wallet.getAccountNewChangeAddress(account);
+
+    const { outputs, changeAddress: changeAddressOutput } = await wallet.buildAccountTx({
+      fromAccount: account,
+      dest: receiveAddress.address,
+      amount: new BigNumber(100000),
+      feePerByte: 5,
+      utxoPickingStrategy,
+      sequence: 0,
+      changeAddress: changeAddress.address,
+    });
+
+    expect(changeAddressOutput).toEqual(changeAddress);
+
+    const [opReturnOutput] = outputs.filter(output => output.address === changeAddress.address);
+
+    expect(opReturnOutput).toBeDefined();
+    expect(opReturnOutput.address).toEqual(changeAddress.address);
+    expect(opReturnOutput?.isChange).toBe(true);
+  });
+
+  it("should throw error if wrong changeAddress", async () => {
+    const receiveAddress = await wallet.getAccountNewReceiveAddress(account);
+    const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
+
+    await expect(
+      wallet.buildAccountTx({
+        fromAccount: account,
+        dest: receiveAddress.address,
+        amount: new BigNumber(100000),
+        feePerByte: 5,
+        utxoPickingStrategy,
+        sequence: 0,
+        changeAddress: "wrongChangeAddress",
+      }),
+    ).rejects.toThrow("Invalid change address");
+  });
 });

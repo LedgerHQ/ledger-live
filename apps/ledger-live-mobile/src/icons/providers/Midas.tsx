@@ -8,7 +8,14 @@ export function Midas({ size = 32, outline = "white", ...props }: Props) {
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
       <Rect width="32" height="32" rx="8" fill="#323232" />
-      <Rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke={outline} strokeOpacity="0.05" />
+      <Rect
+        transform={[{ translateX: 0.5 }, { translateY: 0.5 }]}
+        width="31"
+        height="31"
+        rx="7.5"
+        stroke={outline}
+        strokeOpacity="0.05"
+      />
       <G clipPath="url(#clip0_2938_1971)">
         <Path
           d="M25.0647 17.6436V23.4189C25.0647 23.5418 24.6891 23.9358 24.4956 23.8444H7.50514C7.34233 23.9005 7.01208 23.5111 7.01208 23.4189V17.6436L7.32159 17.6781L16.076 20.5527L24.7544 17.6781L25.0639 17.6436H25.0647Z"

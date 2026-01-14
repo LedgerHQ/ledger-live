@@ -66,9 +66,9 @@ const BackContainer = styled.View`
   z-index: 10;
 `;
 
-const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs({
+const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs<{ p: number }>({
   p: 3,
-})`
+})<{ p?: number }>`
   ${space};
   border-radius: 100px;
   background-color: ${(p) => p.theme.colors.neutral.c30};

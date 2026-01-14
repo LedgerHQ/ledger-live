@@ -1,4 +1,5 @@
 {
+  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
   "entry": [
     "src/api/index.ts",
     "src/bridge/deviceTransactionConfig.ts",
@@ -15,7 +16,11 @@
     "src/types/index.ts",
     "src/types/model.ts",
     "src/types/signer.ts",
-    "src/types/bridge.fixture.ts"
+    "src/types/bridge.fixture.ts",
+    "src/logic/validateAddress.ts"
+  ],
+  "ignoreUnimported": [
+    "src/supportedFeatures.ts"
   ],
   "ignore": []
 }

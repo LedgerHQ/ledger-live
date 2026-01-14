@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSendSPLAddressInvalid } from "../subAccount";
 
 const transactionE2E = {
@@ -5,7 +6,7 @@ const transactionE2E = {
   recipient: TokenAccount.SOL_GIGA_2.currency.contractAddress,
   expectedErrorMessage: "This is a token address. Input a regular wallet address",
   xrayTicket: ["B2CQA-3086"],
-  tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex"],
+  tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
 runSendSPLAddressInvalid(

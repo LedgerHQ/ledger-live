@@ -23,14 +23,20 @@ type Props = {
  */
 const RequiresBLE: React.FC<Props> = ({ children, forceOpenSettingsOnErrorButton = false }) => {
   if (Platform.OS === "android") {
+    /*
+     * FIXME: temporary fix to avoid this issue: https://github.com/facebook/react-native/issues/53887
+     * To revert to `forceOpenSettingsOnErrorButton` when React Native gets upgraded to 0.81.5
+     * to include the fix https://github.com/facebook/react-native/commit/447a7a3527e3e38e4c3ceb330d12d77afe7bc0b4
+     */
+    const forceOpenSettingsForPermissions = true;
     return (
       <AndroidRequiresBluetoothPermissions
-        forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
+        forceOpenSettingsOnErrorButton={forceOpenSettingsForPermissions}
       >
         <RequiresBluetoothEnabled forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}>
           <AndroidRequiresLocationPermission
             required={Platform.Version <= 30}
-            forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
+            forceOpenSettingsOnErrorButton={forceOpenSettingsForPermissions}
           >
             <AndroidRequiresLocationEnabled
               required={Platform.Version <= 30}

@@ -24,7 +24,7 @@ const TezosDelegateValidator = ({
   }, [bakerURL]);
   return (
     <TransactionConfirmField label={field.label}>
-      <Text onClick={openBaker} color="palette.primary.main" ml={1} ff="Inter|Medium" fontSize={3}>
+      <Text onClick={openBaker} color="primary.c80" ml={1} ff="Inter|Medium" fontSize={3}>
         {baker ? baker.name : shortAddressPreview(transaction.recipient)}
       </Text>
     </TransactionConfirmField>
@@ -34,7 +34,7 @@ const TezosDelegateValidator = ({
 const TezosStorageLimit = ({ transaction, field }: TezosFieldComponentProps) => {
   return (
     <TransactionConfirmField label={field.label}>
-      <Text ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
+      <Text ff="Inter|Medium" color="neutral.c80" fontSize={3}>
         {(transaction.storageLimit || "").toString()}
       </Text>
     </TransactionConfirmField>

@@ -15,21 +15,15 @@ import "react-native-url-polyfill/auto";
 // cosmjs use TextEncoder that's not available in React Native but on Node
 import "text-encoding-polyfill";
 
-// Initialize MSW for mocking API calls
-import "./src/mocks/init";
-
-// import all possible polyfills done by live-common for React Native. See in reactNative.ts for more details.
-import "@ledgerhq/live-common/reactNative";
+// Initialize MSW for mocking API calls (only in development when MSW_ENABLED=true)
+if (process.env.MSW_ENABLED === "true") {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  require("./src/mocks/init");
+}
 
 import { AppRegistry } from "react-native";
-import BackgroundRunnerService from "./services/BackgroundRunnerService";
 import App from "./src";
 import logReport from "./src/log-report";
-import { withSentry } from "./src/sentry";
-
 logReport.logReportInit();
 
-const Root = withSentry(App);
-
-AppRegistry.registerComponent("ledgerlivemobile", () => Root);
-AppRegistry.registerHeadlessTask("BackgroundRunnerService", () => BackgroundRunnerService);
+AppRegistry.registerComponent("ledgerlivemobile", () => App);

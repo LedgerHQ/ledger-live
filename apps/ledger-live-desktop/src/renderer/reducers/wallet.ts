@@ -12,8 +12,9 @@ import { DistantState } from "@ledgerhq/live-wallet/walletsync/index";
 import { handleActions } from "redux-actions";
 import { State } from ".";
 import { createSelector } from "reselect";
-import { useSelector } from "react-redux";
-import { AccountLike } from "@ledgerhq/types-live";
+import { useSelector } from "LLD/hooks/redux";
+import { shallowEqual } from "react-redux";
+import { AccountLike, RecentAddressesState } from "@ledgerhq/types-live";
 
 export const walletSelector = (state: State): WalletState => state.wallet;
 
@@ -29,6 +30,10 @@ export function latestDistantStateSelector(state: State): DistantState | null {
 
 export function latestDistantVersionSelector(state: State): number {
   return walletSyncStateSelector(walletSelector(state)).version;
+}
+
+export function recentAddressesSelector(state: State): RecentAddressesState {
+  return walletSelector(state).recentAddresses;
 }
 
 const getAccountName = (
@@ -47,7 +52,10 @@ export const useMaybeAccountName = (
 export const useBatchMaybeAccountName = (
   accounts: (AccountLike | null | undefined)[],
 ): (string | undefined)[] => {
-  return useSelector((state: State) => accounts.map(account => getAccountName(state, account)));
+  return useSelector(
+    (state: State) => accounts.map(account => getAccountName(state, account)),
+    shallowEqual,
+  );
 };
 export const useAccountName = (account: AccountLike) => {
   return useSelector((state: State) => accountNameWithDefaultSelector(state.wallet, account));

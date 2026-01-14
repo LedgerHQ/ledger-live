@@ -3,14 +3,17 @@ import type { Preview } from "@storybook/react";
 import { palettes, StyleProvider } from "../../../libs/ui/packages/react/src/styles";
 import "../src/renderer/i18n/init";
 import { Buffer } from "buffer";
+import "./globals.css";
 
 declare global {
   interface Window {
     Buffer: typeof Buffer;
+    __APP_VERSION__: string;
   }
 }
 
 window.Buffer = Buffer;
+window.__APP_VERSION__ = "2.128.1";
 
 export const decorators = [
   (Story, { globals }) => {

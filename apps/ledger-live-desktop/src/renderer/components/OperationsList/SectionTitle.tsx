@@ -14,7 +14,7 @@ const SectionTitle = ({ date }: Props) => {
 
   return (
     <HeaderWrapper>
-      <Text fontWeight="semiBold" fontSize={3} color={theme.colors.palette.text.shade50}>
+      <Text fontWeight="semiBold" fontSize={3} color={theme.colors.neutral.c70}>
         {txt}
       </Text>
     </HeaderWrapper>

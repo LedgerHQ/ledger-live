@@ -26,9 +26,15 @@ const SectionAccounts = memo(
     editedNames,
     creatableAccount,
     importableAccounts,
+    isReonboarding,
   }: Pick<
     StepProps,
-    "currency" | "accountName" | "editedNames" | "creatableAccount" | "importableAccounts"
+    | "currency"
+    | "accountName"
+    | "editedNames"
+    | "creatableAccount"
+    | "importableAccounts"
+    | "isReonboarding"
   >) => {
     return (
       <SectionAccountsStyled>
@@ -37,7 +43,7 @@ const SectionAccounts = memo(
             <Box
               horizontal
               ff="Inter|Bold"
-              color="palette.text.shade100"
+              color="neutral.c100"
               fontSize={2}
               textTransform="uppercase"
               mb={3}
@@ -69,12 +75,18 @@ const SectionAccounts = memo(
           <Box
             horizontal
             ff="Inter|Bold"
-            color="palette.text.shade100"
+            color="neutral.c100"
             fontSize={2}
             textTransform="uppercase"
             mb={3}
           >
-            <Trans i18nKey="families.canton.addAccount.onboard.newAccount" />
+            <Trans
+              i18nKey={
+                isReonboarding
+                  ? "families.canton.addAccount.onboard.account"
+                  : "families.canton.addAccount.onboard.newAccount"
+              }
+            />
           </Box>
           {creatableAccount && (
             <AccountRow
@@ -120,6 +132,7 @@ export default function StepOnboard({
   importableAccounts,
   onboardingStatus,
   error,
+  isReonboarding,
 }: StepProps) {
   const link = useLocalizedUrl(urls.canton.learnMore);
   const onClick = () => openURL(link);
@@ -134,11 +147,18 @@ export default function StepOnboard({
               editedNames={editedNames}
               creatableAccount={creatableAccount}
               importableAccounts={importableAccounts}
+              isReonboarding={isReonboarding}
             />
 
             <Box>
-              <Alert type="hint">
-                <Trans i18nKey="families.canton.addAccount.onboard.init" />
+              <Alert type={isReonboarding ? "warning" : "hint"}>
+                <Trans
+                  i18nKey={
+                    isReonboarding
+                      ? "families.canton.addAccount.reonboard.init"
+                      : "families.canton.addAccount.onboard.init"
+                  }
+                />
               </Alert>
             </Box>
           </Box>
@@ -156,11 +176,18 @@ export default function StepOnboard({
               editedNames={editedNames}
               creatableAccount={creatableAccount}
               importableAccounts={importableAccounts}
+              isReonboarding={isReonboarding}
             />
 
             <Box>
               <Alert type="success">
-                <Trans i18nKey="families.canton.addAccount.onboard.success" />
+                <Trans
+                  i18nKey={
+                    isReonboarding
+                      ? "families.canton.addAccount.reonboard.success"
+                      : "families.canton.addAccount.onboard.success"
+                  }
+                />
               </Alert>
             </Box>
           </Box>
@@ -191,6 +218,7 @@ export default function StepOnboard({
               editedNames={editedNames}
               creatableAccount={creatableAccount}
               importableAccounts={importableAccounts}
+              isReonboarding={isReonboarding}
             />
 
             <Box>
@@ -208,11 +236,12 @@ export default function StepOnboard({
               editedNames={editedNames}
               creatableAccount={creatableAccount}
               importableAccounts={importableAccounts}
+              isReonboarding={isReonboarding}
             />
 
             <LoadingRow>
-              <Spinner color="palette.text.shade60" size={16} />
-              <Box ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
+              <Spinner color="neutral.c70" size={16} />
+              <Box ml={2} ff="Inter|Regular" color="neutral.c70" fontSize={4}>
                 <Trans i18nKey={getStatusMessage(onboardingStatus)} />
               </Box>
             </LoadingRow>
@@ -289,7 +318,7 @@ const LoadingRow = styled(Box).attrs(() => ({
   mt: 1,
 }))`
   height: 48px;
-  border: 1px dashed ${p => p.theme.colors.palette.text.shade60};
+  border: 1px dashed ${p => p.theme.colors.neutral.c70};
 `;
 
 const SectionAccountsStyled = styled(Box)`

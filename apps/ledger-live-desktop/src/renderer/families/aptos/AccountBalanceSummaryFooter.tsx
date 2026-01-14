@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import BigNumber from "bignumber.js";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
@@ -21,7 +21,7 @@ const Wrapper = styled(Box).attrs(() => ({
   pb: 0,
   scroll: true,
 }))`
-  border-top: 1px solid ${p => p.theme.colors.palette.text.shade10};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c30};
 `;
 
 const BalanceDetail = styled(Box).attrs(() => ({
@@ -39,7 +39,7 @@ const TitleWrapper = styled(Box).attrs(() => ({
 const Title = styled(Text).attrs(() => ({
   fontSize: 4,
   ff: "Inter|Medium",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
 }))`
   line-height: ${p => p.theme.space[4]}px;
   margin-right: ${p => p.theme.space[1]}px;
@@ -48,7 +48,7 @@ const Title = styled(Text).attrs(() => ({
 const AmountValue = styled(Text).attrs(() => ({
   fontSize: 6,
   ff: "Inter|SemiBold",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))<{ paddingRight?: number }>`
   ${p => p.paddingRight && `padding-right: ${p.paddingRight}px`};
 `;

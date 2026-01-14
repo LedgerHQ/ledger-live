@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useStore } from "react-redux";
+import { useStore } from "~/context/hooks";
 import { start } from "./segment";
 import useFlushInBackground from "./useFlushInBackground";
 

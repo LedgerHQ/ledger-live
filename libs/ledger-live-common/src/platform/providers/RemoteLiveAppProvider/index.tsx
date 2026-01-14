@@ -93,7 +93,7 @@ export function RemoteLiveAppProvider({
   children,
   parameters,
   updateFrequency,
-}: LiveAppProviderProps): JSX.Element {
+}: LiveAppProviderProps): React.JSX.Element {
   const isMounted = useIsMounted();
   const [state, setState] = useState<Loadable<LiveAppRegistry>>(initialState);
   const [provider, setProvider] = useState<string>(initialProvider);

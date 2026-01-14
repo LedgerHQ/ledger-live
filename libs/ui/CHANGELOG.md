@@ -1,5 +1,23 @@
 # ui
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+## 0.4.0
+
+### Minor Changes
+
+- [#13038](https://github.com/LedgerHQ/ledger-live/pull/13038) [`ef276b7`](https://github.com/LedgerHQ/ledger-live/commit/ef276b7654ab32c7253ee812ceac3f89316ded4b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Uses crypto-icons everywhere and drop the legacy crypto-icons-ui for design unification and performance gain
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#13038](https://github.com/LedgerHQ/ledger-live/pull/13038) [`ef276b7`](https://github.com/LedgerHQ/ledger-live/commit/ef276b7654ab32c7253ee812ceac3f89316ded4b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Uses crypto-icons everywhere and drop the legacy crypto-icons-ui for design unification and performance gain
+
 ## 0.3.0
 
 ### Minor Changes

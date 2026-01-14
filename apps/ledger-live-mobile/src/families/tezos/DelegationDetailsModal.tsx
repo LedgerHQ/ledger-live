@@ -12,7 +12,7 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Delegation } from "@ledgerhq/live-common/families/tezos/types";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import Icon from "react-native-vector-icons/Feather";
+import { Icons } from "@ledgerhq/native-ui";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import IconReceive from "~/icons/Receive";
 import LText from "~/components/LText";
@@ -28,7 +28,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import BakerImage from "./BakerImage";
 import DelegatingContainer from "./DelegatingContainer";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type Props = {
   isOpened: boolean;
@@ -308,7 +308,7 @@ export default function DelegationDetailsModal({
               label={<Trans i18nKey="delegation.changeValidator" />}
               icon={
                 <Circle bg={rgba(colors.live, 0.2)} size={48}>
-                  <Icon size={16} name="edit-2" color={colors.live} />
+                  <Icons.PenEdit size="XS" color={colors.live} />
                 </Circle>
               }
               onPress={onChangeValidator}

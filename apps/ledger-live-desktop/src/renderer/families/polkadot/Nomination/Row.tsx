@@ -29,7 +29,7 @@ const Wrapper = styled.div`
 
 const Column = styled(TableLine).attrs(() => ({
   ff: "Inter|SemiBold",
-  color: "palette.text.shade80",
+  color: "neutral.c80",
   fontSize: 3,
 }))``;
 
@@ -39,12 +39,12 @@ const IconContainer = styled.div`
   justify-content: center;
   width: 24px;
   height: 24px;
-  color: ${p => p.theme.colors.palette.primary.main};
+  color: ${p => p.theme.colors.primary.c80};
 `;
 
 const ValidatorName = styled(TableLine).attrs(() => ({
   ff: "Inter|SemiBold",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   fontSize: 3,
 }))`
   cursor: pointer;
@@ -53,7 +53,7 @@ const ValidatorName = styled(TableLine).attrs(() => ({
   }
 
   &:hover {
-    color: ${p => p.theme.colors.palette.primary.main};
+    color: ${p => p.theme.colors.primary.c80};
   }
 
   &:hover > ${IconContainer} {
@@ -169,7 +169,7 @@ export function Row({
           </Box>
         )}
         {!status && (
-          <Box color="warning" pl={2}>
+          <Box color="legacyWarning" pl={2}>
             <ToolTip content={<Trans i18nKey="polkadot.nomination.notValidatorTooltip" />}>
               <ExclamationCircle size={14} />
               <StatusLabel>

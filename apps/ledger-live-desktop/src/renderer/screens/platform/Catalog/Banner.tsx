@@ -8,8 +8,8 @@ const Container = styled(Box).attrs(p => ({
   flex: 0,
   horizontal: true,
   fontSize: 4,
-  color: p.theme.colors.palette.primary.contrastText,
-  backgroundColor: p.theme.colors.palette.primary.main,
+  color: p.theme.colors.neutral.c00,
+  backgroundColor: p.theme.colors.primary.c80,
   mb: 24,
 }))`
   min-height: 121px;

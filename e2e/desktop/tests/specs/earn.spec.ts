@@ -4,6 +4,9 @@ import { CLI } from "tests/utils/cliUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
+import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -43,17 +46,10 @@ for (const { account, provider, xrayTicket } of ethEarn) {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: account.currency.speculosApp,
-      cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: account.currency.id,
-            index: account.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-      ],
+      cliCommands: [liveDataWithAddressCommand(account)],
     });
+
+    const family = getFamilyByCurrencyId(account.currency.id);
 
     test(
       `ETH staking flow - Earn Dashboard - ${provider.name}`,
@@ -64,6 +60,9 @@ for (const { account, provider, xrayTicket } of ethEarn) {
           "@NanoX",
           "@Stax",
           "@Flex",
+          "@NanoGen5",
+          `@${account.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
           ...(provider === Provider.LIDO ? ["@smoke"] : []),
         ],
         annotation: {
@@ -99,7 +98,7 @@ test.describe("Inline Add Account", () => {
   test(
     "Inline Add Account",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: [
         {
           type: "TMS",
@@ -111,9 +110,9 @@ test.describe("Inline Add Account", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
       await app.earnDashboard.clickLearnMoreButton(account.currency.id);
-      const modularDrawerVisible = await app.modularDrawer.isModularAccountDrawerVisible();
-      if (modularDrawerVisible) {
-        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+      const selector = await getModularSelector(app, "ACCOUNT");
+      if (selector) {
+        await selector.clickOnAddAndExistingAccount();
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
       } else {
@@ -186,6 +185,8 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
       ],
     });
 
+    const family = getFamilyByCurrencyId(account.currency.id);
+
     test(
       `Correct Earn page - ${account.currency.ticker} - staking situation: ${staking}`,
       {
@@ -195,6 +196,9 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
           "@NanoX",
           "@Stax",
           "@Flex",
+          "@NanoGen5",
+          `@${account.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
           ...(account === Account.NEAR_1 ? ["@smoke"] : []),
         ],
         annotation: {

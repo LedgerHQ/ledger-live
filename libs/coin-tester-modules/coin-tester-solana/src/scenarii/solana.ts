@@ -1,8 +1,6 @@
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { SolanaAccount, Transaction as SolanaTransaction } from "@ledgerhq/coin-solana/types";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import resolver from "@ledgerhq/coin-solana/hw-getAddress";
-import { LegacySignerSolana } from "@ledgerhq/live-signer-solana";
 import {
   RECIPIENT,
   SOLANA,
@@ -14,7 +12,7 @@ import {
   makeAccount,
 } from "../fixtures";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
-import solanaCoinConfig, { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
+import { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import BigNumber from "bignumber.js";
 import { setEnv } from "@ledgerhq/live-env";
 import { airdrop, killAgave, spawnAgave } from "../agave";
@@ -29,17 +27,13 @@ import {
   initStakeAccount,
   initVoteAccount,
 } from "../connection";
-import { Config, getChainAPI } from "@ledgerhq/coin-solana/network/index";
-import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
+import { createBridges } from "@ledgerhq/coin-solana/bridge/js";
+import { buildSigner } from "../signer";
 
 global.console = require("console");
 jest.setTimeout(100_000);
 
 type SolanaScenarioTransaction = ScenarioTransaction<SolanaTransaction, SolanaAccount>;
-
-// Note this config runs with NanoX
-// https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-tester/docker-compose.yml
-export const defaultNanoApp = { firmware: "2.4.2", version: "1.9.2" } as const;
 
 function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] {
   if (!VOTE_ACCOUNT) {
@@ -412,13 +406,10 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
 export const scenarioSolana: Scenario<SolanaTransaction, SolanaAccount> = {
   name: "Ledger Live Basic Solana Transactions",
   setup: async () => {
-    const [{ getOnSpeculosConfirmation, transport }] = await Promise.all([
-      spawnSpeculos(`/${defaultNanoApp.firmware}/Solana/app_${defaultNanoApp.version}.elf`),
-      spawnAgave(),
-    ]);
+    await spawnAgave();
 
-    const signerContext: Parameters<typeof resolver>[0] = (_, fn) =>
-      fn(new LegacySignerSolana(transport));
+    const signer = await buildSigner();
+    const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(signer);
 
     const getAddress = resolver(signerContext);
     const { address } = await getAddress("", {
@@ -436,18 +427,7 @@ export const scenarioSolana: Scenario<SolanaTransaction, SolanaAccount> = {
       token2022Enabled: true,
       legacyOCMSMaxVersion: "1.8.0",
     });
-    solanaCoinConfig.setCoinConfig(coinConfig);
-    const chainAPICache = new Map<string, ReturnType<typeof getChainAPI>>();
-    const { accountBridge, currencyBridge } = makeBridges({
-      getAPI: (config: Config) => {
-        const endpoint = config.endpoint;
-        if (!chainAPICache.has(endpoint)) {
-          chainAPICache.set(endpoint, getChainAPI(config));
-        }
-        return chainAPICache.get(endpoint)!;
-      },
-      signerContext,
-    });
+    const { accountBridge, currencyBridge } = createBridges(signerContext, coinConfig);
 
     await airdrop(account.freshAddress, 5);
     await airdrop(PAYER.publicKey.toBase58(), 5);
@@ -464,11 +444,8 @@ export const scenarioSolana: Scenario<SolanaTransaction, SolanaAccount> = {
       account,
       accountBridge,
       currencyBridge,
-      onSignerConfirmation: getOnSpeculosConfirmation("Approve"),
     };
   },
   getTransactions: makeScenarioTransactions,
-  teardown: async () => {
-    await Promise.all([killSpeculos(), killAgave()]);
-  },
+  teardown: killAgave,
 };

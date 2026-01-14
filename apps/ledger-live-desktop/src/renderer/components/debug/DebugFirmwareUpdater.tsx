@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { lastSeenDeviceSelector, latestFirmwareSelector } from "~/renderer/reducers/settings";
 import { Item, MockContainer } from "./shared";
 import Box from "~/renderer/components/Box";
@@ -18,18 +18,18 @@ const DebugFirmwareUpdater = () => {
   return (
     <MockContainer>
       <Box>
-        <Item color="palette.text.shade100" ff="Inter|Medium" fontSize={3} onClick={toggleExpanded}>
+        <Item color="neutral.c100" ff="Inter|Medium" fontSize={3} onClick={toggleExpanded}>
           {expanded ? "fw updater [ - ]" : "u"}
         </Item>
         {expanded ? (
           <>
             <Box>
-              <Text mx={1} ff={"Inter|Medium"} color="palette.text.shade100" fontSize={3}>
+              <Text mx={1} ff={"Inter|Medium"} color="neutral.c100" fontSize={3}>
                 {latestFirmware ? `Fw version available: ${latestFirmware.final.version}` : ""}
               </Text>
             </Box>
             <Box>
-              <Text mx={1} ff={"Inter|Medium"} color="palette.text.shade100" fontSize={3}>
+              <Text mx={1} ff={"Inter|Medium"} color="neutral.c100" fontSize={3}>
                 <pre>
                   {JSON.stringify(
                     lastSeenDevice

@@ -11,7 +11,7 @@ const StyledSVG = styled(Svg)`
 type Props = {
   height: number;
   opacity: number;
-  stops: JSX.Element[];
+  stops: React.JSX.Element[];
 };
 
 const BackgroundGradient = ({ height, opacity, stops }: Props) => (
@@ -28,7 +28,13 @@ const BackgroundGradient = ({ height, opacity, stops }: Props) => (
         {stops}
       </LinearGradient>
     </Defs>
-    <Rect x="0" y="0" width="100%" height="100%" opacity={opacity} fill="url(#myGradient)" />
+    <Rect
+      transform={[{ translateX: 0 }, { translateY: 0 }]}
+      width="100%"
+      height="100%"
+      opacity={opacity}
+      fill="url(#myGradient)"
+    />
   </StyledSVG>
 );
 
@@ -37,7 +43,7 @@ export default BackgroundGradient;
 type HorizontalProps = {
   height?: number;
   opacity: number;
-  stops: JSX.Element[];
+  stops: React.JSX.Element[];
 };
 
 export const BackgroundGradientHorizontal = ({ height, opacity, stops }: HorizontalProps) => (
@@ -59,6 +65,12 @@ export const BackgroundGradientHorizontal = ({ height, opacity, stops }: Horizon
         {stops}
       </LinearGradient>
     </Defs>
-    <Rect x="0" y="0" width="100%" height="100%" opacity={opacity} fill="url(#myGradient)" />
+    <Rect
+      transform={[{ translateX: 0 }, { translateY: 0 }]}
+      width="100%"
+      height="100%"
+      opacity={opacity}
+      fill="url(#myGradient)"
+    />
   </StyledSVG>
 );

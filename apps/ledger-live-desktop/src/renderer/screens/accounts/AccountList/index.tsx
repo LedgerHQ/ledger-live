@@ -9,7 +9,7 @@ import SearchBox from "./SearchBox";
 import DisplayOptions from "./DisplayOptions";
 import GridBody from "./GridBody";
 import ListBody from "./ListBody";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";

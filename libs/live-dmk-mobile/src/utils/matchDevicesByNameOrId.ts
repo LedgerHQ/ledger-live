@@ -28,7 +28,7 @@ export function isFormattedAsOldDeviceDefaultBleName(name: string): boolean {
    *
    * we keep it simple and don't check the model name because of potential exceptions, this should be good enough
    * */
-  const regex = /^Ledger .* [0-9A-Fa-f]{4}$/;
+  const regex = /^(Ledger|Nano) .* [0-9A-Fa-f]{4}$/;
   return regex.test(name);
 }
 

@@ -17,7 +17,7 @@ import { isRestoreStepEnabled } from "../helpers/createFirmwareUpdateSteps";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))``;
 
 type BodyProps = {
@@ -31,7 +31,7 @@ type StepUpdatingProps = StepProps & {
 };
 
 export const Body = ({ modelId, deviceHasPin, downloadPhase }: BodyProps) => {
-  const type = useTheme().colors.palette.type;
+  const type = useTheme().theme;
   return renderFirmwareUpdating({ modelId, type, deviceHasPin, downloadPhase });
 };
 

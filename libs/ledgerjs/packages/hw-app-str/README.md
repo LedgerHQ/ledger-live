@@ -56,6 +56,9 @@ We have written corresponding classes for exceptions that developers should acti
     *   [signHash](#signhash)
         *   [Parameters](#parameters-4)
         *   [Examples](#examples-5)
+    *   [signMessage](#signmessage)
+        *   [Parameters](#parameters-5)
+        *   [Examples](#examples-6)
 
 ### StellarHashSigningNotEnabledError
 
@@ -169,6 +172,23 @@ Sign a hash.
 
 ```javascript
 str.signHash("44'/148'/0'", hash).then(o => o.signature)
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{signature: [Buffer](https://nodejs.org/api/buffer.html)}>** an object with the signature
+
+#### signMessage
+
+Sign a message.
+
+##### Parameters
+
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+*   `message` **[Buffer](https://nodejs.org/api/buffer.html)** the message to sign
+
+##### Examples
+
+```javascript
+str.signMessage("44'/148'/0'", message).then(o => o.signature)
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{signature: [Buffer](https://nodejs.org/api/buffer.html)}>** an object with the signature

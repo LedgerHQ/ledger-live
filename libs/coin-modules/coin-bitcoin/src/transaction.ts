@@ -87,6 +87,7 @@ const fromTransactionStatusRaw = (tr: TransactionStatusRaw): TransactionStatus =
     txInputs: tr.txInputs ? tr.txInputs.map(fromBitcoinInputRaw) : undefined,
     txOutputs: tr.txOutputs ? tr.txOutputs.map(fromBitcoinOutputRaw) : undefined,
     opReturnData: tr.opReturnData,
+    changeAddress: tr.changeAddress,
   };
 };
 
@@ -97,6 +98,7 @@ export const toTransactionStatusRaw = (t: TransactionStatus): TransactionStatusR
     txInputs: t.txInputs ? t.txInputs.map(toBitcoinInputRaw) : undefined,
     txOutputs: t.txOutputs ? t.txOutputs.map(toBitcoinOutputRaw) : undefined,
     opReturnData: t.opReturnData,
+    changeAddress: t.changeAddress,
   };
 };
 

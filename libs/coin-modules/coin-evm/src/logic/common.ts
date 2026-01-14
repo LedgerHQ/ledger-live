@@ -105,6 +105,7 @@ function getCallData(intent: TransactionIntent<MemoNotSupported, BufferTxData>):
 export async function prepareUnsignedTxParams(
   currency: CryptoCurrency,
   transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
+  customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<TransactionLikeWithPreparedParams> {
   const { sender, type } = transactionIntent;
 
@@ -122,10 +123,18 @@ export async function prepareUnsignedTxParams(
         };
       })()
     : buildStakingTransactionParams(currency, transactionIntent);
-  const gasLimit = await node.getGasEstimation(
-    { currency, freshAddress: sender },
-    { amount: BigNumber(value.toString()), recipient: to, data },
-  );
+  const gasLimit =
+    typeof customFeesParameters?.gasLimit === "bigint"
+      ? BigNumber(customFeesParameters.gasLimit.toString())
+      : // Implementations of `getGasEstimation` throw an error when
+        // trying to send more token asset than available.
+        // Fallback to an estimation of 0 to not break the UI.
+        await node
+          .getGasEstimation(
+            { currency, freshAddress: sender },
+            { amount: BigNumber(value.toString()), recipient: to, data },
+          )
+          .catch(() => new BigNumber(0));
 
   return {
     type: transactionType,

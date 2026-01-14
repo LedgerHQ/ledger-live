@@ -4,7 +4,7 @@ import { SolanaAccount, SolanaStakeWithMeta } from "@ledgerhq/live-common/famili
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
@@ -81,7 +81,7 @@ const Delegation = ({ account }: { account: SolanaAccount }) => {
             <Button
               id={"account-delegate-button"}
               mr={2}
-              color="palette.primary.main"
+              color="primary.c80"
               small
               onClick={onDelegate}
             >
@@ -127,7 +127,7 @@ function EarnRewardsCTA({ account, onEarnRewards }: EarnRewardsCTAProps) {
           maxWidth: "65%",
         }}
       >
-        <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
+        <Text ff="Inter|Medium|SemiBold" color="neutral.c70" fontSize={4}>
           <Trans
             i18nKey="solana.delegation.emptyState.description"
             values={{

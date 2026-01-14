@@ -2,12 +2,10 @@ import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { useSelector } from "react-redux";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-
 import { TrackScreen } from "~/analytics";
 import ValidateError from "~/components/ValidateError";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { ScreenName } from "~/const";
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -25,7 +23,7 @@ export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const error = route.params?.error;
 
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   const currency = account ? getAccountCurrency(account) : null;
 
   const onClose = useCallback(() => {

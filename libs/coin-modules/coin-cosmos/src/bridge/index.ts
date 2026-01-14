@@ -29,6 +29,7 @@ import type { CosmosAccount, CosmosOperation, Transaction, TransactionStatus } f
 import { CosmosSigner } from "../types/signer";
 import { updateTransaction } from "../updateTransaction";
 import { getPreloadStrategy, hydrate, preload } from "./preload";
+import { validateAddress } from "../validateAddress";
 
 const sync = makeSync({ getAccountShape });
 
@@ -80,6 +81,7 @@ function buildAccountBridge(
     formatAccountSpecifics: formatters.formatAccountSpecifics,
     formatOperationSpecifics: formatters.formatOperationSpecifics,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

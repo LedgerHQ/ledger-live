@@ -4,12 +4,21 @@
     "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "rootDir": "./src",
     "exactOptionalPropertyTypes": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "typeRoots": ["./node_modules/@types", "index.d.ts"]
+    "typeRoots": [
+      "./node_modules/@types",
+      "index.d.ts"
+    ]
   },
-  "include": ["src/**/*", "index.d.ts"]
+  "include": [
+    "src/**/*",
+    "index.d.ts"
+  ]
 }

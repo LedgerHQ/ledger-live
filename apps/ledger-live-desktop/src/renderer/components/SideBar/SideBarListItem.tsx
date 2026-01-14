@@ -11,7 +11,7 @@ interface IconProps {
 export type Props = {
   label: string | ((a: Props) => React.ReactNode);
   desc?: (a: Props) => React.ReactNode;
-  icon?: ({ size }: IconProps) => JSX.Element;
+  icon?: ({ size }: IconProps) => React.JSX.Element;
   iconSize?: IconProps["size"];
   disabled?: boolean;
   iconActiveColor: string | undefined;
@@ -91,23 +91,22 @@ const Container = styled(Tabbable).attrs(() => ({
   position: relative;
   width: 100%;
   cursor: ${p => (p.disabled ? "not-allowed" : "pointer")};
-  color: ${p =>
-    p.isActive ? p.theme.colors.palette.text.shade100 : p.theme.colors.palette.opacityDefault.c70};
-  background: ${p => (p.isActive ? p.theme.colors.palette.opacityDefault.c05 : "")};
+  color: ${p => (p.isActive ? p.theme.colors.neutral.c100 : p.theme.colors.opacityDefault.c70)};
+  background: ${p => (p.isActive ? p.theme.colors.opacityDefault.c05 : "")};
   opacity: ${p => (p.disabled ? 0.5 : 1)};
 
   &:active {
-    background: ${p => !p.disabled && p.theme.colors.palette.opacityDefault.c05};
+    background: ${p => !p.disabled && p.theme.colors.opacityDefault.c05};
   }
 
   &:hover {
-    background: ${p => !p.disabled && p.theme.colors.palette.opacityDefault.c05};
+    background: ${p => !p.disabled && p.theme.colors.opacityDefault.c05};
   }
 
   ${p => {
     const iconActiveColor =
       p.theme.colors[p.iconActiveColor as keyof DefaultTheme["colors"]] || p.iconActiveColor;
-    const color = p.isActive ? iconActiveColor : p.theme.colors.palette.opacityDefault.c70;
+    const color = p.isActive ? iconActiveColor : p.theme.colors.opacityDefault.c70;
     return `
       svg { color: ${color}; }
     `;

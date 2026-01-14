@@ -22,6 +22,7 @@ import { broadcast } from "../broadcast";
 import resolver from "../hw-getAddress";
 import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
 import cardanoCoinConfig, { CardanoCoinConfig } from "../config";
+import { validateAddress } from "../validateAddress";
 
 export function buildCurrencyBridge(signerContext: SignerContext<CardanoSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -66,6 +67,7 @@ export function buildAccountBridge(
     assignToAccountRaw,
     assignFromAccountRaw,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

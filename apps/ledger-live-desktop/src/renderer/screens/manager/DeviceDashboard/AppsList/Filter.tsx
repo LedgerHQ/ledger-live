@@ -9,14 +9,17 @@ import Text from "~/renderer/components/Text";
 import { AppType } from "@ledgerhq/live-common/apps/filtering";
 
 type Props = {
-  onFilterChange: Function;
+  onFilterChange: (key: AppType) => void;
   filter: AppType;
 };
 
 const Filter = ({ onFilterChange, filter }: Props) => {
-  const filterItems = [
+  const filterItems: Array<{
+    key: AppType;
+    label: React.JSX.Element;
+  }> = [
     {
-      key: "all",
+      key: "all" as const,
       label: <Trans i18nKey="manager.applist.filter.all" />,
     },
     // {
@@ -24,11 +27,11 @@ const Filter = ({ onFilterChange, filter }: Props) => {
     //   label: <Trans i18nKey="manager.applist.filter.installed" />,
     // },
     {
-      key: "not_installed",
+      key: "not_installed" as const,
       label: <Trans i18nKey="manager.applist.filter.not_installed" />,
     },
     {
-      key: "supported",
+      key: "supported" as const,
       label: <Trans i18nKey="manager.applist.filter.supported" />,
     },
   ];
@@ -68,7 +71,7 @@ const Filter = ({ onFilterChange, filter }: Props) => {
       {({ isOpen, value }) =>
         value ? (
           <Box horizontal flow={1}>
-            <Text color="palette.text.shade60" ff="Inter|SemiBold" fontSize={4}>
+            <Text color="neutral.c70" ff="Inter|SemiBold" fontSize={4}>
               <Trans i18nKey="manager.applist.filter.title" />
             </Text>
             <Box

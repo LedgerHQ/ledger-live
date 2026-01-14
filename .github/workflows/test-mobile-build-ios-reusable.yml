@@ -37,6 +37,11 @@ on:
         required: false
         type: string
         default: "detox-ios-js-cache"
+      production_firebase:
+        description: Whether to build the iOS app for production Firebase
+        required: false
+        type: boolean
+        default: false
     outputs:
       js-bundle-size:
         description: The JS bundle size of the built app
@@ -76,6 +81,11 @@ on:
         required: false
         type: string
         default: "detox-ios-js-cache"
+      production_firebase:
+        description: Whether to build the iOS app for production Firebase
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   id-token: write
@@ -156,9 +166,10 @@ jobs:
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Build iOS app for Detox test run
-        run: pnpm mobile e2e:ci -p ios -b
+        run: pnpm mobile e2e:ci -p ios -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
         env:
           SKIP_JS_BUNDLING: "true"
+          PRODUCTION: ${{ inputs.production_firebase }}
 
       - name: Upload Detox Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop

@@ -4,7 +4,6 @@ import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-help
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
-import { toEVMAddress } from "../logic/utils";
 import { apiClient } from "../network/api";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
@@ -218,7 +217,7 @@ describe("utils", () => {
         erc20Tokens: [],
       });
 
-      expect(result).toHaveLength(0);
+      expect(result).toEqual([]);
     });
 
     it("returns sub account for mirror token with no operations yet (e.g. right after association)", async () => {
@@ -237,7 +236,6 @@ describe("utils", () => {
         erc20Tokens: [],
       });
 
-      expect(result).toHaveLength(1);
       expect(result).toMatchObject([
         {
           token: tokenCurrencyFromCAL,
@@ -259,7 +257,6 @@ describe("utils", () => {
         erc20Tokens: [{ balance: new BigNumber(42), token: tokenCurrencyFromCAL }],
       });
 
-      expect(result).toHaveLength(1);
       expect(result).toMatchObject([
         {
           token: tokenCurrencyFromCAL,
@@ -272,7 +269,7 @@ describe("utils", () => {
 
   describe("integrateERC20Operations", () => {
     const address = "0.0.12345";
-    const evmAddress = toEVMAddress(address);
+    const evmAddress = "0x0000000000000000000000000000000000003039";
     const ledgerAccountId = `js:2:hedera:${address}:`;
     const tokenCurrency = getTokenCurrencyFromCALByType("erc20");
 
@@ -341,7 +338,6 @@ describe("utils", () => {
         hash: incomingTxHash,
         blockHash: incomingERC20Transaction.blockHash,
       });
-      expect(incomingOp?.subOperations).toHaveLength(1);
       expect(incomingOp?.subOperations).toMatchObject([
         {
           type: "IN",
@@ -353,7 +349,6 @@ describe("utils", () => {
           recipients: [address],
         },
       ]);
-      expect(newERC20TokenOperations).toHaveLength(1);
       expect(newERC20TokenOperations).toMatchObject([incomingOp?.subOperations?.[0]]);
       expect(updatedOperations).toHaveLength(oldMirrorOperations.length + 1);
     });
@@ -422,7 +417,6 @@ describe("utils", () => {
         blockHash: allowanceERC20Transaction.blockHash,
         standard: "erc20",
       });
-      expect(allowanceOp?.subOperations).toHaveLength(1);
       expect(allowanceOp?.subOperations).toMatchObject([
         {
           type: "OUT",
@@ -434,7 +428,6 @@ describe("utils", () => {
           recipients: [allowanceTxTo],
         },
       ]);
-      expect(newERC20TokenOperations).toHaveLength(1);
       expect(newERC20TokenOperations).toMatchObject([allowanceOp?.subOperations?.[0]]);
       expect(updatedOperations).toHaveLength(oldMirrorOperations.length + 1);
     });
@@ -519,7 +512,7 @@ describe("utils", () => {
       );
 
       expect(updatedOperations).toHaveLength(2);
-      expect(duplicatedContractCalls).toHaveLength(0);
+      expect(duplicatedContractCalls).toEqual([]);
       expect(feesOps).toHaveLength(1);
       expect(feesOps).toMatchObject([{ blockHash: "0xBLOCK" }]);
     });
@@ -553,7 +546,7 @@ describe("utils", () => {
 
       expect(pendingOp).toBeUndefined();
       expect(updatedOperations).toHaveLength(1);
-      expect(updatedOperations[0].hash).toBe("confirmed_tx");
+      expect(updatedOperations).toMatchObject([{ hash: "confirmed_tx" }]);
     });
 
     /**
@@ -672,7 +665,6 @@ describe("utils", () => {
           },
         ],
       });
-      expect(newERC20TokenOperations).toHaveLength(1);
       expect(newERC20TokenOperations).toMatchObject([
         {
           type: "OUT",

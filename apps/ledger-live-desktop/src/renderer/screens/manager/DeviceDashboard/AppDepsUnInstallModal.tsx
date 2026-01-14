@@ -100,10 +100,10 @@ const AppDepsUninstallModal = ({ app, dependents, dispatch, onClose }: Props) =>
     >
       <CollapsibleCard
         mt={20}
-        bg="palette.background.default"
+        bg="background.default"
         header={
           <ItemLine>
-            <Text ff="Inter|SemiBold" color="palette.primary.main" fontSize={4}>
+            <Text ff="Inter|SemiBold" color="primary.c80" fontSize={4}>
               <Trans i18nKey="manager.apps.dependencyUninstall.showAll" />
             </Text>
           </ItemLine>
@@ -117,7 +117,7 @@ const AppDepsUninstallModal = ({ app, dependents, dispatch, onClose }: Props) =>
             <Box ml={4} mr={2}>
               <Image alt="" resource={manager.getIconUrl(a.icon)} width={22} height={22} />
             </Box>
-            <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
+            <Text ff="Inter|SemiBold" color="neutral.c100" fontSize={4}>
               {a.name}
             </Text>
           </ItemLine>

@@ -1,5 +1,99 @@
 # @ledgerhq/speculos-transport
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`50bae0f`](https://github.com/LedgerHQ/ledger-live/commit/50bae0f13a95ef166b2c5609ccbcf5ef01ba1579), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59)]:
+  - @ledgerhq/live-env@2.25.0-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.31.0-next.0
+  - @ledgerhq/devices@8.10.0-next.0
+  - @ledgerhq/logs@6.14.0-next.0
+  - @ledgerhq/live-dmk-speculos@0.5.0-next.0
+  - @ledgerhq/live-promise@0.2.0-next.0
+
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae), [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4), [`fba1e31`](https://github.com/LedgerHQ/ledger-live/commit/fba1e31386e589a93adb19bc4f6eae55129e19ea), [`b394f1d`](https://github.com/LedgerHQ/ledger-live/commit/b394f1ddca998a384d5e8032899d7f9a356cc4cc)]:
+  - @ledgerhq/devices@8.9.0
+  - @ledgerhq/live-env@2.24.0
+  - @ledgerhq/live-dmk-speculos@0.4.0
+  - @ledgerhq/hw-transport-node-speculos@6.30.1
+
+## 0.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a8c59da`](https://github.com/LedgerHQ/ledger-live/commit/a8c59da888c8cb3c200a9f62869ca54aba706cae), [`8cb7d40`](https://github.com/LedgerHQ/ledger-live/commit/8cb7d40e0a55e47f42adc5cd522740cab1fd4de4), [`fba1e31`](https://github.com/LedgerHQ/ledger-live/commit/fba1e31386e589a93adb19bc4f6eae55129e19ea), [`b394f1d`](https://github.com/LedgerHQ/ledger-live/commit/b394f1ddca998a384d5e8032899d7f9a356cc4cc)]:
+  - @ledgerhq/devices@8.9.0-next.0
+  - @ledgerhq/live-env@2.24.0-next.0
+  - @ledgerhq/live-dmk-speculos@0.4.0-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.30.1-next.0
+
+## 0.4.0
+
+### Minor Changes
+
+- [#13038](https://github.com/LedgerHQ/ledger-live/pull/13038) [`ef276b7`](https://github.com/LedgerHQ/ledger-live/commit/ef276b7654ab32c7253ee812ceac3f89316ded4b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Uses crypto-icons everywhere and drop the legacy crypto-icons-ui for design unification and performance gain
+
+### Patch Changes
+
+- Updated dependencies [[`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143), [`3e70677`](https://github.com/LedgerHQ/ledger-live/commit/3e706774f8c4e9b768ab18b67abc3471cf61b6b6), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe), [`8d8e1b7`](https://github.com/LedgerHQ/ledger-live/commit/8d8e1b7bb26305af326ea21710248223d1e8653b)]:
+  - @ledgerhq/live-dmk-speculos@0.3.0
+  - @ledgerhq/live-env@2.23.0
+  - @ledgerhq/hw-transport-node-speculos@6.30.0
+  - @ledgerhq/devices@8.8.0
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#13038](https://github.com/LedgerHQ/ledger-live/pull/13038) [`ef276b7`](https://github.com/LedgerHQ/ledger-live/commit/ef276b7654ab32c7253ee812ceac3f89316ded4b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Uses crypto-icons everywhere and drop the legacy crypto-icons-ui for design unification and performance gain
+
+### Patch Changes
+
+- Updated dependencies [[`adbabc7`](https://github.com/LedgerHQ/ledger-live/commit/adbabc7d3b7ed8915503120a027d19304adc1fc8), [`bdacedf`](https://github.com/LedgerHQ/ledger-live/commit/bdacedfe32bea8ffce96ab675a44c0d7cf395143), [`3e70677`](https://github.com/LedgerHQ/ledger-live/commit/3e706774f8c4e9b768ab18b67abc3471cf61b6b6), [`aadb3d5`](https://github.com/LedgerHQ/ledger-live/commit/aadb3d57f5719cc2cc397975eafec8094b160afe), [`8d8e1b7`](https://github.com/LedgerHQ/ledger-live/commit/8d8e1b7bb26305af326ea21710248223d1e8653b)]:
+  - @ledgerhq/live-dmk-speculos@0.3.0-next.0
+  - @ledgerhq/live-env@2.23.0-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.30.0-next.0
+  - @ledgerhq/devices@8.8.0-next.0
+
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/devices@8.7.1
+  - @ledgerhq/hw-transport-node-speculos@6.29.14
+  - @ledgerhq/live-dmk-speculos@0.2.1
+
+## 0.3.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/devices@8.7.1-hotfix.0
+  - @ledgerhq/hw-transport-node-speculos@6.29.14-hotfix.0
+  - @ledgerhq/live-dmk-speculos@0.2.1-hotfix.0
+
+## 0.3.0
+
+### Minor Changes
+
+- [#12563](https://github.com/LedgerHQ/ledger-live/pull/12563) [`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add DMK speculos transport and device controller
+
+### Patch Changes
+
+- Updated dependencies [[`a2ecb55`](https://github.com/LedgerHQ/ledger-live/commit/a2ecb55df9d383dc282f5fe489cb14386208215e), [`b4a4e16`](https://github.com/LedgerHQ/ledger-live/commit/b4a4e160aae6fd64f944ab25633f6931dc4358d3), [`b113920`](https://github.com/LedgerHQ/ledger-live/commit/b11392056bc334fc1813c473569ad3ae7be08045)]:
+  - @ledgerhq/live-env@2.22.0
+  - @ledgerhq/live-dmk-speculos@0.2.0
+
 ## 0.3.0-next.0
 
 ### Minor Changes

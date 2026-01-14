@@ -41,7 +41,7 @@ export type QuizzStep = {
   /**
    * Default illustration to display on the right
    */
-  Illustration?: (props: { size?: number }) => JSX.Element;
+  Illustration?: (props: { size?: number }) => React.JSX.Element;
   /**
    * generic explanation to display on any answer
    */
@@ -49,7 +49,7 @@ export type QuizzStep = {
   /**
    * Illustration to display on the right in case of a correct answer
    */
-  CorrectAnswerIllustration?: (props: { size?: number }) => JSX.Element;
+  CorrectAnswerIllustration?: (props: { size?: number }) => React.JSX.Element;
   /**
    * generic title to display in case the user picks a correct answer
    */
@@ -62,7 +62,7 @@ export type QuizzStep = {
   /**
    * Illustration to display on the right in case of an incorrect answer
    */
-  IncorrectAnswerIllustration?: (props: { size?: number }) => JSX.Element;
+  IncorrectAnswerIllustration?: (props: { size?: number }) => React.JSX.Element;
   /**
    * generic title to display in case the user picks an incorrect answer
    */
@@ -80,7 +80,9 @@ type StartScreenProps = {
 
 export type Props = {
   title: string;
-  StartScreen: React.ComponentType<StartScreenProps> | ((props: StartScreenProps) => JSX.Element);
+  StartScreen:
+    | React.ComponentType<StartScreenProps>
+    | ((props: StartScreenProps) => React.JSX.Element);
   steps: Array<QuizzStep>;
   onClose: () => void;
   onLose: () => void;
@@ -103,7 +105,7 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
   const stepCount = steps.length;
 
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { theme } = useTheme();
 
   const [userChoiceIndex, setUserChoiceIndex] = useState<number>();
 
@@ -217,7 +219,7 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
   return (
     <Popin isOpen style={style} p={0} position="relative">
       {!started && StartScreen ? (
-        colors.palette.type === "dark" ? (
+        theme === "dark" ? (
           <InvertThemeV3>
             <StartScreen onStart={() => setStarted(true)} />
           </InvertThemeV3>

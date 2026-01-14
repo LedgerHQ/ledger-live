@@ -17,6 +17,7 @@ export type Resolution = {
     mintAddress: string;
   };
   userInputType?: "sol" | "ata";
+  templateId?: string;
 };
 
 export enum PubKeyDisplayMode {

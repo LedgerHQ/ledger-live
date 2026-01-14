@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { setHasOrderedNano, setSensitiveAnalytics } from "~/actions/settings";

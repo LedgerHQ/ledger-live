@@ -19,6 +19,7 @@ import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
 import { CasperCoinConfig } from "../config";
 import { setCoinConfig } from "../config";
+import { validateAddress } from "./validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext<CasperSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -59,6 +60,7 @@ function buildAccountBridge(
     },
     broadcast,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

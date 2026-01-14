@@ -4,7 +4,7 @@ const ModalFooter = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid ${p => p.theme.colors.palette.divider};
+  border-top: 1px solid ${p => p.theme.colors.neutral.c40};
   padding: 15px 20px;
   &:empty {
     display: none;

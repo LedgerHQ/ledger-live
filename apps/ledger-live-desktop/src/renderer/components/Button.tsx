@@ -25,67 +25,61 @@ const buttonStyles: Record<string, Record<string, ButtonStyle>> = {
   default: {
     default: p => `
       box-shadow: ${p.isFocused ? focusedShadowStyle : ""};
-      ${p.disabled ? `color: ${p.theme.colors.palette.text.shade20}` : ""}
+      ${p.disabled ? `color: ${p.theme.colors.neutral.c40}` : ""}
     `,
     active: p => `
-      background: ${rgba(p.theme.colors.palette.divider, 0.2)};
+      background: ${rgba(p.theme.colors.neutral.c40, 0.2)};
     `,
     hover: p => `
-      background: ${rgba(p.theme.colors.palette.divider, 0.1)};
+      background: ${rgba(p.theme.colors.neutral.c40, 0.1)};
     `,
   },
   primary: {
     default: p => `
       background: ${
         p.disabled
-          ? `${p.theme.colors.palette.action.disabled} !important`
+          ? `${p.theme.colors.opacityDefault.c10} !important`
           : p.inverted
-            ? p.theme.colors.palette.primary.contrastText
-            : p.theme.colors.palette.primary.main
+            ? p.theme.colors.neutral.c00
+            : p.theme.colors.primary.c80
       };
       color: ${
         p.disabled
-          ? p.theme.colors.palette.text.shade20
+          ? p.theme.colors.opacityDefault.c20
           : p.inverted
-            ? p.theme.colors.palette.primary.main
-            : p.theme.colors.palette.primary.contrastText
+            ? p.theme.colors.primary.c80
+            : p.theme.colors.neutral.c00
       };
       box-shadow: ${
         p.isFocused
           ? `
-          0 0 0 1px ${darken(p.theme.colors.palette.primary.main, 0.3)} inset,
-          0 0 0 1px ${rgba(p.theme.colors.palette.primary.main, 0.5)},
-          0 0 0 3px ${rgba(p.theme.colors.palette.primary.main, 0.3)};`
+          0 0 0 1px ${darken(p.theme.colors.primary.c80, 0.3)} inset,
+          0 0 0 1px ${rgba(p.theme.colors.primary.c80, 0.5)},
+          0 0 0 3px ${rgba(p.theme.colors.primary.c80, 0.3)};`
           : ""
       }
     `,
     hover: p => `
        background: ${
          p.inverted
-           ? darken(p.theme.colors.palette.primary.contrastText, 0.05)
-           : lighten(p.theme.colors.palette.primary.main, 0.05)
+           ? darken(p.theme.colors.neutral.c00, 0.05)
+           : lighten(p.theme.colors.primary.c80, 0.05)
        };
      `,
     active: p => `
        background: ${
          p.inverted
-           ? darken(p.theme.colors.palette.primary.contrastText, 0.1)
-           : darken(p.theme.colors.palette.primary.main, 0.1)
+           ? darken(p.theme.colors.neutral.c00, 0.1)
+           : darken(p.theme.colors.primary.c80, 0.1)
        };
      `,
   },
   danger: {
     default: p => `
       background: ${
-        p.disabled
-          ? `${p.theme.colors.palette.action.disabled} !important`
-          : p.theme.colors.alertRed
+        p.disabled ? `${p.theme.colors.opacityDefault.c10} !important` : p.theme.colors.alertRed
       };
-      color: ${
-        p.disabled
-          ? p.theme.colors.palette.text.shade20
-          : p.theme.colors.palette.primary.contrastText
-      };
+      color: ${p.disabled ? p.theme.colors.neutral.c40 : p.theme.colors.neutral.c00};
       box-shadow: ${
         p.isFocused
           ? `
@@ -107,36 +101,32 @@ const buttonStyles: Record<string, Record<string, ButtonStyle>> = {
     default: p => `
       background: ${
         p.disabled
-          ? `${p.theme.colors.palette.action.disabled} !important`
-          : p.theme.colors.palette.action.hover
+          ? `${p.theme.colors.opacityDefault.c10} !important`
+          : p.theme.colors.opacityDefault.c10
       };
       color: ${
-        p.disabled
-          ? `${p.theme.colors.palette.text.shade20} !important`
-          : p.theme.colors.palette.primary.main
+        p.disabled ? `${p.theme.colors.neutral.c40} !important` : p.theme.colors.primary.c80
       };
       box-shadow: ${
         p.isFocused
           ? `
-          0 0 0 1px ${darken(p.theme.colors.palette.primary.main, 0.3)} inset,
-          0 0 0 1px ${rgba(p.theme.colors.palette.primary.main, 0.5)},
-          0 0 0 3px ${rgba(p.theme.colors.palette.primary.main, 0.3)};`
+          0 0 0 1px ${darken(p.theme.colors.primary.c80, 0.3)} inset,
+          0 0 0 1px ${rgba(p.theme.colors.primary.c80, 0.5)},
+          0 0 0 3px ${rgba(p.theme.colors.primary.c80, 0.3)};`
           : ""
       }
     `,
     hover: p => `
-       background: ${lighten(p.theme.colors.palette.action.hover, 0.05)};
+       background: ${lighten(p.theme.colors.opacityDefault.c10, 0.05)};
      `,
     active: p => `
-       background: ${darken(p.theme.colors.palette.action.hover, 0.1)};
+       background: ${darken(p.theme.colors.opacityDefault.c10, 0.1)};
      `,
   },
   lighterDanger: {
     default: p => `
       color: ${
-        p.disabled
-          ? `${p.theme.colors.palette.action.disabled} !important`
-          : p.theme.colors.alertRed
+        p.disabled ? `${p.theme.colors.opacityDefault.c10} !important` : p.theme.colors.alertRed
       };
     `,
     hover: p => `
@@ -150,7 +140,7 @@ const buttonStyles: Record<string, Record<string, ButtonStyle>> = {
     default: p => {
       const c = p.outlineColor
         ? get(p.theme.colors, p.outlineColor) || p.outlineColor
-        : p.theme.colors.palette.primary.main;
+        : p.theme.colors.primary.c80;
       return `
         background: transparent;
         border: 1px solid ${c};
@@ -166,7 +156,7 @@ const buttonStyles: Record<string, Record<string, ButtonStyle>> = {
     hover: p => {
       const c = p.outlineColor
         ? get(p.theme.colors, p.outlineColor) || p.outlineColor
-        : p.theme.colors.palette.primary.main;
+        : p.theme.colors.primary.c80;
       return `
         background: ${rgba(c, 0.1)};
       `;
@@ -174,19 +164,19 @@ const buttonStyles: Record<string, Record<string, ButtonStyle>> = {
     active: p => {
       const c = p.outlineColor
         ? get(p.theme.colors, p.outlineColor) || p.outlineColor
-        : p.theme.colors.palette.primary.main;
+        : p.theme.colors.primary.c80;
       return `
         background: ${rgba(c, 0.15)};
         color: ${darken(
           p.outlineColor
             ? get(p.theme.colors, p.outlineColor) || p.outlineColor
-            : p.theme.colors.palette.primary.main,
+            : p.theme.colors.primary.c80,
           0.1,
         )};
         border-color: ${darken(
           p.outlineColor
             ? get(p.theme.colors, p.outlineColor) || p.outlineColor
-            : p.theme.colors.palette.primary.main,
+            : p.theme.colors.primary.c80,
           0.1,
         )};
       `;
@@ -195,13 +185,13 @@ const buttonStyles: Record<string, Record<string, ButtonStyle>> = {
   outlineGrey: {
     default: p => `
       background: transparent;
-      border: 1px solid ${p.theme.colors.palette.text.shade60};
-      color: ${p.theme.colors.palette.text.shade60};
+      border: 1px solid ${p.theme.colors.neutral.c70};
+      color: ${p.theme.colors.neutral.c70};
       box-shadow: ${p.isFocused ? focusedShadowStyle : ""}
     `,
     active: p => `
-      color: ${darken(p.theme.colors.palette.text.shade60, 0.1)};
-      border-color: ${darken(p.theme.colors.palette.text.shade60, 0.1)};
+      color: ${darken(p.theme.colors.neutral.c70, 0.1)};
+      border-color: ${darken(p.theme.colors.neutral.c70, 0.1)};
     `,
   },
   icon: {
@@ -277,7 +267,7 @@ export const Base = styled.button.attrs<BaseProps>(p => ({
   fontSize: p.fontSize || (!p.small ? 4 : 3),
   px: p.px ? p.px : !p.small ? 4 : 3,
   py: !p.small ? 2 : 0,
-  color: p.color || p.theme.colors.palette.text.shade60,
+  color: p.color || p.theme.colors.neutral.c70,
   bg: "transparent",
 }))<BaseComponentProps>`
   ${space};

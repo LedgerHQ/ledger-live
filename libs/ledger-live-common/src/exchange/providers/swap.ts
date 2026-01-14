@@ -115,6 +115,26 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
     supportUrl: "https://criptointercambio.com/en/about",
     mainUrl: "https://criptointercambio.com/",
   },
+  cic_v2: {
+    name: "CIC",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
+        "0444a71652995d15ef0d4d6fe8de21a0c8ad48bdbfea7f789319973669785ca96abca9fd0c504c3074d9b654f0e3a76dde642a03efe4ccdee3af3ca4ba4afa202d",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "3044022078a73433ab6289027b7a169a260f180d16346f7ab55b06a22109f68a756d691d0220190edd6e1214c3309dc1b0afe90d217b728377491561383f2ee543e2c90188eb",
+      "hex",
+    ),
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+    termsOfUseUrl: "https://criptointercambio.com/terms-of-use",
+    supportUrl: "https://criptointercambio.com/en/about",
+    mainUrl: "https://criptointercambio.com/",
+  },
   moonpay: {
     name: "moonpay",
     publicKey: {
@@ -228,12 +248,14 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
 export const dexProvidersContractAddress: { [key: string]: string } = {
   "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad": "Uniswap",
   "0x111111125421ca6dc452d289314280a0f8842a65": "1inch",
+  "0x6a000f20005980200259b80c5102003040001068": "velora",
 };
 
 export const termsOfUse: { [key: string]: string } = {
   paraswap: "https://paraswap.io/tos",
   "1inch": "https://1inch.com/assets/Widget_1inch.com_Terms_of_Use.pdf",
   Uniswap: "https://uniswap.org/terms-of-service",
+  velora: "https://www.velora.xyz/terms/terms-of-use",
 };
 
 export const privacyPolicy: { [key: string]: string } = {

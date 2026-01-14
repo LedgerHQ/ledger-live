@@ -78,7 +78,7 @@ export class SettingsPage extends AppPage {
     try {
       const response = await axios.get(url);
       expect(response.status).toBe(200);
-    } catch (error) {
+    } catch {
       throw new Error(`Failed to fetch URL ${url}`);
     }
     expect(url).toBe("https://support.ledger.com");

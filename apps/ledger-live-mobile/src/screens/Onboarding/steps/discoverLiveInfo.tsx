@@ -4,7 +4,7 @@ import { Flex, Carousel, Text, Button, StoriesIndicator, Box } from "@ledgerhq/n
 import { useNavigation, useFocusEffect, CompositeNavigationProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "~/context/hooks";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
 import {
@@ -24,6 +24,7 @@ import {
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import { DETOX_ENABLED } from "~/utils/constants";
+import { useNotifications } from "~/logic/notifications";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.webp"),
@@ -63,6 +64,8 @@ const Item = ({
 
   const screenName = useMemo(() => `Reborn Story Step ${currentIndex}`, [currentIndex]);
 
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
+
   const onClick = useCallback(
     (value: string) => {
       track("button_clicked", {
@@ -94,7 +97,8 @@ const Item = ({
     dispatch(setIsReborn(true));
     dispatch(setOnboardingHasDevice(false));
     onClick("Explore without a device");
-  }, [dispatch, exploreLedger, onClick]);
+    tryTriggerPushNotificationDrawerAfterAction("onboarding");
+  }, [dispatch, exploreLedger, onClick, tryTriggerPushNotificationDrawerAfterAction]);
 
   const pressBuy = useCallback(() => {
     buyLedger();
@@ -116,7 +120,12 @@ const Item = ({
             <Stop offset="100%" stopOpacity={0} stopColor={colors.neutral.c00} />
           </LinearGradient>
         </Defs>
-        <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />
+        <Rect
+          transform={[{ translateX: 0 }, { translateY: 0 }]}
+          width="100%"
+          height="100%"
+          fill="url(#myGradient)"
+        />
       </Svg>
       <Text
         variant="h4"

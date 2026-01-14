@@ -43,7 +43,7 @@ const CurrentNetworkFeeComponent = ({
     formattedMaxPriorityFeePerGas,
     formattedMaxFeePerGas,
     formattedGasPrice,
-  } = getFormattedFeeFields({ transaction, mainAccount, locale: locale });
+  } = getFormattedFeeFields({ transaction, mainAccount, locale });
 
   return (
     <Alert type="info">

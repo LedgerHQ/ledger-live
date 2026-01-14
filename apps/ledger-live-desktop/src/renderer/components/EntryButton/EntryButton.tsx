@@ -32,7 +32,7 @@ const EntryButtonContainer = styled.button`
   justify-content: space-between;
   text-align: left;
   border: none;
-  background-color: ${p => p.theme.colors.palette.background.paper};
+  background-color: ${p => p.theme.colors.background.card};
   color: ${p => p.theme.colors.neutral.c100};
   border-radius: 4px;
   padding: ${p => p.theme.space[3]}px;
@@ -84,7 +84,7 @@ const IconWrapper = styled.div`
   height: 40px;
   border-radius: 100%;
   margin-right: ${p => p.theme.space[3]}px;
-  background-color: ${p => p.theme.colors.palette.opacityDefault.c05};
+  background-color: ${p => p.theme.colors.opacityDefault.c05};
 `;
 
 interface EntryButtonProps {

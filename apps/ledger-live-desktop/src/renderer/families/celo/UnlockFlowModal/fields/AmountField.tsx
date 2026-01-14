@@ -75,11 +75,11 @@ const AmountField = ({
         </Label>
         {typeof useAllAmount === "boolean" ? (
           <Box horizontal alignItems="center">
-            <Text color="palette.text.shade40" ff="Inter|Medium" fontSize={13}>
+            <Text color="neutral.c60" ff="Inter|Medium" fontSize={13}>
               <Trans i18nKey="celo.lock.steps.amount.availableLabel" />
               {": "}
             </Text>
-            <Text color="palette.text.shade40" ff="Inter|Medium" fontSize={13}>
+            <Text color="neutral.c60" ff="Inter|Medium" fontSize={13}>
               <SpendableAmount
                 account={account}
                 parentAccount={parentAccount}
@@ -89,7 +89,7 @@ const AmountField = ({
             </Text>
             <S.TextSeparator />
             <Text
-              color="palette.text.shade40"
+              color="neutral.c60"
               ff="Inter|Medium"
               fontSize={13}
               style={{

@@ -7,7 +7,7 @@ import Box from "~/renderer/components/Box/Box";
 const Placeholder = () => {
   return (
     <Box py={6} flex={1} alignContent="center">
-      <Box mb={4} horizontal color="palette.text.shade30" justifyContent="center">
+      <Box mb={4} horizontal color="neutral.c40" justifyContent="center">
         <NoResults />
       </Box>
       <Text textAlign="center" ff="Inter|SemiBold" fontSize={6}>

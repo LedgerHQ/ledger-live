@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/react";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { rgba } from "~/renderer/styles/helpers";
 import IconCheckFull from "~/renderer/icons/CheckFull";
@@ -10,6 +9,8 @@ import useTheme from "~/renderer/hooks/useTheme";
 import ensureContrast from "~/renderer/ensureContrast";
 import Spinner from "./Spinner";
 import { BoxProps } from "./Box/Box";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 
 type CryptoIconWrapperProps = {
   cryptoColor: string;
@@ -34,7 +35,7 @@ const CryptoIconWrapper = styled(Box).attrs<CryptoIconWrapperProps>(p => ({
   }
 `;
 const SpinnerWrapper = styled.div`
-  background: ${p => p.theme.colors.palette.background.paper};
+  background: ${p => p.theme.colors.background.card};
   border-radius: 100%;
   padding: 2px;
   width: 24px;
@@ -42,7 +43,7 @@ const SpinnerWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid ${p => p.theme.colors.palette.background.paper};
+  border: 2px solid ${p => p.theme.colors.background.card};
 `;
 
 /**
@@ -61,18 +62,24 @@ export function CurrencyCircleIcon({
   showSpinner?: boolean;
   showCheckmark?: boolean;
 }) {
-  const bgColor = useTheme().colors.palette.background.paper;
+  const bgColor = useTheme().colors.background.card;
   const cryptoColor = useMemo(
     () => (currency.type === "CryptoCurrency" ? ensureContrast(currency.color, bgColor) : ""),
     [currency, bgColor],
   );
+
   if (currency.type === "TokenCurrency") {
     return <ParentCryptoCurrencyIcon currency={currency} bigger />;
   }
-  const Icon = getCryptoCurrencyIcon(currency);
+
+  // Calculate icon size based on container size (60% of container size)
+  const iconSize = Math.round(size * 0.6);
+  const validIconSize = getValidCryptoIconSize(iconSize);
+
   return (
     <CryptoIconWrapper size={size} cryptoColor={cryptoColor}>
-      {Icon && <Icon size={size * 0.6} />}
+      <CryptoIcon ledgerId={currency.id} ticker={currency.ticker} size={validIconSize} />
+
       {showCheckmark && (
         <div>
           <IconCheckFull size={22} />
@@ -80,7 +87,7 @@ export function CurrencyCircleIcon({
       )}
       {showSpinner && (
         <SpinnerWrapper>
-          <Spinner color="palette.text.shade60" size={14} />
+          <Spinner color="neutral.c70" size={14} />
         </SpinnerWrapper>
       )}
     </CryptoIconWrapper>
@@ -93,7 +100,7 @@ function CurrencyBadge({ currency }: { currency: CryptoCurrency | TokenCurrency 
       <Box ml={2} maxWidth="fit-content">
         <Box
           ff="Inter|SemiBold"
-          color="palette.text.shade50"
+          color="neutral.c70"
           fontSize={2}
           style={{
             letterSpacing: 1,
@@ -101,7 +108,7 @@ function CurrencyBadge({ currency }: { currency: CryptoCurrency | TokenCurrency 
         >
           {currency.ticker}
         </Box>
-        <Box ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
+        <Box ff="Inter|SemiBold" color="neutral.c100" fontSize={4}>
           {currency.name}
         </Box>
       </Box>

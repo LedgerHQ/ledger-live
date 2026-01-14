@@ -49,7 +49,7 @@ const SpendableAmount = <T extends TransactionCommon>({
       style={{
         width: "auto",
       }}
-      color="palette.text.shade100"
+      color="neutral.c100"
       val={maxSpendable}
       unit={accountUnit}
       prefix={prefix}

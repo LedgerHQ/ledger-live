@@ -1,6 +1,6 @@
 import type { Action } from "redux-actions";
 import type { AccountComparator } from "@ledgerhq/live-wallet/ordering";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
   Account,
   DeviceInfo,
@@ -9,9 +9,9 @@ import type {
   FeatureId,
 } from "@ledgerhq/types-live";
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
   AppState,
   FwUpdateBackgroundEvent,
@@ -34,11 +34,11 @@ import type {
   SwapStateType,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
-import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
-import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
-import { Steps } from "LLM/features/WalletSync/types/Activation";
+import type { HandlersPayloads } from "@ledgerhq/live-wallet/store";
+import type { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
+import type { Steps } from "LLM/features/WalletSync/types/Activation";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { AnyAction } from "redux";
+import type { UnknownAction } from "redux";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -166,11 +166,12 @@ export type CountervaluesPayload =
 export enum NotificationsActionTypes {
   NOTIFICATIONS_SET_MODAL_OPEN = "NOTIFICATIONS_SET_MODAL_OPEN",
   NOTIFICATIONS_SET_MODAL_LOCKED = "NOTIFICATIONS_SET_MODAL_LOCKED",
-  NOTIFICATIONS_SET_MODAL_TYPE = "NOTIFICATIONS_SET_MODAL_TYPE",
+  NOTIFICATIONS_SET_DRAWER_SOURCE = "NOTIFICATIONS_SET_DRAWER_SOURCE",
   NOTIFICATIONS_SET_CURRENT_ROUTE_NAME = "NOTIFICATIONS_SET_CURRENT_ROUTE_NAME",
   NOTIFICATIONS_SET_EVENT_TRIGGERED = "NOTIFICATIONS_SET_EVENT_TRIGGERED",
   NOTIFICATIONS_SET_DATA_OF_USER = "NOTIFICATIONS_SET_DATA_OF_USER",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
+  NOTIFICATIONS_SET_PERMISSION_STATUS = "NOTIFICATIONS_SET_PERMISSION_STATUS",
 }
 
 export type NotificationsSetModalOpenPayload = NotificationsState["isPushNotificationsModalOpen"];
@@ -178,21 +179,24 @@ export type NotificationsSetModalOpenPayload = NotificationsState["isPushNotific
 export type NotificationsSetModalLockedPayload =
   NotificationsState["isPushNotificationsModalLocked"];
 
-export type NotificationsSetModalTypePayload = NotificationsState["notificationsModalType"];
+export type NotificationsSetDrawerSourcePayload = NotificationsState["drawerSource"];
 
 export type NotificationsSetCurrentRouteNamePayload = NotificationsState["currentRouteName"];
 
 export type NotificationsSetEventTriggeredPayload = NotificationsState["eventTriggered"];
+
+export type NotificationSetPermissionStatusPayload = NotificationsState["permissionStatus"];
 
 export type NotificationsSetDataOfUserPayload = NotificationsState["dataOfUser"];
 
 export type NotificationsPayload =
   | NotificationsSetModalOpenPayload
   | NotificationsSetModalLockedPayload
-  | NotificationsSetModalTypePayload
+  | NotificationsSetDrawerSourcePayload
   | NotificationsSetCurrentRouteNamePayload
   | NotificationsSetEventTriggeredPayload
-  | NotificationsSetDataOfUserPayload;
+  | NotificationsSetDataOfUserPayload
+  | NotificationSetPermissionStatusPayload;
 
 // === DYNAMIC CONTENT ACTIONS ===
 
@@ -297,7 +301,6 @@ export enum SettingsActionTypes {
   SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
   SET_IS_REBORN = "SET_IS_REBORN",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
-  SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON = "SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
   SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
   SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
@@ -376,8 +379,6 @@ export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
 export type SettingsSetClosedWithdrawBannerPayload = boolean;
 
 export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
-export type SettingsSetNeverClickedOnAllowNotificationsButton =
-  SettingsState["neverClickedOnAllowNotificationsButton"];
 export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
   SettingsState["walletTabNavigatorLastVisitedTab"];
 export type SettingsSetDateFormatPayload = SettingsState["dateFormat"];
@@ -618,4 +619,4 @@ export type ActionsPayload =
   | Action<ProtectPayload>
   | Action<EarnPayload>
   | Action<MarketPayload>
-  | AnyAction;
+  | UnknownAction;

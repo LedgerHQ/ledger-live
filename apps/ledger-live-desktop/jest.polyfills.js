@@ -1,12 +1,21 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-undef */
 const { TextDecoder, TextEncoder } = require("node:util");
-const { ReadableStream } = require("node:stream/web");
+const { ReadableStream, TransformStream } = require("node:stream/web");
 
 Object.defineProperties(globalThis, {
   TextDecoder: { value: TextDecoder },
   TextEncoder: { value: TextEncoder },
   ReadableStream: { value: ReadableStream },
+  TransformStream: { value: TransformStream },
+  BroadcastChannel: {
+    value: class {
+      postMessage() {}
+      close() {}
+      onmessage = null;
+      onmessageerror = null;
+    },
+  },
 });
 
 const { Blob, File } = require("node:buffer");
@@ -35,11 +44,11 @@ Object.defineProperty(globalThis, "performance", {
 const { fetch, Headers, FormData, Request, Response } = require("undici");
 
 Object.defineProperties(globalThis, {
-  fetch: { value: fetch, writable: true },
-  Blob: { value: Blob },
-  File: { value: File },
-  Headers: { value: Headers },
-  FormData: { value: FormData },
-  Request: { value: Request },
-  Response: { value: Response },
+  fetch: { value: fetch, writable: true, configurable: true },
+  Blob: { value: Blob, writable: true, configurable: true },
+  File: { value: File, writable: true, configurable: true },
+  Headers: { value: Headers, writable: true, configurable: true },
+  FormData: { value: FormData, writable: true, configurable: true },
+  Request: { value: Request, writable: true, configurable: true },
+  Response: { value: Response, writable: true, configurable: true },
 });

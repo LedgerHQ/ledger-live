@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { dismissedBannersSelector } from "~/renderer/reducers/settings";
 import { dismissBanner } from "~/renderer/actions/settings";
@@ -23,8 +23,8 @@ const Container = styled(Box).attrs<{
   alignItems: "center",
   py: "8px",
   px: 3,
-  bg: p.theme.colors[p.status] || "palette.primary.main",
-  color: "palette.primary.contrastText",
+  bg: p.theme.colors[p.status] || "primary.c80",
+  color: "neutral.c00",
   mb: 20,
   fontSize: 4,
   ff: "Inter|SemiBold",
@@ -41,7 +41,7 @@ const RightContainer = styled.div`
 export const FakeLink = styled.span<{
   disabled?: boolean;
 }>`
-  color: ${p => p.theme.colors.palette.primary.contrastText};
+  color: ${p => p.theme.colors.neutral.c00};
   text-decoration: underline;
   cursor: pointer;
   pointer-events: ${p => (p.disabled ? "none" : "auto")};
@@ -49,7 +49,7 @@ export const FakeLink = styled.span<{
 `;
 
 const CloseContainer = styled(Box).attrs(() => ({
-  color: "palette.primary.contrastText",
+  color: "neutral.c00",
 }))`
   z-index: 1;
   margin-left: 10px;

@@ -34,7 +34,7 @@ function Installing({ progress, isInstalling, current, total, deviceModelId }: P
           ? t(`manager.modal.steps.progressStep`, { current, total })
           : t(`manager.modal.steps.progress`)}
       </Title>
-      <Text mt={2} ff="Inter|Regular" textAlign="center" color="palette.text.shade60">
+      <Text mt={2} ff="Inter|Regular" textAlign="center" color="neutral.c70">
         {t("manager.modal.mcuRestart", { device: deviceModel.productName })}
       </Text>
     </Box>

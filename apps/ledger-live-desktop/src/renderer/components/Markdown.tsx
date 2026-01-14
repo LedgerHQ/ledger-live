@@ -7,7 +7,7 @@ import Box from "~/renderer/components/Box";
 export const Notes = styled(Box).attrs(() => ({
   ff: "Inter",
   fontSize: 4,
-  color: "palette.text.shade80",
+  color: "neutral.c80",
   flow: 4,
 }))`
   ul,
@@ -28,7 +28,7 @@ export const Notes = styled(Box).attrs(() => ({
   code {
     padding: 0.2em 0.4em;
     font-size: 0.9em;
-    background-color: ${p => p.theme.colors.palette.background.default};
+    background-color: ${p => p.theme.colors.background.default};
     border-radius: 3px;
   }
 
@@ -48,7 +48,7 @@ export const Notes = styled(Box).attrs(() => ({
   h4,
   h5,
   h6 {
-    color: ${p => p.theme.colors.palette.text.shade100};
+    color: ${p => p.theme.colors.neutral.c100};
     font-weight: bold;
     margin-top: 24px;
     margin-bottom: 16px;
@@ -89,7 +89,7 @@ export const Notes = styled(Box).attrs(() => ({
   hr {
     height: 1px;
     border: none;
-    background-color: ${p => p.theme.colors.palette.divider};
+    background-color: ${p => p.theme.colors.neutral.c40};
   }
 
   blockquote {
@@ -144,7 +144,7 @@ export default class Markdown extends PureComponent<Props> {
           e.preventDefault();
 
           const href = e.target && (e.target as typeof link).href;
-          href && shell.openExternal(href);
+          if (href) shell.openExternal(href);
         });
       });
     }

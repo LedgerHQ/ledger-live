@@ -8,8 +8,9 @@ let execa;
 
 const rebuildDeps = async (folder, file) => {
   await execa("npm", ["run", "install-deps"], {
+    stdio: "inherit",
     // env: { DEBUG: "electron-builder" },
-  }).stdout.pipe(process.stdout);
+  });
   const checksum = await hasha.fromFile(path.join("..", "..", "pnpm-lock.yaml"), {
     algorithm: "md5",
   });

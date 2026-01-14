@@ -44,7 +44,7 @@ const DebugUpdater = () => {
   return (
     <MockContainer>
       <Box>
-        <Item color="palette.text.shade100" ff="Inter|Medium" fontSize={3} onClick={toggleExpanded}>
+        <Item color="neutral.c100" ff="Inter|Medium" fontSize={3} onClick={toggleExpanded}>
           {expanded ? "updater [ - ]" : "u"}
         </Item>
         {expanded ? (
@@ -55,7 +55,7 @@ const DebugUpdater = () => {
                   mx={1}
                   id={`app-update-debug-${s}`}
                   ff={"Inter|Medium"}
-                  color="palette.text.shade100"
+                  color="neutral.c100"
                   fontSize={3}
                   onClick={() => setStatus?.(s)}
                 >
@@ -68,7 +68,7 @@ const DebugUpdater = () => {
                 <Text
                   mx={1}
                   ff="Inter|Medium"
-                  color="palette.text.shade100"
+                  color="neutral.c100"
                   fontSize={3}
                   onClick={quitAndInstall}
                 >

@@ -2,9 +2,8 @@ import React, { memo, useCallback, useEffect } from "react";
 import Config from "react-native-config";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { useSelector } from "react-redux";
 import { ScreenName, NavigatorName } from "~/const";
-import { accountScreenSelector } from "~/reducers/accounts";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import Scanner from "~/components/Scanner";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -12,7 +11,7 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 type NavigationProps = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.ScanRecipient>;
 
 const ScanRecipient = ({ route, navigation }: NavigationProps) => {
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
 
   const onResult = useCallback(
     (result: string) => {

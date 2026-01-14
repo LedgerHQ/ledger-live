@@ -61,12 +61,13 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
     (error: Error) => {
       if (onError) onError();
       track(`${analyticsContext} LanguageInstallError`, { error });
-      analyticsPayload &&
+      if (analyticsPayload) {
         track("User refused languageInstall on device", {
           ...analyticsPayload,
           platform: "LLD",
           flow: "SyncOnboarding",
         });
+      }
     },
     [onError, analyticsContext, analyticsPayload],
   );

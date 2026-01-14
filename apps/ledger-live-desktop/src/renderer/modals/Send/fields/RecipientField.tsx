@@ -44,7 +44,7 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
   useEffect(() => {
     if (value !== "" && value !== transaction.recipient) {
       onChangeTransaction(bridge.updateTransaction(transaction, { recipient: value }));
-      resetInitValue && resetInitValue();
+      resetInitValue?.();
     }
   }, [account]); // eslint-disable-line react-hooks/exhaustive-deps
 

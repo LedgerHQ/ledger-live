@@ -13,13 +13,13 @@ import { UpdateStepFooterWrapper } from "../UpdateStepFooterWrapper";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))``;
 
 const Title = styled(Box).attrs(() => ({
   fontFamily: "Inter",
   fontSize: 6,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
 }))`
   font-weight: 600;
   white-space: pre-wrap;
@@ -30,7 +30,7 @@ const SubTitle = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 4,
   mt: 3,
-  color: "palette.text.shade70",
+  color: "neutral.c80",
 }))`
   white-space: pre-wrap;
   text-align: center;

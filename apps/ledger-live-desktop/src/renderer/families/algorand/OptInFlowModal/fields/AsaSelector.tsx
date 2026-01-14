@@ -25,22 +25,19 @@ const renderItem = ({
       key={id}
       horizontal
       alignItems="center"
-      color={isDisabled ? "palette.text.shade40" : "palette.text.shade100"}
+      color={isDisabled ? "neutral.c60" : "neutral.c100"}
       justifyContent="space-between"
     >
       <Box horizontal alignItems="center" justifyContent="flex-start">
-        <FirstLetterIcon
-          color={isDisabled ? "palette.text.shade40" : "palette.text.shade100"}
-          label={name}
-        />
+        <FirstLetterIcon color={isDisabled ? "neutral.c60" : "neutral.c100"} label={name} />
         <Text ff="Inter|Medium">{name}</Text>
-        <Text fontSize={3} color="palette.text.shade40">
+        <Text fontSize={3} color="neutral.c60">
           - ID {tokenId}
         </Text>
       </Box>
       {isDisabled && (
         <ToolTip content={<Trans i18nKey="algorand.optIn.flow.steps.assets.disabledTooltip" />}>
-          <Box color="warning">
+          <Box color="legacyWarning">
             <ExclamationCircleThin size={16} />
           </Box>
         </ToolTip>

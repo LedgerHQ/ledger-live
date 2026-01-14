@@ -33,7 +33,7 @@ const TransactionConfirm = ({
   manifestId,
   manifestName,
 }: Props) => {
-  const type = useTheme().colors.palette.type;
+  const type = useTheme().theme;
 
   if (!device) return null;
 

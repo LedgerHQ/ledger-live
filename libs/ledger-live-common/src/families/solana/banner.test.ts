@@ -5,6 +5,10 @@ import { getAccountBannerState } from "./banner";
 import * as helpers from "../../account/helpers";
 
 jest.mock("@ledgerhq/coin-solana/preload-data");
+jest.mock("../../account/helpers", () => ({
+  ...jest.requireActual("../../account/helpers"),
+  isAccountEmpty: jest.fn(),
+}));
 
 import { BigNumber } from "bignumber.js";
 
@@ -112,13 +116,20 @@ const validatorsMap = {
   splTokens: null,
 } as SolanaPreloadDataV1;
 
+const mockedIsAccountEmpty = jest.mocked(helpers.isAccountEmpty);
+
 describe("solana/banner", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   afterEach(() => {
     jest.restoreAllMocks();
   });
+
   it("should not display the banner is account is", async () => {
     jest.spyOn(preloadedData, "getCurrentSolanaPreloadData").mockReturnValue(validatorsMap);
-    jest.spyOn(helpers, "isAccountEmpty").mockReturnValue(true);
+    mockedIsAccountEmpty.mockReturnValue(true);
     const result = getAccountBannerState(account);
     expect(result).toStrictEqual({
       display: false,
@@ -129,7 +140,7 @@ describe("solana/banner", () => {
   });
   it("should return display delegate mode is account is not empty", async () => {
     jest.spyOn(preloadedData, "getCurrentSolanaPreloadData").mockReturnValue(validatorsMap);
-    jest.spyOn(helpers, "isAccountEmpty").mockReturnValue(false);
+    mockedIsAccountEmpty.mockReturnValue(false);
     const result = getAccountBannerState(account);
     expect(result).toStrictEqual({
       display: true,
@@ -153,7 +164,7 @@ describe("solana/banner", () => {
       withdrawable: 0,
     };
     jest.spyOn(preloadedData, "getCurrentSolanaPreloadData").mockReturnValue(validatorsMap);
-    jest.spyOn(helpers, "isAccountEmpty").mockReturnValue(false);
+    mockedIsAccountEmpty.mockReturnValue(false);
     account.solanaResources?.stakes.push(badValidator);
     const result = getAccountBannerState(account);
     expect(result).toStrictEqual({

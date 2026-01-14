@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Dispatch, Action } from "redux";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";

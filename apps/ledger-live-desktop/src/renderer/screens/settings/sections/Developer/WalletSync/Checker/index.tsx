@@ -3,7 +3,7 @@ import { Alert, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLedgerSyncInfo } from "LLD/features/WalletSync/hooks/useLedgerSyncInfo";
-import ButtonV3 from "~/renderer/components/ButtonV3";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import FakeLink from "~/renderer/components/FakeLink";
 
@@ -114,14 +114,15 @@ export function CheckerLedgerSync() {
         </Flex>
       ))}
 
-      <ButtonV3
-        variant="main"
+      <Button
+        appearance="base"
+        size="sm"
         onClick={() => {
           exportToJson();
         }}
       >
         {t("settings.developer.debugWalletSync.modal.check.export")}
-      </ButtonV3>
+      </Button>
 
       {copied && (
         <Alert

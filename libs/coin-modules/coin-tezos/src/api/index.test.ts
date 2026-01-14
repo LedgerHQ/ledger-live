@@ -1,8 +1,8 @@
 import type { Operation } from "@ledgerhq/coin-framework/api/types";
+import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import type { APIAccount } from "../network/types";
 import networkApi from "../network/tzkt";
 import { createApi } from "./index";
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 
 const DEFAULT_ESTIMATED_FEES = 300n;
 const DEFAULT_GAS_LIMIT = 30n;

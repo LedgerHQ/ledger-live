@@ -22,7 +22,7 @@ export function RecoverySeed(props: { handleNextInDrawer: () => void }) {
     <>
       <ScrollArea isInsideDrawer>
         <PinHelpContainer>
-          <Text color="palette.text.shade100" variant="h3">
+          <Text color="neutral.c100" variant="h3">
             {t("onboarding.drawers.recoverySeed.title1")}
           </Text>
           <Text mt="8px" color="neutral.c80" ff="Inter|Regular" fontSize="14px" lineHeight="19.5px">
@@ -43,7 +43,7 @@ export function RecoverySeed(props: { handleNextInDrawer: () => void }) {
               {t("onboarding.drawers.recoverySeed.link")}
             </Text>
           </FakeLink>
-          <Text mt="40px" color="palette.text.shade100" variant="h3">
+          <Text mt="40px" color="neutral.c100" variant="h3">
             {t("onboarding.drawers.recoverySeed.title2")}
           </Text>
           <Text mt="8px" color="neutral.c80" ff="Inter|Regular" fontSize="14px" lineHeight="19.5px">

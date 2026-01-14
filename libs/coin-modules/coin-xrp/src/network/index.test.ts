@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network";
-import { getAccountInfo } from ".";
 import coinConfig, { type XrpCoinConfig } from "../config";
+import { getAccountInfo } from ".";
 
 jest.mock("@ledgerhq/live-network");
 

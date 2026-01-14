@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for coin transaction 1`] = `
 {

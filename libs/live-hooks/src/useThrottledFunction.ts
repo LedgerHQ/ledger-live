@@ -72,7 +72,9 @@ export const useThrottledFunction = <FnReturnType, Args extends unknown[]>(
 
   useEffect(
     () => () => {
-      timeout.current && clearTimeout(timeout.current);
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
     },
     [],
   );

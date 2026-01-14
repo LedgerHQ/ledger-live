@@ -226,7 +226,7 @@ class CurrencyInput extends PureComponent<Props, State> {
           }
           placeholderTextColor={editable ? colors.darkBlue : colors.grey}
           keyboardType="numeric"
-          blurOnSubmit
+          submitBehavior="blurAndSubmit"
           testID={testID}
         />
         {renderRight}

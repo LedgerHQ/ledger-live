@@ -12,6 +12,11 @@ import {
   Stake,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
+import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { RecommendUndelegation } from "@ledgerhq/errors";
+import { validatePublicKey, ValidationResult, getPkhfromPk } from "@taquito/utils";
+import { getRevealFee } from "@taquito/taquito";
+import { log } from "@ledgerhq/logs";
 import coinConfig, { type TezosConfig } from "../config";
 import {
   broadcast,
@@ -27,11 +32,6 @@ import {
 } from "../logic";
 import { getTezosToolkit } from "../logic/tezosToolkit";
 import api from "../network/tzkt";
-import type { TezosApi, TezosFeeEstimation } from "./types";
-import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import { RecommendUndelegation } from "@ledgerhq/errors";
-import { validatePublicKey, ValidationResult, getPkhfromPk } from "@taquito/utils";
-import { getRevealFee } from "@taquito/taquito";
 import {
   DUST_MARGIN_MUTEZ,
   hasEmptyBalance,
@@ -39,7 +39,7 @@ import {
   normalizePublicKeyForAddress,
 } from "../utils";
 import { CoreAccountInfo, CoreTransactionInfo, EstimatedFees } from "../logic/estimateFees";
-import { log } from "@ledgerhq/logs";
+import type { TezosApi, TezosFeeEstimation } from "./types";
 
 export function createApi(config: TezosConfig): TezosApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));

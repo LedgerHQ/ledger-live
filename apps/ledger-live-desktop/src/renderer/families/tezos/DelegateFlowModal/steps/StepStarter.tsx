@@ -51,7 +51,7 @@ const StepStarter = ({ transitionTo, t, openedWithAccount, eventType }: StepProp
             ff="Inter|Regular"
             fontSize={14}
             textAlign="center"
-            color="palette.text.shade80"
+            color="neutral.c80"
             style={{
               lineHeight: 1.57,
             }}
@@ -67,7 +67,7 @@ const StepStarter = ({ transitionTo, t, openedWithAccount, eventType }: StepProp
               style={{
                 lineHeight: 1.57,
               }}
-              color="palette.text.shade100"
+              color="neutral.c100"
               fontSize={14}
             >
               <Trans i18nKey="delegation.flow.steps.starter.bullet.delegate" />
@@ -80,7 +80,7 @@ const StepStarter = ({ transitionTo, t, openedWithAccount, eventType }: StepProp
               style={{
                 lineHeight: 1.57,
               }}
-              color="palette.text.shade100"
+              color="neutral.c100"
               fontSize={14}
             >
               <Trans i18nKey="delegation.flow.steps.starter.bullet.access" />
@@ -93,7 +93,7 @@ const StepStarter = ({ transitionTo, t, openedWithAccount, eventType }: StepProp
               style={{
                 lineHeight: 1.57,
               }}
-              color="palette.text.shade100"
+              color="neutral.c100"
               fontSize={14}
             >
               <Trans i18nKey="delegation.flow.steps.starter.bullet.ledger" />

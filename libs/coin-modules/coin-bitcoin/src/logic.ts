@@ -49,7 +49,7 @@ export const isValidRecipient = async (params: {
   try {
     // Optimistically assume params.currency.id is an actual Currency
     valid = isValidAddress(params.recipient, <Currency>params.currency.id);
-  } catch (e: any) {
+  } catch {
     // isValidAddress() will throw Error if c is not an actual Currency
     valid = false;
   }
@@ -97,7 +97,7 @@ const bchExplicit = (str: string): string => {
   try {
     const { type } = cashaddr.decode(explicit);
     if (type === "P2PKH") return explicit;
-  } catch (e) {
+  } catch {
     // ignore errors
   }
 

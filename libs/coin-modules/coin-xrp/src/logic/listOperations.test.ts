@@ -1,8 +1,8 @@
 import { assert } from "console";
+import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { Marker } from "../network/types";
 import { listOperations } from "./listOperations";
 import { RIPPLE_EPOCH } from "./utils";
-import { Marker } from "../network/types";
-import { Operation } from "@ledgerhq/coin-framework/api/types";
 
 const maxHeight = 2;
 const minHeight = 1;
@@ -145,8 +145,7 @@ describe("listOperations", () => {
 
     // Verify that ledger_index_min is NOT passed when minHeight is too high
     const callArgs = mockNetworkGetTransactions.mock.calls[0][1];
-    expect(callArgs).toBeDefined();
-    expect(callArgs.ledger_index_min).toBeUndefined();
+    expect(callArgs).not.toHaveProperty("ledger_index_min");
 
     expect(results.length).toEqual(1);
     expect(JSON.parse(token)).toEqual(someMarker);
@@ -166,8 +165,7 @@ describe("listOperations", () => {
 
     // Verify that ledger_index_min IS passed when minHeight is valid
     const callArgs = mockNetworkGetTransactions.mock.calls[0][1];
-    expect(callArgs).toBeDefined();
-    expect(callArgs.ledger_index_min).toBe(1); // Should be max(1, 1) = 1
+    expect(callArgs).toMatchObject({ ledger_index_min: 1 }); // Should be max(1, 1) = 1
 
     expect(results.length).toEqual(1);
     expect(JSON.parse(token)).toEqual(someMarker);

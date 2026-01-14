@@ -22,6 +22,7 @@ import { SignerContext } from "../signer";
 import { broadcast } from "../broadcast";
 import { perCoinLogic } from "../logic";
 import resolver from "../hw-getAddress";
+import { validateAddress } from "../validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext) {
   const getAddress = resolver(signerContext);
@@ -85,6 +86,7 @@ function buildAccountBridge(signerContext: SignerContext) {
     assignToAccountRaw,
     formatAccountSpecifics: formatters.formatAccountSpecifics,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

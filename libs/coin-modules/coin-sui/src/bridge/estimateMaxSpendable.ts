@@ -56,7 +56,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
     }
 
     return BigNumber.max(spendableBalance, 0);
-  } catch (e) {
+  } catch {
     return new BigNumber(0);
   }
 };

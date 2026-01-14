@@ -18,7 +18,7 @@ import { OnboardingContext } from "../../../index";
 export function RecoverHowTo() {
   const theme = useTheme();
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-  const color = theme.colors.palette.primary.c80;
+  const color = theme.colors.primary.c80;
   const steps = [
     {
       text: <Trans i18nKey="onboarding.screens.tutorial.screens.recoverHowTo.1.title" />,

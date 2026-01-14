@@ -1,6 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { Account } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
@@ -13,7 +13,7 @@ const ReceiveButton = ({ account }: { account: Account }) => {
     dispatch(openModal("MODAL_STELLAR_ADD_ASSET", { account }));
   };
   return (
-    <Button small color="palette.primary.main" onClick={onReceiveClick}>
+    <Button small color="primary.c80" onClick={onReceiveClick}>
       <Box horizontal flow={1} alignItems="center">
         <IconPlus size={12} />
         <Box>

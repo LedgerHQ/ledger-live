@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import {
   AccountId,
+  AccountUpdateTransaction,
   ContractExecuteTransaction,
   ContractFunctionParameters,
   ContractId,
@@ -12,13 +13,9 @@ import {
 } from "@hashgraph/sdk";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import { DEFAULT_GAS_LIMIT, HEDERA_TRANSACTION_MODES } from "../constants";
+import { rpcClient } from "../network/rpc";
 import type { HederaMemo, HederaTxData } from "../types";
-import { serializeTransaction } from "./utils";
-
-// avoid "sign" prompt loop by having only one node (one transaction)
-// https://github.com/LedgerHQ/ledger-live/pull/72/commits/1e942687d4301660e43e0c4b5419fcfa2733b290
-// changing this will break `getHederaTransactionBodyBytes` from logic/utils.ts
-const nodeAccountIds: AccountId[] = [new AccountId(3)];
+import { hasSpecificIntentData, serializeTransaction } from "./utils";
 
 interface BuilderOperator {
   accountId: string;
@@ -55,6 +52,14 @@ interface BuilderTokenAssociateTransaction extends BuilderCommonTransactionField
   tokenId: string;
 }
 
+interface BuilderUpdateAccountTransaction extends BuilderCommonTransactionFields {
+  type:
+    | HEDERA_TRANSACTION_MODES.Delegate
+    | HEDERA_TRANSACTION_MODES.Undelegate
+    | HEDERA_TRANSACTION_MODES.Redelegate;
+  stakingNodeId: number | null | undefined;
+}
+
 async function buildUnsignedCoinTransaction({
   account,
   transaction,
@@ -66,7 +71,6 @@ async function buildUnsignedCoinTransaction({
   const hbarAmount = Hbar.fromTinybars(transaction.amount);
 
   const tx = new TransferTransaction()
-    .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo)
     .addHbarTransfer(accountId, hbarAmount.negated())
@@ -76,7 +80,7 @@ async function buildUnsignedCoinTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freeze();
+  return tx.freezeWith(rpcClient.getInstance());
 }
 
 async function buildUnsignedHTSTokenTransaction({
@@ -90,7 +94,6 @@ async function buildUnsignedHTSTokenTransaction({
   const tokenId = transaction.tokenAddress;
 
   const tx = new TransferTransaction()
-    .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo)
     .addTokenTransfer(tokenId, accountId, transaction.amount.negated().toNumber())
@@ -100,7 +103,7 @@ async function buildUnsignedHTSTokenTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freeze();
+  return tx.freezeWith(rpcClient.getInstance());
 }
 
 async function buildUnsignedERC20TokenTransaction({
@@ -122,7 +125,6 @@ async function buildUnsignedERC20TokenTransaction({
     .addUint256(transaction.amount.toNumber());
 
   const tx = new ContractExecuteTransaction()
-    .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .setContractId(contractId)
@@ -133,7 +135,7 @@ async function buildUnsignedERC20TokenTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freeze();
+  return tx.freezeWith(rpcClient.getInstance());
 }
 
 async function buildTokenAssociateTransaction({
@@ -146,7 +148,6 @@ async function buildTokenAssociateTransaction({
   const accountId = account.accountId;
 
   const tx = new TokenAssociateTransaction()
-    .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo)
     .setAccountId(accountId)
@@ -156,16 +157,44 @@ async function buildTokenAssociateTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freeze();
+  return tx.freezeWith(rpcClient.getInstance());
+}
+
+async function buildUnsignedUpdateAccountTransaction({
+  account,
+  transaction,
+}: {
+  account: BuilderOperator;
+  transaction: BuilderUpdateAccountTransaction;
+}): Promise<AccountUpdateTransaction> {
+  const accountId = account.accountId;
+
+  const tx = new AccountUpdateTransaction()
+    .setTransactionId(TransactionId.generate(accountId))
+    .setTransactionMemo(transaction.memo ?? "")
+    .setAccountId(accountId);
+
+  if (transaction.maxFee) {
+    tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
+  }
+
+  if (typeof transaction.stakingNodeId === "number") {
+    tx.setStakedNodeId(transaction.stakingNodeId);
+  }
+
+  if (transaction.stakingNodeId === null) {
+    tx.clearStakedNodeId();
+  }
+
+  return tx.freezeWith(rpcClient.getInstance());
 }
 
 export async function craftTransaction(
   txIntent: TransactionIntent<HederaMemo, HederaTxData>,
   customFees?: FeeEstimation,
 ) {
-  const account = {
-    accountId: txIntent.sender,
-  };
+  const account = { accountId: txIntent.sender };
+  const maxFee = customFees ? new BigNumber(customFees.value.toString()) : undefined;
 
   let tx;
 
@@ -179,7 +208,7 @@ export async function craftTransaction(
         type: txIntent.type,
         tokenId: txIntent.asset.assetReference,
         memo: txIntent.memo.value,
-        maxFee: customFees ? new BigNumber(customFees.value.toString()) : undefined,
+        maxFee,
       },
     });
   } else if (txIntent.type === HEDERA_TRANSACTION_MODES.Send && txIntent.asset.type === "hts") {
@@ -195,17 +224,16 @@ export async function craftTransaction(
         amount,
         recipient: txIntent.recipient,
         memo: txIntent.memo.value,
-        maxFee: customFees ? new BigNumber(customFees.value.toString()) : undefined,
+        maxFee,
       },
     });
   } else if (txIntent.type === HEDERA_TRANSACTION_MODES.Send && txIntent.asset.type === "erc20") {
     invariant("assetReference" in txIntent.asset, "hedera: no assetReference in token transfer");
 
     const amount = new BigNumber(txIntent.amount.toString());
-    const gasLimit =
-      "data" in txIntent && txIntent.data.gasLimit
-        ? new BigNumber(txIntent.data.gasLimit.toString())
-        : DEFAULT_GAS_LIMIT;
+    const gasLimit = hasSpecificIntentData(txIntent, "erc20")
+      ? new BigNumber(txIntent.data.gasLimit.toString())
+      : DEFAULT_GAS_LIMIT;
 
     tx = await buildUnsignedERC20TokenTransaction({
       account,
@@ -215,11 +243,31 @@ export async function craftTransaction(
         amount,
         recipient: txIntent.recipient,
         memo: txIntent.memo.value,
-        maxFee: customFees ? new BigNumber(customFees.value.toString()) : undefined,
+        maxFee,
         gasLimit,
       },
     });
-  } else {
+  } else if (
+    txIntent.type === HEDERA_TRANSACTION_MODES.Redelegate ||
+    txIntent.type === HEDERA_TRANSACTION_MODES.Undelegate ||
+    txIntent.type === HEDERA_TRANSACTION_MODES.Delegate
+  ) {
+    const stakingNodeId = hasSpecificIntentData(txIntent, "staking")
+      ? txIntent.data.stakingNodeId
+      : undefined;
+
+    tx = await buildUnsignedUpdateAccountTransaction({
+      account,
+      transaction: {
+        type: txIntent.type,
+        memo: txIntent.memo.value,
+        maxFee,
+        stakingNodeId,
+      },
+    });
+  }
+  // HEDERA_TRANSACTION_MODES.ClaimRewards is just a coin transfer that triggers staking rewards claim
+  else {
     const amount = new BigNumber(txIntent.amount.toString());
 
     tx = await buildUnsignedCoinTransaction({
@@ -229,7 +277,7 @@ export async function craftTransaction(
         amount,
         recipient: txIntent.recipient,
         memo: txIntent.memo.value,
-        maxFee: customFees ? new BigNumber(customFees.value.toString()) : undefined,
+        maxFee,
       },
     });
   }

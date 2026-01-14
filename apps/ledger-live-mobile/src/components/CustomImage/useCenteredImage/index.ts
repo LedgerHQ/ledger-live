@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import {
   ImageCropError,
   ImageSizeLoadingError,
@@ -60,26 +60,32 @@ function useCenteredImage(params: Params) {
       const cropParams = getCenteredCropParams(resizedImageDimensions, targetDimensions);
 
       if (dead) return;
-      return manipulateAsync(imageUri, [{ resize: resizedImageDimensions }], {
-        compress: 1,
-        base64: false,
-        format: SaveFormat.PNG,
-      })
+      return ImageManipulator.manipulate(imageUri)
+        .resize(resizedImageDimensions)
+        .renderAsync()
+        .then(image =>
+          image.saveAsync({
+            compress: 1,
+            base64: false,
+            format: SaveFormat.PNG,
+          }),
+        )
         .catch(e => {
           console.error(e);
           throw new ImageResizeError();
         })
         .then(resizedImage => {
           if (dead) throw new Error("dead hook"); // this error allows to break the promise chain and will be ignored in the load().catch()
-          return manipulateAsync(
-            resizedImage?.uri,
-            [
-              {
-                crop: cropParams,
-              },
-            ],
-            { base64: true, compress: 1, format: SaveFormat.PNG },
-          );
+          return ImageManipulator.manipulate(resizedImage?.uri)
+            .crop(cropParams)
+            .renderAsync()
+            .then(image =>
+              image.saveAsync({
+                base64: true,
+                compress: 1,
+                format: SaveFormat.PNG,
+              }),
+            );
         })
         .catch(e => {
           if (dead) throw new Error("dead hook");

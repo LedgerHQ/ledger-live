@@ -43,7 +43,7 @@ const AmountField = <T extends TransactionCommon>({
   useEffect(() => {
     if (initValue && !initValue.eq(transaction.amount || new BigNumber(0))) {
       onChangeTransaction(bridge.updateTransaction(transaction, { amount: initValue }));
-      resetInitValue && resetInitValue();
+      resetInitValue?.();
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -94,7 +94,7 @@ const AmountField = <T extends TransactionCommon>({
         {typeof useAllAmount === "boolean" ? (
           <Box horizontal alignItems="center">
             <Text
-              color="palette.text.shade40"
+              color="neutral.c60"
               ff="Inter|Medium"
               fontSize={10}
               style={{ paddingRight: 5 }}

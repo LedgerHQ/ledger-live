@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { Config, getChainAPI } from "../network";
+import { ChainAPI, Config, getChainAPI } from "../network";
 import { makeBridges } from "./bridge";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { SolanaSigner } from "../signer";
@@ -19,7 +19,7 @@ export function createBridges(
   coinConfig: CoinConfig<SolanaCoinConfig>,
 ) {
   solanaCoinConfig.setCoinConfig(coinConfig);
-  const chainAPICache = new Map<string, ReturnType<typeof getChainAPI>>();
+  const chainAPICache = new Map<string, ChainAPI>();
   return makeBridges({
     getAPI: (config: Config) => {
       const endpoint = config.endpoint;

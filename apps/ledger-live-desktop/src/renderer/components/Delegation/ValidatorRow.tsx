@@ -19,17 +19,16 @@ export const IconContainer = styled.div<{
   height: 24px;
   border-radius: 4px;
   background-color: ${p =>
-    p.isSR ? p.theme.colors.palette.action.hover : p.theme.colors.palette.divider};
-  color: ${p =>
-    p.isSR ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade60};
+    p.isSR ? p.theme.colors.opacityDefault.c10 : p.theme.colors.neutral.c40};
+  color: ${p => (p.isSR ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c70)};
 `;
 
-const InfoContainer = styled(Box).attrs(() => ({
+export const InfoContainer = styled(Box).attrs(() => ({
   ml: 2,
   flex: 1,
 }))``;
 
-const Title = styled(Box).attrs(() => ({
+export const Title = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
 }))`
@@ -38,14 +37,14 @@ const Title = styled(Box).attrs(() => ({
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  color: ${p => p.theme.colors.palette.text.shade100};
+  color: ${p => p.theme.colors.neutral.c100};
   ${IconContainer} {
     background-color: rgba(0, 0, 0, 0);
-    color: ${p => p.theme.colors.palette.primary.main};
+    color: ${p => p.theme.colors.primary.c80};
     opacity: 0;
   }
   &:hover {
-    color: ${p => p.theme.colors.palette.primary.main};
+    color: ${p => p.theme.colors.primary.c80};
   }
   &:hover > ${IconContainer} {
     opacity: 1;
@@ -63,12 +62,12 @@ const SubTitle = styled(Box).attrs(() => ({
 }))`
   font-size: 11px;
   font-weight: 500;
-  color: ${p => p.theme.colors.palette.text.shade60};
+  color: ${p => p.theme.colors.neutral.c70};
 `;
-const SideInfo = styled(Box)``;
+export const SideInfo = styled(Box)``;
 const InputRight = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
-  color: "palette.text.shade60",
+  color: "neutral.c70",
   fontSize: 4,
   justifyContent: "center",
   horizontal: true,
@@ -99,8 +98,8 @@ const InputBox = styled(Box).attrs(() => ({
   }
 `;
 const MaxButton = styled.button`
-  background-color: ${p => p.theme.colors.palette.primary.main};
-  color: ${p => p.theme.colors.palette.primary.contrastText}!important;
+  background-color: ${p => p.theme.colors.primary.c80};
+  color: ${p => p.theme.colors.neutral.c00}!important;
   border: none;
   border-radius: 4px;
   padding: 0px ${p => p.theme.space[2]}px;
@@ -131,8 +130,7 @@ const Row = styled(Box).attrs(() => ({
   border: 1px solid transparent;
   position: relative;
   overflow: visible;
-  border-color: ${p =>
-    p.active ? p.theme.colors.palette.primary.main : p.theme.colors.palette.divider};
+  border-color: ${p => (p.active ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c40)};
   ${p =>
     p.active
       ? `&:before {
@@ -142,7 +140,7 @@ const Row = styled(Box).attrs(() => ({
         top: 0;
         left: 0;
         position: absolute;
-        background-color: ${p.theme.colors.palette.primary.main};
+        background-color: ${p.theme.colors.primary.c80};
       }`
       : ""}
   ${p =>
@@ -157,7 +155,7 @@ const Row = styled(Box).attrs(() => ({
     p.onClick
       ? css`
           &:hover {
-            border-color: ${p.theme.colors.palette.primary.main};
+            border-color: ${p.theme.colors.primary.c80};
           }
           ${IconContainer} {
             opacity: 1;
@@ -218,19 +216,20 @@ const ValidatorRow = ({
   const onChange = useCallback(
     // onChange: (b: BigNumber, a: Unit) => void;
     (e: BigNumber) => {
-      onUpdateVote && onUpdateVote(validator.address, e.toString());
+      onUpdateVote?.(validator.address, e.toString());
     },
     [validator, onUpdateVote],
   );
-  const onMaxHandler = useCallback(() => {
-    onUpdateVote &&
-      onUpdateVote(
+  const onMaxHandler = useCallback(
+    () =>
+      onUpdateVote?.(
         validator.address,
         BigNumber(value || 0)
           .plus(maxAvailable)
           .toString(),
-      );
-  }, [validator, onUpdateVote, maxAvailable, value]);
+      ),
+    [validator, onUpdateVote, maxAvailable, value],
+  );
 
   /** focus input on row click */
   const onRowClick = useCallback(() => {

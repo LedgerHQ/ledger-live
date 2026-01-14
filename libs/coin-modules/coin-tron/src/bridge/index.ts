@@ -25,6 +25,7 @@ import {
 import { buildSignOperation } from "./signOperation";
 import { getAccountShape, postSync, sync } from "./synchronization";
 import tronCoinConfig, { type TronCoinConfig } from "../config";
+import { validateAddress } from "../logic";
 
 function buildCurrencyBridge(signerContext: SignerContext<TronSigner>): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);
@@ -68,6 +69,7 @@ function buildAccountBridge(
     fromOperationExtraRaw,
     toOperationExtraRaw,
     getSerializedAddressParameters,
+    validateAddress,
   };
 }
 

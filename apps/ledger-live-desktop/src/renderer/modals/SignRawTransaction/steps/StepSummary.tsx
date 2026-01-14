@@ -20,8 +20,8 @@ const Circle = styled.div`
   height: 32px;
   width: 32px;
   border-radius: 32px;
-  background-color: ${p => rgba(p.theme.colors.palette.primary.main, 0.1)};
-  color: ${p => p.theme.colors.palette.primary.main};
+  background-color: ${p => rgba(p.theme.colors.primary.c80, 0.1)};
+  color: ${p => p.theme.colors.primary.c80};
   align-items: center;
   display: flex;
   justify-content: center;
@@ -29,7 +29,7 @@ const Circle = styled.div`
 `;
 const Separator = styled.div`
   height: 1px;
-  background: ${p => p.theme.colors.palette.text.shade20};
+  background: ${p => p.theme.colors.neutral.c40};
   width: 100%;
   margin: 15px 0;
 `;
@@ -54,16 +54,16 @@ const StepSummary = ({ account, parentAccount, transaction }: StepProps) => {
               <IconWallet size={14} />
             </Circle>
             <Box flex="1">
-              <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+              <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
                 <Trans i18nKey="send.steps.details.from" />
               </Text>
               <Box horizontal alignItems="center">
                 <Box marginRight={7}>
-                  <CryptoCurrencyIcon size={16} currency={currency} />
+                  <CryptoCurrencyIcon size={22} currency={currency} />
                 </Box>
                 <Text
                   ff="Inter"
-                  color="palette.text.shade100"
+                  color="neutral.c100"
                   fontSize={4}
                   style={{
                     flex: 1,

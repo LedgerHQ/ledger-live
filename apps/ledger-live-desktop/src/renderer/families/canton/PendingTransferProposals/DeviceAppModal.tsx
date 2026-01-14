@@ -9,11 +9,12 @@ import BigSpinner from "~/renderer/components/BigSpinner";
 import Text from "~/renderer/components/Text";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import { CONNECTION_TYPES } from "~/renderer/analytics/hooks/variables";
+import type { TransferProposalAction } from "./types";
 
 type Props = {
   isOpen: boolean;
   onConfirm: (deviceId: string) => Promise<void>;
-  action: "accept" | "reject" | "withdraw";
+  action: TransferProposalAction;
   appName: string;
   onClose?: () => void;
 };
@@ -115,7 +116,7 @@ const DeviceAppModal: FC<Props> = ({ isOpen, onConfirm, action, onClose, appName
                 <Text
                   mt={4}
                   fontSize={4}
-                  color="palette.text.shade80"
+                  color="neutral.c80"
                   textAlign="center"
                   style={{ whiteSpace: "pre-wrap" }}
                 >

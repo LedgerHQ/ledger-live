@@ -22,7 +22,7 @@ export type Props = {
   onMessage?: (_: WebViewMessageEvent) => void;
   renderHeader?: () => ReactNode;
   renderLoading?: () => ReactNode;
-  renderError?: () => JSX.Element;
+  renderError?: () => React.JSX.Element;
   enableNavigationOverride?: boolean;
 };
 

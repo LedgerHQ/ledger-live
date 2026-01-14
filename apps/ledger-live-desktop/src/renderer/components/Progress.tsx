@@ -88,7 +88,7 @@ const Progress = ({
   progress = undefined,
 }: Props) => {
   return (
-    <Bar color="palette.divider">
+    <Bar color="divider">
       <Progression infinite={infinite} bg={color} timing={timing} progress={progress} />
     </Bar>
   );

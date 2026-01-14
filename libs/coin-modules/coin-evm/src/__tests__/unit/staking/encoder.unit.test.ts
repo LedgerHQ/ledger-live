@@ -5,7 +5,7 @@ import { StakingOperation } from "../../../types/staking";
 
 describe("encodeStakingData", () => {
   describe("SEI Network", () => {
-    const currencyId = "sei_network_evm";
+    const currencyId = "sei_evm";
     const config = STAKING_CONTRACTS[currencyId];
 
     it("should encode delegate operation", () => {
@@ -19,8 +19,6 @@ describe("encodeStakingData", () => {
         params,
       });
 
-      expect(encoded).toBeDefined();
-      expect(typeof encoded).toBe("string");
       expect(encoded.startsWith("0x")).toBe(true);
     });
 
@@ -36,8 +34,6 @@ describe("encodeStakingData", () => {
         params,
       });
 
-      expect(encoded).toBeDefined();
-      expect(typeof encoded).toBe("string");
       expect(encoded.startsWith("0x")).toBe(true);
     });
 
@@ -54,8 +50,6 @@ describe("encodeStakingData", () => {
         params,
       });
 
-      expect(encoded).toBeDefined();
-      expect(typeof encoded).toBe("string");
       expect(encoded.startsWith("0x")).toBe(true);
     });
   });
@@ -76,8 +70,6 @@ describe("encodeStakingData", () => {
         params,
       });
 
-      expect(encoded).toBeDefined();
-      expect(typeof encoded).toBe("string");
       expect(encoded.startsWith("0x")).toBe(true);
     });
 
@@ -93,14 +85,12 @@ describe("encodeStakingData", () => {
         params,
       });
 
-      expect(encoded).toBeDefined();
-      expect(typeof encoded).toBe("string");
       expect(encoded.startsWith("0x")).toBe(true);
     });
   });
 
   describe("Error handling", () => {
-    const config = STAKING_CONTRACTS["sei_network_evm"];
+    const config = STAKING_CONTRACTS["sei_evm"];
 
     it("should throw error for unsupported currency", () => {
       expect(() => {
@@ -116,19 +106,19 @@ describe("encodeStakingData", () => {
     it("should throw error for unsupported operation", () => {
       expect(() => {
         encodeStakingData({
-          currencyId: "sei_network_evm",
+          currencyId: "sei_evm",
           operation: "invalidOperation" as StakingOperation,
           config,
           params: ["validator"],
         });
-      }).toThrow("Operation 'invalidOperation' not supported for currency: sei_network_evm");
+      }).toThrow("Operation 'invalidOperation' not supported for currency: sei_evm");
     });
   });
 });
 
 describe("decodeStakingResult", () => {
   describe("SEI Network", () => {
-    const currencyId = "sei_network_evm";
+    const currencyId = "sei_evm";
     const config = STAKING_CONTRACTS[currencyId];
 
     it("should decode delegation result", () => {
@@ -195,13 +185,13 @@ describe("decodeStakingResult", () => {
         encodedResult,
       );
 
-      expect(decoded).toBeDefined();
+      expect(decoded).toBeInstanceOf(Array);
       expect(decoded.length).toBeGreaterThan(0);
     });
   });
 
   describe("Error handling", () => {
-    const config = STAKING_CONTRACTS["sei_network_evm"];
+    const config = STAKING_CONTRACTS["sei_evm"];
 
     it("should throw error for unsupported currency", () => {
       expect(() => {
@@ -216,13 +206,8 @@ describe("decodeStakingResult", () => {
 
     it("should throw error for unsupported operation", () => {
       expect(() => {
-        decodeStakingResult(
-          "sei_network_evm",
-          "invalidOperation" as StakingOperation,
-          config,
-          "0x",
-        );
-      }).toThrow("Operation 'invalidOperation' not supported for currency: sei_network_evm");
+        decodeStakingResult("sei_evm", "invalidOperation" as StakingOperation, config, "0x");
+      }).toThrow("Operation 'invalidOperation' not supported for currency: sei_evm");
     });
   });
 });

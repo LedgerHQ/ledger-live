@@ -55,13 +55,13 @@ const PageScrollTopSeparator = styled.div.attrs<{
   box-sizing: border-box;
   z-index: 20;
   transition: opacity 250ms ease-in-out;
-  background: linear-gradient(${p => p.theme.colors.palette.background.default}, rgba(0, 0, 0, 0));
+  background: linear-gradient(${p => p.theme.colors.background.default}, rgba(0, 0, 0, 0));
   &:after {
     content: "";
     width: 100%;
     height: 1px;
     display: block;
-    background-color: ${p => p.theme.colors.palette.text.shade10};
+    background-color: ${p => p.theme.colors.neutral.c30};
   }
 `;
 
@@ -92,8 +92,8 @@ const ScrollUpButton = styled.div.attrs<{
   cursor: pointer;
   height: 36px;
   width: 36px;
-  color: ${p => p.theme.colors.palette.primary.contrastText};
-  background-color: ${p => p.theme.colors.palette.primary.main};
+  color: ${p => p.theme.colors.neutral.c00};
+  background-color: ${p => p.theme.colors.primary.c80};
   transition: all 0.5s;
   display: flex;
   align-items: center;

@@ -15,7 +15,7 @@ export function useHasLocallyOverriddenFeatureFlags(): boolean {
         try {
           const val = getFeature(featureId as FeatureId);
           return val?.overridesRemote || val?.overriddenByEnv;
-        } catch (e) {
+        } catch {
           return false;
         }
       }),

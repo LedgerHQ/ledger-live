@@ -52,7 +52,7 @@ const Row = ({ account, delegation }: Props) => {
   return (
     <Wrapper>
       <Value>
-        <Ellipsis fontSize={3} color="palette.text.shade60">
+        <Ellipsis fontSize={3} color="neutral.c70">
           <Text ff="Inter|SemiBold">{name}</Text>
         </Ellipsis>
       </Value>
@@ -63,7 +63,7 @@ const Row = ({ account, delegation }: Props) => {
           unit={unit}
           showCode
           fontSize={3}
-          color="palette.text.shade80"
+          color="neutral.c80"
         />
       </Value>
       <Value>
@@ -73,7 +73,7 @@ const Row = ({ account, delegation }: Props) => {
           unit={unit}
           showCode
           fontSize={3}
-          color="palette.text.shade80"
+          color="neutral.c80"
         />
       </Value>
       <CTA>

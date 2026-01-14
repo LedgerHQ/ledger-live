@@ -50,7 +50,7 @@ function Range() {
         value ? (
           <Box horizontal flow={1}>
             <Track onUpdate event="ChangeRange" range={rangeItems} />
-            <Text color="palette.text.shade60" ff="Inter|SemiBold" fontSize={4}>
+            <Text color="neutral.c70" ff="Inter|SemiBold" fontSize={4}>
               {t("common.range")}
             </Text>
             <Box
@@ -70,4 +70,4 @@ function Range() {
     </DropDownSelector>
   );
 }
-export default React.memo<{}>(Range);
+export default React.memo(Range);

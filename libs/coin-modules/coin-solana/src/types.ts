@@ -243,6 +243,7 @@ export type Transaction = TransactionCommon & {
   family: "solana";
   model: TransactionModel;
   raw?: string;
+  templateId?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {

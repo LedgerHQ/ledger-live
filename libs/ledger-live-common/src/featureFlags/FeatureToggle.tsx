@@ -9,7 +9,7 @@ type Props = {
   children?: ReactNode;
 };
 
-const FeatureToggle = ({ featureId, fallback, children }: Props): JSX.Element => {
+const FeatureToggle = ({ featureId, fallback, children }: Props): React.JSX.Element => {
   const feature = useFeature(featureId);
 
   if (!feature || !feature.enabled) {

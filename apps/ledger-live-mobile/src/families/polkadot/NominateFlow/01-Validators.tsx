@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
 import type {
   Transaction,
@@ -32,7 +31,7 @@ import {
   usePolkadotPreloadData,
   useSortedValidators,
 } from "@ledgerhq/live-common/families/polkadot/react";
-import { accountScreenSelector } from "~/reducers/accounts";
+
 import { NavigatorName, ScreenName } from "~/const";
 import Button from "~/components/Button";
 import SelectValidatorSearchBox from "~/families/tron/VoteFlow/01-SelectValidator/SearchBox";
@@ -55,7 +54,8 @@ import type { PolkadotNominateFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
 import { useSettings } from "~/hooks";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateSelectValidators>
@@ -64,7 +64,7 @@ type Props = BaseComposite<
 function NominateSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useAccountScreen(route);
   const { locale } = useSettings();
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
@@ -124,7 +124,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
     alwaysShowSign: false,
     showCode: true,
     discreet: false,
-    locale: locale,
+    locale,
   });
   const maxNominatorRewardedPerValidator = staking?.maxNominatorRewardedPerValidator || 300;
   const sorted = useSortedValidators(searchQuery, polkadotValidators, nominations);

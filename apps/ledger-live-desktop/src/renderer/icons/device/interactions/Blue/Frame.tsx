@@ -11,7 +11,7 @@ type Props = {
   error?: boolean;
 };
 const BlueFrame = ({ children, overlay, error }: Props) => {
-  const type = useTheme().colors.palette.type;
+  const type = useTheme().theme;
   return (
     <FrameSVG width="118" height="144">
       <defs />

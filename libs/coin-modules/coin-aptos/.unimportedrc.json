@@ -1,4 +1,5 @@
 {
+  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
   "entry": [
     "src/index.ts",
     "src/api/index.ts",
@@ -25,6 +26,7 @@
     "src/test/index.ts",
     "src/test/speculos-deviceActions.ts",
     "src/types/assets.ts",
+    "src/supportedFeatures.ts",
     "src/utils/IconGenerator.ts",
     "src/utils/index.ts"
   ]

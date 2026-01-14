@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSendInvalidAmountTest } from "../send";
 
 const transaction = new Transaction(Account.XRP_1, Account.XRP_3, "0.1", undefined, "noTag");

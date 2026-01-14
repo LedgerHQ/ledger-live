@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import ConnectionTester from "./ConnectionTester";
 import Button from "~/renderer/components/Button";
@@ -62,11 +62,13 @@ const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) =>
   );
   const onExit = useCallback(() => {
     dispatch(setUSBTroubleshootingIndex());
-    onboarding
-      ? history.goBack()
-      : history.push({
-          pathname: "/manager",
-        });
+    if (onboarding) {
+      history.goBack();
+    } else {
+      history.push({
+        pathname: "/manager",
+      });
+    }
   }, [dispatch, history, onboarding]);
   const onDone = useCallback(() => {
     sendEvent({ type: "DONE" });

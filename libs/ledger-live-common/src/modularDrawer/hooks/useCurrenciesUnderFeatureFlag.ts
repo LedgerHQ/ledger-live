@@ -7,6 +7,8 @@ import useEnv from "../../hooks/useEnv";
 export function useCurrenciesUnderFeatureFlag() {
   const mock = useEnv("MOCK");
 
+  const aleo = useFeature("currencyAleo");
+  const aleoTestnet = useFeature("currencyAleoTestnet");
   const aptos = useFeature("currencyAptos");
   const aptosTestnet = useFeature("currencyAptosTestnet");
   const axelar = useFeature("currencyAxelar");
@@ -83,9 +85,13 @@ export function useCurrenciesUnderFeatureFlag() {
   const monadTestnet = useFeature("currencyMonadTestnet");
   const somnia = useFeature("currencySomnia");
   const zeroGravity = useFeature("currencyZeroGravity");
+  const concordium = useFeature("currencyConcordium");
+  const concordiumTestnet = useFeature("currencyConcordiumTestnet");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
+      aleo,
+      aleo_testnet: aleoTestnet,
       aptos,
       aptos_testnet: aptosTestnet,
       axelar,
@@ -115,7 +121,7 @@ export function useCurrenciesUnderFeatureFlag() {
       syscoin,
       internet_computer: internetComputer,
       telos_evm: telosEvm,
-      sei_network_evm: seiNetworkEvm,
+      sei_evm: seiNetworkEvm,
       berachain: berachain,
       hyperevm: hyperevm,
       coreum,
@@ -162,8 +168,12 @@ export function useCurrenciesUnderFeatureFlag() {
       monad_testnet: monadTestnet,
       somnia,
       zero_gravity: zeroGravity,
+      concordium,
+      concordium_testnet: concordiumTestnet,
     }),
     [
+      aleo,
+      aleoTestnet,
       aptos,
       aptosTestnet,
       axelar,
@@ -240,6 +250,8 @@ export function useCurrenciesUnderFeatureFlag() {
       monadTestnet,
       somnia,
       zeroGravity,
+      concordium,
+      concordiumTestnet,
     ],
   );
 

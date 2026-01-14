@@ -1,6 +1,7 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { RPCHostRequired, RPCUserRequired, RPCPassRequired } from "@ledgerhq/live-common/errors";
+import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
@@ -45,7 +46,7 @@ const maybeError = (
   errors: { field: string; error: Error }[] | null,
   field: unknown,
   satStackAlreadyConfigured: boolean,
-  ignoredErrorClass: Function,
+  ignoredErrorClass: LedgerErrorConstructor<{ [key: string]: unknown }>,
 ) => {
   const error = errors?.find(e => e.field === field)?.error;
   return error && (satStackAlreadyConfigured || !(error instanceof ignoredErrorClass))
@@ -79,13 +80,7 @@ const Form = ({
   );
   return (
     <Box>
-      <Text
-        ff="Inter|SemiBold"
-        textAlign={"center"}
-        mb={32}
-        fontSize={6}
-        color="palette.text.shade100"
-      >
+      <Text ff="Inter|SemiBold" textAlign={"center"} mb={32} fontSize={6} color="neutral.c100">
         <Trans i18nKey="fullNode.modal.steps.node.connectionSteps.notConnected.header" />
       </Text>
       <FormWrapper>

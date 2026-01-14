@@ -1,7 +1,7 @@
-import { getBalance } from "./getBalance";
 import { setupServer } from "msw/node";
-import coinConfig, { TezosCoinConfig } from "../config";
 import { HttpResponse, http } from "msw";
+import coinConfig, { TezosCoinConfig } from "../config";
+import { getBalance } from "./getBalance";
 
 describe("getBalance", () => {
   const mockServer = setupServer();

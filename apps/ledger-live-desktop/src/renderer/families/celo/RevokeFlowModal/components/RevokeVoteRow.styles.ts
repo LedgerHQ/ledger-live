@@ -8,8 +8,7 @@ export const Status = styled(Text)<{
 }>`
   font-size: 11px;
   font-weight: 700;
-  color: ${p =>
-    p.type === "active" ? p.theme.colors.positiveGreen : p.theme.colors.palette.text.shade60};
+  color: ${p => (p.type === "active" ? p.theme.colors.positiveGreen : p.theme.colors.neutral.c70)};
 `;
 export const StyledValidatorRow = styled(ValidatorRow)<ValidatorRowProps>`
   border-color: transparent;
@@ -18,7 +17,7 @@ export const StyledValidatorRow = styled(ValidatorRow)<ValidatorRowProps>`
 export const ChosenMark = styled(Check).attrs<{
   active?: boolean;
 }>(p => ({
-  color: p.active ? p.theme.colors.palette.primary.main : "transparent",
+  color: p.active ? p.theme.colors.primary.c80 : "transparent",
   size: 14,
 }))<{
   active?: boolean;

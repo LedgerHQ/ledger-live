@@ -3,7 +3,6 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
 // TODO move to bitcoin family
-// eslint-disable-next-line no-restricted-imports
 import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import Box from "~/renderer/components/Box";
@@ -18,8 +17,8 @@ const Container = styled(Box).attrs(() => ({
   padding: 16px;
   border-radius: 4px;
   align-items: center;
-  background-color: ${p => p.theme.colors.palette.action.hover};
-  color: ${p => p.theme.colors.palette.primary.main};
+  background-color: ${p => p.theme.colors.opacityDefault.c10};
+  color: ${p => p.theme.colors.primary.c80};
 `;
 const FullNodeStatus = ({ currency }: { currency?: (CryptoCurrency | TokenCurrency) | null }) => {
   const latestStatus: SatStackStatus | undefined | null = useSatStackStatus();

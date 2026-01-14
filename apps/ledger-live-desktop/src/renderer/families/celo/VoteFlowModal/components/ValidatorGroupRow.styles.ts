@@ -9,7 +9,7 @@ export const StyledValidatorRow = styled(ValidatorRow)<ValidatorRowProps>`
 export const ChosenMark = styled(Check).attrs<{
   active: boolean;
 }>(p => ({
-  color: p.active ? p.theme.colors.palette.primary.main : "transparent",
+  color: p.active ? p.theme.colors.primary.c80 : "transparent",
   size: 14,
 }))<{
   active: boolean;

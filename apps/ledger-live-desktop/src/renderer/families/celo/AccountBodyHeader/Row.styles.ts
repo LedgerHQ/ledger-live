@@ -10,19 +10,19 @@ export const Wrapper = styled.div`
 `;
 export const Column = styled(TableLine).attrs<{ strong?: boolean; clickable?: boolean }>(p => ({
   ff: "Inter|SemiBold",
-  color: p.strong ? "palette.text.shade100" : "palette.text.shade80",
+  color: p.strong ? "neutral.c100" : "neutral.c80",
   fontSize: 3,
 }))<{ strong?: boolean; clickable?: boolean }>`
   cursor: ${p => (p.clickable ? "pointer" : "cursor")};
   ${IconContainer} {
-    color: ${p => p.theme.colors.palette.text.shade80};
+    color: ${p => p.theme.colors.neutral.c80};
     opacity: 1;
   }
   ${p =>
     p.clickable
       ? `
     &:hover {
-      color: ${p.theme.colors.palette.primary.main};
+      color: ${p.theme.colors.primary.c80};
     }
     `
       : ``}

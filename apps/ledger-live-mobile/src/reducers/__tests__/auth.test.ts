@@ -1,4 +1,4 @@
-import { createStore, Store } from "redux";
+import { configureStore } from "@reduxjs/toolkit";
 import authReducer, { INITIAL_STATE } from "../auth";
 import {
   initializeAuthState,
@@ -8,7 +8,7 @@ import {
   lock,
   unlock,
 } from "../../actions/auth";
-import type { Privacy, AuthState } from "../types";
+import type { Privacy } from "../types";
 
 const mockPrivacyWithoutPassword: Privacy = {
   hasPassword: false,
@@ -17,10 +17,19 @@ const mockPrivacyWithoutPassword: Privacy = {
 };
 
 describe("Auth Redux Implementation", () => {
-  let store: Store<AuthState>;
+  let store: ReturnType<typeof makeStore>;
+
+  const makeStore = () =>
+    configureStore({
+      reducer: authReducer,
+      middleware: getDefaultMiddleware =>
+        getDefaultMiddleware({
+          serializableCheck: false,
+        }),
+    });
 
   beforeEach(() => {
-    store = createStore(authReducer);
+    store = makeStore();
   });
 
   test("initial state is correct", () => {

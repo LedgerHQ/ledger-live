@@ -2,6 +2,8 @@ import { access, appendFile, stat } from "fs/promises";
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 
+export const NANO_APP_CATALOG_PATH = "tests/artifacts/appVersion/nano-app-catalog.json";
+
 export async function safeAppendFile(filePath: string, data: string) {
   try {
     await appendFile(filePath, data);

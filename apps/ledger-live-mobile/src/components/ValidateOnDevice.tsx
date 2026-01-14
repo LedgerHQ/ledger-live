@@ -20,7 +20,7 @@ import { DataRowUnitValue, TextValueField } from "./ValidateOnDeviceDataRow";
 import Animation from "./Animation";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import { TitleText } from "./DeviceAction/rendering";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 export type FieldComponentProps = {
   account: AccountLike;

@@ -46,6 +46,7 @@ const iconsComponent = {
   WITHDRAW_UNSTAKED: IconsLegacy.CoinsMedium,
   ASSOCIATE_TOKEN: IconsLegacy.PlusMedium,
   CONTRACT_CALL: IconsLegacy.ArrowTopMedium,
+  UPDATE_ACCOUNT: IconsLegacy.PlusMedium,
 };
 
 const OperationStatusIcon = ({

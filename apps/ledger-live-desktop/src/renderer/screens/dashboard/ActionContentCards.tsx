@@ -40,8 +40,13 @@ const ActionContentCards = ({ variant }: { variant: ABTestingVariants }) => {
   const lldActionCarousel = useFeature("lldActionCarousel");
   const additionalProps = useMemo(() => ({ variant }), [variant]);
 
-  const slides = actionCards.map(slide => (
-    <LogContentCardWrapper key={slide.id} id={slide.id} additionalProps={additionalProps}>
+  const slides = actionCards.map((slide, index) => (
+    <LogContentCardWrapper
+      key={slide.id}
+      id={slide.id}
+      additionalProps={additionalProps}
+      displayedPosition={index}
+    >
       <ActionCard
         img={slide.image}
         title={slide.title}
@@ -49,11 +54,11 @@ const ActionContentCards = ({ variant }: { variant: ABTestingVariants }) => {
         actions={{
           primary: {
             label: slide.mainCta,
-            action: () => onClick(slide.id, slide.link),
+            action: () => onClick(slide.id, slide.link, index),
           },
           dismiss: {
             label: slide.secondaryCta,
-            action: () => onDismiss(slide.id),
+            action: () => onDismiss(slide.id, index),
           },
         }}
       />

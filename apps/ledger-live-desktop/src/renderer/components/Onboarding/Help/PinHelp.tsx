@@ -51,13 +51,7 @@ function Rule({ type, children }: RuleProps) {
       >
         <RuleIcon size={12} />
       </RuleIconContainer>
-      <Text
-        ml="16px"
-        color="palette.text.shade100"
-        ff="Inter|Regular"
-        fontSize={13}
-        style={{ flex: 1 }}
-      >
+      <Text ml="16px" color="neutral.c100" ff="Inter|Regular" fontSize={13} style={{ flex: 1 }}>
         {children}
       </Text>
     </RuleContainer>
@@ -76,10 +70,10 @@ export function PinHelp(props: { handleNextInDrawer: () => void }) {
     <>
       <ScrollArea isInsideDrawer>
         <PinHelpContainer>
-          <Text color="palette.text.shade100" variant="h3">
+          <Text color="neutral.c100" variant="h3">
             {t("onboarding.drawers.pinHelp.title")}
           </Text>
-          <Text mt="8px" mb="32px" color="palette.text.shade100" ff="Inter|Regular" fontSize={14}>
+          <Text mt="8px" mb="32px" color="neutral.c100" ff="Inter|Regular" fontSize={14}>
             {t("onboarding.drawers.pinHelp.intro")}
           </Text>
           <Rule type="success">

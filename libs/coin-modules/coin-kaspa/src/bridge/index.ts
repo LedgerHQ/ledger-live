@@ -23,6 +23,7 @@ import resolver from "../hw-getAddress";
 import { buildSignOperation } from "./signOperation";
 import { Result, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { validateAddress } from "./validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext<KaspaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -98,6 +99,7 @@ function buildAccountBridge(
     },
     broadcast,
     estimateMaxSpendable,
+    validateAddress,
   };
 }
 

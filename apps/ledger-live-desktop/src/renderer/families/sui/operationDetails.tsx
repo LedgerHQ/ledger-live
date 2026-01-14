@@ -7,7 +7,6 @@ import {
   OpDetailsSection,
   OpDetailsTitle,
   OpDetailsVoteData,
-  B,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
@@ -18,8 +17,9 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import BigNumber from "bignumber.js";
 import { useGetExtraDetails } from "@ledgerhq/live-common/families/sui/react";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
+import { Divider } from "@ledgerhq/react-ui/index";
 
 const OperationDetailsExtra = ({
   operation,
@@ -46,7 +46,7 @@ const OperationDetailsExtra = ({
   if (type === "UNDELEGATE") {
     return (
       <>
-        <B />
+        <Divider />
         <OpDetailsSection>
           <OpDetailsTitle>
             <Trans i18nKey={"operationDetails.extra.undelegatedFrom"} />
@@ -55,7 +55,7 @@ const OperationDetailsExtra = ({
             <Address>{extra.name}</Address>
           </OpDetailsData>
         </OpDetailsSection>
-        <B />
+        <Divider />
         <OpDetailsSection>
           <OpDetailsTitle>
             <Trans i18nKey={"operationDetails.extra.undelegatedAmount"} />

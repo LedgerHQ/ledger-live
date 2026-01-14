@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,14 @@ import type { BaseComposite, StackNavigatorProps } from "~/components/RootNaviga
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import type { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+
+const secondsToDurationKey: Record<number, string> = {
+  [3 * 60 * 60]: "canton.expiryDuration.threeHours",
+  [6 * 60 * 60]: "canton.expiryDuration.sixHours",
+  [24 * 60 * 60]: "canton.expiryDuration.oneDay",
+  [7 * 24 * 60 * 60]: "canton.expiryDuration.oneWeek",
+  [30 * 24 * 60 * 60]: "canton.expiryDuration.oneMonth",
+};
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -48,6 +56,12 @@ export default function CantonSendRowsCustom(props: Props) {
     );
   }, [navigation, route.params, account, transaction]);
 
+  const expiryDurationLabel = useMemo(() => {
+    const seconds = transaction.expireInSeconds ?? 24 * 60 * 60;
+    const key = secondsToDurationKey[seconds];
+    return t(key);
+  }, [t, transaction.expireInSeconds]);
+
   return (
     <View>
       <SummaryRow title={t("send.summary.memo.title")} onPress={editMemo}>
@@ -75,6 +89,11 @@ export default function CantonSendRowsCustom(props: Props) {
             {t("common.edit")}
           </LText>
         )}
+      </SummaryRow>
+      <SummaryRow title={t("canton.expiryDuration.summaryLabel")}>
+        <LText semiBold style={styles.tagText} numberOfLines={1} testID="summary-expiry-duration">
+          {expiryDurationLabel}
+        </LText>
       </SummaryRow>
     </View>
   );

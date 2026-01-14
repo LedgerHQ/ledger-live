@@ -17,10 +17,8 @@ const SelectorContainer = styled.div`
   border-radius: 9999px;
 `;
 const Selector = styled(Tabbable)<{ active?: boolean }>`
-  color: ${p =>
-    p.active ? p.theme.colors.palette.primary.contrastText : p.theme.colors.palette.text.shade20};
-  background: ${p =>
-    p.active ? p.theme.colors.palette.primary.main : p.theme.colors.palette.action.disabled};
+  color: ${p => (p.active ? p.theme.colors.neutral.c00 : p.theme.colors.neutral.c40)};
+  background: ${p => (p.active ? p.theme.colors.primary.c80 : p.theme.colors.opacityDefault.c10)};
   padding: 4px 12px 4px 12px;
 `;
 const SendFeeMode = ({ isCustomMode, setCustomMode }: Props) => {

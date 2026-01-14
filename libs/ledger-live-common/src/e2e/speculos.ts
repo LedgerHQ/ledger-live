@@ -49,6 +49,8 @@ import {
   swipeRight,
 } from "./deviceInteraction/TouchDeviceSimulator";
 import { withDeviceController } from "./deviceInteraction/DeviceController";
+import { sanitizeError } from ".";
+import { sendVechain } from "./families/vechain";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -348,6 +350,22 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Base: {
+    currency: getCryptoCurrencyById("base"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Ethereum",
+    },
+    dependency: "",
+  },
+  Vechain: {
+    currency: getCryptoCurrencyById("vechain"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Vechain",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(
@@ -394,7 +412,6 @@ export async function startSpeculos(
   if (!appCandidate) {
     console.warn("no app found for " + testName);
     console.warn(appQuery);
-    console.warn(JSON.stringify(appCandidates, undefined, 2));
   }
   invariant(
     appCandidate,
@@ -428,7 +445,7 @@ export async function startSpeculos(
           };
         });
   } catch (e: unknown) {
-    console.error(e);
+    console.error(sanitizeError(e));
     log("engine", `test ${testName} failed with ${String(e)}`);
   }
 }
@@ -610,7 +627,7 @@ export async function takeScreenshot(port?: number): Promise<Buffer | undefined>
     );
     return response.data;
   } catch (error) {
-    console.error("Error downloading speculos screenshot:", error);
+    console.error("Error downloading speculos screenshot:", sanitizeError(error));
   }
 }
 
@@ -622,7 +639,7 @@ export const removeMemberLedgerSync = withDeviceController(
   ({ getButtonsController }) =>
     async () => {
       const buttons = getButtonsController();
-      await waitFor(DeviceLabels.CONNECT_WITH);
+      await waitFor(DeviceLabels.CONNECT_TO);
 
       if (isTouchDevice()) {
         await pressAndRelease(DeviceLabels.CONNECT);
@@ -631,17 +648,22 @@ export const removeMemberLedgerSync = withDeviceController(
         await waitFor(DeviceLabels.CONFIRM_CHANGE);
         await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
         await waitFor(DeviceLabels.TURN_ON_SYNC);
-        await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+        await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
         await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
-        await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
+        const turnOnSyncCoordinates = getTurnOnSyncCoordinates();
+        await pressAndRelease(
+          DeviceLabels.TURN_ON_SYNC,
+          turnOnSyncCoordinates.x,
+          turnOnSyncCoordinates.y,
+        );
       } else {
-        await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
+        await pressUntilTextFound(DeviceLabels.CONNECT, true);
         await buttons.both();
-        await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
-        await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER, true);
+        await waitFor(DeviceLabels.REMOVE_FROM_LEDGER_SYNC);
+        await pressUntilTextFound(DeviceLabels.REMOVE, true);
         await buttons.both();
         await waitFor(DeviceLabels.TURN_ON_SYNC);
-        await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+        await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
         await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
         await buttons.both();
       }
@@ -650,30 +672,81 @@ export const removeMemberLedgerSync = withDeviceController(
 
 export const activateLedgerSync = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
-  await waitFor(DeviceLabels.CONNECT_WITH);
+  await waitFor(DeviceLabels.CONNECT_TO);
 
   if (isTouchDevice()) {
-    await pressAndRelease(DeviceLabels.CONNECT_WITH_LEDGER_SYNC);
+    await pressAndRelease(DeviceLabels.CONNECT);
   } else {
-    await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
+    await pressUntilTextFound(DeviceLabels.CONNECT_TO_LEDGER_SYNC);
+    await buttons.right();
     await buttons.both();
   }
   await waitFor(DeviceLabels.TURN_ON_SYNC);
   if (isTouchDevice()) {
-    await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
+    const turnOnSyncCoordinates = getTurnOnSyncCoordinates();
+    await pressAndRelease(
+      DeviceLabels.TURN_ON_SYNC,
+      turnOnSyncCoordinates.x,
+      turnOnSyncCoordinates.y,
+    );
   } else {
-    await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+    await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
     await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
     await buttons.both();
   }
 });
+
+const getSettingsToggle1Coordinates = () => {
+  const deviceModel = getSpeculosModel();
+
+  switch (deviceModel) {
+    case DeviceModelId.stax:
+      return { x: 345, y: 136 };
+    case DeviceModelId.europa:
+      return { x: 420, y: 140 };
+    case DeviceModelId.apex:
+      return { x: 263, y: 100 };
+    default:
+      return { x: 420, y: 140 };
+  }
+};
+
+const getSettingsCogwheelCoordinates = () => {
+  const deviceModel = getSpeculosModel();
+
+  switch (deviceModel) {
+    case DeviceModelId.stax:
+      return { x: 362, y: 43 };
+    case DeviceModelId.europa:
+      return { x: 400, y: 80 };
+    case DeviceModelId.apex:
+      return { x: 253, y: 58 };
+    default:
+      return { x: 400, y: 80 };
+  }
+};
+
+const getTurnOnSyncCoordinates = () => {
+  const deviceModel = getSpeculosModel();
+
+  switch (deviceModel) {
+    case DeviceModelId.stax:
+      return { x: 121, y: 532 };
+    case DeviceModelId.europa:
+      return { x: 151, y: 446 };
+    case DeviceModelId.apex:
+      return { x: 90, y: 301 };
+    default:
+      return { x: 147, y: 548 };
+  }
+};
 
 export const activateExpertMode = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
 
   if (isTouchDevice()) {
     await goToSettings();
-    const SettingsToggle1Coordinates = { x: 344, y: 136 };
+    const SettingsToggle1Coordinates = getSettingsToggle1Coordinates();
     await pressAndRelease(
       DeviceLabels.SETTINGS_TOGGLE_1,
       SettingsToggle1Coordinates.x,
@@ -698,7 +771,7 @@ export const goToSettings = withDeviceController(({ getButtonsController }) => a
   const buttons = getButtonsController();
 
   if (isTouchDevice()) {
-    const SettingsCogwheelCoordinates = { x: 400, y: 75 };
+    const SettingsCogwheelCoordinates = getSettingsCogwheelCoordinates();
     await pressAndRelease(
       DeviceLabels.SETTINGS,
       SettingsCogwheelCoordinates.x,
@@ -781,63 +854,65 @@ export const expectValidAddressDevice = withDeviceController(
 );
 
 export async function signSendTransaction(tx: Transaction) {
-  const currencyName = tx.accountToDebit.currency;
-  switch (currencyName) {
-    case Currency.sepETH:
-    case Currency.POL:
-    case Currency.ETH:
+  const currencyId = tx.accountToDebit.currency.id;
+  switch (currencyId) {
+    case Currency.sepETH.id:
+    case Currency.BASE.id:
+    case Currency.POL.id:
+    case Currency.ETH.id:
+    case Currency.ETH_USDT.id:
       await sendEVM(tx);
       break;
-    case Currency.BTC:
+    case Currency.BTC.id:
       await sendBTC(tx);
       break;
-    case Currency.ETH_USDT:
-      await sendEVM(tx);
-      break;
-    case Currency.DOGE:
-    case Currency.BCH:
+    case Currency.DOGE.id:
+    case Currency.BCH.id:
       await sendBTCBasedCoin(tx);
       break;
-    case Currency.DOT:
+    case Currency.DOT.id:
       await sendPolkadot(tx);
       break;
-    case Currency.ALGO:
+    case Currency.ALGO.id:
       await sendAlgorand(tx);
       break;
-    case Currency.SOL:
-    case Currency.SOL_GIGA:
+    case Currency.SOL.id:
+    case Currency.SOL_GIGA.id:
       await sendSolana(tx);
       break;
-    case Currency.TRX:
+    case Currency.TRX.id:
       await sendTron(tx);
       break;
-    case Currency.XLM:
+    case Currency.XLM.id:
       await sendStellar(tx);
       break;
-    case Currency.ATOM:
+    case Currency.ATOM.id:
       await sendCosmos(tx);
       break;
-    case Currency.ADA:
+    case Currency.ADA.id:
       await sendCardano(tx);
       break;
-    case Currency.XRP:
+    case Currency.XRP.id:
       await sendXRP(tx);
       break;
-    case Currency.APT:
+    case Currency.APT.id:
       await sendAptos(tx);
       break;
-    case Currency.KAS:
+    case Currency.KAS.id:
       await sendKaspa(tx);
       break;
-    case Currency.HBAR:
+    case Currency.HBAR.id:
       await sendHedera();
       break;
-    case Currency.SUI:
-    case Currency.SUI_USDC:
+    case Currency.SUI.id:
+    case Currency.SUI_USDC.id:
       await sendSui(tx);
       break;
+    case Currency.VET.id:
+      await sendVechain(tx);
+      break;
     default:
-      throw new Error(`Unsupported currency: ${currencyName.ticker}`);
+      throw new Error(`Unsupported currency: ${tx.accountToDebit.currency.ticker}`);
   }
 }
 

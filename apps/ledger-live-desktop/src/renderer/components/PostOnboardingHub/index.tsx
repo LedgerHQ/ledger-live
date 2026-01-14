@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo } from "react";
-import { Flex } from "@ledgerhq/react-ui";
+import { Flex, Icons } from "@ledgerhq/react-ui";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import PostOnboardingActionRow from "./PostOnboardingActionRow";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { setHasRedirectedToPostOnboarding } from "~/renderer/actions/settings";
-import { useDispatch, useSelector } from "react-redux";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/lib-es/store";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 
 const PostOnboardingHub = () => {
@@ -35,6 +36,14 @@ const PostOnboardingHub = () => {
 
   return (
     <Flex flexDirection="column" justifyContent="center">
+      <PostOnboardingActionRow
+        id={PostOnboardingActionId.deviceOnboarded}
+        title="postOnboarding.actions.deviceOnboarded.titleCompleted"
+        titleCompleted="postOnboarding.actions.deviceOnboarded.titleCompleted"
+        completed
+        deviceModelId={deviceModelId}
+        Icon={Icons.LedgerDevices}
+      />
       {postOnboardingRows}
     </Flex>
   );

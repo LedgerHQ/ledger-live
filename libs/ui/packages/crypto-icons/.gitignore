@@ -1,7 +1,0 @@
-/react
-/src/react
-/native
-/src/native
-*.test.js
-*.test.d.ts
-*.test.js.map

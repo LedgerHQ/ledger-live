@@ -3,7 +3,7 @@ import { ImageDimensions } from "../types";
 /**
  * Returns the dimensions of an image that has been resized to fully cover a box,
  * while keeping its aspect ratio.
- * This should behave like the CSS `object-fit: contain` property.
+ * This should behave like the CSS `object-fit: cover` property.
  *
  * @param imageDimensions The dimensions of the image to fit
  * @param containerDimensions The dimensions of the container to fit in
@@ -39,10 +39,10 @@ export function getRescaledDimensions(
     width:
       limitingDimensions === "width"
         ? containerDimensions.width
-        : Math.floor(imageDimensions.width * resizeRatio),
+        : Math.ceil(imageDimensions.width * resizeRatio),
     height:
       limitingDimensions === "height"
         ? containerDimensions.height
-        : Math.floor(imageDimensions.height * resizeRatio),
+        : Math.ceil(imageDimensions.height * resizeRatio),
   };
 }

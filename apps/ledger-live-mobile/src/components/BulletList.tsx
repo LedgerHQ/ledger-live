@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet, Animated, StyleProp, ViewStyle, TextStyle } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
+import { Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import Circle from "./Circle";
@@ -87,7 +87,7 @@ export function BulletGreenCheck() {
   const { colors } = useTheme();
   return (
     <Circle size={24} bg={colors.ledgerGreen}>
-      <Icon size={16} name="check" color={colors.white} />
+      <Icons.Check size="XS" color={colors.white} />
     </Circle>
   );
 }

@@ -1,9 +1,10 @@
 import { validateIntent } from "./validateIntent";
-import * as utils from "./utils";
 
 const mockGetBalance = jest.fn();
 
 const mockGetServerInfos = jest.fn();
+
+const RECIPIENT_NEW = "rDKsbvy9uaNpPtvVFraJyNGfjvTw8xivgK";
 
 jest.mock("./getBalance", () => ({
   getBalance: () => mockGetBalance(),
@@ -13,18 +14,20 @@ jest.mock("../network", () => ({
   getServerInfos: () => mockGetServerInfos(),
 }));
 
-jest.spyOn(utils, "cachedRecipientIsNew").mockImplementation(addr => {
-  if (addr === RECIPIENT_NEW) {
-    return Promise.resolve(true);
-  }
-  return Promise.resolve(false);
-});
+jest.mock("./utils", () => ({
+  ...jest.requireActual("./utils"),
+  cachedRecipientIsNew: jest.fn((addr: string) => {
+    if (addr === RECIPIENT_NEW) {
+      return Promise.resolve(true);
+    }
+    return Promise.resolve(false);
+  }),
+}));
 
 const reserveBase = 10_000_000n; // 10 XRP (drops)
 
 const SENDER = "rPSCfmnX3t9jQJG5RNcZtSaP5UhExZDue4";
 const RECIPIENT = "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe";
-const RECIPIENT_NEW = "rDKsbvy9uaNpPtvVFraJyNGfjvTw8xivgK";
 
 describe("validateIntent", () => {
   afterEach(() => {
@@ -39,13 +42,6 @@ describe("validateIntent", () => {
         },
       },
     });
-    mockGetBalance.mockResolvedValue([
-      {
-        value: 50_000_000n,
-        asset: { type: "native" },
-        locked: 0n,
-      },
-    ]);
 
     const result = await validateIntent(
       // account as any,
@@ -56,6 +52,13 @@ describe("validateIntent", () => {
         recipient: RECIPIENT,
         asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
+      [
+        {
+          value: 50_000_000n,
+          asset: { type: "native" },
+          locked: 0n,
+        },
+      ],
       {
         value: 10_000n, // fees
       },
@@ -74,13 +77,6 @@ describe("validateIntent", () => {
         },
       },
     });
-    mockGetBalance.mockResolvedValue([
-      {
-        value: 50_000_000n,
-        asset: { type: "native" },
-        locked: 0n,
-      },
-    ]);
 
     const result = await validateIntent(
       // account as any,
@@ -91,6 +87,13 @@ describe("validateIntent", () => {
         recipient: RECIPIENT,
         asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
+      [
+        {
+          value: 50_000_000n,
+          asset: { type: "native" },
+          locked: 0n,
+        },
+      ],
       {
         value: 200_000n, // fees
       },
@@ -108,13 +111,6 @@ describe("validateIntent", () => {
         },
       },
     });
-    mockGetBalance.mockResolvedValue([
-      {
-        value: 30_000_000n,
-        asset: { type: "native" },
-        locked: 0n,
-      },
-    ]);
 
     const result = await validateIntent(
       // account as any,
@@ -125,6 +121,13 @@ describe("validateIntent", () => {
         recipient: RECIPIENT,
         asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
+      [
+        {
+          value: 30_000_000n,
+          asset: { type: "native" },
+          locked: 0n,
+        },
+      ],
     );
 
     expect(result.errors.fee?.name).toBe("FeeNotLoaded");
@@ -138,13 +141,6 @@ describe("validateIntent", () => {
         },
       },
     });
-    mockGetBalance.mockResolvedValue([
-      {
-        value: 50_000_000n,
-        asset: { type: "native" },
-        locked: 0n,
-      },
-    ]);
 
     const result = await validateIntent(
       // account as any,
@@ -155,6 +151,13 @@ describe("validateIntent", () => {
         recipient: SENDER,
         asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
+      [
+        {
+          value: 50_000_000n,
+          asset: { type: "native" },
+          locked: 0n,
+        },
+      ],
       { value: 10_000n }, // fees
     );
 
@@ -169,13 +172,6 @@ describe("validateIntent", () => {
         },
       },
     });
-    mockGetBalance.mockResolvedValue([
-      {
-        value: 50_000_000n,
-        asset: { type: "native" },
-        locked: 0n,
-      },
-    ]);
 
     const result = await validateIntent(
       // account as any,
@@ -186,6 +182,13 @@ describe("validateIntent", () => {
         recipient: RECIPIENT_NEW,
         asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
+      [
+        {
+          value: 50_000_000n,
+          asset: { type: "native" },
+          locked: 0n,
+        },
+      ],
       { value: 10_000n }, // fees
     );
 
@@ -200,13 +203,6 @@ describe("validateIntent", () => {
         },
       },
     });
-    mockGetBalance.mockResolvedValue([
-      {
-        value: 50_000_000n,
-        asset: { type: "native" },
-        locked: 0n,
-      },
-    ]);
 
     const result = await validateIntent(
       // account as any,
@@ -217,6 +213,13 @@ describe("validateIntent", () => {
         recipient: RECIPIENT,
         asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
+      [
+        {
+          value: 50_000_000n,
+          asset: { type: "native" },
+          locked: 0n,
+        },
+      ],
       { value: 10_000n }, // fees
     );
 
@@ -231,13 +234,6 @@ describe("validateIntent", () => {
         },
       },
     });
-    mockGetBalance.mockResolvedValue([
-      {
-        value: 50_000_000n,
-        asset: { type: "native" },
-        locked: 0n,
-      },
-    ]);
 
     const result = await validateIntent(
       // account as any,
@@ -248,6 +244,13 @@ describe("validateIntent", () => {
         amount: 1_000_000n,
         recipient: "not-an-address",
       } as any,
+      [
+        {
+          value: 50_000_000n,
+          asset: { type: "native" },
+          locked: 0n,
+        },
+      ],
       { value: 10_000n }, // fees
     );
 
@@ -262,13 +265,6 @@ describe("validateIntent", () => {
         },
       },
     });
-    mockGetBalance.mockResolvedValue([
-      {
-        value: 50_000_000n,
-        asset: { type: "native" },
-        locked: 0n,
-      },
-    ]);
 
     const result = await validateIntent(
       // account as any,
@@ -279,6 +275,13 @@ describe("validateIntent", () => {
         amount: 1_000_000n,
         recipient: "",
       } as any,
+      [
+        {
+          value: 50_000_000n,
+          asset: { type: "native" },
+          locked: 0n,
+        },
+      ],
       { value: 10_000n }, // fees
     );
 

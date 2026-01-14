@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
@@ -25,22 +25,40 @@ import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
 import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 const SectionGeneral = () => {
   const hasPassword = useSelector(hasPasswordSelector);
   const { t } = useTranslation();
   useInitSupportedCounterValues();
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
-  const llMevProtectionFeatureFlag = useFeature("llMevProtection");
   const { shouldDisplayEntryPoint } = useEntryPoint(EntryPoint.settings);
-  const mevLearnMoreLink = llMevProtectionFeatureFlag?.params?.link?.trim() || undefined;
   const { closeDrawer } = useActivationDrawer();
+  const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");
+  const mevProtectionUrl = useLocalizedUrl(urls.mevProtection);
 
   return (
     <>
       <TrackPage category="Settings" name="Display" />
       <Body>
-        <LedgerSyncEntryPoint entryPoint={EntryPoint.settings} />
+        {!ledgerSyncOptimisationFlag?.enabled && (
+          <LedgerSyncEntryPoint entryPoint={EntryPoint.settings} />
+        )}
+        {!shouldDisplayEntryPoint ? (
+          <Row
+            title={t("settings.display.walletSync")}
+            desc={
+              ledgerSyncOptimisationFlag?.enabled
+                ? t("settings.display.walletSyncDescription")
+                : t("settings.display.walletSyncDesc")
+            }
+            dataTestId="setting-walletSync"
+            id="setting-walletSync"
+          >
+            <WalletSync />
+          </Row>
+        ) : null}
         <Row
           title={t("settings.display.counterValue")}
           desc={t("settings.display.counterValueDesc")}
@@ -68,15 +86,14 @@ const SectionGeneral = () => {
         >
           <ThemeSelect />
         </Row>
-
-        {!shouldDisplayEntryPoint ? (
+        {shouldDisplayEntryPoint && ledgerSyncOptimisationFlag?.enabled ? (
           <Row
             title={t("settings.display.walletSync")}
-            desc={t("settings.display.walletSyncDesc")}
+            desc={t("settings.display.walletSyncDescription")}
             dataTestId="setting-walletSync"
             id="setting-walletSync"
           >
-            <WalletSync />
+            <WalletSync variant="sync" />
           </Row>
         ) : null}
 
@@ -102,18 +119,16 @@ const SectionGeneral = () => {
           </Row>
         ) : null}
 
-        <FeatureToggle featureId="llMevProtection">
-          <Row
-            title={t("settings.display.mevProtection")}
-            desc={t("settings.display.mevProtectionDesc")}
-            dataTestId="setting-mevProtection"
-            id="setting-mevProtection"
-            linkText={t("settings.display.mevProtectionLearnMore")}
-            externalUrl={mevLearnMoreLink}
-          >
-            <MevProtectionRow />
-          </Row>
-        </FeatureToggle>
+        <Row
+          title={t("settings.display.mevProtection")}
+          desc={t("settings.display.mevProtectionDesc")}
+          dataTestId="setting-mevProtection"
+          id="setting-mevProtection"
+          linkText={t("settings.display.mevProtectionLearnMore")}
+          externalUrl={mevProtectionUrl}
+        >
+          <MevProtectionRow />
+        </Row>
 
         <Row
           title={t("settings.profile.reportErrors")}

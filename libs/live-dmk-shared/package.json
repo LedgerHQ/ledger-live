@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-shared",
-  "version": "0.15.0",
+  "version": "0.18.0-next.0",
   "description": "Ledger Device Management Kit shared module",
   "private": true,
   "license": "Apache-2.0",
@@ -36,30 +36,30 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@noble/hashes": "^1.8.0",
-    "@types/semver": "^7",
+    "@types/semver": "catalog:",
     "purify-ts": "^2.1.0",
-    "semver": "^7",
+    "semver": "catalog:",
     "xstate": "^5.19.2"
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
-    "@testing-library/dom": "^9.3.4",
-    "@testing-library/jest-dom": "6.6.3",
-    "@testing-library/react": "^16.1.0",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
     "@types/node": "22.10.10",
     "@vitejs/plugin-react": "4.3.4",
     "@vitest/coverage-istanbul": "3.0.7",
     "jsdom": "25.0.1",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "rxjs": "^7.8.1",
+    "rxjs": "catalog:",
     "vite": "6.0.7",
     "vitest": "2.1.9",
-    "ws": "8.18.0"
+    "ws": "catalog:"
   },
   "peerDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
     "react": "catalog:",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   }
 }

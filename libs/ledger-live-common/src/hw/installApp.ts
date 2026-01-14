@@ -1,5 +1,5 @@
 import { Observable, throwError, timer } from "rxjs";
-import { throttleTime, filter, map, catchError, retry } from "rxjs/operators";
+import { throttleTime, filter, map, catchError, retry, switchMap } from "rxjs/operators";
 import {
   LockedDeviceError,
   ManagerAppDepInstallRequired,
@@ -12,6 +12,7 @@ import ManagerAPI from "../manager/api";
 import { getDependencies } from "../apps/polyfill";
 import { LocalTracer } from "@ledgerhq/logs";
 import { LOG_TYPE } from ".";
+import { quitApp } from "../deviceSDK/commands/quitApp";
 
 const APP_INSTALL_RETRY_DELAY = 500;
 const APP_INSTALL_RETRY_LIMIT = 5;
@@ -53,60 +54,65 @@ export default function installApp(
     retryDelayMs,
   });
 
-  return ManagerAPI.install(transport, "install-app", {
-    targetId,
-    perso: app.perso,
-    deleteKey: app.delete_key,
-    firmware: app.firmware,
-    firmwareKey: app.firmware_key,
-    hash: app.hash,
-  }).pipe(
-    retry({
-      count: retryLimit,
-      delay: (error: unknown, retryCount: number) => {
-        // Not retrying on locked device errors
-        if (
-          error instanceof LockedDeviceError ||
-          error instanceof ManagerDeviceLockedError ||
-          error instanceof UnresponsiveDeviceError
-        ) {
-          tracer.trace(`Not retrying on error: ${error}`, {
-            error,
-          });
-          return throwError(() => error);
-        }
+  // Run quitApp just before ManagerAPI.install
+  return quitApp(transport).pipe(
+    switchMap(() =>
+      ManagerAPI.install(transport, "install-app", {
+        targetId,
+        perso: app.perso,
+        deleteKey: app.delete_key,
+        firmware: app.firmware,
+        firmwareKey: app.firmware_key,
+        hash: app.hash,
+      }).pipe(
+        retry({
+          count: retryLimit,
+          delay: (error: unknown, retryCount: number) => {
+            // Not retrying on locked device errors
+            if (
+              error instanceof LockedDeviceError ||
+              error instanceof ManagerDeviceLockedError ||
+              error instanceof UnresponsiveDeviceError
+            ) {
+              tracer.trace(`Not retrying on error: ${error}`, {
+                error,
+              });
+              return throwError(() => error);
+            }
 
-        tracer.trace(`Retrying (${retryCount}/${retryLimit}) on error: ${error}`, {
-          error,
-          retryLimit,
-          retryDelayMs,
-        });
-        return timer(retryDelayMs);
-      },
-    }),
-    filter((e: any) => e.type === "bulk-progress"), // only bulk progress interests the UI
-    throttleTime(100), // throttle to only emit 10 event/s max, to not spam the UI
-    map((e: any) => ({
-      progress: e.progress,
-    })), // extract a stream of progress percentage
-    catchError((e: Error) => {
-      tracer.trace(`Error: ${e}`, { error: e });
+            tracer.trace(`Retrying (${retryCount}/${retryLimit}) on error: ${error}`, {
+              error,
+              retryLimit,
+              retryDelayMs,
+            });
+            return timer(retryDelayMs);
+          },
+        }),
+        filter((e: any) => e.type === "bulk-progress"), // only bulk progress interests the UI
+        throttleTime(100), // throttle to only emit 10 event/s max, to not spam the UI
+        map((e: any) => ({
+          progress: e.progress,
+        })), // extract a stream of progress percentage
+        catchError((e: Error) => {
+          tracer.trace(`Error: ${e}`, { error: e });
 
-      if (!e || !e.message) return throwError(() => e);
+          if (!e || !e.message) return throwError(() => e);
 
-      const status = e.message.slice(e.message.length - 4);
-      if (status === "6a83" || status === "6811") {
-        const dependencies = getDependencies(app.name);
-        return throwError(
-          () =>
-            new ManagerAppDepInstallRequired("", {
-              appName: app.name,
-              dependency: dependencies.join(", "),
-            }),
-        );
-      }
+          const status = e.message.slice(e.message.length - 4);
+          if (status === "6a83" || status === "6811") {
+            const dependencies = getDependencies(app.name);
+            return throwError(
+              () =>
+                new ManagerAppDepInstallRequired("", {
+                  appName: app.name,
+                  dependency: dependencies.join(", "),
+                }),
+            );
+          }
 
-      return throwError(() => e);
-    }),
+          return throwError(() => e);
+        }),
+      ),
+    ),
   );
 }

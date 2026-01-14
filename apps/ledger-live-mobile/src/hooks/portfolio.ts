@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import type { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import {
   useBalanceHistoryWithCountervalue as useBalanceHistoryWithCountervalueCommon,

@@ -12,7 +12,7 @@ const Container = styled(Box).attrs(() => ({
   justifyContent: "center",
   fontSize: 4,
   ff: "Inter",
-  color: "palette.text.shade80",
+  color: "neutral.c80",
 }))`
   border-radius: 12px;
   display: inline-flex;

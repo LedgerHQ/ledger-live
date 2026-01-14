@@ -1,6 +1,6 @@
 {
   "name": "ledger-live-desktop-e2e-tests",
-  "version": "0.11.0-next.0",
+  "version": "0.14.0-next.0",
   "private": true,
   "scripts": {
     "lint": "eslint . --ext .ts --cache",
@@ -18,20 +18,20 @@
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@playwright/test": "^1.51.0",
+    "@playwright/test": "catalog:",
     "@types/node": "22.10.10",
-    "allure-js-commons": "^3.2.1",
-    "allure-playwright": "^3.2.1",
+    "allure-js-commons": "catalog:",
+    "allure-playwright": "catalog:",
     "axios": "catalog:",
     "dotenv": "^16.4.7",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
-    "rxjs": "^7.8.1"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@types/invariant": "2.2.37",
     "@types/lodash": "4.17.16",
     "electron": "catalog:",
-    "playwright": "1.51.1"
+    "playwright": "catalog:"
   }
 }

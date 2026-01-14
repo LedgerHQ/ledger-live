@@ -14,15 +14,6 @@ enum Event {
   ContentSizeChange = "contentSizeChange",
 }
 
-const mockLayoutEvent = (width: number, height: number) => ({
-  nativeEvent: {
-    layout: {
-      width,
-      height,
-    },
-  },
-});
-
 const mockContentSizeChangeEvent = (width: number, height: number) => ({
   width,
   height,
@@ -196,13 +187,15 @@ describe("portfolioAssets", () => {
       Event.ContentSizeChange,
       mockContentSizeChangeEvent(722, 722),
     );
+
+    // Switch to Accounts tab first, then fire the event on AccountsList
+    await user.press(getByText(/accounts/i));
+
     fireEvent(
       getByTestId(/AccountsList/),
       Event.ContentSizeChange,
       mockContentSizeChangeEvent(722, 722),
     );
-
-    await user.press(getByText(/accounts/i));
 
     const seeAllAccountsButton = getByText(/see all accounts/i);
     expect(seeAllAccountsButton).toBeDefined();
@@ -236,20 +229,21 @@ describe("portfolioAssets", () => {
       { ...INITIAL_STATE },
     );
 
-    fireEvent(getByTestId(/portfolio-assets-layout/i), Event.Layout, mockLayoutEvent(375, 640));
-
     fireEvent(
       getByTestId(/AssetsList/),
       Event.ContentSizeChange,
       mockContentSizeChangeEvent(361, 320),
     );
+
+    // Switch to Accounts tab first, then fire the event on AccountsList
+    await user.press(getByText(/accounts/i));
+
     fireEvent(
       getByTestId(/AccountsList/),
       Event.ContentSizeChange,
       mockContentSizeChangeEvent(361, 320),
     );
 
-    await user.press(getByText(/accounts/i));
     const accounts = [
       { name: /ethereum classic 2/i, address: /0x79...1EAF/i },
       { name: /energy web 2/i, address: /0xDF...4D9C/i },

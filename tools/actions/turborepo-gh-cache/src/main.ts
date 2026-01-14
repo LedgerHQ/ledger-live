@@ -45,7 +45,7 @@ saveState("cleanupCacheFolder", cleanupCacheFolder);
         timeout = setTimeout(reject, 10000);
       }),
     ]);
-  } catch (error) {
+  } catch {
     console.error("Timeout while waiting for the server to boot.");
   } finally {
     clearInterval(interval);

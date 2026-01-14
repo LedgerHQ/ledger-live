@@ -1,0 +1,19 @@
+{
+  "libs/client-ids/src/ids/DeviceId.ts": {
+    "exportDeviceIdForPushDevicesService": [
+      "libs/client-ids/src/api/api.ts",
+      "libs/ledger-live-common/src/hw/actions/manager.ts"
+    ],
+    "exportDeviceIdForPersistence": [
+      "libs/client-ids/src/store/persistence.ts",
+      "libs/client-ids/src/ids/DeviceId.ts"
+    ]
+  },
+  "libs/client-ids/src/store/persistence.ts": {
+    "exportIdentitiesForPersistence": [
+      "apps/ledger-live-desktop/src/renderer/middlewares/db.ts",
+      "apps/ledger-live-mobile/src/components/DBSave.ts",
+      "apps/ledger-live-mobile/src/context/store.ts"
+    ]
+  }
+}

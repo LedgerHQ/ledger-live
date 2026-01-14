@@ -15,7 +15,7 @@ const ProviderIcon = ({
   size = "S",
   boxed = true,
   alt = `${name} icon`,
-}: Props): JSX.Element | null => {
+}: Props): React.JSX.Element | null => {
   const iconUrl = getProviderIconUrl({ boxed, name });
   return <Styles.Icon src={iconUrl} size={size} alt={alt} />;
 };

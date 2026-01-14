@@ -1,7 +1,7 @@
 import React from "react";
 import { ScrollView } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
-import Animated, { Layout, SlideInLeft } from "react-native-reanimated";
+import Animated, { LinearTransition, SlideInLeft } from "react-native-reanimated";
 import useAnalyticsEventsLog from "./useAnalyticsEventsLog";
 import Event from "./Event";
 
@@ -27,7 +27,7 @@ const EventList: React.FC<Props> = ({ showExtraProps, hideSyncEvents, hidden }) 
                 item.date.getTime() - filteredItems[filteredItems.length - 1].date.getTime(),
               ) < 1000;
             return (
-              <AnimatedFlex key={item.id} layout={Layout} entering={SlideInLeft}>
+              <AnimatedFlex key={item.id} layout={LinearTransition} entering={SlideInLeft}>
                 <Event {...item} showExtraProps={showExtraProps} isLast={isLast} />
               </AnimatedFlex>
             );

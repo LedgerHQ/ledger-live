@@ -4,7 +4,13 @@ const minaConfig: CurrencyLiveConfigDefinition = {
   config_currency_mina: {
     type: "object",
     default: {
-      status: { type: "active" },
+      status: {
+        type: "active",
+        features: [
+          { id: "blockchain_txs", status: "active" },
+          { id: "staking_txs", status: "active" },
+        ],
+      },
       infra: {
         API_MINA_ROSETTA_NODE: "https://mina.coin.ledger.com/node",
       },

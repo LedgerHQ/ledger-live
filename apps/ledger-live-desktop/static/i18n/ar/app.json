@@ -173,6 +173,9 @@
       "UNDELEGATE" : "غير مفوّض",
       "APPROVE" : "مُعتمد",
       "PRE_APPROVAL" : "موافقة مسبقة",
+      "TRANSFER_PROPOSAL" : "عرض التحويل",
+      "TRANSFER_REJECTED" : "تم رفض التحويل",
+      "TRANSFER_WITHDRAWN" : "تم سحب التحويل",
       "VOTE" : "تم التصويت",
       "FREEZE" : "مُجمد",
       "UNFREEZE" : "تمت إزالة التجميد",
@@ -203,7 +206,9 @@
       "WITHDRAW_UNSTAKED" : "مسحوب",
       "SENDING" : "إرسال",
       "BURN" : "محروق",
-      "ASSOCIATE_TOKEN" : "ربط رمز التوكن"
+      "ASSOCIATE_TOKEN" : "ربط رمز التوكن",
+      "CONTRACT_CALL" : "استدعاء عقد",
+      "UPDATE_ACCOUNT" : "الحساب المحدث"
     },
     "edit" : {
       "title" : "التسريع أو الإلغاء",
@@ -333,7 +338,7 @@
         },
         "rate" : {
           "title" : "مُعدّل التبادل",
-          "tooltip" : "<0>المُعدّل المتغيّر</0> يتقلّب وفقاً لأحوال السوق، لذلك قد تتلقى مبلغ أكثر أو أقل من ذلك الذي قدّرته.<br/><br/><0>المُعدّل الثابت</0> يتطابق مع المبلغ المعروض في بداية التبادل."
+          "tooltip" : "<0>المُعدّل المتغيّر</0> يتقلّب وفقاً لأحوال السوق، لذلك قد تتلقى مبلغ أكثر أو أقل من ذلك الذي قدّرته.  <0>المُعدّل الثابت</0> يتطابق مع المبلغ المعروض في بداية التبادل."
         },
         "receive" : {
           "title" : "تلقي",
@@ -367,7 +372,7 @@
       },
       "notAvailable" : {
         "title" : "المبادلة غير متاحة في منطقتك بعد",
-        "content" : "اصبر قليلاً، <br/>سوف نطلق هذه الميزة قريباً جداً"
+        "content" : "اصبر قليلاً،  سوف نطلق هذه الميزة قريباً جداً"
       },
       "timeout" : {
         "message" : "تعذّر إنشاء عروض الأسعار بسبب مشكلات تقنية. حاول المبادلة مجدداً خلال بضع لحظات."
@@ -475,7 +480,9 @@
       "kaspa_title" : "™Ledger Nano S لا تدعم مبادلة Kaspa",
       "kaspa_description" : "لمبادلة Kaspa، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "celo_title" : "™Ledger Nano S لا تدعم مبادلة Celo",
-      "celo_description" : "لمبادلة Celo، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+      "celo_description" : "لمبادلة Celo، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "monad_title" : "™Ledger Nano S لا تدعم مبادلة Monad",
+      "monad_description" : "لمبادلة Monad، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
     },
     "providers" : {
       "title" : "اختر أحد المزودين لمبادلة الأصول المشفرة",
@@ -618,9 +625,6 @@
     }
   },
   "lottieDebugger" : {
-    "buttonTitle" : "اختبر"
-  },
-  "storylyDebugger" : {
     "buttonTitle" : "اختبر"
   },
   "postOnboardingDebugger" : {
@@ -843,7 +847,7 @@
     "stake" : "تكديس",
     "delegatedAssets" : "الأصول المفوضة",
     "undelegating" : "جاري إلغاء التفويض",
-    "availableBalanceTooltip" : "هذا المبلغ يمكن التخلص منه.",
+    "availableBalanceTooltip" : "أموال يمكنك استخدامها الآن.",
     "frozenAssetsTooltip" : "تُستخدم الأصول المجمدة في عملية تصويت Tron. هذا يمثل العدد الإجمالي للأصوات الخاصة بك.",
     "bandwidthTooltip" : "قم بتجميد الأصول لكسب نطاق ترددي (Bandwidth)",
     "energyTooltip" : "قم بتجميد الأصول لكسب الطاقة",
@@ -1422,7 +1426,7 @@
   },
   "postOnboarding" : {
     "postOnboardingScreen" : {
-      "title" : "قريباً، استخدم {{productName}}\nالخاص بك من أجل... ",
+      "title" : "ما التالي؟",
       "titleCompleted" : "أنت مُستعد الآن!\nتابع واستكشف محفظتك الاستثمارية.",
       "exploreCTA" : "استكشاف محفظتي الاستثمارية"
     },
@@ -1431,19 +1435,22 @@
     },
     "postOnboardingBanner" : {
       "title" : "ما التالي بالنسبة لـ {{productName}} الخاص بك؟",
-      "description" : "حوّل أصولك من أي منصة تداول أو محفظة، أو اشترِ الأصول المشفرة، أو خصص شاشة القفل الخاصة به، أو اشترك في Ledger Recover.",
+      "description" : "قم بتأمين أصولك المشفرة واتخذ خطوةً إضافيةً.",
       "link" : "تعرف على التالي",
       "dismiss" : "ربّما في وقت لاحق"
     },
     "actions" : {
+      "deviceOnboarded" : {
+        "titleCompleted" : "قم بإعداد جهازك Ledger"
+      },
       "buyCrypto" : {
-        "title" : "شراء الأصول المشفرة",
-        "description" : "اختر من بين أكثر من 500 عملة وأفضل عروض الأسعار، المصممة خصيصاً لتناسب تفضيلاتك.",
+        "title" : "شراء الأصول المشفرة عبر Ledger Wallet",
+        "description" : "اختر من بين أكثر من 500 عملة ورمز توكن.",
         "actionCompletedPopupLabel" : "الأصول المشفرة التي تم شراؤها"
       },
       "assetsTransfer" : {
-        "title" : "قم بتحويل أصولك إلى Ledger",
-        "description" : "من أي منصة تداول أو محفظة، مباشرةً إلى جهازك Ledger.",
+        "title" : "تحويل أصولك",
+        "description" : "قم بالتحويل من أي منصة تداول أو محفظة.",
         "actionCompletedPopupLabel" : "تم تحويل الأصول"
       },
       "syncAccounts" : {
@@ -1863,7 +1870,13 @@
       "transferAmount" : "مبلغ التحويل",
       "validatorsCount" : "({{number}}) مدقق",
       "version" : "الإصدار",
-      "accountCreationFee" : "رسوم إنشاء الحساب"
+      "accountCreationFee" : "رسوم إنشاء الحساب",
+      "associatedTokenId" : "مُعرّف رمز التوكن المرتبط",
+      "targetStakingNodeId" : "مُعرّف العقدة الهدف",
+      "previousStakingNodeId" : "مُعرّف العقدة السابقة",
+      "gasConsumed" : "الغاز المستهلَك",
+      "gasUsed" : "الغاز المستخدَم",
+      "gasLimit" : "حد الغاز"
     }
   },
   "operationList" : {
@@ -2447,6 +2460,54 @@
         "checkbox.label" : "لا تظهر هذا مرةً أخرى."
       }
     }
+  },
+  "newSendFlow" : {
+    "title" : "إرسال {{currency}}",
+    "available" : "متاح {{amount}}",
+    "placeholder" : "أدخِل عنواناً أو ENS",
+    "placeholderNoENS" : "أدخل العنوان",
+    "recent" : "حديث",
+    "myAccounts" : "حساباتي",
+    "sendTo" : "إرسال إلى {{address}}",
+    "addressMatched" : "العنوان متطابق",
+    "addressNotFound" : "لم يتم العثور على العنوان",
+    "alreadyUsed" : "تم استخدامه بالفعل · {{date}}",
+    "recentSendWillAppear" : "سيظهر ما أرسلته مؤخراً هنا",
+    "remove" : "حذف",
+    "enterTag" : "أدخل {{tag}}",
+    "firstInteraction" : {
+      "title" : "أنت ترسل إلى عنوان جديد",
+      "description" : "تحقق من صحة العنوان. في حالة الشك أرسل مبلغاً صغيراً أولاً."
+    },
+    "sanctioned" : {
+      "title" : "عنوان مُعلّم",
+      "description" : "لقد تم وضع علامة على هذا العنوان و Ledger لا تسمح بالإرسال إليه",
+      "helpCenter" : "مركز الدعم"
+    },
+    "errors" : {
+      "incorrectFormat" : "تنسيق العنوان غير صحيح",
+      "incompatibleAsset" : "العنوان غير متوافق مع الأصل المحدد",
+      "walletNotExist" : "المحفظة غير موجودة"
+    },
+    "skipMemo" : {
+      "title" : "تخطي إضافة {{tag}}؟",
+      "warning" : "قد يتم فقدان أصلك إذا كان {{tag}} مطلوب من قِبل المستلم الذي تقوم بالإرسال إليه"
+    },
+    "tagHelp" : {
+      "title" : "ما هو {{tag}}؟",
+      "description" : "{{tag}} مطلوب عند إرسال {{currency}} إلى منصة تداول أصول مشفرة. هي ميزة تستخدم لتحديد مستلم المعاملة. عدم تضمين ملاحظة (تسمية الوجهة) {{tag}} قد ينتج عنه فقدان دائم للأموال."
+    },
+    "networkFeesInFiat" : "رسوم الشبكة بعملة {{currency}}",
+    "feesAmount" : "مبلغ الرسوم ({{unit}})",
+    "gasLimit" : "حد الغاز ({{unit}})",
+    "feesPaid" : "الرسوم المدفوعة للشبكة لمتابعة معاملتك",
+    "insufficientBalanceFees" : "رصيد غير كافٍ لتغطية رسوم الشبكة.",
+    "amountToSend" : "المبلغ المراد إرساله بعملة ({{currency}})",
+    "coinToSend" : "العملة المراد إرسالها",
+    "coinControlCustom" : "اختيار عملات مخصص",
+    "aboveMaximum" : "أعلى من الحد الأقصى للرصيد",
+    "transactionSigned" : "تم توقيع المعاملة",
+    "processingTransaction" : "معاملتك قيد المعالجة."
   },
   "releaseNotes" : {
     "title" : "ملاحظات الإصدار",
@@ -3686,6 +3747,8 @@
       "activeTooltip" : "المبالغ النشطة تولد المكافآت",
       "inactiveTooltip" : "المبالغ غير النشطة لا تولد المكافآت",
       "delegatedInfoTooltip" : "إجمالي المبلغ الذي تم تفويضه لمدققين.",
+      "inactiveStakeTooltip" : "حصة التكديس غير النشطة يمكن سحبها دون إلغاء تفويضك.",
+      "inactiveStakeTitle" : "المكافآت القابلة للسحب",
       "withdrawableInfoTooltip" : "مجموع المبلغ القابل للسحب من التفويضات.",
       "withdrawableTitle" : "قابل للسحب",
       "statusUpdateNotice" : "ستُحدّث حالة التفويض عندما يتم تأكيد المعاملة.",
@@ -4493,6 +4556,7 @@
       "stockDesc" : "اختر \"Western\" (غربي) لعرض زيادات السوق باللون الأزرق أو \"Eastern\" (شرقي) لعرضها باللون الأحمر.",
       "walletSync" : "مزامنة Ledger",
       "walletSyncDesc" : "قم بمزامنة حسابات الأصول المشفرة الخاصة بك في Ledger Wallet عبر هواتف وأجهزة كمبيوتر مختلفة.",
+      "walletSyncDescription" : "حافظ على محفظتك الاستثمارية مُحدّثةً عند تبديل أجهزة الكمبيوتر أو استخدام هاتف",
       "mevProtection" : "حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV)",
       "mevProtectionDesc" : "قم بتمكين حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV) لمعاملات أكثر موثوقية على إيثريوم.",
       "mevProtectionLearnMore" : "إشعار الخصوصية",
@@ -4527,6 +4591,10 @@
       "analyticsConsole" : {
         "title" : "السماح بوحدة تحكم التحليلات",
         "desc" : "عرض والسماح بفتح وحدة تحكم التحليلات."
+      },
+      "themeConsole" : {
+        "title" : "تبديل السمة",
+        "desc" : "اعرض طبقةً شفافةً عائمةً لتبديل السمات بسرعة."
       },
       "brazeTools" : {
         "title" : "أدوات Braze",
@@ -4618,7 +4686,10 @@
       },
       "modularDrawerDevTool" : {
         "title" : "أداة تطوير الشريط النموذجي",
-        "description" : "تسمح لك باختبار الشريط النموذجي بسهولة"
+        "description" : "تسمح لك باختبار الشريط النموذجي بسهولة",
+        "openDrawer" : "فتح الشريط",
+        "debugDialog" : "حوار تصحيح الأخطاء",
+        "debugDuplicates" : "تصحيح أخطاء النسخ المماثلة"
       },
       "cryptoAssetsList" : {
         "title" : "قائمة الأصول المشفرة",
@@ -5168,7 +5239,9 @@
           "pinCode" : "كود PIN",
           "recoveryPhrase" : "عبارة الاسترداد",
           "hideRecoveryPhrase" : "إخفاء عبارة الاسترداد",
-          "pairNano" : "توصيل nano"
+          "pairNano" : "توصيل nano",
+          "enableSync" : "المزامنة",
+          "secureYourCrypto" : "تأمين أصولك المشفرة"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -5460,6 +5533,37 @@
             "help" : {
               "help" : "بحاجة الى مساعدة",
               "descr" : "لا تعرف ما يتعين عليك فعله؟ احصل على بعض المساعدة لتجتاز هذه الخطوة."
+            }
+          },
+          "enableSync" : {
+            "title" : "تمكين المزامنة لمحفظتك",
+            "description" : "حافظ على محفظتك الاستثمارية مُحدّثةً عند تبديل الهواتف أو استخدام الكمبيوتر.",
+            "buttons" : {
+              "next" : "متابعة",
+              "nextSecondary" : "سأفعل هذا لاحقاً"
+            }
+          },
+          "secureYourCrypto" : {
+            "title" : "تأمين أصولك المشفرة",
+            "description" : "قم بنقل أصولك المشفرة الأولى من منصة تداول أو محفظة إلى Ledger Wallet خاصتك لأقصى درجات الأمان.",
+            "buttons" : {
+              "next" : "تأمين أصولي المشفرة",
+              "nextSecondary" : "ربّما لاحقاً",
+              "prev" : "الخطوة السابقة"
+            }
+          },
+          "welcomeToWalletWithFunds" : {
+            "title" : "كل شيء في مكانه",
+            "description" : "جهازك Ledger مُستعد. إذا كنت قد أرسلت أصولاً مشفرة إلى Ledger Wallet خاصتك، فستتلقاها خلال بضع دقائق.",
+            "buttons" : {
+              "next" : "متابعة"
+            }
+          },
+          "welcomeToWalletWithoutFunds" : {
+            "title" : "كل شيء في مكانه",
+            "description" : "جهازك Ledger مُستعد — يمكنك الآن تأمين أصولك به.",
+            "buttons" : {
+              "next" : "متابعة"
             }
           }
         }
@@ -5792,10 +5896,32 @@
     "canton" : {
       "commentPlaceholder" : "اختياري",
       "comment" : "تعليق",
+      "expiryDuration" : {
+        "label" : "مدة انتهاء الصلاحية",
+        "summaryLabel" : "انتهاء صلاحية عرض",
+        "threeHours" : "3 ساعات",
+        "sixHours" : "6 ساعات",
+        "oneDay" : "1 يوم",
+        "oneWeek" : "1 أسبوع",
+        "oneMonth" : "30 يوماً"
+      },
+      "account" : {
+        "lockedBalance" : "مُقفل",
+        "lockedBalanceTooltip" : "أموالك مُقفلة في عروض أرسلتها لآخرين. يمكنك إلغاء هذه العروض في أي وقت، أو انتظار قبول أو رفض المستلم.",
+        "withdrawableBalance" : "قابل للسحب",
+        "withdrawableBalanceTooltip" : "أموال يمكنك استعادتها من عروض أرسلتها وانتهت صلاحيتها. قم بالسحب لإعادتها إلى رصيدك المتاح."
+      },
       "addAccount" : {
         "title" : "إضافة حساب Canton",
+        "reonboard" : {
+          "title" : "مطلوب تحديث الحساب",
+          "init" : "تم اكتشاف تغير في طوبولوجيا شبكة Canton. يُرجى إعادة تهيئة حسابك لمتابعة استخدامه.",
+          "success" : "تم تحديث الحساب بنجاح",
+          "successDescription" : "يمكنك الآن متابعة استخدام حسابك"
+        },
         "onboard" : {
           "title" : "التهيئة",
+          "account" : "الحساب",
           "newAccount" : "حساب جديد",
           "init" : "قم بإعداد حساب Canton الجديد الخاص بك بالنقر على Continue (متابعة)",
           "onboarded" : "حسابات مُهيّأة",
@@ -5812,6 +5938,9 @@
           "title" : "التصريح",
           "validator" : "تصريح",
           "hint" : "اقبل تلقائياً الأموال الواردة إلى هذا الحساب.",
+          "reonboard" : {
+            "hint" : "تم اكتشاف تغير في الطوبولوجيا. يُرجى إعادة تصريح مدقق Ledger لمتابعة تلقي الأموال تلقائياً."
+          },
           "error" : "فشل التصريح. يُرجى إعادة المحاولة.",
           "validatorLabel" : "مُدقِّق Ledger",
           "validatorDescription" : "قبول أموال تلقائي"
@@ -5820,12 +5949,73 @@
           "title" : "تأكيد"
         }
       },
+      "topologyChangeError" : {
+        "message" : "تم اكتشاف تغير في الطوبولوجيا. مطلوب إعادة التهيئة."
+      },
       "tooManyUtxos" : {
         "title" : "مطلوب إجراء: مخرجات معاملات غير منفقة (UTXO) كثيرة للغاية",
         "description" : "يحتوي حسابك على الكثير من مخرجات المعاملات غير المنفقة (UTXO) الصغيرة لمعالجة هذا التحويل. قم بدمجها الآن لتجنب انتهاء الصلاحية نتيجةً لرسوم الاحتفاظ المتراكمة وقم بتمكين التحويلات.",
         "quickFix" : "حل سريع: أرسل بعض الأموال لنفسك لتجميعها.",
         "warning" : "يحتوي حسابك على الكثير من مخرجات المعاملات غير المنفقة (UTXO) الصغيرة. أرسل بعض الأموال لنفسك لتجميعها.",
         "consolidate" : "تجميع"
+      },
+      "pendingTransactions" : {
+        "title" : "المعاملات المُعلَّقة ({{count}})",
+        "incoming" : {
+          "title" : "تحويل وارد للمراجعة ({{count}})",
+          "detailsTitle" : "تفاصيل التحويل الوارد"
+        },
+        "outgoing" : {
+          "title" : "العروض الصادرة ({{count}})",
+          "detailsTitle" : "تفاصيل التحويل الصادر"
+        },
+        "pending" : "مُعلقّ",
+        "expired" : "منتهي الصلاحية",
+        "status" : {
+          "label" : "الحالة",
+          "expired" : "منتهي الصلاحية",
+          "incoming" : "وارد",
+          "outgoing" : "صادر"
+        },
+        "from" : "من",
+        "to" : "إلى",
+        "memo" : "ملاحظة (تسمية الوجهة)",
+        "noMemo" : "لا توجد ملاحظة",
+        "date" : "التاريخ",
+        "expiresAt" : "الصلاحية تنتهي في",
+        "expiresIn" : "الصلاحية تنتهي خلال",
+        "amount" : "المبلغ",
+        "transaction" : "المعاملة",
+        "viewTransaction" : "عرض المعاملة",
+        "action" : "الإجراء",
+        "accept" : "قبول",
+        "withdraw" : "سحب",
+        "reject" : "رفض",
+        "deviceAppModal" : {
+          "title" : "{{action}} العرض",
+          "description" : "يُرجى فتح تطبيق Canton على جهازك Ledger من أجل {{action}} هذا العرض.",
+          "contractId" : "مُعرّف العقد",
+          "cancel" : "إلغاء",
+          "openApp" : "افتح تطبيق Canton",
+          "opening" : "جارٍ الفتح...",
+          "noDevice" : "ليس هناك جهاز متصل",
+          "appOpenError" : "فشل فتح تطبيق Canton. يُرجى إعادة المحاولة.",
+          "processing" : "جارٍ معالجة {{action}}...",
+          "success" : {
+            "accept" : {
+              "title" : "تم قبول العرض",
+              "description" : "عرض التحويل تم قبوله بنجاح."
+            },
+            "reject" : {
+              "title" : "تم رفض العرض",
+              "description" : "عرض التحويل تم رفضه بنجاح."
+            },
+            "withdraw" : {
+              "title" : "تم سحب العرض",
+              "description" : "عرض التحويل تم سحبه بنجاح."
+            }
+          }
+        }
       }
     },
     "stellar" : {
@@ -6046,6 +6236,11 @@
     "LatestFirmwareVersionRequired" : {
       "title" : "تحديث البرنامج الثابت للجهاز",
       "description" : "يُرجى تحديث البرنامج الثابت لجهازك إلى أحدث إصدار للوصول إلى هذه الميزة"
+    },
+    "UnsupportedFeatureError" : {
+      "title" : "ميزة غير مدعومة",
+      "description" : "التطبيق المطلوب لهذه العملية غير متاح حالياً لجهازك Ledger. يُرجى التواصل مع دعم Ledger للتفاصيل.",
+      "ctaLabel" : "تواصل مع دعم Ledger"
     },
     "FirmwareNotRecognized" : {
       "title" : "مزوّد غير صالح",
@@ -6277,7 +6472,11 @@
     },
     "TransactionCannotBeCreated" : {
       "title" : "خطأ في المعالجة",
-      "description" : "Changelly لا يمكنها معالجة هذه المعاملة. كود الخطأ 8HBB{{errorCode}}"
+      "description" : "Changelly لا يمكنها معالجة هذه المعاملة. كود الخطأ {{randomCode}}-8HBB"
+    },
+    "SwapQuoteLowLiquidity" : {
+      "title" : "المزود غير متاح",
+      "description" : "لا يمكننا إتمام مبادلتك عن طريق هذا المزود. يُرجى المحاولة من خلال مزود آخر."
     },
     "TimeoutError" : {
       "title" : "عفواً، استغرق خادم البيانات وقتاً أطول من اللازم ليستجيب",
@@ -6785,6 +6984,22 @@
       "title" : "تعذّر التحقق من ربط رمز التوكن",
       "description" : "لم نتمكن من تأكيد ما إذا كان بإمكان حساب الوجهة تلقي رمز التوكن هذا. ربما يكون العنوان غير صالح، أو قد يكون هناك مشكلةً في الشبكة أو الخدمة."
     },
+    "HederaRecipientEvmAddressVerificationRequired" : {
+      "title" : "التحقق من عنوان EVM مطلوب",
+      "description" : "يُرجى التحقق من عنوان EVM الظاهر على جهازك Ledger قبل التأكيد."
+    },
+    "HederaRedundantStakingNodeIdError" : {
+      "title" : "أنت تفوِّض إلى هذه العقدة بالفعل"
+    },
+    "HederaInvalidStakingNodeIdError" : {
+      "title" : "العقدة المختارة ليست مدققاً صالحاً"
+    },
+    "HederaNoStakingRewardsError" : {
+      "title" : "لا توجد مكافآت للمطالبة بها"
+    },
+    "HederaMemoIsTooLong" : {
+      "title" : "الملاحظة (تسمية الوجهة) طويلة جداً. الحد الأقصى للطول هو {{maxLength}} حرف"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "فشل تحميل الصورة من الملف.",
       "description" : "يُرجى المحاولة مجدداً بصورة."
@@ -7062,6 +7277,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "خطأ في الاتصال",
       "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "ReducedAmountUtxoWarning" : {
+      "title" : "تم تخفيض المبلغ ليناسب قيود UTXO ( إخراج المعاملات غير المنفقة)."
+    },
+    "UtxoLimitReachedError" : {
+      "title" : "المبلغ كبير جداً بالنسبة لقيود UTXO ( إخراج المعاملات غير المنفقة)."
     }
   },
   "cryptoOrg" : {
@@ -7107,6 +7328,152 @@
         }
       }
     },
+    "account" : {
+      "header" : {
+        "actions" : {
+          "stake" : {
+            "alreadyDelegatedTooltip" : "تم تفويض رصيدك بالكامل بالفعل"
+          }
+        }
+      },
+      "balanceFooter" : {
+        "delegated" : {
+          "tooltip" : "عند التكديس على Hedera، فإن رصيدك بالكامل يتم تفويضه ويبقى سائلاً"
+        },
+        "claimable" : {
+          "tooltip" : "المكافآت ستتم المطالبة بها تلقائياً بعد كل معاملة. يمكنك أيضاً المطالبة بها يدوياً."
+        }
+      },
+      "bodyHeader" : {
+        "delegatedPositions" : {
+          "header" : "التفويض",
+          "button" : "المطالبة بالمكافآت",
+          "columns" : {
+            "inactiveTooltip" : "لم يتم العثور على المدقق",
+            "overstakedTooltip" : "هذه العقدة مكدسة بأكثر مما يجب، المردود المئوي السنوي (APY) أقل من النسبة المثلى",
+            "activeTooltip" : "المبلغ المفوض يولِّد مكافآت",
+            "delegated" : "تم التفويض",
+            "rewards" : "المكافآت"
+          },
+          "actions" : {
+            "redelegation" : "إعادة التفويض",
+            "undelegation" : "إلغاء التفويض",
+            "claimRewards" : "المطالبة بالمكافآت"
+          }
+        }
+      }
+    },
+    "delegation" : {
+      "totalStake" : "إجمالي التكديس",
+      "flow" : {
+        "title" : "تفويض",
+        "steps" : {
+          "validator" : {
+            "title" : "المدققون",
+            "rowTitle" : "العقدة {{index}}: {{name}}",
+            "rowSubtitlePercentage" : "تم تكديس %{{percentage}} من الحد الأقصى",
+            "rowSubtitleOverstaked" : "العقدة مكدسة بأكثر مما يجب"
+          },
+          "amount" : {
+            "title" : "المبلغ",
+            "alert" : "عند التكديس على Hedera، فإن رصيدك بالكامل يتم تكديسه. وهو يبقى سائلاً بالكامل وليس خاضعاً لفترة قفل أو مخاطر تغريم. ربما تحتاج إلى الانتظار لمدة تصل إلى 48 ساعة حتى تبدأ مكافآت التكديس.",
+            "learnMore" : "تعرّف على المزيد"
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "التأكيد",
+            "success" : {
+              "title" : "لقد قمت بتفويض أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك عندما تقوم سلسلة الكتل (بلوكتشين) بتأكيد المعاملة.",
+              "cta" : "عرض التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "flow" : {
+        "title" : "إلغاء تفويض الأصول",
+        "steps" : {
+          "summary" : {
+            "title" : "المبلغ",
+            "validatorLabel" : "المدقق",
+            "amountLabel" : "المبلغ المطلوب إلغاء تفويضه",
+            "alert" : "بمجرد إلغاء التفويض سيتم تحصيل رصيدك ومكافآتك المعلقة على الفور. لا يمكن إلغاء تفويض حصتك جزئياً.",
+            "learnMore" : "تعرّف على المزيد"
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "التأكيد",
+            "success" : {
+              "title" : "لقد قمت بإلغاء تفويض أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك عندما تؤكد الشبكة المعاملة.",
+              "cta" : "عرض التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "redelegation" : {
+      "flow" : {
+        "title" : "إعادة تفويض الأصول",
+        "steps" : {
+          "validators" : {
+            "title" : "المدققون",
+            "currentValidatorLabel" : "التفويض الحالي",
+            "newValidatorLabel" : "تفويض جديد",
+            "newValidatorSelectPlaceholder" : "اختر مدقق",
+            "removedValidatorSelectPlaceholder" : "المدقق الذي تم اختياره سابقاً لم يعد متاحاً",
+            "newValidatorSelectNoOption" : "لا يوجد مدقق مطابق ”{{validatorName}}“",
+            "amountLabel" : "المبلغ المطلوب إعادة تفويضه",
+            "alert" : "عند التكديس على Hedera، فإن رصيدك بالكامل يتم تكديسه. وهو يبقى سائلاً بالكامل وليس خاضعاً لفترة قفل أو مخاطر تغريم. ربما تحتاج إلى الانتظار لمدة تصل إلى 48 ساعة حتى تبدأ مكافآت التكديس.",
+            "learnMore" : "تعرّف على المزيد"
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "التأكيد",
+            "success" : {
+              "title" : "لقد قمت بإعادة تفويض أصولك بنجاح",
+              "text" : "إعادة التفويض ستقوم بالتحديث بمجرد أن تقوم سلسلة الكتل (بلوكتشين) بتأكيد المعاملة",
+              "cta" : "عرض التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "المطالبة بالمكافآت",
+        "steps" : {
+          "rewards" : {
+            "title" : "المكافآت",
+            "description" : "لقد كسبت <0>{{formattedClaimableRewards}}</0> من المدقق أدناه. بالنقر على ”متابعة“، ستتم المطالبة بها الآن وتفويضها تلقائياً إلى الرصيد المتاح.",
+            "currentValidatorLabel" : "التفويض"
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "التأكيد",
+            "success" : {
+              "title" : "لقد قمت بالمطالبة بمكافأتك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك عندما تقوم سلسلة الكتل (بلوكتشين) بتأكيد المعاملة.",
+              "cta" : "عرض التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "ملاحظة (اختيارية)",
@@ -7118,6 +7485,9 @@
         },
         "unverifiedAssociation" : {
           "learnMore" : "تعرّف على المزيد"
+        },
+        "evmVerificationRequired" : {
+          "text" : "أنت ترسل رمز ERC-20. لهذا النوع من المعاملات، جهازك Ledger سيعرض عنوان EVM الخاص بالمُرسِل، وليس معرّف حسابه.\nيُرجى اتباع <0>هذا الدليل</0> للتحقق من أن العنوان صحيح قبل التأكيد."
         }
       }
     },
@@ -7127,6 +7497,12 @@
         "text" : "بمجرد أن يتم تأكيد هذه المعاملة ستتمكن من تلقي رمز التوكن. <0>انقر هنا</0> لبدء تدفق التلقي.",
         "learnMore" : "تعرّف على المزيد"
       }
+    }
+  },
+  "dialogs" : {
+    "selectAccount" : {
+      "description" : "ليس لديك حسابات {{network}} بعد. يُرجى إضافة حساب للمتابعة",
+      "addAccount" : "إضافة حساب"
     }
   },
   "drawers" : {
@@ -7175,7 +7551,7 @@
     },
     "postOnboarding" : {
       "title" : "قم بتخصيص شاشة القَفل",
-      "description" : "اختر أي فن رقمي أو صورة للتعيين كشاشة قَفل {{productName}} الخاص بك.",
+      "description" : "قم بعرض فنك الرقمي أو صورتك المفضلة كشاشة قفل جهازك.",
       "actionCompletedPopupLabel" : "تم تخصيص الجهاز"
     },
     "customImageSet" : "تم تخصيص شاشة القَفل",
@@ -7298,12 +7674,20 @@
   "walletSync" : {
     "title" : "مزامنة Ledger",
     "close" : "إغلاق",
+    "banner" : {
+      "title" : "محفظتك ليست متزامنةً",
+      "description" : "حافظ على محفظتك الاستثمارية مُحدّثةً عند تبديل أجهزة الكمبيوتر أو استخدام هاتف",
+      "cta" : "مزامنة محفظتي"
+    },
     "activate" : {
       "title" : "تشغيل مزامنة Ledger لهذا الكمبيوتر؟",
       "description" : "قم بمزامنة حسابات الأصول المشفرة خاصتك تلقائياً عبر كل هواتفك وأجهزة الكمبيوتر الخاصة بك، حتى عند الانتقال إلى جهاز جديد.",
       "cta" : "تشغيل مزامنة Ledger",
       "alreadySync" : "لقد قمت بتشغيلها بالفعل",
-      "learnMore" : "كيف تعمل مزامنة Ledger؟"
+      "learnMore" : "كيف تعمل مزامنة Ledger؟",
+      "titleModal" : "مزامنة محفظتك",
+      "descriptionModal" : "حافظ على محفظتك الاستثمارية مُحدّثةً عند تبديل أجهزة الكمبيوتر أو استخدام هاتف — كل ذلك مؤمَّن بواسطة جهازك Ledger.",
+      "ctaModal" : "متابعة"
     },
     "entryPoints" : {
       "accounts" : {
@@ -7380,6 +7764,11 @@
         "title" : "تمت المزامنة بنجاح!",
         "desc" : "التغييرات في حسابات الأصول المشفرة خاصتك ستظهر الآن تلقائياً عبر تطبيقات Ledger Wallet على الهواتف وأجهزة الكمبيوتر التي تمت مزامنتها. "
       },
+      "complete" : {
+        "title" : "اكتملت المزامنة",
+        "description" : "من الآن فصاعداً، ستبقى محفظتك الاستثمارية متزامنةً تلقائياً عبر كل أجهزتك.",
+        "syncAnother" : "تستخدم Ledger على الجوّال؟ مسح ضوئي لكود QR "
+      },
       "synchAnother" : "المزامنة مع تطبيق Ledger Wallet آخر",
       "close" : "إغلاق"
     },
@@ -7409,7 +7798,8 @@
         "connectDevice" : {
           "title" : "استخدم جهازك Ledger",
           "description" : "المزامنة عن طريق التوقيع بجهازك Ledger"
-        }
+        },
+        "descriptionModal" : "اختر إذا كان لديك Ledger Wallet متزامن على هاتف آخر"
       },
       "qrCode" : {
         "title" : "قم بمزامنة تطبيقات Ledger Wallet الخاصة بك",
@@ -7547,6 +7937,17 @@
       "title" : "حدث خطأ في الشبكة",
       "description" : "حدث خطأ ما، يرجى المحاولة مرة أخرى أو التواصل مع دعم Ledger إذا كان لديك شك.",
       "cta" : "إعادة المحاولة"
+    },
+    "errors" : {
+      "network" : {
+        "title" : "فشل الاتصال",
+        "description" : "لا اتصال بالإنترنت. يرجى إعادة المحاولة"
+      },
+      "backend" : {
+        "title" : "فشل الاتصال",
+        "description" : "حدث خطأ ما من جانبنا. يُرجى إعادة المحاولة لاحقاً"
+      },
+      "cta" : "إعادة المحاولة"
     }
   },
   "nftEntryPoint" : {
@@ -7569,5 +7970,15 @@
     "restart" : "إعادة التشغيل",
     "downloadOnLedger" : "تنزيل من Ledger.com",
     "downloadProgress" : "جارٍ التنزيل... %{{ progress }}"
+  },
+  "zcash" : {
+    "account" : {
+      "availableBalance" : "الرصيد المتاح",
+      "availableBalanceTooltip" : "الرصيد القابل للتحويل",
+      "transparentBalance" : "الرصيد الشفاف",
+      "transparentBalanceTooltip" : "الرصيد المرئي للعامة",
+      "privateBalance" : "الرصيد الخاص",
+      "privateBalanceTooltip" : "الرصيد المخفي عن العامة"
+    }
   }
 }

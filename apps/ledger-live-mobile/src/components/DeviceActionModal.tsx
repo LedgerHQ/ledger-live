@@ -23,7 +23,7 @@ type Props<Req, Stt, Res> = {
   onError?: (error: Error) => void;
   onModalHide?: () => void;
   onResult?: (payload: NonNullable<Res>) => Promise<void> | void | null;
-  renderOnResult?: (_: Res) => JSX.Element | null;
+  renderOnResult?: (_: Res) => React.JSX.Element | null;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
   registerDeviceSelection?: (onDeviceUpdated: () => void) => void;

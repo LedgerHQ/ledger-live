@@ -1,18 +1,21 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { render } from "@testing-library/react-native";
+import React from "react";
+import { View } from "react-native";
 import Accept from "./Accept";
 import {
   createMockAccount,
-  createMockDevice,
-  createMockRouteParams,
   createMockNavigation,
+  createMockRouteParams,
 } from "./__tests__/test-utils";
 
-// Mock all dependencies
+const mockObservable = () => ({ pipe: jest.fn(() => ({ subscribe: jest.fn() })) });
+
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getCurrencyBridge: jest.fn(() => ({
-    onboardAccount: jest.fn(() => ({ pipe: jest.fn(() => ({ subscribe: jest.fn() })) })),
-    authorizePreapproval: jest.fn(() => ({ pipe: jest.fn(() => ({ subscribe: jest.fn() })) })),
+    onboardAccount: jest.fn(mockObservable),
+    authorizePreapproval: jest.fn(mockObservable),
   })),
 }));
 
@@ -20,126 +23,77 @@ jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   isTokenCurrency: jest.fn(() => false),
 }));
 
-jest.mock("~/hooks/deviceActions", () => ({
-  useAppDeviceAction: jest.fn(() => jest.fn()),
-}));
-
 jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({
   addAccountsAction: jest.fn(),
 }));
 
-jest.mock("react-redux", () => ({
-  useDispatch: jest.fn(() => jest.fn()),
-  useSelector: jest.fn(selector => {
-    if (selector.toString().includes("lastConnectedDeviceSelector")) {
-      return createMockDevice();
-    }
-    if (selector.toString().includes("accountsSelector")) {
-      return [];
-    }
-    return null;
-  }),
-  useStore: jest.fn(() => ({
-    getState: jest.fn(() => ({})),
-    dispatch: jest.fn(),
-    subscribe: jest.fn(),
-  })),
-}));
+jest.mock("@ledgerhq/native-ui", () => {
+  const { getMockNativeUI } = jest.requireActual("./__tests__/test-utils");
+  return getMockNativeUI();
+});
 
-// Mock the Trans component to avoid i18n issues
-jest.mock("react-i18next", () => ({
-  Trans: ({ i18nKey }: { i18nKey: string }) => (
-    <div data-testid={`trans-${i18nKey}`}>{i18nKey}</div>
-  ),
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock("react-i18next", () => {
+  const { getMockReactI18next } = jest.requireActual("./__tests__/test-utils");
+  return getMockReactI18next();
+});
 
-jest.mock("~/reducers/settings", () => ({
-  lastConnectedDeviceSelector: jest.fn(),
-}));
-
-jest.mock("~/reducers/accounts", () => ({
-  accountsSelector: jest.fn(),
-}));
-
-jest.mock("~/components/SelectableAccountsList", () => {
-  return function MockSelectableAccountsList({ accounts }: { accounts: unknown[] }) {
-    return (
-      <div data-testid="selectable-accounts-list">
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        {accounts.map((account: any) => (
-          <div key={account.id} data-testid={`account-${account.id}`}>
-            Account {account.id}
-          </div>
-        ))}
-      </div>
-    );
-  };
+jest.mock("react-redux", () => {
+  const { getMockReactRedux } = jest.requireActual("./__tests__/test-utils");
+  return getMockReactRedux();
 });
 
 jest.mock("~/components/DeviceActionModal", () => {
-  return function MockDeviceActionModal({ device }: { device: unknown }) {
-    return (
-      <div data-testid="device-action-modal">
+  return {
+    __esModule: true,
+    default: ({ device }: { device: unknown }) => (
+      <View testID="device-action-modal">
         Device Action Modal for {(device as { deviceName?: string })?.deviceName}
-      </div>
-    );
+      </View>
+    ),
   };
 });
+
+jest.mock("~/components/RootNavigator/types/helpers", () => ({ StackNavigatorProps: jest.fn() }));
+
+jest.mock("~/components/SelectableAccountsList", () => {
+  return {
+    __esModule: true,
+    default: ({ accounts }: { accounts: unknown[] }) => (
+      <View testID="selectable-accounts-list">
+        {accounts.map((account: any) => (
+          <View key={account.id} testID={`account-${account.id}`}>
+            Account {account.id}
+          </View>
+        ))}
+      </View>
+    ),
+  };
+});
+
+jest.mock("~/hooks/deviceActions", () => ({
+  useAppDeviceAction: jest.fn(() => jest.fn()),
+}));
+
+jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
+  useFeature: jest.fn(() => ({ enabled: false })),
+}));
+
+jest.mock("LLM/hooks/useLocalizedUrls", () => ({
+  useLocalizedUrl: jest.fn(() => (url: string) => url),
+}));
 
 jest.mock("~/icons/Ledger", () => {
-  return function MockLedgerIcon() {
-    return <div data-testid="ledger-icon">Ledger Icon</div>;
+  return {
+    __esModule: true,
+    default: () => <View testID="ledger-icon">Ledger Icon</View>,
   };
 });
 
-// Mock native-ui components
-jest.mock("@ledgerhq/native-ui", () => ({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Flex: ({ children, testID, ...props }: any) => (
-    <div data-testid={testID} {...props}>
-      {children}
-    </div>
-  ),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Text: ({ children, testID, ...props }: any) => (
-    <div data-testid={testID} {...props}>
-      {children}
-    </div>
-  ),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Button: ({ children, onPress, disabled, testID, ...props }: any) => (
-    <button data-testid={testID} onClick={onPress} disabled={disabled} {...props}>
-      {children}
-    </button>
-  ),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Checkbox: ({ checked, testID, ...props }: any) => (
-    <input type="checkbox" data-testid={testID} checked={checked} {...props} />
-  ),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  IconBox: ({ Icon, testID, ...props }: any) => (
-    <div data-testid={testID} {...props}>
-      <Icon />
-    </div>
-  ),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Alert: ({ children, testID, ...props }: any) => (
-    <div data-testid={testID} {...props}>
-      {children}
-    </div>
-  ),
-  IconsLegacy: {
-    InfoMedium: () => <div data-testid="info-medium-icon">InfoMedium</div>,
-  },
-}));
+jest.mock("~/reducers/accounts", () => ({ accountsSelector: jest.fn() }));
 
-// Mock navigation types
-jest.mock("~/components/RootNavigator/types/helpers", () => ({
-  StackNavigatorProps: jest.fn(),
-}));
+jest.mock("~/reducers/settings", () => ({ lastConnectedDeviceSelector: jest.fn() }));
+
+jest.mock("../../utils/navigationSnapshot", () => ({ restoreNavigationSnapshot: jest.fn() }));
 
 describe("Accept Component", () => {
   const mockRouteParams = createMockRouteParams();
@@ -150,55 +104,116 @@ describe("Accept Component", () => {
       params: routeParams,
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return render(<Accept navigation={mockNavigation as any} route={mockRoute as any} />);
   };
-
-  it("should render the component with correct title", () => {
-    const result = renderComponent();
-
-    // Check that the component renders successfully
-    expect(result).toBeDefined();
-  });
-
-  it("should display accounts list", () => {
-    const result = renderComponent();
-
-    // Check that the component renders successfully
-    expect(result).toBeDefined();
-  });
-
-  it("should show ledger icon", () => {
-    const result = renderComponent();
-
-    // Check that the component renders successfully
-    expect(result).toBeDefined();
-  });
 
   it("should render without crashing", () => {
     expect(() => renderComponent()).not.toThrow();
   });
 
   it("should handle empty accounts list", () => {
-    const emptyRouteParams = createMockRouteParams({
-      accountsToAdd: [],
-    });
-
-    expect(() => renderComponent(emptyRouteParams)).not.toThrow();
+    const routeParams = createMockRouteParams({ accountsToAdd: [] });
+    expect(() => renderComponent(routeParams)).not.toThrow();
   });
 
-  it("should handle multiple accounts", () => {
-    const multipleAccounts = [
+  it("should display multiple accounts", () => {
+    const accounts = [
       createMockAccount({ id: "account-1" }),
       createMockAccount({ id: "account-2" }),
     ];
+    const routeParams = createMockRouteParams({ accountsToAdd: accounts });
+    const { getByTestId } = renderComponent(routeParams);
 
-    const routeParamsWithMultipleAccounts = createMockRouteParams({
-      accountsToAdd: multipleAccounts,
+    expect(getByTestId("account-account-1")).toBeDefined();
+    expect(getByTestId("account-account-2")).toBeDefined();
+  });
+
+  describe("translation keys", () => {
+    const reonboardAccount = createMockAccount({ id: "reonboard-account" });
+
+    test.each([
+      ["title", "canton.onboard.reonboard.title", "canton.onboard.title"],
+      ["account", "canton.onboard.reonboard.account", "canton.onboard.account"],
+      ["authorize", "canton.onboard.reonboard.authorize", "canton.onboard.authorize"],
+    ])(
+      "should display %s translation key based on isReonboarding",
+      (_, reonboardKey, normalKey) => {
+        const reonboardParams = createMockRouteParams({
+          isReonboarding: true,
+          accountToReonboard: reonboardAccount,
+        });
+        const normalParams = createMockRouteParams({ isReonboarding: false });
+
+        const { getByTestId: getReonboard } = renderComponent(reonboardParams);
+        const { getByTestId: getNormal } = renderComponent(normalParams);
+
+        expect(getReonboard(`trans-${reonboardKey}`)).toBeDefined();
+        expect(getNormal(`trans-${normalKey}`)).toBeDefined();
+      },
+    );
+
+    it("should display warning only when reonboarding", () => {
+      const reonboardParams = createMockRouteParams({
+        isReonboarding: true,
+        accountToReonboard: reonboardAccount,
+      });
+      const normalParams = createMockRouteParams({
+        isReonboarding: false,
+      });
+
+      const reonboardRender = renderComponent(reonboardParams);
+      const normalRender = renderComponent(normalParams);
+
+      const reonboardOutput = JSON.stringify(reonboardRender.toJSON());
+      const normalOutput = JSON.stringify(normalRender.toJSON());
+
+      expect(reonboardOutput).toContain("canton.onboard.reonboard.warning.title");
+      expect(reonboardOutput).toContain("canton.onboard.reonboard.warning.description");
+      expect(normalOutput).not.toContain("canton.onboard.reonboard.warning.title");
+      expect(normalOutput).not.toContain("canton.onboard.reonboard.warning.description");
+    });
+  });
+
+  it("should show accountToReonboard when reonboarding", () => {
+    const reonboardAccount = createMockAccount({ id: "reonboard-account" });
+    const otherAccount = createMockAccount({ id: "other-account" });
+    const routeParams = createMockRouteParams({
+      isReonboarding: true,
+      accountToReonboard: reonboardAccount,
+      accountsToAdd: [otherAccount],
+    });
+    const { getByTestId, queryByTestId } = renderComponent(routeParams);
+
+    expect(getByTestId("account-reonboard-account")).toBeDefined();
+    expect(queryByTestId("account-other-account")).toBeNull();
+  });
+
+  it("should show accountsToAdd when not reonboarding", () => {
+    const account1 = createMockAccount({ id: "account-1" });
+    const account2 = createMockAccount({ id: "account-2" });
+    const routeParams = createMockRouteParams({
+      isReonboarding: false,
+      accountsToAdd: [account1, account2],
+      accountToReonboard: createMockAccount({ id: "should-not-appear" }),
+    });
+    const { getByTestId, queryByTestId } = renderComponent(routeParams);
+
+    expect(getByTestId("account-account-1")).toBeDefined();
+    expect(getByTestId("account-account-2")).toBeDefined();
+    expect(queryByTestId("account-should-not-appear")).toBeNull();
+  });
+
+  it("should handle reonboarding with accountToReonboard", () => {
+    const reonboardAccount = createMockAccount({
+      id: "existing-account-id",
+      freshAddressPath: "44'/60'/0'/0/0",
+    });
+    const routeParams = createMockRouteParams({
+      isReonboarding: true,
+      accountToReonboard: reonboardAccount,
+      accountsToAdd: [createMockAccount({ id: "other-account" })],
     });
 
-    const result = renderComponent(routeParamsWithMultipleAccounts);
-
-    expect(result).toBeDefined();
+    expect(() => renderComponent(routeParams)).not.toThrow();
   });
 });

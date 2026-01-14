@@ -20,7 +20,7 @@ function Body({ account, range }: Props) {
     account,
     range,
   });
-  const bgColor = useTheme().colors.palette.background.paper;
+  const bgColor = useTheme().colors.background.card;
   const currency = getAccountCurrency(account);
   const color = useCurrencyColor(currency, bgColor);
   return (
@@ -33,7 +33,7 @@ function Body({ account, range }: Props) {
             animateTicker={false}
             showCode
             fontSize={3}
-            color="palette.text.shade80"
+            color="neutral.c80"
           />
         </Box>
         <Box grow justifyContent="center">

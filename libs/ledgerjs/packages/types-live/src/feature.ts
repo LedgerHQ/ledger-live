@@ -152,6 +152,10 @@ export type CurrencyFeatures = {
   currencyMonadTestnet: DefaultFeature;
   currencySomnia: DefaultFeature;
   currencyZeroGravity: DefaultFeature;
+  currencyConcordium: DefaultFeature;
+  currencyConcordiumTestnet: DefaultFeature;
+  currencyAleo: DefaultFeature;
+  currencyAleoTestnet: DefaultFeature;
 };
 
 /**
@@ -185,6 +189,7 @@ export type Features = CurrencyFeatures & {
   firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
   protectServicesMobile: Feature_ProtectServicesMobile;
   protectServicesDesktop: Feature_ProtectServicesDesktop;
+  recoverUpsellPostOnboarding: Feature_RecoverUpsellPostOnboarding;
   ptxServiceCtaExchangeDrawer: Feature_PtxServiceCtaExchangeDrawer;
   ptxServiceCtaScreens: Feature_PtxServiceCtaScreens;
   swapWalletApiPartnerList: Feature_SwapWalletApiPartnerList;
@@ -205,6 +210,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapDetailedView: Feature_PtxSwapDetailedView;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxEarnDrawerConfiguration: Feature_PtxEarnDrawerConfiguration;
+  ptxEarnUi: Feature_PtxEarnUi;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
@@ -225,23 +231,24 @@ export type Features = CurrencyFeatures & {
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
-  llMevProtection: Feature_LlMevProtection;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmRebornLP: Feature_LlmRebornLP;
   llmAccountListUI: DefaultFeature;
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
+  lwmLedgerSyncOptimisation: DefaultFeature;
+  lwdLedgerSyncOptimisation: DefaultFeature;
+  lwmNewWordingOptInNotificationsDrawer: Feature_LwmNewWordingOptInNotificationsDrawer;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;
   lldThai: DefaultFeature;
-  largemoverLandingpage: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_ModularDrawer;
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
-  ldmkConnectApp: DefaultFeature;
   ldmkSolanaSigner: DefaultFeature;
+  ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
   llmDatadog: {
     enabled: boolean;
@@ -275,9 +282,17 @@ export type Features = CurrencyFeatures & {
   lldSyncOnboardingIncr1: DefaultFeature;
   cantonSkipPreapprovalStep: DefaultFeature;
   noah: Feature_Noah;
-  newSendFlow: DefaultFeature;
-  lldSessionReplay: Feature_LldSessionReplay;
+  newSendFlow: Feature_NewSendFlow;
   zcashShielded: DefaultFeature;
+  llmNanoOnboardingFundWallet: DefaultFeature;
+  lldRebornABtest: DefaultFeature;
+  llmRebornABtest: DefaultFeature;
+  lifiSolana: DefaultFeature;
+  llmAnimatedSplashScreen: Feature_LlmAnimatedSplashScreen;
+  llmOnboardingEnableSync: Feature_OnboardingEnableSync;
+  lldOnboardingEnableSync: Feature_OnboardingEnableSync;
+  lwmWallet40: Feature_LwmWallet40;
+  lwdWallet40: Feature_LwdWallet40;
 };
 
 /**
@@ -380,6 +395,45 @@ export type Feature_BrazePushNotifications = Feature<{
     timer: number;
     type: string;
   }[];
+  reprompt_schedule: Array<{
+    months: number;
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  }>;
+  action_events: {
+    complete_onboarding: {
+      enabled: boolean;
+      timer: number;
+    };
+    send: {
+      enabled: boolean;
+      timer: number;
+    };
+    receive: {
+      enabled: boolean;
+      timer: number;
+    };
+    buy: {
+      enabled: boolean;
+      timer: number;
+    };
+    swap: {
+      enabled: boolean;
+      timer: number;
+    };
+    stake: {
+      enabled: boolean;
+      timer: number;
+    };
+    add_favorite_coin: {
+      enabled: boolean;
+      timer: number;
+    };
+  };
+
+  // Legacy fields kept for backward compatibility with existing configurations.
   marketCoinStarred: {
     enabled: boolean;
     timer: number;
@@ -482,6 +536,10 @@ export type Feature_ProtectServicesDesktop = Feature<{
     homeURI: string;
   };
   protectId: string;
+}>;
+
+export type Feature_RecoverUpsellPostOnboarding = Feature<{
+  deviceIds: DeviceModelId[];
 }>;
 
 export type Feature_DeviceInitialApps = Feature<{
@@ -635,6 +693,7 @@ export type Feature_LlmLedgerSyncEntryPoints = Feature<{
   manager: boolean;
   accounts: boolean;
   settings: boolean;
+  onboarding: boolean;
   postOnboarding: boolean;
 }>;
 export type Feature_LldLedgerSyncEntryPoints = Feature<{
@@ -656,10 +715,6 @@ export type Feature_LlCounterValueGranularitiesRates = Feature<{
   hourly: number;
 }>;
 
-export type Feature_LlMevProtection = Feature<{
-  link: string | null;
-}>;
-
 export type Feature_LlmMmkvMigration = Feature<{
   shouldRollback: boolean | null;
 }>;
@@ -674,10 +729,15 @@ export type Feature_ModularDrawer = Feature<{
   enableModularization: boolean;
   searchDebounceTime: number;
   backendEnvironment: string;
+  enableDialogDesktop?: boolean;
 }>;
 
 export type Feature_Noah = Feature<{
   activeCurrencyIds: string[];
+}>;
+
+export type Feature_NewSendFlow = Feature<{
+  families?: string[];
 }>;
 
 export type Feature_CounterValue = DefaultFeature;
@@ -708,6 +768,9 @@ export type Feature_PtxEarnDrawerConfiguration = Feature<{
     rightElement?: "balance" | "undefined";
   };
 }>;
+export type Feature_PtxEarnUi = Feature<{
+  value: string;
+}>;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
 
@@ -732,6 +795,13 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
 export type Feature_LlmHomescreen = DefaultFeature;
 export type Feature_SupportDeviceApex = DefaultFeature;
 
+export type Feature_LlmAnimatedSplashScreen = Feature<Record<string, boolean>>;
+
+export type Feature_OnboardingEnableSync = Feature<{
+  nanos: boolean;
+  touchscreens: boolean;
+}>;
+
 /**
  * Array of firmware versions that are ignored for the given device model
  */
@@ -745,13 +815,27 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
   [P in Platform]?: IgnoredOSUpdatesByPlatform;
 }>;
 
+type Feature_Wallet40_Params = {
+  marketBanner: boolean;
+};
+
+export type Feature_LwmWallet40 = Feature<
+  {
+    // Add specific LWM params
+  } & Feature_Wallet40_Params
+>;
+export type Feature_LwdWallet40 = Feature<
+  {
+    //  Add specific LWD params
+  } & Feature_Wallet40_Params
+>;
+export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{
+  variant: ABTestingVariants;
+}>;
+
 /**
  * Utils types.
  */
 export type FeatureMap<T = Feature> = { [key in FeatureId]: T };
 export type OptionalFeatureMap<T = Feature> = { [key in FeatureId]?: T };
 export type FeatureParam<T extends FeatureId> = Features[T]["params"];
-
-export type Feature_LldSessionReplay = Feature<{
-  sampling: number;
-}>;

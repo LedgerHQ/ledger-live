@@ -51,7 +51,7 @@ const Wrapper = styled(Box)`
   }
 `;
 const AccountName = styled(Text).attrs(() => ({
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   ff: "Inter|SemiBold",
   fontSize: 7,
 }))`

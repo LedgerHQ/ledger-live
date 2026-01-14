@@ -13,5 +13,18 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="28"
         tools:ignore="GoogleAppIndexingWarning"
-        android:networkSecurityConfig="@xml/network_security_config"/>
+        android:networkSecurityConfig="@xml/network_security_config">
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"
+            android:theme="@android:style/Theme"
+            tools:replace="android:theme" />
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity"
+            android:theme="@android:style/Theme"
+            tools:replace="android:theme" />
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyFloatingActivity"
+            android:theme="@android:style/Theme.Dialog"
+            tools:replace="android:theme" />
+    </application>
 </manifest>

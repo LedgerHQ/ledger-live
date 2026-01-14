@@ -1,13 +1,8 @@
 import type {
   Api,
   CraftedTransaction,
-  Cursor,
   Operation,
-  Page,
-  Reward,
-  Stake,
   TransactionValidation,
-  Validator,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig from "../config";
@@ -24,6 +19,9 @@ import {
   getAssetFromToken,
   getTokenFromAsset,
   lastBlock,
+  getValidators,
+  getStakes,
+  getRewards,
 } from "../logic/index";
 import { mapIntentToSDKOperation, getOperationValue } from "../logic/utils";
 import { apiClient } from "../network/api";
@@ -116,6 +114,9 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
             ...liveOp.extra,
             ledgerOpType: liveOp.type,
             ...(asset.type !== "native" && { assetAmount: liveOp.value.toFixed(0) }),
+            ...(liveOp.extra.stakedAmount && {
+              stakedAmount: BigInt(liveOp.extra.stakedAmount.toFixed(0)),
+            }),
           },
           tx: {
             hash: liveOp.hash,
@@ -133,20 +134,18 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     },
     getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
     getAssetFromToken,
-    validateIntent: async (_transactionIntent, _customFees): Promise<TransactionValidation> => {
+    getValidators: cursor => getValidators(cursor),
+    getStakes: async address => getStakes(address),
+    getRewards: async (address, cursor) => getRewards(address, cursor),
+    validateIntent: async (
+      _transactionIntent,
+      _balances,
+      _customFees,
+    ): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");
     },
     getSequence: async (_address): Promise<bigint> => {
       throw new Error("getSequence is not supported");
-    },
-    getStakes: async (_address, _cursor): Promise<Page<Stake>> => {
-      throw new Error("getStakes is not supported");
-    },
-    getRewards: async (_address, _cursor): Promise<Page<Reward>> => {
-      throw new Error("getRewards is not supported");
-    },
-    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
-      throw new Error("getValidators is not supported");
     },
   };
 }

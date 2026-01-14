@@ -10,7 +10,7 @@ import { CryptoOrTokenCurrency, Currency, TokenCurrency } from "@ledgerhq/types-
 import { AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";

@@ -1,8 +1,8 @@
 export async function initWorker(path: string) {
   let workerPath = path;
   if (!__DEV__) {
-    // In development, vite.js is smart enough to load the worker directly
-    // In production, we bundle the worker into a single file using esbuild
+    // In development, rspack dev server serves the worker directly
+    // In production, workers are bundled into separate files
     // The location of the file is ./[file].worker.js, so we need to rewrite the path
     workerPath = workerPath.split("/").slice(-1)[0];
     if (workerPath.endsWith(".ts")) {

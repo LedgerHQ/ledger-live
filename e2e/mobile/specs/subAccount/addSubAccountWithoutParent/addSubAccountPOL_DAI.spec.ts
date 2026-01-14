@@ -1,15 +1,9 @@
 import { runAddSubAccountTest } from "../subAccount";
 
 const testConfig = {
-  asset: Account.POL_DAI_1,
+  asset: TokenAccount.POL_DAI_1,
   tmslinks: ["B2CQA-2578"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
-  withParentAccount: false,
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
-runAddSubAccountTest(
-  testConfig.asset,
-  testConfig.tmslinks,
-  testConfig.tags,
-  testConfig.withParentAccount,
-);
+runAddSubAccountTest(testConfig);

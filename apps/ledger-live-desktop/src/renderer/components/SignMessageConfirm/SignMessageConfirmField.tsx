@@ -9,7 +9,7 @@ const SignMessageConfirmField = ({
   label: React.ReactNode;
 }) => (
   <Box horizontal justifyContent="space-between" mb={2}>
-    <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={3}>
+    <Text ff="Inter|Medium" color="neutral.c60" fontSize={3}>
       {label}
     </Text>
     {children}

@@ -10,7 +10,8 @@ import { TFunction } from "i18next";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { MultiversXProvider, Transaction } from "@ledgerhq/live-common/families/multiversx/types";
 import { UnbondingType } from "~/renderer/families/multiversx/types";
-import { Option as FilterOption } from "react-select/src/filters";
+// FilterOptionOption type for react-select v5 filter callback
+type FilterOptionOption<T> = { label: string; value: string; data: T };
 
 type NoOptionsMessageCallbackType = {
   inputValue: string;
@@ -72,8 +73,8 @@ const DelegationSelectorField = (props: Props) => {
     [t],
   );
   const filterOptions = useCallback(
-    (option: FilterOption, needle: string): boolean =>
-      option.data.validator.identity.name
+    (option: FilterOptionOption<EnhancedUnbonding>, needle: string): boolean =>
+      option.data.validator?.identity?.name
         ? option.data.validator.identity.name.toLowerCase().includes(needle.toLowerCase())
         : false,
     [],

@@ -8,7 +8,6 @@ export default `* {
   user-select: inherit;
   cursor: inherit;
   min-width: 0;
-  outline: none;
 
   /* it will surely make problem in the future... to be inspected. */
   /* ;_; */
@@ -63,6 +62,6 @@ em {
 }
 
 .currentTicker {
-  background: palette.background.paper;
+  background: background.card;
   z-index: 11 !important;
 }`;

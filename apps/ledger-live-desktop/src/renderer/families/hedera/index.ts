@@ -2,6 +2,9 @@ import {
   getTransactionExplorer,
   sendRecipientCanNext,
 } from "@ledgerhq/live-common/families/hedera/utils";
+import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
+import accountHeaderManageActions from "./AccountHeaderManageActions";
+import AccountBodyHeader from "./AccountBodyHeader";
 import AccountSubHeader from "./AccountSubHeader";
 import NoAssociatedAccounts from "./NoAssociatedAccounts";
 import sendRecipientFields from "./SendRecipientFields";
@@ -17,6 +20,9 @@ const family: HederaFamily = {
   tokenList,
   operationDetails,
   AccountSubHeader,
+  AccountBodyHeader,
+  AccountBalanceSummaryFooter,
+  accountHeaderManageActions,
   StepReceiveAccountCustomAlert,
   StepReceiveFunds,
   StepRecipientCustomAlert,

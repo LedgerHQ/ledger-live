@@ -2,7 +2,7 @@ import React from "react";
 import { Text } from "../../../components";
 import styled from "styled-components";
 import { withTokens } from "../../libs";
-import { CryptoIcon } from "../CryptoIcon/CryptoIcon";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { formatAddress } from "./formatAddress";
 
 const Wrapper = styled.div`

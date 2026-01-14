@@ -13,7 +13,7 @@ type Props = {
   incorrectPassword?: Error | null;
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
   isValid: () => boolean;
-  onChange: Function;
+  onChange: (value: string) => void;
 };
 class PasswordForm extends PureComponent<Props> {
   render() {

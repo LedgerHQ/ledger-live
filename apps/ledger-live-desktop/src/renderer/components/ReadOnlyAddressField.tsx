@@ -7,9 +7,9 @@ import IconCopy from "~/renderer/icons/Copy";
 const LINE_MINLENGTH = 5; // Minimum of chars for the last line (if multiline)
 
 const Address = styled(Box).attrs(() => ({
-  bg: "palette.background.default",
+  bg: "background.default",
   borderRadius: 1,
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   ff: "Inter",
   fontSize: 4,
   px: 4,
@@ -18,7 +18,7 @@ const Address = styled(Box).attrs(() => ({
 }))<{
   allowCopy: boolean;
 }>`
-  border: ${p => `1px solid ${p.theme.colors.palette.divider}`};
+  border: ${p => `1px solid ${p.theme.colors.neutral.c40}`};
   ${p =>
     p.allowCopy
       ? `border-right: none;
@@ -41,11 +41,11 @@ const AddressWrapper = styled.span`
 `;
 const CopyFeedback = styled(Box).attrs(() => ({
   sticky: true,
-  bg: "palette.background.default",
+  bg: "background.default",
   alignItems: "center",
   justifyContent: "center",
 }))`
-  border-left: 1px solid ${p => p.theme.colors.palette.divider};
+  border-left: 1px solid ${p => p.theme.colors.neutral.c40};
 `;
 const ClipboardSuspicious = styled.div`
   font-family: Inter;
@@ -56,8 +56,8 @@ const ClipboardSuspicious = styled.div`
   color: ${p => p.theme.colors.alertRed};
 `;
 const CopyBtn = styled(Box).attrs(() => ({
-  bg: "palette.background.paper",
-  color: "palette.text.shade100",
+  bg: "background.card",
+  color: "neutral.c100",
   alignItems: "center",
   justifyContent: "center",
   borderRadius: 1,
@@ -65,7 +65,7 @@ const CopyBtn = styled(Box).attrs(() => ({
 }))`
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  border: ${p => `1px solid ${p.theme.colors.palette.divider}`};
+  border: ${p => `1px solid ${p.theme.colors.neutral.c40}`};
 
   &:hover {
     opacity: 0.8;
@@ -99,8 +99,8 @@ function ReadOnlyAddressField({ address, allowCopy = true }: Props) {
 
   // Split address into multiple segments - last can't breakline.
   const addressSegments = [
-    address.substr(0, address.length - LINE_MINLENGTH),
-    address.substr(-LINE_MINLENGTH),
+    address.slice(0, address.length - LINE_MINLENGTH),
+    address.slice(-LINE_MINLENGTH),
   ];
   return (
     <Box>

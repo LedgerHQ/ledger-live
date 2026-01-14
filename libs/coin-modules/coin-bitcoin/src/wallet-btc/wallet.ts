@@ -177,8 +177,13 @@ class BitcoinLikeWallet {
     utxoPickingStrategy: PickingStrategy;
     sequence: number;
     opReturnData?: Buffer | undefined;
+    changeAddress?: string | undefined;
   }): Promise<TransactionInfo> {
     const changeAddress = await params.fromAccount.xpub.getNewAddress(1, 1);
+    if (params.changeAddress && params.changeAddress !== changeAddress.address) {
+      throw new Error("Invalid change address");
+    }
+
     const txInfo = await params.fromAccount.xpub.buildTx({
       destAddress: params.dest,
       amount: params.amount,

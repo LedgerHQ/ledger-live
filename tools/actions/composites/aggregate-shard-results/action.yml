@@ -1,0 +1,96 @@
+name: "Aggregate Shard Results"
+description: "Aggregates test results from multiple shards and identifies missing shards"
+inputs:
+  total_shards:
+    required: true
+    description: "Total number of shards"
+  status_1:
+    required: false
+    description: "Status of shard 1"
+  status_2:
+    required: false
+    description: "Status of shard 2"
+  status_3:
+    required: false
+    description: "Status of shard 3"
+  status_4:
+    required: false
+    description: "Status of shard 4"
+  status_5:
+    required: false
+    description: "Status of shard 5"
+  status_6:
+    required: false
+    description: "Status of shard 6"
+  status_7:
+    required: false
+    description: "Status of shard 7"
+  status_8:
+    required: false
+    description: "Status of shard 8"
+  status_9:
+    required: false
+    description: "Status of shard 9"
+  status_10:
+    required: false
+    description: "Status of shard 10"
+  status_11:
+    required: false
+    description: "Status of shard 11"
+  status_12:
+    required: false
+    description: "Status of shard 12"
+outputs:
+  finalStatus:
+    description: "Final aggregated status (success or failure)"
+    value: ${{ steps.aggregate.outputs.finalStatus }}
+  missingShards:
+    description: "Comma-separated list of missing shard numbers"
+    value: ${{ steps.aggregate.outputs.missingShards }}
+runs:
+  using: composite
+  steps:
+    - name: Aggregate test results
+      id: aggregate
+      shell: bash
+      run: |
+        totalShards="${{ inputs.total_shards }}"
+        status_1="${{ inputs.status_1 }}"
+        status_2="${{ inputs.status_2 }}"
+        status_3="${{ inputs.status_3 }}"
+        status_4="${{ inputs.status_4 }}"
+        status_5="${{ inputs.status_5 }}"
+        status_6="${{ inputs.status_6 }}"
+        status_7="${{ inputs.status_7 }}"
+        status_8="${{ inputs.status_8 }}"
+        status_9="${{ inputs.status_9 }}"
+        status_10="${{ inputs.status_10 }}"
+        status_11="${{ inputs.status_11 }}"
+        status_12="${{ inputs.status_12 }}"
+
+        # Build statuses array dynamically up to totalShards
+        statuses=()
+        for i in $(seq 1 "$totalShards"); do
+          var="status_$i"
+          statuses+=("${!var:-}")   # Add empty string if var does not exist
+        done
+
+        finalStatus="success"
+        missingShards=()
+
+        for i in "${!statuses[@]}"; do
+          shardNum=$((i + 1))
+          status="${statuses[$i]}"
+
+          if [ -z "$status" ]; then
+            missingShards+=("$shardNum")
+          elif [ "$status" != "success" ]; then
+            finalStatus="failure"
+          fi
+        done
+
+        echo "finalStatus=$finalStatus" >> "$GITHUB_OUTPUT"
+        if [ ${#missingShards[@]} -gt 0 ]; then
+          missingShardsList=$(printf "%s, " "${missingShards[@]}")
+          echo "missingShards=${missingShardsList%, }" >> "$GITHUB_OUTPUT"
+        fi

@@ -15,7 +15,6 @@ import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 import debounce from "lodash/debounce";
 import isEqual from "lodash/isEqual";
-import { useSelector } from "react-redux";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import CounterValue from "../CounterValue";
 import OperationIcon from "../OperationIcon";
@@ -25,10 +24,9 @@ import perFamilyOperationDetails from "../../generated/operationDetails";
 import { track } from "~/analytics";
 import { UnionToIntersection } from "~/types/helpers";
 import { BaseNavigation } from "../RootNavigator/types/helpers";
-import { currencySettingsForAccountSelector } from "~/reducers/settings";
-import type { State } from "~/reducers/types";
+import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForAccount";
 import { useAccountName } from "~/reducers/wallet";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
   (typeof perFamilyOperationDetails)[keyof typeof perFamilyOperationDetails]
@@ -146,11 +144,7 @@ function OperationRow({
   const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const accountName = useAccountName(account);
-  const currencySettings = useSelector((s: State) =>
-    currencySettingsForAccountSelector(s.settings, {
-      account: mainAccount,
-    }),
-  );
+  const currencySettings = useCurrencySettingsForAccount(mainAccount);
   const isConfirmed = isConfirmedOperation(
     operation,
     mainAccount,

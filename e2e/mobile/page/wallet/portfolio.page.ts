@@ -1,3 +1,4 @@
+import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class PortfolioPage {
@@ -41,6 +42,8 @@ export default class PortfolioPage {
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
   walletTabSelector = (id: "Wallet" | "Market") =>
     getElementById(`${this.walletTabSelectorBase}${id}`);
+  operationByType = (operationType?: string) =>
+    getElementByIdAndText(this.operationRowDate, new RegExp(`.*${operationType ?? ""}.*`, "i"));
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
@@ -150,7 +153,7 @@ export default class PortfolioPage {
 
   @Step("Check asset allocation section")
   async checkAssetAllocationSection() {
-    await scrollToId(this.showAllAssetsButton, this.accountsListView);
+    await scrollToId(this.showAllAssetsButton);
     const assetsCount = await countElementsById(this.assetItemRegExp);
     jestExpect(assetsCount).toBeLessThanOrEqual(5);
     await detoxExpect(getElementById(this.showAllAssetsButton)).toBeVisible();
@@ -190,7 +193,7 @@ export default class PortfolioPage {
   }
 
   @Step("Check asset transaction history")
-  async checkTransactionAllocationSection() {
+  async checkTransactionHistorySection() {
     await scrollToId(this.transactionHistorySectionTitleId, this.accountsListView);
     await detoxExpect(getElementById(this.transactionHistorySectionTitleId)).toBeVisible();
     jestExpect(await countElementsById(this.operationRowDate)).toBeLessThanOrEqual(3);
@@ -201,8 +204,8 @@ export default class PortfolioPage {
   }
 
   @Step("Click on selected last operation")
-  async selectAndClickOnLastOperation() {
-    await tapById(this.operationRowDate);
+  async selectAndClickOnLastOperation(operationType?: string) {
+    await tapByElement(this.operationByType(operationType));
   }
 
   @Step("Tap on tab selector")

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { getsupportedCountervalues } from "~/renderer/reducers/settings";
 import { setSupportedCounterValues } from "~/renderer/actions/settings";
 

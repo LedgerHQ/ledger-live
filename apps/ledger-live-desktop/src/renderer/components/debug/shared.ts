@@ -23,7 +23,7 @@ const Item = styled(Text)`
 const MockContainer = styled.div``;
 const EllipsesText = styled(Text).attrs({
   ff: "Inter|Regular",
-  color: "palette.text.shade100",
+  color: "neutral.c100",
   fontSize: 3,
 })`
   margin-left: 10px;

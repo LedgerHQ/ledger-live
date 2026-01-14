@@ -1,5 +1,10 @@
 import React from "react";
-import Animated, { Extrapolation, interpolate, useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedStyle,
+  SharedValue,
+} from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 import CurrencyGradient from "./CurrencyGradient";
 
@@ -8,7 +13,7 @@ function BackgroundGradient({
   graphCardEndPosition,
   gradientColor,
 }: {
-  currentPositionY: Animated.SharedValue<number>;
+  currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
   gradientColor: string;
 }) {

@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";

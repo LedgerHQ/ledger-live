@@ -16,7 +16,7 @@ import { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import Box from "~/renderer/components/Box/Box";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -25,7 +25,6 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import {
   Address,
-  B,
   OpDetailsData,
   OpDetailsSection,
   OpDetailsTitle,
@@ -35,6 +34,7 @@ import { openURL } from "~/renderer/linking";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { Divider } from "@ledgerhq/react-ui/index";
 
 function getURLFeesInfo({
   op,
@@ -192,7 +192,7 @@ const OperationDetailsExtra = ({
         );
         ret = (
           <>
-            <B />
+            <Divider />
             <OpDetailsSection>
               <OpDetailsTitle>
                 <Trans i18nKey={"operationDetails.extra.undelegatedFrom"} />
@@ -203,7 +203,7 @@ const OperationDetailsExtra = ({
                 </Address>
               </OpDetailsData>
             </OpDetailsSection>
-            <B />
+            <Divider />
             <OpDetailsSection>
               <OpDetailsTitle>
                 <Trans i18nKey={"operationDetails.extra.undelegatedAmount"} />
@@ -227,7 +227,7 @@ const OperationDetailsExtra = ({
         );
         ret = (
           <>
-            <B />
+            <Divider />
             <OpDetailsSection>
               <OpDetailsTitle>
                 <Trans i18nKey={"operationDetails.extra.redelegatedFrom"} />
@@ -238,7 +238,7 @@ const OperationDetailsExtra = ({
                 </Address>
               </OpDetailsData>
             </OpDetailsSection>
-            <B />
+            <Divider />
 
             <OpDetailsSection>
               <OpDetailsTitle>
@@ -283,7 +283,7 @@ const OperationDetailsExtra = ({
                       unit={unit}
                       showCode
                       val={validatorReward.amount}
-                      color="palette.text.shade80"
+                      color="neutral.c80"
                     />
                   </OpDetailsData>
                 </OpDetailsSection>
@@ -314,10 +314,10 @@ const RedelegateAmountCell = ({
     : new BigNumber(0);
   return !amount.isZero() ? (
     <>
-      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"neutral.c80"} />
 
       <CounterValue
-        color="palette.text.shade60"
+        color="neutral.c70"
         fontSize={3}
         date={operation.date}
         currency={currency}
@@ -336,10 +336,10 @@ const UndelegateAmountCell = ({
     : new BigNumber(0);
   return !amount.isZero() ? (
     <>
-      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"neutral.c80"} />
 
       <CounterValue
-        color="palette.text.shade60"
+        color="neutral.c70"
         fontSize={3}
         date={operation.date}
         currency={currency}

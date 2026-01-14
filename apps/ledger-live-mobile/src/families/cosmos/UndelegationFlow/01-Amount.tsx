@@ -1,16 +1,15 @@
 import invariant from "invariant";
 import React from "react";
-import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { accountScreenSelector } from "~/reducers/accounts";
 import SelectAmount from "../shared/02-SelectAmount";
 import { ScreenName } from "~/const";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CosmosUndelegationFlowParamList } from "./types";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
   CosmosUndelegationFlowParamList,
@@ -18,7 +17,7 @@ type Props = StackNavigatorProps<
 >;
 
 function UndelegationAmount({ navigation, route }: Props) {
-  const { account } = useSelector(accountScreenSelector(route));
+  const { account } = useAccountScreen(route);
   invariant(account, "account required");
   const bridge = getAccountBridge(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
@@ -49,7 +48,7 @@ function UndelegationAmount({ navigation, route }: Props) {
       max: amount,
       undelegatedBalance: amount,
       mode: "undelegation",
-      nextScreen: ScreenName.CosmosUndelegationSelectDevice,
+      nextScreen: ScreenName.CosmosUndelegationBridgeTransaction,
     },
   } as Props["route"];
   return <SelectAmount navigation={navigation} route={newRoute} />;

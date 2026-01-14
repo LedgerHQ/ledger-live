@@ -16,9 +16,9 @@ function WarningIcon() {
       height={72}
       borderRadius={100}
       mb={4}
-      backgroundColor="palette.opacityDefault.c05"
+      backgroundColor="opacityDefault.c05"
     >
-      <Icons.Warning size="L" color="palette.warning.c70" />
+      <Icons.Warning size="L" color="warning.c70" />
     </Flex>
   );
 }

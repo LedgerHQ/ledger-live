@@ -121,13 +121,17 @@ export function getCoinAndAmounts(
   // Collect all events related to the address and calculate the overall amounts
   if (stakingTx) {
     tx.events.forEach(event => {
-      if (ADD_STAKE_EVENTS.includes(event.type) && tx.sender === address && amount_out.isZero()) {
+      if (
+        ADD_STAKE_EVENTS.includes(event.type) &&
+        compareAddress(tx.sender, address) &&
+        amount_out.isZero()
+      ) {
         coin_id = APTOS_ASSET_ID;
         type = OP_TYPE.STAKE;
         amount_out = amount_out.plus(event.data.amount_added || event.data.amount);
       } else if (
         REACTIVATE_STAKE_EVENTS.includes(event.type) &&
-        tx.sender === address &&
+        compareAddress(tx.sender, address) &&
         amount_out.isZero()
       ) {
         coin_id = APTOS_ASSET_ID;
@@ -135,7 +139,7 @@ export function getCoinAndAmounts(
         amount_out = amount_out.plus(event.data.amount_reactivated || event.data.amount);
       } else if (
         UNLOCK_STAKE_EVENTS.includes(event.type) &&
-        tx.sender === address &&
+        compareAddress(tx.sender, address) &&
         amount_in.isZero()
       ) {
         coin_id = APTOS_ASSET_ID;
@@ -143,7 +147,7 @@ export function getCoinAndAmounts(
         amount_in = amount_in.plus(event.data.amount_unlocked || event.data.amount);
       } else if (
         WITHDRAW_STAKE_EVENTS.includes(event.type) &&
-        tx.sender === address &&
+        compareAddress(tx.sender, address) &&
         amount_in.isZero()
       ) {
         coin_id = APTOS_ASSET_ID;

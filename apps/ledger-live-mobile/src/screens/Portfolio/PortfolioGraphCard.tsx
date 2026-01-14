@@ -3,7 +3,7 @@ import { Box } from "@ledgerhq/native-ui";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { LayoutChangeEvent } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
-import { useSelector } from "react-redux";
+import { useSelector } from "~/context/hooks";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
 import { areAccountsEmptySelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector } from "~/reducers/settings";

@@ -12,6 +12,7 @@ import {
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
@@ -118,6 +119,7 @@ const accountBridge: AccountBridge<Transaction> = {
   signRawOperation,
   broadcast,
   getSerializedAddressParameters,
+  validateAddress,
 };
 
 const currencyBridge: CurrencyBridge = {

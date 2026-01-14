@@ -17,17 +17,15 @@ export default function GeneralSettings() {
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="General" />
-      <CountervalueSettingsRow />
-      <LanguageRow />
-      <DateFormatRow />
       <FeatureToggle featureId="llmWalletSync">
         <WalletSyncRow />
       </FeatureToggle>
+      <CountervalueSettingsRow />
+      <LanguageRow />
+      <DateFormatRow />
       <ThemeSettingsRow />
       <AuthSecurityToggle />
-      <FeatureToggle featureId="llMevProtection">
-        <MevProtection />
-      </FeatureToggle>
+      <MevProtection />
       <ReportErrorsRow />
       <AnalyticsRow />
       <FeatureToggle featureId="llmAnalyticsOptInPrompt">

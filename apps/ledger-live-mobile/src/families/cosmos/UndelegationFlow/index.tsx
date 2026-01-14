@@ -11,6 +11,7 @@ import SelectDevice from "~/screens/SelectDevice";
 import ConnectDevice from "~/screens/ConnectDevice";
 import UndelegationValidationError from "./03-ValidationError";
 import UndelegationValidationSuccess from "./03-ValidationSuccess";
+import UndelegationBridgeTransaction from "../shared/03-BridgeTransaction";
 import type { CosmosUndelegationFlowParamList } from "./types";
 
 const totalSteps = "3";
@@ -37,6 +38,14 @@ function UndelegationFlow() {
             />
           ),
         })}
+      />
+      <Stack.Screen
+        name={ScreenName.CosmosUndelegationBridgeTransaction}
+        component={UndelegationBridgeTransaction}
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+        }}
       />
       <Stack.Screen
         name={ScreenName.CosmosUndelegationSelectDevice}

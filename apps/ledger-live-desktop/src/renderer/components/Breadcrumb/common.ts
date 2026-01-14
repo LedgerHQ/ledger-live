@@ -6,7 +6,7 @@ export const Separator = styled.div`
   &::after {
     content: "/";
     font-size: 13px;
-    color: ${p => p.theme.colors.palette.divider};
+    color: ${p => p.theme.colors.neutral.c40};
     padding: 0 15px;
   }
 `;
@@ -18,8 +18,7 @@ export const Item = styled.div<{
   flex-direction: row;
   padding: 12px;
   min-width: 200px;
-  color: ${p =>
-    p.isActive ? p.theme.colors.palette.text.shade100 : p.theme.colors.palette.text.shade80};
+  color: ${p => (p.isActive ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c80)};
   > :first-child {
     margin-right: 10px;
   }
@@ -29,7 +28,7 @@ export const Item = styled.div<{
   }
 
   &:hover {
-    background: ${p => p.theme.colors.palette.background.default};
+    background: ${p => p.theme.colors.background.default};
     border-radius: 4px;
   }
 `;
@@ -68,7 +67,7 @@ export const AngleDown = styled.div`
   line-height: 16px;
 
   &:hover {
-    background: ${p => p.theme.colors.palette.divider};
+    background: ${p => p.theme.colors.neutral.c40};
   }
 `;
 export const Check = styled.div`
