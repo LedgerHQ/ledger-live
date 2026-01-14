@@ -1,4 +1,3 @@
-import timemachine from "timemachine";
 import {
   filterAnnouncements,
   localizeAnnouncements,
@@ -6,11 +5,13 @@ import {
 import api from "../test-helpers/announcements";
 import packageJSON from "../../../package.json";
 
-timemachine.config({
-  dateString: "February 22, 2021 13:12:59",
-});
-
 jest.mock("../../../package.json");
+
+// Use Jest 30's fake timers instead of timemachine
+beforeAll(() => {
+  jest.useFakeTimers();
+  jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
+});
 
 let rawAnnouncements;
 let announcements;
@@ -19,7 +20,7 @@ describe("filterAnnouncements", () => {
     rawAnnouncements = await api.fetchAnnouncements();
   });
   afterAll(() => {
-    timemachine.reset();
+    jest.useRealTimers();
   });
   describe("language filters", () => {
     describe("with context.language = 'en'", () => {
@@ -304,9 +305,7 @@ describe("filterAnnouncements", () => {
 
     describe("with current date higher than publish date", () => {
       beforeAll(() => {
-        timemachine.config({
-          dateString: "February 22, 2021 13:12:59",
-        });
+        jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
       });
 
       beforeEach(() => {
@@ -314,7 +313,7 @@ describe("filterAnnouncements", () => {
       });
 
       afterEach(() => {
-        timemachine.reset();
+        // No need to reset, jest.useFakeTimers() is already active
       });
 
       it(`should return all the article posted before `, () => {
@@ -380,9 +379,7 @@ describe("filterAnnouncements", () => {
 
     describe("with current date lower than publish date", () => {
       beforeEach(() => {
-        timemachine.config({
-          dateString: "October 10, 2019 13:12:59",
-        });
+        jest.setSystemTime(new Date("October 10, 2019 13:12:59"));
       });
 
       it("should return only the article posted before", () => {
@@ -411,22 +408,16 @@ describe("filterAnnouncements", () => {
       });
     });
     afterAll(() => {
-      timemachine.config({
-        dateString: "February 22, 2021 13:12:59",
-      });
+      jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
     });
   });
   describe("expired_at filters", () => {
     beforeAll(() => {
-      timemachine.config({
-        dateString: "February 22, 2021 13:12:59",
-      });
+      jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
     });
 
     afterAll(() => {
-      timemachine.config({
-        dateString: "February 22, 2021 13:12:59",
-      });
+      jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
     });
 
     const context = {
@@ -502,9 +493,7 @@ describe("filterAnnouncements", () => {
     });
     describe("with current date higher than expiration date", () => {
       beforeEach(() => {
-        timemachine.config({
-          dateString: "April 22, 2021 13:12:59",
-        });
+        jest.setSystemTime(new Date("April 22, 2021 13:12:59"));
       });
 
       it("should return only non-expired announcements", () => {
@@ -536,15 +525,11 @@ describe("filterAnnouncements", () => {
 
   describe("appVersion filters", () => {
     beforeAll(() => {
-      timemachine.config({
-        dateString: "February 22, 2021 13:12:59",
-      });
+      jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
     });
 
     afterAll(() => {
-      timemachine.config({
-        dateString: "February 22, 2021 13:12:59",
-      });
+      jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
     });
 
     const context = {
@@ -614,16 +599,12 @@ describe("filterAnnouncements", () => {
 
   describe("liveCommonVersions filters", () => {
     beforeAll(() => {
-      timemachine.config({
-        dateString: "February 22, 2021 13:12:59",
-      });
+      jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
       packageJSON.version = "12.41.2";
     });
 
     afterAll(() => {
-      timemachine.config({
-        dateString: "February 22, 2021 13:12:59",
-      });
+      jest.setSystemTime(new Date("February 22, 2021 13:12:59"));
     });
 
     const context = {

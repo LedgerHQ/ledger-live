@@ -12,7 +12,7 @@ import SeedCompanionStep from "./SeedCompanionStep";
 import { SeedPathStatus, FirstStepCompanionStepKey } from "./types";
 import LedgerSyncActivationStep from "./LedgerSyncActivationStep";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { SeedOriginType } from "@ledgerhq/types-live";
 
 const { BodyText } = VerticalTimeline;

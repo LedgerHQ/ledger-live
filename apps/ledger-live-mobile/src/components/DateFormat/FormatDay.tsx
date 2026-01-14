@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { createSelector } from "~/context/selectors";
 import { differenceInCalendarDays } from "date-fns";
 import { useTranslation } from "react-i18next";

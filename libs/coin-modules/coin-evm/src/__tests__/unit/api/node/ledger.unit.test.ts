@@ -5,7 +5,7 @@ import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../../../errors";
-import * as LEDGER_GAS_TRACKER from "../../../../network/gasTracker/ledger";
+import { getGasOptions } from "../../../../network/gasTracker/ledger";
 import { Transaction as EvmTransaction } from "../../../../types";
 import { makeAccount } from "../../../fixtures/common.fixtures";
 import * as LEDGER_API from "../../../../network/node/ledger";
@@ -15,6 +15,12 @@ jest.useFakeTimers({ doNotFake: ["setTimeout"] });
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");
+jest.mock("../../../../network/gasTracker/ledger", () => ({
+  getGasOptions: jest.fn(),
+}));
+
+const mockGetGasOptions = getGasOptions as jest.Mock;
+
 (delay as jest.Mock).mockImplementation(
   () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
 );
@@ -99,7 +105,7 @@ describe("EVM Family", () => {
 
         expect(response).toEqual(true);
         // it should fail 2 times and succeed on the next try
-        expect(spy).toBeCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it("should throw after too many retries", async () => {
@@ -390,7 +396,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the fee data based on the transaction's feesStrategy", async () => {
-        jest.spyOn(LEDGER_GAS_TRACKER, "getGasOptions").mockImplementation(async () => ({
+        mockGetGasOptions.mockImplementation(async () => ({
           slow: {
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(2),
@@ -445,7 +451,7 @@ describe("EVM Family", () => {
       });
 
       it("should return medium fee data if feesStrategy is not provided", async () => {
-        jest.spyOn(LEDGER_GAS_TRACKER, "getGasOptions").mockImplementation(async () => ({
+        mockGetGasOptions.mockImplementation(async () => ({
           slow: {
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(2),

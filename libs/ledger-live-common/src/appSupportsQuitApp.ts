@@ -10,6 +10,7 @@ export const req = {
   },
 };
 export const minAppVersion = {
+  Aleo: "1.0.0",
   Aeternity: "0.4.3",
   Aion: "1.0.2",
   Akroma: "1.4.0",

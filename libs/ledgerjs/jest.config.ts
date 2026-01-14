@@ -1,11 +1,20 @@
 export default {
-  preset: "ts-jest",
   testEnvironment: "node",
   testRegex: ".test.ts$",
   collectCoverage: true,
   testPathIgnorePatterns: ["packages/*/lib-es", "packages/*/lib"],
   coveragePathIgnorePatterns: ["packages/create-dapp"],
   passWithNoTests: true,
+  transform: {
+    "^.+\\.(t|j)sx?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
+  },
   coverageReporters: ["json", ["lcov", { projectRoot: "../../../../" }], "json-summary", "text"],
   reporters: [
     "default",

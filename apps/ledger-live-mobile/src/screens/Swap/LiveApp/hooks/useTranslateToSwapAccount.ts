@@ -1,4 +1,4 @@
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { useMemo } from "react";
 
 import * as walletApi from "@ledgerhq/live-common/wallet-api/converters";

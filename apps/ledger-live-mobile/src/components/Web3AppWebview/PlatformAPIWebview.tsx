@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo, forwardRef } from "react";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import VersionNumber from "react-native-version-number";
 import { ActivityIndicator, Linking, Platform, StyleSheet, View } from "react-native";
 import { WebView as RNWebView, WebViewMessageEvent } from "react-native-webview";

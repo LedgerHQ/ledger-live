@@ -92,19 +92,20 @@
     "@ledgerhq/types-live": "workspace:^",
     "@zondax/ledger-live-icp": "1.4.1",
     "bignumber.js": "^9.1.2",
-    "expect": "^27.4.6",
+    "expect": "catalog:",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "rxjs": "catalog:"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.2",
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
     "@types/semver": "catalog:",
     "axios": "catalog:",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.1"
+    "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

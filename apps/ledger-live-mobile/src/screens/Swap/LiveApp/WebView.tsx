@@ -3,7 +3,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import React, { useRef, forwardRef, useMemo } from "react";
 import { Platform } from "react-native";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { ScopeProvider } from "jotai-scope";
 import { Web3AppWebview } from "~/components/Web3AppWebview";

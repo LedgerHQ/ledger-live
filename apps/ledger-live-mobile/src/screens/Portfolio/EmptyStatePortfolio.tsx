@@ -1,5 +1,5 @@
 import React, { memo, useState, useCallback } from "react";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { Trans } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";

@@ -5,7 +5,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { setOnboardingType } from "~/actions/settings";
 import Button from "~/components/Button";

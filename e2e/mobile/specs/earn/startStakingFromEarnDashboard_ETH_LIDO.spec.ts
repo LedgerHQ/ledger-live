@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Provider } from "@ledgerhq/live-common/lib/e2e/enum/Provider";
 import { runStartETHStakingFromEarnDashboardTest } from "./earn";
 

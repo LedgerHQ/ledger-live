@@ -1,0 +1,34 @@
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
+import { NavigatorScreenParams } from "@react-navigation/core";
+import { NavigatorName, ScreenName } from "~/const";
+import {
+  AddAccountContextType,
+  NetworkBasedAddAccountNavigator,
+} from "../Accounts/screens/AddAccount/types";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+
+type CommonParams = {
+  context?: AddAccountContextType;
+  onSuccess?: (res?: { scannedAccounts: Account[]; selected: Account[] }) => void;
+  onCloseNavigation?: () => void;
+  navigationDepth?: number;
+  sourceScreenName?: string;
+};
+
+export type SelectDeviceRouteParams = CommonParams & {
+  accountId?: string;
+  parentId?: string;
+  currency: CryptoCurrency;
+  inline?: boolean;
+  analyticsPropertyFlow?: string;
+  createTokenAccount?: boolean;
+};
+
+export type DeviceSelectionNavigatorParamsList = {
+  [ScreenName.SelectDevice]: SelectDeviceRouteParams;
+  [NavigatorName.AddAccounts]?: Partial<NavigatorScreenParams<NetworkBasedAddAccountNavigator>>;
+};
+
+export type DeviceSelectionNavigationProps =
+  StackNavigatorProps<DeviceSelectionNavigatorParamsList>;

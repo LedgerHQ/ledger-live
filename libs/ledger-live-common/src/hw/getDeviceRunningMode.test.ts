@@ -98,7 +98,7 @@ describe("getDeviceRunningMode", () => {
         }).subscribe({
           next: event => {
             try {
-              expect(mockedTimer).toBeCalledTimes(nbAcceptedErrors);
+              expect(mockedTimer).toHaveBeenCalledTimes(nbAcceptedErrors);
               expect(event.type).toBe("bootloaderMode");
               done();
             } catch (expectError) {
@@ -212,7 +212,7 @@ describe("getDeviceRunningMode", () => {
         }).subscribe({
           next: event => {
             try {
-              expect(mockedTimer).toBeCalledTimes(cantOpenDeviceRetryLimit);
+              expect(mockedTimer).toHaveBeenCalledTimes(cantOpenDeviceRetryLimit);
               expect(event.type).toBe("disconnectedOrlockedDevice");
               done();
             } catch (expectError) {

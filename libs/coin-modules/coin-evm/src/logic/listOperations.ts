@@ -113,9 +113,7 @@ export async function listOperations(
     );
 
   const isNativeOperation = (coinOperation: LiveOperation): boolean =>
-    ![...lastTokenOperations, ...lastNftOperations, ...lastInternalOperations]
-      .map(op => op.hash)
-      .includes(coinOperation.hash);
+    ![...lastTokenOperations, ...lastNftOperations].map(op => op.hash).includes(coinOperation.hash);
   const isTokenOrInternalOperation = (coinOperation: LiveOperation): boolean =>
     [...lastTokenOperations, ...lastNftOperations, ...lastInternalOperations]
       .map(op => op.hash)

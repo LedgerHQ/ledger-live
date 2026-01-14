@@ -10,7 +10,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import EuropaCompletionView from "./EuropaCompletionView";
 import StaxOnboardingSuccessView from "./StaxOnboardingSuccessView";
 import ApexOnboardingSuccessView from "./ApexOnboardingSuccessView";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import {
   setHasBeenRedirectedToPostOnboarding,
   setHasBeenUpsoldProtect,

@@ -5,7 +5,8 @@ import { useLocale } from "~/context/Locale";
 import { urls } from "~/utils/urls";
 import { generalTermsVersionAcceptedSelector } from "~/reducers/settings";
 import { setGeneralTermsVersionAccepted } from "~/actions/settings";
-import { StoreType, useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
+import { StoreType } from "~/context/store";
 
 const generalTermsVersionRequired = "2022-05-10";
 

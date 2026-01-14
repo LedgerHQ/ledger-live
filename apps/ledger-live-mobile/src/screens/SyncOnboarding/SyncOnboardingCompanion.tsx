@@ -19,7 +19,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
 

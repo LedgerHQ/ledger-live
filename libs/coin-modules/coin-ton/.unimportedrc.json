@@ -1,4 +1,5 @@
 {
+  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
   "entry": [
     "src/bridge/js.ts",
     "src/errors.ts",

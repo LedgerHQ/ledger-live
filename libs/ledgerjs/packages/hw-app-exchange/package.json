@@ -37,12 +37,13 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@noble/curves": "1.9.7",
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
     "bip32-path": "^0.4.2",
     "documentation": "14.0.2",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
+    "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "ts-node": "^10.4.0"
   },
   "scripts": {
@@ -54,9 +55,9 @@
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache --ignore-pattern '**/setupTests.ts'",
     "lint:fix": "pnpm lint --fix",
-    "test": "jest --config=jest.config.ts",
+    "test": "jest --config=jest.config.ts --runInBand",
     "test-integ": "jest --config=jest.integ.config.ts",
     "unimported": "unimported"
   }

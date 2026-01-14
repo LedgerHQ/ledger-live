@@ -1,3 +1,5 @@
+import { Step } from "jest-allure2-reporter/api";
+
 export default class CeloManageAssetsPage {
   titleId = "live-app-title";
   celoLockButton = "celo-lock-button";

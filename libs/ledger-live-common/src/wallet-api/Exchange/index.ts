@@ -10,8 +10,6 @@ export {
   ListCurrencyError,
   UnknownAccountError,
   PayinExtraIdError,
-  CompleteExchangeError,
-  type CompleteExchangeStep,
 } from "./SwapError";
 
 // Export parser utilities

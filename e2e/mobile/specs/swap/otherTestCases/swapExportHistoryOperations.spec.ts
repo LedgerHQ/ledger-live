@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { runExportSwapHistoryOperationsTest } from "./swap.other";

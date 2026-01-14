@@ -15,10 +15,23 @@ import { getAccount, getTokenAccountsTransactions } from "../synchronization";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 
+// Module-level mock for getStakeAccounts
+const actualGetStakeAccounts = jest.requireActual(
+  "../network/chain/stake-activation/rpc",
+).getStakeAccounts;
+const mockGetStakeAccounts = jest.fn(actualGetStakeAccounts);
+jest.mock("../network/chain/stake-activation/rpc", () => ({
+  ...jest.requireActual("../network/chain/stake-activation/rpc"),
+  getStakeAccounts: (...args: unknown[]) => mockGetStakeAccounts(...args),
+}));
+
 describe("Scan account", () => {
   const mockServer = setupServer();
 
-  beforeEach(jest.restoreAllMocks);
+  beforeEach(() => {
+    jest.restoreAllMocks();
+    mockGetStakeAccounts.mockImplementation(actualGetStakeAccounts);
+  });
 
   it("downloads transactions of the given token accounts", async () => {
     mockServer.listen({ onUnhandledRequest: "error" });
@@ -248,25 +261,23 @@ describe("Scan account", () => {
         },
       } as ChainAPI;
       jest.spyOn(api, "getParsedToken2022AccountsByOwner");
-      const getStakeAccounts = jest
-        .spyOn(stakeActivationModule, "getStakeAccounts")
-        .mockResolvedValue([
-          {
-            account: {
-              onChainAcc: {
-                pubkey: publicKeyOf("first-stake-account"),
-                account: parsedAccountInfo({
-                  lamports: 25000,
-                  program: "stake",
-                  type: "delegated",
-                }),
-              },
+      mockGetStakeAccounts.mockResolvedValue([
+        {
+          account: {
+            onChainAcc: {
+              pubkey: publicKeyOf("first-stake-account"),
+              account: parsedAccountInfo({
+                lamports: 25000,
+                program: "stake",
+                type: "delegated",
+              }),
             },
-          } as any,
-        ]);
+          },
+        } as any,
+      ]);
 
       expect(await getAccount("main-account-address", api)).toMatchObject(expectedAccount);
-      expect(getStakeAccounts).toHaveBeenCalledWith(api, "main-account-address");
+      expect(mockGetStakeAccounts).toHaveBeenCalledWith(api, "main-account-address");
       fetchSplToken2022Expectation(api.getParsedToken2022AccountsByOwner);
     },
   );

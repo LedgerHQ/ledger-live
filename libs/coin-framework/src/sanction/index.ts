@@ -1,10 +1,10 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import axios from "axios";
-import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 
-const cache = makeLRUCache(fetchSanctionedAddresses, () => "all_sanctioned_addresses", hours(12));
+const cache = makeLRUCache(fetchSanctionedAddresses, () => "all_sanctioned_addresses", minutes(15));
 
 async function fetchSanctionedAddresses(): Promise<Record<string, string[]>> {
   try {

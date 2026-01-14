@@ -63,7 +63,6 @@ import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
-import { useGetMixpanelDistinctId } from "~/renderer/analytics/mixpanel";
 import { SwapLoader } from "./SwapLoader";
 
 export class UnableToLoadSwapLiveError extends Error {
@@ -160,7 +159,6 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio")?.enabled;
   const lldModularDrawerFF = useFeature("lldModularDrawer");
   const isLldModularDrawer = lldModularDrawerFF?.enabled && lldModularDrawerFF?.params?.live_app;
-  const distinctId = useGetMixpanelDistinctId();
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customHandlers = useMemo(
@@ -557,7 +555,6 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
             ptxSwapLiveAppKycWarning,
             ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio ? "true" : "false",
             isModularDrawer: isLldModularDrawer ? "true" : "false",
-            distinctId,
             isEmbedded: isEmbedded ? "true" : "false",
           }}
           onStateChange={onStateChange}

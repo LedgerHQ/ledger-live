@@ -3,7 +3,7 @@ import type { ReducerMap, Action } from "redux-actions";
 import { State } from "./types";
 import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { shallowEqual } from "react-redux";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 
 export type ToastState = { toasts: ToastData[] };
 

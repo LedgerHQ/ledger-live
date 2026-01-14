@@ -1,13 +1,20 @@
 import type { Config } from "jest";
 
 const config: Config = {
-  preset: "ts-jest",
   testEnvironment: "node",
   transform: {
     "^.+\\.tsx?$": [
-      "ts-jest",
+      "@swc/jest",
       {
-        tsconfig: "tsconfig.json",
+        jsc: {
+          target: "es2022",
+          parser: {
+            syntax: "typescript",
+            tsx: false,
+            decorators: false,
+            dynamicImport: true,
+          },
+        },
       },
     ],
   },

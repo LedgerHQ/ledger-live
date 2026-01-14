@@ -3,6 +3,7 @@
     "src/account/helpers.ts",
     "src/account/index.ts",
     "src/account/serialization.ts",
+    "src/analytics/featureFlagHelpers/wallet40.ts",
     "src/apps/filtering.ts",
     "src/apps/formatting.ts",
     "src/apps/hw.ts",
@@ -319,7 +320,9 @@
     "src/modularDrawer/utils/sortAccountsByFiatValue.ts",
     "src/modularDrawer/index.ts",
     "src/test-helpers/cryptoAssetsStore.ts",
-    "src/bridge/generic-alpaca/registerValidateAddress.ts"
+    "src/bridge/generic-alpaca/registerValidateAddress.ts",
+    "src/cmc-client/index.ts",
+    "src/cmc-client/__mocks__/fearAndGreed.mock.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
@@ -390,6 +393,7 @@
     "src/exchange/swap/const/blockchain.ts",
     "src/exchange/swap/hooks/wrapper.tsx",
     "src/families/algorand/descriptor.ts",
+    "src/families/aleo/types.ts",
     "src/families/aptos/config.ts",
     "src/families/aptos/constants.ts",
     "src/families/aptos/descriptor.ts",
@@ -457,6 +461,8 @@
     "src/market/utils/queryKeys.ts",
     "src/market/utils/timers.ts",
     "src/market/utils/types.ts",
+    "src/market/state-manager/api.ts",
+    "src/market/state-manager/types.ts",
     "src/modularDrawer/enums.ts",
     "src/modularDrawer/hooks/index.ts",
     "src/modularDrawer/hooks/modules/useLeftApyModule.tsx",
@@ -506,6 +512,9 @@
     "yargs"
   ],
   "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util",
     "../../Image/Image",
     "../../StyleSheet/PlatformColorValueTypes",
     "../../Utilities/Platform",

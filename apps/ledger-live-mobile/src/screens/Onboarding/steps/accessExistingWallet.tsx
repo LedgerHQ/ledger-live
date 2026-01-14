@@ -2,7 +2,7 @@ import { Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { setFromLedgerSyncOnboarding, setOnboardingType } from "~/actions/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";

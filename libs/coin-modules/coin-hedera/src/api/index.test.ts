@@ -27,6 +27,8 @@ describe("createApi", () => {
     expect(api.getBlockInfo).toBeInstanceOf(Function);
     expect(api.getTokenFromAsset).toBeInstanceOf(Function);
     expect(api.getValidators).toBeInstanceOf(Function);
+    expect(api.getStakes).toBeInstanceOf(Function);
+    expect(api.getRewards).toBeInstanceOf(Function);
     expect(api.lastBlock).toBeInstanceOf(Function);
     expect(api.listOperations).toBeInstanceOf(Function);
   });

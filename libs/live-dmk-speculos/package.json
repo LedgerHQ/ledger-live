@@ -47,9 +47,9 @@
     "@ledgerhq/live-env": "workspace:^"
   },
   "devDependencies": {
-    "@testing-library/dom": "^9.3.4",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.1.0",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
     "@types/node": "22.10.10",
     "@vitejs/plugin-react": "4.3.4",
     "@vitest/coverage-istanbul": "3.0.7",

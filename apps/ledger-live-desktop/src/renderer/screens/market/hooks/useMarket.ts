@@ -35,12 +35,9 @@ export function useMarket() {
 
   useInitSupportedCounterValues();
 
-  const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
+  const { supportedCounterCurrencies } = useMarketDataProvider();
 
-  const marketResult = useMarketDataHook({
-    ...marketParams,
-    liveCoinsList: liveCompatible ? liveCoinsList : [],
-  });
+  const marketResult = useMarketDataHook(marketParams);
 
   const timeRanges = useMemo(
     () =>
@@ -136,11 +133,6 @@ export function useMarket() {
     });
   }, [order, refresh]);
 
-  const isItemLoaded = useCallback(
-    (index: number) => !!marketResult.data[index],
-    [marketResult.data],
-  );
-
   /**
    *
    * Refresh mechanism ----------------------------------------------
@@ -176,7 +168,6 @@ export function useMarket() {
    */
 
   return {
-    isItemLoaded,
     onLoadNextPage,
     toggleLiveCompatible,
     toggleFilterByStarredAccounts,

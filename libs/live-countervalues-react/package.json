@@ -34,13 +34,15 @@
     "bignumber.js": "9"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.10",
-    "@testing-library/react": "14",
+    "@types/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
-    "ts-jest": "^29.1.1"
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

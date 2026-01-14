@@ -8,7 +8,6 @@ export default `* {
   user-select: inherit;
   cursor: inherit;
   min-width: 0;
-  outline: none;
 
   /* it will surely make problem in the future... to be inspected. */
   /* ;_; */

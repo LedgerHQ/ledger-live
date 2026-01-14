@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { setHasSeenAnalyticsOptInPrompt } from "~/actions/settings";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";

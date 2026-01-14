@@ -6,7 +6,7 @@ import PostOnboardingActionRow from "./PostOnboardingActionRow";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { setHasRedirectedToPostOnboarding } from "~/renderer/actions/settings";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/lib-es/store";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 
 const PostOnboardingHub = () => {

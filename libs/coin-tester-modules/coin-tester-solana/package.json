@@ -72,10 +72,11 @@
     "msw": "catalog:"
   },
   "devDependencies": {
-    "@types/jest": "^29",
-    "jest": "^29",
+    "@types/jest": "catalog:",
+    "jest": "catalog:",
     "rimraf": "^5",
-    "ts-jest": "^29",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "ts-node": "^10",
     "dotenv": "^16",
     "typescript": "^5"

@@ -1,4 +1,3 @@
-/** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 module.exports = {
   passWithNoTests: true,
   collectCoverageFrom: [
@@ -9,7 +8,6 @@ module.exports = {
     "!src/__tests__/**/*.ts",
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
-  preset: "ts-jest",
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.ts"],
   modulePathIgnorePatterns: [
@@ -17,6 +15,19 @@ module.exports = {
     "__tests__/coin-tester",
     "__tests__/integration/bridge.integration.test.ts", // this file is tested at the live-common level
   ],
+  transform: {
+    "^.+\\.(ts|tsx)$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+        module: {
+          type: "commonjs",
+        },
+      },
+    ],
+  },
   setupFilesAfterEnv: ["jest-expect-message", "dotenv/config", "@ledgerhq/disable-network-setup"],
   reporters: [
     "default",

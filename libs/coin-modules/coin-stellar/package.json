@@ -130,7 +130,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@stellar/stellar-sdk": "^14.0.0",
     "bignumber.js": "^9.1.2",
-    "expect": "^27.4.6",
+    "expect": "catalog:",
     "invariant": "^2.2.2",
     "rxjs": "catalog:",
     "@exodus/patch-broken-hermes-typed-arrays": "1.0.0-alpha.1"
@@ -139,11 +139,12 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@faker-js/faker": "^8.4.1",
     "@types/invariant": "^2.2.2",
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
-    "jest": "^29.7.0",
+    "jest": "catalog:",
     "msw": "catalog:",
     "nock": "14.0.2",
-    "ts-jest": "^29.1.1"
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:"
   }
 }

@@ -51,7 +51,6 @@ import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreO
 import {
   hasCompletedOnboardingSelector,
   hasSeenAnalyticsOptInPromptSelector,
-  shareAnalyticsSelector,
   areSettingsLoaded,
 } from "~/renderer/reducers/settings";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
@@ -62,7 +61,6 @@ import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
-import { initMixpanel } from "./analytics/mixpanel";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import { ModularDialogRoot } from "LLD/features/ModularDialog/ModularDialogRoot";
@@ -193,6 +191,78 @@ const NightlyLayerR = () => {
 
 const NightlyLayer = React.memo(NightlyLayerR);
 
+const MainAppLayout = () => {
+  return (
+    <>
+      <IsNewVersion />
+      <IsSystemLanguageAvailable />
+      <IsTermOfUseUpdated />
+      <SyncNewAccounts priority={2} />
+
+      <Box
+        grow
+        horizontal
+        bg="background.default"
+        color="neutral.c70"
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        <FeatureToggle featureId="protectServicesDesktop">
+          <Switch>
+            <Route path="/recover/:appId" render={withSuspense(RecoverPlayer)} />
+          </Switch>
+        </FeatureToggle>
+        <MainSideBar />
+        <Page>
+          <TopBannerContainer>
+            <UpdateBanner />
+            <FirmwareUpdateBanner />
+            <VaultSignerBanner />
+          </TopBannerContainer>
+          <Switch>
+            <Route path="/" exact render={withSuspense(Dashboard)} />
+            <Route path="/settings" render={withSuspense(Settings)} />
+            <Route path="/accounts" render={withSuspense(Accounts)} />
+            <Route exact path="/card/:appId?" render={withSuspense(Card)} />
+            <Redirect from="/manager/reload" to="/manager" />
+            <Route path="/manager" render={withSuspense(Manager)} />
+            <Route path="/platform" render={withSuspense(PlatformCatalog)} exact />
+            <Route path="/platform/:appId?" component={LiveApp} />
+            <Route path="/earn" render={withSuspense(Earn)} />
+            <Route exact path="/exchange/:appId?" render={withSuspense(Exchange)} />
+            <Route path="/swap-web" render={withSuspense(SwapWeb)} />
+            <Route path="/account/:parentId/:id" render={withSuspense(Account)} />
+            <Route path="/account/:id" render={withSuspense(Account)} />
+            <Route path="/asset/:assetId+" render={withSuspense(Asset)} />
+            <Route path="/swap" render={withSuspense(Swap2)} />
+            <Route path="/market/:currencyId" render={withSuspense(MarketCoin)} />
+            <Route path="/market" render={withSuspense(Market)} />
+            <Route path="/bank" render={withSuspense(Bank)} />
+          </Switch>
+        </Page>
+        <Drawer />
+        <ToastOverlay />
+      </Box>
+
+      {__PRERELEASE__ && __CHANNEL__ !== "next" && !__CHANNEL__.includes("sha") ? (
+        <NightlyLayer />
+      ) : null}
+
+      <KeyboardContent sequence="CRASH_TEST">
+        <LetThisCrashForCrashTest />
+      </KeyboardContent>
+      <KeyboardContent sequence="CRASH_MAIN">
+        <LetMainSendCrashTest />
+      </KeyboardContent>
+      <KeyboardContent sequence="CRASH_INTERNAL">
+        <LetInternalSendCrashTest />
+      </KeyboardContent>
+    </>
+  );
+};
+
 export default function Default() {
   const location = useLocation();
   const { pathname } = location;
@@ -222,14 +292,6 @@ export default function Default() {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const isLocked = useSelector(isLockedSelector);
   const dispatch = useDispatch();
-  const mixpanelFF = useFeature("lldSessionReplay");
-  const shareAnalytics = useSelector(shareAnalyticsSelector);
-
-  useEffect(() => {
-    if (mixpanelFF?.enabled && shareAnalytics) {
-      initMixpanel(mixpanelFF?.params?.sampling);
-    }
-  }, [mixpanelFF, shareAnalytics]);
 
   useEffect(() => {
     if (typeof ldmkSolanaSignerFeatureFlag?.enabled === "boolean") {
@@ -354,98 +416,7 @@ export default function Default() {
                         </FeatureToggle>
                       </Switch>
                     ) : (
-                      <Route>
-                        <Switch>
-                          <Route>
-                            <IsNewVersion />
-                            <IsSystemLanguageAvailable />
-                            <IsTermOfUseUpdated />
-                            <SyncNewAccounts priority={2} />
-
-                            <Box
-                              grow
-                              horizontal
-                              bg="background.default"
-                              color="neutral.c70"
-                              style={{
-                                width: "100%",
-                                height: "100%",
-                              }}
-                            >
-                              <FeatureToggle featureId="protectServicesDesktop">
-                                <Switch>
-                                  <Route
-                                    path="/recover/:appId"
-                                    render={withSuspense(RecoverPlayer)}
-                                  />
-                                </Switch>
-                              </FeatureToggle>
-                              <MainSideBar />
-                              <Page>
-                                <TopBannerContainer>
-                                  <UpdateBanner />
-                                  <FirmwareUpdateBanner />
-                                  <VaultSignerBanner />
-                                </TopBannerContainer>
-                                <Switch>
-                                  <Route path="/" exact render={withSuspense(Dashboard)} />
-                                  <Route path="/settings" render={withSuspense(Settings)} />
-                                  <Route path="/accounts" render={withSuspense(Accounts)} />
-                                  <Route exact path="/card/:appId?" render={withSuspense(Card)} />
-                                  <Redirect from="/manager/reload" to="/manager" />
-                                  <Route path="/manager" render={withSuspense(Manager)} />
-                                  <Route
-                                    path="/platform"
-                                    render={withSuspense(PlatformCatalog)}
-                                    exact
-                                  />
-                                  <Route path="/platform/:appId?" component={LiveApp} />
-                                  <Route path="/earn" render={withSuspense(Earn)} />
-                                  <Route
-                                    exact
-                                    path="/exchange/:appId?"
-                                    render={withSuspense(Exchange)}
-                                  />
-
-                                  <Route path="/swap-web" render={withSuspense(SwapWeb)} />
-
-                                  <Route
-                                    path="/account/:parentId/:id"
-                                    render={withSuspense(Account)}
-                                  />
-                                  <Route path="/account/:id" render={withSuspense(Account)} />
-                                  <Route path="/asset/:assetId+" render={withSuspense(Asset)} />
-                                  <Route path="/swap" render={withSuspense(Swap2)} />
-                                  <Route
-                                    path="/market/:currencyId"
-                                    render={withSuspense(MarketCoin)}
-                                  />
-                                  <Route path="/market" render={withSuspense(Market)} />
-                                  <Route path="/bank" render={withSuspense(Bank)} />
-                                </Switch>
-                              </Page>
-                              <Drawer />
-                              <ToastOverlay />
-                            </Box>
-
-                            {__PRERELEASE__ &&
-                            __CHANNEL__ !== "next" &&
-                            !__CHANNEL__.includes("sha") ? (
-                              <NightlyLayer />
-                            ) : null}
-
-                            <KeyboardContent sequence="CRASH_TEST">
-                              <LetThisCrashForCrashTest />
-                            </KeyboardContent>
-                            <KeyboardContent sequence="CRASH_MAIN">
-                              <LetMainSendCrashTest />
-                            </KeyboardContent>
-                            <KeyboardContent sequence="CRASH_INTERNAL">
-                              <LetInternalSendCrashTest />
-                            </KeyboardContent>
-                          </Route>
-                        </Switch>
-                      </Route>
+                      <Route component={MainAppLayout} />
                     )}
                   </Switch>
                 </ContextMenuWrapper>

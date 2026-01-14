@@ -17,6 +17,7 @@ import { promises as fs } from "fs";
 import path from "path";
 
 import { CLI } from "./cliUtils";
+import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
@@ -33,7 +34,7 @@ async function writeSpeculosInFile(deviceId: string) {
     instances.push({ deviceId });
     await writeInstances(instances);
   } catch (error) {
-    log.warn("E2E", `⚠️ Failed to register Speculos instance ${deviceId}:`, error);
+    log.warn("E2E", `⚠️ Failed to register Speculos instance ${deviceId}:`, sanitizeError(error));
   }
 }
 
@@ -43,7 +44,7 @@ async function removeSpeculosFromFile(deviceId: string) {
     const filtered = instances.filter(inst => inst.deviceId !== deviceId);
     if (filtered.length !== instances.length) await writeInstances(filtered);
   } catch (error) {
-    log.warn("E2E", `⚠️ Failed to unregister Speculos instance ${deviceId}:`, error);
+    log.warn("E2E", `⚠️ Failed to unregister Speculos instance ${deviceId}:`, sanitizeError(error));
   }
 }
 
@@ -85,8 +86,8 @@ export async function launchSpeculos(appName: string) {
     deviceId: device.id,
   });
 
-  allure.description(`App name: ${device.appName || ""}`);
-  allure.description(`App version: ${device.appVersion || ""}`);
+  await allure.description(`App name: ${device.appName || ""}`);
+  await allure.description(`App version: ${device.appVersion || ""}`);
 
   return device;
 }
@@ -141,10 +142,10 @@ export async function deleteSpeculos(deviceId?: string) {
       try {
         log.info("E2E", `Stopping Speculos with device ${deviceId} and port ${port}}`);
         await deleteSpeculos(deviceId);
-      } catch (err) {
+      } catch (error) {
         log.error(
           "E2E",
-          `Failed to stop Speculos with device ${deviceId} port ${port}}: ${String(err)}`,
+          `Failed to stop Speculos with device ${deviceId} port ${port}}: ${sanitizeError(error)}`,
         );
       }
     });
@@ -200,5 +201,7 @@ export async function registerKnownSpeculos(proxyPort: number) {
 
 export async function removeSpeculosAndDeregisterKnownSpeculos(deviceId?: string) {
   const proxyPort = await deleteSpeculos(deviceId);
-  proxyPort && (await removeKnownSpeculos(`${proxyAddress}:${proxyPort}`));
+  if (proxyPort) {
+    await removeKnownSpeculos(`${proxyAddress}:${proxyPort}`);
+  }
 }

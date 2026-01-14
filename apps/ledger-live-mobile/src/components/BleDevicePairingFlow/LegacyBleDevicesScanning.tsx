@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import getBLETransport from "../../react-native-hw-transport-ble";
 import { bleDevicesSelector } from "~/reducers/ble";

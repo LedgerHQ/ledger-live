@@ -1,5 +1,5 @@
 import React, { ReactNode, useCallback } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTranslation } from "react-i18next";
 import { Flex, Text, Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
@@ -7,9 +7,10 @@ import { setMevProtection } from "~/actions/settings";
 import { mevProtectionSelector } from "~/reducers/settings";
 import Track from "~/analytics/Track";
 import { track } from "~/analytics";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Linking } from "react-native";
 import styled from "styled-components/native";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { urls } from "~/utils/urls";
 
 const StyledText = styled(Text).attrs(() => ({
   color: "neutral.c70",
@@ -20,11 +21,8 @@ const StyledText = styled(Text).attrs(() => ({
 const MevProtectionRow = () => {
   const { t } = useTranslation();
   const mevProctection = useSelector(mevProtectionSelector);
-
+  const mevProtectionUrl = useLocalizedUrl(urls.mevProtection);
   const dispatch = useDispatch();
-
-  const llMevProtectionFeatureFlag = useFeature("llMevProtection");
-  const mevLearnMoreLink = llMevProtectionFeatureFlag?.params?.link?.trim() || undefined;
 
   const onPressLink = (url: string) => Linking.openURL(url);
 
@@ -50,15 +48,9 @@ const MevProtectionRow = () => {
       <Text variant="body" fontWeight="medium" color="neutral.c70">
         {t("settings.display.mevProtectionDesc")}
       </Text>
-      {mevLearnMoreLink && (
-        <StyledText
-          onPress={() => onPressLink(mevLearnMoreLink)}
-          variant="body"
-          fontWeight="medium"
-        >
-          {t("settings.display.mevProtectionLearnMore")}
-        </StyledText>
-      )}
+      <StyledText onPress={() => onPressLink(mevProtectionUrl)} variant="body" fontWeight="medium">
+        {t("settings.display.mevProtectionLearnMore")}
+      </StyledText>
     </Flex>
   );
 

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, memo, useMemo } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { useTheme } from "@react-navigation/native";

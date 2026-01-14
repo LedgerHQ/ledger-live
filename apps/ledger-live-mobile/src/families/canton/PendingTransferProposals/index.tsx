@@ -14,7 +14,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BigNumber } from "bignumber.js";
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { hoursAndMinutesOptionsSelector } from "~/components/DateFormat/FormatDate";

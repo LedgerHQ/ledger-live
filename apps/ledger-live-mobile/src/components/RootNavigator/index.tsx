@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import Config from "react-native-config";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigatorName } from "~/const";

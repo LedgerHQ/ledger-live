@@ -56,6 +56,14 @@ export const HEDERA_MAINNET_CHAIN_ID = 295;
 export const MEMO_CHARACTER_LIMIT = 100;
 
 /**
+ * On Hedera, transactions are not appended to a global chain of immutable blocks. Instead, each consensus node
+ * publishes its own transactions stream, and mirrornode publishes transactions data as it receives it from each
+ * consensus node. This leads to a changing transaction history on the window [now - delay of worst node, now].
+ * This delay has been empirically observed to be maximum 10 seconds (see BACK-10242).
+ */
+export const FINALITY_MS = 10_000;
+
+/**
  * Enum representing the delegation status of a Hedera account
  */
 export enum HEDERA_DELEGATION_STATUS {

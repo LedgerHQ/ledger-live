@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import ScanQrCode from "../Scanner";
 
-jest.mock("~/newArch/hooks/useQRScanner", () => ({
+jest.mock("LLM/hooks/useQRScanner", () => ({
   useQRScanner: jest.fn(() => ({
     device: { id: "mock-device", position: "back" },
     codeScanner: { codeTypes: ["qr"], onCodeScanned: jest.fn() },

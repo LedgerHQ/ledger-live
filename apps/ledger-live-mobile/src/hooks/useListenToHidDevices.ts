@@ -1,4 +1,4 @@
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { useEffect } from "react";
 import { Observable } from "rxjs";
 import { DescriptorEvent, DeviceModelId } from "@ledgerhq/types-devices";

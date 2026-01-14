@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { Platform, Linking, View, StyleSheet } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import {

@@ -338,23 +338,20 @@ export function getSyntheticBlock(
 }
 
 /**
- * Calculates the timestamp range based on a synthetic block height.
+ * Calculates the date range based on a synthetic block height.
  *
  * @param blockHeight - The synthetic block height
  * @param blockWindowSeconds - Duration of one synthetic block in seconds (default: 10)
- * @returns Hedera timestamp range as a string
+ * @returns block date range
  */
-export function getTimestampRangeFromBlockHeight(
+export function getDateRangeFromBlockHeight(
   blockHeight: number,
   blockWindowSeconds = SYNTHETIC_BLOCK_WINDOW_SECONDS,
 ) {
-  const startTimestamp = blockHeight * blockWindowSeconds;
-  const endTimestamp = (blockHeight + 1) * blockWindowSeconds;
+  const start = new Date(blockHeight * blockWindowSeconds * 1000);
+  const end = new Date((blockHeight + 1) * blockWindowSeconds * 1000);
 
-  return {
-    start: `${startTimestamp}.000000000`,
-    end: `${endTimestamp}.000000000`,
-  };
+  return { start, end };
 }
 
 export const formatTransactionId = (transactionId: TransactionId): string => {

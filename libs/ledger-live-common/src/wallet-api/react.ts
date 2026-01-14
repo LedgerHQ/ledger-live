@@ -809,9 +809,7 @@ export function useWalletAPIServer({
       async ({ accountId, tokenCurrency, transaction, options, meta }) => {
         const sponsored = transaction.family === "ethereum" && transaction.sponsored;
         // isEmbedded and partner are passed via meta (not transaction) as they're tracking params, not tx properties
-        const isEmbeddedSwap =
-          transaction.family === "ethereum" &&
-          (meta as { isEmbedded?: boolean } | undefined)?.isEmbedded;
+        const isEmbeddedSwap = (meta as { isEmbedded?: boolean } | undefined)?.isEmbedded;
         const partner = (meta as { partner?: string } | undefined)?.partner;
 
         const signedTransaction = await signTransactionLogic(

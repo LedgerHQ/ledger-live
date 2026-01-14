@@ -22,7 +22,10 @@
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnresolved": [],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"],
   "ignoreUnimported": [
     "src/broadcast.ts",
     "src/buildOptimisticOperation.ts",

@@ -68,12 +68,13 @@
     "ws": "catalog:"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "bip39": "^3.0.4",
-    "expect": "^27.5.1",
-    "jest": "^29.7.0",
+    "expect": "catalog:",
+    "jest": "catalog:",
     "msw": "catalog:",
-    "ts-jest": "^29.1.1",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "ts-node": "^10.9.2"
   },
   "scripts": {

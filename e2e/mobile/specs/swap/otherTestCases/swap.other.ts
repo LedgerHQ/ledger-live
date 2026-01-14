@@ -49,7 +49,7 @@ async function beforeAllFunction(options: ApplicationOptions) {
         enabled: true,
         params: {
           manifest_id:
-            process.env.PRODUCTION === "true" ? "swap-live-app-demo-3" : "swap-live-app-demo-3-stg",
+            process.env.PRODUCTION === "true" ? "swap-live-app-aws" : "swap-live-app-stg-aws",
         },
       },
       llmAnalyticsOptInPrompt: {
@@ -338,7 +338,7 @@ export function runSwapHistoryOperationsTest(
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunction({
-        userdata: "speculos-tests-app",
+        userdata: "swap-history",
         speculosApp: AppInfos.EXCHANGE,
       });
     });
@@ -367,7 +367,7 @@ export function runExportSwapHistoryOperationsTest(
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunction({
-        userdata: "speculos-tests-app",
+        userdata: "swap-history",
         speculosApp: AppInfos.EXCHANGE,
       });
     });

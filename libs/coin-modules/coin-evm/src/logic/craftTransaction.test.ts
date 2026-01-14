@@ -6,14 +6,58 @@ import {
 } from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import * as externalNode from "../network/node/rpc.common";
+import {
+  getTransactionCount as externalGetTransactionCount,
+  getGasEstimation as externalGetGasEstimation,
+  getFeeData as externalGetFeeData,
+} from "../network/node/rpc.common";
 import ledgerNode from "../network/node/ledger";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import { craftTransaction } from "./craftTransaction";
 
+jest.mock("../network/node/rpc.common", () => ({
+  getTransactionCount: jest.fn(),
+  getGasEstimation: jest.fn(),
+  getFeeData: jest.fn(),
+}));
+
+jest.mock("../network/node/ledger", () => ({
+  __esModule: true,
+  default: {
+    getTransactionCount: jest.fn(),
+    getGasEstimation: jest.fn(),
+    getFeeData: jest.fn(),
+  },
+}));
+
+const mockExternalGetTransactionCount = externalGetTransactionCount as jest.Mock;
+const mockExternalGetGasEstimation = externalGetGasEstimation as jest.Mock;
+const mockExternalGetFeeData = externalGetFeeData as jest.Mock;
+const mockLedgerGetTransactionCount = ledgerNode.getTransactionCount as jest.Mock;
+const mockLedgerGetGasEstimation = ledgerNode.getGasEstimation as jest.Mock;
+const mockLedgerGetFeeData = ledgerNode.getFeeData as jest.Mock;
+
+interface MockNodeFunctions {
+  getTransactionCount: jest.Mock;
+  getGasEstimation: jest.Mock;
+  getFeeData: jest.Mock;
+}
+
+const externalMocks: MockNodeFunctions = {
+  getTransactionCount: mockExternalGetTransactionCount,
+  getGasEstimation: mockExternalGetGasEstimation,
+  getFeeData: mockExternalGetFeeData,
+};
+
+const ledgerMocks: MockNodeFunctions = {
+  getTransactionCount: mockLedgerGetTransactionCount,
+  getGasEstimation: mockLedgerGetGasEstimation,
+  getFeeData: mockLedgerGetFeeData,
+};
+
 describe("craftTransaction", () => {
-  afterEach(() => {
-    jest.restoreAllMocks();
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
   it("fails to craft an unknown intent type", async () => {
@@ -52,13 +96,13 @@ describe("craftTransaction", () => {
     ],
   ])("%s transaction type", (transactionType, transactionTypeNumber, feeData, expectedFee) => {
     it.each([
-      ["an external node", "external", externalNode],
-      ["a ledger node", "ledger", ledgerNode],
-    ])("crafts a transaction with the native asset using %s", async (_, type, node) => {
+      ["an external node", "external", externalMocks],
+      ["a ledger node", "ledger", ledgerMocks],
+    ] as const)("crafts a transaction with the native asset using %s", async (_, type, mocks) => {
       setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
-      jest.spyOn(node, "getTransactionCount").mockResolvedValue(18);
-      jest.spyOn(node, "getGasEstimation").mockResolvedValue(new BigNumber(2300));
-      jest.spyOn(node, "getFeeData").mockResolvedValue(feeData);
+      mocks.getTransactionCount.mockResolvedValue(18);
+      mocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
+      mocks.getFeeData.mockResolvedValue(feeData);
 
       const { transaction } = await craftTransaction(
         { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
@@ -94,13 +138,13 @@ describe("craftTransaction", () => {
     });
 
     it.each([
-      ["an external node", "external", externalNode],
-      ["a ledger node", "ledger", ledgerNode],
-    ])("crafts a transaction with a token asset using %s", async (_, type, node) => {
+      ["an external node", "external", externalMocks],
+      ["a ledger node", "ledger", ledgerMocks],
+    ] as const)("crafts a transaction with a token asset using %s", async (_, type, mocks) => {
       setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
-      jest.spyOn(node, "getTransactionCount").mockResolvedValue(18);
-      jest.spyOn(node, "getGasEstimation").mockResolvedValue(new BigNumber(2300));
-      jest.spyOn(node, "getFeeData").mockResolvedValue(feeData);
+      mocks.getTransactionCount.mockResolvedValue(18);
+      mocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
+      mocks.getFeeData.mockResolvedValue(feeData);
 
       const { transaction } = await craftTransaction(
         { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
@@ -145,68 +189,72 @@ describe("craftTransaction", () => {
     });
 
     it.each([
-      ["an external node", "external", externalNode],
-      ["a ledger node", "ledger", ledgerNode],
-    ])("crafts a transaction without %s when custom fees are passed", async (_, type, node) => {
-      setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
-      jest.spyOn(node, "getTransactionCount").mockResolvedValue(18);
-      const getGasEstimation = jest.spyOn(node, "getGasEstimation");
-      const getFeeData = jest.spyOn(node, "getFeeData");
+      ["an external node", "external", externalMocks],
+      ["a ledger node", "ledger", ledgerMocks],
+    ] as const)(
+      "crafts a transaction without %s when custom fees are passed",
+      async (_, type, mocks) => {
+        setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+        mocks.getTransactionCount.mockResolvedValue(18);
 
-      const { transaction } = await craftTransaction(
-        { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
-        {
-          transactionIntent: {
-            intentType: "transaction",
-            type: `send-${transactionType}`,
-            recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
-            amount: 10n,
-            asset: { type: "erc20", assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" },
-          } as TransactionIntent<MemoNotSupported, BufferTxData>,
-          customFees: {
-            value: 0n,
-            parameters: {
-              gasPrice: feeData.gasPrice && BigInt(feeData.gasPrice.toFixed()),
-              maxFeePerGas: feeData.maxFeePerGas && BigInt(feeData.maxFeePerGas.toFixed()),
-              maxPriorityFeePerGas:
-                feeData.maxPriorityFeePerGas && BigInt(feeData.maxPriorityFeePerGas.toFixed()),
-              gasLimit: 2300n,
+        const { transaction } = await craftTransaction(
+          { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
+          {
+            transactionIntent: {
+              intentType: "transaction",
+              type: `send-${transactionType}`,
+              recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+              amount: 10n,
+              asset: {
+                type: "erc20",
+                assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+              },
+            } as TransactionIntent<MemoNotSupported, BufferTxData>,
+            customFees: {
+              value: 0n,
+              parameters: {
+                gasPrice: feeData.gasPrice && BigInt(feeData.gasPrice.toFixed()),
+                maxFeePerGas: feeData.maxFeePerGas && BigInt(feeData.maxFeePerGas.toFixed()),
+                maxPriorityFeePerGas:
+                  feeData.maxPriorityFeePerGas && BigInt(feeData.maxPriorityFeePerGas.toFixed()),
+                gasLimit: 2300n,
+              },
             },
           },
-        },
-      );
+        );
 
-      expect(transaction).toEqual(
-        ethers.Transaction.from({
-          type: transactionTypeNumber,
-          to: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-          nonce: 18,
-          gasLimit: 2300,
-          data:
-            "0x" +
-            Buffer.concat([
-              Buffer.from("a9059cbb000000000000000000000000", "hex"), // transfer selector
-              Buffer.from("7b2c7232f9e38f30e2868f0e5bf311cd83554b5a", "hex"), // recipient
-              Buffer.from(
-                "000000000000000000000000000000000000000000000000000000000000000a",
-                "hex",
-              ), // amount
-            ]).toString("hex"),
-          value: 0,
-          chainId: 42,
-          ...expectedFee,
-        }).unsignedSerialized,
-      );
-      expect(getGasEstimation).not.toHaveBeenCalled();
-      expect(getFeeData).not.toHaveBeenCalled();
-    });
+        expect(transaction).toEqual(
+          ethers.Transaction.from({
+            type: transactionTypeNumber,
+            to: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            nonce: 18,
+            gasLimit: 2300,
+            data:
+              "0x" +
+              Buffer.concat([
+                Buffer.from("a9059cbb000000000000000000000000", "hex"), // transfer selector
+                Buffer.from("7b2c7232f9e38f30e2868f0e5bf311cd83554b5a", "hex"), // recipient
+                Buffer.from(
+                  "000000000000000000000000000000000000000000000000000000000000000a",
+                  "hex",
+                ), // amount
+              ]).toString("hex"),
+            value: 0,
+            chainId: 42,
+            ...expectedFee,
+          }).unsignedSerialized,
+        );
+        expect(mocks.getGasEstimation).not.toHaveBeenCalled();
+        expect(mocks.getFeeData).not.toHaveBeenCalled();
+      },
+    );
   });
 
   it("preserves passed calldata", async () => {
     setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
-    jest.spyOn(externalNode, "getTransactionCount").mockResolvedValue(18);
-    jest.spyOn(externalNode, "getGasEstimation").mockResolvedValue(new BigNumber(2300));
-    jest.spyOn(externalNode, "getFeeData").mockResolvedValue({
+    mockExternalGetTransactionCount.mockResolvedValue(18);
+    mockExternalGetGasEstimation.mockResolvedValue(new BigNumber(2300));
+    mockExternalGetFeeData.mockResolvedValue({
       gasPrice: new BigNumber(5),
       maxFeePerGas: null,
       maxPriorityFeePerGas: null,
@@ -243,8 +291,8 @@ describe("craftTransaction", () => {
 
   it("preserves passed sequence", async () => {
     setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
-    jest.spyOn(externalNode, "getGasEstimation").mockResolvedValue(new BigNumber(2300));
-    jest.spyOn(externalNode, "getFeeData").mockResolvedValue({
+    mockExternalGetGasEstimation.mockResolvedValue(new BigNumber(2300));
+    mockExternalGetFeeData.mockResolvedValue({
       gasPrice: new BigNumber(5),
       maxFeePerGas: null,
       maxPriorityFeePerGas: null,
@@ -313,127 +361,136 @@ describe("craftTransaction", () => {
       "staking %s transaction type",
       (transactionType, transactionTypeNumber, feeData, _expectedFee) => {
         it.each([
-          ["an external node", "external", externalNode],
-          ["a ledger node", "ledger", ledgerNode],
-        ])("crafts a SEI staking delegate transaction using %s", async (_, type, node) => {
-          setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
-          jest.spyOn(node, "getTransactionCount").mockResolvedValue(25);
-          jest.spyOn(node, "getGasEstimation").mockResolvedValue(new BigNumber(45000));
-          jest.spyOn(node, "getFeeData").mockResolvedValue(feeData);
+          ["an external node", "external", externalMocks],
+          ["a ledger node", "ledger", ledgerMocks],
+        ] as const)(
+          "crafts a SEI staking delegate transaction using %s",
+          async (_, type, mocks) => {
+            setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+            mocks.getTransactionCount.mockResolvedValue(25);
+            mocks.getGasEstimation.mockResolvedValue(new BigNumber(45000));
+            mocks.getFeeData.mockResolvedValue(feeData);
 
-          const { transaction } = await craftTransaction(
-            {
-              id: "sei_evm",
-              ethereumLikeInfo: { chainId: 42 },
-            } as CryptoCurrency,
-            {
-              transactionIntent: {
-                intentType: "staking",
-                type: `staking-${transactionType}`,
-                sender: "0x1234567890abcdef1234567890abcdef12345678",
-                recipient: "0x000000000000000000000000000000000001005",
-                valAddress: "seivaloper1234567890abcdef1234567890abcdef12345678",
-                amount: 1000000000000000000n, // 1 SEI
-                asset: { type: "native" },
-                mode: "delegate",
-              } as any,
-            },
-          );
+            const { transaction } = await craftTransaction(
+              {
+                id: "sei_evm",
+                ethereumLikeInfo: { chainId: 42 },
+              } as CryptoCurrency,
+              {
+                transactionIntent: {
+                  intentType: "staking",
+                  type: `staking-${transactionType}`,
+                  sender: "0x1234567890abcdef1234567890abcdef12345678",
+                  recipient: "0x000000000000000000000000000000000001005",
+                  valAddress: "seivaloper1234567890abcdef1234567890abcdef12345678",
+                  amount: 1000000000000000000n, // 1 SEI
+                  asset: { type: "native" },
+                  mode: "delegate",
+                } as any,
+              },
+            );
 
-          // Parse the returned transaction to verify its properties
-          const parsedTx = ethers.Transaction.from(transaction);
-          expect(parsedTx).toMatchObject({
-            type: transactionTypeNumber,
-            to: "0x0000000000000000000000000000000000001005", // SEI staking contract
-            nonce: 25,
-            gasLimit: 45000n,
-            value: 1000000000000000000n,
-            chainId: 42n,
-          });
-          expect(parsedTx.data).toMatch(/^0x[a-fA-F0-9]+$/); // encoded delegate function call
-        });
-
-        it.each([
-          ["an external node", "external", externalNode],
-          ["a ledger node", "ledger", ledgerNode],
-        ])("crafts a SEI staking undelegate transaction using %s", async (_, type, node) => {
-          setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
-          jest.spyOn(node, "getTransactionCount").mockResolvedValue(26);
-          jest.spyOn(node, "getGasEstimation").mockResolvedValue(new BigNumber(50000));
-          jest.spyOn(node, "getFeeData").mockResolvedValue(feeData);
-
-          const { transaction } = await craftTransaction(
-            {
-              id: "sei_evm",
-              ethereumLikeInfo: { chainId: 42 },
-            } as CryptoCurrency,
-            {
-              transactionIntent: {
-                intentType: "staking",
-                type: `staking-${transactionType}`,
-                sender: "0x1234567890abcdef1234567890abcdef12345678",
-                recipient: "0x000000000000000000000000000000000001005",
-                valAddress: "seivaloper1234567890abcdef1234567890abcdef12345678",
-                amount: 500000000000000000n, // 0.5 SEI
-                asset: { type: "native" },
-                mode: "undelegate",
-              } as any,
-            },
-          );
-
-          // Parse the returned transaction to verify its properties
-          const parsedTx = ethers.Transaction.from(transaction);
-          expect(parsedTx).toMatchObject({
-            type: transactionTypeNumber,
-            to: "0x0000000000000000000000000000000000001005", // SEI staking contract
-            nonce: 26,
-            gasLimit: 50000n,
-            value: 0n, // SEI undelegate is nonpayable
-            chainId: 42n,
-          });
-          expect(parsedTx.data).toMatch(/^0x[a-fA-F0-9]+$/); // encoded undelegate function call
-        });
+            // Parse the returned transaction to verify its properties
+            const parsedTx = ethers.Transaction.from(transaction);
+            expect(parsedTx).toMatchObject({
+              type: transactionTypeNumber,
+              to: "0x0000000000000000000000000000000000001005", // SEI staking contract
+              nonce: 25,
+              gasLimit: 45000n,
+              value: 1000000000000000000n,
+              chainId: 42n,
+            });
+            expect(parsedTx.data).toMatch(/^0x[a-fA-F0-9]+$/); // encoded delegate function call
+          },
+        );
 
         it.each([
-          ["an external node", "external", externalNode],
-          ["a ledger node", "ledger", ledgerNode],
-        ])("crafts a CELO staking delegate transaction using %s", async (_, type, node) => {
-          setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
-          jest.spyOn(node, "getTransactionCount").mockResolvedValue(30);
-          jest.spyOn(node, "getGasEstimation").mockResolvedValue(new BigNumber(60000));
-          jest.spyOn(node, "getFeeData").mockResolvedValue(feeData);
+          ["an external node", "external", externalMocks],
+          ["a ledger node", "ledger", ledgerMocks],
+        ] as const)(
+          "crafts a SEI staking undelegate transaction using %s",
+          async (_, type, mocks) => {
+            setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+            mocks.getTransactionCount.mockResolvedValue(26);
+            mocks.getGasEstimation.mockResolvedValue(new BigNumber(50000));
+            mocks.getFeeData.mockResolvedValue(feeData);
 
-          const { transaction } = await craftTransaction(
-            {
-              id: "celo",
-              ethereumLikeInfo: { chainId: 42220 },
-            } as CryptoCurrency,
-            {
-              transactionIntent: {
-                intentType: "staking",
-                type: `staking-${transactionType}`,
-                sender: "0x1234567890abcdef1234567890abcdef12345678",
-                recipient: "0x55E1A0C8f376964bd339167476063bFED7f213d5",
-                valAddress: "0xabcdef1234567890abcdef1234567890abcdef12",
-                amount: 100000000000000000000n, // 100 CELO
-                asset: { type: "native" },
-                mode: "delegate",
-              } as any,
-            },
-          );
+            const { transaction } = await craftTransaction(
+              {
+                id: "sei_evm",
+                ethereumLikeInfo: { chainId: 42 },
+              } as CryptoCurrency,
+              {
+                transactionIntent: {
+                  intentType: "staking",
+                  type: `staking-${transactionType}`,
+                  sender: "0x1234567890abcdef1234567890abcdef12345678",
+                  recipient: "0x000000000000000000000000000000000001005",
+                  valAddress: "seivaloper1234567890abcdef1234567890abcdef12345678",
+                  amount: 500000000000000000n, // 0.5 SEI
+                  asset: { type: "native" },
+                  mode: "undelegate",
+                } as any,
+              },
+            );
 
-          // Parse the returned transaction to verify its properties
-          const parsedTx = ethers.Transaction.from(transaction);
-          expect(parsedTx).toMatchObject({
-            type: transactionTypeNumber,
-            to: "0x55E1A0C8f376964bd339167476063bFED7f213d5", // CELO staking contract
-            nonce: 30,
-            gasLimit: 60000n,
-            value: 0n, // CELO delegateGovernanceVotes is nonpayable
-            chainId: 42220n,
-          });
-          expect(parsedTx.data).toMatch(/^0x[a-fA-F0-9]+$/); // encoded delegate function call
-        });
+            // Parse the returned transaction to verify its properties
+            const parsedTx = ethers.Transaction.from(transaction);
+            expect(parsedTx).toMatchObject({
+              type: transactionTypeNumber,
+              to: "0x0000000000000000000000000000000000001005", // SEI staking contract
+              nonce: 26,
+              gasLimit: 50000n,
+              value: 0n, // SEI undelegate is nonpayable
+              chainId: 42n,
+            });
+            expect(parsedTx.data).toMatch(/^0x[a-fA-F0-9]+$/); // encoded undelegate function call
+          },
+        );
+
+        it.each([
+          ["an external node", "external", externalMocks],
+          ["a ledger node", "ledger", ledgerMocks],
+        ] as const)(
+          "crafts a CELO staking delegate transaction using %s",
+          async (_, type, mocks) => {
+            setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+            mocks.getTransactionCount.mockResolvedValue(30);
+            mocks.getGasEstimation.mockResolvedValue(new BigNumber(60000));
+            mocks.getFeeData.mockResolvedValue(feeData);
+
+            const { transaction } = await craftTransaction(
+              {
+                id: "celo",
+                ethereumLikeInfo: { chainId: 42220 },
+              } as CryptoCurrency,
+              {
+                transactionIntent: {
+                  intentType: "staking",
+                  type: `staking-${transactionType}`,
+                  sender: "0x1234567890abcdef1234567890abcdef12345678",
+                  recipient: "0x55E1A0C8f376964bd339167476063bFED7f213d5",
+                  valAddress: "0xabcdef1234567890abcdef1234567890abcdef12",
+                  amount: 100000000000000000000n, // 100 CELO
+                  asset: { type: "native" },
+                  mode: "delegate",
+                } as any,
+              },
+            );
+
+            // Parse the returned transaction to verify its properties
+            const parsedTx = ethers.Transaction.from(transaction);
+            expect(parsedTx).toMatchObject({
+              type: transactionTypeNumber,
+              to: "0x55E1A0C8f376964bd339167476063bFED7f213d5", // CELO staking contract
+              nonce: 30,
+              gasLimit: 60000n,
+              value: 0n, // CELO delegateGovernanceVotes is nonpayable
+              chainId: 42220n,
+            });
+            expect(parsedTx.data).toMatch(/^0x[a-fA-F0-9]+$/); // encoded delegate function call
+          },
+        );
       },
     );
 

@@ -1,5 +1,5 @@
 import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { Image } from "react-native";
 import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";

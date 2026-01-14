@@ -168,6 +168,6 @@ describe("getTransactions function", () => {
     });
 
     const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
-    await expect(getTransactions(address)).rejects.toThrowError("Network response was not ok.");
+    await expect(getTransactions(address)).rejects.toThrow("Network response was not ok.");
   });
 });

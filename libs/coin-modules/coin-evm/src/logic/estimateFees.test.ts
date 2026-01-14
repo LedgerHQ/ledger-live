@@ -8,13 +8,25 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import { getNodeApi } from "../network/node";
-import ledgerGasTracker from "../network/gasTracker/ledger";
+import { getGasTracker } from "../network/gasTracker";
 import { EvmCoinConfig, setCoinConfig } from "../config";
-import * as gasTrackerModule from "../network/gasTracker";
 import { GasEstimationError } from "../errors";
 import { estimateFees } from "./estimateFees";
 
 jest.mock("../network/node", () => ({ getNodeApi: jest.fn() }));
+
+jest.mock("../network/gasTracker", () => ({
+  getGasTracker: jest.fn(),
+}));
+
+jest.mock("../network/gasTracker/ledger", () => ({
+  __esModule: true,
+  default: {
+    getGasOptions: jest.fn(),
+  },
+}));
+
+const mockGetGasTracker = getGasTracker as jest.Mock;
 
 describe("estimateFees", () => {
   const mockCurrency = {
@@ -44,6 +56,7 @@ describe("estimateFees", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.resetAllMocks();
 
     setCoinConfig(
       () =>
@@ -145,26 +158,29 @@ describe("estimateFees", () => {
 
   it("estimates fees for token asset and remote gas options", async () => {
     mockNodeApi.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    mockNodeApi.getTransactionCount.mockResolvedValue(42);
     jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
-    jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
-      fast: {
-        maxFeePerGas: null,
-        maxPriorityFeePerGas: null,
-        gasPrice: new BigNumber("30000000000"),
-        nextBaseFee: null,
-      },
-      medium: {
-        maxFeePerGas: null,
-        maxPriorityFeePerGas: null,
-        gasPrice: new BigNumber("20000000000"),
-        nextBaseFee: null,
-      },
-      slow: {
-        maxFeePerGas: null,
-        maxPriorityFeePerGas: null,
-        gasPrice: new BigNumber("10000000000"),
-        nextBaseFee: null,
-      },
+    mockGetGasTracker.mockReturnValue({
+      getGasOptions: jest.fn().mockResolvedValue({
+        fast: {
+          maxFeePerGas: null,
+          maxPriorityFeePerGas: null,
+          gasPrice: new BigNumber("30000000000"),
+          nextBaseFee: null,
+        },
+        medium: {
+          maxFeePerGas: null,
+          maxPriorityFeePerGas: null,
+          gasPrice: new BigNumber("20000000000"),
+          nextBaseFee: null,
+        },
+        slow: {
+          maxFeePerGas: null,
+          maxPriorityFeePerGas: null,
+          gasPrice: new BigNumber("10000000000"),
+          nextBaseFee: null,
+        },
+      }),
     });
 
     const result = await estimateFees(mockCurrency, {
@@ -214,6 +230,7 @@ describe("estimateFees", () => {
 
   it("re-adjusts the transaction type", async () => {
     mockNodeApi.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    mockNodeApi.getTransactionCount.mockResolvedValue(42);
     jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
     mockNodeApi.getFeeData.mockResolvedValue({
       gasPrice: new BigNumber(20000000),
@@ -221,7 +238,7 @@ describe("estimateFees", () => {
       maxPriorityFeePerGas: null,
       nextBaseFee: null,
     });
-    jest.spyOn(gasTrackerModule, "getGasTracker").mockReturnValue(null);
+    mockGetGasTracker.mockReturnValue(null);
 
     const result = await estimateFees(mockCurrency, {
       intentType: "transaction",
@@ -249,6 +266,7 @@ describe("estimateFees", () => {
 
   it("uses custom fee data", async () => {
     mockNodeApi.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    mockNodeApi.getTransactionCount.mockResolvedValue(42);
     jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
 
     const result = await estimateFees(
@@ -283,6 +301,7 @@ describe("estimateFees", () => {
 
   it("returns 0 when gasPrice is null with no custom gas options", async () => {
     mockNodeApi.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    mockNodeApi.getTransactionCount.mockResolvedValue(42);
     jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
     mockNodeApi.getFeeData.mockResolvedValue({
       gasPrice: null,
@@ -290,7 +309,7 @@ describe("estimateFees", () => {
       maxPriorityFeePerGas: null,
       nextBaseFee: null,
     });
-    jest.spyOn(gasTrackerModule, "getGasTracker").mockReturnValue(null);
+    mockGetGasTracker.mockReturnValue(null);
 
     const result = await estimateFees(mockCurrency, {
       intentType: "transaction",
@@ -318,6 +337,7 @@ describe("estimateFees", () => {
 
   it("returns 0 when gas estimation fails", async () => {
     mockNodeApi.getGasEstimation.mockRejectedValue(new GasEstimationError());
+    mockNodeApi.getTransactionCount.mockResolvedValue(42);
     jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
     mockNodeApi.getFeeData.mockResolvedValue({
       gasPrice: null,
@@ -325,7 +345,7 @@ describe("estimateFees", () => {
       maxPriorityFeePerGas: null,
       nextBaseFee: null,
     });
-    jest.spyOn(gasTrackerModule, "getGasTracker").mockReturnValue(null);
+    mockGetGasTracker.mockReturnValue(null);
 
     const result = await estimateFees(mockCurrency, {
       intentType: "transaction",
@@ -353,6 +373,7 @@ describe("estimateFees", () => {
 
   it("embeds additional fees when dealing with layers 2", async () => {
     mockNodeApi.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    mockNodeApi.getTransactionCount.mockResolvedValue(42);
     jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
     mockNodeApi.getFeeData.mockResolvedValue({
       gasPrice: new BigNumber("20000000000"),
@@ -360,7 +381,7 @@ describe("estimateFees", () => {
       maxPriorityFeePerGas: null,
       nextBaseFee: null,
     });
-    jest.spyOn(gasTrackerModule, "getGasTracker").mockReturnValue(null);
+    mockGetGasTracker.mockReturnValue(null);
     mockNodeApi.getOptimismAdditionalFees.mockResolvedValue(new BigNumber(8000));
 
     const result = await estimateFees(
@@ -389,8 +410,9 @@ describe("estimateFees", () => {
     });
   });
 
-  it("estimates fees for delegate and no custom options and no gas tracker", async () => {
+  it("gives 0 additional fees if the transaction is not deserializable", async () => {
     mockNodeApi.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    mockNodeApi.getTransactionCount.mockResolvedValue(42);
     jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
     mockNodeApi.getFeeData.mockResolvedValue({
       gasPrice: new BigNumber("20000000000"),
@@ -398,7 +420,48 @@ describe("estimateFees", () => {
       maxPriorityFeePerGas: null,
       nextBaseFee: null,
     });
-    jest.spyOn(gasTrackerModule, "getGasTracker").mockReturnValue(null);
+    mockGetGasTracker.mockReturnValue(null);
+    mockNodeApi.getOptimismAdditionalFees.mockResolvedValue(new BigNumber(8000));
+
+    const result = await estimateFees(
+      { ...mockCurrency, id: "optimism", ethereumLikeInfo: { chainId: 10 } },
+      {
+        intentType: "transaction",
+        type: "send-legacy",
+        amount: BigInt("1000000000000000000"),
+        asset: { type: "native" },
+        // Invalid recipient address, fails with
+        // TypeError: bad address checksum (argument="address", value="0x0dFC37693E934F242606CA06417Fb76426442334", code=INVALID_ARGUMENT, version=6.15.0)
+        recipient: "0x0dFC37693E934F242606CA06417Fb76426442334",
+        sender: "0xsender",
+        data: { type: "buffer", value: Buffer.from([]) },
+      },
+    );
+    expect(result).toEqual({
+      value: 420000000000000n,
+      parameters: {
+        gasPrice: 20000000000n,
+        maxFeePerGas: null,
+        maxPriorityFeePerGas: null,
+        nextBaseFee: null,
+        gasLimit: 21000n,
+        type: 0,
+        additionalFees: 0n,
+      },
+    });
+  });
+
+  it("estimates fees for delegate and no custom options and no gas tracker", async () => {
+    mockNodeApi.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    mockNodeApi.getTransactionCount.mockResolvedValue(42);
+    jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
+    mockNodeApi.getFeeData.mockResolvedValue({
+      gasPrice: new BigNumber("20000000000"),
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      nextBaseFee: null,
+    });
+    mockGetGasTracker.mockReturnValue(null);
 
     const tokenIntent = {
       ...mockIntent,
@@ -427,6 +490,7 @@ describe("estimateFees", () => {
 
   it("estimates fees for redelegate and no custom options and no gas tracker", async () => {
     mockNodeApi.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    mockNodeApi.getTransactionCount.mockResolvedValue(42);
     jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
     mockNodeApi.getFeeData.mockResolvedValue({
       gasPrice: new BigNumber("20000000000"),
@@ -434,7 +498,7 @@ describe("estimateFees", () => {
       maxPriorityFeePerGas: null,
       nextBaseFee: null,
     });
-    jest.spyOn(gasTrackerModule, "getGasTracker").mockReturnValue(null);
+    mockGetGasTracker.mockReturnValue(null);
 
     const tokenIntent = {
       ...mockIntent,
@@ -457,6 +521,52 @@ describe("estimateFees", () => {
         maxPriorityFeePerGas: null,
         nextBaseFee: null,
         gasLimit: 21000n,
+        type: 0,
+      },
+    });
+  });
+
+  it("uses custom gas limit from customFeesParameters", async () => {
+    const customGasLimit = new BigNumber("50000");
+    jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
+    mockNodeApi.getFeeData.mockResolvedValue({
+      gasPrice: new BigNumber("20000000000"),
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      nextBaseFee: null,
+    });
+    mockGetGasTracker.mockReturnValue(null);
+
+    const result = await estimateFees(
+      mockCurrency,
+      {
+        intentType: "transaction",
+        type: "send-legacy",
+        amount: BigInt("1000000000000000000"),
+        asset: { type: "native" },
+        recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        sender: "0xsender",
+        feesStrategy: "custom",
+        data: { type: "buffer", value: Buffer.from([]) },
+      } as SendTransactionIntent<MemoNotSupported, BufferTxData>,
+      {
+        gasLimit: BigInt(customGasLimit.toFixed()),
+        gasPrice: new BigNumber(30000000000),
+      },
+    );
+
+    // Should not call getGasEstimation when custom gas limit is provided
+    expect(mockNodeApi.getGasEstimation).not.toHaveBeenCalled();
+
+    expect(result).toEqual({
+      value: 1500000000000000n, // 50000 * 30000000000
+      parameters: {
+        additionalFees: 0n,
+        gasPrice: 30000000000n,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null,
+        nextBaseFee: null,
+        gasLimit: 50000n,
         type: 0,
       },
     });

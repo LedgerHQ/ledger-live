@@ -9,7 +9,7 @@ import Form from "./Form";
 import Enjoy from "./Enjoy";
 import DisappointedDone from "./DisappointedDone";
 import { DimensionValue, LayoutChangeEvent } from "react-native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { trackingEnabledSelector } from "~/reducers/settings";
 import getOrCreateUser from "~/user";
 

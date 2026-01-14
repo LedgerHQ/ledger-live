@@ -3,6 +3,7 @@ import { StatusCodes, TransportStatusError, UnexpectedBootloader } from "@ledger
 import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
 import { listApps } from "./listApps";
 import ManagerAPI, { ListInstalledAppsEvent } from "../manager/api";
+import hwListApps from "../hw/listApps";
 import { aDeviceInfoBuilder } from "../mock/fixtures/aDeviceInfo";
 import {
   ManagerApiRepository,
@@ -19,11 +20,20 @@ jest.useFakeTimers();
 jest.mock("../hw/customLockScreenFetchSize");
 jest.mock("../device/use-cases/getDeviceNameUseCase");
 jest.mock("../currencies");
+jest.mock("../device/use-cases/getLatestFirmwareForDeviceUseCase", () => ({
+  ...jest.requireActual("../device/use-cases/getLatestFirmwareForDeviceUseCase"),
+  getLatestFirmwareForDeviceUseCase: jest.fn().mockResolvedValue(null),
+}));
+jest.mock("../hw/listApps", () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
 
 const mockedCustomLockScreenFetchSize = jest.mocked(customLockScreenFetchSize);
 const mockedGetDeviceName = jest.mocked(getDeviceName);
 const mockedListCryptoCurrencies = jest.mocked(listCryptoCurrencies);
 const mockedCurrenciesByMarketCap = jest.mocked(currenciesByMarketcap);
+const mockedHwListApps = jest.mocked(hwListApps);
 
 const mockedListInstalledAppEvent: ListInstalledAppsEvent = {
   type: "result",
@@ -32,24 +42,15 @@ const mockedListInstalledAppEvent: ListInstalledAppsEvent = {
 
 describe("listApps", () => {
   let mockedManagerApiRepository: ManagerApiRepository;
-  let listAppsCommandSpy: jest.SpyInstance;
   let listAppsWithManagerApiSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    jest
-      .spyOn(
-        jest.requireActual("../device/use-cases/getLatestFirmwareForDeviceUseCase"),
-        "getLatestFirmwareForDeviceUseCase",
-      )
-      .mockReturnValue(Promise.resolve(null));
     mockedManagerApiRepository = new StubManagerApiRepository();
     mockedGetDeviceName.mockReturnValue(Promise.resolve("Mocked device name"));
     mockedCurrenciesByMarketCap.mockReturnValue(Promise.resolve([]));
     mockedListCryptoCurrencies.mockReturnValue([]);
-
-    listAppsCommandSpy = jest
-      .spyOn(jest.requireActual("../hw/listApps"), "default")
-      .mockReturnValue(Promise.resolve([]));
+    mockedHwListApps.mockClear();
+    mockedHwListApps.mockReturnValue(Promise.resolve([]));
 
     listAppsWithManagerApiSpy = jest
       .spyOn(ManagerAPI, "listInstalledApps")
@@ -156,7 +157,7 @@ describe("listApps", () => {
 
     jest.advanceTimersByTime(1);
 
-    expect(listAppsCommandSpy).toHaveBeenCalled();
+    expect(mockedHwListApps).toHaveBeenCalled();
     expect(listAppsWithManagerApiSpy).not.toHaveBeenCalled();
   });
 
@@ -176,7 +177,7 @@ describe("listApps", () => {
         targetId: 0x33200000,
       });
 
-      listAppsCommandSpy.mockRejectedValue(new TransportStatusError(statusCode));
+      mockedHwListApps.mockRejectedValue(new TransportStatusError(statusCode));
 
       listApps({
         managerDevModeEnabled: false,
@@ -187,7 +188,7 @@ describe("listApps", () => {
       }).subscribe({
         complete: () => {
           try {
-            expect(listAppsCommandSpy).toHaveBeenCalled();
+            expect(mockedHwListApps).toHaveBeenCalled();
             expect(listAppsWithManagerApiSpy).toHaveBeenCalled();
             done();
           } catch (e) {
@@ -211,7 +212,7 @@ describe("listApps", () => {
       targetId: 0x33200000,
     });
 
-    listAppsCommandSpy.mockRejectedValue(new Error("listApps failed"));
+    mockedHwListApps.mockRejectedValue(new Error("listApps failed"));
 
     listApps({
       managerDevModeEnabled: false,
@@ -254,7 +255,7 @@ describe("listApps", () => {
     }).subscribe();
     jest.advanceTimersByTime(1);
 
-    expect(listAppsCommandSpy).not.toHaveBeenCalled();
+    expect(mockedHwListApps).not.toHaveBeenCalled();
     expect(listAppsWithManagerApiSpy).toHaveBeenCalled();
   });
 
@@ -513,7 +514,7 @@ describe("listApps", () => {
       },
     };
 
-    listAppsCommandSpy.mockResolvedValue([
+    mockedHwListApps.mockResolvedValue([
       { hash: "hash1", name: "Mocked dev app" },
       { hash: "hash2", name: "Another non dev app" },
     ]);

@@ -22,7 +22,7 @@ export const useMarketCoin = () => {
   const dispatch = useDispatch();
   const { currencyId } = useParams<{ currencyId: string }>();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
+  const { supportedCounterCurrencies } = useMarketDataProvider();
 
   const isStarred = starredMarketCoins.includes(currencyId);
   const locale = useSelector(localeSelector);
@@ -112,7 +112,6 @@ export const useMarketCoin = () => {
     changeCounterCurrency,
     currency,
     supportedCounterCurrencies,
-    liveCoinsList,
     availableOnBuy,
     availableOnStake,
     availableOnSwap,

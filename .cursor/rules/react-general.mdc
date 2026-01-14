@@ -6,7 +6,7 @@ globs: ["**/*.{ts,tsx}"]
 
 # General React & React Native Patterns
 
-_These rules apply to all files, including those inside `src/newArch/`._
+_These rules apply to all files, including those inside `src/mvvm/`._
 
 ## Component Architecture
 

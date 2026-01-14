@@ -37,8 +37,6 @@ type Props = {
   onMenuOpen?: () => void;
   small?: boolean;
   onMenuScrollToBottom?: () => void;
-  lastItemIndex?: number;
-  keepLastScrollPosition?: boolean;
   isLoading?: boolean;
 };
 const getOptionValue = (data: CurrencyOption) => (data.currency as CryptoOrTokenCurrency).id;
@@ -61,8 +59,6 @@ const SelectCurrency = ({
   onMenuOpen,
   small,
   onMenuScrollToBottom,
-  lastItemIndex,
-  keepLastScrollPosition,
   isLoading,
 }: Props) => {
   const { t } = useTranslation();
@@ -152,8 +148,6 @@ const SelectCurrency = ({
       stylesMap={stylesMap}
       small={small}
       onScrollEnd={onMenuScrollToBottom}
-      lastItemIndex={lastItemIndex}
-      keepLastScrollPosition={keepLastScrollPosition}
       isLoading={isLoading}
     />
   );

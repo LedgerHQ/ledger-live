@@ -12,8 +12,17 @@ import type { Operation } from "@ledgerhq/types-live";
 import { getSyncHash as baseGetSyncHash } from "@ledgerhq/coin-framework/account/sync";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import * as RPC_API from "../../network/node/rpc.common";
+import { getOptimismAdditionalFees, getScrollAdditionalFees } from "../../network/node/rpc.common";
 import { getCoinConfig } from "../../config";
+
+jest.mock("../../network/node/rpc.common", () => ({
+  ...jest.requireActual("../../network/node/rpc.common"),
+  getOptimismAdditionalFees: jest.fn(),
+  getScrollAdditionalFees: jest.fn(),
+}));
+
+const mockGetOptimismAdditionalFees = getOptimismAdditionalFees as jest.Mock;
+const mockGetScrollAdditionalFees = getScrollAdditionalFees as jest.Mock;
 import {
   attachOperations,
   createSwapHistoryMap,
@@ -335,30 +344,22 @@ describe("EVM Family", () => {
       });
 
       it("should try to get additionalFees for a valid layer 2", async () => {
-        const spyOptimism = jest
-          .spyOn(RPC_API, "getOptimismAdditionalFees")
-          .mockImplementation(jest.fn());
-        const spyScroll = jest
-          .spyOn(RPC_API, "getScrollAdditionalFees")
-          .mockImplementation(jest.fn());
+        mockGetOptimismAdditionalFees.mockClear();
+        mockGetScrollAdditionalFees.mockClear();
 
         await getAdditionalLayer2Fees(optimism, {} as any);
-        expect(spyOptimism).toHaveBeenCalled();
+        expect(mockGetOptimismAdditionalFees).toHaveBeenCalled();
         await getAdditionalLayer2Fees(scroll, {} as any);
-        expect(spyScroll).toHaveBeenCalled();
+        expect(mockGetScrollAdditionalFees).toHaveBeenCalled();
       });
 
       it("should not try to get additionalFees for an invalid layer 2", async () => {
-        const spyOptimism = jest
-          .spyOn(RPC_API, "getOptimismAdditionalFees")
-          .mockImplementation(jest.fn());
-        const spyScroll = jest
-          .spyOn(RPC_API, "getOptimismAdditionalFees")
-          .mockImplementation(jest.fn());
+        mockGetOptimismAdditionalFees.mockClear();
+        mockGetScrollAdditionalFees.mockClear();
 
         await getAdditionalLayer2Fees(ethereum, {} as any);
-        expect(spyOptimism).not.toHaveBeenCalled();
-        expect(spyScroll).not.toHaveBeenCalled();
+        expect(mockGetOptimismAdditionalFees).not.toHaveBeenCalled();
+        expect(mockGetScrollAdditionalFees).not.toHaveBeenCalled();
       });
     });
 

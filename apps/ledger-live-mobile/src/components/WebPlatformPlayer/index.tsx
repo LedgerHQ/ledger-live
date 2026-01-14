@@ -1,7 +1,7 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { ScopeProvider } from "jotai-scope";
 
 import { useNavigation } from "@react-navigation/native";

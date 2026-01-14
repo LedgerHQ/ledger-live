@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";

@@ -1,9 +1,10 @@
 import { validateIntent } from "./validateIntent";
-import * as utils from "./utils";
 
 const mockGetBalance = jest.fn();
 
 const mockGetServerInfos = jest.fn();
+
+const RECIPIENT_NEW = "rDKsbvy9uaNpPtvVFraJyNGfjvTw8xivgK";
 
 jest.mock("./getBalance", () => ({
   getBalance: () => mockGetBalance(),
@@ -13,18 +14,20 @@ jest.mock("../network", () => ({
   getServerInfos: () => mockGetServerInfos(),
 }));
 
-jest.spyOn(utils, "cachedRecipientIsNew").mockImplementation(addr => {
-  if (addr === RECIPIENT_NEW) {
-    return Promise.resolve(true);
-  }
-  return Promise.resolve(false);
-});
+jest.mock("./utils", () => ({
+  ...jest.requireActual("./utils"),
+  cachedRecipientIsNew: jest.fn((addr: string) => {
+    if (addr === RECIPIENT_NEW) {
+      return Promise.resolve(true);
+    }
+    return Promise.resolve(false);
+  }),
+}));
 
 const reserveBase = 10_000_000n; // 10 XRP (drops)
 
 const SENDER = "rPSCfmnX3t9jQJG5RNcZtSaP5UhExZDue4";
 const RECIPIENT = "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe";
-const RECIPIENT_NEW = "rDKsbvy9uaNpPtvVFraJyNGfjvTw8xivgK";
 
 describe("validateIntent", () => {
   afterEach(() => {

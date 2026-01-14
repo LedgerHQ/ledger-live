@@ -298,6 +298,9 @@ export default class Btc {
           // we use the legacy protocol for versions below 2.1.0 of the Bitcoin app.
           return semver.lt(version, "2.1.0");
         }
+        case "Bitcoin Recovery":
+          // Bitcoin Recovery app is not legacy
+          return false;
         case "Bitcoin Legacy":
         case "Bitcoin Test Legacy":
           // the "Bitcoin Legacy" and "Bitcoin Testnet Legacy" app use the legacy protocol, regardless of the version

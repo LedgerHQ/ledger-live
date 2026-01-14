@@ -4,7 +4,7 @@ import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useCleanCache } from "~/actions/general";
 import SettingsRow from "~/components/SettingsRow";
 import { reboot } from "~/actions/appstate";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import Button from "~/components/wrappedUi/Button";
 import QueuedDrawer from "~/components/QueuedDrawer";
 

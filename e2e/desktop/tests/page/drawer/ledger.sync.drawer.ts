@@ -11,8 +11,8 @@ export class LedgerSyncDrawer extends Drawer {
     .locator("span", { hasText: "Ledger Sync turned on for" })
     .or(this.page.locator("span", { hasText: "Sync successful!" }))
     .first();
-  private backupDeletionSuccessText = this.page.getByText(
-    "Your Ledger Wallet apps are no longer synched",
+  private backupDeletionSuccessTextId = this.page.getByTestId(
+    "walletsync-delete-backup-success-title",
   );
   private removeMemberSuccessText = this.page.getByText(
     "Your Ledger Wallet app on CLI is no longer connected to Ledger Sync",
@@ -66,7 +66,9 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Check if the backup deletion was successful")
   async expectBackupDeletion() {
-    await expect(this.backupDeletionSuccessText).toBeVisible();
+    await expect(this.backupDeletionSuccessTextId).toContainText(
+      "Your Ledger Wallet apps are no longer synced",
+    );
   }
 
   async waitForManageInstancesButton() {

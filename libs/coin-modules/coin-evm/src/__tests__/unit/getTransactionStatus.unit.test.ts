@@ -5,14 +5,15 @@ import {
 } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { NotEnoughNftOwned, NotOwnedNft } from "../../errors";
-import * as getTransactionStatusModule from "../../editTransaction/getTransactionStatus";
+import {
+  validateEditTransaction,
+  getEditTransactionStatus,
+} from "../../editTransaction/getTransactionStatus";
 import { EvmTransactionEIP1559, EvmTransactionLegacy, TransactionStatus } from "../../types";
 import {
   getMinEip1559Fees,
   getMinLegacyFees,
 } from "../../editTransaction/getMinEditTransactionFees";
-
-const { validateEditTransaction, getEditTransactionStatus } = getTransactionStatusModule;
 
 const recipient = "0xe2ca7390e76c5A992749bB622087310d2e63ca29"; // rambo.eth
 const testData = Buffer.from("testBufferString").toString("hex");
@@ -321,11 +322,6 @@ describe("EVM Family", () => {
     });
 
     describe("getEditTransactionStatus", () => {
-      jest.mock("../../editTransaction/getTransactionStatus");
-      const mockedGetTransactionStatusModule = jest.mocked(getTransactionStatusModule);
-
-      const updatedTx = { ...eip1559Tx, maxFeePerGas: eip1559Tx.maxFeePerGas.plus(100) };
-
       const originalStatus: TransactionStatus = {
         errors: {},
         warnings: {},
@@ -339,30 +335,36 @@ describe("EVM Family", () => {
         replacementTransactionUnderpriced: new ReplacementTransactionUnderpriced(),
       };
 
-      afterAll(() => {
-        jest.restoreAllMocks();
-      });
+      // Get the minimum required fees for a valid speedup
+      const { maxFeePerGas: minMaxFeePerGas, maxPriorityFeePerGas: minMaxPriorityFeePerGas } =
+        getMinEip1559Fees({
+          maxFeePerGas: eip1559Tx.maxFeePerGas,
+          maxPriorityFeePerGas: eip1559Tx.maxPriorityFeePerGas,
+        });
+
+      // Transaction with fees that are NOT 10% higher (triggers validation error)
+      const underpricedTx = {
+        ...eip1559Tx,
+        maxFeePerGas: minMaxFeePerGas.minus(1), // Less than minimum required
+        maxPriorityFeePerGas: minMaxPriorityFeePerGas.minus(1),
+      };
+
+      // Transaction with fees that ARE at least 10% higher (passes validation)
+      const validSpeedupTx = {
+        ...eip1559Tx,
+        maxFeePerGas: minMaxFeePerGas, // Exactly the minimum required
+        maxPriorityFeePerGas: minMaxPriorityFeePerGas,
+      };
 
       describe("when original transaction does not have errors", () => {
         describe("when edit transaction checks return errors", () => {
-          beforeEach(() => {
-            jest
-              .spyOn(mockedGetTransactionStatusModule, "validateEditTransaction")
-              .mockReturnValue({
-                errors: editTxErrors,
-                warnings: {},
-              });
-          });
-
           it("should add edit transaction checks error to status", () => {
             const res = getEditTransactionStatus({
-              transaction: updatedTx,
+              transaction: underpricedTx,
               transactionToUpdate: eip1559Tx,
               status: originalStatus,
               editType: "speedup",
             });
-
-            expect(mockedGetTransactionStatusModule.validateEditTransaction).toHaveBeenCalled();
 
             expect(res).toEqual({
               ...originalStatus,
@@ -375,15 +377,9 @@ describe("EVM Family", () => {
         });
 
         describe("when edit transaction checks does not return errors", () => {
-          beforeEach(() => {
-            jest
-              .spyOn(mockedGetTransactionStatusModule, "validateEditTransaction")
-              .mockReturnValue({ errors: {}, warnings: {} });
-          });
-
           it("should not update the status", async () => {
             const res = getEditTransactionStatus({
-              transaction: updatedTx,
+              transaction: validSpeedupTx,
               transactionToUpdate: eip1559Tx,
               status: originalStatus,
               editType: "speedup",
@@ -403,24 +399,13 @@ describe("EVM Family", () => {
         };
 
         describe("when edit transaction checks return errors", () => {
-          beforeEach(() => {
-            jest
-              .spyOn(mockedGetTransactionStatusModule, "validateEditTransaction")
-              .mockReturnValue({
-                errors: editTxErrors,
-                warnings: {},
-              });
-          });
-
           it("should add edit transaction checks error to status", () => {
             const res = getEditTransactionStatus({
-              transaction: updatedTx,
+              transaction: underpricedTx,
               transactionToUpdate: eip1559Tx,
               status: originalStatusWithErrors,
               editType: "speedup",
             });
-
-            expect(mockedGetTransactionStatusModule.validateEditTransaction).toHaveBeenCalled();
 
             expect(res).toEqual({
               ...originalStatusWithErrors,
@@ -433,15 +418,9 @@ describe("EVM Family", () => {
         });
 
         describe("when edit transaction checks does not return errors", () => {
-          beforeEach(() => {
-            jest
-              .spyOn(mockedGetTransactionStatusModule, "validateEditTransaction")
-              .mockReturnValue({ errors: {}, warnings: {} });
-          });
-
           it("should not update the status", async () => {
             const res = getEditTransactionStatus({
-              transaction: updatedTx,
+              transaction: validSpeedupTx,
               transactionToUpdate: eip1559Tx,
               status: originalStatusWithErrors,
               editType: "speedup",
@@ -469,7 +448,7 @@ describe("EVM Family", () => {
               };
 
               const res = getEditTransactionStatus({
-                transaction: updatedTx,
+                transaction: validSpeedupTx,
                 transactionToUpdate: eip1559Tx,
                 status: originalStatusWithAmountError,
                 editType: "speedup",

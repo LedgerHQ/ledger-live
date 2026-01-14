@@ -29,6 +29,9 @@
     "src/test/bridge.dataset.ts",
     "src/supportedFeatures.ts"
   ],
-  "ignoreUnresolved": [],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"],
   "ignoreUnused": []
 }

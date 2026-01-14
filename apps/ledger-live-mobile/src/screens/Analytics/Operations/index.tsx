@@ -7,7 +7,7 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import { OperationListV1 } from "./OperationsV1";
 import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useFocusEffect } from "@react-navigation/core";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 

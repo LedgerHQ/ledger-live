@@ -5,7 +5,7 @@ import {
   getMainAccount,
   getAccountSpendableBalance,
 } from "@ledgerhq/live-common/account/index";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { useTranslation } from "react-i18next";
 import { useRoute } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
@@ -113,14 +113,11 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       ],
       label: t("account.swap", { currency: currency.name }),
       Icon: iconSwap,
-      disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
-      modalOnDisabledClick: {
-        component: isPtxServiceCtaScreensDisabled ? PtxToast : ZeroBalanceDisabledModalContent,
-      },
+      disabled: false,
       event: "Swap Crypto Account Button",
       eventProperties: { currencyName: currency.name },
     }),
-    [isPtxServiceCtaScreensDisabled, isZeroBalance, currency, account, parentAccount, t],
+    [currency, account, parentAccount, t],
   );
 
   const actionButtonBuy: ActionButtonEvent = useMemo(

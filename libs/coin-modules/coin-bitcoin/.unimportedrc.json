@@ -39,6 +39,9 @@
     "src/constants/index.ts",
     "src/supportedFeatures.ts"
   ],
-  "ignoreUnresolved": [],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"],
   "ignoreUnused": []
 }

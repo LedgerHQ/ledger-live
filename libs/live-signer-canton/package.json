@@ -48,12 +48,13 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@types/jest": "^29.5.10",
+    "@types/jest": "catalog:",
     "@types/node": "22.10.1",
     "@types/semver": "catalog:",
-    "jest": "^29.7.0",
+    "jest": "catalog:",
     "rimraf": "^4.4.1",
-    "ts-jest": "^29.1.1",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "ts-node": "^10.4.0"
   }
 }

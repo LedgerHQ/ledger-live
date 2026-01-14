@@ -23,12 +23,13 @@
     "probot": "13.2.2"
   },
   "devDependencies": {
-    "@types/jest": "29.5.12",
+    "@types/jest": "catalog:",
     "@types/node": "22.10.10",
-    "jest": "29.7.0",
+    "jest": "catalog:",
     "nock": "13.5.4",
     "nodemon": "3.1.0",
     "smee-client": "1.2.5",
-    "ts-jest": "29.1.2"
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:"
   }
 }

@@ -1,6 +1,6 @@
 import { CountervaluesMarketcapProvider } from "@ledgerhq/live-countervalues-react";
 import React, { useMemo } from "react";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import {
   setCountervaluesMarketcapError,
   setCountervaluesMarketcapIds,
