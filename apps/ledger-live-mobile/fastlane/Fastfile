@@ -468,7 +468,10 @@ platform :android do
         )
     end
 
-    gradle(task: "clean", project_dir: 'android/')
+    # Run clean + codegen together to avoid settings.gradle issue when clean runs alone
+    # RN 0.79 New Architecture fix: Force codegen to generate artifacts before main build
+    gradle(tasks: ["clean", "generateCodegenArtifactsFromSchema"], project_dir: 'android/', flags: "--rerun-tasks")
+    
     if (options[:local])
       gradle(
         tasks: tasks,

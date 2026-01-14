@@ -124,7 +124,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 36176158
-        versionName "3.99.1"
+        versionName "3.100.1"
         resValue "string", "build_config_package", "com.ledger.live"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -229,28 +229,6 @@ dependencies {
     // Needed for LocationHelperModule
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1"
-}
-
-// Ensure codegen completes before CMake configuration (New Architecture)
-// Fix for RN 0.79 race condition where CMake runs before codegen artifacts exist
-afterEvaluate {
-    def cmakeTasks = tasks.matching { it.name.startsWith('configureCMake') || it.name.contains('CMake') }
-    def allCodegenTasks = rootProject.allprojects.collect { proj ->
-        proj.tasks.findByName('generateCodegenArtifactsFromSchema')
-    }.findAll { it != null }
-    
-    cmakeTasks.each { cmakeTask ->
-        allCodegenTasks.each { codegenTask ->
-            cmakeTask.mustRunAfter codegenTask
-        }
-    }
-    
-    // Force codegen to run in preBuild
-    tasks.named('preBuild').configure {
-        allCodegenTasks.each { codegenTask ->
-            dependsOn codegenTask
-        }
-    }
 }
 
 apply plugin: 'kotlin-android'
