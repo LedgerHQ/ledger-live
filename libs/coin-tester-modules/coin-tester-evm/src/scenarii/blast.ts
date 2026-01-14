@@ -5,15 +5,15 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { makeAccount } from "../fixtures";
 import { blast, callMyDealer, getBridges, VITALIK } from "../helpers";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { MIM_ON_BLAST } from "../tokenFixtures";
 import { buildSigner } from "../signer";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
 
-type BlastScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
+type BlastScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
 const makeScenarioTransactions = ({ address }: { address: string }): BlastScenarioTransaction[] => {
   const scenarioSendEthTransaction: BlastScenarioTransaction = {
@@ -68,7 +68,7 @@ const makeScenarioTransactions = ({ address }: { address: string }): BlastScenar
   return [scenarioSendEthTransaction, scenarioSendMIMTransaction, scenarioSendMaxEthTransaction];
 };
 
-export const scenarioBlast: Scenario<EvmTransaction, Account> = {
+export const scenarioBlast: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic Blast Transactions",
   setup: async () => {
     const signer = await buildSigner();

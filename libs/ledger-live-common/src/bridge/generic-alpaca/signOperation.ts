@@ -16,9 +16,9 @@ import { GenericTransaction } from "./types";
  * Handles both destination tags (XRP-like) and Stellar-style memos
  */
 function applyMemoToIntent(
-  transactionIntent: TransactionIntent<any>,
+  transactionIntent: TransactionIntent,
   transaction: GenericTransaction,
-): TransactionIntent<any> {
+): TransactionIntent {
   // Handle destination tag memo (for XRP-like chains)
   if (transaction.tag) {
     const txWithMemoTag = transactionIntent as TransactionIntent<MapMemo<string, string>>;
@@ -54,10 +54,10 @@ function applyMemoToIntent(
  * Enriches transaction intent with memo and asset information
  */
 function enrichTransactionIntent(
-  transactionIntent: TransactionIntent<any>,
+  transactionIntent: TransactionIntent,
   transaction: GenericTransaction,
   publicKey: string,
-): TransactionIntent<any> {
+): TransactionIntent {
   // Set sender public key
   transactionIntent.senderPublicKey = publicKey;
 
@@ -70,7 +70,7 @@ function enrichTransactionIntent(
  * Sign Transaction with Ledger hardware
  */
 export const genericSignOperation =
-  (network, kind) =>
+  (_network: string, kind: string) =>
   (signerContext: SignerContext<any>): AccountBridge<GenericTransaction>["signOperation"] =>
   ({
     account,

@@ -7,10 +7,10 @@ import { GenericTransaction } from "./types";
 
 // => alpaca validateIntent
 export function genericGetTransactionStatus(
-  network,
-  kind,
-): AccountBridge<any>["getTransactionStatus"] {
-  return async (account, transaction: GenericTransaction) => {
+  _network: string,
+  kind: string,
+): AccountBridge<GenericTransaction>["getTransactionStatus"] {
+  return async (account, transaction) => {
     const alpacaApi = getAlpacaApi(account.currency.id, kind);
     const draftTransaction = {
       mode: transaction?.mode ?? "send",

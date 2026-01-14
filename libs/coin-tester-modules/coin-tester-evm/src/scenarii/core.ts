@@ -1,6 +1,5 @@
 import { makeAccount } from "../fixtures";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -12,8 +11,9 @@ import { VITALIK, core, getBridges } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
 import { STCORE_ON_CORE } from "../tokenFixtures";
 import { buildSigner } from "../signer";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
 
-type CoreScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
+type CoreScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
 const makeScenarioTransactions = ({ address }: { address: string }): CoreScenarioTransaction[] => {
   const scenarioSendCoreTransaction: CoreScenarioTransaction = {
@@ -69,7 +69,7 @@ const makeScenarioTransactions = ({ address }: { address: string }): CoreScenari
   return [scenarioSendCoreTransaction, scenarioSendMaxCoreTransaction];
 };
 
-export const scenarioCore: Scenario<EvmTransaction, Account> = {
+export const scenarioCore: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic CORE Transactions",
   setup: async () => {
     const signer = await buildSigner();
