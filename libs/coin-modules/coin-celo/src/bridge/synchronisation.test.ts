@@ -1,13 +1,9 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
-import { lockedGold, nonVoting, electionConfig } from "../../bridge/__mocks__/celokit.mock";
-import {
-  mockCreateApi,
-  erc20Operation,
-  nativeOperation,
-} from "../../bridge/__mocks__/operations-list.mock";
-import { mockGetCoinBalance, mockTokenEvmLogic } from "../../bridge/__mocks__/evm.mock";
-import { getAccountShape, clearEvmApiInstance } from "../../bridge/synchronisation";
+import { lockedGold, nonVoting, electionConfig } from "./__mocks__/celokit.mock";
+import { mockCreateApi, erc20Operation, nativeOperation } from "./__mocks__/operations-list.mock";
+import { mockGetCoinBalance, mockTokenEvmLogic } from "./__mocks__/evm.mock";
+import { getAccountShape } from "./synchronisation";
 
 const defaultInfo = {
   address: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
@@ -24,9 +20,6 @@ nonVoting.mockResolvedValue(new BigNumber(0));
 electionConfig.mockResolvedValue({ maxNumGroupsVotedFor: 10 });
 
 describe("When getting the account shape", () => {
-  afterEach(() => {
-    clearEvmApiInstance();
-  });
   it("returns the account with correct balance and spendable balance", async () => {
     // Given
     mockCreateApi.mockReturnValue({

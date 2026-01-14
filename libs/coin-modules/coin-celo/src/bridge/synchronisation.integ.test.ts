@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { getAccountShape, clearEvmApiInstance } from "./synchronisation";
+import { getAccountShape } from "./synchronisation";
 import { setCoinConfig, EvmCoinConfig } from "@ledgerhq/coin-evm/config";
 import BigNumber from "bignumber.js";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
@@ -42,15 +42,12 @@ describe("Integration — getAccountShape with real implementations", () => {
         }) as unknown as EvmCoinConfig,
     );
   });
-  afterEach(() => {
-    clearEvmApiInstance();
-  });
 
   it("should fetch account data with expected structure", async () => {
     const result = await getAccountShape(defaultInfo, defaultConfig);
 
-    expect(result.balance).toEqual(BigNumber(996309127371000000));
-    expect(result.spendableBalance).toEqual(BigNumber(696309127371000000));
+    expect(result.balance).toEqual(BigNumber(306028106371000000));
+    expect(result.spendableBalance).toEqual(BigNumber(6028106371000000));
     expect(result.blockHeight).toBeGreaterThan(0);
     expect(result.operations?.length).toBeGreaterThan(0);
     expect(result.celoResources?.lockedBalance).toEqual(BigNumber(300000000000000000));
