@@ -74,3 +74,6 @@ export default {
   concordiumSpec,
 };
 */
+
+export default {};
+

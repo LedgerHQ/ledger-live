@@ -22,6 +22,7 @@ import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { buildSignOperation } from "./signOperation";
 import { getAccountShape } from "./sync";
 import { updateTransaction } from "./updateTransaction";
+import { validateAddress } from "./validateAddress";
 
 export function createBridges(
   signerContext: SignerContext<ConcordiumSigner>,
@@ -62,6 +63,7 @@ export function createBridges(
     assignToAccountRaw,
     assignFromAccountRaw,
     getSerializedAddressParameters,
+    validateAddress,
   };
 
   return {

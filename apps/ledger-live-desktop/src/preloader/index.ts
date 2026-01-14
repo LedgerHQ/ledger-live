@@ -6,10 +6,9 @@
   /!\ Everything done in this file must be safe, it can not afford to crash. /!\
 */
 
-import { ipcRenderer, contextBridge } from "electron";
+import { ipcRenderer } from "electron";
 import logo from "./logo.svg";
-import palettes from "~/renderer/styles/palettes";
-// import initializeGrpcMethods from "./grpc";
+import { palettes } from "@ledgerhq/react-ui/styles/index";
 import grpcApi from "./grpc";
 // When dashboard is ready, fade out the splash screen
 const appLoaded = () => {

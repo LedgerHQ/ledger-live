@@ -544,7 +544,7 @@ class OnboardModal extends PureComponent<Props, State> {
   }
 }
 
-export default compose(
+export default compose<React.ComponentType<UserProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(OnboardModal);

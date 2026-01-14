@@ -277,6 +277,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Thorest API for VeChain",
   },
+  ALEO_MAINNET_NODE_ENDPOINT: {
+    def: "https://api.explorer.provable.com/v2/mainnet",
+    parser: stringParser,
+    desc: "Aleo mainnet node URL",
+  },
+  ALEO_TESTNET_NODE_ENDPOINT: {
+    def: "https://api.explorer.provable.com/v2/testnet",
+    parser: stringParser,
+    desc: "Aleo testnet node URL",
+  },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
     parser: stringParser,
@@ -843,6 +853,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Dynamic Assets Data Aggregator API Prod",
   },
+  CMC_API_URL: {
+    def: "https://proxycmc.api.live.ledger.com/v3",
+    parser: stringParser,
+    desc: "CoinMarketCap API",
+  },
   PLATFORM_DEBUG: {
     def: false,
     parser: boolParser,
@@ -927,6 +942,11 @@ const envDefinitions = {
     def: "https://crypto-assets-service.api.ledger-test.com",
     parser: stringParser,
     desc: "Cryptoassets list service url (staging)",
+  },
+  PUSH_DEVICES_SERVICE_URL: {
+    def: "https://device-gateway.api.ledger.com",
+    parser: stringParser,
+    desc: "Push Devices Service url for device tracking",
   },
   FEATURE_FLAGS: {
     def: "{}",

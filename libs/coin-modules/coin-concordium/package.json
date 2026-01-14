@@ -30,11 +30,20 @@
       "api": [
         "lib/api/index"
       ],
+      "bridge/index": [
+        "lib/bridge/index"
+      ],
+      "config": [
+        "lib/config"
+      ],
       "deviceTransactionConfig": [
         "lib/bridge/deviceTransactionConfig"
       ],
-      "logic": [
-        "lib/logic/index"
+      "signer": [
+        "lib/signer/index"
+      ],
+      "common-logic": [
+        "lib/common-logic/index"
       ],
       "specs": [
         "lib/test/bot-specs"
@@ -51,7 +60,7 @@
       "*": [
         "lib/*",
         "lib/bridge/*",
-        "lib/logic/*",
+        "lib/common-logic/*",
         "lib/signer/*",
         "lib/test/*",
         "lib/types/*"
@@ -62,60 +71,64 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./api": {
-      "require": "./lib/coin-modules/coin-concordium/src/api/index.js",
-      "default": "./lib-es/coin-modules/coin-concordium/src/api/index.js"
+      "require": "./lib/api/index.js",
+      "default": "./lib-es/api/index.js"
     },
     "./bridge/index": {
-      "require": "./lib/coin-modules/coin-concordium/src/bridge/index.js",
-      "default": "./lib-es/coin-modules/coin-concordium/src/bridge/index.js"
+      "require": "./lib/bridge/index.js",
+      "default": "./lib-es/bridge/index.js"
+    },
+    "./config": {
+      "require": "./lib/config.js",
+      "default": "./lib-es/config.js"
     },
     "./deviceTransactionConfig": {
-      "require": "./lib/coin-modules/coin-concordium/src/bridge/deviceTransactionConfig.js",
-      "default": "./lib-es/coin-modules/coin-concordium/src/bridge/deviceTransactionConfig.js"
+      "require": "./lib/bridge/deviceTransactionConfig.js",
+      "default": "./lib-es/bridge/deviceTransactionConfig.js"
     },
     "./logic": {
-      "require": "./lib/coin-modules/coin-concordium/src/common-logic/index.js",
-      "default": "./lib-es/coin-modules/coin-concordium/src/common-logic/index.js"
+      "require": "./lib/common-logic/index.js",
+      "default": "./lib-es/common-logic/index.js"
     },
     "./signer": {
-      "require": "./lib/coin-modules/coin-concordium/src/signer/index.js",
-      "default": "./lib-es/coin-modules/coin-concordium/src/signer/index.js"
+      "require": "./lib/signer/index.js",
+      "default": "./lib-es/signer/index.js"
     },
     "./specs": {
-      "require": "./lib/coin-modules/coin-concordium/src/test/bot-specs.js",
-      "default": "./lib-es/coin-modules/coin-concordium/src/test/bot-specs.js"
+      "require": "./lib/test/bot-specs.js",
+      "default": "./lib-es/test/bot-specs.js"
     },
     "./test/concordiumTestUtils": {
-      "require": "./lib/coin-modules/coin-concordium/src/test/concordiumTestUtils.js",
-      "default": "./lib-es/coin-modules/coin-concordium/src/test/concordiumTestUtils.js"
+      "require": "./lib/test/concordiumTestUtils.js",
+      "default": "./lib-es/test/concordiumTestUtils.js"
     },
     "./transaction": {
-      "require": "./lib/coin-modules/coin-concordium/src/bridge/transaction.js",
-      "default": "./lib-es/coin-modules/coin-concordium/src/bridge/transaction.js"
+      "require": "./lib/bridge/transaction.js",
+      "default": "./lib-es/bridge/transaction.js"
     },
     "./types": {
-      "require": "./lib/coin-modules/coin-concordium/src/types/index.js",
-      "default": "./lib-es/coin-modules/coin-concordium/src/types/index.js"
+      "require": "./lib/types/index.js",
+      "default": "./lib-es/types/index.js"
     },
     "./network/onboard": {
-      "require": "./lib/coin-modules/coin-concordium/src/network/onboard.js",
-      "default": "./lib-es/coin-modules/coin-concordium/src/network/onboard.js"
+      "require": "./lib/network/onboard.js",
+      "default": "./lib-es/network/onboard.js"
     },
     "./network/utils": {
-      "require": "./lib/coin-modules/coin-concordium/src/network/utils.js",
-      "default": "./lib-es/coin-modules/coin-concordium/src/network/utils.js"
+      "require": "./lib/network/utils.js",
+      "default": "./lib-es/network/utils.js"
     },
     "./network/walletConnect": {
-      "require": "./lib/coin-modules/coin-concordium/src/network/walletConnect.js",
-      "default": "./lib-es/coin-modules/coin-concordium/src/network/walletConnect.js"
+      "require": "./lib/network/walletConnect.js",
+      "default": "./lib-es/network/walletConnect.js"
     },
     "./*": {
-      "require": "./lib/coin-modules/coin-concordium/src/*.js",
-      "default": "./lib-es/coin-modules/coin-concordium/src/*.js"
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
     },
     ".": {
-      "require": "./lib/coin-modules/coin-concordium/src/index.js",
-      "default": "./lib-es/coin-modules/coin-concordium/src/index.js"
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
     },
     "./package.json": "./package.json"
   },

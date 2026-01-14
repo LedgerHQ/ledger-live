@@ -21,6 +21,7 @@ const windowApi = {
   appLoaded: jest.fn(),
   reloadRenderer: jest.fn(),
   openWindow: jest.fn(),
+  grpc: {},
 };
 
 const OFAC_ENDPOINT = `${getEnv("LEDGER_COUNTERVALUES_API")}/v3/markets`;

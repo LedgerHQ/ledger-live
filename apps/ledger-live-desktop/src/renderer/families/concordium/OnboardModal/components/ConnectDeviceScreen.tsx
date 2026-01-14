@@ -14,10 +14,6 @@ type Props = {
 export default function ConnectDeviceScreen({ lastSeenDevice }: Props) {
   const fallbackModelId = lastSeenDevice?.modelId || DeviceModelId.nanoS;
   const theme = useTheme();
-  // Using deprecated palette.type because theme.theme is not correctly set by StyleProvider (V2).
-  // StyleProviderV3 sets theme.theme correctly, but V2 only sets palette.type.
-  // Since DeviceAction also uses palette.type, we maintain consistency here.
-  const type = theme.colors.palette.type;
 
   return (
     <Modal
@@ -32,7 +28,7 @@ export default function ConnectDeviceScreen({ lastSeenDevice }: Props) {
           render={() =>
             renderConnectYourDevice({
               modelId: fallbackModelId,
-              type,
+              type: theme.theme,
               device: lastSeenDevice || {
                 deviceId: "",
                 modelId: fallbackModelId,

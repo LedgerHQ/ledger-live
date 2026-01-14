@@ -1,4 +1,10 @@
 import type {
+  Transaction as aleoTransaction,
+  TransactionRaw as aleoTransactionRaw,
+  TransactionStatus as aleoTransactionStatus,
+  TransactionStatusRaw as aleoTransactionStatusRaw,
+} from "@ledgerhq/coin-aleo/types/index";
+import type {
   Transaction as algorandTransaction,
   TransactionRaw as algorandTransactionRaw,
   TransactionStatus as algorandTransactionStatus,
@@ -168,6 +174,7 @@ import type {
 } from "@ledgerhq/coin-xrp/types/index";
 
 export type Transaction =
+  | aleoTransaction
   | algorandTransaction
   | aptosTransaction
   | bitcoinTransaction
@@ -198,6 +205,7 @@ export type Transaction =
   | xrpTransaction;
 
 export type TransactionRaw =
+  | aleoTransactionRaw
   | algorandTransactionRaw
   | aptosTransactionRaw
   | bitcoinTransactionRaw
@@ -228,6 +236,7 @@ export type TransactionRaw =
   | xrpTransactionRaw;
 
 export type TransactionStatus =
+  | aleoTransactionStatus
   | algorandTransactionStatus
   | aptosTransactionStatus
   | bitcoinTransactionStatus
@@ -258,6 +267,7 @@ export type TransactionStatus =
   | xrpTransactionStatus;
 
 export type TransactionStatusRaw =
+  | aleoTransactionStatusRaw
   | algorandTransactionStatusRaw
   | aptosTransactionStatusRaw
   | bitcoinTransactionStatusRaw
