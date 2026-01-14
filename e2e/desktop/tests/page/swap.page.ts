@@ -283,6 +283,17 @@ export class SwapPage extends AppPage {
     const executeSwapButton = webview.getByTestId(this.executeSwapBtn);
     await expect(executeSwapButton).toBeVisible();
     await expect(executeSwapButton).toBeEnabled();
+    await executeSwapButton.waitFor({ state: "attached" });
+    await executeSwapButton.evaluate((btn: HTMLElement) => {
+      return new Promise<void>(resolve => {
+        const interval = setInterval(() => {
+          if (!btn.hasAttribute("disabled")) {
+            clearInterval(interval);
+            resolve();
+          }
+        }, 50);
+      });
+    });
     await executeSwapButton.click();
   }
 
