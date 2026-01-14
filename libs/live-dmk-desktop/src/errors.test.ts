@@ -6,6 +6,7 @@ import {
 import {
   isAllowedOnboardingStatePollingErrorDmk,
   isDisconnectedWhileSendingApduError,
+  isDmkError,
 } from "./errors";
 import { WebHidSendReportError } from "@ledgerhq/device-transport-kit-web-hid";
 
@@ -79,5 +80,27 @@ describe("isDisconnectedWhileSendingApduError", () => {
   it("should return false if the error is an object with same shape but not instance", () => {
     const fake = { name: "WebHidSendReportError", message: "fake error" };
     expect(isDisconnectedWhileSendingApduError(fake)).toBe(false);
+  });
+});
+
+describe("isDmkError", () => {
+  it("returns true for a DMK error instance", () => {
+    expect(isDmkError(new DeviceBusyError())).toBe(true);
+  });
+
+  it("returns false for a regular Error instance", () => {
+    expect(isDmkError(new Error("error"))).toBe(false);
+  });
+
+  it("returns false for a string error (e.g. 'Invalid extension provided')", () => {
+    expect(isDmkError("Invalid extension provided")).toBe(false);
+  });
+
+  it("returns false for undefined", () => {
+    expect(isDmkError(undefined)).toBe(false);
+  });
+
+  it("returns false for null", () => {
+    expect(isDmkError(null)).toBe(false);
   });
 });
