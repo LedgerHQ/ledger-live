@@ -55,7 +55,21 @@ const makeScenarioTransactions = ({
     },
   };
 
-  return [scenarioSendEthTransaction, scenarioSendUSDCTransaction];
+  const scenarioSendMaxEthTransaction: ScrollScenarioTransaction = {
+    name: "Send Max ETH",
+    useAllAmount: true,
+    recipient: VITALIK,
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+    },
+  };
+
+  return [scenarioSendEthTransaction, scenarioSendUSDCTransaction, scenarioSendMaxEthTransaction];
 };
 
 export const scenarioScroll: Scenario<EvmTransaction, Account> = {
@@ -109,7 +123,7 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
     });
     initMswHandlers(getCoinConfig(scroll).info);
 
-    const { currencyBridge, accountBridge, getAddress } = await getBridges("scroll", signer);
+    const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: scroll,
@@ -129,12 +143,11 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
       currencyBridge,
       accountBridge,
       account: scenarioAccount,
-      retryLimit: 0,
     };
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks();
+    await indexBlocks(scroll.ethereumLikeInfo?.chainId || 534352);
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
@@ -148,7 +161,7 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("20", USDC_ON_SCROLL.units[0].magnitude).toString(),
     );
-    expect(account.operations.length).toBe(3);
+    expect(account.operations.length).toBe(4);
   },
   teardown: async () => {
     await killAnvil();

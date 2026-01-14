@@ -17,15 +17,13 @@ export const sonic = getCryptoCurrencyById("sonic");
 export const polygon = getCryptoCurrencyById("polygon");
 export const scroll = getCryptoCurrencyById("scroll");
 export const blast = getCryptoCurrencyById("blast");
+export const bnb = getCryptoCurrencyById("bsc");
 export const ERC20Interface = new ethers.Interface(ERC20_ABI);
 export const ERC721Interface = new ethers.Interface(ERC721_ABI);
 export const ERC1155Interface = new ethers.Interface(ERC1155_ABI);
 export const VITALIK = "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9";
 
-export async function getBridges(
-  network: string,
-  signer: Signer,
-): Promise<{
+export async function getBridges(signer: Signer): Promise<{
   currencyBridge: CurrencyBridge;
   accountBridge: AccountBridge<EvmTransaction>;
   getAddress: GetAddressFn;
@@ -34,8 +32,8 @@ export async function getBridges(
   const getAddress = resolver(context);
 
   return {
-    currencyBridge: getAlpacaCurrencyBridge(network, "local", { context, getAddress }),
-    accountBridge: getAlpacaAccountBridge(network, "local", { context, getAddress }),
+    currencyBridge: getAlpacaCurrencyBridge("evm", "local", { context, getAddress }),
+    accountBridge: getAlpacaAccountBridge("evm", "local", { context, getAddress }),
     getAddress,
   };
 }
