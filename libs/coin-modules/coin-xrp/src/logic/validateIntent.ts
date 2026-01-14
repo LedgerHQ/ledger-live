@@ -14,15 +14,16 @@ import {
   TransactionValidation,
   TransactionIntent,
   FeeEstimation,
+  Balance,
 } from "@ledgerhq/coin-framework/api/types";
 import { getServerInfos } from "../network";
 import { XrpMapMemo } from "../types";
 import { cachedRecipientIsNew } from "./utils";
 import { parseAPIValue } from "./common";
-import { getBalance } from "./getBalance";
 
 export const validateIntent = async (
   transactionIntent: TransactionIntent<XrpMapMemo>,
+  balances: Balance[],
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> => {
   const errors: Record<string, Error> = {};
@@ -39,7 +40,6 @@ export const validateIntent = async (
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  const balances = await getBalance(transactionIntent.sender);
   const nativeBalance = balances.find(b => b.asset.type === "native");
   if (nativeBalance === undefined) {
     throw Error("Shouldn't happen");

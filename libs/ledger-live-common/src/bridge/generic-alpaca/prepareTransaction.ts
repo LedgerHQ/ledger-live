@@ -1,6 +1,6 @@
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
-import { transactionToIntent } from "./utils";
+import { extractBalances, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
 import { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
@@ -141,6 +141,7 @@ export function genericPrepareTransaction(
             },
             computeIntentType,
           ),
+          extractBalances(account, getAssetFromToken),
         );
         next.amount = new BigNumber(amount.toString());
       }

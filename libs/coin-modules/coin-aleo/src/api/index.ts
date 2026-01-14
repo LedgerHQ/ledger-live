@@ -68,6 +68,7 @@ export function createApi(config: AleoConfig, _currencyId: string): Api {
     },
     validateIntent: async (
       _transactionIntent: TransactionIntent,
+      _balances: Balance[],
       _customFees?: FeeEstimation,
     ): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");

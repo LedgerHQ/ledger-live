@@ -2461,6 +2461,54 @@
       }
     }
   },
+  "newSendFlow" : {
+    "title" : "Send {{currency}}",
+    "available" : "Available {{amount}}",
+    "placeholder" : "Enter address or ENS",
+    "placeholderNoENS" : "Enter address",
+    "recent" : "Recent",
+    "myAccounts" : "My accounts",
+    "sendTo" : "Send to {{address}}",
+    "addressMatched" : "Address matched",
+    "addressNotFound" : "Address not found",
+    "alreadyUsed" : "Already used · {{date}}",
+    "recentSendWillAppear" : "Your recent send will appear here",
+    "remove" : "Remove",
+    "enterTag" : "Enter {{tag}}",
+    "firstInteraction" : {
+      "title" : "You’re sending to a new address",
+      "description" : "Verify that the address is correct. In case of doubt send a small amount first."
+    },
+    "sanctioned" : {
+      "title" : "Flagged address",
+      "description" : "This address has been flagged and Ledger doesn’t allow sending to it",
+      "helpCenter" : "Help center"
+    },
+    "errors" : {
+      "incorrectFormat" : "Incorrect address format",
+      "incompatibleAsset" : "Address isn’t compatible with the asset selected",
+      "walletNotExist" : "Wallet doesn’t exist"
+    },
+    "skipMemo" : {
+      "title" : "Skip adding {{tag}}?",
+      "warning" : "Your asset may be lost if a {{tag}} is required by your recipient"
+    },
+    "tagHelp" : {
+      "title" : "What’s a {{tag}}?",
+      "description" : "A {{tag}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{tag}} memo may result in a loss of funds."
+    },
+    "networkFeesInFiat" : "Network fees in {{currency}}",
+    "feesAmount" : "Fees amount ({{unit}})",
+    "gasLimit" : "Gas limit ({{unit}})",
+    "feesPaid" : "Fees paid to the network to proceed your transaction",
+    "insufficientBalanceFees" : "Insufficient balance to cover the network fees",
+    "amountToSend" : "Amount to send in ({{currency}})",
+    "coinToSend" : "Coin to send",
+    "coinControlCustom" : "Custom coin selection",
+    "aboveMaximum" : "Above maximum balance",
+    "transactionSigned" : "Transaction signed",
+    "processingTransaction" : "Your transaction is being processed"
+  },
   "releaseNotes" : {
     "title" : "Informationen zur Version",
     "version" : "Ledger Wallet {{versionNb}}"
@@ -3699,6 +3747,8 @@
       "activeTooltip" : "Aktive Beträge generieren Belohnungen",
       "inactiveTooltip" : "Inaktive Beträge generieren keine Belohnungen",
       "delegatedInfoTooltip" : "Gesamtbetrag, der an Validatoren delegiert ist.",
+      "inactiveStakeTooltip" : "Inaktive Stakes können ohne Deaktivierung deiner Delegierung abgehoben werden.",
+      "inactiveStakeTitle" : "Abhebbare Rewards",
       "withdrawableInfoTooltip" : "Gesamtbetrag, der von Delegationen entnommen werden kann.",
       "withdrawableTitle" : "Auszahlbar",
       "statusUpdateNotice" : "Der Status der Delegation wird bei der Bestätigung der Transaktion aktualisiert.",
@@ -4636,7 +4686,10 @@
       },
       "modularDrawerDevTool" : {
         "title" : "Modular Drawer-Entwicklungstool",
-        "description" : "Damit kannst du Modular Drawer ganz einfach testen"
+        "description" : "Damit kannst du Modular Drawer ganz einfach testen",
+        "openDrawer" : "Drawer öffnen",
+        "debugDialog" : "Debug-Dialog",
+        "debugDuplicates" : "Duplikate debuggen"
       },
       "cryptoAssetsList" : {
         "title" : "Crypto Assets List (CAL)",
@@ -5187,6 +5240,7 @@
           "recoveryPhrase" : "Wiederherstellungsphrase",
           "hideRecoveryPhrase" : "Wiederherstellungsphrase ausblenden",
           "pairNano" : "Nano verbinden",
+          "enableSync" : "Synchronisierung",
           "secureYourCrypto" : "Deine Kryptos schützen"
         },
         "screens" : {
@@ -5479,6 +5533,14 @@
             "help" : {
               "help" : "Hilfe benötigt",
               "descr" : "Du weißt nicht, was du tun musst? Dann hol dir Hilfe, um diesen Schritt abzuschließen."
+            }
+          },
+          "enableSync" : {
+            "title" : "Wallet-Synchronisierung aktivieren",
+            "description" : "Dein Portfolio wird automatisch aktualisiert, wenn du dein Handy wechselst oder einen Computer verwendest.",
+            "buttons" : {
+              "next" : "Weiter",
+              "nextSecondary" : "Ich mache das später"
             }
           },
           "secureYourCrypto" : {
@@ -5834,6 +5896,15 @@
     "canton" : {
       "commentPlaceholder" : "Optional",
       "comment" : "Kommentar",
+      "expiryDuration" : {
+        "label" : "Ablauffrist",
+        "summaryLabel" : "Ablaufangebot",
+        "threeHours" : "3 Stunden",
+        "sixHours" : "6 Stunden",
+        "oneDay" : "1 Tag",
+        "oneWeek" : "1 Woche",
+        "oneMonth" : "30 Tage"
+      },
       "account" : {
         "lockedBalance" : "Gesperrt",
         "lockedBalanceTooltip" : "Deine Assets sind in Angeboten blockiert, die du an Dritte gesendet hast. Du kannst diese Angebote jederzeit stornieren oder aber abwarten, bis der Empfänger sie annimmt oder ablehnt.",
@@ -5891,10 +5962,12 @@
       "pendingTransactions" : {
         "title" : "Schwebende Transaktionen ({{count}})",
         "incoming" : {
-          "title" : "Eingehende Angebote ({{count}})"
+          "title" : "Zu prüfender eingehender Transfer ({{count}})",
+          "detailsTitle" : "Details zu eingehendem Transfer"
         },
         "outgoing" : {
-          "title" : "Ausgehende Angebote ({{count}})"
+          "title" : "Ausgehende Angebote ({{count}})",
+          "detailsTitle" : "Details zu ausgehendem Transfer"
         },
         "pending" : "Ausstehend",
         "expired" : "Abgelaufen",
@@ -6924,6 +6997,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Keine Prämien zum Einlösen vorhanden"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "Memo ist zu lang. Maximale Länge: {{maxLength}} Zeichen"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Das Laden des Bildes aus einer Datei ist fehlgeschlagen.",
       "description" : "Bitte versuchen Sie es erneut mit einem Bild."
@@ -7421,6 +7497,12 @@
         "text" : "Sobald diese Transaktion bestätigt wurde, kannst du dein Token empfangen. <0>Klicke hier</0>, um den Empfangsvorgang zu starten.",
         "learnMore" : "Weitere Informationen"
       }
+    }
+  },
+  "dialogs" : {
+    "selectAccount" : {
+      "description" : "Du hast noch keine {{network}}-Konten. Bitte füge eines hinzu, um fortzufahren",
+      "addAccount" : "Konto hinzufügen"
     }
   },
   "drawers" : {

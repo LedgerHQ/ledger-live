@@ -137,7 +137,11 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     getValidators: cursor => getValidators(cursor),
     getStakes: async address => getStakes(address),
     getRewards: async (address, cursor) => getRewards(address, cursor),
-    validateIntent: async (_transactionIntent, _customFees): Promise<TransactionValidation> => {
+    validateIntent: async (
+      _transactionIntent,
+      _balances,
+      _customFees,
+    ): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");
     },
     getSequence: async (_address): Promise<bigint> => {
