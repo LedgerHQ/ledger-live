@@ -12,12 +12,14 @@ import { ActionContentCard } from "~/types/dynamicContent";
 
 const useActionCards = () => {
   const dispatch = useDispatch();
-  const [cachedContentCards, setCachedContentCards] = useState(braze.getCachedContentCards().cards);
+  const [cachedContentCards, setCachedContentCards] = useState(
+    braze.getCachedContentCards()?.cards ?? [],
+  );
   const actionCards = useSelector(actionContentCardSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
 
   useEffect(() => {
-    setCachedContentCards(braze.getCachedContentCards().cards);
+    setCachedContentCards(braze.getCachedContentCards()?.cards ?? []);
   }, [actionCards]);
 
   const findCard = (cardId: string) => cachedContentCards.find(card => card.id === cardId);

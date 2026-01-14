@@ -585,8 +585,8 @@ importers:
   apps/ledger-live-desktop:
     dependencies:
       '@braze/web-sdk':
-        specifier: 4.10.2
-        version: 4.10.2
+        specifier: 6.4.0
+        version: 6.4.0
       '@electron/fuses':
         specifier: 2.0.0
         version: 2.0.0
@@ -12383,8 +12383,8 @@ packages:
   '@braze/react-native-sdk@18.0.0':
     resolution: {integrity: sha512-6VEFpvDObYqr9nMfNHUTVpIQXS3ibJTbEnIZs8/2rw0qyn3cZdMPDHBWTawR8GuQiKHF0UwGLJiEkCu2mOozDw==}
 
-  '@braze/web-sdk@4.10.2':
-    resolution: {integrity: sha512-S5OtBpmHDeZZVG1WjCdJ1w/SjzhGGULPkNjJONnl4YqUKK85BrGxK3beWXutduT5uoUl1Vfq4c32wx/DRsVDBw==}
+  '@braze/web-sdk@6.4.0':
+    resolution: {integrity: sha512-eBbFfGF9PUPowFsBmgqJmKs9T+qkh8LRm5T41mZsQCeNUjXjME6q1sXxXtjV2R3evsk4sN+d+xHSDF4B++HG7Q==}
 
   '@bundled-es-modules/cookie@2.0.1':
     resolution: {integrity: sha512-8o+5fRPLNbjbdGRRmJj3h6Hh1AQJf2dk3qQ/5ZFb+PXkRNiSoMGGUKlsgLfrxneb72axVJyIYji64E2+nNfYyw==}
@@ -40464,7 +40464,7 @@ snapshots:
 
   '@braze/react-native-sdk@18.0.0': {}
 
-  '@braze/web-sdk@4.10.2': {}
+  '@braze/web-sdk@6.4.0': {}
 
   '@bundled-es-modules/cookie@2.0.1':
     dependencies:

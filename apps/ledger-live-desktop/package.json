@@ -55,7 +55,7 @@
     "test-deep-links": "ws --spa ledger-live-desktop-deeplinks.html"
   },
   "dependencies": {
-    "@braze/web-sdk": "4.10.2",
+    "@braze/web-sdk": "6.4.0",
     "@electron/fuses": "2.0.0",
     "@ledgerhq/client-ids": "workspace:*",
     "@ledgerhq/coin-bitcoin": "workspace:^",

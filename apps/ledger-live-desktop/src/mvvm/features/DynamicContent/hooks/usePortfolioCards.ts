@@ -19,7 +19,7 @@ export function usePortfolioCards(): UsePortfolioCards {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const cards = braze.getCachedContentCards().cards;
+    const cards = braze.getCachedContentCards()?.cards ?? [];
     setCachedContentCards(cards);
   }, []);
 
