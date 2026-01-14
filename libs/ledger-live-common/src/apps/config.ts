@@ -55,7 +55,7 @@ const appConfig: Record<string, ConfigInfo> = {
   config_nanoapp_zcash: {
     type: "object",
     default: {
-      minVersion: "2.4.2",
+      minVersion: "2.5.0",
     },
   },
   config_nanoapp_near: {
