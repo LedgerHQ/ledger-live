@@ -33,7 +33,7 @@ async function parseOperation({
     value: new BigNumber(rawTx.amount),
     type,
     hasFailed,
-    hash: rawTx.transition_id,
+    hash: rawTx.transaction_id,
     fee: BigNumber(fee_value),
     blockHeight: rawTx.block_number,
     blockHash: block_hash,
@@ -51,12 +51,14 @@ export async function listOperations({
   ledgerAccountId,
   pagination,
   direction = "next",
+  fetchAllPages,
 }: {
   currency: CryptoCurrency;
   address: string;
   ledgerAccountId: string;
   pagination: Pagination;
   direction?: "prev" | "next" | undefined;
+  fetchAllPages: boolean;
 }): Promise<{ publicOperations: AleoOperation[] }> {
   const publicOperations: AleoOperation[] = [];
   const mirrorResult = await apiClient.getAccountPublicTransactions({
@@ -66,6 +68,7 @@ export async function listOperations({
     order: pagination.order,
     direction,
     limit: pagination.limit,
+    fetchAllPages,
   });
 
   // currently we only support native aleo coin operations & ignore rest

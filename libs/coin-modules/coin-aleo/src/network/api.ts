@@ -53,6 +53,7 @@ async function getAccountPublicTransactions({
   limit = 50,
   order = "desc",
   direction = "next",
+  fetchAllPages,
 }: {
   currency: CryptoCurrency;
   address: string;
@@ -60,16 +61,17 @@ async function getAccountPublicTransactions({
   limit?: number | undefined;
   order?: "asc" | "desc" | undefined;
   direction?: "prev" | "next" | undefined;
+  fetchAllPages: boolean;
 }): Promise<{ transactions: AleoPublicTransaction[] }> {
   const transactions: AleoPublicTransaction[] = [];
 
   const params = new URLSearchParams({
     limit: limit.toString(),
-    order,
+    sort: order,
     direction,
   });
 
-  if (minHeight) {
+  if (minHeight !== null) {
     params.append("cursor_block_number", minHeight.toString());
   }
 
@@ -83,6 +85,8 @@ async function getAccountPublicTransactions({
 
     const newTransactions = res.data.transactions;
     transactions.push(...newTransactions);
+
+    if (!fetchAllPages) break;
 
     const nextCursorBlockNumber = res.data.next_cursor?.block_number;
 

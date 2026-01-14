@@ -45,6 +45,7 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     ledgerAccountId,
     pagination: { minHeight },
     direction: shouldSyncFromScratch ? "next" : "prev",
+    fetchAllPages: true,
   });
 
   const operations = shouldSyncFromScratch
