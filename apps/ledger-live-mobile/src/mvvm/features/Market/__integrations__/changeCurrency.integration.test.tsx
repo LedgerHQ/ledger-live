@@ -1,6 +1,5 @@
 import * as React from "react";
-import { screen } from "@testing-library/react-native";
-import { render } from "@tests/test-renderer";
+import { screen, renderWithReactQuery } from "@tests/test-renderer";
 import { MarketPages } from "./shared";
 import { State, supportedCountervaluesData } from "~/reducers/types";
 
@@ -27,7 +26,7 @@ const SUPPORTED_CURRENCIES = [
 
 describe("Market integration test", () => {
   it("Should change selected currency", async () => {
-    const { user } = render(<MarketPages />, {
+    const { user } = renderWithReactQuery(<MarketPages />, {
       overrideInitialState: (state: State) => ({
         ...state,
         settings: {

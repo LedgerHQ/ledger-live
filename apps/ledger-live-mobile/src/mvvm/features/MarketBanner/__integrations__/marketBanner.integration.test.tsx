@@ -265,10 +265,7 @@ describe("MarketBanner Integration Tests", () => {
       await user.press(viewAllTile);
 
       await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith("Market", {
-          screen: "MarketList",
-          params: {},
-        });
+        expect(mockNavigate).toHaveBeenCalledWith("MarketList");
       });
     });
 
@@ -295,10 +292,7 @@ describe("MarketBanner Integration Tests", () => {
       await user.press(sectionTitle);
 
       await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith("Market", {
-          screen: "MarketList",
-          params: {},
-        });
+        expect(mockNavigate).toHaveBeenCalledWith("MarketList");
       });
     });
   });
@@ -356,10 +350,7 @@ describe("MarketBanner Integration Tests", () => {
       await user.press(viewAllTile);
 
       await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith("Market", {
-          screen: "MarketList",
-          params: {},
-        });
+        expect(mockNavigate).toHaveBeenCalledWith("MarketList");
       });
     });
   });

@@ -5,6 +5,7 @@ import {
 } from "@react-navigation/material-top-tabs";
 import { NavigationContainerEventMap } from "@react-navigation/native";
 import MarketWalletTabNavigator from "LLM/features/Market/WalletTabNavigator";
+import { useIsMarketBannerEnabled } from "LLM/features/MarketBanner/hooks/useIsMarketBannerEnabled";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { StyleProp, ViewStyle } from "react-native";
@@ -26,6 +27,7 @@ import { WalletTabNavigatorStackParamList } from "./types/WalletTabNavigator";
 const WalletTab = createMaterialTopTabNavigator<WalletTabNavigatorStackParamList>();
 
 const tabBar = (props: MaterialTopTabBarProps) => <WalletTabNavigatorTabBar {...props} />;
+const noTabBar = () => null;
 
 const styles = {
   navigator: { backgroundColor: "transparent" } satisfies StyleProp<ViewStyle>,
@@ -45,12 +47,22 @@ export default function WalletTabNavigator() {
   const { t } = useTranslation();
   const [currentRouteName, setCurrentRouteName] = useState<string | undefined>();
 
+  const shouldHideTabs = useIsMarketBannerEnabled();
+
+  // When tabs are hidden and user was previously on Market, show Portfolio instead.
+  // Note: We intentionally don't dispatch to Redux here to avoid infinite loops
+  // with screenListeners. Redux will be updated naturally when user navigates.
+  const initialRouteName =
+    shouldHideTabs && lastVisitedTab === NavigatorName.Market
+      ? ScreenName.Portfolio
+      : lastVisitedTab;
+
   return (
     <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
       <Box flexGrow={1} bg={"background.main"}>
         <WalletTab.Navigator
-          initialRouteName={lastVisitedTab}
-          tabBar={tabBar}
+          initialRouteName={initialRouteName}
+          tabBar={shouldHideTabs ? noTabBar : tabBar}
           style={styles.navigator}
           screenOptions={screenOptions}
           screenListeners={{
@@ -77,13 +89,15 @@ export default function WalletTabNavigator() {
             }}
           />
 
-          <WalletTab.Screen
-            name={NavigatorName.Market}
-            component={MarketWalletTabNavigator}
-            options={{
-              title: t("wallet.tabs.market"),
-            }}
-          />
+          {!shouldHideTabs && (
+            <WalletTab.Screen
+              name={NavigatorName.Market}
+              component={MarketWalletTabNavigator}
+              options={{
+                title: t("wallet.tabs.market"),
+              }}
+            />
+          )}
         </WalletTab.Navigator>
         <WalletTabHeader hidePortfolio={false} />
       </Box>

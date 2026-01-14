@@ -6,9 +6,11 @@ import {
   MarketListRequestParams,
 } from "@ledgerhq/live-common/market/utils/types";
 import { useFocusEffect } from "@react-navigation/native";
+import { useIsMarketBannerEnabled } from "LLM/features/MarketBanner/hooks/useIsMarketBannerEnabled";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "styled-components/native";
 import SearchHeader from "./components/SearchHeader";
 import ListFooter from "./components/ListFooter";
@@ -69,6 +71,11 @@ function View({
   marketParams,
 }: ViewProps) {
   const { colors } = useTheme();
+
+  // When marketBanner is enabled, tabs are hidden and we navigate directly to MarketList
+  // In this case, we need to add top padding to account for the back button header
+  const isMarketBannerEnabled = useIsMarketBannerEnabled();
+
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({
     loading,
     refetch: refetchAllPages,
@@ -89,10 +96,10 @@ function View({
 
   useFocusEffect(
     useCallback(() => {
-      setScreen && setScreen("Market");
+      if (setScreen) setScreen("Market");
 
       return () => {
-        setSource("Market");
+        if (setSource) setSource("Market");
       };
     }, [setScreen, setSource]),
   );
@@ -155,19 +162,28 @@ function View({
     ),
   };
 
+  // When marketBanner is enabled (standalone mode), use SafeAreaView with top edge
+  // Otherwise use WalletTabSafeAreaView for tabs mode
+  const SafeAreaWrapper = isMarketBannerEnabled ? SafeAreaView : WalletTabSafeAreaView;
+  const safeAreaEdges = isMarketBannerEnabled
+    ? (["top", "left", "right"] as const)
+    : (["left", "right"] as const);
+
+  const listHeaderComponent = (
+    <SafeAreaWrapper edges={safeAreaEdges}>
+      <Flex backgroundColor={colors.background.main}>
+        <SearchHeader search={search} updateMarketParams={updateMarketParams} />
+        <BottomSection />
+      </Flex>
+    </SafeAreaWrapper>
+  );
+
   return (
     <CollapsibleHeaderFlatList<MarketCurrencyData>
       {...listProps}
       testID="market-list"
       stickyHeaderIndices={[0]}
-      ListHeaderComponent={
-        <WalletTabSafeAreaView edges={["left", "right"]}>
-          <Flex backgroundColor={colors.background.main}>
-            <SearchHeader search={search} updateMarketParams={updateMarketParams} />
-            <BottomSection />
-          </Flex>
-        </WalletTabSafeAreaView>
-      }
+      ListHeaderComponent={listHeaderComponent}
     />
   );
 }
