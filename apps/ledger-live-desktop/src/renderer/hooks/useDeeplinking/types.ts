@@ -223,28 +223,3 @@ export type DeeplinkHandler<T extends DeeplinkRoute["type"]> = (
 export type DeeplinkHandlerRegistry = {
   [K in DeeplinkRoute["type"]]?: DeeplinkHandler<K>;
 };
-
-export const SUPPORTED_DEEPLINK_TYPES: readonly DeeplinkRoute["type"][] = [
-  "accounts",
-  "account",
-  "add-account",
-  "buy",
-  "earn",
-  "myledger",
-  "swap",
-  "bridge",
-  "send",
-  "receive",
-  "delegate",
-  "settings",
-  "card",
-  "discover",
-  "wc",
-  "market",
-  "asset",
-  "recover",
-  "recover-restore-flow",
-  "post-onboarding",
-  "ledgersync",
-  "default",
-] as const;

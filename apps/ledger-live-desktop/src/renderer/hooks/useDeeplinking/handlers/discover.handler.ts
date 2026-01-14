@@ -22,7 +22,10 @@ export const discoverHandler: DeeplinkHandler<"discover"> = (route, { navigate }
   navigate(`/platform/${path ?? ""}`, query);
 };
 
-export const walletConnectHandler: DeeplinkHandler<"wc"> = (route, { navigate, currentPathname }) => {
+export const walletConnectHandler: DeeplinkHandler<"wc"> = (
+  route,
+  { navigate, currentPathname },
+) => {
   const { uri, query } = route;
   const wcPathname = `/platform/${WC_ID}`;
 
