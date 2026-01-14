@@ -1,0 +1,104 @@
+{
+  "workflow_version": "1.2.0",
+  "timestamps": {
+    "started": "2026-01-14T10:45:00Z",
+    "last_updated": "2026-01-14T11:20:00Z",
+    "completed": "2026-01-14T11:20:00Z"
+  },
+  "mode": "initial_scan",
+  "scan_level": "quick",
+  "project_root": "/Users/samy.rabah-montarou/Code/ledger-live/libs/coin-modules/coin-evm",
+  "output_folder": "/Users/samy.rabah-montarou/Code/ledger-live/libs/coin-modules/coin-evm/docs",
+  "completed_steps": [
+    {
+      "step": "step_1",
+      "status": "completed",
+      "timestamp": "2026-01-14T10:50:00Z",
+      "summary": "Classified as monolith with 1 part (library type)"
+    },
+    {
+      "step": "step_2",
+      "status": "completed",
+      "timestamp": "2026-01-14T10:52:00Z",
+      "summary": "Found 22 existing docs"
+    },
+    {
+      "step": "step_3",
+      "status": "completed",
+      "timestamp": "2026-01-14T10:55:00Z",
+      "summary": "Tech stack: TypeScript/ethers.js/RxJS"
+    },
+    {
+      "step": "step_4",
+      "status": "completed",
+      "timestamp": "2026-01-14T10:58:00Z",
+      "summary": "11 entry points, 49 test files"
+    },
+    {
+      "step": "step_5",
+      "status": "completed",
+      "timestamp": "2026-01-14T11:02:00Z",
+      "summary": "Source tree documented"
+    },
+    {
+      "step": "step_6",
+      "status": "completed",
+      "timestamp": "2026-01-14T11:05:00Z",
+      "summary": "Dev/deployment guides written"
+    },
+    {
+      "step": "step_8",
+      "status": "completed",
+      "timestamp": "2026-01-14T11:08:00Z",
+      "summary": "Architecture docs written"
+    },
+    {
+      "step": "step_9",
+      "status": "completed",
+      "timestamp": "2026-01-14T11:10:00Z",
+      "summary": "All supporting docs written"
+    },
+    {
+      "step": "step_10",
+      "status": "completed",
+      "timestamp": "2026-01-14T11:15:00Z",
+      "summary": "Master index generated"
+    },
+    {
+      "step": "step_11",
+      "status": "completed",
+      "timestamp": "2026-01-14T11:18:00Z",
+      "summary": "Validation and review complete"
+    },
+    {
+      "step": "step_12",
+      "status": "completed",
+      "timestamp": "2026-01-14T11:20:00Z",
+      "summary": "Workflow complete"
+    }
+  ],
+  "current_step": "completed",
+  "findings": {
+    "project_classification": {
+      "repository_type": "monolith",
+      "parts_count": 1,
+      "primary_tech": "TypeScript"
+    },
+    "existing_docs_count": 22,
+    "technology_stack": "TypeScript ES2020, ethers.js, RxJS, Jest/SWC, pnpm workspace",
+    "entry_points": 11,
+    "test_files": 49
+  },
+  "project_types": [
+    { "part_id": "main", "project_type_id": "library", "display_name": "@ledgerhq/coin-evm" }
+  ],
+  "outputs_generated": [
+    "project-scan-report.json",
+    "source-tree-analysis.md",
+    "development-guide.md",
+    "architecture.md",
+    "project-overview.md",
+    "index.md"
+  ],
+  "resume_instructions": "Workflow completed successfully"
+}
