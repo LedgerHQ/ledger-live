@@ -155,7 +155,7 @@ jobs:
 
       - name: Generate shards matrix and test files
         id: generate-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@support/qaa_850_e2e_tests_parallel_test
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@support/qaa_850_e2e_tests_parallel_3
         with:
           test_directory: e2e/mobile
           test_filter: ${{ inputs.test_filter || '' }}
@@ -239,7 +239,7 @@ jobs:
       - name: Check if Android AVD cache exists
         id: check-avd
         if: ${{ inputs.tests_type != 'iOS Only' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@support/qaa_850_e2e_tests_parallel_test
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
         with:
           key: ${{ steps.cache-keys.outputs.avd_cache_key }}
           accessKey: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -286,7 +286,7 @@ jobs:
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
     steps:
       - name: Setup Android AVDs
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@support/qaa_850_e2e_tests_parallel_test
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
         with:
           ref: ${{ inputs.ref || github.sha }}
           avd_api: ${{ env.AVD_API }}
@@ -598,7 +598,7 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: Setup Android Environment
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@support/qaa_850_e2e_tests_parallel_test
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
 
       - name: Download Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
@@ -671,7 +671,7 @@ jobs:
           destination: /
 
       - name: Duplicate AVDs for parallel testing
-        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@support/qaa_850_e2e_tests_parallel_test
+        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
         with:
           source_avd_name: ${{ env.AVD_NAME }}
           target_suffixes: "_2,_3,_4"
