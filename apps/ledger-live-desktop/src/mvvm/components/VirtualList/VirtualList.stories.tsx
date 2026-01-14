@@ -137,9 +137,7 @@ export const WithCustomLastRow: Story = {
         {...args}
         items={items}
         renderItem={item => (
-          <div className="bg-neutral-100 h-[50px] border border-solid border-black">
-            Item {item}
-          </div>
+          <div className="h-[50px] border border-solid border-black bg-muted">Item {item}</div>
         )}
         bottomComponent={<div className="h-[50px] bg-error">End of List</div>}
       />
