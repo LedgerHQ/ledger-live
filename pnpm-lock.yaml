@@ -2049,8 +2049,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/live-wallet
       '@ledgerhq/types-devices':
-        specifier: 6.27.0
-        version: 6.27.0
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/types-devices
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
@@ -15432,9 +15432,6 @@ packages:
 
   '@ledgerhq/speculos-device-controller@0.2.1':
     resolution: {integrity: sha512-vBZ2KUMerRlFfZ0cI4tZio5RGDCHczfh+8uEOCPC79vsVEkukhlR2zw1ybrvXuxrafqJqlSPmfLCxSe8uo7Rhg==}
-
-  '@ledgerhq/types-devices@6.27.0':
-    resolution: {integrity: sha512-FQZdCoYxxMjY7PWFWM8gflSl4++T3Ems2koMiVZhbH4ji3PzafLvK+y422bRdt78zIP3UURbOhuzrpZ2ASv3gw==}
 
   '@ledgerhq/types-live@6.53.1':
     resolution: {integrity: sha512-ukaDDyxg7quBQ0vdoQQjj3ICqiG13gO/rGIO0Jm2nRh/icbLWgxfsI2wX0u0ugJQJ+q/muiX+wJrMJn9EKhEaQ==}
@@ -45114,8 +45111,6 @@ snapshots:
       - bufferutil
       - rxjs
       - utf-8-validate
-
-  '@ledgerhq/types-devices@6.27.0': {}
 
   '@ledgerhq/types-live@6.53.1':
     dependencies:
