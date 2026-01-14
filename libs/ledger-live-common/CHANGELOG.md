@@ -1,5 +1,124 @@
 # @ledgerhq/live-common
 
+## 34.57.0-next.0
+
+### Minor Changes
+
+- [#13679](https://github.com/LedgerHQ/ledger-live/pull/13679) [`433a1dd`](https://github.com/LedgerHQ/ledger-live/commit/433a1dd0b55f0d4bdad03ce2deb65b801770832d) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Added OKX to cal and swap partners config
+
+- [#13633](https://github.com/LedgerHQ/ledger-live/pull/13633) [`9cf9c5b`](https://github.com/LedgerHQ/ledger-live/commit/9cf9c5b0500d5b07e624b1c62ffa2d7a2b50f1c5) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update express, body-parser, qs libraries
+
+- [#13581](https://github.com/LedgerHQ/ledger-live/pull/13581) [`8b0b2ff`](https://github.com/LedgerHQ/ledger-live/commit/8b0b2ffb5425743b56c44e7ec41443c77d839c1f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Migrate MarketPerformer from TanStackQuery to RTKQuery
+
+- [#13563](https://github.com/LedgerHQ/ledger-live/pull/13563) [`3f33516`](https://github.com/LedgerHQ/ledger-live/commit/3f33516315f5256ab1afcd03e075e1c38e42e475) Thanks [@CremaFR](https://github.com/CremaFR)! - fix lifi gas limit
+
+- [#13645](https://github.com/LedgerHQ/ledger-live/pull/13645) [`0d2ee1b`](https://github.com/LedgerHQ/ledger-live/commit/0d2ee1b8c71f8040deaded3575124a44f2704a21) Thanks [@qperrot](https://github.com/qperrot)! - refactor(llc): group validate address by families
+
+- [#13510](https://github.com/LedgerHQ/ledger-live/pull/13510) [`8754614`](https://github.com/LedgerHQ/ledger-live/commit/87546149a62b81f8a25bb6222626592ead629f62) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - feat(lwd,lwm): removed llMevProtection feature flag, updated i18n files with mev url
+
+- [#13585](https://github.com/LedgerHQ/ledger-live/pull/13585) [`8c79f3e`](https://github.com/LedgerHQ/ledger-live/commit/8c79f3e27ed34f91a25a63647e781561531e01fe) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix LoadMore infinite call on some edge case + update Market with supported param
+
+- [#13662](https://github.com/LedgerHQ/ledger-live/pull/13662) [`d790eee`](https://github.com/LedgerHQ/ledger-live/commit/d790eeef975a5d305bd9010e8f4b08cc3044125a) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Fix tracking issue with embedded Swap on Portfolio by removing unnecessary ethereum dependency for isEmbedded tracking parameter.
+
+- [#13639](https://github.com/LedgerHQ/ledger-live/pull/13639) [`6630dfd`](https://github.com/LedgerHQ/ledger-live/commit/6630dfd86f5207d82d844f9aa246c03135a5d586) Thanks [@may01](https://github.com/may01)! - Add zcash swap incompatible message for nanos
+
+- [#13625](https://github.com/LedgerHQ/ledger-live/pull/13625) [`50bae0f`](https://github.com/LedgerHQ/ledger-live/commit/50bae0f13a95ef166b2c5609ccbcf5ef01ba1579) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add CMC fear and greed API
+  Create a rtk query to fetch the fear and greed data
+  Plug the cmc reducers to lwm and lwd stores
+  Fix msw implementation when used at runtime
+
+- [#13636](https://github.com/LedgerHQ/ledger-live/pull/13636) [`bc7f669`](https://github.com/LedgerHQ/ledger-live/commit/bc7f669754002d7fe74dde3f217200e4153a2a26) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix: improve error handling in combine swap cancellation process
+
+- [#13645](https://github.com/LedgerHQ/ledger-live/pull/13645) [`0d2ee1b`](https://github.com/LedgerHQ/ledger-live/commit/0d2ee1b8c71f8040deaded3575124a44f2704a21) Thanks [@qperrot](https://github.com/qperrot)! - feat: add bsc coin tester and test send max in every coin-tester-evm
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+- [#13314](https://github.com/LedgerHQ/ledger-live/pull/13314) [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: coin-aleo template
+
+- [#13579](https://github.com/LedgerHQ/ledger-live/pull/13579) [`7f05536`](https://github.com/LedgerHQ/ledger-live/commit/7f0553665e9c8721f263825cc79994bfc6729d9b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add Wallet 4.0 feature flags. Add analytics for the feature flags on LWM and LWD.
+
+- [#13439](https://github.com/LedgerHQ/ledger-live/pull/13439) [`4758d1a`](https://github.com/LedgerHQ/ledger-live/commit/4758d1a7028e6fc77248d9bf3aec4f20752518c2) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Added safer exchange error utilities: convertTransportError now uses INVALID_ADDRESS for CHECK_REFUND_ADDRESS step, and new getErrorName/getErrorMessage helpers read name/message (or nested causes) and handle string errors in libs/ledger-live-common/src/exchange/error.ts.
+  Swap server now wraps cancellation errors into CompleteExchangeError (defaults step to INIT), reports swap metrics using normalized name/message, rejects with the normalized error instead of StepError, and reuses getErrorName to detect drawer-closed cases in libs/ledger-live-common/src/wallet-api/Exchange/server.ts. Breaking change: CompleteExchangeError constructor signature changed from `constructor(step, message?)` (previously in SwapError.ts) to `constructor(step, title?, message?)` (in libs/ledger-live-common/src/exchange/error.ts), so the second parameter is now interpreted as a title rather than a message when two arguments are passed; external callers using the two-parameter form should update their usage accordingly.
+
+### Patch Changes
+
+- Updated dependencies [[`4d79a0c`](https://github.com/LedgerHQ/ledger-live/commit/4d79a0ceef8bc2cbd72132e4cd2534c3a43917de), [`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`433a1dd`](https://github.com/LedgerHQ/ledger-live/commit/433a1dd0b55f0d4bdad03ce2deb65b801770832d), [`cbcae7c`](https://github.com/LedgerHQ/ledger-live/commit/cbcae7c0ba9b54b1167d26e4227bd2b847207cb9), [`e3a83e0`](https://github.com/LedgerHQ/ledger-live/commit/e3a83e08278fd6bef3fd26d90df2823c78957d20), [`1f35ab1`](https://github.com/LedgerHQ/ledger-live/commit/1f35ab1efc396e1c4740607d6806284f906f1907), [`a526d94`](https://github.com/LedgerHQ/ledger-live/commit/a526d9465eb4887b3c65ab768b346bd91bf17e20), [`93e16fa`](https://github.com/LedgerHQ/ledger-live/commit/93e16fada5fa1b3c4319738d612711810e985aca), [`0d2ee1b`](https://github.com/LedgerHQ/ledger-live/commit/0d2ee1b8c71f8040deaded3575124a44f2704a21), [`ebce0b9`](https://github.com/LedgerHQ/ledger-live/commit/ebce0b97b3d35921d7b6c256e106ddb400f2aaa5), [`50bae0f`](https://github.com/LedgerHQ/ledger-live/commit/50bae0f13a95ef166b2c5609ccbcf5ef01ba1579), [`e506740`](https://github.com/LedgerHQ/ledger-live/commit/e506740729486f4c1579308ede0a5a348a04ecee), [`15d02ab`](https://github.com/LedgerHQ/ledger-live/commit/15d02ab174cb778a9dd222c531503936adcb30f4), [`7e33c7b`](https://github.com/LedgerHQ/ledger-live/commit/7e33c7b3de128e0c076176e98f8065f7cf7ad733), [`cf08174`](https://github.com/LedgerHQ/ledger-live/commit/cf0817462e9f0210fceff29ec60b0699e4e69b71), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59), [`efd8bd3`](https://github.com/LedgerHQ/ledger-live/commit/efd8bd37f23bca1b758b2670a709178731b94586), [`6533f02`](https://github.com/LedgerHQ/ledger-live/commit/6533f0229c41d3597fe057e246f7f00eb88ae18e)]:
+  - @ledgerhq/coin-multiversx@0.10.0-next.0
+  - @ledgerhq/cryptoassets@13.37.0-next.0
+  - @ledgerhq/ledger-cal-service@1.11.0-next.0
+  - @ledgerhq/coin-framework@6.13.0-next.0
+  - @ledgerhq/coin-evm@2.39.0-next.0
+  - @ledgerhq/coin-hedera@1.18.0-next.0
+  - @ledgerhq/coin-tron@5.10.0-next.0
+  - @ledgerhq/live-env@2.25.0-next.0
+  - @ledgerhq/hw-app-btc@10.16.0-next.0
+  - @ledgerhq/hw-transport-mocker@6.31.0-next.0
+  - @ledgerhq/coin-internet_computer@1.14.0-next.0
+  - @ledgerhq/hw-app-multiversx@6.27.0-next.0
+  - @ledgerhq/hw-app-algorand@6.32.0-next.0
+  - @ledgerhq/hw-app-exchange@0.19.0-next.0
+  - @ledgerhq/hw-app-polkadot@6.35.0-next.0
+  - @ledgerhq/hw-app-cosmos@6.33.0-next.0
+  - @ledgerhq/hw-app-hedera@1.3.0-next.0
+  - @ledgerhq/hw-app-aptos@6.35.0-next.0
+  - @ledgerhq/hw-app-kaspa@1.4.0-next.0
+  - @ledgerhq/hw-app-tezos@6.33.0-next.0
+  - @ledgerhq/hw-transport@6.32.0-next.0
+  - @ledgerhq/hw-app-celo@6.37.0-next.0
+  - @ledgerhq/hw-app-icon@1.4.0-next.0
+  - @ledgerhq/hw-app-near@6.32.0-next.0
+  - @ledgerhq/hw-app-eth@7.3.0-next.0
+  - @ledgerhq/hw-app-str@7.4.0-next.0
+  - @ledgerhq/hw-app-sui@1.5.0-next.0
+  - @ledgerhq/hw-app-trx@6.32.0-next.0
+  - @ledgerhq/hw-app-vet@0.9.0-next.0
+  - @ledgerhq/hw-app-xrp@6.33.0-next.0
+  - @ledgerhq/coin-algorand@0.16.0-next.0
+  - @ledgerhq/coin-filecoin@1.18.0-next.0
+  - @ledgerhq/coin-polkadot@6.16.0-next.0
+  - @ledgerhq/hw-bolos@6.33.0-next.0
+  - @ledgerhq/coin-bitcoin@0.29.0-next.0
+  - @ledgerhq/coin-cardano@0.17.0-next.0
+  - @ledgerhq/coin-stellar@6.11.0-next.0
+  - @ledgerhq/coin-vechain@2.16.0-next.0
+  - @ledgerhq/devices@8.10.0-next.0
+  - @ledgerhq/coin-canton@0.14.0-next.0
+  - @ledgerhq/coin-casper@2.7.0-next.0
+  - @ledgerhq/coin-cosmos@0.23.0-next.0
+  - @ledgerhq/coin-solana@0.41.0-next.0
+  - @ledgerhq/coin-stacks@0.14.0-next.0
+  - @ledgerhq/errors@6.29.0-next.0
+  - @ledgerhq/live-countervalues-react@0.8.0-next.0
+  - @ledgerhq/coin-aptos@3.10.0-next.0
+  - @ledgerhq/coin-kaspa@1.7.0-next.0
+  - @ledgerhq/coin-tezos@6.13.0-next.0
+  - @ledgerhq/coin-celo@1.9.0-next.0
+  - @ledgerhq/coin-icon@0.17.0-next.0
+  - @ledgerhq/coin-mina@1.7.0-next.0
+  - @ledgerhq/coin-near@0.19.0-next.0
+  - @ledgerhq/logs@6.14.0-next.0
+  - @ledgerhq/wallet-api-acre-module@0.12.0-next.0
+  - @ledgerhq/coin-sui@0.21.0-next.0
+  - @ledgerhq/coin-ton@0.20.0-next.0
+  - @ledgerhq/coin-xrp@7.12.0-next.0
+  - @ledgerhq/ledger-trust-service@0.6.0-next.0
+  - @ledgerhq/live-countervalues@0.11.0-next.0
+  - @ledgerhq/live-signer-canton@0.7.0-next.0
+  - @ledgerhq/live-signer-solana@0.10.0-next.0
+  - @ledgerhq/speculos-transport@0.5.0-next.0
+  - @ledgerhq/wallet-api-exchange-module@0.21.0-next.0
+  - @ledgerhq/live-dmk-shared@0.18.0-next.0
+  - @ledgerhq/live-signer-evm@0.12.0-next.0
+  - @ledgerhq/live-network@2.2.0-next.0
+  - @ledgerhq/device-core@0.8.0-next.0
+  - @ledgerhq/live-config@3.5.0-next.0
+  - @ledgerhq/live-wallet@0.19.0-next.0
+  - @ledgerhq/client-ids@0.4.0-next.0
+  - @ledgerhq/live-hooks@0.4.0-next.0
+  - @ledgerhq/live-promise@0.2.0-next.0
+  - @ledgerhq/coin-aleo@1.1.0-next.0
+  - @ledgerhq/live-signer-aleo@0.11.0-next.0
+
 ## 34.56.0
 
 ### Minor Changes
