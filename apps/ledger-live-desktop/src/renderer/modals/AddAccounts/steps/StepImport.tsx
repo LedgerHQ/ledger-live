@@ -1,5 +1,5 @@
 import React, { useEffect, PureComponent } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { concat, from, Subscription } from "rxjs";
@@ -62,7 +62,7 @@ const LoadingRow = styled(Box).attrs(() => ({
   mt: 1,
 }))`
   height: 48px;
-  border: 1px dashed ${p => p.theme.colors.palette.text.shade60};
+  border: 1px dashed ${p => p.theme.colors.neutral.c70};
 `;
 const SectionAccounts = ({ defaultSelected, ...rest }: Props) => {
   // componentDidMount-like effect
@@ -228,7 +228,7 @@ class StepImport extends PureComponent<
     const { showAllCreatedAccounts } = this.state;
     return (
       <Box ml="auto" mr={3}>
-        <Box color="palette.text.shade60" horizontal alignItems="center">
+        <Box color="neutral.c70" horizontal alignItems="center">
           <Text fontSize={2}>
             <Trans i18nKey="addAccounts.createNewAccount.showAllAddressTypes" />
           </Text>
@@ -300,7 +300,7 @@ class StepImport extends PureComponent<
       creatable = (
         <Trans i18nKey="addAccounts.createNewAccount.noOperationOnLastAccount" parent="div">
           {" "}
-          <Text ff="Inter|SemiBold" color="palette.text.shade100">
+          <Text ff="Inter|SemiBold" color="neutral.c100">
             {getDefaultAccountName(alreadyEmptyAccount)}
           </Text>{" "}
         </Trans>
@@ -312,7 +312,7 @@ class StepImport extends PureComponent<
       creatable = (
         <Trans i18nKey="addAccounts.createNewAccount.noAccountToCreate" parent="div">
           {" "}
-          <Text ff="Inter|SemiBold" color="palette.text.shade100">
+          <Text ff="Inter|SemiBold" color="neutral.c100">
             {currencyName}
           </Text>{" "}
         </Trans>
@@ -362,8 +362,8 @@ class StepImport extends PureComponent<
 
           {scanStatus === "scanning" ? (
             <LoadingRow>
-              <Spinner color="palette.text.shade60" size={16} />
-              <Box ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
+              <Spinner color="neutral.c70" size={16} />
+              <Box ml={2} ff="Inter|Regular" color="neutral.c70" fontSize={4}>
                 {t("common.sync.syncing")}
               </Box>
             </LoadingRow>

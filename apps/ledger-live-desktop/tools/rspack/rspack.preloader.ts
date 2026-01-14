@@ -27,13 +27,6 @@ export function createPreloaderConfig(
         type: "commonjs2",
       },
     },
-    externals: {
-      // Externalize Concordium SDK and its dependencies for Node.js runtime loading
-      "@concordium/web-sdk": "commonjs2 @concordium/web-sdk",
-      "@concordium/web-sdk/nodejs": "commonjs2 @concordium/web-sdk/nodejs",
-      "@concordium/web-sdk/plt": "commonjs2 @concordium/web-sdk/plt",
-      "@protobuf-ts/runtime": "commonjs2 @protobuf-ts/runtime",
-    },
     devtool: "source-map",
     plugins: [
       new rspack.DefinePlugin({

@@ -486,7 +486,9 @@
       "celo_title": "Ledger Nano S™ does not support swapping Celo",
       "celo_description": "To swap Celo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "monad_title": "Ledger Nano S™ does not support swapping Monad",
-      "monad_description": "To swap Monad, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "monad_description": "To swap Monad, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "zcash_title": "Ledger Nano S™ does not support swapping Zcash",
+      "zcash_description": "To swap Zcash, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
@@ -723,7 +725,7 @@
     "stake": "Stake",
     "delegatedAssets": "Delegated assets",
     "undelegating": "Undelegating",
-    "availableBalanceTooltip": "This amount is disposable.",
+    "availableBalanceTooltip": "Funds you can use right now.",
     "frozenAssetsTooltip": "Frozen assets are used in the Tron voting process. This represents your total number of votes.",
     "bandwidthTooltip": "Freeze assets to gain bandwidth",
     "energyTooltip": "Freeze assets to gain energy",
@@ -996,7 +998,6 @@
         "switchLabel": "<1>I have read and agree with the </1><0>Terms of Use</0><1>.</1>"
       },
       "steps": {
-        "title": "Step <0>{{step}} / {{total}}</0>",
         "1": {
           "subtitle": "Approve an account to allow the protocol to",
           "subtitle2": "process future loans.",
@@ -1009,7 +1010,8 @@
         "3": {
           "subtitle": "Withdraw assets at any time",
           "description": "You can withdraw your assets and earned interest at any time, partially or entirely, directly from your Ledger account."
-        }
+        },
+        "title": "Step <0>{{step}} / {{total}}</0>"
       }
     },
     "supply": {
@@ -1161,8 +1163,8 @@
         "selectionNewLedgerTitle": "Set up as a new Ledger",
         "selectionNewLedgerDescription": "This generates a new Secret Recovery Phrase.",
         "selectionRestoreTitle": "Restore access to assets",
-        "selectionRestoreDescription": "This lets you restore using your backup — Secret Recovery Phrase or Ledger Recover.",
-        "selectionRestoreDescriptionWithCharon": "This lets you restore using your backup — Secret Recovery Phrase, Ledger Recover, or Ledger Recovery Key.",
+        "selectionRestoreDescription": "This lets you restore using your backup — Secret Recovery Phrase or Ledger Recover.",
+        "selectionRestoreDescriptionWithCharon": "This lets you restore using your backup — Secret Recovery Phrase, Ledger Recover, or Ledger Recovery Key.",
         "selectionContinueOnDevice": "Choose the relevant option on your {{productName}}",
         "selectionNewSeedTitle": "Secret Recovery Phrase",
         "selectionNewSeedSubtitle": "Keep it safe and private",
@@ -1178,7 +1180,7 @@
         "restoreChoiceRecoverDescription": "Use your subscription to restore access to your assets with your identity.",
         "followInstructions": "Follow instruction appearing on your {{productName}}.",
         "backupCharonTitle": "Ledger Recovery Key",
-        "backupCharonDescription": "Create a new backup on a PIN-protected card with a built-in Secure Element chip — so you can restore access to your assets in just a few taps.",
+        "backupCharonDescription": "Create a new backup on a PIN-protected card with a built-in Secure Element chip — so you can restore access to your assets in just a few taps.",
         "backupCharonCta": "Learn more or buy",
         "backupCharonContinueOnDevice": "Follow the instructions on your {{productName}}"
       },
@@ -1186,6 +1188,17 @@
         "description": "You can transfer crypto from any exchange or wallet to your Ledger Wallet for maximum security.",
         "depositButton": "Secure my crypto",
         "skipButton": "Maybe later"
+      },
+      "sync": {
+        "timelineTitle": "Wallet sync",
+        "timelineTitleCompleted": "Sync enabled",
+        "title": "Enable sync for your wallet",
+        "description": "Keep your portfolio up to date when switching computers or using a phone",
+        "skipButton": "I’ll do it later",
+        "skipTitle": "Skip enabling sync?",
+        "skipDescription": "If you skip, you'll have to manually re-add all your crypto accounts if you ever switch to a new phone or computer. You can always disable it from your Ledger Wallet settings.",
+        "skipConfirm": "Yes, skip",
+        "skipNo": "No, enable sync"
       },
       "backup": {
         "title": "Backup for your Secret Recovery Phrase",
@@ -1282,7 +1295,7 @@
       },
       "helpDrawer": {
         "title": "Need some help with your setup manual?",
-        "description": "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+        "description": "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
         "docButton": "Go to FAQ",
         "supportButton": "Speak to a human"
       },
@@ -2247,7 +2260,7 @@
           "description": "You cannot verify the transaction details on your Ledger device. If you sign it, you could lose all your assets. Only sign if you trust this website."
         },
         "utxoLag": "This transaction may take long to verify and sign because the account has a significant number of coins.",
-        "subaccountsWarning": "You will need to refill this account with {{ currency }} in order to send the tokens of this account",
+        "subaccountsWarning": "You will need to refill this account with {{ currency }} in order to send the tokens of this account",
         "from": "From",
         "to": "To",
         "selectAccountDebit": "Account to debit",
@@ -3627,6 +3640,8 @@
       "activeTooltip": "Active amount generate rewards",
       "inactiveTooltip": "Inactive amount does not generate rewards",
       "delegatedInfoTooltip": "Total amount that is delegated to validators.",
+      "inactiveStakeTooltip": "Inactive stake that can be withdrawn without deactivating your delegation.",
+      "inactiveStakeTitle": "Withdrawable Rewards",
       "withdrawableInfoTooltip": "Total amount that is withdrawable from delegations.",
       "withdrawableTitle": "Withdrawable",
       "statusUpdateNotice": "The status of the delegation will be updated when the transaction is confirmed.",
@@ -4442,6 +4457,7 @@
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Wallet crypto accounts across different phones and computers.",
+      "walletSyncDescription": "Keep your portfolio up to date when switching computers or use a phone",
       "mevProtection": "MEV Protection",
       "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
       "mevProtectionLearnMore": "Privacy notice"
@@ -4462,7 +4478,6 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
-
       "exchangeDeveloperMode": {
         "title": "Exchange Dev Mode",
         "desc": "Add exchange provider's info",
@@ -4475,6 +4490,10 @@
       "analyticsConsole": {
         "title": "Allow Analytics Console",
         "desc": "Display and allow opening analytics console."
+      },
+      "themeConsole": {
+        "title": "Theme Toggle",
+        "desc": "Display a floating overlay to quickly switch themes."
       },
       "brazeTools": {
         "title": "Braze Tools",
@@ -4566,7 +4585,10 @@
       },
       "modularDrawerDevTool": {
         "title": "Modular Drawer Dev Tool",
-        "description": "Allows you to test the Modular Drawer easily"
+        "description": "Allows you to test the Modular Drawer easily",
+        "openDrawer": "Open Drawer",
+        "debugDialog": "Debug Dialog",
+        "debugDuplicates": "Debug Duplicates"
       },
       "walletFeaturesDevTool": {
         "title": "Wallet Features Dev Tool",
@@ -5124,6 +5146,7 @@
           "recoveryPhrase": "Recovery phrase",
           "hideRecoveryPhrase": "Hide recovery phrase",
           "pairNano": "Connect nano",
+          "enableSync": "Synchronization",
           "secureYourCrypto": "Secure your crypto"
         },
         "screens": {
@@ -5263,7 +5286,6 @@
             }
           },
           "recoverHowTo": {
-            "title": "Select ‘Restore using Ledger Recover’",
             "1": {
               "title": "Select ‘Restore’",
               "descr": "Press both buttons simultaneously to select."
@@ -5271,6 +5293,7 @@
             "2": {
               "title": "Select ‘Restore using Ledger Recover’"
             },
+            "title": "Select ‘Restore using Ledger Recover’",
             "help": {
               "iDontSee": "I don’t see ‘Restore using Ledger Recover’",
               "modal": {
@@ -5418,6 +5441,14 @@
               "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
+          "enableSync": {
+            "title": "Enable sync for your wallet",
+            "description": "Keep your portfolio up to date when switching phones or using a computer.",
+            "buttons": {
+              "next": "Continue",
+              "nextSecondary": "I'll do it later"
+            }
+          },
           "secureYourCrypto": {
             "title": "Secure your crypto",
             "description": "Move your first crypto from an exchange or wallet to your Ledger Wallet for maximum security.",
@@ -5547,12 +5578,6 @@
     "connected": "Connected!",
     "backToPortfolio": "Back to Portfolio",
     "steps": {
-      "entry": {
-        "title": "Troubleshoot USB connection",
-        "desc": "There seems to be a problem connecting to your device. Don’t worry, you can try different solutions one by one until your device connects!",
-        "cta": "Let’s fix it!",
-        "back": "Go back"
-      },
       "1": {
         "windows": {
           "title": "Run Ledger Wallet as Administrator",
@@ -5665,6 +5690,12 @@
           "updateInstructions": "Follow device update instructions",
           "somethingElse": "Something else"
         }
+      },
+      "entry": {
+        "title": "Troubleshoot USB connection",
+        "desc": "There seems to be a problem connecting to your device. Don’t worry, you can try different solutions one by one until your device connects!",
+        "cta": "Let’s fix it!",
+        "back": "Go back"
       }
     }
   },
@@ -5774,14 +5805,28 @@
     "canton": {
       "commentPlaceholder": "Optional",
       "comment": "Comment",
+      "expiryDuration": {
+        "label": "Expiry duration",
+        "summaryLabel": "Expiry Offer",
+        "threeHours": "3 hours",
+        "sixHours": "6 hours",
+        "oneDay": "1 day",
+        "oneWeek": "1 week",
+        "oneMonth": "30 days"
+      },
+      "account": {
+        "lockedBalance": "Locked",
+        "lockedBalanceTooltip": "Your funds are locked in offers you've sent to others. You can cancel these offers any time, or wait for the recipient to accept or reject.",
+        "withdrawableBalance": "Withdrawable",
+        "withdrawableBalanceTooltip": "Funds you can reclaim from offers you sent that have expired. Withdraw to move these back to your available balance."
+      },
       "addAccount": {
         "title": "Add Canton Account",
         "reonboard": {
           "title": "Account Update Required",
           "init": "A topology change has been detected in the Canton network. Please re-onboard your account to continue using it.",
           "success": "Account updated successfully",
-          "successDescription": "You can now continue using your account",
-          "successDescription_other": "You can now continue using your accounts"
+          "successDescription": "You can now continue using your account"
         },
         "onboard": {
           "title": "Onboarding",
@@ -5790,8 +5835,6 @@
           "init": "Set up your new Canton account by clicking Continue",
           "onboarded": "Onboarded accounts",
           "success": "Your new Canton account has been created and onboarded.",
-          "successDescription": "You can now use your account",
-          "successDescription_other": "You can now use your accounts",
           "error": "Failed to onboard new account. Please try again.",
           "error429": "Canton Network currently supports a limited number of account creations per day. Please try again later.",
           "status": {
@@ -5828,10 +5871,12 @@
       "pendingTransactions": {
         "title": "Pending Transactions ({{count}})",
         "incoming": {
-          "title": "Incoming Offers ({{count}})"
+          "title": "Incoming transfer to review ({{count}})",
+          "detailsTitle": "Incoming transfer details"
         },
         "outgoing": {
-          "title": "Outgoing Offers ({{count}})"
+          "title": "Outgoing Offers ({{count}})",
+          "detailsTitle": "Outgoing transfer details"
         },
         "pending": "Pending",
         "expired": "Expired",
@@ -6156,6 +6201,11 @@
     "LatestFirmwareVersionRequired": {
       "title": "Update Device Firmware",
       "description": "Please update your device firmware to the latest version to access this feature"
+    },
+    "UnsupportedFeatureError": {
+      "title": "Unsupported feature",
+      "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details.",
+      "ctaLabel": "Contact Ledger Support"
     },
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
@@ -6902,7 +6952,9 @@
     },
     "HederaMemoExceededSizeError": {
       "title": "Invalid memo size, maximum allowed is 100 characters",
-      "description": "Hedera memo have a maximum limited size. Please reduce the size of the memo"
+    },
+    "HederaMemoIsTooLong": {
+      "title": "Memo is too long. Max length is {{maxLength}} characters"
     },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",
@@ -7403,6 +7455,12 @@
       }
     }
   },
+  "dialogs": {
+    "selectAccount": {
+      "description": "You don't have {{network}} accounts yet. Please add one to continue",
+      "addAccount": "Add account"
+    }
+  },
   "drawers": {
     "selectCurrency": {
       "title": "choose asset"
@@ -7665,6 +7723,11 @@
         "title": "Sync successful!",
         "desc": "Changes in your crypto accounts will now automatically appear across Ledger Wallet apps on synched phones and computers. "
       },
+      "complete": {
+        "title": "Sync complete",
+        "description": "From now on, your portfolio will automatically stay sync across all your devices.",
+        "syncAnother": "Using Ledger on Mobile? Scan QR code "
+      },
       "synchAnother": "Sync with another Ledger Wallet app",
       "close": "Close"
     },
@@ -7676,7 +7739,7 @@
         "cancel": "Keep sync"
       },
       "deleteBackupSuccess": {
-        "title": "Your Ledger Wallet apps are no longer synched",
+        "title": "Your Ledger Wallet apps are no longer synced",
         "description": "You can turn on sync anytime"
       },
       "deleteBackupError": {
@@ -7810,7 +7873,9 @@
       },
       "title": "Checking the blockchain..."
     },
-    "connectYourDevice": { "title": "Connect and unlock your device" },
+    "connectYourDevice": {
+      "title": "Connect and unlock your device"
+    },
     "searchPlaceholder": "Search by name or address",
     "emptyAssetList": "No assets found",
     "selectAsset": "Select asset",
@@ -7831,6 +7896,17 @@
       "title": "A network error occurred",
       "description": "Something went wrong, please try again or contact Ledger Support if in doubt.",
       "cta": "Retry"
+    },
+    "errors": {
+      "network": {
+        "title": "Connection failed",
+        "description": "No internet connection. Please try again"
+      },
+      "backend": {
+        "title": "Connection failed",
+        "description": "Something went wrong on our end. Please try again later"
+      },
+      "cta": "Try again"
     }
   },
   "marketBanner": {

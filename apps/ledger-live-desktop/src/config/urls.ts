@@ -37,6 +37,8 @@ export const urls = {
   // Ledger support
   faq: "https://support.ledger.com",
   chatbot: "https://ledgercustomersuccess.my.salesforce-sites.com/fullscreenbot",
+  mevProtection:
+    "https://support.ledger.com/article/How-to-protect-your-transactions-from-Maximal-Extractable-Value-MEV-attacks",
   ledgerStatus: "https://status.ledger.com/",
   syncErrors: "https://support.ledger.com/article/360012207759-zd",
   terms:
@@ -198,6 +200,7 @@ export const urls = {
     "https://shop.ledger.com?utm_source=live&utm_medium=draw&utm_campaign=ledger_sync_lns_uncompatible&utm_content=to_shop",
   learnMoreLedgerSync:
     "https://www.ledger.com/blog-ledger-sync-synchronize-your-crypto-accounts-effortless-private-and-secure",
+  charonLearnMore: "https://shop.ledger.com/products/ledger-recovery-key",
 
   // Node errors
   txBroadcastErrors: {
