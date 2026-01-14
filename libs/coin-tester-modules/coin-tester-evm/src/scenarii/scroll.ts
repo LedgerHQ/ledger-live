@@ -81,6 +81,7 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
         },
         explorer: {
           type: "blockscout",
+          noCache: true,
           uri: "https://scroll.blockscout.com/api",
         },
         showNfts: true,
@@ -99,6 +100,7 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
           },
           explorer: {
             type: "blockscout",
+            noCache: true,
             uri: "https://scroll.blockscout.com/api",
           },
           showNfts: true,

@@ -11,15 +11,16 @@ import noExplorerAPI from "./none";
  */
 export const getExplorerApi = (currency: CryptoCurrency): ExplorerApi => {
   const config = getCoinConfig(currency).info;
-  const apiType = config?.explorer?.type;
 
-  switch (apiType) {
+  switch (config?.explorer?.type) {
     case "etherscan":
     case "blockscout":
     case "teloscan":
     case "klaytnfinder":
     case "corescan":
-      return etherscanLikeApi;
+      return config.explorer.noCache
+        ? etherscanLikeApi.explorerApiNoChache
+        : etherscanLikeApi.explorerApi;
     case "ledger":
       return ledgerExplorerApi;
     case "none":

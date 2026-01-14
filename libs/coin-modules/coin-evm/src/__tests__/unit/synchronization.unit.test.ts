@@ -51,7 +51,12 @@ jest.mock("../../network/explorer/etherscan", () => {
     getLastERC1155Operations: jest.fn(),
     getLastERC721Operations: jest.fn(),
     default: {
-      getLastOperations: mockGetLastOperations,
+      explorerApi: {
+        getLastOperations: mockGetLastOperations,
+      },
+      explorerApiNoChache: {
+        getLastOperations: mockGetLastOperations,
+      },
     },
   };
 });
@@ -272,7 +277,7 @@ describe("EVM Family", () => {
       describe("With no transactions fetched", () => {
         beforeAll(() => {
           // @ts-expect-error reseting cache
-          etherscanAPI?.default.getLastOperations.reset();
+          etherscanAPI?.default.explorerApi.getLastOperations.reset();
           jest.spyOn(etherscanAPI, "getLastOperations").mockImplementation(() =>
             Promise.resolve({
               lastCoinOperations: [],
@@ -281,14 +286,16 @@ describe("EVM Family", () => {
               lastInternalOperations: [],
             }),
           );
-          jest.spyOn(etherscanAPI?.default, "getLastOperations").mockImplementation(() =>
-            Promise.resolve({
-              lastCoinOperations: [],
-              lastTokenOperations: [],
-              lastNftOperations: [],
-              lastInternalOperations: [],
-            }),
-          );
+          jest
+            .spyOn(etherscanAPI?.default.explorerApi, "getLastOperations")
+            .mockImplementation(() =>
+              Promise.resolve({
+                lastCoinOperations: [],
+                lastTokenOperations: [],
+                lastNftOperations: [],
+                lastInternalOperations: [],
+              }),
+            );
         });
 
         afterAll(() => {
@@ -371,7 +378,7 @@ describe("EVM Family", () => {
             {} as any,
           );
 
-          expect(etherscanAPI?.default.getLastOperations).toHaveBeenCalledWith(
+          expect(etherscanAPI?.default.explorerApi.getLastOperations).toHaveBeenCalledWith(
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
@@ -399,7 +406,7 @@ describe("EVM Family", () => {
             {} as any,
           );
 
-          expect(etherscanAPI?.default.getLastOperations).toHaveBeenCalledWith(
+          expect(etherscanAPI?.default.explorerApi.getLastOperations).toHaveBeenCalledWith(
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
@@ -412,7 +419,7 @@ describe("EVM Family", () => {
       describe("With transactions fetched", () => {
         beforeAll(() => {
           // Mock getLastOperations to return combined operations data
-          (etherscanAPI.default.getLastOperations as jest.Mock).mockResolvedValue({
+          (etherscanAPI.default.explorerApi.getLastOperations as jest.Mock).mockResolvedValue({
             lastCoinOperations: [{ ...coinOperations[0] }, { ...coinOperations[1] }],
             lastTokenOperations: [{ ...tokenOperations[0] }, { ...tokenOperations[1] }],
             lastNftOperations: [
@@ -520,7 +527,7 @@ describe("EVM Family", () => {
 
         it("should return a partial account based on blockHeight", async () => {
           jest
-            .spyOn(etherscanAPI?.default, "getLastOperations")
+            .spyOn(etherscanAPI?.default.explorerApi, "getLastOperations")
             .mockImplementationOnce(async () => ({
               lastTokenOperations: [],
               lastNftOperations: [],
@@ -670,7 +677,7 @@ describe("EVM Family", () => {
       describe("With Blockscout", () => {
         beforeAll(() => {
           // Mock getLastOperations for blockscout explorer
-          (etherscanAPI.default.getLastOperations as jest.Mock).mockResolvedValue({
+          (etherscanAPI.default.explorerApi.getLastOperations as jest.Mock).mockResolvedValue({
             lastCoinOperations: [{ ...coinOperations[0] }, { ...coinOperations[1] }],
             lastTokenOperations: [{ ...tokenOperations[0] }, { ...tokenOperations[1] }],
             lastNftOperations: [
@@ -724,7 +731,7 @@ describe("EVM Family", () => {
           );
 
           // Verify the mock was called
-          expect(etherscanAPI.default.getLastOperations).toHaveBeenCalled();
+          expect(etherscanAPI.default.explorerApi.getLastOperations).toHaveBeenCalled();
           expect(typeof accountShape.id).toBe("string");
         });
       });

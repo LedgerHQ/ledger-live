@@ -166,7 +166,7 @@ const handleERC20Log = async (log: ethers.Log, provider: ethers.JsonRpcProvider)
     cumulativeGasUsed: receipt?.cumulativeGasUsed.toString() || "0",
     gasUsed: receipt?.gasUsed?.toString() || "0",
     input: tx?.data || "0x",
-    confirmations: tx?.confirmations.toString() || "0",
+    confirmations: tx ? (await tx.confirmations()).toString() : "0",
     contractAddress: tx?.to!.toLowerCase() || "",
   };
 
@@ -545,10 +545,19 @@ const handleBlock = async (blockNumber: number, provider: ethers.JsonRpcProvider
     explorerLedgerOperationByAddress[from]!.set(ledgerOperation.hash, ledgerOperation);
     explorerLedgerOperationByAddress[to]!.set(ledgerOperation.hash, ledgerOperation);
 
-    for (const { action, result, type, transactionHash, transactionPosition } of traces.filter(
-      trace => trace.type === "call",
-    )) {
-      if (action?.callType !== "call") continue;
+    for (const {
+      traceAddress,
+      action,
+      result,
+      type,
+      transactionHash,
+      transactionPosition,
+    } of traces.filter(trace => trace.type === "call")) {
+      /**
+       * Empty `traceAddress` means this is a top-level operation
+       * {@link https://www.alchemy.com/docs/reference/what-are-evm-traces?utm_source=chatgpt.com#how-to-read-traceaddress}
+       */
+      if (!traceAddress.length) continue;
       const code = action.to ? await provider.getCode(action.to) : false;
       const from = safeEncodeEIP55(action.from || "");
       const to = safeEncodeEIP55(action.to || "");

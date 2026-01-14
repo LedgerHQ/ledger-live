@@ -14,6 +14,7 @@ export type EvmConfig = {
   explorer:
     | {
         type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder" | "corescan";
+        noCache?: boolean | undefined;
         uri: string;
       }
     | {
