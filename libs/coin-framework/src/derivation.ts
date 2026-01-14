@@ -191,19 +191,9 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
     overridesDerivation: "44'/6767'/<account>'/0'/0'",
     tag: "canton",
   },
-  cashaddr: {
-    addressFormat: "cashaddr",
-    tag: "cashaddr",
-  },
-  celo: {
-    tag: "Legacy",
-  },
-  celoMM: {
-    overridesDerivation: "44'/60'/0'/0/<account>",
-    tag: "Metamask",
-  },
-  celoEvm: {
-    overridesDerivation: "44'/60'/<account>'/0'/0'",
+  concordium: {
+    overridesDerivation: "44'/919'/404'/404'/<account>'",
+    tag: "concordium",
   },
 });
 
@@ -248,7 +238,8 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   canton_network: ["canton"],
   canton_network_devnet: ["canton"],
   canton_network_testnet: ["canton"],
-  celo: ["celo", "celoMM", "celoEvm"],
+  concordium: ["concordium"],
+  concordium_testnet: ["concordium"],
 };
 
 export function isDerivationMode(mode: string): mode is DerivationMode {
@@ -392,7 +383,8 @@ const disableBIP44: Record<string, boolean> = {
   canton_network: true,
   canton_network_devnet: true,
   canton_network_testnet: true,
-  celo: true,
+  concordium: true,
+  concordium_testnet: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -423,6 +415,9 @@ const seedIdentifierPath = (currencyId: string): SeedPathFn => {
     case "canton_network":
     case "canton_network_devnet":
     case "canton_network_testnet":
+      return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`;
+    case "concordium":
+    case "concordium_testnet":
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`;
     default:
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`;

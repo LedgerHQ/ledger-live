@@ -1,10 +1,4 @@
 import type {
-  Transaction as aleoTransaction,
-  TransactionRaw as aleoTransactionRaw,
-  TransactionStatus as aleoTransactionStatus,
-  TransactionStatusRaw as aleoTransactionStatusRaw,
-} from "@ledgerhq/coin-aleo/types/index";
-import type {
   Transaction as algorandTransaction,
   TransactionRaw as algorandTransactionRaw,
   TransactionStatus as algorandTransactionStatus,
@@ -46,6 +40,12 @@ import type {
   TransactionStatus as celoTransactionStatus,
   TransactionStatusRaw as celoTransactionStatusRaw,
 } from "@ledgerhq/coin-celo/types/index";
+import type {
+  Transaction as concordiumTransaction,
+  TransactionRaw as concordiumTransactionRaw,
+  TransactionStatus as concordiumTransactionStatus,
+  TransactionStatusRaw as concordiumTransactionStatusRaw,
+} from "@ledgerhq/coin-concordium/types/index";
 import type {
   Transaction as cosmosTransaction,
   TransactionRaw as cosmosTransactionRaw,
@@ -168,7 +168,6 @@ import type {
 } from "@ledgerhq/coin-xrp/types/index";
 
 export type Transaction =
-  | aleoTransaction
   | algorandTransaction
   | aptosTransaction
   | bitcoinTransaction
@@ -176,6 +175,7 @@ export type Transaction =
   | cardanoTransaction
   | casperTransaction
   | celoTransaction
+  | concordiumTransaction
   | cosmosTransaction
   | evmTransaction
   | filecoinTransaction
@@ -198,7 +198,6 @@ export type Transaction =
   | xrpTransaction;
 
 export type TransactionRaw =
-  | aleoTransactionRaw
   | algorandTransactionRaw
   | aptosTransactionRaw
   | bitcoinTransactionRaw
@@ -206,6 +205,7 @@ export type TransactionRaw =
   | cardanoTransactionRaw
   | casperTransactionRaw
   | celoTransactionRaw
+  | concordiumTransactionRaw
   | cosmosTransactionRaw
   | evmTransactionRaw
   | filecoinTransactionRaw
@@ -228,7 +228,6 @@ export type TransactionRaw =
   | xrpTransactionRaw;
 
 export type TransactionStatus =
-  | aleoTransactionStatus
   | algorandTransactionStatus
   | aptosTransactionStatus
   | bitcoinTransactionStatus
@@ -236,6 +235,7 @@ export type TransactionStatus =
   | cardanoTransactionStatus
   | casperTransactionStatus
   | celoTransactionStatus
+  | concordiumTransactionStatus
   | cosmosTransactionStatus
   | evmTransactionStatus
   | filecoinTransactionStatus
@@ -258,7 +258,6 @@ export type TransactionStatus =
   | xrpTransactionStatus;
 
 export type TransactionStatusRaw =
-  | aleoTransactionStatusRaw
   | algorandTransactionStatusRaw
   | aptosTransactionStatusRaw
   | bitcoinTransactionStatusRaw
@@ -266,6 +265,7 @@ export type TransactionStatusRaw =
   | cardanoTransactionStatusRaw
   | casperTransactionStatusRaw
   | celoTransactionStatusRaw
+  | concordiumTransactionStatusRaw
   | cosmosTransactionStatusRaw
   | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw

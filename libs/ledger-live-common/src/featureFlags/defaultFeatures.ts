@@ -35,8 +35,6 @@ export const initFeature = <T>(opts?: Feature<T>) => {
  */
 export const CURRENCY_DEFAULT_FEATURES = {
   currencyPolkadot: { enabled: true },
-  currencyAleo: DEFAULT_FEATURE,
-  currencyAleoTestnet: DEFAULT_FEATURE,
   currencyArbitrum: DEFAULT_FEATURE,
   currencyArbitrumSepolia: DEFAULT_FEATURE,
   currencyAstar: DEFAULT_FEATURE,
@@ -117,8 +115,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyMonadTestnet: DEFAULT_FEATURE,
   currencySomnia: DEFAULT_FEATURE,
   currencyZeroGravity: DEFAULT_FEATURE,
-  currencyConcordium: DEFAULT_FEATURE,
-  currencyConcordiumTestnet: DEFAULT_FEATURE,
+  currencyConcordium: { enabled: true },
+  currencyConcordiumTestnet: { enabled: true },
 };
 
 /**
@@ -147,13 +145,6 @@ export const DEFAULT_FEATURES: Features = {
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
   stakeAccountBanner: initFeature(),
-  lldOnboardingEnableSync: initFeature({
-    enabled: false,
-    params: {
-      nanos: false,
-      touchscreens: false,
-    },
-  }),
   mixpanelAnalytics: initFeature({
     enabled: false,
     params: { record_sessions_percent: 100 },
@@ -485,13 +476,6 @@ export const DEFAULT_FEATURES: Features = {
     params: {},
   },
 
-  ptxEarnUi: {
-    enabled: false,
-    params: {
-      value: "v1",
-    },
-  },
-
   ptxSwapLiveAppMobile: {
     enabled: false,
     params: {
@@ -575,6 +559,10 @@ export const DEFAULT_FEATURES: Features = {
       warningVisible: true,
     },
   },
+  llMevProtection: {
+    ...DEFAULT_FEATURE,
+    params: { link: null },
+  },
   llCounterValueGranularitiesRates: {
     ...DEFAULT_FEATURE,
     params: {
@@ -590,7 +578,6 @@ export const DEFAULT_FEATURES: Features = {
       manager: true,
       accounts: true,
       settings: true,
-      onboarding: true,
       postOnboarding: true,
     },
   },
@@ -606,10 +593,6 @@ export const DEFAULT_FEATURES: Features = {
   },
   lwmLedgerSyncOptimisation: DEFAULT_FEATURE,
   lwdLedgerSyncOptimisation: DEFAULT_FEATURE,
-  lwmNewWordingOptInNotificationsDrawer: {
-    ...DEFAULT_FEATURE,
-    params: { variant: ABTestingVariants.variantA },
-  },
   lldNanoSUpsellBanners: {
     ...DEFAULT_FEATURE,
     params: {
@@ -651,6 +634,7 @@ export const DEFAULT_FEATURES: Features = {
   },
   llmThai: DEFAULT_FEATURE,
   lldThai: DEFAULT_FEATURE,
+  largemoverLandingpage: DEFAULT_FEATURE,
   llmMmkvMigration: {
     ...DEFAULT_FEATURE,
     params: {
@@ -736,13 +720,14 @@ export const DEFAULT_FEATURES: Features = {
       activeCurrencyIds: [],
     },
   },
-  newSendFlow: {
+  newSendFlow: DEFAULT_FEATURE,
+  cantonSkipPreapprovalStep: DEFAULT_FEATURE,
+  lldSessionReplay: {
     ...DEFAULT_FEATURE,
     params: {
-      families: [],
+      sampling: 100,
     },
   },
-  cantonSkipPreapprovalStep: DEFAULT_FEATURE,
   zcashShielded: DEFAULT_FEATURE,
   llmNanoOnboardingFundWallet: DEFAULT_FEATURE,
   lldRebornABtest: DEFAULT_FEATURE,

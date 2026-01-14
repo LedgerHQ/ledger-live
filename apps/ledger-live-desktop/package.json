@@ -75,7 +75,6 @@
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/hw-transport-vault": "workspace:^",
-    "@ledgerhq/ldls-design-core": "catalog:",
     "@ledgerhq/ldls-ui-react": "0.0.49",
     "@ledgerhq/hw-transport-webhid": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
@@ -178,7 +177,6 @@
   "devDependencies": {
     "@electron/notarize": "3.0.1",
     "@jest/globals": "29.7.0",
-    "@ledgerhq/esbuild-utils": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/live-cli": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",

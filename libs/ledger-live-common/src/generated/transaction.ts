@@ -1,4 +1,3 @@
-import aleo from "@ledgerhq/coin-aleo/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
 import aptos from "@ledgerhq/coin-aptos/transaction";
 import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
@@ -6,6 +5,7 @@ import cardano from "@ledgerhq/coin-cardano/transaction";
 import casper from "@ledgerhq/coin-casper/transaction";
 import canton from "@ledgerhq/coin-canton/transaction";
 import celo from "@ledgerhq/coin-celo/transaction";
+import concordium from "@ledgerhq/coin-concordium/transaction";
 import cosmos from "@ledgerhq/coin-cosmos/transaction";
 import evm from "@ledgerhq/coin-evm/transaction";
 import hedera from "@ledgerhq/coin-hedera/transaction";
@@ -28,7 +28,6 @@ import sui from "@ledgerhq/coin-sui/transaction";
 import mina from "@ledgerhq/coin-mina/transaction";
 
 export default {
-  aleo,
   algorand,
   aptos,
   bitcoin,
@@ -36,6 +35,7 @@ export default {
   casper,
   canton,
   celo,
+  concordium,
   cosmos,
   evm,
   hedera,

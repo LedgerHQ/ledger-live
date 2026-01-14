@@ -277,16 +277,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Thorest API for VeChain",
   },
-  ALEO_MAINNET_NODE_ENDPOINT: {
-    def: "https://api.explorer.provable.com/v2/mainnet",
-    parser: stringParser,
-    desc: "Aleo mainnet node URL",
-  },
-  ALEO_TESTNET_NODE_ENDPOINT: {
-    def: "https://api.explorer.provable.com/v2/testnet",
-    parser: stringParser,
-    desc: "Aleo testnet node URL",
-  },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
     parser: stringParser,
@@ -592,6 +582,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs",
   },
+  MIXPANEL_API_HOST: {
+    def: "https://api.mixpanel.com",
+    parser: stringParser,
+    desc: "Mixpanel API host URL",
+  },
   MAPPING_SERVICE: {
     def: "https://mapping-service.api.ledger.com",
     parser: stringParser,
@@ -848,11 +843,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Dynamic Assets Data Aggregator API Prod",
   },
-  CMC_API_URL: {
-    def: "https://proxycmc.api.live.ledger.com/v3",
-    parser: stringParser,
-    desc: "CoinMarketCap API",
-  },
   PLATFORM_DEBUG: {
     def: false,
     parser: boolParser,
@@ -903,6 +893,16 @@ const envDefinitions = {
     parser: intParser,
     desc: "version used for the platform api",
   },
+  WALLETCONNECT_PROJECT_ID: {
+    def: "",
+    parser: stringParser,
+    desc: "WalletConnect Project ID for concordium",
+  },
+  CONCORDIUM_USE_SOFTWARE_SIGNER: {
+    parser: boolParser,
+    def: false,
+    desc: "Use software signer for Concordium testing/development instead of hardware device",
+  },
   PLAYWRIGHT_RUN: {
     def: false,
     parser: boolParser,
@@ -932,11 +932,6 @@ const envDefinitions = {
     def: "https://crypto-assets-service.api.ledger-test.com",
     parser: stringParser,
     desc: "Cryptoassets list service url (staging)",
-  },
-  PUSH_DEVICES_SERVICE_URL: {
-    def: "https://device-gateway.api.ledger.com",
-    parser: stringParser,
-    desc: "Push Devices Service url for device tracking",
   },
   FEATURE_FLAGS: {
     def: "{}",
