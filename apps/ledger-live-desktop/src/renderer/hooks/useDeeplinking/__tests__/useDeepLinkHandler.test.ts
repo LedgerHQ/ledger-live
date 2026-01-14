@@ -96,6 +96,7 @@ jest.mock("../utils", () => ({
 
 const createMockAccount = (currencyId: string): Account => {
   const currency = getCryptoCurrencyById(currencyId);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return {
     id: `${currencyId}-account-1`,
     type: "Account" as const,
@@ -104,6 +105,7 @@ const createMockAccount = (currencyId: string): Account => {
   } as unknown as Account;
 };
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const createMockTokenAccount = (parentId: string, tokenId: string): TokenAccount =>
   ({
     id: `token-${tokenId}`,
@@ -270,6 +272,7 @@ describe("useDeepLinkHandler", () => {
         );
 
         mockFindCryptoCurrencyByKeyword.mockReturnValue(undefined);
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         mockGetCryptoAssetsStore.findTokenById.mockResolvedValue({
           id: "ethereum/erc20/usdt",
           type: "TokenCurrency",
