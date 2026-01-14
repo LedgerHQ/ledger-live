@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss" important;
+@config "../../tailwind.config.ts";
 
 body {
   font-family: Inter;
