@@ -38,18 +38,6 @@ const getTypeFromString = (value: string) => {
   return operationsTypes.find(item => item === value) ?? "NONE";
 };
 
-let evmAPI: ReturnType<typeof createApi> | null = null;
-const getApi = (configEvm: Parameters<typeof createApi>[0], currencyId: string) => {
-  if (!evmAPI) {
-    evmAPI = createApi(configEvm, currencyId);
-  }
-  return evmAPI;
-};
-
-export const clearEvmApiInstance = () => {
-  evmAPI = null;
-};
-
 const resolveTypesFromContracts = (item: {
   type: OperationType;
   senders: string[];
@@ -77,6 +65,7 @@ const getOperationsList = async ({
   config,
   accountId,
   contracts,
+  api,
 }: {
   info: AccountShapeInfo<CeloAccount>;
   config: SyncConfig;
@@ -85,16 +74,15 @@ const getOperationsList = async ({
     locked: string;
     election: string;
   };
+  api: ReturnType<typeof createApi>;
 }) => {
   const { address, currency, initialAccount } = info;
   const blacklistedTokenIds = config.blacklistedTokenIds || [];
-  const configEvm = getCoinConfig(currency).info;
 
   const syncHash = await getSyncHash(currency, blacklistedTokenIds);
   const shouldSyncFromScratch =
     syncHash !== initialAccount?.syncHash || initialAccount === undefined;
   const latestSyncedHeight = shouldSyncFromScratch ? 0 : initialAccount.blockHeight;
-  const api = getApi(configEvm, currency.id);
   const rawOperationsList = (
     await api.listOperations(address, {
       minHeight: Math.max(latestSyncedHeight - SAFE_REORG_THRESHOLD, 0),
@@ -240,7 +228,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
   const syncHash = await getSyncHash(currency, blacklistedTokenIds);
 
   const nodeApi = getNodeApi(currency);
-  const api = getApi(configEvm, currency.id);
+  const api = createApi(configEvm, currency.id);
   const blockInfo = await api.lastBlock();
   const balance = await nodeApi.getCoinBalance(currency, address);
 
@@ -249,6 +237,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
     config,
     accountId,
     contracts: { locked: lockedGold.address, election: election.address },
+    api,
   });
 
   const nativeOperations = operationsList.filter(({ isSubAccount }) => !isSubAccount);
