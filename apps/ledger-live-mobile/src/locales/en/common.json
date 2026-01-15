@@ -8097,6 +8097,15 @@
       "cta": "Learn more"
     }
   },
+  "marketBanner": {
+    "title": "Explore market",
+    "viewAll": "View all",
+    "viewAllAccessibilityHint": "Double tap to view all market assets",
+    "tile": {
+      "accessibilityLabel": "{{name}}, {{change}}",
+      "accessibilityHint": "Double tap to view market details"
+    }
+  },
   "largeMover": {
     "info": "Info",
     "marketCap": "Market cap",
