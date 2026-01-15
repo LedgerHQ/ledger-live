@@ -13,7 +13,7 @@ import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/type
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import { AvailableProviderV3, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { EventTrigger, DataOfUser } from "../logic/notifications";
+import type { DataOfUser } from "../logic/notifications";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 import {
@@ -117,26 +117,10 @@ export type NotificationsState = {
   permissionStatus?: FirebaseMessagingTypes.AuthorizationStatus;
   /** Boolean indicating whether the push notifications modal is opened or closed */
   isPushNotificationsModalOpen: boolean;
-  /** Type of the push notifications modal to display (either the generic one or the market one) */
-  drawerSource:
-    | "generic"
-    | "onboarding"
-    | "send"
-    | "receive"
-    | "swap"
-    | "stake"
-    | "add_favorite_coin";
-  /** The route name of the current screen displayed in the app, it is updated every time the displayed screen change */
-  currentRouteName?: string;
-  /** The event that triggered the oppening of the push notifications modal */
-  eventTriggered?: EventTrigger;
+  /** This is helps us know what action caused the push notifications modal to open) */
+  drawerSource: "onboarding" | "send" | "receive" | "swap" | "stake" | "add_favorite_coin";
   /** Data related to the user's app usage. We use this data to prompt the push notifications modal on certain conditions only */
   dataOfUser?: DataOfUser;
-  /**
-   * Used to avoid having multiple different modals opened at the same time (for example the push notifications and the ratings ones)
-   * If true, it means another modal is already opened or being opened
-   */
-  isPushNotificationsModalLocked: boolean;
 };
 
 // === DYNAMIC CONTENT STATE ===
@@ -178,12 +162,6 @@ export type RatingsState = {
 
   /** Data related to the user's app usage. We use this data to prompt the rating flow on certain conditions only */
   dataOfUser?: RatingsDataOfUser;
-
-  /**
-   * Used to avoid having multiple different modals opened at the same time (for example the push notifications and the ratings ones)
-   * If true, it means another modal is already opened or being opened
-   */
-  isRatingsModalLocked: boolean;
 };
 
 // === SETTINGS STATE ===
