@@ -42,7 +42,14 @@ describe("getBalance", () => {
     const accountAddress = "0xno_contract_and_no_data";
 
     const api = createApi(mockAptosConfig);
-    expect(await api.getBalance(accountAddress)).toStrictEqual([]);
+    expect(await api.getBalance(accountAddress)).toStrictEqual([
+      {
+        asset: {
+          type: "native",
+        },
+        value: 0n,
+      },
+    ]);
   });
 
   it("should return balance with 'native' contract_address (APTOS_ASSET_ID)", async () => {

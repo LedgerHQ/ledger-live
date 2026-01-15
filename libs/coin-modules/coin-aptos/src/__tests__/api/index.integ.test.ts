@@ -236,6 +236,13 @@ describe("createApi", () => {
       expect(balances.length).toBeGreaterThan(1);
       expect(balances[0].value).toBeGreaterThan(0);
     });
+
+    it("should return 0 for an address with 0 balance", async () => {
+      const result = await api.getBalance(
+        "0xbaeab99276f87a8751210a061952f8d0aad6923c8d9657f3b04f4db99d3a784f",
+      );
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
+    });
   });
 
   describe("listOperations", () => {
