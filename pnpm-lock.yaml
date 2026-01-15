@@ -308,7 +308,7 @@ patchedDependencies:
     hash: 7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732
     path: patches/@exodus__patch-broken-hermes-typed-arrays.patch
   '@ledgerhq/lumen-ui-rnative@0.0.50':
-    hash: 43bd0efae131af0d8c7507ebc77b5b46c58859a5d506db4fe68c564e95973bc3
+    hash: d8b72774d88331612295d3ca98e79c9469ef46f2db38b06bb30b7d971c3ba6e0
     path: patches/@ledgerhq__lumen-ui-rnative@0.0.50.patch
   '@taquito/http-utils':
     hash: fa57afa8cde2dca5953b33875e5797001987caeb346d5a479e7de0c4dd941cb3
@@ -1340,7 +1340,7 @@ importers:
         version: 0.0.40
       '@ledgerhq/lumen-ui-rnative':
         specifier: 0.0.50
-        version: 0.0.50(patch_hash=43bd0efae131af0d8c7507ebc77b5b46c58859a5d506db4fe68c564e95973bc3)(73fe3062c300f521b2b38f9037e50916)
+        version: 0.0.50(patch_hash=d8b72774d88331612295d3ca98e79c9469ef46f2db38b06bb30b7d971c3ba6e0)(73fe3062c300f521b2b38f9037e50916)
       '@ledgerhq/native-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/native
@@ -45100,7 +45100,7 @@ snapshots:
     transitivePeerDependencies:
       - react-native
 
-  '@ledgerhq/lumen-ui-rnative@0.0.50(patch_hash=43bd0efae131af0d8c7507ebc77b5b46c58859a5d506db4fe68c564e95973bc3)(73fe3062c300f521b2b38f9037e50916)':
+  '@ledgerhq/lumen-ui-rnative@0.0.50(patch_hash=d8b72774d88331612295d3ca98e79c9469ef46f2db38b06bb30b7d971c3ba6e0)(73fe3062c300f521b2b38f9037e50916)':
     dependencies:
       '@gorhom/bottom-sheet': 5.2.6(@types/react@19.0.14)(react-native-gesture-handler@2.28.0(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-reanimated@3.19.5(@babel/core@7.28.5)(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@ledgerhq/lumen-design-core': 0.0.40

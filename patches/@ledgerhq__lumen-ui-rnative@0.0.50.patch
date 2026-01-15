@@ -43,3 +43,28 @@ index f5511413f3625df9442e1d305190bf6be94af3ae..527f253451cf9b31420fd91358b3be7f
            textComponentType,
          );
        }
+diff --git a/src/styles/provider/LumenStyleSheetProvider.tsx b/src/styles/provider/LumenStyleSheetProvider.tsx
+index 7ba469672753f0a75ef87903d663499f071715df..5340bb6fe4c319386cb091590bb186737e37802c 100644
+--- a/src/styles/provider/LumenStyleSheetProvider.tsx
++++ b/src/styles/provider/LumenStyleSheetProvider.tsx
+@@ -45,16 +45,19 @@ export const LumenStyleSheetProvider: FC<LumenStyleSheetProviderProps> = ({
+ 
+   /**
+    * Side-effect to update the color scheme of the app when the colorScheme changes.
++   * Only set system appearance when NOT in controlled mode (colorScheme prop not provided).
++   * In controlled mode, the parent manages the theme and shouldn't modify system appearance.
+    */
+   useEffect(() => {
+     if (
++      colorScheme === undefined && // Only in uncontrolled mode
+       colorSchemeState !== null &&
+       colorSchemeState !== undefined &&
+       RuntimeConstants.isNative
+     ) {
+       Appearance.setColorScheme(colorSchemeState as ColorSchemeName);
+     }
+-  }, [colorSchemeState]);
++  }, [colorScheme, colorSchemeState]);
+ 
+   const contextValue = useMemo(() => {
+     const currentTheme = themes[colorSchemeState as 'dark' | 'light'];
