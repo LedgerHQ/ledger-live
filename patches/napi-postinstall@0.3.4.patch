@@ -1,8 +1,8 @@
 diff --git a/lib/index.js b/lib/index.js
-index f6c4674158cf9ffb30aff5c7ef7c78e7a5cb1f4a..a822c1e1d764f26283f53191050c1ca3c8fd8a00 100644
+index f6c4674158cf9ffb30aff5c7ef7c78e7a5cb1f4a..59727192467d5b2258ca70d0eb776949781f3744 100644
 --- a/lib/index.js
 +++ b/lib/index.js
-@@ -134,11 +134,50 @@ function installUsingNPM(hostPkg, pkg, version, target, subpath, nodePath) {
+@@ -134,11 +134,53 @@ function installUsingNPM(hostPkg, pkg, version, target, subpath, nodePath) {
          }
      }
  }
@@ -16,14 +16,17 @@ index f6c4674158cf9ffb30aff5c7ef7c78e7a5cb1f4a..a822c1e1d764f26283f53191050c1ca3
 +          `npm_config_//${u.host}${pathParts}/:_authToken`;
 +
 +        if (process.env[scopedKey]) {
++            console.log('scoped key added');
 +            return process.env[scopedKey];
 +        }
 +
 +        const registryKey = `npm_config_//${u.host}/:_authToken`;
 +        if (process.env[registryKey]) {
++            console.log('registry key added');
 +            return process.env[registryKey];
 +        }
 +
++        console.log('no key added');
 +        return null;
 +
 +    } catch {
