@@ -1,4 +1,5 @@
 import React, { useMemo, type ComponentType, type ReactNode, type CSSProperties } from "react";
+import { cn } from "LLD/utils/cn";
 import { useFlowWizardNavigation } from "./hooks/useFlowWizardNavigation";
 import type {
   FlowStep,
@@ -95,7 +96,7 @@ export function FlowWizardOrchestrator<
       <div className="flex flex-col" style={containerStyle}>
         {children}
         {StepComponent && (
-          <div key={state.currentStep} className={`min-h-0 flex-1 ${animationClass ?? ""}`}>
+          <div key={state.currentStep} className={cn("min-h-0 flex-1", animationClass)}>
             <StepComponent />
           </div>
         )}
