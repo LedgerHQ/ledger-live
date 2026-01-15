@@ -1,42 +1,16 @@
 diff --git a/lib/index.js b/lib/index.js
-index f6c4674158cf9ffb30aff5c7ef7c78e7a5cb1f4a..59727192467d5b2258ca70d0eb776949781f3744 100644
+index f6c4674158cf9ffb30aff5c7ef7c78e7a5cb1f4a..c666ff609bbe05501dd05609d3b141d927b2671f 100644
 --- a/lib/index.js
 +++ b/lib/index.js
-@@ -134,11 +134,53 @@ function installUsingNPM(hostPkg, pkg, version, target, subpath, nodePath) {
+@@ -134,11 +134,27 @@ function installUsingNPM(hostPkg, pkg, version, target, subpath, nodePath) {
          }
      }
  }
 +
-+function resolveAuthToken(downloadUrl) {
-+    try {
-+        const u = new URL(downloadUrl);
-+
-+        const pathParts = u.pathname.split('/').slice(0, 3).join('/');
-+        const scopedKey =
-+          `npm_config_//${u.host}${pathParts}/:_authToken`;
-+
-+        if (process.env[scopedKey]) {
-+            console.log('scoped key added');
-+            return process.env[scopedKey];
-+        }
-+
-+        const registryKey = `npm_config_//${u.host}/:_authToken`;
-+        if (process.env[registryKey]) {
-+            console.log('registry key added');
-+            return process.env[registryKey];
-+        }
-+
-+        console.log('no key added');
-+        return null;
-+
-+    } catch {
-+        return null;
-+    }
-+}
  async function downloadDirectlyFromNPM(pkg, version, subpath, nodePath) {
      const url = `${(0, helpers_js_1.getGlobalNpmRegistry)()}${pkg}/-/${pkg.startsWith('@') ? pkg.split('/')[1] : pkg}-${version}.tgz`;
 +
-+    const token = resolveAuthToken(url);
++    const token = process.env.NAPI_POSTINSTALL_TOKEN;
 +
 +    const headers = {};
 +
