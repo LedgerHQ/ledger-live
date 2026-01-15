@@ -5,12 +5,14 @@ import { InteractiveIcon } from "@ledgerhq/lumen-ui-react";
 import { useHistory } from "react-router-dom";
 import { useMarketBannerViewModel } from "./hooks/useMarketBannerViewModel";
 import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
+import GenericError from "./components/GenericError";
 
 type MarketBannerViewProps = {
   readonly isLoading: boolean;
+  readonly isError: boolean;
 };
 
-const MarketBannerView = ({ isLoading }: MarketBannerViewProps) => {
+const MarketBannerView = ({ isLoading, isError }: MarketBannerViewProps) => {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -19,6 +21,13 @@ const MarketBannerView = ({ isLoading }: MarketBannerViewProps) => {
       pathname: `/market`,
     });
   }, [history]);
+
+  let content: React.ReactNode = null;
+  if (isLoading) {
+    content = <SkeletonList />;
+  } else if (isError) {
+    content = <GenericError />;
+  }
 
   return (
     <div className="flex flex-col">
@@ -33,15 +42,15 @@ const MarketBannerView = ({ isLoading }: MarketBannerViewProps) => {
           <ChevronRight size={16} />
         </InteractiveIcon>
       </div>
-      {isLoading ? <SkeletonList /> : null}
+      {content}
     </div>
   );
 };
 
 const MarketBanner = () => {
-  const { isLoading } = useMarketBannerViewModel();
+  const { isLoading, isError } = useMarketBannerViewModel();
 
-  return <MarketBannerView isLoading={isLoading} />;
+  return <MarketBannerView isLoading={isLoading} isError={isError} />;
 };
 
 export { MarketBannerView };
