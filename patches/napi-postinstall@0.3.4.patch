@@ -1,38 +1,34 @@
+diff --git a/lib/helpers.js b/lib/helpers.js
+index 8f18fd18109e13d0f22ac5d054a8269f34ea5315..75dff9c44d1006b410d95d6d495d3acf4f601f70 100644
+--- a/lib/helpers.js
++++ b/lib/helpers.js
+@@ -15,6 +15,11 @@ const path = require("node:path");
+ const constants_js_1 = require("./constants.js");
+ const target_js_1 = require("./target.js");
+ function getGlobalNpmRegistry() {
++
++    if (process.env.NAPI_POSTINSTALL_CONFIG_REGISTRY)
++        return process.env.NAPI_POSTINSTALL_CONFIG_REGISTRY;
++    }
++
+     try {
+         const registry = (0, node_child_process_1.execSync)('npm config get registry', {
+             encoding: 'utf8',
 diff --git a/lib/index.js b/lib/index.js
-index f6c4674158cf9ffb30aff5c7ef7c78e7a5cb1f4a..4b07fb41916cd5a74052c13349b6c25a1dd45699 100644
+index f6c4674158cf9ffb30aff5c7ef7c78e7a5cb1f4a..ee071352a580a3be02b2dc21f7e449fb4a0b1209 100644
 --- a/lib/index.js
 +++ b/lib/index.js
-@@ -134,11 +134,32 @@ function installUsingNPM(hostPkg, pkg, version, target, subpath, nodePath) {
+@@ -134,11 +134,12 @@ function installUsingNPM(hostPkg, pkg, version, target, subpath, nodePath) {
          }
      }
  }
 +
  async function downloadDirectlyFromNPM(pkg, version, subpath, nodePath) {
      const url = `${(0, helpers_js_1.getGlobalNpmRegistry)()}${pkg}/-/${pkg.startsWith('@') ? pkg.split('/')[1] : pkg}-${version}.tgz`;
-+
-+    const token = process.env.NAPI_POSTINSTALL_TOKEN;
-+
-+    const headers = {};
-+
-+    if (token) {
-+        headers['X-JFrog-Art-Api'] = token;
-+        console.log('token found');
-+    }else{
-+        console.log('token not found');
-+    }
-+
      (0, helpers_js_1.errorLog)(`Trying to download ${JSON.stringify(url)}`);
      try {
 -        fs.writeFileSync(nodePath, extractFileFromTarGzip(await fetch(url), subpath));
-+        const res = await fetch(url, {
-+            headers: headers
-+        });
-+
-+        if (!res.ok) {
-+            throw new Error(`HTTP ${res.status} ${res.statusText}`);
-+        }
-+
-+        fs.writeFileSync(nodePath, extractFileFromTarGzip(res, subpath));
++        fs.writeFileSync(nodePath, extractFileFromTarGzip(fetch(url), subpath));
      }
      catch (err) {
          (0, helpers_js_1.errorLog)(`Failed to download ${JSON.stringify(url)}`, (0, helpers_js_1.getErrorMessage)(err));
