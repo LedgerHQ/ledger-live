@@ -245,7 +245,7 @@
     "react-refresh": "0.14.0",
     "react-test-renderer": "catalog:",
     "serve-handler": "6.1.5",
-    "storybook": "8.6.12",
+    "storybook": "7.6.21",
     "tailwindcss": "catalog:",
     "ts-node": "10.9.2",
     "typescript": "5.4.3",
