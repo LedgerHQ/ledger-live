@@ -3,6 +3,7 @@ import {
   buildOptimisticOperation,
   cleanedOperation,
   extractBalance,
+  extractBalances,
   findCryptoCurrencyByNetwork,
   transactionToIntent,
 } from "./utils";
@@ -330,6 +331,59 @@ describe("Alpaca utils", () => {
 
     it("does not find non existing currencies", () => {
       expect(findCryptoCurrencyByNetwork("non_existing_currency")).toBeUndefined();
+    });
+  });
+
+  describe("extractBalances", () => {
+    it("extracts native balance only", () => {
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(10),
+          balance: BigNumber(10),
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 0n, asset: { type: "native" } }]);
+
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(8),
+          balance: BigNumber(10),
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 2n, asset: { type: "native" } }]);
+    });
+
+    it("extracts native and token balances", () => {
+      expect(
+        extractBalances(
+          {
+            spendableBalance: BigNumber(10),
+            balance: BigNumber(10),
+            subAccounts: [
+              {
+                spendableBalance: BigNumber(11),
+                balance: BigNumber(20),
+                token: {
+                  tokenType: "erc20",
+                  contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                },
+              },
+            ],
+          } as unknown as Account,
+          token => ({
+            type: token.tokenType,
+            assetReference: token.contractAddress,
+          }),
+        ),
+      ).toEqual([
+        { value: 10n, locked: 0n, asset: { type: "native" } },
+        {
+          asset: {
+            assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+            type: "erc20",
+          },
+          locked: 9n,
+          value: 20n,
+        },
+      ]);
     });
   });
 

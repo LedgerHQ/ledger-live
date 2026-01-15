@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.55.1",
+  "version": "34.56.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -140,6 +140,7 @@
   "dependencies": {
     "@blooo/hw-app-acre": "^1.1.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
+    "@ledgerhq/coin-aleo": "workspace:^",
     "@ledgerhq/coin-algorand": "workspace:^",
     "@ledgerhq/coin-aptos": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
@@ -208,6 +209,7 @@
     "@ledgerhq/live-hooks": "workspace:*",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
+    "@ledgerhq/live-signer-aleo": "workspace:^",
     "@ledgerhq/live-signer-canton": "workspace:^",
     "@ledgerhq/live-signer-evm": "workspace:^",
     "@ledgerhq/live-signer-solana": "workspace:^",
@@ -260,7 +262,7 @@
     "pako": "^2.0.4",
     "performance-now": "^2.1.0",
     "prando": "^6.0.1",
-    "qs": "^6.10.1",
+    "qs": "^6.14.1",
     "reselect": "catalog:",
     "rlp": "^3.0.0",
     "rxjs": "catalog:",

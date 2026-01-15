@@ -5,31 +5,17 @@
   "dependencies": {
     "@ledgerhq/live-app-sdk": "^0.8.0",
     "react": "catalog:",
-    "react-dom": "catalog:",
-    "react-scripts": "5.0.1"
+    "react-dom": "catalog:"
   },
   "scripts": {
-    "start": "cross-env DISABLE_ESLINT_PLUGIN=true react-scripts start",
-    "build": "cross-env DISABLE_ESLINT_PLUGIN=true react-scripts build"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "start": "rspack serve",
+    "build": "rspack build"
   },
   "devDependencies": {
-    "@types/jest": "catalog:",
+    "@rspack/cli": "catalog:",
+    "@rspack/core": "catalog:",
     "@types/node": "^22.10.10",
     "@types/react": "^18.2.21",
-    "@types/react-dom": "^18.2.13",
-    "cross-env": "^7.0.3",
-    "webpack": "5.94.0"
+    "@types/react-dom": "^18.2.13"
   }
 }

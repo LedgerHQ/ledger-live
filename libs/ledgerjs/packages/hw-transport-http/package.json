@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-http",
-  "version": "6.32.0",
+  "version": "6.32.1",
   "description": "Ledger Hardware Wallet communication layer over http",
   "keywords": [
     "Ledger",
@@ -21,6 +21,16 @@
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport-http",
   "publishConfig": {
     "access": "public"
+  },
+  "exports": {
+    ".": {
+      "import": "./lib-es/withStaticURLs.js",
+      "require": "./lib/withStaticURLs.js"
+    },
+    "./WebSocketTransport": {
+      "import": "./lib-es/WebSocketTransport.js",
+      "require": "./lib/WebSocketTransport.js"
+    }
   },
   "main": "lib/withStaticURLs.js",
   "module": "lib-es/withStaticURLs.js",

@@ -1,9 +1,9 @@
-import { HEDERA_TRANSACTION_NAMES } from "../constants";
+import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { getBlock } from "./getBlock";
 import { getBlockInfo } from "./getBlockInfo";
 import { apiClient } from "../network/api";
 import type { StakingAnalysis } from "../types";
-import { analyzeStakingOperation, getTimestampRangeFromBlockHeight } from "./utils";
+import { analyzeStakingOperation, getDateRangeFromBlockHeight } from "./utils";
 
 jest.mock("./getBlockInfo");
 jest.mock("../network/api");
@@ -16,15 +16,15 @@ describe("getBlock", () => {
     time: new Date("2024-01-01T00:00:00Z"),
   };
 
-  const mockTimestampRange = {
-    start: "1704067200.000000000",
-    end: "1704067260.000000000",
+  const mockDateRange = {
+    start: new Date(1704067200123),
+    end: new Date(1704067260456),
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
     (getBlockInfo as jest.Mock).mockResolvedValue(mockBlockInfo);
-    (getTimestampRangeFromBlockHeight as jest.Mock).mockReturnValue(mockTimestampRange);
+    (getDateRangeFromBlockHeight as jest.Mock).mockReturnValue(mockDateRange);
     (analyzeStakingOperation as jest.Mock).mockResolvedValue(null);
   });
 
@@ -44,12 +44,12 @@ describe("getBlock", () => {
 
     await getBlock(42);
 
-    expect(getTimestampRangeFromBlockHeight).toHaveBeenCalledWith(42);
+    expect(getDateRangeFromBlockHeight).toHaveBeenCalledWith(42);
     expect(getBlockInfo).toHaveBeenCalledWith(42);
     expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledTimes(1);
     expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledWith({
-      startTimestamp: `gte:${mockTimestampRange.start}`,
-      endTimestamp: `lt:${mockTimestampRange.end}`,
+      startTimestamp: `gte:1704067200.123`,
+      endTimestamp: `lt:1704067260.456`,
     });
   });
 
@@ -379,5 +379,53 @@ describe("getBlock", () => {
         amount: BigInt(1000),
       },
     ]);
+  });
+
+  it("should throw error when querying a block in the future", async () => {
+    const now = Date.now();
+    const futureRange = {
+      start: new Date(now + 60_000),
+      end: new Date(now + 120_000),
+    };
+
+    (getDateRangeFromBlockHeight as jest.Mock).mockReturnValue(futureRange);
+
+    await expect(getBlock(999)).rejects.toThrow("Block 999 is not available yet");
+    expect(getBlockInfo).not.toHaveBeenCalled();
+    expect(apiClient.getTransactionsByTimestampRange).not.toHaveBeenCalled();
+  });
+
+  it("should throw error when querying a block overlapping the non-finalized window", async () => {
+    const now = Date.now();
+    const overlappingRange = {
+      start: new Date(now - FINALITY_MS - 1_000),
+      end: new Date(now - FINALITY_MS / 2),
+    };
+
+    (getDateRangeFromBlockHeight as jest.Mock).mockReturnValue(overlappingRange);
+
+    await expect(getBlock(998)).rejects.toThrow("Block 998 is not available yet");
+    expect(getBlockInfo).not.toHaveBeenCalled();
+    expect(apiClient.getTransactionsByTimestampRange).not.toHaveBeenCalled();
+  });
+
+  it("should succeed when querying the finalized window", async () => {
+    const now = Date.now();
+    const finalizedRange = {
+      start: new Date(now - FINALITY_MS - 120_000),
+      end: new Date(now - FINALITY_MS - 60_000),
+    };
+
+    (getDateRangeFromBlockHeight as jest.Mock).mockReturnValue(finalizedRange);
+    (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([]);
+
+    const result = await getBlock(100);
+
+    expect(result).toEqual({
+      info: mockBlockInfo,
+      transactions: [],
+    });
+    expect(getBlockInfo).toHaveBeenCalledWith(100);
+    expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalled();
   });
 });

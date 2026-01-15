@@ -95,7 +95,8 @@ jobs:
       android_js_key: ${{ steps.cache-keys.outputs.android_js_key }}
       android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
       ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
-      shard_matrix: ${{ steps.generate-shard-matrix.outputs.matrix }}
+      matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
+      matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
     steps:
 
       - uses: actions/checkout@v4
@@ -119,8 +120,24 @@ jobs:
           echo "android_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-3" >> $GITHUB_OUTPUT
           echo "ios_js_key=${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
-          echo "android_timing_cache_key=android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}" >> $GITHUB_OUTPUT
-          echo "ios_timing_cache_key=ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}" >> $GITHUB_OUTPUT
+          echo "android_timing_cache_key=android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-2" >> $GITHUB_OUTPUT
+          echo "ios_timing_cache_key=ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-2" >> $GITHUB_OUTPUT
+
+      - name: Generate shards matrix and test files
+        id: generate-shards
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
+        with:
+          test_directory: apps/ledger-live-mobile/e2e
+          test_filter: ${{ inputs.test_filter || '' }}
+          event_name: ${{ github.event_name }}
+          ref: ${{ inputs.ref || github.ref_name }}
+          ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
+          android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
+          aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
+          cache_bucket: ${{ env.cache-bucket }}
+          aws_region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
@@ -174,13 +191,6 @@ jobs:
           use-fallback: false
           lookup-only: true
 
-      - name: Generate shard matrix
-        id: generate-shard-matrix
-        run: |
-          max_shards=${{ inputs.max-shards || 2 }}
-          shard_indices=$(seq -s ',' 1 $max_shards)
-          echo "matrix={\"shardIndex\":[$shard_indices],\"shardTotal\":[$max_shards]}" >> $GITHUB_OUTPUT
-
   build-ios:
     name: "iOS Build"
     needs: [ determine-builds ]
@@ -209,13 +219,14 @@ jobs:
     secrets: inherit
 
   detox-tests-ios:
-    name: "iOS Build / iOS Detox"
+    name: "iOS Build / iOS Detox (${{ matrix.shard }}, ${{ matrix.total }})"
     needs: [ build-ios, determine-builds ]
     runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
     timeout-minutes: 120
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.determine-builds.outputs.shard_matrix) }}
+      matrix:
+        include: ${{ fromJson(needs.determine-builds.outputs.matrix_ios) }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -252,35 +263,12 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Setup iOS timing cache
-        timeout-minutes: 5
-        uses: tespkg/actions-cache/restore@v1
-        with:
-          path: apps/ledger-live-mobile/e2e/artifacts/e2e-test-results-ios.json
-          key: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}"
-          restore-keys:
-            ios-mock-timing-
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-
-      - name: Generate timing-based shards
-        id: timing-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@develop
-        with:
-          test_directory: apps/ledger-live-mobile/e2e
-          platform: ios
-          shard_index: ${{ matrix.shardIndex }}
-          shard_total: ${{ matrix.shardTotal }}
-
-      - name: Set shard test files environment variable
+      - name: Set shard test files from pre-computed matrix
         run: |
           echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
-          echo "${{ steps.timing-shards.outputs.shard_test_files }}" >> $GITHUB_ENV
+          echo "${{ matrix.files }}" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+          echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - uses: nick-fields/retry@v3
         name: install dependencies
@@ -339,7 +327,7 @@ jobs:
         timeout-minutes: 75
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
         with:
-          command: pnpm mobile e2e:ci -- -p ios -t $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shardIndex }}.json
+          command: pnpm mobile e2e:ci -- -p ios -t $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
@@ -349,15 +337,15 @@ jobs:
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         id: "test-artifacts"
         with:
-          name: "ios-test-artifacts-${{ matrix.shardIndex }}"
+          name: "ios-test-artifacts-${{ matrix.shard }}"
           path: apps/ledger-live-mobile/artifacts
 
       - name: Setup iOS Shard timing artifacts
         if: (!cancelled() || steps.detox.outcome == 'cancelled')
         uses: actions/upload-artifact@v4
         with:
-          path: apps/ledger-live-mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shardIndex }}.json
-          name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shardIndex }}"
+          path: apps/ledger-live-mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
+          name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shard }}"
 
       - name: Record Flake
         if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/ios.**') != '' }}
@@ -365,7 +353,7 @@ jobs:
           echo "Flake detected for iOS tests"
 
   detox-tests-android:
-    name: "Android Build / Android Detox"
+    name: "Android Build / Android Detox (${{ matrix.shard }}, ${{ matrix.total }})"
     needs: [ build-android, determine-builds ]
     runs-on: [ ledger-live-linux-8CPU-32RAM ]
     timeout-minutes: 80
@@ -389,7 +377,8 @@ jobs:
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.determine-builds.outputs.shard_matrix) }}
+      matrix:
+        include: ${{ fromJson(needs.determine-builds.outputs.matrix_android) }}
 
     steps:
       - uses: actions/checkout@v4
@@ -446,35 +435,12 @@ jobs:
           /usr/local/lib/android/sdk/build-tools/34.0.0/zipalign -p 4 /tmp/apk/tmp.apk ${{ env.ANDROID_APK_PATH }}
           /usr/local/lib/android/sdk/build-tools/34.0.0/apksigner sign --ks ${{ secrets.ANDROID_KEYSTORE_PATH }} --ks-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --ks-key-alias staging --key-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} ${{ env.ANDROID_APK_PATH }}
 
-      - name: Setup Android timing cache
-        timeout-minutes: 5
-        uses: tespkg/actions-cache/restore@v1
-        with:
-          path: apps/ledger-live-mobile/e2e/artifacts/e2e-test-results-android.json
-          key: "${{ needs.determine-builds.outputs.android_timing_cache_key }}"
-          restore-keys:
-            android-mock-timing-
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-
-      - name: Generate timing-based shards
-        id: timing-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@develop
-        with:
-          test_directory: apps/ledger-live-mobile/e2e
-          platform: android
-          shard_index: ${{ matrix.shardIndex }}
-          shard_total: ${{ matrix.shardTotal }}
-
-      - name: Set shard test files environment variable
+      - name: Set shard test files from pre-computed matrix
         run: |
           echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
-          echo "${{ steps.timing-shards.outputs.shard_test_files }}" >> $GITHUB_ENV
+          echo "${{ matrix.files }}" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+          echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -568,7 +534,7 @@ jobs:
 
       - name: Run Android Tests
         id: detox
-        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-android-shard-${{ matrix.shardIndex }}.json
+        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
         timeout-minutes: ${{ 45 }}
         env:
           DETOX_INSTALL_TIMEOUT: 120000
@@ -580,15 +546,15 @@ jobs:
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         id: "test-artifacts"
         with:
-          name: "android-test-artifacts-${{ matrix.shardIndex }}"
+          name: "android-test-artifacts-${{ matrix.shard }}"
           path: apps/ledger-live-mobile/artifacts/
 
       - name: Setup Android Shard timing artifacts
         if: (!cancelled() || steps.detox.outcome == 'cancelled')
         uses: actions/upload-artifact@v4
         with:
-          path: apps/ledger-live-mobile/artifacts/e2e-test-results-android-shard-${{ matrix.shardIndex }}.json
-          name: "${{ needs.determine-builds.outputs.android_timing_cache_key }}-${{ matrix.shardIndex }}"
+          path: apps/ledger-live-mobile/artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
+          name: "${{ needs.determine-builds.outputs.android_timing_cache_key }}-${{ matrix.shard }}"
 
       - name: Record Flake
         if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/android.**') != '' }}
@@ -598,7 +564,7 @@ jobs:
       - name: Set job output based on detox result
         id: set-output
         if: ${{ !cancelled() }}
-        run: echo "status_${{ matrix.shardIndex }}=${{ steps.detox.outcome }}" >> $GITHUB_OUTPUT
+        run: echo "status_${{ matrix.shard }}=${{ steps.detox.outcome }}" >> $GITHUB_OUTPUT
 
   report-bundle-sizes:
     name: "Build Mobile > Report Bundle Sizes"

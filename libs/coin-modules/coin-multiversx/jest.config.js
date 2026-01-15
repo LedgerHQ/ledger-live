@@ -1,3 +1,5 @@
+const swcJest = require.resolve("@swc/jest");
+
 module.exports = {
   passWithNoTests: true,
   collectCoverageFrom: [
@@ -13,7 +15,7 @@ module.exports = {
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   transform: {
     "^.+\\.(ts|tsx)$": [
-      "@swc/jest",
+      swcJest,
       {
         jsc: {
           target: "esnext",

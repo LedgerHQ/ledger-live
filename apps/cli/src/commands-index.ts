@@ -10,9 +10,6 @@ import generateTestTransaction from "./commands/blockchain/generateTestTransacti
 import getAddress from "./commands/blockchain/getAddress";
 import getTransactionStatus from "./commands/blockchain/getTransactionStatus";
 import receive from "./commands/blockchain/receive";
-import satstack from "./commands/blockchain/satstack";
-import satstackStatus from "./commands/blockchain/satstackStatus";
-import scanDescriptors from "./commands/blockchain/scanDescriptors";
 import send from "./commands/blockchain/send";
 import signMessage from "./commands/blockchain/signMessage";
 import sync from "./commands/blockchain/sync";
@@ -75,9 +72,6 @@ export default {
   getAddress,
   getTransactionStatus,
   receive,
-  satstack,
-  satstackStatus,
-  scanDescriptors,
   send,
   signMessage,
   sync,

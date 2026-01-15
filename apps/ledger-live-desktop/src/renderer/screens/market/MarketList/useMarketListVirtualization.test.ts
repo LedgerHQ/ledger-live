@@ -3,10 +3,7 @@
  */
 import { renderHook, waitFor } from "tests/testSetup";
 import { useMarketListVirtualization } from "./useMarketListVirtualization";
-import {
-  mockDomMeasurements,
-  setRefCurrent,
-} from "~/renderer/../newArch/features/__tests__/shared";
+import { mockDomMeasurements, setRefCurrent } from "LLD/features/__tests__/shared";
 import { mockMarketData } from "./__fixtures__/marketData";
 
 describe("useMarketListVirtualization", () => {
@@ -52,7 +49,7 @@ describe("useMarketListVirtualization", () => {
         }),
       {
         initialProps: {
-          itemCount: 2,
+          itemCount: 10,
           marketData: mockMarketData,
           loading: false,
           currenciesLength: 2,
@@ -65,11 +62,15 @@ describe("useMarketListVirtualization", () => {
       writable: true,
       value: 0,
     });
+    Object.defineProperty(mockParentElement, "scrollHeight", {
+      writable: true,
+      value: 1000,
+    });
 
     setRefCurrent(result.current.parentRef, mockParentElement);
 
     rerender({
-      itemCount: 2,
+      itemCount: 10,
       marketData: mockMarketData,
       loading: false,
       currenciesLength: 2,
@@ -108,6 +109,31 @@ describe("useMarketListVirtualization", () => {
         checkIfDataIsStaleAndRefetch: mockCheckIfDataIsStaleAndRefetch,
       }),
     );
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    expect(mockOnLoadNextPage).not.toHaveBeenCalled();
+  });
+
+  it("should not call onLoadNextPage when itemCount equals currenciesLength", async () => {
+    const { result } = renderHook(() =>
+      useMarketListVirtualization({
+        itemCount: 2,
+        marketData: mockMarketData,
+        loading: false,
+        currenciesLength: 2,
+        onLoadNextPage: mockOnLoadNextPage,
+        checkIfDataIsStaleAndRefetch: mockCheckIfDataIsStaleAndRefetch,
+      }),
+    );
+
+    const mockParentElement = document.createElement("div");
+    Object.defineProperty(mockParentElement, "scrollTop", {
+      writable: true,
+      value: 0,
+    });
+
+    setRefCurrent(result.current.parentRef, mockParentElement);
 
     await new Promise(resolve => setTimeout(resolve, 100));
 

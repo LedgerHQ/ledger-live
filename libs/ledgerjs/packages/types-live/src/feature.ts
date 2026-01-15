@@ -154,6 +154,8 @@ export type CurrencyFeatures = {
   currencyZeroGravity: DefaultFeature;
   currencyConcordium: DefaultFeature;
   currencyConcordiumTestnet: DefaultFeature;
+  currencyAleo: DefaultFeature;
+  currencyAleoTestnet: DefaultFeature;
 };
 
 /**
@@ -229,7 +231,6 @@ export type Features = CurrencyFeatures & {
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
-  llMevProtection: Feature_LlMevProtection;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmRebornLP: Feature_LlmRebornLP;
   llmAccountListUI: DefaultFeature;
@@ -237,7 +238,7 @@ export type Features = CurrencyFeatures & {
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
   lwmLedgerSyncOptimisation: DefaultFeature;
   lwdLedgerSyncOptimisation: DefaultFeature;
-  lwmNewWordingOptInNotificationsDrawer: DefaultFeature;
+  lwmNewWordingOptInNotificationsDrawer: Feature_LwmNewWordingOptInNotificationsDrawer;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;
@@ -394,6 +395,45 @@ export type Feature_BrazePushNotifications = Feature<{
     timer: number;
     type: string;
   }[];
+  reprompt_schedule: Array<{
+    months: number;
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  }>;
+  action_events: {
+    complete_onboarding: {
+      enabled: boolean;
+      timer: number;
+    };
+    send: {
+      enabled: boolean;
+      timer: number;
+    };
+    receive: {
+      enabled: boolean;
+      timer: number;
+    };
+    buy: {
+      enabled: boolean;
+      timer: number;
+    };
+    swap: {
+      enabled: boolean;
+      timer: number;
+    };
+    stake: {
+      enabled: boolean;
+      timer: number;
+    };
+    add_favorite_coin: {
+      enabled: boolean;
+      timer: number;
+    };
+  };
+
+  // Legacy fields kept for backward compatibility with existing configurations.
   marketCoinStarred: {
     enabled: boolean;
     timer: number;
@@ -675,10 +715,6 @@ export type Feature_LlCounterValueGranularitiesRates = Feature<{
   hourly: number;
 }>;
 
-export type Feature_LlMevProtection = Feature<{
-  link: string | null;
-}>;
-
 export type Feature_LlmMmkvMigration = Feature<{
   shouldRollback: boolean | null;
 }>;
@@ -793,6 +829,9 @@ export type Feature_LwdWallet40 = Feature<
     //  Add specific LWD params
   } & Feature_Wallet40_Params
 >;
+export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{
+  variant: ABTestingVariants;
+}>;
 
 /**
  * Utils types.

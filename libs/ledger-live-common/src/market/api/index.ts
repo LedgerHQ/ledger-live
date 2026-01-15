@@ -3,7 +3,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import {
   MarketCurrencyChartDataRequestParams,
   MarketListRequestParams,
-  MarketPerformersParams,
   MarketItemResponse,
   SupportedCoins,
   MarketCurrencyRequestParams,
@@ -13,7 +12,7 @@ import {
 } from "../utils/types";
 import { rangeDataTable } from "../utils/rangeDataTable";
 import URL from "url";
-import { getRange, getSortParam } from "../utils";
+import { getSortParam } from "../utils";
 
 const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
 const ROOT_PATH = getEnv("MARKET_API_URL");
@@ -31,7 +30,7 @@ export async function fetchList({
   page = 1,
   order = Order.MarketCapDesc,
   search = "",
-  liveCoinsList = [],
+  liveCompatible = false,
   starred = [],
   range = "24",
 }: MarketListRequestParams): Promise<MarketItemResponse[]> {
@@ -44,7 +43,7 @@ export async function fetchList({
       sort: getSortParam(order, range),
       ...(search.length >= 2 && { filter: search }),
       ...(starred.length > 0 && { ids: starred.sort().join(",") }),
-      ...(liveCoinsList.length > 1 && { ids: liveCoinsList.sort().join(",") }),
+      ...(liveCompatible && { supported: liveCompatible }),
       ...([Order.topLosers, Order.topGainers].includes(order) && { top: 100 }),
     },
   });
@@ -110,30 +109,4 @@ export async function fetchCurrency({
   const { data } = await network<MarketItemResponse[]>({ method: "GET", url });
 
   return data[0];
-}
-
-export async function fetchMarketPerformers({
-  counterCurrency,
-  range,
-  limit = 5,
-  top = 50,
-  sort,
-  supported,
-}: MarketPerformersParams): Promise<MarketItemResponse[]> {
-  const sortParam = `${sort === "asc" ? "positive" : "negative"}-price-change-${getRange(range)}`;
-
-  const url = URL.format({
-    pathname: `${baseURL()}/v3/markets`,
-    query: {
-      to: counterCurrency,
-      limit,
-      top,
-      sort: sortParam,
-      supported,
-    },
-  });
-
-  const { data } = await network<MarketItemResponse[]>({ method: "GET", url });
-
-  return data;
 }

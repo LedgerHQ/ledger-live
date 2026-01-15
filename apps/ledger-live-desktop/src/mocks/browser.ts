@@ -2,6 +2,7 @@ import { setupWorker } from "msw/browser";
 import { http, HttpResponse } from "msw";
 import { mockAssets } from "./dada/mockAssets";
 import { mockLedgerStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/mocks/ledgerStatus";
+import { mockFearAndGreedLatest } from "@ledgerhq/live-common/cmc-client/__mocks__/fearAndGreed.mock";
 
 const handlers = [
   http.get("https://dada.api.ledger-test.com/v1/assets", () => {
@@ -9,6 +10,9 @@ const handlers = [
   }),
   http.get("https://ledger.statuspage.io/api/v2/summary.json", () => {
     return HttpResponse.json(mockLedgerStatus);
+  }),
+  http.get("https://proxycmc.api.live.ledger.com/v3/fear-and-greed/latest", () => {
+    return HttpResponse.json(mockFearAndGreedLatest);
   }),
 ];
 

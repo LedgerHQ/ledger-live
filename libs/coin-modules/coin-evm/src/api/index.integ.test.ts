@@ -268,6 +268,12 @@ describe.each([
       ]);
     });
 
+    it("returns 0 when address is not found", async () => {
+      const result = await module.getBalance("0xcafebabe00000000000000000000000000000000");
+
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
+    });
+
     it("returns balance for an address", async () => {
       const result = await module.getBalance("0x9bcd841436ef4f85dacefb1aec772af71619024e");
 
@@ -281,6 +287,30 @@ describe.each([
         expect(balance.asset.type).not.toEqual("native");
         expect(balance.value).toBeGreaterThanOrEqual(0);
       });
+    });
+
+    /**
+     * Ensure non regression and avoid
+     * "To send batches over 10 items, consider using a dedicated API provider"
+     */
+    it("returns at least 10 token balances on Optimisim", async () => {
+      const module = createApi(
+        {
+          node: {
+            type: "external",
+            uri: "https://mainnet.optimism.io",
+          },
+          explorer: {
+            type: "blockscout",
+            uri: "https://optimism.blockscout.com/api",
+          },
+        } as EvmConfig,
+        "optimism",
+      );
+
+      const result = await module.getBalance("0x1CDDb825910426644e00e769072Ce1Ea7d4e34BB");
+
+      expect(result.length).toBeGreaterThan(10);
     });
   });
 

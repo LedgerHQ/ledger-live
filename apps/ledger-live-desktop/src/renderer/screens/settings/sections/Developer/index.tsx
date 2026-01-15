@@ -45,7 +45,7 @@ const Default = () => {
 
   return (
     <Body>
-      <Row title={t("settings.developer.userId")} desc={segmentId} />
+      <Row title={t("settings.developer.userId")} desc={segmentId} dataTestId="developer-user-id" />
 
       <Row title={t("settings.developer.debugApps")} desc={t("settings.developer.debugAppsDesc")}>
         <AllowDebugAppsToggle />

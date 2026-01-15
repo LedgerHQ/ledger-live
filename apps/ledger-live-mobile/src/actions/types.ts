@@ -166,11 +166,12 @@ export type CountervaluesPayload =
 export enum NotificationsActionTypes {
   NOTIFICATIONS_SET_MODAL_OPEN = "NOTIFICATIONS_SET_MODAL_OPEN",
   NOTIFICATIONS_SET_MODAL_LOCKED = "NOTIFICATIONS_SET_MODAL_LOCKED",
-  NOTIFICATIONS_SET_MODAL_TYPE = "NOTIFICATIONS_SET_MODAL_TYPE",
+  NOTIFICATIONS_SET_DRAWER_SOURCE = "NOTIFICATIONS_SET_DRAWER_SOURCE",
   NOTIFICATIONS_SET_CURRENT_ROUTE_NAME = "NOTIFICATIONS_SET_CURRENT_ROUTE_NAME",
   NOTIFICATIONS_SET_EVENT_TRIGGERED = "NOTIFICATIONS_SET_EVENT_TRIGGERED",
   NOTIFICATIONS_SET_DATA_OF_USER = "NOTIFICATIONS_SET_DATA_OF_USER",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
+  NOTIFICATIONS_SET_PERMISSION_STATUS = "NOTIFICATIONS_SET_PERMISSION_STATUS",
 }
 
 export type NotificationsSetModalOpenPayload = NotificationsState["isPushNotificationsModalOpen"];
@@ -178,21 +179,24 @@ export type NotificationsSetModalOpenPayload = NotificationsState["isPushNotific
 export type NotificationsSetModalLockedPayload =
   NotificationsState["isPushNotificationsModalLocked"];
 
-export type NotificationsSetModalTypePayload = NotificationsState["notificationsModalType"];
+export type NotificationsSetDrawerSourcePayload = NotificationsState["drawerSource"];
 
 export type NotificationsSetCurrentRouteNamePayload = NotificationsState["currentRouteName"];
 
 export type NotificationsSetEventTriggeredPayload = NotificationsState["eventTriggered"];
+
+export type NotificationSetPermissionStatusPayload = NotificationsState["permissionStatus"];
 
 export type NotificationsSetDataOfUserPayload = NotificationsState["dataOfUser"];
 
 export type NotificationsPayload =
   | NotificationsSetModalOpenPayload
   | NotificationsSetModalLockedPayload
-  | NotificationsSetModalTypePayload
+  | NotificationsSetDrawerSourcePayload
   | NotificationsSetCurrentRouteNamePayload
   | NotificationsSetEventTriggeredPayload
-  | NotificationsSetDataOfUserPayload;
+  | NotificationsSetDataOfUserPayload
+  | NotificationSetPermissionStatusPayload;
 
 // === DYNAMIC CONTENT ACTIONS ===
 
@@ -297,7 +301,6 @@ export enum SettingsActionTypes {
   SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
   SET_IS_REBORN = "SET_IS_REBORN",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
-  SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON = "SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
   SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
   SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
@@ -376,8 +379,6 @@ export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
 export type SettingsSetClosedWithdrawBannerPayload = boolean;
 
 export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
-export type SettingsSetNeverClickedOnAllowNotificationsButton =
-  SettingsState["neverClickedOnAllowNotificationsButton"];
 export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
   SettingsState["walletTabNavigatorLastVisitedTab"];
 export type SettingsSetDateFormatPayload = SettingsState["dateFormat"];

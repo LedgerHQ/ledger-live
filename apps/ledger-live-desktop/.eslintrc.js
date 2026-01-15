@@ -7,9 +7,8 @@ const commonImportRestrictions = [
     message: "Please remove the /lib import from live-common import.",
   },
   {
-    group: ["~/newArch", "~/newArch/*", "~/newArch/**"],
-    message:
-      "Use 'LLD' alias instead of '~/newArch'. Replace '~/newArch' with 'LLD' in your imports.",
+    group: ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
+    message: "Use 'LLD' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLD' in your imports.",
   },
 ];
 
@@ -65,11 +64,11 @@ module.exports = {
     node: true,
   },
   parser: "@typescript-eslint/parser",
-  plugins: ["react", "react-hooks"],
+  plugins: ["react", "react-hooks", "better-tailwindcss"],
   extends: [
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:tailwindcss/recommended",
+    "plugin:better-tailwindcss/recommended",
   ],
   globals: {
     __DEV__: "readonly",
@@ -102,7 +101,7 @@ module.exports = {
     "space-before-function-paren": "off",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-non-null-assertion": "off", // Useful sometimes. Should not be abused.
-    "tailwindcss/no-custom-classname": "error",
+    "better-tailwindcss/enforce-consistent-line-wrapping": "off",
 
     // Ignore live-common for the moment because this rule does not work with subpath exports
     // See: https://github.com/import-js/eslint-plugin-import/issues/1810
@@ -116,7 +115,7 @@ module.exports = {
     livecommonRules,
     {
       files: [
-        "src/newArch/hooks/redux.ts",
+        "src/mvvm/hooks/redux.ts",
         "src/**/*.test.tsx",
         "src/**/*.test.ts",
         "src/**/*.integration.tsx",
@@ -168,8 +167,9 @@ module.exports = {
     react: {
       version: "detect",
     },
-    tailwindcss: {
-      config: path.join(__dirname, "./tailwind.config.ts"),
+    "better-tailwindcss": {
+      entryPoint: path.join(__dirname, "./src/renderer/global.css"),
+      tailwindConfig: path.join(__dirname, "./tailwind.config.ts"),
       callees: ["cn"],
     },
   },

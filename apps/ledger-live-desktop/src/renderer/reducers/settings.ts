@@ -99,7 +99,6 @@ export type SettingsState = {
   };
   firstTimeLend: boolean;
   showClearCacheBanner: boolean;
-  fullNodeEnabled: boolean;
   // developer settings
   allowDebugApps: boolean;
   allowReactQueryDebug: boolean;
@@ -195,7 +194,6 @@ export const INITIAL_STATE: SettingsState = {
   deepLinkUrl: null,
   firstTimeLend: false,
   showClearCacheBanner: false,
-  fullNodeEnabled: false,
   // developer settings
   allowDebugApps: false,
   allowReactQueryDebug: false,

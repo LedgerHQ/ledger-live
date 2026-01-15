@@ -24,14 +24,18 @@ export const useBrazeContentCard = (mobileCards: Braze.ContentCard[]) => {
   );
 
   const logImpressionCard = useCallback(
-    (cardId: string) => {
+    (cardId: string, displayedPosition?: number) => {
       if (!isTrackedUser) return;
 
       Braze.logContentCardImpression(cardId);
 
       const card = mobileCardRef.current.find(card => card.id === cardId);
       if (!card) return;
-      track("contentcard_impression", { ...card.extras, page: card.extras.location });
+      track("contentcard_impression", {
+        ...card.extras,
+        page: card.extras.location,
+        displayedPosition,
+      });
     },
     [isTrackedUser],
   );

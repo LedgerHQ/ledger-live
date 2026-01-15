@@ -2461,6 +2461,54 @@
       }
     }
   },
+  "newSendFlow" : {
+    "title" : "إرسال {{currency}}",
+    "available" : "متاح {{amount}}",
+    "placeholder" : "أدخِل عنواناً أو ENS",
+    "placeholderNoENS" : "أدخل العنوان",
+    "recent" : "حديث",
+    "myAccounts" : "حساباتي",
+    "sendTo" : "إرسال إلى {{address}}",
+    "addressMatched" : "العنوان متطابق",
+    "addressNotFound" : "لم يتم العثور على العنوان",
+    "alreadyUsed" : "تم استخدامه بالفعل · {{date}}",
+    "recentSendWillAppear" : "سيظهر ما أرسلته مؤخراً هنا",
+    "remove" : "حذف",
+    "enterTag" : "أدخل {{tag}}",
+    "firstInteraction" : {
+      "title" : "أنت ترسل إلى عنوان جديد",
+      "description" : "تحقق من صحة العنوان. في حالة الشك أرسل مبلغاً صغيراً أولاً."
+    },
+    "sanctioned" : {
+      "title" : "عنوان مُعلّم",
+      "description" : "لقد تم وضع علامة على هذا العنوان و Ledger لا تسمح بالإرسال إليه",
+      "helpCenter" : "مركز الدعم"
+    },
+    "errors" : {
+      "incorrectFormat" : "تنسيق العنوان غير صحيح",
+      "incompatibleAsset" : "العنوان غير متوافق مع الأصل المحدد",
+      "walletNotExist" : "المحفظة غير موجودة"
+    },
+    "skipMemo" : {
+      "title" : "تخطي إضافة {{tag}}؟",
+      "warning" : "قد يتم فقدان أصلك إذا كان {{tag}} مطلوب من قِبل المستلم الذي تقوم بالإرسال إليه"
+    },
+    "tagHelp" : {
+      "title" : "ما هو {{tag}}؟",
+      "description" : "{{tag}} مطلوب عند إرسال {{currency}} إلى منصة تداول أصول مشفرة. هي ميزة تستخدم لتحديد مستلم المعاملة. عدم تضمين ملاحظة (تسمية الوجهة) {{tag}} قد ينتج عنه فقدان دائم للأموال."
+    },
+    "networkFeesInFiat" : "رسوم الشبكة بعملة {{currency}}",
+    "feesAmount" : "مبلغ الرسوم ({{unit}})",
+    "gasLimit" : "حد الغاز ({{unit}})",
+    "feesPaid" : "الرسوم المدفوعة للشبكة لمتابعة معاملتك",
+    "insufficientBalanceFees" : "رصيد غير كافٍ لتغطية رسوم الشبكة.",
+    "amountToSend" : "المبلغ المراد إرساله بعملة ({{currency}})",
+    "coinToSend" : "العملة المراد إرسالها",
+    "coinControlCustom" : "اختيار عملات مخصص",
+    "aboveMaximum" : "أعلى من الحد الأقصى للرصيد",
+    "transactionSigned" : "تم توقيع المعاملة",
+    "processingTransaction" : "معاملتك قيد المعالجة."
+  },
   "releaseNotes" : {
     "title" : "ملاحظات الإصدار",
     "version" : "Ledger Wallet {{versionNb}}"
@@ -3699,6 +3747,8 @@
       "activeTooltip" : "المبالغ النشطة تولد المكافآت",
       "inactiveTooltip" : "المبالغ غير النشطة لا تولد المكافآت",
       "delegatedInfoTooltip" : "إجمالي المبلغ الذي تم تفويضه لمدققين.",
+      "inactiveStakeTooltip" : "حصة التكديس غير النشطة يمكن سحبها دون إلغاء تفويضك.",
+      "inactiveStakeTitle" : "المكافآت القابلة للسحب",
       "withdrawableInfoTooltip" : "مجموع المبلغ القابل للسحب من التفويضات.",
       "withdrawableTitle" : "قابل للسحب",
       "statusUpdateNotice" : "ستُحدّث حالة التفويض عندما يتم تأكيد المعاملة.",
@@ -4636,7 +4686,10 @@
       },
       "modularDrawerDevTool" : {
         "title" : "أداة تطوير الشريط النموذجي",
-        "description" : "تسمح لك باختبار الشريط النموذجي بسهولة"
+        "description" : "تسمح لك باختبار الشريط النموذجي بسهولة",
+        "openDrawer" : "فتح الشريط",
+        "debugDialog" : "حوار تصحيح الأخطاء",
+        "debugDuplicates" : "تصحيح أخطاء النسخ المماثلة"
       },
       "cryptoAssetsList" : {
         "title" : "قائمة الأصول المشفرة",
@@ -5187,6 +5240,7 @@
           "recoveryPhrase" : "عبارة الاسترداد",
           "hideRecoveryPhrase" : "إخفاء عبارة الاسترداد",
           "pairNano" : "توصيل nano",
+          "enableSync" : "المزامنة",
           "secureYourCrypto" : "تأمين أصولك المشفرة"
         },
         "screens" : {
@@ -5479,6 +5533,14 @@
             "help" : {
               "help" : "بحاجة الى مساعدة",
               "descr" : "لا تعرف ما يتعين عليك فعله؟ احصل على بعض المساعدة لتجتاز هذه الخطوة."
+            }
+          },
+          "enableSync" : {
+            "title" : "تمكين المزامنة لمحفظتك",
+            "description" : "حافظ على محفظتك الاستثمارية مُحدّثةً عند تبديل الهواتف أو استخدام الكمبيوتر.",
+            "buttons" : {
+              "next" : "متابعة",
+              "nextSecondary" : "سأفعل هذا لاحقاً"
             }
           },
           "secureYourCrypto" : {
@@ -5834,6 +5896,15 @@
     "canton" : {
       "commentPlaceholder" : "اختياري",
       "comment" : "تعليق",
+      "expiryDuration" : {
+        "label" : "مدة انتهاء الصلاحية",
+        "summaryLabel" : "انتهاء صلاحية عرض",
+        "threeHours" : "3 ساعات",
+        "sixHours" : "6 ساعات",
+        "oneDay" : "1 يوم",
+        "oneWeek" : "1 أسبوع",
+        "oneMonth" : "30 يوماً"
+      },
       "account" : {
         "lockedBalance" : "مُقفل",
         "lockedBalanceTooltip" : "أموالك مُقفلة في عروض أرسلتها لآخرين. يمكنك إلغاء هذه العروض في أي وقت، أو انتظار قبول أو رفض المستلم.",
@@ -5891,10 +5962,12 @@
       "pendingTransactions" : {
         "title" : "المعاملات المُعلَّقة ({{count}})",
         "incoming" : {
-          "title" : "العروض الواردة ({{count}})"
+          "title" : "تحويل وارد للمراجعة ({{count}})",
+          "detailsTitle" : "تفاصيل التحويل الوارد"
         },
         "outgoing" : {
-          "title" : "العروض الصادرة ({{count}})"
+          "title" : "العروض الصادرة ({{count}})",
+          "detailsTitle" : "تفاصيل التحويل الصادر"
         },
         "pending" : "مُعلقّ",
         "expired" : "منتهي الصلاحية",
@@ -6924,6 +6997,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "لا توجد مكافآت للمطالبة بها"
     },
+    "HederaMemoIsTooLong" : {
+      "title" : "الملاحظة (تسمية الوجهة) طويلة جداً. الحد الأقصى للطول هو {{maxLength}} حرف"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "فشل تحميل الصورة من الملف.",
       "description" : "يُرجى المحاولة مجدداً بصورة."
@@ -7421,6 +7497,12 @@
         "text" : "بمجرد أن يتم تأكيد هذه المعاملة ستتمكن من تلقي رمز التوكن. <0>انقر هنا</0> لبدء تدفق التلقي.",
         "learnMore" : "تعرّف على المزيد"
       }
+    }
+  },
+  "dialogs" : {
+    "selectAccount" : {
+      "description" : "ليس لديك حسابات {{network}} بعد. يُرجى إضافة حساب للمتابعة",
+      "addAccount" : "إضافة حساب"
     }
   },
   "drawers" : {

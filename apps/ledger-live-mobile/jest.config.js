@@ -40,6 +40,7 @@ const transformIncludePatterns = [
   "react-native-safe-area-context",
   "react-native-gesture-handler",
   "@shopify/flash-list",
+  "@ledgerhq/lumen-.*",
 ];
 
 /** @type {import('@swc/jest').JestConfigWithTsJest} */
@@ -58,6 +59,11 @@ module.exports = {
       {
         jsc: {
           target: "esnext",
+          transform: {
+            react: {
+              runtime: "automatic",
+            },
+          },
         },
       },
     ],

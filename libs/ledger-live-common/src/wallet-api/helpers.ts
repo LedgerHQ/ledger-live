@@ -1,13 +1,15 @@
 import { isCryptoCurrency, isTokenCurrency } from "../currencies";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import {
+import type {
   WalletAPICurrency,
   WalletAPISupportedCurrency,
   WalletAPIERC20TokenCurrency,
   WalletAPICryptoCurrency,
+  AppManifest,
 } from "./types";
 import { WALLET_API_FAMILIES } from "./constants";
 import { includes } from "../helpers";
+import { isSameDomain } from "./manifestDomainUtils";
 
 export function isWalletAPISupportedCurrency(
   currency: Currency,
@@ -37,10 +39,13 @@ export function isWalletAPITokenCurrency(
 export function isWalletAPIERC20TokenCurrency(
   currency: WalletAPICurrency,
 ): currency is WalletAPIERC20TokenCurrency {
-  return (currency as WalletAPIERC20TokenCurrency).standard === "ERC20";
+  return currency.type === "TokenCurrency" && currency.standard === "ERC20";
 }
 
-export function addParamsToURL(url: URL, inputs?: Record<string, string | undefined>): void {
+export function addParamsToURL(
+  url: URL,
+  inputs?: Record<string, string | boolean | undefined>,
+): void {
   if (inputs) {
     const keys = Object.keys(inputs);
 
@@ -49,7 +54,7 @@ export function addParamsToURL(url: URL, inputs?: Record<string, string | undefi
       const value = inputs[key];
 
       if (value !== undefined) {
-        url.searchParams.set(key, value);
+        url.searchParams.set(key, String(value));
       }
     }
   }
@@ -67,29 +72,59 @@ export function getClientHeaders(params: getHostHeadersParams): Record<string, s
   };
 }
 
-const isWhitelistedDomain = (url: string, whitelistedDomains: string[]): boolean => {
-  const isValid: boolean = whitelistedDomains.reduce(
-    (acc: boolean, whitelistedDomain: string) =>
-      acc ? acc : new RegExp(whitelistedDomain).test(url),
-    false,
-  );
+/**
+ * Validates a URL by checking if it's on the same domain as the manifest URL.
+ * Only HTTPS URLs are allowed.
+ * @param url - The URL to validate
+ * @param manifestUrl - The manifest URL to check same domain against
+ * @returns true if the URL is valid and is on the same domain as manifestUrl
+ */
+const isWhitelistedDomain = (url: string, manifestUrl: string): boolean => {
+  try {
+    // Parse the URL
+    const parsedUrl = new URL(url);
 
-  if (!isValid) {
-    console.error("#isWhitelistedDomain:: invalid URL: url is not whitelisted");
+    // Only allow HTTPS scheme
+    if (parsedUrl.protocol !== "https:") {
+      console.error(
+        `#isWhitelistedDomain:: invalid URL: non-HTTPS scheme '${parsedUrl.protocol}' is not allowed`,
+      );
+      return false;
+    }
+
+    // Check if URL is on the same domain as manifest URL
+    if (!isSameDomain(url, manifestUrl)) {
+      console.error(`#isWhitelistedDomain:: invalid URL: not on the same domain as manifest URL`);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    // Invalid URL format
+    console.error(`#isWhitelistedDomain:: invalid URL format: ${error}`);
+    return false;
   }
-
-  return isValid;
 };
 
-export const getInitialURL = (inputs, manifest) => {
+export const getInitialURL = (
+  inputs: Record<string, string | boolean | undefined> | undefined,
+  manifest: AppManifest,
+) => {
   try {
-    if (inputs?.goToURL && isWhitelistedDomain(inputs?.goToURL, manifest.domains)) {
+    if (
+      typeof inputs?.goToURL === "string" &&
+      isWhitelistedDomain(inputs.goToURL, manifest.url.toString())
+    ) {
       return inputs?.goToURL;
     }
 
-    const url = new URL(manifest.url);
+    const url = new URL(manifest.url.toString());
 
-    addParamsToURL(url, inputs);
+    // Filter out goToURL from inputs to prevent it from being added as a query parameter
+    // when validation fails
+    const { goToURL, ...filteredInputs } = inputs || {};
+
+    addParamsToURL(url, filteredInputs);
 
     if (manifest.params) {
       url.searchParams.set("params", JSON.stringify(manifest.params));

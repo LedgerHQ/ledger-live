@@ -59,7 +59,7 @@ import {
   fromEVMAddress,
   toEVMAddress,
   formatTransactionId,
-  getTimestampRangeFromBlockHeight,
+  getDateRangeFromBlockHeight,
   getBlockHash,
   isStakingTransaction,
   extractCompanyFromNodeDescription,
@@ -694,59 +694,59 @@ describe("logic utils", () => {
     });
   });
 
-  describe("getTimestampRangeFromBlockHeight", () => {
+  describe("getDateRangeFromBlockHeight", () => {
     it("calculates consensus timestamp for block height 0 with default window", () => {
-      const result = getTimestampRangeFromBlockHeight(0);
+      const result = getDateRangeFromBlockHeight(0);
 
       expect(result).toEqual({
-        start: "0.000000000",
-        end: "10.000000000",
+        start: new Date(0),
+        end: new Date(10000),
       });
     });
 
     it("calculates consensus timestamp for block height 1 with default window", () => {
-      const result = getTimestampRangeFromBlockHeight(1);
+      const result = getDateRangeFromBlockHeight(1);
 
       expect(result).toEqual({
-        start: "10.000000000",
-        end: "20.000000000",
+        start: new Date(10000),
+        end: new Date(20000),
       });
     });
 
     it("calculates consensus timestamp with custom block window of 1 second", () => {
-      const result = getTimestampRangeFromBlockHeight(42, 1);
+      const result = getDateRangeFromBlockHeight(42, 1);
 
       expect(result).toEqual({
-        start: "42.000000000",
-        end: "43.000000000",
+        start: new Date(42000),
+        end: new Date(43000),
       });
     });
 
     it("handles large block heights correctly", () => {
-      const result = getTimestampRangeFromBlockHeight(1000000);
+      const result = getDateRangeFromBlockHeight(1000000);
 
       expect(result).toEqual({
-        start: "10000000.000000000",
-        end: "10000010.000000000",
+        start: new Date("1970-04-26T17:46:40.000Z"),
+        end: new Date("1970-04-26T17:46:50.000Z"),
       });
     });
 
     it("ensures start and end timestamps are within the same block window", () => {
       const blockHeight = 50;
       const blockWindowSeconds = 10;
-      const result = getTimestampRangeFromBlockHeight(blockHeight, blockWindowSeconds);
+      const result = getDateRangeFromBlockHeight(blockHeight, blockWindowSeconds);
 
-      const startSeconds = parseInt(result.start.split(".")[0]);
-      const endSeconds = parseInt(result.end.split(".")[0]);
+      const startSeconds = result.start.getTime() / 1000;
+      const endSeconds = result.end.getTime() / 1000;
 
       expect(endSeconds - startSeconds).toBe(blockWindowSeconds);
     });
 
-    it("maintains correct nanosecond precision format", () => {
-      const result = getTimestampRangeFromBlockHeight(123);
+    it("does not use sub second precision", () => {
+      const result = getDateRangeFromBlockHeight(123);
 
-      expect(result.start).toMatch(/^\d+\.000000000$/);
-      expect(result.end).toMatch(/^\d+\.000000000$/);
+      expect(result.start.getMilliseconds()).toEqual(0);
+      expect(result.end.getMilliseconds()).toEqual(0);
     });
   });
 

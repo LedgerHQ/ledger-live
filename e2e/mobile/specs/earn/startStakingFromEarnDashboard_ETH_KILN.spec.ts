@@ -15,5 +15,3 @@ runStartETHStakingFromEarnDashboardTest(
   testConfig.tmsLinks,
   testConfig.tags,
 );
-
-// Temporary disabled due to Kiln not being available

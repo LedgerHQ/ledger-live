@@ -26,7 +26,6 @@ import {
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
-import { getIsNotifEnabled } from "../logic/getNotifPermissions";
 import getOrCreateUser from "../user";
 import {
   analyticsEnabledSelector,
@@ -66,6 +65,8 @@ import { LAST_STARTUP_EVENTS } from "LLM/utils/logLastStartupEvents";
 import { resolveStartupEvents } from "LLM/utils/resolveStartupEvents";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
+import { notificationsPermissionStatusSelector } from "~/reducers/notifications";
+import { AuthorizationStatus } from "@react-native-firebase/messaging";
 
 const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -170,12 +171,11 @@ const getRebornAttributes = () => {
 
 const getMEVAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
-  const mevProtection = analyticsFeatureFlagMethod("llMevProtection");
 
   const hasMEVActivated = mevProtectionSelector(state);
 
   return {
-    MEVProtectionActivated: !mevProtection?.enabled ? "Null" : hasMEVActivated ? "Yes" : "No",
+    MEVProtectionActivated: hasMEVActivated ? "Yes" : "No",
   };
 };
 
@@ -212,6 +212,20 @@ const getMADAttributes = () => {
     receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
     send_flow: madFeatureFlag?.params?.send_flow ?? false,
     isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
+  };
+};
+
+const getOptimiseOptInNotificationsNewWordingAttributes = (): Record<string, unknown> => {
+  if (!analyticsFeatureFlagMethod) return {};
+  const optimiseOptInNotificationsNewWording = analyticsFeatureFlagMethod(
+    "lwmNewWordingOptInNotificationsDrawer",
+  );
+  const isFFEnabled = optimiseOptInNotificationsNewWording?.enabled;
+
+  if (!isFFEnabled) return {};
+
+  return {
+    pushOptInVariant: optimiseOptInNotificationsNewWording?.params?.variant,
   };
 };
 
@@ -260,7 +274,8 @@ const extraProperties = async (store: AppStore) => {
   const isReborn = isRebornSelector(state);
 
   const notifications = notificationsSelector(state);
-  const hasEnabledOsNotifications = await getIsNotifEnabled();
+  const hasEnabledOsNotifications =
+    notificationsPermissionStatusSelector(state) === AuthorizationStatus.AUTHORIZED;
 
   const notificationsOptedIn = {
     notificationsAllowed: notifications.areNotificationsAllowed,
@@ -331,6 +346,9 @@ const extraProperties = async (store: AppStore) => {
     ({ event }) => event === LAST_STARTUP_EVENTS.APP_STARTED,
   )?.time;
 
+  const optimiseOptInNotificationsNewWordingAttributes =
+    getOptimiseOptInNotificationsNewWordingAttributes();
+
   return {
     ...mandatoryProperties,
     appVersion,
@@ -385,6 +403,7 @@ const extraProperties = async (store: AppStore) => {
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
+    ...optimiseOptInNotificationsNewWordingAttributes,
   };
 };
 

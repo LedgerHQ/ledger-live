@@ -55,9 +55,23 @@ export const formatEnvData = (data: { [key in EnvName]: unknown }) => {
   return allureData;
 };
 
+/**
+ * Sanitizes an error to remove circular references (e.g., from AxiosError objects).
+ * This prevents Jest serialization failures when processing test results.
+ * Always returns a clean Error object with only serializable properties.
+ */
 export const sanitizeError = (error: unknown): Error => {
   if (!axios.isAxiosError(error)) {
-    return error instanceof Error ? error : new Error(String(error ?? "Unknown error"));
+    if (error instanceof Error) {
+      // Create a new clean error to avoid any circular references
+      const sanitized = new Error(error.message);
+      sanitized.name = error.name;
+      if (error.stack) {
+        sanitized.stack = error.stack;
+      }
+      return sanitized;
+    }
+    return new Error(String(error ?? "Unknown error"));
   }
 
   const err = error as AxiosError;

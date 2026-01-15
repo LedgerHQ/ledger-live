@@ -13,7 +13,7 @@
     "paths": {
       "~/*": ["src/*"],
       "tests/*": ["tests/*"],
-      "LLD/*": ["src/newArch/*"]
+      "LLD/*": ["src/mvvm/*"]
     },
     "outDir": "dist",
     "typeRoots": ["index-types.d.ts", "./node_modules/@types", "./node_modules/@testing-library"]
@@ -30,6 +30,7 @@
     "tests/handlers/**/*.json",
     "index-types.d.ts",
     "tests/jestSetup.ts",
-    "tailwind.config.ts"
+    "tailwind.config.ts",
+    "tools"
   ]
 }

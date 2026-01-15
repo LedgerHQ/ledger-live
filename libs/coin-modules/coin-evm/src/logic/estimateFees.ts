@@ -15,7 +15,7 @@ import { getAdditionalLayer2Fees } from "../logic";
 import { prepareUnsignedTxParams } from "./common";
 import { getSequence } from "./getSequence";
 
-function computeAdditionalFees(
+async function computeAdditionalFees(
   currency: CryptoCurrency,
   unsignedTransaction: TransactionLike,
 ): Promise<BigNumber | undefined> {
@@ -29,7 +29,11 @@ function computeAdditionalFees(
     },
   };
 
-  return getAdditionalLayer2Fees(currency, Transaction.from(transaction).serialized);
+  try {
+    return await getAdditionalLayer2Fees(currency, Transaction.from(transaction).serialized);
+  } catch {
+    return new BigNumber(0);
+  }
 }
 
 function toApiFeeData(feeData: FeeData): ApiFeeData {
@@ -105,6 +109,7 @@ export async function estimateFees(
   const { type, to, data, value, gasLimit } = await prepareUnsignedTxParams(
     currency,
     transactionIntent,
+    customFeesParameters,
   );
 
   // Some apps including, including Magic Eden, set the nonce to -1

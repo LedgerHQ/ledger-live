@@ -17,7 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["src/*"],
-      "LLM/*": ["src/newArch/*"],
+      "LLM/*": ["src/mvvm/*"],
       "@tests/*": ["__tests__/*"],
       "@mocks/*": ["__mocks__/*"]
     }

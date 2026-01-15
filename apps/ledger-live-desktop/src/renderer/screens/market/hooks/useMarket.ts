@@ -35,12 +35,9 @@ export function useMarket() {
 
   useInitSupportedCounterValues();
 
-  const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
+  const { supportedCounterCurrencies } = useMarketDataProvider();
 
-  const marketResult = useMarketDataHook({
-    ...marketParams,
-    liveCoinsList: liveCompatible ? liveCoinsList : [],
-  });
+  const marketResult = useMarketDataHook(marketParams);
 
   const timeRanges = useMemo(
     () =>

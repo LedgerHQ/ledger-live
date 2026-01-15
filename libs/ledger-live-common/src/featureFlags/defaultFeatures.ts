@@ -35,6 +35,8 @@ export const initFeature = <T>(opts?: Feature<T>) => {
  */
 export const CURRENCY_DEFAULT_FEATURES = {
   currencyPolkadot: { enabled: true },
+  currencyAleo: DEFAULT_FEATURE,
+  currencyAleoTestnet: DEFAULT_FEATURE,
   currencyArbitrum: DEFAULT_FEATURE,
   currencyArbitrumSepolia: DEFAULT_FEATURE,
   currencyAstar: DEFAULT_FEATURE,
@@ -580,10 +582,6 @@ export const DEFAULT_FEATURES: Features = {
       warningVisible: true,
     },
   },
-  llMevProtection: {
-    ...DEFAULT_FEATURE,
-    params: { link: null },
-  },
   llCounterValueGranularitiesRates: {
     ...DEFAULT_FEATURE,
     params: {
@@ -615,7 +613,10 @@ export const DEFAULT_FEATURES: Features = {
   },
   lwmLedgerSyncOptimisation: DEFAULT_FEATURE,
   lwdLedgerSyncOptimisation: DEFAULT_FEATURE,
-  lwmNewWordingOptInNotificationsDrawer: DEFAULT_FEATURE,
+  lwmNewWordingOptInNotificationsDrawer: {
+    ...DEFAULT_FEATURE,
+    params: { variant: ABTestingVariants.variantA },
+  },
   lldNanoSUpsellBanners: {
     ...DEFAULT_FEATURE,
     params: {

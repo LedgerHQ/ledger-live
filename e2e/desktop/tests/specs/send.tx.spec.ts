@@ -8,6 +8,7 @@ import { CLI } from "tests/utils/cliUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataWithRecipientAddressCommand } from "tests/utils/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
@@ -248,7 +249,10 @@ test.describe("Send flows", () => {
         {
           tag: [
             "@NanoSP",
-            "@LNS",
+            ...(transaction.transaction.accountToDebit.currency.id !== Currency.SUI.id &&
+            transaction.transaction.accountToDebit.currency.id !== Currency.VET.id
+              ? ["@LNS"]
+              : []),
             "@NanoX",
             "@Stax",
             "@Flex",

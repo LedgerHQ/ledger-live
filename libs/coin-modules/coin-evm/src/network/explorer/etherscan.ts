@@ -359,7 +359,7 @@ export const getLastInternalOperations = async (
  * do not use a Promise.all here, it would
  * break because of the rate limits
  */
-export const getLastOperations: ExplorerApi["getLastOperations"] = makeLRUCache<
+export const getLastOperations = makeLRUCache<
   [
     currency: CryptoCurrency,
     address: string,
@@ -423,4 +423,8 @@ const explorerApi: ExplorerApi = {
   getLastOperations,
 };
 
-export default explorerApi;
+const explorerApiNoChache: ExplorerApi = {
+  getLastOperations: getLastOperations.force,
+};
+
+export default { explorerApi, explorerApiNoChache };

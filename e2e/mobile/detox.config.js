@@ -43,7 +43,7 @@ module.exports = {
     },
     launchApp: "auto",
     cleanup: {
-      shutdownDevice: !!process.env.CI,
+      shutdownDevice: false,
     },
     extends: "detox-allure2-adapter/preset-detox",
   },
@@ -100,6 +100,12 @@ module.exports = {
         name: "iOS Simulator 2",
       },
     },
+    simulator3: {
+      type: "ios.simulator",
+      device: {
+        name: "iOS Simulator 3",
+      },
+    },
     emulator: {
       type: "android.emulator",
       device: {
@@ -112,6 +118,14 @@ module.exports = {
       type: "android.emulator",
       device: {
         avdName: "Android_Emulator_2",
+      },
+      gpuMode: "swiftshader_indirect",
+      headless: !!process.env.CI,
+    },
+    emulator3: {
+      type: "android.emulator",
+      device: {
+        avdName: "Android_Emulator_3",
       },
       gpuMode: "swiftshader_indirect",
       headless: !!process.env.CI,

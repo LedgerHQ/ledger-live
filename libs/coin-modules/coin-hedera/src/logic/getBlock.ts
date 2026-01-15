@@ -4,7 +4,7 @@ import type {
   BlockOperation,
   BlockTransaction,
 } from "@ledgerhq/coin-framework/api/types";
-import { HEDERA_TRANSACTION_NAMES } from "../constants";
+import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { getBlockInfo } from "./getBlockInfo";
 import { apiClient } from "../network/api";
 import type {
@@ -12,11 +12,7 @@ import type {
   HederaMirrorTokenTransfer,
   HederaMirrorTransaction,
 } from "../types";
-import {
-  getMemoFromBase64,
-  analyzeStakingOperation,
-  getTimestampRangeFromBlockHeight,
-} from "./utils";
+import { getMemoFromBase64, analyzeStakingOperation, getDateRangeFromBlockHeight } from "./utils";
 
 function toHederaAsset(
   mirrorTransfer: HederaMirrorCoinTransfer | HederaMirrorTokenTransfer,
@@ -64,11 +60,16 @@ function createStakingRewardOperations(tx: HederaMirrorTransaction): BlockOperat
 }
 
 export async function getBlock(height: number): Promise<Block> {
-  const { start, end } = getTimestampRangeFromBlockHeight(height);
+  const { start, end } = getDateRangeFromBlockHeight(height);
+
+  // block data should be immutable: do not allow querying blocks on non-finalized time range
+  if (end.getTime() > new Date().getTime() - FINALITY_MS)
+    throw new Error(`Block ${height} is not available yet`);
+
   const blockInfo = await getBlockInfo(height);
   const transactions = await apiClient.getTransactionsByTimestampRange({
-    startTimestamp: `gte:${start}`,
-    endTimestamp: `lt:${end}`,
+    startTimestamp: `gte:${start.getTime() / 1000}`,
+    endTimestamp: `lt:${end.getTime() / 1000}`,
   });
 
   // analyze CRYPTOUPDATEACCOUNT transactions to distinguish staking operations from regular account updates.

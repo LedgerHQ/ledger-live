@@ -62,7 +62,7 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
   useInViewContext(
     ({ isInView }) => {
       isInViewRef.current = isInView;
-      if (isInView) visibleCardsRef.current.forEach(logImpressionCard);
+      if (isInView) visibleCardsRef.current.forEach(id => logImpressionCard(id));
     },
     [logImpressionCard],
     viewRef,
@@ -72,7 +72,7 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
       const visibleCards = viewableItems.map(({ item }) => item.props.metadata.id);
       const newlyVisibleCards = visibleCards.filter(id => !visibleCardsRef.current.includes(id));
       visibleCardsRef.current = visibleCards;
-      if (isInViewRef.current) newlyVisibleCards.forEach(logImpressionCard);
+      if (isInViewRef.current) newlyVisibleCards.forEach(id => logImpressionCard(id));
     },
     [logImpressionCard],
   );

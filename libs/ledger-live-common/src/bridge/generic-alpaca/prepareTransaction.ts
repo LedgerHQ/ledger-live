@@ -1,6 +1,6 @@
-import { Account, AccountBridge } from "@ledgerhq/types-live";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
-import { transactionToIntent } from "./utils";
+import { extractBalances, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
 import { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
@@ -23,7 +23,6 @@ function assetInfosFallback(transaction: GenericTransaction): {
 
 function propagateField(estimation: FeeEstimation, field: string, dest: GenericTransaction): void {
   const value = estimation?.parameters?.[field];
-
   if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string") return;
 
   switch (field) {
@@ -44,10 +43,10 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
 }
 
 export function genericPrepareTransaction(
-  network: string,
-  kind,
-): AccountBridge<GenericTransaction, Account>["prepareTransaction"] {
-  return async (account, transaction: GenericTransaction) => {
+  _network: string,
+  kind: string,
+): AccountBridge<GenericTransaction>["prepareTransaction"] {
+  return async (account, transaction) => {
     const { getAssetFromToken, computeIntentType, estimateFees, validateIntent } = getAlpacaApi(
       account.currency.id,
       kind,
@@ -56,6 +55,7 @@ export function genericPrepareTransaction(
       ? await getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
       : assetInfosFallback(transaction);
     const customParametersFees = transaction.customFees?.parameters?.fees;
+    const customParametersGasLimit = transaction.customGasLimit;
 
     /**
      * Ticking `useAllAmount` constantly resets the amount to 0. This is problematic
@@ -90,6 +90,9 @@ export function genericPrepareTransaction(
           gasPrice: transaction.gasPrice,
           maxFeePerGas: transaction.maxFeePerGas,
           maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+          gasLimit: customParametersGasLimit
+            ? BigInt(customParametersGasLimit.toFixed())
+            : undefined,
           gasOptions: transaction.gasOptions,
         });
     const fees = new BigNumber(estimation.value.toString());
@@ -105,6 +108,9 @@ export function genericPrepareTransaction(
             fees: customParametersFees ? new BigNumber(customParametersFees.toString()) : undefined,
           },
         },
+        customGasLimit: customParametersGasLimit
+          ? new BigNumber(customParametersGasLimit.toFixed())
+          : undefined,
       };
 
       // Propagate needed fields
@@ -135,6 +141,7 @@ export function genericPrepareTransaction(
             },
             computeIntentType,
           ),
+          extractBalances(account, getAssetFromToken),
         );
         next.amount = new BigNumber(amount.toString());
       }

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "24.30.1",
+  "version": "24.30.2",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -54,10 +54,10 @@
     "bigint-buffer": "*",
     "bignumber.js": "9.1.2",
     "bip39": "3.1.0",
-    "body-parser": "1.20.3",
+    "body-parser": "2.2.2",
     "command-line-args": "5.2.1",
     "cors": "2.8.5",
-    "express": "4.19.2",
+    "express": "5.2.1",
     "got": "14.4.7",
     "invariant": "2.2.4",
     "lodash": "4.17.21",

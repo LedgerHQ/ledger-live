@@ -65,6 +65,12 @@ export default function DebugSettings({
         iconLeft={<IconsLegacy.EmojiHappyMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugPlayground)}
       />
+      <SettingsRow
+        title="Lumen Debug"
+        desc="Playground for testing Lumen components"
+        iconLeft={<IconsLegacy.PenMedium size={24} color="black" />}
+        onPress={() => navigate(ScreenName.DebugLumen)}
+      />
     </SettingsNavigationScrollView>
   );
 }

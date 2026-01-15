@@ -3475,7 +3475,9 @@
   "notifications": {
     "prompt": {
       "title": "Turn notifications on",
+      "titleVariantB": "Get the most of Ledger Wallet",
       "desc": "Get the latest updates on Ledger Wallet, Ledger products, the market, and personalised recommendations. Opt-out anytime in the settings",
+      "descVariantB": "We'll send you personalized tips, setup guides and relevant market news.",
       "allow": "Allow notifications",
       "later": "Maybe later"
     },
@@ -3892,7 +3894,9 @@
         "celo_title": "Ledger Nano S™ does not support swapping Celo",
         "celo_description": "To swap Celo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "monad_title": "Ledger Nano S™ does not support swapping Monad",
-        "monad_description": "To swap Monad, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "monad_description": "To swap Monad, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "zcash_title": "Ledger Nano S™ does not support swapping Zcash",
+        "zcash_description": "To swap Zcash, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending": {
@@ -7855,7 +7859,7 @@
       "sync": "Sync successful",
       "syncDesc": "Changes in your crypto accounts will now automatically appear across Ledger Wallet apps on synched phones and computers.",
       "activation": "Ledger Sync turned on for this phone",
-      "complete" : {
+      "complete": {
         "title": "Sync complete",
         "description": "From now on, your portfolio will automatically stay sync across all your devices."
       },
@@ -8091,6 +8095,15 @@
     "opted_out": {
       "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
       "cta": "Learn more"
+    }
+  },
+  "marketBanner": {
+    "title": "Explore market",
+    "viewAll": "View all",
+    "viewAllAccessibilityHint": "Double tap to view all market assets",
+    "tile": {
+      "accessibilityLabel": "{{name}}, {{change}}",
+      "accessibilityHint": "Double tap to view market details"
     }
   },
   "largeMover": {
@@ -8332,6 +8345,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed": {
+    "title": "Mood index",
+    "description": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+    "levels": {
+      "extremeFear": "Fear+",
+      "fear": "Fear",
+      "neutral": "Neutral",
+      "greed": "Greed",
+      "extremeGreed": "Greed+"
     }
   }
 }

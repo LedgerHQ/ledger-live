@@ -2,7 +2,7 @@ import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
-import { buildOptimisticOperation, transactionToIntent } from "./utils";
+import { buildOptimisticOperation, extractBalances, transactionToIntent } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/coin-framework/derivation";
 import { MapMemo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
@@ -16,9 +16,9 @@ import { GenericTransaction } from "./types";
  * Handles both destination tags (XRP-like) and Stellar-style memos
  */
 function applyMemoToIntent(
-  transactionIntent: TransactionIntent<any>,
+  transactionIntent: TransactionIntent,
   transaction: GenericTransaction,
-): TransactionIntent<any> {
+): TransactionIntent {
   // Handle destination tag memo (for XRP-like chains)
   if (transaction.tag) {
     const txWithMemoTag = transactionIntent as TransactionIntent<MapMemo<string, string>>;
@@ -54,10 +54,10 @@ function applyMemoToIntent(
  * Enriches transaction intent with memo and asset information
  */
 function enrichTransactionIntent(
-  transactionIntent: TransactionIntent<any>,
+  transactionIntent: TransactionIntent,
   transaction: GenericTransaction,
   publicKey: string,
-): TransactionIntent<any> {
+): TransactionIntent {
   // Set sender public key
   transactionIntent.senderPublicKey = publicKey;
 
@@ -70,7 +70,7 @@ function enrichTransactionIntent(
  * Sign Transaction with Ledger hardware
  */
 export const genericSignOperation =
-  (network, kind) =>
+  (_network: string, kind: string) =>
   (signerContext: SignerContext<any>): AccountBridge<GenericTransaction>["signOperation"] =>
   ({
     account,
@@ -116,6 +116,7 @@ export const genericSignOperation =
           // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22227
           const { amount } = await alpacaApi.validateIntent(
             transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
+            extractBalances(account, alpacaApi.getAssetFromToken),
             { value: fees, parameters: feesParameters },
           );
           transaction.amount = new BigNumber(amount.toString());

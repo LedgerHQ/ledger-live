@@ -135,7 +135,10 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
         action="delegation"
         currency="sol"
       />
-      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        edges={["left", "right", "bottom"]}
+        style={[styles.root, { backgroundColor: colors.background }]}
+      >
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.amountWrapper}>
