@@ -4,6 +4,11 @@ import commandLineArgs, { CommandLineOptions } from "command-line-args";
 import packageJson from "../package.json";
 import currencies, { type AccountType } from "./currencies";
 import run from "./run";
+import { EventEmitter } from "events";
+
+// TODO This mutes warnings related to max listeners. Refactor our usage
+// of listeners to avoid allowing an unlimited number
+EventEmitter.defaultMaxListeners = 0;
 
 const VALID_ACCOUNT_TYPES = ["pristine", "average", "big"] as const;
 const VALID_CURRENCIES = Object.keys(currencies);
