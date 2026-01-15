@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { AppState, Linking } from "react-native";
+import { AppState, InteractionManager, Linking } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { add, isBefore, isEqual } from "date-fns";
 import storage from "LLM/storage";
@@ -442,18 +442,23 @@ const useNotifications = () => {
         return;
       }
 
+      const openDrawerCallback = (
+        source: NotificationsState["drawerSource"],
+        screenName: ScreenName,
+        timer?: number,
+      ) => {
+        InteractionManager.runAfterInteractions(() => {
+          openDrawer(source, screenName, timer);
+        });
+      };
+
       switch (actionSource) {
         case "onboarding": {
           const onboardingParams = actionEvents?.complete_onboarding;
           if (!onboardingParams?.enabled) {
             return;
           }
-
-          // requestAnimationFrame is needed here for onboarding. Otherwise it won't open the drawer
-          // it might be because there is a navigation animation that is not finished yet which we can't control
-          requestAnimationFrame(() => {
-            openDrawer("onboarding", ScreenName.Portfolio, onboardingParams?.timer);
-          });
+          openDrawerCallback("onboarding", ScreenName.Portfolio, onboardingParams?.timer);
           break;
         }
         case "add_favorite_coin": {
@@ -461,8 +466,11 @@ const useNotifications = () => {
           if (!addFavoriteCoinParams?.enabled) {
             return;
           }
-
-          openDrawer("add_favorite_coin", ScreenName.MarketDetail, addFavoriteCoinParams?.timer);
+          openDrawerCallback(
+            "add_favorite_coin",
+            ScreenName.MarketDetail,
+            addFavoriteCoinParams?.timer,
+          );
           break;
         }
         case "send": {
@@ -470,8 +478,7 @@ const useNotifications = () => {
           if (!sendParams?.enabled) {
             return;
           }
-
-          openDrawer("send", ScreenName.SendCoin, sendParams?.timer);
+          openDrawerCallback("send", ScreenName.SendCoin, sendParams?.timer);
           break;
         }
         case "receive": {
@@ -479,18 +486,15 @@ const useNotifications = () => {
           if (!receiveParams?.enabled) {
             return;
           }
-
-          openDrawer("receive", ScreenName.ReceiveConfirmation, receiveParams?.timer);
+          openDrawerCallback("receive", ScreenName.ReceiveConfirmation, receiveParams?.timer);
           break;
         }
-
         case "swap": {
           const swapParams = actionEvents?.swap;
           if (!swapParams?.enabled) {
             return;
           }
-
-          openDrawer("swap", ScreenName.Swap, swapParams?.timer);
+          openDrawerCallback("swap", ScreenName.Swap, swapParams?.timer);
           break;
         }
         case "stake": {
@@ -498,7 +502,7 @@ const useNotifications = () => {
           if (!stakeParams?.enabled) {
             return;
           }
-          openDrawer("stake", ScreenName.Stake, stakeParams?.timer);
+          openDrawerCallback("stake", ScreenName.Stake, stakeParams?.timer);
           break;
         }
         default: {
