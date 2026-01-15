@@ -27,7 +27,6 @@ import Space from "~/renderer/components/Space";
 import UpdateDot from "~/renderer/components/Updater/UpdateDot";
 import { Dot } from "~/renderer/components/Dot";
 import Stars from "~/renderer/components/Stars";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { BAANX_APP_ID } from "~/renderer/screens/card/CardPlatformApp";
 import TopGradient from "./TopGradient";
 import Hide from "./Hide";
@@ -190,10 +189,9 @@ const SideBarScrollContainer = styled(Box)`
 
 const TagContainerExperimental = ({ collapsed }: { collapsed: boolean }) => {
   const isExperimental = useExperimental();
-  const hasFullNodeConfigured = useEnv("SATSTACK"); // NB remove once full node is not experimental
 
   const { t } = useTranslation();
-  return isExperimental || hasFullNodeConfigured ? (
+  return isExperimental ? (
     <Tag
       data-testid="drawer-experimental-button"
       to={{
