@@ -1,5 +1,12 @@
 import React from "react";
-import { ListItem } from "@ledgerhq/lumen-ui-react";
+import {
+  ListItem,
+  ListItemTitle,
+  ListItemContent,
+  ListItemDescription,
+  ListItemLeading,
+  ListItemTrailing,
+} from "@ledgerhq/lumen-ui-react";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -23,16 +30,21 @@ export const NetworkListItem = ({
 }: NetworkListItemProps) => {
   return (
     <ListItem
-      title={currency.name}
-      leadingContent={
-        <SquaredCryptoIcon size="48px" ledgerId={currency.id} ticker={currency.ticker} />
-      }
-      description={description}
-      descriptionTag={apy}
-      trailingContent={rightElement}
       onClick={onClick}
       data-testid={`network-item-name-${currency.name}`}
       className="-outline-offset-2"
-    />
+    >
+      <ListItemLeading>
+        <SquaredCryptoIcon size="48px" ledgerId={currency.id} ticker={currency.ticker} />
+        <ListItemContent>
+          <ListItemTitle>{currency.name}</ListItemTitle>
+          <ListItemDescription className="flex gap-6">
+            {description}
+            {apy}
+          </ListItemDescription>
+        </ListItemContent>
+      </ListItemLeading>
+      <ListItemTrailing>{rightElement}</ListItemTrailing>
+    </ListItem>
   );
 };
