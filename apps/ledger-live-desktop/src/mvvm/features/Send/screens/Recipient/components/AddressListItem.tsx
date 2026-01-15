@@ -1,6 +1,14 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { ListItem, Spot } from "@ledgerhq/lumen-ui-react";
+import {
+  ListItem,
+  ListItemTrailing,
+  ListItemDescription,
+  ListItemTitle,
+  ListItemContent,
+  ListItemLeading,
+  ListItemSpot,
+} from "@ledgerhq/lumen-ui-react";
 import { Wallet, LedgerLogo, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
 import { formatAddress } from "@ledgerhq/react-ui/pre-ldls/components/Address/formatAddress";
 import { formatRelativeDate } from "../utils/dateFormatter";
@@ -44,13 +52,18 @@ export function AddressListItem({
 
   return (
     <ListItem
-      title={title}
-      description={subtitle}
-      leadingContent={<Spot appearance="icon" icon={icon} />}
-      trailingContent={trailingContent || <ChevronRight size={24} />}
       onClick={disabled ? undefined : onSelect}
       onContextMenu={onContextMenu}
       className={className}
-    />
+    >
+      <ListItemLeading>
+        <ListItemSpot appearance="icon" icon={icon} />
+        <ListItemContent>
+          <ListItemTitle>{title}</ListItemTitle>
+          {subtitle && <ListItemDescription>{subtitle}</ListItemDescription>}
+        </ListItemContent>
+      </ListItemLeading>
+      <ListItemTrailing>{trailingContent || <ChevronRight size={24} />}</ListItemTrailing>
+    </ListItem>
   );
 }

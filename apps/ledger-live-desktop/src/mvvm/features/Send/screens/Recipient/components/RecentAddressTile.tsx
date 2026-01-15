@@ -2,12 +2,15 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import {
   Tile,
-  Spot,
+  TileContent,
+  TileSpot,
+  TileTitle,
+  TileDescription,
   Menu,
-  MenuTrigger,
   MenuContent,
   MenuItem,
-  InteractiveIcon,
+  TileSecondaryAction,
+  MenuTrigger,
 } from "@ledgerhq/lumen-ui-react";
 import { Wallet, Trash, MoreVertical, LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { formatAddress } from "@ledgerhq/react-ui/pre-ldls/components/Address/formatAddress";
@@ -54,31 +57,36 @@ export function RecentAddressTile({ recentAddress, onSelect, onRemove }: RecentA
 
   return (
     <div className="w-[100px] pt-6">
-      <Tile
-        leadingContent={<Spot appearance="icon" icon={icon} />}
-        title={displayName}
-        description={dateText}
-        onClick={onSelect}
-        secondaryAction={
-          <Menu>
-            <MenuTrigger asChild>
-              <InteractiveIcon
-                iconType="stroked"
-                aria-label="More actions"
-                onClick={handleStopPropagation}
-              >
-                <MoreVertical />
-              </InteractiveIcon>
-            </MenuTrigger>
-            <MenuContent>
-              <MenuItem onSelect={handleRemove}>
-                <Trash size={16} />
-                {t("newSendFlow.remove")}
-              </MenuItem>
-            </MenuContent>
-          </Menu>
-        }
-      />
+      <Tile onClick={onSelect}>
+        <Menu>
+          {/*
+           * FIXME: MenuTrigger asChild requires TileSecondaryAction to use forwardRef.
+           * This is currently missing in @ledgerhq/lumen-ui-react but will be added soon
+           * as part of the Tailwind V4 upgrade. For now, this pattern is temporarily broken.
+           * No impact as this feature is not released yet.
+           * See: https://ledger.slack.com/archives/C089J9DLGJ3/p1768469178391389
+           */}
+          <MenuTrigger asChild>
+            <TileSecondaryAction
+              icon={MoreVertical}
+              aria-label="More actions"
+              onClick={handleStopPropagation}
+            />
+          </MenuTrigger>
+          <MenuContent>
+            <MenuItem onSelect={handleRemove}>
+              <Trash size={16} />
+              {t("newSendFlow.remove")}
+            </MenuItem>
+          </MenuContent>
+        </Menu>
+
+        <TileSpot appearance="icon" icon={icon} />
+        <TileContent>
+          <TileTitle>{displayName}</TileTitle>
+          {dateText && <TileDescription>{dateText}</TileDescription>}
+        </TileContent>
+      </Tile>
     </div>
   );
 }
