@@ -1,5 +1,5 @@
 diff --git a/lib/index.js b/lib/index.js
-index f6c4674158cf9ffb30aff5c7ef7c78e7a5cb1f4a..5cff632b5425cb4f7b29753e6d8ac9c235807c3e 100644
+index f6c4674158cf9ffb30aff5c7ef7c78e7a5cb1f4a..4b07fb41916cd5a74052c13349b6c25a1dd45699 100644
 --- a/lib/index.js
 +++ b/lib/index.js
 @@ -134,11 +134,32 @@ function installUsingNPM(hostPkg, pkg, version, target, subpath, nodePath) {
@@ -15,7 +15,7 @@ index f6c4674158cf9ffb30aff5c7ef7c78e7a5cb1f4a..5cff632b5425cb4f7b29753e6d8ac9c2
 +    const headers = {};
 +
 +    if (token) {
-+        headers.authorization = `Bearer ${token}`;
++        headers['X-JFrog-Art-Api'] = token;
 +        console.log('token found');
 +    }else{
 +        console.log('token not found');
