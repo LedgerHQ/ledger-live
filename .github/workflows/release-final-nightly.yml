@@ -16,6 +16,7 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+
       - name: generate token
         id: generate-token
         uses: tibdex/github-app-token@v1
@@ -60,13 +61,13 @@ jobs:
           install-proto: true
           skip-turbo-cache: "false"
 
-      - name: Network config
-        run: pnpm setup && PNPM_HOME=/home/runner/.local/share/pnpm pnpm i napi-postinstall -g
+#      - name: Install deps
+#        run: |
+#          apt install pkg-config
+#          apt install libusb-1.0-0
 
       - name: install dependencies
         run: pnpm i -F "./libs/**" -F "./apps/cli/**" -F "@ledgerhq/ledger-live"
-        env:
-          npm_config_build_from_source: true
 
       - name: build libs
         run: pnpm run build:libs
