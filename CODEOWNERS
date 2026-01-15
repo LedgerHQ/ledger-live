@@ -59,6 +59,7 @@ libs/ledger-services/                                    @ledgerhq/coin-integrat
 libs/ledgerjs/packages/cryptoassets                      @ledgerhq/live-hub
 libs/ledgerjs/packages/cryptoassets/src/currencies.ts    @ledgerhq/coin-integration
 
+libs/psbtv2/                                             @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/coin-integration
 libs/live-config/                                        @ledgerhq/coin-integration

@@ -1,6 +1,6 @@
 import { crypto } from "bitcoinjs-lib";
 import { pathArrayToString } from "../bip32";
-import { BufferWriter } from "../buffertools";
+import { BufferWriter } from "@ledgerhq/psbtv2";
 import { hashLeaf, Merkle } from "./merkle";
 
 export type DefaultDescriptorTemplate = "pkh(@0)" | "sh(wpkh(@0))" | "wpkh(@0)" | "tr(@0)";
