@@ -6,29 +6,21 @@ import type { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { CONCORDIUM_CHAIN_IDS, CONCORDIUM_ID_APP_MOBILE_HOST } from "../constants";
 import {
-  deserializeCredentialDeployment,
   getConcordiumNetwork,
   signCredentialDeployment,
   deserializeCredentialDeploymentTransaction,
 } from "../network/onboard";
 import { getWalletConnect } from "../network/walletConnect";
 import resolver from "../signer";
-import type {
-  ConcordiumAccount,
-  ConcordiumResources,
-  ConcordiumSigner,
-  SubmitCredentialRequest,
-} from "../types";
-import type { SerializedCredentialDeploymentDetails } from "../types/onboard";
+import type { ConcordiumAccount, ConcordiumSigner } from "../types";
+
 import {
   AccountOnboardStatus,
   ConcordiumOnboardProgress,
   ConcordiumOnboardResult,
   ConcordiumPairingProgress,
   ConcordiumPairingStatus,
-  IDAppErrorCode,
 } from "../types/onboard";
-import { submitCredential } from "../network/proxyClient";
 
 /**
  * Create an onboarded account with Concordium-specific resources

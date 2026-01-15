@@ -22,7 +22,6 @@ import { Subscription } from "rxjs";
 import { closeModal } from "~/renderer/actions/modals";
 import Modal from "~/renderer/components/Modal";
 import Stepper from "~/renderer/components/Stepper";
-import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { concordiumWalletConnect } from "../services/walletConnect";
 import ConnectDeviceScreen from "./components/ConnectDeviceScreen";
@@ -37,7 +36,6 @@ const STEP_TRANSITION_TIMEOUT = 1500; // Delay before continue to next step whil
 
 const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
-  existingAccounts: accountsSelector,
 });
 
 const mapDispatchToProps = {
@@ -74,7 +72,6 @@ function resolveCreatableAccountName(
 
 type AddAccountsConfig = {
   selectedAccounts: Account[];
-  existingAccounts: Account[];
   editedNames: { [accountId: string]: string };
   onboardingResult?: {
     completedAccount: Account;
@@ -134,7 +131,6 @@ export type UserProps = {
   device: Device | null | undefined;
   editedNames: { [accountId: string]: string };
   selectedAccounts: Account[];
-  existingAccounts: Account[];
 };
 
 export type Props = {
@@ -347,36 +343,20 @@ class OnboardModal extends PureComponent<Props, State> {
   };
 
   handleAddAccounts = () => {
-    const { addAccountsAction, closeModal, selectedAccounts, existingAccounts, editedNames } =
-      this.props;
+    const { addAccountsAction, closeModal, selectedAccounts, editedNames } = this.props;
     const { onboardingResult } = this.state;
-
-    console.log("handleAddAccounts -> start", {
-      onboardingResult,
-      selectedAccounts,
-      existingAccounts,
-      editedNames,
-    });
 
     const { accounts, renamings } = prepareAccountsForAdding({
       selectedAccounts,
-      existingAccounts,
       editedNames,
       onboardingResult,
-    });
-
-    console.log("handleAddAccounts -> addAccountsAction", {
-      scannedAccounts: accounts,
-      existingAccounts,
-      selectedIds: accounts.map(account => account.id),
-      renamings,
     });
 
     addAccountsAction({
       scannedAccounts: accounts,
-      existingAccounts,
       selectedIds: accounts.map(account => account.id),
       renamings,
+      existingAccounts: [],
     });
 
     closeModal("MODAL_CONCORDIUM_ONBOARD_ACCOUNT");
@@ -478,8 +458,6 @@ class OnboardModal extends PureComponent<Props, State> {
       stepId,
       walletConnectUri,
     } = this.state;
-
-    console.log("Rendering OnboardModal", { props: this.props, state: this.state });
 
     invariant(currency, "currency is required");
 

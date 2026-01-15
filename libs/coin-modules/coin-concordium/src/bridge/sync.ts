@@ -27,8 +27,6 @@ const valueToBigNumber = (value?: string | number): BigNumber => {
 };
 
 export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info => {
-  console.log("getAccountShapeForScan called with info:", { info });
-
   const {
     address,
     currency,
@@ -51,7 +49,6 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
   const publicKey = rest.publicKey || initialAccount?.concordiumResources?.publicKey;
 
   const accountsResponse = await getAccountsByPublicKey(currency, publicKey);
-  console.log("getAccountsByPublicKey response:", { accounts: accountsResponse });
 
   let balance = new BigNumber(0);
   let spendableBalance = new BigNumber(0);
@@ -85,8 +82,6 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
   const balanceResponse = await getAccountBalance(currency, account.address);
   const { finalizedBalance: { accountAmount, accountAtDisposal } = {} } = balanceResponse;
 
-  console.log("getAccountBalance response:", { balanceResponse });
-
   balance = valueToBigNumber(accountAmount);
 
   const minReserve = coinConfig.getCoinConfig(currency).minReserve;
@@ -94,11 +89,6 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
     ? valueToBigNumber(accountAtDisposal)
     : balance.minus(minReserve);
   spendableBalance = spendableBalance.isNegative() ? new BigNumber(0) : spendableBalance;
-
-  console.log("Computed balances:", {
-    balance: balance.toString(),
-    spendableBalance: spendableBalance.toString(),
-  });
 
   const oldOperations = initialAccount?.operations ?? [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight ?? 0) + 1 : 0;
@@ -110,7 +100,7 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
 
   const operations = mergeOps(oldOperations, newOperations);
 
-  const shape = {
+  return {
     balance,
     blockHeight: operations[0]?.blockHeight ?? 0,
     concordiumResources: fillConcordiumResources(initialAccount?.concordiumResources, {
@@ -129,8 +119,4 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
     xpub: address,
     ...nextRest,
   };
-
-  console.log("getAccountShapeForScan returning shape:", { shape });
-
-  return shape;
 };
