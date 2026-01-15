@@ -10,8 +10,8 @@ const bigIntOrZero = (val: number | BigNumber | undefined | null): bigint =>
 export async function getBalance(address: string): Promise<Balance[]> {
   const accounts = await fetchTronAccount(address);
 
-  // if account is not activated, an empty array is returned
-  if (accounts.length === 0) return [];
+  // if account is not activated, an empty balance is returned
+  if (accounts.length === 0) return [{ value: BigInt(0), asset: { type: "native" } }];
 
   const account = accounts[0];
 
