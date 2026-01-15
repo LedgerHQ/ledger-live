@@ -62,7 +62,7 @@ jobs:
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
         
-          pnpm turbo run coverage --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" --filter="./libs/**" --filter="!./libs/ui/**" --concurrency=4 -- --runInBand=1 
+          pnpm turbo run coverage --filter="./libs/**" --filter="!./libs/ui/**" --concurrency=4 -- --runInBand=1 
 
       - name: Test libraries without coverage script & Process coverage files
         id: test-libs
