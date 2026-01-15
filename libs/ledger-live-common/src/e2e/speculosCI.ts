@@ -6,6 +6,8 @@ import {
 } from "@ledgerhq/speculos-transport";
 import { SpeculosDevice } from "./speculos";
 import https from "https";
+import fs from "fs";
+import path from "path";
 import { sanitizeError } from "./index";
 
 const { GITHUB_TOKEN, SPECULOS_IMAGE_TAG } = process.env;
@@ -13,7 +15,7 @@ const GIT_API_URL = "https://api.github.com/repos/LedgerHQ/actions/actions/";
 const START_WORKFLOW_ID = "workflows/161487603/dispatches";
 const STOP_WORKFLOW_ID = "workflows/161487604/dispatches";
 const GITHUB_REF = "main";
-const getSpeculosAddress = (runId: string) => `https://${runId}.speculos.aws.stg.ldg-tech.com`;
+const getSpeculosAddress = (runId: string) => `https://${runId}.speculos.aws.stg.ldg-tech.co`;
 const speculosPort = 443;
 
 // ============================================================================
@@ -250,6 +252,9 @@ export function printSpeculosOperationsSummary(): void {
     });
   }
   /* eslint-enable no-console */
+
+  // Write summary to artifacts file
+  writeSpeculosExecutionSummary();
 }
 
 /**
@@ -257,6 +262,90 @@ export function printSpeculosOperationsSummary(): void {
  */
 export function clearSpeculosOperations(): void {
   speculosOperations.length = 0;
+}
+
+/**
+ * Get the path to the e2e mobile artifacts directory
+ */
+function getArtifactsPath(): string {
+  // Try to find the e2e/mobile/artifacts directory relative to workspace root
+  // This handles both running from different directories and CI environments
+  const possiblePaths = [
+    // When running from workspace root
+    path.resolve(process.cwd(), "e2e/mobile/artifacts"),
+    // When running from e2e/mobile
+    path.resolve(process.cwd(), "artifacts"),
+    // When running from libs/ledger-live-common
+    path.resolve(process.cwd(), "../../e2e/mobile/artifacts"),
+    // Fallback: use environment variable if set
+    process.env.E2E_ARTIFACTS_PATH,
+  ].filter(Boolean) as string[];
+
+  for (const artifactsPath of possiblePaths) {
+    if (fs.existsSync(artifactsPath)) {
+      return artifactsPath;
+    }
+  }
+
+  // Default fallback - create in e2e/mobile/artifacts if possible
+  const defaultPath = possiblePaths[0];
+  try {
+    fs.mkdirSync(defaultPath, { recursive: true });
+    return defaultPath;
+  } catch {
+    // If we can't create the directory, use current working directory
+    return process.cwd();
+  }
+}
+
+/**
+ * Write the Speculos CI execution summary to a file in the artifacts directory
+ */
+export function writeSpeculosExecutionSummary(): void {
+  const summary = getSpeculosOperationsSummary();
+  const artifactsPath = getArtifactsPath();
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const filename = `speculos-execution-summary-${timestamp}.json`;
+  const filepath = path.join(artifactsPath, filename);
+
+  const summaryData = {
+    timestamp: new Date().toISOString(),
+    summary: {
+      totalOperations: summary.total,
+      created: {
+        total: summary.created,
+        successful: summary.createdSuccessful,
+        failed: summary.createdFailed,
+      },
+      released: {
+        total: summary.released,
+        successful: summary.releasedSuccessful,
+        failed: summary.releasedFailed,
+      },
+      pendingCleanup: summary.pendingCleanup,
+    },
+    operations: speculosOperations.map(op => ({
+      type: op.type,
+      runId: op.runId,
+      appName: op.appName,
+      appVersion: op.appVersion,
+      timestamp: op.timestamp,
+      status: op.status,
+      error: op.error,
+      caller: op.caller,
+      testName: op.testName,
+      testFile: op.testFile,
+    })),
+  };
+
+  try {
+    fs.writeFileSync(filepath, JSON.stringify(summaryData, null, 2));
+    // eslint-disable-next-line no-console
+    console.log(`[SpeculosCI] Execution summary written to: ${filepath}`);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(`[SpeculosCI] Failed to write execution summary: ${sanitizeError(error)}`);
+  }
 }
 
 let exitHandlerRegistered = false;
@@ -271,6 +360,10 @@ export function registerSpeculosExitHandler(): void {
 
   const printFinalSummary = () => {
     const summary = getSpeculosOperationsSummary();
+
+    // Always write the summary to artifacts
+    writeSpeculosExecutionSummary();
+
     if (summary.pendingCleanup.length > 0) {
       /* eslint-disable no-console */
       console.log("\n" + "!".repeat(70));
