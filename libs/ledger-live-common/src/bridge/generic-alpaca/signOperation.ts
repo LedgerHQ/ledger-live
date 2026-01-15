@@ -4,6 +4,7 @@ import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledg
 import { getAlpacaApi } from "./alpaca";
 import {
   applyMemoToIntent,
+  bigNumberToBigIntDeep,
   buildOptimisticOperation,
   extractBalances,
   transactionToIntent,
@@ -50,20 +51,16 @@ export const genericSignOperation =
       async function main() {
         const alpacaApi = getAlpacaApi(account.currency.id, kind);
         if (!transaction.fees) throw new FeeNotLoaded();
-        const fees = BigInt(transaction.fees?.toString() || "0");
-        const feesParameters = {
-          ...(transaction.gasLimit ? { gasLimit: BigInt(transaction.gasLimit.toFixed()) } : {}),
-          ...(transaction.gasPrice ? { gasPrice: BigInt(transaction.gasPrice.toFixed()) } : {}),
-          ...(transaction.maxFeePerGas
-            ? { maxFeePerGas: BigInt(transaction.maxFeePerGas.toFixed()) }
-            : {}),
-          ...(transaction.maxPriorityFeePerGas
-            ? { maxPriorityFeePerGas: BigInt(transaction.maxPriorityFeePerGas.toFixed()) }
-            : {}),
-          ...(transaction.additionalFees
-            ? { additionalFees: BigInt(transaction.additionalFees.toFixed()) }
-            : {}),
-        };
+        const customFees = bigNumberToBigIntDeep({
+          value: transaction.fees ?? new BigNumber(0),
+          parameters: {
+            gasLimit: transaction.gasLimit,
+            gasPrice: transaction.gasPrice,
+            maxFeePerGas: transaction.maxFeePerGas,
+            maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+            additionalFees: transaction.additionalFees,
+          },
+        });
         if (transaction.useAllAmount) {
           const draftTransaction = {
             mode: transaction.mode,
@@ -82,7 +79,7 @@ export const genericSignOperation =
           const { amount } = await alpacaApi.validateIntent(
             transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
             extractBalances(account, alpacaApi.getAssetFromToken),
-            { value: fees, parameters: feesParameters },
+            customFees,
           );
           transaction.amount = new BigNumber(amount.toString());
         }
@@ -107,10 +104,10 @@ export const genericSignOperation =
           }
 
           /* Craft unsigned blob via Alpaca */
-          const { transaction: unsigned } = await alpacaApi.craftTransaction(transactionIntent, {
-            value: fees,
-            parameters: feesParameters,
-          });
+          const { transaction: unsigned } = await alpacaApi.craftTransaction(
+            transactionIntent,
+            customFees,
+          );
 
           /* Notify UI that the device is now showing the tx */
           o.next({ type: "device-signature-requested" });

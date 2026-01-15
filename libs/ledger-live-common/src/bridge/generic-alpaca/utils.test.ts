@@ -1,5 +1,6 @@
 import {
   adaptCoreOperationToLiveOperation,
+  bigNumberToBigIntDeep,
   buildOptimisticOperation,
   cleanedOperation,
   extractBalance,
@@ -13,6 +14,57 @@ import { Account } from "@ledgerhq/types-live";
 import { GenericTransaction, OperationCommon } from "./types";
 
 describe("Alpaca utils", () => {
+  describe("bigNumberToBigIntDeep", () => {
+    it.each([
+      [undefined, undefined],
+      [null, null],
+      ["", ""],
+      ["str", "str"],
+      [0, 0],
+      [1, 1],
+      [true, true],
+      [false, false],
+      [new BigNumber(0), 0n],
+      [new BigNumber(1), 1n],
+      [[], []],
+      [
+        ["str", 1],
+        ["str", 1],
+      ],
+      [
+        ["str", BigNumber(1)],
+        ["str", 1n],
+      ],
+      [
+        [new BigNumber(0), new BigNumber(1)],
+        [0n, 1n],
+      ],
+      [{}, {}],
+      [
+        { a: "str", b: 0, c: true },
+        { a: "str", b: 0, c: true },
+      ],
+      [
+        { a: "str", b: new BigNumber(1), c: true },
+        { a: "str", b: 1n, c: true },
+      ],
+      [
+        { a: "str", b: new BigNumber(1), c: { ca: new BigNumber(2), cb: 4 } },
+        { a: "str", b: 1n, c: { ca: 2n, cb: 4 } },
+      ],
+      [
+        { a: "str", b: new BigNumber(1), c: { ca: new BigNumber(2), cb: null } },
+        { a: "str", b: 1n, c: { ca: 2n, cb: null } },
+      ],
+      [
+        { a: "str", b: new BigNumber(1), c: { ca: new BigNumber(2), cb: undefined } },
+        { a: "str", b: 1n, c: { ca: 2n } },
+      ],
+    ])("replaces BigNumbers with BigInts (%j)", (input, output) => {
+      expect(bigNumberToBigIntDeep(input)).toStrictEqual(output);
+    });
+  });
+
   describe("buildOptimisticOperation", () => {
     it.each([
       [

@@ -9,14 +9,12 @@ jest.mock("../alpaca", () => ({
   getAlpacaApi: jest.fn(),
 }));
 
-jest.mock("../utils", () => {
-  const module = jest.requireActual("../utils");
-  return {
-    ...module,
-    buildOptimisticOperation: jest.fn(),
-    transactionToIntent: jest.fn(),
-  };
-});
+jest.mock("../utils", () => ({
+  ...jest.requireActual("../utils"),
+  buildOptimisticOperation: jest.fn(),
+  transactionToIntent: jest.fn(),
+}));
+
 describe("genericSignOperation", () => {
   const networks = ["xrp", "stellar", "tezos"];
   const kind = "local";
