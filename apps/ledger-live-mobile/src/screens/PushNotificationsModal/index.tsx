@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text, Link as TextLink, Button } from "@ledgerhq/native-ui";
-import { useNotifications } from "~/logic/notifications";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { PushNotificationsModalIllustration } from "./PushNotificationsModalIllustration";
 import { TrackScreen } from "~/analytics";
@@ -17,7 +17,7 @@ const PushNotificationsModal = () => {
     handleAllowNotificationsPress,
     handleDelayLaterPress,
     handleCloseFromBackdropPress,
-    getRepromptDelay,
+    nextRepromptDelay,
     pushNotificationsDataOfUser,
   } = useNotifications();
 
@@ -42,9 +42,7 @@ const PushNotificationsModal = () => {
       <TrackScreen
         category="Drawer push notification opt-in"
         source={drawerSource}
-        repromptDelay={
-          getRepromptDelay(pushNotificationsDataOfUser?.dismissedOptInDrawerAtList) ?? undefined
-        }
+        repromptDelay={nextRepromptDelay}
         dismissedCount={pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0}
         variant={canShowVariant ? featureNewWordingNotificationsDrawer?.params?.variant : undefined}
       />

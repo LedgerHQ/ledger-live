@@ -1,5 +1,8 @@
 import { act, renderHook } from "@tests/test-renderer";
-import { setPushNotificationsDataOfUserInStorage, useNotifications } from "../notifications";
+import {
+  setPushNotificationsDataOfUserInStorage,
+  useNotifications,
+} from "LLM/features/NotificationsPrompt";
 import storage from "LLM/storage";
 import { add, sub, type Duration } from "date-fns";
 import * as analytics from "~/analytics";

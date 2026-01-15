@@ -22,7 +22,6 @@ export function PushNotificationsModalIllustration({
         />
       );
     }
-    case "generic":
     case "onboarding":
     default: {
       // we will display illustrations for other cases later
