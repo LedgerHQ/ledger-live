@@ -6,7 +6,6 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountsWithPositiveBalanceCountSelector } from "~/reducers/accounts";
 import {
   ratingsModalOpenSelector,
-  ratingsModalLockedSelector,
   ratingsCurrentRouteNameSelector,
   ratingsHappyMomentSelector,
   ratingsDataOfUserSelector,
@@ -18,8 +17,8 @@ import {
   setRatingsDataOfUser,
 } from "~/actions/ratings";
 import { track } from "~/analytics";
-import { setNotificationsModalLocked } from "~/actions/notifications";
 import { setUserNps } from "~/actions/settings";
+import { notificationsModalOpenSelector } from "~/reducers/notifications";
 
 export type RatingsHappyMoment = {
   timeout?: number;
@@ -71,7 +70,7 @@ const useNpsRatings = () => {
   const ratingsFeature = useFeature("npsRatingsPrompt");
 
   const isRatingsModalOpen = useSelector(ratingsModalOpenSelector);
-  const isRatingsModalLocked = useSelector(ratingsModalLockedSelector);
+  const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
   const ratingsOldRoute = useSelector(ratingsCurrentRouteNameSelector);
   const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
@@ -82,13 +81,7 @@ const useNpsRatings = () => {
 
   const setRatingsModalOpenCallback = useCallback(
     (isRatingsModalOpen: boolean) => {
-      if (!isRatingsModalOpen) {
-        dispatch(setRatingsModalOpen(isRatingsModalOpen));
-        dispatch(setNotificationsModalLocked(false));
-      } else {
-        dispatch(setRatingsModalOpen(isRatingsModalOpen));
-        dispatch(setNotificationsModalLocked(true));
-      }
+      dispatch(setRatingsModalOpen(isRatingsModalOpen));
     },
     [dispatch],
   );
@@ -176,7 +169,6 @@ const useNpsRatings = () => {
   const onRatingsRouteChange = useCallback(
     (ratingsNewRoute: string, isOtherModalOpened = false) => {
       if (ratingsHappyMoment?.timeout) {
-        dispatch(setNotificationsModalLocked(false));
         clearTimeout(ratingsHappyMoment?.timeout);
       }
 
@@ -186,7 +178,6 @@ const useNpsRatings = () => {
       for (const happyMoment of ratingsFeature?.params?.happy_moments) {
         // @ts-expect-error TYPINGS
         if (isHappyMomentTriggered(happyMoment, ratingsNewRoute)) {
-          dispatch(setNotificationsModalLocked(true));
           const timeout = setTimeout(() => {
             setRatingsModalOpenCallback(true);
           }, happyMoment.timer);
@@ -237,7 +228,7 @@ const useNpsRatings = () => {
   const ratingsInitialStep = "form";
 
   const handleSettingsRateApp = useCallback(() => {
-    if (isRatingsModalLocked) return;
+    if (isPushNotificationsModalOpen) return;
 
     dispatch(
       setRatingsHappyMoment({
@@ -250,7 +241,7 @@ const useNpsRatings = () => {
       page: "Settings",
     });
     setRatingsModalOpenCallback(true);
-  }, [isRatingsModalLocked, dispatch, setRatingsModalOpenCallback]);
+  }, [isPushNotificationsModalOpen, dispatch, setRatingsModalOpenCallback]);
 
   const handleRatingsSetDateOfNextAllowedRequest = useCallback(
     (delay?: Duration, additionalParams = {}) => {

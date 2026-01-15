@@ -6,7 +6,6 @@ import type {
   RatingsPayload,
   RatingsSetCurrentRouteNamePayload,
   RatingsSetHappyMomentPayload,
-  RatingsSetModalLockedPayload,
   RatingsSetModalOpenPayload,
   DangerouslyOverrideStatePayload,
 } from "../actions/types";
@@ -17,17 +16,11 @@ export const INITIAL_STATE = {
   currentRouteName: null,
   happyMoment: undefined,
   dataOfUser: undefined,
-  isRatingsModalLocked: false,
 };
 const handlers: ReducerMap<RatingsState, RatingsPayload> = {
   [RatingsActionTypes.RATINGS_SET_MODAL_OPEN]: (state, action) => ({
     ...state,
     isRatingsModalOpen: (action as Action<RatingsSetModalOpenPayload>).payload,
-  }),
-
-  [RatingsActionTypes.RATINGS_SET_MODAL_LOCKED]: (state, action) => ({
-    ...state,
-    isRatingsModalLocked: (action as Action<RatingsSetModalLockedPayload>).payload,
   }),
 
   [RatingsActionTypes.RATINGS_SET_CURRENT_ROUTE_NAME]: (state, action) => ({
@@ -53,7 +46,6 @@ const handlers: ReducerMap<RatingsState, RatingsPayload> = {
 
 // Selectors
 export const ratingsModalOpenSelector = (s: State) => s.ratings.isRatingsModalOpen;
-export const ratingsModalLockedSelector = (s: State) => s.ratings.isRatingsModalLocked;
 export const ratingsCurrentRouteNameSelector = (s: State) => s.ratings.currentRouteName;
 export const ratingsHappyMomentSelector = (s: State) => s.ratings.happyMoment;
 export const ratingsDataOfUserSelector = (s: State) => {

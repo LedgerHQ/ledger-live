@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import { View } from "react-native";
 import { EventArg, NavigationState, useNavigation } from "@react-navigation/native";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -6,10 +6,8 @@ import PushNotificationsModal from "../PushNotificationsModal";
 import RatingsModal from "../RatingsModal";
 import NpsRatingsModal from "../NpsRatingsModal";
 import useRatings from "~/logic/ratings";
-import { useNotifications } from "~/logic/notifications";
 import DebugAppLevelDrawer from "LLM/components/QueuedDrawer/DebugAppLevelDrawer";
 import useNpsRatings from "~/logic/npsRatings";
-import { ScreenName } from "~/const";
 
 const getCurrentRouteName = (
   state: NavigationState | Required<NavigationState["routes"][0]>["state"],
@@ -27,9 +25,6 @@ const getCurrentRouteName = (
 const Modals = () => {
   const navigation = useNavigation();
 
-  const pushNotificationsFeature = useFeature("brazePushNotifications");
-  const { handleRouteChangePushNotification } = useNotifications();
-
   const ratingsFeature = useFeature("ratingsPrompt");
   const npsRatingsFeature = useFeature("npsRatingsPrompt");
   const { onRatingsRouteChange } = useRatings();
@@ -39,43 +34,40 @@ const Modals = () => {
     ? "nps"
     : ratingsFeature?.enabled
       ? "no-nps"
-      : "none";
-
-  const onRouteChange = useCallback(
-    (e: EventArg<"state", false, { state: NavigationState | undefined }>) => {
-      const navState = e.data.state;
-
-      if (navState?.routeNames) {
-        const currentRouteName = getCurrentRouteName(navState) as string;
-        let isModalOpened = false;
-        if (pushNotificationsFeature?.enabled) {
-          isModalOpened = handleRouteChangePushNotification(currentRouteName as ScreenName);
-        }
-        if (activeRatings === "nps") {
-          npsOnRatingsRouteChange(currentRouteName, isModalOpened);
-        }
-        if (activeRatings === "no-nps") {
-          onRatingsRouteChange(currentRouteName, isModalOpened);
-        }
-      }
-    },
-    [
-      activeRatings,
-      npsOnRatingsRouteChange,
-      handleRouteChangePushNotification,
-      onRatingsRouteChange,
-      pushNotificationsFeature?.enabled,
-    ],
-  );
+      : null;
 
   useEffect(() => {
-    if (!pushNotificationsFeature?.enabled && !ratingsFeature?.enabled) return undefined;
+    if (!ratingsFeature?.enabled) {
+      return;
+    }
 
-    navigation.removeListener("state", onRouteChange);
-    navigation.addListener("state", onRouteChange);
+    const handleRouteChange = (
+      e: EventArg<"state", false, { state: NavigationState | undefined }>,
+    ) => {
+      const navState = e.data.state;
+      if (!navState?.routeNames) {
+        return;
+      }
 
-    return () => navigation.removeListener("state", onRouteChange);
-  }, [navigation, onRouteChange, pushNotificationsFeature?.enabled, ratingsFeature?.enabled]);
+      const currentRouteName = getCurrentRouteName(navState) as string;
+      if (activeRatings === "nps") {
+        npsOnRatingsRouteChange(currentRouteName, false);
+      }
+      if (activeRatings === "no-nps") {
+        onRatingsRouteChange(currentRouteName, false);
+      }
+    };
+
+    const unsubscribe = navigation.addListener("state", handleRouteChange);
+
+    return () => unsubscribe();
+  }, [
+    navigation,
+    activeRatings,
+    npsOnRatingsRouteChange,
+    onRatingsRouteChange,
+    ratingsFeature?.enabled,
+  ]);
 
   return (
     <>

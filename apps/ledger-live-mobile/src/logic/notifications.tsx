@@ -1,28 +1,21 @@
-import { useCallback, useEffect, useMemo } from "react";
-import { AppState, InteractionManager, Linking } from "react-native";
+import { useCallback, useEffect, useRef } from "react";
+import { AppState, InteractionManager } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { add, isBefore, isEqual } from "date-fns";
 import storage from "LLM/storage";
-import { AuthorizationStatus, getMessaging } from "@react-native-firebase/messaging";
+import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   notificationsModalOpenSelector,
   drawerSourceSelector,
-  notificationsCurrentRouteNameSelector,
-  notificationsEventTriggeredSelector,
   notificationsDataOfUserSelector,
-  notificationsModalLockedSelector,
-  notificationsPermissionStatusSelector,
 } from "~/reducers/notifications";
 import {
   setNotificationsModalOpen,
   setNotificationsDrawerSource,
-  setNotificationsCurrentRouteName,
-  setNotificationsEventTriggered,
   setNotificationsDataOfUser,
-  setNotificationPermissionStatus,
 } from "~/actions/notifications";
-import { setRatingsModalLocked } from "~/actions/ratings";
+import { ratingsModalOpenSelector } from "~/reducers/ratings";
 import { track, updateIdentify } from "~/analytics";
 import { notificationsSelector, INITIAL_STATE as settingsInitialState } from "~/reducers/settings";
 import { NavigatorName, ScreenName } from "~/const/navigation";
@@ -30,6 +23,7 @@ import { setNotifications } from "~/actions/settings";
 import { NotificationsSettings, type NotificationsState } from "~/reducers/types";
 import { getNotificationPermissionStatus } from "./getNotificationPermissionStatus";
 import { useNavigation } from "@react-navigation/core";
+import { useNotificationsPermission } from "~/logic/useNotificationsPermission";
 
 export type DataOfUser = {
   // timestamps in ms of every time the user dismisses the opt in prompt (until he opts in)
@@ -40,16 +34,6 @@ export type DataOfUser = {
   dateOfNextAllowedRequest?: Date;
   /** Whether or not the user clicked on the "Maybe later" cta */
   alreadyDelayedToLater?: boolean;
-};
-
-export type EventTrigger = {
-  timeout: NodeJS.Timeout;
-  /** Name of the current screen route that will maybe trigger the push notification modal */
-  route_name: ScreenName;
-  /** In milliseconds, delay before triggering the push notification modal */
-  timer: number;
-  /** Whether the push notification modal is triggered when entering or when leaving the screen */
-  type?: "on_enter" | "on_leave";
 };
 
 const pushNotificationsDataOfUserStorageKey = "pushNotificationsDataOfUser";
@@ -71,32 +55,19 @@ const useNotifications = () => {
   const featureNewWordingNotificationsDrawer = useFeature("lwmNewWordingOptInNotificationsDrawer");
 
   const notifications = useSelector(notificationsSelector);
-  const permissionStatus = useSelector(notificationsPermissionStatusSelector);
+  const { permissionStatus, requestPushNotificationsPermission, setPermissionStatus } =
+    useNotificationsPermission();
   const actionEvents = featureBrazePushNotifications?.params?.action_events;
   const repromptSchedule = featureBrazePushNotifications?.params?.reprompt_schedule;
 
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
-  const isPushNotificationsModalLocked = useSelector(notificationsModalLockedSelector);
+  const isRatingsModalOpen = useSelector(ratingsModalOpenSelector);
   const drawerSource = useSelector(drawerSourceSelector);
-  const pushNotificationsOldRoute = useSelector(notificationsCurrentRouteNameSelector);
-  const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
   const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
-
-  const hiddenNotificationCategories = useMemo(() => {
-    const hiddenCategories = [];
-    const categoriesToHide = featureBrazePushNotifications?.params?.notificationsCategories ?? [];
-
-    for (const notificationsCategory of categoriesToHide) {
-      if (!notificationsCategory?.displayed) {
-        hiddenCategories.push(notificationsCategory?.category || "");
-      }
-    }
-
-    return hiddenCategories;
-  }, [featureBrazePushNotifications?.params?.notificationsCategories]);
+  const eventTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const updatePushNotificationsDataOfUserInStateAndStore = useCallback(
     (dataOfUserUpdated: DataOfUser) => {
@@ -233,7 +204,7 @@ const useNotifications = () => {
       if (permission.status === "fulfilled") {
         const osPermissionStatus = permission.value;
 
-        dispatch(setNotificationPermissionStatus(osPermissionStatus));
+        setPermissionStatus(osPermissionStatus);
 
         return syncOptOutState(osPermissionStatus, storedUserData);
       }
@@ -245,7 +216,7 @@ const useNotifications = () => {
 
     if (dataOfUserFromStorage.status === "rejected" && permission.status === "fulfilled") {
       const osPermissionStatus = permission.value;
-      dispatch(setNotificationPermissionStatus(osPermissionStatus));
+      setPermissionStatus(osPermissionStatus);
 
       // ignore this case, we will check user status in the next initPushNotificationsData call
       return;
@@ -253,7 +224,7 @@ const useNotifications = () => {
   }, [
     initializeNotificationSettingsState,
     syncOptOutState,
-    dispatch,
+    setPermissionStatus,
     updatePushNotificationsDataOfUserInStateAndStore,
   ]);
 
@@ -272,29 +243,11 @@ const useNotifications = () => {
 
   useEffect(() => {
     return () => {
-      if (pushNotificationsEventTriggered?.timeout) {
-        clearTimeout(pushNotificationsEventTriggered.timeout);
-        dispatch(setRatingsModalLocked(false));
+      if (eventTimeoutRef.current) {
+        clearTimeout(eventTimeoutRef.current);
       }
     };
-  }, [dispatch, pushNotificationsEventTriggered?.timeout]);
-
-  const requestPushNotificationsPermission = useCallback(async () => {
-    const { requestPermission } = getMessaging();
-
-    if (permissionStatus === AuthorizationStatus.NOT_DETERMINED) {
-      const permission = await requestPermission();
-      dispatch(setNotificationPermissionStatus(permission));
-      updateIdentify();
-      return permission;
-    }
-
-    if (permissionStatus === AuthorizationStatus.DENIED) {
-      return Linking.openSettings();
-    }
-
-    return permissionStatus;
-  }, [dispatch, permissionStatus]);
+  }, []);
 
   const setPushNotificationsModalOpenCallback = useCallback(
     (isOpen: boolean, drawerSource: NotificationsState["drawerSource"] = "generic") => {
@@ -302,16 +255,9 @@ const useNotifications = () => {
 
       if (isOpen) {
         dispatch(setNotificationsDrawerSource(drawerSource));
-        if (!isPushNotificationsModalLocked) {
-          dispatch(setRatingsModalLocked(true));
-        }
-      }
-
-      if (!isOpen) {
-        dispatch(setRatingsModalLocked(false));
       }
     },
-    [dispatch, isPushNotificationsModalLocked],
+    [dispatch],
   );
 
   const getRepromptDelay = useCallback(
@@ -374,66 +320,17 @@ const useNotifications = () => {
 
   const openDrawer = useCallback(
     (drawerSource: NotificationsState["drawerSource"], routeName: ScreenName, timer = 0) => {
-      dispatch(setRatingsModalLocked(true));
       const timeout = setTimeout(() => {
         setPushNotificationsModalOpenCallback(true, drawerSource);
       }, timer);
-      dispatch(
-        setNotificationsEventTriggered({
-          route_name: routeName,
-          timer,
-          timeout,
-        }),
-      );
+      eventTimeoutRef.current = timeout;
     },
-    [dispatch, setPushNotificationsModalOpenCallback],
-  );
-
-  const handleRouteChangePushNotification = useCallback(
-    (newRoute: ScreenName): boolean => {
-      if (pushNotificationsEventTriggered?.timeout) {
-        clearTimeout(pushNotificationsEventTriggered?.timeout);
-        dispatch(setRatingsModalLocked(false));
-      }
-
-      const triggerEvents = featureBrazePushNotifications?.params?.trigger_events ?? [];
-
-      for (const eventTrigger of triggerEvents) {
-        const isEntering = eventTrigger.type === "on_enter" && eventTrigger.route_name === newRoute;
-        const isLeaving =
-          eventTrigger.type === "on_leave" && eventTrigger.route_name === pushNotificationsOldRoute;
-
-        if (isEntering || isLeaving) {
-          const shouldPrompt = shouldPromptOptInDrawerCallback();
-          if (!shouldPrompt) {
-            return false;
-          }
-
-          openDrawer("generic", newRoute, eventTrigger.timer);
-          return true;
-        }
-      }
-
-      dispatch(setNotificationsCurrentRouteName(newRoute));
-      return false;
-    },
-    [
-      pushNotificationsEventTriggered?.timeout,
-      featureBrazePushNotifications?.params?.trigger_events,
-      dispatch,
-      pushNotificationsOldRoute,
-      shouldPromptOptInDrawerCallback,
-      openDrawer,
-    ],
+    [setPushNotificationsModalOpenCallback],
   );
 
   const tryTriggerPushNotificationDrawerAfterAction = useCallback(
     (actionSource: Exclude<NotificationsState["drawerSource"], "generic">) => {
-      if (
-        !featureBrazePushNotifications?.enabled ||
-        isPushNotificationsModalLocked ||
-        !actionEvents
-      ) {
+      if (!featureBrazePushNotifications?.enabled || isRatingsModalOpen || !actionEvents) {
         return;
       }
 
@@ -513,7 +410,7 @@ const useNotifications = () => {
     },
     [
       featureBrazePushNotifications?.enabled,
-      isPushNotificationsModalLocked,
+      isRatingsModalOpen,
       actionEvents,
       shouldPromptOptInDrawerCallback,
       openDrawer,
@@ -593,8 +490,6 @@ const useNotifications = () => {
     initPushNotificationsData,
 
     permissionStatus,
-    handleRouteChangePushNotification,
-    pushNotificationsOldRoute,
 
     drawerSource,
 
@@ -602,8 +497,6 @@ const useNotifications = () => {
     pushNotificationsDataOfUser,
 
     isPushNotificationsModalOpen,
-
-    hiddenNotificationCategories,
 
     requestPushNotificationsPermission,
 
