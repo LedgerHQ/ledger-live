@@ -14,13 +14,11 @@ export function useNotifications() {
   const isTrackedUser = useSelector(trackingEnabledSelector);
 
   useEffect(() => {
-    const cards = braze
-      .getCachedContentCards()
-      .cards.filter(
-        card =>
-          card.extras?.platform === Platform.Desktop &&
-          card.extras?.location === LocationContentCard.NotificationCenter,
-      );
+    const cards = (braze.getCachedContentCards()?.cards ?? []).filter(
+      card =>
+        card.extras?.platform === Platform.Desktop &&
+        card.extras?.location === LocationContentCard.NotificationCenter,
+    );
     setCachedNotifications(cards);
   }, [dispatch, notificationsCards]);
 
