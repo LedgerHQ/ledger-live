@@ -95,8 +95,10 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
             </Box>,
           ]
         : []),
-      <MarketBanner key="MarketBanner" />,
-      <Box background={colors.background.main} px={6} mt={6} key="Assets">
+      <Box mx={6} key="MarketBanner">
+        <MarketBanner key="MarketBanner" />
+      </Box>,
+      <Box background={colors.background.main} px={6} key="Assets">
         <Assets assets={assets} />
         <Button type="shade" size="large" outline mt={6} onPress={goToAssets}>
           {t("portfolio.seeAllAssets")}

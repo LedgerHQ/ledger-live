@@ -162,8 +162,8 @@ describe("MarketBanner Integration Tests", () => {
 
       expect(await screen.findByTestId("market-banner-tile-0")).toBeVisible();
       expect(screen.getByTestId("market-banner-tile-1")).toBeVisible();
-      expect(screen.getByText("Bitcoin")).toBeVisible();
-      expect(screen.getByText("Ethereum")).toBeVisible();
+      expect(screen.getByText("BTC")).toBeVisible();
+      expect(screen.getByText("ETH")).toBeVisible();
     });
 
     it("should render View All tile as the last element", async () => {
@@ -361,6 +361,63 @@ describe("MarketBanner Integration Tests", () => {
           params: {},
         });
       });
+    });
+  });
+
+  describe("Fear and Greed index", () => {
+    const API_ENDPOINT = "https://proxycmc.api.live.ledger.com/v3/fear-and-greed/latest";
+
+    it("should display fear and greed index", async () => {
+      server.use(
+        http.get(API_ENDPOINT, () =>
+          HttpResponse.json({
+            data: {
+              value: 50,
+              value_classification: "Neutral",
+              update_time: "2026-01-14T12:00:00Z",
+            },
+            status: {
+              timestamp: "2026-01-14T12:00:00Z",
+              error_code: 0,
+              error_message: "",
+              elapsed: 10,
+              credit_count: 1,
+            },
+          }),
+        ),
+      );
+
+      renderWithReactQuery(<MarketBannerTest />, {
+        overrideInitialState: state => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            overriddenFeatureFlags: {
+              lwmWallet40: { enabled: true, params: { marketBanner: true } },
+            },
+          },
+        }),
+      });
+
+      expect(await screen.findByText(/neutral/i)).toBeVisible();
+    });
+
+    it("should not display fear and greed index", async () => {
+      server.use(http.get(API_ENDPOINT, () => HttpResponse.json(null, { status: 500 })));
+
+      renderWithReactQuery(<MarketBannerTest />, {
+        overrideInitialState: state => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            overriddenFeatureFlags: {
+              lwmWallet40: { enabled: true, params: { marketBanner: true } },
+            },
+          },
+        }),
+      });
+
+      expect(await screen.queryByText(/neutral/i)).toBeNull();
     });
   });
 });

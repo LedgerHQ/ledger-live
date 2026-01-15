@@ -22,6 +22,8 @@ const MarketTile = ({ item, index, range, onPress }: MarketTileProps) => {
     change: `${changeSign}${priceChange.toFixed(2)}%`,
   });
 
+  const capitalizedTicker = item.ticker.toUpperCase();
+
   return (
     <Tile
       appearance="card"
@@ -34,7 +36,7 @@ const MarketTile = ({ item, index, range, onPress }: MarketTileProps) => {
     >
       <MarketTileIcon imageUrl={item.image} name={item.name} />
       <TileContent>
-        <TileTitle>{item.name}</TileTitle>
+        <TileTitle>{capitalizedTicker}</TileTitle>
         <TileDescription>
           <Text lx={{ color: isPositive ? "success" : "error" }}>
             {changeSign}

@@ -8346,5 +8346,16 @@
         }
       }
     }
+  },
+  "fearAndGreed": {
+    "title": "Mood index",
+    "description": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+    "levels": {
+      "extremeFear": "Fear+",
+      "fear": "Fear",
+      "neutral": "Neutral",
+      "greed": "Greed",
+      "extremeGreed": "Greed+"
+    }
   }
 }

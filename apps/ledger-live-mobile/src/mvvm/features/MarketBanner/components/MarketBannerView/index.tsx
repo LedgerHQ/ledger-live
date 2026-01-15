@@ -7,11 +7,14 @@ import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
 import BannerItem, { ListItem } from "../BannerItem";
 import { ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { FearAndGreed } from "LLM/components/FearAndGreed";
+import ViewAllTile from "../ViewAllTile";
+import { BannerStates } from "../BannerStates";
 
 interface MarketBannerViewProps {
   items: MarketItemPerformer[];
-  isLoading: boolean;
   range: PortfolioRange;
+  isError: boolean;
   onTilePress: (item: MarketItemPerformer) => void;
   onViewAllPress: () => void;
   onSectionTitlePress: () => void;
@@ -19,12 +22,10 @@ interface MarketBannerViewProps {
   testID?: string;
 }
 
-const TILE_TOTAL_WIDTH = 98;
-
 const MarketBannerView = ({
   items,
-  isLoading,
   range,
+  isError,
   onTilePress,
   onViewAllPress,
   onSectionTitlePress,
@@ -45,38 +46,16 @@ const MarketBannerView = ({
     [onSwipe],
   );
 
-  const listData: ListItem[] = isLoading
-    ? Array.from({ length: 8 }, (_, i) => ({ type: "skeleton" as const, id: i }))
-    : [...items, { type: "viewAll" as const }];
-
   const renderItem = useCallback(
     (props: { item: ListItem; index: number }) => (
-      <BannerItem
-        item={props.item}
-        index={props.index}
-        range={range}
-        onTilePress={onTilePress}
-        onViewAllPress={onViewAllPress}
-      />
+      <BannerItem item={props.item} index={props.index} range={range} onTilePress={onTilePress} />
     ),
-    [range, onTilePress, onViewAllPress],
+    [range, onTilePress],
   );
 
   const keyExtractor = useCallback((item: ListItem): string => {
-    if ("type" in item) {
-      return item.type === "viewAll" ? "view-all" : `skeleton-${item.id}`;
-    }
-    return (item as MarketItemPerformer).id;
+    return item.id;
   }, []);
-
-  const getItemLayout = useCallback(
-    (_: unknown, index: number) => ({
-      length: TILE_TOTAL_WIDTH,
-      offset: TILE_TOTAL_WIDTH * index,
-      index,
-    }),
-    [],
-  );
 
   return (
     <Flex testID={testID} mb={24}>
@@ -86,7 +65,7 @@ const MarketBannerView = ({
         accessibilityHint={t("marketBanner.viewAllAccessibilityHint")}
         accessibilityRole="button"
       >
-        <Flex flexDirection="row" alignItems="center" mb={4} px={16}>
+        <Flex flexDirection="row" alignItems="center" mb={4}>
           <Text typography="heading4SemiBold" lx={{ color: "base" }}>
             {t("marketBanner.title")}
           </Text>
@@ -95,16 +74,20 @@ const MarketBannerView = ({
       </Pressable>
 
       <FlatList
-        data={listData}
+        data={items}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
+        ListHeaderComponent={<FearAndGreed />}
+        ListFooterComponent={<ViewAllTile onPress={onViewAllPress} />}
+        ListEmptyComponent={<BannerStates isError={isError} />}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16 }}
         onScroll={handleSwipe}
         scrollEventThrottle={16}
-        getItemLayout={getItemLayout}
         testID="market-banner-list"
+        ListHeaderComponentStyle={{ marginRight: 8 }}
+        contentContainerStyle={{ paddingHorizontal: 16 }}
+        style={{ marginHorizontal: -16 }}
       />
     </Flex>
   );
