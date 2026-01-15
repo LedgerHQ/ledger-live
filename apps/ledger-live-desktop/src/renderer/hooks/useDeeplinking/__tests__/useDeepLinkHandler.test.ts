@@ -6,7 +6,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
-import { useDeepLinkHandler } from "./useDeepLinkHandler";
+import { useDeepLinkHandler } from "../useDeepLinkHandler";
 import BigNumber from "bignumber.js";
 
 jest.mock("~/renderer/actions/modals", () => ({
@@ -34,7 +34,7 @@ jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index", () => ({
   usePostOnboardingDeeplinkHandler: () => jest.fn(),
 }));
 
-jest.mock("../useAutoRedirectToPostOnboarding", () => ({
+jest.mock("../../useAutoRedirectToPostOnboarding", () => ({
   useRedirectToPostOnboardingCallback: () => jest.fn(() => false),
 }));
 
@@ -87,7 +87,7 @@ const mockGetAccountsOrSubAccountsByCurrency = jest.fn(
   (_currency: CryptoOrTokenCurrency, _accounts: Account[]): (Account | TokenAccount)[] => [],
 );
 
-jest.mock("./utils", () => ({
+jest.mock("../utils", () => ({
   trackDeeplinkingEvent: jest.fn(),
   getAccountsOrSubAccountsByCurrency: jest.fn((currency, accounts) =>
     mockGetAccountsOrSubAccountsByCurrency(currency, accounts),
@@ -96,6 +96,7 @@ jest.mock("./utils", () => ({
 
 const createMockAccount = (currencyId: string): Account => {
   const currency = getCryptoCurrencyById(currencyId);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return {
     id: `${currencyId}-account-1`,
     type: "Account" as const,
@@ -104,6 +105,7 @@ const createMockAccount = (currencyId: string): Account => {
   } as unknown as Account;
 };
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const createMockTokenAccount = (parentId: string, tokenId: string): TokenAccount =>
   ({
     id: `token-${tokenId}`,
@@ -270,6 +272,7 @@ describe("useDeepLinkHandler", () => {
         );
 
         mockFindCryptoCurrencyByKeyword.mockReturnValue(undefined);
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         mockGetCryptoAssetsStore.findTokenById.mockResolvedValue({
           id: "ethereum/erc20/usdt",
           type: "TokenCurrency",
