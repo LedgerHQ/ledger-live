@@ -40,8 +40,8 @@ catalogs:
       specifier: 0.0.40
       version: 0.0.40
     '@ledgerhq/lumen-ui-react':
-      specifier: 0.0.64
-      version: 0.0.64
+      specifier: 0.0.65
+      version: 0.0.65
     '@ledgerhq/speculos-device-controller':
       specifier: 0.2.1
       version: 0.2.1
@@ -682,7 +682,7 @@ importers:
         version: 0.0.40
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.0.64(e17c1f4f71171860e7268885e247ad1a)
+        version: 0.0.65(e17c1f4f71171860e7268885e247ad1a)
       '@ledgerhq/react-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/react
@@ -15398,8 +15398,8 @@ packages:
   '@ledgerhq/lumen-design-core@0.0.40':
     resolution: {integrity: sha512-/sa2Lnohy03hpNGUfNBfricilRYh7CMYvNHac8BR1Yp1OwIXR4UA9kN3oCJ1GxR8EnasyCcctJsH9G6BPLllYg==}
 
-  '@ledgerhq/lumen-ui-react@0.0.64':
-    resolution: {integrity: sha512-T090TRpIkYZtdkQ6begxYJ86Nn+5DoWS0xQofAefbHpjOmYOSfzwVt2hzfjBAcpAG1neAab5kzHIOadpxsJbFw==}
+  '@ledgerhq/lumen-ui-react@0.0.65':
+    resolution: {integrity: sha512-KdKjExRE9MxgRUgT7t23r0aKeJfD+gUBp6RR5hSVzmyOu2zbyhyS7t3ZsUkQGkociV7PGe/vJcu1BPWrAZ2ymg==}
     peerDependencies:
       '@radix-ui/react-checkbox': ^1.3.2
       '@radix-ui/react-dialog': ^1.1.15
@@ -45226,7 +45226,7 @@ snapshots:
       tailwindcss: 4.1.18
       tslib: 2.6.2
 
-  '@ledgerhq/lumen-ui-react@0.0.64(e17c1f4f71171860e7268885e247ad1a)':
+  '@ledgerhq/lumen-ui-react@0.0.65(e17c1f4f71171860e7268885e247ad1a)':
     dependencies:
       '@ledgerhq/lumen-utils-shared': 0.0.15(react@18.3.1)
       '@radix-ui/react-checkbox': 1.3.3(@types/react-dom@18.2.23(@types/react@18.2.73))(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
