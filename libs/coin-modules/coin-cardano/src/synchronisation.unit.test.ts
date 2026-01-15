@@ -178,7 +178,11 @@ describe("makeGetAccountShape", () => {
 describe("mapTxToAccountOperation", () => {
   const paymentCredKey = "1234";
   const stakeCredKey = "5678";
-  const stakeCredHex = `00${stakeCredKey}`;
+  const stakeAddress = new TyphonAddress.RewardAddress(TyphonTypes.NetworkId.TESTNET, {
+    type: TyphonTypes.HashType.ADDRESS,
+    hash: Buffer.from(stakeCredKey, "hex"),
+  });
+  const stakeCredHex = stakeAddress.getHex();
 
   let accountShapeInfo: AccountShapeInfo<CardanoAccount>;
   let accountAddress: TyphonAddress.EnterpriseAddress;
@@ -193,7 +197,10 @@ describe("mapTxToAccountOperation", () => {
       type: TyphonTypes.HashType.ADDRESS,
     });
     accountShapeInfo = {
-      currency: { id: "cardano", units: [{ name: "Cardano", code: "ADA", magnitude: 6 }] } as any,
+      currency: {
+        id: "cardano_testnet",
+        units: [{ name: "Cardano", code: "ADA", magnitude: 6 }],
+      } as any,
       address: "address",
       index: 0,
       initialAccount: {} as any,

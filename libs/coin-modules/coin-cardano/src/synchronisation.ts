@@ -5,7 +5,7 @@ import {
   GetAccountShape,
   mergeOps,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { utils as TyphonUtils } from "@stricahq/typhonjs";
+import { utils as TyphonUtils, address as TyphonAddress } from "@stricahq/typhonjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account/index";
@@ -205,6 +205,11 @@ export function mapTxToAccountOperation(
   protocolParams: ProtocolParams,
 ): CardanoOperation {
   const accountChange = getAccountChange(tx, accountCredentialsMap);
+  const networkParams = getNetworkParameters(accountShapeInfo.currency.id);
+  const stakeAddress = new TyphonAddress.RewardAddress(networkParams.networkId, {
+    type: HashType.ADDRESS,
+    hash: Buffer.from(stakeCredential.key, "hex"),
+  });
 
   const subOperations = inferSubOperations(tx.hash, subAccounts);
   const memo = getMemoFromTx(tx);
@@ -237,7 +242,7 @@ export function mapTxToAccountOperation(
   // conway era stake registrations
   if (tx.certificate.stakeRegsConway?.length) {
     const walletRegistration = tx.certificate.stakeRegsConway.find(
-      w => stakeCredential.key === w.stakeHex.slice(2),
+      w => stakeAddress.getHex() === w.stakeHex,
     );
     if (walletRegistration) {
       extra.deposit = formatCurrencyUnit(
@@ -274,7 +279,7 @@ export function mapTxToAccountOperation(
   // conway era stake de-registrations
   if (tx.certificate.stakeDeRegsConway?.length) {
     const walletDeRegistration = tx.certificate.stakeDeRegsConway.find(
-      w => stakeCredential.key === w.stakeHex.slice(2),
+      w => stakeAddress.getHex() === w.stakeHex,
     );
     if (walletDeRegistration) {
       operationValue = operationValue.minus(walletDeRegistration.deposit);
