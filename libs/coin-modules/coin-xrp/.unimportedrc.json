@@ -3,8 +3,8 @@
     "src/api/index.ts",
     "src/bridge/index.ts",
     "src/bridge/deviceTransactionConfig.ts",
-    "src/datasets/dataset-1.ts",
     "src/signer/index.ts",
+    "src/transaction.ts",
     "src/test/index.ts",
     "src/index.ts",
     "src/logic/validateAddress.ts"
