@@ -8,9 +8,11 @@ import { validateIntent } from "./validateIntent";
 import * as logicValidateMemo from "./validateMemo";
 
 jest.mock("../network/horizon");
+jest.mock("./validateMemo");
+jest.mock("./utils");
 
 describe("validateIntent", () => {
-  const spiedValidateMemo = jest.spyOn(logicValidateMemo, "validateMemo");
+  const spiedValidateMemo = logicValidateMemo.validateMemo as jest.Mock;
   const spiedFetchAccount = jest.spyOn(horizon, "fetchAccount");
   const spiedFetchAccountNetworkInfo = jest.spyOn(network, "fetchAccountNetworkInfo");
   const spiedIsAccountMultiSign = jest.spyOn(utils, "isAccountMultiSign");
