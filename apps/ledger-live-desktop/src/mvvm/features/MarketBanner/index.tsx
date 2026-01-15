@@ -23,7 +23,7 @@ const MarketBannerView = ({ isLoading }: MarketBannerViewProps) => {
   return (
     <div className="flex flex-col">
       <div className="flex items-center gap-2">
-        <span className="text-base heading-4-semi-bold">{t("marketBanner.title")}</span>
+        <span className="heading-4-semi-bold text-base">{t("marketBanner.title")}</span>
         <InteractiveIcon
           iconType="stroked"
           aria-label="Interactive icon"
