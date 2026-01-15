@@ -65,6 +65,8 @@ jobs:
 
       - name: install dependencies
         run: pnpm i -F "./libs/**" -F "./apps/cli/**" -F "@ledgerhq/ledger-live"
+        env:
+          npm_config_build_from_source: true
 
       - name: build libs
         run: pnpm run build:libs
