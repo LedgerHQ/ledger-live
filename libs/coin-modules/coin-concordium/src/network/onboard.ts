@@ -8,7 +8,6 @@ import type {
 } from "@ledgerhq/concordium-sdk-adapter";
 import {
   TransactionExpiry,
-  signCredentialTransaction as webSDKSignCredentialTransaction,
   serializeCredentialDeploymentPayload,
 } from "@ledgerhq/concordium-sdk-adapter";
 import type { AttributeKey, ChainArData } from "@ledgerhq/concordium-sdk-adapter";
@@ -16,10 +15,8 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import JSONbig from "json-bigint";
 import type { ConcordiumSigner } from "../types";
 import type {
-  CreateAccountCreationRequestMessage,
   CredentialDeploymentTransaction,
   SerializedCredentialDeploymentDetails,
-  SignedCredentialDeploymentTransaction,
   UnsignedCredentialDeploymentInformation,
 } from "../types/onboard";
 import { getAccountInfo, sendCredentialDeploymentTransaction } from "./grpcClient";
@@ -238,34 +235,6 @@ export async function signCredentialDeployment(
 }
 
 /**
- * Check if an account is already onboarded (has credentials deployed)
- *
- * Uses the browser wallet approach: checks credential deployment status by querying
- * account info using the credential ID. This directly verifies credential deployment status.
- *
- * @param currency - The Concordium currency
- * @param credId - Credential ID to check (required)
- * @returns Object with isOnboarded flag and accountAddress if found
- */
-export async function isAccountOnboarded(
-  currency: CryptoCurrency,
-  _publicKey: string,
-  credId: string,
-): Promise<{ isOnboarded: boolean; accountAddress?: string }> {
-  try {
-    const accountInfo = await getAccountInfo(currency, credId);
-
-    return {
-      isOnboarded: true,
-      accountAddress: accountInfo.accountAddress.toString(),
-    };
-  } catch (_error) {
-    // RpcError or any error means credential is not deployed
-    return { isOnboarded: false };
-  }
-}
-
-/**
  * This section contains reimplementations of ID App SDK methods to remove
  * the dependency on @concordium/id-app-sdk while maintaining the same functionality.
  *
@@ -273,7 +242,7 @@ export async function isAccountOnboarded(
  * License: Apache-2.0 (compatible)
  */
 
-function deserializeCredentialDeploymentTransaction(
+export function deserializeCredentialDeploymentTransaction(
   serializedCredentialDeploymentTransaction: SerializedCredentialDeploymentDetails,
 ): WebSDKCredentialDeploymentTransaction {
   const credentialDeploymentTransaction = {} as WebSDKCredentialDeploymentTransaction;
@@ -288,40 +257,6 @@ function deserializeCredentialDeploymentTransaction(
   credentialDeploymentTransaction.randomness =
     serializedCredentialDeploymentTransaction.randomness as WebSDKCommitmentsRandomness;
   return credentialDeploymentTransaction;
-}
-
-/**
- * Sign a credential deployment transaction
- *
- * Reimplementation of ConcordiumIDAppSDK.signCredentialTransaction
- *
- * @param serializedCredentialDeploymentTransaction - Credential deployment transaction to sign
- * @param signingKey - Signing key to use for the account
- * @returns Signed credential deployment transaction
- */
-export async function signCredentialTransaction(
-  serializedCredentialDeploymentTransaction: SerializedCredentialDeploymentDetails,
-  signingKey: HexString,
-): Promise<SignedCredentialDeploymentTransaction> {
-  const credentialDeploymentTransaction: WebSDKCredentialDeploymentTransaction =
-    deserializeCredentialDeploymentTransaction(serializedCredentialDeploymentTransaction);
-
-  const signature = await webSDKSignCredentialTransaction(
-    credentialDeploymentTransaction,
-    signingKey,
-  );
-
-  // Convert back to our CredentialDeploymentTransaction format (expiry as bigint)
-  // Randomness stays as object per updated type - no stringify needed
-  return {
-    credentialDeploymentTransaction: {
-      expiry: credentialDeploymentTransaction.expiry.expiryEpochSeconds,
-      unsignedCdiStr: serializedCredentialDeploymentTransaction.unsignedCdiStr,
-      randomness:
-        credentialDeploymentTransaction.randomness as unknown as import("../types/onboard").CommitmentsRandomness,
-    },
-    signature,
-  };
 }
 
 /**
@@ -490,23 +425,4 @@ export async function submitCCDTransaction(
 
     throw error;
   }
-}
-
-/**
- * Create account creation request message
- *
- * Reimplementation of ConcordiumIDAppSDK.getCreateAccountCreationRequest
- *
- * @param publicKey - Public key to use for the account
- * @param reason - Description of the use of this public key
- * @returns Create account creation request message
- */
-export function getCreateAccountCreationRequest(
-  publicKey: string,
-  reason: string = "The account wallet is requesting and Identity to create an account",
-): CreateAccountCreationRequestMessage {
-  return {
-    publicKey,
-    reason,
-  };
 }

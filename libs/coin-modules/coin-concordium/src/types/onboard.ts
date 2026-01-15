@@ -1,5 +1,8 @@
 import type { HexString } from "@ledgerhq/concordium-sdk-adapter";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { SessionTypes, ISignClient } from "@walletconnect/types";
 import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
+import type { ConcordiumNetwork } from "./config";
 
 export { AccountOnboardStatus };
 
@@ -98,9 +101,16 @@ export interface SignedCredentialDeploymentTransaction {
   signature: HexString;
 }
 
-export interface CreateAccountCreationRequestMessage {
+export interface IDAppCreateAccountMessage {
   publicKey: string;
   reason: string;
+}
+
+export interface IDAppCreateAccountParams {
+  topic: string;
+  chainId: string;
+  method: string;
+  params: { message: IDAppCreateAccountMessage };
 }
 
 export enum IDAppErrorCode {
@@ -133,7 +143,45 @@ export interface IDAppCreateAccountResponseMessage {
   credNumber?: number;
 }
 
-export interface IDAppCreateAccountCreationResponse {
+export interface IDAppCreateAccountResponse {
   status: IDAppResponseStatus;
   message: IDAppCreateAccountResponseMessage | IDAppError;
+}
+
+/**
+ * Type representing WalletConnect SignClient
+ * Using ISignClient from @walletconnect/types which is CommonJS-compatible
+ */
+export type SignClient = ISignClient;
+
+/**
+ * WalletConnect context interface for Concordium onboarding
+ * This allows the bridge layer to use WalletConnect without directly importing renderer services
+ */
+export interface ConcordiumWalletConnectContext {
+  getClient(): Promise<SignClient>;
+
+  isSessionValid(session: SessionTypes.Struct): boolean;
+
+  getSession(network: ConcordiumNetwork): Promise<SessionTypes.Struct | null>;
+
+  disconnectAllSessions(): Promise<void>;
+
+  getCreateAccountMessage(publicKey: string, reason: string): IDAppCreateAccountMessage;
+
+  requestCreateAccount(params: IDAppCreateAccountParams): Promise<IDAppCreateAccountResponse>;
+
+  submitCCDTransaction(
+    credentialDeploymentTransaction: CredentialDeploymentTransaction,
+    signature: string,
+    currency: CryptoCurrency,
+  ): Promise<string>;
+
+  initiatePairing(
+    network: ConcordiumNetwork,
+    chainId: string,
+  ): Promise<{
+    uri?: string;
+    approval: () => Promise<SessionTypes.Struct>;
+  }>;
 }

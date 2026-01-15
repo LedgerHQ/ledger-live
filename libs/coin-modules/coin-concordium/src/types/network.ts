@@ -1,12 +1,3 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { SessionTypes, ISignClient } from "@walletconnect/types";
-import type { ConcordiumNetwork } from "./config";
-import type {
-  CreateAccountCreationRequestMessage,
-  CredentialDeploymentTransaction,
-  IDAppCreateAccountCreationResponse,
-} from "./onboard";
-
 /**
  * Identity provider information from wallet-proxy
  * Contains metadata about the identity provider including verification URLs
@@ -216,62 +207,4 @@ export interface AccountTransactionsResponse {
   count: number;
   limit: number;
   order: "ascending" | "descending";
-}
-
-/**
- * Type representing WalletConnect SignClient
- * Using ISignClient from @walletconnect/types which is CommonJS-compatible
- */
-export type SignClient = ISignClient;
-
-/**
- * WalletConnect context interface for Concordium onboarding
- * This allows the bridge layer to use WalletConnect without directly importing renderer services
- */
-export interface ConcordiumWalletConnectContext {
-  getClient(): Promise<SignClient>;
-  getSession(network: ConcordiumNetwork): Promise<SessionTypes.Struct | null>;
-
-  request(params: {
-    topic: string;
-    chainId: string;
-    method: string;
-    params: { message: unknown };
-  }): Promise<unknown>;
-
-  requestAccountCreation(params: {
-    topic: string;
-    chainId: string;
-    method: string;
-    params: { message: unknown };
-  }): Promise<IDAppCreateAccountCreationResponse>;
-
-  signCredentialTransaction(
-    transaction: CredentialDeploymentTransaction,
-    signingKey: string,
-  ): Promise<{
-    credentialDeploymentTransaction: CredentialDeploymentTransaction;
-    signature: string;
-  }>;
-
-  submitCCDTransaction(
-    credentialDeploymentTransaction: CredentialDeploymentTransaction,
-    signature: string,
-    currency: CryptoCurrency,
-  ): Promise<string>;
-
-  getCreateAccountCreationRequest(
-    publicKey: string,
-    reason: string,
-  ): CreateAccountCreationRequestMessage;
-
-  initiatePairing(
-    network: ConcordiumNetwork,
-    chainId: string,
-  ): Promise<{
-    uri?: string;
-    approval: () => Promise<SessionTypes.Struct>;
-  }>;
-
-  disconnectAllSessions(): Promise<void>;
 }

@@ -1,11 +1,11 @@
 import type { ConcordiumWalletConnectContext } from "../types";
 
-let walletConnectContext: ConcordiumWalletConnectContext | null = null;
+let walletConnect: ConcordiumWalletConnectContext | null = null;
 
-export function setWalletConnectContext(context: ConcordiumWalletConnectContext | null): void {
-  walletConnectContext = context;
+export function setWalletConnect(context: ConcordiumWalletConnectContext | null): void {
+  walletConnect = context;
 }
 
-export function getWalletConnectContext(): ConcordiumWalletConnectContext | null {
-  return walletConnectContext;
+export function getWalletConnect(): ConcordiumWalletConnectContext | null {
+  return walletConnect;
 }

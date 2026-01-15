@@ -6,13 +6,19 @@ import type { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { CONCORDIUM_CHAIN_IDS, CONCORDIUM_ID_APP_MOBILE_HOST } from "../constants";
 import {
+  deserializeCredentialDeployment,
   getConcordiumNetwork,
-  isAccountOnboarded,
   signCredentialDeployment,
+  deserializeCredentialDeploymentTransaction,
 } from "../network/onboard";
-import { getWalletConnectContext } from "../network/walletConnect";
+import { getWalletConnect } from "../network/walletConnect";
 import resolver from "../signer";
-import type { ConcordiumAccount, ConcordiumResources, ConcordiumSigner } from "../types";
+import type {
+  ConcordiumAccount,
+  ConcordiumResources,
+  ConcordiumSigner,
+  SubmitCredentialRequest,
+} from "../types";
 import type { SerializedCredentialDeploymentDetails } from "../types/onboard";
 import {
   AccountOnboardStatus,
@@ -22,6 +28,7 @@ import {
   ConcordiumPairingStatus,
   IDAppErrorCode,
 } from "../types/onboard";
+import { submitCredential } from "../network/proxyClient";
 
 /**
  * Create an onboarded account with Concordium-specific resources
@@ -81,8 +88,8 @@ export const buildOnboardAccount =
   ): Observable<ConcordiumOnboardProgress | ConcordiumOnboardResult> =>
     new Observable(o => {
       async function main() {
-        const walletConnectContext = getWalletConnectContext();
-        if (!walletConnectContext) {
+        const walletConnect = getWalletConnect();
+        if (!walletConnect) {
           throw new Error(
             "WalletConnect context not available. Please ensure Concordium WalletConnect service is initialized.",
           );
@@ -102,210 +109,100 @@ export const buildOnboardAccount =
 
         o.next({ status: AccountOnboardStatus.PREPARE });
 
-        // Check if account is already onboarded using credential ID (browser wallet approach)
-        const concordiumResources =
-          "concordiumResources" in account && account.concordiumResources
-            ? (account.concordiumResources as ConcordiumResources)
-            : undefined;
-        const credId =
-          concordiumResources && typeof concordiumResources.credId === "string"
-            ? concordiumResources.credId
-            : undefined;
-
-        if (credId) {
-          const { isOnboarded, accountAddress: existingAddress } = await isAccountOnboarded(
-            currency,
-            publicKey,
-            credId,
-          );
-
-          // If account is already onboarded AND exists on-chain, skip account creation
-          // If account is marked as onboarded locally but doesn't exist on-chain yet,
-          // proceed with onboarding to finalize the credential deployment transaction
-          if (isOnboarded && existingAddress) {
-            // Preserve existing verify address data from concordiumResources
-            const onboardedAccount = createOnboardedAccount(account, existingAddress, currency, {
-              ...(credId !== undefined && { credId }),
-              ...(concordiumResources?.identityIndex !== undefined && {
-                identityIndex: concordiumResources.identityIndex,
-              }),
-              ...(concordiumResources?.credNumber !== undefined && {
-                credNumber: concordiumResources.credNumber,
-              }),
-              ...(concordiumResources?.ipIdentity !== undefined && {
-                ipIdentity: concordiumResources.ipIdentity,
-              }),
-              ...(concordiumResources?.publicKey !== undefined && {
-                publicKey: concordiumResources.publicKey,
-              }),
-              bip32Address, // Use freshly obtained BIP32 address for device matching
-            });
-            o.next({ accountAddress: existingAddress, account: onboardedAccount });
-            return;
-          }
-        }
-
         const network = getConcordiumNetwork(currency);
-        const createRequest = walletConnectContext.getCreateAccountCreationRequest(
-          publicKey,
-          "Create Concordium account from Ledger Live",
-        );
+        const chainId = CONCORDIUM_CHAIN_IDS[network];
 
-        const session = await walletConnectContext.getSession(network);
+        const session = await walletConnect.getSession(network);
         if (!session) {
           throw new Error(
             `No active WalletConnect session for ${network}. Please pair with Concordium IDApp first.`,
           );
         }
 
-        const chainId = CONCORDIUM_CHAIN_IDS[network];
-        const response = await walletConnectContext.requestAccountCreation({
+        const createAccountMessage = walletConnect.getCreateAccountMessage(
+          publicKey,
+          "Create Concordium account from Ledger Live",
+        );
+        const response = await walletConnect.requestCreateAccount({
           topic: session.topic,
           chainId,
           method: "create_account",
-          params: { message: createRequest },
+          params: { message: createAccountMessage },
         });
 
-        // Handle explicit error response
         if (response.status === "error") {
           const errorMessage =
             "details" in response.message ? response.message.details : "unknown error";
 
-          // Handle case where account already exists - this can happen if account was onboarded
-          // in a previous session but local state wasn't updated
-          if (
-            "code" in response &&
-            response.code === IDAppErrorCode.DuplicateAccountCreationRequest
-          ) {
-            const accountAddress = account.xpub || account.freshAddress;
-
-            if (accountAddress?.length > 0) {
-              // Preserve existing data if available
-              const existingCredId =
-                typeof concordiumResources?.credId === "string"
-                  ? concordiumResources.credId
-                  : undefined;
-              const onboardedAccount = createOnboardedAccount(account, accountAddress, currency, {
-                ...(existingCredId !== undefined && { credId: existingCredId }),
-                ...(concordiumResources?.identityIndex !== undefined && {
-                  identityIndex: concordiumResources.identityIndex,
-                }),
-                ...(concordiumResources?.credNumber !== undefined && {
-                  credNumber: concordiumResources.credNumber,
-                }),
-                ...(concordiumResources?.ipIdentity !== undefined && {
-                  ipIdentity: concordiumResources.ipIdentity,
-                }),
-                ...(concordiumResources?.publicKey !== undefined && {
-                  publicKey: concordiumResources.publicKey,
-                }),
-                bip32Address, // Use freshly obtained BIP32 address for device matching
-              });
-              o.next({ accountAddress, account: onboardedAccount });
-              return;
-            }
-
-            throw new Error(
-              `Account with this public key already exists on the network. The account may have been onboarded in a previous session. Please try syncing your accounts or restart the onboarding process.`,
-            );
-          }
-
           throw new Error(`IDApp create_account failed: ${errorMessage}`);
         }
 
-        // Handle unexpected structure for "success" response
-        if (
-          response.status !== "success" ||
-          !("serializedCredentialDeploymentTransaction" in response.message) ||
-          !("accountAddress" in response.message)
-        ) {
+        if (!("serializedCredentialDeploymentTransaction" in response.message)) {
           throw new Error(
             "Invalid response from IDApp: serializedCredentialDeploymentTransaction is missing or invalid. Please try again.",
           );
         }
 
-        const { serializedCredentialDeploymentTransaction, accountAddress } = response.message;
+        if (!("accountAddress" in response.message)) {
+          throw new Error(
+            "Invalid response from IDApp: accountAddress is missing or invalid. Please try again.",
+          );
+        }
 
-        const randomness =
-          typeof serializedCredentialDeploymentTransaction.randomness === "string"
-            ? JSON.parse(serializedCredentialDeploymentTransaction.randomness)
-            : serializedCredentialDeploymentTransaction.randomness;
-
-        const serializedTransaction: SerializedCredentialDeploymentDetails = {
-          expiry: Number(serializedCredentialDeploymentTransaction.expiry),
-          unsignedCdiStr: serializedCredentialDeploymentTransaction.unsignedCdiStr,
-          randomness,
-        };
+        const {
+          serializedCredentialDeploymentTransaction,
+          accountAddress,
+          identityIndex = 0,
+          credNumber = 0,
+        } = response.message;
 
         o.next({ status: AccountOnboardStatus.SIGN });
 
-        // Sign credential deployment on device
-        // Note: The device app doesn't support exporting account signing keys,
-        // so we must sign directly on device. Both approaches sign the same digest,
-        // so the signatures are compatible with browser wallet format.
-        const signatureResult = await signCredentialDeployment(
+        const signResult = await signCredentialDeployment(
           signerContext,
           deviceId,
           account.freshAddressPath,
-          serializedTransaction,
+          serializedCredentialDeploymentTransaction,
         );
 
-        if (
-          !signatureResult?.signature ||
-          signatureResult.signature.length === 0 ||
-          !signatureResult.signature[0] ||
-          signatureResult.signature[0].length === 0
-        ) {
+        const signature = signResult?.signature?.[0];
+
+        if (!signature?.length) {
           throw new Error("Failed to obtain signature from device");
         }
 
-        o.next({ status: AccountOnboardStatus.SUBMIT });
+        const {
+          randomness,
+          unsignedCdi: { credId, ipIdentity },
+        } = deserializeCredentialDeploymentTransaction(serializedCredentialDeploymentTransaction);
 
         // Note: Device signs with first key (key index 0), signature should be at signatures[0]
         // Convert signature array to single signature string format expected by web SDK
         // hw-app-concordium returns signature as string[], but web SDK expects single hex string
-        const signature = signatureResult.signature.join("");
-        const txHash = await walletConnectContext.submitCCDTransaction(
+        const txHash = await walletConnect.submitCCDTransaction(
           {
-            expiry: BigInt(serializedTransaction.expiry),
-            unsignedCdiStr: serializedTransaction.unsignedCdiStr,
-            randomness: serializedTransaction.randomness,
+            expiry: BigInt(serializedCredentialDeploymentTransaction.expiry),
+            unsignedCdiStr: serializedCredentialDeploymentTransaction.unsignedCdiStr,
+            randomness,
           },
           signature,
           currency,
         );
 
-        // Extract credential info from unsignedCdiStr and IDApp response to save with the account
-        const unsignedCdi: { credId?: string; ipIdentity?: number } = JSON.parse(
-          serializedTransaction.unsignedCdiStr,
-        );
-        const extractedCredentialId = unsignedCdi.credId;
-
-        // Get ipIdentity from credential deployment transaction
-        const ipIdentity = unsignedCdi.ipIdentity;
-        if (typeof ipIdentity !== "number") {
-          throw new Error("Invalid ipIdentity in credential deployment transaction");
-        }
-
-        // Use identityIndex/credNumber from IDApp response if provided, otherwise default to 0
-        // For initial onboarding, identityIndex = 0 (first identity) and credNumber = 0 (first credential)
-        const identityIndex = response.message.identityIndex ?? 0;
-        const credNumber = response.message.credNumber ?? 0;
-
         const onboardedAccount = createOnboardedAccount(account, accountAddress, currency, {
-          ...(extractedCredentialId !== undefined && { credId: extractedCredentialId }),
           identityIndex,
           credNumber,
           ipIdentity,
           publicKey,
           bip32Address, // Use BIP32-derived address for device-account matching
+          credId,
         });
 
         const result: ConcordiumOnboardResult = {
           accountAddress,
           account: onboardedAccount,
           txHash,
-          ...(extractedCredentialId && { credId: extractedCredentialId }),
+          credId,
         };
 
         o.next(result);
@@ -329,16 +226,16 @@ export const buildPairWalletConnect =
       async function main() {
         o.next({ status: ConcordiumPairingStatus.INIT });
 
-        const walletConnectContext = getWalletConnectContext();
+        const walletConnect = getWalletConnect();
 
-        if (!walletConnectContext) {
+        if (!walletConnect) {
           throw new Error("WalletConnect context is not available");
         }
 
         const network = getConcordiumNetwork(currency);
         const chainId = CONCORDIUM_CHAIN_IDS[network];
 
-        const { uri, approval } = await walletConnectContext.initiatePairing(network, chainId);
+        const { uri, approval } = await walletConnect.initiatePairing(network, chainId);
 
         if (!uri) {
           throw new Error("WalletConnect connect() returned no URI");
