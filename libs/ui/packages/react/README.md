@@ -96,7 +96,7 @@ Using the import requires you to use a bundler to export and save the files to t
 import "@ledgerhq/react-ui/assets/fonts";
 ```
 
-With webpack 5 the rule below will process the font files and save them in the `src/assets/fonts` folder.
+With Rspack (or any bundler supporting asset modules) the rule below will process the font files and save them in the `src/assets/fonts` folder.
 
 ```js
 {
@@ -165,7 +165,7 @@ For instance using the `unpkg.com` CDN:
 
 [🌍 Hosted here.](https://codesandbox.io/s/ledger-live-react-ui-forked-1tvm7?file=/src/App.js)
 
-_Assuming dependencies, webpack and babel (or equivalents) are installed and configured._
+_Assuming dependencies and a bundler (Rspack or equivalent) are installed and configured._
 
 ```tsx
 import React from "react";

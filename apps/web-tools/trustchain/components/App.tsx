@@ -1,5 +1,4 @@
-import dynamic from "next/dynamic";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { Tooltip } from "react-tooltip";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
@@ -309,14 +308,16 @@ const App = () => {
 
         <Expand title="Accounts Sync" dynamicControl={accountsSyncControl}>
           {trustchain && memberCredentials ? (
-            <AppAccountsSync
-              deviceId={deviceId}
-              trustchain={trustchain}
-              memberCredentials={memberCredentials}
-              state={state}
-              setState={setState}
-              setTrustchain={setTrustchain}
-            />
+            <Suspense fallback={<Loading />}>
+              <AppAccountsSync
+                deviceId={deviceId}
+                trustchain={trustchain}
+                memberCredentials={memberCredentials}
+                state={state}
+                setState={setState}
+                setTrustchain={setTrustchain}
+              />
+            </Suspense>
           ) : (
             "Prease create a trustchain first"
           )}
@@ -328,15 +329,6 @@ const App = () => {
   );
 };
 
-const AppAccountsSync = dynamic<{
-  deviceId: string;
-  trustchain: Trustchain;
-  memberCredentials: MemberCredentials;
-  state: State;
-  setState: (_: (_: State) => State) => void;
-  setTrustchain: (_: Trustchain | null) => void;
-}>(() => import("./AppAccountsSync"), {
-  loading: () => <Loading />,
-});
+const AppAccountsSync = React.lazy(() => import("./AppAccountsSync"));
 
 export default App;

@@ -1,6 +1,6 @@
-# Webpack Javascript Example
+# Rspack Javascript Example
 
-This simple example demonstrates how to use `@ledgerhq/react-ui` with [`Webpack`](https://webpack.js.org/) and [`babel`](https://babeljs.io/).
+This simple example demonstrates how to use `@ledgerhq/react-ui` with [`Rspack`](https://rspack.rs/) and SWC.
 
 #### Useful commands
 

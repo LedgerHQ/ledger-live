@@ -7,8 +7,6 @@ import { AccountRaw } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/coin-framework/lib/account/index";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
-export const getStaticProps = async () => ({ props: {} });
-
 type App = {
   name: string;
   updated: boolean;

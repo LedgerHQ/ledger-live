@@ -9,10 +9,10 @@
     "dns": false
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "cross-env NODE_ENV=development rspack serve",
+    "build": "cross-env NODE_ENV=production rspack build",
+    "start": "cross-env NODE_ENV=production rspack serve",
+    "lint": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",
@@ -42,10 +42,8 @@
     "bignumber.js": "^9.3.1",
     "bufferutil": "^4.1.0",
     "encoding": "^0.1.13",
-    "eslint-config-next": "15.5.9",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
-    "next": "15.5.9",
     "prop-types": "^15.8.1",
     "qrcode": "^1.5.4",
     "re-resizable": "^6.11.2",
@@ -64,6 +62,11 @@
     "utf-8-validate": "^6.0.6"
   },
   "devDependencies": {
+    "@rspack/cli": "catalog:",
+    "@rspack/core": "catalog:",
+    "@rspack/plugin-react-refresh": "catalog:",
+    "eslint-config-next": "15.5.9",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "@types/invariant": "^2.2.37",
     "@types/lodash": "^4.17.21",
     "@types/node": "22.19.3",
@@ -72,6 +75,8 @@
     "@types/react-dom": "^18.3.7",
     "@types/react-inspector": "^4.0.6",
     "@types/react-table": "^7.7.20",
-    "@types/semver": "catalog:"
+    "@types/semver": "catalog:",
+    "cross-env": "^7.0.3",
+    "react-refresh": "0.14.0"
   }
 }

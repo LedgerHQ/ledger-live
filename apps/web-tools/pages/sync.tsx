@@ -21,8 +21,6 @@ import {
 } from "@ledgerhq/coin-framework/derivation";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 
-export const getStaticProps = async () => ({ props: {} });
-
 const localCache: Record<string, unknown> = {};
 const bridgeCache = makeBridgeCacheSystem({
   saveData(c, d) {
@@ -139,10 +137,10 @@ function App() {
           {account
             ? JSON.stringify(account, null, 2)
             : accountError
-            ? String(accountError)
-            : account === null
-            ? "insert an account id to synchronise"
-            : "loading..."}
+              ? String(accountError)
+              : account === null
+                ? "insert an account id to synchronise"
+                : "loading..."}
         </code>
       </pre>
     </div>

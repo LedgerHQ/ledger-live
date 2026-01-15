@@ -4,22 +4,26 @@
   "version": "0.2.4",
   "license": "MIT",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "serve": "next start -p 8080",
-    "lint": "next lint",
-    "clean:full": "npx rimraf .next node_modules public"
+    "dev": "cross-env NODE_ENV=development rspack serve",
+    "build": "cross-env NODE_ENV=production rspack build",
+    "start": "cross-env NODE_ENV=production rspack serve",
+    "serve": "http-server dist -p 8080",
+    "lint": "eslint . --ext .js,.jsx",
+    "clean:full": "npx rimraf dist node_modules"
   },
   "dependencies": {
     "@ledgerhq/react-ui": "workspace:^",
-    "next": "14.2.35",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-is": "*",
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
-    "eslint-config-next": "13.2.4"
+    "@rspack/cli": "catalog:",
+    "@rspack/core": "catalog:",
+    "@rspack/plugin-react-refresh": "catalog:",
+    "cross-env": "^7.0.3",
+    "http-server": "^14.0.0",
+    "react-refresh": "0.14.0"
   }
 }

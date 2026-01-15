@@ -1,40 +1,36 @@
-import Link from "next/link";
-
-export const getStaticProps = async () => ({ props: {} });
-
 export default function Home() {
   return (
     <main>
       <ul>
         <li>
-          <Link href="/domain-tlv-parser">Domain TLV Parser</Link>
+          <a href="/domain-tlv-parser.html">Domain TLV Parser</a>
         </li>
         <li>
-          <Link href="/derivations">Derivation Paths</Link>
+          <a href="/derivations.html">Derivation Paths</a>
         </li>
         <li>
-          <Link href="/eth-tx-tools">ETH Tx Tools</Link>
+          <a href="/eth-tx-tools.html">ETH Tx Tools</a>
         </li>
         <li>
-          <Link href="/lld-signatures">LLD Signatures</Link>
+          <a href="/lld-signatures.html">LLD Signatures</a>
         </li>
         <li>
-          <Link href="/logsviewer">Logs Viewer</Link>
+          <a href="/logsviewer.html">Logs Viewer</a>
         </li>
         <li>
-          <Link href="/networkTroubleshoot">Network Troubleshooting</Link>
+          <a href="/networkTroubleshoot.html">Network Troubleshooting</a>
         </li>
         <li>
-          <Link href="/sync">Synchronisation</Link>
+          <a href="/sync.html">Synchronisation</a>
         </li>
         <li>
-          <Link href="/repl">REPL</Link>
+          <a href="/repl.html">REPL</a>
         </li>
         <li>
-          <Link href="/trustchain">Trustchain</Link>
+          <a href="/trustchain.html">Trustchain</a>
         </li>
         <li>
-          <Link href="/crypto-icons">Crypto Icons</Link>
+          <a href="/crypto-icons.html">Crypto Icons</a>
         </li>
       </ul>
     </main>
