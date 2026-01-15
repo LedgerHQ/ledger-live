@@ -4,11 +4,12 @@ import { getAlpacaApi } from "./alpaca";
 import { createTransaction } from "./createTransaction";
 import { extractBalances, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
+import { GenericTransaction } from "./types";
 
 export function genericEstimateMaxSpendable(
   network,
   kind,
-): AccountBridge<any>["estimateMaxSpendable"] {
+): AccountBridge<GenericTransaction>["estimateMaxSpendable"] {
   return async ({ account, parentAccount, transaction }) => {
     if (account.type === "TokenAccount") {
       return account.spendableBalance;
@@ -23,12 +24,12 @@ export function genericEstimateMaxSpendable(
     };
 
     let fees = transaction?.fees;
-    if (transaction?.fees === null || transaction?.fees === undefined) {
-      fees = (
-        await alpacaApi.estimateFees(
-          transactionToIntent(mainAccount, draftTransaction, alpacaApi.computeIntentType),
-        )
-      ).value;
+    if (!BigNumber.isBigNumber(fees)) {
+      const { value } = await alpacaApi.estimateFees(
+        transactionToIntent(mainAccount, draftTransaction, alpacaApi.computeIntentType),
+      );
+
+      fees = new BigNumber(value.toString());
     }
     // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22229
     const { amount } = await alpacaApi.validateIntent(

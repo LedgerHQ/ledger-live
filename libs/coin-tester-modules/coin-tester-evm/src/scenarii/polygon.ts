@@ -4,7 +4,6 @@ import { Account } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { resetIndexer, initMswHandlers, setBlock, indexBlocks } from "../indexer";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
 import { callMyDealer, getBridges, polygon, VITALIK } from "../helpers";
@@ -12,8 +11,9 @@ import { killAnvil, spawnAnvil } from "../anvil";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDC_ON_POLYGON } from "../tokenFixtures";
 import { buildSigner } from "../signer";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
 
-type PolygonScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
+type PolygonScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
 const makeScenarioTransactions = ({ address }: { address: string }) => {
   const scenarioSend1MaticTransaction: PolygonScenarioTransaction = {
@@ -73,7 +73,7 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
   ];
 };
 
-export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
+export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic Polygon Transactions",
   setup: async () => {
     const signer = await buildSigner();
