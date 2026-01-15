@@ -129,7 +129,12 @@ async function rpcCall<T extends object>(
   });
 
   if (isResponseStatus(result) && result.status !== "success") {
-    throw new Error(`couldn't fetch ${method} with params ${JSON.stringify(params)}`);
+    const errResponse = result as unknown as ErrorResponse;
+    const parsedError =
+      errResponse.error_message ?? errResponse.error ?? `error code ${errResponse.error_code}`;
+    throw new Error(
+      `couldn't fetch ${method} with params ${JSON.stringify(params)}: ${parsedError}`,
+    );
   }
 
   return result;
