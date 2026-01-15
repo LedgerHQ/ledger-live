@@ -1,28 +1,33 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
 import SkeletonTile from "../SkeletonTile";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
 
 type BannerStatesProps = {
   isError: boolean;
 };
 
 export const BannerStates = ({ isError }: BannerStatesProps) => {
+  const styles = useStyleSheet(
+    theme => ({
+      container: {
+        flexDirection: "row",
+        marginLeft: theme.spacings.s8 * -1,
+      },
+    }),
+    [],
+  );
+
   // will be done in next task (Error handling)
   if (isError) {
-    return <View />;
+    return <Box />;
   }
 
   return (
-    <View style={styles.container}>
+    <Box style={styles.container}>
       {Array.from({ length: 8 }, (_, i) => (
         <SkeletonTile index={i} key={i} />
       ))}
-    </View>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-  },
-});

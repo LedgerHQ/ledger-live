@@ -278,8 +278,8 @@
       "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch",
       "@testing-library/react-native@13.3.3": "patches/@testing-library__react-native@13.3.3.patch",
       "styled-components@6.1.19": "patches/styled-components@6.1.19.patch",
-      "@ledgerhq/lumen-ui-rnative@0.0.50": "patches/@ledgerhq__lumen-ui-rnative@0.0.50.patch",
-      "react-native@0.79.7": "patches/react-native@0.79.7.patch"
+      "react-native@0.79.7": "patches/react-native@0.79.7.patch",
+      "@ledgerhq/lumen-ui-rnative@0.0.54": "patches/@ledgerhq__lumen-ui-rnative@0.0.54.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {
