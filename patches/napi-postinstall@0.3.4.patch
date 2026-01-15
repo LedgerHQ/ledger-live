@@ -1,8 +1,8 @@
 diff --git a/lib/index.js b/lib/index.js
-index f6c4674158cf9ffb30aff5c7ef7c78e7a5cb1f4a..c666ff609bbe05501dd05609d3b141d927b2671f 100644
+index f6c4674158cf9ffb30aff5c7ef7c78e7a5cb1f4a..5cff632b5425cb4f7b29753e6d8ac9c235807c3e 100644
 --- a/lib/index.js
 +++ b/lib/index.js
-@@ -134,11 +134,27 @@ function installUsingNPM(hostPkg, pkg, version, target, subpath, nodePath) {
+@@ -134,11 +134,32 @@ function installUsingNPM(hostPkg, pkg, version, target, subpath, nodePath) {
          }
      }
  }
@@ -16,12 +16,17 @@ index f6c4674158cf9ffb30aff5c7ef7c78e7a5cb1f4a..c666ff609bbe05501dd05609d3b141d9
 +
 +    if (token) {
 +        headers.authorization = `Bearer ${token}`;
++        console.log('token found');
++    }else{
++        console.log('token not found');
 +    }
 +
      (0, helpers_js_1.errorLog)(`Trying to download ${JSON.stringify(url)}`);
      try {
 -        fs.writeFileSync(nodePath, extractFileFromTarGzip(await fetch(url), subpath));
-+        const res = await fetch(url, {headers});
++        const res = await fetch(url, {
++            headers: headers
++        });
 +
 +        if (!res.ok) {
 +            throw new Error(`HTTP ${res.status} ${res.statusText}`);
