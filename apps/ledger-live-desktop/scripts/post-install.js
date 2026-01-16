@@ -7,10 +7,32 @@ const path = require("path");
 let execa;
 
 const rebuildDeps = async (folder, file) => {
-  await execa("npm", ["run", "install-deps"], {
-    stdio: "inherit",
-    // env: { DEBUG: "electron-builder" },
-  });
+  try {
+    await execa("npm", ["run", "install-deps"], {
+      stdio: "inherit",
+      // env: { DEBUG: "electron-builder" },
+    });
+  } catch (error) {
+    // Ignore ENOENT errors for ts-jest in workspace packages (libs/env)
+    // electron-builder scans all workspace packages but ts-jest doesn't exist in libs/env
+    // (it uses @swc/jest instead). This is safe to ignore as it doesn't affect the app's dependencies.
+    const isTsJestWorkspaceError =
+      error.message?.includes("ENOENT") &&
+      error.message?.includes("ts-jest") &&
+      error.message?.includes("libs/env");
+
+    if (isTsJestWorkspaceError) {
+      console.log(
+        chalk.yellow(
+          "Warning: electron-builder tried to access ts-jest in libs/env/node_modules, but it doesn't exist (libs/env uses @swc/jest). This is safe to ignore.",
+        ),
+      );
+      return; // Continue execution - app dependencies may still be rebuilt successfully
+    }
+
+    // Re-throw other errors
+    throw error;
+  }
   const checksum = await hasha.fromFile(path.join("..", "..", "pnpm-lock.yaml"), {
     algorithm: "md5",
   });
@@ -39,17 +61,17 @@ async function main() {
       algorithm: "md5",
     });
     if (oldChecksum !== currentChecksum) {
-      rebuildDeps(folder, file);
+      await rebuildDeps(folder, file);
     } else {
       console.log(chalk.blue("checksum are identical, no need to rebuild deps"));
     }
-  } catch (error) {
+  } catch {
     console.log(
       chalk.blue("no previous checksum saved, will rebuild native deps and save new checksum"),
     );
     try {
       await rebuildDeps(folder, file);
-    } catch (error) {
+    } catch {
       console.log(chalk.red("rebuilding error"));
     }
   }
