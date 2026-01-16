@@ -852,7 +852,7 @@ export const resetDmk = (): void => {
 /**
  * Listen to available devices across all registered transports.
  * Returns arrays of currently visible devices (raw DMK behavior).
- *
+ * //
  * For add/remove events, see discoverDevicesDmk() in discovery.ts
  */
 export const listenToDevicesDmk = (options?: {
@@ -1167,6 +1167,7 @@ function isPermanentJobError(error: unknown): boolean {
 /**
  * Remap connection errors (BLE-specific)
  */
+// ⚠️ COMMENT-ON-ARCHI-PROPOSAL: this logic is transport specific so it needs to be injected (common logic cannot import trnasport implems)
 function remapConnectionError(error: unknown, device?: DiscoveredDevice): Error {
   if (error instanceof PairingRefusedError) {
     return new PairingFailed();
@@ -1249,6 +1250,8 @@ function remapError(error: unknown, context: ErrorRemapContext): Error {
  * Infer transport type from DiscoveredDevice
  * Used for transport-specific error handling
  */
+// ⚠️ COMMENT-ON-ARCHI-PROPOSAL: actually set a convention type in the DMK that we can reliably use here (without depending on the actual transports)
+// OR -> figure out if we can inject transport-specific logic somehow, so that withDevice stays generic (BETTER)
 function inferTransportType(device: DiscoveredDevice): TransportType {
   // This depends on DMK's transport identifier convention
   switch (device.transport) {
@@ -1341,8 +1344,8 @@ This section details each migration phase with architecture diagrams showing the
 │  │   DMK Instance 1       │  │   DMK Instance 2    │  │   DMK Instance 3     │  │
 │  │   (Mobile App)         │  │   (Desktop App)     │  │   (Speculos!)        │  │
 │  │   ┌─────────────────┐  │  │   ┌───────────────┐ │  │   ┌────────────────┐ │  │
-│  │   │ RNBleTransport  │  │  │   │ WebHidTrans.  │ │  │   │ SpeculosTrans. │ │  │
-│  │   │ RNHidTransport  │  │  │   └───────────────┘ │  │   └────────────────┘ │  │
+│  │   │ RNBleTransport  │  │  │   │ WebHidTrans.  │ │  │   │ SpeculosTrans. │ │  │ ⚠️ COMMENT-ON-ARCHI-PROPOSAL: this misses
+│  │   │ RNHidTransport  │  │  │   └───────────────┘ │  │   └────────────────┘ │  │ several transports
 │  │   └─────────────────┘  │  │                     │  │                      │  │
 │  └────────────────────────┘  └─────────────────────┘  └──────────────────────┘  │
 └─────────────────────────────────────────────────────────────────────────────────┘
@@ -1376,30 +1379,31 @@ This section details each migration phase with architecture diagrams showing the
 │                                                                                  │
 │  ┌────────────────────────────────────────┐  ┌──────────────────────────────┐   │
 │  │  hw/index.ts (LEGACY - unchanged)      │  │  hw/dmk/index.ts (NEW!)      │   │
-│  │  • registerTransportModule             │  │  • initDmk()                 │   │
-│  │  • withDevice()                        │  │  • getDmk()                  │   │
-│  │  • discoverDevices()                   │  │  • withDeviceDmk()           │   │
-│  └────────────────────────────────────────┘  │  • DmkDeviceConnection       │   │
-│                                              │  • TransportType             │   │
+│  │  • registerTransportModule             │  │  • initDmk()                 │   │ // ⚠️ COMMENT-ON-ARCHI-PROPOSAL:
+│  │  • withDevice()                        │  │  • getDmk()                  │   │ // could the dmk stuff live in
+│  │  • discoverDevices()                   │  │  • withDeviceDmk()           │   │ // live-dmk-shared ? any blocker to that?
+│  └────────────────────────────────────────┘  │  • DmkDeviceConnection       │   │ // examine dependency tree (would there be
+│                                              │  • TransportType             │   │ // circular dependencies ?)
 │                                              └──────────────────────────────┘   │
 │                                                                                  │
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │
 │  │  hw/dmk/compat.ts (NEW!)                                                   │ │
 │  │  • DmkTransportCompat extends Transport                                    │ │
 │  │  • withDevice() (DMK-based, same API as legacy)                           │ │
-│  │  • withDevicePromise()                                                     │ │
-│  └────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                  │
-│  ┌────────────────────────────────────────────────────────────────────────────┐ │
-│  │  hw/dmk/deviceRegistry.ts (NEW!)                                           │ │
+│  │  • withDevicePromise()                                                     │ │  // ⚠️ COMMENT-ON-ARCHI-PROPOSAL:
+│  └────────────────────────────────────────────────────────────────────────────┘ │  // what about withDevicePolling ?
+│                                                                                  │ // not mentioned much in this doc.
+|                                                                                 |  //
+│  ┌────────────────────────────────────────────────────────────────────────────┐ │  // and, slightly unrelated but what about
+│  │  hw/dmk/deviceRegistry.ts (NEW!)                                           │ │  // hw/actions/implementations.ts ?
 │  │  • DeviceRegistry class (Map<deviceId, DiscoveredDevice>)                  │ │
 │  │  • register(), unregister(), get(), findByName()                           │ │
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 │                                                                                  │
 │  ┌────────────────────────────────────────────────────────────────────────────┐ │
 │  │  hw/dmk/discovery.ts (NEW!)                                                │ │
-│  │  • discoverDevicesDmk() - unified discovery                                │ │
-│  │  • DeviceEvent type (add/remove events)                                    │ │
+│  │  • discoverDevicesDmk() - unified discovery                                │ │ // ⚠️ COMMENT-ON-ARCHI-PROPOSAL: using this in the apps layer is an important phase that we have to test and validate and for which there is currently no "Feature flag based" migration plan.
+│  │  • DeviceEvent type (add/remove events)                                    │ │  what's the exact impact of migrating to that ? to evaluate for each app and transport , also evaluate the risk
 │  └────────────────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
@@ -1441,8 +1445,8 @@ This section details each migration phase with architecture diagrams showing the
 │  │  ┌─────────────────────────────────────────────────────────────────────┐   ││
 │  │  │  src/dmk/init.ts (NEW!)                                              │   ││
 │  │  │  initMobileDmk({                                                     │   ││
-│  │  │    transports: [                                                     │   ││
-│  │  │      Config.MOCK ? mockBleTransportFactory(e2eBridgeClient)         │   ││
+│  │  │    transports: [                                                     │   ││ ⚠️ COMMENT-ON-ARCHI-PROPOSAL:
+│  │  │      Config.MOCK ? mockBleTransportFactory(e2eBridgeClient)         │   ││    what about speculos in e2e tests ?
 │  │  │                  : RNBleTransportFactory,                            │   ││
 │  │  │      RNHidTransportFactory,                                          │   ││
 │  │  │    ]                                                                 │   ││
@@ -1500,6 +1504,10 @@ This section details each migration phase with architecture diagrams showing the
    • E2E mock transport injected at init time (not UI level)
    • Speculos is just another transport (no separate DMK instance)
    • Both LEGACY and NEW paths work in parallel
+      ⚠️ COMMENT-ON-ARCHI-PROPOSAL: what does that mean ? it it really possible ?
+      there are some things that might conflict, for instance in the RN BLE transport, at instantiation we start listening
+      to BLE state of the phone and I think that there might be issues if 2 instances of the DMK RN BLE transport run at the same time-> to verify
+      ⚠️ COMMENT-ON-ARCHI-PROPOSAL: wait actually i misunderstood maybe, there's actually really a single DMK instance per platform
 ```
 
 #### LLM (Mobile)
@@ -1582,13 +1590,13 @@ export const initCliDmk = () => {
 #### Transport Coverage Matrix
 
 | Transport                     | Platform   | Status         | Priority | Notes                              |
-| ----------------------------- | ---------- | -------------- | -------- | ---------------------------------- |
+| ----------------------------- | ---------- | -------------- | -------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | **RNBleTransportFactory**     | Mobile     | ✅ Exists      | -        | From DMK team                      |
 | **RNHidTransportFactory**     | Mobile     | ✅ Exists      | -        | From DMK team                      |
 | **WebHidTransportFactory**    | Desktop    | ✅ Exists      | -        | From DMK team                      |
 | **speculosTransportFactory**  | All        | ✅ Exists      | -        | From `@ledgerhq/live-dmk-speculos` |
 | **NodeHidTransportFactory**   | CLI        | 🔄 In Progress | High     | Coordinate with existing work      |
-| **mockBleTransportFactory**   | Mobile E2E | 📝 To Create   | High     | Uses `e2eBridgeClient`             |
+| **mockBleTransportFactory**   | Mobile E2E | 📝 To Create   | High     | Uses `e2eBridgeClient`             | ⚠️ COMMENT-ON-ARCHI-PROPOSAL: not so high prio, we're not sure that this way of mocking is actually something we want to use? |
 | **VaultTransportFactory**     | Desktop    | 📝 To Create   | Medium   | Enterprise feature                 |
 | **MockTransportFactory**      | Unit tests | 📝 To Create   | Medium   | APDU recording/playback            |
 | **HttpDebugTransportFactory** | Mobile dev | ⏭️ Optional    | Low      | Simple HTTP proxy wrapper          |
@@ -1640,7 +1648,7 @@ export const initCliDmk = () => {
 
    > ⚠️ **Note:** Implementation already in progress. Coordinate with existing work to ensure DMK `Transport` interface compatibility.
 
-   - Verify it implements DMK `Transport` interface correctly
+   - Verify it implements DMK `Transport` interface correctly ⚠️ COMMENT-ON-ARCHI-PROPOSAL: yes it's done by us (the DMK team)
    - Ensure `listenToAvailableDevices()` works for device discovery
    - Test with CLI commands
 
@@ -1681,7 +1689,7 @@ The current Desktop uses `IPCTransport` for Speculos/proxy communication. With t
 BEFORE (Desktop with Speculos):
 ┌──────────────┐     IPC      ┌──────────────┐    HTTP    ┌──────────────┐
 │   Renderer   │ ◄──────────► │ Main Process │ ◄────────► │   Speculos   │
-│ IPCTransport │              │    Proxy     │            │              │
+│ IPCTransport │              │    Proxy     │            │              │ ⚠️ COMMENT-ON-ARCHI-PROPOSAL: didn't we already migrate to direct connection via DmkSpeculosTransport? maybe only on LWM?
 └──────────────┘              └──────────────┘            └──────────────┘
 
 AFTER (Desktop with Speculos):
@@ -1694,7 +1702,7 @@ AFTER (Desktop with Speculos):
 
 **Decision:** When `SPECULOS_API_PORT` is set, inject `speculosTransportFactory` directly at DMK init. The renderer communicates directly with Speculos via HTTP - no IPC layer needed.
 
-> **Note:** If network isolation is required (Speculos only accessible from main process), an `IPCTransportFactory` would be needed. This is unlikely for typical dev/test scenarios.
+> **Note:** If network isolation is required (Speculos only accessible from main process), an `IPCTransportFactory` would be needed. This is unlikely for typical dev/test scenarios. ⚠️ COMMENT-ON-ARCHI-PROPOSAL: nah
 
 ---
 
@@ -1741,8 +1749,8 @@ AFTER (Desktop with Speculos):
 │  │  │   └─► connection.sendApdu(Uint8Array(apdu))                        │  │   │
 │  │  │       └─► dmk.sendApdu({ sessionId, apdu })                        │  │   │
 │  │  │                                                                     │  │   │
-│  │  │ Provides: setScrambleKey(), decorateAppAPIMethods(), close()        │  │   │
-│  │  │ Emits: "disconnect" event (from DMK session state)                  │  │   │
+│  │  │ Provides: setScrambleKey(), decorateAppAPIMethods(), close()        │  │   │ ⚠️ COMMENT-ON-ARCHI-PROPOSAL: what is setScrambleKey()/decorateAppAPIMethod() etc ? is close() actually needed ? with DMK we always try to stay connected, no reason for app to close the connection (it auto closes when device is unplugged/powered off etc.)
+│  │  │ Emits: "disconnect" event (from DMK session state)                  │  │   │ ⚠️ COMMENT-ON-ARCHI-PROPOSAL: are those still necessary? but ok why not
 │  │  └────────────────────────────────────────────────────────────────────┘  │   │
 │  └──────────────────────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────────────────────┘
@@ -1773,20 +1781,30 @@ import { getEnv } from "@ledgerhq/live-env";
 /** @deprecated Use import from @ledgerhq/live-common/hw/dmk/compat */
 export const withDevice = (...args) => {
   if (getEnv("ENABLE_DMK_DIRECT_TRANSPORT")) {
+    // ⚠️ COMMENT-ON-ARCHI-PROPOSAL: can we use a regular feature flag? it should be accessible from there (live common)
     return withDeviceDmk(...args);
   }
-  console.warn("withDevice: Using legacy implementation. Migrate to hw/dmk/compat");
+  console.warn("withDevice: Using legacy implementation. Migrate to hw/dmk/compat"); // ⚠️ COMMENT-ON-ARCHI-PROPOSAL: don't do this console.warn because for a while (until all tests are validated) it might be using this path on develop.
+  // ⚠️ COMMENT-ON-ARCHI-PROPOSAL: however we should ensure that deviceAccess isn't imported anywhere else than from this file.
   return withDeviceLegacy(...args);
 };
 ```
 
 ##### Phase 4b: Device Actions & Manager (Week 5)
 
+⚠️ COMMENT-ON-ARCHI-PROPOSAL: I need a clarification: the point here is to migrate what exactly ?
+for one feature, switch from importing `withDevice` from `deviceAccess.ts` to `withDevice` from `hw/index.ts` ?
+then where is the risk, as long as the flag is off, it will be using the legacy withDevice directly no ?
+If so, we can replace at once all imports of withDevice.
+I think the QA on this can be quick (smoke tests on all connectivity without going into ultra depth),
+then we can merge everything. And then we can start the heavy testing (lots of employees and thorough testing of everything)
+simply by enabling the flag.
+
 **Goal:** Migrate critical device operations.
 
 | Flow                        | Files                                | Risk   |
-| --------------------------- | ------------------------------------ | ------ |
-| Device connect              | `connectApp.ts`, `connectManager.ts` | Medium |
+| --------------------------- | ------------------------------------ | ------ | --------------------------------------------------- |
+| Device connect              | `connectApp.ts`, `connectManager.ts` | Medium | ⚠️ COMMENT-ON-ARCHI-PROPOSAL: lol risk: "medium" no |
 | Open app                    | `hw/actions/app.ts`                  | Medium |
 | Genuine check               | `hw/actions/genuineCheck.ts`         | High   |
 | Manager (install/uninstall) | `hw/actions/manager.ts`              | High   |
@@ -1898,7 +1916,7 @@ Week 8: Flag ON for 100%, remove flag in Phase 5
 │                                                                                  │
 │  ┌──────────────────────────────────────────────────────────────────────────┐   │
 │  │  DmkTransportCompat (for hw-app-* compatibility)                          │   │
-│  │    • Wraps DmkDeviceConnection → Transport interface                      │   │
+│  │    • Wraps DmkDeviceConnection → Transport interface                      │   │ ⚠️ COMMENT-ON-ARCHI-PROPOSAL: are we 100% sure no hw-app-* requires anything else than the exchange method ?
 │  │    • exchange() → sendApdu()                                              │   │
 │  │    • Emits "disconnect" event                                             │   │
 │  └──────────────────────────────────────────────────────────────────────────┘   │
@@ -3306,14 +3324,14 @@ static open(descriptor): Promise<Transport>;
 ### What Can Be Removed (with compat layer)
 
 | Component                     | Status       | Notes                                   |
-| ----------------------------- | ------------ | --------------------------------------- |
+| ----------------------------- | ------------ | --------------------------------------- | ------------------------------------------------------ |
 | `registerTransportModule()`   | ✅ Remove    | DMK handles transport selection         |
 | `unregisterTransportModule()` | ✅ Remove    | No longer needed                        |
 | `discoverDevices()`           | ✅ Remove    | Replace with `discoverDevicesDmk()`     |
 | `open()` from hw/index.ts     | ✅ Remove    | DMK's `connect()` replaces this         |
 | `close()` from hw/index.ts    | ✅ Remove    | DMK's `disconnect()` replaces this      |
 | Legacy `withDevice()`         | ✅ Remove    | Replace with DMK-based `withDevice()`   |
-| `DeviceQueuedJobsManager`     | ⚠️ Keep/Move | Still needed, move to DMK layer         |
+| `DeviceQueuedJobsManager`     | ⚠️ Keep/Move | Still needed, move to DMK layer         | ⚠️ COMMENT-ON-ARCHI-PROPOSAL: there's a queue layer no |
 | `Transport` class             | ⚠️ Keep      | Required for `DmkTransportCompat`       |
 | Transport wrapper classes     | ✅ Remove    | `DeviceManagementKit*Transport` classes |
 
@@ -3353,6 +3371,7 @@ class Btc {
 ```
 
 **Effort estimate:** 20+ packages × ~2-5 days each = **40-100 developer days**
+⚠️ COMMENT-ON-ARCHI-PROPOSAL: lol seing this migration plan that I just made Opus 4.5 build in like 2h, I think it's more like 5 dev days (but a lot of testing)
 
 ### Recommended Migration Strategy
 
