@@ -4,14 +4,18 @@ import { useSelector } from "LLD/hooks/redux";
 import { useNavigate, useLocation } from "react-router";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
-import { stakeDefaultTrack } from "../../stake/constants";
-import useStakeFlow from "../../stake";
-import { useGetSwapTrackingProperties } from "../../exchange/Swap2/utils";
+import { stakeDefaultTrack } from "../../../../renderer/screens/stake/constants";
+import useStakeFlow from "../../../../renderer/screens/stake";
+import { useGetSwapTrackingProperties } from "../../../../renderer/screens/exchange/Swap2/utils";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { isAvailableOnBuy, isAvailableOnStake, isAvailableOnSwap } from "../utils";
+import {
+  isAvailableOnBuy,
+  isAvailableOnStake,
+  isAvailableOnSwap,
+} from "../../../../renderer/screens/market/utils";
 import { useStake } from "LLD/hooks/useStake";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useLazyLedgerCurrency } from "@ledgerhq/live-common/dada-client/hooks/useLazyLedgerCurrency";

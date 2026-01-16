@@ -1553,6 +1553,7 @@
     "currency": "Currency",
     "rangeLabel": "Time",
     "goBack": "Go back",
+    "searchPlaceholder": "Search asset",
     "filters": {
       "title": "Filters",
       "show": "Show",
