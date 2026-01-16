@@ -482,7 +482,9 @@
       "celo_title" : "Ledger Nano S™는 셀로 스왑을 지원하지 않습니다.",
       "celo_description" : "셀로를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
       "monad_title" : "Ledger Nano S™는 모나드(Monad) 스왑을 지원하지 않습니다.",
-      "monad_description" : "모나드를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요."
+      "monad_description" : "모나드를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
+      "zcash_title" : "Ledger Nano S™는 Zcash 스왑을 지원하지 않습니다.",
+      "zcash_description" : "Zcash를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요."
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -1310,6 +1312,17 @@
         "description" : "모든 거래소와 지갑에서 Ledger Wallet으로 암호화폐를 안전하게 옮기고 최고 수준의 보안을 누려보세요.",
         "depositButton" : "자산 보호 시작하기",
         "skipButton" : "다음에 결정하기"
+      },
+      "sync" : {
+        "timelineTitle" : "지갑 동기화",
+        "timelineTitleCompleted" : "동기화 활성화",
+        "title" : "지갑 동기화 활성화",
+        "description" : "PC와 모바일 어디서든, 포트폴리오를 항상 최신 상태로 유지하세요",
+        "skipButton" : "나중에 설정하기",
+        "skipTitle" : "동기화 설정을 건너뛰시겠어요?",
+        "skipDescription" : "이 단계를 건너뛰면 스마트폰이나 컴퓨터 교체 시 모든 암호화폐 계정을 수동으로 다시 추가해야 합니다. 해당 기능은 Ledger Wallet 설정에서 언제든지 해제할 수 있습니다.",
+        "skipConfirm" : "네, 건너뛸게요",
+        "skipNo" : "아니요, 동기화를 활성화하겠습니다"
       },
       "backup" : {
         "title" : "비밀 복구 문구 백업",
@@ -2410,7 +2423,7 @@
         "maxFees" : "최대 네트워크 수수료",
         "maxFeesInfo" : "이 트랜잭션에 대해 지불할 수 있는 최대 금액입니다. 최대 네트워크 수수료와 실제 수수료 간의 차액은 환불됩니다.",
         "useMax" : "최대치 사용",
-        "sendMax" : "최대치 송금",
+        "sendMax" : "최대 수량 전송",
         "rippleTag" : "태그",
         "rippleTagPlaceholder" : "선택 사항",
         "edit" : "편집",
