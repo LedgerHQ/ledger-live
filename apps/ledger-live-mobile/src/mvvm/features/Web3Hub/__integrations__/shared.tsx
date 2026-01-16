@@ -8,7 +8,6 @@ import { NavigatorName } from "~/const";
 const Stack = createNativeStackNavigator();
 
 export function Web3HubTest() {
-  // Create QueryClient inside useMemo to ensure stable reference
   const queryClient = useMemo(() => new QueryClient(), []);
 
   return (

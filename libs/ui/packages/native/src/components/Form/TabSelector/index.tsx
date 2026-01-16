@@ -46,9 +46,7 @@ export default function TabSelector<T extends string>({
   const initialIndex = initialTab ? labels.findIndex((l) => l.id === initialTab) : 0;
   const translateX = useSharedValue(0);
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
-  const isInitialMount = React.useRef(true);
 
-  // Sync selectedIndex when initialIndex changes externally
   useEffect(() => {
     if (selectedIndex !== initialIndex) {
       setSelectedIndex(initialIndex);
@@ -57,17 +55,7 @@ export default function TabSelector<T extends string>({
 
   useEffect(() => {
     if (containerWidth > 0) {
-      const targetPosition = (containerWidth / labels.length) * initialIndex;
-
-      // On initial mount or when container width changes,
-      // set position immediately to avoid animation bouncing effect
-      if (isInitialMount.current) {
-        translateX.value = targetPosition;
-        isInitialMount.current = false;
-      } else {
-        // When initialIndex changes after mount, animate the transition
-        translateX.value = targetPosition;
-      }
+      translateX.value = (containerWidth / labels.length) * initialIndex;
     }
   }, [containerWidth, labels.length, initialIndex, translateX]);
 

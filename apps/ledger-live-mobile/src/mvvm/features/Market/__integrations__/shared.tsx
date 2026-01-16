@@ -13,7 +13,6 @@ const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 const StackWalletTab = createNativeStackNavigator<MarketNavigatorStackParamList>();
 
 export function MarketPages() {
-  // Create QueryClient inside useMemo to ensure stable reference
   const queryClient = useMemo(() => new QueryClient(), []);
 
   return (
