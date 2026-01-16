@@ -24,7 +24,9 @@ export function useAutoSelectDevice({
   enabled,
 }: Props) {
   const autoSelectionStartedRef = useRef(false);
-  const usbDeviceToAutoSelectRef = useRef<{ device: Device; autoSelectStartTime: Date }>();
+  const usbDeviceToAutoSelectRef = useRef<
+    { device: Device; autoSelectStartTime: Date } | undefined
+  >(undefined);
 
   useEffect(() => {
     if (!enabled) return;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type JSX } from "react";
 import styled from "styled-components/native";
 import Text from "../../../src/components/Text";
 import Flex from "../../../src/components/Layout/Flex";

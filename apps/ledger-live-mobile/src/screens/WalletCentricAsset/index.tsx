@@ -1,6 +1,10 @@
 import React, { useMemo, useState, useCallback, useRef } from "react";
-import { FlatList, LayoutChangeEvent } from "react-native";
-import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
+import { FlatList, FlatListProps, LayoutChangeEvent } from "react-native";
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+  AnimatedProps,
+} from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
@@ -39,7 +43,7 @@ import { renderItem } from "LLM/utils/renderItem";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
-);
+) as React.ComponentType<AnimatedProps<FlatListProps<React.JSX.Element | null>>>;
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Asset>
@@ -196,7 +200,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
         style={{ flex: 1 }}
         data={data}
         renderItem={renderItem<React.JSX.Element>}
-        keyExtractor={(_: unknown, index: number) => String(index)}
+        keyExtractor={(_: React.JSX.Element | null, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
         testID="asset-screen-flatlist"

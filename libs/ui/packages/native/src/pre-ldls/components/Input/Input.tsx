@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { NativeSyntheticEvent, TextInput, TextInputFocusEventData, View } from "react-native";
 import styled, { DefaultTheme, ThemeContext } from "styled-components/native";
 import { Tokens, useTokens } from "../../libs";
+import type { JSX } from "react";
 
 export type IconProps = {
   size?: "XS" | "S" | "M" | "L" | "XL" | "XXL";

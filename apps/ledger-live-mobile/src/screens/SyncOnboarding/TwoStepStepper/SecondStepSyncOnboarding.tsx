@@ -27,7 +27,7 @@ interface SecondStepSyncOnboardingProps {
   device: Device;
   companionStep: CompanionStep;
   handleDone: (done: boolean) => void;
-  analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
+  analyticsSeedConfiguration: React.RefObject<SeedOriginType | undefined>;
 }
 
 const SecondStepSyncOnboarding = ({
@@ -123,7 +123,7 @@ const SecondStepSyncOnboarding = ({
             {companionStep === SEED_STATE.NEW_SEED ? (
               <NewSeedConfirmation
                 handlePress={handleExit}
-                seedConfiguration={analyticsSeedConfiguration.current}
+                seedConfiguration={analyticsSeedConfiguration.current ?? undefined}
               />
             ) : (
               <InstallSetOfApps
@@ -131,7 +131,7 @@ const SecondStepSyncOnboarding = ({
                 device={device}
                 onResult={handleExit}
                 dependencies={initialAppsToInstall}
-                seedConfiguration={analyticsSeedConfiguration.current}
+                seedConfiguration={analyticsSeedConfiguration.current ?? undefined}
               />
             )}
           </Box>

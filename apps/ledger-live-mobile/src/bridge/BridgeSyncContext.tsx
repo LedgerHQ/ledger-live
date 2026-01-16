@@ -31,6 +31,7 @@ export const BridgeSyncProvider = ({ children }: { children: React.ReactNode }) 
       hydrateCurrency={hydrateCurrency}
       blacklistedTokenIds={blacklistedTokenIds}
     >
+      {/* @ts-expect-error REACT19FIXME: ReactNode type from React 18 is not compatible with ReactNode from React 19 */}
       {children}
     </BridgeSync>
   );
