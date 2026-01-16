@@ -482,7 +482,9 @@
       "celo_title" : "A Ledger Nano S™ não é compatível com a troca de Celo",
       "celo_description" : "Para trocar Celo, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "monad_title" : "A Ledger Nano S™ não é compatível com a troca de Monad",
-      "monad_description" : "Para trocar Monad, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+      "monad_description" : "Para trocar Monad, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "zcash_title" : "A Ledger Nano™ S não é compatível com a troca de Zcash",
+      "zcash_description" : "Para trocar Zcash, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano™ S Plus, Ledger Nano™ X, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar cripto",
@@ -1310,6 +1312,17 @@
         "description" : "Você pode transferir cripto de qualquer corretora ou carteira à sua Ledger Wallet para ter segurança máxima.",
         "depositButton" : "Proteger minha cripto",
         "skipButton" : "Talvez mais tarde"
+      },
+      "sync" : {
+        "timelineTitle" : "Sincronização de Carteira",
+        "timelineTitleCompleted" : "Sincronização ativada",
+        "title" : "Habilite a sincronização para a sua carteira",
+        "description" : "Mantenha seu portfólio atualizado ao trocar de computadores ou usar um smartphone",
+        "skipButton" : "Farei isso mais tarde",
+        "skipTitle" : "Pular a ativação da sincronização?",
+        "skipDescription" : "Se você pular, terá de adicionar manualmente todas as suas contas cripto novamente se algum dia trocar de smartphone ou computador. Você pode desativar isso a qualquer momento nas configurações da sua Ledger Wallet.",
+        "skipConfirm" : "Sim, pular",
+        "skipNo" : "Não, ativar a sincronização"
       },
       "backup" : {
         "title" : "Backup para sua Frase de Recuperação Secreta",
