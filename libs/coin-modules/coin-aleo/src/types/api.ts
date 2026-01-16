@@ -35,14 +35,34 @@ export interface AleoPublicTransactions {
   };
 }
 
-// FIXME: temp details type
+interface AleoTransition {
+  id: string;
+  scm: string;
+  tcm: string;
+  tpk: string;
+  inputs: Array<{
+    id: string;
+    type: "public" | "private";
+    value: string;
+  }>;
+  outputs: Array<{
+    id: string;
+    type: string;
+    value: string;
+  }>;
+  program: string;
+  function: string;
+}
+
 export interface AleoPublicTransactionDetails {
   type: string;
   id: string;
-  execution: {};
+  execution: {
+    transitions: AleoTransition[];
+  };
   global_state_root: string;
   proof: string;
-  fee: {};
+  fee: { transition: AleoTransition };
   fee_value: number;
   block_height: number;
   block_hash: string;
