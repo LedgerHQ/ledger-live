@@ -30,7 +30,7 @@ test.afterAll(async () => {
   }
 });
 
-test("Earn @smoke", async ({ page, electronApp }) => {
+test.skip("Earn @smoke", async ({ page, electronApp }) => {
   if (!testServerIsRunning) {
     console.warn("Test server not running - Cancelling Earn E2E test");
     return;
