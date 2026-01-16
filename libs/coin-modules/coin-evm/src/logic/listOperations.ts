@@ -118,13 +118,20 @@ export async function listOperations(
     [...lastTokenOperations, ...lastNftOperations, ...lastInternalOperations]
       .map(op => op.hash)
       .includes(coinOperation.hash);
-  const parents = Object.fromEntries(
-    lastCoinOperations.filter(isTokenOrInternalOperation).map(op => [op.hash, op]),
-  );
 
-  const nativeOperations = lastCoinOperations
-    .filter(isNativeOperation)
-    .map<Operation<MemoNotSupported>>(op => toOperation({ type: "native" }, op));
+  const parents: Record<string, LiveOperation> = {};
+  const nativeOperations: Operation<MemoNotSupported>[] = [];
+
+  for (const coinOperation of lastCoinOperations) {
+    if (isTokenOrInternalOperation(coinOperation)) {
+      parents[coinOperation.hash] = coinOperation;
+    }
+
+    if (isNativeOperation(coinOperation)) {
+      nativeOperations.push(toOperation({ type: "native" }, coinOperation));
+    }
+  }
+
   const tokenOperations = [...lastTokenOperations, ...lastNftOperations].map<
     Operation<MemoNotSupported>
   >(op => toOperation({ type: "token", owner: address, parents }, op));

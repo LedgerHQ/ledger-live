@@ -1,9 +1,14 @@
 import { spawn } from "child_process";
 import path from "path";
+import { EventEmitter } from "node:events";
 import commandLineArgs, { CommandLineOptions } from "command-line-args";
 import packageJson from "../package.json";
 import currencies, { type AccountType } from "./currencies";
 import run from "./run";
+
+// Mute `MaxListenersExceededWarning`
+// TODO: check if emitters can be better handled
+EventEmitter.defaultMaxListeners = 0;
 
 const VALID_ACCOUNT_TYPES = ["pristine", "average", "big"] as const;
 const VALID_CURRENCIES = Object.keys(currencies);
