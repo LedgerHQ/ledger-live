@@ -3,17 +3,21 @@ import {
   AccountTransactionType,
   CcdAmount,
   SequenceNumber,
-  serializeAccountTransaction,
   TransactionExpiry,
 } from "@ledgerhq/concordium-sdk-adapter";
-import { AccountTransactionWithEnergy } from "@ledgerhq/hw-app-concordium/lib/serialization";
+import {
+  AccountTransactionWithEnergy,
+  serializeAccountTransaction,
+} from "@ledgerhq/hw-app-concordium/lib/serialization";
 import BigNumber from "bignumber.js";
 
 /**
  * Crafts a Concordium transaction for signing and submission.
  *
  * Creates AccountTransactionWithEnergy for hardware wallet signing using SDK types.
- * This ensures consistency between the device signing format and network submission format.
+ * Uses hw-app-concordium's serializeAccountTransaction which serializes
+ * header + type + payload without requiring signatures (unlike the SDK's
+ * serializeAccountTransaction which requires signatures).
  */
 export async function craftTransaction(
   account: {
@@ -47,9 +51,7 @@ export async function craftTransaction(
     energyAmount: transaction.energy ?? BigInt(0),
   };
 
-  const serializedTransaction = Buffer.from(
-    serializeAccountTransaction(nativeTransaction, {}),
-  ).toString("hex");
+  const serializedTransaction = serializeAccountTransaction(nativeTransaction).toString("hex");
 
   return {
     nativeTransaction,
