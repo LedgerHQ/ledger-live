@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { Platform, View } from "react-native";
 import { useTranslation } from "~/context/Locale";
+import Config from "react-native-config";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-navigation/native";
@@ -43,6 +44,7 @@ import { TAB_BAR_HEIGHT } from "../TabBar/shared";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useAutoSelectDevice } from "./useAutoSelectDevice";
 import { DeviceLockedCheckDrawer } from "./DeviceLockedCheckDrawer";
+import { useMockBleDevicesScanning } from "~/react-native-hw-transport-ble/useMockBle";
 
 export type { SetHeaderOptionsRequest };
 
@@ -137,9 +139,15 @@ export default function SelectDevice({
 
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
 
-  const bleScanningState = useBleDevicesScanning(
-    isFocused && !stopBleScanning && pairingFlowStep !== "pairing" && !deviceToCheckLockedStatus,
-  );
+  const isMockMode = Boolean(Config.MOCK || Config.DETOX);
+  const scanningEnabled =
+    isFocused && !stopBleScanning && pairingFlowStep !== "pairing" && !deviceToCheckLockedStatus;
+
+  // Use mock scanning in e2e test mode, real DMK scanning otherwise
+  const mockScanningState = useMockBleDevicesScanning(isMockMode && scanningEnabled);
+  const realScanningState = useBleDevicesScanning(!isMockMode && scanningEnabled);
+
+  const bleScanningState = isMockMode ? mockScanningState : realScanningState;
 
   const scannedDevices = bleScanningState.scannedDevices;
 

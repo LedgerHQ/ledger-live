@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import Config from "react-native-config";
 import {
   BleScanningState,
   filterScannedDevice,
@@ -13,6 +14,7 @@ import { useSelector } from "~/context/hooks";
 import { bleDevicesSelector } from "~/reducers/ble";
 import { FilterByDeviceModelId } from "./FilterByDeviceModelId";
 import { useIsFocused } from "@react-navigation/core";
+import { useMockBleDevicesScanning } from "~/react-native-hw-transport-ble/useMockBle";
 
 type DmkBleDevicesScanningProps = Omit<BleDevicesScanningProps, "devices"> & {
   /**
@@ -22,7 +24,9 @@ type DmkBleDevicesScanningProps = Omit<BleDevicesScanningProps, "devices"> & {
 };
 
 export const DmkBleDevicesScanning = (props: DmkBleDevicesScanningProps) => {
+  const isMockMode = Boolean(Config.MOCK || Config.DETOX);
   const isFocused = useIsFocused();
+
   const filterByDeviceModelIds = useMemo(() => {
     if (Array.isArray(props.filterByDeviceModelId)) {
       return props.filterByDeviceModelId.filter(
@@ -49,7 +53,13 @@ export const DmkBleDevicesScanning = (props: DmkBleDevicesScanningProps) => {
 
   const scanningEnabled = !bleScanningState && isFocused; // if the parent handles the scanning logic, we don't need to scan here
 
-  const { scannedDevices: scannedDevicesFromHook } = useBleDevicesScanning(scanningEnabled);
+  // Use mock scanning in e2e test mode, real DMK scanning otherwise
+  const mockScanningState = useMockBleDevicesScanning(isMockMode && scanningEnabled);
+  const realScanningState = useBleDevicesScanning(!isMockMode && scanningEnabled);
+
+  const scannedDevicesFromHook = isMockMode
+    ? mockScanningState.scannedDevices
+    : realScanningState.scannedDevices;
 
   const scannedDevices = props.bleScanningState
     ? props.bleScanningState.scannedDevices
