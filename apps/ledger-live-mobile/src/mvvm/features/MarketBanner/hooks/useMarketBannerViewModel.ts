@@ -12,7 +12,7 @@ import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/i
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
-import { counterValueCurrencySelector, selectedTimeRangeSelector } from "~/reducers/settings";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import {
@@ -24,13 +24,14 @@ import {
 } from "../constants";
 import { UseMarketBannerViewModelResult } from "../types";
 
+const TIME_RANGE = "day";
+
 const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
   const baseNavigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const marketNavigation = useNavigation<NavigationProp<WalletTabNavigatorStackParamList>>();
   const lwmWallet40 = useFeature("lwmWallet40");
 
   const isMarketBannerEnabled = lwmWallet40?.enabled && lwmWallet40?.params?.marketBanner;
-  const timeRange = useSelector(selectedTimeRangeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const { isCurrencyAvailable } = useRampCatalog();
@@ -44,7 +45,7 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
   const { data, isLoading, isError } = useMarketPerformers({
     sort: "asc",
     counterCurrency: counterValueCurrency.ticker,
-    range: timeRange,
+    range: TIME_RANGE,
     limit: MARKET_BANNER_TILE_COUNT * 2,
     top: MARKET_BANNER_TOP,
     supported: true,
@@ -119,7 +120,7 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
     isLoading,
     isError,
     isEnabled: isMarketBannerEnabled ?? false,
-    range: timeRange,
+    range: TIME_RANGE,
     onTilePress,
     onViewAllPress,
     onSectionTitlePress,
