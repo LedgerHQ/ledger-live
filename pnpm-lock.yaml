@@ -1368,9 +1368,6 @@ importers:
       '@ledgerhq/react-native-hid':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/react-native-hid
-      '@ledgerhq/react-native-hw-transport-ble':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/react-native-hw-transport-ble
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-cryptoassets
