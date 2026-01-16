@@ -482,7 +482,9 @@
       "celo_title" : "Ledger Nano S™ unterstützt das Swappen von Celo nicht",
       "celo_description" : "Zum Swappen von Celo kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
       "monad_title" : "Ledger Nano S™ unterstützt das Swappen von Monad nicht",
-      "monad_description" : "Zum Swappen von Monad musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™."
+      "monad_description" : "Zum Swappen von Monad musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+      "zcash_title" : "Ledger Nano S™ unterstützt das Swappen von Zcash nicht",
+      "zcash_description" : "Zum Swappen von Zcash musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. einen Ledger Nano S Plus™, einen Ledger Nano X™, einen Ledger Flex™ oder einen Ledger Stax™."
     },
     "providers" : {
       "title" : "Wähle einen Anbieter für das Swappen von Kryptowährungen",
@@ -1310,6 +1312,17 @@
         "description" : "Du kannst Kryptos von jeder Börse oder Wallet nach Ledger Wallet übertragen, um maximale Sicherheit zu garantieren.",
         "depositButton" : "Meine Kryptos schützen",
         "skipButton" : "Vielleicht später"
+      },
+      "sync" : {
+        "timelineTitle" : "Wallet-Synchronisierung",
+        "timelineTitleCompleted" : "Synchronisierung aktiviert",
+        "title" : "Wallet-Synchronisierung aktivieren",
+        "description" : "Halte dein Portfolio auf dem neuesten Stand, wenn du den Computer wechselst oder ein Handy nutzt",
+        "skipButton" : "Ich erledige das später",
+        "skipTitle" : "Aktivieren der Synchronisierung überspringen?",
+        "skipDescription" : "Wenn du diesen Schritt überspringst, musst du beim Wechsel auf ein neues Handy oder einen neuen Computer alle deine Kryptokonten manuell erneut hinzufügen. Du kannst die Option jederzeit in deinen Einstellungen in Ledger Wallet deaktivieren.",
+        "skipConfirm" : "Ja, überspringen",
+        "skipNo" : "Nein, Synchronisierung aktivieren"
       },
       "backup" : {
         "title" : "Sicherheitskopie für deine geheime Wiederherstellungsphrase",
@@ -2462,52 +2475,52 @@
     }
   },
   "newSendFlow" : {
-    "title" : "Send {{currency}}",
-    "available" : "Available {{amount}}",
-    "placeholder" : "Enter address or ENS",
-    "placeholderNoENS" : "Enter address",
-    "recent" : "Recent",
-    "myAccounts" : "My accounts",
-    "sendTo" : "Send to {{address}}",
-    "addressMatched" : "Address matched",
-    "addressNotFound" : "Address not found",
-    "alreadyUsed" : "Already used · {{date}}",
-    "recentSendWillAppear" : "Your recent send will appear here",
-    "remove" : "Remove",
-    "enterTag" : "Enter {{tag}}",
+    "title" : "{{currency}} senden",
+    "available" : "{{amount}} verfügbar",
+    "placeholder" : "Adresse oder ENS eingeben",
+    "placeholderNoENS" : "Adresse eingeben",
+    "recent" : "Neulich",
+    "myAccounts" : "Meine Konten",
+    "sendTo" : "An {{address}} senden",
+    "addressMatched" : "Adressen passen",
+    "addressNotFound" : "Adresse nicht gefunden",
+    "alreadyUsed" : "Bereits genutzt · {{date}}",
+    "recentSendWillAppear" : "Deine letzten Transfers erscheinen hier",
+    "remove" : "Entfernen",
+    "enterTag" : "{{tag}} eingeben",
     "firstInteraction" : {
-      "title" : "You’re sending to a new address",
-      "description" : "Verify that the address is correct. In case of doubt send a small amount first."
+      "title" : "Du sendest an eine neue Adresse",
+      "description" : "Bestätige, das die Adresse korrekt ist. Im Zweifelsfall sende vorab einen kleinen Betrag."
     },
     "sanctioned" : {
-      "title" : "Flagged address",
-      "description" : "This address has been flagged and Ledger doesn’t allow sending to it",
-      "helpCenter" : "Help center"
+      "title" : "Gemeldete Adresse",
+      "description" : "Diese Adresse wurde gemeldet und Ledger erlaubt keine Transfers an sie",
+      "helpCenter" : "Hilfe-Center"
     },
     "errors" : {
-      "incorrectFormat" : "Incorrect address format",
-      "incompatibleAsset" : "Address isn’t compatible with the asset selected",
-      "walletNotExist" : "Wallet doesn’t exist"
+      "incorrectFormat" : "Falsches Adressformat",
+      "incompatibleAsset" : "Adresse ist nicht mit dem gewählten Asset kompatibel",
+      "walletNotExist" : "Wallet existiert nicht"
     },
     "skipMemo" : {
-      "title" : "Skip adding {{tag}}?",
-      "warning" : "Your asset may be lost if a {{tag}} is required by your recipient"
+      "title" : "{{tag}} hinzufügen überspringen?",
+      "warning" : "Deine Assets können verloren gehen, falls der Empfänger ein {{tag}} voraussetzt"
     },
     "tagHelp" : {
-      "title" : "What’s a {{tag}}?",
-      "description" : "A {{tag}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{tag}} memo may result in a loss of funds."
+      "title" : "Was ist ein {{tag}}?",
+      "description" : "Ein {{tag}} wird beim Senden von {{currency}} an eine Krypto-Börse benötigt. Dadurch kann der Empfänger der Transaktion identifiziert werden. Das Fehlen eines {{tag}}-Memo kann zum Verlust von Guthaben führen."
     },
-    "networkFeesInFiat" : "Network fees in {{currency}}",
-    "feesAmount" : "Fees amount ({{unit}})",
-    "gasLimit" : "Gas limit ({{unit}})",
-    "feesPaid" : "Fees paid to the network to proceed your transaction",
-    "insufficientBalanceFees" : "Insufficient balance to cover the network fees",
-    "amountToSend" : "Amount to send in ({{currency}})",
-    "coinToSend" : "Coin to send",
-    "coinControlCustom" : "Custom coin selection",
-    "aboveMaximum" : "Above maximum balance",
-    "transactionSigned" : "Transaction signed",
-    "processingTransaction" : "Your transaction is being processed"
+    "networkFeesInFiat" : "Netzwerkgebühren in {{currency}}",
+    "feesAmount" : "Gebührenbetrag ({{unit}})",
+    "gasLimit" : "Gaslimit ({{unit}})",
+    "feesPaid" : "Gebühren, die an das Netzwerk entrichtet werden, um deine Transaktion durchzuführen",
+    "insufficientBalanceFees" : "Unzureichender Saldo zur Deckung der Netzwerkgebühren",
+    "amountToSend" : "Zu sendender Betrag in ({{currency}})",
+    "coinToSend" : "Zu sendender Coin",
+    "coinControlCustom" : "Eigene Coinauswahl",
+    "aboveMaximum" : "Über dem maximalen Saldo",
+    "transactionSigned" : "Transaktion signiert",
+    "processingTransaction" : "Deine Transaktion wird verarbeitet"
   },
   "releaseNotes" : {
     "title" : "Informationen zur Version",
