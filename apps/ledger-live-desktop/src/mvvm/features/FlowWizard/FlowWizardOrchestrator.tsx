@@ -10,6 +10,7 @@ import type {
   FlowWizardContextValue,
   FlowStepConfig,
 } from "./types";
+import { cn } from "LLD/utils/cn";
 
 const DEFAULT_ANIMATION_CONFIG: AnimationConfig = {
   forward: "animate-fade-in",
@@ -95,7 +96,7 @@ export function FlowWizardOrchestrator<
       <div className="flex flex-col" style={containerStyle}>
         {children}
         {StepComponent && (
-          <div key={state.currentStep} className={`min-h-0 flex-1 ${animationClass ?? ""}`}>
+          <div key={state.currentStep} className={cn("min-h-0 flex-1", animationClass)}>
             <StepComponent />
           </div>
         )}
