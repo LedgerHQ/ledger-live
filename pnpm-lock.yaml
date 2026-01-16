@@ -957,8 +957,8 @@ importers:
         specifier: 7.2.1
         version: 7.2.1(@types/react@18.2.73)(react@18.3.1)
       undici:
-        specifier: 6.19.2
-        version: 6.19.2
+        specifier: 6.21.1
+        version: 6.21.1
       uuid:
         specifier: 9.0.1
         version: 9.0.1
@@ -6369,8 +6369,8 @@ importers:
         specifier: 5.4.3
         version: 5.4.3
       undici:
-        specifier: 6.19.2
-        version: 6.19.2
+        specifier: 6.21.1
+        version: 6.21.1
       uuid:
         specifier: ^8.3.2
         version: 8.3.2
@@ -14740,6 +14740,7 @@ packages:
 
   '@formatjs/intl-enumerator@1.4.5':
     resolution: {integrity: sha512-IbEJHzJO0buoq//RqbLRDettIkZ/WYGOL+8dy5oxzefqlpTsmJFUo5t1sK0/1EoC+eOFiyhdgh5ihCH3Cehc0w==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   '@formatjs/intl-getcanonicallocales@2.3.0':
     resolution: {integrity: sha512-BOXbLwqQ7nKua/l7tKqDLRN84WupDXFDhGJQMFvsMVA2dKuOdRaWTxWpL3cJ7qPkoNw11Jf+Xpj4OSPBBvW0eQ==}
@@ -19760,7 +19761,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -22384,7 +22385,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -32358,6 +32359,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -32606,7 +32608,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -35582,8 +35584,8 @@ packages:
     resolution: {integrity: sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==}
     engines: {node: '>=14.0'}
 
-  undici@6.19.2:
-    resolution: {integrity: sha512-JfjKqIauur3Q6biAtHJ564e3bWa8VvT+7cSiOJHFbX4Erv6CLGDpg8z+Fmg/1OI/47RA+GI2QZaF48SSaLvyBA==}
+  undici@6.21.1:
+    resolution: {integrity: sha512-q/1rj5D0/zayJB2FraXdaWxbhWiNKDvu8naDT2dl1yTlvJp4BLtOcp2a5BvgGNQpYYJzau7tf1WgKv3b+7mqpQ==}
     engines: {node: '>=18.17'}
 
   unfetch@3.1.2:
@@ -37122,7 +37124,7 @@ snapshots:
       '@octokit/core': 5.1.0
       '@octokit/plugin-paginate-rest': 9.2.1(@octokit/core@5.1.0)
       '@octokit/plugin-rest-endpoint-methods': 10.4.1(@octokit/core@5.1.0)
-      undici: 6.19.2
+      undici: 6.21.1
 
   '@actions/github@6.0.1':
     dependencies:
@@ -42484,7 +42486,7 @@ snapshots:
       structured-headers: 0.4.1
       tar: 7.4.3
       terminal-link: 2.1.1
-      undici: 6.19.2
+      undici: 6.21.1
       wrap-ansi: 7.0.0
       ws: 8.18.3
     transitivePeerDependencies:
@@ -42554,7 +42556,7 @@ snapshots:
       structured-headers: 0.4.1
       tar: 7.4.3
       terminal-link: 2.1.1
-      undici: 6.19.2
+      undici: 6.21.1
       wrap-ansi: 7.0.0
       ws: 8.18.3
     transitivePeerDependencies:
@@ -74057,7 +74059,7 @@ snapshots:
     dependencies:
       '@fastify/busboy': 2.1.1
 
-  undici@6.19.2: {}
+  undici@6.21.1: {}
 
   unfetch@3.1.2: {}
 
