@@ -482,7 +482,9 @@
       "celo_title" : "Ledger Nano S™ не поддерживает обмен Celo",
       "celo_description" : "Используйте другие совместимые устройства Ledger для обмена Celo. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "monad_title" : "Ledger Nano S™ не поддерживает обмен Monad",
-      "monad_description" : "Для обмена Monad используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
+      "monad_description" : "Для обмена Monad используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "zcash_title" : "Ledger Nano S™ не поддерживает обмен Zcash",
+      "zcash_description" : "Для обмена Zcash используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
     },
     "providers" : {
       "title" : "Выберите поставщика услуг по обмену криптовалюты",
@@ -1310,6 +1312,17 @@
         "description" : "Для максимальной безопасности выведите криптовалюты с любой биржи или кошелька на Ledger Wallet.",
         "depositButton" : "Хочу защититься",
         "skipButton" : "Не сейчас"
+      },
+      "sync" : {
+        "timelineTitle" : "Синхронизация кошельков",
+        "timelineTitleCompleted" : "Синхронизация включена",
+        "title" : "Включите синхронизацию кошелька",
+        "description" : "Держите портфель в актуальном состоянии, переключаясь между ПК или смартфонами",
+        "skipButton" : "Отложить",
+        "skipTitle" : "Пропустить включение синхронизации",
+        "skipDescription" : "Если вы пропустите этот этап, вам придётся вручную добавлять все криптовалютные счета при переходе на новый смартфон или ПК. Отключить функцию всегда можно в Настройках Ledger Wallet.",
+        "skipConfirm" : "Пропустить",
+        "skipNo" : "Нет, включить синхронизацию"
       },
       "backup" : {
         "title" : "Резервная копия фразы восстановления",
