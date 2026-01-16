@@ -3474,7 +3474,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Ativar Notificações",
+      "titleVariantB" : "Aproveite ao máximo a Ledger Wallet",
       "desc" : "Receba as últimas atualizações sobre a Ledger Wallet, os produtos Ledger, o mercado e recomendações personalizadas. Cancele a qualquer momento nas configurações",
+      "descVariantB" : "Enviaremos dicas personalizadas, guias de configuração e notícias relevantes do mercado.",
       "allow" : "Permitir Notificações",
       "later" : "Talvez mais tarde"
     },
@@ -3891,7 +3893,9 @@
         "celo_title" : "A Ledger Nano S™ não é compatível com a troca de Celo",
         "celo_description" : "Para trocar Celo, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "monad_title" : "A Ledger Nano S™ não é compatível com a troca de Monad",
-        "monad_description" : "Para trocar Monad, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+        "monad_description" : "Para trocar Monad, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "zcash_title" : "A Ledger Nano™ S não é compatível com a troca de Zcash",
+        "zcash_description" : "Para trocar Zcash, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano™ S Plus, Ledger Nano™ X, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {
