@@ -93,6 +93,49 @@ export class ConnectAppEventMapper {
   }
 
   private handleDeviceState(deviceState: DeviceSessionState): void {
+    // FIXME: remove mock once aleo app is available in catalog
+    if ("catalog" in deviceState && deviceState.catalog) {
+      const hasAleoApp = deviceState.catalog?.applications.some(app => app.currencyId === "aleo");
+
+      if (!hasAleoApp) {
+        const mockApp = {
+          versionId: 60800,
+          versionName: "Aleo",
+          versionDisplayName: "Aleo",
+          version: "1.0.0",
+          currencyId: "aleo",
+          description: "",
+          applicationType: "currency",
+          dateModified: new Date().toISOString(),
+          icon: "aleo",
+          authorName: "Aleo",
+          supportURL: "https://support.ledger.com/article/aleo",
+          contactURL: "mailto:support@aleo.org",
+          sourceURL: "https://github.com/LedgerHQ/app-aleo",
+          compatibleWallets: "[]",
+          hash: "aleo123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+          perso: "perso_11",
+          firmware: "nanos+/1.5.0/aleo/app_1.0.0",
+          firmwareKey: "nanos+/1.5.0/aleo/app_1.0.0_key",
+          delete: "nanos+/1.5.0/aleo/app_1.0.0_del",
+          deleteKey: "nanos+/1.5.0/aleo/app_1.0.0_del_key",
+          bytes: 32000,
+          warning: null,
+          isDevTools: false,
+          category: 1,
+          parent: null,
+          parentName: null,
+        };
+
+        // @ts-expect-error - tmp
+        deviceState.catalog.applications.push(mockApp);
+        // @ts-expect-error - tmp
+        deviceState.installedApps.push(mockApp);
+
+        console.log("added aleo mock to catalog");
+      }
+    }
+
     if (deviceState.sessionStateType === DeviceSessionStateType.Connected) {
       return;
     }
