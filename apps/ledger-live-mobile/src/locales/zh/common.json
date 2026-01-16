@@ -3474,7 +3474,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "打开通知",
+      "titleVariantB" : "充分利用 Ledger Wallet",
       "desc" : "获取关于 Ledger Wallet、Ledger 产品、市场的最新资讯以及个性化推荐。在设置中随时选择停用",
+      "descVariantB" : "我们将向您发送个性化小贴士、设置指南以及相关市场新闻。",
       "allow" : "允许通知",
       "later" : "以后再说"
     },
@@ -3891,7 +3893,9 @@
         "celo_title" : "Ledger Nano S™ 不支持互换 Celo",
         "celo_description" : "要互换 Celo，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "monad_title" : "Ledger Nano S™ 不支持互换 Monad",
-        "monad_description" : "要互换 Monad，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
+        "monad_description" : "要互换 Monad，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "zcash_title" : "Ledger Nano S™ 不支持互换 Zcash",
+        "zcash_description" : "要互换 Zcash，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
       }
     },
     "lending" : {
