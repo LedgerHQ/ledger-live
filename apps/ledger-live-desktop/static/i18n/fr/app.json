@@ -482,7 +482,9 @@
       "celo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Celo",
       "celo_description" : "Pour échanger des Celo, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "monad_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Monad",
-      "monad_description" : "Pour échanger des Monad, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+      "monad_description" : "Pour échanger des Monad, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "zcash_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Zcash",
+      "zcash_description" : "Pour échanger des Zcash, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Choisir un prestataire pour le Swap",
@@ -1310,6 +1312,17 @@
         "description" : "Pour une sécurité optimale, vous pouvez transférer vos cryptos depuis n’importe quelle plateforme ou wallet vers Ledger Wallet.",
         "depositButton" : "Sécuriser mes cryptos",
         "skipButton" : "Plus tard"
+      },
+      "sync" : {
+        "timelineTitle" : "Synchronisation wallet",
+        "timelineTitleCompleted" : "Synchronisation activée",
+        "title" : "Activez la synchronisation pour votre wallet",
+        "description" : "Gardez votre portefeuille à jour, même en changeant d’ordinateur ou sur téléphone.",
+        "skipButton" : "Plus tard",
+        "skipTitle" : "Ne pas activer la synchronisation ?",
+        "skipDescription" : "Si vous passez cette étape, vous devrez ajouter manuellement tous vos comptes crypto si vous changez de téléphone ou d’ordinateur. Vous pouvez toujours désactiver cette option dans les paramètres de Ledger Wallet.",
+        "skipConfirm" : "Ne pas activer",
+        "skipNo" : "Activer"
       },
       "backup" : {
         "title" : "Sauvegarde pour votre phrase de récupération",
@@ -6855,7 +6868,7 @@
       "title" : "L’envoi à une adresse Taproot avant l’activation du réseau présente un risque"
     },
     "SolanaAccountNotFunded" : {
-      "title" : "Pas de fonds sur le compte"
+      "title" : "Compte vide"
     },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "Ce compte de tokens associé contient un autre token"
