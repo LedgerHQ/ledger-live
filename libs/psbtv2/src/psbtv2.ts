@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { BufferReader, BufferWriter, unsafeFrom64bitLE, unsafeTo64bitLE } from "../buffertools";
+import { Psbt, Transaction } from "bitcoinjs-lib";
+import { BufferReader, BufferWriter, unsafeFrom64bitLE, unsafeTo64bitLE } from "./buffertools";
 
 export enum psbtGlobal {
   TX_VERSION = 0x02,
@@ -211,7 +212,7 @@ export class PsbtV2 {
     const buf = this.getInput(inputIndex, psbtIn.TAP_BIP32_DERIVATION, pubkey);
     return this.decodeTapBip32Derivation(buf);
   }
-  getInputKeyDatas(inputIndex: number, keyType: KeyType): Buffer[] {
+  getInputKeyDatas(inputIndex: number, keyType: number): Buffer[] {
     return this.getKeyDatas(this.inputMaps[inputIndex], keyType);
   }
 
@@ -298,7 +299,7 @@ export class PsbtV2 {
   }
   serialize(): Buffer {
     const buf = new BufferWriter();
-    buf.writeSlice(Buffer.from([0x70, 0x73, 0x62, 0x74, 0xff]));
+    buf.writeSlice(PSBT_MAGIC_BYTES);
     serializeMap(buf, this.globalMap);
     this.inputMaps.forEach(map => {
       serializeMap(buf, map);
@@ -323,6 +324,207 @@ export class PsbtV2 {
       while (this.readKeyPair(this.outputMaps[i], buf));
     }
   }
+
+  /**
+   * Attempts to extract the version number as uint32LE from raw psbt regardless
+   * of psbt validity.
+   *
+   * @param psbt - PSBT buffer to extract version from
+   * @returns The PSBT version number, or 0 if no version field is found (indicating PSBTv0)
+   *
+   * @example
+   * ```typescript
+   * const psbtBuffer = Buffer.from('cHNidP8BAH...', 'base64');
+   * const version = PsbtV2.getPsbtVersionNumber(psbtBuffer);
+   * if (version === 2) {
+   *   // Handle PSBTv2
+   * } else {
+   *   // Handle PSBTv0
+   * }
+   * ```
+   */
+  static getPsbtVersionNumber(psbt: Buffer): number {
+    const map = new Map<string, Buffer>();
+    const buf = new BufferReader(psbt.subarray(PSBT_MAGIC_BYTES.length));
+
+    // Read global map key-value pairs
+    while (buf.available() > 0) {
+      const keyLen = buf.readVarInt();
+      if (keyLen === 0) break; // End of global map
+
+      const keyType = buf.readUInt8();
+      const keyData = keyLen > 1 ? buf.readSlice(keyLen - 1) : Buffer.alloc(0);
+      const key = Buffer.concat([Buffer.from([keyType]), keyData]).toString("hex");
+
+      const valueLen = buf.readVarInt();
+      const value = valueLen > 0 ? buf.readSlice(valueLen) : Buffer.alloc(0);
+
+      map.set(key, value);
+    }
+
+    // Look for PSBT version field (0xfb)
+    const versionKey = Buffer.from([psbtGlobal.VERSION]).toString("hex");
+    const versionValue = map.get(versionKey);
+    return versionValue ? versionValue.readUInt32LE(0) : 0;
+  }
+
+  /**
+   * Converts a PSBTv0 (from bitcoinjs-lib) to PSBTv2.
+   *
+   * This method deserializes a PSBTv0 buffer and converts it
+   * to the PSBTv2 format, preserving all relevant fields including:
+   * - Transaction version and locktime
+   * - Inputs (UTXOs, derivation paths, sequences, signatures)
+   * - Outputs (amounts, scripts, derivation paths)
+   * - Finalized scripts (if present)
+   *
+   * The method follows the PSBT role saga defined in BIP174:
+   * 1. Creator Role - Initialize PSBTv2 with version and counts
+   * 2. Constructor Role - Add inputs and outputs
+   * 3. Signer Role - Transfer partial signatures
+   * 4. Input Finalizer - Transfer finalized scripts
+   *
+   * @param psbt - PSBTv0 as Buffer
+   * @param allowTxnVersion1 - Allow transaction version 1 (default: false).
+   *                           Version 2 is recommended per BIP68.
+   * @returns A new PsbtV2 instance with converted data
+   * @throws Error if PSBT is invalid or contains unsupported features
+   *
+   * @example
+   * ```typescript
+   * const psbtV0Buffer = Buffer.from('cHNidP8BAH...', 'base64');
+   * const psbtV2 = PsbtV2.fromV0(psbtV0Buffer);
+   * ```
+   */
+  static fromV0(psbt: Buffer, allowTxnVersion1 = false): PsbtV2 {
+    const psbtv0 = Psbt.fromBuffer(psbt);
+
+    // Creator Role - Initialize PSBTv2
+    const psbtv2 = new PsbtV2();
+    PsbtV2.initializeFromV0(psbtv2, psbtv0, allowTxnVersion1);
+
+    // Constructor Role - Add inputs and outputs
+    const txBuffer = psbtv0.data.getTransaction();
+    const tx = Transaction.fromBuffer(txBuffer);
+    PsbtV2.addInputsFromV0(psbtv2, psbtv0, tx);
+    PsbtV2.addOutputsFromV0(psbtv2, psbtv0, tx);
+
+    // Signer Role - Transfer partial signatures
+    PsbtV2.transferPartialSignatures(psbtv2, psbtv0);
+
+    // Input Finalizer - Transfer finalized scripts
+    PsbtV2.transferFinalizedScripts(psbtv2, psbtv0);
+
+    return psbtv2;
+  }
+
+  private static initializeFromV0(psbtv2: PsbtV2, psbtv0: Psbt, allowTxnVersion1: boolean) {
+    const txVersion = psbtv0.data.getTransaction().readInt32LE(0);
+
+    if (txVersion === 1 && !allowTxnVersion1) {
+      throw new Error(
+        "Transaction version 1 detected. PSBTv2 recommends version 2 for BIP68 sequence support. " +
+          "Pass allowTxnVersion1=true to override.",
+      );
+    }
+
+    psbtv2.setGlobalTxVersion(txVersion);
+    psbtv2.setGlobalFallbackLocktime(psbtv0.locktime);
+    psbtv2.setGlobalInputCount(psbtv0.data.inputs.length);
+    psbtv2.setGlobalOutputCount(psbtv0.data.outputs.length);
+    psbtv2.setGlobalPsbtVersion(2);
+  }
+
+  private static addInputsFromV0(psbtv2: PsbtV2, psbtv0: Psbt, tx: Transaction) {
+    for (const [index, input] of psbtv0.data.inputs.entries()) {
+      // Required fields for PSBTv2 - get from the embedded transaction
+      psbtv2.setInputPreviousTxId(index, Buffer.from(tx.ins[index].hash).reverse());
+      psbtv2.setInputOutputIndex(index, tx.ins[index].index);
+      psbtv2.setInputSequence(index, tx.ins[index].sequence);
+
+      // Optional UTXO information
+      if (input.nonWitnessUtxo) {
+        psbtv2.setInputNonWitnessUtxo(index, input.nonWitnessUtxo);
+      }
+
+      if (input.witnessUtxo) {
+        // Convert bitcoinjs-lib format {value, script} to PSBTv2 format {amount, scriptPubKey}
+        const amount = unsafeTo64bitLE(input.witnessUtxo.value);
+        psbtv2.setInputWitnessUtxo(index, amount, input.witnessUtxo.script);
+      }
+
+      // Optional scripts and derivation
+      if (input.redeemScript) {
+        psbtv2.setInputRedeemScript(index, input.redeemScript);
+      }
+
+      if (input.sighashType !== undefined) {
+        psbtv2.setInputSighashType(index, input.sighashType);
+      }
+
+      if (input.bip32Derivation) {
+        for (const deriv of input.bip32Derivation) {
+          psbtv2.setInputBip32Derivation(
+            index,
+            deriv.pubkey,
+            deriv.masterFingerprint,
+            parseBip32Path(deriv.path),
+          );
+        }
+      }
+    }
+  }
+
+  private static addOutputsFromV0(psbtv2: PsbtV2, psbtv0: Psbt, tx: Transaction) {
+    // Constructor Role - Add outputs
+    for (const [index, output] of psbtv0.data.outputs.entries()) {
+      // Required fields for PSBTv2 - get from the embedded transaction
+      psbtv2.setOutputAmount(index, tx.outs[index].value);
+      psbtv2.setOutputScript(index, tx.outs[index].script);
+
+      // Optional fields
+      if (output.redeemScript) {
+        psbtv2.setOutputRedeemScript(index, output.redeemScript);
+      }
+
+      if (output.bip32Derivation) {
+        for (const deriv of output.bip32Derivation) {
+          psbtv2.setOutputBip32Derivation(
+            index,
+            deriv.pubkey,
+            deriv.masterFingerprint,
+            parseBip32Path(deriv.path),
+          );
+        }
+      }
+    }
+  }
+
+  private static transferPartialSignatures(psbtv2: PsbtV2, psbtv0: Psbt) {
+    for (const [index, input] of psbtv0.data.inputs.entries()) {
+      if (input.partialSig) {
+        for (const sig of input.partialSig) {
+          psbtv2.setInputPartialSig(index, sig.pubkey, sig.signature);
+        }
+      }
+    }
+  }
+
+  private static transferFinalizedScripts(psbtv2: PsbtV2, psbtv0: Psbt) {
+    // Input Finalizer - Transfer finalized scripts
+    // Note: Per BIP174, the Input Finalizer should remove other fields after
+    // finalization, but we preserve them for compatibility with the source PSBTv0
+    for (const [index, input] of psbtv0.data.inputs.entries()) {
+      if (input.finalScriptSig) {
+        psbtv2.setInputFinalScriptsig(index, input.finalScriptSig);
+      }
+
+      if (input.finalScriptWitness) {
+        psbtv2.setInputFinalScriptwitness(index, input.finalScriptWitness);
+      }
+    }
+  }
+
   private readKeyPair(map: Map<string, Buffer>, buf: BufferReader): boolean {
     const keyLen = buf.readVarInt();
     if (keyLen == 0) {
@@ -334,7 +536,7 @@ export class PsbtV2 {
     set(map, keyType, keyData, value);
     return true;
   }
-  private getKeyDatas(map: Map<string, Buffer>, keyType: KeyType): Buffer[] {
+  private getKeyDatas(map: Map<string, Buffer>, keyType: number): Buffer[] {
     const result: Buffer[] = [];
     map.forEach((_v, k) => {
       if (this.isKeyType(k, [keyType])) {
@@ -343,40 +545,40 @@ export class PsbtV2 {
     });
     return result;
   }
-  private isKeyType(hexKey: string, keyTypes: KeyType[]): boolean {
+  private isKeyType(hexKey: string, keyTypes: number[]): boolean {
     const keyType = Buffer.from(hexKey.substring(0, 2), "hex").readUInt8(0);
     return keyTypes.some(k => k == keyType);
   }
-  private setGlobal(keyType: KeyType, value: Buffer) {
+  private setGlobal(keyType: number, value: Buffer) {
     const key = new Key(keyType, Buffer.from([]));
     this.globalMap.set(key.toString(), value);
   }
-  private getGlobal(keyType: KeyType): Buffer {
+  private getGlobal(keyType: number): Buffer {
     return get(this.globalMap, keyType, b(), false)!;
   }
-  private getGlobalOptional(keyType: KeyType): Buffer | undefined {
+  private getGlobalOptional(keyType: number): Buffer | undefined {
     return get(this.globalMap, keyType, b(), true);
   }
-  private setInput(index: number, keyType: KeyType, keyData: Buffer, value: Buffer) {
+  private setInput(index: number, keyType: number, keyData: Buffer, value: Buffer) {
     set(this.getMap(index, this.inputMaps), keyType, keyData, value);
   }
-  private getInput(index: number, keyType: KeyType, keyData: Buffer): Buffer {
+  private getInput(index: number, keyType: number, keyData: Buffer): Buffer {
     return get(this.inputMaps[index], keyType, keyData, false)!;
   }
-  private getInputOptional(index: number, keyType: KeyType, keyData: Buffer): Buffer | undefined {
+  private getInputOptional(index: number, keyType: number, keyData: Buffer): Buffer | undefined {
     return get(this.inputMaps[index], keyType, keyData, true);
   }
-  private setOutput(index: number, keyType: KeyType, keyData: Buffer, value: Buffer) {
+  private setOutput(index: number, keyType: number, keyData: Buffer, value: Buffer) {
     set(this.getMap(index, this.outputMaps), keyType, keyData, value);
   }
-  private getOutput(index: number, keyType: KeyType, keyData: Buffer): Buffer {
+  private getOutput(index: number, keyType: number, keyData: Buffer): Buffer {
     return get(this.outputMaps[index], keyType, keyData, false)!;
   }
   private getMap(index: number, maps: Map<string, Buffer>[]): Map<string, Buffer> {
-    if (maps[index]) {
-      return maps[index];
+    if (!maps[index]) {
+      maps[index] = new Map();
     }
-    return (maps[index] = new Map());
+    return maps[index];
   }
   private encodeBip32Derivation(masterFingerprint: Buffer, path: number[]) {
     const buf = new BufferWriter();
@@ -437,11 +639,11 @@ export class PsbtV2 {
 }
 function get(
   map: Map<string, Buffer>,
-  keyType: KeyType,
+  keyType: number,
   keyData: Buffer,
   acceptUndefined: boolean,
 ): Buffer | undefined {
-  if (!map) throw Error("No such map");
+  if (!map) throw new Error("No such map");
   const key = new Key(keyType, keyData);
   const value = map.get(key.toString());
   if (!value) {
@@ -453,12 +655,10 @@ function get(
   // Make sure to return a copy, to protect the underlying data.
   return Buffer.from(value);
 }
-type KeyType = number;
-
 class Key {
-  keyType: KeyType;
+  keyType: number;
   keyData: Buffer;
-  constructor(keyType: KeyType, keyData: Buffer) {
+  constructor(keyType: number, keyData: Buffer) {
     this.keyType = keyType;
     this.keyData = keyData;
   }
@@ -489,7 +689,7 @@ class KeyPair {
   }
 }
 function createKey(buf: Buffer): Key {
-  return new Key(buf.readUInt8(0), buf.slice(1));
+  return new Key(buf.readUInt8(0), buf.subarray(1));
 }
 function serializeMap(buf: BufferWriter, map: Map<string, Buffer>) {
   for (const k of map.keys()) {
@@ -503,7 +703,7 @@ function serializeMap(buf: BufferWriter, map: Map<string, Buffer>) {
 function b(): Buffer {
   return Buffer.from([]);
 }
-function set(map: Map<string, Buffer>, keyType: KeyType, keyData: Buffer, value: Buffer) {
+function set(map: Map<string, Buffer>, keyType: number, keyData: Buffer, value: Buffer) {
   const key = new Key(keyType, keyData);
   map.set(key.toString(), value);
 }
@@ -522,4 +722,19 @@ function varint(n: number): Buffer {
 }
 function fromVarint(buf: Buffer): number {
   return new BufferReader(buf).readVarInt();
+}
+
+export function parseBip32Path(path: string): number[] {
+  return path
+    .split("/")
+    .slice(1)
+    .map(s => {
+      const hardened = s.endsWith("'") || s.endsWith("h");
+      const base = hardened ? s.slice(0, -1) : s;
+      const num = Number(base);
+      if (Number.isNaN(num)) {
+        throw new TypeError(`Invalid BIP32 path segment: ${path}`);
+      }
+      return hardened ? num + 0x80000000 : num;
+    });
 }

@@ -2719,6 +2719,9 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/psbtv2':
+        specifier: workspace:^
+        version: link:../../psbtv2
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets
@@ -6684,6 +6687,9 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../logs
+      '@ledgerhq/psbtv2':
+        specifier: workspace:^
+        version: link:../../../psbtv2
       '@noble/curves':
         specifier: 1.9.7
         version: 1.9.7
@@ -6708,9 +6714,6 @@ importers:
       semver:
         specifier: 'catalog:'
         version: 7.7.3
-      varuint-bitcoin:
-        specifier: 1.1.2
-        version: 1.1.2
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -9413,6 +9416,37 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0
+
+  libs/psbtv2:
+    dependencies:
+      bitcoinjs-lib:
+        specifier: ^5.2.0
+        version: 5.2.0
+      varuint-bitcoin:
+        specifier: 1.1.2
+        version: 1.1.2
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.8
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.8)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: ^22.10.10
+        version: 22.10.10
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@22.10.10)
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      typescript:
+        specifier: ^5.4.3
+        version: 5.8.3
 
   libs/speculos-transport:
     dependencies:

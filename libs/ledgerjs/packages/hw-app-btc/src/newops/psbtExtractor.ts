@@ -1,5 +1,4 @@
-import { BufferWriter } from "../buffertools";
-import { PsbtV2 } from "./psbtv2";
+import { BufferWriter, PsbtV2 } from "@ledgerhq/psbtv2";
 
 /**
  * This implements the "Transaction Extractor" role of BIP370 (PSBTv2

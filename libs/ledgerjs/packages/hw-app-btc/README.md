@@ -42,81 +42,85 @@ For a smooth and quick integration:
     *   [createPaymentTransaction](#createpaymenttransaction)
         *   [Parameters](#parameters-4)
         *   [Examples](#examples-3)
-    *   [signP2SHTransaction](#signp2shtransaction)
+    *   [signPsbtBuffer](#signpsbtbuffer)
         *   [Parameters](#parameters-5)
         *   [Examples](#examples-4)
-    *   [splitTransaction](#splittransaction)
+    *   [signP2SHTransaction](#signp2shtransaction)
         *   [Parameters](#parameters-6)
         *   [Examples](#examples-5)
-    *   [serializeTransactionOutputs](#serializetransactionoutputs)
+    *   [splitTransaction](#splittransaction)
         *   [Parameters](#parameters-7)
         *   [Examples](#examples-6)
-    *   [getTrustedInput](#gettrustedinput)
+    *   [serializeTransactionOutputs](#serializetransactionoutputs)
         *   [Parameters](#parameters-8)
-    *   [getTrustedInputBIP143](#gettrustedinputbip143)
+        *   [Examples](#examples-7)
+    *   [getTrustedInput](#gettrustedinput)
         *   [Parameters](#parameters-9)
+    *   [getTrustedInputBIP143](#gettrustedinputbip143)
+        *   [Parameters](#parameters-10)
 *   [BtcNew](#btcnew)
     *   [getWalletXpub](#getwalletxpub-1)
-        *   [Parameters](#parameters-10)
-    *   [getWalletPublicKey](#getwalletpublickey-1)
         *   [Parameters](#parameters-11)
-    *   [createPaymentTransaction](#createpaymenttransaction-1)
+    *   [getWalletPublicKey](#getwalletpublickey-1)
         *   [Parameters](#parameters-12)
-    *   [signMessage](#signmessage-1)
+    *   [createPaymentTransaction](#createpaymenttransaction-1)
         *   [Parameters](#parameters-13)
+    *   [signPsbtBuffer](#signpsbtbuffer-1)
+        *   [Parameters](#parameters-14)
+    *   [signMessage](#signmessage-1)
+        *   [Parameters](#parameters-15)
 *   [descrTemplFrom](#descrtemplfrom)
-    *   [Parameters](#parameters-14)
+    *   [Parameters](#parameters-16)
 *   [BtcOld](#btcold)
     *   [getWalletPublicKey](#getwalletpublickey-2)
-        *   [Parameters](#parameters-15)
-        *   [Examples](#examples-7)
-    *   [createPaymentTransaction](#createpaymenttransaction-2)
-        *   [Parameters](#parameters-16)
+        *   [Parameters](#parameters-17)
         *   [Examples](#examples-8)
+    *   [createPaymentTransaction](#createpaymenttransaction-2)
+        *   [Parameters](#parameters-18)
+        *   [Examples](#examples-9)
 *   [CreateTransactionArg](#createtransactionarg)
     *   [Properties](#properties)
 *   [AddressFormat](#addressformat)
 *   [AccountType](#accounttype)
     *   [spendingCondition](#spendingcondition)
-        *   [Parameters](#parameters-17)
-    *   [setInput](#setinput)
-        *   [Parameters](#parameters-18)
-    *   [setOwnOutput](#setownoutput)
         *   [Parameters](#parameters-19)
+    *   [setInput](#setinput)
+        *   [Parameters](#parameters-20)
+    *   [setOwnOutput](#setownoutput)
+        *   [Parameters](#parameters-21)
     *   [getDescriptorTemplate](#getdescriptortemplate)
 *   [SingleKeyAccount](#singlekeyaccount)
 *   [getTaprootOutputKey](#gettaprootoutputkey)
-    *   [Parameters](#parameters-20)
-*   [AppClient](#appclient)
-    *   [Parameters](#parameters-21)
-*   [ClientCommandInterpreter](#clientcommandinterpreter)
     *   [Parameters](#parameters-22)
-*   [MerkelizedPsbt](#merkelizedpsbt)
+*   [AppClient](#appclient)
     *   [Parameters](#parameters-23)
-*   [Merkle](#merkle)
+*   [ClientCommandInterpreter](#clientcommandinterpreter)
     *   [Parameters](#parameters-24)
-*   [MerkleMap](#merklemap)
+*   [MerkelizedPsbt](#merkelizedpsbt)
     *   [Parameters](#parameters-25)
-*   [WalletPolicy](#walletpolicy)
+*   [Merkle](#merkle)
     *   [Parameters](#parameters-26)
-*   [extract](#extract)
+*   [MerkleMap](#merklemap)
     *   [Parameters](#parameters-27)
-*   [finalize](#finalize)
+*   [WalletPolicy](#walletpolicy)
     *   [Parameters](#parameters-28)
-*   [clearFinalizedInput](#clearfinalizedinput)
+*   [extract](#extract)
     *   [Parameters](#parameters-29)
-*   [writePush](#writepush)
+*   [finalize](#finalize)
     *   [Parameters](#parameters-30)
-*   [PsbtV2](#psbtv2)
-*   [serializeTransactionOutputs](#serializetransactionoutputs-1)
+*   [clearFinalizedInput](#clearfinalizedinput)
     *   [Parameters](#parameters-31)
-    *   [Examples](#examples-9)
+*   [writePush](#writepush)
+    *   [Parameters](#parameters-32)
+*   [serializeTransactionOutputs](#serializetransactionoutputs-1)
+    *   [Parameters](#parameters-33)
+    *   [Examples](#examples-10)
 *   [SignP2SHTransactionArg](#signp2shtransactionarg)
     *   [Properties](#properties-1)
 *   [splitSaplingPart](#splitsaplingpart)
-    *   [Parameters](#parameters-32)
+    *   [Parameters](#parameters-34)
 *   [splitOrchardPart](#splitorchardpart)
-    *   [Parameters](#parameters-33)
+    *   [Parameters](#parameters-35)
 *   [TransactionInput](#transactioninput)
 *   [TransactionOutput](#transactionoutput)
 *   [Transaction](#transaction)
@@ -248,6 +252,35 @@ outputScriptHex: "01905f0100000000001976a91472a5d75c8d2d0565b656a5232703b167d50d
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** the signed transaction ready to be broadcast
+
+#### signPsbtBuffer
+
+Sign a PSBT Buffer
+
+This method can handle PSBTs with or without BIP32 derivation information.
+It processes a PSBT buffer and signs the transaction inputs according to the
+wallet policy and derivation paths.
+
+##### Parameters
+
+*   `psbt` **[Buffer](https://nodejs.org/api/buffer.html)** The PSBT (Partially Signed Bitcoin Transaction) buffer to be signed
+*   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Optional configuration for signing
+
+    *   `opts.finalizePsbt` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** Whether to finalize the PSBT after signing (default: true)
+    *   `opts.accountPath` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** BIP32 derivation path for the account (e.g., "m/84'/0'/0'")
+    *   `opts.addressFormat` **[AddressFormat](#addressformat)?** Address format to use for signing (e.g., 'p2wpkh', 'p2sh-p2wpkh', 'p2pkh')
+
+##### Examples
+
+```javascript
+const { psbt: signedPsbt, tx } = await btc.signPsbtBuffer(psbtBuffer, {
+  finalizePsbt: true,
+  accountPath: "m/84'/0'/0'",
+  addressFormat: 'p2wpkh'
+});
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{psbt: [Buffer](https://nodejs.org/api/buffer.html), tx: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** A promise that resolves to an object containing the signed PSBT buffer and the transaction hex string
 
 #### signP2SHTransaction
 
@@ -422,6 +455,42 @@ transaction is returned.
 *   `arg` **[CreateTransactionArg](#createtransactionarg)**&#x20;
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
+
+#### signPsbtBuffer
+
+Signs a PSBT buffer using the Bitcoin app (new protocol).
+
+*   If the PSBT is v2, it is deserialized directly.
+*   If the PSBT is v0, it is converted to v2 internally.
+*   The account type (legacy, wrapped segwit, native segwit, taproot) is
+    inferred from PSBT data when possible, or from the provided options.
+
+Note: All internal inputs (inputs that can be signed by the device) must
+belong to the same account and use the same account type. Mixed input types
+or inputs from different accounts are not supported and will throw an error.
+
+##### Parameters
+
+*   `psbtBuffer` **[Buffer](https://nodejs.org/api/buffer.html)** Raw PSBT buffer (v0 or v2) to be signed.
+*   `options` **{finalizePsbt: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, accountPath: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, addressFormat: [AddressFormat](#addressformat)?, onDeviceSignatureRequested: function (): void?, onDeviceSignatureGranted: function (): void?, onDeviceStreaming: function (arg: {progress: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), total: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), index: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}): void?}?** Optional signing configuration.
+
+    *   `options.finalizePsbt`  Whether to finalize the PSBT after signing
+        (default: true). If true, the returned `tx` is a fully signed
+        transaction ready for broadcast.
+    *   `options.accountPath`  BIP32 account path (for example,
+        "m/84'/0'/0'") used when BIP32 derivation information is missing from
+        the PSBT. Required if the PSBT does not contain BIP32 derivation data.
+    *   `options.addressFormat`  Explicit address format to use when the
+        account type cannot be inferred from the PSBT ("legacy", "p2sh",
+        "bech32", or "bech32m").
+    *   `options.onDeviceSignatureRequested`  Callback when signature is about to be requested from device.
+    *   `options.onDeviceSignatureGranted`  Callback when the first signature is granted by device.
+    *   `options.onDeviceStreaming`  Callback to track signing progress with index and total.
+
+Returns **any** An object containing:*   `psbt`: a non-finalized PSBT buffer including signatures.
+*   `tx`: the fully signed transaction hex string (if `finalizePsbt` is
+    true), or the hex of the transaction that would be extracted after
+    finalization.
 
 #### signMessage
 
@@ -671,7 +740,7 @@ The signing process is documented at
 
 #### Parameters
 
-*   `psbt` **[PsbtV2](#psbtv2)**&#x20;
+*   `psbt` **PsbtV2**&#x20;
 
 ### Merkle
 
@@ -723,7 +792,7 @@ the role is partially documented in BIP174 (PSBTv0
 
 #### Parameters
 
-*   `psbt` **[PsbtV2](#psbtv2)**&#x20;
+*   `psbt` **PsbtV2**&#x20;
 
 Returns **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
 
@@ -741,7 +810,7 @@ derivation paths.
 
 #### Parameters
 
-*   `psbt` **[PsbtV2](#psbtv2)** The psbt with all signatures added as partial sigs, either
+*   `psbt` **PsbtV2** The psbt with all signatures added as partial sigs, either
     through PSBT\_IN\_PARTIAL\_SIG or PSBT\_IN\_TAP\_KEY\_SIG
 
 Returns **void**&#x20;
@@ -756,7 +825,7 @@ without actually knowing why. I think we should remove them too.
 
 #### Parameters
 
-*   `psbt` **[PsbtV2](#psbtv2)**&#x20;
+*   `psbt` **PsbtV2**&#x20;
 *   `inputIndex` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
 ### writePush
@@ -769,25 +838,6 @@ depending on the size of the data. See
 
 *   `buf` **BufferWriter** the BufferWriter to write to
 *   `data` **[Buffer](https://nodejs.org/api/buffer.html)** the Buffer to be pushed.
-
-### PsbtV2
-
-Implements Partially Signed Bitcoin Transaction version 2, BIP370, as
-documented at <https://github.com/bitcoin/bips/blob/master/bip-0370.mediawiki>
-and <https://github.com/bitcoin/bips/blob/master/bip-0174.mediawiki>
-
-A psbt is a data structure that can carry all relevant information about a
-transaction through all stages of the signing process. From constructing an
-unsigned transaction to extracting the final serialized transaction ready for
-broadcast.
-
-This implementation is limited to what's needed in ledgerjs to carry out its
-duties, which means that support for features like multisig or taproot script
-path spending are not implemented. Specifically, it supports p2pkh,
-p2wpkhWrappedInP2sh, p2wpkh and p2tr key path spending.
-
-This class is made purposefully dumb, so it's easy to add support for
-complemantary fields as needed in the future.
 
 ### serializeTransactionOutputs
 

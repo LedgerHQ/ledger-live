@@ -1,5 +1,5 @@
 import { MerkleMap } from "./merkleMap";
-import { PsbtV2 } from "./psbtv2";
+import { PsbtV2 } from "@ledgerhq/psbtv2";
 
 /**
  * This class merkelizes a PSBTv2, by merkelizing the different

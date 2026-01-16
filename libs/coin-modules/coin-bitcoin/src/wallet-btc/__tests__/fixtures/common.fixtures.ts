@@ -1,6 +1,14 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-
+import hash from "object-hash";
+import type {
+  AddressFormat,
+  BitcoinSignature,
+  BitcoinSigner,
+  BitcoinXPub,
+  CreateTransaction,
+  SignerTransaction,
+} from "../../../signer";
 import { Account } from "../../account";
 import { ICrypto } from "../../crypto/types";
 import Xpub from "../../xpub";
@@ -84,3 +92,58 @@ export const mockStorage = {
   exportSync: jest.fn(),
   loadSync: jest.fn(),
 } as unknown as jest.Mocked<IStorage>;
+
+export class MockBtcSigner implements BitcoinSigner {
+  // eslint-disable-next-line class-methods-use-this
+  async getWalletPublicKey(
+    path: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _opts: { verify?: boolean; format?: AddressFormat },
+  ) {
+    switch (path) {
+      case "44'/0'":
+        return {
+          publicKey:
+            "04c621f37493d99f39ca12fb02ba7fe1687b1650b875dcb6733f386a98958e6556fc95dcecb6ac41af0a5296965751b1598aa475a537474bab5b316fcdc1196568",
+          chainCode: "a45d311c31a80bf06cc38d8ed7934bd1e8a7b2d48b2868a70258a86e094bacfb",
+          bitcoinAddress: "1BKWjmA9swxRKMH9NgXpSz8YZfVMnWWU9D",
+        };
+      case "44'/0'/0'":
+        return {
+          publicKey:
+            "04d52d1ad9311c5a3d542fa652fbd7d7b0be70109e329d359704d9f2946f8eb52a829c23f8b980c5f7b6c51bf446b21f3dc80c865095243c9215dbf9f3cb6403b8",
+          chainCode: "0bd3e45edca4d8a466f523a2c4094c412d25c36d5298b2d3a29938151a8d37fe",
+          bitcoinAddress: "1FHa4cuKdea21ByTngP9vz3KYDqqQe9SsA",
+        };
+      default:
+        throw new Error("not supported");
+    }
+  }
+
+  async createPaymentTransaction(arg: CreateTransaction) {
+    return hash(arg);
+  }
+
+  getWalletXpub(_arg: { path: string; xpubVersion: number }): Promise<BitcoinXPub> {
+    return Promise.reject(new Error("not implemented"));
+  }
+  signMessage(_path: string, _messageHex: string): Promise<BitcoinSignature> {
+    return Promise.reject(new Error("not implemented"));
+  }
+  signPsbtBuffer(_psbtBuffer: Buffer): Promise<{ psbt: Buffer; tx: string }> {
+    return Promise.reject(new Error("not implemented"));
+  }
+  splitTransaction(
+    _transactionHex: string,
+    _isSegwitSupported: boolean | null | undefined,
+    _hasExtraData: boolean | null | undefined,
+    _additionals: Array<string> | null | undefined,
+  ): SignerTransaction {
+    // Stub
+    return {
+      version: Buffer.from(""),
+      inputs: [],
+      outputs: [],
+    };
+  }
+}

@@ -17,7 +17,7 @@ export function unsafeTo64bitLE(n: number): Buffer {
 export function unsafeFrom64bitLE(byteArray: Buffer): number {
   let value = 0;
   if (byteArray.length != 8) {
-    throw new Error("Expected Bufffer of lenght 8");
+    throw new Error("Expected Buffer of length 8");
   }
   if (byteArray[7] != 0) {
     throw new Error("Can't encode numbers > MAX_SAFE_INT");
@@ -32,7 +32,7 @@ export function unsafeFrom64bitLE(byteArray: Buffer): number {
 }
 
 export class BufferWriter {
-  private bufs: Buffer[] = [];
+  private readonly bufs: Buffer[] = [];
 
   write(alloc: number, fn: (b: Buffer) => void): void {
     const b = Buffer.alloc(alloc);

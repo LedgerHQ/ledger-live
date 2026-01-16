@@ -1,5 +1,4 @@
-import { BufferWriter } from "../buffertools";
-import { psbtIn, PsbtV2 } from "./psbtv2";
+import { BufferWriter, psbtIn, PsbtV2 } from "@ledgerhq/psbtv2";
 
 /**
  * This roughly implements the "input finalizer" role of BIP370 (PSBTv2

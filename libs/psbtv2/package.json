@@ -1,0 +1,78 @@
+{
+  "name": "@ledgerhq/psbtv2",
+  "version": "0.1.0",
+  "description": "Partially Signed Bitcoin Transaction version 2 (BIP370) implementation",
+  "keywords": [
+    "Ledger",
+    "Bitcoin",
+    "PSBT",
+    "BIP370",
+    "BIP174"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/psbtv2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "*": [
+        "lib/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "bitcoinjs-lib": "^5.2.0",
+    "varuint-bitcoin": "1.1.2"
+  },
+  "devDependencies": {
+    "@types/jest": "catalog:",
+    "@types/node": "^22.10.10",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "jest": "catalog:",
+    "rimraf": "^4.4.1",
+    "typescript": "^5.4.3"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "typecheck": "tsc --noEmit"
+  }
+}
