@@ -12,18 +12,25 @@ jest.mock("react-redux", () => {
     return mockedHook;
   };
 
+  const mockUseSelector = jest.fn();
+  mockUseSelector.mockImplementation((selector: (state: unknown) => unknown) => selector({}));
+
+  const mockUseDispatch = jest.fn();
+  mockUseDispatch.mockImplementation(() => jest.fn());
+
+  const mockUseStore = jest.fn();
+  mockUseStore.mockImplementation(() => ({
+    getState: () => ({}),
+    dispatch: jest.fn(),
+    subscribe: jest.fn(),
+    replaceReducer: jest.fn(),
+  }));
+
   return {
     ...actual,
-    useSelector: withTypesSupport(jest.fn((selector: (state: unknown) => unknown) => selector({}))),
-    useDispatch: withTypesSupport(jest.fn(() => jest.fn())),
-    useStore: withTypesSupport(
-      jest.fn(() => ({
-        getState: () => ({}),
-        dispatch: jest.fn(),
-        subscribe: jest.fn(),
-        replaceReducer: jest.fn(),
-      })),
-    ),
+    useSelector: withTypesSupport(mockUseSelector),
+    useDispatch: withTypesSupport(mockUseDispatch),
+    useStore: withTypesSupport(mockUseStore),
   };
 });
 const mockNavigation = { goToNextStep: jest.fn() };
