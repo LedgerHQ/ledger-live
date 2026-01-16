@@ -16,6 +16,7 @@ import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
+import type { AnalyticsNavigatorParamsList } from "LLM/features/Analytics/types";
 import type { Web3HubStackParamList } from "LLM/features/Web3Hub/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
@@ -337,6 +338,7 @@ export type BaseNavigatorStackParamList = {
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>
   >;
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
+  [NavigatorName.Analytics]?: Partial<NavigatorScreenParams<AnalyticsNavigatorParamsList>>;
   [ScreenName.SwapHistory]: undefined;
   [ScreenName.SwapLoading]: undefined;
   [ScreenName.SwapPendingOperation]: { swapOperation: SwapOperation };

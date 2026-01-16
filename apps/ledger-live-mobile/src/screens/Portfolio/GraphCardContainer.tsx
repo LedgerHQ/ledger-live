@@ -16,6 +16,7 @@ const GraphCardContainer = ({
   counterValueCurrency,
   currentPositionY,
   graphCardEndPosition,
+  screenName,
 }: {
   portfolio: Portfolio;
   showGraphCard: boolean;
@@ -23,15 +24,16 @@ const GraphCardContainer = ({
   counterValueCurrency: Currency;
   currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
+  screenName: string;
 }) => {
   const currencies: Array<CryptoCurrency | TokenCurrency> = useSelector(currenciesSelector);
 
   const handleTouchEndGraph = useCallback(() => {
     track("chart_clicked", {
       graph: "Portfolio",
-      page: "Wallet",
+      page: screenName,
     });
-  }, []);
+  }, [screenName]);
 
   return (
     <>
