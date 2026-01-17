@@ -20,7 +20,7 @@ const mockContentSizeChangeEvent = (width: number, height: number) => ({
 });
 
 describe("portfolioAssets", () => {
-  it("should render quick actions", async () => {
+  it("should display the market banner", async () => {
     const { getByText } = render(
       <TestNavigator>
         <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
@@ -29,11 +29,24 @@ describe("portfolioAssets", () => {
         overrideInitialState: (state: State) => ({
           ...INITIAL_STATE.overrideInitialState(state),
           accounts: { ...state.accounts },
+          settings: {
+            ...state.settings,
+            overriddenFeatureFlags: {
+              llmAccountListUI: {
+                enabled: true,
+              },
+              lwmWallet40: {
+                enabled: true,
+                params: {
+                  marketBanner: true,
+                },
+              },
+            },
+          },
         }),
       },
     );
-    const quickActions = [/buy/i, /swap/i, /send/i, /receive/i];
-    quickActions.forEach(action => expect(getByText(action)).toBeVisible());
+    expect(getByText(/explore market/i)).toBeVisible();
   });
 
   it("should track click on tab account", async () => {

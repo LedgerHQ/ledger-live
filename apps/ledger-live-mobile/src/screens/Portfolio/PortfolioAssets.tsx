@@ -4,7 +4,7 @@ import { shallowEqual } from "react-redux";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { GestureResponderEvent } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Button, IconsLegacy, Box } from "@ledgerhq/native-ui";
+import { Box, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDistribution } from "~/actions/general";
 import { track, TrackScreen } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
@@ -15,7 +15,6 @@ import {
 } from "~/reducers/settings";
 import { setSelectedTabPortfolioAssets } from "~/actions/settings";
 import Assets from "./Assets";
-import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 import MarketBanner from "LLM/features/MarketBanner";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import useListsAnimation, { type TabListType } from "./useListsAnimation";
@@ -140,9 +139,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         accountsLength={distribution.list && distribution.list.length}
         discreet={discreetMode}
       />
-      <Box my={24}>
-        <PortfolioQuickActionsBar />
-      </Box>
       <MarketBanner />
 
       {shouldDisplayMarketBanner && __DEV__ && (

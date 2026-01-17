@@ -18,7 +18,12 @@ enum LedgerRecoverSubscriptionStateEnum {
 
 const maxStepNumber = Object.keys(LedgerRecoverSubscriptionStateEnum).length;
 
-function RecoverBanner() {
+type Props = Readonly<{
+  mb?: number;
+  mt?: number;
+}>;
+
+function RecoverBanner({ mb, mt }: Props) {
   const [storageData, setStorageData] = useState<LedgerRecoverSubscriptionStateEnum>(
     LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
   );
@@ -101,7 +106,7 @@ function RecoverBanner() {
   const isWarning = stepNumber > 2;
 
   return (
-    <Flex justifyContent="center" position="relative" mt={3}>
+    <Flex justifyContent="center" position="relative" mt={mt} mb={mb}>
       <Flex
         position="relative"
         columnGap={12}

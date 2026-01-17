@@ -54,6 +54,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
 import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 import { renderItem } from "LLM/utils/renderItem";
+import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -174,12 +175,15 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           key="PortfolioGraphCard"
           screenName={ScreenName.Portfolio}
         />
-        {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mt={7} />}
+        <Box my={24} px={3}>
+          <PortfolioQuickActionsBar />
+        </Box>
+        {!isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mb={24} />}
         {!isLNSUpsellBannerShown && showAssets ? (
           <ContentCardsLocation
             key="contentCardsLocationPortfolio"
             locationId={ContentCardLocation.TopWallet}
-            mt="20px"
+            mb={24}
           />
         ) : null}
       </WalletTabSafeAreaView>,
@@ -187,7 +191,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         isAccountListUIEnabled ? (
           <AnimatedContainer onHeightChange={handleHeightChange}>
             <Box background={colors.background.main} px={6} key="PortfolioAssets">
-              <RecoverBanner />
+              <RecoverBanner mb={24} />
               <PortfolioAssets
                 hideEmptyTokenAccount={hideEmptyTokenAccount}
                 openAddModal={openAddModal}
@@ -196,7 +200,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           </AnimatedContainer>
         ) : (
           <Box background={colors.background.main} px={6} key="PortfolioAssets">
-            <RecoverBanner />
+            <RecoverBanner mb={24} />
             <PortfolioAssets
               hideEmptyTokenAccount={hideEmptyTokenAccount}
               openAddModal={openAddModal}
@@ -242,7 +246,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         : [
             // If the user has no accounts we display an empty state
             <Flex flexDirection="column" mt={30} mx={6} key="PortfolioEmptyState">
-              <RecoverBanner />
+              <RecoverBanner mb={24} />
               <PortfolioEmptyState openAddAccountModal={openAddModal} />
             </Flex>,
           ]),
