@@ -716,97 +716,17 @@ Replace the `registerTransportModule` + `withDevice` pattern with direct DMK usa
 
 ### New Abstraction Layer
 
+#### DMK Singleton and initialization
+
 ```typescript
-// libs/ledger-live-common/src/hw/dmk/index.ts
-
-import {
-  DeviceManagementKit,
-  DeviceManagementKitBuilder,
-  TransportFactory,
-  DiscoveredDevice,
-  DeviceStatus,
-  LoggerPublisherService,
-  SendApduEmptyResponseError,
-  DeviceDisconnectedWhileSendingError,
-  DeviceDisconnectedBeforeSendingApdu,
-} from "@ledgerhq/device-management-kit";
-import { Observable, firstValueFrom, throwError, Subscription } from "rxjs";
-import { first, timeout, tap, catchError, finalize, map } from "rxjs/operators";
-import { TraceContext, LocalTracer } from "@ledgerhq/logs";
-import {
-  CantOpenDevice,
-  PairingFailed,
-  PeerRemovedPairing,
-  DisconnectedDevice,
-  DeviceHalted,
-  FirmwareOrAppUpdateRequired,
-  WrongAppForCurrency,
-  WrongDeviceForAccount,
-  BluetoothRequired,
-  UpdateYourApp,
-  TransportWebUSBGestureRequired,
-  TransportInterfaceNotAvailable,
-  TransportStatusError,
-} from "@ledgerhq/errors";
-import {
-  PairingRefusedError,
-  OpeningConnectionError,
-  isPeerRemovedPairingError,
-} from "@ledgerhq/device-management-kit"; // DMK errors
-import { DeviceQueuedJobsManager } from "./queue";
-import { deviceRegistry } from "./deviceRegistry";
-import { getDeviceModel } from "@ledgerhq/devices";
-import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
-
-/**
- * Connection handle returned by withDeviceDmk.
- *
- * ⚠️ NOTE: This is a PROPOSED helper type, NOT a DMK type!
- *
- * DMK's connect() only returns a sessionId (string). You then use the
- * DMK instance + sessionId for all operations:
- *   - dmk.sendApdu({ sessionId, apdu })
- *   - dmk.disconnect({ sessionId })
- *   - dmk.getDeviceSessionState({ sessionId })
- *
- * DmkDeviceConnection bundles these together as a convenience wrapper:
- *   - sessionId: what DMK connect() returns
- *   - dmk instance: implicitly captured in sendApdu/close closures
- *   - metadata: deviceId, deviceName, transportType
- *
- * This allows job functions to have a simpler interface.
- */
-export type DmkDeviceConnection = {
-  sessionId: string;
-  deviceId: string;
-  deviceName?: string; // Useful for BLE reconnection matching
-  transportType: TransportType; // Needed for transport-specific error handling
-  sendApdu: (
-    apdu: Uint8Array,
-    options?: { abortTimeoutMs?: number },
-  ) => Promise<{ data: Uint8Array; statusCode: Uint8Array }>;
-  close: () => Promise<void>;
-};
-
-// All supported transport types
-export type TransportType = "ble" | "usb" | "webhid" | "speculos" | "mockBle";
-
-/**
- * Context passed to job functions alongside the connection.
- * Provides access to DMK instance and device info for advanced use cases.
- */
-export type DmkJobContext = {
-  dmk: DeviceManagementKit;
-  device: DiscoveredDevice;
-};
+// libs/live-dmk-shared/dmk.ts (can be split in 1 file for singleton, 1 for init, 1 for exposing listen)
+let dmkInstance: DeviceManagementKit | null = null;
 
 // Configuration for DMK initialization
 export type DmkInitConfig = {
   transports: TransportFactory[];
   logger?: LoggerPublisherService;
 };
-
-let dmkInstance: DeviceManagementKit | null = null;
 
 /**
  * Initialize the DMK singleton with platform-specific transports.
@@ -860,8 +780,97 @@ export const listenToDevicesDmk = (options?: {
 }): Observable<DiscoveredDevice[]> => {
   return getDmk().listenToAvailableDevices(options ?? {});
 };
+```
 
-// Options for withDeviceDmk
+#### withDeviceDmk -> takes same params as withDevice and does the same but does not use registered transport modules
+
+```typescript
+// libs/live-dmk-shared/withDeviceDmk.ts
+
+import {
+  DeviceManagementKit,
+  DeviceManagementKitBuilder,
+  TransportFactory,
+  DiscoveredDevice,
+  DeviceStatus,
+  LoggerPublisherService,
+  SendApduEmptyResponseError,
+  DeviceDisconnectedWhileSendingError,
+  DeviceDisconnectedBeforeSendingApdu,
+} from "@ledgerhq/device-management-kit";
+import { Observable, firstValueFrom, throwError, Subscription } from "rxjs";
+import { first, timeout, tap, catchError, finalize, map } from "rxjs/operators";
+import { TraceContext, LocalTracer } from "@ledgerhq/logs";
+import {
+  CantOpenDevice,
+  PairingFailed,
+  PeerRemovedPairing,
+  DisconnectedDevice,
+  DeviceHalted,
+  FirmwareOrAppUpdateRequired,
+  WrongAppForCurrency,
+  WrongDeviceForAccount,
+  BluetoothRequired,
+  UpdateYourApp,
+  TransportWebUSBGestureRequired,
+  TransportInterfaceNotAvailable,
+  TransportStatusError,
+} from "@ledgerhq/errors";
+import {
+  PairingRefusedError,
+  OpeningConnectionError,
+  isPeerRemovedPairingError,
+} from "@ledgerhq/device-management-kit"; // DMK errors
+import { DeviceQueuedJobsManager } from "./queue";
+import { deviceRegistry } from "./deviceRegistry";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+
+// All supported transport types
+export type TransportType = "ble" | "usb" | "webhid" | "speculos" | "mockBle";
+
+/**
+ * Connection handle returned by withDeviceDmk.
+ *
+ * ⚠️ NOTE: This is a PROPOSED helper type, NOT a DMK type!
+ *
+ * DMK's connect() only returns a sessionId (string). You then use the
+ * DMK instance + sessionId for all operations:
+ *   - dmk.sendApdu({ sessionId, apdu })
+ *   - dmk.disconnect({ sessionId })
+ *   - dmk.getDeviceSessionState({ sessionId })
+ *
+ * DmkDeviceConnection bundles these together as a convenience wrapper:
+ *   - sessionId: what DMK connect() returns
+ *   - dmk instance: implicitly captured in sendApdu/close closures
+ *   - metadata: deviceId, deviceName, transportType
+ *
+ * This allows job functions to have a simpler interface.
+ */
+export type DmkDeviceConnection = {
+  sessionId: string;
+  deviceId: string;
+  deviceName?: string; // Useful for BLE reconnection matching
+  transportType: TransportType; // Needed for transport-specific error handling // ⚠️ COMMENT-ON-ARCHI-PROPOSAL: we don't want to to transport specific stuff
+  sendApdu: (
+    apdu: Uint8Array,
+    options?: { abortTimeoutMs?: number },
+  ) => Promise<{ data: Uint8Array; statusCode: Uint8Array }>;
+  close: () => Promise<void>;
+};
+
+/**
+ * Context passed to job functions alongside the connection.
+ * Provides access to DMK instance and device info for advanced use cases.
+ *
+ * ⚠️ COMMENT-ON-ARCHI-PROPOSAL: what's the point of splitting DmkDeviceConnection and DmkJobContext?
+ */
+export type DmkJobContext = {
+  dmk: DeviceManagementKit;
+  device: DiscoveredDevice;
+};
+
+// Options for withDeviceDmk ⚠️ COMMENT-ON-ARCHI-PROPOSAL: ensure this has the same signature
 export type WithDeviceDmkOptions = {
   openTimeoutMs?: number;
   matchDeviceByName?: string; // For BLE reconnection when ID changes
@@ -870,6 +879,10 @@ export type WithDeviceDmkOptions = {
 };
 
 // Active session cache (mirrors current pattern)
+// ⚠️ COMMENT-ON-ARCHI-PROPOSAL: what does it map ? discovered device ID to session ID?
+// -> answer: it maps deviceId (string passed to withDevice) to DMK sessionId
+// The point is to reuse the same session if it's still alive and avoid calling connect on the DMk
+// ⚠️ COMMENT-ON-ARCHI-PROPOSAL: what is transport for ? seems unnecessary
 const activeSessionCache = new Map<string, { sessionId: string; transport: string }>();
 
 /**
@@ -889,8 +902,14 @@ export type DmkJob<T> = (connection: DmkDeviceConnection, context: DmkJobContext
  * 5. BLE name matching (ID can change between connections)
  * 6. Retry logic (transient connection failures)
  *
- * @param deviceId - The device ID (or "" for USB)
+ * ⚠️ COMMENT-ON-ARCHI-PROPOSAL: the internal logic should be split because it's crazy long now
+ *
+ * ⚠️ COMMENT-ON-ARCHI-PROPOSAL: some transport specific logic should be injected, unless it's generic
+ * maybe it's injected through initDmk? 🤔
+ *
+ * @param deviceId - The device ID
  * @param options - Configuration options
+ * NOTE: the args are the same as legacy withDevice, this is important
  */
 export const withDeviceDmk =
   (deviceId: string, options?: WithDeviceDmkOptions) =>
@@ -914,6 +933,22 @@ export const withDeviceDmk =
       const findAndConnect = async (): Promise<{ sessionId: string; device: DiscoveredDevice }> => {
         // Step 1: Check for existing reusable session
         const existingSession = activeSessionCache.get(deviceId);
+        // ⚠️ COMMENT-ON-ARCHI-PROPOSAL is this actually doable ? the id received will match the sessionId ?
+        // (it means we must ensure a match between DiscoveredDevice.id and created sessionId, check in DMK if that's how it works today):
+        /* answer in DMK repo:
+            No, the session ID is NOT the same as the device ID. They are different identifiers:
+              DeviceId - identifies the physical device at the transport level
+              DeviceSessionId - identifies the communication session
+              Behavior depends on what you connect with:
+              Connecting with a DiscoveredDevice:
+              A new UUID is generated for the session ID (via uuidv4())
+              The DiscoveredDevice only has an id (device ID), no session ID
+              Connecting with a ConnectedDevice:
+              The existing sessionId from the ConnectedDevice is reused
+              This is for reconnection scenarios
+            */
+        // -> so the issue is that if we call several time withDevice with a same discovered device id, it creates a new session each time
+
         if (existingSession) {
           try {
             const state = await firstValueFrom(
@@ -974,6 +1009,9 @@ export const withDeviceDmk =
         }
 
         // Step 3: Connect with retry logic
+        // ⚠️ COMMENT-ON-ARCHI: the retry logic might not be necessary if DMK transports are properly implemented.
+        // ie. connect only throws for permanent connection errors, (errors for which retrying is useless)
+        // But let's keep the retry logic to reduce the risk and match the behavior of legacy withDevice
         const MAX_RETRIES = 5;
         const RETRY_DELAY = 500;
         let lastError: Error | null = null;
@@ -3019,6 +3057,13 @@ import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
  * 2. Handle disconnect events from DMK and emit "disconnect"
  * 3. Provide setScrambleKey() / decorateAppAPIMethods() for hw-app-* packages
  * 4. Convert errors to legacy error types
+ */
+/**
+ * ⚠️ COMMENT-ON-ARCHI-PROPOSAL: right now some device actions like connectApp rely on the transport
+ * exposing a `sessionId` and `dmk` property in order to be able to interact with the connected
+ * device using a Transport instance: cf. `isDmkTransport` in `libs/ledger-live-common/src/hw/connectApp.ts`
+ * or for instance to instantiate DmkSignerEth().
+ * We should keep it for simplicity but replace the implem if isDmkTransport to just do `instanceof DmkTransportCompat`
  */
 export class DmkTransportCompat extends Transport {
   private connection: DmkDeviceConnection;
