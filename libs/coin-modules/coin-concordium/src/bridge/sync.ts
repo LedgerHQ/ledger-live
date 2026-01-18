@@ -26,26 +26,17 @@ const valueToBigNumber = (value?: string | number): BigNumber => {
 };
 
 export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info => {
-  const {
-    address,
-    currency,
-    derivationMode,
-    derivationPath,
-    index,
-    initialAccount,
-    rest = {},
-    ...nextRest
-  } = info;
+  const { currency, derivationMode, derivationPath, index, initialAccount, rest = {} } = info;
+
+  const publicKey = rest.publicKey || initialAccount?.concordiumResources?.publicKey;
 
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
-    xpubOrAddress: address,
+    xpubOrAddress: publicKey,
     derivationMode,
   });
-
-  const publicKey = rest.publicKey || initialAccount?.concordiumResources?.publicKey;
 
   const accountsResponse = await getAccountsByPublicKey(currency, publicKey);
 
@@ -54,11 +45,12 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
 
   if (!accountsResponse || accountsResponse.length === 0) {
     // No accounts found for this public key - return empty account shape. We're ready to create a new account.
-    return {
+    const newAccountShape = {
       balance,
       blockHeight: 0,
       concordiumResources: fillConcordiumResources(initialAccount?.concordiumResources, {
         isOnboarded: false,
+        publicKey,
       }),
       derivationMode,
       derivationPath,
@@ -66,12 +58,12 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
       index,
       operations: [],
       operationsCount: 0,
-      rest,
       spendableBalance,
       used: false,
-      xpub: address,
-      ...nextRest,
+      xpub: publicKey,
     };
+
+    return newAccountShape;
   }
 
   // The actual on-chain account
@@ -98,21 +90,22 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
 
   const operations = mergeOps(oldOperations, newOperations);
 
-  return {
+  const accountShape = {
     balance,
     blockHeight: operations[0]?.blockHeight ?? 0,
-    concordiumResources: fillConcordiumResources(initialAccount?.concordiumResources),
+    concordiumResources: fillConcordiumResources(initialAccount?.concordiumResources, {
+      publicKey,
+    }),
     derivationMode,
     derivationPath,
     id: accountId,
     index,
     operations,
     operationsCount: operations.length,
-    rest,
-    seedIdentifier: initialAccount?.seedIdentifier || "",
     spendableBalance,
     used: balance.isPositive(),
-    xpub: address,
-    ...nextRest,
+    xpub: publicKey,
   };
+
+  return accountShape;
 };

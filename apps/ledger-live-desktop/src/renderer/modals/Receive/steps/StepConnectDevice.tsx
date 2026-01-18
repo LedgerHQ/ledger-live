@@ -26,19 +26,33 @@ export default function StepConnectDevice({
     }),
     [mainAccount, tokenCurrency],
   );
+
+  console.log("[Receive] StepConnectDevice render", {
+    account,
+    parentAccount,
+    mainAccount,
+    tokenCurrency,
+    request,
+    action,
+  });
+
   return (
     <>
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       <DeviceAction
         action={action}
         request={request}
-        onResult={() => transitionTo("receive")}
+        onResult={() => {
+          console.log("[Receive] StepConnectDevice onResult");
+          transitionTo("receive");
+        }}
         analyticsPropertyFlow="receive"
         location={HOOKS_TRACKING_LOCATIONS.receiveModal}
       />
     </>
   );
 }
+
 export function StepConnectDeviceFooter({ t, onSkipConfirm, eventType, currencyName }: StepProps) {
   return (
     <Box horizontal flow={2}>

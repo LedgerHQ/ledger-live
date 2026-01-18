@@ -1,7 +1,6 @@
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 import { AccountOnboardStatus } from "@ledgerhq/types-live";
 import styled from "styled-components";
 import { urls } from "~/config/urls";
@@ -17,50 +16,14 @@ import { Text } from "@ledgerhq/react-ui";
 
 const SectionAccounts = memo(
   ({
-    currency,
     accountName,
-    editedNames,
     creatableAccount,
-    importableAccounts,
   }: Pick<
     StepProps,
     "currency" | "accountName" | "editedNames" | "creatableAccount" | "importableAccounts"
   >) => {
     return (
       <SectionAccountsStyled>
-        {importableAccounts?.length > 0 && (
-          <Box mb={4}>
-            <Box
-              horizontal
-              ff="Inter|Bold"
-              color="palette.text.shade100"
-              fontSize={2}
-              textTransform="uppercase"
-              mb={3}
-            >
-              <Trans
-                i18nKey="families.concordium.addAccount.identity.onboarded"
-                count={importableAccounts?.length}
-              />
-            </Box>
-            <Box flow={2}>
-              {importableAccounts.map((account, index) => (
-                <AccountRow
-                  key={account.id}
-                  account={account}
-                  accountName={
-                    editedNames[account.id] ||
-                    getDefaultAccountNameForCurrencyIndex({ currency, index })
-                  }
-                  isDisabled={false}
-                  hideAmount={false}
-                  isReadonly={true}
-                />
-              ))}
-            </Box>
-          </Box>
-        )}
-
         <Box mb={4}>
           <Box
             horizontal
