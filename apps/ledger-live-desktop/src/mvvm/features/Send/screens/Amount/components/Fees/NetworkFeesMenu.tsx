@@ -4,23 +4,19 @@ import {
   MenuTrigger,
   MenuContent,
   MenuLabel,
-  MenuRadioGroup,
-  MenuRadioItem,
-  MenuSeparator,
-  MenuItem,
   TooltipTrigger,
   TooltipContent,
   Tooltip,
 } from "@ledgerhq/lumen-ui-react";
 import { ChevronUpDown, Information } from "@ledgerhq/lumen-ui-react/symbols";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { sendFeatures, getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useTranslation } from "react-i18next";
+import { useSendFlowData } from "../../../../context/SendFlowContext";
 import type { FeePresetOption } from "../../hooks/useFeePresetOptions";
 import type { FeeFiatMap } from "../../hooks/useFeePresetFiatValues";
 import type { FeePresetLegendMap } from "../../hooks/useFeePresetLegends";
+import { FeePresetMenuItems } from "./FeePresetMenuItems";
 
 type FeeOptionDisplay = Readonly<{
   id: string;
@@ -29,50 +25,58 @@ type FeeOptionDisplay = Readonly<{
   disabled?: boolean;
 }>;
 
-type NetworkFeesMenuProps = Readonly<{
-  account: AccountLike;
-  parentAccount: Account | null;
-  transaction: Transaction;
-  status: TransactionStatus;
-  feesLabel: string;
-  feesValue: string;
-  feesStrategyLabel: string;
+type FeesDisplay = Readonly<{
+  label: string;
+  value: string;
+  strategyLabel: string;
+}>;
+
+type FeesSelection = Readonly<{
   selectedStrategy: string | null;
   onSelectStrategy: (strategy: string) => void;
-  onSelectCustomFees?: () => void;
-  onSelectCoinControl?: () => void;
-  feePresetOptions: readonly FeePresetOption[];
+}>;
+
+type FeesPresetsData = Readonly<{
+  options: readonly FeePresetOption[];
   fiatByPreset: FeeFiatMap;
   legendByPreset: FeePresetLegendMap;
 }>;
 
-export function NetworkFeesMenu({
-  account,
-  parentAccount,
-  status: _status,
-  feesLabel,
-  feesValue,
-  feesStrategyLabel,
-  selectedStrategy,
-  onSelectStrategy,
-  onSelectCustomFees,
-  onSelectCoinControl,
-  feePresetOptions,
-  fiatByPreset,
-  legendByPreset,
-}: NetworkFeesMenuProps) {
+type FeesActions = Readonly<{
+  onSelectCustomFees?: () => void;
+  onSelectCoinControl?: () => void;
+}>;
+
+type NetworkFeesMenuProps = Readonly<{
+  display: FeesDisplay;
+  selection: FeesSelection;
+  presets: FeesPresetsData;
+  actions?: FeesActions;
+}>;
+
+export function NetworkFeesMenu({ display, selection, presets, actions }: NetworkFeesMenuProps) {
+  const { label: feesLabel, value: feesValue, strategyLabel: feesStrategyLabel } = display;
+  const { selectedStrategy, onSelectStrategy } = selection;
+  const { options: feePresetOptions, fiatByPreset, legendByPreset } = presets;
+  const { onSelectCustomFees, onSelectCoinControl } = actions ?? {};
   const { t } = useTranslation();
+  const { state } = useSendFlowData();
+  const { account, parentAccount } = state.account;
+  const { transaction } = state.transaction;
+
   const mainAccount = useMemo(
-    () => getMainAccount(account, parentAccount ?? undefined),
+    () => (account ? getMainAccount(account, parentAccount ?? undefined) : null),
     [account, parentAccount],
   );
-  const currency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
+  const currency = useMemo(
+    () => (mainAccount ? getAccountCurrency(mainAccount) : null),
+    [mainAccount],
+  );
 
-  const hasPresets = sendFeatures.hasFeePresets(currency);
-  const hasCustom = sendFeatures.hasCustomFees(currency);
-  const hasCoinControl = sendFeatures.hasCoinControl(currency);
-  const legendConfig = getSendDescriptor(currency)?.fees.presets?.legend;
-  const shouldShowFeeRateLegend = legendConfig?.type === "feeRate";
+  const hasPresetsForCurrency = useMemo(
+    () => (currency ? sendFeatures.hasFeePresets(currency) : false),
+    [currency],
+  );
 
   const feeOptionsWithFiat = useMemo(() => {
     if (feePresetOptions.length > 0) {
@@ -85,8 +89,8 @@ export function NetworkFeesMenu({
       });
     }
 
-    if (hasPresets) {
-      const strategies = ["slow", "medium", "fast"];
+    if (hasPresetsForCurrency) {
+      const strategies = ["slow", "medium", "fast"] as const;
       return strategies.map(strategy => {
         return {
           id: strategy,
@@ -97,7 +101,17 @@ export function NetworkFeesMenu({
     }
 
     return [];
-  }, [feePresetOptions, fiatByPreset, legendByPreset, hasPresets]);
+  }, [feePresetOptions, fiatByPreset, legendByPreset, hasPresetsForCurrency]);
+
+  if (!account || !transaction || !mainAccount || !currency) {
+    return null;
+  }
+
+  const hasPresets = sendFeatures.hasFeePresets(currency);
+  const hasCustom = sendFeatures.hasCustomFees(currency);
+  const hasCoinControl = sendFeatures.hasCoinControl(currency);
+  const legendConfig = getSendDescriptor(currency)?.fees.presets?.legend;
+  const shouldShowFeeRateLegend = legendConfig?.type === "feeRate";
 
   const hasMenuOptions = hasPresets || hasCustom || hasCoinControl;
 
@@ -119,7 +133,7 @@ export function NetworkFeesMenu({
           <span className="body-2">{feesLabel}</span>
           {informationIcon}
         </span>
-        <span className="text-base body-2">{feesValue}</span>
+        <span className="body-2 text-base">{feesValue}</span>
       </div>
     );
   }
@@ -136,7 +150,7 @@ export function NetworkFeesMenu({
             type="button"
             className="flex items-center gap-8 transition-colors hover:opacity-70"
           >
-            <span className="text-base body-2">
+            <span className="body-2 text-base">
               {feesValue} • {feesStrategyLabel}
             </span>
             <ChevronUpDown size={16} className="text-muted" />
@@ -144,45 +158,17 @@ export function NetworkFeesMenu({
         </MenuTrigger>
         <MenuContent className="w-256" side="top">
           <MenuLabel>{feesLabel}</MenuLabel>
-          {hasPresets ? (
-            <>
-              <MenuRadioGroup value={selectedStrategy ?? "medium"} onValueChange={onSelectStrategy}>
-                {feeOptionsWithFiat.map(option => {
-                  const labelKey = `fees.${option.id}`;
-                  const label =
-                    option.id && t(labelKey) !== labelKey ? t(labelKey) : option.id.toUpperCase();
-                  const subLabel = shouldShowFeeRateLegend ? option.legendValue : option.fiatValue;
-                  return (
-                    <MenuRadioItem key={option.id} value={option.id}>
-                      <div className="flex flex-col">
-                        <span className="text-base">{label}</span>
-                        {subLabel ? <span className="text-muted body-3">{subLabel}</span> : null}
-                      </div>
-                    </MenuRadioItem>
-                  );
-                })}
-              </MenuRadioGroup>
-              {(hasCustom || hasCoinControl) && <MenuSeparator />}
-            </>
-          ) : null}
-          {hasCustom ? (
-            <MenuItem
-              onSelect={() => {
-                onSelectCustomFees?.();
-              }}
-            >
-              {t("fees.custom")}
-            </MenuItem>
-          ) : null}
-          {hasCoinControl ? (
-            <MenuItem
-              onSelect={() => {
-                onSelectCoinControl?.();
-              }}
-            >
-              {t("fees.coinControl")}
-            </MenuItem>
-          ) : null}
+          <FeePresetMenuItems
+            hasPresets={hasPresets}
+            hasCustom={hasCustom}
+            hasCoinControl={hasCoinControl}
+            selectedStrategy={selectedStrategy}
+            onSelectStrategy={onSelectStrategy}
+            onSelectCustomFees={onSelectCustomFees}
+            onSelectCoinControl={onSelectCoinControl}
+            feeOptionsWithFiat={feeOptionsWithFiat}
+            shouldShowFeeRateLegend={shouldShowFeeRateLegend}
+          />
         </MenuContent>
       </Menu>
     </div>

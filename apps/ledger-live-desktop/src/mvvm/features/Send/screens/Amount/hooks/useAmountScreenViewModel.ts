@@ -1,11 +1,10 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { SendFlowUiConfig, SendFlowTransactionActions } from "../../../types";
-import { useTranslatedBridgeError } from "../../Recipient/hooks/useTranslatedBridgeError";
-import type { AmountScreenMessage, AmountScreenViewModel } from "../types";
+import type { AmountScreenViewModel } from "../types";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { useAmountInput } from "./useAmountInput";
@@ -17,6 +16,8 @@ import { useFeePresetLegends } from "./useFeePresetLegends";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { useInitialTransactionPreparation } from "./useInitialTransactionPreparation";
+import { useAmountScreenMessage } from "./useAmountScreenMessage";
 
 type UseAmountScreenViewModelParams = Readonly<{
   account: AccountLike;
@@ -28,42 +29,6 @@ type UseAmountScreenViewModelParams = Readonly<{
   uiConfig: SendFlowUiConfig;
   transactionActions: SendFlowTransactionActions;
 }>;
-
-function getStatusError(
-  errors: TransactionStatus["errors"] | undefined,
-  key: string,
-): Error | undefined {
-  if (!errors) return undefined;
-  return errors[key];
-}
-
-function pickBlockingError(errors: TransactionStatus["errors"] | undefined): Error | undefined {
-  if (!errors) return undefined;
-
-  // Prefer errors that are commonly tied to amount validity on UTXO chains.
-  const priorityKeys = ["dustLimit", "recipient", "fees", "transaction"] as const;
-  for (const key of priorityKeys) {
-    const err = errors[key];
-    if (err) return err;
-  }
-
-  return Object.values(errors).find(Boolean);
-}
-
-function getAmountScreenMessage(params: {
-  amountErrorTitle?: string;
-  amountWarningTitle?: string;
-  isFeeTooHigh: boolean;
-  hasRawAmount: boolean;
-}): AmountScreenMessage | null {
-  if (params.amountErrorTitle && params.hasRawAmount) {
-    return { type: "error", text: params.amountErrorTitle };
-  }
-  if (params.amountWarningTitle && params.hasRawAmount) {
-    return { type: params.isFeeTooHigh ? "info" : "warning", text: params.amountWarningTitle };
-  }
-  return null;
-}
 
 export function useAmountScreenViewModel({
   account,
@@ -134,30 +99,13 @@ export function useAmountScreenViewModel({
   const shouldPrepare = Boolean(transaction.recipient) && hasRawAmount;
   const amountComputationPending = bridgePending && shouldPrepare;
 
-  // Trigger initial transaction preparation to fetch fee estimates (networkInfo for Bitcoin)
-  // This is done when account changes or when recipient is set for the first time
-  // Scheduled as a microtask to avoid render-phase side effects while maintaining
-  // execution order
-  const lastPreparedKeyRef = useRef<string | null>(null);
-  const mainAccountId = mainAccount.id;
-  const recipientAddress = transaction.recipient ?? "";
-  const prepareKey = shouldPrepare ? `${mainAccountId}-${recipientAddress}` : null;
-
-  if (
-    prepareKey &&
-    lastPreparedKeyRef.current !== prepareKey &&
-    transaction &&
-    !bridgePending &&
-    recipientAddress
-  ) {
-    lastPreparedKeyRef.current = prepareKey;
-
-    queueMicrotask(() => {
-      // Trigger a transaction update to ensure networkInfo is populated
-      // This will call prepareTransaction on the bridge, fetching fee presets
-      updateTransactionWithPatch({});
-    });
-  }
+  useInitialTransactionPreparation({
+    shouldPrepare,
+    mainAccountId: mainAccount.id,
+    recipientAddress: transaction.recipient ?? "",
+    bridgePending,
+    updateTransactionWithPatch: () => updateTransactionWithPatch({}),
+  });
 
   const maxAvailable = useMemo(() => {
     if (!account) return new BigNumber(0);
@@ -215,36 +163,12 @@ export function useAmountScreenViewModel({
     status,
   });
 
-  const amountError = useTranslatedBridgeError(status.errors?.amount);
-  const amountWarning = useTranslatedBridgeError(status.warnings?.amount);
-  const recipientErrorRaw = getStatusError(status.errors, "recipient");
-  const recipientError = useTranslatedBridgeError(recipientErrorRaw);
-  const otherBlockingErrorRaw = useMemo(() => pickBlockingError(status.errors), [status.errors]);
-  const otherBlockingError = useTranslatedBridgeError(otherBlockingErrorRaw);
-  const shouldHideAmountRequired =
-    amountComputationPending && status.errors?.amount?.name === "AmountRequired" && !hasRawAmount;
-  const amountErrorTitle = amountError && !shouldHideAmountRequired ? amountError.title : undefined;
-  const amountWarningTitle = amountWarning ? amountWarning.title : undefined;
-  const isFeeTooHigh = status.warnings?.amount?.name === "FeeTooHigh";
-  const cryptoCurrency =
-    accountCurrency?.type === "TokenCurrency" ? accountCurrency.parentCurrency : accountCurrency;
-  const isStellarMultisignBlocked =
-    cryptoCurrency?.family === "stellar" && recipientErrorRaw?.name === "StellarSourceHasMultiSign";
-  const multisignMessage =
-    isStellarMultisignBlocked && recipientError?.title
-      ? ({ type: "error", text: recipientError.title } as const)
-      : null;
-  const baseAmountMessage = getAmountScreenMessage({
-    amountErrorTitle,
-    amountWarningTitle: amountErrorTitle ? undefined : amountWarningTitle,
-    isFeeTooHigh,
+  const { amountMessage, isStellarMultisignBlocked } = useAmountScreenMessage({
+    status,
+    accountCurrency,
+    amountComputationPending,
     hasRawAmount,
   });
-  const fallbackBlockingMessage =
-    !multisignMessage && !baseAmountMessage && hasRawAmount && otherBlockingError?.title
-      ? ({ type: "error", text: otherBlockingError.title } as const)
-      : null;
-  const amountMessage = multisignMessage ?? baseAmountMessage ?? fallbackBlockingMessage;
 
   const hasInsufficientFundsError = useMemo(() => {
     if (!status.errors?.amount) return false;

@@ -44,7 +44,7 @@ export function AmountInputSection({
           autoFocus
           aria-invalid={amountMessage?.type === "error"}
           className={cn(
-            "text-base heading-0-semi-bold placeholder:text-muted",
+            "heading-0-semi-bold text-base placeholder:text-muted",
             amountMessage?.type === "error" && "text-error",
           )}
         />
@@ -53,11 +53,11 @@ export function AmountInputSection({
           size="xs"
           appearance="gray"
           aria-label={toggleLabel}
-          className="absolute right-8 top-12"
+          className="absolute top-12 right-8"
           onClick={onToggleInputMode}
         />
       </div>
-      <p className="mt-8 text-muted body-2">{secondaryValue}</p>
+      <p className="mt-8 body-2 text-muted">{secondaryValue}</p>
       <div className="mt-8 min-h-20">
         <AmountMessageText message={amountMessage} />
       </div>

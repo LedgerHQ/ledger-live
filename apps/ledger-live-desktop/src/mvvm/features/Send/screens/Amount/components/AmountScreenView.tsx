@@ -27,10 +27,6 @@ export function AmountScreenView({
   reviewShowIcon,
   reviewDisabled,
   reviewLoading,
-  account,
-  parentAccount,
-  transaction,
-  status,
   selectedFeeStrategy,
   onSelectFeeStrategy,
   onReview,
@@ -56,10 +52,6 @@ export function AmountScreenView({
       </div>
 
       <AmountFooter
-        account={account}
-        parentAccount={parentAccount}
-        transaction={transaction}
-        status={status}
         feesRowLabel={feesRowLabel}
         feesRowValue={feesRowValue}
         feesRowStrategyLabel={feesRowStrategyLabel}

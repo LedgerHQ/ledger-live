@@ -1,12 +1,13 @@
 import { useMemo, useRef, useState } from "react";
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike, AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { FeePresetOption } from "./useFeePresetOptions";
 import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { buildEstimationKey } from "../utils/feeEstimation";
 
 export type FeeFiatMap = Readonly<Record<string, string | null>>;
 
@@ -23,26 +24,63 @@ type Params = Readonly<{
   shouldEstimateWithBridge: boolean;
 }>;
 
-function buildEstimationKey(params: {
-  mainAccountId: string;
-  recipient: string;
-  amount: BigNumber;
-  useAllAmount: boolean;
-  family: string;
-  feePresetOptions: readonly FeePresetOption[];
-  fallbackPresetIds?: readonly string[];
-}): string {
-  const optionsKey = params.feePresetOptions.map(o => `${o.id}:${o.amount.toString()}`).join("|");
-  const fallbackKey = params.fallbackPresetIds?.join("|") ?? "";
-  return [
-    params.mainAccountId,
-    params.recipient,
-    params.useAllAmount ? "1" : "0",
-    params.amount.toString(),
-    params.family,
-    optionsKey,
-    fallbackKey,
-  ].join("::");
+async function estimateFiatValuesForPresets(params: {
+  bridge: AccountBridge<Transaction>;
+  mainAccount: Account;
+  transaction: Transaction;
+  presetIds: readonly string[];
+  convertCountervalue: (currency: Currency, value: BigNumber) => BigNumber | null | undefined;
+  fiatUnit: Unit;
+  requestId: number;
+  requestIdRef: React.MutableRefObject<number>;
+  inFlightRef: React.MutableRefObject<string | null>;
+  setFiatByPreset: (value: FeeFiatMap) => void;
+}): Promise<void> {
+  try {
+    const entries = await Promise.all(
+      params.presetIds.map(async presetId => {
+        const feesStrategy: Transaction["feesStrategy"] =
+          presetId === "slow" ||
+          presetId === "medium" ||
+          presetId === "fast" ||
+          presetId === "custom"
+            ? presetId
+            : null;
+        const txWithStrategy = params.bridge.updateTransaction(params.transaction, {
+          feesStrategy,
+        });
+        const preparedTx = await params.bridge.prepareTransaction(
+          params.mainAccount,
+          txWithStrategy,
+        );
+        const status = await params.bridge.getTransactionStatus(params.mainAccount, preparedTx);
+        const estimatedFees = status.estimatedFees ?? new BigNumber(0);
+
+        const countervalue = params.convertCountervalue(params.mainAccount.currency, estimatedFees);
+        const fiatValue =
+          countervalue !== null && countervalue !== undefined
+            ? formatCurrencyUnit(params.fiatUnit, countervalue, {
+                showCode: true,
+                disableRounding: true,
+              })
+            : null;
+
+        return [presetId, fiatValue] as const;
+      }),
+    );
+
+    if (params.requestIdRef.current !== params.requestId) return;
+
+    const next: Record<string, string | null> = {};
+    for (const [id, value] of entries) {
+      next[id] = value;
+    }
+    params.setFiatByPreset(next);
+  } finally {
+    if (params.requestIdRef.current === params.requestId) {
+      params.inFlightRef.current = null;
+    }
+  }
 }
 
 export function useFeePresetFiatValues({
@@ -142,43 +180,18 @@ export function useFeePresetFiatValues({
     const bridge = getAccountBridge(account, parentAccount ?? undefined);
 
     queueMicrotask(() => {
-      (async () => {
-        try {
-          const entries = await Promise.all(
-            presetIdsToEstimate.map(async presetId => {
-              const txWithStrategy = bridge.updateTransaction(transaction, {
-                feesStrategy: presetId,
-              });
-              const preparedTx = await bridge.prepareTransaction(mainAccount, txWithStrategy);
-              const status = await bridge.getTransactionStatus(mainAccount, preparedTx);
-              const estimatedFees = status.estimatedFees ?? new BigNumber(0);
-
-              const countervalue = convertCountervalue(mainAccount.currency, estimatedFees);
-              const fiatValue =
-                countervalue !== null && countervalue !== undefined
-                  ? formatCurrencyUnit(fiatUnit, countervalue, {
-                      showCode: true,
-                      disableRounding: true,
-                    })
-                  : null;
-
-              return [presetId, fiatValue] as const;
-            }),
-          );
-
-          if (requestIdRef.current !== requestId) return;
-
-          const next: Record<string, string | null> = {};
-          for (const [id, value] of entries) {
-            next[id] = value;
-          }
-          setFiatByPreset(next);
-        } finally {
-          if (requestIdRef.current === requestId) {
-            inFlightRef.current = null;
-          }
-        }
-      })();
+      estimateFiatValuesForPresets({
+        bridge,
+        mainAccount,
+        transaction,
+        presetIds: presetIdsToEstimate,
+        convertCountervalue,
+        fiatUnit,
+        requestId,
+        requestIdRef,
+        inFlightRef,
+        setFiatByPreset,
+      });
     });
   }
 

@@ -1,10 +1,8 @@
-import { useMemo } from "react";
+import { useRef } from "react";
 import isEqual from "lodash/isEqual";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
-import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type { GasOptions, Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import type { SendFlowTransactionActions } from "../../../../types";
-import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 
 type EvmGasOptionsSyncProps = Readonly<{
@@ -12,6 +10,7 @@ type EvmGasOptionsSyncProps = Readonly<{
   parentAccount: Account | null;
   transaction: EvmTransaction;
   transactionActions: SendFlowTransactionActions;
+  evmGasOptions: GasOptions | undefined;
 }>;
 
 export function EvmGasOptionsSync({
@@ -19,31 +18,27 @@ export function EvmGasOptionsSync({
   parentAccount,
   transaction,
   transactionActions,
+  evmGasOptions,
 }: EvmGasOptionsSyncProps) {
-  const mainAccount = useMemo(
-    () => getMainAccount(account, parentAccount ?? undefined),
-    [account, parentAccount],
-  );
-  const gasOptionsInterval = mainAccount.currency.blockAvgTime
-    ? mainAccount.currency.blockAvgTime * 1000
-    : undefined;
-  const [evmGasOptions] = useGasOptions({
-    currency: mainAccount.currency,
-    transaction,
-    interval: gasOptionsInterval,
-  });
+  const scheduledGasOptionsRef = useRef<GasOptions | undefined>(undefined);
 
   const shouldApply =
     evmGasOptions !== undefined && !isEqual(transaction.gasOptions ?? null, evmGasOptions);
 
   if (shouldApply) {
-    transactionActions.updateTransaction(currentTx => {
-      if ("gasOptions" in currentTx && currentTx.gasOptions) {
-        if (isEqual(currentTx.gasOptions, evmGasOptions)) return currentTx;
-      }
-      const bridge = getAccountBridge(account, parentAccount ?? undefined);
-      return bridge.updateTransaction(currentTx, { gasOptions: evmGasOptions });
-    });
+    // schedule transaction update as a microtask
+    if (!isEqual(scheduledGasOptionsRef.current ?? null, evmGasOptions)) {
+      scheduledGasOptionsRef.current = evmGasOptions;
+      queueMicrotask(() => {
+        transactionActions.updateTransaction(currentTx => {
+          if ("gasOptions" in currentTx && currentTx.gasOptions) {
+            if (isEqual(currentTx.gasOptions, evmGasOptions)) return currentTx;
+          }
+          const bridge = getAccountBridge(account, parentAccount ?? undefined);
+          return bridge.updateTransaction(currentTx, { gasOptions: evmGasOptions });
+        });
+      });
+    }
   }
 
   return null;

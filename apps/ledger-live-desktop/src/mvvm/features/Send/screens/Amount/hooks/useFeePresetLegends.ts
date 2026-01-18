@@ -2,13 +2,9 @@ import { useMemo } from "react";
 import { getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { FeePresetOption } from "./useFeePresetOptions";
+import { formatFeeRate } from "../utils/gas";
 
 export type FeePresetLegendMap = Readonly<Record<string, string>>;
-
-function formatFeeRate(amount: FeePresetOption["amount"]): string {
-  if (!amount?.isFinite() || amount?.isNaN()) return "";
-  return amount.integerValue().toFixed(0);
-}
 
 type Params = Readonly<{
   currency: CryptoOrTokenCurrency | undefined;

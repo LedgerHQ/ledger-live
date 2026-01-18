@@ -1,85 +1,15 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "LLD/hooks/redux";
 import { BigNumber } from "bignumber.js";
 import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { formatAddress } from "@ledgerhq/react-ui/pre-ldls/components/Address/formatAddress";
-import type { AccountLike } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useCalculate } from "@ledgerhq/live-countervalues-react";
-import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import {
   useSendFlowNavigation,
   useSendFlowData,
   useSendFlowActions,
 } from "../context/SendFlowContext";
 import { SEND_FLOW_STEP } from "../types";
-
-type RecipientLike = Readonly<{
-  address: string;
-  ensName?: string;
-}>;
-
-function getRecipientDisplayValue(recipient: RecipientLike | null): string {
-  if (!recipient) return "";
-
-  const formattedAddress = formatAddress(recipient.address, {
-    prefixLength: 5,
-    suffixLength: 5,
-  });
-
-  if (recipient.ensName) {
-    return `${recipient.ensName} (${formattedAddress})`;
-  }
-
-  return formattedAddress;
-}
-
-function getRecipientSearchPrefillValue(recipient: RecipientLike | null): string {
-  if (!recipient) return "";
-  return recipient.ensName ?? recipient.address;
-}
-
-function useAvailableBalance(account?: AccountLike | null) {
-  const locale = useSelector(localeSelector);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const unit = useMaybeAccountUnit(account ?? undefined);
-
-  const accountCurrency = useMemo(
-    () => (account ? getAccountCurrency(account) : undefined),
-    [account],
-  );
-
-  const counterValue = useCalculate({
-    from: accountCurrency ?? counterValueCurrency,
-    to: counterValueCurrency,
-    value: account?.balance.toNumber() ?? 0,
-    disableRounding: true,
-  });
-
-  const availableBalanceFormatted = useMemo(() => {
-    if (!account || !unit) return "";
-    return formatCurrencyUnit(unit, account.balance, {
-      showCode: true,
-      locale,
-    });
-  }, [account, unit, locale]);
-
-  const counterValueFormatted = useMemo(() => {
-    if (typeof counterValue !== "number" || !counterValueCurrency) return "";
-    return formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(counterValue), {
-      showCode: true,
-      locale,
-    });
-  }, [counterValue, counterValueCurrency, locale]);
-
-  return useMemo(() => {
-    if (!account) return "";
-    return counterValueFormatted || availableBalanceFormatted || "";
-  }, [account, counterValueFormatted, availableBalanceFormatted]);
-}
+import { getRecipientDisplayValue, getRecipientSearchPrefillValue } from "./utils";
+import { useAvailableBalance } from "../hooks/useAvailableBalance";
 
 export function SendHeader() {
   const { navigation, currentStep, currentStepConfig } = useSendFlowNavigation();

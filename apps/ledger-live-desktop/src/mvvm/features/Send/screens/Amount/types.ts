@@ -1,6 +1,4 @@
 import type { ChangeEvent } from "react";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { FeePresetOption } from "./hooks/useFeePresetOptions";
 import type { FeeFiatMap } from "./hooks/useFeePresetFiatValues";
 import type { FeePresetLegendMap } from "./hooks/useFeePresetLegends";
@@ -31,7 +29,7 @@ export type AmountScreenBanner = Readonly<{
   description: string;
 }>;
 
-export type AmountScreenViewProps = Readonly<{
+type AmountInputProps = Readonly<{
   amountValue: string;
   amountInputMaxDecimalLength: number;
   currencyText: string;
@@ -41,34 +39,38 @@ export type AmountScreenViewProps = Readonly<{
   onToggleInputMode: () => void;
   toggleLabel: string;
   secondaryValue: string;
+  amountMessage?: AmountScreenMessage | null;
+}>;
+
+type FeesProps = Readonly<{
   feesRowLabel: string;
   feesRowValue: string;
   feesRowStrategyLabel: string;
   feePresetOptions: readonly FeePresetOption[];
   fiatByPreset: FeeFiatMap;
   legendByPreset: FeePresetLegendMap;
+  showNetworkFees: boolean;
+  selectedFeeStrategy: string | null;
+  onSelectFeeStrategy: (strategy: string) => void;
+}>;
+
+type QuickActionsProps = Readonly<{
   quickActions: AmountScreenQuickAction[];
   showQuickActions: boolean;
-  amountMessage?: AmountScreenMessage | null;
-  showNetworkFees: boolean;
+}>;
+
+type ReviewProps = Readonly<{
   reviewLabel: string;
   reviewShowIcon: boolean;
   reviewDisabled: boolean;
   reviewLoading: boolean;
-  account: AccountLike;
-  parentAccount: Account | null;
-  transaction: Transaction;
-  status: TransactionStatus;
-  selectedFeeStrategy: string | null;
-  onSelectFeeStrategy: (strategy: string) => void;
   onReview: () => void;
   onGetFunds?: () => void;
 }>;
 
-export type AmountScreenViewModel = Omit<
-  AmountScreenViewProps,
-  "account" | "parentAccount" | "transaction" | "status" | "onReview" | "onGetFunds"
-> &
+export type AmountScreenViewProps = AmountInputProps & FeesProps & QuickActionsProps & ReviewProps;
+
+export type AmountScreenViewModel = Omit<AmountScreenViewProps, "onReview" | "onGetFunds"> &
   Readonly<{
     showFeePresets: boolean;
   }>;

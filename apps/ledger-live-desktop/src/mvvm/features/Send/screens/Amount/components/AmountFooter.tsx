@@ -1,18 +1,13 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { FeePresetOption } from "../hooks/useFeePresetOptions";
 import type { FeeFiatMap } from "../hooks/useFeePresetFiatValues";
 import type { FeePresetLegendMap } from "../hooks/useFeePresetLegends";
+import { useSendFlowData } from "../../../context/SendFlowContext";
 import { NetworkFeesMenu } from "./Fees/NetworkFeesMenu";
 
 type AmountFooterProps = Readonly<{
-  account: AccountLike;
-  parentAccount: Account | null;
-  transaction: Transaction;
-  status: TransactionStatus;
   feesRowLabel: string;
   feesRowValue: string;
   feesRowStrategyLabel: string;
@@ -30,10 +25,6 @@ type AmountFooterProps = Readonly<{
 }>;
 
 export function AmountFooter({
-  account,
-  parentAccount,
-  transaction,
-  status,
   feesRowLabel,
   feesRowValue,
   feesRowStrategyLabel,
@@ -49,22 +40,31 @@ export function AmountFooter({
   onReview,
   onGetFunds,
 }: AmountFooterProps) {
+  const { state } = useSendFlowData();
+  const { account } = state.account;
+  const { transaction } = state.transaction;
+
+  if (!account || !transaction) {
+    return null;
+  }
   return (
     <div className="mt-56 pt-12">
       <div className="border-t border-muted-subtle" />
       <NetworkFeesMenu
-        account={account}
-        parentAccount={parentAccount}
-        transaction={transaction}
-        status={status}
-        feesLabel={feesRowLabel}
-        feesValue={feesRowValue}
-        feesStrategyLabel={feesRowStrategyLabel}
-        selectedStrategy={selectedFeeStrategy}
-        feePresetOptions={feePresetOptions}
-        fiatByPreset={fiatByPreset}
-        legendByPreset={legendByPreset}
-        onSelectStrategy={onSelectFeeStrategy}
+        display={{
+          label: feesRowLabel,
+          value: feesRowValue,
+          strategyLabel: feesRowStrategyLabel,
+        }}
+        selection={{
+          selectedStrategy: selectedFeeStrategy,
+          onSelectStrategy: onSelectFeeStrategy,
+        }}
+        presets={{
+          options: feePresetOptions,
+          fiatByPreset,
+          legendByPreset,
+        }}
       />
       <Button
         appearance="base"

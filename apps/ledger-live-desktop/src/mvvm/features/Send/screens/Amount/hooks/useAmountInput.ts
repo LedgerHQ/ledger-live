@@ -11,49 +11,14 @@ import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducer
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
-import { sanitizeValueString } from "@ledgerhq/coin-framework/currencies/sanitizeValueString";
-
-function clampDecimals(display: string): string {
-  const dotIndex = display.lastIndexOf(".");
-  const commaIndex = display.lastIndexOf(",");
-  const sepIndex = Math.max(dotIndex, commaIndex);
-  if (sepIndex === -1) return display;
-
-  const integerPart = display.slice(0, sepIndex);
-  const sep = display[sepIndex];
-  const decimals = display.slice(sepIndex + 1);
-  if (decimals.length <= 2) return display;
-  return `${integerPart}${sep}${decimals.slice(0, 2)}`;
-}
-
-function isOverDecimalLimit(display: string): boolean {
-  const dotIndex = display.lastIndexOf(".");
-  const commaIndex = display.lastIndexOf(",");
-  const sepIndex = Math.max(dotIndex, commaIndex);
-  if (sepIndex === -1) return false;
-  return display.length - sepIndex - 1 > 2;
-}
-
-function trimTrailingZeros(display: string): string {
-  const dotIndex = display.lastIndexOf(".");
-  const commaIndex = display.lastIndexOf(",");
-  const sepIndex = Math.max(dotIndex, commaIndex);
-  if (sepIndex === -1) return display;
-
-  const integerPart = display.slice(0, sepIndex);
-  const sep = display[sepIndex];
-  let decimals = display.slice(sepIndex + 1);
-
-  // Remove trailing zeros
-  let endIndex = decimals.length;
-  while (endIndex > 0 && decimals[endIndex - 1] === "0") {
-    endIndex--;
-  }
-  decimals = decimals.slice(0, endIndex);
-
-  if (!decimals) return integerPart;
-  return `${integerPart}${sep}${decimals}`;
-}
+import {
+  formatAmountForInput,
+  formatFiatForInput,
+  processRawInput,
+  processFiatInput,
+  calculateFiatEquivalent,
+} from "../utils/amountInput";
+import { syncAmountInputs } from "../utils/amountInputSync";
 
 type UseAmountInputParams = Readonly<{
   account: AccountLike;
@@ -111,61 +76,23 @@ export function useAmountInput({
   const lastUserInputTimeRef = useRef<number>(0);
 
   // Sync input values when transaction amount changes externally (e.g., from quick actions)
-  const useAllAmountChanged = (transaction.useAllAmount ?? false) !== lastUseAllAmountRef.current;
-  const cryptoAmountChanged =
-    !cryptoAmount.eq(lastTransactionAmountRef.current) || useAllAmountChanged;
-  const fiatAmountChanged = !fiatAmount.eq(lastFiatAmountRef.current);
-  const timeSinceUserInput = Date.now() - lastUserInputTimeRef.current;
-  // Allow immediate sync when useAllAmount changes (Max button) or after debounce delay
-  const canSyncWithBridge = useAllAmountChanged || timeSinceUserInput > 200;
-  const isQuickAction = lastUserInputTimeRef.current === 0;
-
-  if (cryptoAmountChanged && canSyncWithBridge) {
-    lastTransactionAmountRef.current = cryptoAmount;
-    if (useAllAmountChanged) {
-      lastUseAllAmountRef.current = transaction.useAllAmount ?? false;
-      lastUserInputTimeRef.current = 0;
-    }
-
-    // Allow sync if quick action (lastUserInputTimeRef === 0) or not actively typing in crypto
-    // When useAllAmount changes, always sync to show the calculated max amount
-    const shouldSyncCryptoInput =
-      isQuickAction ||
-      useAllAmountChanged ||
-      !(inputMode === "crypto" && cryptoInputValue.length > 0);
-    if (shouldSyncCryptoInput) {
-      const cryptoFormatted = formatCurrencyUnit(accountUnit, cryptoAmount, {
-        showCode: false,
-        disableRounding: true,
-        useGrouping: false,
-        locale,
-      });
-      setCryptoInputValue(cryptoAmount.isZero() ? "" : cryptoFormatted);
-    }
-  }
-
-  // Update fiat input when fiatAmount changes (which happens after cryptoAmount changes)
-  if ((cryptoAmountChanged || fiatAmountChanged) && canSyncWithBridge) {
-    lastFiatAmountRef.current = fiatAmount;
-
-    // Allow sync if quick action (lastUserInputTimeRef === 0) or not actively typing in fiat
-    const isQuickActionForFiat = lastUserInputTimeRef.current === 0;
-    const shouldSyncFiatInput =
-      isQuickActionForFiat ||
-      useAllAmountChanged ||
-      !(inputMode === "fiat" && fiatInputValue.length > 0);
-    if (shouldSyncFiatInput) {
-      const fiatFormatted = formatCurrencyUnit(fiatUnit, fiatAmount, {
-        showCode: false,
-        disableRounding: true,
-        useGrouping: false,
-        locale,
-      });
-      const clamped = clampDecimals(fiatFormatted);
-      const trimmed = trimTrailingZeros(clamped);
-      setFiatInputValue(fiatAmount.isZero() ? "" : trimmed);
-    }
-  }
+  syncAmountInputs({
+    cryptoAmount,
+    fiatAmount,
+    transactionUseAllAmount: Boolean(transaction.useAllAmount),
+    inputMode,
+    cryptoInputValue,
+    fiatInputValue,
+    locale,
+    accountUnit,
+    fiatUnit,
+    lastTransactionAmountRef,
+    lastFiatAmountRef,
+    lastUseAllAmountRef,
+    lastUserInputTimeRef,
+    setCryptoInputValue,
+    setFiatInputValue,
+  });
 
   const amountValue = inputMode === "fiat" ? fiatInputValue : cryptoInputValue;
   const currencyText =
@@ -222,90 +149,72 @@ export function useAmountInput({
     [cancelPendingUpdates, onUpdateTransaction],
   );
 
-  const handleAmountChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      lastUserInputTimeRef.current = Date.now();
-      const raw = event.target.value;
-      if (inputMode === "fiat") {
-        const sanitized = sanitizeValueString(fiatUnit, raw, locale);
-        const clampedDisplay = clampDecimals(sanitized.display);
-        const nextSanitized = sanitizeValueString(fiatUnit, clampedDisplay, locale);
+  const handleFiatInput = useCallback(
+    (rawValue: string) => {
+      const processed = processFiatInput(rawValue, fiatUnit, locale);
+      setFiatInputValue(processed.clampedDisplay);
 
-        // Strict: make it impossible to type more than fiatUnit.magnitude decimals.
-        // Controlled input will always render the clamped value.
-        setFiatInputValue(clampedDisplay);
-        if (isOverDecimalLimit(sanitized.display)) {
-          return;
-        }
-        const fiatBase = nextSanitized.value
-          ? new BigNumber(nextSanitized.value)
-          : new BigNumber(0);
-        const nextAmount = calculateCryptoAmount(fiatBase) ?? new BigNumber(0);
-        lastFiatAmountRef.current = fiatBase;
-        lastTransactionAmountRef.current = nextAmount;
-        debouncedUpdateTransaction({
-          amount: nextAmount.integerValue(BigNumber.ROUND_DOWN),
-          useAllAmount: false,
-        });
+      if (processed.isOverLimit) {
         return;
       }
 
-      const sanitized = sanitizeValueString(accountUnit, raw, locale);
-      setCryptoInputValue(sanitized.display);
-      const atomicString = sanitized.value;
-      const atomic = atomicString ? new BigNumber(atomicString) : new BigNumber(0);
-      const nextAmount = atomic.isFinite() && !atomic.isNaN() ? atomic : new BigNumber(0);
+      const nextAmount = calculateCryptoAmount(processed.value) ?? new BigNumber(0);
+      lastFiatAmountRef.current = processed.value;
       lastTransactionAmountRef.current = nextAmount;
-      const fiatEquivalent = calculateFiatFromCrypto(accountCurrency, nextAmount);
-      lastFiatAmountRef.current =
-        fiatEquivalent?.isFinite() && !fiatEquivalent.isNaN() ? fiatEquivalent : new BigNumber(0);
       debouncedUpdateTransaction({
         amount: nextAmount.integerValue(BigNumber.ROUND_DOWN),
         useAllAmount: false,
       });
     },
-    [
-      accountCurrency,
-      accountUnit,
-      calculateCryptoAmount,
-      calculateFiatFromCrypto,
-      debouncedUpdateTransaction,
-      fiatUnit,
-      inputMode,
-      locale,
-    ],
+    [calculateCryptoAmount, debouncedUpdateTransaction, fiatUnit, locale],
+  );
+
+  const handleCryptoInput = useCallback(
+    (rawValue: string) => {
+      const processed = processRawInput(rawValue, accountUnit, locale);
+      setCryptoInputValue(processed.display);
+
+      lastTransactionAmountRef.current = processed.value;
+      const fiatEquivalent = calculateFiatFromCrypto(accountCurrency, processed.value);
+      lastFiatAmountRef.current =
+        fiatEquivalent?.isFinite() && !fiatEquivalent.isNaN() ? fiatEquivalent : new BigNumber(0);
+      debouncedUpdateTransaction({
+        amount: processed.value.integerValue(BigNumber.ROUND_DOWN),
+        useAllAmount: false,
+      });
+    },
+    [accountCurrency, accountUnit, calculateFiatFromCrypto, debouncedUpdateTransaction, locale],
+  );
+
+  const handleAmountChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      lastUserInputTimeRef.current = Date.now();
+      const raw = event.target.value;
+
+      if (inputMode === "fiat") {
+        handleFiatInput(raw);
+      } else {
+        handleCryptoInput(raw);
+      }
+    },
+    [handleCryptoInput, handleFiatInput, inputMode],
   );
 
   const handleToggleMode = useCallback(() => {
     lastUserInputTimeRef.current = Date.now();
     setInputMode(prev => {
       const next = prev === "fiat" ? "crypto" : "fiat";
+
       if (next === "fiat") {
         const source = lastFiatAmountRef.current ?? fiatAmount;
-        if (source.isZero()) {
-          setFiatInputValue("");
-        } else {
-          const formatted = formatCurrencyUnit(fiatUnit, source, {
-            showCode: false,
-            disableRounding: true,
-            useGrouping: false,
-            locale,
-          });
-          const clamped = clampDecimals(formatted);
-          setFiatInputValue(trimTrailingZeros(clamped));
-        }
+        const formatted = formatFiatForInput(fiatUnit, source, locale);
+        setFiatInputValue(formatted);
       } else {
         const source = lastTransactionAmountRef.current ?? cryptoAmount;
-        const formatted = source.isZero()
-          ? ""
-          : formatCurrencyUnit(accountUnit, source, {
-              showCode: false,
-              disableRounding: true,
-              useGrouping: false,
-              locale,
-            });
+        const formatted = formatAmountForInput(accountUnit, source, locale);
         setCryptoInputValue(formatted);
       }
+
       return next;
     });
   }, [accountUnit, cryptoAmount, fiatAmount, fiatUnit, locale]);
@@ -314,40 +223,23 @@ export function useAmountInput({
     (amount: BigNumber) => {
       // Quick action: update inputs immediately for instant feedback,
       // then let bridge sync take over once it responds.
-      // We reset lastUserInputTime to 0 to allow bridge sync to override.
       lastUserInputTimeRef.current = 0;
 
       // Update crypto input
-      const cryptoFormatted = formatCurrencyUnit(accountUnit, amount, {
-        showCode: false,
-        disableRounding: true,
-        useGrouping: false,
-        locale,
+      const cryptoFormatted = formatAmountForInput(accountUnit, amount, locale);
+      setCryptoInputValue(cryptoFormatted);
+
+      // Calculate and update fiat input
+      const fiatEquivalent = calculateFiatEquivalent({
+        amount,
+        lastTransactionAmount: lastTransactionAmountRef.current,
+        lastFiatAmount: lastFiatAmountRef.current,
+        calculateFiatFromCrypto: value => calculateFiatFromCrypto(accountCurrency, value),
       });
-      setCryptoInputValue(amount.isZero() ? "" : cryptoFormatted);
 
-      // Calculate fiat equivalent using the same logic as useSendAmount
-      const directFiat = calculateFiatFromCrypto(accountCurrency, amount);
-      const ratioFiat =
-        lastTransactionAmountRef.current &&
-        !lastTransactionAmountRef.current.isZero() &&
-        lastFiatAmountRef.current &&
-        !lastFiatAmountRef.current.isZero()
-          ? lastFiatAmountRef.current
-              .multipliedBy(amount)
-              .dividedBy(lastTransactionAmountRef.current)
-          : null;
-      const fiatBase = directFiat ?? ratioFiat;
-
-      if (fiatBase?.isFinite() && !fiatBase?.isNaN() && fiatBase?.gt(0)) {
-        const fiatFormatted = formatCurrencyUnit(fiatUnit, fiatBase, {
-          showCode: false,
-          disableRounding: true,
-          useGrouping: false,
-          locale,
-        });
-        const clamped = clampDecimals(fiatFormatted);
-        setFiatInputValue(trimTrailingZeros(clamped));
+      if (fiatEquivalent?.isFinite() && !fiatEquivalent?.isNaN() && fiatEquivalent?.gt(0)) {
+        const formatted = formatFiatForInput(fiatUnit, fiatEquivalent, locale);
+        setFiatInputValue(formatted);
       } else if (amount.isZero()) {
         setFiatInputValue("");
       }

@@ -3,7 +3,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { SendFlowTransactionActions } from "../../../../types";
 import { isEvmTransaction } from "../../utils/isEvmTransaction";
-import { EvmGasOptionsSync } from "../Fees/EvmGasOptionsSync";
+import { EvmGasOptionsSyncPluginEvm } from "./EvmGasOptionsSyncPluginEvm";
 
 type Props = Readonly<{
   account: AccountLike;
@@ -18,12 +18,10 @@ export function EvmGasOptionsSyncPlugin({
   transaction,
   transactionActions,
 }: Props) {
-  if (!isEvmTransaction(transaction)) {
-    return null;
-  }
+  if (!isEvmTransaction(transaction)) return null;
 
   return (
-    <EvmGasOptionsSync
+    <EvmGasOptionsSyncPluginEvm
       account={account}
       parentAccount={parentAccount}
       transaction={transaction}
