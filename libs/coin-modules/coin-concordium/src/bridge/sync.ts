@@ -90,6 +90,8 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
 
   const operations = mergeOps(oldOperations, newOperations);
 
+  const used = !balance.isNegative() || operations.length > 0;
+
   const accountShape = {
     balance,
     blockHeight: operations[0]?.blockHeight ?? 0,
@@ -103,7 +105,7 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
     operations,
     operationsCount: operations.length,
     spendableBalance,
-    used: balance.isPositive(),
+    used,
     xpub: publicKey,
   };
 
