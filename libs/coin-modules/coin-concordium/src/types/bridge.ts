@@ -57,7 +57,6 @@ export type ConcordiumResources = {
   isOnboarded: boolean;
   credId: string;
   publicKey: string;
-  accountAddress: string;
   // Fields for verify address (both legacy and new protocols)
   identityIndex: number;
   credNumber: number;
@@ -68,7 +67,6 @@ export type ConcordiumResourcesRaw = {
   isOnboarded: boolean;
   credId: string;
   publicKey: string;
-  accountAddress: string;
   // Fields for verify address (both legacy and new protocols)
   identityIndex: number;
   credNumber: number;

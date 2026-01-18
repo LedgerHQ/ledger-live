@@ -10,7 +10,6 @@ const fillConcordiumResources = (
   existing: Partial<ConcordiumResources> = {},
   incoming: Partial<ConcordiumResources> = {},
 ): ConcordiumResources => ({
-  accountAddress: "",
   credId: "",
   credNumber: 0,
   identityIndex: 0,
@@ -59,7 +58,6 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
       balance,
       blockHeight: 0,
       concordiumResources: fillConcordiumResources(initialAccount?.concordiumResources, {
-        accountAddress: address,
         isOnboarded: false,
       }),
       derivationMode,
@@ -103,9 +101,7 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
   return {
     balance,
     blockHeight: operations[0]?.blockHeight ?? 0,
-    concordiumResources: fillConcordiumResources(initialAccount?.concordiumResources, {
-      accountAddress: address,
-    }),
+    concordiumResources: fillConcordiumResources(initialAccount?.concordiumResources),
     derivationMode,
     derivationPath,
     id: accountId,

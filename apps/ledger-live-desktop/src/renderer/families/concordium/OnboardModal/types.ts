@@ -4,8 +4,6 @@ import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 
 export type OnboardingResult = {
-  accountAddress: string;
-  credentialId?: string;
   completedAccount: Account;
 };
 

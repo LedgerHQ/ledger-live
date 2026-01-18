@@ -23,6 +23,7 @@ import { closeModal } from "~/renderer/actions/modals";
 import Modal from "~/renderer/components/Modal";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { concordiumWalletConnect } from "../services/walletConnect";
 import ConnectDeviceScreen from "./components/ConnectDeviceScreen";
 import StepCreate, { StepCreateFooter } from "./steps/StepCreate";
@@ -36,6 +37,7 @@ const STEP_TRANSITION_TIMEOUT = 1500; // Delay before continue to next step whil
 
 const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
+  existingAccounts: accountsSelector,
 });
 
 const mapDispatchToProps = {
@@ -72,6 +74,7 @@ function resolveCreatableAccountName(
 
 type AddAccountsConfig = {
   selectedAccounts: Account[];
+  existingAccounts: Account[];
   editedNames: { [accountId: string]: string };
   onboardingResult?: {
     completedAccount: Account;
@@ -91,7 +94,7 @@ function prepareAccountsForNewOnboarding(
     accounts.push(completedAccount);
   }
 
-  // on previous step we don't have an accountAddress yet for onboarding account
+  // on previous step the onboarding account is not yet finalized
   // so editedNames use a temporary account ID
   // since only one account is onboarded at a time, we can filter out importableAccounts renamings
   // what is left belongs to the onboarded account
@@ -131,6 +134,7 @@ export type UserProps = {
   device: Device | null | undefined;
   editedNames: { [accountId: string]: string };
   selectedAccounts: Account[];
+  existingAccounts: Account[];
 };
 
 export type Props = {
@@ -343,11 +347,13 @@ class OnboardModal extends PureComponent<Props, State> {
   };
 
   handleAddAccounts = () => {
-    const { addAccountsAction, closeModal, selectedAccounts, editedNames } = this.props;
+    const { addAccountsAction, closeModal, selectedAccounts, existingAccounts, editedNames } =
+      this.props;
     const { onboardingResult } = this.state;
 
     const { accounts, renamings } = prepareAccountsForAdding({
       selectedAccounts,
+      existingAccounts,
       editedNames,
       onboardingResult,
     });
@@ -356,7 +362,7 @@ class OnboardModal extends PureComponent<Props, State> {
       scannedAccounts: accounts,
       selectedIds: accounts.map(account => account.id),
       renamings,
-      existingAccounts: [],
+      existingAccounts,
     });
 
     closeModal("MODAL_CONCORDIUM_ONBOARD_ACCOUNT");
@@ -417,12 +423,10 @@ class OnboardModal extends PureComponent<Props, State> {
             return;
           }
 
-          if ("account" in data && "accountAddress" in data) {
+          if ("account" in data) {
             this.setStateWithTimeout({
               onboardingResult: {
-                accountAddress: data.accountAddress,
                 completedAccount: data.account,
-                credentialId: "credId" in data ? data.credId : undefined,
               },
               onboardingStatus: AccountOnboardStatus.SUCCESS,
               isProcessing: false,
@@ -430,7 +434,14 @@ class OnboardModal extends PureComponent<Props, State> {
           }
         },
         complete: this.clearOnboardingSubscription,
-        error: (error: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        error: (error: any) => {
+          const errorMessage = "message" in error ? error.message : String(error);
+          if (errorMessage?.toLowerCase()?.includes("expired")) {
+            this.handleCreateAccount();
+            return;
+          }
+
           logger.error("[handleCreateAccount] Failed to create account", { error });
 
           this.setState({

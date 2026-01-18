@@ -1,8 +1,9 @@
 import type { HexString } from "@ledgerhq/concordium-sdk-adapter";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { SessionTypes, ISignClient } from "@walletconnect/types";
-import { Account, AccountOnboardStatus } from "@ledgerhq/types-live";
+import { AccountOnboardStatus } from "@ledgerhq/types-live";
 import type { ConcordiumNetwork } from "./config";
+import { ConcordiumAccount } from "./bridge";
 
 export { AccountOnboardStatus };
 
@@ -24,10 +25,7 @@ export type ConcordiumOnboardProgress = {
 };
 
 export type ConcordiumOnboardResult = {
-  account: Account;
-  accountAddress: string;
-  credId?: string;
-  txHash?: string;
+  account: ConcordiumAccount;
 };
 
 /**

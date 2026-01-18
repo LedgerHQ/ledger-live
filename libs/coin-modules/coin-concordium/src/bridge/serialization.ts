@@ -10,19 +10,13 @@ export function isConcordiumAccount(account: Account): account is ConcordiumAcco
   return "concordiumResources" in account;
 }
 
-function isConcordiumAccountRaw(accountRaw: AccountRaw): accountRaw is ConcordiumAccountRaw {
-  return "concordiumResources" in accountRaw;
-}
-
 function toResourcesRaw(r: ConcordiumResources): ConcordiumResourcesRaw {
-  const { isOnboarded, credId, publicKey, accountAddress, identityIndex, credNumber, ipIdentity } =
-    r;
+  const { isOnboarded, credId, publicKey, identityIndex, credNumber, ipIdentity } = r;
   // Include all fields, even if undefined, to ensure proper serialization
   const result: ConcordiumResourcesRaw = {
     isOnboarded,
     credId,
     publicKey,
-    accountAddress,
     identityIndex,
     credNumber,
     ipIdentity,
@@ -36,7 +30,6 @@ function fromResourcesRaw(r: ConcordiumResourcesRaw): ConcordiumResources {
     isOnboarded: r.isOnboarded,
     credId: r.credId,
     publicKey: r.publicKey,
-    accountAddress: r.accountAddress,
     identityIndex: r.identityIndex,
     credNumber: r.credNumber,
     ipIdentity: r.ipIdentity,
