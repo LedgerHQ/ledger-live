@@ -998,6 +998,7 @@
         "switchLabel": "<1>I have read and agree with the </1><0>Terms of Use</0><1>.</1>"
       },
       "steps": {
+        "title": "Step <0>{{step}} / {{total}}</0>",
         "1": {
           "subtitle": "Approve an account to allow the protocol to",
           "subtitle2": "process future loans.",
@@ -1010,8 +1011,7 @@
         "3": {
           "subtitle": "Withdraw assets at any time",
           "description": "You can withdraw your assets and earned interest at any time, partially or entirely, directly from your Ledger account."
-        },
-        "title": "Step <0>{{step}} / {{total}}</0>"
+        }
       }
     },
     "supply": {
@@ -4478,6 +4478,7 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
+
       "exchangeDeveloperMode": {
         "title": "Exchange Dev Mode",
         "desc": "Add exchange provider's info",
@@ -5286,6 +5287,7 @@
             }
           },
           "recoverHowTo": {
+            "title": "Select ‘Restore using Ledger Recover’",
             "1": {
               "title": "Select ‘Restore’",
               "descr": "Press both buttons simultaneously to select."
@@ -5293,7 +5295,6 @@
             "2": {
               "title": "Select ‘Restore using Ledger Recover’"
             },
-            "title": "Select ‘Restore using Ledger Recover’",
             "help": {
               "iDontSee": "I don’t see ‘Restore using Ledger Recover’",
               "modal": {
@@ -5578,6 +5579,12 @@
     "connected": "Connected!",
     "backToPortfolio": "Back to Portfolio",
     "steps": {
+      "entry": {
+        "title": "Troubleshoot USB connection",
+        "desc": "There seems to be a problem connecting to your device. Don’t worry, you can try different solutions one by one until your device connects!",
+        "cta": "Let’s fix it!",
+        "back": "Go back"
+      },
       "1": {
         "windows": {
           "title": "Run Ledger Wallet as Administrator",
@@ -5690,12 +5697,6 @@
           "updateInstructions": "Follow device update instructions",
           "somethingElse": "Something else"
         }
-      },
-      "entry": {
-        "title": "Troubleshoot USB connection",
-        "desc": "There seems to be a problem connecting to your device. Don’t worry, you can try different solutions one by one until your device connects!",
-        "cta": "Let’s fix it!",
-        "back": "Go back"
       }
     }
   },
@@ -7873,9 +7874,7 @@
       },
       "title": "Checking the blockchain..."
     },
-    "connectYourDevice": {
-      "title": "Connect and unlock your device"
-    },
+    "connectYourDevice": { "title": "Connect and unlock your device" },
     "searchPlaceholder": "Search by name or address",
     "emptyAssetList": "No assets found",
     "selectAsset": "Select asset",
