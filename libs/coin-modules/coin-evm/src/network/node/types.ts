@@ -4,22 +4,48 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction as EvmTransaction, FeeData } from "../../types";
 import { EvmConfigInfo } from "../../config";
 
+/**
+ * Asset information for token transfers
+ */
+export type ERC20Asset = {
+  type: "erc20";
+  /** Token contract address (EIP-55 checksummed) */
+  assetReference: string;
+};
+
+/**
+ * Represents an ERC20 Transfer event extracted from transaction logs
+ */
+export type ERC20Transfer = {
+  asset: ERC20Asset;
+  /** Sender address (EIP-55 checksummed) */
+  from: string;
+  /** Recipient address (EIP-55 checksummed) */
+  to: string;
+  /** Transfer amount as string (to avoid BigInt serialization issues) */
+  value: string;
+};
+
+/**
+ * Transaction information returned by NodeApi.getTransaction
+ */
+export type TransactionInfo = {
+  hash: string;
+  blockHeight: number | undefined;
+  blockHash: string | undefined;
+  nonce: number;
+  gasUsed: string;
+  gasPrice: string;
+  value: string;
+  status: number | null;
+  from: string;
+  to: string | undefined;
+  /** ERC20 Transfer events extracted from receipt logs */
+  erc20Transfers: ERC20Transfer[];
+};
+
 export type NodeApi = {
-  getTransaction: (
-    currency: CryptoCurrency,
-    hash: string,
-  ) => Promise<{
-    hash: string;
-    blockHeight: number | undefined;
-    blockHash: string | undefined;
-    nonce: number;
-    gasUsed: string;
-    gasPrice: string;
-    value: string;
-    status: number | null;
-    from: string;
-    to: string | undefined;
-  }>;
+  getTransaction: (currency: CryptoCurrency, hash: string) => Promise<TransactionInfo>;
   getCoinBalance: (currency: CryptoCurrency, address: string) => Promise<BigNumber>;
   getTokenBalance: (
     currency: CryptoCurrency,

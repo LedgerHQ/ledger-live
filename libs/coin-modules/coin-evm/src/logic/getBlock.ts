@@ -1,7 +1,7 @@
 import type { Block, BlockInfo, BlockTransaction } from "@ledgerhq/coin-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getNodeApi } from "../network/node";
-import { rpcTransactionToBlockOperations } from "../adapters/blockOperations";
+import { transactionToBlockOperations } from "../adapters/blockOperations";
 
 export async function getBlock(currency: CryptoCurrency, height: number): Promise<Block> {
   const nodeApi = getNodeApi(currency);
@@ -60,7 +60,7 @@ async function getTransactionFromHash(
   const failed = txInfo.status === 0;
   const fees = BigInt(txInfo.gasUsed) * BigInt(txInfo.gasPrice);
 
-  const operations = rpcTransactionToBlockOperations(txInfo.from, BigInt(txInfo.value), txInfo.to);
+  const operations = transactionToBlockOperations(txInfo);
 
   return {
     hash: txHash,

@@ -189,6 +189,7 @@ describe("EVM Family", () => {
           status: 1,
           from: "0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5",
           to: "0x6d2e03b7effeae98bd302a9f836d0d6ab0002766",
+          erc20Transfers: [],
         });
       });
     });

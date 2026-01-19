@@ -222,7 +222,162 @@ describe("EVM Family", () => {
           status: 1,
           from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
           to: "0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C",
+          erc20Transfers: [],
         });
+      });
+    });
+
+    describe("parseERC20TransfersFromLogs", () => {
+      const TRANSFER_TOPIC =
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+      const APPROVAL_TOPIC =
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925";
+
+      it("should parse single ERC20 Transfer (Velas EVM)", () => {
+        // Real data from Velas EVM tx 0x23f9232e929f9a13f4f2d6d4e9bf27d717a2b1250d207c030fc66565c4e205e1
+        const logs = [
+          {
+            address: "0xabf26902fd7b624e0db40d31171ea9dddf078351",
+            topics: [
+              TRANSFER_TOPIC,
+              "0x000000000000000000000000534eef6db44fbeb71047ee3eb4cb16e572862af6",
+              "0x000000000000000000000000970402b253733a1f6f4f3cd1d07420006be2882d",
+            ],
+            data: "0x000000000000000000000000000000000000000000009d4d055051b140e00000",
+          },
+        ];
+
+        const result = RPC_API.parseERC20TransfersFromLogs(logs);
+
+        expect(result).toEqual([
+          {
+            asset: {
+              type: "erc20",
+              assetReference: "0xaBf26902Fd7B624e0db40D31171eA9ddDf078351",
+            },
+            from: "0x534eeF6Db44FBeB71047EE3eb4CB16E572862aF6",
+            to: "0x970402B253733A1f6F4f3cd1d07420006be2882D",
+            value: "742832320000000000000000",
+          },
+        ]);
+      });
+
+      it("should parse multiple ERC20 Transfers (Syscoin)", () => {
+        // Real data from Syscoin tx 0x174e87764e5de5c1ba93410233a3c5bfa0d15d1e5ee948832a05a4dccec501a1
+        const logs = [
+          {
+            address: "0xd3e822f3ef011ca5f17d82c956d952d8d7c3a1bb",
+            topics: [
+              TRANSFER_TOPIC,
+              "0x000000000000000000000000017dad2578372caee5c6cddfe35eedb3728544c4",
+              "0x0000000000000000000000001a7400f4dfe299dbac8034bd2bb0b3b17fca9342",
+            ],
+            data: "0x0000000000000000000000000000000000000000000001292003dcc05fb78898",
+          },
+          {
+            address: "0xe18c200a70908c89ffa18c628fe1b83ac0065ea4",
+            topics: [
+              TRANSFER_TOPIC,
+              "0x0000000000000000000000001a7400f4dfe299dbac8034bd2bb0b3b17fca9342",
+              "0x0000000000000000000000004aa7d1957e5ff87eab80ac78da4925530f5351cf",
+            ],
+            data: "0x000000000000000000000000000000000000000000001135ecd1687a13c7e557",
+          },
+        ];
+
+        const result = RPC_API.parseERC20TransfersFromLogs(logs);
+
+        expect(result).toHaveLength(2);
+        expect(result[0].value).toBe("5480989920044678351000");
+        expect(result[1].value).toBe("81274972180027185554775");
+      });
+
+      it("should filter out non-Transfer events (Approval)", () => {
+        const logs = [
+          {
+            address: "0x1111111111111111111111111111111111111111",
+            topics: [
+              TRANSFER_TOPIC,
+              "0x000000000000000000000000534eef6db44fbeb71047ee3eb4cb16e572862af6",
+              "0x000000000000000000000000970402b253733a1f6f4f3cd1d07420006be2882d",
+            ],
+            data: "0x0000000000000000000000000000000000000000000000000000000000000001",
+          },
+          {
+            address: "0x1111111111111111111111111111111111111111",
+            topics: [
+              APPROVAL_TOPIC, // Approval event
+              "0x000000000000000000000000534eef6db44fbeb71047ee3eb4cb16e572862af6",
+              "0x000000000000000000000000970402b253733a1f6f4f3cd1d07420006be2882d",
+            ],
+            data: "0x0000000000000000000000000000000000000000000000000000000000000001",
+          },
+        ];
+
+        const result = RPC_API.parseERC20TransfersFromLogs(logs);
+
+        expect(result).toHaveLength(1); // Only the Transfer, not the Approval
+      });
+
+      it("should return empty array for logs with no Transfer events", () => {
+        const logs = [
+          {
+            address: "0x2222222222222222222222222222222222222222",
+            topics: ["0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+            data: "0x",
+          },
+        ];
+
+        const result = RPC_API.parseERC20TransfersFromLogs(logs);
+
+        expect(result).toEqual([]);
+      });
+
+      it("should handle empty logs array", () => {
+        expect(RPC_API.parseERC20TransfersFromLogs([])).toEqual([]);
+      });
+
+      it("should filter out logs with wrong number of topics", () => {
+        const logs = [
+          {
+            // Valid ERC-20 Transfer: 3 topics (signature, from, to) + value in data
+            address: "0x3333333333333333333333333333333333333333",
+            topics: [
+              TRANSFER_TOPIC,
+              "0x000000000000000000000000534eef6db44fbeb71047ee3eb4cb16e572862af6",
+              "0x000000000000000000000000970402b253733a1f6f4f3cd1d07420006be2882d",
+            ],
+            data: "0x0000000000000000000000000000000000000000000000000000000000000001",
+          },
+          {
+            // Invalid: only 2 topics (missing 'to')
+            address: "0x3333333333333333333333333333333333333333",
+            topics: [
+              TRANSFER_TOPIC,
+              "0x000000000000000000000000534eef6db44fbeb71047ee3eb4cb16e572862af6",
+            ],
+            data: "0x0000000000000000000000000000000000000000000000000000000000000001",
+          },
+          {
+            // ERC-721 Transfer: 4 topics (signature, from, to, tokenId) - should be filtered out
+            // Transfer(address indexed from, address indexed to, uint256 indexed tokenId)
+            address: "0x4444444444444444444444444444444444444444",
+            topics: [
+              TRANSFER_TOPIC, // Same signature hash as ERC-20
+              "0x000000000000000000000000534eef6db44fbeb71047ee3eb4cb16e572862af6", // from
+              "0x000000000000000000000000970402b253733a1f6f4f3cd1d07420006be2882d", // to
+              "0x0000000000000000000000000000000000000000000000000000000000000042", // tokenId (indexed)
+            ],
+            data: "0x", // No data for ERC-721 Transfer
+          },
+        ];
+
+        // Note: ERC-1155 uses different event signatures (TransferSingle/TransferBatch)
+        // so it's already filtered out by the topic[0] check, not by topics.length
+
+        const result = RPC_API.parseERC20TransfersFromLogs(logs);
+
+        expect(result).toHaveLength(1);
       });
     });
 
