@@ -1,12 +1,13 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { Image } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useLocale } from "~/context/Locale";
 import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import { StyledIconContainer } from "./MarketRowItem.styled";
+import Icon from "@ledgerhq/crypto-icons/native";
+import { Image } from "react-native";
 
 type Props = {
   index: number;
@@ -18,7 +19,7 @@ type Props = {
 function MarketRowItem({ item, index, counterCurrency, range }: Props) {
   const { locale } = useLocale();
   const { t } = useTranslation();
-  const { image, name, marketcap, marketcapRank, price, ticker } = item;
+  const { name, marketcap, marketcapRank, price, ticker } = item;
 
   const priceChangePercentage = item?.priceChangePercentage[range as KeysPriceChange];
 
@@ -31,11 +32,19 @@ function MarketRowItem({ item, index, counterCurrency, range }: Props) {
       py="16px"
       key={index}
     >
-      {image && (
-        <StyledIconContainer>
-          <Image source={{ uri: image }} style={{ width: 32, height: 32 }} resizeMode="contain" />
-        </StyledIconContainer>
-      )}
+      <StyledIconContainer>
+        {item?.ledgerIds && item?.ledgerIds.length > 0 && item?.ticker ? (
+          <Icon ledgerId={item?.ledgerIds?.[0]} ticker={item?.ticker} size={32} />
+        ) : (
+          <Image
+            source={{ uri: item?.image }}
+            style={{ width: 32, height: 32 }}
+            accessibilityLabel="currency logo"
+            resizeMode="contain"
+          />
+        )}
+      </StyledIconContainer>
+
       <Flex mx="4" flexDirection="column" justifyContent="center" alignItems="flex-start" flex={1}>
         <Text
           variant="large"

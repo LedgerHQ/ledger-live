@@ -2406,6 +2406,10 @@
     "gasOptionsSync": {
       "warningTitle": "Unable to refresh network fees",
       "warningDescription": "Fee presets may be outdated."
+    },
+    "sign": {
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instructions displayed on your Secure Touchscreen."
     }
   },
   "releaseNotes": {
