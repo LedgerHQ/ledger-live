@@ -93,8 +93,16 @@ const filterOperations = (
   transactions: OperationInfo[],
   accountId: string,
   partyId: string,
+  pendingTransferProposals: Array<{ contract_id: string }>,
 ): Operation[] => {
-  return transactions.map(txInfoToOperationAdapter(accountId, partyId));
+  const pendingProposalUids = new Set(pendingTransferProposals.map(p => p.contract_id));
+
+  return transactions
+    .filter(txInfo => {
+      const isPendingProposal = pendingProposalUids.has(txInfo.uid);
+      return !isPendingProposal;
+    })
+    .map(txInfoToOperationAdapter(accountId, partyId));
 };
 
 export async function filterDisabledTokenAccounts(
@@ -258,7 +266,12 @@ export function makeGetAccountShape(
         cursor: startAt,
         limit: 100,
       });
-      const newOperations = filterOperations(transactionData.operations, accountId, xpubOrAddress);
+      const newOperations = filterOperations(
+        transactionData.operations,
+        accountId,
+        xpubOrAddress,
+        pendingTransferProposals,
+      );
       operations = mergeOps(oldOperations, newOperations);
     }
 
