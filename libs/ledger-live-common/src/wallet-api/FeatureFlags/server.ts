@@ -1,22 +1,22 @@
 import { RPCHandler, customWrapper } from "@ledgerhq/wallet-api-server";
 import { FeatureFlagsGetParams, FeatureFlagsGetResponse, MethodIds } from "./types";
-import { getFeatureFlagsForLiveApp } from "./resolver";
+import { getFeatureFlagsForLiveApp, GetFeatureFn } from "./resolver";
 import { LiveAppManifest } from "../../platform/types";
 
 type Handlers = Record<MethodIds, RPCHandler<FeatureFlagsGetResponse, FeatureFlagsGetParams>>;
 
 export const handlers = ({
   manifest,
-  appLanguage,
+  getFeature,
 }: {
   manifest: LiveAppManifest;
-  appLanguage?: string;
+  getFeature: GetFeatureFn;
 }) => {
   const wrappedHandler = customWrapper<FeatureFlagsGetParams, FeatureFlagsGetResponse>(params => {
     const features = getFeatureFlagsForLiveApp({
       requestedFeatureFlagIds: params?.featureFlagIds ?? [],
       manifest,
-      appLanguage,
+      getFeature,
     });
     return { features };
   });

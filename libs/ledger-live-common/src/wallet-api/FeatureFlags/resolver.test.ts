@@ -1,11 +1,6 @@
 import { getFeatureFlagsForLiveApp } from "./resolver";
-import { getFeature } from "../../featureFlags/firebaseFeatureFlags";
 import { LiveAppManifest } from "../../platform/types";
-import { Feature } from "@ledgerhq/types-live";
-
-jest.mock("../../featureFlags/firebaseFeatureFlags");
-
-const mockGetFeature = jest.mocked(getFeature);
+import { Feature, FeatureId } from "@ledgerhq/types-live";
 
 describe("getFeatureFlagsForLiveApp", () => {
   const createMockManifest = (featureFlags?: string[] | "*"): LiveAppManifest => {
@@ -36,8 +31,10 @@ describe("getFeatureFlagsForLiveApp", () => {
     params: { test: "value" },
   });
 
+  let mockGetFeature: jest.Mock<Feature | null, [FeatureId]>;
+
   beforeEach(() => {
-    jest.clearAllMocks();
+    mockGetFeature = jest.fn();
   });
 
   it("should return empty object when manifest has no featureFlags field", () => {
@@ -46,6 +43,7 @@ describe("getFeatureFlagsForLiveApp", () => {
     const result = getFeatureFlagsForLiveApp({
       requestedFeatureFlagIds: ["testFeature1", "testFeature2"],
       manifest,
+      getFeature: mockGetFeature,
     });
 
     expect(result).toEqual({});
@@ -61,17 +59,14 @@ describe("getFeatureFlagsForLiveApp", () => {
     const result = getFeatureFlagsForLiveApp({
       requestedFeatureFlagIds: ["testFeature1", "testFeature2"],
       manifest,
+      getFeature: mockGetFeature,
     });
 
     expect(result).toEqual({
       testFeature1: mockFeature,
     });
     expect(mockGetFeature).toHaveBeenCalledTimes(1);
-    expect(mockGetFeature).toHaveBeenCalledWith({
-      key: "testFeature1",
-      appLanguage: undefined,
-      allowOverride: true,
-    });
+    expect(mockGetFeature).toHaveBeenCalledWith("testFeature1");
   });
 
   it("should return empty object when manifest has empty allowlist", () => {
@@ -80,6 +75,7 @@ describe("getFeatureFlagsForLiveApp", () => {
     const result = getFeatureFlagsForLiveApp({
       requestedFeatureFlagIds: ["testFeature1"],
       manifest,
+      getFeature: mockGetFeature,
     });
 
     expect(result).toEqual({});
@@ -96,6 +92,7 @@ describe("getFeatureFlagsForLiveApp", () => {
     const result = getFeatureFlagsForLiveApp({
       requestedFeatureFlagIds: ["testFeature1"],
       manifest,
+      getFeature: mockGetFeature,
     });
 
     expect(result).toEqual({
@@ -112,6 +109,7 @@ describe("getFeatureFlagsForLiveApp", () => {
     const result = getFeatureFlagsForLiveApp({
       requestedFeatureFlagIds: ["flag1", "flag2", "flag3", "flag4", "flag5"],
       manifest,
+      getFeature: mockGetFeature,
     });
 
     expect(result).toEqual({
@@ -126,7 +124,7 @@ describe("getFeatureFlagsForLiveApp", () => {
     const manifest = createMockManifest(["flag1", "flag2", "flag3"]);
     const mockFeature = createMockFeature(true);
 
-    mockGetFeature.mockImplementation(({ key }) => {
+    mockGetFeature.mockImplementation((key: FeatureId) => {
       if (String(key) === "flag2") {
         throw new Error("Feature not found");
       }
@@ -136,6 +134,7 @@ describe("getFeatureFlagsForLiveApp", () => {
     const result = getFeatureFlagsForLiveApp({
       requestedFeatureFlagIds: ["flag1", "flag2", "flag3"],
       manifest,
+      getFeature: mockGetFeature,
     });
 
     expect(result).toEqual({
@@ -154,6 +153,7 @@ describe("getFeatureFlagsForLiveApp", () => {
     const result = getFeatureFlagsForLiveApp({
       requestedFeatureFlagIds: ["flag1", "flag2", "flag3", "flag4"],
       manifest,
+      getFeature: mockGetFeature,
     });
 
     expect(result).toEqual({

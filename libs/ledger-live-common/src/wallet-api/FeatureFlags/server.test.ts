@@ -1,6 +1,7 @@
 import { handlers } from "./server";
 import { getFeatureFlagsForLiveApp } from "./resolver";
 import { LiveAppManifest } from "../../platform/types";
+import { Feature, FeatureId } from "@ledgerhq/types-live";
 
 jest.mock("./resolver");
 
@@ -35,6 +36,8 @@ describe("FeatureFlags server handlers", () => {
     };
   };
 
+  const mockGetFeature = jest.fn<Feature | null, [FeatureId]>();
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -49,7 +52,7 @@ describe("FeatureFlags server handlers", () => {
 
       mockGetFeatureFlagsForLiveApp.mockReturnValue(mockFeatures);
 
-      const handlerInstance = handlers({ manifest, appLanguage: "en" });
+      const handlerInstance = handlers({ manifest, getFeature: mockGetFeature });
       // @ts-expect-error - customWrapper is mocked to simplify testing
       const result = handlerInstance["featureFlags.get"]({
         featureFlagIds: ["flag1", "flag2"],
@@ -59,7 +62,7 @@ describe("FeatureFlags server handlers", () => {
       expect(mockGetFeatureFlagsForLiveApp).toHaveBeenCalledWith({
         requestedFeatureFlagIds: ["flag1", "flag2"],
         manifest,
-        appLanguage: "en",
+        getFeature: mockGetFeature,
       });
     });
 
@@ -67,7 +70,7 @@ describe("FeatureFlags server handlers", () => {
       const manifest = createMockManifest();
       mockGetFeatureFlagsForLiveApp.mockReturnValue({});
 
-      const handlerInstance = handlers({ manifest });
+      const handlerInstance = handlers({ manifest, getFeature: mockGetFeature });
       // @ts-expect-error - customWrapper is mocked to simplify testing
       const result = handlerInstance["featureFlags.get"]({
         featureFlagIds: [],
@@ -77,7 +80,7 @@ describe("FeatureFlags server handlers", () => {
       expect(mockGetFeatureFlagsForLiveApp).toHaveBeenCalledWith({
         requestedFeatureFlagIds: [],
         manifest,
-        appLanguage: undefined,
+        getFeature: mockGetFeature,
       });
     });
 
@@ -85,7 +88,7 @@ describe("FeatureFlags server handlers", () => {
       const manifest = createMockManifest();
       mockGetFeatureFlagsForLiveApp.mockReturnValue({});
 
-      const handlerInstance = handlers({ manifest });
+      const handlerInstance = handlers({ manifest, getFeature: mockGetFeature });
       // @ts-expect-error - Testing runtime behavior with undefined params, customWrapper is mocked
       const result = handlerInstance["featureFlags.get"](undefined);
 
@@ -93,7 +96,7 @@ describe("FeatureFlags server handlers", () => {
       expect(mockGetFeatureFlagsForLiveApp).toHaveBeenCalledWith({
         requestedFeatureFlagIds: [],
         manifest,
-        appLanguage: undefined,
+        getFeature: mockGetFeature,
       });
     });
 
@@ -106,7 +109,7 @@ describe("FeatureFlags server handlers", () => {
 
       mockGetFeatureFlagsForLiveApp.mockReturnValue(mockFeatures);
 
-      const handlerInstance = handlers({ manifest });
+      const handlerInstance = handlers({ manifest, getFeature: mockGetFeature });
       // @ts-expect-error - customWrapper is mocked to simplify testing
       const result = handlerInstance["featureFlags.get"]({
         featureFlagIds: ["flag1", "flag2"],

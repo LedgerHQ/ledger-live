@@ -1,15 +1,16 @@
-import { getFeature } from "../../featureFlags/firebaseFeatureFlags";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { LiveAppManifest } from "../../platform/types";
+
+export type GetFeatureFn = (featureId: FeatureId) => Feature | null;
 
 export function getFeatureFlagsForLiveApp({
   requestedFeatureFlagIds,
   manifest,
-  appLanguage,
+  getFeature,
 }: {
   requestedFeatureFlagIds: string[];
   manifest: LiveAppManifest;
-  appLanguage?: string;
+  getFeature: GetFeatureFn;
 }): Record<string, Feature<unknown> | null> {
   // Check if wildcard is present - if so, allow all feature flags
   const manifestFeatureFlags = manifest.featureFlags;
@@ -32,11 +33,7 @@ export function getFeatureFlagsForLiveApp({
 
   for (const featureFlagId of featureFlagIdsToFetch) {
     try {
-      const feature = getFeature({
-        key: featureFlagId as FeatureId,
-        appLanguage,
-        allowOverride: true,
-      });
+      const feature = getFeature(featureFlagId as FeatureId);
       features[featureFlagId] = feature;
     } catch (_error) {
       // If feature doesn't exist or error occurs, set to null
