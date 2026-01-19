@@ -319,6 +319,9 @@ export class TokenAccount extends Account {
     Account.SOL_2.accountPath,
     TokenType.SPL,
     Account.SOL_2,
+    undefined,
+    undefined,
+    Addresses.SOL_GIGA_2_ATA_ADDRESS,
   );
   static readonly SOL_GIGA_3 = new TokenAccount(
     Currency.SOL_GIGA,
