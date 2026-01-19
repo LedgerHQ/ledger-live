@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
-import { Flex, Button as BaseButton, Text, Dropdown } from "@ledgerhq/react-ui";
+import { Flex, Dropdown } from "@ledgerhq/react-ui";
 import styled from "styled-components";
-import CounterValueSelect from "./components/CountervalueSelect";
-import SideDrawerFilter from "./components/SideDrawerFilter";
-import TrackPage from "~/renderer/analytics/TrackPage";
-import MarketList from "./MarketList";
 import { useMarket } from "LLD/features/Market/hooks/useMarket";
+import TrackPage from "~/renderer/analytics/TrackPage";
 import SearchInputComponent from "./components/SearchInputComponent";
-import { useMarketListVirtualization } from "./MarketList/useMarketListVirtualization";
+import SideDrawerFilter from "~/renderer/screens/market/components/SideDrawerFilter";
+import CounterValueSelect from "~/renderer/screens/market/components/CountervalueSelect";
+import { useMarketListVirtualization } from "~/renderer/screens/market/MarketList/useMarketListVirtualization";
+import PageHeader from "LLD/components/PageHeader";
+import { useNavigate } from "react-router";
+import MarketList from "./screens/MarketList";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -19,37 +21,13 @@ const Container = styled(Flex).attrs({
   mx: -1,
 })``;
 
-export const Button = styled(BaseButton)<{ big?: boolean }>`
-  ${p =>
-    p.Icon
-      ? `
-      height: 40px;
-      width: 40px;
-      `
-      : `
-          font-size:  ${p.big ? 14 : 12}px;
-          height: ${p.big ? 48 : 32}px;
-          line-height: ${p.big ? 48 : 32}px;
-          padding: 0 ${p.big ? 25 : 15}px;
-      `}
-
-  ${p =>
-    p.variant === "shade"
-      ? `background-color: transparent!important;border-color: currentColor;`
-      : ``}
-`;
-
-const Title = styled(Text).attrs({ variant: "h3" })`
-  font-size: 28px;
-  line-height: 33px;
-`;
-
 const SelectBarContainer = styled(Flex)`
   font-size: 13px;
 `;
 
 export default function Market() {
   const marketData = useMarket();
+  const navigate = useNavigate();
   const {
     refresh,
     setCounterCurrency,
@@ -105,7 +83,8 @@ export default function Market() {
         timeframe={range}
         countervalue={counterCurrency}
       />
-      <Title>{t("market.title")}</Title>
+      <PageHeader title={t("market.title")} onBack={() => navigate("/")} />
+
       <Flex flexDirection="row" pr="6px" my={2} alignItems="center" justifyContent="space-between">
         <SearchInputComponent search={search} updateSearch={updateSearch} />
         <SelectBarContainer flexDirection="row" alignItems="center" justifyContent="flex-end">

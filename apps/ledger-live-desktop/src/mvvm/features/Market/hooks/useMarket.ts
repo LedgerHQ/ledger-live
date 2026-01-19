@@ -12,7 +12,12 @@ import { setMarketCurrentPage, setMarketOptions } from "~/renderer/actions/marke
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
 import { marketCurrentPageSelector, marketParamsSelector } from "~/renderer/reducers/market";
 import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
-import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE, getCurrentPage, isDataStale } from "../utils";
+import {
+  BASIC_REFETCH,
+  REFETCH_TIME_ONE_MINUTE,
+  getCurrentPage,
+  isDataStale,
+} from "~/renderer/screens/market/utils";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
 
 export function useMarket() {

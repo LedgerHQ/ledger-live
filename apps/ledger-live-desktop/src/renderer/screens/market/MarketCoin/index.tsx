@@ -8,7 +8,7 @@ import styled from "styled-components";
 import { Button } from "..";
 import MarketCoinChart from "./components/MarketCoinChart";
 import MarketInfo from "./components/MarketInfo";
-import { useMarketCoin } from "~/renderer/screens/market/hooks/useMarketCoin";
+import { useMarketCoin } from "LLD/features/Market/hooks/useMarketCoin";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 

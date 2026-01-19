@@ -5,7 +5,7 @@ import Text from "~/renderer/components/Text";
 import { Separator, TextLink } from "./common";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useTranslation } from "react-i18next";
-import { useMarketCoin } from "~/renderer/screens/market/hooks/useMarketCoin";
+import { useMarketCoin } from "LLD/features/Market/hooks/useMarketCoin";
 
 export default function MarketCrumb() {
   const { t } = useTranslation();

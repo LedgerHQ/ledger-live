@@ -77,8 +77,9 @@ const Earn = lazy(() => import("~/renderer/screens/earn"));
 const Bank = lazy(() => import("~/renderer/screens/bank"));
 const SwapWeb = lazy(() => import("~/renderer/screens/swapWeb"));
 const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
-
+const Market40 = lazy(() => import("LLD/features/Market"));
 const Market = lazy(() => import("~/renderer/screens/market"));
+
 const MarketCoin = lazy(() => import("~/renderer/screens/market/MarketCoin"));
 const WelcomeScreenSettings = lazy(
   () => import("~/renderer/screens/settings/WelcomeScreenSettings"),
@@ -202,6 +203,9 @@ const RecoverPlayerWithFeatureToggle = () => {
 
 // Main app layout component that handles the main navigation after onboarding
 const MainAppLayout = () => {
+  const lwdWallet40FF = useFeature("lwdWallet40");
+  const isMarket40Enabled = lwdWallet40FF?.enabled && lwdWallet40FF?.params?.marketBanner;
+
   return (
     <>
       <IsNewVersion />
@@ -246,7 +250,10 @@ const MainAppLayout = () => {
             <Route path="/asset/*" element={withSuspense(Asset)({})} />
             <Route path="/swap/*" element={withSuspense(Swap2)({})} />
             <Route path="/market/:currencyId" element={withSuspense(MarketCoin)({})} />
-            <Route path="/market" element={withSuspense(Market)({})} />
+            <Route
+              path="/market"
+              element={withSuspense(isMarket40Enabled ? Market40 : Market)({})}
+            />
             <Route path="/bank/*" element={withSuspense(Bank)({})} />
           </Routes>
         </Page>
