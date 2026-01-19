@@ -5,7 +5,7 @@ import CounterValueSelect from "./components/CountervalueSelect";
 import SideDrawerFilter from "./components/SideDrawerFilter";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import MarketList from "./MarketList";
-import { useMarket } from "./hooks/useMarket";
+import { useMarket } from "LLD/features/Market/hooks/useMarket";
 import SearchInputComponent from "./components/SearchInputComponent";
 import { useMarketListVirtualization } from "./MarketList/useMarketListVirtualization";
 

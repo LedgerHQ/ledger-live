@@ -7,7 +7,7 @@ import { MarketCoinPage } from "../../page/market.coin.page";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 
-test.use({ userdata: "skip-onboarding" });
+test.use({ userdata: "skip-onboarding", featureFlags: { lwdWallet40: { enabled: false } } });
 
 let testServerIsRunning = false;
 

@@ -28,7 +28,7 @@ const MarketTile = ({ item, index, range, onPress }: MarketTileProps) => {
     <Tile
       appearance="card"
       onPress={handlePress}
-      lx={{ width: "s96", flexShrink: 0, marginRight: "s8" }}
+      lx={{ width: "s96", flexGrow: 1, marginRight: "s8" }}
       testID={`market-banner-tile-${index}`}
       accessibilityLabel={accessibilityLabel}
       accessibilityHint={t("marketBanner.tile.accessibilityHint")}

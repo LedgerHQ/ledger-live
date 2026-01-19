@@ -1555,6 +1555,7 @@
     "currency": "Currency",
     "rangeLabel": "Time",
     "goBack": "Go back",
+    "searchPlaceholder": "Search asset",
     "filters": {
       "title": "Filters",
       "show": "Show",
@@ -2405,6 +2406,10 @@
     "gasOptionsSync": {
       "warningTitle": "Unable to refresh network fees",
       "warningDescription": "Fee presets may be outdated."
+    },
+    "sign": {
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instructions displayed on your Secure Touchscreen."
     }
   },
   "releaseNotes": {
@@ -4711,6 +4716,8 @@
       "runLocalAppOpenButton": "Open",
       "enableLearnStagingUrl": "Learn page staging URL",
       "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
+      "enableCountervaluesStaging": "Countervalues API staging",
+      "enableCountervaluesStagingDesc": "Use the staging countervalues API instead of production.",
       "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
       "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
     },
@@ -6830,6 +6837,10 @@
       "title": "Cardano invalid protocol parameters",
       "description": "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
     },
+    "CardanoMemoExceededSizeError": {
+      "title": "Invalid memo size, maximum allowed is 64 characters",
+      "description": "Cardano memo have a maximum limited size. Please reduce the size of the memo"
+    },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },
@@ -6903,8 +6914,9 @@
     "HederaNoStakingRewardsError": {
       "title": "No rewards to claim"
     },
-    "HederaMemoIsTooLong": {
-      "title": "Memo is too long. Max length is {{maxLength}} characters"
+    "HederaMemoExceededSizeError": {
+      "title": "Invalid memo size, maximum allowed is 100 characters",
+      "description": "Hedera memo have a maximum limited size. Please reduce the size of the memo"
     },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",
@@ -7856,7 +7868,8 @@
   },
   "marketBanner": {
     "title": "Explore market",
-    "genericError": "Connection failed"
+    "genericError": "Connection failed",
+    "cta": "View all"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",

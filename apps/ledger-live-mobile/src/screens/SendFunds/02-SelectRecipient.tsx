@@ -250,6 +250,7 @@ export default function SendSelectRecipient({ route }: Props) {
     !!status.errors.recipient ||
     memoTag?.isDebouncePending ||
     !!memoTag?.error ||
+    !!status.errors.transaction ||
     !!status.errors.sender;
 
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
@@ -377,9 +378,10 @@ export default function SendSelectRecipient({ route }: Props) {
                   placeholder={t("send.summary.memo.title")}
                   autoFocus={focusMemoInput}
                   onChange={memoTag.handleChange}
+                  error={status.errors.transaction?.name}
                 />
                 <Text mt={4} pl={2} color="alert">
-                  <TranslatedError error={memoTag.error} />
+                  <TranslatedError error={status.errors.transaction} />
                 </Text>
               </View>
             )}

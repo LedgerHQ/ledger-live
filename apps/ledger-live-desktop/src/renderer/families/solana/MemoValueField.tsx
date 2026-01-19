@@ -49,7 +49,7 @@ const MemoValueField = ({ onChange, account, transaction, status, autoFocus }: P
   return transaction.model.kind === "transfer" || transaction.model.kind === "token.transfer" ? (
     <InputField
       warning={status.warnings.memo}
-      error={status.errors.memo}
+      error={status.errors.transaction ?? status.errors.memo}
       value={transaction.model.uiState.memo || ""}
       onChange={onMemoValueChange}
       placeholder={t(

@@ -773,12 +773,16 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       marketBanner: true,
+      graphRework: true,
+      quickActionCtas: true,
     },
   },
   lwdWallet40: {
     ...DEFAULT_FEATURE,
     params: {
       marketBanner: true,
+      graphRework: true,
+      quickActionCtas: true,
     },
   },
 };

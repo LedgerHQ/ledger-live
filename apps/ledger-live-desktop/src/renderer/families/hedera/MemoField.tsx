@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { MEMO_CHARACTER_LIMIT } from "@ledgerhq/live-common/families/hedera/constants";
+import { HEDERA_MAX_MEMO_SIZE } from "@ledgerhq/live-common/families/hedera/constants";
 import { track } from "~/renderer/analytics/segment";
 import { SendAmountProps } from "./types";
 import Text from "~/renderer/components/Text";
@@ -40,17 +40,17 @@ const MemoField = ({
 
   return (
     <MemoTagField
-      maxLength={MEMO_CHARACTER_LIMIT}
-      error={status.errors.memo}
+      maxLength={HEDERA_MAX_MEMO_SIZE}
       value={transaction.memo ?? ""}
       onChange={onMemoChange}
+      error={status.errors.transaction}
       CaracterCountComponent={() => (
         <Text fontSize={3}>
           <Trans
             i18nKey="hedera.send.memo.characterCount"
             values={{
               memoLength,
-              memoMaxLength: MEMO_CHARACTER_LIMIT,
+              memoMaxLength: HEDERA_MAX_MEMO_SIZE,
             }}
           />
         </Text>

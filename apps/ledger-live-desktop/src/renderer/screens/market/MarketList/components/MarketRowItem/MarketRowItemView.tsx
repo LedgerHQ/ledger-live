@@ -1,111 +1,43 @@
-import React, { useCallback, memo } from "react";
-import { useNavigate } from "react-router";
-import styled from "styled-components";
-import { Flex, Text, Icon, Tooltip, Box } from "@ledgerhq/react-ui";
+import React, { memo } from "react";
+import { Flex, Text, Icon, Tooltip } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
-import { SmallMarketItemChart } from "./MarketItemChart";
-import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { Button } from "../..";
-import { useTranslation } from "react-i18next";
-import { TableRow, TableCell } from "../../components/Table";
-import { Page, useMarketActions } from "../../hooks/useMarketActions";
-import { formatPercentage, formatPrice } from "../../utils";
-import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
+import { SmallMarketItemChart } from "../MarketItemChart";
+import { Button } from "../../..";
+import { TableRow, TableCell, TablePlaceholder } from "../../../components/Table";
+import { formatPercentage, formatPrice } from "../../../utils";
+import {
+  CryptoCurrencyIconWrapper,
+  EllipsisText,
+  TooltipContainer,
+} from "LLD/features/Market/components/MarketRowItem/styles";
+import { MarketRowItemViewProps } from "LLD/features/Market/components/MarketRowItem/types";
 
-const CryptoCurrencyIconWrapper = styled.div`
-  height: 32px;
-  width: 32px;
-  position: relative;
-  border-radius: 32px;
-  overflow: hidden;
-  img {
-    object-fit: cover;
-  }
-`;
-
-const EllipsisText = styled(Text)`
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const TooltipContainer = styled(Box)`
-  background-color: ${({ theme }) => theme.colors.neutral.c100};
-  padding: 10px;
-  border-radius: 4px;
-  display: flex;
-  gap: 8px;
-`;
-
-type MarketRowItemProps = {
-  currency?: MarketCurrencyData | null;
-  counterCurrency?: string;
-  style: React.CSSProperties;
-  loading: boolean;
-  locale: string;
-  isStarred: boolean;
-  toggleStar: () => void;
-  range?: string;
-};
-
-export const MarketRowItem = memo<MarketRowItemProps>(function MarketRowItem({
+export const MarketRowItemView = memo<MarketRowItemViewProps>(function MarketRowItemView({
   style,
+  loading,
   currency,
   counterCurrency,
   locale,
-  loading,
   isStarred,
-  toggleStar,
-  range,
-}: MarketRowItemProps) {
-  const navigate = useNavigate();
-  const { t } = useTranslation();
-
-  const { onBuy, onStake, onSwap, availableOnBuy, availableOnSwap, availableOnStake } =
-    useMarketActions({ currency, page: Page.Market });
-  const earnStakeLabelCoin = useGetStakeLabelLocaleBased();
-
-  const onCurrencyClick = useCallback(() => {
-    if (currency) {
-      setTrackingSource("Page Market");
-      navigate(`/market/${currency.id}`, {
-        state: currency,
-      });
-    }
-  }, [currency, navigate]);
-
-  const onStarClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-      toggleStar();
-    },
-    [toggleStar],
-  );
-
-  const hasActions =
-    currency?.ledgerIds &&
-    currency?.ledgerIds.length > 0 &&
-    (availableOnBuy || availableOnSwap || availableOnStake);
-
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
-
+  hasActions,
+  currentPriceChangePercentage,
+  earnStakeLabelCoin,
+  availableOnBuy,
+  availableOnSwap,
+  availableOnStake,
+  buyLabel,
+  swapLabel,
+  onCurrencyClick,
+  onStarClick,
+  onBuy,
+  onSwap,
+  onStake,
+}: MarketRowItemViewProps) {
   return (
     <div style={{ ...style }}>
       {loading || !currency ? (
-        <TableRow disabled>
-          <TableCell loading />
-          <TableCell loading />
-          <TableCell loading />
-          <TableCell loading />
-          <TableCell loading />
-          <TableCell loading />
-          <TableCell loading />
-        </TableRow>
+        <TablePlaceholder size={7} />
       ) : (
         <TableRow
           data-testid={`market-${currency?.ticker}-row`}
@@ -146,7 +78,7 @@ export const MarketRowItem = memo<MarketRowItemProps>(function MarketRowItem({
                     mr={1}
                     onClick={onBuy}
                   >
-                    {t("accounts.contextMenu.buy")}
+                    {buyLabel}
                   </Button>
                 )}
                 {availableOnSwap && (
@@ -156,14 +88,14 @@ export const MarketRowItem = memo<MarketRowItemProps>(function MarketRowItem({
                     mr={1}
                     onClick={onSwap}
                   >
-                    {t("accounts.contextMenu.swap")}
+                    {swapLabel}
                   </Button>
                 )}
                 {availableOnStake && (
                   <Button
                     data-testid={`market-${currency?.ticker}-stake-button`}
                     variant="color"
-                    onClick={e => onStake(e)}
+                    onClick={onStake}
                   >
                     {earnStakeLabelCoin}
                   </Button>

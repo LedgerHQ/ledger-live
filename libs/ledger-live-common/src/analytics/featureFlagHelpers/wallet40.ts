@@ -18,5 +18,7 @@ export const getWallet40Attributes = (
   return {
     isEnabled,
     marketBanner: wallet40FeatureFlag?.params?.marketBanner ?? false,
+    graphRework: wallet40FeatureFlag?.params?.graphRework ?? false,
+    quickActionCtas: wallet40FeatureFlag?.params?.quickActionCtas ?? false,
   };
 };

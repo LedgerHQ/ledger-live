@@ -13,7 +13,6 @@ import Animated, {
 import { SkeletonTileProps } from "../../types";
 
 const SKELETON_TILE_WIDTH = 96;
-const SKELETON_TILE_HEIGHT = 110;
 const ANIMATION_DURATION = 800;
 const STAGGER_DELAY = 100;
 
@@ -69,7 +68,7 @@ const SkeletonTile = ({ index }: SkeletonTileProps) => {
 const styles = StyleSheet.create({
   container: {
     width: SKELETON_TILE_WIDTH,
-    height: SKELETON_TILE_HEIGHT,
+    flexGrow: 1,
     borderRadius: 12,
     padding: 12,
     marginRight: 8,
