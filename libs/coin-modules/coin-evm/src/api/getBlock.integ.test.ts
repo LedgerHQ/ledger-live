@@ -59,7 +59,6 @@ describe("getBlock ERC20 transfers", () => {
       const tx = block.transactions.find(
         t => t.hash === "0x23f9232e929f9a13f4f2d6d4e9bf27d717a2b1250d207c030fc66565c4e205e1",
       );
-      expect(tx).toBeDefined();
 
       // Find ERC20 transfer operation for the expected token
       const tokenOps = tx!.operations.filter(
@@ -117,7 +116,6 @@ describe("getBlock ERC20 transfers", () => {
       const tx = block.transactions.find(
         t => t.hash === "0x4f5c5d2dd2c36da64401aa654fd92db9d1ddcf2fedba6428f5f9eb7075a2fa78",
       );
-      expect(tx).toBeDefined();
 
       // Find ERC20 transfer operation for the expected token
       const tokenOps = tx!.operations.filter(
