@@ -3,7 +3,9 @@ import type { ComponentProps } from "react";
 import i18next from "i18next";
 import {
   initReactI18next,
+  // eslint-disable-next-line no-restricted-imports
   useTranslation as useReactI18nextTranslation,
+  // eslint-disable-next-line no-restricted-imports
   Trans as ReactI18nextTrans,
 } from "react-i18next";
 import type { TFunction } from "i18next";
