@@ -184,11 +184,12 @@ describe("RecentAddressesStore", () => {
     const legacyAddress2 = "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1";
     const modernAddress = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0";
     const modernTimestamp = 1234567890;
+    const modernEnsName = "vitalik.eth";
 
     const legacyCache: any = {
       ethereum: [
         legacyAddress1,
-        { address: modernAddress, lastUsed: modernTimestamp },
+        { address: modernAddress, lastUsed: modernTimestamp, ensName: modernEnsName },
         legacyAddress2,
       ],
     };
@@ -196,10 +197,26 @@ describe("RecentAddressesStore", () => {
     setupRecentAddressesStore(legacyCache, onAddAddressCompleteMock);
     store = getRecentAddressesStore();
 
-    const addresses = store.getAddresses("ethereum").map(entry => entry.address);
+    const addresses = store.getAddresses("ethereum");
 
-    // Order should be preserved: legacy1, modern, legacy2
-    expect(addresses).toEqual([legacyAddress1, modernAddress, legacyAddress2]);
+    expect(addresses).toHaveLength(3);
+    expect(addresses[0]).toMatchObject({
+      address: legacyAddress1,
+      ensName: undefined,
+    });
+    expect(addresses[0].lastUsed).toBeDefined();
+
+    expect(addresses[1]).toMatchObject({
+      address: modernAddress,
+      lastUsed: modernTimestamp,
+      ensName: modernEnsName,
+    });
+
+    expect(addresses[2]).toMatchObject({
+      address: legacyAddress2,
+      ensName: undefined,
+    });
+    expect(addresses[2].lastUsed).toBeDefined();
   });
 
   it("should save and retrieve ensName when provided", async () => {
@@ -230,5 +247,261 @@ describe("RecentAddressesStore", () => {
         ensName: undefined,
       }),
     );
+  });
+
+  it("should handle corrupted nested address structure with index", async () => {
+    const address1 = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
+    const timestamp1 = 1768235334651;
+
+    const corruptedCache: any = {
+      ethereum: [
+        {
+          address: {
+            address: address1,
+            lastUsed: timestamp1,
+          },
+          index: 0,
+        },
+      ],
+    };
+
+    setupRecentAddressesStore(corruptedCache, onAddAddressCompleteMock);
+    store = getRecentAddressesStore();
+
+    const addresses = store.getAddresses("ethereum");
+
+    expect(addresses).toHaveLength(1);
+    expect(addresses[0]).toMatchObject({
+      address: address1,
+      lastUsed: timestamp1,
+      ensName: undefined,
+    });
+  });
+
+  it("should handle corrupted nested address structure without timestamp", async () => {
+    const address1 = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
+
+    const corruptedCache: any = {
+      ethereum: [
+        {
+          address: {
+            address: address1,
+          },
+          index: 5,
+        },
+      ],
+    };
+
+    setupRecentAddressesStore(corruptedCache, onAddAddressCompleteMock);
+    store = getRecentAddressesStore();
+
+    const addresses = store.getAddresses("ethereum");
+
+    expect(addresses).toHaveLength(1);
+    expect(addresses[0]).toMatchObject({
+      address: address1,
+      ensName: undefined,
+    });
+    expect(addresses[0].lastUsed).toBeDefined();
+  });
+
+  it("should handle corrupted nested address structure with ensName", async () => {
+    const address1 = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
+    const timestamp1 = 1768235334651;
+    const ensName = "example.eth";
+
+    const corruptedCache: any = {
+      ethereum: [
+        {
+          address: {
+            address: address1,
+            lastUsed: timestamp1,
+            ensName,
+          },
+        },
+      ],
+    };
+
+    setupRecentAddressesStore(corruptedCache, onAddAddressCompleteMock);
+    store = getRecentAddressesStore();
+
+    const addresses = store.getAddresses("ethereum");
+
+    expect(addresses).toHaveLength(1);
+    expect(addresses[0]).toMatchObject({
+      address: address1,
+      lastUsed: timestamp1,
+      ensName,
+    });
+  });
+
+  it("should handle multiple corrupted formats in same cache", async () => {
+    const legacyString = "0x1111111111111111111111111111111111111111";
+    const validAddress = "0x2222222222222222222222222222222222222222";
+    const corruptedAddress1 = "0x3333333333333333333333333333333333333333";
+    const corruptedAddress2 = "0x4444444444444444444444444444444444444444";
+
+    const mixedCache: any = {
+      ethereum: [
+        legacyString,
+        { address: validAddress, lastUsed: 1000000, ensName: "valid.eth" },
+        {
+          address: {
+            address: corruptedAddress1,
+            lastUsed: 2000000,
+          },
+          index: 0,
+        },
+        {
+          address: {
+            address: corruptedAddress2,
+            ensName: "corrupted.eth",
+          },
+        },
+      ],
+    };
+
+    setupRecentAddressesStore(mixedCache, onAddAddressCompleteMock);
+    store = getRecentAddressesStore();
+
+    const addresses = store.getAddresses("ethereum");
+
+    expect(addresses).toHaveLength(4);
+    expect(addresses[0]).toMatchObject({ address: legacyString, ensName: undefined });
+    expect(addresses[1]).toMatchObject({
+      address: validAddress,
+      lastUsed: 1000000,
+      ensName: "valid.eth",
+    });
+    expect(addresses[2]).toMatchObject({
+      address: corruptedAddress1,
+      lastUsed: 2000000,
+      ensName: undefined,
+    });
+    expect(addresses[3]).toMatchObject({
+      address: corruptedAddress2,
+      ensName: "corrupted.eth",
+    });
+    expect(addresses[3].lastUsed).toBeDefined();
+  });
+
+  it("should filter out invalid entries", async () => {
+    const validAddress = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
+    const corruptedAddress = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E4CORRUPTED";
+
+    const mixedCache: any = {
+      ethereum: [
+        { address: validAddress, lastUsed: Date.now() },
+        {
+          address: {
+            address: corruptedAddress,
+            lastUsed: 1768235334651,
+          },
+        },
+        null,
+        undefined,
+        { address: "", lastUsed: Date.now() },
+        { invalidKey: "value" },
+        { address: null },
+        { lastUsed: 123456789 },
+        {},
+        [],
+        42,
+        true,
+        false,
+      ],
+    };
+
+    setupRecentAddressesStore(mixedCache, onAddAddressCompleteMock);
+    store = getRecentAddressesStore();
+
+    const addresses = store.getAddresses("ethereum");
+
+    expect(addresses).toHaveLength(2);
+    expect(addresses[0]).toMatchObject({ address: validAddress });
+    expect(addresses[1]).toMatchObject({
+      address: corruptedAddress,
+      lastUsed: 1768235334651,
+    });
+  });
+
+  it("should handle empty arrays and undefined currencies", async () => {
+    const cache: any = {
+      ethereum: [],
+      bitcoin: undefined,
+      polygon: null,
+    };
+
+    setupRecentAddressesStore(cache, onAddAddressCompleteMock);
+    store = getRecentAddressesStore();
+
+    expect(store.getAddresses("ethereum")).toEqual([]);
+    expect(store.getAddresses("bitcoin")).toEqual([]);
+    expect(store.getAddresses("polygon")).toEqual([]);
+    expect(store.getAddresses("nonexistent")).toEqual([]);
+  });
+
+  it("should sanitize deeply nested corrupted structures", async () => {
+    const address1 = "0x1111111111111111111111111111111111111111";
+
+    const deeplyCorruptedCache: any = {
+      ethereum: [
+        {
+          address: {
+            address: {
+              address: address1,
+            },
+          },
+        },
+      ],
+    };
+
+    setupRecentAddressesStore(deeplyCorruptedCache, onAddAddressCompleteMock);
+    store = getRecentAddressesStore();
+
+    const addresses = store.getAddresses("ethereum");
+
+    // Should filter out invalid deeply nested structure
+    expect(addresses).toHaveLength(0);
+  });
+
+  it("should preserve order when sanitizing mixed formats", async () => {
+    const addr1 = "0x1111111111111111111111111111111111111111";
+    const addr2 = "0x2222222222222222222222222222222222222222";
+    const addr3 = "0x3333333333333333333333333333333333333333";
+    const addr4 = "0x4444444444444444444444444444444444444444";
+
+    const cache: any = {
+      ethereum: [
+        addr1,
+        {
+          address: {
+            address: addr2,
+            lastUsed: 2000,
+          },
+        },
+        { address: addr3, lastUsed: 3000, ensName: "three.eth" },
+        {
+          address: {
+            address: addr4,
+            lastUsed: 4000,
+            ensName: "four.eth",
+          },
+          index: 3,
+        },
+      ],
+    };
+
+    setupRecentAddressesStore(cache, onAddAddressCompleteMock);
+    store = getRecentAddressesStore();
+
+    const addresses = store.getAddresses("ethereum");
+
+    expect(addresses).toHaveLength(4);
+    expect(addresses.map(a => a.address)).toEqual([addr1, addr2, addr3, addr4]);
+    expect(addresses[0]).toMatchObject({ address: addr1, ensName: undefined });
+    expect(addresses[1]).toMatchObject({ address: addr2, lastUsed: 2000, ensName: undefined });
+    expect(addresses[2]).toMatchObject({ address: addr3, lastUsed: 3000, ensName: "three.eth" });
+    expect(addresses[3]).toMatchObject({ address: addr4, lastUsed: 4000, ensName: "four.eth" });
   });
 });
