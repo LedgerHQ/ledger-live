@@ -26,6 +26,7 @@ import {
   getUnimportedAccounts,
 } from "./utils/processAccounts";
 import { useCantonCreatableAccounts } from "./hooks/useCantonCreatableAccounts";
+import { useConcordiumCreatableAccounts } from "./hooks/useConcordiumCreatableAccounts";
 
 const selectImportable = (importable: Account[]) => (selected: string[]) => {
   const importableIds = importable.map(a => a.id);
@@ -166,6 +167,12 @@ export function useScanAccounts({
       selectedIds: filteredSelectedIds,
     });
 
+  const { hasConcordiumCreatableAccounts, selectedConcordiumCreatableAccounts } =
+    useConcordiumCreatableAccounts({
+      scannedAccounts,
+      selectedIds: filteredSelectedIds,
+    });
+
   const handleConfirm = useCallback(() => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
       button: "Confirm",
@@ -181,6 +188,22 @@ export function useScanAccounts({
           currency,
           device,
           selectedAccounts: selectedCantonCreatableAccounts,
+          existingAccounts: existingAccounts,
+          editedNames: {},
+        }),
+      );
+
+      return;
+    }
+
+    if (hasConcordiumCreatableAccounts) {
+      setDrawer();
+
+      dispatch(
+        openModal("MODAL_CONCORDIUM_ONBOARD_ACCOUNT", {
+          currency,
+          device,
+          selectedAccounts: selectedConcordiumCreatableAccounts,
           existingAccounts: existingAccounts,
           editedNames: {},
         }),
@@ -211,6 +234,8 @@ export function useScanAccounts({
     device,
     hasCantonCreatableAccounts,
     selectedCantonCreatableAccounts,
+    hasConcordiumCreatableAccounts,
+    selectedConcordiumCreatableAccounts,
     filteredSelectedIds,
     scannedAccounts,
   ]);
