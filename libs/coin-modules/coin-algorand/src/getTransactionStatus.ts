@@ -16,16 +16,12 @@ import {
 import type { AccountBridge } from "@ledgerhq/types-live";
 
 import { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
-import { AlgorandASANotOptInInRecipient } from "./errors";
+import { AlgorandASANotOptInInRecipient, AlgorandMemoExceededSizeError } from "./errors";
 
-import {
-  ALGORAND_MAX_MEMO_SIZE,
-  computeAlgoMaxSpendable,
-  isAmountValid,
-  recipientHasAsset,
-} from "./logic";
+import { computeAlgoMaxSpendable, isAmountValid, recipientHasAsset } from "./logic";
 import { extractTokenId } from "./tokens";
 import type { AlgorandAccount, Transaction, TransactionStatus } from "./types";
+import { validateMemo } from "./logic/validateMemo";
 
 /*
  * Here are the list of the differents things we check
@@ -160,8 +156,8 @@ export const getTransactionStatus: AccountBridge<
     }
   }
 
-  if (transaction.memo && transaction.memo.length > ALGORAND_MAX_MEMO_SIZE) {
-    throw new Error("Memo is too long");
+  if (!validateMemo(transaction.memo)) {
+    errors.transaction = new AlgorandMemoExceededSizeError();
   }
 
   return {
