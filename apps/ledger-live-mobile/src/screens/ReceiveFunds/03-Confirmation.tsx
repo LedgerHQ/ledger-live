@@ -195,11 +195,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     });
   }, [network, currency?.name]);
 
-  useEffect(() => {
-    if (verified || !isModalOpened) {
-      triggerSuccessEvent();
-    }
-  }, [verified, isModalOpened, triggerSuccessEvent]);
   const freshAccountAddress = useMemo(() => {
     return mainAccount && getFreshAccountAddress(mainAccount);
   }, [mainAccount]);

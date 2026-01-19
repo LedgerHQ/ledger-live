@@ -20,9 +20,17 @@ type Props = {
     testID?: string;
   };
   analyticsPage: string;
+  testID?: string;
 };
 
-export function Success({ title, desc, mainButton, secondaryButton, analyticsPage }: Props) {
+export function Success({
+  title,
+  desc,
+  mainButton,
+  secondaryButton,
+  analyticsPage,
+  testID,
+}: Props) {
   const { colors } = useTheme();
   const ledgerSyncOptimisationFlag = useFeature("lwmLedgerSyncOptimisation");
   return (
@@ -48,7 +56,13 @@ export function Success({ title, desc, mainButton, secondaryButton, analyticsPag
           <Container borderRadius={50}>
             <Icons.CheckmarkCircleFill size={"L"} color={colors.success.c60} />
           </Container>
-          <Text variant="h4" color="neutral.c100" textAlign="center" fontWeight="semiBold">
+          <Text
+            variant="h4"
+            color="neutral.c100"
+            textAlign="center"
+            fontWeight="semiBold"
+            testID={testID}
+          >
             {title}
           </Text>
           <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">

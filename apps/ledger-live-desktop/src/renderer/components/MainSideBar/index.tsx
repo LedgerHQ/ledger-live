@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
-import { Link, useHistory, useLocation, PromptProps } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import { useDeviceHasUpdatesAvailable } from "@ledgerhq/live-common/manager/useDeviceHasUpdatesAvailable";
@@ -27,7 +27,6 @@ import Space from "~/renderer/components/Space";
 import UpdateDot from "~/renderer/components/Updater/UpdateDot";
 import { Dot } from "~/renderer/components/Dot";
 import Stars from "~/renderer/components/Stars";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { BAANX_APP_ID } from "~/renderer/screens/card/CardPlatformApp";
 import TopGradient from "./TopGradient";
 import Hide from "./Hide";
@@ -37,7 +36,7 @@ import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLo
 import RecoverStatusDot from "~/renderer/components/MainSideBar/RecoverStatusDot";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 
-type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
+type LocationType = ReturnType<typeof useLocation>;
 
 const MAIN_SIDEBAR_WIDTH = 230;
 
@@ -190,10 +189,9 @@ const SideBarScrollContainer = styled(Box)`
 
 const TagContainerExperimental = ({ collapsed }: { collapsed: boolean }) => {
   const isExperimental = useExperimental();
-  const hasFullNodeConfigured = useEnv("SATSTACK"); // NB remove once full node is not experimental
 
   const { t } = useTranslation();
-  return isExperimental || hasFullNodeConfigured ? (
+  return isExperimental ? (
     <Tag
       data-testid="drawer-experimental-button"
       to={{
@@ -213,12 +211,7 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
   return isFeatureFlagsButtonVisible || Object.keys(overriddenFeatureFlags).length !== 0 ? (
     <Tag
       data-testid="drawer-feature-flags-button"
-      to={{
-        pathname: "/settings/developer",
-        state: {
-          shouldOpenFeatureFlags: true,
-        },
-      }}
+      to="/settings/developer"
       onClick={() => setTrackingSource("sidebar")}
     >
       <Icons.Switch2 size="S" color="primary.c80" />
@@ -228,11 +221,11 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
 };
 
 // Check if the selected tab is a Live-App under discovery tab
-const checkLiveAppTabSelection = (location: Location, liveAppPaths: Array<string>) =>
+const checkLiveAppTabSelection = (location: LocationType, liveAppPaths: Array<string>) =>
   liveAppPaths.find((liveTab: string) => location?.pathname?.includes(liveTab));
 
 const MainSideBar = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -259,22 +252,20 @@ const MainSideBar = () => {
     (pathname: string) => {
       if (location.pathname === pathname) return;
       setTrackingSource("sidebar");
-      history.push({
-        pathname,
-      });
+      navigate(pathname);
     },
-    [history, location.pathname],
+    [navigate, location.pathname],
   );
 
   const trackEntry = useCallback(
     (entry: string, flagged = false) => {
       track("menuentry_clicked", {
         entry,
-        page: history.location.pathname,
+        page: location.pathname,
         flagged,
       });
     },
-    [history.location.pathname],
+    [location.pathname],
   );
   const handleClickCard = useCallback(() => {
     push("/card");
@@ -337,7 +328,7 @@ const MainSideBar = () => {
     const liveAppId = recoverFeature?.params?.protectId;
 
     if (enabled && openRecoverFromSidebar && liveAppId && recoverHomePath) {
-      history.push(recoverHomePath);
+      navigate(recoverHomePath);
     } else if (enabled) {
       dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
     }
@@ -349,7 +340,7 @@ const MainSideBar = () => {
     recoverFeature?.params?.openRecoverFromSidebar,
     recoverFeature?.params?.protectId,
     recoverHomePath,
-    history,
+    navigate,
     dispatch,
   ]);
 

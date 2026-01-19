@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -18,7 +18,6 @@ import { SeedPathStatus } from "LLD/features/Onboarding/screens/SyncOnboardingCo
 import { analyticsFlowName } from "../shared";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-desktop";
-import { RecoverState } from "~/renderer/screens/recover/Player";
 import { trackPage } from "~/renderer/analytics/segment";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -86,7 +85,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   setCompanionStep,
 }) => {
   const { t } = useTranslation();
-  const history = useHistory<RecoverState>();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const isSyncIncr1Enabled = useFeature("lldSyncOnboardingIncr1")?.enabled || false;
   const servicesConfig = useFeature("protectServicesDesktop");
@@ -162,13 +161,12 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const [steps, setSteps] = useState<Step[]>(companionSteps.defaultSteps);
 
   const handleDeviceReady = useCallback(() => {
-    history.push({
-      pathname: "/onboarding/sync/completion",
+    navigate("/onboarding/sync/completion", {
       state: {
         seedConfiguration: analyticsSeedConfiguration.current,
       },
     });
-  }, [history]);
+  }, [navigate]);
 
   const handleDesyncTimerRunsOut = useCallback(() => {
     setIsDesyncOverlayOpen(false);
@@ -252,7 +250,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       );
     }
     return () => setDrawer();
-  }, [device.modelId, history, lockedDevice]);
+  }, [device.modelId, navigate, lockedDevice]);
 
   const seededDeviceHandled = useRef(false);
 
@@ -458,13 +456,11 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     if (seedPathStatus === "recover_seed" && recoverRestoreStaxPath) {
       const [pathname, search] = recoverRestoreStaxPath.split("?");
 
-      history.push({
-        pathname,
-        search: search ? `?${search}` : undefined,
+      navigate(`${pathname}${search ? `?${search}` : ""}`, {
         state: { fromOnboarding: true },
       });
     }
-  }, [dispatch, history, recoverRestoreStaxPath, seedPathStatus]);
+  }, [dispatch, navigate, recoverRestoreStaxPath, seedPathStatus]);
 
   useEffect(() => {
     if (stepKey === StepKey.Success) {

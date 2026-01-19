@@ -11,7 +11,7 @@ import {
   setQrCodePinCode,
   setQrCodeUrl,
 } from "~/renderer/actions/walletSync";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import styled, { useTheme } from "styled-components";
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { FlowOptions } from "LLD/features/WalletSync/hooks/useFlows";
@@ -27,7 +27,7 @@ export function GeneratorLedgerSync() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [state, setState] = useState<State>({
     flow: Flow.Activation,
@@ -60,7 +60,7 @@ export function GeneratorLedgerSync() {
       if (state.instances.length > 0)
         state.instances.forEach(instance => dispatch(addInstance(instance)));
 
-      history.push("/settings");
+      navigate("/settings");
       setTimeout(() => {
         const aboutPageNode = document.getElementById("setting-walletSync");
         aboutPageNode?.scrollIntoView({ behavior: "smooth" });

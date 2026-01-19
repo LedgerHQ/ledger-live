@@ -20,6 +20,7 @@ const methods = [
   "message.sign",
   "storage.get",
   "storage.set",
+  "bitcoin.signPsbt",
   "transaction.sign",
   "transaction.signRaw",
   "transaction.signAndBroadcast",

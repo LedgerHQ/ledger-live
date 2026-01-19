@@ -1,5 +1,9 @@
 import { crypto } from "bitcoinjs-lib";
 import { secp256k1 } from "@noble/curves/secp256k1";
+import { BufferWriter, PsbtV2 } from "@ledgerhq/psbtv2";
+import { HASH_SIZE, OP_CHECKSIG, OP_DUP, OP_EQUAL, OP_EQUALVERIFY, OP_HASH160 } from "../constants";
+import { hashPublicKey } from "../hashPublicKey";
+import { DefaultDescriptorTemplate } from "./policy";
 
 // Helper function to convert bytes to bigint for scalar operations
 function bytesToBigInt(bytes: Uint8Array): bigint {
@@ -20,11 +24,6 @@ function pointAddScalar(point: Uint8Array, scalar: Uint8Array): Uint8Array | nul
     return null;
   }
 }
-import { BufferWriter } from "../buffertools";
-import { HASH_SIZE, OP_CHECKSIG, OP_DUP, OP_EQUAL, OP_EQUALVERIFY, OP_HASH160 } from "../constants";
-import { hashPublicKey } from "../hashPublicKey";
-import { DefaultDescriptorTemplate } from "./policy";
-import { PsbtV2 } from "./psbtv2";
 
 export type SpendingCondition = {
   scriptPubKey: Buffer;
@@ -175,7 +174,7 @@ export class p2pkh extends SingleKeyAccount {
     this.psbt.setInputBip32Derivation(i, pubkey, this.masterFp, path);
   }
 
-  setSingleKeyOutput(i: number, cond: SpendingCondition, pubkey: Buffer, path: number[]) {
+  setSingleKeyOutput(i: number, _cond: SpendingCondition, pubkey: Buffer, path: number[]) {
     this.psbt.setOutputBip32Derivation(i, pubkey, this.masterFp, path);
   }
 
@@ -186,7 +185,7 @@ export class p2pkh extends SingleKeyAccount {
 
 export class p2tr extends SingleKeyAccount {
   singleKeyCondition(pubkey: Buffer): SpendingCondition {
-    const xonlyPubkey = pubkey.slice(1); // x-only pubkey
+    const xonlyPubkey = pubkey.subarray(1); // x-only pubkey
     const buf = new BufferWriter();
     const outputKey = this.getTaprootOutputKey(xonlyPubkey);
     buf.writeSlice(Buffer.from([0x51, 32])); // push1, pubkeylen
@@ -201,13 +200,13 @@ export class p2tr extends SingleKeyAccount {
     pubkey: Buffer,
     path: number[],
   ) {
-    const xonly = pubkey.slice(1);
+    const xonly = pubkey.subarray(1);
     this.psbt.setInputTapBip32Derivation(i, xonly, [], this.masterFp, path);
     this.psbt.setInputWitnessUtxo(i, spentOutput.amount, spentOutput.cond.scriptPubKey);
   }
 
-  setSingleKeyOutput(i: number, cond: SpendingCondition, pubkey: Buffer, path: number[]) {
-    const xonly = pubkey.slice(1);
+  setSingleKeyOutput(i: number, _cond: SpendingCondition, pubkey: Buffer, path: number[]) {
+    const xonly = pubkey.subarray(1);
     this.psbt.setOutputTapBip32Derivation(i, xonly, [], this.masterFp, path);
   }
 
@@ -251,7 +250,7 @@ export class p2tr extends SingleKeyAccount {
     if (!tweakedKey) throw new Error("Point addition failed");
     const outputEcdsaKey = Buffer.from(tweakedKey);
     // Convert to schnorr.
-    const outputSchnorrKey = outputEcdsaKey.slice(1);
+    const outputSchnorrKey = outputEcdsaKey.subarray(1);
     // Create address
     return outputSchnorrKey;
   }
@@ -295,7 +294,7 @@ export class p2wpkhWrapped extends SingleKeyAccount {
   }
 
   setSingleKeyOutput(i: number, cond: SpendingCondition, pubkey: Buffer, path: number[]) {
-    this.psbt.setOutputRedeemScript(i, cond.redeemScript!);
+    if (cond.redeemScript) this.psbt.setOutputRedeemScript(i, cond.redeemScript);
     this.psbt.setOutputBip32Derivation(i, pubkey, this.masterFp, path);
   }
 

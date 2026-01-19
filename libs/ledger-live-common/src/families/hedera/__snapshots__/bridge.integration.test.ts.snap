@@ -25,7 +25,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "spendableBalance": "2125992",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": "0x87bd2dc9",
+    "syncHash": "0x624e3c6a",
     "used": true,
   },
   {
@@ -84,7 +84,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "spendableBalance": "38038675",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": "0x87bd2dc9",
+    "syncHash": "0x624e3c6a",
     "used": true,
   },
   {
@@ -132,7 +132,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "spendableBalance": "80189",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": "0x87bd2dc9",
+    "syncHash": "0x624e3c6a",
     "used": true,
   },
   {
@@ -158,7 +158,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "spendableBalance": "99442073",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": "0x87bd2dc9",
+    "syncHash": "0x624e3c6a",
     "used": true,
   },
   {
@@ -171,7 +171,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
       "delegation": {
         "delegated": "333985159",
         "nodeId": 18,
-        "pendingReward": "0",
+        "pendingReward": "20547",
       },
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,
@@ -184,7 +184,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "spendableBalance": "333985159",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": "0x87bd2dc9",
+    "syncHash": "0x624e3c6a",
     "used": true,
   },
   {
@@ -199,12 +199,12 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "balance": "40040",
+    "balance": "40042",
     "id": "js:2:hedera:0.0.8313485:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
     "operationsCount": 4,
     "parentId": "js:2:hedera:0.0.8313485:hederaBip44",
     "pendingOperations": [],
-    "spendableBalance": "40040",
+    "spendableBalance": "40042",
     "swapHistory": [],
     "tokenId": "hedera/erc20/bonzo_atoken_usdc_0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
     "type": "TokenAccountRaw",
@@ -232,7 +232,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "spendableBalance": "36243023",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": "0x87bd2dc9",
+    "syncHash": "0x624e3c6a",
     "used": true,
   },
   {
@@ -280,7 +280,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "spendableBalance": "0",
     "subAccounts": [],
     "swapHistory": [],
-    "syncHash": "0x87bd2dc9",
+    "syncHash": "0x624e3c6a",
     "used": false,
   },
 ]

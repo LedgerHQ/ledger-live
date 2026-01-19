@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Transport from "@ledgerhq/hw-transport";
+import { BufferWriter } from "@ledgerhq/psbtv2";
 import bs58check from "bs58check";
 import Btc from "../../src/Btc";
 import BtcNew from "../../src/BtcNew";
-import { BufferWriter } from "../../src/buffertools";
 import { CreateTransactionArg } from "../../src/createTransaction";
 import { AddressFormat } from "../../src/getWalletPublicKey";
 import { AppClient } from "../../src/newops/appClient";

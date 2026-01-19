@@ -1,7 +1,7 @@
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { useCallback, useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "../../stake/constants";
@@ -28,7 +28,8 @@ type MarketActionsProps = {
 };
 
 export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { data: currenciesAll } = useFetchCurrencyAll();
   const startStakeFlow = useStakeFlow();
 
@@ -62,8 +63,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
       const ledgerCurrency = await getLedgerCurrency();
 
-      history.push({
-        pathname: "/exchange",
+      navigate("/exchange", {
         state: ledgerCurrency
           ? {
               currency: ledgerCurrency?.id,
@@ -76,7 +76,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
             },
       });
     },
-    [currency, history, getLedgerCurrency, page],
+    [currency, navigate, getLedgerCurrency, page],
   );
 
   const onSwap = useCallback(
@@ -101,8 +101,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
           Boolean,
         );
 
-        history.push({
-          pathname: "/swap",
+        navigate("/swap", {
           state: {
             defaultCurrency: ledgerCurrency,
             defaultAccount,
@@ -111,12 +110,20 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
               defaultAccount && "parentId" in defaultAccount && defaultAccount.parentId
                 ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
                 : null,
-            from: history.location.pathname,
+            from: location.pathname,
           },
         });
       }
     },
-    [getLedgerCurrency, currency?.ticker, page, swapDefaultTrack, flattenedAccounts, history],
+    [
+      getLedgerCurrency,
+      currency?.ticker,
+      page,
+      swapDefaultTrack,
+      flattenedAccounts,
+      navigate,
+      location.pathname,
+    ],
   );
 
   const onStake = useCallback(
@@ -136,10 +143,10 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       startStakeFlow({
         currencies: ledgerCurrency ? [ledgerCurrency.id] : undefined,
         source: page,
-        returnTo: history.location.pathname,
+        returnTo: location.pathname,
       });
     },
-    [getLedgerCurrency, currency?.ticker, page, startStakeFlow, history.location.pathname],
+    [getLedgerCurrency, currency?.ticker, page, startStakeFlow, location.pathname],
   );
 
   const availableOnBuy = useMemo(

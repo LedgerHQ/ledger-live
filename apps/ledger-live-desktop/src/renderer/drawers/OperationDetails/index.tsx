@@ -28,7 +28,7 @@ import React, { Component, useCallback, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { useDispatch } from "LLD/hooks/redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import styled from "styled-components";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
@@ -57,6 +57,7 @@ import IconExternalLink from "~/renderer/icons/ExternalLink";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { openURL } from "~/renderer/linking";
 import { State } from "~/renderer/reducers";
+import { getAccountUrl } from "~/renderer/utils";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 import { getMarketColor } from "~/renderer/styles/helpers";
@@ -139,7 +140,7 @@ type openOperationType = "goBack" | "subOperation" | "internalOperation";
 const OperationD = (props: Props) => {
   const { t } = useTranslation();
   const { onClose, operation, account, parentAccount, confirmationsNb } = props;
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const mainAccount = getMainAccount(account, parentAccount);
   const { hash, date, senders, type, fee, recipients: _recipients } = operation;
@@ -226,22 +227,23 @@ const OperationD = (props: Props) => {
     const url = `/account/${mainAccount.id}`;
     if (location.pathname !== url) {
       setTrackingSource("operation details");
-      history.push({
-        pathname: url,
-      });
+      navigate(url);
     }
     onClose?.();
-  }, [mainAccount, history, onClose, location]);
+  }, [mainAccount, navigate, onClose, location]);
   const goToSubAccount = useCallback(() => {
-    const url = `/account/${mainAccount.id}/${account.id}`;
+    // For token accounts, use parentAccount.id (or account.parentId) as the parent in the URL
+    const parentId =
+      parentAccount?.id ||
+      (account.type !== "Account" ? account.parentId : undefined) ||
+      mainAccount.id;
+    const url = getAccountUrl(account.id, parentId);
     if (location.pathname !== url) {
       setTrackingSource("operation details");
-      history.push({
-        pathname: url,
-      });
+      navigate(url);
     }
     onClose?.();
-  }, [mainAccount, account, history, onClose, location]);
+  }, [parentAccount, account, mainAccount, navigate, onClose, location]);
   const currencyName = currency
     ? currency.type === "TokenCurrency"
       ? currency.parentCurrency.name

@@ -36,7 +36,7 @@ interface UseCompanionStepsProps {
   productName: string;
   seedPathStatus: SeedPathStatus;
   deviceOnboardingState: OnboardingState | null;
-  analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
+  analyticsSeedConfiguration: React.RefObject<SeedOriginType | undefined>;
 }
 
 interface UseCompanionStepsReturn {

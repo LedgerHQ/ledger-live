@@ -23,7 +23,7 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
-import { useHistory } from "react-router";
+import { useLocation } from "react-router";
 import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
 
@@ -31,7 +31,7 @@ const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;
 
 const Earn = () => {
-  const router = useHistory();
+  const location = useLocation();
   const language = useSelector(languageSelector);
   const locale = useSelector(localeSelector);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
@@ -85,7 +85,7 @@ const Earn = () => {
           devMode,
           discreetMode: discreetMode ? "true" : "false",
           OS: "web",
-          routerState: JSON.stringify(router.location.state ?? {}),
+          routerState: JSON.stringify(location.state ?? {}),
           stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
           stakeCurrenciesParam: stakeCurrenciesParam
             ? JSON.stringify(stakeCurrenciesParam)

@@ -6,7 +6,7 @@ import { Browse } from "./Browse";
 import { useTranslation } from "react-i18next";
 import { useCatalog, useRecentlyUsedDB } from "../hooks";
 import { LocalLiveAppSection } from "./LocalLiveAppSection";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { Categories } from "@ledgerhq/live-common/wallet-api/react";
 
 export function Catalog() {
@@ -14,9 +14,10 @@ export function Catalog() {
 
   const { t } = useTranslation();
 
-  const { state } = useLocation<{
+  const location = useLocation();
+  const state = location.state as {
     category?: Categories["selected"];
-  }>();
+  } | null;
 
   const deeplinkInitialCategory = state?.category;
 

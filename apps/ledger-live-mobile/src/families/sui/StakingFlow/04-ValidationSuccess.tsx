@@ -15,6 +15,7 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import type { SuiStakingFlowParamList } from "./types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useNotifications } from "~/logic/notifications";
 
 type Props = BaseComposite<
   StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingValidationSuccess>
@@ -24,6 +25,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
   const { ticker } = getAccountCurrency(account);
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
@@ -39,7 +41,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       delegation: "delegation",
       flow: "stake",
     });
-  }, [source, validator, ticker]);
+    tryTriggerPushNotificationDrawerAfterAction("stake");
+  }, [source, validator, ticker, tryTriggerPushNotificationDrawerAfterAction]);
 
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

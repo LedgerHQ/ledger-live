@@ -13,6 +13,7 @@ const path = require("path");
 const tsconfig = require("./tsconfig.json");
 
 const forcedDependencies = [
+  "react",
   "react-redux",
   "react-native",
   "react-native-svg",

@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { useTheme } from "styled-components";
 import { getEnv } from "@ledgerhq/live-env";
 import { Button, Text } from "@ledgerhq/react-ui";
@@ -15,7 +15,7 @@ import Box from "./Box";
 import StyleProvider from "../styles/StyleProvider";
 
 const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.ReactNode }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const location = useLocation();
   const latestFirmware = useSelector(latestFirmwareSelector);
@@ -35,10 +35,7 @@ const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.Rea
       firmwareUpdate: "true",
     });
     const search = urlParams.toString();
-    history.push({
-      pathname: "/manager",
-      search: `?${search}`,
-    });
+    navigate(`/manager?${search}`);
   };
   const inManager = location.pathname === "/manager";
   if (!visibleFirmwareVersion || (!right && inManager) || hideBannerForMocks) return null;

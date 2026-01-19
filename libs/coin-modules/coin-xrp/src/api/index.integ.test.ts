@@ -143,6 +143,12 @@ describe("Xrp Api (testnet)", () => {
       // Then
       expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" }, locked: 0n }]);
     });
+
+    it("returns 0 when address is not found", async () => {
+      const result = await api.getBalance("rhWTXC2m2gGGA9WozUaoMm6kLAVPb1tcS0");
+
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" }, locked: 0n }]);
+    });
   });
 
   describe("craftTransaction", () => {
@@ -379,6 +385,15 @@ describe("Xrp Api (mainnet)", () => {
       expect(decode(result)).toMatchObject({
         Fee: customFees.toString(),
       });
+    });
+  });
+
+  describe("broadcast", () => {
+    it("returns the error message when sequence is outdated", async () => {
+      // This error is thrown after submit call, directly in broadcast method
+      const outdatedSequenceTx =
+        "120000228000000024052FCD872ECDD7D4AC201B06048C14614000000B085FA59C68400000000000000A73210311146AB612828EBCACF2F0538E031BFEB3C5CEE03C7297F30DF1A9CBDCB44D8C74463044022051E29B81D7C993E42E752FE7277E0F665EEF532CA23B72FBB49699F1E0511A33022069E4C62C9E8FC95AD32DE9FC9154F83BFBF9588FC69558B99D9C85603BFFEDF2811413B9F21190F88C84F71F0B64C5BCA3E4AA0FF7C783142B9D5E5EA5E91068791B65AFF97D15B11B44B929";
+      await expect(api.broadcast(outdatedSequenceTx)).rejects.toThrow("sequence");
     });
   });
 });

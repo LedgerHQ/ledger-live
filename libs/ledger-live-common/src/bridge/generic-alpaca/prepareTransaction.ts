@@ -1,4 +1,4 @@
-import { Account, AccountBridge } from "@ledgerhq/types-live";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
 import { extractBalances, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
@@ -43,10 +43,10 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
 }
 
 export function genericPrepareTransaction(
-  network: string,
-  kind,
-): AccountBridge<GenericTransaction, Account>["prepareTransaction"] {
-  return async (account, transaction: GenericTransaction) => {
+  _network: string,
+  kind: string,
+): AccountBridge<GenericTransaction>["prepareTransaction"] {
+  return async (account, transaction) => {
     const { getAssetFromToken, computeIntentType, estimateFees, validateIntent } = getAlpacaApi(
       account.currency.id,
       kind,

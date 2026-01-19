@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { useHistory } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { stakeDefaultTrack } from "./constants";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -28,7 +28,8 @@ export type StakeFlowProps = {
 };
 
 const useStakeFlow = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const walletState = useSelector(walletSelector);
   const { enabledCurrencies, partnerSupportedAssets, getRouteToPlatformApp } = useStake();
@@ -59,7 +60,7 @@ const useStakeFlow = () => {
       track("button_clicked2", {
         ...stakeDefaultTrack,
         button: "asset",
-        page: history.location.pathname,
+        page: location.pathname,
         currency: account.type === "Account" ? account?.currency?.family : account?.token?.ticker,
         account: account ? getDefaultAccountName(account) : undefined,
         parentAccount: parentAccount ? getDefaultAccountName(parentAccount) : undefined,
@@ -81,12 +82,11 @@ const useStakeFlow = () => {
         track("button_clicked2", {
           ...stakeDefaultTrack,
           button: "delegate",
-          page: history.location.pathname,
+          page: location.pathname,
           provider: platformAppRoute.state.appId,
           currency: account.type === "Account" ? account.currency.ticker : account.token.ticker,
         });
-        history.push({
-          pathname: platformAppRoute.pathname.toString(),
+        navigate(platformAppRoute.pathname.toString(), {
           state: {
             ...platformAppRoute.state,
             returnTo,
@@ -99,12 +99,10 @@ const useStakeFlow = () => {
       const isNoFundsFlow = account.spendableBalance.isZero();
 
       if (shouldRedirect && !platformAppRoute && !isNoFundsFlow) {
-        history.push({
-          pathname: returnTo ?? `/account/${account.id}`,
-        });
+        navigate(returnTo ?? `/account/${account.id}`);
       }
     },
-    [dispatch, history, getRouteToPlatformApp, walletState],
+    [dispatch, navigate, location, getRouteToPlatformApp, walletState],
   );
 
   const handleRequestClose = useCallback(() => {
@@ -112,9 +110,9 @@ const useStakeFlow = () => {
     track("button_clicked2", {
       ...stakeDefaultTrack,
       button: "close",
-      page: history.location.pathname,
+      page: location.pathname,
     });
-  }, [history.location.pathname]);
+  }, [location.pathname]);
 
   const { openAssetAndAccount } = useOpenAssetAndAccount();
 
@@ -134,7 +132,7 @@ const useStakeFlow = () => {
 
       trackPage("Stake", "Drawer - Choose Asset", {
         ...stakeDefaultTrack,
-        page: history.location.pathname,
+        page: location.pathname,
         type: "drawer",
       });
 
@@ -192,7 +190,7 @@ const useStakeFlow = () => {
       earnDrawerConfigurationFlag,
       handleAccountSelected,
       handleRequestClose,
-      history.location.pathname,
+      location.pathname,
       list,
       modularDrawerVisible,
       openAssetAndAccount,

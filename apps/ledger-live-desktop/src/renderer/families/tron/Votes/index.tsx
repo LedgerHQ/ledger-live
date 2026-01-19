@@ -31,7 +31,7 @@ import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { track } from "~/renderer/analytics/segment";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
@@ -44,7 +44,7 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 const Delegation = ({ account }: { account: TronAccount }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const locale = useSelector(localeSelector);
   const superRepresentatives = useTronSuperRepresentatives();
@@ -90,8 +90,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
       provider: "Stakekit",
       currency: "TRX",
     });
-    history.push({
-      pathname: value,
+    navigate(value, {
       state: {
         pendingaction: "REVOTE",
         yieldId: "tron-trx-native-staking",
@@ -111,8 +110,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
       provider: "Stakekit",
       currency: "TRX",
     });
-    history.push({
-      pathname: value,
+    navigate(value, {
       state: {
         pendingaction: "CLAIM_REWARDS",
         yieldId: "tron-trx-native-staking",

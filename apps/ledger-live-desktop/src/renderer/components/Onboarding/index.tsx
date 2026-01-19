@@ -1,6 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import React, { useEffect, useState, createContext } from "react";
-import { Switch, Route, useRouteMatch } from "react-router-dom";
+import { Routes, Route } from "react-router";
 import { CSSTransition } from "react-transition-group";
 import { Flex } from "@ledgerhq/react-ui";
 
@@ -56,11 +56,7 @@ export const OnboardingContext = createContext<OnboardingContextTypes>({
 });
 
 export function Onboarding() {
-  const { path } = useRouteMatch();
-  const matchRecover = useRouteMatch(`${path}/${OnboardingUseCase.recover}`);
-  const [useCase, setUseCase] = useState<OnboardingUseCase | null>(
-    matchRecover ? OnboardingUseCase.recover : null,
-  );
+  const [useCase, setUseCase] = useState<OnboardingUseCase | null>(null);
   const [deviceModelId, setDeviceModelId] = useState<NullableDeviceModelId>(null);
   const [openedPedagogyModal, setOpenedPedagogyModal] = useState(false);
   const [openedRecoveryPhraseWarningHelp, setOpenedRecoveryPhraseWarningHelp] = useState(false);
@@ -92,37 +88,61 @@ export function Onboarding() {
         </Box>
       </SideDrawer>
       <OnboardingContainer>
-        <CSSTransition in appear key={path} timeout={DURATION} classNames="page-switch">
+        <CSSTransition in appear key="onboarding" timeout={DURATION} classNames="page-switch">
           <ScreenContainer>
-            <Switch>
-              <Route exact path={path} component={Welcome} />
-              <Route path={`${path}/welcome`} component={Welcome} />
-              <Route path={`${path}/select-device`} component={SelectDevice} />
-              <Route path={`${path}/sync`} component={SyncOnboarding} />
+            <Routes>
+              <Route index element={<Welcome />} />
+              <Route path="welcome" element={<Welcome />} />
+              <Route path="select-device" element={<SelectDevice />} />
+              <Route path="sync/*" element={<SyncOnboarding />} />
               <Route
-                path={`${path}/select-use-case`}
-                render={props => (
+                path="select-use-case"
+                element={
                   <SelectUseCase
-                    {...props}
                     setOpenedPedagogyModal={setOpenedPedagogyModal}
                     setUseCase={setUseCase}
                   />
-                )}
+                }
               />
               <Route
-                path={[
-                  `${path}/${OnboardingUseCase.setupDevice}`,
-                  `${path}/${OnboardingUseCase.connectDevice}`,
-                  `${path}/${OnboardingUseCase.recoveryPhrase}`,
-                  `${path}/${OnboardingUseCase.recover}`,
-                ]}
-                render={props =>
+                path={`${OnboardingUseCase.setupDevice}/*`}
+                element={
                   useCase ? (
-                    <Tutorial {...props} useCase={useCase} deviceModelId={deviceModelId} />
+                    <Tutorial useCase={useCase} deviceModelId={deviceModelId} />
+                  ) : (
+                    <SelectDevice />
+                  )
+                }
+              />
+              <Route
+                path={`${OnboardingUseCase.connectDevice}/*`}
+                element={
+                  useCase ? (
+                    <Tutorial useCase={useCase} deviceModelId={deviceModelId} />
+                  ) : (
+                    <SelectDevice />
+                  )
+                }
+              />
+              <Route
+                path={`${OnboardingUseCase.recoveryPhrase}/*`}
+                element={
+                  useCase ? (
+                    <Tutorial useCase={useCase} deviceModelId={deviceModelId} />
+                  ) : (
+                    <SelectDevice />
+                  )
+                }
+              />
+              <Route
+                path={`${OnboardingUseCase.recover}/*`}
+                element={
+                  useCase ? (
+                    <Tutorial useCase={useCase} deviceModelId={deviceModelId} />
                   ) : (
                     /**
                      * In case we navigate to another screen then do a
-                     * history.goBack() we lose the state here so we fallback to
+                     * navigate(-1) we lose the state here so we fallback to
                      * displaying the stateless device selection screen
                      * One case for that is when we navigate to the USB
                      * troubleshoot screen.
@@ -131,7 +151,7 @@ export function Onboarding() {
                   )
                 }
               />
-            </Switch>
+            </Routes>
           </ScreenContainer>
         </CSSTransition>
       </OnboardingContainer>

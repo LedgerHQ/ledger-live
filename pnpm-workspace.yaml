@@ -24,15 +24,35 @@ catalog:
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.2
   "@ledgerhq/device-transport-kit-speculos": 1.1.2
   "@ledgerhq/device-transport-kit-web-hid": 1.2.2
-  "@ledgerhq/lumen-design-core": 0.0.39
+  "@ledgerhq/lumen-design-core": 0.0.40
+  "@ledgerhq/lumen-ui-react": 0.0.65
   "@ledgerhq/speculos-device-controller": 0.2.1
-  "@react-native/assets-registry": 0.77.3
-  "@react-native/babel-plugin-codegen": 0.77.3
-  "@react-native/babel-preset": 0.77.3
-  "@react-native/codegen": 0.77.3
-  "@react-native/dev-middleware": 0.77.3
-  "@react-native/gradle-plugin": 0.77.3
-  "@react-native/metro-config": 0.77.3
+  # React Native
+  react-native: 0.79.7
+  "@react-native/assets-registry": 0.79.7
+  "@react-native/babel-plugin-codegen": 0.79.7
+  "@react-native/babel-preset": 0.79.7
+  "@react-native/codegen": 0.79.7
+  "@react-native/dev-middleware": 0.79.7
+  "@react-native/gradle-plugin": 0.79.7
+  "@react-native/metro-config": 0.79.7
+  # React Native Community
+  "@react-native-community/cli": 18.0.1
+  "@react-native-community/cli-platform-android": 18.0.1
+  "@react-native-community/cli-platform-ios": 18.0.1
+  # Expo
+  expo: 53.0.25
+  expo-constants: 17.1.8
+  expo-asset: 11.1.7
+  expo-font: 13.3.2
+  expo-crypto: 14.1.5
+  expo-file-system: 18.1.11
+  expo-image-loader: 5.0.0
+  expo-image-manipulator: 13.1.7
+  expo-keep-awake: 14.1.4
+  expo-modules-autolinking: 2.1.14
+  expo-modules-core: 2.5.0
+
   "@jest/reporters": 30.2.0
   "@reduxjs/toolkit": 2.8.2
   "@rspack/cli": 1.7.1
@@ -71,17 +91,16 @@ catalog:
   react: 18.3.1
   react-dom: 18.3.1
   react-i18next: 16.5.0
-  react-native: 0.77.3
   react-native-config: 1.5.3
-  react-native-reanimated: 3.16.7
+  react-native-reanimated: 3.19.5
   react-native-safe-area-context: 5.6.1
-  react-native-svg: 15.12.1
+  react-native-svg: 15.15.1
   react-redux: ^9.2.0
   redux: ^5.0.1
   react-test-renderer: 18.3.1
   reselect: 5.1.1
   rxjs: 7.8.2
-  tailwindcss: ^3.4.0
+  tailwindcss: ^4.1.0
   ws: 8.18.3
   semver: 7.7.3
   "@types/semver": 7.7.1
@@ -89,10 +108,10 @@ catalog:
   "styled-system": 5.1.5
   "stylis": 4.0.0
   "@tanstack/react-virtual": 3.13.16
-  "@playwright/test": 1.57.0
-  playwright: 1.57.0
-  allure-playwright: 3.4.3
-  allure-js-commons: 3.4.3
+  "@playwright/test": 1.51.1
+  playwright: 1.51.1
+  allure-playwright: 3.2.1
+  allure-js-commons: 3.2.1
 
 overrides:
   node-abi: ^4.9.0

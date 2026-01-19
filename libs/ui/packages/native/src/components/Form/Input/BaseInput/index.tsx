@@ -26,13 +26,19 @@ export type InputProps<T = string> = Omit<CommonProps, "value" | "onChange"> & {
    * A function that will render some content on the left side of the input.
    */
   renderLeft?:
-    | ((props: InputProps<T>, ref: React.RefObject<{ clear: () => void }>) => React.ReactNode)
+    | ((
+        props: InputProps<T>,
+        ref: React.RefObject<TextInput | { clear: () => void } | null>,
+      ) => React.ReactNode)
     | React.ReactNode;
   /**
    * A function that will render some content on the right side of the input.
    */
   renderRight?:
-    | ((props: InputProps<T>, ref: React.RefObject<{ clear: () => void }>) => React.ReactNode)
+    | ((
+        props: InputProps<T>,
+        ref: React.RefObject<TextInput | { clear: () => void } | null>,
+      ) => React.ReactNode)
     | React.ReactNode;
   /**
    * Triggered when the input value is updated.
@@ -168,7 +174,7 @@ export const InputRenderRightContainer = styled(FlexBox).attrs(() => ({
 const IDENTITY = (_: any): any => _;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function Input<T = string>(props: InputProps<T>, ref?: React.Ref<unknown>): JSX.Element {
+function Input<T = string>(props: InputProps<T>, ref?: React.Ref<unknown>): React.ReactElement {
   const {
     value,
     onChange,
@@ -194,7 +200,7 @@ function Input<T = string>(props: InputProps<T>, ref?: React.Ref<unknown>): JSX.
     ...textInputProps
   } = props;
 
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<TextInput | null>(null);
   useImperativeHandle(ref, () => inputRef.current, [inputRef]);
 
   const inputValue = useMemo(() => serialize(value), [serialize, value]);

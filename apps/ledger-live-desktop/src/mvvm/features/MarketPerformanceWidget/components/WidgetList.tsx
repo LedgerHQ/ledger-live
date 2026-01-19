@@ -8,9 +8,9 @@ import { fontSizes } from "@ledgerhq/react-ui/styles/theme";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { track } from "~/renderer/analytics/segment";
-import { getChangePercentage } from "../utils";
+import { getChangePercentage } from "@ledgerhq/live-common/market/utils/index";
 
 export function WidgetList({ data, order, range, top, enableNewFeature }: PropsBody) {
   const noData = data.length === 0;
@@ -38,7 +38,7 @@ export function WidgetList({ data, order, range, top, enableNewFeature }: PropsB
 function WidgetRow({ data, index, range, enableNewFeature }: PropsBodyElem) {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onCurrencyClick = useCallback(() => {
     track("widgetAsset_clicked", {
@@ -46,10 +46,8 @@ function WidgetRow({ data, index, range, enableNewFeature }: PropsBodyElem) {
       page: "Portfolio",
     });
 
-    history.push({
-      pathname: `/market/${data.id}`,
-    });
-  }, [data, history]);
+    navigate(`/market/${data.id}`);
+  }, [data, navigate]);
 
   return (
     <MainContainer

@@ -13,12 +13,6 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import { StepProps } from "..";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
-import FullNodeStatus from "~/renderer/modals/AddAccounts/FullNodeStatus";
-import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-// TODO move to bitcoin family
-// eslint-disable-next-line no-restricted-imports
-import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
 import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -50,7 +44,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
         <CurrencyDownStatusAlert currencies={[currency]} />
       ) : null}
       <SelectCurrency currencies={currencies} autoFocus onChange={setCurrency} value={currency} />
-      <FullNodeStatus currency={currency} />
       {currency && currency.type === "TokenCurrency" ? (
         <Alert type="primary" learnMoreUrl={url} mt={4} data-testid="add-token-infoBox">
           <Trans
@@ -80,17 +73,6 @@ export const StepChooseCurrencyFooter = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const isToken = currency && currency.type === "TokenCurrency";
-  const satStackAlreadyConfigured = useEnv("SATSTACK");
-  const latestStatus: SatStackStatus | undefined | null = useSatStackStatus();
-  const fullNodeNotReady =
-    satStackAlreadyConfigured &&
-    !!(
-      currency &&
-      currency.type === "CryptoCurrency" &&
-      currency.id === "bitcoin" &&
-      latestStatus &&
-      latestStatus.type !== "ready"
-    );
 
   const parentCurrency = isToken && currency.parentCurrency;
 
@@ -155,7 +137,7 @@ export const StepChooseCurrencyFooter = ({
       ) : (
         <Button
           primary
-          disabled={!currency || fullNodeNotReady || !navigator.onLine}
+          disabled={!currency || !navigator.onLine}
           onClick={() => transitionTo("connectDevice")}
           data-testid="modal-continue-button"
         >

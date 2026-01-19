@@ -1,5 +1,5 @@
 import React, { useCallback, memo } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import styled from "styled-components";
 import { Flex, Text, Icon, Tooltip, Box } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -61,7 +61,7 @@ export const MarketRowItem = memo<MarketRowItemProps>(function MarketRowItem({
   toggleStar,
   range,
 }: MarketRowItemProps) {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const { onBuy, onStake, onSwap, availableOnBuy, availableOnSwap, availableOnStake } =
@@ -71,12 +71,11 @@ export const MarketRowItem = memo<MarketRowItemProps>(function MarketRowItem({
   const onCurrencyClick = useCallback(() => {
     if (currency) {
       setTrackingSource("Page Market");
-      history.push({
-        pathname: `/market/${currency.id}`,
+      navigate(`/market/${currency.id}`, {
         state: currency,
       });
     }
-  }, [currency, history]);
+  }, [currency, navigate]);
 
   const onStarClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {

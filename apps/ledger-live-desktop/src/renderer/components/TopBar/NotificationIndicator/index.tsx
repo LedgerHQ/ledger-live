@@ -5,12 +5,11 @@ import IconBell from "~/renderer/icons/Bell";
 import { useTranslation } from "react-i18next";
 import { InformationDrawer } from "./InformationDrawer";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-
+import { useLocation } from "react-router";
 import { informationCenterStateSelector } from "~/renderer/reducers/UI";
 import { openInformationCenter, closeInformationCenter } from "~/renderer/actions/UI";
 import { track } from "~/renderer/analytics/segment";
 import { useUnseenNotificationsCount } from "~/renderer/hooks/useUnseenNotificationsCount";
-import { useHistory } from "react-router";
 import { getEnv } from "@ledgerhq/live-env";
 
 export function NotificationIndicator() {
@@ -21,15 +20,15 @@ export function NotificationIndicator() {
 
   const { isOpen } = useSelector(informationCenterStateSelector);
   const dispatch = useDispatch();
-  const history = useHistory();
 
+  const location = useLocation();
   const onClickNotificationCenter = useCallback(() => {
     track("button_clicked2", {
       button: "Notification Center",
-      page: history.location.pathname,
+      page: location.pathname,
     });
     dispatch(openInformationCenter(undefined));
-  }, [dispatch, history.location.pathname]);
+  }, [dispatch, location.pathname]);
 
   return (
     <>

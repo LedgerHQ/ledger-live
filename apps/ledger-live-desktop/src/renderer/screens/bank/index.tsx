@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 import { useManifestWithSessionId } from "@ledgerhq/live-common/hooks/useManifestWithSessionId";
@@ -28,7 +28,7 @@ const Bank = () => {
     manifest,
     shareAnalytics,
   });
-  const history = useHistory();
+  const navigate = useNavigate();
   const themeType = useTheme().theme;
   const params = location.state || {};
   const providerInterstitialEnabled = useProviderInterstitalEnabled({
@@ -36,7 +36,7 @@ const Bank = () => {
   });
 
   function handleClose() {
-    history.goBack();
+    navigate(-1);
     dispatch(openModal("MODAL_RECEIVE", undefined));
   }
 

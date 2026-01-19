@@ -8097,6 +8097,15 @@
       "cta": "Learn more"
     }
   },
+  "marketBanner": {
+    "title": "Explore market",
+    "viewAll": "View all",
+    "viewAllAccessibilityHint": "Double tap to view all market assets",
+    "tile": {
+      "accessibilityLabel": "{{name}}, {{change}}",
+      "accessibilityHint": "Double tap to view market details"
+    }
+  },
   "largeMover": {
     "info": "Info",
     "marketCap": "Market cap",
@@ -8336,6 +8345,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed": {
+    "title": "Mood index",
+    "description": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+    "levels": {
+      "extremeFear": "Fear+",
+      "fear": "Fear",
+      "neutral": "Neutral",
+      "greed": "Greed",
+      "extremeGreed": "Greed+"
     }
   }
 }

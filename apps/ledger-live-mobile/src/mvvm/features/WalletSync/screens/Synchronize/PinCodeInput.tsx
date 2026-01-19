@@ -69,7 +69,9 @@ export default function PinCodeInput({ nbDigits, handleSendDigits, focusOnMount 
             onChange={value => handleChange(value, index)}
             onKeyPress={e => handleKeyPress(e, index)}
             index={index}
-            ref={el => (inputRefs.current[index] = el)}
+            ref={el => {
+              inputRefs.current[index] = el;
+            }}
           />
         ))}
       </Flex>

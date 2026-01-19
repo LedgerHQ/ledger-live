@@ -22,7 +22,7 @@ const PasswordForm = ({ onChange, onSubmit, error, placeholder, value }: Props) 
   // transitioning from AddPassword to ConfirmPassword, the keyboard is displayed but
   // the keyboard view is not re-rendered so we lose layout adjustments.
   const isFocused = useIsFocused();
-  const kavKey = isFocused ? "focused" : "blurred";
+  const [remountKey, setRemountKey] = React.useState(0);
   const { t } = useTranslation();
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
@@ -30,9 +30,15 @@ const PasswordForm = ({ onChange, onSubmit, error, placeholder, value }: Props) 
     setSecureTextEntry(active => !active);
   }, []);
 
+  React.useEffect(() => {
+    if (isFocused) {
+      setRemountKey(prev => prev + 1);
+    }
+  }, [isFocused]);
+
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} style={styles.root}>
-      <KeyboardView key={kavKey} style={{ flex: 1 }}>
+      <KeyboardView key={remountKey} style={{ flex: 1 }}>
         <View style={styles.body}>
           <PasswordInput
             inline

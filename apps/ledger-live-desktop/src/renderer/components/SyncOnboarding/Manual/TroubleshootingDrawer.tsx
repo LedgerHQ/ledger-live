@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Flex, Text, Button, Link } from "@ledgerhq/react-ui";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -21,17 +21,17 @@ export type Props = {
  */
 const TroubleshootingDrawer: React.FC<Props> = ({ onClose, lastKnownDeviceId }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const theme = useTheme();
 
   const handleFixClicked = useCallback(() => {
-    history.replace("/USBTroubleshooting");
+    navigate("/USBTroubleshooting");
     track("button_clicked2", {
       button: "fix it",
       page: "drawer troubleshoot USB connection",
       flow: analyticsFlowName,
     });
-  }, [history]);
+  }, [navigate]);
 
   return (
     <>

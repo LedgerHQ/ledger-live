@@ -8,7 +8,7 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { Account } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { track } from "~/renderer/analytics/segment";
-import { useHistory } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 import { openModal } from "~/renderer/actions/modals";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
@@ -35,7 +35,8 @@ const NotEnoughFundsToUnstake = ({
   );
   const { isCurrencyAvailable } = useRampCatalog();
   const isAvailableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const dispatch = useDispatch();
 
@@ -53,8 +54,7 @@ const NotEnoughFundsToUnstake = ({
       button: "buy",
       ...buttonSharedTrackingFields,
     });
-    history.push({
-      pathname: "/exchange",
+    navigate("/exchange", {
       state: {
         currency: currency.id,
         account: account.id,
@@ -62,7 +62,7 @@ const NotEnoughFundsToUnstake = ({
       },
     });
     onClose();
-  }, [buttonSharedTrackingFields, history, currency.id, account?.id, onClose]);
+  }, [buttonSharedTrackingFields, navigate, currency.id, account?.id, onClose]);
 
   const onPressSwap = useCallback(() => {
     track("button_clicked2", {
@@ -70,16 +70,23 @@ const NotEnoughFundsToUnstake = ({
       ...buttonSharedTrackingFields,
       ...swapDefaultTrack,
     });
-    history.push({
-      pathname: "/swap",
+    navigate("/swap", {
       state: {
         defaultCurrency: currency,
         defaultAccount: account,
-        from: history.location.pathname,
+        from: location.pathname,
       },
     });
     onClose();
-  }, [buttonSharedTrackingFields, swapDefaultTrack, history, currency, account, onClose]);
+  }, [
+    buttonSharedTrackingFields,
+    swapDefaultTrack,
+    navigate,
+    location,
+    currency,
+    account,
+    onClose,
+  ]);
 
   const onPressDeposit = useCallback(() => {
     onClose();

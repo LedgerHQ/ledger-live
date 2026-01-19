@@ -3,13 +3,13 @@ import { AccountBridge, CurrencyBridge, NFTStandard } from "@ledgerhq/types-live
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/index";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
 import { Signer } from "@ledgerhq/live-common/bridge/generic-alpaca/signer/Eth";
 import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";
 import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
 
 export const ethereum = getCryptoCurrencyById("ethereum");
 export const core = getCryptoCurrencyById("core");
@@ -25,7 +25,7 @@ export const VITALIK = "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9";
 
 export async function getBridges(signer: Signer): Promise<{
   currencyBridge: CurrencyBridge;
-  accountBridge: AccountBridge<EvmTransaction>;
+  accountBridge: AccountBridge<GenericTransaction>;
   getAddress: GetAddressFn;
 }> {
   const context: SignerContext<Signer> = (_, fn) => fn(signer);

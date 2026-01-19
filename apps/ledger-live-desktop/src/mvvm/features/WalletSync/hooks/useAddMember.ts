@@ -16,7 +16,7 @@ import {
 import { track } from "~/renderer/analytics/segment";
 import { AnalyticsPage } from "./useLedgerSyncAnalytics";
 import { saveSettings, setLastOnboardedDevice } from "~/renderer/actions/settings";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 
 export function useAddMember({
   device,
@@ -26,7 +26,7 @@ export function useAddMember({
   sourcePage?: AnalyticsPage;
 }) {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const sdk = useTrustchainSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const trustchain = useSelector(trustchainSelector);
@@ -49,7 +49,7 @@ export function useAddMember({
         if (!isOnboardingNewDeviceInitial.current) {
           dispatch(saveSettings({ hasCompletedOnboarding: true }));
           dispatch(setLastOnboardedDevice(device));
-          history.push("/");
+          navigate("/");
         }
         dispatch(setDrawerVisibility(false));
       } else {
@@ -66,7 +66,7 @@ export function useAddMember({
         );
       }
     },
-    [device, dispatch, history, sourcePage],
+    [device, dispatch, navigate, sourcePage],
   );
 
   const handleMissingDevice = useCallback(() => {

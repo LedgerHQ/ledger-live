@@ -27,7 +27,7 @@ function getScreenTitle({
   }
 }
 
-export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI>) {
+export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI | null>) {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const track = useTrack();
