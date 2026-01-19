@@ -116,21 +116,19 @@ describe("EVM Family", () => {
             ],
           });
 
-          expect(operations).toHaveLength(2);
-          expect(operations[0]).toEqual({
+          expect(operations).toEqual([{
             type: "transfer",
             address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
             asset: { type: "erc20", assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" },
             amount: -1000000n,
-          });
-          expect(operations[1]).toEqual({
+          }, {
             type: "transfer",
             address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
             peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             asset: { type: "erc20", assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" },
             amount: 1000000n,
-          });
+          }]);
         });
       });
 
