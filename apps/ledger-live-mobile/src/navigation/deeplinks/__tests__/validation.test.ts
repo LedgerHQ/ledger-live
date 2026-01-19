@@ -1,4 +1,4 @@
-import { validateLargeMoverCurrencyIds } from "../validation";
+import { validateLargeMoverCurrencyIds, validateMarketCurrencyId } from "../validation";
 
 describe("validateLargeMoverCurrencyIds", () => {
   it("should return null when currencyIds is null", () => {
@@ -44,5 +44,27 @@ describe("validateLargeMoverCurrencyIds", () => {
   it("should handle mixed case currencyIds", () => {
     const result = validateLargeMoverCurrencyIds("BtC,eTh,XrP");
     expect(result).toBe("BTC,ETH,XRP");
+  });
+});
+
+describe("validateMarketCurrencyId", () => {
+  it("should return null when currencyId is null", () => {
+    const result = validateMarketCurrencyId(null);
+    expect(result).toBeNull();
+  });
+
+  it("should return null when currencyId is empty", () => {
+    const result = validateMarketCurrencyId("");
+    expect(result).toBeNull();
+  });
+
+  it("should return null for an unknown currencyId", () => {
+    const result = validateMarketCurrencyId("unknown_coin");
+    expect(result).toBeNull();
+  });
+
+  it("should normalize and return a valid currencyId", () => {
+    const result = validateMarketCurrencyId("BiTcOiN");
+    expect(result).toBe("bitcoin");
   });
 });
