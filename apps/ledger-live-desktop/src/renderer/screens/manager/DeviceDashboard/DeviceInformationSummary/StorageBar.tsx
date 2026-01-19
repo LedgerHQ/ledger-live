@@ -39,7 +39,7 @@ const StorageBarGraph = styled.div`
   height: 100%;
   position: relative;
   transform-origin: left;
-  animation: ${p => p.theme.animations.fadeInGrowX};
+  ${p => p.theme.animations.fadeInGrowX};
 `;
 
 const transitionStyles = {
@@ -72,7 +72,6 @@ const StorageBarItem = styled.div.attrs<{
 }>(props => ({
   style: {
     backgroundColor: props.installing ? props.theme.colors.neutral.c40 : props.color,
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     ...transitionStyles[props.state as keyof typeof transitionStyles](
       `${(props.ratio * 1e2).toFixed(3)}%`,
     ),
@@ -94,7 +93,9 @@ const StorageBarItem = styled.div.attrs<{
       ? css`
           animation: ${blinkOpacity} 2s ease infinite;
         `
-      : ""};
+      : css`
+          animation: none;
+        `};
   & > * {
     width: 100%;
   }

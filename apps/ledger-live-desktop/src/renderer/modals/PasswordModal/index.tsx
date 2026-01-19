@@ -46,7 +46,7 @@ const PasswordModal = () => {
     [setPassword, onClose],
   );
   const handleSave = useCallback(
-    async (e: React.SyntheticEvent<HTMLFormElement>) => {
+    async (e?: React.SyntheticEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
       if (e) {
         e.preventDefault();
       }

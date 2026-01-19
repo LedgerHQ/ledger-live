@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import styled, { DefaultTheme, withTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { rgba } from "~/renderer/styles/helpers";
 import Tooltip from "~/renderer/components/Tooltip";
@@ -41,17 +41,16 @@ const TooltipWrapper = styled.div`
   max-width: 150px;
   flex-direction: column;
 `;
-const CryptoCurrencyIconTooltip = withTheme(
-  ({ name, theme }: { theme: DefaultTheme; name: string }) => {
-    const { t } = useTranslation();
-    return (
-      <TooltipWrapper>
-        <Text color={rgba(theme.colors.background.card, 0.5)}>{t("tokensList.tooltip")}</Text>
-        <Text>{name}</Text>
-      </TooltipWrapper>
-    );
-  },
-);
+const CryptoCurrencyIconTooltip = ({ name }: { name: string }) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  return (
+    <TooltipWrapper>
+      <Text color={rgba(theme.colors.background.card, 0.5)}>{t("tokensList.tooltip")}</Text>
+      <Text>{name}</Text>
+    </TooltipWrapper>
+  );
+};
 type Props = {
   currency: Currency;
   withTooltip?: boolean;

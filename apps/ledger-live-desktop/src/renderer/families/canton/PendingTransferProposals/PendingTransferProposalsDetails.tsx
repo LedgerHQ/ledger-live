@@ -216,7 +216,7 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
           <>
             <Box flex={1}>
               <Button
-                isFull
+                fullWidth
                 disabled={proposal.isExpired}
                 onClick={() => {
                   if (!proposal.isExpired) {
@@ -232,9 +232,12 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
             </Box>
             <Box flex={1}>
               <Button
-                isFull
-                appearance="no-background"
-                style={{ borderColor: "neutral.c100", borderWidth: 1 }}
+                fullWidth
+                style={{
+                  borderColor: "neutral.c100",
+                  borderWidth: 1,
+                  backgroundColor: "transparent",
+                }}
                 onClick={() => handleRejectOffer(proposal.contract_id)}
               >
                 <Box horizontal alignItems="center" style={{ gap: "8px" }}>
@@ -245,7 +248,7 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
           </>
         ) : (
           <Box flex={1}>
-            <Button isFull onClick={() => handleWithdrawOffer(proposal.contract_id)}>
+            <Button fullWidth onClick={() => handleWithdrawOffer(proposal.contract_id)}>
               <Box horizontal alignItems="center" style={{ gap: "8px" }}>
                 {t("common.cancel")}
                 <IconCheck size={16} />

@@ -13,12 +13,12 @@ const Title = styled(Text).attrs({ variant: "h5", color: "neutral.c100", mb: 2 }
   line-height: 24px;
 `;
 
-const Label = styled(Text).attrs<{ color: string }>(p => ({
+const Label = styled(Text).attrs<{ color?: string }>(p => ({
   variant: "paragraph",
   flexDirection: "column",
   color: p.color || "neutral.c80",
   flex: 1,
-}))<{ color: string }>`
+}))<{ color?: string }>`
   font-size: 13px;
   line-height: 16px;
   min-height: 27px;
@@ -143,7 +143,6 @@ function MarketInfo({
               {currentPriceChangePercentage ? (
                 <FormattedVal
                   isPercent
-                  isNegative
                   val={parseFloat(currentPriceChangePercentage.toFixed(2))}
                   inline
                   withIcon
@@ -230,7 +229,6 @@ function MarketInfo({
               {marketCapChangePercentage24h ? (
                 <FormattedVal
                   isPercent
-                  isNegative
                   val={parseFloat(marketCapChangePercentage24h.toFixed(2))}
                   inline
                   withIcon

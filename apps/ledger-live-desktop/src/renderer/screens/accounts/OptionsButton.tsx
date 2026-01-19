@@ -106,7 +106,6 @@ const OptionsButton = () => {
             <Button
               small
               outlineGrey
-              flow={1}
               style={{
                 width: 34,
                 padding: 0,

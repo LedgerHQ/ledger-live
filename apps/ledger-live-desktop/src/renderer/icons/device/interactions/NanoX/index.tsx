@@ -6,12 +6,12 @@ import Swivel from "./Swivel";
 import Hint from "../Hint";
 import USBCable, { classByState } from "../USBCable";
 
-const DeviceContainer = styled.div.attrs((p: { width?: number; height?: number }) => ({
+const DeviceContainer = styled.div.attrs<{ width?: number; height?: number }>(p => ({
   style: {
     width: p.width || 300,
     height: p.height || 60,
   },
-}))<{ width?: number; height?: number }>`
+}))`
   margin: 32px auto 0px auto;
   justify-content: center;
   align-items: center;

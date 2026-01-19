@@ -1,6 +1,15 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
-import { fontSize, textAlign, fontWeight, color } from "styled-system";
+import {
+  fontSize,
+  textAlign,
+  fontWeight,
+  color,
+  FontSizeProps,
+  FontWeightProps,
+  TextAlignProps,
+  ColorProps,
+} from "styled-system";
 import noop from "lodash/noop";
 import fontFamily from "~/renderer/styles/styled/fontFamily";
 import Box from "~/renderer/components/Box";
@@ -124,9 +133,14 @@ const LoadingDisplay = styled(Box)`
   padding-right: 10px;
 `;
 export const BaseContainer = styled(Box)``;
-const Base = styled.input.attrs(() => ({
-  fontSize: 4,
-}))`
+type BaseProps = {
+  ff?: string;
+} & FontSizeProps &
+  FontWeightProps &
+  TextAlignProps &
+  ColorProps;
+
+const Base = styled.input.attrs<BaseProps>({ fontSize: 4 })<BaseProps>`
   font-family: "Inter";
   font-weight: 600;
   color: ${p => p.theme.colors.neutral.c100};
@@ -175,7 +189,7 @@ export type Props = {
   value?: string;
   placeholder?: string;
   ff?: string;
-} & React.ComponentProps<typeof Base>;
+} & Omit<React.ComponentProps<typeof Base>, "onChange">;
 
 const Input = function Input(
   {
@@ -304,4 +318,6 @@ const Input = function Input(
     </Box>
   );
 };
-export default React.forwardRef(Input) as typeof Input;
+const ForwardedInput = React.forwardRef<HTMLInputElement, Props>(Input);
+ForwardedInput.displayName = "Input";
+export default ForwardedInput;

@@ -60,7 +60,6 @@ const InfoText = styled(Text).attrs(p => ({
   ml: "6px",
   ff: "Inter|Medium",
   fontSize: 12,
-  lineHeight: 18,
   color: p.theme.colors.primary.c80,
 }))`
   flex: 1;

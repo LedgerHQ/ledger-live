@@ -1,6 +1,5 @@
 import { Box } from "@ledgerhq/react-ui";
-import { BaseStyledProps } from "@ledgerhq/react-ui/components/styled";
-import styled, { DefaultTheme, StyledComponent } from "styled-components";
+import styled from "styled-components";
 
 export const SCROLL_WIDTH = 18;
 export const SHADOW_HEIGHT = 30;
@@ -22,12 +21,7 @@ interface IsScrollable {
   isScrollable: boolean;
 }
 
-export const ScrollableContainer: StyledComponent<
-  "div",
-  DefaultTheme,
-  BaseStyledProps & IsScrollable,
-  never
-> = styled(Box)<IsScrollable>(
+export const ScrollableContainer = styled(Box)<IsScrollable>(
   ({ theme, isScrollable }) => `
   padding: 0px ${isScrollable ? 20 - SCROLL_WIDTH : 20}px 0px 20px;
   flex: 1;
@@ -46,9 +40,8 @@ export const ScrollableContainer: StyledComponent<
 `,
 );
 
-export const Header: StyledComponent<"div", DefaultTheme, BaseStyledProps & IsScrollable, never> =
-  styled(Box)<IsScrollable>(
-    ({ isScrollable, theme }) => `
+export const Header = styled(Box)<IsScrollable>(
+  ({ isScrollable, theme }) => `
    position: relative;
    ${
      isScrollable
@@ -68,13 +61,11 @@ export const Header: StyledComponent<"div", DefaultTheme, BaseStyledProps & IsSc
        : ""
    }
 `,
-  );
+);
 
-export const Footer: StyledComponent<"div", DefaultTheme, BaseStyledProps & IsScrollable, never> =
-  styled(Box)<IsScrollable>(
-    ({ isScrollable, theme }) => `
+export const Footer = styled(Box)<IsScrollable>(
+  ({ isScrollable, theme }) => `
     position: relative;
-
     ${
       isScrollable
         ? `
@@ -94,4 +85,4 @@ export const Footer: StyledComponent<"div", DefaultTheme, BaseStyledProps & IsSc
     }
 
   `,
-  );
+);
