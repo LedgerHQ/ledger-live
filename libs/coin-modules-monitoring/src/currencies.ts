@@ -26,7 +26,7 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
     },
     ethereum: {
       accounts: {
-        big: { address: "0xB8c77482e45F1F44dE1745F52C74426C631bDD52" },
+        big: { address: "0x835678a611B28684005a5e2233695fB6cbbB0007" },
         average: { address: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3" },
         pristine: { address: "0x6895Df5ed013c85B3D9D2446c227C9AfC3813551" },
       },
