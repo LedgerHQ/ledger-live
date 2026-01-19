@@ -2,4 +2,4 @@
 "@ledgerhq/coin-evm": minor
 ---
 
-Alpaca getBlock returns ERC20 operations
+EVM coin module getBlock returns ERC20 operations
