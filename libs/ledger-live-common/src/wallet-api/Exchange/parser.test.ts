@@ -35,6 +35,9 @@ const STEP_EXPECTATIONS: StepExpectation[] = [
 ];
 
 const mockDownstreamError = new Error("error message");
+const drawerClosedError = Object.assign(new Error("User closed the drawer"), {
+  name: "DrawerClosedError",
+});
 
 describe("parseError", () => {
   it.each(STEP_EXPECTATIONS)(
@@ -66,11 +69,30 @@ describe("parseError", () => {
       expect(error.cause.swapCode).toBe(swapCode);
     },
   );
+
+  it("returns DrawerClosedError when customErrorType is 'swap'", () => {
+    const error = parseError({
+      error: drawerClosedError,
+      step: StepError.NONCE,
+      customErrorType: CustomErrorType.SWAP,
+    });
+
+    expect(error).toBe(drawerClosedError);
+  });
 });
 
 describe("createStepError", () => {
   it("returns downstream error when no step is supplied", () => {
     expect(createStepError({ error: mockDownstreamError })).toBe(mockDownstreamError);
+  });
+
+  it("returns DrawerClosedError without wrapping", () => {
+    const wrapped = createStepError({
+      error: drawerClosedError,
+      step: StepError.NONCE,
+    });
+
+    expect(wrapped).toBe(drawerClosedError);
   });
 
   it.each(STEP_EXPECTATIONS)(
