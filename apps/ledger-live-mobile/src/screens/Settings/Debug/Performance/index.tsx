@@ -12,7 +12,7 @@ export default function Performance() {
   useEffect(() => {
     resolveStartupEvents().then(events => {
       setStartupTime(
-        [...events].reverse().find(e => LAST_STARTUP_EVENT_VALUES.includes(e.event))?.time ?? 0,
+        [...events].reverse().find(e => LAST_STARTUP_EVENT_VALUES.has(e.event))?.time ?? 0,
       );
       setStartupEvents(events);
     });

@@ -11,7 +11,10 @@ export const STARTUP_EVENTS = {
   NAV_READY: "Splash screen faded",
 } as const;
 
-const NOT_LOGGED_EVENTS: string[] = [STARTUP_EVENTS.STORE_STORAGE_READ];
+const NOT_LOGGED_EVENTS = new Set<string>([
+  STARTUP_EVENTS.STORE_STORAGE_READ,
+  STARTUP_EVENTS.CURRENCY_HYDRATED,
+]);
 
 const startupTsp = new Promise<number>(resolve => {
   // On dev it doesn't make sense to compare to the app starting time due to metro start time
@@ -25,7 +28,7 @@ export async function resolveStartupEvents(): Promise<GroupedStartupEvent[]> {
   const awaitedTsp = await startupTsp;
   const resolved = new Map<string, GroupedStartupEvent>();
   startupEvents
-    .filter(e => !NOT_LOGGED_EVENTS.includes(e.event))
+    .filter(e => !NOT_LOGGED_EVENTS.has(e.event))
     .forEach(({ event, time }) => {
       const existing = resolved.get(event);
       resolved.set(
