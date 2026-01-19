@@ -282,11 +282,13 @@
     "advanced": "Advanced",
     "custom": "Custom",
     "fast": "Fast",
+    "networkFees": "Network fees",
     "high": "High",
     "low": "Low",
     "slow": "Slow",
     "standard": "Standard",
     "medium": "Medium",
+    "coinControl": "Coin Control",
     "feesAmount": "Fees Amount"
   },
   "sidebar": {
@@ -2389,12 +2391,25 @@
     "amountToSend": "Amount to send in ({{currency}})",
     "coinToSend": "Coin to send",
     "coinControlCustom": "Custom coin selection",
+    "quickActions": {
+      "quarter": "25%",
+      "half": "50%",
+      "threeQuarters": "75%",
+      "max": "Max"
+    },
+    "reviewCta": "Review",
+    "getCta": "Get {{currency}}",
+    "switchInputMode": "Switch amount input mode",
     "aboveMaximum": "Above maximum balance",
     "transactionSigned": "Transaction signed",
     "processingTransaction": "Your transaction is being processed",
     "sign": {
       "title": "Continue on your Ledger {{wording}}",
       "description": "Follow the instructions displayed on your Secure Touchscreen."
+    },
+    "gasOptionsSync": {
+      "warningTitle": "Unable to refresh network fees",
+      "warningDescription": "Fee presets may be outdated."
     }
   },
   "releaseNotes": {
