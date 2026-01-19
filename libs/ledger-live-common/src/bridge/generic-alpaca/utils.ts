@@ -22,6 +22,29 @@ import {
 } from "./types";
 import { StellarMemo } from "@ledgerhq/coin-stellar/types/bridge";
 
+type BigNumberToBigIntDeep<T> = T extends BigNumber
+  ? bigint
+  : T extends Array<infer U>
+    ? Array<BigNumberToBigIntDeep<U>>
+    : T extends object
+      ? { [K in keyof T]: BigNumberToBigIntDeep<Exclude<T[K], undefined>> }
+      : T;
+
+export function bigNumberToBigIntDeep<T>(obj: T): BigNumberToBigIntDeep<T> {
+  if (BigNumber.isBigNumber(obj)) return BigInt(obj.toFixed()) as BigNumberToBigIntDeep<T>;
+
+  if (Array.isArray(obj)) return obj.map(bigNumberToBigIntDeep) as BigNumberToBigIntDeep<T>;
+
+  if (!!obj && typeof obj === "object")
+    return Object.fromEntries(
+      Object.entries(obj)
+        .filter(([_, value]) => value !== undefined)
+        .map(([key, value]) => [key, bigNumberToBigIntDeep(value)]),
+    ) as BigNumberToBigIntDeep<T>;
+
+  return obj as BigNumberToBigIntDeep<T>;
+}
+
 export function findCryptoCurrencyByNetwork(network: string): CryptoCurrency | undefined {
   const networksRemap = {
     xrp: "ripple",

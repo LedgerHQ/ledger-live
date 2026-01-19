@@ -2,7 +2,7 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
 import { getAlpacaApi } from "./alpaca";
 import { createTransaction } from "./createTransaction";
-import { extractBalances, transactionToIntent } from "./utils";
+import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
 
@@ -35,7 +35,7 @@ export function genericEstimateMaxSpendable(
     const { amount } = await alpacaApi.validateIntent(
       transactionToIntent(account, { ...draftTransaction }, alpacaApi.computeIntentType),
       extractBalances(account, alpacaApi.getAssetFromToken),
-      { value: transaction?.fees ? BigInt(transaction.fees.toString()) : 0n },
+      bigNumberToBigIntDeep({ value: transaction?.fees ?? new BigNumber(0) }),
     );
     if (["stellar", "tezos", "evm"].includes(network)) {
       return amount > 0 ? new BigNumber(amount.toString()) : new BigNumber(0);
