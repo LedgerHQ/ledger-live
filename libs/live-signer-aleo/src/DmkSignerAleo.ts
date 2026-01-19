@@ -1,4 +1,4 @@
-import type { AleoSigner } from "@ledgerhq/coin-aleo/lib/types/signer";
+import type { AleoSigner } from "@ledgerhq/coin-aleo/types/signer";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
 

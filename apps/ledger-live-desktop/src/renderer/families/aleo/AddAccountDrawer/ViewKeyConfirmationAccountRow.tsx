@@ -23,19 +23,20 @@ const AccountItem = styled(Flex)`
   justify-content: space-between;
 `;
 
+const mapStatusToIcon: Record<AleoAccountSharingStatus, React.JSX.Element> = {
+  [ALEO_ACCOUNT_SHARING_STATUS.CONFIRMED]: <Icons.Check size="S" color="neutral.c60" />,
+  [ALEO_ACCOUNT_SHARING_STATUS.REJECTED]: <Icons.Close size="S" color="neutral.c60" />,
+  [ALEO_ACCOUNT_SHARING_STATUS.WAITING]: <Icons.Refresh size="S" color="neutral.c60" />,
+  [ALEO_ACCOUNT_SHARING_STATUS.PENDING]: (
+    <Box size={20} justifyContent="center" alignItems="center">
+      <Spinner size={14} />
+    </Box>
+  ),
+};
+
 const ViewKeyConfirmationAccountRow = ({ account, status }: AccountRowProps) => {
   const accountName = useAccountName(account);
-
-  const statusIcon = {
-    [ALEO_ACCOUNT_SHARING_STATUS.CONFIRMED]: <Icons.Check size="S" color="neutral.c60" />,
-    [ALEO_ACCOUNT_SHARING_STATUS.REJECTED]: <Icons.Close size="S" color="neutral.c60" />,
-    [ALEO_ACCOUNT_SHARING_STATUS.WAITING]: <Icons.Refresh size="S" color="neutral.c60" />,
-    [ALEO_ACCOUNT_SHARING_STATUS.PENDING]: (
-      <Box size={20} justifyContent="center" alignItems="center">
-        <Spinner size={14} />
-      </Box>
-    ),
-  }[status];
+  const statusIcon = mapStatusToIcon[status];
 
   return (
     <AccountItem>

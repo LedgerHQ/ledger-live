@@ -4,7 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
+import { patchAccountWithViewKey } from "@ledgerhq/live-common/families/aleo/utils";
+import type { ViewKeysByAccountId } from "@ledgerhq/live-common/families/aleo/hw/getViewKey/index";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { Flex } from "@ledgerhq/react-ui/index";
 import type { Account } from "@ledgerhq/types-live";
@@ -37,9 +38,9 @@ import {
   ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP,
   type AleoModularDrawerAddAccountStep,
 } from "./AddAccountDrawer/domain";
+import { useAddAccountFlowNavigation } from "./AddAccountDrawer/useAddAccountFlowNavigation";
 import ViewKeyWarning from "./AddAccountDrawer/ViewKeyWarning";
 import ScanAccounts from "./AddAccountDrawer/ScanAccounts";
-import { useAddAccountFlowNavigation } from "./AddAccountDrawer/useAddAccountFlowNavigation";
 
 const StepContainer = styled(Flex)`
   flex: 1;
@@ -94,6 +95,46 @@ const ModularDrawerAddAccountFlowManager = ({
     [navigateToViewKeyWarning],
   );
 
+  const handleViewKeyApproval = useCallback(
+    (result: ViewKeysByAccountId) => {
+      if (!result) {
+        return;
+      }
+
+      const accountsWithViewKeys = selectedAccounts.reduce<Account[]>((acc, account) => {
+        const viewKey = result[account.id];
+        if (viewKey) {
+          acc.push(patchAccountWithViewKey(account, viewKey));
+        }
+        return acc;
+      }, []);
+
+      setSelectedAccounts(accountsWithViewKeys);
+
+      if (accountsWithViewKeys.length === 0) {
+        navigateToWarningScreen(WARNING_REASON.NO_ACCOUNTS_ADDED);
+      } else {
+        dispatch(
+          addAccountsAction({
+            existingAccounts,
+            scannedAccounts: accountsWithViewKeys,
+            selectedIds: accountsWithViewKeys.map(a => a.id),
+            renamings: {},
+          }),
+        );
+
+        navigateToAccountsAdded();
+      }
+    },
+    [
+      existingAccounts,
+      selectedAccounts,
+      dispatch,
+      navigateToAccountsAdded,
+      navigateToWarningScreen,
+    ],
+  );
+
   const renderStepContent = (step: AleoModularDrawerAddAccountStep) => {
     switch (step) {
       case ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE:
@@ -137,42 +178,7 @@ const ModularDrawerAddAccountFlowManager = ({
               selectedAccounts={selectedAccounts}
               currency={cryptoCurrency}
               onCancel={closeDrawer}
-              onResult={result => {
-                if (!result) {
-                  return;
-                }
-
-                const accountsWithViewKeys = selectedAccounts
-                  .filter((account): account is AleoAccount => {
-                    return result[account.id]?.length > 0 && "aleoResources" in account;
-                  })
-                  .map(a => {
-                    return {
-                      ...a,
-                      aleoResources: {
-                        ...a.aleoResources,
-                        viewKey: result[a.id],
-                      },
-                    };
-                  });
-
-                setSelectedAccounts(accountsWithViewKeys);
-
-                if (accountsWithViewKeys.length === 0) {
-                  navigateToWarningScreen(WARNING_REASON.NO_ACCOUNTS_ADDED);
-                } else {
-                  dispatch(
-                    addAccountsAction({
-                      existingAccounts,
-                      scannedAccounts: accountsWithViewKeys,
-                      selectedIds: accountsWithViewKeys.map(a => a.id),
-                      renamings: {},
-                    }),
-                  );
-
-                  navigateToAccountsAdded();
-                }
-              }}
+              onResult={handleViewKeyApproval}
             />
           </StepContainer>
         );

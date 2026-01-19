@@ -12,7 +12,7 @@ import type { ConnectAppEvent, Input as ConnectAppInput } from "../../../../hw/c
 import { withDevice } from "../../../../hw/deviceAccess";
 import { viewKeyResolver } from "../../setup";
 
-export type ViewKeysByAccountId = Record<string, string> | null;
+export type ViewKeysByAccountId = Record<string, string | null> | null;
 
 type BaseState = {
   error: Error | null;
@@ -27,7 +27,7 @@ type BaseState = {
 
 type State = AppState & BaseState;
 
-type ViewKeyProgress = {
+export type ViewKeyProgress = {
   viewKeys: NonNullable<ViewKeysByAccountId>;
   completed: number;
   total: number;

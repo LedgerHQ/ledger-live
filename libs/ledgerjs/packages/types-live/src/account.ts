@@ -212,6 +212,7 @@ export type AccountIdParams = {
   currencyId: string;
   xpubOrAddress: string;
   derivationMode: DerivationMode;
+  customData?: string;
 };
 
 /**
