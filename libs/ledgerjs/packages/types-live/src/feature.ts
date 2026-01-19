@@ -817,6 +817,8 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 
 type Feature_Wallet40_Params = {
   marketBanner: boolean;
+  graphRework: boolean;
+  quickActionCtas: boolean;
 };
 
 export type Feature_LwmWallet40 = Feature<
