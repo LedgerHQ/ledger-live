@@ -231,7 +231,7 @@ const transactionE2E = [
   },
   {
     transaction: new Transaction(Account.ZEC_1, Account.ZEC_2, "0.001"),
-    xrayTicket: "B2CQA-4247",
+    xrayTicket: "B2CQA-4299",
   },
 ];
 

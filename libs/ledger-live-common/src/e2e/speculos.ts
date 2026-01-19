@@ -372,7 +372,7 @@ export const specs: Specs = {
       model: getSpeculosModel(),
       appName: "Zcash",
     },
-    dependency: "",
+    dependencies: [],
   },
 };
 

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
-import { useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
@@ -19,6 +18,7 @@ import type { BitcoinFamily } from "./types";
 import type { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import { Pause, Refresh } from "@ledgerhq/lumen-ui-react/symbols";
 import Spinner from "~/renderer/components/Spinner";
+import { TFunction } from "i18next";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -61,6 +61,56 @@ const AmountValue = styled(Text).attrs(() => ({
 
 type ZCashSyncState = "disabled" | "running" | "paused" | "complete" | "outdated";
 
+const ActionButton = ({
+  t,
+  syncState,
+  updateSyncState,
+}: {
+  t: TFunction<"translation", undefined>;
+  syncState: ZCashSyncState;
+  updateSyncState: () => void;
+}) => {
+  switch (syncState) {
+    case "disabled":
+      return (
+        <ButtonV3
+          variant="main"
+          onClick={updateSyncState}
+          buttonTestId="show-private-balance-button"
+        >
+          <Text>{t("zcash.shielded.state.showBalance")}</Text>
+        </ButtonV3>
+      );
+    case "paused":
+      return (
+        <ButtonV3
+          variant="main"
+          Icon={<Refresh size={20} />}
+          style={{ padding: "100%" }}
+          onClick={updateSyncState}
+        />
+      );
+    case "running":
+      return (
+        <ButtonV3
+          variant="main"
+          Icon={<Pause size={20} />}
+          style={{ padding: "100%" }}
+          onClick={updateSyncState}
+        />
+      );
+    case "outdated":
+      return (
+        <ButtonV3
+          variant="main"
+          Icon={<Refresh size={20} />}
+          style={{ padding: "100%" }}
+          onClick={updateSyncState}
+        />
+      );
+  }
+};
+
 const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
   const [syncState, setSyncState] = useState<ZCashSyncState>("disabled"); // TODO: initial state depends on the account data
   const [progress] = useState(0);
@@ -74,7 +124,6 @@ const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] 
 
   const showComponent = getFeature("zcashShielded");
 
-  // TODO: BitcoinAccount needs a new prop for private balance and ufvk
   const { spendableBalance } = account;
   const privateInfo = account.type === "Account" ? account.privateInfo : null;
 
@@ -124,44 +173,6 @@ const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] 
         // Start sync from the last known block
         setSyncState("running");
         break;
-    }
-  };
-
-  const ActionButton = () => {
-    switch (syncState) {
-      case "disabled":
-        return (
-          <ButtonV3 variant="main" onClick={updateSyncState}>
-            <Text>{t("zcash.shielded.state.showBalance")}</Text>
-          </ButtonV3>
-        );
-      case "paused":
-        return (
-          <ButtonV3
-            variant="main"
-            Icon={<Refresh size={20} />}
-            style={{ padding: "100%" }}
-            onClick={updateSyncState}
-          />
-        );
-      case "running":
-        return (
-          <ButtonV3
-            variant="main"
-            Icon={<Pause size={20} />}
-            style={{ padding: "100%" }}
-            onClick={updateSyncState}
-          />
-        );
-      case "outdated":
-        return (
-          <ButtonV3
-            variant="main"
-            Icon={<Refresh size={20} />}
-            style={{ padding: "100%" }}
-            onClick={updateSyncState}
-          />
-        );
     }
   };
 
@@ -216,7 +227,7 @@ const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] 
             </div>
           ) : null}
           <div>
-            <ActionButton />
+            <ActionButton t={t} syncState={syncState} updateSyncState={updateSyncState} />
           </div>
         </div>
       </BalanceDetail>

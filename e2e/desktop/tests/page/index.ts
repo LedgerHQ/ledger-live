@@ -33,6 +33,7 @@ import { ModularScanAccountsDrawer } from "./drawer/modular.scan.accounts.drawer
 import { ModularDialog } from "./dialog/modular.dialog";
 import { MarketBannerPage } from "./marketBanner.page";
 import { FearAndGreedDialog } from "./dialog/fearGreed.dialog";
+import { PrivateModal } from "./modal/private.modal";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -59,6 +60,7 @@ export class Application extends PageHolder {
   public password = new PasswordlockModal(this.page);
   public portfolio = new PortfolioPage(this.page);
   public receive = new ReceiveModal(this.page);
+  public private = new PrivateModal(this.page);
   public redux = new Redux(this.page);
   public send = new SendModal(this.page);
   public sendDrawer = new SendDrawer(this.page);

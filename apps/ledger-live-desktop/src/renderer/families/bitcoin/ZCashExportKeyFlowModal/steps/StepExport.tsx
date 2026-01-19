@@ -74,18 +74,12 @@ const StepExport = (props: StepProps) => {
   }, [isUfvkExported, requestUfvkFromDevice]);
 
   return (
-    <>
-      <Box px={2}>
-        <TrackPage category={"Export ZCash UFVK"} name="Step 3" />
-        {
-          device ? (
-            <>
-              <ExportUfvkOnDevice device={device} />
-            </>
-          ) : null // should not happen
-        }
-      </Box>
-    </>
+    <Box px={2}>
+      <TrackPage category={"Export ZCash UFVK"} name="Step 3" />
+      {
+        device ? <ExportUfvkOnDevice device={device} /> : null // should not happen
+      }
+    </Box>
   );
 };
 export default StepExport;
