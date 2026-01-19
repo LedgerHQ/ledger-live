@@ -28,6 +28,7 @@ import MarketGraph from "./components/MarketGraph";
 import MarketStats from "./components/MarketStats";
 import TitleWithTooltip from "./components/TitleWithTooltip";
 import useMarketDetailViewModel from "./useMarketDetailViewModel";
+import Icon from "@ledgerhq/crypto-icons/native";
 
 interface ViewProps {
   loading: boolean;
@@ -60,7 +61,7 @@ function View({
   range,
   updateMarketParams,
 }: ViewProps) {
-  const { name, image, price } = currency || {};
+  const { name, price, ledgerIds, ticker, image } = currency || {};
 
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refetch });
   const [hoveredItem, setHoverItem] = useState<Item | null | undefined>(null);
@@ -78,15 +79,19 @@ function View({
         TopLeftSection={<BackButton />}
         MiddleSection={
           <Flex height={48} flexDirection="row" justifyContent="flex-start" alignItems="center">
-            {image && (
-              <StyledIconContainer>
+            <StyledIconContainer>
+              {ledgerIds && ledgerIds.length > 0 && ticker ? (
+                <Icon ledgerId={ledgerIds[0]} ticker={ticker} size={32} />
+              ) : (
                 <Image
                   source={{ uri: image }}
                   style={{ width: 32, height: 32 }}
+                  accessibilityLabel="currency logo"
                   resizeMode="contain"
                 />
-              </StyledIconContainer>
-            )}
+              )}
+            </StyledIconContainer>
+
             <TitleWithTooltip name={name} />
           </Flex>
         }

@@ -4,6 +4,7 @@ import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PerformanceIndicator } from "./PerformanceIndicator";
 import { useNavigate } from "react-router";
 import { ViewAllTile } from "./ViewAllTile";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 
 type TrendingAssetsListProps = {
   readonly items: MarketItemPerformer[];
@@ -33,15 +34,19 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
           >
             <TileSpot
               appearance="icon"
-              icon={() => (
-                <img
-                  width={48}
-                  height={48}
-                  className="overflow-hidden rounded-full"
-                  src={item.image}
-                  alt={`${getCapitalizedTicker(item)} logo`}
-                />
-              )}
+              icon={() =>
+                item.ledgerIds && item.ledgerIds.length > 0 && item.ticker ? (
+                  <CryptoIcon ledgerId={item.ledgerIds[0]} ticker={item.ticker} size="48px" />
+                ) : (
+                  <img
+                    width={48}
+                    height={48}
+                    className="overflow-hidden rounded-full"
+                    src={item.image}
+                    alt={`${getCapitalizedTicker(item)} logo`}
+                  />
+                )
+              }
             />
             <TileContent>
               <TileTitle>{getCapitalizedTicker(item)}</TileTitle>
