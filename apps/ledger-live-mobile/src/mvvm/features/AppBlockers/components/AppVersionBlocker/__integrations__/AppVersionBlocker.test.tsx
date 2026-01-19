@@ -24,11 +24,7 @@ jest.mock("@ledgerhq/native-ui", () => ({
   ),
   Text: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
-jest.mock("react-i18next", () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+
 jest.mock("styled-components/native", () => ({
   ...jest.requireActual("styled-components/native"),
   useTheme: () => ({
