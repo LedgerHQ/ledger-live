@@ -3474,7 +3474,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Bildirimleri aç",
+      "titleVariantB" : "Ledger Wallet’tan en iyi şekilde faydalanın",
       "desc" : "Ledger Wallet, Ledger ürünleri ve piyasalar hakkındaki son haberleri ve kişiye özel öneriler alın. Ayarları değiştirerek istediğiniz zaman abonelikten çıkabilirsiniz",
+      "descVariantB" : "Size kişiselleştirilmiş ipuçları, kurulum rehberleri ve önemli piyasa haberlerini göndereceğiz.",
       "allow" : "Bildirimlere izin ver",
       "later" : "Belki sonra"
     },
@@ -3891,7 +3893,9 @@
         "celo_title" : "Ledger Nano S™, Celo takasını desteklemez",
         "celo_description" : "Celo takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
         "monad_title" : "Ledger Nano S™, Monad takasını desteklemez",
-        "monad_description" : "Monad takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın."
+        "monad_description" : "Monad takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
+        "zcash_title" : "Ledger Nano S™, Zcash takasını desteklemez",
+        "zcash_description" : "Zcash takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın."
       }
     },
     "lending" : {

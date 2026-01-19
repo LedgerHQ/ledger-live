@@ -3474,7 +3474,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Включите уведомления",
+      "titleVariantB" : "Извлеките максимум из Ledger Wallet",
       "desc" : "Будьте в курсе последних новостей о Ledger Wallet, устройствах Ledger и рынке криптовалют, а также получайте персонализированные рекомендации. Отписаться можно в любой момент в настройках.",
+      "descVariantB" : "Мы отправим вам персонализированные советы, руководства по настройке и актуальные новости о происходящем на рынке.",
       "allow" : "Разрешить уведомления",
       "later" : "Не сейчас"
     },
@@ -3891,7 +3893,9 @@
         "celo_title" : "Ledger Nano S™ не поддерживает обмен Celo",
         "celo_description" : "Используйте другие совместимые устройства Ledger для обмена Celo. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "monad_title" : "Ledger Nano S™ не поддерживает обмен Monad",
-        "monad_description" : "Для обмена Monad используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
+        "monad_description" : "Для обмена Monad используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+        "zcash_title" : "Ledger Nano S™ не поддерживает обмен Zcash",
+        "zcash_description" : "Для обмена Zcash используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
       }
     },
     "lending" : {
