@@ -34,7 +34,7 @@ const MarketTile = ({ item, index, range, onPress }: MarketTileProps) => {
       accessibilityHint={t("marketBanner.tile.accessibilityHint")}
       accessibilityRole="button"
     >
-      <MarketTileIcon imageUrl={item.image} name={item.name} />
+      <MarketTileIcon ledgerIds={item.ledgerIds} ticker={item.ticker} />
       <TileContent>
         <TileTitle>{capitalizedTicker}</TileTitle>
         <TileDescription>

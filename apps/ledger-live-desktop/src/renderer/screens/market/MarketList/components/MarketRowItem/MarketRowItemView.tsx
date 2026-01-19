@@ -48,7 +48,9 @@ export const MarketRowItemView = memo<MarketRowItemViewProps>(function MarketRow
           <TableCell>{currency?.marketcapRank ?? "-"}</TableCell>
           <TableCell mr={3}>
             <CryptoCurrencyIconWrapper>
-              <CryptoIcon ledgerId={currency.ledgerIds[0]} ticker={currency.ticker} size="32px" />
+              {currency.ledgerIds?.[0] && (
+                <CryptoIcon ledgerId={currency.ledgerIds[0]} ticker={currency.ticker} size="32px" />
+              )}
             </CryptoCurrencyIconWrapper>
             <Tooltip
               content={<TooltipContainer>{currency.name}</TooltipContainer>}
