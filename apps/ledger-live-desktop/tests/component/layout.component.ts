@@ -33,7 +33,6 @@ export class Layout extends Component {
   readonly discreetTooltip = this.page.locator("#tippy-12"); // automatically generated tippy id but it's consistent
 
   // general
-  readonly marketPerformanceWidget = this.page.getByTestId("market-performance-widget");
 
   // updater
   readonly appUpdateBanner = this.page.getByTestId("layout-app-update-banner");

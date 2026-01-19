@@ -27,7 +27,9 @@ import {
 import { walletSelector } from "../reducers/wallet";
 import { countervaluesActions } from "./countervalues";
 import { useExtraSessionTrackingPair } from "./deprecated/ondemand-countervalues";
-import { useMarketPerformanceTrackingPairs } from "./marketperformance";
+import { useMarketcapIds, useTrackingPairsForTopCoins } from "@ledgerhq/live-countervalues-react";
+import { TrackingPair } from "@ledgerhq/live-countervalues/types";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 
 export function useDistribution(
   opts: Omit<Parameters<typeof useDistributionRaw>[0], "accounts" | "to">,
@@ -105,12 +107,23 @@ export const themeSelector = createSelector(
   (osDark, theme) => theme || (osDark ? "dark" : "light"),
 );
 
+export function useTrackingPairs(countervalue: Currency): TrackingPair[] {
+  const size = 50;
+
+  const marketcapIds = useMarketcapIds();
+  return useTrackingPairsForTopCoins(
+    marketcapIds,
+    countervalue,
+    size,
+    undefined, // undefined will disable the cost of this hook
+  );
+}
+
 export function useCalculateCountervaluesUserSettings() {
   const dispatch = useDispatch();
   const countervalue = useSelector(counterValueCurrencySelector);
 
-  // countervalues for top coins (market performance feature)
-  const trackingPairsForTopCoins = useMarketPerformanceTrackingPairs(countervalue);
+  const trackingPairsForTopCoins = useTrackingPairs(countervalue);
 
   // countervalues for accounts
   const accounts = useSelector(accountsSelector);

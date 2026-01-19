@@ -20,7 +20,6 @@ export class Layout extends Component {
   readonly topbarSettingsButton = this.page.getByTestId("topbar-settings-button");
 
   // general
-  readonly marketPerformanceWidget = this.page.getByTestId("market-performance-widget");
 
   @step("Go to Portfolio")
   async goToPortfolio() {
