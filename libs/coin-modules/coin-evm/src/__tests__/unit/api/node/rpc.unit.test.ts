@@ -284,10 +284,7 @@ describe("EVM Family", () => {
         ];
 
         const result = RPC_API.parseERC20TransfersFromLogs(logs);
-
-        expect(result).toHaveLength(2);
-        expect(result[0].value).toBe("5480989920044678351000");
-        expect(result[1].value).toBe("81274972180027185554775");
+        expect(result.map(r => r.value)).toEqual(["5480989920044678351000", "81274972180027185554775"]);
       });
 
       it("should filter out non-Transfer events (Approval)", () => {
@@ -308,13 +305,13 @@ describe("EVM Family", () => {
               "0x000000000000000000000000534eef6db44fbeb71047ee3eb4cb16e572862af6",
               "0x000000000000000000000000970402b253733a1f6f4f3cd1d07420006be2882d",
             ],
-            data: "0x0000000000000000000000000000000000000000000000000000000000000001",
+            data: "0x0000000000000000000000000000000000000000000000000000000000000002",
           },
         ];
 
         const result = RPC_API.parseERC20TransfersFromLogs(logs);
-
-        expect(result).toHaveLength(1); // Only the Transfer, not the Approval
+        // Only the Transfer, not the Approval
+        expect(result.map(r => r.value)).toEqual(["1"]);
       });
 
       it("should return empty array for logs with no Transfer events", () => {
@@ -328,7 +325,7 @@ describe("EVM Family", () => {
 
         const result = RPC_API.parseERC20TransfersFromLogs(logs);
 
-        expect(result).toEqual([]);
+        expect(result).toHaveLength(0);
       });
 
       it("should handle empty logs array", () => {
@@ -354,7 +351,7 @@ describe("EVM Family", () => {
               TRANSFER_TOPIC,
               "0x000000000000000000000000534eef6db44fbeb71047ee3eb4cb16e572862af6",
             ],
-            data: "0x0000000000000000000000000000000000000000000000000000000000000001",
+            data: "0x0000000000000000000000000000000000000000000000000000000000000002",
           },
           {
             // ERC-721 Transfer: 4 topics (signature, from, to, tokenId) - should be filtered out
@@ -375,7 +372,7 @@ describe("EVM Family", () => {
 
         const result = RPC_API.parseERC20TransfersFromLogs(logs);
 
-        expect(result).toHaveLength(1);
+        expect(result.map(r => r.value)).toEqual(["1"]);
       });
 
       it("should filter out Transfer with 3 topics but empty data", () => {
@@ -394,7 +391,7 @@ describe("EVM Family", () => {
 
         const result = RPC_API.parseERC20TransfersFromLogs(logs);
 
-        expect(result).toHaveLength(0);
+        expect(result).toEqual([]);
       });
     });
 
