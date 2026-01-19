@@ -6,7 +6,7 @@ import PromptNotifGenericLight from "~/images/illustration/Light/_PromptNotifGen
 import PromptNotifMarketDark from "~/images/illustration/Dark/_PromptNotifMarket.webp";
 import PromptNotifMarketLight from "~/images/illustration/Light/_PromptNotifMarket.webp";
 
-export function PushNotificationsModalIllustration({
+export function NotificationsDrawerIllustration({
   type,
 }: {
   readonly type: NotificationsState["drawerSource"];
@@ -22,7 +22,6 @@ export function PushNotificationsModalIllustration({
         />
       );
     }
-    case "generic":
     case "onboarding":
     default: {
       // we will display illustrations for other cases later

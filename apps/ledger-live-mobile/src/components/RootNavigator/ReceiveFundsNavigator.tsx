@@ -24,7 +24,7 @@ import { urls } from "~/utils/urls";
 import ReceiveProvider from "~/screens/ReceiveFunds/01b-ReceiveProvider.";
 import { setIsOnboardingFlowReceiveSuccess } from "~/actions/settings";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
-import { useNotifications } from "~/logic/notifications";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
