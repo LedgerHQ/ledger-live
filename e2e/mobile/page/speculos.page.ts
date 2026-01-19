@@ -4,18 +4,22 @@ import {
   goToSettings,
   activateExpertMode,
   expectValidAddressDevice,
-  setExchangeDependencies,
   signDelegationTransaction,
   signSendTransaction,
   verifyAmountsAndAcceptSwap,
   verifyAmountsAndAcceptSwapForDifferentSeed,
   verifyAmountsAndRejectSwap,
 } from "@ledgerhq/live-common/e2e/speculos";
+import { setExchangeDependencies } from "../utils/speculosUtils";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
-import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
+import { SwapType, Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+
+function isSwap(value: SwapType | Account): value is SwapType {
+  return value instanceof Swap;
+}
 
 export default class SpeculosPage {
   @Step("Verify receive address correctness on device")
@@ -69,12 +73,12 @@ export default class SpeculosPage {
 
   async setExchangeDependencies(swapOrFromAccount: SwapType | Account, toAccount?: Account) {
     let accounts: Account[];
-    if (toAccount) {
-      accounts = [swapOrFromAccount as Account, toAccount];
+    if (isSwap(swapOrFromAccount)) {
+      accounts = [swapOrFromAccount.accountToDebit, swapOrFromAccount.accountToCredit];
     } else {
-      const swap = swapOrFromAccount as SwapType;
-      accounts = [swap.accountToDebit, swap.accountToCredit];
+      accounts = toAccount ? [swapOrFromAccount, toAccount] : [swapOrFromAccount];
     }
+
     setExchangeDependencies(
       accounts.map(acc => ({
         name: acc.currency.speculosApp.name.replace(/ /g, "_"),
