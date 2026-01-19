@@ -17,7 +17,7 @@ function FearAndGreedCard({ data, onPress }: FearAndGreedCardProps) {
   const translationKey = getFearAndGreedTranslationKey(value);
 
   return (
-    <Tile appearance="card" lx={{ width: "s96", flexShrink: 1 }} onPress={onPress}>
+    <Tile appearance="card" lx={{ width: "s96", flexGrow: 1 }} onPress={onPress}>
       <FearAndGreedArc value={value} />
       <TileContent>
         <TileTitle>{t("fearAndGreed.title")}</TileTitle>

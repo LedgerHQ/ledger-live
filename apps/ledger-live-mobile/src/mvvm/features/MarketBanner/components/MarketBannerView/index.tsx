@@ -22,6 +22,11 @@ interface MarketBannerViewProps {
   testID?: string;
 }
 
+const HEIGHT = 102;
+const MARGIN_RIGHT = 8;
+const PADDING_HORIZONTAL = 16;
+const MARGIN_HORIZONTAL = -16;
+
 const MarketBannerView = ({
   items,
   range,
@@ -53,10 +58,6 @@ const MarketBannerView = ({
     [range, onTilePress],
   );
 
-  const keyExtractor = useCallback((item: ListItem): string => {
-    return item.id;
-  }, []);
-
   return (
     <Flex testID={testID} mb={24}>
       <Pressable
@@ -76,7 +77,7 @@ const MarketBannerView = ({
       <FlatList
         data={items}
         renderItem={renderItem}
-        keyExtractor={keyExtractor}
+        keyExtractor={item => item.id}
         ListHeaderComponent={<FearAndGreed />}
         ListFooterComponent={<ViewAllTile onPress={onViewAllPress} />}
         ListEmptyComponent={<BannerStates isError={isError} />}
@@ -85,9 +86,9 @@ const MarketBannerView = ({
         onScroll={handleSwipe}
         scrollEventThrottle={16}
         testID="market-banner-list"
-        ListHeaderComponentStyle={{ marginRight: 8 }}
-        contentContainerStyle={{ paddingHorizontal: 16 }}
-        style={{ marginHorizontal: -16 }}
+        ListHeaderComponentStyle={{ marginRight: MARGIN_RIGHT }}
+        contentContainerStyle={{ paddingHorizontal: PADDING_HORIZONTAL, height: HEIGHT }}
+        style={{ marginHorizontal: MARGIN_HORIZONTAL }}
       />
     </Flex>
   );
