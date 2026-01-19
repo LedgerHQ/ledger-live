@@ -41,6 +41,17 @@ Object.defineProperty(globalThis, "performance", {
   configurable: true,
 });
 
+const nodeTimers = require("node:timers");
+
+const ensureTimerCallback = callback => (typeof callback === "function" ? callback : () => {});
+
+globalThis.setTimeout = (callback, ...args) =>
+  nodeTimers.setTimeout(ensureTimerCallback(callback), ...args);
+globalThis.clearTimeout = (...args) => nodeTimers.clearTimeout(...args);
+globalThis.setInterval = (callback, ...args) =>
+  nodeTimers.setInterval(ensureTimerCallback(callback), ...args);
+globalThis.clearInterval = (...args) => nodeTimers.clearInterval(...args);
+
 const { fetch, Headers, FormData, Request, Response } = require("undici");
 
 Object.defineProperties(globalThis, {
