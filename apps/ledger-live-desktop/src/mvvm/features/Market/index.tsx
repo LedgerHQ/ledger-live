@@ -8,7 +8,7 @@ import SideDrawerFilter from "~/renderer/screens/market/components/SideDrawerFil
 import CounterValueSelect from "~/renderer/screens/market/components/CountervalueSelect";
 import { useMarketListVirtualization } from "~/renderer/screens/market/MarketList/useMarketListVirtualization";
 import PageHeader from "LLD/components/PageHeader";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import MarketList from "./screens/MarketList";
 
 const Container = styled(Flex).attrs({
@@ -27,7 +27,7 @@ const SelectBarContainer = styled(Flex)`
 
 export default function Market() {
   const marketData = useMarket();
-  const history = useHistory();
+  const navigate = useNavigate();
   const {
     refresh,
     setCounterCurrency,
@@ -83,7 +83,7 @@ export default function Market() {
         timeframe={range}
         countervalue={counterCurrency}
       />
-      <PageHeader title={t("market.title")} onBack={() => history.push("/")} />
+      <PageHeader title={t("market.title")} onBack={() => navigate("/")} />
 
       <Flex flexDirection="row" pr="6px" my={2} alignItems="center" justifyContent="space-between">
         <SearchInputComponent search={search} updateSearch={updateSearch} />
