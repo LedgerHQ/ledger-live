@@ -16,6 +16,7 @@ import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperfor
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 const LIMIT_TO_DISPLAY = 5;
 
@@ -50,13 +51,17 @@ export function useMarketPerformanceWidget() {
   const timeRange = useSelector(selectedTimeRangeSelector);
   const countervalue = useSelector(counterValueCurrencySelector);
 
+  const { shouldDisplayMarketBanner: filterBySupported } = useWalletFeaturesConfig("desktop");
+
+  const shouldDisplaySupported = filterBySupported || supported;
+
   const { data, isError, isLoading } = useMarketPerformers({
     sort: order,
     counterCurrency: countervalue.ticker,
     range: timeRange,
     limit: enableNewFeature ? limit : LIMIT_TO_DISPLAY,
     top,
-    supported,
+    supported: shouldDisplaySupported,
     refreshRate,
   });
 
