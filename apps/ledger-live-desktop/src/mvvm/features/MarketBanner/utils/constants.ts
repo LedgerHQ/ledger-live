@@ -1,4 +1,7 @@
-import { Order } from "LLD/features/MarketPerformanceWidget/types";
+export enum Order {
+  asc = "asc",
+  desc = "desc",
+}
 
 export const MARKET_BANNER_ITEMS_COUNT = 11;
 export const MARKET_BANNER_TOP = 100;

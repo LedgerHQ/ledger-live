@@ -221,7 +221,6 @@ export type Features = CurrencyFeatures & {
   llmChatbotSupport: Feature_LlmChatbotSupport;
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
   lldActionCarousel: Feature_lldActionCarousel;
-  marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
   lldRefreshMarketData: Feature_LldRefreshMarketData;
   llmRefreshMarketData: Feature_LlmRefreshMarketData;
   lldWalletSync: Feature_LldWalletSync;
@@ -652,15 +651,6 @@ export type Feature_LldAnalyticsOptInPrompt = Feature<{
 
 export type Feature_lldActionCarousel = Feature<{
   variant: ABTestingVariants;
-}>;
-
-export type Feature_MarketperformanceWidgetDesktop = Feature<{
-  variant: ABTestingVariants;
-  refreshRate: number;
-  top: number;
-  limit: number;
-  supported: boolean;
-  enableNewFeature: boolean;
 }>;
 
 export type Feature_LldRefreshMarketData = Feature<{
