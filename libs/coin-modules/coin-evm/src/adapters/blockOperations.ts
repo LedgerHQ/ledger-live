@@ -45,10 +45,10 @@ function addTransferOperations(
 }
 
 /**
- * Extract BlockOperations from a transaction.
+ * Extract BlockOperations from an RPC transaction.
  * This extracts native transfers from the transaction value field and ERC20 transfers from logs.
  */
-export function transactionToBlockOperations(
+export function rpcTransactionToBlockOperations(
   tx: Pick<TransactionInfo, "from" | "value" | "to" | "erc20Transfers">,
 ): BlockOperation[] {
   const operations: BlockOperation[] = [];

@@ -1,7 +1,7 @@
 import type { BlockOperation } from "@ledgerhq/coin-framework/api/index";
 import {
   ledgerTransactionToBlockOperations,
-  transactionToBlockOperations,
+  rpcTransactionToBlockOperations,
 } from "../../../adapters/blockOperations";
 import {
   LedgerExplorerOperation,
@@ -14,9 +14,9 @@ import {
 describe("EVM Family", () => {
   describe("adapters", () => {
     describe("blockOperations", () => {
-      describe("transactionToBlockOperations", () => {
+      describe("rpcTransactionToBlockOperations", () => {
         it("should extract native ETH transfer operations from transaction with value", () => {
-          const operations = transactionToBlockOperations({
+          const operations = rpcTransactionToBlockOperations({
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
             value: "1000000000000000000",
             to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
@@ -41,7 +41,7 @@ describe("EVM Family", () => {
         });
 
         it("should return empty array for transaction with zero value", () => {
-          const operations = transactionToBlockOperations({
+          const operations = rpcTransactionToBlockOperations({
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
             value: "0",
             to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
@@ -52,7 +52,7 @@ describe("EVM Family", () => {
         });
 
         it("should handle transaction with undefined to address (contract creation)", () => {
-          const operations = transactionToBlockOperations({
+          const operations = rpcTransactionToBlockOperations({
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
             value: "500000000000000000",
             to: undefined,
@@ -70,7 +70,7 @@ describe("EVM Family", () => {
         });
 
         it("should handle transaction with empty from address", () => {
-          const operations = transactionToBlockOperations({
+          const operations = rpcTransactionToBlockOperations({
             from: "",
             value: "2000000000000000000",
             to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
@@ -88,7 +88,7 @@ describe("EVM Family", () => {
         });
 
         it("should handle invalid addresses gracefully", () => {
-          const operations = transactionToBlockOperations({
+          const operations = rpcTransactionToBlockOperations({
             from: "0x0",
             value: "1000000000000000000",
             to: "0x",
@@ -99,7 +99,7 @@ describe("EVM Family", () => {
         });
 
         it("should extract ERC20 transfers from erc20Transfers", () => {
-          const operations = transactionToBlockOperations({
+          const operations = rpcTransactionToBlockOperations({
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
             value: "0",
             to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
