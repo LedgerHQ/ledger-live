@@ -910,6 +910,12 @@ export type DmkJob<T> = (connection: DmkDeviceConnection, context: DmkJobContext
  * @param deviceId - The device ID
  * @param options - Configuration options
  * NOTE: the args are the same as legacy withDevice, this is important
+ *
+ * ⚠️ COMMENT-ON-ARCHI-PROPOSAL: it's a good idea to pass the TransportDiscoveredDevice so that
+ * the error remapping and transport specific logic can be obtained.
+ * Question: is it easy to pass it down to every single call of withDevice ?
+ * -> answer: we recently managed to pass down the `matchDeviceByName` so it should be doable.
+ * With Cursor and TS enforcing it it should be pretty straightforward.
  */
 export const withDeviceDmk =
   (deviceId: string, options?: WithDeviceDmkOptions) =>
