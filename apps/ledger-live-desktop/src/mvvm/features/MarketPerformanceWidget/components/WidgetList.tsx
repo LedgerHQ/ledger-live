@@ -64,7 +64,11 @@ function WidgetRow({ data, index, range, enableNewFeature }: PropsBodyElem) {
         </Text>
 
         <CryptoCurrencyIconWrapper>
-          <CryptoIcon ledgerId={data.ledgerIds[0]} ticker={data.ticker} size="32px" />
+          {data.ledgerIds && data.ledgerIds.length > 0 && data.ticker ? (
+            <CryptoIcon ledgerId={data.ledgerIds[0]} ticker={data.ticker} size="32px" />
+          ) : (
+            <img width="32px" height="32px" src={data.image} alt={"currency logo"} />
+          )}
         </CryptoCurrencyIconWrapper>
 
         <Flex ml={2} overflow="hidden" flexDirection="column" flex={1} alignItems="left">

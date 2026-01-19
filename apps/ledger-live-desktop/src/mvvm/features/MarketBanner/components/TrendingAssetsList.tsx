@@ -34,9 +34,19 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
           >
             <TileSpot
               appearance="icon"
-              icon={() => (
-                <CryptoIcon ledgerId={item.ledgerIds[0]} ticker={item.ticker} size="48px" />
-              )}
+              icon={() =>
+                item.ledgerIds && item.ledgerIds.length > 0 && item.ticker ? (
+                  <CryptoIcon ledgerId={item.ledgerIds[0]} ticker={item.ticker} size="48px" />
+                ) : (
+                  <img
+                    width={48}
+                    height={48}
+                    className="overflow-hidden rounded-full"
+                    src={item.image}
+                    alt={`${getCapitalizedTicker(item)} logo`}
+                  />
+                )
+              }
             />
             <TileContent>
               <TileTitle>{getCapitalizedTicker(item)}</TileTitle>

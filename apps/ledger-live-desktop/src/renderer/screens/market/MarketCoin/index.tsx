@@ -91,8 +91,10 @@ export default function MarketCoinScreen() {
               <Flex alignItems={"center"} justifyContent={"center"}>
                 <InfiniteLoader />
               </Flex>
+            ) : ledgerIds && ledgerIds.length > 0 && ticker ? (
+              <CryptoIcon ledgerId={ledgerIds[0]} ticker={ticker} size="56px" />
             ) : (
-              <CryptoIcon ledgerId={ledgerIds?.[0]} ticker={ticker} size="56px" />
+              <img width="56px" height="56px" src={currency?.image} alt={"currency logo"} />
             )}
           </CryptoCurrencyIconWrapper>
           <Flex pl={3} flexDirection="column" alignItems="left" pr={16}>

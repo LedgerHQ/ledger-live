@@ -7,6 +7,7 @@ import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import { StyledIconContainer } from "./MarketRowItem.styled";
 import Icon from "@ledgerhq/crypto-icons/native";
+import { Image } from "react-native";
 
 type Props = {
   index: number;
@@ -32,7 +33,16 @@ function MarketRowItem({ item, index, counterCurrency, range }: Props) {
       key={index}
     >
       <StyledIconContainer>
-        <Icon ledgerId={item?.ledgerIds?.[0]} ticker={item?.ticker} size={32} />
+        {item?.ledgerIds && item?.ledgerIds.length > 0 && item?.ticker ? (
+          <Icon ledgerId={item?.ledgerIds?.[0]} ticker={item?.ticker} size={32} />
+        ) : (
+          <Image
+            source={{ uri: item?.image }}
+            style={{ width: 32, height: 32 }}
+            accessibilityLabel="currency logo"
+            resizeMode="contain"
+          />
+        )}
       </StyledIconContainer>
 
       <Flex mx="4" flexDirection="column" justifyContent="center" alignItems="flex-start" flex={1}>

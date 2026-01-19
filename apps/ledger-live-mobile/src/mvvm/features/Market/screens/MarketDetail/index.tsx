@@ -10,7 +10,7 @@ import { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { counterValueFormatter, getDateFormatter } from "LLM/features/Market/utils";
 import React, { memo, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FlatList, RefreshControl } from "react-native";
+import { FlatList, Image, RefreshControl } from "react-native";
 import { useTheme } from "styled-components/native";
 import { Item } from "~/components/Graph/types";
 import { MarketQuickActions } from "~/components/MarketQuickActions";
@@ -61,7 +61,7 @@ function View({
   range,
   updateMarketParams,
 }: ViewProps) {
-  const { name, price, ledgerIds, ticker } = currency || {};
+  const { name, price, ledgerIds, ticker, image } = currency || {};
 
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refetch });
   const [hoveredItem, setHoverItem] = useState<Item | null | undefined>(null);
@@ -80,8 +80,15 @@ function View({
         MiddleSection={
           <Flex height={48} flexDirection="row" justifyContent="flex-start" alignItems="center">
             <StyledIconContainer>
-              {ledgerIds?.[0] && ticker && (
+              {ledgerIds && ledgerIds.length > 0 && ticker ? (
                 <Icon ledgerId={ledgerIds[0]} ticker={ticker} size={32} />
+              ) : (
+                <Image
+                  source={{ uri: image }}
+                  style={{ width: 32, height: 32 }}
+                  accessibilityLabel="currency logo"
+                  resizeMode="contain"
+                />
               )}
             </StyledIconContainer>
 
