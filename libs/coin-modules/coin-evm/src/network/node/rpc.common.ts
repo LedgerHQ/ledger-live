@@ -49,9 +49,7 @@ export function parseERC20TransfersFromLogs(
   return logs
     .filter(
       log =>
-        log.topics[0] === ERC20_TRANSFER_TOPIC &&
-        log.topics.length === 3 &&
-        log.data.length > 2, // must have data beyond "0x"
+        log.topics[0] === ERC20_TRANSFER_TOPIC && log.topics.length === 3 && log.data.length > 2, // must have data beyond "0x"
     )
     .map(log => ({
       asset: {

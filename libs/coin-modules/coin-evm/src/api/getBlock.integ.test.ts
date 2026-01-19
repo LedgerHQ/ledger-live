@@ -51,7 +51,9 @@ describe("getBlock ERC20 transfers", () => {
 
       // Verify block info
       expect(block.info.height).toBe(69733298);
-      expect(block.info.hash).toBe("0x54eab648119283f9d0fa903a36b7e67db69f1fbc267af8ebc5390cfbbe7bd6e0")
+      expect(block.info.hash).toBe(
+        "0x54eab648119283f9d0fa903a36b7e67db69f1fbc267af8ebc5390cfbbe7bd6e0",
+      );
 
       // Find the transaction with ERC20 transfer
       const tx = block.transactions.find(
@@ -66,7 +68,7 @@ describe("getBlock ERC20 transfers", () => {
           op.asset.type === expectedAsset.type &&
           op.asset.assetReference === expectedAsset.assetReference,
       );
-      // there are two transfer operations for the expected token, 
+      // there are two transfer operations for the expected token,
       // one positive and one negative depending on the direction of the transfer
       expect(tokenOps).toHaveLength(2);
       expect(tokenOps.map(op => op.amount).sort()).toEqual([-expectedAmount, expectedAmount]);
@@ -107,7 +109,9 @@ describe("getBlock ERC20 transfers", () => {
 
       // Verify block info
       expect(block.info.height).toBe(18821112);
-      expect(block.info.hash).toBe("0x9c00dca3e674b19d4485432616e7140ef9099ad451d41eae28727a3278daf914");
+      expect(block.info.hash).toBe(
+        "0x9c00dca3e674b19d4485432616e7140ef9099ad451d41eae28727a3278daf914",
+      );
 
       // Find the transaction with ERC20 transfer
       const tx = block.transactions.find(
@@ -122,7 +126,7 @@ describe("getBlock ERC20 transfers", () => {
           op.asset.type === expectedAsset.type &&
           op.asset.assetReference === expectedAsset.assetReference,
       );
-      // there are two transfer operations for the expected token, 
+      // there are two transfer operations for the expected token,
       // one positive and one negative depending on the direction of the transfer
       expect(tokenOps).toHaveLength(2);
       expect(tokenOps.map(op => op.amount).sort()).toEqual([-expectedAmount, expectedAmount]);

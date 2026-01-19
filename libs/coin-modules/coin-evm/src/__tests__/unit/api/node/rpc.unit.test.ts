@@ -228,10 +228,8 @@ describe("EVM Family", () => {
     });
 
     describe("parseERC20TransfersFromLogs", () => {
-      const TRANSFER_TOPIC =
-        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
-      const APPROVAL_TOPIC =
-        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925";
+      const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+      const APPROVAL_TOPIC = "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925";
 
       it("should parse single ERC20 Transfer (Velas EVM)", () => {
         // Real data from Velas EVM tx 0x23f9232e929f9a13f4f2d6d4e9bf27d717a2b1250d207c030fc66565c4e205e1
