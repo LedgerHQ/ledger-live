@@ -8051,7 +8051,7 @@
       },
       "warnings": {
         "noAccountsAddedWarning": {
-          "description": "You haven't shared view key for any of the selected accounts. View keys are required to display your private balance in Ledger Wallet."
+          "description": "You haven't shared view keys for any of the selected accounts. View keys are required to display your private balance in Ledger Wallet."
         }
       }
     }

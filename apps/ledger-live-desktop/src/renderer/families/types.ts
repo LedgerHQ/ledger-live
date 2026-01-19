@@ -388,7 +388,7 @@ export type LLDCoinFamily<
   ) => string | null | undefined;
 
   /**
-   * Component allowing to fully customize the add account flow in the AddAccountsModal
+   * Component allowing to fully customize the add account flow in the drawer
    */
   ModularDrawerAddAccountFlowManager?: React.ComponentType<ModularDrawerAddAccountFlowManagerProps>;
 

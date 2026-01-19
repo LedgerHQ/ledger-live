@@ -44,7 +44,6 @@ const ViewKeyWarning = ({ onAllow, onCancel }: Props) => {
             textAlign="center"
             fontWeight="semiBold"
             color="palette.text.shade100"
-            data-testid="accounts-added-title"
             mb={4}
           >
             <Trans i18nKey="aleo.addAccount.stepViewKeyWarning.title" />
