@@ -1,12 +1,16 @@
 import React, { useCallback, useRef } from "react";
 import { FlatList, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
-import { Flex } from "@ledgerhq/native-ui";
-import { Text, Pressable } from "@ledgerhq/lumen-ui-rnative";
+import {
+  Subheader,
+  SubheaderRow,
+  SubheaderTitle,
+  SubheaderShowMore,
+  Box,
+} from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "react-i18next";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
 import BannerItem, { ListItem } from "../BannerItem";
-import { ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { FearAndGreed } from "LLM/components/FearAndGreed";
 import ViewAllTile from "../ViewAllTile";
 import { BannerStates } from "../BannerStates";
@@ -59,20 +63,19 @@ const MarketBannerView = ({
   );
 
   return (
-    <Flex testID={testID} mb={24}>
-      <Pressable
-        onPress={onSectionTitlePress}
-        accessibilityLabel={t("marketBanner.title")}
-        accessibilityHint={t("marketBanner.viewAllAccessibilityHint")}
-        accessibilityRole="button"
-      >
-        <Flex flexDirection="row" alignItems="center" mb={4}>
-          <Text typography="heading4SemiBold" lx={{ color: "base" }}>
-            {t("marketBanner.title")}
-          </Text>
-          <ChevronRight size={20} color="base" />
-        </Flex>
-      </Pressable>
+    <Box testID={testID} lx={{ marginBottom: "s24" }}>
+      <Subheader>
+        <SubheaderRow
+          onPress={onSectionTitlePress}
+          lx={{ marginBottom: "s12" }}
+          accessibilityRole="button"
+          accessibilityLabel={t("marketBanner.title")}
+          accessibilityHint={t("marketBanner.accessibilityHint")}
+        >
+          <SubheaderTitle>{t("marketBanner.title")}</SubheaderTitle>
+          <SubheaderShowMore />
+        </SubheaderRow>
+      </Subheader>
 
       <FlatList
         data={items}
@@ -90,7 +93,7 @@ const MarketBannerView = ({
         contentContainerStyle={{ paddingHorizontal: PADDING_HORIZONTAL, height: HEIGHT }}
         style={{ marginHorizontal: MARGIN_HORIZONTAL }}
       />
-    </Flex>
+    </Box>
   );
 };
 
