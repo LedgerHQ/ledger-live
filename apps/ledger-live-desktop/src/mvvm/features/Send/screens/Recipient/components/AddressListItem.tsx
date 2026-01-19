@@ -12,6 +12,7 @@ import {
 import { Wallet, LedgerLogo, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
 import { formatAddress } from "@ledgerhq/react-ui/pre-ldls/components/Address/formatAddress";
 import { formatRelativeDate } from "../utils/dateFormatter";
+import { cn } from "LLD/utils/cn";
 import type { AddressListItemProps } from "../types";
 
 export function AddressListItem({
@@ -41,12 +42,10 @@ export function AddressListItem({
   const trailingContent =
     balance && balanceFormatted ? (
       <div className="flex flex-col items-end">
-        <span className="truncate text-base body-2-semi-bold">{balanceFormatted}</span>
-        <span className="truncate text-muted body-3">{balance}</span>
+        <span className="truncate body-2-semi-bold text-base">{balanceFormatted}</span>
+        <span className="truncate body-3 text-muted">{balance}</span>
       </div>
     ) : undefined;
-
-  const className = disabled ? "mb-6 cursor-not-allowed opacity-50" : "mb-6";
 
   const title = showSendTo ? t("newSendFlow.sendTo", { address: displayName }) : displayName;
 
@@ -54,7 +53,9 @@ export function AddressListItem({
     <ListItem
       onClick={disabled ? undefined : onSelect}
       onContextMenu={onContextMenu}
-      className={className}
+      className={cn("mb-6", {
+        "cursor-not-allowed opacity-50": disabled,
+      })}
     >
       <ListItemLeading>
         <ListItemSpot appearance="icon" icon={icon} />

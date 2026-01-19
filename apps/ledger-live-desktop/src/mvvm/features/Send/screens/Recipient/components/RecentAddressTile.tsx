@@ -56,43 +56,9 @@ export function RecentAddressTile({ recentAddress, onSelect, onRemove }: RecentA
   };
 
   return (
-    <div className="w-[100px] pt-6">
-      {/* <Tile
-        leadingContent={<Spot appearance="icon" icon={icon} />}
-        title={displayName}
-        description={dateText}
-        onClick={onSelect}
-        secondaryAction={
-          <Menu>
-            <MenuTrigger asChild>
-              <InteractiveIcon
-                iconType="stroked"
-                aria-label="More actions"
-                onClick={handleStopPropagation}
-              >
-                <MoreVertical />
-              </InteractiveIcon>
-            </MenuTrigger>
-            <MenuContent>
-              <MenuItem onSelect={handleRemove}>
-                <Trash size={16} />
-                {t("newSendFlow.remove")}
-              </MenuItem>
-            </MenuContent>
-          </Menu>
-        }
-      />
-      */}
-
+    <div className="w-96 pt-6">
       <Tile onClick={onSelect}>
         <Menu>
-          {/*
-           * FIXME: MenuTrigger asChild requires TileSecondaryAction to use forwardRef.
-           * This is currently missing in @ledgerhq/lumen-ui-react but will be added soon
-           * as part of the Tailwind V4 upgrade. For now, this pattern is temporarily broken.
-           * No impact as this feature is not released yet.
-           * See: https://ledger.slack.com/archives/C089J9DLGJ3/p1768469178391389
-           */}
           <MenuTrigger asChild>
             <TileSecondaryAction
               icon={MoreVertical}
@@ -100,7 +66,7 @@ export function RecentAddressTile({ recentAddress, onSelect, onRemove }: RecentA
               onClick={handleStopPropagation}
             />
           </MenuTrigger>
-          <MenuContent>
+          <MenuContent onClick={handleStopPropagation} onPointerDown={handleStopPropagation}>
             <MenuItem onSelect={handleRemove}>
               <Trash size={16} />
               {t("newSendFlow.remove")}
