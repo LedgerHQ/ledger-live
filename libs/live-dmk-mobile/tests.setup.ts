@@ -1,20 +1,26 @@
-import { afterEach } from "vitest";
 import { cleanup } from "@testing-library/react";
-import * as matchers from "@testing-library/jest-dom/matchers";
+import "@testing-library/jest-dom";
+import { TextDecoder, TextEncoder } from "util";
 
-expect.extend(matchers);
+if (!global.TextEncoder) {
+  global.TextEncoder = TextEncoder as typeof global.TextEncoder;
+}
+
+if (!global.TextDecoder) {
+  global.TextDecoder = TextDecoder as typeof global.TextDecoder;
+}
 
 afterEach(() => {
   cleanup();
 });
 
-vi.mock("react-native", () => ({
+jest.mock("react-native", () => ({
   Platform: {},
   PermissionsAndroid: {},
   NativeModules: {},
 }));
 
-vi.mock("react-native-ble-plx", () => ({
+jest.mock("react-native-ble-plx", () => ({
   BleError: class extends Error {
     constructor(message: string) {
       super(message);
@@ -26,9 +32,9 @@ vi.mock("react-native-ble-plx", () => ({
     PoweredOn: "PoweredOn",
     PoweredOff: "PoweredOff",
   },
-  BleManager: vi.fn().mockImplementation(() => ({
-    onStateChange: vi.fn(),
-    stopDeviceScan: vi.fn(),
-    startDeviceScan: vi.fn(),
+  BleManager: jest.fn().mockImplementation(() => ({
+    onStateChange: jest.fn(),
+    stopDeviceScan: jest.fn(),
+    startDeviceScan: jest.fn(),
   })),
 }));

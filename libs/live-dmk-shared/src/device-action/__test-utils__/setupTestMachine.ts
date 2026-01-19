@@ -14,12 +14,11 @@ import {
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
 import { Left, Right } from "purify-ts";
-import type { Mock } from "vitest";
 import { assign, createMachine } from "xstate";
 
 export const setupGoToDashboardMock = (error: boolean = false) => {
-  (GoToDashboardDeviceAction as Mock).mockImplementation(() => ({
-    makeStateMachine: vi.fn().mockImplementation(() =>
+  (GoToDashboardDeviceAction as jest.Mock).mockImplementation(() => ({
+    makeStateMachine: jest.fn().mockImplementation(() =>
       createMachine({
         id: "MockGoToDashboardDeviceAction",
         initial: "ready",
@@ -47,8 +46,8 @@ export const setupGoToDashboardMock = (error: boolean = false) => {
 };
 
 export const setupGetDeviceStatusMock = (deviceStatus: GetDeviceStatusDAOutput, error = false) => {
-  (GetDeviceStatusDeviceAction as Mock).mockImplementation(() => ({
-    makeStateMachine: vi.fn().mockImplementation(() =>
+  (GetDeviceStatusDeviceAction as jest.Mock).mockImplementation(() => ({
+    makeStateMachine: jest.fn().mockImplementation(() =>
       createMachine({
         id: "MockGetDeviceStatusDeviceAction",
         initial: "ready",
@@ -76,8 +75,8 @@ export const setupGetDeviceStatusMock = (deviceStatus: GetDeviceStatusDAOutput, 
 };
 
 export const setupGetDeviceMetadataMock = (metadata: GetDeviceMetadataDAOutput, error = false) => {
-  (GetDeviceMetadataDeviceAction as Mock).mockImplementation(() => ({
-    makeStateMachine: vi.fn().mockImplementation(() =>
+  (GetDeviceMetadataDeviceAction as jest.Mock).mockImplementation(() => ({
+    makeStateMachine: jest.fn().mockImplementation(() =>
       createMachine({
         id: "MockGetDeviceMetadataDeviceAction",
         initial: "ready",
@@ -109,8 +108,8 @@ export const setupOpenAppWithDependenciesMock = (
   intermediateValue: OpenAppWithDependenciesDAIntermediateValue,
   error = false,
 ) => {
-  (OpenAppWithDependenciesDeviceAction as Mock).mockImplementation(() => ({
-    makeStateMachine: vi.fn().mockImplementation(() =>
+  (OpenAppWithDependenciesDeviceAction as jest.Mock).mockImplementation(() => ({
+    makeStateMachine: jest.fn().mockImplementation(() =>
       createMachine({
         id: "MockOpenAppWithDependenciesDeviceAction",
         initial: "ready",
@@ -140,8 +139,8 @@ export const setupInstallOrUpdateAppsMock = (
   intermediateValue: InstallOrUpdateAppsDAIntermediateValue,
   error = false,
 ) => {
-  (InstallOrUpdateAppsDeviceAction as Mock).mockImplementation(() => ({
-    makeStateMachine: vi.fn().mockImplementation(() =>
+  (InstallOrUpdateAppsDeviceAction as jest.Mock).mockImplementation(() => ({
+    makeStateMachine: jest.fn().mockImplementation(() =>
       createMachine({
         id: "MockInstallOrUpdateAppsDeviceAction",
         initial: "ready",
