@@ -74,9 +74,9 @@ export const useNotificationsData = () => {
         return optOutOfNotifications();
       }
 
-      const isOptOut = storedUserData?.dismissedOptInDrawerAtList !== undefined;
+      const hasOptedOut = storedUserData?.dismissedOptInDrawerAtList !== undefined;
 
-      if (isOptOut) {
+      if (hasOptedOut) {
         // User previously opted out → check if they've fully re-enabled notifications
         if (isAuthorized && notifications.areNotificationsAllowed) {
           // Both OS and app notifications enabled → clear opt-out state
@@ -90,8 +90,9 @@ export const useNotificationsData = () => {
 
       const isDenied = osPermissionStatus === AuthorizationStatus.DENIED;
       // User was marked as opted in but somehow now has denied OS permissions.
-      if (!isOptOut && isDenied) {
+      if (!hasOptedOut && isDenied) {
         // Mark as opted out to track dismissal for reprompt scheduling
+
         updateIdentify();
         return optOutOfNotifications();
       }

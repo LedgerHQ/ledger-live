@@ -8,7 +8,7 @@ import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAcc
 
 const mockTryTriggerPushNotificationDrawerAfterAction = jest.fn();
 
-jest.mock("~/logic/notifications", () => ({
+jest.mock("LLM/features/NotificationsPrompt/hooks/useNotifications", () => ({
   useNotifications: () => ({
     tryTriggerPushNotificationDrawerAfterAction: mockTryTriggerPushNotificationDrawerAfterAction,
   }),

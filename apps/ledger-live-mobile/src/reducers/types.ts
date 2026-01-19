@@ -13,7 +13,7 @@ import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/type
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import { AvailableProviderV3, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { DataOfUser } from "../logic/notifications";
+import type { DataOfUser } from "LLM/features/NotificationsPrompt/types";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 import {

@@ -3,12 +3,12 @@ import { useTranslation } from "react-i18next";
 import { Flex, Text, Link as TextLink, Button } from "@ledgerhq/native-ui";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { PushNotificationsModalIllustration } from "./PushNotificationsModalIllustration";
+import { NotificationsDrawerIllustration } from "../components/NotificationsDrawerIllustration";
 import { TrackScreen } from "~/analytics";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 
-const PushNotificationsModal = () => {
+export const NotificationsPromptDrawer = () => {
   const { t } = useTranslation();
   const {
     initPushNotificationsData,
@@ -23,6 +23,8 @@ const PushNotificationsModal = () => {
 
   useEffect(() => {
     initPushNotificationsData();
+    // We only want to call this once on mount
+    // And we can't use the function reference because it has a lot of dependencies and will hence change often...
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -49,7 +51,7 @@ const PushNotificationsModal = () => {
 
       <Flex mb={4}>
         <Flex alignItems={"center"}>
-          <PushNotificationsModalIllustration type={drawerSource} />
+          <NotificationsDrawerIllustration type={drawerSource} />
 
           <Text variant="h4" fontWeight="semiBold" color="neutral.c100" mt={5}>
             {canShowVariant && isVariantB
@@ -89,5 +91,3 @@ const PushNotificationsModal = () => {
     </QueuedDrawer>
   );
 };
-
-export default PushNotificationsModal;
