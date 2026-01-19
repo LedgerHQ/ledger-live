@@ -7,8 +7,6 @@ import { AccountRaw } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/coin-framework/lib/account/index";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
-export const getStaticProps = async () => ({ props: {} });
-
 type App = {
   name: string;
   updated: boolean;
@@ -145,7 +143,7 @@ const Header = ({
 
   const linkToExplorer = (accountId: string) => {
     try {
-      const { currencyId, xpubOrAddress } = decodeAccountId(accountId);
+      const { currencyId } = decodeAccountId(accountId);
       const currency = findCryptoCurrencyById(currencyId);
       if (currency && currency.explorerViews && currency.explorerViews.length > 0) {
         const explorerView = currency.explorerViews[0];
@@ -163,7 +161,7 @@ const Header = ({
 
   const isValid = (accountId: string) => {
     try {
-      const { currencyId, xpubOrAddress } = decodeAccountId(accountId);
+      const { currencyId } = decodeAccountId(accountId);
       const currencyInfo = findCryptoCurrencyById(currencyId);
       if (currencyInfo && currencyInfo.explorerViews && currencyInfo.explorerViews.length > 0) {
         const explorerView = currencyInfo.explorerViews[0];
@@ -569,7 +567,9 @@ class HeaderEmptyState extends Component<{
   onFiles: (files: FileList) => void;
 }> {
   onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.target.files && this.props.onFiles(e.target.files);
+    if (e.target.files) {
+      this.props.onFiles(e.target.files);
+    }
   };
   render() {
     return (
@@ -620,7 +620,7 @@ class LogsViewer extends Component {
         let obj;
         try {
           obj = JSON.parse(txt);
-        } catch (e) {
+        } catch (_error) {
           obj = txt
             .split(/\n/g)
             .filter(Boolean)

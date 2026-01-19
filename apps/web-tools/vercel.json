@@ -1,0 +1,6 @@
+{
+  "framework": null,
+  "installCommand": "pnpm i -F \"web-tools...\" -F \"ledger-live\"",
+  "buildCommand": "cd ../.. && pnpm turbo run build --filter=\"@ledgerhq/web-tools\"",
+  "outputDirectory": "dist"
+}
