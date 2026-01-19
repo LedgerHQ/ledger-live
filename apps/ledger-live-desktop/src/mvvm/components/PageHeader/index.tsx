@@ -1,14 +1,18 @@
 import React from "react";
 import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
 
-type Props = {
+type Props = Readonly<{
   title: string;
   onBack: () => void;
-};
+}>;
 
 export default function PageHeader({ title, onBack }: Props) {
   return (
-    <div onClick={onBack} className="flex items-center gap-4 cursor-pointer">
+    <div
+      onClick={onBack}
+      className="flex cursor-pointer items-center gap-4"
+      data-testid="page-header"
+    >
       <ArrowLeft className={"m-10 text-base"} size={20} />
       <span className="heading-3-semi-bold text-base">{title}</span>
     </div>
