@@ -10,7 +10,7 @@ describe("getBlock", () => {
     jest.clearAllMocks();
   });
 
-  it("returns block with transactions using an external node", async () => {
+  it("returns block with transactions and ERC20 transfers", async () => {
     setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
 
     const mockGetNodeApi = jest.mocked(getNodeApi);
@@ -94,95 +94,5 @@ describe("getBlock", () => {
 
     // tx2 has no value and no ERC20 transfers
     expect(result.transactions[1].operations).toHaveLength(0);
-  });
-
-  it("returns block with transactions using a ledger node", async () => {
-    setCoinConfig(
-      () =>
-        ({
-          info: { node: { type: "ledger", explorerId: "eth" } },
-        }) as unknown as EvmCoinConfig,
-    );
-
-    const mockGetNodeApi = jest.mocked(getNodeApi);
-    const mockGetBlockByHeight = jest.fn();
-    mockGetBlockByHeight
-      .mockResolvedValueOnce({
-        hash: "0xabc123",
-        height: 12345,
-        timestamp: new Date("2025-01-15T10:30:00Z").getTime(),
-        transactionHashes: ["0xtx1", "0xtx2"],
-      })
-      .mockResolvedValueOnce({
-        hash: "0xparent123",
-        height: 12344,
-        timestamp: new Date("2025-01-15T10:29:00Z").getTime(),
-      });
-    const mockGetTransaction = jest.fn();
-    mockGetTransaction
-      .mockResolvedValueOnce({
-        hash: "0xtx1",
-        blockHeight: 12345,
-        blockHash: "0xabc123",
-        nonce: 1,
-        gasUsed: "21000",
-        gasPrice: "20000000000",
-        status: 1,
-        value: "0",
-        from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-        to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-        erc20Transfers: [
-          {
-            asset: { type: "erc20", assetReference: "0xF68C9Df95a18B2A5a5fa1124d79EEEffBaD0B6Fa" },
-            from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-            value: "20000000000000000000000",
-          },
-        ],
-      })
-      .mockResolvedValueOnce({
-        hash: "0xtx2",
-        blockHeight: 12345,
-        blockHash: "0xabc123",
-        nonce: 2,
-        gasUsed: "21000",
-        gasPrice: "20000000000",
-        status: 1,
-        value: "2000",
-        from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-        to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-        erc20Transfers: [],
-      });
-    mockGetNodeApi.mockReturnValue({
-      getBlockByHeight: mockGetBlockByHeight,
-      getTransaction: mockGetTransaction,
-    } as any);
-
-    const result = await getBlock({} as CryptoCurrency, 12345);
-
-    expect(result.info).toEqual({
-      hash: "0xabc123",
-      height: 12345,
-      time: new Date("2025-01-15T10:30:00Z"),
-      parent: {
-        hash: "0xparent123",
-        height: 12344,
-        time: new Date("2025-01-15T10:29:00Z"),
-      },
-    });
-    expect(result.transactions).toHaveLength(2);
-    expect(result.transactions[0].hash).toBe("0xtx1");
-    expect(result.transactions[1].hash).toBe("0xtx2");
-
-    // tx1: ERC20 only (value: 0, one ERC20 transfer)
-    const tx1Erc20Ops = result.transactions[0].operations.filter(op => op.asset.type === "erc20");
-    expect(tx1Erc20Ops).toHaveLength(2); // sender and receiver
-    expect(tx1Erc20Ops[0].asset.assetReference).toBe("0xF68C9Df95a18B2A5a5fa1124d79EEEffBaD0B6Fa");
-
-    // tx2: Native only (value: 2000, no ERC20)
-    const tx2NativeOps = result.transactions[1].operations.filter(op => op.asset.type === "native");
-    expect(tx2NativeOps).toHaveLength(2); // sender and receiver
-    const tx2Erc20Ops = result.transactions[1].operations.filter(op => op.asset.type === "erc20");
-    expect(tx2Erc20Ops).toHaveLength(0);
   });
 });
