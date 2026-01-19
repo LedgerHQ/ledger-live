@@ -158,7 +158,20 @@ describe("EVM Family", () => {
             max_priority_fee_per_gas: "0",
             from: "0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5",
             to: "0x6d2e03b7effeae98bd302a9f836d0d6ab0002766",
-            transfer_events: [],
+            transfer_events: [
+              {
+                contract: "0xf68c9df95a18b2a5a5fa1124d79eeeffbad0b6fa",
+                from: "0xcc4461636684868aab71037b29a11cc643e64500",
+                to: "0x970402b253733a1f6f4f3cd1d07420006be2882d",
+                count: "20000000000000000000000",
+              },
+              {
+                contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                from: "0x970402b253733a1f6f4f3cd1d07420006be2882d",
+                to: "0xcc4461636684868aab71037b29a11cc643e64500",
+                count: "1000000",
+              },
+            ],
             erc721_transfer_events: [],
             erc1155_transfer_events: [],
             approval_events: [],
@@ -189,7 +202,26 @@ describe("EVM Family", () => {
           status: 1,
           from: "0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5",
           to: "0x6d2e03b7effeae98bd302a9f836d0d6ab0002766",
-          erc20Transfers: [],
+          erc20Transfers: [
+            {
+              asset: {
+                type: "erc20",
+                assetReference: "0xF68C9Df95a18B2A5a5fa1124d79EEEffBaD0B6Fa",
+              },
+              from: "0xcc4461636684868AaB71037b29a11cC643E64500",
+              to: "0x970402B253733A1f6F4f3cd1d07420006be2882D",
+              value: "20000000000000000000000",
+            },
+            {
+              asset: {
+                type: "erc20",
+                assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+              },
+              from: "0x970402B253733A1f6F4f3cd1d07420006be2882D",
+              to: "0xcc4461636684868AaB71037b29a11cC643E64500",
+              value: "1000000",
+            },
+          ],
         });
       });
     });
