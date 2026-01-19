@@ -1,5 +1,3 @@
-"use client";
-import "../live-common-setup";
 import React, { useEffect, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import {
@@ -20,8 +18,6 @@ import {
   asDerivationMode,
 } from "@ledgerhq/coin-framework/derivation";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
-
-export const getStaticProps = async () => ({ props: {} });
 
 const localCache: Record<string, unknown> = {};
 const bridgeCache = makeBridgeCacheSystem({
@@ -139,10 +135,10 @@ function App() {
           {account
             ? JSON.stringify(account, null, 2)
             : accountError
-            ? String(accountError)
-            : account === null
-            ? "insert an account id to synchronise"
-            : "loading..."}
+              ? String(accountError)
+              : account === null
+                ? "insert an account id to synchronise"
+                : "loading..."}
         </code>
       </pre>
     </div>
@@ -154,7 +150,7 @@ function inferAccountId(id: string) {
     // preserve if decodeAccountId don't fail
     decodeAccountId(id);
     return id;
-  } catch (e) {
+  } catch (_error) {
     const splitted = id.split(":");
 
     const findAndEat = (predicate: (str: string) => unknown) => {
@@ -176,7 +172,7 @@ function inferAccountId(id: string) {
       findAndEat(s => {
         try {
           return asDerivationMode(s);
-        } catch (e) {
+        } catch (_error) {
           // this is therefore not a derivation mode
         }
       }) ?? "",

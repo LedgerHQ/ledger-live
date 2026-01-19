@@ -5,8 +5,6 @@ import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 
-export const getStaticProps = async () => ({ props: {} });
-
 const Container = styled.div`
   padding: 20px;
   max-width: 1200px;

@@ -3,8 +3,6 @@ import styled from "styled-components";
 import Select from "react-select";
 import semver from "semver";
 
-export const getStaticProps = async () => ({ props: {} });
-
 const excludes = ["1.101.0", "1.102.0", "1.103.0", "1.104.0", "1.105.0"];
 
 const Main = styled.div`
@@ -277,8 +275,8 @@ const LLDSignature = () => {
                 const cmd = filename.endsWith(".AppImage")
                   ? `sha512sum ${filename}`
                   : filename.endsWith(".exe")
-                  ? `Get-FileHash ${filename} -Algorithm SHA512`
-                  : `shasum -a 512 ${filename}`;
+                    ? `Get-FileHash ${filename} -Algorithm SHA512`
+                    : `shasum -a 512 ${filename}`;
                 return `$ ${cmd}\n${hash}\n`;
               })
               .join("\n")}

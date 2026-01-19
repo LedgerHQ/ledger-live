@@ -5,8 +5,6 @@ import {
   troubleshootOverObservableReducer,
 } from "@ledgerhq/live-common/network-troubleshooting/index";
 
-export const getStaticProps = async () => ({ props: {} });
-
 function useTroubleshootState() {
   const [state, dispatch] = useReducer(troubleshootOverObservableReducer, []);
   useEffect(() => {
