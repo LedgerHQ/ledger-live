@@ -3,7 +3,7 @@ import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-ap
 import { useRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useEffect, useMemo } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";

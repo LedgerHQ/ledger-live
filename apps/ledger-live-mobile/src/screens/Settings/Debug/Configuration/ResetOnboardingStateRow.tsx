@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import SettingsRow from "~/components/SettingsRow";
 import {
   completeOnboarding,

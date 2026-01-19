@@ -51,13 +51,28 @@ const makeScenarioTransactions = ({ address }: { address: string }): BlastScenar
     },
   };
 
-  return [scenarioSendEthTransaction, scenarioSendMIMTransaction];
+  const scenarioSendMaxEthTransaction: BlastScenarioTransaction = {
+    name: "Send Max ETH",
+    useAllAmount: true,
+    recipient: VITALIK,
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+    },
+  };
+
+  return [scenarioSendEthTransaction, scenarioSendMIMTransaction, scenarioSendMaxEthTransaction];
 };
 
 export const scenarioBlast: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic Blast Transactions",
   setup: async () => {
     const signer = await buildSigner();
+
     await spawnAnvil("https://rpc.blast.io", signer.exportMnemonic());
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
@@ -77,6 +92,7 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
         },
         explorer: {
           type: "etherscan",
+          noCache: true,
           uri: "https://proxyetherscan.api.live.ledger.com/v2/api/81457",
         },
         showNfts: true,
@@ -95,6 +111,7 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
           },
           explorer: {
             type: "etherscan",
+            noCache: true,
             uri: "https://proxyetherscan.api.live.ledger.com/v2/api/81457",
           },
           showNfts: true,
@@ -103,7 +120,7 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
     });
     initMswHandlers(getCoinConfig(blast).info);
 
-    const { currencyBridge, accountBridge, getAddress } = await getBridges("blast", signer);
+    const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: blast,
@@ -123,12 +140,11 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
       currencyBridge,
       accountBridge,
       account: scenarioAccount,
-      retryLimit: 0,
     };
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks();
+    await indexBlocks(blast.ethereumLikeInfo?.chainId || 81457);
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
@@ -142,7 +158,7 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("20", MIM_ON_BLAST.units[0].magnitude).toString(),
     );
-    expect(account.operations.length).toBe(3);
+    expect(account.operations.length).toBe(4);
   },
   teardown: async () => {
     await killAnvil();

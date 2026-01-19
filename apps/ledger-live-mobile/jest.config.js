@@ -1,5 +1,23 @@
-const { pathsToModuleNameMapper } = require("ts-jest");
 const { compilerOptions } = require("./tsconfig");
+
+// Helper function to convert TypeScript paths to Jest moduleNameMapper
+// This replaces pathsToModuleNameMapper from ts-jest which is not available in @swc/jest
+function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
+  const jestPaths = {};
+  if (!paths) return jestPaths;
+
+  Object.keys(paths).forEach(pathKey => {
+    const pathValues = Array.isArray(paths[pathKey]) ? paths[pathKey] : [paths[pathKey]];
+    pathValues.forEach(pathValue => {
+      // Convert TypeScript path pattern to Jest regex pattern
+      const jestKey = pathKey.replace(/\*$/, "(.*)");
+      const jestValue = pathValue.replace(/\*$/, "$1");
+      jestPaths[jestKey] = `${prefix}${jestValue}`;
+    });
+  });
+
+  return jestPaths;
+}
 
 const transformIncludePatterns = [
   "@react-native/polyfills",
@@ -22,9 +40,10 @@ const transformIncludePatterns = [
   "react-native-safe-area-context",
   "react-native-gesture-handler",
   "@shopify/flash-list",
+  "@ledgerhq/lumen-.*",
 ];
 
-/** @type {import('ts-jest').JestConfigWithTsJest} */
+/** @type {import('@swc/jest').JestConfigWithTsJest} */
 module.exports = {
   verbose: true,
   preset: "react-native",
@@ -40,6 +59,11 @@ module.exports = {
       {
         jsc: {
           target: "esnext",
+          transform: {
+            react: {
+              runtime: "automatic",
+            },
+          },
         },
       },
     ],

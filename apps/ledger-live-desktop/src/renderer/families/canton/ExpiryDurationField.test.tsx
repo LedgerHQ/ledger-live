@@ -5,6 +5,7 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/c
 import { DurationEnum } from "@ledgerhq/coin-canton/types";
 import ExpiryDurationField from "./ExpiryDurationField";
 import { createMockAccount } from "./__tests__/testUtils";
+import { mockDomMeasurements } from "LLD/features/__tests__/shared";
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getAccountBridge: () => ({
@@ -42,6 +43,7 @@ describe("ExpiryDurationField", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockDomMeasurements();
   });
 
   it("should render the label", () => {

@@ -26,7 +26,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
 import { setLastSeenDeviceInfo } from "~/actions/settings";
 import { useTrackAddAccountFlow } from "~/analytics/hooks/useTrackAddAccountFlow";

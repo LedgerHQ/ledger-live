@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { assetAvailableNetworks } from "@ledgerhq/live-common/lib/e2e/data/assetsDrawer";
 import { runSelectCryptoNetworkTest } from "./deposit";
 

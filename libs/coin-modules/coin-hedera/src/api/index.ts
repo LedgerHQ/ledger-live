@@ -2,9 +2,6 @@ import type {
   Api,
   CraftedTransaction,
   Operation,
-  Page,
-  Reward,
-  Stake,
   TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
@@ -23,6 +20,8 @@ import {
   getTokenFromAsset,
   lastBlock,
   getValidators,
+  getStakes,
+  getRewards,
 } from "../logic/index";
 import { mapIntentToSDKOperation, getOperationValue } from "../logic/utils";
 import { apiClient } from "../network/api";
@@ -136,6 +135,8 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
     getAssetFromToken,
     getValidators: cursor => getValidators(cursor),
+    getStakes: async address => getStakes(address),
+    getRewards: async (address, cursor) => getRewards(address, cursor),
     validateIntent: async (
       _transactionIntent,
       _balances,
@@ -145,12 +146,6 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     },
     getSequence: async (_address): Promise<bigint> => {
       throw new Error("getSequence is not supported");
-    },
-    getStakes: async (_address, _cursor): Promise<Page<Stake>> => {
-      throw new Error("getStakes is not supported");
-    },
-    getRewards: async (_address, _cursor): Promise<Page<Reward>> => {
-      throw new Error("getRewards is not supported");
     },
   };
 }

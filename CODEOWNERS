@@ -145,7 +145,7 @@ libs/ledger-live-common/src/wallet-api/                  @ledgerhq/coin-integrat
 **/wallet-api.spec.ts-snapshots/                         @ledgerhq/coin-integration
 **/dapp.spec.ts                                          @ledgerhq/coin-integration
 libs/test-utils/                                         @ledgerhq/coin-integration
-apps/ledger-live-mobile/src/newArch/features/Web3Hub/    @ledgerhq/coin-integration
+apps/ledger-live-mobile/src/mvvm/features/Web3Hub/    @ledgerhq/coin-integration
 
 # Devices team
 apps/cli/src/commands/devices                                      @ledgerhq/live-devices
@@ -165,7 +165,7 @@ apps/ledger-live-mobile/src/components/SelectDevice2/              @ledgerhq/liv
 apps/ledger-live-mobile/src/components/BleDevicePairingFlow/       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/FirmwareUpdate/                @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
-apps/ledger-live-mobile/src/newArch/features/FirmwareUpdate/       @ledgerhq/live-devices
+apps/ledger-live-mobile/src/mvvm/features/FirmwareUpdate/       @ledgerhq/live-devices
 apps/ledger-live-mobile/ios/BluetoothHelperModule.swift            @ledgerhq/live-devices
 apps/web-tools/repl/                                               @ledgerhq/live-devices
 libs/**/devices/                                                   @ledgerhq/live-devices
@@ -204,7 +204,7 @@ apps/ledger-live-mobile/src/screens/SyncOnboarding/TwoStepStepper/              
 apps/ledger-live-desktop/src/renderer/components/SyncOnboarding/                               @ledgerhq/activation-team
 apps/ledger-live-desktop/src/renderer/components/Onboarding/                                   @ledgerhq/activation-team
 apps/ledger-live-desktop/src/renderer/components/PostOnboardingHub/                            @ledgerhq/activation-team
-apps/ledger-live-mobile/src/newArch/features/WelcomePage/                                      @ledgerhq/activation-team
+apps/ledger-live-mobile/src/mvvm/features/WelcomePage/                                      @ledgerhq/activation-team
 apps/ledger-live-mobile/src/screens/Onboarding/                                                @ledgerhq/activation-team
 apps/ledger-live-mobile/src/screens/PostOnboarding/                                            @ledgerhq/activation-team
 

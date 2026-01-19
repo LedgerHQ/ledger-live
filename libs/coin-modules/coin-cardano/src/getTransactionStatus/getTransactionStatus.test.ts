@@ -1,12 +1,36 @@
 /* eslint @typescript-eslint/consistent-type-assertions: 0 */
 
 import BigNumber from "bignumber.js";
-import { getTransactionStatus } from "./getTransactionStatus";
 import { CardanoAccount, CardanoOutput, Transaction } from "../types";
-import * as sanction from "@ledgerhq/coin-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { CardanoCoinConfig } from "../config";
+
+// Mock modules before importing
+jest.mock("@ledgerhq/coin-framework/sanction/index", () => ({
+  ...jest.requireActual("@ledgerhq/coin-framework/sanction/index"),
+  isAddressSanctioned: jest.fn(),
+}));
+
+jest.mock("./handler", () => ({
+  ...jest.requireActual("./handler"),
+  getTransactionStatusByTransactionMode: jest.fn(),
+}));
+
+const mockGetCoinConfigFn = jest.fn();
+jest.mock("../config", () => ({
+  __esModule: true,
+  default: {
+    getCoinConfig: () => mockGetCoinConfigFn(),
+  },
+}));
+
+import * as sanction from "@ledgerhq/coin-framework/sanction/index";
 import * as mode from "./handler";
-import coinConfig, { CardanoCoinConfig } from "../config";
+import { getTransactionStatus } from "./getTransactionStatus";
+
+const mockIsAddressSanctioned = sanction.isAddressSanctioned as jest.Mock;
+const mockGetTransactionStatusByTransactionMode =
+  mode.getTransactionStatusByTransactionMode as jest.Mock;
 
 describe("getTransactionStatus", () => {
   it("should return not enough funds error when there are no utxos", async () => {
@@ -55,7 +79,7 @@ describe("getTransactionStatus", () => {
       "addr1UvY42XTJHMPHDEDch9UWagjhipLjke37Uqm7qzfcSkdPHT",
     ];
 
-    jest.spyOn(sanction, "isAddressSanctioned").mockImplementation((_, address) => {
+    mockIsAddressSanctioned.mockImplementation((_, address) => {
       return Promise.resolve(sanctionedAddresses.includes(address));
     });
 
@@ -93,12 +117,12 @@ describe("getTransactionStatus", () => {
 
   it("should return as no sender error when no utxo address is sanctioned", async () => {
     const maxFeesWarning = BigNumber(1000000);
-    jest.spyOn(coinConfig, "getCoinConfig").mockReturnValue({
+    mockGetCoinConfigFn.mockReturnValue({
       maxFeesWarning: maxFeesWarning,
       maxFeesError: maxFeesWarning.multipliedBy(2),
     } as unknown as CardanoCoinConfig);
 
-    jest.spyOn(mode, "getTransactionStatusByTransactionMode").mockResolvedValue({
+    mockGetTransactionStatusByTransactionMode.mockResolvedValue({
       errors: {},
       warnings: {},
       amount: BigNumber(0),
@@ -106,7 +130,7 @@ describe("getTransactionStatus", () => {
       estimatedFees: maxFeesWarning,
     });
 
-    jest.spyOn(sanction, "isAddressSanctioned").mockResolvedValue(false);
+    mockIsAddressSanctioned.mockResolvedValue(false);
 
     const utxos = [
       {

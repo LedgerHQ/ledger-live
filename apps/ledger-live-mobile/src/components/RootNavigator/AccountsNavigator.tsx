@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { ScreenName } from "~/const";
 import Accounts from "~/screens/Accounts";

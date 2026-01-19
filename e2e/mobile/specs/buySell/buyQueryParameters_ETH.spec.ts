@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runQueryParametersTest } from "./buySell";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";

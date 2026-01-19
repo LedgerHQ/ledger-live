@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { firstValueFrom, from } from "rxjs";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";

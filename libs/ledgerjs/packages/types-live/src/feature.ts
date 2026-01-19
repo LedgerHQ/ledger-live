@@ -154,6 +154,8 @@ export type CurrencyFeatures = {
   currencyZeroGravity: DefaultFeature;
   currencyConcordium: DefaultFeature;
   currencyConcordiumTestnet: DefaultFeature;
+  currencyAleo: DefaultFeature;
+  currencyAleoTestnet: DefaultFeature;
 };
 
 /**
@@ -229,7 +231,6 @@ export type Features = CurrencyFeatures & {
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
-  llMevProtection: Feature_LlMevProtection;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmRebornLP: Feature_LlmRebornLP;
   llmAccountListUI: DefaultFeature;
@@ -237,7 +238,7 @@ export type Features = CurrencyFeatures & {
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
   lwmLedgerSyncOptimisation: DefaultFeature;
   lwdLedgerSyncOptimisation: DefaultFeature;
-  lwmNewWordingOptInNotificationsDrawer: DefaultFeature;
+  lwmNewWordingOptInNotificationsDrawer: Feature_LwmNewWordingOptInNotificationsDrawer;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;
@@ -282,7 +283,6 @@ export type Features = CurrencyFeatures & {
   cantonSkipPreapprovalStep: DefaultFeature;
   noah: Feature_Noah;
   newSendFlow: Feature_NewSendFlow;
-  lldSessionReplay: Feature_LldSessionReplay;
   zcashShielded: DefaultFeature;
   llmNanoOnboardingFundWallet: DefaultFeature;
   lldRebornABtest: DefaultFeature;
@@ -291,6 +291,8 @@ export type Features = CurrencyFeatures & {
   llmAnimatedSplashScreen: Feature_LlmAnimatedSplashScreen;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
+  lwmWallet40: Feature_LwmWallet40;
+  lwdWallet40: Feature_LwdWallet40;
 };
 
 /**
@@ -393,6 +395,45 @@ export type Feature_BrazePushNotifications = Feature<{
     timer: number;
     type: string;
   }[];
+  reprompt_schedule: Array<{
+    months: number;
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  }>;
+  action_events: {
+    complete_onboarding: {
+      enabled: boolean;
+      timer: number;
+    };
+    send: {
+      enabled: boolean;
+      timer: number;
+    };
+    receive: {
+      enabled: boolean;
+      timer: number;
+    };
+    buy: {
+      enabled: boolean;
+      timer: number;
+    };
+    swap: {
+      enabled: boolean;
+      timer: number;
+    };
+    stake: {
+      enabled: boolean;
+      timer: number;
+    };
+    add_favorite_coin: {
+      enabled: boolean;
+      timer: number;
+    };
+  };
+
+  // Legacy fields kept for backward compatibility with existing configurations.
   marketCoinStarred: {
     enabled: boolean;
     timer: number;
@@ -674,10 +715,6 @@ export type Feature_LlCounterValueGranularitiesRates = Feature<{
   hourly: number;
 }>;
 
-export type Feature_LlMevProtection = Feature<{
-  link: string | null;
-}>;
-
 export type Feature_LlmMmkvMigration = Feature<{
   shouldRollback: boolean | null;
 }>;
@@ -778,13 +815,27 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
   [P in Platform]?: IgnoredOSUpdatesByPlatform;
 }>;
 
+type Feature_Wallet40_Params = {
+  marketBanner: boolean;
+};
+
+export type Feature_LwmWallet40 = Feature<
+  {
+    // Add specific LWM params
+  } & Feature_Wallet40_Params
+>;
+export type Feature_LwdWallet40 = Feature<
+  {
+    //  Add specific LWD params
+  } & Feature_Wallet40_Params
+>;
+export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{
+  variant: ABTestingVariants;
+}>;
+
 /**
  * Utils types.
  */
 export type FeatureMap<T = Feature> = { [key in FeatureId]: T };
 export type OptionalFeatureMap<T = Feature> = { [key in FeatureId]?: T };
 export type FeatureParam<T extends FeatureId> = Features[T]["params"];
-
-export type Feature_LldSessionReplay = Feature<{
-  sampling: number;
-}>;

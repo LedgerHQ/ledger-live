@@ -3474,7 +3474,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "تفعيل الإشعارات",
+      "titleVariantB" : "Get the most of Ledger Wallet",
       "desc" : "احصل على آخر المستجدات حول Ledger Wallet ومنتجات Ledger والسوق والتوصيات المخصصة. يُمكنك إلغاء الاشتراك في أي وقت عن طريق الإعدادات",
+      "descVariantB" : "We'll send you personalized tips, setup guides and relevant market news.",
       "allow" : "السماح بالإشعارات",
       "later" : "ربّما في وقت لاحق"
     },
@@ -3891,7 +3893,9 @@
         "celo_title" : "™Ledger Nano S لا تدعم مبادلة Celo",
         "celo_description" : "لمبادلة Celo، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "monad_title" : "™Ledger Nano S لا تدعم مبادلة Monad",
-        "monad_description" : "لمبادلة Monad، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+        "monad_description" : "لمبادلة Monad، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "zcash_title" : "™Ledger Nano S لا تدعم مبادلة Zcash",
+        "zcash_description" : "لمبادلة Zcash، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
       }
     },
     "lending" : {

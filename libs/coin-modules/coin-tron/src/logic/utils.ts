@@ -32,7 +32,9 @@ export async function decodeTransaction(rawTx: string): Promise<{
   const transaction = Transaction.raw.deserializeBinary(Buffer.from(rawTx, "hex"));
 
   return {
-    txID: createHash("sha256").update(Buffer.from(rawTx, "hex")).digest("hex"),
+    txID: createHash("sha256")
+      .update(new Uint8Array(Buffer.from(rawTx, "hex")))
+      .digest("hex"),
     raw_data: convertTxFromRaw(transaction),
     raw_data_hex: rawTx,
   };

@@ -129,31 +129,3 @@ export class PayinExtraIdError extends SwapError {
     this.name = "PayinExtraIdError";
   }
 }
-
-/**
- * CompleteSwap/CompleteExchange step information
- * Tracks which hardware wallet step failed
- */
-export type CompleteExchangeStep =
-  | "INIT"
-  | "SET_PARTNER_KEY"
-  | "CHECK_PARTNER"
-  | "PROCESS_TRANSACTION"
-  | "CHECK_TRANSACTION_SIGNATURE"
-  | "CHECK_PAYOUT_ADDRESS"
-  | "CHECK_REFUND_ADDRESS"
-  | "SIGN_COIN_TRANSACTION";
-
-/**
- * Error that occurs during completeSwap with step tracking
- * Useful for debugging hardware wallet interactions
- */
-export class CompleteExchangeError extends Error {
-  step: CompleteExchangeStep;
-
-  constructor(step: CompleteExchangeStep, message?: string) {
-    super(message);
-    this.name = "CompleteExchangeError";
-    this.step = step;
-  }
-}

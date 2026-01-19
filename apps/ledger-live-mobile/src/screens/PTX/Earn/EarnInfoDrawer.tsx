@@ -2,7 +2,7 @@ import { Button, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { makeSetEarnInfoModalAction } from "~/actions/earn";
 import { Track } from "~/analytics";

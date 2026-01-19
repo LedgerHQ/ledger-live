@@ -2,10 +2,21 @@
 
 import { AccountLike } from "@ledgerhq/types-live";
 import { PolkadotAccount, Transaction, TransactionStatus } from "../types";
-import * as account from "@ledgerhq/coin-framework/account";
 import getDeviceTransactionConfig from "./deviceTransactionConfig";
 import BigNumber from "bignumber.js";
-import * as utils from "./utils";
+
+// Module-level mocks
+const mockGetMainAccount = jest.fn();
+jest.mock("@ledgerhq/coin-framework/account", () => ({
+  ...jest.requireActual("@ledgerhq/coin-framework/account"),
+  getMainAccount: (...args: unknown[]) => mockGetMainAccount(...args),
+}));
+
+const mockIsStash = jest.fn();
+jest.mock("./utils", () => ({
+  ...jest.requireActual("./utils"),
+  isStash: (...args: unknown[]) => mockIsStash(...args),
+}));
 
 describe("getDeviceTransactionConfig", () => {
   const status = {
@@ -13,7 +24,11 @@ describe("getDeviceTransactionConfig", () => {
   } as unknown as TransactionStatus;
 
   beforeAll(() => {
-    jest.spyOn(account, "getMainAccount").mockReturnValue({} as PolkadotAccount);
+    mockGetMainAccount.mockReturnValue({} as PolkadotAccount);
+  });
+
+  beforeEach(() => {
+    mockIsStash.mockReset();
   });
 
   it("should correct config for send when transaction is full amount", async () => {
@@ -94,7 +109,7 @@ describe("getDeviceTransactionConfig", () => {
   });
 
   it("should correct config for bond when account is a stash", async () => {
-    jest.spyOn(utils, "isStash").mockReturnValueOnce(true);
+    mockIsStash.mockReturnValueOnce(true);
 
     const fields = await getDeviceTransactionConfig({
       account: {} as AccountLike,
@@ -122,7 +137,7 @@ describe("getDeviceTransactionConfig", () => {
   });
 
   it("should correct config for bond when account is not a stash", async () => {
-    jest.spyOn(utils, "isStash").mockReturnValueOnce(false);
+    mockIsStash.mockReturnValueOnce(false);
 
     const fields = await getDeviceTransactionConfig({
       account: {} as AccountLike,

@@ -277,6 +277,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Thorest API for VeChain",
   },
+  ALEO_MAINNET_NODE_ENDPOINT: {
+    def: "https://api.explorer.provable.com/v2/mainnet",
+    parser: stringParser,
+    desc: "Aleo mainnet node URL",
+  },
+  ALEO_TESTNET_NODE_ENDPOINT: {
+    def: "https://api.explorer.provable.com/v2/testnet",
+    parser: stringParser,
+    desc: "Aleo testnet node URL",
+  },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
     parser: stringParser,
@@ -582,11 +592,6 @@ const envDefinitions = {
     parser: intParser,
     desc: "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs",
   },
-  MIXPANEL_API_HOST: {
-    def: "https://api.mixpanel.com",
-    parser: stringParser,
-    desc: "Mixpanel API host URL",
-  },
   MAPPING_SERVICE: {
     def: "https://mapping-service.api.ledger.com",
     parser: stringParser,
@@ -847,6 +852,11 @@ const envDefinitions = {
     def: "https://dada.api.ledger.com/v1",
     parser: stringParser,
     desc: "Dynamic Assets Data Aggregator API Prod",
+  },
+  CMC_API_URL: {
+    def: "https://proxycmc.api.live.ledger.com/v3",
+    parser: stringParser,
+    desc: "CoinMarketCap API",
   },
   PLATFORM_DEBUG: {
     def: false,

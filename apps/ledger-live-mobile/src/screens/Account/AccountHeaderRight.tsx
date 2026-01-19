@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { View } from "react-native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { NavigationProp, RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { SettingsMedium, OthersMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";

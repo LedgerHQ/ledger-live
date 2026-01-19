@@ -6,6 +6,7 @@ import { scenarioScroll } from "./scenarii/scroll";
 import { scenarioBlast } from "./scenarii/blast";
 import { scenarioSonic } from "./scenarii/sonic";
 import { scenarioCore } from "./scenarii/core";
+import { scenarioBnb } from "./scenarii/bnb";
 // Import tokenFixtures to setup mock store
 import "./tokenFixtures";
 
@@ -60,7 +61,7 @@ describe("EVM Deterministic Tester", () => {
     }
   });
 
-  it("scenario scroll", async () => {
+  it("scenario Scroll", async () => {
     try {
       await executeScenario(scenarioScroll);
     } catch (e) {
@@ -71,9 +72,20 @@ describe("EVM Deterministic Tester", () => {
     }
   });
 
-  it("scenario blast", async () => {
+  it("scenario Blast", async () => {
     try {
       await executeScenario(scenarioBlast);
+    } catch (e) {
+      if (e != "done") {
+        await killAnvil();
+        throw e;
+      }
+    }
+  });
+
+  it("scenario BNB (BSC)", async () => {
+    try {
+      await executeScenario(scenarioBnb);
     } catch (e) {
       if (e != "done") {
         await killAnvil();

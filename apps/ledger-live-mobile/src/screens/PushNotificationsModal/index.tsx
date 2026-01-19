@@ -1,24 +1,24 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text, Link as TextLink, Button } from "@ledgerhq/native-ui";
-import useNotifications from "~/logic/notifications";
-import Illustration from "~/images/illustration/Illustration";
-import PromptNotifGenericDark from "~/images/illustration/Dark/_PromptNotifGeneric.webp";
-import PromptNotifGenericLight from "~/images/illustration/Light/_PromptNotifGeneric.webp";
-import PromptNotifMarketDark from "~/images/illustration/Dark/_PromptNotifMarket.webp";
-import PromptNotifMarketLight from "~/images/illustration/Light/_PromptNotifMarket.webp";
-import { TrackScreen } from "~/analytics";
+import { useNotifications } from "~/logic/notifications";
 import QueuedDrawer from "~/components/QueuedDrawer";
+import { PushNotificationsModalIllustration } from "./PushNotificationsModalIllustration";
+import { TrackScreen } from "~/analytics";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 
 const PushNotificationsModal = () => {
   const { t } = useTranslation();
   const {
     initPushNotificationsData,
-    pushNotificationsModalType,
+    drawerSource,
     isPushNotificationsModalOpen,
-    modalAllowNotifications,
-    modalDelayLater,
-    pushNotificationsOldRoute,
+    handleAllowNotificationsPress,
+    handleDelayLaterPress,
+    handleCloseFromBackdropPress,
+    getRepromptDelay,
+    pushNotificationsDataOfUser,
   } = useNotifications();
 
   useEffect(() => {
@@ -26,40 +26,39 @@ const PushNotificationsModal = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const NotifIllustration = () =>
-    pushNotificationsModalType === "market" ? (
-      <Illustration
-        lightSource={PromptNotifMarketLight}
-        darkSource={PromptNotifMarketDark}
-        width={300}
-        height={141}
-      />
-    ) : (
-      <Illustration
-        lightSource={PromptNotifGenericLight}
-        darkSource={PromptNotifGenericDark}
-        width={300}
-        height={141}
-      />
-    );
+  const featureNewWordingNotificationsDrawer = useFeature("lwmNewWordingOptInNotificationsDrawer");
+
+  const canShowVariant =
+    drawerSource === "onboarding" && featureNewWordingNotificationsDrawer?.enabled;
+  const isVariantB =
+    featureNewWordingNotificationsDrawer?.params?.variant === ABTestingVariants.variantB;
+
   return (
-    <QueuedDrawer isRequestingToBeOpened={isPushNotificationsModalOpen} noCloseButton>
+    <QueuedDrawer
+      isRequestingToBeOpened={isPushNotificationsModalOpen}
+      noCloseButton
+      onBackdropPress={handleCloseFromBackdropPress}
+    >
       <TrackScreen
-        category="Notification Prompt"
-        name={
-          pushNotificationsModalType === "generic"
-            ? "Notification Prompt 1 - Notif"
-            : "Notification Prompt 2 - Graph"
+        category="Drawer push notification opt-in"
+        source={drawerSource}
+        repromptDelay={
+          getRepromptDelay(pushNotificationsDataOfUser?.dismissedOptInDrawerAtList) ?? undefined
         }
-        source={pushNotificationsOldRoute}
-        type={"drawer"}
+        dismissedCount={pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0}
+        variant={canShowVariant ? featureNewWordingNotificationsDrawer?.params?.variant : undefined}
       />
+
       <Flex mb={4}>
         <Flex alignItems={"center"}>
-          <NotifIllustration />
+          <PushNotificationsModalIllustration type={drawerSource} />
+
           <Text variant="h4" fontWeight="semiBold" color="neutral.c100" mt={5}>
-            {t("notifications.prompt.title")}
+            {canShowVariant && isVariantB
+              ? t("notifications.prompt.titleVariantB")
+              : t("notifications.prompt.title")}
           </Text>
+
           <Text
             variant="bodyLineHeight"
             fontWeight="medium"
@@ -67,13 +66,25 @@ const PushNotificationsModal = () => {
             textAlign="center"
             mt={3}
           >
-            {t("notifications.prompt.desc")}
+            {canShowVariant && isVariantB
+              ? t("notifications.prompt.descVariantB")
+              : t("notifications.prompt.desc")}
           </Text>
         </Flex>
-        <Button type={"main"} mt={8} mb={7} onPressIn={modalAllowNotifications}>
+        <Button
+          type={"main"}
+          mt={8}
+          mb={7}
+          onPressIn={handleAllowNotificationsPress}
+          testID="notifications-prompt-allow"
+        >
           {t("notifications.prompt.allow")}
         </Button>
-        <TextLink type={"shade"} onPressIn={modalDelayLater} testID="notifications-prompt-later">
+        <TextLink
+          type={"shade"}
+          onPressIn={handleDelayLaterPress}
+          testID="notifications-prompt-later"
+        >
           {t("notifications.prompt.later")}
         </TextLink>
       </Flex>

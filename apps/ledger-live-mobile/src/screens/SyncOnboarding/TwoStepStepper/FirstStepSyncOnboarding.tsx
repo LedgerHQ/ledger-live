@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { SyncOnboardingScreenProps } from "../SyncOnboardingScreenProps";
 import { NavigatorName, ScreenName } from "~/const";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
 import { SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";

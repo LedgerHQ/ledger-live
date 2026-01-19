@@ -6,8 +6,7 @@
     "src/assets/fonts.ts",
     "src/assets/icons.ts",
     "src/assets/cryptoIcons.ts",
-    "src/components/animations/GlitchText/index.tsx",
-    "src/components/form/SelectInput/VirtualMenuList.tsx"
+    "src/components/animations/GlitchText/index.tsx"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": ["**/node_modules/**", "**/*.stories.*", "**/*.test.*"],
@@ -21,6 +20,9 @@
     "src/pre-ldls/types.ts"
   ],
   "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util",
     "@emotion/is-prop-valid",
     "@emotion/stylis",
     "@emotion/unitless",

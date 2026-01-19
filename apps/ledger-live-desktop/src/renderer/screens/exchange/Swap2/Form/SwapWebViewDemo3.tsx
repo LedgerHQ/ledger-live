@@ -63,8 +63,8 @@ import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
-import { useGetMixpanelDistinctId } from "~/renderer/analytics/mixpanel";
 import { SwapLoader } from "./SwapLoader";
+import { useDiscreetMode } from "~/renderer/components/Discreet";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -142,6 +142,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   const currentVersion = __APP_VERSION__;
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const devMode = useSelector(developerModeSelector);
+  const discreetMode = useDiscreetMode();
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -160,7 +161,6 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio")?.enabled;
   const lldModularDrawerFF = useFeature("lldModularDrawer");
   const isLldModularDrawer = lldModularDrawerFF?.enabled && lldModularDrawerFF?.params?.live_app;
-  const distinctId = useGetMixpanelDistinctId();
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customHandlers = useMemo(
@@ -557,8 +557,8 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
             ptxSwapLiveAppKycWarning,
             ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio ? "true" : "false",
             isModularDrawer: isLldModularDrawer ? "true" : "false",
-            distinctId,
             isEmbedded: isEmbedded ? "true" : "false",
+            discreetMode: discreetMode ? "true" : "false",
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}

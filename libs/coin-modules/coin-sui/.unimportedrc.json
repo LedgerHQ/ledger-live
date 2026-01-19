@@ -14,7 +14,10 @@
     "**/getOperationExtra.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnresolved": [],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"],
   "ignoreUnimported": [
     "src/api/index.ts",
     "src/test/testUtils.ts",

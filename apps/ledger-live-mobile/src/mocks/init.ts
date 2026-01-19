@@ -6,7 +6,9 @@ async function enableMocking() {
   }
 
   try {
-    const { mswWorker } = await import("./server");
+    await import("./polyfills");
+    const serverModule = await import("./server");
+    const mswWorker = serverModule.mswWorker;
     // eslint-disable-next-line no-console
     console.log("\x1b[32m MSW: Starting Mock Service Worker \x1b[0m");
     mswWorker.listen({

@@ -3474,7 +3474,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "通知をオンにする",
+      "titleVariantB" : "Ledger Walletを最大限に活用する",
       "desc" : "Ledger Wallet、Ledger製品、マーケット、おすすめに関する最新情報を入手しましょう。設定からいつでも購読解除できます。",
+      "descVariantB" : "お客様に合わせたヒントやセットアップガイド、関連する市場ニュースをお届けします。",
       "allow" : "通知を許可",
       "later" : "後で"
     },
@@ -3891,7 +3893,9 @@
         "celo_title" : "Ledger Nano S™は、Celoのスワップに対応していません",
         "celo_description" : "Celoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
         "monad_title" : "Ledger Nano S™はMonadのスワップに対応していません",
-        "monad_description" : "Monadをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
+        "monad_description" : "Monadをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+        "zcash_title" : "Ledger Nano S™はZcashのスワップに対応していません",
+        "zcash_description" : "Zcashをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
       }
     },
     "lending" : {

@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { StyleSheet, View } from "react-native";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
 
 import { DeviceModelId } from "@ledgerhq/types-devices";

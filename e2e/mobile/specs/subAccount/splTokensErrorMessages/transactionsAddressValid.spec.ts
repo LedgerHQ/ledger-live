@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSendSPLAddressValid } from "../subAccount";
 const transactionE2E = {
   tx: new Transaction(TokenAccount.SOL_GIGA_1, TokenAccount.SOL_GIGA_2, "0.1", undefined),

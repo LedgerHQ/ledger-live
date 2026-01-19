@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSwapWithDifferentSeedTest } from "./swap.other";
 import { Addresses } from "@ledgerhq/live-common/lib/e2e/enum/Addresses";
 

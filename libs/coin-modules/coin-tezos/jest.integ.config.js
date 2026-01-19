@@ -1,9 +1,18 @@
-/** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
+/** @type {import('jest').Config} */
 module.exports = {
-  preset: "ts-jest",
   testEnvironment: "node",
   testRegex: ".integ.test.ts$",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
-  testTimeout: 60000,
-  workerThreads: true,
+  testTimeout: 60_000,
+  forceExit: true,
+  transform: {
+    "^.+\\.(t|j)sx?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
+  },
 };

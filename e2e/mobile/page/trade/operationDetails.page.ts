@@ -1,4 +1,5 @@
-import { getAccountAddress, Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
+import { Step } from "jest-allure2-reporter/api";
+import { Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
 
 export default class OperationDetailsPage {
   titleId = "operationDetails-title";
@@ -37,13 +38,12 @@ export default class OperationDetailsPage {
     await scrollToId(this.recipientId, this.operationDetailsScrollViewId);
     const recipientElement = getElementById(this.recipientId);
 
-    let expected: string;
-    if (await IsIdVisible(this.operationDetailsConfirmed)) {
-      expected = getAccountAddress(recipient);
+    const expected = recipient.address;
+    if (expected) {
+      await detoxExpect(recipientElement).toHaveText(expected);
     } else {
-      expected = recipient.address;
+      throw new Error("Recipient address is undefined");
     }
-    await detoxExpect(recipientElement).toHaveText(expected);
   }
 
   @Step("Check recipient as provider")
@@ -83,9 +83,10 @@ export default class OperationDetailsPage {
   }
 
   @Step("Check that transaction details are displayed")
-  async checkTransactionDetailsVisibility() {
+  async checkTransactionDetailsVisibility(currencyName: string) {
     await this.waitForOperationDetails();
     await detoxExpect(this.account()).toBeVisible();
+    await detoxExpect(this.account()).toHaveText(currencyName + " 1");
     await detoxExpect(this.amount()).toBeVisible();
     await detoxExpect(this.operation()).toBeVisible();
     await detoxExpect(this.date()).toBeVisible();

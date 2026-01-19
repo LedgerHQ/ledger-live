@@ -1,7 +1,7 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/core";
 import { useEffect } from "react";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { NavigatorName, ScreenName } from "~/const";
 import { hasSeenAnalyticsOptInPromptSelector } from "~/reducers/settings";
 

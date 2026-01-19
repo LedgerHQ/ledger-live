@@ -2,7 +2,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import React, { memo } from "react";
 import { RectButton, Gesture, GestureDetector } from "react-native-gesture-handler";
 import { TokenAccount, Account } from "@ledgerhq/types-live";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { createStructuredSelector } from "~/context/selectors";
 import { connect } from "react-redux";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";

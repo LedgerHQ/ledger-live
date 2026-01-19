@@ -1,5 +1,8 @@
 {
-  "ignoreUnresolved": [],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"],
   "ignoreUnused": [
     "dotenv",
     "expect"

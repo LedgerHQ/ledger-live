@@ -28,7 +28,7 @@ import { formatTransaction } from "@ledgerhq/live-common/transaction/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
 import { getEnv } from "@ledgerhq/live-env";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { updateAccountWithUpdater } from "../actions/accounts";

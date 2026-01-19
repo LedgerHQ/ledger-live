@@ -13,6 +13,7 @@ import { handleActions } from "redux-actions";
 import { State } from ".";
 import { createSelector } from "reselect";
 import { useSelector } from "LLD/hooks/redux";
+import { shallowEqual } from "react-redux";
 import { AccountLike, RecentAddressesState } from "@ledgerhq/types-live";
 
 export const walletSelector = (state: State): WalletState => state.wallet;
@@ -51,7 +52,10 @@ export const useMaybeAccountName = (
 export const useBatchMaybeAccountName = (
   accounts: (AccountLike | null | undefined)[],
 ): (string | undefined)[] => {
-  return useSelector((state: State) => accounts.map(account => getAccountName(state, account)));
+  return useSelector(
+    (state: State) => accounts.map(account => getAccountName(state, account)),
+    shallowEqual,
+  );
 };
 export const useAccountName = (account: AccountLike) => {
   return useSelector((state: State) => accountNameWithDefaultSelector(state.wallet, account));

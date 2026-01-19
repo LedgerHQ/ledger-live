@@ -72,7 +72,7 @@ export class AccountsPage extends AppPage {
 
   @step("Get number of accounts in the list")
   async countAccounts(): Promise<number> {
-    return await this.page.locator(".accounts-account-row-item-content").count();
+    return await this.accountListNumber.count();
   }
 
   @step("Expect number of accounts to be $0")

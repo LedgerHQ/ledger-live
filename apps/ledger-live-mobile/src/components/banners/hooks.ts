@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { dismissBanner } from "../../actions/settings";
 import { dismissedBannersSelector } from "../../reducers/settings";
 

@@ -1,4 +1,4 @@
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import {
   hasBeenRedirectedToPostOnboardingSelector,
   hasBeenUpsoldProtectSelector,

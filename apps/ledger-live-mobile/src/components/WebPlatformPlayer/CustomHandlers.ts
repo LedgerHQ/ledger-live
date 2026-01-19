@@ -11,7 +11,7 @@ import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { WebviewProps } from "../Web3AppWebview/types";
 import prepareSignTransaction from "../Web3AppWebview/liveSDKLogic";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { addOneAccount } from "~/actions/accounts";
 import { setAccountName } from "@ledgerhq/live-wallet/lib/store";
 import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";

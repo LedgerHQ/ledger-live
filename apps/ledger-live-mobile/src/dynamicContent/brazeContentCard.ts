@@ -1,6 +1,6 @@
 import Braze from "@braze/react-native-sdk";
 import { useCallback, useRef } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { track } from "~/analytics";
 import { setDismissedContentCard } from "~/actions/settings";
 import { trackingEnabledSelector } from "~/reducers/settings";
@@ -24,14 +24,18 @@ export const useBrazeContentCard = (mobileCards: Braze.ContentCard[]) => {
   );
 
   const logImpressionCard = useCallback(
-    (cardId: string) => {
+    (cardId: string, displayedPosition?: number) => {
       if (!isTrackedUser) return;
 
       Braze.logContentCardImpression(cardId);
 
       const card = mobileCardRef.current.find(card => card.id === cardId);
       if (!card) return;
-      track("contentcard_impression", { ...card.extras, page: card.extras.location });
+      track("contentcard_impression", {
+        ...card.extras,
+        page: card.extras.location,
+        displayedPosition,
+      });
     },
     [isTrackedUser],
   );

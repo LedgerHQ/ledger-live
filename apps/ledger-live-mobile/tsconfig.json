@@ -9,7 +9,6 @@
     "lib": ["es2017", "DOM"],
     "types": [
       "jest",
-      "@testing-library/jest-native/extend-expect",
       "jest-allure2-reporter/globals"
     ],
     "noEmit": true,
@@ -18,7 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["src/*"],
-      "LLM/*": ["src/newArch/*"],
+      "LLM/*": ["src/mvvm/*"],
       "@tests/*": ["__tests__/*"],
       "@mocks/*": ["__mocks__/*"]
     }

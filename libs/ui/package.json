@@ -1,13 +1,13 @@
 {
   "name": "@ledgerhq/ui",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "devDependencies": {
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/native-ui": "workspace:^",
     "@ledgerhq/react-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
-    "@playwright/test": "~1.40.0",
+    "@playwright/test": "catalog:",
     "concurrently": "^8.0.0",
     "cross-env": "^7.0.3",
     "json": "^11.0.0",

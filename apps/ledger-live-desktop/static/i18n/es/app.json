@@ -482,7 +482,9 @@
       "celo_title" : "No es posible utilizar el Ledger Nano S™ para permutar Celo",
       "celo_description" : "Para permutar Celo, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "monad_title" : "No es posible usar el Ledger Nano S™ para permutar Monad",
-      "monad_description" : "Para permutar Monad, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
+      "monad_description" : "Para permutar Monad, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "zcash_title" : "No es posible usar el Ledger Nano S™ para permutar Zcash",
+      "zcash_description" : "Para permutar Zcash, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
     },
     "providers" : {
       "title" : "Elige un proveedor para permutar cripto",
@@ -1310,6 +1312,17 @@
         "description" : "Puedes transferir cripto desde cualquier exchange o wallet a tu Ledger Wallet para contar con la máxima seguridad.",
         "depositButton" : "Proteger mis cripto",
         "skipButton" : "Quizás más tarde"
+      },
+      "sync" : {
+        "timelineTitle" : "Sincronización de wallets",
+        "timelineTitleCompleted" : "Sincronización activada",
+        "title" : "Activa la sincronización de tu wallet",
+        "description" : "Mantén tu portfolio actualizado al cambiar de PC o si usas un móvil",
+        "skipButton" : "Lo haré más tarde",
+        "skipTitle" : "¿No quieres activar la sincronización?",
+        "skipDescription" : "Si no la activas, tendrás que volver a agregar manualmente todas tus cuentas cripto en caso de cambiar a un móvil o PC nuevos. Puedes desactivarla posteriormente desde los ajustes de Ledger Wallet.",
+        "skipConfirm" : "Sí, omitir",
+        "skipNo" : "No, activar sincronización"
       },
       "backup" : {
         "title" : "Copia de respaldo para tu Frase de Recuperación Secreta",

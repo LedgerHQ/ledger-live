@@ -267,7 +267,11 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         deviceOnboardingState.currentOnboardingStep,
       )
     ) {
-      setStepKey(isSyncIncr1Enabled ? StepKey.Success : StepKey.Apps);
+      let nextStepKey = StepKey.Apps;
+      if (isSyncIncr1Enabled) {
+        nextStepKey = companionSteps.hasSyncStep ? StepKey.Sync : StepKey.Success;
+      }
+      setStepKey(nextStepKey);
       seededDeviceHandled.current = true;
       return;
     }
@@ -333,7 +337,12 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       default:
         break;
     }
-  }, [deviceOnboardingState, notifySyncOnboardingShouldReset, isSyncIncr1Enabled]);
+  }, [
+    deviceOnboardingState,
+    notifySyncOnboardingShouldReset,
+    isSyncIncr1Enabled,
+    companionSteps.hasSyncStep,
+  ]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost
@@ -376,7 +385,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   }, [stepKey, productName, isSyncIncr1Enabled]);
 
   useEffect(() => {
-    if (stepKey >= StepKey.Success) {
+    if (stepKey >= StepKey.Sync) {
       setIsPollingOn(false);
     }
 
@@ -399,8 +408,12 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
 
     setSteps(
       companionSteps.defaultSteps.map(step => {
-        const stepStatus =
-          step.key > stepKey ? "inactive" : step.key < stepKey ? "completed" : "active";
+        let stepStatus = step.status;
+
+        if (stepStatus !== "completed") {
+          stepStatus =
+            step.key > stepKey ? "inactive" : step.key < stepKey ? "completed" : "active";
+        }
         const title = (stepStatus === "completed" && step.titleCompleted) || step.title;
 
         return {
@@ -456,7 +469,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   useEffect(() => {
     if (stepKey === StepKey.Success) {
       parentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-    } else if (stepKey === StepKey.Seed) {
+    } else if ([StepKey.Seed, StepKey.Sync].includes(stepKey)) {
       parentRef.current?.scrollTo({ top: 700, behavior: "smooth" });
     }
   }, [seedPathStatus, stepKey, parentRef]);
@@ -506,6 +519,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
               isNewSeed={isNewSeed}
               handleComplete={companionSteps.handleAppStepComplete}
               seedConfiguration={analyticsSeedConfiguration.current}
+              hasSyncStep={companionSteps.hasSyncStep}
             />
           ) : (
             <VerticalTimeline steps={steps} />

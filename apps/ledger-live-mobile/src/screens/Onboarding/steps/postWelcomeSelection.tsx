@@ -3,7 +3,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { setOnboardingHasDevice, setReadOnlyMode } from "~/actions/settings";
 import { track, updateIdentify } from "~/analytics";

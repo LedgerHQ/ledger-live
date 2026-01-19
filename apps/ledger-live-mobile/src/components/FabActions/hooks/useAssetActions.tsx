@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { AccountLikeArray } from "@ledgerhq/types-live";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { useTranslation } from "react-i18next";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import {

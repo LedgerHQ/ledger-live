@@ -20,7 +20,6 @@ import { init } from "../e2e/bridge/client";
 import logger from "./logger";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import {
-  osThemeSelector,
   hasSeenAnalyticsOptInPromptSelector,
   hasCompletedOnboardingSelector,
   trackingEnabledSelector,
@@ -33,7 +32,8 @@ import { rebootIdSelector } from "~/reducers/appstate";
 import LocaleProvider, { i18n } from "~/context/Locale";
 import AuthPass from "~/context/AuthPass";
 import LedgerStoreProvider from "~/context/LedgerStore";
-import { store, useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
+import { store } from "~/context/store";
 import LoadingApp from "~/components/LoadingApp";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
@@ -290,8 +290,7 @@ function RebootProvider({ children }: { children: React.ReactNode }) {
 }
 
 const StylesProvider = ({ children }: { children: React.ReactNode }) => {
-  const { theme } = useSettings();
-  const osTheme = useSelector(osThemeSelector);
+  const { osTheme, resolvedTheme } = useSettings();
   const dispatch = useDispatch();
 
   const compareOsTheme = useCallback(() => {
@@ -311,10 +310,6 @@ const StylesProvider = ({ children }: { children: React.ReactNode }) => {
     const sub = AppState.addEventListener("change", osThemeChangeHandler);
     return () => sub.remove();
   }, [compareOsTheme]);
-  const resolvedTheme = useMemo(
-    () => (((theme === "system" && osTheme) || theme) === "light" ? "light" : "dark"),
-    [theme, osTheme],
-  );
 
   return (
     <StyleProvider selectedPalette={resolvedTheme}>

@@ -55,7 +55,21 @@ const makeScenarioTransactions = ({
     },
   };
 
-  return [scenarioSendEthTransaction, scenarioSendUSDCTransaction];
+  const scenarioSendMaxEthTransaction: EthereumScenarioTransaction = {
+    name: "Send Max ETH",
+    useAllAmount: true,
+    recipient: VITALIK,
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+    },
+  };
+
+  return [scenarioSendEthTransaction, scenarioSendUSDCTransaction, scenarioSendMaxEthTransaction];
 };
 
 export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
@@ -110,7 +124,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
 
     initMswHandlers(getCoinConfig(ethereum).info);
 
-    const { currencyBridge, accountBridge, getAddress } = await getBridges("ethereum", signer);
+    const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: ethereum,
@@ -149,7 +163,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks();
+    await indexBlocks(ethereum.ethereumLikeInfo?.chainId || 1);
   },
   afterAll: account => {
     expect(account.subAccounts?.length).toBe(1);
@@ -157,7 +171,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
       ethers.parseUnits("20", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
     );
     expect(account.nfts?.length).toBe(0);
-    expect(account.operations.length).toBe(3);
+    expect(account.operations.length).toBe(4);
   },
   teardown: async () => {
     resetIndexer();

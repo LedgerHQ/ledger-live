@@ -1,3 +1,4 @@
+import eip55 from "eip55";
 import { AssetInfo } from "@ledgerhq/coin-framework/api/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
@@ -22,7 +23,7 @@ export function getAssetFromToken(
 
   return {
     type: token.tokenType,
-    assetReference: token.contractAddress,
+    assetReference: eip55.encode(token.contractAddress),
     assetOwner: owner,
     name: token.name,
     unit: token.units[0],

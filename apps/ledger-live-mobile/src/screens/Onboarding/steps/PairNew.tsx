@@ -1,7 +1,7 @@
 import React, { useCallback, memo, useMemo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Flex, Icons, SlideIndicator } from "@ledgerhq/native-ui";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { NavigatorName, ScreenName } from "~/const";
 import { ConnectDevice } from "./setupDevice/scenes";
 import { TrackScreen, track } from "~/analytics";
@@ -13,7 +13,7 @@ import {
   setIsReborn,
   setOnboardingHasDevice,
 } from "~/actions/settings";
-import useNotifications from "~/logic/notifications";
+import { useNotifications } from "~/logic/notifications";
 import {
   RootComposite,
   StackNavigatorNavigation,
@@ -80,7 +80,7 @@ export default memo(function () {
   const route = useRoute<NavigationProps["route"]>();
 
   const dispatch = useDispatch();
-  const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } = useNotifications();
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const { deviceModelId, showSeedWarning, isProtectFlow, fromAccessExistingWallet, isRestoreSeed } =
     route.params;
@@ -140,7 +140,7 @@ export default memo(function () {
       dispatch(setHasBeenRedirectedToPostOnboarding(false));
     }
 
-    triggerJustFinishedOnboardingNewDevicePushNotificationModal();
+    tryTriggerPushNotificationDrawerAfterAction("onboarding");
   }, [
     isProtectFlow,
     deviceModelId,
@@ -148,7 +148,7 @@ export default memo(function () {
     hasCompletedOnboarding,
     navigation,
     fromAccessExistingWallet,
-    triggerJustFinishedOnboardingNewDevicePushNotificationModal,
+    tryTriggerPushNotificationDrawerAfterAction,
     isFundWalletNewSetup,
     seedConfiguration,
   ]);

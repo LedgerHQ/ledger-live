@@ -7,7 +7,7 @@ import {
   usePostOnboardingHubState,
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { getDeviceModel } from "@ledgerhq/devices";
 import PostOnboardingActionRow from "~/components/PostOnboarding/PostOnboardingActionRow";
 import { TrackScreen } from "~/analytics";

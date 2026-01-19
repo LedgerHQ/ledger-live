@@ -1,6 +1,8 @@
+import { Step } from "jest-allure2-reporter/api";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 import { TokenType } from "@ledgerhq/live-common/lib/e2e/enum/TokenType";
 import { ReceiveFundsOptionsType } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
+
 export default class ReceivePage {
   accountAddress = "receive-fresh-address";
   accountFreshAddress = "receive-verifyAddress-freshAdress";
@@ -108,10 +110,7 @@ export default class ReceivePage {
   }
 
   @Step("Verify address")
-  async verifyAddress(address: string | undefined): Promise<void> {
-    if (!address) {
-      throw new Error("Address is not set");
-    }
+  async verifyAddress(address: string): Promise<void> {
     await detoxExpect(getElementById(this.accountAddress)).toHaveText(address);
   }
 

@@ -27,8 +27,8 @@ describe("Constructor", () => {
 
 describe("startNewTransaction", () => {
   const recordStore = new RecordStore();
-  const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
-  const transport = createTransportRecorder(mockTransport, recordStore);
+  // @ts-expect-error - createTransportRecorder expects a Transport class, not instance
+  const TransportRecorder = createTransportRecorder(MockTransport, recordStore);
 
   beforeEach(() => {
     recordStore.clearStore();
@@ -37,13 +37,13 @@ describe("startNewTransaction", () => {
   it("sends a correct sequence of APDU when Swap", async () => {
     // Given
     const mockNonceResponse = "2ac38f187c"; // Response of length 10
-    mockTransport.setNewResponse(
+    const mockTransport = new MockTransport(
       Buffer.concat([
         Buffer.from(mockNonceResponse),
         Buffer.from([0x90, 0x00]), // StatusCodes.OK
       ]),
     );
-    const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
+    const exchange = new Exchange(new TransportRecorder(mockTransport), ExchangeTypes.Swap);
 
     // When
     const result = await exchange.startNewTransaction();
@@ -67,13 +67,13 @@ describe("startNewTransaction", () => {
   ])("returns a base64 nonce when $name", async ({ name, type }) => {
     // Given
     const mockNonceResponse = "2ac38f187c2ac38f187c2ac38f187c7c"; // Response of length 10
-    mockTransport.setNewResponse(
+    const mockTransport = new MockTransport(
       Buffer.concat([
         Buffer.from(mockNonceResponse),
         Buffer.from([0x90, 0x00]), // StatusCodes.OK
       ]),
     );
-    const exchange = new Exchange(new transport(mockTransport), type);
+    const exchange = new Exchange(new TransportRecorder(mockTransport), type);
 
     // When
     const result = await exchange.startNewTransaction();
@@ -99,13 +99,13 @@ describe("startNewTransaction", () => {
   ])("returns a 32 bytes nonce when $name", async ({ name, type }) => {
     // Given
     const mockNonceResponse = Buffer.from("2ac38f187c2ac38f187c2ac38f187c7c"); // Response of 32 bytes
-    mockTransport.setNewResponse(
+    const mockTransport = new MockTransport(
       Buffer.concat([
         mockNonceResponse,
         Buffer.from([0x90, 0x00]), // StatusCodes.OK
       ]),
     );
-    const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.SwapNg);
+    const exchange = new Exchange(new TransportRecorder(mockTransport), ExchangeTypes.SwapNg);
 
     // When
     const result = await exchange.startNewTransaction();
@@ -125,20 +125,27 @@ describe("startNewTransaction", () => {
   it("throws an error if status is not ok", async () => {
     // Given
     const mockResponse = "2ac38f187c"; // Response of length 10
-    mockTransport.setNewResponse(
+    const mockTransport = new MockTransport(
       Buffer.concat([Buffer.from(mockResponse), Buffer.from([0x6a, 0x80])]),
     );
-    const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
+    const exchange = new Exchange(new TransportRecorder(mockTransport), ExchangeTypes.Swap);
 
     // When & Then
-    await expect(exchange.startNewTransaction()).rejects.toThrowError();
+    let thrownError: Error | undefined;
+    try {
+      await exchange.startNewTransaction();
+    } catch (error) {
+      thrownError = error as Error;
+    }
+    expect(thrownError).toBeDefined();
+    expect(thrownError?.message).toContain("0x6a80");
   });
 });
 
 describe("setPartnerKey", () => {
   const recordStore = new RecordStore();
-  const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
-  const transport = createTransportRecorder(mockTransport, recordStore);
+  // @ts-expect-error - createTransportRecorder expects a Transport class, not instance
+  const TransportRecorder = createTransportRecorder(MockTransport, recordStore);
 
   beforeEach(() => {
     recordStore.clearStore();
@@ -146,7 +153,8 @@ describe("setPartnerKey", () => {
 
   it("sends legacy info", async () => {
     // Given
-    const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
+    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+    const exchange = new Exchange(new TransportRecorder(mockTransport), ExchangeTypes.Swap);
     const info = {
       name: "LTX",
       curve: "WHATEVER",
@@ -168,7 +176,8 @@ describe("setPartnerKey", () => {
 
   it("sends NG info", async () => {
     // Given
-    const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
+    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+    const exchange = createExchange(new TransportRecorder(mockTransport), ExchangeTypes.SwapNg);
     const info = {
       name: "LTX",
       curve: "secp256k1",
@@ -191,8 +200,8 @@ describe("setPartnerKey", () => {
 
 describe("processTransaction", () => {
   const recordStore = new RecordStore();
-  const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
-  const transport = createTransportRecorder(mockTransport, recordStore);
+  // @ts-expect-error - createTransportRecorder expects a Transport class, not instance
+  const TransportRecorder = createTransportRecorder(MockTransport, recordStore);
 
   beforeEach(() => {
     recordStore.clearStore();
@@ -200,7 +209,8 @@ describe("processTransaction", () => {
 
   it("sends legacy info", async () => {
     // Given
-    const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
+    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+    const exchange = new Exchange(new TransportRecorder(mockTransport), ExchangeTypes.Swap);
 
     const tx = Buffer.from("1234567890abcdef", "hex");
     const fee = new BigNumber("10");
@@ -219,7 +229,8 @@ describe("processTransaction", () => {
 
   it("sends NG info", async () => {
     // Given
-    const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
+    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+    const exchange = createExchange(new TransportRecorder(mockTransport), ExchangeTypes.SwapNg);
 
     const tx = Buffer.from("1234567890abcdef", "hex");
     const fee = new BigNumber("10");
@@ -238,7 +249,8 @@ describe("processTransaction", () => {
 
   it("sends NG info of larger than 255 bytes", async () => {
     // Given
-    const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
+    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+    const exchange = createExchange(new TransportRecorder(mockTransport), ExchangeTypes.SwapNg);
 
     const value = Array(200).fill("abc").join("");
     const tx = Buffer.from(value, "hex");
@@ -277,8 +289,8 @@ describe("processTransaction", () => {
 
 describe("checkTransactionSignature", () => {
   const recordStore = new RecordStore();
-  const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
-  const transport = createTransportRecorder(mockTransport, recordStore);
+  // @ts-expect-error - createTransportRecorder expects a Transport class, not instance
+  const TransportRecorder = createTransportRecorder(MockTransport, recordStore);
 
   beforeEach(() => {
     recordStore.clearStore();
@@ -286,7 +298,8 @@ describe("checkTransactionSignature", () => {
 
   it("sends legacy info", async () => {
     // Given
-    const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
+    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+    const exchange = new Exchange(new TransportRecorder(mockTransport), ExchangeTypes.Swap);
 
     const txSig = Buffer.from("1234567890abcdef", "hex");
     const hexEncodedInfoExpected = "081234567890abcdef";
@@ -303,7 +316,8 @@ describe("checkTransactionSignature", () => {
 
   it("sends NG info", async () => {
     // Given
-    const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
+    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+    const exchange = createExchange(new TransportRecorder(mockTransport), ExchangeTypes.SwapNg);
 
     const txSig = Buffer.from("1234567890abcdef", "hex");
     const hexEncodedInfoExpected = "0a01011234567890abcdef";
@@ -321,8 +335,8 @@ describe("checkTransactionSignature", () => {
 
 describe("sendPKICertificate", () => {
   const recordStore = new RecordStore();
-  const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
-  const transport = createTransportRecorder(mockTransport, recordStore);
+  // @ts-expect-error - createTransportRecorder expects a Transport class, not instance
+  const TransportRecorder = createTransportRecorder(MockTransport, recordStore);
 
   beforeEach(() => {
     recordStore.clearStore();
@@ -333,7 +347,8 @@ describe("sendPKICertificate", () => {
     const descriptor = "010203";
     const signature = "0a0b0c0d0e0f1a1b1c1d1e1f";
     const signatureLengthInHex = "0c";
-    const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
+    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+    const exchange = createExchange(new TransportRecorder(mockTransport), ExchangeTypes.SwapNg);
 
     // When
     await exchange.sendPKICertificate(
@@ -354,19 +369,19 @@ describe("sendPKICertificate", () => {
 
 describe("getChallenge", () => {
   const recordStore = new RecordStore();
-  const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
-  const transport = createTransportRecorder(mockTransport, recordStore);
+  // @ts-expect-error - createTransportRecorder expects a Transport class, not instance
+  const TransportRecorder = createTransportRecorder(MockTransport, recordStore);
 
   it("returns a new Challenge value", async () => {
     // Given
     const mockNonceResponse = Buffer.from([0xff, 0xff, 0xff, 0xff]); // Response of 32 bytes
-    mockTransport.setNewResponse(
+    const mockTransport = new MockTransport(
       Buffer.concat([
         mockNonceResponse,
         Buffer.from([0x90, 0x00]), // StatusCodes.OK
       ]),
     );
-    const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
+    const exchange = createExchange(new TransportRecorder(mockTransport), ExchangeTypes.SwapNg);
 
     // When
     const result = await exchange.getChallenge();
@@ -386,8 +401,8 @@ describe("getChallenge", () => {
 
 describe("sendTrustedDescriptor", () => {
   const recordStore = new RecordStore();
-  const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
-  const transport = createTransportRecorder(mockTransport, recordStore);
+  // @ts-expect-error - createTransportRecorder expects a Transport class, not instance
+  const TransportRecorder = createTransportRecorder(MockTransport, recordStore);
 
   beforeEach(() => {
     recordStore.clearStore();
@@ -397,7 +412,8 @@ describe("sendTrustedDescriptor", () => {
     // Given
     const descriptor = Buffer.from([0x00, 0x0a, 0xff]);
     const descriptorLengthInHex = "03";
-    const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
+    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+    const exchange = new Exchange(new TransportRecorder(mockTransport), ExchangeTypes.Swap);
 
     // When
     await exchange.sendTrustedDescriptor(descriptor);

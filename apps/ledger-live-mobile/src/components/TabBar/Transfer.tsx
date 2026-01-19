@@ -17,7 +17,7 @@ import { HEIGHT as ExperimentalHeaderHeight } from "~/screens/Settings/Experimen
 import proxyStyled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import Touchable from "../Touchable";
 import TransferDrawer from "./TransferDrawer";
 import { lockSubject } from "../RootNavigator/CustomBlockRouterNavigator";

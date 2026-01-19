@@ -9,7 +9,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { TrackScreen } from "~/analytics";
 import SelectDevice from "~/components/SelectDevice2";
 import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
-import { useDispatch } from "~/context/store";
+import { useDispatch } from "~/context/hooks";
 
 // Called from a bunch of different navigators with different params…
 export default function SelectDeviceScreen({

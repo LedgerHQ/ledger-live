@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useSelector, useDispatch } from "~/context/store";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { useTranslation } from "react-i18next";
 import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";

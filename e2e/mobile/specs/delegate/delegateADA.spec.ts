@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runDelegateTest } from "./delegate";
 import { setEnv } from "@ledgerhq/live-env";
 

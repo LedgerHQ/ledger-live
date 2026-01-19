@@ -27,7 +27,7 @@ afterAll(() => server.close());
 
 NativeModules.RNAnalytics = {};
 
-const mockAnalytics = jest.genMockFromModule("@segment/analytics-react-native");
+const mockAnalytics = jest.createMockFromModule("@segment/analytics-react-native");
 
 // Overriding the default RNGH mocks
 // to replace TouchableNativeFeedback with TouchableOpacity
@@ -152,6 +152,7 @@ require("react-native-reanimated").setUpTests();
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),
   track: jest.fn(),
+  updateIdentify: jest.fn(),
 }));
 
 jest.mock("@react-native-firebase/messaging", () => ({

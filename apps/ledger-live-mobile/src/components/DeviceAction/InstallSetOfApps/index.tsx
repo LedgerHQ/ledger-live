@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SkipReason } from "@ledgerhq/live-common/apps/types";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";

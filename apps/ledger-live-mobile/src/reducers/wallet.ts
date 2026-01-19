@@ -11,7 +11,7 @@ import {
 import { handleActions } from "redux-actions";
 import { State } from "./types";
 import { shallowEqual } from "react-redux";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { AccountLike, RecentAddressesState } from "@ledgerhq/types-live";
 import { DistantState } from "@ledgerhq/live-wallet/walletsync/index";
 

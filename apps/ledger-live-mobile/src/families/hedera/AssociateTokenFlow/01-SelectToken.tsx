@@ -74,7 +74,7 @@ export default function SelectToken({ navigation, route }: Props) {
       } else {
         navigation.navigate(ScreenName.HederaAssociateTokenSummary, {
           accountId: mainAccount.id,
-          tokenAddress: currency.contractAddress,
+          token: currency,
         });
       }
     },

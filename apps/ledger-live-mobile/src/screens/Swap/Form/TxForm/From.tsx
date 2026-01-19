@@ -19,7 +19,7 @@ import { ScreenName } from "~/const";
 import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import { useSelector } from "~/context/store";
+import { useSelector } from "~/context/hooks";
 import { AccountLike } from "@ledgerhq/types-live";
 import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
