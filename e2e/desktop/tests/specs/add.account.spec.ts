@@ -65,7 +65,7 @@ for (const currency of currencies) {
         const selector = await getModularSelector(app, "ASSET");
         if (selector) {
           await selector.validateItems();
-          await selector.selectAsset(currency.currency);
+          await selector.selectAssetByTicker(currency.currency);
           await selector.selectNetwork(currency.currency);
           await app.scanAccountsDrawer.selectFirstAccount();
           await app.scanAccountsDrawer.clickCloseButton();
