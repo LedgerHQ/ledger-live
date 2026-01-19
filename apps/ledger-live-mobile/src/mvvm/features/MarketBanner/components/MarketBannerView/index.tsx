@@ -13,7 +13,8 @@ import { PortfolioRange } from "@ledgerhq/types-live";
 import BannerItem, { ListItem } from "../BannerItem";
 import { FearAndGreed } from "LLM/components/FearAndGreed";
 import ViewAllTile from "../ViewAllTile";
-import { BannerStates } from "../BannerStates";
+import { ErrorState } from "../ErrorState";
+import { SkeletonState } from "../SkeletonState";
 
 interface MarketBannerViewProps {
   items: MarketItemPerformer[];
@@ -77,22 +78,26 @@ const MarketBannerView = ({
         </SubheaderRow>
       </Subheader>
 
-      <FlatList
-        data={items}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        ListHeaderComponent={<FearAndGreed />}
-        ListFooterComponent={<ViewAllTile onPress={onViewAllPress} />}
-        ListEmptyComponent={<BannerStates isError={isError} />}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        onScroll={handleSwipe}
-        scrollEventThrottle={16}
-        testID="market-banner-list"
-        ListHeaderComponentStyle={{ marginRight: MARGIN_RIGHT }}
-        contentContainerStyle={{ paddingHorizontal: PADDING_HORIZONTAL, height: HEIGHT }}
-        style={{ marginHorizontal: MARGIN_HORIZONTAL }}
-      />
+      {isError ? (
+        <ErrorState />
+      ) : (
+        <FlatList
+          data={items}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+          ListHeaderComponent={<FearAndGreed />}
+          ListFooterComponent={<ViewAllTile onPress={onViewAllPress} />}
+          ListEmptyComponent={<SkeletonState />}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          onScroll={handleSwipe}
+          scrollEventThrottle={16}
+          testID="market-banner-list"
+          ListHeaderComponentStyle={{ marginRight: MARGIN_RIGHT }}
+          contentContainerStyle={{ paddingHorizontal: PADDING_HORIZONTAL, height: HEIGHT }}
+          style={{ marginHorizontal: MARGIN_HORIZONTAL }}
+        />
+      )}
     </Box>
   );
 };
