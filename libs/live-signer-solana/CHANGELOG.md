@@ -1,5 +1,23 @@
 # @ledgerhq/live-signer-solana
 
+## 0.10.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`433a1dd`](https://github.com/LedgerHQ/ledger-live/commit/433a1dd0b55f0d4bdad03ce2deb65b801770832d), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b)]:
+  - @ledgerhq/ledger-cal-service@1.11.0
+  - @ledgerhq/hw-app-solana@7.7.0
+  - @ledgerhq/hw-transport@6.32.0
+  - @ledgerhq/hw-bolos@6.33.0
+  - @ledgerhq/devices@8.10.0
+  - @ledgerhq/coin-solana@0.41.0
+  - @ledgerhq/errors@6.29.0
+  - @ledgerhq/ledger-trust-service@0.6.0
+
 ## 0.10.0-next.0
 
 ### Minor Changes

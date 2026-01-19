@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-btc
 
+## 10.16.0
+
+### Minor Changes
+
+- [#13537](https://github.com/LedgerHQ/ledger-live/pull/13537) [`7e33c7b`](https://github.com/LedgerHQ/ledger-live/commit/7e33c7b3de128e0c076176e98f8065f7cf7ad733) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - feat: btc recovery app support
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b)]:
+  - @ledgerhq/hw-transport@6.32.0
+  - @ledgerhq/logs@6.14.0
+
 ## 10.16.0-next.0
 
 ### Minor Changes
