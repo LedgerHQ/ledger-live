@@ -16,8 +16,7 @@ import SharePersonnalRecoButtonFF from "./SharePersonalRecoButtonFF";
 import ShareAnalyticsButtonFF from "./ShareAnalyticsButtonFF";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import MarketPerformanceWidgetRow from "./MarketPerformanceWidget";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import MevProtectionRow from "./MevProtection";
 import { useEntryPoint } from "LLD/features/LedgerSyncEntryPoints/hooks/useEntryPoint";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
@@ -96,16 +95,6 @@ const SectionGeneral = () => {
             <WalletSync variant="sync" />
           </Row>
         ) : null}
-
-        <FeatureToggle featureId="marketperformanceWidgetDesktop">
-          <Row
-            title={t("settings.display.marketPerformanceWidget")}
-            desc={t("settings.display.marketPerformanceWidgetDesc")}
-            dataTestId="setting-marketPerformanceWidget"
-          >
-            <MarketPerformanceWidgetRow />
-          </Row>
-        </FeatureToggle>
 
         <Row title={t("settings.profile.password")} desc={t("settings.profile.passwordDesc")}>
           <PasswordButton />

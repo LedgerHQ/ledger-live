@@ -114,9 +114,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   };
 
   await test.step("Entry buttons load with feature flag enabled", async () => {
-    await expect.soft(page).toHaveScreenshot("portfolio-entry-buttons.png", {
-      mask: [layout.marketPerformanceWidget],
-    });
+    await expect.soft(page).toHaveScreenshot("portfolio-entry-buttons.png");
   });
 
   await test.step("start stake flow via Stake entry button", async () => {
