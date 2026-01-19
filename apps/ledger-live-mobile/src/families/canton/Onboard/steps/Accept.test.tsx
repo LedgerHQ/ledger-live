@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { render } from "@testing-library/react-native";
+import { render, waitFor } from "@testing-library/react-native";
 import React from "react";
 import { View } from "react-native";
 import Accept from "./Accept";
@@ -9,13 +9,21 @@ import {
   createMockNavigation,
   createMockRouteParams,
 } from "./__tests__/test-utils";
+import { UserRefusedOnDevice, LockedDeviceError, LedgerAPI4xx } from "@ledgerhq/errors";
 
-const mockObservable = () => ({ pipe: jest.fn(() => ({ subscribe: jest.fn() })) });
+const mockObservable = () => ({
+  pipe: jest.fn(function (this: any) {
+    return this;
+  }),
+  subscribe: jest.fn(),
+});
+const BridgeOnboardMock: jest.Mock = jest.fn(mockObservable);
+const BridgeAuthorizeMock: jest.Mock = jest.fn(mockObservable);
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getCurrencyBridge: jest.fn(() => ({
-    onboardAccount: jest.fn(mockObservable),
-    authorizePreapproval: jest.fn(mockObservable),
+    onboardAccount: BridgeOnboardMock,
+    authorizePreapproval: BridgeAuthorizeMock,
   })),
 }));
 
@@ -94,6 +102,16 @@ jest.mock("~/reducers/accounts", () => ({ accountsSelector: jest.fn() }));
 jest.mock("~/reducers/settings", () => ({ lastConnectedDeviceSelector: jest.fn() }));
 
 jest.mock("../../utils/navigationSnapshot", () => ({ restoreNavigationSnapshot: jest.fn() }));
+
+const createMockOnboardObservable = (error: Error) => ({
+  pipe: jest.fn(function (this: any) {
+    return this;
+  }),
+  subscribe: jest.fn(({ error: errorHandler }: any) => {
+    errorHandler(error);
+    return { unsubscribe: jest.fn() };
+  }),
+});
 
 describe("Accept Component", () => {
   const mockRouteParams = createMockRouteParams();
@@ -215,5 +233,85 @@ describe("Accept Component", () => {
     });
 
     expect(() => renderComponent(routeParams)).not.toThrow();
+  });
+
+  describe("Error handling", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should display UserRefusedOnDevice error with warning alert", async () => {
+      const error = new UserRefusedOnDevice("errors.UserRefusedOnDevice.description");
+      BridgeOnboardMock.mockReturnValue(createMockOnboardObservable(error));
+
+      const rendered = renderComponent();
+
+      await waitFor(() => {
+        expect(rendered.getByText("errors.UserRefusedOnDevice.title")).toBeTruthy();
+      });
+
+      const output = JSON.stringify(rendered.toJSON());
+      expect(output).toContain("errors.UserRefusedOnDevice.title");
+      expect(output).toContain("errors.UserRefusedOnDevice.description");
+    });
+
+    it("should display LockedDeviceError error with error alert", async () => {
+      const error = new LockedDeviceError("errors.LockedDeviceError.description");
+      BridgeOnboardMock.mockReturnValue(createMockOnboardObservable(error));
+
+      const rendered = renderComponent();
+
+      await waitFor(() => {
+        expect(rendered.getByText("errors.LockedDeviceError.title")).toBeTruthy();
+      });
+
+      const output = JSON.stringify(rendered.toJSON());
+      expect(output).toContain("errors.LockedDeviceError.title");
+      expect(output).toContain("errors.LockedDeviceError.description");
+    });
+
+    it("should display quota exceeded error (HTTP 429) with learn more link", async () => {
+      const error = new LedgerAPI4xx("Canton Network quota exceeded", {
+        status: 429,
+        url: "https://api.example.com/onboard",
+        method: "POST",
+      });
+      BridgeOnboardMock.mockReturnValue(createMockOnboardObservable(error));
+
+      const rendered = renderComponent();
+
+      await waitFor(() => {
+        expect(rendered.getByText("canton.onboard.error429")).toBeTruthy();
+      });
+
+      const output = JSON.stringify(rendered.toJSON());
+      expect(output).toContain("canton.onboard.error429");
+      expect(output).toContain("common.learnMore");
+    });
+
+    it("should display generic error for unknown errors", async () => {
+      const error = new Error("Something went wrong");
+      BridgeOnboardMock.mockReturnValue(createMockOnboardObservable(error));
+
+      const rendered = renderComponent();
+
+      await waitFor(() => {
+        expect(rendered.getByText("Something went wrong")).toBeTruthy();
+      });
+
+      const output = JSON.stringify(rendered.toJSON());
+      expect(output).toContain("Something went wrong");
+    });
+
+    it("should provide retry button for all error types", async () => {
+      const error = new UserRefusedOnDevice("errors.UserRefusedOnDevice.description");
+      BridgeOnboardMock.mockReturnValue(createMockOnboardObservable(error));
+
+      const rendered = renderComponent();
+
+      await waitFor(() => {
+        expect(rendered.getByTestId("trans-common.retry")).toBeTruthy();
+      });
+    });
   });
 });

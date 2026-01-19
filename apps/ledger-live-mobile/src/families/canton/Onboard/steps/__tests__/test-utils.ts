@@ -163,6 +163,20 @@ export const getMockReactI18next = () => ({
 export const getMockNativeUI = () => {
   const mockViewComponentFn = ({ children, testID, ...props }: any) =>
     React.createElement(View, { testID, ...props }, children);
+
+  const AlertComponent = Object.assign(
+    ({ children, testID, title, ...props }: any) =>
+      React.createElement(
+        View,
+        { testID, ...props },
+        title && React.createElement(View, {}, title),
+        children,
+      ),
+    {
+      UnderlinedText: mockViewComponentFn,
+    },
+  );
+
   return {
     Flex: mockViewComponentFn,
     Text: mockViewComponentFn,
@@ -176,7 +190,7 @@ export const getMockNativeUI = () => {
       React.createElement(TextInput, { testID, value: checked ? "checked" : "", ...props }),
     IconBox: ({ Icon, testID, ...props }: any) =>
       React.createElement(View, { testID, ...props }, React.createElement(Icon)),
-    Alert: mockViewComponentFn,
+    Alert: AlertComponent,
     IconsLegacy: {
       InfoMedium: () => React.createElement(View, { testID: "info-medium-icon" }, "InfoMedium"),
     },

@@ -30,6 +30,7 @@ import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
 import { restoreNavigationSnapshot } from "../../utils/navigationSnapshot";
 import { CantonOnboardAccountParamList } from "../types";
+import { UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
 
 function isCantonOnboardResult(
   value: CantonOnboardProgress | CantonOnboardResult,
@@ -379,7 +380,7 @@ export default function Accept({ navigation, route }: Props) {
         </Text>
         <ValidatorSection />
         {isReonboarding && <ReonboardingWarning />}
-        {error && <ErrorSection disabled={disabled} onRetry={retryOnboard} />}
+        {error && <ErrorSection error={error} disabled={disabled} onRetry={retryOnboard} />}
       </Flex>
       <Flex px={6}>
         <Button
@@ -434,12 +435,76 @@ const ReonboardingWarning = () => {
   );
 };
 
-const ErrorSection = ({ disabled, onRetry }: { disabled: boolean; onRetry: () => void }) => {
+const getErrorType = (
+  error: Error | null,
+): "user_refused" | "locked_device" | "quota_exceeded" | "generic" => {
+  if (!error) return "generic";
+
+  if (error instanceof UserRefusedOnDevice) {
+    return "user_refused";
+  }
+
+  if (error instanceof LockedDeviceError) {
+    return "locked_device";
+  }
+
+  if ("status" in error && error.status === 429) {
+    return "quota_exceeded";
+  }
+
+  return "generic";
+};
+
+const ErrorSection = ({
+  error,
+  disabled,
+  onRetry,
+}: {
+  error: Error | null;
+  disabled: boolean;
+  onRetry: () => void;
+}) => {
   const { t } = useTranslation();
+  const errorType = getErrorType(error);
+
+  const getErrorTitle = () => {
+    switch (errorType) {
+      case "user_refused":
+        return t("errors.UserRefusedOnDevice.title");
+      case "locked_device":
+        return t("errors.LockedDeviceError.title");
+      case "quota_exceeded":
+        return t("canton.onboard.error429");
+      default:
+        return error?.message || t("errors.generic.title", { message: error?.message || "Error" });
+    }
+  };
+
+  const getErrorDescription = () => {
+    switch (errorType) {
+      case "user_refused":
+        return t("errors.UserRefusedOnDevice.description");
+      case "locked_device":
+        return t("errors.LockedDeviceError.description");
+      case "quota_exceeded":
+        return null;
+      default:
+        return null;
+    }
+  };
+
+  const showLearnMore = errorType === "quota_exceeded";
+  const alertType = errorType === "user_refused" ? "warning" : "error";
+
   return (
     <Flex flexDirection="column" alignItems="stretch" mt={4} mx={6}>
-      <Alert title={t("canton.onboard.error429")} type="error">
-        <LearnMore />
+      <Alert title={getErrorTitle()} type={alertType}>
+        {getErrorDescription() && (
+          <Text variant="body" color="neutral.c100">
+            {getErrorDescription()}
+          </Text>
+        )}
+        {showLearnMore && <LearnMore />}
       </Alert>
       <Button type="main" onPress={onRetry} disabled={disabled} mt={4}>
         <Trans i18nKey="common.retry" />
