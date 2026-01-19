@@ -65,6 +65,7 @@ export default function BaseOnboardingNavigator() {
     () => getStackNavigatorConfig(colors, true, undefined, true),
     [colors],
   );
+
   return (
     <Stack.Navigator
       screenOptions={{

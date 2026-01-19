@@ -43,7 +43,7 @@ export const useNotificationsPrompt = ({
     return repromptSchedule[scheduleIndex];
   }, [repromptSchedule, pushNotificationsDataOfUser?.dismissedOptInDrawerAtList]);
 
-  const shouldPromptOptInDrawerCallback = useCallback(() => {
+  const shouldPromptOptInDrawerAfterAction = useCallback(() => {
     const isOsPermissionAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
     if (isOsPermissionAuthorized && areNotificationsAllowed) {
       return false;
@@ -77,8 +77,27 @@ export const useNotificationsPrompt = ({
     nextRepromptDelay,
   ]);
 
+  const inactivityEnabled = featureBrazePushNotifications?.params?.inactivity_enabled;
+  const inactivityReprompt = featureBrazePushNotifications?.params?.inactivity_reprompt;
+
+  const shouldPromptOptInDrawerAfterInactivity = useCallback(
+    (lastActionAt?: number) => {
+      if (!inactivityEnabled) return false;
+      if (!inactivityReprompt || !lastActionAt) return false;
+
+      const nextRepromptAt = add(lastActionAt, inactivityReprompt);
+      if (isBefore(nextRepromptAt, Date.now())) {
+        return true;
+      }
+
+      return false;
+    },
+    [inactivityEnabled, inactivityReprompt],
+  );
+
   return {
+    shouldPromptOptInDrawerAfterInactivity,
     nextRepromptDelay,
-    shouldPromptOptInDrawerCallback,
+    shouldPromptOptInDrawerAfterAction,
   };
 };

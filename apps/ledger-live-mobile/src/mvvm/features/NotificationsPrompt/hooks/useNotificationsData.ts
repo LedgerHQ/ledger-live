@@ -23,20 +23,33 @@ export const useNotificationsData = () => {
     [dispatch],
   );
 
-  const resetOptOutState = useCallback(() => {
-    updatePushNotificationsDataOfUserInStateAndStore({
-      dismissedOptInDrawerAtList: undefined,
-    });
+  const markUserAsOptIn = useCallback(() => {
+    updatePushNotificationsDataOfUserInStateAndStore({});
   }, [updatePushNotificationsDataOfUserInStateAndStore]);
 
-  const optOutOfNotifications = useCallback(() => {
+  const markUserAsOptOut = useCallback(() => {
+    const now = Date.now();
     const dismissedOptInDrawerAtList = [
       ...(pushNotificationsDataOfUser?.dismissedOptInDrawerAtList ?? []),
-      Date.now(),
+      now,
     ];
 
+    // when a user is marked as opt out,
+    // we will use 2 ways to prompt the opt in drawer:
+    // 1. after an action (swap, receive, send, favorite, etc.)
+    // 2. after the inactivity period
     updatePushNotificationsDataOfUserInStateAndStore({
       dismissedOptInDrawerAtList,
+      lastActionAt: now,
+    });
+  }, [updatePushNotificationsDataOfUserInStateAndStore, pushNotificationsDataOfUser]);
+
+  const updateUserLastInactiveTime = useCallback(() => {
+    // here user can be marked as inactive but we have to keep track of all the times
+    // the user dimissed the opt in drawer because
+    updatePushNotificationsDataOfUserInStateAndStore({
+      ...pushNotificationsDataOfUser,
+      lastActionAt: Date.now(),
     });
   }, [updatePushNotificationsDataOfUserInStateAndStore, pushNotificationsDataOfUser]);
 
@@ -61,17 +74,16 @@ export const useNotificationsData = () => {
       storedUserData: DataOfUser | null,
     ) => {
       const isAuthorized = osPermissionStatus === AuthorizationStatus.AUTHORIZED;
-
       // Handle legacy users who opted out before the new drawer system
       const hasLegacyOptOutData =
         storedUserData?.alreadyDelayedToLater || storedUserData?.dateOfNextAllowedRequest;
       if (hasLegacyOptOutData) {
         if (isAuthorized && notifications.areNotificationsAllowed) {
           // User is already opted in; prevent re-prompting the opt-in drawer
-          return resetOptOutState();
+          return markUserAsOptIn();
         }
         // User is opted out; mark them for reprompting after the configured delay
-        return optOutOfNotifications();
+        return markUserAsOptOut();
       }
 
       const hasOptedOut = storedUserData?.dismissedOptInDrawerAtList !== undefined;
@@ -81,11 +93,15 @@ export const useNotificationsData = () => {
         if (isAuthorized && notifications.areNotificationsAllowed) {
           // Both OS and app notifications enabled → clear opt-out state
           updateIdentify();
-          return resetOptOutState();
+          return markUserAsOptIn();
         }
 
         // Still opted out or partially enabled → maintain opt-out state for reprompting
-        return updatePushNotificationsDataOfUserInStateAndStore(storedUserData ?? {});
+        // and set lastActionAt to now so that we can prompt the opt in drawer after the inactivity period
+        return updatePushNotificationsDataOfUserInStateAndStore({
+          ...storedUserData,
+          lastActionAt: Date.now(),
+        });
       }
 
       const isDenied = osPermissionStatus === AuthorizationStatus.DENIED;
@@ -94,7 +110,7 @@ export const useNotificationsData = () => {
         // Mark as opted out to track dismissal for reprompt scheduling
 
         updateIdentify();
-        return optOutOfNotifications();
+        return markUserAsOptOut();
       }
 
       // Explicitly handle remaining authorization states:
@@ -114,9 +130,9 @@ export const useNotificationsData = () => {
     },
     [
       notifications.areNotificationsAllowed,
-      resetOptOutState,
+      markUserAsOptIn,
       updatePushNotificationsDataOfUserInStateAndStore,
-      optOutOfNotifications,
+      markUserAsOptOut,
     ],
   );
 
@@ -124,9 +140,10 @@ export const useNotificationsData = () => {
     notifications,
     pushNotificationsDataOfUser,
     updatePushNotificationsDataOfUserInStateAndStore,
-    resetOptOutState,
-    optOutOfNotifications,
+    markUserAsOptIn,
+    markUserAsOptOut,
     initializeNotificationSettingsState,
     syncOptOutState,
+    updateUserLastInactiveTime,
   };
 };

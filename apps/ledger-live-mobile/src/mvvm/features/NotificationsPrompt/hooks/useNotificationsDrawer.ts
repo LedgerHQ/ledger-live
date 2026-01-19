@@ -23,9 +23,11 @@ type UseNotificationsDrawerParams = {
   areNotificationsAllowed: boolean | undefined;
   pushNotificationsDataOfUser: DataOfUser | null | undefined;
   nextRepromptDelay: { days?: number; hours?: number; minutes?: number } | null;
-  shouldPromptOptInDrawerCallback: () => boolean;
-  optOutOfNotifications: () => void;
-  resetOptOutState: () => void;
+  shouldPromptOptInDrawerAfterAction: () => boolean;
+  shouldPromptOptInDrawerAfterInactivity: (lastActionAt?: number) => boolean;
+  markUserAsOptIn: () => void;
+  markUserAsOptOut: () => void;
+  updateUserLastInactiveTime: () => void;
   requestPushNotificationsPermission: () => Promise<
     void | (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus]
   >;
@@ -36,10 +38,12 @@ export const useNotificationsDrawer = ({
   areNotificationsAllowed,
   pushNotificationsDataOfUser,
   nextRepromptDelay,
-  shouldPromptOptInDrawerCallback,
-  optOutOfNotifications,
-  resetOptOutState,
+  shouldPromptOptInDrawerAfterAction,
+  shouldPromptOptInDrawerAfterInactivity,
+  markUserAsOptIn,
+  markUserAsOptOut,
   requestPushNotificationsPermission,
+  updateUserLastInactiveTime,
 }: UseNotificationsDrawerParams) => {
   const featureBrazePushNotifications = useFeature("brazePushNotifications");
   const featureNewWordingNotificationsDrawer = useFeature("lwmNewWordingOptInNotificationsDrawer");
@@ -68,13 +72,35 @@ export const useNotificationsDrawer = ({
     [dispatch],
   );
 
+  const tryTriggerPushNotificationDrawerAfterInactivity = useCallback(
+    (lastActionAt?: number) => {
+      if (!featureBrazePushNotifications?.enabled || isRatingsModalOpen) {
+        return;
+      }
+
+      const shouldPrompt = shouldPromptOptInDrawerAfterInactivity(lastActionAt);
+      if (!shouldPrompt) {
+        return;
+      }
+
+      track("prompt_opt_in_notifications_drawer_after_inactivity");
+      openDrawer("inactivity", 3000);
+    },
+    [
+      featureBrazePushNotifications?.enabled,
+      isRatingsModalOpen,
+      shouldPromptOptInDrawerAfterInactivity,
+      openDrawer,
+    ],
+  );
+
   const tryTriggerPushNotificationDrawerAfterAction = useCallback(
-    (actionSource: Exclude<NotificationsState["drawerSource"], undefined>) => {
+    (actionSource: Exclude<NotificationsState["drawerSource"], undefined | "inactivity">) => {
       if (!featureBrazePushNotifications?.enabled || isRatingsModalOpen || !actionEvents) {
         return;
       }
 
-      const shouldPrompt = shouldPromptOptInDrawerCallback();
+      const shouldPrompt = shouldPromptOptInDrawerAfterAction();
       if (!shouldPrompt) {
         return;
       }
@@ -142,7 +168,7 @@ export const useNotificationsDrawer = ({
       featureBrazePushNotifications?.enabled,
       isRatingsModalOpen,
       actionEvents,
-      shouldPromptOptInDrawerCallback,
+      shouldPromptOptInDrawerAfterAction,
       openDrawer,
     ],
   );
@@ -179,29 +205,32 @@ export const useNotificationsDrawer = ({
     trackButtonClicked("maybe later");
     closeDrawer();
 
-    optOutOfNotifications();
-  }, [trackButtonClicked, closeDrawer, optOutOfNotifications]);
+    markUserAsOptOut();
+  }, [trackButtonClicked, closeDrawer, markUserAsOptOut]);
 
   const handleCloseFromBackdropPress = useCallback(() => {
     trackButtonClicked("backdrop");
-
     closeDrawer();
 
-    optOutOfNotifications();
-  }, [trackButtonClicked, closeDrawer, optOutOfNotifications]);
+    markUserAsOptOut();
+  }, [trackButtonClicked, closeDrawer, markUserAsOptOut]);
 
   const handleAllowNotificationsPress = useCallback(async () => {
     trackButtonClicked("allow notifications");
     closeDrawer();
 
+    if (drawerSource === "inactivity") {
+      updateUserLastInactiveTime();
+    }
+
     if (permissionStatus !== AuthorizationStatus.AUTHORIZED) {
       const permission = await requestPushNotificationsPermission();
       if (permission === AuthorizationStatus.DENIED) {
         trackButtonClicked("os_notifications_deny");
-        optOutOfNotifications();
+        markUserAsOptOut();
       } else if (permission === AuthorizationStatus.AUTHORIZED) {
         trackButtonClicked("os_notifications_allow");
-        resetOptOutState();
+        markUserAsOptIn();
       }
     }
 
@@ -212,12 +241,14 @@ export const useNotificationsDrawer = ({
     }
   }, [
     trackButtonClicked,
+    updateUserLastInactiveTime,
     closeDrawer,
     permissionStatus,
     areNotificationsAllowed,
     requestPushNotificationsPermission,
-    optOutOfNotifications,
-    resetOptOutState,
+    drawerSource,
+    markUserAsOptIn,
+    markUserAsOptOut,
     navigation,
   ]);
 
@@ -229,5 +260,6 @@ export const useNotificationsDrawer = ({
     handleAllowNotificationsPress,
     handleDelayLaterPress,
     handleCloseFromBackdropPress,
+    tryTriggerPushNotificationDrawerAfterInactivity,
   };
 };
