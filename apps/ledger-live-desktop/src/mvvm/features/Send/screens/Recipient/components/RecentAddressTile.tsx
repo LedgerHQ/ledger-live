@@ -13,7 +13,7 @@ import {
   MenuTrigger,
 } from "@ledgerhq/lumen-ui-react";
 import { Wallet, Trash, MoreVertical, LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
-import { formatAddress } from "@ledgerhq/react-ui/pre-ldls/components/Address/formatAddress";
+import { formatAddress } from "LLD/features/ModularDialog/components/Address/formatAddress";
 import { formatRelativeDate } from "../utils/dateFormatter";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { useSelector } from "LLD/hooks/redux";
@@ -51,10 +51,6 @@ export function RecentAddressTile({ recentAddress, onSelect, onRemove }: RecentA
     onRemove();
   };
 
-  const handleStopPropagation = (e: React.MouseEvent | React.KeyboardEvent) => {
-    e.stopPropagation();
-  };
-
   return (
     <div className="w-96 pt-6">
       <Tile
@@ -62,13 +58,9 @@ export function RecentAddressTile({ recentAddress, onSelect, onRemove }: RecentA
         secondaryAction={
           <Menu>
             <MenuTrigger asChild>
-              <TileSecondaryAction
-                icon={MoreVertical}
-                aria-label="More actions"
-                onClick={handleStopPropagation}
-              />
+              <TileSecondaryAction icon={MoreVertical} aria-label="More actions" />
             </MenuTrigger>
-            <MenuContent onClick={handleStopPropagation} onPointerDown={handleStopPropagation}>
+            <MenuContent>
               <MenuItem onSelect={handleRemove}>
                 <Trash size={16} />
                 {t("newSendFlow.remove")}
