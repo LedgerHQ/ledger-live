@@ -482,7 +482,9 @@
       "celo_title" : "Ledger Nano S™は、Celoのスワップに対応していません",
       "celo_description" : "Celoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "monad_title" : "Ledger Nano S™はMonadのスワップに対応していません",
-      "monad_description" : "Monadをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
+      "monad_description" : "Monadをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+      "zcash_title" : "Ledger Nano S™はZcashのスワップに対応していません",
+      "zcash_description" : "Zcashをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
     },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
@@ -1310,6 +1312,17 @@
         "description" : "取引所やウォレットから暗号資産をLedgerウォレットへ移すことで、最高水準のセキュリティで保管することができます。",
         "depositButton" : "暗号資産を守る",
         "skipButton" : "後で"
+      },
+      "sync" : {
+        "timelineTitle" : "ウォレット同期",
+        "timelineTitleCompleted" : "同期有効済み",
+        "title" : "ウォレットの同期を有効にする",
+        "description" : "PCを切り替える際やスマートフォンを使用する際も、ポートフォリオを最新の状態に保ちます",
+        "skipButton" : "あとで行う",
+        "skipTitle" : "同期の有効化をスキップしますか？",
+        "skipDescription" : "スキップした場合、新しいスマートフォンやPCに切り替える際に、すべての暗号資産アカウントを手動で再度追加する必要があります。同期はLedger Walletの設定からいつでも無効にできます。",
+        "skipConfirm" : "はい、スキップします",
+        "skipNo" : "いいえ、同期を有効にする"
       },
       "backup" : {
         "title" : "シークレットリカバリーフレーズのバックアップ",
@@ -2462,52 +2475,52 @@
     }
   },
   "newSendFlow" : {
-    "title" : "Send {{currency}}",
-    "available" : "Available {{amount}}",
-    "placeholder" : "Enter address or ENS",
-    "placeholderNoENS" : "Enter address",
-    "recent" : "Recent",
-    "myAccounts" : "My accounts",
-    "sendTo" : "Send to {{address}}",
-    "addressMatched" : "Address matched",
-    "addressNotFound" : "Address not found",
-    "alreadyUsed" : "Already used · {{date}}",
-    "recentSendWillAppear" : "Your recent send will appear here",
-    "remove" : "Remove",
-    "enterTag" : "Enter {{tag}}",
+    "title" : "{{currency}}を送付",
+    "available" : "利用可能: {{amount}}",
+    "placeholder" : "アドレスまたはENSを入力してください",
+    "placeholderNoENS" : "アドレスを入力",
+    "recent" : "再送信",
+    "myAccounts" : "アカウント",
+    "sendTo" : "送付先：{{address}}",
+    "addressMatched" : "アドレスが一致",
+    "addressNotFound" : "住所が見つかりません",
+    "alreadyUsed" : "使用ずみ・{{date}}",
+    "recentSendWillAppear" : "最近の送付がこちらに表示されます",
+    "remove" : "削除",
+    "enterTag" : "{{tag}}を入力してください",
     "firstInteraction" : {
-      "title" : "You’re sending to a new address",
-      "description" : "Verify that the address is correct. In case of doubt send a small amount first."
+      "title" : "新しいアドレスへ送付しようとしています",
+      "description" : "アドレスが正しいことを確認してください。不安な場合は、まず少額を送金してください。"
     },
     "sanctioned" : {
-      "title" : "Flagged address",
-      "description" : "This address has been flagged and Ledger doesn’t allow sending to it",
-      "helpCenter" : "Help center"
+      "title" : "フラグが立てられたアドレス",
+      "description" : "このアドレスはフラグが付けられており、Ledgerでは送金できません",
+      "helpCenter" : "ヘルプセンター"
     },
     "errors" : {
-      "incorrectFormat" : "Incorrect address format",
-      "incompatibleAsset" : "Address isn’t compatible with the asset selected",
-      "walletNotExist" : "Wallet doesn’t exist"
+      "incorrectFormat" : "アドレス形式が正しくありません",
+      "incompatibleAsset" : "住所は選択したアセットと互換性がありません",
+      "walletNotExist" : "ウォレットが存在しません"
     },
     "skipMemo" : {
-      "title" : "Skip adding {{tag}}?",
-      "warning" : "Your asset may be lost if a {{tag}} is required by your recipient"
+      "title" : "{{tag}}の追加をスキップしますか？",
+      "warning" : "受取人が{{tag}}を要求した場合、資産が失われる可能性があります"
     },
     "tagHelp" : {
-      "title" : "What’s a {{tag}}?",
-      "description" : "A {{tag}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{tag}} memo may result in a loss of funds."
+      "title" : "{{tag}}とは何ですか？",
+      "description" : "{{currency}} を暗号通貨取引所に送信する場合は、{{tag}} が必要です。これは、取引の受信者を識別するために使用される機能です。{{tag}}メモを含めないと資金が失われる可能性があります。"
     },
-    "networkFeesInFiat" : "Network fees in {{currency}}",
-    "feesAmount" : "Fees amount ({{unit}})",
-    "gasLimit" : "Gas limit ({{unit}})",
-    "feesPaid" : "Fees paid to the network to proceed your transaction",
-    "insufficientBalanceFees" : "Insufficient balance to cover the network fees",
-    "amountToSend" : "Amount to send in ({{currency}})",
-    "coinToSend" : "Coin to send",
-    "coinControlCustom" : "Custom coin selection",
-    "aboveMaximum" : "Above maximum balance",
-    "transactionSigned" : "Transaction signed",
-    "processingTransaction" : "Your transaction is being processed"
+    "networkFeesInFiat" : "{{currency}}のネットワーク手数料",
+    "feesAmount" : "手数料金額 ({{unit}})",
+    "gasLimit" : "ガス制限（{{unit}}）",
+    "feesPaid" : "トランザクションを処理するためにネットワークへ支払われる手数料です",
+    "insufficientBalanceFees" : "ネットワーク手数料をカバーするための残高が不足しています",
+    "amountToSend" : "送金金額 ({{currency}})",
+    "coinToSend" : "送付するコイン",
+    "coinControlCustom" : "コインセレクションをカスタマイズ",
+    "aboveMaximum" : "残高上限超過",
+    "transactionSigned" : "取引に署名済み",
+    "processingTransaction" : "トランザクションを処理中です"
   },
   "releaseNotes" : {
     "title" : "リリースノート",

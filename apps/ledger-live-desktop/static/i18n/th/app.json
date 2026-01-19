@@ -482,7 +482,9 @@
       "celo_title" : "Ledger Nano S™ ไม่รองรับการสวอป Celo",
       "celo_description" : "ในการสวอป Celo ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "monad_title" : "Ledger Nano S™ ไม่รองรับการสวอป Monad",
-      "monad_description" : "หากต้องการสวอป Monad ให้ใช้อุปกรณ์ Ledger ที่รองรับรุ่นอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
+      "monad_description" : "หากต้องการสวอป Monad ให้ใช้อุปกรณ์ Ledger ที่รองรับรุ่นอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+      "zcash_title" : "Ledger Nano S™ ไม่รองรับการสวอป Zcash",
+      "zcash_description" : "เพื่อสวอป Zcash ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
     },
     "providers" : {
       "title" : "เลือกผู้ให้บริการเพื่อ Swap คริปโต",
@@ -1310,6 +1312,17 @@
         "description" : "คุณสามารถโอนคริปโตจาก Exchange หรือวอลเล็ตใดก็ได้ไปยังแอป Ledger Wallet เพื่อความปลอดภัยสูงสุด",
         "depositButton" : "ปกป้องคริปโตของฉัน",
         "skipButton" : "ไว้ทีหลัง"
+      },
+      "sync" : {
+        "timelineTitle" : "Wallet Sync",
+        "timelineTitleCompleted" : "เปิดใช้งานการซิงค์แล้ว",
+        "title" : "เปิดการซิงค์สำหรับวอลเล็ตของคุณ",
+        "description" : "พอร์ตการลงทุนของคุณจะอัปเดตเสมอ ไม่ว่าจะเปลี่ยนไปใช้คอมพิวเตอร์หรือใช้โทรศัพท์",
+        "skipButton" : "ทำภายหลัง",
+        "skipTitle" : "ข้ามการเปิดใช้งานการซิงค์?",
+        "skipDescription" : "หากคุณข้ามขั้นตอนนี้ คุณจะต้องเพิ่มบัญชีคริปโตทั้งหมดของคุณใหม่เมื่อคุณเปลี่ยนไปใช้โทรศัพท์หรือคอมพิวเตอร์เครื่องใหม่ คุณสามารถปิดใช้งานได้จากการตั้งค่าแอป Ledger Wallet ของคุณ",
+        "skipConfirm" : "ใช่! ข้ามขั้นตอนนี้",
+        "skipNo" : "ไม่ เปิดใช้งานการซิงค์"
       },
       "backup" : {
         "title" : "การสำรองข้อมูล Secret Recovery Phrase ของคุณ",
