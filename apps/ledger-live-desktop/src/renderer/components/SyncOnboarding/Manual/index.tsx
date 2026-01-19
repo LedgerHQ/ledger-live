@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import { useSelector } from "LLD/hooks/redux";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
@@ -11,7 +11,6 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { stringToDeviceModelId } from "@ledgerhq/devices/helpers";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Header from "./Header";
-import { RecoverState } from "~/renderer/screens/recover/Player";
 import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
 import EarlySecurityChecks from "./EarlySecurityChecks";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -50,7 +49,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   deviceModelId: strDeviceModelId,
 }) => {
   const action = useConnectManagerAction();
-  const history = useHistory<RecoverState>();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const ref = useRef<HTMLDivElement | null>(null);
   const device = useSelector(getCurrentDevice);
@@ -135,20 +134,20 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         {
           lastKnownDeviceId: deviceModelId,
           onClose: () => {
-            history.push("/onboarding/select-device");
+            navigate("/onboarding/select-device");
             setDrawer();
           },
         },
         {
           forceDisableFocusTrap: true,
           onRequestClose: () => {
-            history.push("/onboarding/select-device");
+            navigate("/onboarding/select-device");
           },
         },
       );
     }
     return () => setDrawer();
-  }, [deviceModelId, history, isTroubleshootingDrawerOpen, lockedDevice]);
+  }, [deviceModelId, navigate, isTroubleshootingDrawerOpen, lockedDevice]);
 
   // Handles current step and toggling onboarding early check logics
   useEffect(() => {
@@ -244,7 +243,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const isEarlySecurityChecks = currentStep === "early-security-check" && lastSeenDevice;
 
   const handleClose = useCallback(() => {
-    const exit = () => history.push("/onboarding/select-device");
+    const exit = () => navigate("/onboarding/select-device");
     if (isEarlySecurityChecks) {
       setDrawer(
         ExitChecksDrawer,
@@ -261,7 +260,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     } else {
       exit();
     }
-  }, [deviceModelId, history, isEarlySecurityChecks]);
+  }, [deviceModelId, navigate, isEarlySecurityChecks]);
 
   const [contentScroll, setContentScroll] = useState(0);
 

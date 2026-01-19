@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import styled from "styled-components";
 import { lock } from "~/renderer/actions/application";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
@@ -40,7 +40,7 @@ const Inner = styled(Box).attrs(() => ({
 const TopBar = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const hasPassword = useSelector(hasPasswordSelector);
   const hasAccounts = useSelector(hasAccountsSelector);
@@ -58,11 +58,9 @@ const TopBar = () => {
     const url = "/settings";
     if (location.pathname !== url) {
       setTrackingSource("topbar");
-      history.push({
-        pathname: url,
-      });
+      navigate(url);
     }
-  }, [history, location]);
+  }, [navigate, location]);
   return (
     <Container color="neutral.c80">
       <Inner backgroundColor="background.default">

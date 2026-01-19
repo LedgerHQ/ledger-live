@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import {
   DEFAULT_FEATURES,
   groupedFeatures,
@@ -165,11 +165,12 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
 const FeatureFlagsSettings = () => {
   const { t } = useTranslation();
   const [contentExpanded, setContentExpanded] = useState(false);
-  const location = useLocation<{ shouldOpenFeatureFlags?: boolean }>();
+  const location = useLocation();
+  const locationState = location.state as { shouldOpenFeatureFlags?: boolean } | null;
 
   useEffect(
-    () => setContentExpanded(Boolean(location.state?.shouldOpenFeatureFlags)),
-    [location.state?.shouldOpenFeatureFlags],
+    () => setContentExpanded(Boolean(locationState?.shouldOpenFeatureFlags)),
+    [locationState?.shouldOpenFeatureFlags],
   );
 
   const toggleContentVisibility = useCallback(() => {

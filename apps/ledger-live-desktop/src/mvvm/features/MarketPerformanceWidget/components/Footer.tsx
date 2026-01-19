@@ -2,14 +2,14 @@ import React from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import ButtonV3 from "~/renderer/components/ButtonV3";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export function MarketPerformanceWidgetFooter() {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onClickButton = (target: "swap" | "exchange") => {
-    history.push(target);
+    navigate(target);
   };
 
   return (

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import styled from "styled-components";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -46,17 +46,15 @@ type Props = {
 };
 const Item = ({ account, pathname, collapsed }: Props) => {
   const accountName = useAccountName(account);
-  const history = useHistory();
+  const navigate = useNavigate();
   const active = pathname.endsWith(account.id);
   const onAccountClick = useCallback(() => {
     const parentAccountId = account.type !== "Account" ? account.parentId : undefined;
     setTrackingSource("starred account item");
-    history.push({
-      pathname: parentAccountId
-        ? `/account/${parentAccountId}/${account.id}`
-        : `/account/${account.id}`,
-    });
-  }, [account, history]);
+    navigate(
+      parentAccountId ? `/account/${parentAccountId}/${account.id}` : `/account/${account.id}`,
+    );
+  }, [account, navigate]);
   const unit = useAccountUnit(account);
   return (
     <ItemWrapper active={active} onClick={onAccountClick}>

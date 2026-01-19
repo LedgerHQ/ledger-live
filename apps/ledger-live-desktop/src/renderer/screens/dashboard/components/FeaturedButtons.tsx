@@ -3,7 +3,7 @@ import { Grid, Icons } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import useStakeFlow from "~/renderer/screens/stake";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { track } from "~/renderer/analytics/segment";
@@ -18,7 +18,7 @@ const ButtonGrid = styled(Grid).attrs<{ $hideSwapButton: boolean }>(({ $hideSwap
 `;
 
 const FeaturedButtons = ({ hideSwapButton = false }: { hideSwapButton?: boolean }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const stakeLabel = useGetStakeLabelLocaleBased();
   const bannerFeatureFlag = useFeature("portfolioExchangeBanner");
@@ -30,14 +30,14 @@ const FeaturedButtons = ({ hideSwapButton = false }: { hideSwapButton?: boolean 
   const handleClickExchange = useCallback(() => {
     track("button_clicked2", { button: "buy", flow: "Buy", page: "portfolio" });
 
-    history.push("/exchange");
-  }, [history]);
+    navigate("/exchange");
+  }, [navigate]);
 
   const handleClickSwap = useCallback(() => {
     track("button_clicked2", { button: "swap", flow: "Swap", page: "portfolio" });
 
-    history.push("/swap");
-  }, [history]);
+    navigate("/swap");
+  }, [navigate]);
 
   const handleClickStake = useCallback(() => {
     track("button_clicked2", { button: "stake", flow: "stake", page: "portfolio" });

@@ -5,7 +5,7 @@ import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import ErrorDisplay from "../../../ErrorDisplay";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { DeviceBlocker } from "../../../DeviceAction/DeviceBlocker";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -26,7 +26,7 @@ const ErrorIcon = ({ size }: { size?: number }) => (
 
 const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const isNotFoundEntityError =
     error.message === "not found entity" || error instanceof FirmwareNotRecognized;
   const providerNumber = useEnv("FORCE_PROVIDER");
@@ -41,12 +41,12 @@ const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }
 
   const goToExperimentalSettings = () => {
     setDrawer();
-    history.push("/settings/experimental");
+    navigate("/settings/experimental");
   };
 
   const exit = () => {
     setDrawer();
-    history.push("/onboarding/select-device");
+    navigate("/onboarding/select-device");
   };
 
   return (

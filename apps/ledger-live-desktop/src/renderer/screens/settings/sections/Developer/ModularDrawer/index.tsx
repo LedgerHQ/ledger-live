@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { Flex } from "@ledgerhq/react-ui/index";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { useOpenAssetFlow as useOpenAssetFlowDrawer } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
@@ -135,11 +135,12 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
 const ModularDrawerDevTool = () => {
   const { t } = useTranslation();
   const [contentExpanded, setContentExpanded] = useState(false);
-  const location = useLocation<{ shouldOpenFeatureFlags?: boolean }>();
+  const location = useLocation();
+  const locationState = location.state as { shouldOpenFeatureFlags?: boolean } | null;
 
   useEffect(
-    () => setContentExpanded(Boolean(location.state?.shouldOpenFeatureFlags)),
-    [location.state?.shouldOpenFeatureFlags],
+    () => setContentExpanded(Boolean(locationState?.shouldOpenFeatureFlags)),
+    [locationState?.shouldOpenFeatureFlags],
   );
 
   const toggleContentVisibility = useCallback(() => {

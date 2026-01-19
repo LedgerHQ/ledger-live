@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useTheme } from "styled-components";
 import { Box, Flex } from "@ledgerhq/react-ui";
 import { FormattedAccountItem } from "../../../components/FormattedAccountItem";
@@ -14,18 +14,18 @@ export const AccountList = ({
   isAccountSelectionFlow,
 }: AccountListProps) => {
   const { colors } = useTheme();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleAccountClick = useCallback(
     (account: Account) => {
       if (isAccountSelectionFlow) {
         navigateToEditAccountName(account);
       } else {
-        history.push({ pathname: `/account/${account.id}` });
+        navigate(`/account/${account.id}`);
         setDrawer();
       }
     },
-    [history, isAccountSelectionFlow, navigateToEditAccountName],
+    [navigate, isAccountSelectionFlow, navigateToEditAccountName],
   );
 
   const accountItems = useMemo(

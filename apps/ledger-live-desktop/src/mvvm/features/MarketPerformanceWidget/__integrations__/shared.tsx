@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Route, withRouter } from "react-router";
+import { Routes, Route } from "react-router";
 import MarketPerformanceWidget from "..";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import MarketCoin from "~/renderer/screens/market/MarketCoin";
@@ -9,16 +9,10 @@ import { MOCK_MARKET_PERFORMERS } from "@ledgerhq/live-common/market/utils/fixtu
 export const FAKE_LIST = MOCK_MARKET_PERFORMERS.slice(0, 3);
 
 const MarketWidgetNavigation = () => (
-  <Switch>
-    <Route
-      exact
-      path="/"
-      render={() => <MarketPerformanceWidget variant={ABTestingVariants.variantA} />}
-    />
-    <Route path="/market/:currencyId" render={() => <MarketCoin />} />
-  </Switch>
+  <Routes>
+    <Route path="/" element={<MarketPerformanceWidget variant={ABTestingVariants.variantA} />} />
+    <Route path="/market/:currencyId" element={<MarketCoin />} />
+  </Routes>
 );
 
-const MarketWidgetTestBase = () => <MarketWidgetNavigation />;
-
-export const MarketWidgetTest = withRouter(MarketWidgetTestBase);
+export const MarketWidgetTest = () => <MarketWidgetNavigation />;

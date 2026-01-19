@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { RouteComponentProps, useHistory } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
@@ -14,7 +14,6 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import styled from "styled-components";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { StaticContext } from "react-router";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { SeedOriginType } from "@ledgerhq/types-live";
 
@@ -42,21 +41,20 @@ const FullscreenWrapper = styled.div`
   background-color: ${p => p.theme.colors.background.default};
 `;
 
-export default function RecoverPlayer({
-  match,
-  location,
-}: RouteComponentProps<RecoverComponentParams, StaticContext, RecoverState | undefined>) {
-  const { params } = match;
-  const { search, state } = location;
+export default function RecoverPlayer() {
+  const params = useParams<RecoverComponentParams>();
+  const location = useLocation();
+  const { search } = location;
+  const state = location.state as RecoverState | undefined;
+  const navigate = useNavigate();
   const queryParams = useMemo(() => Object.fromEntries(new URLSearchParams(search)), [search]);
   const locale = useSelector(languageSelector);
   const currencySettings = useSelector(counterValueCurrencySelector);
-  const localManifest = useLocalLiveAppManifest(params.appId);
-  const remoteManifest = useRemoteLiveAppManifest(params.appId);
+  const localManifest = useLocalLiveAppManifest(params.appId || "");
+  const remoteManifest = useRemoteLiveAppManifest(params.appId || "");
   const manifest = localManifest || remoteManifest;
   const theme = useTheme().theme;
-  const history = useHistory();
-  const onClose = useCallback(() => history.goBack(), [history]);
+  const onClose = useCallback(() => navigate(-1), [navigate]);
   const recoverConfig = useFeature("protectServicesDesktop");
 
   const availableOnDesktop = recoverConfig?.enabled && recoverConfig?.params?.availableOnDesktop;

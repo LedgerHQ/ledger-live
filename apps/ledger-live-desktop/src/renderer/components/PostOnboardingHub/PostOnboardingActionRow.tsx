@@ -9,7 +9,7 @@ import styled from "styled-components";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import { AllModalNames } from "~/renderer/modals/types";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { useCompleteActionCallback } from "./logic/useCompleteAction";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Dispatch } from "redux";
@@ -44,7 +44,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   } = props;
   const { t } = useTranslation();
   const dispatch: Dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const recoverServices = useFeature("protectServicesDesktop");
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
 
@@ -71,7 +71,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
       dispatch(openModal(modalName, { isFromPostOnboardingEntryPoint: true }));
     };
     const navigationCallback = (location: Record<string, unknown> | string) => {
-      history.push(location);
+      navigate(location);
     };
 
     if ("startAction" in props && deviceModelId !== null) {
@@ -94,7 +94,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   }, [
     props,
     dispatch,
-    history,
+    navigate,
     buttonLabelForAnalyticsEvent,
     deviceModelId,
     completeAction,

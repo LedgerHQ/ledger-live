@@ -78,6 +78,7 @@ describe("Top Bar", () => {
       <MemoryRouter initialEntries={["/"]}>
         <TopBar {...defaultProps} />
       </MemoryRouter>,
+      { skipRouter: true },
     );
 
     expect(screen.queryByText("common.sync.refresh")).toBeNull();
@@ -91,6 +92,7 @@ describe("Top Bar", () => {
       <MemoryRouter initialEntries={["/"]}>
         <TopBar {...defaultProps} />
       </MemoryRouter>,
+      { skipRouter: true },
     );
     expect(screen.getByText("Refresh")).toBeInTheDocument();
     expect(screen.getByText("Dev tools")).toBeInTheDocument();
@@ -104,6 +106,7 @@ describe("Top Bar", () => {
       <MemoryRouter initialEntries={["/"]}>
         <TopBar {...defaultProps} manifest={internalManifest} />
       </MemoryRouter>,
+      { skipRouter: true },
     );
     expect(screen.getByText("Refresh")).toBeInTheDocument();
     expect(screen.queryByText("common.sync.devTools")).toBeNull();
@@ -117,6 +120,7 @@ describe("Top Bar", () => {
       <MemoryRouter initialEntries={["/"]}>
         <TopBar {...defaultProps} setMobileView={mockSetMobileView} />
       </MemoryRouter>,
+      { skipRouter: true },
     );
 
     const mobileViewToggle = screen.getByTestId("mobile-view-toggle");
@@ -139,6 +143,7 @@ describe("Top Bar", () => {
           setMobileView={mockSetMobileView}
         />
       </MemoryRouter>,
+      { skipRouter: true },
     );
     const widthInput = screen.getByTestId("mobile-view-width-input");
     fireEvent.change(widthInput, { target: { value: "400" } });

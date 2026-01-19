@@ -7,7 +7,7 @@ import { AccountLike, ValueChange } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/ButtonV3";
@@ -130,7 +130,8 @@ export default function BalanceInfos({
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const allAccounts = useSelector(accountsSelector);
   const flattenedAccounts = useMemo(() => flattenAccounts(allAccounts), [allAccounts]);
@@ -154,25 +155,23 @@ export default function BalanceInfos({
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
   const onBuy = useCallback(() => {
     setTrackingSource("Page Portfolio");
-    history.push({
-      pathname: "/exchange",
+    navigate("/exchange", {
       state: {
         mode: "buy", // buy or sell
       },
     });
-  }, [history]);
+  }, [navigate]);
   const onSwap = useCallback(() => {
     setTrackingSource("Page Portfolio");
-    history.push({
-      pathname: "/swap",
+    navigate("/swap", {
       state: {
-        from: history.location.pathname,
+        from: location.pathname,
         defaultAccount,
         defaultAmountFrom: "0",
         defaultParentAccount: parentAccount,
       },
     });
-  }, [history, defaultAccount, parentAccount]);
+  }, [navigate, location, defaultAccount, parentAccount]);
 
   const ref = useRef<HTMLDivElement>(null);
   const { width } = useResize(ref);

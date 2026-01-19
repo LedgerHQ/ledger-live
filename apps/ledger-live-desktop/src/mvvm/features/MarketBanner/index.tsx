@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import SkeletonList from "./components/SkeletonList";
 import { useTranslation } from "react-i18next";
 import { InteractiveIcon } from "@ledgerhq/lumen-ui-react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useMarketBannerViewModel } from "./hooks/useMarketBannerViewModel";
 import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
 import GenericError from "./components/GenericError";
@@ -14,13 +14,11 @@ type MarketBannerViewProps = {
 
 const MarketBannerView = ({ isLoading, isError }: MarketBannerViewProps) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const goToMarket = useCallback(() => {
-    history.push({
-      pathname: `/market`,
-    });
-  }, [history]);
+    navigate("/market");
+  }, [navigate]);
 
   let content: React.ReactNode = null;
   if (isLoading) {

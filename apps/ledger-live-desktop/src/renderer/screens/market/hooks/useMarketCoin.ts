@@ -24,7 +24,7 @@ export const useMarketCoin = () => {
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const { supportedCounterCurrencies } = useMarketDataProvider();
 
-  const isStarred = starredMarketCoins.includes(currencyId);
+  const isStarred = currencyId ? starredMarketCoins.includes(currencyId) : false;
   const locale = useSelector(localeSelector);
 
   const { counterCurrency = "usd", range = "24h" } = marketParams;

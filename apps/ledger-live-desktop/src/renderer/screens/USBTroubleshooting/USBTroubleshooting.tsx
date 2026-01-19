@@ -12,7 +12,7 @@ import USBTroubleshootingMachine from "./USBTroubleshootingMachine";
 import Intro from "./solutions/Intro";
 import ArrowRightIcon from "~/renderer/icons/ArrowRight";
 import RepairFunnel from "./solutions/RepairFunnel";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { setUSBTroubleshootingIndex } from "~/renderer/actions/settings";
 const StepWrapper = styled(Box).attrs({
   horizontal: true,
@@ -27,7 +27,7 @@ const StepWrapper = styled(Box).attrs({
 `;
 const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { state: locationState } = useLocation();
   const fallBackUSBTroubleshootingIndex = useSelector(USBTroubleshootingIndexSelector);
@@ -63,13 +63,11 @@ const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) =>
   const onExit = useCallback(() => {
     dispatch(setUSBTroubleshootingIndex());
     if (onboarding) {
-      history.goBack();
+      navigate(-1);
     } else {
-      history.push({
-        pathname: "/manager",
-      });
+      navigate("/manager");
     }
-  }, [dispatch, history, onboarding]);
+  }, [dispatch, navigate, onboarding]);
   const onDone = useCallback(() => {
     sendEvent({ type: "DONE" });
   }, [sendEvent]);

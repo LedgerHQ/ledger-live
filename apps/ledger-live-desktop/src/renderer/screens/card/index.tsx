@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation, RouteComponentProps } from "react-router-dom";
+import { useLocation, useParams } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
 import Card from "~/renderer/components/Box/Card";
 import {
@@ -19,7 +19,9 @@ import CardPlatformApp from "./CardPlatformApp";
 type CardState = { account?: string } | undefined;
 
 const LiveAppCard = ({ appId }: { appId: string }) => {
-  const { state: urlParams, search } = useLocation<CardState>();
+  const location = useLocation();
+  const urlParams = location.state as CardState;
+  const { search } = location;
   const searchParams = new URLSearchParams(search);
   const locale = useSelector(localeSelector);
   const language = useSelector(languageSelector);
@@ -73,8 +75,8 @@ export type ComponentParams = {
   appId?: string;
 };
 
-const CardDapp = ({ match }: RouteComponentProps<ComponentParams>) => {
-  const appId = match?.params?.appId;
+const CardDapp = () => {
+  const { appId } = useParams<ComponentParams>();
   const ptxCardFlag = useFeature("ptxCard");
   if (ptxCardFlag?.enabled) {
     return <LiveAppCard appId={appId || CARD_APP_ID} />;

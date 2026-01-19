@@ -83,9 +83,7 @@ export const ProviderItem = ({ provider, stakeOnClick }: Props) => {
   const manifest = useMemo(() => remoteManifest || localManifest, [localManifest, remoteManifest]);
 
   const handleClick = useCallback(() => {
-    if (manifest) {
-      stakeOnClick({ provider, manifest });
-    }
+    stakeOnClick({ provider, manifest: manifest || null });
   }, [provider, stakeOnClick, manifest]);
 
   const displayName = i18n.exists(`ethereum.stake.provider.${provider.id}.title`)

@@ -14,7 +14,7 @@ import { Direction } from "@ledgerhq/react-ui/components/layout/Drawer/index";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { Route, Switch, useHistory, useLocation } from "react-router-dom";
+import { Route, Routes, useNavigate, useLocation } from "react-router";
 import styled from "styled-components";
 import {
   saveSettings,
@@ -288,11 +288,11 @@ function useRedirectToPortfolio({
   useEffect(() => {
     if (enabled) {
       /**
-       * There is a lag if we call history.push("/") directly.
+       * There is a lag if we call navigate("/") directly.
        * To improve the UX in that situation, we have to first commit a "loading"
        * state and then when that state is rendered (which will be when this
        * block is executed), on the following commit we can call
-       * history.push("/").
+       * navigate("/").
        */
       const timeout: ReturnType<typeof setTimeout> = setTimeout(() => {
         redirectToPostOnboarding();
@@ -319,7 +319,8 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
       flow: "Onboarding",
     };
   }, [deviceModelId, useCase]);
-  const history = useHistory<{ fromRecover: boolean } | undefined>();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [quizzOpen, setQuizOpen] = useState(false);
   const syncDrawerOpen = useSelector(walletSyncDrawerVisibilitySelector);
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
@@ -366,10 +367,11 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
   // as location.state will be undefined when navigating to other steps
   const [fromRecover, setFromRecover] = useState(false);
   useEffect(() => {
-    if (history.location.state) {
-      setFromRecover(history.location.state.fromRecover);
+    const state = location.state as { fromRecover?: boolean } | null;
+    if (state?.fromRecover) {
+      setFromRecover(true);
     }
-  }, [history.location.state]);
+  }, [location.state]);
 
   const { openAssetFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
@@ -405,16 +407,16 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         useCases: [OnboardingUseCase.setupDevice],
         next: () => {
           track("Onboarding - Get started step 1", trackProperties);
-          history.push(`${path}/${ScreenId.deviceHowTo}`);
+          navigate(`${path}/${ScreenId.deviceHowTo}`);
         },
-        previous: () => history.push("/onboarding/select-use-case"),
+        previous: () => navigate("/onboarding/select-use-case"),
       },
       {
         id: ScreenId.deviceHowTo,
         component: DeviceHowTo,
         useCases: [OnboardingUseCase.setupDevice],
-        next: () => history.push(`${path}/${ScreenId.pinCode}`),
-        previous: () => history.push(`${path}/${ScreenId.howToGetStarted}`),
+        next: () => navigate(`${path}/${ScreenId.pinCode}`),
+        previous: () => navigate(`${path}/${ScreenId.howToGetStarted}`),
       },
       {
         id: ScreenId.deviceHowTo2,
@@ -422,20 +424,20 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         useCases: [OnboardingUseCase.setupDevice, OnboardingUseCase.recoveryPhrase],
         next: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
-            history.push(`${path}/${ScreenId.deviceHowTo2}`);
+            navigate(`${path}/${ScreenId.deviceHowTo2}`);
           }
           // useCase === UseCase.recoveryPhrase
           else {
-            history.push(`${path}/${ScreenId.pinCode}`);
+            navigate(`${path}/${ScreenId.pinCode}`);
           }
         },
         previous: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
-            history.push(`${path}/${ScreenId.howToGetStarted}`);
+            navigate(`${path}/${ScreenId.howToGetStarted}`);
           }
           // useCase === UseCase.recoveryPhrase
           else {
-            history.push(`${path}/${ScreenId.importYourRecoveryPhrase}`);
+            navigate(`${path}/${ScreenId.importYourRecoveryPhrase}`);
           }
         },
       },
@@ -458,17 +460,17 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           if (useCase === OnboardingUseCase.setupDevice) {
             track("Onboarding - Pin code step 1", trackProperties);
           }
-          history.push(`${path}/${ScreenId.pinCodeHowTo}`);
+          navigate(`${path}/${ScreenId.pinCodeHowTo}`);
         },
         previous: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
-            history.push(`${path}/${ScreenId.deviceHowTo}`);
+            navigate(`${path}/${ScreenId.deviceHowTo}`);
           } else if (useCase === OnboardingUseCase.recover) {
-            history.push(`${path}/${ScreenId.recoverHowTo}`);
+            navigate(`${path}/${ScreenId.recoverHowTo}`);
           }
           // useCase === UseCase.recoveryPhrase
           else {
-            history.push(`${path}/${ScreenId.deviceHowTo2}`);
+            navigate(`${path}/${ScreenId.deviceHowTo2}`);
           }
         },
       },
@@ -488,10 +490,10 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           setHelpPinCode(true);
           // useCase === UseCase.recoveryPhrase
           /* else {
-              history.push(`${path}/${ScreenId.existingRecoveryPhrase}`);
+              navigate(`${path}/${ScreenId.existingRecoveryPhrase}`);
             } */
         },
-        previous: () => history.push(`${path}/${ScreenId.pinCode}`),
+        previous: () => navigate(`${path}/${ScreenId.pinCode}`),
       },
       {
         id: ScreenId.newRecoveryPhrase,
@@ -508,9 +510,9 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           if (useCase === OnboardingUseCase.setupDevice) {
             track("Onboarding - Recovery step 1", trackProperties);
           }
-          history.push(`${path}/${ScreenId.useRecoverySheet}`);
+          navigate(`${path}/${ScreenId.useRecoverySheet}`);
         },
-        previous: () => history.push(`${path}/${ScreenId.pinCodeHowTo}`),
+        previous: () => navigate(`${path}/${ScreenId.pinCodeHowTo}`),
       },
       {
         id: ScreenId.useRecoverySheet,
@@ -520,16 +522,16 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           if (useCase === OnboardingUseCase.setupDevice) {
             track("Onboarding - Recovery step 2", trackProperties);
           }
-          history.push(`${path}/${ScreenId.recoveryHowTo3}`);
+          navigate(`${path}/${ScreenId.recoveryHowTo3}`);
         },
-        previous: () => history.push(`${path}/${ScreenId.newRecoveryPhrase}`),
+        previous: () => navigate(`${path}/${ScreenId.newRecoveryPhrase}`),
       },
       {
         id: ScreenId.recoveryHowTo,
         component: RecoveryHowTo1,
         useCases: [OnboardingUseCase.recoveryPhrase],
-        next: () => history.push(`${path}/${ScreenId.recoveryHowTo2}`),
-        previous: () => history.push(`${path}/${ScreenId.existingRecoveryPhrase}`),
+        next: () => navigate(`${path}/${ScreenId.recoveryHowTo2}`),
+        previous: () => navigate(`${path}/${ScreenId.existingRecoveryPhrase}`),
       },
       {
         id: ScreenId.recoveryHowTo2,
@@ -538,7 +540,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         next: () => {
           setHelpRecoveryPhrase(true);
         },
-        previous: () => history.push(`${path}/${ScreenId.recoveryHowTo}`),
+        previous: () => navigate(`${path}/${ScreenId.recoveryHowTo}`),
       },
       {
         id: ScreenId.recoveryHowTo3,
@@ -550,7 +552,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           }
           setHelpRecoveryPhrase(true);
         },
-        previous: () => history.push(`${path}/${ScreenId.useRecoverySheet}`),
+        previous: () => navigate(`${path}/${ScreenId.useRecoverySheet}`),
       },
       {
         id: ScreenId.hideRecoveryPhrase,
@@ -568,18 +570,18 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           }
           setHelpHideRecoveryPhrase(true);
         },
-        previous: () => history.push(`${path}/${ScreenId.recoveryHowTo3}`),
+        previous: () => navigate(`${path}/${ScreenId.recoveryHowTo3}`),
       },
       {
         id: ScreenId.importYourRecoveryPhrase,
         component: ImportYourRecoveryPhrase,
         useCases: [OnboardingUseCase.setupDevice, OnboardingUseCase.recoveryPhrase],
-        next: () => history.push(`${path}/${ScreenId.deviceHowTo2}`),
+        next: () => navigate(`${path}/${ScreenId.deviceHowTo2}`),
         previous: () => {
           if (useCase === OnboardingUseCase.setupDevice) {
-            history.push("/onboarding/select-use-case");
+            navigate("/onboarding/select-use-case");
           } else {
-            history.push("/onboarding/select-use-case");
+            navigate("/onboarding/select-use-case");
           }
         },
       },
@@ -593,8 +595,8 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           },
         },
         useCases: [OnboardingUseCase.recoveryPhrase],
-        next: () => history.push(`${path}/${ScreenId.recoveryHowTo}`),
-        previous: () => history.push(`${path}/${ScreenId.pinCodeHowTo}`),
+        next: () => navigate(`${path}/${ScreenId.recoveryHowTo}`),
+        previous: () => navigate(`${path}/${ScreenId.pinCodeHowTo}`),
         canContinue: userUnderstandConsequences,
       },
       {
@@ -605,9 +607,9 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           if (useCase === OnboardingUseCase.setupDevice) {
             track("Onboarding - Pair start", trackProperties);
           }
-          history.push(`${path}/${ScreenId.pairMyNano}`);
+          navigate(`${path}/${ScreenId.pairMyNano}`);
         },
-        previous: () => history.push(`${path}/${ScreenId.hideRecoveryPhrase}`),
+        previous: () => navigate(`${path}/${ScreenId.hideRecoveryPhrase}`),
       },
       {
         id: ScreenId.quizFailure,
@@ -617,9 +619,9 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           if (useCase === OnboardingUseCase.setupDevice) {
             track("Onboarding - Pair start", trackProperties);
           }
-          history.push(`${path}/${ScreenId.pairMyNano}`);
+          navigate(`${path}/${ScreenId.pairMyNano}`);
         },
-        previous: () => history.push(`${path}/${ScreenId.hideRecoveryPhrase}`),
+        previous: () => navigate(`${path}/${ScreenId.hideRecoveryPhrase}`),
       },
       {
         id: ScreenId.pairMyNano,
@@ -629,24 +631,24 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
             track("Onboarding - Genuine Check", trackProperties);
           }
           if (useCase === OnboardingUseCase.recover) {
-            history.push(`${path}/${ScreenId.recoverHowTo}`);
+            navigate(`${path}/${ScreenId.recoverHowTo}`);
             return;
           }
-          history.push(`${path}/${ScreenId.genuineCheck}`);
+          navigate(`${path}/${ScreenId.genuineCheck}`);
         },
         previous: () => {
           if (useCase === OnboardingUseCase.recover && fromRecover) {
-            history.push(recoverDiscoverPath);
+            navigate(recoverDiscoverPath);
           } else if (
             [OnboardingUseCase.connectDevice, OnboardingUseCase.recover].includes(useCase)
           ) {
-            history.push("/onboarding/select-use-case");
+            navigate("/onboarding/select-use-case");
           } else if (useCase === OnboardingUseCase.setupDevice) {
-            history.push(`${path}/${ScreenId.hideRecoveryPhrase}`);
+            navigate(`${path}/${ScreenId.hideRecoveryPhrase}`);
           }
           // useCase === UseCase.recoveryPhrase
           else {
-            history.push(`${path}/${ScreenId.recoveryHowTo2}`);
+            navigate(`${path}/${ScreenId.recoveryHowTo2}`);
           }
         },
       },
@@ -662,17 +664,17 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           if (useCase === OnboardingUseCase.setupDevice) {
             if (nanoOnboardingFundWalletFeature) {
               if (hasSyncStep) {
-                history.push(`${path}/${ScreenId.enableSync}`);
+                navigate(`${path}/${ScreenId.enableSync}`);
                 return;
               } else {
-                history.push(`${path}/${ScreenId.secureYourCrypto}`);
+                navigate(`${path}/${ScreenId.secureYourCrypto}`);
                 return;
               }
             }
           }
           completeOnboarding();
         },
-        previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
+        previous: () => navigate(`${path}/${ScreenId.pairMyNano}`),
       },
       {
         id: ScreenId.recoverHowTo,
@@ -680,12 +682,10 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         useCases: [OnboardingUseCase.recover],
         next: () => {
           // TODO in next ticket
-          history.push(`${path}/${ScreenId.pinCode}`);
+          navigate(`${path}/${ScreenId.pinCode}`);
         },
         previous: () =>
-          fromRecover
-            ? history.push(recoverDiscoverPath)
-            : history.push("/onboarding/select-use-case"),
+          fromRecover ? navigate(recoverDiscoverPath) : navigate("/onboarding/select-use-case"),
       },
       {
         id: ScreenId.enableSync,
@@ -702,9 +702,9 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         nextSecondary: () => {
           track("button_clicked", { button: "Maybe later", ...trackProperties });
           trackPage("Set up device: Ledger Sync Reject", null, { ...trackProperties });
-          history.push(`${path}/${ScreenId.secureYourCrypto}`);
+          navigate(`${path}/${ScreenId.secureYourCrypto}`);
         },
-        previous: () => history.push(`${path}/${ScreenId.genuineCheck}`),
+        previous: () => navigate(`${path}/${ScreenId.genuineCheck}`),
       },
       {
         id: ScreenId.secureYourCrypto,
@@ -722,14 +722,14 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         },
         nextSecondary: () => {
           track("Onboarding - Maybe later", trackProperties);
-          history.push(`${path}/${ScreenId.welcomeToWalletWithoutFunds}`);
+          navigate(`${path}/${ScreenId.welcomeToWalletWithoutFunds}`);
         },
         previous: () => {
           if (hasSyncStep) {
-            history.push(`${path}/${ScreenId.enableSync}`);
+            navigate(`${path}/${ScreenId.enableSync}`);
             return;
           }
-          history.push(`${path}/${ScreenId.genuineCheck}`);
+          navigate(`${path}/${ScreenId.genuineCheck}`);
         },
       },
       {
@@ -768,7 +768,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     connectedDevice,
     dispatch,
     fromRecover,
-    history,
+    navigate,
     nanoOnboardingFundWalletFeature,
     openAssetFlow,
     openDrawer,
@@ -885,20 +885,20 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
 
   const quizSucceeds = useCallback(() => {
     setQuizOpen(false);
-    history.push(`${path}/quiz-success`);
-  }, [history, path]);
+    navigate(`${path}/quiz-success`);
+  }, [navigate, path]);
 
   const quizFails = useCallback(() => {
     setQuizOpen(false);
-    history.push(`${path}/quiz-failure`);
-  }, [history, path]);
+    navigate(`${path}/quiz-failure`);
+  }, [navigate, path]);
 
   const handleNextInDrawer = useCallback(
     (closeCurrentDrawer: (bool: boolean) => void, targetPath: string | object) => {
       closeCurrentDrawer(false);
-      history.push(targetPath);
+      navigate(targetPath);
     },
-    [history],
+    [navigate],
   );
 
   const { confirmRecoverOnboardingStatus } = useRecoverRestoreOnboarding();
@@ -939,12 +939,12 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           isSuccess: false,
         }),
       );
-      history.push(`${path}/${ScreenId.welcomeToWalletWithFunds}`);
+      navigate(`${path}/${ScreenId.welcomeToWalletWithFunds}`);
     }
   }, [
     isOnboardingReceiveFlow,
     isOnboardingReceiveSuccess,
-    history,
+    navigate,
     path,
     currentScreenId,
     dispatch,
@@ -953,9 +953,9 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
   useEffect(() => {
     if (isLedgerSyncActive && currentStep === ScreenId.enableSync && !syncDrawerOpen) {
       trackPage("Set up device: Step 4 Ledger Sync Success", null, trackProperties);
-      history.push(`${path}/${ScreenId.secureYourCrypto}`);
+      navigate(`${path}/${ScreenId.secureYourCrypto}`);
     }
-  }, [isLedgerSyncActive, history, path, currentStep, syncDrawerOpen, trackProperties]);
+  }, [isLedgerSyncActive, navigate, path, currentStep, syncDrawerOpen, trackProperties]);
 
   useEffect(() => {
     if (isOnboardingSyncFlow && currentStep !== ScreenId.enableSync) {
@@ -1042,20 +1042,18 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         handleContinueSecondary={nextSecondary}
         handleBack={previous}
       >
-        <Switch>
+        <Routes>
           {useCaseScreens.map(({ component, id, props: screenProps = {} }) => {
+            const Screen: React.ElementType = component;
             return (
               <Route
                 key={id}
-                path={`${path}/${id}`}
-                render={props => {
-                  const Screen: React.ElementType = component;
-                  return <Screen {...props} {...screenProps} {...trackProperties} />;
-                }}
+                path={id}
+                element={<Screen {...screenProps} {...trackProperties} />}
               />
             );
           })}
-        </Switch>
+        </Routes>
       </FlowStepper>
     </>
   );

@@ -1,15 +1,15 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import { MarketBannerView } from "..";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useHistory: jest.fn(),
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
+  useNavigate: jest.fn(),
 }));
 
-const mockPush = jest.fn();
-(useHistory as jest.Mock).mockReturnValue({ push: mockPush });
+const mockNavigate = jest.fn();
+(useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
 describe("MarketBannerView", () => {
   beforeEach(() => {
@@ -32,9 +32,7 @@ describe("MarketBannerView", () => {
     const marketButton = screen.getByTestId("market-banner-button");
     await user.click(marketButton);
 
-    expect(mockPush).toHaveBeenCalledWith({
-      pathname: "/market",
-    });
+    expect(mockNavigate).toHaveBeenCalledWith("/market");
   });
 
   it("should render error state when there is an error", () => {

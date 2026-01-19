@@ -21,7 +21,8 @@ export interface ViewProps {
 
 export function useCompletionScreenViewModel(): ViewProps {
   const dispatch = useDispatch();
-  const { state } = useLocation<{ seedConfiguration?: string }>();
+  const location = useLocation();
+  const state = location.state as { seedConfiguration?: string } | null;
   const currentDevice = useSelector(getCurrentDevice);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
 
@@ -44,7 +45,7 @@ export function useCompletionScreenViewModel(): ViewProps {
   }, [currentDevice, dispatch, redirectToPostOnboarding]);
 
   return {
-    seedConfiguration: state.seedConfiguration,
+    seedConfiguration: state?.seedConfiguration,
     deviceModelId,
   };
 }
