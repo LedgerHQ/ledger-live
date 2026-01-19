@@ -23,18 +23,14 @@
     "events": "^3.3.0"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/events": "^3.0.3",
-    "esbuild": "^0.19.0",
-    "rollup": "^4.12.1",
-    "rollup-plugin-dts": "^6.1.0",
-    "rollup-plugin-esbuild": "^6.1.1"
+    "@rspack/cli": "catalog:",
+    "@rspack/core": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib",
-    "build": "rollup -c",
-    "watch": "rollup -c -w",
+    "build": "pnpm run clean && rspack build -c rspack.config.mjs && tsc --emitDeclarationOnly && node scripts/build-umd-json.mjs",
+    "watch": "rspack build --watch -c rspack.config.mjs",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
