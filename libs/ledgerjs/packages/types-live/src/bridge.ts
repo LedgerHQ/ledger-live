@@ -13,6 +13,7 @@ import type {
   SignedOperation,
   TransactionCommon,
   TransactionStatusCommon,
+  TransactionSource,
 } from "./transaction";
 import type { Operation, OperationExtra, OperationExtraRaw } from "./operation";
 import type { DerivationMode } from "./derivation";
@@ -46,6 +47,7 @@ export type PreloadStrategy = Partial<{
 export type BroadcastConfig = {
   mevProtected: boolean;
   sponsored?: boolean;
+  source?: TransactionSource;
 };
 
 /**

@@ -275,6 +275,12 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
     sponsored: Boolean(broadcastConfig?.sponsored),
   };
 
+  const headers: Record<string, string> = {};
+  if (broadcastConfig?.source) {
+    headers["X-Ledger-Source-Type"] = broadcastConfig.source.type;
+    headers["X-Ledger-Source-Name"] = broadcastConfig.source.name;
+  }
+
   const { result: hash } = await fetchWithRetries<{
     result: string;
   }>({
@@ -282,6 +288,7 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
     url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/tx/send`,
     data: { tx: signedTxHex },
     params,
+    headers,
   });
   return hash;
 };

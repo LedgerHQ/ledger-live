@@ -855,7 +855,10 @@ export function useWalletAPIServer({
                   optimisticOperation = await bridge.broadcast({
                     account: mainAccount,
                     signedOperation,
-                    broadcastConfig: { mevProtected: !!config.mevProtected },
+                    broadcastConfig: {
+                      mevProtected: !!config.mevProtected,
+                      source: { type: "live-app", name: manifest.id },
+                    },
                   });
                   tracking.broadcastSuccess(manifest);
                 } catch (error) {
@@ -940,6 +943,7 @@ export function useWalletAPIServer({
                   broadcastConfig: {
                     mevProtected: !!config.mevProtected,
                     sponsored,
+                    source: { type: "live-app", name: manifest.id },
                   },
                 });
                 tracking.broadcastSuccess(manifest, isEmbeddedSwap, partner);
