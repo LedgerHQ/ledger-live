@@ -10,7 +10,8 @@ export default class AccountPage {
   earnButtonId = "account-quick-action-button-earn";
   accountRenameTextInputId = "account-rename-text-input";
   baseSubAccountRow = "subAccount-row-name-";
-  baseAccountName = "account-row-name-";
+  baseAccountRow = "account-row-";
+  baseAccountName = this.baseAccountRow + "name-";
   accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
   operationRowRegexp = new RegExp("operation-row-" + ".*");
   operationHistorySection = "operations-history-";
@@ -45,6 +46,15 @@ export default class AccountPage {
   async goToAccountByName(name: string) {
     await scrollToId(this.baseAccountName + name);
     await tapById(this.baseAccountName + name);
+  }
+
+  @Step("Go to the account with id")
+  async goToAccountById(id: string) {
+    const elementId = this.baseAccountRow + id;
+    await scrollToId(elementId);
+    await waitForElementById(elementId);
+    await detoxExpect(getElementById(elementId)).toBeVisible();
+    await tapById(elementId);
   }
 
   @Step("Expect the account name at index")
