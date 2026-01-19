@@ -101,7 +101,7 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
 
   const formatDate = useDateFormatter(dayFormat);
   const dateFormatted = useMemo(
-    () => formatDate(new Date(proposal?.expires_at_micros ?? 0)),
+    () => formatDate(new Date((proposal?.expires_at_micros ?? 0) / 1000)),
     [proposal?.expires_at_micros, formatDate],
   );
   const timeRemaining = useTimeRemaining(proposal?.expires_at_micros, proposal?.isExpired);
