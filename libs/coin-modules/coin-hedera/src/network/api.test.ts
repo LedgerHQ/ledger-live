@@ -1,6 +1,9 @@
 import BigNumber from "bignumber.js";
 import network from "@ledgerhq/live-network";
 import { apiClient } from "./api";
+import coinConfig from "../config";
+import { mockCoinConfig } from "../test/fixtures/config.fixture";
+import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import { getMockResponse } from "../test/fixtures/network.fixture";
 import type {
   HederaMirrorContractCallResult,
@@ -11,613 +14,622 @@ import type {
 jest.mock("@ledgerhq/live-network");
 const mockedNetwork = jest.mocked(network);
 
-describe("getAccountTransactions", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
+describe("apiClient", () => {
+  const mockCurrency = getMockedCurrency();
+
+  beforeAll(() => {
+    coinConfig.setCoinConfig(mockCoinConfig);
   });
-
-  it("should include 'account.id', 'limit=100' and 'order=desc' query params", async () => {
-    mockedNetwork.mockResolvedValueOnce(
-      getMockResponse({ transactions: [], links: { next: null } }),
-    );
-
-    await apiClient.getAccountTransactions({
-      address: "0.0.1234",
-      pagingToken: null,
-      fetchAllPages: true,
-    });
-
-    const requestUrl = mockedNetwork.mock.calls[0][0].url;
-    expect(requestUrl).toContain("account.id=0.0.1234");
-    expect(requestUrl).toContain("limit=100");
-    expect(requestUrl).toContain("order=desc");
-  });
-
-  it("should keep fetching if fetchAllPages is set and links.next is present", async () => {
-    mockedNetwork
-      .mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [{ consensus_timestamp: "1" }],
-          links: { next: "/next-1" },
-        }),
-      )
-      .mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [],
-          links: { next: "/next-2" },
-        }),
-      )
-      .mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [{ consensus_timestamp: "3" }],
-          links: { next: "/next-3" },
-        }),
-      )
-      .mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [{ consensus_timestamp: "4" }],
-          links: { next: "/next-4" },
-        }),
-      )
-      .mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [],
-          links: { next: null },
-        }),
-      );
-
-    const result = await apiClient.getAccountTransactions({
-      address: "0.0.1234",
-      pagingToken: null,
-      fetchAllPages: true,
-    });
-
-    expect(result.transactions.map(tx => tx.consensus_timestamp)).toEqual(["1", "3", "4"]);
-    expect(result.nextCursor).toBeNull();
-    expect(mockedNetwork).toHaveBeenCalledTimes(5);
-  });
-
-  it("should paginate if fetchAllPages is not set", async () => {
-    mockedNetwork
-      .mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [{ consensus_timestamp: "1" }],
-          links: { next: "/next-1" },
-        }),
-      )
-      .mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [],
-          links: { next: "/next-2" },
-        }),
-      )
-      .mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [{ consensus_timestamp: "3" }],
-          links: { next: "/next-3" },
-        }),
-      )
-      .mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [{ consensus_timestamp: "4" }],
-          links: { next: "/next-4" },
-        }),
-      )
-      .mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [],
-          links: { next: null },
-        }),
-      );
-
-    const result = await apiClient.getAccountTransactions({
-      address: "0.0.1234",
-      pagingToken: null,
-      limit: 2,
-      fetchAllPages: false,
-    });
-
-    expect(result.transactions.map(tx => tx.consensus_timestamp)).toEqual(["1", "3"]);
-    expect(result.nextCursor).toBe("3");
-    expect(mockedNetwork).toHaveBeenCalledTimes(3);
-  });
-});
-
-describe("getAccount", () => {
-  const mockAddress = "0.0.1234";
 
   beforeEach(() => {
     jest.resetAllMocks();
   });
 
-  it("should call the correct endpoint and return account data", async () => {
-    mockedNetwork.mockResolvedValueOnce(
-      getMockResponse({
-        account: mockAddress,
-        max_automatic_token_associations: 0,
-        balance: {
-          balance: 1000,
-          timestamp: "1749047764.000113442",
-          tokens: [],
-        },
-      }),
-    );
+  describe("getAccountTransactions", () => {
+    it("should include 'account.id', 'limit=100' and 'order=desc' query params", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({ transactions: [], links: { next: null } }),
+      );
 
-    const result = await apiClient.getAccount(mockAddress);
-    const requestUrl = mockedNetwork.mock.calls[0][0].url;
+      await apiClient.getAccountTransactions({
+        currency: mockCurrency,
+        address: "0.0.1234",
+        pagingToken: null,
+        fetchAllPages: true,
+      });
 
-    expect(result.account).toEqual(mockAddress);
-    expect(requestUrl).toContain(`/api/v1/accounts/${mockAddress}?transactions=false`);
-    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+      const requestUrl = mockedNetwork.mock.calls[0][0].url;
+      expect(requestUrl).toContain("account.id=0.0.1234");
+      expect(requestUrl).toContain("limit=100");
+      expect(requestUrl).toContain("order=desc");
+    });
+
+    it("should keep fetching if fetchAllPages is set and links.next is present", async () => {
+      mockedNetwork
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [{ consensus_timestamp: "1" }],
+            links: { next: "/next-1" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [],
+            links: { next: "/next-2" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [{ consensus_timestamp: "3" }],
+            links: { next: "/next-3" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [{ consensus_timestamp: "4" }],
+            links: { next: "/next-4" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [],
+            links: { next: null },
+          }),
+        );
+
+      const result = await apiClient.getAccountTransactions({
+        currency: mockCurrency,
+        address: "0.0.1234",
+        pagingToken: null,
+        fetchAllPages: true,
+      });
+
+      expect(result.transactions.map(tx => tx.consensus_timestamp)).toEqual(["1", "3", "4"]);
+      expect(result.nextCursor).toBeNull();
+      expect(mockedNetwork).toHaveBeenCalledTimes(5);
+    });
+
+    it("should paginate if fetchAllPages is not set", async () => {
+      mockedNetwork
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [{ consensus_timestamp: "1" }],
+            links: { next: "/next-1" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [],
+            links: { next: "/next-2" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [{ consensus_timestamp: "3" }],
+            links: { next: "/next-3" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [{ consensus_timestamp: "4" }],
+            links: { next: "/next-4" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [],
+            links: { next: null },
+          }),
+        );
+
+      const result = await apiClient.getAccountTransactions({
+        currency: mockCurrency,
+        address: "0.0.1234",
+        pagingToken: null,
+        limit: 2,
+        fetchAllPages: false,
+      });
+
+      expect(result.transactions.map(tx => tx.consensus_timestamp)).toEqual(["1", "3"]);
+      expect(result.nextCursor).toBe("3");
+      expect(mockedNetwork).toHaveBeenCalledTimes(3);
+    });
   });
 
-  it("supports timestamp filter", async () => {
-    const mockAccount = { account: mockAddress, staked_node_id: null };
-    const timestamp = "lt:1762202064.065172388";
+  describe("getAccount", () => {
+    const mockAddress = "0.0.1234";
 
-    (network as jest.Mock).mockResolvedValueOnce({ data: mockAccount });
-
-    const result = await apiClient.getAccount(mockAddress, timestamp);
-    const requestUrl = mockedNetwork.mock.calls[0][0].url;
-
-    expect(mockedNetwork).toHaveBeenCalledTimes(1);
-    expect(result).toEqual(mockAccount);
-    expect(requestUrl).toContain(
-      `/api/v1/accounts/${mockAddress}?transactions=false&timestamp=${encodeURIComponent(timestamp)}`,
-    );
-  });
-});
-
-describe("getAccountTokens", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
-
-  it("should return all tokens if only one page is needed", async () => {
-    mockedNetwork.mockResolvedValueOnce(
-      getMockResponse({
-        tokens: [
-          { token_id: "0.0.1001", balance: 10 },
-          { token_id: "0.0.1002", balance: 20 },
-        ],
-        links: { next: null },
-      }),
-    );
-
-    const result = await apiClient.getAccountTokens("0.0.1234");
-    const requestUrl = mockedNetwork.mock.calls[0][0].url;
-
-    expect(result.map(t => t.token_id)).toEqual(["0.0.1001", "0.0.1002"]);
-    expect(requestUrl).toContain("/api/v1/accounts/0.0.1234/tokens");
-    expect(requestUrl).toContain("limit=100");
-    expect(mockedNetwork).toHaveBeenCalledTimes(1);
-  });
-
-  it("should keep fetching if links.next is present and new tokens are returned", async () => {
-    mockedNetwork
-      .mockResolvedValueOnce(
+    it("should call the correct endpoint and return account data", async () => {
+      mockedNetwork.mockResolvedValueOnce(
         getMockResponse({
-          tokens: [{ token_id: "0.0.1001", balance: 10 }],
-          links: { next: "/next-1" },
+          account: mockAddress,
+          max_automatic_token_associations: 0,
+          balance: {
+            balance: 1000,
+            timestamp: "1749047764.000113442",
+            tokens: [],
+          },
         }),
-      )
-      .mockResolvedValueOnce(
+      );
+
+      const result = await apiClient.getAccount({ currency: mockCurrency, address: mockAddress });
+      const requestUrl = mockedNetwork.mock.calls[0][0].url;
+
+      expect(result.account).toEqual(mockAddress);
+      expect(requestUrl).toContain(`/api/v1/accounts/${mockAddress}?transactions=false`);
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    });
+
+    it("supports timestamp filter", async () => {
+      const mockAccount = { account: mockAddress, staked_node_id: null };
+      const timestamp = "lt:1762202064.065172388";
+
+      (network as jest.Mock).mockResolvedValueOnce({ data: mockAccount });
+
+      const result = await apiClient.getAccount({
+        currency: mockCurrency,
+        address: mockAddress,
+        timestamp,
+      });
+      const requestUrl = mockedNetwork.mock.calls[0][0].url;
+
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockAccount);
+      expect(requestUrl).toContain(
+        `/api/v1/accounts/${mockAddress}?transactions=false&timestamp=${encodeURIComponent(timestamp)}`,
+      );
+    });
+  });
+
+  describe("getAccountTokens", () => {
+    it("should return all tokens if only one page is needed", async () => {
+      mockedNetwork.mockResolvedValueOnce(
         getMockResponse({
-          tokens: [{ token_id: "0.0.1002", balance: 20 }],
+          tokens: [
+            { token_id: "0.0.1001", balance: 10 },
+            { token_id: "0.0.1002", balance: 20 },
+          ],
           links: { next: null },
         }),
       );
 
-    const result = await apiClient.getAccountTokens("0.0.1234");
+      const result = await apiClient.getAccountTokens({
+        currency: mockCurrency,
+        address: "0.0.1234",
+      });
+      const requestUrl = mockedNetwork.mock.calls[0][0].url;
 
-    expect(result.map(t => t.token_id)).toEqual(["0.0.1001", "0.0.1002"]);
-    expect(mockedNetwork).toHaveBeenCalledTimes(2);
+      expect(result.map(t => t.token_id)).toEqual(["0.0.1001", "0.0.1002"]);
+      expect(requestUrl).toContain("/api/v1/accounts/0.0.1234/tokens");
+      expect(requestUrl).toContain("limit=100");
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    });
+
+    it("should keep fetching if links.next is present and new tokens are returned", async () => {
+      mockedNetwork
+        .mockResolvedValueOnce(
+          getMockResponse({
+            tokens: [{ token_id: "0.0.1001", balance: 10 }],
+            links: { next: "/next-1" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            tokens: [{ token_id: "0.0.1002", balance: 20 }],
+            links: { next: null },
+          }),
+        );
+
+      const result = await apiClient.getAccountTokens({
+        currency: mockCurrency,
+        address: "0.0.1234",
+      });
+
+      expect(result.map(t => t.token_id)).toEqual(["0.0.1001", "0.0.1002"]);
+      expect(mockedNetwork).toHaveBeenCalledTimes(2);
+    });
   });
-});
 
-describe("getNetworkFees", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+  describe("getNetworkFees", () => {
+    it("should call the correct endpoint and return network fees", async () => {
+      const mockedResults: HederaMirrorNetworkFees = {
+        fees: [{ gas: 39, transaction_type: "ContractCall" }],
+        timestamp: "1758733200.632122898",
+      };
+
+      mockedNetwork.mockResolvedValueOnce(getMockResponse(mockedResults));
+
+      const result = await apiClient.getNetworkFees({ currency: mockCurrency });
+      const requestUrl = mockedNetwork.mock.calls[0][0].url;
+
+      expect(result).toEqual(mockedResults);
+      expect(requestUrl).toContain("/api/v1/network/fees");
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it("should call the correct endpoint and return network fees", async () => {
-    const mockedResults: HederaMirrorNetworkFees = {
-      fees: [{ gas: 39, transaction_type: "ContractCall" }],
-      timestamp: "1758733200.632122898",
-    };
-
-    mockedNetwork.mockResolvedValueOnce(getMockResponse(mockedResults));
-
-    const result = await apiClient.getNetworkFees();
-    const requestUrl = mockedNetwork.mock.calls[0][0].url;
-
-    expect(result).toEqual(mockedResults);
-    expect(requestUrl).toContain("/api/v1/network/fees");
-    expect(mockedNetwork).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe("getContractCallResult", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it("should call the correct endpoint and return results for contract call", async () => {
-    const mockedResults: HederaMirrorContractCallResult = {
-      contract_id: "0.0.4321",
-      block_gas_used: 100,
-      gas_consumed: 200,
-      gas_limit: 10000,
-      gas_used: 150,
-      timestamp: "xxxxxxxxx",
-    };
-
-    mockedNetwork.mockResolvedValueOnce(
-      getMockResponse({
+  describe("getContractCallResult", () => {
+    it("should call the correct endpoint and return results for contract call", async () => {
+      const mockedResults: HederaMirrorContractCallResult = {
         contract_id: "0.0.4321",
         block_gas_used: 100,
         gas_consumed: 200,
         gas_limit: 10000,
         gas_used: 150,
         timestamp: "xxxxxxxxx",
-      }),
-    );
+      };
 
-    const result = await apiClient.getContractCallResult(
-      "0xa9059cbb000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000186a0",
-    );
-    const requestUrl = mockedNetwork.mock.calls[0][0].url;
-
-    expect(result).toEqual(mockedResults);
-    expect(requestUrl).toContain("/api/v1/contracts/results");
-    expect(mockedNetwork).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe("findTransactionByContractCall", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it("should call the correct endpoint and return transaction details", async () => {
-    const mockConsensusTimestamp = "1758733200.632122898";
-    const mockPayerAddress = "0.0.1234";
-    const mockedResults: HederaMirrorTransaction = {
-      transfers: [],
-      token_transfers: [],
-      staking_reward_transfers: [],
-      charged_tx_fee: 100,
-      transaction_hash: "",
-      result: "",
-      consensus_timestamp: mockConsensusTimestamp,
-      entity_id: "0.0.1",
-      transaction_id: `${mockPayerAddress}-${mockConsensusTimestamp}`,
-      name: "CONTRACTCALL",
-    };
-
-    mockedNetwork.mockResolvedValueOnce(
-      getMockResponse({
-        transactions: [mockedResults],
-      }),
-    );
-
-    const result = await apiClient.findTransactionByContractCall({
-      timestamp: mockConsensusTimestamp,
-      payerAddress: mockPayerAddress,
-    });
-    const requestUrl = mockedNetwork.mock.calls[0][0].url;
-
-    expect(result).toEqual(mockedResults);
-    expect(requestUrl).toContain("/api/v1/transactions?limit=100&order=desc");
-    expect(requestUrl).toContain("timestamp=gte");
-    expect(requestUrl).toContain("timestamp=lte");
-    expect(mockedNetwork).toHaveBeenCalledTimes(1);
-  });
-
-  it("should return null for non existing contract calls", async () => {
-    const mockConsensusTimestamp1 = "1758733200.632122898";
-    const mockConsensusTimestamp2 = "1758733300.632122898";
-    const mockPayerAddress1 = "0.0.1234";
-    const mockPayerAddress2 = "0.0.4321";
-    mockedNetwork.mockResolvedValueOnce(
-      getMockResponse({
-        transactions: [
-          {
-            transfers: [],
-            token_transfers: [],
-            staking_reward_transfers: [],
-            charged_tx_fee: 100,
-            transaction_hash: "zzz",
-            transaction_id: `${mockPayerAddress1}-${mockConsensusTimestamp1}`,
-            consensus_timestamp: mockConsensusTimestamp1,
-            result: "",
-            entity_id: "0.0.1",
-            name: "NOT_CONTRACTCALL",
-          },
-          {
-            transfers: [],
-            token_transfers: [],
-            staking_reward_transfers: [],
-            charged_tx_fee: 100,
-            transaction_hash: "yyy",
-            transaction_id: `${mockPayerAddress2}-${mockConsensusTimestamp2}`,
-            consensus_timestamp: mockConsensusTimestamp2,
-            result: "",
-            entity_id: "0.0.2",
-            name: "CONTRACTCALL",
-          },
-        ] satisfies Partial<HederaMirrorTransaction>[],
-      }),
-    );
-
-    const result = await apiClient.findTransactionByContractCall({
-      timestamp: mockConsensusTimestamp1,
-      payerAddress: mockPayerAddress1,
-    });
-
-    expect(result).toEqual(null);
-  });
-
-  it("should call the correct endpoint and return null for empty transactions list", async () => {
-    const mockConsensusTimestamp = "1758733200.632122898";
-    const mockPayerAddress = "0.0.1234";
-
-    mockedNetwork.mockResolvedValueOnce(
-      getMockResponse({
-        transactions: [],
-      }),
-    );
-
-    const result = await apiClient.findTransactionByContractCall({
-      timestamp: mockConsensusTimestamp,
-      payerAddress: mockPayerAddress,
-    });
-
-    expect(result).toEqual(null);
-  });
-});
-
-describe("estimateContractCallGas", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it("should call the correct endpoint and return estimated contract call gas", async () => {
-    mockedNetwork.mockResolvedValueOnce(
-      getMockResponse({
-        result: "1000000000",
-      }),
-    );
-
-    const result = await apiClient.estimateContractCallGas(
-      "0x0000000000000000000000000000000000000001",
-      "0x0000000000000000000000000000000000000002",
-      "0xa9059cbb000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000186a0",
-      BigInt(1000),
-    );
-    const requestUrl = mockedNetwork.mock.calls[0][0].url;
-
-    expect(result).toEqual(BigNumber("1000000000"));
-    expect(requestUrl).toContain("/api/v1/contracts/call");
-    expect(mockedNetwork).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe("getTransactionsByTimestampRange", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
-
-  it("should include account.id query param if address is provided", async () => {
-    mockedNetwork.mockResolvedValueOnce(
-      getMockResponse({ transactions: [], links: { next: null } }),
-    );
-
-    await apiClient.getTransactionsByTimestampRange({
-      address: "0.0.1234",
-      startTimestamp: "gte:1000.000000000",
-      endTimestamp: "lt:2000.000000000",
-    });
-
-    const requestUrl = mockedNetwork.mock.calls[0][0].url;
-    expect(requestUrl).toContain("account.id=0.0.1234");
-  });
-
-  it("should include correct query params with timestamp range", async () => {
-    mockedNetwork.mockResolvedValueOnce(
-      getMockResponse({ transactions: [], links: { next: null } }),
-    );
-
-    await apiClient.getTransactionsByTimestampRange({
-      startTimestamp: "gte:1000.000000000",
-      endTimestamp: "lt:2000.000000000",
-    });
-
-    const requestUrl = mockedNetwork.mock.calls[0][0].url;
-    expect(requestUrl).not.toContain("account.id=");
-    expect(requestUrl).toContain("timestamp=gte%3A1000.000000000");
-    expect(requestUrl).toContain("timestamp=lt%3A2000.000000000");
-    expect(requestUrl).toContain("limit=100");
-    expect(requestUrl).toContain("order=desc");
-  });
-
-  it("should return empty array when no transactions found", async () => {
-    mockedNetwork.mockResolvedValueOnce(
-      getMockResponse({ transactions: [], links: { next: null } }),
-    );
-
-    const result = await apiClient.getTransactionsByTimestampRange({
-      startTimestamp: "gte:1000.000000000",
-      endTimestamp: "lt:2000.000000000",
-    });
-
-    expect(result).toEqual([]);
-    expect(mockedNetwork).toHaveBeenCalledTimes(1);
-  });
-
-  it("should return all transactions when only one page is needed", async () => {
-    mockedNetwork.mockResolvedValueOnce(
-      getMockResponse({
-        transactions: [
-          { consensus_timestamp: "1500.123456789" },
-          { consensus_timestamp: "1750.987654321" },
-        ],
-        links: { next: null },
-      }),
-    );
-
-    const result = await apiClient.getTransactionsByTimestampRange({
-      startTimestamp: "gte:1000.000000000",
-      endTimestamp: "lt:2000.000000000",
-    });
-
-    expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1500.123456789", "1750.987654321"]);
-    expect(mockedNetwork).toHaveBeenCalledTimes(1);
-  });
-
-  it("should keep fetching all pages when links.next is present", async () => {
-    mockedNetwork
-      .mockResolvedValueOnce(
+      mockedNetwork.mockResolvedValueOnce(
         getMockResponse({
-          transactions: [{ consensus_timestamp: "1100.000000000" }],
-          links: { next: "/next-1" },
-        }),
-      )
-      .mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [{ consensus_timestamp: "1200.000000000" }],
-          links: { next: "/next-2" },
-        }),
-      )
-      .mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [{ consensus_timestamp: "1300.000000000" }],
-          links: { next: null },
+          contract_id: "0.0.4321",
+          block_gas_used: 100,
+          gas_consumed: 200,
+          gas_limit: 10000,
+          gas_used: 150,
+          timestamp: "xxxxxxxxx",
         }),
       );
 
-    const result = await apiClient.getTransactionsByTimestampRange({
-      startTimestamp: "gte:1000.000000000",
-      endTimestamp: "lt:2000.000000000",
-    });
+      const result = await apiClient.getContractCallResult({
+        currency: mockCurrency,
+        transactionHash:
+          "0xa9059cbb000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000186a0",
+      });
+      const requestUrl = mockedNetwork.mock.calls[0][0].url;
 
-    expect(result.map(tx => tx.consensus_timestamp)).toEqual([
-      "1100.000000000",
-      "1200.000000000",
-      "1300.000000000",
-    ]);
-    expect(mockedNetwork).toHaveBeenCalledTimes(3);
+      expect(result).toEqual(mockedResults);
+      expect(requestUrl).toContain("/api/v1/contracts/results");
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it("should handle empty pages and continue fetching", async () => {
-    mockedNetwork
-      .mockResolvedValueOnce(
+  describe("findTransactionByContractCall", () => {
+    it("should call the correct endpoint and return transaction details", async () => {
+      const mockConsensusTimestamp = "1758733200.632122898";
+      const mockPayerAddress = "0.0.1234";
+      const mockedResults: HederaMirrorTransaction = {
+        transfers: [],
+        token_transfers: [],
+        staking_reward_transfers: [],
+        charged_tx_fee: 100,
+        transaction_hash: "",
+        result: "",
+        consensus_timestamp: mockConsensusTimestamp,
+        entity_id: "0.0.1",
+        transaction_id: `${mockPayerAddress}-${mockConsensusTimestamp}`,
+        name: "CONTRACTCALL",
+      };
+
+      mockedNetwork.mockResolvedValueOnce(
         getMockResponse({
-          transactions: [{ consensus_timestamp: "1100.000000000" }],
-          links: { next: "/next-1" },
+          transactions: [mockedResults],
         }),
-      )
-      .mockResolvedValueOnce(
+      );
+
+      const result = await apiClient.findTransactionByContractCall({
+        currency: mockCurrency,
+        timestamp: mockConsensusTimestamp,
+        payerAddress: mockPayerAddress,
+      });
+      const requestUrl = mockedNetwork.mock.calls[0][0].url;
+
+      expect(result).toEqual(mockedResults);
+      expect(requestUrl).toContain("/api/v1/transactions?limit=100&order=desc");
+      expect(requestUrl).toContain("timestamp=gte");
+      expect(requestUrl).toContain("timestamp=lte");
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    });
+
+    it("should return null for non existing contract calls", async () => {
+      const mockConsensusTimestamp1 = "1758733200.632122898";
+      const mockConsensusTimestamp2 = "1758733300.632122898";
+      const mockPayerAddress1 = "0.0.1234";
+      const mockPayerAddress2 = "0.0.4321";
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({
+          transactions: [
+            {
+              transfers: [],
+              token_transfers: [],
+              staking_reward_transfers: [],
+              charged_tx_fee: 100,
+              transaction_hash: "zzz",
+              transaction_id: `${mockPayerAddress1}-${mockConsensusTimestamp1}`,
+              consensus_timestamp: mockConsensusTimestamp1,
+              result: "",
+              entity_id: "0.0.1",
+              name: "NOT_CONTRACTCALL",
+            },
+            {
+              transfers: [],
+              token_transfers: [],
+              staking_reward_transfers: [],
+              charged_tx_fee: 100,
+              transaction_hash: "yyy",
+              transaction_id: `${mockPayerAddress2}-${mockConsensusTimestamp2}`,
+              consensus_timestamp: mockConsensusTimestamp2,
+              result: "",
+              entity_id: "0.0.2",
+              name: "CONTRACTCALL",
+            },
+          ] satisfies Partial<HederaMirrorTransaction>[],
+        }),
+      );
+
+      const result = await apiClient.findTransactionByContractCall({
+        currency: mockCurrency,
+        timestamp: mockConsensusTimestamp1,
+        payerAddress: mockPayerAddress1,
+      });
+
+      expect(result).toEqual(null);
+    });
+
+    it("should call the correct endpoint and return null for empty transactions list", async () => {
+      const mockConsensusTimestamp = "1758733200.632122898";
+      const mockPayerAddress = "0.0.1234";
+
+      mockedNetwork.mockResolvedValueOnce(
         getMockResponse({
           transactions: [],
-          links: { next: "/next-2" },
-        }),
-      )
-      .mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [{ consensus_timestamp: "1300.000000000" }],
-          links: { next: null },
         }),
       );
 
-    const result = await apiClient.getTransactionsByTimestampRange({
-      startTimestamp: "gte:1000.000000000",
-      endTimestamp: "lt:2000.000000000",
+      const result = await apiClient.findTransactionByContractCall({
+        currency: mockCurrency,
+        timestamp: mockConsensusTimestamp,
+        payerAddress: mockPayerAddress,
+      });
+
+      expect(result).toEqual(null);
+    });
+  });
+
+  describe("estimateContractCallGas", () => {
+    it("should call the correct endpoint and return estimated contract call gas", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({
+          result: "1000000000",
+        }),
+      );
+
+      const result = await apiClient.estimateContractCallGas({
+        currency: mockCurrency,
+        recipientEvmAddress: "0x0000000000000000000000000000000000000001",
+        senderEvmAddress: "0x0000000000000000000000000000000000000002",
+        contractEvmAddress:
+          "0xa9059cbb000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000186a0",
+        amount: BigInt(1000),
+      });
+      const requestUrl = mockedNetwork.mock.calls[0][0].url;
+
+      expect(result).toEqual(BigNumber("1000000000"));
+      expect(requestUrl).toContain("/api/v1/contracts/call");
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("getTransactionsByTimestampRange", () => {
+    it("should include account.id query param if address is provided", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({ transactions: [], links: { next: null } }),
+      );
+
+      await apiClient.getTransactionsByTimestampRange({
+        currency: mockCurrency,
+        address: "0.0.1234",
+        startTimestamp: "gte:1000.000000000",
+        endTimestamp: "lt:2000.000000000",
+      });
+
+      const requestUrl = mockedNetwork.mock.calls[0][0].url;
+      expect(requestUrl).toContain("account.id=0.0.1234");
     });
 
-    expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1100.000000000", "1300.000000000"]);
-    expect(mockedNetwork).toHaveBeenCalledTimes(3);
-  });
-});
+    it("should include correct query params with timestamp range", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({ transactions: [], links: { next: null } }),
+      );
 
-describe("getNodes", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
+      await apiClient.getTransactionsByTimestampRange({
+        currency: mockCurrency,
+        startTimestamp: "gte:1000.000000000",
+        endTimestamp: "lt:2000.000000000",
+      });
 
-  it("should return all nodes if only one page is needed", async () => {
-    mockedNetwork.mockResolvedValueOnce(
-      getMockResponse({
-        nodes: [
-          { node_id: 0, node_account_id: "0.0.3" },
-          { node_id: 1, node_account_id: "0.0.4" },
-        ],
-        links: { next: null },
-      }),
-    );
+      const requestUrl = mockedNetwork.mock.calls[0][0].url;
+      expect(requestUrl).not.toContain("account.id=");
+      expect(requestUrl).toContain("timestamp=gte%3A1000.000000000");
+      expect(requestUrl).toContain("timestamp=lt%3A2000.000000000");
+      expect(requestUrl).toContain("limit=100");
+      expect(requestUrl).toContain("order=desc");
+    });
 
-    const result = await apiClient.getNodes({ fetchAllPages: true });
-    const requestUrl = mockedNetwork.mock.calls[0][0].url;
+    it("should return empty array when no transactions found", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({ transactions: [], links: { next: null } }),
+      );
 
-    expect(result.nodes.map(n => n.node_id)).toEqual([0, 1]);
-    expect(requestUrl).toContain("/api/v1/network/nodes");
-    expect(requestUrl).toContain("limit=100");
-    expect(requestUrl).toContain("order=desc");
-    expect(mockedNetwork).toHaveBeenCalledTimes(1);
-  });
+      const result = await apiClient.getTransactionsByTimestampRange({
+        currency: mockCurrency,
+        startTimestamp: "gte:1000.000000000",
+        endTimestamp: "lt:2000.000000000",
+      });
 
-  it("should keep fetching if fetchAllPages and links.next is present", async () => {
-    mockedNetwork
-      .mockResolvedValueOnce(
+      expect(result).toEqual([]);
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    });
+
+    it("should return all transactions when only one page is needed", async () => {
+      mockedNetwork.mockResolvedValueOnce(
         getMockResponse({
-          nodes: [{ node_id: 0, node_account_id: "0.0.3" }],
-          links: { next: "/next-1" },
-        }),
-      )
-      .mockResolvedValueOnce(
-        getMockResponse({
-          nodes: [{ node_id: 1, node_account_id: "0.0.4" }],
-          links: { next: "/next-2" },
-        }),
-      )
-      .mockResolvedValueOnce(
-        getMockResponse({
-          nodes: [{ node_id: 2, node_account_id: "0.0.5" }],
+          transactions: [
+            { consensus_timestamp: "1500.123456789" },
+            { consensus_timestamp: "1750.987654321" },
+          ],
           links: { next: null },
         }),
       );
 
-    const result = await apiClient.getNodes({ fetchAllPages: true });
+      const result = await apiClient.getTransactionsByTimestampRange({
+        currency: mockCurrency,
+        startTimestamp: "gte:1000.000000000",
+        endTimestamp: "lt:2000.000000000",
+      });
 
-    expect(result.nodes.map(n => n.node_id)).toEqual([0, 1, 2]);
-    expect(mockedNetwork).toHaveBeenCalledTimes(3);
+      expect(result.map(tx => tx.consensus_timestamp)).toEqual([
+        "1500.123456789",
+        "1750.987654321",
+      ]);
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    });
+
+    it("should keep fetching all pages when links.next is present", async () => {
+      mockedNetwork
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [{ consensus_timestamp: "1100.000000000" }],
+            links: { next: "/next-1" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [{ consensus_timestamp: "1200.000000000" }],
+            links: { next: "/next-2" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [{ consensus_timestamp: "1300.000000000" }],
+            links: { next: null },
+          }),
+        );
+
+      const result = await apiClient.getTransactionsByTimestampRange({
+        currency: mockCurrency,
+        startTimestamp: "gte:1000.000000000",
+        endTimestamp: "lt:2000.000000000",
+      });
+
+      expect(result.map(tx => tx.consensus_timestamp)).toEqual([
+        "1100.000000000",
+        "1200.000000000",
+        "1300.000000000",
+      ]);
+      expect(mockedNetwork).toHaveBeenCalledTimes(3);
+    });
+
+    it("should handle empty pages and continue fetching", async () => {
+      mockedNetwork
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [{ consensus_timestamp: "1100.000000000" }],
+            links: { next: "/next-1" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [],
+            links: { next: "/next-2" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            transactions: [{ consensus_timestamp: "1300.000000000" }],
+            links: { next: null },
+          }),
+        );
+
+      const result = await apiClient.getTransactionsByTimestampRange({
+        currency: mockCurrency,
+        startTimestamp: "gte:1000.000000000",
+        endTimestamp: "lt:2000.000000000",
+      });
+
+      expect(result.map(tx => tx.consensus_timestamp)).toEqual([
+        "1100.000000000",
+        "1300.000000000",
+      ]);
+      expect(mockedNetwork).toHaveBeenCalledTimes(3);
+    });
   });
 
-  it("should paginate if fetchAllPages is not set", async () => {
-    mockedNetwork
-      .mockResolvedValueOnce(
+  describe("getNodes", () => {
+    it("should return all nodes if only one page is needed", async () => {
+      mockedNetwork.mockResolvedValueOnce(
         getMockResponse({
           nodes: [
             { node_id: 0, node_account_id: "0.0.3" },
             { node_id: 1, node_account_id: "0.0.4" },
           ],
-          links: { next: "/next-1" },
-        }),
-      )
-      .mockResolvedValueOnce(
-        getMockResponse({
-          nodes: [{ node_id: 2, node_account_id: "0.0.5" }],
           links: { next: null },
         }),
       );
 
-    const result = await apiClient.getNodes({
-      limit: 2,
-      fetchAllPages: false,
+      const result = await apiClient.getNodes({ currency: mockCurrency, fetchAllPages: true });
+      const requestUrl = mockedNetwork.mock.calls[0][0].url;
+
+      expect(result.nodes.map(n => n.node_id)).toEqual([0, 1]);
+      expect(requestUrl).toContain("/api/v1/network/nodes");
+      expect(requestUrl).toContain("limit=100");
+      expect(requestUrl).toContain("order=desc");
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
     });
 
-    expect(result.nodes.map(tx => tx.node_id)).toEqual([0, 1]);
-    expect(result.nextCursor).toBe("1");
-    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    it("should keep fetching if fetchAllPages and links.next is present", async () => {
+      mockedNetwork
+        .mockResolvedValueOnce(
+          getMockResponse({
+            nodes: [{ node_id: 0, node_account_id: "0.0.3" }],
+            links: { next: "/next-1" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            nodes: [{ node_id: 1, node_account_id: "0.0.4" }],
+            links: { next: "/next-2" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            nodes: [{ node_id: 2, node_account_id: "0.0.5" }],
+            links: { next: null },
+          }),
+        );
+
+      const result = await apiClient.getNodes({ currency: mockCurrency, fetchAllPages: true });
+
+      expect(result.nodes.map(n => n.node_id)).toEqual([0, 1, 2]);
+      expect(mockedNetwork).toHaveBeenCalledTimes(3);
+    });
+
+    it("should paginate if fetchAllPages is not set", async () => {
+      mockedNetwork
+        .mockResolvedValueOnce(
+          getMockResponse({
+            nodes: [
+              { node_id: 0, node_account_id: "0.0.3" },
+              { node_id: 1, node_account_id: "0.0.4" },
+            ],
+            links: { next: "/next-1" },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockResponse({
+            nodes: [{ node_id: 2, node_account_id: "0.0.5" }],
+            links: { next: null },
+          }),
+        );
+
+      const result = await apiClient.getNodes({
+        currency: mockCurrency,
+        limit: 2,
+        fetchAllPages: false,
+      });
+
+      expect(result.nodes.map(tx => tx.node_id)).toEqual([0, 1]);
+      expect(result.nextCursor).toBe("1");
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    });
   });
 });

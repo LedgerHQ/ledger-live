@@ -37,12 +37,12 @@ describe("getBalance", () => {
     (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [] });
     (networkUtils.getERC20BalancesForAccount as jest.Mock).mockResolvedValue([]);
 
-    const result = await getBalance(mockCurrency, address);
+    const result = await getBalance({ currency: mockCurrency, address });
 
     expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
-    expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccount).toHaveBeenCalledWith({ currency: mockCurrency, address });
     expect(apiClient.getAccountTokens).toHaveBeenCalledTimes(1);
-    expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccountTokens).toHaveBeenCalledWith({ currency: mockCurrency, address });
     expect(result).toEqual([
       {
         asset: { type: "native" },
@@ -93,14 +93,17 @@ describe("getBalance", () => {
     (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [] });
     (networkUtils.getERC20BalancesForAccount as jest.Mock).mockResolvedValue(mockERC20Balances);
 
-    const result = await getBalance(mockCurrency, address);
+    const result = await getBalance({ currency: mockCurrency, address });
 
     expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
-    expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccount).toHaveBeenCalledWith({ currency: mockCurrency, address });
     expect(apiClient.getAccountTokens).toHaveBeenCalledTimes(1);
-    expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccountTokens).toHaveBeenCalledWith({ currency: mockCurrency, address });
     expect(networkUtils.getERC20BalancesForAccount).toHaveBeenCalledTimes(1);
-    expect(networkUtils.getERC20BalancesForAccount).toHaveBeenCalledWith(address);
+    expect(networkUtils.getERC20BalancesForAccount).toHaveBeenCalledWith({
+      currency: mockCurrency,
+      address,
+    });
     expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledTimes(2);
     expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledWith("0.0.7890", "hedera");
     expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledWith("0x12345", "hedera");
@@ -157,10 +160,10 @@ describe("getBalance", () => {
     (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [mockMirrorNode] });
     (networkUtils.getERC20BalancesForAccount as jest.Mock).mockResolvedValue([]);
 
-    const result = await getBalance(mockCurrency, address);
+    const result = await getBalance({ currency: mockCurrency, address });
 
     expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
-    expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccount).toHaveBeenCalledWith({ currency: mockCurrency, address });
     expect(apiClient.getNodes).toHaveBeenCalledTimes(1);
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
@@ -240,7 +243,7 @@ describe("getBalance", () => {
     (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [] });
     (networkUtils.getERC20BalancesForAccount as jest.Mock).mockResolvedValue(mockERC20Balances);
 
-    const result = await getBalance(mockCurrency, address);
+    const result = await getBalance({ currency: mockCurrency, address });
 
     expect(result).toEqual([
       {
@@ -279,7 +282,7 @@ describe("getBalance", () => {
     (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [] });
     (networkUtils.getERC20BalancesForAccount as jest.Mock).mockResolvedValue([]);
 
-    await expect(getBalance(mockCurrency, address)).rejects.toThrow(error);
+    await expect(getBalance({ currency: mockCurrency, address })).rejects.toThrow(error);
   });
 
   it("should throw when failing to getAccountTokens data", async () => {
@@ -296,7 +299,7 @@ describe("getBalance", () => {
     (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [] });
     (networkUtils.getERC20BalancesForAccount as jest.Mock).mockResolvedValue([]);
 
-    await expect(getBalance(mockCurrency, address)).rejects.toThrow(error);
+    await expect(getBalance({ currency: mockCurrency, address })).rejects.toThrow(error);
   });
 
   it.each([
@@ -316,10 +319,10 @@ describe("getBalance", () => {
     (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [] });
     (networkUtils.getERC20BalancesForAccount as jest.Mock).mockResolvedValue([]);
 
-    const result = await getBalance(mockCurrency, address);
+    const result = await getBalance({ currency: mockCurrency, address });
 
     expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
-    expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccount).toHaveBeenCalledWith({ currency: mockCurrency, address });
     expect(result).toEqual([]);
   });
 });

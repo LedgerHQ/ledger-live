@@ -14,16 +14,20 @@ import { apiClient } from "../network/api";
 import type { EstimateFeesParams, EstimateFeesResult } from "../types";
 import { getCurrencyToUSDRate, toEVMAddress } from "./utils";
 
-const estimateContractCallFees = async (
-  txIntent: TransactionIntent,
-): Promise<EstimateFeesResult> => {
+const estimateContractCallFees = async ({
+  currency,
+  txIntent,
+}: {
+  currency: CryptoCurrency;
+  txIntent: TransactionIntent;
+}): Promise<EstimateFeesResult> => {
   let tinybars = new BigNumber(0);
   let gas = new BigNumber(0);
 
   const tokenEvmAddress = "assetReference" in txIntent.asset ? txIntent.asset.assetReference : null;
   const [senderEvmAddress, recipientEvmAddress] = await Promise.all([
-    toEVMAddress(txIntent.sender),
-    toEVMAddress(txIntent.recipient),
+    toEVMAddress({ currency, accountId: txIntent.sender }),
+    toEVMAddress({ currency, accountId: txIntent.recipient }),
   ]);
 
   if (!tokenEvmAddress || !senderEvmAddress || !recipientEvmAddress) {
@@ -34,13 +38,14 @@ const estimateContractCallFees = async (
 
   try {
     const [networkFees, gasLimit] = await Promise.all([
-      apiClient.getNetworkFees(),
-      apiClient.estimateContractCallGas(
+      apiClient.getNetworkFees({ currency }),
+      apiClient.estimateContractCallGas({
+        currency,
         senderEvmAddress,
         recipientEvmAddress,
-        tokenEvmAddress,
-        txIntent.amount,
-      ),
+        contractEvmAddress: tokenEvmAddress,
+        amount: txIntent.amount,
+      }),
     ]);
 
     const contractCallFees = networkFees.fees.find(
@@ -84,7 +89,7 @@ const estimateStandardFees = async (
 
 export const estimateFees = async (params: EstimateFeesParams): Promise<EstimateFeesResult> => {
   if (params.operationType === HEDERA_OPERATION_TYPES.ContractCall) {
-    return estimateContractCallFees(params.txIntent);
+    return estimateContractCallFees({ currency: params.currency, txIntent: params.txIntent });
   }
 
   return estimateStandardFees(params.currency, params.operationType);

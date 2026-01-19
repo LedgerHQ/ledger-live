@@ -1,9 +1,10 @@
 import BigNumber from "bignumber.js";
 import type { BlockInfo } from "@ledgerhq/coin-framework/api/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { FINALITY_MS, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
 import { getSyntheticBlock } from "./utils";
-import { FINALITY_MS, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
 
 /**
  * Gets the latest "block" information for Hedera.
@@ -14,13 +15,13 @@ import { FINALITY_MS, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
  * 2. Extract its consensus timestamp
  * 3. Convert this timestamp into a synthetic block using a hardcoded time window (10 seconds by default)
  */
-export async function lastBlock(): Promise<BlockInfo> {
-  // see getBlock implementation, block data should be immutable: we do not allow querying blocks on non-finalized time range.
+export async function lastBlock({ currency }: { currency: CryptoCurrency }): Promise<BlockInfo> {
+  // see getBlock implementation, block data should be immutable: we do not allow querying blocks on non-finalized time range
   // => we search the most recent transaction, but only in finalized time range (ending 10 seconds ago).
   const before = new Date(Date.now() - FINALITY_MS - SYNTHETIC_BLOCK_WINDOW_SECONDS * 1000);
   const [latestTransaction, latestHgraphTimestamp] = await Promise.all([
-    apiClient.getLatestTransaction(before),
-    hgraphClient.getLastestIndexedConsensusTimestamp(),
+    apiClient.getLatestTransaction({ currency, before }),
+    hgraphClient.getLastestIndexedConsensusTimestamp({ currency }),
   ]);
 
   const consensusTimestamp = BigNumber.minimum(

@@ -7,7 +7,7 @@ import type {
   TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import coinConfig from "../config";
+import coinConfig, { type HederaCoinConfig } from "../config";
 import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
 import {
   broadcast as logicBroadcast,
@@ -30,19 +30,23 @@ import { apiClient } from "../network/api";
 import { getERC20BalancesForAccount } from "../network/utils";
 import type { EstimateFeesParams, HederaMemo, HederaTxData } from "../types";
 
-export function createApi(config: Record<string, never>): Api<HederaMemo, HederaTxData> {
+export function createApi(config: HederaCoinConfig): Api<HederaMemo, HederaTxData> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
   const currency = getCryptoCurrencyById("hedera");
 
   return {
     broadcast: async tx => {
-      const response = await logicBroadcast(tx);
+      const response = await logicBroadcast({ currency, txWithSignature: tx });
 
       return Buffer.from(response.transactionHash).toString("base64");
     },
     combine,
     craftTransaction: async (txIntent, customFees) => {
-      const { serializedTx } = await craftTransaction(txIntent, customFees);
+      const { serializedTx } = await craftTransaction({
+        currency,
+        txIntent,
+        customFees,
+      });
 
       return {
         transaction: serializedTx,
@@ -61,7 +65,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo, Hedera
       const operationType = mapIntentToSDKOperation(txIntent);
 
       if (operationType === HEDERA_OPERATION_TYPES.ContractCall) {
-        estimateFeesParams = { operationType, txIntent };
+        estimateFeesParams = { currency, operationType, txIntent };
       } else {
         estimateFeesParams = { currency, operationType };
       }
@@ -72,16 +76,16 @@ export function createApi(config: Record<string, never>): Api<HederaMemo, Hedera
         value: BigInt(estimatedFee.tinybars.toString()),
       };
     },
-    getBalance: address => getBalance(currency, address),
-    getBlock: height => getBlock(height),
+    getBalance: address => getBalance({ currency, address }),
+    getBlock: height => getBlock({ currency, height }),
     getBlockInfo: height => getBlockInfo(height),
-    lastBlock,
+    lastBlock: () => lastBlock({ currency }),
     listOperations: async (address, pagination) => {
-      const evmAddress = await toEVMAddress(address);
+      const evmAddress = await toEVMAddress({ currency, accountId: address });
       invariant(evmAddress, "hedera: evm address is missing");
       const [mirrorTokens, erc20TokenBalances] = await Promise.all([
-        apiClient.getAccountTokens(address),
-        getERC20BalancesForAccount(address),
+        apiClient.getAccountTokens({ currency, address }),
+        getERC20BalancesForAccount({ currency, address }),
       ]);
 
       const latestAccountOperations = await logicListOperations({
@@ -161,9 +165,9 @@ export function createApi(config: Record<string, never>): Api<HederaMemo, Hedera
     },
     getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
     getAssetFromToken,
-    getValidators: cursor => getValidators(cursor),
-    getStakes: async address => getStakes(address),
-    getRewards: async (address, cursor) => getRewards(address, cursor),
+    getValidators: cursor => getValidators({ currency, cursor }),
+    getStakes: async address => getStakes({ currency, address }),
+    getRewards: async (address, cursor) => getRewards({ currency, address, cursor }),
     validateIntent: async (
       _transactionIntent,
       _balances,

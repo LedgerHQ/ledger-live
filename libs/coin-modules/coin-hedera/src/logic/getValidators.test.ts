@@ -1,9 +1,12 @@
 import { getValidators } from "./getValidators";
 import { apiClient } from "../network/api";
+import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 
 jest.mock("../network/api");
 
 describe("getValidators", () => {
+  const mockCurrency = getMockedCurrency();
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -22,7 +25,7 @@ describe("getValidators", () => {
       nextCursor: null,
     });
 
-    const result = await getValidators();
+    const result = await getValidators({ currency: mockCurrency, cursor: undefined });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0]).toMatchObject({
@@ -42,9 +45,13 @@ describe("getValidators", () => {
       nextCursor: "123",
     });
 
-    const result = await getValidators("100");
+    const result = await getValidators({ currency: mockCurrency, cursor: "100" });
 
-    expect(apiClient.getNodes).toHaveBeenCalledWith({ cursor: "100", fetchAllPages: false });
+    expect(apiClient.getNodes).toHaveBeenCalledWith({
+      currency: mockCurrency,
+      cursor: "100",
+      fetchAllPages: false,
+    });
     expect(result.next).toBe("123");
   });
 });

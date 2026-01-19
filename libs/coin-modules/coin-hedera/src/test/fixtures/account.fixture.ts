@@ -135,6 +135,7 @@ export const MAINNET_TEST_ACCOUNTS = {
   },
   withTokens: {
     accountId: "0.0.8835924",
+    evmAddress: "0x000000000000000000000000000000000086d354",
     publicKey: "34e26415574250721e8869bd33ea2678c2bbccff5fc70bd8b0ec9239295fd2cf",
     associatedTokenWithBalance: "0.0.456858",
     associatedTokenWithoutBalance: "0.0.7243470",

@@ -5,6 +5,7 @@ import type {
   BlockOperation,
   BlockTransaction,
 } from "@ledgerhq/coin-framework/api/types";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { getBlockInfo } from "./getBlockInfo";
 import { apiClient } from "../network/api";
@@ -122,7 +123,13 @@ function createStakingRewardOperations(tx: HederaMirrorTransaction): BlockOperat
   }));
 }
 
-export async function getBlock(height: number): Promise<Block> {
+export async function getBlock({
+  currency,
+  height,
+}: {
+  currency: CryptoCurrency;
+  height: number;
+}): Promise<Block> {
   const { start, end } = getDateRangeFromBlockHeight(height);
 
   // block data should be immutable: do not allow querying blocks on non-finalized time range
@@ -130,7 +137,9 @@ export async function getBlock(height: number): Promise<Block> {
     throw new Error(`Block ${height} is not available yet`);
   }
 
-  const latestHgraphIndexedTimestampNs = await hgraphClient.getLastestIndexedConsensusTimestamp();
+  const latestHgraphIndexedTimestampNs = await hgraphClient.getLastestIndexedConsensusTimestamp({
+    currency,
+  });
   const startSeconds = start.getTime() / 1000;
   const endSeconds = end.getTime() / 1000;
   const startNanos = new BigNumber(startSeconds).toFixed(9);
@@ -146,6 +155,7 @@ export async function getBlock(height: number): Promise<Block> {
   const [blockInfo, mirrorTransactions, enrichedERC20Transfers] = await Promise.all([
     getBlockInfo(height),
     apiClient.getTransactionsByTimestampRange({
+      currency,
       startTimestamp: `gte:${startSeconds}`,
       endTimestamp: `lt:${endSeconds}`,
       limit,
@@ -153,12 +163,13 @@ export async function getBlock(height: number): Promise<Block> {
     }),
     hgraphClient
       .getERC20TransfersByTimestampRange({
+        currency,
         startTimestamp: startNanos,
         endTimestamp: endNanos,
         limit,
         order,
       })
-      .then(erc20Transfers => enrichERC20Transfers(erc20Transfers)),
+      .then(erc20Transfers => enrichERC20Transfers({ currency, erc20Transfers })),
   ]);
 
   const mergeResult = mergeTransactonsFromDifferentSources({
@@ -179,7 +190,11 @@ export async function getBlock(height: number): Promise<Block> {
       })
       .map(async item => {
         const payerAccount = item.data.transaction_id.split("-")[0];
-        const analysis = await analyzeStakingOperation(payerAccount, item.data);
+        const analysis = await analyzeStakingOperation({
+          currency,
+          address: payerAccount,
+          mirrorTx: item.data,
+        });
 
         return [item.data.transaction_hash, analysis] as const;
       }),

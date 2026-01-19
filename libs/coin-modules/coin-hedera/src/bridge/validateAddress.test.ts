@@ -1,9 +1,11 @@
 import { safeParseAccountId } from "../logic/utils";
+import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import { validateAddress } from "./validateAddress";
 
 jest.mock("../logic/utils");
 
 describe("validateAddress", () => {
+  const mockCurrency = getMockedCurrency();
   const mockedSafeParseAccountId = jest.mocked(safeParseAccountId);
 
   beforeEach(() => {
@@ -20,12 +22,12 @@ describe("validateAddress", () => {
       }
 
       const address = "some random address";
-      const parameters = {};
+      const parameters = { currency: mockCurrency };
       const result = await validateAddress(address, parameters);
       expect(result).toEqual(expectedValue);
 
       expect(mockedSafeParseAccountId).toHaveBeenCalledTimes(1);
-      expect(mockedSafeParseAccountId).toHaveBeenCalledWith(address);
+      expect(mockedSafeParseAccountId).toHaveBeenCalledWith({ currency: mockCurrency, address });
     },
   );
 });

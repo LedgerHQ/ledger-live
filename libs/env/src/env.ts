@@ -267,11 +267,21 @@ const envDefinitions = {
     parser: stringParser,
     desc: "mirror node API for Hedera",
   },
+  API_HEDERA_MIRROR_TESTNET: {
+    def: "https://testnet.mirrornode.hedera.com",
+    parser: stringParser,
+    desc: "testnet mirror node API for Hedera",
+  },
   // TODO: replace with proxy when available
   API_HEDERA_HGRAPH: {
     def: "https://mainnet.hedera.api.hgraph.dev/v1/graphql",
     parser: stringParser,
     desc: "hgraph API for Hedera",
+  },
+  API_HEDERA_HGRAPH_TESTNET: {
+    def: "https://testnet.hedera.api.hgraph.dev/v1/graphql",
+    parser: stringParser,
+    desc: "testnet hgraph API for Hedera",
   },
   API_VECHAIN_THOREST: {
     def: "https://vechain.coin.ledger.com",

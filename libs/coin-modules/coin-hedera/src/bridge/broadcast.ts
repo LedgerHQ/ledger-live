@@ -5,9 +5,12 @@ import { base64ToUrlSafeBase64, isValidExtra, formatTransactionId } from "../log
 import type { HederaOperationExtra, Transaction } from "../types";
 import { patchOperationWithExtra } from "./utils";
 
-export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signedOperation }) => {
+export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
+  signedOperation,
+  account,
+}) => {
   const { signature, operation } = signedOperation;
-  const response = await logicBroadcast(signature);
+  const response = await logicBroadcast({ currency: account.currency, txWithSignature: signature });
 
   const base64Hash = Buffer.from(response.transactionHash).toString("base64");
   const base64HashUrlSafe = base64ToUrlSafeBase64(base64Hash);

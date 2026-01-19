@@ -8,6 +8,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import * as accountHelpers from "@ledgerhq/coin-framework/account";
+import coinConfig from "../config";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
 import {
   HederaInsufficientFundsForAssociation,
@@ -23,6 +24,7 @@ import {
 import { HEDERA_MAX_MEMO_SIZE } from "../logic/validateMemo";
 import { rpcClient } from "../network/rpc";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
+import { mockCoinConfig } from "../test/fixtures/config.fixture";
 import {
   getMockedERC20TokenCurrency,
   getMockedHTSTokenCurrency,
@@ -87,6 +89,10 @@ describe("getTransactionStatus", () => {
     mockFindSubAccountById.mockImplementation(
       jest.requireActual("@ledgerhq/coin-framework/account").findSubAccountById,
     );
+  });
+
+  beforeAll(() => {
+    coinConfig.setCoinConfig(mockCoinConfig);
   });
 
   afterAll(() => {

@@ -8,13 +8,17 @@ import {
   TransactionId,
 } from "@hashgraph/sdk";
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/fiats";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
-import type { Currency, ExplorerView, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  CryptoCurrency,
+  Currency,
+  ExplorerView,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
 import {
   HEDERA_DELEGATION_STATUS,
@@ -250,14 +254,20 @@ export const checkAccountTokenAssociationStatus = makeLRUCache(
       return true;
     }
 
-    const [parsingError, parsingResult] = safeParseAccountId(address);
+    const [parsingError, parsingResult] = safeParseAccountId({
+      currency: token.parentCurrency,
+      address,
+    });
 
     if (parsingError) {
       throw parsingError;
     }
 
     const addressWithoutChecksum = parsingResult.accountId;
-    const mirrorAccount = await apiClient.getAccount(addressWithoutChecksum);
+    const mirrorAccount = await apiClient.getAccount({
+      currency: token.parentCurrency,
+      address: addressWithoutChecksum,
+    });
 
     // auto association is enabled
     if (mirrorAccount.max_automatic_token_associations === -1) {
@@ -283,18 +293,21 @@ export const getChecksum = (accountId: string): string | null => {
   }
 };
 
-export const safeParseAccountId = (
-  address: string,
-): [Error, null] | [null, { accountId: string; checksum: string | null }] => {
-  const currency = findCryptoCurrencyById("hedera");
-  const currencyName = currency?.name ?? "Hedera";
+export const safeParseAccountId = ({
+  currency,
+  address,
+}: {
+  currency: CryptoCurrency;
+  address: string;
+}): [Error, null] | [null, { accountId: string; checksum: string | null }] => {
+  const currencyName = currency.name;
 
   try {
     const accountId = AccountId.fromString(address);
     const checksum = getChecksum(address);
 
     if (checksum) {
-      const client = rpcClient.getInstance();
+      const client = rpcClient.getInstance(currency);
       const expectedChecksum = accountId.toStringWithChecksum(client).split("-")[1];
 
       if (checksum !== expectedChecksum) {
@@ -372,9 +385,18 @@ export const formatTransactionId = (transactionId: TransactionId): string => {
  * @param address - Hedera account ID in the format `shard.realm.num`
  * @returns EVM address (`0x...`) or null if fetch fails
  */
-export const toEVMAddress = async (accountId: string): Promise<string | null> => {
+export const toEVMAddress = async ({
+  currency,
+  accountId,
+}: {
+  currency: CryptoCurrency;
+  accountId: string;
+}): Promise<string | null> => {
   try {
-    const account = await apiClient.getAccount(accountId);
+    const account = await apiClient.getAccount({
+      currency,
+      address: accountId,
+    });
 
     return account.evm_address;
   } catch {
@@ -520,10 +542,12 @@ export const calculateAPY = (rewardRateStart: number): number => {
  * @returns The net balance change as BigInt (sum of all transfers to/from the account)
  */
 export const calculateUncommittedBalanceChange = async ({
+  currency,
   address,
   startTimestamp,
   endTimestamp,
 }: {
+  currency: CryptoCurrency;
   address: string;
   startTimestamp: string;
   endTimestamp: string;
@@ -533,6 +557,7 @@ export const calculateUncommittedBalanceChange = async ({
   }
 
   const uncommittedTransactions = await apiClient.getTransactionsByTimestampRange({
+    currency,
     address,
     startTimestamp: `gt:${startTimestamp}`,
     endTimestamp: `lte:${endTimestamp}`,
@@ -573,13 +598,18 @@ export const calculateUncommittedBalanceChange = async ({
  *
  * Batching would complicate code for minimal gain given low staking op frequency.
  */
-export const analyzeStakingOperation = async (
-  address: string,
-  mirrorTx: HederaMirrorTransaction,
-): Promise<StakingAnalysis | null> => {
+export const analyzeStakingOperation = async ({
+  currency,
+  address,
+  mirrorTx,
+}: {
+  currency: CryptoCurrency;
+  address: string;
+  mirrorTx: HederaMirrorTransaction;
+}): Promise<StakingAnalysis | null> => {
   const [accountBefore, accountAfter] = await Promise.all([
-    apiClient.getAccount(address, `lt:${mirrorTx.consensus_timestamp}`),
-    apiClient.getAccount(address, `eq:${mirrorTx.consensus_timestamp}`),
+    apiClient.getAccount({ currency, address, timestamp: `lt:${mirrorTx.consensus_timestamp}` }),
+    apiClient.getAccount({ currency, address, timestamp: `eq:${mirrorTx.consensus_timestamp}` }),
   ]);
 
   let operationType: OperationType | null = null;
@@ -609,6 +639,7 @@ export const analyzeStakingOperation = async (
 
   // calculate uncommitted balance changes between the last snapshot and the staking tx
   const uncommittedBalanceChange = await calculateUncommittedBalanceChange({
+    currency,
     address,
     startTimestamp: accountAfter.balance.timestamp,
     endTimestamp: mirrorTx.consensus_timestamp,

@@ -102,6 +102,7 @@ export const mocks: AppManifest[] = [
       "ethereum_sepolia/**",
       "ethereum_holesky",
       "hedera",
+      "hedera_testnet",
       "cardano/**",
       "filecoin",
       "osmo",

@@ -1,22 +1,35 @@
 import type { Transaction as HederaTransaction, TransactionResponse } from "@hashgraph/sdk";
 import { Client } from "@hashgraph/sdk";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import hederaCoinConfig from "../config";
 
-function broadcastTransaction(transaction: HederaTransaction): Promise<TransactionResponse> {
-  return transaction.execute(getInstance());
+function broadcastTransaction({
+  currency,
+  transaction,
+}: {
+  currency: CryptoCurrency;
+  transaction: HederaTransaction;
+}): Promise<TransactionResponse> {
+  return transaction.execute(getInstance(currency));
 }
 
-let _hederaClient: Client | null = null;
+const _hederaClients: Map<string, Client> = new Map();
 
-function getInstance(): Client {
-  _hederaClient ??= Client.forMainnet().setMaxNodesPerTransaction(1);
+function getInstance(currency: CryptoCurrency): Client {
+  const { networkType } = hederaCoinConfig.getCoinConfig(currency);
 
-  return _hederaClient;
+  if (!_hederaClients.has(networkType)) {
+    const client = networkType === "mainnet" ? Client.forMainnet() : Client.forTestnet();
+    _hederaClients.set(networkType, client.setMaxNodesPerTransaction(1));
+  }
+
+  return _hederaClients.get(networkType)!;
 }
 
-// for testing purposes only, used to reset singleton client instance
+// for testing purposes only, used to reset singleton client instances
 function _resetInstance() {
-  _hederaClient?.close();
-  _hederaClient = null;
+  _hederaClients.forEach(client => client.close());
+  _hederaClients.clear();
 }
 
 export const rpcClient = {

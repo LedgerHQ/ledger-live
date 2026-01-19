@@ -1,9 +1,10 @@
 import BigNumber from "bignumber.js";
 import { encodeFunctionData, erc20Abi } from "viem";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import network from "@ledgerhq/live-network";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
-import { getEnv } from "@ledgerhq/live-env";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
+import hederaConfig from "../config";
 import { HEDERA_TRANSACTION_NAMES } from "../constants";
 import { HederaAddAccountError } from "../errors";
 import type {
@@ -20,14 +21,28 @@ import type {
   HederaMirrorNodesResponse,
 } from "../types";
 
-const API_URL = getEnv("API_HEDERA_MIRROR");
+const getApiUrl = (currency: CryptoCurrency): string => {
+  return hederaConfig.getCoinConfig(currency).apiUrls.mirrorNode;
+};
 
-async function getAccountsForPublicKey(publicKey: string): Promise<HederaMirrorAccount[]> {
+// keeps old behavior when all pages are fetched
+const getPaginationDirection = (fetchAllPages: boolean, order: string) => {
+  if (fetchAllPages) return "gt";
+  return order === "asc" ? "gt" : "lt";
+};
+
+async function getAccountsForPublicKey({
+  currency,
+  publicKey,
+}: {
+  currency: CryptoCurrency;
+  publicKey: string;
+}): Promise<HederaMirrorAccount[]> {
   let res;
   try {
     res = await network<HederaMirrorAccountsResponse>({
       method: "GET",
-      url: `${API_URL}/api/v1/accounts?account.publicKey=${publicKey}&balance=true&limit=100`,
+      url: `${getApiUrl(currency)}/api/v1/accounts?account.publicKey=${publicKey}&balance=true&limit=100`,
     });
   } catch (e: unknown) {
     if (e instanceof LedgerAPI4xx) return [];
@@ -51,7 +66,15 @@ async function getAccountsForPublicKey(publicKey: string): Promise<HederaMirrorA
  * @returns Promise resolving to account data
  * @throws HederaAddAccountError if account not found (404)
  */
-async function getAccount(address: string, timestamp?: string): Promise<HederaMirrorAccount> {
+async function getAccount({
+  currency,
+  address,
+  timestamp,
+}: {
+  currency: CryptoCurrency;
+  address: string;
+  timestamp?: string;
+}): Promise<HederaMirrorAccount> {
   try {
     const params = new URLSearchParams({
       transactions: "false",
@@ -60,7 +83,7 @@ async function getAccount(address: string, timestamp?: string): Promise<HederaMi
 
     const res = await network<HederaMirrorAccount>({
       method: "GET",
-      url: `${API_URL}/api/v1/accounts/${address}?${params.toString()}`,
+      url: `${getApiUrl(currency)}/api/v1/accounts/${address}?${params.toString()}`,
     });
     const account = res.data;
 
@@ -74,19 +97,15 @@ async function getAccount(address: string, timestamp?: string): Promise<HederaMi
   }
 }
 
-// keeps old behavior when all pages are fetched
-const getPaginationDirection = (fetchAllPages: boolean, order: string) => {
-  if (fetchAllPages) return "gt";
-  return order === "asc" ? "gt" : "lt";
-};
-
 async function getAccountTransactions({
+  currency,
   address,
   pagingToken,
   limit = 100,
   order = "desc",
   fetchAllPages,
 }: {
+  currency: CryptoCurrency;
   address: string;
   pagingToken: string | null;
   limit?: number | undefined;
@@ -113,7 +132,7 @@ async function getAccountTransactions({
   while (nextPath) {
     const res: LiveNetworkResponse<HederaMirrorTransactionsResponse> = await network({
       method: "GET",
-      url: `${API_URL}${nextPath}`,
+      url: `${getApiUrl(currency)}${nextPath}`,
     });
     const newTransactions = res.data.transactions;
     transactions.push(...newTransactions);
@@ -139,7 +158,13 @@ async function getAccountTransactions({
   return { transactions, nextCursor };
 }
 
-async function getAccountTokens(address: string): Promise<HederaMirrorToken[]> {
+async function getAccountTokens({
+  currency,
+  address,
+}: {
+  currency: CryptoCurrency;
+  address: string;
+}): Promise<HederaMirrorToken[]> {
   const tokens: HederaMirrorToken[] = [];
   const params = new URLSearchParams({
     limit: "100",
@@ -150,7 +175,7 @@ async function getAccountTokens(address: string): Promise<HederaMirrorToken[]> {
   while (nextPath) {
     const res: LiveNetworkResponse<HederaMirrorAccountTokensResponse> = await network({
       method: "GET",
-      url: `${API_URL}${nextPath}`,
+      url: `${getApiUrl(currency)}${nextPath}`,
     });
     const newTokens = res.data.tokens;
     tokens.push(...newTokens);
@@ -160,7 +185,13 @@ async function getAccountTokens(address: string): Promise<HederaMirrorToken[]> {
   return tokens;
 }
 
-async function getLatestTransaction(before: Date): Promise<HederaMirrorTransaction> {
+async function getLatestTransaction({
+  currency,
+  before,
+}: {
+  currency: CryptoCurrency;
+  before: Date;
+}): Promise<HederaMirrorTransaction> {
   const params = new URLSearchParams({
     limit: "1",
     order: "desc",
@@ -169,7 +200,7 @@ async function getLatestTransaction(before: Date): Promise<HederaMirrorTransacti
 
   const res = await network<HederaMirrorTransactionsResponse>({
     method: "GET",
-    url: `${API_URL}/api/v1/transactions?${params.toString()}`,
+    url: `${getApiUrl(currency)}/api/v1/transactions?${params.toString()}`,
   });
   const transaction = res.data.transactions[0];
 
@@ -180,30 +211,40 @@ async function getLatestTransaction(before: Date): Promise<HederaMirrorTransacti
   return transaction;
 }
 
-async function getNetworkFees(): Promise<HederaMirrorNetworkFees> {
+async function getNetworkFees({
+  currency,
+}: {
+  currency: CryptoCurrency;
+}): Promise<HederaMirrorNetworkFees> {
   const res = await network<HederaMirrorNetworkFees>({
     method: "GET",
-    url: `${API_URL}/api/v1/network/fees`,
+    url: `${getApiUrl(currency)}/api/v1/network/fees`,
   });
 
   return res.data;
 }
 
-async function getContractCallResult(
-  transactionHash: string,
-): Promise<HederaMirrorContractCallResult> {
+async function getContractCallResult({
+  currency,
+  transactionHash,
+}: {
+  currency: CryptoCurrency;
+  transactionHash: string;
+}): Promise<HederaMirrorContractCallResult> {
   const res = await network<HederaMirrorContractCallResult>({
     method: "GET",
-    url: `${API_URL}/api/v1/contracts/results/${transactionHash}`,
+    url: `${getApiUrl(currency)}/api/v1/contracts/results/${transactionHash}`,
   });
 
   return res.data;
 }
 
 async function findTransactionByContractCall({
+  currency,
   timestamp,
   payerAddress,
 }: {
+  currency: CryptoCurrency;
   timestamp: string;
   payerAddress: string;
 }): Promise<HederaMirrorTransaction | null> {
@@ -222,7 +263,7 @@ async function findTransactionByContractCall({
 
   const res = await network<HederaMirrorTransactionsResponse>({
     method: "GET",
-    url: `${API_URL}/api/v1/transactions?${params.toString()}`,
+    url: `${getApiUrl(currency)}/api/v1/transactions?${params.toString()}`,
   });
 
   // try to find the CONTRACT_CALL transaction related to the given address
@@ -236,15 +277,22 @@ async function findTransactionByContractCall({
   return relatedTx ?? null;
 }
 
-async function estimateContractCallGas(
-  senderEvmAddress: string,
-  recipientEvmAddress: string,
-  contractEvmAddress: string,
-  amount: bigint,
-): Promise<BigNumber> {
+async function estimateContractCallGas({
+  currency,
+  senderEvmAddress,
+  recipientEvmAddress,
+  contractEvmAddress,
+  amount,
+}: {
+  currency: CryptoCurrency;
+  senderEvmAddress: string;
+  recipientEvmAddress: string;
+  contractEvmAddress: string;
+  amount: bigint;
+}): Promise<BigNumber> {
   const res = await network<HederaMirrorContractCallEstimate>({
     method: "POST",
-    url: `${API_URL}/api/v1/contracts/call`,
+    url: `${getApiUrl(currency)}/api/v1/contracts/call`,
     data: {
       block: "latest",
       estimate: true,
@@ -262,12 +310,14 @@ async function estimateContractCallGas(
 }
 
 async function getTransactionsByTimestampRange({
+  currency,
   address,
   startTimestamp,
   endTimestamp,
   order = "desc",
   limit = 100,
 }: {
+  currency: CryptoCurrency;
   startTimestamp: `${string}:${string}`;
   endTimestamp: `${string}:${string}`;
   address?: string;
@@ -289,7 +339,7 @@ async function getTransactionsByTimestampRange({
   while (nextPath) {
     const res: LiveNetworkResponse<HederaMirrorTransactionsResponse> = await network({
       method: "GET",
-      url: `${API_URL}${nextPath}`,
+      url: `${getApiUrl(currency)}${nextPath}`,
     });
     const newTransactions = res.data.transactions;
     transactions.push(...newTransactions);
@@ -300,11 +350,13 @@ async function getTransactionsByTimestampRange({
 }
 
 async function getNodes({
+  currency,
   cursor,
   limit = 100,
   order = "desc",
   fetchAllPages,
 }: {
+  currency: CryptoCurrency;
   cursor?: string;
   limit?: number;
   order?: "asc" | "desc";
@@ -326,7 +378,7 @@ async function getNodes({
   while (nextPath) {
     const res: LiveNetworkResponse<HederaMirrorNodesResponse> = await network({
       method: "GET",
-      url: `${API_URL}${nextPath}`,
+      url: `${getApiUrl(currency)}${nextPath}`,
     });
     const newNodes = res.data.nodes;
     nodes.push(...newNodes);

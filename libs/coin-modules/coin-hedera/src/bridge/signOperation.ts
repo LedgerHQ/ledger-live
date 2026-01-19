@@ -86,8 +86,9 @@ export const buildSignOperation =
             : undefined;
 
           const signedTx = await signerContext(deviceId, async signer => {
-            const { tx } = await craftTransaction(
-              {
+            const { tx } = await craftTransaction({
+              currency: account.currency,
+              txIntent: {
                 intentType: "transaction",
                 type,
                 asset,
@@ -102,7 +103,7 @@ export const buildSignOperation =
                 ...(data && { data }),
               },
               customFees,
-            );
+            });
 
             const txBodyBytes = getHederaTransactionBodyBytes(tx);
             const signatureBytes = await signer.signTransaction(txBodyBytes);

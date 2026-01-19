@@ -60,6 +60,7 @@ describe("prepareTransaction", () => {
     await prepareTransaction(accountWithToken, transaction);
 
     expect(estimateFees).toHaveBeenCalledWith({
+      currency: accountWithToken.currency,
       operationType: HEDERA_OPERATION_TYPES.ContractCall,
       txIntent: {
         intentType: "transaction",

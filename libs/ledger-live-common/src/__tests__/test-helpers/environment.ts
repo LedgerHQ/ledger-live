@@ -58,6 +58,7 @@ setSupportedCurrencies([
   "solana",
   "celo",
   "hedera",
+  "hedera_testnet",
   "cardano",
   "cardano_testnet",
   "osmosis",

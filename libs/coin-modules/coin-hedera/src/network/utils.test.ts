@@ -4,7 +4,7 @@ import { apiClient } from "./api";
 import { SUPPORTED_ERC20_TOKENS } from "../constants";
 import { hgraphClient } from "./hgraph";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
-import { getMockedERC20TokenCurrency } from "../test/fixtures/currency.fixture";
+import { getMockedCurrency, getMockedERC20TokenCurrency } from "../test/fixtures/currency.fixture";
 import {
   getMockedERC20TokenBalance,
   getMockedERC20TokenTransfer,
@@ -22,6 +22,8 @@ jest.mock("./api");
 jest.mock("./hgraph");
 
 describe("network utils", () => {
+  const mockCurrency = getMockedCurrency();
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -197,10 +199,14 @@ describe("network utils", () => {
         findTokenById: jest.fn().mockReturnValue(erc20Token),
       });
 
-      const res = await getERC20BalancesForAccount(mockAccount.freshAddress);
+      const res = await getERC20BalancesForAccount({
+        currency: mockCurrency,
+        address: mockAccount.freshAddress,
+      });
 
       expect(hgraphClient.getERC20Balances).toHaveBeenCalledTimes(1);
       expect(hgraphClient.getERC20Balances).toHaveBeenCalledWith({
+        currency: mockCurrency,
         address: mockAccount.freshAddress,
       });
       expect(res).toEqual([]);
@@ -238,7 +244,10 @@ describe("network utils", () => {
     });
 
     it("should enrich supported ERC20 transfers with contract call result and mirror transaction", async () => {
-      const result = await enrichERC20Transfers([mockERC20Transfer]);
+      const result = await enrichERC20Transfers({
+        currency: mockCurrency,
+        erc20Transfers: [mockERC20Transfer],
+      });
 
       expect(result).toEqual([
         {
@@ -247,8 +256,12 @@ describe("network utils", () => {
           mirrorTransaction: mockMirrorTransaction,
         },
       ]);
-      expect(apiClient.getContractCallResult).toHaveBeenCalledWith("hash123");
+      expect(apiClient.getContractCallResult).toHaveBeenCalledWith({
+        currency: mockCurrency,
+        transactionHash: "hash123",
+      });
       expect(apiClient.findTransactionByContractCall).toHaveBeenCalledWith({
+        currency: mockCurrency,
         timestamp: "1704067200.000000000",
         payerAddress: `0.0.${payerAccountId}`,
       });
@@ -257,7 +270,10 @@ describe("network utils", () => {
     it("should skip transfers where mirror transaction is not found", async () => {
       (apiClient.findTransactionByContractCall as jest.Mock).mockResolvedValue(null);
 
-      const result = await enrichERC20Transfers([mockERC20Transfer]);
+      const result = await enrichERC20Transfers({
+        currency: mockCurrency,
+        erc20Transfers: [mockERC20Transfer],
+      });
 
       expect(result).toEqual([]);
     });
@@ -269,7 +285,10 @@ describe("network utils", () => {
         mockMirrorTransaction,
       );
 
-      const result = await enrichERC20Transfers(transfers);
+      const result = await enrichERC20Transfers({
+        currency: mockCurrency,
+        erc20Transfers: transfers,
+      });
       const txHashes = result.map(r => r.transfer.transaction_hash);
 
       expect(txHashes).toEqual([mockERC20Transfer.transaction_hash, "hash456"]);
@@ -281,16 +300,23 @@ describe("network utils", () => {
         consensus_timestamp: 1768092990 * 10 ** 9,
       };
 
-      await enrichERC20Transfers([transferWithTimestamp]);
+      await enrichERC20Transfers({
+        currency: mockCurrency,
+        erc20Transfers: [transferWithTimestamp],
+      });
 
       expect(apiClient.findTransactionByContractCall).toHaveBeenCalledWith({
+        currency: mockCurrency,
         timestamp: "1768092990.000000000",
         payerAddress: `0.0.${payerAccountId}`,
       });
     });
 
     it("should handle empty array", async () => {
-      const result = await enrichERC20Transfers([]);
+      const result = await enrichERC20Transfers({
+        currency: mockCurrency,
+        erc20Transfers: [],
+      });
 
       expect(result).toEqual([]);
       expect(apiClient.getContractCallResult).not.toHaveBeenCalled();

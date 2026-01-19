@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { AccountId } from "@hashgraph/sdk";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { apiClient } from "./api";
 import { SUPPORTED_ERC20_TOKENS } from "../constants";
@@ -71,12 +72,16 @@ export function parseTransfers(
   };
 }
 
-export async function getERC20BalancesForAccount(
-  address: string,
-): Promise<HederaERC20TokenBalance[]> {
+export async function getERC20BalancesForAccount({
+  currency,
+  address,
+}: {
+  currency: CryptoCurrency;
+  address: string;
+}): Promise<HederaERC20TokenBalance[]> {
   const balances: HederaERC20TokenBalance[] = [];
 
-  const rawBalances = await hgraphClient.getERC20Balances({ address });
+  const rawBalances = await hgraphClient.getERC20Balances({ currency, address });
 
   for (const rawBalance of rawBalances) {
     const rawBalanceTokenId = toEntityId({ num: rawBalance.token_id });
@@ -113,7 +118,13 @@ export async function getERC20BalancesForAccount(
  * @param erc20Transfers - Raw ERC20 transfers from Hgraph API
  * @returns Array of enriched transfers with complete operation data, filtered to supported tokens only
  */
-export const enrichERC20Transfers = async (erc20Transfers: ERC20TokenTransfer[]) => {
+export const enrichERC20Transfers = async ({
+  currency,
+  erc20Transfers,
+}: {
+  currency: CryptoCurrency;
+  erc20Transfers: ERC20TokenTransfer[];
+}) => {
   const enrichedTransfers: EnrichedERC20Transfer[] = [];
 
   for (const rawTransfer of erc20Transfers) {
@@ -124,8 +135,9 @@ export const enrichERC20Transfers = async (erc20Transfers: ERC20TokenTransfer[])
       .toFixed(9);
 
     const [contractCallResult, mirrorTransaction] = await Promise.all([
-      apiClient.getContractCallResult(hash),
+      apiClient.getContractCallResult({ currency, transactionHash: hash }),
       apiClient.findTransactionByContractCall({
+        currency,
         payerAddress,
         timestamp: inaccurateConsensusTimestamp,
       }),

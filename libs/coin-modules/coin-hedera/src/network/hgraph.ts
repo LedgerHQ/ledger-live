@@ -1,8 +1,9 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import hederaConfig from "../config";
 import type {
   ERC20TokenAccount,
   ERC20TokenTransfer,
@@ -11,6 +12,10 @@ import type {
   HgraphLatestIndexedConsensusTimestampResponse,
   HgraphResponse,
 } from "../types/hgraph";
+
+const getApiUrl = (currency: CryptoCurrency): string => {
+  return hederaConfig.getCoinConfig(currency).apiUrls.hgraph;
+};
 
 // keeps old behavior when all pages are fetched
 const getPaginationDirection = (fetchAllPages: boolean, order: string) => {
@@ -28,9 +33,13 @@ const throwOnGraphQLErrors: <T>(
   }
 };
 
-async function getLastestIndexedConsensusTimestamp(): Promise<BigNumber> {
+async function getLastestIndexedConsensusTimestamp({
+  currency,
+}: {
+  currency: CryptoCurrency;
+}): Promise<BigNumber> {
   const res = await network<HgraphLatestIndexedConsensusTimestampResponse>({
-    url: getEnv("API_HEDERA_HGRAPH"),
+    url: getApiUrl(currency),
     method: "POST",
     data: {
       query: `
@@ -54,9 +63,15 @@ async function getLastestIndexedConsensusTimestamp(): Promise<BigNumber> {
   return new BigNumber(lastTransactionTimestamp);
 }
 
-async function getERC20Balances({ address }: { address: string }): Promise<ERC20TokenAccount[]> {
+async function getERC20Balances({
+  currency,
+  address,
+}: {
+  currency: CryptoCurrency;
+  address: string;
+}): Promise<ERC20TokenAccount[]> {
   const res = await network<HgraphErcTokenAccountResponse>({
-    url: getEnv("API_HEDERA_HGRAPH"),
+    url: getApiUrl(currency),
     method: "POST",
     data: {
       query: `
@@ -85,6 +100,7 @@ async function getERC20Balances({ address }: { address: string }): Promise<ERC20
 }
 
 async function getERC20Transfers({
+  currency,
   address,
   tokenEvmAddresses,
   timestamp,
@@ -92,6 +108,7 @@ async function getERC20Transfers({
   order = "desc",
   fetchAllPages,
 }: {
+  currency: CryptoCurrency;
   address: string;
   tokenEvmAddresses: string[];
   fetchAllPages: boolean;
@@ -110,7 +127,7 @@ async function getERC20Transfers({
 
   while (hasMorePages) {
     const res = await network<HgraphErcTokenTransferResponse>({
-      url: getEnv("API_HEDERA_HGRAPH"),
+      url: getApiUrl(currency),
       method: "POST",
       data: {
         query: `
@@ -183,11 +200,13 @@ async function getERC20Transfers({
 }
 
 async function getERC20TransfersByTimestampRange({
+  currency,
   startTimestamp,
   endTimestamp,
   order = "desc",
   limit = 100,
 }: {
+  currency: CryptoCurrency;
   startTimestamp: string;
   endTimestamp: string;
   order?: "asc" | "desc";
@@ -201,7 +220,7 @@ async function getERC20TransfersByTimestampRange({
 
   while (hasMorePages) {
     const res: LiveNetworkResponse<HgraphErcTokenTransferResponse> = await network({
-      url: getEnv("API_HEDERA_HGRAPH"),
+      url: getApiUrl(currency),
       method: "POST",
       data: {
         query: `

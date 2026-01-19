@@ -1,15 +1,24 @@
 import invariant from "invariant";
 import * as sdk from "@hashgraph/sdk";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import coinConfig from "../config";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
 import { craftTransaction } from "./craftTransaction";
 import { rpcClient } from "../network/rpc";
 import type { HederaMemo, HederaTxData } from "../types";
 import { serializeTransaction } from "./utils";
+import { mockCoinConfig } from "../test/fixtures/config.fixture";
+import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 
 jest.mock("./utils");
 
 describe("craftTransaction", () => {
+  const mockCurrency = getMockedCurrency();
+
+  beforeAll(() => {
+    coinConfig.setCoinConfig(mockCoinConfig);
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     (serializeTransaction as jest.Mock).mockReturnValue("serialized-transaction");
@@ -36,7 +45,11 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    const result = await craftTransaction(txIntent);
+    const result = await craftTransaction({
+      currency: mockCurrency,
+      txIntent,
+      customFees: undefined,
+    });
 
     expect(result.tx).toBeInstanceOf(sdk.TransferTransaction);
     invariant(result.tx instanceof sdk.TransferTransaction, "TransferTransaction type guard");
@@ -72,7 +85,11 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    const result = await craftTransaction(txIntent);
+    const result = await craftTransaction({
+      currency: mockCurrency,
+      txIntent,
+      customFees: undefined,
+    });
 
     expect(result.tx).toBeInstanceOf(sdk.TransferTransaction);
     invariant(result.tx instanceof sdk.TransferTransaction, "TransferTransaction type guard");
@@ -113,7 +130,11 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo, HederaTxData>;
 
-    const result = await craftTransaction(txIntent);
+    const result = await craftTransaction({
+      currency: mockCurrency,
+      txIntent,
+      customFees: undefined,
+    });
 
     expect(result.tx).toBeInstanceOf(sdk.ContractExecuteTransaction);
     invariant(
@@ -151,7 +172,11 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    const result = await craftTransaction(txIntent);
+    const result = await craftTransaction({
+      currency: mockCurrency,
+      txIntent,
+      customFees: undefined,
+    });
 
     expect(result.tx).toBeInstanceOf(sdk.TokenAssociateTransaction);
     invariant(
@@ -174,8 +199,9 @@ describe("craftTransaction", () => {
       value: BigInt(50000),
     };
 
-    const result = await craftTransaction(
-      {
+    const result = await craftTransaction({
+      currency: mockCurrency,
+      txIntent: {
         intentType: "transaction",
         type: HEDERA_TRANSACTION_MODES.Send,
         amount: BigInt(1000000),
@@ -191,7 +217,7 @@ describe("craftTransaction", () => {
         },
       },
       customFees,
-    );
+    });
 
     expect(result.tx).toBeInstanceOf(sdk.TransferTransaction);
     invariant(result.tx instanceof sdk.TransferTransaction, "TransferTransaction type guard");
@@ -215,7 +241,9 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    await expect(craftTransaction(txIntent)).rejects.toThrow();
+    await expect(
+      craftTransaction({ currency: mockCurrency, txIntent, customFees: undefined }),
+    ).rejects.toThrow();
   });
 
   it("should throw error when token associate transaction has missing assetReference", async () => {
@@ -235,7 +263,9 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    await expect(craftTransaction(txIntent)).rejects.toThrow();
+    await expect(
+      craftTransaction({ currency: mockCurrency, txIntent, customFees: undefined }),
+    ).rejects.toThrow();
   });
 
   it("should throw error when token transfer transaction has missing assetReference", async () => {
@@ -255,6 +285,8 @@ describe("craftTransaction", () => {
       },
     } satisfies TransactionIntent<HederaMemo>;
 
-    await expect(craftTransaction(txIntent)).rejects.toThrow();
+    await expect(
+      craftTransaction({ currency: mockCurrency, txIntent, customFees: undefined }),
+    ).rejects.toThrow();
   });
 });

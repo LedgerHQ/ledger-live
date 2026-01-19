@@ -48,7 +48,10 @@ function validateRecipient(account: Account, recipient: string): Error | null {
     return new RecipientRequired();
   }
 
-  const [parsingError, parsingResult] = safeParseAccountId(recipient);
+  const [parsingError, parsingResult] = safeParseAccountId({
+    currency: account.currency,
+    address: recipient,
+  });
 
   if (parsingError) {
     return parsingError;
@@ -182,6 +185,7 @@ async function handleERC20TokenTransaction(
   const [calculatedAmount, estimatedFees] = await Promise.all([
     calculateAmount({ transaction, account }),
     estimateFees({
+      currency: account.currency,
       operationType: HEDERA_OPERATION_TYPES.ContractCall,
       txIntent: {
         intentType: "transaction",

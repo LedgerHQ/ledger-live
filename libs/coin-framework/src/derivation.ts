@@ -227,6 +227,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   assethub_polkadot: ["polkadotbip44"],
   assethub_westend: ["polkadotbip44"],
   hedera: ["hederaBip44"],
+  hedera_testnet: ["hederaBip44"],
   filecoin: ["glifLegacy", "filecoinBIP44", "glif"],
   internet_computer: ["internet_computer"],
   casper: ["casper_wallet"],
@@ -378,6 +379,7 @@ const disableBIP44: Record<string, boolean> = {
   assethub_westend: true,
   solana: true,
   hedera: true,
+  hedera_testnet: true,
   cardano: true,
   cardano_testnet: true,
   near: true,
@@ -414,6 +416,7 @@ const seedIdentifierPath = (currencyId: string): SeedPathFn => {
     case "solana":
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'`;
     case "hedera":
+    case "hedera_testnet":
       return ({ purpose, coinType }) => `${purpose}/${coinType}`;
     case "near":
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`;

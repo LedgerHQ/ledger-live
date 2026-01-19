@@ -77,6 +77,7 @@ setSupportedCurrencies([
   "ethereum_hoodi",
   "elrond", // NOTE: legacy 'multiversx' name, kept for compatibility
   "hedera",
+  "hedera_testnet",
   "cardano",
   "osmosis",
   "filecoin",

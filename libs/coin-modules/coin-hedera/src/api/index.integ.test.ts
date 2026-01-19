@@ -12,14 +12,22 @@ import {
   ContractFunctionParameters,
 } from "@hashgraph/sdk";
 import type { FeeEstimation, Pagination } from "@ledgerhq/coin-framework/api/types";
+import { getEnv } from "@ledgerhq/live-env";
 import { createApi } from "../api";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
-import { getSyntheticBlock, toEVMAddress } from "../logic/utils";
+import { getSyntheticBlock } from "../logic/utils";
 import { rpcClient } from "../network/rpc";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
 
 describe("createApi", () => {
-  const api = createApi({});
+  const api = createApi({
+    status: { type: "active" },
+    networkType: "mainnet",
+    apiUrls: {
+      mirrorNode: getEnv("API_HEDERA_MIRROR"),
+      hgraph: getEnv("API_HEDERA_HGRAPH"),
+    },
+  });
 
   beforeAll(() => {
     // Setup CAL client store (automatically set as global store)
@@ -127,10 +135,8 @@ describe("createApi", () => {
         "ContractExecuteTransaction type guard",
       );
 
-      const recipientEvmAddress = await toEVMAddress(MAINNET_TEST_ACCOUNTS.withTokens.accountId);
-      invariant(recipientEvmAddress, "hedera: missing recipient EVM address");
       const expectedFunctionParameters = new ContractFunctionParameters()
-        .addAddress(recipientEvmAddress)
+        .addAddress(MAINNET_TEST_ACCOUNTS.withTokens.evmAddress)
         .addUint256(1);
 
       expect(rawTx.gas).toEqual(Long.fromNumber(100));

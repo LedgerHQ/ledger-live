@@ -341,6 +341,14 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
+  Hedera_Testnet: {
+    currency: getCryptoCurrencyById("hedera_testnet"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Hedera",
+    },
+    dependency: "",
+  },
   Sui: {
     currency: getCryptoCurrencyById("sui"),
     appQuery: {

@@ -113,6 +113,7 @@ describe("getEstimatedFees", () => {
     (apiClient.estimateContractCallGas as jest.Mock).mockResolvedValueOnce(estimatedGasLimit);
 
     const result = await estimateFees({
+      currency: mockedAccount.currency,
       operationType: HEDERA_OPERATION_TYPES.ContractCall,
       txIntent: {
         intentType: "transaction",
@@ -138,12 +139,19 @@ describe("getEstimatedFees", () => {
     expect(apiClient.getAccount).toHaveBeenCalledTimes(2);
     expect(apiClient.getNetworkFees).toHaveBeenCalledTimes(1);
     expect(apiClient.estimateContractCallGas).toHaveBeenCalledTimes(1);
-    expect(apiClient.estimateContractCallGas).toHaveBeenCalledWith(
-      await toEVMAddress(senderAddress),
-      await toEVMAddress(recipientAddress),
-      mockedTokenCurrencyERC20.contractAddress,
-      transferAmount,
-    );
+    expect(apiClient.estimateContractCallGas).toHaveBeenCalledWith({
+      currency: mockedAccount.currency,
+      senderEvmAddress: await toEVMAddress({
+        currency: mockedAccount.currency,
+        accountId: senderAddress,
+      }),
+      recipientEvmAddress: await toEVMAddress({
+        currency: mockedAccount.currency,
+        accountId: recipientAddress,
+      }),
+      contractEvmAddress: mockedTokenCurrencyERC20.contractAddress,
+      amount: transferAmount,
+    });
     expect(result).toMatchObject({
       tinybars: expectedTinybars,
       gas: expectedGas,
@@ -156,6 +164,7 @@ describe("getEstimatedFees", () => {
     (apiClient.getNetworkFees as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
 
     const result = await estimateFees({
+      currency: mockedAccount.currency,
       operationType: HEDERA_OPERATION_TYPES.ContractCall,
       txIntent: {
         intentType: "transaction",
@@ -192,6 +201,7 @@ describe("getEstimatedFees", () => {
     );
 
     const result = await estimateFees({
+      currency: mockedAccount.currency,
       operationType: HEDERA_OPERATION_TYPES.ContractCall,
       txIntent: {
         intentType: "transaction",

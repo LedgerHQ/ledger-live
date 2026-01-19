@@ -47,6 +47,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   // build different estimation params for ERC20 ContractCall transactions
   if (operationType === HEDERA_OPERATION_TYPES.ContractCall) {
     estimateFeesParams = {
+      currency: account.currency,
       operationType,
       txIntent: {
         intentType: "transaction",

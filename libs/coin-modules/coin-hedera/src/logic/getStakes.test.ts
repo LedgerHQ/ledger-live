@@ -1,7 +1,9 @@
-import { apiClient } from "../network/api";
 import { getStakes } from "./getStakes";
+import { apiClient } from "../network/api";
+import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 
 describe("getStakes", () => {
+  const mockCurrency = getMockedCurrency();
   const mockAddress = "0.0.123456";
   const mockGetAccount = jest.spyOn(apiClient, "getAccount");
   const mockGetNodes = jest.spyOn(apiClient, "getNodes");
@@ -29,13 +31,13 @@ describe("getStakes", () => {
       ],
     });
 
-    const result = await getStakes(mockAddress);
+    const result = await getStakes({ currency: mockCurrency, address: mockAddress });
 
     expect(result.items).toEqual([]);
     expect(mockGetAccount).toHaveBeenCalledTimes(1);
-    expect(mockGetAccount).toHaveBeenCalledWith(mockAddress);
+    expect(mockGetAccount).toHaveBeenCalledWith({ currency: mockCurrency, address: mockAddress });
     expect(mockGetNodes).toHaveBeenCalledTimes(1);
-    expect(mockGetNodes).toHaveBeenCalledWith({ fetchAllPages: true });
+    expect(mockGetNodes).toHaveBeenCalledWith({ currency: mockCurrency, fetchAllPages: true });
   });
 
   it("should return inactive stake when delegated node is not found", async () => {
@@ -61,7 +63,7 @@ describe("getStakes", () => {
       ],
     });
 
-    const result = await getStakes(mockAddress);
+    const result = await getStakes({ currency: mockCurrency, address: mockAddress });
 
     expect(result.items).toEqual([
       {
@@ -104,7 +106,7 @@ describe("getStakes", () => {
       ],
     });
 
-    const result = await getStakes(mockAddress);
+    const result = await getStakes({ currency: mockCurrency, address: mockAddress });
 
     expect(result.items).toEqual([
       {
@@ -145,7 +147,7 @@ describe("getStakes", () => {
       ],
     });
 
-    const result = await getStakes(mockAddress);
+    const result = await getStakes({ currency: mockCurrency, address: mockAddress });
 
     expect(result.items[0].details?.overstaked).toBe(true);
   });

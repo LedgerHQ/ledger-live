@@ -1,9 +1,17 @@
 import type { Cursor, Page, Validator } from "@ledgerhq/coin-framework/api/types";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { apiClient } from "../network/api";
 import { calculateAPY, extractCompanyFromNodeDescription } from "./utils";
 
-export async function getValidators(cursor?: Cursor): Promise<Page<Validator>> {
+export async function getValidators({
+  currency,
+  cursor,
+}: {
+  currency: CryptoCurrency;
+  cursor: Cursor | undefined;
+}): Promise<Page<Validator>> {
   const res = await apiClient.getNodes({
+    currency,
     fetchAllPages: false,
     ...(cursor && { cursor }),
   });

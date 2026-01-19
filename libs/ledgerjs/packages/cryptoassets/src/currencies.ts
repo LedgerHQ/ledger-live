@@ -1571,6 +1571,32 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     tokenTypes: ["hts", "erc20"],
   },
+  hedera_testnet: {
+    type: "CryptoCurrency",
+    id: "hedera_testnet",
+    coinType: CoinType.HEDERA,
+    name: "Hedera (Testnet)",
+    managerAppName: "Hedera",
+    ticker: "HBAR",
+    scheme: "hedera_testnet",
+    color: "#121212",
+    family: "hedera",
+    isTestnetFor: "hedera",
+    units: [
+      {
+        name: "Hedera",
+        code: "HBAR",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://hashscan.io/testnet/transaction/$hash",
+        address: "https://hashscan.io/testnet/account/$address",
+      },
+    ],
+    tokenTypes: ["hts", "erc20"],
+  },
   helium: {
     type: "CryptoCurrency",
     id: "helium",

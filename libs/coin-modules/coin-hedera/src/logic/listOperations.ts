@@ -370,7 +370,7 @@ async function processTransactionItem({
 
   const stakingAnalysis =
     mirrorTx.name === HEDERA_TRANSACTION_NAMES.UpdateAccount
-      ? await analyzeStakingOperation(address, mirrorTx)
+      ? await analyzeStakingOperation({ currency, address, mirrorTx })
       : null;
 
   if (mergedTx.type === "mirror") {
@@ -457,6 +457,7 @@ export async function listOperations({
   const [mirrorTransactions, enrichedERC20Transfers, latestHgraphIndexedTimestampNs] =
     await Promise.all([
       apiClient.getAccountTransactions({
+        currency,
         address,
         order,
         limit,
@@ -465,6 +466,7 @@ export async function listOperations({
       }),
       hgraphClient
         .getERC20Transfers({
+          currency,
           address,
           order,
           limit,
@@ -472,8 +474,8 @@ export async function listOperations({
           tokenEvmAddresses: erc20Tokens.map(t => t.token.contractAddress.toLowerCase()),
           ...(cursor && { timestamp: cursor }),
         })
-        .then(erc20Transfers => enrichERC20Transfers(erc20Transfers)),
-      hgraphClient.getLastestIndexedConsensusTimestamp(),
+        .then(erc20Transfers => enrichERC20Transfers({ currency, erc20Transfers })),
+      hgraphClient.getLastestIndexedConsensusTimestamp({ currency }),
     ]);
 
   // merge transactions, ensuring no duplicates, correct ordering and pagination handling

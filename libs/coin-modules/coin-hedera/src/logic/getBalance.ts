@@ -6,13 +6,19 @@ import { HederaAddAccountError } from "../errors";
 import { apiClient } from "../network/api";
 import { getERC20BalancesForAccount } from "../network/utils";
 
-export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {
+export async function getBalance({
+  currency,
+  address,
+}: {
+  currency: CryptoCurrency;
+  address: string;
+}): Promise<Balance[]> {
   try {
     const [mirrorAccount, mirrorTokens, mirrorNodes, erc20TokenBalances] = await Promise.all([
-      apiClient.getAccount(address),
-      apiClient.getAccountTokens(address),
-      apiClient.getNodes({ fetchAllPages: true }),
-      getERC20BalancesForAccount(address),
+      apiClient.getAccount({ currency, address }),
+      apiClient.getAccountTokens({ currency, address }),
+      apiClient.getNodes({ currency, fetchAllPages: true }),
+      getERC20BalancesForAccount({ currency, address }),
     ]);
 
     const mixedTokens = [...mirrorTokens, ...erc20TokenBalances];

@@ -13,6 +13,7 @@ export type EstimateFeesParams =
       operationType: Exclude<HEDERA_OPERATION_TYPES, HEDERA_OPERATION_TYPES.ContractCall>;
     }
   | {
+      currency: CryptoCurrency;
       operationType: HEDERA_OPERATION_TYPES.ContractCall;
       txIntent: TransactionIntent;
     };

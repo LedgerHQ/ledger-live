@@ -12,7 +12,7 @@ export const getPreloadStrategy = () => ({
 
 export async function preload(currency: CryptoCurrency): Promise<HederaPreloadData> {
   log("hedera/preload", "preloading hedera data...");
-  const result = await apiClient.getNodes({ fetchAllPages: true });
+  const result = await apiClient.getNodes({ currency, fetchAllPages: true });
 
   const validators: HederaValidator[] = result.nodes.map(mirrorNode => {
     const minStake = new BigNumber(mirrorNode.min_stake);

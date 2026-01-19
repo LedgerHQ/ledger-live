@@ -54,6 +54,7 @@ setSupportedCurrencies([
   "ethereum_holesky",
   "ethereum_hoodi",
   "hedera",
+  "hedera_testnet",
   "cardano",
   "filecoin",
   "osmosis",

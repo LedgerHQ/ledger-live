@@ -12,6 +12,7 @@ import {
   TransferTransaction,
 } from "@hashgraph/sdk";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { DEFAULT_GAS_LIMIT, HEDERA_TRANSACTION_MODES } from "../constants";
 import { rpcClient } from "../network/rpc";
 import type { HederaMemo, HederaTxData } from "../types";
@@ -19,6 +20,7 @@ import { hasSpecificIntentData, serializeTransaction } from "./utils";
 
 interface BuilderOperator {
   accountId: string;
+  currency: CryptoCurrency;
 }
 
 interface BuilderCommonTransactionFields {
@@ -80,7 +82,7 @@ async function buildUnsignedCoinTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freezeWith(rpcClient.getInstance());
+  return tx.freezeWith(rpcClient.getInstance(account.currency));
 }
 
 async function buildUnsignedHTSTokenTransaction({
@@ -103,7 +105,7 @@ async function buildUnsignedHTSTokenTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freezeWith(rpcClient.getInstance());
+  return tx.freezeWith(rpcClient.getInstance(account.currency));
 }
 
 async function buildUnsignedERC20TokenTransaction({
@@ -135,7 +137,7 @@ async function buildUnsignedERC20TokenTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freezeWith(rpcClient.getInstance());
+  return tx.freezeWith(rpcClient.getInstance(account.currency));
 }
 
 async function buildTokenAssociateTransaction({
@@ -157,7 +159,7 @@ async function buildTokenAssociateTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  return tx.freezeWith(rpcClient.getInstance());
+  return tx.freezeWith(rpcClient.getInstance(account.currency));
 }
 
 async function buildUnsignedUpdateAccountTransaction({
@@ -186,14 +188,19 @@ async function buildUnsignedUpdateAccountTransaction({
     tx.clearStakedNodeId();
   }
 
-  return tx.freezeWith(rpcClient.getInstance());
+  return tx.freezeWith(rpcClient.getInstance(account.currency));
 }
 
-export async function craftTransaction(
-  txIntent: TransactionIntent<HederaMemo, HederaTxData>,
-  customFees?: FeeEstimation,
-) {
-  const account = { accountId: txIntent.sender };
+export async function craftTransaction({
+  currency,
+  txIntent,
+  customFees,
+}: {
+  currency: CryptoCurrency;
+  txIntent: TransactionIntent<HederaMemo, HederaTxData>;
+  customFees: FeeEstimation | undefined;
+}) {
+  const account = { accountId: txIntent.sender, currency };
   const maxFee = customFees ? new BigNumber(customFees.value.toString()) : undefined;
 
   let tx;
