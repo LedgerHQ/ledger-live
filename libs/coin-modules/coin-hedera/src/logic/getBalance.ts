@@ -2,30 +2,41 @@ import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import hederaCoinConfig from "../config";
+import { type HederaCoinConfig } from "../config";
 import { HederaAddAccountError } from "../errors";
+import { resolveConfig } from "./utils";
 import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2 } from "../network/utils";
 
-export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {
+export async function getBalance({
+  config,
+  currencyId,
+  address,
+}: {
+  config?: HederaCoinConfig;
+  currencyId: string;
+  address: string;
+}): Promise<Balance[]> {
+  const coinConfig = resolveConfig(config ?? currencyId);
+
   try {
-    const coinConfig = hederaCoinConfig.getCoinConfig(currency.id);
     // Fetch only the specific staked node (or nothing at all for non-staking
     // accounts) instead of paginating the full /network/nodes list. The
     // validator lookup is chained on the account promise so it still runs
     // concurrently with the token fetches.
-    const mirrorAccountPromise = apiClient.getAccount(address);
+    const mirrorAccountPromise = apiClient.getAccount({ configOrCurrencyId: coinConfig, address });
     const validatorPromise = mirrorAccountPromise.then(account =>
       typeof account.staked_node_id === "number" && account.staked_node_id >= 0
-        ? apiClient.getNode(account.staked_node_id)
+        ? apiClient.getNode({ configOrCurrencyId: coinConfig, nodeId: account.staked_node_id })
         : null,
     );
     const [mirrorAccount, mirrorTokens, erc20TokenBalances, validator] = await Promise.all([
       mirrorAccountPromise,
-      apiClient.getAccountTokens(address),
-      coinConfig.useHgraphForErc20 ? getERC20BalancesForAccountV2(address) : Promise.resolve([]),
+      apiClient.getAccountTokens({ configOrCurrencyId: coinConfig, address }),
+      coinConfig.useHgraphForErc20
+        ? getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address })
+        : Promise.resolve([]),
       validatorPromise,
     ]);
 
@@ -58,7 +69,7 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
         const tokenAddress = "token_id" in item ? item.token_id : item.token.contractAddress;
         const calToken = await getCryptoAssetsStore().findTokenByAddressInCurrency(
           tokenAddress,
-          currency.id,
+          currencyId,
         );
 
         if (!calToken || !calToken.units.length) {

@@ -3,7 +3,6 @@ import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/he
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
-import hederaCoinConfig from "../config";
 import { DEFAULT_GAS_LIMIT, HEDERA_TRANSACTION_MODES } from "../constants";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
@@ -34,7 +33,6 @@ export const buildSignOperation =
           let data: HederaTxData | undefined;
           const accountAddress = account.freshAddress;
           const accountPublicKey = account.seedIdentifier;
-          const coinConfig = hederaCoinConfig.getCoinConfig(account.currency.id);
           const subAccount = findSubAccountById(account, transaction.subAccountId || "");
           const isHTSTokenTransaction =
             transaction.mode === HEDERA_TRANSACTION_MODES.Send &&
@@ -89,6 +87,7 @@ export const buildSignOperation =
 
           const signedTx = await signerContext(deviceId, async signer => {
             const { tx } = await craftTransaction({
+              configOrCurrencyId: account.currency.id,
               txIntent: {
                 intentType: "transaction",
                 type,
@@ -104,7 +103,6 @@ export const buildSignOperation =
                 ...(data && { data }),
               },
               ...(customFees && { customFees }),
-              config: coinConfig,
             });
 
             const txBodyBytes = getHederaTransactionBodyBytes(tx);

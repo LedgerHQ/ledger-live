@@ -63,6 +63,10 @@ const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
     title: "swap.incompatibility.hedera_title",
     description: "swap.incompatibility.hedera_description",
   },
+  hedera_testnet: {
+    title: "swap.incompatibility.hedera_title",
+    description: "swap.incompatibility.hedera_description",
+  },
   osmo: {
     title: "swap.incompatibility.osmo_title",
     description: "swap.incompatibility.osmo_description",

@@ -5,13 +5,13 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import type { HederaCoinConfig } from "../config";
 import { HARDCODED_BLOCK_HEIGHT, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
-import { parseTransfers, enrichERC20Transfers } from "../network/utils";
+import { parseTransfers, enrichERC20Transfers, analyzeStakingOperation } from "../network/utils";
 import type {
   EnrichedERC20Transfer,
   HederaERC20TokenBalance,
@@ -22,7 +22,6 @@ import type {
   StakingAnalysis,
 } from "../types";
 import {
-  analyzeStakingOperation,
   base64ToUrlSafeBase64,
   createStakingRewardOperationHash,
   extractFeesPayer,
@@ -234,13 +233,13 @@ async function processERC20TokenTransfer({
 async function processHTSTokenTransfers({
   rawTx,
   address,
-  currency,
+  currencyId,
   ledgerAccountId,
   commonData,
 }: {
   rawTx: HederaMirrorTransaction;
   address: string;
-  currency: CryptoCurrency;
+  currencyId: string;
   ledgerAccountId: string;
   commonData: ReturnType<typeof getCommonMirrorOperationData>;
 }): Promise<{
@@ -251,7 +250,7 @@ async function processHTSTokenTransfers({
   if (tokenTransfers.length === 0) return null;
 
   const tokenId = tokenTransfers[0].token_id;
-  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, currency.id);
+  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, currencyId);
   if (!token) return null;
 
   const encodedTokenId = encodeTokenAccountId(ledgerAccountId, token);
@@ -383,7 +382,8 @@ async function processTransactionItem({
   mergedTx,
   address,
   evmAddress,
-  currency,
+  config,
+  currencyId,
   ledgerAccountId,
   mirrorTokens,
   useEncodedHash,
@@ -392,7 +392,8 @@ async function processTransactionItem({
   mergedTx: MergedTransaction;
   address: string;
   evmAddress: string;
-  currency: CryptoCurrency;
+  config?: HederaCoinConfig;
+  currencyId: string;
   ledgerAccountId: string;
   mirrorTokens: HederaMirrorToken[];
   useEncodedHash: boolean;
@@ -418,14 +419,18 @@ async function processTransactionItem({
 
   const stakingAnalysis =
     mirrorTx.name === HEDERA_TRANSACTION_NAMES.UpdateAccount
-      ? await analyzeStakingOperation(address, mirrorTx)
+      ? await analyzeStakingOperation({
+          configOrCurrencyId: config ?? currencyId,
+          address,
+          mirrorTx,
+        })
       : null;
 
   if (mergedTx.type === "mirror") {
     const htsTokenResult = await processHTSTokenTransfers({
       rawTx: mirrorTx,
       address,
-      currency,
+      currencyId,
       ledgerAccountId,
       commonData,
     });
@@ -461,7 +466,8 @@ async function processTransactionItem({
 }
 
 export async function listOperationsV2({
-  currency,
+  config,
+  currencyId,
   address,
   evmAddress,
   mirrorTokens,
@@ -474,7 +480,8 @@ export async function listOperationsV2({
   useEncodedHash,
   useSyntheticBlocks,
 }: {
-  currency: CryptoCurrency;
+  config?: HederaCoinConfig;
+  currencyId: string;
   address: string;
   evmAddress: string;
   mirrorTokens: HederaMirrorToken[];
@@ -498,7 +505,7 @@ export async function listOperationsV2({
   const ledgerAccountId = encodeAccountId({
     type: "js",
     version: "2",
-    currencyId: currency.id,
+    currencyId: currencyId,
     xpubOrAddress: address,
     derivationMode: "hederaBip44",
   });
@@ -507,6 +514,7 @@ export async function listOperationsV2({
   const [mirrorTransactions, enrichedERC20Transfers, latestHgraphIndexedTimestampNs] =
     await Promise.all([
       apiClient.getAccountTransactions({
+        configOrCurrencyId: config ?? currencyId,
         address,
         order,
         limit,
@@ -515,6 +523,7 @@ export async function listOperationsV2({
       }),
       hgraphClient
         .getERC20Transfers({
+          configOrCurrencyId: config ?? currencyId,
           address,
           order,
           limit,
@@ -522,8 +531,10 @@ export async function listOperationsV2({
           tokenEvmAddresses: erc20Tokens.map(t => t.token.contractAddress.toLowerCase()),
           ...(cursor && { timestamp: cursor }),
         })
-        .then(erc20Transfers => enrichERC20Transfers(erc20Transfers)),
-      hgraphClient.getLatestIndexedConsensusTimestamp(),
+        .then(erc20Transfers =>
+          enrichERC20Transfers({ configOrCurrencyId: config ?? currencyId, erc20Transfers }),
+        ),
+      hgraphClient.getLatestIndexedConsensusTimestamp({ configOrCurrencyId: config ?? currencyId }),
     ]);
 
   // merge transactions, ensuring no duplicates, correct ordering and pagination handling
@@ -541,7 +552,7 @@ export async function listOperationsV2({
       mergedTx,
       address,
       evmAddress,
-      currency,
+      currencyId,
       ledgerAccountId,
       mirrorTokens,
       useEncodedHash,

@@ -1,37 +1,35 @@
 import type { Transaction as HederaTransaction, TransactionResponse } from "@hashgraph/sdk";
 import { Client } from "@hashgraph/sdk";
+import { type HederaCoinConfig } from "../config";
+import { resolveConfig } from "../logic/utils";
 
-let _hederaClientPromise: Promise<Client> | null = null;
-
-async function broadcastTransaction(transaction: HederaTransaction): Promise<TransactionResponse> {
-  return transaction.execute(await getInstance());
+function broadcastTransaction({
+  configOrCurrencyId,
+  transaction,
+}: {
+  configOrCurrencyId: HederaCoinConfig | string;
+  transaction: HederaTransaction;
+}): Promise<TransactionResponse> {
+  return transaction.execute(getInstance(configOrCurrencyId));
 }
 
-async function createClient(): Promise<Client> {
-  const client = await Client.forMainnetAsync();
-  client.setMaxNodesPerTransaction(1);
-  return client;
-}
+const _hederaClients: Map<string, Client> = new Map();
 
-async function getInstance(): Promise<Client> {
-  _hederaClientPromise ??= createClient().catch(error => {
-    _hederaClientPromise = null;
-    throw error;
-  });
+function getInstance(configOrCurrencyId: HederaCoinConfig | string): Client {
+  const { networkType } = resolveConfig(configOrCurrencyId);
 
-  return _hederaClientPromise;
-}
-
-// for testing purposes only, used to reset singleton client instance
-async function _resetInstance() {
-  try {
-    const client = await _hederaClientPromise;
-    client?.close();
-  } catch {
-    // intentionally ignored during clean up
-  } finally {
-    _hederaClientPromise = null;
+  if (!_hederaClients.has(networkType)) {
+    const client = networkType === "mainnet" ? Client.forMainnet() : Client.forTestnet();
+    _hederaClients.set(networkType, client.setMaxNodesPerTransaction(1));
   }
+
+  return _hederaClients.get(networkType)!;
+}
+
+// for testing purposes only, used to reset singleton client instances
+function _resetInstance() {
+  _hederaClients.forEach(client => client.close());
+  _hederaClients.clear();
 }
 
 export const rpcClient = {

@@ -19,7 +19,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   }
 
   const estimatedFees = await estimateFees({
-    currency: mainAccount.currency,
+    currencyId: mainAccount.currency.id,
     operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
   });
   let maxSpendable = balance.minus(estimatedFees.tinybars);

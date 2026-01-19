@@ -21,7 +21,7 @@ describe("getTokenFromAsset", () => {
       findTokenByAddressInCurrency: findTokenByAddressInCurrencyMock,
     });
 
-    const result = await getTokenFromAsset(mockCurrency, asset1);
+    const result = await getTokenFromAsset(mockCurrency.id, asset1);
     expect(result).toEqual(mockToken);
     expect(result?.id).toBe(mockToken.id);
     expect(result?.contractAddress).toBe(mockToken.contractAddress);
@@ -30,6 +30,6 @@ describe("getTokenFromAsset", () => {
   it("returns undefined for native asset", async () => {
     const nativeAsset = { type: "native" };
 
-    expect(await getTokenFromAsset(mockCurrency, nativeAsset)).toBeUndefined();
+    expect(await getTokenFromAsset(mockCurrency.id, nativeAsset)).toBeUndefined();
   });
 });

@@ -1,6 +1,8 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import BigNumber from "bignumber.js";
+import invariant from "invariant";
+import type { HederaCoinConfig } from "../config";
 import {
   BASE_USD_FEE_BY_OPERATION_TYPE,
   DEFAULT_GAS_LIMIT,
@@ -11,19 +13,23 @@ import {
   HEDERA_OPERATION_TYPES,
 } from "../constants";
 import { apiClient } from "../network/api";
+import { getCurrencyToUSDRate, toEVMAddress } from "../network/utils";
 import type { EstimateFeesParams, EstimateFeesResult } from "../types";
-import { getCurrencyToUSDRate, toEVMAddress } from "./utils";
 
-const estimateContractCallFees = async (
-  txIntent: TransactionIntent,
-): Promise<EstimateFeesResult> => {
+const estimateContractCallFees = async ({
+  configOrCurrencyId,
+  txIntent,
+}: {
+  configOrCurrencyId: HederaCoinConfig | string;
+  txIntent: TransactionIntent;
+}): Promise<EstimateFeesResult> => {
   let tinybars = new BigNumber(0);
   let gas = new BigNumber(0);
 
   const tokenEvmAddress = "assetReference" in txIntent.asset ? txIntent.asset.assetReference : null;
   const [senderEvmAddress, recipientEvmAddress] = await Promise.all([
-    toEVMAddress(txIntent.sender),
-    toEVMAddress(txIntent.recipient),
+    toEVMAddress({ configOrCurrencyId, accountId: txIntent.sender }),
+    toEVMAddress({ configOrCurrencyId, accountId: txIntent.recipient }),
   ]);
 
   if (!tokenEvmAddress || !senderEvmAddress || !recipientEvmAddress) {
@@ -34,13 +40,14 @@ const estimateContractCallFees = async (
 
   try {
     const [networkFees, gasLimit] = await Promise.all([
-      apiClient.getNetworkFees(),
-      apiClient.estimateContractCallGas(
+      apiClient.getNetworkFees({ configOrCurrencyId }),
+      apiClient.estimateContractCallGas({
+        configOrCurrencyId,
         senderEvmAddress,
         recipientEvmAddress,
-        tokenEvmAddress,
-        txIntent.amount,
-      ),
+        contractEvmAddress: tokenEvmAddress,
+        amount: txIntent.amount,
+      }),
     ]);
 
     const contractCallFees = networkFees.fees.find(
@@ -61,10 +68,16 @@ const estimateContractCallFees = async (
   };
 };
 
-const estimateStandardFees = async (
-  currency: CryptoCurrency,
-  operationType: HEDERA_OPERATION_TYPES,
-): Promise<EstimateFeesResult> => {
+const estimateStandardFees = async ({
+  currencyId,
+  operationType,
+}: {
+  currencyId: string;
+  operationType: HEDERA_OPERATION_TYPES;
+}): Promise<EstimateFeesResult> => {
+  const currency = findCryptoCurrencyById(currencyId);
+  invariant(currency, `hedera: currency with id ${currencyId} not found`);
+
   let tinybars: BigNumber;
   const usdRate = await getCurrencyToUSDRate(currency).catch(() => null);
 
@@ -84,8 +97,14 @@ const estimateStandardFees = async (
 
 export const estimateFees = async (params: EstimateFeesParams): Promise<EstimateFeesResult> => {
   if (params.operationType === HEDERA_OPERATION_TYPES.ContractCall) {
-    return estimateContractCallFees(params.txIntent);
+    return estimateContractCallFees({
+      configOrCurrencyId: params.configOrCurrencyId,
+      txIntent: params.txIntent,
+    });
   }
 
-  return estimateStandardFees(params.currency, params.operationType);
+  return estimateStandardFees({
+    currencyId: params.currencyId,
+    operationType: params.operationType,
+  });
 };

@@ -4,11 +4,8 @@ import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { HEDERA_TRANSACTION_MODES, MAP_STAKING_MODE_TO_OPERATION_TYPE } from "../constants";
-import {
-  safeParseAccountId,
-  isTokenAssociateTransaction,
-  isStakingTransaction,
-} from "../logic/utils";
+import { isTokenAssociateTransaction, isStakingTransaction } from "../logic/utils";
+import { safeParseAccountId } from "../network/utils";
 import type { HederaAccount, HederaOperationExtra, Transaction } from "../types";
 
 const buildOptimisticTokenAssociateOperation = async ({
@@ -56,7 +53,10 @@ const buildOptimisticCoinOperation = async ({
     transactionType === "FEES" ? transaction.amount : (transaction.maxFee ?? new BigNumber(0));
   const value = transaction.amount;
   const type: OperationType = transactionType ?? "OUT";
-  const [_, recipientAddress] = await safeParseAccountId(transaction.recipient);
+  const [_, recipientAddress] = await safeParseAccountId({
+    configOrCurrencyId: account.currency.id,
+    address: transaction.recipient,
+  });
   const recipientWithoutChecksum = recipientAddress?.accountId ?? transaction.recipient;
   const memo = transaction.memo;
 
@@ -92,7 +92,10 @@ const buildOptimisticHTSTokenOperation = async ({
   const fee = transaction.maxFee ?? new BigNumber(0);
   const value = transaction.amount;
   const type: OperationType = "OUT";
-  const [_, recipientAddress] = await safeParseAccountId(transaction.recipient);
+  const [_, recipientAddress] = await safeParseAccountId({
+    configOrCurrencyId: account.currency.id,
+    address: transaction.recipient,
+  });
   const recipientWithoutChecksum = recipientAddress?.accountId ?? transaction.recipient;
   const memo = transaction.memo;
 

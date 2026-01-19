@@ -134,7 +134,7 @@ describe("getERC20TransactionsForAccount", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    (apiClient.getAccount as jest.Mock).mockImplementation(address => ({
+    (apiClient.getAccount as jest.Mock).mockImplementation(({ address }) => ({
       address,
       evm_address: "0x0000000000000000000000000000000000012345",
     }));
@@ -142,6 +142,7 @@ describe("getERC20TransactionsForAccount", () => {
 
   it("should return empty array without balance tokens list", async () => {
     const result = await thirdwebClient.getERC20TransactionsForAccount({
+      configOrCurrencyId: "hedera",
       address: "0.0.1234",
       contractAddresses: [],
       since: null,
@@ -154,6 +155,7 @@ describe("getERC20TransactionsForAccount", () => {
     const mockFetcher = jest.fn().mockResolvedValue([mockedERC20Transaction]);
 
     const result = await thirdwebClient.getERC20TransactionsForAccount({
+      configOrCurrencyId: "hedera",
       address: "0.0.1234",
       contractAddresses: [mockedERC20TokenAddress1],
       since: null,
@@ -168,6 +170,7 @@ describe("getERC20TransactionsForAccount", () => {
     const mockFetcher = jest.fn().mockResolvedValue([mockedERC20Transaction]);
 
     const result = await thirdwebClient.getERC20TransactionsForAccount({
+      configOrCurrencyId: "hedera",
       address: "0.0.1234",
       contractAddresses: [mockedERC20TokenAddress1, mockedERC20TokenAddress2],
       since: null,
@@ -184,6 +187,7 @@ describe("getERC20TransactionsForAccount", () => {
       .mockResolvedValue([mockedERC20Transaction, mockedERC20Transaction]);
 
     const result = await thirdwebClient.getERC20TransactionsForAccount({
+      configOrCurrencyId: "hedera",
       address: "0.0.1234",
       contractAddresses: [mockedERC20TokenAddress1],
       since: null,

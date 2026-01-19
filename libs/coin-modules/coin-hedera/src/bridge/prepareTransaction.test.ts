@@ -60,6 +60,7 @@ describe("prepareTransaction", () => {
     await prepareTransaction(accountWithToken, transaction);
 
     expect(estimateFees).toHaveBeenCalledWith({
+      configOrCurrencyId: accountWithToken.currency.id,
       operationType: HEDERA_OPERATION_TYPES.ContractCall,
       txIntent: {
         intentType: "transaction",
@@ -104,7 +105,7 @@ describe("prepareTransaction", () => {
     await prepareTransaction(accountWithToken, transaction);
 
     expect(estimateFees).toHaveBeenCalledWith({
-      currency: accountWithToken.currency,
+      currencyId: accountWithToken.currency.id,
       operationType: HEDERA_OPERATION_TYPES.TokenTransfer,
     });
   });
@@ -121,7 +122,7 @@ describe("prepareTransaction", () => {
     await prepareTransaction(mockAccount, transaction);
 
     expect(estimateFees).toHaveBeenCalledWith({
-      currency: mockAccount.currency,
+      currencyId: mockAccount.currency.id,
       operationType: HEDERA_OPERATION_TYPES.TokenAssociate,
     });
   });
@@ -136,7 +137,7 @@ describe("prepareTransaction", () => {
     await prepareTransaction(mockAccount, transaction);
 
     expect(estimateFees).toHaveBeenCalledWith({
-      currency: mockAccount.currency,
+      currencyId: mockAccount.currency.id,
       operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
     });
   });

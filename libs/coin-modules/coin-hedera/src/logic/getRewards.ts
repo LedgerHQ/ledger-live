@@ -1,11 +1,21 @@
 import type { Page, Reward } from "@ledgerhq/coin-module-framework/api/types";
+import type { HederaCoinConfig } from "../config";
 import { apiClient } from "../network/api";
 
 /**
  * Fetch staking rewards for a given Hedera account.
  */
-export async function getRewards(address: string, cursor?: string): Promise<Page<Reward>> {
+export async function getRewards({
+  configOrCurrencyId,
+  address,
+  cursor,
+}: {
+  configOrCurrencyId: HederaCoinConfig | string;
+  address: string;
+  cursor: string | undefined;
+}): Promise<Page<Reward>> {
   const mirrorTransactions = await apiClient.getAccountTransactions({
+    configOrCurrencyId,
     address,
     fetchAllPages: false,
     pagingToken: cursor ?? null,

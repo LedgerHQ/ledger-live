@@ -4,20 +4,17 @@ import type {
   BlockOperation,
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/types";
+import type { HederaCoinConfig } from "../config";
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
+import { analyzeStakingOperation } from "../network/utils";
 import type {
   HederaMirrorCoinTransfer,
   HederaMirrorTokenTransfer,
   HederaMirrorTransaction,
 } from "../types";
 import { getBlockInfo } from "./getBlockInfo";
-import {
-  extractFeesPayer,
-  getMemoFromBase64,
-  analyzeStakingOperation,
-  getDateRangeFromBlockHeight,
-} from "./utils";
+import { extractFeesPayer, getMemoFromBase64, getDateRangeFromBlockHeight } from "./utils";
 
 function toHederaAsset(
   mirrorTransfer: HederaMirrorCoinTransfer | HederaMirrorTokenTransfer,
@@ -64,7 +61,13 @@ function createStakingRewardOperations(tx: HederaMirrorTransaction): BlockOperat
   }));
 }
 
-export async function getBlock(height: number): Promise<Block> {
+export async function getBlock({
+  configOrCurrencyId,
+  height,
+}: {
+  configOrCurrencyId: HederaCoinConfig | string;
+  height: number;
+}): Promise<Block> {
   const { start, end } = getDateRangeFromBlockHeight(height);
 
   // block data should be immutable: do not allow querying blocks on non-finalized time range
@@ -73,6 +76,7 @@ export async function getBlock(height: number): Promise<Block> {
 
   const blockInfo = await getBlockInfo(height);
   const transactions = await apiClient.getTransactionsByTimestampRange({
+    configOrCurrencyId,
     startTimestamp: `gte:${start.getTime() / 1000}`,
     endTimestamp: `lt:${end.getTime() / 1000}`,
   });
@@ -84,7 +88,11 @@ export async function getBlock(height: number): Promise<Block> {
       .filter(tx => tx.name === HEDERA_TRANSACTION_NAMES.UpdateAccount)
       .map(async tx => {
         const payerAccount = extractFeesPayer(tx);
-        const analysis = await analyzeStakingOperation(payerAccount, tx);
+        const analysis = await analyzeStakingOperation({
+          configOrCurrencyId,
+          address: payerAccount,
+          mirrorTx: tx,
+        });
 
         return [tx.transaction_hash, analysis] as const;
       }),

@@ -19,6 +19,8 @@ import type { EstimateFeesResult } from "../types";
 import { calculateAmount, getSubAccounts, integrateERC20Operations } from "./utils";
 
 describe("utils", () => {
+  const mockedAccount = getMockedAccount();
+
   beforeAll(() => {
     // Setup CAL client store (automatically set as global store)
     setupCalClientStore();
@@ -28,14 +30,13 @@ describe("utils", () => {
     let estimatedFees: Record<"crypto" | "associate", EstimateFeesResult>;
 
     beforeAll(async () => {
-      const mockedAccount = getMockedAccount();
       const [crypto, associate] = await Promise.all([
         estimateFees({
-          currency: mockedAccount.currency,
+          currencyId: mockedAccount.currency.id,
           operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
         }),
         estimateFees({
-          currency: mockedAccount.currency,
+          currencyId: mockedAccount.currency.id,
           operationType: HEDERA_OPERATION_TYPES.TokenAssociate,
         }),
       ]);
@@ -44,7 +45,6 @@ describe("utils", () => {
     });
 
     it("HBAR transfer, useAllAmount = true", async () => {
-      const mockedAccount = getMockedAccount();
       const mockedTransaction = getMockedTransaction({ useAllAmount: true });
 
       const amount = mockedAccount.balance.minus(estimatedFees.crypto.tinybars);
@@ -59,7 +59,6 @@ describe("utils", () => {
     });
 
     it("HBAR transfer, useAllAmount = false", async () => {
-      const mockedAccount = getMockedAccount();
       const mockedTransaction = getMockedTransaction({
         useAllAmount: false,
         amount: new BigNumber(1000000),
@@ -79,7 +78,6 @@ describe("utils", () => {
     it("token transfer, useAllAmount = true", async () => {
       const mockedTokenCurrency = getMockedHTSTokenCurrency();
       const mockedTokenAccount = getMockedTokenAccount(mockedTokenCurrency);
-      const mockedAccount = getMockedAccount({ subAccounts: [mockedTokenAccount] });
       const mockedTransaction = getMockedTransaction({
         useAllAmount: true,
         subAccountId: mockedTokenAccount.id,
@@ -89,7 +87,7 @@ describe("utils", () => {
       const totalSpent = amount;
 
       const result = await calculateAmount({
-        account: mockedAccount,
+        account: { ...mockedAccount, subAccounts: [mockedTokenAccount] },
         transaction: mockedTransaction,
       });
 
@@ -99,7 +97,6 @@ describe("utils", () => {
     it("token transfer, useAllAmount = false", async () => {
       const mockedTokenCurrency = getMockedHTSTokenCurrency();
       const mockedTokenAccount = getMockedTokenAccount(mockedTokenCurrency);
-      const mockedAccount = getMockedAccount({ subAccounts: [mockedTokenAccount] });
       const mockedTransaction = getMockedTransaction({
         useAllAmount: false,
         amount: new BigNumber(1),
@@ -110,7 +107,7 @@ describe("utils", () => {
       const totalSpent = amount;
 
       const result = await calculateAmount({
-        account: mockedAccount,
+        account: { ...mockedAccount, subAccounts: [mockedTokenAccount] },
         transaction: mockedTransaction,
       });
 
@@ -120,7 +117,6 @@ describe("utils", () => {
     it("token associate operation uses TokenAssociate fee", async () => {
       const mockedTokenCurrency = getMockedHTSTokenCurrency();
       const mockedTokenAccount = getMockedTokenAccount(mockedTokenCurrency);
-      const mockedAccount = getMockedAccount({ subAccounts: [mockedTokenAccount] });
       const mockedTransaction = getMockedTransaction({
         useAllAmount: false,
         amount: new BigNumber(1),
@@ -134,7 +130,7 @@ describe("utils", () => {
       const totalSpent = amount.plus(estimatedFees.associate.tinybars);
 
       const result = await calculateAmount({
-        account: mockedAccount,
+        account: { ...mockedAccount, subAccounts: [mockedTokenAccount] },
         transaction: mockedTransaction,
       });
 
@@ -146,7 +142,6 @@ describe("utils", () => {
     it("returns sub account based on operations and mirror tokens", async () => {
       const firstTokenCurrencyFromCAL = getTokenCurrencyFromCAL(0);
       const secondTokenCurrencyFromCAL = getTokenCurrencyFromCAL(1);
-      const mockedAccount = getMockedAccount();
       const mockedMirrorToken1 = getMockedMirrorToken({
         token_id: firstTokenCurrencyFromCAL.contractAddress,
         balance: 10,
@@ -203,7 +198,6 @@ describe("utils", () => {
 
     it("ignores operation if token is not listed in CAL", async () => {
       const mockedTokenCurrency = getMockedHTSTokenCurrency();
-      const mockedAccount = getMockedAccount();
       const mockedOperation = getMockedOperation({
         accountId: encodeTokenAccountId(mockedAccount.id, mockedTokenCurrency),
       });
@@ -220,7 +214,6 @@ describe("utils", () => {
 
     it("returns sub account for mirror token with no operations yet (e.g. right after association)", async () => {
       const tokenCurrencyFromCAL = getTokenCurrencyFromCAL(0);
-      const mockedAccount = getMockedAccount();
       const mockedTokenHTS = getMockedMirrorToken({
         token_id: tokenCurrencyFromCAL.contractAddress,
         balance: 42,
@@ -244,7 +237,6 @@ describe("utils", () => {
 
     it("returns sub account for erc20 token with no operations yet", async () => {
       const tokenCurrencyFromCAL = getTokenCurrencyFromCALByType("erc20");
-      const mockedAccount = getMockedAccount();
 
       const result = await getSubAccounts({
         ledgerAccountId: mockedAccount.id,
@@ -268,6 +260,15 @@ describe("utils", () => {
     const evmAddress = "0x0000000000000000000000000000000000003039";
     const ledgerAccountId = `js:2:hedera:${address}:`;
     const tokenCurrency = getTokenCurrencyFromCALByType("erc20");
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+
+      jest.spyOn(apiClient, "getAccount").mockResolvedValue({
+        address,
+        evm_address: evmAddress,
+      } as any);
+    });
 
     afterEach(() => {
       jest.restoreAllMocks();
@@ -319,6 +320,7 @@ describe("utils", () => {
       } as any);
 
       const { updatedOperations, newERC20TokenOperations } = await integrateERC20Operations({
+        currencyId: "hedera",
         ledgerAccountId,
         address,
         allOperations: oldMirrorOperations,
@@ -397,6 +399,7 @@ describe("utils", () => {
       } as any);
 
       const { updatedOperations, newERC20TokenOperations } = await integrateERC20Operations({
+        currencyId: "hedera",
         ledgerAccountId,
         address,
         allOperations: oldMirrorOperations,
@@ -492,6 +495,7 @@ describe("utils", () => {
       } as any);
 
       const { updatedOperations } = await integrateERC20Operations({
+        currencyId: "hedera",
         ledgerAccountId,
         address,
         allOperations: operationsWithDuplicate,
@@ -530,6 +534,7 @@ describe("utils", () => {
       ];
 
       const { updatedOperations } = await integrateERC20Operations({
+        currencyId: "hedera",
         ledgerAccountId,
         address,
         allOperations: operationsWithPending,
@@ -636,6 +641,7 @@ describe("utils", () => {
       } as any);
 
       const { updatedOperations, newERC20TokenOperations } = await integrateERC20Operations({
+        currencyId: "hedera",
         ledgerAccountId,
         address,
         allOperations: fridaySyncOperations,

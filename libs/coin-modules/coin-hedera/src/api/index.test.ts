@@ -22,7 +22,7 @@ jest.mock("../network/api");
 const mockExtractInitiator = jest.mocked(logicUtils.extractInitiator);
 const mockGetOperationValue = jest.mocked(logicUtils.getOperationValue);
 const mockMapIntentToSDKOperation = jest.mocked(mapIntentToSDKOperation);
-const mockToEVMAddress = jest.mocked(logicUtils.toEVMAddress);
+const mockToEVMAddress = jest.mocked(networkUtils.toEVMAddress);
 const mockGetAccountTokens = jest.mocked(apiClient.getAccountTokens);
 const mockGetERC20BalancesForAccountV2 = jest.mocked(networkUtils.getERC20BalancesForAccountV2);
 const mockBroadcast = jest.mocked(logic.broadcast);

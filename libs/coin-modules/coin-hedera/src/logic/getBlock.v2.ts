@@ -4,10 +4,11 @@ import type {
   BlockOperation,
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/types";
+import type { HederaCoinConfig } from "../config";
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
-import { enrichERC20Transfers } from "../network/utils";
+import { enrichERC20Transfers, analyzeStakingOperation } from "../network/utils";
 import type {
   ERC20TokenTransfer,
   HederaMirrorCoinTransfer,
@@ -18,7 +19,6 @@ import type {
 import { getBlockInfo } from "./getBlockInfo";
 import {
   getMemoFromBase64,
-  analyzeStakingOperation,
   getDateRangeFromBlockHeight,
   mergeTransactionsFromDifferentSources,
   toEntityId,
@@ -137,7 +137,13 @@ function createStakingRewardOperations(tx: HederaMirrorTransaction): BlockOperat
   }));
 }
 
-export async function getBlockV2(height: number): Promise<Block> {
+export async function getBlockV2({
+  configOrCurrencyId,
+  height,
+}: {
+  configOrCurrencyId: HederaCoinConfig | string;
+  height: number;
+}): Promise<Block> {
   const { start, end } = getDateRangeFromBlockHeight(height);
 
   // block data should be immutable: do not allow querying blocks on non-finalized time range
@@ -145,7 +151,9 @@ export async function getBlockV2(height: number): Promise<Block> {
     throw new Error(`Block ${height} is not available yet`);
   }
 
-  const latestHgraphIndexedTimestampNs = await hgraphClient.getLatestIndexedConsensusTimestamp();
+  const latestHgraphIndexedTimestampNs = await hgraphClient.getLatestIndexedConsensusTimestamp({
+    configOrCurrencyId,
+  });
   const startSeconds = millisToSeconds(start.getTime());
   const endSeconds = millisToSeconds(end.getTime());
   const endNanos = secondsToNanos(endSeconds);
@@ -160,6 +168,7 @@ export async function getBlockV2(height: number): Promise<Block> {
   const [blockInfo, mirrorTransactions, enrichedERC20Transfers] = await Promise.all([
     getBlockInfo(height),
     apiClient.getTransactionsByTimestampRange({
+      configOrCurrencyId,
       startTimestamp: `gte:${startSeconds}`,
       endTimestamp: `lt:${endSeconds}`,
       limit,
@@ -167,12 +176,13 @@ export async function getBlockV2(height: number): Promise<Block> {
     }),
     hgraphClient
       .getERC20TransfersByTimestampRange({
+        configOrCurrencyId,
         startTimestamp: startSeconds.toFixed(9),
         endTimestamp: endSeconds.toFixed(9),
         limit,
         order,
       })
-      .then(erc20Transfers => enrichERC20Transfers(erc20Transfers)),
+      .then(erc20Transfers => enrichERC20Transfers({ configOrCurrencyId, erc20Transfers })),
   ]);
 
   const mergeResult = mergeTransactionsFromDifferentSources({
@@ -189,7 +199,11 @@ export async function getBlockV2(height: number): Promise<Block> {
   const stakingAnalyses = await Promise.all(
     mergeResult.merged.filter(isStakingTransactionType).map(async item => {
       const payerAccount = extractFeesPayer(item.data);
-      const analysis = await analyzeStakingOperation(payerAccount, item.data);
+      const analysis = await analyzeStakingOperation({
+        configOrCurrencyId,
+        address: payerAccount,
+        mirrorTx: item.data,
+      });
 
       return [item.data.transaction_hash, analysis] as const;
     }),

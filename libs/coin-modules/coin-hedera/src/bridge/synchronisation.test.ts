@@ -3,7 +3,6 @@ import type { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/
 import type { Account } from "@ledgerhq/types-live";
 import hederaCoinConfig from "../config";
 import * as logic from "../logic";
-import * as logicUtils from "../logic/utils";
 import { apiClient } from "../network/api";
 import * as networkUtils from "../network/utils";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
@@ -18,10 +17,6 @@ jest.mock("../config");
 jest.mock("../network/api");
 jest.mock("../network/utils");
 jest.mock("../logic");
-jest.mock("../logic/utils", () => ({
-  ...jest.requireActual("../logic/utils"),
-  toEVMAddress: jest.fn(),
-}));
 jest.mock("@ledgerhq/ledger-wallet-framework/account", () => ({
   ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account"),
   getSyncHash: jest.fn(),
@@ -31,13 +26,13 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account", () => ({
 const mockEncodeAccountId = jest.mocked(coinFrameworkAccount.encodeAccountId);
 const mockGetSyncHash = jest.mocked(coinFrameworkAccount.getSyncHash);
 const mockHederaConfig = jest.mocked(hederaCoinConfig);
-const mockToEVMAddress = jest.mocked(logicUtils.toEVMAddress);
+const mockToEVMAddress = jest.mocked(networkUtils.toEVMAddress);
 const mockGetAccount = jest.mocked(apiClient.getAccount);
 const mockGetAccountTokens = jest.mocked(apiClient.getAccountTokens);
 const mockListOperationsV2 = jest.mocked(logic.listOperationsV2);
 const mockGetERC20BalancesForAccountV2 = jest.mocked(networkUtils.getERC20BalancesForAccountV2);
 
-const mockConfig = getMockedConfig();
+const mockConfig = { ...getMockedConfig(), useHgraphForErc20: true };
 const mockCurrency = getMockedCurrency();
 const mockMirrorAccount = getMockedMirrorAccount();
 const mockAddress = mockMirrorAccount.account;
@@ -57,7 +52,7 @@ describe("getAccountShape", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockHederaConfig.getCoinConfig.mockReturnValue({ ...mockConfig, useHgraphForErc20: true });
+    mockHederaConfig.getCoinConfig.mockReturnValue(mockConfig);
     mockEncodeAccountId.mockReturnValue(mockLiveAccountId);
     mockGetSyncHash.mockResolvedValue(mockSyncHash);
     mockToEVMAddress.mockResolvedValue(mockEvmAddress);
@@ -85,7 +80,10 @@ describe("getAccountShape", () => {
     await getAccountShape(mockInfo, { paginationConfig: {} });
 
     expect(mockGetERC20BalancesForAccountV2).toHaveBeenCalledTimes(1);
-    expect(mockGetERC20BalancesForAccountV2).toHaveBeenCalledWith(mockAddress);
+    expect(mockGetERC20BalancesForAccountV2).toHaveBeenCalledWith({
+      configOrCurrencyId: mockConfig,
+      address: mockAddress,
+    });
     expect(networkUtils.getERC20BalancesForAccount).not.toHaveBeenCalled();
   });
 
@@ -147,7 +145,7 @@ describe("getAccountShape", () => {
 describe("postSync", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockHederaConfig.getCoinConfig.mockReturnValue(mockConfig);
+    mockHederaConfig.getCoinConfig.mockReturnValue({ ...mockConfig, useHgraphForErc20: false });
   });
 
   it("should remove pending operations that match confirmed ERC20 operations", () => {

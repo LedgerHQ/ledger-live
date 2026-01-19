@@ -24,6 +24,7 @@ import * as estimateFees from "../logic/estimateFees";
 import * as logicUtils from "../logic/utils";
 import { HEDERA_MAX_MEMO_SIZE } from "../logic/validateMemo";
 import { rpcClient } from "../network/rpc";
+import * as networkUtils from "../network/utils";
 import * as preloadData from "../preload-data";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
@@ -41,6 +42,10 @@ jest.mock("../logic/estimateFees", () => ({
 
 jest.mock("../logic/utils", () => ({
   ...jest.requireActual("../logic/utils"),
+  resolveConfig: jest.fn(),
+}));
+jest.mock("../network/utils", () => ({
+  ...jest.requireActual("../network/utils"),
   getCurrencyToUSDRate: jest.fn(),
   checkAccountTokenAssociationStatus: jest.fn(),
 }));
@@ -59,15 +64,18 @@ jest.mock("../preload-data", () => ({
 }));
 
 import { getTransactionStatus } from "./getTransactionStatus";
+import { getMockedConfig } from "../test/fixtures/config.fixture";
 
 const mockEstimateFees = estimateFees.estimateFees as jest.Mock;
-const mockGetCurrencyToUSDRate = logicUtils.getCurrencyToUSDRate as unknown as jest.Mock;
+const mockGetCurrencyToUSDRate = networkUtils.getCurrencyToUSDRate as unknown as jest.Mock;
+const mockResolveConfig = logicUtils.resolveConfig as jest.Mock;
 const mockCheckAccountTokenAssociationStatus =
-  logicUtils.checkAccountTokenAssociationStatus as unknown as jest.Mock;
+  networkUtils.checkAccountTokenAssociationStatus as unknown as jest.Mock;
 const mockGetCurrentHederaPreloadData = preloadData.getCurrentHederaPreloadData as jest.Mock;
 const mockFindSubAccountById = accountHelpers.findSubAccountById as jest.Mock;
 
 describe("getTransactionStatus", () => {
+  const mockConfig = getMockedConfig();
   const mockedEstimatedFee: EstimateFeesResult = { tinybars: new BigNumber(1) };
   const mockedUsdRate = new BigNumber(1);
   const mockPreload = { validators: [{ nodeId: 1 }, { nodeId: 2 }] } as HederaPreloadData;
@@ -78,6 +86,7 @@ describe("getTransactionStatus", () => {
     jest.clearAllMocks();
 
     // Use persistent mocks (better for test suites) instead of mockResolvedValueOnce
+    mockResolveConfig.mockReturnValue(mockConfig);
     mockEstimateFees.mockResolvedValue(mockedEstimatedFee);
     mockGetCurrencyToUSDRate.mockResolvedValue(mockedUsdRate);
     mockGetCurrentHederaPreloadData.mockReturnValue(mockPreload);
@@ -90,7 +99,7 @@ describe("getTransactionStatus", () => {
   });
 
   afterAll(async () => {
-    await rpcClient._resetInstance();
+    rpcClient._resetInstance();
   });
 
   it("coin transfer with valid recipient and sufficient balance completes successfully", async () => {
@@ -341,7 +350,7 @@ describe("getTransactionStatus", () => {
 
   it("adds warning if token association status can't be verified", async () => {
     jest
-      .spyOn(logicUtils, "checkAccountTokenAssociationStatus")
+      .spyOn(networkUtils, "checkAccountTokenAssociationStatus")
       .mockRejectedValueOnce(new HederaRecipientTokenAssociationUnverified());
 
     const mockedTokenCurrency = getMockedHTSTokenCurrency();

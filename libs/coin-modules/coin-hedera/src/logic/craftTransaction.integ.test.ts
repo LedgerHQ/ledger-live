@@ -47,11 +47,11 @@ describe("craftTransaction", () => {
 
     const resultAccountId = await craftTransaction({
       txIntent: txIntentAccountId,
-      config: defaultConfig,
+      configOrCurrencyId: defaultConfig,
     });
     const resultEVMAddress = await craftTransaction({
       txIntent: txIntentEVMAddress,
-      config: defaultConfig,
+      configOrCurrencyId: defaultConfig,
     });
 
     expect(resultAccountId.tx).toBeInstanceOf(sdk.ContractExecuteTransaction);
@@ -106,11 +106,11 @@ describe("craftTransaction", () => {
 
     const resultAccountId = await craftTransaction({
       txIntent: txIntentAccountId,
-      config: defaultConfig,
+      configOrCurrencyId: defaultConfig,
     });
     const resultEVMAddress = await craftTransaction({
       txIntent: txIntentEVMAddress,
-      config: defaultConfig,
+      configOrCurrencyId: defaultConfig,
     });
 
     expect(resultAccountId.tx).toBeInstanceOf(sdk.ContractExecuteTransaction);

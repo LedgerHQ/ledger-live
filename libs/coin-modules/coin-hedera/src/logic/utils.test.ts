@@ -5,6 +5,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
+import coinConfig from "../config";
 import {
   HEDERA_OPERATION_TYPES,
   HEDERA_TRANSACTION_MODES,
@@ -27,7 +28,9 @@ import * as preloadData from "../preload-data";
 const mockGetCurrentHederaPreloadData = preloadData.getCurrentHederaPreloadData as jest.Mock;
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import { getMockedEnrichedERC20Transfer } from "../test/fixtures/common.fixture";
+import { getMockedConfig } from "../test/fixtures/config.fixture";
 import {
+  getMockedCurrency,
   getMockedERC20TokenCurrency,
   getMockedHTSTokenCurrency,
 } from "../test/fixtures/currency.fixture";
@@ -60,11 +63,8 @@ import {
   isAutoTokenAssociationEnabled,
   isTokenAssociateTransaction,
   getTransactionExplorer,
-  checkAccountTokenAssociationStatus,
-  safeParseAccountId,
   getSyntheticBlock,
   fromEVMAddress,
-  toEVMAddress,
   formatTransactionId,
   getDateRangeFromBlockHeight,
   getBlockHash,
@@ -80,8 +80,6 @@ import {
   mapIntentToSDKOperation,
   getOperationDetailsExtraFields,
   calculateAPY,
-  analyzeStakingOperation,
-  calculateUncommittedBalanceChange,
   toEntityId,
   mergeTransactionsFromDifferentSources,
   millisToSeconds,
@@ -90,10 +88,18 @@ import {
   toTimestamp,
   createStakingRewardOperationHash,
 } from "./utils";
+import {
+  checkAccountTokenAssociationStatus,
+  safeParseAccountId,
+  toEVMAddress,
+  analyzeStakingOperation,
+  calculateUncommittedBalanceChange,
+} from "../network/utils";
 
 jest.mock("../network/api");
 
 describe("logic utils", () => {
+  const mockCurrency = getMockedCurrency();
   let oldStakingLedgerNodeIdEnv: number;
 
   beforeEach(() => {
@@ -105,11 +111,12 @@ describe("logic utils", () => {
   });
 
   beforeAll(() => {
+    coinConfig.setCoinConfig(getMockedConfig);
     oldStakingLedgerNodeIdEnv = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
   });
 
   afterAll(async () => {
-    await rpcClient._resetInstance();
+    rpcClient._resetInstance();
   });
 
   describe("signature serialization", () => {
@@ -575,7 +582,10 @@ describe("logic utils", () => {
 
       await checkAccountTokenAssociationStatus(addressWithChecksum, htsToken);
       expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
-      expect(apiClient.getAccount).toHaveBeenCalledWith("0.0.9124531");
+      expect(apiClient.getAccount).toHaveBeenCalledWith({
+        configOrCurrencyId: mockCurrency.id,
+        address: "0.0.9124531",
+      });
     });
   });
 
@@ -597,7 +607,10 @@ describe("logic utils", () => {
 
   describe("safeParseAccountId", () => {
     it("returns account id and no checksum for valid address without checksum", async () => {
-      const [error, result] = await safeParseAccountId("0.0.9124531");
+      const [error, result] = await safeParseAccountId({
+        configOrCurrencyId: "hedera",
+        address: "0.0.9124531",
+      });
 
       expect(error).toBeNull();
       expect(result?.accountId).toBe("0.0.9124531");
@@ -605,7 +618,10 @@ describe("logic utils", () => {
     });
 
     it("returns account id and checksum for valid address with correct checksum", async () => {
-      const [error, result] = await safeParseAccountId("0.0.9124531-xrxlv");
+      const [error, result] = await safeParseAccountId({
+        configOrCurrencyId: "hedera",
+        address: "0.0.9124531-xrxlv",
+      });
 
       expect(error).toBeNull();
       expect(result?.accountId).toBe("0.0.9124531");
@@ -613,14 +629,20 @@ describe("logic utils", () => {
     });
 
     it("returns error for valid address with incorrect checksum", async () => {
-      const [error, accountId] = await safeParseAccountId("0.0.9124531-invld");
+      const [error, accountId] = await safeParseAccountId({
+        configOrCurrencyId: "hedera",
+        address: "0.0.9124531-invld",
+      });
 
       expect(error).toBeInstanceOf(HederaRecipientInvalidChecksum);
       expect(accountId).toBeNull();
     });
 
     it("returns error for invalid address format", async () => {
-      const [error, accountId] = await safeParseAccountId("not-a-valid-address");
+      const [error, accountId] = await safeParseAccountId({
+        configOrCurrencyId: "hedera",
+        address: "not-a-valid-address",
+      });
 
       expect(error).toBeInstanceOf(InvalidAddress);
       expect(accountId).toBeNull();
@@ -693,17 +715,26 @@ describe("logic utils", () => {
     it("returns correct EVM address for valid Hedera account ID", async () => {
       (apiClient.getAccount as jest.Mock).mockResolvedValueOnce(mockMirrorAccount);
 
-      const evmAddress = await toEVMAddress(mockMirrorAccount.account);
+      const evmAddress = await toEVMAddress({
+        configOrCurrencyId: mockCurrency.id,
+        accountId: mockMirrorAccount.account,
+      });
 
-      expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
-      expect(apiClient.getAccount).toHaveBeenCalledWith(mockMirrorAccount.account);
       expect(evmAddress).toBe(mockMirrorAccount.evm_address);
+      expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
+      expect(apiClient.getAccount).toHaveBeenCalledWith({
+        configOrCurrencyId: mockCurrency.id,
+        address: mockMirrorAccount.account,
+      });
     });
 
     it("returns null when API call fails", async () => {
       (apiClient.getAccount as jest.Mock).mockRejectedValueOnce(new Error("API error"));
 
-      const evmAddress = await toEVMAddress(mockMirrorAccount.account);
+      const evmAddress = await toEVMAddress({
+        configOrCurrencyId: mockCurrency.id,
+        accountId: mockMirrorAccount.account,
+      });
 
       expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
       expect(evmAddress).toBeNull();
@@ -1092,6 +1123,7 @@ describe("logic utils", () => {
       (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValueOnce([]);
 
       const result = await calculateUncommittedBalanceChange({
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         startTimestamp: mockStartTimestamp,
         endTimestamp: mockEndTimestamp,
@@ -1100,6 +1132,7 @@ describe("logic utils", () => {
       expect(result).toEqual(new BigNumber(0));
       expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledTimes(1);
       expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledWith({
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         startTimestamp: `gt:${mockStartTimestamp}`,
         endTimestamp: `lte:${mockEndTimestamp}`,
@@ -1136,6 +1169,7 @@ describe("logic utils", () => {
       );
 
       const result = await calculateUncommittedBalanceChange({
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         startTimestamp: mockStartTimestamp,
         endTimestamp: mockEndTimestamp,
@@ -1167,6 +1201,7 @@ describe("logic utils", () => {
       );
 
       const result = await calculateUncommittedBalanceChange({
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         startTimestamp: mockStartTimestamp,
         endTimestamp: mockEndTimestamp,
@@ -1180,11 +1215,13 @@ describe("logic utils", () => {
 
       const [resultEqual, resultInvalid] = await Promise.all([
         calculateUncommittedBalanceChange({
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           startTimestamp: mockStartTimestamp,
           endTimestamp: mockStartTimestamp,
         }),
         calculateUncommittedBalanceChange({
+          configOrCurrencyId: mockCurrency.id,
           address: mockAddress,
           startTimestamp: mockEndTimestamp,
           endTimestamp: mockStartTimestamp,
@@ -1217,7 +1254,11 @@ describe("logic utils", () => {
         .mockResolvedValueOnce(accountBefore)
         .mockResolvedValueOnce(accountAfter);
 
-      const result = await analyzeStakingOperation(mockAddress, mockTx);
+      const result = await analyzeStakingOperation({
+        configOrCurrencyId: mockCurrency.id,
+        address: mockAddress,
+        mirrorTx: mockTx,
+      });
 
       expect(result).toEqual({
         operationType: "DELEGATE",
@@ -1226,8 +1267,16 @@ describe("logic utils", () => {
         stakedAmount: BigInt(1000),
       });
       expect(apiClient.getAccount).toHaveBeenCalledTimes(2);
-      expect(apiClient.getAccount).toHaveBeenCalledWith(mockAddress, `lt:${mockTimestamp}`);
-      expect(apiClient.getAccount).toHaveBeenCalledWith(mockAddress, `eq:${mockTimestamp}`);
+      expect(apiClient.getAccount).toHaveBeenCalledWith({
+        configOrCurrencyId: mockCurrency.id,
+        address: mockAddress,
+        timestamp: `lt:${mockTimestamp}`,
+      });
+      expect(apiClient.getAccount).toHaveBeenCalledWith({
+        configOrCurrencyId: mockCurrency.id,
+        address: mockAddress,
+        timestamp: `eq:${mockTimestamp}`,
+      });
     });
 
     it("detects UNDELEGATE operation when staking stops", async () => {
@@ -1239,7 +1288,11 @@ describe("logic utils", () => {
         .mockResolvedValueOnce(accountBefore)
         .mockResolvedValueOnce(accountAfter);
 
-      const result = await analyzeStakingOperation(mockAddress, mockTx);
+      const result = await analyzeStakingOperation({
+        configOrCurrencyId: mockCurrency.id,
+        address: mockAddress,
+        mirrorTx: mockTx,
+      });
 
       expect(result).toEqual({
         operationType: "UNDELEGATE",
@@ -1258,7 +1311,11 @@ describe("logic utils", () => {
         .mockResolvedValueOnce(accountBefore)
         .mockResolvedValueOnce(accountAfter);
 
-      const result = await analyzeStakingOperation(mockAddress, mockTx);
+      const result = await analyzeStakingOperation({
+        configOrCurrencyId: mockCurrency.id,
+        address: mockAddress,
+        mirrorTx: mockTx,
+      });
 
       expect(result).toEqual({
         operationType: "REDELEGATE",
@@ -1297,10 +1354,15 @@ describe("logic utils", () => {
         .mockResolvedValueOnce(mockAccountBefore)
         .mockResolvedValueOnce(mockAccountAfter);
 
-      const result = await analyzeStakingOperation(mockAddress, mockTx);
+      const result = await analyzeStakingOperation({
+        configOrCurrencyId: mockCurrency.id,
+        address: mockAddress,
+        mirrorTx: mockTx,
+      });
 
       expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledTimes(1);
       expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledWith({
+        configOrCurrencyId: mockCurrency.id,
         address: mockAddress,
         startTimestamp: `gt:${mockAccountBefore.balance.timestamp}`,
         endTimestamp: `lte:${mockTimestamp}`,
@@ -1321,7 +1383,11 @@ describe("logic utils", () => {
         .mockResolvedValueOnce(accountBefore)
         .mockResolvedValueOnce(accountAfter);
 
-      const result = await analyzeStakingOperation(mockAddress, mockTx);
+      const result = await analyzeStakingOperation({
+        configOrCurrencyId: mockCurrency.id,
+        address: mockAddress,
+        mirrorTx: mockTx,
+      });
 
       expect(result).toBeNull();
     });
@@ -1334,7 +1400,11 @@ describe("logic utils", () => {
         .mockResolvedValueOnce(accountBefore)
         .mockResolvedValueOnce(accountAfter);
 
-      const result = await analyzeStakingOperation(mockAddress, mockTx);
+      const result = await analyzeStakingOperation({
+        configOrCurrencyId: mockCurrency.id,
+        address: mockAddress,
+        mirrorTx: mockTx,
+      });
 
       expect(result).toBeNull();
     });

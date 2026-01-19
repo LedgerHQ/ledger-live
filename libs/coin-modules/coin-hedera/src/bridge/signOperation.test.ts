@@ -1,8 +1,6 @@
-import hederaCoinConfig from "../config";
 import { craftTransaction } from "../logic/craftTransaction";
 import { combine } from "../logic/combine";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
-import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import { buildSignOperation } from "./signOperation";
 
@@ -31,9 +29,7 @@ describe("signOperation", () => {
   it("passes hedera coin config to craftTransaction", async () => {
     const account = getMockedAccount();
     const transaction = getMockedTransaction();
-    const config = getMockedConfig();
 
-    jest.spyOn(hederaCoinConfig, "getCoinConfig").mockReturnValue(config);
     jest
       .mocked(craftTransaction)
       .mockResolvedValue({ tx: {} as never, serializedTx: "serialized-tx" });
@@ -58,12 +54,10 @@ describe("signOperation", () => {
       });
     });
 
-    expect(hederaCoinConfig.getCoinConfig).toHaveBeenCalledTimes(1);
-    expect(hederaCoinConfig.getCoinConfig).toHaveBeenCalledWith(account.currency.id);
     expect(craftTransaction).toHaveBeenCalledTimes(1);
     expect(craftTransaction).toHaveBeenCalledWith({
       txIntent: expect.any(Object),
-      config,
+      configOrCurrencyId: account.currency.id,
     });
     expect(combine).toHaveBeenCalledTimes(1);
   });

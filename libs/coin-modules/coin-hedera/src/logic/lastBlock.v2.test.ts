@@ -28,7 +28,7 @@ describe("lastBlockV2", () => {
   });
 
   it("should return the last block info using the smaller timestamp", async () => {
-    const result = await lastBlockV2();
+    const result = await lastBlockV2({ configOrCurrencyId: "hedera" });
     const expectedSyntheticBlock = getSyntheticBlock(mockHgraphTimestamp.toFixed(9));
 
     expect(apiClient.getLatestTransaction).toHaveBeenCalledTimes(1);
@@ -40,15 +40,15 @@ describe("lastBlockV2", () => {
 
   it("should only query transactions from fully finalized blocks", async () => {
     const now = Date.now();
-    await lastBlockV2();
+    await lastBlockV2({ configOrCurrencyId: "hedera" });
 
-    // lastBlockV2() accounts for block window size: a transaction at the start of a block
+    // lastBlockV2({ configOrCurrencyId: "hedera" }) accounts for block window size: a transaction at the start of a block
     // creates a block whose END time is BLOCK_WINDOW later, so we query transactions
     // before (now - FINALITY_MS - BLOCK_WINDOW) to ensure getBlock() can fetch it.
     const expectedBefore = now - FINALITY_MS - BLOCK_WINDOW_MS;
 
     expect(apiClient.getLatestTransaction).toHaveBeenCalledTimes(1);
-    const calledWithDate = (apiClient.getLatestTransaction as jest.Mock).mock.calls[0][0] as Date;
+    const calledWithDate = (apiClient.getLatestTransaction as jest.Mock).mock.calls[0][0].before as Date;
     expect(calledWithDate.getTime()).toBeGreaterThanOrEqual(expectedBefore - 500);
     expect(calledWithDate.getTime()).toBeLessThanOrEqual(expectedBefore + 500);
   });

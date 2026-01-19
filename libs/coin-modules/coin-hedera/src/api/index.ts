@@ -7,13 +7,12 @@ import type {
   TransactionValidation,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { Operation as LiveOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { validateAddress } from "../bridge/validateAddress";
-import coinConfig, { type HederaConfig } from "../config";
+import hederaCoinConfig, { type HederaCoinConfig, type HederaConfig } from "../config";
 import {
   HARDCODED_BLOCK_HEIGHT,
   HEDERA_OPERATION_TYPES,
@@ -41,22 +40,24 @@ import {
   getBlockHash,
   getOperationValue,
   mapIntentToSDKOperation,
-  toEVMAddress,
 } from "../logic/utils";
 import { apiClient } from "../network/api";
-import { getERC20BalancesForAccountV2 } from "../network/utils";
-import type { EstimateFeesParams, HederaMemo, HederaOperationExtra } from "../types";
+import { getERC20BalancesForAccountV2, toEVMAddress } from "../network/utils";
+import type { EstimateFeesParams, HederaMemo, HederaOperationExtra, HederaTxData } from "../types";
 
 export function createApi(
   config: HederaConfig,
   currencyId: string,
-): AlpacaApi<HederaMemo> & BridgeApi {
-  coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
-  const currency = getCryptoCurrencyById(currencyId);
+): AlpacaApi<HederaMemo, HederaTxData> & BridgeApi {
+  const coinConfig: HederaCoinConfig = { ...config, status: { type: "active" } };
+  hederaCoinConfig.setCoinConfig(() => coinConfig);
 
   return {
     broadcast: async tx => {
-      const response = await logicBroadcast(tx);
+      const response = await logicBroadcast({
+        configOrCurrencyId: coinConfig,
+        txWithSignature: tx,
+      });
 
       return Buffer.from(response.transactionHash).toString("base64");
     },
@@ -64,9 +65,9 @@ export function createApi(
     craftTransaction: async (txIntent, customFees) => {
       invariant(!txIntent.useAllAmount, "useAllAmount is not supported");
       const { serializedTx } = await craftTransaction({
+        configOrCurrencyId: coinConfig,
         txIntent,
         ...(customFees && { customFees }),
-        config,
       });
 
       return {
@@ -86,9 +87,9 @@ export function createApi(
       const operationType = mapIntentToSDKOperation(txIntent);
 
       if (operationType === HEDERA_OPERATION_TYPES.ContractCall) {
-        estimateFeesParams = { operationType, txIntent };
+        estimateFeesParams = { configOrCurrencyId: coinConfig, operationType, txIntent };
       } else {
-        estimateFeesParams = { currency, operationType };
+        estimateFeesParams = { currencyId, operationType };
       }
 
       const estimatedFee = await logicEstimateFees(estimateFeesParams);
@@ -98,21 +99,21 @@ export function createApi(
       };
     },
     getBalance: (address: string, options?: BalanceOptions) =>
-      rejectBalanceOptions(() => getBalance(currency, address), options),
+      rejectBalanceOptions(() => getBalance({ config: coinConfig, currencyId, address }), options),
     getBlock: height => {
       if (config.useHgraphForErc20) {
-        return getBlockV2(height);
+        return getBlockV2({ configOrCurrencyId: coinConfig, height });
       }
 
-      return getBlock(height);
+      return getBlock({ configOrCurrencyId: coinConfig, height });
     },
     getBlockInfo: height => getBlockInfo(height),
     lastBlock: () => {
       if (config.useHgraphForErc20) {
-        return lastBlockV2();
+        return lastBlockV2({ configOrCurrencyId: coinConfig });
       }
 
-      return lastBlock();
+      return lastBlock({ configOrCurrencyId: coinConfig });
     },
     listOperations: async (address, { cursor, limit, order, minHeight }) => {
       invariant(minHeight === 0, "minHeight is not supported");
@@ -124,15 +125,19 @@ export function createApi(
       };
 
       if (config.useHgraphForErc20) {
-        const evmAddress = await toEVMAddress(address);
+        const evmAddress = await toEVMAddress({
+          configOrCurrencyId: coinConfig,
+          accountId: address,
+        });
         invariant(evmAddress, `hedera: evm address is missing for ${address}`);
         const [mirrorTokens, erc20TokenBalances] = await Promise.all([
-          apiClient.getAccountTokens(address),
-          getERC20BalancesForAccountV2(address),
+          apiClient.getAccountTokens({ configOrCurrencyId: coinConfig, address }),
+          getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address }),
         ]);
 
         latestAccountOperations = await logicListOperationsV2({
-          currency,
+          config: coinConfig,
+          currencyId,
           address,
           evmAddress,
           mirrorTokens,
@@ -146,10 +151,14 @@ export function createApi(
           useSyntheticBlocks: true,
         });
       } else {
-        const mirrorTokens = await apiClient.getAccountTokens(address);
+        const mirrorTokens = await apiClient.getAccountTokens({
+          configOrCurrencyId: coinConfig,
+          address,
+        });
 
         latestAccountOperations = await logicListOperations({
-          currency,
+          config: coinConfig,
+          currencyId,
           address,
           cursor,
           limit,
@@ -238,9 +247,10 @@ export function createApi(
 
       return { items: alpacaOperations, next: latestAccountOperations.nextCursor || undefined };
     },
-    getValidators: cursor => getValidators(cursor),
-    getStakes: async address => getStakes(address),
-    getRewards: async (address, cursor) => getRewards(address, cursor),
+    getValidators: cursor => getValidators({ configOrCurrencyId: coinConfig, cursor }),
+    getStakes: async address => getStakes({ configOrCurrencyId: coinConfig, address }),
+    getRewards: async (address, cursor) =>
+      getRewards({ configOrCurrencyId: coinConfig, address, cursor }),
     validateIntent: async (
       _transactionIntent,
       _balances,
