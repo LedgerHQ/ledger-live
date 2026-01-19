@@ -38,8 +38,16 @@ describe("getBlock", () => {
         gasPrice: "20000000000",
         status: 1,
         value: "1000",
-        from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-        to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+        from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+        to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        erc20Transfers: [
+          {
+            asset: { type: "erc20", assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" },
+            from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+            value: "1000000",
+          },
+        ],
       })
       .mockResolvedValueOnce({
         hash: "0xtx2",
@@ -49,9 +57,10 @@ describe("getBlock", () => {
         gasUsed: "21000",
         gasPrice: "20000000000",
         status: 1,
-        value: "2000",
-        from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-        to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+        value: "0",
+        from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+        to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        erc20Transfers: [],
       });
 
     mockGetNodeApi.mockReturnValue({
@@ -73,7 +82,18 @@ describe("getBlock", () => {
     });
     expect(result.transactions).toHaveLength(2);
     expect(result.transactions[0].hash).toBe("0xtx1");
-    expect(result.transactions[0].operations.length).toBeGreaterThan(0);
+
+    // Check native transfer operations (tx1 has value: 1000)
+    const tx1NativeOps = result.transactions[0].operations.filter(op => op.asset.type === "native");
+    expect(tx1NativeOps).toHaveLength(2); // sender and receiver
+
+    // Check ERC20 transfer operations (tx1 has one ERC20 transfer)
+    const tx1Erc20Ops = result.transactions[0].operations.filter(op => op.asset.type === "erc20");
+    expect(tx1Erc20Ops).toHaveLength(2); // sender and receiver
+    expect(tx1Erc20Ops[0].asset.assetReference).toBe("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
+
+    // tx2 has no value and no ERC20 transfers
+    expect(result.transactions[1].operations).toHaveLength(0);
   });
 
   it("returns block with transactions using a ledger node", async () => {
@@ -108,9 +128,17 @@ describe("getBlock", () => {
         gasUsed: "21000",
         gasPrice: "20000000000",
         status: 1,
-        value: "1000",
-        from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-        to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+        value: "0",
+        from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+        to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        erc20Transfers: [
+          {
+            asset: { type: "erc20", assetReference: "0xF68C9Df95a18B2A5a5fa1124d79EEEffBaD0B6Fa" },
+            from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+            value: "20000000000000000000000",
+          },
+        ],
       })
       .mockResolvedValueOnce({
         hash: "0xtx2",
@@ -121,8 +149,9 @@ describe("getBlock", () => {
         gasPrice: "20000000000",
         status: 1,
         value: "2000",
-        from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-        to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+        from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+        to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        erc20Transfers: [],
       });
     mockGetNodeApi.mockReturnValue({
       getBlockByHeight: mockGetBlockByHeight,
@@ -144,5 +173,16 @@ describe("getBlock", () => {
     expect(result.transactions).toHaveLength(2);
     expect(result.transactions[0].hash).toBe("0xtx1");
     expect(result.transactions[1].hash).toBe("0xtx2");
+
+    // tx1: ERC20 only (value: 0, one ERC20 transfer)
+    const tx1Erc20Ops = result.transactions[0].operations.filter(op => op.asset.type === "erc20");
+    expect(tx1Erc20Ops).toHaveLength(2); // sender and receiver
+    expect(tx1Erc20Ops[0].asset.assetReference).toBe("0xF68C9Df95a18B2A5a5fa1124d79EEEffBaD0B6Fa");
+
+    // tx2: Native only (value: 2000, no ERC20)
+    const tx2NativeOps = result.transactions[1].operations.filter(op => op.asset.type === "native");
+    expect(tx2NativeOps).toHaveLength(2); // sender and receiver
+    const tx2Erc20Ops = result.transactions[1].operations.filter(op => op.asset.type === "erc20");
+    expect(tx2Erc20Ops).toHaveLength(0);
   });
 });
