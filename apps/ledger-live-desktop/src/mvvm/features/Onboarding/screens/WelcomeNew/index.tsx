@@ -110,6 +110,7 @@ export function WelcomeNew() {
             </Button>
 
             <Button
+              data-testid="onboarding-device-button"
               iconPosition="right"
               variant="neutral"
               onClick={handleBuyNew}

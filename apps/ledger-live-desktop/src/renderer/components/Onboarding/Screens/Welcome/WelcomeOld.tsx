@@ -210,6 +210,7 @@ export function WelcomeOld() {
             {t("onboarding.screens.welcome.nextButton")}
           </Button>
           <Button
+            data-testid="onboarding-device-button"
             iconPosition="right"
             variant="main"
             onClick={() =>
