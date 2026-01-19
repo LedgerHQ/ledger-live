@@ -45,12 +45,13 @@ describe("getBlock ERC20 transfers", () => {
         type: "erc20",
         assetReference: "0xaBf26902Fd7B624e0db40D31171eA9ddDf078351", // EIP-55 checksummed
       };
+      const expectedAmount = 742832320000000000000000n;
 
       const block = await module.getBlock(69733298);
 
       // Verify block info
       expect(block.info.height).toBe(69733298);
-      expect(block.info.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(block.info.hash).toBe("0x54eab648119283f9d0fa903a36b7e67db69f1fbc267af8ebc5390cfbbe7bd6e0")
 
       // Find the transaction with ERC20 transfer
       const tx = block.transactions.find(
@@ -59,13 +60,16 @@ describe("getBlock ERC20 transfers", () => {
       expect(tx).toBeDefined();
 
       // Find ERC20 transfer operation for the expected token
-      const tokenOp = tx!.operations.find(
+      const tokenOps = tx!.operations.filter(
         op =>
           op.type === "transfer" &&
           op.asset.type === expectedAsset.type &&
           op.asset.assetReference === expectedAsset.assetReference,
       );
-      expect(tokenOp).toBeDefined();
+      // there are two transfer operations for the expected token, 
+      // one positive and one negative depending on the direction of the transfer
+      expect(tokenOps).toHaveLength(2);
+      expect(tokenOps.map(op => op.amount).sort()).toEqual([-expectedAmount, expectedAmount]);
     });
   });
 
@@ -97,12 +101,13 @@ describe("getBlock ERC20 transfers", () => {
         type: "erc20",
         assetReference: "0xF68C9Df95a18B2A5a5fa1124d79EEEffBaD0B6Fa", // EIP-55 checksummed
       };
+      const expectedAmount = 20000000000000000000000n;
 
       const block = await module.getBlock(18821112);
 
       // Verify block info
       expect(block.info.height).toBe(18821112);
-      expect(block.info.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+      expect(block.info.hash).toBe("0x9c00dca3e674b19d4485432616e7140ef9099ad451d41eae28727a3278daf914");
 
       // Find the transaction with ERC20 transfer
       const tx = block.transactions.find(
@@ -111,13 +116,16 @@ describe("getBlock ERC20 transfers", () => {
       expect(tx).toBeDefined();
 
       // Find ERC20 transfer operation for the expected token
-      const tokenOp = tx!.operations.find(
+      const tokenOps = tx!.operations.filter(
         op =>
           op.type === "transfer" &&
           op.asset.type === expectedAsset.type &&
           op.asset.assetReference === expectedAsset.assetReference,
       );
-      expect(tokenOp).toBeDefined();
+      // there are two transfer operations for the expected token, 
+      // one positive and one negative depending on the direction of the transfer
+      expect(tokenOps).toHaveLength(2);
+      expect(tokenOps.map(op => op.amount).sort()).toEqual([-expectedAmount, expectedAmount]);
     });
   });
 });
