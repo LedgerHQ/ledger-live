@@ -547,7 +547,10 @@ export function useDappLogic({
                 optimisticOperation = await bridge.broadcast({
                   account: mainAccount,
                   signedOperation: signedTransaction,
-                  broadcastConfig: { mevProtected: !!mevProtected },
+                  broadcastConfig: {
+                    mevProtected: !!mevProtected,
+                    source: { type: "dApp", name: manifest.id },
+                  },
                 });
               }
 

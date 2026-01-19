@@ -525,6 +525,50 @@ describe("EVM Family", () => {
 
         mockRequest.mockRestore();
       });
+
+      it("should include source headers when source is provided", async () => {
+        const mockRequest = jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
+          data: {
+            result: "0xHash",
+          },
+        }));
+
+        await LEDGER_API.broadcastTransaction(currency, "0xSignedTx", {
+          mevProtected: false,
+          source: { type: "live-app", name: "test-manifest-id" },
+        });
+
+        expect(mockRequest).toHaveBeenCalledWith(
+          expect.objectContaining({
+            headers: expect.objectContaining({
+              "X-Ledger-Source-Type": "live-app",
+              "X-Ledger-Source-Name": "test-manifest-id",
+            }),
+          }),
+        );
+
+        mockRequest.mockRestore();
+      });
+
+      it("should not include source headers when source is not provided", async () => {
+        const mockRequest = jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
+          data: {
+            result: "0xHash",
+          },
+        }));
+
+        await LEDGER_API.broadcastTransaction(currency, "0xSignedTx", { mevProtected: false });
+
+        expect(mockRequest).toHaveBeenCalledWith(
+          expect.objectContaining({
+            headers: {
+              "X-Ledger-Client-Version": expect.any(String),
+            },
+          }),
+        );
+
+        mockRequest.mockRestore();
+      });
     });
 
     describe("getBlockByHeight", () => {

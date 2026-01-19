@@ -103,7 +103,10 @@ export function Confirmation({
   const broadcast = useBroadcast({
     account: fromAccount,
     parentAccount: fromParentAccount,
-    broadcastConfig: { mevProtected },
+    broadcastConfig: {
+      mevProtected,
+      source: { type: "swap", name: provider },
+    },
   });
   const tokenCurrency =
     fromAccount && fromAccount.type === "TokenAccount" ? fromAccount.token : null;

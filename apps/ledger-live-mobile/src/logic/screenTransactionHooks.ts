@@ -124,7 +124,10 @@ export const useSignWithDevice = ({
                   .broadcast({
                     account: mainAccount,
                     signedOperation: (e as { signedOperation: SignedOperation }).signedOperation,
-                    broadcastConfig: { mevProtected },
+                    broadcastConfig: {
+                      mevProtected,
+                      source: { type: "coin-module", name: "ledger-live-mobile" },
+                    },
                   })
                   .then(operation => ({
                     type: "broadcasted",
@@ -269,7 +272,10 @@ export function useSignedTxHandler({
   const broadcast = useBroadcast({
     account,
     parentAccount,
-    broadcastConfig: { mevProtected },
+    broadcastConfig: {
+      mevProtected,
+      source: { type: "coin-module", name: "ledger-live-mobile" },
+    },
   });
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
