@@ -379,6 +379,25 @@ describe("EVM Family", () => {
 
         expect(result).toHaveLength(1);
       });
+
+      it("should filter out Transfer with 3 topics but empty data", () => {
+        const logs = [
+          {
+            // Transfer with 3 topics but no data - cannot determine value
+            address: "0x3333333333333333333333333333333333333333",
+            topics: [
+              TRANSFER_TOPIC,
+              "0x000000000000000000000000534eef6db44fbeb71047ee3eb4cb16e572862af6",
+              "0x000000000000000000000000970402b253733a1f6f4f3cd1d07420006be2882d",
+            ],
+            data: "0x",
+          },
+        ];
+
+        const result = RPC_API.parseERC20TransfersFromLogs(logs);
+
+        expect(result).toHaveLength(0);
+      });
     });
 
     describe("getCoinBalance", () => {
