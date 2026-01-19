@@ -7565,6 +7565,9 @@
       "analyticsDesc": "Enable Ledger to collect app usage data to help measure Ledger Wallet’s performance and enhance both the app and your experience."
     }
   },
+  "analytics": {
+    "title": "Analytics"
+  },
   "walletSync": {
     "title": "Ledger Sync",
     "close": "Close",
