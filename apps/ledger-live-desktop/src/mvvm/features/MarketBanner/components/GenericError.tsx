@@ -7,7 +7,7 @@ const GenericError = () => {
   const { t } = useTranslation();
 
   return (
-    <Tile>
+    <Tile data-testid="generic-error">
       <TileSpot appearance="icon" icon={Warning} />
       <TileContent>
         <TileTitle>{t("marketBanner.genericError")}</TileTitle>
