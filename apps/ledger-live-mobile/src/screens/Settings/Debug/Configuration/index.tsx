@@ -7,6 +7,7 @@ import { ScreenName } from "~/const";
 import ReadOnlyModeRow from "./ReadOnlyModeRow";
 import AnalyticsConsoleRow from "./AnalyticsConsoleRow";
 import ThemeToggleRow from "./ThemeToggleRow";
+import CountervaluesStagingRow from "./CountervaluesStagingRow";
 import SkipLock from "~/components/behaviour/SkipLock";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import MockModeRow from "../../General/MockModeRow";
@@ -47,6 +48,7 @@ export default function Configuration() {
       <MockModeRow />
       <AnalyticsConsoleRow />
       <ThemeToggleRow />
+      <CountervaluesStagingRow />
       <SkipLock />
     </SettingsNavigationScrollView>
   );

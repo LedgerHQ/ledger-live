@@ -13,6 +13,7 @@ import CustomLockScreenAssets from "./CustomLockScreenAssets";
 import RunLocalAppButton from "./RunLocalAppButton";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
+import EnableCountervaluesStagingToggle from "./EnableCountervaluesStagingToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
 import ExchangeTestPartnerMode from "./ExchangeTestPartnerMode";
@@ -104,6 +105,12 @@ const Default = () => {
         desc={t("settings.developer.enableLearnStagingUrlDesc")}
       >
         <EnableLearnPageStagingUrlToggle />
+      </Row>
+      <Row
+        title={t("settings.developer.enableCountervaluesStaging")}
+        desc={t("settings.developer.enableCountervaluesStagingDesc")}
+      >
+        <EnableCountervaluesStagingToggle />
       </Row>
       <RecoverUpsellRow />
 
