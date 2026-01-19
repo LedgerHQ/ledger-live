@@ -157,6 +157,10 @@ export function SideDrawer({
         escapeDeactivates: false,
         clickOutsideDeactivates: false,
         preventScroll: true,
+        setReturnFocus: trigger => {
+          // Return the element only if it still exists in DOM to prevent focus error on unmounted elements
+          return trigger && document.body.contains(trigger) ? trigger : document.body;
+        },
       });
       focusTrap.current?.activate();
     } else if (shouldDisableFocusTrap) {
