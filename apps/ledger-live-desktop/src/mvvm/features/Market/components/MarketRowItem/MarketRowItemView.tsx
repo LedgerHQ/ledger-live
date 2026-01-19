@@ -9,6 +9,7 @@ import { formatPercentage, formatPrice } from "~/renderer/screens/market/utils";
 import { CryptoCurrencyIconWrapper, EllipsisText, TooltipContainer } from "./styles";
 import { MarketRowItemViewProps } from "./types";
 import { Star, StarFill } from "@ledgerhq/lumen-ui-react/symbols";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 
 export const MarketRowItemView = memo<MarketRowItemViewProps>(function MarketRowItemView({
   style,
@@ -44,7 +45,11 @@ export const MarketRowItemView = memo<MarketRowItemViewProps>(function MarketRow
           <TableCell>{currency?.marketcapRank ?? "-"}</TableCell>
           <TableCell mr={3}>
             <CryptoCurrencyIconWrapper>
-              <img width="32px" height="32px" src={currency.image} alt={"currency logo"} />
+              <CryptoIcon
+                ledgerId={currency?.ledgerIds?.[0]}
+                ticker={currency?.ticker}
+                size="32px"
+              />
             </CryptoCurrencyIconWrapper>
             <Tooltip
               content={<TooltipContainer>{currency.name}</TooltipContainer>}

@@ -11,6 +11,7 @@ import counterValueFormatter from "@ledgerhq/live-common/market/utils/counterval
 import { useNavigate } from "react-router";
 import { track } from "~/renderer/analytics/segment";
 import { getChangePercentage } from "@ledgerhq/live-common/market/utils/index";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 
 export function WidgetList({ data, order, range, top, enableNewFeature }: PropsBody) {
   const noData = data.length === 0;
@@ -62,14 +63,8 @@ function WidgetRow({ data, index, range, enableNewFeature }: PropsBodyElem) {
           {index}
         </Text>
 
-        <CryptoCurrencyIconWrapper hasImage={!!data.image}>
-          {data.image ? (
-            <img width="32px" height="32px" src={data.image} alt={"currency logo"} />
-          ) : (
-            <Text color="neutral.c100" variant="h5Inter" fontSize={12}>
-              {data.name.charAt(0).toUpperCase()}
-            </Text>
-          )}
+        <CryptoCurrencyIconWrapper>
+          <CryptoIcon ledgerId={data.ledgerIds[0]} ticker={data.ticker} size="32px" />
         </CryptoCurrencyIconWrapper>
 
         <Flex ml={2} overflow="hidden" flexDirection="column" flex={1} alignItems="left">

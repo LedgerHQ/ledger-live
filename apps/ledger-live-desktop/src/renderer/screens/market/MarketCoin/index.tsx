@@ -11,6 +11,7 @@ import MarketInfo from "./components/MarketInfo";
 import { useMarketCoin } from "LLD/features/Market/hooks/useMarketCoin";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;
@@ -69,7 +70,7 @@ export default function MarketCoinScreen() {
 
   const earnStakeLabelCoin = useGetStakeLabelLocaleBased();
 
-  const { name, ticker, image, ledgerIds, price } = currency || {};
+  const { name, ticker, ledgerIds, price } = currency || {};
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
@@ -91,7 +92,7 @@ export default function MarketCoinScreen() {
                 <InfiniteLoader />
               </Flex>
             ) : (
-              <img width="56px" height="56px" src={image} alt={"currency logo"} />
+              <CryptoIcon ledgerId={ledgerIds?.[0]} ticker={ticker} size="56px" />
             )}
           </CryptoCurrencyIconWrapper>
           <Flex pl={3} flexDirection="column" alignItems="left" pr={16}>
