@@ -1,5 +1,5 @@
 /** ⚠️ keep this order of import. @see https://docs.ethers.io/v5/cookbook/react-native/#cookbook-reactnative ⚠️ */
-import { ethers, JsonRpcProvider } from "ethers";
+import { ethers, JsonRpcProvider, Log } from "ethers";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
@@ -43,9 +43,7 @@ export const ERC20_TRANSFER_TOPIC =
  * @param logs - Array of logs from transaction receipt
  * @returns Array of parsed ERC20 transfers
  */
-export function parseERC20TransfersFromLogs(
-  logs: readonly { address: string; topics: readonly string[]; data: string }[],
-): ERC20Transfer[] {
+export function parseERC20TransfersFromLogs(logs: ReadonlyArray<Log>): ERC20Transfer[] {
   return logs
     .filter(
       log =>
