@@ -8,7 +8,6 @@
     "src/signer/index.ts",
     "src/test/bot-deviceActions.ts",
     "src/test/bot-specs.ts",
-    "src/test/bridgeDatasetTest.ts",
     "src/test/cli.ts",
     "src/test/index.ts",
     "src/test/config.ts",
