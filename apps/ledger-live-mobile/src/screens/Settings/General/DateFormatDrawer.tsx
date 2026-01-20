@@ -1,7 +1,7 @@
 import { Text, Flex } from "@ledgerhq/native-ui";
 import { CheckAloneMedium } from "@ledgerhq/native-ui/assets/icons";
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import styled, { useTheme } from "styled-components/native";

@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import styled, { useTheme } from "styled-components/native";
 import BottomContainer from "./BottomContainer";
 import { Camera } from "react-native-vision-camera";

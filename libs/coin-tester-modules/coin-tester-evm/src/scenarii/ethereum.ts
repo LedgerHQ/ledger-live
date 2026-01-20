@@ -5,15 +5,15 @@ import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { makeAccount } from "../fixtures";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { callMyDealer, ethereum, VITALIK, getBridges } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDC_ON_ETHEREUM } from "../tokenFixtures";
 import { buildSigner } from "../signer";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
 
-type EthereumScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
+type EthereumScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
 const makeScenarioTransactions = ({
   address,
@@ -72,7 +72,7 @@ const makeScenarioTransactions = ({
   return [scenarioSendEthTransaction, scenarioSendUSDCTransaction, scenarioSendMaxEthTransaction];
 };
 
-export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
+export const scenarioEthereum: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic ETH Transactions",
   setup: async () => {
     const signer = await buildSigner();

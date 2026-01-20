@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import { TrackScreen, track } from "~/analytics";
@@ -15,6 +15,7 @@ import type {
 import type { TezosDelegationFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 type Props = BaseComposite<
   StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationValidationSuccess>
@@ -22,6 +23,7 @@ type Props = BaseComposite<
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
@@ -40,7 +42,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       delegation,
       flow: "stake",
     });
-  }, [delegation, source, validator]);
+    tryTriggerPushNotificationDrawerAfterAction("stake");
+  }, [delegation, source, validator, tryTriggerPushNotificationDrawerAfterAction]);
 
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

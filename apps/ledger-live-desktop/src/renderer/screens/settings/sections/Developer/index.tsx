@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Switch, Route } from "react-router-dom";
+import { Routes, Route } from "react-router";
 import user from "~/helpers/user";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
@@ -13,6 +13,7 @@ import CustomLockScreenAssets from "./CustomLockScreenAssets";
 import RunLocalAppButton from "./RunLocalAppButton";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
+import EnableCountervaluesStagingToggle from "./EnableCountervaluesStagingToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
 import ExchangeTestPartnerMode from "./ExchangeTestPartnerMode";
@@ -32,6 +33,7 @@ import ModularDrawerDevTool from "./ModularDrawer";
 import CryptoAssetsListDevTool from "./CryptoAssetsList";
 import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
 import CustomLockScreenTester from "./CustomLockScreenTester";
+import WalletFeaturesDevTool from "./WalletFeaturesDevTool";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -105,6 +107,12 @@ const Default = () => {
       >
         <EnableLearnPageStagingUrlToggle />
       </Row>
+      <Row
+        title={t("settings.developer.enableCountervaluesStaging")}
+        desc={t("settings.developer.enableCountervaluesStagingDesc")}
+      >
+        <EnableCountervaluesStagingToggle />
+      </Row>
       <RecoverUpsellRow />
 
       <Row
@@ -131,6 +139,7 @@ const Default = () => {
           <AllowDebugReactQueryToggle />
         </Row>
       )}
+      <WalletFeaturesDevTool />
       <ModularDrawerDevTool />
       <CryptoAssetsListDevTool />
       <MockAccountGeneratorSection />
@@ -140,13 +149,10 @@ const Default = () => {
 const SectionDeveloper = () => (
   <>
     <TrackPage category="Settings" name="Developer" />
-    <Switch>
-      <Route
-        path="/settings/developer/custom-locksscreen-assets"
-        component={CustomLockScreenAssets}
-      />
-      <Route component={Default} />
-    </Switch>
+    <Routes>
+      <Route path="custom-locksscreen-assets" element={<CustomLockScreenAssets />} />
+      <Route path="*" element={<Default />} />
+    </Routes>
   </>
 );
 export default SectionDeveloper;

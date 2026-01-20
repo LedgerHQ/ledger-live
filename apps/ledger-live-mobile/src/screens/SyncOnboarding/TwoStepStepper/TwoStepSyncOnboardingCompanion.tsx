@@ -22,7 +22,7 @@ import {
 } from "~/actions/settings";
 import FirstStepSyncOnboarding from "./FirstStepSyncOnboarding";
 import SecondStepSyncOnboarding from "./SecondStepSyncOnboarding";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { ScrollView } from "react-native";
 import { TrackScreen } from "~/analytics";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
@@ -104,7 +104,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
   const readyRedirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const preventNavigation = useRef(false);
   const scrollViewRef = useRef<ScrollView>(null);
-  const analyticsSeedConfiguration = useRef<SeedOriginType>();
+  const analyticsSeedConfiguration = useRef<SeedOriginType | undefined>(undefined);
 
   /*
    * Redux State

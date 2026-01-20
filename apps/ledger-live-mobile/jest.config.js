@@ -10,8 +10,9 @@ function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
     const pathValues = Array.isArray(paths[pathKey]) ? paths[pathKey] : [paths[pathKey]];
     pathValues.forEach(pathValue => {
       // Convert TypeScript path pattern to Jest regex pattern
+      // Use /\*$/ for key (wildcard at end) but /\*/ for value (wildcard can be anywhere)
       const jestKey = pathKey.replace(/\*$/, "(.*)");
-      const jestValue = pathValue.replace(/\*$/, "$1");
+      const jestValue = pathValue.replace(/\*/, "$1");
       jestPaths[jestKey] = `${prefix}${jestValue}`;
     });
   });
@@ -41,6 +42,8 @@ const transformIncludePatterns = [
   "react-native-gesture-handler",
   "@shopify/flash-list",
   "@ledgerhq/lumen-.*",
+  "immer",
+  "@features/.*",
 ];
 
 /** @type {import('@swc/jest').JestConfigWithTsJest} */
@@ -90,12 +93,18 @@ module.exports = {
   resolver: "<rootDir>/scripts/resolver.js",
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths),
+    "^@features/(.*)$": "<rootDir>/../../features/$1/src",
+    "^@ledgerhq/(lumen-ui-rnative|lumen-design-core)$": "<rootDir>/node_modules/@ledgerhq/$1",
     "^react$": "<rootDir>/node_modules/react",
     "^react/(.*)$": "<rootDir>/node_modules/react/$1",
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",
     "^react-native$": "<rootDir>/node_modules/react-native",
+    "^react-native-gesture-handler$": "<rootDir>/node_modules/react-native-gesture-handler",
+    "^react-native-gesture-handler/(.*)$": "<rootDir>/node_modules/react-native-gesture-handler/$1",
     "styled-components":
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
     "^react-redux": "<rootDir>/node_modules/react-redux",
+    "^@tanstack/react-query$":
+      "<rootDir>/../../node_modules/.pnpm/@tanstack+react-query@5.28.9_react@19.0.0/node_modules/@tanstack/react-query",
   },
 };

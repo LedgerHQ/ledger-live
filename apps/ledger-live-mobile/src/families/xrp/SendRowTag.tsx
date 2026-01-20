@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";

@@ -355,7 +355,6 @@ test.describe("e2e delegation - Celo", () => {
     {
       tag: [
         "@NanoSP",
-        "@LNS",
         "@NanoX",
         "@Stax",
         "@Flex",

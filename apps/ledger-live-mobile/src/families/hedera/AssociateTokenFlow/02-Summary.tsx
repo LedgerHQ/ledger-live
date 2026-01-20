@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";

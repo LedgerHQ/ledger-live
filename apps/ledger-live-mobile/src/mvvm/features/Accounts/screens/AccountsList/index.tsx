@@ -6,7 +6,7 @@ import { ScreenName } from "~/const";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import AddAccountButton from "LLM/features/Accounts/components/AddAccountButton";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
 import { RefreshMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 import Spinning from "~/components/Spinning";

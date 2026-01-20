@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { createAction } from "redux-actions";
 import { useSelector, useDispatch } from "~/context/hooks";
 import type { PortfolioRange } from "@ledgerhq/types-live";

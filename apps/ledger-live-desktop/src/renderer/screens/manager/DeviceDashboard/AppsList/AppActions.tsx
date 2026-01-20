@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { useAppInstallNeedsDeps, useAppUninstallNeedsDeps } from "@ledgerhq/live-common/apps/react";
 import manager from "@ledgerhq/live-common/manager/index";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { App, AppType } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 import styled from "styled-components";
@@ -82,7 +82,7 @@ const AppActions = React.memo(
   }: Props) => {
     const { name, type } = app;
 
-    const history = useHistory();
+    const navigate = useNavigate();
     const { installedAvailable, installQueue, uninstallQueue, updateAllQueue } = state;
 
     const canInstall = useMemo(() => manager.canHandleInstall(app), [app]);
@@ -110,7 +110,7 @@ const AppActions = React.memo(
     const onNavigateTo = useCallback(() => {
       switch (type) {
         case AppType.plugin:
-          history.push("/platform");
+          navigate("/platform");
           break;
         case AppType.app:
         case AppType.currency:
@@ -120,10 +120,10 @@ const AppActions = React.memo(
           openURL(urls.managerAppLearnMore);
           break;
         case AppType.swap:
-          history.push("/swap");
+          navigate("/swap");
           break;
       }
-    }, [type, history, app?.supportURL]);
+    }, [type, navigate, app?.supportURL]);
     const updating = useMemo(() => updateAllQueue.includes(name), [updateAllQueue, name]);
     const installing = useMemo(() => installQueue.includes(name), [installQueue, name]);
     const uninstalling = useMemo(() => uninstallQueue.includes(name), [uninstallQueue, name]);

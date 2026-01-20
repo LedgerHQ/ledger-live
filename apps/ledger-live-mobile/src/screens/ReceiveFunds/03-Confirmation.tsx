@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Dimensions, Linking, Platform, Share, View } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import QRCode from "react-native-qrcode-svg";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -195,11 +195,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     });
   }, [network, currency?.name]);
 
-  useEffect(() => {
-    if (verified || !isModalOpened) {
-      triggerSuccessEvent();
-    }
-  }, [verified, isModalOpened, triggerSuccessEvent]);
   const freshAccountAddress = useMemo(() => {
     return mainAccount && getFreshAccountAddress(mainAccount);
   }, [mainAccount]);

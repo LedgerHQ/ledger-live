@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { context } from "~/renderer/drawers/Provider";
@@ -28,16 +28,16 @@ const DeviceCancel = ({
   onSkip,
 }: Props) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { setDrawer } = useContext(context);
   const onCloseReload = useCallback(() => {
     onDrawerClose();
 
     if (error instanceof UserRefusedFirmwareUpdate && shouldReloadManagerOnCloseIfUpdateRefused) {
-      history.push("/manager/reload");
+      navigate("/manager/reload");
       setDrawer();
     }
-  }, [error, history, onDrawerClose, setDrawer, shouldReloadManagerOnCloseIfUpdateRefused]);
+  }, [error, navigate, onDrawerClose, setDrawer, shouldReloadManagerOnCloseIfUpdateRefused]);
 
   const isUserRefusedFirmwareUpdate = error instanceof UserRefusedFirmwareUpdate;
   const isDeviceLockedError = error instanceof LockedDeviceError;

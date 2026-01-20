@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";

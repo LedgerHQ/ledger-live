@@ -1,19 +1,20 @@
 import React, { useCallback, useMemo } from "react";
 import { Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { capitalize } from "lodash/fp";
 import { Box, Switch, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import SettingsRow from "~/components/SettingsRow";
-import { track, TrackScreen, updateIdentify } from "~/analytics";
+import { track, TrackScreen, trackWithRoute, updateIdentify } from "~/analytics";
 import { notificationsSelector } from "~/reducers/settings";
 import { setNotifications } from "~/actions/settings";
 import type { State } from "~/reducers/types";
-import { useNotifications } from "~/logic/notifications";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 import { updateUserPreferences } from "~/notifications/braze";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
+import { useRoute } from "@react-navigation/core";
 
 const notificationsMapping = {
   areNotificationsAllowed: "allowed",
@@ -95,21 +96,31 @@ function NotificationSettingsRow({ disabled, notificationKey, label }: Notificat
 function NotificationsSettings() {
   const { t } = useTranslation();
   const notifications = useSelector(notificationsSelector);
-  const {
-    permissionStatus,
-    requestPushNotificationsPermission,
-    pushNotificationsOldRoute,
-    hiddenNotificationCategories,
-  } = useNotifications();
+  const { permissionStatus, requestPushNotificationsPermission } = useNotifications();
+
+  const featureBrazePushNotifications = useFeature("brazePushNotifications");
+  const hiddenNotificationCategories = useMemo(() => {
+    const hiddenCategories = [];
+    const categoriesToHide = featureBrazePushNotifications?.params?.notificationsCategories ?? [];
+
+    for (const notificationsCategory of categoriesToHide) {
+      if (!notificationsCategory?.displayed) {
+        hiddenCategories.push(notificationsCategory?.category || "");
+      }
+    }
+
+    return hiddenCategories;
+  }, [featureBrazePushNotifications?.params?.notificationsCategories]);
+
   const featureTransactionsAlerts = useFeature("transactionsAlerts");
+  const route = useRoute();
 
   const allowPushNotifications = useCallback(() => {
-    track("button_clicked", {
+    trackWithRoute("button_clicked", route, {
       button: "Go to system settings",
-      page: pushNotificationsOldRoute,
     });
     requestPushNotificationsPermission();
-  }, [pushNotificationsOldRoute, requestPushNotificationsPermission]);
+  }, [requestPushNotificationsPermission, route]);
 
   const isOsPermissionAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
 

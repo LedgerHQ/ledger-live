@@ -3,7 +3,7 @@ import { Flex, VerticalTimeline } from "@ledgerhq/native-ui";
 import CollapsibleStep from "./CollapsibleStep";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import useCompanionSteps from "./useCompanionSteps";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { SyncOnboardingScreenProps } from "../SyncOnboardingScreenProps";
@@ -73,8 +73,8 @@ interface FirstStepSyncOnboardingProps {
   isPollingOn: boolean;
   setIsPollingOn: (isPolling: boolean) => void;
   handleFinishStep: (nextStep: SEED_STATE) => void;
-  parentRef: null | React.RefObject<ScrollView>;
-  analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
+  parentRef: null | React.RefObject<ScrollView | null>;
+  analyticsSeedConfiguration: React.RefObject<SeedOriginType | undefined>;
 }
 
 const FirstStepSyncOnboarding = ({
@@ -111,7 +111,7 @@ const FirstStepSyncOnboarding = ({
   /*
    * Refs
    */
-  const lastCompanionStepKey = useRef<FirstStepCompanionStepKey>();
+  const lastCompanionStepKey = useRef<FirstStepCompanionStepKey | undefined>(undefined);
   const analyticsSeedingTracked = useRef(false);
   const addedToKnownDevices = useRef(false);
 
@@ -121,14 +121,14 @@ const FirstStepSyncOnboarding = ({
    * Value is undefined until the onboarding state polling returns a first
    * result.
    * */
-  const deviceInitiallyOnboarded = useRef<boolean>();
+  const deviceInitiallyOnboarded = useRef<boolean | undefined>(undefined);
   /**
    * Variable holding the seed phrase type (number of words) until we are
    * ready to track the event (when the seeding step finishes).
    * Should only be maintained if the device is not onboarded/not seeded as the
    * onboarding flags can only be trusted for a non-onboarded device.
    */
-  const analyticsSeedPhraseType = useRef<SeedPhraseType>();
+  const analyticsSeedPhraseType = useRef<SeedPhraseType | undefined>(undefined);
 
   /*
    * Redux State

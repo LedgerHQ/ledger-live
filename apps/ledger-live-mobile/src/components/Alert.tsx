@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Linking, TouchableOpacity } from "react-native";
 import { useSelector } from "~/context/hooks";
 import styled from "styled-components/native";

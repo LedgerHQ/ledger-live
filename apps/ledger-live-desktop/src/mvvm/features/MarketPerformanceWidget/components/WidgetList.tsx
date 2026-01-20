@@ -8,9 +8,10 @@ import { fontSizes } from "@ledgerhq/react-ui/styles/theme";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { track } from "~/renderer/analytics/segment";
-import { getChangePercentage } from "../utils";
+import { getChangePercentage } from "@ledgerhq/live-common/market/utils/index";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
 
 export function WidgetList({ data, order, range, top, enableNewFeature }: PropsBody) {
   const noData = data.length === 0;
@@ -38,7 +39,7 @@ export function WidgetList({ data, order, range, top, enableNewFeature }: PropsB
 function WidgetRow({ data, index, range, enableNewFeature }: PropsBodyElem) {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onCurrencyClick = useCallback(() => {
     track("widgetAsset_clicked", {
@@ -46,10 +47,8 @@ function WidgetRow({ data, index, range, enableNewFeature }: PropsBodyElem) {
       page: "Portfolio",
     });
 
-    history.push({
-      pathname: `/market/${data.id}`,
-    });
-  }, [data, history]);
+    navigate(`/market/${data.id}`);
+  }, [data, navigate]);
 
   return (
     <MainContainer
@@ -64,13 +63,11 @@ function WidgetRow({ data, index, range, enableNewFeature }: PropsBodyElem) {
           {index}
         </Text>
 
-        <CryptoCurrencyIconWrapper hasImage={!!data.image}>
-          {data.image ? (
-            <img width="32px" height="32px" src={data.image} alt={"currency logo"} />
+        <CryptoCurrencyIconWrapper>
+          {data.ledgerIds && data.ledgerIds.length > 0 && data.ticker ? (
+            <CryptoIcon ledgerId={data.ledgerIds[0]} ticker={data.ticker} size="32px" />
           ) : (
-            <Text color="neutral.c100" variant="h5Inter" fontSize={12}>
-              {data.name.charAt(0).toUpperCase()}
-            </Text>
+            <img width="32px" height="32px" src={data.image} alt={"currency logo"} />
           )}
         </CryptoCurrencyIconWrapper>
 

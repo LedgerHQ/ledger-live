@@ -4,6 +4,7 @@ import {
   startSpeculos,
   stopSpeculos,
   takeScreenshot,
+  setExchangeDependencies,
 } from "@ledgerhq/live-common/e2e/speculos";
 import invariant from "invariant";
 import { setEnv } from "@ledgerhq/live-env";
@@ -18,6 +19,9 @@ import path from "path";
 
 import { CLI } from "./cliUtils";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+
+// Re-export setExchangeDependencies to ensure the same module instance is used
+export { setExchangeDependencies };
 
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
@@ -86,8 +90,11 @@ export async function launchSpeculos(appName: string) {
     deviceId: device.id,
   });
 
-  await allure.description(`App name: ${device.appName || ""}`);
-  await allure.description(`App version: ${device.appVersion || ""}`);
+  let info = `App: ${device.appName || ""} (${device.appVersion || ""}) `;
+  if (device.dependencies?.length)
+    info += `\nDependencies: ${device.dependencies?.map(dep => dep.name + " (" + dep.appVersion + ")").join(", ") || ""}`;
+
+  await allure.description("SPECULOS\n" + info);
 
   return device;
 }

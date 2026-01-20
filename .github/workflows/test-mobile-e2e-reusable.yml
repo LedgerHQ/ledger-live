@@ -153,14 +153,29 @@ jobs:
             e2e/mobile
           token: ${{ steps.generate-token.outputs.token }}
 
-      - name: Generate shards matrix and test files
-        id: generate-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
-        with:
-          test_directory: e2e/mobile
-          test_filter: ${{ inputs.test_filter || '' }}
-          event_name: ${{ github.event_name }}
-          ref: ${{ inputs.ref || github.ref_name }}
+      - name: Write summary
+        run: |
+          FILTER_PATTERN="${{ inputs.test_filter || '' }}"
+          DEVICE="${{ inputs.speculos_device || 'nanoX' }}"
+          BUILD_TYPE="${{ inputs.production_firebase == 'true' && 'production' || 'testing' }}"
+          TEST_EXECUTION_ANDROID="${{ inputs.test_execution_android || '(not provided)' }}"
+          TEST_EXECUTION_IOS="${{ inputs.test_execution_ios || '(not provided)' }}"
+
+          if [ -z "$FILTER_PATTERN" ]; then
+            FILTER_PATTERN="(none)"
+          fi
+          {
+          echo "## Workflow Context"
+          echo ""
+          echo "- **Workflow source branch:** ${{ github.workflow_ref }}"
+          echo "- **Triggered branch:** ${{ github.ref_name }}"
+          echo "- **Commit SHA:** ${{ github.sha }}"
+          echo "- **Device selected:** $DEVICE"
+          echo "- **Filtered pattern:** $FILTER_PATTERN"
+          echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
+          echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
+          echo "- **Firebase env to target:** $BUILD_TYPE"
+          } >> $GITHUB_STEP_SUMMARY
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -176,9 +191,25 @@ jobs:
           echo "android_native_key=longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           echo "ios_js_key=${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
-          echo "android_timing_cache_key=android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}" >> $GITHUB_OUTPUT
-          echo "ios_timing_cache_key=ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-" >> $GITHUB_OUTPUT
+          echo "android_timing_cache_key=android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
+          echo "ios_timing_cache_key=ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_4-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
+
+      - name: Generate shards matrix and test files
+        id: generate-shards
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
+        with:
+          test_directory: e2e/mobile
+          test_filter: ${{ inputs.test_filter || '' }}
+          event_name: ${{ github.event_name }}
+          ref: ${{ inputs.ref || github.ref_name }}
+          ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
+          android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
+          aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
+          cache_bucket: ${{ env.cache-bucket }}
+          aws_region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
@@ -304,7 +335,7 @@ jobs:
           r2_endpoint: ${{ secrets.R2_ENDPOINT }}
 
   detox-tests-ios:
-    name: iOS E2E Tests
+    name: iOS E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
     needs: [build-ios, determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on:
@@ -351,34 +382,12 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Setup iOS timing cache
-        timeout-minutes: 5
-        uses: tespkg/actions-cache/restore@v1
-        with:
-          path: e2e/mobile/artifacts/e2e-test-results-ios.json
-          key: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}"
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-
-      - name: Generate timing-based shards
-        id: timing-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@develop
-        with:
-          test_filter: ${{ needs.determine-builds.outputs.test_files_for_sharding || inputs.test_filter || '' }}
-          test_directory: e2e/mobile
-          platform: ios
-          shard_index: ${{ matrix.shard }}
-          shard_total: ${{ matrix.total }}
-
-      - name: Set shard test files environment variable
+      - name: Set shard test files from pre-computed matrix
         run: |
           echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
-          echo "${{ steps.timing-shards.outputs.shard_test_files }}" >> $GITHUB_ENV
+          echo "${{ matrix.files }}" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+          echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: Boot iOS Simulator in Background
         run: |
@@ -532,9 +541,9 @@ jobs:
           xcrun simctl list devices | grep 'iOS Simulator' | awk -F '[()]' '{print $2}' | xargs -I {} sh -c 'echo "Deleting simulator: {}"; xcrun simctl delete {} || echo "Failed to delete: {}"'
 
   detox-tests-android:
-    name: Android E2E Tests
-    needs: [build-android, determine-builds, setup-android-avd]
-    if: ${{ always() && !failure() && !cancelled() && inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
+    name: Android E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
+    needs: [build-android, determine-builds]
+    if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -574,34 +583,12 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Setup Android timing cache
-        timeout-minutes: 5
-        uses: tespkg/actions-cache/restore@v1
-        with:
-          path: e2e/mobile/artifacts/e2e-test-results-android.json
-          key: "${{ needs.determine-builds.outputs.android_timing_cache_key }}"
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-
-      - name: Generate timing-based shards
-        id: timing-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@develop
-        with:
-          test_filter: ${{ needs.determine-builds.outputs.test_files_for_sharding || inputs.test_filter || '' }}
-          test_directory: e2e/mobile
-          platform: android
-          shard_index: ${{ matrix.shard }}
-          shard_total: ${{ matrix.total }}
-
-      - name: Set shard test files environment variable
+      - name: Set shard test files from pre-computed matrix
         run: |
           echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
-          echo "${{ steps.timing-shards.outputs.shard_test_files }}" >> $GITHUB_ENV
+          echo "${{ matrix.files }}" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+          echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: Setup Android Environment
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop

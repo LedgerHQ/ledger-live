@@ -1,5 +1,5 @@
 import React, { useCallback, useContext } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
@@ -33,7 +33,7 @@ const TitleText = styled(Text).attrs({
 
 export function SelectDevice() {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { setDeviceModelId } = useContext(OnboardingContext);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
@@ -42,13 +42,13 @@ export function SelectDevice() {
       // TODO: use a feature flag to do this properly
       track("Onboarding Device - Selection", { deviceModelId, flow: "Onboarding" });
       if (isSyncOnboardingSupported(deviceModelId)) {
-        history.push(`/onboarding/sync/${deviceModelId}`);
+        navigate(`/onboarding/sync/${deviceModelId}`);
       } else {
         setDeviceModelId(deviceModelId);
-        history.push("/onboarding/select-use-case");
+        navigate("/onboarding/select-use-case");
       }
     },
-    [history, setDeviceModelId],
+    [navigate, setDeviceModelId],
   );
 
   return (
@@ -56,7 +56,7 @@ export function SelectDevice() {
       <TrackPage category="Onboarding Device - Selection" flow="Onboarding" />
       <OnboardingNavHeader
         onClickPrevious={() =>
-          history.push(hasCompletedOnboarding ? "/settings/help" : "/onboarding/welcome")
+          navigate(hasCompletedOnboarding ? "/settings/help" : "/onboarding/welcome")
         }
       />
       <DeviceSelector onClick={handleDeviceSelect} />

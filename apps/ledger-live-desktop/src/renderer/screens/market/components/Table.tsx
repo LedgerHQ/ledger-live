@@ -113,3 +113,11 @@ export const TableCell = ({ loading, children, ...props }: TableCellProps) => (
     {loading ? <LoadingPlaceholder style={{ borderRadius: 50, overflow: "hidden" }} /> : children}
   </TableCellBase>
 );
+
+export const TablePlaceholder = ({ size }: { size: number }) => (
+  <TableRow disabled>
+    {Array.from({ length: size }).map((_, index) => (
+      <TableCell key={index} loading />
+    ))}
+  </TableRow>
+);

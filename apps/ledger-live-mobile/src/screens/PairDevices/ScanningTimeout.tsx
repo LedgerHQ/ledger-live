@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View, Linking } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useTheme } from "@react-navigation/native";
 import { DeviceModelId } from "@ledgerhq/types-devices";

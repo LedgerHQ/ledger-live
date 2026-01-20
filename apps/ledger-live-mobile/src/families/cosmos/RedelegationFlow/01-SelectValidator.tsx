@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import BigNumber from "bignumber.js";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type {
   CosmosAccount,
   CosmosValidatorItem,

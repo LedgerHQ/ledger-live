@@ -103,19 +103,19 @@ describe("estimateFees", () => {
           fast: {
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
-            gasPrice: new BigNumber("30000000000"),
+            gasPrice: 30000000000n,
             nextBaseFee: null,
           },
           medium: {
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
-            gasPrice: new BigNumber("20000000000"),
+            gasPrice: 20000000000n,
             nextBaseFee: null,
           },
           slow: {
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
-            gasPrice: new BigNumber("10000000000"),
+            gasPrice: 10000000000n,
             nextBaseFee: null,
           },
         },
@@ -282,7 +282,7 @@ describe("estimateFees", () => {
         data: { type: "buffer", value: Buffer.from([]) },
       } as SendTransactionIntent<MemoNotSupported, BufferTxData>,
       {
-        gasPrice: new BigNumber(60000),
+        gasPrice: 60000n,
       },
     );
 
@@ -527,7 +527,6 @@ describe("estimateFees", () => {
   });
 
   it("uses custom gas limit from customFeesParameters", async () => {
-    const customGasLimit = new BigNumber("50000");
     jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);
     mockNodeApi.getFeeData.mockResolvedValue({
       gasPrice: new BigNumber("20000000000"),
@@ -550,8 +549,8 @@ describe("estimateFees", () => {
         data: { type: "buffer", value: Buffer.from([]) },
       } as SendTransactionIntent<MemoNotSupported, BufferTxData>,
       {
-        gasLimit: BigInt(customGasLimit.toFixed()),
-        gasPrice: new BigNumber(30000000000),
+        gasLimit: 50000n,
+        gasPrice: 30000000000n,
       },
     );
 

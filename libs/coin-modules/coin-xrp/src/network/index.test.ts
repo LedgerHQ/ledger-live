@@ -1,19 +1,19 @@
 import network from "@ledgerhq/live-network";
 import coinConfig, { type XrpCoinConfig } from "../config";
-import { getAccountInfo } from ".";
+import { getAccountInfo, getLedgerIndex } from ".";
 
 jest.mock("@ledgerhq/live-network");
 
-describe("getAccountInfo", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(
-      () =>
-        ({
-          node: "",
-        }) as XrpCoinConfig,
-    );
-  });
+beforeAll(() => {
+  coinConfig.setCoinConfig(
+    () =>
+      ({
+        node: "",
+      }) as XrpCoinConfig,
+  );
+});
 
+describe("getAccountInfo", () => {
   it("returns an empty AccountInfo when returns an error 'actNotFound'", async () => {
     // Given
     const emptyAddress = "rNCgVpHinUDjXP2vHDFDMjm7ssBwpveHya";
@@ -110,5 +110,48 @@ describe("getAccountInfo", () => {
     await expect(getAccountInfo(invalidAddress)).rejects.toThrow(
       "Cannot read properties of undefined (reading 'result')",
     );
+  });
+});
+
+describe("getLedgerIndex", () => {
+  it("returns error_message from rpc call errors", async () => {
+    (network as jest.Mock).mockResolvedValue({
+      data: {
+        result: {
+          error: "issou",
+          error_code: 42,
+          error_message: "las paelleras",
+          status: "error",
+        },
+      },
+    });
+
+    await expect(getLedgerIndex()).rejects.toThrow("las paelleras");
+  });
+
+  it("returns error if there is no error_message", async () => {
+    (network as jest.Mock).mockResolvedValue({
+      data: {
+        result: {
+          error: "issou",
+          status: "error",
+        },
+      },
+    });
+
+    await expect(getLedgerIndex()).rejects.toThrow("issou");
+  });
+
+  it("returns error code if it's the only thing available", async () => {
+    (network as jest.Mock).mockResolvedValue({
+      data: {
+        result: {
+          error_code: 42,
+          status: "error",
+        },
+      },
+    });
+
+    await expect(getLedgerIndex()).rejects.toThrow("42");
   });
 });

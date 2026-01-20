@@ -19,7 +19,7 @@ import CounterValue from "~/components/CounterValue";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import Info from "~/icons/Info";
 import { useTheme } from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 const getCustomStrategyFees = (transaction: Transaction): BigNumber | null => {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type JSX } from "react";
 import AnimatedInputSelect from "../../../../src/components/Form/Input/AnimatedInputSelect";
 import { action } from "@storybook/addon-actions";
 

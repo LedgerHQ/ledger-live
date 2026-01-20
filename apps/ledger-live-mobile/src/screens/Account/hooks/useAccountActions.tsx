@@ -6,7 +6,7 @@ import {
   getAccountSpendableBalance,
 } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "~/context/hooks";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useRoute } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";

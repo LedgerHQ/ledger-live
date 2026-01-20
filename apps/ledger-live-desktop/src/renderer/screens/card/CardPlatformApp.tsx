@@ -1,7 +1,7 @@
 // TODO: Delete this file after completing the Card Program Dapp rollout.
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import useTheme from "~/renderer/hooks/useTheme";
 import { Card } from "~/renderer/components/Box";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";

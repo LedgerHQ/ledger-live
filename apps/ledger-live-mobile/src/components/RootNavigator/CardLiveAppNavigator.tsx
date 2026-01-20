@@ -8,7 +8,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import styles from "~/navigation/styles";
 import type { StackNavigatorProps } from "./types/helpers";
 import { PtxScreen } from "~/screens/PTX";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { PtxNavigatorParamList } from "~/components/RootNavigator/types/PtxNavigator";
 
 const Stack = createNativeStackNavigator<PtxNavigatorParamList>();

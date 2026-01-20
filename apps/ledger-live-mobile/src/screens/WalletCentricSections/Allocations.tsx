@@ -2,7 +2,7 @@ import React, { memo, useMemo, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { getCurrencyColor, ColorableCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { DefaultTheme, useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";

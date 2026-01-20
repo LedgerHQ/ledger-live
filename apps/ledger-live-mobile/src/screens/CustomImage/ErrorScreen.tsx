@@ -1,6 +1,6 @@
 import { Flex } from "@ledgerhq/native-ui";
 import React, { useCallback, useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { TrackScreen } from "~/analytics";

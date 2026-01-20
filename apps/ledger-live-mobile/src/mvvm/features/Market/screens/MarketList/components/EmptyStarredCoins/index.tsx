@@ -1,6 +1,6 @@
 import { Flex, Text, Icon } from "@ledgerhq/native-ui";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 export default function EmptyStarredCoins() {
   const { t } = useTranslation();

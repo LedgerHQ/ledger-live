@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";

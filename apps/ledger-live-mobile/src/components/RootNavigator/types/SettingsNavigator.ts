@@ -64,6 +64,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugHttpTransport]: undefined;
   [ScreenName.DebugLogs]: undefined;
   [ScreenName.DebugLottie]: undefined;
+  [ScreenName.DebugLumen]: undefined;
   [ScreenName.DebugPlayground]: undefined;
   [ScreenName.DebugBluetoothAndLocationServices]: undefined;
   [ScreenName.DebugStorageMigration]: undefined;

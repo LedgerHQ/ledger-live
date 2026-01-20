@@ -1,6 +1,6 @@
 import { Flex, ProgressLoader, Text, Icons } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
@@ -46,7 +46,7 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
   }, [getStorageSubscriptionState]);
 
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const recoverResumeActivatePath = useCustomPath(
     recoverServices,
@@ -96,7 +96,7 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
 
   const onRedirectRecover = () => {
     if (recoverResumeActivatePath) {
-      history.push(recoverResumeActivatePath);
+      navigate(recoverResumeActivatePath);
     }
   };
 

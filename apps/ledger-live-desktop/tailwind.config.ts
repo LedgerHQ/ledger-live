@@ -5,6 +5,7 @@ const config = {
   content: [
     "./src/**/*.{js,ts,jsx,tsx}",
     "./node_modules/@ledgerhq/lumen-ui-react/dist/lib/**/*.{js,ts,jsx,tsx}",
+    "../../features/**/src/**/*.{ts,tsx}",
   ],
   presets: [ledgerLivePreset],
 } satisfies Config;

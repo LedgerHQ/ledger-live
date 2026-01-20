@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { TouchableOpacity, Linking } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { Flex, Text, Button, Link } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import NoResultsFound from "~/icons/NoResultsFound";

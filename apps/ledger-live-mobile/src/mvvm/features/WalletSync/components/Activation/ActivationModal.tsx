@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";

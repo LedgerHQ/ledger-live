@@ -4,7 +4,7 @@ import "./polyfill";
 import "./live-common-setup";
 import "./iosWebsocketFix";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import React, { Component, useCallback, useMemo, useEffect } from "react";
+import React, { Component, useCallback, useMemo, useEffect, useRef } from "react";
 import { StyleSheet, LogBox, Appearance, AppState, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
@@ -99,7 +99,6 @@ import {
 import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
-import { useRef } from "react";
 import HookDevTools from "./devTools/useDevTools";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
@@ -112,6 +111,7 @@ if (Config.DISABLE_YELLOW_BOX) {
 
 checkLibs({
   NotEnoughBalance,
+  // @ts-expect-error REACT19FIXME: React.createFactory removed but still expected by React 18 types
   React,
   log,
   Transport,
@@ -293,13 +293,18 @@ const StylesProvider = ({ children }: { children: React.ReactNode }) => {
   const { osTheme, resolvedTheme } = useSettings();
   const dispatch = useDispatch();
 
+  // Use a ref to track osTheme to avoid recreating compareOsTheme on every osTheme change
+  // which would cause an infinite loop with LumenStyleSheetProvider's Appearance.setColorScheme
+  const osThemeRef = useRef(osTheme);
+  osThemeRef.current = osTheme;
+
   const compareOsTheme = useCallback(() => {
     const currentOsTheme = Appearance.getColorScheme();
 
-    if (currentOsTheme && osTheme !== currentOsTheme) {
+    if (currentOsTheme && osThemeRef.current !== currentOsTheme) {
       dispatch(setOsTheme(currentOsTheme));
     }
-  }, [dispatch, osTheme]);
+  }, [dispatch]);
 
   useEffect(() => {
     compareOsTheme();

@@ -3,7 +3,7 @@ import { useTheme } from "styled-components/native";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Flex, Link } from "@ledgerhq/native-ui";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 
 import { SearchResult } from "~/helpers/formatAccountSearchResults";
 import AccountCard from "./AccountCard";

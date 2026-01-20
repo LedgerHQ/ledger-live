@@ -10,7 +10,7 @@ import {
 import { NotificationCard, Box, Flex, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useDispatch } from "~/context/hooks";
 import Swipeable, { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 
@@ -43,7 +43,7 @@ const RemoveContainer = styled(TouchableHighlight)`
 `;
 
 export default function NotificationCenter() {
-  const rowRefs = useRef(new Map<string, React.RefObject<SwipeableMethods>>()).current;
+  const rowRefs = useRef(new Map<string, React.RefObject<SwipeableMethods | null>>()).current;
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { colors } = useTheme();

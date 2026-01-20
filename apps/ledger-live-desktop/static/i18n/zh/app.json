@@ -482,7 +482,9 @@
       "celo_title" : "Ledger Nano S™ 不支持互换 Celo",
       "celo_description" : "要互换 Celo，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "monad_title" : "Ledger Nano S™ 不支持互换 Monad",
-      "monad_description" : "要互换 Monad，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
+      "monad_description" : "要互换 Monad，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "zcash_title" : "Ledger Nano S™ 不支持互换 Zcash",
+      "zcash_description" : "要互换 Zcash，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
     },
     "providers" : {
       "title" : "选择一个供应方来互换加密货币",
@@ -1310,6 +1312,17 @@
         "description" : "您可将加密货币从任一交易所或钱包转到您的 Ledger Wallet，以确保最大程度的安全性。",
         "depositButton" : "保护我的加密货币",
         "skipButton" : "以后再说"
+      },
+      "sync" : {
+        "timelineTitle" : "Wallet Sync",
+        "timelineTitleCompleted" : "同步已启用",
+        "title" : "为您的钱包启用同步",
+        "description" : "在您换用电脑或使用手机时，及时更新自己的资产组合",
+        "skipButton" : "以后再说",
+        "skipTitle" : "跳过启用同步？",
+        "skipDescription" : "如果跳过，当您换用手机或电脑时，将需要手动重新添加所有加密货币账户。您可以随时在 Ledger Wallet 设置中禁用此功能。",
+        "skipConfirm" : "是，跳过",
+        "skipNo" : "不，启用同步"
       },
       "backup" : {
         "title" : "秘密恢复短语备份",

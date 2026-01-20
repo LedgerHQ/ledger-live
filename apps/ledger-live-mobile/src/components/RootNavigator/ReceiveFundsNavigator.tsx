@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { Platform } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { NavigationProp, useRoute } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import ReceiveConfirmation from "~/screens/ReceiveFunds/03-Confirmation";
@@ -24,6 +24,7 @@ import { urls } from "~/utils/urls";
 import ReceiveProvider from "~/screens/ReceiveFunds/01b-ReceiveProvider.";
 import { setIsOnboardingFlowReceiveSuccess } from "~/actions/settings";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
@@ -33,6 +34,7 @@ export default function ReceiveFundsNavigator() {
   const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
   const dispatchRedux = useDispatch();
   const localizedWithdrawCryptoUrl = useLocalizedUrl(urls.withdrawCrypto);
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const onClose = useCallback(() => {
     track("button_clicked", {
@@ -69,14 +71,16 @@ export default function ReceiveFundsNavigator() {
     });
 
     dispatchRedux(setIsOnboardingFlowReceiveSuccess(true));
-  }, [dispatchRedux]);
+    tryTriggerPushNotificationDrawerAfterAction("receive");
+  }, [dispatchRedux, tryTriggerPushNotificationDrawerAfterAction]);
 
   const onVerificationConfirmationClose = useCallback(() => {
     track("button_clicked", {
       button: "HeaderRight Close",
       page: "ReceiveVerificationConfirmation",
     });
-  }, []);
+    tryTriggerPushNotificationDrawerAfterAction("receive");
+  }, [tryTriggerPushNotificationDrawerAfterAction]);
 
   return (
     <Stack.Navigator

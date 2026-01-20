@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { StyleSheet, View } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
 import { getEnv } from "@ledgerhq/live-env";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -103,7 +103,10 @@ export function Confirmation({
   const broadcast = useBroadcast({
     account: fromAccount,
     parentAccount: fromParentAccount,
-    broadcastConfig: { mevProtected },
+    broadcastConfig: {
+      mevProtected,
+      source: { type: "swap", name: provider },
+    },
   });
   const tokenCurrency =
     fromAccount && fromAccount.type === "TokenAccount" ? fromAccount.token : null;

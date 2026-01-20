@@ -14,7 +14,6 @@ import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../Se
 import ExperimentalSwitch from "./ExperimentalSwitch";
 import ExperimentalInteger from "./ExperimentalInteger";
 import ExperimentalFloat from "./ExperimentalFloat";
-import FullNode from "~/renderer/screens/settings/sections/Accounts/FullNode";
 import LottieTester from "../Developer/LottieTester";
 import PostOnboardingHubTester from "../Developer/PostOnboardingHubTester";
 import VaultSigner from "./VaultSigner";
@@ -170,7 +169,6 @@ const SectionExperimental = () => {
         {process.env.DEBUG_LOTTIE ? <LottieTester /> : null}
         {process.env.DEBUG_POSTONBOARDINGHUB ? <PostOnboardingHubTester /> : null}
         <VaultSigner />
-        <FullNode />
       </Body>
     </div>
   );

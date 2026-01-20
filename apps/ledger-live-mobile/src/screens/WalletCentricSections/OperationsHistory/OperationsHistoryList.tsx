@@ -4,7 +4,7 @@ import { Button } from "@ledgerhq/native-ui";
 import { SectionListRenderItemInfo, SectionList } from "react-native";
 import SectionHeader from "~/components/SectionHeader";
 import { ViewProps } from "./types";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { flattenAccounts } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { OperationRowContainer } from "./OperationRowContainer";
 

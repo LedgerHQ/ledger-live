@@ -35,7 +35,11 @@ const PlatformCompleteExchange: React.FC<Props> = ({
   const broadcast = useBroadcast({
     account,
     parentAccount,
-    broadcastConfig: { mevProtected, sponsored: request.sponsored },
+    broadcastConfig: {
+      mevProtected,
+      sponsored: request.sponsored,
+      source: { type: "swap", name: request.provider },
+    },
   });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();

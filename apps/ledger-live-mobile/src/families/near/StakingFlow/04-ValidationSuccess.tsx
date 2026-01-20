@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen, track } from "~/analytics";
 import { ScreenName } from "~/const";
@@ -15,6 +15,7 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import type { NearStakingFlowParamList } from "./types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 type Props = BaseComposite<
   StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingValidationSuccess>
@@ -24,6 +25,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
   const { ticker } = getAccountCurrency(account);
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
@@ -39,7 +41,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       delegation: "delegation",
       flow: "stake",
     });
-  }, [source, validator, ticker]);
+    tryTriggerPushNotificationDrawerAfterAction("stake");
+  }, [source, validator, ticker, tryTriggerPushNotificationDrawerAfterAction]);
 
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

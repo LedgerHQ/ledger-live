@@ -281,13 +281,7 @@ class StepImport extends PureComponent<
     const preferredNewAccountScheme =
       newAccountSchemes && newAccountSchemes.length > 0 ? newAccountSchemes[0] : undefined;
     if (err) {
-      return (
-        <ErrorDisplay
-          error={err}
-          withExportLogs={err.name !== "SatStackDescriptorNotImported"}
-          supportLink={urls.syncErrors}
-        />
-      );
+      return <ErrorDisplay error={err} withExportLogs supportLink={urls.syncErrors} />;
     }
     const currencyName = mainCurrency ? mainCurrency.name : "";
     const { sections, alreadyEmptyAccount } = groupAddAccounts(existingAccounts, scannedAccounts, {
@@ -389,7 +383,6 @@ export const StepImportFooter = ({
   scannedAccounts,
   existingAccounts,
   currency,
-  err,
   t,
   editedNames,
   device,
@@ -405,7 +398,6 @@ export const StepImportFooter = ({
   });
   const count = checkedAccountsIds.length;
   const willClose = !willCreateAccount && !willAddAccounts;
-  const isHandledError = err && err.name === "SatStackDescriptorNotImported";
 
   const hasCantonCreatableAccounts = scannedAccounts.some(
     a =>
@@ -449,27 +441,16 @@ export const StepImportFooter = ({
           transitionTo("finish");
         }
       };
-  const goFullNode = () => {
-    onCloseModal();
-    dispatch(openModal("MODAL_BITCOIN_FULL_NODE", { skipNodeSetup: true }));
-  };
   return (
     <>
       <Box grow>{currency && <CurrencyBadge currency={currency} />}</Box>
-      {scanStatus === "error" &&
-        (isHandledError ? (
-          <Button data-testid={"add-accounts-full-node-reconfigure"} primary onClick={goFullNode}>
-            {t("addAccounts.fullNodeConfigure")}
-          </Button>
-        ) : (
-          <>
-            <RetryButton
-              data-testid={"add-accounts-import-retry-button"}
-              primary
-              onClick={() => setScanStatus("scanning")}
-            />
-          </>
-        ))}
+      {scanStatus === "error" && (
+        <RetryButton
+          data-testid={"add-accounts-import-retry-button"}
+          primary
+          onClick={() => setScanStatus("scanning")}
+        />
+      )}
       {scanStatus === "scanning" && (
         <Button
           data-testid={"add-accounts-import-stop-button"}
@@ -479,7 +460,7 @@ export const StepImportFooter = ({
         </Button>
       )}
 
-      {isHandledError || scanStatus === "error" ? null : (
+      {scanStatus === "error" ? null : (
         <Button
           data-testid={"add-accounts-import-add-button"}
           primary

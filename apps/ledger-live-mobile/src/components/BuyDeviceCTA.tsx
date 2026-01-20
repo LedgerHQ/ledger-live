@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/native";
 

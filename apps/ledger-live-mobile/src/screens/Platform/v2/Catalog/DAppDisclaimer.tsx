@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, IconBox, Text, Checkbox, IconsLegacy, Button } from "@ledgerhq/native-ui";
 import { Disclaimer } from "../hooks";
 import { AppIcon } from "../AppIcon";

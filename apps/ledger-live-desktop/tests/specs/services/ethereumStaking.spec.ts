@@ -79,6 +79,9 @@ test.use({
         enableModularization: false,
       },
     },
+    lwdWallet40: {
+      enabled: false,
+    },
   },
 });
 

@@ -1,7 +1,7 @@
 import type { BlockInfo } from "@ledgerhq/coin-framework/api/index";
 import { apiClient } from "../network/api";
 import { getSyntheticBlock } from "./utils";
-import { FINALITY_MS } from "../constants";
+import { FINALITY_MS, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
 
 /**
  * Gets the latest "block" information for Hedera.
@@ -13,9 +13,9 @@ import { FINALITY_MS } from "../constants";
  * 3. Convert this timestamp into a synthetic block using a hardcoded time window (10 seconds by default)
  */
 export async function lastBlock(): Promise<BlockInfo> {
-  // see getBlock implementation, block data should be immutable: we do not allow querying blocks on non-finalized time range
+  // see getBlock implementation, block data should be immutable: we do not allow querying blocks on non-finalized time range.
   // => we search the most recent transaction, but only in finalized time range (ending 10 seconds ago).
-  const before = new Date(Date.now() - FINALITY_MS);
+  const before = new Date(Date.now() - FINALITY_MS - SYNTHETIC_BLOCK_WINDOW_SECONDS * 1000);
   const latestTransaction = await apiClient.getLatestTransaction(before);
   const syntheticBlock = getSyntheticBlock(latestTransaction.consensus_timestamp);
 

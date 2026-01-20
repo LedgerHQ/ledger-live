@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
@@ -69,7 +69,9 @@ export default function PinCodeInput({ nbDigits, handleSendDigits, focusOnMount 
             onChange={value => handleChange(value, index)}
             onKeyPress={e => handleKeyPress(e, index)}
             index={index}
-            ref={el => (inputRefs.current[index] = el)}
+            ref={el => {
+              inputRefs.current[index] = el;
+            }}
           />
         ))}
       </Flex>

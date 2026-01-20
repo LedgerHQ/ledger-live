@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import type {
   CosmosMappedValidator,

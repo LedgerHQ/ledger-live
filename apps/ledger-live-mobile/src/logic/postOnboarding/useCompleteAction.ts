@@ -3,13 +3,14 @@ import { useDispatch } from "~/context/hooks";
 import { PostOnboardingContext } from "@ledgerhq/live-common/postOnboarding/PostOnboardingProvider";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { track } from "~/analytics";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useToastsActions } from "~/actions/toast";
 
 export function useCompleteActionCallback() {
   const dispatch = useDispatch();
+  // @ts-expect-error REACT19FIXME: Context $$typeof symbol mismatch between React 18 and 19
   const { getPostOnboardingAction } = useContext(PostOnboardingContext);
   const { deviceModelId } = usePostOnboardingHubState();
   const { t } = useTranslation();

@@ -29,8 +29,9 @@ import {
 } from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
-import { LAST_STARTUP_EVENTS, logLastStartupEvents } from "LLM/utils/logLastStartupEvents";
+import { logLastStartupEvents } from "LLM/utils/logLastStartupEvents";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
+import { STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 
 const TRACKING_EVENT = "deeplink_clicked";
 import {
@@ -40,6 +41,8 @@ import {
   logSecurityEvent,
   EarnDeeplinkAction,
   validateEarnDepositScreen,
+  validateLargeMoverCurrencyIds,
+  validateMarketCurrencyId,
 } from "./deeplinks/validation";
 import { AppLoadingManager, AppLoadingManagerProps } from "LLM/features/LaunchScreen";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
@@ -60,7 +63,7 @@ const styles = StyleSheet.create({
 });
 
 function handleStartComplete() {
-  logLastStartupEvents(LAST_STARTUP_EVENTS.NAV_READY);
+  logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
 }
 
 function isWalletConnectUrl(url: string) {
@@ -595,6 +598,32 @@ export const DeeplinksProvider = ({
             });
 
           const platform = pathname.split("/")[1];
+
+          if (hostname === "landing-page-large-mover") {
+            const currencyIds = searchParams.get("currencyIds");
+
+            const validatedCurrencyIds = validateLargeMoverCurrencyIds(currencyIds);
+            if (!validatedCurrencyIds) {
+              // Redirect to market list when currencyIds is missing or invalid
+              return;
+            }
+            url.searchParams.set("currencyIds", validatedCurrencyIds);
+            return getStateFromPath(url.href?.split("://")[1], config);
+          }
+
+          if (hostname === "market") {
+            const currencyIdFromPath = pathname.replace("/", "");
+            if (currencyIdFromPath) {
+              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
+
+              if (!validatedCurrencyId) {
+                return getStateFromPath("market", config);
+              }
+
+              url.pathname = `/${validatedCurrencyId}`;
+              return getStateFromPath(url.href?.split("://")[1], config);
+            }
+          }
 
           // Handle modular drawer deeplinks (receive & add-account)
           if (hostname === "receive" || hostname === "add-account") {

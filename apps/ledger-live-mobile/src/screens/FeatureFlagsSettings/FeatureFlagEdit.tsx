@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { ScrollView } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId, Feature } from "@ledgerhq/types-live";
 

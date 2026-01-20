@@ -1,5 +1,5 @@
 import React, { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
-import { useHistory, useRouteMatch } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -115,8 +115,8 @@ export const TopBar = ({
 }: Props) => {
   const { t } = useTranslation();
   const lastMatchingURL = useRef<string | null>(null);
-  const history = useHistory();
-  const match = useRouteMatch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { localStorage } = window;
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
@@ -155,10 +155,11 @@ export const TopBar = ({
         flow: flowName,
       });
 
-      const pathname = match.path.replace("/:appId?", "");
-      history.replace({
-        pathname,
-        search: `?referrer=isExternal`,
+      // Extract base path from current location (remove appId segment)
+      const pathParts = location.pathname.split("/");
+      pathParts.pop(); // Remove the appId
+      const pathname = pathParts.join("/") || "/";
+      navigate(`${pathname}?referrer=isExternal`, {
         state: {
           mode: flowName,
         },
@@ -180,7 +181,7 @@ export const TopBar = ({
       await webview.loadURL(safeUrl);
       webview.clearHistory();
     }
-  }, [localStorage, history, match.path, webviewAPIRef, webviewState.url]);
+  }, [localStorage, navigate, location.pathname, webviewAPIRef, webviewState.url]);
 
   const getButtonLabel = useCallback(() => {
     const lastScreen = localStorage.getItem("last-screen") || "";
@@ -228,13 +229,13 @@ export const TopBar = ({
             url.searchParams.get("lastScreen") || url.searchParams.get("flowName") || "",
           );
 
-          history.replace(`${match.url}/${manifestId}?goToURL=${goToURL}`);
+          navigate(`${location.pathname}/${manifestId}?goToURL=${goToURL}`);
         }
       } else {
         lastMatchingURL.current = webviewState.url;
       }
     }
-  }, [localStorage, history, isInternalApp, match.url, webviewState.url]);
+  }, [localStorage, navigate, isInternalApp, location.pathname, webviewState.url]);
 
   const isLoading = useDebounce(webviewState.loading, 100);
 

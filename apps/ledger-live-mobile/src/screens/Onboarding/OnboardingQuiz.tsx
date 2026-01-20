@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Flex, FlowStepper, Text, Button, Transitions } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation/FlowStepper/index";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

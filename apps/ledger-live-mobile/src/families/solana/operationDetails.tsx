@@ -1,7 +1,7 @@
 import React from "react";
 import { Linking, View } from "react-native";
 import { useSelector } from "~/context/hooks";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import { OperationType } from "@ledgerhq/types-live";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";

@@ -3,7 +3,7 @@ import useNftsEntryPointViewModel from "./useNftsEntryPointViewModel";
 import { Account } from "@ledgerhq/types-live";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { EntryPointNft } from "./types";
 
 type Props = { readonly entryPoints: EntryPointNft };

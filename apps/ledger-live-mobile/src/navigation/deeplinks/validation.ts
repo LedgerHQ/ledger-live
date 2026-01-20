@@ -6,6 +6,7 @@
  */
 
 import { DdRum, ErrorSource } from "@datadog/mobile-react-native";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { isDatadogEnabled } from "../../datadog";
 import type { OptionMetadata } from "../../reducers/types";
 
@@ -288,6 +289,25 @@ export function validateEarnDepositScreen(
     cryptoAssetId: sanitizeString(cryptoAssetId || "", MAX_TITLE_LENGTH),
     accountId: sanitizeString(accountId || "", MAX_TITLE_LENGTH),
   };
+}
+
+export function validateLargeMoverCurrencyIds(currencyIds: string | null): string | null {
+  if (!currencyIds || currencyIds?.trim() === "") {
+    return null;
+  }
+
+  return currencyIds.trim().toUpperCase();
+}
+
+export function validateMarketCurrencyId(currencyId: string | null): string | null {
+  if (!currencyId || currencyId.trim() === "") {
+    return null;
+  }
+
+  const normalizedCurrencyId = currencyId.trim().toLowerCase();
+  const currency = findCryptoCurrencyById(normalizedCurrencyId);
+
+  return currency?.id ?? null;
 }
 
 /**

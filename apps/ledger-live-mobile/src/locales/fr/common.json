@@ -933,7 +933,7 @@
       "primaryCTA" : "Réessayer"
     },
     "SolanaAccountNotFunded" : {
-      "title" : "Pas de fonds sur le compte"
+      "title" : "Compte vide"
     },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "Ce compte de tokens associé contient un autre token"
@@ -3474,7 +3474,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Activez les notifications",
+      "titleVariantB" : "Exploitez tout le potentiel de Ledger Wallet",
       "desc" : "Ne manquez plus rien sur Ledger Wallet, les produits Ledger, le marché, et recevez des recommandations personnalisées. Vous pouvez vous désinscrire à tout moment dans les Paramètres.",
+      "descVariantB" : "Nous vous enverrons des conseils personnalisés, des guides de configuration et les actualités du marché les plus utiles.",
       "allow" : "Autoriser les notifications",
       "later" : "Plus tard"
     },
@@ -3891,7 +3893,9 @@
         "celo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Celo",
         "celo_description" : "Pour échanger des Celo, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "monad_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Monad",
-        "monad_description" : "Pour échanger des Monad, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+        "monad_description" : "Pour échanger des Monad, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "zcash_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Zcash",
+        "zcash_description" : "Pour échanger des Zcash, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {

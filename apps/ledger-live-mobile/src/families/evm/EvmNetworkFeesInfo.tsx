@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { InformationFill } from "@ledgerhq/native-ui/assets/icons";
 

@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { DataRow } from "~/components/ValidateOnDeviceDataRow";
 import LText from "~/components/LText";
 

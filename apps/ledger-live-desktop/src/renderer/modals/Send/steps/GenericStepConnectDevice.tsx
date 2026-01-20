@@ -57,7 +57,13 @@ export default function StepConnectDevice({
 }) {
   const mevProtected = useSelector(mevProtectionSelector);
   const dispatch = useDispatch();
-  const broadcastConfig = useMemo(() => ({ mevProtected }), [mevProtected]);
+  const broadcastConfig = useMemo(
+    () => ({
+      mevProtected,
+      source: { type: "coin-module" as const, name: "ledger-live-desktop" },
+    }),
+    [mevProtected],
+  );
   const broadcast = useBroadcast({
     account,
     parentAccount,

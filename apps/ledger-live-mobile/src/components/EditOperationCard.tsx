@@ -5,7 +5,7 @@ import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/core";
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { NavigatorName, ScreenName } from "~/const";
 import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
 

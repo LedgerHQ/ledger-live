@@ -1,3 +1,4 @@
+import type { BroadcastConfig } from "@ledgerhq/types-live";
 import { TX, Address, Block } from "../storage/types";
 
 export type NetworkInfoResponse = {
@@ -9,7 +10,10 @@ export type NetworkInfoResponse = {
 // abstract explorer api used, abstract batching logic, pagination, and retries
 export interface IExplorer {
   baseUrl: string;
-  broadcast(tx: string): Promise<{ data: { result: string } }>;
+  broadcast(
+    tx: string,
+    broadcastConfig?: Pick<BroadcastConfig, "source">,
+  ): Promise<{ data: { result: string } }>;
   getTxHex(txId: string): Promise<string>;
   getFees(): Promise<{ [key: string]: number }>;
   getNetwork?(): Promise<NetworkInfoResponse>;

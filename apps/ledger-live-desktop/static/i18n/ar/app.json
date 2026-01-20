@@ -482,7 +482,9 @@
       "celo_title" : "™Ledger Nano S لا تدعم مبادلة Celo",
       "celo_description" : "لمبادلة Celo، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "monad_title" : "™Ledger Nano S لا تدعم مبادلة Monad",
-      "monad_description" : "لمبادلة Monad، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+      "monad_description" : "لمبادلة Monad، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "zcash_title" : "™Ledger Nano S لا تدعم مبادلة Zcash",
+      "zcash_description" : "لمبادلة Zcash، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
     },
     "providers" : {
       "title" : "اختر أحد المزودين لمبادلة الأصول المشفرة",
@@ -1310,6 +1312,17 @@
         "description" : "يمكنك تحويل الأصول المشفرة من أي منصة تداول أو محفظة إلى Ledger Wallet خاصتك من أجل أقصى درجات الأمان.",
         "depositButton" : "تأمين أصولي المشفرة",
         "skipButton" : "ربّما لاحقاً"
+      },
+      "sync" : {
+        "timelineTitle" : "مزامنة المحفظة",
+        "timelineTitleCompleted" : "المزامنة ممكّنة",
+        "title" : "تمكين المزامنة لمحفظتك",
+        "description" : "حافظ على محفظتك الاستثمارية مُحدّثةً عند تبديل أجهزة الكمبيوتر أو استخدام هاتف",
+        "skipButton" : "سأفعل هذا لاحقاً",
+        "skipTitle" : "تخطي تمكين المزامنة؟",
+        "skipDescription" : "إذا تخطيت، سيتعين عليك إعادة إضافة جميع حسابات الأصول المشفرة خاصتك يدوياً، إذا قمت بالتبديل إلى هاتف أو كمبيوتر جديد. يمكنك دائماً تعطيلها من إعدادات Ledger Wallet لديك.",
+        "skipConfirm" : "نعم، تخطي",
+        "skipNo" : "لا، قم بتمكين المزامنة"
       },
       "backup" : {
         "title" : "نسخة احتياطية لعبارة الاسترداد السرية الخاصة بك",

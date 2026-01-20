@@ -5,6 +5,7 @@ export default class LedgerSyncPage {
   successPage = "walletsync-success";
   confirmDeleteSyncId = "delete-trustchain";
   deleteSyncId = "walletSync-manage-backup";
+  backupDeletionSuccessTextId = "walletsync-delete-backup-success-title";
 
   activationButton = () => getElementById("walletsync-activation-button");
   activationTitle = () => getElementById("walletsync-activation-title");
@@ -51,8 +52,10 @@ export default class LedgerSyncPage {
   }
 
   @Step("Expect deletion success page")
-  async closeDeletionSuccessPage() {
-    await waitForElementById(this.successPage);
-    await tapByElement(this.deletionSuccessCloseButton());
+  async expectBackupDeletion() {
+    await waitForElementById(this.backupDeletionSuccessTextId);
+    await detoxExpect(getElementById(this.backupDeletionSuccessTextId)).toHaveText(
+      "Your Ledger Wallet apps are no longer synced",
+    );
   }
 }

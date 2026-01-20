@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import { Text, Flex, IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";

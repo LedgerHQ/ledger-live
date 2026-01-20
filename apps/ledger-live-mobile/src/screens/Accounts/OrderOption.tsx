@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import styled from "styled-components/native";
 import { Checkbox, Text } from "@ledgerhq/native-ui";
 import { useRefreshAccountsOrdering } from "~/actions/general";

@@ -2,7 +2,7 @@ import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from
 import { useDispatch } from "~/context/hooks";
 import { Image } from "react-native";
 import { Flex, Icons } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/live-common/errors";
@@ -210,4 +210,5 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   );
 };
 
-export default withRemountableWrapper(CustomImageDeviceAction);
+// @ts-expect-error REACT19FIXME: FC return type Promise<ReactNode> not compatible with React 19
+export default withRemountableWrapper(CustomImageDeviceAction) as React.FC<Props>;

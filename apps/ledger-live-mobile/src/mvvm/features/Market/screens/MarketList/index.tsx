@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useCallback, useContext, useEffect } from "react";
+import React, { RefObject, useCallback, useContext, useEffect } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { RefreshControl, ViewToken } from "react-native";
 import {
@@ -6,9 +6,11 @@ import {
   MarketListRequestParams,
 } from "@ledgerhq/live-common/market/utils/types";
 import { useFocusEffect } from "@react-navigation/native";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "styled-components/native";
 import SearchHeader from "./components/SearchHeader";
 import ListFooter from "./components/ListFooter";
@@ -41,7 +43,7 @@ interface ViewProps {
   refreshRate: number;
   marketParams: MarketListRequestParams;
   marketCurrentPage: number;
-  viewabilityConfigCallbackPairs: MutableRefObject<
+  viewabilityConfigCallbackPairs: RefObject<
     {
       onViewableItemsChanged: ({ viewableItems }: { viewableItems: ViewToken[] }) => void;
       viewabilityConfig: {
@@ -69,6 +71,11 @@ function View({
   marketParams,
 }: ViewProps) {
   const { colors } = useTheme();
+
+  // When marketBanner is enabled, tabs are hidden and we navigate directly to MarketList
+  // In this case, we need to add top padding to account for the back button header
+  const { shouldDisplayMarketBanner: isMarketBannerEnabled } = useWalletFeaturesConfig("mobile");
+
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({
     loading,
     refetch: refetchAllPages,
@@ -89,10 +96,10 @@ function View({
 
   useFocusEffect(
     useCallback(() => {
-      setScreen && setScreen("Market");
+      if (setScreen) setScreen("Market");
 
       return () => {
-        setSource("Market");
+        if (setSource) setSource("Market");
       };
     }, [setScreen, setSource]),
   );
@@ -134,7 +141,7 @@ function View({
     scrollEventThrottle: 50,
     initialNumToRender: 50,
     keyExtractor,
-    viewabilityConfigCallbackPairs: viewabilityConfigCallbackPairs.current,
+    viewabilityConfigCallbackPairs: viewabilityConfigCallbackPairs.current ?? undefined,
     ListFooterComponent: <ListFooter isLoading={loading} />,
     ListEmptyComponent: (
       <ListEmpty
@@ -155,19 +162,28 @@ function View({
     ),
   };
 
+  // When marketBanner is enabled (standalone mode), use SafeAreaView with top edge
+  // Otherwise use WalletTabSafeAreaView for tabs mode
+  const SafeAreaWrapper = isMarketBannerEnabled ? SafeAreaView : WalletTabSafeAreaView;
+  const safeAreaEdges = isMarketBannerEnabled
+    ? (["top", "left", "right"] as const)
+    : (["left", "right"] as const);
+
+  const listHeaderComponent = (
+    <SafeAreaWrapper edges={safeAreaEdges}>
+      <Flex backgroundColor={colors.background.main}>
+        <SearchHeader search={search} updateMarketParams={updateMarketParams} />
+        <BottomSection />
+      </Flex>
+    </SafeAreaWrapper>
+  );
+
   return (
     <CollapsibleHeaderFlatList<MarketCurrencyData>
       {...listProps}
       testID="market-list"
       stickyHeaderIndices={[0]}
-      ListHeaderComponent={
-        <WalletTabSafeAreaView edges={["left", "right"]}>
-          <Flex backgroundColor={colors.background.main}>
-            <SearchHeader search={search} updateMarketParams={updateMarketParams} />
-            <BottomSection />
-          </Flex>
-        </WalletTabSafeAreaView>
-      }
+      ListHeaderComponent={listHeaderComponent}
     />
   );
 }

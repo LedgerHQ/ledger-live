@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { openModal } from "~/renderer/actions/modals";
@@ -40,7 +40,7 @@ export default function AccountContextMenu({
   parentAccount,
   withStar,
 }: Props) {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
@@ -86,8 +86,7 @@ export default function AccountContextMenu({
         Icon: IconBuy,
         callback: () => {
           setTrackingSource("account context menu");
-          history.push({
-            pathname: "/exchange",
+          navigate("/exchange", {
             state: {
               currency: currency?.id,
               account: mainAccount?.id,
@@ -104,8 +103,7 @@ export default function AccountContextMenu({
         Icon: IconBuy,
         callback: () => {
           setTrackingSource("account context menu");
-          history.push({
-            pathname: "/exchange",
+          navigate("/exchange", {
             state: {
               currency: currency?.id,
               account: mainAccount?.id,
@@ -122,14 +120,13 @@ export default function AccountContextMenu({
         Icon: IconSwap,
         callback: () => {
           setTrackingSource("account context menu");
-          history.push({
-            pathname: "/swap",
+          navigate("/swap", {
             state: {
               defaultCurrency: currency,
               defaultAccount: account,
               defaultAmountFrom: "0",
               defaultParentAccount: parentAccount,
-              from: history.location.pathname,
+              from: location.pathname,
             },
           });
         },
@@ -142,8 +139,7 @@ export default function AccountContextMenu({
         Icon: IconCoins,
         callback: () => {
           setTrackingSource("account context menu");
-          history.push({
-            pathname: routeToStake.pathname,
+          navigate(routeToStake.pathname, {
             state: {
               ...routeToStake.state,
             },
@@ -196,7 +192,7 @@ export default function AccountContextMenu({
     getCanStakeCurrency,
     withStar,
     dispatch,
-    history,
+    navigate,
     stakeLabel,
     openSendFlow,
     isStarred,

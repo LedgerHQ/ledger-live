@@ -67,7 +67,7 @@ const ToolTip = ({
       disabled={!(!!content && enabled)}
       placement={placement}
       hideOnClick={hideOnClick}
-      // eslint-disable-next-line tailwindcss/no-custom-classname
+      // eslint-disable-next-line better-tailwindcss/no-unknown-classes
       className={tooltipBg ? `bg-${tooltipBg}` : "bg-base"}
     >
       <ChildrenContainer style={containerStyle}>{children}</ChildrenContainer>

@@ -1,2 +1,1 @@
-// Encapsulate for LLD & LLM
-export * from "@ledgerhq/coin-stacks/constants";
+export { STACKS_MAX_MEMO_SIZE } from "@ledgerhq/coin-stacks/logic/validateMemo";

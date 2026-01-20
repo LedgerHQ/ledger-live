@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { Button, Link, Text } from "@ledgerhq/native-ui";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { urls } from "~/utils/urls";

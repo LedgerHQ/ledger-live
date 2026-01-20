@@ -1,6 +1,6 @@
 import { Button } from "@ledgerhq/native-ui";
 import React from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
 
 type Props = {

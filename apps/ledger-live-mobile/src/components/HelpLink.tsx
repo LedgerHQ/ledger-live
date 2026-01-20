@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { StyleSheet, Linking, ViewStyle, StyleProp } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import Touchable from "./Touchable";
 import LText from "./LText";

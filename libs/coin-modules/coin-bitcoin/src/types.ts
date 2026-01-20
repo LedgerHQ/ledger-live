@@ -146,6 +146,8 @@ export type Transaction = TransactionCommon & {
   networkInfo: NetworkInfo | null | undefined;
   opReturnData?: Buffer | undefined;
   changeAddress?: string | undefined;
+  psbt?: string;
+  finalizePsbt?: boolean;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {

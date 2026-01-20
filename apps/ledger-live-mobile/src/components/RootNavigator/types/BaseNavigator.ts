@@ -165,6 +165,7 @@ export type BaseNavigatorStackParamList = {
     onNameChange(name: string): void;
   };
   [ScreenName.MarketCurrencySelect]: undefined;
+  [ScreenName.MarketList]: undefined;
   [ScreenName.PortfolioOperationHistory]: undefined;
   [ScreenName.Account]: {
     account?: AccountLike;

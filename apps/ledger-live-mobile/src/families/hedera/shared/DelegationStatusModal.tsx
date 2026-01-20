@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { HEDERA_DELEGATION_STATUS } from "@ledgerhq/live-common/families/hedera/constants";
 import QueuedDrawer from "~/components/QueuedDrawer";
 

@@ -1,3 +1,4 @@
+import type { BroadcastConfig } from "@ledgerhq/types-live";
 import { Address, Block, TX } from "../storage/types";
 import network from "@ledgerhq/live-network/network";
 import { IExplorer, NetworkInfoResponse } from "./types";
@@ -24,12 +25,21 @@ class BitcoinLikeExplorer implements IExplorer {
     this.baseUrl = forcedExplorerURI ? forcedExplorerURI : blockchainBaseURL(cryptoCurrency);
   }
 
-  async broadcast(tx: string): Promise<{ data: { result: string } }> {
+  async broadcast(
+    tx: string,
+    broadcastConfig?: Pick<BroadcastConfig, "source">,
+  ): Promise<{ data: { result: string } }> {
     const url = `${this.baseUrl}/tx/send`;
+    const headers: Record<string, string> = {};
+    if (broadcastConfig?.source) {
+      headers["X-Ledger-Source-Type"] = broadcastConfig.source.type;
+      headers["X-Ledger-Source-Name"] = broadcastConfig.source.name;
+    }
     const res = await network({
       method: "POST",
       url,
       data: { tx },
+      headers,
     });
     return res;
   }

@@ -34,6 +34,30 @@ globalThis.webSocket = {
 };
 globalThis.pendingCallbacks = new Map<string, { callback: (data: string) => void }>();
 
+// Helper to wrap operations with a timeout to prevent CI hangs
+async function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  operationName: string,
+): Promise<T | undefined> {
+  let timeoutId: NodeJS.Timeout;
+  const timeoutPromise = new Promise<undefined>(resolve => {
+    timeoutId = setTimeout(() => {
+      log.warn(`${operationName} timed out after ${timeoutMs}ms, continuing...`);
+      resolve(undefined);
+    }, timeoutMs);
+  });
+
+  try {
+    const result = await Promise.race([promise, timeoutPromise]);
+    clearTimeout(timeoutId!);
+    return result;
+  } catch (err) {
+    clearTimeout(timeoutId!);
+    throw err;
+  }
+}
+
 export default async () => {
   if (process.env.CI && process.env.SHARD_INDEX === "1") {
     try {
@@ -50,7 +74,7 @@ export default async () => {
     } finally {
       try {
         closeBridge();
-        await cleanupDetox();
+        await withTimeout(cleanupDetox(), 30_000, "cleanupDetox");
       } catch (cleanupErr) {
         log.warn("Error during cleanup:", sanitizeError(cleanupErr));
       }
@@ -63,8 +87,8 @@ export default async () => {
     }
   }
 
-  // default Detox teardown
-  await globalTeardown();
+  // default Detox teardown with timeout protection to prevent CI hangs from proper-lockfile issues
+  await withTimeout(globalTeardown(), 60_000, "globalTeardown");
 
   // parallel file cleanups and force close any lingering connections
   await Promise.all([cleanupUserdata(), forceGarbageCollection()]);

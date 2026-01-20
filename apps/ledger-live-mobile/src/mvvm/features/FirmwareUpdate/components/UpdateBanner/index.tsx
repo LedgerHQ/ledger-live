@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Pressable } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Text, Flex, Icons } from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";

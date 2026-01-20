@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import Section from "~/screens/OperationDetails/Section";
 import { StellarOperation } from "@ledgerhq/live-common/families/stellar/types";
 import { formatMemo } from "@ledgerhq/live-common/families/stellar/ui";

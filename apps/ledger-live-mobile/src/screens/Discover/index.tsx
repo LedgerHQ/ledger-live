@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useMemo, useContext } from "react";
 import { Linking, Platform, ScrollView } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";

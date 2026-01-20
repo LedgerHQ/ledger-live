@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { View } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { App } from "@ledgerhq/types-live";
 import styled, { DefaultTheme, useTheme } from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";

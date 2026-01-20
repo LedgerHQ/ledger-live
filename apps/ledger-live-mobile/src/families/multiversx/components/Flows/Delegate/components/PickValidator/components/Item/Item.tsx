@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { View } from "react-native";
 import BigNumber from "bignumber.js";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/multiversx/constants";

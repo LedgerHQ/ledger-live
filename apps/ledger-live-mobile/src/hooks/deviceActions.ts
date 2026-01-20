@@ -173,7 +173,7 @@ export function useRenameDeviceAction() {
 export function useSelectDevice(defaultDevice?: Device) {
   const [device, setDevice] = useState<Device | null | undefined>(defaultDevice || null);
 
-  const onDeviceUpdated = useRef<() => void>();
+  const onDeviceUpdated = useRef<(() => void) | undefined>(undefined);
   const registerDeviceSelection = useCallback((handler: () => void) => {
     onDeviceUpdated.current = handler;
   }, []);

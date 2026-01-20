@@ -1,8 +1,12 @@
 import React, { useMemo, useState, useCallback } from "react";
-import { FlatList, LayoutChangeEvent } from "react-native";
-import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
+import { FlatList, FlatListProps, LayoutChangeEvent } from "react-native";
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+  AnimatedProps,
+} from "react-native-reanimated";
 import { useSelector } from "~/context/hooks";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
@@ -24,6 +28,7 @@ import BuyDeviceBanner, {
   IMAGE_PROPS_BUY_DEVICE_FLEX,
 } from "LLM/features/Reborn/components/BuyDeviceBanner";
 import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner";
+import { renderItem } from "LLM/utils/renderItem";
 import { FabAssetActions } from "~/components/FabActions/actionsList/asset";
 import { TrackScreen } from "~/analytics";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -38,7 +43,7 @@ type NavigationProps = BaseComposite<
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
-);
+) as React.ComponentType<AnimatedProps<FlatListProps<React.JSX.Element | null>>>;
 
 const currencyBalanceBigNumber = BigNumber(0);
 const accounts: AccountLike[] = [];
@@ -137,8 +142,8 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
         style={{ flex: 1, paddingTop: 48, marginBottom: 40 }}
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         data={data}
-        renderItem={({ item }) => item as React.JSX.Element}
-        keyExtractor={(_, index: number) => String(index)}
+        renderItem={renderItem<React.JSX.Element>}
+        keyExtractor={(_: React.JSX.Element | null, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
       />

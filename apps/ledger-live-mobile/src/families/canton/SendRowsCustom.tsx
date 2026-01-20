@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { ScreenName } from "~/const";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import LText from "~/components/LText";

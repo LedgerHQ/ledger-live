@@ -2,7 +2,7 @@ import * as React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ScreenName } from "~/const";
 import { Button, IconsLegacy } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

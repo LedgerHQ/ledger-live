@@ -14,7 +14,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import snakeCase from "lodash/snakeCase";
-import React, { MutableRefObject, useCallback } from "react";
+import React, { type RefObject, useCallback } from "react";
 import { ABTestingVariants, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
@@ -61,8 +61,7 @@ import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
-import { LAST_STARTUP_EVENTS } from "LLM/utils/logLastStartupEvents";
-import { resolveStartupEvents } from "LLM/utils/resolveStartupEvents";
+import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { notificationsPermissionStatusSelector } from "~/reducers/notifications";
@@ -343,7 +342,7 @@ const extraProperties = async (store: AppStore) => {
 
   const startupEvents = await resolveStartupEvents();
   const legacyStartupTime = startupEvents.find(
-    ({ event }) => event === LAST_STARTUP_EVENTS.APP_STARTED,
+    ({ event }) => event === STARTUP_EVENTS.APP_STARTED,
   )?.time;
 
   const optimiseOptInNotificationsNewWordingAttributes =
@@ -566,7 +565,7 @@ export const useAnalytics = () => {
   };
 };
 
-const lastScreenEventName: MutableRefObject<string | null | undefined> = React.createRef();
+const lastScreenEventName: RefObject<string | null | undefined> = React.createRef();
 
 /**
  * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.

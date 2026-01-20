@@ -146,14 +146,15 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const { state } = useLocation<{
+  const location = useLocation();
+  const state = location.state as {
     defaultAccount?: AccountLike;
     defaultParentAccount?: Account;
     defaultAmountFrom?: string;
     from?: string;
     defaultToken?: TokenParams;
     affiliate?: string;
-  }>();
+  } | null;
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
   // Remove after KYC AB Testing

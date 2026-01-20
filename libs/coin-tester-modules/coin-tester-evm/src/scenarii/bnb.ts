@@ -5,15 +5,15 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { makeAccount } from "../fixtures";
 import { callMyDealer, getBridges, bnb, VITALIK } from "../helpers";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDT_ON_BNB } from "../tokenFixtures";
 import { buildSigner } from "../signer";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
 
-type BnbScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
+type BnbScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
 const makeScenarioTransactions = ({ address }: { address: string }): BnbScenarioTransaction[] => {
   const scenarioSendBNBTransaction: BnbScenarioTransaction = {
@@ -68,7 +68,7 @@ const makeScenarioTransactions = ({ address }: { address: string }): BnbScenario
   return [scenarioSendBNBTransaction, scenarioSendUSDTTransaction, scenarioSendMaxBNBTransaction];
 };
 
-export const scenarioBnb: Scenario<EvmTransaction, Account> = {
+export const scenarioBnb: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic BNB Transactions",
   setup: async () => {
     const signer = await buildSigner();

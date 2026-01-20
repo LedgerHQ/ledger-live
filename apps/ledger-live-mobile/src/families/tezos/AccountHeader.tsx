@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import { useNavigation, ParamListBase, RouteProp } from "@react-navigation/native";
 import { AccountLike, Account } from "@ledgerhq/types-live";

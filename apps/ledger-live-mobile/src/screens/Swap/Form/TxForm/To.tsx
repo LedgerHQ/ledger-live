@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { ExchangeRate, SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { useNavigation } from "@react-navigation/native";

@@ -5,6 +5,7 @@
     "src/bridge/deviceTransactionConfig.ts",
     "src/signer/index.ts",
     "src/test/index.ts",
+    "src/transaction.ts",
     "src/index.ts",
     "src/logic/validateAddress.ts"
   ],

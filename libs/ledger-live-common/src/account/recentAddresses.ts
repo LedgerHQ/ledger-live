@@ -1,4 +1,5 @@
 import type { RecentAddressesState, RecentAddress } from "@ledgerhq/types-live";
+import { RecentAddressesArraySchema } from "./entities/recentAddresses";
 
 export const RECENT_ADDRESSES_COUNT_LIMIT = 12;
 
@@ -44,13 +45,9 @@ class RecentAddressesStoreImpl implements RecentAddressesStore {
   private sanitizeCache(cache: RecentAddressesCache): RecentAddressesCache {
     const sanitized: RecentAddressesCache = {};
     for (const currency in cache) {
-      const entries = cache[currency] as (RecentAddress | string)[];
-      sanitized[currency] = entries.map(entry => {
-        if (typeof entry === "string") {
-          return { address: entry, lastUsed: Date.now(), ensName: undefined };
-        }
-        return entry;
-      });
+      const entries = cache[currency];
+      const result = RecentAddressesArraySchema.safeParse(entries);
+      sanitized[currency] = result.success ? result.data : [];
     }
     return sanitized;
   }
@@ -72,14 +69,11 @@ class RecentAddressesStoreImpl implements RecentAddressesStore {
 
   syncAddresses(cache: RecentAddressesCache): void {
     const previousAddresses = { ...this.addressesByCurrency };
-    this.addressesByCurrency = { ...cache };
+    this.addressesByCurrency = this.sanitizeCache(cache);
     for (const currency in previousAddresses) {
-      const entries = previousAddresses[currency] as (RecentAddress | string)[];
+      const entries = previousAddresses[currency];
       for (const entry of entries) {
-        const address = typeof entry === "string" ? entry : entry.address;
-        const timestamp = typeof entry === "string" ? undefined : entry.lastUsed;
-        const ensName = typeof entry === "string" ? undefined : entry.ensName;
-        this.addAddressToCache(currency, address, timestamp ?? Date.now(), false, ensName);
+        this.addAddressToCache(currency, entry.address, entry.lastUsed, false, entry.ensName);
       }
     }
 

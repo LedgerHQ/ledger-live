@@ -1,6 +1,6 @@
 import React, { useRef, useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";

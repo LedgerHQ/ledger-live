@@ -151,7 +151,10 @@ const Layout = ({ category, cards }: LayoutProps) => {
           id={item.props.metadata.id}
           displayedPosition={item.props.metadata.displayedPosition}
         >
-          <Flex mx={6}>{item.component(item.props)}</Flex>
+          <Flex mx={6}>
+            {/* @ts-expect-error REACT19FIXME: ReactNode type from React 18 is not compatible with ReactNode from React 19 */}
+            {item.component(item.props)}
+          </Flex>
         </LogContentCardWrapper>
       );
     }

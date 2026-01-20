@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { I18nManager, ScrollView } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans, useLocale } from "~/context/Locale";
 import { Flex, SelectableList } from "@ledgerhq/native-ui";
 import i18next from "i18next";
 import RNRestart from "react-native-restart";
@@ -13,7 +13,6 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { CompositeScreenProps } from "@react-navigation/native";
-import { useLocale } from "~/context/Locale";
 import { languages, localeIdToDeviceLanguage, Locale } from "../../../languages";
 import { ScreenName } from "~/const";
 import { setLanguage, setLastSeenDeviceInfo } from "~/actions/settings";

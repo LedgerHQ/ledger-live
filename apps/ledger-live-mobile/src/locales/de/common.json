@@ -3474,7 +3474,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Benachrichtigungen aktivieren",
+      "titleVariantB" : "So nutzt du Ledger Wallet optimal",
       "desc" : "Erhalte die neuesten Updates zu Ledger Wallet, Ledger-Produkten, dem Markt und personalisierte Empfehlungen. Du kannst dich jederzeit in den Einstellungen wieder abmelden",
+      "descVariantB" : "Wir schicken dir personalisierte Tipps, Einrichtungsanleitungen und marktrelevante Informationen.",
       "allow" : "Benachrichtigungen zulassen",
       "later" : "Vielleicht später"
     },
@@ -3891,7 +3893,9 @@
         "celo_title" : "Ledger Nano S™ unterstützt das Swappen von Celo nicht",
         "celo_description" : "Zum Swappen von Celo kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
         "monad_title" : "Ledger Nano S™ unterstützt das Swappen von Monad nicht",
-        "monad_description" : "Zum Swappen von Monad musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™."
+        "monad_description" : "Zum Swappen von Monad musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+        "zcash_title" : "Ledger Nano S™ unterstützt das Swappen von Zcash nicht",
+        "zcash_description" : "Zum Swappen von Zcash musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. einen Ledger Nano S Plus™, einen Ledger Nano X™, einen Ledger Flex™ oder einen Ledger Stax™."
       }
     },
     "lending" : {

@@ -1,10 +1,10 @@
 import { useCallback } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export function useNavigateToPostOnboardingHubCallback() {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   return useCallback(() => {
-    history.push("/post-onboarding");
-  }, [history]);
+    navigate("/post-onboarding");
+  }, [navigate]);
 }

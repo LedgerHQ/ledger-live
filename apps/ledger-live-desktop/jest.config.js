@@ -11,8 +11,9 @@ function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
     const pathValues = Array.isArray(paths[pathKey]) ? paths[pathKey] : [paths[pathKey]];
     pathValues.forEach(pathValue => {
       // Convert TypeScript path pattern to Jest regex pattern
+      // Use /\*$/ for key (wildcard at end) but /\*/ for value (wildcard can be anywhere)
       const jestKey = pathKey.replace(/\*$/, "(.*)");
-      const jestValue = pathValue.replace(/\*$/, "$1");
+      const jestValue = pathValue.replace(/\*/, "$1");
       jestPaths[jestKey] = `${prefix}${jestValue}`;
     });
   });
@@ -35,6 +36,8 @@ const testPathIgnorePatterns = [
 const moduleNameMapper = {
   ...pathsToModuleNameMapper(compilerOptions.paths),
   "~/(.*)": "<rootDir>/src/$1",
+  "^@features/(.*)$": "<rootDir>/../../features/$1/src",
+  "^@ledgerhq/(lumen-ui-react|lumen-design-core)$": "<rootDir>/node_modules/@ledgerhq/$1",
   "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
     "<rootDir>/fileMock.js",
   "styled-components": require.resolve("styled-components"),

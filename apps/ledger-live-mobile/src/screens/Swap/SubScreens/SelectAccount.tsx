@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { useSelector } from "~/context/hooks";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, IconsLegacy, Text, BoxedIcon } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { Account, AccountLike } from "@ledgerhq/types-live";

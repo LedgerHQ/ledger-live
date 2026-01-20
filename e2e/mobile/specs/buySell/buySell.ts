@@ -34,11 +34,7 @@ async function handleBuySellFlow(buySell: BuySell, paymentMethod: string, provid
   await app.buySell.selectPaymentMethod(paymentMethod);
   await app.buySell.selectProvider(provider.name);
   await app.buySell.tapBuySellWithCta(provider.uiName, buySell.operation);
-  await app.buySell.verifyProviderPageLoadedWithQueryParameters(
-    buySell,
-    provider.uiName,
-    paymentMethod,
-  );
+  await app.buySell.verifyProviderPageLoadedWithCorrectUrl(provider.uiName);
 }
 
 export async function runNavigateToBuyFromPortfolioPageTest(

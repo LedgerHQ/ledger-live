@@ -18,3 +18,5 @@ export const StellarNotEnoughNativeBalanceToAddTrustline = createCustomErrorClas
   "StellarNotEnoughNativeBalanceToAddTrustline",
 );
 export const StellarSourceHasMultiSign = createCustomErrorClass("StellarSourceHasMultiSign");
+
+export const StellarMemoDisabled = createCustomErrorClass("StellarMemoDisabled");

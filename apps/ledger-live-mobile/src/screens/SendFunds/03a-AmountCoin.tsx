@@ -4,7 +4,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Linking } from "react-native";
 import Switch from "~/components/Switch";
 import SafeAreaView from "~/components/SafeAreaView";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

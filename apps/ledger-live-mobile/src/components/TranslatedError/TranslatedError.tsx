@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation, Trans } from "~/context/Locale";
 import { Platform, Text } from "react-native";
 import { useErrorLinks } from "./hooks/useErrorLinks";
 import { DmkError, isDmkError } from "@ledgerhq/live-dmk-mobile";

@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import styled from "styled-components";
 import { Chip, Text } from "@ledgerhq/react-ui";
 import { track } from "~/renderer/analytics/segment";
@@ -25,7 +25,7 @@ const Nav = styled.nav`
  */
 const Navbar = () => {
   const { pathname } = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const currentIndex = useMemo(() => {
@@ -44,9 +44,7 @@ const Navbar = () => {
     });
     if (currentIndex === nextIndex) return;
     const nextPathname = swapRoutes[nextIndex].path;
-    history.push({
-      pathname: nextPathname,
-    });
+    navigate(nextPathname);
   };
 
   if (currentIndex < 0 || currentIndex >= tabs.length) {

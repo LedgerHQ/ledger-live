@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError": {
       "title": "No rewards to claim"
     },
-    "HederaMemoIsTooLong": {
-      "title": "Memo is too long. Max length is {{maxLength}} characters"
-    },
     "NearNewAccountWarning": {
       "title": "The recipient account is not created yet. The protocol requires a {{formattedNewAccountStorageCost}} transfer to create it."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet": {
       "title": "Amount needs to be at least {{threshold}}"
+    },
+    "XrpInvalidMemo": {
+      "title": "Memo format is wrong, it should be less than 4294967296"
+    },
+    "HederaMemoExceededSizeError": {
+      "title": "Invalid memo size, maximum allowed is 100 characters"
     },
     "PinNotSet": {
       "title": "PIN not set"
@@ -8098,6 +8101,17 @@
       "cta": "Learn more"
     }
   },
+  "marketBanner": {
+    "title": "Explore market",
+    "viewAll": "View all",
+    "viewAllAccessibilityHint": "Double tap to view all market assets",
+    "connectionFailed": "Connection failed",
+    "errorAccessibilityHint": "Unable to load market data. Please try again later.",
+    "tile": {
+      "accessibilityLabel": "{{name}}, {{change}}",
+      "accessibilityHint": "Double tap to view market details"
+    }
+  },
   "largeMover": {
     "info": "Info",
     "marketCap": "Market cap",
@@ -8337,6 +8351,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed": {
+    "title": "Mood index",
+    "description": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+    "levels": {
+      "extremeFear": "Fear+",
+      "fear": "Fear",
+      "neutral": "Neutral",
+      "greed": "Greed",
+      "extremeGreed": "Greed+"
     }
   }
 }

@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import DebugBenchmarkQRStream from "~/screens/Settings/Debug/Broken/BenchmarkQRStream";
@@ -27,6 +27,7 @@ import DebugInstallSetOfApps from "~/screens/Settings/Debug/Features/InstallSetO
 import DebugPerformance from "~/screens/Settings/Debug/Performance";
 import DebugLogs from "~/screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "~/screens/Settings/Debug/Features/Lottie";
+import DebugLumen from "~/screens/Settings/Debug/Debugging/Lumen";
 import DebugNetwork from "~/screens/Settings/Debug/Debugging/Network";
 import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSender";
 import DebugPlayground from "~/screens/Settings/Debug/Playground";
@@ -296,6 +297,13 @@ export default function SettingsNavigator() {
         component={DebugPlayground}
         options={{
           title: "Playground",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugLumen}
+        component={DebugLumen}
+        options={{
+          title: "Lumen Debug",
         }}
       />
       <Stack.Screen

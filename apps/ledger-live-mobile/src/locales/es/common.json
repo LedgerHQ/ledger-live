@@ -3474,7 +3474,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Activar las notificaciones",
+      "titleVariantB" : "Saca el máximo partido de Ledger Wallet",
       "desc" : "Recibe recomendaciones personalizadas y las últimas novedades sobre Ledger Wallet, los productos Ledger y el mercado. Puedes cancelar la suscripción en cualquier momento desde los ajustes.",
+      "descVariantB" : "Te enviaremos consejos personalizados, guías de configuración y las noticias más relevantes del mercado.",
       "allow" : "Permitir notificaciones",
       "later" : "Quizás más tarde"
     },
@@ -3891,7 +3893,9 @@
         "celo_title" : "No es posible utilizar el Ledger Nano S™ para permutar Celo",
         "celo_description" : "Para permutar Celo, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "monad_title" : "No es posible usar el Ledger Nano S™ para permutar Monad",
-        "monad_description" : "Para permutar Monad, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
+        "monad_description" : "Para permutar Monad, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "zcash_title" : "No es posible usar el Ledger Nano S™ para permutar Zcash",
+        "zcash_description" : "Para permutar Zcash, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
       }
     },
     "lending" : {

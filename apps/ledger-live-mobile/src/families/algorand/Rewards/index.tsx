@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Box, Button, Flex, Text } from "@ledgerhq/native-ui";

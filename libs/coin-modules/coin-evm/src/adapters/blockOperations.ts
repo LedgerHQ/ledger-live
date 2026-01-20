@@ -4,6 +4,7 @@ import type {
   TransferBlockOperation,
 } from "@ledgerhq/coin-framework/api/index";
 import { LedgerExplorerOperation } from "../types";
+import { TransactionInfo } from "../network/node/types";
 import { safeEncodeEIP55 } from "../utils";
 
 /**
@@ -44,18 +45,29 @@ function addTransferOperations(
 }
 
 /**
- * Extract BlockOperations from an RPC transaction (ethers.js TransactionResponse).
- * This extracts native ETH transfers from the transaction value field.
+ * Extract BlockOperations from an RPC transaction.
+ * This extracts native transfers from the transaction value field and ERC20 transfers from logs.
  */
 export function rpcTransactionToBlockOperations(
-  from: string,
-  value: bigint,
-  to: string | undefined,
+  tx: Pick<TransactionInfo, "from" | "value" | "to" | "erc20Transfers">,
 ): BlockOperation[] {
   const operations: BlockOperation[] = [];
 
-  if (value && value > 0n) {
-    addTransferOperations(operations, from, to, { type: "native" }, value);
+  // Native value transfer
+  const value = BigInt(tx.value);
+  if (value > 0n) {
+    addTransferOperations(operations, tx.from, tx.to, { type: "native" }, value);
+  }
+
+  // ERC20 transfers extracted from receipt logs
+  for (const transfer of tx.erc20Transfers) {
+    addTransferOperations(
+      operations,
+      transfer.from,
+      transfer.to,
+      transfer.asset,
+      BigInt(transfer.value),
+    );
   }
 
   return operations;

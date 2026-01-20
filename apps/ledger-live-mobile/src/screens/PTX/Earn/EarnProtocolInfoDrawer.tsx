@@ -1,6 +1,6 @@
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { makeSetEarnProtocolInfoModalAction } from "~/actions/earn";
 import { Track } from "~/analytics";

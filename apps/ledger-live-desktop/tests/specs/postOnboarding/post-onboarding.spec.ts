@@ -9,6 +9,11 @@ import padStart from "lodash/padStart";
 test.use({
   userdata: "1AccountBTC1AccountETHwCarousel", // to have a non empty portfolio page and potentially detect layout issues with the post onboarding banner
   env: { DEBUG_POSTONBOARDINGHUB: "1" },
+  featureFlags: {
+    lwdWallet40: {
+      enabled: false,
+    },
+  },
 });
 
 let screenshotIndex = 0;

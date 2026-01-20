@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView, ListRenderItem } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
