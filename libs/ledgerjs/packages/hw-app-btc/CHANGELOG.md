@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-btc
 
+## 10.17.0-next.0
+
+### Minor Changes
+
+- [#13340](https://github.com/LedgerHQ/ledger-live/pull/13340) [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436) Thanks [@Justkant](https://github.com/Justkant)! - feat(coin-bitcoin): support psbt signature in wallet-api
+
 ## 10.16.0
 
 ### Minor Changes

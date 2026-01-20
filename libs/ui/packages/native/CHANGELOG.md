@@ -1,5 +1,18 @@
 # @ledgerhq/native-ui
 
+## 0.54.0-next.0
+
+### Minor Changes
+
+- [#13742](https://github.com/LedgerHQ/ledger-live/pull/13742) [`b8e22d3`](https://github.com/LedgerHQ/ledger-live/commit/b8e22d36b8bb44eda9dfd267227a22391519c08b) Thanks [@qperrot](https://github.com/qperrot)! - Fix: Suppress source map warnings for @celo/contractkit
+
+- [#13556](https://github.com/LedgerHQ/ledger-live/pull/13556) [`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d) Thanks [@ysitbon](https://github.com/ysitbon)! - bump `react` to `19.0.0` and `react-native` to `0.79`
+
+### Patch Changes
+
+- Updated dependencies [[`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d)]:
+  - @ledgerhq/icons-ui@0.19.0-next.0
+
 ## 0.53.0
 
 ### Minor Changes
