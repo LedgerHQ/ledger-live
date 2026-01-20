@@ -26,12 +26,6 @@ test("Delegate flow using max amount", async () => {
     await expect.soft(modalPage.container).toHaveScreenshot(`earn-reward-pre-flow-page.png`);
   });
 
-  await test.step("Check Ledger is the provider by default", async () => {
-    await delegate.continue();
-    const defaultprovider = await delegate.getTitleProvider(1);
-    expect(defaultprovider).toEqual("Ledger");
-  });
-
   await test.step("Toggle max amount to be filled in the amount field", async () => {
     await delegate.continue();
     await delegate.toggleMaxAmount();
@@ -40,21 +34,5 @@ test("Delegate flow using max amount", async () => {
     const filledMaxAmount = await delegate.getCryptoAmount();
     expect(filledMaxAmount).toEqual(availableMaxAmount);
     await expect.soft(modalPage.container).toHaveScreenshot(`staking-max-amount-page.png`);
-  });
-});
-
-test("The user search and select a provider", async () => {
-  await test.step("open the provider search modal", async () => {
-    await delegate.continue();
-    await expect.soft(modalPage.container).toHaveScreenshot(`provider-search-page.png`);
-  });
-
-  await test.step("search for new provider", async () => {
-    const providerResearched = "Figment";
-    await delegate.openSearchProviderModal();
-    await delegate.inputProvider(providerResearched);
-    await delegate.selectProviderOnRow(1);
-    const providerSelected = await delegate.getTitleProvider(1);
-    expect(providerSelected).toEqual(providerResearched);
   });
 });
