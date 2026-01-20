@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { openModal, closeModal } from "~/renderer/actions/modals";
 import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 
