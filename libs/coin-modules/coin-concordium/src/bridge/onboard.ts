@@ -40,7 +40,7 @@ export const buildOnboardAccount =
         o.next({ status: AccountOnboardStatus.INIT });
 
         const getAddress = resolver(signerContext);
-        const { address: bip32Address, publicKey } = await getAddress(deviceId, {
+        const { publicKey } = await getAddress(deviceId, {
           path: account.freshAddressPath,
           currency,
           derivationMode: account.derivationMode,
@@ -126,7 +126,7 @@ export const buildOnboardAccount =
               ...account,
               freshAddress: accountAddress,
               xpub: publicKey,
-              seedIdentifier: bip32Address,
+              seedIdentifier: publicKey,
               concordiumResources: {
                 credId,
                 credNumber,

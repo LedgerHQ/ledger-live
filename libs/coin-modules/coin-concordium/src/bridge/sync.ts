@@ -81,6 +81,8 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
         publicKey,
         isOnboarded: true,
       }),
+      freshAddress: account.address,
+      seedIdentifier: publicKey,
       derivationMode,
       derivationPath,
       id: accountId,
