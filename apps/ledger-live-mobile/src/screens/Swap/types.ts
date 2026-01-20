@@ -81,5 +81,6 @@ export type SwapLiveAppNavigationParams = {
     tab?: "ACCOUNTS_SELECTION" | "QUOTES_LIST" | null;
     page?: SwapWebviewAllowedPageNames;
     canGoBack?: boolean;
+    isTransactionComplete?: boolean;
   };
 };
