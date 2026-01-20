@@ -4,13 +4,13 @@ import { Flex } from "@ledgerhq/native-ui";
 import Lottie from "lottie-react-native";
 import Animated, {
   interpolate,
-  runOnJS,
   useAnimatedProps,
   useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import { useExperimental } from "../../experimental";
 import Config from "react-native-config";
 import { HEIGHT as ExperimentalHeaderHeight } from "~/screens/Settings/Experimental/ExperimentalHeader";
@@ -133,7 +133,7 @@ export function TransferTabIcon() {
   useAnimatedReaction(
     () => interpolate(openAnimValue.value, [0, 1, 2], [0, 0.5, 1]),
     progress => {
-      runOnJS(setLottieProgress)(progress);
+      scheduleOnRN(setLottieProgress, progress);
     },
   );
 
@@ -146,7 +146,7 @@ export function TransferTabIcon() {
     openAnimValue.value = 0;
     openAnimValue.value = withTiming(1, animParams, finished => {
       if (finished) {
-        runOnJS(animCallback)();
+        scheduleOnRN(animCallback);
       }
     });
   }, [openAnimValue, track, readOnlyModeEnabled]);
@@ -158,7 +158,7 @@ export function TransferTabIcon() {
     openAnimValue.value = withTiming(2, animParams, finished => {
       if (finished) {
         openAnimValue.value = 0;
-        runOnJS(animCallback)();
+        scheduleOnRN(animCallback);
       }
     });
   }, [openAnimValue]);

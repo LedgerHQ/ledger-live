@@ -147,17 +147,12 @@ jest.mock("@react-native-community/netinfo", () => mockRNCNetInfo);
 
 jest.mock("react-native-safe-area-context", () => mockSafeAreaContext);
 
-require("react-native-reanimated").setUpTests();
+// Mock react-native-worklets using official mock (must be before reanimated)
+// https://docs.swmansion.com/react-native-worklets/docs/guides/testing/#javascript
+jest.mock("react-native-worklets", () => require("react-native-worklets/lib/module/mock"));
 
-// Mock useAnimatedScrollHandler to avoid worklet validation errors in tests
-// The @swc/jest transformer doesn't process worklet directives
-jest.mock("react-native-reanimated", () => {
-  const Reanimated = jest.requireActual("react-native-reanimated/mock");
-  return {
-    ...Reanimated,
-    useAnimatedScrollHandler: jest.fn(() => jest.fn()),
-  };
-});
+// Setup Reanimated testing environment
+require("react-native-reanimated").setUpTests();
 
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),

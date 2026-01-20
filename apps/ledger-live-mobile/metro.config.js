@@ -20,6 +20,7 @@ const forcedDependencies = [
   "react-native-svg",
   "styled-components",
   "react-native-reanimated",
+  "react-native-worklets",
   "react-native-safe-area-context",
   "@tanstack/react-query",
   "react-native-linear-gradient",

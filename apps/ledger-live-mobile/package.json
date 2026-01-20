@@ -196,6 +196,7 @@
     "react-native-qrcode-svg": "6.1.1",
     "react-native-randombytes": "3.6.1",
     "react-native-reanimated": "catalog:",
+    "react-native-worklets": "catalog:",
     "react-native-restart": "0.0.24",
     "react-native-safe-area-context": "catalog:",
     "react-native-screens": "4.15.4",

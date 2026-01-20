@@ -1,11 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import {
-  useSharedValue,
-  withTiming,
-  runOnJS,
-  Easing,
-  useAnimatedStyle,
-} from "react-native-reanimated";
+import { useSharedValue, withTiming, Easing, useAnimatedStyle } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import { ModularDrawerStep } from "../types";
 
 const isTestEnv = typeof jest !== "undefined" || process.env.JEST_WORKER_ID !== undefined;
@@ -130,7 +125,7 @@ const useScreenTransition = (currentStep: ModularDrawerStep) => {
         stepData.scale.value = withTiming(0.95, TRANSITION_CONFIG);
         stepData.translateY.value = withTiming(32, TRANSITION_CONFIG);
         stepData.opacity.value = withTiming(0, TRANSITION_CONFIG, () => {
-          runOnJS(removeStep)(step);
+          scheduleOnRN(removeStep, step);
         });
       }
     },
