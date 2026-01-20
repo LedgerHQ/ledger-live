@@ -58,6 +58,7 @@ describe("craftTransaction", () => {
 
   it("should accept account id or EVM alias address when crafting ERC20 token transfer transaction", async () => {
     // recipient account has an EVM alias, it is resolved by fetching account info from mirror node
+
     const txIntent = {
       intentType: "transaction",
       type: HEDERA_TRANSACTION_MODES.Send,
