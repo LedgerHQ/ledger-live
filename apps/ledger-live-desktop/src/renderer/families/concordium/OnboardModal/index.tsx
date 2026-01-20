@@ -280,7 +280,7 @@ class OnboardModal extends PureComponent<Props, State> {
   };
 
   handlePair = () => {
-    if (this.pairingSubscription) return;
+    this.clearPairingSubscription();
 
     const { currency, device } = this.props;
 

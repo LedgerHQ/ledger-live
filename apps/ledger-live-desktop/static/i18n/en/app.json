@@ -5933,7 +5933,7 @@
         "title": "Add Concordium Account",
         "acknowledge": {
           "title": "Acknowledgement",
-          "description": "Concordium requires identity verification (KYC) for all accounts. To create your account, you'll complete this process in the Concordium ID app.",
+          "description": "Concordium requires identity verification (KYC) for all accounts. To create your account, you'll complete this process in the Concordium ID App.",
           "list": {
             "1": "<0>You'll be redirected outside Ledger Live</0> to complete identity verification",
             "2": "<0>Identity verification is mandatory</0> – Required by Concordium's blockchain protocol",
@@ -5947,10 +5947,11 @@
           "account": "Account",
           "newAccount": "New Account",
           "init": "Pressing Allow means you’re ready to continue to the KYC identity check needed to verify your account.",
-          "scanQRCode": "Scan the QR code with your mobile device to connect your Concordium ID app.",
-          "connecting": "Connecting to Concordium ID app...",
+          "scanQRCode": "Scan the QR code with your mobile device to connect your Concordium ID App. <0>Learn more</0>",
+          "ledgerSeedWarning": "<0>DO NOT</0> use your Ledger Seed for Concordium ID App.",
+          "connecting": "Connecting to Concordium ID App...",
           "onboarded": "Onboarded accounts",
-          "success": "Successfully connected to Concordium ID app.",
+          "success": "Successfully connected to Concordium ID App.",
           "error": "Failed to onboard new account. Please try again.",
           "errorTimeout": "Connection timed out. The mobile app may not have connected or the session proposal was rejected. Please try again.",
           "status": {
@@ -5962,10 +5963,10 @@
         "create": {
           "title": "Create Account",
           "init": {
-            "title": "Successfully connected to Concordium ID app"
+            "title": "Successfully connected to Concordium ID App"
           },
           "prepare": {
-            "title": "To create an account, match the code below in the Concordium ID app",
+            "title": "To create an account, match the code below in the Concordium ID App",
             "resendButton": "Resend confirmation",
             "resendDescription": "Confirmation can be resend in <0>{{count}}</0> {{unit}}"
           },

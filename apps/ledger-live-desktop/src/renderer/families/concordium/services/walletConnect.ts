@@ -149,30 +149,35 @@ class ConcordiumWalletConnect implements ConcordiumWalletConnectContext {
     uri?: string;
     approval: () => Promise<SessionTypes.Struct>;
   }> {
-    const client = await this.getClient();
+    try {
+      const client = await this.getClient();
 
-    const expiredPairings = client.pairing
-      .getAll({ active: true })
-      .filter(p => p.expiry * 1000 < Date.now());
+      const expiredPairings = client.pairing
+        .getAll({ active: true })
+        .filter(p => p.expiry * 1000 < Date.now());
 
-    await Promise.allSettled(
-      expiredPairings.map(pairing =>
-        client.pairing.delete(pairing.topic, {
-          code: 6001,
-          message: "Expired",
-        }),
-      ),
-    );
+      await Promise.allSettled(
+        expiredPairings.map(pairing =>
+          client.pairing.delete(pairing.topic, {
+            code: 6001,
+            message: "Expired",
+          }),
+        ),
+      );
 
-    return await client.connect({
-      requiredNamespaces: {
-        ccd: {
-          methods: ["create_account", "recover_account"],
-          chains: [chainId],
-          events: ["proposal_expire", "session_proposal", "session_event"],
+      return await client.connect({
+        requiredNamespaces: {
+          ccd: {
+            methods: ["create_account", "recover_account"],
+            chains: [chainId],
+            events: ["proposal_expire", "session_proposal", "session_event"],
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      logger.error("[ConcordiumWalletConnect] initiatePairing error:", error);
+      throw error;
+    }
   }
 }
 

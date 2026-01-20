@@ -199,9 +199,19 @@ export const buildPairWalletConnect =
           setTimeout(() => reject(new Error("Proposal expired")), APPROVAL_TIMEOUT_MS),
         );
 
-        const session = await Promise.race([approval(), approvalTimeout]);
+        try {
+          const session = await Promise.race([approval(), approvalTimeout]);
 
-        o.next({ status: ConcordiumPairingStatus.SUCCESS, sessionTopic: session.topic });
+          o.next({ status: ConcordiumPairingStatus.SUCCESS, sessionTopic: session.topic });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          const errorMessage = "message" in error ? error.message : String(error);
+          if (errorMessage?.toLowerCase()?.includes("expired")) {
+            throw new Error("Pairing proposal expired. Please try again.");
+          }
+
+          throw error;
+        }
       }
 
       main().then(

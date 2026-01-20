@@ -10,6 +10,8 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import QRCode from "~/renderer/components/QRCode";
 import Spinner from "~/renderer/components/Spinner";
+import Link from "~/renderer/components/Link";
+import { openURL } from "~/renderer/linking";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { StepProps } from "../types";
 import { Text } from "@ledgerhq/react-ui";
@@ -110,7 +112,18 @@ export default function StepOnboard({
             </QRCodeWrapper>
             <Box mt={4}>
               <Alert type="hint">
-                <Trans i18nKey="families.concordium.addAccount.identity.scanQRCode" />
+                <Text variant="paragraph">
+                  <Trans i18nKey="families.concordium.addAccount.identity.scanQRCode">
+                    <Link type="color" onClick={() => openURL(urls.concordium.learnMore)} />
+                  </Trans>
+                </Text>
+                <br />
+                <br />
+                <Text variant="paragraph">
+                  <Trans i18nKey="families.concordium.addAccount.identity.ledgerSeedWarning">
+                    <Text fontWeight="700"></Text>
+                  </Trans>
+                </Text>
               </Alert>
             </Box>
           </Box>
