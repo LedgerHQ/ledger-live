@@ -29,6 +29,7 @@ describe("getBalance", () => {
       balance: {
         balance: "1000000000",
       },
+      pending_reward: "0",
     };
 
     (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
@@ -56,6 +57,7 @@ describe("getBalance", () => {
       balance: {
         balance: "1000000000",
       },
+      pending_reward: "0",
     };
     const mockMirrorTokens = [
       {
@@ -183,6 +185,7 @@ describe("getBalance", () => {
       balance: {
         balance: "1000000000",
       },
+      pending_reward: "0",
     };
     const mockMirrorTokens = [
       {

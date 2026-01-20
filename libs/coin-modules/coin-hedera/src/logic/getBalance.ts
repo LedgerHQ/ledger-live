@@ -16,25 +16,33 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
     ]);
 
     const mixedTokens = [...mirrorTokens, ...erc20TokenBalances];
-    const validator = mirrorNodes.nodes.find(v => v.node_id === mirrorAccount.staked_node_id);
+    const stakedNodeId = mirrorAccount.staked_node_id;
+    const delegatedNode = mirrorNodes.nodes.find(node => node.node_id === stakedNodeId);
+    const balance = BigInt(mirrorAccount.balance.balance);
+    const pendingReward = BigInt(mirrorAccount.pending_reward);
 
     const balances: Balance[] = [
       {
         asset: { type: "native" },
         value: BigInt(mirrorAccount.balance.balance),
-        ...(validator && {
+        ...(delegatedNode && {
           stake: {
             uid: address,
             address,
             asset: { type: "native" },
-            state: "active",
-            amount: BigInt(mirrorAccount.balance.balance) + BigInt(mirrorAccount.pending_reward),
-            amountDeposited: BigInt(mirrorAccount.balance.balance),
-            amountRewarded: BigInt(mirrorAccount.pending_reward),
-            delegate: validator.node_account_id,
+            state: delegatedNode ? "active" : "inactive",
+            amount: balance + pendingReward,
+            amountDeposited: balance,
+            amountRewarded: pendingReward,
             details: {
-              overstaked: BigInt(validator.stake) >= BigInt(validator.max_stake),
+              stakedNodeId,
+              overstaked: delegatedNode
+                ? BigInt(delegatedNode.stake) >= BigInt(delegatedNode.max_stake)
+                : null,
             },
+            ...(delegatedNode && {
+              delegate: delegatedNode.node_account_id,
+            }),
           },
         }),
       },
