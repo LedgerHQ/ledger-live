@@ -284,7 +284,10 @@ describe("EVM Family", () => {
         ];
 
         const result = RPC_API.parseERC20TransfersFromLogs(logs);
-        expect(result.map(r => r.value)).toEqual(["5480989920044678351000", "81274972180027185554775"]);
+        expect(result.map(r => r.value)).toEqual([
+          "5480989920044678351000",
+          "81274972180027185554775",
+        ]);
       });
 
       it("should filter out non-Transfer events (Approval)", () => {
