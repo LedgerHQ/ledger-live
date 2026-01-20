@@ -4604,6 +4604,15 @@
         "debugDialog": "Debug Dialog",
         "debugDuplicates": "Debug Duplicates"
       },
+      "walletFeaturesDevTool": {
+        "title": "Wallet Features Dev Tool",
+        "description": "Toggle Wallet 4.0 features for desktop (lwdWallet40 feature flag).",
+        "enableAll": "Enable All",
+        "disableAll": "Disable All",
+        "featureParameters": "Feature Parameters",
+        "showJson": "Show JSON",
+        "hideJson": "Hide JSON"
+      },
       "cryptoAssetsList": {
         "title": "Crypto Assets List",
         "description": "Browse and manage crypto assets from the Crypto Assets List (CAL) service.",

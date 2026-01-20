@@ -33,6 +33,7 @@ import ModularDrawerDevTool from "./ModularDrawer";
 import CryptoAssetsListDevTool from "./CryptoAssetsList";
 import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
 import CustomLockScreenTester from "./CustomLockScreenTester";
+import WalletFeaturesDevTool from "./WalletFeaturesDevTool";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -138,6 +139,7 @@ const Default = () => {
           <AllowDebugReactQueryToggle />
         </Row>
       )}
+      <WalletFeaturesDevTool />
       <ModularDrawerDevTool />
       <CryptoAssetsListDevTool />
       <MockAccountGeneratorSection />
