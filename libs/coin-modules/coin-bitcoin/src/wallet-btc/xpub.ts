@@ -439,11 +439,11 @@ class Xpub {
       throw new NotEnoughBalance();
     }
 
-    const txs = await Promise.all(
-      unspentUtxoSelected.map(unspentUtxo =>
-        this.storage.getTx(unspentUtxo.address, unspentUtxo.output_hash),
-      ),
-    );
+      const txs = await Promise.all(
+        unspentUtxoSelected.map(unspentUtxo =>
+          this.storage.getTx(unspentUtxo.address, unspentUtxo.output_hash),
+        ),
+      );
 
     const successfulSelections = unspentUtxoSelected.map(utxo => ({
       unspentUtxo: utxo,
