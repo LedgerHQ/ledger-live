@@ -2,12 +2,13 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
 import Link from "~/renderer/components/Link";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 type Props = {
   operation: Operation;
@@ -19,24 +20,122 @@ const EditOperationPanel = (props: Props) => {
   const { operation, account, parentAccount } = props;
   const dispatch = useDispatch();
   const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
+  const { enabled: isEditBitcoinTxEnabled, params: bitcoinParams } =
+    useFeature("editBitcoinTx") ?? {};
   const mainAccount = getMainAccount(account, parentAccount);
-  const isCurrencySupported =
-    params?.supportedCurrencyIds?.includes(mainAccount.currency.id) || false;
+  const currencyFamily = mainAccount.currency.family;
+
+  // Determine if transaction editing is supported and which modal to use
+  const editConfig = useMemo(() => {
+    // Check for Bitcoin RBF support
+    if (currencyFamily === "bitcoin") {
+      // RBF only works for unconfirmed (pending) transactions
+      const isPending = !operation.blockHeight;
+
+      if (!isPending) {
+        return null;
+      }
+
+      if (
+        isEditBitcoinTxEnabled &&
+        bitcoinParams?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId)
+      ) {
+        return {
+          modalName: "MODAL_BITCOIN_EDIT_TRANSACTION" as const,
+          isSupported: true,
+        };
+      }
+      return null;
+    }
+
+    // For EVM, transactionRaw is required
+    if (!operation.transactionRaw) {
+      return null;
+    }
+
+    // Check for EVM support
+    if (currencyFamily === "evm") {
+      const isCurrencySupported =
+        params?.supportedCurrencyIds?.includes(mainAccount.currency.id) || false;
+
+      if (isEditEvmTxEnabled && isCurrencySupported) {
+        return {
+          modalName: "MODAL_EVM_EDIT_TRANSACTION" as const,
+          isSupported: true,
+        };
+      }
+      return null;
+    }
+
+    return null;
+  }, [
+    operation.transactionRaw,
+    operation.blockHeight,
+    currencyFamily,
+    isEditEvmTxEnabled,
+    params,
+    mainAccount.currency.id,
+    isEditBitcoinTxEnabled,
+    bitcoinParams,
+  ]);
 
   const handleOpenEditModal = useCallback(() => {
-    invariant(operation.transactionRaw, "operation.transactionRaw is required");
-    dispatch(closeModal("MODAL_SEND"));
-    dispatch(
-      openModal("MODAL_EVM_EDIT_TRANSACTION", {
-        account,
-        parentAccount,
-        transactionRaw: operation.transactionRaw,
-        transactionHash: operation.hash,
-      }),
-    );
-  }, [parentAccount, account, operation, dispatch]);
+    if (!editConfig) {
+      return;
+    }
 
-  if (!isEditEvmTxEnabled || !isCurrencySupported) {
+    dispatch(closeModal("MODAL_SEND"));
+
+    // For Bitcoin, we support editing even if operation.transactionRaw is missing
+    // by constructing a transactionRaw payload here. For EVM, transactionRaw is required.
+    if (currencyFamily === "bitcoin") {
+      // replaceTxId must always be the tx we are replacing (this operation's hash).
+      // When re-canceling a cancel, the conflicting tx is the cancel, not the original send,
+      // so we must beat the cancel's fee — never use a stored replaceTxId from a previous replacement.
+      const transactionRaw =
+        operation.transactionRaw === undefined
+          ? {
+              family: "bitcoin" as const,
+              amount: "0",
+              recipient: mainAccount.freshAddress,
+              rbf: true,
+              replaceTxId: operation.hash,
+              utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+              feePerByte: null,
+              networkInfo: null,
+            }
+          : { ...operation.transactionRaw, replaceTxId: operation.hash };
+
+      dispatch(
+        openModal(editConfig.modalName, {
+          account,
+          parentAccount,
+          transactionRaw,
+          transactionHash: operation.hash,
+        }),
+      );
+    } else {
+      invariant(operation.transactionRaw, "operation.transactionRaw is required");
+      dispatch(
+        openModal(editConfig.modalName, {
+          account,
+          parentAccount,
+          transactionRaw: operation.transactionRaw,
+          transactionHash: operation.hash,
+        }),
+      );
+    }
+  }, [
+    editConfig,
+    currencyFamily,
+    parentAccount,
+    account,
+    operation,
+    mainAccount.freshAddress,
+    dispatch,
+  ]);
+
+  if (!editConfig?.isSupported) {
     return null;
   }
 
