@@ -21,15 +21,12 @@ const useNotifications = () => {
     updateUserLastInactiveTime,
   } = useNotificationsData();
 
-  const {
-    nextRepromptDelay,
-    shouldPromptOptInDrawerAfterAction,
-    shouldPromptOptInDrawerAfterInactivity,
-  } = useNotificationsPrompt({
-    permissionStatus,
-    areNotificationsAllowed: notifications.areNotificationsAllowed,
-    pushNotificationsDataOfUser,
-  });
+  const { nextRepromptDelay, shouldPromptOptInDrawerAfterAction, checkIsInactive } =
+    useNotificationsPrompt({
+      permissionStatus,
+      areNotificationsAllowed: notifications.areNotificationsAllowed,
+      pushNotificationsDataOfUser,
+    });
 
   const {
     isPushNotificationsModalOpen,
@@ -46,8 +43,8 @@ const useNotifications = () => {
     pushNotificationsDataOfUser,
     nextRepromptDelay,
     shouldPromptOptInDrawerAfterAction,
-    shouldPromptOptInDrawerAfterInactivity,
     updateUserLastInactiveTime,
+    checkIsInactive,
     markUserAsOptOut,
     markUserAsOptIn,
     requestPushNotificationsPermission,
@@ -81,26 +78,43 @@ const useNotifications = () => {
         setPermissionStatus(osPermissionStatus);
 
         syncOptOutState(osPermissionStatus, storedUserData);
+        return {
+          status: "success",
+          storedUserData,
+          osPermissionStatus,
+          areAppNotificationsEnabled: notifications.areNotificationsAllowed,
+        } as const;
       }
 
       if (permission.status === "rejected") {
         updatePushNotificationsDataOfUserInStateAndStore(storedUserData ?? {});
+        return {
+          status: "error",
+          reason: "Failed to get notification permission status",
+        } as const;
       }
-
-      return storedUserData;
     }
 
     if (dataOfUserFromStorage.status === "rejected" && permission.status === "fulfilled") {
       const osPermissionStatus = permission.value;
       setPermissionStatus(osPermissionStatus);
 
-      // ignore this case, we will check user status in the next initPushNotificationsData call
-      return;
+      return {
+        status: "error",
+        reason: "Failed to get push notifications user data from storage",
+      } as const;
     }
+
+    return {
+      status: "error",
+      reason:
+        "Failed to get push notifications user data from storage and notification permission status",
+    } as const;
   }, [
     initializeNotificationSettingsState,
-    syncOptOutState,
+    notifications.areNotificationsAllowed,
     setPermissionStatus,
+    syncOptOutState,
     updatePushNotificationsDataOfUserInStateAndStore,
   ]);
 
@@ -137,7 +151,7 @@ const useNotifications = () => {
     shouldPromptOptInDrawerAfterAction,
     tryTriggerPushNotificationDrawerAfterAction,
 
-    shouldPromptOptInDrawerAfterInactivity,
+    // MAKE SURE TO CALL IT ONLY ON THE STACK NAVIGATOR WHERE THE USER IS ALREADY ONBOARDED
     tryTriggerPushNotificationDrawerAfterInactivity,
   };
 };

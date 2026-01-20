@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { updateIdentify } from "~/analytics";
 import { notificationsSelector, INITIAL_STATE as settingsInitialState } from "~/reducers/settings";
 import { setNotifications } from "~/actions/settings";
 import { setNotificationsDataOfUser } from "~/actions/notifications";
@@ -9,6 +8,7 @@ import { notificationsDataOfUserSelector } from "~/reducers/notifications";
 import { NotificationsSettings } from "~/reducers/types";
 import { setPushNotificationsDataOfUserInStorage } from "../utils/storage";
 import { type DataOfUser } from "../types";
+import { updateIdentify } from "~/analytics";
 
 export const useNotificationsData = () => {
   const notifications = useSelector(notificationsSelector);
@@ -24,7 +24,10 @@ export const useNotificationsData = () => {
   );
 
   const markUserAsOptIn = useCallback(() => {
-    updatePushNotificationsDataOfUserInStateAndStore({});
+    updatePushNotificationsDataOfUserInStateAndStore({
+      lastActionAt: Date.now(),
+    });
+    updateIdentify();
   }, [updatePushNotificationsDataOfUserInStateAndStore]);
 
   const markUserAsOptOut = useCallback(() => {
@@ -42,11 +45,13 @@ export const useNotificationsData = () => {
       dismissedOptInDrawerAtList,
       lastActionAt: now,
     });
+    updateIdentify();
   }, [updatePushNotificationsDataOfUserInStateAndStore, pushNotificationsDataOfUser]);
 
   const updateUserLastInactiveTime = useCallback(() => {
     // here user can be marked as inactive but we have to keep track of all the times
-    // the user dimissed the opt in drawer because
+    // the user dismissed the opt in drawer so we can decide when to show it again
+    // (for example, after an inactivity period) without losing the history of past dismissals
     updatePushNotificationsDataOfUserInStateAndStore({
       ...pushNotificationsDataOfUser,
       lastActionAt: Date.now(),
@@ -92,15 +97,13 @@ export const useNotificationsData = () => {
         // User previously opted out → check if they've fully re-enabled notifications
         if (isAuthorized && notifications.areNotificationsAllowed) {
           // Both OS and app notifications enabled → clear opt-out state
-          updateIdentify();
           return markUserAsOptIn();
         }
 
         // Still opted out or partially enabled → maintain opt-out state for reprompting
-        // and set lastActionAt to now so that we can prompt the opt in drawer after the inactivity period
         return updatePushNotificationsDataOfUserInStateAndStore({
           ...storedUserData,
-          lastActionAt: Date.now(),
+          lastActionAt: storedUserData?.lastActionAt ?? Date.now(), // keep the last action at to decide when to show the opt in drawer again
         });
       }
 
@@ -109,7 +112,6 @@ export const useNotificationsData = () => {
       if (!hasOptedOut && isDenied) {
         // Mark as opted out to track dismissal for reprompt scheduling
 
-        updateIdentify();
         return markUserAsOptOut();
       }
 

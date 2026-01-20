@@ -117,10 +117,8 @@ export default function BaseNavigator() {
     useNotifications();
 
   useEffect(() => {
-    // This feature requires the user to be past onboarding.
-    initPushNotificationsData().then(data => {
-      tryTriggerPushNotificationDrawerAfterInactivity(data?.lastActionAt);
-    });
+    // This feature requires the user to be past onboarding, that's why it lives in the BaseNavigator for onboarded users only
+    initPushNotificationsData().then(tryTriggerPushNotificationDrawerAfterInactivity);
 
     // No dependency because we only want to run it once.
     // eslint-disable-next-line react-hooks/exhaustive-deps
