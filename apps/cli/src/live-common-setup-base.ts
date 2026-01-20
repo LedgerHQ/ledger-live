@@ -140,6 +140,8 @@ setSupportedCurrencies([
   "concordium_testnet",
   "aleo",
   "aleo_testnet",
+  "unichain",
+  "unichain_sepolia",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

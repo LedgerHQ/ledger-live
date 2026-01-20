@@ -1239,4 +1239,22 @@ export const expectedCurrencyList = [
     color: "#9200E1",
     decimals: 18,
   },
+  {
+    type: "CryptoCurrency",
+    id: "unichain",
+    ticker: "ETH",
+    name: "Unichain",
+    family: "ethereum",
+    color: "#f50fb4",
+    decimals: 18,
+  },
+  {
+    type: "CryptoCurrency",
+    id: "unichain_sepolia",
+    ticker: "ETH",
+    name: "Unichain Sepolia",
+    family: "ethereum",
+    color: "#f50fb4",
+    decimals: 18,
+  },
 ];

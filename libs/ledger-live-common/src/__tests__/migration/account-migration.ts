@@ -109,6 +109,8 @@ setSupportedCurrencies([
   "klaytn_baobab",
   "shape",
   "story",
+  "unichain",
+  "unichain_sepolia",
 ]);
 
 LiveConfig.setConfig(liveConfig);
