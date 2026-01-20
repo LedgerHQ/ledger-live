@@ -182,6 +182,10 @@ export const urls = {
   editEvmTx: {
     learnMore: "https://support.ledger.com/article/9756122596765-zd",
   },
+  // TODO: add bitcoin learn more url
+  editBitcoinTx: {
+    learnMore: "https://support.ledger.com/article/9756122596765-zd",
+  },
   ledgerAcademy: {
     whatIsEthereumRestaking: "https://www.ledger.com/academy/what-is-ethereum-restaking",
     ethereumStakingHowToStakeEth:
