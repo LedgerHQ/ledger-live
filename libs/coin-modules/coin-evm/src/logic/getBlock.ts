@@ -60,7 +60,7 @@ async function getTransactionFromHash(
   const failed = txInfo.status === 0;
   const fees = BigInt(txInfo.gasUsed) * BigInt(txInfo.gasPrice);
 
-  const operations = rpcTransactionToBlockOperations(txInfo.from, BigInt(txInfo.value), txInfo.to);
+  const operations = rpcTransactionToBlockOperations(txInfo);
 
   return {
     hash: txHash,
