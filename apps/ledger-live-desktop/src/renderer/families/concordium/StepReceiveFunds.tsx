@@ -1,10 +1,11 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import invariant from "invariant";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getConcordiumNetwork } from "@ledgerhq/coin-concordium/network/utils";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -13,13 +14,14 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import ReadOnlyAddressField from "~/renderer/components/ReadOnlyAddressField";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import LinkShowQRCode from "~/renderer/components/LinkShowQRCode";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import Modal from "~/renderer/components/Modal";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
 import QRCode from "~/renderer/components/QRCode";
 import Alert from "~/renderer/components/Alert";
 import { StepProps } from "~/renderer/modals/Receive/Body";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { urls } from "~/config/urls";
+import { openURL } from "~/renderer/linking";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -97,6 +99,11 @@ const StepReceiveFunds = ({
   const name = token ? token.name : maybeAccountName || getDefaultAccountName(account);
   const address = mainAccount.freshAddress;
 
+  const explorerUrl = useMemo(() => {
+    const network = getConcordiumNetwork(mainAccount.currency).toLowerCase();
+    return `https://ccdexplorer.io/${network}/account/${address}`;
+  }, [mainAccount.currency, address]);
+
   return (
     <>
       <TrackPage
@@ -115,8 +122,13 @@ const StepReceiveFunds = ({
 
         <Separator />
 
-        <Alert type="security" learnMoreUrl={urls.recipientAddressInfo}>
-          <Trans i18nKey="currentAddress.messageIfSkipped" values={{ name }} />
+        <Alert type="security">
+          <Trans i18nKey="families.concordium.receive.messageIfSkipped" />{" "}
+          <LinkWithExternalIcon
+            style={{ display: "inline-flex" }}
+            onClick={() => openURL(explorerUrl)}
+            label={<Trans i18nKey="families.concordium.receive.verifyLink" />}
+          />
         </Alert>
 
         <Box

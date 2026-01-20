@@ -5982,6 +5982,10 @@
         "finish": {
           "title": "Confirmation"
         }
+      },
+      "receive": {
+        "messageIfSkipped": "It is not possible to verify your Concordium Address at the moment. Please make sure to double-check by pasting your address in the Concordium explorer.",
+        "verifyLink": "Verify"
       }
     },
     "stellar": {
