@@ -4,6 +4,7 @@ module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
   passWithNoTests: true,
+  setupFiles: ["<rootDir>/jest.setup.js"],
   setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
   collectCoverageFrom: [
     "src/**/*.ts",
@@ -13,7 +14,8 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
-  workerThreads: true,
+  workerThreads: false,
+  maxWorkers: 1,
   reporters: [
     "default",
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],

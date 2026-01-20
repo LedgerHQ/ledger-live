@@ -65,12 +65,4 @@ const Title = styled(Box).attrs(() => ({
   text-align: center;
 `;
 
-const Text = styled(Box).attrs(() => ({
-  ff: "Inter",
-  fontSize: 4,
-  mt: 2,
-}))`
-  text-align: center;
-`;
-
 export default StepFinish;
