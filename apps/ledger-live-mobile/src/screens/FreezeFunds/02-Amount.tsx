@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import invariant from "invariant";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";

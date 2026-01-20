@@ -1,7 +1,7 @@
 import React from "react";
 import { canStake } from "@ledgerhq/live-common/families/sui/logic";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { ParamListBase, RouteProp } from "@react-navigation/native";

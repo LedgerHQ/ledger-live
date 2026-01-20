@@ -1,13 +1,12 @@
 import React from "react";
 import { Linking } from "react-native";
 import { createCustomErrorClass } from "@ledgerhq/errors";
-import { Trans } from "react-i18next";
+import { Trans, useLocale } from "~/context/Locale";
 import styled from "styled-components/native";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import GenericErrorView from "../GenericErrorView";
 import Button from "../Button";
 import ExternalLink from "../ExternalLink";
-import { useLocale } from "~/context/Locale";
 import { urls } from "~/utils/urls";
 
 const WebPTXPlayerNetworkFail = createCustomErrorClass("WebPTXPlayerNetworkFail");
@@ -53,7 +52,7 @@ export const NetworkError = ({ handleTryAgain }: { handleTryAgain: () => void })
           minWidth="143px"
           height="40px"
         >
-          <Trans marginWidth={40} i18nKey="errors.WebPTXPlayerNetworkFail.primaryCTA" />
+          <Trans i18nKey="errors.WebPTXPlayerNetworkFail.primaryCTA" />
         </Button>
       </GenericErrorView>
     </Flex>

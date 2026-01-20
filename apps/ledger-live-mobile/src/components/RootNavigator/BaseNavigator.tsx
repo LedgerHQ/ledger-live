@@ -3,7 +3,7 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
 } from "@react-navigation/native-stack";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "~/context/hooks";

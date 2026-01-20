@@ -13,7 +13,7 @@ import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/nativ
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BigNumber } from "bignumber.js";
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";

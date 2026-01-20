@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, Text, Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { setMevProtection } from "~/actions/settings";

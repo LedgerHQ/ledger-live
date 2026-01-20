@@ -1,7 +1,7 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Linking } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";

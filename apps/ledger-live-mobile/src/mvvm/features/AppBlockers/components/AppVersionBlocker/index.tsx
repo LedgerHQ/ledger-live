@@ -6,7 +6,7 @@ import { urls } from "~/utils/urls";
 import { useTheme } from "styled-components/native";
 import { useAppVersionBlockCheck } from "@ledgerhq/live-common/hooks/useAppVersionBlockCheck";
 import VersionNumber from "react-native-version-number";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const AppVersionBlocker: React.FC<React.PropsWithChildren> = ({ children }) => {

@@ -1,6 +1,6 @@
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useCallback, useContext, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { LayoutChangeEvent } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useSelector } from "~/context/hooks";

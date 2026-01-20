@@ -2,7 +2,7 @@ import { Button, Icons } from "@ledgerhq/native-ui";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
 import { Linking } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { setOnboardingHasDevice, setReadOnlyMode } from "~/actions/settings";

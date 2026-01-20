@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { SearchProps, useSearch } from "./useSearch";
 import { Flex } from "@ledgerhq/native-ui";
 import { Search } from "@ledgerhq/native-ui/pre-ldls/index";

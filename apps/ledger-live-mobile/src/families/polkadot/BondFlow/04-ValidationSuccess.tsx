@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Operation } from "@ledgerhq/types-live";

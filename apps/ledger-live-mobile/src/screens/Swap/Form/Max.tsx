@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, Text, Switch } from "@ledgerhq/native-ui";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { isAccount } from "@ledgerhq/live-common/account/index";

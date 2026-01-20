@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Box, NumberedList } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";

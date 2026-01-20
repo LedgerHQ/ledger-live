@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, FlatList, Platform } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { v4 as uuid } from "uuid";
 import { useSelector } from "~/context/hooks";
 import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";

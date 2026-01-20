@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Language } from "@ledgerhq/types-live";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { TrackScreen, track } from "~/analytics";
 

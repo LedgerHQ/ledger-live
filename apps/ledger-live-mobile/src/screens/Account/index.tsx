@@ -7,7 +7,7 @@ import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
 import SafeAreaView from "~/components/SafeAreaView";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, Text, Link as TextLink, Button } from "@ledgerhq/native-ui";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
 import QueuedDrawer from "~/components/QueuedDrawer";

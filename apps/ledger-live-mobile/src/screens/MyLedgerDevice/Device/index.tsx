@@ -8,7 +8,7 @@ import React, {
   PropsWithChildren,
 } from "react";
 import { useSelector } from "~/context/hooks";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 
 import { State, AppsDistribution, Action } from "@ledgerhq/live-common/apps/index";
 import { App, DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";

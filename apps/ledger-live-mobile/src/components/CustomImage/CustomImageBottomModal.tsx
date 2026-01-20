@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import Button from "../Button";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";

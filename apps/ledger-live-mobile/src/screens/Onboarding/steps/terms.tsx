@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "~/context/hooks";
 import { Linking } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation, useLocale } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text, Button, Checkbox } from "@ledgerhq/native-ui";
 import { IconsLegacy } from "@ledgerhq/native-ui/assets/index";
@@ -11,7 +11,6 @@ import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import { setAnalytics } from "~/actions/settings";
 import { useAcceptGeneralTerms } from "~/logic/terms";
-import { useLocale } from "~/context/Locale";
 import { urls } from "~/utils/urls";
 import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "~/components/StyledStatusBar";

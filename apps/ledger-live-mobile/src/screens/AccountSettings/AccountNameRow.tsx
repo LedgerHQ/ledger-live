@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";

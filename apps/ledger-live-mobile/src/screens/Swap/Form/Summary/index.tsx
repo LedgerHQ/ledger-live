@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";

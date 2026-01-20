@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import SettingsRow from "~/components/SettingsRow";

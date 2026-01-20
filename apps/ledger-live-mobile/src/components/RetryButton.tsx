@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import Button, { BaseButtonProps } from "./Button";
 
 export default function RetryButton(props: BaseButtonProps) {

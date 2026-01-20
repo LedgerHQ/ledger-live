@@ -9,7 +9,7 @@ import {
   Platform,
   KeyboardAvoidingViewProps,
 } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import type { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

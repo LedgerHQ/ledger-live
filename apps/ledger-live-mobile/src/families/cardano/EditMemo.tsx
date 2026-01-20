@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import i18next from "i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";

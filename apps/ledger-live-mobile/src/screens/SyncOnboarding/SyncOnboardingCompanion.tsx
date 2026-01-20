@@ -16,7 +16,7 @@ import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector, useDispatch } from "~/context/hooks";

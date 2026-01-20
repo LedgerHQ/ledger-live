@@ -1,7 +1,7 @@
 import { SearchInput } from "@ledgerhq/native-ui";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import React, { memo, useState, useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { track } from "~/analytics";
 import { LIMIT } from "~/reducers/market";

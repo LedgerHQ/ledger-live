@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";

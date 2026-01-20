@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation, useLanguageAvailableChecked } from "~/context/Locale";
 import { View } from "react-native";
 
 import { IconsLegacy } from "@ledgerhq/native-ui";
@@ -9,7 +9,6 @@ import ModalBottomAction from "./ModalBottomAction";
 import { languageIsSetByUserSelector } from "~/reducers/settings";
 import { setLanguage } from "~/actions/settings";
 import { getDefaultLanguageLocale } from "../languages";
-import { useLanguageAvailableChecked } from "~/context/Locale";
 import { Track, updateIdentify } from "~/analytics";
 import Button from "./wrappedUi/Button";
 import { useSettings } from "~/hooks";

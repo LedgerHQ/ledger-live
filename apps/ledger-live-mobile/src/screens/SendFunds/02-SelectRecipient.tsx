@@ -16,7 +16,7 @@ import QrCode from "@ledgerhq/icons-ui/native/QrCode";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { Linking, Platform, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { TrackScreen, track } from "~/analytics";

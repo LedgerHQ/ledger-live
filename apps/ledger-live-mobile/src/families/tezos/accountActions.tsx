@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import {
   getAccountDelegationSync,

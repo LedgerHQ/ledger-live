@@ -3,7 +3,7 @@ import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import QRCode from "react-native-qrcode-svg";
 import getWindowDimensions from "~/logic/getWindowDimensions";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import BottomContainer from "./BottomContainer";
 
 const Italic = styled(Text)`

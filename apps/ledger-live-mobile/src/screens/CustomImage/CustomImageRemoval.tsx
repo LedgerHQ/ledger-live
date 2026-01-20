@@ -6,7 +6,7 @@ import { useRemoveImageDeviceAction } from "~/hooks/deviceActions";
 import { useCallback, useMemo } from "react";
 import { ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import DeviceAction from "~/components/DeviceAction";
 import { Button, Flex, Icons } from "@ledgerhq/native-ui";
 import { GenericInformationBody } from "~/components/GenericInformationBody";

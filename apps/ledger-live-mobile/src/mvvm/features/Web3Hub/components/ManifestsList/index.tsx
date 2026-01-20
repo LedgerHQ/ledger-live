@@ -1,7 +1,7 @@
 import React, { ComponentProps, useCallback, useState } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { FlashList, FlashListProps } from "@shopify/flash-list";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";

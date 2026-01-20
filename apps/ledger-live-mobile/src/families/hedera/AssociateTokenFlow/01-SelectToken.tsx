@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, IconBox, Text, Checkbox, IconsLegacy, Button } from "@ledgerhq/native-ui";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import AppIcon from "../AppIcon";

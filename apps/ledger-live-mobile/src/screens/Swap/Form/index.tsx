@@ -6,7 +6,7 @@ import { ExchangeRate, OnNoRatesCallback } from "@ledgerhq/live-common/exchange/
 import { useSwapTransaction, usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import {
   flattenAccounts,
   accountWithMandatoryTokens,

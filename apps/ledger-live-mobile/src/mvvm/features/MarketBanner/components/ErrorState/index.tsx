@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Text, Spot } from "@ledgerhq/lumen-ui-rnative";
 import { Warning } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 const ERROR_CONTAINER_HEIGHT = 110;
 

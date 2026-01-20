@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { Layout } from "./Layout";
 import { useCatalog } from "../hooks";

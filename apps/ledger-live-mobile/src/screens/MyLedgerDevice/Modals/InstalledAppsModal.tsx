@@ -4,7 +4,7 @@ import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import { FlatList } from "react-native";
 import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { State, Action } from "@ledgerhq/live-common/apps/index";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import AppIcon from "../AppsList/AppIcon";
 import ByteSize from "~/components/ByteSize";
 import AppUninstallButton from "../AppsList/AppUninstallButton";

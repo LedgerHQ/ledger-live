@@ -2,7 +2,7 @@ import React from "react";
 
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { FlatList, ListRenderItemInfo } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { TinyCard } from "../TinyCard";
 import { Scene } from "../../screens/ManageInstances/useManageInstanceDrawer";

@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";

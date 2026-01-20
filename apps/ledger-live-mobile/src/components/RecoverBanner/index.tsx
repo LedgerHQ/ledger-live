@@ -1,7 +1,7 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Icon, ProgressLoader, Text, Icons } from "@ledgerhq/native-ui";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useCustomURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useTheme } from "styled-components/native";
 import { RecoverBannerType } from "./types";

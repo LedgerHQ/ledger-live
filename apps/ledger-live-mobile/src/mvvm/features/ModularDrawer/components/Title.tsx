@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components/native";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { ModularDrawerStep } from "../types";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 const TranslationKeyMap: Record<ModularDrawerStep, string> = {
   [ModularDrawerStep.Asset]: "modularDrawer.selectAsset",

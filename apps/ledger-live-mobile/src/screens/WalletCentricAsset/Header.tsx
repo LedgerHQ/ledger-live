@@ -5,7 +5,7 @@ import { CryptoOrTokenCurrency, Currency, FiatCurrency } from "@ledgerhq/types-c
 import { useSelector } from "~/context/hooks";
 import { ArrowLeftMedium, SettingsMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { SharedValue } from "react-native-reanimated";
 import BigNumber from "bignumber.js";
 import Touchable from "~/components/Touchable";

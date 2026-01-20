@@ -5,7 +5,7 @@ import Animated, {
   useSharedValue,
   AnimatedProps,
 } from "react-native-reanimated";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";

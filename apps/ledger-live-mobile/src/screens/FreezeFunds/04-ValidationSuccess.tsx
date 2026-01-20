@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { useTronPowerLoading, getLastVotedDate } from "@ledgerhq/live-common/families/tron/react";
 import { useTimer } from "@ledgerhq/live-common/hooks/useTimer";

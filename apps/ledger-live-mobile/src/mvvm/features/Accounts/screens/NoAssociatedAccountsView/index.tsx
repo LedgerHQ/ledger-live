@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { StyleSheet } from "react-native";
 import { Flex, Icons, rgba } from "@ledgerhq/native-ui";
 import Circle from "~/components/Circle";

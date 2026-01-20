@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 const EmptyState = () => {
   const { t } = useTranslation();

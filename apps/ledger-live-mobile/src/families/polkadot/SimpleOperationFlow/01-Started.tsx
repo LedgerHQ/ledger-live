@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation, Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import type {
   Transaction as PolkadotTransaction,

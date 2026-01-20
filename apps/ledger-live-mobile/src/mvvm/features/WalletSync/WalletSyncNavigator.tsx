@@ -10,7 +10,7 @@ import { ActivationSuccess } from "./screens/Activation/ActivationSuccess";
 import { ActivationLoading } from "./screens/Activation/ActivationLoading";
 import { useInitMemberCredentials } from "./hooks/useInitMemberCredentials";
 import WalletSyncManage from "./screens/Manage";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { WalletSyncManageKeyDeletionSuccess } from "./screens/ManageKey/DeletionSuccess";
 import { ManageInstancesProcess } from "./screens/ManageInstances/ManageInstancesProcess";
 import { WalletSyncManageInstanceDeletionSuccess } from "./screens/ManageInstances/DeletionSuccess";

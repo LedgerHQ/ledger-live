@@ -1,10 +1,10 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useTranslation } from "~/context/Locale";
 import { ScreenName } from "~/const";
-import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import MarketCurrencySelect from "LLM/features/Market/screens/MarketCurrencySelect";
-import MarketDetail from "LLM/features/Market/screens/MarketDetail";
+import MarketDetail from "LLM/features/Market/screens//MarketDetail";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import MarketList from "LLM/features/Market/screens/MarketList";
 import {
   MarketListHeaderLeft,

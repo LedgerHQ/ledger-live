@@ -1,6 +1,6 @@
 import { ValueChange } from "@ledgerhq/types-live";
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { InformationsProps } from "../types";

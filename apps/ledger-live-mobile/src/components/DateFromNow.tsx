@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 
 const k = 60;
 const j = 24;

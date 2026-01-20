@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Tile, TileContent, TileTitle, TileDescription } from "@ledgerhq/lumen-ui-rnative";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import {
   getFearAndGreedColorKey,
   getFearAndGreedTranslationKey,

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";

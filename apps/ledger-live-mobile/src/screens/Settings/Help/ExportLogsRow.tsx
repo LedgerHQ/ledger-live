@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import SettingsRow from "~/components/SettingsRow";
 import useExportLogs from "~/components/useExportLogs";
 
