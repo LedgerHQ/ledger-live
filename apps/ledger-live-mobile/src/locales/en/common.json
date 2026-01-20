@@ -3849,7 +3849,8 @@
         "title": "Select quote"
       },
       "twoStepApproval": {
-        "title": "Complete steps"
+        "title": "Complete steps",
+        "completedTitle": "Completed"
       },
       "loader": {
         "title": "Processing Swap",
