@@ -47,33 +47,61 @@ export function useSendFlowTransaction({
     [bridgeUpdateTransaction],
   );
 
+  const buildRecipientUpdates = useCallback(
+    (currentTransaction: Transaction, recipient: RecipientData): Partial<Transaction> => {
+      const updates: Partial<Transaction> = {};
+
+      if (recipient.address !== undefined) {
+        updates.recipient = recipient.address;
+      }
+
+      if (recipient.memo !== undefined) {
+        Object.assign(
+          updates,
+          applyMemoToTransaction(
+            currentTransaction.family,
+            recipient.memo.value,
+            recipient.memo.type,
+            currentTransaction,
+          ),
+        );
+      }
+
+      if (recipient.destinationTag !== undefined) {
+        const trimmed = recipient.destinationTag.trim();
+        if (trimmed.length > 0) {
+          const parsedTag = Number(trimmed);
+          if (Number.isFinite(parsedTag)) {
+            Object.assign(
+              updates,
+              applyMemoToTransaction(
+                currentTransaction.family,
+                parsedTag,
+                undefined,
+                currentTransaction,
+              ),
+            );
+          }
+        }
+      }
+
+      return updates;
+    },
+    [],
+  );
+
   const setRecipient = useCallback(
     (recipient: RecipientData) => {
       if (!account || !transaction) return;
 
       const bridge = getAccountBridge(account, parentAccount);
-      const updates: Partial<Transaction> = { recipient: recipient.address };
+      const updates = buildRecipientUpdates(transaction, recipient);
 
-      if (recipient.memo !== undefined) {
-        Object.assign(
-          updates,
-          applyMemoToTransaction(transaction.family, recipient.memo, transaction),
-        );
+      if (Object.keys(updates).length > 0) {
+        bridgeSetTransaction(bridge.updateTransaction(transaction, updates));
       }
-
-      if (recipient.destinationTag !== undefined) {
-        const parsedTag = Number(recipient.destinationTag.trim());
-        if (Number.isFinite(parsedTag)) {
-          Object.assign(
-            updates,
-            applyMemoToTransaction(transaction.family, parsedTag, transaction),
-          );
-        }
-      }
-
-      bridgeSetTransaction(bridge.updateTransaction(transaction, updates));
     },
-    [account, parentAccount, transaction, bridgeSetTransaction],
+    [account, parentAccount, transaction, bridgeSetTransaction, buildRecipientUpdates],
   );
 
   const setAccountForTransaction = useCallback(

@@ -1,7 +1,7 @@
 import { formatAddress } from "LLD/features/ModularDialog/components/Address/formatAddress";
 
 export type RecipientLike = Readonly<{
-  address: string;
+  address?: string;
   ensName?: string;
 }>;
 

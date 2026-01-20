@@ -4,6 +4,8 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { BridgeValidationErrors, BridgeValidationWarnings } from "../types";
+import { applyMemoToTransaction } from "@ledgerhq/live-common/bridge/descriptor";
+import type { Memo } from "../../../types";
 
 export type BridgeRecipientValidationResult = {
   errors: BridgeValidationErrors;
@@ -17,6 +19,7 @@ type UseBridgeRecipientValidationProps = {
   recipient: string;
   account: AccountLike | null;
   parentAccount?: Account | null;
+  memo?: Memo;
   enabled?: boolean;
 };
 
@@ -31,6 +34,7 @@ export function useBridgeRecipientValidation({
   recipient,
   account,
   parentAccount,
+  memo,
   enabled = true,
 }: UseBridgeRecipientValidationProps): BridgeRecipientValidationResult {
   const [validationState, setValidationState] = useState<{
@@ -45,12 +49,11 @@ export function useBridgeRecipientValidation({
     status: null,
   });
 
-  const lastRecipientRef = useRef<string>("");
-  const validationTriggeredRef = useRef<boolean>(false);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const lastValidationKeyRef = useRef<string>("");
+  const validationTriggeredRef = useRef<boolean>(false);
 
-  // Cleanup function to clear timeout and abort pending validations
   const cleanup = useCallback(() => {
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current);
@@ -63,10 +66,9 @@ export function useBridgeRecipientValidation({
   }, []);
 
   const validateRecipient = useCallback(async () => {
-    // Clear timeout reference when callback executes
     debounceTimeoutRef.current = null;
 
-    if (!account || !recipient || !enabled) {
+    if (!enabled || !account || !recipient) {
       setValidationState({
         errors: {},
         warnings: {},
@@ -76,7 +78,6 @@ export function useBridgeRecipientValidation({
       return;
     }
 
-    // Cancel any pending validation
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -92,28 +93,31 @@ export function useBridgeRecipientValidation({
       let transaction = bridge.createTransaction(mainAccount);
       transaction = bridge.updateTransaction(transaction, { recipient });
 
-      const preparedTransaction = await bridge.prepareTransaction(mainAccount, transaction);
+      if (memo) {
+        const memoUpdates = applyMemoToTransaction(
+          transaction.family,
+          memo.value,
+          memo.type,
+          transaction,
+        );
+        transaction = bridge.updateTransaction(transaction, memoUpdates);
+      }
 
+      const preparedTransaction = await bridge.prepareTransaction(mainAccount, transaction);
       if (signal.aborted) return;
 
       const status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
-
       if (signal.aborted) return;
 
       const errors: BridgeValidationErrors = {};
       const warnings: BridgeValidationWarnings = {};
 
-      if (status.errors.recipient) {
-        errors.recipient = status.errors.recipient;
-      }
-      if (status.errors.sender) {
-        errors.sender = status.errors.sender;
-      }
+      if (status.errors.recipient) errors.recipient = status.errors.recipient;
+      if (status.errors.sender) errors.sender = status.errors.sender;
+      if (status.errors.transaction) errors.transaction = status.errors.transaction;
 
       Object.entries(status.warnings).forEach(([key, value]) => {
-        if (value) {
-          warnings[key] = value;
-        }
+        if (value) warnings[key] = value;
       });
 
       setValidationState({
@@ -124,7 +128,6 @@ export function useBridgeRecipientValidation({
       });
     } catch (error) {
       if (signal.aborted) return;
-
       console.error("Bridge recipient validation failed:", error);
       setValidationState({
         errors: {},
@@ -133,18 +136,18 @@ export function useBridgeRecipientValidation({
         status: null,
       });
     }
-  }, [account, parentAccount, recipient, enabled]);
+  }, [account, enabled, memo, parentAccount, recipient]);
 
-  if (recipient !== lastRecipientRef.current) {
-    lastRecipientRef.current = recipient;
+  const validationKey = `${enabled ? 1 : 0}|${account?.id ?? ""}|${parentAccount?.id ?? ""}|${recipient}|${
+    memo?.type ?? ""
+  }|${memo?.value ?? ""}`;
+
+  if (validationKey !== lastValidationKeyRef.current) {
+    lastValidationKeyRef.current = validationKey;
     validationTriggeredRef.current = false;
+    cleanup();
 
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
-      debounceTimeoutRef.current = null;
-    }
-
-    if (!recipient) {
+    if (!enabled || !account || !recipient) {
       setValidationState({
         errors: {},
         warnings: {},
@@ -154,17 +157,11 @@ export function useBridgeRecipientValidation({
     }
   }
 
-  if (recipient && !validationTriggeredRef.current && enabled) {
+  if (enabled && account && recipient && !validationTriggeredRef.current) {
     validationTriggeredRef.current = true;
-
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
-    }
-
     setValidationState(prev => ({ ...prev, isLoading: true }));
-
     debounceTimeoutRef.current = setTimeout(() => {
-      validateRecipient();
+      validateRecipient().catch(() => undefined);
     }, DEBOUNCE_DELAY);
   }
 

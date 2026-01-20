@@ -10,7 +10,7 @@
  * @returns Formatted address string
  */
 export const formatAddress = (
-  address: string,
+  address?: string,
   options: {
     prefixLength?: number;
     suffixLength?: number;

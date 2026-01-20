@@ -1,17 +1,67 @@
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { useCalculate } from "@ledgerhq/live-countervalues-react";
+import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
+import type { AccountLike } from "@ledgerhq/types-live";
+import { useSelector } from "LLD/hooks/redux";
+import { BigNumber } from "bignumber.js";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { BigNumber } from "bignumber.js";
-import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
+import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
-import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
 import {
   SEND_FLOW_STEP,
   type SendFlowStep,
   type SendFlowBusinessContext,
 } from "@ledgerhq/live-common/flows/send/types";
 import type { SendStepConfig } from "../types";
+import { useSendFlowActions, useSendFlowData } from "../context/SendFlowContext";
+import { MemoTypeSelect } from "../screens/Recipient/components/Memo/MemoTypeSelect";
+import { MemoValueInput } from "../screens/Recipient/components/Memo/MemoValueInput";
+import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSection";
+import { useRecipientMemo } from "../screens/Recipient/hooks/useRecipientMemo";
 import { getRecipientDisplayValue, getRecipientSearchPrefillValue } from "./utils";
-import { useAvailableBalance } from "../hooks/useAvailableBalance";
+
+function useAvailableBalance(account?: AccountLike | null) {
+  const locale = useSelector(localeSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const unit = useMaybeAccountUnit(account ?? undefined);
+
+  const accountCurrency = useMemo(
+    () => (account ? getAccountCurrency(account) : undefined),
+    [account],
+  );
+
+  const counterValue = useCalculate({
+    from: accountCurrency ?? counterValueCurrency,
+    to: counterValueCurrency,
+    value: account?.balance.toNumber() ?? 0,
+    disableRounding: true,
+  });
+
+  const availableBalanceFormatted = useMemo(() => {
+    if (!account || !unit) return "";
+    return formatCurrencyUnit(unit, account.balance, {
+      showCode: true,
+      locale,
+    });
+  }, [account, unit, locale]);
+
+  const counterValueFormatted = useMemo(() => {
+    if (typeof counterValue !== "number" || !counterValueCurrency) return "";
+    return formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(counterValue), {
+      showCode: true,
+      locale,
+    });
+  }, [counterValue, counterValueCurrency, locale]);
+
+  return useMemo(() => {
+    if (!account) return "";
+    return counterValueFormatted || availableBalanceFormatted || "";
+  }, [account, counterValueFormatted, availableBalanceFormatted]);
+}
 
 export function SendHeader() {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
@@ -71,6 +121,41 @@ export function SendHeader() {
     handleBack();
   }, [handleBack, isAmountStep, recipientSearch, state.recipient]);
 
+  const showMemoControls = Boolean(
+    showRecipientInput && uiConfig.hasMemo && recipientSearch.value.length > 0,
+  );
+
+  const currencyId = state.account.currency?.id;
+  const memoDefaultOption = useMemo(() => {
+    return state.account.currency
+      ? sendFeatures.getMemoDefaultOption(state.account.currency)
+      : undefined;
+  }, [state.account.currency]);
+
+  const memoTypeOptions = useMemo(() => {
+    return uiConfig.memoOptions ?? [];
+  }, [uiConfig]);
+  const memoType = uiConfig.memoType;
+  const memoMaxLength = uiConfig.memoMaxLength;
+
+  const memoViewModel = useRecipientMemo({
+    hasMemo: uiConfig.hasMemo,
+    memoDefaultOption,
+    memoType,
+    memoTypeOptions,
+    onMemoChange: memo => {
+      transaction.setRecipient({ memo });
+    },
+    onMemoSkip: () => {
+      navigation.goToNextStep();
+    },
+    resetKey: `${state.account.account?.id ?? ""}|${currencyId ?? ""}|${
+      recipientSearch.value.length === 0 ? "empty" : "filled"
+    }`,
+  });
+
+  const transactionErrorName = state.transaction.status?.errors?.transaction?.name;
+
   const recipientInputContent = useMemo(() => {
     if (!showRecipientInput) return null;
 
@@ -91,30 +176,82 @@ export function SendHeader() {
     }
 
     return (
-      <AddressInput
-        className="-mt-12 mb-24 px-24"
-        defaultValue={addressInputValue}
-        onChange={e => recipientSearch.setValue(e.target.value)}
-        onClear={recipientSearch.clear}
-        placeholder={
-          uiConfig.recipientSupportsDomain
-            ? t("newSendFlow.placeholder")
-            : t("newSendFlow.placeholderNoENS")
-        }
-      />
+      <>
+        <AddressInput
+          className="-mt-12 mb-24 px-24"
+          defaultValue={addressInputValue}
+          onChange={e => recipientSearch.setValue(e.target.value)}
+          onClear={recipientSearch.clear}
+          placeholder={
+            uiConfig.recipientSupportsDomain
+              ? t("newSendFlow.placeholder")
+              : t("newSendFlow.placeholderNoENS")
+          }
+        />
+        {showMemoControls && currencyId ? (
+          <div className="mb-24 px-24">
+            <div className="flex flex-col gap-12">
+              {memoViewModel.hasMemoTypeOptions ? (
+                <MemoTypeSelect
+                  currencyId={currencyId}
+                  options={memoTypeOptions}
+                  value={memoViewModel.memo.type}
+                  onChange={memoViewModel.onMemoTypeChange}
+                />
+              ) : null}
+
+              {memoViewModel.showMemoValueInput ? (
+                <MemoValueInput
+                  currencyId={currencyId}
+                  value={memoViewModel.memo.value}
+                  maxLength={memoMaxLength}
+                  transactionErrorName={transactionErrorName}
+                  onChange={memoViewModel.onMemoValueChange}
+                />
+              ) : null}
+            </div>
+
+            {memoViewModel.showSkipMemo ? (
+              <SkipMemoSection
+                currencyId={currencyId}
+                state={memoViewModel.skipMemoState}
+                onRequestConfirm={memoViewModel.onSkipMemoRequestConfirm}
+                onCancelConfirm={memoViewModel.onSkipMemoCancelConfirm}
+                onConfirm={memoViewModel.onSkipMemoConfirm}
+              />
+            ) : null}
+          </div>
+        ) : null}
+      </>
     );
   }, [
     showRecipientInput,
     isAmountStep,
     addressInputValue,
-    handleRecipientInputClick,
     recipientSearch,
     uiConfig.recipientSupportsDomain,
     t,
+    showMemoControls,
+    currencyId,
+    memoViewModel.hasMemoTypeOptions,
+    memoViewModel.memo.type,
+    memoViewModel.memo.value,
+    memoViewModel.onMemoTypeChange,
+    memoViewModel.showMemoValueInput,
+    memoViewModel.onMemoValueChange,
+    memoViewModel.showSkipMemo,
+    memoViewModel.skipMemoState,
+    memoViewModel.onSkipMemoRequestConfirm,
+    memoViewModel.onSkipMemoCancelConfirm,
+    memoViewModel.onSkipMemoConfirm,
+    memoTypeOptions,
+    memoMaxLength,
+    transactionErrorName,
+    handleRecipientInputClick,
   ]);
 
   return (
-    <div className="-mb-12 flex flex-col">
+    <div className="flex flex-col">
       <DialogHeader
         appearance="compact"
         title={title}

@@ -2349,12 +2349,15 @@
       "walletNotExist": "Wallet doesn’t exist"
     },
     "skipMemo": {
-      "title": "Skip adding {{tag}}?",
-      "warning": "Your asset may be lost if a {{tag}} is required by your recipient"
+      "title": "Skip adding {{memoLabel}}?",
+      "description": "Your asset may be lost if a {{memoLabel}} is required by your recipient",
+      "notRequired": "{{memoLabel}} not required by recipient?",
+      "confirm": "Yes skip",
+      "neverAskAgain": "Don't show this warning again"
     },
     "tagHelp": {
-      "title": "What’s a {{tag}}?",
-      "description": "A {{tag}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{tag}} memo may result in a loss of funds."
+      "inputLabel": "Enter {{memoLabel}}",
+      "description": "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} memo may result in a loss of funds."
     },
     "networkFeesInFiat": "Network fees in {{currency}}",
     "feesAmount": "Fees amount ({{unit}})",

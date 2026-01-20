@@ -14,13 +14,16 @@ import type {
   AddressValidationError as AddressValidationErrorType,
 } from "../types";
 
-type RecipientAddressModalViewProps = Readonly<{
+type RecipientAddressModalViewData = Readonly<{
   searchValue: string;
   isLoading: boolean;
   result: AddressSearchResult;
   recentAddresses: RecentAddress[];
   mainAccount: Account;
   currency: CryptoOrTokenCurrency;
+}>;
+
+type RecipientAddressModalViewUi = Readonly<{
   showInitialState: boolean;
   showInitialEmptyState: boolean;
   showMatchedAddress: boolean;
@@ -36,39 +39,47 @@ type RecipientAddressModalViewProps = Readonly<{
   bridgeRecipientError: Error | undefined;
   bridgeRecipientWarning: Error | undefined;
   bridgeSenderError: Error | undefined;
+  hasMemo: boolean;
+  hasMemoValidationError: boolean;
+  hasFilledMemo: boolean;
+}>;
+
+type RecipientAddressModalViewActions = Readonly<{
   onRecentAddressSelect: (address: RecentAddress) => void;
   onAccountSelect: (account: Account) => void;
   onAddressSelect: (address: string, ensName?: string) => void;
   onRemoveAddress: (address: RecentAddress) => void;
 }>;
 
-export function RecipientAddressModalView({
-  searchValue,
-  isLoading,
-  result,
-  recentAddresses,
-  mainAccount,
-  currency,
-  showInitialState,
-  showInitialEmptyState,
-  showMatchedAddress,
-  showAddressValidationError,
-  showEmptyState,
-  showBridgeSenderError,
-  showSanctionedBanner,
-  showBridgeRecipientError,
-  showBridgeRecipientWarning,
-  isSanctioned,
-  isAddressComplete,
-  addressValidationErrorType,
-  bridgeRecipientError,
-  bridgeRecipientWarning,
-  bridgeSenderError,
-  onRecentAddressSelect,
-  onAccountSelect,
-  onAddressSelect,
-  onRemoveAddress,
-}: RecipientAddressModalViewProps) {
+type RecipientAddressModalViewProps = Readonly<{
+  data: RecipientAddressModalViewData;
+  ui: RecipientAddressModalViewUi;
+  actions: RecipientAddressModalViewActions;
+}>;
+
+export function RecipientAddressModalView({ data, ui, actions }: RecipientAddressModalViewProps) {
+  const { searchValue, isLoading, result, recentAddresses, mainAccount, currency } = data;
+  const {
+    showInitialState,
+    showInitialEmptyState,
+    showMatchedAddress,
+    showAddressValidationError,
+    showEmptyState,
+    showBridgeSenderError,
+    showSanctionedBanner,
+    showBridgeRecipientError,
+    showBridgeRecipientWarning,
+    isSanctioned,
+    isAddressComplete,
+    addressValidationErrorType,
+    bridgeRecipientError,
+    bridgeRecipientWarning,
+    bridgeSenderError,
+    hasMemo,
+    hasMemoValidationError,
+    hasFilledMemo,
+  } = ui;
+
   const shouldShowErrorBanner =
     !isLoading &&
     (showBridgeSenderError ||
@@ -84,22 +95,22 @@ export function RecipientAddressModalView({
         <>
           <RecentAddressesSection
             recentAddresses={recentAddresses}
-            onSelect={onRecentAddressSelect}
-            onRemove={onRemoveAddress}
+            onSelect={actions.onRecentAddressSelect}
+            onRemove={actions.onRemoveAddress}
           />
           <MyAccountsSection
             currency={currency}
             currentAccountId={mainAccount.id}
-            onSelect={onAccountSelect}
+            onSelect={actions.onAccountSelect}
           />
         </>
       )}
 
-      {showMatchedAddress && (
+      {showMatchedAddress && (!hasMemo || (hasFilledMemo && !hasMemoValidationError)) && (
         <AddressMatchedSection
           searchResult={result}
           searchValue={searchValue}
-          onSelect={onAddressSelect}
+          onSelect={actions.onAddressSelect}
           isSanctioned={isSanctioned}
           isAddressComplete={isAddressComplete}
           hasBridgeError={showBridgeRecipientError || showBridgeRecipientWarning}

@@ -6,11 +6,7 @@ import {
   getRecentAddressesStore,
 } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
-import type {
-  Account,
-  AccountLike,
-  RecentAddress as RecentAddressFromStore,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import type { RecentAddress } from "../types";
@@ -19,11 +15,15 @@ import { useRecipientSearchState } from "./useRecipientSearchState";
 import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
 type UseRecipientAddressModalViewModelProps = Readonly<{
   account: AccountLike;
   parentAccount?: Account;
   currency: CryptoCurrency | TokenCurrency;
-  onAddressSelected: (address: string, ensName?: string) => void;
+  onAddressSelected: (address: string, ensName?: string, goToNextStep?: boolean) => void;
   recipientSupportsDomain: boolean;
 }>;
 
@@ -34,7 +34,7 @@ export function useRecipientAddressModalViewModel({
   onAddressSelected,
   recipientSupportsDomain,
 }: UseRecipientAddressModalViewModelProps) {
-  const { recipientSearch } = useSendFlowData();
+  const { recipientSearch, state } = useSendFlowData();
   const [refreshCounter, setRefreshCounter] = useState(0);
 
   const mainAccount = getMainAccount(account, parentAccount);
@@ -45,6 +45,13 @@ export function useRecipientAddressModalViewModel({
     account,
     parentAccount,
     currentAccountId: mainAccount.id,
+  });
+
+  const recipientSearchState = useRecipientSearchState({
+    searchValue: recipientSearch.value,
+    result,
+    isLoading,
+    recipientSupportsDomain,
   });
 
   const allAccounts = useSelector(accountsSelector);
@@ -60,9 +67,8 @@ export function useRecipientAddressModalViewModel({
   }, [allAccounts, currency, mainAccount.id]);
 
   const recentAddresses = useMemo(() => {
-    const addressesWithMetadata = getRecentAddressesStore().getAddresses(
-      currency.id,
-    ) as unknown as RecentAddressFromStore[];
+    const raw = getRecentAddressesStore().getAddresses(currency.id);
+    const addressesWithMetadata = Array.isArray(raw) ? raw : [];
     const selfTransferPolicy = sendFeatures.getSelfTransferPolicy(currency);
 
     const userAccountsByAddress = new Map(
@@ -71,29 +77,40 @@ export function useRecipientAddressModalViewModel({
 
     return addressesWithMetadata
       .filter(entry => {
-        if (!entry?.address) return false;
+        if (!isRecord(entry)) return false;
+        const address = entry.address;
+        if (typeof address !== "string" || address.length === 0) return false;
         if (
           selfTransferPolicy === "impossible" &&
-          entry.address.toLowerCase() === mainAccount.freshAddress.toLowerCase()
+          address.toLowerCase() === mainAccount.freshAddress.toLowerCase()
         ) {
           return false;
         }
         return true;
       })
       .map(entry => {
-        const matchedAccount = userAccountsByAddress.get(entry.address.toLowerCase());
-        const lastUsedTimestamp = normalizeLastUsedTimestamp(entry.lastUsed);
+        if (!isRecord(entry) || typeof entry.address !== "string") {
+          // Should never happen due to filter above
+          return null;
+        }
+
+        const address = entry.address;
+        const ensName = typeof entry.ensName === "string" ? entry.ensName : undefined;
+        const lastUsed = typeof entry.lastUsed === "number" ? entry.lastUsed : undefined;
+        const lastUsedTimestamp = normalizeLastUsedTimestamp(lastUsed);
+        const matchedAccount = userAccountsByAddress.get(address.toLowerCase());
         const recentAddress: RecentAddress = {
-          address: entry.address,
+          address,
           currency,
           lastUsedAt: new Date(lastUsedTimestamp),
-          name: entry.address,
-          ensName: entry.ensName,
+          name: address,
+          ensName,
           isLedgerAccount: !!matchedAccount,
           accountId: matchedAccount?.id,
         };
         return recentAddress;
-      });
+      })
+      .filter((value): value is RecentAddress => value !== null);
     // refreshKey is used to force recalculation when addresses are removed from the store
     // even though it's not directly used in the computation
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,23 +123,48 @@ export function useRecipientAddressModalViewModel({
   const hasUserAccounts = userAccountsForCurrency.length > 0;
   const showInitialEmptyState = showInitialState && !hasRecentAddresses && !hasUserAccounts;
 
+  const hasMemo = sendFeatures.hasMemo(currency);
+  const memoType = sendFeatures.getMemoType(currency);
+  const memoTypeOptions = sendFeatures.getMemoOptions(currency);
+  const memoDefaultOption = sendFeatures.getMemoDefaultOption(currency);
+  const memoMaxLength = sendFeatures.getMemoMaxLength(currency);
+
+  const hasMemoValidationError = useMemo(() => {
+    if (!hasMemo) return false;
+    return Boolean(state.transaction.status.errors.transaction);
+  }, [hasMemo, state.transaction.status.errors.transaction]);
+
+  const hasFilledMemo = useMemo(() => {
+    if (!hasMemo) return true;
+    const memo = state.recipient?.memo;
+    if (!memo) return false;
+    if (memo.type === "NO_MEMO") return true;
+    return memo.value.length > 0;
+  }, [hasMemo, state.recipient?.memo]);
+
   const handleRecentAddressSelect = useCallback(
     (address: RecentAddress) => {
-      onAddressSelected(address.address, address.ensName);
+      if (hasMemo) {
+        recipientSearch.setValue(address.ensName ?? address.address);
+      }
+      onAddressSelected(address.address, address.ensName, !hasMemo);
     },
-    [onAddressSelected],
+    [hasMemo, onAddressSelected, recipientSearch],
   );
 
   const handleAccountSelect = useCallback(
     (selectedAccount: Account) => {
-      onAddressSelected(selectedAccount.freshAddress);
+      if (hasMemo) {
+        recipientSearch.setValue(selectedAccount.freshAddress);
+      }
+      onAddressSelected(selectedAccount.freshAddress, undefined, !hasMemo);
     },
-    [onAddressSelected],
+    [hasMemo, onAddressSelected, recipientSearch],
   );
 
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
-      onAddressSelected(address, ensName);
+      onAddressSelected(address, ensName, true);
     },
     [onAddressSelected],
   );
@@ -135,13 +177,6 @@ export function useRecipientAddressModalViewModel({
     [currency],
   );
 
-  const searchState = useRecipientSearchState({
-    searchValue: recipientSearch.value,
-    result,
-    isLoading,
-    recipientSupportsDomain,
-  });
-
   return {
     searchValue: recipientSearch.value,
     isLoading,
@@ -150,10 +185,17 @@ export function useRecipientAddressModalViewModel({
     mainAccount,
     showInitialState,
     showInitialEmptyState,
+    ...recipientSearchState,
     handleRecentAddressSelect,
     handleAccountSelect,
     handleAddressSelect,
     handleRemoveAddress,
-    ...searchState,
+    hasMemo,
+    hasMemoValidationError,
+    hasFilledMemo,
+    memoType,
+    memoTypeOptions,
+    memoDefaultOption,
+    memoMaxLength,
   };
 }
