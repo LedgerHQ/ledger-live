@@ -26,7 +26,7 @@ describe("resolveEVMAddress", () => {
     expect(address).toEqual("0xcf15538fa293ab04cdd7ce45bcdac8b6e2dc7ebc");
   });
 
-  it("should resolve from an EVM alias address to an EVM alias address for an account with an EVM alias", async () => {
+  it("should resolve from an EVM alias address without prefix to an EVM alias address for an account with an EVM alias", async () => {
     const address = await resolveEVMAddress("cf15538fa293ab04cdd7ce45bcdac8b6e2dc7ebc");
     expect(address).toEqual("0xcf15538fa293ab04cdd7ce45bcdac8b6e2dc7ebc");
   });
