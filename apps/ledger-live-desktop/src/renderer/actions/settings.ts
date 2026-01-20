@@ -25,7 +25,6 @@ import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
-  TOGGLE_MARKET_WIDGET,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
@@ -363,11 +362,6 @@ export const setLastOnboardedDevice = (payload: Device | null) => ({
 });
 export const setMevProtection = (payload: boolean) => ({
   type: TOGGLE_MEV,
-  payload,
-});
-
-export const setMarketWidget = (payload: boolean) => ({
-  type: TOGGLE_MARKET_WIDGET,
   payload,
 });
 

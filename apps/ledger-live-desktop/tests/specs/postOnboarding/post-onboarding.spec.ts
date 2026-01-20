@@ -61,7 +61,7 @@ test("PostOnboarding state logic", async ({ page }) => {
     await expect(page).toHaveScreenshot(
       `${generateScreenshotPrefix()}postonboarding-banner-in-dashboard.png`,
       {
-        mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+        mask: [page.locator("canvas")],
       },
     );
   });
@@ -98,7 +98,7 @@ test("PostOnboarding state logic", async ({ page }) => {
     await expect(page).toHaveScreenshot(
       `${generateScreenshotPrefix()}postonboarding-done-no-banner-in-dashboard.png`,
       {
-        mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+        mask: [page.locator("canvas")],
       },
     );
   });
