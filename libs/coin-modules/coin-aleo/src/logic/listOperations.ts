@@ -39,7 +39,9 @@ async function parseOperation({
     blockHash: block_hash,
     accountId: ledgerAccountId,
     date: timestamp,
-    extra: {},
+    extra: {
+      functionId: rawTx.function_id,
+    },
   };
 }
 
