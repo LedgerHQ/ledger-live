@@ -10,7 +10,13 @@ import {
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
-import type { BitcoinInput, BitcoinOutput, Transaction, TransactionStatus } from "./types";
+import type {
+  BitcoinInput,
+  BitcoinOutput,
+  Transaction,
+  TransactionStatus,
+  BitcoinAccount,
+} from "./types";
 import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
 import { OP_RETURN_DATA_SIZE_LIMIT } from "./wallet-btc/crypto/base";
 import cryptoFactory from "./wallet-btc/crypto/factory";
@@ -33,6 +39,14 @@ export const getTransactionStatus: AccountBridge<
   const { recipientError, recipientWarning, changeAddressError, changeAddressWarning } =
     await validateRecipient(account.currency, transaction.recipient, transaction?.changeAddress);
 
+  console.log("HERERE");
+  transaction.utxoStrategy.excludeUTXOs.forEach(utxo => {
+    console.log("Excluding UTXO from selection:", utxo.hash, ":", utxo.outputIndex);
+  });
+  //@typescript-eslint/consistent-type-assertions
+  (account as BitcoinAccount)?.bitcoinResources.utxos.forEach(utxo => {
+    console.log("UTXO available:", `${utxo.hash}:${utxo.outputIndex} - ${utxo.value.toString()}`);
+  });
   if (recipientError) {
     errors.recipient = recipientError;
   }
