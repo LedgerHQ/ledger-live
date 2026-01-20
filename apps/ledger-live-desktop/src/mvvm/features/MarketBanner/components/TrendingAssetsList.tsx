@@ -4,7 +4,8 @@ import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PerformanceIndicator } from "./PerformanceIndicator";
 import { useNavigate } from "react-router";
 import { ViewAllTile } from "./ViewAllTile";
-import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import FearAndGreed from "./FearAndGreed";
+import { AssetIcon } from "./AssetIcon";
 
 type TrendingAssetsListProps = {
   readonly items: MarketItemPerformer[];
@@ -25,6 +26,7 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
   return (
     <div className="flex flex-col overflow-x-scroll" data-testid="trending-assets-list">
       <div className="flex items-center gap-8">
+        <FearAndGreed />
         {items.map(item => (
           <Tile
             className="w-[98px]"
@@ -34,19 +36,7 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
           >
             <TileSpot
               appearance="icon"
-              icon={() =>
-                item.ledgerIds && item.ledgerIds.length > 0 && item.ticker ? (
-                  <CryptoIcon ledgerId={item.ledgerIds[0]} ticker={item.ticker} size="48px" />
-                ) : (
-                  <img
-                    width={48}
-                    height={48}
-                    className="overflow-hidden rounded-full"
-                    src={item.image}
-                    alt={`${getCapitalizedTicker(item)} logo`}
-                  />
-                )
-              }
+              icon={() => <AssetIcon item={item} getCapitalizedTicker={getCapitalizedTicker} />}
             />
             <TileContent>
               <TileTitle>{getCapitalizedTicker(item)}</TileTitle>

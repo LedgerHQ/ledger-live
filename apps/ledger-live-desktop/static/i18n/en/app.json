@@ -7857,7 +7857,19 @@
   "marketBanner": {
     "title": "Explore market",
     "genericError": "Connection failed",
-    "cta": "View all"
+    "cta": "View all",
+    "fearAndGreed": {
+      "title": "Mood"
+    }
+  },
+  "fearAndGreed": {
+    "levels": {
+      "extremeFear": "Fear+",
+      "fear": "Fear",
+      "neutral": "Neutral",
+      "greed": "Greed",
+      "extremeGreed": "Greed+"
+    }
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
