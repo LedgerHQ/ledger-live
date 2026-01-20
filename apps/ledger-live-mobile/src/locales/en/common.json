@@ -8104,6 +8104,8 @@
     "title": "Explore market",
     "viewAll": "View all",
     "viewAllAccessibilityHint": "Double tap to view all market assets",
+    "connectionFailed": "Connection failed",
+    "errorAccessibilityHint": "Unable to load market data. Please try again later.",
     "tile": {
       "accessibilityLabel": "{{name}}, {{change}}",
       "accessibilityHint": "Double tap to view market details"
