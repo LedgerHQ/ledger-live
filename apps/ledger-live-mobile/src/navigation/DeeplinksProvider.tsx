@@ -41,6 +41,7 @@ import {
   EarnDeeplinkAction,
   validateEarnDepositScreen,
   validateLargeMoverCurrencyIds,
+  validateMarketCurrencyId,
 } from "./deeplinks/validation";
 import { AppLoadingManager, AppLoadingManagerProps } from "LLM/features/LaunchScreen";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
@@ -607,6 +608,20 @@ export const DeeplinksProvider = ({
             }
             url.searchParams.set("currencyIds", validatedCurrencyIds);
             return getStateFromPath(url.href?.split("://")[1], config);
+          }
+
+          if (hostname === "market") {
+            const currencyIdFromPath = pathname.replace("/", "");
+            if (currencyIdFromPath) {
+              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
+
+              if (!validatedCurrencyId) {
+                return getStateFromPath("market", config);
+              }
+
+              url.pathname = `/${validatedCurrencyId}`;
+              return getStateFromPath(url.href?.split("://")[1], config);
+            }
           }
 
           // Handle modular drawer deeplinks (receive & add-account)

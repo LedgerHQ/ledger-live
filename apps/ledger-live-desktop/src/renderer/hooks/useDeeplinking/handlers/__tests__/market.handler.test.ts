@@ -38,12 +38,20 @@ describe("market.handler", () => {
       expect(context.navigate).toHaveBeenCalledWith("/market/bitcoin");
     });
 
-    it("navigates to market detail for any currency id", () => {
+    it("normalizes and navigates to market detail for a valid currency id", () => {
       const context = createMockContext();
 
-      marketHandler({ type: "market", path: "ethereum" }, context);
+      marketHandler({ type: "market", path: "BiTcOiN" }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith("/market/ethereum");
+      expect(context.navigate).toHaveBeenCalledWith("/market/bitcoin");
+    });
+
+    it("navigates to market list for an unknown currency id", () => {
+      const context = createMockContext();
+
+      marketHandler({ type: "market", path: "unknown_coin" }, context);
+
+      expect(context.navigate).toHaveBeenCalledWith("/market");
     });
   });
 
