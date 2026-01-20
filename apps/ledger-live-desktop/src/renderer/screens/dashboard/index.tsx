@@ -31,6 +31,7 @@ import SwapWebViewEmbedded from "./components/SwapWebViewEmbedded";
 import BannerSection from "./components/BannerSection";
 import MarketBanner from "LLD/features/MarketBanner";
 import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
+import Portfolio from "LLD/features/Portfolio";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -77,78 +78,86 @@ export default function DashboardPage() {
   const lwdWallet40FF = useFeature("lwdWallet40");
   const shouldDisplayMarketBanner =
     (lwdWallet40FF?.enabled && lwdWallet40FF?.params?.marketBanner) ?? false;
+  const shouldDisplayBalanceRework =
+    (lwdWallet40FF?.enabled && lwdWallet40FF?.params?.graphRework) ?? false;
 
   return (
     <>
-      <BannerSection />
-      {!ptxSwapLiveAppOnPortfolio?.enabled && <FeaturedButtons />}
-      <TrackPage
-        category="Portfolio"
-        totalAccounts={totalAccounts}
-        totalOperations={totalOperations}
-        totalCurrencies={totalCurrencies}
-        hasExchangeBannerCTA={!!portfolioExchangeBanner?.enabled}
-      />
-      <Flex flexDirection="column" rowGap={32}>
-        {shouldDisplayMarketBanner ? <MarketBanner /> : null}
-        {shouldDisplayMarketBanner && <MarketBannerFeature />}
-        <Box flow={7} id="portfolio-container" data-testid="portfolio-container">
-          {!hasInstalledApps ? (
-            <EmptyStateInstalledApps />
-          ) : totalAccounts > 0 ? (
-            <>
-              {ptxSwapLiveAppOnPortfolio?.enabled ? (
-                <PortfolioGrid marginTop={4}>
-                  <Box>
-                    <FeaturedButtons hideSwapButton />
+      {lwdWallet40FF?.enabled && shouldDisplayBalanceRework && shouldDisplayMarketBanner ? (
+        <Portfolio />
+      ) : (
+        <>
+          <BannerSection />
+          {!ptxSwapLiveAppOnPortfolio?.enabled && <FeaturedButtons />}
+          <TrackPage
+            category="Portfolio"
+            totalAccounts={totalAccounts}
+            totalOperations={totalOperations}
+            totalCurrencies={totalCurrencies}
+            hasExchangeBannerCTA={!!portfolioExchangeBanner?.enabled}
+          />
+          <Flex flexDirection="column" rowGap={32}>
+            {shouldDisplayMarketBanner ? <MarketBanner /> : null}
+            {shouldDisplayMarketBanner && <MarketBannerFeature />}
+            <Box flow={7} id="portfolio-container" data-testid="portfolio-container">
+              {!hasInstalledApps ? (
+                <EmptyStateInstalledApps />
+              ) : totalAccounts > 0 ? (
+                <>
+                  {ptxSwapLiveAppOnPortfolio?.enabled ? (
+                    <PortfolioGrid marginTop={4}>
+                      <Box>
+                        <FeaturedButtons hideSwapButton />
+                        <BalanceSummary
+                          counterValue={counterValue}
+                          chartColor={colors.wallet}
+                          range={selectedTimeRange}
+                        />
+                      </Box>
+
+                      <Box ml={2} minWidth={375} maxWidth={700}>
+                        <SwapWebViewEmbedded height="550px" />
+                      </Box>
+                    </PortfolioGrid>
+                  ) : marketPerformanceEnabled ? (
+                    <PortfolioGrid>
+                      <BalanceSummary
+                        counterValue={counterValue}
+                        chartColor={colors.wallet}
+                        range={selectedTimeRange}
+                      />
+
+                      <Box ml={2} minWidth={275}>
+                        <MarketPerformanceWidget variant={marketPerformanceVariant} />
+                      </Box>
+                    </PortfolioGrid>
+                  ) : (
                     <BalanceSummary
                       counterValue={counterValue}
                       chartColor={colors.wallet}
                       range={selectedTimeRange}
                     />
-                  </Box>
+                  )}
 
-                  <Box ml={2} minWidth={375} maxWidth={700}>
-                    <SwapWebViewEmbedded height="550px" />
-                  </Box>
-                </PortfolioGrid>
-              ) : marketPerformanceEnabled ? (
-                <PortfolioGrid>
-                  <BalanceSummary
-                    counterValue={counterValue}
-                    chartColor={colors.wallet}
-                    range={selectedTimeRange}
-                  />
-
-                  <Box ml={2} minWidth={275}>
-                    <MarketPerformanceWidget variant={marketPerformanceVariant} />
-                  </Box>
-                </PortfolioGrid>
+                  <AssetDistribution />
+                  {totalOperations > 0 && (
+                    <OperationsList
+                      accounts={accounts}
+                      title={t("dashboard.recentActivity")}
+                      withAccount
+                      withSubAccounts
+                      filterOperation={filterOperations}
+                      t={t}
+                    />
+                  )}
+                </>
               ) : (
-                <BalanceSummary
-                  counterValue={counterValue}
-                  chartColor={colors.wallet}
-                  range={selectedTimeRange}
-                />
+                <EmptyStateAccounts />
               )}
-
-              <AssetDistribution />
-              {totalOperations > 0 && (
-                <OperationsList
-                  accounts={accounts}
-                  title={t("dashboard.recentActivity")}
-                  withAccount
-                  withSubAccounts
-                  filterOperation={filterOperations}
-                  t={t}
-                />
-              )}
-            </>
-          ) : (
-            <EmptyStateAccounts />
-          )}
-        </Box>
-      </Flex>
+            </Box>
+          </Flex>
+        </>
+      )}
 
       {isFeatureFlagsAnalyticsPrefDisplayed && (
         <AnalyticsOptInPrompt {...analyticsOptInPromptProps} />
