@@ -10,15 +10,34 @@ import { TransactionInfo, DerivationModes } from "./types";
 import { Account, SerializedAccount } from "./account";
 import Xpub from "./xpub";
 import { IExplorer } from "./explorer/types";
-import { Output } from "./storage/types";
 import BitcoinLikeStorage from "./storage";
 import { PickingStrategy } from "./pickingstrategies/types";
 import * as utils from "./utils";
 import cryptoFactory from "./crypto/factory";
 import BitcoinLikeExplorer from "./explorer";
-import { TX, Address } from "./storage/types";
+import { TX, Address, Output } from "./storage/types";
 import { blockchainBaseURL } from "../explorer";
+import { getMinReplacementFeeSat, getTxInputOutpoints } from "../rbfHelpers";
 import { BitcoinSigner, SignerTransaction } from "../signer";
+
+type BuildAccountTxParams = {
+  fromAccount: Account;
+  dest: string;
+  amount: BigNumber;
+  feePerByte: number;
+  utxoPickingStrategy: PickingStrategy;
+  sequence: number;
+  opReturnData?: Buffer | undefined;
+  changeAddress?: string | undefined;
+  originalTxId?: string;
+  /** Pending operations (hash + extra.inputs) to detect conflicting txs; when set with originalTxId, min fee is max over all conflicting */
+  pendingOperations?: Array<{ hash: string; extra?: { inputs?: string[] } }>;
+};
+
+const hasExportedTxs = (value: unknown): value is { txs: TX[] } => {
+  if (typeof value !== "object" || value === null) return false;
+  return Array.isArray(Reflect.get(value, "txs"));
+};
 
 class BitcoinLikeWallet {
   explorers: { [currencyId: string]: IExplorer } = {};
@@ -87,8 +106,8 @@ class BitcoinLikeWallet {
   }
 
   async getAccountTransactions(account: Account): Promise<{ txs: TX[] }> {
-    const txs = (await account.xpub.storage.export()) as { txs: TX[] };
-    return txs;
+    const exported = await account.xpub.storage.export();
+    return hasExportedTxs(exported) ? exported : { txs: [] };
   }
 
   async getAccountUnspentUtxos(account: Account): Promise<Output[]> {
@@ -116,10 +135,35 @@ class BitcoinLikeWallet {
       ),
     );
 
+    // Group UTXOs by transaction hash to avoid fetching the same tx multiple times
+    const txHashToUtxos = new Map<string, Output[]>();
+    utxos.forEach(utxo => {
+      if (!txHashToUtxos.has(utxo.output_hash)) {
+        txHashToUtxos.set(utxo.output_hash, []);
+      }
+      txHashToUtxos.get(utxo.output_hash)!.push(utxo);
+    });
+
+    // Fetch unique transaction hexes
+    const uniqueTxHashes = Array.from(txHashToUtxos.keys());
+    const txHexResults = await Promise.allSettled(
+      uniqueTxHashes.map(hash => account.xpub.explorer.getTxHex(hash)),
+    );
+
+    // Build list of valid UTXOs (those whose transaction hex was fetched successfully)
+    const successfulUtxos: Output[] = [];
+    txHexResults.forEach((res, index) => {
+      const txHash = uniqueTxHashes[index];
+      if (res.status === "fulfilled") {
+        const utxosFromTx = txHashToUtxos.get(txHash)!;
+        successfulUtxos.push(...utxosFromTx);
+      }
+    });
+
     let balance = new BigNumber(0);
     log("btcwallet", "estimateAccountMaxSpendable utxos", utxos);
     let usableUtxoCount = 0;
-    utxos.forEach(utxo => {
+    successfulUtxos.forEach(utxo => {
       if (
         !excludeUTXOs.find(
           excludeUtxo =>
@@ -170,20 +214,81 @@ class BitcoinLikeWallet {
     );
   }
 
-  async buildAccountTx(params: {
-    fromAccount: Account;
-    dest: string;
-    amount: BigNumber;
-    feePerByte: number;
-    utxoPickingStrategy: PickingStrategy;
-    sequence: number;
-    opReturnData?: Buffer | undefined;
-    changeAddress?: string | undefined;
-  }): Promise<TransactionInfo> {
+  async getAccountTxBlockHeight(account: Account, hash: string): Promise<number | null> {
+    return await account.xpub.explorer.getTxBlockHeight(hash);
+  }
+
+  private async validateAndGetChangeAddress(params: BuildAccountTxParams): Promise<Address> {
     const changeAddress = await params.fromAccount.xpub.getNewAddress(1, 1);
     if (params.changeAddress && params.changeAddress !== changeAddress.address) {
       throw new Error("Invalid change address");
     }
+    return changeAddress;
+  }
+
+  private async getConflictingTxIds(
+    fromAccount: Account,
+    replaceTxId: string,
+    pendingOperations?: Array<{ hash: string; extra?: { inputs?: string[] } }>,
+  ): Promise<Set<string>> {
+    const inputOutpoints = await getTxInputOutpoints(fromAccount, replaceTxId);
+    const conflictingTxIds = new Set<string>([replaceTxId]);
+    if (pendingOperations?.length) {
+      for (const op of pendingOperations) {
+        const opInputs = op.extra?.inputs;
+        if (!Array.isArray(opInputs)) continue;
+        if (opInputs.some((inp: string) => inputOutpoints.has(inp))) conflictingTxIds.add(op.hash);
+      }
+    }
+    return conflictingTxIds;
+  }
+
+  private async getMaxMinReplacementFeeSat(
+    fromAccount: Account,
+    txIds: Set<string>,
+  ): Promise<number> {
+    let maxMinFee = 0;
+    for (const txId of txIds) {
+      try {
+        const minFee = await getMinReplacementFeeSat(fromAccount, txId);
+        const n = minFee.integerValue().toNumber();
+        if (n > maxMinFee) maxMinFee = n;
+      } catch {
+        // Ignore missing conflicting tx fee context and continue with available conflicts.
+      }
+    }
+    return maxMinFee;
+  }
+
+  private async getMinReplacementFeeSatFromOriginalTx(
+    fromAccount: Account,
+    originalTxId?: string,
+    pendingOperations?: Array<{ hash: string; extra?: { inputs?: string[] } }>,
+  ): Promise<number | undefined> {
+    if (!originalTxId) return undefined;
+
+    try {
+      const conflictingTxIds = await this.getConflictingTxIds(
+        fromAccount,
+        originalTxId,
+        pendingOperations,
+      );
+      const maxMinFee = await this.getMaxMinReplacementFeeSat(fromAccount, conflictingTxIds);
+      return maxMinFee > 0 ? maxMinFee : undefined;
+    } catch {
+      // Continue with best-effort replacement building.
+      // xpub.buildTx still enforces absolute fee-increase constraints from the original tx.
+      return undefined;
+    }
+  }
+
+  async buildAccountTx(params: BuildAccountTxParams): Promise<TransactionInfo> {
+    const changeAddress = await this.validateAndGetChangeAddress(params);
+    const minReplacementFeeSat = await this.getMinReplacementFeeSatFromOriginalTx(
+      params.fromAccount,
+      params.originalTxId,
+      params.pendingOperations,
+    );
 
     const txInfo = await params.fromAccount.xpub.buildTx({
       destAddress: params.dest,
@@ -193,6 +298,8 @@ class BitcoinLikeWallet {
       utxoPickingStrategy: params.utxoPickingStrategy,
       sequence: params.sequence,
       opReturnData: params.opReturnData,
+      ...(params.originalTxId === undefined ? {} : { originalTxId: params.originalTxId }),
+      ...(minReplacementFeeSat === undefined ? {} : { minReplacementFeeSat }),
     });
 
     return txInfo;
