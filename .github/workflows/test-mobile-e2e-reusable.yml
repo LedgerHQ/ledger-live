@@ -153,6 +153,30 @@ jobs:
             e2e/mobile
           token: ${{ steps.generate-token.outputs.token }}
 
+      - name: Write summary
+        run: |
+          FILTER_PATTERN="${{ inputs.test_filter || '' }}"
+          DEVICE="${{ inputs.speculos_device || 'nanoX' }}"
+          BUILD_TYPE="${{ inputs.production_firebase == 'true' && 'production' || 'testing' }}"
+          TEST_EXECUTION_ANDROID="${{ inputs.test_execution_android || '(not provided)' }}"
+          TEST_EXECUTION_IOS="${{ inputs.test_execution_ios || '(not provided)' }}"
+
+          if [ -z "$FILTER_PATTERN" ]; then
+            FILTER_PATTERN="(none)"
+          fi
+          {
+          echo "## Workflow Context"
+          echo ""
+          echo "- **Workflow source branch:** ${{ github.workflow_ref }}"
+          echo "- **Triggered branch:** ${{ github.ref_name }}"
+          echo "- **Commit SHA:** ${{ github.sha }}"
+          echo "- **Device selected:** $DEVICE"
+          echo "- **Filtered pattern:** $FILTER_PATTERN"
+          echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
+          echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
+          echo "- **Firebase env to target:** $BUILD_TYPE"
+          } >> $GITHUB_STEP_SUMMARY
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         id: aws
