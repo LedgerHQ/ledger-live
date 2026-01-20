@@ -27,7 +27,7 @@ import {
 import { walletSelector } from "../reducers/wallet";
 import { countervaluesActions } from "./countervalues";
 import { useExtraSessionTrackingPair } from "./deprecated/ondemand-countervalues";
-import { useMarketPerformanceTrackingPairs } from "./marketperformance";
+import { useTopCoinsTrackingPairs } from "./market-countervalues";
 
 export function useDistribution(
   opts: Omit<Parameters<typeof useDistributionRaw>[0], "accounts" | "to">,
@@ -110,7 +110,7 @@ export function useCalculateCountervaluesUserSettings() {
   const countervalue = useSelector(counterValueCurrencySelector);
 
   // countervalues for top coins (market performance feature)
-  const trackingPairsForTopCoins = useMarketPerformanceTrackingPairs(countervalue);
+  const trackingPairsForTopCoins = useTopCoinsTrackingPairs(countervalue);
 
   // countervalues for accounts
   const accounts = useSelector(accountsSelector);

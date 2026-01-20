@@ -22,8 +22,6 @@ import EmptyStateInstalledApps from "~/renderer/screens/dashboard/EmptyStateInst
 import EmptyStateAccounts from "~/renderer/screens/dashboard/EmptyStateAccounts";
 import FeaturedButtons from "~/renderer/screens/dashboard/components/FeaturedButtons";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
-import MarketPerformanceWidget from "LLD/features/MarketPerformanceWidget";
-import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 import { Flex, Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
@@ -67,9 +65,6 @@ export default function DashboardPage() {
     },
     [shouldFilterTokenOpsZeroAmount],
   );
-
-  const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
-    useMarketPerformanceFeatureFlag();
 
   const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
     useDisplayOnPortfolioAnalytics();
@@ -117,18 +112,6 @@ export default function DashboardPage() {
 
                       <Box ml={2} minWidth={375} maxWidth={700}>
                         <SwapWebViewEmbedded height="550px" />
-                      </Box>
-                    </PortfolioGrid>
-                  ) : marketPerformanceEnabled ? (
-                    <PortfolioGrid>
-                      <BalanceSummary
-                        counterValue={counterValue}
-                        chartColor={colors.wallet}
-                        range={selectedTimeRange}
-                      />
-
-                      <Box ml={2} minWidth={275}>
-                        <MarketPerformanceWidget variant={marketPerformanceVariant} />
                       </Box>
                     </PortfolioGrid>
                   ) : (

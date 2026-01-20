@@ -55,7 +55,7 @@
         "apps": []
       },
       "mevProtection": true,
-      "marketPerformanceWidget": true,
+
       "devicesModelList": ["europa", "stax"],
       "lastSeenCustomImage": { "size": 0, "hash": "" },
       "latestFirmware": null,

@@ -21,9 +21,7 @@ test("Portfolio @smoke", async ({ page }) => {
     await portfolioPage.checkBuySellButtonVisibility();
     await portfolioPage.checkSwapButtonVisibility();
     await portfolioPage.checkStakeButtonVisibility();
-    await expect.soft(page).toHaveScreenshot("portfolio.png", {
-      mask: [layout.marketPerformanceWidget],
-    });
+    await expect.soft(page).toHaveScreenshot("portfolio.png");
   });
 
   await test.step(`scroll to operations`, async () => {

@@ -530,18 +530,6 @@ export const DEFAULT_FEATURES: Features = {
 
   myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
 
-  marketperformanceWidgetDesktop: {
-    enabled: false,
-    params: {
-      variant: ABTestingVariants.variantA,
-      refreshRate: 2,
-      top: 100,
-      limit: 100,
-      supported: true,
-      enableNewFeature: false,
-    },
-  },
-
   lldChatbotSupport: DEFAULT_FEATURE,
   llmChatbotSupport: DEFAULT_FEATURE,
   lldRefreshMarketData: {
