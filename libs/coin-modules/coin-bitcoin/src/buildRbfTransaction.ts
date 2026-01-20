@@ -102,8 +102,23 @@ const getRbfContext = async (account: Account, originalTxId: string): Promise<Rb
   let hexTx: string;
   try {
     hexTx = await walletAccount.xpub.explorer.getTxHex(originalTxId);
+<<<<<<< HEAD
   } catch {
     throw new Error(`Original transaction ${originalTxId} could not be fetched`);
+=======
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    // Check if this transaction was recently confirmed or replaced
+    const confirmedTx = account.operations.find(op => op.hash === originalTxId);
+    if (confirmedTx && confirmedTx.blockHeight) {
+      throw new Error(
+        `Transaction ${originalTxId.slice(0, 8)}... has already been confirmed in block ${confirmedTx.blockHeight}. Confirmed transactions cannot be replaced.`,
+      );
+    }
+    throw new Error(
+      `Transaction ${originalTxId.slice(0, 8)}... not found. It may have been replaced by another transaction or is not yet available from the explorer. Please wait a moment and try again.`,
+    );
+>>>>>>> f2b1733916 (fix: rbf should work but sychonise test must fail)
   }
 
   const originalTx = Transaction.fromHex(hexTx);
