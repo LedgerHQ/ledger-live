@@ -4,6 +4,7 @@ import { palettes, StyleProvider } from "../../../libs/ui/packages/react/src/sty
 import "../src/renderer/i18n/init";
 import { Buffer } from "buffer";
 import "./globals.css";
+import { MemoryRouter } from "react-router";
 
 declare global {
   interface Window {
@@ -25,7 +26,9 @@ export const decorators = [
           href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
           rel="stylesheet"
         ></link>
-        <Story />
+        <MemoryRouter initialEntries={["/"]}>
+          <Story />
+        </MemoryRouter>
       </StyleProvider>
     );
   },

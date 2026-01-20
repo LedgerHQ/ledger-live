@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { Button } from "react-native";
 import { StoryFn } from "@storybook/react";
-import { action } from "@storybook/addon-actions";
 import Popin from "../../../../src/components/Layout/Modals/Popin";
 import Text from "../../../../src/components/Text";
 import { IconsLegacy } from "../../../../src/assets";
@@ -11,7 +10,7 @@ export default {
   component: Popin,
 };
 
-export const Default: StoryFn<typeof Popin> = (args: typeof DefaultStoryArgs) => {
+export const Default: StoryFn<typeof DefaultStoryArgs> = (args: typeof DefaultStoryArgs) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = useCallback(() => {
@@ -24,7 +23,6 @@ export const Default: StoryFn<typeof Popin> = (args: typeof DefaultStoryArgs) =>
       <Popin
         isOpen={isOpen}
         onClose={() => {
-          action("onClose")();
           setIsOpen(false);
         }}
         title={args.title}
@@ -32,8 +30,8 @@ export const Default: StoryFn<typeof Popin> = (args: typeof DefaultStoryArgs) =>
         subtitle={args.subtitle}
         Icon={IconsLegacy.TrashMedium}
         iconColor={"red"}
-        onLeftButtonPress={action("onLeftButtonPress")}
-        onRightButtonPress={action("onRightButtonPress")}
+        onLeftButtonPress={() => {}}
+        onRightButtonPress={() => {}}
       >
         <>
           <Text>Exemple children</Text>

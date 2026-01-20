@@ -1,5 +1,4 @@
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
-import { fn, Mock } from "@storybook/test";
 import BigNumber from "bignumber.js";
 import {
   arbitrumCurrency,
@@ -10,8 +9,16 @@ import {
   scrollCurrency,
 } from "./useSelectAssetFlow.mock";
 
-export const useGetAccountIds: Mock = fn(() => undefined);
-export const getBalanceHistoryWithCountervalue: Mock = fn(() => ({
+type Mock = ((...args: unknown[]) => unknown) & { mock: { calls: unknown[][] } };
+
+const createMock = (implementation?: (...args: unknown[]) => unknown): Mock => {
+  const mockFn = (...args: unknown[]) => (implementation ? implementation(...args) : undefined);
+  mockFn.mock = { calls: [] };
+  return mockFn as Mock;
+};
+
+export const useGetAccountIds: Mock = createMock(() => undefined);
+export const getBalanceHistoryWithCountervalue: Mock = createMock(() => ({
   history: [
     {
       date: "2025-05-22T15:06:28.976Z",
@@ -20,12 +27,15 @@ export const getBalanceHistoryWithCountervalue: Mock = fn(() => ({
     },
   ],
 }));
-export const getPortfolioCount: Mock = fn(() => 0);
-export const useCountervaluesState: Mock = fn(() => ({ cache: { "USD arbitrum": "" } }));
-export const accountsSelector: Mock = fn(state => state.accounts);
-export const counterValueCurrencySelector: Mock = fn(state => state.currency);
-export const discreetModeSelector: Mock = fn(state => state.discreet);
-export const localeSelector: Mock = fn(state => state.locale);
+export const getPortfolioCount: Mock = createMock(() => 0);
+export const useCountervaluesState: Mock = createMock(() => ({ cache: { "USD arbitrum": "" } }));
+export const accountsSelector: Mock = createMock(state => (state as { accounts: unknown }).accounts);
+export const shallowAccountsSelector: Mock = createMock(state => (state as { accounts: unknown }).accounts);
+export const counterValueCurrencySelector: Mock = createMock(
+  state => (state as { currency: unknown }).currency,
+);
+export const discreetModeSelector: Mock = createMock(state => (state as { discreet: unknown }).discreet);
+export const localeSelector: Mock = createMock(state => (state as { locale: unknown }).locale);
 
 export const MOCKED_ARB_ACCOUNT = {
   type: "Account",

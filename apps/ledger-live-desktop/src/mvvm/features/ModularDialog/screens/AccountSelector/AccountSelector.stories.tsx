@@ -78,7 +78,7 @@ const meta: Meta<typeof AccountSelector> = {
   },
   decorators: [
     Story => (
-      <div style={{ width: "100%", height: "100%" }}>
+      <div style={{ width: "100%", height: 560 }}>
         <Provider store={store}>
           <Story />
         </Provider>
@@ -105,7 +105,7 @@ export const NoAccounts: Story = {
   },
   decorators: [
     Story => (
-      <div style={{ width: "100%", height: "100%" }}>
+      <div style={{ width: "100%", height: 560 }}>
         <Provider store={createStore(() => ({ ...defaultStore, accounts: [] }))}>
           <Story />
         </Provider>

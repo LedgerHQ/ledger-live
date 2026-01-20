@@ -9,7 +9,6 @@ import {
 import "@storybook/addon-ondevice-controls/register";
 import "@storybook/addon-ondevice-actions/register";
 import "@storybook/addon-ondevice-notes/register";
-import "@storybook/blocks/register";
 
 const normalizedStories = [
   {
@@ -23,19 +22,6 @@ const normalizedStories = [
       "../src/pre-ldls",
       true,
       /^\.(?:(?:^|\/|(?:(?:(?!(?:^|\/)\.).)*?)\/)(?!\.)(?=.)[^/]*?\.stories\.(js|jsx|ts|tsx))$/
-    ),
-  },
-  {
-    titlePrefix: "",
-    directory: "./storybook/stories",
-    files: "**/*.stories.mdx",
-    importPathMatcher:
-      /^\.(?:(?:^|\/|(?:(?:(?!(?:^|\/)\.).)*?)\/)(?!\.)(?=.)[^/]*?\.stories\.mdx)$/,
-    // @ts-ignore
-    req: require.context(
-      "../storybook/stories",
-      true,
-      /^\.(?:(?:^|\/|(?:(?:(?!(?:^|\/)\.).)*?)\/)(?!\.)(?=.)[^/]*?\.stories\.mdx)$/
     ),
   },
   {
@@ -61,7 +47,6 @@ declare global {
 const annotations = [
   require("./preview"),
   require("@storybook/react-native/dist/preview"),
-  require("@storybook/addon-actions/preview"),
 ];
 
 global.STORIES = normalizedStories;
