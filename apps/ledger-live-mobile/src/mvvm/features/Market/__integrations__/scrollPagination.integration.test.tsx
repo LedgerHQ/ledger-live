@@ -1,14 +1,13 @@
 /* eslint-disable i18next/no-literal-string */
 import * as React from "react";
-import { screen, waitFor, fireEvent } from "@testing-library/react-native";
-import { render } from "@tests/test-renderer";
+import { screen, waitFor, fireEvent, renderWithReactQuery } from "@tests/test-renderer";
 import { server, http, HttpResponse } from "@tests/server";
 import marketsMock from "@mocks/api/market/markets.json";
 import { MarketPages } from "./shared";
 
 describe("Market List Pagination Integration Test", () => {
   it("Should load and display second page data when onEndReached is triggered", async () => {
-    render(<MarketPages />);
+    renderWithReactQuery(<MarketPages />);
 
     await waitFor(
       () => {
@@ -42,7 +41,7 @@ describe("Market List Pagination Integration Test", () => {
   });
 
   it("Should maintain the correct order of items across pages", async () => {
-    render(<MarketPages />);
+    renderWithReactQuery(<MarketPages />);
 
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
 
@@ -60,7 +59,7 @@ describe("Market List Pagination Integration Test", () => {
   });
 
   it("Should handle rapid scrolling without duplicating items", async () => {
-    render(<MarketPages />);
+    renderWithReactQuery(<MarketPages />);
 
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
 
@@ -86,7 +85,7 @@ describe("Market List Pagination Integration Test", () => {
   });
 
   it("Should correctly append new items to the existing list", async () => {
-    render(<MarketPages />);
+    renderWithReactQuery(<MarketPages />);
 
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
     expect(await screen.findByText("Ethereum (ETH)")).toBeOnTheScreen();
@@ -123,7 +122,7 @@ describe("Market List Pagination Integration Test", () => {
       }),
     );
 
-    render(<MarketPages />);
+    renderWithReactQuery(<MarketPages />);
 
     await waitFor(() => {
       expect(screen.getByText("Bitcoin (BTC)")).toBeOnTheScreen();
