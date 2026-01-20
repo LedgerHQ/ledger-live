@@ -7,7 +7,7 @@ import { NavigationContainerEventMap } from "@react-navigation/native";
 import MarketWalletTabNavigator from "LLM/features/Market/WalletTabNavigator";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import type { StyleProp, ViewStyle } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { setWalletTabNavigatorLastVisitedTab } from "~/actions/settings";

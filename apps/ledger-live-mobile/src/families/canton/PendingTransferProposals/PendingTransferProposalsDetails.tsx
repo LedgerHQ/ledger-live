@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation, Trans } from "~/context/Locale";
 import { TouchableOpacity } from "react-native";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";

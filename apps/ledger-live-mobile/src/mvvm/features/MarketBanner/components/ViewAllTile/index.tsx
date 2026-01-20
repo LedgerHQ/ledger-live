@@ -1,7 +1,7 @@
 import React from "react";
 import { Tile, TileSpot, TileContent, TileTitle } from "@ledgerhq/lumen-ui-rnative";
 import { ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { ViewAllTileProps } from "../../types";
 
 const ViewAllTile = ({ onPress }: ViewAllTileProps) => {

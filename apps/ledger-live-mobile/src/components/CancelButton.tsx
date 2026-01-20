@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import Button from "./Button";
 
 type Props = Omit<React.ComponentProps<typeof Button>, "type" | "title">;

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import type { Transaction as TronTransaction } from "@ledgerhq/live-common/families/tron/types";
 import { TrackScreen } from "~/analytics";

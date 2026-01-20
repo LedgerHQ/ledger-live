@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { StyleSheet, View, TouchableOpacity, Linking, ScrollView } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { translateContent } from "@ledgerhq/live-common/platform/logic";
 import type { TranslatableString } from "@ledgerhq/live-common/platform/types";
 import ExternalLinkIcon from "~/icons/ExternalLink";

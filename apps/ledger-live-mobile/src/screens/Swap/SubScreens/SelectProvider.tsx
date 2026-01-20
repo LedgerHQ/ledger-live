@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { Flex, Text, Icon } from "@ledgerhq/native-ui";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import ProviderIcon from "~/components/ProviderIcon";

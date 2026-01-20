@@ -1,10 +1,9 @@
 import React, { useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation, useLocale } from "~/context/Locale";
 import { Flex, Text, Checkbox, Button, Icons, Box } from "@ledgerhq/native-ui";
 import { translateContent } from "@ledgerhq/live-common/wallet-api/logic";
 import ManifestRow from "LLM/features/Web3Hub/components/ManifestRow";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { useLocale } from "~/context/Locale";
 import useDisclaimerViewModel from "./useDisclaimerViewModel";
 
 type Props = {

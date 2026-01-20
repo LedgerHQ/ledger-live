@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import styled from "styled-components/native";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { NavigationProp } from "@react-navigation/native";

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useDispatch } from "~/context/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { disconnect } from "@ledgerhq/live-common/hw/index";

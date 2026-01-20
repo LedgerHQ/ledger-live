@@ -1,7 +1,7 @@
 import { Text } from "@ledgerhq/native-ui";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import React, { useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import { getLineTabNavigatorConfig } from "~/navigation/tabNavigatorConfig";

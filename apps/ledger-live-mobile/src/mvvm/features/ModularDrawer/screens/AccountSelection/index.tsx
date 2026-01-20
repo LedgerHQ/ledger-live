@@ -8,7 +8,7 @@ import {
 } from "../../analytics";
 import { useDetailedAccounts, RawDetailedAccount } from "../../hooks/useDetailedAccounts";
 import { AddAccountButton, AccountItem } from "@ledgerhq/native-ui/pre-ldls/components/index";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";

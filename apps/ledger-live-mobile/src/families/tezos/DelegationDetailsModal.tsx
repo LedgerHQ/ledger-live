@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, View, Linking } from "react-native";
 import { useNavigation, useTheme, ParamListBase, RouteProp } from "@react-navigation/native";
 import { differenceInCalendarDays } from "date-fns";

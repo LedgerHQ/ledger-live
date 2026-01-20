@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View, Pressable } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "~/context/hooks";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import Config from "react-native-config";
 import styled, { useTheme } from "styled-components/native";
 import type { DerivationMode } from "@ledgerhq/types-live";

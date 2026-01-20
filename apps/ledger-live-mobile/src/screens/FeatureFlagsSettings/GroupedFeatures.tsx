@@ -6,7 +6,7 @@ import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlags
 import { Divider, Flex, Link, Switch, Tag } from "@ledgerhq/native-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Pressable } from "react-native";
 import FeatureFlagDetails, { TagEnabled } from "./FeatureFlagDetails";
 

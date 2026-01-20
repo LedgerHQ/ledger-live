@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Text, Flex, IconsLegacy, Icons } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Touchable from "~/components/Touchable";

@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import TrackScreen from "~/analytics/TrackScreen";
 import LText from "~/components/LText";

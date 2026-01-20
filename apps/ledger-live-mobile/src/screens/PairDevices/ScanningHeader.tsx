@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";

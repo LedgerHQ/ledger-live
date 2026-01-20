@@ -1,8 +1,7 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { useTranslation } from "react-i18next";
-import { useLocale } from "~/context/Locale";
+import { useTranslation, useLocale } from "~/context/Locale";
 import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import { StyledIconContainer } from "./MarketRowItem.styled";

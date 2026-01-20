@@ -28,7 +28,7 @@ import {
 } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { Observable } from "rxjs";
 import { updateMainNavigatorVisibility } from "~/actions/appstate";

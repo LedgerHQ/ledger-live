@@ -3,7 +3,7 @@ import { DrawerTabSelector, Flex } from "@ledgerhq/native-ui";
 import QrCode from "LLM/features/WalletSync/components/Synchronize/QrCode";
 import ScanQrCode from "../../components/Synchronize/ScanQrCode";
 import { Options, OptionsType } from "LLM/features/WalletSync/types/Activation";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import {
   useLedgerSyncAnalytics,
   AnalyticsPage,

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { StyleSheet, View, FlatList, SafeAreaView, ListRenderItem } from "react-native";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";

@@ -1,10 +1,9 @@
 import React, { memo, useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans, useLocale } from "~/context/Locale";
 import { Linking } from "react-native";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import SettingsRow from "~/components/SettingsRow";
 import { urls } from "~/utils/urls";
-import { useLocale } from "~/context/Locale";
 
 function PrivacyPolicyRow() {
   const { locale } = useLocale();

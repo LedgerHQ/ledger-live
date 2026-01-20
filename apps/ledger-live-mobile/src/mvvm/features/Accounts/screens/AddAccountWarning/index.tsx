@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Account } from "@ledgerhq/types-live";
 import SafeAreaView from "~/components/SafeAreaView";
 import Circle from "~/components/Circle";

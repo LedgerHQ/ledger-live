@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import LText from "~/components/LText";
 import InfoModal from "~/modals/Info";
 

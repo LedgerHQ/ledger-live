@@ -1,7 +1,7 @@
 import React from "react";
 
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet } from "react-native";
 import LText from "~/components/LText";
 import { deviceNames } from "../../wording";

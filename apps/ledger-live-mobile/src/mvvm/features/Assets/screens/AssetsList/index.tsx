@@ -6,7 +6,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { AssetsListNavigator } from "./types";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
 import { useSelector } from "~/context/hooks";
 import { hasNoAccountsSelector, isUpToDateSelector } from "~/reducers/accounts";

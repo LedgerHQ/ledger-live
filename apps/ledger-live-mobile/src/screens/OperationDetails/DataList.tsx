@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import LText from "~/components/LText";
 import Touchable from "~/components/Touchable";
 import { withTheme, Theme } from "../../colors";

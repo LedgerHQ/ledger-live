@@ -9,7 +9,7 @@ import { urls } from "~/utils/urls";
 import Alert from "~/components/Alert";
 import type { Account } from "@ledgerhq/types-live";
 import React, { useEffect, useState, useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";

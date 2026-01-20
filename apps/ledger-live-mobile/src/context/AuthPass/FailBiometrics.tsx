@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View, TouchableWithoutFeedback } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import LText from "~/components/LText";
 import BiometricsIcon from "~/components/BiometricsIcon";

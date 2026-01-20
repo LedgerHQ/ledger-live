@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 
 export default function NetworkHeader({ children }: PropsWithChildren) {

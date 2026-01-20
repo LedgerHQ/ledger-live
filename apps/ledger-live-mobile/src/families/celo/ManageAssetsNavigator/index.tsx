@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { View, StyleSheet } from "react-native";
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {

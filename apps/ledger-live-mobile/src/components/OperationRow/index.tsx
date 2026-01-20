@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import {

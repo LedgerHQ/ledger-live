@@ -2,7 +2,7 @@ import React from "react";
 import useBuyDeviceBannerModel, { Props } from "./useBuyDeviceBannerModel";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 import GradientContainer from "~/components/GradientContainer";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import ForceTheme from "~/components/theme/ForceTheme";
 import { Image } from "react-native";
 import Button from "~/components/wrappedUi/Button";

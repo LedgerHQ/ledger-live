@@ -1,6 +1,6 @@
 import { Button, Flex, IconBox, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import QueuedDrawer from "~/components/QueuedDrawer";
 
 const OnboardingSetupDeviceInformation = ({

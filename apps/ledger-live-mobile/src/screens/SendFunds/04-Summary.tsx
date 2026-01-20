@@ -2,7 +2,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import React, { useState, useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { NotEnoughGas } from "@ledgerhq/errors";

@@ -1,6 +1,6 @@
 import { SearchInput } from "@ledgerhq/native-ui";
 import React, { memo, useState, useRef, useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { FlatList, TextInput, StyleSheet } from "react-native";
 import Search from "~/components/Search";
 import SafeAreaView from "~/components/SafeAreaView";

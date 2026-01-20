@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import LText from "~/components/LText";
 import KeyboardView from "~/components/KeyboardView";
 import TranslatedError from "~/components/TranslatedError";

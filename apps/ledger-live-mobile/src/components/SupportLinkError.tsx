@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { urls } from "~/utils/urls";
 import ExternalLink from "./ExternalLink";
 import { LearnMoreLink } from "./Alert";

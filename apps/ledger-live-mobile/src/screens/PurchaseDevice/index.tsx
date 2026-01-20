@@ -4,7 +4,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useNavigation } from "@react-navigation/native";
 import { WebViewMessageEvent } from "react-native-webview";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useDispatch } from "~/context/hooks";
 
 import Button from "~/components/wrappedUi/Button";

@@ -6,7 +6,7 @@ import { Image, Linking } from "react-native";
 import SecretRecoveryPhraseImage from "../assets/srp.png";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import {
   ExternalLinkMedium,
   RecoveryKey,

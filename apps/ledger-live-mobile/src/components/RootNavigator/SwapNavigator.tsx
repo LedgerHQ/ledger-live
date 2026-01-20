@@ -3,7 +3,7 @@ import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useCallback, useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import SwapHistory from "~/screens/Swap/History";
 import Touchable from "../Touchable";
 

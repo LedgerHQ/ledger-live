@@ -1,7 +1,15 @@
 import React, { useMemo, useContext, useCallback, useEffect, useState } from "react";
+import type { ComponentProps } from "react";
 import i18next from "i18next";
-import { initReactI18next } from "react-i18next";
+import {
+  initReactI18next,
+  // eslint-disable-next-line no-restricted-imports
+  useTranslation as useReactI18nextTranslation,
+  // eslint-disable-next-line no-restricted-imports
+  Trans as ReactI18nextTrans,
+} from "react-i18next";
 import type { TFunction } from "i18next";
+import type { UseTranslationOptions, UseTranslationResponse } from "react-i18next";
 import { getTimeZone } from "react-native-localize";
 import storage from "LLM/storage";
 import { I18nManager } from "react-native";
@@ -40,6 +48,22 @@ i18next.use(initReactI18next).init({
   },
 });
 export { i18next as i18n };
+
+// Wrapper around `useTranslation` that ensures the correct `i18next` instance is used
+export function useTranslation<N extends string = "common">(
+  ns?: N | readonly N[],
+  options?: UseTranslationOptions<N>,
+): UseTranslationResponse<N, undefined> {
+  return useReactI18nextTranslation(ns, { ...options, i18n: i18next });
+}
+
+type TransProps = ComponentProps<typeof ReactI18nextTrans>;
+
+// Wrapper around `Trans` that ensures the correct `i18next` instance is used
+export function Trans(props: TransProps) {
+  return <ReactI18nextTrans {...props} i18n={i18next} />;
+}
+
 type Props = {
   children: React.ReactNode;
 };

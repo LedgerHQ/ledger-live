@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   ListRenderItemInfo,
 } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getMainAccount, getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "styled-components/native";
 import type {

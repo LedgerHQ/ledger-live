@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { DeviceModel } from "@ledgerhq/types-devices";
 import { formatSize } from "@ledgerhq/live-common/apps/formatting";
 

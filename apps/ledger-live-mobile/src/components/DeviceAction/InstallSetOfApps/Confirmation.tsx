@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import Illustration from "./Illustration";
 
 type Props = {

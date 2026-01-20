@@ -6,9 +6,8 @@ import { DropdownMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 
 import RNRestart from "react-native-restart";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation, useLocale } from "~/context/Locale";
 import { setLanguage } from "~/actions/settings";
-import { useLocale } from "~/context/Locale";
 import { languages, Locale } from "../../languages";
 import { updateIdentify, track } from "~/analytics";
 import QueuedDrawer from "~/components/QueuedDrawer";
