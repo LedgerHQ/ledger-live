@@ -101,6 +101,15 @@ class BitcoinLikeExplorer implements IExplorer {
     return pendingsTxs;
   }
 
+  async getTxBlockHeight(hash: string): Promise<number | null> {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.baseUrl}/tx/${hash}`,
+      params: { verbosity: "Minimal" },
+    });
+    return data.block ? data.block.height : null;
+  }
+
   async fetchTxs(
     address: Address,
     params: ExplorerParams,

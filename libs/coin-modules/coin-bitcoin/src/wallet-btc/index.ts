@@ -8,10 +8,7 @@ import { DeepFirst } from "./pickingstrategies/DeepFirst";
 import { Merge } from "./pickingstrategies/Merge";
 import { isValidAddress, isTaprootAddress } from "./utils";
 
-import type { Account as WalletAccount } from "./account";
-import type { Account as LiveAccount } from "@ledgerhq/types-live";
-import { AccountNeedResync } from "../errors";
-import { BitcoinAccount } from "../types";
+export { getWalletAccount } from "./getWalletAccount";
 
 export {
   BitcoinLikeWallet,
@@ -33,14 +30,6 @@ export {
 };
 
 let wallet: BitcoinLikeWallet | null = null;
-
-export const getWalletAccount = (account: LiveAccount): WalletAccount => {
-  const walletAccount = (account as BitcoinAccount).bitcoinResources?.walletAccount;
-  if (account.id.startsWith("libcore") || !walletAccount) {
-    throw new AccountNeedResync();
-  }
-  return walletAccount;
-};
 
 const getWallet = () => {
   if (!wallet) {
