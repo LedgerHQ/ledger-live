@@ -30,6 +30,7 @@ import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPromp
 import SwapWebViewEmbedded from "./components/SwapWebViewEmbedded";
 import BannerSection from "./components/BannerSection";
 import MarketBanner from "LLD/features/MarketBanner";
+import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -90,6 +91,7 @@ export default function DashboardPage() {
       />
       <Flex flexDirection="column" rowGap={32}>
         {shouldDisplayMarketBanner ? <MarketBanner /> : null}
+        {shouldDisplayMarketBanner && <MarketBannerFeature />}
         <Box flow={7} id="portfolio-container" data-testid="portfolio-container">
           {!hasInstalledApps ? (
             <EmptyStateInstalledApps />

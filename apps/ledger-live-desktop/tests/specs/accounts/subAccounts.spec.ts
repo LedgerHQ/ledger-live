@@ -7,7 +7,14 @@ import { Layout } from "../../component/layout.component";
 import { DeviceAction } from "../../models/DeviceAction";
 import { PortfolioPage } from "../../page/portfolio.page";
 
-test.use({ userdata: "skip-onboarding" });
+test.use({
+  userdata: "skip-onboarding",
+  featureFlags: {
+    lwdWallet40: {
+      enabled: false,
+    },
+  },
+});
 
 // FIXME: Sometimes first selected account is not the same, it should be the biggest balance.
 test.fixme("subAccounts @smoke", async ({ page }) => {

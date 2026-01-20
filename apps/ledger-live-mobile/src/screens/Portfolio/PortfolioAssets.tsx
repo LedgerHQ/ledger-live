@@ -21,6 +21,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useListsAnimation, { type TabListType } from "./useListsAnimation";
 import TabSection, { TAB_OPTIONS } from "./TabSection";
 import { flattenAccountsSelector } from "~/reducers/accounts";
+import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
 
 type Props = {
   hideEmptyTokenAccount: boolean;
@@ -130,6 +131,10 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     [showAssets, isAccountListUIEnabled, navigation],
   );
 
+  const lwmWallet40FF = useFeature("lwmWallet40");
+  const shouldDisplayMarketBanner =
+    (lwmWallet40FF?.enabled && lwmWallet40FF?.params?.marketBanner) ?? false;
+
   return (
     <>
       <TrackScreen
@@ -141,6 +146,13 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         <PortfolioQuickActionsBar />
       </Box>
       <MarketBanner />
+
+      {shouldDisplayMarketBanner && (
+        <Box my={24}>
+          <MarketBannerFeature />
+        </Box>
+      )}
+
       {isAccountListUIEnabled ? (
         <TabSection
           handleToggle={handleToggle}

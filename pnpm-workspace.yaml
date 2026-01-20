@@ -1,6 +1,7 @@
 packages:
   - "apps/*"
   - "e2e/*"
+  - "features/*"
   - "libs/*"
   - "tests/*"
   - "libs/coin-modules/*"
@@ -72,11 +73,14 @@ catalog:
   "@types/jest": 30.0.0
   "@typescript-eslint/eslint-plugin": 8.48.1
   "@typescript-eslint/parser": 8.48.1
+  "@gorhom/bottom-sheet": 5.2.6
   axios: 1.13.2
   babel-jest: 30.2.0
   bs58: ^4.0.1
   bs58check: ^2.1.2
+  clsx: 2.1.1
   electron: 39.2.7
+  eslint-plugin-better-tailwindcss: 4.0.0-beta.3
   ethers: 6.15.0
   expect: 30.2.0
   i18next: 25.7.3
@@ -102,6 +106,7 @@ catalog:
   reselect: 5.1.1
   rxjs: 7.8.2
   tailwindcss: ^4.1.0
+  tailwind-merge: 3.4.0
   ws: 8.18.3
   semver: 7.7.3
   "@types/semver": 7.7.1

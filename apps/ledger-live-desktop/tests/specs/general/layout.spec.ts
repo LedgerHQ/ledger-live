@@ -6,7 +6,14 @@ import { SendModal } from "../../page/modal/send.modal";
 import { ReceiveModal } from "../../page/modal/receive.modal";
 import { SettingsPage } from "../../page/settings.page";
 
-test.use({ userdata: "1AccountBTC1AccountETHStarred" });
+test.use({
+  userdata: "1AccountBTC1AccountETHStarred",
+  featureFlags: {
+    lwdWallet40: {
+      enabled: false,
+    },
+  },
+});
 
 test("Layout @smoke", async ({ page }) => {
   const layout = new Layout(page);

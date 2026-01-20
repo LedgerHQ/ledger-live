@@ -6,6 +6,11 @@ import { AppUpdater } from "../../component/app.updater.component";
 test.use({
   userdata: "1AccountBTC1AccountETHwCarousel",
   env: { DEBUG_UPDATE: "true" },
+  featureFlags: {
+    lwdWallet40: {
+      enabled: false,
+    },
+  },
 });
 
 test("Updater", async ({ page }) => {

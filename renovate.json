@@ -22,7 +22,7 @@
     {
       "description": "Lumen UI React - version updates",
       "matchPackageNames": ["@ledgerhq/lumen-ui-react"],
-      "matchFileNames": ["apps/ledger-live-desktop/package.json"],
+      "matchFileNames": ["pnpm-workspace.yaml"],
       "commitMessagePrefix": "chore(desktop):",
       "commitMessageTopic": "update {{depName}}",
       "commitMessageExtra": "to {{newVersion}}",
@@ -46,7 +46,7 @@
     {
       "description": "Lumen UI RNative - version updates",
       "matchPackageNames": ["@ledgerhq/lumen-ui-rnative"],
-      "matchFileNames": ["apps/ledger-live-mobile/package.json"],
+      "matchFileNames": ["pnpm-workspace.yaml"],
       "commitMessagePrefix": "chore(mobile):",
       "commitMessageTopic": "update {{depName}}",
       "commitMessageExtra": "to {{newVersion}}",
