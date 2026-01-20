@@ -6,7 +6,7 @@ import {
   MarketListRequestParams,
 } from "@ledgerhq/live-common/market/utils/types";
 import { useFocusEffect } from "@react-navigation/native";
-import { useIsMarketBannerEnabled } from "LLM/features/MarketBanner/hooks/useIsMarketBannerEnabled";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
@@ -74,7 +74,7 @@ function View({
 
   // When marketBanner is enabled, tabs are hidden and we navigate directly to MarketList
   // In this case, we need to add top padding to account for the back button header
-  const isMarketBannerEnabled = useIsMarketBannerEnabled();
+  const { shouldDisplayMarketBanner: isMarketBannerEnabled } = useWalletFeaturesConfig("mobile");
 
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({
     loading,

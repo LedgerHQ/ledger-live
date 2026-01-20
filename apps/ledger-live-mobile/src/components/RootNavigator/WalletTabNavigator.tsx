@@ -5,7 +5,7 @@ import {
 } from "@react-navigation/material-top-tabs";
 import { NavigationContainerEventMap } from "@react-navigation/native";
 import MarketWalletTabNavigator from "LLM/features/Market/WalletTabNavigator";
-import { useIsMarketBannerEnabled } from "LLM/features/MarketBanner/hooks/useIsMarketBannerEnabled";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { StyleProp, ViewStyle } from "react-native";
@@ -47,7 +47,7 @@ export default function WalletTabNavigator() {
   const { t } = useTranslation();
   const [currentRouteName, setCurrentRouteName] = useState<string | undefined>();
 
-  const shouldHideTabs = useIsMarketBannerEnabled();
+  const { shouldDisplayMarketBanner: shouldHideTabs } = useWalletFeaturesConfig("mobile");
 
   // When tabs are hidden and user was previously on Market, show Portfolio instead.
   // Note: We intentionally don't dispatch to Redux here to avoid infinite loops
