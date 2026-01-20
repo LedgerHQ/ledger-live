@@ -51,7 +51,6 @@ const getSpeedupPatch = async ({
 };
 
 // TODO: cancel is not the same as speedup: it must send funds back to self instead of the original recipient.
-// If you have (or add) a `buildRbfCancelTx`, plug it here.
 const getCancelPatch = async ({
   transaction,
   editType,
