@@ -2,4 +2,4 @@
 "@ledgerhq/coin-ton": patch
 ---
 
-patching token id to include contract address
+cleaning patch for ton token as it is correct configurated in the cal
