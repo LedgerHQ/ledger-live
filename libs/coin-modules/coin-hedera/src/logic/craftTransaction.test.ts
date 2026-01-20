@@ -87,7 +87,9 @@ describe("craftTransaction", () => {
   });
 
   it("should craft ERC20 token transfer transaction", async () => {
-    (resolveEVMAddress as jest.Mock).mockReturnValue("0x0000000000000000000000000000000000003039");
+    (resolveEVMAddress as jest.Mock).mockResolvedValue(
+      "0x0000000000000000000000000000000000003039",
+    );
 
     const txIntent = {
       intentType: "transaction",
