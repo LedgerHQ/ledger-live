@@ -11,11 +11,10 @@ export async function isTransactionConfirmed(account: Account, txid: string): Pr
 
     const transaction = transactions.find(tx => tx.hash === txid);
     if (transaction && transaction.block?.height && transaction.block.height > 0) {
-      return true; // confirmed
+      return true;
     }
-    return false; // unconfirmed
+    return false;
   } catch (err: any) {
-    // Not found → unconfirmed
     if (err.message.includes("not found")) {
       return false;
     }
