@@ -27,8 +27,13 @@ export const getTransactionStatus: AccountBridge<
   // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
   const reserveAmount = new BigNumber(coinConfig.getCoinConfig(account.currency).minReserve);
   const estimatedFees = new BigNumber(transaction.fee || 0);
-  const totalSpent = new BigNumber(transaction.amount).plus(estimatedFees);
-  const amount = new BigNumber(transaction.amount);
+
+  // Calculate amount based on useAllAmount flag
+  const amount = transaction.useAllAmount
+    ? BigNumber.max(0, account.spendableBalance.minus(estimatedFees))
+    : new BigNumber(transaction.amount);
+
+  const totalSpent = amount.plus(estimatedFees);
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     // if the fee is more than 10 times the amount, we warn the user that fee is high compared to what he is sending
@@ -73,8 +78,9 @@ export const getTransactionStatus: AccountBridge<
     });
   }
 
-  if (!errors.amount && amount.eq(0)) {
+  if (!errors.amount && amount.eq(0) && !transaction.useAllAmount) {
     // if the amount is 0, we prevent the user from sending the tx (even if it's technically feasible)
+    // unless useAllAmount is set (which means the account has insufficient balance)
     errors.amount = new AmountRequired();
   }
 
