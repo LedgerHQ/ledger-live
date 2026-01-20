@@ -8,6 +8,8 @@ import { ICrypto } from "./crypto/types";
 import { PickingStrategy } from "./pickingstrategies/types";
 import { computeDustAmount, maxTxSizeCeil } from "./utils";
 import { TransactionInfo, InputInfo, OutputInfo } from "./types";
+import { Transaction } from "bitcoinjs-lib";
+import * as btc from "bitcoinjs-lib";
 
 // names inside this class and discovery logic respect BIP32 standard
 class Xpub {
@@ -186,6 +188,8 @@ class Xpub {
     utxoPickingStrategy: PickingStrategy;
     sequence: number;
     opReturnData?: Buffer | undefined;
+    isSpeedUp?: boolean | undefined;
+    originalTxId?: string | undefined;
   }): Promise<TransactionInfo> {
     const outputs: OutputInfo[] = [];
 
@@ -197,6 +201,8 @@ class Xpub {
       utxoPickingStrategy,
       feePerByte,
       sequence,
+      isSpeedUp,
+      originalTxId,
     } = params;
 
     if (opReturnData) {
@@ -254,17 +260,53 @@ class Xpub {
       ),
     );
 
-    const inputs: InputInfo[] = unspentUtxoSelected.map((utxo, index) => {
-      return {
-        txHex: txHexs[index],
-        value: utxo.value,
-        address: utxo.address,
-        output_hash: utxo.output_hash,
-        output_index: utxo.output_index,
-        sequence,
-        block_height: utxo.block_height || null,
-      };
-    });
+    let inputs: InputInfo[];
+
+    if (isSpeedUp && originalTxId) {
+      // For speed up transactions, we need to keep the same inputs as the original transaction
+      const originalTx = await this.explorer.getTxHex(originalTxId);
+      if (!originalTx) {
+        throw new Error("Original transaction not found for speed up");
+      }
+      const originalTxObj = Transaction.fromHex(originalTx);
+      inputs = await Promise.all(
+        originalTxObj.ins.map(async input => {
+          const prevTxId = Buffer.from(Uint8Array.from(input.hash)).reverse().toString("hex");
+
+          const prevTxHex = await this.explorer.getTxHex(prevTxId);
+          const prevTx = Transaction.fromHex(prevTxHex);
+
+          const prevOut = prevTx.outs[input.index];
+          if (!prevOut) {
+            throw new Error("Previous output not found");
+          }
+
+          const address = btc.address.fromOutputScript(prevOut.script, this.crypto.network);
+          console.log("Speed up input address:", address);
+          return {
+            txHex: prevTxHex,
+            value: prevOut.value.toString(),
+            address,
+            output_hash: prevTxId,
+            output_index: input.index,
+            sequence: input.sequence,
+            block_height: null,
+          };
+        }),
+      );
+    } else {
+      inputs = unspentUtxoSelected.map((utxo, index) => {
+        return {
+          txHex: txHexs[index],
+          value: utxo.value,
+          address: utxo.address,
+          output_hash: utxo.output_hash,
+          output_index: utxo.output_index,
+          sequence,
+          block_height: utxo.block_height || null,
+        };
+      });
+    }
 
     const associatedDerivations: [number, number][] = unspentUtxoSelected.map((_utxo, index) => {
       if (!txs[index]) {

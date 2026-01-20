@@ -311,3 +311,24 @@ export async function getRelayFeeFloorSatVb(
     return defaultFloor;
   }
 }
+
+export async function getIncrementalFeeFloorSatVb(
+  explorer: unknown,
+  defaultFloor: BigNumber = new BigNumber(0),
+): Promise<BigNumber> {
+  try {
+    const maybeExplorer = explorer as { getNetwork?: () => Promise<NetworkInfoResponse> };
+    if (typeof maybeExplorer?.getNetwork !== "function") return defaultFloor;
+
+    const net = await maybeExplorer.getNetwork();
+    const incremental = net?.incremental_fee;
+    if (incremental === undefined || incremental === null) return defaultFloor;
+
+    const relSatPerVB = btcPerKbToSatPerVB(incremental);
+    if (!relSatPerVB.isFinite() || relSatPerVB.lt(0)) return defaultFloor;
+
+    return BigNumber.max(relSatPerVB, 1);
+  } catch {
+    return defaultFloor;
+  }
+}

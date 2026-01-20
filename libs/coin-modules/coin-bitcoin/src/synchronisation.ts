@@ -40,7 +40,7 @@ const toWalletNetwork = (currencyId: string): "testnet" | "mainnet" => {
 };
 
 // Map wallet-btc's Output to LL's BitcoinOutput
-const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): BitcoinOutput => {
+export const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): BitcoinOutput => {
   return {
     hash: utxo.output_hash,
     outputIndex: utxo.output_index,
@@ -98,6 +98,7 @@ export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
         }
         const existingOp = txByInput.get(input);
         if (existingOp) {
+          console.log("existingOp: ", existingOp);
           const isExistingConfirmed = typeof existingOp.blockHeight === "number";
           const isNewOpConfirmed = typeof op.blockHeight === "number";
 
@@ -233,7 +234,9 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
 
     const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
     const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
-
+    console.log("synchronisation", operations);
+    console.log("synchronisation", utxos);
+    console.log("walletAccount", walletAccount);
     return {
       id: accountId,
       xpub,

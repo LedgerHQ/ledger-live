@@ -178,6 +178,8 @@ class BitcoinLikeWallet {
     sequence: number;
     opReturnData?: Buffer | undefined;
     changeAddress?: string | undefined;
+    originalTxId?: string | undefined;
+    isSpeedUp?: boolean | undefined;
   }): Promise<TransactionInfo> {
     const changeAddress = await params.fromAccount.xpub.getNewAddress(1, 1);
     if (params.changeAddress && params.changeAddress !== changeAddress.address) {
@@ -192,6 +194,8 @@ class BitcoinLikeWallet {
       utxoPickingStrategy: params.utxoPickingStrategy,
       sequence: params.sequence,
       opReturnData: params.opReturnData,
+      isSpeedUp: params.isSpeedUp,
+      originalTxId: params.originalTxId,
     });
 
     return txInfo;

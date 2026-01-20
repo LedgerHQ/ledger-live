@@ -1,0 +1,38 @@
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Transaction as BtcTransaction } from "../types";
+import { getAdditionalFeeRequiredForRbf } from "../rbfHelpers";
+
+export const hasMinimumFundsToCancel = async ({
+  mainAccount,
+  transactionToUpdate,
+}: {
+  mainAccount: Account;
+  transactionToUpdate: BtcTransaction;
+}): Promise<boolean> => {
+  try {
+    const additionalFeeRequired = await getAdditionalFeeRequiredForRbf({
+      mainAccount,
+      transactionToUpdate,
+    });
+
+    const spendable =
+      "spendableBalance" in mainAccount && mainAccount.spendableBalance
+        ? mainAccount.spendableBalance
+        : mainAccount.balance;
+
+    return spendable.gte(additionalFeeRequired);
+  } catch {
+    return false;
+  }
+};
+
+export const hasMinimumFundsToSpeedUp = ({
+  mainAccount,
+  transactionToUpdate,
+}: {
+  account: AccountLike;
+  mainAccount: Account;
+  transactionToUpdate: BtcTransaction;
+}): Promise<boolean> => {
+  return hasMinimumFundsToCancel({ mainAccount, transactionToUpdate });
+};

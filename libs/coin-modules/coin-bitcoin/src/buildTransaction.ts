@@ -18,6 +18,8 @@ const selectUtxoPickingStrategy = (walletAccount: WalletAccount, utxoStrategy: U
     [bitcoinPickingStrategy.MERGE_OUTPUTS]: Merge,
     [bitcoinPickingStrategy.DEEP_OUTPUTS_FIRST]: DeepFirst,
     [bitcoinPickingStrategy.OPTIMIZE_SIZE]: CoinSelect,
+    [bitcoinPickingStrategy.RBF_SPEEDUP]: CoinSelect,
+    [bitcoinPickingStrategy.RBF_CANCEL]: CoinSelect,
   }[utxoStrategy.strategy];
   if (!handler) throw new Error("Unsupported Bitcoin UTXO picking strategy");
 
@@ -50,7 +52,7 @@ export const buildTransaction = async (
   );
 
   log("btcwallet", "building transaction", transaction);
-
+  console.log("Building transaction with params:", transaction);
   const txInfo = await wallet.buildAccountTx({
     fromAccount: walletAccount,
     dest: transaction.recipient,
@@ -61,8 +63,10 @@ export const buildTransaction = async (
     sequence: transaction.rbf ? 0 : 0xffffffff,
     opReturnData,
     changeAddress,
+    isSpeedUp: transaction.utxoStrategy.strategy === bitcoinPickingStrategy.RBF_SPEEDUP,
+    originalTxId: transaction?.replaceTxId,
   });
-
+  console.log("Built transaction info:", txInfo);
   log("btcwallet", "txInfo", txInfo);
 
   return txInfo;
