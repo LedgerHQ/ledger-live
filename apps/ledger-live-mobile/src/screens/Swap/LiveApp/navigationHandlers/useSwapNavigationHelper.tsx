@@ -28,8 +28,22 @@ export function useSwapNavigationHelper({ navigation }: { navigation: Navigation
 
         let canGoBack = canGoBackFromEvent;
 
-        if (urlFromEvent.includes("two-step-approval")) {
+        const isTwoStepFlow =
+          urlFromEvent.includes("two-step-approval") ||
+          urlFromEvent.includes("rfq-approval") ||
+          urlFromEvent.includes("eth-app-flow");
+
+        if (isTwoStepFlow) {
           page = SwapWebviewAllowedPageNames.TwoStepApproval;
+
+          // Check if transaction is complete via query parameter
+          const isTransactionComplete = url.searchParams.get("status") === "complete";
+          if (isTransactionComplete) {
+            navigation.setParams({
+              swapNavigationParams: { tab: tabParam, page, canGoBack, isTransactionComplete: true },
+            });
+            return;
+          }
         }
 
         if (urlFromEvent.includes("unknown-error")) {

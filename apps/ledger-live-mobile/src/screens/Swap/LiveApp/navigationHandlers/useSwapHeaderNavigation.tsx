@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { StackActions, useNavigation } from "@react-navigation/native";
 import { Flex, Icons } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
 import { useTrack } from "~/analytics";
@@ -12,14 +12,18 @@ import { useIsSwapTab } from "./useIsSwapTab";
 
 function getScreenTitle({
   webviewCurrentPage,
+  isTransactionComplete,
   t,
 }: {
   webviewCurrentPage?: SwapWebviewAllowedPageNames;
+  isTransactionComplete?: boolean;
   t: (key: string) => string;
 }) {
   switch (webviewCurrentPage) {
     case SwapWebviewAllowedPageNames.TwoStepApproval:
-      return t("transfer.swap2.twoStepApproval.title");
+      return isTransactionComplete
+        ? t("transfer.swap2.twoStepApproval.completedTitle")
+        : t("transfer.swap2.twoStepApproval.title");
     case SwapWebviewAllowedPageNames.QuotesList:
       return t("transfer.swap2.quotesList.title");
     default:
@@ -27,7 +31,10 @@ function getScreenTitle({
   }
 }
 
-export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI>) {
+export function useSwapHeaderNavigation(
+  webviewRef: React.RefObject<WebviewAPI>,
+  manifestUrl?: string,
+) {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const track = useTrack();
@@ -68,6 +75,21 @@ export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI>)
     navigation.goBack();
   }, [navigation, track]);
 
+  const navigateToSwapForm = useCallback(() => {
+    track("button_clicked", {
+      button: "SwapCloseTwoStep",
+      page: ScreenName.SwapTab,
+      swapVersion: SWAP_VERSION,
+    });
+
+    // Navigate webview back to the swap form
+    if (manifestUrl) {
+      webviewRef.current?.loadURL(manifestUrl);
+    } else {
+      navigation.dispatch(StackActions.popToTop());
+    }
+  }, [webviewRef, track, manifestUrl, navigation]);
+
   useEffect(() => {
     if (!isSwapTabScreen) return;
 
@@ -79,7 +101,29 @@ export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI>)
     const webviewCurrentPage = (webviewParams as DetailsSwapParamList | DefaultAccountSwapParamList)
       ?.swapNavigationParams?.page;
 
-    if (webviewCanGoBack && webviewCurrentPage !== SwapWebviewAllowedPageNames.AccountSelection) {
+    const isTransactionComplete = (
+      webviewParams as DetailsSwapParamList | DefaultAccountSwapParamList
+    )?.swapNavigationParams?.isTransactionComplete;
+
+    const isTwoStepApproval = webviewCurrentPage === SwapWebviewAllowedPageNames.TwoStepApproval;
+
+    // When transaction is complete on two-step-approval, show close button on the right
+    if (isTwoStepApproval && isTransactionComplete) {
+      navigation.setOptions({
+        headerLeft: undefined,
+        headerRight: () => (
+          <Flex p={6}>
+            <Touchable touchableTestID="NavigationHeaderClose" onPress={navigateToSwapForm}>
+              <Icons.Close color={"neutral.c100"} />
+            </Touchable>
+          </Flex>
+        ),
+        headerTitle: getScreenTitle({ t, webviewCurrentPage, isTransactionComplete }),
+      });
+    } else if (
+      webviewCanGoBack &&
+      webviewCurrentPage !== SwapWebviewAllowedPageNames.AccountSelection
+    ) {
       navigation.setOptions({
         headerLeft: () => (
           <Flex p={6}>
@@ -121,6 +165,7 @@ export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI>)
     goBackNative,
     goBackWebView,
     navigateToSwapHistory,
+    navigateToSwapForm,
     navigation,
     swapTabScreen?.params,
     t,

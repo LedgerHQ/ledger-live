@@ -73,7 +73,7 @@ export function SwapLiveApp({
     return result;
   }, [params]);
 
-  useSwapHeaderNavigation(webviewRef);
+  useSwapHeaderNavigation(webviewRef, manifest?.url?.toString());
 
   useSwapAndroidHardwareBackPress({
     webviewRef,
