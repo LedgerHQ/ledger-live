@@ -5,6 +5,19 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { Web3HubTest } from "./shared";
 import { Text } from "@ledgerhq/native-ui";
 
+// Mock useScrollHandler which uses useAnimatedScrollHandler (requires worklet transformation)
+jest.mock("LLM/features/Web3Hub/hooks/useScrollHandler", () => ({
+  __esModule: true,
+  default: () => ({
+    layoutY: { value: 0 },
+    scrollHandler: jest.fn(),
+  }),
+  useWebviewScrollHandler: () => ({
+    layoutY: { value: 0 },
+    onScroll: jest.fn(),
+  }),
+}));
+
 // Need to fix some stuff if we want to test the player too
 jest.mock(
   "LLM/features/Web3Hub/screens/Web3HubApp/components/Web3Player",

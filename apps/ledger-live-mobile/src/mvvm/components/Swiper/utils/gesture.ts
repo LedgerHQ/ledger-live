@@ -1,6 +1,7 @@
 import { Dimensions } from "react-native";
 import { Gesture } from "react-native-gesture-handler";
-import { runOnJS, withSpring } from "react-native-reanimated";
+import { withSpring } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import { GestureParams, SwipeValues } from "../types";
 import { SwipeDirection } from "../enums";
 
@@ -22,10 +23,12 @@ function resetGesture({ swipeX, swipeY, velocityX, velocityY }: GestureParams) {
   swipeX.value = withSpring(0, {
     velocity: velocityX,
     damping: SWIPE_CONFIG.DAMPING,
+    overshootClamping: true,
   });
   swipeY.value = withSpring(0, {
     velocity: velocityY,
     damping: SWIPE_CONFIG.DAMPING,
+    overshootClamping: true,
   });
 }
 
@@ -39,19 +42,23 @@ function handleGesture(
     swipeX.value = withSpring(directionX * width * SWIPE_CONFIG.MULTIPLIER_X, {
       velocity: velocityX,
       damping: SWIPE_CONFIG.DAMPING,
+      overshootClamping: true,
     });
     swipeY.value = withSpring(velocityY * SWIPE_CONFIG.VELOCITY_Y_MULTIPLIER, {
       damping: SWIPE_CONFIG.DAMPING,
+      overshootClamping: true,
     });
   } else if (direction === SwipeDirection.Vertical) {
     const directionY = Math.sign(swipeY.value);
     swipeX.value = withSpring(0, {
       velocity: velocityX,
       damping: SWIPE_CONFIG.DAMPING,
+      overshootClamping: true,
     });
     swipeY.value = withSpring(directionY * height * SWIPE_CONFIG.MULTIPLIER_Y, {
       velocity: velocityY,
       damping: SWIPE_CONFIG.DAMPING,
+      overshootClamping: true,
     });
   }
 }
@@ -71,6 +78,11 @@ function isHorizontalAngle(angle: number): boolean {
 }
 
 function createGesture(swipeX: SwipeValues, swipeY: SwipeValues, handleSwipeComplete: () => void) {
+  // Wrapper that delays the completion callback to let the swipe animation finish
+  const delayedComplete = () => {
+    setTimeout(handleSwipeComplete, SWIPE_CONFIG.TIMEOUT);
+  };
+
   return Gesture.Pan()
     .withTestId("pan")
     .onUpdate(event => {
@@ -95,7 +107,7 @@ function createGesture(swipeX: SwipeValues, swipeY: SwipeValues, handleSwipeComp
         canSwipeHorizontal(params.swipeX.value, params.velocityX, SWIPE_CONFIG.THRESHOLD_X)
       ) {
         handleGesture(SwipeDirection.Horizontal, params);
-        runOnJS(setTimeout)(handleSwipeComplete, SWIPE_CONFIG.TIMEOUT);
+        scheduleOnRN(delayedComplete);
       } else {
         resetGesture(params);
       }

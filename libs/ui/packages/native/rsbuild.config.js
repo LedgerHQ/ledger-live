@@ -13,10 +13,7 @@ module.exports = defineConfig({
     alias: {
       "expo-font": path.resolve(__dirname, ".storybook-web/expoFontStub.js"),
       "@storybook/jest": path.resolve(__dirname, ".storybook-web/jestStub.js"),
-      "@storybook/addon-actions": path.resolve(
-        __dirname,
-        ".storybook-web/addonActionsStub.js",
-      ),
+      "@storybook/addon-actions": path.resolve(__dirname, ".storybook-web/addonActionsStub.js"),
       "expo-asset": require.resolve("expo-asset"),
       react: require.resolve("react"),
       "react-dom": require.resolve("react-dom"),
@@ -59,14 +56,33 @@ module.exports = defineConfig({
         type: "javascript/auto",
       });
       config.module.rules.push(
+        // Process source files with worklets babel plugin
+        {
+          test: /\.[jt]sx?$/,
+          include: path.resolve(__dirname, "src"),
+          loader: "babel-loader",
+          options: {
+            presets: [
+              require.resolve("@react-native/babel-preset"),
+              [require.resolve("@babel/preset-typescript"), { isTSX: true, allExtensions: true }],
+            ],
+            plugins: [
+              require.resolve("@babel/plugin-transform-export-namespace-from"),
+              require.resolve("react-native-worklets/plugin"),
+            ],
+            babelrc: false,
+            configFile: false,
+          },
+        },
+        // Process node_modules that need worklet transformation
         {
           test: /\.[cm]?jsx?$/,
           include:
-            /node_modules[\\/](react-native|react-native-reanimated|react-native-svg|@react-native|@react-native-community|expo)/,
+            /node_modules[\\/](react-native|react-native-reanimated|react-native-worklets|react-native-svg|@react-native|@react-native-community|expo)/,
           loader: "babel-loader",
           options: {
             presets: [require.resolve("@react-native/babel-preset")],
-            plugins: [require.resolve("react-native-reanimated/plugin")],
+            plugins: [require.resolve("react-native-worklets/plugin")],
             babelrc: false,
             configFile: false,
           },
