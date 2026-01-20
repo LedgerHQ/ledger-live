@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { HederaAddAccountError } from "../errors";
 import { getBalance } from "./getBalance";
 import { apiClient } from "../network/api";
 import * as networkUtils from "../network/utils";
@@ -15,13 +17,14 @@ jest.mock("../network/api");
 jest.mock("../network/utils");
 
 describe("getBalance", () => {
+  const mockCurrency = getMockedCurrency();
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("should return native balance when only HBAR is present", async () => {
     const address = "0.0.12345";
-    const mockCurrency = getMockedCurrency();
     const mockMirrorAccount = {
       balance: {
         balance: "1000000000",
@@ -49,7 +52,6 @@ describe("getBalance", () => {
 
   it("should return native balance and token balances", async () => {
     const address = "0.0.12345";
-    const mockCurrency = getMockedCurrency();
     const mockMirrorAccount = {
       balance: {
         balance: "1000000000",
@@ -132,7 +134,6 @@ describe("getBalance", () => {
 
   it("should return stake", async () => {
     const address = "0.0.12345";
-    const mockCurrency = getMockedCurrency();
     const mockMirrorAccount = {
       account: address,
       staked_node_id: 5,
@@ -178,7 +179,6 @@ describe("getBalance", () => {
 
   it("should skip tokens not found in CAL", async () => {
     const address = "0.0.12345";
-    const mockCurrency = getMockedCurrency();
     const mockMirrorAccount = {
       balance: {
         balance: "1000000000",
@@ -269,7 +269,6 @@ describe("getBalance", () => {
 
   it("should throw when failing to getAccount data", async () => {
     const address = "0.0.12345";
-    const mockCurrency = getMockedCurrency();
     const error = new Error("Network error");
 
     (apiClient.getAccount as jest.Mock).mockRejectedValue(error);
@@ -282,7 +281,6 @@ describe("getBalance", () => {
 
   it("should throw when failing to getAccountTokens data", async () => {
     const address = "0.0.12345";
-    const mockCurrency = getMockedCurrency();
     const error = new Error("Network error");
     const mockMirrorAccount = {
       balance: {
@@ -296,5 +294,29 @@ describe("getBalance", () => {
     (networkUtils.getERC20BalancesForAccount as jest.Mock).mockResolvedValue([]);
 
     await expect(getBalance(mockCurrency, address)).rejects.toThrow(error);
+  });
+
+  it.each([
+    {
+      name: "HederaAddAccountError",
+      error: new HederaAddAccountError(),
+    },
+    {
+      name: "404 error",
+      error: new LedgerAPI4xx("", { status: 404, url: undefined, method: "GET" }),
+    },
+  ])("should return empty balance on $name", async ({ error }) => {
+    const address = "0.0.0";
+
+    (apiClient.getAccount as jest.Mock).mockRejectedValue(error);
+    (apiClient.getAccountTokens as jest.Mock).mockResolvedValue([]);
+    (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [] });
+    (networkUtils.getERC20BalancesForAccount as jest.Mock).mockResolvedValue([]);
+
+    const result = await getBalance(mockCurrency, address);
+
+    expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
+    expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(result).toEqual([]);
   });
 });

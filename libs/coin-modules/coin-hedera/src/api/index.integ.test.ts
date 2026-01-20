@@ -363,6 +363,12 @@ describe("createApi", () => {
       expect(balances[0].value).toBe(BigInt(0));
     });
 
+    it("returns no balance for non-existent account", async () => {
+      const balances = await api.getBalance("0.0.0");
+
+      expect(balances.length).toBe(0);
+    });
+
     it("returns native asset for account without tokens", async () => {
       const balances = await api.getBalance(MAINNET_TEST_ACCOUNTS.withoutTokens.accountId);
       const nativeBalance = balances.filter(b => b.asset.type === "native");
