@@ -21,13 +21,13 @@ import {
   BANNER_NAME,
 } from "../constants";
 import { UseMarketBannerViewModelResult } from "../types";
-import { useIsMarketBannerEnabled } from "./useIsMarketBannerEnabled";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 const TIME_RANGE = "day";
 
 const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
   const baseNavigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
-  const isMarketBannerEnabled = useIsMarketBannerEnabled();
+  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const { isCurrencyAvailable } = useRampCatalog();
@@ -112,7 +112,7 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
     items: filteredItems,
     isLoading,
     isError,
-    isEnabled: isMarketBannerEnabled ?? false,
+    isEnabled: shouldDisplayMarketBanner,
     range: TIME_RANGE,
     onTilePress,
     onViewAllPress,

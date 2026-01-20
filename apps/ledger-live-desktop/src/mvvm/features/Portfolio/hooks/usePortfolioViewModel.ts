@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import uniq from "lodash/uniq";
@@ -24,7 +24,7 @@ export interface PortfolioViewModelResult {
 export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   const accounts = useSelector(accountsSelector);
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
-  const lwdWallet40FF = useFeature("lwdWallet40");
+  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("desktop");
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio");
   const { t } = useTranslation();
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
@@ -50,9 +50,6 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   );
 
   const hasExchangeBannerCTA = !!portfolioExchangeBanner?.enabled;
-
-  const shouldDisplayMarketBanner =
-    (lwdWallet40FF?.enabled && lwdWallet40FF?.params?.marketBanner) ?? false;
 
   const shouldDisplaySwapWebView = !!ptxSwapLiveAppOnPortfolio?.enabled;
 

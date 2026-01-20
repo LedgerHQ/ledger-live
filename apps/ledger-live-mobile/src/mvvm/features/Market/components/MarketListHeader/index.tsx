@@ -3,18 +3,18 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { IconButton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ArrowLeft } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { useIsMarketBannerEnabled } from "LLM/features/MarketBanner/hooks/useIsMarketBannerEnabled";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export function MarketListHeaderLeft() {
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const isMarketBannerEnabled = useIsMarketBannerEnabled();
+  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
 
   const handlePress = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
 
-  if (!isMarketBannerEnabled) {
+  if (!shouldDisplayMarketBanner) {
     return null;
   }
 
@@ -31,9 +31,9 @@ export function MarketListHeaderLeft() {
 
 export function MarketListHeaderTitle() {
   const { t } = useTranslation();
-  const isMarketBannerEnabled = useIsMarketBannerEnabled();
+  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
 
-  if (!isMarketBannerEnabled) {
+  if (!shouldDisplayMarketBanner) {
     return null;
   }
 

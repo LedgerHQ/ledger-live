@@ -17,7 +17,7 @@ import { setSelectedTabPortfolioAssets } from "~/actions/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 import MarketBanner from "LLM/features/MarketBanner";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import useListsAnimation, { type TabListType } from "./useListsAnimation";
 import TabSection, { TAB_OPTIONS } from "./TabSection";
 import { flattenAccountsSelector } from "~/reducers/accounts";
@@ -131,9 +131,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     [showAssets, isAccountListUIEnabled, navigation],
   );
 
-  const lwmWallet40FF = useFeature("lwmWallet40");
-  const shouldDisplayMarketBanner =
-    (lwmWallet40FF?.enabled && lwmWallet40FF?.params?.marketBanner) ?? false;
+  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
 
   return (
     <>
