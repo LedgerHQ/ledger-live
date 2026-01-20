@@ -74,14 +74,14 @@ test("Layout @smoke", async ({ page }) => {
     await layout.goToPortfolio(); // FIXME: remove this line when LL-8899 is fixed
     await layout.toggleDiscreetMode();
     await expect.soft(page).toHaveScreenshot("discreet-mode.png", {
-      mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+      mask: [page.locator("canvas")],
     });
   });
 
   await test.step("can collapse the main sidebar", async () => {
     await layout.closeSideBar();
     await expect.soft(page).toHaveScreenshot("collapse-sidebar.png", {
-      mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+      mask: [page.locator("canvas")],
     });
   });
 

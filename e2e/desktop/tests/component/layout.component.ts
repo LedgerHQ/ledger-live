@@ -19,9 +19,6 @@ export class Layout extends Component {
   readonly topbarSynchronizeButton = this.page.getByTestId("topbar-synchronize-button");
   readonly topbarSettingsButton = this.page.getByTestId("topbar-settings-button");
 
-  // general
-  readonly marketPerformanceWidget = this.page.getByTestId("market-performance-widget");
-
   @step("Go to Portfolio")
   async goToPortfolio() {
     await this.drawerPortfolioButton.click();
