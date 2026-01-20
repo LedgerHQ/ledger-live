@@ -1,3 +1,4 @@
+export { getAccountJWT } from "./getAccountJWT";
 export { broadcast } from "./broadcast";
 export { combine } from "./combine";
 export { craftTransaction } from "./craftTransaction";

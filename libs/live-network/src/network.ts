@@ -173,6 +173,7 @@ export type LiveNetworkRequest<T> = {
   timeout?: number;
 };
 export type LiveNetworkResponse<T> = {
+  headers?: Record<string, string>;
   data: T;
   status: number;
 };

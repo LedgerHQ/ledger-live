@@ -10,11 +10,21 @@ const defaultMockAccountId =
 export const mockAleoResources: AleoResources = {
   transparentBalance: new BigNumber(0),
   privateBalance: null,
+  provableApi: {
+    apiKey: "",
+    consumerId: "",
+    jwt: {
+      token: "",
+      exp: 0,
+    },
+    uuid: "",
+  },
 };
 
 export const mockAleoResourcesRaw: AleoResourcesRaw = {
   transparentBalance: "0",
   privateBalance: null,
+  provableApi: '{"apiKey":"","consumerId":"","jwt":{"token":"","exp":0},"uuid":""}',
 };
 
 export const getMockedAccount = (overrides?: Partial<AleoAccount>): AleoAccount => {
