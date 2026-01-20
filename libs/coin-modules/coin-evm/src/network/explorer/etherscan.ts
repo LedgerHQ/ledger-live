@@ -411,6 +411,7 @@ export const getLastOperations = makeLRUCache<
         lastInternalOperations,
       };
     } catch (err) {
+      console.log(err);
       log("EVM getLastOperations", "Error while fetching data from Etherscan like API", err);
       throw new InvalidExplorerResponse("", { currencyName: currency.name });
     }
