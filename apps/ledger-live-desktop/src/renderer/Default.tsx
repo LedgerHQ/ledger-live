@@ -93,6 +93,7 @@ const PostOnboardingScreen = lazy(() => import("~/renderer/components/PostOnboar
 const USBTroubleshooting = lazy(() => import("~/renderer/screens/USBTroubleshooting"));
 const Asset = lazy(() => import("~/renderer/screens/asset"));
 const Account = lazy(() => import("~/renderer/screens/account"));
+const Analytics = lazy(() => import("LLD/features/Analytics"));
 
 const LoaderWrapper = styled.div`
   padding: 24px;
@@ -255,6 +256,7 @@ const MainAppLayout = () => {
               element={withSuspense(isMarket40Enabled ? Market40 : Market)({})}
             />
             <Route path="/bank/*" element={withSuspense(Bank)({})} />
+            <Route path="/analytics" element={withSuspense(Analytics)({})} />
           </Routes>
         </Page>
         <Drawer />
