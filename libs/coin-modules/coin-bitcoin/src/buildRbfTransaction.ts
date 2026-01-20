@@ -202,7 +202,6 @@ import { BigNumber } from "bignumber.js";
 import { getMinReplacementFeeRateSatVb, RBF_SEQUENCE_THRESHOLD } from "./rbfHelpers";
 
 async function getAmountAndRecipient(tx: Transaction, walletAccount: WalletAccount) {
-  // 1. Collect all known addresses for this account
   const allAddressesSet = new Set<string>();
 
   const receiving = await walletAccount.xpub.storage.getUniquesAddresses({ account: 0 });
@@ -211,7 +210,6 @@ async function getAmountAndRecipient(tx: Transaction, walletAccount: WalletAccou
   const change = await walletAccount.xpub.storage.getUniquesAddresses({ account: 1 });
   change.forEach(a => allAddressesSet.add(a.address));
 
-  // 2. Decode outputs and detect which are NOT ours
   const network = walletAccount.xpub.crypto.network;
 
   const externalOutputs = tx.outs
@@ -220,7 +218,7 @@ async function getAmountAndRecipient(tx: Transaction, walletAccount: WalletAccou
         const address = btc.address.fromOutputScript(out.script, network);
         return { address, value: out.value };
       } catch {
-        return null; // skip OP_RETURN etc.
+        return null;
       }
     })
     .filter(
@@ -228,13 +226,11 @@ async function getAmountAndRecipient(tx: Transaction, walletAccount: WalletAccou
     );
 
   const amountSent = externalOutputs.reduce((sum, out) => sum + out.value, 0);
-  // Determine recipient (first external output)
   if (externalOutputs.length === 0) {
     throw new Error("Cannot find recipient (no external outputs found)");
   }
   const recipient = externalOutputs[0].address;
 
-  // 3. Sum external outputs => amount sent
   return { amountSent, recipient };
 }
 
@@ -307,7 +303,7 @@ export async function buildRbfCancelTx(
     throw new Error("Transaction is not RBF-enabled");
   }
 
-  // Minimum replacement feerate implied by RBF policy
+  // Minimum replacement feerate (to bump above original tx)
   const minFeeRateSatVb = await getMinReplacementFeeRateSatVb({
     account,
     originalTxId,
@@ -323,7 +319,7 @@ export async function buildRbfCancelTx(
   const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
   const walletUtxos = rawUtxos.map(u => fromWalletUtxo(u, changeAddrs));
 
-  // Keep same behavior as speedup: exclude pending change UTXOs
+  // TODO: for cancel, we should probably not exclude all change UTXOs?
   const excludeUTXOs = walletUtxos
     .filter(u => u.blockHeight === null && u.isChange)
     .map(u => ({ hash: u.hash, outputIndex: u.outputIndex }));
@@ -335,7 +331,6 @@ export async function buildRbfCancelTx(
 
   const networkInfo = await getAccountNetworkInfo(account);
 
-  // For cancel, send funds back to self (fresh change address works well)
   const changeAddress = await walletAccount.xpub.getNewAddress(1, 1);
   const recipient = changeAddress.address;
 
@@ -345,7 +340,6 @@ export async function buildRbfCancelTx(
   return {
     family: "bitcoin",
     recipient,
-    // For cancel, the builder should spend everything back to self minus fees
     useAllAmount: true,
     amount: new BigNumber(0),
     feesStrategy: shouldUseFastStrategy ? "fast" : "custom",
