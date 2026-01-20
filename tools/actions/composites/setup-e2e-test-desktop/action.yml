@@ -52,6 +52,20 @@ runs:
       run: |
         pnpm desktop build:${{ inputs.build_type || 'testing' }}
       shell: bash
+    - name: Archive desktop build for download
+      if: ${{ !inputs.skip_builds }}
+      run: |
+        ARTIFACT_ZIP="$GITHUB_WORKSPACE/ledger-live-desktop-test-build.zip"
+        pushd apps/ledger-live-desktop
+        zip -r "$ARTIFACT_ZIP" build .webpack
+        popd
+      shell: bash
+    - name: Upload desktop test build artifact
+      if: ${{ !inputs.skip_builds }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ledger-live-desktop-test-build
+        path: ${{ github.workspace }}/ledger-live-desktop-test-build.zip
     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}
       run: |

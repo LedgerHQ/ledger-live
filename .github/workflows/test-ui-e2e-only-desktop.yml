@@ -122,8 +122,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4]
-        shardTotal: [4]
+        shardIndex: [1]
+        shardTotal: [1]
     steps:
       - name: generate token
         id: generate-token
@@ -148,7 +148,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@support/qaa-966
         id: setup-test-desktop
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
