@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import type { PortfolioRange } from "@ledgerhq/types-live";
 import { selectedTimeRangeSelector } from "../reducers/settings";
 import {
-  SettingsAcceptSwapProviderPayload,
   SettingsBlacklistTokenPayload,
   DangerouslyOverrideStatePayload,
   SettingsDismissBannerPayload,
@@ -168,9 +167,6 @@ export const setLocale = createAction<SettingsSetLocalePayload>(
   SettingsActionTypes.SETTINGS_SET_LOCALE,
 );
 
-export const swapAcceptProvider = createAction<SettingsAcceptSwapProviderPayload>(
-  SettingsActionTypes.ACCEPT_SWAP_PROVIDER,
-);
 export const setLastSeenDeviceInfo = createAction<SettingsLastSeenDeviceInfoPayload>(
   SettingsActionTypes.LAST_SEEN_DEVICE_INFO,
 );

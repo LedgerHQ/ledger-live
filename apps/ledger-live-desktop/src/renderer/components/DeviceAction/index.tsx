@@ -69,11 +69,7 @@ import {
   DeviceInfo,
   DeviceModelInfo,
 } from "@ledgerhq/types-live";
-import {
-  ExchangeRate,
-  ExchangeSwap,
-  InitSwapResult,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
@@ -137,9 +133,6 @@ type States = PartialNullable<{
   deviceStreamingProgress: number;
   displayUpgradeWarning: boolean;
   passWarning: () => void;
-  initSwapRequested: boolean;
-  initSwapError: Error;
-  initSwapResult: InitSwapResult | null;
   installingLanguage: boolean;
   languageInstallationRequested: boolean;
   signMessageRequested: AnyMessage;
@@ -250,9 +243,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     transactionChecksOptIn,
     displayUpgradeWarning,
     passWarning,
-    initSwapRequested,
-    initSwapError,
-    initSwapResult,
     completeExchangeStarted,
     completeExchangeResult,
     completeExchangeError,
@@ -510,27 +500,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       default:
         return <div>{"Confirm exchange on your device"}</div>;
     }
-  }
-
-  if (initSwapRequested && !initSwapResult && !initSwapError) {
-    const { transaction, exchange, exchangeRate } = request as {
-      transaction: Transaction;
-      exchange: ExchangeSwap;
-      exchangeRate: ExchangeRate;
-    };
-    const { amountExpectedTo, estimatedFees } = hookState;
-    return renderSwapDeviceConfirmation({
-      modelId,
-      type,
-      transaction,
-      exchangeRate,
-      exchange,
-      amountExpectedTo: amountExpectedTo ?? undefined,
-      estimatedFees: estimatedFees ?? undefined,
-      swapDefaultTrack,
-      stateSettings,
-      walletState,
-    });
   }
 
   if (allowOpeningRequestedWording || requestOpenApp) {
