@@ -29,8 +29,9 @@ import {
 } from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
-import { LAST_STARTUP_EVENTS, logLastStartupEvents } from "LLM/utils/logLastStartupEvents";
+import { logLastStartupEvents } from "LLM/utils/logLastStartupEvents";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
+import { STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 
 const TRACKING_EVENT = "deeplink_clicked";
 import {
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
 });
 
 function handleStartComplete() {
-  logLastStartupEvents(LAST_STARTUP_EVENTS.NAV_READY);
+  logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
 }
 
 function isWalletConnectUrl(url: string) {
