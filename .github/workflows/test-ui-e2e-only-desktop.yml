@@ -27,7 +27,6 @@ on:
         description: "Test Execution ticket ID"
         required: false
         type: string
-        default: "B2CQA-2461"
       enable_broadcast:
         description: "Enable transaction broadcast"
         required: false
@@ -192,6 +191,27 @@ jobs:
             echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
           fi
         shell: bash
+      
+      - name: Write summary
+        shell: bash
+        run: |
+          FILTER_PATTERN="${{ steps.test-filter.outputs.filter }}"
+          DEVICE="${{ inputs.speculos_device || 'nanoSP' }}"
+          BUILD_TYPE="${{ inputs.build_type || 'testing' }}"
+          TEST_EXECUTION="${{ inputs.test_execution || '(not provided)' }}"
+
+          if [ -z "$FILTER_PATTERN" ]; then
+            FILTER_PATTERN="(none)"
+          fi
+          echo "Workflow Context"
+          echo ""
+          echo "- Workflow source branch: ${{ github.workflow_ref }}"
+          echo "- Triggered branch: ${{ github.ref_name }}"
+          echo "- Commit SHA: ${{ github.sha }}"
+          echo "- Device selected: $DEVICE"
+          echo "- Filtered pattern: $FILTER_PATTERN"
+          echo "- Test Execution ticket ID: $TEST_EXECUTION"
+          echo "- Firebase env to target: $BUILD_TYPE"
 
       - name: Run Playwright Tests
         id: run-playwright
