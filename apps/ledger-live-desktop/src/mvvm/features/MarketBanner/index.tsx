@@ -1,13 +1,11 @@
 import React, { memo, useCallback } from "react";
 import SkeletonList from "./components/SkeletonList";
-import { useTranslation } from "react-i18next";
-import { InteractiveIcon } from "@ledgerhq/lumen-ui-react";
 import { useNavigate } from "react-router";
 import { useMarketBannerViewModel } from "./hooks/useMarketBannerViewModel";
-import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
 import GenericError from "./components/GenericError";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { TrendingAssetsList } from "./components/TrendingAssetsList";
+import { MarketBannerHeader } from "./components/MarketBannerHeader";
 
 type MarketBannerViewProps = {
   readonly isLoading: boolean;
@@ -20,7 +18,6 @@ const MarketBannerView = memo(function MarketBannerView({
   isError,
   data,
 }: MarketBannerViewProps) {
-  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const goToMarket = useCallback(() => {
@@ -38,17 +35,7 @@ const MarketBannerView = memo(function MarketBannerView({
 
   return (
     <div className="flex flex-col gap-12">
-      <div className="flex items-center gap-2">
-        <span className="heading-4-semi-bold text-base">{t("marketBanner.title")}</span>
-        <InteractiveIcon
-          iconType="stroked"
-          aria-label="Interactive icon"
-          onClick={goToMarket}
-          data-testid="market-banner-button"
-        >
-          <ChevronRight size={16} />
-        </InteractiveIcon>
-      </div>
+      <MarketBannerHeader onNavigate={goToMarket} />
       {content}
     </div>
   );
