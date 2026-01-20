@@ -5933,14 +5933,14 @@
         "title": "Add Concordium Account",
         "acknowledge": {
           "title": "Acknowledgement",
-          "description": "Concordium requires identity verification (KYC) for all accounts. To create your account, you'll complete this process in the Concordium ID App.",
+          "description": "Concordium requires external identity verification. Please read these important security warnings:",
           "list": {
-            "1": "<0>You'll be redirected outside Ledger Live</0> to complete identity verification",
-            "2": "<0>Identity verification is mandatory</0> – Required by Concordium's blockchain protocol",
-            "3": "<0>Your Ledger stays secure</0> – Only you can sign and create accounts with your device",
-            "4": "<0>Already verified with Concordium?</0> – Your existing identity can be reused"
+            "1": "<0>No address verification</0> – Your Ledger cannot verify Concordium receive addresses. Manually verify addresses before receiving funds.",
+            "2": "<0>Concordium ID App uses a separate seed</0> – You'll create NEW 24 words in Concordium app. NEVER use your Ledger seed.",
+            "3": "<0>You'll be redirected outside Ledger Live</0> – Identity verification happens in the external Concordium Wallet app. This is required by Concordium's blockchain protocol.",
+            "4": "<0>Transaction signing stays secure</0> – Only your Ledger device can sign transactions and create accounts."
           },
-          "allow": "Allow"
+          "allow": "Agree"
         },
         "identity": {
           "title": "Connect",
