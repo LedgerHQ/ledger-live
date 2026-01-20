@@ -13,11 +13,7 @@ export const TransactionErrorBanner = ({
     return <ErrorBanner error={new TransactionHasBeenValidatedError()} />;
   }
 
-  /**
-   * we use an empty fragment as a fallback to avoid displaying the default
-   * generic description
-   */
-  if (errors.gasPrice && errors.gasPrice instanceof NotEnoughGas) {
+  if (errors.gasPrice instanceof NotEnoughGas) {
     return <ErrorBanner error={errors.gasPrice} fallback={{ description: <></> }} />;
   }
 

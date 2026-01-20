@@ -24,6 +24,7 @@ import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { closeModal, openModal } from "~/renderer/actions/modals";
+import { getEditTransactionStepTitleKey } from "~/renderer/components/SpeedUpCancel";
 import Stepper from "~/renderer/components/Stepper";
 import logger from "~/renderer/logger";
 import StepConfirmation, {
@@ -63,21 +64,6 @@ type StateProps = {
 };
 
 export type Props = OwnProps & StateProps;
-
-/**
- * Method used to dynamically change the title of the stepper depending on the
- * editType selected
- */
-const getStepTitleKey = (
-  stepId: StepId,
-  editType?: StepProps["editType"],
-): "operation.edit.title" | "operation.edit.cancel.title" | "operation.edit.speedUp.title" => {
-  if (!editType || stepId === "method") {
-    return "operation.edit.title";
-  }
-
-  return editType === "cancel" ? "operation.edit.cancel.title" : "operation.edit.speedUp.title";
-};
 
 const createSteps = (): St[] => [
   {
@@ -293,7 +279,7 @@ const Body = ({
   });
 
   const stepperProps = {
-    title: t(getStepTitleKey(stepId, editType)),
+    title: t(getEditTransactionStepTitleKey(stepId, editType)),
     stepId,
     steps,
     device,

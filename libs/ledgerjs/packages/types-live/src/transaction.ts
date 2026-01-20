@@ -175,3 +175,5 @@ export type TransactionStatusCommonRaw = {
   useAllAmount?: boolean;
   recipientIsReadOnly?: boolean | undefined;
 };
+
+export type TransactionEditType = "cancel" | "speedup";

@@ -5,8 +5,7 @@ import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { memo } from "react";
-import Box from "~/renderer/components/Box";
-import EditOperationPanel from "~/renderer/components/OperationsList/EditOperationPanel";
+import { SharedEditStuckTransactionPanelBodyHeader } from "~/renderer/components/SpeedUpCancel";
 
 type Props = {
   account: AccountLike;
@@ -27,18 +26,12 @@ const EditStuckTransactionPanelBodyHeader = ({ account, parentAccount }: Props) 
   // check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
 
-  if (!stuckAccountAndOperation) {
-    return null;
-  }
-
   return (
-    <Box>
-      <EditOperationPanel
-        operation={stuckAccountAndOperation.operation}
-        account={stuckAccountAndOperation.account}
-        parentAccount={stuckAccountAndOperation.parentAccount}
-      />
-    </Box>
+    <SharedEditStuckTransactionPanelBodyHeader
+      isEditTxEnabled={!!isEditEvmTxEnabled}
+      isCurrencySupported={isCurrencySupported}
+      stuckAccountAndOperation={stuckAccountAndOperation}
+    />
   );
 };
 

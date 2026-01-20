@@ -18,6 +18,7 @@ import {
   OperationType,
   TokenAccount,
   TransactionCommon,
+  TransactionCommonRaw,
   MessageProperties,
   AccountLike,
 } from "@ledgerhq/types-live";
@@ -73,6 +74,23 @@ export type OperationDetailsExtraProps<A extends Account, O extends Operation> =
   operation: O;
   account: A;
   type: OperationType;
+};
+
+export type EditTransactionFeatureFlagConfig = {
+  enabled: boolean;
+  supportedCurrencyIds?: string[];
+};
+
+export type EditTransactionFeatureFlags = Record<string, EditTransactionFeatureFlagConfig>;
+
+export type EditTransactionModalConfig = {
+  modalName: "MODAL_EVM_EDIT_TRANSACTION" | "MODAL_BITCOIN_EDIT_TRANSACTION";
+  params: {
+    account: AccountLike;
+    parentAccount: Account | undefined;
+    transactionRaw: TransactionCommonRaw;
+    transactionHash: string;
+  };
 };
 
 export type SummaryNetworkFeesRowProps = {
@@ -402,6 +420,18 @@ export type LLDCoinFamily<
   message?: {
     getMessageProperties: (message: AnyMessage) => Promise<MessageProperties | null>;
   };
+
+  /**
+   * Optional family-level handler to decide whether an operation can be edited
+   * and provide modal config when it is supported.
+   */
+  handlesEditTransaction?: (_: {
+    account: AccountLike;
+    parentAccount: A | undefined;
+    mainAccount: A;
+    operation: O;
+    featureFlags: EditTransactionFeatureFlags;
+  }) => EditTransactionModalConfig | null;
 
   /**
    * Component allowing to fully customize the add account flow in the drawer
