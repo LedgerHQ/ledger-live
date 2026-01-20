@@ -8,4 +8,4 @@ export type FeatureFlagsGetResponse = {
   features: Record<string, Feature<unknown> | null>;
 };
 
-export type MethodIds = "featureFlags.get";
+export type MethodIds = "custom.featureFlags.get";

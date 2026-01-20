@@ -42,7 +42,7 @@ describe("FeatureFlags server handlers", () => {
     jest.clearAllMocks();
   });
 
-  describe("featureFlags.get handler", () => {
+  describe("custom.featureFlags.get handler", () => {
     it("should return features in correct format", () => {
       const manifest = createMockManifest();
       const mockFeatures = {
@@ -54,7 +54,7 @@ describe("FeatureFlags server handlers", () => {
 
       const handlerInstance = handlers({ manifest, getFeature: mockGetFeature });
       // @ts-expect-error - customWrapper is mocked to simplify testing
-      const result = handlerInstance["featureFlags.get"]({
+      const result = handlerInstance["custom.featureFlags.get"]({
         featureFlagIds: ["flag1", "flag2"],
       });
 
@@ -72,7 +72,7 @@ describe("FeatureFlags server handlers", () => {
 
       const handlerInstance = handlers({ manifest, getFeature: mockGetFeature });
       // @ts-expect-error - customWrapper is mocked to simplify testing
-      const result = handlerInstance["featureFlags.get"]({
+      const result = handlerInstance["custom.featureFlags.get"]({
         featureFlagIds: [],
       });
 
@@ -90,7 +90,7 @@ describe("FeatureFlags server handlers", () => {
 
       const handlerInstance = handlers({ manifest, getFeature: mockGetFeature });
       // @ts-expect-error - Testing runtime behavior with undefined params, customWrapper is mocked
-      const result = handlerInstance["featureFlags.get"](undefined);
+      const result = handlerInstance["custom.featureFlags.get"](undefined);
 
       expect(result).toEqual({ features: {} });
       expect(mockGetFeatureFlagsForLiveApp).toHaveBeenCalledWith({
@@ -111,7 +111,7 @@ describe("FeatureFlags server handlers", () => {
 
       const handlerInstance = handlers({ manifest, getFeature: mockGetFeature });
       // @ts-expect-error - customWrapper is mocked to simplify testing
-      const result = handlerInstance["featureFlags.get"]({
+      const result = handlerInstance["custom.featureFlags.get"]({
         featureFlagIds: ["flag1", "flag2"],
       });
 

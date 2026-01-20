@@ -22,6 +22,6 @@ export const handlers = ({
   });
 
   return {
-    "featureFlags.get": wrappedHandler,
+    "custom.featureFlags.get": wrappedHandler,
   } as const satisfies Handlers;
 };
