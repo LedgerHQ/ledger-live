@@ -103,6 +103,55 @@ permissions:
   contents: read
 
 jobs:
+  build-desktop-app-macos:
+    name: "Build macOS App"
+    runs-on: [xcode=16.2, macOS, ARM64]
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          token: ${{ steps.generate-token.outputs.token }}
+          persist-credentials: false
+
+      - name: Setup caches
+        id: caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+
+      - name: Build dependencies
+        run: pnpm build:lld:deps
+
+      - name: Build LLD app for testing
+        run: pnpm desktop build:${{ inputs.build_type || 'testing' }}
+
+      - name: Package macOS app
+        run: pnpm desktop dist:internal -- --config electron-builder-nosign.yml --mac --arm64 -c.mac.identity=null -c.afterSign= -c.afterPack= --publish never
+
+      - name: Upload macOS DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: ledger-live-desktop-macos-dmg
+          path: apps/ledger-live-desktop/dist/*.dmg
+
   e2e-tests-linux:
     name: "Ubuntu E2E"
     env:
@@ -248,6 +297,7 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           echo "status_${{ matrix.shardIndex }}=${{ steps.run-playwright.outcome }}" >> $GITHUB_OUTPUT
+
   report-to-allure:
     name: "Create Allure Report and upload it"
     runs-on: [ledger-live-medium]
