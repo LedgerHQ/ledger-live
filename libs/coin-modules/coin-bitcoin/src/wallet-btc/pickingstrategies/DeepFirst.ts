@@ -36,6 +36,12 @@ export class DeepFirst extends PickingStrategy {
         ).length,
     );
 
+    // Validate UTXOs: only keep those for which we can fetch the transaction hex (avoid selecting unfetchable UTXOs)
+    const txHexResults = await Promise.allSettled(
+      unspentUtxos.map(u => xpub.explorer.getTxHex(u.output_hash)),
+    );
+    unspentUtxos = unspentUtxos.filter((_, i) => txHexResults[i].status === "fulfilled");
+
     const safeFeePerByte = Math.max(1, Math.ceil(feePerByte));
     const outputScripts = outputs.map(o => o.script);
 
@@ -53,6 +59,7 @@ export class DeepFirst extends PickingStrategy {
         throw new NotEnoughBalance();
       }
       total = total.plus(unspentUtxos[i].value);
+
       unspentUtxoSelected.push(unspentUtxos[i]);
       i += 1;
       fee =

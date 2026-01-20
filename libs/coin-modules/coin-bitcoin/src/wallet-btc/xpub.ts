@@ -4,6 +4,7 @@ import range from "lodash/range";
 import some from "lodash/some";
 import BigNumber from "bignumber.js";
 import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 import { TX, Address, IStorage } from "./storage/types";
 import { IExplorer } from "./explorer/types";
 import { ICrypto } from "./crypto/types";
@@ -14,7 +15,35 @@ import {
   getIncrementalFeeFloorSatVb,
   scriptToAddress,
 } from "./utils";
+import {
+  computeDustAmount,
+  maxTxSizeCeil,
+  getIncrementalFeeFloorSatVb,
+  scriptToAddress,
+} from "./utils";
 import { TransactionInfo, InputInfo, OutputInfo } from "./types";
+import { Transaction } from "bitcoinjs-lib";
+
+type BuildTxParams = {
+  destAddress: string;
+  amount: BigNumber;
+  feePerByte: number;
+  changeAddress: Address;
+  utxoPickingStrategy: PickingStrategy;
+  sequence: number;
+  opReturnData?: Buffer | undefined;
+  originalTxId?: string;
+  /** For RBF: minimum total fee (sats) so replacement pays more than original (avoids "less fees than conflicting" reject) */
+  minReplacementFeeSat?: number;
+};
+
+type BuildTxSelection = {
+  inputs: InputInfo[];
+  associatedDerivations: [number, number][];
+  total: BigNumber;
+  fee: number;
+  needChangeoutput: boolean;
+};
 import { Transaction } from "bitcoinjs-lib";
 
 type BuildTxParams = {
@@ -208,6 +237,7 @@ class Xpub {
   }
 
   async buildTx(params: BuildTxParams): Promise<TransactionInfo> {
+  async buildTx(params: BuildTxParams): Promise<TransactionInfo> {
     const {
       amount,
       opReturnData,
@@ -216,6 +246,8 @@ class Xpub {
       utxoPickingStrategy,
       feePerByte,
       sequence,
+      originalTxId,
+      minReplacementFeeSat,
       originalTxId,
       minReplacementFeeSat,
     } = params;
@@ -311,10 +343,12 @@ class Xpub {
 
     if (opReturnData) {
       outputs.push({
+      outputs.push({
         script: this.crypto.toOpReturnOutputScript(opReturnData),
         value: new BigNumber(0),
         address: null,
         isChange: false,
+      });
       });
     }
 
@@ -418,7 +452,108 @@ class Xpub {
       inputs,
       associatedDerivations,
       total,
+    return outputs;
+  }
+
+  private async buildRbfSelection({
+    originalTxId,
+    outputs,
+    feePerByte,
+    minReplacementFeeSat,
+  }: Pick<BuildTxParams, "originalTxId" | "feePerByte" | "minReplacementFeeSat"> & {
+    outputs: OutputInfo[];
+  }): Promise<BuildTxSelection & { originalTxObj: Transaction }> {
+    const originalTx = await this.explorer.getTxHex(originalTxId!);
+    const originalTxObj = Transaction.fromHex(originalTx);
+
+    // Build inputs and their associated derivations from the original transaction
+    const inputsWithDerivations = await Promise.all(
+      originalTxObj.ins.map(async input => {
+        const prevTxId = Buffer.from(Uint8Array.from(input.hash)).reverse().toString("hex");
+
+        const prevTxHex = await this.explorer.getTxHex(prevTxId);
+        const prevTx = Transaction.fromHex(prevTxHex);
+
+        const prevOut = prevTx.outs[input.index];
+        if (!prevOut) {
+          throw new Error("Previous output not found");
+        }
+
+        const address = scriptToAddress(prevOut.script, this.crypto);
+
+        // Look up the derivation path for this address from storage
+        const storedTx = this.storage.getTx(address, prevTxId);
+        const derivation: [number, number] = storedTx
+          ? [storedTx.account || 0, storedTx.index || 0]
+          : [0, 0]; // Fallback if not found
+
+        const reconstructedInput: InputInfo = {
+          txHex: prevTxHex,
+          value: prevOut.value.toString(),
+          address,
+          output_hash: prevTxId,
+          output_index: input.index,
+          sequence: input.sequence,
+          block_height: null,
+        };
+        return {
+          input: reconstructedInput,
+          derivation,
+        };
+      }),
+    );
+
+    const inputs = inputsWithDerivations.map(item => item.input);
+    const associatedDerivations = inputsWithDerivations.map(item => item.derivation);
+    const total = inputs.reduce((sum, inp) => sum.plus(new BigNumber(inp.value)), new BigNumber(0));
+
+    // For RBF, fee must be at least (estimatedSize * feePerByte) AND at least minReplacementFeeSat
+    // so that total fee is strictly greater than the original (replacement can be smaller vsize)
+    const estimatedTxSize = maxTxSizeCeil(
+      inputs.length,
+      outputs.map(o => o.script),
+      true,
+      this.crypto,
+      this.derivationMode,
+    );
+    const feeFromRate = estimatedTxSize * feePerByte;
+    const fee =
+      typeof minReplacementFeeSat === "number"
+        ? Math.max(feeFromRate, minReplacementFeeSat)
+        : feeFromRate;
+
+    return {
+      inputs,
+      associatedDerivations,
+      total,
       fee,
+      needChangeoutput: true,
+      originalTxObj,
+    };
+  }
+
+  private async buildRegularSelection({
+    outputs,
+    utxoPickingStrategy,
+    feePerByte,
+    amount,
+    sequence,
+  }: Pick<BuildTxParams, "utxoPickingStrategy" | "feePerByte" | "amount" | "sequence"> & {
+    outputs: OutputInfo[];
+  }): Promise<BuildTxSelection> {
+    const txHexMap = await this.prefetchTxHexAndExcludeUnavailableUtxos(utxoPickingStrategy);
+    const result = await utxoPickingStrategy.selectUnspentUtxosToUse(this, outputs, feePerByte);
+    const unspentUtxoSelected = result.unspentUtxos;
+    const fee = result.fee;
+    const needChangeoutput = result.needChangeoutput;
+
+    const total = unspentUtxoSelected.reduce(
+      (sum, utxo) => sum.plus(new BigNumber(utxo.value)),
+      new BigNumber(0),
+    );
+    if (total.lt(amount.plus(fee))) {
+      throw new NotEnoughBalance();
+    }
       needChangeoutput: true,
       originalTxObj,
     };
@@ -467,11 +602,29 @@ class Xpub {
       sequence,
       block_height: unspentUtxo.block_height || null,
     }));
+    const successfulSelections = unspentUtxoSelected.map(utxo => ({
+      unspentUtxo: utxo,
+      txHex: txHexMap.get(utxo.output_hash)!,
+    }));
 
+    const inputs = successfulSelections.map(({ unspentUtxo, txHex }) => ({
+      txHex,
+      value: unspentUtxo.value,
+      address: unspentUtxo.address,
+      output_hash: unspentUtxo.output_hash,
+      output_index: unspentUtxo.output_index,
+      sequence,
+      block_height: unspentUtxo.block_height || null,
+    }));
+
+    const associatedDerivations = unspentUtxoSelected.map((_utxo, index) => {
     const associatedDerivations = unspentUtxoSelected.map((_utxo, index) => {
       if (!txs[index]) {
         throw new Error("Invalid index in txs[index]");
       }
+      const derivation: [number, number] = [txs[index]?.account || 0, txs[index]?.index || 0];
+      return derivation;
+    });
       const derivation: [number, number] = [txs[index]?.account || 0, txs[index]?.index || 0];
       return derivation;
     });

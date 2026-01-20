@@ -34,6 +34,20 @@ type BuildAccountTxParams = {
   pendingOperations?: Array<{ hash: string; extra?: { inputs?: string[] } }>;
 };
 
+type BuildAccountTxParams = {
+  fromAccount: Account;
+  dest: string;
+  amount: BigNumber;
+  feePerByte: number;
+  utxoPickingStrategy: PickingStrategy;
+  sequence: number;
+  opReturnData?: Buffer | undefined;
+  changeAddress?: string | undefined;
+  originalTxId?: string;
+  /** Pending operations (hash + extra.inputs) to detect conflicting txs; when set with originalTxId, min fee is max over all conflicting */
+  pendingOperations?: Array<{ hash: string; extra?: { inputs?: string[] } }>;
+};
+
 const hasExportedTxs = (value: unknown): value is { txs: TX[] } => {
   if (typeof value !== "object" || value === null) return false;
   return Array.isArray(Reflect.get(value, "txs"));
@@ -289,6 +303,38 @@ class BitcoinLikeWallet {
       params.originalTxId,
       params.pendingOperations,
     );
+
+    let minReplacementFeeSat: number | undefined;
+    if (params.originalTxId) {
+      const replaceTxId = params.originalTxId;
+      try {
+        const inputOutpoints = await getTxInputOutpoints(params.fromAccount, replaceTxId);
+        const conflictingTxIds = new Set<string>([replaceTxId]);
+        if (params.pendingOperations?.length) {
+          for (const op of params.pendingOperations) {
+            const opInputs = op.extra?.inputs;
+            if (!Array.isArray(opInputs)) continue;
+            if (opInputs.some((inp: string) => inputOutpoints.has(inp)))
+              conflictingTxIds.add(op.hash);
+          }
+        }
+        let maxMinFee = 0;
+        for (const txId of conflictingTxIds) {
+          try {
+            const minFee = await getMinReplacementFeeSat(params.fromAccount, txId);
+            const n = minFee.integerValue().toNumber();
+            if (n > maxMinFee) maxMinFee = n;
+          } catch {
+            // Ignore missing conflicting tx fee context and continue with available conflicts.
+          }
+        }
+        minReplacementFeeSat = maxMinFee > 0 ? maxMinFee : undefined;
+      } catch {
+        // Continue with best-effort replacement building.
+        // xpub.buildTx still enforces absolute fee-increase constraints from the original tx.
+        minReplacementFeeSat = undefined;
+      }
+    }
 
     const txInfo = await params.fromAccount.xpub.buildTx({
       destAddress: params.dest,

@@ -1,5 +1,6 @@
 import type { Currency, Output as WalletOutput } from "./wallet-btc";
 import wallet, { DerivationModes as WalletDerivationModes } from "./wallet-btc";
+import wallet, { DerivationModes as WalletDerivationModes } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
@@ -18,6 +19,8 @@ import { DerivationMode } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BitcoinXPub, SignerContext } from "./signer";
+
+const TWO_HOUR_MS = 2 * 60 * 60 * 1000;
 
 const TWO_HOUR_MS = 2 * 60 * 60 * 1000;
 
@@ -41,6 +44,7 @@ const toWalletNetwork = (currencyId: string): "testnet" | "mainnet" => {
 };
 
 // Map wallet-btc's Output to LL's BitcoinOutput
+export const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): BitcoinOutput => {
 export const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): BitcoinOutput => {
   return {
     hash: utxo.output_hash,
@@ -291,6 +295,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
 
     const changeAddresses: Set<string> = new Set<string>();
     const changeAddressesWithInfo = walletAccount.xpub.storage.getUniquesAddresses({
+    const changeAddressesWithInfo = walletAccount.xpub.storage.getUniquesAddresses({
       account: 1,
     });
     changeAddressesWithInfo.forEach(a => changeAddresses.add(a.address));
@@ -310,8 +315,68 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
         .filter(op => !keptOperationHashes.has(op.hash))
         .map(op => op.hash),
     );
+    const balanceOperations = removeReplaced(_operations as BtcOperation[], Date.now(), true);
+    const keptOperationHashes = new Set(balanceOperations.map(op => op.hash));
+    const removedOperationHashes = new Set(
+      (_operations as BtcOperation[])
+        .filter(op => !keptOperationHashes.has(op.hash))
+        .map(op => op.hash),
+    );
 
     const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
+    const filteredRawUtxos = rawUtxos.filter(utxo => {
+      if (utxo.block_height !== null) return true;
+      if (!utxo.rbf) return true;
+      return !removedOperationHashes.has(utxo.output_hash);
+    });
+    const utxos = filteredRawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
+    // 1) Keep operations that have the same hash as those utxos
+    const utxoHashes = new Set(utxos.map(u => u.hash));
+    const operationsOfUtxos = balanceOperations.filter(op => utxoHashes.has(op.hash));
+
+    // 2) Keep only one operation when multiple operations share the same inputs
+    const getInputsKey = (op: BtcOperation): string | null => {
+      const inputs = op.extra?.inputs;
+      if (!Array.isArray(inputs) || inputs.length === 0) return null;
+      return [...inputs].sort().join("|");
+    };
+
+    const isBetterCandidate = (candidate: BtcOperation, existing: BtcOperation): boolean => {
+      const candidateConfirmed = typeof candidate.blockHeight === "number";
+      const existingConfirmed = typeof existing.blockHeight === "number";
+      if (candidateConfirmed !== existingConfirmed) return candidateConfirmed;
+
+      const candidateHeight = candidate.blockHeight ?? -1;
+      const existingHeight = existing.blockHeight ?? -1;
+      if (candidateHeight !== existingHeight) return candidateHeight > existingHeight;
+
+      return new Date(candidate.date).getTime() > new Date(existing.date).getTime();
+    };
+
+    const bestOpByInputsKey = new Map<string, BtcOperation>();
+    for (const op of operationsOfUtxos) {
+      const key = getInputsKey(op);
+      if (!key) continue;
+      const existing = bestOpByInputsKey.get(key);
+      if (!existing || isBetterCandidate(op, existing)) {
+        bestOpByInputsKey.set(key, op);
+      }
+    }
+
+    const finalOperationsOfUtxos = operationsOfUtxos.filter(op => {
+      const key = getInputsKey(op);
+      if (!key) return true;
+      return bestOpByInputsKey.get(key)?.hash === op.hash;
+    });
+
+    // 3) Filter the original utxos to keep the ones that share a hash with the final operations
+    const finalOperationHashes = new Set(finalOperationsOfUtxos.map(op => op.hash));
+    const finalUtxos =
+      finalOperationHashes.size > 0
+        ? utxos.filter(utxo => finalOperationHashes.has(utxo.hash))
+        : utxos;
+
+    const balance = finalUtxos.reduce((total, utxo) => total.plus(utxo.value), new BigNumber(0));
     const filteredRawUtxos = rawUtxos.filter(utxo => {
       if (utxo.block_height !== null) return true;
       if (!utxo.rbf) return true;
@@ -377,6 +442,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       freshAddressPath: `${accountPath}/0/${walletAccount.xpub.freshAddressIndex}`,
       blockHeight,
       bitcoinResources: {
+        utxos: finalUtxos,
         utxos: finalUtxos,
         walletAccount,
       },

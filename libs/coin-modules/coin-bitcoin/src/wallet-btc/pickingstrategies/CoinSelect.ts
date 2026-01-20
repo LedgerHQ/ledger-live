@@ -30,7 +30,7 @@ export class CoinSelect extends PickingStrategy {
     const addresses = await xpub.getXpubAddresses();
     log("picking strategy", "Coinselect");
 
-    const unspentUtxos = flatten(
+    let unspentUtxos = flatten(
       await Promise.all(addresses.map(address => xpub.storage.getAddressUnspentUtxos(address))),
     ).filter(
       o =>

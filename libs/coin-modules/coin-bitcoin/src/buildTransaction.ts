@@ -7,12 +7,20 @@ import {
 } from "./wallet-btc";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 
+import type { Transaction, UtxoStrategy, BtcOperationExtra } from "./types";
 import type { Transaction, UtxoStrategy, BtcOperationExtra } from "./types";
 import { bitcoinPickingStrategy } from "./types";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { log } from "@ledgerhq/logs";
 import { Account } from "@ledgerhq/types-live";
+
+const isBtcOperationExtra = (extra: unknown): extra is BtcOperationExtra => {
+  if (extra === null || extra === undefined || typeof extra !== "object") return false;
+  if (!("inputs" in extra)) return true;
+  return extra.inputs === undefined || Array.isArray(extra.inputs);
+};
 
 const isBtcOperationExtra = (extra: unknown): extra is BtcOperationExtra => {
   if (extra === null || extra === undefined || typeof extra !== "object") return false;
@@ -137,6 +145,11 @@ export const buildTransaction = async (
     transaction.replaceTxId,
   );
 
+  transaction.rbf = ["bitcoin", "bitcoin_testnet", "bitcoin_regtest"].includes(
+    walletAccount.params.currency,
+  )
+    ? true
+    : false;
   const txInfo = await wallet.buildAccountTx({
     fromAccount: walletAccount,
     dest: transaction.recipient,
