@@ -74,6 +74,7 @@ import {
 } from "../NavigationHeaderCloseButton";
 import { RootDrawer } from "../RootDrawer/RootDrawer";
 import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
+import BitcoinEditTransactionNavigator from "~/families/bitcoin/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
@@ -612,6 +613,11 @@ export default function BaseNavigator() {
           name={NavigatorName.EvmEditTransaction}
           options={{ headerShown: false }}
           component={EditTransactionNavigator}
+        />
+        <Stack.Screen
+          name={NavigatorName.BitcoinEditTransaction}
+          options={{ headerShown: false }}
+          component={BitcoinEditTransactionNavigator}
         />
         <Stack.Screen
           name={NavigatorName.AnalyticsOptInPrompt}

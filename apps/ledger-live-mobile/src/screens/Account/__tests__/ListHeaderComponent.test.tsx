@@ -10,6 +10,8 @@ import { ActionButtonEvent } from "~/components/FabActions";
 import * as featureFlagsIndex from "@ledgerhq/live-common/featureFlags/index";
 import * as accountIndex from "@ledgerhq/live-common/account/index";
 import type { TFunction } from "i18next";
+import { render } from "@testing-library/react-native";
+import React from "react";
 
 /**
  * isAccountEmpty can not be spied because it is declared in multiple files
@@ -37,33 +39,53 @@ describe("Testing ListHeaderComponent Component", () => {
       mockIsAccountEmpty.mockImplementation(() => false);
     });
 
+    const getUseListHeaderComponentsResult = (currencyConfig: CurrencyConfig) => {
+      let hookResult: ReturnType<typeof useListHeaderComponents> | undefined;
+
+      const TestComponent = () => {
+        hookResult = useListHeaderComponents({
+          account: ACCOUNT,
+          currency: {} as CryptoCurrency,
+          currencyConfig,
+          countervalueAvailable: false,
+          useCounterValue: false,
+          range: "all",
+          history: {} as BalanceHistoryWithCountervalue,
+          countervalueChange: {} as ValueChange,
+          cryptoChange: {} as ValueChange,
+          counterValueCurrency: {} as CryptoCurrency,
+          onAccountPress: () => {},
+          onSwitchAccountCurrency: () => {},
+          onAccountCardLayout: (_event: LayoutChangeEvent) => {},
+          colors: {
+            background: {
+              main: "#fff",
+            },
+          } as ColorPalette,
+          secondaryActions: [
+            {
+              label: {} as React.ReactNode,
+            } as ActionButtonEvent,
+          ],
+          t: (() => "") as unknown as TFunction,
+        });
+
+        return null;
+      };
+
+      render(<TestComponent />);
+
+      if (!hookResult) {
+        throw new Error("Unable to retrieve useListHeaderComponents result");
+      }
+
+      return hookResult;
+    };
+
     it("should generate account earn header component when we do not disable delegation", () => {
-      const { listHeaderComponents } = useListHeaderComponents({
-        account: ACCOUNT,
-        currency: {} as CryptoCurrency,
-        currencyConfig: { disableDelegation: false } as unknown as CurrencyConfig,
-        countervalueAvailable: false,
-        useCounterValue: false,
-        range: "all",
-        history: {} as BalanceHistoryWithCountervalue,
-        countervalueChange: {} as ValueChange,
-        cryptoChange: {} as ValueChange,
-        counterValueCurrency: {} as CryptoCurrency,
-        onAccountPress: () => {},
-        onSwitchAccountCurrency: () => {},
-        onAccountCardLayout: (_event: LayoutChangeEvent) => {},
-        colors: {
-          background: {
-            main: "#fff",
-          },
-        } as ColorPalette,
-        secondaryActions: [
-          {
-            label: {} as React.ReactNode,
-          } as ActionButtonEvent,
-        ],
-        t: (() => "") as unknown as TFunction,
-      });
+      const { listHeaderComponents } = getUseListHeaderComponentsResult({
+        disableDelegation: false,
+      } as unknown as CurrencyConfig);
 
       expect(listHeaderComponents[7]).toBeDefined();
     });
@@ -73,63 +95,17 @@ describe("Testing ListHeaderComponent Component", () => {
         .spyOn(config, "getCurrencyConfiguration")
         .mockReturnValue({} as unknown as CurrencyConfig);
 
-      const { listHeaderComponents } = useListHeaderComponents({
-        account: ACCOUNT,
-        currency: {} as CryptoCurrency,
-        currencyConfig: {} as unknown as CurrencyConfig,
-        countervalueAvailable: false,
-        useCounterValue: false,
-        range: "all",
-        history: {} as BalanceHistoryWithCountervalue,
-        countervalueChange: {} as ValueChange,
-        cryptoChange: {} as ValueChange,
-        counterValueCurrency: {} as CryptoCurrency,
-        onAccountPress: () => {},
-        onSwitchAccountCurrency: () => {},
-        onAccountCardLayout: (_event: LayoutChangeEvent) => {},
-        colors: {
-          background: {
-            main: "#fff",
-          },
-        } as ColorPalette,
-        secondaryActions: [
-          {
-            label: {} as React.ReactNode,
-          } as ActionButtonEvent,
-        ],
-        t: (() => "") as unknown as TFunction,
-      });
+      const { listHeaderComponents } = getUseListHeaderComponentsResult(
+        {} as unknown as CurrencyConfig,
+      );
 
       expect(listHeaderComponents[7]).toBeDefined();
     });
 
     it("should not generate account earn header component when we disable delegation", () => {
-      const { listHeaderComponents } = useListHeaderComponents({
-        account: ACCOUNT,
-        currency: {} as CryptoCurrency,
-        currencyConfig: { disableDelegation: true } as unknown as CurrencyConfig,
-        countervalueAvailable: false,
-        useCounterValue: false,
-        range: "all",
-        history: {} as BalanceHistoryWithCountervalue,
-        countervalueChange: {} as ValueChange,
-        cryptoChange: {} as ValueChange,
-        counterValueCurrency: {} as CryptoCurrency,
-        onAccountPress: () => {},
-        onSwitchAccountCurrency: () => {},
-        onAccountCardLayout: (_event: LayoutChangeEvent) => {},
-        colors: {
-          background: {
-            main: "#fff",
-          },
-        } as ColorPalette,
-        secondaryActions: [
-          {
-            label: {} as React.ReactNode,
-          } as ActionButtonEvent,
-        ],
-        t: (() => "") as unknown as TFunction,
-      });
+      const { listHeaderComponents } = getUseListHeaderComponentsResult({
+        disableDelegation: true,
+      } as unknown as CurrencyConfig);
 
       expect(listHeaderComponents[7]).toBeUndefined();
     });
