@@ -133,4 +133,6 @@ setSupportedCurrencies([
   "concordium_testnet",
   "aleo",
   "aleo_testnet",
+  "unichain",
+  "unichain_sepolia",
 ]);

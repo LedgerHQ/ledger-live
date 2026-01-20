@@ -5123,6 +5123,42 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  unichain: {
+    type: "CryptoCurrency",
+    id: "unichain",
+    coinType: CoinType.ETH,
+    name: "Unichain",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "unichain",
+    color: "#f50fb4",
+    family: "evm",
+    units: ethereumUnits("ether", "ETH"),
+    ethereumLikeInfo: {
+      chainId: 130,
+    },
+    explorerViews: [blockscoutExplorerView("https://uniscan.xyz")],
+    keywords: ["unichain"],
+  },
+  unichain_sepolia: {
+    type: "CryptoCurrency",
+    id: "unichain_sepolia",
+    coinType: CoinType.ETH,
+    name: "Unichain Sepolia",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "unichain_sepolia",
+    color: "#f50fb4",
+    family: "evm",
+    units: ethereumUnits("ether", "ETH"),
+    isTestnetFor: "unichain",
+    disableCountervalue: true,
+    ethereumLikeInfo: {
+      chainId: 1301,
+    },
+    explorerViews: [blockscoutExplorerView("https://sepolia.uniscan.xyz/")],
+  },
 };
 
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
