@@ -66,6 +66,20 @@ runs:
       with:
         name: ledger-live-desktop-test-build
         path: ${{ github.workspace }}/ledger-live-desktop-test-build.zip
+    - name: Package desktop app
+      if: ${{ !inputs.skip_builds }}
+      run: |
+        pnpm desktop dist:internal -- --config electron-builder-nosign.yml -c.afterSign='lodash/noop' --publish never
+      shell: bash
+    - name: Upload packaged desktop app
+      if: ${{ !inputs.skip_builds }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ledger-live-desktop-app
+        path: |
+          apps/ledger-live-desktop/dist/*.dmg
+          apps/ledger-live-desktop/dist/*.exe
+          apps/ledger-live-desktop/dist/*.AppImage
     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}
       run: |
