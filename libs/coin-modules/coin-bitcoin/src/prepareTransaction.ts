@@ -3,6 +3,7 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import type { Transaction } from "./types";
 import { inferFeePerByte } from "./logic";
+import { buildRbfTx } from "./buildRbfTransaction";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,
@@ -16,7 +17,9 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   }
 
   const feePerByte = inferFeePerByte(transaction, networkInfo);
-
+  if (transaction.replaceTxId) {
+    return buildRbfTx(account, transaction.replaceTxId);
+  }
   if (
     transaction.networkInfo === networkInfo &&
     (feePerByte === transaction.feePerByte || feePerByte.eq(transaction.feePerByte || 0))
