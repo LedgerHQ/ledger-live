@@ -299,7 +299,7 @@ export const mapTxToOperations = (
       accountId,
       date,
       hasFailed,
-      extra: {},
+      extra: { inputs: Array.from(inputs) },
     });
   }
 

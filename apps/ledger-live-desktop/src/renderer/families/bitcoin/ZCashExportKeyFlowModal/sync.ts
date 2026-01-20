@@ -1,4 +1,4 @@
-import { ZcashAccount, ZcashPrivateInfo } from "@ledgerhq/coin-bitcoin/lib/types";
+import { ZcashAccount, ZcashPrivateInfo } from "@ledgerhq/live-common/families/bitcoin/types";
 import { updateAccountWithUpdater, UpdateAccountAction } from "~/renderer/actions/accounts";
 import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/zcash-shielded/constants";
 
