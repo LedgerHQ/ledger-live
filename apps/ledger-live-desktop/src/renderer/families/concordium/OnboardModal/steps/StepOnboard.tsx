@@ -1,10 +1,10 @@
-import React, { memo } from "react";
+import React from "react";
 import { Trans } from "react-i18next";
+import styled from "styled-components";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { AccountOnboardStatus } from "@ledgerhq/types-live";
-import styled from "styled-components";
+import { Text } from "@ledgerhq/react-ui";
 import { urls } from "~/config/urls";
-import AccountRow from "~/renderer/components/AccountsList/AccountRow";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -14,45 +14,7 @@ import Link from "~/renderer/components/Link";
 import { openURL } from "~/renderer/linking";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { StepProps } from "../types";
-import { Text } from "@ledgerhq/react-ui";
-
-const SectionAccounts = memo(
-  ({
-    accountName,
-    creatableAccount,
-  }: Pick<
-    StepProps,
-    "currency" | "accountName" | "editedNames" | "creatableAccount" | "importableAccounts"
-  >) => {
-    return (
-      <SectionAccountsStyled>
-        <Box mb={4}>
-          <Box
-            horizontal
-            ff="Inter|Bold"
-            color="palette.text.shade100"
-            fontSize={2}
-            textTransform="uppercase"
-            mb={3}
-          >
-            <Trans i18nKey="families.concordium.addAccount.identity.newAccount" />
-          </Box>
-          {creatableAccount && (
-            <AccountRow
-              account={creatableAccount}
-              accountName={accountName}
-              isDisabled={false}
-              hideAmount={true}
-              isReadonly={true}
-            />
-          )}
-        </Box>
-      </SectionAccountsStyled>
-    );
-  },
-);
-
-SectionAccounts.displayName = "SectionAccounts";
+import { SectionAccounts } from "../components/SectionAccounts";
 
 const getErrorMessage = (error: unknown) => {
   if (error instanceof UserRefusedOnDevice || error instanceof LockedDeviceError) {
@@ -74,6 +36,8 @@ export default function StepOnboard({
   walletConnectUri,
   sessionTopic,
 }: StepProps) {
+  console.log("StepOnboard()", { creatableAccount, importableAccounts, editedNames });
+
   const link = useLocalizedUrl(urls.concordium.learnMore);
 
   if (onboardingStatus === AccountOnboardStatus.INIT && !isPairing) {
@@ -231,18 +195,6 @@ const QRCodeWrapper = styled(Box).attrs(() => ({
   p: 2,
 }))`
   background: ${p => p.theme.colors.white};
-`;
-
-const SectionAccountsStyled = styled(Box)`
-  position: relative;
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
 `;
 
 const AcknowledgmentBox = styled(Box).attrs(() => ({

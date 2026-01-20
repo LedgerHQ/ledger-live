@@ -167,7 +167,7 @@ export function useScanAccounts({
       selectedIds: filteredSelectedIds,
     });
 
-  const { hasConcordiumCreatableAccounts, selectedConcordiumCreatableAccounts } =
+  const { hasConcordiumCreatableAccounts, selectedConcordiumAccounts } =
     useConcordiumCreatableAccounts({
       scannedAccounts,
       selectedIds: filteredSelectedIds,
@@ -203,7 +203,7 @@ export function useScanAccounts({
         openModal("MODAL_CONCORDIUM_ONBOARD_ACCOUNT", {
           currency,
           device,
-          selectedAccounts: selectedConcordiumCreatableAccounts,
+          selectedAccounts: selectedConcordiumAccounts,
           existingAccounts: existingAccounts,
           editedNames: {},
         }),
@@ -235,7 +235,7 @@ export function useScanAccounts({
     hasCantonCreatableAccounts,
     selectedCantonCreatableAccounts,
     hasConcordiumCreatableAccounts,
-    selectedConcordiumCreatableAccounts,
+    selectedConcordiumAccounts,
     filteredSelectedIds,
     scannedAccounts,
   ]);

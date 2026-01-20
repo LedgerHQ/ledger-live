@@ -411,7 +411,6 @@ export const StepImportFooter = ({
   const hasConcordiumCreatableAccounts = scannedAccounts.some(
     a =>
       checkedAccountsIds.includes(a.id) &&
-      a.currency?.family === "concordium" &&
       isConcordiumAccount(a) &&
       !a.concordiumResources.isOnboarded,
   );

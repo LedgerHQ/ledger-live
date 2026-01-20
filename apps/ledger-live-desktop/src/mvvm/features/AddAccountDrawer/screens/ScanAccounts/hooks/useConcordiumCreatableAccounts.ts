@@ -9,42 +9,41 @@ export interface UseConcordiumCreatableAccountsProps {
 
 export interface UseConcordiumCreatableAccountsReturn {
   hasConcordiumCreatableAccounts: boolean;
-  concordiumCreatableAccounts: Account[];
-  selectedConcordiumCreatableAccounts: Account[];
+  selectedConcordiumAccounts: Account[];
 }
 
 /**
  * Hook to check if there are any Concordium creatable accounts among the scanned accounts
- * and filter them based on selected IDs.
+ * and return all selected Concordium accounts (both creatable and importable).
  *
  * @param scannedAccounts - Array of all scanned accounts
  * @param selectedIds - Array of selected account IDs
- * @returns Object containing Concordium creatable accounts information
+ * @returns Object containing whether there are creatable accounts and all selected Concordium accounts
  */
 export function useConcordiumCreatableAccounts({
   scannedAccounts,
   selectedIds,
 }: UseConcordiumCreatableAccountsProps): UseConcordiumCreatableAccountsReturn {
-  const concordiumCreatableAccounts = useMemo(() => {
-    return scannedAccounts.filter(
-      account =>
-        account.currency?.family === "concordium" &&
-        isConcordiumAccount(account) &&
-        !account.concordiumResources.isOnboarded,
-    );
-  }, [scannedAccounts]);
+  return useMemo(() => {
+    const selectedIdsSet = new Set(selectedIds);
+    const selectedConcordiumAccounts: Account[] = [];
+    let hasCreatableAccounts = false;
 
-  const selectedConcordiumCreatableAccounts = useMemo(() => {
-    return concordiumCreatableAccounts.filter(account => selectedIds.includes(account.id));
-  }, [concordiumCreatableAccounts, selectedIds]);
+    for (const account of scannedAccounts) {
+      if (!isConcordiumAccount(account)) continue;
 
-  const hasConcordiumCreatableAccounts = useMemo(() => {
-    return selectedConcordiumCreatableAccounts.length > 0;
-  }, [selectedConcordiumCreatableAccounts]);
+      if (!selectedIdsSet.has(account.id)) continue;
 
-  return {
-    hasConcordiumCreatableAccounts,
-    concordiumCreatableAccounts,
-    selectedConcordiumCreatableAccounts,
-  };
+      selectedConcordiumAccounts.push(account);
+
+      if (account.concordiumResources.isOnboarded) continue;
+
+      hasCreatableAccounts = true;
+    }
+
+    return {
+      hasConcordiumCreatableAccounts: hasCreatableAccounts,
+      selectedConcordiumAccounts,
+    };
+  }, [scannedAccounts, selectedIds]);
 }

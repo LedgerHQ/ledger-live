@@ -79,6 +79,7 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
       blockHeight: operations[0]?.blockHeight ?? 0,
       concordiumResources: fillConcordiumResources(initialAccount?.concordiumResources, {
         publicKey,
+        isOnboarded: true,
       }),
       derivationMode,
       derivationPath,

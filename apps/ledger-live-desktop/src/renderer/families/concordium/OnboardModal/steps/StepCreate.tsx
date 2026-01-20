@@ -1,10 +1,9 @@
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
-import { AccountOnboardStatus } from "@ledgerhq/types-live";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { isAxiosError } from "axios";
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import AccountRow from "~/renderer/components/AccountsList/AccountRow";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { AccountOnboardStatus } from "@ledgerhq/types-live";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -13,45 +12,8 @@ import Spinner from "~/renderer/components/Spinner";
 import Text from "~/renderer/components/Text";
 import useInterval from "~/renderer/hooks/useInterval";
 import { TransactionConfirm } from "../components/TransactionConfirm";
-import { StepId, StepProps } from "../types";
-
-const SectionAccounts = memo(
-  ({
-    accountName,
-    creatableAccount,
-  }: Pick<
-    StepProps,
-    "currency" | "accountName" | "editedNames" | "creatableAccount" | "importableAccounts"
-  >) => {
-    return (
-      <SectionAccountsStyled>
-        <Box mb={4}>
-          <Box
-            horizontal
-            ff="Inter|Bold"
-            color="palette.text.shade100"
-            fontSize={2}
-            textTransform="uppercase"
-            mb={3}
-          >
-            <Trans i18nKey="families.concordium.addAccount.identity.newAccount" />
-          </Box>
-          {creatableAccount && (
-            <AccountRow
-              account={creatableAccount}
-              accountName={accountName}
-              isDisabled={false}
-              hideAmount={true}
-              isReadonly={true}
-            />
-          )}
-        </Box>
-      </SectionAccountsStyled>
-    );
-  },
-);
-
-SectionAccounts.displayName = "SectionAccounts";
+import { SectionAccounts } from "../components/SectionAccounts";
+import { StepProps } from "../types";
 
 const getStatusMessage = (status?: AccountOnboardStatus): string => {
   switch (status) {
@@ -213,16 +175,17 @@ export const StepCreateFooter = ({
   isProcessing,
   onboardingStatus,
   onCreateAccount,
-  transitionTo,
+  onAddAccounts,
 }: StepProps) => {
   const renderActionButton = () => {
     switch (onboardingStatus) {
       case AccountOnboardStatus.SUCCESS:
         return (
-          <Button primary disabled={isProcessing} onClick={() => transitionTo(StepId.FINISH)}>
+          <Button primary disabled={isProcessing} onClick={onAddAccounts}>
             <Trans i18nKey="common.continue" />
           </Button>
         );
+
       case AccountOnboardStatus.ERROR:
         return (
           <Button primary disabled={isProcessing} onClick={onCreateAccount}>
@@ -252,18 +215,6 @@ const LoadingRow = styled(Box).attrs(() => ({
 }))`
   height: 48px;
   border: 1px dashed ${p => p.theme.colors.neutral.c60};
-`;
-
-const SectionAccountsStyled = styled(Box)`
-  position: relative;
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
 `;
 
 const ConfirmationCodeSection = styled(Box).attrs(() => ({

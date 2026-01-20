@@ -3,37 +3,51 @@ import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { CurrencyCircleIcon } from "~/renderer/components/CurrencyBadge";
+import { SectionAccounts } from "../components/SectionAccounts";
 import { StepProps } from "../types";
 
-const StepFinish = ({ t, currency, creatableAccount, importableAccounts }: StepProps) => {
+const StepFinish = ({
+  t,
+  accountName,
+  editedNames,
+  currency,
+  creatableAccount,
+  importableAccounts,
+}: StepProps) => {
   const accounts = [...importableAccounts, creatableAccount];
 
   return (
-    <Box alignItems="center" py={6} role="status" aria-live="polite">
-      <CurrencyCircleIcon
+    <Box>
+      <SectionAccounts
         currency={currency}
-        size={50}
-        showCheckmark
-        aria-label={`${currency.name} account created successfully`}
+        accountName={accountName}
+        editedNames={editedNames}
+        creatableAccount={creatableAccount}
+        importableAccounts={importableAccounts}
+        showImportableAccounts
       />
-      <Title>{t("addAccounts.success", { count: accounts.length })}</Title>
-      <Text>
-        {t("addAccounts.successDescription", {
-          count: accounts.length,
-        })}
-      </Text>
+
+      <Box alignItems="center" py={6} role="status" aria-live="polite">
+        <CurrencyCircleIcon
+          currency={currency}
+          size={50}
+          showCheckmark
+          aria-label={`${currency.name} account created successfully`}
+        />
+        <Title>{t("addAccounts.success", { count: accounts.length })}</Title>
+      </Box>
     </Box>
   );
 };
 
-export const StepFinishFooter = ({ t, onAddAccounts }: StepProps) => {
+export const StepFinishFooter = ({ t, onComplete }: StepProps) => {
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" grow>
       <Button
         event="Page AddAccounts Step 2 Close"
         data-testid="add-accounts-finish-close-button"
         primary
-        onClick={onAddAccounts}
+        onClick={onComplete}
         aria-label="Complete Concordium account setup"
       >
         {t("common.done")}

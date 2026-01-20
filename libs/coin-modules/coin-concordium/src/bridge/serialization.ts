@@ -7,7 +7,7 @@ import {
 } from "../types";
 
 export function isConcordiumAccount(account: Account): account is ConcordiumAccount {
-  return "concordiumResources" in account;
+  return account.currency?.family === "concordium" && "concordiumResources" in account;
 }
 
 function toResourcesRaw(r: ConcordiumResources): ConcordiumResourcesRaw {

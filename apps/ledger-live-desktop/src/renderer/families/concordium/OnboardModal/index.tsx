@@ -347,8 +347,7 @@ class OnboardModal extends PureComponent<Props, State> {
   };
 
   handleAddAccounts = () => {
-    const { addAccountsAction, closeModal, selectedAccounts, existingAccounts, editedNames } =
-      this.props;
+    const { addAccountsAction, selectedAccounts, existingAccounts, editedNames } = this.props;
     const { onboardingResult } = this.state;
 
     const { accounts, renamings } = prepareAccountsForAdding({
@@ -364,6 +363,14 @@ class OnboardModal extends PureComponent<Props, State> {
       renamings,
       existingAccounts,
     });
+
+    this.setState({
+      stepId: StepId.FINISH,
+    });
+  };
+
+  handleComplete = () => {
+    const { closeModal } = this.props;
 
     closeModal("MODAL_CONCORDIUM_ONBOARD_ACCOUNT");
   };
@@ -503,6 +510,7 @@ class OnboardModal extends PureComponent<Props, State> {
       onboardingResult,
       onboardingStatus,
       onCancel: () => closeModal("MODAL_CONCORDIUM_ONBOARD_ACCOUNT"),
+      onComplete: this.handleComplete,
       onCreateAccount: this.handleCreateAccount,
       onPair: this.handlePair,
       onResendCreateAccount: this.handleCreateAccount,

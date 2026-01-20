@@ -28,6 +28,7 @@ export type StepProps = {
   onboardingResult: OnboardingResult | undefined;
   onboardingStatus: AccountOnboardStatus;
   onCancel: () => void;
+  onComplete: () => void;
   onCreateAccount: () => void;
   onPair: () => void;
   onResendCreateAccount: () => void;
