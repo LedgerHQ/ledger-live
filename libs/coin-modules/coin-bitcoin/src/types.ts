@@ -148,6 +148,7 @@ export type Transaction = TransactionCommon & {
   changeAddress?: string | undefined;
   psbt?: string;
   finalizePsbt?: boolean;
+  replaceTxId?: string | undefined;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -158,6 +159,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   networkInfo: NetworkInfoRaw | null | undefined;
   opReturnData?: Buffer | undefined;
   changeAddress?: string | undefined;
+  replaceTxId?: string | undefined;
 };
 
 export type TransactionStatus = TransactionStatusCommon & {
@@ -216,3 +218,5 @@ export type ZcashPrivateInfoRaw = {
     type: "sapling" | "orchard";
   }[];
 };
+// Possible types of "replace by fee" (aka "edit transaction") operations:
+export type EditType = "cancel" | "speedup";

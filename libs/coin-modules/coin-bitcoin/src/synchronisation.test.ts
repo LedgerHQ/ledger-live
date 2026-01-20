@@ -37,13 +37,13 @@ describe("removeReplaced", () => {
     expect(result).toEqual([confirmedTx]); // Unconfirmed tx should be removed
   });
 
-  it("should replace an unconfirmed transaction with a newer unconfirmed transaction", () => {
+  it("should remove all unconfirmed conflicts once both are older than two hours", () => {
     const oldUnconfirmedTx: BtcOperation = {
       ...baseTx,
       id: "oldUnconfirmed",
       hash: "tx1",
       blockHeight: null,
-      date: new Date("2024-01-01"),
+      date: new Date("2024-01-02T00:00:00Z"),
       extra: { inputs: ["input1"] },
     };
 
@@ -52,12 +52,41 @@ describe("removeReplaced", () => {
       id: "newUnconfirmed",
       hash: "tx2",
       blockHeight: null,
-      date: new Date("2024-01-02"), // Newer date
+      date: new Date("2024-01-02T01:00:00Z"), // Newer date
       extra: { inputs: ["input1"] },
     };
 
-    const result = removeReplaced([oldUnconfirmedTx, newUnconfirmedTx]);
-    expect(result).toEqual([newUnconfirmedTx]); // Older unconfirmed tx should be removed
+    const result = removeReplaced(
+      [oldUnconfirmedTx, newUnconfirmedTx],
+      Date.parse("2024-01-02T04:00:00Z"),
+    );
+    expect(result).toEqual([]); // Both are older than the 2h pending horizon
+  });
+
+  it("should replace old unconfirmed transaction after two hours", () => {
+    const oldUnconfirmedTx: BtcOperation = {
+      ...baseTx,
+      id: "oldUnconfirmed",
+      hash: "tx1",
+      blockHeight: null,
+      date: new Date("2024-01-02T00:00:00Z"),
+      extra: { inputs: ["input1"] },
+    };
+
+    const newUnconfirmedTx: BtcOperation = {
+      ...baseTx,
+      id: "newUnconfirmed",
+      hash: "tx2",
+      blockHeight: null,
+      date: new Date("2024-01-02T01:00:00Z"), // Newer date
+      extra: { inputs: ["input1"] },
+    };
+
+    const result = removeReplaced(
+      [oldUnconfirmedTx, newUnconfirmedTx],
+      Date.parse("2024-01-02T03:00:00Z"),
+    );
+    expect(result).toEqual([newUnconfirmedTx]);
   });
 
   it("should replace transactions based on block height", () => {
@@ -108,13 +137,13 @@ describe("removeReplaced", () => {
     // Both should remain, order should be preserved
   });
 
-  it("should handle multiple inputs correctly", () => {
+  it("should remove multiple-input unconfirmed conflicts once stale", () => {
     const tx1: BtcOperation = {
       ...baseTx,
       id: "tx1",
       hash: "tx1",
       blockHeight: null,
-      date: new Date("2024-01-01"),
+      date: new Date("2024-01-02T00:00:00Z"),
       extra: { inputs: ["input1", "input2"] },
     };
 
@@ -123,12 +152,12 @@ describe("removeReplaced", () => {
       id: "tx2",
       hash: "tx2",
       blockHeight: null,
-      date: new Date("2024-01-02"),
+      date: new Date("2024-01-02T01:00:00Z"),
       extra: { inputs: ["input1", "input2"] },
     };
 
-    const result = removeReplaced([tx1, tx2]);
-    expect(result).toEqual([tx2]); // tx1 should be removed because tx2 is newer
+    const result = removeReplaced([tx1, tx2], Date.parse("2024-01-02T02:00:00Z"));
+    expect(result).toEqual([tx1, tx2]);
   });
 
   it("should keep multiple unrelated transactions", () => {
@@ -269,8 +298,8 @@ describe("removeReplaced", () => {
     };
 
     const result = removeReplaced([confirmedTx, unconfirmedTx]);
-    expect(result).toContain(confirmedTx);
-    expect(result).toContain(unconfirmedTx); // ✅ Confirmed tx should not be replaced
+    expect(result).toContain(confirmedTx); // ✅ Confirmed tx should not be replaced
+    expect(result).not.toContain(unconfirmedTx); // Unconfirmed tx should be replaced
   });
 
   it("should keep both transactions if they have the same block height and date but different hashes", () => {
@@ -351,6 +380,7 @@ describe("removeReplaced", () => {
     const result = removeReplaced([tx1, tx2, tx3, tx4]);
     expect(result).toEqual([tx2, tx3, tx4]); // ✅ tx1 is removed, but order remains
   });
+
   it("should retain only the most confirmed+recent tx among several using same input", () => {
     const tx1 = {
       ...baseTx,

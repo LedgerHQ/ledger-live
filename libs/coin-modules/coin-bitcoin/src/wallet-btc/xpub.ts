@@ -3,12 +3,40 @@ import maxBy from "lodash/maxBy";
 import range from "lodash/range";
 import some from "lodash/some";
 import BigNumber from "bignumber.js";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 import { TX, Address, IStorage } from "./storage/types";
 import { IExplorer } from "./explorer/types";
 import { ICrypto } from "./crypto/types";
 import { PickingStrategy } from "./pickingstrategies/types";
-import { computeDustAmount, maxTxSizeCeil } from "./utils";
+import {
+  computeDustAmount,
+  maxTxSizeCeil,
+  getIncrementalFeeFloorSatVb,
+  scriptToAddress,
+} from "./utils";
 import { TransactionInfo, InputInfo, OutputInfo } from "./types";
+import { Transaction } from "bitcoinjs-lib";
+
+type BuildTxParams = {
+  destAddress: string;
+  amount: BigNumber;
+  feePerByte: number;
+  changeAddress: Address;
+  utxoPickingStrategy: PickingStrategy;
+  sequence: number;
+  opReturnData?: Buffer | undefined;
+  originalTxId?: string;
+  /** For RBF: minimum total fee (sats) so replacement pays more than original (avoids "less fees than conflicting" reject) */
+  minReplacementFeeSat?: number;
+};
+
+type BuildTxSelection = {
+  inputs: InputInfo[];
+  associatedDerivations: [number, number][];
+  total: BigNumber;
+  fee: number;
+  needChangeoutput: boolean;
+};
 
 // names inside this class and discovery logic respect BIP32 standard
 class Xpub {
@@ -179,17 +207,7 @@ class Xpub {
     return address;
   }
 
-  async buildTx(params: {
-    destAddress: string;
-    amount: BigNumber;
-    feePerByte: number;
-    changeAddress: Address;
-    utxoPickingStrategy: PickingStrategy;
-    sequence: number;
-    opReturnData?: Buffer | undefined;
-  }): Promise<TransactionInfo> {
-    const outputs: OutputInfo[] = [];
-
+  async buildTx(params: BuildTxParams): Promise<TransactionInfo> {
     const {
       amount,
       opReturnData,
@@ -198,17 +216,98 @@ class Xpub {
       utxoPickingStrategy,
       feePerByte,
       sequence,
+      originalTxId,
+      minReplacementFeeSat,
     } = params;
 
+    const outputs = this.buildOutputs({ amount, opReturnData, destAddress });
+
+    let txSelection: BuildTxSelection;
+    let originalTxObj: Transaction | null = null;
+    if (originalTxId) {
+      try {
+        const rbfSelection = await this.buildRbfSelection({
+          originalTxId,
+          outputs,
+          feePerByte,
+          ...(minReplacementFeeSat !== undefined ? { minReplacementFeeSat } : {}),
+        });
+        txSelection = rbfSelection;
+        originalTxObj = rbfSelection.originalTxObj;
+      } catch (error) {
+        throw new Error("Failed to build RBF transaction: " + error);
+      }
+    } else {
+      txSelection = await this.buildRegularSelection({
+        outputs,
+        utxoPickingStrategy,
+        feePerByte,
+        amount,
+        sequence,
+      });
+    }
+
+    const { inputs, associatedDerivations, total, fee, needChangeoutput } = txSelection;
+
+    const txSize = maxTxSizeCeil(
+      inputs.length,
+      outputs.map(o => o.script),
+      true,
+      this.crypto,
+      this.derivationMode,
+    );
+
+    const dustLimit = computeDustAmount(this.crypto, txSize);
+
+    // Abandon the change output if change output amount is less than dust amount
+    if (needChangeoutput && total.minus(amount).minus(fee).gt(dustLimit)) {
+      outputs.push({
+        script: this.crypto.toOutputScript(changeAddress.address),
+        value: total.minus(amount).minus(fee),
+        address: changeAddress.address,
+        isChange: true,
+      });
+    }
+
+    const outputsValue: BigNumber = outputs.reduce((cur, o) => cur.plus(o.value), new BigNumber(0));
+    // For RBF transactions, validate that the absolute fee increase meets the minimum requirements
+    if (originalTxId && originalTxObj) {
+      try {
+        await this.enforceRbfAbsoluteFeeIncrease({
+          originalTxObj,
+          total,
+          outputs,
+          outputsValue,
+          dustLimit,
+        });
+      } catch (error) {
+        throw new Error("Failed to build RBF transaction: " + error);
+      }
+    }
+    const result = {
+      inputs,
+      associatedDerivations,
+      outputs,
+      fee: total.minus(outputs.reduce((cur, o) => cur.plus(o.value), new BigNumber(0))).toNumber(),
+      changeAddress: changeAddress,
+    };
+    return result;
+  }
+
+  private buildOutputs({
+    amount,
+    opReturnData,
+    destAddress,
+  }: Pick<BuildTxParams, "amount" | "opReturnData" | "destAddress">): OutputInfo[] {
+    const outputs: OutputInfo[] = [];
+
     if (opReturnData) {
-      const opReturnOutput: OutputInfo = {
+      outputs.push({
         script: this.crypto.toOpReturnOutputScript(opReturnData),
         value: new BigNumber(0),
         address: null,
         isChange: false,
-      };
-
-      outputs.push(opReturnOutput);
+      });
     }
 
     // outputs splitting
@@ -237,17 +336,108 @@ class Xpub {
       outputs.push(desiredOutputLeftToFit);
     }
 
-    // now we select only the output needed to cover the amount + fee
-    const {
-      totalValue: total,
-      unspentUtxos: unspentUtxoSelected,
-      fee,
-      needChangeoutput,
-    } = await utxoPickingStrategy.selectUnspentUtxosToUse(this, outputs, feePerByte);
+    return outputs;
+  }
 
-    const txHexs = await Promise.all(
-      unspentUtxoSelected.map(unspentUtxo => this.explorer.getTxHex(unspentUtxo.output_hash)),
+  private async buildRbfSelection({
+    originalTxId,
+    outputs,
+    feePerByte,
+    minReplacementFeeSat,
+  }: Pick<BuildTxParams, "originalTxId" | "feePerByte" | "minReplacementFeeSat"> & {
+    outputs: OutputInfo[];
+  }): Promise<BuildTxSelection & { originalTxObj: Transaction }> {
+    const originalTx = await this.explorer.getTxHex(originalTxId!);
+    const originalTxObj = Transaction.fromHex(originalTx);
+
+    // Build inputs and their associated derivations from the original transaction
+    const inputsWithDerivations = await Promise.all(
+      originalTxObj.ins.map(async input => {
+        const prevTxId = Buffer.from(Uint8Array.from(input.hash)).reverse().toString("hex");
+
+        const prevTxHex = await this.explorer.getTxHex(prevTxId);
+        const prevTx = Transaction.fromHex(prevTxHex);
+
+        const prevOut = prevTx.outs[input.index];
+        if (!prevOut) {
+          throw new Error("Previous output not found");
+        }
+
+        const address = scriptToAddress(prevOut.script, this.crypto);
+
+        // Look up the derivation path for this address from storage
+        const storedTx = this.storage.getTx(address, prevTxId);
+        const derivation: [number, number] = storedTx
+          ? [storedTx.account || 0, storedTx.index || 0]
+          : [0, 0]; // Fallback if not found
+
+        const reconstructedInput: InputInfo = {
+          txHex: prevTxHex,
+          value: prevOut.value.toString(),
+          address,
+          output_hash: prevTxId,
+          output_index: input.index,
+          sequence: input.sequence,
+          block_height: null,
+        };
+        return {
+          input: reconstructedInput,
+          derivation,
+        };
+      }),
     );
+
+    const inputs = inputsWithDerivations.map(item => item.input);
+    const associatedDerivations = inputsWithDerivations.map(item => item.derivation);
+    const total = inputs.reduce((sum, inp) => sum.plus(new BigNumber(inp.value)), new BigNumber(0));
+
+    // For RBF, fee must be at least (estimatedSize * feePerByte) AND at least minReplacementFeeSat
+    // so that total fee is strictly greater than the original (replacement can be smaller vsize)
+    const estimatedTxSize = maxTxSizeCeil(
+      inputs.length,
+      outputs.map(o => o.script),
+      true,
+      this.crypto,
+      this.derivationMode,
+    );
+    const feeFromRate = estimatedTxSize * feePerByte;
+    const fee =
+      typeof minReplacementFeeSat === "number"
+        ? Math.max(feeFromRate, minReplacementFeeSat)
+        : feeFromRate;
+
+    return {
+      inputs,
+      associatedDerivations,
+      total,
+      fee,
+      needChangeoutput: true,
+      originalTxObj,
+    };
+  }
+
+  private async buildRegularSelection({
+    outputs,
+    utxoPickingStrategy,
+    feePerByte,
+    amount,
+    sequence,
+  }: Pick<BuildTxParams, "utxoPickingStrategy" | "feePerByte" | "amount" | "sequence"> & {
+    outputs: OutputInfo[];
+  }): Promise<BuildTxSelection> {
+    const txHexMap = await this.prefetchTxHexAndExcludeUnavailableUtxos(utxoPickingStrategy);
+    const result = await utxoPickingStrategy.selectUnspentUtxosToUse(this, outputs, feePerByte);
+    const unspentUtxoSelected = result.unspentUtxos;
+    const fee = result.fee;
+    const needChangeoutput = result.needChangeoutput;
+
+    const total = unspentUtxoSelected.reduce(
+      (sum, utxo) => sum.plus(new BigNumber(utxo.value)),
+      new BigNumber(0),
+    );
+    if (total.lt(amount.plus(fee))) {
+      throw new NotEnoughBalance();
+    }
 
     const txs = await Promise.all(
       unspentUtxoSelected.map(unspentUtxo =>
@@ -255,54 +445,134 @@ class Xpub {
       ),
     );
 
-    const inputs: InputInfo[] = unspentUtxoSelected.map((utxo, index) => {
-      return {
-        txHex: txHexs[index],
-        value: utxo.value,
-        address: utxo.address,
-        output_hash: utxo.output_hash,
-        output_index: utxo.output_index,
-        sequence,
-        block_height: utxo.block_height || null,
-      };
-    });
+    const successfulSelections = unspentUtxoSelected.map(utxo => ({
+      unspentUtxo: utxo,
+      txHex: txHexMap.get(utxo.output_hash)!,
+    }));
 
-    const associatedDerivations: [number, number][] = unspentUtxoSelected.map((_utxo, index) => {
+    const inputs = successfulSelections.map(({ unspentUtxo, txHex }) => ({
+      txHex,
+      value: unspentUtxo.value,
+      address: unspentUtxo.address,
+      output_hash: unspentUtxo.output_hash,
+      output_index: unspentUtxo.output_index,
+      sequence,
+      block_height: unspentUtxo.block_height || null,
+    }));
+
+    const associatedDerivations = unspentUtxoSelected.map((_utxo, index) => {
       if (!txs[index]) {
         throw new Error("Invalid index in txs[index]");
       }
-      return [txs[index]?.account || 0, txs[index]?.index || 0];
+      const derivation: [number, number] = [txs[index]?.account || 0, txs[index]?.index || 0];
+      return derivation;
     });
-
-    const txSize = maxTxSizeCeil(
-      unspentUtxoSelected.length,
-      outputs.map(o => o.script),
-      true,
-      this.crypto,
-      this.derivationMode,
-    );
-
-    const dustLimit = computeDustAmount(this.crypto, txSize);
-
-    // Abandon the change output if change output amount is less than dust amount
-    if (needChangeoutput && total.minus(amount).minus(fee).gt(dustLimit)) {
-      outputs.push({
-        script: this.crypto.toOutputScript(changeAddress.address),
-        value: total.minus(amount).minus(fee),
-        address: changeAddress.address,
-        isChange: true,
-      });
-    }
-
-    const outputsValue: BigNumber = outputs.reduce((cur, o) => cur.plus(o.value), new BigNumber(0));
 
     return {
       inputs,
       associatedDerivations,
-      outputs,
-      fee: total.minus(outputsValue).toNumber(),
-      changeAddress: changeAddress,
+      total,
+      fee,
+      needChangeoutput,
     };
+  }
+
+  private async prefetchTxHexAndExcludeUnavailableUtxos(
+    utxoPickingStrategy: PickingStrategy,
+  ): Promise<Map<string, string>> {
+    // Pre-fetch txHex for all unspent UTXOs upfront (deduplicated by hash)
+    // so the picking strategy only sees UTXOs we can actually use.
+    const addresses = await this.getXpubAddresses();
+    const allUnspentUtxos = addresses.flatMap(
+      address => this.storage.getAddressUnspentUtxos(address) || [],
+    );
+
+    const uniqueHashes = [...new Set(allUnspentUtxos.map(u => u.output_hash))];
+    const txHexResults = await Promise.allSettled(
+      uniqueHashes.map(hash => this.explorer.getTxHex(hash)),
+    );
+
+    const txHexMap = new Map<string, string>();
+    uniqueHashes.forEach((hash, idx) => {
+      const result = txHexResults[idx];
+      if (result.status === "fulfilled") {
+        txHexMap.set(hash, result.value);
+      }
+    });
+
+    // Exclude UTXOs whose txHex couldn't be fetched (e.g. replaced pending txs)
+    allUnspentUtxos.forEach(utxo => {
+      if (!txHexMap.has(utxo.output_hash)) {
+        const alreadyExcluded = utxoPickingStrategy.excludedUTXOs.some(
+          excluded =>
+            excluded.hash === utxo.output_hash && excluded.outputIndex === utxo.output_index,
+        );
+        if (!alreadyExcluded) {
+          utxoPickingStrategy.excludedUTXOs.push({
+            hash: utxo.output_hash,
+            outputIndex: utxo.output_index,
+          });
+        }
+      }
+    });
+    return txHexMap;
+  }
+
+  private async enforceRbfAbsoluteFeeIncrease({
+    originalTxObj,
+    total,
+    outputs,
+    outputsValue,
+    dustLimit,
+  }: {
+    originalTxObj: Transaction;
+    total: BigNumber;
+    outputs: OutputInfo[];
+    outputsValue: BigNumber;
+    dustLimit: number;
+  }): Promise<void> {
+    // Calculate original transaction's fee
+    const originalInputValues = await Promise.all(
+      originalTxObj.ins.map(async input => {
+        const txid = Buffer.from(Uint8Array.from(input.hash)).reverse().toString("hex");
+        const prevTxHex = await this.explorer.getTxHex(txid);
+        const prevTx = Transaction.fromHex(prevTxHex);
+        return prevTx.outs[input.index].value;
+      }),
+    );
+    const originalTotalInput = originalInputValues.reduce((a, b) => a + b, 0);
+    const originalTotalOutput = originalTxObj.outs.reduce((a, o) => a + o.value, 0);
+    const originalFee = originalTotalInput - originalTotalOutput;
+
+    const incrementalFeeRateSatVb = await getIncrementalFeeFloorSatVb(this.explorer);
+    const originalVsize = originalTxObj.virtualSize();
+    const minAbsoluteFeeIncrease = incrementalFeeRateSatVb
+      .times(originalVsize)
+      .integerValue(BigNumber.ROUND_CEIL)
+      .toNumber();
+
+    const actualFee = total.minus(outputsValue).toNumber();
+    const actualFeeIncrease = actualFee - originalFee;
+    if (actualFeeIncrease >= minAbsoluteFeeIncrease) {
+      return;
+    }
+
+    // We need to increase the fee by reducing the change output
+    const additionalFeeNeeded = minAbsoluteFeeIncrease - actualFeeIncrease;
+    const changeOutput = outputs.find(o => o.isChange);
+    if (!changeOutput) {
+      throw new Error(
+        `RBF requires an additional ${additionalFeeNeeded} sats fee increase but there is no change output to reduce (e.g. send-max). Cannot build a valid replacement.`,
+      );
+    }
+
+    const newChangeValue = changeOutput.value.minus(additionalFeeNeeded);
+    if (newChangeValue.lt(dustLimit)) {
+      const changeIndex = outputs.indexOf(changeOutput);
+      outputs.splice(changeIndex, 1);
+    } else {
+      changeOutput.value = newChangeValue;
+    }
   }
 
   async broadcastTx(

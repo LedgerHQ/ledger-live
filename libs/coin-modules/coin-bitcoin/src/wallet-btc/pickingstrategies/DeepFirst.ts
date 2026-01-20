@@ -27,7 +27,6 @@ export class DeepFirst extends PickingStrategy {
     // from all addresses of the account
     const addresses = await xpub.getXpubAddresses();
     log("picking strategy", "Deepfirst");
-
     let unspentUtxos = flatten(
       await Promise.all(addresses.map(address => xpub.storage.getAddressUnspentUtxos(address))),
     ).filter(
@@ -41,39 +40,29 @@ export class DeepFirst extends PickingStrategy {
     const outputScripts = outputs.map(o => o.script);
 
     unspentUtxos = sortBy(unspentUtxos, "block_height");
-    // https://metamug.com/article/security/bitcoin-transaction-fee-satoshi-per-byte.html
-    const baseVNoInput = utils.maxTxVBytesCeil(
-      0,
-      outputScripts,
-      false,
-      this.crypto,
-      this.derivationMode,
-    );
-
-    let fee = baseVNoInput * safeFeePerByte;
-    const emptyTxV = utils.maxTxVBytesCeil(0, [], false, this.crypto, this.derivationMode);
-    const perInputV =
-      utils.maxTxVBytesCeil(1, [], false, this.crypto, this.derivationMode) - emptyTxV;
-    const changeDeltaV =
-      utils.maxTxVBytesCeil(0, [], true, this.crypto, this.derivationMode) - emptyTxV;
 
     let total = new BigNumber(0);
     const unspentUtxoSelected: Output[] = [];
-
     const amount = outputs.reduce((sum, output) => sum.plus(output.value), new BigNumber(0));
     let i = 0;
+    let fee =
+      safeFeePerByte *
+      utils.maxTxVBytesCeil(0, outputScripts, false, this.crypto, this.derivationMode);
     while (total.lt(amount.plus(fee))) {
       if (!unspentUtxos[i]) {
         throw new NotEnoughBalance();
       }
       total = total.plus(unspentUtxos[i].value);
       unspentUtxoSelected.push(unspentUtxos[i]);
-      fee += perInputV * safeFeePerByte;
       i += 1;
+      fee =
+        safeFeePerByte *
+        utils.maxTxVBytesCeil(i, outputScripts, false, this.crypto, this.derivationMode);
     }
-
-    if (total.minus(amount.plus(fee)).lt(changeDeltaV * safeFeePerByte)) {
-      // not enough fund to make a change output
+    const feeWithChange =
+      safeFeePerByte *
+      utils.maxTxVBytesCeil(i, outputScripts, true, this.crypto, this.derivationMode);
+    if (total.minus(amount).minus(feeWithChange).lt(0)) {
       return {
         totalValue: total,
         unspentUtxos: unspentUtxoSelected,
@@ -81,11 +70,10 @@ export class DeepFirst extends PickingStrategy {
         needChangeoutput: false,
       };
     }
-    fee += changeDeltaV * safeFeePerByte; // add change output cost
     return {
       totalValue: total,
       unspentUtxos: unspentUtxoSelected,
-      fee: Math.ceil(fee),
+      fee: Math.ceil(feeWithChange),
       needChangeoutput: true,
     };
   }
