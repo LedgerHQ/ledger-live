@@ -15,7 +15,7 @@ import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/
 import { DEFAULT_GAS_LIMIT, HEDERA_TRANSACTION_MODES } from "../constants";
 import { rpcClient } from "../network/rpc";
 import type { HederaMemo, HederaTxData } from "../types";
-import { hasSpecificIntentData, serializeTransaction } from "./utils";
+import { hasSpecificIntentData, serializeTransaction, resolveEVMAddress } from "./utils";
 
 interface BuilderOperator {
   accountId: string;
@@ -115,7 +115,7 @@ async function buildUnsignedERC20TokenTransaction({
 }): Promise<ContractExecuteTransaction> {
   const accountId = AccountId.fromString(account.accountId);
   const contractId = ContractId.fromEvmAddress(0, 0, transaction.tokenAddress);
-  const recipientEvmAddress = AccountId.fromString(transaction.recipient).toSolidityAddress();
+  const recipientEvmAddress = await resolveEVMAddress(transaction.recipient);
   const gas = transaction.gasLimit.toNumber();
 
   // create function parameters for ERC20 transfer function

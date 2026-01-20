@@ -4,7 +4,7 @@ import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
 import { craftTransaction } from "./craftTransaction";
 import type { HederaMemo, HederaTxData } from "../types";
-import { serializeTransaction } from "./utils";
+import { resolveEVMAddress, serializeTransaction } from "./utils";
 
 jest.mock("./utils");
 
@@ -87,6 +87,8 @@ describe("craftTransaction", () => {
   });
 
   it("should craft ERC20 token transfer transaction", async () => {
+    (resolveEVMAddress as jest.Mock).mockReturnValue("0x0000000000000000000000000000000000003039");
+
     const txIntent = {
       intentType: "transaction",
       type: HEDERA_TRANSACTION_MODES.Send,
@@ -126,54 +128,6 @@ describe("craftTransaction", () => {
       tx: expect.any(Object),
       serializedTx: "serialized-transaction",
     });
-  });
-
-  it("should accept account id or EVM address when crafting ERC20 token transfer transaction", async () => {
-    const txIntent = {
-      intentType: "transaction",
-      type: HEDERA_TRANSACTION_MODES.Send,
-      amount: BigInt(1000),
-      sender: "0.0.54321",
-      asset: {
-        type: "erc20",
-        assetReference: "0x39ceba2b467fa987546000eb5d1373acf1f3a2e1",
-      },
-      memo: {
-        kind: "text",
-        type: "string",
-        value: "Token transfer",
-      },
-      data: {
-        type: "erc20",
-        gasLimit: BigInt(100000),
-      },
-    } satisfies Omit<TransactionIntent<HederaMemo, HederaTxData>, "recipient">;
-
-    const txIntentAccountId = {
-      ...txIntent,
-      recipient: "0.0.12345",
-    } satisfies TransactionIntent<HederaMemo, HederaTxData>;
-
-    const txIntentEVMAddress = {
-      ...txIntentAccountId,
-      recipient: "0x0000000000000000000000000000000000003039",
-    } satisfies TransactionIntent<HederaMemo, HederaTxData>;
-
-    const resultAccountId = await craftTransaction(txIntentAccountId);
-    const resultEVMAddress = await craftTransaction(txIntentEVMAddress);
-
-    expect(resultAccountId.tx).toBeInstanceOf(sdk.ContractExecuteTransaction);
-    expect(resultEVMAddress.tx).toBeInstanceOf(sdk.ContractExecuteTransaction);
-    invariant(
-      resultAccountId.tx instanceof sdk.ContractExecuteTransaction,
-      "ContractExecuteTransaction type guard",
-    );
-    invariant(
-      resultEVMAddress.tx instanceof sdk.ContractExecuteTransaction,
-      "ContractExecuteTransaction type guard",
-    );
-
-    expect(resultAccountId.tx.functionParameters).toEqual(resultEVMAddress.tx.functionParameters);
   });
 
   it("should craft a token associate transaction", async () => {
