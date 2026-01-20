@@ -200,8 +200,12 @@ async function getSubAccounts(
   }
   const subAccountsPromises: Promise<Partial<TonSubAccount>>[] = [];
   for (const [token, ops] of opsPerToken.entries()) {
+    const patchedToken = {
+      ...token,
+      id: `ton/jetton/${token.contractAddress}`,
+    };
     subAccountsPromises.push(
-      getSubAccountShape(info, accountId, token, ops, shouldSyncFromScratch),
+      getSubAccountShape(info, accountId, patchedToken, ops, shouldSyncFromScratch),
     );
   }
   return Promise.all(subAccountsPromises);
