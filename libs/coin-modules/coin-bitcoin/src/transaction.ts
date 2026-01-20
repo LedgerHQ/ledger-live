@@ -60,6 +60,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     },
     feesStrategy: tr.feesStrategy,
     opReturnData: tr.opReturnData,
+    replaceTxId: tr.replaceTxId,
   };
 };
 
@@ -77,6 +78,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     },
     feesStrategy: t.feesStrategy,
     opReturnData: t.opReturnData,
+    replaceTxId: t.replaceTxId,
   };
 };
 

@@ -102,6 +102,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Node endpoint for celo",
   },
+  BITCOIN_STUCK_TRANSACTION_TIMEOUT: {
+    def: 20 * 60 * 1000,
+    parser: intParser,
+    desc: "Time after which an optimistic operation is considered stuck",
+  },
   ENABLE_CELO_TOKENS: {
     def: true,
     parser: boolParser,
@@ -946,7 +951,7 @@ const envDefinitions = {
   ETHEREUM_STUCK_TRANSACTION_TIMEOUT: {
     def: 5 * 60 * 1000,
     parser: intParser,
-    desc: "Time after which an optimisc operation is considered stuck",
+    desc: "Time after which an optimistic operation is considered stuck",
   },
   EVM_REPLACE_TX_LEGACY_GASPRICE_FACTOR: {
     def: 1.3,
