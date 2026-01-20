@@ -1,5 +1,5 @@
 import type { Currency, Output as WalletOutput } from "./wallet-btc";
-import { DerivationModes as WalletDerivationModes } from "./wallet-btc";
+import wallet, { DerivationModes as WalletDerivationModes } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
@@ -13,12 +13,13 @@ import {
 } from "@ledgerhq/coin-framework/derivation";
 import { BitcoinAccount, BitcoinOutput, BtcOperation } from "./types";
 import { perCoinLogic } from "./logic";
-import wallet from "./wallet-btc";
 import { mapTxToOperations } from "./logic";
 import { DerivationMode } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BitcoinXPub, SignerContext } from "./signer";
+
+const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
 
 // Map LL's DerivationMode to wallet-btc's
 const toWalletDerivationMode = (mode: DerivationMode): WalletDerivationModes => {
@@ -40,7 +41,7 @@ const toWalletNetwork = (currencyId: string): "testnet" | "mainnet" => {
 };
 
 // Map wallet-btc's Output to LL's BitcoinOutput
-const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): BitcoinOutput => {
+export const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): BitcoinOutput => {
   return {
     hash: utxo.output_hash,
     outputIndex: utxo.output_index,
@@ -77,7 +78,7 @@ const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): Bitco
  * @returns A filtered array of operations with replaced transactions removed.
  *  The original order of operations is preserved.
  */
-export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
+export const removeReplaced = (operations: BtcOperation[], now = Date.now()): BtcOperation[] => {
   // used to track the most recent operation for each input.
   const txByInput = new Map<string, BtcOperation>();
 
@@ -102,35 +103,45 @@ export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
           const isNewOpConfirmed = typeof op.blockHeight === "number";
 
           if (isExistingConfirmed && !isNewOpConfirmed) {
+            if (uniqueOperations.has(op.hash)) {
+              uniqueOperations.delete(op.hash); // Remove the unconfirmed transaction if it was previously added
+            }
             continue; // Keep the confirmed transaction
           }
 
           if (!isExistingConfirmed && isNewOpConfirmed) {
             uniqueOperations.delete(existingOp.hash); // Remove unconfirmed transaction
             txByInput.set(input, op); // Store the confirmed transaction
+            uniqueOperations.set(op.hash, op);
           } else {
             // Compare block height first
             if ((op.blockHeight ?? -1) > (existingOp.blockHeight ?? -1)) {
               uniqueOperations.delete(existingOp.hash);
               txByInput.set(input, op);
+              uniqueOperations.set(op.hash, op);
             } else if ((op.blockHeight ?? -1) === (existingOp.blockHeight ?? -1)) {
-              if (new Date(op.date) > new Date(existingOp.date)) {
-                uniqueOperations.delete(existingOp.hash);
-                txByInput.set(input, op);
-              } else if (new Date(op.date) < new Date(existingOp.date)) {
-                continue; // If date is older, disregard
-              } else {
-                // edge case, date equal, keep both
-                uniqueOperations.set(op.hash, op);
-                continue;
-              }
+              uniqueOperations.set(op.hash, op);
+              continue;
             }
           }
         } else {
-          txByInput.set(input, op);
+          // First time we see this input: only add op if it is not superseded.
+          // An unconfirmed op is superseded if any of its inputs is already spent by a confirmed tx.
+          const opIsSuperseded =
+            typeof op.blockHeight !== "number" &&
+            op.extra.inputs.some((inp: string) => {
+              const existing = txByInput.get(inp);
+              return (
+                existing !== undefined &&
+                existing.hash !== op.hash &&
+                typeof existing.blockHeight === "number"
+              );
+            });
+          if (!opIsSuperseded) {
+            txByInput.set(input, op);
+            uniqueOperations.set(op.hash, op);
+          }
         }
-
-        uniqueOperations.set(op.hash, op);
       }
     } else {
       // Store transactions without inputs (they shouldn't be removed)
@@ -138,7 +149,14 @@ export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
     }
   }
 
-  return operations.filter(op => uniqueOperations.has(op.hash));
+  return operations.filter(
+    op =>
+      uniqueOperations.has(op.hash) &&
+      !(
+        (op.blockHeight === null || op.blockHeight === undefined) &&
+        now > new Date(op.date).getTime() + TWO_WEEKS_MS
+      ),
+  );
 };
 
 // wallet-btc limitation: returns all transactions twice (for each side of the tx)
@@ -209,7 +227,6 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
     const blockHeight = currentBlock?.height || 0;
     await wallet.syncAccount(walletAccount, blockHeight);
 
-    const balance = await wallet.getAccountBalance(walletAccount);
     const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
 
     const accountAddresses: Set<string> = new Set<string>();
@@ -217,7 +234,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
     accountAddressesWithInfo.forEach(a => accountAddresses.add(a.address));
 
     const changeAddresses: Set<string> = new Set<string>();
-    const changeAddressesWithInfo = await walletAccount.xpub.storage.getUniquesAddresses({
+    const changeAddressesWithInfo = walletAccount.xpub.storage.getUniquesAddresses({
       account: 1,
     });
     changeAddressesWithInfo.forEach(a => changeAddresses.add(a.address));
@@ -230,9 +247,67 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
 
     const _operations = mergeOps(oldOperations, newUniqueOperations);
     const operations = removeReplaced(_operations as BtcOperation[]);
+    const keptOperationHashes = new Set(operations.map(op => op.hash));
+    const removedOperationHashes = new Set(
+      (_operations as BtcOperation[])
+        .filter(op => !keptOperationHashes.has(op.hash))
+        .map(op => op.hash),
+    );
 
     const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
-    const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
+    const filteredRawUtxos = rawUtxos.filter(utxo => {
+      if (utxo.block_height !== null) return true;
+      if (!utxo.rbf) return true;
+      return !removedOperationHashes.has(utxo.output_hash);
+    });
+    const utxos = filteredRawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
+    // 1) Keep operations that have the same hash as those utxos
+    const utxoHashes = new Set(utxos.map(u => u.hash));
+    const operationsOfUtxos = operations.filter(op => utxoHashes.has(op.hash));
+
+    // 2) Keep only one operation when multiple operations share the same inputs
+    const getInputsKey = (op: BtcOperation): string | null => {
+      const inputs = op.extra?.inputs;
+      if (!Array.isArray(inputs) || inputs.length === 0) return null;
+      return [...inputs].sort().join("|");
+    };
+
+    const isBetterCandidate = (candidate: BtcOperation, existing: BtcOperation): boolean => {
+      const candidateConfirmed = typeof candidate.blockHeight === "number";
+      const existingConfirmed = typeof existing.blockHeight === "number";
+      if (candidateConfirmed !== existingConfirmed) return candidateConfirmed;
+
+      const candidateHeight = candidate.blockHeight ?? -1;
+      const existingHeight = existing.blockHeight ?? -1;
+      if (candidateHeight !== existingHeight) return candidateHeight > existingHeight;
+
+      return new Date(candidate.date).getTime() > new Date(existing.date).getTime();
+    };
+
+    const bestOpByInputsKey = new Map<string, BtcOperation>();
+    for (const op of operationsOfUtxos) {
+      const key = getInputsKey(op);
+      if (!key) continue;
+      const existing = bestOpByInputsKey.get(key);
+      if (!existing || isBetterCandidate(op, existing)) {
+        bestOpByInputsKey.set(key, op);
+      }
+    }
+
+    const finalOperationsOfUtxos = operationsOfUtxos.filter(op => {
+      const key = getInputsKey(op);
+      if (!key) return true;
+      return bestOpByInputsKey.get(key)?.hash === op.hash;
+    });
+
+    // 3) Filter the original utxos to keep the ones that share a hash with the final operations
+    const finalOperationHashes = new Set(finalOperationsOfUtxos.map(op => op.hash));
+    const finalUtxos =
+      finalOperationHashes.size > 0
+        ? utxos.filter(utxo => finalOperationHashes.has(utxo.hash))
+        : utxos;
+
+    const balance = finalUtxos.reduce((total, utxo) => total.plus(utxo.value), new BigNumber(0));
 
     return {
       id: accountId,
@@ -245,7 +320,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       freshAddressPath: `${accountPath}/0/${walletAccount.xpub.freshAddressIndex}`,
       blockHeight,
       bitcoinResources: {
-        utxos,
+        utxos: finalUtxos,
         walletAccount,
       },
     };

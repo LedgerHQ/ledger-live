@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import * as bech32 from "bech32";
 import { bech32m } from "../../bech32m";
 
@@ -249,5 +250,95 @@ describe("Unit tests for maxTxSize", () => {
     const s = utils.maxTxSizeCeil(inputCount, outputScripts, useChange, btc, derivationMode);
 
     expect(s).toEqual(exp);
+  });
+});
+
+describe("getIncrementalFeeFloorSatVb", () => {
+  it("returns at least 1 sat/vB when explorer has no getNetwork", async () => {
+    const result = await utils.getIncrementalFeeFloorSatVb({});
+    expect(result.toNumber()).toBe(1);
+  });
+
+  it("when original rate not provided, returns 1 sat/vB without explorer", async () => {
+    const result = await utils.getIncrementalFeeFloorSatVb(undefined);
+    expect(result.toNumber()).toBe(1);
+  });
+
+  it("uses 10% bump when 10% > 1 sat/vB (e.g. 15 sat/vB → bump 2)", async () => {
+    const result = await utils.getIncrementalFeeFloorSatVb({}, new BigNumber(15));
+    expect(result.toNumber()).toBe(2);
+  });
+
+  it("uses 1 sat/vB when 10% <= 1 (e.g. 5 sat/vB → 10% = 0.5 → bump 1)", async () => {
+    const result = await utils.getIncrementalFeeFloorSatVb({}, new BigNumber(5));
+    expect(result.toNumber()).toBe(1);
+  });
+
+  it("uses 1 sat/vB when 10% equals 1 (e.g. 10 sat/vB → 10% = 1 → bump 1)", async () => {
+    const result = await utils.getIncrementalFeeFloorSatVb({}, new BigNumber(10));
+    expect(result.toNumber()).toBe(1);
+  });
+
+  it("ceil(10%) for 14 sat/vB gives bump 2", async () => {
+    const result = await utils.getIncrementalFeeFloorSatVb({}, new BigNumber(14));
+    expect(result.toNumber()).toBe(2);
+  });
+
+  it("returns max(relay incremental, rule bump) when explorer provides incremental_fee", async () => {
+    // 15 sat/vB → rule bump = 2. Relay 1 sat/vB → result = 2
+    const explorerLow = {
+      getNetwork: () => Promise.resolve({ incremental_fee: "0.00001000" }), // 1 sat/vB
+    };
+    const resultLow = await utils.getIncrementalFeeFloorSatVb(explorerLow, new BigNumber(15));
+    expect(resultLow.toNumber()).toBe(2);
+
+    // 5 sat/vB → rule bump = 1. Relay 3 sat/vB → result = 3
+    const explorerHigh = {
+      getNetwork: () => Promise.resolve({ incremental_fee: "0.00003000" }), // 3 sat/vB
+    };
+    const resultHigh = await utils.getIncrementalFeeFloorSatVb(explorerHigh, new BigNumber(5));
+    expect(resultHigh.toNumber()).toBe(3);
+  });
+
+  it("on explorer error returns rule bump (or 1)", async () => {
+    const failingExplorer = {
+      getNetwork: () => Promise.reject(new Error("network error")),
+    };
+    const result = await utils.getIncrementalFeeFloorSatVb(failingExplorer, new BigNumber(15));
+    expect(result.toNumber()).toBe(2);
+  });
+
+  it("when explorer has no incremental_fee returns rule bump", async () => {
+    const explorer = {
+      getNetwork: () => Promise.resolve({}), // no incremental_fee
+    };
+    const result = await utils.getIncrementalFeeFloorSatVb(explorer, new BigNumber(20));
+    expect(result.toNumber()).toBe(2); // ceil(20*0.1) = 2
+  });
+});
+
+describe("scriptToAddress", () => {
+  const bitcoinTestnet = {
+    bech32: "tb",
+    pubKeyHash: 0x6f,
+    scriptHash: 0xc4,
+  };
+
+  it("decodes P2TR (Taproot) output script to bech32m address", () => {
+    // P2TR script: OP_1 (0x51) OP_PUSH32 (0x20) <32-byte pubkey>
+    const pubkey = Buffer.alloc(32, 0xab);
+    const script = Buffer.concat([Buffer.from([0x51, 0x20]), pubkey]);
+    expect(script.length).toBe(34);
+
+    const address = utils.scriptToAddress(script, bitcoinTestnet as any);
+    expect(address).toMatch(/^tb1p/);
+    expect(address.length).toBeGreaterThan(50);
+  });
+
+  it("decodes P2WPKH script via bitcoinjs-lib when not P2TR", () => {
+    // P2WPKH: OP_0 OP_PUSH20 <20-byte hash>
+    const script = Buffer.concat([Buffer.from([0x00, 0x14]), Buffer.alloc(20, 1)]);
+    const address = utils.scriptToAddress(script, bitcoinTestnet as any);
+    expect(address).toMatch(/^tb1q/);
   });
 });

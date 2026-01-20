@@ -27,7 +27,6 @@ export class DeepFirst extends PickingStrategy {
     // from all addresses of the account
     const addresses = await xpub.getXpubAddresses();
     log("picking strategy", "Deepfirst");
-
     let unspentUtxos = flatten(
       await Promise.all(addresses.map(address => xpub.storage.getAddressUnspentUtxos(address))),
     ).filter(
@@ -36,6 +35,12 @@ export class DeepFirst extends PickingStrategy {
           x => x.hash === o.output_hash && x.outputIndex === o.output_index,
         ).length,
     );
+
+    // Validate UTXOs: only keep those for which we can fetch the transaction hex (avoid selecting unfetchable UTXOs)
+    const txHexResults = await Promise.allSettled(
+      unspentUtxos.map(u => xpub.explorer.getTxHex(u.output_hash)),
+    );
+    unspentUtxos = unspentUtxos.filter((_, i) => txHexResults[i].status === "fulfilled");
 
     const safeFeePerByte = Math.max(1, Math.ceil(feePerByte));
     const outputScripts = outputs.map(o => o.script);
@@ -59,7 +64,6 @@ export class DeepFirst extends PickingStrategy {
 
     let total = new BigNumber(0);
     const unspentUtxoSelected: Output[] = [];
-
     const amount = outputs.reduce((sum, output) => sum.plus(output.value), new BigNumber(0));
     let i = 0;
     while (total.lt(amount.plus(fee))) {
@@ -67,11 +71,11 @@ export class DeepFirst extends PickingStrategy {
         throw new NotEnoughBalance();
       }
       total = total.plus(unspentUtxos[i].value);
+
       unspentUtxoSelected.push(unspentUtxos[i]);
       fee += perInputV * safeFeePerByte;
       i += 1;
     }
-
     if (total.minus(amount.plus(fee)).lt(changeDeltaV * safeFeePerByte)) {
       // not enough fund to make a change output
       return {

@@ -1,7 +1,5 @@
 import { BigNumber } from "bignumber.js";
-
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-
 import Xpub from "../xpub";
 import { Output } from "../storage/types";
 import { DerivationModes } from "../types";
