@@ -118,6 +118,14 @@ android {
 
     namespace "com.ledger.live"
 
+    // 16 KB page size support for Android 15+ devices
+    // https://developer.android.com/guide/practices/page-sizes
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
+
     defaultConfig {
         applicationId project.hasProperty('APP_IDENTIFIER') ? APP_IDENTIFIER : "com.ledger.live"
         multiDexEnabled true
