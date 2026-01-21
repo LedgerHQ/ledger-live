@@ -367,7 +367,6 @@ export const formatTransactionId = (transactionId: TransactionId): string => {
  *
  * @param accountId - Hedera account ID in the format `shard.realm.num`
  * @returns EVM address (`0x...`) or null if fetch fails
- * @see resolveEVMAddress
  */
 export const toEVMAddress = async (accountId: string): Promise<string | null> => {
   try {
@@ -377,20 +376,6 @@ export const toEVMAddress = async (accountId: string): Promise<string | null> =>
   } catch {
     return null;
   }
-};
-
-/**
- * Fetches EVM address for given Hedera account ID (e.g. "0.0.1234").
- * It falls back to locally computed long zero address if the fetch fails.
- *
- * @param accountId - Hedera account ID in the format `shard.realm.num` or EVM address (`0x...`)
- * @returns EVM address (`0x...`)
- * @see toEVMAddress
- */
-export const resolveEVMAddress = async (accountId: string): Promise<string> => {
-  const evmAddress = await toEVMAddress(accountId);
-  if (evmAddress !== null) return evmAddress;
-  return AccountId.fromString(accountId).toEvmAddress();
 };
 
 /**

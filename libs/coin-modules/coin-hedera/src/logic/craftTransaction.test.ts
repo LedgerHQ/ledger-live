@@ -4,7 +4,7 @@ import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
 import { craftTransaction } from "./craftTransaction";
 import type { HederaMemo, HederaTxData } from "../types";
-import { resolveEVMAddress, serializeTransaction } from "./utils";
+import { serializeTransaction, toEVMAddress } from "./utils";
 
 jest.mock("./utils");
 
@@ -87,9 +87,7 @@ describe("craftTransaction", () => {
   });
 
   it("should craft ERC20 token transfer transaction", async () => {
-    (resolveEVMAddress as jest.Mock).mockResolvedValue(
-      "0x0000000000000000000000000000000000003039",
-    );
+    (toEVMAddress as jest.Mock).mockResolvedValue("0x0000000000000000000000000000000000003039");
 
     const txIntent = {
       intentType: "transaction",
