@@ -236,6 +236,28 @@ describe("createApi", () => {
       expect(fees.value).toBeGreaterThanOrEqual(0n);
     });
 
+    it("returns fee for ERC20 transfer transaction", async () => {
+      const fees = await api.estimateFees({
+        intentType: "transaction",
+        asset: {
+          type: "erc20",
+          assetReference: "0x39ceba2b467fa987546000eb5d1373acf1f3a2e1",
+        },
+        type: HEDERA_TRANSACTION_MODES.Send,
+        sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+        senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+        amount: BigInt(100),
+        recipient: MAINNET_TEST_ACCOUNTS.withTokens.accountId,
+        memo: {
+          kind: "text",
+          type: "string",
+          value: "",
+        },
+      });
+
+      expect(fees.value).toBeGreaterThanOrEqual(0n);
+    });
+
     it("returns fee for token association transaction", async () => {
       const fees = await api.estimateFees({
         intentType: "transaction",

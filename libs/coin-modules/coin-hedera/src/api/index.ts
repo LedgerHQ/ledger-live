@@ -56,11 +56,12 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     estimateFees: async transactionIntent => {
       const operationType = mapIntentToSDKOperation(transactionIntent);
 
+      let estimatedFee;
       if (operationType === HEDERA_OPERATION_TYPES.ContractCall) {
-        throw new Error("hedera: estimateFees for ContractCall is not supported yet");
+        estimatedFee = await logicEstimateFees({ operationType, txIntent: transactionIntent });
+      } else {
+        estimatedFee = await logicEstimateFees({ currency, operationType });
       }
-
-      const estimatedFee = await logicEstimateFees({ currency, operationType });
 
       return {
         value: BigInt(estimatedFee.tinybars.toString()),
