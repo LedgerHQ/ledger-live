@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Box, Flex, Text } from "@ledgerhq/native-ui";
+import { Box, Flex } from "@ledgerhq/native-ui";
 import Animated from "react-native-reanimated";
 
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
@@ -27,6 +27,7 @@ import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import usePortfolioViewModel from "./usePortfolioViewModel";
+import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -39,7 +40,6 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(Collapsibl
 function PortfolioScreen({ navigation }: NavigationProps) {
   const {
     hideEmptyTokenAccount,
-    colors,
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
     showAssets,
@@ -52,6 +52,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     onBackFromUpdate,
     goToAnalyticsAllocations,
   } = usePortfolioViewModel(navigation);
+  const { backgroundColor } = useWallet40Theme("mobile");
 
   const data = useMemo(
     () => [
@@ -72,7 +73,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       showAssets ? (
         isAccountListUIEnabled ? (
           <AnimatedContainer onHeightChange={handleHeightChange}>
-            <Box background={colors.background.main} px={6} key="PortfolioAssets">
+            <Box background={backgroundColor} px={6} key="PortfolioAssets">
               <RecoverBanner />
               <PortfolioAssets
                 hideEmptyTokenAccount={hideEmptyTokenAccount}
@@ -81,7 +82,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
             </Box>
           </AnimatedContainer>
         ) : (
-          <Box background={colors.background.main} px={6} key="PortfolioAssets">
+          <Box background={backgroundColor} px={6} key="PortfolioAssets">
             <RecoverBanner />
             <PortfolioAssets
               hideEmptyTokenAccount={hideEmptyTokenAccount}
@@ -92,7 +93,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       ) : null,
       ...(showAssets && isAWalletCardDisplayed
         ? [
-            <Box background={colors.background.main} key="CarouselTitle">
+            <Box background={backgroundColor} key="CarouselTitle">
               <SectionContainer px={0} minHeight={240} isFirst>
                 <SectionTitle
                   title={t("portfolio.carousel.title")}
@@ -134,7 +135,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       showAssets,
       isAccountListUIEnabled,
       handleHeightChange,
-      colors.background.main,
+      backgroundColor,
       hideEmptyTokenAccount,
       openAddModal,
       isAWalletCardDisplayed,
@@ -144,17 +145,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     ],
   );
 
-  const DebugBanner = __DEV__ ? (
-    <Box backgroundColor="primary.c80" py={2} px={4} alignItems="center">
-      <Text color="neutral.c00" fontWeight="semiBold" fontSize={12}>
-        {"MVVM Portfolio (lwmWallet40)"}
-      </Text>
-    </Box>
-  ) : null;
-
   return (
     <>
-      {DebugBanner}
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
       <Animated.View style={{ flex: 1 }}>
