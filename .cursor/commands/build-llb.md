@@ -2,6 +2,12 @@
 
 Trigger a build workflow on ledger-live-build repository from the current branch.
 
+## Requirements
+
+- **GitHub CLI (`gh`)** — Must be installed and authenticated (`gh auth login`)
+- **Git push access** — Write permissions to `LedgerHQ/ledger-live` (to push your branch)
+- **Access to `ledger-live-build`** — Read/write access to the private `LedgerHQ/ledger-live-build` repository (Ledger employees only)
+
 ## Prompt Variables
 
 $BUILD_TARGET
@@ -145,6 +151,48 @@ case "$BUILD_TARGET" in
 esac
 ```
 
+### Step 5: Calculate average build time from recent successful runs
+
+Fetch the 5 most recent successful runs and calculate the average duration:
+
+```bash
+get_average_build_time() {
+  local workflow_file=$1
+  local workflow_name=$2
+
+  # Fetch 5 most recent successful runs with their duration
+  durations=$(gh run list -R LedgerHQ/ledger-live-build \
+    --workflow="$workflow_file" \
+    --status completed \
+    --limit 20 \
+    --json conclusion,createdAt,updatedAt \
+    --jq '[.[] | select(.conclusion == "success")] | .[0:5] | [.[] | (((.updatedAt | fromdateiso8601) - (.createdAt | fromdateiso8601)) / 60)] | if length > 0 then (add / length | floor) else null end')
+
+  if [ -n "$durations" ] && [ "$durations" != "null" ]; then
+    echo "⏱️  **$workflow_name** — Average build time: ~${durations} minutes (based on last 5 successful builds)"
+  else
+    echo "⏱️  **$workflow_name** — No recent successful builds to estimate duration"
+  fi
+}
+
+# Get average build times based on BUILD_TARGET
+case "$BUILD_TARGET" in
+  android)
+    get_average_build_time "build-apk.yml" "Android"
+    ;;
+  ios)
+    get_average_build_time "build-ipa.yml" "iOS"
+    ;;
+  mobile)
+    get_average_build_time "build-apk.yml" "Android"
+    get_average_build_time "build-ipa.yml" "iOS"
+    ;;
+  desktop)
+    get_average_build_time "build-desktop.yml" "Desktop"
+    ;;
+esac
+```
+
 ### Output Format
 
 After triggering builds, display a summary using markdown for clickable links. Example output:
@@ -159,6 +207,10 @@ After triggering builds, display a summary using markdown for clickable links. E
 🔗 **Workflow run URL(s):**
 
 - [[Build] Desktop (queued)](https://github.com/LedgerHQ/ledger-live-build/actions/runs/123456789)
+
+⏱️  **Expected build time:**
+
+- **Desktop** — ~18 minutes (based on last 5 successful builds)
 
 You can also view all runs at: https://github.com/LedgerHQ/ledger-live-build/actions
 ```
@@ -177,6 +229,4 @@ You can also view all runs at: https://github.com/LedgerHQ/ledger-live-build/act
 - Builds are triggered on the `ledger-live-build` repository, not `ledger-live`
 - The run URL fetching doesn't filter by actor or branch — since we query immediately after triggering, the most recent run is reliably ours. Branch filtering isn't possible because `head_branch` refers to the `ledger-live-build` repo's branch (always `main`), not the `ref` parameter passed for `ledger-live`.
 - The branch must exist on `LedgerHQ/ledger-live` (origin)
-- Android builds typically take ~30 minutes
-- iOS builds typically take ~40 minutes
-- Desktop builds typically take ~20 minutes
+- Expected build times are calculated dynamically from the 5 most recent successful runs
