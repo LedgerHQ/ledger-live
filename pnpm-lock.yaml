@@ -5273,6 +5273,12 @@ importers:
       '@ledgerhq/zcash-decrypt':
         specifier: 0.1.0
         version: 0.1.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      msw:
+        specifier: 'catalog:'
+        version: 2.7.3(typescript@5.4.3)
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -5283,9 +5289,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0
 
   libs/coin-tester:
     dependencies:
