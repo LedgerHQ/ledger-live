@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Banner, Subheader } from "@ledgerhq/lumen-ui-react";
+import { Banner, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
 import { formatAddress } from "@ledgerhq/react-ui/pre-ldls/components/Address/formatAddress";
 import { AddressListItem } from "./AddressListItem";
 import { AccountRowWithBalance } from "./AccountRowWithBalance";
@@ -60,7 +60,11 @@ export function AddressMatchedSection({
 
   return (
     <div className="flex w-full min-w-0 flex-col">
-      <Subheader className="mb-12" title={t("newSendFlow.addressMatched")} />
+      <Subheader className="mb-12">
+        <SubheaderRow>
+          <SubheaderTitle>{t("newSendFlow.addressMatched")}</SubheaderTitle>
+        </SubheaderRow>
+      </Subheader>
       <div className="-mx-8 flex flex-col">
         {/* Show all matched Ledger accounts */}
         {hasMatchedAccounts &&

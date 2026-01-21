@@ -57,23 +57,26 @@ export function RecentAddressTile({ recentAddress, onSelect, onRemove }: RecentA
 
   return (
     <div className="w-96 pt-6">
-      <Tile onClick={onSelect}>
-        <Menu>
-          <MenuTrigger asChild>
-            <TileSecondaryAction
-              icon={MoreVertical}
-              aria-label="More actions"
-              onClick={handleStopPropagation}
-            />
-          </MenuTrigger>
-          <MenuContent onClick={handleStopPropagation} onPointerDown={handleStopPropagation}>
-            <MenuItem onSelect={handleRemove}>
-              <Trash size={16} />
-              {t("newSendFlow.remove")}
-            </MenuItem>
-          </MenuContent>
-        </Menu>
-
+      <Tile
+        onClick={onSelect}
+        secondaryAction={
+          <Menu>
+            <MenuTrigger asChild>
+              <TileSecondaryAction
+                icon={MoreVertical}
+                aria-label="More actions"
+                onClick={handleStopPropagation}
+              />
+            </MenuTrigger>
+            <MenuContent onClick={handleStopPropagation} onPointerDown={handleStopPropagation}>
+              <MenuItem onSelect={handleRemove}>
+                <Trash size={16} />
+                {t("newSendFlow.remove")}
+              </MenuItem>
+            </MenuContent>
+          </Menu>
+        }
+      >
         <TileSpot appearance="icon" icon={icon} />
         <TileContent>
           <TileTitle>{displayName}</TileTitle>
