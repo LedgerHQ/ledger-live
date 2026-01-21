@@ -101,13 +101,6 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
     navigateToMarket();
   }, [navigateToMarket]);
 
-  const onSwipe = useCallback(() => {
-    track("swipe", {
-      page: PAGE_NAME,
-      banner: BANNER_NAME,
-    });
-  }, []);
-
   return {
     items: filteredItems,
     isLoading,
@@ -117,7 +110,6 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
     onTilePress,
     onViewAllPress,
     onSectionTitlePress,
-    onSwipe,
   };
 };
 
