@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { apiClient } from "./api";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
 import { getMockedERC20TokenCurrency } from "../test/fixtures/currency.fixture";
 import {
@@ -9,6 +8,7 @@ import {
 } from "../test/fixtures/mirror.fixture";
 import { getMockedThirdwebTransaction } from "../test/fixtures/thirdweb.fixture";
 import type { HederaMirrorCoinTransfer } from "../types";
+import { apiClient } from "./api";
 import {
   getERC20BalancesForAccount,
   getERC20Operations,

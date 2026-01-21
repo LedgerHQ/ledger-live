@@ -1,6 +1,6 @@
-import { getTokenFromAsset } from "./getTokenFromAsset";
-import { getMockedCurrency, getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getMockedCurrency, getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
+import { getTokenFromAsset } from "./getTokenFromAsset";
 
 setupMockCryptoAssetsStore();
 

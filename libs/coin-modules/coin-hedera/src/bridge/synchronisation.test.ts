@@ -1,8 +1,8 @@
 import type { Account } from "@ledgerhq/types-live";
-import { postSync } from "./synchronisation";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import { getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
+import { postSync } from "./synchronisation";
 
 describe("postSync", () => {
   it("should remove pending operations that match confirmed ERC20 operations", () => {

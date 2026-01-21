@@ -1,12 +1,12 @@
 import BigNumber from "bignumber.js";
 import network from "@ledgerhq/live-network";
-import { apiClient } from "./api";
 import { getMockResponse } from "../test/fixtures/network.fixture";
 import type {
   HederaMirrorContractCallResult,
   HederaMirrorNetworkFees,
   HederaMirrorTransaction,
 } from "../types";
+import { apiClient } from "./api";
 
 jest.mock("@ledgerhq/live-network");
 const mockedNetwork = jest.mocked(network);

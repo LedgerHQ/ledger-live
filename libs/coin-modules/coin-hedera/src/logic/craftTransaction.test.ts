@@ -2,8 +2,8 @@ import invariant from "invariant";
 import * as sdk from "@hiero-ledger/sdk";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
-import { craftTransaction } from "./craftTransaction";
 import type { HederaMemo, HederaTxData } from "../types";
+import { craftTransaction } from "./craftTransaction";
 import { serializeTransaction } from "./utils";
 
 jest.mock("./utils");

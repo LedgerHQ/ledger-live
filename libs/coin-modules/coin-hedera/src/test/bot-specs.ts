@@ -9,12 +9,12 @@ import type {
   TransactionArg,
   TransactionRes,
 } from "@ledgerhq/coin-framework/bot/types";
-import type { Transaction } from "../types";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import { isAccountEmpty } from "@ledgerhq/coin-framework/account";
-import { acceptTransaction } from "./speculos-deviceActions";
 import BigNumber from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
+import type { Transaction } from "../types";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("hedera");
 const memoTestMessage = "This is a test memo.";

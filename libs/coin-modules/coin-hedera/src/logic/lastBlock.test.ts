@@ -1,6 +1,6 @@
 import { FINALITY_MS, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
-import { lastBlock } from "./lastBlock";
 import { apiClient } from "../network/api";
+import { lastBlock } from "./lastBlock";
 import { getSyntheticBlock } from "./utils";
 
 jest.mock("../network/api");

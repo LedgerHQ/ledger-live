@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import type network from "@ledgerhq/live-network";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getMockedThirdwebTransaction } from "./thirdweb.fixture";
 import type { ERC20OperationFields, OperationERC20 } from "../../types";
+import { getMockedThirdwebTransaction } from "./thirdweb.fixture";
 
 export const getMockResponse = (data: unknown): Awaited<ReturnType<typeof network>> => ({
   data,

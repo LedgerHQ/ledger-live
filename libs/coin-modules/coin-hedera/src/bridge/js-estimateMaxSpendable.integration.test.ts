@@ -1,10 +1,10 @@
 import BigNumber from "bignumber.js";
-import { createBridges } from ".";
 import { HEDERA_OPERATION_TYPES } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import { getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
 import type { EstimateFeesResult } from "../types";
+import { createBridges } from ".";
 
 describe("js-estimateMaxSpendable", () => {
   let bridge: ReturnType<typeof createBridges>;

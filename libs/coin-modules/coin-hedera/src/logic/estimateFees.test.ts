@@ -10,11 +10,11 @@ import {
   HEDERA_TRANSACTION_MODES,
   TINYBAR_SCALE,
 } from "../constants";
-import { estimateFees } from "./estimateFees";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
-import { getCurrencyToUSDRate, toEVMAddress } from "./utils";
 import { apiClient } from "../network/api";
 import { getMockedERC20TokenCurrency } from "../test/fixtures/currency.fixture";
+import { getCurrencyToUSDRate, toEVMAddress } from "./utils";
+import { estimateFees } from "./estimateFees";
 
 jest.mock("@ledgerhq/live-countervalues/api/index");
 jest.mock("../network/api");

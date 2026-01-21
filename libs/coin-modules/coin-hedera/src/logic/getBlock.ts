@@ -5,13 +5,13 @@ import type {
   BlockTransaction,
 } from "@ledgerhq/coin-framework/api/types";
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
-import { getBlockInfo } from "./getBlockInfo";
 import { apiClient } from "../network/api";
 import type {
   HederaMirrorCoinTransfer,
   HederaMirrorTokenTransfer,
   HederaMirrorTransaction,
 } from "../types";
+import { getBlockInfo } from "./getBlockInfo";
 import { getMemoFromBase64, analyzeStakingOperation, getDateRangeFromBlockHeight } from "./utils";
 
 function toHederaAsset(

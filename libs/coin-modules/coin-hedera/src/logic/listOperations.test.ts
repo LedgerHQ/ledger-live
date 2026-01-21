@@ -4,10 +4,10 @@ import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { Pagination } from "@ledgerhq/coin-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
-import { listOperations } from "./listOperations";
 import { apiClient } from "../network/api";
 import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import type { HederaMirrorTransaction } from "../types";
+import { listOperations } from "./listOperations";
 import * as utils from "./utils";
 
 setupMockCryptoAssetsStore();

@@ -1,8 +1,8 @@
 import { pad } from "viem";
 import network from "@ledgerhq/live-network";
-import { apiClient } from "./api";
 import { getMockedThirdwebTransaction } from "../test/fixtures/thirdweb.fixture";
 import { getMockResponse } from "../test/fixtures/common.fixture";
+import { apiClient } from "./api";
 import { thirdwebClient } from "./thirdweb";
 
 jest.mock("@ledgerhq/live-network");

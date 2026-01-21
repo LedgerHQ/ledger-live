@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
@@ -7,6 +6,7 @@ import {
   getMockedHTSTokenCurrency,
 } from "../test/fixtures/currency.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
 describe("buildOptimisticOperation", () => {
   it("builds optimistic operation for token association", async () => {

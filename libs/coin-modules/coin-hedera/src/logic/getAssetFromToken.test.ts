@@ -1,5 +1,5 @@
-import { getAssetFromToken } from "./getAssetFromToken";
 import { getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
+import { getAssetFromToken } from "./getAssetFromToken";
 
 describe("getAssetFromToken", () => {
   it("returns asset from TEST token", () => {

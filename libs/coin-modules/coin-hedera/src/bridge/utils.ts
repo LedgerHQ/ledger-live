@@ -12,7 +12,6 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { HEDERA_OPERATION_TYPES } from "../constants";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { estimateFees } from "../logic/estimateFees";
 import {
   fromEVMAddress,
@@ -32,6 +31,7 @@ import type {
   HederaThirdwebTransaction,
   ERC20OperationFields,
 } from "../types";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
 
 interface CalculateAmountResult {
   amount: BigNumber;

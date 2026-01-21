@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import { estimateFees } from "../logic/estimateFees";
-import { prepareTransaction } from "./prepareTransaction";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import type { EstimateFeesResult } from "../types";
@@ -9,6 +8,7 @@ import {
   getMockedERC20TokenCurrency,
   getMockedHTSTokenCurrency,
 } from "../test/fixtures/currency.fixture";
+import { prepareTransaction } from "./prepareTransaction";
 
 jest.mock("../logic/estimateFees");
 

@@ -1,8 +1,8 @@
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getBalance } from "./getBalance";
 import { apiClient } from "../network/api";
 import { getMockedCurrency, getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
+import { getBalance } from "./getBalance";
 
 jest.mock("../network/api");
 

@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { createBridges } from ".";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import type { Transaction } from "../types";
+import { createBridges } from ".";
 
 describe("js-transaction", () => {
   let bridge: ReturnType<typeof createBridges>;

@@ -37,8 +37,8 @@ import type {
   TransactionStatus,
   TransactionTokenAssociate,
 } from "../types";
-import { calculateAmount } from "./utils";
 import { validateMemo } from "../logic/validateMemo";
+import { calculateAmount } from "./utils";
 
 type Errors = Record<string, Error>;
 type Warnings = Record<string, Error>;
