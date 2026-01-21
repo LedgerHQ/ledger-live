@@ -62,23 +62,28 @@
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/hw-app-btc": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/hw-app-btc": "workspace:^",
+    "@ledgerhq/psbtv2": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@noble/curves": "1.9.7",
     "bignumber.js": "^9.1.2",
+    "bip32": "^4.0.0",
+    "bip39": "^3.1.0",
     "bitcoin-core": "^5.0.0",
+    "bitcoinjs-lib": "^5.2.0",
     "docker-compose": "^1.1.0"
   },
   "devDependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "dotenv": "^16.4.5",
     "jest": "catalog:",
-    "tsx": "^4.19.3",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
     "typescript": "^5.4.5"
   }
 }

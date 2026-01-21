@@ -1,11 +1,12 @@
 import chalk from "chalk";
 import * as compose from "docker-compose";
-import { killSpeculos, delay, ensureEnv } from "@ledgerhq/coin-tester/lib/signers/speculos";
 
 const cwd = `${__dirname}/docker`;
 
+const delay = (timing: number): Promise<void> =>
+  new Promise(resolve => setTimeout(resolve, timing));
+
 export const spawnAtlas = async (): Promise<void> => {
-  ensureEnv();
   console.log("Starting atlas...");
   await compose.upAll({
     cwd,
@@ -47,6 +48,6 @@ export const killAtlas = async (): Promise<void> => {
 
 ["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
   process.on(e, async () => {
-    await Promise.all([killAtlas(), killSpeculos()]);
+    await killAtlas();
   }),
 );
