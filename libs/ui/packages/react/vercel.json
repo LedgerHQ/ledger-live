@@ -1,3 +1,6 @@
 {
-  "public": true
+  "public": true,
+  "installCommand": "pnpm i -F \"../../**\" -F \"@ledgerhq/react-ui...\" -F \"ledger-live\"",
+  "buildCommand": "pnpm turbo run build:storybook -F \"@ledgerhq/react-ui\"",
+  "outputDirectory": "storybook-static"
 }
