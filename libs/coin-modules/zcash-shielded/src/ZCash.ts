@@ -1,3 +1,5 @@
+import { decrypt_tx } from "@ledger/decrypt";
+
 /**
  * ZCash API
  */
@@ -8,29 +10,35 @@ export default class ZCash {
   /**
    * Estimates sync time given a start and an end block.
    *
-   * @param startBlock starting block
-   * @param endBlock end block, usually the latest confirmed block
-   * @return the estimated sync time
+   * @param {nunber} startBlock starting block
+   * @param {number} endBlock end block, usually the latest confirmed block
+   * @return {Promise<number>} the estimated sync time
    */
-  async estimateSyncTime(startBlock: number, endBlock: number) {
+  async estimateSyncTime(startBlock: number, endBlock: number): Promise<number> {
     return (endBlock - startBlock) * ZCash.AVERAGE_BLOCK_SYNC_TIME_MS;
   }
 
   /**
    * Decrypts a ZCash shielded - i.e., encrypted - transaction.
    *
-   * @param encryptedTransaction string raw string representing an encrypted transaction.
-   * @return a decrypted transaction
+   * @param {string} rawHexTransaction, raw string representing an encrypted transaction.
+   * @param {string} viewingKey the UFVK - unified full viewing key.
+   * @return {Promise<DecryptedOutput>} the decrypted transaction
    */
-  async decryptTransaction(encryptedTransaction: string): Promise<string> {
-    return `decrypted_${encryptedTransaction}`;
+  async decryptTransaction(rawHexTransaction: string, viewingKey: string) {
+    // Initialize WASM module
+    try {
+      return decrypt_tx(rawHexTransaction, viewingKey);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   /**
-   * Finds the lowest block height correspondent to a given timestamp
+   * Finds the lowest block height correspondent to a given timestamp.
    *
-   * @param timestamp
-   * @return a block height
+   * @param {number} timestamp
+   * @return {Promise<number>} a block height
    */
   async findBlockHeight(timestamp: number): Promise<number> {
     return timestamp + 42;
