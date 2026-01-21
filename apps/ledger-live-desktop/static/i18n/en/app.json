@@ -7915,6 +7915,14 @@
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public"
     },
+    "operations": {
+      "type": {
+        "public": "Public",
+        "private": "Private",
+        "private_to_public": "Private to Public",
+        "public_to_private": "Public to Private"
+      }
+    },
     "addAccount": {
       "stepViewKeyWarning": {
         "title": "Set up Aleo private balance",
