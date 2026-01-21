@@ -41,6 +41,8 @@ export type AleoAccountRaw = AccountRaw & {
   aleoResources: AleoResourcesRaw;
 };
 
-export type AleoOperationExtra = Record<string, unknown>;
+export type AleoOperationExtra = {
+  functionId?: string;
+};
 
 export type AleoOperation = Operation<AleoOperationExtra>;
