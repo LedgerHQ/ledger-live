@@ -6,6 +6,8 @@ import { useNavigate } from "react-router";
 import { ViewAllTile } from "./ViewAllTile";
 import FearAndGreed from "./FearAndGreed";
 import { AssetIcon } from "./AssetIcon";
+import { track } from "~/renderer/analytics/segment";
+import { TRACKING_PAGE_NAME } from "../utils/constants";
 
 type TrendingAssetsListProps = {
   readonly items: MarketItemPerformer[];
@@ -16,6 +18,11 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
 
   const onAssetClick = useCallback(
     (id: string) => () => {
+      track("button_clicked", {
+        button: "Market Tile",
+        currency: id,
+        page: TRACKING_PAGE_NAME,
+      });
       navigate(`/market/${id}`);
     },
     [navigate],

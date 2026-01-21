@@ -8,3 +8,5 @@ export const MARKET_BANNER_REFRESH_RATE = 1000;
 export const MARKET_PERFORMERS_SUPPORTED = true;
 export const MARKET_BANNER_DATA_SORT_ORDER = Order.asc;
 export const TIME_RANGE = "day";
+
+export const TRACKING_PAGE_NAME = "Market Banner";
