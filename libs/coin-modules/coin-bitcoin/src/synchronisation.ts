@@ -98,7 +98,6 @@ export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
         }
         const existingOp = txByInput.get(input);
         if (existingOp) {
-          console.log("existingOp: ", existingOp);
           const isExistingConfirmed = typeof existingOp.blockHeight === "number";
           const isNewOpConfirmed = typeof op.blockHeight === "number";
 
@@ -210,7 +209,6 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
     const blockHeight = currentBlock?.height || 0;
     await wallet.syncAccount(walletAccount, blockHeight);
 
-    const balance = await wallet.getAccountBalance(walletAccount);
     const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
 
     const accountAddresses: Set<string> = new Set<string>();
@@ -218,7 +216,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
     accountAddressesWithInfo.forEach(a => accountAddresses.add(a.address));
 
     const changeAddresses: Set<string> = new Set<string>();
-    const changeAddressesWithInfo = await walletAccount.xpub.storage.getUniquesAddresses({
+    const changeAddressesWithInfo = walletAccount.xpub.storage.getUniquesAddresses({
       account: 1,
     });
     changeAddressesWithInfo.forEach(a => changeAddresses.add(a.address));
@@ -231,12 +229,22 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
 
     const _operations = mergeOps(oldOperations, newUniqueOperations);
     const operations = removeReplaced(_operations as BtcOperation[]);
+    const keptOperationHashes = new Set(operations.map(op => op.hash));
+    const removedOperationHashes = new Set(
+      (_operations as BtcOperation[])
+        .filter(op => !keptOperationHashes.has(op.hash))
+        .map(op => op.hash),
+    );
 
     const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
-    const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
-    console.log("synchronisation", operations);
-    console.log("synchronisation", utxos);
-    console.log("walletAccount", walletAccount);
+    const filteredRawUtxos = rawUtxos.filter(utxo => {
+      if (utxo.block_height !== null) return true;
+      if (!utxo.rbf) return true;
+      return !removedOperationHashes.has(utxo.output_hash);
+    });
+    const utxos = filteredRawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
+    const balance = utxos.reduce((total, utxo) => total.plus(utxo.value), new BigNumber(0));
+
     return {
       id: accountId,
       xpub,

@@ -4,8 +4,7 @@ import { BigNumber } from "bignumber.js";
 import type { Transaction } from "../types";
 
 /**
- * Used to display the pending transaction (the original transaction being sped
- * up or canceled) fees info in the edit flow
+ * Used to display the pending transaction (the original transaction being sped up or canceled) fees info in the edit flow
  */
 export const getFormattedFeeFields = ({
   transaction,

@@ -3,13 +3,15 @@ import type { Account } from "@ledgerhq/types-live";
 import type { Transaction as BtcTransaction } from "../../../types";
 
 jest.mock("../../../buildRbfTransaction", () => ({
-  buildRbfTx: jest.fn(),
+  buildRbfSpeedUpTx: jest.fn(),
+  buildRbfCancelTx: jest.fn(),
 }));
 
-import { buildRbfTx } from "../../../buildRbfTransaction";
+import { buildRbfCancelTx, buildRbfSpeedUpTx } from "../../../buildRbfTransaction";
 import { getEditTransactionPatch } from "../../../editTransaction/getEditTransactionPatch";
 
-const mockedBuildRbfTx = buildRbfTx as unknown as jest.Mock;
+const mockedBuildRbfSpeedUpTx = buildRbfSpeedUpTx as unknown as any;
+const mockedBuildRbfCancelTx = buildRbfCancelTx as unknown as any;
 
 describe("coin-bitcoin editTransaction/getEditTransactionPatch", () => {
   const account = {} as Account;
@@ -18,7 +20,7 @@ describe("coin-bitcoin editTransaction/getEditTransactionPatch", () => {
     jest.clearAllMocks();
   });
 
-  it("calls buildRbfTx with replaceTxId and returns it when network fast fee is unavailable", () => {
+  it("calls buildRbfSpeedUpTx with replaceTxId and returns it when network fast fee is unavailable", () => {
     const originalTxId = "orig-txid";
 
     const baseIntent: Partial<BtcTransaction> = {
@@ -28,7 +30,7 @@ describe("coin-bitcoin editTransaction/getEditTransactionPatch", () => {
       networkInfo: undefined,
     };
 
-    mockedBuildRbfTx.mockResolvedValueOnce(baseIntent);
+    mockedBuildRbfSpeedUpTx.mockResolvedValueOnce(baseIntent);
 
     const tx = { replaceTxId: originalTxId } as unknown as BtcTransaction;
 
@@ -37,8 +39,8 @@ describe("coin-bitcoin editTransaction/getEditTransactionPatch", () => {
       transaction: tx,
       account,
     }).then(patch => {
-      expect(mockedBuildRbfTx).toHaveBeenCalledTimes(1);
-      expect(mockedBuildRbfTx).toHaveBeenCalledWith(account, originalTxId);
+      expect(mockedBuildRbfSpeedUpTx).toHaveBeenCalledTimes(1);
+      expect(mockedBuildRbfSpeedUpTx).toHaveBeenCalledWith(account, originalTxId);
 
       expect(patch).toEqual(baseIntent);
     });
@@ -59,7 +61,7 @@ describe("coin-bitcoin editTransaction/getEditTransactionPatch", () => {
       } as any,
     };
 
-    mockedBuildRbfTx.mockResolvedValueOnce(baseIntent);
+    mockedBuildRbfSpeedUpTx.mockResolvedValueOnce(baseIntent);
 
     const tx = { replaceTxId: originalTxId } as unknown as BtcTransaction;
 
@@ -88,7 +90,7 @@ describe("coin-bitcoin editTransaction/getEditTransactionPatch", () => {
       } as any,
     };
 
-    mockedBuildRbfTx.mockResolvedValueOnce(baseIntent);
+    mockedBuildRbfSpeedUpTx.mockResolvedValueOnce(baseIntent);
 
     const tx = { replaceTxId: originalTxId } as unknown as BtcTransaction;
 
@@ -112,5 +114,59 @@ describe("coin-bitcoin editTransaction/getEditTransactionPatch", () => {
         account,
       }),
     ).rejects.toThrow("replaceTxId is required");
+  });
+
+  it("calls buildRbfCancelTx with replaceTxId and returns it when network fast fee is unavailable", () => {
+    const originalTxId = "orig-txid";
+
+    const baseIntent: Partial<BtcTransaction> = {
+      family: "bitcoin",
+      feePerByte: new BigNumber(10),
+      feesStrategy: "custom",
+      networkInfo: undefined,
+    };
+
+    mockedBuildRbfCancelTx.mockResolvedValueOnce(baseIntent);
+
+    const tx = { replaceTxId: originalTxId } as unknown as BtcTransaction;
+
+    return getEditTransactionPatch({
+      editType: "cancel",
+      transaction: tx,
+      account,
+    }).then(patch => {
+      expect(mockedBuildRbfCancelTx).toHaveBeenCalledTimes(1);
+      expect(mockedBuildRbfCancelTx).toHaveBeenCalledWith(account, originalTxId);
+      expect(patch).toEqual(baseIntent);
+    });
+  });
+
+  it("bumps cancel feePerByte to fast and sets feesStrategy=fast when equal", () => {
+    const originalTxId = "orig-txid";
+    const fast = new BigNumber(20);
+
+    const baseIntent: Partial<BtcTransaction> = {
+      family: "bitcoin",
+      feePerByte: new BigNumber(10),
+      feesStrategy: "custom",
+      networkInfo: {
+        feeItems: {
+          items: [{ speed: "fast", feePerByte: fast }],
+        },
+      } as any,
+    };
+
+    mockedBuildRbfCancelTx.mockResolvedValueOnce(baseIntent);
+
+    const tx = { replaceTxId: originalTxId } as unknown as BtcTransaction;
+
+    return getEditTransactionPatch({
+      editType: "cancel",
+      transaction: tx,
+      account,
+    }).then(patch => {
+      expect(patch.feePerByte?.toNumber()).toBe(20);
+      expect(patch.feesStrategy).toBe("fast");
+    });
   });
 });

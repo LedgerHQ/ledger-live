@@ -3,7 +3,7 @@ import { log } from "@ledgerhq/logs";
 import { isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import type { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
 import type { Observer } from "rxjs";
-import type { BitcoinAccount, Transaction } from "./types";
+import type { Transaction } from "./types";
 import { getNetworkParameters } from "./networks";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
@@ -12,7 +12,6 @@ import wallet, { getWalletAccount } from "./wallet-btc";
 import { perCoinLogic } from "./logic";
 import { SignerContext } from "./signer";
 import { fromAsyncOperation } from "./observable";
-import { buildRbfTx } from "./buildRbfTransaction";
 
 type SignOperationObserverEvent =
   | { type: "device-signature-granted" }
@@ -102,14 +101,7 @@ async function executeSignOperation(
   const expiryHeight = perCoin?.hasExpiryHeight ? Buffer.from([0x00, 0x00, 0x00, 0x00]) : undefined;
 
   const hasExtraData = perCoin?.hasExtraData || false;
-  // console.log("fee", fee);
-  // const replaceableTx = await buildRbfTx(
-  //   account as BitcoinAccount,
-  //   transaction.replaceTxId!,
-  //   // 1,
-  //   // transaction.changeAddress as string,
-  // );
-  console.log("account signature balance", account.balance.toString());
+
   const signature: string = await signerContext(deviceId, currency, signer =>
     wallet.signAccountTx({
       btc: signer,
