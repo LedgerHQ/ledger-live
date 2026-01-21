@@ -27,7 +27,11 @@ test("Delegate flow using max amount", async () => {
   });
 
   await test.step("Toggle max amount to be filled in the amount field", async () => {
+    // Continue from the earn-reward-modal
     await delegate.continue();
+    // Continue from the delegate validator selection modal
+    await delegate.continue();
+
     await delegate.toggleMaxAmount();
     const availableMaxAmount = await delegate.getSpendableBannerValue();
     await delegate.waitForCryptoAmountToBePopulated();
