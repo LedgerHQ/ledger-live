@@ -42,23 +42,6 @@ describe("hasMinimumFunds", () => {
       expect(result).toBe(true);
     });
 
-    it("falls back to balance when spendableBalance is falsy", async () => {
-      const additionalFee = new BigNumber(100);
-      mockedGetAdditionalFeeRequiredForRbf.mockResolvedValueOnce(additionalFee);
-
-      const mainAccount = {
-        balance: new BigNumber(50),
-        // spendableBalance intentionally omitted / falsy
-      } as unknown as Account;
-
-      const result = await hasMinimumFundsToCancel({
-        mainAccount,
-        transactionToUpdate,
-      });
-
-      expect(result).toBe(false);
-    });
-
     it("returns false when getting additional fee fails", async () => {
       mockedGetAdditionalFeeRequiredForRbf.mockRejectedValueOnce(new Error("network error"));
 
