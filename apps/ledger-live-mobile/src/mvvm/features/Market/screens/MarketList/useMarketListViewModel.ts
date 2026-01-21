@@ -12,6 +12,8 @@ import { getCurrentPage, isDataStale } from "../../utils";
 import { ViewToken } from "react-native";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { useQueryClient } from "@tanstack/react-query";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>
 >;
@@ -48,9 +50,14 @@ function useMarketListViewModel() {
 
   const { search, counterCurrency, range } = marketParams;
 
+  const { shouldDisplayMarketBanner: filterBySupported } = useWalletFeaturesConfig("mobile");
+
+  const shouldDisplayLiveCompatible = filterBySupported || marketParams.liveCompatible;
+
   const marketResult = useMarketDataHook({
     ...marketParams,
     starred: filterByStarredCurrencies ? starredMarketCoins : [],
+    liveCompatible: shouldDisplayLiveCompatible,
   });
 
   const baseData = filterByStarredCurrencies
@@ -68,10 +75,10 @@ function useMarketListViewModel() {
         starred: [],
         order: Order.MarketCapDesc,
         search: "",
-        liveCompatible: false,
+        liveCompatible: filterBySupported,
       });
     }
-  }, [initialTop100, updateMarketParams]);
+  }, [initialTop100, updateMarketParams, filterBySupported]);
 
   const onEndReached = useCallback(() => {
     dispatch(setMarketRequestParams({ page: (marketParams?.page || 1) + 1 }));
