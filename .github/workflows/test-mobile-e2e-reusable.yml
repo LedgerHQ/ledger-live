@@ -860,71 +860,71 @@ jobs:
 #          status_11: ${{ needs.detox-tests-android.outputs.status_11 }}
 #          status_12: ${{ needs.detox-tests-android.outputs.status_12 }}
 
-  upload-to-xray:
-    name: "Test Mobile E2E > XRAY Report"
-    runs-on: [ledger-live-medium]
-    strategy:
-      matrix:
-        platform:
-          - android
-          - ios
-        exclude:
-          - platform: ${{ github.event.inputs.tests_type == 'Android Only' && 'ios' }}
-
-      fail-fast: false
-    env:
-      XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
-      XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
-      XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
-      JIRA_URL: https://ledgerhq.atlassian.net/browse
-      TEST_EXECUTION: ${{ matrix.platform == 'android' && inputs.test_execution_android || inputs.test_execution_ios }}
-    needs: [detox-tests-android, detox-tests-ios]
-    if: ${{ !cancelled() && inputs.export_to_xray }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-          repository: LedgerHQ/ledger-live
-
-      - name: Download Allure Results
-        uses: actions/download-artifact@v4
-        with:
-          path: "artifacts-${{ matrix.platform }}"
-          pattern: ${{ matrix.platform }}-test-artifacts-*
-          merge-multiple: true
-
-      - name: Format Xray results
-        run: e2e/mobile/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ env.TEST_EXECUTION}}
-
-      - name: Upload aggregated xray results
-        uses: actions/upload-artifact@v4
-        with:
-          retention-days: 1
-          name: xray-reports-${{ matrix.platform }}
-          path: "artifacts-${{ matrix.platform }}/xray_report.json"
-
-      - name: Authenticate to Xray
-        id: authenticate
-        run: |
-          response=$(curl -H "Content-Type: application/json" -X POST \
-                    --data '{"client_id": "${{ env.XRAY_CLIENT_ID }}", "client_secret": "${{ env.XRAY_CLIENT_SECRET }}"}' \
-                    ${{ env.XRAY_API_URL }}/authenticate)
-          echo "Xray Authentication Response: $response"
-          echo "xray_token=$response" >> $GITHUB_OUTPUT
-      - name: Publish report on Xray
-        id: publish-xray
-        run: |
-          response=$(curl -H "Content-Type: application/json" \
-                    -H "Authorization: Bearer ${{ steps.authenticate.outputs.xray_token }}" \
-                    -X POST \
-                    --data @artifacts-${{ matrix.platform }}/xray_report.json \
-                    ${{ env.XRAY_API_URL }}/import/execution)
-          echo "Xray Report Response: $response"
-          key=$(echo $response | jq -r '.key')
-          echo "xray_key=$key" >> $GITHUB_OUTPUT
-      - name: Write Xray report link in summary
-        shell: bash
-        run: echo "::notice title=${{ matrix.platform }} Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
+#  upload-to-xray:
+#    name: "Test Mobile E2E > XRAY Report"
+#    runs-on: [ledger-live-medium]
+#    strategy:
+#      matrix:
+#        platform:
+#          - android
+#          - ios
+#        exclude:
+#          - platform: ${{ github.event.inputs.tests_type == 'Android Only' && 'ios' }}
+#
+#      fail-fast: false
+#    env:
+#      XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
+#      XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
+#      XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
+#      JIRA_URL: https://ledgerhq.atlassian.net/browse
+#      TEST_EXECUTION: ${{ matrix.platform == 'android' && inputs.test_execution_android || inputs.test_execution_ios }}
+#    needs: [detox-tests-android, detox-tests-ios]
+#    if: ${{ !cancelled() && inputs.export_to_xray }}
+#    steps:
+#      - uses: actions/checkout@v4
+#        with:
+#          ref: ${{ inputs.ref || github.sha }}
+#          repository: LedgerHQ/ledger-live
+#
+#      - name: Download Allure Results
+#        uses: actions/download-artifact@v4
+#        with:
+#          path: "artifacts-${{ matrix.platform }}"
+#          pattern: ${{ matrix.platform }}-test-artifacts-*
+#          merge-multiple: true
+#
+#      - name: Format Xray results
+#        run: e2e/mobile/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ env.TEST_EXECUTION}}
+#
+#      - name: Upload aggregated xray results
+#        uses: actions/upload-artifact@v4
+#        with:
+#          retention-days: 1
+#          name: xray-reports-${{ matrix.platform }}
+#          path: "artifacts-${{ matrix.platform }}/xray_report.json"
+#
+#      - name: Authenticate to Xray
+#        id: authenticate
+#        run: |
+#          response=$(curl -H "Content-Type: application/json" -X POST \
+#                    --data '{"client_id": "${{ env.XRAY_CLIENT_ID }}", "client_secret": "${{ env.XRAY_CLIENT_SECRET }}"}' \
+#                    ${{ env.XRAY_API_URL }}/authenticate)
+#          echo "Xray Authentication Response: $response"
+#          echo "xray_token=$response" >> $GITHUB_OUTPUT
+#      - name: Publish report on Xray
+#        id: publish-xray
+#        run: |
+#          response=$(curl -H "Content-Type: application/json" \
+#                    -H "Authorization: Bearer ${{ steps.authenticate.outputs.xray_token }}" \
+#                    -X POST \
+#                    --data @artifacts-${{ matrix.platform }}/xray_report.json \
+#                    ${{ env.XRAY_API_URL }}/import/execution)
+#          echo "Xray Report Response: $response"
+#          key=$(echo $response | jq -r '.key')
+#          echo "xray_key=$key" >> $GITHUB_OUTPUT
+#      - name: Write Xray report link in summary
+#        shell: bash
+#        run: echo "::notice title=${{ matrix.platform }} Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
 
 #  report-on-slack:
 #    name: "Test Mobile E2E > Slack Report"
