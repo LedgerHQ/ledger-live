@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { BitcoinAccount, BitcoinResources, NetworkInfoRaw } from "../../types";
+import { BitcoinAccount, BitcoinResources, NetworkInfoRaw } from "../types";
 import {
   AddressFormat,
   BitcoinAddress,
@@ -11,7 +11,7 @@ import {
   BitcoinXPub,
   CreateTransaction,
   SignerTransaction,
-} from "../../signer";
+} from "../signer";
 
 export const networkInfo: NetworkInfoRaw = {
   family: "bitcoin",
