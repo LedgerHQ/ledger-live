@@ -61,12 +61,14 @@ export function createApi(config: AleoConfig, currencyId: string): Api {
         xpubOrAddress: address,
         derivationMode: "",
       });
+
       const { publicOperations } = await listOperations({
         currency,
         address,
         ledgerAccountId,
         pagination,
         fetchAllPages: false,
+        direction: undefined,
       });
 
       const alpacaOperations = publicOperations.map(

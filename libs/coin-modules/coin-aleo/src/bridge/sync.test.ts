@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { SyncConfig } from "@ledgerhq/types-live";
-import { getBalance } from "../logic";
+import { getBalance, lastBlock, listOperations } from "../logic";
 import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
 import { getAccountShape } from "./sync";
@@ -9,6 +9,8 @@ import { getAccountShape } from "./sync";
 jest.mock("../logic");
 
 const mockGetBalance = getBalance as jest.MockedFunction<typeof getBalance>;
+const mockLastBlock = lastBlock as jest.MockedFunction<typeof lastBlock>;
+const mockListOperations = listOperations as jest.MockedFunction<typeof listOperations>;
 
 describe("sync.ts", () => {
   const mockCurrency = getMockedCurrency();
@@ -27,6 +29,9 @@ describe("sync.ts", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    mockLastBlock.mockResolvedValue({ height: 100, hash: "mock", time: new Date() });
+    mockListOperations.mockResolvedValue({ publicOperations: [] });
   });
 
   describe("getAccountShape", () => {
@@ -63,7 +68,7 @@ describe("sync.ts", () => {
         id: expectedAccountId,
         balance: mockAccount.balance,
         spendableBalance: mockAccount.spendableBalance,
-        blockHeight: 0,
+        blockHeight: 100,
         operations: [],
         operationsCount: 0,
         lastSyncDate: expect.any(Date),

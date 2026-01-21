@@ -57,10 +57,10 @@ async function getAccountPublicTransactions({
 }: {
   currency: CryptoCurrency;
   address: string;
-  minHeight: number | null;
-  limit?: number | undefined;
-  order?: "asc" | "desc" | undefined;
-  direction?: "prev" | "next" | undefined;
+  minHeight: number;
+  limit: number | undefined;
+  order: "asc" | "desc" | undefined;
+  direction: "prev" | "next" | undefined;
   fetchAllPages: boolean;
 }): Promise<{ transactions: AleoPublicTransaction[] }> {
   const transactions: AleoPublicTransaction[] = [];

@@ -110,6 +110,8 @@ describe("apiClient", () => {
         limit: 2,
         minHeight: 0,
         fetchAllPages: true,
+        direction: undefined,
+        order: undefined,
       });
 
       expect(result.transactions).toHaveLength(3);
@@ -133,6 +135,8 @@ describe("apiClient", () => {
         limit: 50,
         minHeight: 60,
         fetchAllPages: false,
+        direction: undefined,
+        order: undefined,
       });
 
       expect(result.transactions).toHaveLength(50);
@@ -150,6 +154,8 @@ describe("apiClient", () => {
         minHeight: 0,
         limit: 2,
         fetchAllPages: true,
+        direction: undefined,
+        order: undefined,
       });
 
       expect(mockNetwork).toHaveBeenCalledWith({
@@ -169,6 +175,7 @@ describe("apiClient", () => {
         minHeight: 0,
         limit: 2,
         fetchAllPages: true,
+        direction: undefined,
         order: "asc",
       });
 
@@ -188,6 +195,8 @@ describe("apiClient", () => {
           minHeight: 0,
           limit: 2,
           fetchAllPages: true,
+          direction: undefined,
+          order: undefined,
         }),
       ).rejects.toThrow("Network error");
     });
