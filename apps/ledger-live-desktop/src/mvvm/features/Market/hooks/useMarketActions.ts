@@ -108,12 +108,10 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
         navigate("/swap", {
           state: {
             defaultCurrency: ledgerCurrency,
-            defaultAccount,
+            defaultAccountId: defaultAccount?.id,
             defaultAmountFrom: "0",
-            defaultParentAccount:
-              defaultAccount && "parentId" in defaultAccount && defaultAccount.parentId
-                ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
-                : null,
+            defaultParentAccountId:
+              defaultAccount && "parentId" in defaultAccount ? defaultAccount.parentId : undefined,
             from: location.pathname,
           },
         });
