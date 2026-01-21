@@ -43,12 +43,12 @@ export const buildSignOperation =
 
         const signature = await signerContext(deviceId, async signer => {
           const { freshAddressPath: derivationPath } = account;
-          const { publicKey } = await signer.getAddress(derivationPath);
+          const { publicKey } = await signer.getAddress(derivationPath, false);
 
           // Follow standard Ledger Live pattern: craft transaction, then sign
           // Note: estimation returns bigint, convert to BigNumber for transaction crafting
           // The .toString() conversion is intentional for BigNumber precision safety
-          const { nativeTransaction, serializedTransaction } = await craftTransaction(
+          const { transaction: hwTransaction, serializedTransaction } = await craftTransaction(
             {
               address: account.freshAddress,
               publicKey,
@@ -62,8 +62,8 @@ export const buildSignOperation =
             },
           );
 
-          // Sign the native transaction structure with the device
-          const transactionSignature = await signer.signTransfer(nativeTransaction, derivationPath);
+          // hwTransaction is already in hw-app format, ready for device signing
+          const transactionSignature = await signer.signTransfer(hwTransaction, derivationPath);
 
           // Combine serialized transaction from SDK with device signature
           return combine(serializedTransaction, transactionSignature);

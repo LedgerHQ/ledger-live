@@ -5,12 +5,6 @@ import type { ConcordiumAccount, ConcordiumSigner, Transaction } from "../types"
 
 /**
  * Custom receive implementation for Concordium
- *
- * Uses verifyAddress with identity/credential parameters stored in concordiumResources
- * instead of BIP32 path-based address derivation.
- *
- * Concordium addresses are computed as SHA256(credId), where credId is derived from
- * identity parameters, not from BIP32 paths like other blockchains.
  */
 export const buildReceive =
   (

@@ -1,5 +1,7 @@
-import type { HexString } from "@ledgerhq/concordium-sdk-adapter";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  HexString,
+  CredentialDeploymentTransaction as WebSDKCredentialDeploymentTransaction,
+} from "@ledgerhq/concordium-sdk-adapter";
 import type { SessionTypes, ISignClient } from "@walletconnect/types";
 import { AccountOnboardStatus } from "@ledgerhq/types-live";
 import type { ConcordiumNetwork } from "./config";
@@ -29,17 +31,17 @@ export type ConcordiumOnboardResult = {
 };
 
 /**
- * Credential deployment transaction for submission.
+ * Credential deployment transaction (re-exported from SDK).
  *
- * Design Decision: randomness is stored as CommitmentsRandomness object internally.
- * Only stringify to JSON when serializing for external storage or API calls that require string format.
+ * Structure:
+ * - expiry: TransactionExpiry object
+ * - unsignedCdi: Parsed UnsignedCredentialDeploymentInformation object
+ * - randomness: CommitmentsRandomness object
+ *
+ * Design Decision: After deserialization, we work with parsed objects internally.
  * This avoids unnecessary JSON.parse/stringify cycles in the onboarding flow.
  */
-export type CredentialDeploymentTransaction = {
-  expiry: bigint;
-  unsignedCdiStr: string;
-  randomness: CommitmentsRandomness;
-};
+export type CredentialDeploymentTransaction = WebSDKCredentialDeploymentTransaction;
 
 export type PrepareCredentialDeploymentResponse = {
   transaction: CredentialDeploymentTransaction;
@@ -51,18 +53,22 @@ export type PrepareCredentialDeploymentResponse = {
  * Type definitions matching IDApp SDK
  */
 
-export interface SerializedCredentialDeploymentDetails {
+export interface SerializedCredentialDeploymentTransaction {
   expiry: number; // epoch seconds
   unsignedCdiStr: string; // JSON string of UnsignedCredentialDeploymentInformation
   randomness: CommitmentsRandomness;
 }
 
+/**
+ * Commitments randomness from IDApp - matches SDK CommitmentsRandomness structure
+ * AttributeKey is re-exported from @concordium/web-sdk via concordium-sdk-adapter
+ */
 export interface CommitmentsRandomness {
   idCredSecRand: string;
   prfRand: string;
   credCounterRand: string;
   maxAccountsRand: string;
-  attributesRand: Record<string, string>;
+  attributesRand: Record<string, string>; // Compatible with Record<AttributeKey, string> at runtime
 }
 
 export interface IdOwnershipProofs {
@@ -92,11 +98,6 @@ export interface UnsignedCredentialDeploymentInformation {
   arData: Record<string, unknown>; // ChainArData - complex structure
   commitments: CredentialDeploymentCommitments;
   proofs: IdOwnershipProofs;
-}
-
-export interface SignedCredentialDeploymentTransaction {
-  credentialDeploymentTransaction: CredentialDeploymentTransaction;
-  signature: HexString;
 }
 
 export interface IDAppCreateAccountMessage {
@@ -134,9 +135,8 @@ export declare enum IDAppResponseStatus {
 }
 
 export interface IDAppCreateAccountResponseMessage {
-  serializedCredentialDeploymentTransaction: SerializedCredentialDeploymentDetails;
+  serializedCredentialDeploymentTransaction: SerializedCredentialDeploymentTransaction;
   accountAddress: string;
-  // Optional identity/credential indices for verify address support
   identityIndex?: number;
   credNumber?: number;
 }
@@ -168,12 +168,6 @@ export interface ConcordiumWalletConnectContext {
   getCreateAccountMessage(publicKey: string, reason: string): IDAppCreateAccountMessage;
 
   requestCreateAccount(params: IDAppCreateAccountParams): Promise<IDAppCreateAccountResponse>;
-
-  submitCCDTransaction(
-    credentialDeploymentTransaction: CredentialDeploymentTransaction,
-    signature: string,
-    currency: CryptoCurrency,
-  ): Promise<string>;
 
   initiatePairing(
     network: ConcordiumNetwork,

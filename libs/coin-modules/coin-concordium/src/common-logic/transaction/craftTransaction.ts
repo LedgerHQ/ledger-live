@@ -5,19 +5,14 @@ import {
   SequenceNumber,
   TransactionExpiry,
 } from "@ledgerhq/concordium-sdk-adapter";
-import {
-  AccountTransactionWithEnergy,
-  serializeAccountTransaction,
-} from "@ledgerhq/hw-app-concordium/lib/serialization";
+import { serializeAccountTransaction } from "@ledgerhq/hw-app-concordium/lib/serialization";
+import type { AccountTransaction } from "@ledgerhq/hw-app-concordium/lib/types";
 import BigNumber from "bignumber.js";
+import { transformAccountTransaction } from "../utils";
 
 /**
  * Crafts a Concordium transaction for signing and submission.
- *
- * Creates AccountTransactionWithEnergy for hardware wallet signing using SDK types.
- * Uses hw-app-concordium's serializeAccountTransaction which serializes
- * header + type + payload without requiring signatures (unlike the SDK's
- * serializeAccountTransaction which requires signatures).
+ * Returns hw-app format transaction (ready for device signing) + serialized version for network submission.
  */
 export async function craftTransaction(
   account: {
@@ -32,12 +27,12 @@ export async function craftTransaction(
     energy?: bigint;
   },
 ): Promise<{
-  nativeTransaction: AccountTransactionWithEnergy;
+  transaction: AccountTransaction;
   serializedTransaction: string;
 }> {
   const expiryEpochSeconds = Math.floor(Date.now() / 1000) + 3600;
 
-  const nativeTransaction: AccountTransactionWithEnergy = {
+  const nativeTransaction = {
     type: AccountTransactionType.Transfer,
     header: {
       sender: AccountAddress.fromBase58(account.address),
@@ -51,10 +46,12 @@ export async function craftTransaction(
     energyAmount: transaction.energy ?? BigInt(0),
   };
 
-  const serializedTransaction = serializeAccountTransaction(nativeTransaction).toString("hex");
+  // Transform SDK format to hw-app format, then serialize to get transaction body for network submission
+  const hwTransaction = transformAccountTransaction(nativeTransaction);
+  const serializedTransaction = serializeAccountTransaction(hwTransaction).toString("hex");
 
   return {
-    nativeTransaction,
+    transaction: hwTransaction,
     serializedTransaction,
   };
 }

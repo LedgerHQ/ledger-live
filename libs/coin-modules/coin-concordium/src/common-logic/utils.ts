@@ -1,4 +1,6 @@
-import { AccountAddress } from "@ledgerhq/concordium-sdk-adapter";
+import { AccountAddress, getAccountTransactionHandler } from "@ledgerhq/concordium-sdk-adapter";
+import type { AccountTransaction } from "@ledgerhq/hw-app-concordium/lib/types";
+import { AccountTransactionWithEnergy } from "../types/transaction";
 
 /**
  * Validates a Concordium account address using the SDK.
@@ -24,3 +26,19 @@ export const encodeSignedTransaction = (transaction: string, signature: string) 
     signature: signature,
   });
 };
+
+export function transformAccountTransaction(
+  sdkTx: AccountTransactionWithEnergy,
+): AccountTransaction {
+  const handler = getAccountTransactionHandler(sdkTx.type);
+  const serializedPayload = handler.serialize(sdkTx.payload);
+
+  return {
+    sender: Buffer.from(AccountAddress.toBuffer(sdkTx.header.sender)),
+    nonce: sdkTx.header.nonce.value,
+    expiry: sdkTx.header.expiry.expiryEpochSeconds,
+    energyAmount: sdkTx.energyAmount,
+    transactionType: sdkTx.type,
+    payload: Buffer.from(serializedPayload),
+  };
+}

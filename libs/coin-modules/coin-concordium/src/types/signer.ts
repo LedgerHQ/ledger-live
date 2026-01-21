@@ -1,32 +1,54 @@
-export type ConcordiumAddress = {
-  publicKey: string;
-  address: string;
-  path: string;
-};
+import type {
+  Address,
+  VerifyAddressResponse,
+  AccountTransaction,
+  CredentialDeploymentTransaction,
+  SignCredentialDeploymentMetadata,
+} from "@ledgerhq/hw-app-concordium/lib/types";
 
-export type ConcordiumSignature = string; // `0x${string}`
-
-import type { CredentialDeploymentTransaction } from "@ledgerhq/concordium-sdk-adapter";
-import type { AccountTransactionWithEnergy } from "@ledgerhq/hw-app-concordium/lib/serialization";
-
+/**
+ * Signer interface for Concordium device operations.
+ *
+ * This interface matches hw-app-concordium methods exactly.
+ * All types are hw-app format (Buffer, primitives), not SDK types.
+ *
+ * Transformation from SDK → hw-app format happens in the bridge/business logic layer.
+ * Implementation: ledger-live-common/families/concordium/setup.ts (just instantiates hw-app)
+ */
 export interface ConcordiumSigner {
-  getAddress(path: string, display?: boolean): Promise<ConcordiumAddress>;
-  signTransaction(path: string, rawTx: string): Promise<ConcordiumSignature>;
-  signTransfer(txn: AccountTransactionWithEnergy, path: string): Promise<string>;
+  /**
+   * Get Concordium address for a given path.
+   */
+  getAddress(
+    path: string,
+    display?: boolean,
+    id?: number,
+    cred?: number,
+    idp?: number,
+    isLegacy?: boolean,
+  ): Promise<Address>;
+
+  /**
+   * Get public key for a given path.
+   */
+  getPublicKey(path: string, confirm?: boolean): Promise<string>;
+
+  /**
+   * Sign an account transaction (hw-app format).
+   */
+  signTransfer(txn: AccountTransaction, path: string): Promise<string>;
+
+  /**
+   * Sign a credential deployment transaction (hw-app format).
+   */
   signCredentialDeployment(
     payload: CredentialDeploymentTransaction,
     path: string,
-    metadata?: { isNew?: boolean; address?: string },
-  ): Promise<{ signature: string[] }>;
+    metadata?: SignCredentialDeploymentMetadata,
+  ): Promise<string>;
+
   /**
-   * Verify account address on device using identity and credential parameters
-   *
-   * @param isLegacy - If true, uses legacy protocol (P1=0x00), otherwise new protocol (P1=0x01)
-   * @param identityIndex - Identity index
-   * @param credNumber - Credential counter
-   * @param ipIdentity - Identity provider index (only used for new protocol)
-   * @param credId - Credential ID (hex string) for computing the correct on-chain address
-   * @returns Status of verification, computed address, and device-computed credId
+   * Verify account address on device.
    */
   verifyAddress(
     isLegacy: boolean,
@@ -34,5 +56,5 @@ export interface ConcordiumSigner {
     credNumber: number,
     ipIdentity?: number,
     credId?: string,
-  ): Promise<{ status: string; address?: string; deviceCredId?: string; devicePrfKey?: string }>;
+  ): Promise<VerifyAddressResponse>;
 }

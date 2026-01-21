@@ -110,9 +110,9 @@
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
     },
-    "./network/onboard": {
-      "require": "./lib/network/onboard.js",
-      "default": "./lib-es/network/onboard.js"
+    "./network/submitCredentialDeploymentTransaction": {
+      "require": "./lib/network/submitCredentialDeploymentTransaction.js",
+      "default": "./lib-es/network/submitCredentialDeploymentTransaction.js"
     },
     "./network/utils": {
       "require": "./lib/network/utils.js",
@@ -148,7 +148,6 @@
     "@walletconnect/types": "2.23.0",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.4",
-    "json-bigint": "^1.0.0",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -156,7 +155,6 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
-    "@types/json-bigint": "^1.0.4",
     "dotenv": "^16.4.5",
     "expect": "^27.4.6",
     "jest": "^29.7.0",

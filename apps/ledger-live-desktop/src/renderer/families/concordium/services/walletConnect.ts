@@ -1,16 +1,13 @@
 import type { ConcordiumNetwork } from "@ledgerhq/coin-concordium";
 import { CONCORDIUM_CHAIN_IDS } from "@ledgerhq/coin-concordium/constants";
-import { submitCCDTransaction as submitCCDTransactionImpl } from "@ledgerhq/coin-concordium/network/onboard";
 import type {
   ConcordiumWalletConnectContext,
   IDAppCreateAccountMessage,
   IDAppCreateAccountParams,
-  CredentialDeploymentTransaction,
   IDAppCreateAccountResponse,
 } from "@ledgerhq/coin-concordium/types";
 import SignClient from "@walletconnect/sign-client";
 import type { SessionTypes } from "@walletconnect/types";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import logger from "~/renderer/logger";
 
 const CLIENT_CONFIG = {
@@ -28,6 +25,8 @@ const CLIENT_CONFIG = {
 
 class ConcordiumWalletConnect implements ConcordiumWalletConnectContext {
   client: SignClient | null = null;
+
+  private namespace: string = "ccd";
 
   async getClient(): Promise<SignClient> {
     if (this.client) {
@@ -50,7 +49,7 @@ class ConcordiumWalletConnect implements ConcordiumWalletConnectContext {
   }
 
   private getNetworksFromSession(session: SessionTypes.Struct): ConcordiumNetwork[] {
-    const chains = session.namespaces.ccd?.chains;
+    const chains = session.namespaces[this.namespace]?.chains;
     const networks: ConcordiumNetwork[] = [];
 
     if (chains?.includes(CONCORDIUM_CHAIN_IDS.Mainnet)) {
@@ -69,7 +68,7 @@ class ConcordiumWalletConnect implements ConcordiumWalletConnectContext {
 
     if (!client) return [];
 
-    return client.session.getAll().filter(s => "ccd" in s.namespaces);
+    return client.session.getAll().filter(s => this.namespace in s.namespaces);
   }
 
   async getSession(network: ConcordiumNetwork): Promise<SessionTypes.Struct | null> {
@@ -132,14 +131,6 @@ class ConcordiumWalletConnect implements ConcordiumWalletConnectContext {
         params: params.params,
       },
     });
-  }
-
-  async submitCCDTransaction(
-    credentialDeploymentTransaction: CredentialDeploymentTransaction,
-    signature: string,
-    currency: CryptoCurrency,
-  ): Promise<string> {
-    return await submitCCDTransactionImpl(credentialDeploymentTransaction, signature, currency);
   }
 
   async initiatePairing(

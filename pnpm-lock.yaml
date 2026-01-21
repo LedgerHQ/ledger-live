@@ -3397,9 +3397,6 @@ importers:
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
-      json-bigint:
-        specifier: ^1.0.0
-        version: 1.0.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -3416,9 +3413,6 @@ importers:
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.12
-      '@types/json-bigint':
-        specifier: ^1.0.4
-        version: 1.0.4
       dotenv:
         specifier: ^16.4.5
         version: 16.4.7
@@ -7112,9 +7106,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-concordium:
     dependencies:
-      '@ledgerhq/concordium-sdk-adapter':
-        specifier: workspace:*
-        version: link:../../../concordium-sdk-adapter
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -21039,9 +21030,6 @@ packages:
 
   '@types/jsdom@21.1.7':
     resolution: {integrity: sha512-yOriVnggzrnQ3a9OKOCxaVuSug3w3/SbOj5i7VwXWZEyUNl3bLF9V3MfxGbZKuwqJOQyRfqXyROBB1CoZLFWzA==}
-
-  '@types/json-bigint@1.0.4':
-    resolution: {integrity: sha512-ydHooXLbOmxBbubnA7Eh+RpBzuaIiQjh8WGJYQB50JFGFrdxW7JzVlyEV7fAXw0T2sqJ1ysTneJbiyNLqZRAag==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -53517,8 +53505,6 @@ snapshots:
       '@types/node': 20.12.12
       '@types/tough-cookie': 4.0.5
       parse5: 7.2.1
-
-  '@types/json-bigint@1.0.4': {}
 
   '@types/json-schema@7.0.15': {}
 

@@ -12,20 +12,8 @@ import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/se
 import { getCurrencyConfiguration } from "../../config";
 import type { Resolver } from "../../hw/getAddress/types";
 
-const createSigner: CreateSigner<ConcordiumSigner> = (transport: Transport) => {
-  const hwApp = new Concordium(transport);
-
-  return {
-    ...hwApp,
-    signCredentialDeployment: async (
-      payload: any,
-      path: string,
-      metadata?: { isNew?: boolean; address?: string },
-    ): Promise<{ signature: string[] }> => {
-      const signature = await hwApp.signCredentialDeployment(payload, path, metadata);
-      return { signature: [signature] };
-    },
-  } as ConcordiumSigner;
+const createSigner: CreateSigner<ConcordiumSigner> = (transport: Transport): ConcordiumSigner => {
+  return new Concordium(transport);
 };
 
 const getCurrencyConfig = (currency?: CryptoCurrency) => {

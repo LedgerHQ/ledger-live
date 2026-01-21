@@ -5,7 +5,7 @@ import {
   SequenceNumber,
   serializeAccountTransaction,
 } from "@ledgerhq/concordium-sdk-adapter";
-import { AccountTransactionWithEnergy } from "@ledgerhq/hw-app-concordium/lib/serialization";
+import { AccountTransactionWithEnergy } from "../../types/transaction";
 
 /**
  * Minimal Cursor implementation for deserializing transactions.

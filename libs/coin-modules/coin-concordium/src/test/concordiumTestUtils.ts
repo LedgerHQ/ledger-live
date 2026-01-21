@@ -7,9 +7,14 @@
  */
 
 import crypto from "crypto";
-import type { CredentialDeploymentTransaction } from "@ledgerhq/concordium-sdk-adapter";
-import type { AccountTransactionWithEnergy } from "@ledgerhq/hw-app-concordium/lib/serialization";
-import type { ConcordiumAddress, ConcordiumSigner, ConcordiumSignature } from "../types/signer";
+import type {
+  Address,
+  VerifyAddressResponse,
+  AccountTransaction,
+  CredentialDeploymentTransaction,
+  SignCredentialDeploymentMetadata,
+} from "@ledgerhq/hw-app-concordium/lib/types";
+import type { ConcordiumSigner } from "../types/signer";
 
 export interface ConcordiumTestKeyPair {
   publicKeyHex: string; // Ed25519 public key in hex format (64 chars)
@@ -63,27 +68,28 @@ export function generateMockKeyPair(): ConcordiumTestKeyPair {
  */
 export function createMockSigner(keyPair: ConcordiumTestKeyPair): ConcordiumSigner {
   return {
-    getAddress: async (derivationPath: string, display?: boolean): Promise<ConcordiumAddress> => {
+    getAddress: async (
+      _path: string,
+      _display?: boolean,
+      _id?: number,
+      _cred?: number,
+      _idp?: number,
+      _isLegacy?: boolean,
+    ): Promise<Address> => {
       // Generate a mock address from the public key
       // In real implementation, this would derive the address from the public key using Concordium's address derivation
       const address = `4${keyPair.publicKeyHex.slice(0, 63)}`; // Mock Concordium address format
       return {
         address,
         publicKey: keyPair.publicKeyHex,
-        path: derivationPath,
       };
     },
 
-    signTransaction: async (
-      derivationPath: string,
-      rawTx: string,
-    ): Promise<ConcordiumSignature> => {
-      // Sign the raw transaction data
-      const signature = keyPair.sign(rawTx);
-      return signature;
+    getPublicKey: async (_path: string, _confirm?: boolean): Promise<string> => {
+      return keyPair.publicKeyHex;
     },
 
-    signTransfer: async (txn: AccountTransactionWithEnergy, path: string): Promise<string> => {
+    signTransfer: async (txn: AccountTransaction, path: string): Promise<string> => {
       const serializedTx = JSON.stringify({
         transaction: txn,
         path,
@@ -94,16 +100,13 @@ export function createMockSigner(keyPair: ConcordiumTestKeyPair): ConcordiumSign
     signCredentialDeployment: async (
       payload: CredentialDeploymentTransaction,
       path: string,
-      _metadata?: { isNew?: boolean; address?: string },
-    ): Promise<{ signature: string[] }> => {
+      _metadata?: SignCredentialDeploymentMetadata,
+    ): Promise<string> => {
       const serializedTx = JSON.stringify({
         transaction: payload,
         path,
       });
-      const signatureHex = keyPair.sign(serializedTx);
-      return {
-        signature: [signatureHex],
-      };
+      return keyPair.sign(serializedTx);
     },
 
     verifyAddress: async (
@@ -112,12 +115,7 @@ export function createMockSigner(keyPair: ConcordiumTestKeyPair): ConcordiumSign
       _credNumber: number,
       _ipIdentity?: number,
       credId?: string,
-    ): Promise<{
-      status: string;
-      address?: string;
-      deviceCredId?: string;
-      devicePrfKey?: string;
-    }> => {
+    ): Promise<VerifyAddressResponse> => {
       // Mock implementation - always returns success
       // If credId is provided, return it as deviceCredId
       if (credId) {

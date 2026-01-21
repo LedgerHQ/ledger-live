@@ -36,8 +36,6 @@ export default function StepOnboard({
   walletConnectUri,
   sessionTopic,
 }: StepProps) {
-  console.log("StepOnboard()", { creatableAccount, importableAccounts, editedNames });
-
   const link = useLocalizedUrl(urls.concordium.learnMore);
 
   if (onboardingStatus === AccountOnboardStatus.INIT && !isPairing) {

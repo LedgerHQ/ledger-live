@@ -5,14 +5,13 @@ import type { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { CONCORDIUM_CHAIN_IDS, CONCORDIUM_ID_APP_MOBILE_HOST } from "../constants";
 import {
-  getConcordiumNetwork,
-  signCredentialDeployment,
   deserializeCredentialDeploymentTransaction,
-} from "../network/onboard";
+  submitCredentialDeploymentTransaction,
+} from "../network/submitCredentialDeploymentTransaction";
+import { getConcordiumNetwork } from "../network/utils";
 import { getWalletConnect } from "../network/walletConnect";
-import resolver from "../signer";
+import { getPublicKey, signCredentialDeployment } from "../signer";
 import type { ConcordiumSigner } from "../types";
-
 import {
   AccountOnboardStatus,
   ConcordiumOnboardProgress,
@@ -30,40 +29,35 @@ export const buildOnboardAccount =
   ): Observable<ConcordiumOnboardProgress | ConcordiumOnboardResult> =>
     new Observable(o => {
       async function main() {
-        const walletConnect = getWalletConnect();
-        if (!walletConnect) {
-          throw new Error(
-            "WalletConnect context not available. Please ensure Concordium WalletConnect service is initialized.",
-          );
-        }
-
         o.next({ status: AccountOnboardStatus.INIT });
 
-        const getAddress = resolver(signerContext);
-        const { publicKey } = await getAddress(deviceId, {
-          path: account.freshAddressPath,
-          currency,
-          derivationMode: account.derivationMode,
-        });
-
-        o.next({ status: AccountOnboardStatus.PREPARE });
-
-        const network = getConcordiumNetwork(currency);
-        const chainId = CONCORDIUM_CHAIN_IDS[network];
-
-        const session = await walletConnect.getSession(network);
-        if (!session) {
-          throw new Error(
-            `No active WalletConnect session for ${network}. Please pair with Concordium IDApp first.`,
-          );
-        }
-
-        const createAccountMessage = walletConnect.getCreateAccountMessage(
-          publicKey,
-          "Create Concordium account from Ledger Live",
-        );
-
         try {
+          const walletConnect = getWalletConnect();
+          if (!walletConnect) {
+            throw new Error(
+              "WalletConnect context not available. Please ensure Concordium WalletConnect service is initialized.",
+            );
+          }
+
+          const publicKey = await getPublicKey(signerContext, deviceId, account.freshAddressPath);
+
+          o.next({ status: AccountOnboardStatus.PREPARE });
+
+          const network = getConcordiumNetwork(currency);
+          const chainId = CONCORDIUM_CHAIN_IDS[network];
+
+          const session = await walletConnect.getSession(network);
+          if (!session) {
+            throw new Error(
+              `No active WalletConnect session for ${network}. Please pair with Concordium IDApp first.`,
+            );
+          }
+
+          const createAccountMessage = walletConnect.getCreateAccountMessage(
+            publicKey,
+            "Create Concordium account from Ledger Live",
+          );
+
           const response = await walletConnect.requestCreateAccount({
             topic: session.topic,
             chainId,
@@ -93,54 +87,47 @@ export const buildOnboardAccount =
 
           o.next({ status: AccountOnboardStatus.SIGN });
 
-          const signResult = await signCredentialDeployment(
-            signerContext,
-            deviceId,
-            account.freshAddressPath,
+          const credentialDeploymentTransaction = deserializeCredentialDeploymentTransaction(
             serializedCredentialDeploymentTransaction,
           );
 
-          const signature = signResult?.signature?.[0];
+          const signature = await signCredentialDeployment(
+            signerContext,
+            deviceId,
+            account.freshAddressPath,
+            credentialDeploymentTransaction,
+          );
 
-          if (!signature?.length) {
+          if (!signature || !signature.length) {
             throw new Error("Failed to obtain signature from device");
           }
 
-          const {
-            randomness,
-            unsignedCdi: { credId, ipIdentity },
-          } = deserializeCredentialDeploymentTransaction(serializedCredentialDeploymentTransaction);
-
-          await walletConnect.submitCCDTransaction(
-            {
-              expiry: BigInt(serializedCredentialDeploymentTransaction.expiry),
-              unsignedCdiStr: serializedCredentialDeploymentTransaction.unsignedCdiStr,
-              randomness,
-            },
+          await submitCredentialDeploymentTransaction(
+            credentialDeploymentTransaction,
             signature,
             currency,
           );
 
-          const result: ConcordiumOnboardResult = {
+          const onboardResult: ConcordiumOnboardResult = {
             account: {
               ...account,
               freshAddress: accountAddress,
               xpub: publicKey,
               seedIdentifier: publicKey,
               concordiumResources: {
-                credId,
+                credId: credentialDeploymentTransaction.unsignedCdi.credId,
                 credNumber,
                 identityIndex,
-                ipIdentity,
+                ipIdentity: credentialDeploymentTransaction.unsignedCdi.ipIdentity,
                 isOnboarded: true,
                 publicKey,
               },
             },
           };
 
-          o.next(result);
-        } catch (error) {
-          console.error("Error during onboardAccount:", { error });
+          o.next(onboardResult);
+        } catch (error: unknown) {
+          console.error("buildOnboardAccount: error during onboarding", { error });
           throw error;
         }
       }
@@ -176,40 +163,34 @@ export const buildPairWalletConnect =
       async function main() {
         o.next({ status: ConcordiumPairingStatus.INIT });
 
-        const walletConnect = getWalletConnect();
-
-        if (!walletConnect) {
-          throw new Error("WalletConnect context is not available");
-        }
-
-        const network = getConcordiumNetwork(currency);
-        const chainId = CONCORDIUM_CHAIN_IDS[network];
-
-        const { uri, approval } = await walletConnect.initiatePairing(network, chainId);
-
-        if (!uri) {
-          throw new Error("WalletConnect connect() returned no URI");
-        }
-
-        const walletConnectUri = `${CONCORDIUM_ID_APP_MOBILE_HOST}wallet-connect?encodedUri=${uri}`;
-
-        o.next({ status: ConcordiumPairingStatus.PREPARE, walletConnectUri });
-
-        const approvalTimeout = new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error("Proposal expired")), APPROVAL_TIMEOUT_MS),
-        );
-
         try {
+          const walletConnect = getWalletConnect();
+          if (!walletConnect) {
+            throw new Error("WalletConnect context is not available");
+          }
+
+          const network = getConcordiumNetwork(currency);
+          const chainId = CONCORDIUM_CHAIN_IDS[network];
+
+          const { uri, approval } = await walletConnect.initiatePairing(network, chainId);
+
+          if (!uri) {
+            throw new Error("WalletConnect connect() returned no URI");
+          }
+
+          const walletConnectUri = `${CONCORDIUM_ID_APP_MOBILE_HOST}wallet-connect?encodedUri=${uri}`;
+
+          o.next({ status: ConcordiumPairingStatus.PREPARE, walletConnectUri });
+
+          const approvalTimeout = new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error("Proposal expired")), APPROVAL_TIMEOUT_MS),
+          );
+
           const session = await Promise.race([approval(), approvalTimeout]);
 
           o.next({ status: ConcordiumPairingStatus.SUCCESS, sessionTopic: session.topic });
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-          const errorMessage = "message" in error ? error.message : String(error);
-          if (errorMessage?.toLowerCase()?.includes("expired")) {
-            throw new Error("Pairing proposal expired. Please try again.");
-          }
-
+        } catch (error: unknown) {
+          console.error("buildPairWalletConnect: error during pairing", { error });
           throw error;
         }
       }
@@ -217,6 +198,8 @@ export const buildPairWalletConnect =
       main().then(
         () => o.complete(),
         error => {
+          console.error("buildPairWalletConnect: main() error", { error });
+
           o.next({ status: ConcordiumPairingStatus.ERROR });
           o.error(error);
         },
