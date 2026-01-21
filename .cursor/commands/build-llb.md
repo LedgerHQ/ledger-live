@@ -13,6 +13,12 @@ $BUILD_TARGET
 ### Step 1: Validate and get current branch
 
 ```bash
+# Validate BUILD_TARGET
+if [[ ! "$BUILD_TARGET" =~ ^(android|ios|mobile|desktop)$ ]]; then
+  echo "❌ Invalid BUILD_TARGET: $BUILD_TARGET (expected: android | ios | mobile | desktop)"
+  exit 1
+fi
+
 # Get current branch name
 BRANCH=$(git branch --show-current)
 echo "Current branch: $BRANCH"
@@ -121,32 +127,38 @@ fetch_run_url() {
   return 1
 }
 
-# For android:
-fetch_run_url "build-apk.yml"
-
-# For ios:
-fetch_run_url "build-ipa.yml"
-
-# For desktop:
-fetch_run_url "build-desktop.yml"
+# Fetch run URL based on BUILD_TARGET
+case "$BUILD_TARGET" in
+  android)
+    fetch_run_url "build-apk.yml"
+    ;;
+  ios)
+    fetch_run_url "build-ipa.yml"
+    ;;
+  mobile)
+    fetch_run_url "build-apk.yml"
+    fetch_run_url "build-ipa.yml"
+    ;;
+  desktop)
+    fetch_run_url "build-desktop.yml"
+    ;;
+esac
 ```
-
-**Note:** Only query the workflow(s) that were triggered based on `$BUILD_TARGET`. The output uses markdown link format for clickable URLs.
 
 ### Output Format
 
-After triggering builds, display the following summary using markdown (for clickable links):
+After triggering builds, display a summary using markdown for clickable links. Example output:
 
-```markdown
-✅ **Build(s) triggered for branch:** `{{BRANCH}}`
+```
+✅ **Build(s) triggered for branch:** `feat/my-feature`
 
 📦 **Triggered workflow(s):**
 
-- {{WORKFLOW_NAME}}
+- [Build] Desktop
 
 🔗 **Workflow run URL(s):**
 
-- [{{WORKFLOW_NAME}} ({{STATUS}})]({{URL}})
+- [[Build] Desktop (queued)](https://github.com/LedgerHQ/ledger-live-build/actions/runs/123456789)
 
 You can also view all runs at: https://github.com/LedgerHQ/ledger-live-build/actions
 ```
