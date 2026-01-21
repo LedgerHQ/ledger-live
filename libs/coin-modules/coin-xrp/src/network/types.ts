@@ -1,39 +1,68 @@
+/*
+ * Note: This is intentionally modeled as a generic field bag because
+ * different XRPL ledger entry types (AccountRoot, RippleState, etc.)
+ * have different field sets and value shapes.
+ */
+type LedgerEntryFields = Record<string, unknown>;
+
+/**
+ * ModifiedNode - represents a ledger entry that was modified by the transaction.
+ */
+export type ModifiedNodeData = {
+  FinalFields?: LedgerEntryFields;
+  PreviousFields?: LedgerEntryFields;
+  LedgerEntryType: string;
+  LedgerIndex: string;
+  PreviousTxnID?: string;
+  PreviousTxnLgrSeq?: number;
+};
+
+/**
+ * CreatedNode - represents a ledger entry that was created by the transaction.
+ */
+export type CreatedNodeData = {
+  NewFields?: LedgerEntryFields;
+  LedgerEntryType: string;
+  LedgerIndex: string;
+};
+
+/**
+ * DeletedNode - represents a ledger entry that was deleted by the transaction.
+ */
+export type DeletedNodeData = {
+  FinalFields?: LedgerEntryFields;
+  LedgerEntryType: string;
+  LedgerIndex: string;
+};
+
+/**
+ * AffectedNode - union type representing any node change in a transaction's metadata.
+ * Each transaction can modify, create, or delete ledger entries.
+ */
+export type AffectedNode =
+  | { ModifiedNode: ModifiedNodeData }
+  | { CreatedNode: CreatedNodeData }
+  | { DeletedNode: DeletedNodeData };
+
 export type XrplOperation = {
   ledger_hash: string;
   hash: string;
   close_time_iso: string;
   meta: {
-    AffectedNodes: {
-      ModifiedNode: {
-        FinalFields: {
-          Account: string;
-          Balance: string;
-          Flags: number;
-          OwnerCount: number;
-          Sequence: number;
-        };
-        LedgerEntryType: string;
-        LedgerIndex: string;
-        PreviousFields: {
-          Balance: string;
-        };
-        PreviousTxnID: string;
-        PreviousTxnLgrSeq: number;
-      };
-    }[];
+    AffectedNodes?: AffectedNode[];
     TransactionIndex: number;
     TransactionResult: string;
-    delivered_amount: string;
+    delivered_amount?: string;
   };
   tx_json: {
     Account: string;
-    Amount: string;
-    DeliverMax: string;
-    Destination: string;
+    Amount?: string;
+    DeliverMax?: string;
+    Destination?: string;
     DestinationTag?: number;
     Fee: string;
     Flags: number;
-    LastLedgerSequence: number;
+    LastLedgerSequence?: number;
     // cf. https://xrpl.org/docs/references/protocol/transactions/common-fields#memos-field
     Memos?: {
       Memo: {
@@ -45,7 +74,7 @@ export type XrplOperation = {
     Sequence: number;
     SigningPubKey: string;
     TransactionType: string;
-    TxnSignature: string;
+    TxnSignature?: string;
     date: number;
     ledger_index: number;
   };
@@ -182,6 +211,12 @@ export type AccountTxResponse = {
   validated: boolean;
   marker?: Marker;
 } & ResponseStatus;
+
+export type LedgerTxResponse = Omit<LedgerResponse, "ledger"> & {
+  ledger: LedgerResponse["ledger"] & {
+    transactions: XrplOperation[];
+  };
+};
 
 export type LedgerResponse = {
   ledger: {

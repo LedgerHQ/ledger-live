@@ -1,7 +1,9 @@
 import network from "@ledgerhq/live-network";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import coinConfig from "../config";
 import type { AccountInfo } from "../types/model";
 import {
+  LedgerTxResponse,
   isErrorResponse,
   isResponseStatus,
   Marker,
@@ -101,6 +103,36 @@ export const getTransactions = async (
 
 export async function getLedger(): Promise<LedgerResponse> {
   return rpcCall<LedgerResponse>("ledger", { ledger_index: "validated" });
+}
+
+async function fetchLedgerByIndex(index: number): Promise<LedgerTxResponse> {
+  return rpcCall<LedgerTxResponse>("ledger", {
+    ledger_index: index,
+    transactions: true,
+    expand: true,
+    owner_funds: false,
+    api_version: 2,
+  });
+}
+
+export const getLedgerByIndex = makeLRUCache(
+  fetchLedgerByIndex,
+  (index: number) => `${getNodeUrl()}:${index}`,
+  minutes(5),
+);
+
+export const getLedgerInfoByIndex = makeLRUCache(
+  fetchLedgerInfoByIndex,
+  (index: number) => `${getNodeUrl()}:${index}`,
+  minutes(5),
+);
+
+async function fetchLedgerInfoByIndex(index: number): Promise<LedgerResponse> {
+  return rpcCall<LedgerResponse>("ledger", {
+    ledger_index: index,
+    transactions: false,
+    api_version: 2,
+  });
 }
 
 export async function getLedgerIndex(): Promise<number> {
