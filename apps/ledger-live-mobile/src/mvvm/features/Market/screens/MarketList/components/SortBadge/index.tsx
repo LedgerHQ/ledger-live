@@ -9,6 +9,7 @@ type Option = {
   label: string;
   value: unknown;
   requestParam: MarketListRequestParams;
+  testID?: string;
 };
 
 type Props = {
@@ -19,9 +20,10 @@ type Props = {
   options: Option[];
   disabled?: boolean;
   onChange: (_: MarketListRequestParams) => void;
+  testID?: string;
 };
 
-function SortBadge({ label, valueLabel, value, Icon, options, disabled, onChange }: Props) {
+function SortBadge({ label, valueLabel, value, Icon, options, disabled, onChange, testID }: Props) {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
   const openDrawer = useCallback(() => setIsDrawerOpen(true), []);
@@ -30,7 +32,7 @@ function SortBadge({ label, valueLabel, value, Icon, options, disabled, onChange
 
   return (
     <>
-      <TouchableOpacity disabled={disabled} onPress={openDrawer}>
+      <TouchableOpacity disabled={disabled} onPress={openDrawer} testID={testID}>
         <StyledBadge>
           <Text mr={2} fontWeight="semiBold" variant="body">
             {label}
@@ -42,13 +44,14 @@ function SortBadge({ label, valueLabel, value, Icon, options, disabled, onChange
         </StyledBadge>
       </TouchableOpacity>
       <QueuedDrawer isRequestingToBeOpened={isDrawerOpen} onClose={closeDrawer} title={label}>
-        {options.map(({ label, value: optValue, requestParam }: Option, index) => (
+        {options.map(({ label, value: optValue, requestParam, testID }: Option, index) => (
           <TouchableOpacity
             key={index}
             onPress={() => {
               onChange(requestParam);
               closeDrawer();
             }}
+            testID={testID}
           >
             <Flex
               flexDirection="row"

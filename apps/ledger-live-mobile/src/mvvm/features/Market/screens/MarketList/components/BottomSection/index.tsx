@@ -22,6 +22,7 @@ const SORT_OPTIONS = {
       liveCompatible: false,
     },
     value: "top100_gainers",
+    testID: "market-filter-top-gainers",
   },
   top100L: {
     requestParam: {
@@ -31,6 +32,7 @@ const SORT_OPTIONS = {
       liveCompatible: false,
     },
     value: "top100_losers",
+    testID: "market-filter-top-losers",
   },
   market_cap_asc: {
     requestParam: {
@@ -38,6 +40,7 @@ const SORT_OPTIONS = {
       limit: LIMIT,
     },
     value: "market_cap_asc",
+    testID: "market-filter-market-cap-asc",
   },
   market_cap_desc: {
     requestParam: {
@@ -45,6 +48,7 @@ const SORT_OPTIONS = {
       limit: LIMIT,
     },
     value: "market_cap_desc",
+    testID: "market-filter-market-cap-desc",
   },
 };
 
@@ -65,6 +69,7 @@ const getIcon = (order?: Order) => {
 const TIME_RANGES = RANGES.map(value => ({
   requestParam: { range: value },
   value,
+  testID: `market-filter-time-${value}`,
 }));
 
 interface ViewProps {
@@ -125,6 +130,7 @@ function View({
         </StyledBadge>
       </TouchableOpacity>
       <SortBadge
+        testID="market-filter-sort"
         label={t("market.filters.sort")}
         valueLabel={t(
           top100
@@ -159,11 +165,13 @@ function View({
         valueLabel={timeRangeValue?.label ?? ""}
         options={timeRanges}
         onChange={onFilterChange}
+        testID="market-filter-time"
       />
       <TouchableOpacity
         onPress={() => {
           navigation.navigate(ScreenName.MarketCurrencySelect);
         }}
+        testID="market-filter-currency"
       >
         <StyledBadge>
           <Text fontWeight="semiBold" variant="body">

@@ -3,14 +3,24 @@ import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class MarketPage {
   marketRowTitleBaseId = "market-row-title-";
-
+  marketFilterSortButton = () => getElementById("market-filter-sort");
+  marketFilterTimeButton = () => getElementById("market-filter-time");
+  marketFilterCurrencyButton = () => getElementById("market-filter-currency");
+  marketFilterTopGainersButton = () => getElementById("market-filter-top-gainers");
+  marketFilterTopLosersButton = () => getElementById("market-filter-top-losers");
+  marketFilterMarketCapAscButton = () => getElementById("market-filter-market-cap-asc");
+  marketFilterMarketCapDescButton = () => getElementById("market-filter-market-cap-desc");
+  marketFilterTimeWeeklyButton = () => getElementById("market-filter-time-7d");
+  marketCurrencySelectRowButton = (currency: string) =>
+    getElementById(`market-currency-select-row-${currency}`);
   searchBar = () => getElementById("search-box");
   starButton = () => getElementById("star-asset");
-  assetCardBackBtn = () => getElementById("market-back-btn");
+  assetDetailBackBtn = () => getElementById("market-back-btn");
   marketRowTitle = (ticker: string) => getElementById(`${this.marketRowTitleBaseId}${ticker}`);
   starMarketListButton = () => getElementById("toggle-starred-currencies");
   marketQuickActionButton = (action: "send" | "receive" | "buy" | "sell" | "swap") =>
     getElementById(`market-quick-action-button-${action}`);
+  marketListHeaderLeft = () => getElementById("market-list-header-left");
 
   @Step("Open market detail via deeplink")
   async openViaDeeplink(currencyId?: string) {
@@ -20,6 +30,16 @@ export default class MarketPage {
   @Step("Expect market detail page")
   async expectMarketDetailPage() {
     await detoxExpect(this.starButton()).toBeVisible();
+  }
+
+  @Step("Expect market list header left")
+  async goBackToPortfolio() {
+    await tapByElement(this.marketListHeaderLeft());
+  }
+
+  @Step("Leave market detail page")
+  async leaveMarketDetailPage() {
+    await tapByElement(this.assetDetailBackBtn());
   }
 
   @Step("Search for asset")
@@ -39,7 +59,7 @@ export default class MarketPage {
 
   @Step("Back to asset list")
   async backToAssetList() {
-    await tapByElement(this.assetCardBackBtn());
+    await tapByElement(this.assetDetailBackBtn());
   }
 
   @Step("Filter starred asset")
@@ -55,5 +75,36 @@ export default class MarketPage {
   @Step("Tap on market quick action button ")
   async tapOnMarketQuickActionButton(action: "send" | "receive" | "buy" | "sell" | "swap") {
     await tapByElement(this.marketQuickActionButton(action));
+  }
+
+  @Step("Tap on market filter sort button")
+  async tapOnMarketFilterSortButton() {
+    await tapByElement(this.marketFilterSortButton());
+  }
+
+  @Step("Expect filters visible")
+  async expectFiltersVisible() {
+    await detoxExpect(this.marketFilterSortButton()).toBeVisible();
+    await detoxExpect(this.marketFilterTimeButton()).toBeVisible();
+    await detoxExpect(this.marketFilterCurrencyButton()).toBeVisible();
+  }
+
+  @Step("Sort by desc rank")
+  async sortByDescRank() {
+    await detoxExpect(this.marketFilterTopGainersButton()).toBeVisible();
+    await detoxExpect(this.marketFilterTopLosersButton()).toBeVisible();
+    await detoxExpect(this.marketFilterMarketCapAscButton()).toBeVisible();
+    await detoxExpect(this.marketFilterMarketCapDescButton()).toBeVisible();
+    await tapByElement(this.marketFilterMarketCapDescButton());
+  }
+
+  @Step("Tap on market filter time button")
+  async tapOnMarketFilterTimeButton() {
+    await tapByElement(this.marketFilterTimeButton());
+  }
+
+  @Step("Select weekly time range")
+  async selectWeeklyTimeRange() {
+    await tapByElement(this.marketFilterTimeWeeklyButton());
   }
 }
