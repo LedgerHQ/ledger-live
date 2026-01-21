@@ -10,7 +10,8 @@ export default class AccountPage {
   earnButtonId = "account-quick-action-button-earn";
   accountRenameTextInputId = "account-rename-text-input";
   baseSubAccountRow = "subAccount-row-name-";
-  baseAccountName = "account-row-name-";
+  baseAccountRow = "account-row-";
+  baseAccountName = this.baseAccountRow + "name-";
   accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
   operationRowRegexp = new RegExp("operation-row-" + ".*");
   operationHistorySection = "operations-history-";
@@ -39,12 +40,23 @@ export default class AccountPage {
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
     await waitForElementById(this.accountListTitleId);
+    await detoxExpect(getElementById(this.accountListTitleId)).toBeVisible();
   }
 
   @Step("Go to the account with the name")
   async goToAccountByName(name: string) {
     await scrollToId(this.baseAccountName + name);
     await tapById(this.baseAccountName + name);
+  }
+
+  @Step("Go to the account with id")
+  async goToAccountById(id: string) {
+    const elementId = this.baseAccountRow + id;
+    const element = getElementById(elementId);
+    await scrollToId(elementId);
+    await waitForElement(element);
+    await detoxExpect(element).toBeVisible();
+    await tapByElement(element);
   }
 
   @Step("Expect the account name at index")
