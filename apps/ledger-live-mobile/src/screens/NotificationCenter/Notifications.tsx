@@ -89,8 +89,8 @@ export default function NotificationCenter() {
       if (!item) return;
 
       trackContentCardEvent("contentcard_clicked", {
+        ...item.extras,
         screen: item.location,
-        link: item.link || "",
         campaign: item.id,
         contentcard: item.title,
       });
@@ -111,8 +111,8 @@ export default function NotificationCenter() {
       logDismissCard(item.id);
 
       trackContentCardEvent("contentcard_dismissed", {
+        ...item.extras,
         screen: item.location,
-        link: item.link || "",
         campaign: item.id,
         contentcard: item.title,
       });

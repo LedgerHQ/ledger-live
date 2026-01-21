@@ -22,8 +22,8 @@ const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
     if (!cardProps.link) return;
 
     trackContentCardEvent("contentcard_clicked", {
+      ...cardProps.extras,
       screen: cardProps.location,
-      link: cardProps.link,
       campaign: cardProps.id,
     });
 
@@ -36,8 +36,8 @@ const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
     if (!cardProps) return;
 
     trackContentCardEvent("contentcard_dismissed", {
+      ...cardProps.extras,
       screen: cardProps.location,
-      link: cardProps.link || "",
       campaign: cardProps.id,
     });
     dismissCard(cardProps.id);

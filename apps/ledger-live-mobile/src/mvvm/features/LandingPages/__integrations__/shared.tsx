@@ -62,6 +62,12 @@ export const landingPageStickyCtaCard: LandingPageStickyCtaContentCard = {
   cta: "Sign Up Now",
   link: "https://example.com/signup",
   landingPage: "LP_Generic" as LandingPageUseCase,
+  extras: {
+    cta: "Sign Up Now",
+    link: "https://example.com/signup",
+    landingPage: "LP_Generic",
+    location: "landing_page_sticky_cta",
+  },
 };
 
 export const classicCards: ContentCard[] = [
