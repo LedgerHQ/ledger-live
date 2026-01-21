@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.103.0-next.1
+
+### Minor Changes
+
+- [#13868](https://github.com/LedgerHQ/ledger-live/pull/13868) [`beeb70f`](https://github.com/LedgerHQ/ledger-live/commit/beeb70f9c61d0c62a8d564e2964562bd2057d62a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix Android crash when navigating back from Earn webview. The crash occurred when using hardware back button after navigating away from the webview screen and returning to another screen.
+
 ## 3.103.0-next.0
 
 ### Minor Changes
