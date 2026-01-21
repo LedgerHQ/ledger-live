@@ -81,6 +81,19 @@
   ],
   "ui": "tui",
   "tasks": {
+    "build:storybook": {
+      "dependsOn": [
+        "prebuild:storybook"
+      ],
+      "outputs": [
+        "storybook-static/**"
+      ]
+    },
+    "prebuild:storybook" : {
+        "dependsOn": [
+          "^build"
+        ]
+    },
     "build": {
       "dependsOn": [
         "^build"

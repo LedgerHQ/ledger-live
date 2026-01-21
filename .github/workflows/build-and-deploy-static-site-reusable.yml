@@ -1,0 +1,78 @@
+name: "Build and Deploy Static Site"
+
+on:
+  workflow_call:
+    inputs:
+      dependency_filter:
+        description: "Dependency filter to use when installing dependencies"
+        type: string
+        required: false
+        default: ""
+      build_filter:
+        description: "Package to build (choices: @ledgerhq/web-tools, @ledgerhq/native-ui, @ledgerhq/react-ui)"
+        type: string
+        required: true
+      build_command:
+        description: "Custom build command to run instead of the default"
+        type: string
+        default: "build"
+  workflow_dispatch:
+    inputs:
+      dependency_filter:
+        description: "Dependency filter to use when installing dependencies"
+        type: string
+        required: false
+        default: ""
+      package_name:
+        description: "Package to build (choices: @ledgerhq/web-tools, @ledgerhq/native-ui, @ledgerhq/react-ui)"
+        type: choice
+        required: true
+        options:
+          - "@ledgerhq/web-tools"
+          - "@ledgerhq/native-ui"
+          - "@ledgerhq/react-ui"
+      build_command:
+        description: "Custom build command to run instead of the default"
+        type: string
+        default: "build"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    name: "Build and Deploy ${{ inputs.package_name }}"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup git user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: caches
+        with:
+          install-proto: "true"
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Validate package name
+        run: |
+          PACKAGE_NAME="${{ inputs.package_name }}"
+          VALID_PACKAGES=("@ledgerhq/web-tools" "@ledgerhq/native-ui" "@ledgerhq/react-ui")
+          if [[ ! " ${VALID_PACKAGES[@]} " =~ " ${PACKAGE_NAME} " ]]; then
+            echo "Error: Invalid package name. Must be one of: ${VALID_PACKAGES[*]}"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: pnpm i -F "${{ inputs.dependency_filter }}..." -F "ledger-live" --ignore-scripts
+
+      - name: Build static site
+        run: pnpm turbo run static:build --filter="${{ inputs.package_name }}" --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+

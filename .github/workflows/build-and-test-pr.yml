@@ -97,8 +97,8 @@ jobs:
   build-web-tools:
     name: "Build Web Tools"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'apps/web-tools') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
+    if: ${{!github.event.pull_request.head.repo.fork}}
+    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@support/vercel-retirement
     secrets: inherit
 
   test-cli:

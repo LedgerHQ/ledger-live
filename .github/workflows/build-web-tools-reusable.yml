@@ -16,12 +16,10 @@ permissions:
   contents: read
 
 jobs:
+
   build-web-tools:
     name: "Web Tools Build"
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,12 +34,41 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
       - name: Install dependencies
         run: pnpm i -F "web-tools..." -F "ledger-live"
       - name: build web-tools
         run: pnpm turbo run build --filter="@ledgerhq/web-tools" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: typecheck web-tools
         run: pnpm turbo run typecheck --filter="@ledgerhq/web-tools" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        run: pnpm i -F "@ledgerhq/native-ui..." -F "ledger-live" --ignore-scripts
+
+      - name: Build static site
+        run: pnpm turbo run storybook:build --filter="@ledgerhq/native-ui" --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+
+  build-react-storybook:
+    name: "React Storybook Build"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: caches
+        with:
+          install-proto: "true"
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm i -F "libs/ui..." -F "ledger-live" --ignore-scripts
+
+      - name: Build static site
+        run: pnpm turbo run storybook:build --filter="@ledgerhq/react-ui" --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+
 
   report:
     needs: build-web-tools
