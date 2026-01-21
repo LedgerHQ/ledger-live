@@ -126,6 +126,7 @@ export async function runSelectCryptoWithoutNetworkAndAccountTest(
     tags.forEach(tag => $Tag(tag));
     it(`should select crypto without network and account for ${account.currency.ticker}`, async () => {
       await app.portfolioEmptyState.navigateToReceive();
+      await app.receive.selectReceiveFundsOption(ReceiveFundsOptions.CRYPTO);
       await app.modularDrawer.validateAssetsScreen([account.currency.ticker]);
       await app.modularDrawer.performSearchByTicker(account.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
