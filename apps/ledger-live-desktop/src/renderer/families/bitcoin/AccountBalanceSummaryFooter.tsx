@@ -14,8 +14,9 @@ import BigNumber from "bignumber.js";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { openModal } from "~/renderer/actions/modals";
-import type { BitcoinFamily } from "./types";
 import type { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import type { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import { Pause, Refresh } from "@ledgerhq/lumen-ui-react/symbols";
 import Spinner from "~/renderer/components/Spinner";
 import { TFunction } from "i18next";
@@ -111,7 +112,11 @@ const ActionButton = ({
   }
 };
 
-const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
+type Props = {
+  account: BitcoinAccount | TokenAccount;
+};
+
+const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const [syncState, setSyncState] = useState<ZCashSyncState>("disabled"); // TODO: initial state depends on the account data
   const [progress] = useState(0);
 
@@ -122,7 +127,7 @@ const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] 
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const showComponent = getFeature("zcashShielded");
+  const showPrivateBalanceComponent = getFeature("zcashShielded");
 
   const { spendableBalance } = account;
   const privateInfo = account.type === "Account" ? account.privateInfo : null;
@@ -136,7 +141,7 @@ const AccountBalanceSummaryFooter: BitcoinFamily["AccountBalanceSummaryFooter"] 
   if (
     account.type !== "Account" ||
     (account.currency.id as Currency) !== "zcash" ||
-    !showComponent?.enabled
+    !showPrivateBalanceComponent
   )
     return null;
 
