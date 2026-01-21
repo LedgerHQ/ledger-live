@@ -44,7 +44,9 @@
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "build-wasm": "cd decrypt-zcash-wasm; wasm-pack build --target nodejs --release",
+    "build-lib": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "pnpm run build-wasm && pnpm run build-lib",
     "coverage": "jest --coverage --passWithNoTests",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
@@ -58,9 +60,12 @@
     "unimported": "unimported"
   },
   "devDependencies": {
-    "@types/jest": "catalog:",
-    "jest": "catalog:",
+    "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "@types/jest": "catalog:",
+    "jest": "catalog:"
+  },
+  "dependencies": {
+    "@ledger/decrypt-zcash-wasm": "file:./decrypt-zcash-wasm/pkg"
   }
 }
