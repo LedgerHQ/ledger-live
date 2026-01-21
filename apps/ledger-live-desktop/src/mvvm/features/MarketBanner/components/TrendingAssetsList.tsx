@@ -33,6 +33,7 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
             key={item.id}
             appearance="card"
             onClick={onAssetClick(item.id)}
+            data-testid={`market-banner-asset-${item.id}`}
           >
             <TileSpot
               appearance="icon"

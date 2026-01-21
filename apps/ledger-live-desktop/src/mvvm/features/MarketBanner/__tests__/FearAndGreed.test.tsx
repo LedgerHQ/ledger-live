@@ -42,7 +42,7 @@ describe("FearAndGreed", () => {
       const moodTile = screen.getByTestId("fear-and-greed-card");
       await user.click(moodTile);
 
-      expect(screen.getByTestId("mood-index-dialog-content")).toBeVisible();
+      expect(screen.getByTestId("fear-and-greed-dialog-content")).toBeVisible();
     });
 
     it("closes dialog when clicking the close button", async () => {
@@ -56,14 +56,14 @@ describe("FearAndGreed", () => {
       await user.click(moodTile);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mood-index-dialog-content")).toBeVisible();
+        expect(screen.getByTestId("fear-and-greed-dialog-content")).toBeVisible();
       });
 
       const closeButton = screen.getByRole("button", { name: /close/i });
       await user.click(closeButton);
 
       await waitFor(() => {
-        expect(screen.queryByTestId("mood-index-dialog-content")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("fear-and-greed-dialog-content")).not.toBeInTheDocument();
       });
     });
 
@@ -78,14 +78,14 @@ describe("FearAndGreed", () => {
       await user.click(moodTile);
 
       await waitFor(() => {
-        expect(screen.getByTestId("mood-index-dialog-content")).toBeVisible();
+        expect(screen.getByTestId("fear-and-greed-dialog-content")).toBeVisible();
       });
 
-      const ctaButton = screen.getByTestId("mood-index-dialog-cta");
+      const ctaButton = screen.getByTestId("fear-and-greed-dialog-cta");
       await user.click(ctaButton);
 
       await waitFor(() => {
-        expect(screen.queryByTestId("mood-index-dialog-content")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("fear-and-greed-dialog-content")).not.toBeInTheDocument();
       });
     });
   });

@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 
-export const MoodIndexDialog = ({ children }: { children: React.ReactNode }) => {
+export const FearAndGreedDialog = ({ children }: { children: React.ReactNode }) => {
   const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
 
@@ -18,7 +18,7 @@ export const MoodIndexDialog = ({ children }: { children: React.ReactNode }) => 
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent data-testid="mood-index-dialog-content">
+      <DialogContent data-testid="fear-and-greed-dialog-content">
         <DialogHeader
           appearance="extended"
           title={t("fearAndGreed.dialog.title")}
@@ -31,7 +31,7 @@ export const MoodIndexDialog = ({ children }: { children: React.ReactNode }) => 
             appearance="base"
             size="lg"
             onClick={() => setOpen(false)}
-            data-testid="mood-index-dialog-cta"
+            data-testid="fear-and-greed-dialog-cta"
           >
             {t("fearAndGreed.dialog.cta")}
           </Button>
