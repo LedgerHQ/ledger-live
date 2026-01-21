@@ -58,9 +58,12 @@
     "unimported": "unimported"
   },
   "devDependencies": {
-    "@types/jest": "catalog:",
-    "jest": "catalog:",
+    "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "@types/jest": "catalog:",
+    "jest": "catalog:"
+  },
+  "dependencies": {
+    "@ledger/decrypt": "file:./decrypt/pkg"
   }
 }
