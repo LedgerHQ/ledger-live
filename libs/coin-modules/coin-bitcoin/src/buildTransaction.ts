@@ -52,7 +52,7 @@ export const buildTransaction = async (
   );
 
   log("btcwallet", "building transaction", transaction);
-  console.log("Building transaction with params:", transaction);
+
   const txInfo = await wallet.buildAccountTx({
     fromAccount: walletAccount,
     dest: transaction.recipient,
@@ -65,7 +65,7 @@ export const buildTransaction = async (
     changeAddress,
     originalTxId: transaction?.replaceTxId,
   });
-  console.log("Built transaction info:", txInfo);
+
   log("btcwallet", "txInfo", txInfo);
 
   return txInfo;

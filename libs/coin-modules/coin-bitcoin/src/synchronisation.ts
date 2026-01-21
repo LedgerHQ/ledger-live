@@ -99,7 +99,6 @@ export const removeReplaced = (operations: BtcOperation[], now = Date.now()): Bt
         }
         const existingOp = txByInput.get(input);
         if (existingOp) {
-          console.log("existingOp: ", existingOp);
           const isExistingConfirmed = typeof existingOp.blockHeight === "number";
           const isNewOpConfirmed = typeof op.blockHeight === "number";
 

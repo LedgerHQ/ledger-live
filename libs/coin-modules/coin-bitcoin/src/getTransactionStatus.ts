@@ -39,14 +39,6 @@ export const getTransactionStatus: AccountBridge<
   const { recipientError, recipientWarning, changeAddressError, changeAddressWarning } =
     await validateRecipient(account.currency, transaction.recipient, transaction?.changeAddress);
 
-  console.log("HERERE");
-  transaction.utxoStrategy.excludeUTXOs.forEach(utxo => {
-    console.log("Excluding UTXO from selection:", utxo.hash, ":", utxo.outputIndex);
-  });
-  //@typescript-eslint/consistent-type-assertions
-  (account as BitcoinAccount)?.bitcoinResources.utxos.forEach(utxo => {
-    console.log("UTXO available:", `${utxo.hash}:${utxo.outputIndex} - ${utxo.value.toString()}`);
-  });
   if (recipientError) {
     errors.recipient = recipientError;
   }

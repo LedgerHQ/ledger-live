@@ -13,7 +13,6 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   broadcastConfig,
 }) => {
   const { signature, operation } = signedOperation;
-  console.log("broadcasting tx", operation);
   const walletAccount = getWalletAccount(account);
   const hash = await wallet.broadcastTx(walletAccount, signature, broadcastConfig);
   return patchOperationWithHash(operation, hash);
