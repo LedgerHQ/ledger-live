@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import AccountBalanceSummaryFooter from "../AccountBalanceSummaryFooter";
-import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/lib-es/fixtures/common.fixtures";
+import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";

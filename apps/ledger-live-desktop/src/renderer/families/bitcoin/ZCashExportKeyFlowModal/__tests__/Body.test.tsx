@@ -88,7 +88,7 @@ describe("ZCash Export UFVK - Body", () => {
     }));
     jest.spyOn(require("@ledgerhq/live-common/bridge/index"), "getAccountBridge").mockReturnValue({
       receive: mockReceive,
-    } as any);
+    });
 
     render(
       <Body

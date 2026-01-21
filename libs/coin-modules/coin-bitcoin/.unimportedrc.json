@@ -37,11 +37,9 @@
   "ignoreUnimported": [
     "src/constants/env.ts",
     "src/constants/index.ts",
-    "src/supportedFeatures.ts"
+    "src/supportedFeatures.ts",
+    "src/fixtures/common.fixtures.ts"
   ],
-  "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util"],
+  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
   "ignoreUnused": []
 }
