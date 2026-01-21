@@ -40,6 +40,7 @@ export default class AccountPage {
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
     await waitForElementById(this.accountListTitleId);
+    await detoxExpect(getElementById(this.accountListTitleId)).toBeVisible();
   }
 
   @Step("Go to the account with the name")
@@ -51,10 +52,11 @@ export default class AccountPage {
   @Step("Go to the account with id")
   async goToAccountById(id: string) {
     const elementId = this.baseAccountRow + id;
+    const element = getElementById(elementId);
     await scrollToId(elementId);
-    await waitForElementById(elementId);
-    await detoxExpect(getElementById(elementId)).toBeVisible();
-    await tapById(elementId);
+    await waitForElement(element);
+    await detoxExpect(element).toBeVisible();
+    await tapByElement(element);
   }
 
   @Step("Expect the account name at index")
