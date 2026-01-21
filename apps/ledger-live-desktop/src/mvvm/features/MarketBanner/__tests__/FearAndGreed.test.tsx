@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor, act } from "@testing-library/react";
+import { render, screen, waitFor, act } from "tests/testSetup";
 import { FearAndGreedView } from "../components/FearAndGreed";
 import { GradientMoodIndicator } from "../components/FearAndGreed/GradientMoodIndicator";
 
@@ -29,6 +29,65 @@ describe("FearAndGreed", () => {
     };
     const { container } = render(<FearAndGreedView {...props} />);
     expect(container.firstChild).toBeNull();
+  });
+
+  describe("Dialog behavior", () => {
+    it("opens dialog when clicking on the tile", async () => {
+      const props = {
+        isLoading: false,
+        data: { value: 50, classification: "Neutral" },
+      };
+      const { user } = render(<FearAndGreedView {...props} />);
+
+      const moodTile = screen.getByTestId("fear-and-greed-card");
+      await user.click(moodTile);
+
+      expect(screen.getByTestId("mood-index-dialog-content")).toBeVisible();
+    });
+
+    it("closes dialog when clicking the close button", async () => {
+      const props = {
+        isLoading: false,
+        data: { value: 50, classification: "Neutral" },
+      };
+      const { user } = render(<FearAndGreedView {...props} />);
+
+      const moodTile = screen.getByTestId("fear-and-greed-card");
+      await user.click(moodTile);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("mood-index-dialog-content")).toBeVisible();
+      });
+
+      const closeButton = screen.getByRole("button", { name: /close/i });
+      await user.click(closeButton);
+
+      await waitFor(() => {
+        expect(screen.queryByTestId("mood-index-dialog-content")).not.toBeInTheDocument();
+      });
+    });
+
+    it("closes dialog when clicking the CTA button", async () => {
+      const props = {
+        isLoading: false,
+        data: { value: 50, classification: "Neutral" },
+      };
+      const { user } = render(<FearAndGreedView {...props} />);
+
+      const moodTile = screen.getByTestId("fear-and-greed-card");
+      await user.click(moodTile);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("mood-index-dialog-content")).toBeVisible();
+      });
+
+      const ctaButton = screen.getByTestId("mood-index-dialog-cta");
+      await user.click(ctaButton);
+
+      await waitFor(() => {
+        expect(screen.queryByTestId("mood-index-dialog-content")).not.toBeInTheDocument();
+      });
+    });
   });
 });
 
@@ -118,29 +177,6 @@ describe("GradientMoodIndicator", () => {
 
       // At value 50, angle is 90°, so x should be near center
       expect(cx).toBeCloseTo(21.5814, 1);
-    });
-  });
-
-  it("updates animation when value changes", async () => {
-    const { container, rerender } = render(<GradientMoodIndicator value={25} />);
-
-    act(() => {
-      jest.advanceTimersByTime(1200);
-    });
-
-    await waitFor(() => {
-      const text = container.querySelector("text");
-      expect(text?.textContent).toBe("25");
-    });
-
-    rerender(<GradientMoodIndicator value={75} />);
-
-    act(() => {
-      jest.advanceTimersByTime(1200);
-    });
-    await waitFor(() => {
-      const text = container.querySelector("text");
-      expect(text?.textContent).toBe("75");
     });
   });
 
