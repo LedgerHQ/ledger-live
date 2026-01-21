@@ -4,6 +4,7 @@ module.exports = {
   coverageDirectory: "coverage",
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integration\\.test\\.[tj]s"],
+  transformIgnorePatterns: ["node_modules/(?!cipherscan)/"],
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",

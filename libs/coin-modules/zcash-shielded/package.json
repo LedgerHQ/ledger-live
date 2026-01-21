@@ -65,6 +65,8 @@
   },
   "dependencies": {
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/zcash-decrypt": "0.1.0"
+    "@ledgerhq/zcash-decrypt": "0.1.0",
+    "jest": "catalog:",
+    "msw": "catalog:"
   }
 }

@@ -1,5 +1,8 @@
-import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
 import { log } from "@ledgerhq/logs";
+import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
+import type { ShieldedTransaction } from "./shieldedTransaction";
+import { JsonRpcClient } from "./jsonRpcClient";
+import { toShieldedTransaction } from "./shieldedTransaction";
 
 /**
  * ZCash API
@@ -9,8 +12,10 @@ export type SyncEstimatedTime = {
   hours: number;
   minutes: number;
 };
-
 export default class ZCash {
+  static readonly AVERAGE_BLOCK_SYNC_TIME_MS = 5;
+  static readonly JSON_RPC_SERVER = "http://localhost:18232";
+
   /**
    * Estimates sync time given a total number of blocks to process.
    * This is a curried function that returns a function that returns the estimated sync time.
@@ -37,6 +42,48 @@ export default class ZCash {
         minutes,
       };
     };
+  }
+
+  /**
+   * Scans a block for shielded transactions matching the given viewing key.
+   *
+   * @param {string} blockHex Block hex
+   * @param {string} viewingKey the UFVK - unified full viewing key.
+   * @returns {ShieldedTransaction[]} list of shielded transactions
+   */
+  async findShieldedTxsInBlock(
+    blockHex: string,
+    viewingKey: string,
+  ): Promise<ShieldedTransaction[]> {
+    // 1. retrieve block
+    const jsonRpcClient = new JsonRpcClient(ZCash.JSON_RPC_SERVER);
+    const block = await jsonRpcClient.getBlock(blockHex);
+
+    // 2. get list of tx
+    const transactions = block?.tx;
+    const decryptedTransactions = [];
+
+    // 3. retrieve each tx hash
+    if (transactions) {
+      for (const txId of transactions) {
+        const tx = await jsonRpcClient.getRawTransaction(txId);
+
+        // 4. call decryptTransaction for each tx hash containing orchard actions
+        if (tx?.orchard.actions.length) {
+          try {
+            const decryptedTx = await this.decryptTransaction(tx?.hex, viewingKey);
+            if (decryptedTx) {
+              decryptedTransactions.push(toShieldedTransaction(tx, decryptedTx));
+            }
+          } catch (_e) {
+            console.warn("could not decrypt transaction");
+          }
+        }
+      }
+    }
+
+    // 5. return list of transaction for the given viewingKey
+    return decryptedTransactions;
   }
 
   /**
