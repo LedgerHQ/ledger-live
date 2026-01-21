@@ -5266,6 +5266,10 @@ importers:
         version: 5.6.3
 
   libs/coin-modules/zcash-shielded:
+    dependencies:
+      '@cipherscan/zcash-decoder':
+        specifier: github:LedgerHQ/cipherscan#path:/packages/zcash-decoder
+        version: https://codeload.github.com/LedgerHQ/cipherscan/tar.gz/2131ced0fdf4288a1e97e5bb4aa4270e38041145#path:/packages/zcash-decoder
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -12764,6 +12768,10 @@ packages:
 
   '@changesets/write@0.3.1':
     resolution: {integrity: sha512-SyGtMXzH3qFqlHKcvFY2eX+6b0NGiFcNav8AFsYwy5l8hejOeoeTDemu5Yjmke2V5jpzY+pBvM0vCCQ3gdZpfw==}
+
+  '@cipherscan/zcash-decoder@https://codeload.github.com/LedgerHQ/cipherscan/tar.gz/2131ced0fdf4288a1e97e5bb4aa4270e38041145#path:/packages/zcash-decoder':
+    resolution: {path: /packages/zcash-decoder, tarball: https://codeload.github.com/LedgerHQ/cipherscan/tar.gz/2131ced0fdf4288a1e97e5bb4aa4270e38041145}
+    version: 1.0.0
 
   '@codemirror/autocomplete@6.16.3':
     resolution: {integrity: sha512-Vl/tIeRVVUCRDuOG48lttBasNQu8usGgXQawBXI7WJAiUDSFOfzflmEsZFZo48mAvAaa4FZ/4/yLLxFtdJaKYA==}
@@ -37780,6 +37788,8 @@ snapshots:
       fs-extra: 7.0.1
       human-id: 1.0.2
       prettier: 2.8.8
+
+  '@cipherscan/zcash-decoder@https://codeload.github.com/LedgerHQ/cipherscan/tar.gz/2131ced0fdf4288a1e97e5bb4aa4270e38041145#path:/packages/zcash-decoder': {}
 
   '@codemirror/autocomplete@6.16.3(@codemirror/state@6.4.1)(@codemirror/view@6.39.5)':
     dependencies:
