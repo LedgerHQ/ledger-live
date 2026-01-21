@@ -8,3 +8,5 @@ export const CONCORDIUM_CHAIN_IDS = {
 } as const;
 
 export const CONCORDIUM_ID_APP_MOBILE_HOST = "concordiumidapp://";
+
+export const MAX_MEMO_SIZE = 256;

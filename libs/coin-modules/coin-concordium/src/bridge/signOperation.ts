@@ -10,6 +10,7 @@ import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import { combine, craftTransaction, estimateFees, getNextValidSequence } from "../common-logic";
+import { encodeMemoToDataBlob } from "../common-logic/utils";
 import { ConcordiumSigner, Transaction } from "../types";
 
 export const buildSignOperation =
@@ -29,17 +30,24 @@ export const buildSignOperation =
           account.currency,
         );
 
-        const payload = {
+        // Determine transaction type based on memo
+        const transactionType = transaction.memo
+          ? AccountTransactionType.TransferWithMemo
+          : AccountTransactionType.Transfer;
+
+        // Build payload for fee estimation
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const payload: any = {
           amount: CcdAmount.fromMicroCcd(transaction.amount.toString()),
           toAddress: AccountAddress.fromBase58(transaction.recipient),
         };
 
-        const estimation = await estimateFees(
-          "",
-          account.currency,
-          AccountTransactionType.Transfer,
-          payload,
-        );
+        // Add memo to payload if present (for energy calculation)
+        if (transaction.memo) {
+          payload.memo = encodeMemoToDataBlob(transaction.memo);
+        }
+
+        const estimation = await estimateFees("", account.currency, transactionType, payload);
 
         const signature = await signerContext(deviceId, async signer => {
           const { freshAddressPath: derivationPath } = account;
@@ -59,6 +67,7 @@ export const buildSignOperation =
               amount: transaction.amount,
               fee: new BigNumber(estimation.cost.toString()),
               energy: estimation.energy,
+              ...(transaction.memo ? { memo: transaction.memo } : {}),
             },
           );
 

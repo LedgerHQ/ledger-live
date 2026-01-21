@@ -4,6 +4,7 @@ import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { decodeMemoFromCbor } from "../common-logic/utils";
 import coinConfig from "../config";
 import type {
   AccountBalanceResponse,
@@ -309,7 +310,7 @@ function operationAdapter(
   accountAddress: string,
   accountId: string,
 ): Operation | null {
-  if (tx.details.type !== "transfer") {
+  if (tx.details.type !== "transfer" && tx.details.type !== "transferWithMemo") {
     return null;
   }
 
@@ -319,6 +320,8 @@ function operationAdapter(
   const isOutgoing = transferSource === accountAddress;
   const isIncoming = transferDestination === accountAddress;
 
+  // Transactions with details.outcome other than "completed" are ignored,
+  // since they have neither source nor destination
   if (!isOutgoing && !isIncoming) {
     return null;
   }
@@ -330,6 +333,11 @@ function operationAdapter(
 
   if (isOutgoing) {
     value = value.plus(feeValue);
+  }
+
+  const extra: Record<string, unknown> = {};
+  if (tx.details.memo) {
+    extra.memo = decodeMemoFromCbor(tx.details.memo);
   }
 
   return {
@@ -345,7 +353,7 @@ function operationAdapter(
     recipients: [transferDestination],
     date: new Date(Math.floor(tx.blockTime) * 1000),
     transactionSequenceNumber: new BigNumber(tx.id),
-    extra: {},
+    extra,
   };
 }
 

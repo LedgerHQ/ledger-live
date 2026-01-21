@@ -8,7 +8,8 @@ import {
 import { serializeAccountTransaction } from "@ledgerhq/hw-app-concordium/lib/serialization";
 import type { AccountTransaction } from "@ledgerhq/hw-app-concordium/lib/types";
 import BigNumber from "bignumber.js";
-import { transformAccountTransaction } from "../utils";
+import { AccountTransactionWithEnergy } from "../../types/transaction";
+import { encodeMemoToDataBlob, transformAccountTransaction } from "../utils";
 
 /**
  * Crafts a Concordium transaction for signing and submission.
@@ -25,6 +26,7 @@ export async function craftTransaction(
     amount: BigNumber;
     fee?: BigNumber;
     energy?: bigint;
+    memo?: string;
   },
 ): Promise<{
   transaction: AccountTransaction;
@@ -32,8 +34,15 @@ export async function craftTransaction(
 }> {
   const expiryEpochSeconds = Math.floor(Date.now() / 1000) + 3600;
 
-  const nativeTransaction = {
-    type: AccountTransactionType.Transfer,
+  const transactionType = transaction.memo
+    ? AccountTransactionType.TransferWithMemo
+    : AccountTransactionType.Transfer;
+
+  // Encode memo as CBOR and convert to DataBlob for SDK serialization
+  const memoDataBlob = transaction.memo ? encodeMemoToDataBlob(transaction.memo) : undefined;
+
+  const nativeTransaction: AccountTransactionWithEnergy = {
+    type: transactionType,
     header: {
       sender: AccountAddress.fromBase58(account.address),
       nonce: SequenceNumber.create(Number(account.nextSequenceNumber || 0)),
@@ -42,6 +51,7 @@ export async function craftTransaction(
     payload: {
       amount: CcdAmount.fromMicroCcd(transaction.amount.toString()),
       toAddress: AccountAddress.fromBase58(transaction.recipient || ""),
+      ...(memoDataBlob ? { memo: memoDataBlob } : {}),
     },
     energyAmount: transaction.energy ?? BigInt(0),
   };

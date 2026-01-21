@@ -171,13 +171,14 @@ export interface WalletProxyTransactionOrigin {
  * Wallet-proxy transaction details (varies by transaction type)
  */
 export interface WalletProxyTransactionDetails {
-  type: string; // e.g., "transfer", "bakingReward", "encryptedTransfer", etc.
+  type: string; // e.g., "transfer", "transferWithMemo", "bakingReward", "encryptedTransfer", etc.
   outcome: "success" | "reject";
   description?: string;
   events?: string[];
   transferAmount?: string;
   transferSource?: string;
   transferDestination?: string;
+  memo?: string; // Present for transferWithMemo transactions
   [key: string]: unknown;
 }
 

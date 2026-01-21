@@ -14,6 +14,7 @@ import { Account, AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { isRecipientValid } from "../common-logic/utils";
 import coinConfig from "../config";
+import { MAX_MEMO_SIZE } from "../constants";
 import { Transaction, TransactionStatus } from "../types";
 
 export const getTransactionStatus: AccountBridge<
@@ -64,6 +65,13 @@ export const getTransactionStatus: AccountBridge<
         showCode: true,
       }),
     });
+  }
+
+  if (transaction.memo) {
+    const memoBytes = Buffer.from(transaction.memo, "utf-8").length;
+    if (memoBytes > MAX_MEMO_SIZE) {
+      errors.memo = new Error(`Memo too long: ${memoBytes} bytes (max ${MAX_MEMO_SIZE})`);
+    }
   }
 
   if (!transaction.recipient) {

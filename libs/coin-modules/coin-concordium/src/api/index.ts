@@ -27,18 +27,19 @@ import {
 } from "../common-logic";
 import coinConfig from "../config";
 import type { ConcordiumConfig } from "../types/config";
+import type { ConcordiumMemo } from "../types/memo";
 
-export function createApi(config: ConcordiumConfig, currencyId: string): AlpacaApi {
+export function createApi(config: ConcordiumConfig, currencyId: string): AlpacaApi<ConcordiumMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
   const currency = getCryptoCurrencyById(currencyId);
 
   return {
     broadcast: (tx: string) => broadcastLogic(tx, currency),
     combine,
-    craftTransaction: (transactionIntent: TransactionIntent) =>
+    craftTransaction: (transactionIntent: TransactionIntent<ConcordiumMemo>) =>
       craftTransaction(transactionIntent, currency),
     craftRawTransaction,
-    estimateFees: (transactionIntent: TransactionIntent) =>
+    estimateFees: (transactionIntent: TransactionIntent<ConcordiumMemo>) =>
       estimateFees(transactionIntent, currency),
     getBalance: (address: string) => getBalance(address, currency),
     lastBlock: () => lastBlock(currency),
@@ -58,15 +59,20 @@ export function createApi(config: ConcordiumConfig, currencyId: string): AlpacaA
 }
 
 async function craftTransaction(
-  transactionIntent: TransactionIntent,
+  transactionIntent: TransactionIntent<ConcordiumMemo>,
   currency: CryptoCurrency,
 ): Promise<CraftedTransaction> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender, currency);
+  const memo =
+    "memo" in transactionIntent && transactionIntent.memo?.type === "string"
+      ? transactionIntent.memo.value
+      : undefined;
   const { serializedTransaction } = await craftTransactionLogic(
     { address: transactionIntent.sender, nextSequenceNumber },
     {
       recipient: transactionIntent.recipient,
       amount: new BigNumber(transactionIntent.amount.toString()),
+      ...(memo ? { memo } : {}),
     },
   );
   return { transaction: serializedTransaction };
@@ -88,14 +94,19 @@ async function craftRawTransaction(
 }
 
 async function estimateFees(
-  transactionIntent: TransactionIntent,
+  transactionIntent: TransactionIntent<ConcordiumMemo>,
   currency: CryptoCurrency,
 ): Promise<FeeEstimation> {
+  const memo =
+    "memo" in transactionIntent && transactionIntent.memo?.type === "string"
+      ? transactionIntent.memo.value
+      : undefined;
   const { serializedTransaction } = await craftTransactionLogic(
     { address: transactionIntent.sender },
     {
       recipient: transactionIntent.recipient,
       amount: new BigNumber(transactionIntent.amount.toString()),
+      ...(memo ? { memo } : {}),
     },
   );
 
