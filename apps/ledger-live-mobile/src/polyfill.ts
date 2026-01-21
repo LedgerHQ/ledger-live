@@ -20,7 +20,7 @@ import "@azure/core-asynciterator-polyfill";
 import { Platform } from "react-native";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-global.Buffer = require("buffer").Buffer;
+// global.Buffer = require("buffer").Buffer;
 
 if (!console.assert) {
   // eslint-disable-next-line @typescript-eslint/no-empty-function

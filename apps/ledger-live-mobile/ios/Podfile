@@ -59,6 +59,13 @@ target 'ledgerlivemobile' do
     # Workaround build error for classic quoted imports
     # See: https://github.com/expo/expo/issues/15622#issuecomment-997225774
     installer.pods_project.targets.each do |target|
+      # QuickCrypto workaround for Release build errors
+      # https://github.com/margelo/react-native-quick-crypto/issues/868
+      next unless target.name == "QuickCrypto"
+
+      target.build_configurations.each do |config|
+        config.build_settings["EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=x86_64]"] = "deps/blake3/c/blake3_neon.c"
+      end
 
       target.build_configurations.each do |config|
         # if ['react-native-fast-crypto'].include? target.name
@@ -67,10 +74,10 @@ target 'ledgerlivemobile' do
 
         # Using the un-qualified names means you can swap in different implementations, for example ccache
         # see: https://reactnative.dev/docs/build-speed#xcode-specific-setup
-        config.build_settings["CC"] = "clang"
-        config.build_settings["LD"] = "clang"
-        config.build_settings["CXX"] = "clang++"
-        config.build_settings["LDPLUSPLUS"] = "clang++"
+        # config.build_settings["CC"] = "clang"
+        # config.build_settings["LD"] = "clang"
+        # config.build_settings["CXX"] = "clang++"
+        # config.build_settings["LDPLUSPLUS"] = "clang++"
       end
     end
 
