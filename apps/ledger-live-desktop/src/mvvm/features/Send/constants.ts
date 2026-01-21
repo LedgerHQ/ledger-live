@@ -21,6 +21,7 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
   [SEND_FLOW_STEP.AMOUNT]: {
     id: SEND_FLOW_STEP.AMOUNT,
     canGoBack: true,
+    addressInput: true,
   },
   [SEND_FLOW_STEP.SIGNATURE]: {
     id: SEND_FLOW_STEP.SIGNATURE,
