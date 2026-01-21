@@ -3707,7 +3707,7 @@ importers:
 
   libs/coin-modules/coin-hedera:
     dependencies:
-      '@hashgraph/sdk':
+      '@hiero-ledger/sdk':
         specifier: 2.78.0
         version: 2.78.0
       '@ledgerhq/coin-framework':
@@ -14859,10 +14859,6 @@ packages:
   '@hapi/topo@5.1.0':
     resolution: {integrity: sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==}
 
-  '@hashgraph/sdk@2.78.0':
-    resolution: {integrity: sha512-mhefCpseHduXwsSJvAItNjpgio0LwTxoEQ3qzGdtY1WybUurTe5XA+2PFVnbiutaXQ+mDsLo+LJzS3D1juaK1g==}
-    engines: {node: '>=18.0.0'}
-
   '@helium/address@4.11.1':
     resolution: {integrity: sha512-QMrdBx5l5XIy0K9fL3R64Whuk556BLz/pa6yhOQtog1hb3C904m1ykAU8eg2hgiA265Yp98XZkIK3GKTHbH+0A==}
 
@@ -14890,6 +14886,10 @@ packages:
       debug: 4.4.1
       protobufjs: 7.5.4
       strip-ansi: 7.1.2
+
+  '@hiero-ledger/sdk@2.78.0':
+    resolution: {integrity: sha512-xhX9roFoVKUJULF4O9cXlrbEkO9fFdrliQ/D9vsAaqkgE9BZhvEFZ1Fi+aF5eHBlntsOFj0lS6gocPses6XwEw==}
+    engines: {node: '>=18.0.0'}
 
   '@humanwhocodes/config-array@0.11.14':
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
@@ -43430,34 +43430,6 @@ snapshots:
     dependencies:
       '@hapi/hoek': 9.3.0
 
-  '@hashgraph/sdk@2.78.0':
-    dependencies:
-      '@ethersproject/abi': 5.8.0
-      '@ethersproject/bignumber': 5.8.0
-      '@ethersproject/bytes': 5.8.0
-      '@ethersproject/rlp': 5.8.0
-      '@grpc/grpc-js': 1.12.6
-      '@hiero-ledger/cryptography': 1.15.0
-      '@hiero-ledger/proto': 2.25.0(ansi-regex@6.2.2)(ansi-styles@6.2.3)(debug@4.4.1)(protobufjs@7.5.4)(strip-ansi@7.1.2)
-      ansi-regex: 6.2.2
-      ansi-styles: 6.2.3
-      bignumber.js: 9.1.2
-      bn.js: 5.1.1
-      crypto-js: 4.2.0
-      debug: 4.4.1
-      js-base64: 3.7.4
-      long: 5.3.1
-      pino: 10.1.0
-      pino-pretty: 13.0.0
-      protobufjs: 7.5.4
-      rfc4648: 1.5.3
-      strip-ansi: 7.1.2
-      utf8: 3.0.0
-    transitivePeerDependencies:
-      - expo-crypto
-      - react-native
-      - supports-color
-
   '@helium/address@4.11.1':
     dependencies:
       bs58: 5.0.0
@@ -43506,6 +43478,34 @@ snapshots:
       long: 5.3.1
       protobufjs: 7.5.4
       strip-ansi: 7.1.2
+
+  '@hiero-ledger/sdk@2.78.0':
+    dependencies:
+      '@ethersproject/abi': 5.8.0
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/rlp': 5.8.0
+      '@grpc/grpc-js': 1.12.6
+      '@hiero-ledger/cryptography': 1.15.0
+      '@hiero-ledger/proto': 2.25.0(ansi-regex@6.2.2)(ansi-styles@6.2.3)(debug@4.4.1)(protobufjs@7.5.4)(strip-ansi@7.1.2)
+      ansi-regex: 6.2.2
+      ansi-styles: 6.2.3
+      bignumber.js: 9.1.2
+      bn.js: 5.1.1
+      crypto-js: 4.2.0
+      debug: 4.4.1
+      js-base64: 3.7.4
+      long: 5.3.1
+      pino: 10.1.0
+      pino-pretty: 13.0.0
+      protobufjs: 7.5.4
+      rfc4648: 1.5.3
+      strip-ansi: 7.1.2
+      utf8: 3.0.0
+    transitivePeerDependencies:
+      - expo-crypto
+      - react-native
+      - supports-color
 
   '@humanwhocodes/config-array@0.11.14':
     dependencies:

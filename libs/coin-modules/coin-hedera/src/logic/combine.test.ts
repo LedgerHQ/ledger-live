@@ -1,9 +1,9 @@
-import { PublicKey } from "@hashgraph/sdk";
+import { PublicKey } from "@hiero-ledger/sdk";
 import { combine } from "./combine";
 import { deserializeSignature, deserializeTransaction, serializeTransaction } from "./utils";
 
 jest.mock("./utils");
-jest.mock("@hashgraph/sdk");
+jest.mock("@hiero-ledger/sdk");
 
 describe("combine", () => {
   beforeEach(() => {

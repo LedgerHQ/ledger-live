@@ -6,7 +6,7 @@ import {
   EntityIdHelper,
   Transaction as HederaSDKTransaction,
   TransactionId,
-} from "@hashgraph/sdk";
+} from "@hiero-ledger/sdk";
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/fiats";

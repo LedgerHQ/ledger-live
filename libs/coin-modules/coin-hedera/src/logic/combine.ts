@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { PublicKey } from "@hashgraph/sdk";
+import { PublicKey } from "@hiero-ledger/sdk";
 import { deserializeSignature, deserializeTransaction, serializeTransaction } from "./utils";
 
 export function combine(tx: string, signature: string, publicKey?: string): string {

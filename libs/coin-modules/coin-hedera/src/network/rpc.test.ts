@@ -1,4 +1,4 @@
-import { Client, Transaction, TransactionResponse } from "@hashgraph/sdk";
+import { Client, Transaction, TransactionResponse } from "@hiero-ledger/sdk";
 import { rpcClient } from "./rpc";
 
 const mockClient = {
@@ -7,7 +7,7 @@ const mockClient = {
   setNetwork: jest.fn().mockReturnThis(),
 } as unknown as Client;
 
-jest.mock("@hashgraph/sdk", () => {
+jest.mock("@hiero-ledger/sdk", () => {
   return {
     Transaction: jest.fn(),
     Client: {

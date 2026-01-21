@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { AccountId } from "@hashgraph/sdk";
+import { AccountId } from "@hiero-ledger/sdk";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { apiClient } from "./api";

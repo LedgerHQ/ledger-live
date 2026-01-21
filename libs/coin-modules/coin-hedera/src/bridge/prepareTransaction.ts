@@ -77,7 +77,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
   transaction.amount = calculatedAmount.amount;
 
-  // `maxFee` must be explicitly set to avoid the @hashgraph/sdk default fallback
+  // `maxFee` must be explicitly set to avoid the @hiero-ledger/sdk default fallback
   // this ensures device app validation passes (e.g. during swap flow)
   // it's applied via `tx.setMaxTransactionFee` when building the transaction
   transaction.maxFee = estimatedFees.tinybars;

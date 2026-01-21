@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import * as sdk from "@hashgraph/sdk";
+import * as sdk from "@hiero-ledger/sdk";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
 import { craftTransaction } from "./craftTransaction";

@@ -8,7 +8,7 @@ import {
   TokenAssociateTransaction,
   TransferTransaction,
   AccountUpdateTransaction,
-} from "@hashgraph/sdk";
+} from "@hiero-ledger/sdk";
 import type { FeeEstimation, Pagination } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from "../api";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";

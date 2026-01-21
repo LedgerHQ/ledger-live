@@ -19129,6 +19129,7 @@ var package_default = {
     lint: "pnpm turbo lint",
     "lint:fix": "pnpm turbo lint:fix",
     typecheck: "pnpm turbo typecheck",
+    "validate:renovate": "npx --yes --package renovate -- renovate-config-validator",
     "knip-check": "pnpm turbo knip-check",
     unimported: "pnpm turbo unimported",
     desktop: "pnpm --filter ledger-live-desktop",
@@ -19138,6 +19139,7 @@ var package_default = {
     "coin:coverage": 'pnpm turbo coverage --filter="@ledgerhq/coin-*" --concurrency=2',
     "coin:coverage:clean": "rm -rf coverage libs/coin-modules/**/coverage libs/coin-framework/coverage",
     "coin:algorand": "pnpm --filter coin-algorand",
+    "coin:aleo": "pnpm --filter coin-aleo",
     "coin:aptos": "pnpm --filter coin-aptos",
     "coin:bitcoin": "pnpm --filter coin-bitcoin",
     "coin:canton": "pnpm --filter coin-canton",
@@ -19191,6 +19193,7 @@ var package_default = {
     config: "pnpm --filter live-config",
     utils: "pnpm --filter live-utils",
     hooks: "pnpm --filter live-hooks",
+    psbtv2: "pnpm --filter psbtv2",
     lkrp: "pnpm --filter ledger-key-ring-protocol",
     "hw-lkrp": "pnpm --filter hw-ledger-key-ring-protocol",
     countervalues: "pnpm --filter live-countervalues",
@@ -19268,6 +19271,7 @@ var package_default = {
     "import:cal-tokens": 'pnpm --filter="@ledgerhq/cryptoassets" import:cal-tokens'
   },
   devDependencies: {
+    "@ledgerhq/lumen-design-core": "catalog:",
     "@changesets/changelog-github": "0.5.0",
     "@changesets/cli": "2.27.7",
     "@commitlint/cli": "17.8.1",
@@ -19300,13 +19304,15 @@ var package_default = {
   },
   pnpm: {
     overrides: {
+      "live-mobile>@types/react": "19.0.14",
+      "live-mobile>react": "19.0.0",
+      "live-mobile>react-test-renderer": "19.0.0",
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*",
       "@ledgerhq/devices": "workspace:*",
       "@ledgerhq/hw-transport": "workspace:*",
       "@ledgerhq/context-module": "catalog:",
-      "@hashgraph/sdk>bignumber.js": "9.1.2",
       tslib: "2.6.2",
       "@ethersproject/providers>ws": "7.5.10",
       elliptic: "6.6.1",
@@ -19330,7 +19336,10 @@ var package_default = {
       "@exodus/patch-broken-hermes-typed-arrays": "patches/@exodus__patch-broken-hermes-typed-arrays.patch",
       "@taquito/http-utils": "patches/@taquito__http-utils.patch",
       "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch",
-      "react-native@0.77.3": "patches/react-native@0.77.3.patch"
+      "@testing-library/react-native@13.3.3": "patches/@testing-library__react-native@13.3.3.patch",
+      "styled-components@6.1.19": "patches/styled-components@6.1.19.patch",
+      "react-native@0.79.7": "patches/react-native@0.79.7.patch",
+      "@ledgerhq/lumen-ui-rnative@0.0.54": "patches/@ledgerhq__lumen-ui-rnative@0.0.54.patch"
     },
     packageExtensions: {
       "eslint-config-next@*": {
