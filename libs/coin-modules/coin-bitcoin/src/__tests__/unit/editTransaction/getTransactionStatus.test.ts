@@ -4,6 +4,35 @@ import {
   validateEditTransaction,
   getEditTransactionStatus,
 } from "../../../editTransaction/getTransactionStatus";
+import type { Transaction as BtcTransaction, TransactionStatus } from "../../../types";
+import { bitcoinPickingStrategy } from "../../../types";
+
+const makeTransaction = (overrides: Partial<BtcTransaction> = {}): BtcTransaction => ({
+  family: "bitcoin",
+  amount: new BigNumber(0),
+  recipient: "bc1qexample...",
+  utxoStrategy: {
+    strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE,
+    excludeUTXOs: [],
+  },
+  rbf: true,
+  feePerByte: new BigNumber(1),
+  networkInfo: null,
+  ...overrides,
+});
+
+const makeStatus = (overrides: Partial<TransactionStatus> = {}): TransactionStatus => ({
+  errors: {},
+  warnings: {},
+  estimatedFees: new BigNumber(1),
+  amount: new BigNumber(0),
+  totalSpent: new BigNumber(1),
+  txInputs: undefined,
+  txOutputs: undefined,
+  opReturnData: undefined,
+  changeAddress: undefined,
+  ...overrides,
+});
 
 describe("validateEditTransaction", () => {
   it("returns empty errors and warnings when editType is undefined", () => {
@@ -21,8 +50,11 @@ describe("validateEditTransaction", () => {
   });
 
   it("sets error when original transaction is not replaceable (rbf = false)", () => {
-    const transaction = { feePerByte: new BigNumber(10) };
-    const transactionToUpdate = { rbf: false, feePerByte: new BigNumber(5) };
+    const transaction = makeTransaction({ feePerByte: new BigNumber(10) });
+    const transactionToUpdate = makeTransaction({
+      rbf: false,
+      feePerByte: new BigNumber(5),
+    });
 
     const result = validateEditTransaction({
       transaction,
@@ -37,8 +69,8 @@ describe("validateEditTransaction", () => {
   });
 
   it("returns empty errors and warnings when original or new feePerByte is missing", () => {
-    const baseTx = { rbf: true, feePerByte: new BigNumber(5) };
-    const baseEdited = { feePerByte: new BigNumber(10) };
+    const baseTx = makeTransaction({ rbf: true, feePerByte: new BigNumber(5) });
+    const baseEdited = makeTransaction({ feePerByte: new BigNumber(10) });
 
     const cases = [
       {
@@ -66,8 +98,11 @@ describe("validateEditTransaction", () => {
   it("sets error when new feePerByte is less than minimum required (RBF bump rule)", () => {
     // getMinFees rule of thumb: >= +10% and >= +1 sat/vB, ceil.
     // Original 10 => min is ceil(max(11, 11)) = 11.
-    const transaction = { feePerByte: new BigNumber(10) };
-    const transactionToUpdate = { rbf: true, feePerByte: new BigNumber(10) };
+    const transaction = makeTransaction({ feePerByte: new BigNumber(10) });
+    const transactionToUpdate = makeTransaction({
+      rbf: true,
+      feePerByte: new BigNumber(10),
+    });
 
     const result = validateEditTransaction({
       transaction,
@@ -83,8 +118,11 @@ describe("validateEditTransaction", () => {
 
   it("returns no errors when new feePerByte meets or exceeds minimum required (RBF bump rule)", () => {
     // Original 10 => min is 11. New 11 is OK.
-    const transaction = { feePerByte: new BigNumber(11) };
-    const transactionToUpdate = { rbf: true, feePerByte: new BigNumber(10) };
+    const transaction = makeTransaction({ feePerByte: new BigNumber(11) });
+    const transactionToUpdate = makeTransaction({
+      rbf: true,
+      feePerByte: new BigNumber(10),
+    });
 
     const result = validateEditTransaction({
       transaction,
@@ -99,14 +137,15 @@ describe("validateEditTransaction", () => {
 
 describe("getEditTransactionStatus", () => {
   it("merges edit transaction errors into existing status errors", () => {
-    const transaction = { feePerByte: new BigNumber(10) };
-    const transactionToUpdate = { rbf: false, feePerByte: new BigNumber(5) };
+    const transaction = makeTransaction({ feePerByte: new BigNumber(10) });
+    const transactionToUpdate = makeTransaction({
+      rbf: false,
+      feePerByte: new BigNumber(5),
+    });
 
-    const baseStatus = {
+    const baseStatus = makeStatus({
       errors: { existingError: new Error("existing") },
-      warnings: {},
-      someOtherField: "value",
-    };
+    });
 
     const result = getEditTransactionStatus({
       transaction,
@@ -115,7 +154,7 @@ describe("getEditTransactionStatus", () => {
       editType: "speedup",
     });
 
-    expect(result.someOtherField).toBe("value");
+    expect(result.estimatedFees).toEqual(baseStatus.estimatedFees);
     expect(result.errors.existingError).toBe(baseStatus.errors.existingError);
     expect(result.errors.replacementTransactionUnderpriced).toBeInstanceOf(
       ReplacementTransactionUnderpriced,
@@ -123,13 +162,15 @@ describe("getEditTransactionStatus", () => {
   });
 
   it("keeps original errors when validateEditTransaction returns no errors", () => {
-    const transaction = { feePerByte: new BigNumber(10) };
-    const transactionToUpdate = { rbf: true, feePerByte: new BigNumber(5) };
+    const transaction = makeTransaction({ feePerByte: new BigNumber(10) });
+    const transactionToUpdate = makeTransaction({
+      rbf: true,
+      feePerByte: new BigNumber(5),
+    });
 
-    const baseStatus = {
+    const baseStatus = makeStatus({
       errors: { existingError: new Error("existing") },
-      warnings: {},
-    };
+    });
 
     const result = getEditTransactionStatus({
       transaction,

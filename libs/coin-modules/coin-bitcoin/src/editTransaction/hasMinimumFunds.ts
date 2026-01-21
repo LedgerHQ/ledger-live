@@ -15,12 +15,7 @@ export const hasMinimumFundsToCancel = async ({
       transactionToUpdate,
     });
 
-    const spendable =
-      "spendableBalance" in mainAccount && mainAccount.spendableBalance
-        ? mainAccount.spendableBalance
-        : mainAccount.balance;
-
-    return spendable.gte(additionalFeeRequired);
+    return mainAccount.spendableBalance.gte(additionalFeeRequired);
   } catch {
     return false;
   }
