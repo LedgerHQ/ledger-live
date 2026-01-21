@@ -102,6 +102,16 @@ import { ConfigureDBSaveEffects } from "./components/DBSave";
 import HookDevTools from "./devTools/useDevTools";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
+import { startProfiling, stopProfiling } from "react-native-release-profiler";
+
+setTimeout(() => {
+  log("Profiling", "Starting JS profiling for 30 seconds...");
+  startProfiling();
+  setTimeout(() => {
+    const path = stopProfiling(true);
+    log("Profiling", `Profiling data saved to: ${path}`, { path });
+  }, 30000); // Stop profiling after 30 seconds
+}, 10); // allow other imports to be logged first
 
 logStartupEvent("After js imports");
 

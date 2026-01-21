@@ -1816,6 +1816,30 @@ PODS:
     - Yoga
   - react-native-randombytes (3.6.1):
     - React-Core
+  - react-native-release-profiler (0.4.4):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-restart (0.0.24):
     - React-Core
   - react-native-safe-area-context (5.6.1):
@@ -2860,6 +2884,7 @@ DEPENDENCIES:
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-performance (from `../node_modules/react-native-performance`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
+  - react-native-release-profiler (from `../node_modules/react-native-release-profiler`)
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
@@ -3100,6 +3125,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-performance"
   react-native-randombytes:
     :path: "../node_modules/react-native-randombytes"
+  react-native-release-profiler:
+    :path: "../node_modules/react-native-release-profiler"
   react-native-restart:
     :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
@@ -3325,6 +3352,7 @@ SPEC CHECKSUMS:
   react-native-pager-view: e52266cedb6b1312af2f17b1620e045238495a30
   react-native-performance: 98dbece08aba5d9e061e132b00e0f731e36f7a9e
   react-native-randombytes: 3c8f3e89d12487fd03a2f966c288d495415fc116
+  react-native-release-profiler: c633ba969929b92e5283e75a9110d572d1759c51
   react-native-restart: df7caae89026a8ab2ecdd82839978f657701f51d
   react-native-safe-area-context: 83e0ac3d023997de1c2e035af907cc4dc05f718c
   react-native-slider: 7c200b15baebcf0d9d2123156078c5edacfc59f3
@@ -3392,6 +3420,6 @@ SPEC CHECKSUMS:
   VisionCamera: b51af005669c6642dd1b4fca434eda4c1778de87
   Yoga: fce72270ebed754904bbe5e18bb05cda3c3075db
 
-PODFILE CHECKSUM: 383b3ba2e67deedb3aaf06cab144a449c950c986
+PODFILE CHECKSUM: e7e15506b624b3f6b2d5a8b66d4a8841fc781699
 
 COCOAPODS: 1.14.3

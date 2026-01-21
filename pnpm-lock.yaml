@@ -1623,6 +1623,9 @@ importers:
       react-native-reanimated:
         specifier: 'catalog:'
         version: 3.19.5(@babel/core@7.28.5)(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      react-native-release-profiler:
+        specifier: 0.4.4
+        version: 0.4.4(@react-native-community/cli-tools@20.1.0)(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react-native-restart:
         specifier: 0.0.24
         version: 0.0.24(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -1768,6 +1771,9 @@ importers:
       '@react-native-community/cli-platform-ios':
         specifier: 'catalog:'
         version: 18.0.1
+      '@react-native-community/cli-tools':
+        specifier: 20.1.0
+        version: 20.1.0
       '@react-native/babel-preset':
         specifier: 'catalog:'
         version: 0.79.7(@babel/core@7.28.5)
@@ -15607,6 +15613,10 @@ packages:
   '@manypkg/get-packages@1.1.3':
     resolution: {integrity: sha512-fo+QhuU3qE/2TQMQmbVMqaQ6EWbMhi4ABWP+O4AM1NqPBuy0OrApV5LO6BrrgnhtAHS2NH6RrVk9OL181tTi8A==}
 
+  '@margelo/hermes-profile-transformer@0.0.10':
+    resolution: {integrity: sha512-mQp4pMbdBRUPNdgXEt0H+VlQWdEOpvaImP5HBgwY0dsFLxN/qnCGZoERe5kyN5q5x5GT5bj9kmZPt5V7EMhfRA==}
+    engines: {node: '>=8'}
+
   '@marijn/find-cluster-break@1.0.2':
     resolution: {integrity: sha512-l0h88YhZFyKdXIFNfSWpyjStDjGHwZ/U7iobcK1cQQD8sejsONdQtTVU+1wVN1PBw40PiiHB1vA5S7VTfQiP9g==}
 
@@ -17281,6 +17291,9 @@ packages:
 
   '@react-native-community/cli-tools@18.0.1':
     resolution: {integrity: sha512-WxWFXwfYhHR2eYiB4lkHZVC/PmIkRWeVHBQKmn0h1mecr3GrHYO4BzW1jpD5Xt6XZ9jojQ9wE5xrCqXjiMSAIQ==}
+
+  '@react-native-community/cli-tools@20.1.0':
+    resolution: {integrity: sha512-/YmzHGOkY6Bgrv4OaA1L8rFqsBlQd1EB2/ipAoKPiieV0EcB5PUamUSuNeFU3sBZZTYQCUENwX4wgOHgFUlDnQ==}
 
   '@react-native-community/cli-tools@6.2.1':
     resolution: {integrity: sha512-7RbOkZLT/3YG8CAYYM70ajRKIOgVxK/b4t9KNsPq+2uen99MGezfeglC8s1cs3vBNVVxCo0a2JbXg18bUd8eqA==}
@@ -23791,6 +23804,10 @@ packages:
 
   commander@11.0.0:
     resolution: {integrity: sha512-9HMlXtt/BNoYr8ooyjjNRdIilOTkVJXB+GhxMTtOKwk0R4j4lS4NpjuqmRxroBfnfTSHQIHQB7wryHhXarNjmQ==}
+    engines: {node: '>=16'}
+
+  commander@11.1.0:
+    resolution: {integrity: sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ==}
     engines: {node: '>=16'}
 
   commander@12.1.0:
@@ -32588,6 +32605,15 @@ packages:
     resolution: {integrity: sha512-bd4AwIkBAaY4BjrgpSoKjEaRG/tXD756F5nGuiH5IMBSKN8tRdUEA8hWZCyIo/R6/kha/tVSoCqodVUACh7ZWw==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
+      react: '*'
+      react-native: '*'
+
+  react-native-release-profiler@0.4.4:
+    resolution: {integrity: sha512-fzMv7+juBut+V58JSrYlS8LBI5+RdQ1vUevemxxZJwSq1d3R2WK2WK06yG1TfABeiej++VaRhmkkt+Gj3Hqvew==}
+    engines: {node: '>= 18.0.0'}
+    hasBin: true
+    peerDependencies:
+      '@react-native-community/cli-tools': '*'
       react: '*'
       react-native: '*'
 
@@ -44921,6 +44947,10 @@ snapshots:
       globby: 11.1.0
       read-yaml-file: 1.1.0
 
+  '@margelo/hermes-profile-transformer@0.0.10':
+    dependencies:
+      source-map: 0.7.4
+
   '@marijn/find-cluster-break@1.0.2': {}
 
   '@mdx-js/react@2.3.0(@types/react@19.0.14)(react@19.0.0)':
@@ -47101,6 +47131,19 @@ snapshots:
       launch-editor: 2.12.0
       mime: 2.6.0
       ora: 5.4.1
+      prompts: 2.4.2
+      semver: 7.7.3
+
+  '@react-native-community/cli-tools@20.1.0':
+    dependencies:
+      '@vscode/sudo-prompt': 9.3.1
+      appdirsjs: 1.2.7
+      execa: 5.1.1
+      find-up: 5.0.0
+      launch-editor: 2.12.0
+      mime: 2.6.0
+      ora: 5.4.1
+      picocolors: 1.1.1
       prompts: 2.4.2
       semver: 7.7.3
 
@@ -56962,6 +57005,8 @@ snapshots:
   commander@10.0.1: {}
 
   commander@11.0.0: {}
+
+  commander@11.1.0: {}
 
   commander@12.1.0: {}
 
@@ -69331,6 +69376,14 @@ snapshots:
       react-native-is-edge-to-edge: 1.1.7(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - supports-color
+
+  react-native-release-profiler@0.4.4(@react-native-community/cli-tools@20.1.0)(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
+    dependencies:
+      '@margelo/hermes-profile-transformer': 0.0.10
+      '@react-native-community/cli-tools': 20.1.0
+      commander: 11.1.0
+      react: 19.0.0
+      react-native: 0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0)
 
   react-native-restart@0.0.24(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@5.4.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
     dependencies:
