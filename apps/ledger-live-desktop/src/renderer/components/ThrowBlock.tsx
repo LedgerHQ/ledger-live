@@ -1,4 +1,5 @@
 import React, { PureComponent } from "react";
+import { MemoryRouter } from "react-router";
 import logger from "~/renderer/logger";
 import RenderError from "./RenderError";
 type Props = {
@@ -26,7 +27,14 @@ class ThrowBlock extends PureComponent<Props, State> {
   render() {
     const { error } = this.state;
     if (error) {
-      return <RenderError error={error} />;
+      // Wrap RenderError in MemoryRouter because RenderError uses TranslatedError
+      // which calls useNavigate() via useErrorLinks hook. ThrowBlock is positioned
+      // outside the main Router in App.tsx, so we need to provide a Router context.
+      return (
+        <MemoryRouter>
+          <RenderError error={error} />
+        </MemoryRouter>
+      );
     }
     return this.props.children;
   }
