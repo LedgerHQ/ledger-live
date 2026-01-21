@@ -25,6 +25,7 @@ import {
   parseFormattedDate,
   incrementPerGranularity,
   datapointLimits,
+  datapointRetention,
 } from "./helpers";
 import type { Account } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
@@ -34,11 +35,13 @@ import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 // yield raw version of the countervalues state to be saved in a db
 export function exportCountervalues({ data, status }: CounterValuesState): CounterValuesStateRaw {
   const out = { status } as CounterValuesStateRaw;
+  const hourlyLimit = formatCounterValueDay(new Date(Date.now() - datapointRetention.hourly));
 
   for (const path in data) {
     const obj: RateMapRaw = {};
 
     for (const [k, v] of data[path]) {
+      if (k.length === 13 && k.slice(0, 10) < hourlyLimit) continue; // Skip old hourly data
       obj[k] = v;
     }
 
