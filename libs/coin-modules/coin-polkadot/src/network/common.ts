@@ -10,16 +10,11 @@ export const createRegistryAndExtrinsics = (
   registry: TypeRegistry;
   extrinsics: Extrinsics;
 } => {
-  const registry: any = new TypeRegistry();
+  const registry = new TypeRegistry();
   const metadata = new Metadata(registry, material.metadata);
   // Register types specific to chain/runtimeVersion
   registry.register(
-    getSpecTypes(
-      registry,
-      material.chainName,
-      material.specName,
-      Number(material.specVersion),
-    ) as any,
+    getSpecTypes(registry, material.chainName, material.specName, Number(material.specVersion)),
   );
   // Register the chain properties for this registry
   registry.setChainProperties(

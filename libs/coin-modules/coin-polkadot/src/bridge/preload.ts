@@ -1,9 +1,12 @@
 /* eslint-disable no-prototype-builtins */
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import type { PolkadotPreloadData, PolkadotStakingProgress, PolkadotValidator } from "../types";
-import polkadotAPI from "../network";
-import { loadPolkadotCrypto } from "../logic/polkadot-crypto"; //FIXME: Polkadot SDK should not be used in bridge
+import type {
+  PolkadotPreloadData,
+  /* PolkadotStakingProgress, */ PolkadotValidator,
+} from "../types";
+// import polkadotAPI from "../network";
+// import { loadPolkadotCrypto } from "../logic/polkadot-crypto"; //FIXME: Polkadot SDK should not be used in bridge
 import { getCurrentPolkadotPreloadData, setPolkadotPreloadData } from "./state";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -71,59 +74,60 @@ export const getPreloadStrategy = () => ({
   preloadMaxAge: PRELOAD_MAX_AGE,
 });
 
-const shouldRefreshValidators = (
-  previousState: PolkadotStakingProgress | undefined,
-  currentState: PolkadotStakingProgress,
-) => {
-  return !previousState || currentState.activeEra !== previousState.activeEra;
-};
+// const shouldRefreshValidators = (
+//   previousState: PolkadotStakingProgress | undefined,
+//   currentState: PolkadotStakingProgress,
+// ) => {
+//   return !previousState || currentState.activeEra !== previousState.activeEra;
+// };
 
-export const preload = async (currency: CryptoCurrency): Promise<PolkadotPreloadData> => {
-  await loadPolkadotCrypto();
-  await polkadotAPI.getRegistry(currency); // ensure registry is already in cache.
-  let minimumBondBalance;
-  let currentStakingProgress;
-  try {
-    // Should we just check for asset-hub ?
-    currentStakingProgress = await polkadotAPI.getStakingProgress(currency);
-  } catch {
-    currentStakingProgress = {
-      electionClosed: true,
-      activeEra: 0,
-      maxNominatorRewardedPerValidator: 128,
-      bondingDuration: 28,
-    };
-  }
+export const preload = async (_currency: CryptoCurrency): Promise<PolkadotPreloadData> => {
+  // await loadPolkadotCrypto();
+  // await polkadotAPI.getRegistry(currency); // ensure registry is already in cache.
+  // let minimumBondBalance;
+  // let currentStakingProgress;
+  // try {
+  //   // Should we just check for asset-hub ?
+  //   currentStakingProgress = await polkadotAPI.getStakingProgress(currency);
+  // } catch {
+  //   currentStakingProgress = {
+  //     electionClosed: true,
+  //     activeEra: 0,
+  //     maxNominatorRewardedPerValidator: 128,
+  //     bondingDuration: 28,
+  //   };
+  // }
 
-  try {
-    minimumBondBalance = await polkadotAPI.getMinimumBondBalance(currency);
-  } catch {
-    minimumBondBalance = BigNumber(0);
-  }
+  // try {
+  //   minimumBondBalance = await polkadotAPI.getMinimumBondBalance(currency);
+  // } catch {
+  const minimumBondBalance = BigNumber(0);
+  // }
 
   const { validators: previousValidators, staking: previousStakingProgress } =
     getCurrentPolkadotPreloadData();
-  let validators = previousValidators;
+  const validators = previousValidators;
 
-  if (
-    !validators ||
-    !validators.length ||
-    shouldRefreshValidators(previousStakingProgress, currentStakingProgress)
-  ) {
-    log("polkadot/preload", "refreshing polkadot validators...");
+  // if (
+  //   !validators ||
+  //   !validators.length ||
+  //   shouldRefreshValidators(previousStakingProgress, currentStakingProgress)
+  // ) {
+  //   log("polkadot/preload", "refreshing polkadot validators...");
 
-    try {
-      validators = await polkadotAPI.getValidators("all", currency);
-    } catch (error) {
-      log("polkadot/preload", "failed to fetch validators", {
-        error,
-      });
-    }
-  }
+  //   try {
+  //     validators = await polkadotAPI.getValidators("all", currency);
+  //   } catch (error) {
+  //     log("polkadot/preload", "failed to fetch validators", {
+  //       error,
+  //     });
+  //   }
+  // }
 
   return {
     validators,
-    staking: currentStakingProgress,
+    // staking: currentStakingProgress,
+    staking: previousStakingProgress,
     minimumBondBalance: minimumBondBalance.toString(),
   };
 };
