@@ -6,7 +6,11 @@ import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import { useDeviceHasUpdatesAvailable } from "@ledgerhq/live-common/manager/useDeviceHasUpdatesAvailable";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  FeatureToggle,
+  useFeature,
+  useWalletFeaturesConfig,
+} from "@ledgerhq/live-common/featureFlags/index";
 import { Icons, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
@@ -245,6 +249,8 @@ const MainSideBar = () => {
   const recoverFeature = useFeature("protectServicesDesktop");
   const recoverHomePath = useAccountPath(recoverFeature);
 
+  const { shouldDisplayMarketBanner: isMarketBannerEnabled } = useWalletFeaturesConfig("desktop");
+
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
   }, [dispatch, collapsed]);
@@ -399,15 +405,17 @@ const MainSideBar = () => {
                   NotifComponent={<UpdateDot collapsed={collapsed} />}
                   collapsed={secondAnim}
                 />
-                <SideBarListItem
-                  id={"market"}
-                  label={t("sidebar.market")}
-                  icon={Icons.GraphAsc}
-                  iconActiveColor="wallet"
-                  onClick={handleClickMarket}
-                  isActive={location.pathname.startsWith("/market")}
-                  collapsed={secondAnim}
-                />
+                {!isMarketBannerEnabled && (
+                  <SideBarListItem
+                    id={"market"}
+                    label={t("sidebar.market")}
+                    icon={Icons.GraphAsc}
+                    iconActiveColor="wallet"
+                    onClick={handleClickMarket}
+                    isActive={location.pathname.startsWith("/market")}
+                    collapsed={secondAnim}
+                  />
+                )}
                 <SideBarListItem
                   id={"accounts"}
                   label={t("sidebar.accounts")}

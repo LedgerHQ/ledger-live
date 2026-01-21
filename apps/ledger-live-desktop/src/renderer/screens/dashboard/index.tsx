@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import Box from "~/renderer/components/Box";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -70,15 +70,12 @@ export default function DashboardPage() {
     useDisplayOnPortfolioAnalytics();
 
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio");
-  const lwdWallet40FF = useFeature("lwdWallet40");
-  const shouldDisplayMarketBanner =
-    (lwdWallet40FF?.enabled && lwdWallet40FF?.params?.marketBanner) ?? false;
-  const shouldDisplayBalanceRework =
-    (lwdWallet40FF?.enabled && lwdWallet40FF?.params?.graphRework) ?? false;
+  const { shouldDisplayMarketBanner, shouldDisplayGraphRework } =
+    useWalletFeaturesConfig("desktop");
 
   return (
     <>
-      {lwdWallet40FF?.enabled && shouldDisplayBalanceRework && shouldDisplayMarketBanner ? (
+      {shouldDisplayGraphRework && shouldDisplayMarketBanner ? (
         <Portfolio />
       ) : (
         <>
