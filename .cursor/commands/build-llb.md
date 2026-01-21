@@ -17,11 +17,6 @@ $BUILD_TARGET
 BRANCH=$(git branch --show-current)
 echo "Current branch: $BRANCH"
 
-# Safety check: prevent accidental builds from protected branches
-if [[ "$BRANCH" == "main" || "$BRANCH" == "develop" || "$BRANCH" =~ ^release/ ]]; then
-  echo "⚠️  Warning: You are on a protected branch ($BRANCH). Are you sure you want to trigger a build from here?"
-fi
-
 # Check for uncommitted changes
 if ! git diff-index --quiet HEAD --; then
   echo "⚠️  Warning: You have uncommitted changes that won't be included in the build."
@@ -105,23 +100,23 @@ RETRY_DELAY=5
 fetch_run_url() {
   local workflow_file=$1
   local retries=0
-  
+
   while [ $retries -lt $MAX_RETRIES ]; do
     result=$(gh run list -R LedgerHQ/ledger-live-build \
       --workflow="$workflow_file" \
       --limit 1 \
       --json url,name,status \
       --jq '.[0] | "[\(.name) (\(.status))](\(.url))"')
-    
+
     if [ -n "$result" ] && [ "$result" != "null" ]; then
       echo "$result"
       return 0
     fi
-    
+
     retries=$((retries + 1))
     sleep $RETRY_DELAY
   done
-  
+
   echo "⚠️  Could not find run for $workflow_file (check manually)"
   return 1
 }
