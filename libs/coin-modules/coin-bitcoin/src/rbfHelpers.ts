@@ -17,14 +17,14 @@ export async function getUtxoValue(
   const tx = Transaction.fromHex(rawHex);
   const output = tx.outs[index];
   if (!output) throw new Error(`Output index ${index} does not exist`);
-  return output.value; // sats
+  return output.value;
 }
 
 type OriginalTxFeeContext = {
   tx: Transaction;
   vsize: number;
   oldFeeSat: BigNumber;
-  oldFeeRateSatVb: BigNumber; // ceil sat/vB
+  oldFeeRateSatVb: BigNumber;
   incrementalFeeRateSatVb: BigNumber;
 };
 
