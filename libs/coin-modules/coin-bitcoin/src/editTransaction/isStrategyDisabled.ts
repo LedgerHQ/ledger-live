@@ -7,22 +7,19 @@ import { getMinFees } from "./getMinEditTransactionFees";
  */
 export const isStrategyDisabled = ({
   transaction,
-  feeData,
+  feesStrategy,
 }: {
   transaction: { feePerByte: BigNumber; rbf?: boolean };
-  feeData: { feePerByte?: BigNumber };
+  feesStrategy: BigNumber;
 }): boolean => {
   // If RBF is explicitly disabled, a replacement tx shouldn't be possible.
   if (transaction.rbf === false) {
     return true;
   }
-
-  const minFees = getMinFees({ feePerByte: transaction.feePerByte });
-
-  // If the strategy doesn't provide a fee rate, don't disable it here.
-  if (!feeData.feePerByte) {
-    return false;
+  if (!feesStrategy || feesStrategy.lte(0)) {
+    return true;
   }
 
-  return feeData.feePerByte.isLessThan(minFees.feePerByte);
+  const minFees = getMinFees({ feePerByte: transaction.feePerByte });
+  return feesStrategy.isLessThan(minFees.feePerByte);
 };
