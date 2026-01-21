@@ -1,3 +1,6 @@
+import React from "react";
+import styled from "styled-components";
+import { useSelector } from "LLD/hooks/redux";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { ICPAccount } from "@ledgerhq/live-common/families/internet_computer/types";
 import { BigNumber } from "bignumber.js";

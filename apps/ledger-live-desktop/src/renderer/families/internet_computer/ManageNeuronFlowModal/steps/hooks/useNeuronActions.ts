@@ -9,15 +9,15 @@ import {
 } from "@ledgerhq/live-common/families/internet_computer/types";
 import BigNumber from "bignumber.js";
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
+import { useDispatch } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { closeModal, OpenModal } from "~/renderer/actions/modals";
+import { closeModal, openModal } from "~/renderer/actions/modals";
 
 type UseNeuronActionsParams = {
   account: ICPAccount;
   neuron: ICPNeuron;
   manageNeuronIndex: number;
-  openModal: OpenModal;
   onChangeTransaction: (tx: Transaction) => void;
   transitionTo: (step: string) => void;
   setLastManageAction: (action: ICPTransactionType) => void;
@@ -27,12 +27,12 @@ export function useNeuronActions({
   account,
   neuron,
   manageNeuronIndex,
-  openModal,
   onChangeTransaction,
   transitionTo,
   setLastManageAction,
 }: UseNeuronActionsParams) {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const onClickIncreaseStake = useCallback(() => {
     const bridge = getAccountBridge(account);
@@ -41,6 +41,9 @@ export function useNeuronActions({
     dispatch(
       openModal("MODAL_SEND", {
         stepId: "amount",
+        modalTitle: t("internetComputer.manageNeuronFlow.manage.votingPower.increaseStake"),
+        disableBacks: ["amount"],
+        // This is a bit hacky, doesn't comply with type definition but works for this case
         onConfirmationHandler: (optimisticOperation: InternetComputerOperation) => {
           dispatch(
             updateAccountWithUpdater(account.id, account => {
@@ -68,7 +71,7 @@ export function useNeuronActions({
         },
       }),
     );
-  }, [account, dispatch, openModal, neuron, manageNeuronIndex]);
+  }, [account, dispatch, neuron, manageNeuronIndex, t]);
 
   const onClickDisburseStake = useCallback(() => {
     const bridge = getAccountBridge(account);

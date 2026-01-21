@@ -8,6 +8,7 @@ import { Dispatch } from "redux";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { openModal } from "~/renderer/actions/modals";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { TFunction } from "i18next";
 
 export const refreshNeuronsData = (
   dispatch: Dispatch,
@@ -41,7 +42,7 @@ export const refreshNeuronsData = (
   );
 };
 
-export const onClickManageNeurons = (account: ICPAccount, dispatch: Function, refresh = false) => {
+export const onClickManageNeurons = (account: ICPAccount, dispatch: Dispatch, refresh = false) => {
   if (account.type !== "Account") return;
   dispatch(
     openModal("MODAL_ICP_LIST_NEURONS", {
@@ -51,7 +52,7 @@ export const onClickManageNeurons = (account: ICPAccount, dispatch: Function, re
   );
 };
 
-export const onClickStakeIcp = (account: ICPAccount, dispatch: Function) => {
+export const onClickStakeIcp = (account: ICPAccount, dispatch: Dispatch, t: TFunction) => {
   const bridge = getAccountBridge(account);
   const initTx = bridge.createTransaction(account);
 
@@ -70,7 +71,9 @@ export const onClickStakeIcp = (account: ICPAccount, dispatch: Function) => {
     openModal("MODAL_SEND", {
       stepId: "amount",
       account,
+      disableBacks: ["amount"],
       onConfirmationHandler,
+      modalTitle: t("internetComputer.stakeBanner.stakeICP.modalTitle"),
       transaction: {
         ...initTx,
         type: "create_neuron",
@@ -79,7 +82,7 @@ export const onClickStakeIcp = (account: ICPAccount, dispatch: Function) => {
   );
 };
 
-export const onClickConfirmFollowing = (account: ICPAccount, dispatch: Function) => {
+export const onClickConfirmFollowing = (account: ICPAccount, dispatch: Dispatch) => {
   dispatch(
     openModal("MODAL_ICP_REFRESH_VOTING_POWER", {
       account,

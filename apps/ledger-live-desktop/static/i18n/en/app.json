@@ -8006,14 +8006,15 @@
         "cta": "Manage Neurons"
       },
       "stakeICP": {
-        "title": "Stake ICP",
+        "title": "Earn ICP",
         "description": "Stake ICP and gain rewards by participating in its governance.",
-        "cta": "Stake ICP"
+        "cta": "Earn",
+        "modalTitle": "Create Neuron"
       }
     },
     "headerManageActions": {
       "stakeICP": {
-        "title": "Stake ICP",
+        "title": "Earn",
         "tooltip": "Create neurons to stake ICP"
       },
       "manageNeurons": {

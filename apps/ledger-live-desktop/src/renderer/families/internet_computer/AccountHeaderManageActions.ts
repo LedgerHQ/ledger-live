@@ -42,6 +42,7 @@ const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
         stepId: "amount",
         account,
         disableBacks: ["amount"],
+        modalTitle: t("internetComputer.stakeBanner.stakeICP.modalTitle"),
         transaction: {
           ...initTx,
           type: "create_neuron",
@@ -64,7 +65,7 @@ const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
         },
       }),
     );
-  }, [account, dispatch, parentAccount]);
+  }, [account, dispatch, parentAccount, t]);
 
   if (parentAccount) return null;
   return [

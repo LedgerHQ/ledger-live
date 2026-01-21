@@ -37,7 +37,7 @@ const Th = styled.th`
 const Tr = styled.tr<{ pointer?: boolean }>`
   cursor: ${p => (p.pointer ? "pointer" : "default")};
   &:hover {
-    background: ${p => p.theme.colors.background.default};
+    background: ${p => p.theme.colors.neutral.c20};
   }
 `;
 

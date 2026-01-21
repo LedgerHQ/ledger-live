@@ -37,7 +37,6 @@ export default function StepManage({
   neurons,
   onChangeTransaction,
   transitionTo,
-  openModal,
   setLastManageAction,
 }: StepProps) {
   const currencyId = account.currency.id;
@@ -68,7 +67,6 @@ export default function StepManage({
     account,
     neuron,
     manageNeuronIndex,
-    openModal,
     onChangeTransaction,
     transitionTo,
     setLastManageAction,

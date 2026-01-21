@@ -46,6 +46,7 @@ export type Data = {
   onConfirmationHandler?: () => void;
   onFailHandler?: () => void;
   stepId?: StepId;
+  modalTitle?: string;
 };
 
 type OwnProps = {
@@ -274,7 +275,7 @@ const Body = ({
   }
   const error = transactionError || bridgeError;
   const stepperProps = {
-    title: stepId === "warning" ? t("common.information") : t("send.title"),
+    title: stepId === "warning" ? t("common.information") : params.modalTitle || t("send.title"),
     stepId,
     steps,
     errorSteps,

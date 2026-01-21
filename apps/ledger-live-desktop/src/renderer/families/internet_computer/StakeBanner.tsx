@@ -3,34 +3,42 @@ import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import React from "react";
 import { ICPAccount } from "@ledgerhq/live-common/families/internet_computer/types";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { getBannerState } from "@ledgerhq/live-common/families/internet_computer/utils";
 import { onClickConfirmFollowing, onClickManageNeurons, onClickStakeIcp } from "./common";
+import { TFunction } from "i18next";
+import { Dispatch } from "redux";
 
 const defaultDescription = "description";
-const bannerContent = {
+
+type BannerAction = (account: ICPAccount, dispatch: Dispatch, t?: TFunction) => void;
+
+const bannerContent: Record<
+  string,
+  {
+    descriptionKey: string;
+    action: BannerAction;
+  }
+> = {
   confirmFollowing: {
     descriptionKey: "altDescription",
-    action: (account: ICPAccount, dispatch: Function) => onClickConfirmFollowing(account, dispatch),
+    action: (account, dispatch) => onClickConfirmFollowing(account, dispatch),
   },
   syncNeurons: {
     descriptionKey: "altDescription",
-    action: (account: ICPAccount, dispatch: Function) =>
-      onClickManageNeurons(account, dispatch, true),
+    action: (account, dispatch) => onClickManageNeurons(account, dispatch, true),
   },
   lockNeurons: {
     descriptionKey: defaultDescription,
-    action: (account: ICPAccount, dispatch: Function) =>
-      onClickManageNeurons(account, dispatch, false),
+    action: (account, dispatch) => onClickManageNeurons(account, dispatch, false),
   },
   addFollowees: {
     descriptionKey: defaultDescription,
-    action: (account: ICPAccount, dispatch: Function) =>
-      onClickManageNeurons(account, dispatch, false),
+    action: (account, dispatch) => onClickManageNeurons(account, dispatch, false),
   },
   stakeICP: {
     descriptionKey: defaultDescription,
-    action: (account: ICPAccount, dispatch: Function) => onClickStakeIcp(account, dispatch),
+    action: (account, dispatch, t) => onClickStakeIcp(account, dispatch, t!),
   },
 };
 
@@ -54,7 +62,7 @@ const StakeBanner: React.FC<{ account: ICPAccount }> = ({ account }) => {
         hours: data?.hours,
       })}
       cta={t(`internetComputer.stakeBanner.${bannerContentKey}.cta`)}
-      onClick={() => bannerContent[bannerContentKey]?.action(account, dispatch)}
+      onClick={() => bannerContent[bannerContentKey]?.action(account, dispatch, t)}
       display={true}
       linkText={t("common.learnMoreWithEllipsis")}
       linkUrl="https://internetcomputer.org/docs/current/developer-docs/daos/nns/concepts/neurons/staking-voting-rewards"
