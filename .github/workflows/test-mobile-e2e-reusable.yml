@@ -157,7 +157,7 @@ jobs:
         run: |
           FILTER_PATTERN="${{ inputs.test_filter || '' }}"
           DEVICE="${{ inputs.speculos_device || 'nanoX' }}"
-          BUILD_TYPE="${{ inputs.production_firebase == 'true' && 'production' || 'testing' }}"
+          BUILD_TYPE="${{ inputs.production_firebase && 'production' || 'testing' }}"
           TEST_EXECUTION_ANDROID="${{ inputs.test_execution_android || '(not provided)' }}"
           TEST_EXECUTION_IOS="${{ inputs.test_execution_ios || '(not provided)' }}"
 
