@@ -5260,6 +5260,10 @@ importers:
         version: 5.6.3
 
   libs/coin-modules/zcash-shielded:
+    dependencies:
+      '@ledger/decrypt':
+        specifier: file:./decrypt/pkg
+        version: decrypt@file:libs/coin-modules/zcash-shielded/decrypt/pkg
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -23049,6 +23053,9 @@ packages:
   decompress-response@6.0.0:
     resolution: {integrity: sha512-aW35yZM6Bb/4oJlZncMH2LCoZtJXTRxES17vE3hoRiowU2kWHaJKFkSBDnDR+cm9J+9QhXmREyIfv0pji9ejCQ==}
     engines: {node: '>=10'}
+
+  decrypt@file:libs/coin-modules/zcash-shielded/decrypt/pkg:
+    resolution: {directory: libs/coin-modules/zcash-shielded/decrypt/pkg, type: directory}
 
   dedent@0.7.0:
     resolution: {integrity: sha512-Q6fKUPqnAHAyhiUgFU7BUzLiv0kd8saH9al7tnu5Q/okj6dnupxyTgFIBjVzJATdfIAm9NAsvXNzjaKa+bxVyA==}
@@ -53016,6 +53023,8 @@ snapshots:
   decompress-response@6.0.0:
     dependencies:
       mimic-response: 3.1.0
+
+  decrypt@file:libs/coin-modules/zcash-shielded/decrypt/pkg: {}
 
   dedent@0.7.0: {}
 
