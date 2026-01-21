@@ -9,11 +9,7 @@ export class PortfolioPage extends AppPage {
   private stakeEntryButton = this.page.getByTestId("stake-entry-button");
   private chart = this.page.getByTestId("chart-container");
   private operationList = this.page.locator("#operation-list");
-  private marketPerformanceWidget = this.page.getByTestId("market-performance-widget");
-  private swapButton = this.marketPerformanceWidget.getByRole("button", { name: "Swap" });
-  private buyButton = this.marketPerformanceWidget.getByRole("button", { name: "Buy" });
   private assetAllocationTitle = this.page.getByText("Asset allocation");
-  private trendTitle = this.marketPerformanceWidget.getByText("1W trend");
   private assetRowElements = this.page.locator("[data-testid^='asset-row-']");
   private showAllButton = this.page.getByText("Show all");
   private showMoreButton = this.page.getByText("Show more");
@@ -23,11 +19,6 @@ export class PortfolioPage extends AppPage {
   private operationRows = this.page.locator("[data-testid^='operation-row-']");
   private totalBalance = this.page.getByTestId("total-balance");
   private balanceDiff = this.page.getByTestId("balance-diff");
-  private bestPerformersButton = this.page.getByTestId("market-best-performers");
-  private worstPerformersButton = this.page.getByTestId("market-worst-performers");
-  private rowOnePerformer = this.page.getByTestId("market-performance-widget-row-1");
-  private performerArrowDirection = (direction: string) =>
-    this.rowOnePerformer.getByTestId(`arrow-${direction}`);
 
   @step("Open `Add account` modal")
   async openAddAccountModal() {
@@ -63,20 +54,6 @@ export class PortfolioPage extends AppPage {
   @step("Check chart visibility")
   async checkChartVisibility() {
     await expect(this.chart).toBeVisible();
-  }
-
-  @step("Check market performance trend visibility")
-  async checkMarketPerformanceTrendVisibility() {
-    await expect(this.marketPerformanceWidget).toBeVisible();
-    await expect(this.trendTitle).toBeVisible();
-    await expect(this.buyButton).toBeVisible();
-    await expect(this.swapButton).toBeVisible();
-    await this.bestPerformersButton.click();
-    await expect(this.performerArrowDirection("up")).toBeVisible();
-    const bestPerformer = await this.rowOnePerformer.innerText();
-    await this.worstPerformersButton.click();
-    await expect(this.performerArrowDirection("down")).toBeVisible();
-    await expect(this.rowOnePerformer).not.toContainText(bestPerformer ?? "");
   }
 
   @step("Check asset allocation section")

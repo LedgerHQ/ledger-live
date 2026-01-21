@@ -1479,34 +1479,6 @@
         "primaryCta": "Connect device",
         "secondaryCta": "Maybe later"
       }
-    },
-    "marketPerformanceWidget": {
-      "title": "{{time}} trend",
-      "buy": "Buy",
-      "swap": "Swap",
-      "gainers": "Gainers",
-      "losers": "Losers",
-      "error": {
-        "title": "Sorry, we’re unable to load the trend",
-        "description": "Please try again later"
-      },
-      "missingData": {
-        "gainers": {
-          "title": "No assets among the top {{count}} experienced gains in the last {{trend}}",
-          "description": "Consider viewing top losers or come back later"
-        },
-        "losers": {
-          "title": "No assets among the top {{count}} experienced losses in the last {{trend}}",
-          "description": "Consider viewing top gainers or come back later"
-        }
-      },
-      "trend": {
-        "day": "24 hours",
-        "week": "7 days",
-        "month": "30 days",
-        "year": "year",
-        "all": "year"
-      }
     }
   },
   "currentAddress": {
@@ -4486,9 +4458,7 @@
       "walletSyncDescription": "Keep your portfolio up to date when switching computers or use a phone",
       "mevProtection": "MEV Protection",
       "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
-      "mevProtectionLearnMore": "Privacy notice",
-      "marketPerformanceWidget": "Market Performance Widget",
-      "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
+      "mevProtectionLearnMore": "Privacy notice"
     },
     "developer": {
       "search": "Search",
