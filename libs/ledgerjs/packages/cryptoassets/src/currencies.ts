@@ -345,6 +345,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     keywords: ["avax", "avalanche", "c-chain"],
     explorerId: "avax",
   },
+  avalanche_c_chain_fuji: {
+    type: "CryptoCurrency",
+    id: "avalanche_c_chain_fuji",
+    coinType: CoinType.ETH,
+    name: "Avalanche C-Chain Fuji",
+    managerAppName: "Ethereum",
+    ticker: "AVAX",
+    scheme: "avalanche_c_chain_fuji",
+    color: "#E84142",
+    family: "evm",
+    units: [
+      {
+        name: "AVAX",
+        code: "AVAX",
+        magnitude: 18,
+      },
+    ],
+    isTestnetFor: "avalanche_c_chain",
+    ethereumLikeInfo: {
+      chainId: 43113,
+    },
+    explorerViews: [
+      {
+        tx: "https://testnet.snowtrace.io/tx/$hash",
+        address: "https://testnet.snowtrace.io/address/$address",
+        token: "https://testnet.snowtrace.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   axelar: {
     type: "CryptoCurrency",
     id: "axelar",
@@ -559,6 +588,28 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://explorer.btcprivate.org/tx/$hash",
         address: "https://explorer.btcprivate.org/address/$address",
+      },
+    ],
+  },
+  bitlayer: {
+    type: "CryptoCurrency",
+    id: "bitlayer",
+    coinType: CoinType.ETH,
+    name: "Bitlayer",
+    managerAppName: "Ethereum",
+    ticker: "BTC",
+    scheme: "bitlayer",
+    color: "#F7931A",
+    family: "evm",
+    units: ethereumUnits("BTC", "BTC"),
+    ethereumLikeInfo: {
+      chainId: 200901,
+    },
+    explorerViews: [
+      {
+        tx: "https://www.btrscan.com/tx/$hash",
+        address: "https://www.btrscan.com/address/$address",
+        token: "https://www.btrscan.com/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -4498,6 +4549,29 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  klaytn_baobab: {
+    type: "CryptoCurrency",
+    id: "klaytn_baobab",
+    coinType: CoinType.ETH,
+    name: "Klaytn Baobab",
+    managerAppName: "Ethereum",
+    ticker: "KLAY",
+    scheme: "klaytn_baobab",
+    color: "#FF8B00",
+    family: "evm",
+    units: ethereumUnits("KLAY", "KLAY"),
+    isTestnetFor: "klaytn",
+    ethereumLikeInfo: {
+      chainId: 1001,
+    },
+    explorerViews: [
+      {
+        tx: "https://baobab.klaytnfinder.io/tx/$hash",
+        address: "https://baobab.klaytnfinder.io/account/$address",
+        token: "https://baobab.klaytnfinder.io/token/$address",
+      },
+    ],
+  },
   neon_evm: {
     type: "CryptoCurrency",
     id: "neon_evm",
@@ -4659,6 +4733,50 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       chainId: 534351,
     },
     explorerViews: [blockscoutExplorerView("https://scroll-sepolia.blockscout.com")],
+  },
+  shape: {
+    type: "CryptoCurrency",
+    id: "shape",
+    coinType: CoinType.ETH,
+    name: "Shape",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "shape",
+    color: "#000000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    ethereumLikeInfo: {
+      chainId: 360,
+    },
+    explorerViews: [
+      {
+        tx: "https://shapescan.xyz/tx/$hash",
+        address: "https://shapescan.xyz/address/$address",
+        token: "https://shapescan.xyz/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  story: {
+    type: "CryptoCurrency",
+    id: "story",
+    coinType: CoinType.ETH,
+    name: "Story",
+    managerAppName: "Ethereum",
+    ticker: "IP",
+    scheme: "story",
+    color: "#6366F1",
+    family: "evm",
+    units: ethereumUnits("IP", "IP"),
+    ethereumLikeInfo: {
+      chainId: 1514,
+    },
+    explorerViews: [
+      {
+        tx: "https://www.storyscan.io/tx/$hash",
+        address: "https://www.storyscan.io/address/$address",
+        token: "https://www.storyscan.io/token/$contractAddress?a=$address",
+      },
+    ],
   },
   etherlink: {
     type: "CryptoCurrency",

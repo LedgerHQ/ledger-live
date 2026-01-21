@@ -43,6 +43,41 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
+  config_currency_avalanche_c_chain_fuji: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: {
+        type: "external",
+        uri: "https://api.avax-test.network/ext/bc/C/rpc",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/43113",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_bitlayer: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.bitlayer.org",
+      },
+      explorer: {
+        type: "none",
+      },
+      showNfts: false,
+    },
+  },
   config_currency_bsc: {
     type: "object",
     default: {
@@ -784,6 +819,24 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
+  config_currency_klaytn_baobab: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: {
+        type: "external",
+        uri: "https://api.baobab.klaytn.net:8651",
+      },
+      explorer: {
+        type: "klaytnfinder",
+        uri: "https://baobab-oapi.klaytnfinder.io/api",
+      },
+      showNfts: false,
+    },
+  },
   config_currency_neon_evm: {
     type: "object",
     default: {
@@ -982,6 +1035,30 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: { type: "external", uri: "https://sepolia-rpc.scroll.io" },
       explorer: { type: "blockscout", uri: "https://scroll-sepolia.blockscout.com/api" },
+      showNfts: false,
+    },
+  },
+  config_currency_shape: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: { type: "external", uri: "https://mainnet.shape.network" },
+      explorer: { type: "blockscout", uri: "https://shapescan.xyz/api" },
+      showNfts: false,
+    },
+  },
+  config_currency_story: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: { type: "external", uri: "https://mainnet.storyrpc.io" },
+      explorer: { type: "blockscout", uri: "https://www.storyscan.io/api" },
       showNfts: false,
     },
   },
