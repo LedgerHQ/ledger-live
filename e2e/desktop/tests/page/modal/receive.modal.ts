@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 import { Modal } from "tests/component/modal.component";
 import { step } from "tests/misc/reporters/step";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { ReceiveFundsOptionsType } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
 
 export class ReceiveModal extends Modal {
   private verifyAddressOnDeviceLabel = this.page.locator(
@@ -14,6 +15,8 @@ export class ReceiveModal extends Modal {
   private selectAccount = this.page.getByText("Choose a crypto asset");
   private warningMessage = this.page.locator('div[type="warning"]');
   private receiveMenu = this.page.getByTestId("receive-step-options");
+  private receiveFundsOptionId = (receiveFundsOption: ReceiveFundsOptionsType) =>
+    `receive-step-options-${receiveFundsOption}`;
   readonly selectAccountInput = this.page.locator('[placeholder="Search"]');
 
   private sendAssetWarningMessage = (
@@ -64,7 +67,7 @@ export class ReceiveModal extends Modal {
 
   @step("Click receive button")
   async clickReceive() {
-    await this.page.getByText("Via crypto address").click();
+    await this.page.getByTestId(this.receiveFundsOptionId("crypto")).click();
   }
 
   @step("Verify TRON address activation warning message")

@@ -69,7 +69,7 @@ export default function StepOptions(props: Readonly<StepProps>) {
   return (
     <Box data-testid="receive-step-options">
       <TrackPage category="receive_drawer" type="drawer" />
-      <Option onClick={handleGoToBankProvider}>
+      <Option onClick={handleGoToBankProvider} data-testid="receive-step-options-bank">
         <IconWrapper>
           <Icons.Bank size={"M"} />
         </IconWrapper>
@@ -82,7 +82,7 @@ export default function StepOptions(props: Readonly<StepProps>) {
           </Text>
         </Content>
       </Option>
-      <Option onClick={handleGoToReceiveAccount}>
+      <Option onClick={handleGoToReceiveAccount} data-testid="receive-step-options-crypto">
         <IconWrapper>
           <Icons.CoinsCrypto size={"M"} />
         </IconWrapper>
