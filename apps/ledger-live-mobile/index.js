@@ -1,11 +1,10 @@
 import "react-native-get-random-values";
-// We install after node-libs-react-native to override the Buffer implementation
-import QuickCrypto from "react-native-quick-crypto";
-global.crypto = QuickCrypto;
-
 // Injects node.js shims.
 // https://github.com/parshap/node-libs-react-native
 import "node-libs-react-native/globals";
+// We install after node-libs-react-native to override the Buffer implementation
+import QuickCrypto from "react-native-quick-crypto";
+global.crypto = QuickCrypto;
 
 // Fix for crash with `Unsupported top level event type "onGestureHandlerStateChange" dispatched`
 // https://github.com/kmagiera/react-native-gesture-handler/issues/320#issuecomment-443815828
