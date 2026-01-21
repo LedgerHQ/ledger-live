@@ -17,7 +17,6 @@ import notifications from "./notifications";
 import protect from "./protect";
 import ratings from "./ratings";
 import settings from "./settings";
-import swap from "./swap";
 import toasts from "./toast";
 import trustchain from "./trustchain";
 import type { State } from "./types";
@@ -48,7 +47,6 @@ const appReducer = combineReducers({
   protect,
   ratings,
   settings,
-  swap,
   toasts,
   trustchain,
   wallet,

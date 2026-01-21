@@ -15,7 +15,6 @@ import type { CurrencySettings, SettingsState, State, Theme } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 import type {
-  SettingsAcceptSwapProviderPayload,
   SettingsBlacklistTokenPayload,
   SettingsDismissBannerPayload,
   SettingsHideEmptyTokenAccountsPayload,
@@ -405,19 +404,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     locale: (action as Action<SettingsSetLocalePayload>).payload,
   }),
 
-  [SettingsActionTypes.ACCEPT_SWAP_PROVIDER]: (state, action) => ({
-    ...state,
-    swap: {
-      ...state.swap,
-      acceptedProviders: [
-        ...new Set([
-          ...(state.swap?.acceptedProviders || []),
-          (action as Action<SettingsAcceptSwapProviderPayload>).payload,
-        ]),
-      ],
-    },
-  }),
-
   [SettingsActionTypes.LAST_SEEN_DEVICE_INFO]: (state, action) => {
     const { payload } = action as Action<SettingsLastSeenDeviceInfoPayload>;
     return {
@@ -798,11 +784,8 @@ export const languageSelector = (state: State) =>
   state.settings.language || getDefaultLanguageLocale();
 export const languageIsSetByUserSelector = (state: State) => state.settings.languageIsSetByUser;
 export const localeSelector = (state: State) => state.settings.locale || getDefaultLocale();
-
 export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
-export const swapAcceptedProvidersSelector = (state: State) =>
-  state.settings.swap.acceptedProviders;
 export const knownDeviceModelIdsSelector = (state: State) => state.settings.knownDeviceModelIds;
 export const customImageTypeSelector = (state: State) => state.settings.customLockScreenType;
 

@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   deviceInfo155 as deviceInfo,
@@ -8,8 +7,6 @@ import {
 import { AppOp } from "@ledgerhq/live-common/apps/types";
 import { AppType, DeviceInfo } from "@ledgerhq/types-live/lib/manager";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { delay } from "../helpers/commonHelpers";
 import { mockDeviceEvent } from "../bridge/server";
 import { DeviceLike } from "~/reducers/types";
 
@@ -201,28 +198,6 @@ export default class DeviceAction {
 
   async confirmImageLoaded(imageSize: number, imageHash: string) {
     await mockDeviceEvent({ type: "imageLoaded", imageSize, imageHash });
-  }
-
-  async initiateSwap(estimatedFees: BigNumber) {
-    await mockDeviceEvent({ type: "opened" });
-    await delay(2000); // enough time to allow the UI to switch from one action to another
-    await mockDeviceEvent({ type: "init-swap-requested", estimatedFees });
-  }
-
-  async confirmSwap(transaction: Transaction) {
-    await mockDeviceEvent(
-      {
-        type: "init-swap-result",
-        initSwapResult: {
-          transaction,
-          swapId: "12345",
-          magnitudeAwareRate: new BigNumber(50000),
-        },
-      },
-      {
-        type: "complete",
-      },
-    );
   }
 
   async silentSign() {

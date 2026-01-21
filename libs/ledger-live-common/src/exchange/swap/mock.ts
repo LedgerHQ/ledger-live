@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import { Observable, of } from "rxjs";
 import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { SwapExchangeRateAmountTooHigh, SwapExchangeRateAmountTooLow } from "../../errors";
@@ -10,7 +9,6 @@ import type {
   GetProviders,
   PostSwapAccepted,
   PostSwapCancelled,
-  SwapRequestEvent,
 } from "./types";
 import type { Transaction } from "../../generated/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -106,21 +104,6 @@ export const mockGetExchangeRates = async (
       providerURL: `https://1inch.com/swap/#/1/unified/swap/eth/usdt&sourceTokenAmount=${transaction.amount}`,
     },
   ];
-};
-
-export const mockInitSwap = (
-  exchange: ExchangeSwap,
-  exchangeRate: ExchangeRate,
-  transaction: Transaction,
-): Observable<SwapRequestEvent> => {
-  return of({
-    type: "init-swap-result",
-    initSwapResult: {
-      transaction,
-      swapId: "mockedSwapId",
-      magnitudeAwareRate: new BigNumber(50000),
-    },
-  });
 };
 
 // Need to understand how and why this gets used

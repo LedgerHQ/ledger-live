@@ -189,7 +189,6 @@
     "src/hw/actions/customLockScreenFetch.ts",
     "src/hw/actions/customLockScreenLoad.ts",
     "src/hw/actions/customLockScreenRemove.ts",
-    "src/hw/actions/initSwap.ts",
     "src/hw/actions/installLanguage.ts",
     "src/hw/actions/manager.ts",
     "src/hw/actions/renameDevice.ts",
