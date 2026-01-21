@@ -5,7 +5,7 @@ export type RecipientLike = Readonly<{
   ensName?: string;
 }>;
 
-export function getRecipientDisplayValue(recipient: RecipientLike | null): string {
+export function getRecipientDisplayValue(recipient: RecipientLike | null): string | undefined {
   if (!recipient) return "";
 
   const formattedAddress = formatAddress(recipient.address, {
@@ -20,7 +20,9 @@ export function getRecipientDisplayValue(recipient: RecipientLike | null): strin
   return formattedAddress;
 }
 
-export function getRecipientSearchPrefillValue(recipient: RecipientLike | null): string {
+export function getRecipientSearchPrefillValue(
+  recipient: RecipientLike | null,
+): string | undefined {
   if (!recipient) return "";
   return recipient.ensName?.trim() ? recipient.ensName : recipient.address;
 }

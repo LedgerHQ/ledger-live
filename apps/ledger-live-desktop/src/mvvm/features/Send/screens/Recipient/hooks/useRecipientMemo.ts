@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { Memo } from "../../../types";
+import { useDoNotAskAgainSkipMemo } from "~/renderer/actions/settings";
 
-export type SkipMemoState = "propose" | "toConfirm";
+export type SkipMemoState = "propose" | "toConfirm" | "confirmed";
 
 type UseRecipientMemoProps = Readonly<{
   hasMemo: boolean;
@@ -24,7 +25,8 @@ type UseRecipientMemoResult = Readonly<{
   onMemoTypeChange: (type: string) => void;
   onSkipMemoRequestConfirm: () => void;
   onSkipMemoCancelConfirm: () => void;
-  onSkipMemoConfirm: () => void;
+  onSkipMemoConfirm: (doNotAskAgain: boolean) => void;
+  resetViewState: () => void;
 }>;
 
 function buildDefaultMemo(memoDefaultOption?: string): Memo {
@@ -77,37 +79,68 @@ export function useRecipientMemo({
   const onMemoValueChange = useCallback(
     (value: string) => {
       setMemo(prev => {
+        if (skipMemoState !== "propose") {
+          setSkipMemoState("propose");
+        }
+
         const next = { ...prev, value };
         onMemoChange(next);
         return next;
       });
     },
-    [onMemoChange],
+    [onMemoChange, skipMemoState],
   );
 
   const onMemoTypeChange = useCallback(
     (type: string) => {
+      if (skipMemoState !== "propose") {
+        setSkipMemoState("propose");
+      }
+
       const next: Memo = { value: "", type };
       setMemo(next);
       onMemoChange(next);
     },
-    [onMemoChange],
+    [onMemoChange, skipMemoState],
   );
 
-  const onSkipMemoRequestConfirm = useCallback(() => {
-    setSkipMemoState("toConfirm");
-  }, []);
+  const [doNotAskAgainSkipMemo, setDoNotAskAgainSkipMemo] = useDoNotAskAgainSkipMemo();
 
   const onSkipMemoCancelConfirm = useCallback(() => {
     setSkipMemoState("propose");
   }, []);
 
-  const onSkipMemoConfirm = useCallback(() => {
-    const next: Memo = { value: "", type: "NO_MEMO" };
-    setMemo(next);
-    onMemoChange(next);
-    onMemoSkip();
-  }, [onMemoChange, onMemoSkip]);
+  const onSkipMemoConfirm = useCallback(
+    (doNotAskAgain: boolean) => {
+      if (doNotAskAgainSkipMemo !== doNotAskAgain) {
+        setDoNotAskAgainSkipMemo(doNotAskAgain);
+      }
+
+      setSkipMemoState("confirmed");
+      const next: Memo = { value: "", type: "NO_MEMO" };
+      setMemo(next);
+      onMemoChange(next);
+      onMemoSkip();
+    },
+    [onMemoChange, onMemoSkip, setDoNotAskAgainSkipMemo, doNotAskAgainSkipMemo],
+  );
+
+  const onSkipMemoRequestConfirm = useCallback(() => {
+    if (doNotAskAgainSkipMemo) {
+      onSkipMemoConfirm(doNotAskAgainSkipMemo);
+    } else {
+      setSkipMemoState("toConfirm");
+    }
+  }, [doNotAskAgainSkipMemo, onSkipMemoConfirm]);
+
+  const resetViewState = useCallback(() => {
+    if (skipMemoState === "confirmed") {
+      const defaultMemo = buildDefaultMemo(memoDefaultOption);
+      setMemo(defaultMemo);
+      onMemoChange(defaultMemo);
+      setSkipMemoState("propose");
+    }
+  }, [memoDefaultOption, onMemoChange, setMemo, skipMemoState, setSkipMemoState]);
 
   return {
     memo,
@@ -121,5 +154,6 @@ export function useRecipientMemo({
     onSkipMemoRequestConfirm,
     onSkipMemoCancelConfirm,
     onSkipMemoConfirm,
+    resetViewState,
   };
 }

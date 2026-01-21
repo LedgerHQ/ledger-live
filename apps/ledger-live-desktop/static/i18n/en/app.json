@@ -4885,6 +4885,10 @@
       "filterTokenOperationsZeroAmount": {
         "title": "Hide token transactions when value is 0",
         "desc": "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron..."
+      },
+      "doNotAskAgainSkipMemo": {
+        "title": "Do not ask again skip memo on send",
+        "desc": "Disable the warning about skipping the memo when sending funds"
       }
     }
   },

@@ -11,7 +11,7 @@ type SkipMemoSectionProps = Readonly<{
   state: SkipMemoState;
   onRequestConfirm: () => void;
   onCancelConfirm: () => void;
-  onConfirm: () => void;
+  onConfirm: (doNotAskAgain: boolean) => void;
 }>;
 
 function SkipMemoSectionComponent({
@@ -36,14 +36,18 @@ function SkipMemoSectionComponent({
     setDoNotAskAgain(prev => !prev);
   }, []);
 
+  const handleOnSkipConfirmed = useCallback(() => {
+    onConfirm(doNotAskAgain);
+  }, [onConfirm, doNotAskAgain]);
+
   if (state === "propose") {
     return (
       <div className="mt-16">
-        <span style={{ fontSize: 14 }}>
+        <span className="body-2 text-base">
           {t("newSendFlow.skipMemo.notRequired", { memoLabel })}
           &nbsp;
         </span>
-        <Link underline appearance="accent" size="sm" onClick={onRequestConfirm}>
+        <Link className="body-2" underline appearance="accent" size="sm" onClick={onRequestConfirm}>
           {t("common.skip")}
         </Link>
       </div>
@@ -60,7 +64,7 @@ function SkipMemoSectionComponent({
         onClose={onCancelConfirm}
         closeAriaLabel="Close banner"
         primaryAction={
-          <Button appearance="transparent" size="sm" onClick={onConfirm}>
+          <Button appearance="transparent" size="sm" onClick={handleOnSkipConfirmed}>
             {t("newSendFlow.skipMemo.confirm")}
           </Button>
         }
@@ -70,15 +74,11 @@ function SkipMemoSectionComponent({
           </Button>
         }
       />
-      <button
-        type="button"
-        className="mt-12 flex items-center gap-8 text-left"
-        onClick={toggleDoNotAskAgain}
-      >
-        <div onClick={e => e.stopPropagation()}>
+      <button type="button" className="mt-16 flex items-center gap-8" onClick={toggleDoNotAskAgain}>
+        <div className="flex items-center" onClick={e => e.stopPropagation()}>
           <Checkbox checked={doNotAskAgain} onCheckedChange={setDoNotAskAgain} />
         </div>
-        <span style={{ fontSize: 14 }}>{t("newSendFlow.skipMemo.neverAskAgain")}</span>
+        <span className="body-2 text-base">{t("newSendFlow.skipMemo.neverAskAgain")}</span>
       </button>
     </div>
   );

@@ -75,24 +75,6 @@ export function SendHeader() {
   const currencyName = state.account.currency?.ticker ?? "";
   const availableText = useAvailableBalance(state.account.account);
 
-  const handleBack = useCallback(() => {
-    if (navigation.canGoBack()) {
-      // Reset amount-related state when leaving Amount step (back navigation),
-      // otherwise the transaction amount can persist while the UI remounts empty.
-      if (currentStep === SEND_FLOW_STEP.AMOUNT) {
-        transaction.updateTransaction(tx => ({
-          ...tx,
-          amount: new BigNumber(0),
-          useAllAmount: false,
-          feesStrategy: null,
-        }));
-      }
-      navigation.goToPreviousStep();
-    } else {
-      close();
-    }
-  }, [close, currentStep, navigation, transaction]);
-
   const showBackButton = navigation.canGoBack();
   const showTitle = currentStepConfig?.showTitle !== false;
 
@@ -101,25 +83,12 @@ export function SendHeader() {
     showTitle && availableText ? t("newSendFlow.available", { amount: availableText }) : "";
 
   const showRecipientInput = currentStepConfig?.addressInput ?? false;
-  const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
 
   const addressInputValue = useMemo(() => {
-    if (isRecipientStep) return recipientSearch.value;
     if (isAmountStep) return getRecipientDisplayValue(state.recipient);
     return recipientSearch.value;
-  }, [isRecipientStep, isAmountStep, recipientSearch.value, state.recipient]);
-
-  const handleRecipientInputClick = useCallback(() => {
-    if (!isAmountStep) return;
-
-    const prefillValue = getRecipientSearchPrefillValue(state.recipient);
-    if (prefillValue) {
-      recipientSearch.setValue(prefillValue);
-    }
-
-    handleBack();
-  }, [handleBack, isAmountStep, recipientSearch, state.recipient]);
+  }, [isAmountStep, recipientSearch.value, state.recipient]);
 
   const showMemoControls = Boolean(
     showRecipientInput && uiConfig.hasMemo && recipientSearch.value.length > 0,
@@ -144,7 +113,7 @@ export function SendHeader() {
     memoType,
     memoTypeOptions,
     onMemoChange: memo => {
-      transaction.setRecipient({ memo });
+      transaction.setRecipient({ ...state.recipient, memo });
     },
     onMemoSkip: () => {
       navigation.goToNextStep();
@@ -153,6 +122,37 @@ export function SendHeader() {
       recipientSearch.value.length === 0 ? "empty" : "filled"
     }`,
   });
+
+  const handleBack = useCallback(() => {
+    if (navigation.canGoBack()) {
+      // Reset amount-related state when leaving Amount step (back navigation),
+      // otherwise the transaction amount can persist while the UI remounts empty.
+      if (currentStep === SEND_FLOW_STEP.AMOUNT) {
+        transaction.updateTransaction(tx => ({
+          ...tx,
+          amount: new BigNumber(0),
+          useAllAmount: false,
+          feesStrategy: null,
+        }));
+
+        memoViewModel.resetViewState();
+      }
+      navigation.goToPreviousStep();
+    } else {
+      close();
+    }
+  }, [close, currentStep, memoViewModel, navigation, transaction]);
+
+  const handleRecipientInputClick = useCallback(() => {
+    if (!isAmountStep) return;
+
+    const prefillValue = getRecipientSearchPrefillValue(state.recipient);
+    if (prefillValue) {
+      recipientSearch.setValue(prefillValue);
+    }
+
+    handleBack();
+  }, [handleBack, isAmountStep, recipientSearch, state.recipient]);
 
   const transactionErrorName = state.transaction.status?.errors?.transaction?.name;
 
@@ -178,8 +178,8 @@ export function SendHeader() {
     return (
       <>
         <AddressInput
-          className="-mt-12 mb-24 px-24"
-          defaultValue={addressInputValue}
+          className="-mt-12 mb-12 px-24"
+          value={addressInputValue}
           onChange={e => recipientSearch.setValue(e.target.value)}
           onClear={recipientSearch.clear}
           placeholder={
@@ -233,13 +233,13 @@ export function SendHeader() {
     t,
     showMemoControls,
     currencyId,
+    memoViewModel.showMemoValueInput,
+    memoViewModel.showSkipMemo,
     memoViewModel.hasMemoTypeOptions,
     memoViewModel.memo.type,
     memoViewModel.memo.value,
     memoViewModel.onMemoTypeChange,
-    memoViewModel.showMemoValueInput,
     memoViewModel.onMemoValueChange,
-    memoViewModel.showSkipMemo,
     memoViewModel.skipMemoState,
     memoViewModel.onSkipMemoRequestConfirm,
     memoViewModel.onSkipMemoCancelConfirm,
