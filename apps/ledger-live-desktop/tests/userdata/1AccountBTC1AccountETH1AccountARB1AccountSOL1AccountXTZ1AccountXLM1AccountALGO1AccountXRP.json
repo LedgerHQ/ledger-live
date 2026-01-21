@@ -21389,6 +21389,92 @@
       },
       {
         "data": {
+          "id": "mock:1:tezos:tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6:",
+          "seedIdentifier": "mock",
+          "name": "Tezos 1",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6",
+          "freshAddressPath": "44'/1729'/0'/0'",
+          "blockHeight": 349298484,
+          "creationDate": "2020-02-29T00:58:50.328Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "tezos",
+          "unitMagnitude": 6,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "10000000",
+          "spendableBalance": "10000000",
+          "xpub": "",
+          "subAccounts": [],
+          "swapHistory": [],
+          "tezosResources": {
+            "revealed": true,
+            "counter": 0
+          }
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "mock:1:stellar:GDRXE2BQUC3AZ2T7BHP2VMRZGR7DX3PIP5K7E5YXJ3VGDUT3KNSW5M2L:",
+          "seedIdentifier": "mock",
+          "name": "Stellar 1",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "GDRXE2BQUC3AZ2T7BHP2VMRZGR7DX3PIP5K7E5YXJ3VGDUT3KNSW5M2L",
+          "freshAddressPath": "44'/148'/0'",
+          "blockHeight": 349298484,
+          "creationDate": "2020-02-29T00:58:50.328Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "stellar",
+          "unitMagnitude": 7,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "100000000",
+          "spendableBalance": "100000000",
+          "xpub": "",
+          "subAccounts": [],
+          "swapHistory": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "mock:1:algorand:PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI:",
+          "seedIdentifier": "mock",
+          "name": "Algorand 1",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI",
+          "freshAddressPath": "44'/283'/0'/0/0",
+          "blockHeight": 349298484,
+          "creationDate": "2020-02-29T00:58:50.328Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "algorand",
+          "unitMagnitude": 6,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "10000000",
+          "spendableBalance": "10000000",
+          "xpub": "",
+          "subAccounts": [],
+          "swapHistory": [],
+          "algorandResources": {
+            "rewards": "0",
+            "nbAssets": 0
+          }
+        },
+        "version": 1
+      },
+      {
+        "data": {
           "id": "mock:1:ripple:rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH:",
           "seedIdentifier": "mock",
           "name": "XRP 1",

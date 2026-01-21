@@ -9,7 +9,10 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
-import { InvalidAddress } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
+} from "@ledgerhq/errors";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { DomainServiceStatus } from "@ledgerhq/domain-service/hooks/types";
@@ -273,9 +276,24 @@ export function useAddressValidation({
       delete filteredBridgeErrors.recipient;
     }
 
+    // If bridge validation found an InvalidAddress error, override the status
+    const isBridgeInvalidAddress =
+      filteredBridgeErrors.recipient instanceof InvalidAddress &&
+      !(filteredBridgeErrors.recipient instanceof InvalidAddressBecauseDestinationIsAlsoSource);
+
+    // Determine final status based on validation state and bridge errors
+    let finalStatus = validationState.status;
+    let finalError = validationState.error;
+
+    // If bridge says address is invalid, override to invalid status
+    if (isBridgeInvalidAddress && validationState.status === "valid") {
+      finalStatus = "invalid";
+      finalError = "incorrect_format";
+    }
+
     return {
-      status: validationState.status,
-      error: validationState.error,
+      status: finalStatus,
+      error: finalError,
       resolvedAddress: matchedLedgerAccount?.freshAddress ?? ensResolution?.address,
       ensName: ensResolution?.domain,
       isLedgerAccount: allMatchedAccounts.length > 0,
