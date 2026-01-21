@@ -95,6 +95,19 @@ describe("createStepError", () => {
     expect(wrapped).toBe(drawerClosedError);
   });
 
+  it("returns error with DrawerClosedError cause without wrapping", () => {
+    const errorWithCause = Object.assign(new Error("Wrapper error"), {
+      cause: drawerClosedError,
+    });
+
+    const wrapped = createStepError({
+      error: errorWithCause,
+      step: StepError.NONCE,
+    });
+
+    expect(wrapped).toBe(errorWithCause);
+  });
+
   it.each(STEP_EXPECTATIONS)(
     "$step - wraps downstream error with appropriate swap error",
     ({ step, ExpectedError, swapCode }) => {
