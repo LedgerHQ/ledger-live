@@ -32,7 +32,7 @@ function getScreenTitle({
 }
 
 export function useSwapHeaderNavigation(
-  webviewRef: React.RefObject<WebviewAPI>,
+  webviewRef: React.RefObject<WebviewAPI | null>,
   manifestUrl?: string,
 ) {
   const navigation = useNavigation();
