@@ -7,7 +7,7 @@ import {
 import { Tile, TileContent, TileTitle } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { GradientMoodIndicator } from "./GradientMoodIndicator";
-import { MoodIndexDialog } from "./MoodIndexDialog";
+import { FearAndGreedDialog } from "./FearAndGreedDialog";
 
 const COLOR_CLASS_MAP: Record<string, string> = {
   error: "text-error",
@@ -24,7 +24,7 @@ export const FearAndGreedTile = ({ data }: { data: FearAndGreedIndex }) => {
   const textColorClass = COLOR_CLASS_MAP[colorKey] || "text-muted";
 
   return (
-    <MoodIndexDialog>
+    <FearAndGreedDialog>
       <Tile
         appearance="card"
         data-testid="fear-and-greed-card"
@@ -36,6 +36,6 @@ export const FearAndGreedTile = ({ data }: { data: FearAndGreedIndex }) => {
         </TileContent>
         <div className={`${textColorClass} body-2-semi-bold`}>{t(translationKey)}</div>
       </Tile>
-    </MoodIndexDialog>
+    </FearAndGreedDialog>
   );
 };
