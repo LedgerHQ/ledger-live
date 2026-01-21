@@ -5260,6 +5260,10 @@ importers:
         version: 5.6.3
 
   libs/coin-modules/zcash-shielded:
+    dependencies:
+      '@ledgerhq/zcash-decrypt':
+        specifier: 0.1.0
+        version: 0.1.0
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -15019,6 +15023,9 @@ packages:
 
   '@ledgerhq/wallet-api-simulator@2.0.2':
     resolution: {integrity: sha512-7qRqzypnsBnkWaNSf+Ws28obtz2Blin5dUC3JG75U0hG8IXttPWQC4C6xh8ITWOkWRFRj3jSKSVpAaP6gU/SoA==}
+
+  '@ledgerhq/zcash-decrypt@0.1.0':
+    resolution: {integrity: sha512-ISleZtSRu40csXjVXhYG1a7x3WkG4GcQ0xoU2lUZkVSB9LLoN04cQexH2lwvQJadwIAhiI1PWbA21wBdrhKG1A==}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -41735,6 +41742,8 @@ snapshots:
       - bufferutil
       - encoding
       - utf-8-validate
+
+  '@ledgerhq/zcash-decrypt@0.1.0': {}
 
   '@leichtgewicht/ip-codec@2.0.5': {}
 
