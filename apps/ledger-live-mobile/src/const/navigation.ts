@@ -1,4 +1,5 @@
 export enum ScreenName {
+  Analytics = "Analytics",
   AboutSettings = "AboutSettings",
   Account = "Account",
   Accounts = "Accounts",
@@ -385,6 +386,7 @@ export enum ScreenName {
   VerifyAccount = "VerifyAccount",
   AnalyticsAllocation = "AnalyticsAllocation",
   AnalyticsOperations = "AnalyticsOperations",
+  DetailedAllocation = "DetailedAllocation",
   CustomErrorScreen = "CustomErrorScreen",
   // solana
   SolanaEditMemo = "SolanaEditMemo",
@@ -678,4 +680,5 @@ export enum NavigatorName {
   ModularDrawer = "ModularDrawer",
   DeviceSelection = "DeviceSelection",
   Assets = "Assets",
+  Analytics = "Analytics",
 }

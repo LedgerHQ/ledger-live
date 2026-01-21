@@ -85,6 +85,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
           showGraphCard
           areAccountsEmpty={false}
           currentPositionY={currentPositionY}
+          screenName={ScreenName.Portfolio}
           graphCardEndPosition={graphCardEndPosition}
         />
       </Box>,

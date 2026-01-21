@@ -86,6 +86,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
+import AnalyticsNavigator from "LLM/features/Analytics/Navigator";
 import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
@@ -562,6 +563,12 @@ export default function BaseNavigator() {
             options={{ headerShown: false }}
           />
         )}
+
+        <Stack.Screen
+          name={NavigatorName.Analytics}
+          component={AnalyticsNavigator}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </>
   );

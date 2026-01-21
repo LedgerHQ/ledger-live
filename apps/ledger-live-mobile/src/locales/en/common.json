@@ -8362,5 +8362,16 @@
       "greed": "Greed",
       "extremeGreed": "Greed+"
     }
+  },
+  "analyticsAllocation": {
+    "header": {
+      "main": "Analytics"
+    },
+    "allocation": {
+      "title": "Asset Allocation"
+    },
+    "actions": {
+      "swap": "Swap"
+    }
   }
 }
