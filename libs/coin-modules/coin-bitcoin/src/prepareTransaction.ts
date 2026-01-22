@@ -16,6 +16,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   }
 
   const feePerByte = inferFeePerByte(transaction, networkInfo);
+
   if (
     transaction.networkInfo === networkInfo &&
     (feePerByte === transaction.feePerByte || feePerByte.eq(transaction.feePerByte || 0))

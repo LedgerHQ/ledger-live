@@ -1,4 +1,4 @@
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import type { Transaction as BtcTransaction } from "../types";
 import { getAdditionalFeeRequiredForRbf } from "../rbfHelpers";
 
@@ -21,11 +21,10 @@ export const hasMinimumFundsToCancel = async ({
   }
 };
 
-export const hasMinimumFundsToSpeedUp = ({
+export const hasMinimumFundsToSpeedUp = async ({
   mainAccount,
   transactionToUpdate,
 }: {
-  account: AccountLike;
   mainAccount: Account;
   transactionToUpdate: BtcTransaction;
 }): Promise<boolean> => {

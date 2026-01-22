@@ -189,7 +189,6 @@ class Xpub {
     utxoPickingStrategy: PickingStrategy;
     sequence: number;
     opReturnData?: Buffer | undefined;
-    isSpeedUp?: boolean | undefined;
     originalTxId?: string | undefined;
   }): Promise<TransactionInfo> {
     const outputs: OutputInfo[] = [];
@@ -202,7 +201,6 @@ class Xpub {
       utxoPickingStrategy,
       feePerByte,
       sequence,
-      isSpeedUp,
       originalTxId,
     } = params;
 
@@ -263,7 +261,7 @@ class Xpub {
 
     let inputs: InputInfo[];
 
-    if (isSpeedUp && originalTxId) {
+    if (originalTxId) {
       // For speed up transactions, we need to keep the same inputs as the original transaction
       const originalTx = await this.explorer.getTxHex(originalTxId);
       if (!originalTx) {
@@ -283,7 +281,6 @@ class Xpub {
           }
 
           const address = btc.address.fromOutputScript(prevOut.script, this.crypto.network);
-          console.log("Speed up input address:", address);
           return {
             txHex: prevTxHex,
             value: prevOut.value.toString(),

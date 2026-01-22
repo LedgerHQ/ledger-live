@@ -18,8 +18,6 @@ const selectUtxoPickingStrategy = (walletAccount: WalletAccount, utxoStrategy: U
     [bitcoinPickingStrategy.MERGE_OUTPUTS]: Merge,
     [bitcoinPickingStrategy.DEEP_OUTPUTS_FIRST]: DeepFirst,
     [bitcoinPickingStrategy.OPTIMIZE_SIZE]: CoinSelect,
-    [bitcoinPickingStrategy.RBF_SPEEDUP]: CoinSelect,
-    [bitcoinPickingStrategy.RBF_CANCEL]: CoinSelect,
   }[utxoStrategy.strategy];
   if (!handler) throw new Error("Unsupported Bitcoin UTXO picking strategy");
 
@@ -63,7 +61,6 @@ export const buildTransaction = async (
     sequence: transaction.rbf ? 0 : 0xffffffff,
     opReturnData,
     changeAddress,
-    isSpeedUp: transaction.utxoStrategy.strategy === bitcoinPickingStrategy.RBF_SPEEDUP,
     originalTxId: transaction?.replaceTxId,
   });
 
