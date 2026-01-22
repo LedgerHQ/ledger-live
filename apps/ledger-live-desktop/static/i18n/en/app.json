@@ -6958,9 +6958,7 @@
     },
     "HederaMemoExceededSizeError": {
       "title": "Invalid memo size, maximum allowed is 100 characters",
-    },
-    "HederaMemoIsTooLong": {
-      "title": "Memo is too long. Max length is {{maxLength}} characters"
+      "description": "Hedera memo have a maximum limited size. Please reduce the size of the memo"
     },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",

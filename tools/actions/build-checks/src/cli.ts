@@ -10,7 +10,12 @@
 
 import fs from "fs";
 import path from "path";
-import { extractBundleSize, extractDuplicates, getMetafileFormat, type Metafile } from "./metafile";
+import {
+  extractBundleSize,
+  extractDuplicates,
+  getMetafileFormat,
+  type Metafile,
+} from "./metafile";
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;

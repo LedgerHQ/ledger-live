@@ -26,7 +26,6 @@ export default function StepConnectDevice({
     }),
     [mainAccount, tokenCurrency],
   );
-
   return (
     <>
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
@@ -40,7 +39,6 @@ export default function StepConnectDevice({
     </>
   );
 }
-
 export function StepConnectDeviceFooter({ t, onSkipConfirm, eventType, currencyName }: StepProps) {
   return (
     <Box horizontal flow={2}>
