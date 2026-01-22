@@ -1,14 +1,26 @@
-import { Observable, timer, concat, from } from "rxjs";
+import { Observable, timer, concat, from, EMPTY } from "rxjs";
 import { map, scan, take, tap, mergeMap } from "rxjs/operators";
-import { BigNumber } from "bignumber.js";
+import type { Account } from "@ledgerhq/types-live";
 import type { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { SyncConfig } from "@ledgerhq/types-live";
 
-/**
- * Raw shielded transaction data returned from blockchain operations.
- * This is a blockchain-agnostic representation that will be converted
- * to Bitcoin-specific types in the coin-bitcoin module.
- */
+// Shielded sync state constants
+export const SHIELDED_SYNC_DISABLED = 0x00;
+export const SHIELDED_SYNC_REQUIRED = 0x01;
+export const SHIELDED_SYNC_IN_PROGRESS = SHIELDED_SYNC_REQUIRED << 1;
+export const SHIELDED_SYNC_PAUSE = SHIELDED_SYNC_REQUIRED << 2;
+export const SHIELDED_SYNC_COMPLETED = SHIELDED_SYNC_REQUIRED << 3;
+
+function getShieldedSyncState(account: Account | undefined): number {
+  if (account === undefined || !("isZcashShieldedSyncState" in account)) {
+    return 0;
+  }
+  // Property exists, access it safely
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const accountWithState = account as any;
+  return typeof accountWithState.isZcashShieldedSyncState === "number"
+    ? accountWithState.isZcashShieldedSyncState
+    : 0;
+}
 export type ShieldedTransaction = {
   hash: string;
   blockHeight: number;
@@ -31,9 +43,6 @@ export type ShieldedSyncResult = {
   latestBlockHeight: number;
 };
 
-/**
- * ZCash API
- */
 export default class ZCash {
   static readonly AVERAGE_BLOCK_SYNC_TIME_MS = 5;
 
@@ -124,56 +133,97 @@ async function processBlock(blockHeight: number): Promise<ShieldedTransaction[]>
   console.log("RABL zcash/shielded", `Fetching block ${blockHeight} from blockchain`);
   const block = await fetchBlockMock(blockHeight);
 
-  console.log("RABL zcash/shielded", `Decrypting ${block.transactions.length} transactions in block ${blockHeight}`);
+  console.log(
+    "RABL zcash/shielded",
+    `Decrypting ${block.transactions.length} transactions in block ${blockHeight}`,
+  );
   const transactions = await Promise.all(
-    block.transactions.map((txHash) => decryptShieldedTransactionMock(txHash, blockHeight)),
+    block.transactions.map(txHash => decryptShieldedTransactionMock(txHash, blockHeight)),
   );
 
   return transactions;
 }
 
-export function syncShielded(
-  info: AccountShapeInfo<any>
-): Observable<ShieldedSyncResult> {
+export function syncShielded(info: AccountShapeInfo<Account>): Observable<ShieldedSyncResult> {
   const { currency, initialAccount } = info;
   const BLOCKS_TO_SYNC = 10;
   const BLOCK_SYNC_DELAY_MS = 3000; // 3 seconds per block
 
   const startBlock = initialAccount?.blockHeight || 0;
 
+  const currentSyncState = getShieldedSyncState(initialAccount);
+
   console.log("RABL zcash/shielded", `Starting shielded sync for ${currency.id}`, {
     startBlock,
     blocksToSync: BLOCKS_TO_SYNC,
     delayPerBlock: BLOCK_SYNC_DELAY_MS,
+    currentSyncState,
   });
+
+  if (currentSyncState & SHIELDED_SYNC_PAUSE) {
+    console.log("RABL zcash/shielded", `Shielded sync is paused for ${currency.id}`);
+    return EMPTY;
+  }
+
+  if (currentSyncState & SHIELDED_SYNC_COMPLETED) {
+    console.log("RABL zcash/shielded", `Shielded sync already completed for ${currency.id}`);
+    return EMPTY;
+  }
 
   // Create an array of block numbers to sync
   const blocksToSync = Array.from({ length: BLOCKS_TO_SYNC }, (_, i) => startBlock + i + 1);
 
-  // Create an Observable that emits one block number every 10 seconds
+  // Helper function to check if sync should continue (not paused)
+  const shouldContinueSync = (): boolean => {
+    const syncState = getShieldedSyncState(initialAccount);
+    const isPaused = !!(syncState & SHIELDED_SYNC_PAUSE);
+    if (isPaused) {
+      console.log("RABL zcash/shielded", `Shielded sync paused mid-process for ${currency.id}`);
+    }
+    return !isPaused;
+  };
+
+  // Create an Observable that emits one block number every BLOCK_SYNC_DELAY_MS
   return concat(
     ...blocksToSync.map((blockNumber, index) =>
       timer(index * BLOCK_SYNC_DELAY_MS, BLOCK_SYNC_DELAY_MS).pipe(
         take(1),
         map(() => blockNumber),
         tap(() => {
-          console.log("RABL zcash/shielded", `Processing block ${blockNumber} (${index + 1}/${BLOCKS_TO_SYNC})`);
+          // Check pause state before processing each block
+          if (!shouldContinueSync()) {
+            console.log("RABL zcash/shielded", `Skipping block ${blockNumber} - sync is paused`);
+          } else {
+            console.log(
+              "RABL zcash/shielded",
+              `Processing block ${blockNumber} (${index + 1}/${BLOCKS_TO_SYNC})`,
+            );
+          }
         }),
-        // Process the block
-        mergeMap((blockNum: number) => from(processBlock(blockNum))),
+        // Process the block only if not paused
+        mergeMap((blockNum: number) => {
+          if (!shouldContinueSync()) {
+            return EMPTY;
+          }
+          return from(processBlock(blockNum));
+        }),
       ),
     ),
   ).pipe(
-    // Accumulate transactions across ALL blocks (moved outside block processing)
+    // Accumulate transactions across ALL blocks
     scan(
       (
         accumulated: ShieldedSyncResult,
         newTransactions: ShieldedTransaction[],
       ): ShieldedSyncResult => {
-        console.log("RABL zcash/shielded", `Block processed, found ${newTransactions.length} transactions`, {
-          blockHeight: newTransactions[0]?.blockHeight,
-          totalOperations: accumulated.operations.length + newTransactions.length,
-        });
+        console.log(
+          "RABL zcash/shielded",
+          `Block processed, found ${newTransactions.length} transactions`,
+          {
+            blockHeight: newTransactions[0]?.blockHeight,
+            totalOperations: accumulated.operations.length + newTransactions.length,
+          },
+        );
 
         return {
           operations: [...accumulated.operations, ...newTransactions],
@@ -183,18 +233,20 @@ export function syncShielded(
       {
         operations: [],
         latestBlockHeight: startBlock,
-      } as ShieldedSyncResult,
+      } satisfies ShieldedSyncResult,
     ),
     tap((result: ShieldedSyncResult) => {
       console.log("RABL zcash/shielded", "Emitting shielded sync update", {
         blockHeight: result.latestBlockHeight,
         operationsCount: result.operations.length,
+        syncState: SHIELDED_SYNC_IN_PROGRESS,
       });
     }),
     tap({
       complete: () => {
         console.log("RABL zcash/shielded", `Shielded sync completed for ${currency.id}`, {
           totalBlocks: BLOCKS_TO_SYNC,
+          finalState: SHIELDED_SYNC_COMPLETED,
         });
       },
       error: (error: Error) => {

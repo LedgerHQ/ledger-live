@@ -191,6 +191,7 @@ export type ZcashAddon = {
   isZcashShieldedActivated: boolean;
   lastOrchardBlock: number;
   orchardTransactions: any[];
+  isZcashShieldedSyncState: number;
 };
 
 export type ZcashAccount = BitcoinAccount & ZcashAddon;
