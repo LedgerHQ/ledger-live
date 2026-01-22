@@ -251,30 +251,121 @@ const OperationD = (props: Props) => {
     : undefined;
 
   const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
-  const isCurrencySupported =
-    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+  const currencyFamily = mainAccount.currency.family;
+  
+  // Determine if transaction editing is supported and which modal to use
+  const editConfig = useMemo(() => {
+    // Check for Bitcoin RBF support
+    if (currencyFamily === "bitcoin") {
+      // RBF only works for unconfirmed (pending) transactions
+      const isPending = !operation.blockHeight;
+      
+      if (!isPending) {
+        return null;
+      }
 
-  const editable =
-    isEditEvmTxEnabled &&
-    isCurrencySupported &&
-    isEditableOperation({ account: mainAccount, operation });
+      // For Bitcoin RBF, we can edit pending transactions even without transactionRaw
+      // The edit modal will fetch the transaction from the blockchain using the hash
+      // If transactionRaw exists, check if RBF is explicitly disabled
+      if (operation.transactionRaw) {
+        const bitcoinTxRaw = operation.transactionRaw as {
+          family?: string;
+          rbf?: boolean;
+          replaceTxId?: string;
+        };
+        
+        // RBF is supported if rbf is not explicitly false
+        const isRbfDisabled = bitcoinTxRaw.rbf === false;
+        
+        if (isRbfDisabled) {
+          return null;
+        }
+      }
+      
+      return {
+        modalName: "MODAL_BITCOIN_EDIT_TRANSACTION" as const,
+        isSupported: true,
+      };
+    }
+
+    // For EVM, transactionRaw is required
+    if (!operation.transactionRaw) {
+      return null;
+    }
+
+    const transactionRaw = operation.transactionRaw;
+
+    // Check for EVM support
+    if (currencyFamily === "evm") {
+      const isCurrencySupported =
+        params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+      const isEditable = isEditableOperation({ account: mainAccount, operation });
+
+      if (isEditEvmTxEnabled && isCurrencySupported && isEditable) {
+        return {
+          modalName: "MODAL_EVM_EDIT_TRANSACTION" as const,
+          isSupported: true,
+        };
+      }
+      return null;
+    }
+
+    return null;
+  }, [operation.transactionRaw, operation.blockHeight, operation.id, operation.hash, currencyFamily, isEditEvmTxEnabled, params, mainAccount, operation]);
+
+  const editable = editConfig?.isSupported ?? false;
 
   const dispatch = useDispatch();
 
   const handleOpenEditModal = useCallback(() => {
+    if (!editConfig) {
+      return;
+    }
+
     setDrawer(undefined);
 
-    invariant(operation.transactionRaw, "operation.transactionRaw is required");
+    // For Bitcoin, we can edit even without transactionRaw (the modal will fetch it)
+    // For EVM, transactionRaw is required
+    if (currencyFamily === "bitcoin" && !operation.transactionRaw) {
+      // Create a minimal transactionRaw with replaceTxId pointing to the original transaction
+      // This tells the RBF logic which transaction to replace
+      // The modal will fetch the full transaction from the blockchain to verify RBF status
+      // Use the account's fresh address as a temporary recipient to pass bridge validation
+      // The actual recipient will be set by the RBF logic when speedup/cancel is selected
+      const minimalTransactionRaw = {
+        family: "bitcoin" as const,
+        amount: "0", // Required by TransactionCommonRaw, will be replaced by RBF logic
+        recipient: mainAccount.freshAddress, // Use fresh address as placeholder for validation
+        rbf: true, // Assume RBF is enabled, modal will verify when fetching from blockchain
+        replaceTxId: operation.hash, // This is the key - tells RBF logic which tx to replace
+        utxoStrategy: {
+          strategy: 0,
+          excludeUTXOs: [],
+        },
+        feePerByte: null,
+        networkInfo: null,
+      };
 
-    dispatch(
-      openModal("MODAL_EVM_EDIT_TRANSACTION", {
-        account,
-        parentAccount,
-        transactionRaw: operation.transactionRaw,
-        transactionHash: operation.hash,
-      }),
-    );
-  }, [dispatch, account, parentAccount, operation.transactionRaw, operation.hash]);
+      dispatch(
+        openModal(editConfig.modalName, {
+          account,
+          parentAccount,
+          transactionRaw: minimalTransactionRaw,
+          transactionHash: operation.hash,
+        }),
+      );
+    } else {
+      invariant(operation.transactionRaw, "operation.transactionRaw is required");
+      dispatch(
+        openModal(editConfig.modalName, {
+          account,
+          parentAccount,
+          transactionRaw: operation.transactionRaw,
+          transactionHash: operation.hash,
+        }),
+      );
+    }
+  }, [dispatch, editConfig, currencyFamily, account, parentAccount, operation.transactionRaw, operation.hash]);
 
   const isStuck = isStuckOperation({ family: mainAccount.currency.family, operation });
   const feesCurrency = useMemo(() => getFeesCurrency(mainAccount), [mainAccount]);
