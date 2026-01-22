@@ -17,7 +17,6 @@ const getSpeedupPatch = async ({
   account,
 }: {
   transaction: BtcTransaction;
-  editType: EditType;
   account: Account;
 }): Promise<Partial<BtcTransaction>> => {
   const originalTxId = transaction.replaceTxId;
@@ -53,11 +52,9 @@ const getSpeedupPatch = async ({
 // TODO: cancel is not the same as speedup: it must send funds back to self instead of the original recipient.
 const getCancelPatch = async ({
   transaction,
-  editType,
   account,
 }: {
   transaction: BtcTransaction;
-  editType: EditType;
   account: Account;
 }): Promise<Partial<BtcTransaction>> => {
   const originalTxId = transaction.replaceTxId;
@@ -100,6 +97,6 @@ export const getEditTransactionPatch = async ({
   account: Account;
 }): Promise<Partial<BtcTransaction>> => {
   return editType === "speedup"
-    ? getSpeedupPatch({ transaction, editType, account })
-    : getCancelPatch({ transaction, editType, account });
+    ? getSpeedupPatch({ transaction, account })
+    : getCancelPatch({ transaction, account });
 };

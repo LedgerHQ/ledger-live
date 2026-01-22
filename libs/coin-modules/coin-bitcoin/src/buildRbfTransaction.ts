@@ -115,7 +115,7 @@ export async function buildRbfSpeedUpTx(
   const { amountSent, recipient } = await getAmountAndRecipient(originalTx, walletAccount);
 
   const utxoStrategy: UtxoStrategy = {
-    strategy: bitcoinPickingStrategy.RBF_SPEEDUP,
+    strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE,
     excludeUTXOs,
   };
 
@@ -143,7 +143,7 @@ export async function buildRbfCancelTx(
   );
 
   const utxoStrategy: UtxoStrategy = {
-    strategy: bitcoinPickingStrategy.RBF_CANCEL,
+    strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE,
     excludeUTXOs,
   };
 
