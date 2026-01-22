@@ -22,7 +22,6 @@ function pathsToModuleNameMapper(
 
   return jestPaths;
 }
-import { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
 import {
   getDeviceFirmwareVersion,
   getSpeculosModel,
@@ -53,10 +52,12 @@ const jestAllure2ReporterOptions: ReporterOptions = {
   }),
 };
 
-const detoxAllure2AdapterOptions: DetoxAllure2AdapterOptions = {
+import type { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
+
+export const detoxAllure2AdapterOptions: DetoxAllure2AdapterOptions = {
   deviceLogs: false,
   deviceScreenshots: false,
-  deviceVideos: false,
+  deviceVideos: false, // Enabled dynamically on last retry in jest.environment.ts
   deviceViewHierarchy: false,
 };
 
