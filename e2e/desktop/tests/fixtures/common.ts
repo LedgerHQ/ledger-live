@@ -23,6 +23,7 @@ type TestFixtures = {
   theme: "light" | "dark" | "no-preference" | undefined;
   speculosApp: AppInfos;
   userdata?: string;
+  extraUserdataFiles?: Record<string, string>;
   settings: Record<string, unknown>;
   userdataDestinationPath: string;
   userdataOriginalFile?: string;
@@ -62,6 +63,7 @@ export const test = base.extend<TestFixtures>({
   speculosApp: undefined,
   cliCommands: [],
   cliCommandsOnApp: [],
+  extraUserdataFiles: undefined,
 
   app: async ({ page, electronApp }, use) => {
     const app = new Application(page, electronApp);
@@ -92,6 +94,7 @@ export const test = base.extend<TestFixtures>({
       speculosApp,
       cliCommands,
       cliCommandsOnApp,
+      extraUserdataFiles,
     },
     use,
     testInfo,
@@ -105,6 +108,13 @@ export const test = base.extend<TestFixtures>({
 
     const userData = merge({ data: { settings } }, fileUserData);
     await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
+    if (extraUserdataFiles) {
+      await Promise.all(
+        Object.entries(extraUserdataFiles).map(([name, contents]) =>
+          writeFile(path.join(userdataDestinationPath, name), contents),
+        ),
+      );
+    }
 
     let speculos: SpeculosDevice | undefined;
 
