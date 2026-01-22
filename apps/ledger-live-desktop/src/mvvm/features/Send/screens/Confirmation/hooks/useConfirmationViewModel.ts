@@ -4,12 +4,9 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 import { FlowStatus } from "LLD/features/FlowWizard/types";
-import type { SendFlowOperationResult } from "../../../types";
-import {
-  useSendFlowActions,
-  useSendFlowData,
-  useSendFlowNavigation,
-} from "../../../context/SendFlowContext";
+import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
+import type { SendFlowOperationResult, SendFlowStep } from "../../../types";
+import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 
 function getConfirmationStatus(
   operation: SendFlowOperationResult,
@@ -33,7 +30,7 @@ function getConfirmationStatus(
 }
 
 export function useConfirmationViewModel() {
-  const { navigation } = useSendFlowNavigation();
+  const { navigation } = useFlowWizard<SendFlowStep>();
   const { close, status: statusActions, operation } = useSendFlowActions();
   const { state } = useSendFlowData();
   const { account, parentAccount } = state.account;

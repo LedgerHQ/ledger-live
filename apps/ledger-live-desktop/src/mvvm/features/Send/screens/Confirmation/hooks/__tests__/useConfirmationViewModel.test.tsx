@@ -11,17 +11,16 @@ jest.mock("~/renderer/drawers/OperationDetails", () => ({ OperationDetails: {} }
 jest.mock("@ledgerhq/live-common/bridge/descriptor", () => ({
   sendFeatures: { isUserRefusedTransactionError: jest.fn() },
 }));
+jest.mock("../../../../../FlowWizard/FlowWizardContext", () => ({
+  useFlowWizard: jest.fn(),
+}));
 jest.mock("../../../../context/SendFlowContext", () => ({
   useSendFlowActions: jest.fn(),
   useSendFlowData: jest.fn(),
-  useSendFlowNavigation: jest.fn(),
 }));
 
-import {
-  useSendFlowActions,
-  useSendFlowData,
-  useSendFlowNavigation,
-} from "../../../../context/SendFlowContext";
+import { useFlowWizard } from "../../../../../FlowWizard/FlowWizardContext";
+import { useSendFlowActions, useSendFlowData } from "../../../../context/SendFlowContext";
 
 type VM = ReturnType<typeof useConfirmationViewModel>;
 let container: HTMLElement;
@@ -49,7 +48,7 @@ const mockActions = () => {
 
 const mockNavigation = () => {
   const goToStep = jest.fn();
-  (useSendFlowNavigation as jest.Mock).mockReturnValue({
+  (useFlowWizard as jest.Mock).mockReturnValue({
     navigation: { goToStep },
   });
   return { goToStep };
