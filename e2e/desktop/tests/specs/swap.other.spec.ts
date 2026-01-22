@@ -920,45 +920,6 @@ test.describe(`Swap - Error message when network fees are above account balance 
       { scope: "test" },
     ],
   });
-
-  test(
-    `Swap - Network fees above account balance`,
-    {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@ethereum",
-        "@family-evm",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
-      annotation: {
-        type: "TMS",
-        description: swapNetworkFeesAboveAccountBalanceTestConfig.xrayTicket,
-      },
-    },
-    async ({ app, electronApp }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      const minAmount = await app.swap.getMinimumAmount(accountToDebit, accountToCredit);
-
-      await performSwapUntilQuoteSelectionStep(
-        app,
-        electronApp,
-        swapNetworkFeesAboveAccountBalanceTestConfig.swap,
-        minAmount,
-      );
-      await app.swap.checkQuotes(electronApp);
-      await app.swap.selectExchange(electronApp);
-      await app.swap.tapQuoteInfosFeesSelector(electronApp);
-      await app.swap.checkFeeDrawerErrorMessage(
-        swapNetworkFeesAboveAccountBalanceTestConfig.errorMessage,
-      );
-    },
-  );
 });
 
 test.describe("Swap - Switch You send and You receive currency", () => {

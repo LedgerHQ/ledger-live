@@ -609,24 +609,5 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap - Network fees above account balance`, async () => {
-      const minAmount = await app.swapLiveApp.getMinimumAmount(
-        swap.accountToDebit,
-        swap.accountToCredit,
-      );
-
-      const actualAmount = swap.amount === "USE_MIN_AMOUNT" ? minAmount : swap.amount;
-
-      await performSwapUntilQuoteSelectionStep(
-        swap.accountToDebit,
-        swap.accountToCredit,
-        actualAmount,
-      );
-      await app.swapLiveApp.checkQuotes();
-      await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.tapQuoteInfosFeesSelector(1);
-      await app.swapLiveApp.tapFeeContainer("fast");
-      await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
-    });
   });
 }

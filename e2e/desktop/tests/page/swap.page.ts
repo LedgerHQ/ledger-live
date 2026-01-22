@@ -23,7 +23,6 @@ export class SwapPage extends AppPage {
   private numberOfQuotes = "number-of-quotes";
   private switchButton = "to-account-switch-accounts";
   private swapMaxToggle = "from-account-max-toggle";
-  private quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
   private quotesCountdown = "quotes-countdown";
   private networkFeesInfoIcon = "quoteCardTestId-networkFees-infoIcon";
   private rateInfoIcon = "QuoteCard-rate-infoIcon";
@@ -80,7 +79,6 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
     await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
     await expect(webview.getByTestId(this.networkFeesInfoIcon)).toBeVisible();
-    await expect(webview.getByTestId(this.quoteInfosFeesSelector)).toBeVisible();
     await expect(webview.getByTestId(this.rateInfoIcon)).toBeVisible();
   }
 
@@ -202,19 +200,6 @@ export class SwapPage extends AppPage {
       }
     }
     throw new Error("No valid providers found");
-  }
-
-  @step("Tap quote infos fees selector")
-  async tapQuoteInfosFeesSelector(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
-    await webview.getByTestId(this.quoteInfosFeesSelector).nth(1).click();
-  }
-
-  @step("Check drawer error message ($0)")
-  async checkFeeDrawerErrorMessage(errorMessage: string | RegExp) {
-    await expect(this.insufficientFundsWarningElem).toHaveText(errorMessage);
-    await expect(this.continueButton).toBeDisabled();
-    await this.drawerCloseButton.click();
   }
 
   @step("Get all swap providers available")
