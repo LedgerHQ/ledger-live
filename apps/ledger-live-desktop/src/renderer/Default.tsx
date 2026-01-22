@@ -65,6 +65,7 @@ import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setu
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import { ModularDialogRoot } from "LLD/features/ModularDialog/ModularDialogRoot";
 import { SendFlowRoot } from "LLD/features/Send/SendFlowRoot";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -202,11 +203,59 @@ const RecoverPlayerWithFeatureToggle = () => {
   );
 };
 
+// Shared content for the main app layout
+const MainAppContent = ({ shouldDisplayMarketBanner }: { shouldDisplayMarketBanner: boolean }) => (
+  <>
+    <Routes>
+      <Route path="/recover/:appId" element={<RecoverPlayerWithFeatureToggle />} />
+    </Routes>
+    <MainSideBar />
+    <Page>
+      <TopBannerContainer>
+        <UpdateBanner />
+        <FirmwareUpdateBanner />
+        <VaultSignerBanner />
+      </TopBannerContainer>
+      <Routes>
+        <Route path="/" element={withSuspense(Dashboard)({})} />
+        <Route path="/settings/*" element={withSuspense(Settings)({})} />
+        <Route path="/accounts" element={withSuspense(Accounts)({})} />
+        <Route path="/card/:appId?" element={withSuspense(Card)({})} />
+        <Route path="/manager/reload" element={<Navigate to="/manager" replace />} />
+        <Route path="/manager/*" element={withSuspense(Manager)({})} />
+        <Route path="/platform" element={withSuspense(PlatformCatalog)({})} />
+        <Route path="/platform/:appId" element={<LiveApp />} />
+        <Route path="/earn/*" element={withSuspense(Earn)({})} />
+        <Route path="/exchange/:appId?" element={withSuspense(Exchange)({})} />
+        <Route path="/swap-web" element={withSuspense(SwapWeb)({})} />
+        <Route path="/account/:parentId/:id/*" element={withSuspense(Account)({})} />
+        <Route path="/account/:id/*" element={withSuspense(Account)({})} />
+        <Route path="/asset/*" element={withSuspense(Asset)({})} />
+        <Route path="/swap/*" element={withSuspense(Swap2)({})} />
+        <Route path="/market/:currencyId" element={withSuspense(MarketCoin)({})} />
+        <Route
+          path="/market"
+          element={withSuspense(shouldDisplayMarketBanner ? Market40 : Market)({})}
+        />
+        <Route path="/bank/*" element={withSuspense(Bank)({})} />
+        <Route path="/analytics" element={withSuspense(Analytics)({})} />
+      </Routes>
+    </Page>
+    <Drawer />
+    <ToastOverlay />
+  </>
+);
+
+// Pages that should use the new Tailwind design
+const TAILWIND_SET_PAGES = new Set(["/", "/market", "/analytics"]);
+
 // Main app layout component that handles the main navigation after onboarding
 const MainAppLayout = () => {
-  const lwdWallet40FF = useFeature("lwdWallet40");
-  const isMarket40Enabled = lwdWallet40FF?.enabled && lwdWallet40FF?.params?.marketBanner;
+  const { pathname } = useLocation();
+  const { shouldDisplayMarketBanner, isEnabled: isWallet40Enabled } =
+    useWalletFeaturesConfig("desktop");
 
+  const useTailwindLayout = isWallet40Enabled && TAILWIND_SET_PAGES.has(pathname);
   return (
     <>
       <IsNewVersion />
@@ -214,54 +263,24 @@ const MainAppLayout = () => {
       <IsTermOfUseUpdated />
       <SyncNewAccounts priority={2} />
 
-      <Box
-        grow
-        horizontal
-        bg="background.default"
-        color="neutral.c70"
-        style={{
-          width: "100%",
-          height: "100%",
-        }}
-      >
-        <Routes>
-          <Route path="/recover/:appId" element={<RecoverPlayerWithFeatureToggle />} />
-        </Routes>
-        <MainSideBar />
-        <Page>
-          <TopBannerContainer>
-            <UpdateBanner />
-            <FirmwareUpdateBanner />
-            <VaultSignerBanner />
-          </TopBannerContainer>
-          <Routes>
-            <Route path="/" element={withSuspense(Dashboard)({})} />
-            <Route path="/settings/*" element={withSuspense(Settings)({})} />
-            <Route path="/accounts" element={withSuspense(Accounts)({})} />
-            <Route path="/card/:appId?" element={withSuspense(Card)({})} />
-            <Route path="/manager/reload" element={<Navigate to="/manager" replace />} />
-            <Route path="/manager/*" element={withSuspense(Manager)({})} />
-            <Route path="/platform" element={withSuspense(PlatformCatalog)({})} />
-            <Route path="/platform/:appId" element={<LiveApp />} />
-            <Route path="/earn/*" element={withSuspense(Earn)({})} />
-            <Route path="/exchange/:appId?" element={withSuspense(Exchange)({})} />
-            <Route path="/swap-web" element={withSuspense(SwapWeb)({})} />
-            <Route path="/account/:parentId/:id/*" element={withSuspense(Account)({})} />
-            <Route path="/account/:id/*" element={withSuspense(Account)({})} />
-            <Route path="/asset/*" element={withSuspense(Asset)({})} />
-            <Route path="/swap/*" element={withSuspense(Swap2)({})} />
-            <Route path="/market/:currencyId" element={withSuspense(MarketCoin)({})} />
-            <Route
-              path="/market"
-              element={withSuspense(isMarket40Enabled ? Market40 : Market)({})}
-            />
-            <Route path="/bank/*" element={withSuspense(Bank)({})} />
-            <Route path="/analytics" element={withSuspense(Analytics)({})} />
-          </Routes>
-        </Page>
-        <Drawer />
-        <ToastOverlay />
-      </Box>
+      {useTailwindLayout ? (
+        <div className="flex size-full grow flex-row bg-canvas">
+          <MainAppContent shouldDisplayMarketBanner={shouldDisplayMarketBanner} />
+        </div>
+      ) : (
+        <Box
+          grow
+          horizontal
+          bg="background.default"
+          color="neutral.c70"
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          <MainAppContent shouldDisplayMarketBanner={shouldDisplayMarketBanner} />
+        </Box>
+      )}
 
       {__PRERELEASE__ && __CHANNEL__ !== "next" && !__CHANNEL__.includes("sha") ? (
         <NightlyLayer />
