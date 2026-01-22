@@ -5821,6 +5821,19 @@ importers:
         specifier: ^22.10.10
         version: 22.10.10
 
+  libs/feature-flag-module:
+    dependencies:
+      '@ledgerhq/wallet-api-client':
+        specifier: ^1.12.6
+        version: 1.12.6(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-core':
+        specifier: ^1.27.0
+        version: 1.27.0(@ton/crypto@3.3.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.10
+        version: 22.19.3
+
   libs/hw-ledger-key-ring-protocol:
     dependencies:
       '@ledgerhq/hw-transport':
