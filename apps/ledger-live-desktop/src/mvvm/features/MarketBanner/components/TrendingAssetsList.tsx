@@ -35,7 +35,7 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
       className="flex flex-col overflow-x-scroll [scrollbar-width:none]"
       data-testid="trending-assets-list"
     >
-      <div className="flex items-center gap-8">
+      <div className="flex items-stretch gap-8">
         <FearAndGreed />
         {items.map(item => (
           <Tile
