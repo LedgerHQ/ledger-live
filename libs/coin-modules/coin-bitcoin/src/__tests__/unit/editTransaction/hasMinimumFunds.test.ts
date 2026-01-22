@@ -71,7 +71,6 @@ describe("hasMinimumFunds", () => {
       const accountLike = {} as AccountLike;
 
       const result = await hasMinimumFundsToSpeedUp({
-        account: accountLike,
         mainAccount,
         transactionToUpdate,
       });

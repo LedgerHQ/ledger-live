@@ -126,8 +126,6 @@ export const bitcoinPickingStrategy = {
   DEEP_OUTPUTS_FIRST: 0,
   OPTIMIZE_SIZE: 1,
   MERGE_OUTPUTS: 2,
-  RBF_SPEEDUP: 3,
-  RBF_CANCEL: 4,
 };
 export type BitcoinPickingStrategy =
   (typeof bitcoinPickingStrategy)[keyof typeof bitcoinPickingStrategy];
