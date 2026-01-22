@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Aucune récompense à demander"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Mémo trop long. Longueur maximale : {{maxLength}} caractères."
-    },
     "NearNewAccountWarning" : {
       "title" : "Le compte du bénéficiaire n’a pas encore été créé. Pour le créer, le protocole nécessite un transfert de {{formattedNewAccountStorageCost}}."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "Le montant doit être supérieur à {{threshold}}"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "Format du mémo incorrect : il doit être inférieur à 4294967296"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "Longueur du mémo non valide : le maximum autorisé est de 100 caractères"
     },
     "PinNotSet" : {
       "title" : "Code PIN non configuré"
@@ -1575,6 +1578,25 @@
     "cta" : "Configurer mon Ledger",
     "bannerTitle" : "Vous avez reçu votre Ledger ?",
     "bannerCta" : "Démarrer",
+    "continue" : "Continuer"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "Le {{device}}™ ne peut pas signer cette transaction en clair",
+      "subtitle" : "Utilisez un autre appareil Ledger pour vérifier les détails de cette transaction avant de la signer. Sans la signature en clair, vous risquez de perdre tous vos actifs.",
+      "continue" : "Continuer malgré les risques"
+    },
+    "info" : {
+      "title" : "Fin de la prise en charge de {{coinName}} par le {{device}}™ via Ledger Live™ à compter du {{date}}",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder à tous les prestataires de services Ledger Live et de bénéficier d’une expérience optimale.",
+      "reminder" : "Ne plus me le rappeler"
+    },
+    "error" : {
+      "title" : "Le {{device}}™ ne prend pas en charge cette fonctionnalité",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder aux dernières fonctionnalités de Ledger Live."
+    },
+    "update" : "Découvrir la gamme",
+    "learnMore" : "En savoir plus",
     "continue" : "Continuer"
   },
   "purchaseDevice" : {
@@ -8082,12 +8104,25 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Passez du Ledger Nano S à un modèle plus récent, tel que le Ledger Flex. À la clé : plus de mémoire, les dernières améliorations de sécurité, de nouvelles fonctionnalités et -20% en exclusivité. ",
+      "title" : "Upgrade your Ledger Nano S™",
+      "description" : "Get an exclusive 20% off on the latest Ledger signers.",
       "cta" : "Choisir mon Ledger"
     },
     "opted_out" : {
-      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un appareil Ledger plus récent.",
+      "title" : "Upgrade your Ledger Nano S™",
+      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité.",
       "cta" : "En savoir plus"
+    }
+  },
+  "marketBanner" : {
+    "title" : "Explorer le marché",
+    "viewAll" : "Afficher tout",
+    "viewAllAccessibilityHint" : "Appuyez deux fois pour afficher tous les actifs",
+    "connectionFailed" : "Échec de la connexion",
+    "errorAccessibilityHint" : "Impossible de charger les données du marché. Veuillez réessayer plus tard.",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "Appuyez deux fois pour afficher les détails"
     }
   },
   "largeMover" : {
@@ -8329,6 +8364,28 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "Psychologie du marché",
+    "description" : "Cet indice reflète l’état émotionnel du marché. Il varie de 0 à 100 : une valeur basse indique une peur extrême (pessimisme), et une valeur élevée correspond à une cupidité extrême (optimisme).",
+    "levels" : {
+      "extremeFear" : "Peur+",
+      "fear" : "Peur",
+      "neutral" : "Neutre",
+      "greed" : "Cupidité",
+      "extremeGreed" : "Cupidité+"
+    }
+  },
+  "analyticsAllocation" : {
+    "header" : {
+      "main" : "Statistiques"
+    },
+    "allocation" : {
+      "title" : "Répartition des actifs"
+    },
+    "actions" : {
+      "swap" : "Échanger"
     }
   }
 }
