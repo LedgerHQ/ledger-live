@@ -33,20 +33,11 @@ export default async function setup(): Promise<void> {
 
   await globalSetup();
 
-  // Check session index and set env var for workers to detect last retry
+  // Reset retry counter on first run (testSessionIndex=0)
   const testSessionIndex = detoxSession.testSessionIndex ?? 0;
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const detoxConfig = require("./detox.config.js");
-  const maxRetries = detoxConfig.testRunner?.retries ?? 0;
-  const isLastRetry = maxRetries > 0 && testSessionIndex >= maxRetries;
-
-  if (isLastRetry) {
-    // Write marker file for workers to detect last retry
-    const markerPath = path.join(__dirname, ".last-retry-marker");
-    await fs.writeFile(markerPath, "true");
-    log.info(
-      `[globalSetup] Last retry detected (attempt ${testSessionIndex + 1}/${maxRetries + 1}), video recording enabled`,
-    );
+  if (testSessionIndex === 0) {
+    const counterPath = path.join(__dirname, ".retry-counter");
+    await fs.unlink(counterPath).catch(() => {});
   }
 }
 

@@ -1,4 +1,4 @@
 artifacts/
 node_modules/
 allure-results
-.last-retry-marker
+.retry-counter

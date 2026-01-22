@@ -21,46 +21,6 @@ import DetoxEnvironment from "detox/runners/jest/testEnvironment";
 export default class TestEnvironment extends DetoxEnvironment {
   declare global: typeof globalThis;
 
-  constructor(
-    config: ConstructorParameters<typeof DetoxEnvironment>[0],
-    context: ConstructorParameters<typeof DetoxEnvironment>[1],
-  ) {
-    // Check marker file set by globalSetup to detect last retry
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const fs = require("fs");
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const path = require("path");
-    const markerPath = path.join(__dirname, ".last-retry-marker");
-    const isLastRetry = fs.existsSync(markerPath);
-
-    if (isLastRetry) {
-      // Modify the event listener options BEFORE super() initializes the adapter
-      const eventListeners = config.testEnvironmentOptions?.eventListeners;
-      if (Array.isArray(eventListeners)) {
-        for (const listener of eventListeners) {
-          if (Array.isArray(listener) && listener[0] === "detox-allure2-adapter" && listener[1]) {
-            listener[1].deviceVideos = {
-              android: {
-                recording: {
-                  bitRate: 1_000_000,
-                  maxSize: 720,
-                  codec: "h264",
-                },
-                audio: false,
-                window: false,
-              },
-              ios: {
-                codec: "hevc",
-              },
-            };
-          }
-        }
-      }
-    }
-
-    super(config, context);
-  }
-
   async setup() {
     const workerId = Number(process.env.JEST_WORKER_ID ?? "1");
     if (workerId > 1) this.setupDeviceForSecondaryWorker(workerId);
