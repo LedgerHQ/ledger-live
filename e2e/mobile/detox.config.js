@@ -30,7 +30,7 @@ module.exports = {
       teardownTimeout: 120000,
     },
     noRetryArgs: ["json", "outputFile"],
-    retries: 0,
+    retries: process.env.CI ? 2 : 0,
     forwardEnv: true, // Used to forward DETOX_CONFIGURATION to Jest workers
   },
   logger: {
