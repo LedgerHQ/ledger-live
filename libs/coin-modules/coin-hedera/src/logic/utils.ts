@@ -365,7 +365,7 @@ export const formatTransactionId = (transactionId: TransactionId): string => {
  * Fetches EVM address for given Hedera account ID (e.g. "0.0.1234").
  * It returns null if the fetch fails.
  *
- * @param address - Hedera account ID in the format `shard.realm.num`
+ * @param accountId - Hedera account ID in the format `shard.realm.num`
  * @returns EVM address (`0x...`) or null if fetch fails
  */
 export const toEVMAddress = async (accountId: string): Promise<string | null> => {
