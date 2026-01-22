@@ -1,7 +1,7 @@
 import { takeSpeculosScreenshot } from "./utils/speculosUtils";
 import { Circus } from "@jest/types";
 import { logMemoryUsage, takeAppScreenshot, setupEnvironment } from "./helpers/commonHelpers";
-import { config as detoxConfig, session as detoxSession } from "detox/internals";
+import { config as detoxConfig } from "detox/internals";
 import { Subject } from "rxjs";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
@@ -15,42 +15,56 @@ import { CLI } from "./utils/cliUtils";
 import { NativeElementHelpers, WebElementHelpers } from "./helpers/elementHelpers";
 import expect from "expect";
 import { Application } from "./page/index";
-import { detoxAllure2AdapterOptions } from "./jest.config";
 
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
 
 export default class TestEnvironment extends DetoxEnvironment {
   declare global: typeof globalThis;
 
+  constructor(
+    config: ConstructorParameters<typeof DetoxEnvironment>[0],
+    context: ConstructorParameters<typeof DetoxEnvironment>[1],
+  ) {
+    // Check marker file set by globalSetup to detect last retry
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fs = require("fs");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const path = require("path");
+    const markerPath = path.join(__dirname, ".last-retry-marker");
+    const isLastRetry = fs.existsSync(markerPath);
+
+    if (isLastRetry) {
+      // Modify the event listener options BEFORE super() initializes the adapter
+      const eventListeners = config.testEnvironmentOptions?.eventListeners;
+      if (Array.isArray(eventListeners)) {
+        for (const listener of eventListeners) {
+          if (Array.isArray(listener) && listener[0] === "detox-allure2-adapter" && listener[1]) {
+            listener[1].deviceVideos = {
+              android: {
+                recording: {
+                  bitRate: 1_000_000,
+                  maxSize: 720,
+                  codec: "h264",
+                },
+                audio: false,
+                window: false,
+              },
+              ios: {
+                codec: "hevc",
+              },
+            };
+          }
+        }
+      }
+    }
+
+    super(config, context);
+  }
+
   async setup() {
     const workerId = Number(process.env.JEST_WORKER_ID ?? "1");
     if (workerId > 1) this.setupDeviceForSecondaryWorker(workerId);
     await super.setup();
-
-    const testSessionIndex = detoxSession.testSessionIndex ?? 0;
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const detoxConfig = require("./detox.config.js");
-    const maxRetries = detoxConfig.testRunner?.retries ?? 0;
-    const isLastRetry = maxRetries > 0 && testSessionIndex >= maxRetries;
-
-    // Enable video recording only on last retry
-    if (isLastRetry) {
-      detoxAllure2AdapterOptions.deviceVideos = {
-        android: {
-          recording: {
-            bitRate: 1_000_000,
-            maxSize: 720,
-            codec: "h264",
-          },
-          audio: false,
-          window: false,
-        },
-        ios: {
-          codec: "hevc",
-        },
-      };
-      console.info(`[TestEnvironment.setup] Video recording enabled for last retry`);
-    }
 
     setupEnvironment();
 

@@ -91,8 +91,17 @@ export default async () => {
   await withTimeout(globalTeardown(), 60_000, "globalTeardown");
 
   // parallel file cleanups and force close any lingering connections
-  await Promise.all([cleanupUserdata(), forceGarbageCollection()]);
+  await Promise.all([cleanupUserdata(), forceGarbageCollection(), cleanupLastRetryMarker()]);
 };
+
+async function cleanupLastRetryMarker() {
+  try {
+    const markerPath = path.join(__dirname, ".last-retry-marker");
+    await fs.unlink(markerPath);
+  } catch {
+    // File may not exist, ignore
+  }
+}
 
 async function forceGarbageCollection() {
   try {
