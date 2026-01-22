@@ -4,6 +4,7 @@ import {
   CcdAmount,
 } from "@ledgerhq/concordium-sdk-adapter";
 import { AccountBridge } from "@ledgerhq/types-live";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import BigNumber from "bignumber.js";
 import { estimateFees } from "../common-logic";
 import { encodeMemoToDataBlob } from "../common-logic/utils";
@@ -20,16 +21,13 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
   let payload;
   if (transaction.memo) {
-    // Create a payload for fee estimation with memo
-    // Note: We use a dummy amount and recipient for estimation, only memo size matters
-    const dummyAmount = CcdAmount.fromMicroCcd("0");
-    const dummyRecipient = account.freshAddress
+    const toAddress = account.freshAddress
       ? AccountAddress.fromBase58(account.freshAddress)
-      : AccountAddress.fromBase58("3XSLuJcXg6xEua6iBPnWacc3iWh93yEDMCqX8FbE3RDSbEnT9P");
+      : AccountAddress.fromBase58(getAbandonSeedAddress(account.currency.id));
 
     payload = {
-      amount: dummyAmount,
-      toAddress: dummyRecipient,
+      amount: CcdAmount.fromMicroCcd("0"),
+      toAddress,
       memo: encodeMemoToDataBlob(transaction.memo),
     };
   }
