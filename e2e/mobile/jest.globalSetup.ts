@@ -47,7 +47,6 @@ export default async function setup(): Promise<void> {
       recording: { bitRate: 1_000_000, maxSize: 720, codec: "h264" },
       audio: false,
       window: false,
-      ...(process.platform === "linux" && { scrcpyPath: "/snap/bin/scrcpy" }),
     },
     ios: { codec: "hevc" },
   };

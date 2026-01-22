@@ -589,11 +589,10 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Install scrcpy
+      - name: Install scrcpy and Xvfb
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg
-          sudo snap install scrcpy
+          sudo apt-get install -y scrcpy ffmpeg xvfb
           scrcpy --version || echo "scrcpy version check failed"
 
       - name: Set shard test files from pre-computed matrix
@@ -738,7 +737,7 @@ jobs:
         id: run-android
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
         run: |
-          pnpm mobile e2e:ci -p android -t \
+          xvfb-run --auto-servernum pnpm mobile e2e:ci -p android -t \
             --e2e \
             $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') \
             $SHARD_TEST_FILES \
