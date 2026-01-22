@@ -13,6 +13,7 @@ import {
   TIME_RANGE,
   TRACKING_PAGE_NAME,
 } from "./utils/constants";
+import { track } from "~/renderer/analytics/segment";
 
 type MarketBannerViewProps = {
   readonly isLoading: boolean;
@@ -28,6 +29,10 @@ const MarketBannerView = memo(function MarketBannerView({
   const navigate = useNavigate();
 
   const goToMarket = useCallback(() => {
+    track("button_clicked", {
+      button: "Section Tile",
+      page: TRACKING_PAGE_NAME,
+    });
     navigate("/market");
   }, [navigate]);
 
