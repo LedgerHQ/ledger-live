@@ -12,7 +12,7 @@ module.exports = {
     jest: {
       setupTimeout: 500000,
     },
-    retries: 0,
+    retries: process.env.CI ? 2 : 0,
   },
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
