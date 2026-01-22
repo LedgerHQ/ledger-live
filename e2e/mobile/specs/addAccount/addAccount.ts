@@ -9,7 +9,6 @@ export function runAddAccountTest(
     beforeAll(async () => {
       await app.init({
         userdata: "skip-onboarding",
-        speculosApp: currency.speculosApp,
       });
       await app.portfolio.waitForPortfolioPageToLoad();
     });
@@ -19,7 +18,7 @@ export function runAddAccountTest(
     it(`Perform a Network Based add account - ${currency.name}`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
-
+      expect(true).toBe(false);
       const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
       if (isModularDrawer) {
         await app.modularDrawer.performSearchByTicker(currency.ticker);
