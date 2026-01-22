@@ -3399,8 +3399,8 @@ importers:
         specifier: ^2.2.37
         version: 2.2.37
       '@types/jest':
-        specifier: ^29.5.12
-        version: 29.5.12
+        specifier: 'catalog:'
+        version: 30.0.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.7
@@ -6333,9 +6333,6 @@ importers:
       fuse.js:
         specifier: ^6.6.2
         version: 6.6.2
-      i18next:
-        specifier: 20.6.1
-        version: 20.6.1
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -6460,9 +6457,6 @@ importers:
       '@types/react':
         specifier: ^18.2.21
         version: 18.2.73
-      '@types/react-redux':
-        specifier: ^7.1.33
-        version: 7.1.33(@types/react@18.2.73)
       '@types/uuid':
         specifier: ^8.3.4
         version: 8.3.4
@@ -6508,9 +6502,6 @@ importers:
       jest-file-snapshot:
         specifier: 'catalog:'
         version: 0.7.0
-      long:
-        specifier: ^4.0.0
-        version: 4.0.0
       mkdirp:
         specifier: 1.0.4
         version: 1.0.4
@@ -6538,9 +6529,6 @@ importers:
       timemachine:
         specifier: ^0.3.2
         version: 0.3.2
-      ts-jest:
-        specifier: ^29.1.1
-        version: 29.1.2(jest@30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
         version: 10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3)
@@ -21013,9 +21001,6 @@ packages:
   '@types/jest@28.1.3':
     resolution: {integrity: sha512-Tsbjk8Y2hkBaY/gJsataeb4q9Mubw9EOz7+4RjPkzD5KjTvHHs7cpws22InaoXxAVAhF5HfFbzJjo6oKWqSZLw==}
 
-  '@types/jest@29.5.12':
-    resolution: {integrity: sha512-eDC8bTvT/QhYdxJAulQikueigY5AsdBRH2yDKW3yveW7svY3+DzN84/2NUgkw10RTiJbWqZrTtoGVdYlvFJdLw==}
-
   '@types/jest@30.0.0':
     resolution: {integrity: sha512-XTYugzhuwqWjws0CVz8QpM36+T+Dz5mTEBKhNs/esGLnCIlGdRy+Dq78NRjd7ls7r8BC8ZRMOrKlkO1hU0JOwA==}
 
@@ -21274,14 +21259,6 @@ packages:
 
   '@types/react-native-video@5.0.20':
     resolution: {integrity: sha512-CdD4T43uEKzTNJ/RylTDViNuGuyOPWQUEuA1Y9GY8T+HiE9cwYw1zQNqk8a7zz9GHamlPfJQ+bYoEE9OWjZ/6g==}
-    peerDependencies:
-      '@types/react': '*'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-
-  '@types/react-redux@7.1.33':
-    resolution: {integrity: sha512-NF8m5AjWCkert+fosDsN3hAlHzpjSiXlVy9EgQEmLoBhaNXbmyeGs/aj5dQzKuF+/q+S7JQagorGDW8pJ28Hmg==}
     peerDependencies:
       '@types/react': '*'
     peerDependenciesMeta:
@@ -27502,9 +27479,6 @@ packages:
   hyphenate-style-name@1.0.4:
     resolution: {integrity: sha512-ygGZLjmXfPHj+ZWh6LwbC37l43MhfztxetbFCoYTM2VjkIUpeHgSNn7QIyVFj7YQ1Wl9Cbw5sholVJPzWvC2MQ==}
 
-  i18next@20.6.1:
-    resolution: {integrity: sha512-yCMYTMEJ9ihCwEQQ3phLo7I/Pwycf8uAx+sRHwwk5U9Aui/IZYgQRyMqXafQOw5QQ7DM1Z+WyEXWIqSuJHhG2A==}
-
   i18next@23.10.1:
     resolution: {integrity: sha512-NDiIzFbcs3O9PXpfhkjyf7WdqFn5Vq6mhzhtkXzj51aOcNuPNcTwuYNuXCpHsanZGHlHKL35G7huoFeVic1hng==}
 
@@ -33207,9 +33181,6 @@ packages:
     resolution: {integrity: sha512-NW2r5T6ksUKXCabzhL9z+h206HQw/NJkcLm1GPImRQ8IzfXwRGqjVhKJGauHirT0DAuyy6hjdnMZaRoAcy0Klw==}
     peerDependencies:
       redux: ^5.0.0
-
-  redux@4.2.1:
-    resolution: {integrity: sha512-LAUYz4lc+Do8/g7aeRa8JkyDErK6ekstQaqWQrNRW//MY1TvCEpMtpTWvlQ+FPbWCx+Xixu/6SHt5N0HR+SB4w==}
 
   redux@5.0.1:
     resolution: {integrity: sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==}
@@ -53481,11 +53452,6 @@ snapshots:
       jest-matcher-utils: 28.1.3
       pretty-format: 28.1.3
 
-  '@types/jest@29.5.12':
-    dependencies:
-      expect: 29.7.0
-      pretty-format: 29.7.0
-
   '@types/jest@30.0.0':
     dependencies:
       expect: 30.2.0
@@ -53734,14 +53700,6 @@ snapshots:
       - react
       - supports-color
       - utf-8-validate
-
-  '@types/react-redux@7.1.33(@types/react@18.2.73)':
-    dependencies:
-      '@types/hoist-non-react-statics': 3.3.5(@types/react@18.2.73)
-      hoist-non-react-statics: 3.3.2
-      redux: 4.2.1
-    optionalDependencies:
-      '@types/react': 18.2.73
 
   '@types/react-table@6.8.15(@types/react@18.3.27)':
     optionalDependencies:
@@ -62425,10 +62383,6 @@ snapshots:
   hyperdyperid@1.2.0: {}
 
   hyphenate-style-name@1.0.4: {}
-
-  i18next@20.6.1:
-    dependencies:
-      '@babel/runtime': 7.28.4
 
   i18next@23.10.1:
     dependencies:
@@ -71115,10 +71069,6 @@ snapshots:
     dependencies:
       redux: 5.0.1
 
-  redux@4.2.1:
-    dependencies:
-      '@babel/runtime': 7.28.4
-
   redux@5.0.1: {}
 
   reflect-metadata@0.1.14: {}
@@ -73673,19 +73623,6 @@ snapshots:
       make-error: 1.3.6
       semver: 7.7.3
       typescript: 5.6.3
-      yargs-parser: 21.1.1
-
-  ts-jest@29.1.2(jest@30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3)))(typescript@5.4.3):
-    dependencies:
-      bs-logger: 0.2.6
-      fast-json-stable-stringify: 2.1.0
-      jest: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(typescript@5.4.3))
-      jest-util: 29.7.0
-      json5: 2.2.3
-      lodash.memoize: 4.1.2
-      make-error: 1.3.6
-      semver: 7.7.3
-      typescript: 5.4.3
       yargs-parser: 21.1.1
 
   ts-loader@9.5.1(typescript@5.4.3)(webpack@5.94.0(@swc/core@1.15.8)):
