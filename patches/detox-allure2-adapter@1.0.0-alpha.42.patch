@@ -1,0 +1,25 @@
+--- a/dist/listener.js
++++ b/dist/listener.js
+@@ -75,8 +75,20 @@
+                 onError,
+             });
+         }
+-        if (deviceVideos) {
+-            const baseOptions = deviceVideos === true ? {} : deviceVideos;
++        // PATCH: Check DETOX_ENABLE_VIDEO env var to enable video dynamically
++        // DETOX_VIDEO_OPTIONS is JSON config string, e.g.: {"android":{"recording":{"bitRate":1000000}}}
++        const enableVideoFromEnv = process.env.DETOX_ENABLE_VIDEO === 'true';
++        const effectiveDeviceVideos = enableVideoFromEnv ? (deviceVideos || true) : deviceVideos;
++        if (effectiveDeviceVideos) {
++            let baseOptions = effectiveDeviceVideos === true ? {} : effectiveDeviceVideos;
++            // If enabled via env var, check for JSON options or use defaults
++            if (enableVideoFromEnv) {
++                try {
++                    baseOptions = process.env.DETOX_VIDEO_OPTIONS ? JSON.parse(process.env.DETOX_VIDEO_OPTIONS) : { android: { recording: { bitRate: 1000000, maxSize: 720, codec: 'h264' }, audio: false, window: false }, ios: { codec: 'hevc' } };
++                } catch (e) {
++                    baseOptions = {};
++                }
++            }
+             videoManager = new video_1.VideoManager({ device, options: baseOptions, onError });
+         }
+         if (deviceViewHierarchy && viewHierarchyFactory) {
