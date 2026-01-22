@@ -13,6 +13,7 @@ on:
       login:
         description: The GitHub username that triggered the workflow
         required: false
+  pull_request: ~
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
