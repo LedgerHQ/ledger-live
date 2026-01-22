@@ -4748,13 +4748,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 360,
     },
-    explorerViews: [
-      {
-        tx: "https://shapescan.xyz/tx/$hash",
-        address: "https://shapescan.xyz/address/$address",
-        token: "https://shapescan.xyz/token/$contractAddress?a=$address",
-      },
-    ],
+    explorerViews: [blockscoutExplorerView("https://shapescan.xyz")],
   },
   story: {
     type: "CryptoCurrency",
@@ -4770,13 +4764,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 1514,
     },
-    explorerViews: [
-      {
-        tx: "https://www.storyscan.io/tx/$hash",
-        address: "https://www.storyscan.io/address/$address",
-        token: "https://www.storyscan.io/token/$contractAddress?a=$address",
-      },
-    ],
+    explorerViews: [blockscoutExplorerView("https://www.storyscan.io")],
   },
   etherlink: {
     type: "CryptoCurrency",
