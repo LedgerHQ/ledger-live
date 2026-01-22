@@ -391,6 +391,10 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
+      - name: Install scrcpy
+        run: |
+          brew install scrcpy
+
       - name: Boot iOS Simulator in Background
         run: |
           LOG_FILE="e2e/mobile/artifacts/simulator-boot.log"
@@ -585,6 +589,23 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: Install scrcpy 3.x and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
+          
+          # Download scrcpy 3.3.4 from GitHub releases (apt/snap versions are obsolete)
+          # See: https://github.com/Genymobile/scrcpy/blob/master/doc/linux.md
+          SCRCPY_VERSION="3.3.4"
+          curl -L "https://github.com/Genymobile/scrcpy/releases/download/v${SCRCPY_VERSION}/scrcpy-linux-x86_64-v${SCRCPY_VERSION}.tar.gz" -o /tmp/scrcpy.tar.gz
+          tar -xzf /tmp/scrcpy.tar.gz -C /tmp
+          # Copy both scrcpy and scrcpy-server to the same directory (portable mode)
+          sudo cp /tmp/scrcpy-linux-x86_64-v${SCRCPY_VERSION}/scrcpy /usr/local/bin/
+          sudo cp /tmp/scrcpy-linux-x86_64-v${SCRCPY_VERSION}/scrcpy-server /usr/local/bin/
+          
+          scrcpy --version
+          ls -la /usr/local/bin/scrcpy*
+
       - name: Set shard test files from pre-computed matrix
         run: |
           echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
@@ -723,11 +744,52 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
 
+      - name: Test scrcpy recording
+        run: |
+          echo "Testing scrcpy with emulator..."
+          
+          # Use Android SDK's adb - set ADB env var for scrcpy
+          export ADB="$ANDROID_HOME/platform-tools/adb"
+          export PATH="$ANDROID_HOME/platform-tools:$PATH"
+          
+          # Wait for at least one emulator to be online
+          echo "Waiting for emulator to be online..."
+          for i in {1..30}; do
+            DEVICE=$(adb devices | grep -E "emulator-[0-9]+\s+device" | head -1 | cut -f1)
+            if [ -n "$DEVICE" ]; then
+              echo "Found online device: $DEVICE"
+              break
+            fi
+            echo "Waiting... ($i/30)"
+            sleep 2
+          done
+          
+          if [ -z "$DEVICE" ]; then
+            echo "No online emulator found after waiting"
+            adb devices
+            exit 0
+          fi
+          
+          # Test scrcpy in record mode with verbose output
+          echo "Testing scrcpy recording on $DEVICE..."
+          timeout 15 xvfb-run --auto-servernum scrcpy \
+            --serial "$DEVICE" \
+            --no-window \
+            --no-audio \
+            --video-codec=h264 \
+            --max-size=720 \
+            --record=/tmp/test-video.mp4 \
+            -Vdebug 2>&1 || echo "scrcpy test completed (timeout expected)"
+          
+          # Check if video was created
+          ls -la /tmp/test-video.mp4 || echo "No video file created"
+        continue-on-error: true
+
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
         run: |
-          pnpm mobile e2e:ci -p android -t \
+          xvfb-run --auto-servernum pnpm mobile e2e:ci -p android -t \
             --e2e \
             $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') \
             $SHARD_TEST_FILES \
@@ -741,6 +803,8 @@ jobs:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
+          # Tell scrcpy to use Android SDK's adb (not the bundled portable one)
+          ADB: /usr/local/lib/android/sdk/platform-tools/adb
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')

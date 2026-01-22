@@ -60,6 +60,7 @@ const detoxAllure2AdapterOptions: DetoxAllure2AdapterOptions = {
   deviceScreenshots: false,
   deviceVideos: false,
   deviceViewHierarchy: false,
+  onError: "warn",
 };
 
 const ESM_PACKAGES = ["ky", "@polkadot"].join("|");

@@ -47,6 +47,12 @@ export default async function setup(): Promise<void> {
       recording: { bitRate: 1_000_000, maxSize: 720, codec: "h264" },
       audio: false,
       window: false,
+      // On CI (Linux), scrcpy is installed to /usr/local/bin via GitHub releases
+      // adb is in Android SDK at /usr/local/lib/android/sdk/platform-tools
+      ...(process.platform === "linux" && {
+        scrcpyPath: "/usr/local/bin/scrcpy",
+        adbPath: "/usr/local/lib/android/sdk/platform-tools/adb",
+      }),
     },
     ios: { codec: "hevc" },
   };
