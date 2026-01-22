@@ -16,15 +16,19 @@ export {
 export {
   encodeURIScheme,
   decodeURIScheme,
-  sanitizeValueString,
-  formatCurrencyUnit,
-  type formatCurrencyUnitOptions,
-  parseCurrencyUnit,
-  toLocaleString,
   isCurrencySupported,
   listSupportedCurrencies,
   setSupportedCurrencies,
 } from "@ledgerhq/coin-framework/currencies";
+export {
+  formatCurrencyUnit,
+  formatCurrencyUnitFragment,
+  parseCurrencyUnit,
+  sanitizeValueString,
+  toLocaleString,
+  type formatCurrencyUnitOptions,
+  type FormatterValue,
+} from "@ledgerhq/live-currency-format";
 
 export { getCurrencyColor, type ColorableCurrency } from "./color";
 export { formatShort } from "./formatShort";

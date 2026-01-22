@@ -135,6 +135,7 @@
     "utils": "pnpm --filter live-utils",
     "hooks": "pnpm --filter live-hooks",
     "psbtv2": "pnpm --filter psbtv2",
+    "currency-format": "pnpm --filter live-currency-format",
     "lkrp": "pnpm --filter ledger-key-ring-protocol",
     "hw-lkrp": "pnpm --filter hw-ledger-key-ring-protocol",
     "countervalues": "pnpm --filter live-countervalues",
