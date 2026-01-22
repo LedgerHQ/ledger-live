@@ -427,6 +427,14 @@ export type Feature_BrazePushNotifications = Feature<{
       timer: number;
     };
   };
+  inactivity_enabled: boolean;
+  inactivity_reprompt: {
+    months: number;
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  };
   notificationsCategories: {
     displayed: boolean;
     category: string;

@@ -116,7 +116,14 @@ export type NotificationsState = {
   /** Boolean indicating whether the push notifications modal is opened or closed */
   isPushNotificationsModalOpen: boolean;
   /** This helps us know what action caused the push notifications modal to open */
-  drawerSource?: "onboarding" | "send" | "receive" | "swap" | "stake" | "add_favorite_coin";
+  drawerSource?:
+    | "onboarding"
+    | "send"
+    | "receive"
+    | "swap"
+    | "stake"
+    | "add_favorite_coin"
+    | "inactivity";
   /** Data related to the user's app usage. We use this data to prompt the push notifications modal on certain conditions only */
   dataOfUser?: DataOfUser;
 };
