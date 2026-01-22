@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "ไม่มี Reward ให้เคลม"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Memo ยาวเกินไป ความยาวสูงสุดคือ {{maxLength}} ตัวอักษร"
-    },
     "NearNewAccountWarning" : {
       "title" : "ยังไม่ได้สร้างบัญชีผู้รับ Protocol ต้องมีการโอน {{formattedNewAccountStorageCost}} เพื่อสร้าง"
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "จำนวนต้องมีอย่างน้อย {{threshold}}"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "รูปแบบของ Memo ไม่ถูกต้อง ควรน้อยกว่า 4294967296"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "ขนาด Memo ไม่ถูกต้อง ขนาดสูงสุดที่อนุญาตคือ 100 ตัวอักษร"
     },
     "PinNotSet" : {
       "title" : "ไม่ได้ตั้งค่า PIN"
@@ -1575,6 +1578,25 @@
     "cta" : "ติดตั้ง Ledger ของฉัน",
     "bannerTitle" : "ได้รับ Ledger แล้วหรือยัง?",
     "bannerCta" : "เริ่มการติดตั้ง",
+    "continue" : "ดำเนินการต่อ"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ ไม่สามารถดำเนินการ Clear Sign สำหรับธุรกรรมนี้ได้",
+      "subtitle" : "ใช้อุปกรณ์ Ledger อื่น  เพื่อตรวจสอบรายละเอียดของธุรกรรมนี้ก่อนเซ็น หากไม่มีการ Clear Signing  ทรัพย์สินทั้งหมดของคุณอาจตกอยู่ในความเสี่ยง",
+      "continue" : "ดำเนินการต่อโดยรับความเสี่ยงด้วยตนเอง"
+    },
+    "info" : {
+      "title" : "ตั้งแต่วันที่ {{date}} เป็นต้นไป การรองรับ {{coinName}} บน {{device}}™ ผ่านแอป Ledger Live™ จะสิ้นสุดลง",
+      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงผู้ให้บริการ ทั้งหมดบนแอป Ledger Live และการสนับสนุนลูกค้าที่ดีที่สุด",
+      "reminder" : "ไม่ต้องเตือนฉันอีก"
+    },
+    "error" : {
+      "title" : "{{device}}™ ไม่รองรับฟีเจอร์นี้",
+      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงฟีเจอร์ล่าสุดทั้งหมดของแอป Ledger Live ได้"
+    },
+    "update" : "ดูโปรแกรมการอัปเกรดของคุณ",
+    "learnMore" : "เรียนรู้เพิ่มเติม",
     "continue" : "ดำเนินการต่อ"
   },
   "purchaseDevice" : {
@@ -3474,9 +3496,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "เปิดการแจ้งเตือน",
-      "titleVariantB" : "Get the most of Ledger Wallet",
+      "titleVariantB" : "รับประโยชน์สูงสุดจากแอป Ledger Wallet",
       "desc" : "รับข้อมูลอัปเดตล่าสุดเกี่ยวกับแอป Ledger Wallet, ผลิตภัณฑ์ Ledger, ตลาด ตลอดจนคำแนะนำส่วนบุคคล ยกเลิกได้ทุกเมื่อในการตั้งค่า",
-      "descVariantB" : "We'll send you personalized tips, setup guides and relevant market news.",
+      "descVariantB" : "เราจะส่งเคล็ดลับที่ปรับเข้ากับบุคคล คู่มือการติดตั้ง และข่าวสารตลาดที่เกี่ยวข้องให้กับคุณ",
       "allow" : "อนุญาตการแจ้งเตือน",
       "later" : "อาจดำเนินการในภายหลัง"
     },
@@ -8082,12 +8104,25 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "อัปเกรด Ledger Nano S ของคุณเป็น Ledger รุ่นใหม่กว่า —เช่น Ledger Flex — เพื่อรับหน่วยความจำเพิ่ม การปรับปรุงด้านความปลอดภัยล่าสุด ฟีเจอร์ใหม่ และส่วนลดพิเศษ 20% ",
+      "title" : "Upgrade your Ledger Nano S™",
+      "description" : "Get an exclusive 20% off on the latest Ledger signers.",
       "cta" : "อัปเกรด My Ledger"
     },
     "opted_out" : {
-      "description" : "หน่วยความจำที่จำกัดของ Ledger Nano S ของคุณจะยับยั้งการเข้าถึงฟีเจอร์ล่าสุด การเปลี่ยนแปลงบล็อกเชน และการเพิ่มความปลอดภัยให้กับคุณ เพื่อการใช้งานระยะยาว ควรอัปเกรดเป็นอุปกรณ์ Ledger รุ่นใหม่กว่า",
+      "title" : "Upgrade your Ledger Nano S™",
+      "description" : "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements.",
       "cta" : "เรียนรู้เพิ่มเติม"
+    }
+  },
+  "marketBanner" : {
+    "title" : "สำรวจตลาด",
+    "viewAll" : "ดูทั้งหมด",
+    "viewAllAccessibilityHint" : "แตะสองครั้งเพื่อดูสินทรัพย์ในตลาดทั้งหมด",
+    "connectionFailed" : "Connection failed",
+    "errorAccessibilityHint" : "Unable to load market data. Please try again later.",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "แตะสองครั้งเพื่อดูรายละเอียดของตลาด"
     }
   },
   "largeMover" : {
@@ -8329,6 +8364,28 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "Mood index",
+    "description" : "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+    "levels" : {
+      "extremeFear" : "Fear+",
+      "fear" : "Fear",
+      "neutral" : "Neutral",
+      "greed" : "Greed",
+      "extremeGreed" : "Greed+"
+    }
+  },
+  "analyticsAllocation" : {
+    "header" : {
+      "main" : "Analytics"
+    },
+    "allocation" : {
+      "title" : "Asset Allocation"
+    },
+    "actions" : {
+      "swap" : "Swap"
     }
   }
 }
