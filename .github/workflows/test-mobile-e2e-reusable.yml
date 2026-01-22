@@ -589,11 +589,21 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Install scrcpy and Xvfb
+      - name: Install scrcpy 3.x and dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y scrcpy ffmpeg xvfb
-          scrcpy --version || echo "scrcpy version check failed"
+          sudo apt-get install -y ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
+          
+          # Download scrcpy 3.3.4 from GitHub releases (apt/snap versions are obsolete)
+          # See: https://github.com/Genymobile/scrcpy/blob/master/doc/linux.md
+          SCRCPY_VERSION="3.3.4"
+          curl -L "https://github.com/Genymobile/scrcpy/releases/download/v${SCRCPY_VERSION}/scrcpy-linux-x86_64-v${SCRCPY_VERSION}.tar.gz" -o /tmp/scrcpy.tar.gz
+          tar -xzf /tmp/scrcpy.tar.gz -C /tmp
+          sudo cp /tmp/scrcpy-linux-x86_64-v${SCRCPY_VERSION}/scrcpy /usr/local/bin/
+          sudo mkdir -p /usr/local/share/scrcpy
+          sudo cp /tmp/scrcpy-linux-x86_64-v${SCRCPY_VERSION}/scrcpy-server /usr/local/share/scrcpy/
+          
+          scrcpy --version
 
       - name: Set shard test files from pre-computed matrix
         run: |
@@ -669,14 +679,15 @@ jobs:
           echo "Using device: $DEVICE"
           
           # Test scrcpy in record mode with verbose output
-          timeout 10 xvfb-run --auto-servernum scrcpy \
+          echo "Testing scrcpy recording on $DEVICE..."
+          timeout 15 xvfb-run --auto-servernum scrcpy \
             --serial "$DEVICE" \
             --no-window \
             --no-audio \
             --video-codec=h264 \
             --max-size=720 \
             --record=/tmp/test-video.mp4 \
-            --verbosity=debug 2>&1 || echo "scrcpy test completed (timeout expected)"
+            -Vdebug 2>&1 || echo "scrcpy test completed (timeout expected)"
           
           # Check if video was created
           ls -la /tmp/test-video.mp4 || echo "No video file created"
