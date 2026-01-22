@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { StackActions, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { Flex, Icons } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
 import { useTrack } from "~/analytics";
@@ -31,10 +31,7 @@ function getScreenTitle({
   }
 }
 
-export function useSwapHeaderNavigation(
-  webviewRef: React.RefObject<WebviewAPI | null>,
-  manifestUrl?: string,
-) {
+export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI | null>) {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const track = useTrack();
@@ -82,13 +79,8 @@ export function useSwapHeaderNavigation(
       swapVersion: SWAP_VERSION,
     });
 
-    // Navigate webview back to the swap form
-    if (manifestUrl) {
-      webviewRef.current?.loadURL(manifestUrl);
-    } else {
-      navigation.dispatch(StackActions.popToTop());
-    }
-  }, [webviewRef, track, manifestUrl, navigation]);
+    webviewRef.current?.resetToInitialURL();
+  }, [webviewRef, track]);
 
   useEffect(() => {
     if (!isSwapTabScreen) return;

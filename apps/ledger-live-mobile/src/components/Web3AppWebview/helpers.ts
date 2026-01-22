@@ -294,6 +294,10 @@ export function useWebviewState(
         loadURL: (url: string): void => {
           setURI(url);
         },
+        resetToInitialURL: (): void => {
+          const webview = safeGetRefValue(webviewRef);
+          webview.injectJavaScript(`window.location.replace('${initialURL}'); true;`);
+        },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         notify: (method: `event.${string}`, params: any) => {
           serverRef?.current?.sendMessage(method, params);
