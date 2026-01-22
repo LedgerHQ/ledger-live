@@ -120,8 +120,8 @@ export default function AssetBalanceSummaryHeader({
     setTrackingSource("Page Asset");
     navigate("/swap", {
       state: {
-        defaultAccount: account,
-        defaultParentAccount: parentAccount,
+        defaultAccountId: account.id,
+        defaultParentAccountId: parentAccount?.id,
         defaultCurrency: currency,
         defaultAmountFrom: "0",
         from: location.pathname,

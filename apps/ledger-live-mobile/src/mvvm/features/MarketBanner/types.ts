@@ -29,5 +29,4 @@ export interface UseMarketBannerViewModelResult {
   onTilePress: (item: MarketItemPerformer) => void;
   onViewAllPress: () => void;
   onSectionTitlePress: () => void;
-  onSwipe: () => void;
 }

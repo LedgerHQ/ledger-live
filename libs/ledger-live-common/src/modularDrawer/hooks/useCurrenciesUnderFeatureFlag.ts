@@ -22,6 +22,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
+  const avaxCChainFuji = useFeature("currencyAvalancheCChainFuji");
   const stacks = useFeature("currencyStacks");
   const optimism = useFeature("currencyOptimism");
   const optimismSepolia = useFeature("currencyOptimismSepolia");
@@ -43,7 +44,9 @@ export function useCurrenciesUnderFeatureFlag() {
   const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
   const base = useFeature("currencyBase");
   const baseSepolia = useFeature("currencyBaseSepolia");
+  const bitlayer = useFeature("currencyBitlayer");
   const klaytn = useFeature("currencyKlaytn");
+  const klaytnBaobab = useFeature("currencyKlaytnBaobab");
   const injective = useFeature("currencyInjective");
   const vechain = useFeature("currencyVechain");
   const casper = useFeature("currencyCasper");
@@ -55,6 +58,8 @@ export function useCurrenciesUnderFeatureFlag() {
   const blastSepolia = useFeature("currencyBlastSepolia");
   const scroll = useFeature("currencyScroll");
   const scrollSepolia = useFeature("currencyScrollSepolia");
+  const shape = useFeature("currencyShape");
+  const story = useFeature("currencyStory");
   const icon = useFeature("currencyIcon");
   const ton = useFeature("currencyTon");
   const etherlink = useFeature("currencyEtherlink");
@@ -105,6 +110,7 @@ export function useCurrenciesUnderFeatureFlag() {
       quicksilver,
       persistence,
       avalanche_c_chain: avaxCChain,
+      avalanche_c_chain_fuji: avaxCChainFuji,
       stacks,
       optimism,
       optimism_sepolia: optimismSepolia,
@@ -129,7 +135,9 @@ export function useCurrenciesUnderFeatureFlag() {
       polygon_zk_evm_testnet: polygonZkEvmTestnet,
       base,
       base_sepolia: baseSepolia,
+      bitlayer,
       klaytn,
+      klaytn_baobab: klaytnBaobab,
       injective,
       vechain,
       casper,
@@ -142,6 +150,8 @@ export function useCurrenciesUnderFeatureFlag() {
       blast_sepolia: blastSepolia,
       scroll,
       scroll_sepolia: scrollSepolia,
+      shape,
+      story,
       icon,
       etherlink,
       zksync,
@@ -187,6 +197,7 @@ export function useCurrenciesUnderFeatureFlag() {
       quicksilver,
       persistence,
       avaxCChain,
+      avaxCChainFuji,
       stacks,
       optimism,
       optimismSepolia,
@@ -211,7 +222,9 @@ export function useCurrenciesUnderFeatureFlag() {
       polygonZkEvmTestnet,
       base,
       baseSepolia,
+      bitlayer,
       klaytn,
+      klaytnBaobab,
       injective,
       vechain,
       casper,
@@ -224,6 +237,8 @@ export function useCurrenciesUnderFeatureFlag() {
       blastSepolia,
       scroll,
       scrollSepolia,
+      shape,
+      story,
       icon,
       etherlink,
       zksync,

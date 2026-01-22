@@ -4,6 +4,10 @@ import { OnboardingPage } from "../../page/onboarding.page";
 
 test.use({
   settings: { hasSeenAnalyticsOptInPrompt: false },
+  featureFlags: {
+    welcomeScreenVideoCarousel: { enabled: false },
+    noah: { enabled: false },
+  },
 });
 
 enum Nano {

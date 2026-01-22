@@ -1,5 +1,5 @@
-import React, { useCallback, useRef } from "react";
-import { FlatList, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import React, { useCallback } from "react";
+import { FlatList } from "react-native";
 import {
   Subheader,
   SubheaderRow,
@@ -23,7 +23,6 @@ interface MarketBannerViewProps {
   onTilePress: (item: MarketItemPerformer) => void;
   onViewAllPress: () => void;
   onSectionTitlePress: () => void;
-  onSwipe: () => void;
   testID?: string;
 }
 
@@ -39,22 +38,9 @@ const MarketBannerView = ({
   onTilePress,
   onViewAllPress,
   onSectionTitlePress,
-  onSwipe,
   testID = "market-banner-container",
 }: MarketBannerViewProps) => {
   const { t } = useTranslation();
-  const hasTrackedSwipe = useRef(false);
-
-  const handleSwipe = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const { contentOffset } = event.nativeEvent;
-      if (contentOffset.x > 20 && !hasTrackedSwipe.current) {
-        hasTrackedSwipe.current = true;
-        onSwipe();
-      }
-    },
-    [onSwipe],
-  );
 
   const renderItem = useCallback(
     (props: { item: ListItem; index: number }) => (
@@ -90,8 +76,6 @@ const MarketBannerView = ({
           ListEmptyComponent={<SkeletonState />}
           horizontal
           showsHorizontalScrollIndicator={false}
-          onScroll={handleSwipe}
-          scrollEventThrottle={16}
           testID="market-banner-list"
           ListHeaderComponentStyle={{ marginRight: MARGIN_RIGHT }}
           contentContainerStyle={{ paddingHorizontal: PADDING_HORIZONTAL, height: HEIGHT }}
