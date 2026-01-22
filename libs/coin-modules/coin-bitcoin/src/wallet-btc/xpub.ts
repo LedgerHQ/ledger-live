@@ -259,15 +259,18 @@ class Xpub {
     );
 
     let inputs: InputInfo[];
+    let associatedDerivations: [number, number][];
 
     if (originalTxId) {
-      // For speed up transactions, we need to keep the same inputs as the original transaction
+      // For RBF (speed up / cancel) transactions, we need to keep the same inputs as the original transaction
       const originalTx = await this.explorer.getTxHex(originalTxId);
       if (!originalTx) {
         throw new Error("Original transaction not found for speed up");
       }
       const originalTxObj = Transaction.fromHex(originalTx);
-      inputs = await Promise.all(
+
+      // Build inputs and their associated derivations from the original transaction
+      const inputsWithDerivations = await Promise.all(
         originalTxObj.ins.map(async input => {
           const prevTxId = Buffer.from(Uint8Array.from(input.hash)).reverse().toString("hex");
 
@@ -280,17 +283,30 @@ class Xpub {
           }
 
           const address = btc.address.fromOutputScript(prevOut.script, this.crypto.network);
+
+          // Look up the derivation path for this address from storage
+          const storedTx = await this.storage.getTx(address, prevTxId);
+          const derivation: [number, number] = storedTx
+            ? [storedTx.account || 0, storedTx.index || 0]
+            : [0, 0]; // Fallback if not found
+
           return {
-            txHex: prevTxHex,
-            value: prevOut.value.toString(),
-            address,
-            output_hash: prevTxId,
-            output_index: input.index,
-            sequence: input.sequence,
-            block_height: null,
+            input: {
+              txHex: prevTxHex,
+              value: prevOut.value.toString(),
+              address,
+              output_hash: prevTxId,
+              output_index: input.index,
+              sequence: input.sequence,
+              block_height: null,
+            } as InputInfo,
+            derivation,
           };
         }),
       );
+
+      inputs = inputsWithDerivations.map(item => item.input);
+      associatedDerivations = inputsWithDerivations.map(item => item.derivation);
     } else {
       inputs = unspentUtxoSelected.map((utxo, index) => {
         return {
@@ -303,14 +319,14 @@ class Xpub {
           block_height: utxo.block_height || null,
         };
       });
-    }
 
-    const associatedDerivations: [number, number][] = unspentUtxoSelected.map((_utxo, index) => {
-      if (!txs[index]) {
-        throw new Error("Invalid index in txs[index]");
-      }
-      return [txs[index]?.account || 0, txs[index]?.index || 0];
-    });
+      associatedDerivations = unspentUtxoSelected.map((_utxo, index) => {
+        if (!txs[index]) {
+          throw new Error("Invalid index in txs[index]");
+        }
+        return [txs[index]?.account || 0, txs[index]?.index || 0];
+      });
+    }
 
     const txSize = maxTxSizeCeil(
       unspentUtxoSelected.length,

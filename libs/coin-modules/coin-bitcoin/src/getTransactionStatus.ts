@@ -140,7 +140,11 @@ export const getTransactionStatus: AccountBridge<
   const amount = useAllAmount ? totalSpent.minus(estimatedFees) : transaction.amount;
   log("bitcoin", `totalSpent ${totalSpent.toString()} amount ${amount.toString()}`);
 
-  if (!errors.amount && !amount.gt(0)) {
+  // For RBF cancel transactions, amount can be 0 (or close to 0) since we're sending back to ourselves
+  // The recipient is the change address, so the effective amount sent externally is 0
+  const isRbfCancel = transaction.replaceTxId && useAllAmount && transaction.recipient === transaction.changeAddress;
+  
+  if (!errors.amount && !amount.gt(0) && !isRbfCancel) {
     errors.amount = useAllAmount ? new NotEnoughBalance() : new AmountRequired();
   }
 

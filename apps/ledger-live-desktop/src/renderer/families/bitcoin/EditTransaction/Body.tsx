@@ -176,6 +176,9 @@ const Body = ({
     parentAccountFromBridge,
   );
 
+  // Don't render until bridge is ready to avoid flashing previous screens
+  // Use invariant for required values but allow rendering with bridgePending
+  // (returning null causes useNavigate context issues in child components)
   invariant(account, "account required");
   invariant(transactionToUpdate, "transactionToUpdate required");
   invariant(transaction, "original transaction required");

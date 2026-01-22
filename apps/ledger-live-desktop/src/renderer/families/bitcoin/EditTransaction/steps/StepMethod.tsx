@@ -17,10 +17,9 @@ import { openURL } from "~/renderer/linking";
 import { TransactionErrorBanner } from "../components/TransactionErrorBanner";
 import { StepProps } from "../types";
 
-const EditTypeWrapper = styled(Box) <{ selected: boolean }>`
+const EditTypeWrapper = styled(Box)<{ selected: boolean }>`
   border: ${p =>
-    `1px solid ${p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.divider
-    }`};
+    `1px solid ${p.selected ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c40}`};
   padding: 20px 16px;
   border-radius: 4px;
   &:hover {
@@ -28,15 +27,13 @@ const EditTypeWrapper = styled(Box) <{ selected: boolean }>`
   }
 `;
 
-const EditTypeHeader = styled(Box) <{ selected: boolean }>`
-  color: ${p =>
-    p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade50};
+const EditTypeHeader = styled(Box)<{ selected: boolean }>`
+  color: ${p => (p.selected ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c70)};
   margin-left: 10px;
 `;
 
-const Description = styled(Box) <{ selected: boolean }>`
-  color: ${p =>
-    p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade50};
+const Description = styled(Box)<{ selected: boolean }>`
+  color: ${p => (p.selected ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c70)};
   margin-top: 5px;
   margin-left: 15px;
   width: 400px;
@@ -180,7 +177,14 @@ export const StepMethodFooter: React.FC<StepProps> = ({
       account: mainAccount,
     });
 
-    updateTransaction(tx => bridge.updateTransaction(tx, patch));
+    // Apply the RBF patch to completely replace the transaction
+    // The patch contains all necessary fields from buildRbfSpeedUpTx/buildRbfCancelTx
+    updateTransaction(tx => {
+      // Start with the current transaction and apply the patch
+      const updated = bridge.updateTransaction(tx, patch);
+      // The patch should contain all fields needed, but ensure we merge properly
+      return updated;
+    });
 
     transitionTo("summary");
   };
