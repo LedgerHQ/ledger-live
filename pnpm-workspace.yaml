@@ -126,3 +126,5 @@ overrides:
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  # Renovate security update: esbuild@0.25.0
+  - esbuild@0.25.0 || 0.25.0 || 0.25.0
