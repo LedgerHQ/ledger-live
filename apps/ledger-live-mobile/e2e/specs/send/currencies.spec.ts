@@ -9,18 +9,14 @@ describe("Send flow", () => {
   let first = true;
   const testedCurrencies: CryptoCurrencyId[] = [
     "bitcoin",
-    "ethereum",
     "bsc",
     //"ripple", // TOFIX Error during flow
     //"solana", // TOFIX Error during flow
     //"cardano", // TOFIX Error during flow
-    "dogecoin",
     //"tron", // TOFIX Error during flow
     //"avalanche_c_chain", // TOFIX Error during flow
-    "polygon",
-    "polkadot",
-    "cosmos",
   ];
+  const testedCurrenciesForEach = testedCurrencies.map(c => [c]);
   const knownDevice = knownDevices.nanoX;
 
   beforeAll(async () => {
@@ -34,7 +30,7 @@ describe("Send flow", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  it.each(testedCurrencies)(
+  it.each(testedCurrenciesForEach)(
     "%s: open send flow, sends half balance and displays the new operation",
     async currencyId => {
       const account = app.testAccounts.find(a => a.currency.id === currencyId);

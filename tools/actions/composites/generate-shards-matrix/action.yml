@@ -68,7 +68,10 @@ runs:
           SHARD_COUNT_IOS=6
           SHARD_COUNT_ANDROID=12
         else
-          SHARD_COUNT=$(( (TEST_COUNT + 14) / 15 ))
+          SHARD_COUNT=$(( (TEST_COUNT + 11) / 12 ))
+          if [ "$SHARD_COUNT" -lt 1 ]; then
+            SHARD_COUNT=1
+          fi
           SHARD_COUNT_IOS=$(( SHARD_COUNT > 3 ? 3 : SHARD_COUNT ))
           SHARD_COUNT_ANDROID=$(( SHARD_COUNT > 12 ? 12 : SHARD_COUNT ))
         fi
