@@ -11,6 +11,8 @@ test.describe("Market Banner", () => {
         enabled: true,
         params: {
           marketBanner: true,
+          graphRework: true,
+          quickActionCtas: true,
         },
       },
     },
