@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "لا توجد مكافآت للمطالبة بها"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "الملاحظة (تسمية الوجهة) طويلة جداً. الحد الأقصى للطول هو {{maxLength}} حرف"
-    },
     "NearNewAccountWarning" : {
       "title" : "حساب المُستلِم لم يتم إنشاؤه بعد. البروتوكول يتطلب تحويل {{formattedNewAccountStorageCost}} لإنشائه."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "يجب أن يكون المبلغ على الأقل {{threshold}}"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "تنسيق الملاحظة خاطئ، يجب أن يكون أقل من 4294967296"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "حجم ملاحظة غير صالح، الحد الأقصى المسموح هو 100 حرفاً"
     },
     "PinNotSet" : {
       "title" : "لم يتم إعداد كود PIN"
@@ -1575,6 +1578,25 @@
     "cta" : "إعداد جهازي Ledger",
     "bannerTitle" : "تلقيت جهازك Ledger؟",
     "bannerCta" : "ابدأ الإعداد",
+    "continue" : "متابعة"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "™{{device}} لا يستطيع التوقيع بوضوح لهذه المعاملة",
+      "subtitle" : "استخدم أي جهاز Ledger آخر للتحقق من تفاصيل هذه المعاملة قبل التوقيع. بدون التوقيع بوضوح، أنت تخاطر بفقدان كل أصولك.",
+      "continue" : "تابع على مسؤوليتك الخاصة"
+    },
+    "info" : {
+      "title" : "اعتباراً من {{date}}، سينتهي دعم {{coinName}} على ™{{device}} عبر ™Ledger Live",
+      "subtitle" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل مزودي خدمات Ledger Live ودعم العملاء الأمثل",
+      "reminder" : "لا تُذكرني مرة أخرى"
+    },
+    "error" : {
+      "title" : "™{{device}} لا يدعم هذه الميزة",
+      "subtitle" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل ميزات Ledger Live الحديثة."
+    },
+    "update" : "اكتشف برنامج الترقية المناسب لك",
+    "learnMore" : "تعرّف على المزيد",
     "continue" : "متابعة"
   },
   "purchaseDevice" : {
@@ -3474,9 +3496,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "تفعيل الإشعارات",
-      "titleVariantB" : "Get the most of Ledger Wallet",
+      "titleVariantB" : "حقِّق أقصى استفادة من Ledger Wallet",
       "desc" : "احصل على آخر المستجدات حول Ledger Wallet ومنتجات Ledger والسوق والتوصيات المخصصة. يُمكنك إلغاء الاشتراك في أي وقت عن طريق الإعدادات",
-      "descVariantB" : "We'll send you personalized tips, setup guides and relevant market news.",
+      "descVariantB" : "سنرسل إليك نصائح مخصصة، وإرشادات إعداد وأخبار السوق ذات الصلة.",
       "allow" : "السماح بالإشعارات",
       "later" : "ربّما في وقت لاحق"
     },
@@ -8082,12 +8104,25 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "قم بترقية Ledger Nano S الخاصة بك إلى جهاز Ledger جديد — مثل Ledger Flex — من أجل المزيد من الذاكرة، وأحدث تحسينات الأمان، وميزات جديدة، وخصم حصري %20. ",
+      "title" : "Upgrade your Ledger Nano S™",
+      "description" : "Get an exclusive 20% off on the latest Ledger signers.",
       "cta" : "ترقية جهاز Ledger الخاص بي"
     },
     "opted_out" : {
-      "description" : "الذاكرة المحدودة في ledger Nano S الخاصة بك تُقيد وصولك إلى أحدث الميزات، ومتغيّرات سلاسل الكتل، وتحسينات الأمان. من أجل الاستخدام على المدى الطويل، قم بالترقية إلى جهاز Ledger أحدث.",
+      "title" : "Upgrade your Ledger Nano S™",
+      "description" : "الذاكرة المحدودة في Ledger Nano S الخاصة بك تُقيد وصولك إلى أحدث الميزات، ومتغيّرات سلاسل الكتل (بلوكتشين)، وتحسينات الأمان.",
       "cta" : "تعرّف على المزيد"
+    }
+  },
+  "marketBanner" : {
+    "title" : "استكشف السوق",
+    "viewAll" : "عرض الكل",
+    "viewAllAccessibilityHint" : "انقر نقراً مزدوجاً لعرض كل أصول السوق",
+    "connectionFailed" : "فشل الاتصال",
+    "errorAccessibilityHint" : "تعذر تحميل بيانات السوق. يُرجى إعادة المحاولة لاحقاً.",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}، {{change}}",
+      "accessibilityHint" : "انقر نقراً مزدوجاً لعرض تفاصيل السوق"
     }
   },
   "largeMover" : {
@@ -8329,6 +8364,28 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "مؤشر الحالة المزاجية",
+    "description" : "مؤشر الحالة المزاجية يشير إلى الحالة العاطفية للسوق. يتراوح بين 0 و 100، حيث تشير القيمة الأقل إلى الخوف الشديد، والقيمة الأعلى إلى الطمع الشديد.",
+    "levels" : {
+      "extremeFear" : "خوف+",
+      "fear" : "خوف",
+      "neutral" : "محايد",
+      "greed" : "طمع",
+      "extremeGreed" : "طمع+"
+    }
+  },
+  "analyticsAllocation" : {
+    "header" : {
+      "main" : "التحليلات"
+    },
+    "allocation" : {
+      "title" : "توزيع الأصول"
+    },
+    "actions" : {
+      "swap" : "مبادلة"
     }
   }
 }
