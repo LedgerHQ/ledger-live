@@ -80,7 +80,7 @@ function View({
   // Get navigation header height. Subtract safe area top because CollapsibleHeaderFlatList
   // already handles safe area via its own SafeAreaView wrapper.
   const fullHeaderHeight = useHeaderHeight();
-  const headerSpacerHeight = fullHeaderHeight - insets.top;
+  const headerSpacerHeight = Math.max(0, fullHeaderHeight - insets.top);
 
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({
     loading,
