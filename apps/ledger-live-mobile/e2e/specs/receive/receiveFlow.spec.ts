@@ -11,6 +11,11 @@ describe("Receive Flow", () => {
     await app.init({
       userdata: "EthAccountXrpAccountReadOnlyFalse",
       knownDevices: [knownDevice],
+      featureFlags: {
+        noah: {
+          enabled: false,
+        },
+      },
     });
     deviceAction = new DeviceAction(knownDevice);
 
