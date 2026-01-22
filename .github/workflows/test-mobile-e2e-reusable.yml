@@ -305,7 +305,7 @@ jobs:
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-turbo-cache: false
-      build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' }}
+      build-android-js: ${{ false }}
       build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
       android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
       android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
@@ -605,62 +605,9 @@ jobs:
       - name: Setup Android Environment
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
 
-      - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
-        with:
-          key: ${{ needs.determine-builds.outputs.android_native_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Download JS Bundle
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
-        with:
-          key: ${{ needs.determine-builds.outputs.android_js_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Prepare APK
-        run: |
-          mkdir -p /tmp/apk/assets
-          mkdir /home/runner/.android/
-          mv ${{ env.ANDROID_JSBUNDLE_PATH }} /tmp/apk/assets/index.android.bundle
-          mv ${{ env.ANDROID_APK_PATH }} /tmp/apk/tmp.apk
-          (cd /tmp/apk/; zip -r tmp.apk assets/index.android.bundle)
-          /usr/local/lib/android/sdk/build-tools/34.0.0/zipalign -p 4 /tmp/apk/tmp.apk ${{ env.ANDROID_APK_PATH }}
-          /usr/local/lib/android/sdk/build-tools/34.0.0/apksigner sign --ks ${{ secrets.ANDROID_KEYSTORE_PATH }} --ks-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --ks-key-alias staging --key-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} ${{ env.ANDROID_APK_PATH }}
 
-      - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        id: setup-caches
-        with:
-          install-proto: true
-          skip-pnpm-cache: "true"
-          skip-turbo-cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-
-      - name: Install dependencies
-        run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
-
-      - name: Detox Post Install
-        run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
-
-      - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm build:llm:deps
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: false
 
       - name: Download android emulator
         timeout-minutes: 10
@@ -711,27 +658,29 @@ jobs:
           echo "ℹ️ Android emulators boot started in background."
         shell: bash
 
-      - name: Setup Speculos image and Coin Apps
-        id: setup-speculos
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
-        with:
-          coinapps_path: ${{ env.COINAPPS }}
-          bot_id: ${{ secrets.GH_BOT_APP_ID }}
-          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - name: Build CLI
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm build:cli
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: false
 
-      - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
-        with:
-          enable_broadcast: ${{ inputs.enable_broadcast }}
-          build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
+      - name: Test scrcpy recording
+        run: |
+          echo "Testing scrcpy with emulator..."
+          # Wait for emulator and list devices
+          adb devices
+          DEVICE=$(adb devices | grep emulator | head -1 | cut -f1)
+          echo "Using device: $DEVICE"
+          
+          # Test scrcpy in record mode with verbose output
+          timeout 10 xvfb-run --auto-servernum scrcpy \
+            --serial "$DEVICE" \
+            --no-window \
+            --no-audio \
+            --video-codec=h264 \
+            --max-size=720 \
+            --record=/tmp/test-video.mp4 \
+            --verbosity=debug 2>&1 || echo "scrcpy test completed (timeout expected)"
+          
+          # Check if video was created
+          ls -la /tmp/test-video.mp4 || echo "No video file created"
+        continue-on-error: true
 
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
