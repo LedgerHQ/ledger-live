@@ -581,33 +581,3 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
     });
   });
 }
-
-export function runSwapNetworkFeesAboveAccountBalanceTest(
-  swap: SwapType,
-  errorMessage: string | RegExp,
-  tmsLinks: string[],
-  tags: string[],
-) {
-  describe(`Swap - Error message when network fees are above account balance (${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name})`, () => {
-    beforeAll(async () => {
-      await app.speculos.setExchangeDependencies(swap);
-      await beforeAllFunction({
-        userdata: "skip-onboarding",
-        speculosApp: AppInfos.EXCHANGE,
-        cliCommandsOnApp: [
-          {
-            app: swap.accountToDebit.currency.speculosApp,
-            cmd: liveDataWithAddressCommand(swap.accountToDebit),
-          },
-          {
-            app: swap.accountToCredit.currency.speculosApp,
-            cmd: liveDataWithAddressCommand(swap.accountToCredit),
-          },
-        ],
-      });
-    });
-
-    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-    tags.forEach(tag => $Tag(tag));
-  });
-}
