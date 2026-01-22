@@ -1,6 +1,6 @@
 name: "[Mobile] E2E Only - Scheduled/Manual"
 run-name: >
-  @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'Schedule' && 'scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ github.ref_name }} • ${{ github.actor }}
+  @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'schedule' && 'Scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ inputs.ref || github.ref_name }} • ${{ github.actor }}
 
 on:
   schedule:
@@ -168,8 +168,8 @@ jobs:
           {
           echo "## Workflow Context"
           echo ""
-          echo "- **Workflow source branch:** ${{ github.workflow_ref }}"
-          echo "- **Triggered branch:** ${{ github.ref_name }}"
+          echo "- **Workflow source branch:** ${{ github.ref_name }}"
+          echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
           echo "- **Commit SHA:** ${{ github.sha }}"
           echo "- **Device selected:** $DEVICE"
           echo "- **Filtered pattern:** $FILTER_PATTERN"
@@ -788,7 +788,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
-          report_path_suffix: ${{ github.event_name == 'schedule' && '' || 'manual' }}
+          report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
@@ -839,7 +839,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts
-          report_path_suffix: ${{ github.event_name == 'schedule' && '' || 'manual' }}
+          report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
