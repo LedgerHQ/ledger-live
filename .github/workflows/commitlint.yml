@@ -1,5 +1,5 @@
 name: "[CI] - Lint Commits - Manual"
-run-name: "@PR • Lint Commits triggered by ${{ inputs.login }} ${{ format('on branch {0}', inputs.ref) }}"
+run-name: "@PR • Lint Commits triggered by ${{ github.event_name == 'pull_request' && github.event.sender.login || inputs.login || 'unknown' }} ${{ format('on branch {0}', github.event_name == 'pull_request' && github.event.pull_request.head.ref || inputs.ref || 'unknown') }}"
 
 on:
   workflow_dispatch:
@@ -30,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || inputs.ref }}
           fetch-depth: 0
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -47,7 +47,7 @@ jobs:
       - name: Lint commits
         run: |
           set -o pipefail
-          pnpm commitlint --from ${{ inputs.from && format('origin/{0}', inputs.from) || 'HEAD^1' }} 2>&1 | tee commitlint.out
+          pnpm commitlint --from ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || (inputs.from && format('origin/{0}', inputs.from) || 'HEAD^1') }} 2>&1 | tee commitlint.out
       - uses: actions/upload-artifact@v4
         name: upload commitlint output
         if: ${{ !cancelled() }}
