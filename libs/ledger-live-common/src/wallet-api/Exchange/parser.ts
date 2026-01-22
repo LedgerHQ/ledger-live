@@ -43,6 +43,17 @@ export type ParseError = {
   customErrorType?: CustomErrorType;
 };
 
+const DRAWER_CLOSED_ERROR_NAME = "DrawerClosedError";
+
+const isDrawerClosedError = (error: Error): boolean => {
+  if (error.name === DRAWER_CLOSED_ERROR_NAME) {
+    return true;
+  }
+
+  const nestedName = (error as { cause?: { name?: string } }).cause?.name;
+  return nestedName === DRAWER_CLOSED_ERROR_NAME;
+};
+
 /**
  * Maps step errors to error constructors
  */
@@ -68,6 +79,11 @@ const ErrorMap: Record<StepError, new (err?: Error) => Error> = {
 export function createStepError({ error, step }: ParseError): Error {
   // If no step specified, return original error
   if (!step) {
+    return error;
+  }
+
+  // Preserve DrawerClosedError so swap cancellations aren't reclassified.
+  if (isDrawerClosedError(error)) {
     return error;
   }
 
