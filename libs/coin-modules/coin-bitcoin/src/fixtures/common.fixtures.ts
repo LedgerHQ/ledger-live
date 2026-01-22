@@ -138,44 +138,6 @@ export const mockSignerContext = <T>(
   fn: (signer: BitcoinSigner) => Promise<T>,
 ): Promise<T> =>
   fn({
-    getWalletXpub: (_arg: { path: string; xpubVersion: number }): Promise<BitcoinXPub> =>
-      Promise.resolve(""),
-    getWalletPublicKey: (
-      _path: string,
-      _opts?: {
-        verify?: boolean;
-        format?: AddressFormat;
-      },
-    ): Promise<BitcoinAddress> => {
-      return Promise.resolve({
-        publicKey: "",
-        bitcoinAddress: "",
-        chainCode: "",
-      });
-    },
-    signMessage: (_path: string, _messageHex: string): Promise<BitcoinSignature> =>
-      Promise.resolve({
-        v: 0,
-        r: "123",
-        s: "456",
-      }),
-    splitTransaction: (
-      _transactionHex: string,
-      _isSegwitSupported: boolean | null | undefined,
-      _hasExtraData: boolean | null | undefined,
-      _additionals: Array<string> | null | undefined,
-    ): SignerTransaction => ({
-      version: Buffer.from(""),
-      inputs: [
-        {
-          prevout: Buffer.from(""),
-          script: Buffer.from(""),
-          sequence: Buffer.from(""),
-        },
-      ],
-    }),
+    ...mockSigner,
     createPaymentTransaction: (_arg: CreateTransaction): Promise<string> => Promise.resolve(""),
-    signPsbtBuffer(_psbtBuffer: Buffer): Promise<{ psbt: Buffer; tx: string }> {
-      return Promise.resolve({ psbt: Buffer.from(""), tx: "" });
-    },
   });
