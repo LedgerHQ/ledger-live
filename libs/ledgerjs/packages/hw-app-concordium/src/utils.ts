@@ -1,0 +1,175 @@
+import { Buffer } from "buffer";
+
+/**
+ * Serializes a map (object) into a Buffer.
+ * @private
+ * @param map The map to serialize
+ * @param encodeSize Function to encode the size (number of keys)
+ * @param encodeKey Function to encode each key
+ * @param encodeValue Function to encode each value
+ * @returns Serialized buffer
+ */
+export function serializeMap<T>(
+  map: Record<string, T>,
+  encodeSize: (size: number) => Buffer,
+  encodeKey: (key: string) => Buffer,
+  encodeValue: (value: T) => Buffer,
+): Buffer {
+  const keys = Object.keys(map);
+  const buffers = [encodeSize(keys.length)];
+  keys.forEach(key => {
+    buffers.push(encodeKey(key));
+    buffers.push(encodeValue(map[key]));
+  });
+  return Buffer.concat(buffers);
+}
+
+/**
+ * Encodes a 8 bit unsigned integer to a Buffer using big endian.
+ * @private
+ * @param value a 8 bit integer
+ * @returns big endian serialization of the input
+ */
+export function encodeWord8(value: number): Buffer {
+  if (value > 255 || value < 0 || !Number.isInteger(value)) {
+    throw new Error("The input has to be a 8 bit unsigned integer but it was: " + value);
+  }
+  return Buffer.from(Buffer.of(value));
+}
+
+/**
+ * Encodes a 16 bit unsigned integer to a Buffer using big endian.
+ * @private
+ * @param value a 16 bit integer
+ * @param useLittleEndian a boolean value, if not given, the value is serialized in big endian.
+ * @returns big endian serialization of the input
+ */
+export function encodeWord16(value: number, useLittleEndian = false): Buffer {
+  if (value > 65535 || value < 0 || !Number.isInteger(value)) {
+    throw new Error("The input has to be a 16 bit unsigned integer but it was: " + value);
+  }
+  const arr = new ArrayBuffer(2);
+  const view = new DataView(arr);
+  view.setUint16(0, value, useLittleEndian);
+  return Buffer.from(new Uint8Array(arr));
+}
+
+/**
+ * Encodes a 32 bit unsigned integer to a Buffer.
+ * @private
+ * @param value a 32 bit integer
+ * @param useLittleEndian a boolean value, if not given, the value is serialized in big endian.
+ * @returns big endian serialization of the input
+ */
+export function encodeWord32(value: number, useLittleEndian = false): Buffer {
+  if (value > 4294967295 || value < 0 || !Number.isInteger(value)) {
+    throw new Error("The input has to be a 32 bit unsigned integer but it was: " + value);
+  }
+  const arr = new ArrayBuffer(4);
+  const view = new DataView(arr);
+  view.setUint32(0, value, useLittleEndian);
+  return Buffer.from(new Uint8Array(arr));
+}
+
+/**
+ * Encodes a 64 bit unsigned integer to a Buffer using big endian.
+ * @private
+ * @param value a 64 bit integer
+ * @param useLittleEndian a boolean value, if not given, the value is serialized in big endian.
+ * @returns big endian serialization of the input
+ */
+export function encodeWord64(value: bigint, useLittleEndian = false): Buffer {
+  if (value > 18446744073709551615n || value < 0n) {
+    throw new Error("The input has to be a 64 bit unsigned integer but it was: " + value);
+  }
+  const arr = new ArrayBuffer(8);
+  const view = new DataView(arr);
+  view.setBigUint64(0, value, useLittleEndian);
+  return Buffer.from(new Uint8Array(arr));
+}
+
+/**
+ * Encodes a string as a Word8 value.
+ * @private
+ * @param value string representation of a number
+ * @returns serialized Word8
+ */
+export function encodeWord8FromString(value: string): Buffer {
+  return encodeWord8(Number(value));
+}
+
+/**
+ * Serializes a public key. The serialization includes the scheme used for the key.
+ * @private
+ * @param key the key to serialize
+ * @returns the serialization of the key
+ */
+export function serializeVerifyKey(key: { schemeId: string; verifyKey: string }): Buffer {
+  enum SchemeId {
+    Ed25519 = 0,
+  }
+  let schemeId: number;
+  if (key.schemeId === "Ed25519") {
+    schemeId = SchemeId.Ed25519;
+  } else {
+    throw new Error(`Unknown key type: ${key.schemeId}`);
+  }
+  const keyBuffer = Buffer.from(key.verifyKey, "hex");
+  const serializedScheme = encodeWord8(schemeId);
+  return Buffer.concat([serializedScheme, keyBuffer]);
+}
+
+/**
+ * Serializes a year and month string.
+ * @private
+ * @param yearMonth year and month formatted as "YYYYMM"
+ * @returns the serialization of the year and month string
+ */
+export function serializeYearMonth(yearMonth: string): Buffer {
+  const year = parseInt(yearMonth.substring(0, 4), 10);
+  const month = parseInt(yearMonth.substring(4, 6), 10);
+  const serializedYear = encodeWord16(year);
+  const serializedMonth = encodeWord8(month);
+  return Buffer.concat([serializedYear, serializedMonth]);
+}
+
+/**
+ * Serializes IdOwnershipProofs to hex string format expected by hardware wallet.
+ * @private
+ * @param proofs the IdOwnershipProofs object to serialize
+ * @returns hex string representation of the serialized proofs
+ */
+export function serializeIdOwnershipProofs(proofs: {
+  sig: string;
+  commitments: string;
+  challenge: string;
+  proofIdCredPub: Record<string, string>;
+  proofIpSig: string;
+  proofRegId: string;
+  credCounterLessThanMaxAccounts: string;
+}): string {
+  const proofIdCredPubEntries = Object.entries(proofs.proofIdCredPub);
+  const proofIdCredPubLength = encodeWord32(proofIdCredPubEntries.length);
+  const idCredPubProofs = Buffer.concat(
+    proofIdCredPubEntries
+      .sort(([indexA], [indexB]) => parseInt(indexA, 10) - parseInt(indexB, 10))
+      .map(([index, value]) => {
+        const serializedIndex = encodeWord32(parseInt(index, 10));
+        const serializedValue = Buffer.from(value, "hex");
+        return Buffer.concat([serializedIndex, serializedValue]);
+      }),
+  );
+
+  const serialized = Buffer.concat([
+    Buffer.from(proofs.sig, "hex"),
+    Buffer.from(proofs.commitments, "hex"),
+    Buffer.from(proofs.challenge, "hex"),
+    proofIdCredPubLength,
+    idCredPubProofs,
+    Buffer.from(proofs.proofIpSig, "hex"),
+    Buffer.from(proofs.proofRegId, "hex"),
+    Buffer.from(proofs.credCounterLessThanMaxAccounts, "hex"),
+  ]);
+
+  return serialized.toString("hex");
+}
