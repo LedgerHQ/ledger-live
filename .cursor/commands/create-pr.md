@@ -16,9 +16,6 @@ $CHANGE_TYPE
 $CHANGE_SCOPE
 > What packages are impacted? (e.g., live-mobile, ledger-live-desktop, @ledgerhq/live-common)
 
-$IMPACT_LEVEL
-> Semver impact level: patch (bugfix) | minor (new feature) | major (breaking change)
-
 $TEST_COVERAGE
 > Are changes covered by tests? yes | no | partial - If not fully covered, explain why.
 
@@ -26,7 +23,7 @@ $QA_FOCUS_AREAS
 > What specific areas should QA focus on when testing this PR?
 
 $HAS_UI_CHANGES
-> Are there visual/UI changes? yes | no - If yes, the PR will open in edit mode for you to add screenshots.
+> Are there visual/UI changes? yes | no - If yes, you will need to edit the PR description to add screenshots.
 
 ## Instructions
 
@@ -46,7 +43,7 @@ npx changeset
 
 # Or create manually in .changeset/ with format:
 # ---
-# "package-name": patch|minor|major
+# "package-name": minor | major
 # ---
 #
 # Description of the change
@@ -93,24 +90,28 @@ Generate the PR body using this template, filled with the provided information:
 
 ### Step 4: Create the Pull Request
 
-```bash
-# Ensure branch is pushed
-git push -u origin HEAD
+First, push the branch:
 
-# Create PR as draft with gh CLI and capture the URL
+```bash
+git push -u origin HEAD
+```
+
+Then create the PR as draft and capture the URL:
+
+```bash
 PR_URL=$(gh pr create --draft --title "{{PR_TITLE}}" --body "$(cat <<'EOF'
 {{GENERATED_PR_BODY}}
 EOF
 )")
-
-echo "PR created: $PR_URL"
-
-# Open the PR in the default browser
-# If UI changes, open in edit mode for easy screenshot upload
-open "$PR_URL"  # or "${PR_URL}/files" to see changes
 ```
 
-**Note**: After creating the PR (as draft), it will automatically open in your default browser.
+Then open the PR in the browser:
+
+```bash
+open "$PR_URL"
+```
+
+**Important**: Always run `open "$PR_URL"` after creating the PR to ensure it opens in the browser. Do NOT skip this step.
 
 **If there are UI changes** (`$HAS_UI_CHANGES` is "yes"):
 1. The PR opens in your browser
@@ -122,11 +123,11 @@ open "$PR_URL"  # or "${PR_URL}/files" to see changes
 
 ### Step 5: Generate Slack Message
 
-After creating the PR, generate a Slack message to share with the team:
+After creating the PR, use the URL from the `gh pr create` output to generate a Slack message:
 
 ```
 :pr-open: {{SLACK_PREFIX}} - {{SHORT_DESCRIPTION}}
-{{PR_URL}}
+<PR_URL from gh pr create output>
 ```
 
 **Slack prefix rules:**
@@ -182,8 +183,7 @@ From CONTRIBUTING.md:
   - `ledger-live-desktop` for desktop app
   - `@ledgerhq/live-common` for common lib
 - Impact levels:
-  - `patch`: Bug fixes, small improvements
-  - `minor`: New features, non-breaking changes
+  - `minor`: New features, bug fixes, non-breaking changes
   - `major`: Breaking changes (rare, requires discussion)
 
 ## Example Output
