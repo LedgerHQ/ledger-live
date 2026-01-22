@@ -33,8 +33,14 @@ fi
 
 echo "Installing $APK"
 
-$ADB install -r $APK
+APP_ID=`"$APKANALYZER" manifest application-id "$APK"`
 
-APP_ID=`$APKANALYZER manifest application-id $APK`
+# Try to install with -r (replace) flag
+if ! "$ADB" install -r "$APK" 2>&1; then
+  echo "Installation failed, likely due to signature mismatch. Uninstalling existing app..."
+  "$ADB" uninstall "$APP_ID" || true
+  echo "Retrying installation..."
+  "$ADB" install "$APK"
+fi
 
-$ADB shell monkey -p $APP_ID 1 &> /dev/null
+"$ADB" shell monkey -p "$APP_ID" 1 &> /dev/null
