@@ -28,7 +28,7 @@ function SearchInputComponent({ search, updateSearch }: Props) {
   }, [search]);
 
   return (
-    <div className="mb-12 pt-4">
+    <div className="mb-12 max-w-[350px] flex-auto pt-4">
       <Search
         autoFocus={false}
         value={inputSearch}
