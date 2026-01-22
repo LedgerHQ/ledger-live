@@ -31,7 +31,10 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
   const getCapitalizedTicker = (item: MarketItemPerformer) => item.ticker.toUpperCase();
 
   return (
-    <div className="flex flex-col overflow-x-scroll" data-testid="trending-assets-list">
+    <div
+      className="flex flex-col overflow-x-scroll [scrollbar-width:none]"
+      data-testid="trending-assets-list"
+    >
       <div className="flex items-center gap-8">
         <FearAndGreed />
         {items.map(item => (
@@ -48,8 +51,8 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
             />
             <TileContent>
               <TileTitle>{getCapitalizedTicker(item)}</TileTitle>
+              <PerformanceIndicator value={item} />
             </TileContent>
-            <PerformanceIndicator value={item} />
           </Tile>
         ))}
         <ViewAllTile />

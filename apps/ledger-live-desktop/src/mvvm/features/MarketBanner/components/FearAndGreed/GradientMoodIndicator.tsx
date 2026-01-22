@@ -59,7 +59,7 @@ export const GradientMoodIndicator = ({ value }: { value: number }) => {
         strokeLinecap="round"
       />
       {/* White indicator circle */}
-      <circle cx={circleX} cy={circleY} r="4" fill="white" stroke="#E0E0E0" strokeWidth="1" />
+      <circle cx={circleX} cy={circleY} r="4" fill="white" stroke="black" strokeWidth="1" />
       {/* Value text in the center */}
       <text
         x={centerX}
