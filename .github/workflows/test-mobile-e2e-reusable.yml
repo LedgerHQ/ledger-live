@@ -168,7 +168,7 @@ jobs:
           {
           echo "## Workflow Context"
           echo ""
-          echo "- **Workflow source branch:** ${{ github.workflow_ref }}"
+          echo "- **Workflow source branch:** ${{ github.ref_name }}"
           echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
           echo "- **Commit SHA:** ${{ github.sha }}"
           echo "- **Device selected:** $DEVICE"
