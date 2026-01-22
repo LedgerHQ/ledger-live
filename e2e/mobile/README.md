@@ -56,24 +56,20 @@ Follow the full wiki if you need setup details.
 ### 5. Run Tests
 - Run all tests:
 ```bash
-cd e2e/mobile
-
 # iOS
-pnpm run test:ios
+pnpm e2e:mobile test:ios:debug
 
 # Android
-pnpm run test:android
+pnpm e2e:mobile test:android:debug
 ```
 
 - Run a single test file:
 ```bash
-cd e2e/mobile
-
 # iOS
-pnpm run test:ios <testFileName>
+pnpm e2e:mobile test:ios:debug <testFileName>
 
 # Android
-pnpm run test:android <testFileName>
+pnpm e2e:mobile test:android:debug <testFileName>
 ```
 > For CI, sharding, and advanced flags, see [the full wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:End-to-end-testing).
 
