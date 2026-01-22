@@ -394,13 +394,6 @@ jobs:
             echo "🛫 Booting simulator..."
             xcrun simctl boot "iOS Simulator" || true
             xcrun simctl bootstatus "iOS Simulator"
-            echo "✅ Simulator is now fully booted"
-            xcrun simctl boot "iOS Simulator 2" || true
-            xcrun simctl bootstatus "iOS Simulator 2"
-            echo "✅ Simulator 2 is now fully booted"
-            xcrun simctl boot "iOS Simulator 3" || true
-            xcrun simctl bootstatus "iOS Simulator 3"
-            echo "✅ Simulator 3 is now fully booted"
           ' > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Simulator boot started in background."
         shell: bash
@@ -525,13 +518,6 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           echo "status_${{ matrix.shard }}=${{ steps.run-ios.outcome }}" >> $GITHUB_OUTPUT
-
-      - name: Delete iOS Simulators
-        if: always()
-        run: |
-          xcrun simctl delete "iOS Simulator 2"
-          xcrun simctl delete "iOS Simulator 3"
-          xcrun simctl list devices | grep 'iOS Simulator' | awk -F '[()]' '{print $2}' | xargs -I {} sh -c 'echo "Deleting simulator: {}"; xcrun simctl delete {} || echo "Failed to delete: {}"'
 
 #  detox-tests-android:
 #    name: Android E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
