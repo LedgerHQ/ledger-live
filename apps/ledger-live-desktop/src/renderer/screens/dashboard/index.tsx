@@ -27,7 +27,6 @@ import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import SwapWebViewEmbedded from "./components/SwapWebViewEmbedded";
 import BannerSection from "./components/BannerSection";
-import MarketBanner from "LLD/features/MarketBanner";
 import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
 import Portfolio from "LLD/features/Portfolio";
 
@@ -89,8 +88,7 @@ export default function DashboardPage() {
             hasExchangeBannerCTA={!!portfolioExchangeBanner?.enabled}
           />
           <Flex flexDirection="column" rowGap={32}>
-            {shouldDisplayMarketBanner ? <MarketBanner /> : null}
-            {shouldDisplayMarketBanner && <MarketBannerFeature />}
+            {shouldDisplayMarketBanner && __DEV__ && <MarketBannerFeature />}
             <Box flow={7} id="portfolio-container" data-testid="portfolio-container">
               {!hasInstalledApps ? (
                 <EmptyStateInstalledApps />

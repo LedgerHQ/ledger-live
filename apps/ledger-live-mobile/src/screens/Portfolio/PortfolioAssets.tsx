@@ -145,7 +145,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
       </Box>
       <MarketBanner />
 
-      {shouldDisplayMarketBanner && (
+      {shouldDisplayMarketBanner && __DEV__ && (
         <Box my={24}>
           <MarketBannerFeature />
         </Box>
