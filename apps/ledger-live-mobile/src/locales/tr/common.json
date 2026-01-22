@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Alınacak hiçbir ödül yok"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Memo çok uzun Uzunluk en fazla {{maxLength}} karakter olmalıdır"
-    },
     "NearNewAccountWarning" : {
       "title" : "Alıcı hesabı henüz oluşturulmadı. Bu protokol, alıcı hesabı oluşturmak için {{formattedNewAccountStorageCost}} tutarında bir aktarım yapılmasını gerektiriyor."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "Tutarın en az {{threshold}} olması gerekiyor"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "Memo formatı yanlış, 4294967296’dan küçük olmalıdır"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "Geçersiz memo boyutu, en fazla 100 karaktere izin verilir"
     },
     "PinNotSet" : {
       "title" : "PIN kodu belirlenmedi"
@@ -1577,6 +1580,25 @@
     "bannerCta" : "Kurulumu başlatın",
     "continue" : "Devam"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™, bu işlemde Şeffaf İmzalama gerçekleştiremez",
+      "subtitle" : "İmzalamadan önce bu işlemin ayrıntılarını doğrulamak için başka herhangi bir Ledger cihazı kullanın. Şeffaf İmzalama olmadan tüm varlıklarınızı kaybetme riskini alırsınız.",
+      "continue" : "İşleme devam ettiğiniz takdirde sorumluluk size aittir"
+    },
+    "info" : {
+      "title" : "{{date}} tarihinden itibaren, {{device}}™ cihazında Ledger Live™ üzerinden sağlanan {{coinName}} desteği sona erecektir",
+      "subtitle" : "Tüm Ledger Live sağlayıcılarına ve optimum müşteri desteğine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin",
+      "reminder" : "Tekrar hatırlatma"
+    },
+    "error" : {
+      "title" : "{{device}}™ bu özelliği desteklemiyor",
+      "subtitle" : "En yeni Ledger Live özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin."
+    },
+    "update" : "Model Yükseltme Programınızı keşfedin",
+    "learnMore" : "Daha fazla bilgi",
+    "continue" : "Devam"
+  },
   "purchaseDevice" : {
     "pageTitle" : "Cihaz Satın Alın",
     "debugDrawers" : {
@@ -1876,7 +1898,7 @@
             "label" : "Ekrandaki yönergeleri okuyarak cihazınızı nasıl kullanacağınızı öğrenin."
           },
           "2" : {
-            "title" : "“Yeni cihaz olarak kur” seçeneğini onaylayın",
+            "title" : "“Set up as new device” (Yeni cihaz olarak kur) seçeneğini onaylayın",
             "label" : "Seçimi onaylamak için her iki tuşa da aynı anda basın."
           },
           "3" : {
@@ -4845,7 +4867,7 @@
       "all" : "Tümü",
       "installed" : "Uygulamalar",
       "not_installed" : "Yüklenmemiş",
-      "supported" : "Ledger Wallet destekleniyor",
+      "supported" : "Ledger Wallet desteği",
       "updatable" : "Güncellenebilir",
       "apply" : "Uygula"
     },
@@ -8082,12 +8104,25 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Daha fazla bellek, en son güvenlik güncellemeleri, yeni özellikler ve %20 oranında özel bir indirim için Ledger Nano S cihazınızın modelini Ledger Flex gibi daha yeni bir Ledger modeline yükseltin. ",
+      "title" : "Upgrade your Ledger Nano S™",
+      "description" : "Get an exclusive 20% off on the latest Ledger signers.",
       "cta" : "Ledger modelimi yükselt"
     },
     "opted_out" : {
-      "description" : "Ledger Nano S cihazınızdaki sınırlı bellek en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar. Uzun vadeli kullanım için daha yeni bir Ledger cihazına model yükseltin.",
+      "title" : "Upgrade your Ledger Nano S™",
+      "description" : "Ledger Nano S cihazınızdaki sınırlı bellek; en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar.",
       "cta" : "Daha fazla bilgi"
+    }
+  },
+  "marketBanner" : {
+    "title" : "Piyasayı keşfedin",
+    "viewAll" : "Tümünü gör",
+    "viewAllAccessibilityHint" : "Piyasadaki tüm varlıkları görüntülemek için çift dokunun",
+    "connectionFailed" : "Bağlantı başarısız oldu",
+    "errorAccessibilityHint" : "Unable to load market data. Please try again later.",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "Piyasa bilgilerini görüntülemek için çift dokunun"
     }
   },
   "largeMover" : {
@@ -8329,6 +8364,28 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "Mood index",
+    "description" : "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+    "levels" : {
+      "extremeFear" : "Fear+",
+      "fear" : "Fear",
+      "neutral" : "Neutral",
+      "greed" : "Greed",
+      "extremeGreed" : "Greed+"
+    }
+  },
+  "analyticsAllocation" : {
+    "header" : {
+      "main" : "Analiz"
+    },
+    "allocation" : {
+      "title" : "Varlık Dağılımı"
+    },
+    "actions" : {
+      "swap" : "Takas et"
     }
   }
 }
