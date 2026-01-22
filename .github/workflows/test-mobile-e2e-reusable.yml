@@ -391,6 +391,10 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
+      - name: Install scrcpy
+        run: |
+          brew install scrcpy
+
       - name: Boot iOS Simulator in Background
         run: |
           LOG_FILE="e2e/mobile/artifacts/simulator-boot.log"
@@ -584,6 +588,10 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Install scrcpy
+        run: |
+          sudo apt-get install -y scrcpy
 
       - name: Set shard test files from pre-computed matrix
         run: |
