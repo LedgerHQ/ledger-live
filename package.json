@@ -282,7 +282,8 @@
       "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch",
       "@testing-library/react-native@13.3.3": "patches/@testing-library__react-native@13.3.3.patch",
       "styled-components@6.1.19": "patches/styled-components@6.1.19.patch",
-      "react-native@0.79.7": "patches/react-native@0.79.7.patch"
+      "react-native@0.79.7": "patches/react-native@0.79.7.patch",
+      "detox-allure2-adapter@1.0.0-alpha.42": "patches/detox-allure2-adapter@1.0.0-alpha.42.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

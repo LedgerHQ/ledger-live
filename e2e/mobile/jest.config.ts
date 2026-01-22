@@ -22,7 +22,6 @@ function pathsToModuleNameMapper(
 
   return jestPaths;
 }
-import { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
 import {
   getDeviceFirmwareVersion,
   getSpeculosModel,
@@ -53,6 +52,9 @@ const jestAllure2ReporterOptions: ReporterOptions = {
   }),
 };
 
+import type { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
+
+// Video recording is handled by patched detox-allure2-adapter via DETOX_ENABLE_VIDEO env var in globalSetup
 const detoxAllure2AdapterOptions: DetoxAllure2AdapterOptions = {
   deviceLogs: false,
   deviceScreenshots: false,
