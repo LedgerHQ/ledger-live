@@ -231,6 +231,7 @@ GEM
     naturally (2.3.0)
     netrc (0.11.0)
     nkf (0.2.0)
+    openssl (4.0.0)
     optparse (0.6.0)
     os (1.1.4)
     plist (3.7.2)
@@ -295,6 +296,7 @@ DEPENDENCIES
   fastlane (~> 2.228.0)
   fastlane-plugin-load_json
   fastlane-plugin-versioning_android
+  openssl (~> 4.0)
   semver2 (~> 3.4, >= 3.4.2)
   xcodeproj (< 1.26.0)
 
