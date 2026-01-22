@@ -17,7 +17,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import type { SendFundsNavigatorStackParamList } from "./types/SendFundsNavigator";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import SendWorkflow from "LLM/features/Send";
+import SendWorkflow from "~/mvvm/features/SendInitial";
 
 const totalSteps = "5";
 
