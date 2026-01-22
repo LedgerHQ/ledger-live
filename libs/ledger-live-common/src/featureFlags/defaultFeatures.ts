@@ -117,7 +117,9 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyMonadTestnet: DEFAULT_FEATURE,
   currencySomnia: DEFAULT_FEATURE,
   currencyZeroGravity: DEFAULT_FEATURE,
-  currencyConcordium: DEFAULT_FEATURE,
+  currencyConcordium: {
+    enabled: true,
+  },
   currencyConcordiumTestnet: DEFAULT_FEATURE,
 };
 

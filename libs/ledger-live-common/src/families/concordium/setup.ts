@@ -3,6 +3,7 @@ import { createBridges } from "@ledgerhq/coin-concordium/bridge/index";
 import concordiumResolver from "@ledgerhq/coin-concordium/signer";
 import type { ConcordiumCoinConfig } from "@ledgerhq/coin-concordium/types";
 import { ConcordiumAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-concordium/types";
+import makeCliTools from "@ledgerhq/coin-concordium/test/cli";
 import Concordium from "@ledgerhq/hw-app-concordium";
 import Transport from "@ledgerhq/hw-transport";
 import { getEnv } from "@ledgerhq/live-env";
@@ -30,7 +31,6 @@ const bridge: Bridge<Transaction, ConcordiumAccount, TransactionStatus> = getEnv
 
 const resolver: Resolver = createResolver(createSigner, concordiumResolver);
 
-// TODO: Add CLI tools when available
-const cliTools = undefined;
+const cliTools = makeCliTools();
 
 export { bridge, cliTools, resolver };

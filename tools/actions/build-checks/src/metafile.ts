@@ -189,3 +189,4 @@ export function getMetafileFormat(metafile: Metafile): "rspack" | "esbuild" | "u
   if (isEsbuildMetafile(metafile)) return "esbuild";
   return "unknown";
 }
+
