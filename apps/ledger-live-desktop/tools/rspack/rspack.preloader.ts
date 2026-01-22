@@ -27,23 +27,6 @@ export function createPreloaderConfig(
         type: "commonjs2",
       },
     },
-    resolve: {
-      ...commonConfig.resolve,
-      // Help rspack find modules in pnpm's node_modules structure
-      modules: [
-        path.resolve(rootFolder, "node_modules"),
-        path.resolve(rootFolder, "..", "..", "node_modules"),
-        "node_modules",
-      ],
-      symlinks: true,
-      alias: {
-        ...commonConfig.resolve?.alias,
-        // Help rspack resolve @protobuf-ts/runtime from desktop's node_modules
-        // This is needed because pnpm's strict dependency isolation prevents
-        // rspack from resolving transitive dependencies within @concordium/web-sdk
-        "@protobuf-ts/runtime": path.resolve(rootFolder, "node_modules", "@protobuf-ts", "runtime"),
-      },
-    },
     devtool: "source-map",
     plugins: [
       new rspack.DefinePlugin({

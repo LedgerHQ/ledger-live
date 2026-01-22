@@ -49,7 +49,6 @@ interface Window {
     appLoaded: () => void;
     reloadRenderer: () => void;
     openWindow: (id: number) => void;
-    grpc: any;
   };
 
   // for debugging purposes

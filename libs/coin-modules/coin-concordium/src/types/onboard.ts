@@ -1,10 +1,5 @@
-import type {
-  HexString,
-  CredentialDeploymentTransaction as WebSDKCredentialDeploymentTransaction,
-} from "@ledgerhq/concordium-sdk-adapter";
-import type { SessionTypes, ISignClient } from "@walletconnect/types";
+import type { CredentialDeploymentTransaction as WebSDKCredentialDeploymentTransaction } from "@ledgerhq/concordium-sdk-adapter";
 import { AccountOnboardStatus } from "@ledgerhq/types-live";
-import type { ConcordiumNetwork } from "./config";
 import { ConcordiumAccount } from "./bridge";
 
 export { AccountOnboardStatus };
@@ -144,36 +139,4 @@ export interface IDAppCreateAccountResponseMessage {
 export interface IDAppCreateAccountResponse {
   status: IDAppResponseStatus;
   message: IDAppCreateAccountResponseMessage | IDAppError;
-}
-
-/**
- * Type representing WalletConnect SignClient
- * Using ISignClient from @walletconnect/types which is CommonJS-compatible
- */
-export type SignClient = ISignClient;
-
-/**
- * WalletConnect context interface for Concordium onboarding
- * This allows the bridge layer to use WalletConnect without directly importing renderer services
- */
-export interface ConcordiumWalletConnectContext {
-  getClient(): Promise<SignClient>;
-
-  isSessionValid(session: SessionTypes.Struct): boolean;
-
-  getSession(network: ConcordiumNetwork): Promise<SessionTypes.Struct | null>;
-
-  disconnectAllSessions(): Promise<void>;
-
-  getCreateAccountMessage(publicKey: string, reason: string): IDAppCreateAccountMessage;
-
-  requestCreateAccount(params: IDAppCreateAccountParams): Promise<IDAppCreateAccountResponse>;
-
-  initiatePairing(
-    network: ConcordiumNetwork,
-    chainId: string,
-  ): Promise<{
-    uri?: string;
-    approval: () => Promise<SessionTypes.Struct>;
-  }>;
 }

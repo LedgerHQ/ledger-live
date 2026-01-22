@@ -4,7 +4,11 @@ import {
   ConcordiumPairingProgress,
   ConcordiumPairingStatus,
 } from "@ledgerhq/coin-concordium";
-import { setWalletConnect } from "@ledgerhq/coin-concordium/network/walletConnect";
+import {
+  setWalletConnect,
+  ConcordiumWalletConnect,
+  clearWalletConnect,
+} from "@ledgerhq/coin-concordium/network/walletConnect";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
@@ -24,7 +28,6 @@ import Modal from "~/renderer/components/Modal";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { concordiumWalletConnect } from "../services/walletConnect";
 import ConnectDeviceScreen from "./components/ConnectDeviceScreen";
 import StepCreate, { StepCreateFooter } from "./steps/StepCreate";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
@@ -170,6 +173,7 @@ class OnboardModal extends PureComponent<Props, State> {
     walletConnectUri: null,
   };
 
+  concordiumWalletConnect: ConcordiumWalletConnect | null = null;
   concordiumBridge: ConcordiumCurrencyBridge | null = null;
   pairingSubscription: Subscription | null = null;
   onboardingSubscription: Subscription | null = null;
@@ -209,7 +213,7 @@ class OnboardModal extends PureComponent<Props, State> {
   }
 
   componentDidMount() {
-    setWalletConnect(concordiumWalletConnect);
+    this.concordiumWalletConnect = setWalletConnect();
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -233,8 +237,9 @@ class OnboardModal extends PureComponent<Props, State> {
     this.clearStepTransitionTimeout();
     this.clearPairingSubscription();
     this.clearOnboardingSubscription();
-    concordiumWalletConnect.disconnectAllSessions();
-    setWalletConnect(null);
+    this.concordiumWalletConnect?.disconnectAllSessions();
+    clearWalletConnect();
+    this.concordiumWalletConnect = null;
   }
 
   transitionTo = (stepId: StepId) => this.setState({ stepId });
@@ -261,7 +266,7 @@ class OnboardModal extends PureComponent<Props, State> {
   };
 
   handleDeviceReconnection = async () => {
-    await concordiumWalletConnect.disconnectAllSessions();
+    await this.concordiumWalletConnect?.disconnectAllSessions();
 
     this.setState({
       isPairing: false,
@@ -332,7 +337,7 @@ class OnboardModal extends PureComponent<Props, State> {
             return;
           }
 
-          concordiumWalletConnect.disconnectAllSessions();
+          this.concordiumWalletConnect?.disconnectAllSessions();
 
           this.setState({
             error,
