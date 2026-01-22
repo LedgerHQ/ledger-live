@@ -282,11 +282,13 @@
     "advanced" : "Avancé",
     "custom" : "Personnalisé",
     "fast" : "Rapide",
+    "networkFees" : "Frais de réseau",
     "high" : "Élevé",
     "low" : "Bas",
     "slow" : "Lent",
     "standard" : "Standard",
     "medium" : "Moyen",
+    "coinControl" : "Contrôle des coins",
     "feesAmount" : "Montant des frais"
   },
   "sidebar" : {
@@ -650,134 +652,6 @@
         "placeholder" : "Token"
       },
       "submit" : "Connecter"
-    }
-  },
-  "fullNode" : {
-    "status" : "Statut",
-    "connect" : "Connecter",
-    "disconnect" : "Déconnecter",
-    "checkNodeSettings" : "Vérifier les paramètres du nœud",
-    "edit" : "Modifier",
-    "modal" : {
-      "title" : "Connecter un nœud Bitcoin complet",
-      "disconnectTitle" : "Déconnecter le nœud complet",
-      "steps" : {
-        "landing" : {
-          "header" : "Démarrez votre nœud. Don’t trust, verify.",
-          "description" : "Un nœud Bitcoin valide toutes les transactions et tous les blocs. Il vous permet d’utiliser Bitcoin en vous passant des tiers de confiance tout en contribuant au réseau Bitcoin.",
-          "list" : {
-            "item1" : "Configurez Bitcoin Core sur un appareil ayant des ressources suffisantes.",
-            "item2" : "Attendez que votre nœud soit complètement synchronisé.",
-            "item3" : "Notez bien les identifiants RPC, l’adresse IP et le numéro de port de votre nœud."
-          },
-          "disclaimer" : "Pour exécuter un nœud complet, il faut un ordinateur disposant de ressources suffisantes et une connexion haut débit sans limitation de données."
-        },
-        "node" : {
-          "title" : "Nœud",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "Entrer les paramètres du nœud",
-              "disclaimer" : "Votre nœud doit être entièrement synchronisé avant de connecter Ledger Wallet.",
-              "fields" : {
-                "nodeHost" : {
-                  "title" : "Hôte",
-                  "tooltip" : "Laissez les valeurs par défaut si le nœud s’exécute sur cet ordinateur. Dans le cas contraire, remplacez l’adresse IP et le numéro de port du nœud."
-                },
-                "rpcCredentials" : {
-                  "title" : "Identifiants RPC",
-                  "tooltip" : "Entrez les nom d’utilisateur et mot de passe RPC de votre nœud. Ils se trouvent dans le fichier bitcoin.conf.",
-                  "usernamePlaceholder" : "Nom d’utilisateur",
-                  "passwordPlaceholder" : "Mot de passe"
-                },
-                "tls" : {
-                  "title" : "Utiliser TLS",
-                  "tooltip" : "Activez le protocole Transport Layer Security (TLS) lorsque vous utilisez par exemple une solution de nœud hébergé."
-                }
-              }
-            },
-            "connecting" : {
-              "header" : "Test de la connexion du nœud",
-              "description" : "Veuillez patienter pendant que nous vérifions si votre nœud complet répond."
-            },
-            "success" : {
-              "header" : "Connexion du nœud complet réussie",
-              "description" : "Vous pouvez maintenant configurer votre nœud complet pour rechercher vos comptes sur la blockchain."
-            },
-            "failure" : {
-              "header" : "Nœud complet inaccessible",
-              "description" : "Merci de vous assurer que votre nœud est entièrement synchronisé et vérifier ses paramètres de connexion."
-            }
-          }
-        },
-        "device" : {
-          "title" : "Appareil",
-          "connectionSteps" : {
-            "pending" : {
-              "header" : "Récupération des comptes depuis l’appareil",
-              "description" : "Merci de patienter pendant que les comptes à rechercher sont ajoutés au fichier de configuration du nœud."
-            },
-            "success" : {
-              "header" : "Comptes ajoutés à la configuration du nœud",
-              "description" : "Un fichier de configuration a été sauvegardé dans le dossier de données utilisateur. Il permet à l’application Ledger SatStack de se connecter à votre nœud complet et de rechercher vos comptes sur la blockchain.",
-              "cta" : "Voir les données utilisateur"
-            }
-          }
-        },
-        "accounts" : {
-          "title" : "Comptes",
-          "existing" : "Comptes à rechercher",
-          "toScan" : "Comptes à rechercher",
-          "toScanDescription" : "Comptes à rechercher pour chaque type d’adresse",
-          "toScanTooltip" : "Augmentez seulement si vous avez plus de 10 comptes BTC. La recherche initiale sera plus lente. "
-        },
-        "satstack" : {
-          "title" : "SatStack",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "Téléchargez et exécutez Ledger SatStack.",
-              "description" : "Ledger SatStack est une application qui permet à Ledger Wallet de parler à votre nœud. Veuillez la télécharger et l’exécuter avant de continuer.",
-              "disclaimer" : "SatStack doit être en cours d'exécution pour que Ledger Wallet se connecte à votre nœud complet.  Il peut être pratique de le configurer pour qu’il se lance automatiquement au démarrage de votre ordinateur.",
-              "cta" : "Télécharger SatStack"
-            },
-            "satstack-disconnected" : {
-              "header" : "SatStack inaccessible",
-              "description" : "Merci de vérifier que SatStack s’exécute sur cet ordinateur."
-            },
-            "satstack-outdated" : {
-              "header" : "Merci de mettre à jour SatStack",
-              "description" : "La version de SatStack que vous utilisez est trop ancienne et peut renfermer des bugs ou des incompatibilités."
-            },
-            "node-disconnected" : {
-              "header" : "Nœud complet inaccessible",
-              "description" : "Merci de vérifier que votre nœud est joignable et que les paramètres de connexion que vous avez saisis sont corrects."
-            },
-            "invalid-chain" : {
-              "header" : "Titre de la chaîne invalide",
-              "description" : "Description de chaîne invalide pour l’infobulle"
-            },
-            "initializing" : {
-              "header" : "Chargement",
-              "description" : ""
-            },
-            "ready" : {
-              "header" : "Prêt",
-              "description" : "Le nœud complet est entièrement synchronisé. Les soldes de vos comptes Bitcoin sont maintenant corrects."
-            },
-            "syncing" : {
-              "header" : "Synchronisation du nœud en cours…",
-              "description" : "Les transactions récentes peuvent ne pas encore être visibles. Les soldes des comptes Bitcoin peuvent donc être incorrects. Si possible, exécutez votre nœud en continu pour le garder à jour."
-            },
-            "scanning" : {
-              "header" : "Recherche du compte en cours...",
-              "description" : "Vous pouvez ajouter vos comptes une fois la recherche de compte effectuée. Tous les comptes Bitcoin précédemment ajoutés par les explorateurs de Ledger ont été supprimés."
-            }
-          }
-        },
-        "disconnect" : {
-          "cta" : "Déconnecter",
-          "description" : "Voulez-vous vraiment le déconnecter ? La déconnexion du nœud supprimera tous les comptes Bitcoin. Vous pouvez à nouveau ajouter vos comptes en utilisant les explorateurs de Ledger."
-        }
-      }
     }
   },
   "account" : {
@@ -1605,35 +1479,26 @@
         "primaryCta" : "Connecter mon appareil",
         "secondaryCta" : "Plus tard"
       }
-    },
-    "marketPerformanceWidget" : {
-      "title" : "Tendance - {{time}}",
-      "buy" : "Acheter",
-      "swap" : "Échanger",
-      "gainers" : "Hausses",
-      "losers" : "Baisses",
-      "error" : {
-        "title" : "Échec du chargement de la tendance",
-        "description" : "Veuillez réessayer plus tard."
-      },
-      "missingData" : {
-        "gainers" : {
-          "title" : "Aucun actif parmi les {{count}} premiers n’a enregistré de hausse en {{trend}}. ",
-          "description" : "Jetez un œil au Top des baisses ou revenez plus tard"
-        },
-        "losers" : {
-          "title" : "Aucun actif parmi les {{count}} premiers n’a enregistré de perte en {{trend}}",
-          "description" : "Jetez un œil au Top des hausses ou revenez plus tard"
-        }
-      },
-      "trend" : {
-        "day" : "24 heures ",
-        "week" : "7 jours",
-        "month" : "30 jours",
-        "year" : "an",
-        "all" : "an"
-      }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "Le {{device}}™ ne peut pas signer cette transaction en clair",
+      "subtitle" : "Utilisez un autre appareil Ledger pour vérifier les détails de cette transaction avant de la signer. Sans la signature en clair, vous risquez de perdre tous vos actifs.",
+      "continue" : "Continuer malgré les risques"
+    },
+    "info" : {
+      "title" : "Fin de la prise en charge de {{coinName}} par le {{device}}™ via Ledger Live™ à compter du {{date}}",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder à tous les prestataires de services Ledger Live et de bénéficier d’une expérience optimale.",
+      "reminder" : "Ne plus me le rappeler"
+    },
+    "error" : {
+      "title" : "Le {{device}}™ ne prend pas en charge cette fonctionnalité",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder aux dernières fonctionnalités de Ledger Live."
+    },
+    "update" : "Découvrir la gamme",
+    "learnMore" : "En savoir plus",
+    "continue" : "Continuer"
   },
   "currentAddress" : {
     "title" : "Adresse actuelle",
@@ -1681,6 +1546,7 @@
     "currency" : "Devise",
     "rangeLabel" : "Période",
     "goBack" : "Retour",
+    "searchPlaceholder" : "Rechercher un actif",
     "filters" : {
       "title" : "Filtres",
       "show" : "Afficher",
@@ -1786,8 +1652,6 @@
       "import" : "Comptes",
       "finish" : "Confirmation"
     },
-    "fullNodeReadyInfo" : "Les comptes seront ajoutés en utilisant votre nœud Bitcoin.",
-    "fullNodeConfigure" : "Configurer le nœud",
     "tokensTip" : "{{token}} ({{ticker}}) est un token {{tokenType}}.\n Vous pouvez recevoir ces tokens directement sur un compte {{currency}}.",
     "accountToImportSubtitle_other" : "Ajouter des comptes",
     "selectAll" : "Sélectionner tout ({{count}})",
@@ -2518,9 +2382,26 @@
     "amountToSend" : "Montant à envoyer ({{currency}})",
     "coinToSend" : "Crypto à envoyer",
     "coinControlCustom" : "Sélection personnalisée",
+    "quickActions" : {
+      "quarter" : "25%",
+      "half" : "50%",
+      "threeQuarters" : "75%",
+      "max" : "Max"
+    },
+    "reviewCta" : "Vérifier",
+    "getCta" : "Acheter des {{currency}}",
+    "switchInputMode" : "Changer le mode de saisie du montant",
     "aboveMaximum" : "Solde maximal dépassé",
     "transactionSigned" : "Transaction signée",
-    "processingTransaction" : "Transaction en cours de traitement"
+    "processingTransaction" : "Transaction en cours de traitement",
+    "sign" : {
+      "title" : "Continuez sur votre Ledger {{wording}}",
+      "description" : "Consultez les instructions sur son écran tactile sécurisé."
+    },
+    "gasOptionsSync" : {
+      "warningTitle" : "Échec de l’actualisation des frais de réseau",
+      "warningDescription" : "Les frais prédéfinis peuvent ne plus être à jour."
+    }
   },
   "releaseNotes" : {
     "title" : "Notes de publication",
@@ -2531,7 +2412,7 @@
     "myLedgerServices" : "Services My Ledger (scriptrunner)",
     "bitcoinExplorers" : "Explorateurs Bitcoin",
     "ethereumExplorers" : "Explorateurs Ethereum",
-    "countervaluesApi" : "API devises de contrepartie",
+    "countervaluesApi" : "API Devises de contrepartie",
     "announcements" : "Annonces",
     "status" : "Statut",
     "test" : "TEST",
@@ -4572,9 +4453,7 @@
       "walletSyncDescription" : "Gardez votre portefeuille à jour, même en changeant d’ordinateur ou sur téléphone.",
       "mevProtection" : "Protection MEV",
       "mevProtectionDesc" : "Activez la protection contre la MEV pour des transactions plus fiables sur Ethereum.",
-      "mevProtectionLearnMore" : "Avis de confidentialité",
-      "marketPerformanceWidget" : "Widget de suivi du marché",
-      "marketPerformanceWidgetDesc" : "Activez cette fonctionnalité pour afficher sur la page Portefeuille le Top des hausses et le Top des baisses sur une période choisie."
+      "mevProtectionLearnMore" : "Avis de confidentialité"
     },
     "developer" : {
       "search" : "Rechercher",
@@ -4704,6 +4583,15 @@
         "debugDialog" : "Débugger le Dialog",
         "debugDuplicates" : "Débugger les doublons"
       },
+      "walletFeaturesDevTool" : {
+        "title" : "Wallet Features Dev Tool",
+        "description" : "Toggle Wallet 4.0 features for desktop (lwdWallet40 feature flag).",
+        "enableAll" : "Enable All",
+        "disableAll" : "Disable All",
+        "featureParameters" : "Feature Parameters",
+        "showJson" : "Show JSON",
+        "hideJson" : "Hide JSON"
+      },
       "cryptoAssetsList" : {
         "title" : "Liste de crypto-actifs (CAL)",
         "description" : "Avec le service de Liste de crypto-actifs (CAL), parcourez et gérez les crypto-actifs.",
@@ -4716,7 +4604,7 @@
           "selectFamily" : "Sélectionner une blockchain",
           "pageSize" : "Taille page",
           "useStaging" : "Utiliser l’environnement staging",
-          "useStagingDesc" : "Utiliser l’environnement staging au lieu de l’environnement de production.",
+          "useStagingDesc" : "Utilisez l’environnement Staging au lieu de l’environnement Production.",
           "outputFields" : "Champs output",
           "refresh" : "Actualiser",
           "loading" : "Chargement...",
@@ -4801,6 +4689,8 @@
       "runLocalAppOpenButton" : "Ouvrir",
       "enableLearnStagingUrl" : "Activer l’URL de test de la page Apprendre",
       "enableLearnStagingUrlDesc" : "Activez l’URL de test de la page Apprendre.",
+      "enableCountervaluesStaging" : "API Devises de contrepartie - Staging",
+      "enableCountervaluesStagingDesc" : "Utilisez l’API Devises de contrepartie dans l’environnement Staging plutôt que dans l’environnement Production.",
       "openOnboardingAppInstallDebug" : "Ouvrir l’écran de débogage relatif à l’installation des apps (Onboarding)",
       "openOnboardingAppInstallDebugDesc" : "Ouvrez un écran contenant les composants de l’étape d’installation des apps (flux Sync Onboarding)."
     },
@@ -4981,10 +4871,6 @@
         "desc" : "Vous pouvez masquer les tokens en vous rendant sur le compte parent, en faisant un clic droit sur le token et en sélectionnant Masquer le token.",
         "count" : "1 token",
         "count_other" : "{{count}} tokens"
-      },
-      "fullNode" : {
-        "title" : "Connecter un nœud Bitcoin complet",
-        "desc" : "Configurez votre nœud Bitcoin complet pour synchroniser et envoyer des transactions sans passer par les explorateurs de Ledger."
       },
       "filterTokenOperationsZeroAmount" : {
         "title" : "Masquer les opérations de tokens d’un montant nul",
@@ -6456,22 +6342,6 @@
     "RPCPassRequired" : {
       "title" : "Mot de passe RPC requis"
     },
-    "SatStackAccessDown" : {
-      "title" : "Nœud complet inaccessible",
-      "description" : "Merci de vérifier que SatStack et votre nœud sont en cours d’exécution. Vérifiez la configuration du nœud complet dans les Paramètres si le problème persiste."
-    },
-    "SatStackStillSyncing" : {
-      "title" : "Synchronisation du nœud en cours...",
-      "description" : "Merci de patienter pendant la synchronisation de votre nœud. L’envoi n’est pas possible car le solde de vos comptes Bitcoin est peut-être incorrect."
-    },
-    "SatStackVersionTooOld" : {
-      "title" : "Merci de mettre à jour SatStack",
-      "description" : "La version de SatStack que vous utilisez est trop ancienne et peut renfermer des bugs ou des incompatibilités."
-    },
-    "SatStackDescriptorNotImported" : {
-      "title" : "Compte non balayé par le nœud",
-      "description" : "Veuillez configurer votre nœud pour rechercher les comptes associés à cet appareil. Votre nœud doit d’abord balayer la blockchain avant de pouvoir ajouter le compte à votre Portefeuille."
-    },
     "SwapRateExpiredError" : {
       "title" : "Taux expiré",
       "description" : "Taux de change expiré. Veuillez actualiser et réessayer."
@@ -6937,6 +6807,10 @@
       "title" : "Paramètres de protocole invalides pour Cardano",
       "description" : "Les opérations en ADA sont temporairement indisponibles. Veuillez synchroniser votre compte et réessayer, ou contactez l’Assistance Ledger si vous avez besoin d’aide."
     },
+    "CardanoMemoExceededSizeError" : {
+      "title" : "Longueur du mémo non valide : le maximum autorisé est de 64 caractères",
+      "description" : "La longueur du mémo Cardano est limitée. Veuillez réduire la longueur du mémo."
+    },
     "StacksMemoTooLong" : {
       "title" : "Mémo trop long"
     },
@@ -7010,8 +6884,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Aucune récompense à demander"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Mémo trop long. Longueur maximale : {{maxLength}} caractères."
+    "HederaMemoExceededSizeError" : {
+      "title" : "Longueur du mémo non valide : le maximum autorisé est de 100 caractères",
+      "description" : "La longueur du mémo Hedera est limitée. Veuillez réduire la longueur du mémo."
     },
     "ImageIncorrectFileTypeError" : {
       "title" : "Échec du chargement de l’image.",
@@ -7684,6 +7559,9 @@
       "analyticsDesc" : "Autorisez Ledger à collecter les données d’utilisation pour nous aider à mesurer la performance de Ledger Wallet, à améliorer l’application et votre expérience."
     }
   },
+  "analytics" : {
+    "title" : "Statistiques"
+  },
   "walletSync" : {
     "title" : "Ledger Sync",
     "close" : "Fermer",
@@ -7961,6 +7839,28 @@
         "description" : "Une erreur est survenue de notre côté. Veuillez réessayer plus tard."
       },
       "cta" : "Réessayer"
+    }
+  },
+  "marketBanner" : {
+    "title" : "Explorer le marché",
+    "genericError" : "Échec de la connexion",
+    "cta" : "Afficher tout",
+    "fearAndGreed" : {
+      "title" : "Psychologie"
+    }
+  },
+  "fearAndGreed" : {
+    "levels" : {
+      "extremeFear" : "Peur+",
+      "fear" : "Peur",
+      "neutral" : "Neutre",
+      "greed" : "Cupidité",
+      "extremeGreed" : "Cupidité+"
+    },
+    "dialog" : {
+      "title" : "Psychologie du marché",
+      "content" : "Cet indice reflète l’état émotionnel du marché. Il varie de 0 à 100 : une valeur basse indique une peur extrême (pessimisme), et une valeur élevée correspond à une cupidité extrême (optimisme).",
+      "cta" : "Compris"
     }
   },
   "nftEntryPoint" : {
