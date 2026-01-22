@@ -41,8 +41,13 @@ export default function TabSection({
   const hasInitializedAccounts = useRef(false);
   const prevAssetsLength = useRef(assetsLength);
   const prevAccountsLength = useRef(accountsLength);
+  const [heightAdjustment, setHeightAdjustment] = useState(0);
 
   useEffect(() => setHasAnimated(true), []);
+
+  useEffect(() => {
+    return forceFabricLayoutRefresh(setHeightAdjustment);
+  }, [showAssets, assetsLength, accountsLength]);
 
   useEffect(() => {
     resetInitializationOnDataChange(
@@ -103,7 +108,7 @@ export default function TabSection({
             key="assets-tab"
             entering={hasAnimated ? SlideInLeft.duration(ANIMATION_DURATION_MS) : undefined}
             exiting={hasAnimated ? SlideOutLeft.duration(ANIMATION_DURATION_MS) : undefined}
-            style={{ height: assetsFullHeight }}
+            style={{ height: assetsFullHeight + heightAdjustment }}
             collapsable={false}
           >
             <AssetsListView
@@ -127,7 +132,7 @@ export default function TabSection({
             key="accounts-tab"
             entering={hasAnimated ? SlideInRight.duration(ANIMATION_DURATION_MS) : undefined}
             exiting={hasAnimated ? SlideOutRight.duration(ANIMATION_DURATION_MS) : undefined}
-            style={{ height: accountsFullHeight }}
+            style={{ height: accountsFullHeight + heightAdjustment }}
             collapsable={false}
           >
             <AccountsListView
@@ -273,6 +278,45 @@ function resetInitializationOnDataChange(
   }
 }
 
+/**
+ * RNNA-FIX: Workaround for a React Native Fabric hit testing cache issue.
+ *
+ * This helper forces a layout refresh by temporarily adjusting the list
+ * container height. After the tab animation has finished, it nudges the
+ * height by a small amount (to `1`), which invalidates Fabric's internal
+ * hit-testing and layout cache, and then restores the height back to `0`
+ * once the layout has had time to settle.
+ *
+ * The initial timeout is scheduled for `ANIMATION_DURATION_MS +
+ * FABRIC_REFRESH_DELAY_BUFFER_MS`, ensuring the adjustment runs only after
+ * the tab transition animation is expected to be fully complete, with a
+ * small buffer to account for timing variance. The restoration timeout then
+ * waits an additional `LAYOUT_SETTLE_DELAY_MS` so that the view hierarchy
+ * can stabilize before resetting the adjustment back to its baseline.
+ *
+ * @param setHeightAdjustment
+ * The state setter used to apply the temporary height adjustment.
+ * Typically this is created with {@link React.useState} and controls an
+ * extra height value applied to the container.
+ *
+ * @see https://github.com/LedgerHQ/ledger-live/pull/13892
+ */
+function forceFabricLayoutRefresh(
+  setHeightAdjustment: React.Dispatch<React.SetStateAction<number>>,
+) {
+  let restorationTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  const timeoutId = setTimeout(() => {
+    setHeightAdjustment(1);
+    restorationTimeoutId = setTimeout(() => setHeightAdjustment(0), LAYOUT_SETTLE_DELAY_MS);
+  }, ANIMATION_DURATION_MS + FABRIC_REFRESH_DELAY_BUFFER_MS);
+  return () => {
+    clearTimeout(timeoutId);
+    if (restorationTimeoutId) {
+      clearTimeout(restorationTimeoutId);
+    }
+  };
+}
+
 /** Constant mapping for the tab options */
 export const TAB_OPTIONS = {
   Assets: "Assets",
@@ -284,6 +328,9 @@ const LAYOUT_SETTLE_DELAY_MS = 100;
 
 /** Animation duration in milliseconds */
 const ANIMATION_DURATION_MS = 250;
+
+/** Delay buffer in milliseconds for Fabric refresh */
+const FABRIC_REFRESH_DELAY_BUFFER_MS = 50;
 
 /** Props for the {@link TabSection} component */
 type TabSectionProps = {
