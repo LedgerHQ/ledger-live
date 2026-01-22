@@ -1,46 +1,41 @@
+import { getDomain } from "tldts";
 import type { LiveAppManifest } from "../platform/types";
 
 /**
- * Extracts the domain from a URL string
+ * Parses a URL string and returns both hostname and protocol
  */
-export function getDomain(url: string): string | null {
+function parseUrl(url: string): { hostname: string; protocol: string } | null {
   try {
     const urlObj = new URL(url);
-    return urlObj.hostname;
+    return { hostname: urlObj.hostname, protocol: urlObj.protocol };
   } catch {
     return null;
   }
 }
 
 /**
- * Extracts the protocol from a URL string
- */
-export function getProtocol(url: string): string | null {
-  try {
-    const urlObj = new URL(url);
-    return urlObj.protocol;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Checks if two URLs are on the same domain and protocol
+ * Checks if two URLs are on the same base domain and protocol
+ * This allows matching across subdomains (e.g., example.com matches subdomain.example.com)
  */
 export function isSameDomain(url1: string | undefined, url2: string | undefined): boolean {
   if (!url1 || !url2) return false;
-  const domain1 = getDomain(url1);
-  const domain2 = getDomain(url2);
-  const protocol1 = getProtocol(url1);
-  const protocol2 = getProtocol(url2);
-  return (
-    domain1 !== null &&
-    domain2 !== null &&
-    protocol1 !== null &&
-    protocol2 !== null &&
-    domain1 === domain2 &&
-    protocol1 === protocol2
-  );
+
+  const parsed1 = parseUrl(url1);
+  const parsed2 = parseUrl(url2);
+
+  if (!parsed1 || !parsed2) {
+    return false;
+  }
+
+  // Use tldts to extract the base domain (handles complex TLDs like .co.uk)
+  const domain1 = getDomain(parsed1.hostname, { allowPrivateDomains: true });
+  const domain2 = getDomain(parsed2.hostname, { allowPrivateDomains: true });
+
+  if (!domain1 || !domain2) {
+    return false;
+  }
+
+  return domain1 === domain2 && parsed1.protocol === parsed2.protocol;
 }
 
 /**
