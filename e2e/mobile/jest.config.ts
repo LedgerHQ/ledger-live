@@ -53,43 +53,12 @@ const jestAllure2ReporterOptions: ReporterOptions = {
 };
 
 import type { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
-import * as fs from "fs";
-import * as path from "path";
 
-// Read retry counter written by previous run's globalTeardown
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const detoxConfigFile = require("./detox.config.js");
-const maxRetries = detoxConfigFile.testRunner?.retries ?? 0;
-const counterPath = path.join(__dirname, ".retry-counter");
-let retryCount = 0;
-try {
-  retryCount = parseInt(fs.readFileSync(counterPath, "utf-8"), 10) || 0;
-} catch {
-  // File doesn't exist on first run
-}
-const isLastRetry = maxRetries > 0 && retryCount >= maxRetries;
-
-// Video recording is enabled only on last retry
-// Requires scrcpy: brew install scrcpy (or apt install scrcpy on Linux)
-export const detoxAllure2AdapterOptions: DetoxAllure2AdapterOptions = {
+// Video recording is handled by patched detox-allure2-adapter via DETOX_ENABLE_VIDEO env var in globalSetup
+const detoxAllure2AdapterOptions: DetoxAllure2AdapterOptions = {
   deviceLogs: false,
   deviceScreenshots: false,
-  deviceVideos: isLastRetry
-    ? {
-        android: {
-          recording: {
-            bitRate: 1_000_000,
-            maxSize: 720,
-            codec: "h264",
-          },
-          audio: false,
-          window: false,
-        },
-        ios: {
-          codec: "hevc",
-        },
-      }
-    : false,
+  deviceVideos: false,
   deviceViewHierarchy: false,
 };
 

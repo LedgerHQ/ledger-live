@@ -92,21 +92,7 @@ export default async () => {
 
   // parallel file cleanups and force close any lingering connections
   await Promise.all([cleanupUserdata(), forceGarbageCollection()]);
-
-  // Write retry counter for next run to detect last retry in jest.config.ts
-  await writeRetryCounter();
 };
-
-async function writeRetryCounter() {
-  try {
-    const counterPath = path.join(__dirname, ".retry-counter");
-    const currentCount = await fs.readFile(counterPath, "utf-8").catch(() => "0");
-    const nextCount = parseInt(currentCount, 10) + 1;
-    await fs.writeFile(counterPath, String(nextCount));
-  } catch (err) {
-    log.warn("Failed to write retry counter:", sanitizeError(err));
-  }
-}
 
 async function forceGarbageCollection() {
   try {
