@@ -591,7 +591,10 @@ jobs:
 
       - name: Install scrcpy
         run: |
-          sudo apt-get install -y scrcpy
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          sudo snap install scrcpy
+          scrcpy --version || echo "scrcpy version check failed"
 
       - name: Set shard test files from pre-computed matrix
         run: |
