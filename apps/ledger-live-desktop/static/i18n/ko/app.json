@@ -282,11 +282,13 @@
     "advanced" : "고급",
     "custom" : "커스텀",
     "fast" : "빠름",
+    "networkFees" : "네트워크 수수료",
     "high" : "높음",
     "low" : "낮음",
     "slow" : "느림",
     "standard" : "스탠다드",
     "medium" : "Medium",
+    "coinControl" : "코인 컨트롤",
     "feesAmount" : "수수료 비용"
   },
   "sidebar" : {
@@ -650,134 +652,6 @@
         "placeholder" : "토큰"
       },
       "submit" : "연결"
-    }
-  },
-  "fullNode" : {
-    "status" : "상태",
-    "connect" : "연결",
-    "disconnect" : "연결 해제",
-    "checkNodeSettings" : "노드 설정 인증",
-    "edit" : "편집",
-    "modal" : {
-      "title" : "비트코인 풀 노드 연결",
-      "disconnectTitle" : "풀 노드 연결 해제",
-      "steps" : {
-        "landing" : {
-          "header" : "풀 노드 시작. 믿지 말고, 검증하세요.",
-          "description" : "비트코인 풀 노드가 모든 트랜잭션과 블록을 검증하기 때문에 사용자는 비트코인을 무신뢰 방식으로 사용하며 비트코인 네트워크에 기여할 수 있습니다.",
-          "list" : {
-            "item1" : "비트코인 코어를 용량이 충분한 장치에 설정하세요.",
-            "item2" : "노드가 완전히 동기화될 때까지 기다려 주세요.",
-            "item3" : "노드 RPC 인증, IP 주소, 포트 번호를 기록해 두세요."
-          },
-          "disclaimer" : "풀 노드를 구동하려면 용량이 충분한 컴퓨터와 데이터 제한이 없는 브로드밴드 연결이 필요합니다."
-        },
-        "node" : {
-          "title" : "노드(Node)",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "노드 파라미터를 입력하세요",
-              "disclaimer" : "Ledger Wallet에 연결하기 전에 풀 노드를 완전히 동기화해야 합니다.",
-              "fields" : {
-                "nodeHost" : {
-                  "title" : "호스트",
-                  "tooltip" : "이 컴퓨터에 노드가 실행되면 디폴트로 유지하거나 노드 IP 주소와 포트 번호를 변경하세요."
-                },
-                "rpcCredentials" : {
-                  "title" : "RPC 인증",
-                  "tooltip" : "bitcoin.conf 파일에서 확인할 수 있는 원격 프로시저 호출 (RPC) 사용자명과 노드 패스워드를 입력하세요.",
-                  "usernamePlaceholder" : "사용자명",
-                  "passwordPlaceholder" : "패스워드"
-                },
-                "tls" : {
-                  "title" : "TLS 사용",
-                  "tooltip" : "예를 들어, 호스트된 노드 솔루션을 사용할 때 전송 계층 보안을 활성화하세요."
-                }
-              }
-            },
-            "connecting" : {
-              "header" : "노드 연결 테스트 중",
-              "description" : "풀 노드 반응 여부를 확인할 때까지 기다려 주세요"
-            },
-            "success" : {
-              "header" : "풀 노드 연결이 성공적으로 완료되었습니다",
-              "description" : "이제 풀 노드설정을 변경하여 블록체인 상의 내 계정을 스캔할 수 있습니다."
-            },
-            "failure" : {
-              "header" : "풀 노드에 접속할 수 없습니다",
-              "description" : "노드가 완전히 동기화되었는지 확인하시고 연결 설정을 인증하세요."
-            }
-          }
-        },
-        "device" : {
-          "title" : "장치",
-          "connectionSteps" : {
-            "pending" : {
-              "header" : "장치에서 계정 가져오기",
-              "description" : "스캔할 계정이 노드 구성 파일에 추가될 때까지 기다려 주세요"
-            },
-            "success" : {
-              "header" : "노드 구성에 추가된 계정",
-              "description" : "사용자 데이터 폴더에 구성 파일이 저장되었습니다. Ledger SatStack이 풀 노드에 연결되어 블록체인에서 계정을 스캔합니다.",
-              "cta" : "사용자 데이터 보기"
-            }
-          }
-        },
-        "accounts" : {
-          "title" : "계정",
-          "existing" : "스캔할 기존 계정",
-          "toScan" : "스캔할 계정",
-          "toScanDescription" : "주소 유형별 스캔할 계정",
-          "toScanTooltip" : "계정의 BTC가 10 이상인 경우에만 증가합니다.  첫 스캔은 속도가 느립니다. "
-        },
-        "satstack" : {
-          "title" : "SatStack",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "Ledger SatStack을 다운로드하여 실행하세요",
-              "description" : "Ledger SatStack은 Ledger Wallet과 풀 노드의 소통을 가능하게 하는 소규모 애플리케이션입니다. 앱을 다운로드하여 실행한 다음 계속 진행하세요.",
-              "disclaimer" : "Ledger Wallet이 풀 노드에 연결되려면 SatStack이 실행 중이어야 합니다.  컴퓨터 부팅 시 자동 실행되도록 설정해 보세요.",
-              "cta" : "SatStack 다운로드"
-            },
-            "satstack-disconnected" : {
-              "header" : "SatStack에 접근할 수 없습니다",
-              "description" : "이 컴퓨터에 SatStack이 실행 중인지 확인하세요."
-            },
-            "satstack-outdated" : {
-              "header" : "SatStack을 업그레이드하세요",
-              "description" : "사용 중인 SatStack 버전이 오래되어 버그가 있거나 호환 되지 않는 버전입니다."
-            },
-            "node-disconnected" : {
-              "header" : "풀 노드에 접속할 수 없습니다",
-              "description" : "노드에 접속 가능하고 입력한 연결 설정이 올바른지 확인하세요."
-            },
-            "invalid-chain" : {
-              "header" : "유효하지 않은 체인 타이틀",
-              "description" : "툴팁의 유효하지 않은 체인 설명"
-            },
-            "initializing" : {
-              "header" : "로딩중",
-              "description" : ""
-            },
-            "ready" : {
-              "header" : "준비 완료",
-              "description" : "풀 노드가 완전히 동기화되었습니다. 비트코인 계정 잔금이 현재 올바르지 않습니다."
-            },
-            "syncing" : {
-              "header" : "노드 동기화 진행 중...",
-              "description" : "최근 트랜잭션이 아직 보이지 않아 비트코인 계정 잔액이 정확하지 않을 수 있습니다. 가능한 경우, 노드를 실행하여 계속 동기화하세요."
-            },
-            "scanning" : {
-              "header" : "계정 스캔 진행 중...",
-              "description" : "계정 스캔이 완료되면 계정을 추가할 수 있습니다. Ledger 탐색기로 앞서 추가되었던 모든 비트코인 계정이 제거되었습니다."
-            }
-          }
-        },
-        "disconnect" : {
-          "cta" : "연결 해제",
-          "description" : "계속 진행할까요? 풀 노드를 해제하면 비트코인 계정이 삭제됩니다. Ledger 탐색기를 이용해서 계정을 다시 추가할 수 있습니다."
-        }
-      }
     }
   },
   "account" : {
@@ -1605,35 +1479,26 @@
         "primaryCta" : "장치 연결",
         "secondaryCta" : "다음에 결정하기"
       }
-    },
-    "marketPerformanceWidget" : {
-      "title" : "{{time}} 트렌드",
-      "buy" : "구매",
-      "swap" : "스왑",
-      "gainers" : "상승 코인",
-      "losers" : "하락 코인",
-      "error" : {
-        "title" : "죄송합니다. 트렌드를 로드할 수 없습니다.",
-        "description" : "나중에 다시 시도해 주세요"
-      },
-      "missingData" : {
-        "gainers" : {
-          "title" : "지난 {{trend}} 동안 상위 {{count}}개 자산 중 수익을 낸 자산이 없습니다",
-          "description" : "최하위 수익 창출 자산을 확인하거나 나중에 다시 방문하세요."
-        },
-        "losers" : {
-          "title" : "지난 {{trend}} 동안 상위 {{count}}개 자산 중 수익을 낸 자산이 없습니다",
-          "description" : "최상위 수익 창출 자산을 확인하거나 나중에 다시 방문해 보세요."
-        }
-      },
-      "trend" : {
-        "day" : "24시간",
-        "week" : "7일",
-        "month" : "30일",
-        "year" : "년",
-        "all" : "년"
-      }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™에서 이 트랜잭션의 클리어 서명을 수행할 수 없습니다.",
+      "subtitle" : "서명 전, 다른 Ledger 장치로 트랜잭션 세부 정보를 반드시 확인하세요. 클리어 서명 없이 진행하면, 보유 자산을 모두 잃을 수 있습니다.",
+      "continue" : "이후 단계를 진행하는 경우, 그 모든 책임은 전적으로 사용자에게 있습니다."
+    },
+    "info" : {
+      "title" : "{{date}}부터 Ledger Live™에서 {{device}} 장치를 통한 {{coinName}} 지원이 중단됩니다.",
+      "subtitle" : "원활한 Ledger Live 서비스 이용과 고객 지원을 위해 최신 Ledger 장치로 업그레이드하세요.",
+      "reminder" : "추가 알림을 보내지 마세요."
+    },
+    "error" : {
+      "title" : "{{device}}™에서는 이 기능을 지원하지 않습니다.",
+      "subtitle" : "지금 최신 Ledger 장치로 업그레이드하고, Ledger Live의 모든 기능을 이용해 보세요."
+    },
+    "update" : "업그레이드 프로그램 살펴보기",
+    "learnMore" : "자세히 알아보기",
+    "continue" : "계속"
   },
   "currentAddress" : {
     "title" : "현재 주소",
@@ -1681,6 +1546,7 @@
     "currency" : "통화",
     "rangeLabel" : "시간",
     "goBack" : "돌아가기",
+    "searchPlaceholder" : "Search asset",
     "filters" : {
       "title" : "필터",
       "show" : "보기",
@@ -1786,8 +1652,6 @@
       "import" : "계정",
       "finish" : "확인"
     },
-    "fullNodeReadyInfo" : "비트코인 풀 노드를 이용하여 계정을 추가할 것입니다.",
-    "fullNodeConfigure" : "노드 구성",
     "tokensTip" : "{{token}} ({{ticker}})(은)는 {{tokenType}} 토큰입니다.\n {{currency}} 계정에서 직접 토큰을 수령할 수 있습니다.",
     "accountToImportSubtitle_other" : "기존 계정 추가",
     "selectAll" : "모든 ({{count}}) 선택",
@@ -2518,9 +2382,26 @@
     "amountToSend" : "보낼 수량({{currency}})",
     "coinToSend" : "보낼 코인",
     "coinControlCustom" : "코인 직접 선택",
+    "quickActions" : {
+      "quarter" : "25%",
+      "half" : "50%",
+      "threeQuarters" : "75%",
+      "max" : "최대"
+    },
+    "reviewCta" : "검토",
+    "getCta" : "Get {{currency}}",
+    "switchInputMode" : "Switch amount input mode",
     "aboveMaximum" : "최대 수량 초과",
     "transactionSigned" : "트랜잭션 서명 완료",
-    "processingTransaction" : "트랜잭션을 처리 중입니다"
+    "processingTransaction" : "트랜잭션을 처리 중입니다",
+    "sign" : {
+      "title" : "Ledger {{wording}}에서 계속하기",
+      "description" : "보안 터치스크린에 표시된 안내를 따라주세요."
+    },
+    "gasOptionsSync" : {
+      "warningTitle" : "Unable to refresh network fees",
+      "warningDescription" : "Fee presets may be outdated."
+    }
   },
   "releaseNotes" : {
     "title" : "릴리즈 노트",
@@ -4572,9 +4453,7 @@
       "walletSyncDescription" : "PC와 모바일 어디서든, 포트폴리오를 항상 최신 상태로 유지하세요",
       "mevProtection" : "MEV 보호",
       "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
-      "mevProtectionLearnMore" : "개인정보 관련 고지",
-      "marketPerformanceWidget" : "마켓 퍼포먼스 위젯",
-      "marketPerformanceWidgetDesc" : "이 기능을 활성화하면 포트폴리오 페이지에서 선택한 기간 동안 가장 큰 상승 및 하락을 기록한 코인을 확인할 수 있습니다."
+      "mevProtectionLearnMore" : "개인정보 관련 고지"
     },
     "developer" : {
       "search" : "검색",
@@ -4704,6 +4583,15 @@
         "debugDialog" : "디버그 대화상자",
         "debugDuplicates" : "중복 항목 디버그"
       },
+      "walletFeaturesDevTool" : {
+        "title" : "Wallet Features Dev Tool",
+        "description" : "Toggle Wallet 4.0 features for desktop (lwdWallet40 feature flag).",
+        "enableAll" : "Enable All",
+        "disableAll" : "Disable All",
+        "featureParameters" : "Feature Parameters",
+        "showJson" : "Show JSON",
+        "hideJson" : "Hide JSON"
+      },
       "cryptoAssetsList" : {
         "title" : "암호화폐 목록",
         "description" : "Crypto Assets List(CAL) 서비스를 통해 암호화폐를 탐색하고 관리하세요.",
@@ -4801,6 +4689,8 @@
       "runLocalAppOpenButton" : "열기",
       "enableLearnStagingUrl" : "페이지 스테이징 URL 알아보기",
       "enableLearnStagingUrlDesc" : "학습 페이지의 스테이징 URL을 활성화합니다.",
+      "enableCountervaluesStaging" : "Countervalues API staging",
+      "enableCountervaluesStagingDesc" : "Use the staging countervalues API instead of production.",
       "openOnboardingAppInstallDebug" : "온보딩 앱 설치 디버그 화면 열기",
       "openOnboardingAppInstallDebugDesc" : "동기화 온보딩 앱 설치 단계의 구성 요소가 있는 화면을 엽니다."
     },
@@ -4981,10 +4871,6 @@
         "desc" : "상위 계정으로 이동한 후 토큰을 오른쪽 마우스 클릭하여 '토큰 숨기기'를 선택하면 토큰을 숨길 수 있습니다.",
         "count" : "1개의 토큰",
         "count_other" : "{{count}}개의 토큰"
-      },
-      "fullNode" : {
-        "title" : "비트코인 풀 노드 연결",
-        "desc" : "비트코인 풀 노드를 설정해 Ledger의 탐색기를 사용하지 않고 트랜잭션을 동기화하고 전송하세요."
       },
       "filterTokenOperationsZeroAmount" : {
         "title" : "값이 0 인 경우 토큰 트랜잭션을 숨깁니다",
@@ -6456,22 +6342,6 @@
     "RPCPassRequired" : {
       "title" : "원격 프로시저 호출(RPC) 패스워드가 필요합니다"
     },
-    "SatStackAccessDown" : {
-      "title" : "풀 노드에 접속할 수 없습니다",
-      "description" : "SatStack과 노드가 실행 중인지 확인하세요. 문제가 지속되면 설정에서 풀 노드를 확인하세요."
-    },
-    "SatStackStillSyncing" : {
-      "title" : "노드 동기화 진행 중...",
-      "description" : "노드가 동기화될 때까지 기다려 주세요 비트코인 계정 잔금이 올바르지 않아 전송할 수 없습니다"
-    },
-    "SatStackVersionTooOld" : {
-      "title" : "SatStack을 업그레이드하세요",
-      "description" : "사용 중인 SatStack 버전이 오래되어 버그가 있거나 호환 되지 않는 버전입니다."
-    },
-    "SatStackDescriptorNotImported" : {
-      "title" : "풀 노드로 계정을 스캔하지 않았습니다",
-      "description" : "이 장치에 연결된 계정을 스캔하도록 풀 노드를 구성하세요. 우선 귀하의 풀 노드로 이 계정을 위한 블록체인을 스캔한 후 포트폴리오에 계정을 추가할 수 있습니다."
-    },
     "SwapRateExpiredError" : {
       "title" : "요율 만료",
       "description" : "환율이 만료되었습니다. 새로고침하고 다시 시도해 보세요."
@@ -6937,6 +6807,10 @@
       "title" : "Cardano 유효하지 않은 프로토콜 파라미터",
       "description" : "일시적으로 ADA 트랜잭션이 불가능합니다. 계정을 다시 동기화하고 다시 시도하거나 도움이 필요할 경우 지원팀으로 문의해 주세요."
     },
+    "CardanoMemoExceededSizeError" : {
+      "title" : "메모 길이 초과. 최대 64자까지 지원됩니다",
+      "description" : "카르다노 메모는 최대 길이 제한이 있습니다. 메모 길이를 줄여주세요."
+    },
     "StacksMemoTooLong" : {
       "title" : "메모 길이가 너무 깁니다"
     },
@@ -7010,8 +6884,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "수령할 보상이 없습니다"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "메모가 너무 깁니다. 최대 길이는 {{maxLength}}자 입니다."
+    "HederaMemoExceededSizeError" : {
+      "title" : "메모 길이 초과. 최대 100자까지 지원됩니다",
+      "description" : "헤데라 메모는 최대 길이 제한이 있습니다. 메모 길이를 줄여주세요."
     },
     "ImageIncorrectFileTypeError" : {
       "title" : "파일 이미지 로딩 실패.",
@@ -7684,6 +7559,9 @@
       "analyticsDesc" : "Ledger의 앱 사용 데이터를 수집을 허용하면 Ledger Wallet의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다."
     }
   },
+  "analytics" : {
+    "title" : "애널리틱스"
+  },
   "walletSync" : {
     "title" : "Ledger 동기화",
     "close" : "닫기",
@@ -7961,6 +7839,28 @@
         "description" : "문제가 발생했습니다. 나중에 다시 시도해 주세요"
       },
       "cta" : "다시 시도하세요"
+    }
+  },
+  "marketBanner" : {
+    "title" : "시장 탐색하기",
+    "genericError" : "연결에 실패했습니다",
+    "cta" : "모두 보기",
+    "fearAndGreed" : {
+      "title" : "Mood"
+    }
+  },
+  "fearAndGreed" : {
+    "levels" : {
+      "extremeFear" : "Fear+",
+      "fear" : "Fear",
+      "neutral" : "Neutral",
+      "greed" : "Greed",
+      "extremeGreed" : "Greed+"
+    },
+    "dialog" : {
+      "title" : "Mood index",
+      "content" : "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+      "cta" : "Got it"
     }
   },
   "nftEntryPoint" : {
