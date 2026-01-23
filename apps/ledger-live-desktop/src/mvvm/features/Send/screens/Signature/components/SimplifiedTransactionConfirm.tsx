@@ -21,10 +21,10 @@ export const SimplifiedTransactionConfirm = ({ device }: SimplifiedTransactionCo
     <div className="flex flex-col items-center gap-24 px-24 pb-16 text-center">
       <DeviceBlocker />
       <Animation animation={getDeviceAnimation(device.modelId, type, "verify")} />
-      <h2 className="heading-3-semi-bold text-base">
+      <h2 className="text-base heading-3-semi-bold">
         {t("newSendFlow.sign.title", { wording: getProductName(device.modelId) })}
       </h2>
-      <p className="body-2 text-muted">{t("newSendFlow.sign.description")}</p>
+      <p className="text-muted body-2">{t("newSendFlow.sign.description")}</p>
     </div>
   );
 };

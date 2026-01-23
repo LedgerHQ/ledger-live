@@ -17,7 +17,7 @@ export const PendingState = ({ messageKey }: PendingStateProps) => {
         <div className="flex items-center justify-center rounded-full">
           <InfiniteLoader size={58} />
         </div>
-        <p className="text-center heading-4-semi-bold text-base">{t(messageKey)}</p>
+        <p className="text-center text-base heading-4-semi-bold">{t(messageKey)}</p>
       </div>
     </div>
   );

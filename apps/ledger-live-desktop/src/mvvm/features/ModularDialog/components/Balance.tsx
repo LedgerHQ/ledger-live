@@ -14,7 +14,7 @@ export const balanceItem = (balanceUI: BalanceUI) => {
       <span className="body-2-semi-bold">
         <CounterValue currency={currency} value={balance} placeholder="-" color="inherit" />
       </span>
-      <span className="body-3 text-muted">
+      <span className="text-muted body-3">
         <FormattedVal unit={currency.units[0]} val={balance} showCode color="inherit" />
       </span>
     </div>

@@ -9,10 +9,10 @@ export const SuccessContent = () => {
     <>
       <Spot appearance="check" size={72} />
       <div className="flex flex-col items-center gap-12 text-center">
-        <h3 className="heading-3-semi-bold text-base">
+        <h3 className="text-base heading-3-semi-bold">
           {t("send.steps.confirmation.success.title")}
         </h3>
-        <p className="body-2 text-muted">{t("send.steps.confirmation.success.text")}</p>
+        <p className="text-muted body-2">{t("send.steps.confirmation.success.text")}</p>
       </div>
     </>
   );
