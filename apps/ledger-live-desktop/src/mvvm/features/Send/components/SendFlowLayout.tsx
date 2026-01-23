@@ -1,26 +1,23 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Dialog, DialogContent, DialogBody } from "@ledgerhq/lumen-ui-react";
-import { useSendFlowNavigation, useSendFlowData } from "../context/SendFlowContext";
-import type { StepRegistry, StepRenderer } from "../../FlowWizard/types";
+import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
+import { useSendFlowData } from "../context/SendFlowContext";
 import { FLOW_STATUS } from "../../FlowWizard/types";
-import type { SendFlowStep } from "../types";
+import type { SendFlowStep, SendStepConfig } from "../types";
 import { SendHeader } from "./SendHeader";
 import { cn } from "LLD/utils/cn";
 
 type SendFlowLayoutProps = Readonly<{
-  stepRegistry: StepRegistry<SendFlowStep>;
   isOpen: boolean;
   onClose: () => void;
 }>;
 
-export function SendFlowLayout({ stepRegistry, isOpen, onClose }: SendFlowLayoutProps) {
-  const { currentStep, currentStepConfig } = useSendFlowNavigation();
+export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
+  const { currentStep, currentStepConfig, currentStepRenderer } = useFlowWizard<
+    SendFlowStep,
+    SendStepConfig
+  >();
   const { state } = useSendFlowData();
-
-  const StepComponent = useMemo<StepRenderer | null>(() => {
-    const renderer = stepRegistry[currentStep];
-    return renderer ?? null;
-  }, [currentStep, stepRegistry]);
 
   const handleDialogOpenChange = useCallback(
     (open: boolean) => {
@@ -35,6 +32,8 @@ export function SendFlowLayout({ stepRegistry, isOpen, onClose }: SendFlowLayout
 
   const shouldShowStatusGradient =
     state.flowStatus === FLOW_STATUS.ERROR || state.flowStatus === FLOW_STATUS.SUCCESS;
+
+  const StepComponent = currentStepRenderer;
 
   return (
     <Dialog height={dialogHeight} open={isOpen} onOpenChange={handleDialogOpenChange}>

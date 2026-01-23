@@ -2,17 +2,17 @@ import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import {
-  useSendFlowNavigation,
-  useSendFlowData,
-  useSendFlowActions,
-} from "../context/SendFlowContext";
-import { SEND_FLOW_STEP } from "../types";
+import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
+import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
+import { SEND_FLOW_STEP, type SendFlowStep, type SendStepConfig } from "../types";
 import { getRecipientDisplayValue, getRecipientSearchPrefillValue } from "./utils";
 import { useAvailableBalance } from "../hooks/useAvailableBalance";
 
 export function SendHeader() {
-  const { navigation, currentStep, currentStepConfig } = useSendFlowNavigation();
+  const { navigation, currentStep, currentStepConfig } = useFlowWizard<
+    SendFlowStep,
+    SendStepConfig
+  >();
   const { state, uiConfig, recipientSearch } = useSendFlowData();
   const { close, transaction } = useSendFlowActions();
   const { t } = useTranslation();
