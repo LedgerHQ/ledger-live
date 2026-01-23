@@ -48,6 +48,7 @@ export function useMarket() {
 
   const marketResult = useMarketDataHook({
     ...marketParams,
+    starred: starFilterOn ? starredMarketCoins : starred,
     liveCompatible: shouldDisplayLiveCompatible,
   });
 
