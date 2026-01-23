@@ -46,6 +46,7 @@ describe("PortfolioView", () => {
     totalCurrencies: 3,
     hasExchangeBannerCTA: true,
     shouldDisplayMarketBanner: true,
+    shouldDisplayQuickActionCtas: true,
     shouldDisplaySwapWebView: true,
     filterOperations: () => true,
     accounts: [],
@@ -128,6 +129,18 @@ describe("PortfolioView", () => {
     it("should not render MarketBanner when shouldDisplayMarketBanner is false", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={false} />);
       expect(screen.queryByText("Explore market")).toBeNull();
+    });
+  });
+
+  describe("QuickActions", () => {
+    it("should render QuickActions when shouldDisplayQuickActionCtas is true", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={true} />);
+      expect(screen.getByTestId("quick-actions-actions-list")).toBeVisible();
+    });
+
+    it("should not render QuickActions when shouldDisplayQuickActionCtas is false", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={false} />);
+      expect(screen.queryByTestId("quick-actions-actions-list")).toBeNull();
     });
   });
 

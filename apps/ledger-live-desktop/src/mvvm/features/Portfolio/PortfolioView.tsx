@@ -8,6 +8,7 @@ import { PortfolioViewModelResult } from "./hooks/usePortfolioViewModel";
 
 import OperationsList from "~/renderer/components/OperationsList";
 import AssetDistribution from "~/renderer/screens/dashboard/AssetDistribution";
+import QuickActions from "LLD/features/QuickActions";
 
 export const PortfolioView = memo(function PortfolioView({
   totalAccounts,
@@ -15,6 +16,7 @@ export const PortfolioView = memo(function PortfolioView({
   totalCurrencies,
   hasExchangeBannerCTA,
   shouldDisplayMarketBanner,
+  shouldDisplayQuickActionCtas,
   shouldDisplaySwapWebView,
   accounts,
   filterOperations,
@@ -36,7 +38,10 @@ export const PortfolioView = memo(function PortfolioView({
         className="flex flex-col gap-32"
       >
         <PortfolioGrid>
-          <div>{shouldDisplayMarketBanner && <MarketBanner />}</div>
+          <div className="flex flex-col gap-24">
+            {shouldDisplayQuickActionCtas && <QuickActions hasAccount={totalAccounts > 0} />}
+            {shouldDisplayMarketBanner && <MarketBanner />}
+          </div>
           {shouldDisplaySwapWebView && (
             <div className="ml-10 max-w-[700px] min-w-[375px]">
               <SwapWebViewEmbedded height="550px" />

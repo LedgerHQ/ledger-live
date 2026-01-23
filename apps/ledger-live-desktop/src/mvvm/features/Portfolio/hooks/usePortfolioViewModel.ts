@@ -15,6 +15,7 @@ export interface PortfolioViewModelResult {
   readonly totalCurrencies: number;
   readonly hasExchangeBannerCTA: boolean;
   readonly shouldDisplayMarketBanner: boolean;
+  readonly shouldDisplayQuickActionCtas: boolean;
   readonly shouldDisplaySwapWebView: boolean;
   readonly filterOperations: (operation: Operation, account: AccountLike) => boolean;
   readonly accounts: AccountLike[];
@@ -24,7 +25,8 @@ export interface PortfolioViewModelResult {
 export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   const accounts = useSelector(accountsSelector);
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
-  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayMarketBanner, shouldDisplayQuickActionCtas } =
+    useWalletFeaturesConfig("desktop");
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio");
   const { t } = useTranslation();
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
@@ -59,6 +61,7 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     totalCurrencies,
     hasExchangeBannerCTA,
     shouldDisplayMarketBanner,
+    shouldDisplayQuickActionCtas,
     shouldDisplaySwapWebView,
     filterOperations,
     accounts,
