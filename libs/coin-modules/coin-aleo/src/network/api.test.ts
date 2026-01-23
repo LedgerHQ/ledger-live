@@ -1,6 +1,7 @@
 import network from "@ledgerhq/live-network";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import aleoConfig from "../config";
+import { getMockedCurrency } from "../test/fixtures/currency.fixture";
+import { PROGRAM_ID } from "../constants";
 import { apiClient } from "./api";
 
 jest.mock("@ledgerhq/live-network");
@@ -12,7 +13,7 @@ const mockGetCoinConfig = aleoConfig.getCoinConfig as jest.MockedFunction<
 >;
 
 describe("apiClient", () => {
-  const mockCurrency = { id: "aleo" } as CryptoCurrency;
+  const mockCurrency = getMockedCurrency();
   const mockNodeUrl = "https://api.provable.com/v2/testnet";
   const mockAddress = "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv";
 
@@ -21,21 +22,54 @@ describe("apiClient", () => {
     mockGetCoinConfig.mockReturnValue({ nodeUrl: mockNodeUrl });
   });
 
+  describe("getLatestBlock", () => {
+    it("should fetch latest block successfully", async () => {
+      const mockBlock = {
+        block_hash: "ab1234567890",
+        previous_hash: "ab0987654321",
+        header: {
+          metadata: {
+            height: 1234567,
+            timestamp: 1234567890,
+          },
+        },
+      };
+
+      mockNetwork.mockResolvedValue({ data: mockBlock });
+
+      const result = await apiClient.getLatestBlock(mockCurrency);
+      const requestUrl = mockNetwork.mock.calls[0][0].url;
+
+      expect(result).toEqual(mockBlock);
+      expect(mockGetCoinConfig).toHaveBeenCalledTimes(1);
+      expect(mockGetCoinConfig).toHaveBeenCalledWith(mockCurrency);
+      expect(mockNetwork).toHaveBeenCalledTimes(1);
+      expect(requestUrl).toBe(`${mockNodeUrl}/blocks/latest`);
+    });
+
+    it("should throw error when network request fails", async () => {
+      const mockError = new Error("Network error");
+      mockNetwork.mockRejectedValue(mockError);
+
+      await expect(apiClient.getLatestBlock(mockCurrency)).rejects.toThrow("Network error");
+    });
+  });
+
   describe("getAccountBalance", () => {
     it("should fetch account balance successfully", async () => {
       const mockBalance = "1000000u64";
       mockNetwork.mockResolvedValue({ data: mockBalance });
 
       const result = await apiClient.getAccountBalance(mockCurrency, mockAddress);
+      const requestUrl = mockNetwork.mock.calls[0][0].url;
 
       expect(result).toBe(mockBalance);
       expect(mockGetCoinConfig).toHaveBeenCalledTimes(1);
       expect(mockGetCoinConfig).toHaveBeenCalledWith(mockCurrency);
       expect(mockNetwork).toHaveBeenCalledTimes(1);
-      expect(mockNetwork).toHaveBeenCalledWith({
-        method: "GET",
-        url: `${mockNodeUrl}/programs/program/credits.aleo/mapping/account/${mockAddress}`,
-      });
+      expect(requestUrl).toBe(
+        `${mockNodeUrl}/programs/program/${PROGRAM_ID.CREDITS}/mapping/account/${mockAddress}`,
+      );
     });
 
     it("should handle zero balance", async () => {
@@ -66,84 +100,76 @@ describe("apiClient", () => {
     });
   });
 
+  describe("getTransactionById", () => {
+    it("should fetch transaction details by id successfully", async () => {
+      const mockTransactionId = "at1abc123def456";
+      const mockTransactionDetails = {
+        transaction_id: mockTransactionId,
+        type: "execute",
+        status: "accepted",
+        block_number: 1234567,
+        timestamp: 1234567890,
+        transitions: [],
+      };
+
+      mockNetwork.mockResolvedValue({ data: mockTransactionDetails });
+
+      const result = await apiClient.getTransactionById(mockCurrency, mockTransactionId);
+      const requestUrl = mockNetwork.mock.calls[0][0].url;
+
+      expect(result).toEqual(mockTransactionDetails);
+      expect(mockGetCoinConfig).toHaveBeenCalledTimes(1);
+      expect(mockGetCoinConfig).toHaveBeenCalledWith(mockCurrency);
+      expect(mockNetwork).toHaveBeenCalledTimes(1);
+      expect(requestUrl).toBe(`${mockNodeUrl}/transactions/${mockTransactionId}`);
+    });
+
+    it("should throw error when network request fails", async () => {
+      const mockTransactionId = "at1abc123def456";
+      const mockError = new Error("Network error");
+      mockNetwork.mockRejectedValue(mockError);
+
+      await expect(apiClient.getTransactionById(mockCurrency, mockTransactionId)).rejects.toThrow(
+        "Network error",
+      );
+    });
+  });
+
   describe("getAccountPublicTransactions", () => {
     const mockTx1 = { id: "tx1", block_number: 100 };
     const mockTx2 = { id: "tx2", block_number: 101 };
-    const mockTx3 = { id: "tx3", block_number: 102 };
 
     it("should fetch transactions with default parameters", async () => {
       mockNetwork.mockResolvedValue({
         data: { transactions: [mockTx1, mockTx2], next_cursor: null },
       });
-      const args = {
-        minHeight: 100,
-        fetchAllPages: false,
-        limit: 3,
+
+      const params = {
+        cursor: mockTx1.block_number.toString(),
         currency: mockCurrency,
         address: mockAddress,
-      };
-      const result = await apiClient.getAccountPublicTransactions(args);
+        limit: undefined,
+        order: undefined,
+        direction: undefined,
+        minHeight: 0,
+      } as const;
+
+      const result = await apiClient.getAccountPublicTransactions(params);
+      const requestUrl = mockNetwork.mock.calls[0][0].url;
 
       expect(result.transactions).toEqual([mockTx1, mockTx2]);
-
       expect(mockGetCoinConfig).toHaveBeenCalledTimes(1);
       expect(mockGetCoinConfig).toHaveBeenCalledWith(mockCurrency);
       expect(mockNetwork).toHaveBeenCalledTimes(1);
-      expect(mockNetwork).toHaveBeenCalledWith({
-        method: "GET",
-        url: `${mockNodeUrl}/transactions/address/${mockAddress}?limit=${args.limit}&sort=desc&direction=next&cursor_block_number=${args.minHeight}`,
-      });
+      expect(requestUrl).toContain(`${mockNodeUrl}/transactions/address/${mockAddress}`);
+      expect(requestUrl).toContain("limit=50");
+      expect(requestUrl).toContain("sort=asc");
+      expect(requestUrl).toContain("direction=next");
+      expect(requestUrl).toContain(`cursor_block_number=${params.cursor}`);
     });
 
-    it("should handle pagination with fetchAllPages true", async () => {
-      mockNetwork
-        .mockResolvedValueOnce({
-          data: { transactions: [mockTx1, mockTx2], next_cursor: { block_number: 101 } },
-        })
-        .mockResolvedValueOnce({
-          data: { transactions: [mockTx3], next_cursor: null },
-        });
-
-      const result = await apiClient.getAccountPublicTransactions({
-        currency: mockCurrency,
-        address: mockAddress,
-        limit: 2,
-        minHeight: 0,
-        fetchAllPages: true,
-        direction: undefined,
-        order: undefined,
-      });
-
-      expect(result.transactions).toHaveLength(3);
-      expect(result.transactions).toEqual([mockTx1, mockTx2, mockTx3]);
-      expect(mockNetwork).toHaveBeenCalledTimes(2);
-    });
-
-    it("should respect limit when fetchAllPages is false", async () => {
-      const transactions = [...Array(50)].map((_, i) => ({
-        id: `tx${i}`,
-        block_number: i,
-      }));
-
-      mockNetwork.mockResolvedValue({
-        data: { transactions, next_cursor: { block_number: 60 } },
-      });
-
-      const result = await apiClient.getAccountPublicTransactions({
-        currency: mockCurrency,
-        address: mockAddress,
-        limit: 50,
-        minHeight: 60,
-        fetchAllPages: false,
-        direction: undefined,
-        order: undefined,
-      });
-
-      expect(result.transactions).toHaveLength(50);
-    });
-
-    it("should use min height cursor when provided", async () => {
-      const minHeight = 0;
+    it("should use cursor when provided", async () => {
+      const cursor = mockTx1.block_number.toString();
       mockNetwork.mockResolvedValue({
         data: { transactions: [mockTx2], next_cursor: null },
       });
@@ -151,17 +177,15 @@ describe("apiClient", () => {
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
         address: mockAddress,
-        minHeight: 0,
+        cursor,
         limit: 2,
-        fetchAllPages: true,
         direction: undefined,
         order: undefined,
       });
 
-      expect(mockNetwork).toHaveBeenCalledWith({
-        method: "GET",
-        url: expect.stringContaining(`cursor_block_number=${minHeight}`),
-      });
+      const requestUrl = mockNetwork.mock.calls[0][0].url;
+
+      expect(requestUrl).toContain(`cursor_block_number=${cursor}`);
     });
 
     it("should apply custom order parameter", async () => {
@@ -172,17 +196,15 @@ describe("apiClient", () => {
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
         address: mockAddress,
-        minHeight: 0,
+        cursor: undefined,
         limit: 2,
-        fetchAllPages: true,
         direction: undefined,
-        order: "asc",
+        order: "desc",
       });
 
-      expect(mockNetwork).toHaveBeenCalledWith({
-        method: "GET",
-        url: expect.stringContaining("sort=asc"),
-      });
+      const requestUrl = mockNetwork.mock.calls[0][0].url;
+
+      expect(requestUrl).toContain("sort=desc");
     });
 
     it("should throw error on network failure", async () => {
@@ -192,9 +214,8 @@ describe("apiClient", () => {
         apiClient.getAccountPublicTransactions({
           currency: mockCurrency,
           address: mockAddress,
-          minHeight: 0,
           limit: 2,
-          fetchAllPages: true,
+          cursor: undefined,
           direction: undefined,
           order: undefined,
         }),

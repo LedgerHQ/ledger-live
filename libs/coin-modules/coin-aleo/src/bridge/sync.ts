@@ -39,30 +39,36 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const privateBalance = null;
   const spendableBalance = transparentBalance.plus(privateBalance ?? 0);
 
-  const blockHeight = latestBlock.height;
   const shouldSyncFromScratch = !initialAccount;
   const oldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
   const latestOperation = oldOperations[0];
-  const minHeight = shouldSyncFromScratch ? 0 : latestOperation?.blockHeight ?? 0;
+  const lastBlockHeight = shouldSyncFromScratch ? 0 : latestOperation?.blockHeight ?? 0;
   const latestAccountOperations = await listOperations({
     currency,
     address,
     ledgerAccountId,
-    pagination: { minHeight },
-    direction: shouldSyncFromScratch ? "next" : "prev",
     fetchAllPages: true,
+    pagination: {
+      minHeight: 0,
+      order: "asc",
+      ...(lastBlockHeight > 0 && { lastPagingToken: lastBlockHeight.toString() }),
+    },
   });
 
+  // sort by date desc
+  latestAccountOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  // merge old and new operations
   const operations = shouldSyncFromScratch
-    ? latestAccountOperations.publicOperations
-    : mergeOps(oldOperations, latestAccountOperations.publicOperations);
+    ? latestAccountOperations.operations
+    : mergeOps(oldOperations, latestAccountOperations.operations);
 
   return {
     type: "Account",
     id: ledgerAccountId,
     balance: spendableBalance,
     spendableBalance: spendableBalance,
-    blockHeight,
+    blockHeight: latestBlock.height,
     operations,
     operationsCount: operations.length,
     lastSyncDate: new Date(),

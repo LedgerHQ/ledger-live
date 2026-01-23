@@ -2,12 +2,12 @@ import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import aleoConfig from "../config";
-import {
+import type {
   AleoLatestBlockResponse,
-  AleoPublicTransaction,
   AleoPublicTransactionDetails,
   AleoPublicTransactions,
 } from "../types/api";
+import { PROGRAM_ID } from "../constants";
 
 const getNodeUrl = (currency: CryptoCurrency): string => {
   return aleoConfig.getCoinConfig(currency).nodeUrl;
@@ -28,13 +28,13 @@ async function getAccountBalance(
 ): Promise<string | null> {
   const res = await network<string | null>({
     method: "GET",
-    url: `${getNodeUrl(currency)}/programs/program/credits.aleo/mapping/account/${address}`,
+    url: `${getNodeUrl(currency)}/programs/program/${PROGRAM_ID.CREDITS}/mapping/account/${address}`,
   });
 
   return res.data;
 }
 
-async function getTranscationByTransactionId(
+async function getTransactionById(
   currency: CryptoCurrency,
   transactionId: string,
 ): Promise<AleoPublicTransactionDetails> {
@@ -49,60 +49,36 @@ async function getTranscationByTransactionId(
 async function getAccountPublicTransactions({
   currency,
   address,
-  minHeight,
+  cursor,
   limit = 50,
-  order = "desc",
+  order = "asc",
   direction = "next",
-  fetchAllPages,
 }: {
   currency: CryptoCurrency;
   address: string;
-  minHeight: number;
-  limit: number | undefined;
-  order: "asc" | "desc" | undefined;
-  direction: "prev" | "next" | undefined;
-  fetchAllPages: boolean;
-}): Promise<{ transactions: AleoPublicTransaction[] }> {
-  const transactions: AleoPublicTransaction[] = [];
-
+  cursor?: string;
+  limit?: number;
+  order?: "asc" | "desc";
+  direction?: "prev" | "next";
+}): Promise<AleoPublicTransactions> {
   const params = new URLSearchParams({
     limit: limit.toString(),
     sort: order,
     direction,
+    ...(cursor && { cursor_block_number: cursor }),
   });
 
-  if (minHeight !== null) {
-    params.append("cursor_block_number", minHeight.toString());
-  }
+  const res: LiveNetworkResponse<AleoPublicTransactions> = await network({
+    method: "GET",
+    url: `${getNodeUrl(currency)}/transactions/address/${address}?${params.toString()}`,
+  });
 
-  let nextPath: string | null = `/transactions/address/${address}?${params.toString()}`;
-
-  while (nextPath) {
-    const res: LiveNetworkResponse<AleoPublicTransactions> = await network({
-      method: "GET",
-      url: `${getNodeUrl(currency)}${nextPath}`,
-    });
-
-    const newTransactions = res.data.transactions;
-    transactions.push(...newTransactions);
-
-    if (!fetchAllPages) break;
-
-    const nextCursorBlockNumber = res.data.next_cursor?.block_number;
-
-    if (nextCursorBlockNumber) {
-      const updatedParams = new URLSearchParams(params);
-      updatedParams.set("cursor_block_number", nextCursorBlockNumber.toString());
-      nextPath = `/transactions/address/${address}?${updatedParams.toString()}`;
-    } else break;
-  }
-
-  return { transactions };
+  return res.data;
 }
 
 export const apiClient = {
   getLatestBlock,
   getAccountBalance,
-  getTranscationByTransactionId,
+  getTransactionById,
   getAccountPublicTransactions,
 };

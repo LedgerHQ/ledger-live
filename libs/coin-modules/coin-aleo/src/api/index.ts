@@ -62,16 +62,15 @@ export function createApi(config: AleoConfig, currencyId: string): Api {
         derivationMode: "",
       });
 
-      const { publicOperations } = await listOperations({
+      const { operations, nextCursor } = await listOperations({
         currency,
         address,
         ledgerAccountId,
         pagination,
         fetchAllPages: false,
-        direction: undefined,
       });
 
-      const alpacaOperations = publicOperations.map(
+      const alpacaOperations = operations.map(
         operation =>
           ({
             id: operation.id,
@@ -96,9 +95,8 @@ export function createApi(config: AleoConfig, currencyId: string): Api {
             },
           }) satisfies Operation,
       );
-      const cursor = alpacaOperations.at(-1)?.tx.block.height.toString() ?? "";
 
-      return [alpacaOperations, cursor];
+      return [alpacaOperations, nextCursor ?? ""];
     },
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");

@@ -3,8 +3,8 @@ import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
-import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
+import { patchAccountWithViewKey } from "@ledgerhq/live-common/families/aleo/utils";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { Flex } from "@ledgerhq/react-ui/index";
 import type { Account } from "@ledgerhq/types-live";
@@ -144,14 +144,10 @@ const ModularDrawerAddAccountFlowManager = ({
 
                 const accountsWithViewKeys = selectedAccounts
                   .filter(account => result[account.id]?.length > 0)
-                  .map(a => {
-                    const viewKey = result[a.id];
-                    const accountIdParams = decodeAccountId(a.id);
+                  .map(account => {
+                    const viewKey = result[account.id];
 
-                    return {
-                      ...a,
-                      id: encodeAccountId({ ...accountIdParams, customData: viewKey }),
-                    };
+                    return patchAccountWithViewKey(account, viewKey);
                   });
 
                 setSelectedAccounts(accountsWithViewKeys);

@@ -1,7 +1,7 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Pagination } from "@ledgerhq/coin-framework/api/types";
-import { apiClient } from "../network/api";
 import type { AleoOperation } from "../types/bridge";
+import { fetchAccountTransactionsFromHeight } from "../network/utils";
 import { parseOperation } from "./utils";
 
 export async function listOperations({
@@ -9,33 +9,30 @@ export async function listOperations({
   address,
   ledgerAccountId,
   pagination,
-  direction = "next",
   fetchAllPages,
 }: {
   currency: CryptoCurrency;
   address: string;
   ledgerAccountId: string;
   pagination: Pagination;
-  direction: "prev" | "next" | undefined;
   fetchAllPages: boolean;
-}): Promise<{ publicOperations: AleoOperation[] }> {
-  const publicOperations: AleoOperation[] = [];
-  const result = await apiClient.getAccountPublicTransactions({
+}): Promise<{
+  operations: AleoOperation[];
+  nextCursor: string | null;
+}> {
+  const operations: AleoOperation[] = [];
+
+  const result = await fetchAccountTransactionsFromHeight({
     currency,
     address,
-    minHeight: pagination.minHeight,
-    order: pagination.order,
-    direction,
-    limit: pagination.limit,
     fetchAllPages,
+    minBlockHeight: pagination.minHeight,
+    ...(pagination.lastPagingToken && { cursor: pagination.lastPagingToken }),
+    ...(pagination.limit && { limit: pagination.limit }),
+    ...(pagination.order && { order: pagination.order }),
   });
 
-  // currently we only support native aleo coin operations & ignore rest
-  const nativePublicTransactions = result.transactions.filter(
-    tx => tx.program_id === "credits.aleo",
-  );
-
-  for (const rawTx of nativePublicTransactions) {
+  for (const rawTx of result.transactions) {
     const parsedOperation = await parseOperation({
       currency,
       rawTx,
@@ -43,10 +40,11 @@ export async function listOperations({
       ledgerAccountId,
     });
 
-    publicOperations.push(parsedOperation);
+    operations.push(parsedOperation);
   }
 
   return {
-    publicOperations,
+    operations,
+    nextCursor: result.nextCursor,
   };
 }
