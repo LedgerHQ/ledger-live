@@ -6,7 +6,7 @@ import { useTranslation } from "~/context/Locale";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useSharedValue } from "react-native-reanimated";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
@@ -39,6 +39,7 @@ interface UsePortfolioViewModelResult {
   isLNSUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
   isFocused: boolean;
+  shouldDisplayGraphRework: boolean;
   t: ReturnType<typeof useTranslation>["t"];
   openAddModal: () => void;
   closeAddModal: () => void;
@@ -58,6 +59,7 @@ const usePortfolioViewModel = (navigation: {
   const { colors } = useTheme();
   const { isAWalletCardDisplayed } = useDynamicContent();
   const accountListFF = useFeature("llmAccountListUI");
+  const { shouldDisplayGraphRework } = useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
@@ -146,6 +148,7 @@ const usePortfolioViewModel = (navigation: {
     isLNSUpsellBannerShown,
     isAddModalOpened,
     isFocused,
+    shouldDisplayGraphRework,
     t,
     openAddModal,
     closeAddModal,

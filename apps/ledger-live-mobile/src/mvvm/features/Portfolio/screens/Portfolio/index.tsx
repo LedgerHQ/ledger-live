@@ -45,6 +45,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
+    shouldDisplayGraphRework,
     t,
     openAddModal,
     closeAddModal,
@@ -60,7 +61,12 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         <Flex px={6} key="FirmwareUpdateBanner">
           <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
         </Flex>
-        <PortfolioGraphCard showAssets={showAssets} screenName="Wallet" key="PortfolioGraphCard" />
+        <PortfolioGraphCard
+          showAssets={showAssets}
+          screenName="Wallet"
+          key="PortfolioGraphCard"
+          hideGraph={shouldDisplayGraphRework}
+        />
         {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mt={7} />}
         {!isLNSUpsellBannerShown && showAssets ? (
           <ContentCardsLocation
@@ -106,15 +112,23 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         : []),
       ...(showAssets
         ? [
-            <SectionContainer px={6} isFirst={!isAWalletCardDisplayed} key="AllocationsSection">
-              <SectionTitle
-                title={t("analytics.allocation.title")}
-                testID="portfolio-allocation-section"
-              />
-              <Flex minHeight={94}>
-                <AllocationsSection screenName="Wallet" onPress={goToAnalyticsAllocations} />
-              </Flex>
-            </SectionContainer>,
+            ...(!shouldDisplayGraphRework
+              ? [
+                  <SectionContainer
+                    px={6}
+                    isFirst={!isAWalletCardDisplayed}
+                    key="AllocationsSection"
+                  >
+                    <SectionTitle
+                      title={t("analytics.allocation.title")}
+                      testID="portfolio-allocation-section"
+                    />
+                    <Flex minHeight={94}>
+                      <AllocationsSection screenName="Wallet" onPress={goToAnalyticsAllocations} />
+                    </Flex>
+                  </SectionContainer>,
+                ]
+              : []),
             <SectionContainer px={6} key="PortfolioOperationsHistorySection">
               <SectionTitle
                 title={t("analytics.operations.title")}
@@ -140,6 +154,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       openAddModal,
       isAWalletCardDisplayed,
       isLNSUpsellBannerShown,
+      shouldDisplayGraphRework,
       goToAnalyticsAllocations,
       t,
     ],

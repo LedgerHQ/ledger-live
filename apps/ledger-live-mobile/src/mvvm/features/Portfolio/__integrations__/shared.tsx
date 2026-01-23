@@ -31,3 +31,13 @@ export const overrideInitialStateWithFeatureFlag = (state: State): State => ({
     },
   },
 });
+
+export const overrideInitialStateWithGraphReworkEnabled = (state: State): State => ({
+  ...state,
+  settings: {
+    ...state.settings,
+    overriddenFeatureFlags: {
+      lwmWallet40: { enabled: true, params: { graphRework: true } },
+    },
+  },
+});

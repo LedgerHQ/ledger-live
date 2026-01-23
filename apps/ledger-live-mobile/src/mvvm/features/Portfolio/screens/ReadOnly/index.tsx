@@ -36,6 +36,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
     assets,
     graphCardEndPosition,
     currentPositionY,
+    shouldDisplayGraphRework,
     t,
     source,
     onPortfolioCardLayout,
@@ -59,6 +60,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
           screenName="Wallet"
+          hideGraph={shouldDisplayGraphRework}
         />
       </Box>,
       ...(hasOrderedNano
@@ -112,6 +114,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
       portfolio,
       currentPositionY,
       graphCardEndPosition,
+      shouldDisplayGraphRework,
       assets,
       goToAssets,
       t,
