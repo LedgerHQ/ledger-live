@@ -51,7 +51,7 @@ export const buildSignOperation =
 
         const signature = await signerContext(deviceId, async signer => {
           const { freshAddressPath: derivationPath } = account;
-          const { publicKey } = await signer.getAddress(derivationPath, false);
+          const publicKey = await signer.getPublicKey(derivationPath, false);
 
           // Follow standard Ledger Live pattern: craft transaction, then sign
           // Note: estimation returns bigint, convert to BigNumber for transaction crafting

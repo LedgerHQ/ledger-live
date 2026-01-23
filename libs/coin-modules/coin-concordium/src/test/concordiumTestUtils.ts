@@ -110,10 +110,9 @@ export function createMockSigner(keyPair: ConcordiumTestKeyPair): ConcordiumSign
     },
 
     verifyAddress: async (
-      _isLegacy: boolean,
       _identityIndex: number,
       _credNumber: number,
-      _ipIdentity?: number,
+      _ipIdentity: number,
       credId?: string,
     ): Promise<VerifyAddressResponse> => {
       // Mock implementation - always returns success

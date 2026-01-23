@@ -17,10 +17,10 @@ export async function getPublicKey(
   path: string,
 ): Promise<string> {
   const result = await signerContext(deviceId, async signer => {
-    return signer.getAddress(path, false);
+    return signer.getPublicKey(path, false);
   });
 
-  const publicKey = result.publicKey || "";
+  const publicKey = result || "";
   if (!publicKey || typeof publicKey !== "string") {
     throw new Error("Invalid public key: must be a hex string");
   }

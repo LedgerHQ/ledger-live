@@ -18,6 +18,7 @@ import type {
 export interface ConcordiumSigner {
   /**
    * Get Concordium address for a given path.
+   * When display=true, id/cred/idp are required.
    */
   getAddress(
     path: string,
@@ -25,7 +26,6 @@ export interface ConcordiumSigner {
     id?: number,
     cred?: number,
     idp?: number,
-    isLegacy?: boolean,
   ): Promise<Address>;
 
   /**
@@ -51,10 +51,9 @@ export interface ConcordiumSigner {
    * Verify account address on device.
    */
   verifyAddress(
-    isLegacy: boolean,
     identityIndex: number,
     credNumber: number,
-    ipIdentity?: number,
+    ipIdentity: number,
     credId?: string,
   ): Promise<VerifyAddressResponse>;
 }
