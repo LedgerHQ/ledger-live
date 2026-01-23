@@ -13,6 +13,25 @@ import { usePrice } from "~/renderer/hooks/usePrice";
 
 type ColorKeys = keyof typeof colors;
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function resolveThemeColor(themeColors: Record<string, unknown>, path: string): string | undefined {
+  const [group, shade] = path.split(".");
+  if (!group || !shade) return undefined;
+  const groupValue = themeColors[group];
+  if (isRecord(groupValue)) {
+    const shadeValue = groupValue[shade];
+    if (typeof shadeValue === "string") return shadeValue;
+  }
+  return undefined;
+}
+
+function isColorKey(key: string): key is ColorKeys {
+  return key in colors;
+}
+
 type Props = {
   unit?: Unit;
   rate?: BigNumber;
@@ -23,7 +42,7 @@ type Props = {
   withActivityColor?: ColorKeys;
   withIcon?: boolean;
   withEquality?: boolean;
-  color?: ColorKeys; // TODO change type of this props
+  color?: ColorKeys | string; // Accepts legacy ColorKeys or design system paths like "neutral.c80"
   fontSize?: number;
   fontWeight?: number;
   iconSize?: number;
@@ -56,27 +75,38 @@ export default function Price({
     rate,
   );
   const theme = useTheme();
-  const textColor = useMemo(
-    () => (color ? colors[color] : theme.colors.neutral.c100),
-    [color, theme],
-  );
+  // Resolve color to hex value (needed for activityColor which uses inline styles)
+  const resolvedColor = useMemo(() => {
+    if (!color) return undefined;
+    // Check legacy colors object first
+    if (isColorKey(color)) {
+      return colors[color];
+    }
+    // Support design system paths like "neutral.c80"
+    return resolveThemeColor(theme.colors, color);
+  }, [color, theme]);
   const bgColor = theme.colors.background.card;
   const activityColor = useMemo(
     () =>
       withActivityColor
         ? colors[withActivityColor]
         : !withActivityCurrencyColor
-          ? textColor
-            ? textColor
-            : undefined
+          ? resolvedColor ?? theme.colors.neutral.c100
           : getCurrencyColor(from, bgColor),
-    [bgColor, textColor, from, withActivityColor, withActivityCurrencyColor],
+    [
+      bgColor,
+      resolvedColor,
+      from,
+      withActivityColor,
+      withActivityCurrencyColor,
+      theme.colors.neutral.c100,
+    ],
   );
   if (!counterValue || counterValue.isZero())
     return <NoCountervaluePlaceholder placeholder={placeholder} />;
   const subMagnitude = counterValue.lt(1) || showAllDigits ? 1 : 0;
   return (
-    <PriceWrapper color={textColor} fontSize={fontSize} fontWeight={fontWeight}>
+    <PriceWrapper color={color ?? "neutral.c100"} fontSize={fontSize} fontWeight={fontWeight}>
       {withIcon ? (
         <IconActivity
           size={iconSize || 12}
