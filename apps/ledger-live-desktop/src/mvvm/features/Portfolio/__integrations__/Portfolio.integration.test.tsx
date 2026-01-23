@@ -3,7 +3,9 @@ import { render, screen, waitFor } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import { MarketMockedResponse } from "tests/handlers/fixtures/market";
 import { TFunction } from "i18next";
+import { Portfolio } from "@ledgerhq/types-live";
 import { PortfolioView } from "../PortfolioView";
+import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
 
@@ -39,6 +41,26 @@ jest.mock("@ledgerhq/live-common/exchange/swap/hooks/index", () => ({
   }),
 }));
 
+const mockUsePortfolio = jest.spyOn(portfolioReact, "usePortfolio");
+
+const createPortfolioMock = (countervalueChange: {
+  percentage: number | null;
+  value: number;
+}): Portfolio => ({
+  balanceHistory: [{ date: new Date(), value: 100000 }],
+  balanceAvailable: true,
+  availableAccounts: [],
+  unavailableCurrencies: [],
+  accounts: [],
+  range: "day",
+  histories: [],
+  countervalueReceiveSum: 0,
+  countervalueSendSum: 0,
+  countervalueChange,
+});
+
+const defaultPortfolioMock = createPortfolioMock({ percentage: 0.0542, value: 5000 });
+
 describe("PortfolioView", () => {
   const defaultProps = {
     totalAccounts: 5,
@@ -46,6 +68,7 @@ describe("PortfolioView", () => {
     totalCurrencies: 3,
     hasExchangeBannerCTA: true,
     shouldDisplayMarketBanner: true,
+    shouldDisplayGraphRework: true,
     shouldDisplaySwapWebView: true,
     filterOperations: () => true,
     accounts: [],
@@ -55,6 +78,7 @@ describe("PortfolioView", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUsePortfolio.mockReturnValue(defaultPortfolioMock);
   });
 
   afterEach(() => {
@@ -79,6 +103,66 @@ describe("PortfolioView", () => {
   it("should not render SwapWebViewEmbedded when shouldDisplaySwapWebView is false", () => {
     render(<PortfolioView {...defaultProps} shouldDisplaySwapWebView={false} />);
     expect(screen.queryByTestId("swap-webview-embedded")).toBeNull();
+  });
+
+  describe("Balance", () => {
+    it("should render Balance when shouldDisplayGraphRework is true", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />);
+      expect(screen.getByTestId("portfolio-balance")).toBeVisible();
+    });
+
+    it("should render total balance with integer and decimal parts", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />);
+      expect(screen.getByTestId("portfolio-total-balance")).toBeVisible();
+    });
+
+    it("should not render Balance when shouldDisplayGraphRework is false", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={false} />);
+      expect(screen.queryByTestId("portfolio-balance")).toBeNull();
+    });
+  });
+
+  describe("Trend", () => {
+    it("should render Trend with positive percentage", () => {
+      mockUsePortfolio.mockReturnValue(createPortfolioMock({ percentage: 0.0542, value: 5000 }));
+
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />);
+
+      expect(screen.getByTestId("portfolio-trend")).toBeVisible();
+      expect(screen.getByText("+5.42%")).toBeVisible();
+    });
+
+    it("should render Trend with negative percentage", () => {
+      mockUsePortfolio.mockReturnValue(createPortfolioMock({ percentage: -0.0315, value: -3000 }));
+
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />);
+
+      expect(screen.getByTestId("portfolio-trend")).toBeVisible();
+      expect(screen.getByText("-3.15%")).toBeVisible();
+    });
+
+    it("should render Trend with zero percentage", () => {
+      mockUsePortfolio.mockReturnValue(createPortfolioMock({ percentage: 0, value: 0 }));
+
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />);
+
+      expect(screen.getByTestId("portfolio-trend")).toBeVisible();
+      expect(screen.getByText("+0.00%")).toBeVisible();
+    });
+
+    it("should not render Trend when percentage is null", () => {
+      mockUsePortfolio.mockReturnValue(createPortfolioMock({ percentage: null, value: 0 }));
+
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />);
+
+      expect(screen.queryByTestId("portfolio-trend")).toBeNull();
+    });
+
+    it("should not render Trend when shouldDisplayGraphRework is false", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={false} />);
+
+      expect(screen.queryByTestId("portfolio-trend")).toBeNull();
+    });
   });
 
   describe("MarketBanner", () => {

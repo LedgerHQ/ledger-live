@@ -7848,6 +7848,9 @@
       "cta": "Try again"
     }
   },
+  "portfolio": {
+    "title": "Home"
+  },
   "marketBanner": {
     "title": "Explore market",
     "genericError": "Connection failed",
