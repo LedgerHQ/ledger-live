@@ -346,6 +346,7 @@ describe("makeGetAccountShape", () => {
         instrument_admin: "native-admin",
         memo: "Test proposal",
         expires_at_micros: Date.now() + 100000,
+        update_id: "tx-pending",
       },
     ]);
 

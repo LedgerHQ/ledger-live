@@ -14,6 +14,7 @@ import {
   getCalTokensCached,
   getKey,
   SEPARATOR,
+  type TransferProposal,
 } from "../network/gateway";
 import { getBalance } from "../common-logic/account/getBalance";
 import coinConfig from "../config";
@@ -93,15 +94,12 @@ const filterOperations = (
   transactions: OperationInfo[],
   accountId: string,
   partyId: string,
-  pendingTransferProposals: Array<{ contract_id: string }>,
+  pendingTransferProposals: TransferProposal[],
 ): Operation[] => {
-  const pendingProposalUids = new Set(pendingTransferProposals.map(p => p.contract_id));
+  const pendingUpdateIds = new Set(pendingTransferProposals.map(p => p.update_id));
 
   return transactions
-    .filter(txInfo => {
-      const isPendingProposal = pendingProposalUids.has(txInfo.uid);
-      return !isPendingProposal;
-    })
+    .filter(txInfo => !pendingUpdateIds.has(txInfo.transaction_hash))
     .map(txInfoToOperationAdapter(accountId, partyId));
 };
 
@@ -272,6 +270,7 @@ export function makeGetAccountShape(
         xpubOrAddress,
         pendingTransferProposals,
       );
+
       operations = mergeOps(oldOperations, newOperations);
     }
 
