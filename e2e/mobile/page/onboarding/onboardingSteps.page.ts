@@ -13,6 +13,7 @@ export default class OnboardingStepsPage {
   languageSelectDrawerTitleId = "language-select-drawer-title";
   deviceCardBaseId = "onboarding-device-selection";
   scrollListContainerId = "onboarding-view-scroll-list-container";
+  welcomeProgressBarId = "welcome-progress-bar";
 
   languageSelectElementId = (language: string) => `language-select-${language}`;
   deviceCardId = (title: string) => `${this.deviceCardBaseId}-${title}`;
@@ -32,7 +33,13 @@ export default class OnboardingStepsPage {
   @Step("Wait for onboarding to load")
   async waitForOnboardingToLoad(): Promise<void> {
     await waitForElementById(this.getStartedButtonId);
-    await waitForElementById(this.languageSelectButtonId);
+  }
+
+  @Step("Expect 3 progress bars to be visible")
+  async expectProgressBarToBeVisible(): Promise<void> {
+    for (let i = 0; i < 3; i++) {
+      await detoxExpect(getElementById(this.welcomeProgressBarId, i)).toBeVisible();
+    }
   }
 
   @Step("Tap on Get Started button")
