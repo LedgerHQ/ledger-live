@@ -188,7 +188,7 @@ jobs:
       - name: Publish Allure report
         id: publish-allure
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/qaa_e2e_llm_fail_video_retry
         with:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}

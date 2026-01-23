@@ -844,7 +844,7 @@ jobs:
           path: ios-test-artifacts
           pattern: ios-test-artifacts*
           merge-multiple: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/qaa_e2e_llm_fail_video_retry
         if: ${{ !cancelled() }}
         id: upload
         with:
@@ -895,7 +895,7 @@ jobs:
           path: android-test-artifacts
           pattern: android-test-artifacts*
           merge-multiple: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/qaa_e2e_llm_fail_video_retry
         id: upload
         if: ${{ !cancelled() }}
         with:
