@@ -341,7 +341,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=$(command -v node)\n\nset -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\n\nif [[ \"$SKIP_JS_BUNDLING\" == \"true\" ]]; then\n    REACT_NATIVE_XCODE=\"\"\n    echo \"Skipping JS bundle\"\nelse\n    echo \"Not skipping JS bundle\"\n    REACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\nfi\n\nBUNDLE_REACT_NATIVE=\"$REACT_NATIVE_XCODE\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT \\\"$BUNDLE_REACT_NATIVE\\\"\"\n";
+			shellScript = "export NODE_BINARY=$(command -v node)\n\nset -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\n\nif [[ \"$SKIP_JS_BUNDLING\" == \"true\" ]]; then\n    REACT_NATIVE_XCODE=\"\"\n    echo \"Skipping JS bundle\"\nelse\n    echo \"Not skipping JS bundle\"\n    REACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\nfi\n\nif [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n    source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n    source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\nexport CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('@react-native-community/cli/package.json')) + '/build/bin.js'\")\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
 		3B8A85D90BB941F538378AA1 /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
