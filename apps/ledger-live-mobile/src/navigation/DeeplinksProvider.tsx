@@ -625,6 +625,21 @@ export const DeeplinksProvider = ({
             }
           }
 
+          // Handle asset deeplink - validate currencyId before navigation
+          if (hostname === "asset") {
+            const currencyIdFromPath = pathname.replace("/", "");
+            if (currencyIdFromPath) {
+              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
+
+              if (!validatedCurrencyId) {
+                return getStateFromPath("portfolio", config);
+              }
+
+              url.pathname = `/${validatedCurrencyId}`;
+              return getStateFromPath(url.href?.split("://")[1], config);
+            }
+          }
+
           // Handle modular drawer deeplinks (receive & add-account)
           if (hostname === "receive" || hostname === "add-account") {
             return handleModularDrawerDeeplink(hostname, searchParams, dispatch, config);

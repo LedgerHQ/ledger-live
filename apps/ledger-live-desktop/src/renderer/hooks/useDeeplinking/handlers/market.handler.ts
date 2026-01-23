@@ -21,6 +21,14 @@ export const assetHandler: DeeplinkHandler<"asset"> = (route, { navigate }) => {
   const { path } = route;
 
   if (path) {
-    navigate(`/asset/${path}`);
+    const normalizedPath = path.trim().toLowerCase();
+    const currency = findCryptoCurrencyById(normalizedPath);
+
+    if (currency) {
+      navigate(`/asset/${currency.id}`);
+      return;
+    }
   }
+
+  navigate("/");
 };
