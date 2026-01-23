@@ -7,10 +7,17 @@ interface UseTrendViewModelOptions {
   readonly valueChange: ValueChange;
 }
 
+type TrendVariant = "positive" | "negative" | "neutral";
+
+const getTrendVariant = (percentage: number): TrendVariant => {
+  if (percentage === 0) return "neutral";
+  if (percentage > 0) return "positive";
+  return "negative";
+};
+
 interface TrendViewModelResult {
   readonly percentageText: string;
-  readonly isPositive: boolean;
-  readonly isAvailable: boolean;
+  readonly variant: TrendVariant;
 }
 
 export const useTrendViewModel = ({
@@ -19,28 +26,16 @@ export const useTrendViewModel = ({
   const discreet = useSelector(discreetModeSelector);
 
   return useMemo(() => {
-    const isAvailable = valueChange.percentage !== null && valueChange.percentage !== undefined;
-
-    if (!isAvailable) {
-      return {
-        percentageText: "",
-        isPositive: true,
-        isAvailable: false,
-      };
-    }
-
     const percentage = valueChange.percentage ?? 0;
-    const isPositive = percentage >= 0;
+    const variant = getTrendVariant(percentage);
 
-    // Format percentage (multiply by 100 since it's 0-1 range)
-    const percentageText = discreet
-      ? "***"
-      : `${isPositive ? "+" : ""}${(percentage * 100).toFixed(2)}%`;
+    const sign = percentage > 0 ? "+" : "";
+    const formattedPercentage = `${sign}${(percentage * 100).toFixed(2)}%`;
+    const percentageText = discreet ? "***" : formattedPercentage;
 
     return {
       percentageText,
-      isPositive,
-      isAvailable: true,
+      variant,
     };
-  }, [valueChange, discreet]);
+  }, [valueChange.percentage, discreet]);
 };

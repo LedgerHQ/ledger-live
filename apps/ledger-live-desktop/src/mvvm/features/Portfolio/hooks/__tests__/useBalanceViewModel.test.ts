@@ -44,11 +44,10 @@ describe("useBalanceViewModel", () => {
   it("should return portfolio data correctly", () => {
     const { result } = renderHook(() => useBalanceViewModel(), { initialState });
 
-    expect(result.current.totalBalance).toBe(1500);
+    expect(result.current.totalBalance.isEqualTo(1500)).toBe(true);
     expect(result.current.unit).toEqual(mockCounterValue.units[0]);
     expect(result.current.isAvailable).toBe(true);
     expect(result.current.valueChange).toEqual(mockPortfolio.countervalueChange);
-    expect(result.current.currencyTicker).toBe("USD");
   });
 
   it("should return 0 when balance history is empty", () => {
@@ -59,7 +58,7 @@ describe("useBalanceViewModel", () => {
 
     const { result } = renderHook(() => useBalanceViewModel(), { initialState });
 
-    expect(result.current.totalBalance).toBe(0);
+    expect(result.current.totalBalance.isEqualTo(0)).toBe(true);
   });
 
   it("should use 'day' range by default", () => {

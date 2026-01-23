@@ -6,13 +6,18 @@ import { TFunction } from "i18next";
 import { Portfolio } from "@ledgerhq/types-live";
 import { PortfolioView } from "../PortfolioView";
 import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
+import { useNavigate } from "react-router";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
 
+const mockNavigate = jest.fn();
+
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
-  useNavigate: jest.fn(() => jest.fn()),
+  useNavigate: jest.fn(() => mockNavigate),
 }));
+
+const mockedUseNavigate = jest.mocked(useNavigate);
 
 jest.mock("~/renderer/screens/dashboard/components/SwapWebViewEmbedded", () => ({
   __esModule: true,
@@ -79,6 +84,7 @@ describe("PortfolioView", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUsePortfolio.mockReturnValue(defaultPortfolioMock);
+    mockedUseNavigate.mockReturnValue(mockNavigate);
   });
 
   afterEach(() => {
@@ -106,13 +112,10 @@ describe("PortfolioView", () => {
   });
 
   describe("Balance", () => {
-    it("should render Balance when shouldDisplayGraphRework is true", () => {
+    it("should render Balance with total balance when shouldDisplayGraphRework is true", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />);
-      expect(screen.getByTestId("portfolio-balance")).toBeVisible();
-    });
 
-    it("should render total balance with integer and decimal parts", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />);
+      expect(screen.getByTestId("portfolio-balance")).toBeVisible();
       expect(screen.getByTestId("portfolio-total-balance")).toBeVisible();
     });
 
@@ -120,16 +123,25 @@ describe("PortfolioView", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={false} />);
       expect(screen.queryByTestId("portfolio-balance")).toBeNull();
     });
+
+    it("should navigate to analytics when clicking on balance", async () => {
+      const { user } = render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />);
+
+      await user.click(screen.getByTestId("portfolio-balance"));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/analytics");
+    });
   });
 
   describe("Trend", () => {
-    it("should render Trend with positive percentage", () => {
+    it("should render Trend with positive percentage and display separator with Today label", () => {
       mockUsePortfolio.mockReturnValue(createPortfolioMock({ percentage: 0.0542, value: 5000 }));
 
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />);
 
       expect(screen.getByTestId("portfolio-trend")).toBeVisible();
       expect(screen.getByText("+5.42%")).toBeVisible();
+      expect(screen.getByText(/today/i)).toBeVisible();
     });
 
     it("should render Trend with negative percentage", () => {
@@ -141,21 +153,15 @@ describe("PortfolioView", () => {
       expect(screen.getByText("-3.15%")).toBeVisible();
     });
 
-    it("should render Trend with zero percentage", () => {
+    it("should show 0% when percentage is zero", () => {
       mockUsePortfolio.mockReturnValue(createPortfolioMock({ percentage: 0, value: 0 }));
 
       render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />);
 
       expect(screen.getByTestId("portfolio-trend")).toBeVisible();
-      expect(screen.getByText("+0.00%")).toBeVisible();
-    });
-
-    it("should not render Trend when percentage is null", () => {
-      mockUsePortfolio.mockReturnValue(createPortfolioMock({ percentage: null, value: 0 }));
-
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />);
-
-      expect(screen.queryByTestId("portfolio-trend")).toBeNull();
+      expect(screen.getByTestId("portfolio-trend-percentage")).toBeVisible();
+      expect(screen.getByText("0.00%")).toBeVisible();
+      expect(screen.getByText(/today/i)).toBeVisible();
     });
 
     it("should not render Trend when shouldDisplayGraphRework is false", () => {

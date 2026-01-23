@@ -10,7 +10,7 @@ type Props = Readonly<{
 export default function PageHeader({ title, onBack }: Props) {
   return (
     <div
-      onClick={onBack ? onBack : undefined}
+      onClick={onBack}
       className={cn("flex items-center gap-4", onBack && "cursor-pointer")}
       data-testid="page-header"
     >

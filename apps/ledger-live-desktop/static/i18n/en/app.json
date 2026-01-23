@@ -7849,7 +7849,8 @@
     }
   },
   "portfolio": {
-    "title": "Home"
+    "title": "Home",
+    "today": "Today"
   },
   "marketBanner": {
     "title": "Explore market",

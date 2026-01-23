@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { usePortfolio as usePortfolioRaw } from "@ledgerhq/live-countervalues-react/portfolio";
 import {
@@ -6,6 +7,8 @@ import {
 } from "~/renderer/reducers/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { BalanceViewModelResult } from "../components/Balance/types";
+import { useNavigate } from "react-router";
+import BigNumber from "bignumber.js";
 
 const NEW_FLOW_RANGE = "day" as const;
 
@@ -17,7 +20,7 @@ export const useBalanceViewModel = (
   options: UseBalanceViewModelOptions = {},
 ): BalanceViewModelResult => {
   const { useLegacyRange = false } = options;
-
+  const navigate = useNavigate();
   const accounts = useSelector(accountsSelector);
   const counterValue = useSelector(counterValueCurrencySelector);
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
@@ -30,17 +33,22 @@ export const useBalanceViewModel = (
     to: counterValue,
   });
 
-  const totalBalance = portfolio.balanceHistory[portfolio.balanceHistory.length - 1]?.value ?? 0;
+  const latestBalanceValue =
+    portfolio.balanceHistory[portfolio.balanceHistory.length - 1]?.value ?? 0;
+  const totalBalance = new BigNumber(latestBalanceValue);
   const unit = counterValue.units[0];
   const isAvailable = portfolio.balanceAvailable;
+  const isFiat = counterValue.type === "FiatCurrency";
   const valueChange = portfolio.countervalueChange;
-  const currencyTicker = counterValue.ticker;
+
+  const navigateToAnalytics = useCallback(() => navigate("/analytics"), [navigate]);
 
   return {
     totalBalance,
     valueChange,
     unit,
     isAvailable,
-    currencyTicker,
+    isFiat,
+    navigateToAnalytics,
   };
 };

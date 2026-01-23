@@ -1,12 +1,13 @@
 import { BigNumber } from "bignumber.js";
 import { Unit } from "@ledgerhq/types-cryptoassets";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 
 interface FormatBalancePartsOptions {
   readonly unit: Unit;
-  readonly balance: number;
+  readonly balance: BigNumber;
   readonly locale: string;
   readonly discreet: boolean;
-  readonly currencyTicker?: string;
+  readonly isFiat?: boolean;
 }
 
 interface BalanceParts {
@@ -17,47 +18,50 @@ interface BalanceParts {
 
 const splitFormattedBalance = (formatted: string): BalanceParts => {
   // Remove non-breaking spaces and normalize whitespace
-  const normalized = formatted.replace(/\u00A0/g, "").replace(/\s+/g, "");
-  // Use greedy match to get everything before the last decimal separator
-  const match = normalized.match(/^(.+)([.,])(\d{2})$/);
-  return match
-    ? { integerPart: match[1], decimalSeparator: match[2], decimalDigits: match[3] }
-    : { integerPart: normalized, decimalSeparator: "", decimalDigits: "" };
+  const normalized = formatted.replaceAll("\u00A0", "").replaceAll(/\s+/g, "");
+  // Match decimal separator and digits, allowing optional currency symbol/code suffix
+  // Handles both "$1,364.91" (prefix) and "1,364.91€" (suffix)
+  // The suffix can be any non-digit characters (letters, symbols like €, $, etc.)
+  const match = /^(.+?)([.,])(\d+)(\D*)$/.exec(normalized);
+  if (match) {
+    const suffix = match[4];
+    // If there's a suffix, append it to the decimal digits
+    return {
+      integerPart: match[1],
+      decimalSeparator: match[2],
+      decimalDigits: suffix ? `${match[3]}${suffix}` : match[3],
+    };
+  }
+  return { integerPart: normalized, decimalSeparator: "", decimalDigits: "" };
 };
 
 /**
  * Formats a balance value and splits it into integer and decimal parts.
- * The integer part includes the currency symbol and thousands separators.
+ * Uses formatCurrencyUnit from coin-framework for consistent formatting.
+ * The integer part includes the currency code and thousands separators.
  * The decimal part includes the decimal separator and digits.
  */
+const CRYPTO_MAX_DECIMAL_DIGITS = 6;
+
 export const formatBalanceParts = ({
   unit,
   balance,
   locale,
   discreet,
-  currencyTicker,
+  isFiat = true,
 }: FormatBalancePartsOptions): BalanceParts => {
   if (discreet) {
     return { integerPart: "***", decimalSeparator: "", decimalDigits: "" };
   }
 
-  const floatValue = BigNumber(balance).div(new BigNumber(10).pow(unit.magnitude)).toNumber();
+  const formatted = formatCurrencyUnit(unit, balance, {
+    locale,
+    showCode: true,
+    disableRounding: false,
+    // Fiat: show all digits (typically 2), Crypto: use dynamic significant digits (max 6)
+    showAllDigits: isFiat,
+    dynamicSignificantDigits: isFiat ? undefined : CRYPTO_MAX_DECIMAL_DIGITS,
+  });
 
-  const currencyCode = currencyTicker || unit.code;
-
-  try {
-    const formatter = new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency: currencyCode,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-    return splitFormattedBalance(formatter.format(floatValue));
-  } catch {
-    const formatter = new Intl.NumberFormat(locale, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-    return splitFormattedBalance(`${unit.code}${formatter.format(floatValue)}`);
-  }
+  return splitFormattedBalance(formatted);
 };

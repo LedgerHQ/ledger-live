@@ -12,36 +12,48 @@ describe("useTrendViewModel", () => {
     mockedUseSelector.mockReturnValue(false);
   });
 
-  it("should format positive percentage correctly", () => {
+  it("should format positive percentage with positive variant", () => {
     const { result } = renderHook(() =>
       useTrendViewModel({ valueChange: { percentage: 0.0523, value: 1000 } }),
     );
 
     expect(result.current).toEqual({
       percentageText: "+5.23%",
-      isPositive: true,
-      isAvailable: true,
+      variant: "positive",
     });
   });
 
-  it("should format negative percentage correctly", () => {
+  it("should format negative percentage with negative variant", () => {
     const { result } = renderHook(() =>
       useTrendViewModel({ valueChange: { percentage: -0.0312, value: -500 } }),
     );
 
     expect(result.current).toEqual({
       percentageText: "-3.12%",
-      isPositive: false,
-      isAvailable: true,
+      variant: "negative",
     });
   });
 
-  it("should return isAvailable false when percentage is null", () => {
+  it("should show 0% without sign when percentage is 0", () => {
     const { result } = renderHook(() =>
-      useTrendViewModel({ valueChange: { percentage: null, value: 0 } }),
+      useTrendViewModel({ valueChange: { percentage: 0, value: 0 } }),
     );
 
-    expect(result.current.isAvailable).toBe(false);
+    expect(result.current).toEqual({
+      percentageText: "0.00%",
+      variant: "neutral",
+    });
+  });
+
+  it("should show 0% without sign when percentage is undefined", () => {
+    const { result } = renderHook(() =>
+      useTrendViewModel({ valueChange: { percentage: undefined, value: 0 } }),
+    );
+
+    expect(result.current).toEqual({
+      percentageText: "0.00%",
+      variant: "neutral",
+    });
   });
 
   it("should mask percentage in discreet mode", () => {
@@ -52,5 +64,17 @@ describe("useTrendViewModel", () => {
     );
 
     expect(result.current.percentageText).toBe("***");
+    expect(result.current.variant).toBe("positive");
+  });
+
+  it("should mask 0% in discreet mode with neutral variant", () => {
+    mockedUseSelector.mockReturnValue(true);
+
+    const { result } = renderHook(() =>
+      useTrendViewModel({ valueChange: { percentage: 0, value: 0 } }),
+    );
+
+    expect(result.current.percentageText).toBe("***");
+    expect(result.current.variant).toBe("neutral");
   });
 });
