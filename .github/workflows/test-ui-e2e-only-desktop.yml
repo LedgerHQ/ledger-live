@@ -230,6 +230,9 @@ jobs:
           TEST_EXECUTION: ${{ inputs.test_execution }}
           PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
+          # Network monitoring - vraie connexion CI (neutre)
+          MOCK: 0
+          # PLAYWRIGHT_NETWORK_CONDITION: none  # Mode neutre par défaut
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
@@ -245,11 +248,47 @@ jobs:
           name: xray-reports-${{ matrix.shardIndex }}
           path: e2e/desktop/tests/artifacts/xray/xray-report.json
 
+      - name: Upload Network Monitoring Results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: network-monitoring-${{ matrix.shardIndex }}
+          path: |
+            e2e/desktop/tests/artifacts/network-throughput-report.txt
+            e2e/desktop/tests/artifacts/network-throughput.log
+
       - name: Set job output based on test result
         id: set-output
         if: ${{ !cancelled() }}
         run: |
           echo "status_${{ matrix.shardIndex }}=${{ steps.run-playwright.outcome }}" >> $GITHUB_OUTPUT
+
+      - name: Analyze network connectivity
+        if: ${{ !cancelled() && matrix.shardIndex == 1 }}
+        run: |
+          echo "## 🌐 Network Connectivity Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Analyser les logs de la commande précédente pour extraire les métriques réseau
+          if [ -f "e2e/desktop/tests/artifacts/network-throughput-report.txt" ]; then
+            echo "**Network Report Found:** ✅" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            # Extraire les métriques principales du rapport
+            if grep -q "CONNECTION INTERRUPTIONS DETECTED" "e2e/desktop/tests/artifacts/network-throughput-report.txt"; then
+              echo "**🚨 CONNECTION ISSUES DETECTED!**" >> $GITHUB_STEP_SUMMARY
+              echo "Check the network report for details." >> $GITHUB_STEP_SUMMARY
+            else
+              echo "**✅ No connection interruptions detected**" >> $GITHUB_STEP_SUMMARY
+            fi
+
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**📁 Network Report:** [View Details](network-throughput-report.txt)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**Network Report:** ❌ Not found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
   report-to-allure:
     name: "Create Allure Report and upload it"
     runs-on: [ledger-live-medium]

@@ -15,8 +15,106 @@ import { lastValueFrom, Observable } from "rxjs";
 import { CLI } from "tests/utils/cliUtils";
 import { launchSpeculos, killSpeculos } from "tests/utils/speculosUtils";
 import { SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
+import { NetworkThroughputLogger } from "tests/utils/networkResponseLogger";
 
 type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
+
+// Simulate intermittent connection with real dropouts
+async function simulateIntermittentConnection(client: any, baseCondition: any) {
+  let isOnline = true;
+  const onlineDuration = 3000; // 3 secondes en ligne
+  const offlineDuration = 50000; // 50 secondes hors ligne
+
+  // Fonction pour basculer entre en ligne/hors ligne
+  const toggleConnection = async () => {
+    if (isOnline) {
+      // Passer hors ligne
+      await client.send("Network.emulateNetworkConditions", {
+        offline: true,
+        downloadThroughput: 0,
+        uploadThroughput: 0,
+        latency: 0,
+      });
+      console.log("🔴 Connection DROPPED (simulated)");
+      isOnline = false;
+      setTimeout(toggleConnection, offlineDuration);
+    } else {
+      // Repasser en ligne
+      await client.send("Network.emulateNetworkConditions", baseCondition);
+      console.log("🔄 Connection RESTORED (simulated)");
+      isOnline = true;
+      setTimeout(toggleConnection, onlineDuration);
+    }
+  };
+
+  // Démarrer le cycle
+  setTimeout(toggleConnection, onlineDuration);
+}
+
+// Network conditions for testing
+function getNetworkCondition(condition: string) {
+  const conditions = {
+    // Fast 3G
+    "3g-fast": {
+      offline: false,
+      downloadThroughput: 1.5 * 1024 * 1024 / 8, // 1.5 Mbps
+      uploadThroughput: 750 * 1024 / 8, // 750 Kbps
+      latency: 40,
+    },
+    // Slow 3G
+    "3g-slow": {
+      offline: false,
+      downloadThroughput: 500 * 1024 / 8, // 500 Kbps
+      uploadThroughput: 500 * 1024 / 8, // 500 Kbps
+      latency: 400,
+    },
+    // 2G
+    "2g": {
+      offline: false,
+      downloadThroughput: 250 * 1024 / 8, // 250 Kbps
+      uploadThroughput: 50 * 1024 / 8, // 50 Kbps
+      latency: 800,
+    },
+    // Very slow connection
+    "slow": {
+      offline: false,
+      downloadThroughput: 50 * 1024 / 8, // 50 Kbps
+      uploadThroughput: 25 * 1024 / 8, // 25 Kbps
+      latency: 2000,
+    },
+    // Simulate connection drops - version améliorée
+    "unstable": {
+      offline: false,
+      downloadThroughput: 1 * 1024 * 1024 / 8, // 1 Mbps
+      uploadThroughput: 500 * 1024 / 8, // 500 Kbps
+      latency: 100,
+    },
+    // Simulate real connection interruptions
+    "intermittent": {
+      offline: false,
+      downloadThroughput: 2 * 1024 * 1024 / 8, // 2 Mbps (normal)
+      uploadThroughput: 1 * 1024 * 1024 / 8, // 1 Mbps (normal)
+      latency: 50, // Normal latency
+      // Cette condition sera gérée différemment pour simuler des coupures
+    },
+    // GPRS (very slow)
+    "gprs": {
+      offline: false,
+      downloadThroughput: 50 * 1024 / 8, // 50 Kbps
+      uploadThroughput: 20 * 1024 / 8, // 20 Kbps
+      latency: 500,
+    },
+    // No throttling (default)
+    "none": {
+      offline: false,
+      downloadThroughput: -1, // Unlimited
+      uploadThroughput: -1,
+      latency: 0,
+    },
+  };
+
+  return conditions[condition as keyof typeof conditions] || conditions.none;
+}
 
 type TestFixtures = {
   lang: string;
@@ -34,6 +132,7 @@ type TestFixtures = {
   featureFlags: OptionalFeatureMap;
   simulateCamera: string;
   app: Application;
+  networkLogger: NetworkThroughputLogger;
   cliCommands?: CliCommand[];
   cliCommandsOnApp?: {
     app: AppInfos;
@@ -87,6 +186,11 @@ export const test = base.extend<TestFixtures>({
   app: async ({ page, electronApp }, use) => {
     const app = new Application(page, electronApp);
     await use(app);
+  },
+
+  networkLogger: async ({}, use, testInfo) => {
+    const logger = new NetworkThroughputLogger(testInfo);
+    await use(logger);
   },
 
   userdataDestinationPath: async ({}, use) => {
@@ -206,7 +310,7 @@ export const test = base.extend<TestFixtures>({
       }
     }
   },
-  page: async ({ electronApp }, use, testInfo) => {
+  page: async ({ electronApp, networkLogger }, use, testInfo) => {
     // app is ready
     const page = await electronApp.firstWindow();
     // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
@@ -217,6 +321,30 @@ export const test = base.extend<TestFixtures>({
       await client.send("Emulation.setCPUThrottlingRate", {
         rate: parseInt(process.env.PLAYWRIGHT_CPU_THROTTLING_RATE),
       });
+    }
+
+    // Network throttling simulation
+    if (process.env.PLAYWRIGHT_NETWORK_CONDITION) {
+      const client = await (page.context() as ChromiumBrowserContext).newCDPSession(page);
+      const conditionName = process.env.PLAYWRIGHT_NETWORK_CONDITION;
+      const networkCondition = getNetworkCondition(conditionName);
+
+      await client.send("Network.enable");
+
+      if (conditionName === "intermittent") {
+        // Simulation spéciale de coupures intermittentes
+        await simulateIntermittentConnection(client, networkCondition);
+      } else {
+        // Condition réseau normale
+        await client.send("Network.emulateNetworkConditions", networkCondition);
+      }
+
+      console.log(`🌐 Network throttling enabled: ${conditionName}`);
+    } else {
+      // En mode neutre (vraie connexion CI), activer quand même Network.enable pour le monitoring
+      const client = await (page.context() as ChromiumBrowserContext).newCDPSession(page);
+      await client.send("Network.enable");
+      console.log(`🌐 Network monitoring enabled (real CI connection)`);
     }
 
     // record all logs into an artifact
@@ -233,12 +361,47 @@ export const test = base.extend<TestFixtures>({
       safeAppendFile(logFile, `${txt}\n`);
     });
 
+    // Démarrer le monitoring réseau dès que la page est prête
+    networkLogger.startMonitoring(page);
+
     // app is loaded
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
 
     // use page in the test
     await use(page);
+
+    // Générer et afficher uniquement le rapport final de connectivité réseau
+    const connectivityReport = networkLogger.generateReport();
+
+    // Afficher seulement le rapport final dans la console Playwright
+    console.log(connectivityReport);
+
+    // Écrire aussi le rapport dans un fichier d'artefacts pour archivage
+    const reportFile = testInfo.outputPath("network-throughput-report.txt");
+    await writeFile(reportFile, connectivityReport);
+
+    // Logs structurés pour la CI (parsing facile par les outils)
+    const stats = networkLogger.getStats();
+    const successRate = stats.totalRequests > 0 ? ((stats.totalRequests - stats.failedRequests) / stats.totalRequests * 100).toFixed(2) : '0.00';
+
+    // Logs lisibles par les humains et parsables par les outils CI
+    console.log(`📊 NETWORK_METRICS: success_rate=${successRate}%`);
+    console.log(`📊 NETWORK_METRICS: connection_downtime=${stats.connectionDowntime}ms`);
+    console.log(`📊 NETWORK_METRICS: throughput=${stats.throughputMbps.toFixed(2)}Mbps`);
+    console.log(`📊 NETWORK_METRICS: total_requests=${stats.totalRequests}`);
+    console.log(`📊 NETWORK_METRICS: failed_requests=${stats.failedRequests}`);
+    console.log(`📊 NETWORK_METRICS: connection_errors=${stats.connectionErrors}`);
+    console.log(`📊 NETWORK_METRICS: timeouts=${stats.timeouts}`);
+    console.log(`📊 NETWORK_METRICS: has_issues=${stats.connectionDowntime > 0}`);
+
+    // Format GitHub Actions (si utilisé dans GitHub CI)
+    if (process.env.GITHUB_ACTIONS) {
+      console.log(`::set-output name=network-success-rate::${successRate}%`);
+      console.log(`::set-output name=network-has-issues::${stats.connectionDowntime > 0}`);
+      console.log(`::set-output name=network-downtime::${stats.connectionDowntime}ms`);
+      console.log(`::set-output name=network-throughput::${stats.throughputMbps.toFixed(2)}Mbps`);
+    }
 
     // Take screenshot and video only on failure
     if (testInfo.status !== "passed") {
