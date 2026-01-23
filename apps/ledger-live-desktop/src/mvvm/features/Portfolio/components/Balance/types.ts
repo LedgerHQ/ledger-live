@@ -1,14 +1,17 @@
-import { BigNumber } from "bignumber.js";
-import { Unit } from "@ledgerhq/types-cryptoassets";
 import { ValueChange } from "@ledgerhq/types-live";
 
+export interface BalanceParts {
+  readonly integerPart: string;
+  readonly decimalSeparator: string;
+  readonly decimalDigits: string;
+}
+
 export interface BalanceViewProps {
-  readonly totalBalance: BigNumber;
+  readonly balanceParts: BalanceParts;
   readonly valueChange: ValueChange;
-  readonly unit: Unit;
   readonly isAvailable: boolean;
-  readonly isFiat: boolean;
   readonly navigateToAnalytics: () => void;
+  readonly handleKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void;
 }
 
 export type BalanceViewModelResult = BalanceViewProps;

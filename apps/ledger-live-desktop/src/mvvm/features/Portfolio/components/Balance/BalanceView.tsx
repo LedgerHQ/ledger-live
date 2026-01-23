@@ -1,39 +1,19 @@
-import React, { useCallback, useMemo } from "react";
-import { useSelector } from "LLD/hooks/redux";
-import { localeSelector, discreetModeSelector } from "~/renderer/reducers/settings";
-import { formatBalanceParts } from "../../utils/formatBalanceParts";
+import React from "react";
 import { BalanceViewProps } from "./types";
 import { Trend } from "../Trend";
 
 export const BalanceView = ({
-  totalBalance,
+  balanceParts,
   valueChange,
-  unit,
   isAvailable,
-  isFiat,
   navigateToAnalytics,
+  handleKeyDown,
 }: BalanceViewProps) => {
-  const locale = useSelector(localeSelector);
-  const discreet = useSelector(discreetModeSelector);
-
-  const { integerPart, decimalSeparator, decimalDigits } = useMemo(
-    () => formatBalanceParts({ unit, balance: totalBalance, locale, discreet, isFiat }),
-    [unit, totalBalance, locale, discreet, isFiat],
-  );
-
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        navigateToAnalytics();
-      }
-    },
-    [navigateToAnalytics],
-  );
-
   if (!isAvailable) {
     return null;
   }
+
+  const { integerPart, decimalSeparator, decimalDigits } = balanceParts;
 
   return (
     <div

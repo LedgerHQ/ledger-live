@@ -1,12 +1,15 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { usePortfolio as usePortfolioRaw } from "@ledgerhq/live-countervalues-react/portfolio";
 import {
   counterValueCurrencySelector,
   selectedTimeRangeSelector,
+  localeSelector,
+  discreetModeSelector,
 } from "~/renderer/reducers/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { BalanceViewModelResult } from "../components/Balance/types";
+import { formatBalanceParts } from "../utils/formatBalanceParts";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
 
@@ -24,6 +27,8 @@ export const useBalanceViewModel = (
   const accounts = useSelector(accountsSelector);
   const counterValue = useSelector(counterValueCurrencySelector);
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
+  const locale = useSelector(localeSelector);
+  const discreet = useSelector(discreetModeSelector);
 
   const range = useLegacyRange ? selectedTimeRange : NEW_FLOW_RANGE;
 
@@ -35,20 +40,33 @@ export const useBalanceViewModel = (
 
   const latestBalanceValue =
     portfolio.balanceHistory[portfolio.balanceHistory.length - 1]?.value ?? 0;
-  const totalBalance = new BigNumber(latestBalanceValue);
   const unit = counterValue.units[0];
   const isAvailable = portfolio.balanceAvailable;
-  const isFiat = counterValue.type === "FiatCurrency";
   const valueChange = portfolio.countervalueChange;
 
   const navigateToAnalytics = useCallback(() => navigate("/analytics"), [navigate]);
 
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        navigateToAnalytics();
+      }
+    },
+    [navigateToAnalytics],
+  );
+
+  const balanceParts = useMemo(
+    () =>
+      formatBalanceParts({ unit, balance: new BigNumber(latestBalanceValue), locale, discreet }),
+    [unit, latestBalanceValue, locale, discreet],
+  );
+
   return {
-    totalBalance,
+    balanceParts,
     valueChange,
-    unit,
     isAvailable,
-    isFiat,
     navigateToAnalytics,
+    handleKeyDown,
   };
 };

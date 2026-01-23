@@ -80,6 +80,7 @@
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-countervalues-react": "workspace:^",
+    "@ledgerhq/live-currency-format": "workspace:^",
     "@ledgerhq/live-dmk-desktop": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
