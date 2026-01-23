@@ -40,6 +40,27 @@ runs:
           PATH_VALUE="${BRANCH}-${SUFFIX}"
         fi
         echo "path=${PATH_VALUE}" >> "$GITHUB_OUTPUT"
+    - name: Compress PNG files
+      shell: bash
+      run: |
+        if command -v pngquant &> /dev/null; then
+          echo "pngquant already installed"
+        else
+          echo "Installing pngquant..."
+          if [[ "$OSTYPE" == "darwin"* ]]; then
+            brew install pngquant
+          else
+            sudo apt-get update && sudo apt-get install -y pngquant
+          fi
+        fi
+        
+        PNG_COUNT=$(find "${{ inputs.path }}" -type f -name "*.png" 2>/dev/null | wc -l)
+        echo "Found $PNG_COUNT PNG files to compress"
+        
+        if [ "$PNG_COUNT" -gt 0 ]; then
+          find "${{ inputs.path }}" -type f -name "*.png" -exec pngquant --quality=65-80 --skip-if-larger --ext .png --force {} \;
+          echo "PNG compression completed"
+        fi
     - name: Publish report on Allure Server
       id: publish-report
       uses: LedgerHQ/send-to-allure-server-action@2.1.2
