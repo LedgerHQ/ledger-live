@@ -7874,6 +7874,14 @@
       "cta": "Got it"
     }
   },
+  "quickActions": {
+    "send": "Send",
+    "receive": "Receive",
+    "buy": "Buy",
+    "sell": "Sell",
+    "connect": "Connect",
+    "buyALedger": "Buy a Ledger"
+  },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
     "entry": {
