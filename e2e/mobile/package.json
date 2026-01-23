@@ -52,7 +52,7 @@
     "bignumber.js": "9.1.2",
     "body-parser": "2.2.2",
     "cors": "2.8.5",
-    "detox": "20.46.0",
+    "detox": "20.46.3",
     "detox-allure2-adapter": "1.0.0-alpha.42",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
