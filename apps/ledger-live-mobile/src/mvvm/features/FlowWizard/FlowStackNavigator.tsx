@@ -20,7 +20,6 @@ import type { FlowStep } from "../FlowWizard/types";
 import type {
   FlowStackNavigatorProps,
   ReactNativeFlowStepConfig,
-  StackScreenConfig,
 } from "../FlowWizard/types.native";
 
 type NavigationProps = BaseComposite<
@@ -77,6 +76,7 @@ export function FlowStackNavigator<
     () => ({
       ...getStackNavigatorConfig(colors, true),
       headerRight: () => <CloseWithConfirmation onClose={handleClose} />,
+      headerShown: false,
     }),
     [colors, handleClose],
   );
@@ -90,7 +90,7 @@ export function FlowStackNavigator<
   }, [route, navigation]);
 
   // Generate screen configurations from stepRegistry and flowConfig
-  const screenConfigs = useMemo<StackScreenConfig<TStep>[]>(() => {
+  const screenConfigs = useMemo(() => {
     const { stepOrder, stepConfigs } = flowConfig;
 
     return stepOrder
@@ -137,7 +137,7 @@ export function FlowStackNavigator<
           listeners: stepConfig?.listeners,
         };
       })
-      .filter((config): config is StackScreenConfig<TStep> => config !== null);
+      .filter(config => config !== null);
   }, [
     flowConfig,
     stepRegistry,

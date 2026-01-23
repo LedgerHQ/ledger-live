@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { FLOW_STATUS } from "../../FlowWizard/types";
+// import { FLOW_STATUS } from "../../FlowWizard/types"; todo: why import issue?
 import { useSendFlowAccount } from "./useSendFlowAccount";
 import { useSendFlowTransaction } from "./useSendFlowTransaction";
 import { useSendFlowOperation } from "./useSendFlowOperation";
@@ -16,6 +16,12 @@ type UseSendFlowBusinessLogicParams = Readonly<{
   initParams?: SendFlowInitParams;
   onClose: () => void;
 }>;
+
+const FLOW_STATUS = {
+  IDLE: "IDLE",
+  ERROR: "ERROR",
+  SUCCESS: "SUCCESS",
+};
 
 // Send-specific business state (account, transaction, operation, status)
 // and exposes stable, typed actions to the UI
@@ -36,10 +42,7 @@ export function useSendFlowBusinessLogic({
     parentAccount: accountHook.state.parentAccount,
   });
 
-  const operationHook = useSendFlowOperation({
-    account: accountHook.state.account,
-    parentAccount: accountHook.state.parentAccount,
-  });
+  const operationHook = useSendFlowOperation();
 
   const uiConfig = useMemo(
     () => getSendUiConfig(accountHook.state.currency),

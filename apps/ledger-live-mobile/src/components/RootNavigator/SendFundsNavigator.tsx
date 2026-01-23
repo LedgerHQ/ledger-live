@@ -17,7 +17,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import type { SendFundsNavigatorStackParamList } from "./types/SendFundsNavigator";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import SendWorkflow from "~/mvvm/features/SendInitial";
+import SendWorkflow from "LLM/features/Send";
 
 const totalSteps = "5";
 
@@ -162,6 +162,7 @@ export default function SendFundsNavigator() {
         {/* ---- New Send flow screens */}
         <Stack.Screen
           name={ScreenName.NewSendFlow}
+          // @ts-expect-error: todo fix types
           component={SendWorkflow}
           options={{
             headerShown: false,

@@ -4,13 +4,10 @@ import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/gener
 import type {
   FlowNavigationDirection,
   FlowNavigationActions,
-  FlowStepConfig,
-  FlowConfig,
   FlowStatus,
   FlowStatusActions,
 } from "../FlowWizard/types";
 import type { ReactNativeFlowStepConfig, ReactNativeFlowConfig } from "../FlowWizard/types.native";
-import { ScreenName } from "~/const";
 
 export const SEND_FLOW_STEP = {
   RECIPIENT: "RECIPIENT",
