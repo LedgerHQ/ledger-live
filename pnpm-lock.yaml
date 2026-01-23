@@ -2499,6 +2499,9 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../live-config
+      '@ledgerhq/live-currency-format':
+        specifier: workspace:^
+        version: link:../live-currency-format
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
@@ -6150,6 +6153,9 @@ importers:
       '@ledgerhq/live-countervalues-react':
         specifier: workspace:^
         version: link:../live-countervalues-react
+      '@ledgerhq/live-currency-format':
+        specifier: workspace:^
+        version: link:../live-currency-format
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../live-dmk-shared
@@ -8924,6 +8930,34 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
+
+  libs/live-currency-format:
+    dependencies:
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../env
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-cryptoassets
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
+    devDependencies:
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/cryptoassets
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.8
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.8)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
 
   libs/live-dmk-desktop:
     dependencies:
