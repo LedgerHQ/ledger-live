@@ -6,6 +6,7 @@ import {
   clearAccount,
   getAccountCurrency,
   isUpToDateAccount,
+  isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
 import { getEnv } from "@ledgerhq/live-env";
 import isEqual from "lodash/isEqual";
@@ -137,3 +138,7 @@ export const starredAccountsSelector = createSelector(
 export const isUpToDateAccountSelector = createSelector(accountSelector, isUpToDateAccount);
 
 export const flattenAccountsSelector = createSelector(accountsSelector, flattenAccounts);
+
+export const areAccountsEmptySelector = createSelector(accountsSelector, accounts =>
+  accounts.every(isAccountEmpty),
+);
