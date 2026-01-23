@@ -5,24 +5,31 @@ Create a pull request with proper description, changeset, and all required eleme
 ## Prompt Variables
 
 $TICKET_URL
+
 > Paste the JIRA or GitHub issue URL (e.g., https://ledgerhq.atlassian.net/browse/LIVE-1234)
 
 $TICKET_DESCRIPTION
+
 > Describe the ticket context: What is the problem? What should be done? Include acceptance criteria if available.
 
 $CHANGE_TYPE
+
 > Select the type of change: feat | fix | refactor | test | docs | chore
 
 $CHANGE_SCOPE
+
 > What packages are impacted? (e.g., live-mobile, ledger-live-desktop, @ledgerhq/live-common)
 
 $TEST_COVERAGE
+
 > Are changes covered by tests? yes | no | partial - If not fully covered, explain why.
 
 $QA_FOCUS_AREAS
+
 > What specific areas should QA focus on when testing this PR?
 
 $HAS_UI_CHANGES
+
 > Are there visual/UI changes? yes | no - If yes, you will need to edit the PR description to add screenshots.
 
 ## Instructions
@@ -50,6 +57,7 @@ npx changeset
 ```
 
 **Changeset naming convention:**
+
 - Use the change description from the ticket
 - Keep it concise but descriptive
 - Format: `<verb> <what>` (e.g., "Add dark mode toggle", "Fix transaction signing issue")
@@ -64,7 +72,7 @@ Generate the PR body using this template, filled with the provided information:
 - [x] `npx changeset` was attached.
 - [{{TEST_CHECKBOX}}] **Covered by automatic tests.** {{TEST_EXPLANATION}}
 - [x] **Impact of the changes:**
-  {{QA_FOCUS_AREAS}}
+      {{QA_FOCUS_AREAS}}
 
 ### 📝 Description
 
@@ -114,6 +122,7 @@ open "$PR_URL"
 **Important**: Always run `open "$PR_URL"` after creating the PR to ensure it opens in the browser. Do NOT skip this step.
 
 **If there are UI changes** (`$HAS_UI_CHANGES` is "yes"):
+
 1. The PR opens in your browser
 2. Click the **"..."** menu (top-right of the PR description) → **"Edit"**
 3. Scroll to the Before/After table
@@ -131,35 +140,41 @@ After creating the PR, use the URL from the `gh pr create` output to generate a 
 ```
 
 **Slack prefix rules:**
-- `LLM` for Ledger Live Mobile changes
-- `LLD` for Ledger Live Desktop changes
+
+- `LWM` for Ledger Live Mobile changes
+- `LWD` for Ledger Live Desktop changes
 - `Common` for @ledgerhq/live-common or shared libs
 - `Tooling` for CI, scripts, or developer tooling
-- `LLM + LLD` if both apps are impacted
+- `LWM + LWD` if both apps are impacted
 
 ## Template Fill Rules
 
 1. **PR Title**: `{{CHANGE_TYPE}}({{SCOPE}}): {{SHORT_DESCRIPTION}}`
+
    - Example: `feat(mobile): add dark mode toggle`
    - Example: `fix(desktop): resolve transaction signing issue`
 
-2. **TEST_CHECKBOX**: 
+2. **TEST_CHECKBOX**:
+
    - `x` if $TEST_COVERAGE is "yes"
    - ` ` (space) if "no" or "partial"
 
 3. **TEST_EXPLANATION**:
+
    - Empty if fully covered
    - Add explanation in italics if partial/no: `_Explanation here_`
 
 4. **QA_FOCUS_AREAS**: Format as bullet list from $QA_FOCUS_AREAS
 
 5. **DESCRIPTION**: Generate from $TICKET_DESCRIPTION:
+
    - First paragraph: Problem statement
    - Second paragraph: Solution approach
    - Include code samples for library changes
    - Include before/after for bug fixes
 
-6. **SCREENSHOTS_SECTION**: 
+6. **SCREENSHOTS_SECTION**:
+
    - If $HAS_UI_CHANGES is "yes":
      - Add the table with placeholders:
        ```
@@ -177,6 +192,7 @@ After creating the PR, use the URL from the `gh pr create` output to generate a 
 ## Changeset Guidelines
 
 From CONTRIBUTING.md:
+
 - Always add a changeset with `pnpm changeset`
 - Package names must match exactly (check package.json):
   - `live-mobile` for mobile app
@@ -191,6 +207,7 @@ From CONTRIBUTING.md:
 For a feature adding portfolio analytics:
 
 **Changeset** (`.changeset/blue-tigers-smile.md`):
+
 ```markdown
 ---
 "live-mobile": minor
@@ -203,6 +220,7 @@ Add portfolio analytics dashboard with performance metrics
 **PR Title**: `feat(portfolio): add analytics dashboard`
 
 **PR Body**:
+
 ```markdown
 ### ✅ Checklist
 
@@ -220,6 +238,7 @@ This PR introduces a new analytics dashboard to the portfolio feature, providing
 **Problem**: Users currently have no way to track their portfolio performance over time.
 
 **Solution**: Added a new analytics screen with:
+
 - Performance charts (daily, weekly, monthly views)
 - Key metrics summary (gains, losses, total value)
 - Export functionality for data
@@ -230,7 +249,8 @@ This PR introduces a new analytics dashboard to the portfolio feature, providing
 ```
 
 **Slack Message**:
+
 ```
-:pr-open: LLM + LLD - Add portfolio analytics dashboard
+:pr-open: LWM + LWD - Add portfolio analytics dashboard
 https://github.com/LedgerHQ/ledger-live/pull/1234
 ```
