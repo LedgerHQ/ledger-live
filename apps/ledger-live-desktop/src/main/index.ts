@@ -23,6 +23,7 @@ import {
   loadWindow,
 } from "./window-lifecycle";
 import db from "./db";
+import { UserDataCleanup } from "./cleanupUserData";
 import debounce from "lodash/debounce";
 import sentry, { setTags } from "~/sentry/main";
 import type { SettingsState } from "~/renderer/reducers/settings";
@@ -105,6 +106,10 @@ app.on("ready", async () => {
   console.timeEnd("T-window");
 
   // Initialize database
+  const userDataCleanup = new UserDataCleanup(userDataDirectory, {
+    patterns: [/^app\.json\..+$/],
+  });
+  await userDataCleanup.cleanup();
   db.init(userDataDirectory);
 
   // Defer extension installation to not block startup
