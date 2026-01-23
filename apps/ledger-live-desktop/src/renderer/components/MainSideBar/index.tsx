@@ -249,7 +249,10 @@ const MainSideBar = () => {
   const recoverFeature = useFeature("protectServicesDesktop");
   const recoverHomePath = useAccountPath(recoverFeature);
 
-  const { shouldDisplayMarketBanner: isMarketBannerEnabled } = useWalletFeaturesConfig("desktop");
+  const {
+    shouldDisplayMarketBanner: isMarketBannerEnabled,
+    shouldDisplayQuickActionCtas: isQuickActionCtasEnabled,
+  } = useWalletFeaturesConfig("desktop");
 
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
@@ -426,24 +429,28 @@ const MainSideBar = () => {
                   disabled={noAccounts}
                   collapsed={secondAnim}
                 />
-                <SideBarListItem
-                  id={"send"}
-                  label={t("send.title")}
-                  icon={Icons.ArrowUp}
-                  iconActiveColor="wallet"
-                  onClick={handleOpenSendModal}
-                  disabled={noAccounts || navigationLocked}
-                  collapsed={secondAnim}
-                />
-                <SideBarListItem
-                  id={"receive"}
-                  label={t("receive.title")}
-                  icon={Icons.ArrowDown}
-                  iconActiveColor="wallet"
-                  onClick={handleOpenReceiveModal}
-                  disabled={noAccounts || navigationLocked}
-                  collapsed={secondAnim}
-                />
+                {!isQuickActionCtasEnabled && (
+                  <SideBarListItem
+                    id={"send"}
+                    label={t("send.title")}
+                    icon={Icons.ArrowUp}
+                    iconActiveColor="wallet"
+                    onClick={handleOpenSendModal}
+                    disabled={noAccounts || navigationLocked}
+                    collapsed={secondAnim}
+                  />
+                )}
+                {!isQuickActionCtasEnabled && (
+                  <SideBarListItem
+                    id={"receive"}
+                    label={t("receive.title")}
+                    icon={Icons.ArrowDown}
+                    iconActiveColor="wallet"
+                    onClick={handleOpenReceiveModal}
+                    disabled={noAccounts || navigationLocked}
+                    collapsed={secondAnim}
+                  />
+                )}
                 <SideBarListItem
                   id={"swap"}
                   label={t("sidebar.swap")}
@@ -463,16 +470,18 @@ const MainSideBar = () => {
                   isActive={location.pathname === "/earn"}
                   collapsed={secondAnim}
                 />
-                <SideBarListItem
-                  id={"exchange"}
-                  label={t("sidebar.exchange")}
-                  icon={Icons.Dollar}
-                  iconActiveColor="wallet"
-                  onClick={handleClickExchange}
-                  isActive={location.pathname === "/exchange"}
-                  disabled={noAccounts}
-                  collapsed={secondAnim}
-                />
+                {!isQuickActionCtasEnabled && (
+                  <SideBarListItem
+                    id={"exchange"}
+                    label={t("sidebar.exchange")}
+                    icon={Icons.Dollar}
+                    iconActiveColor="wallet"
+                    onClick={handleClickExchange}
+                    isActive={location.pathname === "/exchange"}
+                    disabled={noAccounts}
+                    collapsed={secondAnim}
+                  />
+                )}
                 <SideBarListItem
                   id={"catalog"}
                   label={t("sidebar.catalog")}
