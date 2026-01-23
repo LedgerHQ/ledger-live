@@ -25,7 +25,7 @@ export type WebviewState = {
 
 export type WebviewAPI = Pick<WebView, "reload" | "goBack" | "goForward"> & {
   loadURL: (url: string) => void;
-  /** Resets webview to initial URL with all params, clearing history so swipe-back exits */
+  /** Resets webview to initial URL with all original params */
   resetToInitialURL: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   notify: (method: `event.${string}`, params: any) => void;

@@ -295,8 +295,7 @@ export function useWebviewState(
           setURI(url);
         },
         resetToInitialURL: (): void => {
-          const webview = safeGetRefValue(webviewRef);
-          webview.injectJavaScript(`window.location.replace('${initialURL}'); true;`);
+          setURI(initialURL);
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         notify: (method: `event.${string}`, params: any) => {
