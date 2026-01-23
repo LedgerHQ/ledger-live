@@ -1,5 +1,5 @@
 import React, { useCallback, useState, memo } from "react";
-import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Portfolio } from "@ledgerhq/types-live";
 import styled, { useTheme } from "styled-components/native";
@@ -15,16 +15,12 @@ import { TransactionsPendingConfirmationWarningAllAccounts } from "./Transaction
 import CurrencyUnitValue from "./CurrencyUnitValue";
 
 import { useTimeRange } from "~/actions/settings";
-import getWindowDimensions from "~/logic/getWindowDimensions";
-import Graph from "./Graph";
 import FormatDate from "./DateFormat/FormatDate";
 import { track } from "~/analytics";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import EmptyGraph from "~/icons/EmptyGraph";
 import { Item } from "./Graph/types";
 import { GestureResponderEvent } from "react-native";
-
-const { width } = getWindowDimensions();
+import GraphSection from "./GraphSection";
 
 type Props = {
   areAccountsEmpty: boolean;
@@ -34,6 +30,7 @@ type Props = {
   currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
   onTouchEndGraph?: (event: GestureResponderEvent) => void;
+  hideGraph?: boolean;
 };
 
 const Placeholder = styled(Flex).attrs({
@@ -58,6 +55,7 @@ function GraphCard({
   currentPositionY,
   graphCardEndPosition,
   onTouchEndGraph,
+  hideGraph,
 }: Props) {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
@@ -188,31 +186,19 @@ function GraphCard({
         </Animated.View>
       </Flex>
 
-      {readOnlyModeEnabled ? (
-        <EmptyGraph />
-      ) : (
-        <>
-          <Flex onTouchEnd={onTouchEndGraph}>
-            <Graph
-              isInteractive={isAvailable}
-              height={110}
-              width={width + 1}
-              color={colors.primary.c80}
-              data={balanceHistory}
-              onItemHover={onItemHover}
-              mapValue={mapGraphValue}
-              fill="transparent"
-              testID="graphCard-chart"
-            />
-          </Flex>
-          <Flex paddingTop={6} background="transparent">
-            <GraphTabs
-              activeIndex={activeRangeIndex}
-              onChange={updateTimeRange}
-              labels={rangesLabels}
-            />
-          </Flex>
-        </>
+      {!hideGraph && (
+        <GraphSection
+          readOnlyModeEnabled={readOnlyModeEnabled}
+          onTouchEndGraph={onTouchEndGraph}
+          isAvailable={isAvailable}
+          balanceHistory={balanceHistory}
+          onItemHover={onItemHover}
+          mapGraphValue={mapGraphValue}
+          primaryColor={colors.primary.c80}
+          activeRangeIndex={activeRangeIndex}
+          updateTimeRange={updateTimeRange}
+          rangesLabels={rangesLabels}
+        />
       )}
     </Flex>
   );

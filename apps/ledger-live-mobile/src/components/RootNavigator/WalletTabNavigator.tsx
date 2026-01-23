@@ -7,6 +7,7 @@ import {
 } from "@react-navigation/material-top-tabs";
 import { NavigationContainerEventMap } from "@react-navigation/native";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import MarketWalletTabNavigator from "LLM/features/Market/WalletTabNavigator";
 import {
   Portfolio as NewPortfolio,
@@ -23,6 +24,7 @@ import {
 } from "~/reducers/settings";
 import Portfolio from "~/screens/Portfolio";
 import ReadOnlyPortfolio from "~/screens/Portfolio/ReadOnly";
+import WalletTabBackgroundGradient from "../WalletTab/WalletTabBackgroundGradient";
 import WalletTabHeader from "../WalletTab/WalletTabHeader";
 import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
 import WalletTabNavigatorTabBar from "../WalletTab/WalletTabNavigatorTabBar";
@@ -53,6 +55,7 @@ export default function WalletTabNavigator() {
 
   const { shouldDisplayMarketBanner: shouldHideTabs, isEnabled: isNewPortfolioEnabled } =
     useWalletFeaturesConfig("mobile");
+  const { backgroundColor } = useWallet40Theme("mobile");
 
   const PortfolioComponent = useMemo(() => {
     if (readOnlyModeEnabled && hasNoAccounts) {
@@ -71,7 +74,8 @@ export default function WalletTabNavigator() {
 
   return (
     <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
-      <Box flexGrow={1} bg={"background.main"}>
+      <Box flexGrow={1} bg={backgroundColor}>
+        {shouldHideTabs && <WalletTabBackgroundGradient />}
         <WalletTab.Navigator
           initialRouteName={initialRouteName}
           tabBar={shouldHideTabs ? noTabBar : tabBar}
