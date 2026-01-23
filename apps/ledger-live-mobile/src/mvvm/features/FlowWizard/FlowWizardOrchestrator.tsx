@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, type ComponentType, type ReactNode } from "react";
 import { Animated, type StyleProp, type ViewStyle, View } from "react-native";
-import { useFlowWizardNavigation } from "./hooks/useFlowWizardNavigation";
+import { useFlowWizardOrchestrator } from "./hooks";
 import type {
   FlowStep,
   FlowConfig,
@@ -54,7 +54,7 @@ export function FlowWizardOrchestrator<
   getContainerStyle,
   children,
 }: FlowWizardOrchestratorProps<TStep, TContextValue, TStepConfig>) {
-  const { state, actions, currentStepConfig } = useFlowWizardNavigation<TStep, TStepConfig>({
+  const { state, actions, currentStepConfig } = useFlowWizardOrchestrator<TStep, TStepConfig>({
     flowConfig,
   });
 
