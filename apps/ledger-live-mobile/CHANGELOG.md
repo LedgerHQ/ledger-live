@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.103.0-next.2
+
+### Minor Changes
+
+- [#13921](https://github.com/LedgerHQ/ledger-live/pull/13921) [`a48f452`](https://github.com/LedgerHQ/ledger-live/commit/a48f452653c898b045d8c5fac3fda0f1602fe152) Thanks [@desirendr](https://github.com/desirendr)! - fix touch events not working on newly added assets/accounts
+
 ## 3.103.0-next.1
 
 ### Minor Changes
