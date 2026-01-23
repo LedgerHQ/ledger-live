@@ -86,7 +86,6 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
-// import NewSendNavigator from "LLM/features/Send/Navigator";
 import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
@@ -549,13 +548,6 @@ export default function BaseNavigator() {
           component={AddAccountsV2Navigator}
           options={{ headerShown: false }}
         />
-
-        {/* <Stack.Screen
-          // @ts-expect-error: todo
-          name={NavigatorName.NewSend}
-          component={NewSendNavigator}
-          options={{ headerShown: false }}
-        /> */}
 
         <Stack.Screen
           name={NavigatorName.DeviceSelection}

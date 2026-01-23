@@ -12,8 +12,8 @@ import type { ReactNativeFlowStepConfig, ReactNativeFlowConfig } from "../FlowWi
 export const SEND_FLOW_STEP = {
   RECIPIENT: "RECIPIENT",
   AMOUNT: "AMOUNT",
-  SIGNATURE: "SIGNATURE",
   CONFIRMATION: "CONFIRMATION",
+  SIGNATURE: "SIGNATURE",
 };
 
 export type SendFlowStep = (typeof SEND_FLOW_STEP)[keyof typeof SEND_FLOW_STEP];

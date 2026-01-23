@@ -22,7 +22,7 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     screenName: ScreenName.NewSendRecipient,
     screenOptions: {
       ...TransparentHeaderNavigationOptions,
-      headerLeft: () => null,
+      headerLeft: () => null, // todo: take into account
     },
   },
   [SEND_FLOW_STEP.AMOUNT]: {
@@ -33,23 +33,23 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
       ...TransparentHeaderNavigationOptions,
     },
   },
-  [SEND_FLOW_STEP.SIGNATURE]: {
-    id: SEND_FLOW_STEP.SIGNATURE,
-    canGoBack: false,
-    showTitle: false,
-    height: "hug",
-    screenName: ScreenName.NewSendSignature,
-    screenOptions: {
-      ...TransparentHeaderNavigationOptions,
-      headerLeft: () => null,
-    },
-  },
   [SEND_FLOW_STEP.CONFIRMATION]: {
     id: SEND_FLOW_STEP.CONFIRMATION,
     canGoBack: false,
     showTitle: false,
     height: "hug",
     screenName: ScreenName.NewSendConfirmation,
+    screenOptions: {
+      ...TransparentHeaderNavigationOptions,
+      headerLeft: () => null,
+    },
+  },
+  [SEND_FLOW_STEP.SIGNATURE]: {
+    id: SEND_FLOW_STEP.SIGNATURE,
+    canGoBack: false,
+    showTitle: false,
+    height: "hug",
+    screenName: ScreenName.NewSendSignature,
     screenOptions: {
       ...TransparentHeaderNavigationOptions,
       headerLeft: () => null,

@@ -3,19 +3,13 @@ import { SEND_FLOW_STEP_ORDER, SEND_STEP_CONFIGS } from "../constants";
 import { SEND_FLOW_STEP } from "../types";
 import type { SendFlowStep } from "../types";
 
-/**
- * Hook to access Send Flow navigation actions using React Navigation
- * This bridges the FlowWizard context with actual React Navigation
- */
 export function useSendFlowNavigation() {
   const reactNavigation = useNavigation();
 
-  // Helper to check if a string is a valid SendFlowStep
   const isValidSendFlowStep = (step: string): step is SendFlowStep => {
     return Object.values(SEND_FLOW_STEP).some(validStep => validStep === step);
   };
 
-  // Get current step from route name
   const getCurrentStep = (): SendFlowStep => {
     const navigationState = reactNavigation.getState();
     const currentIndex = navigationState?.index;
@@ -24,7 +18,6 @@ export function useSendFlowNavigation() {
     if (currentIndex !== undefined && routes && routes[currentIndex]) {
       const currentRouteName = routes[currentIndex].name;
 
-      // Map screen names back to steps
       const stepEntries = Object.entries(SEND_STEP_CONFIGS);
       for (const [step, config] of stepEntries) {
         if (config.screenName === currentRouteName && isValidSendFlowStep(step)) {
@@ -33,7 +26,7 @@ export function useSendFlowNavigation() {
       }
     }
 
-    return SEND_FLOW_STEP.RECIPIENT; // fallback
+    return SEND_FLOW_STEP.RECIPIENT;
   };
 
   const goToNextStep = () => {
@@ -47,7 +40,6 @@ export function useSendFlowNavigation() {
       const nextScreenName = nextConfig.screenName;
 
       if (nextScreenName) {
-        // Use CommonActions.navigate to avoid TypeScript issues
         reactNavigation.dispatch(
           CommonActions.navigate({
             name: nextScreenName,
