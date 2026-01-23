@@ -1,11 +1,12 @@
 import { createHash } from "crypto";
+import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AleoPrivateRecord } from "../types/api";
-import type { AleoOperation, AleoTransactionType } from "../types";
+import type { AleoOperation, AleoTransactionType, Transaction } from "../types";
 import { PROGRAM_ID, TRANSFERS } from "../constants";
 import { sdkClient } from "../network/sdk";
 import { apiClient } from "../network/api";
@@ -199,3 +200,26 @@ export const patchPublicOperations = async (
 
   return patchedOperations;
 };
+
+export function calculateAmount({
+  account,
+  transaction,
+  estimatedFees,
+}: {
+  account: Account;
+  transaction: Transaction;
+  estimatedFees: BigNumber;
+}) {
+  let amount = transaction.amount;
+
+  if (transaction.useAllAmount) {
+    amount = BigNumber.max(0, account.balance.minus(estimatedFees));
+  }
+
+  const totalSpent = amount.plus(estimatedFees);
+
+  return {
+    amount,
+    totalSpent,
+  };
+}

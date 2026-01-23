@@ -1,6 +1,9 @@
+import BigNumber from "bignumber.js";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
+import { Transaction } from "../types";
 import {
+  calculateAmount,
   parseMicrocredits,
   patchAccountWithViewKey,
   determineTransactionType,
@@ -182,6 +185,68 @@ describe("logic utils", () => {
       expect(result1).toMatch(/^[a-f0-9]{64}$/);
       expect(result2).toMatch(/^[a-f0-9]{64}$/);
       expect(result1).not.toBe(result2);
+    });
+  });
+
+  describe("calculateAmount", () => {
+    it("should return transaction amount when useAllAmount is false", () => {
+      const estimatedFees = new BigNumber(5000);
+      const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
+      const mockTransaction = {
+        amount: new BigNumber(500000),
+        useAllAmount: false,
+      } as Transaction;
+
+      const result = calculateAmount({
+        account: mockAccount,
+        transaction: mockTransaction,
+        estimatedFees,
+      });
+
+      expect(result).toMatchObject({
+        amount: mockTransaction.amount,
+        totalSpent: mockTransaction.amount.plus(estimatedFees),
+      });
+    });
+
+    it("should calculate max amount when useAllAmount is true", () => {
+      const estimatedFees = new BigNumber(5000);
+      const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
+      const mockTransaction = {
+        amount: new BigNumber(0),
+        useAllAmount: true,
+      } as Transaction;
+
+      const result = calculateAmount({
+        account: mockAccount,
+        transaction: mockTransaction,
+        estimatedFees,
+      });
+
+      expect(result).toMatchObject({
+        amount: mockAccount.balance.minus(estimatedFees),
+        totalSpent: mockAccount.balance,
+      });
+    });
+
+    it("should return zero amount when balance is less than fees with useAllAmount", () => {
+      const estimatedFees = new BigNumber(5000);
+      const mockAccount = getMockedAccount({ balance: new BigNumber(3000) });
+      const mockTransaction = {
+        amount: new BigNumber(0),
+        useAllAmount: true,
+      } as Transaction;
+
+      const result = calculateAmount({
+        account: mockAccount,
+        transaction: mockTransaction,
+        estimatedFees,
+      });
+
+      expect(result).toMatchObject({
+        amount: new BigNumber(0),
+        totalSpent: estimatedFees,
+      });
     });
   });
 });

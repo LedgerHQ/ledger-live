@@ -13,10 +13,12 @@ import { AleoUnspentRecord } from "./logic";
 
 export type Transaction = TransactionCommon & {
   family: "aleo";
+  fees: BigNumber;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "aleo";
+  fees: string;
 };
 
 export type TransactionStatus = TransactionStatusCommon;

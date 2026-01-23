@@ -1,5 +1,6 @@
-import type { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import BigNumber from "bignumber.js";
 
-export async function estimateFees(): Promise<FeeEstimation> {
-  throw new Error("estimateFees is not supported");
+// TODO: better mock
+export async function estimateFees(): Promise<BigNumber> {
+  return new BigNumber(30_000);
 }
