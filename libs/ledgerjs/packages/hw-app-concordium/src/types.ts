@@ -62,3 +62,10 @@ export interface SignCredentialDeploymentMetadata {
   isNew?: boolean; // If true, sends expiry to device; if false, sends existing account address
   address?: Buffer; // Existing account address (32 bytes raw) - only used when isNew is false
 }
+
+/**
+ * Cryptographic signature scheme identifier
+ */
+export enum SchemeId {
+  Ed25519 = 0,
+}

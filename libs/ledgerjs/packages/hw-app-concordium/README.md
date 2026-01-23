@@ -43,25 +43,24 @@ For a smooth and quick integration:
         *   [Parameters](#parameters-4)
     *   [signCredentialDeployment](#signcredentialdeployment)
         *   [Parameters](#parameters-5)
-*   [splitPath](#splitpath)
-    *   [Parameters](#parameters-6)
 *   [pathToBuffer](#pathtobuffer)
-    *   [Parameters](#parameters-7)
+    *   [Parameters](#parameters-6)
 *   [serializeTransactionPayloadsWithDerivationPath](#serializetransactionpayloadswithderivationpath)
-    *   [Parameters](#parameters-8)
+    *   [Parameters](#parameters-7)
 *   [serializeTransactionPayloads](#serializetransactionpayloads)
-    *   [Parameters](#parameters-9)
+    *   [Parameters](#parameters-8)
 *   [serializeTransaction](#serializetransaction)
-    *   [Parameters](#parameters-10)
+    *   [Parameters](#parameters-9)
 *   [serializeTransferWithMemo](#serializetransferwithmemo)
-    *   [Parameters](#parameters-11)
+    *   [Parameters](#parameters-10)
 *   [serializeCredentialDeployment](#serializecredentialdeployment)
-    *   [Parameters](#parameters-12)
+    *   [Parameters](#parameters-11)
 *   [CredentialDeploymentTransaction](#credentialdeploymenttransaction)
 *   [AccountTransaction](#accounttransaction)
 *   [Address](#address)
 *   [VerifyAddressResponse](#verifyaddressresponse)
 *   [SignCredentialDeploymentMetadata](#signcredentialdeploymentmetadata)
+*   [SchemeId](#schemeid)
 
 ### Concordium
 
@@ -135,19 +134,6 @@ Sign a credential deployment transaction.
 *   `metadata` **[SignCredentialDeploymentMetadata](#signcredentialdeploymentmetadata)?** Optional metadata for hardware wallet (isNew, address as Buffer)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** Promise with signature (hex string)
-
-### splitPath
-
-Splits a BIP32 path string into numeric components.
-
-Handles hardened derivation (apostrophe suffix) by adding 0x80000000.
-Example: "m/44'/919'/0'/0/0" → \[0x8000002C, 0x80000397, 0x80000000, 0, 0]
-
-#### Parameters
-
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path string (e.g., "m/44'/919'/0'/0/0")
-
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>** Array of path components as numbers
 
 ### pathToBuffer
 
@@ -255,6 +241,10 @@ Verify address response from device
 ### SignCredentialDeploymentMetadata
 
 Metadata for credential deployment signing
+
+### SchemeId
+
+Cryptographic signature scheme identifier
 
 ## Usage
 
@@ -418,7 +408,6 @@ The package exports serialization utilities from `@ledgerhq/hw-app-concordium/li
 
 *   `serializeTransaction(txn, path)` - Serialize account transaction for signing
 *   `serializeCredentialDeployment(payload, path, metadata)` - Serialize credential deployment
-*   `splitPath(path)` - Split BIP32 path string into array of numbers
 *   `pathToBuffer(path)` - Convert BIP32 path string to Buffer
 *   `serializeTransactionPayloads(rawTx)` - Chunk data into APDU payloads
 *   `serializeTransactionPayloadsWithDerivationPath(path, rawTx)` - Chunk with path prefix

@@ -71,7 +71,7 @@ const P2 = {
  * @param scrambleKey - App-specific key used to scramble APDU data exchanges
  */
 export default class Concordium {
-  private transport: Transport;
+  public transport: Transport;
 
   constructor(transport: Transport, scrambleKey = "concordium_default_scramble_key") {
     this.transport = transport;

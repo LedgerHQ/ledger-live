@@ -1,5 +1,4 @@
 import {
-  splitPath,
   pathToBuffer,
   serializeAccountTransaction,
   serializeTransaction,
@@ -10,85 +9,6 @@ import {
 import type { AccountTransaction } from "./types";
 
 describe("serialization", () => {
-  describe("splitPath", () => {
-    it("should split standard Concordium path", () => {
-      // GIVEN
-      const path = "m/44'/919'/0'/0/0";
-
-      // WHEN
-      const result = splitPath(path);
-
-      // THEN
-      expect(result).toEqual([0x8000002c, 0x80000397, 0x80000000, 0, 0]);
-    });
-
-    it("should handle non-hardened components", () => {
-      // GIVEN
-      const path = "m/44'/919'/0'/0/5";
-
-      // WHEN
-      const result = splitPath(path);
-
-      // THEN
-      expect(result).toEqual([0x8000002c, 0x80000397, 0x80000000, 0, 5]);
-    });
-
-    it("should handle all hardened components", () => {
-      // GIVEN
-      const path = "m/44'/919'/0'/0'/0'";
-
-      // WHEN
-      const result = splitPath(path);
-
-      // THEN
-      expect(result).toEqual([0x8000002c, 0x80000397, 0x80000000, 0x80000000, 0x80000000]);
-    });
-
-    it("should skip m/ prefix", () => {
-      // GIVEN
-      const path = "m/44'/919'";
-
-      // WHEN
-      const result = splitPath(path);
-
-      // THEN
-      expect(result).toEqual([0x8000002c, 0x80000397]);
-    });
-
-    it("should handle path without m/ prefix", () => {
-      // GIVEN
-      const path = "44'/919'/0'";
-
-      // WHEN
-      const result = splitPath(path);
-
-      // THEN
-      expect(result).toEqual([0x8000002c, 0x80000397, 0x80000000]);
-    });
-
-    it("should skip invalid components", () => {
-      // GIVEN
-      const path = "m/44'/abc/919'";
-
-      // WHEN
-      const result = splitPath(path);
-
-      // THEN
-      expect(result).toEqual([0x8000002c, 0x80000397]);
-    });
-
-    it("should handle empty path", () => {
-      // GIVEN
-      const path = "";
-
-      // WHEN
-      const result = splitPath(path);
-
-      // THEN
-      expect(result).toEqual([]);
-    });
-  });
-
   describe("pathToBuffer", () => {
     it("should serialize standard Concordium path", () => {
       // GIVEN

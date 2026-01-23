@@ -1,4 +1,5 @@
 import { Buffer } from "buffer";
+import { SchemeId } from "./types";
 
 /**
  * Serializes a map (object) into a Buffer.
@@ -34,7 +35,7 @@ export function encodeWord8(value: number): Buffer {
   if (value > 255 || value < 0 || !Number.isInteger(value)) {
     throw new Error("The input has to be a 8 bit unsigned integer but it was: " + value);
   }
-  return Buffer.from(Buffer.of(value));
+  return Buffer.of(value);
 }
 
 /**
@@ -105,9 +106,6 @@ export function encodeWord8FromString(value: string): Buffer {
  * @returns the serialization of the key
  */
 export function serializeVerifyKey(key: { schemeId: string; verifyKey: string }): Buffer {
-  enum SchemeId {
-    Ed25519 = 0,
-  }
   let schemeId: number;
   if (key.schemeId === "Ed25519") {
     schemeId = SchemeId.Ed25519;
@@ -126,8 +124,23 @@ export function serializeVerifyKey(key: { schemeId: string; verifyKey: string })
  * @returns the serialization of the year and month string
  */
 export function serializeYearMonth(yearMonth: string): Buffer {
+  if (yearMonth.length !== 6) {
+    throw new Error(
+      `Invalid yearMonth format: expected 6 characters (YYYYMM), got ${yearMonth.length}`,
+    );
+  }
+
+  if (!/^\d{6}$/.test(yearMonth)) {
+    throw new Error(`Invalid yearMonth format: "${yearMonth}" could not be parsed`);
+  }
+
   const year = parseInt(yearMonth.substring(0, 4), 10);
   const month = parseInt(yearMonth.substring(4, 6), 10);
+
+  if (month < 1 || month > 12) {
+    throw new Error(`Invalid month: ${month} (must be between 1 and 12)`);
+  }
+
   const serializedYear = encodeWord16(year);
   const serializedMonth = encodeWord8(month);
   return Buffer.concat([serializedYear, serializedMonth]);

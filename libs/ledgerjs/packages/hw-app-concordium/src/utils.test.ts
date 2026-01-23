@@ -492,6 +492,56 @@ describe("utils", () => {
       expect(result.readUInt16BE(0)).toBe(2024);
       expect(result.readUInt8(2)).toBe(6);
     });
+
+    it("should throw on invalid length (too short)", () => {
+      // GIVEN
+      const yearMonth = "20240";
+
+      // WHEN & THEN
+      expect(() => serializeYearMonth(yearMonth)).toThrow(
+        "Invalid yearMonth format: expected 6 characters (YYYYMM), got 5",
+      );
+    });
+
+    it("should throw on invalid length (too long)", () => {
+      // GIVEN
+      const yearMonth = "2024011";
+
+      // WHEN & THEN
+      expect(() => serializeYearMonth(yearMonth)).toThrow(
+        "Invalid yearMonth format: expected 6 characters (YYYYMM), got 7",
+      );
+    });
+
+    it("should throw on non-numeric input", () => {
+      // GIVEN
+      const yearMonth = "20XX01";
+
+      // WHEN & THEN
+      expect(() => serializeYearMonth(yearMonth)).toThrow(
+        'Invalid yearMonth format: "20XX01" could not be parsed',
+      );
+    });
+
+    it("should throw on invalid month (0)", () => {
+      // GIVEN
+      const yearMonth = "202400";
+
+      // WHEN & THEN
+      expect(() => serializeYearMonth(yearMonth)).toThrow(
+        "Invalid month: 0 (must be between 1 and 12)",
+      );
+    });
+
+    it("should throw on invalid month (13)", () => {
+      // GIVEN
+      const yearMonth = "202413";
+
+      // WHEN & THEN
+      expect(() => serializeYearMonth(yearMonth)).toThrow(
+        "Invalid month: 13 (must be between 1 and 12)",
+      );
+    });
   });
 
   describe("serializeMap", () => {

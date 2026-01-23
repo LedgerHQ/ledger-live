@@ -74,39 +74,13 @@ const serializePath = (path: number[]): Buffer => {
 };
 
 /**
- * Splits a BIP32 path string into numeric components.
- *
- * Handles hardened derivation (apostrophe suffix) by adding 0x80000000.
- * Example: "m/44'/919'/0'/0/0" → [0x8000002C, 0x80000397, 0x80000000, 0, 0]
- *
- * @param path - BIP32 path string (e.g., "m/44'/919'/0'/0/0")
- * @returns Array of path components as numbers
- */
-export const splitPath = (path: string): number[] => {
-  const result: number[] = [];
-  const components = path.split("/");
-  components.forEach(element => {
-    let number = parseInt(element, 10);
-    if (isNaN(number)) {
-      return;
-    }
-    if (element.length > 1 && element.endsWith("'")) {
-      number += 0x80000000;
-    }
-    result.push(number);
-  });
-  return result;
-};
-
-/**
  * Converts a BIP32 path string to serialized Buffer format.
  *
  * @param originalPath - BIP32 path string (e.g., "44'/919'/0'/0/0")
  * @returns Serialized path buffer ready for device transmission
  */
 export const pathToBuffer = (originalPath: string): Buffer => {
-  const path = originalPath;
-  const pathNums: number[] = BIPPath.fromString(path).toPathArray();
+  const pathNums: number[] = BIPPath.fromString(originalPath).toPathArray();
   return serializePath(pathNums);
 };
 
@@ -124,12 +98,12 @@ export const serializeTransactionPayloadsWithDerivationPath = (
   path: string,
   rawTx: Buffer,
 ): Buffer[] => {
-  const paths = splitPath(path);
+  const paths = BIPPath.fromString(path).toPathArray();
   let offset = 0;
   const payloads: Buffer[] = [];
   const pathBuffer = Buffer.alloc(1 + paths.length * 4);
   pathBuffer[0] = paths.length;
-  paths.forEach((element, index) => {
+  paths.forEach((element: number, index: number) => {
     pathBuffer.writeUInt32BE(element, 1 + 4 * index);
   });
 
