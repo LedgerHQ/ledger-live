@@ -1,10 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
-import { Platform } from "react-native";
-import { useTranslation } from "~/context/Locale";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
-import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useSharedValue } from "react-native-reanimated";
@@ -32,21 +29,17 @@ import { ScreenName } from "~/const";
 
 interface UsePortfolioViewModelResult {
   hideEmptyTokenAccount: boolean;
-  colors: ReturnType<typeof useTheme>["colors"];
   isAWalletCardDisplayed: boolean;
   isAccountListUIEnabled: boolean;
   showAssets: boolean;
   isLNSUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
-  isFocused: boolean;
   shouldDisplayGraphRework: boolean;
-  t: ReturnType<typeof useTranslation>["t"];
   openAddModal: () => void;
   closeAddModal: () => void;
   handleHeightChange: (newHeight: number) => void;
   onBackFromUpdate: () => void;
   goToAnalyticsAllocations: () => void;
-  progressViewOffset: number;
 }
 
 const usePortfolioViewModel = (navigation: {
@@ -54,9 +47,7 @@ const usePortfolioViewModel = (navigation: {
   navigate: (screen: ScreenName) => void;
 }): UsePortfolioViewModelResult => {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-  const { t } = useTranslation();
   const [isAddModalOpened, setAddModalOpened] = useState(false);
-  const { colors } = useTheme();
   const { isAWalletCardDisplayed } = useDynamicContent();
   const accountListFF = useFeature("llmAccountListUI");
   const { shouldDisplayGraphRework } = useWalletFeaturesConfig("mobile");
@@ -137,25 +128,19 @@ const usePortfolioViewModel = (navigation: {
     navigation.navigate(ScreenName.AnalyticsAllocation);
   }, [navigation]);
 
-  const progressViewOffset = useMemo(() => (Platform.OS === "android" ? 64 : 0), []);
-
   return {
     hideEmptyTokenAccount,
-    colors,
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
-    isFocused,
     shouldDisplayGraphRework,
-    t,
     openAddModal,
     closeAddModal,
     handleHeightChange,
     onBackFromUpdate,
     goToAnalyticsAllocations,
-    progressViewOffset,
   };
 };
 
