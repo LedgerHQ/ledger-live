@@ -132,16 +132,22 @@ describe("NotificationsPrompt Integration", () => {
   async function setup({
     osPermission,
     appNotifications,
-    lastActionAt = Date.now(),
+    lastActionAt,
+    dateOfNextAllowedRequest,
+    alreadyDelayedToLater,
   }: {
     osPermission: AuthorizationStatusType;
     appNotifications: boolean;
     lastActionAt?: number;
+    dateOfNextAllowedRequest?: Date;
+    alreadyDelayedToLater?: boolean;
   }) {
     mockHasPermission.mockResolvedValue(osPermission);
     mockRequestPermission.mockResolvedValue(osPermission);
     await setPushNotificationsDataOfUserInStorage({
       lastActionAt,
+      dateOfNextAllowedRequest,
+      alreadyDelayedToLater,
     });
 
     function SetupComponent() {
@@ -229,6 +235,113 @@ describe("NotificationsPrompt Integration", () => {
   };
 
   describe("after an action", () => {
+    describe("backward compatibility for legacy users", () => {
+      describe("opt in", () => {
+        it("alreadyDelayedToLater: should never prompt", async () => {
+          const { tryTriggerDrawer } = await setup({
+            osPermission: AuthorizationStatus.AUTHORIZED,
+            appNotifications: true,
+            alreadyDelayedToLater: true,
+          });
+
+          await tryTriggerDrawer();
+          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+
+          advanceTime(REPROMPT_SCHEDULE[0]);
+          await tryTriggerDrawer();
+          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+
+          advanceTime(REPROMPT_SCHEDULE[1]);
+          await tryTriggerDrawer();
+          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+        });
+
+        it("dateOfNextAllowedRequest: should never prompt", async () => {
+          const { tryTriggerDrawer } = await setup({
+            osPermission: AuthorizationStatus.AUTHORIZED,
+            appNotifications: true,
+            dateOfNextAllowedRequest: sub(new Date(), { years: 10 }),
+          });
+
+          await tryTriggerDrawer();
+          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+
+          advanceTime(REPROMPT_SCHEDULE[0]);
+          await tryTriggerDrawer();
+          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+
+          advanceTime(REPROMPT_SCHEDULE[1]);
+          await tryTriggerDrawer();
+          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+        });
+      });
+
+      describe("opt out", () => {
+        describe("os denied", () => {
+          it("alreadyDelayedToLater: should prompt only after the next reprompt delay", async () => {
+            const { tryTriggerDrawer } = await setup({
+              osPermission: AuthorizationStatus.DENIED,
+              appNotifications: true,
+              alreadyDelayedToLater: true,
+            });
+
+            await tryTriggerDrawer();
+            expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+
+            advanceTime(REPROMPT_SCHEDULE[0]);
+            await tryTriggerDrawer();
+            expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
+          });
+
+          it("dateOfNextAllowedRequest: should prompt only after the next reprompt delay", async () => {
+            const { tryTriggerDrawer } = await setup({
+              osPermission: AuthorizationStatus.DENIED,
+              appNotifications: true,
+              dateOfNextAllowedRequest: add(new Date(), { years: 10 }),
+            });
+
+            await tryTriggerDrawer();
+            expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+
+            advanceTime(REPROMPT_SCHEDULE[0]);
+            await tryTriggerDrawer();
+            expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
+          });
+        });
+        describe("app notifications = false", () => {
+          it("alreadyDelayedToLater: should prompt only after the next reprompt delay", async () => {
+            const { tryTriggerDrawer } = await setup({
+              osPermission: AuthorizationStatus.AUTHORIZED,
+              appNotifications: false,
+              alreadyDelayedToLater: true,
+            });
+
+            await tryTriggerDrawer();
+            expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+
+            advanceTime(REPROMPT_SCHEDULE[0]);
+            await tryTriggerDrawer();
+            expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
+          });
+
+          it("dateOfNextAllowedRequest: should prompt only after the next reprompt delay", async () => {
+            const { tryTriggerDrawer } = await setup({
+              osPermission: AuthorizationStatus.AUTHORIZED,
+              appNotifications: false,
+              dateOfNextAllowedRequest: add(new Date(), { years: 10 }),
+            });
+
+            await tryTriggerDrawer();
+            expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+
+            advanceTime(REPROMPT_SCHEDULE[0]);
+            await tryTriggerDrawer();
+            expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
+          });
+        });
+      });
+    });
+
     describe("first time prompt", () => {
       describe("os not determined", () => {
         it("app notifications = false, should prompt immediately", async () => {
@@ -465,6 +578,86 @@ describe("NotificationsPrompt Integration", () => {
   });
 
   describe("after inactivity", () => {
+    describe("backward compatibility", () => {
+      describe("opt in", () => {
+        it("alreadyDelayedToLater: should never prompt", async () => {
+          const { user } = await setup({
+            osPermission: AuthorizationStatus.AUTHORIZED,
+            appNotifications: true,
+            alreadyDelayedToLater: true,
+          });
+
+          act(() => jest.runOnlyPendingTimers());
+          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+
+          advanceTime(INACTIVITY_REPROMPT);
+          await user.press(screen.getByText(/reload app/i));
+          act(() => jest.runOnlyPendingTimers());
+          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+
+          advanceTime(INACTIVITY_REPROMPT);
+          await user.press(screen.getByText(/reload app/i));
+          act(() => jest.runOnlyPendingTimers());
+          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+        });
+
+        it("dateOfNextAllowedRequest: should never prompt", async () => {
+          const { user } = await setup({
+            osPermission: AuthorizationStatus.AUTHORIZED,
+            appNotifications: true,
+            dateOfNextAllowedRequest: sub(new Date(), { years: 10 }),
+          });
+
+          act(() => jest.runOnlyPendingTimers());
+          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+
+          advanceTime(INACTIVITY_REPROMPT);
+          await user.press(screen.getByText(/reload app/i));
+          act(() => jest.runOnlyPendingTimers());
+          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+
+          advanceTime(INACTIVITY_REPROMPT);
+          await user.press(screen.getByText(/reload app/i));
+          act(() => jest.runOnlyPendingTimers());
+          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+        });
+      });
+
+      describe("opt out", () => {
+        it("alreadyDelayedToLater: should prompt after inactivity", async () => {
+          const { user } = await setup({
+            osPermission: AuthorizationStatus.AUTHORIZED,
+            appNotifications: false,
+            alreadyDelayedToLater: true,
+          });
+
+          act(() => jest.runOnlyPendingTimers());
+          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+
+          advanceTime(INACTIVITY_REPROMPT);
+          await user.press(screen.getByText(/reload app/i));
+          act(() => jest.runOnlyPendingTimers());
+          expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
+        });
+
+        it("dateOfNextAllowedRequest: should prompt after inactivity", async () => {
+          const { user } = await setup({
+            osPermission: AuthorizationStatus.AUTHORIZED,
+            appNotifications: false,
+            dateOfNextAllowedRequest: sub(new Date(), { years: 10 }),
+          });
+
+          act(() => jest.runOnlyPendingTimers());
+          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
+
+          advanceTime(INACTIVITY_REPROMPT);
+          await user.press(screen.getByText(/reload app/i));
+          act(() => jest.runOnlyPendingTimers());
+          expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
+        });
+      });
+    });
+
     it("should prompt after inactivity", async () => {
       await setup({
         osPermission: AuthorizationStatus.AUTHORIZED,
