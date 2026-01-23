@@ -7848,6 +7848,10 @@
       "cta": "Try again"
     }
   },
+  "portfolio": {
+    "title": "Home",
+    "today": "Today"
+  },
   "marketBanner": {
     "title": "Explore market",
     "genericError": "Connection failed",

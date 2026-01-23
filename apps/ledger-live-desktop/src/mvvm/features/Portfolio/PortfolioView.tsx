@@ -2,12 +2,14 @@ import React, { memo } from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import BannerSection from "~/renderer/screens/dashboard/components/BannerSection";
 import MarketBanner from "LLD/features/MarketBanner";
+import PageHeader from "LLD/components/PageHeader";
 import SwapWebViewEmbedded from "~/renderer/screens/dashboard/components/SwapWebViewEmbedded";
 import { PortfolioGrid } from "./components/PortfolioGrid";
 import { PortfolioViewModelResult } from "./hooks/usePortfolioViewModel";
 
 import OperationsList from "~/renderer/components/OperationsList";
 import AssetDistribution from "~/renderer/screens/dashboard/AssetDistribution";
+import { Balance } from "./components/Balance";
 
 export const PortfolioView = memo(function PortfolioView({
   totalAccounts,
@@ -15,6 +17,7 @@ export const PortfolioView = memo(function PortfolioView({
   totalCurrencies,
   hasExchangeBannerCTA,
   shouldDisplayMarketBanner,
+  shouldDisplayGraphRework,
   shouldDisplaySwapWebView,
   accounts,
   filterOperations,
@@ -36,7 +39,11 @@ export const PortfolioView = memo(function PortfolioView({
         className="flex flex-col gap-32"
       >
         <PortfolioGrid>
-          <div>{shouldDisplayMarketBanner && <MarketBanner />}</div>
+          <div className="flex flex-col gap-24">
+            <PageHeader title={t("portfolio.title")} />
+            {shouldDisplayGraphRework && <Balance />}
+            {shouldDisplayMarketBanner && <MarketBanner />}
+          </div>
           {shouldDisplaySwapWebView && (
             <div className="ml-10 max-w-[700px] min-w-[375px]">
               <SwapWebViewEmbedded height="550px" />
