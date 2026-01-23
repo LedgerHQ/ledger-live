@@ -39,6 +39,9 @@ class NetworkThroughputLogger {
   private lastRequestTime: number = 0;
   private connectionDownStartTime: number = 0;
   private isConnectionDown: boolean = false;
+  private liveAppStartTime: number = 0;
+  private liveAppTimeoutMs: number = 60000; // 60 secondes pour les live apps
+  private currentTestName: string = "unknown";
 
   constructor(testInfo: any) {
     this.logFile = join(testInfo.outputDir, "network-throughput.log");
@@ -63,7 +66,16 @@ class NetworkThroughputLogger {
     }
   }
 
-  startMonitoring(page: Page) {
+  setCurrentTest(testName: string) {
+    this.currentTestName = testName;
+  }
+
+  startMonitoring(page: Page, electronApp?: any) {
+    // Monitoring des live apps/WebView si electronApp est fourni
+    if (electronApp) {
+      this.monitorLiveApps(electronApp);
+    }
+
     // Timer pour vérifier périodiquement l'état de la connexion
     const connectionCheckInterval = setInterval(() => {
       const now = Date.now();
@@ -81,7 +93,7 @@ class NetworkThroughputLogger {
       clearInterval(connectionCheckInterval);
     });
 
-    // Intercepter toutes les requêtes réseau
+    // Monitoring réseau minimal - seulement pour les stats
     page.on("request", request => {
       const now = Date.now();
       const requestId = `${request.url()}-${now}`;
@@ -93,47 +105,37 @@ class NetworkThroughputLogger {
       });
 
       this.lastRequestTime = now;
-      this.log(`REQUEST: ${request.method()} ${request.url()}`);
 
-      // Vérifier si la connexion était down et vient de revenir
+      // Vérifier si la connexion était down et vient de revenir (seulement si détecté)
       if (this.isConnectionDown) {
         const downtimeDuration = now - this.connectionDownStartTime;
         this.stats.connectionDowntime += downtimeDuration;
-        this.log(`🔄 CONNECTION RESTORED after ${this.formatDuration(downtimeDuration)}`);
+        this.log(`🔄 NETWORK CONNECTION RESTORED after ${this.formatDuration(downtimeDuration)}`);
         this.isConnectionDown = false;
       }
     });
 
-    // Intercepter toutes les réponses réseau
+    // Monitoring des réponses - seulement les erreurs importantes
     page.on("response", async response => {
       const request = response.request();
-      const requestId = `${request.url()}-${this.findRequestStartTime(request.url())}`;
+      const startTime = this.findRequestStartTime(request.url());
 
       try {
         const bodySize = await this.getResponseBodySize(response);
         const endTime = Date.now();
-        const startTime = this.findRequestStartTime(request.url());
 
         if (startTime) {
           const responseTime = endTime - startTime;
 
-          // Vérifier les erreurs HTTP (codes 4xx, 5xx)
+          // SEULEMENT les erreurs HTTP importantes (pas les logs de succès)
           if (response.status() >= 400) {
             this.stats.connectionErrors += 1;
-            this.log(
-              `❌ HTTP ERROR: ${response.status()} ${request.method()} ${request.url()} - ` +
-                `${responseTime}ms - ${bodySize} bytes`,
-            );
-          } else {
-            this.stats.lastSuccessfulRequest = endTime;
-            this.log(
-              `✅ RESPONSE: ${response.status()} ${request.method()} ${request.url()} - ` +
-                `${bodySize} bytes in ${responseTime}ms (${this.formatBytesPerSecond(bodySize, responseTime)})`,
-            );
+            this.log(`❌ HTTP ERROR ${response.status()}: ${request.method()} ${request.url()} (${responseTime}ms) [TEST: ${this.currentTestName}]`);
           }
 
           this.stats.totalBytes += bodySize;
           this.stats.totalRequests += 1;
+          this.stats.lastSuccessfulRequest = endTime;
 
           // Mettre à jour la moyenne des temps de réponse
           const currentAvg = this.stats.averageResponseTime;
@@ -142,14 +144,13 @@ class NetworkThroughputLogger {
         }
       } catch (error) {
         this.stats.connectionErrors += 1;
-        this.log(`❌ RESPONSE ERROR for ${request.url()}: ${error}`);
+        this.log(`❌ RESPONSE ERROR: ${request.url()} - ${error} [TEST: ${this.currentTestName}]`);
       }
     });
 
-    // Intercepter les échecs de requête (timeouts, connexion perdue, etc.)
+    // Monitoring des échecs réseau importants
     page.on("requestfailed", request => {
       const now = Date.now();
-      const requestId = `${request.url()}-${this.findRequestStartTime(request.url())}`;
       const startTime = this.findRequestStartTime(request.url());
 
       this.stats.failedRequests += 1;
@@ -157,24 +158,19 @@ class NetworkThroughputLogger {
       if (startTime) {
         const duration = now - startTime;
 
-        // Détecter les timeouts (requêtes qui prennent plus de 30 secondes)
+        // Détecter les vrais problèmes réseau (timeouts > 30s)
         if (duration > this.connectionTimeoutMs) {
           this.stats.timeouts += 1;
-          this.log(
-            `⏰ TIMEOUT: ${request.method()} ${request.url()} - ${duration}ms (>${this.connectionTimeoutMs}ms)`,
-          );
+          this.log(`⏰ NETWORK TIMEOUT: ${request.method()} ${request.url()} (${duration}ms) [TEST: ${this.currentTestName}]`);
 
-          // Marquer la connexion comme down si c'est la première fois
+          // Marquer la connexion comme down
           if (!this.isConnectionDown) {
             this.isConnectionDown = true;
             this.connectionDownStartTime = now;
-            this.log(`🔴 CONNECTION DOWN detected at ${new Date(now).toISOString()}`);
+            this.log(`🔴 NETWORK DOWN detected [TEST: ${this.currentTestName}]`);
           }
-        } else {
-          this.log(
-            `❌ REQUEST FAILED: ${request.method()} ${request.url()} - ${request.failure()?.errorText} (${duration}ms)`,
-          );
         }
+        // Les autres échecs (404, etc.) ne sont pas loggés pour éviter le spam
       }
     });
   }
@@ -216,10 +212,14 @@ class NetworkThroughputLogger {
     try {
       appendFileSync(this.logFile, logMessage);
     } catch (error) {
-      console.error("Failed to write network log:", error);
+      console.error("Failed to write log:", error);
     }
 
-    // Plus de logs en temps réel dans la console - seulement dans le fichier
+    // Afficher seulement les logs critiques dans la console CI
+    if (message.includes('❌') || message.includes('⏰') || message.includes('🔴') || message.includes('🔄') ||
+        message.includes('📱') || message.includes('⚠️') || message.includes('LIVE APP TIMEOUT')) {
+      console.log(`[LIVEAPP] ${message}`);
+    }
   }
 
   getStats(): ThroughputStats {
@@ -237,32 +237,66 @@ class NetworkThroughputLogger {
 
   generateReport(): string {
     const stats = this.getStats();
-    const successRate =
-      stats.totalRequests > 0
-        ? (((stats.totalRequests - stats.failedRequests) / stats.totalRequests) * 100).toFixed(2)
-        : "0.00";
 
-    return `=== NETWORK CONNECTIVITY REPORT ===
-Duration: ${(stats.duration / 1000).toFixed(2)} seconds
-Total Requests: ${stats.totalRequests}
-Successful Requests: ${stats.totalRequests - stats.failedRequests}
-Failed Requests: ${stats.failedRequests}
-Success Rate: ${successRate}%
+    // Rapport simplifié concentré sur les problèmes critiques
+    let issues = [];
+    if (stats.connectionErrors > 0) issues.push(`${stats.connectionErrors} HTTP errors`);
+    if (stats.timeouts > 0) issues.push(`${stats.timeouts} timeouts`);
+    if (stats.connectionDowntime > 0) issues.push(`${this.formatDuration(stats.connectionDowntime)} downtime`);
 
-=== CONNECTION ISSUES ===
-Connection Errors (4xx/5xx): ${stats.connectionErrors}
-Timeouts (>30s): ${stats.timeouts}
-Total Connection Downtime: ${this.formatDuration(stats.connectionDowntime)}
+    return `=== LIVE APP MONITORING ===
+${issues.length > 0 ? `🚨 ISSUES: ${issues.join(', ')}` : '✅ NO CRITICAL ISSUES DETECTED'}
+=====================================`;
+  }
 
-=== PERFORMANCE METRICS ===
-Total Data Transferred: ${this.formatBytes(stats.totalBytes)}
-Average Response Time: ${stats.averageResponseTime.toFixed(2)} ms
-Average Throughput: ${stats.throughputMbps.toFixed(2)} Mbps
+  private monitorLiveApps(electronApp: any) {
+    this.liveAppStartTime = Date.now();
+    this.log(`📱 LIVE APP MONITORING STARTED [TEST: ${this.currentTestName}]`);
 
-${stats.connectionDowntime > 0 ? `⚠️  CONNECTION INTERRUPTIONS DETECTED - Total downtime: ${this.formatDuration(stats.connectionDowntime)}` : "✅ NO CONNECTION INTERRUPTIONS DETECTED"}
-=====================================
+    // Monitor WebView windows
+    const webviewCheckInterval = setInterval(async () => {
+      try {
+        const windows = electronApp.windows();
+        const webviewWindows = windows.filter((w: any, index: number) => index > 0); // Skip main window
 
-==================================`;
+        if (webviewWindows.length > 0) {
+          this.log(`📱 ${webviewWindows.length} WebView window(s) detected`);
+
+          for (let i = 0; i < webviewWindows.length; i++) {
+            const webview = webviewWindows[i];
+            try {
+              // Check if WebView is responsive
+              const title = await webview.title();
+              const url = await webview.url();
+
+              if (title || url) {
+                this.log(`✅ WebView ${i + 1} responsive - Title: "${title}" URL: ${url}`);
+              } else {
+                this.log(`⚠️  WebView ${i + 1} detected but not fully loaded yet`);
+              }
+            } catch (error) {
+              this.log(`❌ WebView ${i + 1} error: ${error} [TEST: ${this.currentTestName}]`);
+            }
+          }
+        } else {
+          // Check timeout for live app loading
+          const elapsed = Date.now() - this.liveAppStartTime;
+          if (elapsed > this.liveAppTimeoutMs) {
+            this.log(`⏰ LIVE APP TIMEOUT: No WebView detected after ${this.formatDuration(elapsed)} [TEST: ${this.currentTestName}]`);
+          } else if (elapsed > 10000) { // Log every 10 seconds if no WebView yet
+            this.log(`⏳ Waiting for WebView... (${Math.round(elapsed/1000)}s elapsed) [TEST: ${this.currentTestName}]`);
+          }
+        }
+      } catch (error) {
+        this.log(`❌ Error checking WebView windows: ${error}`);
+      }
+    }, 5000); // Check every 5 seconds
+
+    // Cleanup
+    electronApp.on('close', () => {
+      clearInterval(webviewCheckInterval);
+      this.log(`📱 LIVE APP MONITORING ENDED [TEST: ${this.currentTestName}]`);
+    });
   }
 
   private async checkConnectionHealth(page: Page) {

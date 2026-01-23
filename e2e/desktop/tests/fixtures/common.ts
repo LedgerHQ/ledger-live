@@ -347,6 +347,9 @@ export const test = base.extend<TestFixtures>({
       console.log(`🌐 Network monitoring enabled (real CI connection)`);
     }
 
+    // Définir le nom du test pour les logs d'erreur
+    networkLogger.setCurrentTest(testInfo.title);
+
     // record all logs into an artifact
     const logFile = testInfo.outputPath("logs.log");
     page.on("console", msg => {
@@ -361,8 +364,8 @@ export const test = base.extend<TestFixtures>({
       safeAppendFile(logFile, `${txt}\n`);
     });
 
-    // Démarrer le monitoring réseau dès que la page est prête
-    networkLogger.startMonitoring(page);
+    // Démarrer le monitoring réseau/live apps dès que la page est prête
+    networkLogger.startMonitoring(page, electronApp);
 
     // app is loaded
     await page.waitForLoadState("domcontentloaded");
@@ -381,26 +384,22 @@ export const test = base.extend<TestFixtures>({
     const reportFile = testInfo.outputPath("network-throughput-report.txt");
     await writeFile(reportFile, connectivityReport);
 
-    // Logs structurés pour la CI (parsing facile par les outils)
+    // Logs concis pour la CI - seulement les métriques critiques
     const stats = networkLogger.getStats();
-    const successRate = stats.totalRequests > 0 ? ((stats.totalRequests - stats.failedRequests) / stats.totalRequests * 100).toFixed(2) : '0.00';
 
-    // Logs lisibles par les humains et parsables par les outils CI
-    console.log(`📊 NETWORK_METRICS: success_rate=${successRate}%`);
-    console.log(`📊 NETWORK_METRICS: connection_downtime=${stats.connectionDowntime}ms`);
-    console.log(`📊 NETWORK_METRICS: throughput=${stats.throughputMbps.toFixed(2)}Mbps`);
-    console.log(`📊 NETWORK_METRICS: total_requests=${stats.totalRequests}`);
-    console.log(`📊 NETWORK_METRICS: failed_requests=${stats.failedRequests}`);
-    console.log(`📊 NETWORK_METRICS: connection_errors=${stats.connectionErrors}`);
-    console.log(`📊 NETWORK_METRICS: timeouts=${stats.timeouts}`);
-    console.log(`📊 NETWORK_METRICS: has_issues=${stats.connectionDowntime > 0}`);
+    // Afficher seulement s'il y a des problèmes critiques avec le nom du test
+    if (stats.connectionErrors > 0 || stats.timeouts > 0 || stats.connectionDowntime > 0) {
+      console.log(`🚨 LIVEAPP_ISSUES [${testInfo.title}]: ${stats.connectionErrors} errors, ${stats.timeouts} timeouts, ${stats.connectionDowntime}ms downtime`);
+    } else {
+      console.log(`✅ LIVEAPP_OK [${testInfo.title}]: No critical issues detected`);
+    }
 
-    // Format GitHub Actions (si utilisé dans GitHub CI)
+    // Format GitHub Actions pour les métriques importantes
     if (process.env.GITHUB_ACTIONS) {
-      console.log(`::set-output name=network-success-rate::${successRate}%`);
-      console.log(`::set-output name=network-has-issues::${stats.connectionDowntime > 0}`);
-      console.log(`::set-output name=network-downtime::${stats.connectionDowntime}ms`);
-      console.log(`::set-output name=network-throughput::${stats.throughputMbps.toFixed(2)}Mbps`);
+      console.log(`::set-output name=liveapp-errors::${stats.connectionErrors}`);
+      console.log(`::set-output name=liveapp-timeouts::${stats.timeouts}`);
+      console.log(`::set-output name=liveapp-downtime::${stats.connectionDowntime}`);
+      console.log(`::set-output name=liveapp-has-issues::${(stats.connectionErrors > 0 || stats.timeouts > 0 || stats.connectionDowntime > 0)}`);
     }
 
     // Take screenshot and video only on failure

@@ -263,15 +263,26 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
+        console.log(`🔄 STARTING SWAP: ${fromAccount.currency.name} → ${toAccount.currency.name}`);
+
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
-        await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-        await app.swap.selectExchangeWithoutKyc(electronApp);
+        console.log(`📊 SWAP AMOUNT: ${minAmount} ${fromAccount.currency.name}`);
 
+        console.log(`🔄 NAVIGATING TO SWAP PAGE...`);
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
+        console.log(`✅ SWAP PAGE LOADED`);
+
+        console.log(`📱 LOADING EXCHANGE PROVIDERS (LIVE APPS)...`);
+        await app.swap.selectExchangeWithoutKyc(electronApp); // ← POINT CRITIQUE DE MONITORING
+
+        console.log(`✅ EXCHANGE SELECTED, PROCEEDING...`);
         await app.swap.clickExchangeButton(electronApp);
         await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
+
+        console.log(`🎉 SWAP COMPLETED: ${fromAccount.currency.name} → ${toAccount.currency.name}`);
       },
     );
   });

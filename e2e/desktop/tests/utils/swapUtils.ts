@@ -41,7 +41,15 @@ export async function performSwapUntilQuoteSelectionStep(
   if (swap.accountToDebit.currency === Currency.APT) {
     await checkAccountFromIsSynchronised(app, swap);
   }
-  await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
+
+  console.log(`🔄 CRITICAL_STEP: Navigating to swap page - goAndWaitForSwapToBeReady()`);
+  try {
+    await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
+    console.log(`✅ CRITICAL_STEP: Swap page navigation successful`);
+  } catch (error) {
+    console.error(`❌ CRITICAL_STEP: Swap page navigation FAILED - ${error}`);
+    throw error;
+  }
   const isAssetFromSelected = await app.swap.checkIfFromAssetIsAlreadySelected(
     swap.accountToDebit.currency.ticker,
     electronApp,
