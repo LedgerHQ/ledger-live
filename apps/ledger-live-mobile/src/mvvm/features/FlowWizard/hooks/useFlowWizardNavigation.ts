@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useReducer } from "react";
 import {
-  FLOW_NAVIGATION_DIRECTION,
   type FlowStep,
   type FlowNavigationState,
   type FlowNavigationActions,
@@ -9,6 +8,12 @@ import {
   type UseFlowWizardNavigationResult,
   type FlowNavigationDirection,
 } from "../types";
+
+// todo: why import issue?
+const FLOW_NAVIGATION_DIRECTION = {
+  FORWARD: "FORWARD" as const,
+  BACKWARD: "BACKWARD" as const,
+};
 
 type NavigationAction<TStep extends FlowStep, TStepConfig extends FlowStepConfig<TStep>> =
   | { type: "GO_TO_STEP"; step: TStep }

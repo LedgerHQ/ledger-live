@@ -1,5 +1,6 @@
 import React, { useMemo, type ReactNode } from "react";
-import type { StepRegistry, FlowWizardContextValue } from "../FlowWizard/types";
+import type { StepRegistry } from "../FlowWizard/types";
+import { useFlowWizardNavigation } from "../FlowWizard/hooks/useFlowWizardNavigation";
 import { SendFlowProvider } from "./context/SendFlowContext";
 import { useSendFlowBusinessLogic } from "./hooks/useSendFlowState";
 import { SEND_FLOW_CONFIG } from "./constants";
@@ -7,10 +8,9 @@ import { SEND_FLOW_STEP } from "./types";
 import type {
   SendFlowStep,
   SendFlowInitParams,
-  SendFlowBusinessContext,
   SendStepConfig,
+  SendFlowContextValue,
 } from "./types";
-import { useFlowWizardNavigation } from "../FlowWizard/hooks/useFlowWizardNavigation";
 
 type SendFlowStepRegistry = StepRegistry<SendFlowStep>;
 
@@ -43,9 +43,7 @@ export function SendFlowOrchestrator({
     flowConfig,
   });
 
-  const contextValue = useMemo<
-    FlowWizardContextValue<SendFlowStep, SendFlowBusinessContext, SendStepConfig>
-  >(
+  const contextValue = useMemo<SendFlowContextValue>(
     () => ({
       ...businessContext,
       navigation: actions,

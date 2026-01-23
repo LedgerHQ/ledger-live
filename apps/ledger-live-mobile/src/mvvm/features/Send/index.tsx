@@ -1,13 +1,23 @@
 import React, { useCallback } from "react";
+import { useNavigation, useRoute, CommonActions } from "@react-navigation/native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { track } from "~/analytics";
 import { SendFlowOrchestrator } from "./SendFlowOrchestrator";
-import { SEND_FLOW_STEP, type SendFlowInitParams } from "./types";
+import { SEND_FLOW_STEP, type SendFlowInitParams, type SendFlowStep } from "./types";
 import { SignatureScreen } from "./screens/Signature/SignatureScreen";
 import { ConfirmationScreen } from "./screens/Confirmation/ConfirmationScreen";
-import { createStepRegistry } from "../FlowWizard/FlowWizardOrchestrator";
 import { RecipientScreen } from "./screens/Recipient/RecipientScreen";
 import { AmountScreen } from "./screens/Amount/AmountScreen";
-import Navigator from "./Navigator";
+import { FlowStackNavigator } from "../FlowWizard/FlowStackNavigator";
+import { SEND_FLOW_CONFIG } from "./constants";
+import type { StepRegistry } from "../FlowWizard/types";
+
+// Simple helper to create a type-safe step registry
+function createStepRegistry<TStep extends string>(
+  registry: StepRegistry<TStep>,
+): StepRegistry<TStep> {
+  return registry;
+}
 
 export const stepRegistry = createStepRegistry({
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
@@ -32,10 +42,37 @@ type SendWorkflowProps = Readonly<{
   isOpen: boolean;
 }>;
 
-export function SendWorkflow({ onClose, params, isOpen: _isOpen }: SendWorkflowProps) {
+export default function SendWorkflow({ onClose, params, isOpen: _isOpen }: SendWorkflowProps) {
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  // Default exit process
+  const exitProcess = useCallback(() => {
+    const rootParent = navigation.getParent();
+    if (rootParent) {
+      const state = rootParent.getState();
+      const homeRouteName = state.routeNames[0];
+
+      rootParent.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: homeRouteName }],
+        }),
+      );
+    }
+  }, [navigation]);
+
   const handleClose = useCallback(() => {
-    onClose?.();
-  }, [onClose]);
+    track("button_clicked", {
+      button: "Close",
+      screen: route.name,
+    });
+    if (onClose) {
+      onClose();
+    } else {
+      exitProcess();
+    }
+  }, [route, exitProcess, onClose]);
 
   const initParams: SendFlowInitParams = {
     account: params?.account,
@@ -46,11 +83,22 @@ export function SendWorkflow({ onClose, params, isOpen: _isOpen }: SendWorkflowP
     fromMAD: params?.fromMAD ?? false,
   };
 
-  // For React Native, we use the Navigator directly instead of a layout component
-  // The Navigator handles the screen navigation and the FlowOrchestrator manages the state
+  // Custom screen name generator based on step config
+  const getScreenName = useCallback((step: SendFlowStep): string => {
+    const stepConfig = SEND_FLOW_CONFIG.stepConfigs[step];
+    return stepConfig.screenName || `NewSend${step}`;
+  }, []);
+
+  // For React Native, we use the FlowStackNavigator directly
+  // The FlowStackNavigator handles the screen navigation dynamically based on the registry
   return (
     <SendFlowOrchestrator initParams={initParams} onClose={handleClose} stepRegistry={stepRegistry}>
-      <Navigator />
+      <FlowStackNavigator
+        stepRegistry={stepRegistry}
+        flowConfig={SEND_FLOW_CONFIG}
+        getScreenName={getScreenName}
+        onClose={handleClose}
+      />
     </SendFlowOrchestrator>
   );
 }
