@@ -161,6 +161,8 @@ export type CurrencyFeatures = {
   currencyConcordiumTestnet: DefaultFeature;
   currencyAleo: DefaultFeature;
   currencyAleoTestnet: DefaultFeature;
+  currencyUnichain: DefaultFeature;
+  currencyUnichainSepolia: DefaultFeature;
 };
 
 /**

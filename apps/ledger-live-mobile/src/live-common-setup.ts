@@ -156,6 +156,8 @@ setSupportedCurrencies([
   "concordium_testnet",
   "aleo",
   "aleo_testnet",
+  "unichain",
+  "unichain_sepolia",
 ]);
 
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))

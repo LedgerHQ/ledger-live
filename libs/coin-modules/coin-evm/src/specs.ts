@@ -61,6 +61,8 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   monad_testnet: 0.05,
   somnia: 0.001,
   zero_gravity: 0.01,
+  unichain: 0.001,
+  unichain_sepolia: 0.001,
 };
 
 /**

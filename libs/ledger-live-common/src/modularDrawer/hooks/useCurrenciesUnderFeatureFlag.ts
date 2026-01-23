@@ -92,6 +92,8 @@ export function useCurrenciesUnderFeatureFlag() {
   const zeroGravity = useFeature("currencyZeroGravity");
   const concordium = useFeature("currencyConcordium");
   const concordiumTestnet = useFeature("currencyConcordiumTestnet");
+  const unichain = useFeature("currencyUnichain");
+  const unichainSepolia = useFeature("currencyUnichainSepolia");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -180,6 +182,8 @@ export function useCurrenciesUnderFeatureFlag() {
       zero_gravity: zeroGravity,
       concordium,
       concordium_testnet: concordiumTestnet,
+      unichain,
+      unichain_sepolia: unichainSepolia,
     }),
     [
       aleo,
@@ -267,6 +271,8 @@ export function useCurrenciesUnderFeatureFlag() {
       zeroGravity,
       concordium,
       concordiumTestnet,
+      unichain,
+      unichainSepolia,
     ],
   );
 

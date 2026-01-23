@@ -1168,6 +1168,36 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
+  config_currency_unichain: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: {
+        type: "external",
+        uri: "https://mainnet.unichain.org",
+      },
+      explorer: {
+        type: "blockscout",
+        uri: "https://unichain.blockscout.com/api",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_unichain_sepolia: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: { type: "external", uri: "https://sepolia.unichain.org" },
+      explorer: { type: "blockscout", uri: "https://unichain-sepolia.blockscout.com/api" },
+      showNfts: false,
+    },
+  },
 };
 
 export { evmConfig };
