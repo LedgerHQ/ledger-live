@@ -62,7 +62,7 @@ jobs:
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Install dependencies
-        run: pnpm i -F "@ledgerhq/native-ui..." -F "ledger-live" --ignore-scripts
+        run: pnpm i -F "@ledgerhq/native-ui..." -F "ledger-live"
 
       - name: Build static site
         run: pnpm turbo run build:storybook --filter="@ledgerhq/native-ui" --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
@@ -85,7 +85,7 @@ jobs:
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Install dependencies
-        run: pnpm i -F "libs/ui..." -F "ledger-live" --ignore-scripts
+        run: pnpm i -F "./libs/ui/**" -F "ledger-live"
 
       - name: Build static site
         run: pnpm turbo run build:storybook --filter="@ledgerhq/react-ui" --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
