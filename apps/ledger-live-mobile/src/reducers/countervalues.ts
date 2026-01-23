@@ -1,4 +1,4 @@
-import { exportCountervalues, initialState } from "@ledgerhq/live-countervalues/logic";
+import { initialState } from "@ledgerhq/live-countervalues/logic";
 import { CountervaluesSettings, CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { useSelector } from "~/context/hooks";
 import { Action, handleActions, ReducerMap } from "redux-actions";
@@ -79,8 +79,6 @@ export const useCountervaluesMarketcapLastUpdated = () =>
   useSelector(countervaluesMarketcapLastUpdatedSelector);
 
 export const useCountervaluesStateError = () => useSelector(countervaluesErrorSelector);
-export const useCountervaluesStateExport = () =>
-  useSelector((s: State) => exportCountervalues(s.countervalues.countervalues.state));
 export const useCountervaluesStatePending = () => useSelector(countervaluesPendingSelector);
 export const useCountervaluesState = () => useSelector(countervaluesStateSelector);
 

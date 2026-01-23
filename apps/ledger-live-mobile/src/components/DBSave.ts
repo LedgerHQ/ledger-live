@@ -1,6 +1,5 @@
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
 import identity from "lodash/identity";
 import isEqual from "lodash/isEqual";
@@ -23,7 +22,7 @@ import {
 } from "~/db";
 import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { exportSelector as bleSelector } from "~/reducers/ble";
-import { useCountervaluesStateExport } from "~/reducers/countervalues";
+import { useCountervaluesState } from "~/reducers/countervalues";
 import { exportLargeMoverSelector } from "~/reducers/largeMover";
 import { exportMarketSelector } from "~/reducers/market";
 import { settingsStoreSelector } from "~/reducers/settings";
@@ -32,6 +31,7 @@ import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
 import { extractPersistedCALFromState } from "@ledgerhq/cryptoassets/cal-client/persistence";
 import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
+import { exportCountervalues } from "@ledgerhq/live-countervalues/logic";
 
 type MaybeState = Maybe<State>;
 
@@ -154,16 +154,13 @@ export const ConfigureDBSaveEffects = () => {
     [],
   );
 
-  const rawState = useCountervaluesStateExport();
   const trackingPairs = useTrackingPairs();
-  const pairIds = useMemo(() => trackingPairs.map(p => pairId(p)), [trackingPairs]);
+  const state = useCountervaluesState();
+  const rawState = useMemo(() => exportCountervalues(state, trackingPairs), [state, trackingPairs]);
 
   const countervaluesChangesStats = useCallback(
-    () => ({
-      changed: !!Object.keys(rawState.status).length,
-      pairIds,
-    }),
-    [rawState, pairIds],
+    () => ({ changed: !!Object.keys(rawState.status).length }),
+    [rawState],
   );
   const countervaluesRawState = useCallback(() => rawState, [rawState]);
   useDBSaveEffect({
