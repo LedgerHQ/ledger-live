@@ -18,14 +18,15 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function resolveThemeColor(themeColors: Record<string, unknown>, path: string): string | undefined {
-  const [group, shade] = path.split(".");
-  if (!group || !shade) return undefined;
-  const groupValue = themeColors[group];
-  if (isRecord(groupValue)) {
-    const shadeValue = groupValue[shade];
-    if (typeof shadeValue === "string") return shadeValue;
+  const parts = path.split(".");
+  let current: unknown = themeColors;
+
+  for (const part of parts) {
+    if (!isRecord(current)) return undefined;
+    current = current[part];
   }
-  return undefined;
+
+  return typeof current === "string" ? current : undefined;
 }
 
 function isColorKey(key: string): key is ColorKeys {
