@@ -1,162 +1,94 @@
-import { useCallback, useMemo, useReducer } from "react";
-import {
-  type FlowStep,
-  type FlowNavigationState,
-  type FlowNavigationActions,
-  type FlowStepConfig,
-  type UseFlowWizardNavigationParams,
-  type UseFlowWizardNavigationResult,
-  type FlowNavigationDirection,
-} from "../types";
+import { useNavigation, CommonActions } from "@react-navigation/native";
+import { SEND_FLOW_STEP_ORDER, SEND_STEP_CONFIGS } from "../constants";
+import { SEND_FLOW_STEP } from "../types";
+import type { SendFlowStep } from "../types";
 
-// todo: why import issue?
-const FLOW_NAVIGATION_DIRECTION = {
-  FORWARD: "FORWARD" as const,
-  BACKWARD: "BACKWARD" as const,
-};
+export function useSendFlowNavigation(flowConfig:) {
+  const { stepOrder, stepConfigs, initialStep } = flowConfig;
 
-type NavigationAction<TStep extends FlowStep, TStepConfig extends FlowStepConfig<TStep>> =
-  | { type: "GO_TO_STEP"; step: TStep }
-  | { type: "GO_FORWARD"; stepOrder: readonly TStep[] }
-  | { type: "GO_BACKWARD"; stepConfigs: Record<TStep, TStepConfig> };
+  const reactNavigation = useNavigation();
 
-function getStepIndex<TStep extends FlowStep>(step: TStep, stepOrder: readonly TStep[]): number {
-  return stepOrder.indexOf(step);
-}
 
-function getNextStep<TStep extends FlowStep>(
-  currentStep: TStep,
-  stepOrder: readonly TStep[],
-): TStep | null {
-  const currentIndex = getStepIndex(currentStep, stepOrder);
-  const nextIndex = currentIndex + 1;
-  return nextIndex < stepOrder.length ? stepOrder[nextIndex] : null;
-}
+  const isValidSendFlowStep = (step: string): step is SendFlowStep => {
+    return Object.values(SEND_FLOW_STEP).some(validStep => validStep === step);
+  };
 
-function determineDirection<TStep extends FlowStep>(
-  currentStep: TStep,
-  targetStep: TStep,
-  stepOrder: readonly TStep[],
-): FlowNavigationDirection {
-  const currentIndex = getStepIndex(currentStep, stepOrder);
-  const targetIndex = getStepIndex(targetStep, stepOrder);
-  return targetIndex > currentIndex
-    ? FLOW_NAVIGATION_DIRECTION.FORWARD
-    : FLOW_NAVIGATION_DIRECTION.BACKWARD;
-}
+  const getCurrentStep = (): SendFlowStep => {
+    const navigationState = reactNavigation.getState();
+    const currentIndex = navigationState?.index;
+    const routes = navigationState?.routes;
 
-function createNavigationReducer<
-  TStep extends FlowStep,
-  TStepConfig extends FlowStepConfig<TStep> = FlowStepConfig<TStep>,
->(stepOrder: readonly TStep[]) {
-  return function navigationReducer(
-    state: FlowNavigationState<TStep>,
-    action: NavigationAction<TStep, TStepConfig>,
-  ): FlowNavigationState<TStep> {
-    switch (action.type) {
-      case "GO_TO_STEP": {
-        if (action.step === state.currentStep) return state;
-        const direction = determineDirection(state.currentStep, action.step, stepOrder);
-        const newHistory =
-          direction === FLOW_NAVIGATION_DIRECTION.FORWARD
-            ? [...state.stepHistory, state.currentStep]
-            : state.stepHistory.slice(0, -1);
-        return { currentStep: action.step, direction, stepHistory: newHistory };
+    if (currentIndex !== undefined && routes && routes[currentIndex]) {
+      const currentRouteName = routes[currentIndex].name;
+
+      const stepEntries = Object.entries(SEND_STEP_CONFIGS);
+      for (const [step, config] of stepEntries) {
+        if (config.screenName === currentRouteName && isValidSendFlowStep(step)) {
+          return step;
+        }
       }
+    }
 
-      case "GO_FORWARD": {
-        const nextStep = getNextStep(state.currentStep, action.stepOrder);
-        if (!nextStep) return state;
-        return {
-          currentStep: nextStep,
-          direction: FLOW_NAVIGATION_DIRECTION.FORWARD,
-          stepHistory: [...state.stepHistory, state.currentStep],
-        };
+    return SEND_FLOW_STEP.RECIPIENT;
+  };
+
+  const goToNextStep = () => {
+    const currentStep = getCurrentStep();
+    const currentIndex = SEND_FLOW_STEP_ORDER.indexOf(currentStep);
+    const nextIndex = currentIndex + 1;
+
+    if (nextIndex < SEND_FLOW_STEP_ORDER.length) {
+      const nextStep = SEND_FLOW_STEP_ORDER[nextIndex];
+      const nextConfig = SEND_STEP_CONFIGS[nextStep];
+      const nextScreenName = nextConfig.screenName;
+
+      if (nextScreenName) {
+        reactNavigation.dispatch(
+          CommonActions.navigate({
+            name: nextScreenName,
+          }),
+        );
       }
-
-      case "GO_BACKWARD": {
-        const config = action.stepConfigs[state.currentStep];
-        if (!config?.canGoBack) return state;
-        const previousStep = state.stepHistory.at(-1);
-        if (!previousStep) return state;
-        return {
-          currentStep: previousStep,
-          direction: FLOW_NAVIGATION_DIRECTION.BACKWARD,
-          stepHistory: state.stepHistory.slice(0, -1),
-        };
-      }
-
-      default:
-        return state;
     }
   };
-}
 
-function createInitialState<TStep extends FlowStep>(
-  initialStep: TStep,
-  initialHistory: TStep[] = [],
-): FlowNavigationState<TStep> {
-  return {
-    currentStep: initialStep,
-    direction: FLOW_NAVIGATION_DIRECTION.FORWARD,
-    stepHistory: initialHistory,
+  const goToPreviousStep = () => {
+    if (reactNavigation.canGoBack()) {
+      reactNavigation.goBack();
+    }
   };
-}
 
-export function useFlowWizardNavigation<
-  TStep extends FlowStep,
-  TStepConfig extends FlowStepConfig<TStep> = FlowStepConfig<TStep>,
->({
-  flowConfig,
-}: UseFlowWizardNavigationParams<TStep, TStepConfig>): UseFlowWizardNavigationResult<
-  TStep,
-  TStepConfig
-> {
-  const { stepOrder, stepConfigs, initialStep, initialHistory } = flowConfig;
+  const goToStep = (step: SendFlowStep) => {
+    const config = SEND_STEP_CONFIGS[step];
+    if (config.screenName) {
+      reactNavigation.dispatch(
+        CommonActions.navigate({
+          name: config.screenName,
+        }),
+      );
+    }
+  };
 
-  const computedInitialStep = useMemo(() => {
-    if (initialStep) return initialStep;
-    return stepOrder[0];
-  }, [initialStep, stepOrder]);
+  const canGoBack = () => {
+    return reactNavigation.canGoBack();
+  };
 
-  const reducer = useMemo(
-    () => createNavigationReducer<TStep, TStepConfig>(stepOrder),
-    [stepOrder],
-  );
-  const [state, dispatch] = useReducer(reducer, undefined, () =>
-    createInitialState(computedInitialStep, initialHistory),
-  );
+  const canGoForward = () => {
+    const currentStep = getCurrentStep();
+    const currentIndex = SEND_FLOW_STEP_ORDER.indexOf(currentStep);
+    return currentIndex < SEND_FLOW_STEP_ORDER.length - 1;
+  };
 
-  const goToStep = useCallback((step: TStep) => {
-    dispatch({ type: "GO_TO_STEP", step });
-  }, []);
-
-  const goToNextStep = useCallback(() => {
-    dispatch({ type: "GO_FORWARD", stepOrder });
-  }, [stepOrder]);
-
-  const goToPreviousStep = useCallback(() => {
-    dispatch({ type: "GO_BACKWARD", stepConfigs });
-  }, [stepConfigs]);
-
-  const canGoBack = useCallback(() => {
-    const config = stepConfigs[state.currentStep];
-    return config?.canGoBack === true && state.stepHistory.length > 0;
-  }, [state.currentStep, state.stepHistory.length, stepConfigs]);
-
-  const canGoForward = useCallback(() => {
-    return getNextStep(state.currentStep, stepOrder) !== null;
-  }, [state.currentStep, stepOrder]);
-
-  const actions: FlowNavigationActions<TStep> = useMemo(
-    () => ({ goToStep, goToNextStep, goToPreviousStep, canGoBack, canGoForward }),
-    [goToStep, goToNextStep, goToPreviousStep, canGoBack, canGoForward],
-  );
-
-  const currentStepConfig = stepConfigs[state.currentStep];
-  const currentStepIndex = getStepIndex(state.currentStep, stepOrder);
-  const isFirstStep = currentStepIndex === 0;
-  const isLastStep = currentStepIndex === stepOrder.length - 1;
-
-  return { state, actions, currentStepConfig, isFirstStep, isLastStep };
+  return {
+    navigation: {
+      goToNextStep,
+      goToPreviousStep,
+      goToStep,
+      canGoBack,
+      canGoForward,
+    },
+    currentStep: getCurrentStep(),
+    direction: "forward" as const,
+    currentStepConfig: SEND_STEP_CONFIGS[getCurrentStep()],
+  };
 }

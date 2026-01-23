@@ -575,13 +575,6 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
 
-        {/* <Stack.Screen
-          // @ts-expect-error: todo
-          name={NavigatorName.NewSend}
-          component={NewSendNavigator}
-          options={{ headerShown: false }}
-        /> */}
-
         <Stack.Screen
           name={NavigatorName.DeviceSelection}
           component={DeviceSelectionNavigator}
