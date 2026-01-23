@@ -789,7 +789,7 @@ jobs:
         id: run-android
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
         run: |
-          xvfb-run --auto-servernum pnpm mobile e2e:ci -p android -t \
+          pnpm mobile e2e:ci -p android -t \
             --e2e \
             $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') \
             $SHARD_TEST_FILES \
