@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { Operation } from "@ledgerhq/types-live";
+import type { Operation, TransactionCommonRaw } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 type BuildOptimisticOperationParams = {
@@ -9,6 +9,7 @@ type BuildOptimisticOperationParams = {
   senders?: string[];
   recipients?: string[];
   extra?: Record<string, unknown>;
+  transactionRaw?: TransactionCommonRaw;
 };
 
 export const buildOptimisticOperation = ({
@@ -18,6 +19,7 @@ export const buildOptimisticOperation = ({
   senders = [],
   recipients = [],
   extra = {},
+  transactionRaw,
 }: BuildOptimisticOperationParams): Operation => ({
   id: encodeOperationId(accountId, "", "OUT"),
   hash: "",
@@ -31,4 +33,5 @@ export const buildOptimisticOperation = ({
   accountId,
   date: new Date(),
   extra,
+  ...(transactionRaw ? { transactionRaw } : {}),
 });

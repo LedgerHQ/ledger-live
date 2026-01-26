@@ -241,34 +241,22 @@ class Xpub {
       outputs.push(desiredOutputLeftToFit);
     }
 
-    // now we select only the output needed to cover the amount + fee
-    const {
-      totalValue: total,
-      unspentUtxos: unspentUtxoSelected,
-      fee,
-      needChangeoutput,
-    } = await utxoPickingStrategy.selectUnspentUtxosToUse(this, outputs, feePerByte);
-
-    const txHexs = await Promise.all(
-      unspentUtxoSelected.map(unspentUtxo => this.explorer.getTxHex(unspentUtxo.output_hash)),
-    );
-
-    const txs = await Promise.all(
-      unspentUtxoSelected.map(unspentUtxo =>
-        this.storage.getTx(unspentUtxo.address, unspentUtxo.output_hash),
-      ),
-    );
-
     let inputs: InputInfo[];
+    let associatedDerivations: [number, number][];
+    let total: BigNumber;
+    let fee: number;
+    let needChangeoutput: boolean;
 
     if (originalTxId) {
-      // For speed up transactions, we need to keep the same inputs as the original transaction
+      // For RBF (speed up / cancel) transactions, we need to keep the same inputs as the original transaction
       const originalTx = await this.explorer.getTxHex(originalTxId);
       if (!originalTx) {
         throw new Error("Original transaction not found for speed up");
       }
       const originalTxObj = Transaction.fromHex(originalTx);
-      inputs = await Promise.all(
+
+      // Build inputs and their associated derivations from the original transaction
+      const inputsWithDerivations = await Promise.all(
         originalTxObj.ins.map(async input => {
           const prevTxId = Buffer.from(Uint8Array.from(input.hash)).reverse().toString("hex");
 
@@ -281,18 +269,63 @@ class Xpub {
           }
 
           const address = btc.address.fromOutputScript(prevOut.script, this.crypto.network);
+
+          // Look up the derivation path for this address from storage
+          const storedTx = await this.storage.getTx(address, prevTxId);
+          const derivation: [number, number] = storedTx
+            ? [storedTx.account || 0, storedTx.index || 0]
+            : [0, 0]; // Fallback if not found
+
           return {
-            txHex: prevTxHex,
-            value: prevOut.value.toString(),
-            address,
-            output_hash: prevTxId,
-            output_index: input.index,
-            sequence: input.sequence,
-            block_height: null,
+            input: {
+              txHex: prevTxHex,
+              value: prevOut.value.toString(),
+              address,
+              output_hash: prevTxId,
+              output_index: input.index,
+              sequence: input.sequence,
+              block_height: null,
+            } as InputInfo,
+            derivation,
           };
         }),
       );
+
+      inputs = inputsWithDerivations.map(item => item.input);
+      associatedDerivations = inputsWithDerivations.map(item => item.derivation);
+
+      // Calculate total from actual inputs for RBF
+      total = inputs.reduce((sum, inp) => sum.plus(new BigNumber(inp.value)), new BigNumber(0));
+
+      // For RBF, we need to estimate the fee based on the transaction size
+      // The fee will be recalculated later, but we need a placeholder for now
+      const estimatedTxSize = maxTxSizeCeil(
+        inputs.length,
+        outputs.map(o => o.script),
+        true,
+        this.crypto,
+        this.derivationMode,
+      );
+      fee = estimatedTxSize * feePerByte;
+      needChangeoutput = true; // We'll determine this later based on dust limit
     } else {
+      // now we select only the output needed to cover the amount + fee
+      const result = await utxoPickingStrategy.selectUnspentUtxosToUse(this, outputs, feePerByte);
+      total = result.totalValue;
+      const unspentUtxoSelected = result.unspentUtxos;
+      fee = result.fee;
+      needChangeoutput = result.needChangeoutput;
+
+      const txHexs = await Promise.all(
+        unspentUtxoSelected.map(unspentUtxo => this.explorer.getTxHex(unspentUtxo.output_hash)),
+      );
+
+      const txs = await Promise.all(
+        unspentUtxoSelected.map(unspentUtxo =>
+          this.storage.getTx(unspentUtxo.address, unspentUtxo.output_hash),
+        ),
+      );
+
       inputs = unspentUtxoSelected.map((utxo, index) => {
         return {
           txHex: txHexs[index],
@@ -304,17 +337,17 @@ class Xpub {
           block_height: utxo.block_height || null,
         };
       });
+
+      associatedDerivations = unspentUtxoSelected.map((_utxo, index) => {
+        if (!txs[index]) {
+          throw new Error("Invalid index in txs[index]");
+        }
+        return [txs[index]?.account || 0, txs[index]?.index || 0];
+      });
     }
 
-    const associatedDerivations: [number, number][] = unspentUtxoSelected.map((_utxo, index) => {
-      if (!txs[index]) {
-        throw new Error("Invalid index in txs[index]");
-      }
-      return [txs[index]?.account || 0, txs[index]?.index || 0];
-    });
-
     const txSize = maxTxSizeCeil(
-      unspentUtxoSelected.length,
+      inputs.length, // Use actual inputs length
       outputs.map(o => o.script),
       true,
       this.crypto,
@@ -335,13 +368,14 @@ class Xpub {
 
     const outputsValue: BigNumber = outputs.reduce((cur, o) => cur.plus(o.value), new BigNumber(0));
 
-    return {
+    const result = {
       inputs,
       associatedDerivations,
       outputs,
       fee: total.minus(outputsValue).toNumber(),
       changeAddress: changeAddress,
     };
+    return result;
   }
 
   async broadcastTx(

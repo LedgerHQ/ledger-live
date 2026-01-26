@@ -10,7 +10,31 @@ import type { Transaction as BtcTransaction } from "./types";
 import { BigNumber } from "bignumber.js";
 import { getMinReplacementFeeRateSatVb, RBF_SEQUENCE_THRESHOLD } from "./rbfHelpers";
 
-async function getAmountAndRecipient(tx: Transaction, walletAccount: WalletAccount) {
+async function getAmountAndRecipient(
+  tx: Transaction,
+  walletAccount: WalletAccount,
+  knownRecipient?: string,
+) {
+  const network = walletAccount.xpub.crypto.network;
+
+  // If we already know the recipient from the pending transaction,
+  // use it directly to find the correct output
+  if (knownRecipient) {
+    const recipientOutput = tx.outs.find(out => {
+      try {
+        const address = btc.address.fromOutputScript(out.script, network);
+        return address === knownRecipient;
+      } catch {
+        return false;
+      }
+    });
+
+    if (recipientOutput) {
+      return { amountSent: recipientOutput.value, recipient: knownRecipient };
+    }
+  }
+
+  // Fallback: identify external outputs by checking against known wallet addresses
   const allAddressesSet = new Set<string>();
 
   const receiving = walletAccount.xpub.storage.getUniquesAddresses({ account: 0 });
@@ -18,8 +42,6 @@ async function getAmountAndRecipient(tx: Transaction, walletAccount: WalletAccou
 
   const change = walletAccount.xpub.storage.getUniquesAddresses({ account: 1 });
   change.forEach(a => allAddressesSet.add(a.address));
-
-  const network = walletAccount.xpub.crypto.network;
 
   const externalOutputs = tx.outs
     .map(out => {
@@ -81,7 +103,22 @@ const resolveFeesStrategy = (
 
 const getRbfContext = async (account: Account, originalTxId: string): Promise<RbfTxContext> => {
   const walletAccount = getWalletAccount(account);
-  const hexTx = await walletAccount.xpub.explorer.getTxHex(originalTxId);
+
+  let hexTx: string;
+  try {
+    hexTx = await walletAccount.xpub.explorer.getTxHex(originalTxId);
+  } catch (error) {
+    // Check if this transaction was recently confirmed or replaced
+    const confirmedTx = account.operations.find(op => op.hash === originalTxId);
+    if (confirmedTx && confirmedTx.blockHeight) {
+      throw new Error(
+        `Transaction ${originalTxId.slice(0, 8)}... has already been confirmed in block ${confirmedTx.blockHeight}. Confirmed transactions cannot be replaced.`,
+      );
+    }
+
+    throw new Error(error instanceof Error ? error.message : String(error));
+  }
+
   const originalTx = Transaction.fromHex(hexTx);
   assertRbfEnabled(originalTx);
 
@@ -112,7 +149,15 @@ export async function buildRbfSpeedUpTx(
   const { walletAccount, originalTx, feePerByte, networkInfo, changeAddress, excludeUTXOs } =
     await getRbfContext(account, originalTxId);
 
-  const { amountSent, recipient } = await getAmountAndRecipient(originalTx, walletAccount);
+  // Try to find the pending operation to get the known recipient
+  const pendingOp = account.pendingOperations.find(op => op.hash === originalTxId);
+  const knownRecipient = pendingOp?.recipients?.[0];
+
+  const { amountSent, recipient } = await getAmountAndRecipient(
+    originalTx,
+    walletAccount,
+    knownRecipient,
+  );
 
   const utxoStrategy: UtxoStrategy = {
     strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE,
@@ -137,10 +182,15 @@ export async function buildRbfCancelTx(
   account: Account,
   originalTxId: string,
 ): Promise<BtcTransaction> {
-  const { feePerByte, networkInfo, changeAddress, excludeUTXOs } = await getRbfContext(
-    account,
-    originalTxId,
-  );
+  const { walletAccount, originalTx, feePerByte, networkInfo, changeAddress, excludeUTXOs } =
+    await getRbfContext(account, originalTxId);
+
+  // Get the original external recipient from the pending operation
+  const pendingOp = account.pendingOperations.find(op => op.hash === originalTxId);
+  const originalRecipient = pendingOp?.recipients?.[0];
+
+  // Get the amount sent to the external recipient (not including change)
+  const { amountSent } = await getAmountAndRecipient(originalTx, walletAccount, originalRecipient);
 
   const utxoStrategy: UtxoStrategy = {
     strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE,
@@ -150,8 +200,7 @@ export async function buildRbfCancelTx(
   return {
     family: "bitcoin",
     recipient: changeAddress.address,
-    useAllAmount: true,
-    amount: new BigNumber(0),
+    amount: new BigNumber(amountSent), // Send the same amount as original, but to ourselves
     feesStrategy: resolveFeesStrategy(feePerByte, networkInfo),
     utxoStrategy,
     rbf: true,
