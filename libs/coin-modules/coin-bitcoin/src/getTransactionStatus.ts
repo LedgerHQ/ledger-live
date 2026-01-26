@@ -10,13 +10,7 @@ import {
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
-import type {
-  BitcoinInput,
-  BitcoinOutput,
-  Transaction,
-  TransactionStatus,
-  BitcoinAccount,
-} from "./types";
+import type { BitcoinInput, BitcoinOutput, Transaction, TransactionStatus } from "./types";
 import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
 import { OP_RETURN_DATA_SIZE_LIMIT } from "./wallet-btc/crypto/base";
 import cryptoFactory from "./wallet-btc/crypto/factory";
@@ -140,7 +134,12 @@ export const getTransactionStatus: AccountBridge<
   const amount = useAllAmount ? totalSpent.minus(estimatedFees) : transaction.amount;
   log("bitcoin", `totalSpent ${totalSpent.toString()} amount ${amount.toString()}`);
 
-  if (!errors.amount && !amount.gt(0)) {
+  // For RBF cancel transactions, we're sending the same amount as the original tx but to ourselves (change address)
+  // The recipient is the change address, so the external amount is effectively cancelled
+  const isRbfCancel =
+    transaction.replaceTxId && transaction.recipient === transaction.changeAddress;
+
+  if (!errors.amount && !amount.gt(0) && !isRbfCancel) {
     errors.amount = useAllAmount ? new NotEnoughBalance() : new AmountRequired();
   }
 

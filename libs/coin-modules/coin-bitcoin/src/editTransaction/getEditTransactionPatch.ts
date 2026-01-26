@@ -25,10 +25,10 @@ const getSpeedupPatch = async ({
   // Build a baseline RBF replacement intent (min replacement feerate + inputs overlap etc.)
   const nextTx = await buildRbfSpeedUpTx(account, originalTxId);
 
-  /**
-   * Ensure the default fee rate is not only "RBF-minimum", but also not below
-   * current network conditions (otherwise the replacement could still be stuck).
-   */
+  // /**
+  //  * Ensure the default fee rate is not only "RBF-minimum", but also not below
+  //  * current network conditions (otherwise the replacement could still be stuck).
+  //  */
   const fastFeePerByte = getNetworkFastFeePerByte(nextTx);
 
   if (fastFeePerByte === null) {
