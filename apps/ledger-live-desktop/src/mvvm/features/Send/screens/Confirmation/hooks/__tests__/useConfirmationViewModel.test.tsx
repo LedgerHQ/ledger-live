@@ -21,6 +21,7 @@ jest.mock("../../../../context/SendFlowContext", () => ({
 
 import { useFlowWizard } from "../../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../../context/SendFlowContext";
+import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
 
 type VM = ReturnType<typeof useConfirmationViewModel>;
 let container: HTMLElement;
@@ -95,7 +96,7 @@ describe("useConfirmationViewModel", () => {
       root.render(<HookProbe onResult={vm => (latestVM = vm)} />);
     });
 
-    expect(latestVM?.status).toBe("success");
+    expect(latestVM?.status).toBe(FLOW_STATUS.SUCCESS);
     expect(latestVM?.transactionError).toBeNull();
     expect(actions.close).not.toHaveBeenCalled();
     expect(nav.goToStep).not.toHaveBeenCalled();
@@ -123,7 +124,7 @@ describe("useConfirmationViewModel", () => {
       root.render(<HookProbe onResult={vm => (latestVM = vm)} />);
     });
 
-    expect(latestVM?.status).toBe("error");
+    expect(latestVM?.status).toBe(FLOW_STATUS.ERROR);
     expect(latestVM?.transactionError).toBe(error);
   });
 
@@ -149,7 +150,7 @@ describe("useConfirmationViewModel", () => {
       root.render(<HookProbe onResult={vm => (latestVM = vm)} />);
     });
 
-    expect(latestVM?.status).toBe("idle");
+    expect(latestVM?.status).toBe(FLOW_STATUS.IDLE);
   });
 
   test("status is idle by default when no error and not signed", () => {
@@ -173,7 +174,7 @@ describe("useConfirmationViewModel", () => {
       root.render(<HookProbe onResult={vm => (latestVM = vm)} />);
     });
 
-    expect(latestVM?.status).toBe("idle");
+    expect(latestVM?.status).toBe(FLOW_STATUS.IDLE);
   });
 
   test("onViewDetails opens drawer with first subOperation when present", () => {

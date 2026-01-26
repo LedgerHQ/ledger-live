@@ -4,9 +4,15 @@ import type {
   SendFlowUiConfig,
   SendFlowTransactionActions,
   SendFlowOperationActions,
-} from "../types";
+} from "@ledgerhq/live-common/flows/send/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { FlowStatusActions } from "../../FlowWizard/types";
+import type {
+  FlowStatusActions,
+  FlowWizardContextValue,
+} from "@ledgerhq/live-common/flows/wizard/types";
+import { FlowWizardProvider } from "../../FlowWizard/FlowWizardContext";
+import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import type { SendStepConfig } from "../types";
 
 /**
  * SendFlowContext
@@ -47,7 +53,7 @@ const SendFlowActionsContext = createContext<ActionsContextValue | null>(null);
 export type SendFlowBusinessContext = DataContextValue & ActionsContextValue;
 
 type SendFlowProviderProps = Readonly<{
-  value: SendFlowBusinessContext;
+  value: FlowWizardContextValue<SendFlowStep, SendFlowBusinessContext, SendStepConfig>;
   children: ReactNode;
 }>;
 
@@ -73,11 +79,13 @@ export function SendFlowProvider({ value, children }: SendFlowProviderProps) {
   );
 
   return (
-    <SendFlowDataContext.Provider value={dataValue}>
-      <SendFlowActionsContext.Provider value={actionsValue}>
-        {children}
-      </SendFlowActionsContext.Provider>
-    </SendFlowDataContext.Provider>
+    <FlowWizardProvider value={value}>
+      <SendFlowDataContext.Provider value={dataValue}>
+        <SendFlowActionsContext.Provider value={actionsValue}>
+          {children}
+        </SendFlowActionsContext.Provider>
+      </SendFlowDataContext.Provider>
+    </FlowWizardProvider>
   );
 }
 

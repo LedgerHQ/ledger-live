@@ -1,11 +1,12 @@
 import { useNavigation, CommonActions } from "@react-navigation/native";
-import type { FlowStep, FlowConfig, FlowNavigationActions, FlowNavigationState } from "../types";
+import type {
+  FlowStep,
+  FlowConfig,
+  FlowNavigationActions,
+  FlowNavigationState,
+} from "@ledgerhq/live-common/flows/wizard/types";
+import { FLOW_NAVIGATION_DIRECTION } from "@ledgerhq/live-common/flows/wizard/types";
 import type { ReactNativeFlowStepConfig } from "../types.native";
-
-const FLOW_NAVIGATION_DIRECTION = {
-  FORWARD: "FORWARD",
-  BACKWARD: "BACKWARD",
-};
 
 /**
  * Generic hook to access Flow Wizard navigation actions using React Navigation

@@ -4,18 +4,23 @@ import { BigNumber } from "bignumber.js";
 import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
-import { SEND_FLOW_STEP, type SendFlowStep, type SendStepConfig } from "../types";
+import {
+  SEND_FLOW_STEP,
+  type SendFlowStep,
+  type SendFlowBusinessContext,
+} from "@ledgerhq/live-common/flows/send/types";
+import type { SendStepConfig } from "../types";
 import { getRecipientDisplayValue, getRecipientSearchPrefillValue } from "./utils";
 import { useAvailableBalance } from "../hooks/useAvailableBalance";
 
 export function SendHeader() {
-  const { navigation, currentStep, currentStepConfig } = useFlowWizard<
-    SendFlowStep,
-    SendStepConfig
-  >();
+  const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
   const { state, uiConfig, recipientSearch } = useSendFlowData();
   const { close, transaction } = useSendFlowActions();
   const { t } = useTranslation();
+
+  const { navigation, currentStep } = wizard;
+  const currentStepConfig = wizard.currentStepConfig as SendStepConfig;
 
   const currencyName = state.account.currency?.ticker ?? "";
   const availableText = useAvailableBalance(state.account.account);
