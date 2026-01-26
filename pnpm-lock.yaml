@@ -10765,6 +10765,9 @@ importers:
 
   tools/actions/mobile-performance-test:
     dependencies:
+      '@actions/core':
+        specifier: 1.11.1
+        version: 1.11.1
       '@actions/github':
         specifier: 6.0.1
         version: 6.0.1
@@ -10781,9 +10784,6 @@ importers:
         specifier: 0.5.16
         version: 0.5.16
     devDependencies:
-      '@actions/core':
-        specifier: 1.11.1
-        version: 1.11.1
       '@rslib/core':
         specifier: 'catalog:'
         version: 0.19.3(typescript@5.8.3)

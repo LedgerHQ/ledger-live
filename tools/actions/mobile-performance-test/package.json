@@ -10,6 +10,7 @@
     "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {
+    "@actions/core": "1.11.1",
     "@datadog/datadog-ci": "3.11.0",
     "@datadog/datadog-api-client": "2.0.0-beta.1",
     "@datadog/datadog-api-client-synthetics": "0.0.1-beta.1",
@@ -17,7 +18,6 @@
     "adm-zip": "0.5.16"
   },
   "devDependencies": {
-    "@actions/core": "1.11.1",
     "@types/adm-zip": "0.5.7",
     "@rslib/core": "catalog:",
     "typescript": "5.8.3"
