@@ -116,19 +116,35 @@ function toOperation(
   };
 }
 
+// the sort parameter has a double meaning:
+// - legacy (for the bridge): it's used to sort the operations in the result list. Explorer always queried in "desc" order.
+// - new: it's used to sort AND query the explorer with the correct order.
+
+// the limit parameter is a newly introduced parameter for pagination. It's used to switch between "legacy" and "new" behavior.
+// see tests for a full description of the behavior.
 export async function listOperations(
   currency: CryptoCurrency,
   address: string,
   pagination: Pagination,
 ): Promise<[Operation<MemoNotSupported>[], string]> {
   const explorerApi = getExplorerApi(currency);
-  const { lastCoinOperations, lastTokenOperations, lastNftOperations, lastInternalOperations } =
-    await explorerApi.getLastOperations(
-      currency,
-      address,
-      `js:2:${currency.id}:${address}:`,
-      pagination.minHeight,
-    );
+  const explorerOrder = pagination.limit === undefined ? "desc" : pagination.order ?? "desc";
+  const {
+    lastCoinOperations,
+    lastTokenOperations,
+    lastNftOperations,
+    lastInternalOperations,
+    nextPagingToken,
+  } = await explorerApi.getOperations(
+    currency,
+    address,
+    `js:2:${currency.id}:${address}:`,
+    pagination.minHeight,
+    undefined,
+    pagination.pagingToken,
+    pagination.limit,
+    explorerOrder,
+  );
 
   const isNativeOperation = (coinOperation: LiveOperation): boolean =>
     ![...lastTokenOperations, ...lastNftOperations].map(op => op.hash).includes(coinOperation.hash);
@@ -189,5 +205,5 @@ export async function listOperations(
         : b.tx.date.getTime() - a.tx.date.getTime(),
     );
 
-  return [operations, ""];
+  return [operations, nextPagingToken];
 }
