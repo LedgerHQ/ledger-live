@@ -9,5 +9,11 @@
     "exactOptionalPropertyTypes": true
   },
   "include": ["src/**/*"],
-  "exclude": ["src/api/subscan.ts", "src/api/websocket.ts"]
+  "exclude": [
+    "src/api/subscan.ts",
+    "src/api/websocket.ts",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts"
+  ]
 }

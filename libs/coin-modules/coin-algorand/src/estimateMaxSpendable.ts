@@ -5,7 +5,7 @@ import { findSubAccountById, getMainAccount } from "@ledgerhq/coin-framework/acc
 import type { AlgorandAccount, AlgorandTransaction } from "./types";
 import { getEstimatedFees } from "./getFeesForTransaction";
 import createTransaction from "./createTransaction";
-import { computeAlgoMaxSpendable } from "./logic";
+import { computeAlgoMaxSpendable } from "./bridgeLogic";
 
 export const estimateMaxSpendable: AccountBridge<
   AlgorandTransaction,
