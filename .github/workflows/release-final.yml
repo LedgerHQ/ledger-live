@@ -64,18 +64,18 @@ jobs:
             ~/Library/Caches/CocoaPods
             ~/.cocoapods
           key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
-      - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
-      - name: build libs
-        run: pnpm run build:libs
-      - name: authenticate with npm
-        uses: actions/setup-node@v4
-        with:
-          registry-url: "https://registry.npmjs.org"
-      - name: publish release
-        run: pnpm changeset publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+#      - name: install dependencies
+#        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
+#      - name: build libs
+#        run: pnpm run build:libs
+#      - name: authenticate with npm
+#        uses: actions/setup-node@v4
+#        with:
+#          registry-url: "https://registry.npmjs.org"
+#      - name: publish release
+#        run: pnpm changeset publish
+#        env:
+#          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
       - name: check if desktop versions are different
         if: ${{ inputs.caller == 'release-prepare' || inputs.caller == 'release-prepare-hotfix' }}
         id: desktop-changed
@@ -103,90 +103,90 @@ jobs:
           changelog-path: ${{ github.workspace }}/apps/ledger-live-desktop/CHANGELOG.md
           output-path: ${{ github.workspace }}
           name: desktop-changelog
-      - name: tag desktop
-        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
-        run: |
-          git tag @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }}
-      - name: generate mobile changelog
-        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
-        uses: LedgerHQ/ledger-live/tools/actions/generate-release-message@support/turbo-addected-rslib-tests
-        id: mobile-changelog
-        with:
-          package-path: ${{ github.workspace }}/apps/ledger-live-mobile/package.json
-          changelog-path: ${{ github.workspace }}/apps/ledger-live-mobile/CHANGELOG.md
-          output-path: ${{ github.workspace }}
-          name: mobile-changelog
-      - name: tag mobile
-        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
-        run: |
-          git tag live-mobile@${{ steps.mobile-version.outputs.version }}
-      - name: push changes
-        run: |
-          git push origin ${{ inputs.ref }} --tags
-      - name: create desktop github release
-        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }} -F ${{ steps.desktop-changelog.outputs.path }}
-      - name: create mobile github release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
-        run: |
-          gh release create live-mobile@${{ steps.mobile-version.outputs.version }} -F ${{ steps.mobile-changelog.outputs.path }}
-      - uses: actions/github-script@v7
-        name: trigger release build for desktop
-        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
-        with:
-          github-token: ${{ steps.generate-token.outputs.token }}
-          script: |
-            github.rest.actions.createWorkflowDispatch({
-              owner: "ledgerhq",
-              repo: "ledger-live-build",
-              ref: "main",
-              workflow_id: "release-desktop.yml",
-              inputs: {
-                branch: "${{ inputs.ref }}"
-              }
-            });
-      - uses: actions/github-script@v7
-        name: trigger release build for mobile
-        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
-        with:
-          github-token: ${{ steps.generate-token.outputs.token }}
-          script: |
-            github.rest.actions.createWorkflowDispatch({
-              owner: "ledgerhq",
-              repo: "ledger-live-build",
-              ref: "main",
-              workflow_id: "release-mobile.yml",
-              inputs: {
-                ref: "${{ inputs.ref }}"
-              }
-            });
-
-  release-fail:
-    name: Release Final > Failure Reporting
-    needs: release
-    if: failure()
-    runs-on: ubuntu-latest
-    steps:
-      - name: post to a Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@v2.0.0
-        with:
-          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-          method: chat.postMessage
-          payload: |
-            channel: "C08JQKWS9KK"
-            text: "[Alert] Release failed"
-            blocks: 
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "*Release (final) failed*"
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+#      - name: tag desktop
+#        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
+#        run: |
+#          git tag @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }}
+#      - name: generate mobile changelog
+#        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
+#        uses: LedgerHQ/ledger-live/tools/actions/generate-release-message@support/turbo-addected-rslib-tests
+#        id: mobile-changelog
+#        with:
+#          package-path: ${{ github.workspace }}/apps/ledger-live-mobile/package.json
+#          changelog-path: ${{ github.workspace }}/apps/ledger-live-mobile/CHANGELOG.md
+#          output-path: ${{ github.workspace }}
+#          name: mobile-changelog
+#      - name: tag mobile
+#        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
+#        run: |
+#          git tag live-mobile@${{ steps.mobile-version.outputs.version }}
+#      - name: push changes
+#        run: |
+#          git push origin ${{ inputs.ref }} --tags
+#      - name: create desktop github release
+#        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          gh release create @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }} -F ${{ steps.desktop-changelog.outputs.path }}
+#      - name: create mobile github release
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
+#        run: |
+#          gh release create live-mobile@${{ steps.mobile-version.outputs.version }} -F ${{ steps.mobile-changelog.outputs.path }}
+#      - uses: actions/github-script@v7
+#        name: trigger release build for desktop
+#        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
+#        with:
+#          github-token: ${{ steps.generate-token.outputs.token }}
+#          script: |
+#            github.rest.actions.createWorkflowDispatch({
+#              owner: "ledgerhq",
+#              repo: "ledger-live-build",
+#              ref: "main",
+#              workflow_id: "release-desktop.yml",
+#              inputs: {
+#                branch: "${{ inputs.ref }}"
+#              }
+#            });
+#      - uses: actions/github-script@v7
+#        name: trigger release build for mobile
+#        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
+#        with:
+#          github-token: ${{ steps.generate-token.outputs.token }}
+#          script: |
+#            github.rest.actions.createWorkflowDispatch({
+#              owner: "ledgerhq",
+#              repo: "ledger-live-build",
+#              ref: "main",
+#              workflow_id: "release-mobile.yml",
+#              inputs: {
+#                ref: "${{ inputs.ref }}"
+#              }
+#            });
+#
+#  release-fail:
+#    name: Release Final > Failure Reporting
+#    needs: release
+#    if: failure()
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: post to a Slack channel
+#        id: slack
+#        uses: slackapi/slack-github-action@v2.0.0
+#        with:
+#          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+#          method: chat.postMessage
+#          payload: |
+#            channel: "C08JQKWS9KK"
+#            text: "[Alert] Release failed"
+#            blocks:
+#              - type: "section"
+#                text:
+#                  type: "mrkdwn"
+#                  text: "*Release (final) failed*"
+#              - type: "section"
+#                text:
+#                  type: "mrkdwn"
+#                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
