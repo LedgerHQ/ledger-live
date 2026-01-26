@@ -68,6 +68,7 @@ const defaultPortfolioMock = createPortfolioMock({ percentage: 0.0542, value: 50
 
 describe("PortfolioView", () => {
   const defaultProps = {
+    isWallet40Enabled: true,
     totalAccounts: 5,
     totalOperations: 10,
     totalCurrencies: 3,

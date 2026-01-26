@@ -46,11 +46,7 @@ function SwapCard({
 
   if (isWallet40) {
     return (
-      <div
-        style={style}
-        data-testid={testId}
-        className="overflow-hidden rounded-xl bg-surface"
-      >
+      <div style={style} data-testid={testId} className="overflow-hidden rounded-xl bg-surface">
         {children}
       </div>
     );

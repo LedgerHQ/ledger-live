@@ -13,7 +13,6 @@ import { Balance } from "./components/Balance";
 
 /**
  * Swap sidebar height calculation:
- * 100vh - (topBarHeight + padding * 2) = 100vh - (58px + 16px * 2) = 100vh - 90px
  */
 const SWAP_SIDEBAR_HEIGHT = "h-[100vh]";
 
@@ -58,7 +57,7 @@ export const PortfolioView = memo(function PortfolioView({
               withSubAccounts
               filterOperation={filterOperations}
               t={t}
-              isWallet40={shouldDisplayGraphRework}
+              isWallet40={isWallet40Enabled}
             />
           )}
         </div>
