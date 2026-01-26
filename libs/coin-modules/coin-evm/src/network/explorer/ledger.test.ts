@@ -428,6 +428,7 @@ describe("EVM Family", () => {
               value: new BigNumber(coinOperation2.actions[0].value),
             },
           ],
+          nextPagingToken: "",
         });
       });
 
