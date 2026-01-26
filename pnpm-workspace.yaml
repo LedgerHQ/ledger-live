@@ -131,3 +131,5 @@ overrides:
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  # Renovate security update: firebase@10.9.0
+  - firebase@10.9.0
