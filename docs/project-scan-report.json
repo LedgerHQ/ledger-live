@@ -1,0 +1,55 @@
+{
+  "workflow_version": "1.2.0",
+  "timestamps": {
+    "started": "2026-01-23T10:45:00.000Z",
+    "last_updated": "2026-01-23T10:50:00.000Z"
+  },
+  "mode": "initial_scan",
+  "scan_level": "exhaustive",
+  "project_root": "/Users/hedi.edelbloute/Documents/Workspace/ledger-live",
+  "output_folder": "/Users/hedi.edelbloute/Documents/Workspace/ledger-live/docs",
+  "repository_type": "monorepo",
+  "project_types": [
+    {"part_id": "ledger-live-desktop", "project_type_id": "desktop", "root_path": "apps/ledger-live-desktop", "display_name": "Ledger Live Desktop"},
+    {"part_id": "ledger-live-mobile", "project_type_id": "mobile", "root_path": "apps/ledger-live-mobile", "display_name": "Ledger Live Mobile"},
+    {"part_id": "cli", "project_type_id": "cli", "root_path": "apps/cli", "display_name": "Ledger Live CLI"},
+    {"part_id": "web-tools", "project_type_id": "web", "root_path": "apps/web-tools", "display_name": "Web Tools"},
+    {"part_id": "ledger-live-common", "project_type_id": "library", "root_path": "libs/ledger-live-common", "display_name": "Ledger Live Common"},
+    {"part_id": "ledgerjs", "project_type_id": "library", "root_path": "libs/ledgerjs", "display_name": "LedgerJS SDK"},
+    {"part_id": "coin-modules", "project_type_id": "library", "root_path": "libs/coin-modules", "display_name": "Coin Modules"},
+    {"part_id": "ui", "project_type_id": "library", "root_path": "libs/ui", "display_name": "UI Design System"},
+    {"part_id": "ledger-services", "project_type_id": "library", "root_path": "libs/ledger-services", "display_name": "Ledger Services"}
+  ],
+  "completed_steps": [
+    {"step": "step_1", "status": "completed", "timestamp": "2026-01-23T10:50:00.000Z", "summary": "Classified as monorepo with 9 parts"},
+    {"step": "step_2", "status": "completed", "timestamp": "2026-01-23T10:55:00.000Z", "summary": "Found 36+ existing docs, 73 CI workflows"},
+    {"step": "step_3", "status": "completed", "timestamp": "2026-01-23T11:00:00.000Z", "summary": "Tech stack: React/RN/Electron, TypeScript, Redux, 30 coin modules"},
+    {"step": "step_4", "status": "completed", "timestamp": "2026-01-23T11:10:00.000Z", "summary": "Conditional analysis: state mgmt, API clients, UI components, families pattern"},
+    {"step": "step_5", "status": "completed", "timestamp": "2026-01-23T11:15:00.000Z", "summary": "Source tree documented with critical folders"},
+    {"step": "step_6", "status": "completed", "timestamp": "2026-01-23T11:18:00.000Z", "summary": "Development and deployment guides written"},
+    {"step": "step_8", "status": "completed", "timestamp": "2026-01-23T11:22:00.000Z", "summary": "Architecture docs for desktop and mobile"},
+    {"step": "step_9", "status": "completed", "timestamp": "2026-01-23T11:25:00.000Z", "summary": "Supporting docs: project-overview, development-guide"},
+    {"step": "step_10", "status": "completed", "timestamp": "2026-01-23T11:28:00.000Z", "summary": "Master index generated with navigation"}
+  ],
+  "current_step": "completed",
+  "findings": {
+    "project_classification": "monorepo, 9 parts, TypeScript/React/React Native/Electron"
+  },
+  "workflow_status": "completed",
+  "completed_at": "2026-01-23T12:00:00.000Z",
+  "outputs_generated": [
+    "project-scan-report.json",
+    "index.md",
+    "project-overview.md",
+    "source-tree-analysis.md",
+    "architecture-desktop.md",
+    "architecture-mobile.md",
+    "architecture-libraries.md",
+    "development-guide.md",
+    "testing-guide.md",
+    "contribution-guide.md",
+    "api-contracts.md",
+    "integration-architecture.md"
+  ],
+  "resume_instructions": "Workflow completed. Run again to update documentation."
+}
