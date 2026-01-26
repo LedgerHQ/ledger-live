@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useReducer } from "react";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency } from "../../../account/helpers";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { SendFlowAccountState } from "../types";
 

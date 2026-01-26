@@ -95,7 +95,7 @@ describe("useConfirmationViewModel", () => {
       root.render(<HookProbe onResult={vm => (latestVM = vm)} />);
     });
 
-    expect(latestVM?.status).toBe("success");
+    expect(latestVM?.status).toBe("SUCCESS");
     expect(latestVM?.transactionError).toBeNull();
     expect(actions.close).not.toHaveBeenCalled();
     expect(nav.goToStep).not.toHaveBeenCalled();
@@ -123,7 +123,7 @@ describe("useConfirmationViewModel", () => {
       root.render(<HookProbe onResult={vm => (latestVM = vm)} />);
     });
 
-    expect(latestVM?.status).toBe("error");
+    expect(latestVM?.status).toBe("ERROR");
     expect(latestVM?.transactionError).toBe(error);
   });
 
@@ -149,7 +149,7 @@ describe("useConfirmationViewModel", () => {
       root.render(<HookProbe onResult={vm => (latestVM = vm)} />);
     });
 
-    expect(latestVM?.status).toBe("idle");
+    expect(latestVM?.status).toBe("IDLE");
   });
 
   test("status is idle by default when no error and not signed", () => {
@@ -173,7 +173,7 @@ describe("useConfirmationViewModel", () => {
       root.render(<HookProbe onResult={vm => (latestVM = vm)} />);
     });
 
-    expect(latestVM?.status).toBe("idle");
+    expect(latestVM?.status).toBe("IDLE");
   });
 
   test("onViewDetails opens drawer with first subOperation when present", () => {
