@@ -15,9 +15,9 @@ import { isValidAddress } from "algosdk";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 
+import { computeAlgoMaxSpendable, isAmountValid, recipientHasAsset } from "./bridgeLogic";
 import { AlgorandASANotOptInInRecipient, AlgorandMemoExceededSizeError } from "./errors";
 
-import { computeAlgoMaxSpendable, isAmountValid, recipientHasAsset } from "./logic";
 import { validateMemo } from "./logic/validateMemo";
 import { extractTokenId } from "./tokens";
 import type { AlgorandAccount, Transaction, TransactionStatus } from "./types";

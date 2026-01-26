@@ -63,7 +63,7 @@ export type Operation<MemoType extends Memo = MemoNotSupported> = {
   assetInfo?: AssetInfo;
   tx: {
     hash: string; // transaction hash
-    block: BlockInfo; // block metadata
+    block: BlockInfo; // block metadata, empty string for block hash if not available directly and no reorg possible
     fees: bigint; // network fees paid
     date: Date; // tx date (may differ from block time)
 

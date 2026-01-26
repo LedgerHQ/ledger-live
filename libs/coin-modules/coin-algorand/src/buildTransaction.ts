@@ -1,13 +1,12 @@
 import type { Transaction as AlgoTransaction } from "algosdk";
 import {
   encodeMsgpack,
-  SignedTransaction,
   base64ToBytes,
   makeAssetTransferTxnWithSuggestedParamsFromObject,
   makePaymentTxnWithSuggestedParamsFromObject,
 } from "algosdk";
 
-import algorandAPI from "./api";
+import { getTransactionParams } from "./network";
 import { extractTokenId } from "./tokens";
 import type { AlgorandAccount, Transaction } from "./types";
 
@@ -22,7 +21,7 @@ export const buildTransactionPayload = async (
 
   const note = memo ? new TextEncoder().encode(memo) : undefined;
 
-  const params = await algorandAPI.getTransactionParams();
+  const params = await getTransactionParams();
   const suggestedParams = {
     ...params,
     firstValid: params.lastRound,
