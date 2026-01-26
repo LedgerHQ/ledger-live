@@ -6,7 +6,7 @@ import {
   SubheaderTitle,
   SubheaderShowMore,
 } from "@ledgerhq/lumen-ui-rnative";
-import GraphCardContainer from "~/screens/Portfolio/GraphCardContainer";
+import PortfolioGraphCard from "~/screens/Portfolio/PortfolioGraphCard";
 import TrackScreen from "~/analytics/TrackScreen";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
@@ -30,16 +30,11 @@ type NavigationProps = BaseComposite<
 
 function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
   const {
-    counterValueCurrency,
-    portfolio,
     hasOrderedNano,
     assets,
-    graphCardEndPosition,
-    currentPositionY,
     shouldDisplayGraphRework,
     t,
     source,
-    onPortfolioCardLayout,
     goToAssets,
     onBackFromUpdate,
   } = useReadOnlyPortfolioViewModel(navigation);
@@ -51,16 +46,12 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
 
   const data = useMemo(
     () => [
-      <Box onLayout={onPortfolioCardLayout} key="GraphCardContainer">
-        <GraphCardContainer
-          counterValueCurrency={counterValueCurrency}
-          portfolio={portfolio}
-          showGraphCard
-          areAccountsEmpty={false}
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
+      <Box key="PortfolioGraphCard">
+        <PortfolioGraphCard
+          showAssets={false}
           screenName="Wallet"
           hideGraph={shouldDisplayGraphRework}
+          isReadOnlyMode
         />
       </Box>,
       ...(hasOrderedNano
@@ -107,19 +98,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
           ]
         : []),
     ],
-    [
-      hasOrderedNano,
-      onPortfolioCardLayout,
-      counterValueCurrency,
-      portfolio,
-      currentPositionY,
-      graphCardEndPosition,
-      shouldDisplayGraphRework,
-      assets,
-      goToAssets,
-      t,
-      getCryptoSectionTitle,
-    ],
+    [hasOrderedNano, shouldDisplayGraphRework, assets, goToAssets, t, getCryptoSectionTitle],
   );
 
   return (
