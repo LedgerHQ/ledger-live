@@ -1,5 +1,5 @@
 import React from "react";
-import { FlowStatus } from "LLD/features/FlowWizard/types";
+import type { FlowStatus } from "@ledgerhq/live-common/flows/wizard/types";
 import { SuccessContent } from "./Content/SuccessContent";
 import { InfoContent } from "./Content/InfoContent";
 import { ErrorContent } from "./Content/ErrorContent";

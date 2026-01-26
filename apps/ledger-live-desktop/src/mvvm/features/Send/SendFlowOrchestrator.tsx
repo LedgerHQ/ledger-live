@@ -1,16 +1,12 @@
 import React, { useMemo, type ReactNode } from "react";
-import type { StepRegistry, FlowWizardContextValue } from "../FlowWizard/types";
+import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 import { SendFlowProvider } from "./context/SendFlowContext";
 import { useSendFlowBusinessLogic } from "./hooks/useSendFlowState";
 import { SEND_FLOW_CONFIG } from "./constants";
-import { SEND_FLOW_STEP } from "./types";
-import type {
-  SendFlowStep,
-  SendFlowInitParams,
-  SendFlowBusinessContext,
-  SendStepConfig,
-} from "./types";
-import { useFlowWizardNavigation } from "../FlowWizard/hooks/useFlowWizardNavigation";
+import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowStep, SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
+import type { SendStepConfig as DesktopSendStepConfig } from "./types";
+import { FlowWizardOrchestrator } from "../FlowWizard/FlowWizardOrchestrator";
 
 type SendFlowStepRegistry = StepRegistry<SendFlowStep>;
 
@@ -24,7 +20,7 @@ type SendFlowOrchestratorProps = Readonly<{
 export function SendFlowOrchestrator({
   initParams,
   onClose,
-  stepRegistry: _stepRegistry,
+  stepRegistry,
   children,
 }: SendFlowOrchestratorProps) {
   const businessContext = useSendFlowBusinessLogic({ initParams, onClose });
@@ -36,25 +32,14 @@ export function SendFlowOrchestrator({
     [],
   );
 
-  const { state, actions, currentStepConfig } = useFlowWizardNavigation<
-    SendFlowStep,
-    SendStepConfig
-  >({
-    flowConfig,
-  });
-
-  const contextValue = useMemo<
-    FlowWizardContextValue<SendFlowStep, SendFlowBusinessContext, SendStepConfig>
-  >(
-    () => ({
-      ...businessContext,
-      navigation: actions,
-      currentStep: state.currentStep,
-      direction: state.direction,
-      currentStepConfig,
-    }),
-    [businessContext, actions, state.currentStep, state.direction, currentStepConfig],
+  return (
+    <FlowWizardOrchestrator<SendFlowStep, typeof businessContext, DesktopSendStepConfig>
+      flowConfig={flowConfig}
+      stepRegistry={stepRegistry}
+      contextValue={businessContext}
+      ContextProvider={SendFlowProvider}
+    >
+      {children}
+    </FlowWizardOrchestrator>
   );
-
-  return <SendFlowProvider value={contextValue}>{children}</SendFlowProvider>;
 }

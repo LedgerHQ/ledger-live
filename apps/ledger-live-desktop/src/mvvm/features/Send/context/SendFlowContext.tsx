@@ -1,17 +1,16 @@
 import React, { createContext, useContext, type ReactNode, useMemo } from "react";
 import type {
-  SendFlowContextValue,
   SendFlowNavigationActions,
   SendFlowStep,
-  SendStepConfig,
   SendFlowState,
   SendFlowUiConfig,
   SendFlowTransactionActions,
   SendFlowOperationActions,
   NavigationDirection,
-} from "../types";
+} from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowContextValue, SendStepConfig } from "../types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { FlowStatusActions } from "../../FlowWizard/types";
+import type { FlowStatusActions } from "@ledgerhq/live-common/flows/wizard/types";
 
 // Navigation Context
 type NavigationContextValue = Readonly<{

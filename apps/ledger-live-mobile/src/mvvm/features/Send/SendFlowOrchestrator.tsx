@@ -1,16 +1,12 @@
 import React, { useMemo, type ReactNode } from "react";
-import type { StepRegistry } from "../FlowWizard/types";
-import { useFlowWizardOrchestrator } from "../FlowWizard/hooks";
+import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 import { SendFlowProvider } from "./context/SendFlowContext";
 import { useSendFlowBusinessLogic } from "./hooks/useSendFlowState";
 import { SEND_FLOW_CONFIG } from "./constants";
-import { SEND_FLOW_STEP } from "./types";
-import type {
-  SendFlowStep,
-  SendFlowInitParams,
-  SendStepConfig,
-  SendFlowContextValue,
-} from "./types";
+import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowStep, SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
+import type { SendStepConfig } from "./types";
+import { FlowWizardOrchestrator } from "../FlowWizard/FlowWizardOrchestrator";
 
 type SendFlowStepRegistry = StepRegistry<SendFlowStep>;
 
@@ -24,7 +20,7 @@ type SendFlowOrchestratorProps = Readonly<{
 export function SendFlowOrchestrator({
   initParams,
   onClose,
-  stepRegistry: _stepRegistry,
+  stepRegistry,
   children,
 }: SendFlowOrchestratorProps) {
   const businessContext = useSendFlowBusinessLogic({ initParams, onClose });
@@ -36,23 +32,14 @@ export function SendFlowOrchestrator({
     [],
   );
 
-  const { state, actions, currentStepConfig } = useFlowWizardOrchestrator<
-    SendFlowStep,
-    SendStepConfig
-  >({
-    flowConfig,
-  });
-
-  const contextValue = useMemo<SendFlowContextValue>(
-    () => ({
-      ...businessContext,
-      navigation: actions,
-      currentStep: state.currentStep,
-      direction: state.direction,
-      currentStepConfig,
-    }),
-    [businessContext, actions, state.currentStep, state.direction, currentStepConfig],
+  return (
+    <FlowWizardOrchestrator<SendFlowStep, typeof businessContext, SendStepConfig>
+      flowConfig={flowConfig}
+      stepRegistry={stepRegistry}
+      contextValue={businessContext}
+      ContextProvider={SendFlowProvider}
+    >
+      {children}
+    </FlowWizardOrchestrator>
   );
-
-  return <SendFlowProvider value={contextValue}>{children}</SendFlowProvider>;
 }

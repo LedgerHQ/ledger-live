@@ -1,19 +1,23 @@
 import React, { useCallback } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { SendFlowOrchestrator } from "./SendFlowOrchestrator";
-import { SEND_FLOW_STEP, type SendFlowInitParams } from "./types";
+import {
+  SEND_FLOW_STEP,
+  type SendFlowStep,
+  type SendFlowInitParams,
+} from "@ledgerhq/live-common/flows/send/types";
 import { SignatureScreen } from "./screens/Signature/SignatureScreen";
 import { ConfirmationScreen } from "./screens/Confirmation/ConfirmationScreen";
-import { createStepRegistry } from "../FlowWizard/FlowWizardOrchestrator";
 import { SendFlowLayout } from "./components/SendFlowLayout";
 import { RecipientScreen } from "./screens/Recipient/RecipientScreen";
+import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 
-const stepRegistry = createStepRegistry({
+const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
   [SEND_FLOW_STEP.AMOUNT]: () => <></>,
   [SEND_FLOW_STEP.SIGNATURE]: SignatureScreen,
   [SEND_FLOW_STEP.CONFIRMATION]: ConfirmationScreen,
-});
+};
 
 type SendWorkflowParams = Readonly<{
   account?: AccountLike;

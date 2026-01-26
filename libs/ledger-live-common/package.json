@@ -69,6 +69,11 @@
       "require": "./lib/bridge/descriptor.js",
       "default": "./lib-es/bridge/descriptor.js"
     },
+    "./flows/*/*": {
+      "types": "./src/flows/*/*.ts",
+      "require": "./lib/flows/*/*.js",
+      "default": "./src/flows/*/*.ts"
+    },
     "./test-helpers/cryptoAssetsStore": {
       "types": "./lib/test-helpers/cryptoAssetsStore.d.ts",
       "require": "./lib/test-helpers/cryptoAssetsStore.js",

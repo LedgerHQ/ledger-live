@@ -3,7 +3,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
-import { FlowStatus } from "LLD/features/FlowWizard/types";
+import type { FlowStatus } from "@ledgerhq/live-common/flows/wizard/types";
 import type { SendFlowOperationResult } from "../../../types";
 import {
   useSendFlowActions,

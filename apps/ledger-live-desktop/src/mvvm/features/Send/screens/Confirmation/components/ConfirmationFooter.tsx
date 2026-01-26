@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, DialogFooter } from "@ledgerhq/lumen-ui-react";
-import { FlowStatus } from "LLD/features/FlowWizard/types";
+import type { FlowStatus } from "@ledgerhq/live-common/flows/wizard/types";
 
 interface ButtonConfig {
   label: string;

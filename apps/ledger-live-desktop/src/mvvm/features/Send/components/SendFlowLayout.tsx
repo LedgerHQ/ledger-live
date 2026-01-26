@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo } from "react";
 import { Dialog, DialogContent, DialogBody } from "@ledgerhq/lumen-ui-react";
 import { useSendFlowNavigation, useSendFlowData } from "../context/SendFlowContext";
-import type { StepRegistry, StepRenderer } from "../../FlowWizard/types";
-import { FLOW_STATUS } from "../../FlowWizard/types";
-import type { SendFlowStep } from "../types";
+import type { StepRenderer, StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
+import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
+import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { SendHeader } from "./SendHeader";
 import { cn } from "LLD/utils/cn";
 

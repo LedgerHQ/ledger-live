@@ -1,9 +1,5 @@
-import {
-  SEND_FLOW_STEP,
-  type SendFlowStep,
-  type SendStepConfig,
-  type SendFlowConfig,
-} from "./types";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import type { SendStepConfig, SendFlowConfig } from "./types";
 import { ScreenName } from "~/const";
 import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
 

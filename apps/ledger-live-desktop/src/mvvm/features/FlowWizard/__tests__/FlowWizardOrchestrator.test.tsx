@@ -1,7 +1,11 @@
 import React, { createContext, useContext } from "react";
 import { render, screen } from "tests/testSetup";
-import { FlowWizardOrchestrator, createStepRegistry } from "../FlowWizardOrchestrator";
-import type { FlowConfig, FlowWizardContextValue } from "../types";
+import { FlowWizardOrchestrator } from "../FlowWizardOrchestrator";
+import type {
+  FlowConfig,
+  FlowWizardContextValue,
+  StepRegistry,
+} from "@ledgerhq/live-common/flows/wizard/types";
 
 const TEST_STEPS = {
   FIRST: "FIRST",
@@ -68,11 +72,11 @@ const StepThree = () => {
   );
 };
 
-const stepRegistry = createStepRegistry({
+const stepRegistry: StepRegistry<TestStep> = {
   [TEST_STEPS.FIRST]: StepOne,
   [TEST_STEPS.SECOND]: StepTwo,
   [TEST_STEPS.THIRD]: StepThree,
-});
+};
 
 const flowConfig: FlowConfig<TestStep> = {
   stepOrder: [TEST_STEPS.FIRST, TEST_STEPS.SECOND, TEST_STEPS.THIRD],
