@@ -1,8 +1,8 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getSendDescriptor, sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
-import type { SendFlowUiConfig } from "../types";
+import { getSendDescriptor, sendFeatures } from "../../bridge/descriptor";
+import type { SendFlowUiConfig } from "./types";
 
-const DEFAULT_UI_CONFIG: SendFlowUiConfig = {
+export const DEFAULT_SEND_UI_CONFIG: SendFlowUiConfig = {
   hasMemo: false,
   memoType: undefined,
   memoMaxLength: undefined,
@@ -14,15 +14,12 @@ const DEFAULT_UI_CONFIG: SendFlowUiConfig = {
   hasCoinControl: false,
 };
 
-/**
- * Get UI configuration for the Send flow based on the currency descriptor.
- */
 export function getSendUiConfig(currency: CryptoOrTokenCurrency | null): SendFlowUiConfig {
-  if (!currency) return DEFAULT_UI_CONFIG;
+  if (!currency) return DEFAULT_SEND_UI_CONFIG;
   const descriptor = getSendDescriptor(currency);
 
   if (!descriptor) {
-    return DEFAULT_UI_CONFIG;
+    return DEFAULT_SEND_UI_CONFIG;
   }
 
   const memoDescriptor = descriptor.inputs.memo;
