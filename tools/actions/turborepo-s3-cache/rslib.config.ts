@@ -14,7 +14,7 @@ export default defineConfig({
       root: "build",
     },
     cleanDistPath: true,
-    minify: false,
+    minify: true,
     sourceMap: false,
     externals: [], // Bundle everything for GitHub Actions
   },
