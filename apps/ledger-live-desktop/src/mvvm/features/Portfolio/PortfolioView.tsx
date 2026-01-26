@@ -44,7 +44,7 @@ export const PortfolioView = memo(function PortfolioView({
           <div className="flex flex-col gap-24">
             <PageHeader title={t("portfolio.title")} />
             {shouldDisplayGraphRework && <Balance />}
-            {shouldDisplayQuickActionCtas && <QuickActions hasAccount={totalAccounts > 0} />}
+            {shouldDisplayQuickActionCtas && <QuickActions />}
             {shouldDisplayMarketBanner && <MarketBanner />}
           </div>
           {shouldDisplaySwapWebView && (

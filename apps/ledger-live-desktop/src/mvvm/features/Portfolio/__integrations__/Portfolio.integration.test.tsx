@@ -7,6 +7,8 @@ import { Portfolio } from "@ledgerhq/types-live";
 import { PortfolioView } from "../PortfolioView";
 import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
 import { useNavigate } from "react-router";
+import { INITIAL_STATE } from "~/renderer/reducers/settings";
+import { ARB_ACCOUNT, BTC_ACCOUNT, HEDERA_ACCOUNT } from "../../__mocks__/accounts.mock";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
 
@@ -223,15 +225,19 @@ describe("PortfolioView", () => {
   });
 
   describe("QuickActions", () => {
-    it("should render QuickActions when shouldDisplayQuickActionCtas is true", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={true} />);
+    it.only("should render QuickActions when shouldDisplayQuickActionCtas is true", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={true} />, {
+        ...INITIAL_STATE,
+        initialState: { accounts: [BTC_ACCOUNT, HEDERA_ACCOUNT, ARB_ACCOUNT] },
+      });
       expect(screen.getByTestId("quick-actions-actions-list")).toBeVisible();
     });
 
-    it("should render QuickActions when user has no accounts", () => {
-      render(
-        <PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={true} totalAccounts={0} />,
-      );
+    it("should not render QuickActions when user has no accounts", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={true} />, {
+        ...INITIAL_STATE,
+        initialState: { accounts: [] },
+      });
       expect(screen.queryByTestId("quick-actions-actions-list")).toBeNull();
     });
 

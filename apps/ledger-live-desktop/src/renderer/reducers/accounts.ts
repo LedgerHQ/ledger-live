@@ -139,6 +139,7 @@ export const isUpToDateAccountSelector = createSelector(accountSelector, isUpToD
 
 export const flattenAccountsSelector = createSelector(accountsSelector, flattenAccounts);
 
-export const areAccountsEmptySelector = createSelector(accountsSelector, accounts =>
-  accounts.every(isAccountEmpty),
+export const areAccountsEmptySelector = createSelector(
+  accountsSelector,
+  accounts => accounts.length > 0 && accounts.every(isAccountEmpty),
 );
