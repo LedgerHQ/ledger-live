@@ -1,6 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import type { Operation } from "@ledgerhq/types-live";
-import type { SendFlowOperationResult, SendFlowOperationActions } from "../types";
+import type {
+  SendFlowOperationResult,
+  SendFlowOperationActions,
+} from "@ledgerhq/live-common/flows/send/types";
 
 type UseSendFlowOperationResult = Readonly<{
   state: SendFlowOperationResult;

@@ -3,28 +3,25 @@ import { useNavigation, useRoute, CommonActions } from "@react-navigation/native
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { track } from "~/analytics";
 import { SendFlowOrchestrator } from "./SendFlowOrchestrator";
-import { SEND_FLOW_STEP, type SendFlowInitParams, type SendFlowStep } from "./types";
+import {
+  SEND_FLOW_STEP,
+  type SendFlowInitParams,
+  type SendFlowStep,
+} from "@ledgerhq/live-common/flows/send/types";
 import { SignatureScreen } from "./screens/Signature/SignatureScreen";
 import { ConfirmationScreen } from "./screens/Confirmation/ConfirmationScreen";
 import { RecipientScreen } from "./screens/Recipient/RecipientScreen";
 import { AmountScreen } from "./screens/Amount/AmountScreen";
 import { FlowStackNavigator } from "../FlowWizard/FlowStackNavigator";
 import { SEND_FLOW_CONFIG } from "./constants";
-import type { StepRegistry } from "../FlowWizard/types";
+import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 
-// Simple helper to create a type-safe step registry
-function createStepRegistry<TStep extends string>(
-  registry: StepRegistry<TStep>,
-): StepRegistry<TStep> {
-  return registry;
-}
-
-export const stepRegistry = createStepRegistry({
+export const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
   [SEND_FLOW_STEP.AMOUNT]: AmountScreen,
   [SEND_FLOW_STEP.SIGNATURE]: SignatureScreen,
   [SEND_FLOW_STEP.CONFIRMATION]: ConfirmationScreen,
-});
+};
 
 type SendWorkflowParams = Readonly<{
   account?: AccountLike;

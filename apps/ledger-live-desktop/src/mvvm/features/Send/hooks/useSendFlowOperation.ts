@@ -5,7 +5,10 @@ import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/accou
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import logger from "~/renderer/logger";
-import type { SendFlowOperationResult, SendFlowOperationActions } from "../types";
+import type {
+  SendFlowOperationResult,
+  SendFlowOperationActions,
+} from "@ledgerhq/live-common/flows/send/types";
 
 type OperationAction =
   | { type: "SET_OPERATION"; operation: Operation }
