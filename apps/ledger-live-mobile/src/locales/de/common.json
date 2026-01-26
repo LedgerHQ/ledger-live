@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Keine Prämien zum Einlösen vorhanden"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Memo ist zu lang. Maximale Länge: {{maxLength}} Zeichen"
-    },
     "NearNewAccountWarning" : {
       "title" : "Das Empfängerkonto wurde noch nicht erstellt. Das Protokoll erfordert einen Transfer von {{formattedNewAccountStorageCost}}, um es zu erstellen."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "Der Betrag muss mindestens {{threshold}} betragen"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "Das Memo-Format ist ungültig; das Memo muss kleiner als 4294967296 sein."
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "Ungültige Memolänge; zulässig sind maximal 100 Zeichen."
     },
     "PinNotSet" : {
       "title" : "PIN nicht festgelegt"
@@ -8090,6 +8093,15 @@
       "cta" : "Weitere Informationen"
     }
   },
+  "marketBanner" : {
+    "title" : "Markt erkunden",
+    "viewAll" : "Alles anzeigen",
+    "viewAllAccessibilityHint" : "Doppeltippen, um alle Assets anzuzeigen",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "Doppeltippen, um Marktdetails anzuzeigen"
+    }
+  },
   "largeMover" : {
     "info" : "Informationen",
     "marketCap" : "Marktkapitalisierung",
@@ -8329,6 +8341,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "Stimmungsindex",
+    "description" : "Der Stimmungsindex gibt den Emotionalitätsgrad des Marktes an. Die Bandbreite reicht von 0 bis 100, wobei ein sehr niedriger Wert auf ausgeprägte Angst und ein sehr hoher Wert auf extreme Gier hindeutet.",
+    "levels" : {
+      "extremeFear" : "Angst+",
+      "fear" : "Angst",
+      "neutral" : "Neutral",
+      "greed" : "Gier",
+      "extremeGreed" : "Gier+"
     }
   }
 }

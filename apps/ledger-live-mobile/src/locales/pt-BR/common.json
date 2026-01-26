@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Sem recompensas para resgatar"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "O memo é muito longo. O comprimento máximo é {{maxLength}} caracteres"
-    },
     "NearNewAccountWarning" : {
       "title" : "A conta receptora ainda não foi criada. O protocolo requer uma transferência de {{formattedNewAccountStorageCost}} para criá-la."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "A quantia precisa ser de pelo menos {{threshold}}"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "O formato do memo está incorreto; ele deve ser menor que 4294967296"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "Tamanho do memo inválido, o máximo permitido é 100 caracteres"
     },
     "PinNotSet" : {
       "title" : "PIN não definido"
@@ -8090,6 +8093,15 @@
       "cta" : "Saiba mais"
     }
   },
+  "marketBanner" : {
+    "title" : "Explorar o mercado",
+    "viewAll" : "Ver todos",
+    "viewAllAccessibilityHint" : "Toque duas vezes para ver todos os ativos do mercado",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "Toque duas vezes para ver os detalhes do mercado"
+    }
+  },
   "largeMover" : {
     "info" : "Informações",
     "marketCap" : "Capitalização de mercado",
@@ -8329,6 +8341,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "Índice de Sentimento",
+    "description" : "O índice de sentimento mostra o estado emocional do mercado. O índice vai de 0 a 100: números baixos sinalizam medo intenso, enquanto números altos refletem ganância extrema.",
+    "levels" : {
+      "extremeFear" : "Medo+",
+      "fear" : "Medo",
+      "neutral" : "Neutro",
+      "greed" : "Ganância",
+      "extremeGreed" : "Ganância+"
     }
   }
 }

@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Нет вознаграждений для получения"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Слишком длинное Memo. Максимум – {{maxLength}} символов"
-    },
     "NearNewAccountWarning" : {
       "title" : "Адрес получателя ещё не создан. Для его создания протокол требует перевод {{formattedNewAccountStorageCost}}."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "Сумма должна быть не менее {{threshold}}"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "Недопустимый формат примечания (Memo). Оно должно быть меньше 4294967296"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "Недопустимый размер примечания (Memo). Используйте не более 100 символов"
     },
     "PinNotSet" : {
       "title" : "ПИН-код не установлен"
@@ -8090,6 +8093,15 @@
       "cta" : "Подробнее..."
     }
   },
+  "marketBanner" : {
+    "title" : "Исследуйте рынок",
+    "viewAll" : "Посмотреть всё",
+    "viewAllAccessibilityHint" : "Нажмите дважды, чтобы посмотреть все активы рынка",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "Нажмите дважды, чтобы посмотреть информацию о рынке"
+    }
+  },
   "largeMover" : {
     "info" : "Инфо",
     "marketCap" : "Капитализация",
@@ -8329,6 +8341,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "Настроения",
+    "description" : "Индекс настроений отражает эмоциональное состояние рынка. Его значение варьируется от 0 до 100. Более низкий показатель означает крайний страх, а более высокий — крайнюю жадность.",
+    "levels" : {
+      "extremeFear" : "Страх+",
+      "fear" : "Страх",
+      "neutral" : "Нейтральное",
+      "greed" : "Жадность",
+      "extremeGreed" : "Жадность+"
     }
   }
 }

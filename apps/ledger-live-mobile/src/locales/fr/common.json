@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Aucune récompense à demander"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Mémo trop long. Longueur maximale : {{maxLength}} caractères."
-    },
     "NearNewAccountWarning" : {
       "title" : "Le compte du bénéficiaire n’a pas encore été créé. Pour le créer, le protocole nécessite un transfert de {{formattedNewAccountStorageCost}}."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "Le montant doit être supérieur à {{threshold}}"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "Format du mémo incorrect : il doit être inférieur à 4294967296"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "Longueur du mémo non valide : le maximum autorisé est de 100 caractères"
     },
     "PinNotSet" : {
       "title" : "Code PIN non configuré"
@@ -3065,7 +3068,7 @@
       "cta" : "Demander"
     },
     "undelegation" : {
-      "sectionLabel" : "Délégation(s) interrompue(s)"
+      "sectionLabel" : "Délégations arrêtées"
     },
     "readOnly" : {
       "noTransaction" : {
@@ -8090,6 +8093,15 @@
       "cta" : "En savoir plus"
     }
   },
+  "marketBanner" : {
+    "title" : "Explorer le marché",
+    "viewAll" : "Afficher tout",
+    "viewAllAccessibilityHint" : "Appuyez deux fois pour afficher tous les actifs",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "Appuyez deux fois pour afficher les détails"
+    }
+  },
   "largeMover" : {
     "info" : "Informations",
     "marketCap" : "Capitalisation",
@@ -8329,6 +8341,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "Psychologie du marché",
+    "description" : "Cet indice reflète l’état émotionnel du marché. Il varie de 0 à 100 : une valeur basse indique une peur extrême (pessimisme), et une valeur élevée correspond à une cupidité extrême (optimisme).",
+    "levels" : {
+      "extremeFear" : "Peur+",
+      "fear" : "Peur",
+      "neutral" : "Neutre",
+      "greed" : "Cupidité",
+      "extremeGreed" : "Cupidité+"
     }
   }
 }
