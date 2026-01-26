@@ -718,7 +718,7 @@ importers:
         version: link:../../libs/coin-framework
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))
+        version: 1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(patch_hash=810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
@@ -938,9 +938,6 @@ importers:
       react-i18next:
         specifier: 'catalog:'
         version: 16.5.0(i18next@25.7.3(typescript@5.4.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.3)
-      react-is:
-        specifier: 17.0.2
-        version: 17.0.2
       react-key-handler:
         specifier: 1.2.0-beta.3
         version: 1.2.0-beta.3(eslint@8.57.0)(react@18.3.1)
@@ -987,10 +984,10 @@ importers:
         specifier: 'catalog:'
         version: 7.7.3
       styled-components:
-        specifier: 5.3.11
-        version: 5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1)
+        specifier: 'catalog:'
+        version: 6.1.19(patch_hash=810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-system:
-        specifier: 5.1.5
+        specifier: 'catalog:'
         version: 5.1.5
       tailwind-merge:
         specifier: 'catalog:'
@@ -1140,9 +1137,6 @@ importers:
       '@types/serve-handler':
         specifier: 6.1.4
         version: 6.1.4
-      '@types/styled-components':
-        specifier: 5.1.34
-        version: 5.1.34(@types/react@18.2.73)
       '@types/styled-system':
         specifier: 5.1.22
         version: 5.1.22
@@ -11824,10 +11818,6 @@ packages:
 
   '@babel/helper-member-expression-to-functions@7.28.5':
     resolution: {integrity: sha512-cwM7SBRZcPCLgl8a7cY0soT1SptSzAlMH39vwiRpOQkJlh53r5hdHwLSCZpQdVLT39sZt+CRpNwYG4Y2v77atg==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/helper-module-imports@7.24.3':
-    resolution: {integrity: sha512-viKb0F9f2s0BCS22QSF308z/+1YWKV/76mwt61NBzS5izMzDPwdq1pTrzf+Li3npBWX9KdQbkeCt1jSAM7lZqg==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-module-imports@7.25.9':
@@ -38270,10 +38260,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/helper-module-imports@7.24.3':
-    dependencies:
-      '@babel/types': 7.28.5
-
   '@babel/helper-module-imports@7.25.9':
     dependencies:
       '@babel/traverse': 7.28.5
@@ -39478,21 +39464,6 @@ snapshots:
       '@babel/parser': 7.28.5
       '@babel/types': 7.28.5
       debug: 4.3.4
-      globals: 11.12.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/traverse@7.24.1(supports-color@5.5.0)':
-    dependencies:
-      '@babel/code-frame': 7.27.1
-      '@babel/generator': 7.28.5
-      '@babel/helper-environment-visitor': 7.22.20
-      '@babel/helper-function-name': 7.23.0
-      '@babel/helper-hoist-variables': 7.22.5
-      '@babel/helper-split-export-declaration': 7.22.6
-      '@babel/parser': 7.28.5
-      '@babel/types': 7.28.5
-      debug: 4.3.4(supports-color@5.5.0)
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -43942,14 +43913,6 @@ snapshots:
     optionalDependencies:
       react-dom: 18.3.1(react@18.3.1)
       styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1)
-
-  '@ledgerhq/crypto-icons@1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))':
-    dependencies:
-      '@ledgerhq/ui-shared': 0.2.2
-      react: 18.3.1
-    optionalDependencies:
-      react-dom: 18.3.1(react@18.3.1)
-      styled-components: 5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1)
 
   '@ledgerhq/crypto-icons@1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(patch_hash=810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
@@ -54900,18 +54863,6 @@ snapshots:
       lodash: 4.17.21
       picomatch: 2.3.1
       styled-components: 6.1.19(patch_hash=810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7)(react@19.0.0)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - supports-color
-
-  babel-plugin-styled-components@2.1.4(styled-components@5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))(supports-color@5.5.0):
-    dependencies:
-      '@babel/helper-annotate-as-pure': 7.27.3
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
-      '@babel/plugin-syntax-jsx': 7.27.1
-      lodash: 4.17.21
-      picomatch: 2.3.1
-      styled-components: 5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1)
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
@@ -70918,8 +70869,8 @@ snapshots:
 
   styled-components@5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1):
     dependencies:
-      '@babel/helper-module-imports': 7.24.3
-      '@babel/traverse': 7.24.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5(supports-color@5.5.0)
       '@emotion/is-prop-valid': 1.2.2
       '@emotion/stylis': 0.8.5
       '@emotion/unitless': 0.7.5
@@ -70936,8 +70887,8 @@ snapshots:
 
   styled-components@5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1):
     dependencies:
-      '@babel/helper-module-imports': 7.24.3
-      '@babel/traverse': 7.24.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5(supports-color@5.5.0)
       '@emotion/is-prop-valid': 1.2.2
       '@emotion/stylis': 0.8.5
       '@emotion/unitless': 0.7.5
@@ -70952,28 +70903,10 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
 
-  styled-components@5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1):
-    dependencies:
-      '@babel/helper-module-imports': 7.24.3
-      '@babel/traverse': 7.24.1(supports-color@5.5.0)
-      '@emotion/is-prop-valid': 1.2.2
-      '@emotion/stylis': 0.8.5
-      '@emotion/unitless': 0.7.5
-      babel-plugin-styled-components: 2.1.4(styled-components@5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@17.0.2)(react@18.3.1))(supports-color@5.5.0)
-      css-to-react-native: 3.2.0
-      hoist-non-react-statics: 3.3.2
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-is: 17.0.2
-      shallowequal: 1.1.0
-      supports-color: 5.5.0
-    transitivePeerDependencies:
-      - '@babel/core'
-
   styled-components@5.3.11(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1):
     dependencies:
-      '@babel/helper-module-imports': 7.24.3
-      '@babel/traverse': 7.24.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5(supports-color@5.5.0)
       '@emotion/is-prop-valid': 1.2.2
       '@emotion/stylis': 0.8.5
       '@emotion/unitless': 0.7.5

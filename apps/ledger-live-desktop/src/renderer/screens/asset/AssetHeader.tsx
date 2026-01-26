@@ -41,11 +41,11 @@ const Wrapper = styled(Box)`
   display: flex;
   align-items: center;
 
-  :hover ${CurNameTokenIcon} {
+  &:hover ${CurNameTokenIcon} {
     display: flex;
   }
 
-  :hover ${CurNameTokenLink} {
+  &:hover ${CurNameTokenLink} {
     color: ${p => p.theme.colors.wallet};
     background-color: ${p => p.theme.colors.pillActiveBackground};
   }

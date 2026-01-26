@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
@@ -38,10 +38,10 @@ const Row = styled(Box)`
   margin-bottom: 9px;
   position: relative;
   transition: background-color ease-in-out 200ms;
-  :hover {
+  &:hover {
     border-color: ${p => p.theme.colors.neutral.c40};
   }
-  :active:not(:focus-within) {
+  &:active:not(:focus-within) {
     border-color: ${p => p.theme.colors.neutral.c40};
     background: ${p => p.theme.colors.opacityDefault.c10};
   }
@@ -142,8 +142,10 @@ const AccountRowItem = (props: Props) => {
     setExpanded(!!search);
   }, [search]);
 
-  const toggleAccordion = (e: SyntheticEvent<HTMLDivElement>) => {
-    e.stopPropagation();
+  const toggleAccordion = (e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
     expandedStates[account.id] = !expandedStates[account.id];
     setExpanded(expandedStates[account.id]);
     if (scrollTopFocusRef.current && !expanded) {

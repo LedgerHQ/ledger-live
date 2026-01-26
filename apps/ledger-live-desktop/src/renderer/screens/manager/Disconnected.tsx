@@ -150,7 +150,7 @@ const Disconnected = ({ onTryAgain }: { onTryAgain: (a: boolean) => void }) => {
         <Button primary onClick={onReopenManager}>
           <Trans i18nKey={"manager.disconnected.ctaReopen"} />
         </Button>
-        <Button secondary mt={3} onClick={onBackToPortfolio}>
+        <Button mt={3} onClick={onBackToPortfolio}>
           <Trans i18nKey={"manager.disconnected.ctaPortfolio"} />
         </Button>
       </Box>

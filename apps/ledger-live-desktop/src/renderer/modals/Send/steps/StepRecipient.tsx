@@ -232,9 +232,7 @@ export const StepRecipientFooter = ({
         </Text>
       </Flex>
       <Flex columnGap={2}>
-        <Button secondary onClick={handleOnRefuseAddTag}>
-          {t("send.info.needMemoTag.cta.not.addTag")}
-        </Button>
+        <Button onClick={handleOnRefuseAddTag}>{t("send.info.needMemoTag.cta.not.addTag")}</Button>
         <Button primary onClick={handleOnAddTag}>
           {t("send.info.needMemoTag.cta.addTag")}
         </Button>

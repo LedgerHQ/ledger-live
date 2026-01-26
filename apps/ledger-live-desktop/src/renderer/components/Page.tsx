@@ -1,6 +1,6 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
-import styled, { DefaultTheme, ThemedStyledProps } from "styled-components";
+import styled, { DefaultTheme } from "styled-components";
 import AngleUp from "~/renderer/icons/AngleUp";
 import TopBar from "~/renderer/components/TopBar";
 import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
@@ -16,9 +16,11 @@ const PageContainer = styled.div`
   position: relative;
 `;
 
-export const getPagePaddingLeft = (p: ThemedStyledProps<unknown, DefaultTheme>) => p.theme.space[6];
+type ThemedProps<P = unknown> = P & { theme: DefaultTheme };
 
-export const getPagePaddingRight = (p: ThemedStyledProps<unknown, DefaultTheme>) =>
+export const getPagePaddingLeft = (p: ThemedProps) => p.theme.space[6];
+
+export const getPagePaddingRight = (p: ThemedProps) =>
   p.theme.space[6] - p.theme.overflow.trackSize;
 
 const PageScroller = styled.div`
@@ -28,6 +30,20 @@ const PageScroller = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+
+  &::-webkit-scrollbar {
+    width: ${p => p.theme.overflow.trackSize}px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${p => p.theme.colors.neutral.c40};
+    border-radius: ${p => p.theme.overflow.trackSize}px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: ${p => p.theme.colors.neutral.c20};
+    border-radius: ${p => p.theme.overflow.trackSize}px;
+  }
 `;
 
 const PageScrollerContainer = styled.div`

@@ -1,4 +1,4 @@
-import React, { PureComponent, useRef, useEffect, useMemo, useCallback } from "react";
+import React, { useRef, useEffect, useMemo, useCallback, memo } from "react";
 import ReactSelect, {
   components,
   GroupBase,
@@ -8,9 +8,8 @@ import ReactSelect, {
   OnChangeValue,
 } from "react-select";
 import AsyncReactSelect from "react-select/async";
-import { withTranslation } from "react-i18next";
 import { useVirtualizer, VirtualItem } from "@tanstack/react-virtual";
-import styled, { DefaultTheme, withTheme } from "styled-components";
+import styled, { DefaultTheme, useTheme } from "styled-components";
 import debounce from "lodash/debounce";
 import createStyles from "./createStyles";
 import createRenderers from "./createRenderers";
@@ -182,85 +181,87 @@ function createVirtualMenuList(onScrollEnd?: () => void) {
   };
 }
 
-class Select<
+const Select = <
   OptionType = { label: string; value: string },
   IsMulti extends boolean = false,
   GroupType extends GroupBase<OptionType> = GroupBase<OptionType>,
-> extends PureComponent<
-  Props<OptionType, IsMulti, GroupType> & {
-    onScrollEnd?: () => void;
-  }
-> {
-  componentDidMount() {
-    if (this.ref && this.props.autoFocus) {
-      this.timeout = requestAnimationFrame(() => this.ref?.focus());
-    }
-    window.addEventListener("resize", this.resizeHandler);
-  }
+>(
+  props: Props<OptionType, IsMulti, GroupType> & { onScrollEnd?: () => void },
+) => {
+  const {
+    async,
+    value,
+    isClearable,
+    isSearchable,
+    isDisabled,
+    isLoading,
+    isRight,
+    isLeft,
+    placeholder,
+    options,
+    renderOption,
+    renderValue,
+    width,
+    minWidth,
+    small,
+    error,
+    stylesMap,
+    virtual = true,
+    rowHeight = small ? 34 : 48,
+    autoFocus,
+    extraRenderers,
+    onScrollEnd,
+    onChange,
+    ...restProps
+  } = props;
 
-  componentWillUnmount() {
-    if (this.timeout) {
-      cancelAnimationFrame(this.timeout);
-    }
-    window.removeEventListener("resize", this.resizeHandler);
-  }
+  const theme = useTheme();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const selectRef = useRef<any>(null);
+  const timeoutRef = useRef<number | undefined>(undefined);
 
-  resizeHandler = debounce(
-    () => {
-      if (this.ref) this.ref.blur();
-    },
-    200,
-    { leading: true },
+  const resizeHandler = useMemo(
+    () =>
+      debounce(
+        () => {
+          if (selectRef.current) selectRef.current.blur();
+        },
+        200,
+        { leading: true },
+      ),
+    [],
   );
 
-  handleChange: ReactSelectProps<OptionType, IsMulti, GroupType>["onChange"] = (
-    value,
-    { action },
-  ) => {
-    const { onChange } = this.props;
-    if (action === "select-option") {
-      onChange(value);
+  useEffect(() => {
+    if (selectRef.current && autoFocus) {
+      timeoutRef.current = requestAnimationFrame(() => selectRef.current?.focus());
     }
-    if (action === "pop-value") {
-      onChange(null);
-    }
-  };
+    window.addEventListener("resize", resizeHandler);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ref: any;
-  timeout: number | undefined;
+    return () => {
+      if (timeoutRef.current) {
+        cancelAnimationFrame(timeoutRef.current);
+      }
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, [autoFocus, resizeHandler]);
 
-  render() {
-    const {
-      async,
-      value,
-      isClearable,
-      isSearchable,
-      isDisabled,
-      isLoading,
-      isRight,
-      isLeft,
-      placeholder,
-      options,
-      renderOption,
-      renderValue,
-      width,
-      minWidth,
-      small,
-      theme,
-      error,
-      stylesMap,
-      virtual = true,
-      rowHeight = small ? 34 : 48,
-      autoFocus,
-      extraRenderers,
-      onScrollEnd,
-      ...props
-    } = this.props;
+  const handleChange = useCallback(
+    (value: OnChangeValue<OptionType, IsMulti>, { action }: { action: string }) => {
+      if (action === "select-option") {
+        onChange(value);
+      }
+      if (action === "pop-value") {
+        onChange(null);
+      }
+    },
+    [onChange],
+  ) as ReactSelectProps<OptionType, IsMulti, GroupType>["onChange"];
 
-    const Comp = async ? AsyncReactSelect : ReactSelect;
+  const Comp = async ? AsyncReactSelect : ReactSelect;
 
-    const baseStyles =
+  const baseStyles = useMemo(
+    () =>
       theme &&
       createStyles(theme, {
         width,
@@ -270,73 +271,82 @@ class Select<
         isLeft,
         error,
         rowHeight,
-      });
+      }),
+    [theme, width, minWidth, small, isRight, isLeft, error, rowHeight],
+  );
 
-    const baseStylesWithPlaceholder = {
+  const baseStylesWithPlaceholder = useMemo(
+    () => ({
       ...baseStyles,
       placeholder: (base: React.CSSProperties) => ({
         ...base,
         color: theme?.colors.neutral.c60,
       }),
-    };
+    }),
+    [baseStyles, theme],
+  );
 
-    const styles = stylesMap
-      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        stylesMap(baseStylesWithPlaceholder as any)
-      : baseStylesWithPlaceholder;
+  const styles = useMemo(
+    () =>
+      stylesMap
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          stylesMap(baseStylesWithPlaceholder as any)
+        : baseStylesWithPlaceholder,
+    [stylesMap, baseStylesWithPlaceholder],
+  );
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const customComponents: any = virtual
-      ? {
-          MenuList: createVirtualMenuList(this.props.onScrollEnd),
-          ...createRenderers({
-            renderOption,
-            renderValue,
-            selectProps: this.props,
-          }),
-          ...(extraRenderers || {}),
-        }
-      : {
-          ...createRenderers({
-            renderOption,
-            renderValue,
-            selectProps: this.props,
-          }),
-          ...(extraRenderers || {}),
-        };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const customComponents: any = useMemo(
+    () =>
+      virtual
+        ? {
+            MenuList: createVirtualMenuList(onScrollEnd),
+            ...createRenderers({
+              renderOption,
+              renderValue,
+              selectProps: props,
+            }),
+            ...(extraRenderers || {}),
+          }
+        : {
+            ...createRenderers({
+              renderOption,
+              renderValue,
+              selectProps: props,
+            }),
+            ...(extraRenderers || {}),
+          },
+    [virtual, onScrollEnd, renderOption, renderValue, props, extraRenderers],
+  );
 
-    return (
-      <Comp
-        {...props}
-        ref={(c: unknown) => (this.ref = c)}
-        autoFocus={autoFocus}
-        value={value}
-        maxMenuHeight={rowHeight * 4.5}
-        classNamePrefix="select"
-        options={options}
-        components={customComponents}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        styles={styles as any}
-        placeholder={placeholder}
-        isDisabled={isDisabled}
-        isLoading={isLoading}
-        isClearable={isClearable}
-        isSearchable={isSearchable}
-        menuPlacement="auto"
-        blurInputOnSelect={false}
-        backspaceRemovesValue
-        captureMenuScroll={false}
-        menuShouldBlockScroll
-        menuPortalTarget={document.body}
-        // @ts-expect-error rowHeight is a custom prop passed through selectProps
-        rowHeight={rowHeight}
-        onChange={this.handleChange}
-      />
-    );
-  }
-}
+  return (
+    <Comp
+      {...restProps}
+      ref={selectRef}
+      autoFocus={autoFocus}
+      value={value}
+      maxMenuHeight={rowHeight * 4.5}
+      classNamePrefix="select"
+      options={options}
+      components={customComponents}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      styles={styles as any}
+      placeholder={placeholder}
+      isDisabled={isDisabled}
+      isLoading={isLoading}
+      isClearable={isClearable}
+      isSearchable={isSearchable}
+      menuPlacement="auto"
+      blurInputOnSelect={false}
+      backspaceRemovesValue
+      captureMenuScroll={false}
+      menuShouldBlockScroll
+      menuPortalTarget={document.body}
+      // @ts-expect-error rowHeight is a custom prop passed through selectProps
+      rowHeight={rowHeight}
+      onChange={handleChange}
+    />
+  );
+};
 
-// Type assertion required due to complex HOC composition (withTranslation + withTheme)
-// The wrapped component maintains the same API surface as the original Select class
-// eslint-disable-next-line
-export default withTranslation()(withTheme(Select)) as unknown as typeof Select;
+export default memo(Select) as typeof Select;

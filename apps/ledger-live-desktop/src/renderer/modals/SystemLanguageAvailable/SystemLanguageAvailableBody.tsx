@@ -98,7 +98,6 @@ const SystemLanguageAvailableBody = (props: Props) => {
         <Box horizontal justifyContent="flex-end">
           <Button
             mx={15}
-            secondary
             event={`Discoverability - Denied - ${osLanguage}`}
             eventProperties={{
               language: osLanguage,

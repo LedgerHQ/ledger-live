@@ -185,7 +185,7 @@ const SideBarScrollContainer = styled(Box)`
 
   flex: 1;
 
-  ::-webkit-scrollbar {
+  &::-webkit-scrollbar {
     width: 0;
     height: 0;
   }
@@ -549,7 +549,6 @@ const MainSideBar = () => {
                   maxHeight: "max-content",
                   minHeight: getMinHeightForStarredAccountsList(),
                 }}
-                scroll
                 title={t("sidebar.stars")}
                 collapsed={secondAnim}
               >

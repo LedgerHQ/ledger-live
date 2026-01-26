@@ -49,7 +49,11 @@ function FormLocalManifest({
   onClose: () => void;
 }) {
   const { addLocalManifest } = useLocalLiveAppContext();
-  const [form, setForm] = useState<LiveAppManifest>(cloneDeep(DEFAULT_FORM));
+  // cloneDeep makes the object mutable at runtime, but TypeScript still sees it as readonly
+  const [form, setForm] = useState<LiveAppManifest>(
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    cloneDeep(DEFAULT_FORM) as unknown as LiveAppManifest,
+  );
   const [isDapp, setIsDapp] = useState("dapp" in form);
 
   const completeManifests = useManifests({ visibility: ["complete"] });
@@ -61,7 +65,11 @@ function FormLocalManifest({
     setIsDapp(prevState => !prevState);
     setForm((prevState: LiveAppManifest) => {
       if (!isDapp) {
-        prevState.dapp = cloneDeep(DEFAULT_FORM.dapp);
+        // cloneDeep makes the object mutable at runtime, but TypeScript still sees it as readonly
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        prevState.dapp = cloneDeep(DEFAULT_FORM.dapp) as unknown as NonNullable<
+          LiveAppManifest["dapp"]
+        >;
       } else {
         delete prevState.dapp;
       }
@@ -77,10 +85,14 @@ function FormLocalManifest({
     });
   }, []);
 
-  const submitHandler = (e: KeyboardEvent) => {
-    e.preventDefault();
-    if (e.detail !== 0) {
-      if (formIsValid) addLocalManifest(form);
+  const submitHandler = (
+    e?: React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<HTMLFormElement>,
+  ) => {
+    if (e) {
+      e.preventDefault();
+    }
+    if (formIsValid) {
+      addLocalManifest(form);
       onClose();
     }
   };
@@ -296,6 +308,8 @@ function FormLocalManifest({
                   }
 
                   if (key === "visibility" || key === "branch") {
+                    // Type narrowing: when key is "visibility" or "branch", value is a string
+                    const stringValue: string = typeof value === "string" ? value : String(value);
                     return (
                       <FormLiveAppSelector
                         key={key}
@@ -305,18 +319,20 @@ function FormLocalManifest({
                         path={path}
                         handleChange={handleChange}
                         multipleChoices={false}
-                        initialValue={value as string}
+                        initialValue={stringValue}
                       ></FormLiveAppSelector>
                     );
                   }
 
                   if (key === "permissions" || key === "categories" || key === "currencies") {
+                    // Type narrowing: when key is "permissions", "categories", or "currencies", value is string[]
+                    const arrayValue: string[] = Array.isArray(value) ? value : [];
                     return (
                       <FormLiveAppArraySelect
                         key={key}
                         options={[...DEFAULT_VALUES[key]]}
                         fieldName={key}
-                        initialValue={value as string[]}
+                        initialValue={arrayValue}
                         optional={optional}
                         parseCheck={parseCheck}
                         path={path}

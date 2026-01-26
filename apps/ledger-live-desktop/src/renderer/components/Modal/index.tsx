@@ -67,23 +67,17 @@ const transitionsScale = {
     transform: "scale(1.1)",
   },
 };
-const Container = styled.div.attrs(
-  ({
-    state,
-    centered,
-    isOpened,
-  }: {
-    state: TransitionStatus;
-    centered?: boolean;
-    isOpened?: boolean;
-  }) => ({
-    style: {
-      ...transitionsOpacity[state as keyof typeof transitionsOpacity],
-      justifyContent: centered ? "center" : "flex-start",
-      pointerEvents: isOpened ? "auto" : "none",
-    },
-  }),
-)<{
+const Container = styled.div.attrs<{
+  state: TransitionStatus;
+  centered?: boolean;
+  isOpened?: boolean;
+}>(p => ({
+  style: {
+    ...transitionsOpacity[p.state as keyof typeof transitionsOpacity],
+    justifyContent: p.centered ? "center" : "flex-start",
+    pointerEvents: p.isOpened ? "auto" : "none",
+  },
+}))<{
   state: TransitionStatus;
   centered?: boolean;
   isOpened?: boolean;
@@ -103,10 +97,10 @@ const Container = styled.div.attrs(
   align-items: center;
   transition: opacity 200ms cubic-bezier(0.3, 1, 0.5, 0.8);
 `;
-const BodyWrapper = styled.div.attrs(({ state }: { state: TransitionStatus }) => ({
+const BodyWrapper = styled.div.attrs<{ state: TransitionStatus }>(p => ({
   style: {
-    ...transitionsOpacity[state as keyof typeof transitionsOpacity],
-    ...transitionsScale[state as keyof typeof transitionsScale],
+    ...transitionsOpacity[p.state as keyof typeof transitionsOpacity],
+    ...transitionsScale[p.state as keyof typeof transitionsScale],
   } as CSSProperties,
 }))<{ state: TransitionStatus; width?: number }>`
   background: ${p => p.theme.colors.background.card};

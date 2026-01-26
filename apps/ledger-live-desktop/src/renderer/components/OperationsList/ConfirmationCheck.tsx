@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import styled, { DefaultTheme, ThemedStyledProps } from "styled-components";
+import styled, { DefaultTheme } from "styled-components";
 import { OperationType } from "@ledgerhq/types-live";
 import { rgba, mix } from "~/renderer/styles/helpers";
 import { TFunction } from "i18next";
@@ -24,7 +24,9 @@ import ClaimRewards from "~/renderer/icons/ClaimReward";
 import Vote from "~/renderer/icons/Vote";
 import VoteNay from "~/renderer/icons/VoteNay";
 
-const border = (p: ThemedStyledProps<ContainerProps, DefaultTheme>) =>
+type ThemedProps<P> = P & { theme: DefaultTheme };
+
+const border = (p: ThemedProps<ContainerProps>) =>
   p.hasFailed
     ? `1px solid ${p.theme.colors.alertRed}`
     : p.isConfirmed
@@ -32,7 +34,7 @@ const border = (p: ThemedStyledProps<ContainerProps, DefaultTheme>) =>
       : `1px solid ${
           p.type === "IN" ? p.theme.colors.legacyWarning : rgba(p.theme.colors.neutral.c70, 0.2)
         }`;
-function inferColor(p: ThemedStyledProps<ContainerProps, DefaultTheme>) {
+function inferColor(p: ThemedProps<ContainerProps>) {
   switch (p.type) {
     case "IN":
       return p.isConfirmed ? p.marketColor : p.theme.colors.legacyWarning;

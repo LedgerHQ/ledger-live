@@ -11,7 +11,7 @@ export type StepProps = {
   device: Device | undefined | null;
   account: Account | undefined | null;
   parentAccount: Account | undefined | null;
-  onRetry: (a: void) => void;
+  onRetry: () => void;
   onClose: () => void;
   openModal: OpenModal;
   optimisticOperation: Operation | undefined;

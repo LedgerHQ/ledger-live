@@ -99,7 +99,7 @@ export default function EarnRewardsInfoModal<Name extends keyof ModalData>({
           renderFooter={() => (
             <Box horizontal grow>
               <Box grow>{footerLeft}</Box>
-              <Button ml={2} secondary onClick={onClose}>
+              <Button ml={2} onClick={onClose}>
                 <Trans i18nKey="common.cancel" />
               </Button>
               <Button
