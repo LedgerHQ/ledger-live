@@ -13,10 +13,21 @@ export default defineConfig({
     distPath: {
       root: "build",
     },
+    cleanDistPath: true,
+    minify: false,
+    sourceMap: false,
+    externals: [], // Bundle everything for GitHub Actions
   },
   lib: [
     {
       format: "cjs",
+      bundle: true,
+      autoExternal: {
+        dependencies: false, // Bundle all dependencies for GitHub Actions
+        peerDependencies: true,
+        devDependencies: true,
+        optionalDependencies: true,
+      }
     },
   ],
 });
