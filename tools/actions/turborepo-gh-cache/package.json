@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsup --target node20 -d build src/main.ts src/server.ts src/cleanup.ts",
+    "build": "rslib build",
     "lint": "eslint ./ --cache",
     "lint:fix": "pnpm lint --fix"
   },
@@ -17,6 +17,6 @@
     "@types/fs-extra": "9.0.13",
     "express": "5.2.1",
     "fs-extra": "10.1.0",
-    "tsup": "7.3.0"
+    "@rslib/core": "catalog:"
   }
 }
