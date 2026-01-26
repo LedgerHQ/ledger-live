@@ -39,7 +39,7 @@
     "android": "expo start --android",
     "build": "tsc -p tsconfig.prod.json && node scripts/postBuild",
     "prebuild:storybook": "pnpm -F ui-shared -F icons-ui -F crypto-icons-ui build",
-    "build:storybook": "storybook build -c .storybook-web -o web-build",
+    "build:storybook": "storybook build -c .storybook-web",
     "watch": "tsc -p tsconfig.prod.json --watch",
     "clean": "rimraf lib",
     "eject": "expo eject",
