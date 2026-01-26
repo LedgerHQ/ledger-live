@@ -2,7 +2,7 @@ import Animation from "~/components/Animation";
 import React, { useEffect, useRef, useState } from "react";
 import { Dimensions, Image } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
-import OnboardingSuccessAnimation from "~/animations/onboardingSuccess.json";
+import OnboardingSuccessAnimation from "~/animations/onboardingSuccess.lottie";
 import { useIsFocused } from "@react-navigation/core";
 
 type Props = {

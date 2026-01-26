@@ -4,7 +4,7 @@ import { useTheme } from "styled-components/native";
 import GradientContainer from "~/components/GradientContainer";
 import Animation from "~/components/Animation";
 
-import lottie from "~/animations/lottie.json";
+import lottie from "~/animations/lottie.lottie";
 
 function AnimatedGradient() {
   const { colors } = useTheme();

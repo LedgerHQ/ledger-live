@@ -25,8 +25,8 @@ import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "./shared";
 import { useTrack } from "~/analytics";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 
-import lightAnimSource from "~/animations/mainButton/light.json";
-import darkAnimSource from "~/animations/mainButton/dark.json";
+import lightAnimSource from "~/animations/mainButton/light.lottie";
+import darkAnimSource from "~/animations/mainButton/dark.lottie";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 
 const MainButton = proxyStyled(Touchable).attrs<BaseStyledProps>(p => ({

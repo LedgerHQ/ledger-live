@@ -1,0 +1,1083 @@
+{
+  "stats": {
+    "totalFiles": 101,
+    "totalSize": {
+      "bytes": 33579801,
+      "mb": 32.02
+    },
+    "estimatedSizeAfterConversion": {
+      "min": 6.4,
+      "max": 9.61
+    },
+    "estimatedSavings": {
+      "min": 22.42,
+      "max": 25.62
+    },
+    "scannedAt": "2026-01-26T19:18:04.952Z"
+  },
+  "files": [
+    {
+      "path": "src/animations/infinityPass.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/infinityPass.json",
+      "size": {
+        "bytes": 4944061,
+        "kb": 4828.18,
+        "mb": 4.72
+      },
+      "directory": "src/animations"
+    },
+    {
+      "path": "src/animations/infinityPassPart1.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/infinityPassPart1.json",
+      "size": {
+        "bytes": 4891594,
+        "kb": 4776.95,
+        "mb": 4.66
+      },
+      "directory": "src/animations"
+    },
+    {
+      "path": "src/animations/infinityPassPart2.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/infinityPassPart2.json",
+      "size": {
+        "bytes": 4807146,
+        "kb": 4694.48,
+        "mb": 4.58
+      },
+      "directory": "src/animations"
+    },
+    {
+      "path": "src/animations/infinityPassCentered.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/infinityPassCentered.json",
+      "size": {
+        "bytes": 4675522,
+        "kb": 4565.94,
+        "mb": 4.46
+      },
+      "directory": "src/animations"
+    },
+    {
+      "path": "src/animations/onboardingSuccess.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/onboardingSuccess.json",
+      "size": {
+        "bytes": 612863,
+        "kb": 598.5,
+        "mb": 0.58
+      },
+      "directory": "src/animations"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoSP/powerOnRecovery/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoSP/powerOnRecovery/dark.json",
+      "size": {
+        "bytes": 494650,
+        "kb": 483.06,
+        "mb": 0.47
+      },
+      "directory": "src/screens/Onboarding/assets/nanoSP/powerOnRecovery"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoSP/powerOnRecovery/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoSP/powerOnRecovery/light.json",
+      "size": {
+        "bytes": 485360,
+        "kb": 473.98,
+        "mb": 0.46
+      },
+      "directory": "src/screens/Onboarding/assets/nanoSP/powerOnRecovery"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/powerOnRecovery/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/powerOnRecovery/light.json",
+      "size": {
+        "bytes": 463575,
+        "kb": 452.71,
+        "mb": 0.44
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/powerOnRecovery"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/powerOnRecovery/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/powerOnRecovery/dark.json",
+      "size": {
+        "bytes": 462901,
+        "kb": 452.05,
+        "mb": 0.44
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/powerOnRecovery"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoSP/powerOn/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoSP/powerOn/dark.json",
+      "size": {
+        "bytes": 458293,
+        "kb": 447.55,
+        "mb": 0.44
+      },
+      "directory": "src/screens/Onboarding/assets/nanoSP/powerOn"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoSP/powerOn/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoSP/powerOn/light.json",
+      "size": {
+        "bytes": 448975,
+        "kb": 438.45,
+        "mb": 0.43
+      },
+      "directory": "src/screens/Onboarding/assets/nanoSP/powerOn"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/powerOn/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/powerOn/light.json",
+      "size": {
+        "bytes": 427334,
+        "kb": 417.32,
+        "mb": 0.41
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/powerOn"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/powerOn/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/powerOn/dark.json",
+      "size": {
+        "bytes": 426664,
+        "kb": 416.66,
+        "mb": 0.41
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/powerOn"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/recover/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/recover/dark.json",
+      "size": {
+        "bytes": 383913,
+        "kb": 374.92,
+        "mb": 0.37
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/recover"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/recover/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/recover/light.json",
+      "size": {
+        "bytes": 382221,
+        "kb": 373.26,
+        "mb": 0.36
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/recover"
+    },
+    {
+      "path": "src/animations/device/blue/5AllowManager/data.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/blue/5AllowManager/data.json",
+      "size": {
+        "bytes": 321503,
+        "kb": 313.97,
+        "mb": 0.31
+      },
+      "directory": "src/animations/device/blue/5AllowManager"
+    },
+    {
+      "path": "src/mvvm/features/LaunchScreen/components/Splashscreen.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/mvvm/features/LaunchScreen/components/Splashscreen.json",
+      "size": {
+        "bytes": 287829,
+        "kb": 281.08,
+        "mb": 0.27
+      },
+      "directory": "src/mvvm/features/LaunchScreen/components"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/confetti.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/confetti.json",
+      "size": {
+        "bytes": 226423,
+        "kb": 221.12,
+        "mb": 0.22
+      },
+      "directory": "src/screens/Onboarding/assets"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoS/powerOnRecovery/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoS/powerOnRecovery/dark.json",
+      "size": {
+        "bytes": 224534,
+        "kb": 219.27,
+        "mb": 0.21
+      },
+      "directory": "src/screens/Onboarding/assets/nanoS/powerOnRecovery"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoS/powerOnRecovery/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoS/powerOnRecovery/light.json",
+      "size": {
+        "bytes": 220731,
+        "kb": 215.56,
+        "mb": 0.21
+      },
+      "directory": "src/screens/Onboarding/assets/nanoS/powerOnRecovery"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoSP/recover/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoSP/recover/dark.json",
+      "size": {
+        "bytes": 219446,
+        "kb": 214.3,
+        "mb": 0.21
+      },
+      "directory": "src/screens/Onboarding/assets/nanoSP/recover"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoS/pinCode/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoS/pinCode/dark.json",
+      "size": {
+        "bytes": 216878,
+        "kb": 211.79,
+        "mb": 0.21
+      },
+      "directory": "src/screens/Onboarding/assets/nanoS/pinCode"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoS/powerOn/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoS/powerOn/dark.json",
+      "size": {
+        "bytes": 213911,
+        "kb": 208.9,
+        "mb": 0.2
+      },
+      "directory": "src/screens/Onboarding/assets/nanoS/powerOn"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoS/pinCode/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoS/pinCode/light.json",
+      "size": {
+        "bytes": 212845,
+        "kb": 207.86,
+        "mb": 0.2
+      },
+      "directory": "src/screens/Onboarding/assets/nanoS/pinCode"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoS/powerOn/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoS/powerOn/light.json",
+      "size": {
+        "bytes": 210108,
+        "kb": 205.18,
+        "mb": 0.2
+      },
+      "directory": "src/screens/Onboarding/assets/nanoS/powerOn"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoS/recover/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoS/recover/dark.json",
+      "size": {
+        "bytes": 208554,
+        "kb": 203.67,
+        "mb": 0.2
+      },
+      "directory": "src/screens/Onboarding/assets/nanoS/recover"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoS/recover/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoS/recover/light.json",
+      "size": {
+        "bytes": 204755,
+        "kb": 199.96,
+        "mb": 0.2
+      },
+      "directory": "src/screens/Onboarding/assets/nanoS/recover"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoSP/recover/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoSP/recover/light.json",
+      "size": {
+        "bytes": 199686,
+        "kb": 195.01,
+        "mb": 0.19
+      },
+      "directory": "src/screens/Onboarding/assets/nanoSP/recover"
+    },
+    {
+      "path": "src/animations/device/nanoS/3EnterPinCode/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/3EnterPinCode/dark.json",
+      "size": {
+        "bytes": 196707,
+        "kb": 192.1,
+        "mb": 0.19
+      },
+      "directory": "src/animations/device/nanoS/3EnterPinCode"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoSP/numberOfWords/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoSP/numberOfWords/dark.json",
+      "size": {
+        "bytes": 192406,
+        "kb": 187.9,
+        "mb": 0.18
+      },
+      "directory": "src/screens/Onboarding/assets/nanoSP/numberOfWords"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoSP/numberOfWords/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoSP/numberOfWords/light.json",
+      "size": {
+        "bytes": 183090,
+        "kb": 178.8,
+        "mb": 0.17
+      },
+      "directory": "src/screens/Onboarding/assets/nanoSP/numberOfWords"
+    },
+    {
+      "path": "src/animations/device/nanoS/3EnterPinCode/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/3EnterPinCode/light.json",
+      "size": {
+        "bytes": 180755,
+        "kb": 176.52,
+        "mb": 0.17
+      },
+      "directory": "src/animations/device/nanoS/3EnterPinCode"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoS/confirmWords/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoS/confirmWords/light.json",
+      "size": {
+        "bytes": 178442,
+        "kb": 174.26,
+        "mb": 0.17
+      },
+      "directory": "src/screens/Onboarding/assets/nanoS/confirmWords"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoSP/pinCode/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoSP/pinCode/dark.json",
+      "size": {
+        "bytes": 177423,
+        "kb": 173.26,
+        "mb": 0.17
+      },
+      "directory": "src/screens/Onboarding/assets/nanoSP/pinCode"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoS/confirmWords/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoS/confirmWords/dark.json",
+      "size": {
+        "bytes": 176356,
+        "kb": 172.22,
+        "mb": 0.17
+      },
+      "directory": "src/screens/Onboarding/assets/nanoS/confirmWords"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoSP/pinCode/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoSP/pinCode/light.json",
+      "size": {
+        "bytes": 168519,
+        "kb": 164.57,
+        "mb": 0.16
+      },
+      "directory": "src/screens/Onboarding/assets/nanoSP/pinCode"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/numberOfWords/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/numberOfWords/light.json",
+      "size": {
+        "bytes": 152413,
+        "kb": 148.84,
+        "mb": 0.15
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/numberOfWords"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/numberOfWords/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/numberOfWords/dark.json",
+      "size": {
+        "bytes": 151743,
+        "kb": 148.19,
+        "mb": 0.14
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/numberOfWords"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoSP/confirmWords/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoSP/confirmWords/dark.json",
+      "size": {
+        "bytes": 148708,
+        "kb": 145.22,
+        "mb": 0.14
+      },
+      "directory": "src/screens/Onboarding/assets/nanoSP/confirmWords"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoSP/plugDevice/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoSP/plugDevice/light.json",
+      "size": {
+        "bytes": 144252,
+        "kb": 140.87,
+        "mb": 0.14
+      },
+      "directory": "src/screens/Onboarding/assets/nanoSP/plugDevice"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoSP/plugDevice/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoSP/plugDevice/dark.json",
+      "size": {
+        "bytes": 143860,
+        "kb": 140.49,
+        "mb": 0.14
+      },
+      "directory": "src/screens/Onboarding/assets/nanoSP/plugDevice"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoSP/confirmWords/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoSP/confirmWords/light.json",
+      "size": {
+        "bytes": 139653,
+        "kb": 136.38,
+        "mb": 0.13
+      },
+      "directory": "src/screens/Onboarding/assets/nanoSP/confirmWords"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/pinCode/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/pinCode/dark.json",
+      "size": {
+        "bytes": 129525,
+        "kb": 126.49,
+        "mb": 0.12
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/pinCode"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/pinCode/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/pinCode/light.json",
+      "size": {
+        "bytes": 127704,
+        "kb": 124.71,
+        "mb": 0.12
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/pinCode"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/plugDevice/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/plugDevice/dark.json",
+      "size": {
+        "bytes": 126399,
+        "kb": 123.44,
+        "mb": 0.12
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/plugDevice"
+    },
+    {
+      "path": "src/animations/device/nanoS/2FirmwareUpdating/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/2FirmwareUpdating/dark.json",
+      "size": {
+        "bytes": 126012,
+        "kb": 123.06,
+        "mb": 0.12
+      },
+      "directory": "src/animations/device/nanoS/2FirmwareUpdating"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/confirmWords/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/confirmWords/dark.json",
+      "size": {
+        "bytes": 124671,
+        "kb": 121.75,
+        "mb": 0.12
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/confirmWords"
+    },
+    {
+      "path": "src/animations/device/blue/4QuitApp/data.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/blue/4QuitApp/data.json",
+      "size": {
+        "bytes": 122417,
+        "kb": 119.55,
+        "mb": 0.12
+      },
+      "directory": "src/animations/device/blue/4QuitApp"
+    },
+    {
+      "path": "src/animations/device/nanoS/2FirmwareUpdating/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/2FirmwareUpdating/light.json",
+      "size": {
+        "bytes": 117804,
+        "kb": 115.04,
+        "mb": 0.11
+      },
+      "directory": "src/animations/device/nanoS/2FirmwareUpdating"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/plugDevice/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/plugDevice/light.json",
+      "size": {
+        "bytes": 117594,
+        "kb": 114.84,
+        "mb": 0.11
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/plugDevice"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoS/plugDevice/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoS/plugDevice/dark.json",
+      "size": {
+        "bytes": 116415,
+        "kb": 113.69,
+        "mb": 0.11
+      },
+      "directory": "src/screens/Onboarding/assets/nanoS/plugDevice"
+    },
+    {
+      "path": "src/animations/device/nanoS/1PlugAndPinCode/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/1PlugAndPinCode/dark.json",
+      "size": {
+        "bytes": 116265,
+        "kb": 113.54,
+        "mb": 0.11
+      },
+      "directory": "src/animations/device/nanoS/1PlugAndPinCode"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoS/plugDevice/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoS/plugDevice/light.json",
+      "size": {
+        "bytes": 112602,
+        "kb": 109.96,
+        "mb": 0.11
+      },
+      "directory": "src/screens/Onboarding/assets/nanoS/plugDevice"
+    },
+    {
+      "path": "src/animations/device/nanoSP/light/continue.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoSP/light/continue.json",
+      "size": {
+        "bytes": 112578,
+        "kb": 109.94,
+        "mb": 0.11
+      },
+      "directory": "src/animations/device/nanoSP/light"
+    },
+    {
+      "path": "src/animations/device/nanoS/1PlugAndPinCode/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/1PlugAndPinCode/light.json",
+      "size": {
+        "bytes": 110583,
+        "kb": 107.99,
+        "mb": 0.11
+      },
+      "directory": "src/animations/device/nanoS/1PlugAndPinCode"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/confirmWords/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/confirmWords/light.json",
+      "size": {
+        "bytes": 108290,
+        "kb": 105.75,
+        "mb": 0.1
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/confirmWords"
+    },
+    {
+      "path": "src/animations/device/nanoSP/light/pin.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoSP/light/pin.json",
+      "size": {
+        "bytes": 101568,
+        "kb": 99.19,
+        "mb": 0.1
+      },
+      "directory": "src/animations/device/nanoSP/light"
+    },
+    {
+      "path": "src/animations/device/blue/3EnterPinCode/data.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/blue/3EnterPinCode/data.json",
+      "size": {
+        "bytes": 101536,
+        "kb": 99.16,
+        "mb": 0.1
+      },
+      "directory": "src/animations/device/blue/3EnterPinCode"
+    },
+    {
+      "path": "src/animations/device/nanoSP/dark/pin.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoSP/dark/pin.json",
+      "size": {
+        "bytes": 101424,
+        "kb": 99.05,
+        "mb": 0.1
+      },
+      "directory": "src/animations/device/nanoSP/dark"
+    },
+    {
+      "path": "src/animations/device/blue/1PlugAndPinCode/data.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/blue/1PlugAndPinCode/data.json",
+      "size": {
+        "bytes": 101338,
+        "kb": 98.96,
+        "mb": 0.1
+      },
+      "directory": "src/animations/device/blue/1PlugAndPinCode"
+    },
+    {
+      "path": "src/animations/device/flex/light/pin.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/flex/light/pin.json",
+      "size": {
+        "bytes": 97617,
+        "kb": 95.33,
+        "mb": 0.09
+      },
+      "directory": "src/animations/device/flex/light"
+    },
+    {
+      "path": "src/animations/device/flex/dark/pin.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/flex/dark/pin.json",
+      "size": {
+        "bytes": 97047,
+        "kb": 94.77,
+        "mb": 0.09
+      },
+      "directory": "src/animations/device/flex/dark"
+    },
+    {
+      "path": "src/animations/device/blue/6OpenApp/data.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/blue/6OpenApp/data.json",
+      "size": {
+        "bytes": 96487,
+        "kb": 94.23,
+        "mb": 0.09
+      },
+      "directory": "src/animations/device/blue/6OpenApp"
+    },
+    {
+      "path": "src/animations/device/blue/7Validate/data.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/blue/7Validate/data.json",
+      "size": {
+        "bytes": 95231,
+        "kb": 93,
+        "mb": 0.09
+      },
+      "directory": "src/animations/device/blue/7Validate"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoS/numberOfWords/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoS/numberOfWords/dark.json",
+      "size": {
+        "bytes": 93206,
+        "kb": 91.02,
+        "mb": 0.09
+      },
+      "directory": "src/screens/Onboarding/assets/nanoS/numberOfWords"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoS/numberOfWords/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoS/numberOfWords/light.json",
+      "size": {
+        "bytes": 89559,
+        "kb": 87.46,
+        "mb": 0.09
+      },
+      "directory": "src/screens/Onboarding/assets/nanoS/numberOfWords"
+    },
+    {
+      "path": "src/animations/device/nanoX/light/pin.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoX/light/pin.json",
+      "size": {
+        "bytes": 77910,
+        "kb": 76.08,
+        "mb": 0.07
+      },
+      "directory": "src/animations/device/nanoX/light"
+    },
+    {
+      "path": "src/animations/device/nanoX/dark/pin.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoX/dark/pin.json",
+      "size": {
+        "bytes": 73522,
+        "kb": 71.8,
+        "mb": 0.07
+      },
+      "directory": "src/animations/device/nanoX/dark"
+    },
+    {
+      "path": "src/animations/device/nanoS/5AllowManager/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/5AllowManager/dark.json",
+      "size": {
+        "bytes": 66826,
+        "kb": 65.26,
+        "mb": 0.06
+      },
+      "directory": "src/animations/device/nanoS/5AllowManager"
+    },
+    {
+      "path": "src/animations/device/nanoS/5AllowManager/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/5AllowManager/light.json",
+      "size": {
+        "bytes": 63033,
+        "kb": 61.56,
+        "mb": 0.06
+      },
+      "directory": "src/animations/device/nanoS/5AllowManager"
+    },
+    {
+      "path": "src/animations/device/stax/light/pin.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/stax/light/pin.json",
+      "size": {
+        "bytes": 61716,
+        "kb": 60.27,
+        "mb": 0.06
+      },
+      "directory": "src/animations/device/stax/light"
+    },
+    {
+      "path": "src/animations/device/stax/dark/pin.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/stax/dark/pin.json",
+      "size": {
+        "bytes": 61605,
+        "kb": 60.16,
+        "mb": 0.06
+      },
+      "directory": "src/animations/device/stax/dark"
+    },
+    {
+      "path": "src/animations/device/nanoS/6OpenApp/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/6OpenApp/dark.json",
+      "size": {
+        "bytes": 50361,
+        "kb": 49.18,
+        "mb": 0.05
+      },
+      "directory": "src/animations/device/nanoS/6OpenApp"
+    },
+    {
+      "path": "src/animations/device/nanoS/7Validate/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/7Validate/dark.json",
+      "size": {
+        "bytes": 49351,
+        "kb": 48.19,
+        "mb": 0.05
+      },
+      "directory": "src/animations/device/nanoS/7Validate"
+    },
+    {
+      "path": "src/animations/device/nanoS/2InstallLoading/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/2InstallLoading/dark.json",
+      "size": {
+        "bytes": 49159,
+        "kb": 48.01,
+        "mb": 0.05
+      },
+      "directory": "src/animations/device/nanoS/2InstallLoading"
+    },
+    {
+      "path": "src/animations/device/nanoX/light/pairing.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoX/light/pairing.json",
+      "size": {
+        "bytes": 46652,
+        "kb": 45.56,
+        "mb": 0.04
+      },
+      "directory": "src/animations/device/nanoX/light"
+    },
+    {
+      "path": "src/animations/device/nanoS/6OpenApp/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/6OpenApp/light.json",
+      "size": {
+        "bytes": 46583,
+        "kb": 45.49,
+        "mb": 0.04
+      },
+      "directory": "src/animations/device/nanoS/6OpenApp"
+    },
+    {
+      "path": "src/animations/device/nanoX/dark/pairing.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoX/dark/pairing.json",
+      "size": {
+        "bytes": 46539,
+        "kb": 45.45,
+        "mb": 0.04
+      },
+      "directory": "src/animations/device/nanoX/dark"
+    },
+    {
+      "path": "src/animations/device/nanoS/7Validate/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/7Validate/light.json",
+      "size": {
+        "bytes": 45318,
+        "kb": 44.26,
+        "mb": 0.04
+      },
+      "directory": "src/animations/device/nanoS/7Validate"
+    },
+    {
+      "path": "src/animations/device/nanoS/2InstallLoading/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/2InstallLoading/light.json",
+      "size": {
+        "bytes": 44326,
+        "kb": 43.29,
+        "mb": 0.04
+      },
+      "directory": "src/animations/device/nanoS/2InstallLoading"
+    },
+    {
+      "path": "src/animations/device/nanoSP/dark/continue.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoSP/dark/continue.json",
+      "size": {
+        "bytes": 43522,
+        "kb": 42.5,
+        "mb": 0.04
+      },
+      "directory": "src/animations/device/nanoSP/dark"
+    },
+    {
+      "path": "src/animations/device/nanoS/4QuitApp/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/4QuitApp/dark.json",
+      "size": {
+        "bytes": 43368,
+        "kb": 42.35,
+        "mb": 0.04
+      },
+      "directory": "src/animations/device/nanoS/4QuitApp"
+    },
+    {
+      "path": "src/animations/device/nanoS/4QuitApp/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoS/4QuitApp/light.json",
+      "size": {
+        "bytes": 39592,
+        "kb": 38.66,
+        "mb": 0.04
+      },
+      "directory": "src/animations/device/nanoS/4QuitApp"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/pairDevice/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/pairDevice/light.json",
+      "size": {
+        "bytes": 34857,
+        "kb": 34.04,
+        "mb": 0.03
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/pairDevice"
+    },
+    {
+      "path": "src/screens/Onboarding/assets/nanoX/pairDevice/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/screens/Onboarding/assets/nanoX/pairDevice/dark.json",
+      "size": {
+        "bytes": 34181,
+        "kb": 33.38,
+        "mb": 0.03
+      },
+      "directory": "src/screens/Onboarding/assets/nanoX/pairDevice"
+    },
+    {
+      "path": "src/animations/device/nanoX/light/long_press.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoX/light/long_press.json",
+      "size": {
+        "bytes": 32093,
+        "kb": 31.34,
+        "mb": 0.03
+      },
+      "directory": "src/animations/device/nanoX/light"
+    },
+    {
+      "path": "src/animations/device/nanoX/dark/long_press.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoX/dark/long_press.json",
+      "size": {
+        "bytes": 32069,
+        "kb": 31.32,
+        "mb": 0.03
+      },
+      "directory": "src/animations/device/nanoX/dark"
+    },
+    {
+      "path": "src/animations/device/nanoX/light/paired.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoX/light/paired.json",
+      "size": {
+        "bytes": 28512,
+        "kb": 27.84,
+        "mb": 0.03
+      },
+      "directory": "src/animations/device/nanoX/light"
+    },
+    {
+      "path": "src/animations/device/nanoX/dark/paired.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoX/dark/paired.json",
+      "size": {
+        "bytes": 28224,
+        "kb": 27.56,
+        "mb": 0.03
+      },
+      "directory": "src/animations/device/nanoX/dark"
+    },
+    {
+      "path": "src/animations/device/nanoX/light/continue.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoX/light/continue.json",
+      "size": {
+        "bytes": 27585,
+        "kb": 26.94,
+        "mb": 0.03
+      },
+      "directory": "src/animations/device/nanoX/light"
+    },
+    {
+      "path": "src/animations/device/nanoX/dark/continue.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/nanoX/dark/continue.json",
+      "size": {
+        "bytes": 27561,
+        "kb": 26.92,
+        "mb": 0.03
+      },
+      "directory": "src/animations/device/nanoX/dark"
+    },
+    {
+      "path": "src/animations/device/apex/light/frame.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/apex/light/frame.json",
+      "size": {
+        "bytes": 18033,
+        "kb": 17.61,
+        "mb": 0.02
+      },
+      "directory": "src/animations/device/apex/light"
+    },
+    {
+      "path": "src/animations/device/flex/light/frame.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/flex/light/frame.json",
+      "size": {
+        "bytes": 18033,
+        "kb": 17.61,
+        "mb": 0.02
+      },
+      "directory": "src/animations/device/flex/light"
+    },
+    {
+      "path": "src/animations/device/apex/dark/frame.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/apex/dark/frame.json",
+      "size": {
+        "bytes": 17999,
+        "kb": 17.58,
+        "mb": 0.02
+      },
+      "directory": "src/animations/device/apex/dark"
+    },
+    {
+      "path": "src/animations/device/flex/dark/frame.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/flex/dark/frame.json",
+      "size": {
+        "bytes": 17999,
+        "kb": 17.58,
+        "mb": 0.02
+      },
+      "directory": "src/animations/device/flex/dark"
+    },
+    {
+      "path": "src/animations/device/stax/dark/frame.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/stax/dark/frame.json",
+      "size": {
+        "bytes": 13228,
+        "kb": 12.92,
+        "mb": 0.01
+      },
+      "directory": "src/animations/device/stax/dark"
+    },
+    {
+      "path": "src/animations/device/stax/light/frame.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/device/stax/light/frame.json",
+      "size": {
+        "bytes": 7908,
+        "kb": 7.72,
+        "mb": 0.01
+      },
+      "directory": "src/animations/device/stax/light"
+    },
+    {
+      "path": "src/animations/mainButton/dark.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/mainButton/dark.json",
+      "size": {
+        "bytes": 7134,
+        "kb": 6.97,
+        "mb": 0.01
+      },
+      "directory": "src/animations/mainButton"
+    },
+    {
+      "path": "src/animations/mainButton/light.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/mainButton/light.json",
+      "size": {
+        "bytes": 7134,
+        "kb": 6.97,
+        "mb": 0.01
+      },
+      "directory": "src/animations/mainButton"
+    },
+    {
+      "path": "src/components/BleDevicePairingFlow/assets/bluetooth.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/components/BleDevicePairingFlow/assets/bluetooth.json",
+      "size": {
+        "bytes": 5589,
+        "kb": 5.46,
+        "mb": 0.01
+      },
+      "directory": "src/components/BleDevicePairingFlow/assets"
+    },
+    {
+      "path": "src/animations/line.json",
+      "absolutePath": "/Users/lucas.werey/Code/ledger-live/apps/ledger-live-mobile/src/animations/line.json",
+      "size": {
+        "bytes": 1805,
+        "kb": 1.76,
+        "mb": 0
+      },
+      "directory": "src/animations"
+    }
+  ],
+  "directories": [
+    "src/animations",
+    "src/animations/device/apex/dark",
+    "src/animations/device/apex/light",
+    "src/animations/device/blue/1PlugAndPinCode",
+    "src/animations/device/blue/3EnterPinCode",
+    "src/animations/device/blue/4QuitApp",
+    "src/animations/device/blue/5AllowManager",
+    "src/animations/device/blue/6OpenApp",
+    "src/animations/device/blue/7Validate",
+    "src/animations/device/flex/dark",
+    "src/animations/device/flex/light",
+    "src/animations/device/nanoS/1PlugAndPinCode",
+    "src/animations/device/nanoS/2FirmwareUpdating",
+    "src/animations/device/nanoS/2InstallLoading",
+    "src/animations/device/nanoS/3EnterPinCode",
+    "src/animations/device/nanoS/4QuitApp",
+    "src/animations/device/nanoS/5AllowManager",
+    "src/animations/device/nanoS/6OpenApp",
+    "src/animations/device/nanoS/7Validate",
+    "src/animations/device/nanoSP/dark",
+    "src/animations/device/nanoSP/light",
+    "src/animations/device/nanoX/dark",
+    "src/animations/device/nanoX/light",
+    "src/animations/device/stax/dark",
+    "src/animations/device/stax/light",
+    "src/animations/mainButton",
+    "src/components/BleDevicePairingFlow/assets",
+    "src/mvvm/features/LaunchScreen/components",
+    "src/screens/Onboarding/assets",
+    "src/screens/Onboarding/assets/nanoS/confirmWords",
+    "src/screens/Onboarding/assets/nanoS/numberOfWords",
+    "src/screens/Onboarding/assets/nanoS/pinCode",
+    "src/screens/Onboarding/assets/nanoS/plugDevice",
+    "src/screens/Onboarding/assets/nanoS/powerOn",
+    "src/screens/Onboarding/assets/nanoS/powerOnRecovery",
+    "src/screens/Onboarding/assets/nanoS/recover",
+    "src/screens/Onboarding/assets/nanoSP/confirmWords",
+    "src/screens/Onboarding/assets/nanoSP/numberOfWords",
+    "src/screens/Onboarding/assets/nanoSP/pinCode",
+    "src/screens/Onboarding/assets/nanoSP/plugDevice",
+    "src/screens/Onboarding/assets/nanoSP/powerOn",
+    "src/screens/Onboarding/assets/nanoSP/powerOnRecovery",
+    "src/screens/Onboarding/assets/nanoSP/recover",
+    "src/screens/Onboarding/assets/nanoX/confirmWords",
+    "src/screens/Onboarding/assets/nanoX/numberOfWords",
+    "src/screens/Onboarding/assets/nanoX/pairDevice",
+    "src/screens/Onboarding/assets/nanoX/pinCode",
+    "src/screens/Onboarding/assets/nanoX/plugDevice",
+    "src/screens/Onboarding/assets/nanoX/powerOn",
+    "src/screens/Onboarding/assets/nanoX/powerOnRecovery",
+    "src/screens/Onboarding/assets/nanoX/recover"
+  ]
+}

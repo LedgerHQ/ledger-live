@@ -12,9 +12,9 @@ import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/
 import { TrackScreen } from "~/analytics";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import Animation from "~/components/Animation";
-import STAX_CLS_PREVIEW from "~/animations/device/customLockScreen/stax.json";
-import FLEX_CLS_PREVIEW from "~/animations/device/customLockScreen/flex.json";
-import APEX_CLS_PREVIEW from "~/animations/device/customLockScreen/apex.json";
+import STAX_CLS_PREVIEW from "~/animations/device/customLockScreen/stax.lottie";
+import FLEX_CLS_PREVIEW from "~/animations/device/customLockScreen/flex.lottie";
+import APEX_CLS_PREVIEW from "~/animations/device/customLockScreen/apex.lottie";
 import { useTheme } from "styled-components/native";
 import { importImageFromPhoneGallery } from "~/components/CustomImage/imageUtils";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";

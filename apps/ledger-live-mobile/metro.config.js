@@ -109,6 +109,7 @@ const metroConfig = {
     },
   },
   resolver: {
+    assetExts: [...getDefaultConfig(__dirname).resolver.assetExts, "lottie"],
     unstable_enableSymlinks: true,
     unstable_enablePackageExports: true,
     unstable_conditionNames: ["require", "react-native", "browser"],

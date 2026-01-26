@@ -71,7 +71,12 @@
     "e2e:loadConfig": "ts-node ./e2e/bridge/start-server.ts",
     "check": "pnpm lint; pnpm typecheck",
     "knip-check": "pnpm knip --directory ../.. -W apps/ledger-live-mobile",
-    "assets:replace": "zx ./scripts/replace-assets.mjs"
+    "assets:replace": "zx ./scripts/replace-assets.mjs",
+    "animations:list": "node scripts/list-lottie-files.mjs",
+    "animations:convert": "node scripts/convert-to-lottie.mjs",
+    "animations:full": "pnpm animations:list && pnpm animations:convert",
+    "animations:update-imports": "node scripts/update-lottie-imports.mjs",
+    "animations:cleanup": "node scripts/cleanup-json-animations.mjs"
   },
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "1.0.2",
@@ -225,6 +230,7 @@
     "uuid": "8.3.2"
   },
   "devDependencies": {
+    "@dotlottie/dotlottie-js": "1.6.2",
     "@babel/core": "7.28.5",
     "@babel/plugin-transform-arrow-functions": "7.27.1",
     "@babel/plugin-transform-class-properties": "7.27.1",

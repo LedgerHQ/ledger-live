@@ -2,7 +2,7 @@
 import * as React from "react";
 import { screen, waitFor, fireEvent, renderWithReactQuery } from "@tests/test-renderer";
 import { server, http, HttpResponse } from "@tests/server";
-import marketsMock from "@mocks/api/market/markets.json";
+import marketsMock from "@mocks/api/market/markets.lottie";
 import { MarketPages } from "./shared";
 
 describe("Market List Pagination Integration Test", () => {

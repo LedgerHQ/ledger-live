@@ -1,4 +1,4 @@
-import ethereumProvider from "@ledgerhq/ethereum-provider/lib/ethereum-provider.umd.json";
+import ethereumProvider from "@ledgerhq/ethereum-provider/lib/ethereum-provider.umd.lottie";
 
 export const INJECTED_JAVASCRIPT = `
 ${ethereumProvider.code}

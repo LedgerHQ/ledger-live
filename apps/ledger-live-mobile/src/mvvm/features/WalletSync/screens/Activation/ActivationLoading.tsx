@@ -8,7 +8,7 @@ import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import GradientContainer from "~/components/GradientContainer";
 import Animation from "~/components/Animation";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import lottie from "~/animations/lottie.json";
+import lottie from "~/animations/lottie.lottie";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "~/context/Locale";
 import { useSelector, useDispatch } from "~/context/hooks";
