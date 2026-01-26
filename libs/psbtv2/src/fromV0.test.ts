@@ -40,7 +40,7 @@ describe("PsbtV2.fromV0", () => {
       expect(psbtv2.getGlobalPsbtVersion()).toBe(2);
 
       // Verify input fields
-      expect(psbtv2.getInputPreviousTxid(0)).toEqual(prevTxId.reverse());
+      expect(psbtv2.getInputPreviousTxid(0)).toEqual(prevTxId);
       expect(psbtv2.getInputOutputIndex(0)).toBe(0);
       expect(psbtv2.getInputSequence(0)).toBe(0xfffffffd);
 
