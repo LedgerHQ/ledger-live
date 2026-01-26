@@ -83,7 +83,7 @@ jobs:
   test-libraries:
     name: "Test Libraries"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
+    if: ${{!github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
 
