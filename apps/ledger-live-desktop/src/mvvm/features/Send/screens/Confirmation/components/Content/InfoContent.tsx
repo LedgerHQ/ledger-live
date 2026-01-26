@@ -14,8 +14,8 @@ export const InfoContent = ({ titleKey, descriptionKey }: InfoContentProps) => {
     <>
       <Spot appearance="info" size={72} />
       <div className="flex flex-col items-center gap-12 text-center">
-        <h3 className="text-base heading-3-semi-bold">{t(titleKey)}</h3>
-        <p className="text-muted body-2">{t(descriptionKey)}</p>
+        <h3 className="heading-3-semi-bold text-base">{t(titleKey)}</h3>
+        <p className="body-2 text-muted">{t(descriptionKey)}</p>
       </div>
     </>
   );

@@ -1,6 +1,11 @@
 import type { ComponentType } from "react";
 import type { NativeStackNavigationOptions } from "@react-navigation/native-stack";
-import type { FlowStep, FlowStepConfig, StepRegistry, FlowConfig } from "../FlowWizard/types";
+import type {
+  FlowStep,
+  FlowStepConfig,
+  StepRegistry,
+  FlowConfig,
+} from "@ledgerhq/live-common/flows/wizard/types";
 
 export type ReactNativeFlowStepConfig<TStep extends FlowStep = FlowStep> = FlowStepConfig<TStep> &
   Readonly<{
@@ -31,7 +36,7 @@ export type FlowStackNavigatorProps<
 export type StackScreenConfig<TStep extends FlowStep = FlowStep> = Readonly<{
   step: TStep;
   name: string;
-  component: ComponentType<any>;
+  component: ComponentType<unknown>;
   options?: NativeStackNavigationOptions;
   initialParams?: Record<string, unknown>;
   listeners?: Record<string, unknown>;
