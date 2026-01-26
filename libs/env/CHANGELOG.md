@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.26.0
+
+### Minor Changes
+
+- [#13757](https://github.com/LedgerHQ/ledger-live/pull/13757) [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add CVS staging toggle
+
 ## 2.26.0-next.0
 
 ### Minor Changes

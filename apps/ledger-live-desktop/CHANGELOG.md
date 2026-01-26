@@ -1,5 +1,91 @@
 # ledger-live-desktop
 
+## 2.138.0
+
+### Minor Changes
+
+- [#13671](https://github.com/LedgerHQ/ledger-live/pull/13671) [`a44cc77`](https://github.com/LedgerHQ/ledger-live/commit/a44cc779d67e07f7269cd41aba7d26ee85d1f8b9) Thanks [@pdeville-ledger](https://github.com/pdeville-ledger)! - update desktop deeplink structure
+
+- [#13600](https://github.com/LedgerHQ/ledger-live/pull/13600) [`d8f4b10`](https://github.com/LedgerHQ/ledger-live/commit/d8f4b10b28b63880fdac40a58e1d4f06191070a9) Thanks [@deepyjr](https://github.com/deepyjr)! - add new market banner on the home page (ff) and shared code for desktop and mobile (tests)
+
+- [#13786](https://github.com/LedgerHQ/ledger-live/pull/13786) [`e5cf08a`](https://github.com/LedgerHQ/ledger-live/commit/e5cf08a9bcb9ea903d0241aa0c6709e4016b947b) Thanks [@cfloume](https://github.com/cfloume)! - fix: better handle unknown coins through deeplinks
+
+- [#13340](https://github.com/LedgerHQ/ledger-live/pull/13340) [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436) Thanks [@Justkant](https://github.com/Justkant)! - feat(coin-bitcoin): support psbt signature in wallet-api
+
+- [#13412](https://github.com/LedgerHQ/ledger-live/pull/13412) [`8d2547a`](https://github.com/LedgerHQ/ledger-live/commit/8d2547a4ba9296ce31bad3cd82ca2dd84028b108) Thanks [@qperrot](https://github.com/qperrot)! - Feat Signature and Confirmation screens for new send flow on LWD
+
+- [#13790](https://github.com/LedgerHQ/ledger-live/pull/13790) [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d) Thanks [@Justkant](https://github.com/Justkant)! - feat: add transaction source tagging with headers for broadcast
+
+  Add TransactionSource type and source field to BroadcastConfig to track
+  transaction origins (dApp, live-app, coin-module, swap) and transmit them
+  as X-Ledger-Source-Type and X-Ledger-Source-Name headers when broadcasting
+  to blockchain explorers for Bitcoin and EVM.
+
+  Changes:
+
+  - Add TransactionSource type with type and name fields to types-live
+  - Extend BroadcastConfig with optional source field
+  - Thread source through Bitcoin broadcast chain (broadcast.ts → wallet.ts → xpub.ts → explorer)
+  - Thread source through EVM broadcast in ledger node API
+  - Update Desktop to pass source in:
+    - Live app broadcasts (LiveAppSDKLogic.ts)
+    - Swap flows (CompleteExchange Body.tsx)
+    - Native send flows (GenericStepConnectDevice.tsx)
+  - Update Mobile to pass source in:
+    - Native transaction flows (screenTransactionHooks.ts)
+    - Platform exchange (CompleteExchange.tsx)
+    - Swap flows (Confirmation.tsx)
+  - Update wallet-api integrations (react.ts, useDappLogic.ts)
+
+- [#13701](https://github.com/LedgerHQ/ledger-live/pull/13701) [`90ef69f`](https://github.com/LedgerHQ/ledger-live/commit/90ef69fa9ff3c030d037d60a22e367c1bf78a2f8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade Lumen React Package
+
+- [#13715](https://github.com/LedgerHQ/ledger-live/pull/13715) [`9e2597a`](https://github.com/LedgerHQ/ledger-live/commit/9e2597ad5d88f250aef8853843c539982661c64f) Thanks [@claudiiafg](https://github.com/claudiiafg)! - feat(lwd): market banner trending assets
+
+- [#13717](https://github.com/LedgerHQ/ledger-live/pull/13717) [`236b921`](https://github.com/LedgerHQ/ledger-live/commit/236b92169a9d159d7b7f684650c2fbdf207b8c0a) Thanks [@dilaouid](https://github.com/dilaouid)! - chore: adapt Secondary Action for Tile on Recipient Step
+
+- [#13784](https://github.com/LedgerHQ/ledger-live/pull/13784) [`d4c80fc`](https://github.com/LedgerHQ/ledger-live/commit/d4c80fcab9d89bb62a7e134f1b2ece39d9a8d19f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Use CryptoIcons in Markets Pages
+
+- [#13693](https://github.com/LedgerHQ/ledger-live/pull/13693) [`7c0c726`](https://github.com/LedgerHQ/ledger-live/commit/7c0c726d2a0d5e5f10461b3256164e379785b788) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LWD Braze sdk upgrade
+
+- [#13677](https://github.com/LedgerHQ/ledger-live/pull/13677) [`da2e3af`](https://github.com/LedgerHQ/ledger-live/commit/da2e3af6a3e2def351dcb67ec72e9a4133c49ad6) Thanks [@claudiiafg](https://github.com/claudiiafg)! - feat(lwd): market banner error state
+
+- [#13642](https://github.com/LedgerHQ/ledger-live/pull/13642) [`7b7724e`](https://github.com/LedgerHQ/ledger-live/commit/7b7724ed9bbff5e6fd64b3759a56fa3c51cabf75) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update react-router
+
+- [#13757](https://github.com/LedgerHQ/ledger-live/pull/13757) [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add CVS staging toggle
+
+- [#13698](https://github.com/LedgerHQ/ledger-live/pull/13698) [`430909d`](https://github.com/LedgerHQ/ledger-live/commit/430909d5b38a913b649d4133b03191b00c28331d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade Tailwind to v4
+
+- [#13643](https://github.com/LedgerHQ/ledger-live/pull/13643) [`1bb95c0`](https://github.com/LedgerHQ/ledger-live/commit/1bb95c07dc4ce8793d12f2ec928df68eac006030) Thanks [@claudiiafg](https://github.com/claudiiafg)! - feat(lwd): market banner loading state and cta
+
+- [#13747](https://github.com/LedgerHQ/ledger-live/pull/13747) [`3024b1f`](https://github.com/LedgerHQ/ledger-live/commit/3024b1fbbd0b55386426a694edde09ac90a9fe12) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - market header + first iteration wallet4.0
+
+- [#13711](https://github.com/LedgerHQ/ledger-live/pull/13711) [`bd7ac82`](https://github.com/LedgerHQ/ledger-live/commit/bd7ac82a7ba225d4306098d5ed6d5c562dd9eabf) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove duplicate script tag causing MIME type error
+
+### Patch Changes
+
+- Updated dependencies [[`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d), [`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`d38431e`](https://github.com/LedgerHQ/ledger-live/commit/d38431ee5f91439794cc6c7bad793b89ade95155), [`d3a00b8`](https://github.com/LedgerHQ/ledger-live/commit/d3a00b897349d2109b2ddb6aba63d20fdedc149c), [`d8f4b10`](https://github.com/LedgerHQ/ledger-live/commit/d8f4b10b28b63880fdac40a58e1d4f06191070a9), [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436), [`97ac494`](https://github.com/LedgerHQ/ledger-live/commit/97ac4940399281450a67b5f533ff49d03a169403), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`7389999`](https://github.com/LedgerHQ/ledger-live/commit/7389999b0a5b52c42b565cbfe8e024c315c9dcf5), [`b8e22d3`](https://github.com/LedgerHQ/ledger-live/commit/b8e22d36b8bb44eda9dfd267227a22391519c08b), [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a), [`36aaf48`](https://github.com/LedgerHQ/ledger-live/commit/36aaf487c15da117a23332de376257ce8e6582a9), [`d469c61`](https://github.com/LedgerHQ/ledger-live/commit/d469c6160a9fdd7cd581836195d54bafd2a0419a), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb)]:
+  - @ledgerhq/live-countervalues-react@0.9.0
+  - @ledgerhq/live-common@34.58.0
+  - @ledgerhq/types-live@6.94.0
+  - @ledgerhq/coin-evm@2.40.0
+  - @ledgerhq/coin-bitcoin@0.30.0
+  - @ledgerhq/live-env@2.26.0
+  - @ledgerhq/live-wallet@0.20.0
+  - @ledgerhq/live-dmk-desktop@0.15.1
+  - @ledgerhq/react-ui@0.44.1
+  - @ledgerhq/coin-framework@6.13.1
+  - @ledgerhq/coin-canton@0.14.1
+  - @ledgerhq/coin-cosmos@0.23.1
+  - @ledgerhq/coin-filecoin@1.18.1
+  - @ledgerhq/domain-service@1.6.1
+  - @ledgerhq/cryptoassets@13.37.1
+  - @ledgerhq/live-countervalues@0.11.1
+  - @ledgerhq/client-ids@0.4.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.7.1
+  - @ledgerhq/ledger-key-ring-protocol@0.11.1
+  - @ledgerhq/live-dmk-speculos@0.5.1
+  - @ledgerhq/live-network@2.2.1
+
 ## 2.138.0-next.0
 
 ### Minor Changes
