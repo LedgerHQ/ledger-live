@@ -13,17 +13,16 @@ import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import {
-  MARKET_BANNER_TILE_COUNT,
-  MARKET_BANNER_TOP,
-  REFRESH_RATE,
-  PAGE_NAME,
-  BANNER_NAME,
-} from "../constants";
+import { MARKET_BANNER_TILE_COUNT, PAGE_NAME, BANNER_NAME } from "../constants";
 import { UseMarketBannerViewModelResult } from "../types";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-
-const TIME_RANGE = "day";
+import {
+  TIME_RANGE,
+  MARKET_BANNER_DATA_SORT_ORDER,
+  MARKET_BANNER_TOP,
+  MARKET_PERFORMERS_SUPPORTED,
+  MARKET_BANNER_REFRESH_RATE,
+} from "@ledgerhq/live-common/market/constants";
 
 const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
   const baseNavigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
@@ -39,13 +38,13 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
   );
 
   const { data, isLoading, isError } = useMarketPerformers({
-    sort: "asc",
+    sort: MARKET_BANNER_DATA_SORT_ORDER,
     counterCurrency: counterValueCurrency.ticker,
     range: TIME_RANGE,
     limit: MARKET_BANNER_TILE_COUNT * 2,
     top: MARKET_BANNER_TOP,
-    supported: true,
-    refreshRate: REFRESH_RATE,
+    supported: MARKET_PERFORMERS_SUPPORTED,
+    refreshRate: MARKET_BANNER_REFRESH_RATE,
   });
 
   const filteredItems = useMemo(() => {

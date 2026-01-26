@@ -244,6 +244,7 @@
     "src/manager/useDeviceHasUpdatesAvailable.ts",
     "src/market/utils/countervalueFormatter.ts",
     "src/market/utils/rangeDataTable.ts",
+    "src/market/constants.ts",
     "src/mock/account.ts",
     "src/mock/helpers.ts",
     "src/network-troubleshooting/index.ts",

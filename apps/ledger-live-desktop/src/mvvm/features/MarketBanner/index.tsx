@@ -7,12 +7,12 @@ import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { TrendingAssetsList } from "./components/TrendingAssetsList";
 import { MarketBannerHeader } from "./components/MarketBannerHeader";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { TRACKING_PAGE_NAME } from "./utils/constants";
 import {
   MARKET_BANNER_TOP,
   MARKET_BANNER_DATA_SORT_ORDER,
   TIME_RANGE,
-  TRACKING_PAGE_NAME,
-} from "./utils/constants";
+} from "@ledgerhq/live-common/market/constants";
 import { track } from "~/renderer/analytics/segment";
 
 type MarketBannerViewProps = {
