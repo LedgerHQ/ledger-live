@@ -108,7 +108,7 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
     await app.portfolio.openViaDeeplink();
     await app.portfolio.navigateToSettings();
     await app.settings.navigateToGeneralSettings();
-    disableSync && (await device.disableSynchronization()); // TODO: Remove line when LIVE-15405 is fixed
+    if (disableSync) await device.disableSynchronization(); // TODO: Remove line when LIVE-15405 is fixed
     await app.settingsGeneral.navigateToLedgerSync();
   }
 
