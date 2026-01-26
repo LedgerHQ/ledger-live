@@ -42,7 +42,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/linting-parallelism
         id: setup-caches
         with:
           skip-turbo-cache: "false"
@@ -158,7 +158,7 @@ jobs:
         run: pnpm i --filter="!./apps/**"
       - name: Lint affected libraries
         id: lint-libs
-        run: pnpm lint --concurrency=1 --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --quiet
+        run: pnpm lint --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --quiet
       - name: Typecheck affected libraries
         id: typecheck-libs
         run: pnpm typecheck --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
