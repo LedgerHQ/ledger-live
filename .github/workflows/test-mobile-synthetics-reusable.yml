@@ -135,7 +135,7 @@ jobs:
           fi
 
       - name: Run performance tests
-        uses: LedgerHQ/ledger-live/tools/actions/mobile-performance-test@develop
+        uses: LedgerHQ/ledger-live/tools/actions/mobile-performance-test@chore/turbo-affected-rslib
         id: test-results
         with:
           api-key: ${{ secrets.DATADOG_API_KEY }}

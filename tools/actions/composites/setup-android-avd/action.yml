@@ -61,7 +61,7 @@ runs:
           tools/actions
 
     - name: Setup Android Environment
-      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@chore/turbo-affected-rslib
 
     - name: Create .android directory
       shell: bash
@@ -85,7 +85,7 @@ runs:
         script: ${{ inputs.wait_script_path }}
 
     - name: Cache android emulator
-      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@chore/turbo-affected-rslib
       with:
         path: |
           /home/runner/.android/

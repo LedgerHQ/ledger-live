@@ -28,10 +28,10 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/turbo-affected-rslib
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
         id: setup-caches
         with:
           install-proto: true
@@ -70,7 +70,7 @@ jobs:
           git fetch origin develop main
 
       - name: Merge into main
-        uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@chore/turbo-affected-rslib
         with:
           base-branch: "main"
           head-branch: "${{ inputs.ref }}"
@@ -89,7 +89,7 @@ jobs:
   release-final:
     name: "Prepare Release > Publish packages and apps"
     needs: prepare-release
-    uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@chore/turbo-affected-rslib
     with:
       ref: main
       caller: release-prepare

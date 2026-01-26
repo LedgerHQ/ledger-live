@@ -35,7 +35,7 @@ jobs:
           git fetch origin develop
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
         id: setup-caches
         with:
           install-proto: true

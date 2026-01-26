@@ -36,7 +36,7 @@ jobs:
           repository: LedgerHQ/coin-apps
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/bot@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/bot@chore/turbo-affected-rslib
         id: bot
         timeout-minutes: 120
         with:

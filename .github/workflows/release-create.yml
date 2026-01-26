@@ -22,12 +22,12 @@ jobs:
           ref: develop
           token: ${{ steps.generate-token.outputs.token }}
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/turbo-affected-rslib
       - name: create release branch
         run: |
           git checkout -b $RELEASE_BRANCH
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
         id: setup-caches
         with:
           install-proto: true
@@ -36,7 +36,7 @@ jobs:
       - name: Move patch updates to minor
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/turbo-affected-rslib
         with:
           from_level: patch
           to_level: minor
