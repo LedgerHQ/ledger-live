@@ -125,7 +125,7 @@ jobs:
 
       - name: Generate shards matrix and test files
         id: generate-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@support/turbo-addected-rslib-tests
         with:
           test_directory: apps/ledger-live-mobile/e2e
           test_filter: ${{ inputs.test_filter || '' }}
@@ -194,7 +194,7 @@ jobs:
   build-ios:
     name: "iOS Build"
     needs: [ determine-builds ]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@chore/turbo-affected-rslib
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@support/turbo-addected-rslib-tests
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
@@ -208,7 +208,7 @@ jobs:
   build-android:
     name: "Android Build"
     needs: [ determine-builds ]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@chore/turbo-affected-rslib
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@support/turbo-addected-rslib-tests
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
@@ -246,7 +246,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         with:
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
@@ -283,7 +283,7 @@ jobs:
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
       - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/turbo-addected-rslib-tests
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_native_key }}
@@ -294,7 +294,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/turbo-addected-rslib-tests
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_js_key }}
@@ -310,7 +310,7 @@ jobs:
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
       - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@support/turbo-addected-rslib-tests
         with:
           command: pnpm build:llm:deps
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -325,7 +325,7 @@ jobs:
       - name: Test iOS app
         id: detox
         timeout-minutes: 75
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@support/turbo-addected-rslib-tests
         with:
           command: pnpm mobile e2e:ci -- -p ios -t $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -406,7 +406,7 @@ jobs:
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/turbo-addected-rslib-tests
         with:
           key: ${{ needs.determine-builds.outputs.android_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -416,7 +416,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Bundle
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/turbo-addected-rslib-tests
         with:
           key: ${{ needs.determine-builds.outputs.android_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -443,7 +443,7 @@ jobs:
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         id: setup-caches
         with:
           install-proto: true
@@ -472,7 +472,7 @@ jobs:
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
       - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@support/turbo-addected-rslib-tests
         with:
           command: pnpm build:llm:deps
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -480,7 +480,7 @@ jobs:
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@support/turbo-addected-rslib-tests
         with:
           command: pnpm build:dummy-apps
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -489,7 +489,7 @@ jobs:
 
       - name: Download android emulator
         timeout-minutes: 5
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/turbo-addected-rslib-tests
         id: detox-avd
         with:
           key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
@@ -518,7 +518,7 @@ jobs:
           script: ./tools/scripts/wait_emulator_idle.sh
 
       - name: Cache android emulator
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/turbo-addected-rslib-tests
         if: steps.detox-avd.outputs.cache-hit != 'true'
         with:
           path: |
@@ -584,7 +584,7 @@ jobs:
               \"main.ios.jsbundle\" : { \"size\": ${{ needs.build-ios.outputs.js-bundle-size }}},
               \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}}
           }" > mobile.metafile.json
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@support/turbo-addected-rslib-tests
         if: ${{ !inputs.skip-bundle-size-reporting }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
@@ -611,7 +611,7 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@support/turbo-addected-rslib-tests
         with:
           platform: ios
           artifacts_dir: apps/ledger-live-mobile/e2e/artifacts
@@ -639,7 +639,7 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@support/turbo-addected-rslib-tests
         with:
           platform: android
           artifacts_dir: apps/ledger-live-mobile/e2e/artifacts
@@ -669,7 +669,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         with:
           skip-pod-cache: "true"
           skip-pnpm-cache: "true"

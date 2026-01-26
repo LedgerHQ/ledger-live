@@ -44,7 +44,7 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         id: setup-caches
         with:
           install-proto: true

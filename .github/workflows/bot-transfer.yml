@@ -42,7 +42,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}

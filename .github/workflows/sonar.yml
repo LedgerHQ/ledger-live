@@ -22,9 +22,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@support/turbo-addected-rslib-tests
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         id: caches
         with:
           skip-turbo-cache: "false"

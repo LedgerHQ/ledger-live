@@ -33,10 +33,10 @@ jobs:
         shell: bash
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@support/turbo-addected-rslib-tests
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         id: setup-caches
         with:
           install-proto: true
@@ -67,18 +67,18 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/turbo-addected-rslib-tests
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
 
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/turbo-addected-rslib-tests
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
 
       - name: tag nightly ref
-        uses: LedgerHQ/ledger-live/tools/actions/composites/create-or-update-tag@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/create-or-update-tag@support/turbo-addected-rslib-tests
         with:
           ref: ${{ steps.get-sha.outputs.sha }}
           tagName: nightly

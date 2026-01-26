@@ -35,11 +35,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         id: setup-caches
         with:
           install-proto: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@support/turbo-addected-rslib-tests
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -74,11 +74,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         id: setup-caches
         with:
           install-proto: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@support/turbo-addected-rslib-tests
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -105,11 +105,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         id: setup-caches
         with:
           install-proto: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@support/turbo-addected-rslib-tests
         id: setup-test-desktop
         with:
           skip_ruby: true
@@ -181,7 +181,7 @@ jobs:
             fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
       - name: prepare comment with screenshots
         id: comment
-        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@support/turbo-addected-rslib-tests
         with:
           images: images.json
           no-actor: true

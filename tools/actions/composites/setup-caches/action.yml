@@ -111,7 +111,7 @@ runs:
     - name: TurboRepo local caching server
       id: turborepo-cache-server
       if: steps.aws.conclusion == 'success' && inputs.skip_turbo_cache != 'true'
-      uses: LedgerHQ/ledger-live/tools/actions/turborepo-s3-cache@chore/turbo-affected-rslib
+      uses: LedgerHQ/ledger-live/tools/actions/turborepo-s3-cache@support/turbo-addected-rslib-tests
       with:
         server-token: "${{ inputs.turbo-server-token }}"
         cleanup-cache-folder: "false"

@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         with:
           install-proto: true
           skip-turbo-cache: "true"

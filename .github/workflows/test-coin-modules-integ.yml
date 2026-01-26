@@ -42,7 +42,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         run: |
           git checkout $GITHUB_SHA
-      - uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@support/turbo-addected-rslib-tests
         id: affected
         with:
           ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
@@ -72,7 +72,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         with:
           install-proto: true
           skip-turbo-cache: "false"

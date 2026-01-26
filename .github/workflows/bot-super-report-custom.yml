@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         id: setup-caches
         with:
           install-proto: true
@@ -33,7 +33,7 @@ jobs:
         run: pnpm i --filter='!./apps/**'
 
       - name: generate super report
-        uses: LedgerHQ/ledger-live/tools/actions/generate-bot-super-report@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/generate-bot-super-report@support/turbo-addected-rslib-tests
         with:
           branch: ${{inputs.branch}}
           environment: ${{inputs.environment}}

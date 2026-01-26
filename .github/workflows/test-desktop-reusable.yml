@@ -46,7 +46,7 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         id: setup-caches
         with:
           install-proto: true
@@ -55,7 +55,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@support/turbo-addected-rslib-tests
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -91,7 +91,7 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         id: setup-caches
         with:
           install-proto: true
@@ -100,7 +100,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@support/turbo-addected-rslib-tests
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -136,7 +136,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup caches
         id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         with:
           install-proto: "true"
           skip-turbo-cache: "false"
@@ -144,20 +144,20 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@support/turbo-addected-rslib-tests
         id: setup-test-desktop
         with:
           build_type: testing
           turborepo-server-port: ${{ steps.caches.outputs.port }}
       - name: Setup Speculos image and Coin Apps
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@support/turbo-addected-rslib-tests
         with:
           coinapps_path: coin-apps
           speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Set test environment variables
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@support/turbo-addected-rslib-tests
         with:
           enable_broadcast: false
           build_type: testing
@@ -166,7 +166,7 @@ jobs:
         run: echo "filter=@smoke" >> $GITHUB_OUTPUT
         shell: bash
       - name: UI e2e smoke tests
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@support/turbo-addected-rslib-tests
         with:
           speculos_device: nanoSP
           test_filter: ${{ steps.test-filter.outputs.filter }}
@@ -188,7 +188,7 @@ jobs:
       - name: Publish Allure report
         id: publish-allure
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/turbo-addected-rslib-tests
         with:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
@@ -217,7 +217,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup caches
         id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         with:
           install-proto: "true"
           skip-turbo-cache: "false"
@@ -225,7 +225,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@support/turbo-addected-rslib-tests
         id: setup-test-desktop
         with:
           skip_ruby: true
@@ -237,7 +237,7 @@ jobs:
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/upload-images@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/upload-images@support/turbo-addected-rslib-tests
         id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
@@ -301,7 +301,7 @@ jobs:
             fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
       - name: prepare comment with screenshots
         id: comment
-        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@support/turbo-addected-rslib-tests
         with:
           images: images.json
           no-actor: true

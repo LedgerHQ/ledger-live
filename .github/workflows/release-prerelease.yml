@@ -37,9 +37,9 @@ jobs:
           ref: ${{ inputs.ref }}
           token: ${{ steps.generate-token.outputs.token }}
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@support/turbo-addected-rslib-tests
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/turbo-addected-rslib-tests
         id: setup-caches
         with:
           install-proto: true
@@ -49,7 +49,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'release') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@support/turbo-addected-rslib-tests
         with:
           from_level: patch
           to_level: minor
@@ -57,7 +57,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@support/turbo-addected-rslib-tests
         with:
           from_level: minor
           to_level: patch
@@ -65,15 +65,15 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@support/turbo-addected-rslib-tests
         with:
           from_level: major
           to_level: patch
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/turbo-addected-rslib-tests
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/turbo-addected-rslib-tests
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -81,11 +81,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/turbo-addected-rslib-tests
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@chore/turbo-affected-rslib
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/turbo-addected-rslib-tests
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile

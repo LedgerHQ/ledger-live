@@ -40,7 +40,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
       - name: Run the bot
-        uses: LedgerHQ/ledger-live/tools/actions/composites/bot@chore/turbo-affected-rslib
+        uses: LedgerHQ/ledger-live/tools/actions/composites/bot@support/turbo-addected-rslib-tests
         id: bot
         timeout-minutes: 120
         with:
