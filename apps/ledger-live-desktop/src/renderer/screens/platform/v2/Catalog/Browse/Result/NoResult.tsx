@@ -1,15 +1,15 @@
 import React, { useCallback } from "react";
-import { shell } from "electron";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { HTTP_REGEX } from "@ledgerhq/live-common/wallet-api/constants";
 import { useTranslation, Trans } from "react-i18next";
+import { openURL } from "~/renderer/linking";
 import { Search } from "../../../hooks";
 
 export function NoResult({ input }: Pick<Search, "input">) {
   const { t } = useTranslation();
 
   const onClickLink = useCallback(() => {
-    shell.openExternal(input);
+    openURL(input, "PlatformCatalogSearch");
   }, [input]);
 
   return (

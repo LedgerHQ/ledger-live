@@ -8,7 +8,6 @@ import {
   ipcMain,
   session,
   webContents,
-  shell,
   type BrowserWindow,
   dialog,
   protocol,
@@ -34,6 +33,7 @@ import {
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
 import { setupTransportHandlers, cleanupTransports } from "./transportHandler";
+import { openURL } from "./openURL";
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
@@ -185,7 +185,7 @@ app.on("ready", async () => {
     wc?.setWindowOpenHandler(({ url }) => {
       const protocol = new URL(url).protocol;
       if (["https:", "http:"].includes(protocol)) {
-        shell.openExternal(url);
+        openURL(url);
       }
       return {
         action: "deny",
