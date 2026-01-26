@@ -44,7 +44,7 @@ const AssetDynamicContent: React.FC<Props> = ({ currency }) => {
   if (!dynamicContentCard) return null;
 
   return (
-    <LogContentCardWrapper id={dynamicContentCard.id}>
+    <LogContentCardWrapper id={dynamicContentCard.id} location={dynamicContentCard.location}>
       <Flex mt={6}>
         <SideImageCard
           title={dynamicContentCard.title}

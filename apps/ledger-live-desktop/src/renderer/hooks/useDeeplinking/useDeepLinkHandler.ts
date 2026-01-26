@@ -80,10 +80,10 @@ export function useDeepLinkHandler() {
   );
 
   const handler = useCallback(
-    (_: unknown, deeplink: string) => {
+    (deeplink: string, triggeredAppStart: boolean) => {
       const parsed = parseDeepLink(deeplink);
 
-      trackDeeplinkingEvent(parsed.tracking);
+      trackDeeplinkingEvent(parsed.tracking, triggeredAppStart);
 
       const route = createRoute(parsed);
 
