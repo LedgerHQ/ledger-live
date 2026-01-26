@@ -1,10 +1,9 @@
 name: "[Mobile] E2E Lint & Typecheck - PR"
+
 on:
+  pull_request: ~
   merge_group:
     types: [checks_requested]
-  pull_request:
-    paths:
-      - "e2e/mobile/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -19,7 +18,7 @@ permissions:
 jobs:
   pre_job:
     name: "Skip Check"
-    if: ${{!github.event.pull_request.head.repo.fork}}
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip == 'true' }}
@@ -29,12 +28,22 @@ jobs:
         with:
           concurrent_skipping: "never"
           skip_after_successful_duplicate: "true"
-          do_not_skip: '["pull_request", "workflow_dispatch", "schedule"]'
+          do_not_skip: '["pull_request","workflow_dispatch","schedule"]'
+
+  determine-affected:
+    name: "Turbo Affected"
+    needs: pre_job
+    if: ${{ !github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true' }}
+    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
+    with:
+      head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
+      base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
 
   test-mobile-e2e-lint:
-    name: "Test Mobile E2E Lint & Typecheck"
-    needs: pre_job
-    if: ${{!github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true'}}
+    name: "Mobile E2E Lint & Typecheck"
+    needs: determine-affected
+    if: >-
+      ${{ !github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/mobile')}}
     runs-on: ubuntu-22.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
