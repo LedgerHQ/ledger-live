@@ -84,7 +84,7 @@ jobs:
     name: "Test Libraries"
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@support/linting-parallelism
     secrets: inherit
 
   test-design-system:
