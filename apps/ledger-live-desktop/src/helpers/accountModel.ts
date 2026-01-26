@@ -6,15 +6,7 @@ import { fromAccountRaw, toAccountRaw } from "@ledgerhq/live-common/account/inde
 import { Account, AccountRaw, Operation, AccountUserData } from "@ledgerhq/types-live";
 import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/store";
 
-/**
- * @memberof models/account
- */
-export const opRetentionStategy =
-  (maxDaysOld: number, keepFirst: number) =>
-  (op: Operation, index: number): boolean =>
-    index < keepFirst || Date.now() - op.date.getTime() < 1000 * 60 * 60 * 24 * maxDaysOld;
-
-const opRetentionFilter = opRetentionStategy(366, 500);
+export const opRetentionFilter = (_op: Operation, index: number): boolean => index < 20;
 
 const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDataModel({
   migrations: [
@@ -85,6 +77,10 @@ const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDa
       {
         ...account,
         operations: account.operations.filter(opRetentionFilter),
+        subAccounts: account.subAccounts?.map(subAccount => ({
+          ...subAccount,
+          operations: subAccount.operations.filter(opRetentionFilter),
+        })),
       },
       userData,
     ),
