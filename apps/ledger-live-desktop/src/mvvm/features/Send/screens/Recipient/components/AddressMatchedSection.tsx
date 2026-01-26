@@ -4,7 +4,7 @@ import { Banner, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen
 import { formatAddress } from "LLD/features/ModularDialog/components/Address/formatAddress";
 import { AddressListItem } from "./AddressListItem";
 import { AccountRowWithBalance } from "./AccountRowWithBalance";
-import { formatRelativeDate } from "../utils/dateFormatter";
+import { formatRelativeDate } from "@ledgerhq/live-common/flows/send/recipient/utils/dateFormatter";
 import type { AddressSearchResult } from "../types";
 
 type AddressMatchedSectionProps = Readonly<{

@@ -6,14 +6,14 @@ export type SendFlowState = Readonly<{
   params: SendFlowInitParams | null;
 }>;
 
-export const INITIAL_STATE: SendFlowState = {
+const initialState: SendFlowState = {
   isOpen: false,
   params: null,
 };
 
 const sendFlowSlice = createSlice({
   name: "sendFlow",
-  initialState: INITIAL_STATE,
+  initialState,
   reducers: {
     openSendFlow: (state, action: PayloadAction<SendFlowInitParams>) => {
       state.isOpen = true;

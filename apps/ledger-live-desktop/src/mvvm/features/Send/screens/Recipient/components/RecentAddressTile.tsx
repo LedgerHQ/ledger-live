@@ -14,7 +14,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { Wallet, Trash, MoreVertical, LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { formatAddress } from "LLD/features/ModularDialog/components/Address/formatAddress";
-import { formatRelativeDate } from "../utils/dateFormatter";
+import { formatRelativeDate } from "@ledgerhq/live-common/flows/send/recipient/utils/dateFormatter";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";

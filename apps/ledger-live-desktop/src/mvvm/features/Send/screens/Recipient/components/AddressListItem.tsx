@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { Wallet, LedgerLogo, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
 import { formatAddress } from "LLD/features/ModularDialog/components/Address/formatAddress";
-import { formatRelativeDate } from "../utils/dateFormatter";
+import { formatRelativeDate } from "@ledgerhq/live-common/flows/send/recipient/utils/dateFormatter";
 import { cn } from "LLD/utils/cn";
 import type { AddressListItemProps } from "../types";
 

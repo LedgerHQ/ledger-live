@@ -1,17 +1,13 @@
 import { useState, useMemo, useCallback, useRef } from "react";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "../../../../bridge/index";
+import { getMainAccount } from "../../../../account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { BridgeValidationErrors, BridgeValidationWarnings } from "../types";
-
-export type BridgeRecipientValidationResult = {
-  errors: BridgeValidationErrors;
-  warnings: BridgeValidationWarnings;
-  isLoading: boolean;
-  status: TransactionStatus | null;
-  cleanup: () => void;
-};
+import type { TransactionStatus } from "../../../../generated/types";
+import type {
+  BridgeValidationErrors,
+  BridgeValidationWarnings,
+  BridgeRecipientValidationResult,
+} from "../types";
 
 type UseBridgeRecipientValidationProps = {
   recipient: string;
@@ -47,10 +43,9 @@ export function useBridgeRecipientValidation({
 
   const lastRecipientRef = useRef<string>("");
   const validationTriggeredRef = useRef<boolean>(false);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Cleanup function to clear timeout and abort pending validations
   const cleanup = useCallback(() => {
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current);
@@ -63,7 +58,6 @@ export function useBridgeRecipientValidation({
   }, []);
 
   const validateRecipient = useCallback(async () => {
-    // Clear timeout reference when callback executes
     debounceTimeoutRef.current = null;
 
     if (!account || !recipient || !enabled) {
@@ -76,7 +70,6 @@ export function useBridgeRecipientValidation({
       return;
     }
 
-    // Cancel any pending validation
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }

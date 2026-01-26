@@ -8,7 +8,7 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-import { useBridgeRecipientValidation } from "../useBridgeRecipientValidation";
+import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
 import { useFormattedAccountBalance } from "../useFormattedAccountBalance";
 import { useMaybeAccountName, useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
@@ -21,7 +21,7 @@ jest.mock("LLD/hooks/redux");
 jest.mock("@ledgerhq/domain-service/hooks/index");
 jest.mock("@ledgerhq/coin-framework/sanction/index");
 jest.mock("@ledgerhq/live-common/account/index");
-jest.mock("../useBridgeRecipientValidation");
+jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation");
 jest.mock("../useFormattedAccountBalance");
 jest.mock("~/renderer/reducers/wallet");
 jest.mock("@ledgerhq/live-common/bridge/descriptor");
