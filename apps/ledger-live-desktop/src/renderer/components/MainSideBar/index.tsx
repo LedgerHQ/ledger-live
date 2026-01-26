@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { Link, useNavigate, useLocation } from "react-router";
@@ -39,6 +39,7 @@ import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import RecoverStatusDot from "~/renderer/components/MainSideBar/RecoverStatusDot";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
+import { HIDE_BAR_THRESHOLD } from "~/renderer/screens/dashboard/AssetDistribution/constants";
 
 type LocationType = ReturnType<typeof useLocation>;
 
@@ -249,7 +250,28 @@ const MainSideBar = () => {
   const recoverFeature = useFeature("protectServicesDesktop");
   const recoverHomePath = useAccountPath(recoverFeature);
 
-  const { shouldDisplayMarketBanner: isMarketBannerEnabled } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayMarketBanner: isMarketBannerEnabled, isEnabled: isWallet40Enabled } =
+    useWalletFeaturesConfig("desktop");
+
+  /**
+   * Auto-collapse sidebar when wallet40 is enabled and window is narrow.
+   * Uses the same threshold as the AssetDistribution responsive layout.
+   */
+  useEffect(() => {
+    if (!isWallet40Enabled) return;
+
+    const handleResize = () => {
+      if (window.innerWidth <= HIDE_BAR_THRESHOLD && !collapsed) {
+        dispatch(setSidebarCollapsed(true));
+      }
+    };
+
+    // Check on mount
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isWallet40Enabled, collapsed, dispatch]);
 
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
@@ -388,7 +410,7 @@ const MainSideBar = () => {
               onClick={handleCollapse}
               data-testid="drawer-collapse-button"
             >
-              <Icons.ChevronRight size="S" />
+              <Icons.ChevronRight size="S" color="neutral.c70" />
             </Collapser>
 
             <SideBarScrollContainer>

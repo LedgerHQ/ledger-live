@@ -17,6 +17,7 @@ export interface PortfolioViewModelResult {
   readonly shouldDisplayMarketBanner: boolean;
   readonly shouldDisplayGraphRework: boolean;
   readonly shouldDisplaySwapWebView: boolean;
+  readonly isWallet40Enabled: boolean;
   readonly filterOperations: (operation: Operation, account: AccountLike) => boolean;
   readonly accounts: AccountLike[];
   readonly t: TFunction;
@@ -25,8 +26,11 @@ export interface PortfolioViewModelResult {
 export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   const accounts = useSelector(accountsSelector);
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
-  const { shouldDisplayMarketBanner, shouldDisplayGraphRework } =
-    useWalletFeaturesConfig("desktop");
+  const {
+    shouldDisplayMarketBanner,
+    shouldDisplayGraphRework,
+    isEnabled: isWallet40Enabled,
+  } = useWalletFeaturesConfig("desktop");
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio");
   const { t } = useTranslation();
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
@@ -65,6 +69,7 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplaySwapWebView,
     filterOperations,
     accounts,
+    isWallet40Enabled,
     t,
   };
 };
