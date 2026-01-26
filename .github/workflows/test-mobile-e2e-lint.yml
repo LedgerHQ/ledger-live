@@ -1,0 +1,62 @@
+name: "[Mobile] E2E Lint & Typecheck - PR"
+on:
+  merge_group:
+    types: [checks_requested]
+  pull_request:
+    paths:
+      - "e2e/mobile/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+  actions: write
+
+jobs:
+  pre_job:
+    name: "Skip Check"
+    if: ${{!github.event.pull_request.head.repo.fork}}
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip == 'true' }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          concurrent_skipping: "never"
+          skip_after_successful_duplicate: "true"
+          do_not_skip: '["pull_request", "workflow_dispatch", "schedule"]'
+
+  test-mobile-e2e-lint:
+    name: "Test Mobile E2E Lint & Typecheck"
+    needs: pre_job
+    if: ${{!github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true'}}
+    runs-on: ubuntu-22.04
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: true
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-mobile-e2e-tests..." --no-frozen-lockfile --unsafe-perm
+
+      - name: Run lint and typecheck
+        run: pnpm turbo lint typecheck --filter="ledger-live-mobile-e2e-tests" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
