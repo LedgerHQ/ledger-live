@@ -5,7 +5,7 @@ export type FlowStep = string;
 export const FLOW_NAVIGATION_DIRECTION = {
   FORWARD: "FORWARD",
   BACKWARD: "BACKWARD",
-};
+} as const;
 
 export type FlowNavigationDirection =
   (typeof FLOW_NAVIGATION_DIRECTION)[keyof typeof FLOW_NAVIGATION_DIRECTION];
@@ -14,7 +14,7 @@ export const FLOW_STATUS = {
   IDLE: "IDLE",
   ERROR: "ERROR",
   SUCCESS: "SUCCESS",
-};
+} as const;
 
 export type FlowStatus = (typeof FLOW_STATUS)[keyof typeof FLOW_STATUS];
 
@@ -22,11 +22,6 @@ export type FlowStepConfig<TStep extends FlowStep = FlowStep> = Readonly<{
   id: TStep;
   canGoBack: boolean;
   showHeader?: boolean;
-}>;
-
-export type AnimationConfig = Readonly<{
-  forward?: string;
-  backward?: string;
 }>;
 
 export type FlowNavigationState<TStep extends FlowStep = FlowStep> = Readonly<{
@@ -71,15 +66,17 @@ export type FlowConfig<
  */
 export type FlowWizardContextValue<
   TStep extends FlowStep = FlowStep,
+  TContextValue = unknown,
   TStepConfig extends FlowStepConfig<TStep> = FlowStepConfig<TStep>,
-> = Readonly<{
-  navigation: FlowNavigationActions<TStep>;
-  currentStep: TStep;
-  direction: FlowNavigationDirection;
-  currentStepConfig: TStepConfig;
-  currentStepRenderer: StepRenderer | null;
-  stepHistory: readonly TStep[];
-}>;
+> = TContextValue &
+  Readonly<{
+    navigation: FlowNavigationActions<TStep>;
+    currentStep: TStep;
+    direction: FlowNavigationDirection;
+    currentStepConfig: TStepConfig;
+    currentStepRenderer: StepRenderer | null;
+    stepHistory: readonly TStep[];
+  }>;
 
 export type UseFlowWizardNavigationParams<
   TStep extends FlowStep = FlowStep,

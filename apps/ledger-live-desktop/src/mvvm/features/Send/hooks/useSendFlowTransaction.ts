@@ -4,7 +4,11 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { applyMemoToTransaction } from "@ledgerhq/live-common/bridge/descriptor";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { SendFlowTransactionState, SendFlowTransactionActions, RecipientData } from "../types";
+import type {
+  SendFlowTransactionState,
+  SendFlowTransactionActions,
+  RecipientData,
+} from "@ledgerhq/live-common/flows/send/types";
 
 type UseSendFlowTransactionParams = Readonly<{
   account: AccountLike | null;

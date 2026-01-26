@@ -5,7 +5,7 @@ import { useSendFlowBusinessLogic } from "./hooks/useSendFlowState";
 import { SEND_FLOW_CONFIG } from "./constants";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import type { SendFlowStep, SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
-import type { SendStepConfig } from "./types";
+import type { SendStepConfig as DesktopSendStepConfig } from "./types";
 import { FlowWizardOrchestrator } from "../FlowWizard/FlowWizardOrchestrator";
 
 type SendFlowStepRegistry = StepRegistry<SendFlowStep>;
@@ -33,7 +33,7 @@ export function SendFlowOrchestrator({
   );
 
   return (
-    <FlowWizardOrchestrator<SendFlowStep, typeof businessContext, SendStepConfig>
+    <FlowWizardOrchestrator<SendFlowStep, typeof businessContext, DesktopSendStepConfig>
       flowConfig={flowConfig}
       stepRegistry={stepRegistry}
       contextValue={businessContext}
