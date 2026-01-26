@@ -25,10 +25,63 @@ import {
   EtherscanInternalTransaction,
   EtherscanOperation,
 } from "../../types";
-import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
+import { ExplorerApi, isEtherscanLikeExplorerConfig, NO_TOKEN } from "./types";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
+
+// Pagination state types for height-based pagination
+type EndpointState = {
+  lastBlock: number; // Last block height processed
+  done: boolean; // No more results from this endpoint
+};
+
+// Pagination state for etherscan API
+// each endpoint has its own state
+type EtherscanPaginationState = {
+  coin: EndpointState;
+  internal: EndpointState;
+  token: EndpointState;
+  nft: EndpointState;
+};
+
+function createDefaultState(minHeight: number): EtherscanPaginationState {
+  return {
+    coin: { lastBlock: minHeight, done: false },
+    internal: { lastBlock: minHeight, done: false },
+    token: { lastBlock: minHeight, done: false },
+    nft: { lastBlock: minHeight, done: false },
+  };
+}
+
+export function deserializePagingToken(
+  token: string | undefined,
+  minHeight: number,
+): EtherscanPaginationState {
+  if (!token) return createDefaultState(minHeight);
+  // if deserialization fails, an error is thrown
+  return JSON.parse(Buffer.from(token, "base64").toString("utf-8"));
+}
+
+export function serializePagingToken(state: EtherscanPaginationState): string {
+  const allDone = Object.values(state).every(s => s.done);
+  if (allDone) return NO_TOKEN;
+  return Buffer.from(JSON.stringify(state)).toString("base64");
+}
+
+function getMaxBlockFromOperations(ops: Operation[], sort: "asc" | "desc"): number {
+  if (ops.length === 0) return 0;
+  // Results are already sorted, take head for desc or tail for asc
+  const op = sort === "desc" ? ops[0] : ops[ops.length - 1];
+  return op.blockHeight ?? 0;
+}
+
+// Result type for individual endpoint fetches
+type EndpointResult = {
+  operations: Operation[];
+  done: boolean;
+  maxBlock: number;
+};
 
 export async function fetchWithRetries<T>(
   params: AxiosRequestConfig,
@@ -69,7 +122,9 @@ export const getLastCoinOperations = async (
   accountId: string,
   fromBlock: number,
   toBlock?: number,
-): Promise<Operation[]> => {
+  limit?: number,
+  sort: "asc" | "desc" = "desc",
+): Promise<EndpointResult> => {
   const config = getCoinConfig(currency).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
@@ -87,13 +142,21 @@ export const getLastCoinOperations = async (
     params: {
       tag: "latest",
       page: 1,
-      sort: "desc",
+      ...(limit !== undefined && { offset: limit }),
+      sort,
       startBlock: fromBlock,
       endBlock: toBlock,
     },
   });
 
-  return ops.map(tx => etherscanOperationToOperations(accountId, tx)).flat();
+  const operations = ops.map(tx => etherscanOperationToOperations(accountId, tx)).flat();
+  const maxBlock = getMaxBlockFromOperations(operations, sort);
+
+  return {
+    operations,
+    done: ops.length === 0,
+    maxBlock,
+  };
 };
 
 /**
@@ -105,7 +168,9 @@ export const getLastTokenOperations = async (
   accountId: string,
   fromBlock: number,
   toBlock?: number,
-): Promise<Operation[]> => {
+  limit?: number,
+  sort: "asc" | "desc" = "desc",
+): Promise<EndpointResult> => {
   const config = getCoinConfig(currency).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
@@ -123,7 +188,8 @@ export const getLastTokenOperations = async (
     params: {
       tag: "latest",
       page: 1,
-      sort: "desc",
+      ...(limit !== undefined && { offset: limit }),
+      sort,
       startBlock: fromBlock,
       endBlock: toBlock,
     },
@@ -150,7 +216,14 @@ export const getLastTokenOperations = async (
     events.map((event, index) => etherscanERC20EventToOperations(accountId, event, index)),
   );
 
-  return allOperationsArrays.flat(2);
+  const operations = allOperationsArrays.flat(2);
+  const maxBlock = getMaxBlockFromOperations(operations, sort);
+
+  return {
+    operations,
+    done: ops.length === 0,
+    maxBlock,
+  };
 };
 
 /**
@@ -162,7 +235,9 @@ export const getLastERC721Operations = async (
   accountId: string,
   fromBlock: number,
   toBlock?: number,
-): Promise<Operation[]> => {
+  limit?: number,
+  sort: "asc" | "desc" = "desc",
+): Promise<EndpointResult> => {
   const config = getCoinConfig(currency).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
@@ -180,7 +255,8 @@ export const getLastERC721Operations = async (
     params: {
       tag: "latest",
       page: 1,
-      sort: "desc",
+      ...(limit !== undefined && { offset: limit }),
+      sort,
       startBlock: fromBlock,
       endBlock: toBlock,
     },
@@ -203,11 +279,18 @@ export const getLastERC721Operations = async (
     opsByHash[op.hash].push(op);
   }
 
-  return Object.values(opsByHash)
+  const operations = Object.values(opsByHash)
     .map(events =>
       events.map((event, index) => etherscanERC721EventToOperations(accountId, event, index)),
     )
     .flat(2);
+  const maxBlock = getMaxBlockFromOperations(operations, sort);
+
+  return {
+    operations,
+    done: ops.length === 0,
+    maxBlock,
+  };
 };
 
 /**
@@ -219,7 +302,9 @@ export const getLastERC1155Operations = async (
   accountId: string,
   fromBlock: number,
   toBlock?: number,
-): Promise<Operation[]> => {
+  limit?: number,
+  sort: "asc" | "desc" = "desc",
+): Promise<EndpointResult> => {
   const config = getCoinConfig(currency).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
@@ -228,7 +313,7 @@ export const getLastERC1155Operations = async (
 
   // Blockscout and Corescan have no ERC1155 support yet
   if (["blockscout", "corescan"].includes(explorer.type)) {
-    return [];
+    return { operations: [], done: true, maxBlock: 0 };
   }
 
   const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
@@ -237,7 +322,8 @@ export const getLastERC1155Operations = async (
     params: {
       tag: "latest",
       page: 1,
-      sort: "desc",
+      ...(limit !== undefined && { offset: limit }),
+      sort,
       startBlock: fromBlock,
       endBlock: toBlock,
     },
@@ -260,11 +346,18 @@ export const getLastERC1155Operations = async (
     opsByHash[op.hash].push(op);
   }
 
-  return Object.values(opsByHash)
+  const operations = Object.values(opsByHash)
     .map(events =>
       events.map((event, index) => etherscanERC1155EventToOperations(accountId, event, index)),
     )
     .flat(2);
+  const maxBlock = getMaxBlockFromOperations(operations, sort);
+
+  return {
+    operations,
+    done: ops.length === 0,
+    maxBlock,
+  };
 };
 
 /**
@@ -276,38 +369,59 @@ export const getLastNftOperations = async (
   accountId: string,
   fromBlock: number,
   toBlock?: number,
-): Promise<Operation[]> => {
+  limit?: number,
+  sort: "asc" | "desc" = "desc",
+): Promise<EndpointResult> => {
   const config = getCoinConfig(currency).info;
   if (!config.showNfts) {
-    return [];
+    return { operations: [], done: true, maxBlock: 0 };
   }
 
-  const erc721Ops = await getLastERC721Operations(currency, address, accountId, fromBlock, toBlock);
-  const erc1155Ops = await getLastERC1155Operations(
+  const erc721Result = await getLastERC721Operations(
     currency,
     address,
     accountId,
     fromBlock,
     toBlock,
+    limit,
+    sort,
+  );
+  const erc1155Result = await getLastERC1155Operations(
+    currency,
+    address,
+    accountId,
+    fromBlock,
+    toBlock,
+    limit,
+    sort,
   );
 
-  return [...erc721Ops, ...erc1155Ops].sort(
-    // sorting DESC order
-    (a, b) => b.date.getTime() - a.date.getTime(),
+  const operations = [...erc721Result.operations, ...erc1155Result.operations].sort(
+    // sorting by date based on sort parameter
+    (a, b) =>
+      sort === "desc" ? b.date.getTime() - a.date.getTime() : a.date.getTime() - b.date.getTime(),
   );
+  const maxBlock = Math.max(erc721Result.maxBlock, erc1155Result.maxBlock);
+
+  return {
+    operations,
+    done: erc721Result.done && erc1155Result.done,
+    maxBlock,
+  };
 };
 
 /**
  * Get all the latest internal transactions
  */
-
 export const getLastInternalOperations = async (
   currency: CryptoCurrency,
   address: string,
   accountId: string,
   fromBlock: number,
   toBlock?: number,
-): Promise<Operation[]> => {
+  limit?: number,
+  sort: "asc" | "desc" = "desc",
+): Promise<EndpointResult> => {
   const config = getCoinConfig(currency).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
@@ -315,7 +429,7 @@ export const getLastInternalOperations = async (
   }
 
   // Corescan has no support to get internal operations by address
-  if (explorer.type === "corescan") return [];
+  if (explorer.type === "corescan") return { operations: [], done: true, maxBlock: 0 };
 
   const ops = await fetchWithRetries<EtherscanInternalTransaction[]>({
     method: "GET",
@@ -323,7 +437,8 @@ export const getLastInternalOperations = async (
     params: {
       tag: "latest",
       page: 1,
-      sort: "desc",
+      ...(limit !== undefined && { offset: limit }),
+      sort,
       startBlock: fromBlock,
       endBlock: toBlock,
     },
@@ -343,13 +458,20 @@ export const getLastInternalOperations = async (
     opsByHash[op.hash].push(op);
   }
 
-  return Object.values(opsByHash)
+  const operations = Object.values(opsByHash)
     .map(internalTxs =>
       internalTxs.map((internalTx, index) =>
         etherscanInternalTransactionToOperations(accountId, internalTx, index),
       ),
     )
     .flat(2);
+  const maxBlock = getMaxBlockFromOperations(operations, sort);
+
+  return {
+    operations,
+    done: ops.length === 0,
+    maxBlock,
+  };
 };
 
 /**
@@ -366,49 +488,100 @@ export const getLastOperations = makeLRUCache<
     accountId: string,
     fromBlock: number,
     toBlock?: number,
+    pagingToken?: string,
+    limit?: number,
+    order?: "asc" | "desc",
   ],
   {
     lastCoinOperations: Operation[];
     lastTokenOperations: Operation[];
     lastNftOperations: Operation[];
     lastInternalOperations: Operation[];
+    nextPagingToken: string;
   }
 >(
-  async (currency, address, accountId, fromBlock, toBlock) => {
+  async (currency, address, accountId, fromBlock, toBlock, pagingToken, limit, order = "desc") => {
     try {
-      const lastCoinOperations = await getLastCoinOperations(
-        currency,
-        address,
-        accountId,
-        fromBlock,
-        toBlock,
-      );
+      const state = deserializePagingToken(pagingToken, fromBlock);
+      const emptyResult: EndpointResult = { operations: [], done: true, maxBlock: 0 };
 
-      const lastInternalOperations = await getLastInternalOperations(
-        currency,
-        address,
-        accountId,
-        fromBlock,
-        toBlock,
-      );
+      const coinResult = state.coin.done
+        ? emptyResult
+        : await getLastCoinOperations(
+          currency,
+          address,
+          accountId,
+          state.coin.lastBlock,
+          toBlock,
+          limit,
+          order,
+        );
 
-      const lastTokenOperations = await getLastTokenOperations(
-        currency,
-        address,
-        accountId,
-        fromBlock,
-        toBlock,
-      );
+      const internalResult = state.internal.done
+        ? emptyResult
+        : await getLastInternalOperations(
+          currency,
+          address,
+          accountId,
+          state.internal.lastBlock,
+          toBlock,
+          limit,
+          order,
+        );
 
-      const lastNftOperations = isNFTActive(currency)
-        ? await getLastNftOperations(currency, address, accountId, fromBlock, toBlock)
-        : [];
+      const tokenResult = state.token.done
+        ? emptyResult
+        : await getLastTokenOperations(
+          currency,
+          address,
+          accountId,
+          state.token.lastBlock,
+          toBlock,
+          limit,
+          order,
+        );
+
+      const nftResult =
+        isNFTActive(currency) && !state.nft.done
+          ? await getLastNftOperations(
+            currency,
+            address,
+            accountId,
+            state.nft.lastBlock,
+            toBlock,
+            limit,
+            order,
+          )
+          : emptyResult;
+
+      // Update state with new lastBlock values
+      // done = true only when results.length === 0 (conservative approach)
+      const nextState: EtherscanPaginationState = {
+        coin: {
+          lastBlock: coinResult.maxBlock > 0 ? coinResult.maxBlock + 1 : state.coin.lastBlock,
+          done: coinResult.done,
+        },
+        internal: {
+          lastBlock:
+            internalResult.maxBlock > 0 ? internalResult.maxBlock + 1 : state.internal.lastBlock,
+          done: internalResult.done,
+        },
+        token: {
+          lastBlock: tokenResult.maxBlock > 0 ? tokenResult.maxBlock + 1 : state.token.lastBlock,
+          done: tokenResult.done,
+        },
+        nft: {
+          lastBlock: nftResult.maxBlock > 0 ? nftResult.maxBlock + 1 : state.nft.lastBlock,
+          done: nftResult.done || !isNFTActive(currency),
+        },
+      };
 
       return {
-        lastCoinOperations,
-        lastTokenOperations,
-        lastNftOperations,
-        lastInternalOperations,
+        lastCoinOperations: coinResult.operations,
+        lastTokenOperations: tokenResult.operations,
+        lastNftOperations: nftResult.operations,
+        lastInternalOperations: internalResult.operations,
+        nextPagingToken: serializePagingToken(nextState),
       };
     } catch (err) {
       log("EVM getLastOperations", "Error while fetching data from Etherscan like API", err);
@@ -423,7 +596,8 @@ export const getLastOperations = makeLRUCache<
       });
     }
   },
-  (_currency, _address, accountId, fromBlock, toBlock) => accountId + fromBlock + toBlock,
+  (_currency, _address, accountId, fromBlock, toBlock, pagingToken, limit, order) =>
+    `${accountId}:${fromBlock}:${toBlock ?? ""}:${pagingToken ?? ""}:${limit ?? ""}:${order ?? "desc"}`,
   { ttl: ETHERSCAN_TIMEOUT },
 );
 

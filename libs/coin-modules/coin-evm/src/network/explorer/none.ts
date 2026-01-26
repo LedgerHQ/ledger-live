@@ -1,7 +1,8 @@
-import { ExplorerApi } from "./types";
+import { ExplorerApi, NO_TOKEN } from "./types";
 
 /**
  * Returns all operation types from an address
+ * No explorer configured - returns empty results
  */
 export const getLastOperations: ExplorerApi["getLastOperations"] = async () => {
   return {
@@ -9,6 +10,7 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async () => {
     lastTokenOperations: [],
     lastNftOperations: [],
     lastInternalOperations: [],
+    nextPagingToken: NO_TOKEN,
   };
 };
 

@@ -22,6 +22,8 @@ import {
   etherscanTokenOperations,
 } from "../../fixtures/etherscan.fixtures";
 import * as ETHERSCAN_API from "./etherscan";
+import { deserializePagingToken, serializePagingToken } from "./etherscan";
+import { NO_TOKEN } from "./types";
 
 setupMockCryptoAssetsStore({
   getTokensSyncHash: async () => "0",
@@ -188,10 +190,10 @@ describe("EVM Family", () => {
           0,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           etherscanCoinOperations.map(op => etherscanOperationToOperations(account.id, op)).flat(),
         );
-        expect(response.length).toBe(4);
+        expect(response.operations.length).toBe(4);
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
           url: `mock?module=account&action=txlist&address=${account.freshAddress}`,
@@ -218,10 +220,10 @@ describe("EVM Family", () => {
           50,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           etherscanCoinOperations.map(op => etherscanOperationToOperations(account.id, op)).flat(),
         );
-        expect(response.length).toBe(4);
+        expect(response.operations.length).toBe(4);
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
           url: `mock?module=account&action=txlist&address=${account.freshAddress}`,
@@ -249,10 +251,10 @@ describe("EVM Family", () => {
           100,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           etherscanCoinOperations.map(op => etherscanOperationToOperations(account.id, op)).flat(),
         );
-        expect(response.length).toBe(4);
+        expect(response.operations.length).toBe(4);
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
           url: `mock?module=account&action=txlist&address=${account.freshAddress}`,
@@ -326,7 +328,7 @@ describe("EVM Family", () => {
           0,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           [
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
@@ -359,7 +361,7 @@ describe("EVM Family", () => {
           50,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           [
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
@@ -393,7 +395,7 @@ describe("EVM Family", () => {
           100,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           [
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
@@ -473,7 +475,7 @@ describe("EVM Family", () => {
           0,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           [
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[0], 0),
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[1], 0),
@@ -506,7 +508,7 @@ describe("EVM Family", () => {
           50,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           [
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[0], 0),
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[1], 0),
@@ -540,7 +542,7 @@ describe("EVM Family", () => {
           100,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           [
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[0], 0),
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[1], 0),
@@ -620,7 +622,7 @@ describe("EVM Family", () => {
           0,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           [
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[0], 0),
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[1], 0),
@@ -653,7 +655,7 @@ describe("EVM Family", () => {
           50,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           [
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[0], 0),
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[1], 0),
@@ -687,7 +689,7 @@ describe("EVM Family", () => {
           100,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           [
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[0], 0),
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[1], 0),
@@ -725,8 +727,8 @@ describe("EVM Family", () => {
           0,
         );
 
-        expect(response).toEqual(
-          response.slice().sort((a, b) => b.date.getTime() - a.date.getTime()),
+        expect(response.operations).toEqual(
+          response.operations.slice().sort((a, b) => b.date.getTime() - a.date.getTime()),
         );
       });
     });
@@ -790,7 +792,7 @@ describe("EVM Family", () => {
           0,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           [
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
@@ -823,7 +825,7 @@ describe("EVM Family", () => {
           50,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           [
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
@@ -857,7 +859,7 @@ describe("EVM Family", () => {
           100,
         );
 
-        expect(response).toEqual(
+        expect(response.operations).toEqual(
           [
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
@@ -904,8 +906,125 @@ describe("EVM Family", () => {
           account.id,
           0,
         );
-        expect(response).toEqual([]);
+        expect(response.operations).toEqual([]);
       });
+    });
+  });
+});
+
+describe("Etherscan pagination helpers", () => {
+  describe("deserializePagingToken", () => {
+    it("returns default state when token is undefined", () => {
+      expect(deserializePagingToken(undefined, 100)).toEqual({
+        coin: { lastBlock: 100, done: false },
+        internal: { lastBlock: 100, done: false },
+        token: { lastBlock: 100, done: false },
+        nft: { lastBlock: 100, done: false },
+      });
+    });
+
+    it("returns default state when token is empty string", () => {
+      expect(deserializePagingToken("", 50)).toEqual({
+        coin: { lastBlock: 50, done: false },
+        internal: { lastBlock: 50, done: false },
+        token: { lastBlock: 50, done: false },
+        nft: { lastBlock: 50, done: false },
+      });
+    });
+
+    it("throws when token is invalid base64", () => {
+      expect(() => deserializePagingToken("not-valid-base64!!!", 200)).toThrow();
+    });
+
+    it("throws when token is valid base64 but invalid JSON", () => {
+      const invalidJson = Buffer.from("not json").toString("base64");
+      expect(() => deserializePagingToken(invalidJson, 300)).toThrow();
+    });
+
+    it("deserializes valid token correctly", () => {
+      const state = {
+        coin: { lastBlock: 1000, done: true },
+        internal: { lastBlock: 500, done: false },
+        token: { lastBlock: 750, done: true },
+        nft: { lastBlock: 600, done: false },
+      };
+      const token = Buffer.from(JSON.stringify(state)).toString("base64");
+
+      expect(deserializePagingToken(token, 0)).toEqual(state);
+    });
+  });
+
+  describe("serializePagingToken", () => {
+    it("returns NO_TOKEN when all endpoints are done", () => {
+      const state = {
+        coin: { lastBlock: 1000, done: true },
+        internal: { lastBlock: 500, done: true },
+        token: { lastBlock: 750, done: true },
+        nft: { lastBlock: 600, done: true },
+      };
+
+      expect(serializePagingToken(state)).toBe(NO_TOKEN);
+    });
+
+    it("returns serialized token when at least one endpoint is not done", () => {
+      const state = {
+        coin: { lastBlock: 1000, done: true },
+        internal: { lastBlock: 500, done: false },
+        token: { lastBlock: 750, done: true },
+        nft: { lastBlock: 600, done: true },
+      };
+
+      const result = serializePagingToken(state);
+
+      // Verify it's valid base64 and can be deserialized back to original state
+      expect(JSON.parse(Buffer.from(result, "base64").toString("utf-8"))).toEqual(state);
+    });
+
+    it("serializes and deserializes roundtrip correctly", () => {
+      const state = {
+        coin: { lastBlock: 12345, done: false },
+        internal: { lastBlock: 12340, done: true },
+        token: { lastBlock: 12350, done: false },
+        nft: { lastBlock: 12330, done: false },
+      };
+
+      const token = serializePagingToken(state);
+      expect(deserializePagingToken(token, 0)).toEqual(state);
+    });
+  });
+
+  describe("pagination token lifecycle", () => {
+    it("first call creates token with initial minHeight", () => {
+      expect(deserializePagingToken(undefined, 1000)).toEqual({
+        coin: { lastBlock: 1000, done: false },
+        internal: { lastBlock: 1000, done: false },
+        token: { lastBlock: 1000, done: false },
+        nft: { lastBlock: 1000, done: false },
+      });
+    });
+
+    it("subsequent calls use lastBlock from token", () => {
+      const state = {
+        coin: { lastBlock: 5000, done: false },
+        internal: { lastBlock: 4500, done: false },
+        token: { lastBlock: 4800, done: true },
+        nft: { lastBlock: 4600, done: false },
+      };
+      const token = serializePagingToken(state);
+
+      // Deserialize with different minHeight - should use token values
+      expect(deserializePagingToken(token, 1000)).toEqual(state);
+    });
+
+    it("final call returns NO_TOKEN when all done", () => {
+      const state = {
+        coin: { lastBlock: 10000, done: true },
+        internal: { lastBlock: 10000, done: true },
+        token: { lastBlock: 10000, done: true },
+        nft: { lastBlock: 10000, done: true },
+      };
+
+      expect(serializePagingToken(state)).toBe(NO_TOKEN);
     });
   });
 });

@@ -195,6 +195,7 @@ describe("listOperations", () => {
           extra: {},
         },
       ],
+      nextPagingToken: "",
     });
 
     expect(

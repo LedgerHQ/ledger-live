@@ -104,13 +104,22 @@ export async function listOperations(
   pagination: Pagination,
 ): Promise<[Operation<MemoNotSupported>[], string]> {
   const explorerApi = getExplorerApi(currency);
-  const { lastCoinOperations, lastTokenOperations, lastNftOperations, lastInternalOperations } =
-    await explorerApi.getLastOperations(
-      currency,
-      address,
-      `js:2:${currency.id}:${address}:`,
-      pagination.minHeight,
-    );
+  const {
+    lastCoinOperations,
+    lastTokenOperations,
+    lastNftOperations,
+    lastInternalOperations,
+    nextPagingToken,
+  } = await explorerApi.getLastOperations(
+    currency,
+    address,
+    `js:2:${currency.id}:${address}:`,
+    pagination.minHeight,
+    undefined,
+    pagination.pagingToken,
+    pagination.limit,
+    pagination.order,
+  );
 
   const isNativeOperation = (coinOperation: LiveOperation): boolean =>
     ![...lastTokenOperations, ...lastNftOperations].map(op => op.hash).includes(coinOperation.hash);
@@ -169,5 +178,5 @@ export async function listOperations(
         : b.tx.date.getTime() - a.tx.date.getTime(),
     );
 
-  return [operations, ""];
+  return [operations, nextPagingToken];
 }

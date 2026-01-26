@@ -370,6 +370,126 @@ describe.each([
         expect(isCorrectlyOrdered(result));
       },
     );
+
+    it.each([
+      ["ascending", "asc"],
+      ["descending", "desc"],
+    ] as const)("paginates operations in %s order across multiple pages", async (_, order) => {
+      const address = "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1";
+      const allOperations: Operation[] = [];
+
+      // First page
+      const [firstPageOps, firstPageToken] = await module.listOperations(address, {
+        minHeight: 200,
+        order,
+        limit: 10,
+      });
+
+      allOperations.push(...firstPageOps);
+
+      // Continue fetching while we have a token (max 3 pages for test efficiency)
+      let currentToken = firstPageToken;
+      let pageCount = 1;
+      while (currentToken && pageCount < 3) {
+        const [pageOps, nextToken] = await module.listOperations(address, {
+          minHeight: 200,
+          order,
+          limit: 10,
+          pagingToken: currentToken,
+        });
+        allOperations.push(...pageOps);
+        currentToken = nextToken;
+        pageCount++;
+      }
+
+      // Verify we got multiple pages worth of operations
+      expect(pageCount).toBeGreaterThan(1);
+      expect(allOperations.length).toBeGreaterThan(10);
+
+      // Verify all operations are valid
+      allOperations.forEach(op => {
+        expect(op.tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+        expect(op.tx.block.height).toBeGreaterThanOrEqual(200);
+      });
+
+      // Verify no page overlapping (no duplicate operation ids)
+      const allOperationIds = allOperations.map(op => op.id);
+      const uniqueOperationIds = new Set(allOperationIds);
+      expect(uniqueOperationIds.size).toBe(allOperationIds.length);
+
+      // Verify operations are correctly ordered
+      const isCorrectlyOrdered = allOperations.every((op, i) => {
+        if (i === 0) return true;
+        const prevDate = allOperations[i - 1].tx.date.getTime();
+        const currDate = op.tx.date.getTime();
+        return order === "desc" ? currDate <= prevDate : currDate >= prevDate;
+      });
+      expect(isCorrectlyOrdered).toBe(true);
+    });
+
+    it("cache key includes pagination parameters", async () => {
+      const address = "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1";
+
+      // First call - not cached
+      const startFirstCall = performance.now();
+      const [firstCallResult, firstCallToken] = await module.listOperations(address, {
+        minHeight: 200,
+        order: "desc",
+        limit: 5,
+      });
+      const durationFirstCall = performance.now() - startFirstCall;
+
+      // Same call again - should be faster (cached)
+      const startCachedCall = performance.now();
+      await module.listOperations(address, {
+        minHeight: 200,
+        order: "desc",
+        limit: 5,
+      });
+      const durationCachedCall = performance.now() - startCachedCall;
+
+      // Different limit - should be slower (different cache key)
+      const startDifferentLimit = performance.now();
+      const [differentLimitResult] = await module.listOperations(address, {
+        minHeight: 200,
+        order: "desc",
+        limit: 10,
+      });
+      const durationDifferentLimit = performance.now() - startDifferentLimit;
+
+      // Different order - should be slower (different cache key)
+      const startDifferentOrder = performance.now();
+      const [differentOrderResult] = await module.listOperations(address, {
+        minHeight: 200,
+        order: "asc",
+        limit: 5,
+      });
+      const durationDifferentOrder = performance.now() - startDifferentOrder;
+
+      // Different pagingToken - should be slower (different cache key)
+      const startDifferentToken = performance.now();
+      await module.listOperations(address, {
+        minHeight: 200,
+        order: "desc",
+        limit: 5,
+        pagingToken: firstCallToken,
+      });
+      const durationDifferentToken = performance.now() - startDifferentToken;
+
+      // Cached call should be significantly faster
+      expect(durationCachedCall).toBeLessThan(durationFirstCall * 0.5);
+
+      // Different parameters should result in different results
+      expect(firstCallResult.length).toBeLessThanOrEqual(differentLimitResult.length);
+      expect(firstCallResult[0]?.tx.date.getTime()).toBeGreaterThanOrEqual(
+        differentOrderResult[0]?.tx.date.getTime(),
+      );
+
+      // Non-cached calls should be slower than cached call
+      expect(durationDifferentLimit).toBeGreaterThan(durationCachedCall);
+      expect(durationDifferentOrder).toBeGreaterThan(durationCachedCall);
+      expect(durationDifferentToken).toBeGreaterThan(durationCachedCall);
+    });
   });
 
   describe.each([
