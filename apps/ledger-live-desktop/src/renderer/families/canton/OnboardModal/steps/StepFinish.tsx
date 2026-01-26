@@ -36,16 +36,7 @@ const StepFinish = ({
   );
 };
 
-export const StepFinishFooter = ({
-  t,
-  onAddAccounts,
-  onAddMore,
-  isReonboarding,
-  importableAccounts,
-  creatableAccount,
-}: StepProps) => {
-  const accounts = [...importableAccounts, creatableAccount];
-
+export const StepFinishFooter = ({ t, onAddAccounts, onAddMore, isReonboarding }: StepProps) => {
   return (
     <Box
       horizontal
@@ -68,7 +59,7 @@ export const StepFinishFooter = ({
         event="Page AddAccounts Step 4 Close"
         data-testid="add-accounts-finish-close-button"
         primary
-        onClick={() => onAddAccounts(accounts)}
+        onClick={onAddAccounts}
         aria-label="Complete Canton account setup"
       >
         {isReonboarding ? t("common.continue") : t("common.done")}
