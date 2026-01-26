@@ -21,7 +21,7 @@ async function parseOperation({
   const timestamp = new Date(Number(rawTx.block_timestamp) * 1000);
   const hasFailed = rawTx.status !== "Accepted";
 
-  const { fee_value, block_hash, execution } = await apiClient.getTranscationByTransactionId(
+  const { fee_value, block_hash, execution } = await apiClient.getTransactionById(
     currency,
     rawTx.transaction_id,
   );
