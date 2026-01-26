@@ -81,7 +81,7 @@ export async function fetchPaginatedOpsWithRetries(
  * so pagination parameters are ignored and nextPagingToken is always empty.
  * Pagination may be supported in the future.
  */
-export const getLastOperations: ExplorerApi["getLastOperations"] = async (
+export const getOperations: ExplorerApi["getOperations"] = async (
   currency,
   address,
   accountId,
@@ -145,7 +145,7 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
 };
 
 const ledgerExplorerAPI: ExplorerApi = {
-  getLastOperations,
+  getOperations,
 };
 
 export default ledgerExplorerAPI;

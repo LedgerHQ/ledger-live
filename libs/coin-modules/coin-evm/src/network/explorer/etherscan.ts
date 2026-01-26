@@ -116,7 +116,7 @@ export async function fetchWithRetries<T>(
 /**
  * Get all the latest "normal" transactions (no tokens / NFTs)
  */
-export const getLastCoinOperations = async (
+export const getCoinOperations = async (
   currency: CryptoCurrency,
   address: string,
   accountId: string,
@@ -162,7 +162,7 @@ export const getLastCoinOperations = async (
 /**
  * Get all the latest ERC20 transactions
  */
-export const getLastTokenOperations = async (
+export const getTokenOperations = async (
   currency: CryptoCurrency,
   address: string,
   accountId: string,
@@ -229,7 +229,7 @@ export const getLastTokenOperations = async (
 /**
  * Get all the latest ERC721 transactions
  */
-export const getLastERC721Operations = async (
+export const getERC721Operations = async (
   currency: CryptoCurrency,
   address: string,
   accountId: string,
@@ -296,7 +296,7 @@ export const getLastERC721Operations = async (
 /**
  * Get all the latest ERC1155 transactions
  */
-export const getLastERC1155Operations = async (
+export const getERC1155Operations = async (
   currency: CryptoCurrency,
   address: string,
   accountId: string,
@@ -363,7 +363,7 @@ export const getLastERC1155Operations = async (
 /**
  * Get all NFT related operations (ERC721 + ERC1155)
  */
-export const getLastNftOperations = async (
+export const getNftOperations = async (
   currency: CryptoCurrency,
   address: string,
   accountId: string,
@@ -377,7 +377,7 @@ export const getLastNftOperations = async (
     return { operations: [], done: true, maxBlock: 0 };
   }
 
-  const erc721Result = await getLastERC721Operations(
+  const erc721Result = await getERC721Operations(
     currency,
     address,
     accountId,
@@ -386,7 +386,7 @@ export const getLastNftOperations = async (
     limit,
     sort,
   );
-  const erc1155Result = await getLastERC1155Operations(
+  const erc1155Result = await getERC1155Operations(
     currency,
     address,
     accountId,
@@ -413,7 +413,7 @@ export const getLastNftOperations = async (
 /**
  * Get all the latest internal transactions
  */
-export const getLastInternalOperations = async (
+export const getInternalOperations = async (
   currency: CryptoCurrency,
   address: string,
   accountId: string,
@@ -481,7 +481,7 @@ export const getLastInternalOperations = async (
  * do not use a Promise.all here, it would
  * break because of the rate limits
  */
-export const getLastOperations = makeLRUCache<
+export const getOperations = makeLRUCache<
   [
     currency: CryptoCurrency,
     address: string,
@@ -507,7 +507,7 @@ export const getLastOperations = makeLRUCache<
 
       const coinResult = state.coin.done
         ? emptyResult
-        : await getLastCoinOperations(
+        : await getCoinOperations(
           currency,
           address,
           accountId,
@@ -519,7 +519,7 @@ export const getLastOperations = makeLRUCache<
 
       const internalResult = state.internal.done
         ? emptyResult
-        : await getLastInternalOperations(
+        : await getInternalOperations(
           currency,
           address,
           accountId,
@@ -531,7 +531,7 @@ export const getLastOperations = makeLRUCache<
 
       const tokenResult = state.token.done
         ? emptyResult
-        : await getLastTokenOperations(
+        : await getTokenOperations(
           currency,
           address,
           accountId,
@@ -543,7 +543,7 @@ export const getLastOperations = makeLRUCache<
 
       const nftResult =
         isNFTActive(currency) && !state.nft.done
-          ? await getLastNftOperations(
+          ? await getNftOperations(
             currency,
             address,
             accountId,
@@ -584,7 +584,7 @@ export const getLastOperations = makeLRUCache<
         nextPagingToken: serializePagingToken(nextState),
       };
     } catch (err) {
-      log("EVM getLastOperations", "Error while fetching data from Etherscan like API", err);
+      log("EVM getOperations", "Error while fetching data from Etherscan like API", err);
       const message =
         typeof err === "string"
           ? err
@@ -602,11 +602,11 @@ export const getLastOperations = makeLRUCache<
 );
 
 const explorerApi: ExplorerApi = {
-  getLastOperations,
+  getOperations,
 };
 
 const explorerApiNoChache: ExplorerApi = {
-  getLastOperations: getLastOperations.force,
+  getOperations: getOperations.force,
 };
 
 export default { explorerApi, explorerApiNoChache };

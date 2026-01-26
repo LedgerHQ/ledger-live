@@ -110,7 +110,7 @@ export async function listOperations(
     lastNftOperations,
     lastInternalOperations,
     nextPagingToken,
-  } = await explorerApi.getLastOperations(
+  } = await explorerApi.getOperations(
     currency,
     address,
     `js:2:${currency.id}:${address}:`,

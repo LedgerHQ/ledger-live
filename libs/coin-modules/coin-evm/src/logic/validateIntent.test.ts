@@ -77,7 +77,7 @@ describe("validateIntent", () => {
       gasPrice: null,
       nextBaseFee: null,
     });
-    jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
       lastCoinOperations: [],
       lastInternalOperations: [],
       lastNftOperations: [],
@@ -276,7 +276,7 @@ describe("validateIntent", () => {
 
     it("detects token asset sending intent with an error", async () => {
       jest.spyOn(ledgerNode, "getTransactionCount").mockResolvedValue(10);
-      jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+      jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
         lastCoinOperations: [],
         lastInternalOperations: [],
         lastNftOperations: [],
@@ -760,7 +760,7 @@ describe("validateIntent", () => {
       { expectedTotalFees, expectedTotalSpent, expectedAmount },
     ) => {
       it("does not return any error or warning for a valid legacy intent", async () => {
-        jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+        jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
           lastCoinOperations: [],
           lastInternalOperations: [],
           lastNftOperations: [],
@@ -795,7 +795,7 @@ describe("validateIntent", () => {
       });
 
       it("does not return any error or warning for a valid eip1559 intent", async () => {
-        jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+        jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
           lastCoinOperations: [],
           lastInternalOperations: [],
           lastNftOperations: [],
@@ -855,7 +855,7 @@ describe("validateIntent", () => {
       });
 
       it("does not call the gas tracker if unnecessary", async () => {
-        jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+        jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
           lastCoinOperations: [],
           lastInternalOperations: [],
           lastNftOperations: [],

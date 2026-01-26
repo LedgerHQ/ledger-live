@@ -4,7 +4,7 @@ import { ExplorerApi, NO_TOKEN } from "./types";
  * Returns all operation types from an address
  * No explorer configured - returns empty results
  */
-export const getLastOperations: ExplorerApi["getLastOperations"] = async () => {
+export const getOperations: ExplorerApi["getOperations"] = async () => {
   return {
     lastCoinOperations: [],
     lastTokenOperations: [],
@@ -15,7 +15,7 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async () => {
 };
 
 const noExplorerAPI: ExplorerApi = {
-  getLastOperations,
+  getOperations,
 };
 
 export default noExplorerAPI;

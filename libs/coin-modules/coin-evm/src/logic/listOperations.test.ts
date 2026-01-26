@@ -16,7 +16,7 @@ describe("listOperations", () => {
     ["a ledger explorer", { type: "ledger" }, ledgerExplorer],
   ])("lists latest operations using %s", async (_, config, explorer) => {
     setCoinConfig(() => ({ info: { explorer: config } }) as unknown as EvmCoinConfig);
-    jest.spyOn(explorer, "getLastOperations").mockResolvedValue({
+    jest.spyOn(explorer, "getOperations").mockResolvedValue({
       lastCoinOperations: [
         {
           id: "coin-op-1",

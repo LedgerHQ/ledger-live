@@ -6,7 +6,7 @@ import { EvmConfigInfo } from "../../config";
 export const NO_TOKEN = "";
 
 export type ExplorerApi = {
-  getLastOperations: (
+  getOperations: (
     currency: CryptoCurrency,
     address: string,
     accountId: string,

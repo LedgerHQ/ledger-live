@@ -129,7 +129,7 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("getLastCoinOperations", () => {
+    describe("getCoinOperations", () => {
       afterEach(() => {
         jest.clearAllMocks();
       });
@@ -154,7 +154,7 @@ describe("EVM Family", () => {
         }));
 
         try {
-          await ETHERSCAN_API.getLastCoinOperations(
+          await ETHERSCAN_API.getCoinOperations(
             {
               ...currency,
               ethereumLikeInfo: {
@@ -181,7 +181,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastCoinOperations(
+        const response = await ETHERSCAN_API.getCoinOperations(
           currency,
           account.freshAddress,
           account.id,
@@ -214,7 +214,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastCoinOperations(
+        const response = await ETHERSCAN_API.getCoinOperations(
           currency,
           account.freshAddress,
           account.id,
@@ -247,7 +247,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastCoinOperations(
+        const response = await ETHERSCAN_API.getCoinOperations(
           currency,
           account.freshAddress,
           account.id,
@@ -276,7 +276,7 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("getLastTokenOperations", () => {
+    describe("getTokenOperations", () => {
       afterEach(() => {
         jest.clearAllMocks();
       });
@@ -301,7 +301,7 @@ describe("EVM Family", () => {
         }));
 
         try {
-          await ETHERSCAN_API.getLastTokenOperations(
+          await ETHERSCAN_API.getTokenOperations(
             {
               ...currency,
               ethereumLikeInfo: {
@@ -328,7 +328,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastTokenOperations(
+        const response = await ETHERSCAN_API.getTokenOperations(
           currency,
           account.freshAddress,
           account.id,
@@ -363,7 +363,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastTokenOperations(
+        const response = await ETHERSCAN_API.getTokenOperations(
           currency,
           account.freshAddress,
           account.id,
@@ -398,7 +398,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastTokenOperations(
+        const response = await ETHERSCAN_API.getTokenOperations(
           currency,
           account.freshAddress,
           account.id,
@@ -429,7 +429,7 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("getLastERC721Operations", () => {
+    describe("getERC721Operations", () => {
       afterEach(() => {
         jest.clearAllMocks();
       });
@@ -454,7 +454,7 @@ describe("EVM Family", () => {
         }));
 
         try {
-          await ETHERSCAN_API.getLastERC721Operations(
+          await ETHERSCAN_API.getERC721Operations(
             {
               ...currency,
               ethereumLikeInfo: {
@@ -481,7 +481,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastERC721Operations(
+        const response = await ETHERSCAN_API.getERC721Operations(
           currency,
           account.freshAddress,
           account.id,
@@ -516,7 +516,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastERC721Operations(
+        const response = await ETHERSCAN_API.getERC721Operations(
           currency,
           account.freshAddress,
           account.id,
@@ -551,7 +551,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastERC721Operations(
+        const response = await ETHERSCAN_API.getERC721Operations(
           currency,
           account.freshAddress,
           account.id,
@@ -582,7 +582,7 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("getLastERC1155Operations", () => {
+    describe("getERC1155Operations", () => {
       afterEach(() => {
         jest.clearAllMocks();
       });
@@ -607,7 +607,7 @@ describe("EVM Family", () => {
         }));
 
         try {
-          await ETHERSCAN_API.getLastERC1155Operations(
+          await ETHERSCAN_API.getERC1155Operations(
             {
               ...currency,
               ethereumLikeInfo: {
@@ -634,7 +634,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastERC1155Operations(
+        const response = await ETHERSCAN_API.getERC1155Operations(
           currency,
           account.freshAddress,
           account.id,
@@ -669,7 +669,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastERC1155Operations(
+        const response = await ETHERSCAN_API.getERC1155Operations(
           currency,
           account.freshAddress,
           account.id,
@@ -704,7 +704,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastERC1155Operations(
+        const response = await ETHERSCAN_API.getERC1155Operations(
           currency,
           account.freshAddress,
           account.id,
@@ -735,7 +735,7 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("getLastNftOperations", () => {
+    describe("getNftOperations", () => {
       it("should return a sorted array of nft transactions", async () => {
         jest.spyOn(axios, "request").mockImplementation(async params => ({
           data: {
@@ -745,7 +745,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastNftOperations(
+        const response = await ETHERSCAN_API.getNftOperations(
           currency,
           account.freshAddress,
           account.id,
@@ -764,7 +764,7 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("getLastInternalOperations", () => {
+    describe("getInternalOperations", () => {
       afterEach(() => {
         jest.clearAllMocks();
       });
@@ -789,7 +789,7 @@ describe("EVM Family", () => {
         }));
 
         try {
-          await ETHERSCAN_API.getLastInternalOperations(
+          await ETHERSCAN_API.getInternalOperations(
             {
               ...currency,
               ethereumLikeInfo: {
@@ -816,7 +816,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastInternalOperations(
+        const response = await ETHERSCAN_API.getInternalOperations(
           currency,
           account.freshAddress,
           account.id,
@@ -851,7 +851,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastInternalOperations(
+        const response = await ETHERSCAN_API.getInternalOperations(
           currency,
           account.freshAddress,
           account.id,
@@ -886,7 +886,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastInternalOperations(
+        const response = await ETHERSCAN_API.getInternalOperations(
           currency,
           account.freshAddress,
           account.id,
@@ -917,7 +917,7 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("getLastNftOperations without nft", () => {
+    describe("getNftOperations without nft", () => {
       beforeEach(() => {
         mockGetConfig.mockImplementation((): any => {
           return {
@@ -937,7 +937,7 @@ describe("EVM Family", () => {
       });
 
       it("should not return NFT opperation", async () => {
-        const response = await ETHERSCAN_API.getLastNftOperations(
+        const response = await ETHERSCAN_API.getNftOperations(
           currency,
           account.freshAddress,
           account.id,
