@@ -581,3 +581,51 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
     });
   });
 }
+
+export function runSwapNetworkFeesAboveAccountBalanceTest(
+  swap: SwapType,
+  errorMessage: string | RegExp,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  describe(`Swap - Error message when network fees are above account balance (${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name})`, () => {
+    beforeAll(async () => {
+      await app.speculos.setExchangeDependencies(swap);
+      await beforeAllFunction({
+        userdata: "skip-onboarding",
+        speculosApp: AppInfos.EXCHANGE,
+        cliCommandsOnApp: [
+          {
+            app: swap.accountToDebit.currency.speculosApp,
+            cmd: liveDataWithAddressCommand(swap.accountToDebit),
+          },
+          {
+            app: swap.accountToCredit.currency.speculosApp,
+            cmd: liveDataWithAddressCommand(swap.accountToCredit),
+          },
+        ],
+      });
+    });
+
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+
+    it(`Swap - Network fees above account balance`, async () => {
+      const minAmount = await app.swapLiveApp.getMinimumAmount(
+        swap.accountToDebit,
+        swap.accountToCredit,
+      );
+
+      const actualAmount = swap.amount === "USE_MIN_AMOUNT" ? minAmount : swap.amount;
+
+      await performSwapUntilQuoteSelectionStep(
+        swap.accountToDebit,
+        swap.accountToCredit,
+        actualAmount,
+      );
+      await app.swapLiveApp.checkQuotes();
+      await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
+    });
+  });
+}
