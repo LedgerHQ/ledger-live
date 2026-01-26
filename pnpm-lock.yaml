@@ -761,9 +761,6 @@ importers:
       '@ledgerhq/live-countervalues-react':
         specifier: workspace:^
         version: link:../../libs/live-countervalues-react
-      '@ledgerhq/live-currency-format':
-        specifier: workspace:^
-        version: link:../../libs/live-currency-format
       '@ledgerhq/live-dmk-desktop':
         specifier: workspace:^
         version: link:../../libs/live-dmk-desktop
