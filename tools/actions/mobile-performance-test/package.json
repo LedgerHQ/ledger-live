@@ -14,10 +14,10 @@
     "@datadog/datadog-api-client": "2.0.0-beta.1",
     "@datadog/datadog-api-client-synthetics": "0.0.1-beta.1",
     "@actions/github": "6.0.1",
-    "adm-zip": "0.5.16"
+    "adm-zip": "0.5.16",
+    "@actions/core": "1.11.1"
   },
   "devDependencies": {
-    "@actions/core": "1.11.1",
     "@types/adm-zip": "0.5.7",
     "@rslib/core": "catalog:",
     "typescript": "5.8.3"
