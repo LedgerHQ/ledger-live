@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import algorandAPI from "./api";
 import { buildTransactionPayload, encodeToSign } from "./buildTransaction";
+import { getTransactionParams } from "./network";
 import type { AlgorandAccount, Transaction } from "./types";
 
 // This is only true for a single signature. If we ever support different type of signatures
@@ -11,7 +11,7 @@ export const getEstimatedFees = async (
   account: AlgorandAccount,
   transaction: Transaction,
 ): Promise<BigNumber> => {
-  const params = await algorandAPI.getTransactionParams();
+  const params = await getTransactionParams();
 
   let suggestedFees = 0;
   if (params.fee) {

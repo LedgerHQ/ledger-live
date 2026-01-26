@@ -9,7 +9,7 @@ import type {
   TransactionRaw as algorandTransactionRaw,
   TransactionStatus as algorandTransactionStatus,
   TransactionStatusRaw as algorandTransactionStatusRaw,
-} from "@ledgerhq/coin-algorand/types";
+} from "@ledgerhq/coin-algorand/types/index";
 import type {
   Transaction as aptosTransaction,
   TransactionRaw as aptosTransactionRaw,

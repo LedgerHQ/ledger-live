@@ -36,6 +36,38 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./api": {
+      "require": "./lib/api/index.js",
+      "default": "./lib-es/api/index.js"
+    },
+    "./bridge": {
+      "require": "./lib/bridge/index.js",
+      "default": "./lib-es/bridge/index.js"
+    },
+    "./config": {
+      "require": "./lib/config.js",
+      "default": "./lib-es/config.js"
+    },
+    "./logic": {
+      "require": "./lib/logic/index.js",
+      "default": "./lib-es/logic/index.js"
+    },
+    "./logic/*": {
+      "require": "./lib/logic/*.js",
+      "default": "./lib-es/logic/*.js"
+    },
+    "./network": {
+      "require": "./lib/network/index.js",
+      "default": "./lib-es/network/index.js"
+    },
+    "./signer": {
+      "require": "./lib/signer/index.js",
+      "default": "./lib-es/signer/index.js"
+    },
+    "./types": {
+      "require": "./lib/types/index.js",
+      "default": "./lib-es/types/index.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
@@ -82,6 +114,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
+    "test-integ": "jest --config=jest.integ.config.js",
     "unimported": "unimported"
   }
 }

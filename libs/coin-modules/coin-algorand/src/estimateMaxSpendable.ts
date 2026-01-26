@@ -2,10 +2,10 @@ import { findSubAccountById, getMainAccount } from "@ledgerhq/coin-framework/acc
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { computeAlgoMaxSpendable } from "./bridgeLogic";
 import createTransaction from "./createTransaction";
 import { getEstimatedFees } from "./getFeesForTransaction";
-import { computeAlgoMaxSpendable } from "./logic";
-import type { AlgorandAccount, AlgorandTransaction } from "./types";
+import { AlgorandAccount, AlgorandTransaction } from "./types";
 
 export const estimateMaxSpendable: AccountBridge<
   AlgorandTransaction,
