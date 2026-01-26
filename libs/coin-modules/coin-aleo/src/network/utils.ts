@@ -165,7 +165,7 @@ export async function parsePrivateOperation({
 }): Promise<AleoOperation | null> {
   const [transactionDetails, outputRecord] = await Promise.all([
     apiClient.getTransactionById(currency, rawTx.transaction_id),
-    sdkClient.decryptRecord(rawTx.record_ciphertext, viewKey),
+    sdkClient.decryptRecord({ currency, ciphertext: rawTx.record_ciphertext, viewKey }),
   ]);
 
   const transactionId = rawTx.transaction_id.trim();
@@ -188,6 +188,7 @@ export async function parsePrivateOperation({
     // ONLY THE SENDER CAN DECRYPT THESE VALUES
     const [recipientData, amountData] = await Promise.all([
       sdkClient.decryptCiphertext({
+        currency,
         ciphertext: recordTransition.inputs[RECIPIENT_ARG_INDEX].value,
         tpk: recordTransition.tpk,
         viewKey,
@@ -196,6 +197,7 @@ export async function parsePrivateOperation({
         outputIndex: RECIPIENT_ARG_INDEX,
       }),
       sdkClient.decryptCiphertext({
+        currency,
         ciphertext: recordTransition.inputs[AMOUNT_ARG_INDEX].value,
         tpk: recordTransition.tpk,
         viewKey,

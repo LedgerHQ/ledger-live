@@ -10,6 +10,17 @@ import type { AleoOperation, AleoTransactionType, Transaction } from "../types";
 import { PROGRAM_ID, TRANSFERS } from "../constants";
 import { sdkClient } from "../network/sdk";
 import { apiClient } from "../network/api";
+import aleoConfig from "../config";
+
+export function getNetworkConfig(currency: CryptoCurrency) {
+  const config = aleoConfig.getCoinConfig(currency);
+
+  return {
+    nodeUrl: config.apiUrls.node,
+    sdkUrl: config.apiUrls.sdk,
+    networkType: config.networkType,
+  };
+}
 
 export function parseMicrocredits(microcreditsU64: string): string {
   const value = microcreditsU64.split(".")[0];
@@ -222,4 +233,17 @@ export function calculateAmount({
     amount,
     totalSpent,
   };
+}
+
+export interface SignedAleoTransaction {
+  authorization: Record<string, unknown>;
+  feeAuthorization: Record<string, unknown>;
+}
+
+export function serializeTransaction(tx: SignedAleoTransaction): string {
+  return Buffer.from(JSON.stringify(tx)).toString("hex");
+}
+
+export function deserializeTransaction(serialized: string): SignedAleoTransaction {
+  return JSON.parse(Buffer.from(serialized, "hex").toString("utf8"));
 }

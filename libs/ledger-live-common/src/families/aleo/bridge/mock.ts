@@ -29,6 +29,7 @@ const createTransaction = (): Transaction => ({
   amount: new BigNumber(100000),
   recipient: "",
   useAllAmount: false,
+  fees: new BigNumber(50000),
 });
 
 const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {

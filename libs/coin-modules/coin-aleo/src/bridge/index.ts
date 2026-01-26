@@ -19,12 +19,14 @@ import type { AleoAccount, Transaction as AleoTransaction } from "../types/index
 import type { AleoSigner } from "../types/signer";
 import { validateAddress } from "../logic/validateAddress";
 import resolver from "../signer/getAddress";
+import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import { assignToAccountRaw, assignFromAccountRaw } from "./serialization";
 import { getAccountShape, sync } from "./sync";
+import { buildSignOperation } from "./signOperation";
 
 export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -46,6 +48,7 @@ export function buildAccountBridge(
 ): AccountBridge<AleoTransaction, AleoAccount> {
   const getAddress = resolver(signerContext);
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
+  const signOperation = buildSignOperation(signerContext);
 
   return {
     createTransaction,
@@ -56,15 +59,11 @@ export function buildAccountBridge(
     assignFromAccountRaw,
     sync,
     receive,
-    signOperation: () => {
-      throw new Error("signOperation is not supported");
-    },
+    signOperation,
     signRawOperation: (): Observable<SignOperationEvent> => {
       throw new Error("signRawOperation is not supported");
     },
-    broadcast: () => {
-      throw new Error("broadcast is not supported");
-    },
+    broadcast,
     estimateMaxSpendable,
     getSerializedAddressParameters,
     validateAddress,

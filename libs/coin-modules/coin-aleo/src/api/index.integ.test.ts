@@ -6,7 +6,16 @@ import { createApi } from "../api";
 describe("createApi", () => {
   const emptyAccountAddress = "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f";
   const testAccountAddress = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
-  const api = createApi({ nodeUrl: getEnv("ALEO_TESTNET_NODE_ENDPOINT") }, "aleo");
+  const api = createApi(
+    {
+      networkType: "testnet",
+      apiUrls: {
+        node: getEnv("ALEO_TESTNET_NODE_ENDPOINT"),
+        sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
+      },
+    },
+    "aleo",
+  );
 
   beforeAll(() => {
     setupCalClientStore();

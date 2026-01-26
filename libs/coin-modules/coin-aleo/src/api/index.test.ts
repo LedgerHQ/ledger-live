@@ -1,19 +1,26 @@
-import coinConfig from "../config";
+import coinConfig, { type AleoCoinConfig } from "../config";
 import { createApi } from "./index";
 
 describe("createApi", () => {
+  const mockConfig: AleoCoinConfig = {
+    networkType: "mainnet",
+    apiUrls: { node: "", sdk: "" },
+    status: { type: "active" },
+  };
+
   it("should set the coin config value", () => {
     const mockSetCoinConfig = jest.spyOn(coinConfig, "setCoinConfig");
 
-    createApi({ nodeUrl: "" }, "aleo");
+    createApi(mockConfig, "aleo");
+
     const config = coinConfig.getCoinConfig();
 
     expect(mockSetCoinConfig).toHaveBeenCalled();
-    expect(config).toMatchObject({ status: { type: "active" } });
+    expect(config).toMatchObject(mockConfig);
   });
 
   it("should return an API object with alpaca api methods", () => {
-    const api = createApi({ nodeUrl: "" }, "aleo");
+    const api = createApi(mockConfig, "aleo");
 
     expect(api.broadcast).toBeInstanceOf(Function);
     expect(api.combine).toBeInstanceOf(Function);

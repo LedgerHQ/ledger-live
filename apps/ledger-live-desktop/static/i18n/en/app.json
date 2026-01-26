@@ -1740,7 +1740,8 @@
       "previousStakingNodeId": "Previous node ID",
       "gasConsumed": "Gas consumed",
       "gasUsed": "Gas used",
-      "gasLimit": "Gas limit"
+      "gasLimit": "Gas limit",
+      "functionId": "Function ID"
     }
   },
   "operationList": {

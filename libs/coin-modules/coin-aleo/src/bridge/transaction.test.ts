@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
-import { getMockedAccount } from "../test/fixtures/account.fixture";
+import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import {
   getMockedTransaction,
   getMockedTransactionRaw,
-} from "../test/fixtures/transaction.fixture";
+} from "../__tests__/fixtures/transaction.fixture";
 import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "./transaction";
 
 describe("transaction", () => {

@@ -78,12 +78,14 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   if (viewKey && provableApi && provableApi.uuid && provableApi.apiKey && provableApi.jwt?.token) {
     const [resNewPrivateRecords, resUnspentPrivateRecords] = await Promise.all([
       apiClient.getAccountOwnedRecords({
+        currency,
         jwtToken: provableApi.jwt?.token,
         uuid: provableApi.uuid,
         apiKey: provableApi.apiKey,
         start: latestAccountPrivateRecord ? latestAccountPrivateRecord.block_height + 1 : 0,
       }),
       apiClient.getAccountOwnedRecords({
+        currency,
         jwtToken: provableApi.jwt?.token,
         uuid: provableApi.uuid,
         apiKey: provableApi.apiKey,
@@ -120,6 +122,7 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
       .sort((a, b) => b.block_height - a.block_height);
 
     const privateBalanceResult = await getPrivateBalance({
+      currency,
       viewKey,
       privateRecords: privateRecordsHistory,
     });

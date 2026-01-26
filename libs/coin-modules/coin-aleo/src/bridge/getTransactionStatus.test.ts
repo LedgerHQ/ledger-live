@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getMockedAccount } from "../test/fixtures/account.fixture";
+import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { estimateFees } from "../logic";
 import { calculateAmount } from "../logic/utils";
 import type { Transaction } from "../types";

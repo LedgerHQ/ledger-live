@@ -1,14 +1,17 @@
 import BigNumber from "bignumber.js";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AleoPrivateRecord } from "../types/api";
 import { sdkClient } from "../network/sdk";
 import { AleoUnspentRecord } from "../types";
 import { parseMicrocredits } from "./utils";
 
 export async function getPrivateBalance({
+  currency,
   viewKey,
   privateRecords,
 }: {
+  currency: CryptoCurrency;
   viewKey: string;
   privateRecords: AleoPrivateRecord[];
 }): Promise<{ balance: BigNumber; unspentRecords: AleoUnspentRecord[] }> {
@@ -17,7 +20,11 @@ export async function getPrivateBalance({
   let balance = new BigNumber(0);
 
   await promiseAllBatched(2, unspentRecords, async record => {
-    const decryptedRecord = await sdkClient.decryptRecord(record.record_ciphertext, viewKey);
+    const decryptedRecord = await sdkClient.decryptRecord({
+      currency,
+      ciphertext: record.record_ciphertext,
+      viewKey,
+    });
     const microcredits = parseMicrocredits(decryptedRecord.data.microcredits);
 
     balance = balance.plus(microcredits);

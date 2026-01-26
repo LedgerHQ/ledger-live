@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getMockedAccount } from "../test/fixtures/account.fixture";
+import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import type { Transaction } from "../types";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { createTransaction } from "./createTransaction";
