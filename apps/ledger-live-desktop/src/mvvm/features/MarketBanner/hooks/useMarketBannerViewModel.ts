@@ -2,17 +2,17 @@ import { useMemo } from "react";
 import { useMarketPerformers } from "@ledgerhq/live-common/market/hooks/useMarketPerformers";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
+import { MARKET_BANNER_ITEMS_COUNT } from "../utils/constants";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { filterMarketPerformersByAvailability } from "@ledgerhq/live-common/market/utils/index";
 import {
-  MARKET_BANNER_ITEMS_COUNT,
   MARKET_BANNER_TOP,
   MARKET_BANNER_DATA_SORT_ORDER,
   MARKET_BANNER_REFRESH_RATE,
   MARKET_PERFORMERS_SUPPORTED,
   TIME_RANGE,
-} from "../utils/constants";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { filterMarketPerformersByAvailability } from "@ledgerhq/live-common/market/utils/index";
+} from "@ledgerhq/live-common/market/constants";
 
 export const useMarketBannerViewModel = () => {
   const countervalue = useSelector(counterValueCurrencySelector);
