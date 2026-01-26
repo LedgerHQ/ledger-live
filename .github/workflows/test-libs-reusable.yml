@@ -158,7 +158,7 @@ jobs:
         run: pnpm i --filter="!./apps/**"
       - name: Lint affected libraries
         id: lint-libs
-        run: pnpm lint --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --quiet -concurrency=off
+        run: pnpm lint --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --quiet --concurrency=off
       - name: Typecheck affected libraries
         id: typecheck-libs
         run: pnpm typecheck --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
