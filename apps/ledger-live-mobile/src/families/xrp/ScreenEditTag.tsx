@@ -1,12 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTranslation } from "react-i18next";
+import { useTranslation, i18n } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { i18n } from "~/context/Locale";
 import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
 import NavigationScrollView from "~/components/NavigationScrollView";

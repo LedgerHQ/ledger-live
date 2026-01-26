@@ -2,35 +2,45 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Layout } from "../../component/layout.component";
 import { Drawer } from "../../component/drawer.component";
-import { SendModal } from "../../page/modal/send.modal";
-import { ReceiveModal } from "../../page/modal/receive.modal";
 import { SettingsPage } from "../../page/settings.page";
+import path from "path";
+import { SendModal } from "../../page/modal/send.modal";
 
-test.use({ userdata: "1AccountBTC1AccountETHStarred" });
+test.use({
+  userdata: "1AccountBTC1AccountETH",
+  featureFlags: {
+    lwdWallet40: {
+      enabled: false,
+    },
+    noah: { enabled: false },
+    welcomeScreenVideoCarousel: { enabled: false },
+  },
+  simulateCamera: path.join(
+    __dirname,
+    "../../userdata/",
+    "qrcode-19qAJ5F2eH7CRPFfj5c94x22zFcXpa8rZ77.y4m",
+  ),
+});
 
 test("Layout @smoke", async ({ page }) => {
   const layout = new Layout(page);
   const drawer = new Drawer(page);
-  const sendModal = new SendModal(page);
-  const receiveModal = new ReceiveModal(page);
   const settingsPage = new SettingsPage(page);
+  const sendModal = new SendModal(page);
 
-  await test.step("can open send modal", async () => {
+  await test.step("can open send modal and use a qr code from camera", async () => {
     await layout.openSendModalFromSideBar();
     await sendModal.container.waitFor({ state: "visible" });
     const sendButtonLoader = sendModal.container
       .locator("id=send-recipient-continue-button")
       .getByTestId("loading-spinner");
     await sendButtonLoader.waitFor({ state: "detached" });
-    await expect.soft(sendModal.container).toHaveScreenshot("send-modal.png");
-    await sendModal.close();
-  });
 
-  await test.step("can open receive modal", async () => {
-    await layout.openReceiveModalFromSideBar();
-    await receiveModal.container.waitFor({ state: "visible" });
-    await expect.soft(sendModal.container).toHaveScreenshot("receive-modal.png");
-    await receiveModal.close();
+    await sendModal.selectAccount("Bitcoin 1");
+    await sendModal.clickOnCameraButton();
+
+    await expect(sendModal.recipientInput).toHaveValue("19qAJ5F2eH7CRPFfj5c94x22zFcXpa8rZ77");
+    await sendModal.closeModal();
   });
 
   await test.step("go to accounts", async () => {
@@ -67,14 +77,14 @@ test("Layout @smoke", async ({ page }) => {
     await layout.goToPortfolio(); // FIXME: remove this line when LL-8899 is fixed
     await layout.toggleDiscreetMode();
     await expect.soft(page).toHaveScreenshot("discreet-mode.png", {
-      mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+      mask: [page.locator("canvas")],
     });
   });
 
   await test.step("can collapse the main sidebar", async () => {
     await layout.closeSideBar();
     await expect.soft(page).toHaveScreenshot("collapse-sidebar.png", {
-      mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+      mask: [page.locator("canvas")],
     });
   });
 

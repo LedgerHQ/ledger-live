@@ -1,6 +1,6 @@
 import React from "react";
 import { Text } from "@ledgerhq/lumen-ui-rnative";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import FearAndGreedCard from "./components/FearAndGreedCard";
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";

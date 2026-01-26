@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, TouchableOpacity, Linking, ScrollView } from "react-native";
 import { translateContent } from "@ledgerhq/live-common/platform/logic";

@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { BigNumber } from "bignumber.js";
 import { View, StyleSheet } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";

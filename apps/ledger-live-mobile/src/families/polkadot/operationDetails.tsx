@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { Linking } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import startCase from "lodash/startCase";
 import { BigNumber } from "bignumber.js";
 

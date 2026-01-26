@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Text } from "@ledgerhq/lumen-ui-rnative";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 function FearAndGreedTitle() {
   const { t } = useTranslation();

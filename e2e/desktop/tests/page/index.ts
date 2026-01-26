@@ -31,6 +31,8 @@ import { SwapConfirmationDrawer } from "./drawer/swap.confirmation.drawer";
 import { SwapPage } from "./swap.page";
 import { ModularScanAccountsDrawer } from "./drawer/modular.scan.accounts.drawer";
 import { ModularDialog } from "./dialog/modular.dialog";
+import { MarketBannerPage } from "./marketBanner.page";
+import { FearAndGreedDialog } from "./dialog/fearGreed.dialog";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -65,4 +67,6 @@ export class Application extends PageHolder {
   public speculos = new SpeculosPage(this.page);
   public swap = new SwapPage(this.page);
   public swapDrawer = new SwapConfirmationDrawer(this.page);
+  public marketBanner = new MarketBannerPage(this.page);
+  public fearAndGreedDialog = new FearAndGreedDialog(this.page);
 }

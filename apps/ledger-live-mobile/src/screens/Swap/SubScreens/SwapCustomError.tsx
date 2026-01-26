@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import type { TFunction } from "i18next";
 import { useHeaderHeight } from "@react-navigation/elements";
 import get from "lodash/get";

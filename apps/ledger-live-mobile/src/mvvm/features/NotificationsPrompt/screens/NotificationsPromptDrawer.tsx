@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import React from "react";
+import { useTranslation } from "~/context/Locale";
 import { Flex, Text, Link as TextLink, Button } from "@ledgerhq/native-ui";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
 import QueuedDrawer from "~/components/QueuedDrawer";
@@ -11,7 +11,6 @@ import { ABTestingVariants } from "@ledgerhq/types-live";
 export const NotificationsPromptDrawer = () => {
   const { t } = useTranslation();
   const {
-    initPushNotificationsData,
     drawerSource,
     isPushNotificationsModalOpen,
     handleAllowNotificationsPress,
@@ -20,13 +19,6 @@ export const NotificationsPromptDrawer = () => {
     nextRepromptDelay,
     pushNotificationsDataOfUser,
   } = useNotifications();
-
-  useEffect(() => {
-    initPushNotificationsData();
-    // We only want to call this once on mount
-    // And we can't use the function reference because it has a lot of dependencies and will hence change often...
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const featureNewWordingNotificationsDrawer = useFeature("lwmNewWordingOptInNotificationsDrawer");
 

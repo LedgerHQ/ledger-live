@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useSelector } from "~/context/hooks";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";

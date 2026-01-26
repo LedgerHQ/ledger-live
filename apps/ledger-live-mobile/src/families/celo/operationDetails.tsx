@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { BigNumber } from "bignumber.js";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";

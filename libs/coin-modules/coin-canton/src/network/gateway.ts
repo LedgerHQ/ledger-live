@@ -93,6 +93,7 @@ export type TransferProposal = {
   instrument_admin: string;
   memo: string;
   expires_at_micros: number;
+  update_id?: string;
 };
 
 type OnboardingSubmitRequest = {

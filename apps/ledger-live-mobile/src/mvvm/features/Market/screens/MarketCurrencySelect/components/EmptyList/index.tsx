@@ -1,6 +1,6 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Image } from "react-native";
 import { useTheme } from "styled-components/native";
 

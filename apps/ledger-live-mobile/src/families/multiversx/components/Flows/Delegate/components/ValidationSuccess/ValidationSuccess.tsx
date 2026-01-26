@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { View } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
 import { TrackScreen, track } from "~/analytics";

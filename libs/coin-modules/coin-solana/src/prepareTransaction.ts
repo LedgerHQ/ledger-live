@@ -169,7 +169,7 @@ const deriveTokenTransferCommandDescriptor = async (
   const memo = model.uiState.memo;
 
   if (typeof memo === "string" && memo.length > 0 && !validateMemo(memo)) {
-    errors.transaction = new SolanaMemoIsTooLong(undefined, {
+    errors.transaction = errors.memo = new SolanaMemoIsTooLong(undefined, {
       maxLength: MAX_MEMO_LENGTH,
     });
   }

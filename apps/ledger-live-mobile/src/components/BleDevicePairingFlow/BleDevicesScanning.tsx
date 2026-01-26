@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Linking, FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { IconsLegacy } from "@ledgerhq/native-ui";

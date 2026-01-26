@@ -9,7 +9,6 @@ import { ConnectAppEvent } from "@ledgerhq/live-common/hw/connectApp";
 import { ConnectManagerEvent } from "@ledgerhq/live-common/hw/connectManager";
 import { InstallLanguageEvent } from "@ledgerhq/live-common/hw/installLanguage";
 import { LoadImageEvent } from "@ledgerhq/live-common/hw/customLockScreenLoad";
-import { SwapRequestEvent } from "@ledgerhq/live-common/exchange/swap/types";
 import { FetchImageEvent } from "@ledgerhq/live-common/hw/customLockScreenFetch";
 import { ExchangeRequestEvent } from "@ledgerhq/live-common/hw/actions/startExchange";
 import { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/platform/types";
@@ -88,7 +87,6 @@ export type MockDeviceEvent =
   | LoadImageEvent
   | FetchImageEvent
   | ExchangeRequestEvent
-  | SwapRequestEvent
   | RemoveImageEvent
   | RenameDeviceEvent
   | CompleteExchangeRequestEvent
@@ -100,8 +98,6 @@ export const mockDeviceEventSubject = new Subject<MockDeviceEvent>();
 // these adaptor will filter the event type to satisfy typescript (workaround), it works because underlying exec usage will ignore unknown event type
 export const connectAppExecMock = (): Observable<ConnectAppEvent> =>
   mockDeviceEventSubject as Observable<ConnectAppEvent>;
-export const initSwapExecMock = (): Observable<SwapRequestEvent> =>
-  mockDeviceEventSubject as Observable<SwapRequestEvent>;
 export const startExchangeExecMock = (): Observable<ExchangeRequestEvent> =>
   mockDeviceEventSubject as Observable<ExchangeRequestEvent>;
 export const connectManagerExecMock = (): Observable<ConnectManagerEvent> =>

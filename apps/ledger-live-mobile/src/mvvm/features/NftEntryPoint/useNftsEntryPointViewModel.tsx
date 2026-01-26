@@ -6,7 +6,7 @@ import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { entryPointConfig } from "./config";
 type Props = {
   accountId: string;

@@ -57,8 +57,11 @@ let mockState: MockState = {
 const broadcastFn = jest.fn();
 const actionMock = jest.fn();
 
+jest.mock("../../../../../FlowWizard/FlowWizardContext", () => ({
+  useFlowWizard: jest.fn(() => ({ navigation: mockNavigation })),
+}));
+
 jest.mock("../../../../context/SendFlowContext", () => ({
-  useSendFlowNavigation: jest.fn(() => ({ navigation: mockNavigation })),
   useSendFlowActions: jest.fn(() => ({ operation: mockOperation, status: mockStatus })),
   useSendFlowData: jest.fn(() => ({ state: mockState })),
 }));

@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { track } from "~/analytics";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";

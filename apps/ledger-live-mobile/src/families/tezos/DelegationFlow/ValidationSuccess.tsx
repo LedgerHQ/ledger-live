@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import { TrackScreen, track } from "~/analytics";

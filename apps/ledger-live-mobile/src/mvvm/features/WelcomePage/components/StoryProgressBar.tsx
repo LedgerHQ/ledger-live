@@ -37,7 +37,7 @@ export function StoryProgressBar({
   }));
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="welcome-progress-bar">
       <Animated.View style={[styles.progress, animatedStyles]} />
     </View>
   );

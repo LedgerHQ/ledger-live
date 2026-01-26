@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Flex, Text, Button, Link } from "@ledgerhq/native-ui";
 import useRatings from "~/logic/ratings";
 import { track, TrackScreen } from "~/analytics";

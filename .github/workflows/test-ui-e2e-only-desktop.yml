@@ -27,7 +27,6 @@ on:
         description: "Test Execution ticket ID"
         required: false
         type: string
-        default: "B2CQA-2461"
       enable_broadcast:
         description: "Enable transaction broadcast"
         required: false
@@ -113,7 +112,7 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'master' }}
-      SPECULOS_DEVICE: ${{ inputs.speculos_device }}
+      SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoSP' }}
     runs-on: [ledger-live-4xlarge-e2e]
     outputs:
       status_1: ${{ steps.set-output.outputs.status_1 }}
@@ -177,11 +176,9 @@ jobs:
         id: test-filter
         run: |
           BASE_FILTER="${{ inputs.test_filter }}"
-
           if [ -n "$BASE_FILTER" ]; then
             BASE_FILTER="${BASE_FILTER//,/|}"
           fi
-
           if [ "${{ inputs.smoke_tests }}" = "true" ]; then
             if [ -n "$BASE_FILTER" ]; then
               echo "filter=@smoke $BASE_FILTER" >> $GITHUB_OUTPUT
@@ -193,6 +190,31 @@ jobs:
           fi
         shell: bash
 
+      - name: Write summary
+        if: ${{ matrix.shardIndex == 1 }}
+        run: |
+          FILTER_PATTERN="${{ steps.test-filter.outputs.filter }}"
+          DEVICE="${{ inputs.speculos_device || 'nanoSP' }}"
+          BUILD_TYPE="${{ inputs.build_type || 'testing' }}"
+          TEST_EXECUTION="${{ inputs.test_execution || '(not provided)' }}"
+          BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
+
+          if [ -z "$FILTER_PATTERN" ]; then
+            FILTER_PATTERN="(none)"
+          fi
+          {
+            echo "## Workflow Context"
+            echo ""
+            echo "- **Workflow source branch:** ${{ github.workflow_ref }}"
+            echo "- **Triggered branch:** ${{ github.ref_name }}"
+            echo "- **Commit SHA:** ${{ github.sha }}"
+            echo "- **Device selected:** $DEVICE"
+            echo "- **Filtered pattern:** $FILTER_PATTERN"
+            echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
+            echo "- **Firebase env to target:** $BUILD_TYPE"
+            echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
+          } >> $GITHUB_STEP_SUMMARY
+          
       - name: Run Playwright Tests
         id: run-playwright
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
@@ -228,7 +250,6 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           echo "status_${{ matrix.shardIndex }}=${{ steps.run-playwright.outcome }}" >> $GITHUB_OUTPUT
-
   report-to-allure:
     name: "Create Allure Report and upload it"
     runs-on: [ledger-live-medium]
@@ -311,7 +332,6 @@ jobs:
         run: |
           response=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ secrets.XRAY_CLIENT_ID }}", "client_secret": "${{ secrets.XRAY_CLIENT_SECRET }}"}' ${{ env.XRAY_API_URL }}/authenticate)
           echo "xray_token=$response" >> $GITHUB_OUTPUT
-
       - name: Publish merged report on Xray
         id: publish-xray
         run: |
@@ -322,7 +342,6 @@ jobs:
                     ${{ env.XRAY_API_URL }}/import/execution)
             key=$(echo $response | jq -r '.key')
             echo "xray_key=$key" >> $GITHUB_OUTPUT
-
       - name: Write Xray report in summary
         shell: bash
         run: echo "::notice title=Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
@@ -346,7 +365,6 @@ jobs:
           script: |
             const fs = require("fs");
             const statusEmoji = process.env.STATUS_EMOJI;
-
             const blocks = [
               {
                 "type": "header",
@@ -367,7 +385,6 @@ jobs:
                 }
               }
             ];
-
             if (process.env.MISSING_SHARDS) {
               blocks.push({
                 "type": "section",
@@ -377,11 +394,9 @@ jobs:
                 }
               });
             }
-
             blocks.push({
               "type": "divider"
             });
-
             blocks.push({
               "type": "section",
               "fields": [
@@ -395,7 +410,6 @@ jobs:
                 }
               ]
             });
-
             if (process.env.EXPORT_TO_XRAY === 'true') {
               blocks.push({
                 "type": "section",
@@ -407,7 +421,6 @@ jobs:
                 ]
               });
             }
-
             const slackPayload = {
               "attachments": [
                 {
@@ -416,9 +429,7 @@ jobs:
                 }
               ]
             };
-
             fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
-
       - name: Print Slack Payload Content
         run: cat ${{ github.workspace }}/payload-slack-content.json
 

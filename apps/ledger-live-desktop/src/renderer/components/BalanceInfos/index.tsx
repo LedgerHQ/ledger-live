@@ -141,6 +141,7 @@ export default function BalanceInfos({
       counterValueId
         ? getAvailableAccountsById(counterValueId, flattenedAccounts).find(Boolean)
         : undefined,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [counterValueId, flattenedAccounts],
   );
 
@@ -166,9 +167,9 @@ export default function BalanceInfos({
     navigate("/swap", {
       state: {
         from: location.pathname,
-        defaultAccount,
+        defaultAccountId: defaultAccount?.id,
         defaultAmountFrom: "0",
-        defaultParentAccount: parentAccount,
+        defaultParentAccountId: parentAccount?.id,
       },
     });
   }, [navigate, location, defaultAccount, parentAccount]);

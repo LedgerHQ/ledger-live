@@ -1,6 +1,6 @@
 import React from "react";
 import { NewBannerCard } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { BaseStyledProps } from "@ledgerhq/native-ui/lib/components/styled";
 import { useLNSUpsellBannerModel } from "./useLNSUpsellBannerModel";
 import type { LNSBannerLocation, LNSBannerModel } from "./types";
@@ -25,6 +25,8 @@ function View({
   return (
     <NewBannerCard
       {...styledProps}
+      variant="titleProminent"
+      title={t(`lnsUpsell.${tracking}.title`)}
       description={t(`lnsUpsell.${tracking}.description`)}
       cta={t(`lnsUpsell.${tracking}.cta`)}
       icon={tracking === "opted_in" ? "SparksFill" : "Nano"}

@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import useCameraPermissions from "./useCameraPermissions";
 import Fallback from "./Fallback";
 import CameraPermissionContext from "./CameraPermissionContext";

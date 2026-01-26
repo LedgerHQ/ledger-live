@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { View } from "react-native";
 import BigNumber from "bignumber.js";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Flex, Text, Alert, Box } from "@ledgerhq/native-ui";
 import {
   SolanaTokenAccount,

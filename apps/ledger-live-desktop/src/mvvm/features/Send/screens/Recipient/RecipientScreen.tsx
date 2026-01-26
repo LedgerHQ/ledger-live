@@ -1,17 +1,14 @@
 import React, { useCallback, useMemo } from "react";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  useSendFlowData,
-  useSendFlowActions,
-  useSendFlowNavigation,
-} from "../../context/SendFlowContext";
+import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
+import { useSendFlowData, useSendFlowActions } from "../../context/SendFlowContext";
 import { RecipientAddressModal } from "./components/RecipientAddressModal";
 
 export function RecipientScreen() {
   const { state, uiConfig, recipientSearch } = useSendFlowData();
   const { transaction, close } = useSendFlowActions();
-  const { navigation } = useSendFlowNavigation();
+  const { navigation } = useFlowWizard();
 
   const account = state.account.account;
   const parentAccount = state.account.parentAccount ?? undefined;

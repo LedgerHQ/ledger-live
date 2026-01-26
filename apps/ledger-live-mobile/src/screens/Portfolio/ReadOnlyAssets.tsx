@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, memo } from "react";
 import { FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import TrackScreen from "~/analytics/TrackScreen";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 

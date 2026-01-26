@@ -492,7 +492,7 @@ const App = () => {
         });
 
         let i = 1;
-        for (let apdu of list) {
+        for (const apdu of list) {
           addLog({
             type: "verbose",
             text: `APDU - ${i} / ${list.length}`,
@@ -526,7 +526,7 @@ const App = () => {
     <Theme>
       <Container {...getRootProps()} onClick={undefined}>
         {/* Needed for drag-and-drop functionality */}
-        <input {...getInputProps()} />
+        <input {...(getInputProps() as React.InputHTMLAttributes<HTMLInputElement>)} />
 
         <LeftPanel>
           <Section style={{ flex: 1 }}>

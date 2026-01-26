@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/utils/types";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import {
@@ -42,7 +42,15 @@ export function useMarket() {
 
   const { supportedCounterCurrencies } = useMarketDataProvider();
 
-  const marketResult = useMarketDataHook(marketParams);
+  const { shouldDisplayMarketBanner: filterBySupported } = useWalletFeaturesConfig("desktop");
+
+  const shouldDisplayLiveCompatible = filterBySupported || marketParams.liveCompatible;
+
+  const marketResult = useMarketDataHook({
+    ...marketParams,
+    starred: starFilterOn ? starredMarketCoins : starred,
+    liveCompatible: shouldDisplayLiveCompatible,
+  });
 
   const timeRanges = useMemo(
     () =>

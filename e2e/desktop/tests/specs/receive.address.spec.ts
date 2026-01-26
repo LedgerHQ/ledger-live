@@ -72,6 +72,8 @@ for (const account of accounts) {
             );
             break;
           case Account.ETH_1:
+            await app.receive.expectRecieveMenu();
+            await app.receive.clickReceive();
             await app.receive.verifySendCurrencyTokensWarningMessage(account.account, "Ethereum");
             break;
           case Account.BSC_1:

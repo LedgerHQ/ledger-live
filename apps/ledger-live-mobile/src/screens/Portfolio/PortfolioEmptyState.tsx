@@ -2,7 +2,7 @@ import React, { memo, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import WalletCoinsSupported from "~/icons/WalletCoinsSupported";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
 import { NavigatorName, ScreenName } from "~/const";

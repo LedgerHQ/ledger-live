@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import NewSeedIllustration from "./NewSeedIllustration";
 import { track } from "~/analytics";
 import { SeedOriginType } from "@ledgerhq/types-live";

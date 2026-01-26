@@ -6,7 +6,7 @@ import { log } from "@ledgerhq/logs";
 import { Alert, Flex } from "@ledgerhq/native-ui";
 import type { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types-live";
 import React, { memo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import LText from "~/components/LText";
 import { useSettings } from "~/hooks";
 

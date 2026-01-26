@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { StyleSheet, View, Linking } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import IconPlus from "~/icons/Plus";
 import Button from "~/components/Button";

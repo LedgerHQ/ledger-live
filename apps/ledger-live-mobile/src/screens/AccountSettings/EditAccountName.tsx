@@ -3,7 +3,7 @@ import i18next from "i18next";
 import { Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Box } from "@ledgerhq/native-ui";
 import TextInput from "~/components/TextInput";
 import Button from "~/components/wrappedUi/Button";

@@ -1,6 +1,6 @@
 import { useTheme } from "styled-components/native";
 import React, { memo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Linking } from "react-native";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import Button from "~/components/Button";

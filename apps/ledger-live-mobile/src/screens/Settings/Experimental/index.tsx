@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { isEnvDefault } from "@ledgerhq/live-env";
 
 import { Alert } from "@ledgerhq/native-ui";

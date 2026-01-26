@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { Linking, StyleSheet } from "react-native";
 import { BleError, BleError as DeprecatedError, BleErrorCode } from "react-native-ble-plx";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import {
   PairingFailed,
   GenuineCheckFailed,

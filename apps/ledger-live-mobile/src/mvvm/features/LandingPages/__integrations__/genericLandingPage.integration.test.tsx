@@ -20,8 +20,8 @@ const Linking = {
 
 const openLinkMock = jest.fn((card: LandingPageStickyCtaContentCard) => {
   trackContentCardEvent("contentcard_clicked", {
+    ...card.extras,
     campaign: card.id,
-    link: card.link,
     contentcard: card.cta,
     landingPage: useCase,
   });
@@ -90,9 +90,11 @@ describe("GenericLandingPage", () => {
     expect(openLinkMock).toHaveBeenCalled();
     expect(trackContentCardEvent).toHaveBeenCalledWith("contentcard_clicked", {
       campaign: "stickyCta001",
+      cta: "Sign Up Now",
       link: "https://example.com/signup",
       contentcard: "Sign Up Now",
       landingPage: "LP_Generic",
+      location: "landing_page_sticky_cta",
     });
     expect(Linking.openURL).toHaveBeenCalledWith("https://example.com/signup");
     expect(logClickCard).toHaveBeenCalledWith("stickyCta001");

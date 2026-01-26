@@ -3,7 +3,7 @@ import { Flex, VerticalTimeline } from "@ledgerhq/native-ui";
 import CollapsibleStep from "./CollapsibleStep";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import useCompanionSteps from "./useCompanionSteps";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { SyncOnboardingScreenProps } from "../SyncOnboardingScreenProps";

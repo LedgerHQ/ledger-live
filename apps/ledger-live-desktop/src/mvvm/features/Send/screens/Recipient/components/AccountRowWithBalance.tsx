@@ -1,6 +1,6 @@
 import React from "react";
 import type { Account } from "@ledgerhq/types-live";
-import { formatAddress } from "@ledgerhq/react-ui/pre-ldls/components/Address/formatAddress";
+import { formatAddress } from "LLD/features/ModularDialog/components/Address/formatAddress";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { AddressListItem } from "./AddressListItem";
 import { useFormattedAccountBalance } from "../hooks/useFormattedAccountBalance";

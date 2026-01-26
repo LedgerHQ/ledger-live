@@ -9,8 +9,6 @@ import type {
   FeatureId,
 } from "@ledgerhq/types-live";
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
   AppState,
@@ -31,7 +29,6 @@ import type {
   MarketState,
   LargeMoverState,
   InViewState,
-  SwapStateType,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 import type { HandlersPayloads } from "@ledgerhq/live-wallet/store";
@@ -273,7 +270,6 @@ export enum SettingsActionTypes {
   SETTINGS_SET_LANGUAGE = "SETTINGS_SET_LANGUAGE",
   SETTINGS_SET_LOCALE = "SETTINGS_SET_LOCALE",
   SETTINGS_SET_DATE_FORMAT = "SETTINGS_SET_DATE_FORMAT",
-  ACCEPT_SWAP_PROVIDER = "ACCEPT_SWAP_PROVIDER",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
   LAST_SEEN_DEVICE_LANGUAGE_ID = "LAST_SEEN_DEVICE_LANGUAGE_ID",
   SET_KNOWN_DEVICE_MODEL_IDS = "SET_KNOWN_DEVICE_MODEL_IDS",
@@ -478,12 +474,6 @@ export enum SwapActionTypes {
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
-export type UpdateProvidersPayload = SwapStateType["providers"];
-export type UpdateTransactionPayload = Transaction | undefined;
-export type UpdateRatePayload = ExchangeRate | undefined;
-
-export type SwapPayload = UpdateTransactionPayload | UpdateRatePayload;
-
 // === EARN ACTIONS ==
 export enum EarnActionTypes {
   EARN_INFO_MODAL = "EARN_INFO_MODAL",
@@ -599,7 +589,6 @@ export type ActionsPayload =
   | Action<SettingsPayload>
   | Action<WalletConnectPayload>
   | Action<PostOnboardingPayload>
-  | Action<SwapPayload>
   | Action<ProtectPayload>
   | Action<EarnPayload>
   | Action<MarketPayload>

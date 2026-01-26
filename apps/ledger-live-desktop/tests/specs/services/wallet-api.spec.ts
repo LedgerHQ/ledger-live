@@ -799,7 +799,7 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await expect(drawer.getByText("Confirmed")).toBeVisible();
 
     const res = await liveAppWebview.getResOutput();
-    expect(res).toBe("32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25");
+    expect(res).toBe("93036A2539D5DEEECE463E04A7D43C4BAFA60F6118EF295D35D175A514002FB4");
 
     await resetWebview();
   });

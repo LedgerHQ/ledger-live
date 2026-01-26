@@ -75,7 +75,6 @@
     "msw": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
     "@types/bluebird": "^3.5.42",
     "@types/jest": "catalog:",
     "dotenv": "^16.4.5",

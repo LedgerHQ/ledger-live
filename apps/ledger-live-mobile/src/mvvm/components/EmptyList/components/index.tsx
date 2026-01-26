@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Text, Button, Link } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Linking } from "react-native";
 
 type Props = {

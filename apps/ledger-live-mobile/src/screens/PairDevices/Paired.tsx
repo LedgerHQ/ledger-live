@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 

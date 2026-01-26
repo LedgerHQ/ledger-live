@@ -4,7 +4,7 @@ import { Flex, Icons } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
 import { useTrack } from "~/analytics";
 import { SWAP_VERSION } from "~/screens/Swap/utils";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { DefaultAccountSwapParamList, DetailsSwapParamList } from "~/screens/Swap/types";
 import Touchable from "~/components/Touchable";
 import { SwapWebviewAllowedPageNames, WebviewAPI } from "~/components/Web3AppWebview/types";

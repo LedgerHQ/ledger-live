@@ -1,0 +1,102 @@
+---
+description: Redux Toolkit createSlice best practices
+alwaysApply: true
+---
+
+# Redux Toolkit - createSlice
+
+## Structure
+
+- Use descriptive `name` for action type prefixes
+- Define typed `initialState` with `satisfies`
+- Export actions and reducer separately
+
+```typescript
+// ✅ GOOD
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+interface MyState {
+  value: number;
+  status: "idle" | "loading" | "error";
+}
+
+const initialState: MyState = {
+  value: 0,
+  status: "idle",
+};
+
+const mySlice = createSlice({
+  name: "myFeature",
+  initialState,
+  reducers: {
+    setValue: (state, action: PayloadAction<number>) => {
+      state.value = action.payload;
+    },
+    setStatus: (state, action: PayloadAction<MyState["status"]>) => {
+      state.status = action.payload;
+    },
+  },
+});
+
+export const { setValue, setStatus } = mySlice.actions;
+export default mySlice.reducer;
+```
+
+## Registration
+
+Add the slice to `reducers/index.ts`:
+
+```typescript
+// 1. Import the reducer and state type
+import myFeature, { MyFeatureState } from "./myFeature";
+
+// 2. Add to State type
+export type State = {
+  // ...existing
+  myFeature: MyFeatureState;
+};
+
+// 3. Add to combineReducers
+const appReducer = combineReducers({
+  // ...existing
+  myFeature,
+});
+```
+
+## Reducers
+
+- Use Immer's mutable syntax safely
+- Type `PayloadAction<T>` for actions with payloads
+- Keep reducers focused on single state changes
+
+## Selectors
+
+- Define selectors with the slice
+- Use `createSelector` for derived data
+
+```typescript
+// Colocate selectors with slice
+export const selectValue = (state: RootState) => state.myFeature.value;
+export const selectStatus = (state: RootState) => state.myFeature.status;
+```
+
+## extraReducers
+
+- Use builder callback for external actions
+- Handle async thunk states (pending/fulfilled/rejected)
+
+```typescript
+extraReducers: (builder) => {
+  builder
+    .addCase(fetchData.pending, (state) => {
+      state.status = "loading";
+    })
+    .addCase(fetchData.fulfilled, (state, action) => {
+      state.status = "idle";
+      state.data = action.payload;
+    })
+    .addCase(fetchData.rejected, (state) => {
+      state.status = "error";
+    });
+},
+```

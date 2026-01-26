@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useEffect } from "react";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { View, StyleSheet, Linking, TouchableOpacity, SafeAreaView } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

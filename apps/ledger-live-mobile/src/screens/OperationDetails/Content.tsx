@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import uniq from "lodash/uniq";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";

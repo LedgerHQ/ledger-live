@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Text } from "@ledgerhq/native-ui";
 import { useSelector } from "~/context/hooks";
 import SettingsRow from "~/components/SettingsRow";

@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Pressable } from "react-native";
 
 type Props = {

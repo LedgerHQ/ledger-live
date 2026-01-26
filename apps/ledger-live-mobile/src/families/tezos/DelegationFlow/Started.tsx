@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Linking, ScrollView } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Flex, Text, IconsLegacy, List, Link, Log } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";

@@ -5,7 +5,7 @@ import Animation from "~/components/Animation";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import React from "react";
 import { useTheme } from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Device } from "@ledgerhq/types-devices";
 
 export const BleDevicePairingProgress = ({

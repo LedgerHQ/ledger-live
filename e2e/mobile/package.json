@@ -5,6 +5,7 @@
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
+    "typecheck": "node ./scripts/typecheck.js",
     "test:detox": "pnpm detox test",
     "test:ios": "pnpm test:detox --configuration ios.sim.release",
     "test:android": "pnpm test:detox --configuration android.emu.release",

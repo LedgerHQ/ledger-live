@@ -61,8 +61,7 @@ import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
-import { LAST_STARTUP_EVENTS } from "LLM/utils/logLastStartupEvents";
-import { resolveStartupEvents } from "LLM/utils/resolveStartupEvents";
+import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { notificationsPermissionStatusSelector } from "~/reducers/notifications";
@@ -343,7 +342,7 @@ const extraProperties = async (store: AppStore) => {
 
   const startupEvents = await resolveStartupEvents();
   const legacyStartupTime = startupEvents.find(
-    ({ event }) => event === LAST_STARTUP_EVENTS.APP_STARTED,
+    ({ event }) => event === STARTUP_EVENTS.APP_STARTED,
   )?.time;
 
   const optimiseOptInNotificationsNewWordingAttributes =

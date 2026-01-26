@@ -23,7 +23,7 @@ permissions:
 jobs:
   is-affected:
     outputs:
-      is-affected: ${{ steps.affected.outputs.is-affected }}
+      is-affected: ${{ steps.set-affected.outputs.is-affected }}
       paths: ${{ steps.affected.outputs.paths }}
       coins: ${{ steps.affected.outputs.coins }}
     runs-on: ubuntu-22.04

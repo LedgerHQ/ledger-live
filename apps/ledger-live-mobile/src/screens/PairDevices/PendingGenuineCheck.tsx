@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { Alert, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 

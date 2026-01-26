@@ -8092,11 +8092,13 @@
   },
   "lnsUpsell": {
     "opted_in": {
-      "description": "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "title": "Upgrade your Ledger Nano S™",
+      "description": "Get an exclusive 20% off on the latest Ledger signers.",
       "cta": "Upgrade my Ledger"
     },
     "opted_out": {
-      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
+      "title": "Upgrade your Ledger Nano S™",
+      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements.",
       "cta": "Learn more"
     }
   },
@@ -8104,6 +8106,8 @@
     "title": "Explore market",
     "viewAll": "View all",
     "viewAllAccessibilityHint": "Double tap to view all market assets",
+    "connectionFailed": "Connection failed",
+    "errorAccessibilityHint": "Unable to load market data. Please try again later.",
     "tile": {
       "accessibilityLabel": "{{name}}, {{change}}",
       "accessibilityHint": "Double tap to view market details"
@@ -8359,6 +8363,17 @@
       "neutral": "Neutral",
       "greed": "Greed",
       "extremeGreed": "Greed+"
+    }
+  },
+  "analyticsAllocation": {
+    "header": {
+      "main": "Analytics"
+    },
+    "allocation": {
+      "title": "Asset Allocation"
+    },
+    "actions": {
+      "swap": "Swap"
     }
   }
 }

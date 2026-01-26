@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";

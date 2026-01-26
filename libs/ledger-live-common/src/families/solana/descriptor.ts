@@ -9,7 +9,7 @@ export const descriptor: CoinDescriptor = {
       },
     },
     fees: {
-      hasPresets: true,
+      hasPresets: false,
       hasCustom: false,
     },
   },

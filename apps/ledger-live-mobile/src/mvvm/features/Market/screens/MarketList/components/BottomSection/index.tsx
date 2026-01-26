@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Text, ScrollContainerHeader, Icon, ScrollContainer, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { TouchableOpacity } from "react-native";
 import SortBadge from "../SortBadge";
 import { StyledBadge } from "../SortBadge/SortBadge.styled";

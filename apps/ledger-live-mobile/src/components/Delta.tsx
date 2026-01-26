@@ -4,7 +4,7 @@ import { Unit } from "@ledgerhq/types-cryptoassets";
 import { PortfolioRange, ValueChange } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { ArrowEvolutionUpMedium, ArrowEvolutionDownMedium } from "@ledgerhq/native-ui/assets/icons";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 

@@ -1,0 +1,62 @@
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { WALLET_FEATURES_PARAMS } from "./constants";
+import { WalletFeaturesDevToolContentProps } from "./types";
+import { useWalletFeaturesDevToolViewModel } from "./hooks/useWalletFeaturesDevToolViewModel";
+import { QuickActions, FeatureParamRow, FeatureFlagPreview, MainFeatureToggle } from "./components";
+import { Divider } from "@ledgerhq/lumen-ui-react";
+
+export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevToolContentProps) => {
+  const { t } = useTranslation();
+  const {
+    featureFlag,
+    isEnabled,
+    params,
+    allEnabled,
+    handleToggleAll,
+    handleToggleEnabled,
+    handleToggleParam,
+  } = useWalletFeaturesDevToolViewModel();
+
+  return (
+    <div className="flex flex-col gap-2 pt-2">
+      <p className="text-muted">{t("settings.developer.walletFeaturesDevTool.description")}</p>
+
+      {expanded && (
+        <div className="mt-4 flex flex-col gap-6">
+          <QuickActions
+            allEnabled={allEnabled}
+            isEnabled={isEnabled}
+            onEnableAll={() => handleToggleAll(true)}
+            onDisableAll={() => handleToggleAll(false)}
+          />
+
+          <div className="flex flex-col gap-4">
+            <MainFeatureToggle isEnabled={isEnabled} onToggle={handleToggleEnabled} />
+
+            <div className="flex flex-col gap-2">
+              <span className="body-3-semi-bold text-muted">
+                {t("settings.developer.walletFeaturesDevTool.featureParameters")}
+              </span>
+              <Divider />
+              <div className="flex flex-col rounded-md bg-surface px-4 py-1">
+                {WALLET_FEATURES_PARAMS.map(({ key, label }) => (
+                  <FeatureParamRow
+                    key={key}
+                    paramKey={key}
+                    label={label}
+                    isEnabled={isEnabled}
+                    isSelected={isEnabled && (params[key] ?? false)}
+                    onToggle={() => handleToggleParam(key)}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <FeatureFlagPreview featureFlag={featureFlag} />
+        </div>
+      )}
+    </div>
+  );
+};

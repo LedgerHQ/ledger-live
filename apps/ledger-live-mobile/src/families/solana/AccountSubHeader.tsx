@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { Box, Alert, Text } from "@ledgerhq/native-ui";
 import {

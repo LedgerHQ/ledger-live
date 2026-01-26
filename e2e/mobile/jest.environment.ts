@@ -15,7 +15,9 @@ import { CLI } from "./utils/cliUtils";
 import { NativeElementHelpers, WebElementHelpers } from "./helpers/elementHelpers";
 import expect from "expect";
 import { Application } from "./page/index";
+import { ServerData } from "../../apps/ledger-live-mobile/e2e/bridge/types";
 
+// @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
 
 export default class TestEnvironment extends DetoxEnvironment {
@@ -34,7 +36,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       wss: undefined,
       ws: undefined,
       messages: {},
-      e2eBridgeServer: new Subject(),
+      e2eBridgeServer: new Subject<ServerData>(),
     };
     const pendingCallbacksMap = new Map<string, { callback: (data: string) => void }>();
     const appInstance = new Application();

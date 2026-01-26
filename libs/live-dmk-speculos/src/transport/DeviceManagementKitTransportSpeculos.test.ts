@@ -1,6 +1,23 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, beforeAll, afterEach, vi } from "vitest";
+jest.mock("@ledgerhq/device-transport-kit-speculos", () => {
+  class HttpSpeculosDatasource {
+    openEventStream() {
+      return Promise.resolve({ cancel: jest.fn() });
+    }
+  }
+
+  return {
+    __esModule: true,
+    speculosTransportFactory: jest.fn(),
+    HttpSpeculosDatasource,
+  };
+});
+
+jest.mock("@ledgerhq/speculos-device-controller", () => ({
+  deviceControllerClientFactory: jest.fn(),
+}));
+
 import DeviceManagementKitTransportSpeculos, {
   SpeculosButton,
 } from "./DeviceManagementKitTransportSpeculos";
@@ -18,7 +35,7 @@ const flushPromises = () => new Promise<void>(resolve => setImmediate(resolve));
 let listenSubject: Subject<DiscoveredDevice[]>;
 let fakeDmk: any;
 
-let pressMock: ReturnType<typeof vi.fn>;
+let pressMock: ReturnType<typeof jest.fn>;
 let openEventHandlers: { onEvent?: (e: any) => void; onClose?: () => void };
 
 beforeAll(() => {
@@ -27,49 +44,48 @@ beforeAll(() => {
   listenSubject = new Subject<DiscoveredDevice[]>();
 
   fakeDmk = {
-    listenToAvailableDevices: vi.fn().mockImplementation(() => listenSubject.asObservable()),
-    connect: vi.fn().mockResolvedValue("session-1"),
-    sendApdu: vi.fn(),
-    disconnect: vi.fn(),
+    listenToAvailableDevices: jest.fn().mockImplementation(() => listenSubject.asObservable()),
+    connect: jest.fn().mockResolvedValue("session-1"),
+    sendApdu: jest.fn(),
+    disconnect: jest.fn(),
   };
 
-  vi.spyOn(DeviceManagementKitBuilder.prototype, "addTransport").mockReturnThis();
-  vi.spyOn(DeviceManagementKitBuilder.prototype, "addLogger").mockReturnThis();
-  vi.spyOn(DeviceManagementKitBuilder.prototype, "build").mockReturnValue(fakeDmk);
+  jest.spyOn(DeviceManagementKitBuilder.prototype, "addTransport").mockReturnThis();
+  jest.spyOn(DeviceManagementKitBuilder.prototype, "addLogger").mockReturnThis();
+  jest.spyOn(DeviceManagementKitBuilder.prototype, "build").mockReturnValue(fakeDmk);
 
-  vi.spyOn(speculosTransportFactoryModule, "speculosTransportFactory").mockReturnValue(
+  jest.spyOn(speculosTransportFactoryModule, "speculosTransportFactory").mockReturnValue(
     // @ts-expect-error – just a placeholder for the DMK builder
     "fake-transport",
   );
 
-  pressMock = vi.fn().mockResolvedValue(undefined);
-  vi.spyOn(speculosDeviceControllerModule, "deviceControllerClientFactory").mockImplementation(
+  pressMock = jest.fn().mockResolvedValue(undefined);
+  jest.spyOn(speculosDeviceControllerModule, "deviceControllerClientFactory").mockImplementation(
     //@ts-expect-error adf
     () => ({
       buttonFactory: () => ({
         press: pressMock,
-        left: vi.fn().mockResolvedValue(undefined),
-        right: vi.fn().mockResolvedValue(undefined),
-        both: vi.fn().mockResolvedValue(undefined),
-        pressSequence: vi.fn().mockResolvedValue(undefined),
+        left: jest.fn().mockResolvedValue(undefined),
+        right: jest.fn().mockResolvedValue(undefined),
+        both: jest.fn().mockResolvedValue(undefined),
+        pressSequence: jest.fn().mockResolvedValue(undefined),
       }),
     }),
   );
 
   openEventHandlers = {};
-  vi.spyOn(
-    speculosTransportFactoryModule.HttpSpeculosDatasource.prototype,
-    "openEventStream",
-  ).mockImplementation(async function (onEvent: any, onClose: any) {
-    openEventHandlers.onEvent = onEvent;
-    openEventHandlers.onClose = onClose;
-    // Return an object that has a cancel() method so transport.close() is safe
-    return { cancel: vi.fn() } as any;
-  });
+  jest
+    .spyOn(speculosTransportFactoryModule.HttpSpeculosDatasource.prototype, "openEventStream")
+    .mockImplementation(async function (onEvent: any, onClose: any) {
+      openEventHandlers.onEvent = onEvent;
+      openEventHandlers.onClose = onClose;
+      // Return an object that has a cancel() method so transport.close() is safe
+      return { cancel: jest.fn() } as any;
+    });
 });
 
 afterEach(() => {
-  vi.clearAllMocks();
+  jest.clearAllMocks();
   listenSubject = new Subject<DiscoveredDevice[]>();
   fakeDmk.listenToAvailableDevices.mockImplementation(() => listenSubject.asObservable());
 });

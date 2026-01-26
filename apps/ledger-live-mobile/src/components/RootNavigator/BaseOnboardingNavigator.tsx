@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 import { ScreenName, NavigatorName } from "~/const";
@@ -65,6 +65,7 @@ export default function BaseOnboardingNavigator() {
     () => getStackNavigatorConfig(colors, true, undefined, true),
     [colors],
   );
+
   return (
     <Stack.Navigator
       screenOptions={{

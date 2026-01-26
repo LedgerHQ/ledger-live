@@ -1,9 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
 } from "@react-navigation/native-stack";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "~/context/hooks";
@@ -86,9 +86,12 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
+import AnalyticsNavigator from "LLM/features/Analytics/Navigator";
 import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
+import { AppState } from "react-native";
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 
@@ -109,6 +112,28 @@ export default function BaseNavigator() {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   const web3hub = useFeature("web3hub");
   const llmAccountListUI = useFeature("llmAccountListUI");
+
+  const { initPushNotificationsData, tryTriggerPushNotificationDrawerAfterInactivity } =
+    useNotifications();
+
+  useEffect(() => {
+    // This feature requires the user to be past onboarding, that's why it lives in the BaseNavigator for onboarded users only
+    initPushNotificationsData().then(tryTriggerPushNotificationDrawerAfterInactivity);
+
+    // No dependency because we only want to run it once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    // This catches when the user is redirected back from toggling on notifications in the os settings
+    const subscription = AppState.addEventListener("change", nextAppState => {
+      if (nextAppState === "active") {
+        initPushNotificationsData();
+      }
+    });
+
+    return () => subscription.remove();
+  }, [initPushNotificationsData]);
 
   return (
     <>
@@ -562,6 +587,12 @@ export default function BaseNavigator() {
             options={{ headerShown: false }}
           />
         )}
+
+        <Stack.Screen
+          name={NavigatorName.Analytics}
+          component={AnalyticsNavigator}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </>
   );

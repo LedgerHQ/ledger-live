@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Flex, IconsLegacy, Tag, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
 import { PostOnboardingActionState, PostOnboardingAction, Account } from "@ledgerhq/types-live";
 import Touchable from "../Touchable";

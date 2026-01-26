@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Image } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 import graphPlaceholderSource from "../../../assets/images/graph/graphPlaceholder.webp";
 

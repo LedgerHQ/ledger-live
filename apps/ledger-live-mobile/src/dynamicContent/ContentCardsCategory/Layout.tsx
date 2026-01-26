@@ -72,8 +72,8 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
   const onCardCick = (card: AnyContentCard, displayedPosition?: number) => {
     trackContentCardEvent("contentcard_clicked", {
+      ...card.extras,
       page: card.location,
-      link: card.link,
       campaign: card.id,
       contentcard: card.title,
       type: category.cardsType,
@@ -89,8 +89,8 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
   const onCardDismiss = (card: AnyContentCard, displayedPosition?: number) => {
     trackContentCardEvent("contentcard_dismissed", {
+      ...card.extras,
       page: card.location,
-      link: card.link || undefined,
       campaign: card.id,
       contentcard: card.title,
       type: category.cardsType,

@@ -73,7 +73,7 @@ const NotEnoughFundsToUnstake = ({
     navigate("/swap", {
       state: {
         defaultCurrency: currency,
-        defaultAccount: account,
+        defaultAccountId: account.id,
         from: location.pathname,
       },
     });

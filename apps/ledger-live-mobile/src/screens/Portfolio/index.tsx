@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
 import { Platform } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
@@ -11,7 +11,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import Carousel from "~/components/Carousel";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
@@ -44,7 +44,7 @@ import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLM/features/LNSUpsell
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 export { default as PortfolioTabIcon } from "./TabIcon";
 import Animated, { useSharedValue } from "react-native-reanimated";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import AnimatedContainer from "./AnimatedContainer";
 import storage from "LLM/storage";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
@@ -77,6 +77,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const isFocused = useIsFocused();
 
   const mmkvMigrationFF = useFeature("llmMmkvMigration");
+
+  const { shouldDisplayGraphRework } = useWalletFeaturesConfig("mobile");
 
   useEffect(() => {
     async function handleMigration() {
@@ -147,13 +149,31 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
 
+  const onPressAllocations = useCallback(() => {
+    // TODO: Remove this condition once we have the correct entry point
+    if (shouldDisplayGraphRework) {
+      navigation.navigate(NavigatorName.Analytics, {
+        screen: ScreenName.Analytics,
+        params: {
+          sourceScreenName: ScreenName.Portfolio,
+        },
+      });
+    } else {
+      navigation.navigate(ScreenName.AnalyticsAllocation);
+    }
+  }, [shouldDisplayGraphRework, navigation]);
+
   const data = useMemo(
     () => [
       <WalletTabSafeAreaView key="portfolioHeaderElements" edges={["left", "right"]}>
         <Flex px={6} key="FirmwareUpdateBanner">
           <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
         </Flex>
-        <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />
+        <PortfolioGraphCard
+          showAssets={showAssets}
+          key="PortfolioGraphCard"
+          screenName={ScreenName.Portfolio}
+        />
         {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mt={7} />}
         {!isLNSUpsellBannerShown && showAssets ? (
           <ContentCardsLocation
@@ -204,8 +224,11 @@ function PortfolioScreen({ navigation }: NavigationProps) {
                 title={t("analytics.allocation.title")}
                 testID="portfolio-allocation-section"
               />
-              <Flex minHeight={94}>
-                <AllocationsSection />
+              <Flex minHeight={94} mt={6}>
+                <AllocationsSection
+                  screenName={ScreenName.Portfolio}
+                  onPress={onPressAllocations}
+                />
               </Flex>
             </SectionContainer>,
             <SectionContainer px={6} key="PortfolioOperationsHistorySection">
@@ -227,13 +250,14 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     [
       onBackFromUpdate,
       showAssets,
+      onPressAllocations,
+      isLNSUpsellBannerShown,
       isAccountListUIEnabled,
       handleHeightChange,
       colors.background.main,
       hideEmptyTokenAccount,
       openAddModal,
       isAWalletCardDisplayed,
-      isLNSUpsellBannerShown,
       t,
     ],
   );

@@ -4,7 +4,7 @@ import { Image, Linking, ScrollView } from "react-native";
 import Config from "react-native-config";
 import { useSelector } from "~/context/hooks";
 import styled, { useTheme } from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 import { ParamListBase, T } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";

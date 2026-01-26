@@ -3,7 +3,7 @@ import { Subscription } from "rxjs";
 import { filter, first, map } from "rxjs/operators";
 import { TouchableOpacity, Linking, LayoutChangeEvent } from "react-native";
 import { useSelector } from "~/context/hooks";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation, Trans } from "~/context/Locale";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

@@ -111,7 +111,6 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
       </Asset>
       <PriceSection>
         {distribution ? (
-          // @ts-expect-error Need to change "color" type in Component
           <Price from={currency} color="neutral.c80" fontSize={3} />
         ) : (
           <NoCountervaluePlaceholder />
