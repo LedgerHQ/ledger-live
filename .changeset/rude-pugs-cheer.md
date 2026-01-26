@@ -3,7 +3,6 @@
 "@ledgerhq/cryptoassets": minor
 "@actions/desktop-report-build": minor
 "@ledgerhq/types-live": minor
-"@actions/submit-bot-report": minor
 "@ledgerhq/coin-evm": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
