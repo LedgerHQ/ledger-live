@@ -113,7 +113,8 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'master' }}
       SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoSP' }}
-    runs-on: [ledger-live-4xlarge-e2e]
+    #runs-on: [ledger-live-4xlarge-e2e]
+    runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
     outputs:
       status_1: ${{ steps.set-output.outputs.status_1 }}
       status_2: ${{ steps.set-output.outputs.status_2 }}
@@ -142,6 +143,7 @@ jobs:
         id: caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          install-proto: true
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -214,7 +216,7 @@ jobs:
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
           } >> $GITHUB_STEP_SUMMARY
-          
+
       - name: Run Playwright Tests
         id: run-playwright
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
