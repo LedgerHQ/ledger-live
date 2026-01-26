@@ -16,6 +16,7 @@ import receiveOptionsDrawer from "./receiveOptionsDrawer";
 import notifications from "./notifications";
 import protect from "./protect";
 import ratings from "./ratings";
+import sendFlow from "./sendFlow";
 import settings from "./settings";
 import toasts from "./toast";
 import trustchain from "./trustchain";
@@ -46,6 +47,7 @@ const appReducer = combineReducers({
   postOnboarding,
   protect,
   ratings,
+  sendFlow,
   settings,
   toasts,
   trustchain,
