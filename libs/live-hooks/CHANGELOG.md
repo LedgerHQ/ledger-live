@@ -1,5 +1,17 @@
 # @ledgerhq/live-hooks
 
+## 0.5.0
+
+### Minor Changes
+
+- [#13556](https://github.com/LedgerHQ/ledger-live/pull/13556) [`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d) Thanks [@ysitbon](https://github.com/ysitbon)! - make lib compatible with react 19
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#13556](https://github.com/LedgerHQ/ledger-live/pull/13556) [`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d) Thanks [@ysitbon](https://github.com/ysitbon)! - make lib compatible with react 19
+
 ## 0.4.0
 
 ### Minor Changes

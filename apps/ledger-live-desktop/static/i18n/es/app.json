@@ -652,134 +652,6 @@
       "submit" : "Conectar"
     }
   },
-  "fullNode" : {
-    "status" : "Estado",
-    "connect" : "Conectar",
-    "disconnect" : "Desconectar",
-    "checkNodeSettings" : "Verificar configuración del nodo",
-    "edit" : "Editar",
-    "modal" : {
-      "title" : "Conectar nodo completo de Bitcoin",
-      "disconnectTitle" : "Desconectar nodo completo",
-      "steps" : {
-        "landing" : {
-          "header" : "Inicia tu nodo completo. No confíes, verifica.",
-          "description" : "Un nodo completo de Bitcoin valida todas las transacciones y bloques, permitiéndote usar Bitcoin de una manera que no requiere confianza, a la vez que contribuyes a la red de Bitcoin.",
-          "list" : {
-            "item1" : "Configura Bitcoin Core en un dispositivo con recursos suficientes.",
-            "item2" : "Espera a que el nodo se sincronice completamente.",
-            "item3" : "Toma nota de tus credenciales de nodo RPC, dirección de IP y número de puerto."
-          },
-          "disclaimer" : "Ejecutar un nodo completo requiere que tu PC tenga  recursos suficientes y una conexión de banda ancha sin restricciones de datos."
-        },
-        "node" : {
-          "title" : "Nodo",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "Ingresa los parámetros de tu nodo",
-              "disclaimer" : "Tu nodo completo debe estar completamente sincronizado antes de conectar a Ledger Wallet.",
-              "fields" : {
-                "nodeHost" : {
-                  "title" : "Anfitrión",
-                  "tooltip" : "Utiliza el valor predeterminado si el nodo se ejecuta en esta PC o ingresa la dirección de IP y el número de puerto del nodo."
-                },
-                "rpcCredentials" : {
-                  "title" : "Credenciales de RPC",
-                  "tooltip" : "Ingresa la contraseña y el nombre de usuario RPC de tu nodo, que se encuentran en el archivo bitcoin.conf.",
-                  "usernamePlaceholder" : "Nombre de usuario",
-                  "passwordPlaceholder" : "Contraseña"
-                },
-                "tls" : {
-                  "title" : "Usar TLS",
-                  "tooltip" : "Habilita la seguridad de la capa de transporte. Por ejemplo, cuando utilices una solución de nodo alojado."
-                }
-              }
-            },
-            "connecting" : {
-              "header" : "Comprobando la conexión de nodo",
-              "description" : "Espera mientras comprobamos si tu nodo completo responde."
-            },
-            "success" : {
-              "header" : "Conexión de nodo completo exitosa",
-              "description" : "Ahora puedes configurar tu nodo para buscar tus cuentas en la cadena de bloques."
-            },
-            "failure" : {
-              "header" : "No fue posible hacer contacto con el nodo completo",
-              "description" : "Asegúrate de que tu nodo esté perfectamente sincronizado y verifica sus ajustes de conexión."
-            }
-          }
-        },
-        "device" : {
-          "title" : "Dispositivo",
-          "connectionSteps" : {
-            "pending" : {
-              "header" : "Obteniendo cuentas desde el dispositivo",
-              "description" : "Espera mientras se agregan las cuentas a buscar al archivo de configuración del nodo."
-            },
-            "success" : {
-              "header" : "Cuentas agregadas a la configuración del nodo",
-              "description" : "Se guardó un archivo de configuración en la carpeta de datos del usuario. Esto permite que Ledger SatStack se conecte a tu nodo y busque tus cuentas en la cadena de bloques.",
-              "cta" : "Ver datos de usuario"
-            }
-          }
-        },
-        "accounts" : {
-          "title" : "Cuentas",
-          "existing" : "Cuentas existentes a buscar",
-          "toScan" : "Cuentas a buscar",
-          "toScanDescription" : "Cuentas a buscar por cada tipo de dirección",
-          "toScanTooltip" : "Aumenta la cantidad sólo si tienes más de 10 cuentas de BTC. La búsqueda inicial será más lenta. "
-        },
-        "satstack" : {
-          "title" : "SatStack",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "Descarga y ejecuta Ledger SatStack",
-              "description" : "Ledger SatStack es una aplicación pequeña que le permite a Ledger Wallet comunicarse con tu nodo completo. Descarga y ejecuta Ledger SatStack antes de continuar.",
-              "disclaimer" : "SatStack debe estar en ejecución para que Ledger Wallet se conecte a tu nodo completo.  Evalúa configurarla para que se inicie automáticamente al encender tu PC.",
-              "cta" : "Descargar SatStack"
-            },
-            "satstack-disconnected" : {
-              "header" : "No fue posible hacer contacto con SatStack",
-              "description" : "Comprueba que SatStack está en ejecución en esta PC."
-            },
-            "satstack-outdated" : {
-              "header" : "Actualiza SatStack",
-              "description" : "La versión de SatStack que estás utilizando es demasiado antigua y puede contener errores o incompatibilidades."
-            },
-            "node-disconnected" : {
-              "header" : "No fue posible hacer contacto con el nodo completo",
-              "description" : "Verifica que tu nodo esté accesible y que los ajustes de conexión ingresados sean los correctos."
-            },
-            "invalid-chain" : {
-              "header" : "cadena inválida título",
-              "description" : "cadena inválida descripción de tooltip"
-            },
-            "initializing" : {
-              "header" : "Cargando",
-              "description" : ""
-            },
-            "ready" : {
-              "header" : "Listo",
-              "description" : "Se ha sincronizado por completo todo el nodo. Los saldos de tu cuenta de Bitcoin son correctos ahora."
-            },
-            "syncing" : {
-              "header" : "Sincronización de nodo en curso…",
-              "description" : "Las transacciones recientes pueden no ser todavía visibles, por lo que los saldos de tu cuenta de Bitcoin podrían ser incorrectos. Si es posible, mantén tu nodo continuamente en ejecución para que siempre esté sincronizado."
-            },
-            "scanning" : {
-              "header" : "Escaneo de cuenta en curso...",
-              "description" : "Puedes agregar tus cuentas una vez que finalice el escaneo de cuenta. Se eliminó cualquier cuenta de Bitcoin previamente agregada a través de los exploradores de Ledger."
-            }
-          }
-        },
-        "disconnect" : {
-          "cta" : "Desconectar",
-          "description" : "¿Deseas continuar? Desconectar el nodo completo eliminará todas las cuentas de Bitcoin. Puedes agregar tus cuentas de nuevo utilizando los exploradores de Ledger."
-        }
-      }
-    }
-  },
   "account" : {
     "subHeader" : {
       "moreInfo" : "Más información",
@@ -1681,6 +1553,7 @@
     "currency" : "Divisa",
     "rangeLabel" : "Tiempo",
     "goBack" : "Volver",
+    "searchPlaceholder" : "Buscar activo",
     "filters" : {
       "title" : "Filtros",
       "show" : "Mostrar",
@@ -1786,8 +1659,6 @@
       "import" : "Cuentas",
       "finish" : "Confirmación"
     },
-    "fullNodeReadyInfo" : "Se agregarán las cuentas utilizando tu nodo completo de Bitcoin.",
-    "fullNodeConfigure" : "Configurar nodo",
     "tokensTip" : "{{token}} ({{ticker}}) es un token {{tokenType}}. Puedes recibir tokens directamente en una cuenta de {{currency}}.",
     "accountToImportSubtitle_other" : "Agregar cuentas existentes",
     "selectAll" : "Seleccionar todas ({{count}})",
@@ -2520,7 +2391,11 @@
     "coinControlCustom" : "Selección de monedas personalizada",
     "aboveMaximum" : "Supera el saldo máximo",
     "transactionSigned" : "Transacción firmada",
-    "processingTransaction" : "Tu transacción está en proceso"
+    "processingTransaction" : "Tu transacción está en proceso",
+    "sign" : {
+      "title" : "Continúa en tu Ledger {{wording}}",
+      "description" : "Sigue las instrucciones que aparecen en tu pantalla táctil segura."
+    }
   },
   "releaseNotes" : {
     "title" : "Notas de versión",
@@ -4801,6 +4676,8 @@
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "URL de ensayo de la página Learn",
       "enableLearnStagingUrlDesc" : "Activar el URL de ensayo de la página Learn.",
+      "enableCountervaluesStaging" : "Entorno de prueba de API de contravalores",
+      "enableCountervaluesStagingDesc" : "Usa el entorno de prueba de la API de contravalores en lugar del entorno de producción.",
       "openOnboardingAppInstallDebug" : "Abre la pantalla de depuración de la instalación de aplicaciones iniciales",
       "openOnboardingAppInstallDebugDesc" : "Abre una pantalla con los componentes del paso de sincronización de la instalación de aplicaciones iniciales"
     },
@@ -4981,10 +4858,6 @@
         "desc" : "Puedes ocultar los tokens yendo a la cuenta principal y haciendo clic derecho en el token y seleccionando “Ocultar token”.",
         "count" : "1 token",
         "count_other" : "{{count}} tokens"
-      },
-      "fullNode" : {
-        "title" : "Conectar nodo completo de Bitcoin",
-        "desc" : "Configura tu nodo completo de Bitcoin para sincronizar y enviar transacciones sin usar el Explorer de Ledger."
       },
       "filterTokenOperationsZeroAmount" : {
         "title" : "Ocultar transacciones con tokens cuando el valor es 0",
@@ -6456,22 +6329,6 @@
     "RPCPassRequired" : {
       "title" : "Es necesario ingresar la contraseña RPC"
     },
-    "SatStackAccessDown" : {
-      "title" : "No fue posible hacer contacto con el nodo completo",
-      "description" : "Verifica que SatStack y tu nodo estén funcionando. Comprueba la configuración del nodo completo en Ajustes si persiste el problema."
-    },
-    "SatStackStillSyncing" : {
-      "title" : "Sincronización de nodo en curso...",
-      "description" : "Espera mientras se sincroniza el nodo. No es posible realizar el envío, ya que los saldos de tu cuenta de Bitcoin pueden ser incorrectos."
-    },
-    "SatStackVersionTooOld" : {
-      "title" : "Actualiza SatStack",
-      "description" : "La versión de SatStack que estás utilizando es demasiado antigua y puede contener errores o incompatibilidades."
-    },
-    "SatStackDescriptorNotImported" : {
-      "title" : "Cuenta no escaneada por el nodo completo",
-      "description" : "Configura el nodo completo para buscar las cuentas asociadas a este dispositivo. El nodo completo debe buscar esta cuenta primero en la cadena de bloques, antes de agregarla a tu Portfolio."
-    },
     "SwapRateExpiredError" : {
       "title" : "Tasa caducada",
       "description" : "La tasa de cambio ha caducado. Actualiza e inténtalo de nuevo."
@@ -6937,6 +6794,10 @@
       "title" : "Parámetros de protocolo no válidos para Cardano",
       "description" : "Las transacciones con ADA no están disponibles en este momento. Sincroniza tu cuenta de nuevo e inténtalo otra vez, o contacta al equipo de Soporte si necesitas ayuda."
     },
+    "CardanoMemoExceededSizeError" : {
+      "title" : "Tamaño de memo no válido; el límite máximo permitido es de 64 caracteres.",
+      "description" : "El memo de Cardano tiene un tamaño máximo limitado. Reduce el tamaño del memo."
+    },
     "StacksMemoTooLong" : {
       "title" : "El memo es demasiado largo"
     },
@@ -7010,8 +6871,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "No hay recompensas que reclamar"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "El Memo es demasiado largo. La longitud máxima es de {{maxLength}} caracteres"
+    "HederaMemoExceededSizeError" : {
+      "title" : "Tamaño de memo no válido; el límite máximo permitido es de 100 caracteres.",
+      "description" : "El memo de Hedera tiene un tamaño máximo limitado. Reduce el tamaño del memo."
     },
     "ImageIncorrectFileTypeError" : {
       "title" : "Error al cargar la imagen desde el archivo.",
@@ -7962,6 +7824,11 @@
       },
       "cta" : "Intentarlo de nuevo"
     }
+  },
+  "marketBanner" : {
+    "title" : "Explorar mercado",
+    "genericError" : "La conexión ha fallado",
+    "cta" : "Ver todo"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens no fungibles)",

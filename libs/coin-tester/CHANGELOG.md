@@ -1,5 +1,19 @@
 # @ledgerhq/coin-tester
 
+## 0.16.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-dmk-speculos@0.5.1
+
+## 0.16.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-dmk-speculos@0.5.1-next.0
+
 ## 0.16.0
 
 ### Minor Changes
