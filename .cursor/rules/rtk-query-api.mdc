@@ -1,0 +1,108 @@
+---
+description: RTK Query createApi best practices
+alwaysApply: true
+---
+
+# RTK Query - createApi
+
+## Structure
+
+- One API slice per base URL / data source
+- Define API slices in `state-manager/api.ts` files
+- Export generated hooks alongside the API
+
+```typescript
+// ✅ GOOD - state-manager/api.ts
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { EntityTags } from "./types";
+
+export const myApi = createApi({
+  reducerPath: "myApi",
+  baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
+  tagTypes: [EntityTags.Entity, EntityTags.Entities],
+  endpoints: (build) => ({
+    getEntity: build.query<Entity, string>({
+      query: (id) => `entities/${id}`,
+      providesTags: [EntityTags.Entity],
+    }),
+  }),
+});
+
+export const { useGetEntityQuery } = myApi;
+```
+
+Define tags as enums in `state-manager/types.ts`:
+
+```typescript
+export enum EntityTags {
+  Entity = "Entity",
+  Entities = "Entities",
+}
+```
+
+## Endpoints
+
+- Use `build.query` for GET requests
+- Use `build.mutation` for POST/PUT/DELETE
+- Type both response and argument: `build.query<ResponseType, ArgType>`
+- Use `void` for no arguments: `build.query<Data[], void>`
+
+## Caching & Tags
+
+- Define tags as **enums** in `types.ts`
+- Use `providesTags` on queries for cache invalidation
+- Use `invalidatesTags` on mutations to trigger refetch
+- Use `keepUnusedDataFor` for custom cache duration
+
+```typescript
+endpoints: (build) => ({
+  getItems: build.query<Item[], void>({
+    query: () => "items",
+    providesTags: [ItemTags.Items],
+    keepUnusedDataFor: 60, // seconds
+  }),
+  addItem: build.mutation<Item, Partial<Item>>({
+    query: (body) => ({ url: "items", method: "POST", body }),
+    invalidatesTags: [ItemTags.Items],
+  }),
+}),
+```
+
+## Transform Responses
+
+- Use `transformResponse` to reshape API data
+- Use `transformErrorResponse` for custom error handling
+
+```typescript
+getItems: build.query<Item[], void>({
+  query: () => "items",
+  transformResponse: (response: ApiResponse) => response.data.items,
+}),
+```
+
+## Error Handling
+
+- Always catch errors in custom `baseQuery` or `queryFn`
+- Return `{ data }` on success, `{ error }` on failure
+
+```typescript
+// ✅ GOOD - errors are caught and returned
+queryFn: async (arg) => {
+  try {
+    const data = await fetchData(arg);
+    return { data };
+  } catch (error) {
+    return { error: { status: "CUSTOM_ERROR", data: error } };
+  }
+},
+```
+
+## Registration
+
+Register APIs in `reducers/rtkQueryApi.ts`:
+
+```typescript
+const APIs = {
+  [myApi.reducerPath]: myApi,
+};
+```
