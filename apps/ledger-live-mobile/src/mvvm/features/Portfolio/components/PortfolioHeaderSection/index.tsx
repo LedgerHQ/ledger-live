@@ -1,9 +1,9 @@
 import React from "react";
 import { Box, Flex } from "@ledgerhq/native-ui";
-import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import PortfolioGraphCard from "~/screens/Portfolio/PortfolioGraphCard";
 import PortfolioQuickActionsBar from "~/screens/Portfolio/PortfolioQuickActionsBar";
+import { View } from "react-native";
 
 interface PortfolioHeaderSectionProps {
   readonly showAssets: boolean;
@@ -17,7 +17,7 @@ export const PortfolioHeaderSection = ({
   onBackFromUpdate,
 }: PortfolioHeaderSectionProps) => {
   return (
-    <WalletTabSafeAreaView key="portfolioHeaderElements" edges={["left", "right"]}>
+    <View key="portfolioHeaderElements" style={{ paddingTop: 24 }}>
       <Flex px={6} key="FirmwareUpdateBanner">
         <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
       </Flex>
@@ -32,6 +32,6 @@ export const PortfolioHeaderSection = ({
           <PortfolioQuickActionsBar />
         </Box>
       )}
-    </WalletTabSafeAreaView>
+    </View>
   );
 };
