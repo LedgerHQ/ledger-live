@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type JSX } from "react";
 import { TextInput } from "react-native";
 import Input, { InputProps, InputRenderRightContainer } from "../BaseInput";
 import Text from "../../../Text";

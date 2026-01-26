@@ -31,7 +31,7 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
   const dispatch = useDispatch();
 
   const currentCard = useMemo(() => {
-    const cards = braze.getCachedContentCards().cards;
+    const cards = braze.getCachedContentCards()?.cards ?? [];
     return cards.find(card => card.id === id);
   }, [id]);
 

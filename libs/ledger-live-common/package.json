@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.57.0",
+  "version": "34.58.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -140,6 +140,7 @@
   "dependencies": {
     "@blooo/hw-app-acre": "^1.1.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
+    "@ledgerhq/client-ids": "workspace:^",
     "@ledgerhq/coin-aleo": "workspace:^",
     "@ledgerhq/coin-algorand": "workspace:^",
     "@ledgerhq/coin-aptos": "workspace:^",
@@ -172,7 +173,6 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",
@@ -197,7 +197,6 @@
     "@ledgerhq/hw-bolos": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/client-ids": "workspace:^",
     "@ledgerhq/ledger-cal-service": "workspace:^",
     "@ledgerhq/ledger-trust-service": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
@@ -215,6 +214,7 @@
     "@ledgerhq/live-signer-solana": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/wallet-api-acre-module": "workspace:^",
     "@ledgerhq/wallet-api-client": "^1.12.6",
@@ -283,6 +283,8 @@
     "@ledgerhq/types-live": "workspace:^",
     "@solana/web3.js": "1.95.4",
     "@svgr/core": "^5.5.0",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@tanstack/react-query": "^5.28.9",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
@@ -313,15 +315,13 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
-    "react-test-renderer": "catalog:",
     "react-redux": "catalog:",
+    "react-test-renderer": "catalog:",
     "redux-actions": "2.6.5",
     "timemachine": "^0.3.2",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
     "ts-node": "^10.4.0",
     "typescript": "5.4.3",
-    "undici": "6.19.2",
+    "undici": "catalog:",
     "uuid": "^8.3.2",
     "ws": "catalog:"
   }

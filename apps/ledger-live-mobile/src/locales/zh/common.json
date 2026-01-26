@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "暂无可领取的奖励"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Memo 备注太长。最大长度为 {{maxLength}} 个字符"
-    },
     "NearNewAccountWarning" : {
       "title" : "尚未创建接收人账户。该协议需要 {{formattedNewAccountStorageCost}} 转账才能创建账户。"
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "数额必须至少为 {{threshold}}"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "备忘标签格式错误，数值应小于 4294967296"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "备忘标签长度无效，最大允许 100 个字符"
     },
     "PinNotSet" : {
       "title" : "识别码未设置"
@@ -8090,6 +8093,15 @@
       "cta" : "了解更多"
     }
   },
+  "marketBanner" : {
+    "title" : "探索市场",
+    "viewAll" : "查看全部",
+    "viewAllAccessibilityHint" : "双击查看全部市场资产",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "双击查看市场详情"
+    }
+  },
   "largeMover" : {
     "info" : "信息",
     "marketCap" : "市值",
@@ -8329,6 +8341,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "情绪指数",
+    "description" : "情绪指数反映了市场的情绪状态。其数值范围为 0 至 100，数值越低表示越恐惧，数值越高表示越贪婪。",
+    "levels" : {
+      "extremeFear" : "恐惧+",
+      "fear" : "恐惧",
+      "neutral" : "中立",
+      "greed" : "贪婪",
+      "extremeGreed" : "贪婪+"
     }
   }
 }

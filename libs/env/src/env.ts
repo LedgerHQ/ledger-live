@@ -507,11 +507,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger regtest Bitcoin explorer API",
   },
-  EXPLORER_SATSTACK: {
-    def: "http://localhost:20000",
-    parser: stringParser,
-    desc: "Ledger satstack Bitcoin explorer API",
-  },
   EXPORT_EXCLUDED_LOG_TYPES: {
     def: "ble-frame",
     parser: stringParser,
@@ -566,6 +561,11 @@ const envDefinitions = {
     def: "https://countervalues.live.ledger.com",
     parser: stringParser,
     desc: "Ledger countervalues API",
+  },
+  LEDGER_COUNTERVALUES_API_STAGING: {
+    def: "https://countervalues-service.api.ledger-test.com",
+    parser: stringParser,
+    desc: "Ledger countervalues API (staging)",
   },
   LEDGER_REST_API_BASE: {
     def: "https://explorers.api.live.ledger.com",
@@ -675,11 +675,6 @@ const envDefinitions = {
     def: 25,
     parser: intParser,
     desc: "in blocks - number of blocks before Polkadot election effectively opens to consider it as open and disable all staking features",
-  },
-  SATSTACK: {
-    def: false,
-    parser: boolParser,
-    desc: "Switch to satstack mode",
   },
   SCAN_FOR_INVALID_PATHS: {
     def: false,

@@ -64,11 +64,11 @@ module.exports = {
     node: true,
   },
   parser: "@typescript-eslint/parser",
-  plugins: ["react", "react-hooks"],
+  plugins: ["react", "react-hooks", "better-tailwindcss"],
   extends: [
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:tailwindcss/recommended",
+    "plugin:better-tailwindcss/recommended",
   ],
   globals: {
     __DEV__: "readonly",
@@ -101,7 +101,7 @@ module.exports = {
     "space-before-function-paren": "off",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-non-null-assertion": "off", // Useful sometimes. Should not be abused.
-    "tailwindcss/no-custom-classname": "error",
+    "better-tailwindcss/enforce-consistent-line-wrapping": "off",
 
     // Ignore live-common for the moment because this rule does not work with subpath exports
     // See: https://github.com/import-js/eslint-plugin-import/issues/1810
@@ -167,8 +167,9 @@ module.exports = {
     react: {
       version: "detect",
     },
-    tailwindcss: {
-      config: path.join(__dirname, "./tailwind.config.ts"),
+    "better-tailwindcss": {
+      entryPoint: path.join(__dirname, "./src/renderer/global.css"),
+      tailwindConfig: path.join(__dirname, "./tailwind.config.ts"),
       callees: ["cn"],
     },
   },

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import Alert from "~/renderer/components/Alert";
@@ -37,20 +37,19 @@ const LowGasAlertBuyMore = ({
   gasPriceError,
   trackingSource,
 }: LowGasAlertBuyMoreProps) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onBuyClick = useCallback(() => {
     handleRequestClose();
     setTrackingSource(trackingSource);
-    history.push({
-      pathname: "/exchange",
+    navigate("/exchange", {
       state: {
         currency: account.currency.id,
         account: account.id,
         mode: "buy",
       },
     });
-  }, [account.currency.id, account.id, history, handleRequestClose, trackingSource]);
+  }, [account.currency.id, account.id, navigate, handleRequestClose, trackingSource]);
 
   if (!gasPriceError) return null;
   return (

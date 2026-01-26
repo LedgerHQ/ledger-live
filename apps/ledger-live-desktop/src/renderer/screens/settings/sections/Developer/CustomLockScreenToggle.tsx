@@ -2,17 +2,15 @@ import React, { useCallback } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const CustomLockScreenToggle = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onNavigateToDebugScreen = useCallback(() => {
-    history.push({
-      pathname: "/settings/developer/custom-locksscreen-assets",
-    });
-  }, [history]);
+    navigate("/settings/developer/custom-locksscreen-assets");
+  }, [navigate]);
 
   return (
     <>

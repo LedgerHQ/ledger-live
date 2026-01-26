@@ -134,6 +134,7 @@
     "config": "pnpm --filter live-config",
     "utils": "pnpm --filter live-utils",
     "hooks": "pnpm --filter live-hooks",
+    "psbtv2": "pnpm --filter psbtv2",
     "lkrp": "pnpm --filter ledger-key-ring-protocol",
     "hw-lkrp": "pnpm --filter hw-ledger-key-ring-protocol",
     "countervalues": "pnpm --filter live-countervalues",
@@ -243,6 +244,9 @@
   },
   "pnpm": {
     "overrides": {
+      "live-mobile>@types/react": "19.0.14",
+      "live-mobile>react": "19.0.0",
+      "live-mobile>react-test-renderer": "19.0.0",
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*",
@@ -272,7 +276,10 @@
       "@exodus/patch-broken-hermes-typed-arrays": "patches/@exodus__patch-broken-hermes-typed-arrays.patch",
       "@taquito/http-utils": "patches/@taquito__http-utils.patch",
       "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch",
-      "react-native@0.77.3": "patches/react-native@0.77.3.patch"
+      "@testing-library/react-native@13.3.3": "patches/@testing-library__react-native@13.3.3.patch",
+      "styled-components@6.1.19": "patches/styled-components@6.1.19.patch",
+      "react-native@0.79.7": "patches/react-native@0.79.7.patch",
+      "@ledgerhq/lumen-ui-rnative@0.0.54": "patches/@ledgerhq__lumen-ui-rnative@0.0.54.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

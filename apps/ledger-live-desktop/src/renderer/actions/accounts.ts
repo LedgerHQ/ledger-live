@@ -69,6 +69,3 @@ export const updateAccount: UpdateAccount = payload => ({
 });
 
 export const cleanAccountsCache = () => ({ type: "DB:CLEAN_ACCOUNTS_CACHE" });
-export const cleanFullNodeDisconnect = () => ({
-  type: "DB:CLEAN_FULLNODE_DISCONNECT",
-});

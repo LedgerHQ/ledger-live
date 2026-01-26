@@ -166,7 +166,7 @@ export default class SwapPage {
 
   @Step("Wait for swap success and continue")
   async waitForSuccessAndContinue() {
-    await waitForElementById(this.swapSuccessTitleId, 60000, {
+    await waitForElementById(this.swapSuccessTitleId, 120000, {
       errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
     });
     await tapById(app.common.proceedButtonId);

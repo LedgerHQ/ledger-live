@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, type JSX } from "react";
 import Text, { BaseTextProps as TextProps } from "../../Text";
 import Flex, { FlexBoxProps } from "../../Layout/Flex";
 import { BracketTopLeft, BracketTopRight, BracketBottomLeft, BracketBottomRight } from "./Brackets";

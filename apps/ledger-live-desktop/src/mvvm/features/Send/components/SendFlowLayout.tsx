@@ -5,6 +5,7 @@ import type { StepRegistry, StepRenderer } from "../../FlowWizard/types";
 import { FLOW_STATUS } from "../../FlowWizard/types";
 import type { SendFlowStep } from "../types";
 import { SendHeader } from "./SendHeader";
+import { cn } from "LLD/utils/cn";
 
 type SendFlowLayoutProps = Readonly<{
   stepRegistry: StepRegistry<SendFlowStep>;
@@ -32,26 +33,22 @@ export function SendFlowLayout({ stepRegistry, isOpen, onClose }: SendFlowLayout
 
   const dialogHeight = currentStepConfig?.height ?? "fixed";
 
-  const statusGradientClass = useMemo(() => {
-    if (state.flowStatus === FLOW_STATUS.ERROR) {
-      return "bg-gradient-error";
-    }
-    if (state.flowStatus === FLOW_STATUS.SUCCESS) {
-      return "bg-gradient-success";
-    }
-    return null;
-  }, [state.flowStatus]);
+  const shouldShowStatusGradient =
+    state.flowStatus === FLOW_STATUS.ERROR || state.flowStatus === FLOW_STATUS.SUCCESS;
 
   return (
     <Dialog height={dialogHeight} open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogContent>
-        {statusGradientClass && (
+        {shouldShowStatusGradient && (
           <div
-            className={`pointer-events-none absolute inset-x-0 top-0 h-full ${statusGradientClass}`}
+            className={cn("pointer-events-none absolute inset-x-0 top-0 h-full", {
+              "bg-gradient-error": state.flowStatus === FLOW_STATUS.ERROR,
+              "bg-gradient-success": state.flowStatus === FLOW_STATUS.SUCCESS,
+            })}
           />
         )}
         <SendHeader />
-        <DialogBody className="-mb-24 basis-0 gap-32 px-24 py-16 text-base [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <DialogBody className="-mb-24 gap-32 px-24 py-16 text-base [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {StepComponent && (
             <div key={currentStep} className="animate-fade-in">
               <StepComponent />

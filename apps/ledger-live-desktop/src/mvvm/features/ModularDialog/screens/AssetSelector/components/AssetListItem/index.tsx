@@ -1,6 +1,13 @@
 import React from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import { ListItem } from "@ledgerhq/lumen-ui-react";
+import {
+  ListItem,
+  ListItemLeading,
+  ListItemContent,
+  ListItemTitle,
+  ListItemDescription,
+  ListItemTrailing,
+} from "@ledgerhq/lumen-ui-react";
 import { AssetType } from "../../../../types";
 
 const copyToClipboard = async (text: string) => {
@@ -60,19 +67,26 @@ export const AssetListItem = ({
 
   return (
     <ListItem
-      title={name}
-      leadingContent={<CryptoIcon size="48px" ledgerId={id} ticker={ticker} />}
-      description={ticker}
-      descriptionTag={renderDescriptionTag({
-        leftElement,
-        shouldDisplayId,
-        assetId,
-        numberOfNetworks,
-      })}
-      trailingContent={rightElement}
+      className="-outline-offset-2"
       onClick={handleClick}
       data-testid={`asset-item-ticker-${ticker.toLowerCase()}`}
-      className="-outline-offset-2"
-    />
+    >
+      <ListItemLeading>
+        <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
+        <ListItemContent>
+          <ListItemTitle>{name}</ListItemTitle>
+          <ListItemDescription className="flex gap-6">
+            {ticker}
+            {renderDescriptionTag({
+              leftElement,
+              shouldDisplayId,
+              assetId,
+              numberOfNetworks,
+            })}
+          </ListItemDescription>
+        </ListItemContent>
+      </ListItemLeading>
+      <ListItemTrailing>{rightElement}</ListItemTrailing>
+    </ListItem>
   );
 };

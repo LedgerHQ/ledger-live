@@ -10,14 +10,6 @@ type LedgerExplorer = {
 export const findCurrencyExplorer = (
   currency: CryptoCurrency,
 ): LedgerExplorer | null | undefined => {
-  if (getEnv("SATSTACK") && currency.id === "bitcoin") {
-    return {
-      endpoint: getEnv("EXPLORER_SATSTACK"),
-      id: "btc",
-      version: "v3",
-    };
-  }
-
   if (currency.explorerId == null) {
     console.warn("no explorerId for", currency.id);
   }

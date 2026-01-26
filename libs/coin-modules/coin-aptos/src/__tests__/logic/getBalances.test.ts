@@ -15,7 +15,7 @@ describe("getBalance", () => {
     expect(balances).toStrictEqual([{ value: 10n, asset: { type: "native" } }]);
   });
 
-  it("should return empty array when no contract_address and no data", async () => {
+  it("should return 0 balance when no contract_address and no data", async () => {
     const mockAptosClient = {
       getBalances: jest.fn().mockResolvedValue([]),
     } as Partial<AptosAPI> as AptosAPI;
@@ -23,7 +23,7 @@ describe("getBalance", () => {
     const accountAddress = "0x4be47904b31063d60ac0dfde06e5dc203e647edbe853bae0e666ae5a763c3906";
 
     const balances = await getBalances(mockAptosClient, accountAddress);
-    expect(balances).toStrictEqual([]);
+    expect(balances).toStrictEqual([{ value: 0n, asset: { type: "native" } }]);
   });
 
   it("should return balance with 'native' contract_address (APTOS_ASSET_ID)", async () => {

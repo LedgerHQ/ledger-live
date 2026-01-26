@@ -4,7 +4,7 @@ import { track } from "~/renderer/analytics/segment";
 import { Row } from "./components/Row";
 import React from "react";
 
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { entryPointConfig } from "./config";
 
 type Props = {
@@ -14,7 +14,7 @@ type Props = {
 
 export default function useNftsEntryPointViewModel({ accountId, currencyId }: Props) {
   const featureNftEntryPoint = useFeature("llNftEntryPoint");
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const chains =
     featureNftEntryPoint?.params?.chains?.map((chain: string) => chain.toLowerCase()) ?? [];
@@ -22,8 +22,7 @@ export default function useNftsEntryPointViewModel({ accountId, currencyId }: Pr
   const openLiveApp = (link: string, entry: Entry) => {
     track("entry_nft_clicked", { item: entry, page: AnalyticsPage.Account });
 
-    history.push({
-      pathname: "/platform/nft-viewer-redirector",
+    navigate("/platform/nft-viewer-redirector", {
       state: {
         website: link,
         accountId,

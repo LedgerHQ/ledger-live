@@ -165,10 +165,7 @@ export type CountervaluesPayload =
 
 export enum NotificationsActionTypes {
   NOTIFICATIONS_SET_MODAL_OPEN = "NOTIFICATIONS_SET_MODAL_OPEN",
-  NOTIFICATIONS_SET_MODAL_LOCKED = "NOTIFICATIONS_SET_MODAL_LOCKED",
   NOTIFICATIONS_SET_DRAWER_SOURCE = "NOTIFICATIONS_SET_DRAWER_SOURCE",
-  NOTIFICATIONS_SET_CURRENT_ROUTE_NAME = "NOTIFICATIONS_SET_CURRENT_ROUTE_NAME",
-  NOTIFICATIONS_SET_EVENT_TRIGGERED = "NOTIFICATIONS_SET_EVENT_TRIGGERED",
   NOTIFICATIONS_SET_DATA_OF_USER = "NOTIFICATIONS_SET_DATA_OF_USER",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
   NOTIFICATIONS_SET_PERMISSION_STATUS = "NOTIFICATIONS_SET_PERMISSION_STATUS",
@@ -176,14 +173,7 @@ export enum NotificationsActionTypes {
 
 export type NotificationsSetModalOpenPayload = NotificationsState["isPushNotificationsModalOpen"];
 
-export type NotificationsSetModalLockedPayload =
-  NotificationsState["isPushNotificationsModalLocked"];
-
 export type NotificationsSetDrawerSourcePayload = NotificationsState["drawerSource"];
-
-export type NotificationsSetCurrentRouteNamePayload = NotificationsState["currentRouteName"];
-
-export type NotificationsSetEventTriggeredPayload = NotificationsState["eventTriggered"];
 
 export type NotificationSetPermissionStatusPayload = NotificationsState["permissionStatus"];
 
@@ -191,10 +181,7 @@ export type NotificationsSetDataOfUserPayload = NotificationsState["dataOfUser"]
 
 export type NotificationsPayload =
   | NotificationsSetModalOpenPayload
-  | NotificationsSetModalLockedPayload
   | NotificationsSetDrawerSourcePayload
-  | NotificationsSetCurrentRouteNamePayload
-  | NotificationsSetEventTriggeredPayload
   | NotificationsSetDataOfUserPayload
   | NotificationSetPermissionStatusPayload;
 
@@ -234,7 +221,6 @@ export type DynamicContentPayload =
 
 export enum RatingsActionTypes {
   RATINGS_SET_MODAL_OPEN = "RATINGS_SET_MODAL_OPEN",
-  RATINGS_SET_MODAL_LOCKED = "RATINGS_SET_MODAL_LOCKED",
   RATINGS_SET_CURRENT_ROUTE_NAME = "RATINGS_SET_CURRENT_ROUTE_NAME",
   RATINGS_SET_HAPPY_MOMENT = "RATINGS_SET_HAPPY_MOMENT",
   RATINGS_SET_DATA_OF_USER = "RATINGS_SET_DATA_OF_USER",
@@ -242,13 +228,11 @@ export enum RatingsActionTypes {
 }
 
 export type RatingsSetModalOpenPayload = RatingsState["isRatingsModalOpen"];
-export type RatingsSetModalLockedPayload = RatingsState["isRatingsModalLocked"];
 export type RatingsSetCurrentRouteNamePayload = RatingsState["currentRouteName"];
 export type RatingsSetHappyMomentPayload = RatingsState["happyMoment"];
 export type RatingsDataOfUserPayload = RatingsState["dataOfUser"];
 export type RatingsPayload =
   | RatingsSetModalOpenPayload
-  | RatingsSetModalLockedPayload
   | RatingsSetCurrentRouteNamePayload
   | RatingsSetHappyMomentPayload
   | RatingsDataOfUserPayload;

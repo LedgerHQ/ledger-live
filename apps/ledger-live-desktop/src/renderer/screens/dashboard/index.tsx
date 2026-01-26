@@ -24,11 +24,12 @@ import FeaturedButtons from "~/renderer/screens/dashboard/components/FeaturedBut
 import { AccountLike, Operation } from "@ledgerhq/types-live";
 import MarketPerformanceWidget from "LLD/features/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
-import { Grid } from "@ledgerhq/react-ui";
+import { Flex, Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import SwapWebViewEmbedded from "./components/SwapWebViewEmbedded";
 import BannerSection from "./components/BannerSection";
+import MarketBanner from "LLD/features/MarketBanner";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -72,6 +73,9 @@ export default function DashboardPage() {
     useDisplayOnPortfolioAnalytics();
 
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio");
+  const lwdWallet40FF = useFeature("lwdWallet40");
+  const shouldDisplayMarketBanner =
+    (lwdWallet40FF?.enabled && lwdWallet40FF?.params?.marketBanner) ?? false;
 
   return (
     <>
@@ -84,62 +88,66 @@ export default function DashboardPage() {
         totalCurrencies={totalCurrencies}
         hasExchangeBannerCTA={!!portfolioExchangeBanner?.enabled}
       />
-      <Box flow={7} id="portfolio-container" data-testid="portfolio-container">
-        {!hasInstalledApps ? (
-          <EmptyStateInstalledApps />
-        ) : totalAccounts > 0 ? (
-          <>
-            {ptxSwapLiveAppOnPortfolio?.enabled ? (
-              <PortfolioGrid marginTop={4}>
-                <Box>
-                  <FeaturedButtons hideSwapButton />
+      <Flex flexDirection="column" rowGap={32}>
+        {shouldDisplayMarketBanner ? <MarketBanner /> : null}
+        <Box flow={7} id="portfolio-container" data-testid="portfolio-container">
+          {!hasInstalledApps ? (
+            <EmptyStateInstalledApps />
+          ) : totalAccounts > 0 ? (
+            <>
+              {ptxSwapLiveAppOnPortfolio?.enabled ? (
+                <PortfolioGrid marginTop={4}>
+                  <Box>
+                    <FeaturedButtons hideSwapButton />
+                    <BalanceSummary
+                      counterValue={counterValue}
+                      chartColor={colors.wallet}
+                      range={selectedTimeRange}
+                    />
+                  </Box>
+
+                  <Box ml={2} minWidth={375} maxWidth={700}>
+                    <SwapWebViewEmbedded height="550px" />
+                  </Box>
+                </PortfolioGrid>
+              ) : marketPerformanceEnabled ? (
+                <PortfolioGrid>
                   <BalanceSummary
                     counterValue={counterValue}
                     chartColor={colors.wallet}
                     range={selectedTimeRange}
                   />
-                </Box>
 
-                <Box ml={2} minWidth={375} maxWidth={700}>
-                  <SwapWebViewEmbedded height="550px" />
-                </Box>
-              </PortfolioGrid>
-            ) : marketPerformanceEnabled ? (
-              <PortfolioGrid>
+                  <Box ml={2} minWidth={275}>
+                    <MarketPerformanceWidget variant={marketPerformanceVariant} />
+                  </Box>
+                </PortfolioGrid>
+              ) : (
                 <BalanceSummary
                   counterValue={counterValue}
                   chartColor={colors.wallet}
                   range={selectedTimeRange}
                 />
+              )}
 
-                <Box ml={2} minWidth={275}>
-                  <MarketPerformanceWidget variant={marketPerformanceVariant} />
-                </Box>
-              </PortfolioGrid>
-            ) : (
-              <BalanceSummary
-                counterValue={counterValue}
-                chartColor={colors.wallet}
-                range={selectedTimeRange}
-              />
-            )}
+              <AssetDistribution />
+              {totalOperations > 0 && (
+                <OperationsList
+                  accounts={accounts}
+                  title={t("dashboard.recentActivity")}
+                  withAccount
+                  withSubAccounts
+                  filterOperation={filterOperations}
+                  t={t}
+                />
+              )}
+            </>
+          ) : (
+            <EmptyStateAccounts />
+          )}
+        </Box>
+      </Flex>
 
-            <AssetDistribution />
-            {totalOperations > 0 && (
-              <OperationsList
-                accounts={accounts}
-                title={t("dashboard.recentActivity")}
-                withAccount
-                withSubAccounts
-                filterOperation={filterOperations}
-                t={t}
-              />
-            )}
-          </>
-        ) : (
-          <EmptyStateAccounts />
-        )}
-      </Box>
       {isFeatureFlagsAnalyticsPrefDisplayed && (
         <AnalyticsOptInPrompt {...analyticsOptInPromptProps} />
       )}

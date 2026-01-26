@@ -3,10 +3,9 @@
  */
 
 import { Order } from "../types";
-import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
+import { MarketItemPerformer, getChangePercentage } from "@ledgerhq/live-common/market/utils/index";
 import {
   filterAvailableBuyOrSwapCurrency,
-  getChangePercentage,
   getSlicedList,
   getSlicedListWithFilters,
   isAvailableOnBuyOrSwap,

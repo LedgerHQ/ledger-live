@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useTranslation, Trans } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -87,13 +87,13 @@ type Props = {
 export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
   const { t } = useTranslation();
   const { deviceModelId } = useContext(OnboardingContext);
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const servicesConfig = useFeature("protectServicesDesktop");
 
   return (
     <ScrollArea withHint>
-      <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
+      <OnboardingNavHeader onClickPrevious={() => navigate("/onboarding/select-device")} />
       <SelectUseCaseContainer>
         <Row>
           <LeftColumn>
@@ -126,7 +126,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 track("Onboarding - Setup new");
                 setUseCase(OnboardingUseCase.setupDevice);
                 setOpenedPedagogyModal(true);
-                history.push(
+                navigate(
                   `/onboarding/${OnboardingUseCase.setupDevice}/${ScreenId.howToGetStarted}`,
                 );
               }}
@@ -161,9 +161,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
               onClick={() => {
                 track("Onboarding - Connect");
                 setUseCase(OnboardingUseCase.connectDevice);
-                history.push(
-                  `/onboarding/${OnboardingUseCase.connectDevice}/${ScreenId.pairMyNano}`,
-                );
+                navigate(`/onboarding/${OnboardingUseCase.connectDevice}/${ScreenId.pairMyNano}`);
               }}
             />
             <UseCaseOption
@@ -188,7 +186,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
               onClick={() => {
                 track("Onboarding - Restore");
                 setUseCase(OnboardingUseCase.recoveryPhrase);
-                history.push(
+                navigate(
                   `/onboarding/${OnboardingUseCase.recoveryPhrase}/${ScreenId.importYourRecoveryPhrase}`,
                 );
               }}
@@ -215,9 +213,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                     dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
                   } else {
                     setUseCase(OnboardingUseCase.recover);
-                    history.push(
-                      `/onboarding/${OnboardingUseCase.recover}/${ScreenId.recoverHowTo}`,
-                    );
+                    navigate(`/onboarding/${OnboardingUseCase.recover}/${ScreenId.recoverHowTo}`);
                   }
                 }}
               />

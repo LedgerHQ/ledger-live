@@ -4,7 +4,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useTheme } from "styled-components";
 import { urls } from "~/config/urls";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -22,7 +22,7 @@ export const useWarningConfig = (
 ) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const formatter = useAccountFormatter();
   const emptyAccountName = useMaybeAccountName(emptyAccount);
@@ -34,10 +34,10 @@ export const useWarningConfig = (
 
   const handleAccountClick = useCallback(
     (accountId: string) => {
-      history.push({ pathname: `/account/${accountId}` });
+      navigate(`/account/${accountId}`);
       setDrawer();
     },
-    [history],
+    [navigate],
   );
 
   const handleClose = useCallback(() => setDrawer(), []);

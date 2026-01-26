@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import repairFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { useTranslation } from "react-i18next";
 import logger from "~/renderer/logger";
@@ -15,7 +15,7 @@ type Props = {
 
 function RepairDeviceButton({ buttonProps, onRepair }: Props) {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [opened, setOpened] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -76,14 +76,14 @@ function RepairDeviceButton({ buttonProps, onRepair }: Props) {
           setIsLoading(false);
           setProgress(0);
           setTrackingSource("settings help repair device");
-          history.push("/manager");
+          navigate("/manager");
           if (onRepair) {
             onRepair(false);
           }
         },
       });
     },
-    [isLoading, history, onRepair],
+    [isLoading, navigate, onRepair],
   );
 
   return (

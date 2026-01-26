@@ -120,22 +120,21 @@ export function waitForSpeculosReady(
 }
 
 function createStartPayload(deviceParams: DeviceParams, runId: string) {
-  const { model, firmware, appName, appVersion, dependency, dependencies } = deviceParams;
+  const { model, firmware, appName, appVersion, dependencies } = deviceParams;
 
   let additional_args = "-p";
 
-  if (dependency) {
-    additional_args = `${additional_args} -l ${dependency}:/apps/${conventionalAppSubpath(model, firmware, dependency, appVersion)}`;
-  } else if (dependencies) {
+  if (dependencies?.length) {
     additional_args = [
+      additional_args,
       ...new Set(
         dependencies.map(
           dep =>
-            `${additional_args} -l ${dep.name}:/apps/${conventionalAppSubpath(
+            `-l ${dep.name}:/apps/${conventionalAppSubpath(
               model,
               firmware,
               dep.name,
-              dep.appVersion ?? "1.0.0",
+              dep.appVersion ?? appVersion,
             )}`,
         ),
       ),
@@ -168,6 +167,7 @@ export async function createSpeculosDeviceCI(
       port: speculosPort,
       appName: deviceParams.appName,
       appVersion: deviceParams.appVersion,
+      dependencies: deviceParams.dependencies,
     };
   } catch (error) {
     console.warn(
@@ -179,6 +179,7 @@ export async function createSpeculosDeviceCI(
       port: 0,
       appName: deviceParams.appName,
       appVersion: deviceParams.appVersion,
+      dependencies: deviceParams.dependencies,
     };
   }
 }

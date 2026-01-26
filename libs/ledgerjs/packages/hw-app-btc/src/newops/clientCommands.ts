@@ -1,5 +1,5 @@
 import { crypto } from "bitcoinjs-lib";
-import { BufferReader } from "../buffertools";
+import { BufferReader } from "@ledgerhq/psbtv2";
 import { createVarint } from "../varint";
 import { hashLeaf, Merkle } from "./merkle";
 import { MerkleMap } from "./merkleMap";

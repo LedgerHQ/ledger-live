@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Image from "~/renderer/components/Image";
@@ -13,14 +13,14 @@ import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 
 const EmptyStateInstalledApps = ({ theme }: { theme: DefaultTheme }) => {
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const urlFaq = useLocalizedUrl(urls.faq);
 
   const handleInstallApp = useCallback(() => {
-    push("/manager");
-  }, [push]);
+    navigate("/manager");
+  }, [navigate]);
   return (
     <Box
       alignItems="center"

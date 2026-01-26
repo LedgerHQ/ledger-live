@@ -1,7 +1,7 @@
 import React, { useEffect, lazy, Suspense } from "react";
 import styled from "styled-components";
 import { ipcRenderer } from "electron";
-import { Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { LiveApp } from "~/renderer/screens/platform";
@@ -77,8 +77,9 @@ const Earn = lazy(() => import("~/renderer/screens/earn"));
 const Bank = lazy(() => import("~/renderer/screens/bank"));
 const SwapWeb = lazy(() => import("~/renderer/screens/swapWeb"));
 const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
-
+const Market40 = lazy(() => import("LLD/features/Market"));
 const Market = lazy(() => import("~/renderer/screens/market"));
+
 const MarketCoin = lazy(() => import("~/renderer/screens/market/MarketCoin"));
 const WelcomeScreenSettings = lazy(
   () => import("~/renderer/screens/settings/WelcomeScreenSettings"),
@@ -191,7 +192,20 @@ const NightlyLayerR = () => {
 
 const NightlyLayer = React.memo(NightlyLayerR);
 
+// Wrapper component for RecoverPlayer with FeatureToggle
+const RecoverPlayerWithFeatureToggle = () => {
+  return (
+    <FeatureToggle featureId="protectServicesDesktop">
+      {withSuspense(RecoverPlayer)({})}
+    </FeatureToggle>
+  );
+};
+
+// Main app layout component that handles the main navigation after onboarding
 const MainAppLayout = () => {
+  const lwdWallet40FF = useFeature("lwdWallet40");
+  const isMarket40Enabled = lwdWallet40FF?.enabled && lwdWallet40FF?.params?.marketBanner;
+
   return (
     <>
       <IsNewVersion />
@@ -209,11 +223,9 @@ const MainAppLayout = () => {
           height: "100%",
         }}
       >
-        <FeatureToggle featureId="protectServicesDesktop">
-          <Switch>
-            <Route path="/recover/:appId" render={withSuspense(RecoverPlayer)} />
-          </Switch>
-        </FeatureToggle>
+        <Routes>
+          <Route path="/recover/:appId" element={<RecoverPlayerWithFeatureToggle />} />
+        </Routes>
         <MainSideBar />
         <Page>
           <TopBannerContainer>
@@ -221,26 +233,29 @@ const MainAppLayout = () => {
             <FirmwareUpdateBanner />
             <VaultSignerBanner />
           </TopBannerContainer>
-          <Switch>
-            <Route path="/" exact render={withSuspense(Dashboard)} />
-            <Route path="/settings" render={withSuspense(Settings)} />
-            <Route path="/accounts" render={withSuspense(Accounts)} />
-            <Route exact path="/card/:appId?" render={withSuspense(Card)} />
-            <Redirect from="/manager/reload" to="/manager" />
-            <Route path="/manager" render={withSuspense(Manager)} />
-            <Route path="/platform" render={withSuspense(PlatformCatalog)} exact />
-            <Route path="/platform/:appId?" component={LiveApp} />
-            <Route path="/earn" render={withSuspense(Earn)} />
-            <Route exact path="/exchange/:appId?" render={withSuspense(Exchange)} />
-            <Route path="/swap-web" render={withSuspense(SwapWeb)} />
-            <Route path="/account/:parentId/:id" render={withSuspense(Account)} />
-            <Route path="/account/:id" render={withSuspense(Account)} />
-            <Route path="/asset/:assetId+" render={withSuspense(Asset)} />
-            <Route path="/swap" render={withSuspense(Swap2)} />
-            <Route path="/market/:currencyId" render={withSuspense(MarketCoin)} />
-            <Route path="/market" render={withSuspense(Market)} />
-            <Route path="/bank" render={withSuspense(Bank)} />
-          </Switch>
+          <Routes>
+            <Route path="/" element={withSuspense(Dashboard)({})} />
+            <Route path="/settings/*" element={withSuspense(Settings)({})} />
+            <Route path="/accounts" element={withSuspense(Accounts)({})} />
+            <Route path="/card/:appId?" element={withSuspense(Card)({})} />
+            <Route path="/manager/reload" element={<Navigate to="/manager" replace />} />
+            <Route path="/manager/*" element={withSuspense(Manager)({})} />
+            <Route path="/platform" element={withSuspense(PlatformCatalog)({})} />
+            <Route path="/platform/:appId" element={<LiveApp />} />
+            <Route path="/earn/*" element={withSuspense(Earn)({})} />
+            <Route path="/exchange/:appId?" element={withSuspense(Exchange)({})} />
+            <Route path="/swap-web" element={withSuspense(SwapWeb)({})} />
+            <Route path="/account/:parentId/:id/*" element={withSuspense(Account)({})} />
+            <Route path="/account/:id/*" element={withSuspense(Account)({})} />
+            <Route path="/asset/*" element={withSuspense(Asset)({})} />
+            <Route path="/swap/*" element={withSuspense(Swap2)({})} />
+            <Route path="/market/:currencyId" element={withSuspense(MarketCoin)({})} />
+            <Route
+              path="/market"
+              element={withSuspense(isMarket40Enabled ? Market40 : Market)({})}
+            />
+            <Route path="/bank/*" element={withSuspense(Bank)({})} />
+          </Routes>
         </Page>
         <Drawer />
         <ToastOverlay />
@@ -266,7 +281,7 @@ const MainAppLayout = () => {
 export default function Default() {
   const location = useLocation();
   const { pathname } = location;
-  const history = useHistory();
+  const navigate = useNavigate();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const areSettingsLoadedSelector = useSelector(areSettingsLoaded);
   const accounts = useSelector(accountsSelector);
@@ -331,7 +346,7 @@ export default function Default() {
     // If we just did a hard reset and onboarding is not completed, force redirect to onboarding
     // even if we're on the settings page (where the reset button is)
     if (wasHardReset && !hasCompletedOnboarding) {
-      history.replace("/onboarding");
+      navigate("/onboarding", { replace: true });
       window.localStorage.removeItem("hard-reset");
       updateIdentify();
       return;
@@ -344,10 +359,10 @@ export default function Default() {
       pathname.includes("settings");
 
     if (!userIsOnboardingOrSettingUp && !hasCompletedOnboarding) {
-      history.replace("/onboarding");
+      navigate("/onboarding", { replace: true });
     }
     updateIdentify();
-  }, [history, pathname, hasCompletedOnboarding, areSettingsLoadedSelector]);
+  }, [navigate, pathname, hasCompletedOnboarding, areSettingsLoadedSelector]);
 
   return (
     <>
@@ -376,49 +391,56 @@ export default function Default() {
                   ) : null}
                   <ModularDialogRoot />
                   <SendFlowRoot />
-                  <Switch>
+                  <Routes>
                     <Route
-                      path="/onboarding"
-                      render={() => (
+                      path="/onboarding/*"
+                      element={
                         <>
                           <Suspense fallback={<Fallback />}>
                             <Onboarding />
                           </Suspense>
                           <Drawer />
                         </>
-                      )}
+                      }
                     />
-                    <Route path="/sync-onboarding" render={withSuspense(SyncOnboarding)} />
+                    <Route path="/sync-onboarding/*" element={withSuspense(SyncOnboarding)({})} />
                     <Route
                       path="/post-onboarding"
-                      render={() => (
+                      element={
                         <>
                           <Suspense fallback={<Fallback />}>
                             <PostOnboardingScreen />
                           </Suspense>
                           <Drawer />
                         </>
-                      )}
+                      }
                     />
-                    <Route path="/recover-restore" render={withSuspense(RecoverRestore)} />
+                    <Route path="/recover-restore" element={withSuspense(RecoverRestore)({})} />
 
-                    <Route path="/USBTroubleshooting">
-                      <Suspense fallback={<Fallback />}>
-                        <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
-                      </Suspense>
-                    </Route>
+                    <Route
+                      path="/USBTroubleshooting"
+                      element={
+                        <Suspense fallback={<Fallback />}>
+                          <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
+                        </Suspense>
+                      }
+                    />
 
                     {!hasCompletedOnboarding ? (
-                      <Switch>
-                        <Route path="/settings" render={withSuspense(WelcomeScreenSettings)} />
-                        <FeatureToggle featureId="protectServicesDesktop">
-                          <Route path="/recover/:appId" render={withSuspense(RecoverPlayer)} />
-                        </FeatureToggle>
-                      </Switch>
+                      <>
+                        <Route
+                          path="/settings/*"
+                          element={withSuspense(WelcomeScreenSettings)({})}
+                        />
+                        <Route
+                          path="/recover/:appId"
+                          element={<RecoverPlayerWithFeatureToggle />}
+                        />
+                      </>
                     ) : (
-                      <Route component={MainAppLayout} />
+                      <Route path="/*" element={<MainAppLayout />} />
                     )}
-                  </Switch>
+                  </Routes>
                 </ContextMenuWrapper>
               </WalletSyncProvider>
             </BridgeSyncProvider>

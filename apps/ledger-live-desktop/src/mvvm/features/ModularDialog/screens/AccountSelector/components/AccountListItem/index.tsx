@@ -1,5 +1,12 @@
 import React from "react";
-import { ListItem } from "@ledgerhq/lumen-ui-react";
+import {
+  ListItem,
+  ListItemLeading,
+  ListItemTitle,
+  ListItemDescription,
+  ListItemTrailing,
+  ListItemContent,
+} from "@ledgerhq/lumen-ui-react";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import { formatAddress } from "../../../../components/Address/formatAddress";
 
@@ -26,10 +33,10 @@ const renderTrailingContent = (balance?: string, fiatValue?: string) => {
   }
 
   return (
-    <div className="flex flex-col items-end">
-      {fiatValue && <span className="body-2-semi-bold">{fiatValue}</span>}
-      {balance && <span className="text-muted body-3">{balance}</span>}
-    </div>
+    <ListItemContent>
+      {fiatValue && <ListItemTitle>{fiatValue}</ListItemTitle>}
+      {balance && <ListItemDescription>{balance}</ListItemDescription>}
+    </ListItemContent>
   );
 };
 
@@ -40,14 +47,17 @@ export const AccountListItem = ({ onClick, account }: AccountListItemProps) => {
   const networkId = parentId ?? cryptoId;
 
   return (
-    <ListItem
-      title={name}
-      description={formattedAddress}
-      descriptionTag={<SquaredCryptoIcon size="16px" ledgerId={networkId} ticker={ticker} />}
-      trailingContent={renderTrailingContent(balance, fiatValue)}
-      onClick={onClick}
-      data-testid={`account-row-${name}`}
-      className="-outline-offset-2"
-    />
+    <ListItem className="-outline-offset-2" onClick={onClick} data-testid={`account-row-${name}`}>
+      <ListItemLeading>
+        <ListItemContent>
+          <ListItemTitle>{name}</ListItemTitle>
+          <ListItemDescription className="flex gap-6">
+            {formattedAddress}
+            <SquaredCryptoIcon size="16px" ledgerId={networkId} ticker={ticker} />
+          </ListItemDescription>
+        </ListItemContent>
+      </ListItemLeading>
+      <ListItemTrailing>{renderTrailingContent(balance, fiatValue)}</ListItemTrailing>
+    </ListItem>
   );
 };

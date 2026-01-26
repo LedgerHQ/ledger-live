@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 import { PortfolioContentCard as Card } from "@ledgerhq/react-ui";
 import { openURL } from "~/renderer/linking";
@@ -24,13 +24,13 @@ function Slide({
   logSlideClick,
   dismissCard,
 }: Props) {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleClose = () => dismissCard(index);
   const handleClick = () => {
     logSlideClick(id);
     if (path) {
-      history.push({ pathname: path, state: { source: "banner" } });
+      navigate(path, { state: { source: "banner" } });
     } else if (url) {
       openURL(url);
     }

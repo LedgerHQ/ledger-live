@@ -96,6 +96,10 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
           });
         },
       ],
+      //TODO: Remove line when LIVE-24337 is fixed
+      featureFlags: {
+        llmAccountListUI: { enabled: true },
+      },
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
@@ -125,8 +129,6 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
     await goToLedgerSync(true);
     await app.ledgerSync.openDeleteSync();
     await app.ledgerSync.confirmDeleteSync();
-    await app.ledgerSync.expectLedgerSyncSuccessPage();
-    await app.ledgerSync.closeDeletionSuccessPage();
-    await device.enableSynchronization();
+    await app.ledgerSync.expectBackupDeletion();
   });
 });

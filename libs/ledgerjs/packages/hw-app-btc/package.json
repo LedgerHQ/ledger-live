@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-btc",
-  "version": "10.16.0",
+  "version": "10.17.0",
   "description": "Ledger Hardware Wallet Bitcoin Application API",
   "keywords": [
     "Ledger",
@@ -62,6 +62,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/psbtv2": "workspace:^",
     "@noble/curves": "1.9.7",
     "@noble/hashes": "1.8.0",
     "bip32-path": "^0.4.2",
@@ -69,8 +70,7 @@
     "bs58": "catalog:",
     "bs58check": "catalog:",
     "invariant": "^2.2.4",
-    "semver": "catalog:",
-    "varuint-bitcoin": "1.1.2"
+    "semver": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",

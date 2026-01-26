@@ -5,7 +5,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import RepairModal from "~/renderer/modals/RepairModal";
 import logger from "~/renderer/logger";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { openModal, closeModal } from "~/renderer/actions/modals";
 import { Subscription } from "rxjs";
@@ -30,7 +30,7 @@ const RepairDeviceButton = React.forwardRef(function RepairDevice(
   const [progress, setProgress] = useState(0);
   const timeout = useRef<NodeJS.Timeout | null>(null);
   const sub = useRef<Subscription | null>(null);
-  const history = useHistory();
+  const navigate = useNavigate();
   useEffect(() => {
     return () => {
       if (timeout && timeout.current) {
@@ -91,16 +91,14 @@ const RepairDeviceButton = React.forwardRef(function RepairDevice(
           setIsLoading(false);
           setProgress(0);
           setTrackingSource("repair device button");
-          history.push({
-            pathname: "manager",
-          });
+          navigate("/manager");
           if (onRepair) {
             onRepair(false);
           }
         },
       });
     },
-    [history, isLoading, onRepair],
+    [navigate, isLoading, onRepair],
   );
   return (
     <>

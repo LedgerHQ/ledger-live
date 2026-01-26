@@ -29,7 +29,7 @@ import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 const Wrapper = styled(Box).attrs(() => ({
@@ -40,7 +40,7 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 const Delegation = ({ account }: { account: CosmosAccount }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { cosmosResources } = account;
   const {
@@ -60,15 +60,14 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
   const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";
   const goToStakekit = useCallback(() => {
-    history.push({
-      pathname: "/platform/stakekit",
+    navigate("/platform/stakekit", {
       state: {
         yieldId: "cronos-cro-native-staking",
         accountId: account.id,
         returnTo: `/account/${account.id}`,
       },
     });
-  }, [account.id, history]);
+  }, [account.id, navigate]);
 
   const onEarnRewards = useCallback(
     () =>

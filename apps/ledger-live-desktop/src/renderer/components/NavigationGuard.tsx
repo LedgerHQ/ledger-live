@@ -1,114 +1,184 @@
-import React, { useState, useCallback, memo, useEffect } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { Location, UNSAFE_NavigationContext, useLocation, useNavigate } from "react-router";
 import { useDispatch } from "LLD/hooks/redux";
-import { Prompt, PromptProps, useHistory } from "react-router-dom";
-import ConfirmModal from "~/renderer/modals/ConfirmModal";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { setNavigationLock } from "~/renderer/actions/application";
+import ConfirmModal, { Props as ConfirmModalProps } from "~/renderer/modals/ConfirmModal";
 
-type Props = {
-  /** set to tru if navigation should be locked */
-  when: boolean;
-  /** just lock navigation without prompt modal */
+type Props = Omit<
+  ConfirmModalProps,
+  "isOpened" | "onConfirm" | "onReject" | "onClose" | "analyticsName"
+> & {
+  when?: boolean;
   noModal?: boolean;
-  /** callback function on location to filter out block navigation according to this param */
-  shouldBlockNavigation?: PromptProps["message"];
-  /** confirm modal analytics name */
   analyticsName?: string;
-} & Omit<
-  React.ComponentProps<typeof ConfirmModal>,
-  "analyticsName" | "isOpened" | "onReject" | "onConfirm"
->;
+  shouldBlockNavigation?: (location: Location) => boolean;
+};
 
-type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
+const getPathFromHash = (hash: string) => {
+  const trimmed = hash.startsWith("#") ? hash.slice(1) : hash;
+  return trimmed || "/";
+};
+
+const getPathFromUrl = (url?: string) => {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    return getPathFromHash(parsed.hash);
+  } catch {
+    const hashIndex = url.indexOf("#");
+    if (hashIndex >= 0) {
+      return getPathFromHash(url.slice(hashIndex));
+    }
+  }
+  return null;
+};
+
+const toLocation = (path: string): Location => {
+  const [pathname, searchValue = ""] = path.split("?");
+  return {
+    pathname: pathname || "/",
+    search: searchValue ? `?${searchValue}` : "",
+    hash: "",
+    state: null,
+    key: "navigation-guard",
+  };
+};
 
 const NavigationGuard = ({
-  when,
-  noModal,
-  shouldBlockNavigation = () => true,
+  when = false,
+  noModal = false,
   analyticsName = "NavigationGuard",
-  ...confirmModalProps
+  shouldBlockNavigation = () => true,
+  ...modalProps
 }: Props) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [lastLocation, setLastLocation] = useState<Location | null>(null);
-  const [confirmedNavigation, setConfirmedNavigation] = useState(false);
-  const history = useHistory();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const navigationContext = useContext(UNSAFE_NavigationContext);
+  const navigator = navigationContext?.navigator;
+  const [isOpened, setIsOpened] = useState(false);
+  const pendingPathRef = useRef<string | null>(null);
+  const pendingTxRef = useRef<{ retry: () => void } | null>(null);
+  const ignoreNextHashChangeRef = useRef(false);
+  const currentPathRef = useRef(`${location.pathname}${location.search}${location.hash}`);
+
   useEffect(() => {
-    /** Set redux navigation lock status */
+    currentPathRef.current = `${location.pathname}${location.search}${location.hash}`;
+  }, [location.pathname, location.search, location.hash]);
+
+  useEffect(() => {
     dispatch(setNavigationLock(when));
-    /** force close modal when condition is over */
-    if (!when) setModalVisible(false);
     return () => {
-      /** Reset redux navigation lock status */
       dispatch(setNavigationLock(false));
     };
   }, [dispatch, when]);
 
-  /** show modal if needed and location to go to on confirm */
-  const showModal = useCallback(
-    (location: Location) => {
-      setModalVisible(!noModal);
-      setLastLocation(location);
-    },
-    [setModalVisible, setLastLocation, noModal],
-  );
-
-  /** close modal on cancel */
-  const closeModal = useCallback(() => {
-    setModalVisible(false);
-  }, [setModalVisible]);
-
-  /** handles blocked location update */
-  const handleBlockedNavigation = useCallback(
-    (nextLocation: Location) => {
-      if (
-        !confirmedNavigation &&
-        typeof shouldBlockNavigation === "function" &&
-        // @ts-expect-error TODO: seems fishy, shouldBlockNavigation expects an action as 2nd argument according to the bindings
-        shouldBlockNavigation(nextLocation)
-      ) {
-        /** if navigation is locked show modal */
-        showModal(nextLocation);
-        return false;
-      }
-      /** or proceed navigation */
-      dispatch(setNavigationLock(false));
-      return true;
-    },
-    [confirmedNavigation, dispatch, shouldBlockNavigation, showModal],
-  );
-
-  /** on confirm closes modal and toggles confirmation redirect */
-  const handleConfirmNavigationClick = useCallback(() => {
-    dispatch(setNavigationLock(false));
-    setModalVisible(false);
-    if (lastLocation) {
-      setConfirmedNavigation(true);
-    }
-  }, [dispatch, lastLocation]);
-
-  /** retry redirection once confirmation state changes */
   useEffect(() => {
-    if (confirmedNavigation && lastLocation) {
-      setTrackingSource("confirmation navigation guard");
-      history.push({
-        pathname: lastLocation.pathname,
-      });
+    if (!when) {
+      setIsOpened(false);
+      pendingPathRef.current = null;
     }
-  }, [confirmedNavigation, lastLocation, history]);
+  }, [when]);
+
+  const closeModal = useCallback(() => {
+    setIsOpened(false);
+    pendingPathRef.current = null;
+    pendingTxRef.current = null;
+  }, []);
+
+  const stayOnPage = useCallback(() => {
+    closeModal();
+  }, [closeModal]);
+
+  const allowNavigation = useCallback(() => {
+    const pendingTx = pendingTxRef.current;
+    const pendingPath = pendingPathRef.current;
+    closeModal();
+    if (pendingTx) {
+      pendingTx.retry();
+      return;
+    }
+    if (!pendingPath) {
+      return;
+    }
+    ignoreNextHashChangeRef.current = true;
+    navigate(pendingPath);
+  }, [closeModal, navigate]);
+
+  const handleHashChange = useCallback(
+    (event: HashChangeEvent) => {
+      if (!when) return;
+      if (ignoreNextHashChangeRef.current) {
+        ignoreNextHashChangeRef.current = false;
+        return;
+      }
+
+      const nextPath = getPathFromHash(window.location.hash);
+      const nextLocation = toLocation(nextPath);
+
+      if (!shouldBlockNavigation(nextLocation)) {
+        return;
+      }
+
+      const previousPath = getPathFromUrl(event.oldURL) ?? currentPathRef.current;
+
+      if (noModal) {
+        ignoreNextHashChangeRef.current = true;
+        navigate(previousPath, { replace: true });
+        return;
+      }
+
+      pendingPathRef.current = nextPath;
+      setIsOpened(true);
+      ignoreNextHashChangeRef.current = true;
+      navigate(previousPath, { replace: true });
+    },
+    [navigate, noModal, shouldBlockNavigation, when],
+  );
+
+  useEffect(() => {
+    if (!when || !navigator || !("block" in navigator)) {
+      return undefined;
+    }
+    const block = navigator.block;
+    if (typeof block !== "function") {
+      return undefined;
+    }
+    const unblock = block((tx: { location: Location; retry: () => void }) => {
+      if (!shouldBlockNavigation(tx.location)) {
+        tx.retry();
+        return;
+      }
+      if (noModal) {
+        return;
+      }
+      pendingTxRef.current = tx;
+      setIsOpened(true);
+    });
+    return unblock;
+  }, [navigator, noModal, shouldBlockNavigation, when]);
+
+  useEffect(() => {
+    window.addEventListener("hashchange", handleHashChange);
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, [handleHashChange]);
+
+  if (noModal) {
+    return null;
+  }
+
   return (
-    <>
-      <Prompt when={when} message={handleBlockedNavigation} />
-      {when && (
-        <ConfirmModal
-          {...confirmModalProps}
-          analyticsName={analyticsName}
-          isOpened={modalVisible}
-          onReject={handleConfirmNavigationClick}
-          onConfirm={closeModal}
-        />
-      )}
-    </>
+    <ConfirmModal
+      {...modalProps}
+      analyticsName={analyticsName}
+      isOpened={isOpened}
+      onConfirm={stayOnPage}
+      onReject={allowNavigation}
+      onClose={stayOnPage}
+    />
   );
 };
-export default memo<Props>(NavigationGuard);
+
+export default NavigationGuard;

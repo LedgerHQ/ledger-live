@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { dismissedBannersSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -44,7 +44,7 @@ const Title = styled(Box).attrs(p => ({
 
 export function Catalog() {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { state } = useRemoteLiveAppContext();
   const manifests = useMemo(() => (state.value ? state.value.liveAppFiltered : []), [state.value]);
   const dismissedBanners = useSelector(dismissedBannersSelector);
@@ -53,7 +53,7 @@ export function Catalog() {
 
   const handleClick = useCallback(
     (manifest: LiveAppManifest) => {
-      const openApp = () => history.push(`/platform/${manifest.id}`);
+      const openApp = () => navigate(`/platform/${manifest.id}`);
       if (!isDismissed && manifest.author !== "ledger") {
         dispatch(
           openPlatformAppDisclaimerDrawer({
@@ -66,7 +66,7 @@ export function Catalog() {
         openApp();
       }
     },
-    [history, isDismissed, dispatch],
+    [navigate, isDismissed, dispatch],
   );
 
   return (

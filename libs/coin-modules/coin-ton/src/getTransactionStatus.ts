@@ -17,7 +17,8 @@ import {
   TonNotEnoughBalanceInParentAccount,
 } from "./errors";
 import { TonAccount, Transaction, TransactionStatus } from "./types";
-import { addressesAreEqual, commentIsValid, findSubAccountById, isAddressValid } from "./utils";
+import { addressesAreEqual, findSubAccountById, isAddressValid } from "./utils";
+import { validateMemo } from "./logic/validateMemo";
 
 type ValidatedTransactionFields = "recipient" | "sender" | "amount" | "transaction";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
@@ -105,19 +106,6 @@ const validateAmount = (
   return [errors, warnings];
 };
 
-const validateComment = (transaction: Transaction): Array<ValidationIssues> => {
-  const errors: ValidationIssues = {};
-
-  // if the comment isn'transaction encrypted, it should be valid
-  if (transaction.comment.isEncrypted || !commentIsValid(transaction.comment)) {
-    // We use transaction as an error here.
-    // It will be usefull to block a memo wrong format
-    // on the ledger-live mobile
-    errors.transaction = new TonCommentInvalid();
-  }
-  return [errors];
-};
-
 export const getTransactionStatus: AccountBridge<
   Transaction,
   TonAccount,
@@ -136,15 +124,16 @@ export const getTransactionStatus: AccountBridge<
   const [senderErr] = validateSender(account);
   // Amount related errors and warnings
   const [amountErr, amountWarn] = validateAmount(account, transaction, totalSpent);
-  // Transaction related errors and warnings
-  const [transactionErr] = validateComment(transaction);
 
   const errors: ValidationIssues = {
     ...recipientErr,
     ...senderErr,
     ...amountErr,
-    ...transactionErr,
   };
+
+  if (!validateMemo(transaction.comment)) {
+    errors.transaction = new TonCommentInvalid();
+  }
 
   const warnings: ValidationIssues = {
     ...amountWarn,

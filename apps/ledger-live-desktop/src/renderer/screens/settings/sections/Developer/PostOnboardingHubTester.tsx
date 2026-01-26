@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
@@ -9,7 +9,7 @@ import { Flex } from "@ledgerhq/react-ui";
 
 const PostOnboardingHubTester = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleInitPostOnboarding = useStartPostOnboardingCallback();
 
@@ -46,7 +46,7 @@ const PostOnboardingHubTester = () => {
                 handleInitPostOnboarding({
                   deviceModelId,
                   mock: true,
-                  fallbackIfNoAction: () => history.push("/"),
+                  fallbackIfNoAction: () => navigate("/"),
                 })
               }
               appearance="accent"
@@ -59,7 +59,7 @@ const PostOnboardingHubTester = () => {
                 handleInitPostOnboarding({
                   deviceModelId,
                   mock: false,
-                  fallbackIfNoAction: () => history.push("/"),
+                  fallbackIfNoAction: () => navigate("/"),
                 })
               }
               appearance="accent"

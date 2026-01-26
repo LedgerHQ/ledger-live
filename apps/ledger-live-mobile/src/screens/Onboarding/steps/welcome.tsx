@@ -93,7 +93,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
 
   const countTitle = useRef(0);
   const countSubtitle = useRef(0);
-  const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const handleNavigateToFeatureFlagsSettings = useCallback(
     (nb: string) => {
@@ -171,7 +171,6 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           />
         </Svg>
         <Flex justifyContent="center" alignItems="center" flex={1} overflow="hidden">
-          {/* @ts-expect-error Bindings for SafeAreaView are not written properly. */}
           <SafeFlex position="absolute" top={0} right={0}>
             <Flex pr={4}>
               <LanguageSelect />

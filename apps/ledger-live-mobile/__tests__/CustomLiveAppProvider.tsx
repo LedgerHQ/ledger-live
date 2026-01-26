@@ -2,6 +2,7 @@ import React from "react";
 import { liveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { LiveAppContextType } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/types";
+import type { ReactNode } from "react";
 
 const mockInitialState: LiveAppManifest[] = [
   {
@@ -68,8 +69,11 @@ const mockLiveAppContext: LiveAppContextType = {
   getLocalLiveAppManifestById: jest.fn(id => mockInitialState.find(app => app.id === id)),
 };
 
-const CustomWrapper = ({ children }: { children: React.ReactElement }) => (
-  <liveAppContext.Provider value={mockLiveAppContext}>{children}</liveAppContext.Provider>
+const CustomWrapper = ({ children }: { children: ReactNode }) => (
+  <liveAppContext.Provider value={mockLiveAppContext}>
+    {/* @ts-expect-error REACT19FIXME: ReactNode type from React 18 is not compatible with ReactNode from React 19 */}
+    {children}
+  </liveAppContext.Provider>
 );
 
 export default CustomWrapper;

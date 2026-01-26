@@ -33,6 +33,7 @@ export function WalletSyncManageKeyDeletionSuccess({ navigation }: Props) {
         testID: "walletsync-deletion-success-close",
       }}
       analyticsPage={AnalyticsPage.DeleteBackupSuccess}
+      testID="walletsync-delete-backup-success-title"
     />
   );
 }

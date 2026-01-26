@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "受け取る報酬はありません"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "メモが長すぎます。最大{{maxLength}}文字まで入力可能です"
-    },
     "NearNewAccountWarning" : {
       "title" : "受取人アカウントはまだ作成されていません。このプロトコルでは、作成するのに{{formattedNewAccountStorageCost}}の転送コストが必要です。"
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "{{threshold}}以上の数量が必要です。"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "メモの形式が正しくありません。4294967296未満の数値を入力してください。"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "メモの文字数が制限を超えています。最大100文字までです。"
     },
     "PinNotSet" : {
       "title" : "PINコードが設定されていません"
@@ -3191,7 +3194,7 @@
       "languageDesc" : "Ledger Walletの表示言語を設定。",
       "dateFormat" : "日付形式",
       "dateFormatDesc" : "Ledger Walletの日付形式を設定。",
-      "walletSync" : "Ledger同期",
+      "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "さまざまなスマートフォンやコンピューター間でLedger Wallet暗号資産アカウントを同期します。",
       "walletSyncDescription" : "PCを買い替えた時やスマホを使用する際も、ポートフォリオを常に最新の状態に保てます。",
       "region" : "地域",
@@ -3285,7 +3288,7 @@
       }
     },
     "about" : {
-      "title" : "Ledgerについて",
+      "title" : "アプリについて",
       "desc" : "アプリ情報・利用規約・プライバシーポリシーを確認する。",
       "appDescription" : "Ledger Walletを使って暗号資産を安全に保管や売買、スワップをしながら、資産を管理して運用できます。全てが揃う場所です。",
       "appVersion" : "バージョン",
@@ -7809,7 +7812,7 @@
     }
   },
   "walletSync" : {
-    "title" : "Ledger同期",
+    "title" : "Ledger Sync",
     "banner" : {
       "title" : "ウォレットが同期されていません",
       "description" : "ポートフォリオを最新の状態に保つ"
@@ -7826,7 +7829,7 @@
     },
     "activation" : {
       "screen" : {
-        "title" : "このスマートフォンに対してLedger同期をオンにしますか？",
+        "title" : "このスマートフォンでLedger Sync（同期）をオンにしますか？",
         "description" : "新しいデバイスに移行した場合でも、すべての携帯電話とコンピューター間で暗号資産アカウントを自動的に同期します。",
         "mainCta" : "Ledger Syncをオンにする",
         "secondCta" : "すでにオンにしました",
@@ -8090,6 +8093,15 @@
       "cta" : "詳細はこちら"
     }
   },
+  "marketBanner" : {
+    "title" : "市場を見る",
+    "viewAll" : "すべて表示",
+    "viewAllAccessibilityHint" : "ダブルタップですべての市場資産を表示",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "ダブルタップで市場の詳細を表示"
+    }
+  },
   "largeMover" : {
     "info" : "情報",
     "marketCap" : "マーケットキャップ",
@@ -8329,6 +8341,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "市場ムード指数",
+    "description" : "市場ムード指数は、市場の心理状態を示しています。0から100の範囲で推移し、数値が低いほど「極度の恐怖」を、高いほど「極度の貪欲」を示します。",
+    "levels" : {
+      "extremeFear" : "極度の恐怖",
+      "fear" : "恐怖",
+      "neutral" : "中立",
+      "greed" : "貪欲",
+      "extremeGreed" : "極度の貪欲"
     }
   }
 }

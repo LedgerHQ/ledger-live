@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { stringToDeviceModelId } from "@ledgerhq/devices/helpers";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -21,7 +21,7 @@ const SyncOnboardingDeviceConnection = ({
   deviceModelId: strDeviceModelId,
 }: SyncOnboardingDeviceConnectionProps) => {
   const navTimeout = useRef<ReturnType<typeof setTimeout>>();
-  const history = useHistory();
+  const navigate = useNavigate();
   const currentDevice = useSelector(getCurrentDevice);
   const [stopPolling, setStopPolling] = useState(false);
   const { lockedDevice } = useOnboardingStatePolling({
@@ -68,7 +68,7 @@ const SyncOnboardingDeviceConnection = ({
       navTimeout.current = setTimeout(
         () =>
           // Uses the modelId from the newly connected device, in case the route prop strDeviceModelId is different
-          history.push(`/onboarding/sync/manual/${currentDevice?.modelId}`),
+          navigate(`/onboarding/sync/manual/${currentDevice?.modelId}`),
         SUCCESS_TIMEOUT_MS,
       );
     }
@@ -78,7 +78,7 @@ const SyncOnboardingDeviceConnection = ({
       navTimeout.current = undefined;
     }
     return () => clearTimeout(navTimeout.current);
-  }, [shouldNavigate, currentDevice, history]);
+  }, [shouldNavigate, currentDevice, navigate]);
 
   if (currentDevice && shouldNavigate) {
     return <Success device={currentDevice} />;

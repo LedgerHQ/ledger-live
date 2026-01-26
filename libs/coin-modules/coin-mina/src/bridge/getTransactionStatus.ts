@@ -8,10 +8,11 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
 import type { Transaction, MinaAccount, TransactionStatus, StatusErrorMap } from "../types/common";
-import { isValidAddress, isValidMemo, getMaxAmount, getTotalSpent } from "../common-logic";
+import { isValidAddress, getMaxAmount, getTotalSpent } from "../common-logic";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { AccountCreationFeeWarning, InvalidMemoMina, AmountTooSmall } from "./errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { validateMemo } from "../logic/validateMemo";
 
 const getTransactionStatus: AccountBridge<
   Transaction,
@@ -36,7 +37,7 @@ const getTransactionStatus: AccountBridge<
     });
   }
 
-  if (t.memo && !isValidMemo(t.memo)) {
+  if (!validateMemo(t.memo)) {
     errors.transaction = new InvalidMemoMina();
   }
 

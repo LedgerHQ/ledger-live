@@ -173,7 +173,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
     CompanionStepKey.EarlySecurityCheckCompleted,
   );
-  const lastCompanionStepKey = useRef<CompanionStepKey>();
+  const lastCompanionStepKey = useRef<CompanionStepKey | undefined>(undefined);
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
 
   useTrackOnboardingFlow({
@@ -321,14 +321,14 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
    * Value is undefined until the onboarding state polling returns a first
    * result.
    * */
-  const deviceInitiallyOnboarded = useRef<boolean>();
+  const deviceInitiallyOnboarded = useRef<boolean | undefined>(undefined);
   /**
    * Variable holding the seed phrase type (number of words) until we are
    * ready to track the event (when the seeding step finishes).
    * Should only be maintained if the device is not onboarded/not seeded as the
    * onboarding flags can only be trusted for a non-onboarded device.
    */
-  const analyticsSeedPhraseType = useRef<SeedPhraseType>();
+  const analyticsSeedPhraseType = useRef<SeedPhraseType | undefined>(undefined);
   useEffect(() => {
     if (!deviceOnboardingState) return;
 
@@ -344,7 +344,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     }
   }, [deviceOnboardingState]);
 
-  const analyticsSeedConfiguration = useRef<SeedOriginType>();
+  const analyticsSeedConfiguration = useRef<SeedOriginType | undefined>(undefined);
 
   const analyticsSeedingTracked = useRef(false);
   /**

@@ -13,15 +13,18 @@ import IconClock from "~/icons/Clock";
 import { rgba } from "../../../colors";
 import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import { PendingOperationParamList } from "../types";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 export function PendingOperation({ route, navigation }: PendingOperationParamList) {
   const { colors } = useTheme();
   const { swapId, provider, toCurrency, fromCurrency } = route.params.swapOperation;
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const syncAccounts = useSyncAllAccounts();
 
   useEffect(() => {
     syncAccounts();
+    tryTriggerPushNotificationDrawerAfterAction("swap");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

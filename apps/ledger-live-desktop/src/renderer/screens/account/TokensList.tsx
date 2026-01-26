@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
 import styled from "styled-components";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
+import { getAccountUrl } from "~/renderer/utils";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
@@ -32,17 +33,16 @@ function TokensList({ account }: Props) {
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const [range] = useTimeRange();
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const onAccountClick = useCallback(
     (account: AccountLike, parentAccount: Account) => {
-      history.push({
-        pathname: `/account/${parentAccount.id}/${account.id}`,
+      navigate(getAccountUrl(account.id, parentAccount.id), {
         state: {
           source: "tokens list",
         },
       });
     },
-    [history],
+    [navigate],
   );
   const onReceiveClick = useCallback(() => {
     dispatch(
