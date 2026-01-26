@@ -1,23 +1,19 @@
 import React from "react";
-import { Flex } from "@ledgerhq/native-ui";
+import { Box, Flex } from "@ledgerhq/native-ui";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import PortfolioGraphCard from "~/screens/Portfolio/PortfolioGraphCard";
-import { LNSUpsellBanner } from "LLM/features/LNSUpsell";
-import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
-import { ContentCardLocation } from "~/dynamicContent/types";
+import PortfolioQuickActionsBar from "~/screens/Portfolio/PortfolioQuickActionsBar";
 
 interface PortfolioHeaderSectionProps {
   readonly showAssets: boolean;
   readonly hideGraph: boolean;
-  readonly isLNSUpsellBannerShown: boolean;
   readonly onBackFromUpdate: () => void;
 }
 
 export const PortfolioHeaderSection = ({
   showAssets,
   hideGraph,
-  isLNSUpsellBannerShown,
   onBackFromUpdate,
 }: PortfolioHeaderSectionProps) => {
   return (
@@ -31,14 +27,11 @@ export const PortfolioHeaderSection = ({
         key="PortfolioGraphCard"
         hideGraph={hideGraph}
       />
-      {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mt={7} />}
-      {!isLNSUpsellBannerShown && showAssets ? (
-        <ContentCardsLocation
-          key="contentCardsLocationPortfolio"
-          locationId={ContentCardLocation.TopWallet}
-          mt="20px"
-        />
-      ) : null}
+      {showAssets && (
+        <Box my={24} px={6}>
+          <PortfolioQuickActionsBar />
+        </Box>
+      )}
     </WalletTabSafeAreaView>
   );
 };
