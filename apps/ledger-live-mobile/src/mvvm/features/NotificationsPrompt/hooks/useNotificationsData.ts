@@ -92,26 +92,22 @@ export const useNotificationsData = () => {
       }
 
       const hasOptedOut = storedUserData?.dismissedOptInDrawerAtList !== undefined;
-
       if (hasOptedOut) {
         // User previously opted out → check if they've fully re-enabled notifications
-        if (isAuthorized && notifications.areNotificationsAllowed) {
-          // Both OS and app notifications enabled → clear opt-out state
+        const isOptIn = isAuthorized && notifications.areNotificationsAllowed;
+        if (isOptIn) {
           return markUserAsOptIn();
         }
 
         // Still opted out or partially enabled → maintain opt-out state for reprompting
         return updatePushNotificationsDataOfUserInStateAndStore({
           ...storedUserData,
-          lastActionAt: storedUserData?.lastActionAt ?? Date.now(), // keep the last action at to decide when to show the opt in drawer again
+          lastActionAt: storedUserData?.lastActionAt ?? Date.now(), // keep the last action at to show the opt in drawer in the correct time
         });
       }
 
-      const isDenied = osPermissionStatus === AuthorizationStatus.DENIED;
-      // User was marked as opted in but somehow now has denied OS permissions.
-      if (!hasOptedOut && isDenied) {
-        // Mark as opted out to track dismissal for reprompt scheduling
-
+      if (!hasOptedOut && osPermissionStatus === AuthorizationStatus.DENIED) {
+        // User was marked as opted in but has denied OS permissions from the system.
         return markUserAsOptOut();
       }
 
@@ -127,14 +123,21 @@ export const useNotificationsData = () => {
         return updatePushNotificationsDataOfUserInStateAndStore(storedUserData ?? {});
       }
 
+      // This handles an edge case where user is opted out of app notifications AND never dismissed the opt in drawer before.
+      const isLegacy = !storedUserData || Object.keys(storedUserData).length === 0;
+      if (isLegacy && !notifications.areNotificationsAllowed) {
+        return updateUserLastInactiveTime();
+      }
+
       // Fallback: for any unexpected status values, keep behavior consistent with the default path.
       return updatePushNotificationsDataOfUserInStateAndStore(storedUserData ?? {});
     },
     [
       notifications.areNotificationsAllowed,
-      markUserAsOptIn,
       updatePushNotificationsDataOfUserInStateAndStore,
       markUserAsOptOut,
+      markUserAsOptIn,
+      updateUserLastInactiveTime,
     ],
   );
 
