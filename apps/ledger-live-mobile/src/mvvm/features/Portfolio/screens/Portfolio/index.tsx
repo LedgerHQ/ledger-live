@@ -20,6 +20,7 @@ import {
   PortfolioEmptyStateSection,
   PortfolioHeaderSection,
   PortfolioOperationsSection,
+  PortfolioBannersSection,
 } from "../../components";
 
 type NavigationProps = BaseComposite<
@@ -55,7 +56,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         key="header"
         showAssets={showAssets}
         hideGraph={shouldDisplayGraphRework}
-        isLNSUpsellBannerShown={isLNSUpsellBannerShown}
         onBackFromUpdate={onBackFromUpdate}
       />,
     );
@@ -64,6 +64,15 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       sections.push(<PortfolioEmptyStateSection key="empty" openAddModal={openAddModal} />);
       return sections;
     }
+
+    sections.push(
+      <PortfolioBannersSection
+        key="banners"
+        isFirst={true}
+        isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+        showAssets={showAssets}
+      />,
+    );
 
     sections.push(
       <PortfolioAssetsSection
@@ -95,8 +104,8 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
   }, [
     showAssets,
     shouldDisplayGraphRework,
-    isLNSUpsellBannerShown,
     onBackFromUpdate,
+    isLNSUpsellBannerShown,
     isAccountListUIEnabled,
     hideEmptyTokenAccount,
     openAddModal,

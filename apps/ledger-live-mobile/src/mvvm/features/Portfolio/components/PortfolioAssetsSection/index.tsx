@@ -1,6 +1,5 @@
 import React from "react";
 import { Box } from "@ledgerhq/native-ui";
-import RecoverBanner from "~/components/RecoverBanner";
 import PortfolioAssets from "~/screens/Portfolio/PortfolioAssets";
 import AnimatedContainer from "~/screens/Portfolio/AnimatedContainer";
 
@@ -21,7 +20,6 @@ export const PortfolioAssetsSection = ({
     return (
       <AnimatedContainer onHeightChange={onHeightChange}>
         <Box px={6} key="PortfolioAssets">
-          <RecoverBanner />
           <PortfolioAssets
             hideEmptyTokenAccount={hideEmptyTokenAccount}
             openAddModal={openAddModal}
@@ -33,7 +31,6 @@ export const PortfolioAssetsSection = ({
 
   return (
     <Box px={6} key="PortfolioAssets">
-      <RecoverBanner />
       <PortfolioAssets hideEmptyTokenAccount={hideEmptyTokenAccount} openAddModal={openAddModal} />
     </Box>
   );

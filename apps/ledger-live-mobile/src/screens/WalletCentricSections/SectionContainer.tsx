@@ -11,7 +11,7 @@ interface SectionContainerProps extends FlexBoxProps {
 }
 
 const SectionContainer = styled(Flex).attrs<SectionContainerProps>(p => ({
-  py: 8,
+  py: p.py || 8,
   borderTopWidth: p.isFirst ? 0 : 1,
   borderTopColor: "neutral.c30",
 }))``;
@@ -20,6 +20,7 @@ const MemoizedSectionContainer = memo(SectionContainer);
 
 interface AnimatedSectionContainerProps extends SectionContainerProps {
   children: React.ReactNode;
+  py?: string;
   key?: string;
 }
 

@@ -131,7 +131,10 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     [showAssets, isAccountListUIEnabled, navigation],
   );
 
-  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayMarketBanner, isEnabled: isLwmWallet40Enabled } =
+    useWalletFeaturesConfig("mobile");
+
+  const isLwmWallet40Disabled = !isLwmWallet40Enabled;
 
   return (
     <>
@@ -140,9 +143,13 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         accountsLength={distribution.list && distribution.list.length}
         discreet={discreetMode}
       />
-      <Box my={24}>
-        <PortfolioQuickActionsBar />
-      </Box>
+
+      {isLwmWallet40Disabled && (
+        <Box my={24}>
+          <PortfolioQuickActionsBar />
+        </Box>
+      )}
+
       <MarketBanner />
 
       {shouldDisplayMarketBanner && __DEV__ && (

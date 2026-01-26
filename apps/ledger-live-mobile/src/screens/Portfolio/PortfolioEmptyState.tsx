@@ -10,6 +10,7 @@ import { track, TrackScreen } from "~/analytics";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import RecoverBanner from "~/components/RecoverBanner";
 
 const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () => void }) => {
   const { t } = useTranslation();
@@ -53,6 +54,7 @@ const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () 
         mt={7}
         marginX={"-16px"}
       />
+      <RecoverBanner />
       <Flex flexGrow={1} flexDirection="row" mt={9}>
         <Button
           type="main"
