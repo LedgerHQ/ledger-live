@@ -94,7 +94,7 @@ describe("getBalance", () => {
     });
 
     mockGetExplorerApi.mockReturnValue({
-      getLastOperations: jest.fn().mockResolvedValue(operations),
+      getOperations: jest.fn().mockResolvedValue(operations),
     });
 
     // Mock getStakes to return the expected stake data
@@ -124,7 +124,7 @@ describe("getBalance", () => {
       },
     });
     mockGetExplorerApi.mockReturnValue({
-      getLastOperations: () => ({
+      getOperations: () => ({
         lastTokenOperations: [
           { contract: "contract1" },
           { contract: "contract1" },
@@ -157,7 +157,7 @@ describe("getBalance", () => {
     });
 
     mockGetExplorerApi.mockReturnValue({
-      getLastOperations: jest.fn().mockResolvedValue({ lastTokenOperations: [] }),
+      getOperations: jest.fn().mockResolvedValue({ lastTokenOperations: [] }),
     });
 
     // Mock getStakes to return empty stakes
