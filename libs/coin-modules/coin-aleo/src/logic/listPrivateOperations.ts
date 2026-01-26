@@ -54,7 +54,7 @@ async function parseOperation({
     accountId: ledgerAccountId,
     date: timestamp,
     extra: {
-      functionName: rawTx.function_name,
+      functionId: rawTx.function_name,
     },
   };
 }

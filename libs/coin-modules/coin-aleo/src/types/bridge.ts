@@ -51,7 +51,6 @@ export type AleoAccountRaw = AccountRaw & {
 
 export type AleoOperationExtra = {
   functionId?: string;
-  functionName?: string;
 };
 
 export type AleoOperation = Operation<AleoOperationExtra>;

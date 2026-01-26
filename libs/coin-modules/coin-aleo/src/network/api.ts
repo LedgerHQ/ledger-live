@@ -114,23 +114,6 @@ async function getAccountOwnedRecords(
   apiKey: string,
 ): Promise<AleoPrivateTransaction[]> {
   const data = {
-    decrypt: true,
-    filter: {
-      block_height: true,
-      checksum: true,
-      commitment: true,
-      record_ciphertext: true,
-      function_name: true,
-      nonce: true,
-      output_index: true,
-      owner: true,
-      program_name: true,
-      record_name: true,
-      transaction_id: true,
-      transition_id: true,
-      transaction_index: true,
-      transition_index: true,
-    },
     response_filter: {
       block_height: true,
       checksum: true,
@@ -147,7 +130,6 @@ async function getAccountOwnedRecords(
       transaction_index: true,
       transition_index: true,
     },
-    unspent: false,
     uuid,
   };
   const res = await network<AleoPrivateTransaction[]>({
