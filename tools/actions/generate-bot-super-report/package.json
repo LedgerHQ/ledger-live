@@ -5,8 +5,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsup --target node20 -d build main.ts",
-    "build-cli-test": "tsup -d build-cli cli-test.ts",
+    "build": "rslib build",
+    "build-cli-test": "rslib build --config rslib.config.cli-test.ts",
     "lint": "eslint ./ --cache",
     "lint:fix": "pnpm lint --fix"
   },
@@ -18,7 +18,7 @@
     "lodash": "4.17.21",
     "node-fetch": "3.3.2",
     "stream-json": "1.8.0",
-    "tsup": "7.3.0",
+    "@rslib/core": "catalog:",
     "unzipper": "0.10.14"
   },
   "peerDependencies": {
