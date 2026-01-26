@@ -185,7 +185,6 @@ function GraphCard({
           </Flex>
         </Animated.View>
       </Flex>
-
       {!hideGraph && (
         <GraphSection
           readOnlyModeEnabled={readOnlyModeEnabled}

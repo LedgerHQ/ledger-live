@@ -1,7 +1,7 @@
 import * as React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ScreenName } from "~/const";
-import Portfolio from "../screens/Portfolio";
+import { PortfolioScreen as Portfolio } from "../screens/Portfolio";
 import ReadOnlyPortfolio from "../screens/ReadOnly";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { State } from "~/reducers/types";
@@ -28,6 +28,16 @@ export const overrideInitialStateWithFeatureFlag = (state: State): State => ({
     ...state.settings,
     overriddenFeatureFlags: {
       lwmWallet40: { enabled: true },
+    },
+  },
+});
+
+export const overrideInitialStateWithGraphReworkEnabled = (state: State): State => ({
+  ...state,
+  settings: {
+    ...state.settings,
+    overriddenFeatureFlags: {
+      lwmWallet40: { enabled: true, params: { graphRework: true } },
     },
   },
 });

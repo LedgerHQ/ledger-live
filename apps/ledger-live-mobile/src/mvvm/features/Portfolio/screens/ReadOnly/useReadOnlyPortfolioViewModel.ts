@@ -9,6 +9,7 @@ import { Currency } from "@ledgerhq/types-cryptoassets";
 
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { counterValueCurrencySelector, hasOrderedNanoSelector } from "~/reducers/settings";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
@@ -26,6 +27,7 @@ interface UseReadOnlyPortfolioViewModelResult {
   assets: Asset[];
   graphCardEndPosition: number;
   currentPositionY: ReturnType<typeof useSharedValue<number>>;
+  shouldDisplayGraphRework: boolean;
   t: ReturnType<typeof useTranslation>["t"];
   source: string | undefined;
   onPortfolioCardLayout: (event: LayoutChangeEvent) => void;
@@ -42,6 +44,7 @@ const useReadOnlyPortfolioViewModel = (navigation: {
   const portfolio = usePortfolioAllAccounts();
   const { colors } = useTheme();
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
+  const { shouldDisplayGraphRework } = useWalletFeaturesConfig("mobile");
 
   const { sortedCryptoCurrencies } = useReadOnlyCoins({ maxDisplayed: MAX_ASSETS_TO_DISPLAY });
 
@@ -95,6 +98,7 @@ const useReadOnlyPortfolioViewModel = (navigation: {
     assets,
     graphCardEndPosition,
     currentPositionY,
+    shouldDisplayGraphRework,
     t,
     source,
     onPortfolioCardLayout,
