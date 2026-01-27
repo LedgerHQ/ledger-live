@@ -1,5 +1,5 @@
-import coinConfig from "../../config";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import coinConfig from "../../config";
 
 const magnitude: bigint = 10n ** 38n;
 
