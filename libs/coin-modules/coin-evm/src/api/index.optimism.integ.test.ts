@@ -79,10 +79,13 @@ describe("EVM Optimism Network", () => {
         expect(op.value).toBeGreaterThanOrEqual(0n);
         expect(op.tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
 
-        // Internal transactions without a parent "normal" transaction have fee=0 and blockHash=""
-        // (not available from explorer without doing a separate request, and we choose not to)
-        expect(op.tx.fees).toBe(0n);
-        expect(op.tx.block.hash).toBe("");
+        // Internal transactions may or may not have a parent "normal" transaction.
+        // When they don't, we currently expect fee=0 and blockHash="" (not available
+        // from the explorer without a separate request). When they do, they should have
+        // a non-zero fee and a valid block hash. This test only verifies that fees and
+        // block hash are structurally valid, not specific values.
+        expect(op.tx.fees).toBeGreaterThanOrEqual(0n);
+        expect(op.tx.block.hash).toMatch(/^$|^0x[A-Fa-f0-9]{64}$/);
       });
     });
   });
