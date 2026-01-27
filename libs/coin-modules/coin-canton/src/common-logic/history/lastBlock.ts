@@ -3,7 +3,7 @@ import { getLedgerEnd as nodeGetLedgerEnd } from "../../network/node";
 import { getLedgerEnd } from "../../network/gateway";
 import coinConfig from "../../config";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 const useGateway = (currency: CryptoCurrency) =>
   coinConfig.getCoinConfig(currency).useGateway === true;

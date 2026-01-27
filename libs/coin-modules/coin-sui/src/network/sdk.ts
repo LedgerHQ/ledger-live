@@ -711,31 +711,40 @@ export const getListOperations = async (
 
     const ops = dedupOperations(opsOut, opsIn, order);
 
-    const sortedOps = ops.operations.sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs));
+    const sortedOps = [...ops.operations].sort(
+      (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
+    );
 
     const uniqueCheckpoints = new Set(
       sortedOps.map(t => t.checkpoint).filter((cp): cp is string => Boolean(cp)),
     );
 
     const checkpointHashMap = new Map<string, string>();
+    const failedCheckpoints = new Set<string>();
     await Promise.all(
       Array.from(uniqueCheckpoints).map(async checkpoint => {
         try {
           const checkpointData = await api.getCheckpoint({ id: checkpoint });
           checkpointHashMap.set(checkpoint, checkpointData.digest);
-        } catch (_error) {
-          // If checkpoint fetch fails, we'll throw an error when creating the operation
+        } catch (error) {
+          failedCheckpoints.add(checkpoint);
+          console.warn(
+            `Failed to fetch checkpoint ${checkpoint}, skipping associated operations:`,
+            error,
+          );
         }
       }),
     );
 
-    const operations = sortedOps.map(t =>
-      alpacaTransactionToOp(
-        addr,
-        t,
-        t.checkpoint ? checkpointHashMap.get(t.checkpoint) : undefined,
-      ),
-    );
+    const operations = sortedOps
+      .filter(t => !t.checkpoint || checkpointHashMap.has(t.checkpoint))
+      .map(t =>
+        alpacaTransactionToOp(
+          addr,
+          t,
+          t.checkpoint ? checkpointHashMap.get(t.checkpoint) : undefined,
+        ),
+      );
 
     return {
       items: operations,
