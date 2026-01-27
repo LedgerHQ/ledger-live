@@ -157,3 +157,5 @@ overrides:
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  # Renovate security update: playwright@1.55.1
+  - playwright@1.55.1
