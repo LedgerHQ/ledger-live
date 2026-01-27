@@ -1,11 +1,11 @@
 import {
   Api,
   Cursor,
+  ListOperationsOptions as ApiListOperationsOptions,
   Page,
   Validator,
   FeeEstimation,
   Operation,
-  Pagination,
   Reward,
   Stake,
   TransactionIntent,
@@ -110,19 +110,21 @@ async function estimate(): Promise<FeeEstimation> {
 }
 
 // NOTE: double check
-async function operations(address: string, pagination: Pagination): Promise<[Operation[], string]> {
-  const { minHeight, lastPagingToken, order } = pagination;
+async function operations(
+  address: string,
+  { minHeight, cursor, order }: ApiListOperationsOptions,
+): Promise<Page<Operation>> {
   const options: ListOperationsOptions = {
     limit: 200,
     minHeight: minHeight,
     order: order ?? "asc",
   };
-  if (lastPagingToken) {
-    const token = lastPagingToken.split("-");
+  if (cursor) {
+    const token = cursor.split("-");
     options.token = JSON.stringify({ ledger: Number(token[0]), seq: Number(token[1]) });
     log(options.token);
   }
-  const [operations, apiNextCursor] = await listOperations(address, options);
+  const [ops, apiNextCursor] = await listOperations(address, options);
   const next = apiNextCursor ? JSON.parse(apiNextCursor) : null;
-  return [operations, next ? next.ledger + "-" + next.seq : ""];
+  return { items: ops, next: next ? next.ledger + "-" + next.seq : undefined };
 }

@@ -59,7 +59,7 @@ describe("API", () => {
 
   it("returns operations from latest, but in asc order", async () => {
     // When
-    const [txDesc] = await module.listOperations("TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1", {
+    const { items: txDesc } = await module.listOperations("TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1", {
       minHeight: 0,
       order: "desc",
     });

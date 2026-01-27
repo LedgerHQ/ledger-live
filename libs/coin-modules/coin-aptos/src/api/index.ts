@@ -10,7 +10,7 @@ import {
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import type { AptosConfig as AptosConfigApi } from "../config";
-import type { Balance, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { Balance, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import coinConfig from "../config";
 import { AptosAPI } from "../network";
 import { combine } from "../logic/combine";
@@ -38,8 +38,7 @@ export function createApi(config: AptosConfigApi): AlpacaApi {
     estimateFees: (transactionIntent: TransactionIntent) => client.estimateFees(transactionIntent),
     getBalance: (address): Promise<Balance[]> => getBalances(client, address),
     lastBlock: () => client.getLastBlock(),
-    listOperations: (address: string, pagination: Pagination) =>
-      client.listOperations(address, pagination.minHeight),
+    listOperations: (address: string, { minHeight }) => client.listOperations(address, minHeight),
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
