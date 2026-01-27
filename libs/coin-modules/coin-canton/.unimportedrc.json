@@ -3,7 +3,6 @@
     "src/api/index.ts",
     "src/bridge/index.ts",
     "src/bridge/deviceTransactionConfig.ts",
-    "src/datasets/dataset-1.ts",
     "src/signer/index.ts",
     "src/test/index.ts",
     "src/index.ts"
@@ -32,5 +31,5 @@
     "src/test/fixtures.ts",
     "src/supportedFeatures.ts"
   ],
-  "ignoreUnused": ["@ledgerhq/devices", "protobufjs"]
+  "ignoreUnused": ["@ledgerhq/devices", "protobufjs", "@ledgerhq/hw-app-canton"]
 }

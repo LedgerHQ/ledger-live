@@ -250,6 +250,7 @@ const createCantonAccount = (
         instrument_admin: "admin-instrument-123",
         memo: "",
         expires_at_micros: Date.now() * 1000 + 3600000000,
+        update_id: "update-123",
       },
     ],
     instrumentUtxoCounts: {},

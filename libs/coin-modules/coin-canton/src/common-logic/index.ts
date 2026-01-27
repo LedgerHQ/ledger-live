@@ -1,5 +1,4 @@
 export { getBalance } from "./account/getBalance";
-export { getNextValidSequence } from "./account/getNextSequence";
 export { parseAPIValue } from "./common";
 export { lastBlock } from "./history/lastBlock";
 export { listOperations } from "./history/listOperations";

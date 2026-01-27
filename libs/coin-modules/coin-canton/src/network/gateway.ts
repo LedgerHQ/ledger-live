@@ -457,3 +457,14 @@ async function getCalTokens(currency: CryptoCurrency): Promise<Map<string, strin
 const getCalTokensCacheKey = (currency: CryptoCurrency): string => currency.id;
 
 export const getCalTokensCached = makeLRUCache(getCalTokens, getCalTokensCacheKey, minutes(30));
+
+// Re-export types that are needed by other modules
+export type {
+  TransferProposal,
+  OnboardingPrepareResponse,
+  PrepareTransferResponse,
+  OperationView,
+} from "../types/gateway";
+
+// Type alias for backward compatibility
+export type OperationInfo = OperationView;

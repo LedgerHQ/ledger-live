@@ -2,7 +2,9 @@
 import { createEmptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-transfer.json";
+// TODO: This import will be available after PR #2 is merged
+// import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-transfer.json";
+import prepareTransferMock from "./prepare-transfer.json";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -196,7 +198,9 @@ export const createMockTransaction = createFactory<Transaction>({
 
 export const createMockPrepareTransferResponse = createFactory<PrepareTransferResponse>({
   hash: "test-hash",
-  json: prepareTransferMock.json,
+  // TODO: This import will be available after PR #2 is merged
+  // json: prepareTransferMock.json,
+  json: prepareTransferMock,
   serialized: "serialized-transaction",
   step: { type: "single-step" },
 });

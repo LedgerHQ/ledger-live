@@ -25,9 +25,32 @@ import { isCantonAccountEmpty } from "../helpers";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { buildSubAccounts } from "./buildSubAccounts";
 
+type ValidOperationInfo = OperationInfo & {
+  asset: { type: "native" | "token"; instrumentId: string; instrumentAdmin: string };
+  transfers: Array<{
+    value: string;
+    details?: { operationType?: string; metadata?: { reason?: string } };
+  }>;
+  senders: string[];
+  recipients: string[];
+};
+
+function isValidOperation(txInfo: OperationInfo): txInfo is ValidOperationInfo {
+  return (
+    txInfo.asset !== undefined &&
+    (txInfo.asset.type === "native" || txInfo.asset.type === "token") &&
+    typeof txInfo.asset.instrumentId === "string" &&
+    typeof txInfo.asset.instrumentAdmin === "string" &&
+    txInfo.transfers !== undefined &&
+    txInfo.transfers.length > 0 &&
+    txInfo.senders !== undefined &&
+    txInfo.recipients !== undefined
+  );
+}
+
 const txInfoToOperationAdapter =
   (accountId: string, partyId: string) =>
-  (txInfo: OperationInfo): Operation => {
+  (txInfo: ValidOperationInfo): Operation => {
     const {
       asset: { instrumentId, instrumentAdmin },
       transaction_hash,
@@ -41,11 +64,11 @@ const txInfoToOperationAdapter =
     } = txInfo;
 
     let type: OperationType = "UNKNOWN";
-    if (details.operationType === "transfer-proposal") {
+    if (details?.operationType === "transfer-proposal") {
       type = "TRANSFER_PROPOSAL";
-    } else if (details.operationType === "transfer-rejected") {
+    } else if (details?.operationType === "transfer-rejected") {
       type = "TRANSFER_REJECTED";
-    } else if (details.operationType === "transfer-withdrawn") {
+    } else if (details?.operationType === "transfer-withdrawn") {
       type = "TRANSFER_WITHDRAWN";
     } else if (txInfo.type === "Send" && transferValue === "0") {
       type = "FEES";
@@ -64,7 +87,7 @@ const txInfoToOperationAdapter =
     }
 
     const feeValue = new BigNumber(fee);
-    const memo = details.metadata.reason;
+    const memo = details?.metadata?.reason;
 
     const op: Operation = {
       id: encodeOperationId(accountId, transaction_hash, type),
@@ -100,6 +123,7 @@ const filterOperations = (
 
   return transactions
     .filter(txInfo => !pendingUpdateIds.has(txInfo.transaction_hash))
+    .filter(isValidOperation)
     .map(txInfoToOperationAdapter(accountId, partyId));
 };
 

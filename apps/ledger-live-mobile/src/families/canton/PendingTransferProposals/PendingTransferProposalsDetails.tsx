@@ -56,6 +56,7 @@ const PendingTransferProposalsDetails: React.FC<Props> = ({
       ...found,
       isExpired,
       amount: new BigNumber(found.amount),
+      memo: found.memo ?? "",
     };
   }, [cantonAccount, contractId]);
 
