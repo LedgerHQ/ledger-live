@@ -29,12 +29,18 @@ export const getBalanceHistoryWithCountervalue: Mock = createMock(() => ({
 }));
 export const getPortfolioCount: Mock = createMock(() => 0);
 export const useCountervaluesState: Mock = createMock(() => ({ cache: { "USD arbitrum": "" } }));
-export const accountsSelector: Mock = createMock(state => (state as { accounts: unknown }).accounts);
-export const shallowAccountsSelector: Mock = createMock(state => (state as { accounts: unknown }).accounts);
+export const accountsSelector: Mock = createMock(
+  state => (state as { accounts: unknown }).accounts,
+);
+export const shallowAccountsSelector: Mock = createMock(
+  state => (state as { accounts: unknown }).accounts,
+);
 export const counterValueCurrencySelector: Mock = createMock(
   state => (state as { currency: unknown }).currency,
 );
-export const discreetModeSelector: Mock = createMock(state => (state as { discreet: unknown }).discreet);
+export const discreetModeSelector: Mock = createMock(
+  state => (state as { discreet: unknown }).discreet,
+);
 export const localeSelector: Mock = createMock(state => (state as { locale: unknown }).locale);
 
 export const MOCKED_ARB_ACCOUNT = {
