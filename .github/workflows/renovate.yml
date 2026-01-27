@@ -25,10 +25,10 @@ jobs:
     steps:
       - name: Get token
         id: get_token
-        uses: tibdex/github-app-token@32691ba7c9e7063bd457bd8f2a5703138591fa58 # v1
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
         with:
-          app_id: ${{ secrets.PUBLIC_RENOVATE_APP_ID }}
-          private_key: ${{ secrets.PUBLIC_RENOVATE_KEY }}
+          app-id: ${{ secrets.PUBLIC_RENOVATE_APP_ID }}
+          private-key: ${{ secrets.PUBLIC_RENOVATE_KEY }}
 
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4

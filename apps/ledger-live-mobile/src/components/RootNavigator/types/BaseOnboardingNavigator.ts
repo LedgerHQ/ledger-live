@@ -1,5 +1,5 @@
 import { NavigatorScreenParams } from "@react-navigation/native";
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import { Device } from "@ledgerhq/types-devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { OnboardingNavigatorParamList } from "./OnboardingNavigator";
@@ -18,11 +18,6 @@ export type BaseOnboardingNavigatorParamList = {
   [NavigatorName.Onboarding]: NavigatorScreenParams<OnboardingNavigatorParamList>;
   [NavigatorName.BuyDevice]: NavigatorScreenParams<BuyDeviceNavigatorParamList> | undefined;
   [NavigatorName.ReceiveFunds]: NavigatorScreenParams<ReceiveFundsStackParamList> | undefined;
-  [ScreenName.PairDevices]: {
-    onDone?: (_: Device) => void;
-    hasError?: boolean;
-    deviceModelIds?: DeviceModelId[];
-  };
   [ScreenName.EditDeviceName]: {
     device: Device;
     deviceName: string;

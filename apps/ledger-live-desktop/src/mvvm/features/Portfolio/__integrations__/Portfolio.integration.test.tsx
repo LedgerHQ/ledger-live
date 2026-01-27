@@ -7,6 +7,8 @@ import { Portfolio } from "@ledgerhq/types-live";
 import { PortfolioView } from "../PortfolioView";
 import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
 import { useNavigate } from "react-router";
+import { INITIAL_STATE } from "~/renderer/reducers/settings";
+import { ARB_ACCOUNT, BTC_ACCOUNT, HEDERA_ACCOUNT } from "../../__mocks__/accounts.mock";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
 
@@ -68,13 +70,14 @@ const defaultPortfolioMock = createPortfolioMock({ percentage: 0.0542, value: 50
 
 describe("PortfolioView", () => {
   const defaultProps = {
+    isWallet40Enabled: true,
     totalAccounts: 5,
     totalOperations: 10,
     totalCurrencies: 3,
     hasExchangeBannerCTA: true,
     shouldDisplayMarketBanner: true,
     shouldDisplayGraphRework: true,
-    shouldDisplaySwapWebView: true,
+    shouldDisplayQuickActionCtas: true,
     filterOperations: () => true,
     accounts: [],
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -99,16 +102,6 @@ describe("PortfolioView", () => {
   it("should render portfolio container", () => {
     render(<PortfolioView {...defaultProps} />);
     expect(screen.getByTestId("portfolio-container")).toBeVisible();
-  });
-
-  it("should render SwapWebViewEmbedded when shouldDisplaySwapWebView is true", () => {
-    render(<PortfolioView {...defaultProps} shouldDisplaySwapWebView={true} />);
-    expect(screen.getByTestId("swap-webview-embedded")).toBeVisible();
-  });
-
-  it("should not render SwapWebViewEmbedded when shouldDisplaySwapWebView is false", () => {
-    render(<PortfolioView {...defaultProps} shouldDisplaySwapWebView={false} />);
-    expect(screen.queryByTestId("swap-webview-embedded")).toBeNull();
   });
 
   describe("Balance", () => {
@@ -218,6 +211,29 @@ describe("PortfolioView", () => {
     it("should not render MarketBanner when shouldDisplayMarketBanner is false", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={false} />);
       expect(screen.queryByText("Explore market")).toBeNull();
+    });
+  });
+
+  describe("QuickActions", () => {
+    it("should render QuickActions when shouldDisplayQuickActionCtas is true", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={true} />, {
+        ...INITIAL_STATE,
+        initialState: { accounts: [BTC_ACCOUNT, HEDERA_ACCOUNT, ARB_ACCOUNT] },
+      });
+      expect(screen.getByTestId("quick-actions-actions-list")).toBeVisible();
+    });
+
+    it("should not render QuickActions when user has no accounts", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={true} />, {
+        ...INITIAL_STATE,
+        initialState: { accounts: [] },
+      });
+      expect(screen.queryByTestId("quick-actions-actions-list")).toBeNull();
+    });
+
+    it("should not render QuickActions when shouldDisplayQuickActionCtas is false", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={false} />);
+      expect(screen.queryByTestId("quick-actions-actions-list")).toBeNull();
     });
   });
 

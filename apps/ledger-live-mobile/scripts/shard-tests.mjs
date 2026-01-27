@@ -46,8 +46,18 @@ function findTestFiles(dir) {
 
 function filterTestFiles(files, testFilter) {
   if (!testFilter) return files;
-  const filters = testFilter.toLowerCase().split(/\s+/).filter(Boolean);
-  const filtered = files.filter(f => filters.some(filter => f.toLowerCase().includes(filter)));
+  const filters = testFilter.trim().split(/\s+/).filter(Boolean);
+  const filterRegex = new RegExp(filters.join("|"), "i");
+
+  const filtered = files.filter(filePath => {
+    if (filterRegex.test(filePath)) return true;
+    try {
+      return filterRegex.test(fs.readFileSync(filePath, "utf8"));
+    } catch {
+      return false;
+    }
+  });
+
   return filtered.sort(compareStrings);
 }
 

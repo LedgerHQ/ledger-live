@@ -7,7 +7,18 @@ const transactionE2E = {
   errorMessage: "Not enough balance",
   ctaBanner: false,
   quotesVisible: false,
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  tags: [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    "@ethereum",
+    "@family-evm",
+    "@bitcoin",
+    "@family-bitcoin",
+  ],
 };
 
 runTooLowAmountForQuoteSwapsTest(
