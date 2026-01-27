@@ -5,6 +5,7 @@ import { Account } from "@ledgerhq/types-live";
 import { Props as TouchableProps } from "~/components/Touchable";
 import { AddAccountContexts } from "./enums";
 import { CantonOnboardAccountParamList } from "~/families/canton/Onboard/types";
+import { AccountsOnboardParams } from "../AccountsOnboard/types";
 
 export type AddAccountContextType = `${AddAccountContexts}`;
 
@@ -40,4 +41,5 @@ export type NetworkBasedAddAccountNavigator = {
     }) => React.JSX.Element;
   };
   [ScreenName.CantonOnboardAccount]: CantonOnboardAccountParamList[ScreenName.CantonOnboardAccount];
+  [ScreenName.AccountsOnboard]: AccountsOnboardParams;
 };

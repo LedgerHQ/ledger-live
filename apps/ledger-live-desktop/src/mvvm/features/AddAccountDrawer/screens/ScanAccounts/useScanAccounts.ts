@@ -25,7 +25,7 @@ import {
   getGroupedAccounts,
   getUnimportedAccounts,
 } from "./utils/processAccounts";
-import { useCantonCreatableAccounts } from "./hooks/useCantonCreatableAccounts";
+import { useOnboardingAccounts } from "../AccountsOnboard/hooks/useOnboardingAccounts";
 import { useConcordiumCreatableAccounts } from "./hooks/concordium/useConcordiumCreatableAccounts";
 
 const selectImportable = (importable: Account[]) => (selected: string[]) => {
@@ -44,6 +44,12 @@ export interface UseScanAccountsProps {
   deferAccountAddition?: boolean;
   onComplete: (accounts: Account[]) => void;
   navigateToWarningScreen: (reason: WarningReason, account?: Account) => void;
+  navigateToAccountsOnboard?: (state: {
+    selectedAccounts: Account[];
+    editedNames: { [accountId: string]: string };
+    isReonboarding?: boolean;
+    accountToReonboard?: Account;
+  }) => void;
 }
 
 export function useScanAccounts({
@@ -52,10 +58,11 @@ export function useScanAccounts({
   deferAccountAddition = false,
   onComplete,
   navigateToWarningScreen,
+  navigateToAccountsOnboard,
 }: UseScanAccountsProps) {
   const { trackAddAccountEvent } = useAddAccountAnalytics();
   const existingAccounts = useSelector(accountsSelector);
-  const device = useSelector(getCurrentDevice);
+  const _device = useSelector(getCurrentDevice);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
@@ -163,11 +170,11 @@ export function useScanAccounts({
     selectedIds,
   ]);
 
-  const { hasCantonCreatableAccounts, selectedCantonCreatableAccounts } =
-    useCantonCreatableAccounts({
-      scannedAccounts,
-      selectedIds: filteredSelectedIds,
-    });
+  const { hasOnboardingCreatableAccounts, selectedOnboardingAccounts } = useOnboardingAccounts({
+    currency,
+    scannedAccounts,
+    selectedIds: filteredSelectedIds,
+  });
 
   const { hasConcordiumCreatableAccounts, selectedConcordiumAccounts } =
     useConcordiumCreatableAccounts({
@@ -182,18 +189,13 @@ export function useScanAccounts({
       flow: ADD_ACCOUNT_FLOW_NAME,
     });
 
-    if (hasCantonCreatableAccounts) {
-      setDrawer();
-
-      dispatch(
-        openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
-          currency,
-          device,
-          selectedAccounts: selectedCantonCreatableAccounts,
-          existingAccounts: existingAccounts,
+    if (hasOnboardingCreatableAccounts) {
+      if (navigateToAccountsOnboard) {
+        navigateToAccountsOnboard({
+          selectedAccounts: selectedOnboardingAccounts,
           editedNames: {},
-        }),
-      );
+        });
+      }
 
       return;
     }
@@ -231,18 +233,17 @@ export function useScanAccounts({
   }, [
     trackAddAccountEvent,
     accountsToImport,
-    dispatch,
     existingAccounts,
     onComplete,
-    currency,
-    device,
-    hasCantonCreatableAccounts,
-    selectedCantonCreatableAccounts,
+    hasOnboardingCreatableAccounts,
+    selectedOnboardingAccounts,
     hasConcordiumCreatableAccounts,
     selectedConcordiumAccounts,
     filteredSelectedIds,
     scannedAccounts,
+    navigateToAccountsOnboard,
     deferAccountAddition,
+    dispatch,
   ]);
 
   const toggleShowAllCreatedAccounts = useCallback(() => setShowAllCreatedAccounts(p => !p), []);

@@ -11,7 +11,7 @@ export const balanceItem = (balanceUI: BalanceUI) => {
 
   return (
     <div className="flex flex-col items-end gap-4">
-      <span className="body-2-semi-bold">
+      <span>
         <CounterValue currency={currency} value={balance} placeholder="-" color="inherit" />
       </span>
       <span className="body-3 text-muted">

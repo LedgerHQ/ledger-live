@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, cleanup } from "tests/testSetup";
-import { OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { AccountOnboardStatus } from "@ledgerhq/types-live";
 import StepOnboard, { StepOnboardFooter } from "../StepOnboard";
 import { StepProps, StepId } from "../../types";
 import {
@@ -31,7 +31,7 @@ describe("StepOnboard", () => {
     currency: mockCurrency,
     creatableAccount: mockAccount,
     importableAccounts: [mockImportableAccount],
-    onboardingStatus: OnboardStatus.INIT,
+    onboardingStatus: AccountOnboardStatus.INIT,
   });
 
   beforeEach(() => {
@@ -70,22 +70,22 @@ describe("StepOnboard", () => {
 
   it("should render correct footer buttons and handle interactions", () => {
     const testCases = [
-      { status: OnboardStatus.INIT, expectedButton: "Continue", shouldBeDisabled: false },
-      { status: OnboardStatus.SUCCESS, expectedButton: "Continue", shouldBeDisabled: false },
-      { status: OnboardStatus.ERROR, expectedButton: "Try again", shouldBeDisabled: false },
+      { status: AccountOnboardStatus.INIT, expectedButton: "Continue", shouldBeDisabled: false },
+      { status: AccountOnboardStatus.SUCCESS, expectedButton: "Continue", shouldBeDisabled: false },
+      { status: AccountOnboardStatus.ERROR, expectedButton: "Try again", shouldBeDisabled: false },
       {
-        status: OnboardStatus.PREPARE,
+        status: AccountOnboardStatus.PREPARE,
         expectedButton: "Continue",
         shouldBeDisabled: false,
         isProcessing: false,
       },
       {
-        status: OnboardStatus.PREPARE,
+        status: AccountOnboardStatus.PREPARE,
         expectedButton: "Continue",
         shouldBeDisabled: true,
         isProcessing: true,
       },
-      { status: OnboardStatus.SIGN, expectedButton: null }, // No button for SIGN
+      { status: AccountOnboardStatus.SIGN, expectedButton: null }, // No button for SIGN
     ];
 
     testCases.forEach(({ status, expectedButton, shouldBeDisabled, isProcessing }) => {
@@ -122,7 +122,7 @@ describe("StepOnboard", () => {
       <StepOnboardFooter
         {...defaultProps}
         onOnboardAccount={onOnboardAccount}
-        onboardingStatus={OnboardStatus.INIT}
+        onboardingStatus={AccountOnboardStatus.INIT}
       />,
     );
     const continueButton = await screen.findByRole("button", { name: "Continue" });
@@ -135,7 +135,7 @@ describe("StepOnboard", () => {
       <StepOnboardFooter
         {...defaultProps}
         onRetryOnboardAccount={onRetry}
-        onboardingStatus={OnboardStatus.ERROR}
+        onboardingStatus={AccountOnboardStatus.ERROR}
       />,
     );
     const retryButton = await screen.findByRole("button", { name: "Try again" });
@@ -148,7 +148,7 @@ describe("StepOnboard", () => {
       <StepOnboardFooter
         {...defaultProps}
         transitionTo={transitionTo}
-        onboardingStatus={OnboardStatus.SUCCESS}
+        onboardingStatus={AccountOnboardStatus.SUCCESS}
       />,
     );
     const successButton = await screen.findByRole("button", { name: "Continue" });

@@ -9,6 +9,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isCryptoCurrency, isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import logger from "~/logger";
 import { NavigatorName, ScreenName } from "~/const";
 import { prepareCurrency } from "~/bridge/cache";
@@ -18,7 +19,6 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { groupAddAccounts, addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { setAccountName } from "@ledgerhq/live-wallet/store";
-import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import { isConcordiumAccount } from "@ledgerhq/coin-concordium/bridge/serialization";
 import type { ScanDeviceAccountsNavigationProps, ScanDeviceAccountsViewModelProps } from "./types";
 import { track } from "~/analytics";
@@ -42,6 +42,7 @@ export default function useScanDeviceAccountsViewModel({
   const [scanning, setScanning] = useState(true);
   const navigation = useNavigation<ScanDeviceAccountsNavigationProps["navigation"]>();
   const [error, setError] = useState(null);
+  const llmModularDrawer = useFeature("llmModularDrawer");
   const [latestScannedAccount, setLatestScannedAccount] = useState<Account | null>(null);
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [onlyNewAccounts, setOnlyNewAccounts] = useState(true);
@@ -198,20 +199,24 @@ export default function useScanDeviceAccountsViewModel({
     const accountsToAdd = scannedAccounts.filter(a => selectedIds.includes(a.id));
 
     if (currency.id.includes("canton_network")) {
-      const accountsNeedingOnboarding = accountsToAdd.filter(account => {
-        if (isCantonAccount(account)) {
-          return !account.cantonResources.isOnboarded;
-        }
-        return true;
-      });
-
-      if (accountsNeedingOnboarding.length > 0) {
-        navigation.replace(NavigatorName.CantonOnboard, {
-          screen: ScreenName.CantonOnboardAccount,
-          params: { accountsToAdd: accountsToAdd, currency },
+      // Check if modular drawer is enabled
+      if (llmModularDrawer?.enabled) {
+        // Use new AccountsOnboard screen in modular drawer flow
+        // Extract parent currency if it's a token currency
+        const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
+        navigation.replace(ScreenName.AccountsOnboard, {
+          accountsToAdd,
+          currency: cryptoCurrency,
+          editedNames: {},
         });
         return;
       }
+      // Fallback to old CantonOnboard navigation when modular drawer is disabled
+      navigation.replace(NavigatorName.CantonOnboard, {
+        screen: ScreenName.CantonOnboardAccount,
+        params: { accountsToAdd, currency },
+      });
+      return;
     }
 
     if (isCryptoCurrency(currency) && currency.family === "concordium") {
@@ -284,6 +289,7 @@ export default function useScanDeviceAccountsViewModel({
     closeInlineFlow,
     analyticsMetadata?.AccountsFound?.onContinue,
     analyticsMetadata?.AccountsFound?.onAccountsAdded,
+    llmModularDrawer?.enabled,
   ]);
 
   const onCancel = useCallback(() => {

@@ -345,6 +345,7 @@ export enum ScreenName {
   StellarAddAssetValidationSuccess = "StellarAddAssetValidationSuccess",
   // Canton
   CantonOnboardAccount = "CantonOnboardAccount",
+  AccountsOnboard = "AccountsOnboard",
   // Concordium
   ConcordiumOnboardAccount = "ConcordiumOnboardAccount",
 

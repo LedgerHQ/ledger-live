@@ -17,6 +17,13 @@ interface UseAddAccountFlowNavigationProps {
   originalCurrency?: CryptoOrTokenCurrency;
 }
 
+export interface AccountsOnboardState {
+  selectedAccounts: Account[];
+  editedNames: { [accountId: string]: string };
+  isReonboarding?: boolean;
+  accountToReonboard?: Account;
+}
+
 export const useAddAccountFlowNavigation = ({
   selectedAccounts,
   onAccountSelected,
@@ -29,6 +36,9 @@ export const useAddAccountFlowNavigation = ({
   const [emptyAccount, setEmptyAccount] = useState<Account>();
   const [accountToFund, setAccountToFund] = useState<Account>();
   const [accountToEdit, setAccountToEdit] = useState<Account>();
+  const [accountsOnboardState, setAccountsOnboardState] = useState<
+    AccountsOnboardState | undefined
+  >();
 
   const navigateToWarningScreen = useCallback(
     (reason?: WarningReason, account?: Account) => {
@@ -83,6 +93,14 @@ export const useAddAccountFlowNavigation = ({
     goToStep(MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE);
   }, [goToStep]);
 
+  const navigateToAccountsOnboard = useCallback(
+    (state: AccountsOnboardState) => {
+      setAccountsOnboardState(state);
+      goToStep(MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ONBOARD);
+    },
+    [goToStep],
+  );
+
   const navigateBack = useMemo(
     (track: boolean = true) => {
       switch (currentStep) {
@@ -132,6 +150,18 @@ export const useAddAccountFlowNavigation = ({
             navigateToAccountsAdded();
           };
         }
+        case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ONBOARD: {
+          return () => {
+            if (track) {
+              trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
+                button: "Back",
+                page: ADD_ACCOUNT_PAGE_NAME.LOOKING_FOR_ACCOUNTS,
+                flow: ADD_ACCOUNT_FLOW_NAME,
+              });
+            }
+            navigateToScanAccounts();
+          };
+        }
         case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED:
         case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING:
         case MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE:
@@ -147,6 +177,7 @@ export const useAddAccountFlowNavigation = ({
       navigateToWarningScreen,
       navigateToSelectAccount,
       navigateToAccountsAdded,
+      navigateToScanAccounts,
       trackAddAccountEvent,
     ],
   );
@@ -154,11 +185,13 @@ export const useAddAccountFlowNavigation = ({
   return {
     accountToEdit,
     accountToFund,
+    accountsOnboardState,
     currentStep,
     emptyAccount,
     goToStep,
     navigateBack,
     navigateToAccountsAdded,
+    navigateToAccountsOnboard,
     navigateToConnectDevice,
     navigateToEditAccountName,
     navigateToFundAccount,

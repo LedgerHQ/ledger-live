@@ -254,7 +254,7 @@ type ProcessedProposal = {
   receiver: string;
   amount: BigNumber;
   instrumentId: string;
-  memo: string;
+  memo?: string;
   expiresAtMicros: number;
   isExpired: boolean;
   isIncoming: boolean;

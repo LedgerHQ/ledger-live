@@ -31,6 +31,7 @@ const ScanAccounts = ({
   deferAccountAddition,
   onComplete,
   navigateToWarningScreen,
+  navigateToAccountsOnboard,
   onRetry,
   FooterComponent = Footer,
 }: Props) => {
@@ -58,6 +59,7 @@ const ScanAccounts = ({
     deviceId,
     deferAccountAddition,
     navigateToWarningScreen,
+    navigateToAccountsOnboard,
     onComplete,
   });
 

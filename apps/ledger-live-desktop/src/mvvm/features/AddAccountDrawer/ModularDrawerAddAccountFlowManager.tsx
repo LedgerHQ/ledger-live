@@ -3,7 +3,7 @@ import { Flex, Text } from "@ledgerhq/react-ui/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { AnimatePresence } from "framer-motion";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { MODULAR_DRAWER_PAGE_NAME } from "../ModularDrawer/analytics/modularDrawer.types";
@@ -14,15 +14,19 @@ import HeaderGradient from "./components/HeaderGradient";
 import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, ModularDrawerAddAccountStep } from "./domain";
 import AccountsAdded from "./screens/AccountsAdded";
 import AccountsWarning from "./screens/AccountsWarning";
+import AccountsOnboard from "./screens/AccountsOnboard";
+import { getOnboardingConfig } from "./screens/AccountsOnboard/registry";
 import ConnectYourDevice from "./screens/ConnectYourDevice";
 import EditAccountName from "./screens/EditAccountName";
 import FundAccount from "./screens/FundAccount";
 import ScanAccounts from "./screens/ScanAccounts";
 import { useAddAccountFlowNavigation } from "./useAddAccountFlowNavigation";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setFlowValue } from "~/renderer/reducers/modularDrawer";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { ADD_ACCOUNT_FLOW_NAME } from "./analytics/addAccount.types";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 
 export const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
@@ -63,6 +67,7 @@ const ModularDrawerAddAccountFlowManager = ({
     emptyAccount,
     accountToEdit,
     accountToFund,
+    accountsOnboardState,
     navigateBack,
     navigateToWarningScreen,
     navigateToEditAccountName,
@@ -71,11 +76,15 @@ const ModularDrawerAddAccountFlowManager = ({
     navigateToScanAccounts,
     navigateToAccountsAdded,
     navigateToConnectDevice,
+    navigateToAccountsOnboard,
   } = useAddAccountFlowNavigation({
     selectedAccounts,
     onAccountSelected,
     originalCurrency: currency,
   });
+
+  const device = useSelector(getCurrentDevice);
+  const existingAccounts = useSelector(accountsSelector);
 
   const isAccountSelectionFlow = !!onAccountSelected;
   const cryptoCurrency = currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
@@ -101,6 +110,16 @@ const ModularDrawerAddAccountFlowManager = ({
       />
     );
   }
+
+  // Redirect to scan accounts if required state is missing for ACCOUNTS_ONBOARD step
+  useEffect(() => {
+    if (
+      currentStep === MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ONBOARD &&
+      (!accountsOnboardState || !device)
+    ) {
+      navigateToScanAccounts();
+    }
+  }, [currentStep, accountsOnboardState, device, navigateToScanAccounts]);
 
   const renderStepContent = (step: ModularDrawerAddAccountStep) => {
     switch (step) {
@@ -130,9 +149,50 @@ const ModularDrawerAddAccountFlowManager = ({
               }}
               analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
               navigateToWarningScreen={navigateToWarningScreen}
+              navigateToAccountsOnboard={navigateToAccountsOnboard}
             />
           </StepContainer>
         );
+      case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ONBOARD: {
+        if (!accountsOnboardState || !device) {
+          return null;
+        }
+
+        // Get onboarding config for translation keys
+        const onboardingConfig = getOnboardingConfig(cryptoCurrency);
+        let titleKey: string | null = null;
+        if (onboardingConfig) {
+          titleKey = accountsOnboardState.isReonboarding
+            ? onboardingConfig.translationKeys.reonboardTitle
+            : onboardingConfig.translationKeys.title;
+        }
+
+        if (!titleKey) {
+          // should not happen if flow is correct
+          return null;
+        }
+
+        return (
+          <StepContainer paddingX="8px" data-test-id="content">
+            <Title style={{ paddingLeft: 0 }}>{t(titleKey)}</Title>
+            <Flex flex={1} flexDirection="column" minHeight={0}>
+              <AccountsOnboard
+                currency={cryptoCurrency}
+                device={device}
+                selectedAccounts={accountsOnboardState.selectedAccounts}
+                existingAccounts={existingAccounts}
+                editedNames={accountsOnboardState.editedNames}
+                isReonboarding={accountsOnboardState.isReonboarding}
+                accountToReonboard={accountsOnboardState.accountToReonboard}
+                onComplete={(accounts: Account[]) => {
+                  setSelectedAccounts(accounts);
+                  navigateToAccountsAdded();
+                }}
+              />
+            </Flex>
+          </StepContainer>
+        );
+      }
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED:
         return (
           <StepContainer paddingX="8px" data-test-id="content">

@@ -2,12 +2,12 @@ import React from "react";
 import { cva } from "class-variance-authority";
 import { useMarketIndicator } from "../useMarketIndicator";
 
-const percentStyles = cva("rounded-sm px-4 py-2 body-3", {
+const percentStyles = cva("rounded-sm px-4 py-2", {
   variants: {
     variant: {
       positive: "bg-success text-success",
-      negative: "bg-error text-error",
-      neutral: "bg-muted text-muted",
+      negative: "text-error",
+      neutral: "",
     },
   },
   defaultVariants: {
