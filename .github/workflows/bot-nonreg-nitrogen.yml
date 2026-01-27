@@ -16,6 +16,9 @@ jobs:
         with:
           app-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          repositories: |
+            coin-apps
+            ledger-live
       - uses: actions/checkout@v4
       - name: Retrieving coin apps
         uses: actions/checkout@v4
