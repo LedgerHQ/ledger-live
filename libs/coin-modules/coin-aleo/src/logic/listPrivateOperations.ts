@@ -25,18 +25,13 @@ async function parseOperation({
     currency,
     rawTx.transaction_id,
   );
+  const [receiverOutput, senderOutput] = execution.transitions[0].outputs;
   const receiver = await apiClient
-    .decryptCiphertext<AleoDecryptedTransactionValueResponse>(
-      execution.transitions[0].outputs[0].value,
-      viewKey,
-    )
-    .catch(() => null);
+    .decryptCiphertext<AleoDecryptedTransactionValueResponse>(receiverOutput?.value, viewKey)
+    .catch(e => console.log(`Failed to decrypt receiver output: ${e}`));
   const sender = await apiClient
-    .decryptCiphertext<AleoDecryptedTransactionValueResponse>(
-      execution.transitions[0].outputs[1].value,
-      viewKey,
-    )
-    .catch(() => null);
+    .decryptCiphertext<AleoDecryptedTransactionValueResponse>(senderOutput?.value, viewKey)
+    .catch(e => console.log(`Failed to decrypt sender output: ${e}`));
   const type = receiver?.owner === address ? "IN" : "OUT";
   const value = receiver?.data?.microcredits ?? sender?.data?.microcredits ?? "0.0";
 
@@ -77,7 +72,7 @@ export async function listPrivateOperations({
   ledgerAccountId: string;
 }): Promise<{ privateOperations: AleoOperation[] }> {
   const privateOperations: AleoOperation[] = [];
-  const mirrorResult = await apiClient.getAccountOwnedRecords(currency, jwtToken, uuid, apiKey);
+  const mirrorResult = await apiClient.getAccountOwnedRecords(jwtToken, uuid, apiKey);
 
   // currently we only support native aleo coin operations & ignore rest
   const nativePrivateTransactions = mirrorResult.filter(tx => tx.program_name === "credits.aleo");

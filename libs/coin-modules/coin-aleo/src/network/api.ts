@@ -50,13 +50,10 @@ async function getTransactionById(
   return res.data;
 }
 
-async function registerNewAccount(
-  currency: CryptoCurrency,
-  username: string,
-): Promise<AleoRegisterAccountResponse> {
+async function registerNewAccount(username: string): Promise<AleoRegisterAccountResponse> {
   const res = await network<AleoRegisterAccountResponse>({
     method: "POST",
-    url: `${getNodeUrl(currency)}/consumers`,
+    url: "https://api.provable.com/consumers",
     data: { username },
   });
 
@@ -64,13 +61,12 @@ async function registerNewAccount(
 }
 
 async function getAccountJWT(
-  currency: CryptoCurrency,
   apiKey: string,
   consumerId: string,
 ): Promise<LiveNetworkResponse<AleoAccountJWTResponse>> {
   const res = await network<AleoAccountJWTResponse>({
     method: "POST",
-    url: `${getNodeUrl(currency)}/jwts/${consumerId}`,
+    url: `https://api.provable.com/jwts/${consumerId}`,
     headers: {
       "X-Provable-API-Key": apiKey,
     },
@@ -80,16 +76,15 @@ async function getAccountJWT(
 }
 
 async function registerForScanningAccountRecords(
-  currency: CryptoCurrency,
-  jwt: string,
+  jwtToken: string,
   viewKey: string,
   start: number = 0,
 ): Promise<AleoRegisterForRecordsResponse> {
   const res = await network<AleoRegisterForRecordsResponse>({
     method: "POST",
-    url: `${getNodeUrl(currency)}/scanner/mainnet/register`,
+    url: "https://api.provable.com/scanner/mainnet/register",
     headers: {
-      Authorization: `Bearer ${jwt}`,
+      Authorization: jwtToken,
     },
     data: { view_key: viewKey, start },
   });
@@ -108,7 +103,6 @@ async function decryptCiphertext<T>(ciphertext: string, viewKey: string): Promis
 }
 
 async function getAccountOwnedRecords(
-  currency: CryptoCurrency,
   jwtToken: string,
   uuid: string,
   apiKey: string,
@@ -134,9 +128,9 @@ async function getAccountOwnedRecords(
   };
   const res = await network<AleoPrivateTransaction[]>({
     method: "POST",
-    url: `${getNodeUrl(currency)}/scanner/testnet/records/owned`,
+    url: "https://api.provable.com/scanner/mainnet/records/owned",
     headers: {
-      Authorization: `Bearer ${jwtToken}`,
+      Authorization: jwtToken,
       "X-Provable-API-Key": apiKey,
     },
     data,

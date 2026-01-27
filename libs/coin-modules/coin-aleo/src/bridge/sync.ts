@@ -6,10 +6,22 @@ import {
   mergeOps,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
+import type { Operation } from "@ledgerhq/types-live";
 import { getBalance, lastBlock, listOperations, getAccountJWT } from "../logic";
-import type { AleoAccount } from "../types";
+import type { AleoAccount, AleoOperationExtra } from "../types";
 import { apiClient } from "../network/api";
 import { AleoJWT, AleoRegisterAccountResponse } from "../types/api";
+import { listPrivateOperations } from "../logic/listPrivateOperations";
+
+const generateRandomString = (): string => {
+  const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let result = "";
+  for (let i = 0; i < 8; i++) {
+    const randomIndex = Math.floor(Math.random() * chars.length);
+    result += chars[randomIndex];
+  }
+  return result;
+};
 
 export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const { initialAccount, address, derivationMode, currency } = infos;
@@ -26,20 +38,19 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     invariant(viewKey, `aleo: viewKey is missing in initialAccount ${initialAccount.id}`);
 
     if (!apiKey || !consumerId) {
-      const username = initialAccount.freshAddress.slice(4, 15);
-      const { key, consumer } = await apiClient.registerNewAccount(currency, username);
+      const username = generateRandomString();
+      const { key, consumer } = await apiClient.registerNewAccount(username);
 
       apiKey = key;
       consumerId = consumer.id;
     }
 
     if (jwt.exp <= Math.floor(Date.now() / 1000)) {
-      jwt = await getAccountJWT(currency, apiKey, consumerId);
+      jwt = await getAccountJWT(apiKey, consumerId);
     }
 
-    if (!uuid) {
+    if (!uuid && viewKey) {
       const { uuid: accountUuid } = await apiClient.registerForScanningAccountRecords(
-        currency,
         jwt.token,
         viewKey,
       );
@@ -72,6 +83,22 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const oldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
   const latestOperation = oldOperations[0];
   const lastBlockHeight = shouldSyncFromScratch ? 0 : latestOperation?.blockHeight ?? 0;
+  let latestAccountPrivateOperations: Operation<AleoOperationExtra>[] = [];
+
+  if (provableApi && uuid && viewKey && apiKey && jwt.token) {
+    const res = await listPrivateOperations({
+      currency,
+      jwtToken: jwt.token,
+      uuid,
+      apiKey,
+      viewKey,
+      address,
+      ledgerAccountId,
+    });
+
+    latestAccountPrivateOperations = res.privateOperations;
+  }
+
   const latestAccountOperations = await listOperations({
     currency,
     address,
@@ -98,8 +125,8 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     balance: spendableBalance,
     spendableBalance: spendableBalance,
     blockHeight: latestBlock.height,
-    operations,
-    operationsCount: operations.length,
+    operations: [...operations, ...latestAccountPrivateOperations],
+    operationsCount: operations.length + latestAccountPrivateOperations.length,
     lastSyncDate: new Date(),
     aleoResources: {
       provableApi: {
