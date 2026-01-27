@@ -1,6 +1,7 @@
 // CountervaluesSettings is user config that drives the countervalues logic.
 
 import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { PortfolioRange } from "@ledgerhq/types-live";
 
 // we generally will just infer it from Accounts
 export type CountervaluesSettings = {
@@ -16,6 +17,10 @@ export type CountervaluesSettings = {
   disableAutoRecoverErrors?: boolean;
 
   granularitiesRates?: Record<RateGranularity, number>;
+  // PortfolioRange selected by the user for graph view
+  // Used to determine how much daily countervalue data to keep
+  // If undefined or "all", no filtering is applied (keeps all daily data)
+  selectedTimeRange?: PortfolioRange;
 };
 // This is the internal state of countervalues.
 export type CounterValuesState = {

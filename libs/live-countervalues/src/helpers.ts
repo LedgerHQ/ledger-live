@@ -1,5 +1,6 @@
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import type { RateGranularity } from "./types";
+import type { PortfolioRange } from "@ledgerhq/types-live";
 
 export const inferCurrencyAPIID = (currency: Currency): string => {
   switch (currency.type) {
@@ -28,9 +29,31 @@ export const datapointLimits: Record<RateGranularity, number> = {
   hourly: 7 * DAY, // we fetch at MOST a week of hourly. after that there are too much data...
 };
 
-export const datapointRetention: Record<Extract<RateGranularity, "hourly">, number> = {
+export const datapointRetention: Record<RateGranularity, number> = {
   hourly: 7 * DAY, // we keep hourly data for 7 days
+  daily: 9999 * DAY, // we keep daily data for a very long time by default, can be overridden by user settings
 };
+
+/**
+ * Convert PortfolioRange to number of days for daily data retention
+ * This is used to determine how much daily countervalue data to keep based on user's graph view preference
+ * Returns undefined for "all" to indicate no filtering should be applied
+ */
+export function portfolioRangeToDays(range: PortfolioRange): number | undefined {
+  switch (range) {
+    case "day":
+      return 1;
+    case "week":
+      return 7;
+    case "month":
+      return 30;
+    case "year":
+      return 365;
+    case "all":
+      // For "all", return undefined to indicate no filtering (keep all data)
+      return undefined;
+  }
+}
 
 /**
  * efficient implementation of YYYY-MM-DD formatter
