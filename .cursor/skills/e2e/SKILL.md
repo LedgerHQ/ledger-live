@@ -33,6 +33,8 @@ Before running tests, ensure these environment variables are set:
 export COINAPPS=/path/to/coin-apps
 export SEED="your 24 words seed phrase here"
 export SPECULOS_IMAGE_TAG=ghcr.io/ledgerhq/speculos:master
+# SPECULOS_DEVICE valid values: nanoS, nanoSP, nanoX, stax, flex, nanoGen5
+export SPECULOS_DEVICE=nanoSP
 export MOCK=0
 ```
 
@@ -138,6 +140,32 @@ case Currency.NEWCOIN.id:
 pnpm build:lld:deps
 ```
 
+### Step 9: Test on all devices
+
+**REQUIRED:** Run the test on all supported device models before considering it complete:
+
+| Device | Model ID   | Description        |
+| ------ | ---------- | ------------------ |
+| LNS    | `nanoS`    | Ledger Nano S      |
+| LNSP   | `nanoSP`   | Ledger Nano S Plus |
+| LNX    | `nanoX`    | Ledger Nano X      |
+| STAX   | `stax`     | Ledger Stax        |
+| FLEX   | `flex`     | Ledger Flex        |
+| NG5    | `nanoGen5` | Ledger NG5         |
+
+Run tests for each device using the `SPECULOS_MODEL` environment variable:
+
+```bash
+SPECULOS_MODEL=nanoS DISABLE_TRANSACTION_BROADCAST=1 pnpm test:desktop e2e:playwright specs/folder/file.spec.ts
+SPECULOS_MODEL=nanoSP DISABLE_TRANSACTION_BROADCAST=1 pnpm test:desktop e2e:playwright specs/folder/file.spec.ts
+SPECULOS_MODEL=nanoX DISABLE_TRANSACTION_BROADCAST=1 pnpm test:desktop e2e:playwright specs/folder/file.spec.ts
+SPECULOS_MODEL=stax DISABLE_TRANSACTION_BROADCAST=1 pnpm test:desktop e2e:playwright specs/folder/file.spec.ts
+SPECULOS_MODEL=flex DISABLE_TRANSACTION_BROADCAST=1 pnpm test:desktop e2e:playwright specs/folder/file.spec.ts
+SPECULOS_MODEL=nanoGen5 DISABLE_TRANSACTION_BROADCAST=1 pnpm test:desktop e2e:playwright specs/folder/file.spec.ts
+```
+
+**Note:** Each device may have different button layouts and screen flows. Ensure the family file handles device-specific interactions correctly.
+
 ---
 
 ## Test Configuration Reference
@@ -161,8 +189,8 @@ test.use({
 - **Install:** `pnpm i`
 - **Build deps:** `pnpm build:lld:deps`
 - **Build testing:** `pnpm desktop build:testing`
-- **Run test:** `DISABLE_TRANSACTION_BROADCAST=1 pnpm desktop e2e:playwright specs/folder/file.spec.ts`
-- **Debug:** `PWDEBUG=1 DISABLE_TRANSACTION_BROADCAST=1 pnpm desktop e2e:playwright specs/folder/file.spec.ts`
+- **Run test:** `DISABLE_TRANSACTION_BROADCAST=1 pnpm e2e:desktop test:playwright specs/folder/file.spec.ts`
+- **Debug:** `PWDEBUG=1 DISABLE_TRANSACTION_BROADCAST=1 pnpm e2e:desktop test:playwright specs/folder/file.spec.ts`
 
 ---
 
@@ -171,3 +199,4 @@ test.use({
 - **Never use hardcoded timeouts** (e.g., `page.waitForTimeout(1000)`)
 - Use `@step` decorator in Page Objects
 - Access methods via `app` fixture (e.g., `app.layout`, `app.send`, `app.speculos`)
+- **MANDATORY:** Test on all 6 device models (LNS, LNSP, LNX, STAX, FLEX, NG5) before marking tests complete
