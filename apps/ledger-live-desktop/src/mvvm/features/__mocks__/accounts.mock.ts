@@ -9,11 +9,20 @@ import {
   scrollCurrency,
 } from "./useSelectAssetFlow.mock";
 
-type Mock = ((...args: unknown[]) => unknown) & { mock: { calls: unknown[][] } };
+type Mock = ((...args: unknown[]) => unknown) & {
+  mock: { calls: unknown[][] };
+  mockImplementation: (implementation: (...args: unknown[]) => unknown) => Mock;
+};
 
 const createMock = (implementation?: (...args: unknown[]) => unknown): Mock => {
-  const mockFn = (...args: unknown[]) => (implementation ? implementation(...args) : undefined);
+  let currentImplementation = implementation;
+  const mockFn = (...args: unknown[]) =>
+    currentImplementation ? currentImplementation(...args) : undefined;
   mockFn.mock = { calls: [] };
+  mockFn.mockImplementation = (nextImplementation: (...args: unknown[]) => unknown) => {
+    currentImplementation = nextImplementation;
+    return mockFn as Mock;
+  };
   return mockFn as Mock;
 };
 
