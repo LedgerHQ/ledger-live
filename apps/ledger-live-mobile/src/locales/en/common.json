@@ -8291,6 +8291,11 @@
       "preapprove": "Successfully added account",
       "validator": "Ledger Validator",
       "title": "Automatically accept incoming funds",
+      "processing": {
+        "title": "Processing transaction",
+        "description": "This process may take up to 1 minute",
+        "keepDeviceNearby": "Stay in the Ledger Wallet app and keep your Ledger nearby."
+      },
       "reonboard": {
         "title": "Account Update Required",
         "account": "Account",
