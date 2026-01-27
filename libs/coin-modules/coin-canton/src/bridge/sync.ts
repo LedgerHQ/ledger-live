@@ -4,10 +4,9 @@ import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bri
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Operation, TokenAccount } from "@ledgerhq/types-live";
+import type { Operation, OperationType, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getBalance } from "../common-logic/account/getBalance";
-import { determineOperationType } from "../common-logic/history/operationType";
 import coinConfig from "../config";
 import { isCantonAccountEmpty } from "../helpers";
 import {
@@ -18,81 +17,102 @@ import {
   getOperations,
   getPendingTransferProposals,
   SEPARATOR,
-  type OperationInfo,
   type TransferProposal,
 } from "../network/gateway";
 import resolver from "../signer";
 import { CantonAccount, CantonResources, CantonSigner } from "../types";
+import type { OperationView } from "../types/gateway";
 import { buildSubAccounts } from "./buildSubAccounts";
 import { isAccountOnboarded } from "./onboard";
 
-type ValidOperationInfo = OperationInfo & {
-  asset: { type: "native" | "token"; instrumentId: string; instrumentAdmin: string };
-  transfers: Array<{
-    value: string;
-    details?: { operationType?: string; metadata?: { reason?: string } };
-  }>;
-  senders: string[];
-  recipients: string[];
-};
+function determineOperationType(
+  details: unknown,
+  partyId: string,
+  senders: string[],
+  transferValue: string,
+  txType: string,
+): OperationType {
+  const operationType =
+    details && typeof details === "object" && "operationType" in details
+      ? details.operationType
+      : undefined;
+  if (operationType === "transfer-proposal") return "TRANSFER_PROPOSAL";
+  if (operationType === "transfer-rejected") return "TRANSFER_REJECTED";
+  if (operationType === "transfer-withdrawn") return "TRANSFER_WITHDRAWN";
 
-function isValidOperation(txInfo: OperationInfo): txInfo is ValidOperationInfo {
-  return (
-    txInfo.asset !== undefined &&
-    (txInfo.asset.type === "native" || txInfo.asset.type === "token") &&
-    typeof txInfo.asset.instrumentId === "string" &&
-    typeof txInfo.asset.instrumentAdmin === "string" &&
-    txInfo.transfers !== undefined &&
-    txInfo.transfers.length > 0 &&
-    txInfo.senders !== undefined &&
-    txInfo.recipients !== undefined
-  );
+  switch (txType) {
+    case "Send":
+      // Zero-value sends are fee-only transactions
+      if (transferValue === "0") return "FEES";
+      // Otherwise, determine if it's outgoing or incoming based on sender
+      return senders.includes(partyId) ? "OUT" : "IN";
+
+    case "Receive":
+      return "IN";
+
+    case "Initialize":
+      return "PRE_APPROVAL";
+
+    default:
+      return "UNKNOWN";
+  }
+}
+
+function extractMemo(details: unknown) {
+  if (!details || typeof details !== "object") return undefined;
+
+  const metadata = "metadata" in details ? details.metadata : undefined;
+  if (!metadata || typeof metadata !== "object") return undefined;
+
+  const reason = "reason" in metadata ? metadata.reason : undefined;
+  return typeof reason === "string" ? reason : undefined;
 }
 
 const txInfoToOperationAdapter =
   (accountId: string, partyId: string) =>
-  (txInfo: ValidOperationInfo): Operation => {
+  (txInfo: OperationView): Operation => {
     const {
-      asset: { instrumentId, instrumentAdmin },
-      transaction_hash,
+      asset,
       uid,
-      block: { height, hash },
-      senders,
-      recipients,
-      transaction_timestamp,
       fee: { value: fee },
-      transfers: [{ value: transferValue, details }],
+      block: { height, hash },
+      senders = [],
+      recipients = [],
+      transfers = [],
+      transaction_timestamp,
+      transaction_hash,
     } = txInfo;
 
-    const type = determineOperationType(
-      details?.operationType,
-      txInfo.type,
-      transferValue,
-      senders,
-      partyId,
-    );
+    const instrumentId =
+      asset && (asset.type === "native" || asset.type === "token") ? asset.instrumentId : undefined;
+    const instrumentAdmin =
+      asset && (asset.type === "native" || asset.type === "token")
+        ? asset.instrumentAdmin
+        : undefined;
 
+    const transferValue = transfers[0]?.value ?? "0";
+    const details = transfers[0]?.details ?? {};
+    const memo = extractMemo(details);
+    const type = determineOperationType(details, partyId, senders, transferValue, txInfo.type);
+    const feeValue = new BigNumber(fee);
     let value = new BigNumber(transferValue);
 
     if (type === "OUT" || type === "FEES") {
-      value = value.plus(fee);
+      value = value.plus(feeValue);
     }
-
-    const feeValue = new BigNumber(fee);
-    const memo = details?.metadata?.reason;
 
     const op: Operation = {
       id: encodeOperationId(accountId, transaction_hash, type),
-      hash: transaction_hash,
       accountId,
+      date: new Date(transaction_timestamp),
+      hash: transaction_hash,
       type,
       value,
       fee: feeValue,
-      blockHash: hash ?? "",
-      blockHeight: height,
       senders,
       recipients,
-      date: new Date(transaction_timestamp),
+      blockHeight: height,
+      blockHash: hash,
       transactionSequenceNumber: new BigNumber(height),
       extra: {
         uid,
@@ -106,7 +126,7 @@ const txInfoToOperationAdapter =
   };
 
 const filterOperations = (
-  transactions: OperationInfo[],
+  transactions: OperationView[],
   accountId: string,
   partyId: string,
   pendingTransferProposals: TransferProposal[],
@@ -115,7 +135,6 @@ const filterOperations = (
 
   return transactions
     .filter(txInfo => !pendingUpdateIds.has(txInfo.transaction_hash))
-    .filter(isValidOperation)
     .map(txInfoToOperationAdapter(accountId, partyId));
 };
 
@@ -143,7 +162,7 @@ export async function filterDisabledTokenAccounts(
 export function makeGetAccountShape(
   signerContext: SignerContext<CantonSigner>,
 ): GetAccountShape<CantonAccount> {
-  return async info => {
+  return async (info, _config: SyncConfig) => {
     const { address, currency, derivationMode, derivationPath, initialAccount } = info;
 
     let isOnboarded = initialAccount?.cantonResources?.isOnboarded ?? false;
@@ -339,12 +358,12 @@ export function makeGetAccountShape(
     const shape = {
       id: accountId,
       type: "Account" as const,
+      freshAddress: address,
+      seedIdentifier: address,
       balance: totalBalance,
       blockHeight,
       creationDate,
       lastSyncDate: new Date(),
-      freshAddress: address,
-      seedIdentifier: address,
       operations: mainAccountOperations,
       operationsCount: mainAccountOperations.length,
       spendableBalance,

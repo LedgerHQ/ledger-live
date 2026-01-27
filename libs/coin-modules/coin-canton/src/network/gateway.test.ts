@@ -606,7 +606,7 @@ describe("prepare and submit transaction helpers", () => {
     const result = await submitPreApprovalTransaction(
       mockCurrency,
       "party-1",
-      { serialized: "ser", json: {}, hash: "h" },
+      { serialized: "ser", json: {}, hash: "h", step: { type: "single-step" as const } },
       "sig",
     );
 

@@ -8,7 +8,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { type TransferProposal } from "../network/gateway";
+import { type TransferProposal } from "../types/gateway";
 
 export type CantonTokenAccount = TokenAccount & {
   cantonResources: { pendingTransferProposals: TransferProposal[] };

@@ -3,7 +3,7 @@ export * from "./errors";
 export * from "./gateway";
 // TODO: onboard types are in PR #3, but some types conflict with gateway types
 // Export enums as values (not types) so they can be accessed at runtime
-export { OnboardStatus, AuthorizeStatus } from "./onboard";
+export { AccountOnboardStatus, AccountOnboardStatus as OnboardStatus, AuthorizeStatus } from "./onboard";
 // Export specific types to avoid conflicts
 export type {
   CantonOnboardProgress,

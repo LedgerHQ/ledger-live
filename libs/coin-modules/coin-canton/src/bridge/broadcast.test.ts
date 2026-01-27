@@ -1,15 +1,14 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, BroadcastArg } from "@ledgerhq/types-live";
 import { broadcast as broadcastLogic } from "../common-logic";
+import { createMockCantonCurrency } from "../test/fixtures";
 import { broadcast } from "./broadcast";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../common-logic");
 
-const mockCurrency = {
-  id: "canton_network",
-} as unknown as CryptoCurrency;
+const mockCurrency = createMockCantonCurrency();
 
 describe("broadcast", () => {
   let patchOperationSpy: jest.SpyInstance;

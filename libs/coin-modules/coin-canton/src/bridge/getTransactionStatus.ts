@@ -17,11 +17,11 @@ import { isRecipientValid } from "../common-logic/utils";
 import coinConfig from "../config";
 import { isTopologyChangeRequiredCached } from "../network/gateway";
 import {
-  Transaction,
-  TransactionStatus,
   CantonAccount,
   TooManyUtxosCritical,
   TooManyUtxosWarning,
+  Transaction,
+  TransactionStatus,
 } from "../types";
 import { TopologyChangeError } from "../types/errors";
 

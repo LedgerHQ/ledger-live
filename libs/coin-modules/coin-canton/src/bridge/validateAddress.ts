@@ -1,9 +1,8 @@
-import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-module-framework/api/types";
 import { isRecipientValid } from "../common-logic";
 
-export async function validateAddress(
+export const validateAddress = async (
   address: string,
-  _parameters: Partial<AddressValidationCurrencyParameters>,
-): Promise<boolean> {
+  _parameters: Partial<Record<string, unknown>>,
+): Promise<boolean> => {
   return isRecipientValid(address);
-}
+};
