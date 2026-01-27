@@ -9,9 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # Required for Renovate to create and update branches with dependency updates
-  pull-requests: write # Required for Renovate to create and manage pull requests for dependency updates
-  issues: write # Required for Renovate to create and manage issues (e.g., for dependency dashboard)
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
