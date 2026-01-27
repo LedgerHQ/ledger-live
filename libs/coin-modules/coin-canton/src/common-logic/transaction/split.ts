@@ -65,7 +65,7 @@ export function splitTransaction(
       commandId: metadata.submitterInfo.commandId,
     },
     synchronizerId: metadata.synchronizerId,
-    ...(metadata.mediatorGroup !== undefined ? { mediatorGroup: metadata.mediatorGroup } : {}),
+    ...(metadata.mediatorGroup ? { mediatorGroup: metadata.mediatorGroup } : {}),
     transactionUuid: metadata.transactionUuid,
     submissionTime: Number.parseInt(metadata.preparationTime, 10),
     inputContractsCount: metadata.inputContracts?.length || 0,

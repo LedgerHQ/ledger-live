@@ -6,22 +6,46 @@ describe("determineOperationType", () => {
 
   describe("transfer-specific operation types", () => {
     it("should return TRANSFER_PROPOSAL when operationType is transfer-proposal", () => {
-      const result = determineOperationType("transfer-proposal", "Send", "100", mockSenders, mockPartyId);
+      const result = determineOperationType(
+        "transfer-proposal",
+        "Send",
+        "100",
+        mockSenders,
+        mockPartyId,
+      );
       expect(result).toBe("TRANSFER_PROPOSAL");
     });
 
     it("should return TRANSFER_REJECTED when operationType is transfer-rejected", () => {
-      const result = determineOperationType("transfer-rejected", "Send", "100", mockSenders, mockPartyId);
+      const result = determineOperationType(
+        "transfer-rejected",
+        "Send",
+        "100",
+        mockSenders,
+        mockPartyId,
+      );
       expect(result).toBe("TRANSFER_REJECTED");
     });
 
     it("should return TRANSFER_WITHDRAWN when operationType is transfer-withdrawn", () => {
-      const result = determineOperationType("transfer-withdrawn", "Send", "100", mockSenders, mockPartyId);
+      const result = determineOperationType(
+        "transfer-withdrawn",
+        "Send",
+        "100",
+        mockSenders,
+        mockPartyId,
+      );
       expect(result).toBe("TRANSFER_WITHDRAWN");
     });
 
     it("should prioritize operationType over transaction type", () => {
-      const result = determineOperationType("transfer-proposal", "Send", "0", mockSenders, mockPartyId);
+      const result = determineOperationType(
+        "transfer-proposal",
+        "Send",
+        "0",
+        mockSenders,
+        mockPartyId,
+      );
       expect(result).toBe("TRANSFER_PROPOSAL");
     });
   });
@@ -50,7 +74,13 @@ describe("determineOperationType", () => {
     });
 
     it("should return PRE_APPROVAL for Initialize transaction type", () => {
-      const result = determineOperationType(undefined, "Initialize", "100", mockSenders, mockPartyId);
+      const result = determineOperationType(
+        undefined,
+        "Initialize",
+        "100",
+        mockSenders,
+        mockPartyId,
+      );
       expect(result).toBe("PRE_APPROVAL");
     });
 

@@ -41,6 +41,6 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   return updateTransaction(transaction, {
     fee,
     tokenId,
-    ...(instrumentAdmin !== undefined ? { instrumentAdmin } : {}),
+    ...(instrumentAdmin ? { instrumentAdmin } : {}),
   });
 };
