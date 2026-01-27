@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { useSelector } from "~/context/hooks";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { isAccountBalanceUnconfirmed } from "@ledgerhq/live-common/account/helpers";
 import { areSomeAccountsBalanceUnconfirmedSelector } from "~/reducers/accounts";

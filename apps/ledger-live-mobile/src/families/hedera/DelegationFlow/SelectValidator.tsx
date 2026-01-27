@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList, StyleSheet, View } from "react-native";
 import invariant from "invariant";

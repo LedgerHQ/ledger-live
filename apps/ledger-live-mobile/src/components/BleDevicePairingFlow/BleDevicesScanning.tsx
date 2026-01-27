@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Linking, FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import Animation from "../Animation";
 import BleDeviceItem from "./BleDeviceItem";
@@ -13,8 +12,9 @@ import { urls } from "~/utils/urls";
 import { TrackScreen, track } from "~/analytics";
 import { ScannedDevice } from "@ledgerhq/live-dmk-mobile";
 import { useOrderedBleScannedDevices } from "./hooks/useOrderedBleScannedDevices";
+import { FilterByDeviceModelId } from "./FilterByDeviceModelId";
 
-export type FilterByDeviceModelId = null | DeviceModelId;
+export type { FilterByDeviceModelId };
 const CANT_SEE_DEVICE_TIMEOUT = 5000;
 
 export type BleDevicesScanningProps = {

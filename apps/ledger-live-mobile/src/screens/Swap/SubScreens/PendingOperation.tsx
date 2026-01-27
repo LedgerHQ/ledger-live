@@ -1,6 +1,6 @@
 import { CommonActions, useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -13,7 +13,7 @@ import IconClock from "~/icons/Clock";
 import { rgba } from "../../../colors";
 import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import { PendingOperationParamList } from "../types";
-import { useNotifications } from "~/logic/notifications";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 export function PendingOperation({ route, navigation }: PendingOperationParamList) {
   const { colors } = useTheme();

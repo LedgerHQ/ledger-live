@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { TFunction } from "i18next";
 import Dropdown from "./DropDown";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export default function SideDrawerFilter({
   refresh,
@@ -16,9 +17,14 @@ export default function SideDrawerFilter({
   t: TFunction;
 }) {
   const { starred, liveCompatible } = filters;
+
+  const { shouldDisplayMarketBanner: filterBySupported } = useWalletFeaturesConfig("desktop");
+
+  const shouldDisplayCompatibleOption = !filterBySupported;
+
   const resetFilters = useCallback(
-    () => refresh({ starred: [], liveCompatible: false }),
-    [refresh],
+    () => refresh({ starred: [], liveCompatible: filterBySupported }),
+    [refresh, filterBySupported],
   );
   const onChange = useCallback(
     (option?: { label: string; value: string } | null) => {
@@ -38,6 +44,25 @@ export default function SideDrawerFilter({
     [liveCompatible, resetFilters, starred],
   );
 
+  const options = [
+    {
+      value: "all",
+      label: t("market.filters.all"),
+    },
+    ...(shouldDisplayCompatibleOption
+      ? [
+          {
+            value: "liveCompatible",
+            label: t("market.filters.isLedgerCompatible"),
+          },
+        ]
+      : []),
+    {
+      value: "starred",
+      label: t("market.filters.isFavorite"),
+    },
+  ];
+
   return (
     <>
       <Dropdown
@@ -45,20 +70,7 @@ export default function SideDrawerFilter({
         label={t("market.filters.show")}
         menuPortalTarget={document.body}
         onChange={onChange}
-        options={[
-          {
-            value: "all",
-            label: t("market.filters.all"),
-          },
-          {
-            value: "liveCompatible",
-            label: t("market.filters.isLedgerCompatible"),
-          },
-          {
-            value: "starred",
-            label: t("market.filters.isFavorite"),
-          },
-        ]}
+        options={options}
         value={[
           ...(!starred.value && !liveCompatible.value
             ? [
@@ -68,7 +80,7 @@ export default function SideDrawerFilter({
                 },
               ]
             : []),
-          ...(liveCompatible.value
+          ...(shouldDisplayCompatibleOption && liveCompatible.value
             ? [
                 {
                   value: "liveCompatible",

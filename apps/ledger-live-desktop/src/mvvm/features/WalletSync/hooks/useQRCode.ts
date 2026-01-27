@@ -24,13 +24,13 @@ import { QueryKey } from "./type.hooks";
 import { useInstanceName } from "./useInstanceName";
 import { AnalyticsPage } from "./useLedgerSyncAnalytics";
 import { saveSettings } from "~/renderer/actions/settings";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 
 const MIN_TIME_TO_REFRESH = 30_000;
 
 export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
   const queryClient = useQueryClient();
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
@@ -93,7 +93,7 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
       }
       if (sourcePage === AnalyticsPage.Onboarding) {
         dispatch(saveSettings({ hasCompletedOnboarding: true }));
-        history.push("/");
+        navigate("/");
         dispatch(setDrawerVisibility(false));
       } else {
         dispatch(

@@ -9,6 +9,13 @@ import padStart from "lodash/padStart";
 test.use({
   userdata: "1AccountBTC1AccountETHwCarousel", // to have a non empty portfolio page and potentially detect layout issues with the post onboarding banner
   env: { DEBUG_POSTONBOARDINGHUB: "1" },
+  featureFlags: {
+    lwdWallet40: {
+      enabled: false,
+    },
+    welcomeScreenVideoCarousel: { enabled: false },
+    noah: { enabled: false },
+  },
 });
 
 let screenshotIndex = 0;
@@ -56,7 +63,7 @@ test("PostOnboarding state logic", async ({ page }) => {
     await expect(page).toHaveScreenshot(
       `${generateScreenshotPrefix()}postonboarding-banner-in-dashboard.png`,
       {
-        mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+        mask: [page.locator("canvas")],
       },
     );
   });
@@ -93,7 +100,7 @@ test("PostOnboarding state logic", async ({ page }) => {
     await expect(page).toHaveScreenshot(
       `${generateScreenshotPrefix()}postonboarding-done-no-banner-in-dashboard.png`,
       {
-        mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+        mask: [page.locator("canvas")],
       },
     );
   });

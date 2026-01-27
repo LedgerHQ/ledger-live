@@ -31,7 +31,7 @@ export const StepVoteFooter = ({
     <>
       <AccountFooter parentAccount={parentAccount} account={account} status={status} />
       <Box horizontal>
-        <Button mr={1} secondary onClick={onClose}>
+        <Button mr={1} onClick={onClose}>
           <Trans i18nKey="common.cancel" />
         </Button>
         <Button

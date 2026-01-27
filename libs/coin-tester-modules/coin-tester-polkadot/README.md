@@ -21,8 +21,7 @@ await executeScenario(PolkadotScenario);
 
 ## Development
 
-1. Set up your environment variables in `.env` (see `.env.example`)
-2. Run the tests with `pnpm start`
+Run the tests with `pnpm start`
 
 ## Dependencies
 

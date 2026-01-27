@@ -1,5 +1,69 @@
 # @ledgerhq/coin-tester-bitcoin
 
+## 1.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb)]:
+  - @ledgerhq/types-live@6.94.0
+  - @ledgerhq/hw-app-btc@10.17.0
+  - @ledgerhq/coin-bitcoin@0.30.0
+  - @ledgerhq/coin-framework@6.13.1
+  - @ledgerhq/coin-tester@0.16.1
+  - @ledgerhq/cryptoassets@13.37.1
+  - @ledgerhq/live-network@2.2.1
+
+## 1.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb)]:
+  - @ledgerhq/types-live@6.94.0-next.0
+  - @ledgerhq/hw-app-btc@10.17.0-next.0
+  - @ledgerhq/coin-bitcoin@0.30.0-next.0
+  - @ledgerhq/coin-framework@6.13.1-next.0
+  - @ledgerhq/coin-tester@0.16.1-next.0
+  - @ledgerhq/cryptoassets@13.37.1-next.0
+  - @ledgerhq/live-network@2.2.1-next.0
+
+## 1.3.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`cbcae7c`](https://github.com/LedgerHQ/ledger-live/commit/cbcae7c0ba9b54b1167d26e4227bd2b847207cb9), [`8754614`](https://github.com/LedgerHQ/ledger-live/commit/87546149a62b81f8a25bb6222626592ead629f62), [`7e33c7b`](https://github.com/LedgerHQ/ledger-live/commit/7e33c7b3de128e0c076176e98f8065f7cf7ad733), [`cf08174`](https://github.com/LedgerHQ/ledger-live/commit/cf0817462e9f0210fceff29ec60b0699e4e69b71), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59), [`7f05536`](https://github.com/LedgerHQ/ledger-live/commit/7f0553665e9c8721f263825cc79994bfc6729d9b)]:
+  - @ledgerhq/cryptoassets@13.37.0
+  - @ledgerhq/coin-framework@6.13.0
+  - @ledgerhq/types-live@6.93.0
+  - @ledgerhq/hw-app-btc@10.16.0
+  - @ledgerhq/types-cryptoassets@7.32.0
+  - @ledgerhq/coin-bitcoin@0.29.0
+  - @ledgerhq/live-network@2.2.0
+  - @ledgerhq/coin-tester@0.16.0
+  - @ledgerhq/live-config@3.5.0
+
+## 1.3.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`cbcae7c`](https://github.com/LedgerHQ/ledger-live/commit/cbcae7c0ba9b54b1167d26e4227bd2b847207cb9), [`8754614`](https://github.com/LedgerHQ/ledger-live/commit/87546149a62b81f8a25bb6222626592ead629f62), [`7e33c7b`](https://github.com/LedgerHQ/ledger-live/commit/7e33c7b3de128e0c076176e98f8065f7cf7ad733), [`cf08174`](https://github.com/LedgerHQ/ledger-live/commit/cf0817462e9f0210fceff29ec60b0699e4e69b71), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59), [`7f05536`](https://github.com/LedgerHQ/ledger-live/commit/7f0553665e9c8721f263825cc79994bfc6729d9b)]:
+  - @ledgerhq/cryptoassets@13.37.0-next.0
+  - @ledgerhq/coin-framework@6.13.0-next.0
+  - @ledgerhq/types-live@6.93.0-next.0
+  - @ledgerhq/hw-app-btc@10.16.0-next.0
+  - @ledgerhq/types-cryptoassets@7.32.0-next.0
+  - @ledgerhq/coin-bitcoin@0.29.0-next.0
+  - @ledgerhq/live-network@2.2.0-next.0
+  - @ledgerhq/coin-tester@0.16.0-next.0
+  - @ledgerhq/live-config@3.5.0-next.0
+
 ## 1.2.5
 
 ### Patch Changes

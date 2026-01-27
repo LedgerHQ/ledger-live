@@ -8,7 +8,7 @@ import SettingsRow from "~/components/SettingsRow";
 import FeatureSwitch from "./FeatureSwitch";
 import FeatureInteger from "./FeatureInteger";
 import FeatureFloat from "./FeatureFloat";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 type Props = {
   feature: Feature;

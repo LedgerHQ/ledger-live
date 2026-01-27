@@ -9,7 +9,7 @@ import {
   Platform,
   KeyboardAvoidingViewProps,
 } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { getMaxEstimatedBalance } from "@ledgerhq/live-common/families/cosmos/logic";

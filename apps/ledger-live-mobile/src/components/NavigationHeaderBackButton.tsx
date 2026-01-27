@@ -13,6 +13,12 @@ type Props = {
       getState(): NavigationState | undefined;
     },
   ) => void;
+
+  /**
+   * Extra margin to add to the left of the back button.
+   * Only use it for Wallet 4.0 screens please.
+   */
+  extraMarginLeft?: number;
 };
 
 export const NavigationHeaderBackImage = () => (
@@ -24,20 +30,26 @@ export const NavigationHeaderBackImage = () => (
 /**
  * Back arrow button that should be used as the back arrow on the left of the react-navigation header.
  */
-export const NavigationHeaderBackButton: React.FC<Props> = React.memo(({ onPress }) => {
-  const navigation = useNavigation();
+export const NavigationHeaderBackButton: React.FC<Props> = React.memo(
+  ({ onPress, extraMarginLeft }) => {
+    const navigation = useNavigation();
 
-  function handlePress() {
-    if (onPress) {
-      onPress(navigation);
-    } else if (navigation.canGoBack()) {
-      navigation.goBack();
+    function handlePress() {
+      if (onPress) {
+        onPress(navigation);
+      } else if (navigation.canGoBack()) {
+        navigation.goBack();
+      }
     }
-  }
 
-  return (
-    <Touchable testID="navigation-header-back-button" onPress={handlePress}>
-      <NavigationHeaderBackImage />
-    </Touchable>
-  );
-});
+    return (
+      <Touchable
+        style={{ marginLeft: extraMarginLeft }}
+        testID="navigation-header-back-button"
+        onPress={handlePress}
+      >
+        <NavigationHeaderBackImage />
+      </Touchable>
+    );
+  },
+);

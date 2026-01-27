@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import CollapsibleStep from "./CollapsibleStep";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { CompanionStep, COMPANION_STATE, SEED_STATE } from "./types";
@@ -27,7 +27,7 @@ interface SecondStepSyncOnboardingProps {
   device: Device;
   companionStep: CompanionStep;
   handleDone: (done: boolean) => void;
-  analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
+  analyticsSeedConfiguration: React.RefObject<SeedOriginType | undefined>;
 }
 
 const SecondStepSyncOnboarding = ({
@@ -123,7 +123,7 @@ const SecondStepSyncOnboarding = ({
             {companionStep === SEED_STATE.NEW_SEED ? (
               <NewSeedConfirmation
                 handlePress={handleExit}
-                seedConfiguration={analyticsSeedConfiguration.current}
+                seedConfiguration={analyticsSeedConfiguration.current ?? undefined}
               />
             ) : (
               <InstallSetOfApps
@@ -131,7 +131,7 @@ const SecondStepSyncOnboarding = ({
                 device={device}
                 onResult={handleExit}
                 dependencies={initialAppsToInstall}
-                seedConfiguration={analyticsSeedConfiguration.current}
+                seedConfiguration={analyticsSeedConfiguration.current ?? undefined}
               />
             )}
           </Box>

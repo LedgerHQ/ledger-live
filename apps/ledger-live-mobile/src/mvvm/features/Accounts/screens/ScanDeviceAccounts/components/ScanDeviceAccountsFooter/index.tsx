@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Animated } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 
 import IconPause from "~/icons/Pause";
 import Button from "~/components/Button";

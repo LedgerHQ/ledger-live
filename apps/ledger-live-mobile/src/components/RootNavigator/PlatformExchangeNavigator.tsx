@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import styles from "~/navigation/styles";
 import { ScreenName } from "~/const";

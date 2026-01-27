@@ -6,6 +6,7 @@ import {
   NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { UserInputType } from "./signer";
 import type { Account } from "@ledgerhq/types-live";
 import { findSubAccountById, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
 import { ChainAPI } from "./network";
@@ -48,7 +49,6 @@ import {
   decodeAccountIdWithTokenAccountAddress,
   isEd25519Address,
   isValidBase58Address,
-  MAX_MEMO_LENGTH,
 } from "./logic";
 import type {
   CommandDescriptor,
@@ -82,6 +82,7 @@ import { deriveRawCommandDescriptor, toLiveTransaction } from "./rawTransaction"
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { MAX_MEMO_LENGTH, validateMemo } from "./logic/validateMemo";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,
@@ -168,8 +169,10 @@ const deriveTokenTransferCommandDescriptor = async (
 
   const memo = model.uiState.memo;
 
-  if (typeof memo === "string" && memo.length > 0) {
-    validateMemoCommon(memo, errors);
+  if (typeof memo === "string" && memo.length > 0 && !validateMemo(memo)) {
+    errors.transaction = errors.memo = new SolanaMemoIsTooLong(undefined, {
+      maxLength: MAX_MEMO_LENGTH,
+    });
   }
 
   const mintAddress = tokenAccount.token.contractAddress;
@@ -194,7 +197,7 @@ const deriveTokenTransferCommandDescriptor = async (
     shouldCreateAsAssociatedTokenAccount: false,
     tokenAccAddress: "",
     walletAddress: "",
-    userInputType: "sol",
+    userInputType: UserInputType.SOL,
   };
 
   const tokenRecipientOrError = errors.recipient
@@ -346,7 +349,7 @@ async function getTokenRecipient(
         walletAddress: recipientAddress,
         shouldCreateAsAssociatedTokenAccount,
         tokenAccAddress: recipientAssociatedTokenAccountAddress,
-        userInputType: "sol",
+        userInputType: UserInputType.SOL,
       },
       recipientAccInfo: associatedTokenAccount,
     };
@@ -363,7 +366,7 @@ async function getTokenRecipient(
       walletAddress: recipientTokenAccount.owner.toBase58(),
       shouldCreateAsAssociatedTokenAccount: false,
       tokenAccAddress: recipientAddress,
-      userInputType: "ata",
+      userInputType: UserInputType.ATA,
     },
     recipientAccInfo: recipientTokenAccount,
   };
@@ -426,8 +429,10 @@ async function deriveTransferCommandDescriptor(
 
   const memo = model.uiState.memo;
 
-  if (typeof memo === "string" && memo.length > 0) {
-    validateMemoCommon(memo, errors);
+  if (typeof memo === "string" && memo.length > 0 && !validateMemo(memo)) {
+    errors.transaction = errors.memo = new SolanaMemoIsTooLong(undefined, {
+      maxLength: MAX_MEMO_LENGTH,
+    });
   }
 
   const { fee, spendable } = await estimateFeeAndSpendable(api, mainAccount, tx);
@@ -508,7 +513,7 @@ async function deriveCreateApproveCommandDescriptor(
     shouldCreateAsAssociatedTokenAccount: false,
     tokenAccAddress: "",
     walletAddress: "",
-    userInputType: "sol",
+    userInputType: UserInputType.SOL,
   };
 
   const tokenRecipientOrError = errors.recipient
@@ -947,17 +952,6 @@ async function validateRecipientCommon(
     if (!isEd25519Address(tx.recipient)) {
       warnings.recipientOffCurve = new SolanaAddressOffEd25519();
     }
-  }
-}
-
-function validateMemoCommon(memo: string, errors: Record<string, Error>) {
-  const memoBytes = Buffer.from(memo, "utf-8");
-  if (memoBytes.byteLength > MAX_MEMO_LENGTH) {
-    errors.memo = errors.memo = new SolanaMemoIsTooLong(undefined, {
-      maxLength: MAX_MEMO_LENGTH,
-    });
-    // LLM expects <transaction> as error key to disable continue button
-    errors.transaction = errors.memo;
   }
 }
 

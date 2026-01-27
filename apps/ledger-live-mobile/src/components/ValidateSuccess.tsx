@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { IconsLegacy, IconBox, Text, Flex, Log } from "@ledgerhq/native-ui";
 
 import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";

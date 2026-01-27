@@ -1,26 +1,29 @@
 import { verifyAppValidationSendInfo } from "../../models/send";
 import { device } from "detox";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { getEnv } from "@ledgerhq/live-env";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import invariant from "invariant";
 
 async function navigateToSubAccount(account: AccountType) {
+  const subAccountId = app.account.subAccountId(account);
   await app.account.openViaDeeplink();
-  await app.account.goToAccountByName(getParentAccountName(account));
-  await app.account.navigateToTokenInAccount(account);
-  await waitForElement(app.account.accountGraph(app.account.subAccountId(account)));
+  await app.account.goToAccountById(subAccountId);
+  await waitForElement(app.account.accountGraph(subAccountId));
 }
 
 async function checkOperationInfos(
   transaction: TransactionType,
+  isSentTransaction: boolean = true,
   operationType?: keyof typeof app.operationDetails.operationsType,
 ) {
   await app.operationDetails.waitForOperationDetails();
   await app.operationDetails.checkAccount(transaction.accountToDebit.currency.name);
-  await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
+  await app.operationDetails.checkRecipientAddress(
+    isSentTransaction ? transaction.accountToCredit : transaction.accountToCredit.parentAccount!,
+  );
   if (operationType) await app.operationDetails.checkTransactionType(operationType);
 }
 
@@ -52,10 +55,7 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
               const parentAccountToDebit = transaction.accountToDebit.parentAccount;
               invariant(parentAccountToDebit, "Parent account to debit is required");
 
-              transaction.accountToCredit.address = await CLI.getAddressForAccount(
-                transaction.accountToCredit,
-              );
-
+              parentAccountToCredit.address = await CLI.getAddressForAccount(parentAccountToCredit);
               parentAccountToDebit.address = await CLI.getAddressForAccount(parentAccountToDebit);
             },
           ]
@@ -96,14 +96,14 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
       await device.disableSynchronization();
       await app.common.successViewDetails();
 
-      await checkOperationInfos(transaction, "OUT");
+      await checkOperationInfos(transaction, true, "OUT");
 
       if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
         const subAccountId = app.account.subAccountId(transaction.accountToCredit);
         await navigateToSubAccount(transaction.accountToCredit);
         await app.account.expectAccountBalanceVisible(subAccountId);
         await app.account.scrollToHistoryAndClickOnLastOperation(TransactionStatus.RECEIVED);
-        await checkOperationInfos(transaction);
+        await checkOperationInfos(transaction, false);
       }
     });
   });

@@ -70,7 +70,7 @@ export default function BlacklistedTokens() {
   return (
     <Section
       style={{
-        flowDirection: "column",
+        flexDirection: "column",
       }}
     >
       <Track onUpdate event="BlacklistedTokens dropdown" opened={sectionVisible} />

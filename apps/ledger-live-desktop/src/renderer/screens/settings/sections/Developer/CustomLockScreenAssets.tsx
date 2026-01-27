@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import Box from "~/renderer/components/Box";
 import { Flex, Theme, Text, Icons } from "@ledgerhq/react-ui";
 import FramedPicture from "~/renderer/components/CustomImage/FramedPicture";
@@ -15,12 +15,12 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { AnimationWrapper } from "~/renderer/components/DeviceAction/rendering";
 
 const CustomLockScreenAssets = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const type: Theme["theme"] = useTheme().theme;
 
   const onBack = useCallback(() => {
-    history.push({ pathname: "/settings/developer" });
-  }, [history]);
+    navigate("/settings/developer");
+  }, [navigate]);
 
   const [deviceModelId, setDeviceModelId] = useState<CLSSupportedDeviceModelId>(DeviceModelId.stax);
 

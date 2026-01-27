@@ -1,5 +1,99 @@
 # web-tools
 
+## 0.29.1
+
+### Patch Changes
+
+- Updated dependencies [[`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d), [`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`d38431e`](https://github.com/LedgerHQ/ledger-live/commit/d38431ee5f91439794cc6c7bad793b89ade95155), [`d3a00b8`](https://github.com/LedgerHQ/ledger-live/commit/d3a00b897349d2109b2ddb6aba63d20fdedc149c), [`d8f4b10`](https://github.com/LedgerHQ/ledger-live/commit/d8f4b10b28b63880fdac40a58e1d4f06191070a9), [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436), [`97ac494`](https://github.com/LedgerHQ/ledger-live/commit/97ac4940399281450a67b5f533ff49d03a169403), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`7389999`](https://github.com/LedgerHQ/ledger-live/commit/7389999b0a5b52c42b565cbfe8e024c315c9dcf5), [`b8e22d3`](https://github.com/LedgerHQ/ledger-live/commit/b8e22d36b8bb44eda9dfd267227a22391519c08b), [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a), [`d469c61`](https://github.com/LedgerHQ/ledger-live/commit/d469c6160a9fdd7cd581836195d54bafd2a0419a), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb)]:
+  - @ledgerhq/live-common@34.58.0
+  - @ledgerhq/types-live@6.94.0
+  - @ledgerhq/live-env@2.26.0
+  - @ledgerhq/live-wallet@0.20.0
+  - @ledgerhq/react-ui@0.44.1
+  - @ledgerhq/coin-framework@6.13.1
+  - @ledgerhq/domain-service@1.6.1
+  - @ledgerhq/cryptoassets@13.37.1
+  - @ledgerhq/hw-app-eth@7.3.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.7.1
+  - @ledgerhq/ledger-key-ring-protocol@0.11.1
+
+## 0.29.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d), [`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`d38431e`](https://github.com/LedgerHQ/ledger-live/commit/d38431ee5f91439794cc6c7bad793b89ade95155), [`d3a00b8`](https://github.com/LedgerHQ/ledger-live/commit/d3a00b897349d2109b2ddb6aba63d20fdedc149c), [`d8f4b10`](https://github.com/LedgerHQ/ledger-live/commit/d8f4b10b28b63880fdac40a58e1d4f06191070a9), [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436), [`97ac494`](https://github.com/LedgerHQ/ledger-live/commit/97ac4940399281450a67b5f533ff49d03a169403), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`7389999`](https://github.com/LedgerHQ/ledger-live/commit/7389999b0a5b52c42b565cbfe8e024c315c9dcf5), [`b8e22d3`](https://github.com/LedgerHQ/ledger-live/commit/b8e22d36b8bb44eda9dfd267227a22391519c08b), [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a), [`d469c61`](https://github.com/LedgerHQ/ledger-live/commit/d469c6160a9fdd7cd581836195d54bafd2a0419a), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb)]:
+  - @ledgerhq/live-common@34.58.0-next.0
+  - @ledgerhq/types-live@6.94.0-next.0
+  - @ledgerhq/live-env@2.26.0-next.0
+  - @ledgerhq/live-wallet@0.20.0-next.0
+  - @ledgerhq/react-ui@0.44.1-next.0
+  - @ledgerhq/coin-framework@6.13.1-next.0
+  - @ledgerhq/domain-service@1.6.1-next.0
+  - @ledgerhq/cryptoassets@13.37.1-next.0
+  - @ledgerhq/hw-app-eth@7.3.1-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.7.1-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.11.1-next.0
+
+## 0.29.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`433a1dd`](https://github.com/LedgerHQ/ledger-live/commit/433a1dd0b55f0d4bdad03ce2deb65b801770832d), [`cbcae7c`](https://github.com/LedgerHQ/ledger-live/commit/cbcae7c0ba9b54b1167d26e4227bd2b847207cb9), [`9cf9c5b`](https://github.com/LedgerHQ/ledger-live/commit/9cf9c5b0500d5b07e624b1c62ffa2d7a2b50f1c5), [`93e16fa`](https://github.com/LedgerHQ/ledger-live/commit/93e16fada5fa1b3c4319738d612711810e985aca), [`8b0b2ff`](https://github.com/LedgerHQ/ledger-live/commit/8b0b2ffb5425743b56c44e7ec41443c77d839c1f), [`3f33516`](https://github.com/LedgerHQ/ledger-live/commit/3f33516315f5256ab1afcd03e075e1c38e42e475), [`0d2ee1b`](https://github.com/LedgerHQ/ledger-live/commit/0d2ee1b8c71f8040deaded3575124a44f2704a21), [`8754614`](https://github.com/LedgerHQ/ledger-live/commit/87546149a62b81f8a25bb6222626592ead629f62), [`8c79f3e`](https://github.com/LedgerHQ/ledger-live/commit/8c79f3e27ed34f91a25a63647e781561531e01fe), [`d790eee`](https://github.com/LedgerHQ/ledger-live/commit/d790eeef975a5d305bd9010e8f4b08cc3044125a), [`6630dfd`](https://github.com/LedgerHQ/ledger-live/commit/6630dfd86f5207d82d844f9aa246c03135a5d586), [`50bae0f`](https://github.com/LedgerHQ/ledger-live/commit/50bae0f13a95ef166b2c5609ccbcf5ef01ba1579), [`cf08174`](https://github.com/LedgerHQ/ledger-live/commit/cf0817462e9f0210fceff29ec60b0699e4e69b71), [`bc7f669`](https://github.com/LedgerHQ/ledger-live/commit/bc7f669754002d7fe74dde3f217200e4153a2a26), [`0d2ee1b`](https://github.com/LedgerHQ/ledger-live/commit/0d2ee1b8c71f8040deaded3575124a44f2704a21), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59), [`7f05536`](https://github.com/LedgerHQ/ledger-live/commit/7f0553665e9c8721f263825cc79994bfc6729d9b), [`3ba59d4`](https://github.com/LedgerHQ/ledger-live/commit/3ba59d4dbdf69945e40d0cd000bcb0a68d2a916a), [`4758d1a`](https://github.com/LedgerHQ/ledger-live/commit/4758d1a7028e6fc77248d9bf3aec4f20752518c2), [`5127fc6`](https://github.com/LedgerHQ/ledger-live/commit/5127fc6c3aba783e66633ddb13403a6a36211cd8)]:
+  - @ledgerhq/cryptoassets@13.37.0
+  - @ledgerhq/react-ui@0.44.0
+  - @ledgerhq/live-common@34.57.0
+  - @ledgerhq/coin-framework@6.13.0
+  - @ledgerhq/hw-transport-http@6.33.0
+  - @ledgerhq/types-live@6.93.0
+  - @ledgerhq/live-env@2.25.0
+  - @ledgerhq/hw-transport-web-ble@6.31.0
+  - @ledgerhq/hw-transport-webhid@6.31.0
+  - @ledgerhq/hw-transport-webusb@6.30.0
+  - @ledgerhq/types-cryptoassets@7.32.0
+  - @ledgerhq/hw-transport@6.32.0
+  - @ledgerhq/hw-app-eth@7.3.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.7.0
+  - @ledgerhq/ledger-key-ring-protocol@0.11.0
+  - @ledgerhq/errors@6.29.0
+  - @ledgerhq/logs@6.14.0
+  - @ledgerhq/domain-service@1.6.0
+  - @ledgerhq/live-config@3.5.0
+  - @ledgerhq/live-wallet@0.19.0
+
+## 0.29.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`433a1dd`](https://github.com/LedgerHQ/ledger-live/commit/433a1dd0b55f0d4bdad03ce2deb65b801770832d), [`cbcae7c`](https://github.com/LedgerHQ/ledger-live/commit/cbcae7c0ba9b54b1167d26e4227bd2b847207cb9), [`9cf9c5b`](https://github.com/LedgerHQ/ledger-live/commit/9cf9c5b0500d5b07e624b1c62ffa2d7a2b50f1c5), [`93e16fa`](https://github.com/LedgerHQ/ledger-live/commit/93e16fada5fa1b3c4319738d612711810e985aca), [`8b0b2ff`](https://github.com/LedgerHQ/ledger-live/commit/8b0b2ffb5425743b56c44e7ec41443c77d839c1f), [`3f33516`](https://github.com/LedgerHQ/ledger-live/commit/3f33516315f5256ab1afcd03e075e1c38e42e475), [`0d2ee1b`](https://github.com/LedgerHQ/ledger-live/commit/0d2ee1b8c71f8040deaded3575124a44f2704a21), [`8754614`](https://github.com/LedgerHQ/ledger-live/commit/87546149a62b81f8a25bb6222626592ead629f62), [`8c79f3e`](https://github.com/LedgerHQ/ledger-live/commit/8c79f3e27ed34f91a25a63647e781561531e01fe), [`d790eee`](https://github.com/LedgerHQ/ledger-live/commit/d790eeef975a5d305bd9010e8f4b08cc3044125a), [`6630dfd`](https://github.com/LedgerHQ/ledger-live/commit/6630dfd86f5207d82d844f9aa246c03135a5d586), [`50bae0f`](https://github.com/LedgerHQ/ledger-live/commit/50bae0f13a95ef166b2c5609ccbcf5ef01ba1579), [`cf08174`](https://github.com/LedgerHQ/ledger-live/commit/cf0817462e9f0210fceff29ec60b0699e4e69b71), [`bc7f669`](https://github.com/LedgerHQ/ledger-live/commit/bc7f669754002d7fe74dde3f217200e4153a2a26), [`0d2ee1b`](https://github.com/LedgerHQ/ledger-live/commit/0d2ee1b8c71f8040deaded3575124a44f2704a21), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59), [`7f05536`](https://github.com/LedgerHQ/ledger-live/commit/7f0553665e9c8721f263825cc79994bfc6729d9b), [`3ba59d4`](https://github.com/LedgerHQ/ledger-live/commit/3ba59d4dbdf69945e40d0cd000bcb0a68d2a916a), [`4758d1a`](https://github.com/LedgerHQ/ledger-live/commit/4758d1a7028e6fc77248d9bf3aec4f20752518c2), [`5127fc6`](https://github.com/LedgerHQ/ledger-live/commit/5127fc6c3aba783e66633ddb13403a6a36211cd8)]:
+  - @ledgerhq/cryptoassets@13.37.0-next.0
+  - @ledgerhq/react-ui@0.44.0-next.0
+  - @ledgerhq/live-common@34.57.0-next.0
+  - @ledgerhq/coin-framework@6.13.0-next.0
+  - @ledgerhq/hw-transport-http@6.33.0-next.0
+  - @ledgerhq/types-live@6.93.0-next.0
+  - @ledgerhq/live-env@2.25.0-next.0
+  - @ledgerhq/hw-transport-web-ble@6.31.0-next.0
+  - @ledgerhq/hw-transport-webhid@6.31.0-next.0
+  - @ledgerhq/hw-transport-webusb@6.30.0-next.0
+  - @ledgerhq/types-cryptoassets@7.32.0-next.0
+  - @ledgerhq/hw-transport@6.32.0-next.0
+  - @ledgerhq/hw-app-eth@7.3.0-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.7.0-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.11.0-next.0
+  - @ledgerhq/errors@6.29.0-next.0
+  - @ledgerhq/logs@6.14.0-next.0
+  - @ledgerhq/domain-service@1.6.0-next.0
+  - @ledgerhq/live-config@3.5.0-next.0
+  - @ledgerhq/live-wallet@0.19.0-next.0
+
 ## 0.28.0
 
 ### Minor Changes

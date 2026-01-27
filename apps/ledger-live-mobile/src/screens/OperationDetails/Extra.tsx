@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Operation } from "@ledgerhq/types-live";
 import Section from "./Section";
 

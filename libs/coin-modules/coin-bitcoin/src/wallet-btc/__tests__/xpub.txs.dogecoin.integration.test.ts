@@ -7,7 +7,7 @@ import BitcoinLikeExplorer from "../explorer";
 import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
 import BitcoinLikeWallet from "../wallet";
-import MockBtcSigner from "../../mockBtcSigner";
+import { MockBtcSigner } from "./fixtures/common.fixtures";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 describe("testing dogecoin transactions", () => {

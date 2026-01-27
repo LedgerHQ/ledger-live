@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import styled from "styled-components/native";
 import { Text, Flex, IconsLegacy, Button } from "@ledgerhq/native-ui";
 

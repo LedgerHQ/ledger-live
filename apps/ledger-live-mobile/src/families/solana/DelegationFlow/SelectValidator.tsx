@@ -5,7 +5,7 @@ import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { FlatList, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TrackScreen } from "~/analytics";

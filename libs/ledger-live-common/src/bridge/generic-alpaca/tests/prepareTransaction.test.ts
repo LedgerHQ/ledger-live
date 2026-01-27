@@ -11,6 +11,7 @@ jest.mock("../alpaca", () => ({
 }));
 
 jest.mock("../utils", () => ({
+  ...jest.requireActual("../utils"),
   transactionToIntent: jest.fn(),
   extractBalances: jest.fn(),
 }));

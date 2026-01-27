@@ -51,7 +51,7 @@ export function useWebView(
   ref: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
 ) {
-  const serverRef = useRef<WalletAPIServer>();
+  const serverRef = useRef<WalletAPIServer | undefined>(undefined);
 
   const tracking = useMemo(
     () =>
@@ -239,7 +239,7 @@ export function useWebviewState(
   params: Pick<WebviewProps, "manifest" | "inputs">,
   WebviewAPIRef: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
-  serverRef?: React.MutableRefObject<WalletAPIServer | undefined>,
+  serverRef?: React.RefObject<WalletAPIServer | undefined>,
 ) {
   const webviewRef = useRef<WebView>(null);
   const { manifest, inputs } = params;

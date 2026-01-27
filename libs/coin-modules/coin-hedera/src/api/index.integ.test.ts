@@ -565,6 +565,17 @@ describe("createApi", () => {
         },
       ]);
     });
+
+    it("returns block for latest finalized height from lastBlock", async () => {
+      const latestBlockInfo = await api.lastBlock();
+      const block = await api.getBlock(latestBlockInfo.height);
+
+      expect(block.info.height).toBe(latestBlockInfo.height);
+      expect(block.info.hash).toBe(latestBlockInfo.hash);
+      // Note: lastBlock().time is the transaction timestamp, while getBlock().info.time is the block start time
+      expect(block.info.time).toBeInstanceOf(Date);
+      expect(block.transactions).toBeInstanceOf(Array);
+    });
   });
 
   describe("lastBlock", () => {

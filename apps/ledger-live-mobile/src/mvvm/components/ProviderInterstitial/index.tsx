@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Svg, Circle as SVGCircle, SvgUri } from "react-native-svg";
 import Animated, {
   interpolate,

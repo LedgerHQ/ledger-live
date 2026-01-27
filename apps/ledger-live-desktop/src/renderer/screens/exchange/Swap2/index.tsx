@@ -1,5 +1,5 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Routes, Route } from "react-router";
 import styled, { createGlobalStyle } from "styled-components";
 import Box from "~/renderer/components/Box";
 import SwapHistory from "./History";
@@ -25,16 +25,16 @@ const GlobalStyle = createGlobalStyle`
       padding-top: 0;
   }
 
-  div#page-scroller::-webkit-scrollbar {
+  #page-scroller &::-webkit-scrollbar {
     width: 10px;
   }
 
-  div#page-scroller::-webkit-scrollbar-thumb {
+  #page-scroller &::-webkit-scrollbar-thumb {
     background-color: ${p => p.theme.colors.neutral.c50};
     border-radius: 10px;
   }
 
-  div#page-scroller::-webkit-scrollbar-track {
+  #page-scroller &::-webkit-scrollbar-track {
     background: ${p => p.theme.colors.neutral.c20};
     border-radius: 10px;
   }
@@ -46,8 +46,10 @@ const Swap2 = () => {
       <GlobalStyle />
       <SwapNavbar />
       <Main>
-        <Route path="/swap" component={SwapApp} exact />
-        <Route path="/swap/history" component={SwapHistory} exact />
+        <Routes>
+          <Route path="/" element={<SwapApp />} />
+          <Route path="/history" element={<SwapHistory />} />
+        </Routes>
       </Main>
     </Body>
   );

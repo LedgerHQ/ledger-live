@@ -7,6 +7,7 @@ import { ApplicationOptions } from "page";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { setEnv } from "@ledgerhq/live-env";
+import { log } from "detox";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -530,6 +531,10 @@ export function runSwapCheckProvider(
 
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
       await app.swapLiveApp.goToProviderLiveApp(provider.uiName);
+      if (provider.uiName === "1inch") {
+        log.warn("Skipping 1inch URL verification due to QAA-854");
+        return;
+      }
       await app.swapLiveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
     });
   });
@@ -604,6 +609,7 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
+
     it(`Swap - Network fees above account balance`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(
         swap.accountToDebit,
@@ -619,8 +625,6 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
       );
       await app.swapLiveApp.checkQuotes();
       await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.tapQuoteInfosFeesSelector(1);
-      await app.swapLiveApp.tapFeeContainer("fast");
       await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
     });
   });

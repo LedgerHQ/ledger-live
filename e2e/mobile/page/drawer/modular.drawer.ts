@@ -80,12 +80,7 @@ export default class ModularDrawer {
   @Step("Select network in list if needed")
   async selectNetworkIfAsked(networkName: string): Promise<void> {
     if (await IsIdVisible(this.networkBasedTitleIdMAD)) {
-      const id = this.networkItemIdMAD(networkName);
-      if (!(await IsIdVisible(id))) {
-        await getElementById(this.networkBasedTitleIdMAD).swipe("up");
-        await scrollToId(id, this.networkSelectionScrollViewId);
-      }
-      await tapById(id, 0);
+      await this.selectNetwork(networkName);
     }
   }
 
@@ -93,6 +88,7 @@ export default class ModularDrawer {
   async selectNetwork(networkName: string): Promise<void> {
     const id = this.networkItemIdMAD(networkName);
     if (!(await IsIdVisible(id))) {
+      await getElementById(this.networkBasedTitleIdMAD).swipe("up");
       await scrollToId(id, this.networkSelectionScrollViewId);
     }
     await tapById(id, 0);
@@ -149,6 +145,7 @@ export default class ModularDrawer {
   async validateNetworksScreen(networks: string[]): Promise<void> {
     const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);
     jestExpect(modularDrawerAttributes.label).toMatch(/Select network.*/i);
+    await getElementById(this.networkBasedTitleIdMAD).swipe("up");
     for (const network of networks) {
       const networkItemId = this.networkItemIdMAD(network);
       await scrollToId(networkItemId, this.networkSelectionScrollViewId);

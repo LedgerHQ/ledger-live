@@ -11,7 +11,7 @@ import {
   ListRenderItem,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation, Trans } from "~/context/Locale";
 import { Icons } from "@ledgerhq/native-ui";
 import { RecipientRequired } from "@ledgerhq/errors";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";

@@ -62,7 +62,12 @@ export default function SettingsCard({
         iconColor={"primary.c80"}
       />
       <Box ml={6} flex={1} testID={settingsCardTestId}>
-        <Text variant={"large"} fontWeight={"semiBold"} color={"neutral.c100"}>
+        <Text
+          variant={"large"}
+          fontWeight={"semiBold"}
+          color={"neutral.c100"}
+          testID={settingsCardTestId + "-title"}
+        >
           {title}
         </Text>
         <Text variant={"body"} fontWeight={"medium"} color={"neutral.c80"}>

@@ -2,7 +2,12 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { AccountAwaitingSendPendingOperations } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
-import { extractBalances, transactionToIntent } from "./utils";
+import {
+  bigNumberToBigIntDeep,
+  extractBalances,
+  applyMemoToIntent,
+  transactionToIntent,
+} from "./utils";
 import { GenericTransaction } from "./types";
 
 // => alpaca validateIntent
@@ -38,25 +43,24 @@ export function genericGetTransactionStatus(
       }
     }
 
-    const fees = BigInt(transaction.fees?.toString() || "0");
-    const feesParameters = {
-      ...(transaction.gasLimit ? { gasLimit: BigInt(transaction.gasLimit.toFixed()) } : {}),
-      ...(transaction.gasPrice ? { gasPrice: BigInt(transaction.gasPrice.toFixed()) } : {}),
-      ...(transaction.maxFeePerGas
-        ? { maxFeePerGas: BigInt(transaction.maxFeePerGas.toFixed()) }
-        : {}),
-      ...(transaction.maxPriorityFeePerGas
-        ? { maxPriorityFeePerGas: BigInt(transaction.maxPriorityFeePerGas.toFixed()) }
-        : {}),
-      ...(transaction.additionalFees
-        ? { additionalFees: BigInt(transaction.additionalFees.toFixed()) }
-        : {}),
-    };
+    let intent = transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType);
+    intent = applyMemoToIntent(intent, transaction);
+
+    const customFees = bigNumberToBigIntDeep({
+      value: transaction.fees ?? new BigNumber(0),
+      parameters: {
+        gasLimit: transaction.gasLimit,
+        gasPrice: transaction.gasPrice,
+        maxFeePerGas: transaction.maxFeePerGas,
+        maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+        additionalFees: transaction.additionalFees,
+      },
+    });
     const { errors, warnings, estimatedFees, amount, totalSpent, totalFees } =
       await alpacaApi.validateIntent(
-        transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
+        intent,
         extractBalances(account, alpacaApi.getAssetFromToken),
-        { value: fees, parameters: feesParameters },
+        customFees,
       );
 
     return {

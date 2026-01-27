@@ -23,7 +23,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import SwapOperationDetails from "~/renderer/drawers/SwapOperationDetails";
 import HistoryLoading from "./HistoryLoading";
 import HistoryPlaceholder from "./HistoryPlaceholder";
-import { useHistory } from "react-router-dom";
+import { useLocation } from "react-router";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
 import { getEnv } from "@ledgerhq/live-env";
@@ -56,11 +56,12 @@ const History = () => {
   const [mappedSwapOperations, setMappedSwapOperations] = useState<
     SwapHistorySection[] | undefined | null
   >(null);
-  const history = useHistory<{ swapId?: string }>();
+  const location = useLocation();
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const defaultOpenedOnce = useRef(false);
-  const defaultOpenedSwapOperationId = history?.location?.state?.swapId;
+  const locationState = location.state as { swapId?: string } | null;
+  const defaultOpenedSwapOperationId = locationState?.swapId;
   const getDateTxt = useTechnicalDateFn();
   const onExportOperations = useCallback(() => {
     async function asyncExport() {

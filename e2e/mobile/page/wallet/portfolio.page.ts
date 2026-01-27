@@ -126,6 +126,7 @@ export default class PortfolioPage {
 
   @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
+    await waitForElementById(this.accountsListView, 10000);
     await scrollToId(this.allocationSectionTitleId, this.accountsListView, 400);
 
     if (await IsIdVisible(this.assetItemId(currencyName))) {

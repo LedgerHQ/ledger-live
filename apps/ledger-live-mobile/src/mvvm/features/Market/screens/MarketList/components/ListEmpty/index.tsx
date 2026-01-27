@@ -1,7 +1,7 @@
 import React from "react";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { Text } from "@ledgerhq/native-ui";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import EmptyState from "../EmptyState";
 import EmptyStarredCoins from "../EmptyStarredCoins";
 

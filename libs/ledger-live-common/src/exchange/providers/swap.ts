@@ -265,6 +265,7 @@ export const termsOfUse: { [key: string]: string } = {
   "1inch": "https://1inch.com/assets/Widget_1inch.com_Terms_of_Use.pdf",
   Uniswap: "https://uniswap.org/terms-of-service",
   velora: "https://www.velora.xyz/terms/terms-of-use",
+  okx: "https://web3.okx.com/help/okx-web3-build-user-agreement",
 };
 
 export const privacyPolicy: { [key: string]: string } = {

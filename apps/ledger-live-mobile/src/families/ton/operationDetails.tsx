@@ -1,6 +1,6 @@
 import { TonOperation } from "@ledgerhq/live-common/families/ton/types";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import Section from "~/screens/OperationDetails/Section";
 
 type Props = {

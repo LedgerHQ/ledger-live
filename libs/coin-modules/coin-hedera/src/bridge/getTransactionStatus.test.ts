@@ -8,7 +8,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import * as accountHelpers from "@ledgerhq/coin-framework/account";
-import { HEDERA_TRANSACTION_MODES, MEMO_CHARACTER_LIMIT } from "../constants";
+import { HEDERA_TRANSACTION_MODES } from "../constants";
 import {
   HederaInsufficientFundsForAssociation,
   HederaInvalidStakingNodeIdError,
@@ -18,8 +18,9 @@ import {
   HederaRecipientTokenAssociationRequired,
   HederaRecipientTokenAssociationUnverified,
   HederaRedundantStakingNodeIdError,
-  HederaMemoIsTooLong,
+  HederaMemoExceededSizeError,
 } from "../errors";
+import { HEDERA_MAX_MEMO_SIZE } from "../logic/validateMemo";
 import { rpcClient } from "../network/rpc";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
@@ -76,6 +77,7 @@ describe("getTransactionStatus", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
+    // Use persistent mocks (better for test suites) instead of mockResolvedValueOnce
     mockEstimateFees.mockResolvedValue(mockedEstimatedFee);
     mockGetCurrencyToUSDRate.mockResolvedValue(mockedUsdRate);
     mockGetCurrentHederaPreloadData.mockReturnValue(mockPreload);
@@ -180,14 +182,14 @@ describe("getTransactionStatus", () => {
     ["undefined", undefined],
     ["empty", ""],
     ["short", "aaaaa"],
-    ["exact limit", "a".repeat(MEMO_CHARACTER_LIMIT)],
+    ["exact limit", "a".repeat(HEDERA_MAX_MEMO_SIZE)],
   ])("allows %s memo", async (_description, memo) => {
     const mockedAccount = getMockedAccount();
     const mockedTransaction = getMockedTransaction({ memo });
 
     const result = await getTransactionStatus(mockedAccount, mockedTransaction);
 
-    expect(result.errors.memo).toBeUndefined();
+    expect(result.errors.transaction).toBeUndefined();
   });
 
   it.each([
@@ -227,7 +229,7 @@ describe("getTransactionStatus", () => {
       properties: { token: getMockedHTSTokenCurrency() },
     },
   ])("adds error for too long memo - $description", async ({ mode, subAccount, properties }) => {
-    const tooLongMemo = "a".repeat(MEMO_CHARACTER_LIMIT + 1);
+    const tooLongMemo = "a".repeat(HEDERA_MAX_MEMO_SIZE + 1);
     const mockedAccount = getMockedAccount();
     const mockedTransaction = getMockedTransaction({
       mode,
@@ -242,7 +244,7 @@ describe("getTransactionStatus", () => {
 
     const result = await getTransactionStatus(mockedAccount, mockedTransaction);
 
-    expect(result.errors.memo).toBeInstanceOf(HederaMemoIsTooLong);
+    expect(result.errors.transaction).toBeInstanceOf(HederaMemoExceededSizeError);
   });
 
   it("adds error for invalid recipient address", async () => {

@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
+import type { Theme } from "@ledgerhq/react-ui";
 import {
   EConnResetError,
   ImageDoesNotExistOnDevice,
@@ -68,11 +69,7 @@ import {
   DeviceInfo,
   DeviceModelInfo,
 } from "@ledgerhq/types-live";
-import {
-  ExchangeRate,
-  ExchangeSwap,
-  InitSwapResult,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
@@ -136,9 +133,6 @@ type States = PartialNullable<{
   deviceStreamingProgress: number;
   displayUpgradeWarning: boolean;
   passWarning: () => void;
-  initSwapRequested: boolean;
-  initSwapError: Error;
-  initSwapResult: InitSwapResult | null;
   installingLanguage: boolean;
   languageInstallationRequested: boolean;
   signMessageRequested: AnyMessage;
@@ -168,6 +162,14 @@ type InnerProps<P> = {
   onResult?: (_: NonNullable<P>) => void;
   onError?: (_: Error) => Promise<void> | void;
   renderOnResult?: (_: P) => React.JSX.Element | null;
+  renderDeviceSignatureRequested?: (args: { device: Device; request: unknown }) => React.ReactNode;
+  renderLockedDevice?: (args: {
+    device?: Device | null;
+    modelId: DeviceModelId;
+    theme: Theme["theme"];
+    onRetry?: (() => void) | null | undefined;
+    inlineRetry?: boolean;
+  }) => React.ReactNode;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
   overridesPreferredDeviceModel?: DeviceModelId;
@@ -198,6 +200,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   Result,
   onResult,
   onError,
+  renderDeviceSignatureRequested,
+  renderLockedDevice,
   overridesPreferredDeviceModel,
   inlineRetry = true,
   analyticsPropertyFlow,
@@ -239,9 +243,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     transactionChecksOptIn,
     displayUpgradeWarning,
     passWarning,
-    initSwapRequested,
-    initSwapError,
-    initSwapResult,
     completeExchangeStarted,
     completeExchangeResult,
     completeExchangeError,
@@ -501,27 +502,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     }
   }
 
-  if (initSwapRequested && !initSwapResult && !initSwapError) {
-    const { transaction, exchange, exchangeRate } = request as {
-      transaction: Transaction;
-      exchange: ExchangeSwap;
-      exchangeRate: ExchangeRate;
-    };
-    const { amountExpectedTo, estimatedFees } = hookState;
-    return renderSwapDeviceConfirmation({
-      modelId,
-      type,
-      transaction,
-      exchangeRate,
-      exchange,
-      amountExpectedTo: amountExpectedTo ?? undefined,
-      estimatedFees: estimatedFees ?? undefined,
-      swapDefaultTrack,
-      stateSettings,
-      walletState,
-    });
-  }
-
   if (allowOpeningRequestedWording || requestOpenApp) {
     // requestOpenApp for Nano S 1.3.1 (need to ask user to open the app.)
     const wording = allowOpeningRequestedWording || requestOpenApp || "";
@@ -634,6 +614,9 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
   // Renders an error as long as LLD is using the "event" implementation of device actions
   if (isLocked) {
+    if (renderLockedDevice) {
+      return renderLockedDevice({ device, modelId, theme: type, onRetry, inlineRetry });
+    }
     return renderLockedDeviceError({ t, device, onRetry, inlineRetry });
   }
 
@@ -656,6 +639,9 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (request && device && deviceSignatureRequested) {
+    if (renderDeviceSignatureRequested) {
+      return renderDeviceSignatureRequested({ device, request });
+    }
     const { account, parentAccount, status, transaction } = request as unknown as {
       account: AccountLike;
       parentAccount: Account | null;

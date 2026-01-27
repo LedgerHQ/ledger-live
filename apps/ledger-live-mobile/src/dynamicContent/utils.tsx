@@ -86,6 +86,7 @@ export const mapAsCategoryContentCard = (card: BrazeContentCard): CategoryConten
   isDismissable: Boolean(card.extras?.isDismissable === "true"),
   hasPagination: Boolean(card.extras?.hasPagination === "true"),
   centeredText: Boolean(card.extras?.centeredText === "true"),
+  extras: card.extras,
 });
 
 export const mapAsWalletContentCard = (card: BrazeContentCard): WalletContentCard => ({
@@ -99,6 +100,7 @@ export const mapAsWalletContentCard = (card: BrazeContentCard): WalletContentCar
   viewed: card.viewed,
   createdAt: card.created,
   order: parseInt(card.extras.order) ?? undefined,
+  extras: card.extras,
 });
 
 export const mapAsAssetContentCard = (card: BrazeContentCard): AssetContentCard => ({
@@ -114,6 +116,7 @@ export const mapAsAssetContentCard = (card: BrazeContentCard): AssetContentCard 
   createdAt: card.created,
   viewed: card.viewed,
   order: parseInt(card.extras.order) ?? undefined,
+  extras: card.extras,
 });
 
 export const mapAsNotificationContentCard = (card: BrazeContentCard): NotificationContentCard => ({
@@ -127,6 +130,7 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard): Notificati
   createdAt: card.created,
   viewed: card.viewed,
   order: parseInt(card.extras.order) ?? undefined,
+  extras: card.extras,
 });
 
 export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalContentCard => ({
@@ -141,6 +145,7 @@ export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalCo
   viewed: card.viewed,
   order: parseInt(card.extras.order) ?? undefined,
   gridWidthFactor: WidthFactor.Full,
+  extras: card.extras,
 });
 
 const mapAsSquareContentCard = (
@@ -169,6 +174,7 @@ const mapAsSquareContentCard = (
   mediaType: card.extras.mediaType as VerticalContentCard["mediaType"],
   media: card.extras.media,
   filledMedia: Boolean(card.extras.filledMedia),
+  extras: card.extras,
 });
 
 export const mapAsHeroContentCard = (card: BrazeContentCard): HeroContentCard => ({
@@ -184,6 +190,7 @@ export const mapAsHeroContentCard = (card: BrazeContentCard): HeroContentCard =>
   createdAt: card.created,
   viewed: card.viewed,
   order: parseInt(card.extras.order) ?? undefined,
+  extras: card.extras,
 });
 
 export const mapAsSmallSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
@@ -216,4 +223,5 @@ export const mapAsLandingPageStickyCtaContentCard = (
   createdAt: card.created,
   viewed: card.viewed,
   landingPage: card.extras.landingPage as LandingPageUseCase,
+  extras: card.extras,
 });

@@ -82,14 +82,15 @@ test.describe("Swap - Provider redirection", () => {
 
       await app.swap.selectSpecificProvider(provider, electronApp);
       await app.swap.goToProviderLiveApp(electronApp, provider.uiName);
-      if (getEnv("SWAP_API_BASE") === "https://swap-stg.ledger-test.com/v5") {
-        await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
-        await app.swap.clickExecuteSwapButton(electronApp);
-        await app.swap.clickContinueButton();
-      } else {
-        await app.swap.verifyProviderURL(electronApp, provider.uiName, swap);
-        await app.liveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
-      }
+      //TODO: enable this code when Velora is activated on staging
+      // if (getEnv("SWAP_API_BASE") === "https://swap-stg.ledger-test.com/v5") {
+      //   await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
+      //   await app.swap.clickExecuteSwapButton(electronApp);
+      //   await app.swap.clickContinueButton();
+      // } else {
+      await app.swap.verifyProviderURL(electronApp, provider.uiName, swap);
+      await app.liveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
+      // }
     },
   );
 });
@@ -866,7 +867,7 @@ for (const swap of tooLowAmountForQuoteSwaps) {
 const swapNetworkFeesAboveAccountBalanceTestConfig = {
   swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, ""),
   errorMessage: new RegExp(
-    `You need \\d+\\.\\d+ ETH in your account to pay for transaction fees on the Ethereum network. {2}Buy ETH or deposit more into your account. Learn more`,
+    `Your account .+ doesn't have enough balance to cover the network fees\\.`,
   ),
   xrayTicket: "B2CQA-2363",
   tags: [
@@ -919,7 +920,6 @@ test.describe(`Swap - Error message when network fees are above account balance 
       { scope: "test" },
     ],
   });
-
   test(
     `Swap - Network fees above account balance`,
     {
@@ -952,8 +952,8 @@ test.describe(`Swap - Error message when network fees are above account balance 
       );
       await app.swap.checkQuotes(electronApp);
       await app.swap.selectExchange(electronApp);
-      await app.swap.tapQuoteInfosFeesSelector(electronApp);
-      await app.swap.checkFeeDrawerErrorMessage(
+      await app.swap.checkFeeErrorMessage(
+        electronApp,
         swapNetworkFeesAboveAccountBalanceTestConfig.errorMessage,
       );
     },

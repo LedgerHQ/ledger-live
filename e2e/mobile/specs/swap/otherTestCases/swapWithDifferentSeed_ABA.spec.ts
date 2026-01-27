@@ -9,7 +9,18 @@ const swapTestConfig = {
   errorMessage: null,
   addressFrom: Addresses.BTC_NATIVE_SEGWIT_1,
   addressTo: Addresses.ETH_OTHER_SEED,
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  tags: [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    "@bitcoin",
+    "@family-bitcoin",
+    "@ethereum",
+    "@family-evm",
+  ],
 };
 
 runSwapWithDifferentSeedTest(

@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Flex, Icons, NumberedList, ProgressBar, Text } from "@ledgerhq/native-ui";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { Camera } from "react-native-vision-camera";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";

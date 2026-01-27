@@ -8,7 +8,7 @@ import { withTokens } from "../../libs";
 const Wrapper = styled.div`
   ${withTokens("colors-border-active-default", "radius-s")}
 
-  :focus-within {
+  &:focus-within {
     box-shadow: inset 0 0 0 2px var(--colors-border-active-default);
   }
   border-radius: var(--radius-s, 8px);

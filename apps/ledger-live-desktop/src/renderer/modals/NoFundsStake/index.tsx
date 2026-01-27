@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useDispatch } from "LLD/hooks/redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Icon, Text } from "@ledgerhq/react-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
@@ -46,7 +46,8 @@ interface NoFundsStakeModalProps {
 const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeModalProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { data: currenciesAll } = useFetchCurrencyAll();
 
   const currency = isTokenAccount(account) ? account.token : account?.currency;
@@ -66,53 +67,51 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
   const onBuy = useCallback(() => {
     track("button_clicked2", {
       button: "buy",
-      page: history.location.pathname,
+      page: location.pathname,
       ...stakeDefaultTrack,
     });
 
     dispatch(closeModal(modalName));
 
-    history.push({
-      pathname: "/exchange",
+    navigate("/exchange", {
       state: {
         account: isTokenAccount(account) ? parentAccount?.id : account.id,
         currency: currency.id,
         mode: "buy",
       },
     });
-  }, [history, dispatch, account, parentAccount?.id, currency.id]);
+  }, [location, dispatch, navigate, account, parentAccount?.id, currency.id]);
 
   const onSwap = useCallback(() => {
     track("button_clicked2", {
       button: "swap",
-      page: history.location.pathname,
+      page: location.pathname,
       ...stakeDefaultTrack,
     });
 
     dispatch(closeModal(modalName));
 
-    history.push({
-      pathname: "/swap",
+    navigate("/swap", {
       state: {
         defaultCurrency: currency,
-        defaultAccount: account,
-        defaultParentAccount: parentAccount,
-        from: history.location.pathname,
+        defaultAccountId: account.id,
+        defaultParentAccountId: parentAccount?.id,
+        from: location.pathname,
       },
     });
-  }, [currency, account, parentAccount, history, dispatch]);
+  }, [currency, account, parentAccount, location, navigate, dispatch]);
 
   const onReceive = useCallback(() => {
     track("button_clicked2", {
       button: "receive",
-      page: history.location.pathname,
+      page: location.pathname,
       ...stakeDefaultTrack,
     });
 
     dispatch(closeModal(modalName));
 
     dispatch(openModal("MODAL_RECEIVE", { parentAccount, account }));
-  }, [parentAccount, account, dispatch, history]);
+  }, [parentAccount, account, dispatch, location]);
 
   const onClose = useCallback(() => {
     dispatch(closeModal(modalName));
@@ -120,7 +119,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
 
   useEffect(() => {
     trackPage("Stake", "Service_modal", {
-      source: history.location.pathname,
+      source: location.pathname,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { TrackScreen, track } from "~/analytics";
@@ -16,7 +16,7 @@ import type { CosmosRedelegationFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { getTrackingDelegationType } from "../../helpers";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { useNotifications } from "~/logic/notifications";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 type Props = BaseComposite<
   StackNavigatorProps<

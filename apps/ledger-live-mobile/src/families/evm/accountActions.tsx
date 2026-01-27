@@ -1,7 +1,7 @@
 import React from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { isAccountEmpty, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";

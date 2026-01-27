@@ -150,8 +150,12 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
 
   const mevProtected = useSelector(mevProtectionSelector);
   const broadcastConfig = useMemo(
-    () => ({ mevProtected, sponsored: !!sponsored }),
-    [mevProtected, sponsored],
+    () => ({
+      mevProtected,
+      sponsored: !!sponsored,
+      source: { type: "swap" as const, name: provider },
+    }),
+    [mevProtected, sponsored, provider],
   );
 
   const broadcast = useBroadcast({ account, parentAccount, broadcastConfig });

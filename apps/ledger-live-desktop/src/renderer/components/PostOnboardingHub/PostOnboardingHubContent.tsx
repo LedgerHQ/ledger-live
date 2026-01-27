@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Flex, Link } from "@ledgerhq/react-ui";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import {
   useAllPostOnboardingActionsCompleted,
@@ -13,7 +13,7 @@ import ButtonV3 from "~/renderer/components/ButtonV3";
 
 const PostOnboardingHubContent = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const areAllPostOnboardingActionsCompleted = useAllPostOnboardingActionsCompleted();
   const { deviceModelId } = usePostOnboardingHubState();
 
@@ -23,13 +23,13 @@ const PostOnboardingHubContent = () => {
       deviceModelId,
       flow: "post-onboarding",
     });
-    history.push("/");
-  }, [history, deviceModelId]);
+    navigate("/");
+  }, [navigate, deviceModelId]);
 
   const handleOnboardingOver = useCallback(() => {
     track("button_clicked2", { button: "Explore wallet", deviceModelId, flow: "post-onboarding" });
-    history.push("/");
-  }, [history, deviceModelId]);
+    navigate("/");
+  }, [navigate, deviceModelId]);
 
   return (
     <Flex

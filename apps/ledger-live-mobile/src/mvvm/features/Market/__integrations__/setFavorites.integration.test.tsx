@@ -1,11 +1,10 @@
 import * as React from "react";
-import { screen, waitFor } from "@testing-library/react-native";
-import { render } from "@tests/test-renderer";
+import { screen, waitFor, renderWithReactQuery } from "@tests/test-renderer";
 import { MarketPages } from "./shared";
 
 describe("Market integration test", () => {
   it("Should set some coins as favorites", async () => {
-    const { user } = render(<MarketPages />);
+    const { user } = renderWithReactQuery(<MarketPages />);
 
     //Set BTC as favorite
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();

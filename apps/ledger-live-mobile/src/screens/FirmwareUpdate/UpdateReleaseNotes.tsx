@@ -2,7 +2,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import Button from "~/components/wrappedUi/Button";
 import SafeMarkdown from "~/components/SafeMarkdown";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Platform, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SafeAreaViewFixed from "~/components/SafeAreaView";

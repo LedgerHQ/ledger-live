@@ -37,6 +37,7 @@ setSupportedCurrencies([
   "digibyte",
   "algorand",
   "avalanche_c_chain",
+  "avalanche_c_chain_fuji",
   "qtum",
   "bitcoin_gold",
   "komodo",
@@ -89,7 +90,9 @@ setSupportedCurrencies([
   "quicksilver",
   "vechain",
   "internet_computer",
+  "bitlayer",
   "klaytn",
+  "klaytn_baobab",
   "polygon_zk_evm",
   "polygon_zk_evm_testnet",
   "base",
@@ -112,6 +115,8 @@ setSupportedCurrencies([
   "blast_sepolia",
   "scroll",
   "scroll_sepolia",
+  "shape",
+  "story",
   "etherlink",
   "zksync",
   "zksync_sepolia",
@@ -135,6 +140,8 @@ setSupportedCurrencies([
   "concordium_testnet",
   "aleo",
   "aleo_testnet",
+  "unichain",
+  "unichain_sepolia",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

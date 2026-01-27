@@ -5,7 +5,7 @@ import { useSelector } from "~/context/hooks";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { useTheme } from "@react-navigation/native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import CurrencyUnitValue, { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";

@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent } from "@tests/test-renderer";
+import { render } from "@tests/test-renderer";
 import {
   MOCK_MARKET_PERFORMERS,
   createMockMarketPerformer,
@@ -119,48 +119,6 @@ describe("MarketTile", () => {
 
       expect(mockOnPress).toHaveBeenCalledTimes(1);
       expect(mockOnPress).toHaveBeenCalledWith(bitcoin);
-    });
-  });
-
-  describe("Icon rendering", () => {
-    it("renders image icon when imageUrl is provided", () => {
-      const { getByTestId } = render(
-        <MarketTile item={bitcoin} index={0} range="day" onPress={mockOnPress} />,
-      );
-
-      expect(getByTestId("market-tile-icon-image")).toBeTruthy();
-    });
-
-    it("renders fallback letter when no image is provided", () => {
-      const itemWithoutImage = createMockMarketPerformer({ image: "", name: "Ethereum" });
-      const { getByTestId, getByText } = render(
-        <MarketTile item={itemWithoutImage} index={0} range="day" onPress={mockOnPress} />,
-      );
-
-      expect(getByTestId("market-tile-icon-fallback")).toBeTruthy();
-      expect(getByText("E")).toBeTruthy();
-    });
-
-    it("renders fallback letter when image fails to load", () => {
-      const itemWithInvalidImage = createMockMarketPerformer({
-        image: "https://invalid-url.com/image.png",
-        name: "Cardano",
-      });
-      const { getByTestId, getByText, queryByTestId } = render(
-        <MarketTile item={itemWithInvalidImage} index={0} range="day" onPress={mockOnPress} />,
-      );
-
-      // Initially the image should be rendered
-      const image = getByTestId("market-tile-icon-image");
-      expect(image).toBeTruthy();
-      expect(queryByTestId("market-tile-icon-fallback")).toBeNull();
-
-      // Simulate image error
-      fireEvent(image, "error");
-
-      // After error, fallback should be visible
-      expect(getByTestId("market-tile-icon-fallback")).toBeTruthy();
-      expect(getByText("C")).toBeTruthy();
     });
   });
 

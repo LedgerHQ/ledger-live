@@ -3,16 +3,17 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
-import { Redirect } from "react-router";
+import { Navigate, useParams } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
-import { accountSelector } from "~/renderer/reducers/accounts";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import {
   findSubAccountById,
   getMainAccount,
   isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
+import { findAccountById, findSubAccountByIdWithFallback } from "~/renderer/utils";
 import {
   setCountervalueFirst,
   useFilterTokenOperationsZeroAmount,
@@ -35,32 +36,21 @@ import { getLLDCoinFamily } from "~/renderer/families";
 import NftEntryPoint from "LLD/features/NftEntryPoint";
 
 type Params = {
-  id: string;
-  parentId: string;
+  id?: string;
+  parentId?: string;
 };
 
-const mapStateToProps = (
-  state: State,
-  {
-    match: {
-      params: { id, parentId },
-    },
-  }: {
-    match: {
-      params: Params;
-    };
-  },
-) => {
-  const parentAccount: Account | undefined | null = accountSelector(state, {
-    accountId: parentId,
-  });
+const mapStateToProps = (state: State, ownProps: { id?: string; parentId?: string }) => {
+  const { id, parentId } = ownProps;
+  const accounts = accountsSelector(state);
+  const parentAccount: Account | undefined | null = parentId
+    ? findAccountById(accounts, parentId) || undefined
+    : undefined;
   let account: AccountLike | undefined | null;
-  if (parentAccount) {
-    account = findSubAccountById(parentAccount, id);
-  } else {
-    account = accountSelector(state, {
-      accountId: id,
-    });
+  if (parentAccount && id) {
+    account = findSubAccountByIdWithFallback(parentAccount, id, findSubAccountById) || undefined;
+  } else if (id) {
+    account = findAccountById(accounts, id) || undefined;
   }
 
   return {
@@ -80,6 +70,11 @@ type Props = {
   parentAccount?: Account;
   countervalueFirst: boolean;
   setCountervalueFirst: (a: boolean) => void;
+};
+
+type OwnProps = {
+  id?: string;
+  parentId?: string;
 };
 
 const AccountPage = ({
@@ -111,7 +106,7 @@ const AccountPage = ({
   const currency = mainAccount?.currency;
 
   if (!account || !mainAccount || !currency) {
-    return <Redirect to="/accounts" />;
+    return <Navigate to="/accounts" replace />;
   }
 
   const color = getCurrencyColor(currency, bgColor);
@@ -192,9 +187,17 @@ const AccountPage = ({
   );
 };
 
-const ConnectedAccountPage = compose<React.ComponentType<Props>>(
+const ConnectedAccountPage = compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(AccountPage);
 
-export default ConnectedAccountPage;
+// Wrapper component that extracts route params and passes them to the connected component
+const AccountPageWrapper = () => {
+  const { id, parentId, "*": splat } = useParams<Params & { "*"?: string }>();
+  const fullId =
+    id && parentId && splat && splat.indexOf("account/") === -1 ? `${id}/${splat}` : id;
+  return <ConnectedAccountPage id={fullId} parentId={parentId} />;
+};
+
+export default AccountPageWrapper;

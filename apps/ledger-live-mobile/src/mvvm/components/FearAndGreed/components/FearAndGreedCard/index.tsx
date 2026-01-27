@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Tile, TileContent, TileTitle, TileDescription } from "@ledgerhq/lumen-ui-rnative";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import {
   getFearAndGreedColorKey,
   getFearAndGreedTranslationKey,
@@ -17,7 +17,7 @@ function FearAndGreedCard({ data, onPress }: FearAndGreedCardProps) {
   const translationKey = getFearAndGreedTranslationKey(value);
 
   return (
-    <Tile appearance="card" lx={{ width: "s96", flexShrink: 1 }} onPress={onPress}>
+    <Tile appearance="card" lx={{ width: "s96", flexGrow: 1 }} onPress={onPress}>
       <FearAndGreedArc value={value} />
       <TileContent>
         <TileTitle>{t("fearAndGreed.title")}</TileTitle>

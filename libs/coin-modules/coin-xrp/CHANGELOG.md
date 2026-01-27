@@ -1,5 +1,75 @@
 # @ledgerhq/coin-xrp
 
+## 7.13.0
+
+### Minor Changes
+
+- [#13719](https://github.com/LedgerHQ/ledger-live/pull/13719) [`624dde7`](https://github.com/LedgerHQ/ledger-live/commit/624dde7675ee68af9addbbdbe8666e77d09f76b6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - coin-xrp: add details on broadcast failure
+
+- [#13418](https://github.com/LedgerHQ/ledger-live/pull/13418) [`6c9b829`](https://github.com/LedgerHQ/ledger-live/commit/6c9b82957c777e81e65b3321f4d0d5d66384992f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Uniform memo validation accross the coin modules
+
+- [#13710](https://github.com/LedgerHQ/ledger-live/pull/13710) [`36aaf48`](https://github.com/LedgerHQ/ledger-live/commit/36aaf487c15da117a23332de376257ce8e6582a9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Returns native empty balance when account is pristine
+
+### Patch Changes
+
+- Updated dependencies [[`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb)]:
+  - @ledgerhq/types-live@6.94.0
+  - @ledgerhq/coin-framework@6.13.1
+  - @ledgerhq/cryptoassets@13.37.1
+  - @ledgerhq/live-network@2.2.1
+
+## 7.13.0-next.0
+
+### Minor Changes
+
+- [#13719](https://github.com/LedgerHQ/ledger-live/pull/13719) [`624dde7`](https://github.com/LedgerHQ/ledger-live/commit/624dde7675ee68af9addbbdbe8666e77d09f76b6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - coin-xrp: add details on broadcast failure
+
+- [#13418](https://github.com/LedgerHQ/ledger-live/pull/13418) [`6c9b829`](https://github.com/LedgerHQ/ledger-live/commit/6c9b82957c777e81e65b3321f4d0d5d66384992f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Uniform memo validation accross the coin modules
+
+- [#13710](https://github.com/LedgerHQ/ledger-live/pull/13710) [`36aaf48`](https://github.com/LedgerHQ/ledger-live/commit/36aaf487c15da117a23332de376257ce8e6582a9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Returns native empty balance when account is pristine
+
+### Patch Changes
+
+- Updated dependencies [[`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb)]:
+  - @ledgerhq/types-live@6.94.0-next.0
+  - @ledgerhq/coin-framework@6.13.1-next.0
+  - @ledgerhq/cryptoassets@13.37.1-next.0
+  - @ledgerhq/live-network@2.2.1-next.0
+
+## 7.12.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`cbcae7c`](https://github.com/LedgerHQ/ledger-live/commit/cbcae7c0ba9b54b1167d26e4227bd2b847207cb9), [`8754614`](https://github.com/LedgerHQ/ledger-live/commit/87546149a62b81f8a25bb6222626592ead629f62), [`cf08174`](https://github.com/LedgerHQ/ledger-live/commit/cf0817462e9f0210fceff29ec60b0699e4e69b71), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59), [`7f05536`](https://github.com/LedgerHQ/ledger-live/commit/7f0553665e9c8721f263825cc79994bfc6729d9b)]:
+  - @ledgerhq/cryptoassets@13.37.0
+  - @ledgerhq/coin-framework@6.13.0
+  - @ledgerhq/types-live@6.93.0
+  - @ledgerhq/devices@8.10.0
+  - @ledgerhq/errors@6.29.0
+  - @ledgerhq/logs@6.14.0
+  - @ledgerhq/live-network@2.2.0
+
+## 7.12.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`cbcae7c`](https://github.com/LedgerHQ/ledger-live/commit/cbcae7c0ba9b54b1167d26e4227bd2b847207cb9), [`8754614`](https://github.com/LedgerHQ/ledger-live/commit/87546149a62b81f8a25bb6222626592ead629f62), [`cf08174`](https://github.com/LedgerHQ/ledger-live/commit/cf0817462e9f0210fceff29ec60b0699e4e69b71), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59), [`7f05536`](https://github.com/LedgerHQ/ledger-live/commit/7f0553665e9c8721f263825cc79994bfc6729d9b)]:
+  - @ledgerhq/cryptoassets@13.37.0-next.0
+  - @ledgerhq/coin-framework@6.13.0-next.0
+  - @ledgerhq/types-live@6.93.0-next.0
+  - @ledgerhq/devices@8.10.0-next.0
+  - @ledgerhq/errors@6.29.0-next.0
+  - @ledgerhq/logs@6.14.0-next.0
+  - @ledgerhq/live-network@2.2.0-next.0
+
 ## 7.11.0
 
 ### Minor Changes

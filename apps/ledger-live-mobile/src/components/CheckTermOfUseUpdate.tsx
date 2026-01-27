@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback } from "react";
 import { Linking, ScrollView } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, IconsLegacy, Link, Text, Divider } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 

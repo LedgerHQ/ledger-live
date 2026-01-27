@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";

@@ -1,6 +1,6 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
-import { extractBalances, transactionToIntent } from "./utils";
+import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
 import { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
@@ -55,7 +55,6 @@ export function genericPrepareTransaction(
       ? await getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
       : assetInfosFallback(transaction);
     const customParametersFees = transaction.customFees?.parameters?.fees;
-    const customParametersGasLimit = transaction.customGasLimit;
 
     /**
      * Ticking `useAllAmount` constantly resets the amount to 0. This is problematic
@@ -84,17 +83,16 @@ export function genericPrepareTransaction(
       },
       computeIntentType,
     );
+    const customFeesParameters = bigNumberToBigIntDeep({
+      gasPrice: transaction.gasPrice,
+      maxFeePerGas: transaction.maxFeePerGas,
+      maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+      gasLimit: transaction.customGasLimit,
+      gasOptions: transaction.gasOptions,
+    });
     const estimation: FeeEstimation = customParametersFees
       ? { value: BigInt(customParametersFees.toFixed()) }
-      : await estimateFees(intent, {
-          gasPrice: transaction.gasPrice,
-          maxFeePerGas: transaction.maxFeePerGas,
-          maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
-          gasLimit: customParametersGasLimit
-            ? BigInt(customParametersGasLimit.toFixed())
-            : undefined,
-          gasOptions: transaction.gasOptions,
-        });
+      : await estimateFees(intent, customFeesParameters);
     const fees = new BigNumber(estimation.value.toString());
 
     if (!bnEq(transaction.fees, fees)) {
@@ -108,9 +106,6 @@ export function genericPrepareTransaction(
             fees: customParametersFees ? new BigNumber(customParametersFees.toString()) : undefined,
           },
         },
-        customGasLimit: customParametersGasLimit
-          ? new BigNumber(customParametersGasLimit.toFixed())
-          : undefined,
       };
 
       // Propagate needed fields

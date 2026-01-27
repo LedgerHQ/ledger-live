@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runNavigateToBuyFromPortfolioPageTest } from "./buySell";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
@@ -11,9 +10,9 @@ const testConfig = {
     operation: OperationType.Buy,
   },
   tmsLinks: ["B2CQA-3518"],
-  provider: Provider.TRANSAK,
+  provider: Provider.MOONPAY,
   paymentMethod: "card",
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@ethereum`, `@family-evm`],
 };
 
 runNavigateToBuyFromPortfolioPageTest(

@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { connect } from "react-redux";
 import { TextInput as NativeTextInput } from "react-native";
 import { DeviceNameInvalid } from "@ledgerhq/errors";

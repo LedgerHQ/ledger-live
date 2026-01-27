@@ -6,7 +6,7 @@ import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { EthStakingProvider } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import styled, { DefaultTheme, StyledComponent } from "styled-components";
+import styled from "styled-components";
 import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { StakeOnClickProps } from "../EthStakingModalBody";
 
@@ -59,12 +59,10 @@ function StakingIcon({ icon }: { icon?: string }) {
   return null;
 }
 
-const Container: StyledComponent<"div", DefaultTheme, Record<string, unknown>, never> = styled(
-  Flex,
-)`
+const Container = styled(Flex)`
   cursor: pointer;
   background-color: ${p => p.theme.colors.opacityDefault.c05};
-  :hover {
+  &:hover {
     background-color: ${p => p.theme.colors.primary.c10};
   }
 `;
@@ -83,9 +81,7 @@ export const ProviderItem = ({ provider, stakeOnClick }: Props) => {
   const manifest = useMemo(() => remoteManifest || localManifest, [localManifest, remoteManifest]);
 
   const handleClick = useCallback(() => {
-    if (manifest) {
-      stakeOnClick({ provider, manifest });
-    }
+    stakeOnClick({ provider, manifest: manifest || null });
   }, [provider, stakeOnClick, manifest]);
 
   const displayName = i18n.exists(`ethereum.stake.provider.${provider.id}.title`)

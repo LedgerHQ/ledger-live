@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import * as dmkUtils from "./useDeviceManagementKit";
 import { mapDiscoveredDeviceToScannedDevice, useBleDevicesScanning } from "./useBleDevicesScanning";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
@@ -6,7 +6,16 @@ import { Observable, Subject } from "rxjs";
 import { renderHook, act } from "@testing-library/react";
 import { BleState, useBleState } from "./useBleState";
 
-const dmk = dmkUtils.getDeviceManagementKit();
+jest.mock("./useDeviceManagementKit", () => ({
+  getDeviceManagementKit: jest.fn(),
+  useDeviceManagementKit: jest.fn(),
+}));
+
+const dmk = {
+  getDeviceSessionState: jest.fn(),
+  listenToAvailableDevices: jest.fn(),
+  stopDiscovering: jest.fn(),
+} as unknown as DeviceManagementKit;
 
 // Mock device data for tests
 const mockDevice1 = {
@@ -109,8 +118,8 @@ describe("defaultMapper", () => {
 });
 
 // Mock useBleState
-vi.mock("./useBleState", () => ({
-  useBleState: vi.fn(),
+jest.mock("./useBleState", () => ({
+  useBleState: jest.fn(),
   BleState: {
     Unknown: "Unknown",
     Resetting: "Resetting",
@@ -123,16 +132,17 @@ vi.mock("./useBleState", () => ({
 }));
 
 describe("useBleDevicesScanning", () => {
-  const mockUseBleState = vi.mocked(useBleState);
-  const mockListenToAvailableDevices = vi.fn();
-  const mockStopDiscovering = vi.fn();
+  const mockUseBleState = jest.mocked(useBleState);
+  const mockListenToAvailableDevices = jest.fn();
+  const mockStopDiscovering = jest.fn();
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    vi.spyOn(dmkUtils, "useDeviceManagementKit").mockReturnValue(dmk);
-    vi.spyOn(dmk, "getDeviceSessionState").mockReturnValue(new Observable());
-    vi.spyOn(dmk, "listenToAvailableDevices").mockImplementation(mockListenToAvailableDevices);
-    vi.spyOn(dmk, "stopDiscovering").mockImplementation(mockStopDiscovering);
+    jest.clearAllMocks();
+    jest.mocked(dmkUtils.getDeviceManagementKit).mockReturnValue(dmk);
+    jest.mocked(dmkUtils.useDeviceManagementKit).mockReturnValue(dmk);
+    dmk.getDeviceSessionState.mockReturnValue(new Observable());
+    dmk.listenToAvailableDevices.mockImplementation(mockListenToAvailableDevices);
+    dmk.stopDiscovering.mockImplementation(mockStopDiscovering);
   });
 
   it("should scan and map devices", async () => {
@@ -337,7 +347,7 @@ describe("useBleDevicesScanning", () => {
   });
 
   it("should retry scanning after unexpected completion", async () => {
-    vi.useFakeTimers();
+    jest.useFakeTimers();
     mockUseBleState.mockReturnValue(BleState.PoweredOn);
 
     // First attempt - completes unexpectedly
@@ -363,7 +373,7 @@ describe("useBleDevicesScanning", () => {
 
     // Fast-forward time by 5 seconds to trigger retry
     act(() => {
-      vi.advanceTimersByTime(5000);
+      jest.advanceTimersByTime(5000);
     });
 
     // Should have retried
@@ -378,11 +388,11 @@ describe("useBleDevicesScanning", () => {
     expect(result.current.scannedDevices).toHaveLength(2);
     expect(result.current.isScanning).toBe(true);
 
-    vi.useRealTimers();
+    jest.useRealTimers();
   });
 
   it("should not retry if scanning is disabled before retry timeout", async () => {
-    vi.useFakeTimers();
+    jest.useFakeTimers();
     mockUseBleState.mockReturnValue(BleState.PoweredOn);
 
     const subject = new Subject<DiscoveredDevice[]>();
@@ -406,18 +416,18 @@ describe("useBleDevicesScanning", () => {
 
     // Fast-forward time by 5 seconds
     act(() => {
-      vi.advanceTimersByTime(5000);
+      jest.advanceTimersByTime(5000);
     });
 
     // Should NOT have retried because scanning was disabled
     expect(mockListenToAvailableDevices).toHaveBeenCalledTimes(1);
     expect(result.current.isScanning).toBe(false);
 
-    vi.useRealTimers();
+    jest.useRealTimers();
   });
 
   it("should cleanup retry timeout on unmount", async () => {
-    vi.useFakeTimers();
+    jest.useFakeTimers();
     mockUseBleState.mockReturnValue(BleState.PoweredOn);
 
     const subject = new Subject<DiscoveredDevice[]>();
@@ -439,12 +449,12 @@ describe("useBleDevicesScanning", () => {
 
     // Fast-forward time by 5 seconds
     act(() => {
-      vi.advanceTimersByTime(5000);
+      jest.advanceTimersByTime(5000);
     });
 
     // Should NOT have retried because component was unmounted
     expect(mockListenToAvailableDevices).toHaveBeenCalledTimes(1);
 
-    vi.useRealTimers();
+    jest.useRealTimers();
   });
 });

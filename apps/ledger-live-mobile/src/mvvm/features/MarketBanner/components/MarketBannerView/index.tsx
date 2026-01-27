@@ -1,15 +1,20 @@
-import React, { useCallback, useRef } from "react";
-import { FlatList, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
-import { Flex } from "@ledgerhq/native-ui";
-import { Text, Pressable } from "@ledgerhq/lumen-ui-rnative";
-import { useTranslation } from "react-i18next";
+import React, { useCallback } from "react";
+import { FlatList } from "react-native";
+import {
+  Subheader,
+  SubheaderRow,
+  SubheaderTitle,
+  SubheaderShowMore,
+  Box,
+} from "@ledgerhq/lumen-ui-rnative";
+import { useTranslation } from "~/context/Locale";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
 import BannerItem, { ListItem } from "../BannerItem";
-import { ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { FearAndGreed } from "LLM/components/FearAndGreed";
 import ViewAllTile from "../ViewAllTile";
-import { BannerStates } from "../BannerStates";
+import { ErrorState } from "../ErrorState";
+import { SkeletonState } from "../SkeletonState";
 
 interface MarketBannerViewProps {
   items: MarketItemPerformer[];
@@ -18,9 +23,13 @@ interface MarketBannerViewProps {
   onTilePress: (item: MarketItemPerformer) => void;
   onViewAllPress: () => void;
   onSectionTitlePress: () => void;
-  onSwipe: () => void;
   testID?: string;
 }
+
+const HEIGHT = 102;
+const MARGIN_RIGHT = 8;
+const PADDING_HORIZONTAL = 16;
+const MARGIN_HORIZONTAL = -16;
 
 const MarketBannerView = ({
   items,
@@ -29,22 +38,9 @@ const MarketBannerView = ({
   onTilePress,
   onViewAllPress,
   onSectionTitlePress,
-  onSwipe,
   testID = "market-banner-container",
 }: MarketBannerViewProps) => {
   const { t } = useTranslation();
-  const hasTrackedSwipe = useRef(false);
-
-  const handleSwipe = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const { contentOffset } = event.nativeEvent;
-      if (contentOffset.x > 20 && !hasTrackedSwipe.current) {
-        hasTrackedSwipe.current = true;
-        onSwipe();
-      }
-    },
-    [onSwipe],
-  );
 
   const renderItem = useCallback(
     (props: { item: ListItem; index: number }) => (
@@ -53,43 +49,40 @@ const MarketBannerView = ({
     [range, onTilePress],
   );
 
-  const keyExtractor = useCallback((item: ListItem): string => {
-    return item.id;
-  }, []);
-
   return (
-    <Flex testID={testID} mb={24}>
-      <Pressable
-        onPress={onSectionTitlePress}
-        accessibilityLabel={t("marketBanner.title")}
-        accessibilityHint={t("marketBanner.viewAllAccessibilityHint")}
-        accessibilityRole="button"
-      >
-        <Flex flexDirection="row" alignItems="center" mb={4}>
-          <Text typography="heading4SemiBold" lx={{ color: "base" }}>
-            {t("marketBanner.title")}
-          </Text>
-          <ChevronRight size={20} color="base" />
-        </Flex>
-      </Pressable>
+    <Box testID={testID} lx={{ marginBottom: "s24" }}>
+      <Subheader>
+        <SubheaderRow
+          onPress={onSectionTitlePress}
+          lx={{ marginBottom: "s12" }}
+          accessibilityRole="button"
+          accessibilityLabel={t("marketBanner.title")}
+          accessibilityHint={t("marketBanner.accessibilityHint")}
+        >
+          <SubheaderTitle>{t("marketBanner.title")}</SubheaderTitle>
+          <SubheaderShowMore />
+        </SubheaderRow>
+      </Subheader>
 
-      <FlatList
-        data={items}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        ListHeaderComponent={<FearAndGreed />}
-        ListFooterComponent={<ViewAllTile onPress={onViewAllPress} />}
-        ListEmptyComponent={<BannerStates isError={isError} />}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        onScroll={handleSwipe}
-        scrollEventThrottle={16}
-        testID="market-banner-list"
-        ListHeaderComponentStyle={{ marginRight: 8 }}
-        contentContainerStyle={{ paddingHorizontal: 16 }}
-        style={{ marginHorizontal: -16 }}
-      />
-    </Flex>
+      {isError ? (
+        <ErrorState />
+      ) : (
+        <FlatList
+          data={items}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+          ListHeaderComponent={<FearAndGreed />}
+          ListFooterComponent={<ViewAllTile onPress={onViewAllPress} />}
+          ListEmptyComponent={<SkeletonState />}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          testID="market-banner-list"
+          ListHeaderComponentStyle={{ marginRight: MARGIN_RIGHT }}
+          contentContainerStyle={{ paddingHorizontal: PADDING_HORIZONTAL, height: HEIGHT }}
+          style={{ marginHorizontal: MARGIN_HORIZONTAL }}
+        />
+      )}
+    </Box>
   );
 };
 

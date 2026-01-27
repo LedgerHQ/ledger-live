@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSendInvalidTokenAmountTest } from "../send";
 
 const transaction = new Transaction(
@@ -13,4 +12,5 @@ runSendInvalidTokenAmountTest(
     /You need \d+\.\d+ ETH in your account to pay for transaction fees on the Ethereum network\. .*/,
   ),
   ["B2CQA-2701"],
+  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 );

@@ -2,7 +2,7 @@ import React, { memo, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import WalletCoinsSupported from "~/icons/WalletCoinsSupported";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
 import { NavigatorName, ScreenName } from "~/const";
@@ -10,6 +10,7 @@ import { track, TrackScreen } from "~/analytics";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import RecoverBanner from "~/components/RecoverBanner";
 
 const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () => void }) => {
   const { t } = useTranslation();
@@ -53,6 +54,7 @@ const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () 
         mt={7}
         marginX={"-16px"}
       />
+      <RecoverBanner />
       <Flex flexGrow={1} flexDirection="row" mt={9}>
         <Button
           type="main"

@@ -1,5 +1,5 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import {
   View,
   TouchableOpacity,

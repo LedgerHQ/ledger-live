@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, IconsLegacy, Text, Box } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import Button from "~/components/wrappedUi/Button";
 import usePostBuySuccessModel from "./usePostBuySuccessModel";
 

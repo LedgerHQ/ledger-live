@@ -282,11 +282,13 @@
     "advanced": "Advanced",
     "custom": "Custom",
     "fast": "Fast",
+    "networkFees": "Network fees",
     "high": "High",
     "low": "Low",
     "slow": "Slow",
     "standard": "Standard",
     "medium": "Medium",
+    "coinControl": "Coin Control",
     "feesAmount": "Fees Amount"
   },
   "sidebar": {
@@ -1477,34 +1479,6 @@
         "primaryCta": "Connect device",
         "secondaryCta": "Maybe later"
       }
-    },
-    "marketPerformanceWidget": {
-      "title": "{{time}} trend",
-      "buy": "Buy",
-      "swap": "Swap",
-      "gainers": "Gainers",
-      "losers": "Losers",
-      "error": {
-        "title": "Sorry, we’re unable to load the trend",
-        "description": "Please try again later"
-      },
-      "missingData": {
-        "gainers": {
-          "title": "No assets among the top {{count}} experienced gains in the last {{trend}}",
-          "description": "Consider viewing top losers or come back later"
-        },
-        "losers": {
-          "title": "No assets among the top {{count}} experienced losses in the last {{trend}}",
-          "description": "Consider viewing top gainers or come back later"
-        }
-      },
-      "trend": {
-        "day": "24 hours",
-        "week": "7 days",
-        "month": "30 days",
-        "year": "year",
-        "all": "year"
-      }
     }
   },
   "currentAddress": {
@@ -1553,6 +1527,7 @@
     "currency": "Currency",
     "rangeLabel": "Time",
     "goBack": "Go back",
+    "searchPlaceholder": "Search asset",
     "filters": {
       "title": "Filters",
       "show": "Show",
@@ -2388,9 +2363,26 @@
     "amountToSend": "Amount to send in ({{currency}})",
     "coinToSend": "Coin to send",
     "coinControlCustom": "Custom coin selection",
+    "quickActions": {
+      "quarter": "25%",
+      "half": "50%",
+      "threeQuarters": "75%",
+      "max": "Max"
+    },
+    "reviewCta": "Review",
+    "getCta": "Get {{currency}}",
+    "switchInputMode": "Switch amount input mode",
     "aboveMaximum": "Above maximum balance",
     "transactionSigned": "Transaction signed",
-    "processingTransaction": "Your transaction is being processed"
+    "processingTransaction": "Your transaction is being processed",
+    "sign": {
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instructions displayed on your Secure Touchscreen."
+    },
+    "gasOptionsSync": {
+      "warningTitle": "Unable to refresh network fees",
+      "warningDescription": "Fee presets may be outdated."
+    }
   },
   "releaseNotes": {
     "title": "Release notes",
@@ -4466,9 +4458,7 @@
       "walletSyncDescription": "Keep your portfolio up to date when switching computers or use a phone",
       "mevProtection": "MEV Protection",
       "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
-      "mevProtectionLearnMore": "Privacy notice",
-      "marketPerformanceWidget": "Market Performance Widget",
-      "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
+      "mevProtectionLearnMore": "Privacy notice"
     },
     "developer": {
       "search": "Search",
@@ -4599,6 +4589,15 @@
         "debugDialog": "Debug Dialog",
         "debugDuplicates": "Debug Duplicates"
       },
+      "walletFeaturesDevTool": {
+        "title": "Wallet Features Dev Tool",
+        "description": "Toggle Wallet 4.0 features for desktop (lwdWallet40 feature flag).",
+        "enableAll": "Enable All",
+        "disableAll": "Disable All",
+        "featureParameters": "Feature Parameters",
+        "showJson": "Show JSON",
+        "hideJson": "Hide JSON"
+      },
       "cryptoAssetsList": {
         "title": "Crypto Assets List",
         "description": "Browse and manage crypto assets from the Crypto Assets List (CAL) service.",
@@ -4696,6 +4695,8 @@
       "runLocalAppOpenButton": "Open",
       "enableLearnStagingUrl": "Learn page staging URL",
       "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
+      "enableCountervaluesStaging": "Countervalues API staging",
+      "enableCountervaluesStagingDesc": "Use the staging countervalues API instead of production.",
       "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
       "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
     },
@@ -6815,6 +6816,10 @@
       "title": "Cardano invalid protocol parameters",
       "description": "ADA transactions are temporarily unavailable. Please resync your account and try again or contact Support if you need assistance."
     },
+    "CardanoMemoExceededSizeError": {
+      "title": "Invalid memo size, maximum allowed is 64 characters",
+      "description": "Cardano memo have a maximum limited size. Please reduce the size of the memo"
+    },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },
@@ -6888,8 +6893,9 @@
     "HederaNoStakingRewardsError": {
       "title": "No rewards to claim"
     },
-    "HederaMemoIsTooLong": {
-      "title": "Memo is too long. Max length is {{maxLength}} characters"
+    "HederaMemoExceededSizeError": {
+      "title": "Invalid memo size, maximum allowed is 100 characters",
+      "description": "Hedera memo have a maximum limited size. Please reduce the size of the memo"
     },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",
@@ -7562,6 +7568,9 @@
       "analyticsDesc": "Enable Ledger to collect app usage data to help measure Ledger Wallet’s performance and enhance both the app and your experience."
     }
   },
+  "analytics": {
+    "title": "Analytics"
+  },
   "walletSync": {
     "title": "Ledger Sync",
     "close": "Close",
@@ -7839,9 +7848,39 @@
       "cta": "Try again"
     }
   },
+  "portfolio": {
+    "title": "Home",
+    "today": "Today"
+  },
   "marketBanner": {
     "title": "Explore market",
-    "genericError": "Connection failed"
+    "genericError": "Connection failed",
+    "cta": "View all",
+    "fearAndGreed": {
+      "title": "Mood"
+    }
+  },
+  "fearAndGreed": {
+    "levels": {
+      "extremeFear": "Fear+",
+      "fear": "Fear",
+      "neutral": "Neutral",
+      "greed": "Greed",
+      "extremeGreed": "Greed+"
+    },
+    "dialog": {
+      "title": "Mood index",
+      "content": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+      "cta": "Got it"
+    }
+  },
+  "quickActions": {
+    "send": "Send",
+    "receive": "Receive",
+    "buy": "Buy",
+    "sell": "Sell",
+    "connect": "Connect",
+    "buyALedger": "Buy a Ledger"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",

@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Нет вознаграждений для получения"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Слишком длинное Memo. Максимум – {{maxLength}} символов"
-    },
     "NearNewAccountWarning" : {
       "title" : "Адрес получателя ещё не создан. Для его создания протокол требует перевод {{formattedNewAccountStorageCost}}."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "Сумма должна быть не менее {{threshold}}"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "Недопустимый формат примечания (Memo). Оно должно быть меньше 4294967296"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "Недопустимый размер примечания (Memo). Используйте не более 100 символов"
     },
     "PinNotSet" : {
       "title" : "ПИН-код не установлен"
@@ -3474,7 +3477,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Включите уведомления",
+      "titleVariantB" : "Извлеките максимум из Ledger Wallet",
       "desc" : "Будьте в курсе последних новостей о Ledger Wallet, устройствах Ledger и рынке криптовалют, а также получайте персонализированные рекомендации. Отписаться можно в любой момент в настройках.",
+      "descVariantB" : "Мы отправим вам персонализированные советы, руководства по настройке и актуальные новости о происходящем на рынке.",
       "allow" : "Разрешить уведомления",
       "later" : "Не сейчас"
     },
@@ -3891,7 +3896,9 @@
         "celo_title" : "Ledger Nano S™ не поддерживает обмен Celo",
         "celo_description" : "Используйте другие совместимые устройства Ledger для обмена Celo. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "monad_title" : "Ledger Nano S™ не поддерживает обмен Monad",
-        "monad_description" : "Для обмена Monad используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
+        "monad_description" : "Для обмена Monad используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+        "zcash_title" : "Ledger Nano S™ не поддерживает обмен Zcash",
+        "zcash_description" : "Для обмена Zcash используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
       }
     },
     "lending" : {
@@ -8086,6 +8093,15 @@
       "cta" : "Подробнее..."
     }
   },
+  "marketBanner" : {
+    "title" : "Исследуйте рынок",
+    "viewAll" : "Посмотреть всё",
+    "viewAllAccessibilityHint" : "Нажмите дважды, чтобы посмотреть все активы рынка",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "Нажмите дважды, чтобы посмотреть информацию о рынке"
+    }
+  },
   "largeMover" : {
     "info" : "Инфо",
     "marketCap" : "Капитализация",
@@ -8325,6 +8341,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "Настроения",
+    "description" : "Индекс настроений отражает эмоциональное состояние рынка. Его значение варьируется от 0 до 100. Более низкий показатель означает крайний страх, а более высокий — крайнюю жадность.",
+    "levels" : {
+      "extremeFear" : "Страх+",
+      "fear" : "Страх",
+      "neutral" : "Нейтральное",
+      "greed" : "Жадность",
+      "extremeGreed" : "Жадность+"
     }
   }
 }

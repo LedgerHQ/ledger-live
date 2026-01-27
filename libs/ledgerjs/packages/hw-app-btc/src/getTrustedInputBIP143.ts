@@ -1,9 +1,7 @@
-import Transport from "@ledgerhq/hw-transport";
 import { sha256 } from "@noble/hashes/sha256";
 import type { Transaction } from "./types";
 import { serializeTransaction } from "./serializeTransaction";
 export function getTrustedInputBIP143(
-  transport: Transport,
   indexLookup: number,
   transaction: Transaction,
   additionals: Array<string> = [],

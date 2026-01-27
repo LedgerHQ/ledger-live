@@ -2,53 +2,19 @@ import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
-import { buildOptimisticOperation, extractBalances, transactionToIntent } from "./utils";
+import {
+  applyMemoToIntent,
+  bigNumberToBigIntDeep,
+  buildOptimisticOperation,
+  extractBalances,
+  transactionToIntent,
+} from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/coin-framework/derivation";
-import { MapMemo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import { StellarMemo } from "@ledgerhq/coin-stellar/types/bridge";
+import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
-
-/**
- * Applies memo information to transaction intent
- * Handles both destination tags (XRP-like) and Stellar-style memos
- */
-function applyMemoToIntent(
-  transactionIntent: TransactionIntent,
-  transaction: GenericTransaction,
-): TransactionIntent {
-  // Handle destination tag memo (for XRP-like chains)
-  if (transaction.tag) {
-    const txWithMemoTag = transactionIntent as TransactionIntent<MapMemo<string, string>>;
-    const txMemo = String(transaction.tag);
-
-    txWithMemoTag.memo = {
-      type: "map",
-      memos: new Map(),
-    };
-    txWithMemoTag.memo.memos.set("destinationTag", txMemo);
-
-    return txWithMemoTag;
-  }
-
-  // Handle Stellar-style memo
-  if (transaction.memoType && transaction.memoValue) {
-    const txWithMemo = transactionIntent as TransactionIntent<StellarMemo>;
-    const txMemoType = String(transaction.memoType);
-    const txMemoValue = String(transaction.memoValue);
-
-    txWithMemo.memo = {
-      type: txMemoType as "NO_MEMO" | "MEMO_TEXT" | "MEMO_ID" | "MEMO_HASH" | "MEMO_RETURN",
-      value: txMemoValue,
-    };
-
-    return txWithMemo;
-  }
-
-  return transactionIntent;
-}
 
 /**
  * Enriches transaction intent with memo and asset information
@@ -85,20 +51,16 @@ export const genericSignOperation =
       async function main() {
         const alpacaApi = getAlpacaApi(account.currency.id, kind);
         if (!transaction.fees) throw new FeeNotLoaded();
-        const fees = BigInt(transaction.fees?.toString() || "0");
-        const feesParameters = {
-          ...(transaction.gasLimit ? { gasLimit: BigInt(transaction.gasLimit.toFixed()) } : {}),
-          ...(transaction.gasPrice ? { gasPrice: BigInt(transaction.gasPrice.toFixed()) } : {}),
-          ...(transaction.maxFeePerGas
-            ? { maxFeePerGas: BigInt(transaction.maxFeePerGas.toFixed()) }
-            : {}),
-          ...(transaction.maxPriorityFeePerGas
-            ? { maxPriorityFeePerGas: BigInt(transaction.maxPriorityFeePerGas.toFixed()) }
-            : {}),
-          ...(transaction.additionalFees
-            ? { additionalFees: BigInt(transaction.additionalFees.toFixed()) }
-            : {}),
-        };
+        const customFees = bigNumberToBigIntDeep({
+          value: transaction.fees ?? new BigNumber(0),
+          parameters: {
+            gasLimit: transaction.gasLimit,
+            gasPrice: transaction.gasPrice,
+            maxFeePerGas: transaction.maxFeePerGas,
+            maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+            additionalFees: transaction.additionalFees,
+          },
+        });
         if (transaction.useAllAmount) {
           const draftTransaction = {
             mode: transaction.mode,
@@ -117,7 +79,7 @@ export const genericSignOperation =
           const { amount } = await alpacaApi.validateIntent(
             transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
             extractBalances(account, alpacaApi.getAssetFromToken),
-            { value: fees, parameters: feesParameters },
+            customFees,
           );
           transaction.amount = new BigNumber(amount.toString());
         }
@@ -142,10 +104,10 @@ export const genericSignOperation =
           }
 
           /* Craft unsigned blob via Alpaca */
-          const { transaction: unsigned } = await alpacaApi.craftTransaction(transactionIntent, {
-            value: fees,
-            parameters: feesParameters,
-          });
+          const { transaction: unsigned } = await alpacaApi.craftTransaction(
+            transactionIntent,
+            customFees,
+          );
 
           /* Notify UI that the device is now showing the tx */
           o.next({ type: "device-signature-requested" });

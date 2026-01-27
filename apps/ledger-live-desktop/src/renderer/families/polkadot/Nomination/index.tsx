@@ -44,7 +44,7 @@ import {
 } from "@ledgerhq/live-common/families/polkadot/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 
 type Props = {
   account: PolkadotAccount | TokenAccount;
@@ -65,7 +65,7 @@ export type NominationValidator =
   | PolkadotUnlocking;
 
 const Nomination = ({ account }: { account: PolkadotAccount }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
@@ -119,8 +119,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
   }, [unlockings, unlockedBalance]);
   const onEarnRewards = useCallback(() => {
     if (["polkadot", "assethub_polkadot"].includes(account.currency.id)) {
-      history.push({
-        pathname: "/platform/stakekit",
+      navigate("/platform/stakekit", {
         state: {
           yieldId: "polkadot-dot-validator-staking",
           accountId: account.id,
@@ -134,7 +133,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
         }),
       );
     }
-  }, [account, dispatch, history]);
+  }, [account, dispatch, navigate]);
   const onNominate = useCallback(() => {
     dispatch(
       openModal("MODAL_POLKADOT_NOMINATE", {

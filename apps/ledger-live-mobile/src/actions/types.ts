@@ -9,8 +9,6 @@ import type {
   FeatureId,
 } from "@ledgerhq/types-live";
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
   AppState,
@@ -31,7 +29,6 @@ import type {
   MarketState,
   LargeMoverState,
   InViewState,
-  SwapStateType,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 import type { HandlersPayloads } from "@ledgerhq/live-wallet/store";
@@ -165,10 +162,7 @@ export type CountervaluesPayload =
 
 export enum NotificationsActionTypes {
   NOTIFICATIONS_SET_MODAL_OPEN = "NOTIFICATIONS_SET_MODAL_OPEN",
-  NOTIFICATIONS_SET_MODAL_LOCKED = "NOTIFICATIONS_SET_MODAL_LOCKED",
   NOTIFICATIONS_SET_DRAWER_SOURCE = "NOTIFICATIONS_SET_DRAWER_SOURCE",
-  NOTIFICATIONS_SET_CURRENT_ROUTE_NAME = "NOTIFICATIONS_SET_CURRENT_ROUTE_NAME",
-  NOTIFICATIONS_SET_EVENT_TRIGGERED = "NOTIFICATIONS_SET_EVENT_TRIGGERED",
   NOTIFICATIONS_SET_DATA_OF_USER = "NOTIFICATIONS_SET_DATA_OF_USER",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
   NOTIFICATIONS_SET_PERMISSION_STATUS = "NOTIFICATIONS_SET_PERMISSION_STATUS",
@@ -176,14 +170,7 @@ export enum NotificationsActionTypes {
 
 export type NotificationsSetModalOpenPayload = NotificationsState["isPushNotificationsModalOpen"];
 
-export type NotificationsSetModalLockedPayload =
-  NotificationsState["isPushNotificationsModalLocked"];
-
 export type NotificationsSetDrawerSourcePayload = NotificationsState["drawerSource"];
-
-export type NotificationsSetCurrentRouteNamePayload = NotificationsState["currentRouteName"];
-
-export type NotificationsSetEventTriggeredPayload = NotificationsState["eventTriggered"];
 
 export type NotificationSetPermissionStatusPayload = NotificationsState["permissionStatus"];
 
@@ -191,10 +178,7 @@ export type NotificationsSetDataOfUserPayload = NotificationsState["dataOfUser"]
 
 export type NotificationsPayload =
   | NotificationsSetModalOpenPayload
-  | NotificationsSetModalLockedPayload
   | NotificationsSetDrawerSourcePayload
-  | NotificationsSetCurrentRouteNamePayload
-  | NotificationsSetEventTriggeredPayload
   | NotificationsSetDataOfUserPayload
   | NotificationSetPermissionStatusPayload;
 
@@ -234,7 +218,6 @@ export type DynamicContentPayload =
 
 export enum RatingsActionTypes {
   RATINGS_SET_MODAL_OPEN = "RATINGS_SET_MODAL_OPEN",
-  RATINGS_SET_MODAL_LOCKED = "RATINGS_SET_MODAL_LOCKED",
   RATINGS_SET_CURRENT_ROUTE_NAME = "RATINGS_SET_CURRENT_ROUTE_NAME",
   RATINGS_SET_HAPPY_MOMENT = "RATINGS_SET_HAPPY_MOMENT",
   RATINGS_SET_DATA_OF_USER = "RATINGS_SET_DATA_OF_USER",
@@ -242,13 +225,11 @@ export enum RatingsActionTypes {
 }
 
 export type RatingsSetModalOpenPayload = RatingsState["isRatingsModalOpen"];
-export type RatingsSetModalLockedPayload = RatingsState["isRatingsModalLocked"];
 export type RatingsSetCurrentRouteNamePayload = RatingsState["currentRouteName"];
 export type RatingsSetHappyMomentPayload = RatingsState["happyMoment"];
 export type RatingsDataOfUserPayload = RatingsState["dataOfUser"];
 export type RatingsPayload =
   | RatingsSetModalOpenPayload
-  | RatingsSetModalLockedPayload
   | RatingsSetCurrentRouteNamePayload
   | RatingsSetHappyMomentPayload
   | RatingsDataOfUserPayload;
@@ -289,7 +270,6 @@ export enum SettingsActionTypes {
   SETTINGS_SET_LANGUAGE = "SETTINGS_SET_LANGUAGE",
   SETTINGS_SET_LOCALE = "SETTINGS_SET_LOCALE",
   SETTINGS_SET_DATE_FORMAT = "SETTINGS_SET_DATE_FORMAT",
-  ACCEPT_SWAP_PROVIDER = "ACCEPT_SWAP_PROVIDER",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
   LAST_SEEN_DEVICE_LANGUAGE_ID = "LAST_SEEN_DEVICE_LANGUAGE_ID",
   SET_KNOWN_DEVICE_MODEL_IDS = "SET_KNOWN_DEVICE_MODEL_IDS",
@@ -494,12 +474,6 @@ export enum SwapActionTypes {
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
-export type UpdateProvidersPayload = SwapStateType["providers"];
-export type UpdateTransactionPayload = Transaction | undefined;
-export type UpdateRatePayload = ExchangeRate | undefined;
-
-export type SwapPayload = UpdateTransactionPayload | UpdateRatePayload;
-
 // === EARN ACTIONS ==
 export enum EarnActionTypes {
   EARN_INFO_MODAL = "EARN_INFO_MODAL",
@@ -615,7 +589,6 @@ export type ActionsPayload =
   | Action<SettingsPayload>
   | Action<WalletConnectPayload>
   | Action<PostOnboardingPayload>
-  | Action<SwapPayload>
   | Action<ProtectPayload>
   | Action<EarnPayload>
   | Action<MarketPayload>

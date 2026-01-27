@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps } from "@react-navigation/native";

@@ -38,25 +38,33 @@ describe("market.handler", () => {
       expect(context.navigate).toHaveBeenCalledWith("/market/bitcoin");
     });
 
-    it("navigates to market detail for any currency id", () => {
+    it("normalizes and navigates to market detail for a valid currency id", () => {
       const context = createMockContext();
 
-      marketHandler({ type: "market", path: "ethereum" }, context);
+      marketHandler({ type: "market", path: "BiTcOiN" }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith("/market/ethereum");
+      expect(context.navigate).toHaveBeenCalledWith("/market/bitcoin");
+    });
+
+    it("navigates to market list for an unknown currency id", () => {
+      const context = createMockContext();
+
+      marketHandler({ type: "market", path: "unknown_coin" }, context);
+
+      expect(context.navigate).toHaveBeenCalledWith("/market");
     });
   });
 
   describe("assetHandler", () => {
-    it("does nothing when no path is provided", () => {
+    it("navigates to home when no path is provided", () => {
       const context = createMockContext();
 
       assetHandler({ type: "asset", path: "" }, context);
 
-      expect(context.navigate).not.toHaveBeenCalled();
+      expect(context.navigate).toHaveBeenCalledWith("/");
     });
 
-    it("navigates to asset page when path is provided", () => {
+    it("navigates to asset page when valid currency id is provided", () => {
       const context = createMockContext();
 
       assetHandler({ type: "asset", path: "bitcoin" }, context);
@@ -64,12 +72,20 @@ describe("market.handler", () => {
       expect(context.navigate).toHaveBeenCalledWith("/asset/bitcoin");
     });
 
-    it("navigates to asset page for any asset id", () => {
+    it("normalizes and navigates to asset page for a valid currency id", () => {
       const context = createMockContext();
 
-      assetHandler({ type: "asset", path: "ethereum" }, context);
+      assetHandler({ type: "asset", path: "BiTcOiN" }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith("/asset/ethereum");
+      expect(context.navigate).toHaveBeenCalledWith("/asset/bitcoin");
+    });
+
+    it("navigates to home for an unknown currency id", () => {
+      const context = createMockContext();
+
+      assetHandler({ type: "asset", path: "unknown_coin" }, context);
+
+      expect(context.navigate).toHaveBeenCalledWith("/");
     });
   });
 });

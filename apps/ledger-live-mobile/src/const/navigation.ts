@@ -1,4 +1,5 @@
 export enum ScreenName {
+  Analytics = "Analytics",
   AboutSettings = "AboutSettings",
   Account = "Account",
   Accounts = "Accounts",
@@ -26,8 +27,6 @@ export enum ScreenName {
   CurrencySettings = "CurrencySettings",
   EditCurrencyUnits = "EditCurrencyUnits",
   CustomCALRefInput = "CustomCALRefInput",
-  DebugBLE = "DebugBLE",
-  DebugBLEBenchmark = "DebugBLEBenchmark",
   DebugBLEDevicePairing = "DebugBLEDevicePairing",
   DebugConfiguration = "DebugConfiguration",
   DebugCommandSender = "DebugCommandSender",
@@ -101,7 +100,6 @@ export enum ScreenName {
   MyLedgerDevice = "MyLedgerDevice",
   NotificationsSettings = "NotificationsSettings",
   OperationDetails = "OperationDetails",
-  PairDevices = "PairDevices",
   PasswordAdd = "PasswordAdd",
   PasswordRemove = "PasswordRemove",
   Portfolio = "Wallet",
@@ -385,6 +383,7 @@ export enum ScreenName {
   VerifyAccount = "VerifyAccount",
   AnalyticsAllocation = "AnalyticsAllocation",
   AnalyticsOperations = "AnalyticsOperations",
+  DetailedAllocation = "DetailedAllocation",
   CustomErrorScreen = "CustomErrorScreen",
   // solana
   SolanaEditMemo = "SolanaEditMemo",
@@ -678,4 +677,5 @@ export enum NavigatorName {
   ModularDrawer = "ModularDrawer",
   DeviceSelection = "DeviceSelection",
   Assets = "Assets",
+  Analytics = "Analytics",
 }

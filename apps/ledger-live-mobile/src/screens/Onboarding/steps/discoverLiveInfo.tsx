@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo, useContext } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, Carousel, Text, Button, StoriesIndicator, Box } from "@ledgerhq/native-ui";
 import { useNavigation, useFocusEffect, CompositeNavigationProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -24,7 +24,7 @@ import {
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import { DETOX_ENABLED } from "~/utils/constants";
-import { useNotifications } from "~/logic/notifications";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.webp"),

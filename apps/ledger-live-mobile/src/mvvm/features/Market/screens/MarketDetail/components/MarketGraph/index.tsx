@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback, memo } from "react";
 import { useTheme } from "styled-components/native";
 import { Flex, GraphTabs, InfiniteLoader, Transitions, ensureContrast } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import Graph from "~/components/Graph";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Item } from "~/components/Graph/types";

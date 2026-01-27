@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
@@ -20,9 +20,9 @@ export function useDeepLinkHandler() {
   const dispatch = useDispatch();
   const accounts = useSelector(accountsSelector);
   const location = useLocation();
-  const history = useHistory();
+  const routerNavigate = useNavigate();
 
-  const navigateToHome = useCallback(() => history.push("/"), [history]);
+  const navigateToHome = useCallback(() => routerNavigate("/"), [routerNavigate]);
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
   const postOnboardingDeeplinkHandler = usePostOnboardingDeeplinkHandler(
     navigateToHome,
@@ -41,16 +41,17 @@ export function useDeepLinkHandler() {
       const hasNewPathname = pathname !== location.pathname;
       const hasNewSearch = typeof search === "string" && search !== location.search;
       const hasNewState = JSON.stringify(state) !== JSON.stringify(location.state);
+      const fullPath = search ? `${pathname}${search}` : pathname;
 
       if (hasNewPathname || hasNewSearch) {
         setTrackingSource("deeplink");
-        history.push({ pathname, state, search });
+        routerNavigate(fullPath, { state });
       } else if (!hasNewPathname && hasNewState) {
         setTrackingSource("deeplink");
-        history.replace({ pathname, state, search });
+        routerNavigate(fullPath, { state, replace: true });
       }
     },
-    [history, location],
+    [routerNavigate, location],
   );
 
   const context: DeeplinkHandlerContext = useMemo(
@@ -79,10 +80,10 @@ export function useDeepLinkHandler() {
   );
 
   const handler = useCallback(
-    (_: unknown, deeplink: string) => {
+    (deeplink: string, triggeredAppStart: boolean) => {
       const parsed = parseDeepLink(deeplink);
 
-      trackDeeplinkingEvent(parsed.tracking);
+      trackDeeplinkingEvent(parsed.tracking, triggeredAppStart);
 
       const route = createRoute(parsed);
 

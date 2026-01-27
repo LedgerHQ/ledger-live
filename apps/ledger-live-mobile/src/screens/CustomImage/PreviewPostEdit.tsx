@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "~/components/wrappedUi/Button";
 

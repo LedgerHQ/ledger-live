@@ -149,11 +149,11 @@ describe("genericGetAccountShape", () => {
         };
 
         getSyncHashMock.mockReturnValue("sync-hash");
-        extractBalanceMock.mockReturnValue({ value: "1000", locked: "300" });
+        extractBalanceMock.mockReturnValue({ value: 1000n, locked: 300n });
         getBalanceMock.mockResolvedValue([
-          { asset: { type: "native" }, value: "1000", locked: "300" },
-          { asset: { type: "token", symbol: "TOK1" }, value: "42" },
-          { asset: { type: "token", symbol: "TOK_IGNORE" }, value: "5" },
+          { asset: { type: "native" }, value: 1000n, locked: 300n },
+          { asset: { type: "token", symbol: "TOK1" }, value: 42n },
+          { asset: { type: "token", symbol: "TOK_IGNORE" }, value: 5n },
         ]);
 
         getTokenFromAssetMock.mockImplementation(asset =>
@@ -216,8 +216,8 @@ describe("genericGetAccountShape", () => {
 
         const assetsBalancePassed = buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances;
         expect(assetsBalancePassed).toEqual([
-          { asset: { symbol: "TOK1", type: "token" }, value: "42" },
-          { asset: { symbol: "TOK_IGNORE", type: "token" }, value: "5" },
+          { asset: { symbol: "TOK1", type: "token" }, value: 42n },
+          { asset: { symbol: "TOK_IGNORE", type: "token" }, value: 5n },
         ]);
 
         const assetOpsPassed = buildSubAccountsMock.mock.calls[0][0].operations;
@@ -254,8 +254,8 @@ describe("genericGetAccountShape", () => {
     );
 
     test("handles empty operations (no old ops, no new ops) and blockHeight=0", async () => {
-      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: "0", locked: "0" }]);
-      extractBalanceMock.mockReturnValue({ value: "0", locked: "0" });
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
       listOperationsMock.mockResolvedValue([[]]);
       buildSubAccountsMock.mockReturnValue([]);
 
@@ -277,6 +277,150 @@ describe("genericGetAccountShape", () => {
         balance: new BigNumber(0),
         spendableBalance: new BigNumber(0),
       });
+    });
+
+    test("existing operations object refs are preserved", async () => {
+      const oldOps = [
+        {
+          hash: "h1",
+          blockHeight: 10,
+          type: "OPT_IN",
+          extra: { pagingToken: "pt1", assetReference: "ar1", assetOwner: "ow1" },
+          accountId: "accId",
+          id: "accId_h1_OPT_IN",
+        },
+        {
+          hash: "h2",
+          blockHeight: 12,
+          type: "OUT",
+          extra: { assetReference: "ar2", assetOwner: "ow2" },
+          accountId: "accId",
+          id: "accId_h2_OUT",
+        },
+      ];
+
+      const initialAccount = {
+        operations: oldOps,
+        pendingOperations: [],
+        blockHeight: 10,
+        syncHash: "sync-hash",
+      };
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: `${currency.id}_addr2`,
+          initialAccount,
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.operations?.[0]).toStrictEqual(oldOps[0]);
+      expect(result.operations?.[1]).toStrictEqual(oldOps[1]);
+    });
+
+    test("LedgerOPTypes is handled correctly", async () => {
+      const txWithLedgerOpTypes = {
+        hash: "tx-hash3",
+        type: "OUT",
+        tx: { failed: false },
+        details: {
+          assetReference: "usdc",
+          assetOwner: "owner",
+          ledgerOpType: "IN",
+          assetSenders: ["other"],
+          assetRecipients: ["owner"],
+        },
+      };
+
+      listOperationsMock.mockResolvedValue([[txWithLedgerOpTypes]]);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: `${currency.id}_addr2`,
+          initialAccount: undefined,
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      const operation = result.operations?.[0];
+      expect(operation?.hash).toBe(txWithLedgerOpTypes.hash);
+      expect(operation?.type).toBe(txWithLedgerOpTypes.type);
+    });
+
+    test("internal operations are correctly attached to parent operations with matching hash", async () => {
+      const parentOpHash = "parent-hash-123";
+      const parentOp = {
+        hash: parentOpHash,
+        type: "OUT",
+        height: 15,
+        tx: { failed: false },
+      };
+      const internalOp = {
+        hash: parentOpHash, // Same hash as parent
+        type: "IN",
+        height: 15,
+        tx: { failed: false },
+        details: {
+          ledgerOpType: "IN",
+        },
+      };
+
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+      listOperationsMock.mockResolvedValue([[parentOp, internalOp]]);
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 123 });
+
+      adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op) => {
+        if (op.hash === parentOpHash && op.type === "IN") {
+          // This is the internal operation
+          return {
+            hash: op.hash,
+            type: op.type,
+            blockHeight: op.height,
+            extra: { internal: true },
+          };
+        }
+        // This is the parent operation
+        return {
+          hash: op.hash,
+          type: op.type,
+          blockHeight: op.height,
+          extra: {},
+        };
+      });
+
+      cleanedOperationMock.mockImplementation(operation => operation);
+      mergeOpsMock.mockImplementation((_oldOps, newOps) => newOps);
+      inferSubOperationsMock.mockReturnValue([]);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: `${currency.id}_addr3`,
+          initialAccount: undefined,
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.operations).toHaveLength(1);
+      const operation = result.operations?.[0];
+      expect(operation?.hash).toBe(parentOpHash);
+      expect(operation?.type).toBe("OUT");
+      expect(operation?.internalOperations).toBeDefined();
+      expect(operation?.internalOperations).toHaveLength(1);
+      const attachedInternalOp = operation?.internalOperations?.[0];
+      expect(attachedInternalOp?.hash).toBe(parentOpHash);
+      expect(attachedInternalOp?.type).toBe("IN");
+      expect((attachedInternalOp as any)?.extra?.internal).toBe(true);
     });
   });
 });

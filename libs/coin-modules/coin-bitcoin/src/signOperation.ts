@@ -1,142 +1,156 @@
 import { BigNumber } from "bignumber.js";
-import { Observable } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import { isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
-import type { AccountBridge, DerivationMode, Operation } from "@ledgerhq/types-live";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import type { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import type { Observer } from "rxjs";
 import type { Transaction } from "./types";
 import { getNetworkParameters } from "./networks";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
 import { calculateFees } from "./cache";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { perCoinLogic } from "./logic";
 import { SignerContext } from "./signer";
+import { fromAsyncOperation } from "./observable";
+
+type SignOperationObserverEvent =
+  | { type: "device-signature-granted" }
+  | { type: "device-signature-requested" }
+  | { type: "device-streaming"; progress: number; index: number; total: number }
+  | { type: "signed"; signedOperation: { operation: Operation; signature: string } };
+
+function buildAdditionals(
+  currencyId: string,
+  derivationMode: string,
+  transaction: Transaction,
+): string[] {
+  const perCoin = perCoinLogic[currencyId];
+  let additionals: string[] = [currencyId];
+
+  if (derivationMode === "native_segwit") {
+    additionals.push("bech32");
+  }
+
+  if (derivationMode === "taproot") {
+    additionals.push("bech32m");
+  }
+
+  if (perCoin?.getAdditionals) {
+    additionals = additionals.concat(
+      perCoin.getAdditionals({
+        transaction,
+      }),
+    );
+  }
+
+  return additionals;
+}
+
+async function executeSignOperation(
+  o: Observer<SignOperationObserverEvent>,
+  account: Account,
+  deviceId: string,
+  transaction: Transaction,
+  signerContext: SignerContext,
+): Promise<void> {
+  const { currency } = account;
+  const walletAccount = getWalletAccount(account);
+
+  log("hw", `signTransaction ${currency.id} for account ${account.id}`);
+  const txInfo = await buildTransaction(account, transaction);
+
+  // Maybe better not re-calculate these fields here, instead include them
+  // in Transaction type and set them in prepareTransaction?
+  const res = await calculateFees({
+    account,
+    transaction,
+  });
+
+  const senders = res.txInputs.reduce((acc, i) => {
+    if (i.address) acc.add(i.address);
+    return acc;
+  }, new Set<string>());
+
+  const recipients = res.txOutputs.reduce<string[]>((acc, o) => {
+    if (!o.isChange && o.address) acc.push(o.address);
+    return acc;
+  }, []);
+
+  const fee = res.fees;
+
+  let lockTime: number | undefined;
+
+  // (legacy) Set lockTime for Komodo to enable reward claiming on UTXOs created by
+  // Ledger Live. We should only set this if the currency is Komodo and
+  // lockTime isn't already defined.
+  if (currency.id === "komodo" && lockTime === undefined) {
+    const unixtime = Math.floor(Date.now() / 1000);
+    lockTime = unixtime - 777;
+  }
+
+  const networkParams = getNetworkParameters(currency.id);
+  const sigHashType = networkParams.sigHash;
+  if (isNaN(sigHashType)) {
+    throw new Error("sigHashType should not be NaN");
+  }
+
+  const segwit = isSegwitDerivationMode(account.derivationMode);
+  const additionals = buildAdditionals(currency.id, account.derivationMode, transaction);
+
+  const perCoin = perCoinLogic[currency.id];
+  const expiryHeight = perCoin?.hasExpiryHeight ? Buffer.from([0x00, 0x00, 0x00, 0x00]) : undefined;
+
+  const hasExtraData = perCoin?.hasExtraData || false;
+
+  const signature: string = await signerContext(deviceId, currency, signer =>
+    wallet.signAccountTx({
+      btc: signer,
+      fromAccount: walletAccount,
+      txInfo,
+      lockTime,
+      sigHashType,
+      segwit,
+      additionals,
+      expiryHeight,
+      hasExtraData,
+      onDeviceSignatureGranted: () =>
+        o.next({
+          type: "device-signature-granted",
+        }),
+      onDeviceSignatureRequested: () =>
+        o.next({
+          type: "device-signature-requested",
+        }),
+      onDeviceStreaming: ({ progress, index, total }) =>
+        o.next({
+          type: "device-streaming",
+          progress,
+          index,
+          total,
+        }),
+    }),
+  );
+
+  const operation = buildOptimisticOperation({
+    accountId: account.id,
+    fee,
+    value: new BigNumber(transaction.amount).plus(fee),
+    senders: Array.from(senders),
+    recipients,
+  });
+
+  o.next({
+    type: "signed",
+    signedOperation: {
+      operation,
+      signature,
+    },
+  });
+}
 
 export const buildSignOperation =
   (signerContext: SignerContext): AccountBridge<Transaction>["signOperation"] =>
   ({ account, deviceId, transaction }) =>
-    new Observable(o => {
-      async function main() {
-        const { currency } = account;
-        const walletAccount = getWalletAccount(account);
-
-        log("hw", `signTransaction ${currency.id} for account ${account.id}`);
-        const txInfo = await buildTransaction(account, transaction);
-        let senders = new Set<string>();
-        let recipients: string[] = [];
-        let fee = new BigNumber(0);
-        // Maybe better not re-calculate these fields here, instead include them
-        // in Transaction type and set them in prepareTransaction?
-        await calculateFees({
-          account,
-          transaction,
-        }).then(res => {
-          senders = new Set(res.txInputs.map(i => i.address).filter(Boolean) as string[]);
-          recipients = res.txOutputs
-            .filter(o => o.address && !o.isChange)
-            .map(o => o.address) as string[];
-          fee = res.fees;
-        });
-
-        let lockTime: number | undefined;
-
-        // (legacy) Set lockTime for Komodo to enable reward claiming on UTXOs created by
-        // Ledger Live. We should only set this if the currency is Komodo and
-        // lockTime isn't already defined.
-        if (currency.id === "komodo" && lockTime === undefined) {
-          const unixtime = Math.floor(Date.now() / 1000);
-          lockTime = unixtime - 777;
-        }
-
-        const networkParams = getNetworkParameters(currency.id);
-        const sigHashType = networkParams.sigHash;
-        if (isNaN(sigHashType)) {
-          throw new Error("sigHashType should not be NaN");
-        }
-
-        const segwit = isSegwitDerivationMode(account.derivationMode as DerivationMode);
-
-        const perCoin = perCoinLogic[currency.id];
-        let additionals: string[] = [currency.id];
-
-        if (account.derivationMode === "native_segwit") {
-          additionals.push("bech32");
-        }
-
-        if (account.derivationMode === "taproot") {
-          additionals.push("bech32m");
-        }
-
-        if (perCoin?.getAdditionals) {
-          additionals = additionals.concat(
-            perCoin.getAdditionals({
-              transaction,
-            }),
-          );
-        }
-
-        const expiryHeight = perCoin?.hasExpiryHeight
-          ? Buffer.from([0x00, 0x00, 0x00, 0x00])
-          : undefined;
-
-        const hasExtraData = perCoin?.hasExtraData || false;
-
-        const signature: string = await signerContext(deviceId, currency, signer =>
-          wallet.signAccountTx({
-            btc: signer,
-            fromAccount: walletAccount,
-            txInfo,
-            lockTime,
-            sigHashType,
-            segwit,
-            additionals,
-            expiryHeight,
-            hasExtraData,
-            onDeviceSignatureGranted: () =>
-              o.next({
-                type: "device-signature-granted",
-              }),
-            onDeviceSignatureRequested: () =>
-              o.next({
-                type: "device-signature-requested",
-              }),
-            onDeviceStreaming: ({ progress, index, total }) =>
-              o.next({
-                type: "device-streaming",
-                progress,
-                index,
-                total,
-              }),
-          }),
-        );
-        // Build the optimistic operation
-        const operation: Operation = {
-          id: encodeOperationId(account.id, "", "OUT"),
-          hash: "", // Will be resolved in broadcast()
-          type: "OUT",
-          value: new BigNumber(transaction.amount).plus(fee),
-          fee,
-          blockHash: null,
-          blockHeight: null,
-          senders: Array.from(senders),
-          recipients,
-          accountId: account.id,
-          date: new Date(),
-          extra: {},
-        };
-        o.next({
-          type: "signed",
-          signedOperation: {
-            operation,
-            signature,
-          },
-        });
-      }
-
-      main().then(
-        () => o.complete(),
-        e => o.error(e),
-      );
-    });
+    fromAsyncOperation(o => executeSignOperation(o, account, deviceId, transaction, signerContext));
 
 export default buildSignOperation;

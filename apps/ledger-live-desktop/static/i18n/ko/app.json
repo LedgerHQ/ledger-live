@@ -482,7 +482,9 @@
       "celo_title" : "Ledger Nano S™는 셀로 스왑을 지원하지 않습니다.",
       "celo_description" : "셀로를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
       "monad_title" : "Ledger Nano S™는 모나드(Monad) 스왑을 지원하지 않습니다.",
-      "monad_description" : "모나드를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요."
+      "monad_description" : "모나드를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
+      "zcash_title" : "Ledger Nano S™는 Zcash 스왑을 지원하지 않습니다.",
+      "zcash_description" : "Zcash를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요."
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -648,134 +650,6 @@
         "placeholder" : "토큰"
       },
       "submit" : "연결"
-    }
-  },
-  "fullNode" : {
-    "status" : "상태",
-    "connect" : "연결",
-    "disconnect" : "연결 해제",
-    "checkNodeSettings" : "노드 설정 인증",
-    "edit" : "편집",
-    "modal" : {
-      "title" : "비트코인 풀 노드 연결",
-      "disconnectTitle" : "풀 노드 연결 해제",
-      "steps" : {
-        "landing" : {
-          "header" : "풀 노드 시작. 믿지 말고, 검증하세요.",
-          "description" : "비트코인 풀 노드가 모든 트랜잭션과 블록을 검증하기 때문에 사용자는 비트코인을 무신뢰 방식으로 사용하며 비트코인 네트워크에 기여할 수 있습니다.",
-          "list" : {
-            "item1" : "비트코인 코어를 용량이 충분한 장치에 설정하세요.",
-            "item2" : "노드가 완전히 동기화될 때까지 기다려 주세요.",
-            "item3" : "노드 RPC 인증, IP 주소, 포트 번호를 기록해 두세요."
-          },
-          "disclaimer" : "풀 노드를 구동하려면 용량이 충분한 컴퓨터와 데이터 제한이 없는 브로드밴드 연결이 필요합니다."
-        },
-        "node" : {
-          "title" : "노드(Node)",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "노드 파라미터를 입력하세요",
-              "disclaimer" : "Ledger Wallet에 연결하기 전에 풀 노드를 완전히 동기화해야 합니다.",
-              "fields" : {
-                "nodeHost" : {
-                  "title" : "호스트",
-                  "tooltip" : "이 컴퓨터에 노드가 실행되면 디폴트로 유지하거나 노드 IP 주소와 포트 번호를 변경하세요."
-                },
-                "rpcCredentials" : {
-                  "title" : "RPC 인증",
-                  "tooltip" : "bitcoin.conf 파일에서 확인할 수 있는 원격 프로시저 호출 (RPC) 사용자명과 노드 패스워드를 입력하세요.",
-                  "usernamePlaceholder" : "사용자명",
-                  "passwordPlaceholder" : "패스워드"
-                },
-                "tls" : {
-                  "title" : "TLS 사용",
-                  "tooltip" : "예를 들어, 호스트된 노드 솔루션을 사용할 때 전송 계층 보안을 활성화하세요."
-                }
-              }
-            },
-            "connecting" : {
-              "header" : "노드 연결 테스트 중",
-              "description" : "풀 노드 반응 여부를 확인할 때까지 기다려 주세요"
-            },
-            "success" : {
-              "header" : "풀 노드 연결이 성공적으로 완료되었습니다",
-              "description" : "이제 풀 노드설정을 변경하여 블록체인 상의 내 계정을 스캔할 수 있습니다."
-            },
-            "failure" : {
-              "header" : "풀 노드에 접속할 수 없습니다",
-              "description" : "노드가 완전히 동기화되었는지 확인하시고 연결 설정을 인증하세요."
-            }
-          }
-        },
-        "device" : {
-          "title" : "장치",
-          "connectionSteps" : {
-            "pending" : {
-              "header" : "장치에서 계정 가져오기",
-              "description" : "스캔할 계정이 노드 구성 파일에 추가될 때까지 기다려 주세요"
-            },
-            "success" : {
-              "header" : "노드 구성에 추가된 계정",
-              "description" : "사용자 데이터 폴더에 구성 파일이 저장되었습니다. Ledger SatStack이 풀 노드에 연결되어 블록체인에서 계정을 스캔합니다.",
-              "cta" : "사용자 데이터 보기"
-            }
-          }
-        },
-        "accounts" : {
-          "title" : "계정",
-          "existing" : "스캔할 기존 계정",
-          "toScan" : "스캔할 계정",
-          "toScanDescription" : "주소 유형별 스캔할 계정",
-          "toScanTooltip" : "계정의 BTC가 10 이상인 경우에만 증가합니다.  첫 스캔은 속도가 느립니다. "
-        },
-        "satstack" : {
-          "title" : "SatStack",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "Ledger SatStack을 다운로드하여 실행하세요",
-              "description" : "Ledger SatStack은 Ledger Wallet과 풀 노드의 소통을 가능하게 하는 소규모 애플리케이션입니다. 앱을 다운로드하여 실행한 다음 계속 진행하세요.",
-              "disclaimer" : "Ledger Wallet이 풀 노드에 연결되려면 SatStack이 실행 중이어야 합니다.  컴퓨터 부팅 시 자동 실행되도록 설정해 보세요.",
-              "cta" : "SatStack 다운로드"
-            },
-            "satstack-disconnected" : {
-              "header" : "SatStack에 접근할 수 없습니다",
-              "description" : "이 컴퓨터에 SatStack이 실행 중인지 확인하세요."
-            },
-            "satstack-outdated" : {
-              "header" : "SatStack을 업그레이드하세요",
-              "description" : "사용 중인 SatStack 버전이 오래되어 버그가 있거나 호환 되지 않는 버전입니다."
-            },
-            "node-disconnected" : {
-              "header" : "풀 노드에 접속할 수 없습니다",
-              "description" : "노드에 접속 가능하고 입력한 연결 설정이 올바른지 확인하세요."
-            },
-            "invalid-chain" : {
-              "header" : "유효하지 않은 체인 타이틀",
-              "description" : "툴팁의 유효하지 않은 체인 설명"
-            },
-            "initializing" : {
-              "header" : "로딩중",
-              "description" : ""
-            },
-            "ready" : {
-              "header" : "준비 완료",
-              "description" : "풀 노드가 완전히 동기화되었습니다. 비트코인 계정 잔금이 현재 올바르지 않습니다."
-            },
-            "syncing" : {
-              "header" : "노드 동기화 진행 중...",
-              "description" : "최근 트랜잭션이 아직 보이지 않아 비트코인 계정 잔액이 정확하지 않을 수 있습니다. 가능한 경우, 노드를 실행하여 계속 동기화하세요."
-            },
-            "scanning" : {
-              "header" : "계정 스캔 진행 중...",
-              "description" : "계정 스캔이 완료되면 계정을 추가할 수 있습니다. Ledger 탐색기로 앞서 추가되었던 모든 비트코인 계정이 제거되었습니다."
-            }
-          }
-        },
-        "disconnect" : {
-          "cta" : "연결 해제",
-          "description" : "계속 진행할까요? 풀 노드를 해제하면 비트코인 계정이 삭제됩니다. Ledger 탐색기를 이용해서 계정을 다시 추가할 수 있습니다."
-        }
-      }
     }
   },
   "account" : {
@@ -1311,6 +1185,17 @@
         "depositButton" : "자산 보호 시작하기",
         "skipButton" : "다음에 결정하기"
       },
+      "sync" : {
+        "timelineTitle" : "지갑 동기화",
+        "timelineTitleCompleted" : "동기화 활성화",
+        "title" : "지갑 동기화 활성화",
+        "description" : "PC와 모바일 어디서든, 포트폴리오를 항상 최신 상태로 유지하세요",
+        "skipButton" : "나중에 설정하기",
+        "skipTitle" : "동기화 설정을 건너뛰시겠어요?",
+        "skipDescription" : "이 단계를 건너뛰면 스마트폰이나 컴퓨터 교체 시 모든 암호화폐 계정을 수동으로 다시 추가해야 합니다. 해당 기능은 Ledger Wallet 설정에서 언제든지 해제할 수 있습니다.",
+        "skipConfirm" : "네, 건너뛸게요",
+        "skipNo" : "아니요, 동기화를 활성화하겠습니다"
+      },
       "backup" : {
         "title" : "비밀 복구 문구 백업",
         "description" : "디지털 암호화 백업을 사용하면 비밀 복구 문구 없이 지갑에 대한 액세스를 복원할 수 있습니다.\n\n다음에서 원하는 디지털 백업을 선택하세요.",
@@ -1668,6 +1553,7 @@
     "currency" : "통화",
     "rangeLabel" : "시간",
     "goBack" : "돌아가기",
+    "searchPlaceholder" : "자산 검색",
     "filters" : {
       "title" : "필터",
       "show" : "보기",
@@ -1773,8 +1659,6 @@
       "import" : "계정",
       "finish" : "확인"
     },
-    "fullNodeReadyInfo" : "비트코인 풀 노드를 이용하여 계정을 추가할 것입니다.",
-    "fullNodeConfigure" : "노드 구성",
     "tokensTip" : "{{token}} ({{ticker}})(은)는 {{tokenType}} 토큰입니다.\n {{currency}} 계정에서 직접 토큰을 수령할 수 있습니다.",
     "accountToImportSubtitle_other" : "기존 계정 추가",
     "selectAll" : "모든 ({{count}}) 선택",
@@ -2410,7 +2294,7 @@
         "maxFees" : "최대 네트워크 수수료",
         "maxFeesInfo" : "이 트랜잭션에 대해 지불할 수 있는 최대 금액입니다. 최대 네트워크 수수료와 실제 수수료 간의 차액은 환불됩니다.",
         "useMax" : "최대치 사용",
-        "sendMax" : "최대치 송금",
+        "sendMax" : "최대 수량 전송",
         "rippleTag" : "태그",
         "rippleTagPlaceholder" : "선택 사항",
         "edit" : "편집",
@@ -2507,7 +2391,11 @@
     "coinControlCustom" : "코인 직접 선택",
     "aboveMaximum" : "최대 수량 초과",
     "transactionSigned" : "트랜잭션 서명 완료",
-    "processingTransaction" : "트랜잭션을 처리 중입니다"
+    "processingTransaction" : "트랜잭션을 처리 중입니다",
+    "sign" : {
+      "title" : "Ledger {{wording}}에서 계속하기",
+      "description" : "보안 터치스크린에 표시된 안내를 따라주세요."
+    }
   },
   "releaseNotes" : {
     "title" : "릴리즈 노트",
@@ -4788,6 +4676,8 @@
       "runLocalAppOpenButton" : "열기",
       "enableLearnStagingUrl" : "페이지 스테이징 URL 알아보기",
       "enableLearnStagingUrlDesc" : "학습 페이지의 스테이징 URL을 활성화합니다.",
+      "enableCountervaluesStaging" : "Countervalues API 스테이징",
+      "enableCountervaluesStagingDesc" : "프로덕션 대신 스테이징 Countervalues API를 사용하세요.",
       "openOnboardingAppInstallDebug" : "온보딩 앱 설치 디버그 화면 열기",
       "openOnboardingAppInstallDebugDesc" : "동기화 온보딩 앱 설치 단계의 구성 요소가 있는 화면을 엽니다."
     },
@@ -4968,10 +4858,6 @@
         "desc" : "상위 계정으로 이동한 후 토큰을 오른쪽 마우스 클릭하여 '토큰 숨기기'를 선택하면 토큰을 숨길 수 있습니다.",
         "count" : "1개의 토큰",
         "count_other" : "{{count}}개의 토큰"
-      },
-      "fullNode" : {
-        "title" : "비트코인 풀 노드 연결",
-        "desc" : "비트코인 풀 노드를 설정해 Ledger의 탐색기를 사용하지 않고 트랜잭션을 동기화하고 전송하세요."
       },
       "filterTokenOperationsZeroAmount" : {
         "title" : "값이 0 인 경우 토큰 트랜잭션을 숨깁니다",
@@ -6443,22 +6329,6 @@
     "RPCPassRequired" : {
       "title" : "원격 프로시저 호출(RPC) 패스워드가 필요합니다"
     },
-    "SatStackAccessDown" : {
-      "title" : "풀 노드에 접속할 수 없습니다",
-      "description" : "SatStack과 노드가 실행 중인지 확인하세요. 문제가 지속되면 설정에서 풀 노드를 확인하세요."
-    },
-    "SatStackStillSyncing" : {
-      "title" : "노드 동기화 진행 중...",
-      "description" : "노드가 동기화될 때까지 기다려 주세요 비트코인 계정 잔금이 올바르지 않아 전송할 수 없습니다"
-    },
-    "SatStackVersionTooOld" : {
-      "title" : "SatStack을 업그레이드하세요",
-      "description" : "사용 중인 SatStack 버전이 오래되어 버그가 있거나 호환 되지 않는 버전입니다."
-    },
-    "SatStackDescriptorNotImported" : {
-      "title" : "풀 노드로 계정을 스캔하지 않았습니다",
-      "description" : "이 장치에 연결된 계정을 스캔하도록 풀 노드를 구성하세요. 우선 귀하의 풀 노드로 이 계정을 위한 블록체인을 스캔한 후 포트폴리오에 계정을 추가할 수 있습니다."
-    },
     "SwapRateExpiredError" : {
       "title" : "요율 만료",
       "description" : "환율이 만료되었습니다. 새로고침하고 다시 시도해 보세요."
@@ -6924,6 +6794,10 @@
       "title" : "Cardano 유효하지 않은 프로토콜 파라미터",
       "description" : "일시적으로 ADA 트랜잭션이 불가능합니다. 계정을 다시 동기화하고 다시 시도하거나 도움이 필요할 경우 지원팀으로 문의해 주세요."
     },
+    "CardanoMemoExceededSizeError" : {
+      "title" : "메모 길이 초과. 최대 64자까지 지원됩니다",
+      "description" : "카르다노 메모는 최대 길이 제한이 있습니다. 메모 길이를 줄여주세요."
+    },
     "StacksMemoTooLong" : {
       "title" : "메모 길이가 너무 깁니다"
     },
@@ -6997,8 +6871,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "수령할 보상이 없습니다"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "메모가 너무 깁니다. 최대 길이는 {{maxLength}}자 입니다."
+    "HederaMemoExceededSizeError" : {
+      "title" : "메모 길이 초과. 최대 100자까지 지원됩니다",
+      "description" : "헤데라 메모는 최대 길이 제한이 있습니다. 메모 길이를 줄여주세요."
     },
     "ImageIncorrectFileTypeError" : {
       "title" : "파일 이미지 로딩 실패.",
@@ -7949,6 +7824,11 @@
       },
       "cta" : "다시 시도하세요"
     }
+  },
+  "marketBanner" : {
+    "title" : "시장 탐색하기",
+    "genericError" : "연결에 실패했습니다",
+    "cta" : "모두 보기"
   },
   "nftEntryPoint" : {
     "title" : "NFT(대체 불가능 토큰)",

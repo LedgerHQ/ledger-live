@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, QuickActionButtonProps, QuickActionList } from "@ledgerhq/native-ui";
 import { track } from "~/analytics";
 import useQuickActions, { QuickActionProps } from "../../hooks/useQuickActions";

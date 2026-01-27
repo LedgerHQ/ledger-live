@@ -1,5 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { BigNumber } from "bignumber.js";
 import {
   getDescriptor,
   getSendDescriptor,
@@ -20,58 +21,8 @@ describe("getDescriptor", () => {
     expect(descriptor).toBeNull();
   });
 
-  it.each([
-    [
-      "bitcoin",
-      {
-        send: {
-          inputs: {},
-          fees: {
-            hasPresets: true,
-            hasCustom: true,
-            hasCoinControl: true,
-          },
-          selfTransfer: "free",
-        },
-      },
-    ],
-    [
-      "ethereum",
-      {
-        send: {
-          inputs: {
-            recipientSupportsDomain: true,
-          },
-          fees: {
-            hasPresets: true,
-            hasCustom: true,
-          },
-          selfTransfer: "free",
-          errors: {
-            userRefusedTransaction: "UserRefusedOnDevice",
-          },
-        },
-      },
-    ],
-    [
-      "solana",
-      {
-        send: {
-          inputs: {
-            memo: {
-              type: "text",
-              maxLength: 32,
-            },
-          },
-          fees: {
-            hasPresets: true,
-            hasCustom: false,
-          },
-        },
-      },
-    ],
-  ])("should return descriptor for %s", (currencyId, expected) => {
-    const currency = getCryptoCurrencyById(currencyId);
+  it("should return descriptor for bitcoin", () => {
+    const currency = getCryptoCurrencyById("bitcoin");
     jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue({
       status: {
         type: "active",
@@ -80,10 +31,79 @@ describe("getDescriptor", () => {
     });
 
     const descriptor = getDescriptor(currency);
-    expect(descriptor).toEqual(expected);
+    expect(descriptor).toMatchObject({
+      send: {
+        inputs: {},
+        fees: {
+          hasPresets: true,
+          hasCustom: true,
+          hasCoinControl: true,
+          presets: {
+            legend: { type: "feeRate", unit: "sat/vbyte", valueFrom: "presetAmount" },
+            strategyLabelInAmount: "legend",
+          },
+        },
+        selfTransfer: "free",
+      },
+    });
+    expect(typeof descriptor?.send.fees.presets?.getOptions).toBe("function");
+    expect(typeof descriptor?.send.fees.presets?.shouldEstimateWithBridge).toBe("function");
   });
 
-  it.each([
+  it("should return descriptor for ethereum", () => {
+    const currency = getCryptoCurrencyById("ethereum");
+    jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue({
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+    });
+
+    const descriptor = getDescriptor(currency);
+    expect(descriptor).toMatchObject({
+      send: {
+        inputs: { recipientSupportsDomain: true },
+        fees: {
+          hasPresets: true,
+          hasCustom: true,
+          presets: {},
+        },
+        selfTransfer: "free",
+        errors: { userRefusedTransaction: "UserRefusedOnDevice" },
+        amount: {},
+      },
+    });
+    expect(typeof descriptor?.send.fees.presets?.getOptions).toBe("function");
+    expect(typeof descriptor?.send.amount?.getPlugins).toBe("function");
+  });
+
+  it("should return descriptor for solana", () => {
+    const currency = getCryptoCurrencyById("solana");
+    jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue({
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+    });
+
+    const descriptor = getDescriptor(currency);
+    expect(descriptor).toMatchObject({
+      send: {
+        inputs: {
+          memo: {
+            type: "text",
+            maxLength: 32,
+          },
+        },
+        fees: {
+          hasPresets: false,
+          hasCustom: false,
+        },
+      },
+    });
+  });
+
+  const configCases: ReadonlyArray<readonly [string, CurrencyConfig]> = [
     [
       "feature is inactive",
       {
@@ -91,7 +111,7 @@ describe("getDescriptor", () => {
           type: "active",
           features: [{ id: "blockchain_txs", status: "inactive" }],
         },
-      } as CurrencyConfig,
+      },
     ],
     [
       "currency status is not active",
@@ -100,17 +120,19 @@ describe("getDescriptor", () => {
           type: "under_maintenance",
           message: "Maintenance",
         },
-      } as CurrencyConfig,
+      },
     ],
-  ])("should return default descriptor when %s", (_, mockConfig) => {
+  ];
+
+  it.each(configCases)("should not be affected by config when %s", (_, mockConfig) => {
     const bitcoin = getCryptoCurrencyById("bitcoin");
     jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue(mockConfig);
 
     const descriptor = getDescriptor(bitcoin);
-    expect(descriptor).toBeNull();
+    expect(descriptor).not.toBeNull();
   });
 
-  it("should return null when no features array", () => {
+  it("should not be affected when no features array", () => {
     const bitcoin = getCryptoCurrencyById("bitcoin");
     jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue({
       status: {
@@ -119,17 +141,17 @@ describe("getDescriptor", () => {
     });
 
     const descriptor = getDescriptor(bitcoin);
-    expect(descriptor).toBeNull();
+    expect(descriptor).not.toBeNull();
   });
 
-  it("should return default descriptor when config throws error", () => {
+  it("should not be affected when config throws error", () => {
     const bitcoin = getCryptoCurrencyById("bitcoin");
     jest.spyOn(configModule, "getCurrencyConfiguration").mockImplementation(() => {
       throw new Error("Config not found");
     });
 
     const descriptor = getDescriptor(bitcoin);
-    expect(descriptor).toBeNull();
+    expect(descriptor).not.toBeNull();
   });
 });
 
@@ -144,18 +166,24 @@ describe("getSendDescriptor", () => {
     });
 
     const sendDescriptor = getSendDescriptor(bitcoin);
-    expect(sendDescriptor).toEqual({
+    expect(sendDescriptor).toMatchObject({
       inputs: {},
       fees: {
         hasPresets: true,
         hasCustom: true,
         hasCoinControl: true,
+        presets: {
+          legend: { type: "feeRate", unit: "sat/vbyte", valueFrom: "presetAmount" },
+          strategyLabelInAmount: "legend",
+        },
       },
       selfTransfer: "free",
     });
+    expect(typeof sendDescriptor?.fees.presets?.getOptions).toBe("function");
+    expect(typeof sendDescriptor?.fees.presets?.shouldEstimateWithBridge).toBe("function");
   });
 
-  it("should return null when feature is not active", () => {
+  it("should not be affected when feature is not active", () => {
     const bitcoin = getCryptoCurrencyById("bitcoin");
     jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue({
       status: {
@@ -165,7 +193,7 @@ describe("getSendDescriptor", () => {
     });
 
     const sendDescriptor = getSendDescriptor(bitcoin);
-    expect(sendDescriptor).toBeNull();
+    expect(sendDescriptor).not.toBeNull();
   });
 });
 
@@ -200,6 +228,84 @@ describe("sendFeatures", () => {
   it("should check coin control support", () => {
     const bitcoin = getCryptoCurrencyById("bitcoin");
     expect(sendFeatures.hasCoinControl(bitcoin)).toBe(true);
+  });
+
+  it("should return empty fee preset options when not implemented", () => {
+    const solana = getCryptoCurrencyById("solana");
+    expect(sendFeatures.getFeePresetOptions(solana, {})).toEqual([]);
+  });
+
+  it("should expose fee preset options for bitcoin from descriptor", () => {
+    const bitcoin = getCryptoCurrencyById("bitcoin");
+    const options = sendFeatures.getFeePresetOptions(bitcoin, {
+      networkInfo: {
+        feeItems: {
+          items: [
+            { speed: "slow", feePerByte: new BigNumber(1) },
+            { speed: "medium", feePerByte: new BigNumber(2) },
+          ],
+        },
+      },
+    });
+
+    expect(options).toEqual([
+      { id: "medium", amount: new BigNumber(2) },
+      { id: "slow", amount: new BigNumber(1) },
+    ]);
+  });
+
+  it("should expose fee preset options for evm from descriptor", () => {
+    const ethereum = getCryptoCurrencyById("ethereum");
+    const options = sendFeatures.getFeePresetOptions(ethereum, {
+      gasLimit: new BigNumber(21_000),
+      gasOptions: {
+        slow: { maxFeePerGas: new BigNumber(10), gasPrice: null },
+        medium: { maxFeePerGas: new BigNumber(20), gasPrice: null },
+        fast: { gasPrice: new BigNumber(30) },
+      },
+    });
+
+    expect(options.map(o => o.id)).toEqual(["slow", "medium", "fast"]);
+    expect(options.find(o => o.id === "slow")?.amount).toEqual(new BigNumber(10).times(21_000));
+    expect(options.find(o => o.id === "medium")?.amount).toEqual(new BigNumber(20).times(21_000));
+    expect(options.find(o => o.id === "fast")?.amount).toEqual(new BigNumber(30).times(21_000));
+  });
+
+  it("should expose fee preset options for kaspa from descriptor", () => {
+    const kaspa = getCryptoCurrencyById("kaspa");
+    const options = sendFeatures.getFeePresetOptions(kaspa, {
+      networkInfo: [
+        { label: "slow", amount: new BigNumber(1), estimatedSeconds: 10 },
+        { label: "medium", amount: new BigNumber(2), estimatedSeconds: 10 },
+        { label: "fast", amount: new BigNumber(3), estimatedSeconds: 10 },
+      ],
+    });
+
+    expect(options).toEqual([
+      { id: "slow", amount: new BigNumber(1), estimatedMs: 10_000, disabled: true },
+      { id: "medium", amount: new BigNumber(2), estimatedMs: 10_000, disabled: true },
+      { id: "fast", amount: new BigNumber(3), estimatedMs: 10_000, disabled: false },
+    ]);
+  });
+
+  it("should return false when bridge estimation is not specified", () => {
+    const solana = getCryptoCurrencyById("solana");
+    expect(sendFeatures.shouldEstimateFeePresetsWithBridge(solana, {})).toBe(false);
+  });
+
+  it("should require bridge estimation for bitcoin presets", () => {
+    const bitcoin = getCryptoCurrencyById("bitcoin");
+    expect(sendFeatures.shouldEstimateFeePresetsWithBridge(bitcoin, {})).toBe(true);
+  });
+
+  it("should return empty plugins when not specified", () => {
+    const bitcoin = getCryptoCurrencyById("bitcoin");
+    expect(sendFeatures.getAmountPlugins(bitcoin)).toEqual([]);
+  });
+
+  it("should expose amount plugins for evm", () => {
+    const ethereum = getCryptoCurrencyById("ethereum");
+    expect(sendFeatures.getAmountPlugins(ethereum)).toEqual(["evmGasOptionsSync"]);
   });
 
   it("should get memo type", () => {

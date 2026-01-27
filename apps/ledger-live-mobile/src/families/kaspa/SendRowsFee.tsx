@@ -6,7 +6,7 @@ import type {
   FeeStrategy,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { Transaction as KaspaTransaction } from "@ledgerhq/live-common/families/kaspa/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type JSX } from "react";
 import { ChevronRightMedium, CloseMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 import { TouchableOpacityProps, TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { Tile, TileContent, TileTitle, TileDescription, Text } from "@ledgerhq/lumen-ui-rnative";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getChangePercentage } from "@ledgerhq/live-common/market/utils/index";
 import { MarketTileProps } from "../../types";
 import MarketTileIcon from "../MarketTileIcon";
@@ -28,13 +28,13 @@ const MarketTile = ({ item, index, range, onPress }: MarketTileProps) => {
     <Tile
       appearance="card"
       onPress={handlePress}
-      lx={{ width: "s96", flexShrink: 0, marginRight: "s8" }}
+      lx={{ width: "s96", flexGrow: 1, marginRight: "s8" }}
       testID={`market-banner-tile-${index}`}
       accessibilityLabel={accessibilityLabel}
       accessibilityHint={t("marketBanner.tile.accessibilityHint")}
       accessibilityRole="button"
     >
-      <MarketTileIcon imageUrl={item.image} name={item.name} />
+      <MarketTileIcon ledgerIds={item.ledgerIds} ticker={item.ticker} image={item.image} />
       <TileContent>
         <TileTitle>{capitalizedTicker}</TileTitle>
         <TileDescription>

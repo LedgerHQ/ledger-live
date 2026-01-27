@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 
 type SchemeRowProps = {
   scheme: string;

@@ -10,7 +10,7 @@ import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";

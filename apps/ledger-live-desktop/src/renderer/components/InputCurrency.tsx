@@ -48,7 +48,7 @@ function stopPropagation(e: React.SyntheticEvent) {
   e.stopPropagation();
 }
 
-type OwnProps = Omit<InputProps, "value" | "onChange"> & {
+type OwnProps = Omit<InputProps, "value" | "onChange" | "ref"> & {
   onChangeFocus?: (a: boolean) => void;
   onChange: (b: BigNumber, a: Unit) => void;
   // FIXME Unit shouldn't be provided (this is not "standard" onChange)
@@ -255,7 +255,10 @@ const Connected = uncontrollable(
     unit: "onChangeUnit",
   },
 );
-const m: React.ComponentType<OwnProps> = React.forwardRef(function InputCurrency(props, ref) {
-  return <Connected {...props} forwardedRef={ref} />;
-});
-export default m;
+const InputCurrencyForwarded = React.forwardRef<HTMLInputElement, OwnProps>(
+  function InputCurrencyForwarded(props, ref) {
+    return <Connected {...props} forwardedRef={ref} />;
+  },
+);
+
+export default InputCurrencyForwarded;

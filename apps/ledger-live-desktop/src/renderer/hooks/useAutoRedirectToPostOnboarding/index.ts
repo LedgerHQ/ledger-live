@@ -4,7 +4,7 @@ import { lastOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { useShouldRedirect } from "./useShouldRedirect";
 import { useOpenRecoverCallback } from "./useOpenRecoverCallback";
 import { useOpenPostOnboardingCallback } from "./useOpenPostOnboardingCallback";
-import { useHistory } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 
 /**
  * Navigates to the post onboarding or to the Ledger Recover upsell if needed
@@ -13,7 +13,7 @@ import { useHistory } from "react-router";
 // to avoid the need of a fallback redirection and to make the function more readable
 // and maintainable. (see neverthrow library for example)
 export function useRedirectToPostOnboardingCallback() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const lastOnboardedDevice = useSelector(lastOnboardedDeviceSelector);
 
   const { shouldRedirectToRecoverUpsell, shouldRedirectToPostOnboarding } = useShouldRedirect();
@@ -21,11 +21,12 @@ export function useRedirectToPostOnboardingCallback() {
   const openRecoverUpsell = useOpenRecoverCallback();
   const openPostOnboarding = useOpenPostOnboardingCallback();
 
+  const location = useLocation();
   const fallbackRedirection = useCallback(() => {
-    if (history.location.pathname !== "/") {
-      history.push("/");
+    if (location.pathname !== "/") {
+      navigate("/");
     }
-  }, [history]);
+  }, [location, navigate]);
 
   return useCallback(
     (onDone: () => void = () => {}) => {

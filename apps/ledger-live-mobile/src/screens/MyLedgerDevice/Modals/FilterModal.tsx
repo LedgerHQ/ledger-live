@@ -1,6 +1,6 @@
 import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React, { memo, useCallback, useEffect, useReducer } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { ListRenderItem, SectionList, SectionListData } from "react-native";
 import styled from "styled-components/native";
 import Touchable from "~/components/Touchable";
@@ -151,10 +151,7 @@ const FilterModalComponent = ({
   isOpened,
   onClose,
 }: Props) => {
-  const [state, dispatch] = useReducer<React.Reducer<State, Action>>(
-    filterReducer,
-    initialFilterState,
-  );
+  const [state, dispatch] = useReducer(filterReducer, initialFilterState);
 
   useEffect(() => {
     dispatch({
@@ -198,7 +195,7 @@ const FilterModalComponent = ({
 
       return (
         <FilterLine
-          style={({ pressed }) => (pressed ? { opacity: 0.5 } : {})}
+          style={({ pressed }: { pressed: boolean }) => (pressed ? { opacity: 0.5 } : {})}
           onPress={onPress}
           event="ManagerAppFilterClick"
           eventProperties={{

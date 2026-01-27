@@ -9,7 +9,7 @@ import {
   Keyboard,
   SafeAreaView,
 } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";

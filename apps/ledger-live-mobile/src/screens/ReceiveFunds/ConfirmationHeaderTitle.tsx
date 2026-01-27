@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 

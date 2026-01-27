@@ -1,6 +1,6 @@
 import { Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { FlatList, ListRenderItemInfo, StyleSheet, View as RNView } from "react-native";
 import { TrackScreen } from "~/analytics";
 import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";

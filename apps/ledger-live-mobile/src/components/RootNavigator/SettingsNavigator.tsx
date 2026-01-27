@@ -1,11 +1,9 @@
 import React, { useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import DebugBenchmarkQRStream from "~/screens/Settings/Debug/Broken/BenchmarkQRStream";
-import DebugBLE from "~/screens/Settings/Debug/Connectivity/BLE";
-import DebugBLEBenchmark from "~/screens/Settings/Debug/Connectivity/BLEBenchmark";
 import DebugConfiguration from "~/screens/Settings/Debug/Configuration";
 import DebugConnectivity, {
   connectivityHeaderOptions,
@@ -56,7 +54,6 @@ import DeveloperSettings, {
   ExchangeDeveloperMode,
 } from "~/screens/Settings/Developer";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import Button from "../Button";
 import HelpButton from "~/screens/Settings/HelpButton";
 import OnboardingStepLanguage from "~/screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "~/screens/Settings/Debug/Generators/GenerateMockAccountsSelect";
@@ -328,26 +325,6 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.DebugBLE}
-        component={DebugBLE}
-        options={({ route, navigation }) => ({
-          title: "BLE Debugging",
-          headerRight: () => (
-            <Button
-              event="DebugBLEBenchmark"
-              type="lightSecondary"
-              containerStyle={{ width: 100 }}
-              onPress={() =>
-                navigation.navigate(ScreenName.DebugBLEBenchmark, {
-                  deviceId: route.params?.deviceId,
-                })
-              }
-              title="Benchmark"
-            />
-          ),
-        })}
-      />
-      <Stack.Screen
         name={ScreenName.DebugBLEDevicePairing}
         component={BleEDevicePairingScreen}
         options={{
@@ -359,13 +336,6 @@ export default function SettingsNavigator() {
         component={DebugCommandSender}
         options={{
           title: "Command Sender",
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.DebugBLEBenchmark}
-        component={DebugBLEBenchmark}
-        options={{
-          title: "Debug BLE Benchmark",
         }}
       />
       <Stack.Screen

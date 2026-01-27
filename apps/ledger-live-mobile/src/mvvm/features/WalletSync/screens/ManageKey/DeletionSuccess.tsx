@@ -1,6 +1,6 @@
 import React from "react";
 import { Success } from "../../components/Success";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 
@@ -33,6 +33,7 @@ export function WalletSyncManageKeyDeletionSuccess({ navigation }: Props) {
         testID: "walletsync-deletion-success-close",
       }}
       analyticsPage={AnalyticsPage.DeleteBackupSuccess}
+      testID="walletsync-delete-backup-success-title"
     />
   );
 }

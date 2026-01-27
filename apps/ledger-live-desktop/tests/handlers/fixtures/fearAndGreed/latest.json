@@ -1,0 +1,14 @@
+{
+  "status": {
+    "timestamp": "2026-01-20T10:00:00.000Z",
+    "error_code": 0,
+    "error_message": "",
+    "elapsed": 3,
+    "credit_count": 1
+  },
+  "data": {
+    "value": 65,
+    "value_classification": "Greed",
+    "update_time": "2026-01-20T00:00:00.000Z"
+  }
+}

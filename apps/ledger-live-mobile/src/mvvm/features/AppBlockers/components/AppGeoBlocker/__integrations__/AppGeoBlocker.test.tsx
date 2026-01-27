@@ -16,11 +16,7 @@ jest.mock("@ledgerhq/native-ui", () => ({
   ),
   Text: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
-jest.mock("react-i18next", () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+
 jest.mock("styled-components/native", () => ({
   ...jest.requireActual("styled-components/native"),
   useTheme: () => ({
@@ -73,8 +69,8 @@ describe("AppGeoBlocker", () => {
     );
 
     const renderedNode = screen.toJSON();
-    expect(renderedNode.includes("geoBlocking.title")).toBeTruthy();
-    expect(renderedNode.includes("geoBlocking.description")).toBeTruthy();
+    expect(renderedNode.includes("Location unavailable")).toBeTruthy();
+    expect(renderedNode.includes("Ledger Wallet is not available in this location.")).toBeTruthy();
   });
 });
 

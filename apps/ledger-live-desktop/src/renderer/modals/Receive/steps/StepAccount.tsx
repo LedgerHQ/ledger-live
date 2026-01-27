@@ -215,7 +215,7 @@ export function StepAccountFooter({
   return (
     <Button
       data-testid="modal-continue-button"
-      disabled={!account || (shouldRequireToken && !token) || accountError}
+      disabled={!account || (shouldRequireToken && !token) || !!accountError}
       primary
       onClick={() => transitionTo("device")}
     >

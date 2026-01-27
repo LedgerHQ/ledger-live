@@ -51,7 +51,7 @@ const bundle_ios_with_cache = async () => {
 };
 
 const test_ios = async () => {
-  await $`pnpm mobile ${testType}:test\
+  const result = await $`pnpm mobile ${testType}:test\
       -c ios.sim.${target} \
       --loglevel error \
       --record-logs failing \
@@ -60,7 +60,8 @@ const test_ios = async () => {
       --headless \
       --retries 2 \
       --cleanup \
-      ${filteredArgs}`;
+      ${filteredArgs}`.nothrow();
+  process.exitCode = result.exitCode;
 };
 
 const build_android = async () => {
@@ -68,7 +69,7 @@ const build_android = async () => {
 };
 
 const test_android = async () => {
-  await $`pnpm mobile ${testType}:test \\
+  const result = await $`pnpm mobile ${testType}:test \\
       -c android.emu.${target} \\
       --loglevel error \\
       --record-logs failing \\
@@ -77,7 +78,8 @@ const test_android = async () => {
       --headless \\
       --retries 2 \\
       --cleanup \\
-      ${filteredArgs}`;
+      ${filteredArgs}`.nothrow();
+  process.exitCode = result.exitCode;
 };
 
 const getTasksFrom = {

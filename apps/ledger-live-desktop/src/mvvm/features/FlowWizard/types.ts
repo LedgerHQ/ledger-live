@@ -64,7 +64,12 @@ export type FlowConfig<
   initialHistory?: TStep[];
 }>;
 
-export type FlowWizardAugmentation<
+/**
+ * The shape of the FlowWizard's internal navigation context.
+ *
+ * Flows access this via useFlowWizard() hook.
+ */
+export type FlowWizardContextValue<
   TStep extends FlowStep = FlowStep,
   TStepConfig extends FlowStepConfig<TStep> = FlowStepConfig<TStep>,
 > = Readonly<{
@@ -72,13 +77,9 @@ export type FlowWizardAugmentation<
   currentStep: TStep;
   direction: FlowNavigationDirection;
   currentStepConfig: TStepConfig;
+  currentStepRenderer: StepRenderer | null;
+  stepHistory: readonly TStep[];
 }>;
-
-export type FlowWizardContextValue<
-  TStep extends FlowStep,
-  TContextBase,
-  TStepConfig extends FlowStepConfig<TStep> = FlowStepConfig<TStep>,
-> = Readonly<TContextBase & FlowWizardAugmentation<TStep, TStepConfig>>;
 
 export type UseFlowWizardNavigationParams<
   TStep extends FlowStep = FlowStep,

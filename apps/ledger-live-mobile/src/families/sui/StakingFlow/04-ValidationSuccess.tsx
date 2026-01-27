@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen, track } from "~/analytics";
 import { ScreenName } from "~/const";
@@ -15,7 +15,7 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import type { SuiStakingFlowParamList } from "./types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { useNotifications } from "~/logic/notifications";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 type Props = BaseComposite<
   StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingValidationSuccess>

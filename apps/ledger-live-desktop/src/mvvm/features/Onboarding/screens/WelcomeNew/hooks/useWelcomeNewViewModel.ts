@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { saveSettings } from "~/renderer/actions/settings";
 import { openURL } from "~/renderer/linking";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
@@ -16,7 +16,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export function useWelcomeNewViewModel() {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const lldRebornABtest = useFeature("lldRebornABtest");
 
@@ -39,9 +39,9 @@ export function useWelcomeNewViewModel() {
   // Navigation effect
   useEffect(() => {
     if (hasCompletedOnboarding && !trustchain) {
-      history.push("/onboarding/select-device");
+      navigate("/onboarding/select-device");
     }
-  }, [hasCompletedOnboarding, history, trustchain]);
+  }, [hasCompletedOnboarding, navigate, trustchain]);
 
   // Feature flags easter egg state
   const countRef1 = useRef(0);
@@ -76,20 +76,20 @@ export function useWelcomeNewViewModel() {
   }, []);
 
   const accessSettings = useCallback(() => {
-    history.push("/settings");
-  }, [history]);
+    navigate("/settings");
+  }, [navigate]);
 
   // Skip onboarding (dev only)
   const skipOnboarding = useCallback(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
-    history.push("/settings");
-  }, [dispatch, history]);
+    navigate("/settings");
+  }, [dispatch, navigate]);
 
   // Main navigation handlers
   const handleAcceptTermsAndGetStarted = useCallback(() => {
     acceptTerms();
-    history.push("/onboarding/select-device");
-  }, [history]);
+    navigate("/onboarding/select-device");
+  }, [navigate]);
 
   // Analytics opt-in prompt
   const {

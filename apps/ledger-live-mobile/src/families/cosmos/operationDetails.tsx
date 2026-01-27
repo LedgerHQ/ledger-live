@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import type { OperationType, Operation } from "@ledgerhq/types-live";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";

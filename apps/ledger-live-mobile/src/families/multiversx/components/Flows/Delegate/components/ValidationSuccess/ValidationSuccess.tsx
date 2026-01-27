@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { View } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
 import { TrackScreen, track } from "~/analytics";
@@ -12,7 +12,7 @@ import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import styles from "./styles";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { useNotifications } from "~/logic/notifications";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 /*
  * Handle the component declaration.

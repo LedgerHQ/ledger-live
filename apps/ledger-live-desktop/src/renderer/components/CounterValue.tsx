@@ -28,7 +28,7 @@ type Props = {
     [key: string]: string | number;
   };
   counterValue?: BigNumber;
-} & Partial<FormattedValProps>;
+} & Partial<Omit<FormattedValProps, "prefix" | "suffix">>;
 
 export const NoCountervaluePlaceholder = ({
   placeholder,
@@ -91,7 +91,6 @@ export default function CounterValue({
       <FormattedVal
         {...props}
         val={counterValue || calculatedCounterValue}
-        currency={currency}
         unit={counterValueCurrency.units[0]}
         showCode
         alwaysShowSign={alwaysShowSign}

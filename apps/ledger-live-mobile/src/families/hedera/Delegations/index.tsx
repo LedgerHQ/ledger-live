@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { Linking, StyleSheet, View } from "react-native";
 import { capitalize } from "lodash/fp";
 import { useNavigation, useTheme } from "@react-navigation/native";

@@ -15,7 +15,7 @@ import {
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import nanoS from "./assets/nanoS.png";
@@ -96,15 +96,13 @@ const Disconnected = ({ onTryAgain }: { onTryAgain: (a: boolean) => void }) => {
   const [readyToDecide, setReadyToDecide] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
   const device = useSelector(getCurrentDevice);
-  const history = useHistory();
+  const navigate = useNavigate();
   const onReopenManager = useCallback(() => {
     onTryAgain(false);
   }, [onTryAgain]);
   const onBackToPortfolio = useCallback(() => {
-    history.push({
-      pathname: "/",
-    });
-  }, [history]);
+    navigate("/");
+  }, [navigate]);
   useEffect(() => {
     setTimeout(() => {
       setReadyToDecide(true);
@@ -152,7 +150,7 @@ const Disconnected = ({ onTryAgain }: { onTryAgain: (a: boolean) => void }) => {
         <Button primary onClick={onReopenManager}>
           <Trans i18nKey={"manager.disconnected.ctaReopen"} />
         </Button>
-        <Button secondary mt={3} onClick={onBackToPortfolio}>
+        <Button mt={3} onClick={onBackToPortfolio}>
           <Trans i18nKey={"manager.disconnected.ctaPortfolio"} />
         </Button>
       </Box>

@@ -46,6 +46,7 @@ const ActionContentCards = ({ variant }: { variant: ABTestingVariants }) => {
       id={slide.id}
       additionalProps={additionalProps}
       displayedPosition={index}
+      location={slide.location}
     >
       <ActionCard
         img={slide.image}

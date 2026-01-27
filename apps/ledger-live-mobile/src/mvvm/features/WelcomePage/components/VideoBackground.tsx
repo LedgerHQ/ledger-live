@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, View } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import Video, { OnLoadData, ReactVideoSource, VideoRef } from "react-native-video";
 import useIsAppInBackground from "~/components/useIsAppInBackground";
 import { VideoTitleText } from "./WelcomePage.styles";

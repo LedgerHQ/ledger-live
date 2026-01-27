@@ -1,13 +1,12 @@
 import React from "react";
-import { RouteComponentProps } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { IconsLegacy, Link } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
-import Page from "~/renderer/components/Page";
+import Page from "LLD/components/Page";
 import Settings from ".";
 
-type Props = RouteComponentProps;
-
-const WelcomeScreenSettings: React.FC<Props> = props => {
+const WelcomeScreenSettings: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <Box
       grow
@@ -20,7 +19,7 @@ const WelcomeScreenSettings: React.FC<Props> = props => {
         <Link
           alignSelf="flex-start"
           onClick={() => {
-            props.history.push("/onboarding");
+            navigate("/onboarding");
           }}
           mb={5}
           Icon={IconsLegacy.ArrowLeftMedium}

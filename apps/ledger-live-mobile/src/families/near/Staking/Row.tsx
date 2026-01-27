@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { NearMappedStakingPosition } from "@ledgerhq/live-common/families/near/types";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";

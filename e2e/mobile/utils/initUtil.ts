@@ -14,6 +14,12 @@ import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
+function checkTestFailed(): void {
+  if (globalThis.IS_FAILED) {
+    throw new Error("Test failed - aborting initialization to prevent orphaned Speculos instances");
+  }
+}
+
 type CliCommand = (
   userdataPath?: string,
   speculosAddress?: string,
@@ -65,6 +71,7 @@ async function executeCliCommand(
 async function launchSpeculosDevices(toStart: SpeculosAppType[]): Promise<Record<string, Entry>> {
   const entries: Entry[] = await Promise.all(
     toStart.map(async app => {
+      checkTestFailed();
       const proxyPort = await findFreePort();
       const device = await launchSpeculos(app.name);
 
@@ -100,6 +107,7 @@ async function executeCliCommandsOnApp(
     let lastError: unknown;
 
     while (attempt < maxRetries) {
+      checkTestFailed();
       attempt++;
 
       try {
@@ -126,6 +134,8 @@ async function executeCliCommandsOnApp(
         lastError = err;
 
         if (attempt < maxRetries) {
+          checkTestFailed();
+
           // Create fresh instance for next retry attempt
           await deleteSpeculos(entry.deviceId);
           const device = await launchSpeculos(app.name);
@@ -165,6 +175,7 @@ async function setupMainSpeculosApp(
   let lastError: unknown;
 
   while (attempt < maxRetries) {
+    checkTestFailed();
     attempt++;
 
     try {
@@ -183,6 +194,8 @@ async function setupMainSpeculosApp(
       lastError = err;
 
       if (attempt < maxRetries) {
+        checkTestFailed();
+
         log.info(`[${speculosApp.name}] Creating new main Speculos instance for retry`);
         await removeSpeculosAndDeregisterKnownSpeculos(main.deviceId);
         const device = await launchSpeculos(main.name);
@@ -218,6 +231,7 @@ async function executeCliCommands(
   let lastError: unknown;
 
   while (attempt < maxRetries) {
+    checkTestFailed();
     attempt++;
     log.info(`\n🔄 [Global CLI] Attempt ${attempt}/${maxRetries}`);
     try {
@@ -231,6 +245,8 @@ async function executeCliCommands(
       lastError = err;
 
       if (speculosApp && entryMap) {
+        checkTestFailed();
+
         const main = entryMap[speculosApp.name];
 
         await removeSpeculosAndDeregisterKnownSpeculos(main.deviceId);

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";

@@ -16,7 +16,7 @@ import styled from "styled-components";
 import Swap from "~/renderer/icons/Swap";
 import Button from "~/renderer/components/ButtonV3";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { useHistory } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import useStakeFlow from "~/renderer/screens/stake";
@@ -52,7 +52,8 @@ export default function AssetBalanceSummaryHeader({
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
   const flattenAccounts = useSelector(flattenAccountsSelector);
 
   const cvUnit = counterValue.units[0];
@@ -101,14 +102,13 @@ export default function AssetBalanceSummaryHeader({
 
   const onBuy = useCallback(() => {
     setTrackingSource("asset header actions");
-    history.push({
-      pathname: "/exchange",
+    navigate("/exchange", {
       state: {
         currency: currency?.id,
         mode: "buy", // buy or sell
       },
     });
-  }, [currency.id, history]);
+  }, [currency.id, navigate]);
 
   const onSwap = useCallback(() => {
     track("button_clicked2", {
@@ -118,17 +118,16 @@ export default function AssetBalanceSummaryHeader({
       ...swapDefaultTrack,
     });
     setTrackingSource("Page Asset");
-    history.push({
-      pathname: "/swap",
+    navigate("/swap", {
       state: {
-        defaultAccount: account,
-        defaultParentAccount: parentAccount,
+        defaultAccountId: account.id,
+        defaultParentAccountId: parentAccount?.id,
         defaultCurrency: currency,
         defaultAmountFrom: "0",
-        from: history.location.pathname,
+        from: location.pathname,
       },
     });
-  }, [currency, swapDefaultTrack, history, account, parentAccount]);
+  }, [currency, swapDefaultTrack, navigate, location, account, parentAccount]);
 
   const onStake = useCallback(() => {
     track("button_clicked2", {

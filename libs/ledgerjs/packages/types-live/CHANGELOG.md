@@ -1,5 +1,111 @@
 # @ledgerhq/types-live
 
+## 6.94.0
+
+### Minor Changes
+
+- [#13764](https://github.com/LedgerHQ/ledger-live/pull/13764) [`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add graphRework and quickActionCtas params to lw40 ff
+
+- [#13790](https://github.com/LedgerHQ/ledger-live/pull/13790) [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d) Thanks [@Justkant](https://github.com/Justkant)! - feat: add transaction source tagging with headers for broadcast
+
+  Add TransactionSource type and source field to BroadcastConfig to track
+  transaction origins (dApp, live-app, coin-module, swap) and transmit them
+  as X-Ledger-Source-Type and X-Ledger-Source-Name headers when broadcasting
+  to blockchain explorers for Bitcoin and EVM.
+
+  Changes:
+
+  - Add TransactionSource type with type and name fields to types-live
+  - Extend BroadcastConfig with optional source field
+  - Thread source through Bitcoin broadcast chain (broadcast.ts → wallet.ts → xpub.ts → explorer)
+  - Thread source through EVM broadcast in ledger node API
+  - Update Desktop to pass source in:
+    - Live app broadcasts (LiveAppSDKLogic.ts)
+    - Swap flows (CompleteExchange Body.tsx)
+    - Native send flows (GenericStepConnectDevice.tsx)
+  - Update Mobile to pass source in:
+    - Native transaction flows (screenTransactionHooks.ts)
+    - Platform exchange (CompleteExchange.tsx)
+    - Swap flows (Confirmation.tsx)
+  - Update wallet-api integrations (react.ts, useDappLogic.ts)
+
+- [#13732](https://github.com/LedgerHQ/ledger-live/pull/13732) [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb) Thanks [@tonykhaov](https://github.com/tonykhaov)! - refactor: clean up old notifications logic
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.4.1
+
+## 6.94.0-next.0
+
+### Minor Changes
+
+- [#13764](https://github.com/LedgerHQ/ledger-live/pull/13764) [`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add graphRework and quickActionCtas params to lw40 ff
+
+- [#13790](https://github.com/LedgerHQ/ledger-live/pull/13790) [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d) Thanks [@Justkant](https://github.com/Justkant)! - feat: add transaction source tagging with headers for broadcast
+
+  Add TransactionSource type and source field to BroadcastConfig to track
+  transaction origins (dApp, live-app, coin-module, swap) and transmit them
+  as X-Ledger-Source-Type and X-Ledger-Source-Name headers when broadcasting
+  to blockchain explorers for Bitcoin and EVM.
+
+  Changes:
+
+  - Add TransactionSource type with type and name fields to types-live
+  - Extend BroadcastConfig with optional source field
+  - Thread source through Bitcoin broadcast chain (broadcast.ts → wallet.ts → xpub.ts → explorer)
+  - Thread source through EVM broadcast in ledger node API
+  - Update Desktop to pass source in:
+    - Live app broadcasts (LiveAppSDKLogic.ts)
+    - Swap flows (CompleteExchange Body.tsx)
+    - Native send flows (GenericStepConnectDevice.tsx)
+  - Update Mobile to pass source in:
+    - Native transaction flows (screenTransactionHooks.ts)
+    - Platform exchange (CompleteExchange.tsx)
+    - Swap flows (Confirmation.tsx)
+  - Update wallet-api integrations (react.ts, useDappLogic.ts)
+
+- [#13732](https://github.com/LedgerHQ/ledger-live/pull/13732) [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb) Thanks [@tonykhaov](https://github.com/tonykhaov)! - refactor: clean up old notifications logic
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.4.1-next.0
+
+## 6.93.0
+
+### Minor Changes
+
+- [#13510](https://github.com/LedgerHQ/ledger-live/pull/13510) [`8754614`](https://github.com/LedgerHQ/ledger-live/commit/87546149a62b81f8a25bb6222626592ead629f62) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - feat(lwd,lwm): removed llMevProtection feature flag, updated i18n files with mev url
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+- [#13314](https://github.com/LedgerHQ/ledger-live/pull/13314) [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: coin-aleo template
+
+- [#13579](https://github.com/LedgerHQ/ledger-live/pull/13579) [`7f05536`](https://github.com/LedgerHQ/ledger-live/commit/7f0553665e9c8721f263825cc79994bfc6729d9b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add Wallet 4.0 feature flags. Add analytics for the feature flags on LWM and LWD.
+
+### Patch Changes
+
+- Updated dependencies [[`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b)]:
+  - @ledgerhq/client-ids@0.4.0
+
+## 6.93.0-next.0
+
+### Minor Changes
+
+- [#13510](https://github.com/LedgerHQ/ledger-live/pull/13510) [`8754614`](https://github.com/LedgerHQ/ledger-live/commit/87546149a62b81f8a25bb6222626592ead629f62) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - feat(lwd,lwm): removed llMevProtection feature flag, updated i18n files with mev url
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+- [#13314](https://github.com/LedgerHQ/ledger-live/pull/13314) [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: coin-aleo template
+
+- [#13579](https://github.com/LedgerHQ/ledger-live/pull/13579) [`7f05536`](https://github.com/LedgerHQ/ledger-live/commit/7f0553665e9c8721f263825cc79994bfc6729d9b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add Wallet 4.0 feature flags. Add analytics for the feature flags on LWM and LWD.
+
+### Patch Changes
+
+- Updated dependencies [[`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b)]:
+  - @ledgerhq/client-ids@0.4.0-next.0
+
 ## 6.92.0
 
 ### Minor Changes

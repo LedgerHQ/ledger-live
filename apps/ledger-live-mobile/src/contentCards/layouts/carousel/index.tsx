@@ -16,6 +16,10 @@ import { ContentCardItem } from "~/contentCards/cards/types";
 import { WidthFactor } from "~/contentCards/layouts/types";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { useInViewContext } from "LLM/contexts/InViewContext";
+import { track } from "~/analytics";
+import { currentRouteNameRef } from "~/analytics/screenRefs";
+
+const CONTAINER_IMPRESSION_THRESHOLD = 0.8;
 
 type Props = {
   styles?: {
@@ -55,16 +59,30 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
     if (newIndex !== carouselIndex) setCarouselIndex(newIndex);
   };
 
-  const viewRef = useRef<View>(null);
+  const viewRef = useRef<View | null>(null);
   const isInViewRef = useRef(false);
+  const isContainerVisibleRef = useRef(false);
   const visibleCardsRef = useRef<string[]>([]);
   const { logImpressionCard } = useDynamicContent();
   useInViewContext(
-    ({ isInView }) => {
+    ({ isInView, progressRatio }) => {
       isInViewRef.current = isInView;
       if (isInView) visibleCardsRef.current.forEach(id => logImpressionCard(id));
+
+      const isNowVisible = progressRatio >= CONTAINER_IMPRESSION_THRESHOLD;
+      if (isNowVisible && !isContainerVisibleRef.current) {
+        const page = currentRouteNameRef.current ?? "";
+        visibleCardsRef.current.forEach(id => {
+          const item = items.find(i => i.props.metadata.id === id);
+          if (item?.props.location) {
+            track("container_impression", { page, location: item.props.location });
+          }
+        });
+      }
+      isContainerVisibleRef.current = isNowVisible;
     },
-    [logImpressionCard],
+    [logImpressionCard, items],
+    // @ts-expect-error REACT19FIXME: RefObject<View | null> not assignable to RefObject<View>
     viewRef,
   );
   const handleViewableItemsChanged = useCallback(

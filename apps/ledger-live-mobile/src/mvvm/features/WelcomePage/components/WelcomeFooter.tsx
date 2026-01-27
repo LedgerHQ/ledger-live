@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { Button, Text as LText } from "@ledgerhq/native-ui";
 import { useWelcomeNavigation } from "../hooks/useWelcomeNavigation";
 

@@ -1,6 +1,6 @@
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import invariant from "invariant";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -17,7 +17,7 @@ import { SolanaDelegationFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { getTrackingDelegationType } from "../../helpers";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { useNotifications } from "~/logic/notifications";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 type Props = BaseComposite<
   StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationValidationSuccess>

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
 import BigNumber from "bignumber.js";
 

@@ -50,8 +50,8 @@ export default class Btc {
         "signP2SHTransaction",
         "signMessage",
         "createPaymentTransaction",
+        "signPsbtBuffer",
         "getTrustedInput",
-        "getTrustedInputBIP143",
       ],
       scrambleKey,
     );
@@ -210,6 +210,45 @@ export default class Btc {
   }
 
   /**
+   * Sign a PSBT Buffer
+   *
+   * This method can handle PSBTs with or without BIP32 derivation information.
+   * It processes a PSBT buffer and signs the transaction inputs according to the
+   * wallet policy and derivation paths.
+   *
+   * @param {Buffer} psbt - The PSBT (Partially Signed Bitcoin Transaction) buffer to be signed
+   * @param {Object} [opts] - Optional configuration for signing
+   * @param {boolean} [opts.finalizePsbt] - Whether to finalize the PSBT after signing (default: true)
+   * @param {string} [opts.accountPath] - BIP32 derivation path for the account (e.g., "m/84'/0'/0'")
+   * @param {AddressFormat} [opts.addressFormat] - Address format to use for signing (e.g., 'p2wpkh', 'p2sh-p2wpkh', 'p2pkh')
+   *
+   * @returns {Promise<{psbt: Buffer, tx: string}>} A promise that resolves to an object containing the signed PSBT buffer and the transaction hex string
+   *
+   * @example
+   * const { psbt: signedPsbt, tx } = await btc.signPsbtBuffer(psbtBuffer, {
+   *   finalizePsbt: true,
+   *   accountPath: "m/84'/0'/0'",
+   *   addressFormat: 'p2wpkh'
+   * });
+   */
+  async signPsbtBuffer(
+    psbt: Buffer,
+    opts?: {
+      finalizePsbt?: boolean;
+      accountPath?: string;
+      addressFormat?: AddressFormat;
+      onDeviceSignatureRequested?: () => void;
+      onDeviceSignatureGranted?: () => void;
+      onDeviceStreaming?: (arg: { progress: number; total: number; index: number }) => void;
+    },
+  ): Promise<{ psbt: Buffer; tx: string }> {
+    if (this._impl instanceof BtcOld) {
+      throw new TypeError("signPsbtBuffer is not supported with the legacy Bitcoin app");
+    }
+    return this._impl.signPsbtBuffer(psbt, opts);
+  }
+
+  /**
    * To obtain the signature of multisignature (P2SH) inputs, call signP2SHTransaction_async with the folowing parameters
    * @param inputs is an array of [ transaction, output_index, redeem script, optional sequence ] where
    * * transaction is the previously computed transaction object for this UTXO
@@ -282,7 +321,7 @@ export default class Btc {
     transaction: Transaction,
     additionals: Array<string> = [],
   ): string {
-    return getTrustedInputBIP143(this._transport, indexLookup, transaction, additionals);
+    return getTrustedInputBIP143(indexLookup, transaction, additionals);
   }
 
   async changeImplIfNecessary(): Promise<BtcOld | BtcNew> {

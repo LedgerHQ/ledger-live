@@ -81,7 +81,7 @@ for (const token of subAccounts) {
         const selector = await getModularSelector(app, "ASSET");
         if (selector) {
           await selector.validateItems();
-          await selector.selectAsset(token.account.currency);
+          await selector.selectAssetByTicker(token.account.currency);
           await selector.selectNetwork(token.account.currency);
           await app.scanAccountsDrawer.selectFirstAccount();
           await app.scanAccountsDrawer.clickCloseButton();

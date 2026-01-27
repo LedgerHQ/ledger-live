@@ -1,5 +1,155 @@
 # @ledgerhq/coin-evm
 
+## 2.40.0
+
+### Minor Changes
+
+- [#13743](https://github.com/LedgerHQ/ledger-live/pull/13743) [`d38431e`](https://github.com/LedgerHQ/ledger-live/commit/d38431ee5f91439794cc6c7bad793b89ade95155) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - perf(llc): parellelize calls to the crypto asset store
+
+- [#13790](https://github.com/LedgerHQ/ledger-live/pull/13790) [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d) Thanks [@Justkant](https://github.com/Justkant)! - feat: add transaction source tagging with headers for broadcast
+
+  Add TransactionSource type and source field to BroadcastConfig to track
+  transaction origins (dApp, live-app, coin-module, swap) and transmit them
+  as X-Ledger-Source-Type and X-Ledger-Source-Name headers when broadcasting
+  to blockchain explorers for Bitcoin and EVM.
+
+  Changes:
+
+  - Add TransactionSource type with type and name fields to types-live
+  - Extend BroadcastConfig with optional source field
+  - Thread source through Bitcoin broadcast chain (broadcast.ts → wallet.ts → xpub.ts → explorer)
+  - Thread source through EVM broadcast in ledger node API
+  - Update Desktop to pass source in:
+    - Live app broadcasts (LiveAppSDKLogic.ts)
+    - Swap flows (CompleteExchange Body.tsx)
+    - Native send flows (GenericStepConnectDevice.tsx)
+  - Update Mobile to pass source in:
+    - Native transaction flows (screenTransactionHooks.ts)
+    - Platform exchange (CompleteExchange.tsx)
+    - Swap flows (Confirmation.tsx)
+  - Update wallet-api integrations (react.ts, useDappLogic.ts)
+
+- [#13787](https://github.com/LedgerHQ/ledger-live/pull/13787) [`7389999`](https://github.com/LedgerHQ/ledger-live/commit/7389999b0a5b52c42b565cbfe8e024c315c9dcf5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(llc): always pass `bigint` inside Alpaca custom fees
+
+- [#13710](https://github.com/LedgerHQ/ledger-live/pull/13710) [`36aaf48`](https://github.com/LedgerHQ/ledger-live/commit/36aaf487c15da117a23332de376257ce8e6582a9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Returns native empty balance when account is pristine
+
+### Patch Changes
+
+- Updated dependencies [[`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a)]:
+  - @ledgerhq/live-env@2.26.0
+  - @ledgerhq/coin-framework@6.13.1
+  - @ledgerhq/domain-service@1.6.1
+  - @ledgerhq/evm-tools@1.10.1
+  - @ledgerhq/cryptoassets@13.37.1
+  - @ledgerhq/live-network@2.2.1
+
+## 2.40.0-next.0
+
+### Minor Changes
+
+- [#13743](https://github.com/LedgerHQ/ledger-live/pull/13743) [`d38431e`](https://github.com/LedgerHQ/ledger-live/commit/d38431ee5f91439794cc6c7bad793b89ade95155) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - perf(llc): parellelize calls to the crypto asset store
+
+- [#13790](https://github.com/LedgerHQ/ledger-live/pull/13790) [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d) Thanks [@Justkant](https://github.com/Justkant)! - feat: add transaction source tagging with headers for broadcast
+
+  Add TransactionSource type and source field to BroadcastConfig to track
+  transaction origins (dApp, live-app, coin-module, swap) and transmit them
+  as X-Ledger-Source-Type and X-Ledger-Source-Name headers when broadcasting
+  to blockchain explorers for Bitcoin and EVM.
+
+  Changes:
+
+  - Add TransactionSource type with type and name fields to types-live
+  - Extend BroadcastConfig with optional source field
+  - Thread source through Bitcoin broadcast chain (broadcast.ts → wallet.ts → xpub.ts → explorer)
+  - Thread source through EVM broadcast in ledger node API
+  - Update Desktop to pass source in:
+    - Live app broadcasts (LiveAppSDKLogic.ts)
+    - Swap flows (CompleteExchange Body.tsx)
+    - Native send flows (GenericStepConnectDevice.tsx)
+  - Update Mobile to pass source in:
+    - Native transaction flows (screenTransactionHooks.ts)
+    - Platform exchange (CompleteExchange.tsx)
+    - Swap flows (Confirmation.tsx)
+  - Update wallet-api integrations (react.ts, useDappLogic.ts)
+
+- [#13787](https://github.com/LedgerHQ/ledger-live/pull/13787) [`7389999`](https://github.com/LedgerHQ/ledger-live/commit/7389999b0a5b52c42b565cbfe8e024c315c9dcf5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(llc): always pass `bigint` inside Alpaca custom fees
+
+- [#13710](https://github.com/LedgerHQ/ledger-live/pull/13710) [`36aaf48`](https://github.com/LedgerHQ/ledger-live/commit/36aaf487c15da117a23332de376257ce8e6582a9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Returns native empty balance when account is pristine
+
+### Patch Changes
+
+- Updated dependencies [[`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a)]:
+  - @ledgerhq/live-env@2.26.0-next.0
+  - @ledgerhq/coin-framework@6.13.1-next.0
+  - @ledgerhq/domain-service@1.6.1-next.0
+  - @ledgerhq/evm-tools@1.10.1-next.0
+  - @ledgerhq/cryptoassets@13.37.1-next.0
+  - @ledgerhq/live-network@2.2.1-next.0
+
+## 2.39.0
+
+### Minor Changes
+
+- [#13630](https://github.com/LedgerHQ/ledger-live/pull/13630) [`e3a83e0`](https://github.com/LedgerHQ/ledger-live/commit/e3a83e08278fd6bef3fd26d90df2823c78957d20) Thanks [@qperrot](https://github.com/qperrot)! - Fix: Blast need to use getOptimismAdditionalFees in order to perform a send max
+
+- [#13626](https://github.com/LedgerHQ/ledger-live/pull/13626) [`1f35ab1`](https://github.com/LedgerHQ/ledger-live/commit/1f35ab1efc396e1c4740607d6806284f906f1907) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): display native internal operations
+
+- [#13634](https://github.com/LedgerHQ/ledger-live/pull/13634) [`a526d94`](https://github.com/LedgerHQ/ledger-live/commit/a526d9465eb4887b3c65ab768b346bd91bf17e20) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): harmonize contract addresses
+
+- [#13645](https://github.com/LedgerHQ/ledger-live/pull/13645) [`0d2ee1b`](https://github.com/LedgerHQ/ledger-live/commit/0d2ee1b8c71f8040deaded3575124a44f2704a21) Thanks [@qperrot](https://github.com/qperrot)! - Fix: remove asset type check and only check reference
+
+- [#13627](https://github.com/LedgerHQ/ledger-live/pull/13627) [`ebce0b9`](https://github.com/LedgerHQ/ledger-live/commit/ebce0b97b3d35921d7b6c256e106ddb400f2aaa5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): do not crash when computing additional fees
+
+- [#13614](https://github.com/LedgerHQ/ledger-live/pull/13614) [`e506740`](https://github.com/LedgerHQ/ledger-live/commit/e506740729486f4c1579308ede0a5a348a04ecee) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): only expose `refreshOperations` if no explorers is available
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`cbcae7c`](https://github.com/LedgerHQ/ledger-live/commit/cbcae7c0ba9b54b1167d26e4227bd2b847207cb9), [`50bae0f`](https://github.com/LedgerHQ/ledger-live/commit/50bae0f13a95ef166b2c5609ccbcf5ef01ba1579), [`cf08174`](https://github.com/LedgerHQ/ledger-live/commit/cf0817462e9f0210fceff29ec60b0699e4e69b71), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59)]:
+  - @ledgerhq/cryptoassets@13.37.0
+  - @ledgerhq/coin-framework@6.13.0
+  - @ledgerhq/live-env@2.25.0
+  - @ledgerhq/devices@8.10.0
+  - @ledgerhq/errors@6.29.0
+  - @ledgerhq/logs@6.14.0
+  - @ledgerhq/domain-service@1.6.0
+  - @ledgerhq/live-network@2.2.0
+  - @ledgerhq/evm-tools@1.10.0
+  - @ledgerhq/live-promise@0.2.0
+
+## 2.39.0-next.0
+
+### Minor Changes
+
+- [#13630](https://github.com/LedgerHQ/ledger-live/pull/13630) [`e3a83e0`](https://github.com/LedgerHQ/ledger-live/commit/e3a83e08278fd6bef3fd26d90df2823c78957d20) Thanks [@qperrot](https://github.com/qperrot)! - Fix: Blast need to use getOptimismAdditionalFees in order to perform a send max
+
+- [#13626](https://github.com/LedgerHQ/ledger-live/pull/13626) [`1f35ab1`](https://github.com/LedgerHQ/ledger-live/commit/1f35ab1efc396e1c4740607d6806284f906f1907) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): display native internal operations
+
+- [#13634](https://github.com/LedgerHQ/ledger-live/pull/13634) [`a526d94`](https://github.com/LedgerHQ/ledger-live/commit/a526d9465eb4887b3c65ab768b346bd91bf17e20) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): harmonize contract addresses
+
+- [#13645](https://github.com/LedgerHQ/ledger-live/pull/13645) [`0d2ee1b`](https://github.com/LedgerHQ/ledger-live/commit/0d2ee1b8c71f8040deaded3575124a44f2704a21) Thanks [@qperrot](https://github.com/qperrot)! - Fix: remove asset type check and only check reference
+
+- [#13627](https://github.com/LedgerHQ/ledger-live/pull/13627) [`ebce0b9`](https://github.com/LedgerHQ/ledger-live/commit/ebce0b97b3d35921d7b6c256e106ddb400f2aaa5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): do not crash when computing additional fees
+
+- [#13614](https://github.com/LedgerHQ/ledger-live/pull/13614) [`e506740`](https://github.com/LedgerHQ/ledger-live/commit/e506740729486f4c1579308ede0a5a348a04ecee) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): only expose `refreshOperations` if no explorers is available
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`cbcae7c`](https://github.com/LedgerHQ/ledger-live/commit/cbcae7c0ba9b54b1167d26e4227bd2b847207cb9), [`50bae0f`](https://github.com/LedgerHQ/ledger-live/commit/50bae0f13a95ef166b2c5609ccbcf5ef01ba1579), [`cf08174`](https://github.com/LedgerHQ/ledger-live/commit/cf0817462e9f0210fceff29ec60b0699e4e69b71), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59)]:
+  - @ledgerhq/cryptoassets@13.37.0-next.0
+  - @ledgerhq/coin-framework@6.13.0-next.0
+  - @ledgerhq/live-env@2.25.0-next.0
+  - @ledgerhq/devices@8.10.0-next.0
+  - @ledgerhq/errors@6.29.0-next.0
+  - @ledgerhq/logs@6.14.0-next.0
+  - @ledgerhq/domain-service@1.6.0-next.0
+  - @ledgerhq/live-network@2.2.0-next.0
+  - @ledgerhq/evm-tools@1.10.0-next.0
+  - @ledgerhq/live-promise@0.2.0-next.0
+
 ## 2.38.0
 
 ### Minor Changes

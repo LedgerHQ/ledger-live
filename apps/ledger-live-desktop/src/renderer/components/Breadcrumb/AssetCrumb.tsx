@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 import DropDownSelector from "~/renderer/components/DropDownSelector";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
@@ -26,7 +26,7 @@ export default function AssetCrumb() {
   const { t } = useTranslation();
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
   const distribution = useDistribution({ hideEmptyTokenAccount });
-  const history = useHistory();
+  const navigate = useNavigate();
   const { assetId } = useParams<{ assetId?: string }>();
   const renderItem = useCallback(
     ({ item, isActive }: { item: ItemShape; isActive: boolean }) => (
@@ -51,11 +51,9 @@ export default function AssetCrumb() {
       }
       const { currency } = item;
       setTrackingSource("asset breadcrumb");
-      history.push({
-        pathname: `/asset/${currency.id}`,
-      });
+      navigate(`/asset/${currency.id}`);
     },
-    [history],
+    [navigate],
   );
   const processItemsForDropdown = useCallback(
     (items: DistributionItem[]) =>
@@ -81,9 +79,7 @@ export default function AssetCrumb() {
         <Button
           onClick={() => {
             setTrackingSource("asset breadcrumb");
-            history.push({
-              pathname: "/",
-            });
+            navigate("/");
           }}
         >
           {t("dashboard.title")}

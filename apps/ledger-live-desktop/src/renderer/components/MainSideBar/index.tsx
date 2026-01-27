@@ -1,12 +1,16 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
-import { Link, useHistory, useLocation, PromptProps } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import { useDeviceHasUpdatesAvailable } from "@ledgerhq/live-common/manager/useDeviceHasUpdatesAvailable";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  FeatureToggle,
+  useFeature,
+  useWalletFeaturesConfig,
+} from "@ledgerhq/live-common/featureFlags/index";
 import { Icons, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
@@ -35,8 +39,9 @@ import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import RecoverStatusDot from "~/renderer/components/MainSideBar/RecoverStatusDot";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
+import { HIDE_BAR_THRESHOLD } from "~/renderer/screens/dashboard/AssetDistribution/constants";
 
-type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
+type LocationType = ReturnType<typeof useLocation>;
 
 const MAIN_SIDEBAR_WIDTH = 230;
 
@@ -181,7 +186,7 @@ const SideBarScrollContainer = styled(Box)`
 
   flex: 1;
 
-  ::-webkit-scrollbar {
+  &::-webkit-scrollbar {
     width: 0;
     height: 0;
   }
@@ -211,12 +216,7 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
   return isFeatureFlagsButtonVisible || Object.keys(overriddenFeatureFlags).length !== 0 ? (
     <Tag
       data-testid="drawer-feature-flags-button"
-      to={{
-        pathname: "/settings/developer",
-        state: {
-          shouldOpenFeatureFlags: true,
-        },
-      }}
+      to="/settings/developer"
       onClick={() => setTrackingSource("sidebar")}
     >
       <Icons.Switch2 size="S" color="primary.c80" />
@@ -226,11 +226,11 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
 };
 
 // Check if the selected tab is a Live-App under discovery tab
-const checkLiveAppTabSelection = (location: Location, liveAppPaths: Array<string>) =>
+const checkLiveAppTabSelection = (location: LocationType, liveAppPaths: Array<string>) =>
   liveAppPaths.find((liveTab: string) => location?.pathname?.includes(liveTab));
 
 const MainSideBar = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -250,6 +250,36 @@ const MainSideBar = () => {
   const recoverFeature = useFeature("protectServicesDesktop");
   const recoverHomePath = useAccountPath(recoverFeature);
 
+  const {
+    shouldDisplayMarketBanner: isMarketBannerEnabled,
+    shouldDisplayQuickActionCtas: isQuickActionCtasEnabled,
+    isEnabled: isWallet40Enabled,
+  } = useWalletFeaturesConfig("desktop");
+
+  /**
+   * Auto-collapse/expand sidebar when wallet40 is enabled based on window width.
+   * Uses the same threshold as the AssetDistribution responsive layout.
+   */
+  const wasNarrowRef = useRef<boolean | null>(null);
+
+  useEffect(() => {
+    if (!isWallet40Enabled) return;
+
+    const handleResize = () => {
+      const isNarrow = window.innerWidth <= HIDE_BAR_THRESHOLD;
+
+      if (wasNarrowRef.current !== isNarrow) {
+        wasNarrowRef.current = isNarrow;
+        dispatch(setSidebarCollapsed(isNarrow));
+      }
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isWallet40Enabled, dispatch]);
+
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
   }, [dispatch, collapsed]);
@@ -257,22 +287,20 @@ const MainSideBar = () => {
     (pathname: string) => {
       if (location.pathname === pathname) return;
       setTrackingSource("sidebar");
-      history.push({
-        pathname,
-      });
+      navigate(pathname);
     },
-    [history, location.pathname],
+    [navigate, location.pathname],
   );
 
   const trackEntry = useCallback(
     (entry: string, flagged = false) => {
       track("menuentry_clicked", {
         entry,
-        page: history.location.pathname,
+        page: location.pathname,
         flagged,
       });
     },
-    [history.location.pathname],
+    [location.pathname],
   );
   const handleClickCard = useCallback(() => {
     push("/card");
@@ -335,7 +363,7 @@ const MainSideBar = () => {
     const liveAppId = recoverFeature?.params?.protectId;
 
     if (enabled && openRecoverFromSidebar && liveAppId && recoverHomePath) {
-      history.push(recoverHomePath);
+      navigate(recoverHomePath);
     } else if (enabled) {
       dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
     }
@@ -347,7 +375,7 @@ const MainSideBar = () => {
     recoverFeature?.params?.openRecoverFromSidebar,
     recoverFeature?.params?.protectId,
     recoverHomePath,
-    history,
+    navigate,
     dispatch,
   ]);
 
@@ -389,7 +417,7 @@ const MainSideBar = () => {
               onClick={handleCollapse}
               data-testid="drawer-collapse-button"
             >
-              <Icons.ChevronRight size="S" />
+              <Icons.ChevronRight size="S" color="neutral.c70" />
             </Collapser>
 
             <SideBarScrollContainer>
@@ -406,15 +434,17 @@ const MainSideBar = () => {
                   NotifComponent={<UpdateDot collapsed={collapsed} />}
                   collapsed={secondAnim}
                 />
-                <SideBarListItem
-                  id={"market"}
-                  label={t("sidebar.market")}
-                  icon={Icons.GraphAsc}
-                  iconActiveColor="wallet"
-                  onClick={handleClickMarket}
-                  isActive={location.pathname.startsWith("/market")}
-                  collapsed={secondAnim}
-                />
+                {!isMarketBannerEnabled && (
+                  <SideBarListItem
+                    id={"market"}
+                    label={t("sidebar.market")}
+                    icon={Icons.GraphAsc}
+                    iconActiveColor="wallet"
+                    onClick={handleClickMarket}
+                    isActive={location.pathname.startsWith("/market")}
+                    collapsed={secondAnim}
+                  />
+                )}
                 <SideBarListItem
                   id={"accounts"}
                   label={t("sidebar.accounts")}
@@ -425,24 +455,28 @@ const MainSideBar = () => {
                   disabled={noAccounts}
                   collapsed={secondAnim}
                 />
-                <SideBarListItem
-                  id={"send"}
-                  label={t("send.title")}
-                  icon={Icons.ArrowUp}
-                  iconActiveColor="wallet"
-                  onClick={handleOpenSendModal}
-                  disabled={noAccounts || navigationLocked}
-                  collapsed={secondAnim}
-                />
-                <SideBarListItem
-                  id={"receive"}
-                  label={t("receive.title")}
-                  icon={Icons.ArrowDown}
-                  iconActiveColor="wallet"
-                  onClick={handleOpenReceiveModal}
-                  disabled={noAccounts || navigationLocked}
-                  collapsed={secondAnim}
-                />
+                {!isQuickActionCtasEnabled && (
+                  <SideBarListItem
+                    id={"send"}
+                    label={t("send.title")}
+                    icon={Icons.ArrowUp}
+                    iconActiveColor="wallet"
+                    onClick={handleOpenSendModal}
+                    disabled={noAccounts || navigationLocked}
+                    collapsed={secondAnim}
+                  />
+                )}
+                {!isQuickActionCtasEnabled && (
+                  <SideBarListItem
+                    id={"receive"}
+                    label={t("receive.title")}
+                    icon={Icons.ArrowDown}
+                    iconActiveColor="wallet"
+                    onClick={handleOpenReceiveModal}
+                    disabled={noAccounts || navigationLocked}
+                    collapsed={secondAnim}
+                  />
+                )}
                 <SideBarListItem
                   id={"swap"}
                   label={t("sidebar.swap")}
@@ -462,16 +496,18 @@ const MainSideBar = () => {
                   isActive={location.pathname === "/earn"}
                   collapsed={secondAnim}
                 />
-                <SideBarListItem
-                  id={"exchange"}
-                  label={t("sidebar.exchange")}
-                  icon={Icons.Dollar}
-                  iconActiveColor="wallet"
-                  onClick={handleClickExchange}
-                  isActive={location.pathname === "/exchange"}
-                  disabled={noAccounts}
-                  collapsed={secondAnim}
-                />
+                {!isQuickActionCtasEnabled && (
+                  <SideBarListItem
+                    id={"exchange"}
+                    label={t("sidebar.exchange")}
+                    icon={Icons.Dollar}
+                    iconActiveColor="wallet"
+                    onClick={handleClickExchange}
+                    isActive={location.pathname === "/exchange"}
+                    disabled={noAccounts}
+                    collapsed={secondAnim}
+                  />
+                )}
                 <SideBarListItem
                   id={"catalog"}
                   label={t("sidebar.catalog")}
@@ -548,7 +584,6 @@ const MainSideBar = () => {
                   maxHeight: "max-content",
                   minHeight: getMinHeightForStarredAccountsList(),
                 }}
-                scroll
                 title={t("sidebar.stars")}
                 collapsed={secondAnim}
               >

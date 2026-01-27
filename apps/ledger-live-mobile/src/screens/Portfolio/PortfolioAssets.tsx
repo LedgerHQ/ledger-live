@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState, useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { shallowEqual } from "react-redux";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { GestureResponderEvent } from "react-native";
@@ -17,10 +17,11 @@ import { setSelectedTabPortfolioAssets } from "~/actions/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 import MarketBanner from "LLM/features/MarketBanner";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import useListsAnimation, { type TabListType } from "./useListsAnimation";
 import TabSection, { TAB_OPTIONS } from "./TabSection";
 import { flattenAccountsSelector } from "~/reducers/accounts";
+import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
 
 type Props = {
   hideEmptyTokenAccount: boolean;
@@ -130,6 +131,11 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     [showAssets, isAccountListUIEnabled, navigation],
   );
 
+  const { shouldDisplayMarketBanner, isEnabled: isLwmWallet40Enabled } =
+    useWalletFeaturesConfig("mobile");
+
+  const isLwmWallet40Disabled = !isLwmWallet40Enabled;
+
   return (
     <>
       <TrackScreen
@@ -137,10 +143,21 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         accountsLength={distribution.list && distribution.list.length}
         discreet={discreetMode}
       />
-      <Box my={24}>
-        <PortfolioQuickActionsBar />
-      </Box>
+
+      {isLwmWallet40Disabled && (
+        <Box my={24}>
+          <PortfolioQuickActionsBar />
+        </Box>
+      )}
+
       <MarketBanner />
+
+      {shouldDisplayMarketBanner && __DEV__ && (
+        <Box my={24}>
+          <MarketBannerFeature />
+        </Box>
+      )}
+
       {isAccountListUIEnabled ? (
         <TabSection
           handleToggle={handleToggle}

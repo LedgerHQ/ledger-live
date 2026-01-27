@@ -1,14 +1,14 @@
 import * as React from "react";
-import { render, screen, waitFor } from "@tests/test-renderer";
+import { renderWithReactQuery, screen, waitFor } from "@tests/test-renderer";
 import { MarketPages } from "./shared";
 
 describe("Market integration test - Title Tooltip", () => {
   it("Should display tooltip on long press of coin title", async () => {
-    const { user } = render(<MarketPages />);
+    const { user } = renderWithReactQuery(<MarketPages />);
 
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
 
-    const searchInput = await screen.findByTestId("search-box");
+    const searchInput = await screen.findByPlaceholderText("Search");
     await user.type(searchInput, "BTC");
 
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();

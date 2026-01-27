@@ -482,7 +482,9 @@
       "celo_title" : "Ledger Nano S™ 不支持互换 Celo",
       "celo_description" : "要互换 Celo，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "monad_title" : "Ledger Nano S™ 不支持互换 Monad",
-      "monad_description" : "要互换 Monad，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
+      "monad_description" : "要互换 Monad，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "zcash_title" : "Ledger Nano S™ 不支持互换 Zcash",
+      "zcash_description" : "要互换 Zcash，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
     },
     "providers" : {
       "title" : "选择一个供应方来互换加密货币",
@@ -648,134 +650,6 @@
         "placeholder" : "Token（代币）"
       },
       "submit" : "连接"
-    }
-  },
-  "fullNode" : {
-    "status" : "状态",
-    "connect" : "连接",
-    "disconnect" : "断开连接",
-    "checkNodeSettings" : "验证节点设置",
-    "edit" : "编辑",
-    "modal" : {
-      "title" : "连接比特币完整节点",
-      "disconnectTitle" : "断开连接完整节点",
-      "steps" : {
-        "landing" : {
-          "header" : "启动您的全部节点。不要信任，验证。",
-          "description" : "一个比特币的完整节点验证所有交易和区块，使您能够在为比特币网络做出贡献的同时无需信任地使用比特币。",
-          "list" : {
-            "item1" : "在拥有足够资源的设备上设置 Bitcoin Core（比特币核心）。",
-            "item2" : "等待您的节点完全同步。",
-            "item3" : "注意您的节点的 RPC 凭据、IP 地址和端口号。"
-          },
-          "disclaimer" : "运行一个完整节点需要一台拥有足够资源的计算机和一个不受数据限制的宽带连接。"
-        },
-        "node" : {
-          "title" : "Node（节点）",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "输入您的节点参数",
-              "disclaimer" : "您的全部节点必须在连接 Ledger Wallet 之前被完全同步。",
-              "fields" : {
-                "nodeHost" : {
-                  "title" : "主机",
-                  "tooltip" : "如果节点在此计算机上运行，则应保持默认值，或者替换节点 IP 地址和端口号。"
-                },
-                "rpcCredentials" : {
-                  "title" : "RPC 凭据",
-                  "tooltip" : "请输入您的节点 RPC 用户名和密码，可在 bitcoin.conf 文件里找到。",
-                  "usernamePlaceholder" : "用户名",
-                  "passwordPlaceholder" : "密码"
-                },
-                "tls" : {
-                  "title" : "使用 TLS",
-                  "tooltip" : "启用传输层安全性，例如，在使用托管节点解决方案时。"
-                }
-              }
-            },
-            "connecting" : {
-              "header" : "正在测试节点连接",
-              "description" : "请稍等，我们正在检查您的完整节点是否有响应。"
-            },
-            "success" : {
-              "header" : "完整节点连接成功",
-              "description" : "您现在可以配置您的完整节点来扫描您在区块链上的账户。"
-            },
-            "failure" : {
-              "header" : "Could not reach full node（无法访问全节点）",
-              "description" : "请确保您的节点完全同步并验证其连接设置。"
-            }
-          }
-        },
-        "device" : {
-          "title" : "设备",
-          "connectionSteps" : {
-            "pending" : {
-              "header" : "正在从设备获取账户",
-              "description" : "请稍候，正在将待扫描的账户添加到节点配置文件中。"
-            },
-            "success" : {
-              "header" : "账户已添加至节点配置",
-              "description" : "配置文件已保存到用户数据文件夹。 它允许 Ledger SatStack 连接到您的完整节点，并允许其扫描您在区块链上的账户。",
-              "cta" : "查看用户数据"
-            }
-          }
-        },
-        "accounts" : {
-          "title" : "账户",
-          "existing" : "待扫描的现有账户",
-          "toScan" : "待扫描的账户",
-          "toScanDescription" : "每个地址类别中待扫描的账户",
-          "toScanTooltip" : "仅当您有10个以上 BTC 账户时才会增加。初始扫描速度会更慢。 "
-        },
-        "satstack" : {
-          "title" : "SatStack",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "下载并运行 Ledger SatStack",
-              "description" : "Ledger SatStack 是一个小型应用程序，支持 Ledger Wallet 与您的全节点通话。请下载并运行该应用程序再继续。",
-              "disclaimer" : "SatStack 必须运行，Ledger Wallet 才能连接到您的 fullnode。考虑将其设置为在计算机启动时自动启动。",
-              "cta" : "下载 SatStack"
-            },
-            "satstack-disconnected" : {
-              "header" : "Could not reach SatStack（无法访问 SatStack）",
-              "description" : "请验证 SatStack 正在此计算机上运行。"
-            },
-            "satstack-outdated" : {
-              "header" : "请升级 SatStack",
-              "description" : "您正在使用的 SatStack 版本过旧，可能存在漏洞或不兼容。"
-            },
-            "node-disconnected" : {
-              "header" : "Could not reach full node（无法访问全节点）",
-              "description" : "请验证您节点的可访问性，且您输入了正确的连接设置。"
-            },
-            "invalid-chain" : {
-              "header" : "无效链标题",
-              "description" : "tooltip 工具提示的无效链描述"
-            },
-            "initializing" : {
-              "header" : "Loading（加载中）",
-              "description" : ""
-            },
-            "ready" : {
-              "header" : "Ready（准备就绪）",
-              "description" : "完整节点已完全同步。您的比特币账户余额现在是正确的。"
-            },
-            "syncing" : {
-              "header" : "正在进行节点同步……",
-              "description" : "最近的交易可能尚不可见，因此比特币账户余额可能不正确。如果可能，请连续运行您的节点以使其保持同步。"
-            },
-            "scanning" : {
-              "header" : "Account scan in progress...（正在进行账户扫描...）",
-              "description" : "您可以在完成账户扫描后添加您的账户。任何之前通过 Ledger 浏览器添加的比特币账户都被删除。"
-            }
-          }
-        },
-        "disconnect" : {
-          "cta" : "断开连接",
-          "description" : "您确定吗？断开完整节点将会移除所有比特币账户。您可以使用 Ledger 浏览器再次添加您的账户。"
-        }
-      }
     }
   },
   "account" : {
@@ -1311,6 +1185,17 @@
         "depositButton" : "保护我的加密货币",
         "skipButton" : "以后再说"
       },
+      "sync" : {
+        "timelineTitle" : "Wallet Sync",
+        "timelineTitleCompleted" : "同步已启用",
+        "title" : "为您的钱包启用同步",
+        "description" : "在您换用电脑或使用手机时，及时更新自己的资产组合",
+        "skipButton" : "以后再说",
+        "skipTitle" : "跳过启用同步？",
+        "skipDescription" : "如果跳过，当您换用手机或电脑时，将需要手动重新添加所有加密货币账户。您可以随时在 Ledger Wallet 设置中禁用此功能。",
+        "skipConfirm" : "是，跳过",
+        "skipNo" : "不，启用同步"
+      },
       "backup" : {
         "title" : "秘密恢复短语备份",
         "description" : "利用数字加密备份，没有秘密恢复短语也能恢复钱包访问权限。\n\n选择是否需要数字备份：",
@@ -1668,6 +1553,7 @@
     "currency" : "货币",
     "rangeLabel" : "时间",
     "goBack" : "返回",
+    "searchPlaceholder" : "搜索资产",
     "filters" : {
       "title" : "筛选",
       "show" : "显示",
@@ -1773,8 +1659,6 @@
       "import" : "账户",
       "finish" : "确认"
     },
-    "fullNodeReadyInfo" : "将使用您的比特币完整节点来添加账户。",
-    "fullNodeConfigure" : "配置节点",
     "tokensTip" : "{{token}} ({{ticker}}) 是一个 {{tokenType}} 代币。您可以直接在 {{currency}} 账户上接收代币。",
     "accountToImportSubtitle_other" : "添加现有账户",
     "selectAll" : "全选 ({{count}})",
@@ -2507,7 +2391,11 @@
     "coinControlCustom" : "自定义币种选择",
     "aboveMaximum" : "高于最大余额",
     "transactionSigned" : "交易已签署",
-    "processingTransaction" : "您的交易正在处理中"
+    "processingTransaction" : "您的交易正在处理中",
+    "sign" : {
+      "title" : "在您的 Ledger {{wording}} 上继续操作",
+      "description" : "按照安全触摸屏上的指示进行操作。"
+    }
   },
   "releaseNotes" : {
     "title" : "版本说明",
@@ -4788,6 +4676,8 @@
       "runLocalAppOpenButton" : "打开",
       "enableLearnStagingUrl" : "学习页面的模拟环境 URL 网页地址",
       "enableLearnStagingUrlDesc" : "启用学习页面的模拟环境 URL 网址。",
+      "enableCountervaluesStaging" : "对价 API 预发布环境",
+      "enableCountervaluesStagingDesc" : "使用预发布环境而非生产环境的对价 API。",
       "openOnboardingAppInstallDebug" : "打开入门应用程序安装调试界面",
       "openOnboardingAppInstallDebugDesc" : "打开一个界面，其中包含同步入门应用程序安装步骤中的组件"
     },
@@ -4968,10 +4858,6 @@
         "desc" : "您可以通过前往主账户，以右键点击相关代币并选择“隐藏代币”的方式来隐藏代币。",
         "count" : "1 枚代币",
         "count_other" : "{{count}} 枚代币"
-      },
-      "fullNode" : {
-        "title" : "连接比特币完整节点",
-        "desc" : "设置您的比特币完整节点，无需使用 Ledger 的浏览器即可进行同步和发送交易。"
       },
       "filterTokenOperationsZeroAmount" : {
         "title" : "值为 0 时隐藏代币交易",
@@ -6443,22 +6329,6 @@
     "RPCPassRequired" : {
       "title" : "需要输入 RPC 密码"
     },
-    "SatStackAccessDown" : {
-      "title" : "Could not reach full node（无法访问全节点）",
-      "description" : "请确认 SatStack 和您的节点正在运行。如果问题仍然存在，请在设置选项中检查完整节点设置。"
-    },
-    "SatStackStillSyncing" : {
-      "title" : "Node sync in progress...（正在进行节点同步...）",
-      "description" : "节点正在同步，请耐心等待。由于您的比特币账户余额或许不正确，无法发送。"
-    },
-    "SatStackVersionTooOld" : {
-      "title" : "请升级 SatStack",
-      "description" : "您正在使用的 SatStack 版本过旧，可能存在漏洞或不兼容。"
-    },
-    "SatStackDescriptorNotImported" : {
-      "title" : "账户未经完整节点扫描",
-      "description" : "请配置您的完整节点以扫描与此设备相关联的账户。您的完整节点必须先扫描此账户的区块链，然后才能将其添加到您的资产组合中。"
-    },
     "SwapRateExpiredError" : {
       "title" : "费率已过期",
       "description" : "汇率已过期。请刷新并重试。"
@@ -6924,6 +6794,10 @@
       "title" : "Cardano 无效协议参数",
       "description" : "暂时无法使用 ADA 交易。请重新同步您的账户并重试，如需帮助，请联系客服。"
     },
+    "CardanoMemoExceededSizeError" : {
+      "title" : "备忘标签长度无效，最大允许 64 个字符",
+      "description" : "Cardano 备忘标签有最大长度限制。请缩减备忘标签的长度"
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo 过长"
     },
@@ -6997,8 +6871,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "暂无可领取的奖励"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Memo 备注太长。最大长度为 {{maxLength}} 个字符"
+    "HederaMemoExceededSizeError" : {
+      "title" : "备忘标签长度无效，最大允许 100 个字符",
+      "description" : "Hedera 备忘标签有最大长度限制。请缩减备忘标签的长度"
     },
     "ImageIncorrectFileTypeError" : {
       "title" : "从文件加载图片失败。",
@@ -7949,6 +7824,11 @@
       },
       "cta" : "请重试"
     }
+  },
+  "marketBanner" : {
+    "title" : "探索市场",
+    "genericError" : "连接失败",
+    "cta" : "查看全部"
   },
   "nftEntryPoint" : {
     "title" : "NFT（非同质化代币）",

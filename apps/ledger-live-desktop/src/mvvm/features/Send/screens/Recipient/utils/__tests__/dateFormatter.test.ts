@@ -121,7 +121,8 @@ describe("dateFormatter utils", () => {
     });
 
     it("handles dates at year boundaries correctly", () => {
-      const lastDayOfYear = new Date("2023-12-31T23:59:59.000Z");
+      // Use a date that will be Dec 31 in all timezones
+      const lastDayOfYear = new Date("2023-12-31T12:00:00.000Z");
       const result = formatRelativeDate(lastDayOfYear);
 
       expect(result).toBe("31 Dec 23");

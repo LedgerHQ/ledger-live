@@ -933,7 +933,7 @@
       "primaryCTA" : "Réessayer"
     },
     "SolanaAccountNotFunded" : {
-      "title" : "Pas de fonds sur le compte"
+      "title" : "Compte vide"
     },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "Ce compte de tokens associé contient un autre token"
@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Aucune récompense à demander"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Mémo trop long. Longueur maximale : {{maxLength}} caractères."
-    },
     "NearNewAccountWarning" : {
       "title" : "Le compte du bénéficiaire n’a pas encore été créé. Pour le créer, le protocole nécessite un transfert de {{formattedNewAccountStorageCost}}."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "Le montant doit être supérieur à {{threshold}}"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "Format du mémo incorrect : il doit être inférieur à 4294967296"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "Longueur du mémo non valide : le maximum autorisé est de 100 caractères"
     },
     "PinNotSet" : {
       "title" : "Code PIN non configuré"
@@ -3065,7 +3068,7 @@
       "cta" : "Demander"
     },
     "undelegation" : {
-      "sectionLabel" : "Délégation(s) interrompue(s)"
+      "sectionLabel" : "Délégations arrêtées"
     },
     "readOnly" : {
       "noTransaction" : {
@@ -3474,7 +3477,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Activez les notifications",
+      "titleVariantB" : "Exploitez tout le potentiel de Ledger Wallet",
       "desc" : "Ne manquez plus rien sur Ledger Wallet, les produits Ledger, le marché, et recevez des recommandations personnalisées. Vous pouvez vous désinscrire à tout moment dans les Paramètres.",
+      "descVariantB" : "Nous vous enverrons des conseils personnalisés, des guides de configuration et les actualités du marché les plus utiles.",
       "allow" : "Autoriser les notifications",
       "later" : "Plus tard"
     },
@@ -3891,7 +3896,9 @@
         "celo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Celo",
         "celo_description" : "Pour échanger des Celo, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "monad_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Monad",
-        "monad_description" : "Pour échanger des Monad, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+        "monad_description" : "Pour échanger des Monad, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "zcash_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Zcash",
+        "zcash_description" : "Pour échanger des Zcash, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {
@@ -8086,6 +8093,15 @@
       "cta" : "En savoir plus"
     }
   },
+  "marketBanner" : {
+    "title" : "Explorer le marché",
+    "viewAll" : "Afficher tout",
+    "viewAllAccessibilityHint" : "Appuyez deux fois pour afficher tous les actifs",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "Appuyez deux fois pour afficher les détails"
+    }
+  },
   "largeMover" : {
     "info" : "Informations",
     "marketCap" : "Capitalisation",
@@ -8325,6 +8341,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "Psychologie du marché",
+    "description" : "Cet indice reflète l’état émotionnel du marché. Il varie de 0 à 100 : une valeur basse indique une peur extrême (pessimisme), et une valeur élevée correspond à une cupidité extrême (optimisme).",
+    "levels" : {
+      "extremeFear" : "Peur+",
+      "fear" : "Peur",
+      "neutral" : "Neutre",
+      "greed" : "Cupidité",
+      "extremeGreed" : "Cupidité+"
     }
   }
 }

@@ -77,6 +77,7 @@ export type DefaultFeature = Feature<unknown>;
  */
 export type CurrencyFeatures = {
   currencyAvalancheCChain: DefaultFeature;
+  currencyAvalancheCChainFuji: DefaultFeature;
   currencyStacks: DefaultFeature;
   currencyOptimism: DefaultFeature;
   currencyOptimismSepolia: DefaultFeature;
@@ -111,7 +112,9 @@ export type CurrencyFeatures = {
   currencyPolygonZkEvmTestnet: DefaultFeature;
   currencyBase: DefaultFeature;
   currencyBaseSepolia: DefaultFeature;
+  currencyBitlayer: DefaultFeature;
   currencyKlaytn: DefaultFeature;
+  currencyKlaytnBaobab: DefaultFeature;
   currencyVechain: DefaultFeature;
   currencyCasper: DefaultFeature;
   currencyNeonEvm: DefaultFeature;
@@ -122,6 +125,8 @@ export type CurrencyFeatures = {
   currencyBlastSepolia: DefaultFeature;
   currencyScroll: DefaultFeature;
   currencyScrollSepolia: DefaultFeature;
+  currencyShape: DefaultFeature;
+  currencyStory: DefaultFeature;
   currencyIcon: DefaultFeature;
   currencyTon: DefaultFeature;
   currencyEtherlink: DefaultFeature;
@@ -156,6 +161,8 @@ export type CurrencyFeatures = {
   currencyConcordiumTestnet: DefaultFeature;
   currencyAleo: DefaultFeature;
   currencyAleoTestnet: DefaultFeature;
+  currencyUnichain: DefaultFeature;
+  currencyUnichainSepolia: DefaultFeature;
 };
 
 /**
@@ -221,7 +228,6 @@ export type Features = CurrencyFeatures & {
   llmChatbotSupport: Feature_LlmChatbotSupport;
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
   lldActionCarousel: Feature_lldActionCarousel;
-  marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
   lldRefreshMarketData: Feature_LldRefreshMarketData;
   llmRefreshMarketData: Feature_LlmRefreshMarketData;
   lldWalletSync: Feature_LldWalletSync;
@@ -386,15 +392,6 @@ export type Feature_ReferralProgramDesktopSidebar = Feature<{
 }>;
 
 export type Feature_BrazePushNotifications = Feature<{
-  notificationsCategories: {
-    displayed: boolean;
-    category: string;
-  }[];
-  trigger_events: {
-    route_name: string;
-    timer: number;
-    type: string;
-  }[];
   reprompt_schedule: Array<{
     months: number;
     days: number;
@@ -432,29 +429,18 @@ export type Feature_BrazePushNotifications = Feature<{
       timer: number;
     };
   };
-
-  // Legacy fields kept for backward compatibility with existing configurations.
-  marketCoinStarred: {
-    enabled: boolean;
-    timer: number;
+  inactivity_enabled: boolean;
+  inactivity_reprompt: {
+    months: number;
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
   };
-  justFinishedOnboarding: {
-    enabled: boolean;
-    timer: number;
-  };
-  conditions: {
-    default_delay_between_two_prompts: {
-      seconds: number;
-    };
-    maybe_later_delay: {
-      seconds: number;
-    };
-    minimum_accounts_with_funds_number: number;
-    minimum_app_starts_number: number;
-    minimum_duration_since_app_first_start: {
-      seconds: number;
-    };
-  };
+  notificationsCategories: {
+    displayed: boolean;
+    category: string;
+  }[];
 }>;
 
 export type Feature_ReceiveStakingFlowConfigDesktop = Feature<{
@@ -654,15 +640,6 @@ export type Feature_lldActionCarousel = Feature<{
   variant: ABTestingVariants;
 }>;
 
-export type Feature_MarketperformanceWidgetDesktop = Feature<{
-  variant: ABTestingVariants;
-  refreshRate: number;
-  top: number;
-  limit: number;
-  supported: boolean;
-  enableNewFeature: boolean;
-}>;
-
 export type Feature_LldRefreshMarketData = Feature<{
   refreshTime: number;
 }>;
@@ -817,6 +794,8 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 
 type Feature_Wallet40_Params = {
   marketBanner: boolean;
+  graphRework: boolean;
+  quickActionCtas: boolean;
 };
 
 export type Feature_LwmWallet40 = Feature<

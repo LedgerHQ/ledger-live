@@ -1,7 +1,7 @@
 import React from "react";
 import { ScrollView } from "react-native";
 import { Flex, InfiniteLoader, Link, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import Button from "~/components/wrappedUi/Button";
 import type { Step, UiCheckStatus } from "./EarlySecurityCheck";
 import CheckCard from "./CheckCard";

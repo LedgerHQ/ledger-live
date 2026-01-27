@@ -1,5 +1,5 @@
 import React, { useState, ReactNode, useMemo, useRef } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
@@ -36,7 +36,7 @@ interface UseCompanionStepsProps {
   productName: string;
   seedPathStatus: SeedPathStatus;
   deviceOnboardingState: OnboardingState | null;
-  analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
+  analyticsSeedConfiguration: React.RefObject<SeedOriginType | undefined>;
 }
 
 interface UseCompanionStepsReturn {

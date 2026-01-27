@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
@@ -16,7 +16,7 @@ import type {
 import { PolkadotNominateFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { useNotifications } from "~/logic/notifications";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 type Props = BaseComposite<
   StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateValidationSuccess>

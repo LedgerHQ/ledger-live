@@ -3,7 +3,7 @@ import { App } from "@ledgerhq/types-live";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { State, Action } from "@ledgerhq/live-common/apps/index";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import styled from "styled-components/native";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import manager from "@ledgerhq/live-common/manager/index";

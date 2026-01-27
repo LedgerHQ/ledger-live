@@ -1,7 +1,7 @@
 import { openModal } from "~/renderer/actions/modals";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import useStakeFlow from "~/renderer/screens/stake";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
@@ -17,7 +17,7 @@ import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/accou
 export const useDeepLinkListener = () => {
   const startStakeFlow = useStakeFlow();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const accounts = useSelector(flattenAccountsSelector);
   const dispatch = useDispatch();
 
@@ -86,8 +86,6 @@ export const useDeepLinkListener = () => {
     queryParams.delete("action");
 
     // reset the query params, so we don't trigger the effect again
-    history.replace({
-      search: queryParams.toString(),
-    });
-  }, [accounts, dispatch, history, location.search, startStakeFlow]);
+    navigate(`?${queryParams.toString()}`, { replace: true });
+  }, [accounts, dispatch, navigate, location.search, startStakeFlow]);
 };

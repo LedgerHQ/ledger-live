@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
-import { Redirect } from "react-router";
+import { Navigate, useParams } from "react-router";
 import { Account } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -20,17 +20,8 @@ import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import AssetHeader from "./AssetHeader";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
-type Props = {
-  match: {
-    params: {
-      assetId: string;
-    };
-    isExact: boolean;
-    path: string;
-    url: string;
-  };
-};
-export default function AssetPage({ match }: Props) {
+export default function AssetPage() {
+  const { "*": assetId } = useParams<{ "*": string }>();
   const { t } = useTranslation();
   const paperColor = useTheme().colors.background.card;
   const range = useSelector(selectedTimeRangeSelector);
@@ -40,14 +31,14 @@ export default function AssetPage({ match }: Props) {
 
   const accounts = useFlattenSortAccounts({
     enforceHideEmptySubAccounts: true,
-  }).filter(a => getAccountCurrency(a).id === match.params.assetId);
+  }).filter(a => getAccountCurrency(a).id === assetId);
 
   const lookupParentAccount = useCallback(
     (id: string): Account | undefined | null => allAccounts.find(a => a.id === id) || null,
     [allAccounts],
   );
   const unit = useMaybeAccountUnit(accounts[0]);
-  if (!accounts.length || !unit) return <Redirect to="/" />;
+  if (!accounts.length || !unit) return <Navigate to="/" replace />;
   const parentAccount =
     accounts[0].type !== "Account" ? lookupParentAccount(accounts[0].parentId) : null;
   const currency = getAccountCurrency(accounts[0]);

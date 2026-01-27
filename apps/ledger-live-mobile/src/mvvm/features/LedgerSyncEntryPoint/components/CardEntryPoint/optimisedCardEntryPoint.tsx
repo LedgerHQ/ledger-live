@@ -1,6 +1,6 @@
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { TouchableOpacity } from "react-native";
 import Logo from "./assets/Logo";
 

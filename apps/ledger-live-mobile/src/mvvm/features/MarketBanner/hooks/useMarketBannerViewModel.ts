@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useSelector } from "~/context/hooks";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useMarketPerformers } from "@ledgerhq/live-common/market/hooks/useMarketPerformers";
 import {
@@ -9,28 +9,24 @@ import {
 } from "@ledgerhq/live-common/market/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { track } from "~/analytics";
-import { NavigatorName, ScreenName } from "~/const";
-import { counterValueCurrencySelector, selectedTimeRangeSelector } from "~/reducers/settings";
+import { ScreenName } from "~/const";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
-import {
-  MARKET_BANNER_TILE_COUNT,
-  MARKET_BANNER_TOP,
-  REFRESH_RATE,
-  PAGE_NAME,
-  BANNER_NAME,
-} from "../constants";
+import { MARKET_BANNER_TILE_COUNT, PAGE_NAME, BANNER_NAME } from "../constants";
 import { UseMarketBannerViewModelResult } from "../types";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  TIME_RANGE,
+  MARKET_BANNER_DATA_SORT_ORDER,
+  MARKET_BANNER_TOP,
+  MARKET_PERFORMERS_SUPPORTED,
+  MARKET_BANNER_REFRESH_RATE,
+} from "@ledgerhq/live-common/market/constants";
 
 const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
   const baseNavigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
-  const marketNavigation = useNavigation<NavigationProp<WalletTabNavigatorStackParamList>>();
-  const lwmWallet40 = useFeature("lwmWallet40");
-
-  const isMarketBannerEnabled = lwmWallet40?.enabled && lwmWallet40?.params?.marketBanner;
-  const timeRange = useSelector(selectedTimeRangeSelector);
+  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const { isCurrencyAvailable } = useRampCatalog();
@@ -42,13 +38,13 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
   );
 
   const { data, isLoading, isError } = useMarketPerformers({
-    sort: "asc",
+    sort: MARKET_BANNER_DATA_SORT_ORDER,
     counterCurrency: counterValueCurrency.ticker,
-    range: timeRange,
+    range: TIME_RANGE,
     limit: MARKET_BANNER_TILE_COUNT * 2,
     top: MARKET_BANNER_TOP,
-    supported: true,
-    refreshRate: REFRESH_RATE,
+    supported: MARKET_PERFORMERS_SUPPORTED,
+    refreshRate: MARKET_BANNER_REFRESH_RATE,
   });
 
   const filteredItems = useMemo(() => {
@@ -63,11 +59,8 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
   }, [data, isCurrencyAvailable, currenciesForSwapAllSet]);
 
   const navigateToMarket = useCallback(() => {
-    marketNavigation.navigate(NavigatorName.Market, {
-      screen: ScreenName.MarketList,
-      params: {},
-    });
-  }, [marketNavigation]);
+    baseNavigation.navigate(ScreenName.MarketList);
+  }, [baseNavigation]);
 
   const navigateToMarketDetail = useCallback(
     (currencyId: string) => {
@@ -107,23 +100,15 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
     navigateToMarket();
   }, [navigateToMarket]);
 
-  const onSwipe = useCallback(() => {
-    track("swipe", {
-      page: PAGE_NAME,
-      banner: BANNER_NAME,
-    });
-  }, []);
-
   return {
     items: filteredItems,
     isLoading,
     isError,
-    isEnabled: isMarketBannerEnabled ?? false,
-    range: timeRange,
+    isEnabled: shouldDisplayMarketBanner,
+    range: TIME_RANGE,
     onTilePress,
     onViewAllPress,
     onSectionTitlePress,
-    onSwipe,
   };
 };
 

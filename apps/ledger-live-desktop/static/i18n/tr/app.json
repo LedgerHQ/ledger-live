@@ -482,7 +482,9 @@
       "celo_title" : "Ledger Nano S™, Celo takasını desteklemez",
       "celo_description" : "Celo takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
       "monad_title" : "Ledger Nano S™, Monad takasını desteklemez",
-      "monad_description" : "Monad takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın."
+      "monad_description" : "Monad takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
+      "zcash_title" : "Ledger Nano S™, Zcash takasını desteklemez",
+      "zcash_description" : "Zcash takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın."
     },
     "providers" : {
       "title" : "Kripto takası işlemleri için bir sağlayıcı seçin",
@@ -648,134 +650,6 @@
         "placeholder" : "Token"
       },
       "submit" : "Bağlan"
-    }
-  },
-  "fullNode" : {
-    "status" : "Durum",
-    "connect" : "Bağlan",
-    "disconnect" : "Bağlantıyı Kes",
-    "checkNodeSettings" : "Düğüm ayarlarını doğrulayın",
-    "edit" : "Düzenle",
-    "modal" : {
-      "title" : "Bitcoin tam düğümü bağla",
-      "disconnectTitle" : "Tam düğümün bağlantısını kes",
-      "steps" : {
-        "landing" : {
-          "header" : "Tam düğümünüzü başlatın. Güvenmek yerine kendiniz doğrulayın.",
-          "description" : "Bir Bitcoin tam düğümü (full node), tüm işlemleri ve blokları doğrulayıp Bitcoin ağına katkıda bulunur ve Bitcoin'i kimseye güven gerektirmeyen bir şekilde kullanmanıza izin verir.",
-          "list" : {
-            "item1" : "Bitcoin Core'u yeterli kaynaklara sahip bir cihazda kurun.",
-            "item2" : "Düğümünüzün tamamen senkronize edilmesini bekleyin.",
-            "item3" : "Düğüm RPC kimlik bilgileri, IP adresi ve port (bağlantı noktası) numarasını not alın."
-          },
-          "disclaimer" : "Tam düğümü çalıştırmak için yeterli kaynaklara sahip bir bilgisayar ve veri kısıtlamaları olmayan bir geniş bant bağlantısı gerekir."
-        },
-        "node" : {
-          "title" : "Node (Düğüm)",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "Düğüm parametrelerinizi girin",
-              "disclaimer" : "Tam düğümünüz, Ledger Wallet'a bağlanmadan önce tamamen senkronize edilmelidir.",
-              "fields" : {
-                "nodeHost" : {
-                  "title" : "Sunucu",
-                  "tooltip" : "Düğüm bu bilgisayarda çalışıyorsa varsayılan olarak bırakın ya da düğüm IP adresi ve port numarasını değiştirin."
-                },
-                "rpcCredentials" : {
-                  "title" : "RPC Bilgileri",
-                  "tooltip" : "Düğümünüzün, bitcoin.conf dosyasında bulunan RPC kullanıcı adını ve şifresini girin.",
-                  "usernamePlaceholder" : "Kullanıcı Adı",
-                  "passwordPlaceholder" : "Parola"
-                },
-                "tls" : {
-                  "title" : "TLS Kullan",
-                  "tooltip" : "Örneğin, bir düğüm sunucusu çözümü kullanırken Taşıma Katmanı Güvenliğini (TLS) etkinleştirin."
-                }
-              }
-            },
-            "connecting" : {
-              "header" : "Düğüm bağlantısını test etme",
-              "description" : "Tam düğümünüzün yanıt verip vermediğini kontrol ederken lütfen bekleyin."
-            },
-            "success" : {
-              "header" : "Tam düğüm bağlantısı başarılı",
-              "description" : "Artık tam düğümünüzü blok zincirindeki hesaplarınızı tarayacak şekilde yapılandırabilirsiniz."
-            },
-            "failure" : {
-              "header" : "Tam düğüme ulaşılamadı",
-              "description" : "Lütfen düğümünüzün tamamen senkronize olduğundan emin olun ve bağlantı ayarlarını doğrulayın."
-            }
-          }
-        },
-        "device" : {
-          "title" : "Cihaz",
-          "connectionSteps" : {
-            "pending" : {
-              "header" : "Cihazdan hesap alma",
-              "description" : "Taranacak hesaplar düğüm yapılandırma dosyasına eklenirken lütfen bekleyin."
-            },
-            "success" : {
-              "header" : "Hesaplar düğüm yapılandırmasına eklendi",
-              "description" : "Kullanıcı veri klasörüne bir yapılandırma dosyası kaydedildi. Bu, Ledger SatStack uygulamasının tam düğümünüze bağlanmasını ve blok zincirindeki hesaplarınızı taramasını sağlar.",
-              "cta" : "Kullanıcı verilerini görün"
-            }
-          }
-        },
-        "accounts" : {
-          "title" : "Hesaplar",
-          "existing" : "Taranacak mevcut hesaplar",
-          "toScan" : "Taranacak hesaplar",
-          "toScanDescription" : "Her adres türü için taranacak hesaplar",
-          "toScanTooltip" : "Yalnızca 10'dan fazla BTC hesabınız varsa arttırın. İlk tarama yavaş olacaktır. "
-        },
-        "satstack" : {
-          "title" : "SatStack",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "Ledger SatStack uygulamasını indir ve çalıştır",
-              "description" : "Ledger SatStack, Ledger Wallet ile tam düğümünüz arasında iletişim kurulmasını sağlayan küçük bir uygulamadır. Devam etmeden önce lütfen indirin ve çalıştırın.",
-              "disclaimer" : "Ledger Wallet’ın tam düğümünüze bağlanabilmesi için SatStack çalışıyor olmalıdır.  Bilgisayarınız açıldığında otomatik olarak başlayacak şekilde ayarlamanızı öneririz.",
-              "cta" : "SatStack'i indir"
-            },
-            "satstack-disconnected" : {
-              "header" : "SatStack'e ulaşılamadı",
-              "description" : "Lütfen SatStack uygulamasının bu bilgisayarda çalışmakta olduğunu doğrulayın."
-            },
-            "satstack-outdated" : {
-              "header" : "Lütfen SatStack'i güncelleyin",
-              "description" : "Kullanmakta olduğunuz SatStack sürümü çok eski ve çeşitli hata veya uyumsuzluklar içerebilir."
-            },
-            "node-disconnected" : {
-              "header" : "Tam düğüme ulaşılamadı",
-              "description" : "Lütfen düğümünüzün erişilebilir olduğunu ve girdiğiniz bağlantı ayarlarının doğru olduğunu kontrol edin."
-            },
-            "invalid-chain" : {
-              "header" : "geçersiz zincir başlığı",
-              "description" : "bilgi kutusu için geçersiz zincir tanımı"
-            },
-            "initializing" : {
-              "header" : "Yükleniyor",
-              "description" : ""
-            },
-            "ready" : {
-              "header" : "Hazır",
-              "description" : "Tam düğüm tamamen senkronize edildi. Bitcoin hesap bakiyeleriniz artık doğru."
-            },
-            "syncing" : {
-              "header" : "Düğüm senkronizasyonu yapılıyor...",
-              "description" : "Son işlemler henüz görüntülenemiyor olduğu için Bitcoin hesap bakiyeleri doğru olmayabilir. Mümkünse, düğümünüzü senkronize tutmak için sürekli olarak çalıştırın."
-            },
-            "scanning" : {
-              "header" : "Hesap taraması yapılıyor...",
-              "description" : "Hesap taraması tamamlandıktan sonra hesaplarınızı ekleyebilirsiniz. Ledger'ın tarayıcıları tarafından daha önce eklenmiş olan Bitcoin hesapları kaldırıldı."
-            }
-          }
-        },
-        "disconnect" : {
-          "cta" : "Bağlantıyı Kes",
-          "description" : "Emin misiniz? Tam düğümün bağlantısı kesildiğinde tüm Bitcoin hesapları kaldırılır. Ledger'ın tarayıcılarını kullanarak hesaplarınızı tekrar ekleyebilirsiniz."
-        }
-      }
     }
   },
   "account" : {
@@ -1311,6 +1185,17 @@
         "depositButton" : "Kriptolarınızı güvende tutun",
         "skipButton" : "Belki sonra"
       },
+      "sync" : {
+        "timelineTitle" : "Cüzdan Senkronizasyonu",
+        "timelineTitleCompleted" : "Senkronizasyon etkinleştirildi",
+        "title" : "Cüzdanınız için senkronizasyonu etkinleştirin",
+        "description" : "Farklı bilgisayarlar arasında geçiş yaparken veya bir telefon kullanırken portföyünüzün güncel kalmasını sağlayın",
+        "skipButton" : "Daha sonra yapacağım",
+        "skipTitle" : "Senkronizasyonun etkinleştirilmesi atlansın mı?",
+        "skipDescription" : "Bu işlemi atlarsanız, yeni bir telefona veya bilgisayara geçtiğinizde tüm kripto hesaplarınızı manuel olarak yeniden eklemeniz gerekecektir. Bunu istediğiniz zaman Ledger Wallet ayarlarından devre dışı bırakabilirsiniz.",
+        "skipConfirm" : "Evet, atla",
+        "skipNo" : "Hayır, senkronizasyonu etkinleştir"
+      },
       "backup" : {
         "title" : "Gizli Kurtarma İfadenizin yedeklemesi",
         "description" : "Dijital olarak şifrelenmiş bir yedekleme ile, Gizli Kurtarma İfadeniz gerekmeden cüzdanınıza erişimi geri kazanın.\n\nDijital yedekleme isteyip istemediğinizi seçin:",
@@ -1668,6 +1553,7 @@
     "currency" : "Para birimi",
     "rangeLabel" : "Zaman",
     "goBack" : "Geri dön",
+    "searchPlaceholder" : "Varlık ara",
     "filters" : {
       "title" : "Filtreler",
       "show" : "Göster",
@@ -1773,8 +1659,6 @@
       "import" : "Hesaplar",
       "finish" : "Onaylayın"
     },
-    "fullNodeReadyInfo" : "Hesaplar Bitcoin tam düğümünüz ile eklenecektir.",
-    "fullNodeConfigure" : "Düğümü yapılandır",
     "tokensTip" : "{{token}} ({{ticker}}) bir {{tokenType}} token'ıdır. Token'ları doğrudan bir {{currency}} hesabına alabilirsiniz.",
     "accountToImportSubtitle_other" : "Mevcut hesapları ekle",
     "selectAll" : "Tümünü seç ({{count}})",
@@ -1979,7 +1863,7 @@
       "filter" : {
         "title" : "Göster",
         "all" : "Tümü",
-        "supported" : "Ledger Wallet destekleniyor",
+        "supported" : "Ledger Wallet desteği",
         "installed" : "Yüklendi",
         "not_installed" : "Yüklenmemiş"
       },
@@ -2016,7 +1900,7 @@
         "updated" : "Güncellendi",
         "uninstall" : "Kaldır",
         "notEnoughSpace" : "Yeterli depolama alanı yok",
-        "supported" : "Ledger Wallet destekleniyor",
+        "supported" : "Ledger Wallet desteği",
         "not_supported" : "3. taraf cüzdan gerektirir",
         "addAccount" : "Hesap ekle",
         "addAccountTooltip" : "{{appName}} hesabı ekle",
@@ -2507,7 +2391,11 @@
     "coinControlCustom" : "Özel coin seçimi",
     "aboveMaximum" : "Maksimum bakiyenin üzerinde",
     "transactionSigned" : "İşlem imzalandı",
-    "processingTransaction" : "İşleminiz gerçekleştiriliyor"
+    "processingTransaction" : "İşleminiz gerçekleştiriliyor",
+    "sign" : {
+      "title" : "Ledger {{wording}} üzerinde devam edin",
+      "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
+    }
   },
   "releaseNotes" : {
     "title" : "Sürüm notları",
@@ -4788,6 +4676,8 @@
       "runLocalAppOpenButton" : "Aç",
       "enableLearnStagingUrl" : "Öğren sayfası staging URL'si",
       "enableLearnStagingUrlDesc" : "Öğren sayfası için staging URL'sini etkinleştirin.",
+      "enableCountervaluesStaging" : "Karşı değerler API'ı test ortamı",
+      "enableCountervaluesStagingDesc" : "Sonuç yerine test ortamı karşı değerler API’ını kullanın.",
       "openOnboardingAppInstallDebug" : "İlk uygulama kurulumu hata ayıklama ekranını açın",
       "openOnboardingAppInstallDebugDesc" : "İlk uygulama kurulumunu senkronize etme adımındaki bileşenlerin yer aldığı bir ekranı açın"
     },
@@ -4968,10 +4858,6 @@
         "desc" : "Token'ları gizlemek için ana hesaba gidin, token ismine sağ tıklayın ve 'Token'ı gizle' seçeneğini seçin.",
         "count" : "1 token",
         "count_other" : "{{count}} token"
-      },
-      "fullNode" : {
-        "title" : "Bitcoin tam düğümü bağla",
-        "desc" : "Ledger'ın tarayıcılarını kullanmadan işlemleri senkronize etmek ve göndermek için Bitcoin tam düğümünüzü ayarlayın."
       },
       "filterTokenOperationsZeroAmount" : {
         "title" : "Değeri 0 olan token işlemlerini gizle",
@@ -5280,7 +5166,7 @@
               "descr" : "Ekrandaki yönergeleri okuyarak cihazınızı nasıl kullanacağınızı öğrenin."
             },
             "select" : {
-              "title" : "“Yeni cihaz olarak kur” seçeneğini onaylayın",
+              "title" : "“Set up as new device” (Yeni cihaz olarak kur) seçeneğini onaylayın",
               "descr" : "Seçimi onaylamak için her iki tuşa da aynı anda basın."
             },
             "follow" : {
@@ -6443,22 +6329,6 @@
     "RPCPassRequired" : {
       "title" : "RPC Parolası gerekli"
     },
-    "SatStackAccessDown" : {
-      "title" : "Tam düğüme ulaşılamadı",
-      "description" : "Lütfen SatStack'in ve düğümünüzün çalışıyor olduğunu doğrulayın. Sorun devam ederse Ayarlardan tam düğüm kurulumunu kontrol edin."
-    },
-    "SatStackStillSyncing" : {
-      "title" : "Düğüm senkronizasyonu yapılıyor...",
-      "description" : "Düğümünüz senkronize edilirken lütfen bekleyin. Bitcoin hesap bakiyeleriniz yanlış olabileceğinden gönderim mümkün değildir."
-    },
-    "SatStackVersionTooOld" : {
-      "title" : "Lütfen SatStack'i güncelleyin",
-      "description" : "Kullanmakta olduğunuz SatStack sürümü çok eski ve çeşitli hata veya uyumsuzluklar içerebilir."
-    },
-    "SatStackDescriptorNotImported" : {
-      "title" : "Hesap tam düğüm tarafından taranmadı",
-      "description" : "Lütfen tam düğümünüzü bu cihazla ilişkili hesapları tarayacak şekilde yapılandırın. Hesabı portföyünüze ekleyebilmeniz için öncelikle tam düğümünüz blok zincirini bu hesap için taramalıdır."
-    },
     "SwapRateExpiredError" : {
       "title" : "Kurun Süresi Doldu",
       "description" : "Kur zaman aşımına uğradı. Lütfen yenileyip tekrar deneyin."
@@ -6924,6 +6794,10 @@
       "title" : "Cardano ile ilgili geçersiz protokol parametreleri",
       "description" : "ADA işlemleri geçici olarak kullanılamıyor. Lütfen hesabınızı yeniden senkronize edip tekrar deneyin veya yardıma ihtiyacınız varsa Destek ile iletişime geçin."
     },
+    "CardanoMemoExceededSizeError" : {
+      "title" : "Geçersiz memo boyutu, en fazla 64 karaktere izin verilir",
+      "description" : "Cardano memo’sunun boyutu için bir üst sınır vardır. Memo’nun boyutunu lütfen azaltın"
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo çok fazla uzun"
     },
@@ -6997,8 +6871,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Alınacak hiçbir ödül yok"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Memo çok uzun Uzunluk en fazla {{maxLength}} karakter olmalıdır"
+    "HederaMemoExceededSizeError" : {
+      "title" : "Geçersiz memo boyutu, en fazla 100 karaktere izin verilir",
+      "description" : "Hedera memo’sunun boyutu için bir üst sınır vardır. Memo’nun boyutunu lütfen azaltın"
     },
     "ImageIncorrectFileTypeError" : {
       "title" : "Dosyadan görüntü yüklenemedi.",
@@ -7949,6 +7824,11 @@
       },
       "cta" : "Tekrar dene"
     }
+  },
+  "marketBanner" : {
+    "title" : "Piyasayı keşfedin",
+    "genericError" : "Bağlantı başarısız oldu",
+    "cta" : "Tümünü gör"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",

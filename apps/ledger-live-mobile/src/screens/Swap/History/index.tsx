@@ -7,7 +7,7 @@ import { getParentAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import {
   Animated,
   Linking,
@@ -185,7 +185,7 @@ const History = () => {
           </Alert>
         </View>
       ) : null}
-      <AnimatedSectionList
+      <AnimatedSectionList<MappedSwapOperation, SwapHistorySection>
         ref={ref}
         sections={sections}
         style={styles.sectionList}
@@ -204,9 +204,7 @@ const History = () => {
             />
           ) : null
         }
-        keyExtractor={({ swapId, operation }: { swapId: string; operation?: { id: string } }) =>
-          swapId + operation?.id
-        }
+        keyExtractor={({ swapId, operation }: MappedSwapOperation) => swapId + operation?.id}
         renderItem={renderItem}
         renderSectionHeader={({ section }: { section: SwapHistorySection }) => (
           <LText semiBold style={styles.section} color="grey">

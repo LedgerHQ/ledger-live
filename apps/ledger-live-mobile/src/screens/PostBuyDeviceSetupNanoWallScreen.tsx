@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Text, Box } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Pressable, StyleSheet } from "react-native";
 import { ModalHeaderCloseButton } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
 import Button from "~/components/wrappedUi/Button";

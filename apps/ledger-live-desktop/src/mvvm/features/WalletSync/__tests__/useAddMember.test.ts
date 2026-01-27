@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, waitFor } from "@testing-library/react";
+import { renderHook, waitFor } from "tests/testSetup";
 import { TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
@@ -10,6 +10,7 @@ import {
   TrustchainAlreadyInitialized,
   TrustchainAlreadyInitializedWithOtherSeed,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { INITIAL_STATE } from "~/renderer/reducers/settings";
 
 jest.mock("~/renderer/reducers/walletSync", () => ({
   ...jest.requireActual("~/renderer/reducers/walletSync"),
@@ -38,7 +39,11 @@ describe("useAddMember", () => {
       type: TrustchainResultType.created,
     });
 
-    const { result } = renderHook(() => useAddMember({ device }));
+    const { result } = renderHook(() => useAddMember({ device }), {
+      initialState: {
+        settings: INITIAL_STATE,
+      },
+    });
 
     await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
 
@@ -59,7 +64,11 @@ describe("useAddMember", () => {
       trustchain,
       type: TrustchainResultType.restored,
     });
-    const { result } = renderHook(() => useAddMember({ device }));
+    const { result } = renderHook(() => useAddMember({ device }), {
+      initialState: {
+        settings: INITIAL_STATE,
+      },
+    });
 
     await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
 
@@ -89,7 +98,11 @@ describe("useAddMember", () => {
 
   it("should handle already initialized trustchain", async () => {
     Mocks.sdk.getOrCreateTrustchain.mockRejectedValue(new TrustchainAlreadyInitialized());
-    const { result } = renderHook(() => useAddMember({ device }));
+    const { result } = renderHook(() => useAddMember({ device }), {
+      initialState: {
+        settings: INITIAL_STATE,
+      },
+    });
 
     await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
 
@@ -106,7 +119,11 @@ describe("useAddMember", () => {
     Mocks.sdk.getOrCreateTrustchain.mockRejectedValue(
       new TrustchainAlreadyInitializedWithOtherSeed(),
     );
-    const { result } = renderHook(() => useAddMember({ device }));
+    const { result } = renderHook(() => useAddMember({ device }), {
+      initialState: {
+        settings: INITIAL_STATE,
+      },
+    });
 
     await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
 
@@ -121,7 +138,11 @@ describe("useAddMember", () => {
 
   it("should handle missing member credentials", async () => {
     Mocks.memberCredentialsSelector.mockReturnValue(null);
-    const { result } = renderHook(() => useAddMember({ device }));
+    const { result } = renderHook(() => useAddMember({ device }), {
+      initialState: {
+        settings: INITIAL_STATE,
+      },
+    });
 
     await waitFor(() => expect(result.current.error).toBeInstanceOf(Error)); // Wait for the setError
 
@@ -133,7 +154,11 @@ describe("useAddMember", () => {
 
   it("should handle other sdk errors", async () => {
     Mocks.sdk.getOrCreateTrustchain.mockRejectedValue(new Error("Random error"));
-    const { result } = renderHook(() => useAddMember({ device }));
+    const { result } = renderHook(() => useAddMember({ device }), {
+      initialState: {
+        settings: INITIAL_STATE,
+      },
+    });
 
     await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
     await waitFor(() => expect(result.current.error).toBeInstanceOf(Error)); // Wait for the setError
@@ -153,17 +178,18 @@ describe("useAddMember", () => {
   });
 });
 
+const mockDispatch = jest.fn();
+
 jest.mock("LLD/hooks/redux", () => {
   const actual = jest.requireActual("LLD/hooks/redux");
-  const dispatch = jest.fn();
   return {
     ...actual,
-    useDispatch: () => dispatch,
-    useSelector: (selector: () => unknown) => selector(),
+    useDispatch: () => mockDispatch,
   };
 });
 
 jest.mock("@ledgerhq/ledger-key-ring-protocol/store", () => ({
+  ...jest.requireActual("@ledgerhq/ledger-key-ring-protocol/store"),
   memberCredentialsSelector: () => Mocks.memberCredentialsSelector(),
   trustchainSelector: () => null,
   setTrustchain: (trustchain: unknown) => Mocks.setTrustchain(trustchain),
@@ -175,6 +201,7 @@ jest.mock("~/renderer/actions/walletSync", () => ({
 
 jest.mock("~/renderer/analytics/segment", () => ({
   track: (event: string) => Mocks.track(event),
+  setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
 jest.mock("../hooks/useTrustchainSdk", () => ({

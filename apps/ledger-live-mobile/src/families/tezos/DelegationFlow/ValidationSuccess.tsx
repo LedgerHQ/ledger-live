@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import { TrackScreen, track } from "~/analytics";
@@ -15,7 +15,7 @@ import type {
 import type { TezosDelegationFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { useNotifications } from "~/logic/notifications";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 type Props = BaseComposite<
   StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationValidationSuccess>

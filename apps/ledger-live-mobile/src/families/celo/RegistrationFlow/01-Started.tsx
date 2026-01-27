@@ -3,7 +3,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

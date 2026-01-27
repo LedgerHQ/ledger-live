@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Sem recompensas para resgatar"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "O memo é muito longo. O comprimento máximo é {{maxLength}} caracteres"
-    },
     "NearNewAccountWarning" : {
       "title" : "A conta receptora ainda não foi criada. O protocolo requer uma transferência de {{formattedNewAccountStorageCost}} para criá-la."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "A quantia precisa ser de pelo menos {{threshold}}"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "O formato do memo está incorreto; ele deve ser menor que 4294967296"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "Tamanho do memo inválido, o máximo permitido é 100 caracteres"
     },
     "PinNotSet" : {
       "title" : "PIN não definido"
@@ -3474,7 +3477,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Ativar Notificações",
+      "titleVariantB" : "Aproveite ao máximo a Ledger Wallet",
       "desc" : "Receba as últimas atualizações sobre a Ledger Wallet, os produtos Ledger, o mercado e recomendações personalizadas. Cancele a qualquer momento nas configurações",
+      "descVariantB" : "Enviaremos dicas personalizadas, guias de configuração e notícias relevantes do mercado.",
       "allow" : "Permitir Notificações",
       "later" : "Talvez mais tarde"
     },
@@ -3891,7 +3896,9 @@
         "celo_title" : "A Ledger Nano S™ não é compatível com a troca de Celo",
         "celo_description" : "Para trocar Celo, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "monad_title" : "A Ledger Nano S™ não é compatível com a troca de Monad",
-        "monad_description" : "Para trocar Monad, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+        "monad_description" : "Para trocar Monad, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "zcash_title" : "A Ledger Nano™ S não é compatível com a troca de Zcash",
+        "zcash_description" : "Para trocar Zcash, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano™ S Plus, Ledger Nano™ X, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {
@@ -8086,6 +8093,15 @@
       "cta" : "Saiba mais"
     }
   },
+  "marketBanner" : {
+    "title" : "Explorar o mercado",
+    "viewAll" : "Ver todos",
+    "viewAllAccessibilityHint" : "Toque duas vezes para ver todos os ativos do mercado",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "Toque duas vezes para ver os detalhes do mercado"
+    }
+  },
   "largeMover" : {
     "info" : "Informações",
     "marketCap" : "Capitalização de mercado",
@@ -8325,6 +8341,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "Índice de Sentimento",
+    "description" : "O índice de sentimento mostra o estado emocional do mercado. O índice vai de 0 a 100: números baixos sinalizam medo intenso, enquanto números altos refletem ganância extrema.",
+    "levels" : {
+      "extremeFear" : "Medo+",
+      "fear" : "Medo",
+      "neutral" : "Neutro",
+      "greed" : "Ganância",
+      "extremeGreed" : "Ganância+"
     }
   }
 }

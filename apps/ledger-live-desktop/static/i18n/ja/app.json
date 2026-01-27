@@ -482,7 +482,9 @@
       "celo_title" : "Ledger Nano S™は、Celoのスワップに対応していません",
       "celo_description" : "Celoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "monad_title" : "Ledger Nano S™はMonadのスワップに対応していません",
-      "monad_description" : "Monadをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
+      "monad_description" : "Monadをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+      "zcash_title" : "Ledger Nano S™はZcashのスワップに対応していません",
+      "zcash_description" : "Zcashをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
     },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
@@ -648,134 +650,6 @@
         "placeholder" : "トークン"
       },
       "submit" : "接続"
-    }
-  },
-  "fullNode" : {
-    "status" : "ステータス",
-    "connect" : "接続",
-    "disconnect" : "接続を切断",
-    "checkNodeSettings" : "ノード設定の確認",
-    "edit" : "編集",
-    "modal" : {
-      "title" : "Bitcoinフルノードを接続",
-      "disconnectTitle" : "フルノードを切断",
-      "steps" : {
-        "landing" : {
-          "header" : "フルノードを開始。信頼せず、確認をしましょう。",
-          "description" : "Bitcoinフルノードは、すべてのトランザクションとブロックを検証し、Bitcoinネットワークに貢献しながら、信頼不要な方法でBitcoinを使用可能にします。",
-          "list" : {
-            "item1" : "十分なリソースを持つデバイスにBitcoin Coreをセットアップします。",
-            "item2" : "完全にノードが同期されるまでお待ちください。",
-            "item3" : "ノードのRPC（遠隔手続き呼び出し）証明、IPアドレス、ポート番号を書き留めてください。"
-          },
-          "disclaimer" : "フルノードを実行するには、十分なリソースと、データ制限のないブロードバンド接続を備えたコンピューターが必要です。"
-        },
-        "node" : {
-          "title" : "ノード",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "ノードパラメータの入力",
-              "disclaimer" : "Ledger Walletを接続する前に、フルノードが完全に同期済みでなければなりません。",
-              "fields" : {
-                "nodeHost" : {
-                  "title" : "ホスト",
-                  "tooltip" : "このコンピューターでノードが実行されている場合は、デフォルトのままにするか、ノードのIPアドレスとポート番号を置き換えてください。"
-                },
-                "rpcCredentials" : {
-                  "title" : "RPC Credentials（遠隔手続き呼び出し証明）",
-                  "tooltip" : "bitcoin.confファイルにあるノードのRPCユーザー名とパスワードを入力してください。",
-                  "usernamePlaceholder" : "ユーザー名",
-                  "passwordPlaceholder" : "パスワード"
-                },
-                "tls" : {
-                  "title" : "TLSを使用する",
-                  "tooltip" : "Transport Layer Security（トランスポート・レイヤー・セキュリティ/TLS）を有効化。例えば、ホスト型ノードソリューション使用時など。"
-                }
-              }
-            },
-            "connecting" : {
-              "header" : "ノード接続のテスト",
-              "description" : "フルノードの応答を確認が完了するまで、しばらくお待ちください。"
-            },
-            "success" : {
-              "header" : "フルノードの接続に成功しました",
-              "description" : "これで、ブロックチェーンのアカウントをスキャンするようにフルノードを構成できます。"
-            },
-            "failure" : {
-              "header" : "フルノードに到達できませんでした",
-              "description" : "ノードが完全に同期されていることを確認し、接続設定を確認してください。"
-            }
-          }
-        },
-        "device" : {
-          "title" : "デバイス",
-          "connectionSteps" : {
-            "pending" : {
-              "header" : "デバイスからアカウントを取得する",
-              "description" : "スキャンするアカウントが、ノード構成ファイルに追加されるまでお待ちください。"
-            },
-            "success" : {
-              "header" : "ノード構成に追加されたアカウント",
-              "description" : "構成ファイルがユーザーデータフォルダに保存されました。Ledger SatStackはフルノードに接続し、ブロックチェーン上のアカウントをスキャンできます。",
-              "cta" : "ユーザーデータを表示"
-            }
-          }
-        },
-        "accounts" : {
-          "title" : "アカウント",
-          "existing" : "スキャンする既存のアカウント",
-          "toScan" : "スキャンするアカウント",
-          "toScanDescription" : "アドレスの種類別にスキャンするアカウント",
-          "toScanTooltip" : "10以上のBTCアカウントを持っている場合にのみ増やしてください。初期スキャンには時間がかかります。 "
-        },
-        "satstack" : {
-          "title" : "SatStack",
-          "connectionSteps" : {
-            "notConnected" : {
-              "header" : "Ledger SatStackをダウンロードして実行する",
-              "description" : "Ledger SatStackは、Ledger Walletがフルノードと通信することを可能にするアプリケーションです。続行する前に、ダウンロードして実行してください。",
-              "disclaimer" : "Ledger Walletがフルノードに接続するために、SatStackが実行されている必要があります。コンピューターの起動時に自動起動を設定することを検討してください。",
-              "cta" : "SatStackをダウンロード"
-            },
-            "satstack-disconnected" : {
-              "header" : "SatStackに到達できませんでした",
-              "description" : "SatStackがこのコンピューターで実行されていることを確認してください。"
-            },
-            "satstack-outdated" : {
-              "header" : "SatStackをアップグレードしてください。",
-              "description" : "お使いのSatStackが古いバージョンのため、バグや互換性の問題が含まれている可能性があります。"
-            },
-            "node-disconnected" : {
-              "header" : "フルノードに到達できませんでした",
-              "description" : "ノードが到達可能であること、および入力した接続設定が正しいことを確認してください。"
-            },
-            "invalid-chain" : {
-              "header" : "無効なチェーンのタイトル",
-              "description" : "ツールチップの無効なチェーンの説明"
-            },
-            "initializing" : {
-              "header" : "読み込み中",
-              "description" : ""
-            },
-            "ready" : {
-              "header" : "準備完了",
-              "description" : "フルノードは完全に同期されています。Bitcoinアカウントの残高が正確になりました。"
-            },
-            "syncing" : {
-              "header" : "ノード同期中...",
-              "description" : "最近のトランザクションが表示されていない場合、Bitcoinのアカウント残高が正しくない可能性があります。可能であれば、ノードの稼働を続けて同期してください。"
-            },
-            "scanning" : {
-              "header" : "アカウントをスキャン中...",
-              "description" : "アカウントのスキャン完了後、アカウントの追加が可能になります。Ledgerのエクスプローラーにより、過去に追加されたBitcoinアカウントはすべて削除されました。"
-            }
-          }
-        },
-        "disconnect" : {
-          "cta" : "接続を切断",
-          "description" : "本当によろしいですか？フルノードを切断すると、すべてのBitcoinアカウントが削除されます。Ledgerのエクスプローラを使用してアカウントを再度追加可能です。"
-        }
-      }
     }
   },
   "account" : {
@@ -1311,6 +1185,17 @@
         "depositButton" : "暗号資産を守る",
         "skipButton" : "後で"
       },
+      "sync" : {
+        "timelineTitle" : "ウォレット同期",
+        "timelineTitleCompleted" : "同期有効済み",
+        "title" : "ウォレットの同期を有効にする",
+        "description" : "PCを切り替える際やスマートフォンを使用する際も、ポートフォリオを最新の状態に保ちます",
+        "skipButton" : "あとで行う",
+        "skipTitle" : "同期の有効化をスキップしますか？",
+        "skipDescription" : "スキップした場合、新しいスマートフォンやPCに切り替える際に、すべての暗号資産アカウントを手動で再度追加する必要があります。同期はLedger Walletの設定からいつでも無効にできます。",
+        "skipConfirm" : "はい、スキップします",
+        "skipNo" : "いいえ、同期を有効にする"
+      },
       "backup" : {
         "title" : "シークレットリカバリーフレーズのバックアップ",
         "description" : "デジタルの暗号化バックアップを使用すると、シークレットリカバリーフレーズなしでウォレットへのアクセスを復元できます。\n\nデジタルのバックアップが必要かどうか選択してください：",
@@ -1668,6 +1553,7 @@
     "currency" : "通貨",
     "rangeLabel" : "時刻",
     "goBack" : "戻る",
+    "searchPlaceholder" : "資産を検索",
     "filters" : {
       "title" : "フィルター",
       "show" : "表示",
@@ -1773,8 +1659,6 @@
       "import" : "アカウント",
       "finish" : "確認"
     },
-    "fullNodeReadyInfo" : "アカウントは、Bitcoinフルノードを使用して追加されます。",
-    "fullNodeConfigure" : "ノードの構成",
     "tokensTip" : "{{token}} ({{ticker}}) は、{{tokenType}}トークンです。{{currency}}アカウントで直接トークンを受け取ることができます。",
     "accountToImportSubtitle_other" : "既存アカウントを追加",
     "selectAll" : "すべてを選択 ({{count}})",
@@ -2462,52 +2346,56 @@
     }
   },
   "newSendFlow" : {
-    "title" : "Send {{currency}}",
-    "available" : "Available {{amount}}",
-    "placeholder" : "Enter address or ENS",
-    "placeholderNoENS" : "Enter address",
-    "recent" : "Recent",
-    "myAccounts" : "My accounts",
-    "sendTo" : "Send to {{address}}",
-    "addressMatched" : "Address matched",
-    "addressNotFound" : "Address not found",
-    "alreadyUsed" : "Already used · {{date}}",
-    "recentSendWillAppear" : "Your recent send will appear here",
-    "remove" : "Remove",
-    "enterTag" : "Enter {{tag}}",
+    "title" : "{{currency}}を送付",
+    "available" : "利用可能: {{amount}}",
+    "placeholder" : "アドレスまたはENSを入力してください",
+    "placeholderNoENS" : "アドレスを入力",
+    "recent" : "再送信",
+    "myAccounts" : "アカウント",
+    "sendTo" : "送付先：{{address}}",
+    "addressMatched" : "アドレスが一致",
+    "addressNotFound" : "住所が見つかりません",
+    "alreadyUsed" : "使用ずみ・{{date}}",
+    "recentSendWillAppear" : "最近の送付がこちらに表示されます",
+    "remove" : "削除",
+    "enterTag" : "{{tag}}を入力してください",
     "firstInteraction" : {
-      "title" : "You’re sending to a new address",
-      "description" : "Verify that the address is correct. In case of doubt send a small amount first."
+      "title" : "新しいアドレスへ送付しようとしています",
+      "description" : "アドレスが正しいことを確認してください。不安な場合は、まず少額を送金してください。"
     },
     "sanctioned" : {
-      "title" : "Flagged address",
-      "description" : "This address has been flagged and Ledger doesn’t allow sending to it",
-      "helpCenter" : "Help center"
+      "title" : "フラグが立てられたアドレス",
+      "description" : "このアドレスはフラグが付けられており、Ledgerでは送金できません",
+      "helpCenter" : "ヘルプセンター"
     },
     "errors" : {
-      "incorrectFormat" : "Incorrect address format",
-      "incompatibleAsset" : "Address isn’t compatible with the asset selected",
-      "walletNotExist" : "Wallet doesn’t exist"
+      "incorrectFormat" : "アドレス形式が正しくありません",
+      "incompatibleAsset" : "住所は選択したアセットと互換性がありません",
+      "walletNotExist" : "ウォレットが存在しません"
     },
     "skipMemo" : {
-      "title" : "Skip adding {{tag}}?",
-      "warning" : "Your asset may be lost if a {{tag}} is required by your recipient"
+      "title" : "{{tag}}の追加をスキップしますか？",
+      "warning" : "受取人が{{tag}}を要求した場合、資産が失われる可能性があります"
     },
     "tagHelp" : {
-      "title" : "What’s a {{tag}}?",
-      "description" : "A {{tag}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{tag}} memo may result in a loss of funds."
+      "title" : "{{tag}}とは何ですか？",
+      "description" : "{{currency}} を暗号通貨取引所に送信する場合は、{{tag}} が必要です。これは、取引の受信者を識別するために使用される機能です。{{tag}}メモを含めないと資金が失われる可能性があります。"
     },
-    "networkFeesInFiat" : "Network fees in {{currency}}",
-    "feesAmount" : "Fees amount ({{unit}})",
-    "gasLimit" : "Gas limit ({{unit}})",
-    "feesPaid" : "Fees paid to the network to proceed your transaction",
-    "insufficientBalanceFees" : "Insufficient balance to cover the network fees",
-    "amountToSend" : "Amount to send in ({{currency}})",
-    "coinToSend" : "Coin to send",
-    "coinControlCustom" : "Custom coin selection",
-    "aboveMaximum" : "Above maximum balance",
-    "transactionSigned" : "Transaction signed",
-    "processingTransaction" : "Your transaction is being processed"
+    "networkFeesInFiat" : "{{currency}}のネットワーク手数料",
+    "feesAmount" : "手数料金額 ({{unit}})",
+    "gasLimit" : "ガス制限（{{unit}}）",
+    "feesPaid" : "トランザクションを処理するためにネットワークへ支払われる手数料です",
+    "insufficientBalanceFees" : "ネットワーク手数料をカバーするための残高が不足しています",
+    "amountToSend" : "送金金額 ({{currency}})",
+    "coinToSend" : "送付するコイン",
+    "coinControlCustom" : "コインセレクションをカスタマイズ",
+    "aboveMaximum" : "残高上限超過",
+    "transactionSigned" : "取引に署名済み",
+    "processingTransaction" : "トランザクションを処理中です",
+    "sign" : {
+      "title" : "Ledger {{wording}}で続ける",
+      "description" : "セキュアタッチスクリーンに表示される指示に従ってください。"
+    }
   },
   "releaseNotes" : {
     "title" : "リリースノート",
@@ -4554,7 +4442,7 @@
       "regionDesc" : "地域を選択して日付や時間、通貨をアップデートする。",
       "stock" : "マーケットインジケーターの色分け",
       "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。",
-      "walletSync" : "Ledger同期",
+      "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "さまざまなスマートフォンやコンピューター間でLedger Wallet暗号資産アカウントを同期します。",
       "walletSyncDescription" : "PCを買い替えた時やスマホを使用する際も、ポートフォリオを常に最新の状態に保てます。",
       "mevProtection" : "MEV保護",
@@ -4657,7 +4545,7 @@
         }
       },
       "debugWalletSync" : {
-        "title" : "Ledger同期デバッガー",
+        "title" : "Ledger Syncデバッガー",
         "description" : "特定のLedgerSyncフローを起動したり、LedgerSyncの現在の状態を確認したりできます。",
         "cta" : "開く",
         "modal" : {
@@ -4788,6 +4676,8 @@
       "runLocalAppOpenButton" : "開く",
       "enableLearnStagingUrl" : "学習ページのステージングURL",
       "enableLearnStagingUrlDesc" : "学習ページのステージングURLを有効にする。",
+      "enableCountervaluesStaging" : "カウンターバリューAPI（ステージング）",
+      "enableCountervaluesStagingDesc" : "プロダクション用ではなく、ステージング用のカウンターバリューAPIを使用します。",
       "openOnboardingAppInstallDebug" : "オンボーディングアプリのインストールデバッグ画面を開く",
       "openOnboardingAppInstallDebugDesc" : "同期オンボーディングアプリのインストール手順の構成要素で画面を開きます"
     },
@@ -4968,10 +4858,6 @@
         "desc" : "トークンを非表示にするには、親アカウントに移動し、トークンを右クリックして「トークンを非表示」を選択してください。",
         "count" : "1トークン",
         "count_other" : "{{count}}トークン"
-      },
-      "fullNode" : {
-        "title" : "Bitcoinフルノードを接続",
-        "desc" : "同期およびトランザクションの送信用のBitcoinのフルノードを、Ledgerのエクスプローラを使用せずに設定する。"
       },
       "filterTokenOperationsZeroAmount" : {
         "title" : "数量がゼロのトランザクションを非表示にする",
@@ -6443,22 +6329,6 @@
     "RPCPassRequired" : {
       "title" : "RPCパスワードは必須です。"
     },
-    "SatStackAccessDown" : {
-      "title" : "フルノードに到達できませんでした",
-      "description" : "SatStackとノードが実行されていることを確認してください。問題が解決しない場合は、設定でフルノードのセットアップを確認してください。"
-    },
-    "SatStackStillSyncing" : {
-      "title" : "ノード同期中...",
-      "description" : "ノードの同期が完了するまでお待ちください。Bitcoinの残高が正しくない可能性がありますので、送付できません。"
-    },
-    "SatStackVersionTooOld" : {
-      "title" : "SatStackをアップグレードしてください。",
-      "description" : "お使いのSatStackが古いバージョンのため、バグや互換性の問題が含まれている可能性があります。"
-    },
-    "SatStackDescriptorNotImported" : {
-      "title" : "アカウントがフルノードによってスキャンされていません。",
-      "description" : "このデバイスのアカウントがスキャンされるように、フルノードを設定してください。ポートフォリオに追加する前に、フルノードでこのアカウントのブロックチェーンをスキャンする必要があります。"
-    },
     "SwapRateExpiredError" : {
       "title" : "レートの有効期限切れ",
       "description" : "取引レートの有効期限が切れました。更新してもう一度お試しください。"
@@ -6924,6 +6794,10 @@
       "title" : "Cardanoのプロトコルパラメータが無効です",
       "description" : "ADAトランザクションは一時的にご利用いただけません。アカウントを再同期して再試行するか、サポートが必要な場合はサポートにご連絡ください。"
     },
+    "CardanoMemoExceededSizeError" : {
+      "title" : "メモの文字数が制限を超えています。最大64文字までです。",
+      "description" : "Cardanoのメモには文字数制限があります。メモを短くしてください。"
+    },
     "StacksMemoTooLong" : {
       "title" : "メモの長さが長すぎます"
     },
@@ -6997,8 +6871,9 @@
     "HederaNoStakingRewardsError" : {
       "title" : "受け取る報酬はありません"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "メモが長すぎます。最大{{maxLength}}文字まで入力可能です"
+    "HederaMemoExceededSizeError" : {
+      "title" : "メモの文字数が制限を超えています。最大100文字までです。",
+      "description" : "Hederaのメモには文字数制限があります。メモを短くしてください。"
     },
     "ImageIncorrectFileTypeError" : {
       "title" : "ファイルからの画像の読み込みに失敗しました。",
@@ -7672,7 +7547,7 @@
     }
   },
   "walletSync" : {
-    "title" : "Ledger同期",
+    "title" : "Ledger Sync",
     "close" : "閉じる",
     "banner" : {
       "title" : "ウォレットが同期されていません",
@@ -7680,7 +7555,7 @@
       "cta" : "ウォレットを同期する"
     },
     "activate" : {
-      "title" : "このコンピューターに対してLedger同期をオンにしますか？",
+      "title" : "このコンピューターでLedger Sync（同期）をオンにしますか？",
       "description" : "新しいデバイスに移行した場合でも、すべての携帯電話とコンピューター間で暗号資産アカウントを自動的に同期します。",
       "cta" : "Ledger Syncをオンにする",
       "alreadySync" : "すでにオンにしました",
@@ -7949,6 +7824,11 @@
       },
       "cta" : "再試行"
     }
+  },
+  "marketBanner" : {
+    "title" : "市場を見る",
+    "genericError" : "接続に失敗",
+    "cta" : "すべて表示"
   },
   "nftEntryPoint" : {
     "title" : "NFT（非代替性トークン）",

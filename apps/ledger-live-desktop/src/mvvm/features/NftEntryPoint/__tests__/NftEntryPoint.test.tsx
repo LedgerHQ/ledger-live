@@ -1,5 +1,4 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
 
 import { render, screen } from "tests/testSetup";
 import NftEntryPoint from "..";
@@ -7,18 +6,17 @@ import { Entry } from "../types";
 import { track } from "~/renderer/analytics/segment";
 import { Account } from "@ledgerhq/types-live";
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useHistory: jest.fn(),
+const mockNavigate = jest.fn();
+
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
+  useNavigate: () => mockNavigate,
 }));
 
 jest.mock("~/renderer/analytics/segment", () => ({
   ...jest.requireActual("~/renderer/analytics/segment"),
   track: jest.fn(),
 }));
-
-const mockPush = jest.fn();
-(useHistory as jest.Mock).mockReturnValue({ push: mockPush });
 
 const mockAccount = {
   id: "testAccountId",
@@ -134,8 +132,7 @@ describe("NftEntryPoint", () => {
       item: Entry.magiceden,
       page: "Account",
     });
-    expect(mockPush).toHaveBeenCalledWith({
-      pathname: "/platform/nft-viewer-redirector",
+    expect(mockNavigate).toHaveBeenCalledWith("/platform/nft-viewer-redirector", {
       state: {
         accountId: mockAccount.id,
         chainId: mockAccount.currency.id,

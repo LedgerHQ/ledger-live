@@ -1,5 +1,119 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.30.0
+
+### Minor Changes
+
+- [#13340](https://github.com/LedgerHQ/ledger-live/pull/13340) [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436) Thanks [@Justkant](https://github.com/Justkant)! - feat(coin-bitcoin): support psbt signature in wallet-api
+
+- [#13790](https://github.com/LedgerHQ/ledger-live/pull/13790) [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d) Thanks [@Justkant](https://github.com/Justkant)! - feat: add transaction source tagging with headers for broadcast
+
+  Add TransactionSource type and source field to BroadcastConfig to track
+  transaction origins (dApp, live-app, coin-module, swap) and transmit them
+  as X-Ledger-Source-Type and X-Ledger-Source-Name headers when broadcasting
+  to blockchain explorers for Bitcoin and EVM.
+
+  Changes:
+
+  - Add TransactionSource type with type and name fields to types-live
+  - Extend BroadcastConfig with optional source field
+  - Thread source through Bitcoin broadcast chain (broadcast.ts → wallet.ts → xpub.ts → explorer)
+  - Thread source through EVM broadcast in ledger node API
+  - Update Desktop to pass source in:
+    - Live app broadcasts (LiveAppSDKLogic.ts)
+    - Swap flows (CompleteExchange Body.tsx)
+    - Native send flows (GenericStepConnectDevice.tsx)
+  - Update Mobile to pass source in:
+    - Native transaction flows (screenTransactionHooks.ts)
+    - Platform exchange (CompleteExchange.tsx)
+    - Swap flows (Confirmation.tsx)
+  - Update wallet-api integrations (react.ts, useDappLogic.ts)
+
+### Patch Changes
+
+- Updated dependencies [[`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb)]:
+  - @ledgerhq/types-live@6.94.0
+  - @ledgerhq/live-env@2.26.0
+  - @ledgerhq/coin-framework@6.13.1
+  - @ledgerhq/cryptoassets@13.37.1
+  - @ledgerhq/live-network@2.2.1
+
+## 0.30.0-next.0
+
+### Minor Changes
+
+- [#13340](https://github.com/LedgerHQ/ledger-live/pull/13340) [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436) Thanks [@Justkant](https://github.com/Justkant)! - feat(coin-bitcoin): support psbt signature in wallet-api
+
+- [#13790](https://github.com/LedgerHQ/ledger-live/pull/13790) [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d) Thanks [@Justkant](https://github.com/Justkant)! - feat: add transaction source tagging with headers for broadcast
+
+  Add TransactionSource type and source field to BroadcastConfig to track
+  transaction origins (dApp, live-app, coin-module, swap) and transmit them
+  as X-Ledger-Source-Type and X-Ledger-Source-Name headers when broadcasting
+  to blockchain explorers for Bitcoin and EVM.
+
+  Changes:
+
+  - Add TransactionSource type with type and name fields to types-live
+  - Extend BroadcastConfig with optional source field
+  - Thread source through Bitcoin broadcast chain (broadcast.ts → wallet.ts → xpub.ts → explorer)
+  - Thread source through EVM broadcast in ledger node API
+  - Update Desktop to pass source in:
+    - Live app broadcasts (LiveAppSDKLogic.ts)
+    - Swap flows (CompleteExchange Body.tsx)
+    - Native send flows (GenericStepConnectDevice.tsx)
+  - Update Mobile to pass source in:
+    - Native transaction flows (screenTransactionHooks.ts)
+    - Platform exchange (CompleteExchange.tsx)
+    - Swap flows (Confirmation.tsx)
+  - Update wallet-api integrations (react.ts, useDappLogic.ts)
+
+### Patch Changes
+
+- Updated dependencies [[`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb)]:
+  - @ledgerhq/types-live@6.94.0-next.0
+  - @ledgerhq/live-env@2.26.0-next.0
+  - @ledgerhq/coin-framework@6.13.1-next.0
+  - @ledgerhq/cryptoassets@13.37.1-next.0
+  - @ledgerhq/live-network@2.2.1-next.0
+
+## 0.29.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`cbcae7c`](https://github.com/LedgerHQ/ledger-live/commit/cbcae7c0ba9b54b1167d26e4227bd2b847207cb9), [`8754614`](https://github.com/LedgerHQ/ledger-live/commit/87546149a62b81f8a25bb6222626592ead629f62), [`50bae0f`](https://github.com/LedgerHQ/ledger-live/commit/50bae0f13a95ef166b2c5609ccbcf5ef01ba1579), [`cf08174`](https://github.com/LedgerHQ/ledger-live/commit/cf0817462e9f0210fceff29ec60b0699e4e69b71), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59), [`7f05536`](https://github.com/LedgerHQ/ledger-live/commit/7f0553665e9c8721f263825cc79994bfc6729d9b)]:
+  - @ledgerhq/cryptoassets@13.37.0
+  - @ledgerhq/coin-framework@6.13.0
+  - @ledgerhq/types-live@6.93.0
+  - @ledgerhq/live-env@2.25.0
+  - @ledgerhq/types-cryptoassets@7.32.0
+  - @ledgerhq/devices@8.10.0
+  - @ledgerhq/errors@6.29.0
+  - @ledgerhq/logs@6.14.0
+  - @ledgerhq/live-network@2.2.0
+
+## 0.29.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`cbcae7c`](https://github.com/LedgerHQ/ledger-live/commit/cbcae7c0ba9b54b1167d26e4227bd2b847207cb9), [`8754614`](https://github.com/LedgerHQ/ledger-live/commit/87546149a62b81f8a25bb6222626592ead629f62), [`50bae0f`](https://github.com/LedgerHQ/ledger-live/commit/50bae0f13a95ef166b2c5609ccbcf5ef01ba1579), [`cf08174`](https://github.com/LedgerHQ/ledger-live/commit/cf0817462e9f0210fceff29ec60b0699e4e69b71), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59), [`7f05536`](https://github.com/LedgerHQ/ledger-live/commit/7f0553665e9c8721f263825cc79994bfc6729d9b)]:
+  - @ledgerhq/cryptoassets@13.37.0-next.0
+  - @ledgerhq/coin-framework@6.13.0-next.0
+  - @ledgerhq/types-live@6.93.0-next.0
+  - @ledgerhq/live-env@2.25.0-next.0
+  - @ledgerhq/types-cryptoassets@7.32.0-next.0
+  - @ledgerhq/devices@8.10.0-next.0
+  - @ledgerhq/errors@6.29.0-next.0
+  - @ledgerhq/logs@6.14.0-next.0
+  - @ledgerhq/live-network@2.2.0-next.0
+
 ## 0.28.0
 
 ### Minor Changes

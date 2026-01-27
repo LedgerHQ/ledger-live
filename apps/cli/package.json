@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "24.30.2",
+  "version": "24.31.1",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "prebuild": "zx ./scripts/gen.mjs",
     "build": "zx ./scripts/build.mjs",
     "prepublishOnly": "zx ./scripts/build.mjs",
-    "watch": "tsup src/cli.ts --watch=src",
+    "watch": "rslib build --watch",
     "typecheck": "tsc --project src/tsconfig.json --noEmit",
     "lint": "eslint src --cache",
     "lint:fix": "pnpm lint --fix",
@@ -65,7 +65,9 @@
     "pako": "2.1.0",
     "purify-ts": "2.1.0",
     "qrcode-terminal": "0.12.0",
+    "readable-stream": "^4.7.0",
     "react": "catalog:",
+    "superagent": "^10.3.0",
     "react-dom": "catalog:",
     "rxjs": "catalog:",
     "usb": "*",
@@ -90,7 +92,7 @@
     "@types/qrcode-terminal": "0.12.2",
     "@types/ws": "8.5.10",
     "ts-node": "10.9.2",
-    "tsup": "7.3.0",
+    "@rslib/core": "catalog:",
     "yaml": "2.8.1"
   },
   "publishConfig": {

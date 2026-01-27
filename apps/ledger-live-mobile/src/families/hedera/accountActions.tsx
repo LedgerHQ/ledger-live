@@ -1,7 +1,7 @@
 import React from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import type { ParamListBase, RouteProp } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";

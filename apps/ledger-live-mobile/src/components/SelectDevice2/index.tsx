@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { Platform, View } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
+import Config from "react-native-config";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-navigation/native";
@@ -34,19 +35,16 @@ import {
   filterScannedDevice,
   findMatchingNewDevice,
   useBleDevicesScanning,
-  useDeviceManagementKitEnabled,
 } from "@ledgerhq/live-dmk-mobile";
-import getBLETransport from "../../react-native-hw-transport-ble";
-import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import styled from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DisplayedDevice } from "./DisplayedDevice";
 import BleDeviceNotAvailableDrawer from "./BleDeviceNotAvailableDrawer";
-import { mapLegacyScannedDeviceToScannedDevice } from "./mapLegacyScannedDeviceToScannedDevice";
 import { TAB_BAR_HEIGHT } from "../TabBar/shared";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useAutoSelectDevice } from "./useAutoSelectDevice";
 import { DeviceLockedCheckDrawer } from "./DeviceLockedCheckDrawer";
+import { useMockBleDevicesScanning } from "~/react-native-hw-transport-ble/useMockBle";
 
 export type { SetHeaderOptionsRequest };
 
@@ -137,33 +135,22 @@ export default function SelectDevice({
   const bleKnownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
 
-  const isLDMKEnabled = useDeviceManagementKitEnabled();
-
-  const { scannedDevices: legacyScannedDevices } = useLegacyBleDevicesScanning({
-    bleTransportListen: getBLETransport({ isLDMKEnabled }).listen,
-    stopBleScanning,
-    enabled: !isLDMKEnabled,
-  });
-
   const [deviceToCheckLockedStatus, setDeviceToCheckLockedStatus] = useState<Device | null>(null);
 
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
 
-  const bleScanningState = useBleDevicesScanning(
-    isLDMKEnabled &&
-      isFocused &&
-      !stopBleScanning &&
-      pairingFlowStep !== "pairing" &&
-      !deviceToCheckLockedStatus,
-  );
+  // FIXME: this will be done properly by injecting the mock transport directly in the DMK transport builder
+  const isMockMode = Boolean(Config.MOCK || Config.DETOX);
+  const scanningEnabled =
+    isFocused && !stopBleScanning && pairingFlowStep !== "pairing" && !deviceToCheckLockedStatus;
 
-  const scannedDevices = useMemo(
-    () =>
-      isLDMKEnabled
-        ? bleScanningState.scannedDevices
-        : legacyScannedDevices.map(mapLegacyScannedDeviceToScannedDevice),
-    [isLDMKEnabled, bleScanningState.scannedDevices, legacyScannedDevices],
-  );
+  // Use mock scanning in e2e test mode, real DMK scanning otherwise
+  const mockScanningState = useMockBleDevicesScanning(isMockMode && scanningEnabled);
+  const realScanningState = useBleDevicesScanning(!isMockMode && scanningEnabled);
+
+  const bleScanningState = isMockMode ? mockScanningState : realScanningState;
+
+  const scannedDevices = bleScanningState.scannedDevices;
 
   const filteredScannedDevices = useMemo(() => {
     return scannedDevices.filter(device =>

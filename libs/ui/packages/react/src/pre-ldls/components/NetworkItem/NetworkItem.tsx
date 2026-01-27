@@ -32,11 +32,11 @@ const Wrapper = styled.div`
   border-radius: var(--radius-s, 8px);
   align-items: center;
 
-  :hover {
+  &:hover {
     background-color: var(--colors-surface-transparent-hover);
   }
 
-  :active {
+  &:active {
     background-color: var(--colors-surface-transparent-pressed);
   }
 `;

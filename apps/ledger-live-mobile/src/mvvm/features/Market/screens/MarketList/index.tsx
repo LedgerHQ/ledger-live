@@ -1,14 +1,18 @@
-import React, { MutableRefObject, useCallback, useContext, useEffect } from "react";
+import React, { RefObject, useCallback, useContext, useEffect } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { RefreshControl, ViewToken } from "react-native";
+import { RefreshControl, View as RNView, ViewToken } from "react-native";
 import {
   MarketCurrencyData,
   MarketListRequestParams,
 } from "@ledgerhq/live-common/market/utils/types";
 import { useFocusEffect } from "@react-navigation/native";
+import { useHeaderHeight } from "@react-navigation/elements";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "styled-components/native";
 import SearchHeader from "./components/SearchHeader";
 import ListFooter from "./components/ListFooter";
@@ -41,7 +45,7 @@ interface ViewProps {
   refreshRate: number;
   marketParams: MarketListRequestParams;
   marketCurrentPage: number;
-  viewabilityConfigCallbackPairs: MutableRefObject<
+  viewabilityConfigCallbackPairs: RefObject<
     {
       onViewableItemsChanged: ({ viewableItems }: { viewableItems: ViewToken[] }) => void;
       viewabilityConfig: {
@@ -69,6 +73,15 @@ function View({
   marketParams,
 }: ViewProps) {
   const { colors } = useTheme();
+
+  // When marketBanner is enabled, tabs are hidden and we navigate directly to MarketList
+  const { shouldDisplayMarketBanner: isMarketBannerEnabled } = useWalletFeaturesConfig("mobile");
+  const insets = useSafeAreaInsets();
+  // Get navigation header height. Subtract safe area top because CollapsibleHeaderFlatList
+  // already handles safe area via its own SafeAreaView wrapper.
+  const fullHeaderHeight = useHeaderHeight();
+  const headerSpacerHeight = Math.max(0, fullHeaderHeight - insets.top);
+
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({
     loading,
     refetch: refetchAllPages,
@@ -89,10 +102,10 @@ function View({
 
   useFocusEffect(
     useCallback(() => {
-      setScreen && setScreen("Market");
+      if (setScreen) setScreen("Market");
 
       return () => {
-        setSource("Market");
+        if (setSource) setSource("Market");
       };
     }, [setScreen, setSource]),
   );
@@ -134,7 +147,7 @@ function View({
     scrollEventThrottle: 50,
     initialNumToRender: 50,
     keyExtractor,
-    viewabilityConfigCallbackPairs: viewabilityConfigCallbackPairs.current,
+    viewabilityConfigCallbackPairs: viewabilityConfigCallbackPairs.current ?? undefined,
     ListFooterComponent: <ListFooter isLoading={loading} />,
     ListEmptyComponent: (
       <ListEmpty
@@ -155,19 +168,29 @@ function View({
     ),
   };
 
+  // When marketBanner is enabled (standalone mode), use SafeAreaView without top edge
+  // (CollapsibleHeaderFlatList already handles safe area top), but add spacer for transparent header.
+  // In tabs mode, use WalletTabSafeAreaView which handles the collapsible header spacer.
+  const SafeAreaWrapper = isMarketBannerEnabled ? SafeAreaView : WalletTabSafeAreaView;
+  const safeAreaEdges = ["left", "right"] as const;
+
+  const listHeaderComponent = (
+    <SafeAreaWrapper edges={safeAreaEdges}>
+      {/* Spacer for transparent navigation header in standalone mode */}
+      {isMarketBannerEnabled && <RNView style={{ height: headerSpacerHeight }} />}
+      <Flex backgroundColor={colors.background.main}>
+        <SearchHeader search={search} updateMarketParams={updateMarketParams} />
+        <BottomSection />
+      </Flex>
+    </SafeAreaWrapper>
+  );
+
   return (
     <CollapsibleHeaderFlatList<MarketCurrencyData>
       {...listProps}
       testID="market-list"
       stickyHeaderIndices={[0]}
-      ListHeaderComponent={
-        <WalletTabSafeAreaView edges={["left", "right"]}>
-          <Flex backgroundColor={colors.background.main}>
-            <SearchHeader search={search} updateMarketParams={updateMarketParams} />
-            <BottomSection />
-          </Flex>
-        </WalletTabSafeAreaView>
-      }
+      ListHeaderComponent={listHeaderComponent}
     />
   );
 }

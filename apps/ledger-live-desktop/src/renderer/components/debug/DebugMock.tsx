@@ -181,64 +181,6 @@ const swapEvents = [
       ),
     },
   },
-  {
-    name: "init-swap-requested",
-    event: {
-      type: "init-swap-requested",
-    },
-  },
-  {
-    name: "init-swap-error",
-    event: {
-      type: "init-swap-error",
-      error: {
-        name: "SwapGenericAPIError",
-      },
-    },
-  },
-  {
-    name: "init-swap-result",
-    event: {
-      type: "init-swap-result",
-      initSwapResult: {
-        transaction: fromTransactionRaw({
-          family: "bitcoin",
-          recipient: "1Cz2ZXb6Y6AacXJTpo4RBjQMLEmscuxD8e",
-          amount: "1",
-          feePerByte: "1",
-          networkInfo: {
-            family: "bitcoin",
-            feeItems: {
-              items: [
-                {
-                  key: "0",
-                  speed: "high",
-                  feePerByte: "3",
-                },
-                {
-                  key: "1",
-                  speed: "standard",
-                  feePerByte: "2",
-                },
-                {
-                  key: "2",
-                  speed: "low",
-                  feePerByte: "1",
-                },
-              ],
-              defaultFeePerByte: "1",
-            },
-          },
-          rbf: false,
-          utxoStrategy: {
-            strategy: 0,
-            excludeUTXOs: [],
-          },
-        }),
-        swapId: "12345",
-      },
-    },
-  },
 ];
 const localizationEvents = [
   {

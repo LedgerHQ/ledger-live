@@ -3,7 +3,7 @@ import { View, StyleSheet, Linking } from "react-native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";

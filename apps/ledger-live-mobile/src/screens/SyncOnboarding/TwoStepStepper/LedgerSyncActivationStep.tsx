@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Button, Flex, Text, VerticalTimeline } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation } from "@react-navigation/native";
@@ -29,7 +29,7 @@ const LedgerSyncActivationStep = ({
   handleContinue: () => void;
   isLedgerSyncActive: boolean;
   device: Device;
-  analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
+  analyticsSeedConfiguration: React.RefObject<SeedOriginType | undefined>;
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();

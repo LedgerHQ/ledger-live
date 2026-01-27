@@ -5,7 +5,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Alert, Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Linking, StyleSheet, View } from "react-native";
 import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";

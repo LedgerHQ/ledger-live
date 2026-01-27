@@ -13,7 +13,7 @@ import { getSerializedTransaction } from "../../transaction";
 import { LedgerExplorerOperation } from "../../types";
 import { getCoinConfig } from "../../config";
 import { getGasOptions } from "../gasTracker/ledger";
-import { padHexString } from "../../utils";
+import { padHexString, safeEncodeEIP55 } from "../../utils";
 import { NodeApi, isLedgerNodeConfig } from "./types";
 
 export const LEDGER_TIMEOUT = 10_000; // 10_000ms (10s) for network call timeout
@@ -83,6 +83,15 @@ export const getTransaction: NodeApi["getTransaction"] = async (currency, hash) 
     status: ledgerTransaction.status,
     from: ledgerTransaction.from,
     to: ledgerTransaction.to,
+    erc20Transfers: ledgerTransaction.transfer_events.map(event => ({
+      asset: {
+        type: "erc20" as const,
+        assetReference: safeEncodeEIP55(event.contract),
+      },
+      from: safeEncodeEIP55(event.from),
+      to: safeEncodeEIP55(event.to),
+      value: event.count,
+    })),
   };
 };
 
@@ -275,6 +284,12 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
     sponsored: Boolean(broadcastConfig?.sponsored),
   };
 
+  const headers: Record<string, string> = {};
+  if (broadcastConfig?.source) {
+    headers["X-Ledger-Source-Type"] = broadcastConfig.source.type;
+    headers["X-Ledger-Source-Name"] = broadcastConfig.source.name;
+  }
+
   const { result: hash } = await fetchWithRetries<{
     result: string;
   }>({
@@ -282,6 +297,7 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
     url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/tx/send`,
     data: { tx: signedTxHex },
     params,
+    headers,
   });
   return hash;
 };

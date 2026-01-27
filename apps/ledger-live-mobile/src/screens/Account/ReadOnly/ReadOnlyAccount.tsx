@@ -1,7 +1,7 @@
 import React, { useCallback, useContext } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import { useSelector } from "~/context/hooks";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Currency } from "@ledgerhq/types-cryptoassets";

@@ -10,11 +10,7 @@ import {
   ImageDoesNotExistOnDevice,
   NoSuchAppOnProvider,
 } from "@ledgerhq/live-common/errors";
-import {
-  ExchangeRate,
-  ExchangeSwap,
-  InitSwapResult,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -25,7 +21,7 @@ import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
 import { setLastSeenDeviceInfo } from "~/actions/settings";
@@ -111,9 +107,6 @@ type Status = PartialNullable<{
   deviceStreamingProgress: number;
   displayUpgradeWarning: boolean;
   passWarning: () => void;
-  initSwapRequested: boolean;
-  initSwapError: Error;
-  initSwapResult: InitSwapResult | null;
   installingLanguage: boolean;
   languageInstallationRequested: boolean;
   imageRemoveRequested: boolean;

@@ -13,7 +13,7 @@ import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { Alert, Button, Checkbox, Flex, IconBox, Text } from "@ledgerhq/native-ui";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "~/context/Locale";
 import { Linking, TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { Observable, Subscription } from "rxjs";

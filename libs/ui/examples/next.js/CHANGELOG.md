@@ -1,5 +1,41 @@
 # next.js-example
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/react-ui@0.44.1
+
+## 0.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/react-ui@0.44.1-next.0
+
+## 0.3.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ba59d4`](https://github.com/LedgerHQ/ledger-live/commit/3ba59d4dbdf69945e40d0cd000bcb0a68d2a916a), [`5127fc6`](https://github.com/LedgerHQ/ledger-live/commit/5127fc6c3aba783e66633ddb13403a6a36211cd8)]:
+  - @ledgerhq/react-ui@0.44.0
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+### Patch Changes
+
+- Updated dependencies [[`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ba59d4`](https://github.com/LedgerHQ/ledger-live/commit/3ba59d4dbdf69945e40d0cd000bcb0a68d2a916a), [`5127fc6`](https://github.com/LedgerHQ/ledger-live/commit/5127fc6c3aba783e66633ddb13403a6a36211cd8)]:
+  - @ledgerhq/react-ui@0.44.0-next.0
+
 ## 0.2.5
 
 ### Patch Changes

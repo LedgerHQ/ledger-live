@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { SearchProps } from "LLM/features/Web3Hub/types";
 import useScrollHandler from "LLM/features/Web3Hub/hooks/useScrollHandler";

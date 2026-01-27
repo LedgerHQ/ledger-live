@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { View, Keyboard, TouchableOpacity, TouchableWithoutFeedback, Platform } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";

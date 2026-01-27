@@ -2,7 +2,7 @@ import { SuiValidator } from "@ledgerhq/live-common/families/sui/types";
 import { useTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Platform } from "react-native";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";

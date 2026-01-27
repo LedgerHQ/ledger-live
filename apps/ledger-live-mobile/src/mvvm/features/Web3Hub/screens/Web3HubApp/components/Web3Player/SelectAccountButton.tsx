@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";

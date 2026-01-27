@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import { Language, languageIds } from "@ledgerhq/types-live";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { Flex, Button, Icons } from "@ledgerhq/native-ui";
 import { useDispatch } from "~/context/hooks";
 import { setLastSeenDeviceLanguageId } from "~/actions/settings";

@@ -140,6 +140,50 @@ describe("MarketBanner Integration Tests", () => {
     });
   });
 
+  describe("Error state", () => {
+    it("should display error state with icon and message when API fails", async () => {
+      server.use(
+        http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json(null, { status: 500 })),
+      );
+
+      renderWithReactQuery(<MarketBannerTest />, {
+        overrideInitialState: state => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            overriddenFeatureFlags: {
+              lwmWallet40: { enabled: true, params: { marketBanner: true } },
+            },
+          },
+        }),
+      });
+
+      expect(await screen.findByText(/Connection failed/i)).toBeVisible();
+    });
+
+    it("should not display FearAndGreed or ViewAll when in error state", async () => {
+      server.use(
+        http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json(null, { status: 500 })),
+      );
+
+      renderWithReactQuery(<MarketBannerTest />, {
+        overrideInitialState: state => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            overriddenFeatureFlags: {
+              lwmWallet40: { enabled: true, params: { marketBanner: true } },
+            },
+          },
+        }),
+      });
+
+      expect(await screen.findByText(/Connection failed/i)).toBeVisible();
+      expect(screen.queryByTestId("market-banner-view-all")).toBeNull();
+      expect(screen.queryByTestId("fear-and-greed-card")).toBeNull();
+    });
+  });
+
   describe("Tile rendering", () => {
     it("should render market tiles with correct data", async () => {
       server.use(
@@ -265,10 +309,7 @@ describe("MarketBanner Integration Tests", () => {
       await user.press(viewAllTile);
 
       await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith("Market", {
-          screen: "MarketList",
-          params: {},
-        });
+        expect(mockNavigate).toHaveBeenCalledWith("MarketList");
       });
     });
 
@@ -295,10 +336,7 @@ describe("MarketBanner Integration Tests", () => {
       await user.press(sectionTitle);
 
       await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith("Market", {
-          screen: "MarketList",
-          params: {},
-        });
+        expect(mockNavigate).toHaveBeenCalledWith("MarketList");
       });
     });
   });
@@ -356,15 +394,13 @@ describe("MarketBanner Integration Tests", () => {
       await user.press(viewAllTile);
 
       await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith("Market", {
-          screen: "MarketList",
-          params: {},
-        });
+        expect(mockNavigate).toHaveBeenCalledWith("MarketList");
       });
     });
   });
 
-  describe("Fear and Greed index", () => {
+  // TODO REACT19: Skipped until @ledgerhq/lumen-ui-rnative is fully compatible with React 19 test renderer
+  describe.skip("Fear and Greed index", () => {
     const API_ENDPOINT = "https://proxycmc.api.live.ledger.com/v3/fear-and-greed/latest";
 
     it("should display fear and greed index", async () => {

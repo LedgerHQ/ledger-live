@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import semver from "semver";
-import { RouteComponentProps, useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
 import Card from "~/renderer/components/Box/Card";
 import {
@@ -36,7 +36,9 @@ import { ProviderInterstitial } from "LLD/components/ProviderInterstitial";
 type ExchangeState = { account?: string } | undefined;
 
 const LiveAppExchange = ({ appId }: { appId: string }) => {
-  const { state: urlParams, search } = useLocation<ExchangeState>();
+  const location = useLocation();
+  const urlParams = location.state as ExchangeState;
+  const { search } = location;
   const searchParams = new URLSearchParams(search);
   const lang = useSelector(languageSelector);
   const locale = useSelector(localeSelector);
@@ -136,8 +138,8 @@ export type ExchangeComponentParams = {
   appId?: string;
 };
 
-const Exchange = ({ match }: RouteComponentProps<ExchangeComponentParams>) => {
-  const appId = match?.params?.appId;
+const Exchange = () => {
+  const { appId } = useParams<ExchangeComponentParams>();
   const buySellUiFlag = useFeature("buySellUi");
   const defaultPlatform = buySellUiFlag?.params?.manifestId || BUY_SELL_UI_APP_ID;
 

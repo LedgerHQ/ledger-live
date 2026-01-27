@@ -1,5 +1,95 @@
 # @ledgerhq/coin-hedera
 
+## 1.19.0
+
+### Minor Changes
+
+- [#13418](https://github.com/LedgerHQ/ledger-live/pull/13418) [`6c9b829`](https://github.com/LedgerHQ/ledger-live/commit/6c9b82957c777e81e65b3321f4d0d5d66384992f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Uniform memo validation accross the coin modules
+
+- [#13699](https://github.com/LedgerHQ/ledger-live/pull/13699) [`ee3f952`](https://github.com/LedgerHQ/ledger-live/commit/ee3f95244d2e9d4a5bb011b9a482def1fb492147) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(BACK-10242): fix hedera lastBlock returning non-finalized block
+
+### Patch Changes
+
+- Updated dependencies [[`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb)]:
+  - @ledgerhq/types-live@6.94.0
+  - @ledgerhq/live-env@2.26.0
+  - @ledgerhq/coin-framework@6.13.1
+  - @ledgerhq/cryptoassets@13.37.1
+  - @ledgerhq/live-countervalues@0.11.1
+  - @ledgerhq/live-network@2.2.1
+
+## 1.19.0-next.0
+
+### Minor Changes
+
+- [#13418](https://github.com/LedgerHQ/ledger-live/pull/13418) [`6c9b829`](https://github.com/LedgerHQ/ledger-live/commit/6c9b82957c777e81e65b3321f4d0d5d66384992f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Uniform memo validation accross the coin modules
+
+- [#13699](https://github.com/LedgerHQ/ledger-live/pull/13699) [`ee3f952`](https://github.com/LedgerHQ/ledger-live/commit/ee3f95244d2e9d4a5bb011b9a482def1fb492147) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(BACK-10242): fix hedera lastBlock returning non-finalized block
+
+### Patch Changes
+
+- Updated dependencies [[`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a), [`069d298`](https://github.com/LedgerHQ/ledger-live/commit/069d2982cd36c9525addf9d1f9df762a8799b3bb)]:
+  - @ledgerhq/types-live@6.94.0-next.0
+  - @ledgerhq/live-env@2.26.0-next.0
+  - @ledgerhq/coin-framework@6.13.1-next.0
+  - @ledgerhq/cryptoassets@13.37.1-next.0
+  - @ledgerhq/live-countervalues@0.11.1-next.0
+  - @ledgerhq/live-network@2.2.1-next.0
+
+## 1.18.0
+
+### Minor Changes
+
+- [#13632](https://github.com/LedgerHQ/ledger-live/pull/13632) [`93e16fa`](https://github.com/LedgerHQ/ledger-live/commit/93e16fada5fa1b3c4319738d612711810e985aca) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove every /lib-es/ from import paths
+
+- [#13631](https://github.com/LedgerHQ/ledger-live/pull/13631) [`15d02ab`](https://github.com/LedgerHQ/ledger-live/commit/15d02ab174cb778a9dd222c531503936adcb30f4) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(BACK-10242): ensure Hedera blocks are immutable
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+- [#13568](https://github.com/LedgerHQ/ledger-live/pull/13568) [`efd8bd3`](https://github.com/LedgerHQ/ledger-live/commit/efd8bd37f23bca1b758b2670a709178731b94586) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: hedera regressions and sdk upgrade
+
+- [#13610](https://github.com/LedgerHQ/ledger-live/pull/13610) [`6533f02`](https://github.com/LedgerHQ/ledger-live/commit/6533f0229c41d3597fe057e246f7f00eb88ae18e) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: missing getStakes and getRewards method in coin-hedera
+
+### Patch Changes
+
+- Updated dependencies [[`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`cbcae7c`](https://github.com/LedgerHQ/ledger-live/commit/cbcae7c0ba9b54b1167d26e4227bd2b847207cb9), [`8754614`](https://github.com/LedgerHQ/ledger-live/commit/87546149a62b81f8a25bb6222626592ead629f62), [`50bae0f`](https://github.com/LedgerHQ/ledger-live/commit/50bae0f13a95ef166b2c5609ccbcf5ef01ba1579), [`cf08174`](https://github.com/LedgerHQ/ledger-live/commit/cf0817462e9f0210fceff29ec60b0699e4e69b71), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59), [`7f05536`](https://github.com/LedgerHQ/ledger-live/commit/7f0553665e9c8721f263825cc79994bfc6729d9b)]:
+  - @ledgerhq/cryptoassets@13.37.0
+  - @ledgerhq/coin-framework@6.13.0
+  - @ledgerhq/types-live@6.93.0
+  - @ledgerhq/live-env@2.25.0
+  - @ledgerhq/devices@8.10.0
+  - @ledgerhq/errors@6.29.0
+  - @ledgerhq/logs@6.14.0
+  - @ledgerhq/live-countervalues@0.11.0
+  - @ledgerhq/live-network@2.2.0
+
+## 1.18.0-next.0
+
+### Minor Changes
+
+- [#13632](https://github.com/LedgerHQ/ledger-live/pull/13632) [`93e16fa`](https://github.com/LedgerHQ/ledger-live/commit/93e16fada5fa1b3c4319738d612711810e985aca) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove every /lib-es/ from import paths
+
+- [#13631](https://github.com/LedgerHQ/ledger-live/pull/13631) [`15d02ab`](https://github.com/LedgerHQ/ledger-live/commit/15d02ab174cb778a9dd222c531503936adcb30f4) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(BACK-10242): ensure Hedera blocks are immutable
+
+- [#13396](https://github.com/LedgerHQ/ledger-live/pull/13396) [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update Jest to v30
+
+- [#13568](https://github.com/LedgerHQ/ledger-live/pull/13568) [`efd8bd3`](https://github.com/LedgerHQ/ledger-live/commit/efd8bd37f23bca1b758b2670a709178731b94586) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: hedera regressions and sdk upgrade
+
+- [#13610](https://github.com/LedgerHQ/ledger-live/pull/13610) [`6533f02`](https://github.com/LedgerHQ/ledger-live/commit/6533f0229c41d3597fe057e246f7f00eb88ae18e) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: missing getStakes and getRewards method in coin-hedera
+
+### Patch Changes
+
+- Updated dependencies [[`537a975`](https://github.com/LedgerHQ/ledger-live/commit/537a975536ca3669d3b88371e1e1f651c4cb9a1b), [`cbcae7c`](https://github.com/LedgerHQ/ledger-live/commit/cbcae7c0ba9b54b1167d26e4227bd2b847207cb9), [`8754614`](https://github.com/LedgerHQ/ledger-live/commit/87546149a62b81f8a25bb6222626592ead629f62), [`50bae0f`](https://github.com/LedgerHQ/ledger-live/commit/50bae0f13a95ef166b2c5609ccbcf5ef01ba1579), [`cf08174`](https://github.com/LedgerHQ/ledger-live/commit/cf0817462e9f0210fceff29ec60b0699e4e69b71), [`b9a3e43`](https://github.com/LedgerHQ/ledger-live/commit/b9a3e431be33943ab4feb4294d6a7f27b966e61b), [`3ac5f26`](https://github.com/LedgerHQ/ledger-live/commit/3ac5f26111f8596327fa7e588e514509de3f8a59), [`7f05536`](https://github.com/LedgerHQ/ledger-live/commit/7f0553665e9c8721f263825cc79994bfc6729d9b)]:
+  - @ledgerhq/cryptoassets@13.37.0-next.0
+  - @ledgerhq/coin-framework@6.13.0-next.0
+  - @ledgerhq/types-live@6.93.0-next.0
+  - @ledgerhq/live-env@2.25.0-next.0
+  - @ledgerhq/devices@8.10.0-next.0
+  - @ledgerhq/errors@6.29.0-next.0
+  - @ledgerhq/logs@6.14.0-next.0
+  - @ledgerhq/live-countervalues@0.11.0-next.0
+  - @ledgerhq/live-network@2.2.0-next.0
+
 ## 1.17.0
 
 ### Minor Changes

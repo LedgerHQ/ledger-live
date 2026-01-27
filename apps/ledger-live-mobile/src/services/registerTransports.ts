@@ -16,7 +16,7 @@ import { getHIDTransport } from "~/services/getHidTransport";
  */
 export const registerTransports = (isLDMKEnabled: boolean) => {
   if (Config.BLE_LOG_LEVEL) {
-    getBLETransport({ isLDMKEnabled }).setLogLevel(Config.BLE_LOG_LEVEL);
+    getBLETransport().setLogLevel(Config.BLE_LOG_LEVEL);
   }
   const hidTransport = getHIDTransport({ isLDMKEnabled });
 
@@ -85,7 +85,7 @@ export const registerTransports = (isLDMKEnabled: boolean) => {
   registerTransportModule({
     id: "ble",
     open: (id, timeoutMs, traceContext, matchDeviceByName) =>
-      getBLETransport({ isLDMKEnabled }).open(id, timeoutMs, traceContext, { matchDeviceByName }),
-    disconnect: id => getBLETransport({ isLDMKEnabled }).disconnectDevice(id),
+      getBLETransport().open(id, timeoutMs, traceContext, { matchDeviceByName }),
+    disconnect: id => getBLETransport().disconnectDevice(id),
   });
 };

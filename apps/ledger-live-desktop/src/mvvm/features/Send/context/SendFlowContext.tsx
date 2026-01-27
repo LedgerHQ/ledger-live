@@ -1,27 +1,23 @@
 import React, { createContext, useContext, type ReactNode, useMemo } from "react";
 import type {
-  SendFlowContextValue,
-  SendFlowNavigationActions,
-  SendFlowStep,
-  SendStepConfig,
   SendFlowState,
   SendFlowUiConfig,
   SendFlowTransactionActions,
   SendFlowOperationActions,
-  NavigationDirection,
 } from "../types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { FlowStatusActions } from "../../FlowWizard/types";
 
-// Navigation Context
-type NavigationContextValue = Readonly<{
-  navigation: SendFlowNavigationActions;
-  currentStep: SendFlowStep;
-  direction: NavigationDirection;
-  currentStepConfig: SendStepConfig;
-}>;
-
-const SendFlowNavigationContext = createContext<NavigationContextValue | null>(null);
+/**
+ * SendFlowContext
+ *
+ * Business logic context for the Send flow.
+ * Navigation is handled separately by FlowWizard (useFlowWizard hook).
+ *
+ * This pattern allows clean separation:
+ * - FlowWizard: navigation, steps, animations (generic)
+ * - SendFlowContext: transaction state, recipient, amount (domain-specific)
+ */
 
 // Data Context
 type DataContextValue = Readonly<{
@@ -47,22 +43,15 @@ type ActionsContextValue = Readonly<{
 
 const SendFlowActionsContext = createContext<ActionsContextValue | null>(null);
 
+// Combined business context (used by the provider)
+export type SendFlowBusinessContext = DataContextValue & ActionsContextValue;
+
 type SendFlowProviderProps = Readonly<{
-  value: SendFlowContextValue;
+  value: SendFlowBusinessContext;
   children: ReactNode;
 }>;
 
 export function SendFlowProvider({ value, children }: SendFlowProviderProps) {
-  const navigationValue = useMemo(
-    () => ({
-      navigation: value.navigation,
-      currentStep: value.currentStep,
-      direction: value.direction,
-      currentStepConfig: value.currentStepConfig,
-    }),
-    [value.navigation, value.currentStep, value.direction, value.currentStepConfig],
-  );
-
   const dataValue = useMemo(
     () => ({
       state: value.state,
@@ -84,24 +73,15 @@ export function SendFlowProvider({ value, children }: SendFlowProviderProps) {
   );
 
   return (
-    <SendFlowNavigationContext.Provider value={navigationValue}>
-      <SendFlowDataContext.Provider value={dataValue}>
-        <SendFlowActionsContext.Provider value={actionsValue}>
-          {children}
-        </SendFlowActionsContext.Provider>
-      </SendFlowDataContext.Provider>
-    </SendFlowNavigationContext.Provider>
+    <SendFlowDataContext.Provider value={dataValue}>
+      <SendFlowActionsContext.Provider value={actionsValue}>
+        {children}
+      </SendFlowActionsContext.Provider>
+    </SendFlowDataContext.Provider>
   );
 }
 
 // Hooks
-export function useSendFlowNavigation(): NavigationContextValue {
-  const context = useContext(SendFlowNavigationContext);
-  if (!context) {
-    throw new Error("useSendFlowNavigation must be used within a SendFlowProvider");
-  }
-  return context;
-}
 
 export function useSendFlowData(): DataContextValue {
   const context = useContext(SendFlowDataContext);

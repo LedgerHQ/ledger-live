@@ -28,7 +28,6 @@ import {
   languageSelector,
   lastSeenDeviceSelector,
   localeSelector,
-  marketPerformanceWidgetSelector,
   mevProtectionSelector,
   shareAnalyticsSelector,
   sharePersonalizedRecommendationsSelector,
@@ -75,18 +74,6 @@ let analyticsFeatureFlagMethod:
 export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
   analyticsFeatureFlagMethod = method;
 }
-
-const getMarketWidgetAnalytics = (state: State) => {
-  if (!analyticsFeatureFlagMethod) return false;
-  const marketWidget = analyticsFeatureFlagMethod("marketperformanceWidgetDesktop");
-
-  const hasMarketWidgetActivated = marketPerformanceWidgetSelector(state);
-
-  return {
-    hasMarketWidget: !marketWidget?.enabled ? "Null" : hasMarketWidgetActivated ? "Yes" : "No",
-    hasMarketWidgetV2: marketWidget?.params?.enableNewFeature ? "Yes" : "No",
-  };
-};
 
 const getLedgerSyncAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
@@ -245,7 +232,6 @@ const extraProperties = (store: ReduxStore) => {
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
-  const marketWidgetAttributes = getMarketWidgetAnalytics(state);
   const madAttributes = getMADAttributes();
   const addAccountAttributes = getAddAccountAttributes();
 
@@ -310,7 +296,6 @@ const extraProperties = (store: ReduxStore) => {
     ...deviceInfo,
     ...ledgerSyncAttributes,
     ...mevProtectionAttributes,
-    ...marketWidgetAttributes,
     ...addAccountAttributes,
     madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,

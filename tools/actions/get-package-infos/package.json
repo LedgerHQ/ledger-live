@@ -1,12 +1,12 @@
 {
   "name": "@actions/get-package-infos",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "returns the current version, clean semver version and name from package.json",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsup --target node20 -d build main.ts",
+    "build": "rslib build",
     "lint": "eslint ./ --cache",
     "lint:fix": "pnpm lint --fix"
   },
@@ -14,6 +14,6 @@
     "@actions/core": "1.10.1",
     "@actions/github": "6.0.0",
     "semver": "catalog:",
-    "tsup": "7.3.0"
+    "@rslib/core": "catalog:"
   }
 }

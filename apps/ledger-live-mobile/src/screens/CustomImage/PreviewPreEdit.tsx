@@ -3,7 +3,7 @@ import styled from "styled-components/native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData, Pressable } from "react-native";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import {
   EventListenerCallback,
   EventMapCore,

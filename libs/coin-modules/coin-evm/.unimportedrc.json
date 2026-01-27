@@ -20,12 +20,11 @@
     "src/logic/validateAddress.ts"
   ],
   "ignoreUnimported": [
-    "src/__tests__/*",
     "**/*.test.*",
     "**/*.spec.*",
+    "**/*.fixtures.*",
     "src/datasets/ethereum1.ts",
     "src/abis/index.ts",
-    "src/test/bridge.dataset.ts",
     "src/supportedFeatures.ts"
   ],
   "ignoreUnresolved": [

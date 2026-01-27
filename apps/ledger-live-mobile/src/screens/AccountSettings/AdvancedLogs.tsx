@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { View, StyleSheet } from "react-native";
 import { Alert } from "@ledgerhq/native-ui";
 import type { DerivationMode } from "@ledgerhq/types-live";

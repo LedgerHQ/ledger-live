@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "Keine Prämien zum Einlösen vorhanden"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Memo ist zu lang. Maximale Länge: {{maxLength}} Zeichen"
-    },
     "NearNewAccountWarning" : {
       "title" : "Das Empfängerkonto wurde noch nicht erstellt. Das Protokoll erfordert einen Transfer von {{formattedNewAccountStorageCost}}, um es zu erstellen."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "Der Betrag muss mindestens {{threshold}} betragen"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "Das Memo-Format ist ungültig; das Memo muss kleiner als 4294967296 sein."
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "Ungültige Memolänge; zulässig sind maximal 100 Zeichen."
     },
     "PinNotSet" : {
       "title" : "PIN nicht festgelegt"
@@ -3474,7 +3477,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "Benachrichtigungen aktivieren",
+      "titleVariantB" : "So nutzt du Ledger Wallet optimal",
       "desc" : "Erhalte die neuesten Updates zu Ledger Wallet, Ledger-Produkten, dem Markt und personalisierte Empfehlungen. Du kannst dich jederzeit in den Einstellungen wieder abmelden",
+      "descVariantB" : "Wir schicken dir personalisierte Tipps, Einrichtungsanleitungen und marktrelevante Informationen.",
       "allow" : "Benachrichtigungen zulassen",
       "later" : "Vielleicht später"
     },
@@ -3891,7 +3896,9 @@
         "celo_title" : "Ledger Nano S™ unterstützt das Swappen von Celo nicht",
         "celo_description" : "Zum Swappen von Celo kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
         "monad_title" : "Ledger Nano S™ unterstützt das Swappen von Monad nicht",
-        "monad_description" : "Zum Swappen von Monad musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™."
+        "monad_description" : "Zum Swappen von Monad musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+        "zcash_title" : "Ledger Nano S™ unterstützt das Swappen von Zcash nicht",
+        "zcash_description" : "Zum Swappen von Zcash musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. einen Ledger Nano S Plus™, einen Ledger Nano X™, einen Ledger Flex™ oder einen Ledger Stax™."
       }
     },
     "lending" : {
@@ -8086,6 +8093,15 @@
       "cta" : "Weitere Informationen"
     }
   },
+  "marketBanner" : {
+    "title" : "Markt erkunden",
+    "viewAll" : "Alles anzeigen",
+    "viewAllAccessibilityHint" : "Doppeltippen, um alle Assets anzuzeigen",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "Doppeltippen, um Marktdetails anzuzeigen"
+    }
+  },
   "largeMover" : {
     "info" : "Informationen",
     "marketCap" : "Marktkapitalisierung",
@@ -8325,6 +8341,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "Stimmungsindex",
+    "description" : "Der Stimmungsindex gibt den Emotionalitätsgrad des Marktes an. Die Bandbreite reicht von 0 bis 100, wobei ein sehr niedriger Wert auf ausgeprägte Angst und ein sehr hoher Wert auf extreme Gier hindeutet.",
+    "levels" : {
+      "extremeFear" : "Angst+",
+      "fear" : "Angst",
+      "neutral" : "Neutral",
+      "greed" : "Gier",
+      "extremeGreed" : "Gier+"
     }
   }
 }

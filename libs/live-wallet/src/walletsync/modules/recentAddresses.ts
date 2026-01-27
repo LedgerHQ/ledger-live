@@ -20,9 +20,9 @@
  * a consistent ordering of recently used addresses across all synchronized Live instances.
  */
 
-import { z } from "zod";
 import { WalletSyncDataManager } from "../types";
 import { RecentAddressesState } from "@ledgerhq/types-live";
+import { schema } from "../entities/recentAddresses";
 
 /**
  * We dont use the same data structure for remote state
@@ -86,14 +86,6 @@ function sameDistantState(
     })
   );
 }
-
-const recentAddressesSchema = z.object({
-  address: z.string(),
-  index: z.number(),
-  lastUsed: z.number().optional(),
-});
-
-const schema = z.record(z.string(), z.array(recentAddressesSchema));
 
 const manager: WalletSyncDataManager<RecentAddressesState, RecentAddressesState, typeof schema> = {
   schema,

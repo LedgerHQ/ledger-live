@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import invariant from "invariant";
 import { StyleSheet, View } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";

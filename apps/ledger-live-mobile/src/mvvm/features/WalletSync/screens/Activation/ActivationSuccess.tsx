@@ -1,6 +1,6 @@
 import React from "react";
 import { Success } from "../../components/Success";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "~/context/Locale";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { ScreenName } from "~/const";

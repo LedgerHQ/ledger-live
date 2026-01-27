@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans } from "~/context/Locale";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";

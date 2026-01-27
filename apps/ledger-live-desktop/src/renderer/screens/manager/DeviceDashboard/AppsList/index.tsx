@@ -1,5 +1,5 @@
 import React, { useState, memo, useCallback, useEffect, useRef } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
@@ -77,7 +77,7 @@ const AppsList = ({
   setAppUninstallDep,
   t,
 }: Props) => {
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const { search } = useLocation();
   const currenciesAccountsSetup = useSelector(currenciesSelector);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -114,10 +114,10 @@ const AppsList = ({
   const { installed: installedApps, uninstallQueue } = state;
   const addAccount = useCallback(
     (currency: CryptoOrTokenCurrency) => {
-      push("/accounts");
+      navigate("/accounts");
       openAddAccountFlow(currency, true);
     },
-    [push, openAddAccountFlow],
+    [navigate, openAddAccountFlow],
   );
   const { update, device, catalog } = useAppsSections(state, {
     query,
