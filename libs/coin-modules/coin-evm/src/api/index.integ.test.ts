@@ -358,9 +358,9 @@ describe.each([
           );
           expect(op.value).toBeGreaterThanOrEqual(0n);
           expect(op.tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
-          expect(op.tx.block.hash).toMatch(/^(|0x[A-Fa-f0-9]{64})$/); // block hash not available for internal operations
+          expect(op.tx.block.hash).toMatch(/^(|0x[A-Fa-f0-9]{64})$/); // block hash not available for all internal transactions
           expect(op.tx.block.height).toBeGreaterThanOrEqual(200);
-          expect(op.tx.fees).toBeGreaterThanOrEqual(0n); // fees not available for internal operations
+          expect(op.tx.fees).toBeGreaterThanOrEqual(0n); // fees not available for all internal transactions
           expect(op.tx.date).toBeInstanceOf(Date);
         });
         expect(isCorrectlyOrdered(result));
