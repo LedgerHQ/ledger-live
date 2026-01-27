@@ -26,6 +26,36 @@ export type BalanceHistoryDataCache = {
   balances: number[];
 };
 
+/**
+ * Compressed balance entry: either an absolute balance value (number)
+ * or an RLE tuple [value, count], where `value` is an absolute balance
+ * and `count` is how many times it repeats consecutively.
+ * RLE tuples compress sequences of 2+ identical values.
+ */
+export type CompressedBalanceEntry = number | [number, number];
+
+/**
+ * Compressed version of BalanceHistoryDataCache
+ * Uses absolute balance values with optional RLE compression.
+ * This format is used in *Raw types for storage optimization.
+ */
+export type CompressedBalanceHistoryDataCache = {
+  latestDate: number | null | undefined;
+  // Balances are stored as absolute values (no delta encoding).
+  // RLE tuples [value, count] compress sequences of 2+ identical values.
+  // Empty array if no data.
+  balances: CompressedBalanceEntry[];
+};
+
+/**
+ * Compressed version of BalanceHistoryCache
+ * Used in *Raw types for storage optimization
+ */
+export type CompressedBalanceHistoryCache = Record<
+  GranularityId,
+  CompressedBalanceHistoryDataCache
+>;
+
 /** A token belongs to an Account and share the parent account address */
 export type TokenAccount = {
   type: "TokenAccount";
@@ -166,7 +196,8 @@ export type TokenAccountRaw = {
   pendingOperations: OperationRaw[];
   balance: string;
   spendableBalance?: string;
-  balanceHistoryCache?: BalanceHistoryCache;
+  // Compressed format for storage optimization (backward compatible: accepts both formats)
+  balanceHistoryCache?: CompressedBalanceHistoryCache | BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
 };
 
@@ -196,7 +227,8 @@ export type AccountRaw = {
   /** Not persisted; kept optional for backward compat when reading old data */
   lastSyncDate?: string;
   subAccounts?: TokenAccountRaw[];
-  balanceHistoryCache?: BalanceHistoryCache;
+  // Compressed format for storage optimization (backward compatible: accepts both formats)
+  balanceHistoryCache?: CompressedBalanceHistoryCache | BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
   syncHash?: string | undefined;
   nfts?: ProtoNFTRaw[];
