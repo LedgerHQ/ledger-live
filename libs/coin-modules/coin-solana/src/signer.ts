@@ -7,6 +7,15 @@ export type SolanaSignature = {
   signature: Buffer;
 };
 
+/**
+ * Enum for user input type in transaction resolution.
+ * Values are compatible with the UserInputType enum from @ledgerhq/device-signer-kit-solana.
+ */
+export enum UserInputType {
+  SOL = "sol",
+  ATA = "ata",
+}
+
 export type Resolution = {
   deviceModelId?: DeviceModelId | undefined;
   certificateSignatureKind?: "prod" | "test" | undefined;
@@ -16,7 +25,7 @@ export type Resolution = {
     address: string;
     mintAddress: string;
   };
-  userInputType?: "sol" | "ata";
+  userInputType?: UserInputType;
   templateId?: string;
 };
 

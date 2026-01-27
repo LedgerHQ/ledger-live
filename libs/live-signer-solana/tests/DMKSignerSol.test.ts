@@ -3,7 +3,7 @@
 // tests/DmkSignerSol.test.ts
 import { DmkSignerSol } from "../src/DmkSignerSol";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
-import { PubKeyDisplayMode } from "@ledgerhq/coin-solana/signer";
+import { PubKeyDisplayMode, UserInputType, Resolution } from "@ledgerhq/coin-solana/signer";
 import bs58 from "bs58";
 import { of, throwError } from "rxjs";
 
@@ -146,6 +146,135 @@ describe("DmkSignerSol", () => {
       };
 
       await expect(signer.signTransaction("path", new Uint8Array())).rejects.toThrow("tx error");
+    });
+
+    it("passes resolution with userInputType SOL to DMK signer", async () => {
+      const outputArray = Uint8Array.from([10, 20, 30]);
+      const observable = of({ status: DeviceActionStatus.Completed, output: outputArray });
+      (signer as any).dmkSigner = {
+        signTransaction: jest.fn().mockReturnValue({ observable }),
+      };
+
+      const resolution: Resolution = {
+        tokenInternalId: "token-123",
+        tokenAddress: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+        userInputType: UserInputType.SOL,
+      };
+
+      const tx = Uint8Array.from([0xaa, 0xbb]);
+      const result = await signer.signTransaction("path", tx, resolution);
+
+      expect((signer as any).dmkSigner.signTransaction).toHaveBeenCalledWith(
+        "path",
+        tx,
+        expect.objectContaining({
+          transactionResolutionContext: expect.objectContaining({
+            tokenInternalId: "token-123",
+            tokenAddress: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+            userInputType: "sol",
+          }),
+          skipOpenApp: true,
+        }),
+      );
+      expect(result).toEqual({ signature: Buffer.from(outputArray) });
+    });
+
+    it("passes resolution with userInputType ATA to DMK signer", async () => {
+      const outputArray = Uint8Array.from([10, 20, 30]);
+      const observable = of({ status: DeviceActionStatus.Completed, output: outputArray });
+      (signer as any).dmkSigner = {
+        signTransaction: jest.fn().mockReturnValue({ observable }),
+      };
+
+      const resolution: Resolution = {
+        tokenInternalId: "token-456",
+        tokenAddress: "5oNDL3swdJJF1g9DzJiZ4ynHXgszjAEpUkxVYejchzrY",
+        userInputType: UserInputType.ATA,
+      };
+
+      const tx = Uint8Array.from([0xcc, 0xdd]);
+      const result = await signer.signTransaction("path", tx, resolution);
+
+      expect((signer as any).dmkSigner.signTransaction).toHaveBeenCalledWith(
+        "path",
+        tx,
+        expect.objectContaining({
+          transactionResolutionContext: expect.objectContaining({
+            tokenInternalId: "token-456",
+            tokenAddress: "5oNDL3swdJJF1g9DzJiZ4ynHXgszjAEpUkxVYejchzrY",
+            userInputType: "ata",
+          }),
+          skipOpenApp: true,
+        }),
+      );
+      expect(result).toEqual({ signature: Buffer.from(outputArray) });
+    });
+
+    it("passes resolution with createATA field to DMK signer", async () => {
+      const outputArray = Uint8Array.from([10, 20, 30]);
+      const observable = of({ status: DeviceActionStatus.Completed, output: outputArray });
+      (signer as any).dmkSigner = {
+        signTransaction: jest.fn().mockReturnValue({ observable }),
+      };
+
+      const resolution: Resolution = {
+        tokenInternalId: "token-789",
+        createATA: {
+          address: "GcwafkKJH9QE7LXMJ15g2K3tWmLbqQNEeyEGBYcXAqAH",
+          mintAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        },
+        userInputType: UserInputType.SOL,
+      };
+
+      const tx = Uint8Array.from([0xee, 0xff]);
+      const result = await signer.signTransaction("path", tx, resolution);
+
+      expect((signer as any).dmkSigner.signTransaction).toHaveBeenCalledWith(
+        "path",
+        tx,
+        expect.objectContaining({
+          transactionResolutionContext: expect.objectContaining({
+            tokenInternalId: "token-789",
+            createATA: {
+              address: "GcwafkKJH9QE7LXMJ15g2K3tWmLbqQNEeyEGBYcXAqAH",
+              mintAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+            },
+            userInputType: "sol",
+          }),
+          skipOpenApp: true,
+        }),
+      );
+      expect(result).toEqual({ signature: Buffer.from(outputArray) });
+    });
+
+    it("passes resolution without userInputType to DMK signer", async () => {
+      const outputArray = Uint8Array.from([10, 20, 30]);
+      const observable = of({ status: DeviceActionStatus.Completed, output: outputArray });
+      (signer as any).dmkSigner = {
+        signTransaction: jest.fn().mockReturnValue({ observable }),
+      };
+
+      const resolution: Resolution = {
+        tokenInternalId: "token-abc",
+        templateId: "template-123",
+      };
+
+      const tx = Uint8Array.from([0x11, 0x22]);
+      const result = await signer.signTransaction("path", tx, resolution);
+
+      expect((signer as any).dmkSigner.signTransaction).toHaveBeenCalledWith(
+        "path",
+        tx,
+        expect.objectContaining({
+          transactionResolutionContext: expect.objectContaining({
+            tokenInternalId: "token-abc",
+            templateId: "template-123",
+            userInputType: undefined,
+          }),
+          skipOpenApp: true,
+        }),
+      );
+      expect(result).toEqual({ signature: Buffer.from(outputArray) });
     });
   });
 
