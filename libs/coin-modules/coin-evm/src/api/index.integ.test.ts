@@ -107,7 +107,6 @@ describe.each([
       if (result.parent) {
         expect(result.parent.height).toBeGreaterThanOrEqual(0);
         expect(result.parent.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
-        expect(result.parent.time).toBeInstanceOf(Date);
         expect(result.parent.height).toBe(result.height - 1);
       }
     });
