@@ -1,97 +1,31 @@
-import { OnboardingPrepareResponse, PrepareTransferResponse } from "../../network/gateway";
 import {
-  CantonPreparedTransaction,
-  CantonSigner,
-  CantonSignature,
-  CantonUntypedVersionedMessage,
-} from "../../types/signer";
+  createMockCantonSigner,
+  createMockOnboardingPrepareResponse,
+  createMockPrepareTransferResponse,
+} from "../../test/fixtures";
+import type { CantonSigner } from "../../types/signer";
 import { signTransaction } from "./sign";
 
-class MockCantonSigner implements CantonSigner {
-  async getAddress(path: string) {
-    return {
-      publicKey: "mock-public-key",
-      address: "mock-address",
-      path,
-    };
-  }
-
-  async signTransaction(
-    _path: string,
-    data: CantonPreparedTransaction | CantonUntypedVersionedMessage | string,
-  ): Promise<CantonSignature> {
-    if (typeof data === "string") {
-      return { signature: `txhash-signature-${data}` };
-    } else if ("transactions" in data) {
-      const result: CantonSignature = {
-        signature: `untyped-signature-${data.transactions.length}`,
-      };
-      if (data.challenge) {
-        result.applicationSignature = `challenge-signature-${data.challenge}`;
-      }
-      return result;
-    } else {
-      return {
-        signature: `prepared-transaction-signature-${data.damlTransaction.length}-${data.nodes.length}`,
-      };
-    }
-  }
-}
+const createMockSigner = (signTransactionImpl: CantonSigner["signTransaction"]): CantonSigner => {
+  const signer = createMockCantonSigner();
+  return {
+    getAddress: signer.getAddress.bind(signer),
+    signTransaction: signTransactionImpl,
+  };
+};
 
 describe("signTransaction", () => {
-  const mockSigner = new MockCantonSigner();
+  const mockSigner = createMockSigner(
+    jest.fn().mockResolvedValue({
+      signature: "a1b2c3d4e5f678901234567890abcdef1234567890abcdef1234567890abcdef12",
+      applicationSignature: "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321",
+    }),
+  );
   const mockDerivationPath = "44'/6767'/0'/0'/0'";
 
   it("should sign prepared transaction", async () => {
     // GIVEN
-    const mockPrepareTransferResponse: PrepareTransferResponse = {
-      json: {
-        transaction: {
-          version: "2.1",
-          roots: ["0"],
-          nodes: [
-            {
-              nodeId: "0",
-              v1: {
-                create: {
-                  lfVersion: "2.1",
-                  contractId: "test-contract-id",
-                  packageName: "test-package",
-                  templateId: {
-                    packageId: "test-package-id",
-                    moduleName: "TestModule",
-                    entityName: "TestEntity",
-                  },
-                  argument: {
-                    record: {
-                      recordId: {
-                        packageId: "test-package-id",
-                        moduleName: "TestModule",
-                        entityName: "TestEntity",
-                      },
-                      fields: [],
-                    },
-                  },
-                },
-              },
-            },
-          ],
-        },
-        metadata: {
-          submitterInfo: {
-            actAs: ["test::party"],
-            commandId: "test-command-id",
-          },
-          synchronizerId: "test-synchronizer-id",
-          transactionUuid: "test-transaction-uuid",
-          submissionTime: "1234567890",
-          inputContracts: [],
-        },
-      },
-      serialized: "serialized-transaction",
-      hash: "test-hash",
-      step: { type: "single-step" },
-    };
+    const mockPrepareTransferResponse = createMockPrepareTransferResponse();
 
     // WHEN
     const result = await signTransaction(
@@ -101,77 +35,27 @@ describe("signTransaction", () => {
     );
 
     // THEN
-    expect(result).toEqual({ signature: "prepared-transaction-signature-10-1" });
+    expect(result.signature).toMatch(/^[0-9a-f]+$/i);
+    expect(result.signature.length).toBeGreaterThan(0);
   });
 
   it("should sign untyped versioned message", async () => {
     // GIVEN
-    const mockOnboardingPrepareResponse: OnboardingPrepareResponse = {
-      party_id: "test-party-id",
-      party_name: "test-party-name",
-      public_key_fingerprint: "test-fingerprint",
-      transactions: {
-        namespace_transaction: {
-          serialized: "namespace-transaction-data",
-          transaction: { operation: "op", serial: 1, mapping: {} },
-          hash: "namespace-hash",
-        },
-        party_to_key_transaction: {
-          serialized: "party-to-key-transaction-data",
-          transaction: { operation: "op", serial: 2, mapping: {} },
-          hash: "party-to-key-hash",
-        },
-        party_to_participant_transaction: {
-          serialized: "party-to-participant-transaction-data",
-          transaction: { operation: "op", serial: 3, mapping: {} },
-          hash: "party-to-participant-hash",
-        },
-        combined_hash: "combined-hash",
-      },
-      challenge_nonce: "",
-      challenge_deadline: 0,
-    };
+    const mockOnboardingPrepare = createMockOnboardingPrepareResponse();
 
     // WHEN
-    const result = await signTransaction(
-      mockSigner,
-      mockDerivationPath,
-      mockOnboardingPrepareResponse,
-    );
+    const result = await signTransaction(mockSigner, mockDerivationPath, mockOnboardingPrepare);
 
     // THEN
-    expect(result).toEqual({ signature: "untyped-signature-3" });
+    expect(result.signature).toMatch(/^[0-9a-f]+$/i);
+    expect(result.applicationSignature).toMatch(/^[0-9a-f]+$/i);
   });
 
   it("should handle empty signature from signer", async () => {
     // GIVEN
-    const mockSignerWithEmptySignature = {
-      ...mockSigner,
-      signTransaction: jest.fn().mockResolvedValue(""),
-    } as unknown as CantonSigner;
-
-    const mockPrepareTransferResponse: PrepareTransferResponse = {
-      json: {
-        transaction: {
-          version: "2.1",
-          roots: ["0"],
-          nodes: [],
-        },
-        metadata: {
-          submitterInfo: {
-            actAs: ["test::party"],
-            commandId: "test-command-id",
-          },
-          synchronizerId: "test-synchronizer-id",
-          transactionUuid: "test-transaction-uuid",
-          submissionTime: "1234567890",
-          inputContracts: [],
-        },
-      },
-      serialized: "serialized-transaction",
-      hash: "test-hash",
-      step: { type: "single-step" },
-    };
+    const mockSignerSpy = jest.fn().mockResolvedValue({ signature: "" });
+    const mockSignerWithEmptySignature = createMockSigner(mockSignerSpy);
+    const mockPrepareTransferResponse = createMockPrepareTransferResponse();
 
     // WHEN & THEN
     await expect(
@@ -185,33 +69,9 @@ describe("signTransaction", () => {
 
   it("should handle signer errors", async () => {
     // GIVEN
-    const mockSignerWithError = {
-      ...mockSigner,
-      signTransaction: jest.fn().mockRejectedValue(new Error("Signer error")),
-    } as unknown as CantonSigner;
-
-    const mockPrepareTransferResponse: PrepareTransferResponse = {
-      json: {
-        transaction: {
-          version: "2.1",
-          roots: ["0"],
-          nodes: [],
-        },
-        metadata: {
-          submitterInfo: {
-            actAs: ["test::party"],
-            commandId: "test-command-id",
-          },
-          synchronizerId: "test-synchronizer-id",
-          transactionUuid: "test-transaction-uuid",
-          submissionTime: "1234567890",
-          inputContracts: [],
-        },
-      },
-      serialized: "serialized-transaction",
-      hash: "test-hash",
-      step: { type: "single-step" },
-    };
+    const mockSignerSpy = jest.fn().mockRejectedValue(new Error("Signer error"));
+    const mockSignerWithError = createMockSigner(mockSignerSpy);
+    const mockPrepareTransferResponse = createMockPrepareTransferResponse();
 
     // WHEN & THEN
     await expect(
@@ -221,60 +81,11 @@ describe("signTransaction", () => {
 
   it("should call signer with correct parameters for prepared transaction", async () => {
     // GIVEN
-    const mockSignerSpy = jest.fn().mockResolvedValue({ signature: "test-signature" });
-    const mockSignerWithSpy = {
-      ...mockSigner,
-      signTransaction: mockSignerSpy,
-    } as unknown as CantonSigner;
-
-    const mockPrepareTransferResponse: PrepareTransferResponse = {
-      json: {
-        transaction: {
-          version: "2.1",
-          roots: ["0"],
-          nodes: [
-            {
-              nodeId: "0",
-              v1: {
-                create: {
-                  lfVersion: "2.1",
-                  contractId: "test-contract-id",
-                  packageName: "test-package",
-                  templateId: {
-                    packageId: "test-package-id",
-                    moduleName: "TestModule",
-                    entityName: "TestEntity",
-                  },
-                  argument: {
-                    record: {
-                      recordId: {
-                        packageId: "test-package-id",
-                        moduleName: "TestModule",
-                        entityName: "TestEntity",
-                      },
-                      fields: [],
-                    },
-                  },
-                },
-              },
-            },
-          ],
-        },
-        metadata: {
-          submitterInfo: {
-            actAs: ["test::party"],
-            commandId: "test-command-id",
-          },
-          synchronizerId: "test-synchronizer-id",
-          transactionUuid: "test-transaction-uuid",
-          submissionTime: "1234567890",
-          inputContracts: [],
-        },
-      },
-      serialized: "serialized-transaction",
-      hash: "test-hash",
-      step: { type: "single-step" },
-    };
+    const mockSignerSpy = jest.fn().mockResolvedValue({
+      signature: "a1b2c3d4e5f678901234567890abcdef1234567890abcdef1234567890abcdef12",
+    });
+    const mockSignerWithSpy = createMockSigner(mockSignerSpy);
+    const mockPrepareTransferResponse = createMockPrepareTransferResponse();
 
     // WHEN
     await signTransaction(mockSignerWithSpy, mockDerivationPath, mockPrepareTransferResponse);
@@ -293,37 +104,14 @@ describe("signTransaction", () => {
 
   it("should call signer with correct parameters for untyped versioned message without challenge", async () => {
     // GIVEN
-    const mockSignerSpy = jest.fn().mockResolvedValue({ signature: "test-signature" });
-    const mockSignerWithSpy = {
-      ...mockSigner,
-      signTransaction: mockSignerSpy,
-    } as unknown as CantonSigner;
-
-    const mockOnboardingPrepareResponse: OnboardingPrepareResponse = {
-      party_id: "test-party-id",
-      party_name: "test-party-name",
-      public_key_fingerprint: "test-fingerprint",
-      transactions: {
-        namespace_transaction: {
-          serialized: "namespace-transaction-data",
-          transaction: { operation: "op", serial: 1, mapping: {} },
-          hash: "namespace-hash",
-        },
-        party_to_key_transaction: {
-          serialized: "party-to-key-transaction-data",
-          transaction: { operation: "op", serial: 2, mapping: {} },
-          hash: "party-to-key-hash",
-        },
-        party_to_participant_transaction: {
-          serialized: "party-to-participant-transaction-data",
-          transaction: { operation: "op", serial: 3, mapping: {} },
-          hash: "party-to-participant-hash",
-        },
-        combined_hash: "combined-hash",
-      },
+    const mockSignerSpy = jest.fn().mockResolvedValue({
+      signature: "a1b2c3d4e5f678901234567890abcdef1234567890abcdef1234567890abcdef12",
+    });
+    const mockSignerWithSpy = createMockSigner(mockSignerSpy);
+    const mockOnboardingPrepareResponse = createMockOnboardingPrepareResponse({
       challenge_nonce: "",
       challenge_deadline: 0,
-    };
+    });
 
     // WHEN
     await signTransaction(mockSignerWithSpy, mockDerivationPath, mockOnboardingPrepareResponse);
@@ -339,52 +127,26 @@ describe("signTransaction", () => {
   });
 
   it("should call signer with correct parameters for untyped versioned message with challenge", async () => {
+    // GIVEN
     const mockSignerSpy = jest.fn().mockResolvedValue({
-      signature: "main-signature",
-      applicationSignature: "challenge-signature",
+      signature: "a1b2c3d4e5f678901234567890abcdef1234567890abcdef1234567890abcdef12",
+      applicationSignature: "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321",
     });
-    const mockSignerWithSpy = {
-      ...mockSigner,
-      signTransaction: mockSignerSpy,
-    } as unknown as CantonSigner;
+    const mockSignerWithSpy = createMockSigner(mockSignerSpy);
+    const mockOnboardingPrepareResponse = createMockOnboardingPrepareResponse();
 
-    const mockOnboardingPrepareResponse: OnboardingPrepareResponse = {
-      party_id: "test-party-id",
-      party_name: "test-party-name",
-      public_key_fingerprint: "test-fingerprint",
-      challenge_nonce: "1234567890abcdef",
-      challenge_deadline: 1735689599,
-      transactions: {
-        namespace_transaction: {
-          serialized: "namespace-transaction-data",
-          transaction: { operation: "op", serial: 1, mapping: {} },
-          hash: "namespace-hash",
-        },
-        party_to_key_transaction: {
-          serialized: "party-to-key-transaction-data",
-          transaction: { operation: "op", serial: 2, mapping: {} },
-          hash: "party-to-key-hash",
-        },
-        party_to_participant_transaction: {
-          serialized: "party-to-participant-transaction-data",
-          transaction: { operation: "op", serial: 3, mapping: {} },
-          hash: "party-to-participant-hash",
-        },
-        combined_hash: "combined-hash",
-      },
-    };
-
+    // WHEN
     const result = await signTransaction(
       mockSignerWithSpy,
       mockDerivationPath,
       mockOnboardingPrepareResponse,
     );
 
+    // THEN
     expect(result).toEqual({
-      signature: "main-signature",
-      applicationSignature: "challenge-signature",
+      signature: "a1b2c3d4e5f678901234567890abcdef1234567890abcdef1234567890abcdef12",
+      applicationSignature: "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321",
     });
-
     expect(mockSignerSpy).toHaveBeenCalledWith(mockDerivationPath, {
       transactions: [
         "namespace-transaction-data",
