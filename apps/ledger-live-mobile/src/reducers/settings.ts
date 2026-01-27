@@ -172,13 +172,34 @@ export const INITIAL_STATE: SettingsState = {
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
   `${from.ticker}_${to.ticker}`;
 
+/**
+ * Filters imported settings to only include valid SettingsState keys.
+ * This prevents unknown/obsolete fields (like nftCollectionsStatusByNetwork) from being imported.
+ */
+function isValidSettingsKey(key: string): key is keyof SettingsState {
+  return key in INITIAL_STATE;
+}
+
+export function filterValidSettings(
+  importedSettings: Partial<SettingsState>,
+): Partial<SettingsState> {
+  const validKeys = new Set<string>(Object.keys(INITIAL_STATE));
+
+  return Object.fromEntries(
+    Object.entries(importedSettings).filter(
+      ([key]) => validKeys.has(key) && isValidSettingsKey(key),
+    ),
+  ) as Partial<SettingsState>;
+}
+
 const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => {
     const payload = (action as Action<SettingsImportPayload>).payload;
+    const filteredPayload = filterValidSettings(payload);
     return {
       ...state,
-      ...payload,
-      locale: payload.locale ?? state.locale ?? getDefaultLocale(),
+      ...filteredPayload,
+      locale: filteredPayload.locale ?? state.locale ?? getDefaultLocale(),
     };
   },
 
