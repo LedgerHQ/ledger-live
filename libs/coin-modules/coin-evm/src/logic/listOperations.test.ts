@@ -103,7 +103,7 @@ describe("listOperations", () => {
           hash: "coin-op-6-tx-hash",
           blockHeight: 20,
           blockHash: "coin-op-6-block-hash",
-          fee: new BigNumber(0),
+          fee: new BigNumber(15),
           date: new Date("2025-02-20"),
           transactionSequenceNumber: new BigNumber(6),
           extra: {},
@@ -161,6 +161,8 @@ describe("listOperations", () => {
       ],
       lastNftOperations: [],
       lastInternalOperations: [
+        // Internal operation WITH matching parent coin operation (coin-op-5).
+        // Should be enriched with parent's fee (20) and blockHash ("coin-op-3-block-hash").
         {
           id: "internal-op-1",
           accountId: "",
@@ -168,14 +170,16 @@ describe("listOperations", () => {
           senders: ["contract-address"],
           recipients: ["address"],
           value: new BigNumber(3),
-          hash: "token-op-3-tx-hash",
+          hash: "token-op-3-tx-hash", // matches coin-op-5
           blockHeight: 20,
-          blockHash: "token-op-3-block-hash",
-          fee: new BigNumber(0),
+          blockHash: "token-op-3-block-hash", // will be replaced by parent's blockHash
+          fee: new BigNumber(0), // will be replaced by parent's fee
           date: new Date("2025-02-20"),
           transactionSequenceNumber: new BigNumber(5),
           extra: {},
         },
+        // Internal operation WITH matching parent coin operation (coin-op-6).
+        // Should be enriched with parent's fee (0) and blockHash ("coin-op-6-block-hash").
         {
           id: "internal-op-2",
           accountId: "",
@@ -183,12 +187,30 @@ describe("listOperations", () => {
           senders: ["contract-address"],
           recipients: ["address"],
           value: new BigNumber(5),
-          hash: "coin-op-6-tx-hash",
+          hash: "coin-op-6-tx-hash", // matches coin-op-6
           blockHeight: 20,
-          blockHash: "token-op-3-block-hash",
-          fee: new BigNumber(0),
+          blockHash: "token-op-3-block-hash", // will be replaced by parent's blockHash
+          fee: new BigNumber(0), // will be replaced by parent's fee
           date: new Date("2025-02-20"),
           transactionSequenceNumber: new BigNumber(6),
+          extra: {},
+        },
+        // Internal operation with no matching parent coin operation.
+        // This happens when the parent transaction was paid for by another
+        // account (e.g., swapping to a fresh address via smart contract).
+        {
+          id: "internal-op-3",
+          accountId: "",
+          type: "IN",
+          senders: ["some-other-contract"],
+          recipients: ["address"],
+          value: new BigNumber(7),
+          hash: "orphan-internal-tx-hash",
+          blockHeight: 25,
+          blockHash: "",
+          fee: new BigNumber(0),
+          date: new Date("2025-02-25"),
+          transactionSequenceNumber: new BigNumber(7),
           extra: {},
         },
       ],
@@ -272,7 +294,7 @@ describe("listOperations", () => {
                 hash: "coin-op-6-block-hash",
                 time: new Date("2025-02-20"),
               },
-              fees: 0n,
+              fees: 15n,
               date: new Date("2025-02-20"),
               failed: false,
             },
@@ -366,6 +388,7 @@ describe("listOperations", () => {
               sequence: BigNumber(5),
             },
           },
+          // Internal operation WITH parent - enriched with parent's fee and blockHash
           {
             id: "internal-op-1",
             type: "IN",
@@ -375,13 +398,13 @@ describe("listOperations", () => {
             asset: { type: "native" },
             tx: {
               block: {
-                hash: "coin-op-3-block-hash",
+                hash: "coin-op-3-block-hash", // from parent coin-op-5
                 height: 20,
                 time: new Date("2025-02-20"),
               },
               date: new Date("2025-02-20"),
               failed: false,
-              fees: 20n,
+              fees: 20n, // from parent coin-op-5
               hash: "token-op-3-tx-hash",
             },
             details: {
@@ -389,6 +412,7 @@ describe("listOperations", () => {
               sequence: new BigNumber(5),
             },
           },
+          // Internal operation WITH parent - enriched with parent's fee and blockHash
           {
             id: "internal-op-2",
             type: "IN",
@@ -398,18 +422,43 @@ describe("listOperations", () => {
             asset: { type: "native" },
             tx: {
               block: {
-                hash: "coin-op-6-block-hash",
+                hash: "coin-op-6-block-hash", // from parent coin-op-6
                 height: 20,
                 time: new Date("2025-02-20"),
               },
               date: new Date("2025-02-20"),
               failed: false,
-              fees: 0n,
+              fees: 15n, // from parent coin-op-6 (internal-op-2 has fee=0)
               hash: "coin-op-6-tx-hash",
             },
             details: {
               internal: true,
               sequence: new BigNumber(6),
+            },
+          },
+          // Internal operation with no matching parent - should still be included
+          // with its own default values (fee=0, blockHash="").
+          {
+            id: "internal-op-3",
+            type: "IN",
+            recipients: ["address"],
+            senders: ["some-other-contract"],
+            value: 7n,
+            asset: { type: "native" },
+            tx: {
+              block: {
+                hash: "",
+                height: 25,
+                time: new Date("2025-02-25"),
+              },
+              date: new Date("2025-02-25"),
+              failed: false,
+              fees: 0n,
+              hash: "orphan-internal-tx-hash",
+            },
+            details: {
+              internal: true,
+              sequence: new BigNumber(7),
             },
           },
         ],
