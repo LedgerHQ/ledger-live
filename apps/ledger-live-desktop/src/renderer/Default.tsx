@@ -24,7 +24,7 @@ import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWra
 import DebugUpdater from "~/renderer/components/debug/DebugUpdater";
 import DebugFirmwareUpdater from "~/renderer/components/debug/DebugFirmwareUpdater";
 import Page from "LLD/components/Page";
-import { isWallet40Page } from "LLD/components/Page/constants";
+import { isWallet40Page } from "LLD/components/Page/utils";
 import AnalyticsConsole from "~/renderer/components/AnalyticsConsole";
 import ThemeConsole from "~/renderer/components/ThemeConsole";
 import DebugMock from "~/renderer/components/debug/DebugMock";
