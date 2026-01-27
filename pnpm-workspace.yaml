@@ -157,3 +157,5 @@ overrides:
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  # Renovate security update: glob@11.1.0
+  - glob@11.1.0
