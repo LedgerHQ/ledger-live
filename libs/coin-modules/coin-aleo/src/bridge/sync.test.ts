@@ -5,13 +5,16 @@ import { getBalance, lastBlock, listOperations } from "../logic";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
+import { accessProvableApi } from "../logic/accessProvableApi";
 import { getAccountShape } from "./sync";
 
 jest.mock("../logic");
+jest.mock("../logic/accessProvableApi");
 
 const mockGetBalance = getBalance as jest.MockedFunction<typeof getBalance>;
 const mockLastBlock = lastBlock as jest.MockedFunction<typeof lastBlock>;
 const mockListOperations = listOperations as jest.MockedFunction<typeof listOperations>;
+const mockAccessProvableApi = accessProvableApi as jest.MockedFunction<typeof accessProvableApi>;
 
 describe("sync.ts", () => {
   const mockCurrency = getMockedCurrency();
@@ -25,6 +28,8 @@ describe("sync.ts", () => {
     aleoResources: {
       transparentBalance: new BigNumber(500000),
       privateBalance: null,
+      provableApi: null,
+      lastPrivateSyncDate: null,
     },
   };
 
@@ -39,6 +44,7 @@ describe("sync.ts", () => {
         value: BigInt(mockAccount.balance.toString()),
       },
     ]);
+    mockAccessProvableApi.mockResolvedValue(null);
   });
 
   describe("getAccountShape", () => {

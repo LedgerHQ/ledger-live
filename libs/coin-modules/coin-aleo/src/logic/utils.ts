@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import invariant from "invariant";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -56,4 +57,11 @@ export const determineTransactionType = (
   }
 
   return "public";
+};
+
+export const generateUniqueUsername = (address: string): string => {
+  const timestamp = new Date().getTime().toString();
+  const combined = `${timestamp}_${address}`;
+  const hash = createHash("sha256").update(combined).digest("hex");
+  return hash;
 };
