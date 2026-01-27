@@ -1,13 +1,9 @@
+import { createHash } from "crypto";
 import invariant from "invariant";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type { AleoTransactionType } from "../types";
-
-export function parseMicrocredits(microcreditsU64: string) {
-  invariant(microcreditsU64.endsWith("u64"), `aleo: invalid balance format (${microcreditsU64})`);
-  return microcreditsU64.slice(0, -3);
-}
 
 export function parseMicrocredits(microcreditsU64: string) {
   invariant(microcreditsU64.endsWith("u64"), `aleo: invalid balance format (${microcreditsU64})`);
@@ -58,4 +54,11 @@ export const determineTransactionType = (
   }
 
   return "public";
+};
+
+export const generateUniqueUsername = (address: string): string => {
+  const timestamp = new Date().getTime().toString();
+  const combined = `${timestamp}_${address}`;
+  const hash = createHash("sha256").update(combined).digest("hex");
+  return hash;
 };

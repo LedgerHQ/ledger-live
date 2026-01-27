@@ -7,15 +7,27 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { getBalance, lastBlock, listOperations } from "../logic";
-import type { AleoAccount } from "../types";
+import { accessProvableApi } from "../logic/accessProvableApi";
+import type { AleoAccount, ProvableApi } from "../types";
 
 export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   const { initialAccount, address, derivationMode, currency } = infos;
+
   let viewKey: string | undefined;
+  let provableApi: ProvableApi | null = null;
 
   if (initialAccount) {
     viewKey = decodeAccountId(initialAccount.id).customData;
     invariant(viewKey, `aleo: viewKey is missing in initialAccount ${initialAccount.id}`);
+
+    if (viewKey) {
+      provableApi = await accessProvableApi(
+        currency,
+        viewKey,
+        address,
+        initialAccount.aleoResources.provableApi,
+      );
+    }
   }
 
   const [latestBlock, balances] = await Promise.all([
@@ -75,6 +87,10 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     aleoResources: {
       transparentBalance,
       privateBalance,
+      provableApi,
+      lastPrivateSyncDate: provableApi?.scannerStatus?.synced
+        ? new Date()
+        : initialAccount?.aleoResources.lastPrivateSyncDate || null,
     },
   };
 };

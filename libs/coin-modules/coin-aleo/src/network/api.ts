@@ -3,10 +3,15 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import aleoConfig from "../config";
 import { PROGRAM_ID } from "../constants";
-import type {
+import {
+  AleoAccountJWTResponse,
+  AleoJWT,
   AleoLatestBlockResponse,
   AleoPublicTransactionDetailsResponse,
   AleoPublicTransactionsResponse,
+  AleoRecordScannerStatusResponse,
+  AleoRegisterAccountResponse,
+  AleoRegisterForRecordsResponse,
 } from "../types/api";
 
 const getNodeUrl = (currency: CryptoCurrency): string => {
@@ -76,9 +81,83 @@ async function getAccountPublicTransactions({
   return res.data;
 }
 
+async function registerNewAccount(
+  currency: CryptoCurrency,
+  username: string,
+): Promise<AleoRegisterAccountResponse> {
+  const res = await network<AleoRegisterAccountResponse>({
+    method: "POST",
+    url: `https://api.provable.com/consumers`,
+    data: { username },
+  });
+
+  return res.data;
+}
+
+async function getAccountJWT(
+  currency: CryptoCurrency,
+  apiKey: string,
+  consumerId: string,
+): Promise<AleoJWT> {
+  const res = await network<AleoAccountJWTResponse>({
+    method: "POST",
+    url: `https://api.provable.com/jwts/${consumerId}`,
+    headers: {
+      "X-Provable-API-Key": apiKey,
+    },
+  });
+
+  const data = {
+    token: res.headers?.["authorization"] ?? "",
+    exp: res.data.exp,
+  };
+
+  return data;
+}
+
+async function registerForScanningAccountRecords(
+  currency: CryptoCurrency,
+  jwt: string,
+  viewKey: string,
+  start: number = 0,
+): Promise<AleoRegisterForRecordsResponse> {
+  const res = await network<AleoRegisterForRecordsResponse>({
+    method: "POST",
+    url: `https://api.provable.com/scanner/mainnet/register`,
+    headers: {
+      Authorization: jwt,
+    },
+    data: { view_key: viewKey, start },
+  });
+
+  return res.data;
+}
+
+export const getRecordScannerStatus = async (
+  currency: CryptoCurrency,
+  accessToken: string,
+  uuid: string,
+): Promise<AleoRecordScannerStatusResponse> => {
+  const res = await network<AleoRecordScannerStatusResponse>({
+    method: "POST",
+    url: "https://api.provable.com/scanner/mainnet/status",
+    headers: {
+      Authorization: accessToken,
+      "Content-Type": "application/json",
+    },
+    data: `"${uuid.toString()}"`,
+  });
+
+  return res.data;
+};
+
 export const apiClient = {
   getLatestBlock,
   getAccountBalance,
   getTransactionById,
   getAccountPublicTransactions,
+  getAccountJWT,
+  registerNewAccount,
+  getRecordScannerStatus,
+  registerForScanningAccountRecords,
 };
