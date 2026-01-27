@@ -46,19 +46,14 @@ function findTestFiles(dir) {
 
 function filterTestFiles(files, testFilter) {
   if (!testFilter) return files;
-  const filters = testFilter.toLowerCase().split(/\s+/).filter(Boolean);
+  const filters = testFilter.trim().split(/\s+/).filter(Boolean);
+  const filterRegex = new RegExp(filters.join("|"), "i");
 
   const filtered = files.filter(filePath => {
-    // Check if the file path matches the filter
-    const pathMatches = filters.some(filter => filePath.toLowerCase().includes(filter));
-    if (pathMatches) return true;
-
-    // Check if the file content contains the filter (for tags like @ethereum)
+    if (filterRegex.test(filePath)) return true;
     try {
-      const fileContent = fs.readFileSync(filePath, "utf8").toLowerCase();
-      return filters.some(filter => fileContent.includes(filter));
-    } catch (e) {
-      console.error(`[shard-tests] Error reading file ${filePath}:`, e);
+      return filterRegex.test(fs.readFileSync(filePath, "utf8"));
+    } catch {
       return false;
     }
   });
