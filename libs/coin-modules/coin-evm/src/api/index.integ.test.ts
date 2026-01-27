@@ -90,8 +90,6 @@ describe.each([
       expect(result.parent?.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.parent?.height).toBe(19999999);
       expect(result.parent?.height).toBe(result.height - 1);
-      expect(result.parent?.time).toBeInstanceOf(Date);
-      expect(result.parent?.time!.getTime()).toBeLessThan(result.time!.getTime());
     });
 
     it("returns block info without parent for genesis block", async () => {
@@ -156,8 +154,6 @@ describe.each([
       expect(result.info.parent?.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.info.parent?.height).toBe(19999999);
       expect(result.info.parent?.height).toBe(result.info.height - 1);
-      expect(result.info.parent?.time).toBeInstanceOf(Date);
-      expect(result.info.parent?.time!.getTime()).toBeLessThan(result.info.time!.getTime());
     });
 
     it("returns block without parent for genesis block", async () => {

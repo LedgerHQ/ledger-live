@@ -404,10 +404,20 @@ export const alpacaGetOperationAmount = (
 export function alpacaTransactionToOp(
   address: string,
   transaction: SuiTransactionBlockResponse,
+  checkpointHash?: string,
 ): Op {
   const type = getOperationType(address, transaction);
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
+
+  if (!checkpointHash && transaction.checkpoint) {
+    throw new Error(
+      `Checkpoint hash is required for transaction ${hash} at checkpoint ${transaction.checkpoint}`,
+    );
+  }
+
+  const blockHeight = Number.parseInt(transaction.checkpoint || "0");
+  const blockHash = checkpointHash || (blockHeight > 0 ? `synthetic-${blockHeight}` : "");
 
   const op: Op = {
     id: hash,
@@ -416,7 +426,8 @@ export function alpacaTransactionToOp(
       hash,
       fees: BigInt(getOperationFee(transaction).toString()),
       block: {
-        height: Number.parseInt(transaction.checkpoint || "0"),
+        height: blockHeight,
+        hash: blockHash,
         time: getOperationDate(transaction),
       },
       failed: transaction.effects?.status.status !== "success",
@@ -443,15 +454,16 @@ export function alpacaTransactionToOp(
  * Convert a SUI RPC checkpoint info to a {@link BlockInfo}.
  *
  * @param checkpoint SUI RPC checkpoint info
+ * @param api Optional SuiClient API to fetch parent checkpoint if needed
  */
-export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
+export async function toBlockInfo(checkpoint: Checkpoint): Promise<BlockInfo> {
   const info: BlockInfo = {
     height: Number(checkpoint.sequenceNumber),
     hash: checkpoint.digest,
     time: new Date(parseInt(checkpoint.timestampMs)),
   };
 
-  if (typeof checkpoint.previousDigest === "string")
+  if (typeof checkpoint.previousDigest === "string") {
     return {
       ...info,
       parent: {
@@ -459,6 +471,7 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
         hash: checkpoint.previousDigest,
       },
     };
+  }
 
   return info;
 }
@@ -698,9 +711,31 @@ export const getListOperations = async (
 
     const ops = dedupOperations(opsOut, opsIn, order);
 
-    const operations = ops.operations
-      .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
-      .map(t => alpacaTransactionToOp(addr, t));
+    const sortedOps = ops.operations.sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs));
+
+    const uniqueCheckpoints = new Set(
+      sortedOps.map(t => t.checkpoint).filter((cp): cp is string => Boolean(cp)),
+    );
+
+    const checkpointHashMap = new Map<string, string>();
+    await Promise.all(
+      Array.from(uniqueCheckpoints).map(async checkpoint => {
+        try {
+          const checkpointData = await api.getCheckpoint({ id: checkpoint });
+          checkpointHashMap.set(checkpoint, checkpointData.digest);
+        } catch (_error) {
+          // If checkpoint fetch fails, we'll throw an error when creating the operation
+        }
+      }),
+    );
+
+    const operations = sortedOps.map(t =>
+      alpacaTransactionToOp(
+        addr,
+        t,
+        t.checkpoint ? checkpointHashMap.get(t.checkpoint) : undefined,
+      ),
+    );
 
     return {
       items: operations,
@@ -798,7 +833,7 @@ export const getBlock = async (id: string): Promise<Block> =>
     const checkpoint = await api.getCheckpoint({ id });
     const rawTxs = await queryTransactionsByDigest({ api, digests: checkpoint.transactions });
     return {
-      info: toBlockInfo(checkpoint),
+      info: await toBlockInfo(checkpoint),
       transactions: rawTxs.map(toBlockTransaction),
     };
   });

@@ -10,7 +10,11 @@ export function fromTrongridTxInfoToOperation(
     id: trongridTxInfo.txID,
     tx: {
       hash: trongridTxInfo.txID,
-      block: { height: trongridTxInfo.blockHeight || 0, time: trongridTxInfo.date },
+      block: {
+        height: trongridTxInfo.blockHeight || 0,
+        hash: "",
+        time: trongridTxInfo.date,
+      },
       fees: fromBigNumberToBigInt<bigint>(trongridTxInfo.fee, BigInt(0)),
       date: trongridTxInfo.date,
       failed: trongridTxInfo.hasFailed,

@@ -73,7 +73,11 @@ export function transactionsToOperations(
       },
       tx: {
         hash: tx.hash,
-        block: { height: 0 },
+        block: {
+          height: tx.block.height,
+          hash: tx.block.hash,
+          time: new Date(parseInt(tx.timestamp) / 1000),
+        },
         fees: BigInt(0),
         date: new Date(parseInt(tx.timestamp) / 1000),
         failed: !tx.success,
