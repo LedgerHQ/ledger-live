@@ -2,6 +2,10 @@ import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
+import {
+  PrepareSaveSwapProps,
+  prepareSaveSwapToHistory,
+} from "@ledgerhq/live-common/exchange/swap/prepareSaveSwapToHistory";
 import { getEnv } from "@ledgerhq/live-env";
 
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
@@ -17,7 +21,7 @@ import {
   accountToWalletAPIAccount,
   getAccountIdFromWalletAccountId,
 } from "@ledgerhq/live-common/wallet-api/converters";
-import { Account, AccountLike, TokenAccount, SwapOperation } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -75,28 +79,6 @@ export class UnableToLoadSwapLiveError extends Error {
   }
 }
 
-export type SwapProps = {
-  provider: string;
-  fromAccountId: string;
-  fromParentAccountId?: string;
-  toAccountId: string;
-  fromAmount: string;
-  toAmount?: string;
-  quoteId: string;
-  rate: string;
-  feeStrategy: string;
-  customFeeConfig: string;
-  cacheKey: string;
-  loading: boolean;
-  error: boolean;
-  providerRedirectURL: string;
-  toNewTokenId: string;
-  swapApiBase: string;
-  estimatedFees: string;
-  estimatedFeesUnit: string;
-  swapId?: string;
-};
-
 export type SwapWebProps = {
   manifest: LiveAppManifest;
   isEmbedded?: boolean;
@@ -141,8 +123,8 @@ const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u
 const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: SwapWebProps) => {
   const { theme } = useTheme();
   const walletState = useSelector(walletSelector);
-  const dispatch = useDispatch();
   const redirectToHistory = useRedirectToSwapHistory();
+  const dispatch = useDispatch();
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const { setDrawer } = React.useContext(context);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
@@ -418,65 +400,22 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
       "custom.saveSwapToHistory": async ({
         params,
       }: {
-        params: { swap: SwapProps; transaction_id: string };
+        params: { swap: PrepareSaveSwapProps; transaction_id: string };
       }) => {
         const { swap, transaction_id } = params;
 
-        if (
-          !swap ||
-          !transaction_id ||
-          !swap.provider ||
-          !swap.fromAmount ||
-          !swap.toAmount ||
-          !swap.swapId
-        ) {
-          return Promise.reject("Cannot save swap missing params");
-        }
         const fromId = getAccountIdFromWalletAccountId(swap.fromAccountId);
         const toId = getAccountIdFromWalletAccountId(swap.toAccountId);
         if (!fromId || !toId) return Promise.reject("Accounts not found");
-        const operationId = `${fromId}-${transaction_id}-OUT`;
-        const fromAccount = accounts.find(acc => acc.id === fromId);
-        const toAccount = accounts.find(acc => acc.id === toId);
-        if (!fromAccount || !toAccount) {
-          return Promise.reject(new Error(`accountId ${fromId} unknown`));
-        }
-        const accountId =
-          fromAccount.type === "TokenAccount" ? getParentAccount(fromAccount, accounts).id : fromId;
-        const swapOperation: SwapOperation = {
-          status: "pending",
-          provider: swap.provider,
-          operationId,
-          swapId: swap.swapId,
-          receiverAccountId: toId,
-          tokenId: toId,
-          fromAmount: convertToAtomicUnit({
-            amount: new BigNumber(swap.fromAmount),
-            account: fromAccount,
-          })!,
-          toAmount: convertToAtomicUnit({
-            amount: new BigNumber(swap.toAmount),
-            account: toAccount,
-          })!,
-        };
 
-        dispatch(
-          updateAccountWithUpdater(accountId, account => {
-            if (fromId === account.id) {
-              return { ...account, swapHistory: [...account.swapHistory, swapOperation] };
-            }
-            return {
-              ...account,
-              subAccounts: account.subAccounts?.map<TokenAccount>((a: TokenAccount) => {
-                const subAccount = {
-                  ...a,
-                  swapHistory: [...a.swapHistory, swapOperation],
-                };
-                return a.id === fromId ? subAccount : a;
-              }),
-            };
-          }),
-        );
+        const { accountId, updater } = prepareSaveSwapToHistory(accounts, {
+          ...swap,
+          fromAccountId: fromId,
+          toAccountId: toId,
+          transactionId: transaction_id,
+        });
+
+        dispatch(updateAccountWithUpdater(accountId, updater));
         return Promise.resolve();
       },
     }),

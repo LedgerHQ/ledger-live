@@ -17,6 +17,7 @@ import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
 import { WebviewProps } from "../Web3AppWebview/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import { prepareSaveSwapToHistory } from "@ledgerhq/live-common/exchange/swap/prepareSaveSwapToHistory";
 import { openModal } from "~/renderer/actions/modals";
 import {
   getParentAccount,
@@ -36,6 +37,8 @@ import { objectToURLSearchParams } from "@ledgerhq/live-common/wallet-api/helper
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
+import BigNumber from "bignumber.js";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
@@ -214,6 +217,19 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                 ...exchangeParams,
                 onResult: operation => {
                   if (operation && exchangeParams.swapId) {
+                    const { accountId, updater } = prepareSaveSwapToHistory(accounts, {
+                      provider: exchangeParams.provider,
+                      swapId: exchangeParams.swapId,
+                      transactionId: operation.hash,
+                      fromAccountId: exchangeParams.exchange.fromAccount.id,
+                      // @ts-expect-error type issue
+                      toAccountId: exchangeParams.exchange.toAccount.id,
+                      fromAmount: exchangeParams.transaction.amount,
+                      toAmount: new BigNumber(exchangeParams.amountExpectedTo ?? 0),
+                    });
+
+                    dispatch(updateAccountWithUpdater(accountId, updater));
+
                     // return success to swap live app
                     onSuccess({
                       operationHash: operation.hash,

@@ -31,12 +31,16 @@ import {
   decodeTokenAccountId,
 } from "@ledgerhq/coin-framework/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import { prepareSaveSwapToHistory } from "@ledgerhq/live-common/exchange/swap/prepareSaveSwapToHistory";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
+import BigNumber from "bignumber.js";
+import { updateAccountWithUpdater } from "~/actions/accounts";
+import { useDispatch } from "~/context/hooks";
 
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 const drawerClosedError = new DrawerClosedError("User closed the drawer");
@@ -64,6 +68,7 @@ export function useCustomExchangeHandlers({
   const [device, setDevice] = useState<Device>();
   const deviceRef = useRef<Device | undefined>(undefined);
   const syncAccountById = useSyncAccountById();
+  const dispatch = useDispatch();
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
 
@@ -426,6 +431,19 @@ export function useCustomExchangeHandlers({
 
                     onCompleteResult?.(exchangeParams, operationHash);
 
+                    const { accountId, updater } = prepareSaveSwapToHistory(accounts, {
+                      provider: exchangeParams.provider,
+                      swapId: exchangeParams.swapId,
+                      transactionId: result.operation.hash,
+                      fromAccountId: exchangeParams.exchange.fromAccount.id,
+                      // @ts-expect-error type issue
+                      toAccountId: exchangeParams.exchange.toAccount.id,
+                      fromAmount: exchangeParams.transaction.amount,
+                      toAmount: new BigNumber(exchangeParams.amountExpectedTo ?? 0),
+                    });
+
+                    dispatch(updateAccountWithUpdater({ accountId, updater }));
+
                     // return success to swap live app
                     onSuccess({ operationHash, swapId: exchangeParams.swapId });
                   }
@@ -455,6 +473,7 @@ export function useCustomExchangeHandlers({
     goToAccountStakeFlow,
     getManifestById,
     getAccount,
+    dispatch,
   ]);
 }
 
