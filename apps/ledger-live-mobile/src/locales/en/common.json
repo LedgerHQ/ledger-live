@@ -3478,9 +3478,9 @@
   "notifications": {
     "prompt": {
       "title": "Turn notifications on",
-      "titleVariantB": "Get the most of Ledger Wallet",
+      "titleVariantB": "Don't miss what matters",
       "desc": "Get the latest updates on Ledger Wallet, Ledger products, the market, and personalised recommendations. Opt-out anytime in the settings",
-      "descVariantB": "We'll send you personalized tips, setup guides and relevant market news.",
+      "descVariantB": "Get real-time alerts on new tokens, earning opportunities, and market shifts. Opt out at any time.",
       "allow": "Allow notifications",
       "later": "Maybe later"
     },
