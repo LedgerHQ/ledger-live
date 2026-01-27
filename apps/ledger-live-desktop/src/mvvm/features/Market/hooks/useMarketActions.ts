@@ -20,6 +20,7 @@ import { useStake } from "LLD/hooks/useStake";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useLazyLedgerCurrency } from "@ledgerhq/live-common/dada-client/hooks/useLazyLedgerCurrency";
 import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 
 export enum Page {
   Market = "Page Market",
@@ -89,33 +90,45 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       e.stopPropagation();
 
       const ledgerCurrency = await getLedgerCurrency();
+      if (!ledgerCurrency?.id) return;
 
-      if (ledgerCurrency?.id) {
-        track("button_clicked2", {
-          button: "swap",
-          currency: currency?.ticker,
-          page,
-          ...swapDefaultTrack,
-        });
-        setTrackingSource(page);
+      track("button_clicked2", {
+        button: "swap",
+        currency: currency?.ticker,
+        page,
+        ...swapDefaultTrack,
+      });
+      setTrackingSource(page);
 
-        const currencyId = ledgerCurrency?.id;
+      const currencyId = ledgerCurrency.id;
+      const hasExistingAccount = getAvailableAccountsById(currencyId, flattenedAccounts).find(
+        Boolean,
+      );
 
-        const defaultAccount = getAvailableAccountsById(currencyId, flattenedAccounts).find(
-          Boolean,
-        );
+      const getParentAccountId = (account: typeof hasExistingAccount) =>
+        account && "parentId" in account ? account.parentId : undefined;
 
-        navigate("/swap", {
-          state: {
+      const baseState = {
+        defaultAmountFrom: "0",
+        from: location.pathname,
+      };
+
+      const swapState = hasExistingAccount
+        ? {
+            ...baseState,
             defaultCurrency: ledgerCurrency,
-            defaultAccountId: defaultAccount?.id,
-            defaultAmountFrom: "0",
-            defaultParentAccountId:
-              defaultAccount && "parentId" in defaultAccount ? defaultAccount.parentId : undefined,
-            from: location.pathname,
-          },
-        });
-      }
+            defaultAccountId: hasExistingAccount.id,
+            defaultParentAccountId: getParentAccountId(hasExistingAccount),
+          }
+        : {
+            ...baseState,
+            defaultCurrency: currencyId,
+            ...(isTokenCurrency(ledgerCurrency) && {
+              defaultToken: { toTokenId: currencyId },
+            }),
+          };
+
+      navigate("/swap", { state: swapState });
     },
     [
       getLedgerCurrency,
