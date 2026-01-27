@@ -88,14 +88,14 @@ export async function fetchWithRetries<T>(
 
 function isPageFull(limitParameter: number | undefined, operationCount: number): boolean {
   return (
-    limitParameter === 0 || (limitParameter !== undefined && operationCount >= limitParameter)
+    limitParameter === undefined || limitParameter === 0 || operationCount >= limitParameter
   );
 }
 
 // Returns true when there might be more pages to fetch
 // This happens when the page is full AND we actually got results
 function hasMorePage(limitParameter: number | undefined, operationCount: number): boolean {
-  return !limitParameter === undefined && isPageFull(limitParameter, operationCount) && operationCount > 0;
+  return !(limitParameter === undefined) && isPageFull(limitParameter, operationCount) && operationCount > 0;
 }
 
 function groupByHash<T extends { hash: string }>(items: T[]): Record<string, T[]> {
@@ -108,7 +108,6 @@ function groupByHash<T extends { hash: string }>(items: T[]): Record<string, T[]
   }
   return byHash;
 }
-
 
 
 // this function is used to optimize the toBlock for the next endpoint call

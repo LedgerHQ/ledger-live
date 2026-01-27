@@ -189,13 +189,14 @@ describe("EVM Family", () => {
           0,
         );
 
+        expect(response.operations.length).toBe(4);
         expect(response).toEqual({
           operations: etherscanCoinOperations
             .map(op => etherscanOperationToOperations(account.id, op))
             .flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 14923678,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -223,13 +224,14 @@ describe("EVM Family", () => {
           50,
         );
 
+        expect(response.operations.length).toBe(4);
         expect(response).toEqual({
           operations: etherscanCoinOperations
             .map(op => etherscanOperationToOperations(account.id, op))
             .flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 14923678,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -258,13 +260,14 @@ describe("EVM Family", () => {
           100,
         );
 
+        expect(response.operations.length).toBe(4);
         expect(response).toEqual({
           operations: etherscanCoinOperations
             .map(op => etherscanOperationToOperations(account.id, op))
             .flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 14923678,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -339,6 +342,7 @@ describe("EVM Family", () => {
           0,
         );
 
+        expect(response.operations.length).toBe(4);
         expect(response).toEqual({
           operations: [
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
@@ -346,8 +350,8 @@ describe("EVM Family", () => {
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 4730207,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -375,6 +379,7 @@ describe("EVM Family", () => {
           50,
         );
 
+        expect(response.operations.length).toBe(4);
         expect(response).toEqual({
           operations: [
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
@@ -382,8 +387,8 @@ describe("EVM Family", () => {
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 4730207,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -412,6 +417,7 @@ describe("EVM Family", () => {
           100,
         );
 
+        expect(response.operations.length).toBe(4);
         expect(response).toEqual({
           operations: [
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
@@ -419,8 +425,8 @@ describe("EVM Family", () => {
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 4730207,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -495,6 +501,7 @@ describe("EVM Family", () => {
           0,
         );
 
+        expect(response.operations.length).toBe(4);
         expect(response).toEqual({
           operations: [
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[0], 0),
@@ -502,8 +509,8 @@ describe("EVM Family", () => {
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 4708120,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -531,6 +538,7 @@ describe("EVM Family", () => {
           50,
         );
 
+        expect(response.operations.length).toBe(4);
         expect(response).toEqual({
           operations: [
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[0], 0),
@@ -538,8 +546,8 @@ describe("EVM Family", () => {
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 4708120,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -568,6 +576,7 @@ describe("EVM Family", () => {
           100,
         );
 
+        expect(response.operations.length).toBe(4);
         expect(response).toEqual({
           operations: [
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[0], 0),
@@ -575,8 +584,8 @@ describe("EVM Family", () => {
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 4708120,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -651,6 +660,7 @@ describe("EVM Family", () => {
           0,
         );
 
+        expect(response.operations.length).toBe(4);
         expect(response).toEqual({
           operations: [
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[0], 0),
@@ -658,8 +668,8 @@ describe("EVM Family", () => {
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 13472395,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -687,6 +697,7 @@ describe("EVM Family", () => {
           50,
         );
 
+        expect(response.operations.length).toBe(4);
         expect(response).toEqual({
           operations: [
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[0], 0),
@@ -694,8 +705,8 @@ describe("EVM Family", () => {
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 13472395,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -724,6 +735,7 @@ describe("EVM Family", () => {
           100,
         );
 
+        expect(response.operations.length).toBe(4);
         expect(response).toEqual({
           operations: [
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[0], 0),
@@ -731,8 +743,8 @@ describe("EVM Family", () => {
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 13472395,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -769,11 +781,12 @@ describe("EVM Family", () => {
         const sortedOps = response.operations
           .slice()
           .sort((a, b) => b.date.getTime() - a.date.getTime());
+        expect(response.operations.length).toBe(8);
         expect(response).toEqual({
           operations: sortedOps,
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 13472395,
+          isPageFull: true,
         });
       });
     });
@@ -837,6 +850,7 @@ describe("EVM Family", () => {
           0,
         );
 
+        expect(response.operations.length).toBe(3);
         expect(response).toEqual({
           operations: [
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
@@ -844,8 +858,8 @@ describe("EVM Family", () => {
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
           ].flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 14878012,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -873,6 +887,7 @@ describe("EVM Family", () => {
           50,
         );
 
+        expect(response.operations.length).toBe(3);
         expect(response).toEqual({
           operations: [
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
@@ -880,8 +895,8 @@ describe("EVM Family", () => {
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
           ].flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 14878012,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -910,6 +925,7 @@ describe("EVM Family", () => {
           100,
         );
 
+        expect(response.operations.length).toBe(3);
         expect(response).toEqual({
           operations: [
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
@@ -917,8 +933,8 @@ describe("EVM Family", () => {
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
           ].flat(),
           hasMorePage: false,
-          maxBlock: expect.any(Number),
-          isPageFull: false,
+          maxBlock: 14878012,
+          isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
