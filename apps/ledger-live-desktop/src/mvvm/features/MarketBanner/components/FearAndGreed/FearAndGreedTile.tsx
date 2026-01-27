@@ -41,7 +41,7 @@ export const FearAndGreedTile = ({ data }: { data: FearAndGreedIndex }) => {
         <GradientMoodIndicator value={data.value} />
         <TileContent>
           <TileTitle>{t("marketBanner.fearAndGreed.title")}</TileTitle>
-          <div className={`${textColorClass} body-2-semi-bold`}>{t(translationKey)}</div>
+          <div className={`${textColorClass} body-3`}>{t(translationKey)}</div>
         </TileContent>
       </Tile>
     </FearAndGreedDialog>
