@@ -666,7 +666,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://evmexplorer.velas.com/rpc",
+        uri: "https://velas-mainnet.rpcfast.com?api_key=xbhWBI1Wkguk8SNMu1bvvLurPGLXmgwYeC4S6g2H7WdwFigZSmPWVZRxrskEQwIf",
       },
       explorer: {
         type: "blockscout",
