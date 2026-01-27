@@ -18,6 +18,7 @@ import { getAccountCurrency, getParentAccount } from "@ledgerhq/coin-framework/l
 import { shallowAccountsSelector } from "~/reducers/accounts";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import { useOpenSwap } from "LLM/features/Swap";
 
 export type QuickAction = {
   disabled: boolean;
@@ -108,6 +109,8 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     sourceScreenName: route.name,
   });
 
+  const { handleOpenSwap } = useOpenSwap({ currency, sourceScreenName: route.name });
+
   const quickActionsList = useMemo(() => {
     const list: Partial<Record<Actions, QuickAction>> = {
       SEND: {
@@ -128,13 +131,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       },
       SWAP: {
         disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled || !hasFunds,
-        route: [
-          NavigatorName.Swap,
-          {
-            screen: ScreenName.SwapTab,
-            params: { currency },
-          },
-        ],
+        customHandler: handleOpenSwap,
         icon: IconsLegacy.BuyCryptoMedium,
       },
     };
@@ -234,6 +231,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     isPtxServiceCtaExchangeDrawerDisabled,
     hasFunds,
     isPerpsEnabled,
+    handleOpenSwap,
     canBeBought,
     canBeSold,
     partnerStakeRoute,
