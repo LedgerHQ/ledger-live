@@ -11,7 +11,7 @@ describe("listOperations", () => {
     [
       "a no cache etherscan explorer",
       { type: "etherscan", noCache: true },
-      etherscanExplorer.explorerApiNoChache,
+      etherscanExplorer.explorerApiNoCache,
     ],
     ["a ledger explorer", { type: "ledger" }, ledgerExplorer],
   ])("lists latest operations using %s", async (_, config, explorer) => {

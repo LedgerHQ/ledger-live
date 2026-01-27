@@ -1,5 +1,6 @@
 import { AssertionError, fail } from "assert";
 import axios from "axios";
+import BigNumber from "bignumber.js";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
@@ -194,6 +195,7 @@ describe("EVM Family", () => {
             .flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -227,6 +229,7 @@ describe("EVM Family", () => {
             .flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -261,6 +264,7 @@ describe("EVM Family", () => {
             .flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -343,6 +347,7 @@ describe("EVM Family", () => {
           ].flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -378,6 +383,7 @@ describe("EVM Family", () => {
           ].flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -414,6 +420,7 @@ describe("EVM Family", () => {
           ].flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -496,6 +503,7 @@ describe("EVM Family", () => {
           ].flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -531,6 +539,7 @@ describe("EVM Family", () => {
           ].flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -567,6 +576,7 @@ describe("EVM Family", () => {
           ].flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -649,6 +659,7 @@ describe("EVM Family", () => {
           ].flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -684,6 +695,7 @@ describe("EVM Family", () => {
           ].flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -720,6 +732,7 @@ describe("EVM Family", () => {
           ].flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -760,6 +773,7 @@ describe("EVM Family", () => {
           operations: sortedOps,
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
       });
     });
@@ -831,6 +845,7 @@ describe("EVM Family", () => {
           ].flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -866,6 +881,7 @@ describe("EVM Family", () => {
           ].flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -902,6 +918,7 @@ describe("EVM Family", () => {
           ].flat(),
           done: false,
           maxBlock: expect.any(Number),
+          isPageFull: false,
         });
         expect(spy).toHaveBeenCalledWith({
           method: "GET",
@@ -947,7 +964,446 @@ describe("EVM Family", () => {
           operations: [],
           done: true,
           maxBlock: 0,
+          isPageFull: false,
         });
+      });
+    });
+
+    describe("getOperations cascading effectiveMaxBlock logic", () => {
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
+      // Helpers to create mock Etherscan responses with specific block heights for each operation type
+      const createMockCoinTxResponse = (blockNumbers: number[]) =>
+        blockNumbers.map((blockNumber, i) => ({
+          ...etherscanCoinOperations[0],
+          blockNumber: String(blockNumber),
+          hash: `0xcoin${blockNumber}${i}`,
+        }));
+
+      const createMockInternalTxResponse = (blockNumbers: number[]) =>
+        blockNumbers.map((blockNumber, i) => ({
+          ...etherscanInternalOperations[0],
+          blockNumber: String(blockNumber),
+          hash: `0xinternal${blockNumber}${i}`,
+        }));
+
+      const createMockTokenTxResponse = (blockNumbers: number[]) =>
+        blockNumbers.map((blockNumber, i) => ({
+          ...etherscanTokenOperations[0],
+          blockNumber: String(blockNumber),
+          hash: `0xtoken${blockNumber}${i}`,
+        }));
+
+      const createMockNftTxResponse = (blockNumbers: number[]) =>
+        blockNumbers.map((blockNumber, i) => ({
+          ...etherscanERC721Operations[0],
+          blockNumber: String(blockNumber),
+          hash: `0xnft${blockNumber}${i}`,
+        }));
+
+      // Helper to identify endpoint type from URL - order matters due to substring matching
+      const getEndpointType = (url: string): string => {
+        if (url.includes("action=txlistinternal")) return "internal";
+        if (url.includes("action=txlist")) return "coin";
+        if (url.includes("action=tokentx")) return "token";
+        if (url.includes("action=tokennfttx")) return "erc721";
+        if (url.includes("action=token1155tx")) return "erc1155";
+        return "unknown";
+      };
+
+      it("should cascade effectiveMaxBlock from coin to internal when coin returns full page", async () => {
+        const coinBlockHeight = 150;
+        // Track calls per endpoint to return empty on page 2+ (to avoid infinite loop in exhaustEndpoint)
+        const coinCallCount = { count: 0 };
+        const spy = jest.spyOn(axios, "request").mockImplementation(async config => {
+          const url = config.url as string;
+          if (getEndpointType(url) === "coin") {
+            coinCallCount.count++;
+            // First call returns op, subsequent calls return empty (to break exhaustEndpoint loop)
+            if (coinCallCount.count === 1) {
+              return { data: { result: createMockCoinTxResponse([coinBlockHeight]) } };
+            }
+          }
+          return { data: { result: [] } };
+        });
+
+        await ETHERSCAN_API.getOperations.force(
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          undefined,
+          undefined,
+          1, // limit=1 to make single op a full page
+        );
+
+        const internalCall = spy.mock.calls.find(
+          call => getEndpointType((call[0] as any).url) === "internal",
+        );
+        expect(internalCall).toBeDefined();
+        expect((internalCall![0] as any).params.endBlock).toBe(coinBlockHeight);
+      });
+
+      it("should cascade effectiveMaxBlock through all endpoints sequentially when pages are full", async () => {
+        const coinMaxBlock = 180;
+        const internalMaxBlock = 160;
+
+        // Track calls per endpoint to return empty on page 2+ (to avoid infinite loop in exhaustEndpoint)
+        const callCounts: Record<string, number> = {};
+        const spy = jest.spyOn(axios, "request").mockImplementation(async config => {
+          const url = config.url as string;
+          const endpointType = getEndpointType(url);
+          callCounts[endpointType] = (callCounts[endpointType] || 0) + 1;
+          // First call returns op, subsequent calls return empty
+          if (callCounts[endpointType] === 1) {
+            if (endpointType === "coin") {
+              return { data: { result: createMockCoinTxResponse([coinMaxBlock]) } };
+            }
+            if (endpointType === "internal") {
+              return { data: { result: createMockInternalTxResponse([internalMaxBlock]) } };
+            }
+          }
+          return { data: { result: [] } };
+        });
+
+        await ETHERSCAN_API.getOperations.force(
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          undefined,
+          undefined,
+          1, // limit=1 to make single op a full page
+        );
+
+        const tokenCall = spy.mock.calls.find(
+          call => getEndpointType((call[0] as any).url) === "token",
+        );
+        expect(tokenCall).toBeDefined();
+        expect((tokenCall![0] as any).params.endBlock).toBe(internalMaxBlock);
+      });
+
+      it("should cascade to min(callerToBlock, maxBlock) when page is full", async () => {
+        const callerToBlock = 200;
+        const coinMaxBlock = 150;
+
+        // Track calls per endpoint to return empty on page 2+ (to avoid infinite loop in exhaustEndpoint)
+        const coinCallCount = { count: 0 };
+        const spy = jest.spyOn(axios, "request").mockImplementation(async config => {
+          const url = config.url as string;
+          if (getEndpointType(url) === "coin") {
+            coinCallCount.count++;
+            // First call returns op, subsequent calls return empty
+            if (coinCallCount.count === 1) {
+              return { data: { result: createMockCoinTxResponse([coinMaxBlock]) } };
+            }
+          }
+          return { data: { result: [] } };
+        });
+
+        await ETHERSCAN_API.getOperations.force(
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          callerToBlock,
+          undefined,
+          1, // limit=1 to make single op a full page
+        );
+
+        const coinCall = spy.mock.calls.find(
+          call => getEndpointType((call[0] as any).url) === "coin",
+        );
+        expect(coinCall).toBeDefined();
+        expect((coinCall![0] as any).params.endBlock).toBe(callerToBlock);
+
+        // After full page from coin, cascades to min(200, 150) = 150
+        const internalCall = spy.mock.calls.find(
+          call => getEndpointType((call[0] as any).url) === "internal",
+        );
+        expect(internalCall).toBeDefined();
+        expect((internalCall![0] as any).params.endBlock).toBe(coinMaxBlock);
+      });
+
+      it("should not cascade when all endpoints return empty", async () => {
+        const callerToBlock = 200;
+
+        const spy = jest.spyOn(axios, "request").mockImplementation(async () => {
+          return { data: { result: [] } };
+        });
+
+        await ETHERSCAN_API.getOperations.force(
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          callerToBlock,
+          undefined,
+          10,
+        );
+
+        const calls = spy.mock.calls;
+        const coinCall = calls.find(call => getEndpointType((call[0] as any).url) === "coin");
+        const internalCall = calls.find(
+          call => getEndpointType((call[0] as any).url) === "internal",
+        );
+        const tokenCall = calls.find(call => getEndpointType((call[0] as any).url) === "token");
+
+        expect((coinCall![0] as any).params.endBlock).toBe(callerToBlock);
+        expect((internalCall![0] as any).params.endBlock).toBe(callerToBlock);
+        expect((tokenCall![0] as any).params.endBlock).toBe(callerToBlock);
+      });
+
+      it("should pass limit to all endpoint calls", async () => {
+        const limit = 25;
+
+        const spy = jest.spyOn(axios, "request").mockImplementation(async () => {
+          return { data: { result: [] } };
+        });
+
+        await ETHERSCAN_API.getOperations.force(
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          undefined,
+          undefined,
+          limit,
+        );
+
+        const calls = spy.mock.calls;
+        for (const call of calls) {
+          expect((call[0] as any).params.offset).toBe(limit);
+        }
+      });
+
+      it("should cascade minimum block height when multiple endpoints return full pages", async () => {
+        const coinMaxBlock = 180;
+        const internalMaxBlock = 200;
+        const tokenMaxBlock = 150;
+
+        // Track calls per endpoint to return empty on page 2+ (to avoid infinite loop in exhaustEndpoint)
+        const callCounts: Record<string, number> = {};
+        const spy = jest.spyOn(axios, "request").mockImplementation(async config => {
+          const url = config.url as string;
+          const endpointType = getEndpointType(url);
+          callCounts[endpointType] = (callCounts[endpointType] || 0) + 1;
+          // First call returns op, subsequent calls return empty
+          if (callCounts[endpointType] === 1) {
+            if (endpointType === "coin") {
+              return { data: { result: createMockCoinTxResponse([coinMaxBlock]) } };
+            }
+            if (endpointType === "internal") {
+              return { data: { result: createMockInternalTxResponse([internalMaxBlock]) } };
+            }
+            if (endpointType === "token") {
+              return { data: { result: createMockTokenTxResponse([tokenMaxBlock]) } };
+            }
+          }
+          return { data: { result: [] } };
+        });
+
+        await ETHERSCAN_API.getOperations.force(
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          undefined,
+          undefined,
+          1, // limit=1 to make single op a full page
+        );
+
+        // Internal call uses effectiveMaxBlock after coin = min(undefined, 180) = 180
+        const internalCall = spy.mock.calls.find(
+          call => getEndpointType((call[0] as any).url) === "internal",
+        );
+        expect((internalCall![0] as any).params.endBlock).toBe(coinMaxBlock);
+
+        // Token call uses effectiveMaxBlock after internal = min(180, 200) = 180
+        // Note: internal returns 200 which is > 180, so no update, stays at 180
+        const tokenCall = spy.mock.calls.find(
+          call => getEndpointType((call[0] as any).url) === "token",
+        );
+        expect((tokenCall![0] as any).params.endBlock).toBe(coinMaxBlock);
+
+        // NFT call uses effectiveMaxBlock after token = min(180, 150) = 150
+        const nftCall = spy.mock.calls.find(
+          call => getEndpointType((call[0] as any).url) === "erc721",
+        );
+        expect(nftCall).toBeDefined();
+        expect((nftCall![0] as any).params.endBlock).toBe(tokenMaxBlock);
+      });
+    });
+
+    describe("exhaustEndpoint", () => {
+      // Helper to create mock operations at specific block heights
+      const createOps = (blockHeights: number[]): ETHERSCAN_API.EndpointResult["operations"] =>
+        blockHeights.map((blockHeight, i) => ({
+          id: `op-${blockHeight}-${i}`,
+          hash: `0x${blockHeight}${i}`,
+          accountId: account.id,
+          blockHash: `0xblock${blockHeight}`,
+          blockHeight,
+          recipients: ["0x123"],
+          senders: ["0x456"],
+          value: new BigNumber(100),
+          fee: new BigNumber(10),
+          date: new Date(),
+          type: "OUT" as const,
+          extra: {},
+        }));
+
+      const createEndpointResult = (
+        ops: ETHERSCAN_API.EndpointResult["operations"],
+        isPageFull: boolean,
+      ): ETHERSCAN_API.EndpointResult => ({
+        operations: ops,
+        done: ops.length === 0,
+        maxBlock: ops.length > 0 ? Math.max(...ops.map(op => op.blockHeight ?? 0)) : 0,
+        isPageFull,
+      });
+
+      it("page 1 not full => single call, returns only page 1 operations", async () => {
+        const page1Ops = createOps([100, 99, 98]);
+        const mockFetch = jest.fn<Promise<ETHERSCAN_API.EndpointResult>, [any, any, any, any, any, any, any, number?]>();
+        mockFetch.mockResolvedValue(createEndpointResult(page1Ops, false));
+
+        const result = await ETHERSCAN_API.exhaustEndpoint(
+          mockFetch,
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          undefined,
+          10,
+          "desc",
+        );
+
+        expect(mockFetch).toHaveBeenCalledTimes(1);
+        expect(mockFetch).toHaveBeenCalledWith(
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          undefined,
+          10,
+          "desc",
+          1,
+        );
+        expect(result).toEqual({
+          operations: page1Ops,
+          done: false,
+          maxBlock: 100,
+          isPageFull: false,
+        });
+      });
+
+      it("page 1 full, page 2 not full with same block => returns all operations", async () => {
+        const page1Ops = createOps([100, 100, 100]);
+        const page2Ops = createOps([100, 100]);
+        const mockFetch = jest.fn<Promise<ETHERSCAN_API.EndpointResult>, [any, any, any, any, any, any, any, number?]>();
+        mockFetch
+          .mockResolvedValueOnce(createEndpointResult(page1Ops, true))
+          .mockResolvedValueOnce(createEndpointResult(page2Ops, false));
+
+        const result = await ETHERSCAN_API.exhaustEndpoint(
+          mockFetch,
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          undefined,
+          3,
+          "desc",
+        );
+
+        expect(mockFetch).toHaveBeenCalledTimes(2);
+        expect(mockFetch).toHaveBeenNthCalledWith(1, currency, account.freshAddress, account.id, 0, undefined, 3, "desc", 1);
+        expect(mockFetch).toHaveBeenNthCalledWith(2, currency, account.freshAddress, account.id, 0, undefined, 3, "desc", 2);
+        expect(result.operations).toHaveLength(5);
+        // isPageFull preserves firstPage.isPageFull for cascading effectiveMaxBlock
+        expect(result.isPageFull).toBe(true);
+      });
+
+      it("page 1 full, page 2 has operations at different block => returns page 1 + boundary ops from page 2", async () => {
+        const page1Ops = createOps([100, 100, 99]);
+        const page2Ops = createOps([100, 98, 97]);
+        const mockFetch = jest.fn<Promise<ETHERSCAN_API.EndpointResult>, [any, any, any, any, any, any, any, number?]>();
+        mockFetch
+          .mockResolvedValueOnce(createEndpointResult(page1Ops, true))
+          .mockResolvedValueOnce(createEndpointResult(page2Ops, false));
+
+        const result = await ETHERSCAN_API.exhaustEndpoint(
+          mockFetch,
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          undefined,
+          3,
+          "desc",
+        );
+
+        expect(mockFetch).toHaveBeenCalledTimes(2);
+        // Should include page1 (3 ops) + only boundary block ops from page2 (1 op at block 100)
+        expect(result.operations).toHaveLength(4);
+        expect(result.operations.every(op => op.blockHeight === 100 || op.blockHeight === 99)).toBe(true);
+        expect(result.done).toBe(false);
+        // isPageFull preserves firstPage.isPageFull for cascading effectiveMaxBlock
+        expect(result.isPageFull).toBe(true);
+      });
+
+      it("page 1 full, page 2 empty => returns page 1 operations", async () => {
+        const page1Ops = createOps([100, 100, 100]);
+        const mockFetch = jest.fn<Promise<ETHERSCAN_API.EndpointResult>, [any, any, any, any, any, any, any, number?]>();
+        mockFetch
+          .mockResolvedValueOnce(createEndpointResult(page1Ops, true))
+          .mockResolvedValueOnce(createEndpointResult([], false));
+
+        const result = await ETHERSCAN_API.exhaustEndpoint(
+          mockFetch,
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          undefined,
+          3,
+          "desc",
+        );
+
+        expect(mockFetch).toHaveBeenCalledTimes(2);
+        expect(result.operations).toHaveLength(3);
+        expect(result.done).toBe(true);
+      });
+
+      it("multiple full pages at same block, then partial => exhausts all", async () => {
+        const page1Ops = createOps([100, 100, 100]);
+        const page2Ops = createOps([100, 100, 100]);
+        const page3Ops = createOps([100]);
+        const mockFetch = jest.fn<Promise<ETHERSCAN_API.EndpointResult>, [any, any, any, any, any, any, any, number?]>();
+        mockFetch
+          .mockResolvedValueOnce(createEndpointResult(page1Ops, true))
+          .mockResolvedValueOnce(createEndpointResult(page2Ops, true))
+          .mockResolvedValueOnce(createEndpointResult(page3Ops, false));
+
+        const result = await ETHERSCAN_API.exhaustEndpoint(
+          mockFetch,
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          undefined,
+          3,
+          "desc",
+        );
+
+        expect(mockFetch).toHaveBeenCalledTimes(3);
+        expect(mockFetch).toHaveBeenNthCalledWith(3, currency, account.freshAddress, account.id, 0, undefined, 3, "desc", 3);
+        expect(result.operations).toHaveLength(7);
+        // isPageFull preserves firstPage.isPageFull for cascading effectiveMaxBlock
+        expect(result.isPageFull).toBe(true);
       });
     });
   });

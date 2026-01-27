@@ -54,7 +54,7 @@ jest.mock("../network/explorer/etherscan", () => {
       explorerApi: {
         getOperations: mockGetLastOperations,
       },
-      explorerApiNoChache: {
+      explorerApiNoCache: {
         getOperations: mockGetLastOperations,
       },
     },

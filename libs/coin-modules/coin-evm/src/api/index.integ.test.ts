@@ -419,24 +419,27 @@ describe.each([
         expect(op.tx.block.height).toBeGreaterThanOrEqual(200);
       });
 
-      // Verify no page overlapping (no duplicate operation ids)
+      // Verify no duplicate operation ids (no page overlapping)
       const allOperationIds = allOperations.map(op => op.id);
       const uniqueOperationIds = new Set(allOperationIds);
       expect(uniqueOperationIds.size).toBe(allOperationIds.length);
 
-      // Verify operations are correctly ordered WITHIN each page.
-      // Note: Cross-page ordering is not guaranteed because pagination is
-      // based on block height and different endpoints may return operations
-      // at different heights. Operations within each page are sorted by date.
-      allPages.forEach(pageOps => {
+      // Verify ordering WITHIN each page.
+      // Note: Cross-page total ordering is not guaranteed because different endpoints
+      // (coin, internal, token, nft) may have operations at different block heights.
+      // Each individual page is sorted by date, but operations from different endpoints
+      // on the same page may interleave by block height.
+      for (const pageOps of allPages) {
         const isPageOrdered = pageOps.every((op, i) => {
           if (i === 0) return true;
           const prevDate = pageOps[i - 1].tx.date.getTime();
           const currDate = op.tx.date.getTime();
+          // For desc: date should be decreasing or equal
+          // For asc: date should be increasing or equal
           return order === "desc" ? currDate <= prevDate : currDate >= prevDate;
         });
         expect(isPageOrdered).toBe(true);
-      });
+      }
     });
 
     // Cache test only makes sense for etherscan-like explorers that have
