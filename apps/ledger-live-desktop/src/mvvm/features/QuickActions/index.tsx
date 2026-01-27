@@ -4,25 +4,16 @@ import { useQuickActions } from "./hooks/useQuickActions";
 import { QuickAction } from "./types";
 
 interface QuickActionsProps {
-  hasAccount: boolean;
   actionsList: QuickAction[];
 }
 
-const QuickActionsView = memo(function QuickActionsView({
-  hasAccount,
-  actionsList,
-}: QuickActionsProps) {
-  if (!hasAccount) {
-    // onboarding scenario
-    return null;
-  }
-
+const QuickActionsView = memo(function QuickActionsView({ actionsList }: QuickActionsProps) {
   return <ActionsList actionsList={actionsList} />;
 });
 
 const QuickActions = () => {
-  const { hasAccount, actionsList } = useQuickActions();
-  return <QuickActionsView hasAccount={hasAccount} actionsList={actionsList} />;
+  const { actionsList } = useQuickActions();
+  return <QuickActionsView actionsList={actionsList} />;
 };
 
 export { QuickActionsView };
