@@ -175,7 +175,7 @@ describe("EVM Family", () => {
         }
       });
 
-      it("should return a flat list of coin transactions from block 0", async () => {
+      it("should return a flat list of coin transactions from block 0 for an unlimited page", async () => {
         const spy = jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: {
             result: etherscanCoinOperations,
@@ -193,7 +193,7 @@ describe("EVM Family", () => {
           operations: etherscanCoinOperations
             .map(op => etherscanOperationToOperations(account.id, op))
             .flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -227,7 +227,7 @@ describe("EVM Family", () => {
           operations: etherscanCoinOperations
             .map(op => etherscanOperationToOperations(account.id, op))
             .flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -262,7 +262,7 @@ describe("EVM Family", () => {
           operations: etherscanCoinOperations
             .map(op => etherscanOperationToOperations(account.id, op))
             .flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -345,7 +345,7 @@ describe("EVM Family", () => {
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
           ].flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -381,7 +381,7 @@ describe("EVM Family", () => {
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
           ].flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -418,7 +418,7 @@ describe("EVM Family", () => {
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
           ].flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -501,7 +501,7 @@ describe("EVM Family", () => {
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[1], 0),
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
           ].flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -537,7 +537,7 @@ describe("EVM Family", () => {
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[1], 0),
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
           ].flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -574,7 +574,7 @@ describe("EVM Family", () => {
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[1], 0),
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
           ].flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -657,7 +657,7 @@ describe("EVM Family", () => {
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[1], 0),
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
           ].flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -693,7 +693,7 @@ describe("EVM Family", () => {
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[1], 0),
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
           ].flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -730,7 +730,7 @@ describe("EVM Family", () => {
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[1], 0),
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
           ].flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -771,7 +771,7 @@ describe("EVM Family", () => {
           .sort((a, b) => b.date.getTime() - a.date.getTime());
         expect(response).toEqual({
           operations: sortedOps,
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -843,7 +843,7 @@ describe("EVM Family", () => {
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
           ].flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -879,7 +879,7 @@ describe("EVM Family", () => {
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
           ].flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -916,7 +916,7 @@ describe("EVM Family", () => {
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
           ].flat(),
-          done: false,
+          hasMorePage: false,
           maxBlock: expect.any(Number),
           isPageFull: false,
         });
@@ -962,7 +962,7 @@ describe("EVM Family", () => {
         );
         expect(response).toEqual({
           operations: [],
-          done: true,
+          hasMorePage: false,
           maxBlock: 0,
           isPageFull: false,
         });
@@ -1260,7 +1260,7 @@ describe("EVM Family", () => {
         isPageFull: boolean,
       ): ETHERSCAN_API.EndpointResult => ({
         operations: ops,
-        done: ops.length === 0,
+        hasMorePage: ops.length > 0 && isPageFull,
         maxBlock: ops.length > 0 ? Math.max(...ops.map(op => op.blockHeight ?? 0)) : 0,
         isPageFull,
       });
@@ -1294,7 +1294,7 @@ describe("EVM Family", () => {
         );
         expect(result).toEqual({
           operations: page1Ops,
-          done: false,
+          hasMorePage: false,
           maxBlock: 100,
           isPageFull: false,
         });
@@ -1350,7 +1350,7 @@ describe("EVM Family", () => {
         // Should include page1 (3 ops) + only boundary block ops from page2 (1 op at block 100)
         expect(result.operations).toHaveLength(4);
         expect(result.operations.every(op => op.blockHeight === 100 || op.blockHeight === 99)).toBe(true);
-        expect(result.done).toBe(false);
+        expect(result.hasMorePage).toBe(true);
         // isPageFull preserves firstPage.isPageFull for cascading effectiveMaxBlock
         expect(result.isPageFull).toBe(true);
       });
@@ -1375,7 +1375,7 @@ describe("EVM Family", () => {
 
         expect(mockFetch).toHaveBeenCalledTimes(2);
         expect(result.operations).toHaveLength(3);
-        expect(result.done).toBe(true);
+        expect(result.hasMorePage).toBe(false);
       });
 
       it("multiple full pages at same block, then partial => exhausts all", async () => {

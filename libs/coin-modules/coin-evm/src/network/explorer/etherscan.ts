@@ -18,7 +18,6 @@ import {
   etherscanInternalTransactionToOperations,
   deserializePagingToken,
   serializePagingToken,
-  getMaxBlockFromOperations,
 } from "../../adapters";
 import { getCoinConfig } from "../../config";
 import {
@@ -28,16 +27,22 @@ import {
   EtherscanInternalTransaction,
   EtherscanOperation,
 } from "../../types";
-import { ExplorerApi, isEtherscanLikeExplorerConfig, NO_TOKEN } from "./types";
+import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
 
+function getMaxBlockFromOperations(ops: Operation[], sort: "asc" | "desc"): number {
+  if (ops.length === 0) return 0;
+  // Results are already sorted, take head for desc or tail for asc
+  const op = sort === "desc" ? ops[0] : ops[ops.length - 1];
+  return op.blockHeight ?? 0;
+}
 
 // Result type for individual endpoint fetches
 export type EndpointResult = {
   operations: Operation[];
-  done: boolean;
+  hasMorePage: boolean;
   maxBlock: number;
   // true when page returned exactly `limit` results, indicating more data may exist
   // used to compute effectiveMaxBlock for the next endpoint call
@@ -46,7 +51,7 @@ export type EndpointResult = {
 
 const EMPTY_RESULT: EndpointResult = {
   operations: [],
-  done: true,
+  hasMorePage: false,
   maxBlock: 0,
   isPageFull: false,
 };
@@ -83,8 +88,14 @@ export async function fetchWithRetries<T>(
 
 function isPageFull(limitParameter: number | undefined, operationCount: number): boolean {
   return (
-    limitParameter === 0 || (limitParameter !== undefined && operationCount === limitParameter)
+    limitParameter === 0 || (limitParameter !== undefined && operationCount >= limitParameter)
   );
+}
+
+// Returns true when there might be more pages to fetch
+// This happens when the page is full AND we actually got results
+function hasMorePage(limitParameter: number | undefined, operationCount: number): boolean {
+  return !limitParameter === undefined && isPageFull(limitParameter, operationCount) && operationCount > 0;
 }
 
 function groupByHash<T extends { hash: string }>(items: T[]): Record<string, T[]> {
@@ -98,6 +109,8 @@ function groupByHash<T extends { hash: string }>(items: T[]): Record<string, T[]
   return byHash;
 }
 
+
+
 // this function is used to optimize the toBlock for the next endpoint call
 // if the current enpoint call returns a full page, then it's unnecessary to call the next endpoint with a toBlock higher than the maxBlock of the current page
 // why ? because the operations must respect a total ordering by block height across pages
@@ -105,7 +118,7 @@ function updateEffectiveMaxBlock(
   current: number | undefined,
   result: EndpointResult,
 ): number | undefined {
-  if (result.isPageFull && (result.operations.length > 0 && result.maxBlock > 0) ){
+  if (result.isPageFull && (result.operations.length > 0 && result.maxBlock > 0)) {
     return current !== undefined ? Math.min(current, result.maxBlock) : result.maxBlock;
   }
   return current;
@@ -153,7 +166,7 @@ export const getCoinOperations = async (
 
   return {
     operations,
-    done: ops.length === 0,
+    hasMorePage: hasMorePage(limit, ops.length),
     maxBlock,
     isPageFull: isPageFull(limit, ops.length),
   };
@@ -214,7 +227,7 @@ export const getTokenOperations = async (
 
   return {
     operations,
-    done: ops.length === 0,
+    hasMorePage: hasMorePage(limit, ops.length),
     maxBlock,
     isPageFull: isPageFull(limit, ops.length),
   };
@@ -275,7 +288,7 @@ export const getERC721Operations = async (
 
   return {
     operations,
-    done: ops.length === 0,
+    hasMorePage: hasMorePage(limit, ops.length),
     maxBlock,
     isPageFull: isPageFull(limit, ops.length),
   };
@@ -336,7 +349,7 @@ export const getERC1155Operations = async (
 
   return {
     operations,
-    done: ops.length === 0,
+    hasMorePage: hasMorePage(limit, ops.length),
     maxBlock,
     isPageFull: isPageFull(limit, ops.length),
   };
@@ -390,7 +403,7 @@ export const getNftOperations = async (
 
   return {
     operations,
-    done: erc721Result.done && erc1155Result.done,
+    hasMorePage: erc721Result.hasMorePage || erc1155Result.hasMorePage,
     maxBlock,
     isPageFull: erc721Result.isPageFull || erc1155Result.isPageFull,
   };
@@ -450,7 +463,7 @@ export const getInternalOperations = async (
 
   return {
     operations,
-    done: ops.length === 0,
+    hasMorePage: hasMorePage(limit, ops.length),
     maxBlock,
     isPageFull: isPageFull(limit, ops.length),
   };
@@ -518,11 +531,11 @@ export async function exhaustEndpoint(
     // Continue while all ops are at boundary block AND page is full (more pages might exist)
   } while (boundaryOps.length === nextPage.operations.length && nextPage.isPageFull);
 
-  // done = false if we found ops at other blocks, otherwise use last page's done status
+  // hasMorePage = true if we found ops at other blocks, otherwise use last page's status
   const hasOpsAtOtherBlocks = boundaryOps.length < nextPage.operations.length;
-  const done = hasOpsAtOtherBlocks ? false : nextPage.done;
+  const hasMorePage = hasOpsAtOtherBlocks ? true : nextPage.hasMorePage;
 
-  return { ...firstPage, operations: allOperations, done, isPageFull: firstPage.isPageFull };
+  return { ...firstPage, operations: allOperations, hasMorePage, isPageFull: firstPage.isPageFull };
 }
 
 /**
@@ -631,9 +644,8 @@ export const getOperations = makeLRUCache<
       );
       const nextFromBlock = maxBlock > 0 ? maxBlock + 1 : currentFromBlock;
 
-      // All done when all endpoints have no more data
-      const allDone =
-        coinResult.done && internalResult.done && tokenResult.done && nftResult.done;
+      // All done when no endpoint has more pages to fetch
+      const allDone = !(coinResult.hasMorePage || internalResult.hasMorePage || tokenResult.hasMorePage || nftResult.hasMorePage);
 
       return {
         lastCoinOperations: coinResult.operations,

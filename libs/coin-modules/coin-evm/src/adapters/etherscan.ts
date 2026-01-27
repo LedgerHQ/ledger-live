@@ -317,14 +317,3 @@ export function deserializePagingToken(
   if (isNaN(parsed)) return minHeight;
   return parsed;
 }
-
-/**
- * Get the max block height from a list of operations
- * Used to compute the next page's fromBlock
- */
-export function getMaxBlockFromOperations(ops: Operation[], sort: "asc" | "desc"): number {
-  if (ops.length === 0) return 0;
-  // Results are already sorted, take head for desc or tail for asc
-  const op = sort === "desc" ? ops[0] : ops[ops.length - 1];
-  return op.blockHeight ?? 0;
-}
