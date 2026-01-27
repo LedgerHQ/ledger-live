@@ -51,7 +51,13 @@ export const GradientMoodIndicator = ({ value }: { value: number }) => {
   const circleY = centerY - radius * Math.sin(angleRad);
 
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 44 31" fill="none">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="48"
+      height="48"
+      viewBox="-2 -2 47 35"
+      fill="none"
+    >
       <path
         d="M3.37572 28.8056C2.48799 26.5704 2 24.1329 2 21.5814C2 10.7669 10.7669 2 21.5814 2C32.396 2 41.1629 10.7669 41.1629 21.5814C41.1629 24.1323 40.6751 26.5693 39.7877 28.8041"
         stroke="url(#paint0_linear_15877_11047)"
