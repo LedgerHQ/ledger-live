@@ -54,15 +54,15 @@ export function createApi(config: AleoConfig, currencyId: string): Api {
     lastBlock: async (): Promise<BlockInfo> => {
       return lastBlock(currency);
     },
-    listOperations: async (address, pagination) => {
+    listOperations: async (address, options) => {
       const { operations, nextCursor } = await listOperations({
         currency,
         address,
-        pagination,
+        options,
         mode: "alpaca",
       });
 
-      return [operations, nextCursor ?? ""];
+      return { items: operations, next: nextCursor ?? undefined };
     },
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");

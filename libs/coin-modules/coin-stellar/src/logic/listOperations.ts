@@ -1,13 +1,6 @@
-import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { ListOperationsOptions, Operation } from "@ledgerhq/coin-framework/api/types";
 import { fetchOperations } from "../network";
 import type { StellarOperation } from "../types/bridge";
-
-export type ListOperationsOptions = {
-  limit?: number;
-  cursor?: string;
-  order: "asc" | "desc";
-  minHeight: number;
-};
 
 export async function listOperations(
   address: string,
@@ -19,7 +12,7 @@ export async function listOperations(
     accountId,
     addr: address,
     minHeight,
-    order: order,
+    order: order || "desc",
     limit,
     cursor: cursor,
   });

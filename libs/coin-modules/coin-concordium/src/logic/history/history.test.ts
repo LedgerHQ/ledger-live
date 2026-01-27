@@ -181,7 +181,7 @@ describe("history", () => {
       const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, mockCurrency);
 
       // THEN
-      const [operations] = result;
+      const { items: operations } = result;
       expect(operations[0]).toEqual({
         id: "encoded-op-id-2",
         asset: { type: "native" },
@@ -226,7 +226,7 @@ describe("history", () => {
       const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, mockCurrency);
 
       // THEN
-      const [operations] = result;
+      const { items: operations } = result;
       expect(operations[0].tx.block).toEqual({
         height: 0,
         hash: "txhash3", // Falls back to tx hash

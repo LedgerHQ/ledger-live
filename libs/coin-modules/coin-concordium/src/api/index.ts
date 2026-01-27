@@ -48,7 +48,7 @@ export function createApi(config: ConcordiumConfig): AlpacaApi<ConcordiumMemo> {
       estimateFees(transactionIntent, currency),
     getBalance: (address: string) => getBalance(address, currency),
     lastBlock: () => lastBlock(currency),
-    listOperations: (address: string, pagination) => listOperations(address, pagination, currency),
+    listOperations: (address: string, options) => listOperations(address, options, currency),
     getBlock: (height: number) => getBlockLogic(height, currency),
     getBlockInfo: (height: number) => getBlockInfoLogic(height, currency),
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
