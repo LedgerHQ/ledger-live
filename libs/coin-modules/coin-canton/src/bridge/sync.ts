@@ -323,7 +323,7 @@ export function makeGetAccountShape(
       pendingTransferProposals: pendingTransferProposals.filter(
         proposal => proposal.instrument_id === nativeInstrumentId,
       ),
-      ...(publicKey && { publicKey }),
+      ...(publicKey ? { publicKey } : {}),
       xpub: xpubOrAddress,
     };
 

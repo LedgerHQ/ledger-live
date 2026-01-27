@@ -17,7 +17,7 @@ const createMockConfig = (
 ): coinConfigModule.CantonCoinConfig => ({
   ...createMockCoinConfigValue(),
   useGateway,
-  ...(nativeInstrumentId && { nativeInstrumentId }),
+  ...(nativeInstrumentId ? { nativeInstrumentId } : {}),
 });
 
 describe("getBalance", () => {

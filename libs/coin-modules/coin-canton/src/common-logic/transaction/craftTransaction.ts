@@ -30,18 +30,10 @@ export async function craftTransaction(
     amount: transaction.amount.toFixed(),
     execute_before_secs: transaction.expireInSeconds,
     instrument_id: transaction.tokenId,
-    ...(transaction.memo && { reason: transaction.memo }),
-    ...(transaction.pickingStrategy && { picking_strategy: transaction.pickingStrategy }),
-    ...(transaction.instrumentAdmin && { instrument_admin: transaction.instrumentAdmin }),
+    ...(transaction.memo ? { reason: transaction.memo } : {}),
+    ...(transaction.pickingStrategy ? { picking_strategy: transaction.pickingStrategy } : {}),
+    ...(transaction.instrumentAdmin ? { instrument_admin: transaction.instrumentAdmin } : {}),
   };
-
-  if (transaction.instrumentAdmin) {
-    params.instrument_admin = transaction.instrumentAdmin;
-  }
-
-  if (transaction.memo) {
-    params.reason = transaction.memo;
-  }
 
   const { serialized, json, hash } = await prepareTransferRequest(
     currency,

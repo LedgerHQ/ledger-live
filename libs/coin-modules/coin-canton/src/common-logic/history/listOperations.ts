@@ -15,8 +15,8 @@ function convertAssetViewToAssetInfo(asset?: AssetView): AssetInfo {
   if (asset.type === "token") {
     return {
       type: asset.type,
-      ...(asset.instrumentId && { assetReference: asset.instrumentId }),
-      ...(asset.instrumentAdmin && { assetOwner: asset.instrumentAdmin }),
+      ...(asset.instrumentId ? { assetReference: asset.instrumentId } : {}),
+      ...(asset.instrumentAdmin ? { assetOwner: asset.instrumentAdmin } : {}),
     };
   }
 

@@ -73,7 +73,7 @@ const gatewayNetwork = async <T, U = unknown>(
       ...req,
       headers: {
         ...(req.headers || {}),
-        ...(API_KEY && { "X-Ledger-Canton-Api-Key": API_KEY }),
+        ...(API_KEY ? { "X-Ledger-Canton-Api-Key": API_KEY } : {}),
       },
     });
   } catch (error) {
