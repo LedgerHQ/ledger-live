@@ -1,5 +1,13 @@
 # @actions/build-checks
 
+## 1.3.0-next.0
+
+### Minor Changes
+
+- [#13955](https://github.com/LedgerHQ/ledger-live/pull/13955) [`1faf5be`](https://github.com/LedgerHQ/ledger-live/commit/1faf5bebde222d1f55f67bcaa2233f8d80cdaf73) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove unused Account imports from E2E mobile test files and fix code formatting
+
+- [#13946](https://github.com/LedgerHQ/ledger-live/pull/13946) [`4fd0c38`](https://github.com/LedgerHQ/ledger-live/commit/4fd0c38ed3f2809e6ef0abdd0f7edbc290a19f4c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - move from tsup to @rslib/core
+
 ## 1.2.1
 
 ### Patch Changes

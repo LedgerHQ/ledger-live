@@ -1,5 +1,28 @@
 # @ledgerhq/live-cli
 
+## 24.32.0-next.0
+
+### Minor Changes
+
+- [#13946](https://github.com/LedgerHQ/ledger-live/pull/13946) [`4fd0c38`](https://github.com/LedgerHQ/ledger-live/commit/4fd0c38ed3f2809e6ef0abdd0f7edbc290a19f4c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - move from tsup to @rslib/core
+
+- [#13782](https://github.com/LedgerHQ/ledger-live/pull/13782) [`363b630`](https://github.com/LedgerHQ/ledger-live/commit/363b63050ab007266d2c1158a27e4fce79081983) Thanks [@acewf](https://github.com/acewf)! - Add unichain network config
+
+- [#13567](https://github.com/LedgerHQ/ledger-live/pull/13567) [`5a3332f`](https://github.com/LedgerHQ/ledger-live/commit/5a3332f7f701ca31d6f0808575816891101450cb) Thanks [@CremaFR](https://github.com/CremaFR)! - chore: removed swap legacy
+
+- [#13871](https://github.com/LedgerHQ/ledger-live/pull/13871) [`cb69f67`](https://github.com/LedgerHQ/ledger-live/commit/cb69f67326834079695935103530d0b24ad3772d) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - add EVM currencies avalanche_c_chain_fuji, bitlayer, klaytn_baobab, shape, story
+
+### Patch Changes
+
+- Updated dependencies [[`fb7eafc`](https://github.com/LedgerHQ/ledger-live/commit/fb7eafc3f1f1fb408d96d4179b8c3bf352ece6cc), [`ed6c327`](https://github.com/LedgerHQ/ledger-live/commit/ed6c32745d607d339eee3159e7234e42bfdf20ce), [`a9e7653`](https://github.com/LedgerHQ/ledger-live/commit/a9e7653027ef350dc854051ee836a7d977f53092), [`dd1122e`](https://github.com/LedgerHQ/ledger-live/commit/dd1122eeb6e9c582541446ff82a488928fa340c2), [`7a3085a`](https://github.com/LedgerHQ/ledger-live/commit/7a3085a9e448079425a71372713240f8e65b1b61), [`7a26443`](https://github.com/LedgerHQ/ledger-live/commit/7a264432a31b1b1311b0e63e70a896c83d913187), [`52c5265`](https://github.com/LedgerHQ/ledger-live/commit/52c5265b2825bfa4ba27587e9306182c024c7126), [`363b630`](https://github.com/LedgerHQ/ledger-live/commit/363b63050ab007266d2c1158a27e4fce79081983), [`2b6d179`](https://github.com/LedgerHQ/ledger-live/commit/2b6d1797dcefa9f642c2a37efcd4f6ae8fe79557), [`5a3332f`](https://github.com/LedgerHQ/ledger-live/commit/5a3332f7f701ca31d6f0808575816891101450cb), [`cb69f67`](https://github.com/LedgerHQ/ledger-live/commit/cb69f67326834079695935103530d0b24ad3772d), [`21191ce`](https://github.com/LedgerHQ/ledger-live/commit/21191cefd8b3b10153c5532376d4a7eacb6fbbe6), [`9a99ae9`](https://github.com/LedgerHQ/ledger-live/commit/9a99ae9c6b4a99cdda500ae0e216037799de5cd5), [`556dd22`](https://github.com/LedgerHQ/ledger-live/commit/556dd22dd505b4b5ae865ffe36fc5b5aa22a4f81)]:
+  - @ledgerhq/live-common@34.59.0-next.0
+  - @ledgerhq/coin-framework@6.14.0-next.0
+  - @ledgerhq/live-countervalues@0.12.0-next.0
+  - @ledgerhq/cryptoassets@13.38.0-next.0
+  - @ledgerhq/coin-bitcoin@0.30.1-next.0
+  - @ledgerhq/live-wallet@0.20.1-next.0
+  - @ledgerhq/device-core@0.8.2-next.0
+
 ## 24.31.1
 
 ### Patch Changes
