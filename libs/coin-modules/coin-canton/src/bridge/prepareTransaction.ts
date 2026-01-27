@@ -1,10 +1,10 @@
 import { AccountBridge, TokenAccount } from "@ledgerhq/types-live";
-import { Transaction } from "../types";
-import { estimateFees } from "../common-logic";
 import BigNumber from "bignumber.js";
-import { updateTransaction } from "./updateTransaction";
+import { estimateFees } from "../common-logic";
 import coinConfig from "../config";
 import { getCalTokensCached } from "../network/gateway";
+import { Transaction } from "../types";
+import { updateTransaction } from "./updateTransaction";
 
 type CantonTokenAccount = TokenAccount & {
   cantonResources: { instrumentAdmin: string };

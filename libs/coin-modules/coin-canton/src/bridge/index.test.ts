@@ -1,14 +1,18 @@
+import { createMockCoinConfig, createMockSignerContext } from "../test/fixtures";
 import { createBridges } from ".";
 
 describe("createBridges", () => {
+  const mockSignerContext = createMockSignerContext();
+  const mockCoinConfig = createMockCoinConfig();
+
   it("should return both bridges interface", () => {
-    const bridges = createBridges(undefined as any, {} as any);
+    const bridges = createBridges(mockSignerContext, mockCoinConfig);
     expect(bridges.accountBridge).toBeDefined();
     expect(bridges.currencyBridge).toBeDefined();
   });
 
   it("should have a currency bridge with required methods", () => {
-    const bridges = createBridges(undefined as any, {} as any);
+    const bridges = createBridges(mockSignerContext, mockCoinConfig);
     expect(bridges.currencyBridge).toBeDefined();
     expect(bridges.currencyBridge.preload).toBeDefined();
     expect(bridges.currencyBridge.hydrate).toBeDefined();
@@ -16,7 +20,7 @@ describe("createBridges", () => {
   });
 
   it("should have an account bridge with required methods", () => {
-    const bridges = createBridges(undefined as any, {} as any);
+    const bridges = createBridges(mockSignerContext, mockCoinConfig);
     expect(bridges.accountBridge).toBeDefined();
     expect(bridges.accountBridge.broadcast).toBeDefined();
     expect(bridges.accountBridge.createTransaction).toBeDefined();

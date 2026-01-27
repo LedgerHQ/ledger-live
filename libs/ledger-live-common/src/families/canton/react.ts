@@ -1,11 +1,12 @@
-import { useCallback, useState, useEffect, useMemo } from "react";
-import { getCurrencyBridge } from "../../bridge";
-import { CantonCurrencyBridge, CantonAccount } from "@ledgerhq/coin-canton/types";
 import { isCantonAccount } from "@ledgerhq/coin-canton";
+import { createTransferInstruction } from "@ledgerhq/coin-canton/bridge/acceptOffer";
+import { CantonAccount, CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
+import { getParentAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getParentAccount } from "@ledgerhq/coin-framework/account/helpers";
 import BigNumber from "bignumber.js";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { getCurrencyBridge } from "../../bridge";
 
 export type UseCantonAcceptOrRejectOfferOptions = {
   currency: CryptoCurrency;
@@ -36,15 +37,8 @@ export function useCantonAcceptOrRejectOffer({
       { contractId, deviceId, reason }: TransferInstructionParams,
       type: TransferInstructionType,
     ) => {
-      return cantonBridge.transferInstruction(
-        currency,
-        deviceId,
-        account,
-        partyId,
-        contractId,
-        type,
-        reason,
-      );
+      const instruction = createTransferInstruction(type, contractId, reason);
+      return cantonBridge.transferInstruction(currency, deviceId, account, partyId, instruction);
     },
     [cantonBridge, currency, account, partyId],
   );
