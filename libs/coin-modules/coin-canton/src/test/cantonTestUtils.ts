@@ -15,6 +15,7 @@ import {
   decodeNode,
   decodeInputContract,
 } from "@ledgerhq/hw-app-canton";
+import * as transactionProto from "@ledgerhq/hw-app-canton/lib/types/transaction-proto.json";
 import { CantonPreparedTransaction, CantonUntypedVersionedMessage } from "../types/signer";
 
 // Constants from app-canton

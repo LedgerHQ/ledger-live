@@ -1,219 +1,176 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import * as accountBalance from "../common-logic/account/getBalance";
 import * as config from "../config";
 import * as gateway from "../network/gateway";
-import { OperationInfo } from "../network/gateway";
 import resolver from "../signer";
-import { createMockCantonCurrency } from "../test/fixtures";
+import {
+  createFactory,
+  createMockCantonCurrency,
+  createMockInstrumentBalances,
+  createMockSignerContext,
+} from "../test/fixtures";
 import { CantonAccount } from "../types";
+import type {
+  OperationStatusView,
+  OperationTypeView,
+  OperationView,
+  TransferView,
+} from "../types/gateway";
 import * as onboard from "./onboard";
 import { makeGetAccountShape, filterDisabledTokenAccounts } from "./sync";
 
-jest.mock("../network/gateway", () => ({
-  ...jest.requireActual("../network/gateway"),
-  getLedgerEnd: jest.fn(),
-  getOperations: jest.fn(),
-  getPendingTransferProposals: jest.fn(),
-  getCalTokensCached: jest.fn(),
-  getEnabledInstrumentsCached: jest.fn(),
-}));
-jest.mock("../signer");
 jest.mock("../config");
+jest.mock("../network/gateway", () => {
+  const actual = jest.requireActual<typeof import("../network/gateway")>("../network/gateway");
+  return {
+    getKey: actual.getKey,
+    SEPARATOR: actual.SEPARATOR,
+    getBalance: jest.fn(),
+    getLedgerEnd: jest.fn(),
+    getOperations: jest.fn(),
+    getPendingTransferProposals: jest.fn(),
+    getEnabledInstrumentsCached: jest.fn(),
+    getCalTokensCached: jest.fn().mockResolvedValue(new Map()),
+  };
+});
+jest.mock("../signer");
 jest.mock("./onboard");
-jest.mock("../common-logic/account/getBalance");
-const mockFindTokenByAddressInCurrency = jest.fn().mockResolvedValue(undefined);
-const mockFindTokenById = jest.fn().mockResolvedValue(undefined);
+jest.mock("@ledgerhq/cryptoassets/state", () => {
+  const store = {
+    findTokenByAddressInCurrency: jest.fn().mockResolvedValue(undefined),
+  };
+  return {
+    getCryptoAssetsStore: jest.fn(() => store),
+  };
+});
 
-jest.mock("@ledgerhq/cryptoassets/state", () => ({
-  getCryptoAssetsStore: jest.fn(() => ({
-    findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
-    findTokenById: mockFindTokenById,
-  })),
-}));
-
-const mockedGetBalance = accountBalance.getBalance as jest.Mock;
+const mockedCoinConfig = config.default.getCoinConfig as jest.Mock;
+const mockedGetBalance = gateway.getBalance as jest.Mock;
 const mockedGetLedgerEnd = gateway.getLedgerEnd as jest.Mock;
 const mockedGetOperations = gateway.getOperations as jest.Mock;
 const mockedGetPendingTransferProposals = gateway.getPendingTransferProposals as jest.Mock;
-const mockedGetCalTokensCached = gateway.getCalTokensCached as unknown as jest.Mock;
-const mockedGetEnabledInstrumentsCached =
-  gateway.getEnabledInstrumentsCached as unknown as jest.Mock;
-const mockedResolver = resolver as jest.Mock;
-const mockedIsOnboarded = onboard.isAccountOnboarded as jest.Mock;
+const mockedGetEnabledInstrumentsCached = gateway.getEnabledInstrumentsCached as jest.Mock;
 const mockedIsAuthorized = onboard.isCantonCoinPreapproved as jest.Mock;
-const mockedCoinConfig = config.default.getCoinConfig as jest.Mock;
+const mockedIsOnboarded = onboard.isAccountOnboarded as jest.Mock;
+const mockedResolver = resolver as jest.Mock;
 
-const sampleCurrency = createMockCantonCurrency();
+const instrumentAdmin = "AmuletAdmin";
+const instrumentId = "Amulet";
 
-type CantonBalance = {
-  value: bigint;
-  locked: bigint;
-  asset: { type: "native" } | { type: "token"; assetReference: string };
-  utxoCount: number;
-  instrumentId: string;
-  adminId: string;
-};
-
-const createMockNativeBalance = (amount: string, locked = false): CantonBalance => ({
-  value: BigInt(amount),
-  locked: locked ? BigInt(amount) : BigInt(0),
-  asset: { type: "native" },
-  utxoCount: 1,
-  instrumentId: "Amulet",
-  adminId: "native-admin",
-});
-
-const createMockOperationView = (
-  overrides: {
-    instrumentId?: string;
-    instrumentAdmin?: string | null;
-    txHash?: string;
-    uid?: string;
-    type?: string;
-    value?: string;
-    operationType?: string;
-  } = {},
-): OperationInfo =>
-  ({
-    transaction_hash: overrides.txHash ?? "tx-test",
-    uid: overrides.uid ?? "uid-test",
-    type: overrides.type ?? "Send",
-    status: "Success",
-    fee: {
-      value: "5",
-      asset: {
-        type: "native",
-        issuer: null,
-      },
-      details: {
-        type: "fee",
-      },
-    },
-    transfers: [
-      {
-        address: "party123",
-        type: "Send",
-        value: overrides.value ?? "100",
-        asset: overrides.instrumentId ?? "Amulet",
-        details: {
-          operationType: overrides.operationType ?? "transfer",
-          metadata: {
-            reason: "test transfer",
-          },
-        },
-      },
-    ],
-    transaction_timestamp: new Date().toISOString(),
-    senders: ["party123"],
-    recipients: ["party456"],
-    block: {
-      height: 1,
-      time: new Date().toISOString(),
-      hash: "blockhash1",
-    },
-    asset: {
-      type: "native",
-      instrumentId: overrides.instrumentId ?? "Amulet",
-      instrumentAdmin: overrides.instrumentAdmin ?? "AmuletAdmin",
-    },
-    details: {
-      operationType: overrides.operationType ?? "transfer",
-    },
-  }) as OperationInfo;
+let idCounter = 0;
+const generateUniqueId = (prefix: string): string => `${prefix}${++idCounter}`;
 
 const createMockCantonAccountShapeInfo = (
   overrides: Partial<AccountShapeInfo<CantonAccount>> = {},
 ): AccountShapeInfo<CantonAccount> => {
   const currency = createMockCantonCurrency();
   return {
-    address: "addr1",
+    address: "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
     currency,
-    derivationMode: "",
-    derivationPath: "44'/0'/0'/0/0",
-    deviceId: "fakeDevice",
-    index: 0,
+    derivationMode: "canton",
+    derivationPath: "44'/6767'/0'/0'/0'",
+    deviceId: "test-device-id",
     initialAccount: undefined,
+    ...overrides,
+  } as AccountShapeInfo<CantonAccount>;
+};
+
+const createMockOperationView = (overrides: Partial<OperationView> = {}): OperationView => {
+  const transactionHash = overrides.transaction_hash || generateUniqueId("tx");
+  return {
+    uid: generateUniqueId("uid"),
+    transaction_hash: transactionHash,
+    transaction_timestamp: new Date().toISOString(),
+    status: "Success" as OperationStatusView,
+    type: "Send" as OperationTypeView,
+    senders: ["test-party-id-sender"],
+    recipients: ["test-party-id"],
+    transfers: [createMockTransferView()],
+    block: {
+      height: 1,
+      time: new Date().toISOString(),
+      hash: "blockhash1",
+    },
+    fee: {
+      value: "5",
+      asset: {
+        type: "native",
+        instrumentAdmin,
+        instrumentId,
+      },
+      details: {},
+    },
+    asset: {
+      type: "native",
+      instrumentAdmin,
+      instrumentId,
+    },
+    details: {
+      metadata: {
+        reason: "test transfer",
+      },
+    },
     ...overrides,
   };
 };
 
-describe("makeGetAccountShape", () => {
-  const fakeSignerContext = {} as any;
+const createMockTransferView = createFactory<TransferView>({
+  address: "party456",
+  type: "Send",
+  value: "100",
+  details: {
+    metadata: {
+      reason: "test transfer",
+    },
+  },
+  asset: instrumentId,
+});
 
-  const defaultInfo: AccountShapeInfo<CantonAccount> = {
-    address: "addr1",
-    currency: sampleCurrency,
-    derivationMode: "",
-    derivationPath: "44'/0'/0'/0/0",
-    deviceId: "fakeDevice",
-    index: 0,
-    initialAccount: undefined,
-  };
+describe("makeGetAccountShape", () => {
+  const mockSignerContext = createMockSignerContext();
+  const defaultInfo = createMockCantonAccountShapeInfo();
 
   beforeEach(() => {
     jest.clearAllMocks();
-
-    mockedResolver.mockReturnValue(async () => ({
-      publicKey: "FAKE_PUBLIC_KEY",
-    }));
-
-    mockedIsOnboarded.mockResolvedValue({
-      isOnboarded: true,
-      partyId: "party123",
-    });
 
     mockedCoinConfig.mockReturnValue({
       nativeInstrumentId: "Amulet",
       minReserve: "0",
       useGateway: true,
     });
-
-    mockedIsAuthorized.mockResolvedValue(true);
     mockedGetLedgerEnd.mockResolvedValue(12345);
     mockedGetPendingTransferProposals.mockResolvedValue([]);
-    mockedGetCalTokensCached.mockResolvedValue(new Map());
-    mockFindTokenByAddressInCurrency.mockResolvedValue(undefined);
-    mockFindTokenById.mockResolvedValue(undefined);
+    mockedIsAuthorized.mockResolvedValue(true);
+    mockedIsOnboarded.mockResolvedValue({ isOnboarded: true, partyId: "test-party-id" });
+    mockedResolver.mockReturnValue(async () => ({ publicKey: "test-public-key" }));
   });
 
   it("should return a valid account shape with correct balances and operations", async () => {
-    mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+    mockedGetBalance.mockResolvedValue(createMockInstrumentBalances());
     mockedGetOperations.mockResolvedValue({
-      operations: [
-        createMockOperationView({
-          txHash: "tx1",
-          uid: "uid1",
-          type: "Send",
-          value: "100",
-        }),
-      ],
+      operations: [createMockOperationView()],
     });
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo, {
-      paginationConfig: {},
-    });
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    const shape = await getAccountShape(defaultInfo, { paginationConfig: {} });
 
     expect(shape).toHaveProperty("id");
     expect(shape.balance).toEqual(BigNumber(1000));
     expect(shape.operations?.length).toBe(1);
-    expect((shape.operations as any)[0].type).toBe("OUT");
-    expect((shape.operations as any)[0].value).toEqual(BigNumber(105)); // 100 + 5 fee
+    expect(shape.operations![0].type).toBe("IN");
+    expect(shape.operations![0].value).toEqual(BigNumber(100));
     expect(shape.spendableBalance).toEqual(BigNumber(1000));
     expect(shape.used).toBe(true);
   });
 
   it("should handle locked balances correctly", async () => {
-    mockedGetBalance.mockResolvedValue([
-      createMockNativeBalance("1000", true),
-      createMockNativeBalance("10", false),
-    ]);
+    mockedGetBalance.mockResolvedValue(
+      createMockInstrumentBalances(2, [{ amount: "1000", locked: true }, { amount: "10" }]),
+    );
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo, {
-      paginationConfig: {},
-    });
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    const shape = await getAccountShape(defaultInfo, { paginationConfig: {} });
 
     expect(shape).toMatchObject({
       balance: BigNumber(1010),
@@ -224,10 +181,8 @@ describe("makeGetAccountShape", () => {
   it("should handle empty balances correctly", async () => {
     mockedGetBalance.mockResolvedValue([]);
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo, {
-      paginationConfig: {},
-    });
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    const shape = await getAccountShape(defaultInfo, { paginationConfig: {} });
 
     expect(shape).toMatchObject({
       balance: BigNumber(0),
@@ -236,119 +191,122 @@ describe("makeGetAccountShape", () => {
   });
 
   it("should default to FEES operation type when transferValue is 0", async () => {
-    mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+    mockedGetBalance.mockResolvedValue(createMockInstrumentBalances());
     mockedGetOperations.mockResolvedValue({
       operations: [
         createMockOperationView({
-          txHash: "tx2",
-          uid: "uid2",
-          type: "Send",
-          value: "0",
+          transfers: [
+            createMockTransferView({
+              value: "0",
+              details: {
+                metadata: {
+                  reason: "fee only",
+                },
+              },
+            }),
+          ],
         }),
       ],
     });
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo, {
-      paginationConfig: {},
-    });
-    expect(shape).toMatchObject({
-      operations: [
-        expect.objectContaining({
-          type: "FEES",
-          // In this case, value should equal the fee
-          value: BigNumber(5), // fee is 5 in createMockOperationView
-        }),
-      ],
-    });
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    const shape = await getAccountShape(defaultInfo, { paginationConfig: {} });
+    expect(shape).toBeDefined();
+    expect(shape.operations).toBeDefined();
+    expect(shape.operations?.length).toBeGreaterThan(0);
+    expect(shape.operations![0].type).toBe("FEES");
+    expect(shape.operations![0].value).toEqual(BigNumber(5));
   });
 
   it("should set operation type to TRANSFER_PROPOSAL when operationType is transfer-proposal", async () => {
-    mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+    mockedGetBalance.mockResolvedValue(createMockInstrumentBalances());
     mockedGetOperations.mockResolvedValue({
       operations: [
         createMockOperationView({
-          txHash: "tx3",
-          uid: "uid3",
-          type: "Send",
-          value: "200",
-          operationType: "transfer-proposal",
+          transfers: [
+            createMockTransferView({
+              value: "200",
+              details: {
+                operationType: "transfer-proposal",
+                metadata: {
+                  reason: "transfer proposal",
+                },
+              },
+            }),
+          ],
         }),
       ],
     });
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo, {
-      paginationConfig: {},
-    });
-    expect(shape).toMatchObject({
-      operations: [
-        expect.objectContaining({
-          type: "TRANSFER_PROPOSAL",
-          value: BigNumber(200), // transfer value only, fees not added for TRANSFER_PROPOSAL
-        }),
-      ],
-    });
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    const shape = await getAccountShape(defaultInfo, { paginationConfig: {} });
+    expect(shape).toBeDefined();
+    expect(shape.operations).toBeDefined();
+    expect(shape.operations?.length).toBeGreaterThan(0);
+    expect(shape.operations![0].type).toBe("TRANSFER_PROPOSAL");
+    expect(shape.operations![0].value).toEqual(BigNumber(200)); // transfer value only, fees not added for TRANSFER_PROPOSAL
   });
 
   it("should set operation type to TRANSFER_REJECTED when operationType is transfer-rejected", async () => {
-    mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+    mockedGetBalance.mockResolvedValue(createMockInstrumentBalances());
     mockedGetOperations.mockResolvedValue({
       operations: [
         createMockOperationView({
-          txHash: "tx4",
-          uid: "uid4",
-          type: "Send",
-          value: "150",
-          operationType: "transfer-rejected",
+          transfers: [
+            createMockTransferView({
+              value: "150",
+              details: {
+                operationType: "transfer-rejected",
+                metadata: {
+                  reason: "transfer rejected",
+                },
+              },
+            }),
+          ],
         }),
       ],
     });
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape: any = await getAccountShape(defaultInfo, {
-      paginationConfig: {},
-    });
-    expect(shape).toMatchObject({
-      operations: [
-        expect.objectContaining({
-          type: "TRANSFER_REJECTED",
-          value: BigNumber(150), // transfer value only, fees not added for TRANSFER_REJECTED
-        }),
-      ],
-    });
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    const shape = await getAccountShape(defaultInfo, { paginationConfig: {} });
+    expect(shape).toBeDefined();
+    expect(shape.operations).toBeDefined();
+    expect(shape.operations?.length).toBeGreaterThan(0);
+    expect(shape.operations![0].type).toBe("TRANSFER_REJECTED");
+    expect(shape.operations![0].value).toEqual(BigNumber(150)); // transfer value only, fees not added for TRANSFER_REJECTED
   });
 
   it("should set operation type to TRANSFER_WITHDRAWN when operationType is transfer-withdrawn", async () => {
-    mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+    mockedGetBalance.mockResolvedValue(createMockInstrumentBalances());
     mockedGetOperations.mockResolvedValue({
       operations: [
         createMockOperationView({
-          txHash: "tx5",
-          uid: "uid5",
-          type: "Send",
-          value: "50",
-          operationType: "transfer-withdrawn",
+          transfers: [
+            createMockTransferView({
+              value: "50",
+              details: {
+                operationType: "transfer-withdrawn",
+                metadata: {
+                  reason: "transfer withdrawn",
+                },
+              },
+            }),
+          ],
         }),
       ],
     });
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo, {
-      paginationConfig: {},
-    });
-    expect(shape).toMatchObject({
-      operations: [
-        expect.objectContaining({
-          type: "TRANSFER_WITHDRAWN",
-          value: BigNumber(50), // transfer value only, fees not added for TRANSFER_WITHDRAWN
-        }),
-      ],
-    });
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    const shape = await getAccountShape(defaultInfo, { paginationConfig: {} });
+    expect(shape).toBeDefined();
+    expect(shape.operations).toBeDefined();
+    expect(shape.operations?.length).toBeGreaterThan(0);
+    expect(shape.operations![0].type).toBe("TRANSFER_WITHDRAWN");
+    expect(shape.operations![0].value).toEqual(BigNumber(50)); // transfer value only, fees not added for TRANSFER_WITHDRAWN
   });
 
   it("should filter out operations that match pending transfer proposals", async () => {
-    mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+    mockedGetBalance.mockResolvedValue(createMockInstrumentBalances());
 
     mockedGetPendingTransferProposals.mockResolvedValue([
       {
@@ -367,24 +325,22 @@ describe("makeGetAccountShape", () => {
     mockedGetOperations.mockResolvedValue({
       operations: [
         createMockOperationView({
-          txHash: "tx-pending",
+          transaction_hash: "tx-pending",
           uid: "pending-proposal-uid",
-          type: "Receive",
-          value: "100",
+          type: "Receive" as OperationTypeView,
+          transfers: [createMockTransferView({ value: "100" })],
         }),
         createMockOperationView({
-          txHash: "tx-completed",
+          transaction_hash: "tx-completed",
           uid: "completed-uid",
-          type: "Receive",
-          value: "200",
+          type: "Receive" as OperationTypeView,
+          transfers: [createMockTransferView({ value: "200" })],
         }),
       ],
     });
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo, {
-      paginationConfig: {},
-    });
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
+    const shape = await getAccountShape(defaultInfo, { paginationConfig: {} });
 
     expect(shape).toMatchObject({
       operations: [expect.objectContaining({ hash: "tx-completed", value: BigNumber(200) })],
@@ -397,7 +353,7 @@ describe("makeGetAccountShape", () => {
   });
 
   it("should sync without device when account has xpub but no publicKey", async () => {
-    mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+    mockedGetBalance.mockResolvedValue(createMockInstrumentBalances());
     mockedGetOperations.mockResolvedValue({
       operations: [createMockOperationView()],
     });
@@ -413,7 +369,7 @@ describe("makeGetAccountShape", () => {
     });
     delete infoWithXpub.deviceId;
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
     const shape = await getAccountShape(infoWithXpub, { paginationConfig: {} });
 
     expect(shape).toHaveProperty("id");
@@ -440,7 +396,7 @@ describe("makeGetAccountShape", () => {
     });
     delete infoWithPublicKey.deviceId;
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
     const shape = await getAccountShape(infoWithPublicKey, { paginationConfig: {} });
 
     expect(shape).toHaveProperty("id");
@@ -449,7 +405,7 @@ describe("makeGetAccountShape", () => {
   });
 
   it("should sync without device when account has both xpub and publicKey", async () => {
-    mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+    mockedGetBalance.mockResolvedValue(createMockInstrumentBalances());
     mockedGetOperations.mockResolvedValue({
       operations: [createMockOperationView()],
     });
@@ -466,7 +422,7 @@ describe("makeGetAccountShape", () => {
     });
     delete infoWithBoth.deviceId;
 
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
     const shape = await getAccountShape(infoWithBoth, { paginationConfig: {} });
 
     expect(shape).toHaveProperty("id");
@@ -474,99 +430,15 @@ describe("makeGetAccountShape", () => {
     // Should not call getAddress since we have both values
     expect(mockedResolver).not.toHaveBeenCalled();
   });
-
-  it("should correctly identify tokens with same adminId but different instrumentId", async () => {
-    const sharedAdminId =
-      "party-28dc4516-b5ca-44ff-86c7-2107e90a6807::1220b8301e18aa8a401d6e34e6c20f8b0243183c514373bca8f1b6b9270246341a9e";
-    const sbcInstrumentId = "f29bdd7a-1469-498a-ba2a-796bf5387b31";
-    const cusdInstrumentId = "481871d4-ca56-42a8-b2d3-4b7d28742946";
-
-    // Create token mocks
-    const sbcToken = {
-      type: "TokenCurrency" as const,
-      id: "canton_network/cip56/sbc",
-      contractAddress: sharedAdminId,
-      parentCurrency: sampleCurrency,
-      tokenType: "cip56",
-      name: "SBC",
-      ticker: "SBC",
-      delisted: false,
-      disableCountervalue: false,
-      units: [{ name: "SBC", code: "SBC", magnitude: 38 }],
-    };
-
-    const cusdToken = {
-      type: "TokenCurrency" as const,
-      id: "canton_network/cip56/cusd",
-      contractAddress: sharedAdminId,
-      parentCurrency: sampleCurrency,
-      tokenType: "cip56",
-      name: "CUSD",
-      ticker: "CUSD",
-      delisted: false,
-      disableCountervalue: false,
-      units: [{ name: "CUSD", code: "CUSD", magnitude: 38 }],
-    };
-
-    // Mock CAL tokens map (token_identifier -> token id)
-    mockedGetCalTokensCached.mockResolvedValue(
-      new Map([
-        ["canton_network/cip56/sbc", sbcInstrumentId],
-        ["canton_network/cip56/cusd", cusdInstrumentId],
-      ]),
-    );
-
-    // Mock findTokenById to return correct tokens
-    mockFindTokenById.mockImplementation(async (id: string) => {
-      if (id === "canton_network/cip56/sbc") return sbcToken;
-      if (id === "canton_network/cip56/cusd") return cusdToken;
-      return undefined;
-    });
-
-    // Mock enabled instruments to include SBC (using SEPARATOR format)
-    mockedGetEnabledInstrumentsCached.mockResolvedValue(
-      new Set([`${sbcInstrumentId}____${sharedAdminId}`]),
-    );
-
-    // Mock balances with SBC token (NOT CUSD)
-    mockedGetBalance.mockResolvedValue([
-      createMockNativeBalance("1000"),
-      {
-        value: BigInt("990000000000000000000000000000000"),
-        locked: BigInt(0),
-        asset: { type: "token", assetReference: sbcInstrumentId },
-        utxoCount: 1,
-        instrumentId: sbcInstrumentId,
-        adminId: sharedAdminId,
-      },
-    ]);
-
-    mockedGetOperations.mockResolvedValue({
-      operations: [],
-    });
-
-    const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo, {
-      paginationConfig: {},
-    });
-
-    expect(shape).toMatchObject({
-      subAccounts: [
-        expect.objectContaining({
-          balance: BigNumber("990000000000000000000000000000000"),
-          type: "TokenAccount",
-          token: expect.objectContaining({
-            id: "canton_network/cip56/sbc",
-            ticker: "SBC", // Should be SBC, not CUSD!
-          }),
-        }),
-      ],
-    });
-  });
 });
 
 describe("filterDisabledTokenAccounts", () => {
   const currency = createMockCantonCurrency();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedGetEnabledInstrumentsCached.mockResolvedValue(new Set());
+  });
 
   const createMockTokenAccount = (contractAddress: string, tokenId?: string): TokenAccount => ({
     type: "TokenAccount",

@@ -17,6 +17,7 @@ import type {
   CantonAuthorizeProgress,
   CantonAuthorizeResult,
 } from "./onboard";
+import type { PrepareTransferInstructionRequest } from "./gateway";
 
 export interface CantonCurrencyBridge extends CurrencyBridge {
   onboardAccount: (
@@ -35,12 +36,7 @@ export interface CantonCurrencyBridge extends CurrencyBridge {
     deviceId: string,
     account: Account,
     partyId: string,
-    contractId: string,
-    type:
-      | "accept-transfer-instruction"
-      | "reject-transfer-instruction"
-      | "withdraw-transfer-instruction",
-    reason?: string,
+    instruction: PrepareTransferInstructionRequest,
   ) => Promise<void>;
 }
 
