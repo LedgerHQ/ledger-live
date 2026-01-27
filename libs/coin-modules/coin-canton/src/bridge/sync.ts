@@ -1,29 +1,30 @@
-import BigNumber from "bignumber.js";
-import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Operation, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { getBalance } from "../common-logic/account/getBalance";
+import { determineOperationType } from "../common-logic/history/operationType";
+import coinConfig from "../config";
+import { isCantonAccountEmpty } from "../helpers";
 import {
+  getCalTokensCached,
+  getEnabledInstrumentsCached,
+  getKey,
   getLedgerEnd,
   getOperations,
-  type OperationInfo,
   getPendingTransferProposals,
-  getEnabledInstrumentsCached,
-  getCalTokensCached,
-  getKey,
   SEPARATOR,
+  type OperationInfo,
   type TransferProposal,
 } from "../network/gateway";
-import { getBalance } from "../common-logic/account/getBalance";
-import coinConfig from "../config";
 import resolver from "../signer";
 import { CantonAccount, CantonResources, CantonSigner } from "../types";
-import { isAccountOnboarded } from "./onboard";
-import { isCantonAccountEmpty } from "../helpers";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { buildSubAccounts } from "./buildSubAccounts";
+import { isAccountOnboarded } from "./onboard";
 
 type ValidOperationInfo = OperationInfo & {
   asset: { type: "native" | "token"; instrumentId: string; instrumentAdmin: string };
@@ -63,26 +64,17 @@ const txInfoToOperationAdapter =
       transfers: [{ value: transferValue, details }],
     } = txInfo;
 
-    let type: OperationType = "UNKNOWN";
-    if (details?.operationType === "transfer-proposal") {
-      type = "TRANSFER_PROPOSAL";
-    } else if (details?.operationType === "transfer-rejected") {
-      type = "TRANSFER_REJECTED";
-    } else if (details?.operationType === "transfer-withdrawn") {
-      type = "TRANSFER_WITHDRAWN";
-    } else if (txInfo.type === "Send" && transferValue === "0") {
-      type = "FEES";
-    } else if (txInfo.type === "Send") {
-      type = senders.includes(partyId) ? "OUT" : "IN";
-    } else if (txInfo.type === "Receive") {
-      type = "IN";
-    } else if (txInfo.type === "Initialize") {
-      type = "PRE_APPROVAL";
-    }
+    const type = determineOperationType(
+      details?.operationType,
+      txInfo.type,
+      transferValue,
+      senders,
+      partyId,
+    );
+
     let value = new BigNumber(transferValue);
 
     if (type === "OUT" || type === "FEES") {
-      // We add fees when it's an outgoing transaction or a fees-only transaction
       value = value.plus(fee);
     }
 
