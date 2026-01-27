@@ -8,7 +8,7 @@ export default {
   component: Box,
 };
 
-export const BoxStory: StoryFn<typeof Box> = (args: typeof BoxStoryArgs) => {
+export const BoxStory: StoryFn<typeof BoxStoryArgs> = (args: typeof BoxStoryArgs) => {
   const { p, m, background } = args;
 
   return (
@@ -30,7 +30,7 @@ const BoxStoryArgs = {
 };
 BoxStory.args = BoxStoryArgs;
 
-export const BoxStoryTwo: StoryFn<typeof Box> = (args: typeof BoxStoryTwoArgs) => {
+export const BoxStoryTwo: StoryFn<typeof BoxStoryTwoArgs> = (args: typeof BoxStoryTwoArgs) => {
   const { p, m, background } = args;
 
   return (

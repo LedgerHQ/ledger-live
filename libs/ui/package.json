@@ -15,9 +15,9 @@
   },
   "scripts": {
     "pretest:react": "playwright install",
-    "clean": "pnpm -F ./examples/webpack.js -F ./examples/next.js clean:full",
-    "build-and-test": "pnpm pretest:react && pnpm build-next && pnpm e2e",
-    "build-next": "pnpm -w -F ./examples/webpack.js build",
-    "e2e": "cross-env UPDATE_SNAPSHOTS=1 pnpm concurrently -s=first -k \"pnpm -w -F ./examples/webpack.js serve\" \"playwright test $([ \"$UPDATE_SNAPSHOTS\" = 1 ] && echo \"--update-snapshots\")\""
+    "clean": "pnpm -F ./examples/rspack clean:full",
+    "build-and-test": "pnpm pretest:react && pnpm build-rspack && pnpm e2e",
+    "build-rspack": "pnpm -w -F ./examples/rspack build",
+    "e2e": "cross-env UPDATE_SNAPSHOTS=1 pnpm concurrently -s=first -k \"pnpm -w -F ./examples/rspack serve\" \"playwright test $([ \"$UPDATE_SNAPSHOTS\" = 1 ] && echo \"--update-snapshots\")\""
   }
 }

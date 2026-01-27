@@ -13,7 +13,7 @@ export default {
   },
 };
 
-export const Default: StoryFn<typeof TipList> = (args: typeof DefaultArgs) => {
+export const Default: StoryFn<typeof DefaultArgs> = (args: typeof DefaultArgs) => {
   return (
     <TipList
       items={[
