@@ -13,9 +13,11 @@ import {
   hideEmptyTokenAccountsSelector,
 } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export default function AssetDistribution() {
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
+  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("desktop");
 
   const distribution = useDistribution({
     hideEmptyTokenAccount,
@@ -55,8 +57,10 @@ export default function AssetDistribution() {
 
   const subList = showAll || almostAll ? filteredList : filteredList.slice(0, initialRowCount);
 
-  return filteredList.length ? (
-    <TableContainer>
+  if (!filteredList.length) return null;
+
+  const tableContent = (
+    <>
       <TableHeader
         title={
           <Trans
@@ -68,10 +72,15 @@ export default function AssetDistribution() {
         }
       />
       <Box p={0}>
-        <Header />
+        <Header isResponsiveLayout={isWallet40Enabled} />
         <div ref={cardRef}>
           {subList.map(item => (
-            <Row key={item.currency.id} item={item} isVisible={isVisible} />
+            <Row
+              key={item.currency.id}
+              item={item}
+              isVisible={isVisible}
+              isResponsiveLayout={isWallet40Enabled}
+            />
           ))}
         </div>
         {!almostAll && (
@@ -83,8 +92,14 @@ export default function AssetDistribution() {
           </SeeAllButton>
         )}
       </Box>
-    </TableContainer>
-  ) : null;
+    </>
+  );
+
+  if (isWallet40Enabled) {
+    return <div className="overflow-hidden rounded-md bg-surface">{tableContent}</div>;
+  }
+
+  return <TableContainer>{tableContent}</TableContainer>;
 }
 const SeeAllButton = styled.div<{
   expanded: boolean;

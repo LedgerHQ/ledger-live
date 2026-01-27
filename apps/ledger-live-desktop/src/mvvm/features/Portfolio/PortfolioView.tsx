@@ -3,8 +3,6 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import BannerSection from "~/renderer/screens/dashboard/components/BannerSection";
 import MarketBanner from "LLD/features/MarketBanner";
 import PageHeader from "LLD/components/PageHeader";
-import SwapWebViewEmbedded from "~/renderer/screens/dashboard/components/SwapWebViewEmbedded";
-import { PortfolioGrid } from "./components/PortfolioGrid";
 import { PortfolioViewModelResult } from "./hooks/usePortfolioViewModel";
 
 import OperationsList from "~/renderer/components/OperationsList";
@@ -20,7 +18,7 @@ export const PortfolioView = memo(function PortfolioView({
   shouldDisplayMarketBanner,
   shouldDisplayGraphRework,
   shouldDisplayQuickActionCtas,
-  shouldDisplaySwapWebView,
+  isWallet40Enabled,
   accounts,
   filterOperations,
   t,
@@ -35,36 +33,29 @@ export const PortfolioView = memo(function PortfolioView({
         totalCurrencies={totalCurrencies}
         hasExchangeBannerCTA={hasExchangeBannerCTA}
       />
-      <div
-        id="portfolio-container"
-        data-testid="portfolio-container"
-        className="flex flex-col gap-32"
-      >
-        <PortfolioGrid>
+      <div id="portfolio-container" data-testid="portfolio-container" className="flex flex-col">
+        {/* Main content area */}
+        <div className="flex flex-1 flex-col gap-32">
           <div className="flex flex-col gap-24">
             <PageHeader title={t("portfolio.title")} />
             {shouldDisplayGraphRework && <Balance />}
             {shouldDisplayQuickActionCtas && <QuickActions />}
             {shouldDisplayMarketBanner && <MarketBanner />}
           </div>
-          {shouldDisplaySwapWebView && (
-            <div className="ml-10 max-w-[700px] min-w-[375px]">
-              <SwapWebViewEmbedded height="550px" />
-            </div>
-          )}
-        </PortfolioGrid>
 
-        <AssetDistribution />
-        {totalOperations > 0 && (
-          <OperationsList
-            accounts={accounts}
-            title={t("dashboard.recentActivity")}
-            withAccount
-            withSubAccounts
-            filterOperation={filterOperations}
-            t={t}
-          />
-        )}
+          <AssetDistribution />
+          {totalOperations > 0 && (
+            <OperationsList
+              accounts={accounts}
+              title={t("dashboard.recentActivity")}
+              withAccount
+              withSubAccounts
+              filterOperation={filterOperations}
+              t={t}
+              isWallet40={isWallet40Enabled}
+            />
+          )}
+        </div>
       </div>
     </>
   );

@@ -70,6 +70,7 @@ const defaultPortfolioMock = createPortfolioMock({ percentage: 0.0542, value: 50
 
 describe("PortfolioView", () => {
   const defaultProps = {
+    isWallet40Enabled: true,
     totalAccounts: 5,
     totalOperations: 10,
     totalCurrencies: 3,
@@ -77,7 +78,6 @@ describe("PortfolioView", () => {
     shouldDisplayMarketBanner: true,
     shouldDisplayGraphRework: true,
     shouldDisplayQuickActionCtas: true,
-    shouldDisplaySwapWebView: true,
     filterOperations: () => true,
     accounts: [],
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -102,16 +102,6 @@ describe("PortfolioView", () => {
   it("should render portfolio container", () => {
     render(<PortfolioView {...defaultProps} />);
     expect(screen.getByTestId("portfolio-container")).toBeVisible();
-  });
-
-  it("should render SwapWebViewEmbedded when shouldDisplaySwapWebView is true", () => {
-    render(<PortfolioView {...defaultProps} shouldDisplaySwapWebView={true} />);
-    expect(screen.getByTestId("swap-webview-embedded")).toBeVisible();
-  });
-
-  it("should not render SwapWebViewEmbedded when shouldDisplaySwapWebView is false", () => {
-    render(<PortfolioView {...defaultProps} shouldDisplaySwapWebView={false} />);
-    expect(screen.queryByTestId("swap-webview-embedded")).toBeNull();
   });
 
   describe("Balance", () => {
