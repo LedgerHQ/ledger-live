@@ -6,7 +6,7 @@ import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
-import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
+import type { Operation } from "@ledgerhq/coin-framework/api/types";
 import type { OperationCommon } from "./types";
 import type { Account } from "@ledgerhq/types-live";
 
@@ -65,18 +65,19 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         ? op
         : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
     );
-    const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
+    const cursor = oldOps[0]?.extra?.pagingToken || "";
     const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
     const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
 
     // Calculate minHeight for pagination
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
-    const paginationParams: Pagination = { minHeight, order: "desc" };
-    if (lastPagingToken && !syncFromScratch) {
-      paginationParams.lastPagingToken = lastPagingToken;
-    }
+    const paginationCursor = cursor && !syncFromScratch ? cursor : undefined;
 
-    const [newCoreOps] = await alpacaApi.listOperations(address, paginationParams);
+    const { items: newCoreOps } = await alpacaApi.listOperations(address, {
+      minHeight,
+      cursor: paginationCursor,
+      order: "desc",
+    });
     const newOps = newCoreOps
       .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
       .map(op => adaptCoreOperationToLiveOperation(accountId, op)) as OperationCommon[];

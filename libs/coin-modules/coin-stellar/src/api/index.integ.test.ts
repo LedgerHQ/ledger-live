@@ -43,7 +43,8 @@ describe("Stellar Api", () => {
     let txs: Operation[];
 
     beforeAll(async () => {
-      [txs] = await module.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
+      const result = await module.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
+      txs = result.items;
     });
 
     it("returns a list regarding address parameter", async () => {
@@ -68,7 +69,10 @@ describe("Stellar Api", () => {
     });
 
     it("returns all operations from the latest, but in asc order", async () => {
-      const [txsDesc] = await module.listOperations(ADDRESS, { minHeight: 0, order: "desc" });
+      const { items: txsDesc } = await module.listOperations(ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
       expect(txsDesc[0]).toStrictEqual(txs[0]);
     });
   });
