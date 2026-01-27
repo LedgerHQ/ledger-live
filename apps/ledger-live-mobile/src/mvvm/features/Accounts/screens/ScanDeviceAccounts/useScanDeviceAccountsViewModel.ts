@@ -9,6 +9,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import logger from "~/logger";
 import { NavigatorName, ScreenName } from "~/const";
 import { prepareCurrency } from "~/bridge/cache";
@@ -41,6 +42,7 @@ export default function useScanDeviceAccountsViewModel({
   const [scanning, setScanning] = useState(true);
   const navigation = useNavigation<ScanDeviceAccountsNavigationProps["navigation"]>();
   const [error, setError] = useState(null);
+  const llmModularDrawer = useFeature("llmModularDrawer");
   const [latestScannedAccount, setLatestScannedAccount] = useState<Account | null>(null);
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [onlyNewAccounts, setOnlyNewAccounts] = useState(true);
@@ -196,6 +198,19 @@ export default function useScanDeviceAccountsViewModel({
   const importAccounts = useCallback(() => {
     const accountsToAdd = scannedAccounts.filter(a => selectedIds.includes(a.id));
     if (currency.id.includes("canton_network")) {
+      // Check if modular drawer is enabled
+      if (llmModularDrawer?.enabled) {
+        // Use new AccountsOnboard screen in modular drawer flow
+        // Extract parent currency if it's a token currency
+        const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
+        navigation.replace(ScreenName.AccountsOnboard, {
+          accountsToAdd,
+          currency: cryptoCurrency,
+          editedNames: {},
+        });
+        return;
+      }
+      // Fallback to old CantonOnboard navigation when modular drawer is disabled
       navigation.replace(NavigatorName.CantonOnboard, {
         screen: ScreenName.CantonOnboardAccount,
         params: { accountsToAdd, currency },
@@ -255,6 +270,7 @@ export default function useScanDeviceAccountsViewModel({
     closeInlineFlow,
     analyticsMetadata?.AccountsFound?.onContinue,
     analyticsMetadata?.AccountsFound?.onAccountsAdded,
+    llmModularDrawer?.enabled,
   ]);
 
   const onCancel = useCallback(() => {

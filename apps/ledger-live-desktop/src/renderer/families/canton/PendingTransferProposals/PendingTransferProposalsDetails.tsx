@@ -28,7 +28,7 @@ type PendingProposal = {
   sender: string;
   receiver: string;
   amount: BigNumber;
-  memo: string;
+  memo?: string;
   expires_at_micros: number;
   isExpired: boolean;
 };
@@ -54,7 +54,9 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
   const cantonAccount = account as CantonAccount;
   const proposal = useMemo<PendingProposal | null>(() => {
     const pendingTransferProposals = cantonAccount?.cantonResources?.pendingTransferProposals || [];
-    const found = pendingTransferProposals.find(p => p.contract_id === contractId);
+    const found = pendingTransferProposals.find(
+      (p: { contract_id: string }) => p.contract_id === contractId,
+    );
     if (!found) return null;
 
     const now = Date.now();
@@ -63,6 +65,7 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
       ...found,
       isExpired,
       amount: new BigNumber(found.amount),
+      memo: found.memo,
     };
   }, [cantonAccount, contractId]);
 

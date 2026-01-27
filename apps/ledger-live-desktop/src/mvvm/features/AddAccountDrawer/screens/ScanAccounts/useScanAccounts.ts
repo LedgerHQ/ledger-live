@@ -6,8 +6,6 @@ import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Subscription } from "rxjs";
-import { openModal } from "~/renderer/actions/modals";
-import { setDrawer } from "~/renderer/drawers/Provider";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import * as RX from "rxjs/operators";
 import { getLLDCoinFamily } from "~/renderer/families";
@@ -25,7 +23,7 @@ import {
   getGroupedAccounts,
   getUnimportedAccounts,
 } from "./utils/processAccounts";
-import { useCantonCreatableAccounts } from "./hooks/useCantonCreatableAccounts";
+import { useOnboardingAccounts } from "../AccountsOnboard/hooks/useOnboardingAccounts";
 
 const selectImportable = (importable: Account[]) => (selected: string[]) => {
   const importableIds = importable.map(a => a.id);
@@ -42,6 +40,12 @@ export interface UseScanAccountsProps {
   deviceId: string;
   onComplete: (accounts: Account[]) => void;
   navigateToWarningScreen: (reason: WarningReason, account?: Account) => void;
+  navigateToAccountsOnboard?: (state: {
+    selectedAccounts: Account[];
+    editedNames: { [accountId: string]: string };
+    isReonboarding?: boolean;
+    accountToReonboard?: Account;
+  }) => void;
 }
 
 export function useScanAccounts({
@@ -49,10 +53,11 @@ export function useScanAccounts({
   deviceId,
   onComplete,
   navigateToWarningScreen,
+  navigateToAccountsOnboard,
 }: UseScanAccountsProps) {
   const { trackAddAccountEvent } = useAddAccountAnalytics();
   const existingAccounts = useSelector(accountsSelector);
-  const device = useSelector(getCurrentDevice);
+  const _device = useSelector(getCurrentDevice);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
@@ -160,11 +165,11 @@ export function useScanAccounts({
     selectedIds,
   ]);
 
-  const { hasCantonCreatableAccounts, selectedCantonCreatableAccounts } =
-    useCantonCreatableAccounts({
-      scannedAccounts,
-      selectedIds: filteredSelectedIds,
-    });
+  const { hasOnboardingCreatableAccounts, selectedOnboardingAccounts } = useOnboardingAccounts({
+    currency,
+    scannedAccounts,
+    selectedIds: filteredSelectedIds,
+  });
 
   const handleConfirm = useCallback(() => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
@@ -173,18 +178,13 @@ export function useScanAccounts({
       flow: ADD_ACCOUNT_FLOW_NAME,
     });
 
-    if (hasCantonCreatableAccounts) {
-      setDrawer();
-
-      dispatch(
-        openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
-          currency,
-          device,
-          selectedAccounts: selectedCantonCreatableAccounts,
-          existingAccounts: existingAccounts,
+    if (hasOnboardingCreatableAccounts) {
+      if (navigateToAccountsOnboard) {
+        navigateToAccountsOnboard({
+          selectedAccounts: selectedOnboardingAccounts,
           editedNames: {},
-        }),
-      );
+        });
+      }
 
       return;
     }
@@ -204,15 +204,14 @@ export function useScanAccounts({
   }, [
     trackAddAccountEvent,
     accountsToImport,
-    dispatch,
     existingAccounts,
     onComplete,
-    currency,
-    device,
-    hasCantonCreatableAccounts,
-    selectedCantonCreatableAccounts,
+    hasOnboardingCreatableAccounts,
+    selectedOnboardingAccounts,
     filteredSelectedIds,
     scannedAccounts,
+    navigateToAccountsOnboard,
+    dispatch,
   ]);
 
   const toggleShowAllCreatedAccounts = useCallback(() => setShowAllCreatedAccounts(p => !p), []);

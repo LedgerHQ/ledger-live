@@ -244,7 +244,7 @@ type RawTransferProposal = {
   receiver: string;
   amount: string;
   instrument_id: string;
-  memo: string;
+  memo?: string;
   expires_at_micros: number;
 };
 
@@ -254,7 +254,7 @@ type ProcessedProposal = {
   receiver: string;
   amount: BigNumber;
   instrumentId: string;
-  memo: string;
+  memo?: string;
   expiresAtMicros: number;
   isExpired: boolean;
   isIncoming: boolean;

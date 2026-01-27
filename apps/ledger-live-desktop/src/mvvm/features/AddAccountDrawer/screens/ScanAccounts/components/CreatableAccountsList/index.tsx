@@ -13,6 +13,7 @@ export type CreatableAccountsListProps = {
   showAllCreatedAccounts: boolean;
   toggleShowAllCreatedAccounts: () => void;
   renderAccount: (account: Account) => React.ReactNode;
+  titleKey?: string;
 };
 
 export const CreatableAccountsList = ({
@@ -22,6 +23,7 @@ export const CreatableAccountsList = ({
   showAllCreatedAccounts,
   toggleShowAllCreatedAccounts,
   renderAccount,
+  titleKey = "modularAssetDrawer.addAccounts.newAccount",
 }: CreatableAccountsListProps) => {
   const { t } = useTranslation();
 
@@ -29,7 +31,7 @@ export const CreatableAccountsList = ({
     <Box flex={1}>
       <Flex alignItems="center" justifyContent="space-between" mb="2">
         <Text variant="h5Inter" fontSize="small" color="neutral.c80">
-          {t("modularAssetDrawer.addAccounts.newAccount")}
+          {t(titleKey)}
         </Text>
         {newAccountSchemes.length > 1 ? (
           <Flex flexDirection="row" alignItems="center" justifyContent="center">

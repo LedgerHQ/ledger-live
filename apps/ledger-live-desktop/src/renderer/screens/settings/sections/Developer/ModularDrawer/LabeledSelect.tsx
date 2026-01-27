@@ -24,7 +24,7 @@ export const LabeledSelect = <T extends SelectOption = SelectOption>({
   onChange,
 }: LabeledSelectProps<T>) => {
   return (
-    <div className="flex w-400 flex-row items-center">
+    <div className="flex flex-row items-center">
       <Text variant="body" fontSize="14px" mr="2">
         {label}
       </Text>

@@ -21,6 +21,7 @@ import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 interface Props extends UseScanAccountsProps {
   analyticsPropertyFlow?: string;
   onRetry?: () => void;
+  navigateToAccountsOnboard?: UseScanAccountsProps["navigateToAccountsOnboard"];
 }
 
 const ScanAccounts = ({
@@ -28,6 +29,7 @@ const ScanAccounts = ({
   deviceId,
   onComplete,
   navigateToWarningScreen,
+  navigateToAccountsOnboard,
   onRetry,
 }: Props) => {
   const source = useSelector(modularDrawerSourceSelector);
@@ -53,6 +55,7 @@ const ScanAccounts = ({
     currency,
     deviceId,
     navigateToWarningScreen,
+    navigateToAccountsOnboard,
     onComplete,
   });
 

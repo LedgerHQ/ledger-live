@@ -110,7 +110,7 @@ const ThemeConsole = () => {
     >
       <div className="flex flex-row gap-8 rounded-[8px] bg-muted-transparent p-8 shadow-xl select-none">
         <div
-          className="flex cursor-grab items-center justify-center px-2 text-muted active:cursor-grabbing"
+          className="flex cursor-grab items-center justify-center px-2 active:cursor-grabbing"
           onMouseDown={handleMouseDown}
           title="Drag to move"
         >

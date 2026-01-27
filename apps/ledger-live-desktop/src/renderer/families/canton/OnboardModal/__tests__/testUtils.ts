@@ -1,4 +1,5 @@
-import { AuthorizeStatus, OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { AuthorizeStatus } from "@ledgerhq/coin-canton/types";
+import { AccountOnboardStatus } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Account } from "@ledgerhq/types-live";
@@ -37,7 +38,9 @@ export const createMockCantonBridge = () => ({
   authorizePreapproval: jest.fn(),
 });
 
-type ObservableValue = { error?: Error } | { status: number; account?: Account; partyId?: string };
+type ObservableValue =
+  | { error?: Error }
+  | { status: AccountOnboardStatus | number; account?: Account; partyId?: string };
 
 export const createMockObservable = (values: ObservableValue[], delay: number = 0) => ({
   subscribe: jest.fn(
@@ -87,11 +90,10 @@ export const createMockStepProps = (overrides: Record<string, unknown> = {}) => 
     importableAccounts: [importableAccount],
     isProcessing: false,
     onboardingResult: undefined,
-    onboardingStatus: OnboardStatus.INIT,
+    onboardingStatus: AccountOnboardStatus.INIT,
     authorizeStatus: AuthorizeStatus.INIT,
     error: null,
     onAddAccounts: jest.fn(),
-    onAddMore: jest.fn(),
     onAuthorizePreapproval: jest.fn(),
     onOnboardAccount: jest.fn(),
     onRetryOnboardAccount: jest.fn(),
@@ -122,11 +124,11 @@ export const createMockUserProps = (overrides: Record<string, unknown> = {}) => 
 };
 
 export const mockOnboardingProgress = {
-  PREPARE: { status: OnboardStatus.PREPARE },
-  SIGN: { status: OnboardStatus.SIGN },
-  SUBMIT: { status: OnboardStatus.SUBMIT },
+  PREPARE: { status: AccountOnboardStatus.PREPARE },
+  SIGN: { status: AccountOnboardStatus.SIGN },
+  SUBMIT: { status: AccountOnboardStatus.SUBMIT },
   SUCCESS: {
-    status: OnboardStatus.SUCCESS,
+    status: AccountOnboardStatus.SUCCESS,
     account: createMockAccount(),
     partyId: "test-party-id",
   },
