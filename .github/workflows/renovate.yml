@@ -8,8 +8,16 @@ on:
     - cron: "0 22 * * 1-5"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   renovate:
+    name: "Run Renovate"
     runs-on: ubuntu-22.04
     env:
       LOG_LEVEL: debug
@@ -17,14 +25,18 @@ jobs:
     steps:
       - name: Get token
         id: get_token
-        uses: tibdex/github-app-token@v1
+        uses: tibdex/github-app-token@32691ba7c9e7063bd457bd8f2a5703138591fa58 # v1
         with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          app_id: ${{ secrets.PUBLIC_RENOVATE_APP_ID }}
+          private_key: ${{ secrets.PUBLIC_RENOVATE_KEY }}
+
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+
       - name: Self-hosted Renovate
-        uses: renovatebot/github-action@v44.2.1
+        uses: renovatebot/github-action@f7fad228a053c69a98e24f8e4f6cf40db8f61e08 # v44.2.1
         with:
           configurationFile: renovate-config.js
           token: "${{ steps.get_token.outputs.token }}"
