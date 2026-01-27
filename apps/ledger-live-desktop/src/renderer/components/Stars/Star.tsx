@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { toggleStarAction } from "~/renderer/actions/wallet";
@@ -32,12 +32,22 @@ export default function Star({ accountId, yellow, rounded }: Props) {
     [dispatch, accountId, refreshAccountsOrdering, isAccountStarred],
   );
   const MaybeButtonWrapper = yellow ? ButtonWrapper : FloatingWrapper;
+  const nodeRef = useRef(null);
   return (
     <MaybeButtonWrapper filled={isAccountStarred} rounded={rounded}>
       <StarWrapper id="account-star-button" onClick={toggleStar} tabIndex={-1} rounded={rounded}>
-        <Transition in={isAccountStarred} timeout={isAccountStarred ? startBurstTiming : 0}>
+        <Transition
+          in={isAccountStarred}
+          timeout={isAccountStarred ? startBurstTiming : 0}
+          nodeRef={nodeRef}
+        >
           {className => (
-            <StarIcon yellow={yellow} filled={isAccountStarred} className={className} />
+            <StarIcon
+              ref={nodeRef}
+              yellow={yellow}
+              filled={isAccountStarred}
+              className={className}
+            />
           )}
         </Transition>
       </StarWrapper>

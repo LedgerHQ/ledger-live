@@ -1,4 +1,4 @@
-import React, { useContext, useCallback, useEffect, useState } from "react";
+import React, { useContext, useCallback, useEffect, useState, useRef } from "react";
 import { context, State } from "./Provider";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import styled from "styled-components";
@@ -68,6 +68,19 @@ const Drawer = () => {
     }
     setDrawer();
   }, [setDrawer, state?.props?.onRequestClose, track]);
+
+  const refsMapRef = useRef<Map<string, React.RefObject<HTMLDivElement>>>(new Map());
+
+  useEffect(() => {
+    const refsMap = refsMapRef.current;
+    const currentIds = new Set(queue.map(({ id }) => id));
+    for (const [id] of refsMap) {
+      if (!currentIds.has(id)) {
+        refsMap.delete(id);
+      }
+    }
+  }, [queue]);
+
   return (
     <SideDrawer
       isOpen={!!state.open}
@@ -78,33 +91,44 @@ const Drawer = () => {
     >
       <>
         <TransitionGroup>
-          {queue.map(({ Component, props, id }, index) => (
-            <Transition
-              timeout={{
-                appear: DURATION,
-                enter: DURATION,
-                exit: DURATION * 2,
-              }}
-              key={id}
-            >
-              {s => (
-                <Bar
-                  state={s}
-                  index={index}
-                  withPaddingTop={
-                    state.options.withPaddingTop === undefined ? true : state.options.withPaddingTop
-                  }
-                >
-                  {Component && (
-                    <Component
-                      onClose={state.options.onRequestClose || onRequestClose}
-                      {...props}
-                    />
-                  )}
-                </Bar>
-              )}
-            </Transition>
-          ))}
+          {queue.map(({ Component, props, id }, index) => {
+            const refsMap = refsMapRef.current;
+            if (!refsMap.has(id)) {
+              refsMap.set(id, React.createRef<HTMLDivElement>());
+            }
+            const nodeRef = refsMap.get(id)!;
+            return (
+              <Transition
+                timeout={{
+                  appear: DURATION,
+                  enter: DURATION,
+                  exit: DURATION * 2,
+                }}
+                key={id}
+                nodeRef={nodeRef}
+              >
+                {s => (
+                  <Bar
+                    ref={nodeRef}
+                    state={s}
+                    index={index}
+                    withPaddingTop={
+                      state.options.withPaddingTop === undefined
+                        ? true
+                        : state.options.withPaddingTop
+                    }
+                  >
+                    {Component && (
+                      <Component
+                        onClose={state.options.onRequestClose || onRequestClose}
+                        {...props}
+                      />
+                    )}
+                  </Bar>
+                )}
+              </Transition>
+            );
+          })}
         </TransitionGroup>
       </>
     </SideDrawer>

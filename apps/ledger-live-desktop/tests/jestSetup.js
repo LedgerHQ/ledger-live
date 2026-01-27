@@ -140,7 +140,7 @@ const originalWarn = console.warn;
 // eslint-disable-next-line no-console
 const originalLog = console.log;
 
-const EXCLUDED_ERRORS = ["act(...)", "ReactDOMTestUtils.act", "Warning: findDOMNode is deprecated"];
+const EXCLUDED_ERRORS = ["act(...)"];
 
 const EXCLUDED_WARNINGS = ["@polkadot"];
 

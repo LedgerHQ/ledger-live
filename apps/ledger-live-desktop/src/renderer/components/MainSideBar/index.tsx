@@ -399,6 +399,8 @@ const MainSideBar = () => {
     return minHeight + "px";
   };
 
+  const nodeRef = useRef(null);
+
   return (
     <Transition
       in={!collapsed}
@@ -407,11 +409,15 @@ const MainSideBar = () => {
       onExit={disableTransitions}
       onEntered={enableTransitions}
       onExited={enableTransitions}
+      nodeRef={nodeRef}
     >
       {state => {
         const secondAnim = !(state === "entered" && !collapsed);
         return (
-          <SideBar style={sideBarTransitionStyles[state as keyof typeof sideBarTransitionStyles]}>
+          <SideBar
+            ref={nodeRef}
+            style={sideBarTransitionStyles[state as keyof typeof sideBarTransitionStyles]}
+          >
             <Collapser
               collapsed={collapsed}
               onClick={handleCollapse}
