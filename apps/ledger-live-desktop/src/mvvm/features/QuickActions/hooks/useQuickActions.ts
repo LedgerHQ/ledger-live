@@ -36,8 +36,13 @@ export const useQuickActions = (): { hasAccount: boolean; actionsList: QuickActi
 
   const onReceive = useCallback(() => {
     maybeRedirectToAccounts();
+
+    if (!hasFunds) {
+      dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
+    }
+
     dispatch(openModal("MODAL_RECEIVE", undefined));
-  }, [dispatch, maybeRedirectToAccounts]);
+  }, [dispatch, maybeRedirectToAccounts, hasFunds]);
 
   const onBuy = useCallback(() => {
     navigate("/exchange", {

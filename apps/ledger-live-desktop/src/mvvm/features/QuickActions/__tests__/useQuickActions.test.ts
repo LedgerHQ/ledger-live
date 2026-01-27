@@ -118,6 +118,24 @@ describe("useQuickActions", () => {
       expect(mockDispatch).toHaveBeenCalledWith(openModal("MODAL_RECEIVE", undefined));
     });
 
+    it("should open MODAL_ADD_ACCOUNTS when no accounts exist", () => {
+      mockUseSelector.mockImplementation(selector => {
+        if (selector.toString().includes("areAccountsEmpty")) {
+          return false;
+        }
+        return false;
+      });
+
+      const { result } = renderHook(() => useQuickActions());
+
+      act(() => {
+        result.current.actionsList[0].onAction();
+      });
+
+      expect(mockDispatch).toHaveBeenCalledWith(openModal("MODAL_ADD_ACCOUNTS", undefined));
+      expect(mockDispatch).toHaveBeenCalledWith(openModal("MODAL_RECEIVE", undefined));
+    });
+
     it("should not navigate when already on accounts page", () => {
       mockUseLocation.mockReturnValue({
         pathname: "/accounts",
