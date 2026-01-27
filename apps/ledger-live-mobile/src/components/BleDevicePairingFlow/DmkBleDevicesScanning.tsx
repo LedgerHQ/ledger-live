@@ -24,6 +24,7 @@ type DmkBleDevicesScanningProps = Omit<BleDevicesScanningProps, "devices"> & {
 };
 
 export const DmkBleDevicesScanning = (props: DmkBleDevicesScanningProps) => {
+  // FIXME: this will be done properly by injecting the mock transport directly in the DMK transport builder
   const isMockMode = Boolean(Config.MOCK || Config.DETOX);
   const isFocused = useIsFocused();
 

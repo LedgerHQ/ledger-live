@@ -139,6 +139,7 @@ export default function SelectDevice({
 
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
 
+  // FIXME: this will be done properly by injecting the mock transport directly in the DMK transport builder
   const isMockMode = Boolean(Config.MOCK || Config.DETOX);
   const scanningEnabled =
     isFocused && !stopBleScanning && pairingFlowStep !== "pairing" && !deviceToCheckLockedStatus;

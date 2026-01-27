@@ -24,6 +24,7 @@ export const DmkBleDevicePairing = ({
   onPaired,
   onOpenHelp,
 }: DmkBleDevicePairingProps) => {
+  // FIXME: this will be done properly by injecting the mock transport directly in the DMK transport builder
   const isMockMode = Boolean(Config.MOCK || Config.DETOX);
 
   // Use mock pairing in e2e test mode, real DMK pairing otherwise
