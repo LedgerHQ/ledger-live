@@ -720,14 +720,12 @@ export const getListOperations = async (
     );
 
     const checkpointHashMap = new Map<string, string>();
-    const failedCheckpoints = new Set<string>();
     await Promise.all(
       Array.from(uniqueCheckpoints).map(async checkpoint => {
         try {
           const checkpointData = await api.getCheckpoint({ id: checkpoint });
           checkpointHashMap.set(checkpoint, checkpointData.digest);
         } catch (error) {
-          failedCheckpoints.add(checkpoint);
           console.warn(
             `Failed to fetch checkpoint ${checkpoint}, skipping associated operations:`,
             error,
