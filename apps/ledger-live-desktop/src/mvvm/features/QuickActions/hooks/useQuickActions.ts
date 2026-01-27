@@ -37,7 +37,7 @@ export const useQuickActions = (): { hasAccount: boolean; actionsList: QuickActi
   const onReceive = useCallback(() => {
     maybeRedirectToAccounts();
 
-    if (!hasFunds) {
+    if (hasFunds) {
       dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
     }
 
@@ -59,6 +59,36 @@ export const useQuickActions = (): { hasAccount: boolean; actionsList: QuickActi
       },
     });
   }, [navigate]);
+
+  const onConnect = useCallback(() => {
+    dispatch(openModal("MODAL_CONNECT_DEVICE", { onResult: () => {} }));
+  }, [dispatch]);
+
+  const onBuyALedger = useCallback(() => {
+    window.open("https://www.ledger.com/buy-ledger", "_blank", "noopener");
+  }, []);
+
+  if (!hasAccount) {
+    return {
+      hasAccount,
+      actionsList: [
+        {
+          title: t("quickActions.connect"),
+          onAction: onConnect,
+          icon: ArrowDown,
+          disabled: false,
+          buttonAppearance: "base",
+        },
+        {
+          title: t("quickActions.buyALedger"),
+          onAction: onBuyALedger,
+          icon: ArrowDown,
+          disabled: false,
+          buttonAppearance: "transparent",
+        },
+      ],
+    };
+  }
 
   return {
     hasAccount,
