@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router";
 import { IconsLegacy, Link } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
-import Page from "~/renderer/components/Page";
+import Page from "LLD/components/Page";
 import Settings from ".";
 
 const WelcomeScreenSettings: React.FC = () => {
