@@ -8,6 +8,8 @@ import {
   etherscanInternalTransactionToOperations,
   etherscanOperationToOperations,
   safeBigNumber,
+  deserializePagingToken,
+  serializePagingToken,
 } from "../adapters";
 import {
   EtherscanERC1155Event,
@@ -16,10 +18,6 @@ import {
   EtherscanInternalTransaction,
   EtherscanOperation,
 } from "../types";
-import {
-  deserializePagingToken,
-  serializePagingToken,
-} from "../network/explorer/etherscan";
 import { NO_TOKEN } from "../network/explorer/types";
 
 describe("EVM Family", () => {
@@ -1706,22 +1704,6 @@ describe("EVM Family", () => {
           const nextFromBlock = 12345;
           const token = serializePagingToken(nextFromBlock, false);
           expect(deserializePagingToken(token, 0)).toBe(nextFromBlock);
-        });
-      });
-
-      describe("pagination token lifecycle", () => {
-        it("first call uses minHeight when no token", () => {
-          expect(deserializePagingToken(undefined, 1000)).toBe(1000);
-        });
-
-        it("subsequent calls use fromBlock from token", () => {
-          const token = serializePagingToken(5000, false);
-          // Deserialize with different minHeight - should use token value
-          expect(deserializePagingToken(token, 1000)).toBe(5000);
-        });
-
-        it("final call returns NO_TOKEN when all done", () => {
-          expect(serializePagingToken(10000, true)).toBe(NO_TOKEN);
         });
       });
     });

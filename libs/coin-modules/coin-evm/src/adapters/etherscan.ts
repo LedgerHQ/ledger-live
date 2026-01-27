@@ -293,3 +293,38 @@ export const etherscanInternalTransactionToOperations = (
       }) as Operation,
   );
 };
+
+/**
+ * Serialize a paging token for the next page request
+ * Returns NO_TOKEN if all endpoints are done
+ */
+export function serializePagingToken(nextFromBlock: number, allDone: boolean): string {
+  // NO_TOKEN is empty string - inline to avoid circular dependency
+  if (allDone) return "";
+  return nextFromBlock.toString();
+}
+
+/**
+ * Deserialize a paging token to get the fromBlock for the current request
+ * Returns minHeight if token is undefined or invalid
+ */
+export function deserializePagingToken(
+  token: string | undefined,
+  minHeight: number,
+): number {
+  if (!token) return minHeight;
+  const parsed = parseInt(token, 10);
+  if (isNaN(parsed)) return minHeight;
+  return parsed;
+}
+
+/**
+ * Get the max block height from a list of operations
+ * Used to compute the next page's fromBlock
+ */
+export function getMaxBlockFromOperations(ops: Operation[], sort: "asc" | "desc"): number {
+  if (ops.length === 0) return 0;
+  // Results are already sorted, take head for desc or tail for asc
+  const op = sort === "desc" ? ops[0] : ops[ops.length - 1];
+  return op.blockHeight ?? 0;
+}

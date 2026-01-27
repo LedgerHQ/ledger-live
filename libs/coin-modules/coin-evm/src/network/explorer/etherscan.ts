@@ -16,6 +16,9 @@ import {
   etherscanERC721EventToOperations,
   etherscanERC1155EventToOperations,
   etherscanInternalTransactionToOperations,
+  deserializePagingToken,
+  serializePagingToken,
+  getMaxBlockFromOperations,
 } from "../../adapters";
 import { getCoinConfig } from "../../config";
 import {
@@ -30,30 +33,6 @@ import { ExplorerApi, isEtherscanLikeExplorerConfig, NO_TOKEN } from "./types";
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
 
-// Paging token is simply the next fromBlock (maxBlock + 1)
-// With total ordering, all endpoints use the same fromBlock
-
-export function deserializePagingToken(
-  token: string | undefined,
-  minHeight: number,
-): number {
-  if (!token) return minHeight;
-  const parsed = parseInt(token, 10);
-  if (isNaN(parsed)) return minHeight;
-  return parsed;
-}
-
-export function serializePagingToken(nextFromBlock: number, allDone: boolean): string {
-  if (allDone) return NO_TOKEN;
-  return nextFromBlock.toString();
-}
-
-function getMaxBlockFromOperations(ops: Operation[], sort: "asc" | "desc"): number {
-  if (ops.length === 0) return 0;
-  // Results are already sorted, take head for desc or tail for asc
-  const op = sort === "desc" ? ops[0] : ops[ops.length - 1];
-  return op.blockHeight ?? 0;
-}
 
 // Result type for individual endpoint fetches
 export type EndpointResult = {
