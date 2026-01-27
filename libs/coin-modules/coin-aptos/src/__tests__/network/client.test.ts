@@ -11,7 +11,7 @@ import {
   postAptosFullNode,
   TransactionResponseType,
 } from "@aptos-labs/ts-sdk";
-import { Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { APTOS_ASSET_ID } from "../../constants";
@@ -851,7 +851,7 @@ describe("Aptos API", () => {
     it("list of operations", async () => {
       const api = new AptosAPI("aptos");
       const address = "0x12345";
-      const pagination: Pagination = { minHeight: 0, order: "asc" };
+      const minHeight = 0;
 
       const txs: AptosTransaction[] = [
         {
@@ -1288,10 +1288,10 @@ describe("Aptos API", () => {
 
       api.getAccountInfo = jest.fn().mockResolvedValue({ transactions });
 
-      const ops = await api.listOperations(address, pagination.minHeight);
+      const ops = await api.listOperations(address, minHeight);
 
-      expect(ops[0]).toHaveLength(2);
-      expect(ops[1]).toBe("");
+      expect(ops.items).toHaveLength(2);
+      expect(ops.next).toBeUndefined();
     });
   });
 });

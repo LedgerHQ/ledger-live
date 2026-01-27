@@ -3,11 +3,11 @@ import {
   Block,
   BlockInfo,
   Cursor,
+  ListOperationsOptions,
   Page,
   Validator,
   IncorrectTypeError,
   type Operation,
-  type Pagination,
   Reward,
   Stake,
   CraftedTransaction,
@@ -356,14 +356,14 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
 
 async function operations(
   address: string,
-  pagination: Pagination = { minHeight: 0, order: "asc" },
-): Promise<[Operation[], string]> {
-  const [operations, newNextCursor] = await listOperations(address, {
+  { minHeight = 0, cursor, order = "asc" }: ListOperationsOptions,
+): Promise<Page<Operation>> {
+  const [items, newNextCursor] = await listOperations(address, {
     limit: 200,
-    token: pagination.lastPagingToken,
-    sort: pagination.order === "asc" ? "Ascending" : "Descending",
-    minHeight: pagination.minHeight,
+    token: cursor,
+    sort: order === "asc" ? "Ascending" : "Descending",
+    minHeight: minHeight,
   });
 
-  return [operations, newNextCursor || ""];
+  return { items, next: newNextCursor || undefined };
 }
