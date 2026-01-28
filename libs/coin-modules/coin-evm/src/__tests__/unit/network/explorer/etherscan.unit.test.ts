@@ -1746,6 +1746,56 @@ describe("EVM Family", () => {
         expect(nftCall).toBeDefined();
         expect((nftCall![0] as any).params.endBlock).toBe(tokenMaxBlock);
       });
+
+      it("should not cascade block range when limit is undefined (unlimited page)", async () => {
+        const callerToBlock = 200;
+        const coinMaxBlock = 150;
+
+        // Track calls per endpoint to return empty on page 2+
+        const coinCallCount = { count: 0 };
+        const spy = jest.spyOn(axios, "request").mockImplementation(async config => {
+          const url = config.url as string;
+          if (getEndpointType(url) === "coin") {
+            coinCallCount.count++;
+            if (coinCallCount.count === 1) {
+              return { data: { result: createMockCoinTxResponse([coinMaxBlock]) } };
+            }
+          }
+          return { data: { result: [] } };
+        });
+
+        await ETHERSCAN_API.getOperations.force(
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          callerToBlock,
+          undefined,
+          undefined, // limit undefined = unlimited page
+        );
+
+        // Coin call should use callerToBlock
+        const coinCall = spy.mock.calls.find(
+          call => getEndpointType((call[0] as any).url) === "coin",
+        );
+        expect(coinCall).toBeDefined();
+        expect((coinCall![0] as any).params.endBlock).toBe(callerToBlock);
+
+        // Even though coin returned ops at block 150, internal should still use callerToBlock (200)
+        // because limit is undefined, so effectiveMaxBlock is not updated
+        const internalCall = spy.mock.calls.find(
+          call => getEndpointType((call[0] as any).url) === "internal",
+        );
+        expect(internalCall).toBeDefined();
+        expect((internalCall![0] as any).params.endBlock).toBe(callerToBlock);
+
+        // Token should also use callerToBlock
+        const tokenCall = spy.mock.calls.find(
+          call => getEndpointType((call[0] as any).url) === "token",
+        );
+        expect(tokenCall).toBeDefined();
+        expect((tokenCall![0] as any).params.endBlock).toBe(callerToBlock);
+      });
     });
 
     describe("exhaustEndpoint", () => {
