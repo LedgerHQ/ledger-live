@@ -21,6 +21,19 @@ import { safeEncodeEIP55 } from "../utils";
 import { detectEvmStakingOperationType } from "../staking/detectOperationType";
 
 /**
+ * Helper to safely convert a value to BigNumber, defaulting to 0 if invalid.
+ * Some explorers (e.g., Blockscout on Optimism) may return empty strings or
+ * undefined for gasPrice/gasUsed on L2 transactions with special gas handling.
+ */
+export const safeBigNumber = (value: string | undefined): BigNumber => {
+  if (!value || value === "") {
+    return new BigNumber(0);
+  }
+  const bn = new BigNumber(value);
+  return bn.isNaN() ? new BigNumber(0) : bn;
+};
+
+/**
  * Adapter to convert an Etherscan operation into Ledger Live Operations.
  * It can return more than one operation in case of self-send
  */
@@ -32,8 +45,8 @@ export const etherscanOperationToOperations = (
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(etherscanOp.from);
   const to = safeEncodeEIP55(etherscanOp.to);
-  const value = new BigNumber(etherscanOp.value);
-  const fee = new BigNumber(etherscanOp.gasUsed).times(new BigNumber(etherscanOp.gasPrice));
+  const value = safeBigNumber(etherscanOp.value);
+  const fee = safeBigNumber(etherscanOp.gasUsed).times(safeBigNumber(etherscanOp.gasPrice));
   const hasFailed = etherscanOp.isError === "1";
   const types: OperationType[] = [];
 
@@ -98,8 +111,8 @@ export const etherscanERC20EventToOperations = (
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(event.from);
   const to = safeEncodeEIP55(event.to);
-  const value = new BigNumber(event.value);
-  const fee = new BigNumber(event.gasUsed).times(new BigNumber(event.gasPrice));
+  const value = safeBigNumber(event.value);
+  const fee = safeBigNumber(event.gasUsed).times(safeBigNumber(event.gasPrice));
   const types: OperationType[] = [];
 
   if (to === checksummedAddress) {
@@ -150,7 +163,7 @@ export const etherscanERC721EventToOperations = (
   const from = safeEncodeEIP55(event.from);
   const to = safeEncodeEIP55(event.to);
   const value = new BigNumber(1); // value is representing the number of NFT transfered. ERC721 are always sending 1 NFT per transaction
-  const fee = new BigNumber(event.gasUsed).times(new BigNumber(event.gasPrice));
+  const fee = safeBigNumber(event.gasUsed).times(safeBigNumber(event.gasPrice));
   const contract = eip55.encode(event.contractAddress);
   const nftId = encodeNftId(accountId, contract, event.tokenID, currencyId);
   const types: OperationType[] = [];
@@ -199,8 +212,8 @@ export const etherscanERC1155EventToOperations = (
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(event.from);
   const to = safeEncodeEIP55(event.to);
-  const value = new BigNumber(event.tokenValue); // value is representing the number of NFT transfered.
-  const fee = new BigNumber(event.gasUsed).times(new BigNumber(event.gasPrice));
+  const value = safeBigNumber(event.tokenValue); // value is representing the number of NFT transfered.
+  const fee = safeBigNumber(event.gasUsed).times(safeBigNumber(event.gasPrice));
   const contract = eip55.encode(event.contractAddress);
   const nftId = encodeNftId(accountId, contract, event.tokenID, currencyId);
   const types: OperationType[] = [];
@@ -250,7 +263,7 @@ export const etherscanInternalTransactionToOperations = (
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(internalTx.from);
   const to = safeEncodeEIP55(internalTx.to);
-  const value = new BigNumber(internalTx.value);
+  const value = safeBigNumber(internalTx.value);
   const types: OperationType[] = [];
   const hasFailed = isError === "1";
 

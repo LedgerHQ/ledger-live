@@ -7,6 +7,7 @@ import {
   etherscanERC721EventToOperations,
   etherscanInternalTransactionToOperations,
   etherscanOperationToOperations,
+  safeBigNumber,
 } from "../adapters";
 import {
   EtherscanERC1155Event,
@@ -496,6 +497,97 @@ describe("EVM Family", () => {
             etherscanOperationToOperations(accountId, { ...etherscanOpIn, isError: "1" })[0].value,
           ).toEqual(new BigNumber(etherscanOpIn.value));
         });
+
+        // Raw response from Blockscout Optimism API for account 0xB10770cE9f8532634b6Ba156b8789f19935210F0
+        // These transactions have empty gasPrice which previously caused "Cannot convert NaN to a BigInt"
+        const rawBlockscoutTransaction: EtherscanOperation = {
+          blockHash: "0x9856e4949b1854cca7463e29fe50d78c3f458b48b59402b765c4fa4b53292568",
+          blockNumber: "117087839",
+          confirmations: "29885597",
+          contractAddress: "",
+          cumulativeGasUsed: "381508",
+          from: "0xb10770ce9f8532634b6ba156b8789f19935210f0",
+          gas: "163840",
+          gasPrice: "",
+          gasUsed: "140669",
+          hash: "0xea18d674a91c9b7459baad0e138bcca25fa342d8fa692c66489248a3ebb4ca9d",
+          input:
+            "0x22e147abe8919a070b6015d241b29a7bf065b2acd60b85d34fbd69a76171ab7a69b15fad2ffb299b366ffe43cbc46ec3f2e8f2b3e821df564be33fb5549a566e1c65e916a20223a20cdc42000000000000000000000000000000000000060a2c9a33c8dc6ff44d5d932cbd77b52e5612ba0529dc6226f13301002c9a33c82ae3d6096d8215ac2acddf30c60caa984ea5debe",
+          isError: "0",
+          methodId: "0x",
+          nonce: "167946",
+          timeStamp: "1709774455",
+          to: "0xff153aaab90deb8d88c3e7e9e0737b03a5e8b93c",
+          transactionIndex: "2",
+          txreceipt_status: "1",
+          value: "0",
+          functionName: "",
+        };
+
+        it("should handle transaction with empty gasPrice without throwing (Blockscout Optimism)", () => {
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "optimism",
+            xpubOrAddress: "0xB10770cE9f8532634b6Ba156b8789f19935210F0",
+            derivationMode: "",
+          });
+
+          const result = etherscanOperationToOperations(accountId, rawBlockscoutTransaction);
+
+          expect(result).toHaveLength(1);
+          expect(result[0].fee).toEqual(new BigNumber(0));
+          expect(result[0].value).toEqual(new BigNumber(0));
+          expect(result[0].hash).toBe(
+            "0xea18d674a91c9b7459baad0e138bcca25fa342d8fa692c66489248a3ebb4ca9d",
+          );
+          expect(result[0].type).toBe("OUT");
+        });
+
+        it("should handle failed transaction with empty gasPrice", () => {
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "optimism",
+            xpubOrAddress: "0xB10770cE9f8532634b6Ba156b8789f19935210F0",
+            derivationMode: "",
+          });
+
+          const failedTransaction: EtherscanOperation = {
+            ...rawBlockscoutTransaction,
+            isError: "1",
+            txreceipt_status: "0",
+            hash: "0xb7ae1fdaa0d0bcde82cdb12d91898862fbcc5308bc844f508916b434080bb218",
+          };
+
+          const result = etherscanOperationToOperations(accountId, failedTransaction);
+
+          expect(result).toHaveLength(1);
+          expect(result[0].fee).toEqual(new BigNumber(0));
+          expect(result[0].value).toEqual(new BigNumber(0));
+          expect(result[0].hasFailed).toBe(true);
+        });
+
+        it("should handle transaction with both empty gasPrice and empty value", () => {
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "optimism",
+            xpubOrAddress: "0xB10770cE9f8532634b6Ba156b8789f19935210F0",
+            derivationMode: "",
+          });
+
+          const txWithEmptyValue: EtherscanOperation = {
+            ...rawBlockscoutTransaction,
+            value: "",
+          };
+
+          const result = etherscanOperationToOperations(accountId, txWithEmptyValue);
+
+          expect(result).toHaveLength(1);
+          expect(result[0].fee).toEqual(new BigNumber(0));
+          expect(result[0].value).toEqual(new BigNumber(0));
+        });
       });
 
       describe("etherscanERC20EventToOperations", () => {
@@ -708,6 +800,44 @@ describe("EVM Family", () => {
           expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual(
             expectedOperations,
           );
+        });
+
+        it("should handle ERC20 event with empty gasPrice (Blockscout Optimism)", () => {
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "optimism",
+            xpubOrAddress: "0xB10770cE9f8532634b6Ba156b8789f19935210F0",
+            derivationMode: "",
+          });
+
+          const erc20Event: EtherscanERC20Event = {
+            blockNumber: "117087839",
+            timeStamp: "1709774455",
+            hash: "0xea18d674a91c9b7459baad0e138bcca25fa342d8fa692c66489248a3ebb4ca9d",
+            nonce: "167946",
+            blockHash: "0x9856e4949b1854cca7463e29fe50d78c3f458b48b59402b765c4fa4b53292568",
+            from: "0xb10770ce9f8532634b6ba156b8789f19935210f0",
+            to: "0xff153aaab90deb8d88c3e7e9e0737b03a5e8b93c",
+            contractAddress: "0x4200000000000000000000000000000000000042",
+            value: "1000000000000000000",
+            tokenName: "Optimism",
+            tokenSymbol: "OP",
+            tokenDecimal: "18",
+            transactionIndex: "2",
+            gas: "163840",
+            gasPrice: "",
+            gasUsed: "140669",
+            cumulativeGasUsed: "381508",
+            input: "deprecated",
+            confirmations: "29885597",
+          };
+
+          const result = etherscanERC20EventToOperations(accountId, erc20Event);
+
+          expect(result).toHaveLength(1);
+          expect(result[0].fee).toEqual(new BigNumber(0));
+          expect(result[0].value).toEqual(new BigNumber("1000000000000000000"));
         });
       });
 
@@ -1512,6 +1642,29 @@ describe("EVM Family", () => {
           expect(etherscanOperationToOperations(accountId, etherscanOp)).toEqual([
             expectedOperation,
           ]);
+        });
+      });
+
+      describe("safeBigNumber", () => {
+        it("should return BigNumber(0) for empty string", () => {
+          expect(safeBigNumber("")).toEqual(new BigNumber(0));
+        });
+        it("should return BigNumber(0) for undefined", () => {
+          expect(safeBigNumber(undefined)).toEqual(new BigNumber(0));
+        });
+        it("should return BigNumber(0) for NaN-producing values", () => {
+          expect(safeBigNumber("not-a-number")).toEqual(new BigNumber(0));
+          expect(safeBigNumber("abc")).toEqual(new BigNumber(0));
+        });
+        it("should return correct BigNumber for valid numeric strings", () => {
+          expect(safeBigNumber("0")).toEqual(new BigNumber(0));
+          expect(safeBigNumber("123")).toEqual(new BigNumber(123));
+          expect(safeBigNumber("1000000000000000000")).toEqual(
+            new BigNumber("1000000000000000000"),
+          );
+        });
+        it("should handle hex values", () => {
+          expect(safeBigNumber("0x10")).toEqual(new BigNumber(16));
         });
       });
     });
