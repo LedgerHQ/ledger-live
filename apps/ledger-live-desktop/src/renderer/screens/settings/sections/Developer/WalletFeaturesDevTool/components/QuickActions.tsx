@@ -12,16 +12,13 @@ export const QuickActions = ({
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center gap-4">
-      <span className="body-3-semi-bold text-muted">Quick Actions:</span>
-      <div className="flex gap-2">
-        <Button appearance="accent" size="sm" onClick={onEnableAll} disabled={allEnabled}>
-          {t("settings.developer.walletFeaturesDevTool.enableAll")}
-        </Button>
-        <Button appearance="base" size="sm" onClick={onDisableAll} disabled={!isEnabled}>
-          {t("settings.developer.walletFeaturesDevTool.disableAll")}
-        </Button>
-      </div>
+    <div className="flex gap-4">
+      <Button appearance="accent" size="sm" onClick={onEnableAll} disabled={allEnabled}>
+        {t("settings.developer.walletFeaturesDevTool.enableAll")}
+      </Button>
+      <Button appearance="base" size="sm" onClick={onDisableAll} disabled={!isEnabled}>
+        {t("settings.developer.walletFeaturesDevTool.disableAll")}
+      </Button>
     </div>
   );
 };
