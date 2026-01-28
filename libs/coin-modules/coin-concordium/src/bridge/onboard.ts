@@ -181,11 +181,17 @@ export const buildPairWalletConnect =
 
           o.next({ status: ConcordiumPairingStatus.PREPARE, walletConnectUri });
 
-          const approvalTimeout = new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error("Proposal expired")), APPROVAL_TIMEOUT_MS),
-          );
+          let timeoutId: ReturnType<typeof setTimeout>;
+          const approvalTimeout = new Promise<never>((_, reject) => {
+            timeoutId = setTimeout(
+              () => reject(new Error("Proposal expired")),
+              APPROVAL_TIMEOUT_MS,
+            );
+          });
 
-          const session = await Promise.race([approval(), approvalTimeout]);
+          const session = await Promise.race([approval(), approvalTimeout]).finally(() => {
+            clearTimeout(timeoutId);
+          });
 
           o.next({ status: ConcordiumPairingStatus.SUCCESS, sessionTopic: session.topic });
         } catch (error: unknown) {

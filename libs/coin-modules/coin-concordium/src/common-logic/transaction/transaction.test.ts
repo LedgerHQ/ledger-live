@@ -1,0 +1,335 @@
+import BigNumber from "bignumber.js";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { AccountTransactionType } from "@ledgerhq/concordium-sdk-adapter";
+import { craftTransaction } from "./craftTransaction";
+import { estimateFees } from "./estimateFees";
+import { combine } from "./combine";
+import { broadcast } from "./broadcast";
+
+// Mock network calls
+jest.mock("../../network/grpcClient", () => ({
+  getBlockChainParameters: jest.fn().mockResolvedValue({
+    euroPerEnergy: { numerator: 1n, denominator: 1000n },
+    microGTUPerEuro: { numerator: 1000000n, denominator: 1n },
+  }),
+}));
+
+jest.mock("../../network/proxyClient", () => ({
+  submitTransfer: jest.fn().mockResolvedValue({ submissionId: "test-submission-id" }),
+}));
+
+const VALID_ADDRESS = "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w";
+
+const createMockCurrency = (): CryptoCurrency =>
+  ({
+    id: "concordium",
+    name: "Concordium",
+  }) as CryptoCurrency;
+
+describe("common-logic/transaction", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe("craftTransaction", () => {
+    it("should craft a simple transfer transaction", async () => {
+      const account = {
+        address: VALID_ADDRESS,
+        nextSequenceNumber: 1,
+        publicKey: "aa".repeat(32),
+      };
+      const transaction = {
+        recipient: VALID_ADDRESS,
+        amount: new BigNumber(1000000),
+      };
+
+      const result = await craftTransaction(account, transaction);
+
+      expect(result).toHaveProperty("transaction");
+      expect(result).toHaveProperty("serializedTransaction");
+      expect(typeof result.serializedTransaction).toBe("string");
+      expect(result.serializedTransaction.length).toBeGreaterThan(0);
+    });
+
+    it("should craft a transfer with memo transaction", async () => {
+      const account = {
+        address: VALID_ADDRESS,
+        nextSequenceNumber: 5,
+      };
+      const transaction = {
+        recipient: VALID_ADDRESS,
+        amount: new BigNumber(2000000),
+        memo: "test memo",
+      };
+
+      const result = await craftTransaction(account, transaction);
+
+      expect(result.transaction).toBeDefined();
+      expect(result.serializedTransaction).toBeDefined();
+      // Serialized transaction should be longer due to memo
+      expect(result.serializedTransaction.length).toBeGreaterThan(100);
+    });
+
+    it("should use default sequence number when not provided", async () => {
+      const account = {
+        address: VALID_ADDRESS,
+        nextSequenceNumber: 1, // SDK requires sequence >= 1
+      };
+      const transaction = {
+        recipient: VALID_ADDRESS,
+        amount: new BigNumber(500000),
+      };
+
+      const result = await craftTransaction(account, transaction);
+
+      expect(result.transaction).toBeDefined();
+      expect(result.transaction.nonce).toBe(1n);
+    });
+
+    it("should include energy amount when provided", async () => {
+      const account = {
+        address: VALID_ADDRESS,
+        nextSequenceNumber: 1,
+      };
+      const transaction = {
+        recipient: VALID_ADDRESS,
+        amount: new BigNumber(1000000),
+        energy: BigInt(1000),
+      };
+
+      const result = await craftTransaction(account, transaction);
+
+      expect(result.transaction.energyAmount).toBe(BigInt(1000));
+    });
+
+    it("should default energy to 0 when not provided", async () => {
+      const account = {
+        address: VALID_ADDRESS,
+        nextSequenceNumber: 1,
+      };
+      const transaction = {
+        recipient: VALID_ADDRESS,
+        amount: new BigNumber(1000000),
+      };
+
+      const result = await craftTransaction(account, transaction);
+
+      expect(result.transaction.energyAmount).toBe(BigInt(0));
+    });
+
+    it("should set transaction type to Transfer for simple transfer", async () => {
+      const account = { address: VALID_ADDRESS, nextSequenceNumber: 1 };
+      const transaction = {
+        recipient: VALID_ADDRESS,
+        amount: new BigNumber(1000000),
+      };
+
+      const result = await craftTransaction(account, transaction);
+
+      expect(result.transaction.transactionType).toBe(AccountTransactionType.Transfer);
+    });
+
+    it("should set transaction type to TransferWithMemo when memo is present", async () => {
+      const account = { address: VALID_ADDRESS, nextSequenceNumber: 1 };
+      const transaction = {
+        recipient: VALID_ADDRESS,
+        amount: new BigNumber(1000000),
+        memo: "hello",
+      };
+
+      const result = await craftTransaction(account, transaction);
+
+      expect(result.transaction.transactionType).toBe(AccountTransactionType.TransferWithMemo);
+    });
+
+    it("should handle zero amount", async () => {
+      const account = { address: VALID_ADDRESS, nextSequenceNumber: 1 };
+      const transaction = {
+        recipient: VALID_ADDRESS,
+        amount: new BigNumber(0),
+      };
+
+      const result = await craftTransaction(account, transaction);
+
+      expect(result.transaction).toBeDefined();
+    });
+
+    it("should handle large amounts", async () => {
+      const account = { address: VALID_ADDRESS, nextSequenceNumber: 1 };
+      const transaction = {
+        recipient: VALID_ADDRESS,
+        amount: new BigNumber("10000000000000"), // 10 trillion microCCD
+      };
+
+      const result = await craftTransaction(account, transaction);
+
+      expect(result.transaction).toBeDefined();
+      expect(result.serializedTransaction).toBeDefined();
+    });
+
+    it("should set expiry to 1 hour from now", async () => {
+      const beforeTime = Math.floor(Date.now() / 1000);
+
+      const account = { address: VALID_ADDRESS, nextSequenceNumber: 1 };
+      const transaction = {
+        recipient: VALID_ADDRESS,
+        amount: new BigNumber(1000000),
+      };
+
+      const result = await craftTransaction(account, transaction);
+
+      const afterTime = Math.floor(Date.now() / 1000);
+      const expiry = Number(result.transaction.expiry);
+
+      // Expiry should be ~1 hour (3600 seconds) from now
+      expect(expiry).toBeGreaterThanOrEqual(beforeTime + 3600);
+      expect(expiry).toBeLessThanOrEqual(afterTime + 3600 + 1);
+    });
+  });
+
+  describe("estimateFees", () => {
+    it("should return fee estimation for simple transfer", async () => {
+      const currency = createMockCurrency();
+
+      const result = await estimateFees("", currency, AccountTransactionType.Transfer);
+
+      expect(result).toHaveProperty("cost");
+      expect(result).toHaveProperty("energy");
+      expect(typeof result.cost).toBe("bigint");
+      expect(typeof result.energy).toBe("bigint");
+    });
+
+    it("should use fixed energy for simple transfer without payload", async () => {
+      const currency = createMockCurrency();
+
+      const result = await estimateFees("", currency, AccountTransactionType.Transfer);
+
+      // Simple transfer has fixed energy cost of 501
+      expect(result.energy).toBe(BigInt(501));
+    });
+
+    it("should calculate energy for transfer with payload", async () => {
+      const currency = createMockCurrency();
+      const { CcdAmount, AccountAddress } = jest.requireActual("@ledgerhq/concordium-sdk-adapter");
+
+      const payload = {
+        amount: CcdAmount.fromMicroCcd("1000000"),
+        toAddress: AccountAddress.fromBase58(VALID_ADDRESS),
+      };
+
+      const result = await estimateFees("", currency, AccountTransactionType.Transfer, payload);
+
+      expect(result.energy).toBeGreaterThan(0n);
+    });
+
+    it("should return default values when chain parameters fetch fails", async () => {
+      const { getBlockChainParameters } = jest.requireMock("../../network/grpcClient");
+      getBlockChainParameters.mockRejectedValueOnce(new Error("Network error"));
+
+      const currency = createMockCurrency();
+
+      const result = await estimateFees("", currency, AccountTransactionType.Transfer);
+
+      // Should return defaults: cost=1000000, energy=501
+      expect(result.cost).toBe(BigInt(1000000));
+      expect(result.energy).toBe(BigInt(501));
+    });
+
+    it("should call getBlockChainParameters with currency", async () => {
+      const { getBlockChainParameters } = jest.requireMock("../../network/grpcClient");
+      const currency = createMockCurrency();
+
+      await estimateFees("", currency, AccountTransactionType.Transfer);
+
+      expect(getBlockChainParameters).toHaveBeenCalledWith(currency);
+    });
+
+    it("should default transaction type to Transfer", async () => {
+      const currency = createMockCurrency();
+
+      // Call without explicit transaction type
+      const result = await estimateFees("", currency);
+
+      expect(result).toHaveProperty("cost");
+      expect(result).toHaveProperty("energy");
+    });
+  });
+
+  describe("combine", () => {
+    it("should combine transaction and signature into JSON", () => {
+      const transaction = "aabbccdd";
+      const signature = "11223344";
+
+      const result = combine(transaction, signature);
+      const parsed = JSON.parse(result);
+
+      expect(parsed).toEqual({
+        transactionBody: "aabbccdd",
+        signature: "11223344",
+      });
+    });
+
+    it("should handle empty strings", () => {
+      const result = combine("", "");
+      const parsed = JSON.parse(result);
+
+      expect(parsed).toEqual({
+        transactionBody: "",
+        signature: "",
+      });
+    });
+
+    it("should produce valid JSON", () => {
+      const result = combine("tx", "sig");
+      expect(() => JSON.parse(result)).not.toThrow();
+    });
+  });
+
+  describe("broadcast", () => {
+    it("should broadcast transaction and return submission ID", async () => {
+      const { submitTransfer } = jest.requireMock("../../network/proxyClient");
+      const currency = createMockCurrency();
+      const signedTx = JSON.stringify({
+        transactionBody: "aabbccdd",
+        signature: "11223344",
+      });
+
+      const result = await broadcast(signedTx, currency);
+
+      expect(result).toBe("test-submission-id");
+      expect(submitTransfer).toHaveBeenCalledWith(currency, "aabbccdd", "11223344");
+    });
+
+    it("should parse signed transaction JSON correctly", async () => {
+      const { submitTransfer } = jest.requireMock("../../network/proxyClient");
+      const currency = createMockCurrency();
+      const signedTx = JSON.stringify({
+        transactionBody: "deadbeef",
+        signature: "cafebabe",
+      });
+
+      await broadcast(signedTx, currency);
+
+      expect(submitTransfer).toHaveBeenCalledWith(currency, "deadbeef", "cafebabe");
+    });
+
+    it("should throw on invalid JSON", async () => {
+      const currency = createMockCurrency();
+
+      await expect(broadcast("not-json", currency)).rejects.toThrow();
+    });
+
+    it("should propagate network errors", async () => {
+      const { submitTransfer } = jest.requireMock("../../network/proxyClient");
+      submitTransfer.mockRejectedValueOnce(new Error("Network error"));
+
+      const currency = createMockCurrency();
+      const signedTx = JSON.stringify({
+        transactionBody: "aabbccdd",
+        signature: "11223344",
+      });
+
+      await expect(broadcast(signedTx, currency)).rejects.toThrow("Network error");
+    });
+  });
+});
