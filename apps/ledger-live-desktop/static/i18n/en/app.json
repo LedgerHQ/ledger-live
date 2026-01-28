@@ -4455,7 +4455,7 @@
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Wallet crypto accounts across different phones and computers.",
-      "walletSyncDescription": "Keep your portfolio up to date when switching computers or use a phone",
+      "walletSyncDescription": "Keep your portfolio up to date when switching computers or using a phone",
       "mevProtection": "MEV Protection",
       "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
       "mevProtectionLearnMore": "Privacy notice"
@@ -7576,7 +7576,7 @@
     "close": "Close",
     "banner": {
       "title": "Your wallet isn't synced",
-      "description": "Keep your portfolio up to date when switching computers or use a phone",
+      "description": "Keep your portfolio up to date when switching computers or using a phone",
       "cta": "Sync my wallet"
     },
     "activate": {
@@ -7586,7 +7586,7 @@
       "alreadySync": "I already turned it on",
       "learnMore": "How does Ledger Sync work?",
       "titleModal": "Sync your wallet",
-      "descriptionModal": "Keep your portfolio up to date when switching computers or use a phone — all secured by your Ledger device.",
+      "descriptionModal": "Keep your portfolio up to date when switching computers or using a phone — all secured by your Ledger device.",
       "ctaModal": "Continue"
     },
     "entryPoints": {
