@@ -6957,6 +6957,9 @@ importers:
       bip32-path:
         specifier: ^0.4.2
         version: 0.4.2
+      protobufjs:
+        specifier: 7.5.4
+        version: 7.5.4
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -6982,6 +6985,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.15.8)(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      protobufjs-cli:
+        specifier: 1.1.2
+        version: 1.1.2(protobufjs@7.5.4)
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
