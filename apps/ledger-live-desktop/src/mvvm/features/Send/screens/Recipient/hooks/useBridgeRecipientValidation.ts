@@ -4,7 +4,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo, useRef, useState } from "react";
-import type { Memo } from "../../../types";
+import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import type { BridgeValidationErrors, BridgeValidationWarnings } from "../types";
 
 export type BridgeRecipientValidationResult = {

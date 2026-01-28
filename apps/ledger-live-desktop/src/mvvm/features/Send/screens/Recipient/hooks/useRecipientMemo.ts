@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import type { Memo } from "../../../types";
+import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useDoNotAskAgainSkipMemo } from "~/renderer/actions/settings";
 
 export type SkipMemoState = "propose" | "toConfirm" | "confirmed";
@@ -78,7 +78,7 @@ export function useRecipientMemo({
 
   const onMemoValueChange = useCallback(
     (value: string) => {
-      setMemo(prev => {
+      setMemo((prev: Memo) => {
         if (skipMemoState !== "propose") {
           setSkipMemoState("propose");
         }

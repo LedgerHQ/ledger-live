@@ -13,7 +13,7 @@ import {
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { createMockAccount } from "../../__integrations__/__fixtures__/accounts";
-import { SendFlowState } from "../../../../types";
+import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
 
 jest.mock("LLD/hooks/redux");
 jest.mock("../useAddressValidation");
