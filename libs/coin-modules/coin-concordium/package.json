@@ -39,6 +39,9 @@
       "config": [
         "lib/config"
       ],
+      "constants": [
+        "lib/constants"
+      ],
       "deviceTransactionConfig": [
         "lib/bridge/deviceTransactionConfig"
       ],
@@ -94,6 +97,10 @@
     "./config": {
       "require": "./lib/config.js",
       "default": "./lib-es/config.js"
+    },
+    "./constants": {
+      "require": "./lib/constants.js",
+      "default": "./lib-es/constants.js"
     },
     "./deviceTransactionConfig": {
       "require": "./lib/bridge/deviceTransactionConfig.js",

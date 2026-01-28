@@ -2,6 +2,7 @@ import baseConfig from "../../jest.config";
 
 export default {
   ...baseConfig,
+  testPathIgnorePatterns: [...baseConfig.testPathIgnorePatterns, ".*\\.integ\\.test\\.[tj]s"],
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.{ts,tsx}",
@@ -20,4 +21,3 @@ export default {
     ],
   ],
 };
-

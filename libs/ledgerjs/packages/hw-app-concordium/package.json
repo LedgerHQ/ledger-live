@@ -29,11 +29,11 @@
   "types": "lib/Concordium.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "bip32-path": "^0.4.2"
   },
   "devDependencies": {
+    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@swc/core": "catalog:",
