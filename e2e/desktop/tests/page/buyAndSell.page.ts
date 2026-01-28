@@ -83,9 +83,7 @@ export class BuyAndSellPage extends WebViewAppPage {
           address: string;
           blockchains: string[];
         }>;
-        if (!wallets[0]?.address) {
-          throw new Error("No address found in destinationwallets");
-        }
+        if (!wallets[0]?.address) throw new Error("No address found in destinationwallets");
         return wallets[0].address.toLowerCase();
       },
     },
@@ -109,10 +107,7 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Choose crypto asset if not selected")
   async chooseAssetIfNotSelected(account: AccountType) {
-    if (await this.isCorrectAssetAlreadySelected(account)) {
-      return;
-    }
-
+    if (await this.isCorrectAssetAlreadySelected(account)) return;
     await this.clickElement(this.cryptoCurrencySelector);
     await this.selectAssetInDrawer(account);
   }
@@ -120,7 +115,6 @@ export class BuyAndSellPage extends WebViewAppPage {
   private async isCorrectAssetAlreadySelected(account: AccountType): Promise<boolean> {
     const selectedTicker = await this.getWebViewElementByTestId(this.cryptoCurrencySelector);
     const selectedTickerText = (await selectedTicker.textContent()) || "";
-
     return (
       selectedTickerText.includes(account.currency.ticker) ||
       selectedTickerText.includes(account.currency.name)
@@ -152,7 +146,6 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   private async selectAssetInLegacyDrawer(account: AccountType) {
     const networkName = account.parentAccount?.currency.name;
-
     await this.chooseAssetDrawer.chooseFromAsset(account.currency.name, networkName);
     await this.chooseAssetDrawer.selectAccountByName(account);
   }
@@ -216,7 +209,7 @@ export class BuyAndSellPage extends WebViewAppPage {
 
     await this.verifyElementText(
       this.formCta,
-      operation == OperationType.Buy ? "Select quote to continue" : "Set an amount to get quotes",
+      operation === OperationType.Buy ? "Select quote to continue" : "Set an amount to get quotes",
     );
     await this.verifyElementIsNotEnabled(this.formCta);
     await this.verifyElementIsVisible(this.paymentSelector);
@@ -241,97 +234,107 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Verify provider URL for $0")
   async verifyProviderUrl(providerName: string, buySell: BuySell, userdataDestinationPath: string) {
+    const rawUrl = await this.waitForGoToUrl();
+    const decodedUrl = decodeGoToUrl(rawUrl);
+    const url = new URL(decodedUrl);
+
+    this.verifyBaseUrl(url, providerName, buySell.operation);
+    this.verifyQueryParams(url, providerName, buySell);
+    await this.verifyDestinationAddress(url, providerName, buySell, userdataDestinationPath);
+  }
+
+  private async waitForGoToUrl(): Promise<string> {
     await waitFor(
       async () => this.webviewUrlHistory.some(url => url.toLowerCase().includes("gotourl")),
-      2_00,
+      200,
       10_000,
     );
-    const rawUrl = this.webviewUrlHistory.find(url => url.toLowerCase().includes("gotourl"));
-    if (!rawUrl) {
-      throw new Error("No URL with 'gotourl' found in webviewUrlHistory after waiting.");
+
+    const url = this.webviewUrlHistory.find(url => url.toLowerCase().includes("gotourl"));
+    if (!url) throw new Error("No GoTo URL found in webviewUrlHistory after waiting.");
+    return url;
+  }
+
+  private verifyBaseUrl(url: URL, providerName: string, operation: OperationType) {
+    const hrefLower = url.href.toLowerCase();
+
+    expect(
+      hrefLower.includes(operation.toLowerCase()),
+      `Operation "${operation}" should appear in URL`,
+    ).toBe(true);
+    expect(
+      hrefLower.includes(providerName.toLowerCase()),
+      `Provider "${providerName}" should appear in URL`,
+    ).toBe(true);
+  }
+
+  private verifyQueryParams(url: URL, providerName: string, buySell: BuySell) {
+    const expectations = this.getExpectedQueryParams(providerName, buySell);
+
+    for (const [expectedKey, expectedValue] of Object.entries(expectations)) {
+      const actualKey = Array.from(url.searchParams.keys()).find(
+        key => key.toLowerCase() === expectedKey.toLowerCase(),
+      );
+
+      if (!actualKey) {
+        throw new Error(`Query param "${expectedKey}" not found in URL`);
+      }
+
+      const actualValue = url.searchParams.get(actualKey) ?? "";
+      expect(
+        actualValue.toLowerCase(),
+        `Query param "${actualKey}" should include "${expectedValue}"`,
+      ).toContain(expectedValue);
     }
-    const normalizedUrl = rawUrl.toLowerCase();
-
-    this.verifyBasicUrlIncludes(normalizedUrl, providerName, buySell.operation);
-
-    const decodedUrl = this.getDecodedGoToURL(normalizedUrl, rawUrl);
-    this.verifyExpectedQueryParams(decodedUrl, providerName, buySell);
-    await this.verifyDestinationAddress(providerName, buySell, decodedUrl, userdataDestinationPath);
   }
 
-  private getDecodedGoToURL(rawLower: string, rawFull: string): string {
-    const extractedGotoUrl = rawLower.match(/gotourl=([^&]*)/)?.[1];
-    if (!extractedGotoUrl) {
-      throw new Error(`No goToURL found in URL:\n ${rawFull}`);
-    }
-    return doubleDecodeGoToURL(extractedGotoUrl);
-  }
-
-  private verifyBasicUrlIncludes(
-    normalizedUrl: string,
-    providerName: string,
-    operation: OperationType,
-  ) {
-    [
-      [operation.toLowerCase(), `Tab "${operation}" missing`],
-      [providerName.toLowerCase(), `Provider "${providerName}" missing`],
-    ].forEach(([text, err]) => {
-      this.assertIncludes(normalizedUrl, text, err);
-    });
-  }
-
-  private getExpectations(providerName: string, buySell: BuySell): Record<string, string> {
+  private getExpectedQueryParams(providerName: string, buySell: BuySell): Record<string, string> {
     const config = this.providerConfigs[providerName];
     if (!config) throw new Error(`Unsupported provider: ${providerName}`);
 
-    const rawMap = buySell.operation === OperationType.Buy ? config.buyParams : config.sellParams;
+    const paramMap = buySell.operation === OperationType.Buy ? config.buyParams : config.sellParams;
 
-    const ret: Record<string, string> = {};
-    for (const [key, fn] of Object.entries(rawMap)) {
-      ret[key.toLowerCase()] = String(fn(buySell)).toLowerCase();
-    }
-    return ret;
-  }
-
-  private verifyExpectedQueryParams(decodedUrl: string, providerName: string, buySell: BuySell) {
-    const expectations = this.getExpectations(providerName, buySell);
-    for (const [param, val] of Object.entries(expectations)) {
-      this.assertIncludes(decodedUrl, `${param}=${val}`, `query param`);
-    }
-  }
-
-  private assertIncludes(haystack: string, substring: string, contextLabel: string) {
-    expect(
-      haystack,
-      `Expected ${contextLabel} to include "${substring}", but got:\n  ${haystack}`,
-    ).toContain(substring);
+    return Object.fromEntries(
+      Object.entries(paramMap).map(([key, fn]) => [
+        key.toLowerCase(),
+        String(fn(buySell)).toLowerCase(),
+      ]),
+    );
   }
 
   private async verifyDestinationAddress(
+    url: URL,
     providerName: string,
     buySell: BuySell,
-    decodedUrl: string,
-    userdataDestinationPath: string,
-    config: ProviderConfig = this.providerConfigs[providerName],
+    userDataDir: string,
   ) {
-    const addresses = await getAccountAddressesFromAppJson(userdataDestinationPath);
-    const normalizedDataAddresses = addresses.map(a => a.toLowerCase());
+    const config = this.providerConfigs[providerName];
+    if (!config) throw new Error(`Unsupported provider: ${providerName}`);
+    const addresses = await getAccountAddressesFromAppJson(userDataDir);
+    const normalizedAddresses = addresses.map(a => a.toLowerCase());
 
-    const urlParams = new URLSearchParams(decodedUrl.split("?")[1] || "");
-    const addressValue = urlParams.get(
-      buySell.operation === OperationType.Buy ? config.addressParam : "address",
+    const expectedParam = buySell.operation === OperationType.Buy ? config.addressParam : "address";
+
+    const actualParam = Array.from(url.searchParams.keys()).find(
+      key => key.toLowerCase() === expectedParam.toLowerCase(),
     );
-    if (!addressValue) {
-      throw new Error(`${config.addressParam} parameter missing in URL: ${decodedUrl}`);
-    }
 
+    if (!actualParam) throw new Error(`Missing address param "${expectedParam}" in URL`);
+
+    const rawValue = url.searchParams.get(actualParam)!;
     const actualAddress = config.parseAddress
-      ? config.parseAddress(addressValue)
-      : addressValue.toLowerCase();
+      ? config.parseAddress(rawValue)
+      : rawValue.toLowerCase();
 
     expect(
-      normalizedDataAddresses,
-      `Expected one of ${JSON.stringify(normalizedDataAddresses)} to contain "${actualAddress}", but it did not.`,
+      normalizedAddresses,
+      `Destination address should match one of the app accounts`,
     ).toContain(actualAddress);
   }
+}
+
+function decodeGoToUrl(rawUrl: string): string {
+  const match = rawUrl.match(/gotourl=([^&]+)/i);
+  if (!match) throw new Error(`Missing 'goToURL' param in URL:\n${rawUrl}`);
+  return doubleDecodeGoToURL(match[1]);
 }
