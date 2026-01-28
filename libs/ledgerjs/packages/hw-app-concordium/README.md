@@ -43,24 +43,30 @@ For a smooth and quick integration:
         *   [Parameters](#parameters-4)
     *   [signCredentialDeployment](#signcredentialdeployment)
         *   [Parameters](#parameters-5)
-*   [pathToBuffer](#pathtobuffer)
-    *   [Parameters](#parameters-6)
 *   [serializeTransactionPayloadsWithDerivationPath](#serializetransactionpayloadswithderivationpath)
-    *   [Parameters](#parameters-7)
+    *   [Parameters](#parameters-6)
 *   [serializeTransactionPayloads](#serializetransactionpayloads)
-    *   [Parameters](#parameters-8)
+    *   [Parameters](#parameters-7)
 *   [serializeTransaction](#serializetransaction)
-    *   [Parameters](#parameters-9)
+    *   [Parameters](#parameters-8)
 *   [serializeTransferWithMemo](#serializetransferwithmemo)
-    *   [Parameters](#parameters-10)
+    *   [Parameters](#parameters-9)
 *   [serializeCredentialDeployment](#serializecredentialdeployment)
+    *   [Parameters](#parameters-10)
+*   [serializeIdOwnershipProofs](#serializeidownershipproofs)
     *   [Parameters](#parameters-11)
+*   [serializeAccountOwnershipProofs](#serializeaccountownershipproofs)
+    *   [Parameters](#parameters-12)
+*   [IdOwnershipProofs](#idownershipproofs)
 *   [CredentialDeploymentTransaction](#credentialdeploymenttransaction)
 *   [AccountTransaction](#accounttransaction)
 *   [Address](#address)
 *   [VerifyAddressResponse](#verifyaddressresponse)
-*   [SignCredentialDeploymentMetadata](#signcredentialdeploymentmetadata)
 *   [SchemeId](#schemeid)
+*   [pathToBuffer](#pathtobuffer)
+    *   [Parameters](#parameters-13)
+*   [chunkBuffer](#chunkbuffer)
+    *   [Parameters](#parameters-14)
 
 ### Concordium
 
@@ -118,7 +124,7 @@ Sign an account transaction.
 
 ##### Parameters
 
-*   `txn` **[AccountTransaction](#accounttransaction)** Account transaction in hw-app format (sender as Buffer, payload pre-serialized)
+*   `tx` **[AccountTransaction](#accounttransaction)** Account transaction in hw-app format (sender as Buffer, payload pre-serialized)
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path for signing key
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** Promise with signature (hex string)
@@ -127,23 +133,15 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 Sign a credential deployment transaction.
 
+Always creates credentials for new accounts on existing identities.
+The device displays the expiry time for user verification.
+
 ##### Parameters
 
-*   `payload` **[CredentialDeploymentTransaction](#credentialdeploymenttransaction)** CredentialDeploymentTransaction in hw-app format
+*   `tx` **[CredentialDeploymentTransaction](#credentialdeploymenttransaction)** CredentialDeploymentTransaction in hw-app format
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path for signing key
-*   `metadata` **[SignCredentialDeploymentMetadata](#signcredentialdeploymentmetadata)?** Optional metadata for hardware wallet (isNew, address as Buffer)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** Promise with signature (hex string)
-
-### pathToBuffer
-
-Converts a BIP32 path string to serialized Buffer format.
-
-#### Parameters
-
-*   `originalPath` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path string (e.g., "44'/919'/0'/0/0")
-
-Returns **[Buffer](https://nodejs.org/api/buffer.html)** Serialized path buffer ready for device transmission
 
 ### serializeTransactionPayloadsWithDerivationPath
 
@@ -178,7 +176,7 @@ Serializes a transaction for hardware wallet signing.
 
 #### Parameters
 
-*   `txn` **[AccountTransaction](#accounttransaction)** Account transaction with all fields prepared
+*   `tx` **[AccountTransaction](#accounttransaction)** Account transaction with all fields prepared
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 derivation path
 
 Returns **{payloads: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>}** Object with payloads ready for APDU transmission
@@ -196,7 +194,7 @@ Expects hw-app format where payload is pre-serialized Buffer containing:
 
 #### Parameters
 
-*   `txn` **[AccountTransaction](#accounttransaction)** Account transaction in hw-app format with pre-serialized payload
+*   `tx` **[AccountTransaction](#accounttransaction)** Account transaction in hw-app format with pre-serialized payload
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path for signing key
 
 Returns **{headerPayload: [Buffer](https://nodejs.org/api/buffer.html), memoPayloads: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>, amountPayload: [Buffer](https://nodejs.org/api/buffer.html)}** Object with header, memo chunks, and amount payloads for APDU transmission
@@ -208,13 +206,53 @@ Serializes a credential deployment transaction for hardware wallet signing.
 Takes hw-app format transaction and prepares it for transmission to device
 by chunking it into appropriate APDU payloads.
 
+Always creates credentials for new accounts on existing identities (Ledger Live use case).
+The device receives the expiry time to display for user verification.
+
 #### Parameters
 
-*   `payload` **[CredentialDeploymentTransaction](#credentialdeploymenttransaction)** Credential deployment transaction in hw-app format
+*   `tx` **[CredentialDeploymentTransaction](#credentialdeploymenttransaction)** Credential deployment transaction in hw-app format
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 derivation path
-*   `metadata` **{isNew: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, address: [Buffer](https://nodejs.org/api/buffer.html)?}?** Optional metadata (isNew flag, existing account address as Buffer)
 
 Returns **any** Structured payload components ready for APDU transmission
+
+### serializeIdOwnershipProofs
+
+Serializes IdOwnershipProofs WITHOUT account ownership proofs.
+
+IMPORTANT: This serializes ONLY the ID ownership proofs portion.
+The account ownership proofs must be inserted AFTER proofRegId and BEFORE
+credCounterLessThanMaxAccounts when building the complete CredDeploymentProofs.
+
+Returns an object with the parts so they can be combined in correct order.
+
+#### Parameters
+
+*   `proofs` **{sig: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), commitments: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), challenge: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), proofIdCredPub: Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>, proofIpSig: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), proofRegId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), credCounterLessThanMaxAccounts: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}**&#x20;
+
+Returns **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+
+### serializeAccountOwnershipProofs
+
+Serializes account ownership proofs from Ed25519 signatures.
+
+Structure (matching Concordium node expectations):
+
+*   Number of signatures (1 byte, u8)
+*   For each signature:
+    *   Key index (1 byte, u8)
+    *   Signature (64 bytes for Ed25519)
+
+#### Parameters
+
+*   `signatures` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** Array of Ed25519 signatures as hex strings
+
+Returns **[Buffer](https://nodejs.org/api/buffer.html)** Serialized account ownership proofs as Buffer
+
+### IdOwnershipProofs
+
+ID ownership proofs from ID App.
+Must be serialized when building the message hash for device signing.
 
 ### CredentialDeploymentTransaction
 
@@ -238,13 +276,30 @@ Address response from device
 
 Verify address response from device
 
-### SignCredentialDeploymentMetadata
-
-Metadata for credential deployment signing
-
 ### SchemeId
 
 Cryptographic signature scheme identifier
+
+### pathToBuffer
+
+Converts a BIP32 path string to serialized Buffer format.
+
+#### Parameters
+
+*   `originalPath` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 path string (e.g., "44'/919'/0'/0/0")
+
+Returns **[Buffer](https://nodejs.org/api/buffer.html)** Serialized path buffer ready for device transmission
+
+### chunkBuffer
+
+Chunks a buffer into smaller pieces of a maximum size.
+
+#### Parameters
+
+*   `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** The buffer to chunk
+*   `maxSize` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** Maximum size of each chunk
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>** Array of buffer chunks
 
 ## Usage
 

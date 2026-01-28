@@ -1,4 +1,18 @@
 /**
+ * ID ownership proofs from ID App.
+ * Must be serialized when building the message hash for device signing.
+ */
+export interface IdOwnershipProofs {
+  sig: string; // IP signature (hex string, 64 bytes = 128 hex chars)
+  commitments: string; // Commitments (hex string)
+  challenge: string; // Challenge (hex string)
+  proofIdCredPub: Record<string, string>; // AR index -> proof hex string
+  proofIpSig: string; // IP signature proof (hex string)
+  proofRegId: string; // Registration ID proof (hex string)
+  credCounterLessThanMaxAccounts: string; // Credential counter proof (hex string)
+}
+
+/**
  * Credential deployment transaction format expected by Ledger device.
  *
  * This is the hw-app format, not the SDK CredentialDeploymentTransaction type.
@@ -6,7 +20,7 @@
  */
 export interface CredentialDeploymentTransaction {
   credentialPublicKeys: {
-    keys: Record<number, { schemeId: string; verifyKey: string }>; // Indexed by key index
+    keys: Record<string, { schemeId: string; verifyKey: string }>; // String key indices, converted to numbers during serialization
     threshold: number; // Signature threshold
   };
   credId: string; // Credential ID as hex string (48 bytes = 96 hex chars)
@@ -18,7 +32,7 @@ export interface CredentialDeploymentTransaction {
     createdAt: string; // YearMonth format (YYYYMM)
     revealedAttributes: Record<string, string>; // Attribute tag → value mapping
   };
-  proofs: string; // Hex string (pre-serialized IdOwnershipProofs from SDK)
+  proofs: IdOwnershipProofs; // ID ownership proofs object (will be serialized by hw-app)
   expiry: bigint; // Transaction expiry as epoch seconds
 }
 
@@ -53,14 +67,6 @@ export interface VerifyAddressResponse {
   address?: string; // Verified Base58 address displayed on device
   deviceCredId?: string; // Credential ID computed by device (hex string)
   devicePrfKey?: string; // PRF key computed by device (hex string)
-}
-
-/**
- * Metadata for credential deployment signing
- */
-export interface SignCredentialDeploymentMetadata {
-  isNew?: boolean; // If true, sends expiry to device; if false, sends existing account address
-  address?: Buffer; // Existing account address (32 bytes raw) - only used when isNew is false
 }
 
 /**

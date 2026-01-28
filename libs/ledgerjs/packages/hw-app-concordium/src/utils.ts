@@ -1,4 +1,5 @@
 import { Buffer } from "buffer";
+import BIPPath from "bip32-path";
 import { SchemeId } from "./types";
 
 /**
@@ -147,42 +148,46 @@ export function serializeYearMonth(yearMonth: string): Buffer {
 }
 
 /**
- * Serializes IdOwnershipProofs to hex string format expected by hardware wallet.
+ * Serializes a BIP32 path array into device-compatible format.
+ * Format: [1 byte: path length] [4 bytes per element: path components]
  * @private
- * @param proofs the IdOwnershipProofs object to serialize
- * @returns hex string representation of the serialized proofs
+ * @param path - BIP32 path as number array
+ * @returns Serialized path buffer
  */
-export function serializeIdOwnershipProofs(proofs: {
-  sig: string;
-  commitments: string;
-  challenge: string;
-  proofIdCredPub: Record<string, string>;
-  proofIpSig: string;
-  proofRegId: string;
-  credCounterLessThanMaxAccounts: string;
-}): string {
-  const proofIdCredPubEntries = Object.entries(proofs.proofIdCredPub);
-  const proofIdCredPubLength = encodeWord32(proofIdCredPubEntries.length);
-  const idCredPubProofs = Buffer.concat(
-    proofIdCredPubEntries
-      .sort(([indexA], [indexB]) => parseInt(indexA, 10) - parseInt(indexB, 10))
-      .map(([index, value]) => {
-        const serializedIndex = encodeWord32(parseInt(index, 10));
-        const serializedValue = Buffer.from(value, "hex");
-        return Buffer.concat([serializedIndex, serializedValue]);
-      }),
-  );
+export function serializePath(path: number[]): Buffer {
+  const buf = Buffer.alloc(1 + path.length * 4);
+  buf.writeUInt8(path.length, 0);
+  for (const [i, num] of path.entries()) {
+    buf.writeUInt32BE(num, 1 + i * 4);
+  }
+  return buf;
+}
 
-  const serialized = Buffer.concat([
-    Buffer.from(proofs.sig, "hex"),
-    Buffer.from(proofs.commitments, "hex"),
-    Buffer.from(proofs.challenge, "hex"),
-    proofIdCredPubLength,
-    idCredPubProofs,
-    Buffer.from(proofs.proofIpSig, "hex"),
-    Buffer.from(proofs.proofRegId, "hex"),
-    Buffer.from(proofs.credCounterLessThanMaxAccounts, "hex"),
-  ]);
+/**
+ * Converts a BIP32 path string to serialized Buffer format.
+ *
+ * @param originalPath - BIP32 path string (e.g., "44'/919'/0'/0/0")
+ * @returns Serialized path buffer ready for device transmission
+ */
+export function pathToBuffer(originalPath: string): Buffer {
+  const pathNums: number[] = BIPPath.fromString(originalPath).toPathArray();
+  return serializePath(pathNums);
+}
 
-  return serialized.toString("hex");
+/**
+ * Chunks a buffer into smaller pieces of a maximum size.
+ *
+ * @param buffer - The buffer to chunk
+ * @param maxSize - Maximum size of each chunk
+ * @returns Array of buffer chunks
+ */
+export function chunkBuffer(buffer: Buffer, maxSize: number): Buffer[] {
+  const chunks: Buffer[] = [];
+  let offset = 0;
+  while (offset < buffer.length) {
+    const chunkSize = Math.min(maxSize, buffer.length - offset);
+    chunks.push(Buffer.from(buffer.subarray(offset, offset + chunkSize)));
+    offset += chunkSize;
+  }
+  return chunks;
 }
