@@ -101,11 +101,9 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       setTrackingSource(page);
 
       const currencyId = ledgerCurrency.id;
-      const hasExistingAccount = getAvailableAccountsById(currencyId, flattenedAccounts).find(
-        Boolean,
-      );
+      const defaultAccount = getAvailableAccountsById(currencyId, flattenedAccounts).find(Boolean);
 
-      const getParentAccountId = (account: typeof hasExistingAccount) =>
+      const getParentAccountId = (account: typeof defaultAccount) =>
         account && "parentId" in account ? account.parentId : undefined;
 
       const baseState = {
@@ -113,12 +111,12 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
         from: location.pathname,
       };
 
-      const swapState = hasExistingAccount
+      const swapState = defaultAccount
         ? {
             ...baseState,
             defaultCurrency: ledgerCurrency,
-            defaultAccountId: hasExistingAccount.id,
-            defaultParentAccountId: getParentAccountId(hasExistingAccount),
+            defaultAccountId: defaultAccount.id,
+            defaultParentAccountId: getParentAccountId(defaultAccount),
           }
         : {
             ...baseState,
