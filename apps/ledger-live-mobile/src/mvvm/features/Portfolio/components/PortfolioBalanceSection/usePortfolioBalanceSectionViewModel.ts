@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useSelector } from "~/context/hooks";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
+import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import {
   PortfolioBalanceState,
@@ -13,6 +14,7 @@ export const usePortfolioBalanceSectionViewModel = ({
   isReadOnlyMode,
 }: PortfolioBalanceSectionProps): UsePortfolioBalanceSectionViewModelResult => {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const { toggleDiscreetMode } = useToggleDiscreetMode();
   const portfolio = usePortfolioAllAccounts();
 
   const { countervalueChange, balanceHistory, balanceAvailable } = portfolio;
@@ -36,5 +38,6 @@ export const usePortfolioBalanceSectionViewModel = ({
     countervalueChange,
     unit,
     isBalanceAvailable: balanceAvailable,
+    onToggleDiscreetMode: toggleDiscreetMode,
   };
 };
