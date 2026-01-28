@@ -48,7 +48,9 @@ export default function DebugWallet40() {
               borderRadius: "md",
             }}
           >
-            <Text typography="heading5SemiBold">Main Feature Enabled</Text>
+            <Text lx={{ color: "base" }} typography="heading5SemiBold">
+              Main Feature Enabled
+            </Text>
             <Switch checked={isEnabled} onCheckedChange={handleToggleEnabled} />
           </Box>
         </Box>
@@ -82,7 +84,9 @@ export default function DebugWallet40() {
                   }}
                 >
                   <Box lx={{ flexDirection: "row", alignItems: "center", columnGap: "s12" }}>
-                    <Text typography="body2">{label}</Text>
+                    <Text typography="body2" lx={{ color: "base" }}>
+                      {label}
+                    </Text>
                     {isSelected && <Tag appearance="success" size="sm" label="ON" />}
                   </Box>
                   <Switch
