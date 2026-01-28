@@ -46,6 +46,7 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
             data-testid={`market-banner-asset-${item.id}`}
           >
             <TileSpot
+              size={40}
               appearance="icon"
               icon={() => <AssetIcon item={item} getCapitalizedTicker={getCapitalizedTicker} />}
             />

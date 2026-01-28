@@ -15,7 +15,7 @@ export const useQuickActions = (): { actionsList: QuickAction[] } => {
   const location = useLocation();
   const { t } = useTranslation();
   const hasAccount = useSelector(hasAccountsSelector);
-  const hasFunds = !useSelector(areAccountsEmptySelector);
+  const hasFunds = !useSelector(areAccountsEmptySelector) && hasAccount;
 
   const push = useCallback(
     (pathname: string) => {
