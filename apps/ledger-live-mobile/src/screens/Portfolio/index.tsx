@@ -11,7 +11,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import Carousel from "~/components/Carousel";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
@@ -44,7 +44,7 @@ import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLM/features/LNSUpsell
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 export { default as PortfolioTabIcon } from "./TabIcon";
 import Animated, { useSharedValue } from "react-native-reanimated";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AnimatedContainer from "./AnimatedContainer";
 import storage from "LLM/storage";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
@@ -77,8 +77,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const isFocused = useIsFocused();
 
   const mmkvMigrationFF = useFeature("llmMmkvMigration");
-
-  const { shouldDisplayGraphRework } = useWalletFeaturesConfig("mobile");
 
   useEffect(() => {
     async function handleMigration() {
@@ -150,18 +148,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
 
   const onPressAllocations = useCallback(() => {
-    // TODO: Remove this condition once we have the correct entry point
-    if (shouldDisplayGraphRework) {
-      navigation.navigate(NavigatorName.Analytics, {
-        screen: ScreenName.Analytics,
-        params: {
-          sourceScreenName: ScreenName.Portfolio,
-        },
-      });
-    } else {
-      navigation.navigate(ScreenName.AnalyticsAllocation);
-    }
-  }, [shouldDisplayGraphRework, navigation]);
+    navigation.navigate(ScreenName.AnalyticsAllocation);
+  }, [navigation]);
 
   const data = useMemo(
     () => [

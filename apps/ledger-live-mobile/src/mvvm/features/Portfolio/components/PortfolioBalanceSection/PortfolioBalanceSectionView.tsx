@@ -8,8 +8,8 @@ import { BigNumber } from "bignumber.js";
 import { useSelector } from "~/context/hooks";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { discreetModeSelector } from "~/reducers/settings";
-import Delta from "~/components/Delta";
 import { PortfolioBalanceSectionViewProps } from "./types";
+import { AnalyticPill } from "./AnalyticPill";
 
 const containerStyle: LumenViewStyle = {
   alignItems: "center",
@@ -20,7 +20,7 @@ const containerStyle: LumenViewStyle = {
 const rowStyle: LumenViewStyle = {
   flexDirection: "row",
   alignItems: "center",
-  marginTop: "s8",
+  marginTop: "s12",
 };
 
 export const PortfolioBalanceSectionView = ({
@@ -48,9 +48,7 @@ export const PortfolioBalanceSectionView = ({
     if (!isBalanceAvailable) {
       return <InfiniteLoader size={20} />;
     }
-    return (
-      <Delta percent show0Delta valueChange={countervalueChange} testID="portfolio-balance-delta" />
-    );
+    return <AnalyticPill valueChange={countervalueChange} />;
   };
 
   if (state === "noSigner" || state === "noFund") {
