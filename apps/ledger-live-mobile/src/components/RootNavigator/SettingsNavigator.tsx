@@ -26,6 +26,7 @@ import DebugPerformance from "~/screens/Settings/Debug/Performance";
 import DebugLogs from "~/screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "~/screens/Settings/Debug/Features/Lottie";
 import DebugLumen from "~/screens/Settings/Debug/Debugging/Lumen";
+import DebugWallet40 from "~/screens/Settings/Debug/Debugging/Wallet40";
 import DebugNetwork from "~/screens/Settings/Debug/Debugging/Network";
 import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSender";
 import DebugPlayground from "~/screens/Settings/Debug/Playground";
@@ -301,6 +302,13 @@ export default function SettingsNavigator() {
         component={DebugLumen}
         options={{
           title: "Lumen Debug",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugWallet40}
+        component={DebugWallet40}
+        options={{
+          title: "Wallet 4.0",
         }}
       />
       <Stack.Screen
