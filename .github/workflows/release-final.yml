@@ -42,7 +42,10 @@ jobs:
         with:
           app-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-          
+          repositories: |
+            ledger-live
+            ledger-live-build
+
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref }}
