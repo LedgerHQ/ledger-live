@@ -46,6 +46,32 @@ const currency: CryptoCurrency = {
 
 const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency);
 
+// Factory to create fetch utilities for isPageFull/hasMorePage tests
+const createFetchWithLimit =
+  <T>(
+    apiFn: (
+      currency: CryptoCurrency,
+      address: string,
+      accountId: string,
+      fromBlock: number,
+      toBlock?: number,
+      limit?: number,
+    ) => Promise<ETHERSCAN_API.EndpointResult>,
+  ) =>
+  async (ops: T[], limit: number | undefined) => {
+    jest.spyOn(axios, "request").mockResolvedValueOnce({
+      data: { result: ops },
+    });
+    return apiFn(currency, account.freshAddress, account.id, 0, undefined, limit);
+  };
+
+// Helper to extract pagination state for assertions
+const paginationState = (result: ETHERSCAN_API.EndpointResult) => ({
+  isPageFull: result.isPageFull,
+  hasMorePage: result.hasMorePage,
+  nbOps: result.operations.length,
+});
+
 describe("EVM Family", () => {
   beforeEach(() => {
     mockGetConfig.mockImplementation((): any => {
@@ -65,12 +91,11 @@ describe("EVM Family", () => {
     });
   });
 
-  describe("network/explorer/etherscan.ts", () => {
-    afterAll(() => {
-      jest.restoreAllMocks();
-    });
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
 
-    describe("fetchWithRetries", () => {
+  describe("fetchWithRetries", () => {
       afterEach(() => {
         jest.clearAllMocks();
       });
@@ -281,6 +306,67 @@ describe("EVM Family", () => {
           },
         });
       });
+
+      describe("isPageFull and hasMorePage", () => {
+        const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getCoinOperations);
+
+        // etherscanCoinOperations: 3 raw ops => 4 processed ops (one self-send creates 2 ops)
+        const expectedProcessedOpsCount = 4;
+
+        it("limit > nb ops => isPageFull = false, hasMorePage = false", async () => {
+          const result = await fetchWithLimit(
+            etherscanCoinOperations,
+            etherscanCoinOperations.length + 1,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: false,
+            hasMorePage: false,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit = nb ops => isPageFull = true, hasMorePage = true", async () => {
+          const result = await fetchWithLimit(
+            etherscanCoinOperations,
+            etherscanCoinOperations.length,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: true,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit < nb ops => isPageFull = true, hasMorePage = true", async () => {
+          const result = await fetchWithLimit(
+            etherscanCoinOperations,
+            etherscanCoinOperations.length - 1,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: true,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit undefined (= unlimited page) with ops => isPageFull = true, hasMorePage = false", async () => {
+          const result = await fetchWithLimit(etherscanCoinOperations, undefined);
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: false,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit undefined (= unlimited page) without ops => isPageFull = true, hasMorePage = false", async () => {
+          const result = await fetchWithLimit([], undefined);
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: false,
+            nbOps: 0,
+          });
+        });
+      });
     });
 
     describe("getTokenOperations", () => {
@@ -438,6 +524,67 @@ describe("EVM Family", () => {
             startBlock: 50,
             endBlock: 100,
           },
+        });
+      });
+
+      describe("isPageFull and hasMorePage", () => {
+        const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getTokenOperations);
+
+        // etherscanTokenOperations: 3 raw ops => 4 processed ops
+        const expectedProcessedOpsCount = 4;
+
+        it("limit > nb ops => isPageFull = false, hasMorePage = false", async () => {
+          const result = await fetchWithLimit(
+            etherscanTokenOperations,
+            etherscanTokenOperations.length + 1,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: false,
+            hasMorePage: false,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit = nb ops => isPageFull = true, hasMorePage = true", async () => {
+          const result = await fetchWithLimit(
+            etherscanTokenOperations,
+            etherscanTokenOperations.length,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: true,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit < nb ops => isPageFull = true, hasMorePage = true", async () => {
+          const result = await fetchWithLimit(
+            etherscanTokenOperations,
+            etherscanTokenOperations.length - 1,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: true,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit undefined with ops => isPageFull = true, hasMorePage = false", async () => {
+          const result = await fetchWithLimit(etherscanTokenOperations, undefined);
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: false,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit undefined without ops => isPageFull = true, hasMorePage = false", async () => {
+          const result = await fetchWithLimit([], undefined);
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: false,
+            nbOps: 0,
+          });
         });
       });
     });
@@ -599,6 +746,67 @@ describe("EVM Family", () => {
           },
         });
       });
+
+      describe("isPageFull and hasMorePage", () => {
+        const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getERC721Operations);
+
+        // etherscanERC721Operations: 3 raw ops => 4 processed ops
+        const expectedProcessedOpsCount = 4;
+
+        it("limit > nb ops => isPageFull = false, hasMorePage = false", async () => {
+          const result = await fetchWithLimit(
+            etherscanERC721Operations,
+            etherscanERC721Operations.length + 1,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: false,
+            hasMorePage: false,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit = nb ops => isPageFull = true, hasMorePage = true", async () => {
+          const result = await fetchWithLimit(
+            etherscanERC721Operations,
+            etherscanERC721Operations.length,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: true,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit < nb ops => isPageFull = true, hasMorePage = true", async () => {
+          const result = await fetchWithLimit(
+            etherscanERC721Operations,
+            etherscanERC721Operations.length - 1,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: true,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit undefined with ops => isPageFull = true, hasMorePage = false", async () => {
+          const result = await fetchWithLimit(etherscanERC721Operations, undefined);
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: false,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit undefined without ops => isPageFull = true, hasMorePage = false", async () => {
+          const result = await fetchWithLimit([], undefined);
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: false,
+            nbOps: 0,
+          });
+        });
+      });
     });
 
     describe("getERC1155Operations", () => {
@@ -758,6 +966,67 @@ describe("EVM Family", () => {
           },
         });
       });
+
+      describe("isPageFull and hasMorePage", () => {
+        const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getERC1155Operations);
+
+        // etherscanERC1155Operations: 3 raw ops => 4 processed ops
+        const expectedProcessedOpsCount = 4;
+
+        it("limit > nb ops => isPageFull = false, hasMorePage = false", async () => {
+          const result = await fetchWithLimit(
+            etherscanERC1155Operations,
+            etherscanERC1155Operations.length + 1,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: false,
+            hasMorePage: false,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit = nb ops => isPageFull = true, hasMorePage = true", async () => {
+          const result = await fetchWithLimit(
+            etherscanERC1155Operations,
+            etherscanERC1155Operations.length,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: true,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit < nb ops => isPageFull = true, hasMorePage = true", async () => {
+          const result = await fetchWithLimit(
+            etherscanERC1155Operations,
+            etherscanERC1155Operations.length - 1,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: true,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit undefined with ops => isPageFull = true, hasMorePage = false", async () => {
+          const result = await fetchWithLimit(etherscanERC1155Operations, undefined);
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: false,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit undefined without ops => isPageFull = true, hasMorePage = false", async () => {
+          const result = await fetchWithLimit([], undefined);
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: false,
+            nbOps: 0,
+          });
+        });
+      });
     });
 
     describe("getNftOperations", () => {
@@ -787,6 +1056,79 @@ describe("EVM Family", () => {
           hasMorePage: false,
           maxBlock: 13472395,
           isPageFull: true,
+        });
+      });
+
+      describe("isPageFull and hasMorePage", () => {
+        const fetchNftOperationsWithLimit = async (
+          erc721Ops: typeof etherscanERC721Operations,
+          erc1155Ops: typeof etherscanERC1155Operations,
+          limit: number | undefined,
+        ) => {
+          jest.spyOn(axios, "request").mockImplementation(async params => ({
+            data: {
+              result: params.url?.includes("tokennfttx") ? erc721Ops : erc1155Ops,
+            },
+          }));
+          return ETHERSCAN_API.getNftOperations(
+            currency,
+            account.freshAddress,
+            account.id,
+            0,
+            undefined,
+            limit,
+          );
+        };
+
+        // etherscanERC721Operations (3) + etherscanERC1155Operations (3) => 8 processed ops
+        const expectedProcessedOpsCount = 8;
+
+        it("limit > nb ops => isPageFull = false, hasMorePage = false", async () => {
+          const result = await fetchNftOperationsWithLimit(
+            etherscanERC721Operations,
+            etherscanERC1155Operations,
+            etherscanERC721Operations.length + etherscanERC1155Operations.length + 1,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: false,
+            hasMorePage: false,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit = nb ops => isPageFull = true, hasMorePage = true", async () => {
+          const result = await fetchNftOperationsWithLimit(
+            etherscanERC721Operations,
+            etherscanERC1155Operations,
+            etherscanERC721Operations.length, // limit matches one of the endpoints
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: true,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit undefined with ops => isPageFull = true, hasMorePage = false", async () => {
+          const result = await fetchNftOperationsWithLimit(
+            etherscanERC721Operations,
+            etherscanERC1155Operations,
+            undefined,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: false,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit undefined without ops => isPageFull = true, hasMorePage = false", async () => {
+          const result = await fetchNftOperationsWithLimit([], [], undefined);
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: false,
+            nbOps: 0,
+          });
         });
       });
     });
@@ -948,6 +1290,67 @@ describe("EVM Family", () => {
           },
         });
       });
+
+      describe("isPageFull and hasMorePage", () => {
+        const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getInternalOperations);
+
+        // etherscanInternalOperations: 4 raw ops => 3 processed ops (self-send excluded)
+        const expectedProcessedOpsCount = 3;
+
+        it("limit > nb ops => isPageFull = false, hasMorePage = false", async () => {
+          const result = await fetchWithLimit(
+            etherscanInternalOperations,
+            etherscanInternalOperations.length + 1,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: false,
+            hasMorePage: false,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit = nb ops => isPageFull = true, hasMorePage = true", async () => {
+          const result = await fetchWithLimit(
+            etherscanInternalOperations,
+            etherscanInternalOperations.length,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: true,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit < nb ops => isPageFull = true, hasMorePage = true", async () => {
+          const result = await fetchWithLimit(
+            etherscanInternalOperations,
+            etherscanInternalOperations.length - 1,
+          );
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: true,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit undefined with ops => isPageFull = true, hasMorePage = false", async () => {
+          const result = await fetchWithLimit(etherscanInternalOperations, undefined);
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: false,
+            nbOps: expectedProcessedOpsCount,
+          });
+        });
+
+        it("limit undefined without ops => isPageFull = true, hasMorePage = false", async () => {
+          const result = await fetchWithLimit([], undefined);
+          expect(paginationState(result)).toEqual({
+            isPageFull: true,
+            hasMorePage: false,
+            nbOps: 0,
+          });
+        });
+      });
     });
 
     describe("getNftOperations without nft", () => {
@@ -985,7 +1388,7 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("getOperations cascading effectiveMaxBlock logic", () => {
+    describe("getOperations cascades calls optimising the block range", () => {
       afterEach(() => {
         jest.clearAllMocks();
       });
@@ -1469,5 +1872,4 @@ describe("EVM Family", () => {
         expect(result.isPageFull).toBe(true);
       });
     });
-  });
 });
