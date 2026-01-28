@@ -16,6 +16,9 @@ describe("Change Language", () => {
   ];
 
   const verifyLanguageCanBeChanged = (l10n: { lang: string; localization: string }) => {
+    if (l10n.lang === "Español") {
+      $Tag("@smoke");
+    }
     it(`should change selected language to ${l10n.lang}`, async () => {
       await app.settingsGeneral.navigateToLanguageSelect();
       await app.settingsGeneral.selectLanguage(l10n.lang);
