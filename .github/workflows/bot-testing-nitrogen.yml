@@ -18,38 +18,16 @@ on:
         required: false
         default: false
 
-concurrency:
-  group: bot-seed7
-
 jobs:
   run-bot:
-    runs-on: [ledger-live-4xlarge]
-    steps:
-      - name: Generate token
-        id: generate-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
-        with:
-          app-id: ${{ secrets.GH_BOT_APP_ID }}
-          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v4
-      - name: Retrieving coin apps
-        uses: actions/checkout@v4
-        with:
-          ref: generated/ledger-live-bot
-          repository: LedgerHQ/coin-apps
-          token: ${{ steps.generate-token.outputs.token }}
-          path: coin-apps
-      - name: Run the bot
-        uses: LedgerHQ/ledger-live/tools/actions/composites/bot@develop
-        id: bot
-        timeout-minutes: 120
-        with:
-          SHOW_LEGACY_NEW_ACCOUNT: "1"
-          SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
-          SLACK_ICON_EMOJI: ":bot-seed7:"
-          SEED: ${{ secrets.SEED7 }}
-          BOT_ENVIRONMENT: testing
-          BOT_FILTER_FAMILIES: ${{github.event.inputs.families}}
-          BOT_FILTER_CURRENCIES: ${{github.event.inputs.currencies}}
-          BOT_FILTER_FEATURES: ${{github.event.inputs.features}}
-          SPECULOS_USE_WEBSOCKET: ${{inputs.speculos_websocket}}
+    uses: ./.github/workflows/bot-reusable.yml
+    with:
+      seed_index: "7"
+      concurrency_group: bot-seed7
+      bot_environment: testing
+      runs_on: ledger-live-4xlarge
+      slack_icon_emoji: ":bot-seed7:"
+      bot_filter_families: ${{ inputs.families }}
+      bot_filter_currencies: ${{ inputs.currencies }}
+      bot_filter_features: ${{ inputs.features }}
+      speculos_websocket: ${{ inputs.speculos_websocket }}

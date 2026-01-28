@@ -3,36 +3,14 @@ on:
   schedule:
     - cron: "9 16 * * 1-5" # every working day at 4pm we will do a daily non reg on what was merged in
 
-concurrency:
-  group: bot-seed7
-
 jobs:
   run-bot:
-    runs-on: [ledger-live-medium]
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
-        with:
-          app-id: ${{ secrets.GH_BOT_APP_ID }}
-          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v4
-      - name: Retrieving coin apps
-        uses: actions/checkout@v4
-        with:
-          ref: generated/ledger-live-bot
-          repository: LedgerHQ/coin-apps
-          token: ${{ steps.generate-token.outputs.token }}
-          path: coin-apps
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/bot@develop
-        id: bot
-        timeout-minutes: 120
-        with:
-          SHOW_LEGACY_NEW_ACCOUNT: "1"
-          SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
-          SLACK_ICON_EMOJI: ":bot-seed7:"
-          SEED: ${{ secrets.SEED7 }}
-          BOT_ENVIRONMENT: production
-          # We don't run these currencies daily because fees are expensive
-          BOT_DISABLED_CURRENCIES: bitcoin,ethereum,qtum,decred,cardano,axelar,cosmos,secret_network,avalanche_c_chain,bsc,filecoin,tron,cronos,fantom,boba,desmos,sei_network,xion,velas_evm,umee,stargaze,klaytn,etherlink,telos_evm,polygon_zk_evm,polkadot,polygon_zk_evm_testnet,aptos_testnet,arbitrum_sepolia,base_sepolia,blast_sepolia,scroll_sepolia,zksync_sepolia,ethereum_sepolia,optimism_sepolia,linea_sepolia,near
-          BOT_FILTER_FEATURES: send
+    uses: ./.github/workflows/bot-reusable.yml
+    with:
+      seed_index: "7"
+      concurrency_group: bot-seed7
+      bot_environment: production
+      slack_icon_emoji: ":bot-seed7:"
+      # We don't run these currencies daily because fees are expensive
+      bot_disabled_currencies: bitcoin,ethereum,qtum,decred,cardano,axelar,cosmos,secret_network,avalanche_c_chain,bsc,filecoin,tron,cronos,fantom,boba,desmos,sei_network,xion,velas_evm,umee,stargaze,klaytn,etherlink,telos_evm,polygon_zk_evm,polkadot,polygon_zk_evm_testnet,aptos_testnet,arbitrum_sepolia,base_sepolia,blast_sepolia,scroll_sepolia,zksync_sepolia,ethereum_sepolia,optimism_sepolia,linea_sepolia,near
+      bot_filter_features: send

@@ -1,0 +1,104 @@
+name: "[Coin] - Bot - Called"
+
+on:
+  workflow_call:
+    inputs:
+      seed_index:
+        description: "Seed index (1-7) to determine which SEED secret to use"
+        type: string
+        required: true
+      concurrency_group:
+        description: "Concurrency group name (e.g., bot-seed7)"
+        type: string
+        required: true
+      bot_environment:
+        description: "Bot environment (testing/production/staging)"
+        type: string
+        required: true
+      runs_on:
+        description: "Runner type (e.g., ledger-live-medium, ledger-live-4xlarge)"
+        type: string
+        required: false
+        default: ledger-live-medium
+      timeout_minutes:
+        description: "Timeout in minutes"
+        type: number
+        required: false
+        default: 120
+      checkout_ref:
+        description: "Git ref to checkout (defaults to current ref)"
+        type: string
+        required: false
+      bot_filter_families:
+        description: "Comma-separated list of coin families to filter"
+        type: string
+        required: false
+      bot_filter_currencies:
+        description: "Comma-separated list of currency ids to filter"
+        type: string
+        required: false
+      bot_filter_features:
+        description: "Comma-separated list of features to filter (send,sendMax,tokens,staking)"
+        type: string
+        required: false
+      bot_disabled_currencies:
+        description: "Comma-separated list of currencies to disable"
+        type: string
+        required: false
+      explorer:
+        description: "Explorer URL (for staging environments)"
+        type: string
+        required: false
+      slack_channel:
+        description: "Slack channel name (defaults to standard channel)"
+        type: string
+        required: false
+      slack_icon_emoji:
+        description: "Slack icon emoji (e.g., :bot-seed7:)"
+        type: string
+        required: true
+      speculos_websocket:
+        description: "Use Speculos with WebSocket"
+        type: boolean
+        required: false
+        default: false
+
+concurrency:
+  group: ${{ inputs.concurrency_group }}
+
+jobs:
+  run-bot:
+    runs-on: ${{ inputs.runs_on }}
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+        with:
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.checkout_ref || github.ref }}
+      - name: Retrieving coin apps
+        uses: actions/checkout@v4
+        with:
+          ref: generated/ledger-live-bot
+          repository: LedgerHQ/coin-apps
+          token: ${{ steps.generate-token.outputs.token }}
+          path: coin-apps
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/bot@develop
+        id: bot
+        timeout-minutes: ${{ inputs.timeout_minutes }}
+        with:
+          SHOW_LEGACY_NEW_ACCOUNT: "1"
+          SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
+          SLACK_ICON_EMOJI: ${{ inputs.slack_icon_emoji }}
+          SEED: ${{ secrets[format('SEED{0}', inputs.seed_index)] }}
+          BOT_ENVIRONMENT: ${{ inputs.bot_environment }}
+          BOT_FILTER_FAMILIES: ${{ inputs.bot_filter_families }}
+          BOT_FILTER_CURRENCIES: ${{ inputs.bot_filter_currencies }}
+          BOT_FILTER_FEATURES: ${{ inputs.bot_filter_features }}
+          BOT_DISABLED_CURRENCIES: ${{ inputs.bot_disabled_currencies }}
+          EXPLORER: ${{ inputs.explorer }}
+          SLACK_CHANNEL: ${{ inputs.slack_channel }}
+          SPECULOS_USE_WEBSOCKET: ${{ inputs.speculos_websocket }}
