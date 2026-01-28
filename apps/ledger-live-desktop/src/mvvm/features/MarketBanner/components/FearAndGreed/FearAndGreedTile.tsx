@@ -35,10 +35,12 @@ export const FearAndGreedTile = ({ data }: { data: FearAndGreedIndex }) => {
       <Tile
         appearance="card"
         data-testid="fear-and-greed-card"
-        className="w-[98px] justify-center self-stretch"
+        className="w-[98px]"
         onClick={onClick}
       >
-        <GradientMoodIndicator value={data.value} />
+        <div className="flex h-40 items-center justify-center">
+          <GradientMoodIndicator value={data.value} />
+        </div>
         <TileContent>
           <TileTitle>{t("marketBanner.fearAndGreed.title")}</TileTitle>
           <div className={`${textColorClass} body-3`}>{t(translationKey)}</div>

@@ -10,7 +10,7 @@ export default function PageHeader({ title, onBack }: Props) {
   return (
     <NavBar data-testid="page-header">
       {onBack ? <NavBarBackButton onClick={onBack} /> : null}
-      <NavBarTitle className="text-base">{title}</NavBarTitle>
+      <NavBarTitle>{title}</NavBarTitle>
     </NavBar>
   );
 }
