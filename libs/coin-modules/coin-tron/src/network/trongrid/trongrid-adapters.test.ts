@@ -10,6 +10,12 @@ jest.mock("@ledgerhq/coin-framework/utils", () => ({
 describe("fromTrongridTxInfoToOperation", () => {
   const mockUserAddress = "from";
 
+  const mockBlock = {
+    height: 10,
+    hash: "blockHash123",
+    time: new Date(1627843345000),
+  };
+
   const mockTrongridTxInfo: TrongridTxInfo = {
     txID: "tx123",
     blockHeight: 10,
@@ -30,13 +36,13 @@ describe("fromTrongridTxInfoToOperation", () => {
   });
 
   it("should correctly transform a TrongridTxInfo to an Operation", () => {
-    const result = fromTrongridTxInfoToOperation(mockTrongridTxInfo, mockUserAddress);
+    const result = fromTrongridTxInfoToOperation(mockTrongridTxInfo, mockBlock, mockUserAddress);
 
     expect(result).toEqual({
       id: "tx123",
       tx: {
         hash: "tx123",
-        block: { height: 10, hash: "", time: 1627843345 },
+        block: { height: 10, hash: "blockHash123", time: new Date(1627843345000) },
         fees: BigInt(1000),
         date: 1627843345,
         failed: undefined,
@@ -56,7 +62,7 @@ describe("fromTrongridTxInfoToOperation", () => {
       to: mockUserAddress,
     };
 
-    const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
+    const result = fromTrongridTxInfoToOperation(txInfo, mockBlock, mockUserAddress);
 
     expect(result.type).toBe("IN");
   });
@@ -68,7 +74,7 @@ describe("fromTrongridTxInfoToOperation", () => {
       to: "randomAddress",
     };
 
-    const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
+    const result = fromTrongridTxInfoToOperation(txInfo, mockBlock, mockUserAddress);
 
     expect(result.type).toBe("OUT");
   });
@@ -79,9 +85,9 @@ describe("fromTrongridTxInfoToOperation", () => {
       blockHeight: undefined,
     };
 
-    const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
+    const result = fromTrongridTxInfoToOperation(txInfo, mockBlock, mockUserAddress);
 
-    expect(result.tx.block.height).toBe(0); // default value
+    expect(result.tx.block.height).toBe(10);
   });
 
   it("should return a native asset (not a token) when type / tokenAddr is undefined", () => {
@@ -91,7 +97,7 @@ describe("fromTrongridTxInfoToOperation", () => {
       tokenAddressOrId: undefined,
     };
 
-    const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
+    const result = fromTrongridTxInfoToOperation(txInfo, mockBlock, mockUserAddress);
 
     expect(result.asset).toEqual({ type: "native" });
   });
@@ -103,7 +109,7 @@ describe("fromTrongridTxInfoToOperation", () => {
       to: mockUserAddress,
     };
 
-    const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
+    const result = fromTrongridTxInfoToOperation(txInfo, mockBlock, mockUserAddress);
 
     expect(result.type).toBe("UNKNOWN");
   });
@@ -115,7 +121,7 @@ describe("fromTrongridTxInfoToOperation", () => {
       value: undefined,
     };
 
-    const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
+    const result = fromTrongridTxInfoToOperation(txInfo, mockBlock, mockUserAddress);
 
     expect(result.tx.fees).toBe(BigInt(0));
     expect(result.value).toBe(BigInt(0));

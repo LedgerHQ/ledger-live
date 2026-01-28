@@ -1,9 +1,11 @@
 import { AssetInfo, Operation } from "@ledgerhq/coin-framework/api/types";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
 import type { TrongridTxInfo } from "../../types";
+import { Block } from "../types";
 
 export function fromTrongridTxInfoToOperation(
   trongridTxInfo: TrongridTxInfo,
+  block: Block,
   userAddress: string,
 ): Operation {
   return {
@@ -11,9 +13,9 @@ export function fromTrongridTxInfoToOperation(
     tx: {
       hash: trongridTxInfo.txID,
       block: {
-        height: trongridTxInfo.blockHeight || 0,
-        hash: "",
-        time: trongridTxInfo.date,
+        height: block.height,
+        hash: block.hash,
+        time: block.time || new Date(),
       },
       fees: fromBigNumberToBigInt<bigint>(trongridTxInfo.fee, BigInt(0)),
       date: trongridTxInfo.date,

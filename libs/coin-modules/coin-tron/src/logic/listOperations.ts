@@ -50,7 +50,7 @@ export async function listOperations(
   return [
     txs
       // TODO: adapt directly in network calls
-      .map(tx => fromTrongridTxInfoToOperation(tx, address)),
+      .map(tx => fromTrongridTxInfoToOperation(tx, block, address)),
     "",
   ];
 }
