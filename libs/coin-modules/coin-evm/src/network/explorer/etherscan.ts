@@ -33,10 +33,12 @@ import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 export const ETHERSCAN_TIMEOUT = 4000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 2;
 
-function getBlockBoundFromOperations(ops: Operation[], sort: "asc" | "desc"): number {
+function getBlockBoundFromOperations(ops: Operation[]): number {
   if (ops.length === 0) return 0;
-  // Results are already sorted, take tail for desc or head for asc
-  const op = sort === "asc" ? ops[0] : ops[ops.length - 1];
+  // Results are already sorted
+  // In asc mode [1, 2, 3], the bound is 3
+  // In desc mode [3, 2, 1], the bound is 1
+  const op = ops[ops.length - 1];
   return op.blockHeight ?? 0;
 }
 
@@ -168,7 +170,7 @@ export const getCoinOperations = async (
   });
 
   const operations = ops.map(tx => etherscanOperationToOperations(accountId, tx)).flat();
-  const maxBlock = getBlockBoundFromOperations(operations, sort);
+  const maxBlock = getBlockBoundFromOperations(operations);
 
   return {
     operations,
@@ -229,7 +231,7 @@ export const getTokenOperations = async (
   const operations = Object.values(opsByHash).flatMap(events =>
     events.flatMap((event, index) => etherscanERC20EventToOperations(accountId, event, index)),
   );
-  const maxBlock = getBlockBoundFromOperations(operations, sort);
+  const maxBlock = getBlockBoundFromOperations(operations);
 
   return {
     operations,
@@ -290,7 +292,7 @@ export const getERC721Operations = async (
   const operations = Object.values(opsByHash).flatMap(events =>
     events.flatMap((event, index) => etherscanERC721EventToOperations(accountId, event, index)),
   );
-  const maxBlock = getBlockBoundFromOperations(operations, sort);
+  const maxBlock = getBlockBoundFromOperations(operations);
 
   return {
     operations,
@@ -351,7 +353,7 @@ export const getERC1155Operations = async (
   const operations = Object.values(opsByHash).flatMap(events =>
     events.flatMap((event, index) => etherscanERC1155EventToOperations(accountId, event, index)),
   );
-  const maxBlock = getBlockBoundFromOperations(operations, sort);
+  const maxBlock = getBlockBoundFromOperations(operations);
 
   return {
     operations,
@@ -465,7 +467,7 @@ export const getInternalOperations = async (
       etherscanInternalTransactionToOperations(accountId, internalTx, index),
     ),
   );
-  const maxBlock = getBlockBoundFromOperations(operations, sort);
+  const maxBlock = getBlockBoundFromOperations(operations);
 
   return {
     operations,

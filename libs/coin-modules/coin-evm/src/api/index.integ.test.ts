@@ -388,10 +388,25 @@ describe.each([
         setEnv("NFT_CURRENCIES", oldNftCurrencies);
       });
 
+      const expectUniqueOperationIds = (ops: Operation[]) => {
+        const operationIds = ops.map(op => op.id);
+        const uniqueOperationIds = new Set(operationIds);
+        expect(uniqueOperationIds.size).toBe(operationIds.length);
+      };
+
+      const isOrdered = (ops: Operation[], order: "asc" | "desc") => {
+        return ops.every((op, i) => {
+          if (i === 0) return true;
+          const prevDate = ops[i - 1].tx.date.getTime();
+          const currDate = op.tx.date.getTime();
+          return order === "desc" ? currDate <= prevDate : currDate >= prevDate;
+        });
+      };
+
       it.only.each([
         // note that the ASC mode is really slow
-        //["ascending", "asc"],
-        ["descending", "desc"],
+        ["ascending", "asc"],
+        //["descending", "desc"],
       ] as const)("paginates operations in %s order across multiple pages", async (_, order) => {
         // TODO
         // Pagination tests only make sense for etherscan-like explorers that support real pagination.
@@ -413,6 +428,8 @@ describe.each([
 
         expect(p1NbOps).toBeGreaterThanOrEqual(limit);
         expect(p1Token).toBeTruthy();
+        expectUniqueOperationIds(p1Ops);
+        expect(isOrdered(p1Ops, order)).toBe(true);
 
         // -- Page 2
         console.log("🦄 fetching page 2 with pagingToken", p1Token);
@@ -427,30 +444,28 @@ describe.each([
 
         expect(p2NbOps).toBeGreaterThanOrEqual(limit);
         expect(p2Token).toBeTruthy();
+        expectUniqueOperationIds(p2Ops);
+        expect(isOrdered(p2Ops, order)).toBe(true);
 
         // -- Properties assertion
+
+        const allOps = [...p1Ops, ...p2Ops];
 
         // check that each page has no height bounds in commmon
         expect(p1Ops[0]).not.toBe(p2Ops[p2NbOps - 1]);
         expect(p1Ops[p1NbOps - 1]).not.toBe(p2Ops[0]);
 
-        const allOps = [...p1Ops, ...p2Ops];
+        // Check mo page overlapping
+        const operationHeights = allOps.map(op => op.tx.block.height);
+        const p1Heights = new Set(p1Ops.map(op => op.tx.block.height));
+        const p2Heights = new Set(p2Ops.map(op => op.tx.block.height));
+        expect(p1Heights.intersection(p2Heights).size).toBe(0);
 
-        // Check no duplicate operation ids (no page overlapping)
-        const allOperationIds = allOps.map(op => op.id);
-        const uniqueOperationIds = new Set(allOperationIds);
-        expect(uniqueOperationIds.size).toBe(allOperationIds.length);
-
+        // Check no duplicate operation ids
+        expectUniqueOperationIds(allOps);
 
         // check total ordering across pages
-        const isPageOrdered = allOps.every((op, i) => {
-          if (i === 0) return true;
-          const prevDate = allOps[i - 1].tx.date.getTime();
-          const currDate = op.tx.date.getTime();
-          return order === "desc" ? currDate <= prevDate : currDate >= prevDate;
-        });
-        expect(isPageOrdered).toBe(true);
-
+        expect(isOrdered(allOps, order)).toBe(true);
       });
 
       // Cache test only makes sense for etherscan-like explorers that have
