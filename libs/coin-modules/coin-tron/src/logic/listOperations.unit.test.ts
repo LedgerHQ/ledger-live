@@ -46,7 +46,7 @@ describe("listOperations", () => {
     ];
 
     (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);
-    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation((tx, block) => {
+    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation((tx, _block) => {
       return {
         tx: { hash: tx.txID },
         value: BigInt(tx.value.toString()),

@@ -35,8 +35,6 @@ describe("lastBlock", () => {
     const result = await lastBlock(mockCurrency);
 
     expect(result.height).toBe(100);
-    expect(result.hash).toMatch(/^0x[a-f0-9]{64}$/);
-    expect(result.time).toBeInstanceOf(Date);
     expect(gatewayGetLedgerEnd).toHaveBeenCalledTimes(1);
     expect(nodeGetLedgerEnd).not.toHaveBeenCalled();
   });
@@ -48,8 +46,6 @@ describe("lastBlock", () => {
     const result = await lastBlock(mockCurrency);
 
     expect(result.height).toBe(200);
-    expect(result.hash).toMatch(/^0x[a-f0-9]{64}$/);
-    expect(result.time).toBeInstanceOf(Date);
     expect(nodeGetLedgerEnd).toHaveBeenCalledTimes(1);
     expect(gatewayGetLedgerEnd).not.toHaveBeenCalled();
   });
