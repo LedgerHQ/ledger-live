@@ -23,13 +23,16 @@ export function useBalanceHistoryWithCountervalue({
   });
 }
 
-export function usePortfolioAllAccounts(options?: GetPortfolioOptionsType) {
+export function usePortfolioAllAccounts(
+  options?: GetPortfolioOptionsType & { range?: PortfolioRange },
+) {
   const to = useSelector(counterValueCurrencySelector);
   const accounts = useSelector(accountsSelector);
-  const range = useSelector(selectedTimeRangeSelector);
+  const globalRange = useSelector(selectedTimeRangeSelector);
+
   return usePortfolioThrottled({
     accounts,
-    range,
+    range: options?.range ?? globalRange,
     to,
     options,
   });
