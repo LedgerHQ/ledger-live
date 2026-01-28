@@ -20,7 +20,9 @@ import {
 import { FilecoinFeeEstimationFailed } from "../errors";
 import { LiveNetworkRequest } from "@ledgerhq/live-network/network";
 
-const txsPerPageLimit = 1000;
+// Reduced from 1000 to avoid API context deadline exceeded errors
+// The Filecoin API times out with large page sizes
+const txsPerPageLimit = 200;
 const currentVersion = "/v2";
 const fromHeightQueryParam = "from_height";
 
@@ -133,7 +135,8 @@ export const fetchTxsWithPages = async (
   let txsLen = txsPerPageLimit;
 
   while (txsLen === txsPerPageLimit) {
-    const { txs } = await fetchTxs(addr, lastHeight, offset, txsPerPageLimit);
+    const response = await fetchTxs(addr, lastHeight, offset, txsPerPageLimit);
+    const txs = response?.txs ?? [];
     result = result.concat(txs);
 
     txsLen = txs.length;
@@ -195,7 +198,8 @@ export const fetchERC20TransactionsWithPages = async (
   let txsLen = txsPerPageLimit;
 
   while (txsLen === txsPerPageLimit) {
-    const { txs } = await fetchERC20Transactions(addr, lastHeight, offset, txsPerPageLimit);
+    const response = await fetchERC20Transactions(addr, lastHeight, offset, txsPerPageLimit);
+    const txs = response?.txs ?? [];
     result = result.concat(txs);
 
     txsLen = txs.length;

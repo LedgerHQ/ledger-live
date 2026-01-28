@@ -116,12 +116,15 @@ describe("Filecoin API", () => {
   });
 
   describe("fetchTxsWithPages", () => {
+    // Note: txsPerPageLimit is 200 (reduced from 1000 to avoid API timeouts)
     it("should fetch all transactions with multi-page pagination", async () => {
-      const firstPageTxs = Array.from({ length: 1000 }, (_, i) =>
+      // First page: 200 txs (equals page limit, so fetch continues)
+      const firstPageTxs = Array.from({ length: 200 }, (_, i) =>
         createMockTransactionResponse({ hash: `hash_${i}` }),
       );
-      const secondPageTxs = Array.from({ length: 500 }, (_, i) =>
-        createMockTransactionResponse({ hash: `hash_${1000 + i}` }),
+      // Second page: 100 txs (less than page limit, so fetch stops)
+      const secondPageTxs = Array.from({ length: 100 }, (_, i) =>
+        createMockTransactionResponse({ hash: `hash_${200 + i}` }),
       );
 
       mockedNetwork
@@ -130,7 +133,7 @@ describe("Filecoin API", () => {
 
       const result = await fetchTxsWithPages(TEST_ADDRESSES.F1_ADDRESS, 0);
 
-      expect(result).toHaveLength(1500);
+      expect(result).toHaveLength(300);
       expect(mockedNetwork).toHaveBeenCalledTimes(2);
     });
   });
@@ -186,20 +189,23 @@ describe("Filecoin API", () => {
   });
 
   describe("fetchERC20TransactionsWithPages", () => {
+    // Note: txsPerPageLimit is 200 (reduced from 1000 to avoid API timeouts)
     it("should fetch all ERC20 transactions with pagination and sort by timestamp", async () => {
       const now = Math.floor(Date.now() / 1000);
 
-      const firstPageTxs = Array.from({ length: 1000 }, (_, i) =>
+      // First page: 200 txs (equals page limit, so fetch continues)
+      const firstPageTxs = Array.from({ length: 200 }, (_, i) =>
         createMockERC20Transfer({
           id: `${i}`,
           timestamp: now - i,
         }),
       );
 
-      const secondPageTxs = Array.from({ length: 300 }, (_, i) =>
+      // Second page: 100 txs (less than page limit, so fetch stops)
+      const secondPageTxs = Array.from({ length: 100 }, (_, i) =>
         createMockERC20Transfer({
-          id: `${1000 + i}`,
-          timestamp: now - 1000 - i,
+          id: `${200 + i}`,
+          timestamp: now - 200 - i,
         }),
       );
 
@@ -209,7 +215,7 @@ describe("Filecoin API", () => {
 
       const result = await fetchERC20TransactionsWithPages(TEST_ADDRESSES.F4_ADDRESS, 100);
 
-      expect(result).toHaveLength(1300);
+      expect(result).toHaveLength(300);
       expect(mockedNetwork).toHaveBeenCalledTimes(2);
       expect(result[0].timestamp).toBeGreaterThanOrEqual(result[1].timestamp);
     });
