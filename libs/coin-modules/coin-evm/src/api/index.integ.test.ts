@@ -316,7 +316,7 @@ describe.each([
   });
 
   describe("listOperations", () => {
-    it.skip("returns empty operation list for a pristine account", async () => {
+    it("returns empty operation list for a pristine account", async () => {
       expect(
         await module.listOperations("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551", {
           minHeight: 200,
@@ -325,7 +325,7 @@ describe.each([
       ).toEqual([[], ""]);
     });
 
-    it.skip.each([
+    it.each([
       [
         "an ascending",
         "asc",
@@ -407,7 +407,7 @@ describe.each([
         ["ascending", "asc"],
         ["descending", "desc"],
       ] as const)("paginates operations in %s order across multiple pages", async (_, order) => {
-        // TODO
+        // TODO implement pagination for ledger explorer
         // Pagination tests only make sense for etherscan-like explorers that support real pagination.
         // Ledger explorer fetches all data in one call looping over all the pages and returns NO_TOKEN.
         if (!isEtherscanLike) {
@@ -426,7 +426,7 @@ describe.each([
         const p1NbOps = p1Ops.length;
 
         expect(p1NbOps).toBeGreaterThanOrEqual(limit);
-        expect(p1Token).match(/^\d+$/);
+        expect(p1Token).toMatch(/^\d+$/);
         expectUniqueOperationIds(p1Ops);
         expect(isOrdered(p1Ops, order)).toBe(true);
 
