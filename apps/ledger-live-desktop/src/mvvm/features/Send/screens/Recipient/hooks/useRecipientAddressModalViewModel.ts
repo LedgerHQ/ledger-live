@@ -1,23 +1,23 @@
-import { useCallback, useMemo, useState } from "react";
-import { useSelector } from "LLD/hooks/redux";
 import {
   getAccountCurrency,
   getMainAccount,
   getRecentAddressesStore,
 } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  Account,
+  AccountLike,
+  RecentAddress as RecentAddressFromStore,
+} from "@ledgerhq/types-live";
+import { useSelector } from "LLD/hooks/redux";
+import { useCallback, useMemo, useState } from "react";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { useSendFlowData } from "../../../context/SendFlowContext";
 import type { RecentAddress } from "../types";
+import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
 import { useAddressValidation } from "./useAddressValidation";
 import { useRecipientSearchState } from "./useRecipientSearchState";
-import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
-import { useSendFlowData } from "../../../context/SendFlowContext";
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
 
 type UseRecipientAddressModalViewModelProps = Readonly<{
   account: AccountLike;
@@ -47,13 +47,6 @@ export function useRecipientAddressModalViewModel({
     currentAccountId: mainAccount.id,
   });
 
-  const recipientSearchState = useRecipientSearchState({
-    searchValue: recipientSearch.value,
-    result,
-    isLoading,
-    recipientSupportsDomain,
-  });
-
   const allAccounts = useSelector(accountsSelector);
   const userAccountsForCurrency = useMemo(() => {
     const selfTransferPolicy = sendFeatures.getSelfTransferPolicy(currency);
@@ -67,8 +60,9 @@ export function useRecipientAddressModalViewModel({
   }, [allAccounts, currency, mainAccount.id]);
 
   const recentAddresses = useMemo(() => {
-    const raw = getRecentAddressesStore().getAddresses(currency.id);
-    const addressesWithMetadata = Array.isArray(raw) ? raw : [];
+    const addressesWithMetadata = getRecentAddressesStore().getAddresses(
+      currency.id,
+    ) as unknown as RecentAddressFromStore[];
     const selfTransferPolicy = sendFeatures.getSelfTransferPolicy(currency);
 
     const userAccountsByAddress = new Map(
@@ -77,40 +71,29 @@ export function useRecipientAddressModalViewModel({
 
     return addressesWithMetadata
       .filter(entry => {
-        if (!isRecord(entry)) return false;
-        const address = entry.address;
-        if (typeof address !== "string" || address.length === 0) return false;
+        if (!entry?.address) return false;
         if (
           selfTransferPolicy === "impossible" &&
-          address.toLowerCase() === mainAccount.freshAddress.toLowerCase()
+          entry.address.toLowerCase() === mainAccount.freshAddress.toLowerCase()
         ) {
           return false;
         }
         return true;
       })
       .map(entry => {
-        if (!isRecord(entry) || typeof entry.address !== "string") {
-          // Should never happen due to filter above
-          return null;
-        }
-
-        const address = entry.address;
-        const ensName = typeof entry.ensName === "string" ? entry.ensName : undefined;
-        const lastUsed = typeof entry.lastUsed === "number" ? entry.lastUsed : undefined;
-        const lastUsedTimestamp = normalizeLastUsedTimestamp(lastUsed);
-        const matchedAccount = userAccountsByAddress.get(address.toLowerCase());
+        const matchedAccount = userAccountsByAddress.get(entry.address.toLowerCase());
+        const lastUsedTimestamp = normalizeLastUsedTimestamp(entry.lastUsed);
         const recentAddress: RecentAddress = {
-          address,
+          address: entry.address,
           currency,
           lastUsedAt: new Date(lastUsedTimestamp),
-          name: address,
-          ensName,
+          name: entry.address,
+          ensName: entry.ensName,
           isLedgerAccount: !!matchedAccount,
           accountId: matchedAccount?.id,
         };
         return recentAddress;
-      })
-      .filter((value): value is RecentAddress => value !== null);
+      });
     // refreshKey is used to force recalculation when addresses are removed from the store
     // even though it's not directly used in the computation
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -147,6 +130,7 @@ export function useRecipientAddressModalViewModel({
       if (hasMemo) {
         recipientSearch.setValue(address.ensName ?? address.address);
       }
+
       onAddressSelected(address.address, address.ensName, !hasMemo);
     },
     [hasMemo, onAddressSelected, recipientSearch],
@@ -157,6 +141,7 @@ export function useRecipientAddressModalViewModel({
       if (hasMemo) {
         recipientSearch.setValue(selectedAccount.freshAddress);
       }
+
       onAddressSelected(selectedAccount.freshAddress, undefined, !hasMemo);
     },
     [hasMemo, onAddressSelected, recipientSearch],
@@ -177,6 +162,13 @@ export function useRecipientAddressModalViewModel({
     [currency],
   );
 
+  const searchState = useRecipientSearchState({
+    searchValue: recipientSearch.value,
+    result,
+    isLoading,
+    recipientSupportsDomain,
+  });
+
   return {
     searchValue: recipientSearch.value,
     isLoading,
@@ -185,7 +177,6 @@ export function useRecipientAddressModalViewModel({
     mainAccount,
     showInitialState,
     showInitialEmptyState,
-    ...recipientSearchState,
     handleRecentAddressSelect,
     handleAccountSelect,
     handleAddressSelect,
@@ -197,5 +188,6 @@ export function useRecipientAddressModalViewModel({
     memoTypeOptions,
     memoDefaultOption,
     memoMaxLength,
+    ...searchState,
   };
 }

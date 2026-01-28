@@ -4,18 +4,18 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
-import {
-  SEND_FLOW_STEP,
-  type SendFlowStep,
-  type SendFlowBusinessContext,
-} from "@ledgerhq/live-common/flows/send/types";
-import type { SendStepConfig } from "../types";
 import { useSendFlowActions, useSendFlowData } from "../context/SendFlowContext";
 import { useAvailableBalance } from "../hooks/useAvailableBalance";
 import { MemoTypeSelect } from "../screens/Recipient/components/Memo/MemoTypeSelect";
 import { MemoValueInput } from "../screens/Recipient/components/Memo/MemoValueInput";
 import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSection";
 import { useRecipientMemo } from "../screens/Recipient/hooks/useRecipientMemo";
+import {
+  SEND_FLOW_STEP,
+  type SendFlowStep,
+  type SendFlowBusinessContext,
+} from "@ledgerhq/live-common/flows/send/types";
+import type { SendStepConfig } from "../types";
 import { getRecipientDisplayValue, getRecipientSearchPrefillValue } from "./utils";
 
 export function SendHeader() {
@@ -27,29 +27,13 @@ export function SendHeader() {
   const { navigation, currentStep } = wizard;
   const currentStepConfig = wizard.currentStepConfig as SendStepConfig;
 
-  const currencyName = state.account.currency?.ticker ?? "";
-  const availableText = useAvailableBalance(state.account.account);
-
-  const showBackButton = navigation.canGoBack();
-  const showTitle = currentStepConfig?.showTitle !== false;
-
-  const title = showTitle ? t("newSendFlow.title", { currency: currencyName }) : "";
-  const descriptionText =
-    showTitle && availableText ? t("newSendFlow.available", { amount: availableText }) : "";
+  const currencyId = state.account.currency?.id;
 
   const showRecipientInput = currentStepConfig?.addressInput ?? false;
-  const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
-
-  const addressInputValue = useMemo(() => {
-    if (isAmountStep) return getRecipientDisplayValue(state.recipient);
-    return recipientSearch.value;
-  }, [isAmountStep, recipientSearch.value, state.recipient]);
-
   const showMemoControls = Boolean(
     showRecipientInput && uiConfig.hasMemo && recipientSearch.value.length > 0,
   );
 
-  const currencyId = state.account.currency?.id;
   const memoDefaultOption = useMemo(() => {
     return state.account.currency
       ? sendFeatures.getMemoDefaultOption(state.account.currency)
@@ -63,17 +47,17 @@ export function SendHeader() {
   const memoMaxLength = uiConfig.memoMaxLength;
 
   const {
-    resetViewState,
-    showMemoValueInput,
-    showSkipMemo,
     hasMemoTypeOptions,
     memo,
     onMemoTypeChange,
+    showMemoValueInput,
     onMemoValueChange,
+    showSkipMemo,
     skipMemoState,
     onSkipMemoRequestConfirm,
     onSkipMemoCancelConfirm,
     onSkipMemoConfirm,
+    resetViewState,
   } = useRecipientMemo({
     hasMemo: uiConfig.hasMemo,
     memoDefaultOption,
@@ -89,6 +73,9 @@ export function SendHeader() {
       recipientSearch.value.length === 0 ? "empty" : "filled"
     }`,
   });
+
+  const currencyName = state.account.currency?.ticker ?? "";
+  const availableText = useAvailableBalance(state.account.account);
 
   const handleBack = useCallback(() => {
     if (navigation.canGoBack()) {
@@ -109,6 +96,22 @@ export function SendHeader() {
       close();
     }
   }, [close, currentStep, navigation, resetViewState, transaction]);
+
+  const showBackButton = navigation.canGoBack();
+  const showTitle = currentStepConfig?.showTitle !== false;
+
+  const title = showTitle ? t("newSendFlow.title", { currency: currencyName }) : "";
+  const descriptionText =
+    showTitle && availableText ? t("newSendFlow.available", { amount: availableText }) : "";
+
+  const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
+  const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
+
+  const addressInputValue = useMemo(() => {
+    if (isRecipientStep) return recipientSearch.value;
+    if (isAmountStep) return getRecipientDisplayValue(state.recipient);
+    return recipientSearch.value;
+  }, [isRecipientStep, isAmountStep, recipientSearch.value, state.recipient]);
 
   const handleRecipientInputClick = useCallback(() => {
     if (!isAmountStep) return;
@@ -200,12 +203,12 @@ export function SendHeader() {
     t,
     showMemoControls,
     currencyId,
-    showMemoValueInput,
-    showSkipMemo,
     hasMemoTypeOptions,
     memo,
     onMemoTypeChange,
+    showMemoValueInput,
     onMemoValueChange,
+    showSkipMemo,
     skipMemoState,
     onSkipMemoRequestConfirm,
     onSkipMemoCancelConfirm,

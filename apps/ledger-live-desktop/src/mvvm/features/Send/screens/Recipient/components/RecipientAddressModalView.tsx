@@ -1,29 +1,26 @@
-import React from "react";
-import type { Account } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import EmptyList from "./EmptyList";
-import { RecentAddressesSection } from "./RecentAddressesSection";
-import { MyAccountsSection } from "./MyAccountsSection";
-import { AddressMatchedSection } from "./AddressMatchedSection";
-import { LoadingState } from "./LoadingState";
-import { ValidationBanner } from "./ValidationBanner";
-import { AddressValidationError } from "./AddressValidationError";
+import type { Account } from "@ledgerhq/types-live";
+import React from "react";
 import type {
   AddressSearchResult,
-  RecentAddress,
   AddressValidationError as AddressValidationErrorType,
+  RecentAddress,
 } from "../types";
+import { AddressMatchedSection } from "./AddressMatchedSection";
+import { AddressValidationError } from "./AddressValidationError";
+import EmptyList from "./EmptyList";
+import { LoadingState } from "./LoadingState";
+import { MyAccountsSection } from "./MyAccountsSection";
+import { RecentAddressesSection } from "./RecentAddressesSection";
+import { ValidationBanner } from "./ValidationBanner";
 
-type RecipientAddressModalViewData = Readonly<{
+type RecipientAddressModalViewProps = Readonly<{
   searchValue: string;
   isLoading: boolean;
   result: AddressSearchResult;
   recentAddresses: RecentAddress[];
   mainAccount: Account;
   currency: CryptoOrTokenCurrency;
-}>;
-
-type RecipientAddressModalViewUi = Readonly<{
   showInitialState: boolean;
   showInitialEmptyState: boolean;
   showMatchedAddress: boolean;
@@ -39,47 +36,45 @@ type RecipientAddressModalViewUi = Readonly<{
   bridgeRecipientError: Error | undefined;
   bridgeRecipientWarning: Error | undefined;
   bridgeSenderError: Error | undefined;
+  onRecentAddressSelect: (address: RecentAddress) => void;
+  onAccountSelect: (account: Account) => void;
+  onAddressSelect: (address: string, ensName?: string) => void;
+  onRemoveAddress: (address: RecentAddress) => void;
   hasMemo: boolean;
   hasMemoValidationError: boolean;
   hasFilledMemo: boolean;
 }>;
 
-type RecipientAddressModalViewActions = Readonly<{
-  onRecentAddressSelect: (address: RecentAddress) => void;
-  onAccountSelect: (account: Account) => void;
-  onAddressSelect: (address: string, ensName?: string) => void;
-  onRemoveAddress: (address: RecentAddress) => void;
-}>;
-
-type RecipientAddressModalViewProps = Readonly<{
-  data: RecipientAddressModalViewData;
-  ui: RecipientAddressModalViewUi;
-  actions: RecipientAddressModalViewActions;
-}>;
-
-export function RecipientAddressModalView({ data, ui, actions }: RecipientAddressModalViewProps) {
-  const { searchValue, isLoading, result, recentAddresses, mainAccount, currency } = data;
-  const {
-    showInitialState,
-    showInitialEmptyState,
-    showMatchedAddress,
-    showAddressValidationError,
-    showEmptyState,
-    showBridgeSenderError,
-    showSanctionedBanner,
-    showBridgeRecipientError,
-    showBridgeRecipientWarning,
-    isSanctioned,
-    isAddressComplete,
-    addressValidationErrorType,
-    bridgeRecipientError,
-    bridgeRecipientWarning,
-    bridgeSenderError,
-    hasMemo,
-    hasMemoValidationError,
-    hasFilledMemo,
-  } = ui;
-
+export function RecipientAddressModalView({
+  searchValue,
+  isLoading,
+  result,
+  recentAddresses,
+  mainAccount,
+  currency,
+  showInitialState,
+  showInitialEmptyState,
+  showMatchedAddress,
+  showAddressValidationError,
+  showEmptyState,
+  showBridgeSenderError,
+  showSanctionedBanner,
+  showBridgeRecipientError,
+  showBridgeRecipientWarning,
+  isSanctioned,
+  isAddressComplete,
+  addressValidationErrorType,
+  bridgeRecipientError,
+  bridgeRecipientWarning,
+  bridgeSenderError,
+  onRecentAddressSelect,
+  onAccountSelect,
+  onAddressSelect,
+  onRemoveAddress,
+  hasMemo,
+  hasMemoValidationError,
+  hasFilledMemo,
+}: RecipientAddressModalViewProps) {
   const shouldShowErrorBanner =
     !isLoading &&
     (showBridgeSenderError ||
@@ -95,13 +90,13 @@ export function RecipientAddressModalView({ data, ui, actions }: RecipientAddres
         <>
           <RecentAddressesSection
             recentAddresses={recentAddresses}
-            onSelect={actions.onRecentAddressSelect}
-            onRemove={actions.onRemoveAddress}
+            onSelect={onRecentAddressSelect}
+            onRemove={onRemoveAddress}
           />
           <MyAccountsSection
             currency={currency}
             currentAccountId={mainAccount.id}
-            onSelect={actions.onAccountSelect}
+            onSelect={onAccountSelect}
           />
         </>
       )}
@@ -110,7 +105,7 @@ export function RecipientAddressModalView({ data, ui, actions }: RecipientAddres
         <AddressMatchedSection
           searchResult={result}
           searchValue={searchValue}
-          onSelect={actions.onAddressSelect}
+          onSelect={onAddressSelect}
           isSanctioned={isSanctioned}
           isAddressComplete={isAddressComplete}
           hasBridgeError={showBridgeRecipientError || showBridgeRecipientWarning}
