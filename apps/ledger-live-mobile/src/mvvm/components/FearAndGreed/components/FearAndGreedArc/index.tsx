@@ -29,6 +29,7 @@ export default function FearAndGreedArc({ value }: FearAndGreedArcProps) {
   const { theme } = useTheme();
   const animatedValue = useSharedValue(0);
   const [displayValue, setDisplayValue] = useState(0);
+  const lastDisplayValue = useSharedValue(0);
 
   useEffect(() => {
     animatedValue.value = withTiming(value, {
@@ -62,8 +63,11 @@ export default function FearAndGreedArc({ value }: FearAndGreedArcProps) {
   useDerivedValue(() => {
     "worklet";
     const rounded = Math.round(animatedValue.value);
-    runOnJS(setDisplayValue)(rounded);
-  }, [animatedValue]);
+    if (rounded !== lastDisplayValue.value) {
+      lastDisplayValue.value = rounded;
+      runOnJS(setDisplayValue)(rounded);
+    }
+  });
 
   const cursorStyle = useAnimatedStyle(() => {
     "worklet";
