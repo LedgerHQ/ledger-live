@@ -61,11 +61,12 @@
   },
   "exports": {
     ".": {
-      "@ledgerhq/source": "./src/Canton.ts",
-      "import": "./lib-es/Canton.js",
-      "require": "./lib/Canton.js",
-      "default": "./lib/Canton.js"
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib-es/index.js",
+      "require": "./lib/index.js",
+      "default": "./lib/index.js"
     },
+    "./tests/fixtures/prepare-transfer.json": "./tests/fixtures/prepare-transfer.json",
     "./lib-es/*": "./lib-es/*.js",
     "./lib/*": "./lib/*.js",
     "./*": {
