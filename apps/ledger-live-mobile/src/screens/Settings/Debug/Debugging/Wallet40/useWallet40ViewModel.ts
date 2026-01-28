@@ -7,6 +7,7 @@ export const WALLET_40_PARAMS = [
   { key: "marketBanner", label: "Market Banner" },
   { key: "graphRework", label: "Graph & Balance Rework" },
   { key: "quickActionCtas", label: "Quick Action CTAs" },
+  { key: "tour", label: "Tour" },
 ] as const;
 
 type WalletFeatureParamKey = (typeof WALLET_40_PARAMS)[number]["key"];

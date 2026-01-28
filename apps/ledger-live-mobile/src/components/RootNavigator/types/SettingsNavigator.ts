@@ -83,4 +83,5 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugSwipe]: undefined;
   [ScreenName.DebugModularAssetDrawer]: undefined;
   [ScreenName.DebugTooltip]: undefined;
+  [ScreenName.DebugWalletV4Tour]: undefined;
 };

@@ -282,6 +282,7 @@ export type SettingsState = {
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
+  hasSeenWalletV4Tour: boolean;
 };
 
 export type NotificationsSettings = {

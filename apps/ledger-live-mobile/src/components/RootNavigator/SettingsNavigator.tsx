@@ -76,6 +76,7 @@ import SwiperScreenDebug from "~/screens/Settings/Debug/Features/SwiperScreenDeb
 import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/StorageMigration";
 import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
 import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
+import WalletV4TourScreenDebug from "LLM/features/WalletV4Tour/Debug";
 import { UnmountOnBlur } from "./utils/UnmountOnBlur";
 
 const Stack = createNativeStackNavigator<SettingsNavigatorStackParamList>();
@@ -519,6 +520,13 @@ export default function SettingsNavigator() {
         component={ModularDrawerScreenDebug}
         options={{
           title: "ModularAssetDrawer Screen Debug",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugWalletV4Tour}
+        component={WalletV4TourScreenDebug}
+        options={{
+          title: "Wallet V4 Tour",
         }}
       />
     </Stack.Navigator>
