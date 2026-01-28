@@ -62,7 +62,6 @@ export function useSendFlowBusinessLogic({
     (recipient: RecipientData) => {
       setRecipient(recipient);
       transactionHook.actions.setRecipient(recipient);
-      setRecipient(prev => (prev ? { ...prev, ...recipient } : recipient));
     },
     [transactionHook.actions],
   );

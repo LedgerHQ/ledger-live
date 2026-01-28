@@ -53,7 +53,9 @@ export function AddressMatchedSection({
 
   const getRecentDescription = (): string | undefined => {
     if (matchedRecentAddress) {
-      return `Already used · ${formatRelativeDate(matchedRecentAddress.lastUsedAt)}`;
+      return t("newSendFlow.alreadyUsed", {
+        date: formatRelativeDate(matchedRecentAddress.lastUsedAt),
+      });
     }
     return formattedAddress;
   };
