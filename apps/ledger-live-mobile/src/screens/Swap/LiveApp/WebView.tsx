@@ -60,10 +60,7 @@ export const WebView = forwardRef<WebviewAPI, Props>(
 
     const devMode = exportSettings.developerModeEnabled.toString();
     const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-
-    const currentAccounts = useSelector(flattenAccountsSelector);
-    const stableCurrentAccounts = useRef(currentAccounts).current; // only consider accounts available upon initial WebView load
-    const swapParams = useTranslateToSwapAccount(params, stableCurrentAccounts);
+    const swapParams = useTranslateToSwapAccount(params);
     const llmModularDrawerFF = useFeature("llmModularDrawer");
 
     const isLlmModularDrawer = llmModularDrawerFF?.enabled && llmModularDrawerFF?.params?.live_app;
