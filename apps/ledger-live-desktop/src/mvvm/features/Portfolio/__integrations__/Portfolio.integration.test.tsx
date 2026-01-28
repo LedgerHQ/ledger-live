@@ -7,8 +7,6 @@ import { Portfolio } from "@ledgerhq/types-live";
 import { PortfolioView } from "../PortfolioView";
 import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
 import { useNavigate } from "react-router";
-import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import { ARB_ACCOUNT, BTC_ACCOUNT, HEDERA_ACCOUNT } from "../../__mocks__/accounts.mock";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
 
@@ -216,19 +214,8 @@ describe("PortfolioView", () => {
 
   describe("QuickActions", () => {
     it("should render QuickActions when shouldDisplayQuickActionCtas is true", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={true} />, {
-        ...INITIAL_STATE,
-        initialState: { accounts: [BTC_ACCOUNT, HEDERA_ACCOUNT, ARB_ACCOUNT] },
-      });
+      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={true} />);
       expect(screen.getByTestId("quick-actions-actions-list")).toBeVisible();
-    });
-
-    it("should not render QuickActions when user has no accounts", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={true} />, {
-        ...INITIAL_STATE,
-        initialState: { accounts: [] },
-      });
-      expect(screen.queryByTestId("quick-actions-actions-list")).toBeNull();
     });
 
     it("should not render QuickActions when shouldDisplayQuickActionCtas is false", () => {
@@ -245,5 +232,25 @@ describe("PortfolioView", () => {
   it("should not render BalanceSummary", () => {
     render(<PortfolioView {...defaultProps} />);
     expect(screen.queryByTestId("balance-summary")).toBeNull();
+  });
+
+  describe("AddAccount CTA", () => {
+    it("should render AddAccount CTA when user has zero accounts and Wallet 4.0 is enabled", () => {
+      render(<PortfolioView {...defaultProps} totalAccounts={0} isWallet40Enabled={true} />);
+
+      expect(screen.getByTestId("portfolio-add-account-button")).toBeVisible();
+    });
+
+    it("should not render AddAccount CTA when user has accounts", () => {
+      render(<PortfolioView {...defaultProps} totalAccounts={3} isWallet40Enabled={true} />);
+
+      expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
+    });
+
+    it("should not render AddAccount CTA when Wallet 4.0 is disabled", () => {
+      render(<PortfolioView {...defaultProps} totalAccounts={0} isWallet40Enabled={false} />);
+
+      expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
+    });
   });
 });

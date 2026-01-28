@@ -7850,7 +7850,8 @@
   },
   "portfolio": {
     "title": "Home",
-    "today": "Today"
+    "today": "Today",
+    "addAccountCta": "Add crypto account"
   },
   "marketBanner": {
     "title": "Explore market",

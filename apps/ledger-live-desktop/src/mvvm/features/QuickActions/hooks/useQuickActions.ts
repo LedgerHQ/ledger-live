@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { areAccountsEmptySelector, hasAccountsSelector } from "~/renderer/reducers/accounts";
 import { QuickAction } from "../types";
 
-export const useQuickActions = (): { hasAccount: boolean; actionsList: QuickAction[] } => {
+export const useQuickActions = (): { actionsList: QuickAction[] } => {
   const openSendFlow = useOpenSendFlow();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,8 +36,14 @@ export const useQuickActions = (): { hasAccount: boolean; actionsList: QuickActi
 
   const onReceive = useCallback(() => {
     maybeRedirectToAccounts();
+
+    if (!hasAccount) {
+      dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
+      return;
+    }
+
     dispatch(openModal("MODAL_RECEIVE", undefined));
-  }, [dispatch, maybeRedirectToAccounts]);
+  }, [dispatch, maybeRedirectToAccounts, hasAccount]);
 
   const onBuy = useCallback(() => {
     navigate("/exchange", {
@@ -56,7 +62,6 @@ export const useQuickActions = (): { hasAccount: boolean; actionsList: QuickActi
   }, [navigate]);
 
   return {
-    hasAccount,
     actionsList: [
       {
         title: t("quickActions.receive"),

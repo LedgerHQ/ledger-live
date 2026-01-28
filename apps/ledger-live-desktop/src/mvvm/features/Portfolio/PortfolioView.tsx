@@ -9,6 +9,7 @@ import OperationsList from "~/renderer/components/OperationsList";
 import AssetDistribution from "~/renderer/screens/dashboard/AssetDistribution";
 import { Balance } from "./components/Balance";
 import QuickActions from "LLD/features/QuickActions";
+import { AddAccount } from "./components/AddAccount";
 
 export const PortfolioView = memo(function PortfolioView({
   totalAccounts,
@@ -23,6 +24,8 @@ export const PortfolioView = memo(function PortfolioView({
   filterOperations,
   t,
 }: PortfolioViewModelResult) {
+  const shouldDisplayAddAccountCta = totalAccounts === 0 && isWallet40Enabled;
+
   return (
     <>
       <BannerSection isWallet40Enabled={isWallet40Enabled} />
@@ -41,6 +44,7 @@ export const PortfolioView = memo(function PortfolioView({
             {shouldDisplayGraphRework && <Balance />}
             {shouldDisplayQuickActionCtas && <QuickActions />}
             {shouldDisplayMarketBanner && <MarketBanner />}
+            {shouldDisplayAddAccountCta && <AddAccount />}
           </div>
 
           <AssetDistribution />

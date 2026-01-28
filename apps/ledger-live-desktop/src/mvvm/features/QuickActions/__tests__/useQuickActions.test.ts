@@ -1,13 +1,15 @@
 import { renderHook, act } from "tests/testSetup";
 import { useQuickActions } from "../hooks/useQuickActions";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
-import { openModal } from "~/renderer/actions/modals";
-import { useNavigate, useLocation } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useNavigate, useLocation } from "react-router";
 import { ArrowDown, Plus, Minus, ArrowUp } from "@ledgerhq/lumen-ui-react/symbols";
+import { hasAccountsSelector, areAccountsEmptySelector } from "~/renderer/reducers/accounts";
 
 jest.mock("LLD/features/Send/hooks/useOpenSendFlow");
-jest.mock("~/renderer/actions/modals");
+jest.mock("~/renderer/actions/modals", () => ({
+  openModal: jest.fn((name, data) => ({ type: "OPEN_MODAL", name, data })),
+}));
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: jest.fn(),
@@ -37,12 +39,21 @@ describe("useQuickActions", () => {
     mockUseNavigate.mockReturnValue(mockNavigate);
     mockUseLocation.mockReturnValue({
       pathname: "/accounts",
-      state: undefined,
-      key: "",
+      state: null,
+      key: "default",
       search: "",
       hash: "",
     });
-    mockUseSelector.mockImplementation(() => false);
+    // Default: has accounts and has funds
+    mockUseSelector.mockImplementation(selector => {
+      if (selector === hasAccountsSelector) {
+        return true;
+      }
+      if (selector === areAccountsEmptySelector) {
+        return false;
+      }
+      return false;
+    });
   });
 
   describe("actions structure", () => {
@@ -89,7 +100,12 @@ describe("useQuickActions", () => {
 
   describe("sell action disabled state", () => {
     it("should enable sell action when accounts have funds", () => {
-      mockUseSelector.mockImplementation(() => false);
+      mockUseSelector.mockImplementation(selector => {
+        if (selector === hasAccountsSelector) {
+          return true;
+        }
+        return false; // areAccountsEmpty = false
+      });
 
       const { result } = renderHook(() => useQuickActions());
 
@@ -98,7 +114,12 @@ describe("useQuickActions", () => {
     });
 
     it("should disable sell action when accounts are empty", () => {
-      mockUseSelector.mockImplementation(() => true);
+      mockUseSelector.mockImplementation(selector => {
+        if (selector === hasAccountsSelector) {
+          return true;
+        }
+        return true; // areAccountsEmpty = true
+      });
 
       const { result } = renderHook(() => useQuickActions());
 
@@ -108,21 +129,59 @@ describe("useQuickActions", () => {
   });
 
   describe("onReceive action", () => {
-    it("should dispatch openModal with MODAL_RECEIVE when called", () => {
+    it("should dispatch openModal with MODAL_RECEIVE when has accounts", () => {
+      mockUseSelector.mockImplementation(selector => {
+        if (selector === hasAccountsSelector) {
+          return true; // hasAccount = true
+        }
+        if (selector === areAccountsEmptySelector) {
+          return false;
+        }
+        return false;
+      });
+
       const { result } = renderHook(() => useQuickActions());
 
       act(() => {
         result.current.actionsList[0].onAction();
       });
 
-      expect(mockDispatch).toHaveBeenCalledWith(openModal("MODAL_RECEIVE", undefined));
+      expect(mockDispatch).toHaveBeenNthCalledWith(3, {
+        type: "OPEN_MODAL",
+        name: "MODAL_RECEIVE",
+        data: undefined,
+      });
+    });
+
+    it("should open MODAL_ADD_ACCOUNTS when no accounts", () => {
+      mockUseSelector.mockImplementation(selector => {
+        if (selector === hasAccountsSelector) {
+          return false; // hasAccount = false
+        }
+        if (selector === areAccountsEmptySelector) {
+          return true;
+        }
+        return false;
+      });
+
+      const { result } = renderHook(() => useQuickActions());
+
+      act(() => {
+        result.current.actionsList[0].onAction();
+      });
+
+      expect(mockDispatch).toHaveBeenNthCalledWith(3, {
+        type: "OPEN_MODAL",
+        name: "MODAL_ADD_ACCOUNTS",
+        data: undefined,
+      });
     });
 
     it("should not navigate when already on accounts page", () => {
       mockUseLocation.mockReturnValue({
         pathname: "/accounts",
-        state: undefined,
-        key: "",
+        state: null,
+        key: "default",
         search: "",
         hash: "",
       });
@@ -133,14 +192,20 @@ describe("useQuickActions", () => {
         result.current.actionsList[0].onAction();
       });
 
-      expect(mockNavigate).not.toHaveBeenCalledWith("/accounts");
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
 
     it("should navigate to accounts when on manager page", () => {
+      mockUseSelector.mockImplementation(selector => {
+        if (selector === hasAccountsSelector) {
+          return true;
+        }
+        return false; // areAccountsEmpty = true
+      });
       mockUseLocation.mockReturnValue({
         pathname: "/manager",
-        state: undefined,
-        key: "",
+        state: null,
+        key: "default",
         search: "",
         hash: "",
       });
@@ -152,7 +217,11 @@ describe("useQuickActions", () => {
       });
 
       expect(mockNavigate).toHaveBeenCalledWith("/accounts");
-      expect(mockDispatch).toHaveBeenCalledWith(openModal("MODAL_RECEIVE", undefined));
+      expect(mockDispatch).toHaveBeenNthCalledWith(3, {
+        type: "OPEN_MODAL",
+        name: "MODAL_RECEIVE",
+        data: undefined,
+      });
     });
   });
 
@@ -196,14 +265,14 @@ describe("useQuickActions", () => {
         result.current.actionsList[3].onAction();
       });
 
-      expect(mockOpenSendFlow).toHaveBeenCalled();
+      expect(mockOpenSendFlow).toHaveBeenCalledTimes(1);
     });
 
     it("should not navigate when already on accounts page", () => {
       mockUseLocation.mockReturnValue({
         pathname: "/accounts",
-        state: undefined,
-        key: "",
+        state: null,
+        key: "default",
         search: "",
         hash: "",
       });
@@ -214,15 +283,15 @@ describe("useQuickActions", () => {
         result.current.actionsList[3].onAction();
       });
 
-      expect(mockNavigate).not.toHaveBeenCalledWith("/accounts");
-      expect(mockOpenSendFlow).toHaveBeenCalled();
+      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(mockOpenSendFlow).toHaveBeenCalledTimes(1);
     });
 
     it("should navigate to accounts when on manager page", () => {
       mockUseLocation.mockReturnValue({
         pathname: "/manager",
-        state: undefined,
-        key: "",
+        state: null,
+        key: "default",
         search: "",
         hash: "",
       });
@@ -234,7 +303,7 @@ describe("useQuickActions", () => {
       });
 
       expect(mockNavigate).toHaveBeenCalledWith("/accounts");
-      expect(mockOpenSendFlow).toHaveBeenCalled();
+      expect(mockOpenSendFlow).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -242,44 +311,33 @@ describe("useQuickActions", () => {
     it("should return stable action callbacks when dependencies don't change", () => {
       const { result, rerender } = renderHook(() => useQuickActions());
 
-      const firstReceiveAction = result.current.actionsList[0].onAction;
-      const firstSendAction = result.current.actionsList[3].onAction;
-
+      const firstRender = result.current.actionsList;
       rerender();
+      const secondRender = result.current.actionsList;
 
-      const secondReceiveAction = result.current.actionsList[0].onAction;
-      const secondSendAction = result.current.actionsList[3].onAction;
-
-      expect(firstReceiveAction).toBe(secondReceiveAction);
-      expect(firstSendAction).toBe(secondSendAction);
+      expect(firstRender[0].onAction).toBe(secondRender[0].onAction);
+      expect(firstRender[1].onAction).toBe(secondRender[1].onAction);
+      expect(firstRender[2].onAction).toBe(secondRender[2].onAction);
+      expect(firstRender[3].onAction).toBe(secondRender[3].onAction);
     });
 
     it("should update callbacks when location changes", () => {
-      mockUseLocation.mockReturnValue({
-        pathname: "/accounts",
-        state: undefined,
-        key: "",
-        search: "",
-        hash: "",
-      });
-
       const { result, rerender } = renderHook(() => useQuickActions());
 
-      const firstAction = result.current.actionsList[0].onAction;
+      const firstRender = result.current.actionsList;
 
       mockUseLocation.mockReturnValue({
         pathname: "/manager",
-        state: undefined,
-        key: "",
+        state: null,
+        key: "different",
         search: "",
         hash: "",
       });
 
       rerender();
+      const secondRender = result.current.actionsList;
 
-      const secondAction = result.current.actionsList[0].onAction;
-
-      expect(firstAction).not.toBe(secondAction);
+      expect(firstRender[0].onAction).not.toBe(secondRender[0].onAction);
     });
   });
 });
