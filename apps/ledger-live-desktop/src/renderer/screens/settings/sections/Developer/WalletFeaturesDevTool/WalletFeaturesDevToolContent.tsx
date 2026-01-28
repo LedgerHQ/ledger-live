@@ -23,19 +23,17 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
       <p className="text-muted">{t("settings.developer.walletFeaturesDevTool.description")}</p>
 
       {expanded && (
-        <div className="mt-4 flex flex-col gap-6">
-          <QuickActions
-            allEnabled={allEnabled}
-            isEnabled={isEnabled}
-            onEnableAll={() => handleToggleAll(true)}
-            onDisableAll={() => handleToggleAll(false)}
-          />
-
+        <div className="mt-4 flex flex-col gap-12">
           <div className="flex flex-col gap-4">
-            <MainFeatureToggle isEnabled={isEnabled} onToggle={handleToggleEnabled} />
-
-            <div className="flex flex-col gap-2">
-              <span className="body-3-semi-bold text-muted">
+            <div className="flex flex-col gap-4">
+              <span className="body-2-semi-bold text-muted">
+                {t("settings.developer.walletFeaturesDevTool.mainFeatureToggle")}
+              </span>
+              <Divider />
+              <MainFeatureToggle isEnabled={isEnabled} onToggle={handleToggleEnabled} />
+            </div>
+            <div className="flex flex-col gap-4">
+              <span className="body-2-semi-bold text-muted">
                 {t("settings.developer.walletFeaturesDevTool.featureParameters")}
               </span>
               <Divider />
@@ -54,7 +52,15 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
             </div>
           </div>
 
-          <FeatureFlagPreview featureFlag={featureFlag} />
+          <div className="flex gap-4">
+            <QuickActions
+              allEnabled={allEnabled}
+              isEnabled={isEnabled}
+              onEnableAll={() => handleToggleAll(true)}
+              onDisableAll={() => handleToggleAll(false)}
+            />
+            <FeatureFlagPreview featureFlag={featureFlag} />
+          </div>
         </div>
       )}
     </div>

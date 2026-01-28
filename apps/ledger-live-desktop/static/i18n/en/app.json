@@ -4592,6 +4592,7 @@
       "walletFeaturesDevTool": {
         "title": "Wallet Features Dev Tool",
         "description": "Toggle Wallet 4.0 features for desktop (lwdWallet40 feature flag).",
+        "mainFeatureToggle": "Main Feature Toggle",
         "enableAll": "Enable All",
         "disableAll": "Disable All",
         "featureParameters": "Feature Parameters",
