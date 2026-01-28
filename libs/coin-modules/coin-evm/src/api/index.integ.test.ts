@@ -403,10 +403,10 @@ describe.each([
         });
       };
 
-      it.only.each([
+      it.each([
         // note that the ASC mode is really slow
         ["ascending", "asc"],
-        //["descending", "desc"],
+        ["descending", "desc"],
       ] as const)("paginates operations in %s order across multiple pages", async (_, order) => {
         // TODO
         // Pagination tests only make sense for etherscan-like explorers that support real pagination.

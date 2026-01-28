@@ -601,8 +601,7 @@ export const getOperations = makeLRUCache<
 >(
   async (currency, address, accountId, fromBlock, toBlock, pagingToken, limit, order = "desc") => {
     try {
-
-      let paginationBlock = deserializePagingToken(pagingToken);
+      const paginationBlock = deserializePagingToken(pagingToken);
       let currentBoundBlock = undefined
 
       // in asc mode we increment the bound (fromBlock) and in desc mode we decrement it (toBlock)
