@@ -26,7 +26,7 @@ import { detectEvmStakingOperationType } from "../staking/detectOperationType";
  * undefined for gasPrice/gasUsed on L2 transactions with special gas handling.
  */
 export const safeBigNumber = (value: string | undefined): BigNumber => {
-  if (!value || value === "") {
+  if (!value) {
     return new BigNumber(0);
   }
   const bn = new BigNumber(value);
