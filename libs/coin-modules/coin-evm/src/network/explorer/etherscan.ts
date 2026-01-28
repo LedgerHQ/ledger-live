@@ -126,8 +126,15 @@ function updateEffectiveBoundBlock(
   // the currentBoundBlock must be "logically greater than or equal to" the result.boundBlock
   // TODO < or > : assert(currentBoundBlock === undefined || currentBoundBlock >= result.boundBlock)
   // when page are unlimited, we don't adjust the maxBlock
-  if (limit !== undefined && result.isPageFull && result.operations.length > 0 && result.boundBlock > 0) {
-    return currentBoundBlock !== undefined ? Math.min(currentBoundBlock, result.boundBlock) : result.boundBlock;
+  if (
+    limit !== undefined &&
+    result.isPageFull &&
+    result.operations.length > 0 &&
+    result.boundBlock > 0
+  ) {
+    return currentBoundBlock !== undefined
+      ? Math.min(currentBoundBlock, result.boundBlock)
+      : result.boundBlock;
   }
   return currentBoundBlock;
 }
@@ -521,7 +528,12 @@ export async function exhaustEndpoint(
 
   let currentPageNumber = 1;
   const firstPage = await fetchPage(currentPageNumber);
-  console.log("🦄 firstPage", { isPageFull: firstPage.isPageFull, hasMorePage: firstPage.hasMorePage, boundBlock: firstPage.boundBlock, nbOperations: firstPage.operations.length });
+  console.log("🦄 firstPage", {
+    isPageFull: firstPage.isPageFull,
+    hasMorePage: firstPage.hasMorePage,
+    boundBlock: firstPage.boundBlock,
+    nbOperations: firstPage.operations.length,
+  });
 
   // TODO see if we could converge isPageFull and hasMorePage into a single boolean
 
@@ -536,7 +548,7 @@ export async function exhaustEndpoint(
   let boundaryOps: EndpointResult["operations"];
 
   // FIXME it possibly make a new page query where we ditch all the the operations from it in most cases
-  // so I suggest to keep every operations of 2nd page (or 3rd if all 2nd are at the boundary block height) 
+  // so I suggest to keep every operations of 2nd page (or 3rd if all 2nd are at the boundary block height)
   // except the ones at the boundary block height of the 2nd page
   // with a limit of 3:
   // - example: pages: [[1, 2, 3], [3, 3, 3], [3, 4, 5]]
@@ -553,13 +565,22 @@ export async function exhaustEndpoint(
   do {
     currentPageNumber++;
     nextPage = await fetchPage(currentPageNumber);
-    console.log("🦄 nextPage", { isPageFull: nextPage.isPageFull, hasMorePage: nextPage.hasMorePage, boundBlock: nextPage.boundBlock, nbOperations: nextPage.operations.length });
+    console.log("🦄 nextPage", {
+      isPageFull: nextPage.isPageFull,
+      hasMorePage: nextPage.hasMorePage,
+      boundBlock: nextPage.boundBlock,
+      nbOperations: nextPage.operations.length,
+    });
 
     boundaryOps = nextPage.operations.filter(op => (op.blockHeight ?? 0) === firstPage.boundBlock);
     console.log("🦄 boundaryOps", boundaryOps.length);
     allOperations.push(...boundaryOps);
     // Continue while all ops are at boundary block AND page is full (more pages might exist)
-  } while (boundaryOps.length === nextPage.operations.length && nextPage.isPageFull && nextPage.hasMorePage);
+  } while (
+    boundaryOps.length === nextPage.operations.length &&
+    nextPage.isPageFull &&
+    nextPage.hasMorePage
+  );
 
   // hasMorePage = true if we found ops at other blocks, otherwise use last page's status
   const hasOpsAtOtherBlocks = boundaryOps.length < nextPage.operations.length;
@@ -602,24 +623,43 @@ export const getOperations = makeLRUCache<
   async (currency, address, accountId, fromBlock, toBlock, pagingToken, limit, order = "desc") => {
     try {
       const paginationBlock = deserializePagingToken(pagingToken);
-      let currentBoundBlock = undefined
+      let currentBoundBlock = undefined;
 
       // in asc mode we increment the bound (fromBlock) and in desc mode we decrement it (toBlock)
-      const nextPaginationBlock = order === "asc" ? ((bound: number) => bound + 1) : ((bound: number) => bound - 1);
+      const nextPaginationBlock =
+        order === "asc" ? (bound: number) => bound + 1 : (bound: number) => bound - 1;
 
       // TODO remove the boundBlock parameter and use the currentBoundBlock instead in the closure
       async function callEndpoint(endpoint: FetchOperations, boundBlock: number | undefined) {
-        // in asc mode, the cursor is the toBlock 
+        // in asc mode, the cursor is the toBlock
         // in desc mode the cursor is the fromBlock
         // note that user input is discarded in favor of the bound block and the pagination
         if (order === "asc") {
           const from = paginationBlock || fromBlock;
           const to = boundBlock || toBlock;
-          return await exhaustEndpoint(endpoint, currency, address, accountId, from, to, limit, order);
+          return await exhaustEndpoint(
+            endpoint,
+            currency,
+            address,
+            accountId,
+            from,
+            to,
+            limit,
+            order,
+          );
         } else {
           const from = boundBlock || fromBlock;
           const to = paginationBlock || toBlock;
-          return await exhaustEndpoint(endpoint, currency, address, accountId, from, to, limit, order); 
+          return await exhaustEndpoint(
+            endpoint,
+            currency,
+            address,
+            accountId,
+            from,
+            to,
+            limit,
+            order,
+          );
         }
       }
 
@@ -642,7 +682,9 @@ export const getOperations = makeLRUCache<
 
       // nfts
       console.log("🦄 callEndpoint getNftOperations", paginationBlock, currentBoundBlock);
-      const nftResult = isNFTActive(currency) ? (await callEndpoint(getNftOperations, currentBoundBlock)) : EMPTY_RESULT;
+      const nftResult = isNFTActive(currency)
+        ? await callEndpoint(getNftOperations, currentBoundBlock)
+        : EMPTY_RESULT;
       currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, nftResult);
 
       // All done when no endpoint has more pages to fetch
@@ -653,7 +695,8 @@ export const getOperations = makeLRUCache<
         nftResult.hasMorePage
       );
 
-      const nextBoundBlock = currentBoundBlock !== undefined ? nextPaginationBlock(currentBoundBlock) : undefined;
+      const nextBoundBlock =
+        currentBoundBlock !== undefined ? nextPaginationBlock(currentBoundBlock) : undefined;
       return {
         lastCoinOperations: coinResult.operations,
         lastTokenOperations: tokenResult.operations,

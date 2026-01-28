@@ -372,7 +372,6 @@ describe.each([
       },
     );
 
-
     const isEtherscanLike = (config as EvmConfig).explorer?.type === "etherscan";
 
     describe("pagination", () => {

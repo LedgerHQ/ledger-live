@@ -10,6 +10,7 @@ import { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
+import { N } from "ethers";
 import {
   EtherscanOperation,
   EtherscanERC20Event,
@@ -20,7 +21,6 @@ import {
 import { safeEncodeEIP55 } from "../utils";
 import { detectEvmStakingOperationType } from "../staking/detectOperationType";
 import { NO_TOKEN } from "../network/explorer/types";
-import { N } from "ethers";
 
 /**
  * Helper to safely convert a value to BigNumber, defaulting to 0 if invalid.
