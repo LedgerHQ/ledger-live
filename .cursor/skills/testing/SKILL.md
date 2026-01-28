@@ -55,10 +55,10 @@ describe("MyComponent", () => {
     expect(screen.getByText("Test")).toBeInTheDocument();
   });
 
-  it("should handle click", () => {
+  it("should handle click", async () => {
     const onClick = jest.fn();
-    render(<MyComponent onClick={onClick} />);
-    screen.getByRole("button").click();
+    const { user } = render(<MyComponent onClick={onClick} />);
+    await user.click(screen.getByRole("button"));
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
