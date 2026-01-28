@@ -9,12 +9,14 @@ interface PortfolioHeaderSectionProps {
   readonly showAssets: boolean;
   readonly hideGraph: boolean;
   readonly onBackFromUpdate: () => void;
+  readonly isReadOnlyMode?: boolean;
 }
 
 export const PortfolioHeaderSection = ({
   showAssets,
   hideGraph,
   onBackFromUpdate,
+  isReadOnlyMode = false,
 }: PortfolioHeaderSectionProps) => {
   return (
     <View key="portfolioHeaderElements" style={{ paddingTop: 24 }}>
@@ -22,10 +24,11 @@ export const PortfolioHeaderSection = ({
         <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
       </Flex>
       <PortfolioGraphCard
+        key="PortfolioGraphCard"
         showAssets={showAssets}
         screenName="Wallet"
-        key="PortfolioGraphCard"
         hideGraph={hideGraph}
+        isReadOnlyMode={isReadOnlyMode}
       />
       {showAssets && (
         <Box my={24} px={6}>

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { usePortfolio as usePortfolioRaw } from "@ledgerhq/live-countervalues-react/portfolio";
 import {
@@ -9,7 +9,8 @@ import {
 } from "~/renderer/reducers/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { BalanceViewModelResult } from "../components/Balance/types";
-import { formatBalanceParts } from "../utils/formatBalanceParts";
+import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
+import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
 
@@ -56,14 +57,19 @@ export const useBalanceViewModel = (
     [navigateToAnalytics],
   );
 
-  const balanceParts = useMemo(
-    () =>
-      formatBalanceParts({ unit, balance: new BigNumber(latestBalanceValue), locale, discreet }),
-    [unit, latestBalanceValue, locale, discreet],
+  const formatter = useCallback(
+    (value: number): FormattedValue =>
+      formatCurrencyUnitFragment(unit, new BigNumber(value), {
+        locale,
+        showCode: true,
+      }),
+    [unit, locale],
   );
 
   return {
-    balanceParts,
+    balance: latestBalanceValue,
+    formatter,
+    discreet,
     valueChange,
     isAvailable,
     navigateToAnalytics,
