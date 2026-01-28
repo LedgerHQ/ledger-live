@@ -56,7 +56,7 @@ export const getTransactionStatus: AccountBridge<
         showCode: true,
       }),
     });
-  } else if (transaction.recipient && transaction.amount.lt(reserveAmount)) {
+  } else if (transaction.recipient && amount.lt(reserveAmount)) {
     // if we send an amount lower than reserve amount AND target account is new, we need to warn the user that the target account will not be activated
     errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
       minimalAmount: formatCurrencyUnit(account.currency.units[0], reserveAmount, {

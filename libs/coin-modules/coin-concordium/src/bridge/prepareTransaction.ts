@@ -14,23 +14,21 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   account,
   transaction,
 ) => {
-  // Determine transaction type and payload based on memo
   const transactionType = transaction.memo
     ? AccountTransactionType.TransferWithMemo
     : AccountTransactionType.Transfer;
 
-  let payload;
-  if (transaction.memo) {
-    const toAddress = account.freshAddress
+  const toAddress = transaction.recipient
+    ? AccountAddress.fromBase58(transaction.recipient)
+    : account.freshAddress
       ? AccountAddress.fromBase58(account.freshAddress)
       : AccountAddress.fromBase58(getAbandonSeedAddress(account.currency.id));
 
-    payload = {
-      amount: CcdAmount.fromMicroCcd("0"),
-      toAddress,
-      memo: encodeMemoToDataBlob(transaction.memo),
-    };
-  }
+  const payload = {
+    amount: CcdAmount.fromMicroCcd(transaction.amount.toString()),
+    toAddress,
+    ...(transaction.memo ? { memo: encodeMemoToDataBlob(transaction.memo) } : {}),
+  };
 
   const estimation = await estimateFees("", account.currency, transactionType, payload);
 

@@ -12,6 +12,7 @@ import { Observable } from "rxjs";
 import { combine, craftTransaction, estimateFees, getNextValidSequence } from "../common-logic";
 import { encodeMemoToDataBlob } from "../common-logic/utils";
 import { ConcordiumSigner, Transaction } from "../types";
+import { getTransactionStatus } from "./getTransactionStatus";
 
 export const buildSignOperation =
   (signerContext: SignerContext<ConcordiumSigner>): AccountBridge<Transaction>["signOperation"] =>
@@ -20,6 +21,9 @@ export const buildSignOperation =
       async function main() {
         const { fee } = transaction;
         if (!fee) throw new FeeNotLoaded();
+
+        const status = await getTransactionStatus(account, transaction);
+        const actualAmount = status.amount;
 
         o.next({
           type: "device-signature-requested",
@@ -35,15 +39,13 @@ export const buildSignOperation =
           account.operations[0]?.transactionSequenceNumber ??
           new BigNumber(0);
 
-        // Determine transaction type based on memo
         const transactionType = transaction.memo
           ? AccountTransactionType.TransferWithMemo
           : AccountTransactionType.Transfer;
 
-        // Build payload for fee estimation
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const payload: any = {
-          amount: CcdAmount.fromMicroCcd(transaction.amount.toString()),
+          amount: CcdAmount.fromMicroCcd(actualAmount.toString()),
           toAddress: AccountAddress.fromBase58(transaction.recipient),
         };
 
@@ -69,7 +71,7 @@ export const buildSignOperation =
             },
             {
               recipient: transaction.recipient,
-              amount: transaction.amount,
+              amount: actualAmount,
               fee: new BigNumber(estimation.cost.toString()),
               energy: estimation.energy,
               ...(transaction.memo ? { memo: transaction.memo } : {}),
@@ -93,7 +95,7 @@ export const buildSignOperation =
           hash,
           accountId: account.id,
           type: "OUT",
-          value: transaction.amount,
+          value: actualAmount,
           fee: new BigNumber(estimation.cost.toString()),
           blockHash: null,
           blockHeight: null,
