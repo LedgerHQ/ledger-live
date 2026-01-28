@@ -798,6 +798,23 @@ export const DEFAULT_FEATURES: Features = {
       newReceiveDialog: true,
     },
   },
+  addressPoisoningOperationsFilter: {
+    ...DEFAULT_FEATURE,
+    enabled: true,
+    params: {
+      families: [
+        "evm",
+        "tron",
+        "solana",
+        "xrp",
+        "stellar",
+        "hedera",
+        "algorand",
+        "cardano",
+        "cosmos",
+      ],
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings
