@@ -1517,6 +1517,9 @@ describe("EVM Family", () => {
       return "unknown";
     };
 
+    // We will refactor those tests
+    // here is the data
+
     it("should cascade block range from coin to internal when coin returns full page", async () => {
       const coinBlockHeight = 150;
       // Track calls per endpoint to return empty on page 2+ (to avoid infinite loop in exhaustEndpoint)
