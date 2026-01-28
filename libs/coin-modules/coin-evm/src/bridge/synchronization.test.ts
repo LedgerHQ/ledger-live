@@ -286,16 +286,14 @@ describe("EVM Family", () => {
               lastInternalOperations: [],
             }),
           );
-          jest
-            .spyOn(etherscanAPI?.default.explorerApi, "getOperations")
-            .mockImplementation(() =>
-              Promise.resolve({
-                lastCoinOperations: [],
-                lastTokenOperations: [],
-                lastNftOperations: [],
-                lastInternalOperations: [],
-              }),
-            );
+          jest.spyOn(etherscanAPI?.default.explorerApi, "getOperations").mockImplementation(() =>
+            Promise.resolve({
+              lastCoinOperations: [],
+              lastTokenOperations: [],
+              lastNftOperations: [],
+              lastInternalOperations: [],
+            }),
+          );
         });
 
         afterAll(() => {

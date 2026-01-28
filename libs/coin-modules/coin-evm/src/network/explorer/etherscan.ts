@@ -87,15 +87,17 @@ export async function fetchWithRetries<T>(
 }
 
 function isPageFull(limitParameter: number | undefined, operationCount: number): boolean {
-  return (
-    limitParameter === undefined || limitParameter === 0 || operationCount >= limitParameter
-  );
+  return limitParameter === undefined || limitParameter === 0 || operationCount >= limitParameter;
 }
 
 // Returns true when there might be more pages to fetch
 // This happens when the page is full AND we actually got results
 function hasMorePage(limitParameter: number | undefined, operationCount: number): boolean {
-  return !(limitParameter === undefined) && isPageFull(limitParameter, operationCount) && operationCount > 0;
+  return (
+    !(limitParameter === undefined) &&
+    isPageFull(limitParameter, operationCount) &&
+    operationCount > 0
+  );
 }
 
 function groupByHash<T extends { hash: string }>(items: T[]): Record<string, T[]> {
@@ -109,7 +111,6 @@ function groupByHash<T extends { hash: string }>(items: T[]): Record<string, T[]
   return byHash;
 }
 
-
 // this function is used to optimize the toBlock for the next endpoint call
 // if the current enpoint call returns a full page, then it's unnecessary to call the next endpoint with a toBlock higher than the maxBlock of the current page
 // why ? because the operations must respect a total ordering by block height across pages
@@ -117,7 +118,7 @@ function updateEffectiveMaxBlock(
   current: number | undefined,
   result: EndpointResult,
 ): number | undefined {
-  if (result.isPageFull && (result.operations.length > 0 && result.maxBlock > 0)) {
+  if (result.isPageFull && result.operations.length > 0 && result.maxBlock > 0) {
     return current !== undefined ? Math.min(current, result.maxBlock) : result.maxBlock;
   }
   return current;
@@ -491,7 +492,7 @@ export type FetchOperations = (
  * on the next page.
  *
  * This helper continues fetching pages while the page is full AND all operations are at
- * the same boundary block height than the first page. 
+ * the same boundary block height than the first page.
  * This ensures we get all operations at H1.
  *
  * @returns An aggregated EndpointResult with operations from one or more pages with guarantee that no operation exceed the highest block height of the first page.
@@ -523,9 +524,7 @@ export async function exhaustEndpoint(
   let boundaryOps: EndpointResult["operations"];
   do {
     nextPage = await fetchPage(++currentPageNumber);
-    boundaryOps = nextPage.operations.filter(
-      op => (op.blockHeight ?? 0) === firstPage.maxBlock,
-    );
+    boundaryOps = nextPage.operations.filter(op => (op.blockHeight ?? 0) === firstPage.maxBlock);
     allOperations.push(...boundaryOps);
     // Continue while all ops are at boundary block AND page is full (more pages might exist)
   } while (boundaryOps.length === nextPage.operations.length && nextPage.isPageFull);
@@ -623,15 +622,15 @@ export const getOperations = makeLRUCache<
       // Fetch NFT operations with cascaded effectiveMaxBlock
       const nftResult = isNFTActive(currency)
         ? await exhaustEndpoint(
-          getNftOperations,
-          currency,
-          address,
-          accountId,
-          currentFromBlock,
-          effectiveMaxBlock,
-          limit,
-          order,
-        )
+            getNftOperations,
+            currency,
+            address,
+            accountId,
+            currentFromBlock,
+            effectiveMaxBlock,
+            limit,
+            order,
+          )
         : EMPTY_RESULT;
 
       // Compute next fromBlock as max of all endpoints' maxBlocks + 1
@@ -644,7 +643,12 @@ export const getOperations = makeLRUCache<
       const nextFromBlock = maxBlock > 0 ? maxBlock + 1 : currentFromBlock;
 
       // All done when no endpoint has more pages to fetch
-      const allDone = !(coinResult.hasMorePage || internalResult.hasMorePage || tokenResult.hasMorePage || nftResult.hasMorePage);
+      const allDone = !(
+        coinResult.hasMorePage ||
+        internalResult.hasMorePage ||
+        tokenResult.hasMorePage ||
+        nftResult.hasMorePage
+      );
 
       return {
         lastCoinOperations: coinResult.operations,

@@ -308,10 +308,7 @@ export function serializePagingToken(nextFromBlock: number, allDone: boolean): s
  * Deserialize a paging token to get the fromBlock for the current request
  * Returns minHeight if token is undefined or invalid
  */
-export function deserializePagingToken(
-  token: string | undefined,
-  minHeight: number,
-): number {
+export function deserializePagingToken(token: string | undefined, minHeight: number): number {
   if (!token) return minHeight;
   const parsed = parseInt(token, 10);
   if (isNaN(parsed)) return minHeight;

@@ -1283,7 +1283,10 @@ describe("EVM Family", () => {
 
       it("page 1 not full => single call, returns only page 1 operations", async () => {
         const page1Ops = createOps([100, 99, 98]);
-        const mockFetch = jest.fn<Promise<ETHERSCAN_API.EndpointResult>, [any, any, any, any, any, any, any, number?]>();
+        const mockFetch = jest.fn<
+          Promise<ETHERSCAN_API.EndpointResult>,
+          [any, any, any, any, any, any, any, number?]
+        >();
         mockFetch.mockResolvedValue(createEndpointResult(page1Ops, false));
 
         const result = await ETHERSCAN_API.exhaustEndpoint(
@@ -1319,7 +1322,10 @@ describe("EVM Family", () => {
       it("page 1 full, page 2 not full with same block => returns all operations", async () => {
         const page1Ops = createOps([100, 100, 100]);
         const page2Ops = createOps([100, 100]);
-        const mockFetch = jest.fn<Promise<ETHERSCAN_API.EndpointResult>, [any, any, any, any, any, any, any, number?]>();
+        const mockFetch = jest.fn<
+          Promise<ETHERSCAN_API.EndpointResult>,
+          [any, any, any, any, any, any, any, number?]
+        >();
         mockFetch
           .mockResolvedValueOnce(createEndpointResult(page1Ops, true))
           .mockResolvedValueOnce(createEndpointResult(page2Ops, false));
@@ -1336,8 +1342,28 @@ describe("EVM Family", () => {
         );
 
         expect(mockFetch).toHaveBeenCalledTimes(2);
-        expect(mockFetch).toHaveBeenNthCalledWith(1, currency, account.freshAddress, account.id, 0, undefined, 3, "desc", 1);
-        expect(mockFetch).toHaveBeenNthCalledWith(2, currency, account.freshAddress, account.id, 0, undefined, 3, "desc", 2);
+        expect(mockFetch).toHaveBeenNthCalledWith(
+          1,
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          undefined,
+          3,
+          "desc",
+          1,
+        );
+        expect(mockFetch).toHaveBeenNthCalledWith(
+          2,
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          undefined,
+          3,
+          "desc",
+          2,
+        );
         expect(result.operations).toHaveLength(5);
         // isPageFull preserves firstPage.isPageFull for cascading effectiveMaxBlock
         expect(result.isPageFull).toBe(true);
@@ -1346,7 +1372,10 @@ describe("EVM Family", () => {
       it("page 1 full, page 2 has operations at different block => returns page 1 + boundary ops from page 2", async () => {
         const page1Ops = createOps([100, 100, 99]);
         const page2Ops = createOps([100, 98, 97]);
-        const mockFetch = jest.fn<Promise<ETHERSCAN_API.EndpointResult>, [any, any, any, any, any, any, any, number?]>();
+        const mockFetch = jest.fn<
+          Promise<ETHERSCAN_API.EndpointResult>,
+          [any, any, any, any, any, any, any, number?]
+        >();
         mockFetch
           .mockResolvedValueOnce(createEndpointResult(page1Ops, true))
           .mockResolvedValueOnce(createEndpointResult(page2Ops, false));
@@ -1365,7 +1394,9 @@ describe("EVM Family", () => {
         expect(mockFetch).toHaveBeenCalledTimes(2);
         // Should include page1 (3 ops) + only boundary block ops from page2 (1 op at block 100)
         expect(result.operations).toHaveLength(4);
-        expect(result.operations.every(op => op.blockHeight === 100 || op.blockHeight === 99)).toBe(true);
+        expect(result.operations.every(op => op.blockHeight === 100 || op.blockHeight === 99)).toBe(
+          true,
+        );
         expect(result.hasMorePage).toBe(true);
         // isPageFull preserves firstPage.isPageFull for cascading effectiveMaxBlock
         expect(result.isPageFull).toBe(true);
@@ -1373,7 +1404,10 @@ describe("EVM Family", () => {
 
       it("page 1 full, page 2 empty => returns page 1 operations", async () => {
         const page1Ops = createOps([100, 100, 100]);
-        const mockFetch = jest.fn<Promise<ETHERSCAN_API.EndpointResult>, [any, any, any, any, any, any, any, number?]>();
+        const mockFetch = jest.fn<
+          Promise<ETHERSCAN_API.EndpointResult>,
+          [any, any, any, any, any, any, any, number?]
+        >();
         mockFetch
           .mockResolvedValueOnce(createEndpointResult(page1Ops, true))
           .mockResolvedValueOnce(createEndpointResult([], false));
@@ -1398,7 +1432,10 @@ describe("EVM Family", () => {
         const page1Ops = createOps([100, 100, 100]);
         const page2Ops = createOps([100, 100, 100]);
         const page3Ops = createOps([100]);
-        const mockFetch = jest.fn<Promise<ETHERSCAN_API.EndpointResult>, [any, any, any, any, any, any, any, number?]>();
+        const mockFetch = jest.fn<
+          Promise<ETHERSCAN_API.EndpointResult>,
+          [any, any, any, any, any, any, any, number?]
+        >();
         mockFetch
           .mockResolvedValueOnce(createEndpointResult(page1Ops, true))
           .mockResolvedValueOnce(createEndpointResult(page2Ops, true))
@@ -1416,7 +1453,17 @@ describe("EVM Family", () => {
         );
 
         expect(mockFetch).toHaveBeenCalledTimes(3);
-        expect(mockFetch).toHaveBeenNthCalledWith(3, currency, account.freshAddress, account.id, 0, undefined, 3, "desc", 3);
+        expect(mockFetch).toHaveBeenNthCalledWith(
+          3,
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+          undefined,
+          3,
+          "desc",
+          3,
+        );
         expect(result.operations).toHaveLength(7);
         // isPageFull preserves firstPage.isPageFull for cascading effectiveMaxBlock
         expect(result.isPageFull).toBe(true);
