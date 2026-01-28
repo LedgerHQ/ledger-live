@@ -1,15 +1,7 @@
-/**
- * Direct transport handling in main process for Speculos and HTTP proxy
- * No more internal process - much simpler!
- */
 import { ipcMain } from "electron";
 import { log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
 import TransportHttp from "@ledgerhq/hw-transport-http";
-import {
-  DeviceManagementKitTransportSpeculos,
-  SpeculosHttpTransportOpts,
-} from "@ledgerhq/live-dmk-speculos";
 
 const LOG_TYPE = "main-transport-handler";
 
@@ -26,14 +18,7 @@ export function setupTransportHandlers() {
 
       let transport;
 
-      if (descriptor?.includes("speculos") || process.env.SPECULOS_API_PORT) {
-        // Speculos transport
-        const req: SpeculosHttpTransportOpts = {
-          apiPort: String(process.env.SPECULOS_API_PORT || "5000"),
-        };
-        transport = await DeviceManagementKitTransportSpeculos.open(req);
-      } else if (process.env.DEVICE_PROXY_URL) {
-        // HTTP proxy transport
+      if (process.env.DEVICE_PROXY_URL) {
         const TransportHttpProxy = TransportHttp(process.env.DEVICE_PROXY_URL.split("|"));
         transport = await TransportHttpProxy.create(timeout || 3000, timeout || 5000);
       } else {

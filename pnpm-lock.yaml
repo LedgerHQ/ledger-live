@@ -1425,6 +1425,9 @@ importers:
       '@ledgerhq/live-dmk-mobile':
         specifier: workspace:^
         version: link:../../libs/live-dmk-mobile
+      '@ledgerhq/live-dmk-speculos':
+        specifier: workspace:^
+        version: link:../../libs/live-dmk-speculos
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
