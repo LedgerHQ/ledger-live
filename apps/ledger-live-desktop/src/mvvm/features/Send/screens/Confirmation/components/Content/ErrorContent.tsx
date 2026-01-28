@@ -20,13 +20,13 @@ export const ErrorContent = ({ error }: ErrorContentProps) => {
     <>
       <Spot appearance="error" size={72} />
       <div className="flex flex-col items-center gap-12 text-center">
-        <h3 className="text-base heading-3-semi-bold">
+        <h3 className="heading-3-semi-bold text-base">
           <TranslatedError error={error} field="title" />
         </h3>
-        <p className="text-muted body-2">
+        <p className="body-2 text-muted">
           <TranslatedError error={error} field="description" />
         </p>
-        <button type="button" onClick={handleExportLogs} className="mt-4 text-interactive body-2">
+        <button type="button" onClick={handleExportLogs} className="mt-4 body-2 text-interactive">
           {t("settings.exportLogs.title")}
         </button>
       </div>
