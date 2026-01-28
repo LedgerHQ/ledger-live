@@ -377,8 +377,8 @@ describe("EVM Family", () => {
           const resultDesc = await fetchWithLimit(etherscanCoinOperations, undefined, "desc");
           // the order must be respected by the underlying api, it's not enforced by implementation
           expect(resultAsc.operations).toEqual(resultDesc.operations);
-          // boundBlock depends on sort parameter (boundary for pagination)
-          expect(resultAsc.boundBlock).not.toEqual(resultDesc.boundBlock);
+          // boundBlock is always the last element of the operations array (boundary for pagination)
+          expect(resultAsc.boundBlock).toEqual(resultDesc.boundBlock);
         });
       });
     });
@@ -611,7 +611,7 @@ describe("EVM Family", () => {
           // the order must be respected by the underlying api, it's not enforced by implementation
           expect(resultAsc.operations).toEqual(resultDesc.operations);
           // boundBlock depends on sort parameter (boundary for pagination)
-          expect(resultAsc.boundBlock).not.toEqual(resultDesc.boundBlock);
+           expect(resultAsc.boundBlock).toEqual(resultDesc.boundBlock);;
         });
       });
     });
@@ -844,7 +844,7 @@ describe("EVM Family", () => {
           // the order must be respected by the underlying api, it's not enforced by implementation
           expect(resultAsc.operations).toEqual(resultDesc.operations);
           // boundBlock depends on sort parameter (boundary for pagination)
-          expect(resultAsc.boundBlock).not.toEqual(resultDesc.boundBlock);
+           expect(resultAsc.boundBlock).toEqual(resultDesc.boundBlock);;
         });
       });
     });
@@ -1077,7 +1077,7 @@ describe("EVM Family", () => {
           // the order must be respected by the underlying api, it's not enforced by implementation
           expect(resultAsc.operations).toEqual(resultDesc.operations);
           // boundBlock depends on sort parameter (boundary for pagination)
-          expect(resultAsc.boundBlock).not.toEqual(resultDesc.boundBlock);
+           expect(resultAsc.boundBlock).toEqual(resultDesc.boundBlock);;
         });
       });
     });
@@ -1440,7 +1440,7 @@ describe("EVM Family", () => {
           // the order must be respected by the underlying api, it's not enforced by implementation
           expect(resultAsc.operations).toEqual(resultDesc.operations);
           // boundBlock depends on sort parameter (boundary for pagination)
-          expect(resultAsc.boundBlock).not.toEqual(resultDesc.boundBlock);
+           expect(resultAsc.boundBlock).toEqual(resultDesc.boundBlock);;
         });
       });
     });
@@ -1554,7 +1554,8 @@ describe("EVM Family", () => {
           call => getEndpointType((call[0] as any).url) === "internal",
         );
         expect(internalCall).toBeDefined();
-        expect((internalCall![0] as any).params.endBlock).toBe(coinBlockHeight);
+        // In desc mode, the cascade affects startBlock (fromBlock), not endBlock
+        expect((internalCall![0] as any).params.startBlock).toBe(coinBlockHeight);
       });
 
       it("should cascade block range through all endpoints sequentially when pages are full", async () => {
@@ -1593,7 +1594,8 @@ describe("EVM Family", () => {
           call => getEndpointType((call[0] as any).url) === "token",
         );
         expect(tokenCall).toBeDefined();
-        expect((tokenCall![0] as any).params.endBlock).toBe(internalMaxBlock);
+        // In desc mode, the cascade affects startBlock (fromBlock), not endBlock
+        expect((tokenCall![0] as any).params.startBlock).toBe(internalMaxBlock);
       });
 
       it("should cascade to min(callerToBlock, boundBlock) when page is full", async () => {
@@ -1631,11 +1633,12 @@ describe("EVM Family", () => {
         expect((coinCall![0] as any).params.endBlock).toBe(callerToBlock);
 
         // After full page from coin, cascades to min(200, 150) = 150
+        // In desc mode, the cascade affects startBlock (fromBlock), not endBlock
         const internalCall = spy.mock.calls.find(
           call => getEndpointType((call[0] as any).url) === "internal",
         );
         expect(internalCall).toBeDefined();
-        expect((internalCall![0] as any).params.endBlock).toBe(coinMaxBlock);
+        expect((internalCall![0] as any).params.startBlock).toBe(coinMaxBlock);
       });
 
       it("should not cascade when all endpoints return empty", async () => {
@@ -1726,25 +1729,26 @@ describe("EVM Family", () => {
           1, // limit=1 to make single op a full page
         );
 
-        // Internal call uses effectiveMaxBlock after coin = min(undefined, 180) = 180
+        // Internal call uses effectiveBoundBlock after coin = min(undefined, 180) = 180
+        // In desc mode, the cascade affects startBlock (fromBlock), not endBlock
         const internalCall = spy.mock.calls.find(
           call => getEndpointType((call[0] as any).url) === "internal",
         );
-        expect((internalCall![0] as any).params.endBlock).toBe(coinMaxBlock);
+        expect((internalCall![0] as any).params.startBlock).toBe(coinMaxBlock);
 
-        // Token call uses effectiveMaxBlock after internal = min(180, 200) = 180
+        // Token call uses effectiveBoundBlock after internal = min(180, 200) = 180
         // Note: internal returns 200 which is > 180, so no update, stays at 180
         const tokenCall = spy.mock.calls.find(
           call => getEndpointType((call[0] as any).url) === "token",
         );
-        expect((tokenCall![0] as any).params.endBlock).toBe(coinMaxBlock);
+        expect((tokenCall![0] as any).params.startBlock).toBe(coinMaxBlock);
 
-        // NFT call uses effectiveMaxBlock after token = min(180, 150) = 150
+        // NFT call uses effectiveBoundBlock after token = min(180, 150) = 150
         const nftCall = spy.mock.calls.find(
           call => getEndpointType((call[0] as any).url) === "erc721",
         );
         expect(nftCall).toBeDefined();
-        expect((nftCall![0] as any).params.endBlock).toBe(tokenMaxBlock);
+        expect((nftCall![0] as any).params.startBlock).toBe(tokenMaxBlock);
       });
 
       it("should not cascade block range when limit is undefined (unlimited page)", async () => {
