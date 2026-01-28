@@ -25,7 +25,7 @@ export const PortfolioView = memo(function PortfolioView({
 }: PortfolioViewModelResult) {
   return (
     <>
-      <BannerSection />
+      <BannerSection isWallet40Enabled={isWallet40Enabled} />
       <TrackPage
         category="Portfolio"
         totalAccounts={totalAccounts}
