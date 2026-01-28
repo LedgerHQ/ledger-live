@@ -417,6 +417,7 @@
     "src/families/casper/descriptor.ts",
     "src/families/celo/descriptor.ts",
     "src/families/cosmos/descriptor.ts",
+    "src/families/concordium/types.ts",
     "src/families/evm/descriptor.ts",
     "src/families/filecoin/descriptor.ts",
     "src/families/filecoin/utils.ts",
