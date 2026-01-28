@@ -66,7 +66,8 @@
         "/typescript/",
         "/vite/",
         "/zx/"
-      ]
+      ],
+      "minimumReleaseAge": "2 days"
     },
     {
       "description": "Electron linked updates",
@@ -80,7 +81,8 @@
         "!electron-context-menu",
         "!electron-store",
         "!vite-plugin-electron"
-      ]
+      ],
+      "minimumReleaseAge": "2 days"
     },
     {
       "description": "Metro linked updates",
@@ -95,11 +97,16 @@
       ],
       "groupName": "metro",
       "reviewers": ["team:live-hub"],
-      "assignees": ["team:live-hub"]
+      "assignees": ["team:live-hub"],
+      "minimumReleaseAge": "2 days"
     },
     {
       "extends": ["monorepo:expo"],
-      "groupName": null
+      "groupName": null,
+      "minimumReleaseAge": "2 days"
+    },
+    {
+      "minimumReleaseAge": "2 days"
     }
   ],
   "prConcurrentLimit": 10,
