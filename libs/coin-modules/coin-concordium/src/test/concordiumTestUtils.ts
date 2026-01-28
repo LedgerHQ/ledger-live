@@ -43,12 +43,11 @@ export function generateMockKeyPair(): ConcordiumTestKeyPair {
     privateKeyPem, // PEM format string
 
     /**
-     * Sign transaction data using Ed25519 signature
+     * Sign transaction data using Ed25519 signature.
+     * Accepts UTF-8 strings (e.g., JSON.stringify output) and produces hex signature.
      */
     sign: (data: string): string => {
-      // Clean input - remove 0x prefix if present
-      const cleanData = data.startsWith("0x") ? data.slice(2) : data;
-      const dataBuffer = Buffer.from(cleanData, "hex");
+      const dataBuffer = Buffer.from(data, "utf-8");
 
       const privateKeyObj = crypto.createPrivateKey({
         key: privateKeyPem,

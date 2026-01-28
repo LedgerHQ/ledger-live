@@ -17,7 +17,7 @@ This adapter package:
 1. **Imports** the ESM-only SDK package `@concordium/web-sdk`
 2. **Bundles** it using Rollup (like `ethereum-provider`)
 3. **Builds** both CJS and ESM outputs
-4. **Re-exports** simply everything from web-sdk
+4. **Re-exports** everything from web-sdk
 
 ## Architecture
 
@@ -59,4 +59,4 @@ This adapter package:
 
 We might want to move this to `coin-concordium` module
 
-Also it will be required to include some aditioonal pylyfils to make it work with reac-native on mobile
+Also it will be required to include some additional polyfills to make it work with react-native on mobile

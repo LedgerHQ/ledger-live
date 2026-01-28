@@ -53,10 +53,8 @@ For a smooth and quick integration:
     *   [Parameters](#parameters-9)
 *   [serializeCredentialDeployment](#serializecredentialdeployment)
     *   [Parameters](#parameters-10)
-*   [serializeIdOwnershipProofs](#serializeidownershipproofs)
-    *   [Parameters](#parameters-11)
 *   [serializeAccountOwnershipProofs](#serializeaccountownershipproofs)
-    *   [Parameters](#parameters-12)
+    *   [Parameters](#parameters-11)
 *   [IdOwnershipProofs](#idownershipproofs)
 *   [CredentialDeploymentTransaction](#credentialdeploymenttransaction)
 *   [AccountTransaction](#accounttransaction)
@@ -64,9 +62,9 @@ For a smooth and quick integration:
 *   [VerifyAddressResponse](#verifyaddressresponse)
 *   [SchemeId](#schemeid)
 *   [pathToBuffer](#pathtobuffer)
-    *   [Parameters](#parameters-13)
+    *   [Parameters](#parameters-12)
 *   [chunkBuffer](#chunkbuffer)
-    *   [Parameters](#parameters-14)
+    *   [Parameters](#parameters-13)
 
 ### Concordium
 
@@ -215,22 +213,6 @@ The device receives the expiry time to display for user verification.
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** BIP32 derivation path
 
 Returns **any** Structured payload components ready for APDU transmission
-
-### serializeIdOwnershipProofs
-
-Serializes IdOwnershipProofs WITHOUT account ownership proofs.
-
-IMPORTANT: This serializes ONLY the ID ownership proofs portion.
-The account ownership proofs must be inserted AFTER proofRegId and BEFORE
-credCounterLessThanMaxAccounts when building the complete CredDeploymentProofs.
-
-Returns an object with the parts so they can be combined in correct order.
-
-#### Parameters
-
-*   `proofs` **{sig: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), commitments: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), challenge: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), proofIdCredPub: Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>, proofIpSig: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), proofRegId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), credCounterLessThanMaxAccounts: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}**&#x20;
-
-Returns **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
 
 ### serializeAccountOwnershipProofs
 

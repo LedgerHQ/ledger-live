@@ -31,7 +31,7 @@ describe("submitCredential integration test", () => {
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
       networkType: "testnet",
-      grpcHostname: "grpc.testnet.concordium.com",
+      grpcUrl: "https://grpc.testnet.concordium.com",
       grpcPort: 20000,
       proxyUrl: "https://wallet-proxy.testnet.concordium.com",
       minReserve: 0,

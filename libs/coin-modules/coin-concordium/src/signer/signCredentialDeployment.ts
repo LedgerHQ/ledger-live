@@ -21,8 +21,6 @@ export async function signCredentialDeployment(
   path: string,
 ): Promise<string> {
   return signerContext(deviceId, async signer => {
-    const signature = await signer.signCredentialDeployment(transaction, path);
-
-    return signature;
+    return await signer.signCredentialDeployment(transaction, path);
   });
 }

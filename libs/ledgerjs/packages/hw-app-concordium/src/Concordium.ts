@@ -319,7 +319,7 @@ export default class Concordium {
 
     const proofsPayloads = serializeTransactionPayloads(serialized.proofs);
     for (let i = 0; i < proofsPayloads.length; i++) {
-      response = await send(P1.PROOFS, P2.MORE, proofsPayloads[i]);
+      await send(P1.PROOFS, P2.MORE, proofsPayloads[i]);
     }
 
     // 7. Send expiry (always for new account creation)

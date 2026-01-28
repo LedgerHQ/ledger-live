@@ -9,4 +9,6 @@ export const CONCORDIUM_CHAIN_IDS = {
 
 export const CONCORDIUM_ID_APP_MOBILE_HOST = "concordiumidapp://";
 
-export const MAX_MEMO_SIZE = 256;
+// Maximum memo size is 254 bytes to fit within DataBlob's 256-byte limit
+// after CBOR encoding overhead (254 bytes memo + 2 bytes CBOR header = 256 bytes total)
+export const MAX_MEMO_SIZE = 254;

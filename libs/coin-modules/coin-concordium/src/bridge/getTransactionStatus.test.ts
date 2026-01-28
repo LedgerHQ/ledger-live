@@ -50,10 +50,10 @@ describe("getTransactionStatus - memo validation", () => {
     });
   });
 
-  describe("protocol boundaries (256 bytes)", () => {
+  describe("protocol boundaries (254 bytes)", () => {
     it.each([
-      ["ASCII at limit", "a".repeat(MAX_MEMO_SIZE), 256],
-      ["multi-byte at limit", "🌍".repeat(64), 256],
+      ["ASCII at limit", "a".repeat(MAX_MEMO_SIZE), 254],
+      ["multi-byte at limit", "🌍".repeat(63) + "12", 254],
     ])("should accept %s (%s bytes)", async (_description, memo, expectedBytes) => {
       expect(Buffer.from(memo, "utf-8").length).toBe(expectedBytes);
       const transaction = createTransaction({ memo });
@@ -62,8 +62,8 @@ describe("getTransactionStatus - memo validation", () => {
     });
 
     it.each([
-      ["ASCII over limit", "a".repeat(MAX_MEMO_SIZE + 1), 257],
-      ["multi-byte over limit", "🌍".repeat(65), 260],
+      ["ASCII over limit", "a".repeat(MAX_MEMO_SIZE + 1), 255],
+      ["multi-byte over limit", "🌍".repeat(64), 256],
     ])("should reject %s (%s bytes)", async (_description, memo, expectedBytes) => {
       expect(Buffer.from(memo, "utf-8").length).toBe(expectedBytes);
       const transaction = createTransaction({ memo });
@@ -71,7 +71,7 @@ describe("getTransactionStatus - memo validation", () => {
 
       expect(result.errors.memo).not.toBeUndefined();
       expect(result.errors.memo?.message).toContain("Memo too long");
-      expect(result.errors.memo?.message).toContain("256");
+      expect(result.errors.memo?.message).toContain("254");
     });
   });
 });

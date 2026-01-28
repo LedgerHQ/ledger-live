@@ -35,12 +35,10 @@
     },
     "./types": {
       "import": {
-        "types": "./lib-es/types/index.d.ts",
-        "default": "./lib-es/types/index.js"
+        "types": "./lib-es/types/index.d.ts"
       },
       "require": {
-        "types": "./lib/types/index.d.cts",
-        "default": "./lib/index.cjs"
+        "types": "./lib/types/index.d.cts"
       }
     }
   },

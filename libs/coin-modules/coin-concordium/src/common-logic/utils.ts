@@ -8,6 +8,8 @@ import { AccountTransactionWithEnergy } from "../types/transaction";
 
 const CBOR_TEXT_STRING_BASE = 0x60;
 const CBOR_MAX_SHORT_LENGTH = 24;
+const CBOR_TEXT_STRING_1BYTE = 0x78;
+const CBOR_TEXT_STRING_2BYTE = 0x79;
 
 /**
  * Validates a Concordium account address using the SDK.
@@ -55,18 +57,31 @@ export function transformAccountTransaction(
  * Memos in Concordium TransferWithMemo transactions must be CBOR-encoded.
  * The Ledger device expects CBOR-encoded memos for display and signing.
  *
- * @param memo - The memo string to encode
+ * Supports CBOR text string encoding up to 254 bytes (to fit in 256-byte limit with CBOR overhead):
+ * - 0x60-0x77: lengths 0-23 (direct encoding, +1 byte overhead)
+ * - 0x78 + 1 byte: lengths 24-254 (+2 bytes overhead)
+ *
+ * Note: Device firmware and SDK DataBlob both enforce 256-byte limit on CBOR-encoded data.
+ *
+ * @param memo - The memo string to encode (max 254 bytes UTF-8)
  * @returns Buffer containing CBOR-encoded text string
  */
 export function encodeMemoAsCbor(memo: string): Buffer {
   const memoBytes = Buffer.from(memo, "utf-8");
   const memoLength = memoBytes.length;
 
-  if (memoLength >= CBOR_MAX_SHORT_LENGTH) {
-    throw new Error(`Memo length must be less than ${CBOR_MAX_SHORT_LENGTH} bytes`);
+  let cborHeader: Buffer;
+
+  if (memoLength < CBOR_MAX_SHORT_LENGTH) {
+    // Short form: 0x60-0x77 (length 0-23)
+    cborHeader = Buffer.from([CBOR_TEXT_STRING_BASE + memoLength]);
+  } else if (memoLength <= 254) {
+    // 1-byte length form: 0x78 + 1 byte length (length 24-254)
+    cborHeader = Buffer.from([CBOR_TEXT_STRING_1BYTE, memoLength]);
+  } else {
+    throw new Error(`Memo length ${memoLength} exceeds maximum supported size of 254 bytes`);
   }
 
-  const cborHeader = Buffer.from([CBOR_TEXT_STRING_BASE + memoLength]);
   return Buffer.concat([cborHeader, memoBytes]);
 }
 
@@ -97,8 +112,15 @@ export function encodeMemoToDataBlob(memo: string): DataBlob {
 
 /**
  * Decodes a CBOR-encoded memo string.
- * Reverses the encoding done by encodeMemoAsCbor.
  * The wallet-proxy returns memos in CBOR-encoded format that needs to be decoded for display.
+ *
+ * Supports CBOR text string decoding:
+ * - 0x60-0x77: lengths 0-23 (direct encoding)
+ * - 0x78 + 1 byte: lengths 24-255
+ * - 0x79 + 2 bytes (big-endian): lengths 256+ (for compatibility with network data)
+ *
+ * Note: While we only encode up to 254 bytes, we support decoding larger memos
+ * for compatibility with transactions received from the network.
  *
  * @param cborEncoded - CBOR-encoded memo (can be string hex, Buffer, or base64)
  * @returns Decoded UTF-8 string, or original input if decoding fails
@@ -122,23 +144,39 @@ export function decodeMemoFromCbor(cborEncoded: string | Buffer): string {
 
     // Read CBOR header (first byte)
     const header = buffer[0];
+    let length: number;
+    let dataOffset: number;
 
-    // Check if it's a CBOR text string (0x60-0x77 range for short strings)
-    if (header < CBOR_TEXT_STRING_BASE || header >= CBOR_TEXT_STRING_BASE + CBOR_MAX_SHORT_LENGTH) {
-      // Not a valid CBOR short text string, return as-is
+    if (header >= CBOR_TEXT_STRING_BASE && header < CBOR_TEXT_STRING_BASE + CBOR_MAX_SHORT_LENGTH) {
+      // Short form: 0x60-0x77 (lengths 0-23)
+      length = header - CBOR_TEXT_STRING_BASE;
+      dataOffset = 1;
+    } else if (header === CBOR_TEXT_STRING_1BYTE) {
+      // 1-byte length form: 0x78 + 1 byte (lengths 24-255)
+      if (buffer.length < 2) {
+        return buffer.toString("utf-8");
+      }
+      length = buffer[1];
+      dataOffset = 2;
+    } else if (header === CBOR_TEXT_STRING_2BYTE) {
+      // 2-byte length form: 0x79 + 2 bytes big-endian (length 256)
+      if (buffer.length < 3) {
+        return buffer.toString("utf-8");
+      }
+      length = (buffer[1] << 8) | buffer[2];
+      dataOffset = 3;
+    } else {
+      // Not a recognized CBOR text string format, return as-is
       return buffer.toString("utf-8");
     }
 
-    // Extract length from header
-    const length = header - CBOR_TEXT_STRING_BASE;
-
-    // Validate buffer has enough bytes
-    if (buffer.length < length + 1) {
+    // Validate buffer has enough bytes for the data
+    if (buffer.length < dataOffset + length) {
       return buffer.toString("utf-8");
     }
 
     // Extract and decode the UTF-8 string
-    return buffer.subarray(1, 1 + length).toString("utf-8");
+    return buffer.subarray(dataOffset, dataOffset + length).toString("utf-8");
   } catch (_error) {
     // If any error occurs, return original input as string
     return typeof cborEncoded === "string" ? cborEncoded : cborEncoded.toString("utf-8");

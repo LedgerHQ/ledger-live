@@ -19,9 +19,13 @@ describe("prepareTransaction", () => {
 
   it("should update fee field if it's different", async () => {
     getNextValidSequenceSpy.mockResolvedValue(42);
-    const oldTx = { fee: new BigNumber(0) };
+    const mockAccount = {
+      currency: { id: "concordium" },
+      freshAddress: "3XSLuJcXg6xEua6iBPnWacc3iWh93yEDMCqX8FbE3RDSbEnT9P",
+    } as Account;
+    const oldTx = { fee: new BigNumber(0), amount: new BigNumber(1000) };
     estimateFeesSpy.mockResolvedValue({ cost: BigInt(1), energy: BigInt(501) });
-    const newTx = await prepareTransaction({} as Account, oldTx as Transaction);
+    const newTx = await prepareTransaction(mockAccount, oldTx as Transaction);
     expect(newTx.fee).toEqual(new BigNumber(1));
   });
 });

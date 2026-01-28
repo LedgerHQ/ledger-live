@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   AmountRequired,

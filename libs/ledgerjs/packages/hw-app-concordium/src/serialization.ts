@@ -227,9 +227,11 @@ export const serializeTransferWithMemo = (
  * Serializes credential deployment values from CredentialDeploymentTransaction.
  *
  * Extracts and serializes the core credential data from hw-app format where:
- * - proofs are already serialized as hex string
  * - all hex fields (credId, verifyKey, etc.) are strings
  * - numeric fields are primitive types (number/bigint)
+ *
+ * Note: This function does NOT serialize proofs. Proofs are serialized separately
+ * in serializeCredentialDeployment() via serializeIdOwnershipProofs().
  *
  * @private
  * @param payload The credential deployment transaction in hw-app format
@@ -409,19 +411,16 @@ export const serializeCredentialDeployment = (
 };
 
 /**
- * Serializes IdOwnershipProofs to Buffer format.
- * @private
- * @param proofs the IdOwnershipProofs object to serialize
- * @returns serialized proofs as Buffer
- */
-/**
- * Serializes IdOwnershipProofs WITHOUT account ownership proofs.
+ * Serializes IdOwnershipProofs to Buffer format WITHOUT account ownership proofs.
  *
  * IMPORTANT: This serializes ONLY the ID ownership proofs portion.
- * The account ownership proofs must be inserted AFTER proofRegId and BEFORE
- * credCounterLessThanMaxAccounts when building the complete CredDeploymentProofs.
+ * Account ownership proofs are NOT included and must be inserted separately
+ * AFTER proofRegId and BEFORE credCounterLessThanMaxAccounts when building
+ * the complete CredDeploymentProofs.
  *
- * Returns an object with the parts so they can be combined in correct order.
+ * @private
+ * @param proofs the IdOwnershipProofs object to serialize
+ * @returns serialized ID ownership proofs as a single concatenated Buffer
  */
 export function serializeIdOwnershipProofs(proofs: {
   sig: string;
