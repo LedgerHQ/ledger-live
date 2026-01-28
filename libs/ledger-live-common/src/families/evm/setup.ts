@@ -7,27 +7,34 @@ import { CreateSigner, createMessageSigner, createResolver } from "../../bridge/
 import { Resolver } from "../../hw/getAddress/types";
 import Transport from "@ledgerhq/hw-transport";
 import { type DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { DmkSignerEth, LegacySignerEth } from "@ledgerhq/live-signer-evm";
+import { DmkSignerEth } from "@ledgerhq/live-signer-evm";
 import { EvmSigner } from "@ledgerhq/coin-evm/types/signer";
+import invariant from "invariant";
 
-const createSigner: CreateSigner<EvmSigner> = (transport: Transport) => {
-  if (isDmkTransport(transport)) {
-    return new DmkSignerEth(transport.dmk, transport.sessionId);
-  }
+const createSigner: CreateSigner<EvmSigner> = (
+  transport: Transport & Partial<{ dmk: DeviceManagementKit; sessionId: string }>,
+) => {
+  invariant(transport.dmk, "evm: transport.dmk is missing");
+  invariant(transport.sessionId, "evm: transport.sessionId is missing");
+  return new DmkSignerEth(transport.dmk, transport.sessionId);
 
-  return new LegacySignerEth(transport);
+  // if (isDmkTransport(transport)) {
+  //   return new DmkSignerEth(transport.dmk, transport.sessionId);
+  // }
+
+  // return new LegacySignerEth(transport);
 };
 
-const isDmkTransport = (
-  transport: Transport,
-): transport is Transport & { dmk: DeviceManagementKit; sessionId: string } => {
-  return (
-    "dmk" in transport &&
-    transport.dmk !== undefined &&
-    "sessionId" in transport &&
-    transport.sessionId !== undefined
-  );
-};
+// const isDmkTransport = (
+//   transport: Transport,
+// ): transport is Transport & { dmk: DeviceManagementKit; sessionId: string } => {
+//   return (
+//     "dmk" in transport &&
+//     transport.dmk !== undefined &&
+//     "sessionId" in transport &&
+//     transport.sessionId !== undefined
+//   );
+// };
 
 const messageSigner = {
   prepareMessageToSign,
