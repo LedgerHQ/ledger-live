@@ -56,13 +56,14 @@ const createFetchWithLimit =
       fromBlock: number,
       toBlock?: number,
       limit?: number,
+      sort?: "asc" | "desc",
     ) => Promise<ETHERSCAN_API.EndpointResult>,
   ) =>
-  async (ops: T[], limit: number | undefined) => {
+  async (ops: T[], limit: number | undefined, sort: "asc" | "desc" = "desc") => {
     jest.spyOn(axios, "request").mockResolvedValueOnce({
       data: { result: ops },
     });
-    return apiFn(currency, account.freshAddress, account.id, 0, undefined, limit);
+    return apiFn(currency, account.freshAddress, account.id, 0, undefined, limit, sort);
   };
 
 // Helper to extract pagination state for assertions
@@ -367,6 +368,19 @@ describe("EVM Family", () => {
           });
         });
       });
+
+      describe("sort parameter", () => {
+        const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getCoinOperations);
+
+        it("should pass sort parameter to API and return operations in received order (trusting endpoint)", async () => {
+          const resultAsc = await fetchWithLimit(etherscanCoinOperations, undefined, "asc");
+          const resultDesc = await fetchWithLimit(etherscanCoinOperations, undefined, "desc");
+          // the order must be respected by the underlying api, it's not enforced by implementation
+          expect(resultAsc.operations).toEqual(resultDesc.operations);
+          // maxBlock depends on sort parameter (boundary for pagination)
+          expect(resultAsc.maxBlock).not.toEqual(resultDesc.maxBlock);
+        });
+      });
     });
 
     describe("getTokenOperations", () => {
@@ -585,6 +599,19 @@ describe("EVM Family", () => {
             hasMorePage: false,
             nbOps: 0,
           });
+        });
+      });
+
+      describe("sort parameter", () => {
+        const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getTokenOperations);
+
+        it("should pass sort parameter to API and return operations in received order (trusting endpoint)", async () => {
+          const resultAsc = await fetchWithLimit(etherscanTokenOperations, undefined, "asc");
+          const resultDesc = await fetchWithLimit(etherscanTokenOperations, undefined, "desc");
+          // the order must be respected by the underlying api, it's not enforced by implementation
+          expect(resultAsc.operations).toEqual(resultDesc.operations);
+          // maxBlock depends on sort parameter (boundary for pagination)
+          expect(resultAsc.maxBlock).not.toEqual(resultDesc.maxBlock);
         });
       });
     });
@@ -807,6 +834,19 @@ describe("EVM Family", () => {
           });
         });
       });
+
+      describe("sort parameter", () => {
+        const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getERC721Operations);
+
+        it("should pass sort parameter to API and return operations in received order (trusting endpoint)", async () => {
+          const resultAsc = await fetchWithLimit(etherscanERC721Operations, undefined, "asc");
+          const resultDesc = await fetchWithLimit(etherscanERC721Operations, undefined, "desc");
+          // the order must be respected by the underlying api, it's not enforced by implementation
+          expect(resultAsc.operations).toEqual(resultDesc.operations);
+          // maxBlock depends on sort parameter (boundary for pagination)
+          expect(resultAsc.maxBlock).not.toEqual(resultDesc.maxBlock);
+        });
+      });
     });
 
     describe("getERC1155Operations", () => {
@@ -1027,6 +1067,19 @@ describe("EVM Family", () => {
           });
         });
       });
+
+      describe("sort parameter", () => {
+        const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getERC1155Operations);
+
+        it("should pass sort parameter to API and return operations in received order (trusting endpoint)", async () => {
+          const resultAsc = await fetchWithLimit(etherscanERC1155Operations, undefined, "asc");
+          const resultDesc = await fetchWithLimit(etherscanERC1155Operations, undefined, "desc");
+          // the order must be respected by the underlying api, it's not enforced by implementation
+          expect(resultAsc.operations).toEqual(resultDesc.operations);
+          // maxBlock depends on sort parameter (boundary for pagination)
+          expect(resultAsc.maxBlock).not.toEqual(resultDesc.maxBlock);
+        });
+      });
     });
 
     describe("getNftOperations", () => {
@@ -1064,6 +1117,7 @@ describe("EVM Family", () => {
           erc721Ops: typeof etherscanERC721Operations,
           erc1155Ops: typeof etherscanERC1155Operations,
           limit: number | undefined,
+          sort: "asc" | "desc" = "desc",
         ) => {
           jest.spyOn(axios, "request").mockImplementation(async params => ({
             data: {
@@ -1077,6 +1131,7 @@ describe("EVM Family", () => {
             0,
             undefined,
             limit,
+            sort,
           );
         };
 
@@ -1129,6 +1184,35 @@ describe("EVM Family", () => {
             hasMorePage: false,
             nbOps: 0,
           });
+        });
+      });
+
+      describe("sort parameter", () => {
+        const fetchNftOperationsWithSort = async (sort: "asc" | "desc") => {
+          jest.spyOn(axios, "request").mockImplementation(async params => ({
+            data: {
+              result: params.url?.includes("tokennfttx")
+                ? etherscanERC721Operations
+                : etherscanERC1155Operations,
+            },
+          }));
+          return ETHERSCAN_API.getNftOperations(
+            currency,
+            account.freshAddress,
+            account.id,
+            0,
+            undefined,
+            undefined,
+            sort,
+          );
+        };
+
+        it("should pass sort parameter to both underlying API calls and sort combined results", async () => {
+          const resultAsc = await fetchNftOperationsWithSort("asc");
+          const resultDesc = await fetchNftOperationsWithSort("desc");
+
+          // getNftOperations sorts the combined ERC721+ERC1155 results internally
+          expect(resultAsc.operations).not.toEqual(resultDesc.operations);
         });
       });
     });
@@ -1350,6 +1434,14 @@ describe("EVM Family", () => {
             nbOps: 0,
           });
         });
+        it("should pass sort parameter to API and return operations in received order (trusting endpoint)", async () => {
+          const resultAsc = await fetchWithLimit(etherscanInternalOperations, undefined, "asc");
+          const resultDesc = await fetchWithLimit(etherscanInternalOperations, undefined, "desc");
+          // the order must be respected by the underlying api, it's not enforced by implementation
+          expect(resultAsc.operations).toEqual(resultDesc.operations);
+          // maxBlock depends on sort parameter (boundary for pagination)
+          expect(resultAsc.maxBlock).not.toEqual(resultDesc.maxBlock);
+        });
       });
     });
 
@@ -1432,7 +1524,7 @@ describe("EVM Family", () => {
         return "unknown";
       };
 
-      it("should cascade effectiveMaxBlock from coin to internal when coin returns full page", async () => {
+      it("should cascade block range from coin to internal when coin returns full page", async () => {
         const coinBlockHeight = 150;
         // Track calls per endpoint to return empty on page 2+ (to avoid infinite loop in exhaustEndpoint)
         const coinCallCount = { count: 0 };
@@ -1465,7 +1557,7 @@ describe("EVM Family", () => {
         expect((internalCall![0] as any).params.endBlock).toBe(coinBlockHeight);
       });
 
-      it("should cascade effectiveMaxBlock through all endpoints sequentially when pages are full", async () => {
+      it("should cascade block range through all endpoints sequentially when pages are full", async () => {
         const coinMaxBlock = 180;
         const internalMaxBlock = 160;
 
