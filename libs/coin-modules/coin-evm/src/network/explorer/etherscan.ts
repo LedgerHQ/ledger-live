@@ -513,8 +513,10 @@ export async function exhaustEndpoint(
   let currentPageNumber = 1;
   const firstPage = await fetchPage(currentPageNumber);
 
-  // if the page is not full, there is nothing to exhaust
-  if (!firstPage.isPageFull) {
+  // TODO see if we could converge isPageFull and hasMorePage into a single boolean
+
+  // if the page is not full or no mor pages, there is nothing to exhaust
+  if (!firstPage.isPageFull || !firstPage.hasMorePage) {
     return firstPage;
   }
 
@@ -523,11 +525,12 @@ export async function exhaustEndpoint(
   let nextPage: EndpointResult;
   let boundaryOps: EndpointResult["operations"];
   do {
-    nextPage = await fetchPage(++currentPageNumber);
+    currentPageNumber++;
+    nextPage = await fetchPage(currentPageNumber);
     boundaryOps = nextPage.operations.filter(op => (op.blockHeight ?? 0) === firstPage.maxBlock);
     allOperations.push(...boundaryOps);
     // Continue while all ops are at boundary block AND page is full (more pages might exist)
-  } while (boundaryOps.length === nextPage.operations.length && nextPage.isPageFull);
+  } while (boundaryOps.length === nextPage.operations.length && nextPage.isPageFull && nextPage.hasMorePage);
 
   // hasMorePage = true if we found ops at other blocks, otherwise use last page's status
   const hasOpsAtOtherBlocks = boundaryOps.length < nextPage.operations.length;
@@ -576,6 +579,8 @@ export const getOperations = makeLRUCache<
       // When an endpoint returns a full page of operations, subsequent endpoints use this as their toBlock
       // to ensure all endpoints operate within the same block range for total ordering
       let effectiveMaxBlock = toBlock;
+
+      // TODO possible factorization with utility function
 
       // Fetch coin operations and exhaust boundary block
       const coinResult = await exhaustEndpoint(
