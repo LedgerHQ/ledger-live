@@ -426,7 +426,7 @@ describe.each([
         const p1NbOps = p1Ops.length;
 
         expect(p1NbOps).toBeGreaterThanOrEqual(limit);
-        expect(p1Token).toBeTruthy();
+        expect(p1Token).match(/^\d+$/);
         expectUniqueOperationIds(p1Ops);
         expect(isOrdered(p1Ops, order)).toBe(true);
 
@@ -442,7 +442,7 @@ describe.each([
         const p2NbOps = p2Ops.length;
 
         expect(p2NbOps).toBeGreaterThanOrEqual(limit);
-        expect(p2Token).toBeTruthy();
+        expect(p2Token).match(/^\d+$/);
         expectUniqueOperationIds(p2Ops);
         expect(isOrdered(p2Ops, order)).toBe(true);
 
@@ -455,7 +455,6 @@ describe.each([
         expect(p1Ops[p1NbOps - 1]).not.toBe(p2Ops[0]);
 
         // Check mo page overlapping
-        const operationHeights = allOps.map(op => op.tx.block.height);
         const p1Heights = new Set(p1Ops.map(op => op.tx.block.height));
         const p2Heights = new Set(p2Ops.map(op => op.tx.block.height));
         expect(p1Heights.intersection(p2Heights).size).toBe(0);

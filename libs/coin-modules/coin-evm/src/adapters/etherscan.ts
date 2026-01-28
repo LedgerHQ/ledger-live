@@ -10,7 +10,6 @@ import { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
-import { N } from "ethers";
 import {
   EtherscanOperation,
   EtherscanERC20Event,

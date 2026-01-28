@@ -1507,13 +1507,6 @@ describe("EVM Family", () => {
         hash: `0xtoken${blockNumber}${i}`,
       }));
 
-    const createMockNftTxResponse = (blockNumbers: number[]) =>
-      blockNumbers.map((blockNumber, i) => ({
-        ...etherscanERC721Operations[0],
-        blockNumber: String(blockNumber),
-        hash: `0xnft${blockNumber}${i}`,
-      }));
-
     // Helper to identify endpoint type from URL - order matters due to substring matching
     const getEndpointType = (url: string): string => {
       if (url.includes("action=txlistinternal")) return "internal";
@@ -1801,40 +1794,74 @@ describe("EVM Family", () => {
   });
 
   describe("exhaustEndpoint", () => {
-    // Helper to create mock operations at specific block heights
-    const createOps = (blockHeights: number[]): ETHERSCAN_API.EndpointResult["operations"] =>
-      blockHeights.map((blockHeight, i) => ({
-        id: `op-${blockHeight}-${i}`,
-        hash: `0x${blockHeight}${i}`,
-        accountId: account.id,
-        blockHash: `0xblock${blockHeight}`,
-        blockHeight,
-        recipients: ["0x123"],
-        senders: ["0x456"],
-        value: new BigNumber(100),
-        fee: new BigNumber(10),
-        date: new Date(),
-        type: "OUT" as const,
-        extra: {},
-      }));
+    it.each([
+      {
+        pages: [[1, 2, 3], [3, 3, 3], [3, 4, 5]],
+        expected: { blocks: [1, 2, 3, 3, 3, 3, 3], hasMorePage: true, isPageFull: true },
+      },
+      {
+        pages: [[1, 2, 3], []],
+        expected: { blocks: [1, 2, 3], hasMorePage: false, isPageFull: true },
+      },
+      {
+        pages: [[1, 2, 3], [3, 3, 3], []],
+        expected: { blocks: [1, 2, 3, 3, 3, 3], hasMorePage: false, isPageFull: true },
+      },
+      {
+        pages: [[1, 2, 3], [3, 3, 3], [3, 3]],
+        expected: { blocks: [1, 2, 3, 3, 3, 3, 3, 3], hasMorePage: false, isPageFull: true },
+      },
+      {
+        pages: [[1, 2, 3], [3, 3, 3], [4, 5]],
+        expected: { blocks: [1, 2, 3, 3, 3, 3], hasMorePage: true, isPageFull: true },
+      },
+      {
+        pages: [[1, 2]],
+        expected: { blocks: [1, 2], hasMorePage: false, isPageFull: false },
+      },
+      {
+        pages: [[]],
+        expected: { blocks: [], hasMorePage: false, isPageFull: false },
+      },
+      {
+        pages: [[1, 2, 3], [3, 4, 5]],
+        expected: { blocks: [1, 2, 3, 3], hasMorePage: true, isPageFull: true },
+      },
+    ])("pages $pages", async ({ pages, expected }) => {
+      const LIMIT = 3;
 
-    const createEndpointResult = (
-      ops: ETHERSCAN_API.EndpointResult["operations"],
-      isPageFull: boolean,
-    ): ETHERSCAN_API.EndpointResult => ({
-      operations: ops,
-      hasMorePage: ops.length > 0 && isPageFull,
-      boundBlock: ops.length > 0 ? Math.max(...ops.map(op => op.blockHeight ?? 0)) : 0,
-      isPageFull,
-    });
+      const createOps = (blockHeights: number[]): ETHERSCAN_API.EndpointResult["operations"] =>
+        blockHeights.map((blockHeight, i) => ({
+          id: `op-${blockHeight}-${i}`,
+          hash: `0x${blockHeight}${i}`,
+          accountId: account.id,
+          blockHash: `0xblock${blockHeight}`,
+          blockHeight,
+          recipients: ["0x123"],
+          senders: ["0x456"],
+          value: new BigNumber(100),
+          fee: new BigNumber(10),
+          date: new Date(),
+          type: "OUT" as const,
+          extra: {},
+        }));
 
-    it("page 1 not full => single call, returns only page 1 operations", async () => {
-      const page1Ops = createOps([100, 99, 98]);
+      const pageResult = (blockHeights: number[]): ETHERSCAN_API.EndpointResult => {
+        const ops = createOps(blockHeights);
+        const isPageFull = blockHeights.length === LIMIT;
+        return {
+          operations: ops,
+          hasMorePage: ops.length > 0 && isPageFull,
+          boundBlock: ops.length > 0 ? Math.max(...ops.map(op => op.blockHeight ?? 0)) : 0,
+          isPageFull,
+        };
+      };
+
       const mockFetch = jest.fn<
         Promise<ETHERSCAN_API.EndpointResult>,
         [any, any, any, any, any, any, any, number?]
       >();
-      mockFetch.mockResolvedValue(createEndpointResult(page1Ops, false));
+      pages.forEach(page => mockFetch.mockResolvedValueOnce(pageResult(page)));
 
       const result = await ETHERSCAN_API.exhaustEndpoint(
         mockFetch,
@@ -1843,177 +1870,15 @@ describe("EVM Family", () => {
         account.id,
         0,
         undefined,
-        10,
+        LIMIT,
         "desc",
       );
 
-      expect(mockFetch).toHaveBeenCalledTimes(1);
-      expect(mockFetch).toHaveBeenCalledWith(
-        currency,
-        account.freshAddress,
-        account.id,
-        0,
-        undefined,
-        10,
-        "desc",
-        1,
-      );
-      expect(result).toEqual({
-        operations: page1Ops,
-        hasMorePage: false,
-        boundBlock: 100,
-        isPageFull: false,
-      });
-    });
-
-    it("page 1 full, page 2 not full with same block => returns all operations", async () => {
-      const page1Ops = createOps([100, 100, 100]);
-      const page2Ops = createOps([100, 100]);
-      const mockFetch = jest.fn<
-        Promise<ETHERSCAN_API.EndpointResult>,
-        [any, any, any, any, any, any, any, number?]
-      >();
-      mockFetch
-        .mockResolvedValueOnce(createEndpointResult(page1Ops, true))
-        .mockResolvedValueOnce(createEndpointResult(page2Ops, false));
-
-      const result = await ETHERSCAN_API.exhaustEndpoint(
-        mockFetch,
-        currency,
-        account.freshAddress,
-        account.id,
-        0,
-        undefined,
-        3,
-        "desc",
-      );
-
-      expect(mockFetch).toHaveBeenCalledTimes(2);
-      expect(mockFetch).toHaveBeenNthCalledWith(
-        1,
-        currency,
-        account.freshAddress,
-        account.id,
-        0,
-        undefined,
-        3,
-        "desc",
-        1,
-      );
-      expect(mockFetch).toHaveBeenNthCalledWith(
-        2,
-        currency,
-        account.freshAddress,
-        account.id,
-        0,
-        undefined,
-        3,
-        "desc",
-        2,
-      );
-      expect(result.operations).toHaveLength(5);
-      // isPageFull preserves firstPage.isPageFull for cascading effectiveMaxBlock
-      expect(result.isPageFull).toBe(true);
-    });
-
-    it("page 1 full, page 2 has operations at different block => returns page 1 + boundary ops from page 2", async () => {
-      const page1Ops = createOps([100, 100, 99]);
-      const page2Ops = createOps([100, 98, 97]);
-      const mockFetch = jest.fn<
-        Promise<ETHERSCAN_API.EndpointResult>,
-        [any, any, any, any, any, any, any, number?]
-      >();
-      mockFetch
-        .mockResolvedValueOnce(createEndpointResult(page1Ops, true))
-        .mockResolvedValueOnce(createEndpointResult(page2Ops, false));
-
-      const result = await ETHERSCAN_API.exhaustEndpoint(
-        mockFetch,
-        currency,
-        account.freshAddress,
-        account.id,
-        0,
-        undefined,
-        3,
-        "desc",
-      );
-
-      expect(mockFetch).toHaveBeenCalledTimes(2);
-      // Should include page1 (3 ops) + only boundary block ops from page2 (1 op at block 100)
-      expect(result.operations).toHaveLength(4);
-      expect(result.operations.every(op => op.blockHeight === 100 || op.blockHeight === 99)).toBe(
-        true,
-      );
-      expect(result.hasMorePage).toBe(true);
-      // isPageFull preserves firstPage.isPageFull for cascading effectiveMaxBlock
-      expect(result.isPageFull).toBe(true);
-    });
-
-    it("page 1 full, page 2 empty => returns page 1 operations", async () => {
-      const page1Ops = createOps([100, 100, 100]);
-      const mockFetch = jest.fn<
-        Promise<ETHERSCAN_API.EndpointResult>,
-        [any, any, any, any, any, any, any, number?]
-      >();
-      mockFetch
-        .mockResolvedValueOnce(createEndpointResult(page1Ops, true))
-        .mockResolvedValueOnce(createEndpointResult([], false));
-
-      const result = await ETHERSCAN_API.exhaustEndpoint(
-        mockFetch,
-        currency,
-        account.freshAddress,
-        account.id,
-        0,
-        undefined,
-        3,
-        "desc",
-      );
-
-      expect(mockFetch).toHaveBeenCalledTimes(2);
-      expect(result.operations).toHaveLength(3);
-      expect(result.hasMorePage).toBe(false);
-    });
-
-    it("multiple full pages at same block, then partial => exhausts all", async () => {
-      const page1Ops = createOps([100, 100, 100]);
-      const page2Ops = createOps([100, 100, 100]);
-      const page3Ops = createOps([100]);
-      const mockFetch = jest.fn<
-        Promise<ETHERSCAN_API.EndpointResult>,
-        [any, any, any, any, any, any, any, number?]
-      >();
-      mockFetch
-        .mockResolvedValueOnce(createEndpointResult(page1Ops, true))
-        .mockResolvedValueOnce(createEndpointResult(page2Ops, true))
-        .mockResolvedValueOnce(createEndpointResult(page3Ops, false));
-
-      const result = await ETHERSCAN_API.exhaustEndpoint(
-        mockFetch,
-        currency,
-        account.freshAddress,
-        account.id,
-        0,
-        undefined,
-        3,
-        "desc",
-      );
-
-      expect(mockFetch).toHaveBeenCalledTimes(3);
-      expect(mockFetch).toHaveBeenNthCalledWith(
-        3,
-        currency,
-        account.freshAddress,
-        account.id,
-        0,
-        undefined,
-        3,
-        "desc",
-        3,
-      );
-      expect(result.operations).toHaveLength(7);
-      // isPageFull preserves firstPage.isPageFull for cascading effectiveMaxBlock
-      expect(result.isPageFull).toBe(true);
+      expect({
+        blocks: result.operations.map(op => op.blockHeight),
+        hasMorePage: result.hasMorePage,
+        isPageFull: result.isPageFull,
+      }).toEqual(expected);
     });
   });
 });
