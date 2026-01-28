@@ -14,8 +14,9 @@ describe("broadcast", () => {
     broadcastSpy.mockResolvedValue("hash");
   });
 
-  it("should broadcast", () => {
-    broadcast({
+  it("should broadcast", async () => {
+    await broadcast({
+      account: { currency: { id: "concordium" } } as Account,
       signedOperation: {
         signature: undefined,
         operation: undefined,
@@ -24,8 +25,9 @@ describe("broadcast", () => {
     expect(broadcastLogic).toHaveBeenCalledTimes(1);
   });
 
-  it("should patch operation with hash", () => {
-    broadcast({
+  it("should patch operation with hash", async () => {
+    await broadcast({
+      account: { currency: { id: "concordium" } } as Account,
       signedOperation: {
         signature: undefined,
         operation: undefined,

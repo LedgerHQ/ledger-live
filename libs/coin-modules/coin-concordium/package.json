@@ -30,14 +30,29 @@
       "api": [
         "lib/api/index"
       ],
+      "bridge/index": [
+        "lib/bridge/index"
+      ],
+      "config": [
+        "lib/config"
+      ],
       "deviceTransactionConfig": [
         "lib/bridge/deviceTransactionConfig"
       ],
-      "logic": [
-        "lib/logic/index"
+      "signer": [
+        "lib/signer/index"
+      ],
+      "common-logic": [
+        "lib/common-logic/index"
       ],
       "specs": [
         "lib/test/bot-specs"
+      ],
+      "test/cli": [
+        "lib/test/cli"
+      ],
+      "test/concordiumTestUtils": [
+        "lib/test/concordiumTestUtils"
       ],
       "transaction": [
         "lib/bridge/transaction"
@@ -45,10 +60,13 @@
       "types": [
         "lib/types/index"
       ],
+      "types/index": [
+        "lib/types/index"
+      ],
       "*": [
         "lib/*",
         "lib/bridge/*",
-        "lib/logic/*",
+        "lib/common-logic/*",
         "lib/signer/*",
         "lib/test/*",
         "lib/types/*"
@@ -62,13 +80,21 @@
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
     },
+    "./bridge/index": {
+      "require": "./lib/bridge/index.js",
+      "default": "./lib-es/bridge/index.js"
+    },
+    "./config": {
+      "require": "./lib/config.js",
+      "default": "./lib-es/config.js"
+    },
     "./deviceTransactionConfig": {
       "require": "./lib/bridge/deviceTransactionConfig.js",
       "default": "./lib-es/bridge/deviceTransactionConfig.js"
     },
     "./logic": {
-      "require": "./lib/logic/index.js",
-      "default": "./lib-es/logic/index.js"
+      "require": "./lib/common-logic/index.js",
+      "default": "./lib-es/common-logic/index.js"
     },
     "./signer": {
       "require": "./lib/signer/index.js",
@@ -78,6 +104,14 @@
       "require": "./lib/test/bot-specs.js",
       "default": "./lib-es/test/bot-specs.js"
     },
+    "./test/cli": {
+      "require": "./lib/test/cli.js",
+      "default": "./lib-es/test/cli.js"
+    },
+    "./test/concordiumTestUtils": {
+      "require": "./lib/test/concordiumTestUtils.js",
+      "default": "./lib-es/test/concordiumTestUtils.js"
+    },
     "./transaction": {
       "require": "./lib/bridge/transaction.js",
       "default": "./lib-es/bridge/transaction.js"
@@ -85,6 +119,22 @@
     "./types": {
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
+    },
+    "./types/index": {
+      "require": "./lib/types/index.js",
+      "default": "./lib-es/types/index.js"
+    },
+    "./network/submitCredentialDeploymentTransaction": {
+      "require": "./lib/network/submitCredentialDeploymentTransaction.js",
+      "default": "./lib-es/network/submitCredentialDeploymentTransaction.js"
+    },
+    "./network/utils": {
+      "require": "./lib/network/utils.js",
+      "default": "./lib-es/network/utils.js"
+    },
+    "./network/walletConnect": {
+      "require": "./lib/network/walletConnect.js",
+      "default": "./lib-es/network/walletConnect.js"
     },
     "./*": {
       "require": "./lib/*.js",
@@ -98,32 +148,39 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@ledgerhq/concordium-sdk-adapter": "workspace:*",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-app-concordium": "workspace:*",
+    "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@walletconnect/sign-client": "2.23.0",
+    "@walletconnect/types": "2.23.0",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.4",
+    "json-bigint": "^1.0.0",
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.37",
     "@types/jest": "catalog:",
+    "@types/json-bigint": "^1.0.4",
     "dotenv": "^16.4.5",
-    "expect": "catalog:",
-    "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
+    "expect": "^27.4.6",
+    "jest": "^29.7.0",
     "typescript": "^5.4.5"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json",
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
@@ -132,7 +189,7 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc -p tsconfig.cjs.json --noEmit",
     "unimported": "unimported"
   }
 }

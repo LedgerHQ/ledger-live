@@ -9,4 +9,9 @@ describe("createTransaction", () => {
   it("should create a transaction with concordium family", () => {
     expect(createTransaction({} as AccountLike<Account>).family).toEqual("concordium");
   });
+
+  it("should create a transaction with memo field initialized as undefined", () => {
+    const transaction = createTransaction({} as AccountLike<Account>);
+    expect(transaction.memo).toBeUndefined();
+  });
 });

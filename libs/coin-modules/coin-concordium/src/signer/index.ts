@@ -1,7 +1,7 @@
-/**
- * This directory is the home for all types and logic based on Ledgers signer.
- */
+import { getAddress } from "./getAddress";
+import { getPublicKey } from "./getPublicKey";
+import { signCredentialDeployment } from "./signCredentialDeployment";
 
-import getAddress from "./getAddress";
+export { getPublicKey, signCredentialDeployment };
 
 export default getAddress;
