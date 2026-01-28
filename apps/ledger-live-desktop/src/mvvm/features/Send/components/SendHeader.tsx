@@ -1,50 +1,39 @@
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import {
+  SEND_FLOW_STEP,
+  type SendFlowBusinessContext,
+  type SendFlowStep,
+} from "@ledgerhq/live-common/flows/send/types";
 import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { BigNumber } from "bignumber.js";
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../context/SendFlowContext";
 import { useAvailableBalance } from "../hooks/useAvailableBalance";
+import { useSendHeaderModel } from "../hooks/useSendHeaderModel";
 import { MemoTypeSelect } from "../screens/Recipient/components/Memo/MemoTypeSelect";
 import { MemoValueInput } from "../screens/Recipient/components/Memo/MemoValueInput";
 import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSection";
 import { useRecipientMemo } from "../screens/Recipient/hooks/useRecipientMemo";
-import {
-  SEND_FLOW_STEP,
-  type SendFlowStep,
-  type SendFlowBusinessContext,
-} from "@ledgerhq/live-common/flows/send/types";
 import type { SendStepConfig } from "../types";
-import { getRecipientDisplayValue, getRecipientSearchPrefillValue } from "./utils";
 
 export function SendHeader() {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
   const { state, uiConfig, recipientSearch } = useSendFlowData();
   const { close, transaction } = useSendFlowActions();
   const { t } = useTranslation();
+  const availableText = useAvailableBalance(state.account.account);
 
   const { navigation, currentStep } = wizard;
-  const currentStepConfig = wizard.currentStepConfig as SendStepConfig;
-
   const currencyId = state.account.currency?.id;
 
-  const showRecipientInput = currentStepConfig?.addressInput ?? false;
-  const showMemoControls = Boolean(
-    showRecipientInput && uiConfig.hasMemo && recipientSearch.value.length > 0,
-  );
-
   const memoDefaultOption = useMemo(() => {
-    return state.account.currency
-      ? sendFeatures.getMemoDefaultOption(state.account.currency)
-      : undefined;
+    return sendFeatures.getMemoDefaultOption(state.account.currency ?? undefined);
   }, [state.account.currency]);
 
   const memoTypeOptions = useMemo(() => {
     return uiConfig.memoOptions ?? [];
   }, [uiConfig]);
-  const memoType = uiConfig.memoType;
-  const memoMaxLength = uiConfig.memoMaxLength;
 
   const {
     hasMemoTypeOptions,
@@ -61,7 +50,7 @@ export function SendHeader() {
   } = useRecipientMemo({
     hasMemo: uiConfig.hasMemo,
     memoDefaultOption,
-    memoType,
+    memoType: uiConfig.memoType,
     memoTypeOptions,
     onMemoChange: memo => {
       transaction.setRecipient({ ...state.recipient, memo });
@@ -74,57 +63,19 @@ export function SendHeader() {
     }`,
   });
 
-  const currencyName = state.account.currency?.ticker ?? "";
-  const availableText = useAvailableBalance(state.account.account);
+  const {
+    addressInputValue,
+    descriptionText,
+    handleBack,
+    handleRecipientInputClick,
+    showBackButton,
+    showMemoControls,
+    showRecipientInput,
+    title,
+    transactionErrorName,
+  } = useSendHeaderModel({ availableText, resetViewState });
 
-  const handleBack = useCallback(() => {
-    if (navigation.canGoBack()) {
-      // Reset amount-related state when leaving Amount step (back navigation),
-      // otherwise the transaction amount can persist while the UI remounts empty.
-      if (currentStep === SEND_FLOW_STEP.AMOUNT) {
-        transaction.updateTransaction(tx => ({
-          ...tx,
-          amount: new BigNumber(0),
-          useAllAmount: false,
-          feesStrategy: null,
-        }));
-
-        resetViewState();
-      }
-      navigation.goToPreviousStep();
-    } else {
-      close();
-    }
-  }, [close, currentStep, navigation, resetViewState, transaction]);
-
-  const showBackButton = navigation.canGoBack();
-  const showTitle = currentStepConfig?.showTitle !== false;
-
-  const title = showTitle ? t("newSendFlow.title", { currency: currencyName }) : "";
-  const descriptionText =
-    showTitle && availableText ? t("newSendFlow.available", { amount: availableText }) : "";
-
-  const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
-
-  const addressInputValue = useMemo(() => {
-    if (isRecipientStep) return recipientSearch.value;
-    if (isAmountStep) return getRecipientDisplayValue(state.recipient);
-    return recipientSearch.value;
-  }, [isRecipientStep, isAmountStep, recipientSearch.value, state.recipient]);
-
-  const handleRecipientInputClick = useCallback(() => {
-    if (!isAmountStep) return;
-
-    const prefillValue = getRecipientSearchPrefillValue(state.recipient);
-    if (prefillValue) {
-      recipientSearch.setValue(prefillValue);
-    }
-
-    handleBack();
-  }, [handleBack, isAmountStep, recipientSearch, state.recipient]);
-
-  const transactionErrorName = state.transaction.status?.errors?.transaction?.name;
 
   const recipientInputContent = useMemo(() => {
     if (!showRecipientInput) return null;
@@ -174,7 +125,7 @@ export function SendHeader() {
                 <MemoValueInput
                   currencyId={currencyId}
                   value={memo.value}
-                  maxLength={memoMaxLength}
+                  maxLength={uiConfig.memoMaxLength}
                   transactionErrorName={transactionErrorName}
                   onChange={onMemoValueChange}
                 />
@@ -200,22 +151,23 @@ export function SendHeader() {
     addressInputValue,
     recipientSearch,
     uiConfig.recipientSupportsDomain,
+    uiConfig.memoMaxLength,
     t,
     showMemoControls,
     currencyId,
     hasMemoTypeOptions,
-    memo,
+    memoTypeOptions,
+    memo.type,
+    memo.value,
     onMemoTypeChange,
     showMemoValueInput,
+    transactionErrorName,
     onMemoValueChange,
     showSkipMemo,
     skipMemoState,
     onSkipMemoRequestConfirm,
     onSkipMemoCancelConfirm,
     onSkipMemoConfirm,
-    memoTypeOptions,
-    memoMaxLength,
-    transactionErrorName,
     handleRecipientInputClick,
   ]);
 

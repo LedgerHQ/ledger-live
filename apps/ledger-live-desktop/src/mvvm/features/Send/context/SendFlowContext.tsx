@@ -24,7 +24,7 @@ import type { SendStepConfig } from "../types";
  */
 
 // Data Context
-type DataContextValue = Readonly<{
+export type DataContextValue = Readonly<{
   state: SendFlowState;
   uiConfig: SendFlowUiConfig;
   recipientSearch: Readonly<{
