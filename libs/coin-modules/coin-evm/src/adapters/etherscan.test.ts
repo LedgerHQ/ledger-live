@@ -1674,20 +1674,20 @@ describe("EVM Family", () => {
 
     describe("pagination helpers", () => {
       describe("deserializePagingToken", () => {
-        it("returns minHeight when token is undefined", () => {
-          expect(deserializePagingToken(undefined, 100)).toBe(100);
+        it("returns undefined when token is undefined", () => {
+          expect(deserializePagingToken(undefined)).toBeUndefined();
         });
 
-        it("returns minHeight when token is empty string", () => {
-          expect(deserializePagingToken("", 50)).toBe(50);
+        it("returns undefined when token is NO_TOKEN (empty string)", () => {
+          expect(deserializePagingToken("")).toBeUndefined();
         });
 
-        it("returns minHeight when token is not a valid number", () => {
-          expect(deserializePagingToken("not-a-number", 200)).toBe(200);
+        it("throws when token is not a valid number", () => {
+          expect(() => deserializePagingToken("not-a-number")).toThrow("Invalid paging token");
         });
 
         it("deserializes valid token correctly", () => {
-          expect(deserializePagingToken("1000", 0)).toBe(1000);
+          expect(deserializePagingToken("1000")).toBe(1000);
         });
       });
 

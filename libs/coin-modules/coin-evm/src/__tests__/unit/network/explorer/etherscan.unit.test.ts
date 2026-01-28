@@ -221,7 +221,7 @@ describe("EVM Family", () => {
             .map(op => etherscanOperationToOperations(account.id, op))
             .flat(),
           hasMorePage: false,
-          maxBlock: 14923678,
+          boundBlock: 14923692,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -256,7 +256,7 @@ describe("EVM Family", () => {
             .map(op => etherscanOperationToOperations(account.id, op))
             .flat(),
           hasMorePage: false,
-          maxBlock: 14923678,
+          boundBlock: 14923692,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -292,7 +292,7 @@ describe("EVM Family", () => {
             .map(op => etherscanOperationToOperations(account.id, op))
             .flat(),
           hasMorePage: false,
-          maxBlock: 14923678,
+          boundBlock: 14923692,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -377,8 +377,8 @@ describe("EVM Family", () => {
           const resultDesc = await fetchWithLimit(etherscanCoinOperations, undefined, "desc");
           // the order must be respected by the underlying api, it's not enforced by implementation
           expect(resultAsc.operations).toEqual(resultDesc.operations);
-          // maxBlock depends on sort parameter (boundary for pagination)
-          expect(resultAsc.maxBlock).not.toEqual(resultDesc.maxBlock);
+          // boundBlock depends on sort parameter (boundary for pagination)
+          expect(resultAsc.boundBlock).not.toEqual(resultDesc.boundBlock);
         });
       });
     });
@@ -450,7 +450,7 @@ describe("EVM Family", () => {
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: 4730207,
+          boundBlock: 4764973,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -487,7 +487,7 @@ describe("EVM Family", () => {
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: 4730207,
+          boundBlock: 4764973,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -525,7 +525,7 @@ describe("EVM Family", () => {
             etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: 4730207,
+          boundBlock: 4764973,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -610,8 +610,8 @@ describe("EVM Family", () => {
           const resultDesc = await fetchWithLimit(etherscanTokenOperations, undefined, "desc");
           // the order must be respected by the underlying api, it's not enforced by implementation
           expect(resultAsc.operations).toEqual(resultDesc.operations);
-          // maxBlock depends on sort parameter (boundary for pagination)
-          expect(resultAsc.maxBlock).not.toEqual(resultDesc.maxBlock);
+          // boundBlock depends on sort parameter (boundary for pagination)
+          expect(resultAsc.boundBlock).not.toEqual(resultDesc.boundBlock);
         });
       });
     });
@@ -683,7 +683,7 @@ describe("EVM Family", () => {
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: 4708120,
+          boundBlock: 4708161,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -720,7 +720,7 @@ describe("EVM Family", () => {
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: 4708120,
+          boundBlock: 4708161,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -758,7 +758,7 @@ describe("EVM Family", () => {
             etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: 4708120,
+          boundBlock: 4708161,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -843,8 +843,8 @@ describe("EVM Family", () => {
           const resultDesc = await fetchWithLimit(etherscanERC721Operations, undefined, "desc");
           // the order must be respected by the underlying api, it's not enforced by implementation
           expect(resultAsc.operations).toEqual(resultDesc.operations);
-          // maxBlock depends on sort parameter (boundary for pagination)
-          expect(resultAsc.maxBlock).not.toEqual(resultDesc.maxBlock);
+          // boundBlock depends on sort parameter (boundary for pagination)
+          expect(resultAsc.boundBlock).not.toEqual(resultDesc.boundBlock);
         });
       });
     });
@@ -916,7 +916,7 @@ describe("EVM Family", () => {
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: 13472395,
+          boundBlock: 14049909,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -953,7 +953,7 @@ describe("EVM Family", () => {
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: 13472395,
+          boundBlock: 14049909,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -991,7 +991,7 @@ describe("EVM Family", () => {
             etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
           ].flat(),
           hasMorePage: false,
-          maxBlock: 13472395,
+          boundBlock: 14049909,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -1076,8 +1076,8 @@ describe("EVM Family", () => {
           const resultDesc = await fetchWithLimit(etherscanERC1155Operations, undefined, "desc");
           // the order must be respected by the underlying api, it's not enforced by implementation
           expect(resultAsc.operations).toEqual(resultDesc.operations);
-          // maxBlock depends on sort parameter (boundary for pagination)
-          expect(resultAsc.maxBlock).not.toEqual(resultDesc.maxBlock);
+          // boundBlock depends on sort parameter (boundary for pagination)
+          expect(resultAsc.boundBlock).not.toEqual(resultDesc.boundBlock);
         });
       });
     });
@@ -1107,7 +1107,7 @@ describe("EVM Family", () => {
         expect(response).toEqual({
           operations: sortedOps,
           hasMorePage: false,
-          maxBlock: 13472395,
+          boundBlock: 14049909,
           isPageFull: true,
         });
       });
@@ -1284,7 +1284,7 @@ describe("EVM Family", () => {
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
           ].flat(),
           hasMorePage: false,
-          maxBlock: 14878012,
+          boundBlock: 15214745,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -1321,7 +1321,7 @@ describe("EVM Family", () => {
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
           ].flat(),
           hasMorePage: false,
-          maxBlock: 14878012,
+          boundBlock: 15214745,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -1359,7 +1359,7 @@ describe("EVM Family", () => {
             etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
           ].flat(),
           hasMorePage: false,
-          maxBlock: 14878012,
+          boundBlock: 15214745,
           isPageFull: true,
         });
         expect(spy).toHaveBeenCalledWith({
@@ -1439,8 +1439,8 @@ describe("EVM Family", () => {
           const resultDesc = await fetchWithLimit(etherscanInternalOperations, undefined, "desc");
           // the order must be respected by the underlying api, it's not enforced by implementation
           expect(resultAsc.operations).toEqual(resultDesc.operations);
-          // maxBlock depends on sort parameter (boundary for pagination)
-          expect(resultAsc.maxBlock).not.toEqual(resultDesc.maxBlock);
+          // boundBlock depends on sort parameter (boundary for pagination)
+          expect(resultAsc.boundBlock).not.toEqual(resultDesc.boundBlock);
         });
       });
     });
@@ -1474,7 +1474,7 @@ describe("EVM Family", () => {
         expect(response).toEqual({
           operations: [],
           hasMorePage: false,
-          maxBlock: 0,
+          boundBlock: 0,
           isPageFull: false,
         });
       });
@@ -1596,7 +1596,7 @@ describe("EVM Family", () => {
         expect((tokenCall![0] as any).params.endBlock).toBe(internalMaxBlock);
       });
 
-      it("should cascade to min(callerToBlock, maxBlock) when page is full", async () => {
+      it("should cascade to min(callerToBlock, boundBlock) when page is full", async () => {
         const callerToBlock = 200;
         const coinMaxBlock = 150;
 
@@ -1822,7 +1822,7 @@ describe("EVM Family", () => {
       ): ETHERSCAN_API.EndpointResult => ({
         operations: ops,
         hasMorePage: ops.length > 0 && isPageFull,
-        maxBlock: ops.length > 0 ? Math.max(...ops.map(op => op.blockHeight ?? 0)) : 0,
+        boundBlock: ops.length > 0 ? Math.max(...ops.map(op => op.blockHeight ?? 0)) : 0,
         isPageFull,
       });
 
@@ -1859,7 +1859,7 @@ describe("EVM Family", () => {
         expect(result).toEqual({
           operations: page1Ops,
           hasMorePage: false,
-          maxBlock: 100,
+          boundBlock: 100,
           isPageFull: false,
         });
       });

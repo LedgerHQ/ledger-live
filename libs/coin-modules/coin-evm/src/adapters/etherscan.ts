@@ -19,6 +19,8 @@ import {
 } from "../types";
 import { safeEncodeEIP55 } from "../utils";
 import { detectEvmStakingOperationType } from "../staking/detectOperationType";
+import { NO_TOKEN } from "../network/explorer/types";
+import { N } from "ethers";
 
 /**
  * Helper to safely convert a value to BigNumber, defaulting to 0 if invalid.
@@ -294,23 +296,25 @@ export const etherscanInternalTransactionToOperations = (
   );
 };
 
+// TODO we can optimize the cursor by maintaining the "hasMorePage" flag for each endpoint
+// => that would avoid unnecessary calls to the API
+
 /**
  * Serialize a paging token for the next page request
  * Returns NO_TOKEN if all endpoints are done
  */
-export function serializePagingToken(nextFromBlock: number, allDone: boolean): string {
-  // NO_TOKEN is empty string - inline to avoid circular dependency
-  if (allDone) return "";
-  return nextFromBlock.toString();
+export function serializePagingToken(boundBlock: number | undefined, allDone: boolean): string {
+  if (allDone || boundBlock === undefined) return NO_TOKEN;
+  return boundBlock.toString();
 }
 
 /**
  * Deserialize a paging token to get the fromBlock for the current request
- * Returns minHeight if token is undefined or invalid
+ * throws an
  */
-export function deserializePagingToken(token: string | undefined, minHeight: number): number {
-  if (!token) return minHeight;
+export function deserializePagingToken(token: string | undefined): number | undefined {
+  if (token === undefined || token === NO_TOKEN) return undefined;
   const parsed = parseInt(token, 10);
-  if (isNaN(parsed)) return minHeight;
+  if (isNaN(parsed)) throw new Error("Invalid paging token");
   return parsed;
 }
