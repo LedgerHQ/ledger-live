@@ -1,0 +1,67 @@
+{
+  "name": "@ledgerhq/concordium-sdk-adapter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Adapter module for Concordium web-sdk to support both CJS and ESM builds",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "concordium",
+    "sdk-adapter"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/concordium-sdk-adapter",
+  "license": "Apache-2.0",
+  "main": "lib/index.cjs",
+  "module": "lib-es/index.js",
+  "types": "lib-es/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./lib-es/index.d.ts",
+        "default": "./lib-es/index.js"
+      },
+      "require": {
+        "types": "./lib/index.d.cts",
+        "default": "./lib/index.cjs"
+      }
+    },
+    "./types": {
+      "import": {
+        "types": "./lib-es/types/index.d.ts",
+        "default": "./lib-es/types/index.js"
+      },
+      "require": {
+        "types": "./lib/types/index.d.cts",
+        "default": "./lib/index.cjs"
+      }
+    }
+  },
+  "dependencies": {
+    "@protobuf-ts/runtime": "2.11.1",
+    "@concordium/web-sdk": "^10.0.2"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "esbuild": "^0.19.0",
+    "rollup": "^4.12.1",
+    "rollup-plugin-dts": "^6.1.0",
+    "rollup-plugin-esbuild": "^6.1.1"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit"
+  }
+}
