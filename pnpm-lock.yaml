@@ -3571,9 +3571,6 @@ importers:
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
-      protobufjs:
-        specifier: 7.5.4
-        version: 7.5.4
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
