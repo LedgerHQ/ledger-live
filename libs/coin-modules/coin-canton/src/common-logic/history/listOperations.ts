@@ -4,11 +4,7 @@ import { getOperations } from "../../network/gateway";
 import type { AssetView } from "../../types/gateway";
 
 function convertAssetViewToAssetInfo(asset?: AssetView): AssetInfo {
-  if (!asset) {
-    return { type: "native" };
-  }
-
-  if (asset.type === "native") {
+  if (!asset || asset.type === "native") {
     return { type: "native" };
   }
 
