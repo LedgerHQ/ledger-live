@@ -4,7 +4,7 @@ import { cn } from "LLD/utils/cn";
 interface Wallet40LayoutProps {
   readonly children: React.ReactNode;
   readonly scrollerRef: (node: HTMLDivElement | null) => void;
-  readonly rightPanel?: React.ReactNode;
+  readonly rightPanel: React.ReactNode | undefined;
 }
 
 /**
@@ -18,7 +18,7 @@ export const Wallet40Layout = memo(function Wallet40Layout({
   rightPanel,
 }: Wallet40LayoutProps) {
   return (
-    <div className={cn("flex flex-1 gap-32 overflow-hidden px-32", rightPanel && "pr-0")}>
+    <div className={cn("flex flex-1 gap-32 overflow-hidden px-32")}>
       <div id="scroll-area" className="relative flex flex-1 flex-col overflow-hidden">
         <div
           id="page-scroller"
