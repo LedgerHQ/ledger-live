@@ -115,10 +115,12 @@ function groupByHash<T extends { hash: string }>(items: T[]): Record<string, T[]
 // if the current enpoint call returns a full page, then it's unnecessary to call the next endpoint with a toBlock higher than the maxBlock of the current page
 // why ? because the operations must respect a total ordering by block height across pages
 function updateEffectiveMaxBlock(
+  limit: number | undefined,
   current: number | undefined,
   result: EndpointResult,
 ): number | undefined {
-  if (result.isPageFull && result.operations.length > 0 && result.maxBlock > 0) {
+  // when page are unlimited, we don't adjust the maxBlock
+  if (limit !== undefined && result.isPageFull && result.operations.length > 0 && result.maxBlock > 0) {
     return current !== undefined ? Math.min(current, result.maxBlock) : result.maxBlock;
   }
   return current;
@@ -594,7 +596,7 @@ export const getOperations = makeLRUCache<
         order,
       );
 
-      effectiveMaxBlock = updateEffectiveMaxBlock(effectiveMaxBlock, coinResult);
+      effectiveMaxBlock = updateEffectiveMaxBlock(limit, effectiveMaxBlock, coinResult);
 
       // Fetch internal operations with cascaded effectiveMaxBlock
       const internalResult = await exhaustEndpoint(
@@ -608,7 +610,7 @@ export const getOperations = makeLRUCache<
         order,
       );
 
-      effectiveMaxBlock = updateEffectiveMaxBlock(effectiveMaxBlock, internalResult);
+      effectiveMaxBlock = updateEffectiveMaxBlock(limit, effectiveMaxBlock, internalResult);
 
       // Fetch token operations with cascaded effectiveMaxBlock
       const tokenResult = await exhaustEndpoint(
@@ -622,7 +624,7 @@ export const getOperations = makeLRUCache<
         order,
       );
 
-      effectiveMaxBlock = updateEffectiveMaxBlock(effectiveMaxBlock, tokenResult);
+      effectiveMaxBlock = updateEffectiveMaxBlock(limit, effectiveMaxBlock, tokenResult);
 
       // Fetch NFT operations with cascaded effectiveMaxBlock
       const nftResult = isNFTActive(currency)
