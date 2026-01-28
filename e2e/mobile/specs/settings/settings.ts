@@ -1,6 +1,8 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ApplicationOptions } from "page";
 
+const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
+
 const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
   CLI.liveData({
     currency: currencyApp.name,
@@ -23,7 +25,7 @@ export function runUserClearApplicationCacheTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("User clear application cache", () => {
+  (isSmokeTestRun ? describe.skip : describe)("User clear application cache", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -60,6 +62,7 @@ export function runUserCanExportLogsTest(tmsLinks: string[], tags: string[]) {
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
+    $Tag("@smoke");
     test("Verify that user can export logs", async () => {
       await app.portfolio.navigateToSettings();
       await app.settings.navigateToHelpSettings();
@@ -70,7 +73,7 @@ export function runUserCanExportLogsTest(tmsLinks: string[], tags: string[]) {
 }
 
 export function runUserCanAccessLedgerSupportTest(tmsLinks: string[], tags: string[]) {
-  describe("User can access Ledger Support (Web Link)", () => {
+  (isSmokeTestRun ? describe.skip : describe)("User can access Ledger Support (Web Link)", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -92,28 +95,31 @@ export function runUserCanSelectCounterValueToDisplayAmountInLedgerLive(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("User can select counter value to display amount in Ledger Live", () => {
-    beforeAll(async () => {
-      await beforeAllFunction({
-        userdata: "skip-onboarding",
-        cliCommands: [liveDataCommand(account.currency, account.index)],
-        speculosApp: account.currency.speculosApp,
+  (isSmokeTestRun ? describe.skip : describe)(
+    "User can select counter value to display amount in Ledger Live",
+    () => {
+      beforeAll(async () => {
+        await beforeAllFunction({
+          userdata: "skip-onboarding",
+          cliCommands: [liveDataCommand(account.currency, account.index)],
+          speculosApp: account.currency.speculosApp,
+        });
       });
-    });
 
-    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-    tags.forEach(tag => $Tag(tag));
-    test("Verify that user can select counter value to display amount in Ledger Live", async () => {
-      await app.portfolio.navigateToSettings();
-      await app.settings.navigateToGeneralSettings();
-      await app.settingsGeneral.changeCounterValue("Euro - EUR");
-      await app.settingsGeneral.expectCounterValue("EUR");
-      await app.portfolio.openViaDeeplink();
-      await app.portfolio.waitForPortfolioPageToLoad();
-      await app.portfolio.expectTotalBalanceCounterValue("€");
-      await app.portfolio.expectBalanceDiffCounterValue("€");
-      await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
-      await app.portfolio.expectOperationCounterValue("€");
-    });
-  });
+      tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+      tags.forEach(tag => $Tag(tag));
+      test("Verify that user can select counter value to display amount in Ledger Live", async () => {
+        await app.portfolio.navigateToSettings();
+        await app.settings.navigateToGeneralSettings();
+        await app.settingsGeneral.changeCounterValue("Euro - EUR");
+        await app.settingsGeneral.expectCounterValue("EUR");
+        await app.portfolio.openViaDeeplink();
+        await app.portfolio.waitForPortfolioPageToLoad();
+        await app.portfolio.expectTotalBalanceCounterValue("€");
+        await app.portfolio.expectBalanceDiffCounterValue("€");
+        await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
+        await app.portfolio.expectOperationCounterValue("€");
+      });
+    },
+  );
 }

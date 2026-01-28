@@ -1,5 +1,7 @@
 import { device } from "detox";
 
+const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
+
 const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 describe("Password Lock Screen", () => {
   const nanoApp = AppInfos.ETHEREUM;
@@ -24,7 +26,7 @@ describe("Password Lock Screen", () => {
 
   $TmsLink("B2CQA-1763");
   tags.forEach(tag => $Tag(tag));
-  it("should ask for the password when lock is toggled", async () => {
+  (isSmokeTestRun ? it.skip : it)("should ask for the password when lock is toggled", async () => {
     await app.portfolio.navigateToSettings();
     await app.settings.navigateToGeneralSettings();
     await app.settingsGeneral.togglePassword();
@@ -37,7 +39,7 @@ describe("Password Lock Screen", () => {
 
   $TmsLink("B2CQA-2343");
   tags.forEach(tag => $Tag(tag));
-  it("should stay locked with incorrect password", async () => {
+  (isSmokeTestRun ? it.skip : it)("should stay locked with incorrect password", async () => {
     await app.passwordEntry.enterPassword("INCORRECT_PASSWORD");
     await app.passwordEntry.login();
     await app.passwordEntry.expectLock();
@@ -45,6 +47,7 @@ describe("Password Lock Screen", () => {
 
   $TmsLink("B2CQA-1763");
   tags.forEach(tag => $Tag(tag));
+  $Tag("@smoke");
   it("should unlock with correct password", async () => {
     await app.passwordEntry.enterPassword(CORRECT_PASSWORD);
     await app.passwordEntry.login();
