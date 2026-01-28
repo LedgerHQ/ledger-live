@@ -442,7 +442,7 @@ describe.each([
         const p2NbOps = p2Ops.length;
 
         expect(p2NbOps).toBeGreaterThanOrEqual(limit);
-        expect(p2Token).match(/^\d+$/);
+        expect(p2Token).toMatch(/^\d+$/);
         expectUniqueOperationIds(p2Ops);
         expect(isOrdered(p2Ops, order)).toBe(true);
 
