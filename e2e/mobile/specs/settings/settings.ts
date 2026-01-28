@@ -60,6 +60,7 @@ export function runUserCanExportLogsTest(tmsLinks: string[], tags: string[]) {
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
+    $Tag("@smoke");
     test("Verify that user can export logs", async () => {
       await app.portfolio.navigateToSettings();
       await app.settings.navigateToHelpSettings();

@@ -1,21 +1,33 @@
+const langButtonText = [
+  { lang: "Français", localization: "Général", isSmoke: false },
+  { lang: "Español", localization: "General", isSmoke: true },
+  { lang: "Русский", localization: "Общие", isSmoke: false },
+  { lang: "Deutsch", localization: "Allgemeines", isSmoke: false },
+  { lang: "Português (Brasil)", localization: "Geral", isSmoke: false },
+  { lang: "Türkçe", localization: "Genel", isSmoke: false },
+  { lang: "简体中文", localization: "常规", isSmoke: false },
+  { lang: "한국어", localization: "일반", isSmoke: false },
+  { lang: "日本語", localization: "一般", isSmoke: false },
+  { lang: "English", localization: "General", isSmoke: false },
+];
+
 $TmsLink("B2CQA-2344");
-const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
+const tags: string[] = [
+  "@NanoSP",
+  "@LNS",
+  "@NanoX",
+  "@Stax",
+  "@Flex",
+  "@NanoGen5",
+  ...(langButtonText.some(l => l.isSmoke) ? ["@smoke"] : []),
+];
 tags.forEach(tag => $Tag(tag));
 describe("Change Language", () => {
-  const langButtonText = [
-    { lang: "Français", localization: "Général" },
-    { lang: "Español", localization: "General" },
-    { lang: "Русский", localization: "Общие" },
-    { lang: "Deutsch", localization: "Allgemeines" },
-    { lang: "Português (Brasil)", localization: "Geral" },
-    { lang: "Türkçe", localization: "Genel" },
-    { lang: "简体中文", localization: "常规" },
-    { lang: "한국어", localization: "일반" },
-    { lang: "日本語", localization: "一般" },
-    { lang: "English", localization: "General" },
-  ];
-
-  const verifyLanguageCanBeChanged = (l10n: { lang: string; localization: string }) => {
+  const verifyLanguageCanBeChanged = (l10n: {
+    lang: string;
+    localization: string;
+    isSmoke: boolean;
+  }) => {
     it(`should change selected language to ${l10n.lang}`, async () => {
       await app.settingsGeneral.navigateToLanguageSelect();
       await app.settingsGeneral.selectLanguage(l10n.lang);

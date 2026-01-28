@@ -170,6 +170,12 @@ if (outputFile) {
   filteredArgs.push(`--outputFile=${outputFile}`);
 }
 
+// Filter tests by name pattern only for @smoke
+const testFilter = process.env.INPUTS_TEST_FILTER || filter;
+if (testFilter && testFilter.includes("@smoke")) {
+  filteredArgs.push("--testNamePattern", "@smoke");
+}
+
 within(async () => {
   if (!platform) {
     usage(2);

@@ -78,7 +78,7 @@ describe("Receive Flow", () => {
   });
 
   $TmsLink("B2CQA-1859");
-  it("Should access to receive after selecting an existing account", async () => {
+  it("@smoke Should access to receive after selecting an existing account", async () => {
     await app.modularDrawer.selectCurrencyByTicker(Currency.XRP.ticker);
     await app.modularDrawer.selectAccount(Account.XRP_2.accountName);
     await app.receive.doNotVerifyAddress();

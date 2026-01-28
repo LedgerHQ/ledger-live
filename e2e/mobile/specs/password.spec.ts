@@ -45,7 +45,7 @@ describe("Password Lock Screen", () => {
 
   $TmsLink("B2CQA-1763");
   tags.forEach(tag => $Tag(tag));
-  it("should unlock with correct password", async () => {
+  it("@smoke should unlock with correct password", async () => {
     await app.passwordEntry.enterPassword(CORRECT_PASSWORD);
     await app.passwordEntry.login();
     await app.passwordEntry.expectNoLock();

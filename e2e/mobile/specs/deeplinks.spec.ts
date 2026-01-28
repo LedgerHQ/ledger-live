@@ -40,7 +40,7 @@ describe("DeepLinks Tests", () => {
     await app.manager.expectManagerPage();
   });
 
-  it("should open Account page", async () => {
+  it("@smoke should open Account page", async () => {
     await app.assetAccountsPage.openViaDeeplink();
     await app.accounts.waitForAccountsPageToLoad();
   });
