@@ -33,6 +33,7 @@ const familiesWPackage = [
   "casper",
   "canton",
   "celo",
+  "concordium",
   "cosmos",
   "evm",
   "hedera",
