@@ -15,7 +15,7 @@ export function fromTrongridTxInfoToOperation(
       block: {
         height: block.height,
         hash: block.hash,
-        time: block.time || new Date(),
+        time: block.time || new Date(0),
       },
       fees: fromBigNumberToBigInt<bigint>(trongridTxInfo.fee, BigInt(0)),
       date: trongridTxInfo.date,

@@ -14,7 +14,12 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
     time: new Date(result.timestamp),
   };
 
-  if (height > 0 && result.parentHash) {
+  if (
+    height > 0 &&
+    result.parentHash &&
+    result.parentHash !== "" &&
+    !/^0x0+$/.test(result.parentHash)
+  ) {
     info.parent = {
       height: result.height - 1,
       hash: result.parentHash,

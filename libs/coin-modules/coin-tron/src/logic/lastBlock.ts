@@ -6,6 +6,6 @@ export async function lastBlock(): Promise<BlockInfo> {
   return {
     height: block.height,
     hash: block.hash,
-    time: block.time ?? new Date(),
+    time: block.time ?? new Date(0),
   };
 }
