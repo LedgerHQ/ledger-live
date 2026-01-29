@@ -1,12 +1,12 @@
 import BigNumber from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
-import { getAccountIdFromWalletAccountId } from "wallet-api/converters";
+import { getAccountIdFromWalletAccountId } from "../../wallet-api/converters";
 import { PrepareSaveSwapProps, prepareSaveSwapToHistory } from "./prepareSaveSwapToHistory";
 import { convertToAtomicUnit } from "./webApp";
 
 export type { PrepareSaveSwapProps } from "./prepareSaveSwapToHistory";
 
-export async function prepareLegacySaveSwapToHistory({
+export function prepareLegacySaveSwapToHistory({
   params,
   accounts,
 }: {
