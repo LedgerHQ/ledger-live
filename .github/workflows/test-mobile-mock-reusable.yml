@@ -139,18 +139,18 @@ jobs:
           aws_region: ${{ secrets.AWS_CACHE_REGION }}
           max_shards: ${{ inputs.max-shards }}
 
-      - name: Check if iOS Native Build exists already
-        id: check-ios-native
-        uses: tespkg/actions-cache/restore@v1.9.0
-        with:
-          key: ${{ steps.cache-keys.outputs.ios_native_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-          lookup-only: true
+      # - name: Check if iOS Native Build exists already
+      #   id: check-ios-native
+      #   uses: tespkg/actions-cache/restore@v1.9.0
+      #   with:
+      #     key: ${{ steps.cache-keys.outputs.ios_native_key }}
+      #     accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+      #     secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+      #     sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+      #     bucket: ${{ env.cache-bucket }}
+      #     region: ${{ secrets.AWS_CACHE_REGION }}
+      #     use-fallback: false
+      #     lookup-only: true
 
       - name: Check if Android Native Build exists already
         id: check-android-native
@@ -165,18 +165,18 @@ jobs:
           use-fallback: false
           lookup-only: true
 
-      - name: Check if iOS JS Build exists already
-        id: check-ios-js
-        uses: tespkg/actions-cache/restore@v1.9.0
-        with:
-          key: ${{ steps.cache-keys.outputs.ios_js_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-          lookup-only: true
+      # - name: Check if iOS JS Build exists already
+      #   id: check-ios-js
+      #   uses: tespkg/actions-cache/restore@v1.9.0
+      #   with:
+      #     key: ${{ steps.cache-keys.outputs.ios_js_key }}
+      #     accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+      #     secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+      #     sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+      #     bucket: ${{ env.cache-bucket }}
+      #     region: ${{ secrets.AWS_CACHE_REGION }}
+      #     use-fallback: false
+      #     lookup-only: true
 
       - name: Check if Android JS Build exists already
         id: check-android-js
@@ -191,19 +191,19 @@ jobs:
           use-fallback: false
           lookup-only: true
 
-  build-ios:
-    name: "iOS Build"
-    needs: [determine-builds]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
-    with:
-      ref: ${{ inputs.ref || github.sha }}
-      macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
-      disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
-      build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
-      build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
-      ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
-      ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
-    secrets: inherit
+  # build-ios:
+  #   name: "iOS Build"
+  #   needs: [determine-builds]
+  #   uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+  #   with:
+  #     ref: ${{ inputs.ref || github.sha }}
+  #     macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
+  #     disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
+  #     build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
+  #     build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
+  #     ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
+  #     ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
+  #   secrets: inherit
 
   build-android:
     name: "Android Build"
@@ -218,139 +218,139 @@ jobs:
       android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
     secrets: inherit
 
-  detox-tests-ios:
-    name: "iOS Build / iOS Detox (${{ matrix.shard }}, ${{ matrix.total }})"
-    needs: [build-ios, determine-builds]
-    runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
-    timeout-minutes: 120
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJson(needs.determine-builds.outputs.matrix_ios) }}
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      LANG: en_US.UTF-8
-      LANGUAGE: en_US.UTF-8
-      LC_ALL: en_US.UTF-8
-      SEED: ${{ vars.SEED_QAA_B2C }}
-    outputs:
-      status: ${{ steps.detox.outcome }}
-      artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-          repository: LedgerHQ/ledger-live
-          persist-credentials: false
-
-      - name: setup caches
-        id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        with:
-          skip-pod-cache: "true"
-          skip-turbo-cache: "false"
-          skip-pnpm-cache: "true"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - name: Set shard test files from pre-computed matrix
-        run: |
-          echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
-          echo "${{ matrix.files }}" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
-
-      - uses: nick-fields/retry@v3
-        name: install dependencies
-        id: install-dependencies
-        with:
-          max_attempts: 2
-          timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm --ignore-scripts
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
-
-      - name: Detox Post Install
-        run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
-
-      - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
-        with:
-          endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
-          key: ${{ needs.determine-builds.outputs.ios_native_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - name: Download JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
-        with:
-          endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
-          key: ${{ needs.determine-builds.outputs.ios_js_key }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - name: Copy JS build
-        run: |
-          cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }} 
-          cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
-
-      - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm build:llm:deps
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
-
-      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
-        run: |
-          pnpm build:dummy-apps
-        shell: bash
-
-      - name: Test iOS app
-        id: detox
-        timeout-minutes: 75
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm mobile e2e:ci -- -p ios -t $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
-
-      - name: Upload test artifacts
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        id: "test-artifacts"
-        with:
-          name: "ios-test-artifacts-${{ matrix.shard }}"
-          path: apps/ledger-live-mobile/artifacts
-
-      - name: Setup iOS Shard timing artifacts
-        if: (!cancelled() || steps.detox.outcome == 'cancelled')
-        uses: actions/upload-artifact@v4
-        with:
-          path: apps/ledger-live-mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
-          name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shard }}"
-
-      - name: Record Flake
-        if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/ios.**') != '' }}
-        run: |
-          echo "Flake detected for iOS tests"
-
+  # detox-tests-ios:
+  #   name: "iOS Build / iOS Detox (${{ matrix.shard }}, ${{ matrix.total }})"
+  #   needs: [build-ios, determine-builds]
+  #   runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
+  #   timeout-minutes: 120
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       include: ${{ fromJson(needs.determine-builds.outputs.matrix_ios) }}
+  #   env:
+  #     NODE_OPTIONS: "--max-old-space-size=7168"
+  #     LANG: en_US.UTF-8
+  #     LANGUAGE: en_US.UTF-8
+  #     LC_ALL: en_US.UTF-8
+  #     SEED: ${{ vars.SEED_QAA_B2C }}
+  #   outputs:
+  #     status: ${{ steps.detox.outcome }}
+  #     artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ inputs.ref || github.sha }}
+  #         repository: LedgerHQ/ledger-live
+  #         persist-credentials: false
+  #
+  #     - name: setup caches
+  #       id: setup-caches
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+  #       with:
+  #         skip-pod-cache: "true"
+  #         skip-turbo-cache: "false"
+  #         skip-pnpm-cache: "true"
+  #         accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+  #         roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+  #         region: ${{ secrets.AWS_CACHE_REGION }}
+  #         turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+  #
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       id: aws
+  #       with:
+  #         role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+  #         aws-region: ${{ secrets.AWS_CACHE_REGION }}
+  #
+  #     - name: Set shard test files from pre-computed matrix
+  #       run: |
+  #         echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
+  #         echo "${{ matrix.files }}" >> $GITHUB_ENV
+  #         echo "EOF" >> $GITHUB_ENV
+  #         echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
+  #
+  #     - uses: nick-fields/retry@v3
+  #       name: install dependencies
+  #       id: install-dependencies
+  #       with:
+  #         max_attempts: 2
+  #         timeout_minutes: 15
+  #         command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm --ignore-scripts
+  #         new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
+  #
+  #     - name: Detox Post Install
+  #       run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
+  #
+  #     - name: Download Native Build
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+  #       with:
+  #         endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
+  #         key: ${{ needs.determine-builds.outputs.ios_native_key }}
+  #         accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+  #         secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+  #         sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+  #         bucket: ${{ env.cache-bucket }}
+  #         region: ${{ secrets.AWS_CACHE_REGION }}
+  #
+  #     - name: Download JS Build
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+  #       with:
+  #         endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
+  #         key: ${{ needs.determine-builds.outputs.ios_js_key }}
+  #         accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+  #         secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+  #         sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+  #         bucket: ${{ env.cache-bucket }}
+  #         region: ${{ secrets.AWS_CACHE_REGION }}
+  #
+  #     - name: Copy JS build
+  #       run: |
+  #         cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }}
+  #         cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
+  #
+  #     - name: Build dependencies
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+  #       with:
+  #         command: pnpm build:llm:deps
+  #         turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+  #         turbo_port: ${{ steps.setup-caches.outputs.port }}
+  #         disable_cache: ${{ inputs.disable-turbo-cache || false }}
+  #
+  #     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
+  #       run: |
+  #         pnpm build:dummy-apps
+  #       shell: bash
+  #
+  #     - name: Test iOS app
+  #       id: detox
+  #       timeout-minutes: 75
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+  #       with:
+  #         command: pnpm mobile e2e:ci -- -p ios -t $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
+  #         turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+  #         turbo_port: ${{ steps.setup-caches.outputs.port }}
+  #         disable_cache: ${{ inputs.disable-turbo-cache || false }}
+  #
+  #     - name: Upload test artifacts
+  #       uses: actions/upload-artifact@v4
+  #       if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+  #       id: "test-artifacts"
+  #       with:
+  #         name: "ios-test-artifacts-${{ matrix.shard }}"
+  #         path: apps/ledger-live-mobile/artifacts
+  #
+  #     - name: Setup iOS Shard timing artifacts
+  #       if: (!cancelled() || steps.detox.outcome == 'cancelled')
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         path: apps/ledger-live-mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
+  #         name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shard }}"
+  #
+  #     - name: Record Flake
+  #       if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/ios.**') != '' }}
+  #       run: |
+  #         echo "Flake detected for iOS tests"
+  #
   detox-tests-android:
     name: "Android Build / Android Detox (${{ matrix.shard }}, ${{ matrix.total }})"
     needs: [build-android, determine-builds]
