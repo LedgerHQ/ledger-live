@@ -1713,7 +1713,7 @@ describe("EVM Family", () => {
     const ops = (...items: BlockchainOp[]) => items.map(String);
 
     // Create intelligent mock that simulates blockchain based on given operations
-    const createBlockchainMock = (allOps: BlockchainOp[], limit: number) => {
+    const createBlockchainMock = (allOps: BlockchainOp[], limit: number, order: "asc" | "desc") => {
       const pageCounts: Record<string, number> = {};
 
       return async (config: any) => {
@@ -1722,7 +1722,6 @@ describe("EVM Family", () => {
         const startBlock = params.startBlock ?? 0;
         const endBlock = params.endBlock ?? Infinity;
         const pageLimit = params.offset ?? limit;
-        const page = params.page ?? 1;
         const endpointType = getEndpointType(url);
 
         // Track page counts per endpoint to handle exhaustEndpoint pagination
@@ -1741,7 +1740,7 @@ describe("EVM Family", () => {
 
         const filteredOps = allOps
           .filter(op => op.type === opType && op.block >= startBlock && op.block <= endBlock)
-          .sort((a, b) => b.block - a.block); // desc order
+          .sort((a, b) => (order === "desc" ? b.block - a.block : a.block - b.block));
 
         // Simulate pagination: skip (page-1)*limit, take limit
         const startIdx = (currentPage - 1) * pageLimit;
@@ -1758,13 +1757,13 @@ describe("EVM Family", () => {
       };
     };
 
-    // Helper to call getOperations with common parameters
-    const callGetOperations = (
+    // Helper to call getOperations with common parameters (desc mode)
+    const callGetOperationsDesc = (
       allOps: BlockchainOp[],
       opts: { fromBlock?: number; toBlock?: number; pagingToken?: string; limit?: number } = {},
     ) => {
       const { fromBlock = 0, toBlock, pagingToken, limit = 3 } = opts;
-      jest.spyOn(axios, "request").mockImplementation(createBlockchainMock(allOps, limit));
+      jest.spyOn(axios, "request").mockImplementation(createBlockchainMock(allOps, limit, "desc"));
       return ETHERSCAN_API.getOperations.force(
         currency,
         account.freshAddress,
@@ -1773,6 +1772,26 @@ describe("EVM Family", () => {
         toBlock,
         pagingToken,
         limit,
+        "desc",
+      );
+    };
+
+    // Helper to call getOperations with common parameters (asc mode)
+    const callGetOperationsAsc = (
+      allOps: BlockchainOp[],
+      opts: { fromBlock?: number; toBlock?: number; pagingToken?: string; limit?: number } = {},
+    ) => {
+      const { fromBlock = 0, toBlock, pagingToken, limit = 3 } = opts;
+      jest.spyOn(axios, "request").mockImplementation(createBlockchainMock(allOps, limit, "asc"));
+      return ETHERSCAN_API.getOperations.force(
+        currency,
+        account.freshAddress,
+        account.id,
+        fromBlock,
+        toBlock,
+        pagingToken,
+        limit,
+        "asc",
       );
     };
 
@@ -1795,166 +1814,333 @@ describe("EVM Family", () => {
       return { ops, nextPagingToken: result.nextPagingToken };
     };
 
-    describe("drop scenarios - operations discarded due to cascading boundBlock", () => {
-      it("drops full coin result when internal has higher blocks", async () => {
-        const result = await callGetOperations([I6, I6, I6, I5, T5, C4, C3, C2]);
-        // - coin([Ø, Ø])       [C4 C3 C2]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
-        // - internal([2, Ø])   [I6 I6 I6]     boundBlock=5, isPageFull=true,  hasMorePage=true  (full page, higher boundBlock)
-        // - token([5, Ø])      []             boundBlock=5, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
-        // Result: only I6s kept, coin ops dropped (below boundBlock=5)
-        expect(summarize(result)).toEqual({ ops: ops(I6, I6, I6), nextPagingToken: "5" });
+    describe("desc mode", () => {
+      describe("drop scenarios - operations discarded due to cascading boundBlock", () => {
+        it("drops full coin result when internal has higher blocks", async () => {
+          const result = await callGetOperationsDesc([I6, I6, I6, I5, T5, C4, C3, C2]);
+          // - coin([Ø, Ø])       [C4 C3 C2]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([2, Ø])   [I6 I6 I6]     boundBlock=5, isPageFull=true,  hasMorePage=true  (full page, higher boundBlock)
+          // - token([5, Ø])      []             boundBlock=5, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+          // Result: only I6s kept, coin ops dropped (below boundBlock=5)
+          expect(summarize(result)).toEqual({ ops: ops(I6, I6, I6), nextPagingToken: "5" });
+        });
+
+        it("drops full coin result, keeps token ops above boundBlock", async () => {
+          const result = await callGetOperationsDesc([T7, I6, I6, I6, T5, C4, C3, C2, I2]);
+          // - coin([Ø, Ø])       [C4 C3 C2]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([2, Ø])   [I6 I6 I6]     boundBlock=5, isPageFull=true,  hasMorePage=true  (full page, higher boundBlock)
+          // - token([5, Ø])      [T7]           boundBlock=5, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+          // Result: T7 + I6s kept, coin ops dropped (below boundBlock=5)
+          expect(summarize(result)).toEqual({ ops: ops(T7, I6, I6, I6), nextPagingToken: "5" });
+        });
+
+        it("drops full coin and internal results when token has highest blocks", async () => {
+          const result = await callGetOperationsDesc([T9, T8, T7, I6, I5, I4, C3, C2, C1, I1, T1]);
+          // - coin([Ø, Ø])       [C3 C2 C1]     boundBlock=Ø, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([Ø, Ø])   [I6 I5 I4]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page)
+          // - token([3, Ø])      [T9 T8 T7]     boundBlock=6, isPageFull=true,  hasMorePage=true  (full page, highest boundBlock)
+          // Result: only T9/T8/T7 kept, coin+internal ops dropped (below boundBlock=6)
+          expect(summarize(result)).toEqual({ ops: ops(T9, T8, T7), nextPagingToken: "6" });
+        });
+
+        it("drops partial results from coin and internal", async () => {
+          const result = await callGetOperationsDesc([T9, T8, I8, T7, I7, C7, I6, C6, T6, C5, T1, I1]);
+          // - coin([Ø, Ø])       [C7 C6 C5]     boundBlock=4, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([4, Ø])   [I8 I7 I6]     boundBlock=5, isPageFull=true,  hasMorePage=true  (full page, higher boundBlock)
+          // - token([5, Ø])      [T9 T8 T7]     boundBlock=6, isPageFull=true,  hasMorePage=true  (full page, highest boundBlock)
+          // Result: ops >= 7 kept, lower ops dropped (below boundBlock=6)
+          expect(summarize(result)).toEqual({ ops: ops(T9, T8, I8, T7, I7, C7), nextPagingToken: "6" });
+        });
       });
 
-      it("drops full coin result, keeps token ops above boundBlock", async () => {
-        const result = await callGetOperations([T7, I6, I6, I6, T5, C4, C3, C2, I2]);
-        // - coin([Ø, Ø])       [C4 C3 C2]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
-        // - internal([2, Ø])   [I6 I6 I6]     boundBlock=5, isPageFull=true,  hasMorePage=true  (full page, higher boundBlock)
-        // - token([5, Ø])      [T7]           boundBlock=5, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
-        // Result: T7 + I6s kept, coin ops dropped (below boundBlock=5)
-        expect(summarize(result)).toEqual({ ops: ops(T7, I6, I6, I6), nextPagingToken: "5" });
+      describe("no-drop scenarios - all operations kept", () => {
+        it("keeps all when subsequent pages are not full", async () => {
+          const result = await callGetOperationsDesc([I6, I6, T5, C4, C3, C2, C1, T1]);
+          // - coin([Ø, Ø])       [C4 C3 C2]     boundBlock=1, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([1, Ø])   [I6 I6]        boundBlock=1, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+          // - token([1, Ø])      [T5]           boundBlock=1, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+          // Result: all ops kept, boundBlock stays at 1 because subsequent pages not full
+          expect(summarize(result)).toEqual({ ops: ops(I6, I6, T5, C4, C3, C2), nextPagingToken: "1" });
+        });
+
+        it("keeps all when no endpoint has full page", async () => {
+          const result = await callGetOperationsDesc([I6, T5, C4]);
+          // - coin([Ø, Ø])       [C4]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full, no more data)
+          // - internal([Ø, Ø])   [I6]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full, no more data)
+          // - token([Ø, Ø])      [T5]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full, no more data)
+          // Result: all ops kept, no pagination token (all data fetched)
+          expect(summarize(result)).toEqual({ ops: ops(I6, T5, C4), nextPagingToken: NO_TOKEN });
+        });
+
+        it("keeps all when only coin has ops", async () => {
+          const result = await callGetOperationsDesc([C4, C3, C2, C1]);
+          // - coin([Ø, Ø])       [C4 C3 C2]     boundBlock=1, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([1, Ø])   []             boundBlock=1, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+          // - token([1, Ø])      []             boundBlock=1, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+          // Result: coin ops kept, nextPagingToken=1 for remaining C1
+          expect(summarize(result)).toEqual({ ops: ops(C4, C3, C2), nextPagingToken: "1" });
+        });
+
+        it("keeps all when only token has ops", async () => {
+          const result = await callGetOperationsDesc([T4, T3, T2, T1]);
+          // - coin([Ø, Ø])       []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+          // - internal([Ø, Ø])   []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+          // - token([Ø, Ø])      [T4 T3 T2]     boundBlock=1, isPageFull=true,  hasMorePage=true  (full page)
+          // Result: token ops kept, nextPagingToken=1 for remaining T1
+          expect(summarize(result)).toEqual({ ops: ops(T4, T3, T2), nextPagingToken: "1" });
+        });
+
+        it("cascades without dropping when blocks interleave nicely", async () => {
+          const result = await callGetOperationsDesc([T6, C5, I5, C4, I4, C3, I2, I1, C1, T1]);
+          // - coin([Ø, Ø])       [C5 C4 C3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([2, Ø])   [I5 I4]        boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+          // - token([2, Ø])      [T6]           boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+          // Result: all ops >= 3 kept, interleaved blocks don't cause drops
+          expect(summarize(result)).toEqual({ ops: ops(T6, C5, I5, C4, I4, C3), nextPagingToken: "2" });
+        });
+
+        it("uses boundBlock from internal when coin page is not full", async () => {
+          const result = await callGetOperationsDesc([T6, I6, C5, C4, I4, I3, I2, I1, T1]);
+          // - coin([Ø, Ø])       [C5 C4]        boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
+          // - internal([Ø, Ø])   [I6 I4 I3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
+          // - token([2, Ø])      [T6]           boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+          // Result: all ops >= 3 kept, boundBlock from internal applies
+          expect(summarize(result)).toEqual({ ops: ops(T6, I6, C5, C4, I4, I3), nextPagingToken: "2" });
+        });
+
+        it("handles empty token result with boundBlock from internal", async () => {
+          const result = await callGetOperationsDesc([I6, C5, C4, I4, I3, I2, I1, T1]);
+          // - coin([Ø, Ø])       [C5 C4]        boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
+          // - internal([Ø, Ø])   [I6 I4 I3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
+          // - token([2, Ø])      []             boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+          // Result: coin + internal ops kept
+          expect(summarize(result)).toEqual({ ops: ops(I6, C5, C4, I4, I3), nextPagingToken: "2" });
+        });
+
+        it("handles all endpoints with full pages at same block", async () => {
+          const result = await callGetOperationsDesc([C4, C4, C4, I4, I4, I4, T4, T4, T4, C1, T1, I1]);
+          // - coin([Ø, Ø])       [C4 C4 C4]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([3, Ø])   [I4 I4 I4]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page, same boundBlock)
+          // - token([3, Ø])      [T4 T4 T4]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page, same boundBlock)
+          // Result: all 9 ops at block 4 kept, all above boundBlock=3
+          expect(summarize(result)).toEqual({ ops: ops(C4, C4, C4, I4, I4, I4, T4, T4, T4), nextPagingToken: "3" });
+        });
+
+        it("returns empty when all endpoints return empty", async () => {
+          const result = await callGetOperationsDesc([]);
+          // - coin([Ø, Ø])       []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+          // - internal([Ø, Ø])   []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+          // - token([Ø, Ø])      []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+          // Result: empty, no pagination needed
+          expect(summarize(result)).toEqual({ ops: [], nextPagingToken: NO_TOKEN });
+        });
       });
 
-      it("drops full coin and internal results when token has highest blocks", async () => {
-        const result = await callGetOperations([T9, T8, T7, I6, I5, I4, C3, C2, C1, I1, T1]);
-        // - coin([Ø, Ø])       [C3 C2 C1]     boundBlock=Ø, isPageFull=true,  hasMorePage=true  (full page)
-        // - internal([Ø, Ø])   [I6 I5 I4]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page)
-        // - token([3, Ø])      [T9 T8 T7]     boundBlock=6, isPageFull=true,  hasMorePage=true  (full page, highest boundBlock)
-        // Result: only T9/T8/T7 kept, coin+internal ops dropped (below boundBlock=6)
-        expect(summarize(result)).toEqual({ ops: ops(T9, T8, T7), nextPagingToken: "6" });
+      describe("with pagination token", () => {
+        it("uses token as toBlock for all calls", async () => {
+          const result = await callGetOperationsDesc([T6, I6, C6, C5, I5, C4, I4, C3, I2, I1, C1, T1], {
+            pagingToken: "5",
+          });
+          // pagingToken=5 acts as toBlock for all endpoints
+          // - coin([Ø, 5])       [C5 C4 C3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([2, 5])   [I5 I4]        boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+          // - token([2, 5])      []             boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+          // Result: C5/C4/C3 + I5/I4 kept, T6/I6/C6 excluded by pagingToken
+          expect(summarize(result)).toEqual({ ops: ops(C5, I5, C4, I4, C3), nextPagingToken: "2" });
+        });
       });
 
-      it("drops partial results from coin and internal", async () => {
-        const result = await callGetOperations([T9, T8, I8, T7, I7, C7, I6, C6, T6, C5, T1, I1]);
-        // - coin([Ø, Ø])       [C7 C6 C5]     boundBlock=4, isPageFull=true,  hasMorePage=true  (full page)
-        // - internal([4, Ø])   [I8 I7 I6]     boundBlock=5, isPageFull=true,  hasMorePage=true  (full page, higher boundBlock)
-        // - token([5, Ø])      [T9 T8 T7]     boundBlock=6, isPageFull=true,  hasMorePage=true  (full page, highest boundBlock)
-        // Result: ops >= 7 kept, lower ops dropped (below boundBlock=6)
-        expect(summarize(result)).toEqual({ ops: ops(T9, T8, I8, T7, I7, C7), nextPagingToken: "6" });
+      describe("with fromBlock and toBlock", () => {
+        it("uses fromBlock and cascades boundBlock when page is full", async () => {
+          const result = await callGetOperationsDesc([T7, I7, C7, C5, I5, C4, I4, C3, I2, I1, C1, T1], {
+            fromBlock: 2,
+            toBlock: 6,
+          });
+          // fromBlock=2, toBlock=6 restricts all endpoints
+          // - coin([2, 6])       [C5 C4 C3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([2, 6])   [I5 I4]        boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+          // - token([2, 6])      []             boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+          // Result: ops in [2, 6] kept, T7/I7/C7 excluded by toBlock
+          expect(summarize(result)).toEqual({ ops: ops(C5, I5, C4, I4, C3), nextPagingToken: "2" });
+        });
+
+        it("reaches fromBlock and returns no pagination token", async () => {
+          const result = await callGetOperationsDesc([C7, T6, C6, C5, I5, I4, I2, I1, C1, T1, C0], {
+            fromBlock: 2,
+            toBlock: 6,
+          });
+          // fromBlock=2, toBlock=6, lowest ops reach fromBlock
+          // - coin([2, 6])       [C6 C5]        boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
+          // - internal([Ø, 6])   [I5 I4 I2]     boundBlock=Ø, isPageFull=true,  hasMorePage=false (full but reached fromBlock)
+          // - token([Ø, 6])      [T6]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
+          // Result: all ops in [2, 6] kept, no nextPagingToken (reached fromBlock)
+          expect(summarize(result)).toEqual({ ops: ops(C6, T6, C5, I5, I4, I2), nextPagingToken: NO_TOKEN });
+        });
       });
     });
 
-    describe("no-drop scenarios - all operations kept", () => {
-      it("keeps all when subsequent pages are not full", async () => {
-        const result = await callGetOperations([I6, I6, T5, C4, C3, C2, C1, T1]);
-        // - coin([Ø, Ø])       [C4 C3 C2]     boundBlock=1, isPageFull=true,  hasMorePage=true  (full page)
-        // - internal([1, Ø])   [I6 I6]        boundBlock=1, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
-        // - token([1, Ø])      [T5]           boundBlock=1, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
-        // Result: all ops kept, boundBlock stays at 1 because subsequent pages not full
-        expect(summarize(result)).toEqual({ ops: ops(I6, I6, T5, C4, C3, C2), nextPagingToken: "1" });
-      });
-
-      it("keeps all when no endpoint has full page", async () => {
-        const result = await callGetOperations([I6, T5, C4]);
-        // - coin([Ø, Ø])       [C4]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full, no more data)
-        // - internal([Ø, Ø])   [I6]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full, no more data)
-        // - token([Ø, Ø])      [T5]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full, no more data)
-        // Result: all ops kept, no pagination token (all data fetched)
-        expect(summarize(result)).toEqual({ ops: ops(I6, T5, C4), nextPagingToken: NO_TOKEN });
-      });
-
-      it("keeps all when only coin has ops", async () => {
-        const result = await callGetOperations([C4, C3, C2, C1]);
-        // - coin([Ø, Ø])       [C4 C3 C2]     boundBlock=1, isPageFull=true,  hasMorePage=true  (full page)
-        // - internal([1, Ø])   []             boundBlock=1, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
-        // - token([1, Ø])      []             boundBlock=1, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
-        // Result: coin ops kept, nextPagingToken=1 for remaining C1
-        expect(summarize(result)).toEqual({ ops: ops(C4, C3, C2), nextPagingToken: "1" });
-      });
-
-      it("keeps all when only token has ops", async () => {
-        const result = await callGetOperations([T4, T3, T2, T1]);
-        // - coin([Ø, Ø])       []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
-        // - internal([Ø, Ø])   []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
-        // - token([Ø, Ø])      [T4 T3 T2]     boundBlock=1, isPageFull=true,  hasMorePage=true  (full page)
-        // Result: token ops kept, nextPagingToken=1 for remaining T1
-        expect(summarize(result)).toEqual({ ops: ops(T4, T3, T2), nextPagingToken: "1" });
-      });
-
-      it("cascades without dropping when blocks interleave nicely", async () => {
-        const result = await callGetOperations([T6, C5, I5, C4, I4, C3, I2, I1, C1, T1]);
-        // - coin([Ø, Ø])       [C5 C4 C3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
-        // - internal([2, Ø])   [I5 I4]        boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
-        // - token([2, Ø])      [T6]           boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
-        // Result: all ops >= 3 kept, interleaved blocks don't cause drops
-        expect(summarize(result)).toEqual({ ops: ops(T6, C5, I5, C4, I4, C3), nextPagingToken: "2" });
-      });
-
-      it("uses boundBlock from internal when coin page is not full", async () => {
-        const result = await callGetOperations([T6, I6, C5, C4, I4, I3, I2, I1, T1]);
-        // - coin([Ø, Ø])       [C5 C4]        boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
-        // - internal([Ø, Ø])   [I6 I4 I3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
-        // - token([2, Ø])      [T6]           boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
-        // Result: all ops >= 3 kept, boundBlock from internal applies
-        expect(summarize(result)).toEqual({ ops: ops(T6, I6, C5, C4, I4, I3), nextPagingToken: "2" });
-      });
-
-      it("handles empty token result with boundBlock from internal", async () => {
-        const result = await callGetOperations([I6, C5, C4, I4, I3, I2, I1, T1]);
-        // - coin([Ø, Ø])       [C5 C4]        boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
-        // - internal([Ø, Ø])   [I6 I4 I3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
-        // - token([2, Ø])      []             boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
-        // Result: coin + internal ops kept
-        expect(summarize(result)).toEqual({ ops: ops(I6, C5, C4, I4, I3), nextPagingToken: "2" });
-      });
-
-      it("handles all endpoints with full pages at same block", async () => {
-        const result = await callGetOperations([C4, C4, C4, I4, I4, I4, T4, T4, T4, C1, T1, I1]);
-        // - coin([Ø, Ø])       [C4 C4 C4]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page)
-        // - internal([3, Ø])   [I4 I4 I4]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page, same boundBlock)
-        // - token([3, Ø])      [T4 T4 T4]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page, same boundBlock)
-        // Result: all 9 ops at block 4 kept, all above boundBlock=3
-        expect(summarize(result)).toEqual({ ops: ops(C4, C4, C4, I4, I4, I4, T4, T4, T4), nextPagingToken: "3" });
-      });
-
-      it("returns empty when all endpoints return empty", async () => {
-        const result = await callGetOperations([]);
-        // - coin([Ø, Ø])       []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
-        // - internal([Ø, Ø])   []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
-        // - token([Ø, Ø])      []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
-        // Result: empty, no pagination needed
-        expect(summarize(result)).toEqual({ ops: [], nextPagingToken: NO_TOKEN });
-      });
-    });
-
-    describe("with pagination token", () => {
-      it("uses token as toBlock for all calls", async () => {
-        const result = await callGetOperations([T6, I6, C6, C5, I5, C4, I4, C3, I2, I1, C1, T1], {
-          pagingToken: "5",
+    describe("asc mode", () => {
+      describe("drop scenarios - operations discarded due to cascading boundBlock", () => {
+        it("drops full coin result when internal has lower blocks", async () => {
+          const result = await callGetOperationsAsc([C5, C6, C7, C8, T4, I2, I2, I2, I3]);
+          // - coin([Ø, Ø])       [C5 C6 C7]     boundBlock=8, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([Ø, 8])   [I2 I2 I2]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page, lower boundBlock)
+          // - token([Ø, 3])      []             boundBlock=3, isPageFull=false, hasMorePage=true  (bounded by boundBlock < toBlock)
+          // Result: only I2s kept, coin ops dropped (above boundBlock=3)
+          expect(summarize(result)).toEqual({ ops: ops(I2, I2, I2), nextPagingToken: "4" });
         });
-        // pagingToken=5 acts as toBlock for all endpoints
-        // - coin([Ø, 5])       [C5 C4 C3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
-        // - internal([2, 5])   [I5 I4]        boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
-        // - token([2, 5])      []             boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
-        // Result: C5/C4/C3 + I5/I4 kept, T6/I6/C6 excluded by pagingToken
-        expect(summarize(result)).toEqual({ ops: ops(C5, I5, C4, I4, C3), nextPagingToken: "2" });
-      });
-    });
 
-    describe("with fromBlock and toBlock", () => {
-      it("uses fromBlock and cascades boundBlock when page is full", async () => {
-        const result = await callGetOperations([T7, I7, C7, C5, I5, C4, I4, C3, I2, I1, C1, T1], {
-          fromBlock: 2,
-          toBlock: 6,
+        it("drops full coin result, keeps token ops below boundBlock", async () => {
+          const result = await callGetOperationsAsc([T1, I2, I2, I2, T4, C5, C6, C7, I8]);
+          // - coin([Ø, Ø])       [C5 C6 C7]     boundBlock=8, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([Ø, 8])   [I2 I2 I2]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page, lower boundBlock)
+          // - token([Ø, 3])      [T1]           boundBlock=3, isPageFull=false, hasMorePage=true  (bounded by boundBlock < toBlock)
+          // Result: T1 + I2s kept, coin ops dropped (above boundBlock=3)
+          expect(summarize(result)).toEqual({ ops: ops(I2, I2, I2, T1), nextPagingToken: "4" });
         });
-        // fromBlock=2, toBlock=6 restricts all endpoints
-        // - coin([2, 6])       [C5 C4 C3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
-        // - internal([2, 6])   [I5 I4]        boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
-        // - token([2, 6])      []             boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
-        // Result: ops in [2, 6] kept, T7/I7/C7 excluded by toBlock
-        expect(summarize(result)).toEqual({ ops: ops(C5, I5, C4, I4, C3), nextPagingToken: "2" });
+
+        it("drops full coin and internal results when token has lowest blocks", async () => {
+          const result = await callGetOperationsAsc([T1, T2, T3, I4, I5, I6, C7, C8, C9, I9, T9]);
+          // - coin([Ø, Ø])       [C7 C8 C9]     boundBlock=Ø, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([Ø, Ø])   [I4 I5 I6]     boundBlock=7, isPageFull=true,  hasMorePage=true  (full page)
+          // - token([Ø, 7])      [T1 T2 T3]     boundBlock=4, isPageFull=true,  hasMorePage=true  (full page, lowest boundBlock)
+          // Result: only T1/T2/T3 kept, coin+internal ops dropped (above boundBlock=4)
+          expect(summarize(result)).toEqual({ ops: ops(T3, T2, T1), nextPagingToken: "4" });
+        });
+
+        it("drops partial results from coin and internal", async () => {
+          const result = await callGetOperationsAsc([T1, T2, I2, T3, I3, C3, I4, C4, T4, C5, T9, I9]);
+          // - coin([Ø, Ø])       [C3 C4 C5]     boundBlock=6, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([Ø, 6])   [I2 I3 I4]     boundBlock=5, isPageFull=true,  hasMorePage=true  (full page, lower boundBlock)
+          // - token([Ø, 5])      [T1 T2 T3]     boundBlock=4, isPageFull=true,  hasMorePage=true  (full page, lowest boundBlock)
+          // Result: ops <= 3 kept, higher ops dropped (above boundBlock=4)
+          expect(summarize(result)).toEqual({ ops: ops(C3, I3, T3, I2, T2, T1), nextPagingToken: "4" });
+        });
       });
 
-      it("reaches fromBlock and returns no pagination token", async () => {
-        const result = await callGetOperations([C7, T6, C6, C5, I5, I4, I2, I1, C1, T1, C0], {
-          fromBlock: 2,
-          toBlock: 6,
+      describe("no-drop scenarios - all operations kept", () => {
+        it("keeps all when subsequent pages are not full", async () => {
+          const result = await callGetOperationsAsc([I2, I2, T4, C5, C6, C7, C8, T8]);
+          // - coin([Ø, Ø])       [C5 C6 C7]     boundBlock=8, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([Ø, 8])   [I2 I2]        boundBlock=8, isPageFull=false, hasMorePage=true  (bounded by boundBlock < toBlock)
+          // - token([Ø, 8])      [T4]           boundBlock=8, isPageFull=false, hasMorePage=true  (bounded by boundBlock < toBlock)
+          // Result: all ops kept, boundBlock stays at 8 because subsequent pages not full
+          expect(summarize(result)).toEqual({ ops: ops(C7, C6, C5, T4, I2, I2), nextPagingToken: "8" });
         });
-        // fromBlock=2, toBlock=6, lowest ops reach fromBlock
-        // - coin([2, 6])       [C6 C5]        boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
-        // - internal([Ø, 6])   [I5 I4 I2]     boundBlock=Ø, isPageFull=true,  hasMorePage=false (full but reached fromBlock)
-        // - token([Ø, 6])      [T6]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
-        // Result: all ops in [2, 6] kept, no nextPagingToken (reached fromBlock)
-        expect(summarize(result)).toEqual({ ops: ops(C6, T6, C5, I5, I4, I2), nextPagingToken: NO_TOKEN });
+
+        it("keeps all when no endpoint has full page", async () => {
+          const result = await callGetOperationsAsc([I2, T4, C5]);
+          // - coin([Ø, Ø])       [C5]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full, no more data)
+          // - internal([Ø, Ø])   [I2]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full, no more data)
+          // - token([Ø, Ø])      [T4]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full, no more data)
+          // Result: all ops kept, no pagination token (all data fetched)
+          expect(summarize(result)).toEqual({ ops: ops(C5, T4, I2), nextPagingToken: NO_TOKEN });
+        });
+
+        it("keeps all when only coin has ops", async () => {
+          const result = await callGetOperationsAsc([C5, C6, C7, C8]);
+          // - coin([Ø, Ø])       [C5 C6 C7]     boundBlock=8, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([Ø, 8])   []             boundBlock=8, isPageFull=false, hasMorePage=true  (bounded by boundBlock < toBlock)
+          // - token([Ø, 8])      []             boundBlock=8, isPageFull=false, hasMorePage=true  (bounded by boundBlock < toBlock)
+          // Result: coin ops kept, nextPagingToken=8 for remaining C8
+          expect(summarize(result)).toEqual({ ops: ops(C7, C6, C5), nextPagingToken: "8" });
+        });
+
+        it("keeps all when only token has ops", async () => {
+          const result = await callGetOperationsAsc([T5, T6, T7, T8]);
+          // - coin([Ø, Ø])       []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+          // - internal([Ø, Ø])   []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+          // - token([Ø, Ø])      [T5 T6 T7]     boundBlock=8, isPageFull=true,  hasMorePage=true  (full page)
+          // Result: token ops kept, nextPagingToken=8 for remaining T8
+          expect(summarize(result)).toEqual({ ops: ops(T7, T6, T5), nextPagingToken: "8" });
+        });
+
+        it("cascades without dropping when blocks interleave nicely", async () => {
+          const result = await callGetOperationsAsc([T2, C4, I4, C5, I5, C6, I7, I8, C8, T8]);
+          // - coin([Ø, Ø])       [C4 C5 C6]     boundBlock=7, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([Ø, 7])   [I4 I5]        boundBlock=7, isPageFull=false, hasMorePage=true  (bounded by boundBlock < toBlock)
+          // - token([Ø, 7])      [T2]           boundBlock=7, isPageFull=false, hasMorePage=true  (bounded by boundBlock < toBlock)
+          // Result: all ops <= 6 kept, interleaved blocks don't cause drops
+          expect(summarize(result)).toEqual({ ops: ops(C6, C5, I5, C4, I4, T2), nextPagingToken: "7" });
+        });
+
+        it("uses boundBlock from internal when coin page is not full", async () => {
+          const result = await callGetOperationsAsc([T2, I2, C4, C5, I5, I6, I7, I8, T8]);
+          // - coin([Ø, Ø])       [C4 C5]        boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
+          // - internal([Ø, Ø])   [I2 I5 I6]     boundBlock=7, isPageFull=true,  hasMorePage=true  (full page)
+          // - token([Ø, 7])      [T2]           boundBlock=7, isPageFull=false, hasMorePage=true  (bounded by boundBlock < toBlock)
+          // Result: all ops <= 6 kept, boundBlock from internal applies
+          expect(summarize(result)).toEqual({ ops: ops(I6, I5, C5, C4, I2, T2), nextPagingToken: "7" });
+        });
+
+        it("handles empty token result with boundBlock from internal", async () => {
+          const result = await callGetOperationsAsc([I2, C4, C5, I5, I6, I7, I8, T8]);
+          // - coin([Ø, Ø])       [C4 C5]        boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
+          // - internal([Ø, Ø])   [I2 I5 I6]     boundBlock=7, isPageFull=true,  hasMorePage=true  (full page)
+          // - token([Ø, 7])      []             boundBlock=7, isPageFull=false, hasMorePage=true  (bounded by boundBlock < toBlock)
+          // Result: coin + internal ops kept
+          expect(summarize(result)).toEqual({ ops: ops(I6, I5, C5, C4, I2), nextPagingToken: "7" });
+        });
+
+        it("handles all endpoints with full pages at same block", async () => {
+          const result = await callGetOperationsAsc([C5, C5, C5, I5, I5, I5, T5, T5, T5, C8, T8, I8]);
+          // - coin([Ø, Ø])       [C5 C5 C5]     boundBlock=6, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([Ø, 6])   [I5 I5 I5]     boundBlock=6, isPageFull=true,  hasMorePage=true  (full page, same boundBlock)
+          // - token([Ø, 6])      [T5 T5 T5]     boundBlock=6, isPageFull=true,  hasMorePage=true  (full page, same boundBlock)
+          // Result: all 9 ops at block 5 kept, all below boundBlock=6
+          expect(summarize(result)).toEqual({ ops: ops(C5, C5, C5, I5, I5, I5, T5, T5, T5), nextPagingToken: "6" });
+        });
+
+        it("returns empty when all endpoints return empty", async () => {
+          const result = await callGetOperationsAsc([]);
+          // - coin([Ø, Ø])       []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+          // - internal([Ø, Ø])   []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+          // - token([Ø, Ø])      []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+          // Result: empty, no pagination needed
+          expect(summarize(result)).toEqual({ ops: [], nextPagingToken: NO_TOKEN });
+        });
+      });
+
+      describe("with pagination token", () => {
+        it("uses token as fromBlock for all calls", async () => {
+          const result = await callGetOperationsAsc([T2, I2, C2, C4, I4, C5, I5, C6, I7, I8, C8, T8], {
+            pagingToken: "4",
+          });
+          // pagingToken=4 acts as fromBlock for all endpoints
+          // - coin([4, Ø])       [C4 C5 C6]     boundBlock=7, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([4, 7])   [I4 I5]        boundBlock=7, isPageFull=false, hasMorePage=true  (bounded by boundBlock < toBlock)
+          // - token([4, 7])      []             boundBlock=7, isPageFull=false, hasMorePage=true  (bounded by boundBlock < toBlock)
+          // Result: C4/C5/C6 + I4/I5 kept, T2/I2/C2 excluded by pagingToken
+          expect(summarize(result)).toEqual({ ops: ops(C6, C5, I5, C4, I4), nextPagingToken: "7" });
+        });
+      });
+
+      describe("with fromBlock and toBlock", () => {
+        it("uses toBlock and cascades boundBlock when page is full", async () => {
+          const result = await callGetOperationsAsc([T1, I1, C1, C4, I4, C5, I5, C6, I7, I8, C8, T8], {
+            fromBlock: 3,
+            toBlock: 7,
+          });
+          // fromBlock=3, toBlock=7 restricts all endpoints
+          // - coin([3, 7])       [C4 C5 C6]     boundBlock=7, isPageFull=true,  hasMorePage=true  (full page)
+          // - internal([3, 7])   [I4 I5]        boundBlock=7, isPageFull=false, hasMorePage=true  (bounded by boundBlock < toBlock)
+          // - token([3, 7])      []             boundBlock=7, isPageFull=false, hasMorePage=true  (bounded by boundBlock < toBlock)
+          // Result: ops in [3, 7] kept, T1/I1/C1 excluded by fromBlock
+          expect(summarize(result)).toEqual({ ops: ops(C6, C5, I5, C4, I4), nextPagingToken: "7" });
+        });
+
+        it("reaches toBlock and returns no pagination token", async () => {
+          const result = await callGetOperationsAsc([C1, T3, C3, C4, I4, I5, I7, I8, C8, T8, C9], {
+            fromBlock: 3,
+            toBlock: 7,
+          });
+          // fromBlock=3, toBlock=7, highest ops reach toBlock
+          // - coin([3, 7])       [C3 C4]        boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
+          // - internal([3, Ø])   [I4 I5 I7]     boundBlock=Ø, isPageFull=true,  hasMorePage=false (full but reached toBlock)
+          // - token([3, Ø])      [T3]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
+          // Result: all ops in [3, 7] kept, no nextPagingToken (reached toBlock)
+          expect(summarize(result)).toEqual({ ops: ops(I7, I5, C4, I4, C3, T3), nextPagingToken: NO_TOKEN });
+        });
       });
     });
   });
