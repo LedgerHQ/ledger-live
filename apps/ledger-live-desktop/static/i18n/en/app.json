@@ -4531,6 +4531,10 @@
           "title": "Quick generation",
           "desc": "Generate 10 random accounts with random currencies"
         },
+        "emptyGenerate": {
+          "title": "Empty generation",
+          "desc": "Generate an empty account"
+        },
         "currencySelector": {
           "placeholder": "Choose currencies...",
           "searchPlaceholder": "Search",
@@ -4546,7 +4550,8 @@
         "buttons": {
           "generateAccounts": "Generate {{count}} account",
           "generateAccounts_other": "Generate {{count}} accounts",
-          "generateAccountsQuick": "Generate {{count}} accounts"
+          "generateAccountsQuick": "Generate {{count}} accounts",
+          "generateEmptyAccount": "Generate empty account"
         },
         "alerts": {
           "selectCurrency": "Please select at least one currency",
