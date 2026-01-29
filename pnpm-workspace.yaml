@@ -60,6 +60,7 @@ catalog:
   "@rsbuild/plugin-node-polyfill": 1.4.3
   "@rsbuild/plugin-react": 1.4.3
   "@rsbuild/plugin-styled-components": 1.6.1
+  "@rsdoctor/rspack-plugin": "1.5.2"
   "@rspack/cli": 1.7.3
   "@rspack/core": 1.7.3
   "@rspack/dev-server": 1.1.5

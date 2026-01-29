@@ -75,21 +75,12 @@ jobs:
       - name: Build the app
         id: build-app
         run: pnpm build:lld --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
-        env:
-          GENERATE_METAFILES: "lite"
 
       - name: Upload ${{ matrix.config.name }} app
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/ledger-live-desktop-${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
-
-      - name: Upload bundle metafiles
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        if: ${{ !cancelled() }}
-        with:
-          name: ${{ matrix.config.output-name }}-js-bundle-metafiles
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/metafile.*
 
       - name: Push status
         id: status
@@ -115,22 +106,6 @@ jobs:
           app-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
-        if: ${{ needs.build-desktop-app.outputs.linux == 'success' }}
-        with:
-          name: linux-js-bundle-metafiles
-          path: linux-js-bundle-metafiles
-      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
-        if: ${{ needs.build-desktop-app.outputs.win == 'success' }}
-        with:
-          name: win-js-bundle-metafiles
-          path: win-js-bundle-metafiles
-      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
-        if: ${{ needs.build-desktop-app.outputs.mac == 'success' }}
-        with:
-          name: mac-js-bundle-metafiles
-          path: mac-js-bundle-metafiles
-
       - uses: actions/github-script@v7
         name: Produce statuses of builds
         id: statuses
@@ -143,14 +118,6 @@ jobs:
               mac: "${{ needs.build-desktop-app.outputs.mac }}"
             }
             return JSON.stringify(obj);
-
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
-        if: ${{ !cancelled() && github.event.number != '' }}
-        with:
-          token: ${{ steps.generate-token.outputs.token }}
-          baseBranch: ${{ inputs.base_ref || 'develop' }}
-          prNumber: ${{ github.event.number}}
-          mode: desktop
 
       - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@develop
         name: Report summary

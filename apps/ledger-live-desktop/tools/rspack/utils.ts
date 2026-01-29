@@ -1,8 +1,10 @@
 import childProcess from "child_process";
+import type { Plugins } from "@rspack/core";
 import fs from "fs";
 import path from "path";
 import * as dotenv from "dotenv";
 import { prerelease } from "semver";
+import { RSDOCTOR_DUPLICATE_PACKAGE_ALLOWLIST } from "./rsdoctor-duplicate-allowlist";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const pkg = require("../../package.json");
@@ -101,3 +103,50 @@ export function buildRendererEnv(mode: "development" | "production"): Record<str
 }
 
 export { pkg, GIT_REVISION, PRERELEASE, CHANNEL, SENTRY_URL };
+
+const RSDOCTOR_LINTER = {
+  level: "Error" as const,
+  rules: {
+    "duplicate-package": [
+      "Error",
+      { checkVersion: "major" as const, ignore: RSDOCTOR_DUPLICATE_PACKAGE_ALLOWLIST },
+    ],
+    "loader-performance": ["Warn", { threshold: 8000 }],
+    "ecma-version-check": ["Warn", {}],
+    "default-import-check": ["Warn", { ignore: [] }],
+    "module-mixed-chunks": ["Warn", { ignore: ["node_modules/"] }],
+  },
+};
+
+export function getRsdoctorPlugin(bundleName: string): Plugins {
+  if (process.env.RSDOCTOR && process.env.RSDOCTOR !== "0") {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { RsdoctorRspackPlugin } = require("@rsdoctor/rspack-plugin");
+    const isCI = process.env.CI === "true" || process.env.CI === "1";
+    const repoRoot = path.resolve(lldRoot, "..", "..");
+    const reportDir = path.join(repoRoot, "rsdoctor", `desktop-${bundleName}`);
+    const options = isCI
+      ? {
+          disableClientServer: true,
+          linter: RSDOCTOR_LINTER,
+          output: {
+            mode: "brief" as const,
+            options: { type: ["json" as const] },
+            reportDir,
+          },
+        }
+      : {
+          linter: RSDOCTOR_LINTER,
+          output: {
+            mode: "brief" as const,
+            options: {
+              type: ["html" as const, "json" as const],
+              htmlOptions: { reportHtmlName: "report.html" },
+            },
+            reportDir,
+          },
+        };
+    return [new RsdoctorRspackPlugin(options)] as Plugins;
+  }
+  return [];
+}

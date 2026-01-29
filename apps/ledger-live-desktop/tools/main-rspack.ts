@@ -2,8 +2,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import fs from "fs";
-import path from "path";
 import { rspack } from "@rspack/core";
 
 import {
@@ -14,7 +12,6 @@ import {
   createWebviewDappPreloaderConfig,
   createWorkerConfig,
   startDev,
-  lldRoot,
 } from "./rspack";
 
 const yargs = require("yargs");
@@ -129,7 +126,7 @@ const build = async (argv: { port?: number }) => {
     { name: "workers", config: createWorkerConfig("production") },
   ];
 
-  const results = await Promise.all(
+  await Promise.all(
     configs.map(async ({ name, config }) => {
       return new Promise<{ name: string; stats: any }>((resolve, reject) => {
         rspack(config, (err, stats) => {
@@ -168,43 +165,6 @@ const build = async (argv: { port?: number }) => {
       });
     }),
   );
-
-  // Generate metafiles if requested
-  if (process.env.GENERATE_METAFILES) {
-    const isLite = process.env.GENERATE_METAFILES === "lite";
-    console.log(`\n📊 Generating metafiles${isLite ? " (lite mode)" : ""}...`);
-
-    results.forEach(({ name, stats }) => {
-      if (stats) {
-        const metafile = stats.toJson({
-          assets: true,
-          chunks: !isLite, // Include chunks in full mode for tools like statoscope
-          modules: true,
-        });
-
-        // In lite mode, minimize metafile: keep only essential data for bundle size and duplicate detection
-        // This removes sourcemaps, reasons, and other verbose data that makes files huge
-        const finalMetafile = isLite
-          ? {
-              assets: (metafile.assets || []).map((asset: any) => ({
-                name: asset.name,
-                size: asset.size,
-              })),
-              modules: (metafile.modules || [])
-                .map((mod: any) => ({
-                  ...(mod.identifier && { identifier: mod.identifier }),
-                  ...(mod.name && { name: mod.name }),
-                }))
-                .filter((mod: any) => mod.identifier || mod.name),
-            }
-          : metafile;
-
-        const metafilePath = path.join(lldRoot, `metafile.${name}.json`);
-        fs.writeFileSync(metafilePath, JSON.stringify(finalMetafile, null, 2), "utf-8");
-        console.log(`   Written: metafile.${name}.json`);
-      }
-    });
-  }
 
   console.log("\n🎉 Production build complete!");
 };

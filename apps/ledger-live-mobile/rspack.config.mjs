@@ -1,5 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { RSDOCTOR_DUPLICATE_PACKAGE_ALLOWLIST } from "./rsdoctor-duplicate-allowlist.mjs";
 import * as Repack from "@callstack/repack";
 import { ReanimatedPlugin } from "@callstack/repack-plugin-reanimated";
 import { ExpoModulesPlugin } from "@callstack/repack-plugin-expo-modules";
@@ -76,6 +77,38 @@ const buildTsAlias = (paths = {}) =>
     {},
   );
 
+const RSDOCTOR_LINTER = {
+  level: "Error",
+  rules: {
+    "duplicate-package": [
+      "Error",
+      { checkVersion: "major", ignore: RSDOCTOR_DUPLICATE_PACKAGE_ALLOWLIST },
+    ],
+    "loader-performance": ["Warn", { threshold: 8000 }],
+    "ecma-version-check": ["Warn", {}],
+    "default-import-check": ["Warn", { ignore: [] }],
+    "module-mixed-chunks": ["Warn", { ignore: ["node_modules/"] }],
+  },
+};
+
+function getRsdoctorPlugin() {
+  if (!process.env.RSDOCTOR || process.env.RSDOCTOR === "0") return [];
+  const { RsdoctorRspackPlugin } = require("@rsdoctor/rspack-plugin");
+  const isCI = process.env.CI === "true" || process.env.CI === "1";
+  const options = isCI
+    ? {
+        disableClientServer: true,
+        linter: RSDOCTOR_LINTER,
+        output: {
+          mode: "brief",
+          options: { type: ["json"] },
+          reportDir: path.join(projectRootDir, "rsdoctor", "mobile"),
+        },
+      }
+    : { linter: RSDOCTOR_LINTER };
+  return [new RsdoctorRspackPlugin(options)];
+}
+
 const withRozeniteUrlFix = rozeniteConfig => {
   return async env => {
     const config = await rozeniteConfig(env);
@@ -128,10 +161,16 @@ export default withRozeniteUrlFix(
     Repack.defineRspackConfig(env => {
       const { mode, platform } = env;
 
+      const isRsdoctor = process.env.RSDOCTOR && process.env.RSDOCTOR !== "0";
       return {
         mode,
         context: __dirname,
         entry: "./index.js",
+        // When running rsdoctor, emit main bundle as .js so it's counted as JavaScript (not Other)
+        ...(isRsdoctor && { output: { filename: "[name].js" } }),
+        optimization: {
+          minimize: false,
+        },
         resolve: {
           ...Repack.getResolveOptions(platform, {
             enablePackageExports: true,
@@ -209,6 +248,7 @@ export default withRozeniteUrlFix(
             unstable_disableTransform: true,
           }),
           new ExpoModulesPlugin(),
+          ...getRsdoctorPlugin(),
         ],
         devServer: {
           host: "local-ip",
