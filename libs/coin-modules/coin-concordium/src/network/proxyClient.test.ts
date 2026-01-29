@@ -89,7 +89,7 @@ describe("proxyClient", () => {
       await expect(
         withClient(currency, async client => client.request({ method: "GET", url: "/test" })),
       ).rejects.toThrow("Fails");
-      expect(mockNetwork).toHaveBeenCalledTimes(2); // DEFAULT_RETRIES = 1
+      expect(mockNetwork).toHaveBeenCalledTimes(3); // DEFAULT_RETRIES = 2
     }, 10000);
 
     it("should throw when URL is not provided", async () => {
@@ -417,7 +417,7 @@ describe("proxyClient", () => {
       const result = await getOperations(currency, "test-address", "account-id", { from: 0 });
 
       expect(result).toHaveLength(1);
-      expect(result[0].extra).toBeDefined();
+      expect(result[0].extra).not.toBeUndefined();
     });
 
     it("should filter transactions by minimum sequence number", async () => {

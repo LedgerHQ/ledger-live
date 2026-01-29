@@ -2,6 +2,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import {
   AccountAddress,
+  AccountTransactionPayload,
   AccountTransactionType,
   CcdAmount,
 } from "@ledgerhq/concordium-sdk-adapter";
@@ -43,16 +44,16 @@ export const buildSignOperation =
           ? AccountTransactionType.TransferWithMemo
           : AccountTransactionType.Transfer;
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const payload: any = {
-          amount: CcdAmount.fromMicroCcd(actualAmount.toString()),
-          toAddress: AccountAddress.fromBase58(transaction.recipient),
-        };
-
-        // Add memo to payload if present (for energy calculation)
-        if (transaction.memo) {
-          payload.memo = encodeMemoToDataBlob(transaction.memo);
-        }
+        const payload: AccountTransactionPayload = transaction.memo
+          ? {
+              amount: CcdAmount.fromMicroCcd(actualAmount.toString()),
+              toAddress: AccountAddress.fromBase58(transaction.recipient),
+              memo: encodeMemoToDataBlob(transaction.memo),
+            }
+          : {
+              amount: CcdAmount.fromMicroCcd(actualAmount.toString()),
+              toAddress: AccountAddress.fromBase58(transaction.recipient),
+            };
 
         const estimation = await estimateFees("", account.currency, transactionType, payload);
 

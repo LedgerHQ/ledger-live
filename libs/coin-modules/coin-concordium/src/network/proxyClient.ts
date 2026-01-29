@@ -24,7 +24,7 @@ interface ProxyClient {
 }
 
 const PROXY_TIMEOUT = 30000;
-const DEFAULT_RETRIES = 1;
+const DEFAULT_RETRIES = 2;
 const RETRY_DELAY = 1000;
 
 function getProxyUrl(currency: CryptoCurrency): string {
@@ -73,7 +73,7 @@ function getClient(currency: CryptoCurrency): ProxyClient {
  *
  * @param currency - The Concordium currency
  * @param execute - Function to execute with the client
- * @param retries - Number of retries (default: 3)
+ * @param retries - Number of retries (default: 2)
  * @returns Result of the execute function
  */
 export async function withClient<T>(

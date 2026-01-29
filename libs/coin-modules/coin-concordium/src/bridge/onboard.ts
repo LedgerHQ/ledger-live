@@ -1,5 +1,6 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { LockedDeviceError, TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
@@ -20,6 +21,16 @@ import {
   ConcordiumPairingStatus,
 } from "../types/onboard";
 import { submitCredential } from "../network/proxyClient";
+
+const REQUEST_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+
+const createTimeoutPromise = <T = never>(errorMessage: string): Promise<T> => {
+  return new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error(errorMessage));
+    }, REQUEST_TIMEOUT_MS);
+  });
+};
 
 export const buildOnboardAccount =
   (signerContext: SignerContext<ConcordiumSigner>) =>
@@ -126,9 +137,7 @@ export const buildOnboardAccount =
 
           o.next(onboardResult);
         } catch (error: unknown) {
-          // eslint-disable-next-line no-console
-          console.log("buildOnboardAccount error", error);
-
+          log("concordium-onboarding", "Failed to onboard account", error);
           throw error;
         }
       }
@@ -152,8 +161,6 @@ export const buildOnboardAccount =
         },
       );
     });
-
-const APPROVAL_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 
 export const buildPairWalletConnect =
   () =>
@@ -181,22 +188,14 @@ export const buildPairWalletConnect =
 
           o.next({ status: ConcordiumPairingStatus.PREPARE, walletConnectUri });
 
-          let timeoutId: ReturnType<typeof setTimeout>;
-          const approvalTimeout = new Promise<never>((_, reject) => {
-            timeoutId = setTimeout(
-              () => reject(new Error("Proposal expired")),
-              APPROVAL_TIMEOUT_MS,
-            );
-          });
-
-          const session = await Promise.race([approval(), approvalTimeout]).finally(() => {
-            clearTimeout(timeoutId);
-          });
+          const session = await Promise.race([
+            approval(),
+            createTimeoutPromise("Pairing approval is expired. Please try again."),
+          ]);
 
           o.next({ status: ConcordiumPairingStatus.SUCCESS, sessionTopic: session.topic });
         } catch (error: unknown) {
-          // eslint-disable-next-line no-console
-          console.log("buildPairWalletConnect error", error);
+          log("concordium-onboarding", "Failed to pair Wallet Connect session", error);
           throw error;
         }
       }

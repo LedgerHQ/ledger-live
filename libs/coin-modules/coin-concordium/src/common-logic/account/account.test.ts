@@ -129,7 +129,9 @@ describe("common-logic/account", () => {
 
       const currency = createMockCurrency();
 
-      await expect(getNextValidSequence(VALID_ADDRESS, currency)).rejects.toThrow("Network timeout");
+      await expect(getNextValidSequence(VALID_ADDRESS, currency)).rejects.toThrow(
+        "Network timeout",
+      );
     });
   });
 });

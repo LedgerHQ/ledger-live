@@ -415,7 +415,7 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(account, transaction);
 
       // THEN
-      expect(result.errors.memo).toBeDefined();
+      expect(result.errors.memo).not.toBeUndefined();
       expect(result.errors.memo?.message).toContain("Memo too long");
       expect(result.errors.memo?.message).toContain("254");
     });

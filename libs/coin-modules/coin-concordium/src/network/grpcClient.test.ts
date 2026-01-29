@@ -53,7 +53,7 @@ describe("grpcClient", () => {
       const currency = createMockCurrency();
       const client = getGrpcClient(currency);
 
-      expect(client).toBeDefined();
+      expect(client).not.toBeUndefined();
     });
 
     it("should return cached client on subsequent calls", () => {
@@ -203,7 +203,7 @@ describe("grpcClient", () => {
       const currency = createMockCurrency();
       const result = await getBlockInfoByHeight(500, currency);
 
-      expect(result.parent).toBeDefined();
+      expect(result.parent).not.toBeUndefined();
       expect(result.parent?.height).toBe(499);
       expect(result.parent?.hash).toBe("parenthash");
     });

@@ -64,8 +64,8 @@ describe("common-logic/transaction", () => {
 
       const result = await craftTransaction(account, transaction);
 
-      expect(result.transaction).toBeDefined();
-      expect(result.serializedTransaction).toBeDefined();
+      expect(result.transaction).not.toBeUndefined();
+      expect(result.serializedTransaction).not.toBeUndefined();
       // Serialized transaction should be longer due to memo
       expect(result.serializedTransaction.length).toBeGreaterThan(100);
     });
@@ -82,7 +82,7 @@ describe("common-logic/transaction", () => {
 
       const result = await craftTransaction(account, transaction);
 
-      expect(result.transaction).toBeDefined();
+      expect(result.transaction).not.toBeUndefined();
       expect(result.transaction.nonce).toBe(1n);
     });
 
@@ -151,7 +151,7 @@ describe("common-logic/transaction", () => {
 
       const result = await craftTransaction(account, transaction);
 
-      expect(result.transaction).toBeDefined();
+      expect(result.transaction).not.toBeUndefined();
     });
 
     it("should handle large amounts", async () => {
@@ -163,8 +163,8 @@ describe("common-logic/transaction", () => {
 
       const result = await craftTransaction(account, transaction);
 
-      expect(result.transaction).toBeDefined();
-      expect(result.serializedTransaction).toBeDefined();
+      expect(result.transaction).not.toBeUndefined();
+      expect(result.serializedTransaction).not.toBeUndefined();
     });
 
     it("should set expiry to 1 hour from now", async () => {

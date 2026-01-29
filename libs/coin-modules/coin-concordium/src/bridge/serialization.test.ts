@@ -122,7 +122,7 @@ describe("serialization", () => {
 
       // THEN
       const rawResult = accountRaw as ConcordiumAccountRaw;
-      expect(rawResult.concordiumResources).toBeDefined();
+      expect(rawResult.concordiumResources).not.toBeUndefined();
       expect(rawResult.concordiumResources?.isOnboarded).toBe(false);
     });
   });

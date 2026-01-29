@@ -133,7 +133,6 @@ describe("walletConnect", () => {
 
         const session = await wc.getSession("Mainnet");
 
-        expect(session).toBeTruthy();
         expect(session?.topic).toBe("mainnet-session");
       });
 
@@ -277,6 +276,7 @@ describe("walletConnect", () => {
             method: "create_account",
             params: { identityIndex: 0, credNumber: 0, ipIdentity: 1 },
           },
+          expiry: 604800,
         });
       });
     });
@@ -324,9 +324,9 @@ describe("walletConnect", () => {
         expect(mockConnect).toHaveBeenCalledWith({
           requiredNamespaces: {
             ccd: {
-              methods: ["create_account", "recover_account"],
+              methods: ["create_account"],
               chains: [CONCORDIUM_CHAIN_IDS.Mainnet],
-              events: ["proposal_expire", "session_proposal", "session_event"],
+              events: [],
             },
           },
         });

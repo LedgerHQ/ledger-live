@@ -148,7 +148,7 @@ describe("signOperation", () => {
 
       // THEN
       expect(signedEvent.type).toBe("signed");
-      expect(signedEvent.signedOperation).toBeDefined();
+      expect(signedEvent.signedOperation).not.toBeUndefined();
       expect(signedEvent.signedOperation.signature).toBe("combined-signature");
       expect(signedEvent.signedOperation.operation).toMatchObject({
         type: "OUT",

@@ -1,9 +1,12 @@
 import { getEnv } from "@ledgerhq/live-env";
 import SignClient from "@walletconnect/sign-client";
 import type { SessionTypes } from "@walletconnect/types";
+import { log } from "@ledgerhq/logs";
 import type { ConcordiumNetwork } from "../types";
 import type { IDAppCreateAccountParams, IDAppCreateAccountResponse } from "../types/network";
 import { CONCORDIUM_CHAIN_IDS } from "../constants";
+
+const REQUEST_CREATE_ACCOUNT_EXPIRY = 7 * 24 * 60 * 60; // 7 days in seconds
 
 const CLIENT_CONFIG = {
   projectId: getEnv("WALLETCONNECT_PROJECT_ID"),
@@ -26,7 +29,7 @@ export class ConcordiumWalletConnect {
       return this.client;
     } catch (error) {
       this.client = null;
-      console.error("[ConcordiumWalletConnect] Failed to initialize client:", error);
+      log("concordium-onboarding", "Failed to initialize WalletConnect client", error);
       throw error;
     }
   }
@@ -86,15 +89,16 @@ export class ConcordiumWalletConnect {
               },
             });
           } catch (error) {
-            console.warn(
-              `[ConcordiumWalletConnect] Failed to disconnect session ${session.topic}:`,
+            log(
+              "concordium-onboarding",
+              `Failed to disconnect Wallet Connect session ${session.topic}`,
               error,
             );
           }
         }),
       );
     } catch (error) {
-      console.error("[ConcordiumWalletConnect] Error disconnecting all sessions:", error);
+      log("concordium-onboarding", "Failed to disconnect all Wallet Connect sessions", error);
     }
   }
 
@@ -103,13 +107,14 @@ export class ConcordiumWalletConnect {
   ): Promise<IDAppCreateAccountResponse> {
     const client = await this.getClient();
 
-    return await client.request<IDAppCreateAccountResponse>({
+    return client.request<IDAppCreateAccountResponse>({
       topic: params.topic,
       chainId: params.chainId,
       request: {
         method: "create_account",
         params: params.params,
       },
+      expiry: REQUEST_CREATE_ACCOUNT_EXPIRY,
     });
   }
 
@@ -139,14 +144,14 @@ export class ConcordiumWalletConnect {
       return await client.connect({
         requiredNamespaces: {
           ccd: {
-            methods: ["create_account", "recover_account"],
+            methods: ["create_account"],
             chains: [chainId],
-            events: ["proposal_expire", "session_proposal", "session_event"],
+            events: [],
           },
         },
       });
     } catch (error) {
-      console.error("[ConcordiumWalletConnect] initiatePairing error:", error);
+      log("concordium-onboarding", "Failed to initiate Wallet Connect pairing", error);
       throw error;
     }
   }

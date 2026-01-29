@@ -93,7 +93,7 @@ describe("craftRawTransaction", () => {
     it("should preserve the payload", async () => {
       const result = await craftRawTransaction("aabbccdd", VALID_ADDRESS, PUBLIC_KEY, BigInt(1));
 
-      expect(result.nativeTransaction.payload).toBeDefined();
+      expect(result.nativeTransaction.payload).not.toBeUndefined();
     });
 
     it("should set energyAmount to 0", async () => {

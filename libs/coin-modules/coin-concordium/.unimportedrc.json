@@ -21,7 +21,7 @@
   "ignoreUnimported": [
     "src/test/bot-specs.ts",
     "src/test/concordiumTestUtils.ts",
-    "src/types/assets.ts",
+    "src/test/fixtures.ts",
     "src/types/errors.ts"
   ],
   "ignoreUnused": [

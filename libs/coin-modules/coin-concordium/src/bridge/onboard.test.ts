@@ -101,7 +101,7 @@ describe("onboard", () => {
 
       // THEN
       const result = events[events.length - 1];
-      expect(result.account).toBeDefined();
+      expect(result.account).not.toBeUndefined();
       expect(result.account.freshAddress).toBe(VALID_ADDRESS);
       expect(result.account.concordiumResources).toMatchObject({
         credId: CRED_ID,
