@@ -20,7 +20,8 @@ import { useStake } from "LLD/hooks/useStake";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useLazyLedgerCurrency } from "@ledgerhq/live-common/dada-client/hooks/useLazyLedgerCurrency";
 import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
-import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { buildSwapNavigationState } from "../utils/swapNavigation";
 
 export enum Page {
   Market = "Page Market",
@@ -44,6 +45,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   const flattenedAccounts = flattenAccounts(allAccounts);
 
   const { isCurrencyAvailable } = useRampCatalog();
+  const { openAssetAndAccount } = useOpenAssetAndAccount();
 
   const currenciesForSwapAllSet = useMemo(() => new Set(currenciesAll), [currenciesAll]);
 
@@ -64,7 +66,6 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       e.preventDefault();
       e.stopPropagation();
       setTrackingSource(page);
-      // PTX smart routing redirect to live app or to native implementation
 
       const ledgerCurrency = await getLedgerCurrency();
 
@@ -100,42 +101,44 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       });
       setTrackingSource(page);
 
-      const currencyId = ledgerCurrency.id;
-      const defaultAccount = getAvailableAccountsById(currencyId, flattenedAccounts).find(Boolean);
+      const fromPath = location.pathname;
+      const availableAccounts = getAvailableAccountsById(ledgerCurrency.id, flattenedAccounts);
+      const hasAccounts = availableAccounts.length > 0;
 
-      const getParentAccountId = (account: typeof defaultAccount) =>
-        account && "parentId" in account ? account.parentId : undefined;
+      if (!hasAccounts) {
+        navigate("/swap", {
+          state: buildSwapNavigationState({ currency: ledgerCurrency, fromPath }),
+        });
+        return;
+      }
 
-      const baseState = {
-        defaultAmountFrom: "0",
-        from: location.pathname,
-      };
-
-      const swapState = defaultAccount
-        ? {
-            ...baseState,
-            defaultCurrency: ledgerCurrency,
-            defaultAccountId: defaultAccount.id,
-            defaultParentAccountId: getParentAccountId(defaultAccount),
-          }
-        : {
-            ...baseState,
-            defaultCurrency: currencyId,
-            ...(isTokenCurrency(ledgerCurrency) && {
-              defaultToken: { toTokenId: currencyId },
+      openAssetAndAccount({
+        currencies: [ledgerCurrency.id],
+        areCurrenciesFiltered: true,
+        useCase: "swap",
+        drawerConfiguration: {},
+        onSuccess: (account, parentAccount) => {
+          navigate("/swap", {
+            state: buildSwapNavigationState({
+              currency: ledgerCurrency,
+              fromPath,
+              account,
+              parentAccount,
             }),
-          };
-
-      navigate("/swap", { state: swapState });
+          });
+        },
+        onCancel: () => {},
+      });
     },
     [
       getLedgerCurrency,
       currency?.ticker,
       page,
       swapDefaultTrack,
-      flattenedAccounts,
       navigate,
       location.pathname,
+      flattenedAccounts,
+      openAssetAndAccount,
     ],
   );
 
