@@ -2,6 +2,8 @@ import { useCallback, useLayoutEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { SCROLL_UP_BUTTON_THRESHOLD } from "./constants";
+import { shouldDisplayRightPanel as isRightPanelPage } from "./utils";
+import { useRightPanelViewModel } from "LLD/components/RightPanel/useRightPanelViewModel";
 
 export interface PageViewModelResult {
   readonly pageScrollerRef: (node: HTMLDivElement | null) => void;
@@ -10,6 +12,7 @@ export interface PageViewModelResult {
   readonly isWallet40Enabled: boolean;
   readonly pathname: string;
   readonly onClickScrollUp: () => void;
+  readonly shouldRenderRightPanel: boolean;
 }
 
 export const usePageViewModel = (): PageViewModelResult => {
@@ -18,6 +21,9 @@ export const usePageViewModel = (): PageViewModelResult => {
   const [isScrollAtUpperBound, setScrollAtUpperBound] = useState(true);
   const { pathname } = useLocation();
   const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplay: isRightPanelEnabled } = useRightPanelViewModel();
+
+  const shouldRenderRightPanel = isRightPanelPage(pathname) && isRightPanelEnabled;
 
   // Callback ref to capture the scroller element
   const pageScrollerRef = useCallback((node: HTMLDivElement | null) => {
@@ -69,5 +75,6 @@ export const usePageViewModel = (): PageViewModelResult => {
     isWallet40Enabled,
     pathname,
     onClickScrollUp,
+    shouldRenderRightPanel,
   };
 };
