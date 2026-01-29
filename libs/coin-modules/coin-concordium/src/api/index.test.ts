@@ -17,10 +17,16 @@ jest.mock("../common-logic", () => ({
 }));
 
 const {
+  broadcast: broadcastMock,
   craftTransaction: craftTransactionMock,
   craftRawTransaction: craftRawTransactionMock,
   estimateFees: estimateFeesMock,
+  getBalance: getBalanceMock,
+  getBlock: getBlockMock,
+  getBlockInfo: getBlockInfoMock,
   getNextValidSequence: getNextValidSequenceMock,
+  lastBlock: lastBlockMock,
+  listOperations: listOperationsMock,
 } = jest.requireMock("../common-logic");
 
 const mockConfig: ConcordiumCoinConfig = {
@@ -187,6 +193,114 @@ describe("createApi", () => {
 
       // THEN
       expect(result).toEqual({ value: BigInt(1000) });
+    });
+  });
+
+  describe("broadcast", () => {
+    it("should call broadcast with transaction and currency", async () => {
+      // GIVEN
+      const api = createApi(mockConfig, "concordium");
+      broadcastMock.mockResolvedValue("tx-hash-123");
+
+      // WHEN
+      const result = await api.broadcast("signed-tx-data");
+
+      // THEN
+      expect(broadcastMock).toHaveBeenCalledWith(
+        "signed-tx-data",
+        expect.objectContaining({ id: "concordium" }),
+      );
+      expect(result).toBe("tx-hash-123");
+    });
+  });
+
+  describe("getBalance", () => {
+    it("should call getBalance with address and currency", async () => {
+      // GIVEN
+      const api = createApi(mockConfig, "concordium");
+      getBalanceMock.mockResolvedValue(BigInt(5000000));
+
+      // WHEN
+      const result = await api.getBalance(VALID_ADDRESS);
+
+      // THEN
+      expect(getBalanceMock).toHaveBeenCalledWith(
+        VALID_ADDRESS,
+        expect.objectContaining({ id: "concordium" }),
+      );
+      expect(result).toBe(BigInt(5000000));
+    });
+  });
+
+  describe("lastBlock", () => {
+    it("should call lastBlock with currency", async () => {
+      // GIVEN
+      const api = createApi(mockConfig, "concordium");
+      const mockBlockInfo = { height: 1000, hash: "block-hash", time: new Date() };
+      lastBlockMock.mockResolvedValue(mockBlockInfo);
+
+      // WHEN
+      const result = await api.lastBlock();
+
+      // THEN
+      expect(lastBlockMock).toHaveBeenCalledWith(expect.objectContaining({ id: "concordium" }));
+      expect(result).toEqual(mockBlockInfo);
+    });
+  });
+
+  describe("listOperations", () => {
+    it("should call listOperations with address, pagination and currency", async () => {
+      // GIVEN
+      const api = createApi(mockConfig, "concordium");
+      const mockOperations = [{ id: "op1" }, { id: "op2" }];
+      listOperationsMock.mockResolvedValue(mockOperations);
+      const pagination = { minHeight: 100 };
+
+      // WHEN
+      const result = await api.listOperations(VALID_ADDRESS, pagination);
+
+      // THEN
+      expect(listOperationsMock).toHaveBeenCalledWith(
+        VALID_ADDRESS,
+        pagination,
+        expect.objectContaining({ id: "concordium" }),
+      );
+      expect(result).toEqual(mockOperations);
+    });
+  });
+
+  describe("getBlock", () => {
+    it("should call getBlock with height and currency", async () => {
+      // GIVEN
+      const api = createApi(mockConfig, "concordium");
+      const mockBlock = { height: 500, hash: "block-500", transactions: [] };
+      getBlockMock.mockResolvedValue(mockBlock);
+
+      // WHEN
+      const result = await api.getBlock(500);
+
+      // THEN
+      expect(getBlockMock).toHaveBeenCalledWith(500, expect.objectContaining({ id: "concordium" }));
+      expect(result).toEqual(mockBlock);
+    });
+  });
+
+  describe("getBlockInfo", () => {
+    it("should call getBlockInfo with height and currency", async () => {
+      // GIVEN
+      const api = createApi(mockConfig, "concordium");
+      const mockBlockInfo = { height: 600, hash: "block-600", time: new Date() };
+      getBlockInfoMock.mockResolvedValue(mockBlockInfo);
+
+      // WHEN
+      const result = await api.getBlockInfo(600);
+
+      // THEN
+      expect(getBlockInfoMock).toHaveBeenCalledWith(
+        600,
+        expect.objectContaining({ id: "concordium" }),
+      );
+      expect(result).toEqual(mockBlockInfo);
     });
   });
 

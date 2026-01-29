@@ -133,5 +133,25 @@ describe("receive", () => {
       // THEN
       expect(signerContext).not.toHaveBeenCalled();
     });
+
+    it("should propagate errors through observable", async () => {
+      // GIVEN
+      const signerContext = createMockSignerContext();
+      const receive = buildReceive(signerContext);
+      const errorMessage = "Property access failed";
+      const account = {
+        get freshAddress(): string {
+          throw new Error(errorMessage);
+        },
+        freshAddressPath: "m/1105'/0'/0'/0'/0'/0'",
+        concordiumResources: { publicKey: "abc" },
+      } as any;
+
+      // WHEN
+      const observable = receive(account, {} as any);
+
+      // THEN
+      await expect(firstValueFrom(observable)).rejects.toThrow(errorMessage);
+    });
   });
 });
