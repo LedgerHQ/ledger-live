@@ -2,7 +2,6 @@ import React, { memo, useCallback } from "react";
 import SkeletonList from "./components/SkeletonList";
 import { useNavigate } from "react-router";
 import { useMarketBannerViewModel } from "./hooks/useMarketBannerViewModel";
-import GenericError from "./components/GenericError";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { TrendingAssetsList } from "./components/TrendingAssetsList";
 import { MarketBannerHeader } from "./components/MarketBannerHeader";
@@ -37,10 +36,8 @@ const MarketBannerView = memo(function MarketBannerView({
   }, [navigate]);
 
   let content: React.ReactNode = null;
-  if (isLoading) {
+  if (isLoading || isError) {
     content = <SkeletonList />;
-  } else if (isError) {
-    content = <GenericError />;
   } else if (data && data.length > 0) {
     content = <TrendingAssetsList items={data} />;
   }

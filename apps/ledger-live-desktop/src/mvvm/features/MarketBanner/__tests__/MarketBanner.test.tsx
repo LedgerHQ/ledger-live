@@ -25,7 +25,7 @@ describe("MarketBannerView", () => {
 
   it("should render skeleton when loading", () => {
     render(<MarketBannerView isLoading={true} isError={false} data={undefined} />);
-    expect(screen.getByTestId("skeleton-list")).toBeTruthy();
+    expect(screen.getByTestId("skeleton-list")).toBeVisible();
   });
 
   it("should navigate to market page when button is clicked", async () => {
@@ -38,9 +38,9 @@ describe("MarketBannerView", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/market");
   });
 
-  it("should render error state when there is an error", () => {
+  it("should render loading state when there is an error", () => {
     render(<MarketBannerView isLoading={false} isError={true} data={undefined} />);
-    expect(screen.getByTestId("generic-error")).toBeVisible();
+    expect(screen.getByTestId("skeleton-list")).toBeVisible();
   });
 
   it("should render TrendingAssetsList when data is provided", () => {

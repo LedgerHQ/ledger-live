@@ -234,7 +234,7 @@ describe("PortfolioView", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={true} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("generic-error")).toBeVisible();
+        expect(screen.getByTestId("skeleton-list")).toBeVisible();
       });
     });
 
