@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, waitFor, act } from "tests/testSetup";
-import { FearAndGreedView } from "../components/FearAndGreed";
-import { GradientMoodIndicator } from "../components/FearAndGreed/GradientMoodIndicator";
+import { FearAndGreedView } from "../../FearAndGreed";
+import { FearAndGreedIndicator } from "../../FearAndGreed/components/FearAndGreedIndicator";
 
 describe("FearAndGreed", () => {
   it("renders without crashing", () => {
@@ -91,7 +91,7 @@ describe("FearAndGreed", () => {
   });
 });
 
-describe("GradientMoodIndicator", () => {
+describe("FearAndGreedIndicator", () => {
   beforeEach(() => {
     jest.useFakeTimers();
   });
@@ -102,27 +102,27 @@ describe("GradientMoodIndicator", () => {
   });
 
   it("renders the SVG gradient arc", () => {
-    const { container } = render(<GradientMoodIndicator value={50} />);
+    const { container } = render(<FearAndGreedIndicator value={50} />);
     const path = container.querySelector("path");
     expect(path).toBeVisible();
     expect(path?.getAttribute("stroke")).toBe("url(#paint0_linear_15877_11047)");
   });
 
   it("renders the white indicator circle", () => {
-    const { container } = render(<GradientMoodIndicator value={50} />);
+    const { container } = render(<FearAndGreedIndicator value={50} />);
     const circle = container.querySelector("circle");
     expect(circle).toBeVisible();
     expect(circle?.getAttribute("fill")).toBe("white");
   });
 
   it("displays the initial value as 0", () => {
-    const { container } = render(<GradientMoodIndicator value={75} />);
+    const { container } = render(<FearAndGreedIndicator value={75} />);
     const text = container.querySelector("text");
     expect(text?.textContent).toBe("0");
   });
 
   it("animates to the target value", async () => {
-    const { container } = render(<GradientMoodIndicator value={75} />);
+    const { container } = render(<FearAndGreedIndicator value={75} />);
     const text = container.querySelector("text");
 
     // Fast-forward through animation
@@ -136,7 +136,7 @@ describe("GradientMoodIndicator", () => {
   });
 
   it("positions the circle at the left for value 0", () => {
-    const { container } = render(<GradientMoodIndicator value={0} />);
+    const { container } = render(<FearAndGreedIndicator value={0} />);
 
     act(() => {
       jest.advanceTimersByTime(1200);
@@ -149,7 +149,7 @@ describe("GradientMoodIndicator", () => {
   });
 
   it("positions the circle at the right for value 100", async () => {
-    const { container } = render(<GradientMoodIndicator value={100} />);
+    const { container } = render(<FearAndGreedIndicator value={100} />);
 
     act(() => {
       jest.advanceTimersByTime(1200);
@@ -165,7 +165,7 @@ describe("GradientMoodIndicator", () => {
   });
 
   it("positions the circle at the center for value 50", async () => {
-    const { container } = render(<GradientMoodIndicator value={50} />);
+    const { container } = render(<FearAndGreedIndicator value={50} />);
 
     act(() => {
       jest.advanceTimersByTime(1200);
@@ -181,7 +181,7 @@ describe("GradientMoodIndicator", () => {
   });
 
   it("displays rounded value during animation", async () => {
-    const { container } = render(<GradientMoodIndicator value={50} />);
+    const { container } = render(<FearAndGreedIndicator value={50} />);
     const text = container.querySelector("text");
 
     // Check intermediate values are integers

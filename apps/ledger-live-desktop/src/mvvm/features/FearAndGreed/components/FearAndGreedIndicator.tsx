@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 
 const ANIMATION_DURATION = 1200;
 
-export const GradientMoodIndicator = ({ value }: { value: number }) => {
+export const FearAndGreedIndicator = ({ value }: { value: number }) => {
   const [animatedValue, setAnimatedValue] = useState(0);
   const [displayValue, setDisplayValue] = useState(0);
 

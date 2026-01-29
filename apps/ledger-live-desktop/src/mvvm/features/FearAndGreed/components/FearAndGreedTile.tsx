@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/live-common/cmc-client/utils/fearAndGreed";
 import { Tile, TileContent, TileTitle } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import { GradientMoodIndicator } from "./GradientMoodIndicator";
+import { FearAndGreedIndicator } from "./FearAndGreedIndicator";
 import { FearAndGreedDialog } from "./FearAndGreedDialog";
 import { track } from "~/renderer/analytics/segment";
 
@@ -39,7 +39,7 @@ export const FearAndGreedTile = ({ data }: { data: FearAndGreedIndex }) => {
         onClick={onClick}
       >
         <div className="flex h-40 items-center justify-center">
-          <GradientMoodIndicator value={data.value} />
+          <FearAndGreedIndicator value={data.value} />
         </div>
         <TileContent>
           <TileTitle>{t("marketBanner.fearAndGreed.title")}</TileTitle>
