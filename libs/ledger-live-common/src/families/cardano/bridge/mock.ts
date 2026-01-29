@@ -8,6 +8,7 @@ import {
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import type { AccountBridge, CurrencyBridge, Account } from "@ledgerhq/types-live";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "@ledgerhq/coin-cardano/buildSubAccounts";
+import { assignToAccountRaw, assignFromAccountRaw } from "@ledgerhq/coin-cardano/serialization";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -169,6 +170,8 @@ const accountBridge: AccountBridge<CardanoTransaction> = {
   prepareTransaction,
   sync,
   receive,
+  assignToAccountRaw,
+  assignFromAccountRaw,
   signOperation,
   signRawOperation,
   broadcast,
