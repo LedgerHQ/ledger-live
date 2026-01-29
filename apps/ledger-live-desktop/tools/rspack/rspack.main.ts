@@ -1,7 +1,7 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import { commonConfig, rootFolder, outputFolder } from "./rspack.common";
-import { buildMainEnv, buildDotEnvDefine, DOTENV_FILE } from "./utils";
+import { buildMainEnv, buildDotEnvDefine, DOTENV_FILE, getRsdoctorPlugin } from "./utils";
 
 /**
  * Creates the rspack configuration for the Electron main process
@@ -33,6 +33,7 @@ export function createMainConfig(
       mainFields: ["main", "module"],
     },
     plugins: [
+      ...getRsdoctorPlugin(),
       new rspack.DefinePlugin({
         ...buildMainEnv(mode, argv),
         ...buildDotEnvDefine(DOTENV_FILE),
