@@ -107,7 +107,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
       if (!hasAccounts) {
         navigate("/swap", {
-          state: buildSwapNavigationState({ currency: ledgerCurrency, fromPath }),
+          state: buildSwapNavigationState({ defaultCurrency: ledgerCurrency, fromPath }),
         });
         return;
       }
@@ -120,7 +120,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
         navigate("/swap", {
           state: buildSwapNavigationState({
-            currency: ledgerCurrency,
+            defaultCurrency: ledgerCurrency,
             fromPath,
             account,
             parentAccount,
@@ -137,7 +137,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
         onSuccess: (account, parentAccount) => {
           navigate("/swap", {
             state: buildSwapNavigationState({
-              currency: ledgerCurrency,
+              defaultCurrency: ledgerCurrency,
               fromPath,
               account,
               parentAccount,

@@ -34,8 +34,7 @@ export const useTranslateToSwapAccount = (
     }
 
     const defaultAccount = params.defaultAccount;
-    // @ts-expect-error params.currency comes from market
-    const defaultCurrency = params.defaultCurrency || params.currency;
+    const defaultCurrency = params.defaultCurrency;
 
     if (params.fromPath) newParams.fromPath = params.fromPath;
     if (params.affiliate) newParams.affiliate = params.affiliate;
@@ -54,10 +53,12 @@ export const useTranslateToSwapAccount = (
       return newParams;
     }
 
-    if (isTokenCurrency(defaultCurrency)) {
-      newParams.toTokenId = defaultCurrency.id;
-    } else {
-      newParams.toCurrencyId = defaultCurrency.id;
+    if (defaultCurrency) {
+      if (isTokenCurrency(defaultCurrency)) {
+        newParams.toTokenId = defaultCurrency.id;
+      } else {
+        newParams.toCurrencyId = defaultCurrency.id;
+      }
     }
 
     return newParams;
