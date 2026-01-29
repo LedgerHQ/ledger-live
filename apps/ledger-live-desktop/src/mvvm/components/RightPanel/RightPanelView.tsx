@@ -1,7 +1,6 @@
 import React, { memo } from "react";
 import SwapWebViewEmbedded from "~/renderer/screens/dashboard/components/SwapWebViewEmbedded";
 import { RightPanelViewModelResult } from "./useRightPanelViewModel";
-import { RIGHT_PANEL_WIDTH } from "LLD/components/Page/constants";
 
 type RightPanelViewProps = RightPanelViewModelResult;
 
@@ -15,7 +14,7 @@ export const RightPanelView = memo(function RightPanelView({ shouldDisplay }: Ri
   }
 
   return (
-    <div className="flex h-full shrink-0 flex-col py-32" style={{ width: RIGHT_PANEL_WIDTH }}>
+    <div className="flex h-full flex-col py-32">
       <SwapWebViewEmbedded height="100%" isWallet40 />
     </div>
   );
