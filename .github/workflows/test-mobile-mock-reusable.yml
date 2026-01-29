@@ -534,7 +534,7 @@ jobs:
       - uses: jdx/mise-action@v3
         with:
           install: true # [default: true] run `mise install`
-          cache: true # [default: true] cache mise using GitHub's cache
+          cache: false # [default: true] cache mise using GitHub's cache
           experimental: true # [default: false] enable experimental features
           mise_toml: |
             [env]
