@@ -95,7 +95,7 @@ export const useQuickActions = (): { actionsList: QuickAction[] } => {
         title: t("quickActions.send"),
         onAction: onSend,
         icon: ArrowUp,
-        disabled: false,
+        disabled: !hasAccount,
         buttonAppearance: "transparent",
       },
     ],
