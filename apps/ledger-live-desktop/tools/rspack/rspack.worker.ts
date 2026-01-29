@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import { rspack, type RspackOptions } from "@rspack/core";
 import { commonConfig, rootFolder } from "./rspack.common";
-import { buildRendererEnv, buildDotEnvDefine, DOTENV_FILE } from "./utils";
+import { buildRendererEnv, buildDotEnvDefine, DOTENV_FILE, getRsdoctorPlugin } from "./utils";
 
 const workersPath = path.join(rootFolder, "src", "renderer", "webworkers", "workers");
 
@@ -50,8 +50,9 @@ export function createWorkerConfig(mode: "development" | "production"): RspackOp
       ...commonConfig.output,
       filename: "[name].js",
     },
-    devtool: "source-map",
+    devtool: process.env.RSDOCTOR ? false : "source-map",
     plugins: [
+      ...getRsdoctorPlugin("workers"),
       new rspack.DefinePlugin({
         ...buildRendererEnv(mode),
         ...buildDotEnvDefine(DOTENV_FILE),

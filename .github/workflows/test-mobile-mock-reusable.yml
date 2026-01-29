@@ -585,38 +585,6 @@ jobs:
         if: ${{ !cancelled() }}
         run: echo "status_${{ matrix.shard }}=${{ steps.detox.outcome }}" >> $GITHUB_OUTPUT
 
-  report-bundle-sizes:
-    name: "Build Mobile > Report Bundle Sizes"
-    runs-on: [ ubuntu-22.04 ]
-    if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != ''
-    needs: [ build-ios, build-android ]
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
-        with:
-          app-id: ${{ secrets.GH_BOT_APP_ID }}
-          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - name: Create mobile metafile
-        run: |
-          echo "{
-              \"main.ios.jsbundle\" : { \"size\": ${{ needs.build-ios.outputs.js-bundle-size }}},
-              \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}}
-          }" > mobile.metafile.json
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
-        if: ${{ !inputs.skip-bundle-size-reporting }}
-        with:
-          token: ${{ steps.generate-token.outputs.token }}
-          baseBranch: ${{ inputs.base_ref || 'develop' }}
-          prNumber: ${{ github.event.number}}
-          mode: mobile
-      - name: Upload mobile metafile
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          name: mobile.metafile.json
-          path: mobile.metafile.json
-          overwrite: true
-
   merge-ios-timings:
     name: Merge iOS Timing Files
     needs: [ determine-builds, detox-tests-ios ]
