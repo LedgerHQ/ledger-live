@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ES2020",
     "lib": ["ES2020"],
+    "types": ["node"],
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
@@ -13,15 +14,9 @@
     "outDir": "./dist",
     "rootDir": "..",
     "baseUrl": ".",
-    "paths": {
-      "~/*": ["../../src/*"]
-    }
+    "paths": { "~/*": ["../../src/*"] }
   },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs"
-    }
-  },
+  "ts-node": { "compilerOptions": { "module": "commonjs" } },
   "include": ["./**/*.ts", "../main-rspack.ts"],
   "exclude": ["node_modules", "dist"]
 }

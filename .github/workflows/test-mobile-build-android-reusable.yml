@@ -37,11 +37,6 @@ on:
         required: false
         type: boolean
         default: false
-    outputs:
-      js-bundle-size:
-        description: The JS bundle size of the built app
-        value: ${{ jobs.build-android-js.outputs.js-bundle-size }}
-
   workflow_dispatch:
     inputs:
       ref:
@@ -177,8 +172,6 @@ jobs:
     runs-on: [ledger-live-linux-8CPU-32RAM]
     timeout-minutes: 20
     if: ${{ inputs.build-android-js == true }}
-    outputs:
-      js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -225,15 +218,6 @@ jobs:
 
       - name: Build JS Bundle app for Detox test run
         run: pnpm mobile e2e:ci -p android --bundle
-
-      - name: Build minified JS Bundle for size analysis
-        run: pnpm mobile e2e:ci -p android --bundle-size
-
-      - name: Output bundle size for analysis
-        id: output-js-bundle-size
-        run: |
-          # Report the minified bundle size for comparison with other branches
-          echo size=`ls -l apps/ledger-live-mobile/main.jsbundle.minified | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
