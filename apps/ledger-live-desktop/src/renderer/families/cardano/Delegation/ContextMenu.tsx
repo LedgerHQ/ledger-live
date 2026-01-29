@@ -45,7 +45,7 @@ const ContextMenu = ({ account }: Props) => {
     {
       key: "redelegate",
       label: (
-        <Box color="neutral.c100">
+        <Box color="neutral.c100" data-testid="delegation-redelegate-button">
           <Trans i18nKey="cardano.delegation.changeDelegation" />
         </Box>
       ),
@@ -64,7 +64,7 @@ const ContextMenu = ({ account }: Props) => {
     {
       key: "stopDelegation",
       label: (
-        <Box color="alertRed">
+        <Box color="alertRed" data-testid="delegation-undelegate-button">
           <Trans i18nKey="delegation.contextMenu.stopDelegation" />
         </Box>
       ),
@@ -104,6 +104,7 @@ const ContextMenu = ({ account }: Props) => {
     <DropDownSelector items={items} renderItem={renderItem}>
       {() => (
         <Container
+          data-testid="delegation-context-menu-button"
           style={{
             width: 34,
             padding: 0,
