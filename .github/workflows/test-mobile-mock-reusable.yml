@@ -321,6 +321,23 @@ jobs:
           pnpm build:dummy-apps
         shell: bash
 
+      - uses: jdx/mise-action@v3
+        with:
+          install: true # [default: true] run `mise install`
+          install_args: "bun" # [default: ""] additional arguments to `mise install`
+          cache: true # [default: true] cache mise using GitHub's cache
+          experimental: true # [default: false] enable experimental features
+          mise_toml: |
+            [env]
+            _.python.venv = { path = ".venv", create = true }
+
+            [settings]
+            python.uv_venv_auto = true
+
+            [tools]
+            python = "{{ get_env(name='PYTHON_VERSION', default='3.11') }}"
+          github_token: ${{ secrets.GITHUB_TOKEN }} # [default: ${{ github.token }}] GitHub token for API authentication
+
       # Start mitmproxy logging
       - name: Start mitmproxy
         id: mitmproxy
