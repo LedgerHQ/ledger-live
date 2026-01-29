@@ -1,21 +1,11 @@
 # Debugging the JavaScript bundle
 
-Analyze the renderer bundle to identify large dependencies, duplicates, or optimization opportunities.
-
-## Full mode (for detailed analysis)
-
-Generates complete metafiles with all module information, sourcemaps, and reasons. Use this for detailed analysis with tools like [statoscope.tech](https://statoscope.tech/):
+Bundle size and duplicate-package analysis run in CI via the **[Rsdoctor] - Bundle reports on PR** workflow. Locally, use the doctor script:
 
 ```bash
-GENERATE_METAFILES=1 pnpm desktop build:js
+RSDOCTOR=1 pnpm run doctor
+# or
+pnpm --filter ledger-live-desktop run doctor
 ```
 
-Then drop `metafile.renderer.json` into [statoscope.tech](https://statoscope.tech/)
-
-## Lite mode (for CI/CD)
-
-Generates minimized metafiles with only essential data (bundle size and duplicate detection). Use this in CI/CD to reduce artifact size:
-
-```bash
-GENERATE_METAFILES="lite" pnpm desktop build:js
-```
+Reports are written under `rsdoctor/desktop-<bundle>/`. Open the generated HTML or use the PR comment from the Rsdoctor action for diff views.
