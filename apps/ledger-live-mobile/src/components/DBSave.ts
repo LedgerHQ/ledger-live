@@ -29,7 +29,10 @@ import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
-import { extractPersistedCALFromState } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import {
+  extractPersistedCALFromState,
+  persistedCALContentEqual,
+} from "@ledgerhq/cryptoassets/cal-client/persistence";
 import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
 import { exportCountervalues } from "@ledgerhq/live-countervalues/logic";
 
@@ -150,10 +153,8 @@ const compareWalletState = (a: State, b: State) =>
   walletStateExportShouldDiffer(a.wallet, b.wallet);
 const largeMoverNotEquals = (a: State, b: State) => a.largeMover !== b.largeMover;
 
-const cryptoAssetsNotEquals = (a: State, b: State) => {
-  // Compare RTK Query state reference
-  return a.cryptoAssetsApi !== b.cryptoAssetsApi;
-};
+const cryptoAssetsNotEquals = (a: State, b: State) =>
+  !persistedCALContentEqual(extractPersistedCALFromState(a), extractPersistedCALFromState(b));
 const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identities;
 
 const extractIdentitiesForPersistence = (state: State) =>
