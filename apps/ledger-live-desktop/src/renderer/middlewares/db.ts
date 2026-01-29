@@ -22,6 +22,7 @@ import { extractPersistedCALFromState } from "@ledgerhq/cryptoassets/cal-client/
 
 import { marketStoreSelector } from "../reducers/market";
 import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
+import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 
 let DB_MIDDLEWARE_ENABLED = true;
 
@@ -60,14 +61,16 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
   }
 
   if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("DB:")) {
+    const oldState = store.getState();
     const [, type] = action.type.split(":");
     store.dispatch({
       type,
       payload: action.payload,
     });
-    const state = store.getState();
-    setKey("app", "accounts", accountsExportSelector(state));
-    // ^ TODO ultimately we'll do same for accounts to drop DB: pattern
+    const newState = store.getState();
+    if (accountsPersistedStateChanged(oldState.accounts, newState.accounts)) {
+      setKey("app", "accounts", accountsExportSelector(newState));
+    }
   } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith(postOnboardingActionTypePrefix)) {
     next(action);
     const state = store.getState();

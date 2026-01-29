@@ -31,6 +31,7 @@ import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
 import { extractPersistedCALFromState } from "@ledgerhq/cryptoassets/cal-client/persistence";
 import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
+import { accountPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 import { exportCountervalues } from "@ledgerhq/live-countervalues/logic";
 
 type MaybeState = Maybe<State>;
@@ -128,11 +129,12 @@ const getAccountsChanged = (
   | null
   | undefined => {
   if (oldState.accounts !== newState.accounts) {
+    const oldById = new Map(oldState.accounts.active.map(a => [a.id, a] as const));
     return {
       changed: newState.accounts.active
         .filter(a => {
-          const old = oldState.accounts.active.find(b => a.id === b.id);
-          return !old || old !== a;
+          const old = oldById.get(a.id);
+          return !old || accountPersistedStateChanged(old, a);
         })
         .map(a => a.id),
     };
