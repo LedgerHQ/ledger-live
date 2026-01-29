@@ -59,16 +59,16 @@ type WrapperProps = {
 };
 
 const ButtonWrapper = styled.div<WrapperProps>`
-  height: ${p => (p.rounded ? 40 : 34)}px};
-  width: ${p => (p.rounded ? 40 : 34)}px};
-  border: 1px solid
-    ${p => (p.filled ? p.theme.colors.starYellow : p.theme.colors.neutral.c70)};
+  height: ${p => (p.rounded ? 40 : 34)}px;
+  width: ${p => (p.rounded ? 40 : 34)}px;
+  border: 1px solid ${p => (p.filled ? p.theme.colors.starYellow : p.theme.colors.neutral.c70)};
   border-radius: ${p => (p.rounded ? 20 : 4)}px;
   padding: ${p => (p.rounded ? 14 : 8)}px;
   text-align: center;
   background: ${p => (p.filled ? p.theme.colors.starYellow : "transparent")};
   &:hover {
-    background: ${p => (p.filled ? p.theme.colors.starYellow : rgba(p.theme.colors.neutral.c40, 0.2))};
+    background: ${p =>
+      p.filled ? p.theme.colors.starYellow : rgba(p.theme.colors.neutral.c40, 0.2)};
     border-color: ${p => (p.filled ? p.theme.colors.starYellow : p.theme.colors.neutral.c100)};
   }
 `;
