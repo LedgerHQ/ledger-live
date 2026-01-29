@@ -1,4 +1,4 @@
 tests/artifacts/*
 !tests/artifacts/.gitkeep
 node_modules/
-allure-results
+allure-*

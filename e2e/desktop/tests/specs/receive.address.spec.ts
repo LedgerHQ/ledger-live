@@ -18,7 +18,6 @@ const accounts = [
   { account: Account.BSC_1, xrayTicket: "B2CQA-2686, B2CQA-2696, B2CQA-2698" },
 ];
 
-//Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581
 for (const account of accounts) {
   test.describe("Receive", () => {
     test.use({
