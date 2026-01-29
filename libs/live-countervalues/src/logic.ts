@@ -30,7 +30,6 @@ import {
 import type { Account } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import api from "./api";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 // yield raw version of the countervalues state to be saved in a db
 export function exportCountervalues(
@@ -90,27 +89,6 @@ export function importCountervalues(
       {},
     ),
   };
-}
-
-export function trackingPairForTopCoins(
-  marketcapIds: string[],
-  size: number,
-  countervalue: Currency,
-  startDate: Date,
-) {
-  const pairs = [];
-  for (let i = 0; i < marketcapIds.length && pairs.length < size; i++) {
-    const id = marketcapIds[i];
-    const currency = findCryptoCurrencyById(id);
-    if (currency) {
-      pairs.push({
-        from: currency,
-        to: countervalue,
-        startDate,
-      });
-    }
-  }
-  return pairs;
 }
 
 // infer the tracking pair from user accounts to know which pairs are concerned
