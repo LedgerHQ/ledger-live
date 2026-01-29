@@ -30,7 +30,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
   const { currency, derivationMode, address, initialAccount } = info;
   invariant(address, "hedera: address is expected");
   const evmAddress = await toEVMAddress(address);
-  invariant(evmAddress, "hedera: evm address is missing");
+  invariant(evmAddress, `hedera: evm address is missing for ${address}`);
 
   const liveAccountId = encodeAccountId({
     type: "js",
