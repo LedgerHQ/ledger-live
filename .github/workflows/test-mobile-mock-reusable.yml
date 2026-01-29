@@ -31,7 +31,7 @@ on:
         description: Whether to skip the pod lockfile checks
         required: false
         type: string
-        default: 'true'
+        default: "true"
 
   workflow_dispatch:
     inputs:
@@ -65,7 +65,7 @@ on:
         description: Whether to skip the pod lockfile checks
         required: false
         type: string
-        default: 'true'
+        default: "true"
 
 permissions:
   id-token: write
@@ -83,7 +83,7 @@ env:
 jobs:
   determine-builds:
     name: "Determine Builds"
-    runs-on: [ ubuntu-22.04 ]
+    runs-on: [ubuntu-22.04]
     outputs:
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
       ios_js_exists: ${{ steps.check-ios-js.outputs.cache-hit }}
@@ -98,7 +98,6 @@ jobs:
       matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
       matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
     steps:
-
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -194,7 +193,7 @@ jobs:
 
   build-ios:
     name: "iOS Build"
-    needs: [ determine-builds ]
+    needs: [determine-builds]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
     with:
       ref: ${{ inputs.ref || github.sha }}
@@ -208,7 +207,7 @@ jobs:
 
   build-android:
     name: "Android Build"
-    needs: [ determine-builds ]
+    needs: [determine-builds]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
     with:
       ref: ${{ inputs.ref || github.sha }}
@@ -221,7 +220,7 @@ jobs:
 
   detox-tests-ios:
     name: "iOS Build / iOS Detox (${{ matrix.shard }}, ${{ matrix.total }})"
-    needs: [ build-ios, determine-builds ]
+    needs: [build-ios, determine-builds]
     runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
     timeout-minutes: 120
     strategy:
@@ -238,7 +237,6 @@ jobs:
       status: ${{ steps.detox.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
     steps:
-
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -323,6 +321,18 @@ jobs:
           pnpm build:dummy-apps
         shell: bash
 
+      # Start mitmproxy logging
+      - name: Start mitmproxy
+        id: mitmproxy
+        uses: yaegashi/mitmproxy-logger-action@v1
+        with:
+          enabled: true
+          listen-host: "127.0.0.1"
+          listen-port: "8080"
+          install-cacert: true
+          set-envvars: true
+          passphrase: "remove-me"
+
       - name: Test iOS app
         id: detox
         timeout-minutes: 75
@@ -355,8 +365,8 @@ jobs:
 
   detox-tests-android:
     name: "Android Build / Android Detox (${{ matrix.shard }}, ${{ matrix.total }})"
-    needs: [ build-android, determine-builds ]
-    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    needs: [build-android, determine-builds]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     timeout-minutes: 80
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -569,9 +579,9 @@ jobs:
 
   report-bundle-sizes:
     name: "Build Mobile > Report Bundle Sizes"
-    runs-on: [ ubuntu-22.04 ]
+    runs-on: [ubuntu-22.04]
     if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != ''
-    needs: [ build-ios, build-android ]
+    needs: [build-ios, build-android]
     steps:
       - name: generate token
         id: generate-token
@@ -601,7 +611,7 @@ jobs:
 
   merge-ios-timings:
     name: Merge iOS Timing Files
-    needs: [ determine-builds, detox-tests-ios ]
+    needs: [determine-builds, detox-tests-ios]
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure')  && inputs.max-shards > 1 }}
     steps:
@@ -629,7 +639,7 @@ jobs:
 
   merge-android-timings:
     name: Merge Android Timing Files
-    needs: [ determine-builds, detox-tests-android ]
+    needs: [determine-builds, detox-tests-android]
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') && inputs.max-shards > 1 }}
     steps:
@@ -657,8 +667,8 @@ jobs:
 
   test-pod-lockfile:
     name: "Test Pod Lockfile"
-    runs-on: [ macOS, ARM64 ]
-    needs: [ determine-builds ]
+    runs-on: [macOS, ARM64]
+    needs: [determine-builds]
     if: needs.determine-builds.outputs.ios_native_exists == 'true' && inputs.skip-pod-checks != 'true'
     steps:
       - uses: actions/checkout@v4
