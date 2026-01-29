@@ -6,12 +6,11 @@ import {
   MarketListRequestParams,
 } from "@ledgerhq/live-common/market/utils/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { SortTableCell } from "~/renderer/screens/market/components/SortTableCell";
-import { TableCell, TableRow } from "~/renderer/screens/market/components/Table";
 import { NoCryptoPlaceholder } from "~/renderer/screens/market/MarketList/components/NoCryptoPlaceholder";
-import { MarketRowItem } from "../components/MarketRowItem";
-import { Star, StarFill } from "@ledgerhq/lumen-ui-react/symbols";
 import { ScrollContainer } from "LLD/components/ScrollContainer";
+import { ListHeader } from "../components/ListHeader";
+import { ListSkeleton } from "../components/ListSkeleton";
+import { ListData } from "../components/ListData";
 
 type MarketListVirtualization = {
   parentRef: RefObject<HTMLDivElement>;
@@ -20,8 +19,8 @@ type MarketListVirtualization = {
 
 type MarketListProps = {
   starredMarketCoins: string[];
-  loading: boolean;
   freshLoading: boolean;
+  isError: boolean;
   currenciesLength: number;
   marketParams: MarketListRequestParams;
   locale: string;
@@ -37,8 +36,8 @@ type MarketListProps = {
 function MarketList({
   starredMarketCoins,
   marketParams,
-  loading,
   freshLoading,
+  isError,
   currenciesLength,
   locale,
   marketData,
@@ -52,72 +51,42 @@ function MarketList({
   const { order, search, starred, range, counterCurrency } = marketParams;
   const { parentRef, rowVirtualizer } = virtualization;
 
-  if (!currenciesLength && !loading) {
+  // Only show skeleton on initial load or error, not during background refetches
+  const showSkeleton = freshLoading || isError;
+  const showData = !showSkeleton && currenciesLength > 0;
+
+  if (!showData && !showSkeleton) {
     return <NoCryptoPlaceholder requestParams={marketParams} t={t} resetSearch={resetSearch} />;
   }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col rounded-md bg-surface">
       {search && currenciesLength > 0 && <TrackPage category="Market Search" success={true} />}
-      <div className="px-20">
-        <TableRow header>
-          <SortTableCell data-testid="market-sort-button" onClick={toggleSortBy} order={order}>
-            #
-          </SortTableCell>
-          <TableCell disabled>{t("market.marketList.crypto")}</TableCell>
-          <TableCell disabled>{t("market.marketList.price")}</TableCell>
-          <TableCell disabled>{t("market.marketList.change")}</TableCell>
-          <TableCell disabled>{t("market.marketList.marketCap")}</TableCell>
-          <TableCell disabled>{t("market.marketList.last7d")}</TableCell>
-          <TableCell
-            data-testid="market-star-button"
-            disabled={starredMarketCoins.length <= 0 && (!starred || starred.length <= 0)}
-            onClick={toggleFilterByStarredAccounts}
-          >
-            {starred && starred.length > 0 ? (
-              <StarFill size={16} />
-            ) : (
-              <Star size={16} style={{ fill: "none" }} />
-            )}
-          </TableCell>
-        </TableRow>
-      </div>
+      <ListHeader
+        order={order}
+        starredMarketCoins={starredMarketCoins}
+        starred={starred}
+        onToggleSortBy={toggleSortBy}
+        onToggleFilterByStarredAccounts={toggleFilterByStarredAccounts}
+        t={t}
+      />
 
       <ScrollContainer ref={parentRef}>
-        <div
-          style={{
-            height: `${rowVirtualizer.getTotalSize()}px`,
-            width: "100%",
-            position: "relative",
-          }}
-        >
-          {rowVirtualizer.getVirtualItems().map(virtualRow => {
-            const currency = marketData[virtualRow.index];
-            const isLoading = freshLoading || !currency;
-            const isStarred = currency && starredMarketCoins.includes(currency.id);
-
-            return (
-              <MarketRowItem
-                key={currency?.id ?? virtualRow.index}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: `${virtualRow.size}px`,
-                  transform: `translateY(${virtualRow.start}px)`,
-                }}
-                currency={currency}
-                counterCurrency={counterCurrency}
-                loading={isLoading}
-                isStarred={!!isStarred}
-                toggleStar={() => currency?.id && toggleStar(currency.id, !!isStarred)}
-                locale={locale}
-                range={range}
-              />
-            );
-          })}
-        </div>
+        {showSkeleton ? (
+          <ListSkeleton />
+        ) : (
+          showData && (
+            <ListData
+              rowVirtualizer={rowVirtualizer}
+              marketData={marketData}
+              starredMarketCoins={starredMarketCoins}
+              counterCurrency={counterCurrency}
+              locale={locale}
+              range={range}
+              toggleStar={toggleStar}
+            />
+          )
+        )}
       </ScrollContainer>
     </div>
   );

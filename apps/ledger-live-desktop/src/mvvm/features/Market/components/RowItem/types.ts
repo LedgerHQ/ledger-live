@@ -1,20 +1,18 @@
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 
-export type MarketRowItemContainerProps = {
-  currency?: MarketCurrencyData | null;
+export type RowItemContainerProps = {
+  currency: MarketCurrencyData;
   counterCurrency?: string;
   style: React.CSSProperties;
-  loading: boolean;
   locale: string;
   isStarred: boolean;
   toggleStar: () => void;
   range?: string;
 };
 
-export type MarketRowItemViewProps = {
+export type RowItemViewProps = {
   style: React.CSSProperties;
-  loading: boolean;
-  currency?: MarketCurrencyData | null;
+  currency: MarketCurrencyData;
   counterCurrency?: string;
   locale: string;
   isStarred: boolean;
