@@ -1,9 +1,16 @@
 import React from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { Box, Text, Switch, Button, Tag, Divider } from "@ledgerhq/lumen-ui-rnative";
+import { IconsLegacy } from "@ledgerhq/native-ui";
+import { useNavigation } from "@react-navigation/native";
+import { ScreenName } from "~/const";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import SettingsRow from "~/components/SettingsRow";
 import { useWallet40ViewModel, WALLET_40_PARAMS } from "./useWallet40ViewModel";
 
 export default function DebugWallet40() {
+  const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
   const { isEnabled, params, allEnabled, handleToggleEnabled, handleToggleParam, handleToggleAll } =
     useWallet40ViewModel();
 
@@ -100,6 +107,21 @@ export default function DebugWallet40() {
             );
           })}
         </Box>
+
+        <Box lx={{ marginTop: "s24", marginBottom: "s16" }}>
+          <Text typography="body2SemiBold" lx={{ color: "muted", marginBottom: "s8" }}>
+            FEATURES
+          </Text>
+          <Divider />
+        </Box>
+
+        <SettingsRow
+          title="Wallet V4 Tour"
+          desc="Test tour drawer"
+          iconLeft={<IconsLegacy.NewsMedium size={24} color="black" />}
+          arrowRight
+          onPress={() => navigation.navigate(ScreenName.DebugWalletV4Tour)}
+        />
       </Box>
     </ScrollView>
   );
