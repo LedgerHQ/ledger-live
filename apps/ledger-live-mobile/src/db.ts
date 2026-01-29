@@ -74,11 +74,7 @@ async function getKeys(prefix: string) {
   return (await storage.keys()).filter(k => k.indexOf(prefix) === 0);
 }
 
-async function unsafeSaveCountervalues(
-  state: CounterValuesStateRaw,
-  { changed }: { changed: boolean },
-): Promise<void> {
-  if (!changed) return;
+async function unsafeSaveCountervalues(state: CounterValuesStateRaw): Promise<void> {
   const data = Object.entries(state).map<[string, RateMapRaw | CounterValuesStatus]>(
     ([key, val]) => [`${COUNTERVALUES_DB_PREFIX}${key}`, val],
   );
