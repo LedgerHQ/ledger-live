@@ -329,8 +329,6 @@ jobs:
           enabled: true
           listen-host: "127.0.0.1"
           listen-port: "8080"
-          install-cacert: true
-          set-envvars: true
           passphrase: "remove-me"
 
       - name: Test iOS app
