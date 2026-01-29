@@ -17,12 +17,12 @@ export function prepareLegacySaveSwapToHistory({
 
   const fromId = getAccountIdFromWalletAccountId(swap.fromAccountId);
   const toId = getAccountIdFromWalletAccountId(swap.toAccountId);
-  if (!fromId || !toId) return Promise.reject("Accounts not found");
+  if (!fromId || !toId) throw new Error("Accounts not found");
 
   const fromAccount = accounts.find(acc => acc.id === fromId);
   const toAccount = accounts.find(acc => acc.id === toId);
   if (!fromAccount || !toAccount) {
-    return Promise.reject(new Error(`accountId ${fromId} unknown`));
+    throw new Error(`accountId ${fromId} unknown`);
   }
 
   return prepareSaveSwapToHistory(accounts, {
