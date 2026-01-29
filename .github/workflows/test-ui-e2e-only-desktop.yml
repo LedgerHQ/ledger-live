@@ -217,7 +217,53 @@ jobs:
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
           } >> $GITHUB_STEP_SUMMARY
-          
+
+      - name: Start network monitor
+        id: start-network-monitor
+        run: |
+          echo "Starting network connectivity monitor..."
+          MONITOR_LOG="/tmp/network-monitor-${{ matrix.shardIndex }}.log"
+          echo "=== Network Monitor Started at $(date) ===" > $MONITOR_LOG
+          echo "Shard: ${{ matrix.shardIndex }}" >> $MONITOR_LOG
+          echo "Runner: $(hostname)" >> $MONITOR_LOG
+          echo "==========================================" >> $MONITOR_LOG
+
+          # Run monitoring in background, check every 30 seconds
+          (while true; do
+            TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+            echo "" >> $MONITOR_LOG
+            echo "[$TIMESTAMP] --- Connectivity Check ---" >> $MONITOR_LOG
+            
+            # Check DNS resolution
+            if nslookup github.com > /dev/null 2>&1; then
+              echo "[$TIMESTAMP] DNS (github.com): OK" >> $MONITOR_LOG
+            else
+              echo "[$TIMESTAMP] DNS (github.com): FAILED" >> $MONITOR_LOG
+            fi
+            
+            # Check HTTP connectivity
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://github.com 2>/dev/null || echo "TIMEOUT")
+            echo "[$TIMESTAMP] HTTP (github.com): $HTTP_STATUS" >> $MONITOR_LOG
+            
+            # Check npm registry
+            NPM_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://registry.npmjs.org 2>/dev/null || echo "TIMEOUT")
+            echo "[$TIMESTAMP] HTTP (registry.npmjs.org): $NPM_STATUS" >> $MONITOR_LOG
+            
+            # Ping test
+            if ping -c 1 -W 5 8.8.8.8 > /dev/null 2>&1; then
+              echo "[$TIMESTAMP] Ping (8.8.8.8): OK" >> $MONITOR_LOG
+            else
+              echo "[$TIMESTAMP] Ping (8.8.8.8): FAILED" >> $MONITOR_LOG
+            fi
+            
+            sleep 30
+          done) &
+
+          echo $! > /tmp/network-monitor.pid
+          echo "Network monitor started with PID $(cat /tmp/network-monitor.pid)"
+          echo "monitor_log=$MONITOR_LOG" >> $GITHUB_OUTPUT
+        shell: bash
+
       - name: Run Playwright Tests
         id: run-playwright
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
@@ -233,6 +279,38 @@ jobs:
           TEST_EXECUTION: ${{ inputs.test_execution }}
           PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
+
+      - name: Stop network monitor and upload logs
+        if: ${{ !cancelled() }}
+        run: |
+          echo "Stopping network monitor..."
+          if [ -f /tmp/network-monitor.pid ]; then
+            PID=$(cat /tmp/network-monitor.pid)
+            kill $PID 2>/dev/null || true
+            echo "Network monitor (PID $PID) stopped"
+          fi
+
+          MONITOR_LOG="${{ steps.start-network-monitor.outputs.monitor_log }}"
+          echo "=== Network Monitor Stopped at $(date) ===" >> $MONITOR_LOG
+
+          echo "--- Network Monitor Log Summary ---"
+          echo "Total checks: $(grep -c 'Connectivity Check' $MONITOR_LOG || echo 0)"
+          echo "Failed DNS: $(grep -c 'DNS.*FAILED' $MONITOR_LOG || echo 0)"
+          echo "Failed HTTP: $(grep -c 'HTTP.*TIMEOUT\|HTTP.*000' $MONITOR_LOG || echo 0)"
+          echo "Failed Ping: $(grep -c 'Ping.*FAILED' $MONITOR_LOG || echo 0)"
+          echo "-----------------------------------"
+
+          # Show last 50 lines in job log
+          echo "Last 50 lines of network monitor log:"
+          tail -50 $MONITOR_LOG
+        shell: bash
+
+      - name: Upload network monitor logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: network-monitor-logs-${{ matrix.shardIndex }}
+          path: /tmp/network-monitor-${{ matrix.shardIndex }}.log
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
