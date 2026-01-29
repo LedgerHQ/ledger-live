@@ -1,8 +1,7 @@
 import React from "react";
-import { Box, Flex } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import PortfolioGraphCard from "~/screens/Portfolio/PortfolioGraphCard";
-import PortfolioQuickActionsBar from "~/screens/Portfolio/PortfolioQuickActionsBar";
 import { View } from "react-native";
 
 interface PortfolioHeaderSectionProps {
@@ -30,11 +29,6 @@ export const PortfolioHeaderSection = ({
         hideGraph={hideGraph}
         isReadOnlyMode={isReadOnlyMode}
       />
-      {showAssets && (
-        <Box my={24} px={6}>
-          <PortfolioQuickActionsBar />
-        </Box>
-      )}
     </View>
   );
 };
