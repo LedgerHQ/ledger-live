@@ -77,11 +77,11 @@ const Wrapper = styled(Box)`
   display: flex;
   align-items: center;
 
-  :hover ${CurNameTokenIcon} {
+  &:hover ${CurNameTokenIcon} {
     display: flex;
   }
 
-  :hover ${CurNameTokenLink} {
+  &:hover ${CurNameTokenLink} {
     color: ${colors.wallet};
     background-color: ${colors.pillActiveBackground};
   }
@@ -118,7 +118,7 @@ const AccountName = styled.input.attrs<BaseProps>(p => ({
     transition: opacity 0.2s;
   }
 
-  :hover {
+  &:hover {
     border-color: ${p => (!p.disabled ? p.theme.colors.neutral.c40 : "transparent")};
     cursor: text;
 
@@ -127,7 +127,7 @@ const AccountName = styled.input.attrs<BaseProps>(p => ({
     }
   }
 
-  :focus {
+  &:focus {
     border-color: ${p => p.theme.colors.wallet};
     background: ${p => (p.theme.theme === "light" ? "#fff" : "none")};
 

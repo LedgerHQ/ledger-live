@@ -4,8 +4,10 @@ import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PerformanceIndicator } from "./PerformanceIndicator";
 import { useNavigate } from "react-router";
 import { ViewAllTile } from "./ViewAllTile";
-import FearAndGreed from "./FearAndGreed";
 import { AssetIcon } from "./AssetIcon";
+import { track } from "~/renderer/analytics/segment";
+import { TRACKING_PAGE_NAME } from "../utils/constants";
+import FearAndGreed from "LLD/features/FearAndGreed";
 
 type TrendingAssetsListProps = {
   readonly items: MarketItemPerformer[];
@@ -16,6 +18,11 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
 
   const onAssetClick = useCallback(
     (id: string) => () => {
+      track("button_clicked", {
+        button: "Market Tile",
+        currency: id,
+        page: TRACKING_PAGE_NAME,
+      });
       navigate(`/market/${id}`);
     },
     [navigate],
@@ -24,8 +31,11 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
   const getCapitalizedTicker = (item: MarketItemPerformer) => item.ticker.toUpperCase();
 
   return (
-    <div className="flex flex-col overflow-x-scroll" data-testid="trending-assets-list">
-      <div className="flex items-center gap-8">
+    <div
+      className="flex flex-col overflow-x-scroll [scrollbar-width:none]"
+      data-testid="trending-assets-list"
+    >
+      <div className="flex items-stretch gap-8">
         <FearAndGreed />
         {items.map(item => (
           <Tile
@@ -36,13 +46,14 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
             data-testid={`market-banner-asset-${item.id}`}
           >
             <TileSpot
+              size={40}
               appearance="icon"
               icon={() => <AssetIcon item={item} getCapitalizedTicker={getCapitalizedTicker} />}
             />
             <TileContent>
               <TileTitle>{getCapitalizedTicker(item)}</TileTitle>
+              <PerformanceIndicator value={item} />
             </TileContent>
-            <PerformanceIndicator value={item} />
           </Tile>
         ))}
         <ViewAllTile />

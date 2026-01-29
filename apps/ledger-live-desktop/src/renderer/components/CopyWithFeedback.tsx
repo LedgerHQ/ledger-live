@@ -1,7 +1,6 @@
-import React, { PureComponent } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import { withTranslation } from "react-i18next";
-import { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
 import { darken, lighten } from "~/renderer/styles/helpers";
 import IconCopy from "~/renderer/icons/Copy";
 import Box from "~/renderer/components/Box";
@@ -12,46 +11,44 @@ if (!process.env.STORYBOOK_ENV) {
   clipboard = electron.clipboard; // eslint-disable-line
 }
 type Props = {
-  t: TFunction;
   text: string;
 };
-type State = {
-  isCopied: boolean;
-};
-class CopyWithFeedback extends PureComponent<Props, State> {
-  state = {
-    isCopied: false,
-  };
 
-  componentWillUnmount() {
-    this._isUnmounted = true;
-  }
+const CopyWithFeedback = ({ text }: Props) => {
+  const { t } = useTranslation();
+  const [isCopied, setIsCopied] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isUnmountedRef = useRef(false);
 
-  _isUnmounted = false;
-  handleCopy = () => {
-    const { text } = this.props;
+  useEffect(() => {
+    return () => {
+      isUnmountedRef.current = true;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleCopy = () => {
     if (clipboard) clipboard.writeText(text);
-    this.setState({
-      isCopied: true,
-    });
-    setTimeout(() => {
-      this.setState({
-        isCopied: false,
-      });
+    setIsCopied(true);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      if (!isUnmountedRef.current) {
+        setIsCopied(false);
+      }
     }, 1e3);
   };
 
-  render() {
-    const { t } = this.props;
-    const { isCopied } = this.state;
-    return (
-      <ClickableWrapper onClick={this.handleCopy}>
-        <IconCopy size={16} />
-        <span>{isCopied ? t("common.copied") : t("common.copy")}</span>
-      </ClickableWrapper>
-    );
-  }
-}
+  return (
+    <ClickableWrapper onClick={handleCopy}>
+      <IconCopy size={16} />
+      <span>{isCopied ? t("common.copied") : t("common.copy")}</span>
+    </ClickableWrapper>
+  );
+};
 const ClickableWrapper = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
@@ -68,4 +65,4 @@ const ClickableWrapper = styled(Box).attrs(() => ({
     color: ${p => darken(p.theme.colors.wallet, 0.1)};
   }
 `;
-export default withTranslation()(CopyWithFeedback);
+export default CopyWithFeedback;

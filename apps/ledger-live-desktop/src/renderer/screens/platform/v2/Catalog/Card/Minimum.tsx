@@ -22,7 +22,7 @@ export function MinimumCard(props: PropsCard<RecentlyUsedManifest | LiveAppManif
   }, [lang, manifest]);
 
   return (
-    <Container disabled={disabled} onClick={onClick} width={300}>
+    <Container disabled={disabled} onClick={onClick} width={300} highlighted={false}>
       <Flex alignItems="center">
         <Logo icon={manifest.icon} name={manifest.name} size="small" disabled={disabled} />
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { useArgs } from "@storybook/manager-api";
+import { useArgs } from "storybook/manager-api";
 
 import Toggle from "./index";
 import type { ToggleProps } from "./index";

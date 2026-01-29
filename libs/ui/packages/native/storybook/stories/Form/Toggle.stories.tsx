@@ -1,5 +1,4 @@
 import React from "react";
-import { action } from "@storybook/addon-actions";
 import Toggle from "../../../src/components/Form/Toggle";
 
 export default {
@@ -8,7 +7,7 @@ export default {
 };
 
 export const Default = (args: typeof DefaultArgs) => (
-  <Toggle active={args.active} onPress={action("onPress")}>
+  <Toggle active={args.active} onPress={() => {}}>
     {args.text}
   </Toggle>
 );

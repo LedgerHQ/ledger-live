@@ -6,6 +6,7 @@ import {
   NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { UserInputType } from "./signer";
 import type { Account } from "@ledgerhq/types-live";
 import { findSubAccountById, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
 import { ChainAPI } from "./network";
@@ -196,7 +197,7 @@ const deriveTokenTransferCommandDescriptor = async (
     shouldCreateAsAssociatedTokenAccount: false,
     tokenAccAddress: "",
     walletAddress: "",
-    userInputType: "sol",
+    userInputType: UserInputType.SOL,
   };
 
   const tokenRecipientOrError = errors.recipient
@@ -348,7 +349,7 @@ async function getTokenRecipient(
         walletAddress: recipientAddress,
         shouldCreateAsAssociatedTokenAccount,
         tokenAccAddress: recipientAssociatedTokenAccountAddress,
-        userInputType: "sol",
+        userInputType: UserInputType.SOL,
       },
       recipientAccInfo: associatedTokenAccount,
     };
@@ -365,7 +366,7 @@ async function getTokenRecipient(
       walletAddress: recipientTokenAccount.owner.toBase58(),
       shouldCreateAsAssociatedTokenAccount: false,
       tokenAccAddress: recipientAddress,
-      userInputType: "ata",
+      userInputType: UserInputType.ATA,
     },
     recipientAccInfo: recipientTokenAccount,
   };
@@ -512,7 +513,7 @@ async function deriveCreateApproveCommandDescriptor(
     shouldCreateAsAssociatedTokenAccount: false,
     tokenAccAddress: "",
     walletAddress: "",
-    userInputType: "sol",
+    userInputType: UserInputType.SOL,
   };
 
   const tokenRecipientOrError = errors.recipient

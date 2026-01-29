@@ -7,13 +7,15 @@ import NoAccounts from "./NoAccountsImage";
 import Text from "~/renderer/components/Text";
 import LinkHelp from "~/renderer/components/LinkHelp";
 import { openURL } from "~/renderer/linking";
-import { DefaultTheme, withTheme } from "styled-components";
+import { useTheme } from "styled-components";
 import FakeLink from "~/renderer/components/FakeLink";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
+
+const EmptyStateAccounts = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -98,4 +100,4 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
     </Box>
   );
 };
-export default React.memo(withTheme(EmptyStateAccounts));
+export default React.memo(EmptyStateAccounts);

@@ -77,6 +77,7 @@ export type DefaultFeature = Feature<unknown>;
  */
 export type CurrencyFeatures = {
   currencyAvalancheCChain: DefaultFeature;
+  currencyAvalancheCChainFuji: DefaultFeature;
   currencyStacks: DefaultFeature;
   currencyOptimism: DefaultFeature;
   currencyOptimismSepolia: DefaultFeature;
@@ -111,7 +112,9 @@ export type CurrencyFeatures = {
   currencyPolygonZkEvmTestnet: DefaultFeature;
   currencyBase: DefaultFeature;
   currencyBaseSepolia: DefaultFeature;
+  currencyBitlayer: DefaultFeature;
   currencyKlaytn: DefaultFeature;
+  currencyKlaytnBaobab: DefaultFeature;
   currencyVechain: DefaultFeature;
   currencyCasper: DefaultFeature;
   currencyNeonEvm: DefaultFeature;
@@ -122,6 +125,8 @@ export type CurrencyFeatures = {
   currencyBlastSepolia: DefaultFeature;
   currencyScroll: DefaultFeature;
   currencyScrollSepolia: DefaultFeature;
+  currencyShape: DefaultFeature;
+  currencyStory: DefaultFeature;
   currencyIcon: DefaultFeature;
   currencyTon: DefaultFeature;
   currencyEtherlink: DefaultFeature;
@@ -156,6 +161,8 @@ export type CurrencyFeatures = {
   currencyConcordiumTestnet: DefaultFeature;
   currencyAleo: DefaultFeature;
   currencyAleoTestnet: DefaultFeature;
+  currencyUnichain: DefaultFeature;
+  currencyUnichainSepolia: DefaultFeature;
 };
 
 /**
@@ -421,6 +428,14 @@ export type Feature_BrazePushNotifications = Feature<{
       enabled: boolean;
       timer: number;
     };
+  };
+  inactivity_enabled: boolean;
+  inactivity_reprompt: {
+    months: number;
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
   };
   notificationsCategories: {
     displayed: boolean;
@@ -781,18 +796,15 @@ type Feature_Wallet40_Params = {
   marketBanner: boolean;
   graphRework: boolean;
   quickActionCtas: boolean;
+  tour?: boolean;
 };
 
 export type Feature_LwmWallet40 = Feature<
   {
-    // Add specific LWM params
+    tour: boolean;
   } & Feature_Wallet40_Params
 >;
-export type Feature_LwdWallet40 = Feature<
-  {
-    //  Add specific LWD params
-  } & Feature_Wallet40_Params
->;
+export type Feature_LwdWallet40 = Feature<Feature_Wallet40_Params>;
 export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{
   variant: ABTestingVariants;
 }>;

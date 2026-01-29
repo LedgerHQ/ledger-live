@@ -20,6 +20,17 @@ describe("Verify Address warnings", () => {
   });
 
   $TmsLink("B2CQA-1551");
+  const tags: string[] = [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    "@tron",
+    "@family-tron",
+  ];
+  tags.forEach(tag => $Tag(tag));
   it(`Verify address warning for ${account.currency.name}`, async () => {
     await app.account.openViaDeeplink();
     await app.account.goToAccountByName(account.accountName);

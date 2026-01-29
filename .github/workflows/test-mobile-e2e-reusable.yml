@@ -1,6 +1,6 @@
 name: "[Mobile] E2E Only - Scheduled/Manual"
 run-name: >
-  @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'Schedule' && 'scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ github.ref_name }} • ${{ github.actor }}
+  @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'schedule' && 'Scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ inputs.ref || github.ref_name }} • ${{ github.actor }}
 
 on:
   schedule:
@@ -11,7 +11,7 @@ on:
         description: "The branch which triggered this workflow"
         required: false
       test_filter:
-        description: Filter to execute only test suite spec files according to pattern(s) (e.g. to execute nftGallery.spec.ts and deeplinks.spec.ts files "addAccount deeplinks")"
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       tests_type:
@@ -66,7 +66,7 @@ on:
         required: false
         type: string
       test_filter:
-        description: "Filter to execute only test suite spec files according to pattern(s)"
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       tests_type:
@@ -139,10 +139,13 @@ jobs:
     steps:
       - name: generate token
         id: generate-token
-        uses: tibdex/github-app-token@v1
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
         with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          repositories: |
+            coin-apps
+            ledger-live
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -168,8 +171,8 @@ jobs:
           {
           echo "## Workflow Context"
           echo ""
-          echo "- **Workflow source branch:** ${{ github.workflow_ref }}"
-          echo "- **Triggered branch:** ${{ github.ref_name }}"
+          echo "- **Workflow source branch:** ${{ github.ref_name }}"
+          echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
           echo "- **Commit SHA:** ${{ github.sha }}"
           echo "- **Device selected:** $DEVICE"
           echo "- **Filtered pattern:** $FILTER_PATTERN"
@@ -495,6 +498,18 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
 
+      - name: Prepare test filter
+        id: test-filter
+        run: |
+          BASE_FILTER="${{ inputs.test_filter }}"
+
+          if [ -n "$BASE_FILTER" ]; then
+            BASE_FILTER="${BASE_FILTER//,/|}"
+          fi
+
+          echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
+        shell: bash
+
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
@@ -510,7 +525,7 @@ jobs:
           INPUT_E2E: "true"
           REMOTE_SPECULOS: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
-          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+          INPUTS_TEST_FILTER: ${{ steps.test-filter.outputs.filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
 
@@ -723,6 +738,18 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
 
+      - name: Prepare test filter
+        id: test-filter
+        run: |
+          BASE_FILTER="${{ inputs.test_filter }}"
+
+          if [ -n "$BASE_FILTER" ]; then
+            BASE_FILTER="${BASE_FILTER//,/|}"
+          fi
+
+          echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
+        shell: bash
+
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
@@ -738,7 +765,7 @@ jobs:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_E2E: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
-          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+          INPUTS_TEST_FILTER: ${{ steps.test-filter.outputs.filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
 
@@ -788,7 +815,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
-          report_path_suffix: ${{ github.event_name == 'schedule' && '' || 'manual' }}
+          report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
@@ -839,7 +866,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts
-          report_path_suffix: ${{ github.event_name == 'schedule' && '' || 'manual' }}
+          report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}

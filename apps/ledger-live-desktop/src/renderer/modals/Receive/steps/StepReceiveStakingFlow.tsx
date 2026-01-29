@@ -27,7 +27,7 @@ export const CheckBoxContainer: typeof Flex = styled(Flex)`
   }
   border-radius: 8px;
   background-color: ${p => p.theme.colors.neutral.c30};
-  :hover {
+  &:hover {
     background-color: ${p => p.theme.colors.primary.c10};
   }
 `;

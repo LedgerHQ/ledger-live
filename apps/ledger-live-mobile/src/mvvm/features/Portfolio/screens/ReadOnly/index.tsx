@@ -1,7 +1,12 @@
-import React, { useMemo } from "react";
-import { Box, Button, Flex, Text } from "@ledgerhq/native-ui";
-
-import GraphCardContainer from "~/screens/Portfolio/GraphCardContainer";
+import React, { useCallback, useMemo } from "react";
+import { Box, Button, Flex } from "@ledgerhq/native-ui";
+import {
+  Subheader,
+  SubheaderRow,
+  SubheaderTitle,
+  SubheaderShowMore,
+} from "@ledgerhq/lumen-ui-rnative";
+import PortfolioGraphCard from "~/screens/Portfolio/PortfolioGraphCard";
 import TrackScreen from "~/analytics/TrackScreen";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
@@ -25,31 +30,28 @@ type NavigationProps = BaseComposite<
 
 function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
   const {
-    counterValueCurrency,
-    portfolio,
-    colors,
     hasOrderedNano,
     assets,
-    graphCardEndPosition,
-    currentPositionY,
+    shouldDisplayGraphRework,
     t,
     source,
-    onPortfolioCardLayout,
     goToAssets,
     onBackFromUpdate,
   } = useReadOnlyPortfolioViewModel(navigation);
 
+  const getCryptoSectionTitle = useCallback(
+    (): string => `${t("wallet.tabs.crypto")} (${String(assets.length)})`,
+    [t, assets.length],
+  );
+
   const data = useMemo(
     () => [
-      <Box onLayout={onPortfolioCardLayout} key="GraphCardContainer">
-        <GraphCardContainer
-          counterValueCurrency={counterValueCurrency}
-          portfolio={portfolio}
-          showGraphCard
-          areAccountsEmpty={false}
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
+      <Box key="PortfolioGraphCard">
+        <PortfolioGraphCard
+          showAssets={false}
           screenName="Wallet"
+          hideGraph={shouldDisplayGraphRework}
+          isReadOnlyMode
         />
       </Box>,
       ...(hasOrderedNano
@@ -59,10 +61,20 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
             </Box>,
           ]
         : []),
-      <Box mx={6} key="MarketBanner">
+      <Box mx={6} mt={6} key="MarketBanner">
         <MarketBanner />
       </Box>,
-      <Box background={colors.background.main} px={6} key="Assets">
+      <Box px={6} key="Assets">
+        <Subheader>
+          <SubheaderRow
+            onPress={goToAssets}
+            lx={{ marginBottom: "s12" }}
+            accessibilityRole="button"
+          >
+            <SubheaderTitle>{getCryptoSectionTitle()}</SubheaderTitle>
+            <SubheaderShowMore />
+          </SubheaderRow>
+        </Subheader>
         <Assets assets={assets} />
         <Button type="shade" size="large" outline mt={6} onPress={goToAssets}>
           {t("portfolio.seeAllAssets")}
@@ -86,31 +98,11 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
           ]
         : []),
     ],
-    [
-      hasOrderedNano,
-      onPortfolioCardLayout,
-      counterValueCurrency,
-      portfolio,
-      currentPositionY,
-      graphCardEndPosition,
-      colors.background.main,
-      assets,
-      goToAssets,
-      t,
-    ],
+    [hasOrderedNano, shouldDisplayGraphRework, assets, goToAssets, t, getCryptoSectionTitle],
   );
-
-  const DebugBanner = __DEV__ ? (
-    <Box backgroundColor="primary.c80" py={2} px={4} alignItems="center">
-      <Text color="neutral.c00" fontWeight="semiBold" fontSize={12}>
-        {"MVVM ReadOnly Portfolio (lwmWallet40)"}
-      </Text>
-    </Box>
-  ) : null;
 
   return (
     <>
-      {DebugBanner}
       <Flex px={6} py={4}>
         <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
       </Flex>

@@ -6,4 +6,5 @@ runSendValidAddressTest(
   transaction,
   ["B2CQA-2715", "B2CQA-2716"],
   "Existing Account and Valid address",
+  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 );

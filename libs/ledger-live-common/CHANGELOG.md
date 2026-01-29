@@ -1,5 +1,207 @@
 # @ledgerhq/live-common
 
+## 34.58.0
+
+### Minor Changes
+
+- [#13556](https://github.com/LedgerHQ/ledger-live/pull/13556) [`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d) Thanks [@ysitbon](https://github.com/ysitbon)! - make lib compatible with react 19
+
+- [#13764](https://github.com/LedgerHQ/ledger-live/pull/13764) [`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add graphRework and quickActionCtas params to lw40 ff
+
+- [#13743](https://github.com/LedgerHQ/ledger-live/pull/13743) [`d38431e`](https://github.com/LedgerHQ/ledger-live/commit/d38431ee5f91439794cc6c7bad793b89ade95155) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - perf(llc): parellelize calls to the crypto asset store
+
+- [#13590](https://github.com/LedgerHQ/ledger-live/pull/13590) [`d3a00b8`](https://github.com/LedgerHQ/ledger-live/commit/d3a00b897349d2109b2ddb6aba63d20fdedc149c) Thanks [@deepyjr](https://github.com/deepyjr)! - Add Fear and greed index to the market banner on LWM
+
+- [#13600](https://github.com/LedgerHQ/ledger-live/pull/13600) [`d8f4b10`](https://github.com/LedgerHQ/ledger-live/commit/d8f4b10b28b63880fdac40a58e1d4f06191070a9) Thanks [@deepyjr](https://github.com/deepyjr)! - add new market banner on the home page (ff) and shared code for desktop and mobile (tests)
+
+- [#13340](https://github.com/LedgerHQ/ledger-live/pull/13340) [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436) Thanks [@Justkant](https://github.com/Justkant)! - feat(coin-bitcoin): support psbt signature in wallet-api
+
+- [#13659](https://github.com/LedgerHQ/ledger-live/pull/13659) [`97ac494`](https://github.com/LedgerHQ/ledger-live/commit/97ac4940399281450a67b5f533ff49d03a169403) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - chore: update device app minversion eth
+
+- [#13790](https://github.com/LedgerHQ/ledger-live/pull/13790) [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d) Thanks [@Justkant](https://github.com/Justkant)! - feat: add transaction source tagging with headers for broadcast
+
+  Add TransactionSource type and source field to BroadcastConfig to track
+  transaction origins (dApp, live-app, coin-module, swap) and transmit them
+  as X-Ledger-Source-Type and X-Ledger-Source-Name headers when broadcasting
+  to blockchain explorers for Bitcoin and EVM.
+
+  Changes:
+
+  - Add TransactionSource type with type and name fields to types-live
+  - Extend BroadcastConfig with optional source field
+  - Thread source through Bitcoin broadcast chain (broadcast.ts → wallet.ts → xpub.ts → explorer)
+  - Thread source through EVM broadcast in ledger node API
+  - Update Desktop to pass source in:
+    - Live app broadcasts (LiveAppSDKLogic.ts)
+    - Swap flows (CompleteExchange Body.tsx)
+    - Native send flows (GenericStepConnectDevice.tsx)
+  - Update Mobile to pass source in:
+    - Native transaction flows (screenTransactionHooks.ts)
+    - Platform exchange (CompleteExchange.tsx)
+    - Swap flows (Confirmation.tsx)
+  - Update wallet-api integrations (react.ts, useDappLogic.ts)
+
+- [#13787](https://github.com/LedgerHQ/ledger-live/pull/13787) [`7389999`](https://github.com/LedgerHQ/ledger-live/commit/7389999b0a5b52c42b565cbfe8e024c315c9dcf5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(llc): always pass `bigint` inside Alpaca custom fees
+
+- [#13742](https://github.com/LedgerHQ/ledger-live/pull/13742) [`b8e22d3`](https://github.com/LedgerHQ/ledger-live/commit/b8e22d36b8bb44eda9dfd267227a22391519c08b) Thanks [@qperrot](https://github.com/qperrot)! - Fix: Update snapshot cardano
+
+- [#13685](https://github.com/LedgerHQ/ledger-live/pull/13685) [`d469c61`](https://github.com/LedgerHQ/ledger-live/commit/d469c6160a9fdd7cd581836195d54bafd2a0419a) Thanks [@dilaouid](https://github.com/dilaouid)! - fix: corrupted format on RecentAddresses sync
+
+### Patch Changes
+
+- Updated dependencies [[`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d), [`d38431e`](https://github.com/LedgerHQ/ledger-live/commit/d38431ee5f91439794cc6c7bad793b89ade95155), [`624dde7`](https://github.com/LedgerHQ/ledger-live/commit/624dde7675ee68af9addbbdbe8666e77d09f76b6), [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`7389999`](https://github.com/LedgerHQ/ledger-live/commit/7389999b0a5b52c42b565cbfe8e024c315c9dcf5), [`6c9b829`](https://github.com/LedgerHQ/ledger-live/commit/6c9b82957c777e81e65b3321f4d0d5d66384992f), [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a), [`36aaf48`](https://github.com/LedgerHQ/ledger-live/commit/36aaf487c15da117a23332de376257ce8e6582a9), [`d469c61`](https://github.com/LedgerHQ/ledger-live/commit/d469c6160a9fdd7cd581836195d54bafd2a0419a), [`ee3f952`](https://github.com/LedgerHQ/ledger-live/commit/ee3f95244d2e9d4a5bb011b9a482def1fb492147)]:
+  - @ledgerhq/live-countervalues-react@0.9.0
+  - @ledgerhq/live-hooks@0.5.0
+  - @ledgerhq/coin-evm@2.40.0
+  - @ledgerhq/coin-xrp@7.13.0
+  - @ledgerhq/hw-app-btc@10.17.0
+  - @ledgerhq/coin-bitcoin@0.30.0
+  - @ledgerhq/coin-internet_computer@1.15.0
+  - @ledgerhq/coin-algorand@0.17.0
+  - @ledgerhq/coin-cardano@0.18.0
+  - @ledgerhq/coin-stellar@6.12.0
+  - @ledgerhq/coin-casper@2.8.0
+  - @ledgerhq/coin-hedera@1.19.0
+  - @ledgerhq/coin-solana@0.42.0
+  - @ledgerhq/coin-stacks@0.15.0
+  - @ledgerhq/coin-mina@1.8.0
+  - @ledgerhq/coin-ton@0.21.0
+  - @ledgerhq/live-env@2.26.0
+  - @ledgerhq/coin-aptos@3.11.0
+  - @ledgerhq/coin-tezos@6.14.0
+  - @ledgerhq/coin-tron@5.11.0
+  - @ledgerhq/coin-sui@0.22.0
+  - @ledgerhq/live-wallet@0.20.0
+  - @ledgerhq/coin-framework@6.13.1
+  - @ledgerhq/coin-aleo@1.1.1
+  - @ledgerhq/coin-canton@0.14.1
+  - @ledgerhq/coin-celo@1.9.1
+  - @ledgerhq/coin-cosmos@0.23.1
+  - @ledgerhq/coin-filecoin@1.18.1
+  - @ledgerhq/coin-icon@0.17.1
+  - @ledgerhq/coin-kaspa@1.7.1
+  - @ledgerhq/coin-multiversx@0.10.1
+  - @ledgerhq/coin-near@0.19.1
+  - @ledgerhq/coin-polkadot@6.16.1
+  - @ledgerhq/coin-vechain@2.16.1
+  - @ledgerhq/device-core@0.8.1
+  - @ledgerhq/cryptoassets@13.37.1
+  - @ledgerhq/hw-app-eth@7.3.1
+  - @ledgerhq/live-countervalues@0.11.1
+  - @ledgerhq/live-signer-aleo@0.11.1
+  - @ledgerhq/live-signer-canton@0.7.1
+  - @ledgerhq/live-signer-evm@0.12.1
+  - @ledgerhq/live-signer-solana@0.10.1
+  - @ledgerhq/client-ids@0.4.1
+  - @ledgerhq/ledger-cal-service@1.11.1
+  - @ledgerhq/ledger-trust-service@0.6.1
+  - @ledgerhq/live-network@2.2.1
+  - @ledgerhq/speculos-transport@0.5.1
+  - @ledgerhq/hw-app-vet@0.9.1
+  - @ledgerhq/hw-app-celo@6.37.1
+  - @ledgerhq/hw-app-exchange@0.19.0
+
+## 34.58.0-next.0
+
+### Minor Changes
+
+- [#13556](https://github.com/LedgerHQ/ledger-live/pull/13556) [`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d) Thanks [@ysitbon](https://github.com/ysitbon)! - make lib compatible with react 19
+
+- [#13764](https://github.com/LedgerHQ/ledger-live/pull/13764) [`c84be03`](https://github.com/LedgerHQ/ledger-live/commit/c84be039f162fd3af72861fd1605f4141c8f0792) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add graphRework and quickActionCtas params to lw40 ff
+
+- [#13743](https://github.com/LedgerHQ/ledger-live/pull/13743) [`d38431e`](https://github.com/LedgerHQ/ledger-live/commit/d38431ee5f91439794cc6c7bad793b89ade95155) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - perf(llc): parellelize calls to the crypto asset store
+
+- [#13590](https://github.com/LedgerHQ/ledger-live/pull/13590) [`d3a00b8`](https://github.com/LedgerHQ/ledger-live/commit/d3a00b897349d2109b2ddb6aba63d20fdedc149c) Thanks [@deepyjr](https://github.com/deepyjr)! - Add Fear and greed index to the market banner on LWM
+
+- [#13600](https://github.com/LedgerHQ/ledger-live/pull/13600) [`d8f4b10`](https://github.com/LedgerHQ/ledger-live/commit/d8f4b10b28b63880fdac40a58e1d4f06191070a9) Thanks [@deepyjr](https://github.com/deepyjr)! - add new market banner on the home page (ff) and shared code for desktop and mobile (tests)
+
+- [#13340](https://github.com/LedgerHQ/ledger-live/pull/13340) [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436) Thanks [@Justkant](https://github.com/Justkant)! - feat(coin-bitcoin): support psbt signature in wallet-api
+
+- [#13659](https://github.com/LedgerHQ/ledger-live/pull/13659) [`97ac494`](https://github.com/LedgerHQ/ledger-live/commit/97ac4940399281450a67b5f533ff49d03a169403) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - chore: update device app minversion eth
+
+- [#13790](https://github.com/LedgerHQ/ledger-live/pull/13790) [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d) Thanks [@Justkant](https://github.com/Justkant)! - feat: add transaction source tagging with headers for broadcast
+
+  Add TransactionSource type and source field to BroadcastConfig to track
+  transaction origins (dApp, live-app, coin-module, swap) and transmit them
+  as X-Ledger-Source-Type and X-Ledger-Source-Name headers when broadcasting
+  to blockchain explorers for Bitcoin and EVM.
+
+  Changes:
+
+  - Add TransactionSource type with type and name fields to types-live
+  - Extend BroadcastConfig with optional source field
+  - Thread source through Bitcoin broadcast chain (broadcast.ts → wallet.ts → xpub.ts → explorer)
+  - Thread source through EVM broadcast in ledger node API
+  - Update Desktop to pass source in:
+    - Live app broadcasts (LiveAppSDKLogic.ts)
+    - Swap flows (CompleteExchange Body.tsx)
+    - Native send flows (GenericStepConnectDevice.tsx)
+  - Update Mobile to pass source in:
+    - Native transaction flows (screenTransactionHooks.ts)
+    - Platform exchange (CompleteExchange.tsx)
+    - Swap flows (Confirmation.tsx)
+  - Update wallet-api integrations (react.ts, useDappLogic.ts)
+
+- [#13787](https://github.com/LedgerHQ/ledger-live/pull/13787) [`7389999`](https://github.com/LedgerHQ/ledger-live/commit/7389999b0a5b52c42b565cbfe8e024c315c9dcf5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(llc): always pass `bigint` inside Alpaca custom fees
+
+- [#13742](https://github.com/LedgerHQ/ledger-live/pull/13742) [`b8e22d3`](https://github.com/LedgerHQ/ledger-live/commit/b8e22d36b8bb44eda9dfd267227a22391519c08b) Thanks [@qperrot](https://github.com/qperrot)! - Fix: Update snapshot cardano
+
+- [#13685](https://github.com/LedgerHQ/ledger-live/pull/13685) [`d469c61`](https://github.com/LedgerHQ/ledger-live/commit/d469c6160a9fdd7cd581836195d54bafd2a0419a) Thanks [@dilaouid](https://github.com/dilaouid)! - fix: corrupted format on RecentAddresses sync
+
+### Patch Changes
+
+- Updated dependencies [[`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d), [`d38431e`](https://github.com/LedgerHQ/ledger-live/commit/d38431ee5f91439794cc6c7bad793b89ade95155), [`624dde7`](https://github.com/LedgerHQ/ledger-live/commit/624dde7675ee68af9addbbdbe8666e77d09f76b6), [`85ed675`](https://github.com/LedgerHQ/ledger-live/commit/85ed67593945e396cfe995a13de7454850fa6436), [`819d969`](https://github.com/LedgerHQ/ledger-live/commit/819d96907febd9a68a6407c1bad06f475d044a4d), [`7389999`](https://github.com/LedgerHQ/ledger-live/commit/7389999b0a5b52c42b565cbfe8e024c315c9dcf5), [`6c9b829`](https://github.com/LedgerHQ/ledger-live/commit/6c9b82957c777e81e65b3321f4d0d5d66384992f), [`6532080`](https://github.com/LedgerHQ/ledger-live/commit/6532080d2a0f5e49052aeab0bf532ee5cd52694a), [`36aaf48`](https://github.com/LedgerHQ/ledger-live/commit/36aaf487c15da117a23332de376257ce8e6582a9), [`d469c61`](https://github.com/LedgerHQ/ledger-live/commit/d469c6160a9fdd7cd581836195d54bafd2a0419a), [`ee3f952`](https://github.com/LedgerHQ/ledger-live/commit/ee3f95244d2e9d4a5bb011b9a482def1fb492147)]:
+  - @ledgerhq/live-countervalues-react@0.9.0-next.0
+  - @ledgerhq/live-hooks@0.5.0-next.0
+  - @ledgerhq/coin-evm@2.40.0-next.0
+  - @ledgerhq/coin-xrp@7.13.0-next.0
+  - @ledgerhq/hw-app-btc@10.17.0-next.0
+  - @ledgerhq/coin-bitcoin@0.30.0-next.0
+  - @ledgerhq/coin-internet_computer@1.15.0-next.0
+  - @ledgerhq/coin-algorand@0.17.0-next.0
+  - @ledgerhq/coin-cardano@0.18.0-next.0
+  - @ledgerhq/coin-stellar@6.12.0-next.0
+  - @ledgerhq/coin-casper@2.8.0-next.0
+  - @ledgerhq/coin-hedera@1.19.0-next.0
+  - @ledgerhq/coin-solana@0.42.0-next.0
+  - @ledgerhq/coin-stacks@0.15.0-next.0
+  - @ledgerhq/coin-mina@1.8.0-next.0
+  - @ledgerhq/coin-ton@0.21.0-next.0
+  - @ledgerhq/live-env@2.26.0-next.0
+  - @ledgerhq/coin-aptos@3.11.0-next.0
+  - @ledgerhq/coin-tezos@6.14.0-next.0
+  - @ledgerhq/coin-tron@5.11.0-next.0
+  - @ledgerhq/coin-sui@0.22.0-next.0
+  - @ledgerhq/live-wallet@0.20.0-next.0
+  - @ledgerhq/coin-framework@6.13.1-next.0
+  - @ledgerhq/coin-aleo@1.1.1-next.0
+  - @ledgerhq/coin-canton@0.14.1-next.0
+  - @ledgerhq/coin-celo@1.9.1-next.0
+  - @ledgerhq/coin-cosmos@0.23.1-next.0
+  - @ledgerhq/coin-filecoin@1.18.1-next.0
+  - @ledgerhq/coin-icon@0.17.1-next.0
+  - @ledgerhq/coin-kaspa@1.7.1-next.0
+  - @ledgerhq/coin-multiversx@0.10.1-next.0
+  - @ledgerhq/coin-near@0.19.1-next.0
+  - @ledgerhq/coin-polkadot@6.16.1-next.0
+  - @ledgerhq/coin-vechain@2.16.1-next.0
+  - @ledgerhq/device-core@0.8.1-next.0
+  - @ledgerhq/cryptoassets@13.37.1-next.0
+  - @ledgerhq/hw-app-eth@7.3.1-next.0
+  - @ledgerhq/live-countervalues@0.11.1-next.0
+  - @ledgerhq/live-signer-aleo@0.11.1-next.0
+  - @ledgerhq/live-signer-canton@0.7.1-next.0
+  - @ledgerhq/live-signer-evm@0.12.1-next.0
+  - @ledgerhq/live-signer-solana@0.10.1-next.0
+  - @ledgerhq/client-ids@0.4.1-next.0
+  - @ledgerhq/ledger-cal-service@1.11.1-next.0
+  - @ledgerhq/ledger-trust-service@0.6.1-next.0
+  - @ledgerhq/live-network@2.2.1-next.0
+  - @ledgerhq/speculos-transport@0.5.1-next.0
+  - @ledgerhq/hw-app-vet@0.9.1-next.0
+  - @ledgerhq/hw-app-celo@6.37.1-next.0
+  - @ledgerhq/hw-app-exchange@0.19.0
+
 ## 34.57.0
 
 ### Minor Changes

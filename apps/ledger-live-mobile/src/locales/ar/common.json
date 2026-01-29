@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "لا توجد مكافآت للمطالبة بها"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "الملاحظة (تسمية الوجهة) طويلة جداً. الحد الأقصى للطول هو {{maxLength}} حرف"
-    },
     "NearNewAccountWarning" : {
       "title" : "حساب المُستلِم لم يتم إنشاؤه بعد. البروتوكول يتطلب تحويل {{formattedNewAccountStorageCost}} لإنشائه."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "يجب أن يكون المبلغ على الأقل {{threshold}}"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "تنسيق الملاحظة خاطئ، يجب أن يكون أقل من 4294967296"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "حجم ملاحظة غير صالح، الحد الأقصى المسموح هو 100 حرفاً"
     },
     "PinNotSet" : {
       "title" : "لم يتم إعداد كود PIN"
@@ -3474,9 +3477,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "تفعيل الإشعارات",
-      "titleVariantB" : "Get the most of Ledger Wallet",
+      "titleVariantB" : "حقِّق أقصى استفادة من Ledger Wallet",
       "desc" : "احصل على آخر المستجدات حول Ledger Wallet ومنتجات Ledger والسوق والتوصيات المخصصة. يُمكنك إلغاء الاشتراك في أي وقت عن طريق الإعدادات",
-      "descVariantB" : "We'll send you personalized tips, setup guides and relevant market news.",
+      "descVariantB" : "سنرسل إليك نصائح مخصصة، وإرشادات إعداد وأخبار السوق ذات الصلة.",
       "allow" : "السماح بالإشعارات",
       "later" : "ربّما في وقت لاحق"
     },
@@ -8090,6 +8093,15 @@
       "cta" : "تعرّف على المزيد"
     }
   },
+  "marketBanner" : {
+    "title" : "استكشف السوق",
+    "viewAll" : "عرض الكل",
+    "viewAllAccessibilityHint" : "انقر نقراً مزدوجاً لعرض كل أصول السوق",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}، {{change}}",
+      "accessibilityHint" : "انقر نقراً مزدوجاً لعرض تفاصيل السوق"
+    }
+  },
   "largeMover" : {
     "info" : "معلومات",
     "marketCap" : "سقف أسعار السوق (Market Cap)",
@@ -8329,6 +8341,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "مؤشر الحالة المزاجية",
+    "description" : "مؤشر الحالة المزاجية يشير إلى الحالة العاطفية للسوق. يتراوح بين 0 و 100، حيث تشير القيمة الأقل إلى الخوف الشديد، والقيمة الأعلى إلى الطمع الشديد.",
+    "levels" : {
+      "extremeFear" : "خوف+",
+      "fear" : "خوف",
+      "neutral" : "محايد",
+      "greed" : "طمع",
+      "extremeGreed" : "طمع+"
     }
   }
 }

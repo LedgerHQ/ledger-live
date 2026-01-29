@@ -5,19 +5,19 @@ import type {
   CantonOnboardProgress,
   CantonOnboardResult,
 } from "@ledgerhq/coin-canton/types";
+import { OnboardStatus, AuthorizeStatus } from "@ledgerhq/coin-canton/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
-import { Alert, Button, Checkbox, Flex, IconBox, Text } from "@ledgerhq/native-ui";
+import { Alert, Button, Checkbox, Flex, IconBox, Text, InfiniteLoader } from "@ledgerhq/native-ui";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "~/context/Locale";
 import { Linking, TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { Observable, Subscription } from "rxjs";
-import { filter, take } from "rxjs/operators";
 import styled from "styled-components/native";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -30,6 +30,7 @@ import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
 import { restoreNavigationSnapshot } from "../../utils/navigationSnapshot";
 import { CantonOnboardAccountParamList } from "../types";
+import { UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
 
 function isCantonOnboardResult(
   value: CantonOnboardProgress | CantonOnboardResult,
@@ -42,9 +43,6 @@ function isCantonAuthorizeResult(
 ): value is CantonAuthorizeResult {
   return "isApproved" in value;
 }
-
-const isCompleteOnboardResult = (value: CantonOnboardProgress | CantonOnboardResult): boolean =>
-  isCantonOnboardResult(value) && !!value.partyId;
 
 const isApprovedAuthorizeResult = (
   value: CantonAuthorizeProgress | CantonAuthorizeResult,
@@ -73,6 +71,9 @@ export default function Accept({ navigation, route }: Props) {
   const [result, setResult] = useState<CantonOnboardResult | null>(null);
   const [updated, setUpdated] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [onboardingStatus, setOnboardingStatus] = useState<OnboardStatus | AuthorizeStatus | null>(
+    null,
+  );
 
   const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
   const bridge = useMemo(() => {
@@ -95,9 +96,14 @@ export default function Accept({ navigation, route }: Props) {
     if (isReonboarding && accountToReonboard) {
       return accountToReonboard;
     }
-    return (accountsToAdd as CantonAccount[]).find(
+    if (accountsToAdd.length === 0) {
+      return undefined;
+    }
+    const notOnboarded = (accountsToAdd as CantonAccount[]).find(
       account => !account.cantonResources?.isOnboarded,
     );
+    const selectedAccount = notOnboarded || (accountsToAdd[0] as CantonAccount);
+    return selectedAccount;
   }, [isReonboarding, accountToReonboard, accountsToAdd]);
 
   const selectedIds = useMemo(
@@ -106,6 +112,8 @@ export default function Accept({ navigation, route }: Props) {
   );
 
   const deviceActionRequest = useMemo(() => ({ currency: cryptoCurrency }), [cryptoCurrency]);
+  const isNetworkProcessing =
+    onboardingStatus === OnboardStatus.SUBMIT || onboardingStatus === AuthorizeStatus.SUBMIT;
 
   const cleanupSubscription = useCallback(() => {
     if (subscriptionRef.current) {
@@ -220,22 +228,28 @@ export default function Accept({ navigation, route }: Props) {
 
     setError(null);
     setDisabled(true);
+    setOnboardingStatus(null);
 
     try {
-      const onboardObservable = bridge
-        .onboardAccount(cryptoCurrency, device.deviceId, accountToOnboard)
-        .pipe(filter(isCompleteOnboardResult), take(1));
+      const onboardObservable = bridge.onboardAccount(
+        cryptoCurrency,
+        device.deviceId,
+        accountToOnboard,
+      );
 
       createSubscription(
         onboardObservable,
         (value: CantonOnboardProgress | CantonOnboardResult) => {
-          if (!isCantonOnboardResult(value)) return;
-
-          setError(null);
-          setDisabled(false);
-          setResult(value);
-          if (skipCantonPreapprovalStep?.enabled) {
-            finishOnboarding(value);
+          if (isCantonOnboardResult(value)) {
+            setError(null);
+            setDisabled(false);
+            setOnboardingStatus(null);
+            setResult(value);
+            if (skipCantonPreapprovalStep?.enabled) {
+              finishOnboarding(value);
+            }
+          } else if ("status" in value) {
+            setOnboardingStatus(value.status);
           }
         },
       );
@@ -254,27 +268,43 @@ export default function Accept({ navigation, route }: Props) {
   ]);
 
   const handleConfirm = useCallback(() => {
-    // During reonboarding, if we don't have a result yet, start onboarding first
-    if (isReonboarding && !result) {
-      if (!device || !accountToOnboard) return;
+    // If we don't have a result yet, start onboarding first (both reonboarding and normal flow)
+    if (!result) {
+      if (!device || !accountToOnboard) {
+        return;
+      }
       retryOnboard();
       return;
     }
 
-    // Normal flow: authorize preapproval if we have a result
-    if (!device || !result) return;
+    // If we have a result, authorize preapproval
+    if (!device) {
+      return;
+    }
 
     setDisabled(true);
+    setOnboardingStatus(null);
 
-    const authorizeObservable = bridge
-      .authorizePreapproval(cryptoCurrency, device.deviceId, result.account, result.partyId)
-      .pipe(filter(isApprovedAuthorizeResult), take(1));
+    const authorizeObservable = bridge.authorizePreapproval(
+      cryptoCurrency,
+      device.deviceId,
+      result.account,
+      result.partyId,
+    );
 
-    createSubscription(authorizeObservable, () => {
-      finishOnboarding(result);
-    });
+    createSubscription(
+      authorizeObservable,
+      (value: CantonAuthorizeProgress | CantonAuthorizeResult) => {
+        if (isApprovedAuthorizeResult(value)) {
+          setDisabled(false);
+          setOnboardingStatus(null);
+          finishOnboarding(result);
+        } else if ("status" in value) {
+          setOnboardingStatus(value.status);
+        }
+      },
+    );
   }, [
-    isReonboarding,
     result,
     device,
     accountToOnboard,
@@ -316,6 +346,10 @@ export default function Accept({ navigation, route }: Props) {
       navigateToSuccess();
     }
   }, [accountsToAdd, dispatchAddAccounts, updated, isReonboarding, navigateToSuccess]);
+
+  if (disabled && isNetworkProcessing) {
+    return <ProcessingScreen />;
+  }
 
   if (disabled && device && cryptoCurrency) {
     return (
@@ -379,14 +413,10 @@ export default function Accept({ navigation, route }: Props) {
         </Text>
         <ValidatorSection />
         {isReonboarding && <ReonboardingWarning />}
-        {error && <ErrorSection disabled={disabled} onRetry={retryOnboard} />}
+        {error && <ErrorSection error={error} disabled={disabled} onRetry={retryOnboard} />}
       </Flex>
       <Flex px={6}>
-        <Button
-          type={"main"}
-          onPress={handleConfirm}
-          disabled={disabled || (!isReonboarding && !result)}
-        >
+        <Button type={"main"} onPress={handleConfirm} disabled={disabled}>
           <Trans i18nKey="common.confirm" />
         </Button>
       </Flex>
@@ -434,12 +464,71 @@ const ReonboardingWarning = () => {
   );
 };
 
-const ErrorSection = ({ disabled, onRetry }: { disabled: boolean; onRetry: () => void }) => {
+export const ErrorSection = ({
+  error,
+  disabled,
+  onRetry,
+}: {
+  error: Error | null;
+  disabled: boolean;
+  onRetry: () => void;
+}) => {
   const { t } = useTranslation();
+
+  const getErrorTitle = () => {
+    if (!error) return t("errors.generic.title", { message: "Error" });
+
+    if (error instanceof UserRefusedOnDevice || error instanceof LockedDeviceError) {
+      return t(`errors.${error.name}.title`);
+    }
+
+    if ("status" in error && typeof error.status === "number" && error.status === 429) {
+      return t("canton.onboard.error429");
+    }
+
+    return error.message || t("errors.generic.title", { message: "Error" });
+  };
+
+  const getErrorDescription = () => {
+    if (!error) return null;
+
+    if (error instanceof UserRefusedOnDevice || error instanceof LockedDeviceError) {
+      return t(`errors.${error.name}.description`);
+    }
+
+    if ("status" in error && typeof error.status === "number" && error.status === 429) {
+      return null;
+    }
+
+    return null;
+  };
+
+  const isQuotaExceeded =
+    error && "status" in error && typeof error.status === "number" && error.status === 429;
+  const showLearnMore = isQuotaExceeded;
+  const alertType = error instanceof UserRefusedOnDevice ? "warning" : "error";
+
   return (
     <Flex flexDirection="column" alignItems="stretch" mt={4} mx={6}>
-      <Alert title={t("canton.onboard.error429")} type="error">
-        <LearnMore />
+      <Alert type={alertType}>
+        <Flex flexDirection="column" rowGap={4} flex={1} flexShrink={1}>
+          {getErrorTitle() && (
+            <Text
+              variant="bodyLineHeight"
+              fontWeight="semiBold"
+              color="neutral.c100"
+              flexShrink={1}
+            >
+              {getErrorTitle()}
+            </Text>
+          )}
+          {getErrorDescription() && (
+            <Text variant="body" color="neutral.c100" flexShrink={1}>
+              {getErrorDescription()}
+            </Text>
+          )}
+          {showLearnMore && <LearnMore />}
+        </Flex>
       </Alert>
       <Button type="main" onPress={onRetry} disabled={disabled} mt={4}>
         <Trans i18nKey="common.retry" />
@@ -468,3 +557,33 @@ const LinkTouchable = styled(TouchableOpacity).attrs({
   align-items: center;
   justify-content: center;
 `;
+
+const ProcessingScreen = () => {
+  const { t } = useTranslation();
+  return (
+    <Flex
+      flex={1}
+      alignItems="stretch"
+      justifyContent="space-between"
+      px={6}
+      pb={6}
+      backgroundColor="background.main"
+      testID="processing-screen"
+    >
+      <Flex alignItems="center" justifyContent="center" flex={1}>
+        <Flex alignItems="center" justifyContent="center" mb={8}>
+          <InfiniteLoader size={60} />
+        </Flex>
+        <Text variant="h4" fontWeight="semiBold" textAlign="center" color="neutral.c100" mb={4}>
+          {t("canton.onboard.processing.title")}
+        </Text>
+        <Text variant="body" textAlign="center" color="neutral.c80" mb={3}>
+          {t("canton.onboard.processing.description")}
+        </Text>
+      </Flex>
+      <Flex mb={8}>
+        <Alert type="info" title={t("canton.onboard.processing.keepDeviceNearby")} />
+      </Flex>
+    </Flex>
+  );
+};

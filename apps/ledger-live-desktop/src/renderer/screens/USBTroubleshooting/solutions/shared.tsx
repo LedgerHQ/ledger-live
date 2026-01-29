@@ -1,10 +1,9 @@
 import React from "react";
-import styled, { DefaultTheme, StyledComponent } from "styled-components";
+import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import { Flex } from "@ledgerhq/react-ui";
 import Text from "~/renderer/components/Text";
 import ExternalLinkIcon from "~/renderer/icons/ExternalLink";
-import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
 
 export const Wrapper = styled(Box).attrs({
   alignItems: "center",
@@ -12,9 +11,7 @@ export const Wrapper = styled(Box).attrs({
   padding: 20px;
   grid-gap: 12px;
 `;
-export const DeviceSelectorWrapper: StyledComponent<"div", DefaultTheme, FlexBoxProps> = styled(
-  Flex,
-).attrs({
+export const DeviceSelectorWrapper = styled(Flex).attrs({
   height: "100%",
   width: "100%",
   justifyContent: "center",

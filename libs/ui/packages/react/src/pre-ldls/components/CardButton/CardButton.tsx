@@ -34,18 +34,18 @@ const Button = styled.button`
   border-color: ${({ theme: { theme } }) =>
     theme === "light" ? "var(--colors-border-light-default);" : "var(--colors-opacity-default-10);"}
 
-  :hover {
+  &:hover {
     background-color: var(--colors-surface-transparent-hover);
     ${({ theme: { theme } }) =>
       theme === "light" && "border-color: var(--colors-border-subdued-default-hover);"}
   }
 
-  :active {
+  &:active {
     background-color: var(--colors-surface-transparent-pressed);
     ${({ theme: { theme } }) => theme === "light" && "border-color: var(--colors-border-subdued-default-pressed);"}
   }
 
-  :focus-visible {
+  &:focus-visible {
     border-color: var(--colors-border-focus-default);
     border-width: var(--border-width-focus);
   }

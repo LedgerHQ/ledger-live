@@ -1,5 +1,4 @@
 import { useCallback, useEffect } from "react";
-import { AppState } from "react-native";
 import { getNotificationPermissionStatus } from "~/logic/getNotificationPermissionStatus";
 import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission";
 import { useNotificationsData } from "./useNotificationsData";
@@ -14,24 +13,27 @@ const useNotifications = () => {
   const {
     notifications,
     pushNotificationsDataOfUser,
-    resetOptOutState,
-    optOutOfNotifications,
+    markUserAsOptIn,
+    markUserAsOptOut,
     initializeNotificationSettingsState,
     syncOptOutState,
     updatePushNotificationsDataOfUserInStateAndStore,
+    updateUserLastInactiveTime,
   } = useNotificationsData();
 
-  const { nextRepromptDelay, shouldPromptOptInDrawerCallback } = useNotificationsPrompt({
-    permissionStatus,
-    areNotificationsAllowed: notifications.areNotificationsAllowed,
-    pushNotificationsDataOfUser,
-  });
+  const { nextRepromptDelay, shouldPromptOptInDrawerAfterAction, checkIsInactive } =
+    useNotificationsPrompt({
+      permissionStatus,
+      areNotificationsAllowed: notifications.areNotificationsAllowed,
+      pushNotificationsDataOfUser,
+    });
 
   const {
     isPushNotificationsModalOpen,
     drawerSource,
     eventTimeoutRef,
     tryTriggerPushNotificationDrawerAfterAction,
+    tryTriggerPushNotificationDrawerAfterInactivity,
     handleAllowNotificationsPress,
     handleDelayLaterPress,
     handleCloseFromBackdropPress,
@@ -40,9 +42,11 @@ const useNotifications = () => {
     areNotificationsAllowed: notifications.areNotificationsAllowed,
     pushNotificationsDataOfUser,
     nextRepromptDelay,
-    shouldPromptOptInDrawerCallback,
-    optOutOfNotifications,
-    resetOptOutState,
+    shouldPromptOptInDrawerAfterAction,
+    updateUserLastInactiveTime,
+    checkIsInactive,
+    markUserAsOptOut,
+    markUserAsOptIn,
     requestPushNotificationsPermission,
   });
 
@@ -73,11 +77,21 @@ const useNotifications = () => {
 
         setPermissionStatus(osPermissionStatus);
 
-        return syncOptOutState(osPermissionStatus, storedUserData);
+        syncOptOutState(osPermissionStatus, storedUserData);
+        return {
+          status: "success",
+          storedUserData,
+          osPermissionStatus,
+          areAppNotificationsEnabled: notifications.areNotificationsAllowed,
+        } as const;
       }
 
       if (permission.status === "rejected") {
-        return updatePushNotificationsDataOfUserInStateAndStore(storedUserData ?? {});
+        updatePushNotificationsDataOfUserInStateAndStore(storedUserData ?? {});
+        return {
+          status: "error",
+          reason: "Failed to get notification permission status",
+        } as const;
       }
     }
 
@@ -85,28 +99,24 @@ const useNotifications = () => {
       const osPermissionStatus = permission.value;
       setPermissionStatus(osPermissionStatus);
 
-      // ignore this case, we will check user status in the next initPushNotificationsData call
-      return;
+      return {
+        status: "error",
+        reason: "Failed to get push notifications user data from storage",
+      } as const;
     }
+
+    return {
+      status: "error",
+      reason:
+        "Failed to get push notifications user data from storage and notification permission status",
+    } as const;
   }, [
     initializeNotificationSettingsState,
-    syncOptOutState,
+    notifications.areNotificationsAllowed,
     setPermissionStatus,
+    syncOptOutState,
     updatePushNotificationsDataOfUserInStateAndStore,
   ]);
-
-  useEffect(() => {
-    // This catches when the user is redirected back from toggling on notifications in the os settings
-    const subscription = AppState.addEventListener("change", nextAppState => {
-      if (nextAppState === "active") {
-        initPushNotificationsData();
-      }
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, [initPushNotificationsData]);
 
   useEffect(() => {
     return () => {
@@ -131,16 +141,18 @@ const useNotifications = () => {
 
     requestPushNotificationsPermission,
 
-    tryTriggerPushNotificationDrawerAfterAction,
-
-    resetOptOutState,
-    optOutOfNotifications,
+    markUserAsOptIn,
+    markUserAsOptOut,
 
     handleAllowNotificationsPress,
     handleDelayLaterPress,
     handleCloseFromBackdropPress,
 
-    shouldPromptOptInDrawerCallback,
+    shouldPromptOptInDrawerAfterAction,
+    tryTriggerPushNotificationDrawerAfterAction,
+
+    // MAKE SURE TO CALL IT ONLY ON THE STACK NAVIGATOR WHERE THE USER IS ALREADY ONBOARDED
+    tryTriggerPushNotificationDrawerAfterInactivity,
   };
 };
 

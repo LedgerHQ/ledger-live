@@ -40,6 +40,8 @@ jobs:
         run: pnpm i -F "web-tools..." -F "ledger-live"
       - name: build web-tools
         run: pnpm turbo run build --filter="@ledgerhq/web-tools" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+      - name: typecheck web-tools
+        run: pnpm turbo run typecheck --filter="@ledgerhq/web-tools" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
 
   report:
     needs: build-web-tools
@@ -64,10 +66,10 @@ jobs:
               }
             };
 
-            const summary = `### Common Tools
+            const summary = `### Web Tools
 
-            ${statuses.tool.pass ? "Common Tools are fine" : "Common Tools build failed"}
-              - ${statuses.tool.pass ? "✅" : "❌"} **Common Tools* build* ended with status \`${statuses.tool.status}\`
+            ${statuses.tool.pass ? "Web Tools are fine" : "Web Tools build or typecheck failed"}
+              - ${statuses.tool.pass ? "✅" : "❌"} **Web Tools** ended with status \`${statuses.tool.status}\`
             `;
 
             const actions = [];

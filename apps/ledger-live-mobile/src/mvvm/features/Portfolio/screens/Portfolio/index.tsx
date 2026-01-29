@@ -1,160 +1,122 @@
 import React, { useMemo } from "react";
-import { Box, Flex, Text } from "@ledgerhq/native-ui";
+import { Platform } from "react-native";
 import Animated from "react-native-reanimated";
 
-import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
-import Carousel from "~/components/Carousel";
-import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
-import RecoverBanner from "~/components/RecoverBanner";
-import PortfolioEmptyState from "~/screens/Portfolio/PortfolioEmptyState";
-import SectionTitle from "~/screens/WalletCentricSections/SectionTitle";
-import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
-import AllocationsSection from "~/screens/WalletCentricSections/Allocations";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
-import PortfolioOperationsHistorySection from "~/screens/Portfolio/PortfolioOperationsHistorySection";
-import PortfolioGraphCard from "~/screens/Portfolio/PortfolioGraphCard";
-import PortfolioAssets from "~/screens/Portfolio/PortfolioAssets";
-import AnimatedContainer from "~/screens/Portfolio/AnimatedContainer";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
-import { LNSUpsellBanner } from "LLM/features/LNSUpsell";
-import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
-import { ContentCardLocation } from "~/dynamicContent/types";
 import { renderItem } from "LLM/utils/renderItem";
 import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import usePortfolioViewModel from "./usePortfolioViewModel";
+import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
+import {
+  PortfolioAllocationsSection,
+  PortfolioAssetsSection,
+  PortfolioCarouselSection,
+  PortfolioEmptyStateSection,
+  PortfolioHeaderSection,
+  PortfolioOperationsSection,
+  PortfolioBannersSection,
+} from "../../components";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
 >;
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(CollapsibleHeaderFlatList, {
-  progressViewOffset: 0,
+  progressViewOffset: Platform.OS === "android" ? 64 : 0,
 });
 
-function PortfolioScreen({ navigation }: NavigationProps) {
+export const PortfolioScreen = ({ navigation }: NavigationProps) => {
   const {
     hideEmptyTokenAccount,
-    colors,
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
-    t,
+    shouldDisplayGraphRework,
     openAddModal,
     closeAddModal,
     handleHeightChange,
     onBackFromUpdate,
     goToAnalyticsAllocations,
   } = usePortfolioViewModel(navigation);
+  const { backgroundColor } = useWallet40Theme("mobile");
 
-  const data = useMemo(
-    () => [
-      <WalletTabSafeAreaView key="portfolioHeaderElements" edges={["left", "right"]}>
-        <Flex px={6} key="FirmwareUpdateBanner">
-          <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-        </Flex>
-        <PortfolioGraphCard showAssets={showAssets} screenName="Wallet" key="PortfolioGraphCard" />
-        {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mt={7} />}
-        {!isLNSUpsellBannerShown && showAssets ? (
-          <ContentCardsLocation
-            key="contentCardsLocationPortfolio"
-            locationId={ContentCardLocation.TopWallet}
-            mt="20px"
-          />
-        ) : null}
-      </WalletTabSafeAreaView>,
-      showAssets ? (
-        isAccountListUIEnabled ? (
-          <AnimatedContainer onHeightChange={handleHeightChange}>
-            <Box background={colors.background.main} px={6} key="PortfolioAssets">
-              <RecoverBanner />
-              <PortfolioAssets
-                hideEmptyTokenAccount={hideEmptyTokenAccount}
-                openAddModal={openAddModal}
-              />
-            </Box>
-          </AnimatedContainer>
-        ) : (
-          <Box background={colors.background.main} px={6} key="PortfolioAssets">
-            <RecoverBanner />
-            <PortfolioAssets
-              hideEmptyTokenAccount={hideEmptyTokenAccount}
-              openAddModal={openAddModal}
-            />
-          </Box>
-        )
-      ) : null,
-      ...(showAssets && isAWalletCardDisplayed
-        ? [
-            <Box background={colors.background.main} key="CarouselTitle">
-              <SectionContainer px={0} minHeight={240} isFirst>
-                <SectionTitle
-                  title={t("portfolio.carousel.title")}
-                  containerProps={{ mb: 7, mx: 6 }}
-                />
-                <Carousel />
-              </SectionContainer>
-            </Box>,
-          ]
-        : []),
-      ...(showAssets
-        ? [
-            <SectionContainer px={6} isFirst={!isAWalletCardDisplayed} key="AllocationsSection">
-              <SectionTitle
-                title={t("analytics.allocation.title")}
-                testID="portfolio-allocation-section"
-              />
-              <Flex minHeight={94}>
-                <AllocationsSection screenName="Wallet" onPress={goToAnalyticsAllocations} />
-              </Flex>
-            </SectionContainer>,
-            <SectionContainer px={6} key="PortfolioOperationsHistorySection">
-              <SectionTitle
-                title={t("analytics.operations.title")}
-                testID="portfolio-transaction-history-section"
-              />
-              <PortfolioOperationsHistorySection />
-            </SectionContainer>,
-          ]
-        : [
-            <Flex flexDirection="column" mt={30} mx={6} key="PortfolioEmptyState">
-              <RecoverBanner />
-              <PortfolioEmptyState openAddAccountModal={openAddModal} />
-            </Flex>,
-          ]),
-    ],
-    [
-      onBackFromUpdate,
-      showAssets,
-      isAccountListUIEnabled,
-      handleHeightChange,
-      colors.background.main,
-      hideEmptyTokenAccount,
-      openAddModal,
-      isAWalletCardDisplayed,
-      isLNSUpsellBannerShown,
-      goToAnalyticsAllocations,
-      t,
-    ],
-  );
+  const data = useMemo(() => {
+    const sections: React.JSX.Element[] = [];
 
-  const DebugBanner = __DEV__ ? (
-    <Box backgroundColor="primary.c80" py={2} px={4} alignItems="center">
-      <Text color="neutral.c00" fontWeight="semiBold" fontSize={12}>
-        {"MVVM Portfolio (lwmWallet40)"}
-      </Text>
-    </Box>
-  ) : null;
+    sections.push(
+      <PortfolioHeaderSection
+        key="header"
+        showAssets={showAssets}
+        hideGraph={shouldDisplayGraphRework}
+        onBackFromUpdate={onBackFromUpdate}
+      />,
+    );
+
+    if (!showAssets) {
+      sections.push(<PortfolioEmptyStateSection key="empty" openAddModal={openAddModal} />);
+      return sections;
+    }
+
+    sections.push(
+      <PortfolioBannersSection
+        key="banners"
+        isFirst={true}
+        isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+        showAssets={showAssets}
+      />,
+    );
+
+    sections.push(
+      <PortfolioAssetsSection
+        key="assets"
+        isAccountListUIEnabled={isAccountListUIEnabled}
+        hideEmptyTokenAccount={hideEmptyTokenAccount}
+        openAddModal={openAddModal}
+        onHeightChange={handleHeightChange}
+      />,
+    );
+
+    if (isAWalletCardDisplayed) {
+      sections.push(<PortfolioCarouselSection key="carousel" backgroundColor={backgroundColor} />);
+    }
+
+    if (!shouldDisplayGraphRework) {
+      sections.push(
+        <PortfolioAllocationsSection
+          key="allocations"
+          isFirst={!isAWalletCardDisplayed}
+          onPress={goToAnalyticsAllocations}
+        />,
+      );
+    }
+
+    sections.push(<PortfolioOperationsSection key="operations" />);
+
+    return sections;
+  }, [
+    showAssets,
+    shouldDisplayGraphRework,
+    onBackFromUpdate,
+    isLNSUpsellBannerShown,
+    isAccountListUIEnabled,
+    hideEmptyTokenAccount,
+    openAddModal,
+    handleHeightChange,
+    isAWalletCardDisplayed,
+    backgroundColor,
+    goToAnalyticsAllocations,
+  ]);
 
   return (
     <>
-      {DebugBanner}
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
       <Animated.View style={{ flex: 1 }}>
@@ -173,6 +135,4 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       </Animated.View>
     </>
   );
-}
-
-export default PortfolioScreen;
+};

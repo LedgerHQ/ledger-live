@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { openModal } from "~/renderer/actions/modals";
@@ -7,8 +7,8 @@ const ReleaseNotesButton = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onClick = useCallback(
-    (e: SyntheticEvent<HTMLButtonElement>) => {
-      e.preventDefault();
+    (e?: React.MouseEvent) => {
+      if (e) e.preventDefault();
       dispatch(openModal("MODAL_RELEASE_NOTES", undefined));
     },
     [dispatch],

@@ -221,7 +221,7 @@ describe("LedgerSyncEntryPoint", () => {
       expect(bannerTitle).toBeVisible();
 
       const bannerDescription = screen.getByText(
-        /Keep your portfolio up to date when switching computers or use a phone/,
+        /Keep your portfolio up to date when switching computers or using a phone/,
       );
       expect(bannerDescription).toBeVisible();
 
@@ -246,7 +246,7 @@ describe("LedgerSyncEntryPoint", () => {
       expect(bannerTitle).toBeVisible();
 
       const bannerDescription = screen.getByText(
-        /Keep your portfolio up to date when switching computers or use a phone/,
+        /Keep your portfolio up to date when switching computers or using a phone/,
       );
       expect(bannerDescription).toBeVisible();
 
@@ -271,7 +271,7 @@ describe("LedgerSyncEntryPoint", () => {
       expect(bannerTitle).toBeVisible();
 
       const bannerDescription = screen.getByText(
-        /Keep your portfolio up to date when switching computers or use a phone/,
+        /Keep your portfolio up to date when switching computers or using a phone/,
       );
       expect(bannerDescription).toBeVisible();
 

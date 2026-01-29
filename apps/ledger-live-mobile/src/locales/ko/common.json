@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "수령할 보상이 없습니다"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "메모가 너무 깁니다. 최대 길이는 {{maxLength}}자 입니다."
-    },
     "NearNewAccountWarning" : {
       "title" : "수령인 계정이 아직 생성되지 않았습니다. 프로토콜을 생성하려면 {{formattedNewAccountStorageCost}} 전송이 필요합니다."
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "금액은 {{threshold}} 이상이어야 합니다."
+    },
+    "XrpInvalidMemo" : {
+      "title" : "메모 형식 오류. 4294967296보다 작아야 합니다."
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "메모 길이 초과. 최대 100자까지 지원됩니다"
     },
     "PinNotSet" : {
       "title" : "PIN이 설정되지 않았습니다"
@@ -8090,6 +8093,15 @@
       "cta" : "자세히 알아보기"
     }
   },
+  "marketBanner" : {
+    "title" : "시장 탐색하기",
+    "viewAll" : "모두 보기",
+    "viewAllAccessibilityHint" : "두 번 탭하면 모든 시장 자산이 표시됩니다",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "두 번 탭하면 시장 상세 정보가 표시됩니다"
+    }
+  },
   "largeMover" : {
     "info" : "정보",
     "marketCap" : "시가총액",
@@ -8329,6 +8341,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "시장 심리 지수",
+    "description" : "시장 심리 지수는 시장의 정서적 상태를 나타냅니다. 0~100 사이 수치로 표시되며, 값이 낮을수록 극도의 공포를, 값이 높을수록 극도의 탐욕을 의미합니다.",
+    "levels" : {
+      "extremeFear" : "공포+",
+      "fear" : "공포",
+      "neutral" : "중립",
+      "greed" : "탐욕",
+      "extremeGreed" : "탐욕+"
     }
   }
 }

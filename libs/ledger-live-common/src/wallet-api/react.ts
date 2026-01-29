@@ -23,6 +23,7 @@ import type {
 } from "@ledgerhq/cryptoassets/lib/cal-client/state-manager/types";
 import { Subject } from "rxjs";
 import { StateDB } from "../hooks/useDBRaw";
+import { useFeatureFlags } from "../featureFlags/FeatureFlagsContext";
 import {
   accountToWalletAPIAccount,
   currencyToWalletAPICurrency,
@@ -48,6 +49,7 @@ import {
   bitcoinFamilyAccountGetPublicKeyLogic,
   signRawTransactionLogic,
 } from "./logic";
+import { handlers as featureFlagsHandlers } from "./FeatureFlags";
 import { getAccountBridge } from "../bridge";
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
@@ -307,6 +309,7 @@ export function useWalletAPIServer({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<ThunkDispatch<any, any, UnknownAction>>();
   const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+  const { getFeature } = useFeatureFlags();
   const permission = usePermission(manifest);
   const transport = useTransport(webviewHook.postMessage);
   const [widgetLoaded, setWidgetLoaded] = useState(false);
@@ -315,11 +318,21 @@ export function useWalletAPIServer({
   // If we don't want the map to be empty when requesting an account
   useSetWalletAPIAccounts(accounts);
 
+  // Merge featureFlags handler with customHandlers
+  const mergedCustomHandlers = useMemo(() => {
+    const featureFlagsHandlersInstance = featureFlagsHandlers({ manifest, getFeature });
+
+    return {
+      ...featureFlagsHandlersInstance,
+      ...customHandlers,
+    };
+  }, [manifest, customHandlers, getFeature]);
+
   const { server, onMessage } = useWalletAPIServerRaw({
     transport,
     config,
     permission,
-    customHandlers,
+    customHandlers: mergedCustomHandlers,
   });
 
   useEffect(() => {

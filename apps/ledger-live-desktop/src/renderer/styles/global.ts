@@ -92,25 +92,25 @@ export const GlobalStyle = createGlobalStyle`
 
   --track-color: rgba(0,0,0,0);
 
-  ::-webkit-scrollbar              {
+  &::-webkit-scrollbar              {
     width: ${p => p.theme.overflow.trackSize}px;
     height: ${p => p.theme.overflow.trackSize}px;
     background-color: rgba(0,0,0,0);
   }
-  ::-webkit-scrollbar-button       {
+  &::-webkit-scrollbar-button       {
     opacity: 0;
     height: 0;
     width: 0;
   }
-  ::-webkit-scrollbar-track        {
+  &::-webkit-scrollbar-track        {
     background-color: rgba(0,0,0,0);
   }
-  ::-webkit-scrollbar-thumb        {
+  &::-webkit-scrollbar-thumb        {
     box-shadow: inset 0 0 0 ${p => p.theme.overflow.trackSize}px var(--track-color);
     border: 2px solid rgba(0,0,0,0);
     border-radius: ${p => p.theme.overflow.trackSize}px;
   }
-  ::-webkit-scrollbar-corner {
+  &::-webkit-scrollbar-corner {
     opacity: 0;
   }
 `;

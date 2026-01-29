@@ -867,7 +867,7 @@ for (const swap of tooLowAmountForQuoteSwaps) {
 const swapNetworkFeesAboveAccountBalanceTestConfig = {
   swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, ""),
   errorMessage: new RegExp(
-    `You need \\d+\\.\\d+ ETH in your account to pay for transaction fees on the Ethereum network. {2}Buy ETH or deposit more into your account. Learn more`,
+    `Your account .+ doesn't have enough balance to cover the network fees\\.`,
   ),
   xrayTicket: "B2CQA-2363",
   tags: [
@@ -920,7 +920,6 @@ test.describe(`Swap - Error message when network fees are above account balance 
       { scope: "test" },
     ],
   });
-
   test(
     `Swap - Network fees above account balance`,
     {
@@ -953,8 +952,8 @@ test.describe(`Swap - Error message when network fees are above account balance 
       );
       await app.swap.checkQuotes(electronApp);
       await app.swap.selectExchange(electronApp);
-      await app.swap.tapQuoteInfosFeesSelector(electronApp);
-      await app.swap.checkFeeDrawerErrorMessage(
+      await app.swap.checkFeeErrorMessage(
+        electronApp,
         swapNetworkFeesAboveAccountBalanceTestConfig.errorMessage,
       );
     },

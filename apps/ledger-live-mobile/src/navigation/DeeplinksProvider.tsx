@@ -12,6 +12,7 @@ import {
 import Config from "react-native-config";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -345,6 +346,7 @@ export const DeeplinksProvider = ({
   logStartupEvent("DeeplinksProvider render");
 
   const dispatch = useDispatch();
+  const triggeredAppStartRef = useRef(true);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   // Hook to close drawers when deeplink is triggered after app was in background
@@ -357,6 +359,7 @@ export const DeeplinksProvider = ({
   const userAcceptedTerms = useGeneralTermsAccepted();
   const buySellUiFlag = useFeature("buySellUi");
   const llmAccountListUI = useFeature("llmAccountListUI");
+  const { shouldDisplayMarketBanner } = useWalletFeaturesConfig("mobile");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
@@ -517,6 +520,7 @@ export const DeeplinksProvider = ({
           const sub = Linking.addEventListener("url", ({ url }) => {
             // Track deeplink session when app comes from background
             track("Start", { isDeeplinkSession: true });
+            triggeredAppStartRef.current = false;
 
             // Close all drawers if app was in background before deeplink
             onDeeplinkReceived();
@@ -574,9 +578,13 @@ export const DeeplinksProvider = ({
             }, 4000); // Allow 4 seconds before resetting password lock, unless on Detox e2e test, as this breaks CI.
           }
 
+          const triggeredAppStart = triggeredAppStartRef.current;
+          triggeredAppStartRef.current = false;
+
           // Track deeplink only when ajsPropSource attribute exists.
           if (ajsPropSource) {
             track(TRACKING_EVENT, {
+              triggeredAppStart,
               deeplinkSource: ajsPropSource,
               deeplinkCampaign: ajsPropCampaign,
               url: hostname,
@@ -588,6 +596,7 @@ export const DeeplinksProvider = ({
             });
           } else
             track(TRACKING_EVENT, {
+              triggeredAppStart,
               deeplinkSource,
               deeplinkType,
               deeplinkDestination,
@@ -618,6 +627,34 @@ export const DeeplinksProvider = ({
 
               if (!validatedCurrencyId) {
                 return getStateFromPath("market", config);
+              }
+
+              url.pathname = `/${validatedCurrencyId}`;
+              return getStateFromPath(url.href?.split("://")[1], config);
+            }
+            if (shouldDisplayMarketBanner) {
+              return {
+                routes: [
+                  {
+                    name: NavigatorName.Base,
+                    state: {
+                      routes: [{ name: ScreenName.MarketList }],
+                    },
+                  },
+                ],
+              };
+            }
+            return getStateFromPath("market", config);
+          }
+
+          // Handle asset deeplink - validate currencyId before navigation
+          if (hostname === "asset") {
+            const currencyIdFromPath = pathname.replace("/", "");
+            if (currencyIdFromPath) {
+              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
+
+              if (!validatedCurrencyId) {
+                return getStateFromPath("portfolio", config);
               }
 
               url.pathname = `/${validatedCurrencyId}`;
@@ -739,11 +776,12 @@ export const DeeplinksProvider = ({
     llmAccountListUI?.enabled,
     AccountsListScreenName,
     userAcceptedTerms,
+    onDeeplinkReceived,
     buySellUiManifestId,
     dispatch,
+    shouldDisplayMarketBanner,
     liveAppProviderInitialized,
     manifests,
-    onDeeplinkReceived,
   ]);
   const [isReady, setIsReady] = React.useState(false);
 

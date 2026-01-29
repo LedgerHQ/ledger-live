@@ -10,7 +10,18 @@ const swapTestConfig = {
     "This sending account does not belong to the connected device. Please change and retry.",
   addressFrom: Addresses.ETH_OTHER_SEED,
   addressTo: Addresses.BTC_NATIVE_SEGWIT_1,
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+  tags: [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    "@ethereum",
+    "@family-evm",
+    "@bitcoin",
+    "@family-bitcoin",
+  ],
 };
 
 runSwapWithDifferentSeedTest(

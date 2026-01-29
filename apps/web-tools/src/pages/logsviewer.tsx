@@ -143,7 +143,7 @@ const Header = ({
 
   const linkToExplorer = (accountId: string) => {
     try {
-      const { currencyId } = decodeAccountId(accountId);
+      const { currencyId, xpubOrAddress } = decodeAccountId(accountId);
       const currency = findCryptoCurrencyById(currencyId);
       if (currency && currency.explorerViews && currency.explorerViews.length > 0) {
         const explorerView = currency.explorerViews[0];

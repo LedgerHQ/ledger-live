@@ -33,6 +33,7 @@ import type { ToastState } from "./toast";
 import type { ModularDrawerState } from "./modularDrawer";
 import type { LLMRTKApiState } from "~/context/rtkQueryApi";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
+import type { TransferDrawerState } from "./transferDrawer";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 
@@ -116,7 +117,14 @@ export type NotificationsState = {
   /** Boolean indicating whether the push notifications modal is opened or closed */
   isPushNotificationsModalOpen: boolean;
   /** This helps us know what action caused the push notifications modal to open */
-  drawerSource?: "onboarding" | "send" | "receive" | "swap" | "stake" | "add_favorite_coin";
+  drawerSource?:
+    | "onboarding"
+    | "send"
+    | "receive"
+    | "swap"
+    | "stake"
+    | "add_favorite_coin"
+    | "inactivity";
   /** Data related to the user's app usage. We use this data to prompt the push notifications modal on certain conditions only */
   dataOfUser?: DataOfUser;
 };
@@ -275,6 +283,7 @@ export type SettingsState = {
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
+  hasSeenWalletV4Tour: boolean;
 };
 
 export type NotificationsSettings = {
@@ -369,6 +378,7 @@ export type State = LLMRTKApiState & {
   market: MarketState;
   modularDrawer: ModularDrawerState;
   receiveOptionsDrawer: ReceiveOptionsDrawerState;
+  transferDrawer: TransferDrawerState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;

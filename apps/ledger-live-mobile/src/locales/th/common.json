@@ -1107,9 +1107,6 @@
     "HederaNoStakingRewardsError" : {
       "title" : "ไม่มี Reward ให้เคลม"
     },
-    "HederaMemoIsTooLong" : {
-      "title" : "Memo ยาวเกินไป ความยาวสูงสุดคือ {{maxLength}} ตัวอักษร"
-    },
     "NearNewAccountWarning" : {
       "title" : "ยังไม่ได้สร้างบัญชีผู้รับ Protocol ต้องมีการโอน {{formattedNewAccountStorageCost}} เพื่อสร้าง"
     },
@@ -1133,6 +1130,12 @@
     },
     "NearStakingThresholdNotMet" : {
       "title" : "จำนวนต้องมีอย่างน้อย {{threshold}}"
+    },
+    "XrpInvalidMemo" : {
+      "title" : "รูปแบบของ Memo ไม่ถูกต้อง ควรน้อยกว่า 4294967296"
+    },
+    "HederaMemoExceededSizeError" : {
+      "title" : "ขนาด Memo ไม่ถูกต้อง ขนาดสูงสุดที่อนุญาตคือ 100 ตัวอักษร"
     },
     "PinNotSet" : {
       "title" : "ไม่ได้ตั้งค่า PIN"
@@ -3474,9 +3477,9 @@
   "notifications" : {
     "prompt" : {
       "title" : "เปิดการแจ้งเตือน",
-      "titleVariantB" : "Get the most of Ledger Wallet",
+      "titleVariantB" : "รับประโยชน์สูงสุดจากแอป Ledger Wallet",
       "desc" : "รับข้อมูลอัปเดตล่าสุดเกี่ยวกับแอป Ledger Wallet, ผลิตภัณฑ์ Ledger, ตลาด ตลอดจนคำแนะนำส่วนบุคคล ยกเลิกได้ทุกเมื่อในการตั้งค่า",
-      "descVariantB" : "We'll send you personalized tips, setup guides and relevant market news.",
+      "descVariantB" : "เราจะส่งเคล็ดลับที่ปรับเข้ากับบุคคล คู่มือการติดตั้ง และข่าวสารตลาดที่เกี่ยวข้องให้กับคุณ",
       "allow" : "อนุญาตการแจ้งเตือน",
       "later" : "อาจดำเนินการในภายหลัง"
     },
@@ -8090,6 +8093,15 @@
       "cta" : "เรียนรู้เพิ่มเติม"
     }
   },
+  "marketBanner" : {
+    "title" : "สำรวจตลาด",
+    "viewAll" : "ดูทั้งหมด",
+    "viewAllAccessibilityHint" : "แตะสองครั้งเพื่อดูสินทรัพย์ในตลาดทั้งหมด",
+    "tile" : {
+      "accessibilityLabel" : "{{name}}, {{change}}",
+      "accessibilityHint" : "แตะสองครั้งเพื่อดูรายละเอียดของตลาด"
+    }
+  },
   "largeMover" : {
     "info" : "ข้อมูล",
     "marketCap" : "มูลค่าหลักทรัพย์ตามราคาตลาด",
@@ -8329,6 +8341,17 @@
           }
         }
       }
+    }
+  },
+  "fearAndGreed" : {
+    "title" : "ดัชนีวัดอารมณ์",
+    "description" : "ดัชนีวัดอารมณ์บ่งชี้ถึงสภาวะทางอารมณ์ของตลาด โดยมีช่วงตั้งแต่ 0 ถึง 100 โดยมูลค่าที่ต่ำกว่าแสดงถึงความกลัวขั้นสุด และมูลค่าที่สูงกว่าแสดงถึงความโลภขั้นสุด",
+    "levels" : {
+      "extremeFear" : "กลัวขั้นสุด",
+      "fear" : "กลัว",
+      "neutral" : "ปกติ",
+      "greed" : "โลภ",
+      "extremeGreed" : "โลภขั้นสุด"
     }
   }
 }

@@ -15,7 +15,6 @@ const meta: Meta<typeof AddAccountButton> = {
   title: "PreLdls/Components/AddAccountButton",
   tags: ["autodocs"],
   args: {
-    t: (key: string) => key,
     onClick: () => {},
     label: "Add new or existing account",
   },

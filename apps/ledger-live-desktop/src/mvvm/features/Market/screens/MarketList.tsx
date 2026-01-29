@@ -11,6 +11,7 @@ import { TableCell, TableRow } from "~/renderer/screens/market/components/Table"
 import { NoCryptoPlaceholder } from "~/renderer/screens/market/MarketList/components/NoCryptoPlaceholder";
 import { MarketRowItem } from "../components/MarketRowItem";
 import { Star, StarFill } from "@ledgerhq/lumen-ui-react/symbols";
+import { ScrollContainer } from "LLD/components/ScrollContainer";
 
 type MarketListVirtualization = {
   parentRef: RefObject<HTMLDivElement>;
@@ -56,7 +57,7 @@ function MarketList({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col rounded-md bg-surface-hover">
+    <div className="flex min-h-0 flex-1 flex-col rounded-md bg-surface">
       {search && currenciesLength > 0 && <TrackPage category="Market Search" success={true} />}
       <div className="px-20">
         <TableRow header>
@@ -82,10 +83,7 @@ function MarketList({
         </TableRow>
       </div>
 
-      <div
-        ref={parentRef}
-        className="min-h-0 w-full flex-1 overflow-x-hidden overflow-y-auto [scrollbar-gutter:stable]"
-      >
+      <ScrollContainer ref={parentRef}>
         <div
           style={{
             height: `${rowVirtualizer.getTotalSize()}px`,
@@ -120,7 +118,7 @@ function MarketList({
             );
           })}
         </div>
-      </div>
+      </ScrollContainer>
     </div>
   );
 }

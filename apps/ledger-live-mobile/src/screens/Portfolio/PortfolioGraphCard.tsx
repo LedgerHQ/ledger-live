@@ -7,14 +7,22 @@ import { useSelector } from "~/context/hooks";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
 import { areAccountsEmptySelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector } from "~/reducers/settings";
+import { PortfolioBalanceSection } from "LLM/features/Portfolio/components";
 import GraphCardContainer from "./GraphCardContainer";
 
 type Props = {
   showAssets: boolean;
   screenName: string;
+  hideGraph?: boolean;
+  isReadOnlyMode?: boolean;
 };
 
-const PortfolioGraphCard = ({ showAssets, screenName }: Props) => {
+const PortfolioGraphCard = ({
+  showAssets,
+  screenName,
+  hideGraph,
+  isReadOnlyMode = false,
+}: Props) => {
   const areAccountsEmpty = useSelector(areAccountsEmptySelector);
   const portfolio = usePortfolioAllAccounts();
   const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
@@ -27,6 +35,10 @@ const PortfolioGraphCard = ({ showAssets, screenName }: Props) => {
     setGraphCardEndPosition(y + height / 10);
   }, []);
 
+  if (hideGraph) {
+    return <PortfolioBalanceSection showAssets={showAssets} isReadOnlyMode={isReadOnlyMode} />;
+  }
+
   return (
     <Box onLayout={onPortfolioCardLayout}>
       <GraphCardContainer
@@ -37,6 +49,7 @@ const PortfolioGraphCard = ({ showAssets, screenName }: Props) => {
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}
         screenName={screenName}
+        hideGraph={hideGraph}
       />
     </Box>
   );

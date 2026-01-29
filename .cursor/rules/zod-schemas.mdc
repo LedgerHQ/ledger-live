@@ -1,0 +1,90 @@
+---
+description: Zod schema validation patterns for API types
+alwaysApply: true
+---
+
+# Zod Schema Validation
+
+Define types in `state-manager/types.ts` using Zod schemas for runtime validation.
+
+## Structure
+
+- Define Zod schemas first, then infer TypeScript types
+- Use enums for tag types
+- Export both schemas and inferred types
+
+```typescript
+// ✅ GOOD - state-manager/types.ts
+import { z } from "zod";
+
+// 1. Define tag types as enum
+export enum MyDataTags {
+  Items = "Items",
+  Item = "Item",
+}
+
+// 2. Define Zod schemas with validation rules
+const ItemSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1),
+  value: z.number().min(0),
+  status: z.enum(["active", "inactive"]),
+  createdAt: z.string().datetime(),
+});
+
+const ItemResponseSchema = z.object({
+  data: ItemSchema,
+  meta: z.object({
+    timestamp: z.string(),
+    version: z.string(),
+  }),
+});
+
+const ItemListResponseSchema = z.object({
+  items: z.array(ItemSchema),
+  pagination: z.object({
+    nextCursor: z.string().optional(),
+    total: z.number(),
+  }),
+});
+
+// 3. Infer TypeScript types from schemas
+export type Item = z.infer<typeof ItemSchema>;
+export type ItemResponse = z.infer<typeof ItemResponseSchema>;
+export type ItemListResponse = z.infer<typeof ItemListResponseSchema>;
+
+// 4. Define query params as interfaces
+export interface GetItemsParams {
+  search?: string;
+  limit?: number;
+  cursor?: string;
+}
+
+// 5. Export schemas for runtime validation
+export { ItemSchema, ItemResponseSchema, ItemListResponseSchema };
+```
+
+## Using Schemas in API
+
+```typescript
+// state-manager/api.ts
+import { ItemListResponseSchema, type ItemListResponse } from "./types";
+
+endpoints: (build) => ({
+  getItems: build.query<ItemListResponse, GetItemsParams>({
+    query: (params) => ({ url: "items", params }),
+    transformResponse: (response: unknown) => {
+      // Runtime validation
+      return ItemListResponseSchema.parse(response);
+    },
+  }),
+}),
+```
+
+## Best Practices
+
+- Use `.min()`, `.max()`, `.uuid()`, `.email()` for field validation
+- Use `z.enum()` for fixed string values
+- Use `z.union()` for multiple possible types
+- Use `.optional()` for nullable fields
+- Always infer types with `z.infer<typeof Schema>`

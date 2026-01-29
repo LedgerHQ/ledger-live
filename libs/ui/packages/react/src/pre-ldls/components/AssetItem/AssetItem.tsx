@@ -45,11 +45,11 @@ const Wrapper = styled.div`
   align-items: center;
   overflow: hidden;
 
-  :hover {
+  &:hover {
     background-color: var(--colors-surface-transparent-hover);
   }
 
-  :active {
+  &:active {
     background-color: var(--colors-surface-transparent-pressed);
   }
 `;

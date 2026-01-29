@@ -15,7 +15,7 @@ type ContainerProps = {
   appearanceType: Appearance["type"];
 };
 
-const Container = styled(Flex).attrs((p: ContainerProps) => ({
+const Container = styled(Flex).attrs<ContainerProps>(p => ({
   position: "relative",
   justifyContent: "center",
   alignItems: "center",
@@ -26,14 +26,16 @@ const Container = styled(Flex).attrs((p: ContainerProps) => ({
   padding: p.appearanceType === "two-colors" ? 0 : 2,
   borderColor: p.selected ? "neutral.c100" : "transparent",
   borderRadius: p.appearanceType === "two-colors" ? "5px" : "8px",
-}))<ContainerProps>``;
+}))``;
 
-const ContrastOptionColors = styled(Box).attrs({
+const ContrastOptionColors = styled(Box).attrs<{
+  colors: { topLeft: string; bottomRight: string };
+}>({
   borderRadius: "4px",
   height: 46,
   width: 46,
   overflow: "hidden",
-})<{ colors: { topLeft: string; bottomRight: string } }>`
+})`
   background: linear-gradient(
     to bottom right,
     ${p => p.colors.topLeft} calc(50% - 1px),

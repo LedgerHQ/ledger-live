@@ -28,6 +28,10 @@ export const datapointLimits: Record<RateGranularity, number> = {
   hourly: 7 * DAY, // we fetch at MOST a week of hourly. after that there are too much data...
 };
 
+export const datapointRetention: Record<Extract<RateGranularity, "hourly">, number> = {
+  hourly: 7 * DAY, // we keep hourly data for 7 days
+};
+
 /**
  * efficient implementation of YYYY-MM-DD formatter
  * @memberof countervalue

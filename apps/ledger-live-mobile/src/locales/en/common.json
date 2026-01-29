@@ -2681,6 +2681,10 @@
       "seeMarket": "See all"
     },
     "walletBalance": "Wallet balance",
+    "balance": {
+      "noSigner": "The most secure\nwallet",
+      "noFund": "Secure your\ncrypto"
+    },
     "seeAllAssets": "See all assets",
     "seeAllAccounts": "See all accounts",
     "marketPriceSection": {
@@ -2701,6 +2705,18 @@
       "send": "Send",
       "deposit": "Receive",
       "stake": "Stake"
+    },
+    "quickActionsCtas": {
+      "transfer": "Transfer",
+      "swap": "Swap",
+      "buy": "Buy",
+      "transferDrawer": {
+        "title": "Transfer",
+        "receiveCrypto": "Receive crypto",
+        "sendCrypto": "Send crypto",
+        "bankTransfer": "Bank transfer",
+        "bankTransferDescription": "Receive stablecoin by sending cash"
+      }
     },
     "recoverBanner": {
       "subscribeDone": {
@@ -3478,9 +3494,9 @@
   "notifications": {
     "prompt": {
       "title": "Turn notifications on",
-      "titleVariantB": "Get the most of Ledger Wallet",
+      "titleVariantB": "Don't miss what matters",
       "desc": "Get the latest updates on Ledger Wallet, Ledger products, the market, and personalised recommendations. Opt-out anytime in the settings",
-      "descVariantB": "We'll send you personalized tips, setup guides and relevant market news.",
+      "descVariantB": "Get real-time alerts on new tokens, earning opportunities, and market shifts. Opt out at any time.",
       "allow": "Allow notifications",
       "later": "Maybe later"
     },
@@ -8254,7 +8270,7 @@
     },
     "transactionCannotBeCreated": {
       "title": "Partner unavailable",
-      "description": "Changelly cannot process this transaction. Error code 8HBB-{{randomCode}}"
+      "description": "The swap provider cannot process this transaction. Error code 8HBB-{{randomCode}}"
     },
     "swapQuoteLowLiquidity": {
       "title": "Partner unavailable",
@@ -8291,6 +8307,11 @@
       "preapprove": "Successfully added account",
       "validator": "Ledger Validator",
       "title": "Automatically accept incoming funds",
+      "processing": {
+        "title": "Processing transaction",
+        "description": "This process may take up to 1 minute",
+        "keepDeviceNearby": "Stay in the Ledger Wallet app and keep your Ledger nearby."
+      },
       "reonboard": {
         "title": "Account Update Required",
         "account": "Account",
