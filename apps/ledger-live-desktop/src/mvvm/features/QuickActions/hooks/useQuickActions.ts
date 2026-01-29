@@ -1,11 +1,11 @@
 import { useCallback } from "react";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { openModal } from "~/renderer/actions/modals";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
 import { ArrowDown, Plus, Minus, ArrowUp } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "react-i18next";
-import { areAccountsEmptySelector, hasAccountsSelector } from "~/renderer/reducers/accounts";
+import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { QuickAction } from "../types";
 import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "../../ModularDrawer";
@@ -16,8 +16,7 @@ export const useQuickActions = (): { actionsList: QuickAction[] } => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
-  const hasAccount = useSelector(hasAccountsSelector);
-  const hasFunds = !useSelector(areAccountsEmptySelector) && hasAccount;
+  const { hasAccount, hasFunds } = useAccountStatus();
 
   const { openAssetFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
