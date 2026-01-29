@@ -23,6 +23,7 @@ import {
   etherscanOperationToOperations,
 } from "../../../../adapters";
 import { getCoinConfig } from "../../../../config";
+import { NO_TOKEN } from "../../../../network/explorer/types";
 
 setupMockCryptoAssetsStore({
   getTokensSyncHash: async () => "0",
@@ -1522,6 +1523,9 @@ describe("EVM Family", () => {
     // so we have only 3 calls cascading: coin, internal, token
     // for the sake of simplicity of the tests, we assume that exhaustEndpoint is working perfectly, and it is tested separately (no case with same height spreading over multiple pages)
     // you will have to implement an intelligent mock that provided the operations of the block chain, it can return the correct operations for the given limi and range
+    // 1 test "it" per scenario use describe to group top level category
+    // each test must be a single given, when, then as short as possible, only the essential
+    // you can create helpers
     // range: is the range of block chain the search is made on, idependent of sort mode, fromBlock is lower bound, toBlock is upper bound: [fromBlock, toBlock] with fromBlock <= toBlock
     
     // -- given desc mode, limit=3, fromBlock=Ø, toBlock=Ø, token=Ø
@@ -1684,280 +1688,274 @@ describe("EVM Family", () => {
     // - token([2, 6])            [T6]           boundBlock = Ø, isPageFull=false, hasMorePage=false (because unbounded by boundBlock and ops < limit within from/to)
     // returns                    [C6 T6 C5 I5 I4 I2]        pagination token = Ø (because reached original fromBlock)
 
-    //
-    it("should cascade block range from coin to internal when coin returns full page", async () => {
-      const coinBlockHeight = 150;
-      // Track calls per endpoint to return empty on page 2+ (to avoid infinite loop in exhaustEndpoint)
-      const coinCallCount = { count: 0 };
-      const spy = jest.spyOn(axios, "request").mockImplementation(async config => {
-        const url = config.url as string;
-        if (getEndpointType(url) === "coin") {
-          coinCallCount.count++;
-          // First call returns op, subsequent calls return empty (to break exhaustEndpoint loop)
-          if (coinCallCount.count === 1) {
-            return { data: { result: createMockCoinTxResponse([coinBlockHeight]) } };
-          }
-        }
-        return { data: { result: [] } };
-      });
+    // Type for blockchain operation representation in test scenarios
+    type BlockchainOp = { type: "C" | "I" | "T"; block: number; toString: () => string };
 
-      await ETHERSCAN_API.getOperations.force(
-        currency,
-        account.freshAddress,
-        account.id,
-        0,
-        undefined,
-        undefined,
-        1, // limit=1 to make single op a full page
-      );
-
-      const internalCall = spy.mock.calls.find(
-        call => getEndpointType((call[0] as any).url) === "internal",
-      );
-      expect(internalCall).toBeDefined();
-      // In desc mode, the cascade affects startBlock (fromBlock), not endBlock
-      expect((internalCall![0] as any).params.startBlock).toBe(coinBlockHeight);
+    // Factory to create operation constants
+    const makeOp = (type: "C" | "I" | "T", block: number): BlockchainOp => ({
+      type,
+      block,
+      toString: () => `${type}${block}`,
     });
 
-    it("should cascade block range through all endpoints sequentially when pages are full", async () => {
-      const coinMaxBlock = 180;
-      const internalMaxBlock = 160;
+    // Operation constants for clean test syntax: C0, C1, ..., I0, I1, ..., T0, T1, ...
+    const [C0, C1, C2, C3, C4, C5, C6, C7, C8, C9] = Array.from({ length: 10 }, (_, i) =>
+      makeOp("C", i),
+    );
+    const [I0, I1, I2, I3, I4, I5, I6, I7, I8, I9] = Array.from({ length: 10 }, (_, i) =>
+      makeOp("I", i),
+    );
+    const [T0, T1, T2, T3, T4, T5, T6, T7, T8, T9] = Array.from({ length: 10 }, (_, i) =>
+      makeOp("T", i),
+    );
 
-      // Track calls per endpoint to return empty on page 2+ (to avoid infinite loop in exhaustEndpoint)
-      const callCounts: Record<string, number> = {};
-      const spy = jest.spyOn(axios, "request").mockImplementation(async config => {
+    // Helper to convert ops to string array for assertions: ops(I6, I6, I6) => ["I6", "I6", "I6"]
+    const ops = (...items: BlockchainOp[]) => items.map(String);
+
+    // Create intelligent mock that simulates blockchain based on given operations
+    const createBlockchainMock = (allOps: BlockchainOp[], limit: number) => {
+      const pageCounts: Record<string, number> = {};
+
+      return async (config: any) => {
         const url = config.url as string;
+        const params = config.params;
+        const startBlock = params.startBlock ?? 0;
+        const endBlock = params.endBlock ?? Infinity;
+        const pageLimit = params.offset ?? limit;
+        const page = params.page ?? 1;
         const endpointType = getEndpointType(url);
-        callCounts[endpointType] = (callCounts[endpointType] || 0) + 1;
-        // First call returns op, subsequent calls return empty
-        if (callCounts[endpointType] === 1) {
-          if (endpointType === "coin") {
-            return { data: { result: createMockCoinTxResponse([coinMaxBlock]) } };
-          }
-          if (endpointType === "internal") {
-            return { data: { result: createMockInternalTxResponse([internalMaxBlock]) } };
-          }
+
+        // Track page counts per endpoint to handle exhaustEndpoint pagination
+        const key = `${endpointType}-${startBlock}-${endBlock}`;
+        pageCounts[key] = (pageCounts[key] || 0) + 1;
+        const currentPage = pageCounts[key];
+
+        // Filter ops by type and range
+        const typeMap: Record<string, "C" | "I" | "T"> = {
+          coin: "C",
+          internal: "I",
+          token: "T",
+        };
+        const opType = typeMap[endpointType];
+        if (!opType) return { data: { result: [] } };
+
+        const filteredOps = allOps
+          .filter(op => op.type === opType && op.block >= startBlock && op.block <= endBlock)
+          .sort((a, b) => b.block - a.block); // desc order
+
+        // Simulate pagination: skip (page-1)*limit, take limit
+        const startIdx = (currentPage - 1) * pageLimit;
+        const pageOps = filteredOps.slice(startIdx, startIdx + pageLimit);
+
+        // Convert to Etherscan response format
+        if (opType === "C") {
+          return { data: { result: createMockCoinTxResponse(pageOps.map(op => op.block)) } };
+        } else if (opType === "I") {
+          return { data: { result: createMockInternalTxResponse(pageOps.map(op => op.block)) } };
+        } else {
+          return { data: { result: createMockTokenTxResponse(pageOps.map(op => op.block)) } };
         }
-        return { data: { result: [] } };
-      });
+      };
+    };
 
-      await ETHERSCAN_API.getOperations.force(
+    // Helper to call getOperations with common parameters
+    const callGetOperations = (
+      allOps: BlockchainOp[],
+      opts: { fromBlock?: number; toBlock?: number; pagingToken?: string; limit?: number } = {},
+    ) => {
+      const { fromBlock = 0, toBlock, pagingToken, limit = 3 } = opts;
+      jest.spyOn(axios, "request").mockImplementation(createBlockchainMock(allOps, limit));
+      return ETHERSCAN_API.getOperations.force(
         currency,
         account.freshAddress,
         account.id,
-        0,
-        undefined,
-        undefined,
-        1, // limit=1 to make single op a full page
-      );
-
-      const tokenCall = spy.mock.calls.find(
-        call => getEndpointType((call[0] as any).url) === "token",
-      );
-      expect(tokenCall).toBeDefined();
-      // In desc mode, the cascade affects startBlock (fromBlock), not endBlock
-      expect((tokenCall![0] as any).params.startBlock).toBe(internalMaxBlock);
-    });
-
-    it("should cascade to min(callerToBlock, boundBlock) when page is full", async () => {
-      const callerToBlock = 200;
-      const coinMaxBlock = 150;
-
-      // Track calls per endpoint to return empty on page 2+ (to avoid infinite loop in exhaustEndpoint)
-      const coinCallCount = { count: 0 };
-      const spy = jest.spyOn(axios, "request").mockImplementation(async config => {
-        const url = config.url as string;
-        if (getEndpointType(url) === "coin") {
-          coinCallCount.count++;
-          // First call returns op, subsequent calls return empty
-          if (coinCallCount.count === 1) {
-            return { data: { result: createMockCoinTxResponse([coinMaxBlock]) } };
-          }
-        }
-        return { data: { result: [] } };
-      });
-
-      await ETHERSCAN_API.getOperations.force(
-        currency,
-        account.freshAddress,
-        account.id,
-        0,
-        callerToBlock,
-        undefined,
-        1, // limit=1 to make single op a full page
-      );
-
-      const coinCall = spy.mock.calls.find(
-        call => getEndpointType((call[0] as any).url) === "coin",
-      );
-      expect(coinCall).toBeDefined();
-      expect((coinCall![0] as any).params.endBlock).toBe(callerToBlock);
-
-      // After full page from coin, cascades to min(200, 150) = 150
-      // In desc mode, the cascade affects startBlock (fromBlock), not endBlock
-      const internalCall = spy.mock.calls.find(
-        call => getEndpointType((call[0] as any).url) === "internal",
-      );
-      expect(internalCall).toBeDefined();
-      expect((internalCall![0] as any).params.startBlock).toBe(coinMaxBlock);
-    });
-
-    it("should not cascade when all endpoints return empty", async () => {
-      const callerToBlock = 200;
-
-      const spy = jest.spyOn(axios, "request").mockImplementation(async () => {
-        return { data: { result: [] } };
-      });
-
-      await ETHERSCAN_API.getOperations.force(
-        currency,
-        account.freshAddress,
-        account.id,
-        0,
-        callerToBlock,
-        undefined,
-        10,
-      );
-
-      const calls = spy.mock.calls;
-      const coinCall = calls.find(call => getEndpointType((call[0] as any).url) === "coin");
-      const internalCall = calls.find(call => getEndpointType((call[0] as any).url) === "internal");
-      const tokenCall = calls.find(call => getEndpointType((call[0] as any).url) === "token");
-
-      expect((coinCall![0] as any).params.endBlock).toBe(callerToBlock);
-      expect((internalCall![0] as any).params.endBlock).toBe(callerToBlock);
-      expect((tokenCall![0] as any).params.endBlock).toBe(callerToBlock);
-    });
-
-    it("should pass limit to all endpoint calls", async () => {
-      const limit = 25;
-
-      const spy = jest.spyOn(axios, "request").mockImplementation(async () => {
-        return { data: { result: [] } };
-      });
-
-      await ETHERSCAN_API.getOperations.force(
-        currency,
-        account.freshAddress,
-        account.id,
-        0,
-        undefined,
-        undefined,
+        fromBlock,
+        toBlock,
+        pagingToken,
         limit,
       );
+    };
 
-      const calls = spy.mock.calls;
-      for (const call of calls) {
-        expect((call[0] as any).params.offset).toBe(limit);
-      }
-    });
+    // Helper to extract result summary for assertions
+    const summarize = (result: {
+      lastCoinOperations: { blockHeight?: number }[];
+      lastTokenOperations: { blockHeight?: number }[];
+      lastInternalOperations: { blockHeight?: number }[];
+      nextPagingToken?: string;
+    }) => {
+      const tagged = [
+        ...result.lastCoinOperations.map(op => ({ type: "C", block: op.blockHeight })),
+        ...result.lastInternalOperations.map(op => ({ type: "I", block: op.blockHeight })),
+        ...result.lastTokenOperations.map(op => ({ type: "T", block: op.blockHeight })),
+      ];
+      const ops = tagged
+        .filter((op): op is { type: string; block: number } => op.block !== undefined)
+        .sort((a, b) => b.block - a.block)
+        .map(op => `${op.type}${op.block}`);
+      return { ops, nextPagingToken: result.nextPagingToken };
+    };
 
-    it("should cascade minimum block height when multiple endpoints return full pages", async () => {
-      const coinMaxBlock = 180;
-      const internalMaxBlock = 200;
-      const tokenMaxBlock = 150;
-
-      // Track calls per endpoint to return empty on page 2+ (to avoid infinite loop in exhaustEndpoint)
-      const callCounts: Record<string, number> = {};
-      const spy = jest.spyOn(axios, "request").mockImplementation(async config => {
-        const url = config.url as string;
-        const endpointType = getEndpointType(url);
-        callCounts[endpointType] = (callCounts[endpointType] || 0) + 1;
-        // First call returns op, subsequent calls return empty
-        if (callCounts[endpointType] === 1) {
-          if (endpointType === "coin") {
-            return { data: { result: createMockCoinTxResponse([coinMaxBlock]) } };
-          }
-          if (endpointType === "internal") {
-            return { data: { result: createMockInternalTxResponse([internalMaxBlock]) } };
-          }
-          if (endpointType === "token") {
-            return { data: { result: createMockTokenTxResponse([tokenMaxBlock]) } };
-          }
-        }
-        return { data: { result: [] } };
+    describe("drop scenarios - operations discarded due to cascading boundBlock", () => {
+      it("drops full coin result when internal has higher blocks", async () => {
+        const result = await callGetOperations([I6, I6, I6, I5, T5, C4, C3, C2]);
+        // - coin([Ø, Ø])       [C4 C3 C2]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
+        // - internal([2, Ø])   [I6 I6 I6]     boundBlock=5, isPageFull=true,  hasMorePage=true  (full page, higher boundBlock)
+        // - token([5, Ø])      []             boundBlock=5, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+        // Result: only I6s kept, coin ops dropped (below boundBlock=5)
+        expect(summarize(result)).toEqual({ ops: ops(I6, I6, I6), nextPagingToken: "5" });
       });
 
-      await ETHERSCAN_API.getOperations.force(
-        currency,
-        account.freshAddress,
-        account.id,
-        0,
-        undefined,
-        undefined,
-        1, // limit=1 to make single op a full page
-      );
-
-      // Internal call uses effectiveBoundBlock after coin = min(undefined, 180) = 180
-      // In desc mode, the cascade affects startBlock (fromBlock), not endBlock
-      const internalCall = spy.mock.calls.find(
-        call => getEndpointType((call[0] as any).url) === "internal",
-      );
-      expect((internalCall![0] as any).params.startBlock).toBe(coinMaxBlock);
-
-      // Token call uses effectiveBoundBlock after internal = min(180, 200) = 180
-      // Note: internal returns 200 which is > 180, so no update, stays at 180
-      const tokenCall = spy.mock.calls.find(
-        call => getEndpointType((call[0] as any).url) === "token",
-      );
-      expect((tokenCall![0] as any).params.startBlock).toBe(coinMaxBlock);
-
-      // NFT call uses effectiveBoundBlock after token = min(180, 150) = 150
-      const nftCall = spy.mock.calls.find(
-        call => getEndpointType((call[0] as any).url) === "erc721",
-      );
-      expect(nftCall).toBeDefined();
-      expect((nftCall![0] as any).params.startBlock).toBe(tokenMaxBlock);
-    });
-
-    it("should not cascade block range when limit is undefined (unlimited page)", async () => {
-      const callerToBlock = 200;
-      const coinMaxBlock = 150;
-
-      // Track calls per endpoint to return empty on page 2+
-      const coinCallCount = { count: 0 };
-      const spy = jest.spyOn(axios, "request").mockImplementation(async config => {
-        const url = config.url as string;
-        if (getEndpointType(url) === "coin") {
-          coinCallCount.count++;
-          if (coinCallCount.count === 1) {
-            return { data: { result: createMockCoinTxResponse([coinMaxBlock]) } };
-          }
-        }
-        return { data: { result: [] } };
+      it("drops full coin result, keeps token ops above boundBlock", async () => {
+        const result = await callGetOperations([T7, I6, I6, I6, T5, C4, C3, C2, I2]);
+        // - coin([Ø, Ø])       [C4 C3 C2]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
+        // - internal([2, Ø])   [I6 I6 I6]     boundBlock=5, isPageFull=true,  hasMorePage=true  (full page, higher boundBlock)
+        // - token([5, Ø])      [T7]           boundBlock=5, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+        // Result: T7 + I6s kept, coin ops dropped (below boundBlock=5)
+        expect(summarize(result)).toEqual({ ops: ops(T7, I6, I6, I6), nextPagingToken: "5" });
       });
 
-      await ETHERSCAN_API.getOperations.force(
-        currency,
-        account.freshAddress,
-        account.id,
-        0,
-        callerToBlock,
-        undefined,
-        undefined, // limit undefined = unlimited page
-      );
+      it("drops full coin and internal results when token has highest blocks", async () => {
+        const result = await callGetOperations([T9, T8, T7, I6, I5, I4, C3, C2, C1, I1, T1]);
+        // - coin([Ø, Ø])       [C3 C2 C1]     boundBlock=Ø, isPageFull=true,  hasMorePage=true  (full page)
+        // - internal([Ø, Ø])   [I6 I5 I4]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page)
+        // - token([3, Ø])      [T9 T8 T7]     boundBlock=6, isPageFull=true,  hasMorePage=true  (full page, highest boundBlock)
+        // Result: only T9/T8/T7 kept, coin+internal ops dropped (below boundBlock=6)
+        expect(summarize(result)).toEqual({ ops: ops(T9, T8, T7), nextPagingToken: "6" });
+      });
 
-      // Coin call should use callerToBlock
-      const coinCall = spy.mock.calls.find(
-        call => getEndpointType((call[0] as any).url) === "coin",
-      );
-      expect(coinCall).toBeDefined();
-      expect((coinCall![0] as any).params.endBlock).toBe(callerToBlock);
+      it("drops partial results from coin and internal", async () => {
+        const result = await callGetOperations([T9, T8, I8, T7, I7, C7, I6, C6, T6, C5, T1, I1]);
+        // - coin([Ø, Ø])       [C7 C6 C5]     boundBlock=4, isPageFull=true,  hasMorePage=true  (full page)
+        // - internal([4, Ø])   [I8 I7 I6]     boundBlock=5, isPageFull=true,  hasMorePage=true  (full page, higher boundBlock)
+        // - token([5, Ø])      [T9 T8 T7]     boundBlock=6, isPageFull=true,  hasMorePage=true  (full page, highest boundBlock)
+        // Result: ops >= 7 kept, lower ops dropped (below boundBlock=6)
+        expect(summarize(result)).toEqual({ ops: ops(T9, T8, I8, T7, I7, C7), nextPagingToken: "6" });
+      });
+    });
 
-      // Even though coin returned ops at block 150, internal should still use callerToBlock (200)
-      // because limit is undefined, so effectiveMaxBlock is not updated
-      const internalCall = spy.mock.calls.find(
-        call => getEndpointType((call[0] as any).url) === "internal",
-      );
-      expect(internalCall).toBeDefined();
-      expect((internalCall![0] as any).params.endBlock).toBe(callerToBlock);
+    describe("no-drop scenarios - all operations kept", () => {
+      it("keeps all when subsequent pages are not full", async () => {
+        const result = await callGetOperations([I6, I6, T5, C4, C3, C2, C1, T1]);
+        // - coin([Ø, Ø])       [C4 C3 C2]     boundBlock=1, isPageFull=true,  hasMorePage=true  (full page)
+        // - internal([1, Ø])   [I6 I6]        boundBlock=1, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+        // - token([1, Ø])      [T5]           boundBlock=1, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+        // Result: all ops kept, boundBlock stays at 1 because subsequent pages not full
+        expect(summarize(result)).toEqual({ ops: ops(I6, I6, T5, C4, C3, C2), nextPagingToken: "1" });
+      });
 
-      // Token should also use callerToBlock
-      const tokenCall = spy.mock.calls.find(
-        call => getEndpointType((call[0] as any).url) === "token",
-      );
-      expect(tokenCall).toBeDefined();
-      expect((tokenCall![0] as any).params.endBlock).toBe(callerToBlock);
+      it("keeps all when no endpoint has full page", async () => {
+        const result = await callGetOperations([I6, T5, C4]);
+        // - coin([Ø, Ø])       [C4]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full, no more data)
+        // - internal([Ø, Ø])   [I6]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full, no more data)
+        // - token([Ø, Ø])      [T5]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full, no more data)
+        // Result: all ops kept, no pagination token (all data fetched)
+        expect(summarize(result)).toEqual({ ops: ops(I6, T5, C4), nextPagingToken: NO_TOKEN });
+      });
+
+      it("keeps all when only coin has ops", async () => {
+        const result = await callGetOperations([C4, C3, C2, C1]);
+        // - coin([Ø, Ø])       [C4 C3 C2]     boundBlock=1, isPageFull=true,  hasMorePage=true  (full page)
+        // - internal([1, Ø])   []             boundBlock=1, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+        // - token([1, Ø])      []             boundBlock=1, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+        // Result: coin ops kept, nextPagingToken=1 for remaining C1
+        expect(summarize(result)).toEqual({ ops: ops(C4, C3, C2), nextPagingToken: "1" });
+      });
+
+      it("keeps all when only token has ops", async () => {
+        const result = await callGetOperations([T4, T3, T2, T1]);
+        // - coin([Ø, Ø])       []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+        // - internal([Ø, Ø])   []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+        // - token([Ø, Ø])      [T4 T3 T2]     boundBlock=1, isPageFull=true,  hasMorePage=true  (full page)
+        // Result: token ops kept, nextPagingToken=1 for remaining T1
+        expect(summarize(result)).toEqual({ ops: ops(T4, T3, T2), nextPagingToken: "1" });
+      });
+
+      it("cascades without dropping when blocks interleave nicely", async () => {
+        const result = await callGetOperations([T6, C5, I5, C4, I4, C3, I2, I1, C1, T1]);
+        // - coin([Ø, Ø])       [C5 C4 C3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
+        // - internal([2, Ø])   [I5 I4]        boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+        // - token([2, Ø])      [T6]           boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+        // Result: all ops >= 3 kept, interleaved blocks don't cause drops
+        expect(summarize(result)).toEqual({ ops: ops(T6, C5, I5, C4, I4, C3), nextPagingToken: "2" });
+      });
+
+      it("uses boundBlock from internal when coin page is not full", async () => {
+        const result = await callGetOperations([T6, I6, C5, C4, I4, I3, I2, I1, T1]);
+        // - coin([Ø, Ø])       [C5 C4]        boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
+        // - internal([Ø, Ø])   [I6 I4 I3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
+        // - token([2, Ø])      [T6]           boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+        // Result: all ops >= 3 kept, boundBlock from internal applies
+        expect(summarize(result)).toEqual({ ops: ops(T6, I6, C5, C4, I4, I3), nextPagingToken: "2" });
+      });
+
+      it("handles empty token result with boundBlock from internal", async () => {
+        const result = await callGetOperations([I6, C5, C4, I4, I3, I2, I1, T1]);
+        // - coin([Ø, Ø])       [C5 C4]        boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
+        // - internal([Ø, Ø])   [I6 I4 I3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
+        // - token([2, Ø])      []             boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+        // Result: coin + internal ops kept
+        expect(summarize(result)).toEqual({ ops: ops(I6, C5, C4, I4, I3), nextPagingToken: "2" });
+      });
+
+      it("handles all endpoints with full pages at same block", async () => {
+        const result = await callGetOperations([C4, C4, C4, I4, I4, I4, T4, T4, T4, C1, T1, I1]);
+        // - coin([Ø, Ø])       [C4 C4 C4]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page)
+        // - internal([3, Ø])   [I4 I4 I4]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page, same boundBlock)
+        // - token([3, Ø])      [T4 T4 T4]     boundBlock=3, isPageFull=true,  hasMorePage=true  (full page, same boundBlock)
+        // Result: all 9 ops at block 4 kept, all above boundBlock=3
+        expect(summarize(result)).toEqual({ ops: ops(C4, C4, C4, I4, I4, I4, T4, T4, T4), nextPagingToken: "3" });
+      });
+
+      it("returns empty when all endpoints return empty", async () => {
+        const result = await callGetOperations([]);
+        // - coin([Ø, Ø])       []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+        // - internal([Ø, Ø])   []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+        // - token([Ø, Ø])      []             boundBlock=Ø, isPageFull=false, hasMorePage=false (no ops)
+        // Result: empty, no pagination needed
+        expect(summarize(result)).toEqual({ ops: [], nextPagingToken: NO_TOKEN });
+      });
+    });
+
+    describe("with pagination token", () => {
+      it("uses token as toBlock for all calls", async () => {
+        const result = await callGetOperations([T6, I6, C6, C5, I5, C4, I4, C3, I2, I1, C1, T1], {
+          pagingToken: "5",
+        });
+        // pagingToken=5 acts as toBlock for all endpoints
+        // - coin([Ø, 5])       [C5 C4 C3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
+        // - internal([2, 5])   [I5 I4]        boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+        // - token([2, 5])      []             boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+        // Result: C5/C4/C3 + I5/I4 kept, T6/I6/C6 excluded by pagingToken
+        expect(summarize(result)).toEqual({ ops: ops(C5, I5, C4, I4, C3), nextPagingToken: "2" });
+      });
+    });
+
+    describe("with fromBlock and toBlock", () => {
+      it("uses fromBlock and cascades boundBlock when page is full", async () => {
+        const result = await callGetOperations([T7, I7, C7, C5, I5, C4, I4, C3, I2, I1, C1, T1], {
+          fromBlock: 2,
+          toBlock: 6,
+        });
+        // fromBlock=2, toBlock=6 restricts all endpoints
+        // - coin([2, 6])       [C5 C4 C3]     boundBlock=2, isPageFull=true,  hasMorePage=true  (full page)
+        // - internal([2, 6])   [I5 I4]        boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+        // - token([2, 6])      []             boundBlock=2, isPageFull=false, hasMorePage=true  (bounded by boundBlock > fromBlock)
+        // Result: ops in [2, 6] kept, T7/I7/C7 excluded by toBlock
+        expect(summarize(result)).toEqual({ ops: ops(C5, I5, C4, I4, C3), nextPagingToken: "2" });
+      });
+
+      it("reaches fromBlock and returns no pagination token", async () => {
+        const result = await callGetOperations([C7, T6, C6, C5, I5, I4, I2, I1, C1, T1, C0], {
+          fromBlock: 2,
+          toBlock: 6,
+        });
+        // fromBlock=2, toBlock=6, lowest ops reach fromBlock
+        // - coin([2, 6])       [C6 C5]        boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
+        // - internal([Ø, 6])   [I5 I4 I2]     boundBlock=Ø, isPageFull=true,  hasMorePage=false (full but reached fromBlock)
+        // - token([Ø, 6])      [T6]           boundBlock=Ø, isPageFull=false, hasMorePage=false (not full)
+        // Result: all ops in [2, 6] kept, no nextPagingToken (reached fromBlock)
+        expect(summarize(result)).toEqual({ ops: ops(C6, T6, C5, I5, I4, I2), nextPagingToken: NO_TOKEN });
+      });
     });
   });
 
