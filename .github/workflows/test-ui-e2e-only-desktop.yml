@@ -234,29 +234,58 @@ jobs:
             echo "" >> $MONITOR_LOG
             echo "[$TIMESTAMP] --- Connectivity Check ---" >> $MONITOR_LOG
             
-            # Check DNS resolution
-            if nslookup github.com > /dev/null 2>&1; then
+            # Check DNS resolution using getent (more reliable than nslookup in CI)
+            if getent hosts github.com > /dev/null 2>&1; then
               echo "[$TIMESTAMP] DNS (github.com): OK" >> $MONITOR_LOG
             else
               echo "[$TIMESTAMP] DNS (github.com): FAILED" >> $MONITOR_LOG
             fi
             
-            # Check HTTP connectivity
+            # Check HTTP connectivity to GitHub
             HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://github.com 2>/dev/null || echo "TIMEOUT")
             echo "[$TIMESTAMP] HTTP (github.com): $HTTP_STATUS" >> $MONITOR_LOG
             
-            # Check npm registry
-            NPM_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://registry.npmjs.org 2>/dev/null || echo "TIMEOUT")
-            echo "[$TIMESTAMP] HTTP (registry.npmjs.org): $NPM_STATUS" >> $MONITOR_LOG
+            # ===== Ledger Live API Endpoints =====
+            # Explorers API (blockchain data)
+            EXPLORERS_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://explorers.api.live.ledger.com 2>/dev/null || echo "TIMEOUT")
+            echo "[$TIMESTAMP] HTTP (explorers.api.live.ledger.com): $EXPLORERS_STATUS" >> $MONITOR_LOG
             
-            # Ping test
-            if ping -c 1 -W 5 8.8.8.8 > /dev/null 2>&1; then
-              echo "[$TIMESTAMP] Ping (8.8.8.8): OK" >> $MONITOR_LOG
+            # Manager API (device management, firmware)
+            MANAGER_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://manager.api.live.ledger.com 2>/dev/null || echo "TIMEOUT")
+            echo "[$TIMESTAMP] HTTP (manager.api.live.ledger.com): $MANAGER_STATUS" >> $MONITOR_LOG
+            
+            # Swap API
+            SWAP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://swap.ledger.com/v5 2>/dev/null || echo "TIMEOUT")
+            echo "[$TIMESTAMP] HTTP (swap.ledger.com): $SWAP_STATUS" >> $MONITOR_LOG
+            
+            # Countervalues API (prices)
+            CV_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://countervalues.live.ledger.com 2>/dev/null || echo "TIMEOUT")
+            echo "[$TIMESTAMP] HTTP (countervalues.live.ledger.com): $CV_STATUS" >> $MONITOR_LOG
+            
+            # Buy API
+            BUY_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://buy.api.live.ledger.com 2>/dev/null || echo "TIMEOUT")
+            echo "[$TIMESTAMP] HTTP (buy.api.live.ledger.com): $BUY_STATUS" >> $MONITOR_LOG
+            
+            # Earn API (staking)
+            EARN_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://earn.api.live.ledger.com 2>/dev/null || echo "TIMEOUT")
+            echo "[$TIMESTAMP] HTTP (earn.api.live.ledger.com): $EARN_STATUS" >> $MONITOR_LOG
+            
+            # CDN (assets, images)
+            CDN_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://cdn.live.ledger.com 2>/dev/null || echo "TIMEOUT")
+            echo "[$TIMESTAMP] HTTP (cdn.live.ledger.com): $CDN_STATUS" >> $MONITOR_LOG
+            
+            # Crypto Assets Service (token lists - used by Add Account flow)
+            CAL_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://crypto-assets-service.api.ledger.com 2>/dev/null || echo "TIMEOUT")
+            echo "[$TIMESTAMP] HTTP (crypto-assets-service): $CAL_STATUS" >> $MONITOR_LOG
+            
+            # TCP connectivity check to Ledger API
+            if timeout 5 bash -c 'cat < /dev/null > /dev/tcp/explorers.api.live.ledger.com/443' 2>/dev/null; then
+              echo "[$TIMESTAMP] TCP (explorers.api.live.ledger.com:443): OK" >> $MONITOR_LOG
             else
-              echo "[$TIMESTAMP] Ping (8.8.8.8): FAILED" >> $MONITOR_LOG
+              echo "[$TIMESTAMP] TCP (explorers.api.live.ledger.com:443): FAILED" >> $MONITOR_LOG
             fi
             
-            sleep 30
+            sleep 10
           done) &
 
           echo $! > /tmp/network-monitor.pid
@@ -296,8 +325,16 @@ jobs:
           echo "--- Network Monitor Log Summary ---"
           echo "Total checks: $(grep -c 'Connectivity Check' $MONITOR_LOG || echo 0)"
           echo "Failed DNS: $(grep -c 'DNS.*FAILED' $MONITOR_LOG || echo 0)"
-          echo "Failed HTTP: $(grep -c 'HTTP.*TIMEOUT\|HTTP.*000' $MONITOR_LOG || echo 0)"
-          echo "Failed Ping: $(grep -c 'Ping.*FAILED' $MONITOR_LOG || echo 0)"
+          echo "Failed HTTP (github): $(grep 'HTTP (github.com)' $MONITOR_LOG | grep -c 'TIMEOUT\|000' || echo 0)"
+          echo "Failed HTTP (explorers.api): $(grep 'explorers.api' $MONITOR_LOG | grep -c 'TIMEOUT\|000\|5[0-9][0-9]' || echo 0)"
+          echo "Failed HTTP (manager.api): $(grep 'manager.api' $MONITOR_LOG | grep -c 'TIMEOUT\|000\|5[0-9][0-9]' || echo 0)"
+          echo "Failed HTTP (swap.ledger.com): $(grep 'swap.ledger.com' $MONITOR_LOG | grep -c 'TIMEOUT\|000\|5[0-9][0-9]' || echo 0)"
+          echo "Failed HTTP (countervalues): $(grep 'countervalues.live' $MONITOR_LOG | grep -c 'TIMEOUT\|000\|5[0-9][0-9]' || echo 0)"
+          echo "Failed HTTP (buy.api): $(grep 'buy.api' $MONITOR_LOG | grep -c 'TIMEOUT\|000\|5[0-9][0-9]' || echo 0)"
+          echo "Failed HTTP (earn.api): $(grep 'earn.api' $MONITOR_LOG | grep -c 'TIMEOUT\|000\|5[0-9][0-9]' || echo 0)"
+          echo "Failed HTTP (cdn): $(grep 'cdn.live' $MONITOR_LOG | grep -c 'TIMEOUT\|000\|5[0-9][0-9]' || echo 0)"
+          echo "Failed HTTP (crypto-assets): $(grep 'crypto-assets-service' $MONITOR_LOG | grep -c 'TIMEOUT\|000\|5[0-9][0-9]' || echo 0)"
+          echo "Failed TCP: $(grep -c 'TCP.*FAILED' $MONITOR_LOG || echo 0)"
           echo "-----------------------------------"
 
           # Show last 50 lines in job log
