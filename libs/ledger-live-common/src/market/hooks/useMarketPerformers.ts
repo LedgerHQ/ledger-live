@@ -1,6 +1,9 @@
+import { useEffect, useState } from "react";
 import { MarketPerformersParams } from "../utils/types";
 import { useGetMarketPerformersQuery } from "../state-manager/api";
-import { REFETCH_TIME_ONE_MINUTE } from "../utils/timers";
+
+const NORMAL_REFETCH_INTERVAL = 3 * 60 * 1000;
+const ERROR_REFETCH_INTERVAL = 30 * 1000;
 
 export const useMarketPerformers = ({
   counterCurrency,
@@ -9,11 +12,17 @@ export const useMarketPerformers = ({
   top = 50,
   sort,
   supported,
-  refreshRate,
-}: MarketPerformersParams) =>
-  useGetMarketPerformersQuery(
+}: Omit<MarketPerformersParams, "refreshRate">) => {
+  const [pollingInterval, setPollingInterval] = useState(NORMAL_REFETCH_INTERVAL);
+
+  const result = useGetMarketPerformersQuery(
     { counterCurrency, range, limit, top, sort, supported },
-    {
-      pollingInterval: REFETCH_TIME_ONE_MINUTE * Number(refreshRate),
-    },
+    { pollingInterval },
   );
+
+  useEffect(() => {
+    setPollingInterval(result.isError ? ERROR_REFETCH_INTERVAL : NORMAL_REFETCH_INTERVAL);
+  }, [result.isError]);
+
+  return result;
+};

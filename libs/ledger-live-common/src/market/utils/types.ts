@@ -137,7 +137,6 @@ export type MarketPerformersParams = {
   range: PortfolioRange;
   counterCurrency: string;
   supported: boolean;
-  refreshRate?: number;
 };
 
 export type MarketItemResponse = {

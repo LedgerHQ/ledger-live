@@ -21,7 +21,6 @@ import {
   MARKET_BANNER_DATA_SORT_ORDER,
   MARKET_BANNER_TOP,
   MARKET_PERFORMERS_SUPPORTED,
-  MARKET_BANNER_REFRESH_RATE,
 } from "@ledgerhq/live-common/market/constants";
 
 const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
@@ -44,7 +43,6 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
     limit: MARKET_BANNER_TILE_COUNT * 2,
     top: MARKET_BANNER_TOP,
     supported: MARKET_PERFORMERS_SUPPORTED,
-    refreshRate: MARKET_BANNER_REFRESH_RATE,
   });
 
   const filteredItems = useMemo(() => {

@@ -9,7 +9,6 @@ import { filterMarketPerformersByAvailability } from "@ledgerhq/live-common/mark
 import {
   MARKET_BANNER_TOP,
   MARKET_BANNER_DATA_SORT_ORDER,
-  MARKET_BANNER_REFRESH_RATE,
   MARKET_PERFORMERS_SUPPORTED,
   TIME_RANGE,
 } from "@ledgerhq/live-common/market/constants";
@@ -31,7 +30,6 @@ export const useMarketBannerViewModel = () => {
     limit: MARKET_BANNER_TOP,
     top: MARKET_BANNER_TOP,
     supported: MARKET_PERFORMERS_SUPPORTED,
-    refreshRate: MARKET_BANNER_REFRESH_RATE,
   });
 
   const filteredItems = useMemo(() => {
