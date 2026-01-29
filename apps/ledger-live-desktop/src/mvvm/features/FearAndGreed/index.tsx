@@ -1,8 +1,8 @@
 import React, { memo } from "react";
 import type { FearAndGreedIndex } from "@ledgerhq/live-common/cmc-client/state-manager/types";
-import { useFearAndGreedViewModel } from "../../hooks/useFearAndGreedViewModel";
-import { LoadingTile } from "./LoadingTile";
-import { FearAndGreedTile } from "./FearAndGreedTile";
+import { useFearAndGreedViewModel } from "./hooks/useFearAndGreedViewModel";
+import { FearAndGreedTile } from "./components/FearAndGreedTile";
+import { LoadingTile } from "./components/LoadingTile";
 
 type FearAndGreedViewProps = {
   readonly isLoading: boolean;
