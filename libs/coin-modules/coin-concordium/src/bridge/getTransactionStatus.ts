@@ -7,6 +7,7 @@ import {
   FeeTooHigh,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
+  NotEnoughBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughSpendableBalance,
   RecipientRequired,
@@ -48,8 +49,11 @@ export const getTransactionStatus: AccountBridge<
   } else if (transaction.fee.eq(0)) {
     // On some chains, 0 fee could still work so this is optional
     errors.fee = new FeeRequired();
+  } else if (totalSpent.gt(account.balance)) {
+    // if the total spent is greater than the balance, user doesn't have enough funds
+    errors.amount = new NotEnoughBalance();
   } else if (totalSpent.gt(account.balance.minus(reserveAmount))) {
-    // if the total spent is greater than the balance minus the reserve amount, tx is invalid
+    // if the total spent would leave balance below reserve amount, tx is invalid
     errors.amount = new NotEnoughSpendableBalance("", {
       minimumAmount: formatCurrencyUnit(account.currency.units[0], reserveAmount, {
         disableRounding: true,

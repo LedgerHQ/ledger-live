@@ -5,6 +5,7 @@ import {
   FeeTooHigh,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
+  NotEnoughBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughSpendableBalance,
   RecipientRequired,
@@ -108,8 +109,24 @@ describe("getTransactionStatus", () => {
   });
 
   describe("balance validation", () => {
-    it("should return NotEnoughSpendableBalance when totalSpent exceeds balance minus reserve", async () => {
-      // GIVEN - totalSpent (500000) > balance (500000) - reserve (100000)
+    it("should return NotEnoughBalance when totalSpent exceeds balance", async () => {
+      // GIVEN - totalSpent (600000) > balance (500000)
+      const account = createFixtureAccount({ balance: new BigNumber(500000) });
+      const transaction = createFixtureTransaction({
+        amount: new BigNumber(500000),
+        fee: new BigNumber(100000),
+        recipient: VALID_ADDRESS_2,
+      });
+
+      // WHEN
+      const result = await getTransactionStatus(account, transaction);
+
+      // THEN
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
+    it("should return NotEnoughSpendableBalance when totalSpent exceeds balance minus reserve but not balance", async () => {
+      // GIVEN - balance (500000) >= totalSpent (500000) > balance (500000) - reserve (100000) = 400000
       coinConfig.setCoinConfig(() => ({
         status: { type: "active" },
         networkType: "testnet",
