@@ -1,40 +1,14 @@
 /**
- * Test fixtures for Concordium bridge tests.
+ * Bridge-specific test fixtures for Concordium.
  *
- * Usage:
- *   import { createFixtureAccount, createFixtureTransaction, ... } from "./bridge.fixture";
- *   const account = createFixtureAccount({ balance: new BigNumber(5000) });
+ * For shared fixtures (Account, Transaction, addresses), import from "../test/fixtures".
+ * This file contains only bridge-specific fixtures like ConcordiumAccount, Signer, etc.
  */
 import BigNumber from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { ConcordiumAccount, ConcordiumResources, Transaction } from "../types";
+import type { ConcordiumAccount, ConcordiumResources } from "../types";
 import type { ConcordiumSigner } from "../types/signer";
-
-// Valid Concordium address derived from abandon seed phrase
-export const VALID_ADDRESS = "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w";
-
-// 64 hex characters (32 bytes) - standard Ed25519 public key length
-export const PUBLIC_KEY = "aa".repeat(32);
-
-// 96 hex characters (48 bytes) - standard credential ID length
-export const CRED_ID = "cc".repeat(48);
-
-export function createFixtureCurrency(overrides?: Partial<CryptoCurrency>): CryptoCurrency {
-  return {
-    type: "CryptoCurrency",
-    id: "concordium",
-    name: "Concordium",
-    family: "concordium",
-    ticker: "CCD",
-    scheme: "concordium",
-    color: "#000000",
-    units: [{ name: "CCD", code: "CCD", magnitude: 6 }],
-    managerAppName: "Concordium",
-    ...overrides,
-  } as CryptoCurrency;
-}
+import { VALID_ADDRESS, PUBLIC_KEY, CRED_ID, createFixtureCurrency } from "../test/fixtures";
 
 export function createFixtureResources(
   overrides?: Partial<ConcordiumResources>,
@@ -50,7 +24,13 @@ export function createFixtureResources(
   };
 }
 
-export function createFixtureAccount(overrides?: Partial<ConcordiumAccount>): ConcordiumAccount {
+/**
+ * Creates a ConcordiumAccount with concordiumResources.
+ * For basic Account without resources, use createFixtureAccount from "../test/fixtures".
+ */
+export function createFixtureConcordiumAccount(
+  overrides?: Partial<ConcordiumAccount>,
+): ConcordiumAccount {
   return {
     type: "Account",
     id: "js:2:concordium:3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w:",
@@ -79,52 +59,6 @@ export function createFixtureAccount(overrides?: Partial<ConcordiumAccount>): Co
     concordiumResources: createFixtureResources(overrides?.concordiumResources),
     ...overrides,
   } as ConcordiumAccount;
-}
-
-/**
- * Creates a basic Account (without concordiumResources).
- * Use createFixtureAccount for ConcordiumAccount with resources.
- */
-export function createFixtureBaseAccount(overrides?: Partial<Account>): Account {
-  return {
-    type: "Account",
-    id: "js:2:concordium:3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w:",
-    seedIdentifier: PUBLIC_KEY,
-    xpub: PUBLIC_KEY,
-    derivationMode: "",
-    index: 0,
-    currency: createFixtureCurrency(),
-    freshAddress: VALID_ADDRESS,
-    freshAddressPath: "m/1105'/0'/0'/0'/0'/0'",
-    balance: new BigNumber(10000000),
-    spendableBalance: new BigNumber(9900000),
-    blockHeight: 1000,
-    creationDate: new Date("2024-01-01"),
-    operationsCount: 0,
-    operations: [],
-    pendingOperations: [],
-    lastSyncDate: new Date(),
-    subAccounts: [],
-    balanceHistoryCache: {
-      HOUR: { latestDate: null, balances: [] },
-      DAY: { latestDate: null, balances: [] },
-      WEEK: { latestDate: null, balances: [] },
-    },
-    swapHistory: [],
-    ...overrides,
-  } as Account;
-}
-
-export function createFixtureTransaction(overrides?: Partial<Transaction>): Transaction {
-  return {
-    family: "concordium",
-    amount: new BigNumber(1000000),
-    recipient: VALID_ADDRESS,
-    fee: new BigNumber(1000),
-    useAllAmount: false,
-    memo: undefined,
-    ...overrides,
-  } as Transaction;
 }
 
 /**

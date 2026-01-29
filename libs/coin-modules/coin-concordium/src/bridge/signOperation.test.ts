@@ -1,14 +1,9 @@
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { firstValueFrom, toArray } from "rxjs";
+import { createFixtureAccount, createFixtureTransaction, VALID_ADDRESS } from "../test/fixtures";
 import { buildSignOperation } from "./signOperation";
-import {
-  createFixtureBaseAccount,
-  createFixtureTransaction,
-  createFixtureSigner,
-  createFixtureSignerContext,
-  VALID_ADDRESS,
-} from "./bridge.fixture";
+import { createFixtureSigner, createFixtureSignerContext } from "./bridge.fixture";
 
 jest.mock("../common-logic", () => ({
   getNextValidSequence: jest.fn().mockResolvedValue(5),
@@ -49,7 +44,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
 
       // WHEN
@@ -72,7 +67,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const transaction = createFixtureTransaction({ fee: undefined });
 
       // WHEN
@@ -92,7 +87,7 @@ describe("signOperation", () => {
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
       const derivationPath = "m/1105'/0'/1'/2'/3'/4'";
-      const account = createFixtureBaseAccount({ freshAddressPath: derivationPath });
+      const account = createFixtureAccount({ freshAddressPath: derivationPath });
       const transaction = createFixtureTransaction();
 
       // WHEN
@@ -113,7 +108,7 @@ describe("signOperation", () => {
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
       const derivationPath = "m/1105'/0'/0'/0'/0'/0'";
-      const account = createFixtureBaseAccount({ freshAddressPath: derivationPath });
+      const account = createFixtureAccount({ freshAddressPath: derivationPath });
       const transaction = createFixtureTransaction();
 
       // WHEN
@@ -139,7 +134,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
 
       // WHEN
@@ -168,7 +163,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
 
       // WHEN
@@ -189,7 +184,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
 
       // WHEN
@@ -210,7 +205,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const account = createFixtureBaseAccount({
+      const account = createFixtureAccount({
         pendingOperations: [{ transactionSequenceNumber: new BigNumber(10) }] as any,
         operations: [{ transactionSequenceNumber: new BigNumber(5) }] as any,
       });
@@ -236,7 +231,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const account = createFixtureBaseAccount({
+      const account = createFixtureAccount({
         pendingOperations: [],
         operations: [{ transactionSequenceNumber: new BigNumber(7) }] as any,
       });
@@ -262,7 +257,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const account = createFixtureBaseAccount({
+      const account = createFixtureAccount({
         pendingOperations: [],
         operations: [],
       });
@@ -289,7 +284,7 @@ describe("signOperation", () => {
       mockSigner.signTransfer = jest.fn().mockRejectedValue(new Error("User rejected"));
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
 
       // WHEN
@@ -309,7 +304,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const transaction = createFixtureTransaction({
         amount: new BigNumber(1000000),
         recipient: VALID_ADDRESS,
@@ -345,7 +340,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
 
       // WHEN
@@ -366,7 +361,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const transaction = createFixtureTransaction({ memo: "test memo" });
 
       // WHEN
@@ -391,7 +386,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
       const beforeTime = new Date();
 
@@ -416,7 +411,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const account = createFixtureBaseAccount({ id: "concordium:test-account" });
+      const account = createFixtureAccount({ id: "concordium:test-account" });
       const transaction = createFixtureTransaction();
 
       // WHEN

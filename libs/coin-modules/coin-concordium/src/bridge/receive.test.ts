@@ -1,8 +1,9 @@
 import { firstValueFrom, toArray } from "rxjs";
 import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { ConcordiumSigner } from "../types";
+import { VALID_ADDRESS, PUBLIC_KEY } from "../test/fixtures";
 import { buildReceive } from "./receive";
-import { createFixtureAccount, VALID_ADDRESS, PUBLIC_KEY } from "./bridge.fixture";
+import { createFixtureConcordiumAccount } from "./bridge.fixture";
 
 /**
  * Creates a mock SignerContext that is a jest.fn() for call tracking.
@@ -18,7 +19,7 @@ describe("receive", () => {
       // GIVEN
       const signerContext = createMockSignerContext();
       const receive = buildReceive(signerContext);
-      const account = createFixtureAccount();
+      const account = createFixtureConcordiumAccount();
 
       // WHEN
       const observable = receive(account, {} as any);
@@ -38,7 +39,7 @@ describe("receive", () => {
       const signerContext = createMockSignerContext();
       const receive = buildReceive(signerContext);
       const customAddress = "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G";
-      const account = createFixtureAccount({ freshAddress: customAddress });
+      const account = createFixtureConcordiumAccount({ freshAddress: customAddress });
 
       // WHEN
       const observable = receive(account, {} as any);
@@ -53,7 +54,7 @@ describe("receive", () => {
       const signerContext = createMockSignerContext();
       const receive = buildReceive(signerContext);
       const customPath = "m/1105'/0'/1'/2'/3'/4'";
-      const account = createFixtureAccount({ freshAddressPath: customPath });
+      const account = createFixtureConcordiumAccount({ freshAddressPath: customPath });
 
       // WHEN
       const observable = receive(account, {} as any);
@@ -67,7 +68,7 @@ describe("receive", () => {
       // GIVEN
       const signerContext = createMockSignerContext();
       const receive = buildReceive(signerContext);
-      const account = createFixtureAccount({ concordiumResources: undefined });
+      const account = createFixtureConcordiumAccount({ concordiumResources: undefined });
 
       // WHEN
       const observable = receive(account, {} as any);
@@ -81,7 +82,7 @@ describe("receive", () => {
       // GIVEN
       const signerContext = createMockSignerContext();
       const receive = buildReceive(signerContext);
-      const account = createFixtureAccount({
+      const account = createFixtureConcordiumAccount({
         concordiumResources: {
           isOnboarded: true,
           publicKey: undefined,
@@ -100,7 +101,7 @@ describe("receive", () => {
       // GIVEN
       const signerContext = createMockSignerContext();
       const receive = buildReceive(signerContext);
-      const account = createFixtureAccount();
+      const account = createFixtureConcordiumAccount();
 
       // WHEN
       const observable = receive(account, {} as any);
@@ -123,7 +124,7 @@ describe("receive", () => {
       // GIVEN
       const signerContext = createMockSignerContext();
       const receive = buildReceive(signerContext);
-      const account = createFixtureAccount();
+      const account = createFixtureConcordiumAccount();
 
       // WHEN
       const observable = receive(account, {} as any);

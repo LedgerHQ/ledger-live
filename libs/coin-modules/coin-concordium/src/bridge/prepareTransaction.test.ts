@@ -1,10 +1,6 @@
 import BigNumber from "bignumber.js";
+import { createFixtureAccount, createFixtureTransaction, VALID_ADDRESS } from "../test/fixtures";
 import { prepareTransaction } from "./prepareTransaction";
-import {
-  createFixtureBaseAccount,
-  createFixtureTransaction,
-  VALID_ADDRESS,
-} from "./bridge.fixture";
 
 jest.mock("../common-logic", () => ({
   estimateFees: jest.fn(),
@@ -28,7 +24,7 @@ describe("prepareTransaction", () => {
     it("should update fee when current fee differs from estimate", async () => {
       // GIVEN
       estimateFees.mockResolvedValue({ cost: BigInt(1000), energy: BigInt(600) });
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const tx = createFixtureTransaction({ fee: new BigNumber(0) });
 
       // WHEN
@@ -41,7 +37,7 @@ describe("prepareTransaction", () => {
     it("should return same transaction when fee is unchanged", async () => {
       // GIVEN
       estimateFees.mockResolvedValue({ cost: BigInt(500), energy: BigInt(501) });
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const tx = createFixtureTransaction({ fee: new BigNumber(500) });
 
       // WHEN
@@ -53,7 +49,7 @@ describe("prepareTransaction", () => {
 
     it("should update fee when estimate changes", async () => {
       // GIVEN
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const tx = createFixtureTransaction({ fee: new BigNumber(100) });
       estimateFees.mockResolvedValue({ cost: BigInt(200), energy: BigInt(501) });
 
@@ -69,7 +65,7 @@ describe("prepareTransaction", () => {
   describe("transaction type selection", () => {
     it("should use Transfer type when no memo", async () => {
       // GIVEN
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const tx = createFixtureTransaction({ memo: undefined });
 
       // WHEN
@@ -91,7 +87,7 @@ describe("prepareTransaction", () => {
 
     it("should use TransferWithMemo type when memo is present", async () => {
       // GIVEN
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const tx = createFixtureTransaction({ memo: "test memo" });
 
       // WHEN
@@ -114,7 +110,7 @@ describe("prepareTransaction", () => {
     it("should use recipient when provided", async () => {
       // GIVEN
       const recipientAddress = "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G";
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const tx = createFixtureTransaction({ recipient: recipientAddress });
 
       // WHEN
@@ -127,7 +123,7 @@ describe("prepareTransaction", () => {
 
     it("should use freshAddress when recipient is empty", async () => {
       // GIVEN
-      const account = createFixtureBaseAccount({ freshAddress: VALID_ADDRESS });
+      const account = createFixtureAccount({ freshAddress: VALID_ADDRESS });
       const tx = createFixtureTransaction({ recipient: "" });
 
       // WHEN
@@ -140,7 +136,7 @@ describe("prepareTransaction", () => {
 
     it("should use abandon seed address when recipient and freshAddress are empty", async () => {
       // GIVEN
-      const account = createFixtureBaseAccount({ freshAddress: "" });
+      const account = createFixtureAccount({ freshAddress: "" });
       const tx = createFixtureTransaction({ recipient: "" });
 
       // WHEN
@@ -154,7 +150,7 @@ describe("prepareTransaction", () => {
   describe("amount handling", () => {
     it("should convert BigNumber amount to CcdAmount", async () => {
       // GIVEN
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const tx = createFixtureTransaction({ amount: new BigNumber(5000000) }); // 5 CCD in microCCD
 
       // WHEN
@@ -167,7 +163,7 @@ describe("prepareTransaction", () => {
 
     it("should handle zero amount", async () => {
       // GIVEN
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const tx = createFixtureTransaction({ amount: new BigNumber(0) });
 
       // WHEN
@@ -183,7 +179,7 @@ describe("prepareTransaction", () => {
     it("should not mutate original transaction", async () => {
       // GIVEN
       estimateFees.mockResolvedValue({ cost: BigInt(999), energy: BigInt(501) });
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const tx = createFixtureTransaction({ fee: new BigNumber(0) });
       const originalFee = tx.fee;
 
@@ -197,7 +193,7 @@ describe("prepareTransaction", () => {
     it("should preserve other transaction fields when updating fee", async () => {
       // GIVEN
       estimateFees.mockResolvedValue({ cost: BigInt(999), energy: BigInt(501) });
-      const account = createFixtureBaseAccount();
+      const account = createFixtureAccount();
       const tx = createFixtureTransaction({
         amount: new BigNumber(12345),
         recipient: VALID_ADDRESS,

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
+import { createFixtureAccount } from "../test/fixtures";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import { createFixtureBaseAccount } from "./bridge.fixture";
 
 jest.mock("./prepareTransaction", () => ({
   prepareTransaction: jest.fn().mockResolvedValue({
@@ -31,7 +31,7 @@ describe("estimateMaxSpendable", () => {
 
   it("should return spendable balance minus estimated fees", async () => {
     // GIVEN
-    const account = createFixtureBaseAccount({ spendableBalance: new BigNumber(10000000) });
+    const account = createFixtureAccount({ spendableBalance: new BigNumber(10000000) });
 
     // WHEN
     const result = await estimateMaxSpendable({ account });
@@ -48,7 +48,7 @@ describe("estimateMaxSpendable", () => {
       errors: {},
       warnings: {},
     });
-    const account = createFixtureBaseAccount({ spendableBalance: new BigNumber(10000000) });
+    const account = createFixtureAccount({ spendableBalance: new BigNumber(10000000) });
 
     // WHEN
     const result = await estimateMaxSpendable({ account });
@@ -65,7 +65,7 @@ describe("estimateMaxSpendable", () => {
       errors: {},
       warnings: {},
     });
-    const account = createFixtureBaseAccount({ spendableBalance: new BigNumber(10000000) });
+    const account = createFixtureAccount({ spendableBalance: new BigNumber(10000000) });
 
     // WHEN
     const result = await estimateMaxSpendable({ account });
@@ -77,7 +77,7 @@ describe("estimateMaxSpendable", () => {
   it("should use transaction recipient if provided", async () => {
     // GIVEN
     const { prepareTransaction } = jest.requireMock("./prepareTransaction");
-    const account = createFixtureBaseAccount();
+    const account = createFixtureAccount();
     const customRecipient = "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G";
 
     // WHEN
@@ -96,7 +96,7 @@ describe("estimateMaxSpendable", () => {
   it("should use abandon seed address when no recipient provided", async () => {
     // GIVEN
     const { prepareTransaction } = jest.requireMock("./prepareTransaction");
-    const account = createFixtureBaseAccount();
+    const account = createFixtureAccount();
 
     // WHEN
     await estimateMaxSpendable({ account });
@@ -113,7 +113,7 @@ describe("estimateMaxSpendable", () => {
   it("should set amount to 0 for fee estimation", async () => {
     // GIVEN
     const { prepareTransaction } = jest.requireMock("./prepareTransaction");
-    const account = createFixtureBaseAccount();
+    const account = createFixtureAccount();
 
     // WHEN
     await estimateMaxSpendable({ account });
@@ -128,7 +128,7 @@ describe("estimateMaxSpendable", () => {
   it("should call createTransaction with account", async () => {
     // GIVEN
     const { createTransaction } = jest.requireMock("./createTransaction");
-    const account = createFixtureBaseAccount();
+    const account = createFixtureAccount();
 
     // WHEN
     await estimateMaxSpendable({ account });
@@ -140,7 +140,7 @@ describe("estimateMaxSpendable", () => {
   it("should merge transaction properties with created transaction", async () => {
     // GIVEN
     const { prepareTransaction } = jest.requireMock("./prepareTransaction");
-    const account = createFixtureBaseAccount();
+    const account = createFixtureAccount();
 
     // WHEN
     await estimateMaxSpendable({
@@ -157,8 +157,8 @@ describe("estimateMaxSpendable", () => {
 
   it("should handle parentAccount parameter", async () => {
     // GIVEN
-    const account = createFixtureBaseAccount();
-    const parentAccount = createFixtureBaseAccount({ id: "parent-id" });
+    const account = createFixtureAccount();
+    const parentAccount = createFixtureAccount({ id: "parent-id" });
 
     // WHEN
     const result = await estimateMaxSpendable({ account, parentAccount });
@@ -169,7 +169,7 @@ describe("estimateMaxSpendable", () => {
 
   it("should handle zero spendable balance", async () => {
     // GIVEN
-    const account = createFixtureBaseAccount({ spendableBalance: new BigNumber(0) });
+    const account = createFixtureAccount({ spendableBalance: new BigNumber(0) });
 
     // WHEN
     const result = await estimateMaxSpendable({ account });

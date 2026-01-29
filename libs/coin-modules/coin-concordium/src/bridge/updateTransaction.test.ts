@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
+import { createFixtureTransaction } from "../test/fixtures";
 import { updateTransaction } from "./updateTransaction";
-import { createFixtureTransaction } from "./bridge.fixture";
 
 describe("updateTransaction", () => {
   it("should reset fee to null when updating", () => {

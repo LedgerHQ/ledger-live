@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { ConcordiumAccount } from "../types";
+import { createFixtureCurrency, VALID_ADDRESS, PUBLIC_KEY } from "../test/fixtures";
 import { getAccountShape } from "./sync";
-import { createFixtureCurrency, VALID_ADDRESS, PUBLIC_KEY } from "./bridge.fixture";
 
 jest.mock("../network/proxyClient", () => ({
   getAccountsByPublicKey: jest.fn(),

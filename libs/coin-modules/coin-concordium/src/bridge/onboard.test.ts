@@ -1,15 +1,17 @@
 import { LockedDeviceError, TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { firstValueFrom, toArray } from "rxjs";
 import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types/onboard";
+import {
+  createFixtureAccount,
+  createFixtureCurrency,
+  VALID_ADDRESS,
+  CRED_ID,
+} from "../test/fixtures";
 import { buildOnboardAccount, buildPairWalletConnect } from "./onboard";
 import {
-  createFixtureBaseAccount,
-  createFixtureCurrency,
   createFixtureSigner,
   createFixtureSignerContext,
   createFixtureIdAppResponse,
-  VALID_ADDRESS,
-  CRED_ID,
 } from "./bridge.fixture";
 
 // Mock dependencies
@@ -69,7 +71,7 @@ describe("onboard", () => {
       const signerContext = createFixtureSignerContext(mockSigner);
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
-      const account = createFixtureBaseAccount({ freshAddress: "", xpub: "" });
+      const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
       const observable = onboardAccount(currency, "test-device", account);
@@ -91,7 +93,7 @@ describe("onboard", () => {
       const signerContext = createFixtureSignerContext(mockSigner);
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
-      const account = createFixtureBaseAccount({ freshAddress: "", xpub: "" });
+      const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
       const observable = onboardAccount(currency, "test-device", account);
@@ -118,7 +120,7 @@ describe("onboard", () => {
       const signerContext = createFixtureSignerContext(mockSigner);
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
-      const account = createFixtureBaseAccount({ freshAddress: "", xpub: "" });
+      const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
       const observable = onboardAccount(currency, "test-device", account);
@@ -136,7 +138,7 @@ describe("onboard", () => {
       const signerContext = createFixtureSignerContext(mockSigner);
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
-      const account = createFixtureBaseAccount({ freshAddress: "", xpub: "" });
+      const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
       const observable = onboardAccount(currency, "test-device", account);
@@ -158,7 +160,7 @@ describe("onboard", () => {
       const signerContext = createFixtureSignerContext(mockSigner);
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
-      const account = createFixtureBaseAccount({ freshAddress: "", xpub: "" });
+      const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
       const observable = onboardAccount(currency, "test-device", account);
@@ -180,7 +182,7 @@ describe("onboard", () => {
       const signerContext = createFixtureSignerContext(mockSigner);
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
-      const account = createFixtureBaseAccount({ freshAddress: "", xpub: "" });
+      const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
       const observable = onboardAccount(currency, "test-device", account);
@@ -200,7 +202,7 @@ describe("onboard", () => {
       const signerContext = createFixtureSignerContext(mockSigner);
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
-      const account = createFixtureBaseAccount({ freshAddress: "", xpub: "" });
+      const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
       const observable = onboardAccount(currency, "test-device", account);
@@ -221,7 +223,7 @@ describe("onboard", () => {
       const signerContext = createFixtureSignerContext(mockSigner);
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
-      const account = createFixtureBaseAccount({ freshAddress: "", xpub: "" });
+      const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
       const observable = onboardAccount(currency, "test-device", account);
@@ -240,7 +242,7 @@ describe("onboard", () => {
       const signerContext = createFixtureSignerContext(mockSigner);
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
-      const account = createFixtureBaseAccount({ freshAddress: "", xpub: "" });
+      const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
       const observable = onboardAccount(currency, "test-device", account);
@@ -259,7 +261,7 @@ describe("onboard", () => {
       const signerContext = createFixtureSignerContext(mockSigner);
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
-      const account = createFixtureBaseAccount({ freshAddress: "", xpub: "" });
+      const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
       const observable = onboardAccount(currency, "test-device", account);
@@ -278,7 +280,7 @@ describe("onboard", () => {
       const signerContext = createFixtureSignerContext(mockSigner);
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
-      const account = createFixtureBaseAccount({ freshAddress: "", xpub: "" });
+      const account = createFixtureAccount({ freshAddress: "", xpub: "" });
       account.freshAddressPath = "m/1105'/0'/1'/2'/3'/4'";
 
       // WHEN
@@ -303,7 +305,7 @@ describe("onboard", () => {
       const signerContext = createFixtureSignerContext(mockSigner);
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
-      const account = createFixtureBaseAccount({ freshAddress: "", xpub: "" });
+      const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
       const observable = onboardAccount(currency, "test-device", account);
