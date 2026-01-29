@@ -1,0 +1,282 @@
+{
+  "data": {
+    "PLAYWRIGHT_RUN": {
+      "localStorage": {
+        "acceptedTermsVersion": "2042-01-01"
+      }
+    },
+    "settings": { "hasCompletedOnboarding": true },
+    "accounts": [
+      {
+        "data": {
+          "type": "Account",
+          "id": "mock:1:cardano:true_cardano_0:",
+          "seedIdentifier": "mock",
+          "xpub": "2b7203eaac6970424a3c03c6523d73d5c5c8608bbdb2da6cac0fa818a550070226ff4d533833edaf32c8153559089195376128ae9f533a5e89fc4c256a50f6df",
+          "name": "Cardano No Delegation",
+          "starred": false,
+          "used": false,
+          "derivationMode": "cardano",
+          "index": 0,
+          "freshAddress": "addr1_no_delegation",
+          "freshAddressPath": "1852'/1815'/0'/0/0",
+          "blockHeight": 100000,
+          "creationDate": "2023-01-01T00:00:00.000Z",
+          "operationsCount": 10,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "cardano",
+          "unitMagnitude": 6,
+          "lastSyncDate": "2023-10-01T00:00:00.000Z",
+          "balance": "100000000",
+          "spendableBalance": "100000000",
+          "swapHistory": [],
+          "subAccounts": [],
+          "balanceHistoryCache": {},
+          "cardanoResources": {
+            "externalCredentials": [
+              {
+                "isUsed": true,
+                "key": "bd2717d482fa89b20f7ba1299344d203d14cfa231d8da9847aa51e07",
+                "path": {
+                  "account": 0,
+                  "chain": 0,
+                  "coin": 1815,
+                  "index": 0,
+                  "purpose": 1852
+                }
+              }
+            ],
+            "internalCredentials": [
+              {
+                "isUsed": false,
+                "key": "cdc820fc923c1f0c21eda007b83b15da770edee5f7d8fc9e77bf02ba",
+                "path": {
+                  "account": 0,
+                  "chain": 1,
+                  "coin": 1815,
+                  "index": 0,
+                  "purpose": 1852
+                }
+              }
+            ],
+            "utxos": [],
+            "delegation": null,
+            "protocolParams": {
+              "minFeeA": "44",
+              "minFeeB": "155381",
+              "stakeKeyDeposit": "2000000",
+              "lovelacePerUtxoWord": "34482",
+              "collateralPercent": "150",
+              "priceSteps": "0.0000721",
+              "priceMem": "0.0577",
+              "maxTxSize": "16384",
+              "maxValueSize": "5000",
+              "utxoCostPerByte": "4310",
+              "minFeeRefScriptCostPerByte": "15",
+              "languageView": {}
+            }
+          }
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "type": "Account",
+          "id": "mock:1:cardano:true_cardano_1:",
+          "seedIdentifier": "mock",
+          "xpub": "ad2717d482fa89b20f7ba1299344d203d14cfa231d8da9847aa51e07db5e8ece0982acc4883de67c2e3411cc26bd56686a162074998c02bc",
+          "name": "Cardano Active Delegation",
+          "starred": false,
+          "used": true,
+          "derivationMode": "cardano",
+          "index": 1,
+          "freshAddress": "addr1_active_delegation",
+          "freshAddressPath": "1852'/1815'/1'/0/0",
+          "blockHeight": 100000,
+          "creationDate": "2023-01-01T00:00:00.000Z",
+          "operationsCount": 10,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "cardano",
+          "unitMagnitude": 6,
+          "lastSyncDate": "2023-10-01T00:00:00.000Z",
+          "balance": "500000000",
+          "spendableBalance": "500000000",
+          "swapHistory": [],
+          "subAccounts": [],
+          "balanceHistoryCache": {},
+          "cardanoResources": {
+            "externalCredentials": [
+              {
+                "isUsed": true,
+                "key": "ad3717d482fa89b20f7ba1299344d203d14cfa231d8da9847aa51e07",
+                "path": {
+                  "account": 0,
+                  "chain": 0,
+                  "coin": 1815,
+                  "index": 0,
+                  "purpose": 1852
+                }
+              }
+            ],
+            "internalCredentials": [
+              {
+                "isUsed": false,
+                "key": "bdc820fc923c1f0c21eda007b83b15da770edee5f7d8fc9e77bf02ba",
+                "path": {
+                  "account": 0,
+                  "chain": 1,
+                  "coin": 1815,
+                  "index": 0,
+                  "purpose": 1852
+                }
+              }
+            ],
+            "utxos": [
+              {
+                "hash": "e807160f59455ffc011e6d0a48c0922645797707b8520788f176ca21f2b49561",
+                "index": 0,
+                "address": "addr1_active_delegation",
+                "amount": "500000000",
+                "tokens": [],
+                "paymentCredential": {
+                  "key": "ad3717d482fa89b20f7ba1299344d203d14cfa231d8da9847aa51e07",
+                  "path": {
+                    "account": 0,
+                    "chain": 0,
+                    "coin": 1815,
+                    "index": 0,
+                    "purpose": 1852
+                  }
+                }
+              }
+            ],
+            "delegation": {
+              "status": true,
+              "deposit": "2000000",
+              "poolId": "pool1abc1234567890abcdef1234567890",
+              "ticker": "LITHER",
+              "name": "Lither Pool",
+              "dRepHex": null,
+              "rewards": "5000000"
+            },
+            "protocolParams": {
+              "minFeeA": "44",
+              "minFeeB": "155381",
+              "stakeKeyDeposit": "2000000",
+              "lovelacePerUtxoWord": "34482",
+              "collateralPercent": "150",
+              "priceSteps": "0.0000721",
+              "priceMem": "0.0577",
+              "maxTxSize": "16384",
+              "maxValueSize": "5000",
+              "utxoCostPerByte": "4310",
+              "minFeeRefScriptCostPerByte": "15",
+              "languageView": {}
+            }
+          }
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "type": "Account",
+          "id": "mock:1:cardano:true_cardano_2:",
+          "seedIdentifier": "mock",
+          "xpub": "cd2717d482fa89b20f7ba1299344d203d14cfa231d8da9847aa51e07db5e8ece0982acc4883de67c2e3411cc26bd56686a162074998c02bd",
+          "name": "Cardano Self Tx Info",
+          "starred": false,
+          "used": true,
+          "derivationMode": "cardano",
+          "index": 2,
+          "freshAddress": "addr1_self_tx_info",
+          "freshAddressPath": "1852'/1815'/2'/0/0",
+          "blockHeight": 100000,
+          "creationDate": "2023-01-01T00:00:00.000Z",
+          "operationsCount": 10,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "cardano",
+          "unitMagnitude": 6,
+          "lastSyncDate": "2023-10-01T00:00:00.000Z",
+          "balance": "300000000",
+          "spendableBalance": "300000000",
+          "swapHistory": [],
+          "subAccounts": [],
+          "balanceHistoryCache": {},
+          "cardanoResources": {
+            "externalCredentials": [
+              {
+                "isUsed": true,
+                "key": "cd3717d482fa89b20f7ba1299344d203d14cfa231d8da9847aa51e07",
+                "path": {
+                  "account": 0,
+                  "chain": 0,
+                  "coin": 1815,
+                  "index": 0,
+                  "purpose": 1852
+                }
+              }
+            ],
+            "internalCredentials": [
+              {
+                "isUsed": false,
+                "key": "ddc820fc923c1f0c21eda007b83b15da770edee5f7d8fc9e77bf02ba",
+                "path": {
+                  "account": 0,
+                  "chain": 1,
+                  "coin": 1815,
+                  "index": 0,
+                  "purpose": 1852
+                }
+              }
+            ],
+            "utxos": [
+              {
+                "hash": "f807160f59455ffc011e6d0a48c0922645797707b8520788f176ca21f2b49562",
+                "index": 0,
+                "address": "addr1_self_tx_info",
+                "amount": "300000000",
+                "tokens": [],
+                "paymentCredential": {
+                  "key": "cd3717d482fa89b20f7ba1299344d203d14cfa231d8da9847aa51e07",
+                  "path": {
+                    "account": 0,
+                    "chain": 0,
+                    "coin": 1815,
+                    "index": 0,
+                    "purpose": 1852
+                  }
+                }
+              }
+            ],
+            "delegation": {
+              "status": true,
+              "deposit": "2000000",
+              "poolId": "pool1xyz9876543210fedcba0987654321",
+              "ticker": "STAKER",
+              "name": "Staker Pool",
+              "rewards": "10000000"
+            },
+            "protocolParams": {
+              "minFeeA": "44",
+              "minFeeB": "155381",
+              "stakeKeyDeposit": "2000000",
+              "lovelacePerUtxoWord": "34482",
+              "collateralPercent": "150",
+              "priceSteps": "0.0000721",
+              "priceMem": "0.0577",
+              "maxTxSize": "16384",
+              "maxValueSize": "5000",
+              "utxoCostPerByte": "4310",
+              "minFeeRefScriptCostPerByte": "15",
+              "languageView": {}
+            }
+          }
+        },
+        "version": 1
+      }
+    ]
+  }
+}
