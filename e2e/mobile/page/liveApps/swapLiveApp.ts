@@ -331,7 +331,6 @@ export default class SwapLiveAppPage {
       await app.swapLiveApp.tapExecuteSwapOnStepApproval();
       const summaryContinueButton = app.send.summaryContinueButton();
       await waitForElement(summaryContinueButton);
-      //Test will fail here with a known issue: LIVE-21138
       await tapByElement(summaryContinueButton);
     }
   }
