@@ -115,6 +115,50 @@ function groupByHash<T extends { hash: string }>(items: T[]): Record<string, T[]
   return byHash;
 }
 
+/**
+ * Creates a block comparator for pagination ordering.
+ *
+ * The comparator encodes "semantic ordering" based on pagination direction:
+ * - In desc mode: higher blocks are fetched first, lower blocks come later
+ * - In asc mode: lower blocks are fetched first, higher blocks come later
+ *
+ * The comparator returns:
+ * - negative if `a` comes before `b` in pagination order (a is "semantically smaller")
+ * - zero if `a` equals `b`
+ * - positive if `a` comes after `b` in pagination order (a is "semantically greater")
+ *
+ * Example in desc mode: compare(10, 5) = 5 - 10 = -5 (block 10 comes before block 5)
+ * Example in asc mode: compare(5, 10) = 5 - 10 = -5 (block 5 comes before block 10)
+ */
+type BlockComparator = {
+  /** Compare two blocks: negative if a comes first, positive if b comes first */
+  compare: (a: number, b: number) => number;
+  /** Select the bound that comes first in pagination (semantically smaller) */
+  selectFirstBound: (a: number, b: number) => number;
+  /** Check if a block should be kept (comes at or before the bound) */
+  shouldKeep: (block: number, bound: number) => boolean;
+  /** Get the next block after the bound in pagination order */
+  nextBlock: (bound: number) => number;
+};
+
+function createBlockComparator(order: "asc" | "desc"): BlockComparator {
+  // In desc: higher blocks come first, so compare(a, b) = b - a
+  // In asc: lower blocks come first, so compare(a, b) = a - b
+  const compare =
+    order === "asc"
+      ? (a: number, b: number): number => a - b
+      : (a: number, b: number): number => b - a;
+
+  const nextBlock = order === "asc" ? (b: number): number => b + 1 : (b: number): number => b - 1;
+
+  return {
+    compare,
+    selectFirstBound: (a: number, b: number): number => (compare(a, b) <= 0 ? a : b),
+    shouldKeep: (block: number, bound: number): boolean => compare(block, bound) <= 0,
+    nextBlock,
+  };
+}
+
 // this function is used to optimize the fromBlock or toBlock for the next endpoint call
 // if the current enpoint call returns a full page, then it's unnecessary to call the next endpoint with a toBlock higher than the maxBlock of the current page
 // why ? because the operations must respect a total ordering by block height across pages
@@ -122,10 +166,8 @@ function updateEffectiveBoundBlock(
   limit: number | undefined,
   currentBoundBlock: number | undefined,
   result: EndpointResult,
-  order: "asc" | "desc",
+  cmp: BlockComparator,
 ): number | undefined {
-  // the currentBoundBlock must be "logically greater than or equal to" the result.boundBlock
-  // TODO < or > : assert(currentBoundBlock === undefined || currentBoundBlock >= result.boundBlock)
   // when page are unlimited, we don't adjust the maxBlock
   if (
     limit !== undefined &&
@@ -136,11 +178,11 @@ function updateEffectiveBoundBlock(
     if (currentBoundBlock === undefined) {
       return result.boundBlock;
     }
-    // For desc: keep the maximum boundBlock (higher blocks take priority)
-    // For asc: keep the minimum boundBlock (lower blocks take priority)
-    return order === "desc"
-      ? Math.max(currentBoundBlock, result.boundBlock)
-      : Math.min(currentBoundBlock, result.boundBlock);
+    // Select the bound that comes first in pagination order (semantically smaller)
+    // This ensures we don't miss any blocks - we constrain to the most restrictive bound
+    // In desc mode: this is Math.max (higher blocks come first)
+    // In asc mode: this is Math.min (lower blocks come first)
+    return cmp.selectFirstBound(currentBoundBlock, result.boundBlock);
   }
   return currentBoundBlock;
 }
@@ -658,14 +700,15 @@ export const getOperations = makeLRUCache<
   async (currency, address, accountId, fromBlock, toBlock, pagingToken, limit, order = "desc") => {
     try {
       const paginationBlock = deserializePagingToken(pagingToken);
-      let currentBoundBlock = undefined;
+      let currentBoundBlock: number | undefined = undefined;
 
-      // in asc mode we increment the bound (fromBlock) and in desc mode we decrement it (toBlock)
-      const nextPaginationBlock =
-        order === "asc" ? (bound: number) => bound + 1 : (bound: number) => bound - 1;
+      const cmp = createBlockComparator(order);
 
       // TODO remove the boundBlock parameter and use the currentBoundBlock instead in the closure
-      async function callEndpoint(endpoint: FetchOperations, boundBlock: number | undefined) {
+      async function callEndpoint(
+        endpoint: FetchOperations,
+        boundBlock: number | undefined,
+      ): Promise<EndpointResult> {
         // in asc mode, the cursor is the toBlock
         // in desc mode the cursor is the fromBlock
         // note that user input is discarded in favor of the bound block and the pagination
@@ -704,37 +747,34 @@ export const getOperations = makeLRUCache<
       // coins
       console.log("🦄 callEndpoint getCoinOperations", paginationBlock, currentBoundBlock);
       const coinResult = await callEndpoint(getCoinOperations, currentBoundBlock);
-      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, coinResult, order);
+      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, coinResult, cmp);
 
       // internal operations
       console.log("🦄 callEndpoint getInternalOperations", paginationBlock, currentBoundBlock);
       const internalResult = await callEndpoint(getInternalOperations, currentBoundBlock);
-      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, internalResult, order);
+      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, internalResult, cmp);
 
       // tokens
       console.log("🦄 callEndpoint getTokenOperations", paginationBlock, currentBoundBlock);
       const tokenResult = await callEndpoint(getTokenOperations, currentBoundBlock);
-      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, tokenResult, order);
+      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, tokenResult, cmp);
 
       // nfts
       console.log("🦄 callEndpoint getNftOperations", paginationBlock, currentBoundBlock);
       const nftResult = isNFTActive(currency)
         ? await callEndpoint(getNftOperations, currentBoundBlock)
         : EMPTY_RESULT;
-      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, nftResult, order);
+      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, nftResult, cmp);
 
-      // TODO implement all the comparisons, max/min, ... given a single comparator function
-      // if negative then a < b, if 0 then a = b, if positive then a > b
+      // Drop operations that come after the boundBlock in pagination order
       const dropOperations = (
         operations: Operation[],
         boundBlock: number | undefined,
       ): Operation[] => {
-        // If no boundBlock is set, keep all operations
         if (boundBlock === undefined) return operations;
         return operations.filter(op => {
           const block = op.blockHeight;
-          if (block === undefined || block === null) return false;
-          return order === "asc" ? block <= boundBlock : block >= boundBlock;
+          return !(block === undefined || block === null) && cmp.shouldKeep(block, boundBlock);
         });
       };
 
@@ -753,7 +793,7 @@ export const getOperations = makeLRUCache<
       );
 
       const nextBoundBlock =
-        currentBoundBlock !== undefined ? nextPaginationBlock(currentBoundBlock) : undefined;
+        currentBoundBlock !== undefined ? cmp.nextBlock(currentBoundBlock) : undefined;
       return {
         lastCoinOperations: coinResult.operations,
         lastTokenOperations: tokenResult.operations,
