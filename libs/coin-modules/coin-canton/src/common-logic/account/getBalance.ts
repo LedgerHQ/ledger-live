@@ -35,6 +35,6 @@ export async function getBalance(
 ): Promise<CantonBalance[]> {
   if (useGateway(currency)) {
     const balances = await gatewayGetBalance(currency, partyId);
-    return (balances ?? []).map(instrument => adaptInstrument(currency, instrument));
+    return balances.map(instrument => adaptInstrument(currency, instrument));
   } else throw new Error("Not implemented");
 }

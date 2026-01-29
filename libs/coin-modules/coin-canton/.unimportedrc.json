@@ -31,5 +31,5 @@
     "src/test/fixtures.ts",
     "src/supportedFeatures.ts"
   ],
-  "ignoreUnused": ["@ledgerhq/devices", "protobufjs", "@ledgerhq/hw-app-canton"]
+  "ignoreUnused": ["@ledgerhq/devices", "protobufjs"]
 }
