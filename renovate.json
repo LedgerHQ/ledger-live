@@ -102,11 +102,7 @@
     },
     {
       "extends": ["monorepo:expo"],
-      "groupName": null,
-      "minimumReleaseAge": "2 days"
-    },
-    {
-      "minimumReleaseAge": "2 days"
+      "groupName": null
     }
   ],
   "prConcurrentLimit": 10,
