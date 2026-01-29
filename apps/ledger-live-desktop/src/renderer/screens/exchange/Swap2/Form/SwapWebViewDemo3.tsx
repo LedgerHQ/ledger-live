@@ -4,8 +4,8 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import {
   PrepareSaveSwapProps,
-  prepareSaveSwapToHistory,
-} from "@ledgerhq/live-common/exchange/swap/prepareSaveSwapToHistory";
+  prepareLegacySaveSwapToHistory,
+} from "@ledgerhq/live-common/exchange/swap/prepareLegacySaveSwapToHistory";
 import { getEnv } from "@ledgerhq/live-env";
 
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
@@ -402,17 +402,9 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
       }: {
         params: { swap: PrepareSaveSwapProps; transaction_id: string };
       }) => {
-        const { swap, transaction_id } = params;
-
-        const fromId = getAccountIdFromWalletAccountId(swap.fromAccountId);
-        const toId = getAccountIdFromWalletAccountId(swap.toAccountId);
-        if (!fromId || !toId) return Promise.reject("Accounts not found");
-
-        const { accountId, updater } = prepareSaveSwapToHistory(accounts, {
-          ...swap,
-          fromAccountId: fromId,
-          toAccountId: toId,
-          transactionId: transaction_id,
+        const { accountId, updater } = prepareLegacySaveSwapToHistory({
+          params,
+          accounts,
         });
 
         dispatch(updateAccountWithUpdater(accountId, updater));

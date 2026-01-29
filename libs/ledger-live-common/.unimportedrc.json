@@ -77,6 +77,8 @@
     "src/exchange/swap/hooks/index.ts",
     "src/exchange/swap/index.ts",
     "src/exchange/swap/initSwap.ts",
+    "src/exchange/swap/prepareSaveSwapToHistory.ts",
+    "src/exchange/swap/prepareLegacySaveSwapToHistory.ts",
     "src/exchange/swap/setBroadcastTransaction.ts",
     "src/exchange/swap/types.ts",
     "src/exchange/swap/updateAccountSwapStatus.ts",
