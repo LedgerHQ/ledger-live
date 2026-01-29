@@ -3,14 +3,14 @@
 exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
 [
   {
-    "balance": "2125992",
+    "balance": "1066802",
     "currencyId": "hedera",
     "derivationMode": "hederaBip44",
     "freshAddress": "0.0.1040977",
     "freshAddressPath": "44/3030",
     "hederaResources": {
       "delegation": {
-        "delegated": "2125992",
+        "delegated": "1066802",
         "nodeId": 20,
         "pendingReward": "0",
       },
@@ -19,10 +19,10 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     },
     "id": "js:2:hedera:0.0.1040977:hederaBip44",
     "index": 0,
-    "operationsCount": 85,
+    "operationsCount": 87,
     "pendingOperations": [],
     "seedIdentifier": "9e92a312233d5fd6b5a723875aeea2cea81a8e48ffc00341cff6dffcfd3ab7f2",
-    "spendableBalance": "2125992",
+    "spendableBalance": "1066802",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": "0xd57e2c66",
@@ -199,12 +199,12 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "balance": "40063",
+    "balance": "40064",
     "id": "js:2:hedera:0.0.8313485:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
     "operationsCount": 4,
     "parentId": "js:2:hedera:0.0.8313485:hederaBip44",
     "pendingOperations": [],
-    "spendableBalance": "40063",
+    "spendableBalance": "40064",
     "swapHistory": [],
     "tokenId": "hedera/erc20/bonzo_atoken_usdc_0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
     "type": "TokenAccountRaw",
@@ -910,6 +910,28 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "value": "167824",
     },
     {
+      "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 10,
+      "extra": {
+        "consensusTimestamp": "1769698035.720449444",
+        "pagingToken": "1769698035.720449444",
+        "transactionId": "0.0.1040977-1769698022-867001204",
+      },
+      "fee": "97410",
+      "hasFailed": false,
+      "hash": "EXEFhjx1__M7cV5WIqiDjF8TrzEtmES7_96T9-BfT4u8MMjZaEd69eXn_bcAQcw-",
+      "id": "js:2:hedera:0.0.1040977:hederaBip44-EXEFhjx1__M7cV5WIqiDjF8TrzEtmES7_96T9-BfT4u8MMjZaEd69eXn_bcAQcw--OUT",
+      "recipients": [
+        "0.0.30",
+      ],
+      "senders": [
+        "0.0.1040977",
+      ],
+      "type": "OUT",
+      "value": "97410",
+    },
+    {
       "accountId": "",
       "blockHash": null,
       "blockHeight": 10,
@@ -1200,6 +1222,28 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       ],
       "type": "OUT",
       "value": "10225507",
+    },
+    {
+      "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 10,
+      "extra": {
+        "consensusTimestamp": "1769699423.568370037",
+        "pagingToken": "1769699423.568370037",
+        "transactionId": "0.0.1040977-1769699408-000317990",
+      },
+      "fee": "961780",
+      "hasFailed": true,
+      "hash": "ipFK5Ikr9NsFatyBR3evOyIFMPEKVROLQL4gtOnVD6mzvyIhXAq5scS0aZJikbcq",
+      "id": "js:2:hedera:0.0.1040977:hederaBip44-ipFK5Ikr9NsFatyBR3evOyIFMPEKVROLQL4gtOnVD6mzvyIhXAq5scS0aZJikbcq-OUT",
+      "recipients": [
+        "0.0.30",
+      ],
+      "senders": [
+        "0.0.1040977",
+      ],
+      "type": "OUT",
+      "value": "961780",
     },
     {
       "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
