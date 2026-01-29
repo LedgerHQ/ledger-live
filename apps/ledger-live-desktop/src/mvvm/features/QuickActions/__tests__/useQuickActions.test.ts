@@ -291,5 +291,23 @@ describe("useQuickActions", () => {
       expect(mockNavigate).toHaveBeenCalledWith("/accounts");
       expect(mockOpenSendFlow).toHaveBeenCalledTimes(1);
     });
+
+    it("should disable send action when no accounts exist", () => {
+      const { result } = renderHook(() => useQuickActions(), {
+        initialState: { accounts: [] },
+      });
+
+      const sendAction = result.current.actionsList[3];
+      expect(sendAction.disabled).toBe(true);
+    });
+
+    it("should enable send action when all accounts are empty", () => {
+      const { result } = renderHook(() => useQuickActions(), {
+        initialState: { accounts: [createEmptyAccount()] },
+      });
+
+      const sendAction = result.current.actionsList[3];
+      expect(sendAction.disabled).toBe(false);
+    });
   });
 });
