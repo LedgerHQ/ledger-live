@@ -133,12 +133,12 @@ function groupByHash<T extends { hash: string }>(items: T[]): Record<string, T[]
 type BlockComparator = {
   /** Compare two blocks: negative if a comes first, positive if b comes first */
   compare: (a: number, b: number) => number;
-  /** Select the bound that comes first in pagination (semantically smaller) */
-  selectFirstBound: (a: number, b: number) => number;
-  /** Check if a block should be kept (comes at or before the bound) */
-  shouldKeep: (block: number, bound: number) => boolean;
-  /** Get the next block after the bound in pagination order */
-  nextBlock: (bound: number) => number;
+  /** Select the semantically smaller number (min in pagination order) */
+  min: (a: number, b: number) => number;
+  /** Check if a is semantically less than or equal to b */
+  isLessOrEqual: (a: number, b: number) => boolean;
+  /** Get the next block in pagination order */
+  next: (a: number) => number;
 };
 
 function createBlockComparator(order: "asc" | "desc"): BlockComparator {
@@ -149,13 +149,13 @@ function createBlockComparator(order: "asc" | "desc"): BlockComparator {
       ? (a: number, b: number): number => a - b
       : (a: number, b: number): number => b - a;
 
-  const nextBlock = order === "asc" ? (b: number): number => b + 1 : (b: number): number => b - 1;
+  const next = order === "asc" ? (b: number): number => b + 1 : (b: number): number => b - 1;
 
   return {
     compare,
-    selectFirstBound: (a: number, b: number): number => (compare(a, b) <= 0 ? a : b),
-    shouldKeep: (block: number, bound: number): boolean => compare(block, bound) <= 0,
-    nextBlock,
+    min: (a: number, b: number): number => (compare(a, b) <= 0 ? a : b),
+    isLessOrEqual: (a: number, b: number): boolean => compare(a, b) <= 0,
+    next,
   };
 }
 
@@ -182,7 +182,7 @@ function updateEffectiveBoundBlock(
     // This ensures we don't miss any blocks - we constrain to the most restrictive bound
     // In desc mode: this is Math.max (higher blocks come first)
     // In asc mode: this is Math.min (lower blocks come first)
-    return cmp.selectFirstBound(currentBoundBlock, result.boundBlock);
+    return cmp.min(currentBoundBlock, result.boundBlock);
   }
   return currentBoundBlock;
 }
@@ -774,7 +774,7 @@ export const getOperations = makeLRUCache<
         if (boundBlock === undefined) return operations;
         return operations.filter(op => {
           const block = op.blockHeight;
-          return !(block === undefined || block === null) && cmp.shouldKeep(block, boundBlock);
+          return !(block === undefined || block === null) && cmp.isLessOrEqual(block, boundBlock);
         });
       };
 
@@ -793,7 +793,7 @@ export const getOperations = makeLRUCache<
       );
 
       const nextBoundBlock =
-        currentBoundBlock !== undefined ? cmp.nextBlock(currentBoundBlock) : undefined;
+        currentBoundBlock !== undefined ? cmp.next(currentBoundBlock) : undefined;
       return {
         lastCoinOperations: coinResult.operations,
         lastTokenOperations: tokenResult.operations,
