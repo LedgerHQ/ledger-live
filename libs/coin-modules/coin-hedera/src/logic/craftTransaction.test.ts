@@ -3,6 +3,7 @@ import * as sdk from "@hashgraph/sdk";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
 import { craftTransaction } from "./craftTransaction";
+import { rpcClient } from "../network/rpc";
 import type { HederaMemo, HederaTxData } from "../types";
 import { serializeTransaction, toEVMAddress } from "./utils";
 
@@ -12,6 +13,10 @@ describe("craftTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (serializeTransaction as jest.Mock).mockReturnValue("serialized-transaction");
+  });
+
+  afterAll(async () => {
+    await rpcClient._resetInstance();
   });
 
   it("should craft a native HBAR transfer transaction", async () => {

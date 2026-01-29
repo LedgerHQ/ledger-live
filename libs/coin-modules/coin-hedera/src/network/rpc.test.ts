@@ -11,31 +11,31 @@ jest.mock("@hashgraph/sdk", () => {
   return {
     Transaction: jest.fn(),
     Client: {
-      forMainnet: jest.fn(() => mockClient),
+      forMainnetAsync: jest.fn(async () => mockClient),
     },
   };
 });
 
 describe("getInstance", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
-    rpcClient._resetInstance();
+    await rpcClient._resetInstance();
   });
 
-  it("returns cached client instance for multiple calls", () => {
-    const client1 = rpcClient.getInstance();
-    const client2 = rpcClient.getInstance();
+  it("returns cached client instance for multiple calls", async () => {
+    const client1 = await rpcClient.getInstance();
+    const client2 = await rpcClient.getInstance();
 
-    expect(Client.forMainnet).toHaveBeenCalledTimes(1);
+    expect(Client.forMainnetAsync).toHaveBeenCalledTimes(1);
     expect(client1).toBe(mockClient);
     expect(client2).toBe(client1);
   });
 });
 
 describe("broadcastTransaction", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
-    rpcClient._resetInstance();
+    await rpcClient._resetInstance();
   });
 
   it("executes the transaction using the client", async () => {
@@ -60,7 +60,7 @@ describe("broadcastTransaction", () => {
     await rpcClient.broadcastTransaction(mockTransaction1);
     await rpcClient.broadcastTransaction(mockTransaction2);
 
-    expect(Client.forMainnet).toHaveBeenCalledTimes(1);
+    expect(Client.forMainnetAsync).toHaveBeenCalledTimes(1);
     expect(mockedExecute1).toHaveBeenCalledTimes(1);
     expect(mockedExecute2).toHaveBeenCalledTimes(1);
     expect(mockedExecute1).toHaveBeenCalledWith(mockClient);
