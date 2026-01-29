@@ -8,7 +8,7 @@ import { stakeDefaultTrack } from "../../../../renderer/screens/stake/constants"
 import useStakeFlow from "../../../../renderer/screens/stake";
 import { useGetSwapTrackingProperties } from "../../../../renderer/screens/exchange/Swap2/utils";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { flattenAccounts } from "@ledgerhq/live-common/account/index";
+import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import {
@@ -112,6 +112,23 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
         return;
       }
 
+      if (availableAccounts.length === 1) {
+        const account = availableAccounts[0];
+        const parentAccount = isTokenAccount(account)
+          ? allAccounts.find(a => a.id === account.parentId)
+          : undefined;
+
+        navigate("/swap", {
+          state: buildSwapNavigationState({
+            currency: ledgerCurrency,
+            fromPath,
+            account,
+            parentAccount,
+          }),
+        });
+        return;
+      }
+
       openAssetAndAccount({
         currencies: [ledgerCurrency.id],
         areCurrenciesFiltered: true,
@@ -138,6 +155,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       navigate,
       location.pathname,
       flattenedAccounts,
+      allAccounts,
       openAssetAndAccount,
     ],
   );
