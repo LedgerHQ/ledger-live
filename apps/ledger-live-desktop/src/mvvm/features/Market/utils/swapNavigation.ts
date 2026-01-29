@@ -13,14 +13,14 @@ export interface SwapNavigationState {
 }
 
 interface BuildSwapStateParams {
-  currency: CryptoOrTokenCurrency;
+  defaultCurrency: CryptoOrTokenCurrency;
   fromPath: string;
   account?: AccountLike;
   parentAccount?: Account;
 }
 
 export function buildSwapNavigationState({
-  currency,
+  defaultCurrency,
   fromPath,
   account,
   parentAccount,
@@ -28,11 +28,11 @@ export function buildSwapNavigationState({
   const baseState: SwapNavigationState = {
     defaultAmountFrom: "0",
     from: fromPath,
-    defaultCurrency: currency,
+    defaultCurrency,
   };
 
-  if (isTokenCurrency(currency) && !account) {
-    baseState.defaultToken = { toTokenId: currency.id };
+  if (isTokenCurrency(defaultCurrency) && !account) {
+    baseState.defaultToken = { toTokenId: defaultCurrency.id };
   }
 
   if (account) {
