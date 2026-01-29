@@ -7,6 +7,8 @@ import { ArrowDown, Plus, Minus, ArrowUp } from "@ledgerhq/lumen-ui-react/symbol
 import { useTranslation } from "react-i18next";
 import { areAccountsEmptySelector, hasAccountsSelector } from "~/renderer/reducers/accounts";
 import { QuickAction } from "../types";
+import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
+import { ModularDrawerLocation } from "../../ModularDrawer";
 
 export const useQuickActions = (): { actionsList: QuickAction[] } => {
   const openSendFlow = useOpenSendFlow();
@@ -16,6 +18,12 @@ export const useQuickActions = (): { actionsList: QuickAction[] } => {
   const { t } = useTranslation();
   const hasAccount = useSelector(hasAccountsSelector);
   const hasFunds = !useSelector(areAccountsEmptySelector) && hasAccount;
+
+  const { openAssetFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    "quick_actions_receive",
+    "MODAL_RECEIVE",
+  );
 
   const push = useCallback(
     (pathname: string) => {
@@ -38,12 +46,12 @@ export const useQuickActions = (): { actionsList: QuickAction[] } => {
     maybeRedirectToAccounts();
 
     if (!hasAccount) {
-      dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
+      openAssetFlow();
       return;
     }
 
     dispatch(openModal("MODAL_RECEIVE", undefined));
-  }, [dispatch, maybeRedirectToAccounts, hasAccount]);
+  }, [maybeRedirectToAccounts, hasAccount, dispatch, openAssetFlow]);
 
   const onBuy = useCallback(() => {
     navigate("/exchange", {
