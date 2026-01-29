@@ -122,6 +122,7 @@ function updateEffectiveBoundBlock(
   limit: number | undefined,
   currentBoundBlock: number | undefined,
   result: EndpointResult,
+  order: "asc" | "desc",
 ): number | undefined {
   // the currentBoundBlock must be "logically greater than or equal to" the result.boundBlock
   // TODO < or > : assert(currentBoundBlock === undefined || currentBoundBlock >= result.boundBlock)
@@ -132,9 +133,14 @@ function updateEffectiveBoundBlock(
     result.operations.length > 0 &&
     result.boundBlock > 0
   ) {
-    return currentBoundBlock !== undefined
-      ? Math.min(currentBoundBlock, result.boundBlock)
-      : result.boundBlock;
+    if (currentBoundBlock === undefined) {
+      return result.boundBlock;
+    }
+    // For desc: keep the maximum boundBlock (higher blocks take priority)
+    // For asc: keep the minimum boundBlock (lower blocks take priority)
+    return order === "desc"
+      ? Math.max(currentBoundBlock, result.boundBlock)
+      : Math.min(currentBoundBlock, result.boundBlock);
   }
   return currentBoundBlock;
 }
@@ -693,31 +699,53 @@ export const getOperations = makeLRUCache<
       }
 
       // endpoint calls are sorted by likelyhood of having more operations than the next
+      // todo internal operations on 3rd position
 
       // coins
       console.log("🦄 callEndpoint getCoinOperations", paginationBlock, currentBoundBlock);
       const coinResult = await callEndpoint(getCoinOperations, currentBoundBlock);
-      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, coinResult);
+      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, coinResult, order);
 
       // internal operations
       console.log("🦄 callEndpoint getInternalOperations", paginationBlock, currentBoundBlock);
       const internalResult = await callEndpoint(getInternalOperations, currentBoundBlock);
-      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, internalResult);
+      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, internalResult, order);
 
       // tokens
       console.log("🦄 callEndpoint getTokenOperations", paginationBlock, currentBoundBlock);
       const tokenResult = await callEndpoint(getTokenOperations, currentBoundBlock);
-      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, tokenResult);
+      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, tokenResult, order);
 
       // nfts
       console.log("🦄 callEndpoint getNftOperations", paginationBlock, currentBoundBlock);
       const nftResult = isNFTActive(currency)
         ? await callEndpoint(getNftOperations, currentBoundBlock)
         : EMPTY_RESULT;
-      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, nftResult);
+      currentBoundBlock = updateEffectiveBoundBlock(limit, currentBoundBlock, nftResult, order);
+
+      // TODO implement all the comparisons, max/min, ... given a single comparator function
+      // if negative then a < b, if 0 then a = b, if positive then a > b
+      const dropOperations = (
+        operations: Operation[],
+        boundBlock: number | undefined,
+      ): Operation[] => {
+        // If no boundBlock is set, keep all operations
+        if (boundBlock === undefined) return operations;
+        return operations.filter(op => {
+          const block = op.blockHeight;
+          if (block === undefined || block === null) return false;
+          return order === "asc" ? block <= boundBlock : block >= boundBlock;
+        });
+      };
+
+      // drop operations below/above the currentBoundBlock
+      coinResult.operations = dropOperations(coinResult.operations, currentBoundBlock);
+      internalResult.operations = dropOperations(internalResult.operations, currentBoundBlock);
+      tokenResult.operations = dropOperations(tokenResult.operations, currentBoundBlock);
+      nftResult.operations = dropOperations(nftResult.operations, currentBoundBlock);
 
       // All done when no endpoint has more pages to fetch
-      const hasMore = !(
+      const allDone = !(
         coinResult.hasMorePage ||
         internalResult.hasMorePage ||
         tokenResult.hasMorePage ||
@@ -731,7 +759,7 @@ export const getOperations = makeLRUCache<
         lastTokenOperations: tokenResult.operations,
         lastNftOperations: nftResult.operations,
         lastInternalOperations: internalResult.operations,
-        nextPagingToken: serializePagingToken(nextBoundBlock, hasMore),
+        nextPagingToken: serializePagingToken(nextBoundBlock, allDone),
       };
     } catch (err) {
       console.log("🦄 getOperations error", err);
