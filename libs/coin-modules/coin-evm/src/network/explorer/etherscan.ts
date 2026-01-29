@@ -562,6 +562,35 @@ export async function exhaustEndpoint(
   // - example pages: [[1, 2, 3], [3, 3, 3], [4, 5]]
   // with present algorithm we keep [(1, 2, 3), (3, 3)] but we could keep [(1, 2, 3), (3, 3, 3), (4, 5)]
   // but this algo would defeat the cascading optimization of calls
+
+  // another fix to do: call first page with a limit + 1, and check if we need to fetch a 2nd page based on wether the last 2 ops are the same block height, keep only limit ops
+  // most of the time the 2 last ops won't be at the same block height, so we win a lot of calls
+  // example with limit=3:
+
+  // ops : [1 2 3 3, 3 3 3, 3 4 5]
+  // pages calls: [[1 2 3 3] [3 3 3] [3 4 5]]
+  // result: [(1 2 3 3) (3 3 3) (3)] isFullPage=true, hasMorePage=true
+
+  // ops : [1 2 3 4 5]
+  // pages calls: [[1 2 3 4]]
+  // result: [(1 2 3)] isFullPage=true, hasMorePage=true
+
+  // ops : [1 2 3 4 4 5]
+  // pages calls: [[1 2 3 4]]
+  // result: [(1 2 3)] isFullPage = true, hasMorePage=true
+
+  // ops : [1 2 3 3 4 5 6 7]
+  // pages calls: [[1 2 3 3] [4 5 6]]]
+  // result: [(1 2 3 3)] isFullPage=true, hasMorePage=true
+
+  // ops : [1 2]
+  // pages calls: [[1 2]]
+  // result: [(1 2)] isFullPage=true, hasMorePage=false
+
+  // ops : [1 2 3 3]
+  // pages calls: [[1 2 3 3] []]
+  // result: [(1 2 3 3)] isFullPage=true, hasMorePage=false
+
   do {
     currentPageNumber++;
     nextPage = await fetchPage(currentPageNumber);
