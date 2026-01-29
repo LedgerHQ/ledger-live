@@ -6,7 +6,6 @@ import { ConcordiumAccount, Transaction, TransactionStatus } from "@ledgerhq/coi
 import makeCliTools from "@ledgerhq/coin-concordium/test/cli";
 import Concordium from "@ledgerhq/hw-app-concordium";
 import Transport from "@ledgerhq/hw-transport";
-import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Bridge } from "@ledgerhq/types-live";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
@@ -24,10 +23,10 @@ const getCurrencyConfig = (currency?: CryptoCurrency) => {
   return getCurrencyConfiguration<ConcordiumCoinConfig>(currency);
 };
 
-const bridge: Bridge<Transaction, ConcordiumAccount, TransactionStatus> = getEnv("MOCK")
-  ? // TODO: Add mock bridge when available
-    createBridges(executeWithSigner(createSigner), getCurrencyConfig)
-  : createBridges(executeWithSigner(createSigner), getCurrencyConfig);
+const bridge: Bridge<Transaction, ConcordiumAccount, TransactionStatus> = createBridges(
+  executeWithSigner(createSigner),
+  getCurrencyConfig,
+);
 
 const resolver: Resolver = createResolver(createSigner, concordiumResolver);
 

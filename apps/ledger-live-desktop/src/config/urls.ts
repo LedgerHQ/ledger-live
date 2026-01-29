@@ -220,6 +220,11 @@ export const urls = {
   canton: {
     learnMore: "https://support.ledger.com/article/Canton-Network",
   },
+  concordium: {
+    learnMore: "https://support.ledger.com",
+    appStore: "https://apps.apple.com/in/app/concordium-id/id6746754485",
+    playStore: "https://play.google.com/store/apps/details?id=com.idwallet.app",
+  },
 };
 
 export const vaultSigner = {
