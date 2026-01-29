@@ -161,6 +161,7 @@ const Popover = ({ position = "top", children, content }: PopoverProps) => {
     setVisible(!visible);
   }, [childrenContainer, position, visible]);
   const onBlur = useCallback(() => setVisible(false), [setVisible]);
+  const nodeRef = useRef(null);
   return (
     <>
       <Container ref={childrenContainer} onClick={onClick} onBlur={onBlur}>
@@ -176,8 +177,17 @@ const Popover = ({ position = "top", children, content }: PopoverProps) => {
           enter: 100,
           exit: 200,
         }}
+        nodeRef={nodeRef}
       >
-        {state => <Content state={state} content={content} posXY={posXY} position={position} />}
+        {state => (
+          <Content
+            ref={nodeRef}
+            state={state}
+            content={content}
+            posXY={posXY}
+            position={position}
+          />
+        )}
       </Transition>
     </>
   );
@@ -191,12 +201,15 @@ type ContentProps = {
   };
   position: "top" | "bottom" | "left" | "right";
 };
-const Content = ({ content, state, posXY: { left, bottom }, position }: ContentProps) => {
-  const C = (
-    <ContentWrapper state={state} position={position} left={left} bottom={bottom}>
-      <ContentContainer>{content}</ContentContainer>
-    </ContentWrapper>
-  );
-  return document.body && createPortal(C, document.body);
-};
+const Content = React.forwardRef<HTMLDivElement, ContentProps>(
+  ({ content, state, posXY: { left, bottom }, position }, ref) => {
+    const C = (
+      <ContentWrapper ref={ref} state={state} position={position} left={left} bottom={bottom}>
+        <ContentContainer>{content}</ContentContainer>
+      </ContentWrapper>
+    );
+    return document.body && createPortal(C, document.body);
+  },
+);
+Content.displayName = "PopoverContent";
 export default Popover;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import styled from "styled-components";
 import { alwaysShowSkeletonsSelector } from "~/renderer/reducers/application";
@@ -111,12 +111,13 @@ const SkeletonComponent: React.FC<Props> = ({
   const isSkeletonVisible: boolean = show || alwaysShowSkeletons;
   const content = isSkeletonVisible ?? (isSkeletonVisible || !children) ? "" : children;
   const key = content ? "content" : "holder";
+  const nodeRef = useRef(null);
 
   return (
     <Wrapper minHeight={minHeight} full={full} mt={mt}>
       <TransitionGroup component={null}>
-        <CSSTransition in appear key={key} timeout={1000} classNames="skeleton">
-          <Item full={full} width={width} minHeight={barHeight || minHeight}>
+        <CSSTransition in appear key={key} timeout={1000} classNames="skeleton" nodeRef={nodeRef}>
+          <Item ref={nodeRef} full={full} width={width} minHeight={barHeight || minHeight}>
             {content}
           </Item>
         </CSSTransition>
