@@ -4,7 +4,6 @@ import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards"
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { PageViewModelResult } from "./usePageViewModel";
 import { ClassicLayout, Wallet40Layout, ScrollUpButton } from "./components";
-import { shouldDisplayRightPanel } from "./utils";
 import RightPanel from "LLD/components/RightPanel";
 
 type PageViewProps = PageViewModelResult & {
@@ -24,16 +23,15 @@ export const PageView = memo(function PageView({
   isWallet40Enabled,
   pathname,
   onClickScrollUp,
+  shouldRenderRightPanel,
 }: PageViewProps) {
-  const shouldShowRightPanel = shouldDisplayRightPanel(pathname);
-
   return (
     <div className="relative flex flex-1 flex-col">
       <TopBar />
       {isWallet40Enabled ? (
         <Wallet40Layout
           scrollerRef={pageScrollerRef}
-          rightPanel={shouldShowRightPanel ? <RightPanel /> : undefined}
+          rightPanel={shouldRenderRightPanel ? <RightPanel /> : undefined}
         >
           {children}
         </Wallet40Layout>
