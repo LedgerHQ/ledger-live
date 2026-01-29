@@ -1,6 +1,7 @@
 import { test } from "tests/fixtures/common";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 test.describe("Market", () => {
   test.use({
@@ -33,7 +34,7 @@ test.describe("Market", () => {
     },
   );
 
-  test.only(
+  test(
     "Filters behavior",
     {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
@@ -49,11 +50,11 @@ test.describe("Market", () => {
 
       await app.market.validateMarketList();
 
-      await app.market.starCoin("btc");
+      await app.market.starCoin(Account.BTC_NATIVE_SEGWIT_1.currency.ticker);
       await app.market.expectFilterDropdownToBeVisible();
       await app.market.selectStarredAssetsFilter();
-      await app.market.expectCoinToBeVisible("btc");
-      await app.market.expectCoinToNotBeVisible("eth");
+      await app.market.expectCoinToBeVisible(Account.BTC_NATIVE_SEGWIT_1.currency.ticker);
+      await app.market.expectCoinToNotBeVisible(Account.ETH_1.currency.ticker);
     },
   );
 });
