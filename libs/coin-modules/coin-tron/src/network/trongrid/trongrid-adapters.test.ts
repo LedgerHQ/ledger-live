@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
 import { fromTrongridTxInfoToOperation } from "./trongrid-adapters";
 import { TrongridTxInfo } from "../../types";
@@ -19,19 +20,22 @@ describe("fromTrongridTxInfoToOperation", () => {
   const mockTrongridTxInfo: TrongridTxInfo = {
     txID: "tx123",
     blockHeight: 10,
-    date: 1627843345,
-    fee: "1000", // Fee as string (simulating BigNumber)
-    value: "5000", // Value as string (simulating BigNumber)
+    date: new Date(1627843345000),
+    fee: new BigNumber("1000"),
+    value: new BigNumber("5000"),
     from: "from",
     to: "to",
     tokenType: "trc20",
     tokenAddress: "boo",
-  } as unknown as TrongridTxInfo;
+    hasFailed: false,
+    type: "TriggerSmartContract",
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
     (fromBigNumberToBigInt as jest.Mock).mockImplementation(
-      (value: string, defaultValue: bigint) => (value ? BigInt(value) : defaultValue),
+      (value: BigNumber | undefined, defaultValue: bigint) =>
+        value ? BigInt(value.toFixed()) : defaultValue,
     );
   });
 
@@ -45,7 +49,7 @@ describe("fromTrongridTxInfoToOperation", () => {
         block: { height: 10, hash: "blockHash123", time: new Date(1627843345000) },
         fees: BigInt(1000),
         date: 1627843345,
-        failed: undefined,
+        failed: false,
       },
       type: "OUT",
       value: BigInt(5000),
