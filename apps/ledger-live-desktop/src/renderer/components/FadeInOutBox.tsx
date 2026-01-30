@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import { Transition, TransitionStatus } from "react-transition-group";
 import Box from "./Box/Box";
@@ -49,6 +49,7 @@ type Props = {
   in?: boolean;
 } & React.ComponentProps<typeof FadeInOutBox>;
 const UpdateAllApps = ({ timing = 400, children, in: _in, ...rest }: Props) => {
+  const nodeRef = useRef(null);
   return (
     <Transition
       in={_in}
@@ -58,9 +59,10 @@ const UpdateAllApps = ({ timing = 400, children, in: _in, ...rest }: Props) => {
         enter: timing,
         exit: timing * 3, // leaves extra time for the animation to end before unmount
       }}
+      nodeRef={nodeRef}
     >
       {state => (
-        <FadeInOutBox {...rest} timing={timing} state={state}>
+        <FadeInOutBox ref={nodeRef} {...rest} timing={timing} state={state}>
           {children}
         </FadeInOutBox>
       )}

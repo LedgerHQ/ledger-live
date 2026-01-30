@@ -18,7 +18,7 @@ function AnalyticsContent({ viewModel }: { readonly viewModel: AnalyticsViewMode
       <TrackPage category="Analytics" range={selectedTimeRange} countervalue={counterValue} />
       <PageHeader title={t("analytics.title")} onBack={navigateToDashboard} />
 
-      <div className="overflow-hidden rounded-md bg-surface">
+      <div className="overflow-hidden rounded-md bg-surface" data-testid="analytics-chart">
         <PortfolioBalanceSummary
           counterValue={counterValue}
           chartColor={colors.wallet}

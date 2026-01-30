@@ -30,7 +30,7 @@ describe("Analytics", () => {
     render(<Analytics />);
 
     expect(screen.getByText("analytics.title")).toBeVisible();
-    expect(screen.getByTestId("portfolio-balance-summary")).toBeVisible();
+    expect(screen.getByTestId("analytics-chart")).toBeVisible();
   });
 
   it("should call navigateToDashboard when back button is clicked", async () => {

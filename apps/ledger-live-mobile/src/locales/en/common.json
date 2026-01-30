@@ -8384,7 +8384,8 @@
       "neutral": "Neutral",
       "greed": "Greed",
       "extremeGreed": "Greed+"
-    }
+    },
+    "tileTitle": "Mood"
   },
   "analyticsAllocation": {
     "header": {

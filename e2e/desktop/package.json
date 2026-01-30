@@ -7,7 +7,10 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit --project tsconfig.json",
     "test:playwright": "playwright test --config=playwright.config.ts",
-    "test:playwright:setup": "playwright install chromium"
+    "test:playwright:setup": "playwright install chromium",
+    "allure:generate": "allure generate ./allure-results --clean -o ./allure-report",
+    "allure:open": "allure open ./allure-report",
+    "allure": "pnpm run allure:generate && pnpm run allure:open"
   },
   "dependencies": {
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",

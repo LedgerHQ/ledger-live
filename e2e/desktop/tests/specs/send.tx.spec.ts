@@ -232,7 +232,6 @@ const transactionE2E = [
 ];
 
 test.describe("Send flows", () => {
-  //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581 or insufficient funds
 
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
