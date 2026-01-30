@@ -540,7 +540,7 @@ jobs:
 
       - name: run AVD commands to provision cert
         run: |
-          adb root
+          adb ${{steps.create-avd.outputs.avd-name}}
           adb remount
           adb push ~/.mitmproxy/mitmproxy-ca.pem /sdcard/
           adb shell "mv /sdcard/mitmproxy-ca.pem /system/etc/security/cacerts/"
