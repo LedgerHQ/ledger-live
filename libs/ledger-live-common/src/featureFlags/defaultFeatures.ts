@@ -475,6 +475,20 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxPerpsLiveApp: {
+    enabled: false,
+    params: {
+      manifest_id: "perps-live-app",
+    },
+  },
+
+  ptxPerpsLiveAppMobile: {
+    enabled: false,
+    params: {
+      manifest_id: "perps-live-app",
+    },
+  },
+
   ptxEarnLiveApp: {
     enabled: true,
     params: {

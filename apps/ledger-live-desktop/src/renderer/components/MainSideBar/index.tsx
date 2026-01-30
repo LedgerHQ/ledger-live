@@ -310,6 +310,10 @@ const MainSideBar = () => {
     push("/swap");
     trackEntry("swap");
   }, [push, trackEntry]);
+  const handleClickPerps = useCallback(() => {
+    push("/perps");
+    trackEntry("perps");
+  }, [push, trackEntry]);
   const handleClickRefer = useCallback(() => {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
       push(referralProgramConfig?.params.path);
@@ -454,6 +458,18 @@ const MainSideBar = () => {
                   disabled={noAccounts}
                   collapsed={secondAnim}
                 />
+                <FeatureToggle featureId="ptxPerpsLiveApp">
+                  <SideBarListItem
+                    id={"perps"}
+                    label={t("sidebar.perps")}
+                    icon={Icons.GraphAsc}
+                    iconActiveColor="wallet"
+                    onClick={handleClickPerps}
+                    isActive={location.pathname.startsWith("/perps")}
+                    disabled={noAccounts}
+                    collapsed={secondAnim}
+                  />
+                </FeatureToggle>
                 <SideBarListItem
                   id={"earn"}
                   label={earnLabel}

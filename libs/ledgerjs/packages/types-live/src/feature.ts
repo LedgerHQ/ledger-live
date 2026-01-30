@@ -213,6 +213,8 @@ export type Features = CurrencyFeatures & {
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveAppKycWarning: DefaultFeature;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
+  ptxPerpsLiveApp: Feature_PtxPerpsLiveApp;
+  ptxPerpsLiveAppMobile: Feature_PtxPerpsLiveApp;
   ptxSwapLiveAppOnPortfolio: DefaultFeature;
   ptxSwapDetailedView: Feature_PtxSwapDetailedView;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
@@ -616,6 +618,10 @@ export type Feature_PtxSwapLiveApp = Feature<{
   manifest_id: string;
   currencies?: string[];
   families?: string[];
+}>;
+
+export type Feature_PtxPerpsLiveApp = Feature<{
+  manifest_id: string;
 }>;
 
 export type Feature_PtxEarnLiveApp = Feature<{

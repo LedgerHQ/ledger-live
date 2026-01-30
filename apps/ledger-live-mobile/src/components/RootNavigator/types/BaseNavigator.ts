@@ -78,6 +78,7 @@ import type { SignMessageNavigatorStackParamList } from "./SignMessageNavigator"
 import type { SignTransactionNavigatorParamList } from "./SignTransactionNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
+import type { PerpsNavigatorParamList } from "./PerpsNavigator";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
@@ -221,6 +222,7 @@ export type BaseNavigatorStackParamList = {
     onError: (err: Error) => void;
   };
   [NavigatorName.Swap]?: NavigatorScreenParams<SwapNavigatorParamList>;
+  [NavigatorName.Perps]?: NavigatorScreenParams<PerpsNavigatorParamList>;
   [NavigatorName.Earn]?: NavigatorScreenParams<EarnLiveAppNavigatorParamList>;
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;
   [NavigatorName.Unfreeze]: NavigatorScreenParams<UnfreezeNavigatorParamList>;
