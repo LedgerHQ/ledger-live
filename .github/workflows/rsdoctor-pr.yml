@@ -7,9 +7,9 @@ name: "[Rsdoctor] - Bundle reports on PR"
 
 on:
   pull_request:
-    branches: [develop, main]
+    branches: [develop, main, feat/rsdoctor]
   push:
-    branches: [develop, main]
+    branches: [develop, main, feat/rsdoctor]
   workflow_dispatch:
     inputs:
       ref:
