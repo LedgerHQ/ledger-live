@@ -4,6 +4,7 @@ import sendRecipientFields from "./SendRecipientFields";
 import StepReceiveFundsPostAlert from "./StepReceiveFundsPostAlert";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
+import AccountBodyHeader from "./AccountBodyHeader";
 import { BitcoinFamily } from "./types";
 
 const family: BitcoinFamily = {
@@ -12,6 +13,7 @@ const family: BitcoinFamily = {
   StepReceiveFundsPostAlert,
   accountHeaderManageActions,
   AccountBalanceSummaryFooter,
+  AccountBodyHeader,
 };
 
 export default family;

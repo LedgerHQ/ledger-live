@@ -8,6 +8,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
 import Link from "~/renderer/components/Link";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 type Props = {
   operation: Operation;
@@ -19,6 +20,8 @@ const EditOperationPanel = (props: Props) => {
   const { operation, account, parentAccount } = props;
   const dispatch = useDispatch();
   const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
+  const { enabled: isEditBitcoinTxEnabled, params: bitcoinParams } =
+    useFeature("editBitcoinTx") ?? {};
   const mainAccount = getMainAccount(account, parentAccount);
   const currencyFamily = mainAccount.currency.family;
 
@@ -28,7 +31,7 @@ const EditOperationPanel = (props: Props) => {
     if (currencyFamily === "bitcoin") {
       // RBF only works for unconfirmed (pending) transactions
       const isPending = !operation.blockHeight;
-      
+
       if (!isPending) {
         return null;
       }
@@ -42,27 +45,31 @@ const EditOperationPanel = (props: Props) => {
           rbf?: boolean;
           replaceTxId?: string;
         };
-        
+
         // RBF is supported if rbf is not explicitly false
         const isRbfDisabled = bitcoinTxRaw.rbf === false;
-        
+
         if (isRbfDisabled) {
           return null;
         }
       }
-      
-      return {
-        modalName: "MODAL_BITCOIN_EDIT_TRANSACTION" as const,
-        isSupported: true,
-      };
+
+      if (
+        isEditBitcoinTxEnabled &&
+        bitcoinParams?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId)
+      ) {
+        return {
+          modalName: "MODAL_BITCOIN_EDIT_TRANSACTION" as const,
+          isSupported: true,
+        };
+      }
+      return null;
     }
 
     // For EVM, transactionRaw is required
     if (!operation.transactionRaw) {
       return null;
     }
-
-    const transactionRaw = operation.transactionRaw;
 
     // Check for EVM support
     if (currencyFamily === "evm") {
@@ -79,7 +86,16 @@ const EditOperationPanel = (props: Props) => {
     }
 
     return null;
-  }, [operation.transactionRaw, operation.blockHeight, operation.id, operation.hash, currencyFamily, isEditEvmTxEnabled, params, mainAccount.currency.id]);
+  }, [
+    operation.transactionRaw,
+    operation.blockHeight,
+    currencyFamily,
+    isEditEvmTxEnabled,
+    params,
+    mainAccount.currency.id,
+    isEditBitcoinTxEnabled,
+    bitcoinParams,
+  ]);
 
   const handleOpenEditModal = useCallback(() => {
     if (!editConfig) {
@@ -87,7 +103,7 @@ const EditOperationPanel = (props: Props) => {
     }
 
     dispatch(closeModal("MODAL_SEND"));
-    
+
     // For Bitcoin, we can edit even without transactionRaw (the modal will fetch it)
     // For EVM, transactionRaw is required
     if (currencyFamily === "bitcoin" && !operation.transactionRaw) {
@@ -109,7 +125,7 @@ const EditOperationPanel = (props: Props) => {
         feePerByte: null,
         networkInfo: null,
       };
-      
+
       dispatch(
         openModal(editConfig.modalName, {
           account,
@@ -129,7 +145,15 @@ const EditOperationPanel = (props: Props) => {
         }),
       );
     }
-  }, [editConfig, currencyFamily, parentAccount, account, operation, dispatch]);
+  }, [
+    editConfig,
+    currencyFamily,
+    parentAccount,
+    account,
+    operation,
+    mainAccount.freshAddress,
+    dispatch,
+  ]);
 
   if (!editConfig?.isSupported) {
     return null;

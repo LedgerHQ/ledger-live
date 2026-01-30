@@ -22,14 +22,15 @@ const getCacheKeyForCalculateFees = ({
     transaction.rbf,
   )}_${transaction.utxoStrategy.excludeUTXOs
     .map(({ hash, outputIndex }) => `${hash}@${outputIndex}`)
-    .join("+")}`;
+    .join("+")}_${transaction.replaceTxId || ""}`;
 
 export const calculateFees = makeLRUCache(
-  async ({ account, transaction }: { account: Account; transaction: Transaction }) =>
-    getFeesForTransaction({
+  async ({ account, transaction }: { account: Account; transaction: Transaction }) => {
+    return getFeesForTransaction({
       account,
       transaction,
-    }),
+    });
+  },
   ({ account, transaction }) =>
     getCacheKeyForCalculateFees({
       account,

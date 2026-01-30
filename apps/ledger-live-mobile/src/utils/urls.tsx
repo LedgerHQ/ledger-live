@@ -270,6 +270,9 @@ export const urls = {
   editEvmTx: {
     learnMore: "https://support.ledger.com/article/9756122596765-zd",
   },
+  editBitcoinTx: {
+    learnMore: "https://support.ledger.com/article/9756122596765-zd",
+  },
   genuineCheck: {
     learnMore: "https://support.ledger.com/article/4404389367057-zd",
   },

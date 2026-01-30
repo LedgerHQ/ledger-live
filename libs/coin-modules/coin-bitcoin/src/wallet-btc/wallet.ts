@@ -115,10 +115,35 @@ class BitcoinLikeWallet {
       ),
     );
 
+    // Group UTXOs by transaction hash to avoid fetching the same tx multiple times
+    const txHashToUtxos = new Map<string, Output[]>();
+    utxos.forEach(utxo => {
+      if (!txHashToUtxos.has(utxo.output_hash)) {
+        txHashToUtxos.set(utxo.output_hash, []);
+      }
+      txHashToUtxos.get(utxo.output_hash)!.push(utxo);
+    });
+
+    // Fetch unique transaction hexes
+    const uniqueTxHashes = Array.from(txHashToUtxos.keys());
+    const txHexResults = await Promise.allSettled(
+      uniqueTxHashes.map(hash => account.xpub.explorer.getTxHex(hash)),
+    );
+
+    // Build list of valid UTXOs (those whose transaction hex was fetched successfully)
+    const successfulUtxos: Output[] = [];
+    txHexResults.forEach((res, index) => {
+      const txHash = uniqueTxHashes[index];
+      if (res.status === "fulfilled") {
+        const utxosFromTx = txHashToUtxos.get(txHash)!;
+        successfulUtxos.push(...utxosFromTx);
+      }
+    });
+
     let balance = new BigNumber(0);
     log("btcwallet", "estimateAccountMaxSpendable utxos", utxos);
     let usableUtxoCount = 0;
-    utxos.forEach(utxo => {
+    successfulUtxos.forEach(utxo => {
       if (
         !excludeUTXOs.find(
           excludeUtxo =>

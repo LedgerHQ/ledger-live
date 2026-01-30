@@ -14,29 +14,28 @@ export const isEditableOperation = (
 ): boolean => {
   const { currency } = account;
 
-  switch(true){
-    case currency.family === "evm":
-        // gasTracker is needed to perform the edit transaction logic,
-        // it is used to estimate the fees and let the user choose them
-        if (!hasGasTracker(currency)) {
-          return false;
-        }
-        // For UX reasons, we don't allow to edit the FEES operation associated to a
-        // token or nft operation
-        // If the operation has subOperations, it's a token operation
-        // If the operation has nftOperations, it's an nft operation
-        if (
-          operation.type === "FEES" &&
-          (operation.subOperations?.length || operation.nftOperations?.length)
-        ) {
-          return false;
-        }
-      return operation.blockHeight === null && !!operation.transactionRaw;
-    case currency.id === "bitcoin":
-      return operation.blockHeight === null && !!operation.transactionRaw;
-    default:
-      return false;
+  if (currency.family !== "evm") {
+    return false;
   }
+
+  // gasTracker is needed to perform the edit transaction logic,
+  // it is used to estimate the fees and let the user choose them
+  if (!hasGasTracker(currency)) {
+    return false;
+  }
+
+  // For UX reasons, we don't allow to edit the FEES operation associated to a
+  // token or nft operation
+  // If the operation has subOperations, it's a token operation
+  // If the operation has nftOperations, it's an nft operation
+  if (
+    operation.type === "FEES" &&
+    (operation.subOperations?.length || operation.nftOperations?.length)
+  ) {
+    return false;
+  }
+
+  return operation.blockHeight === null && !!operation.transactionRaw;
 };
 
 /**
