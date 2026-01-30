@@ -64,7 +64,7 @@ export default function TabSelector<T extends string | number>({
   selectedOption,
   handleSelectOption,
   labels,
-}: TabSelectorProps<T>): JSX.Element {
+}: TabSelectorProps<T>): React.JSX.Element {
   const { colors } = useTheme();
 
   const longuestLabel =

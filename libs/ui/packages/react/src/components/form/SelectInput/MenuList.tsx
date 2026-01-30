@@ -26,6 +26,6 @@ export function MenuList<
   O = unknown,
   M extends boolean = false,
   G extends GroupBase<O> = GroupBase<O>,
->(props: MenuListProps<O, M, G>): JSX.Element {
+>(props: MenuListProps<O, M, G>): React.JSX.Element {
   return <components.MenuList {...props}>{props.children}</components.MenuList>;
 }

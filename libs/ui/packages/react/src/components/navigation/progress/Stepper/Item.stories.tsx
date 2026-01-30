@@ -6,7 +6,7 @@ export default {
   component: Step,
 };
 
-export const Item = (args: StepProps): JSX.Element => (
+export const Item = (args: StepProps): React.JSX.Element => (
   <div style={{ width: "75px" }}>
     <Step {...args} />
   </div>

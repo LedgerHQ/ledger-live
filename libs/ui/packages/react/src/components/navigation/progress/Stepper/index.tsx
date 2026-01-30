@@ -96,9 +96,9 @@ export const Item = {
     border-radius: ${p => p.theme.space[2]}px;
     ${color}
   `,
-  Completed: (): JSX.Element => <IconsLegacy.CheckAloneMedium size={16} />,
-  Disabled: (): JSX.Element => <IconsLegacy.CloseMedium size={16} />,
-  Errored: (): JSX.Element => <IconsLegacy.CloseMedium size={16} />,
+  Completed: (): React.JSX.Element => <IconsLegacy.CheckAloneMedium size={16} />,
+  Disabled: (): React.JSX.Element => <IconsLegacy.CloseMedium size={16} />,
+  Errored: (): React.JSX.Element => <IconsLegacy.CloseMedium size={16} />,
 };
 
 export const StepText = styled(Text)<{ state: StepState }>`
@@ -165,7 +165,7 @@ export const Step = memo(function Step({
   label: Label,
   hideLeftSeparator,
   nextState,
-}: StepProps): JSX.Element {
+}: StepProps): React.JSX.Element {
   const inactive = state === "pending";
   const nextInactive = state === "pending";
 

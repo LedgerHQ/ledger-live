@@ -2,11 +2,12 @@ import React, { useCallback } from "react";
 import { VirtualList } from "LLD/components/VirtualList";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NetworkListItem } from "../NetworkListItem";
+import type { ReactElement, ReactNode } from "react";
 
 type NetworkWithUI = CryptoOrTokenCurrency & {
   description?: string;
-  rightElement?: React.ReactNode;
-  apy?: React.ReactElement;
+  rightElement?: ReactNode;
+  apy?: ReactElement;
 };
 
 type NetworkVirtualListProps = {

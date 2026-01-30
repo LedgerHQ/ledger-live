@@ -46,7 +46,7 @@ export function useWelcomeNewViewModel() {
   // Feature flags easter egg state
   const countRef1 = useRef(0);
   const countRef2 = useRef(0);
-  const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [isFeatureFlagsSettingsButtonDisplayed, setIsFeatureFlagsSettingsButtonDisplayed] =
     useState<boolean>(false);
 

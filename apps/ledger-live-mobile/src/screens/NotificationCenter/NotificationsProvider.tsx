@@ -30,7 +30,6 @@ export default function NotificationsProvider({ children }: Props) {
 
   return (
     <ServiceStatusProvider context={context} autoUpdateDelay={60000} networkApi={serviceStatusApi}>
-      {/* @ts-expect-error REACT19FIXME: ReactNode type from React 18 is not compatible with ReactNode from React 19 */}
       {children}
     </ServiceStatusProvider>
   );

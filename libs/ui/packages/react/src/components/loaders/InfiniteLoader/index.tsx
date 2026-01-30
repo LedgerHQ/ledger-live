@@ -29,7 +29,7 @@ export default function InfiniteLoader({
   size = 38,
   color = "primary.c50",
   ...extraProps
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   return (
     <Loader
       size={size}

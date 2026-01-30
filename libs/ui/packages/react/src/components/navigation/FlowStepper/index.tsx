@@ -127,11 +127,12 @@ function FlowStepper<ExtraProps>({
     stepFooter: React.ReactNode | null;
   }>(
     (acc, child, idx) => {
-      const index = (isElement(child) && child.props.index) ?? idx;
-      const label = isElement(child) && child.props.label;
-      const hidden = isElement(child) && child.props.hidden;
-      const stepHeader = isElement(child) && child.props.header;
-      const stepFooter = isElement(child) && child.props.footer;
+      const stepChild = isElement(child) ? (child as StepChild) : null;
+      const index = stepChild?.props.index ?? idx;
+      const label = stepChild?.props.label;
+      const hidden = stepChild?.props.hidden;
+      const stepHeader = stepChild?.props.header;
+      const stepFooter = stepChild?.props.footer;
 
       if (label && !hidden) {
         acc.steps[index] = label;
@@ -224,8 +225,8 @@ export type IndexedProps<ExtraProps> = Omit<Props<ExtraProps>, "activeIndex" | "
 function FlowStepperIndexed<ExtraProps>(props: IndexedProps<ExtraProps>) {
   const { activeKey, children, ...otherProps } = props;
   const activeIndex = React.Children.toArray(children).findIndex(child => {
-    const res = isElement(child) && child.props.itemKey === activeKey;
-    return res;
+    const stepChild = isElement(child) ? (child as IndexedStepperChild) : null;
+    return stepChild?.props.itemKey === activeKey;
   });
   return (
     <FlowStepper {...otherProps} activeIndex={activeIndex}>

@@ -38,7 +38,7 @@ const TransitionInOut = ({
   in: inProp,
   timeout = duration,
   ...TransitionProps
-}: TransitionInOutProps): JSX.Element => (
+}: TransitionInOutProps): React.JSX.Element => (
   <CSSTransition {...TransitionProps} in={inProp} timeout={timeout} classNames="transition-inout">
     <ChildrenWrapper timeout={timeout}>{children}</ChildrenWrapper>
   </CSSTransition>

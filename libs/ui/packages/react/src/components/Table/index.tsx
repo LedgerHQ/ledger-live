@@ -61,7 +61,7 @@ function RowsComponent<T>({
   render,
   extraRender,
   renderRow,
-}: RowProps<T>): JSX.Element {
+}: RowProps<T>): React.JSX.Element {
   return (
     <React.Fragment key="row-component">
       {data.map((elt, rowIndex) => {
@@ -101,7 +101,7 @@ export function Table<T>({
   extraRender,
   renderRow,
   ...containerProps
-}: Props<T>): JSX.Element {
+}: Props<T>): React.JSX.Element {
   const gridTemplateColumns = useMemo(
     () => columns.reduce<string>((acc, col) => `${acc} ${col.layout || "auto"}`, ""),
     [columns],

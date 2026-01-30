@@ -38,7 +38,7 @@ const RecoverRestore = () => {
   const [error, setError] = useState<Error>();
   const { setDeviceModelId } = useContext(OnboardingContext);
   const buyNew = useLocalizedUrl(urls.buyNew);
-  const sub = useRef<Subscription>();
+  const sub = useRef<Subscription>(undefined);
   const recoverDiscoverPath = useMemo(() => {
     return `/recover/${recoverFF?.params?.protectId}?redirectTo=disclaimerRestore`;
   }, [recoverFF?.params?.protectId]);

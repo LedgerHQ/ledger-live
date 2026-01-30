@@ -28,7 +28,7 @@ export function ValueContainer<
   O = unknown,
   M extends boolean = false,
   G extends GroupBase<O> = GroupBase<O>,
->(props: MixedProps<O, M, G>): JSX.Element {
+>(props: MixedProps<O, M, G>): React.JSX.Element {
   const color = props.selectProps.isDisabled ? "neutral.c60" : "neutral.c100";
   return (
     <components.ValueContainer {...props}>

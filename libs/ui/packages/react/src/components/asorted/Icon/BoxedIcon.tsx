@@ -53,7 +53,7 @@ export type IconBoxProps = {
   /**
    * Component that takes `{size?: number; color?: string}` as props. Will be rendered at the top right with the size provided in `badgeSize` or a default size.
    */
-  Badge?: React.ComponentType<IconProps> | ((props: IconProps) => JSX.Element);
+  Badge?: React.ComponentType<IconProps> | ((props: IconProps) => React.JSX.Element);
   /**
    * Color of the border
    */
@@ -66,7 +66,7 @@ export type IconBoxProps = {
    * Badge size, will be applied to the component provided in the `Badge` prop
    */
   badgeSize?: number;
-  children?: JSX.Element;
+  children?: React.JSX.Element;
   /**
    * Box size for preview
    */
@@ -77,7 +77,7 @@ export type BoxedIconProps = IconBoxProps & {
   /**
    * Component that takes `{size?: number; color?: string}` as props. Will be rendered at the top right with the size provided in `iconSize` or a default size.
    */
-  Icon: React.ComponentType<IconProps> | ((props: IconProps) => JSX.Element);
+  Icon: React.ComponentType<IconProps> | ((props: IconProps) => React.JSX.Element);
   /**
    * Icon size, will be applied to the component provided in the `Icon` prop
    */

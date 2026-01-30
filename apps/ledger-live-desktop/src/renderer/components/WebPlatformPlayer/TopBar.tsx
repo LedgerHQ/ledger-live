@@ -133,7 +133,7 @@ export type Props = {
   manifest: LiveAppManifest;
   onClose?: () => void;
   config?: TopBarConfig;
-  webviewAPIRef: RefObject<WebviewAPI>;
+  webviewAPIRef: RefObject<WebviewAPI | null>;
   webviewState: WebviewState;
   currentAccountHistDb?: CurrentAccountHistDB;
   mobileView?: MobileView;

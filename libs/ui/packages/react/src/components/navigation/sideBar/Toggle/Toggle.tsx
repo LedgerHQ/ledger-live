@@ -25,7 +25,7 @@ const ToggleButtonContainer = styled(TransitionInOut)`
 `;
 
 type ToggleButtonProps = { isDisplayed: boolean };
-const ToggleButton = ({ isDisplayed }: ToggleButtonProps): JSX.Element => {
+const ToggleButton = ({ isDisplayed }: ToggleButtonProps): React.JSX.Element => {
   const { isExpanded, onToggle } = useContext(SideBarContext);
 
   return (

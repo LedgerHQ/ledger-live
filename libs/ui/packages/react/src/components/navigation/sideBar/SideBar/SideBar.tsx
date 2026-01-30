@@ -44,12 +44,12 @@ const TransparentMouseZone = styled.div`
 `;
 
 export type SideBarProps = {
-  children: Array<JSX.Element>;
+  children: Array<React.JSX.Element>;
   onToggle: () => void;
   isExpanded?: boolean;
 };
 
-const SideBar = ({ children, onToggle, isExpanded = true }: SideBarProps): JSX.Element => {
+const SideBar = ({ children, onToggle, isExpanded = true }: SideBarProps): React.JSX.Element => {
   const [isToggleDisplayed, setToggleDisplayed] = useState(false);
   const providerValue = useMemo(() => ({ isExpanded, onToggle }), [isExpanded, onToggle]);
 

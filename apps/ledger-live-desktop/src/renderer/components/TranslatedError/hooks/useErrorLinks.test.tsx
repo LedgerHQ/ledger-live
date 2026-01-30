@@ -35,7 +35,7 @@ describe("useErrorLinks", () => {
     expect(currentResult).toBeInstanceOf(Object);
     expect(Object.keys(currentResult)).toHaveLength(1);
 
-    expect(currentResult["link0"].props["data-testid"]).toBe("translated-error-link-0");
+    expect(currentResult["link0"].props).toHaveProperty("data-testid", "translated-error-link-0");
   });
 
   it("filters out invalid links", () => {
@@ -47,8 +47,8 @@ describe("useErrorLinks", () => {
 
     expect(Object.keys(currentResult)).toHaveLength(2);
 
-    expect(currentResult["link0"].props["data-testid"]).toBe("translated-error-link-0");
-    expect(currentResult["link1"].props["data-testid"]).toBe("translated-error-link-1");
+    expect(currentResult["link0"].props).toHaveProperty("data-testid", "translated-error-link-0");
+    expect(currentResult["link1"].props).toHaveProperty("data-testid", "translated-error-link-1");
   });
 
   it("handles the condition getSafeStringLinks correctly", () => {

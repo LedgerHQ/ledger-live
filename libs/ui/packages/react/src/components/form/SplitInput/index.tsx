@@ -56,7 +56,7 @@ const Divider = styled.div<{
   }
 `;
 
-export default function SplitInput(props: Props): JSX.Element {
+export default function SplitInput(props: Props): React.JSX.Element {
   const { disabled, isDisabled, renderLeft, renderRight, error } = props;
   const [focus, setFocus] = React.useState(false);
 

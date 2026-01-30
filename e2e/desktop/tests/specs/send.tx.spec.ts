@@ -236,7 +236,6 @@ const transactionE2E = [
 ];
 
 test.describe("Send flows", () => {
-
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
       test.use({

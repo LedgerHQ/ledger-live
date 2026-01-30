@@ -28,7 +28,7 @@
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "^22.10.10",
-    "@types/react": "18.2.73",
+    "@types/react": "18.3.27",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "react": "catalog:",

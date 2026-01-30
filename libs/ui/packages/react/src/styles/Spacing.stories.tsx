@@ -23,7 +23,7 @@ const SpaceRow = styled(Flex).attrs({
   }
 `;
 
-export const Spacing = (): JSX.Element => {
+export const Spacing = (): React.JSX.Element => {
   const theme = useTheme();
   const [, ...space] = theme.space;
 

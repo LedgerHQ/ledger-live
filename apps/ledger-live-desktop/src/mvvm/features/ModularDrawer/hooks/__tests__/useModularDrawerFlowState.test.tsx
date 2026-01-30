@@ -1,4 +1,4 @@
-import { act } from "react-dom/test-utils";
+import { act } from "react";
 import { renderHook } from "tests/testSetup";
 import { bitcoinCurrency, ethereumCurrency } from "../../../__mocks__/useSelectAssetFlow.mock";
 import { useModularDrawerFlowState } from "../useModularDrawerFlowState";

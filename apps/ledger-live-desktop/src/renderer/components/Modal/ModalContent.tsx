@@ -45,16 +45,16 @@ const ContentScrollableContainerGradient = styled.div.attrs<{
   pointer-events: none;
 `;
 
-type Props = React.PropsWithRef<{
+type ModalContentProps = {
   children: React.ReactNode;
   noScroll?: boolean;
   pt?: number;
-}>;
+};
 
 function ModalContent(
   // eslint is wrong here, it should not complain
   // eslint-disable-next-line
-  { children, noScroll, pt }: Props,
+  { children, noScroll, pt }: ModalContentProps,
   containerRef: React.ForwardedRef<HTMLDivElement>,
 ) {
   const [isScrollable, setScrollable] = useState(false);

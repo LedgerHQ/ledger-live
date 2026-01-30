@@ -104,7 +104,7 @@ const Checkbox = ({
   name,
   onChange,
   size,
-}: CheckboxProps): JSX.Element => (
+}: CheckboxProps): React.JSX.Element => (
   <Container data-variant={variant} data-disabled={isDisabled}>
     <Input
       type="checkbox"

@@ -77,7 +77,10 @@ const Tooltip = ({ tooltip, renderTooltip, color, data }: TooltipProps) => {
       </div>
       <animated.div
         style={{
-          transform: interpolate([x, y], (x, y) => `translate3d(${x}px,${y - 35}px,0)`),
+          transform: interpolate(
+            [x as number, y as number],
+            (x, y) => `translate3d(${x}px,${y - 35}px,0)`,
+          ),
           pointerEvents: "none",
           position: "absolute",
           top: 0,

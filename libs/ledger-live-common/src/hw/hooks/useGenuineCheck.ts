@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, MutableRefObject, useRef } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { UnresponsiveDeviceError, UserRefusedAllowManager } from "@ledgerhq/errors";
 import type { DeviceId } from "@ledgerhq/types-live";
 import { getGenuineCheckFromDeviceId as defaultGetGenuineCheckFromDeviceId } from "../getGenuineCheckFromDeviceId";
@@ -42,7 +42,7 @@ export type UseGenuineCheckResult = {
 
 const SOCKET_EVENT_PAYLOAD_GENUINE = "0000";
 
-const clearTimeoutRef = (timeoutRef: MutableRefObject<NodeJS.Timeout | null>) => {
+const clearTimeoutRef = (timeoutRef: { current: NodeJS.Timeout | null }) => {
   if (timeoutRef.current) {
     clearTimeout(timeoutRef.current);
     timeoutRef.current = null;

@@ -21,8 +21,8 @@ function RepairDeviceButton({ buttonProps, onRepair }: Props) {
   const [error, setError] = useState<Error | null>(null);
   const [progress, setProgress] = useState(0);
 
-  const subRef = useRef<Subscription | undefined>();
-  const timeoutRef = useRef<NodeJS.Timeout | undefined>();
+  const subRef = useRef<Subscription | undefined>(undefined);
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     return () => {

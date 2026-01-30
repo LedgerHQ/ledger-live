@@ -51,7 +51,7 @@ function DropdownIndicatorsContainer() {
   return null;
 }
 
-export default function Dropdown<O>(props: Props<O>): JSX.Element {
+export default function Dropdown<O>(props: Props<O>): React.JSX.Element {
   const theme = useTheme();
   const { styles, ...rest } = props;
 

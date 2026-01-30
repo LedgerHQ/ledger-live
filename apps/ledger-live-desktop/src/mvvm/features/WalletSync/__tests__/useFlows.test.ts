@@ -1,6 +1,6 @@
 import { Flow, Step, initialStateWalletSync } from "~/renderer/reducers/walletSync";
 import { renderHook } from "tests/testSetup";
-import { act } from "react-dom/test-utils";
+import { act } from "react";
 import { FlowOptions, useFlows } from "../hooks/useFlows";
 
 const INITIAL_STATE = {

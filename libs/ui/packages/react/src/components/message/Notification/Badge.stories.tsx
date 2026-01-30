@@ -18,7 +18,7 @@ export default {
   },
 };
 
-export const Badge = (args: Props): JSX.Element => {
+export const Badge = (args: Props): React.JSX.Element => {
   return (
     <FlexBox style={{ columnGap: "2em" }}>
       <BadgeComponent

@@ -46,7 +46,7 @@ const StyledIconContainer = styled.div<{ type?: TipType }>`
   align-items: center;
 `;
 
-export default function Tip({ type, label }: TipProps): JSX.Element {
+export default function Tip({ type, label }: TipProps): React.JSX.Element {
   return (
     <Flex alignItems={"center"}>
       {type && <StyledIconContainer type={type}>{icons[type]}</StyledIconContainer>}

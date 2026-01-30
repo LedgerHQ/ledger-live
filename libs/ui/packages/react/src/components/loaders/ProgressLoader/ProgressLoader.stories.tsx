@@ -56,7 +56,7 @@ export default {
   },
 };
 
-export const Default = (args: Props): JSX.Element => {
+export const Default = (args: Props): React.JSX.Element => {
   return (
     <ProgressLoader
       radius={args.radius}

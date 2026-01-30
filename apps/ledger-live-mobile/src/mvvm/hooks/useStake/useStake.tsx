@@ -45,11 +45,9 @@ export function useStake() {
 
   const partnerSupportedAssets = useMemo(() => Array.from(redirects.keys()), [redirects]);
 
-  // @ts-expect-error REACT19FIXME: Context $$typeof symbol mismatch between React 18 and 19
   const remoteLiveAppRegistry: Loadable<LiveAppRegistry> = useContext(remoteLiveAppContext).state;
 
   const getLocalLiveAppManifestById = useContext(
-    // @ts-expect-error REACT19FIXME: Context $$typeof symbol mismatch between React 18 and 19
     localLiveAppProviderContext,
   ).getLocalLiveAppManifestById;
 

@@ -34,7 +34,7 @@ export function mockDomMeasurements() {
   };
 }
 
-export function setRefCurrent<T>(ref: RefObject<T>, value: T | null): void {
+export function setRefCurrent<T>(ref: RefObject<T | null>, value: T | null): void {
   Object.defineProperty(ref, "current", {
     writable: true,
     configurable: true,
